@@ -67,15 +67,14 @@ static int ascii_tree[] = {
 #define CALLC(x) { if ((x) == -SCI_ERROR_DECOMPRESSION_OVERFLOW) return -SCI_ERROR_DECOMPRESSION_OVERFLOW; }
 
 static inline int
-getbits_msb_first(struct bit_read_struct *inp, int bits)
-{
+getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	int morebytes = (bits + inp->bitpos - 1) >> 3;
 	int result = 0;
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		fprintf(stderr,"read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
-			inp->bytepos, morebytes, inp->length);
+		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -94,15 +93,14 @@ getbits_msb_first(struct bit_read_struct *inp, int bits)
 static int DEBUG_DCL_INFLATE = 0; /* FIXME: Make this a define eventually */
 
 static inline int
-getbits(struct bit_read_struct *inp, int bits)
-{
+getbits(struct bit_read_struct *inp, int bits) {
 	int morebytes = (bits + inp->bitpos - 1) >> 3;
 	int result = 0;
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		fprintf(stderr,"read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
-			inp->bytepos, morebytes, inp->length);
+		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -116,28 +114,27 @@ getbits(struct bit_read_struct *inp, int bits)
 	inp->bytepos += morebytes;
 
 	if (DEBUG_DCL_INFLATE)
-		fprintf(stderr,"(%d:%04x)", bits, result);
+		fprintf(stderr, "(%d:%04x)", bits, result);
 
 	return result;
 }
 
 static int
-huffman_lookup(struct bit_read_struct *inp, int *tree)
-{
+huffman_lookup(struct bit_read_struct *inp, int *tree) {
 	int pos = 0;
 	int bit;
 
 	while (!(tree[pos] & HUFFMAN_LEAF)) {
 		CALLC(bit = getbits(inp, 1));
 		if (DEBUG_DCL_INFLATE)
-			fprintf(stderr,"[%d]:%d->", pos, bit);
+			fprintf(stderr, "[%d]:%d->", pos, bit);
 		if (bit)
 			pos = tree[pos] & ~(~0 << BRANCH_SHIFT);
 		else
 			pos = tree[pos] >> BRANCH_SHIFT;
 	}
 	if (DEBUG_DCL_INFLATE)
-		fprintf(stderr,"=%02x\n", tree[pos] & 0xffff);
+		fprintf(stderr, "=%02x\n", tree[pos] & 0xffff);
 	return tree[pos] & 0xffff;
 }
 
@@ -146,8 +143,7 @@ huffman_lookup(struct bit_read_struct *inp, int *tree)
 #define DCL_ASCII_MODE 1
 
 static int
-decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
-{
+decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	int mode, length_param, value, val_length, val_distance;
 	int write_pos = 0;
 	int M[] = {0x07, 0x08, 0x0A, 0x0E, 0x16, 0x26, 0x46, 0x86, 0x106};
@@ -156,28 +152,28 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 	CALLC(length_param = getbits(reader, 8));
 
 	if (mode == DCL_ASCII_MODE) {
-		fprintf(stderr,"DCL-INFLATE: Warning: Decompressing ASCII mode (untested)\n");
+		fprintf(stderr, "DCL-INFLATE: Warning: Decompressing ASCII mode (untested)\n");
 		/*		DEBUG_DCL_INFLATE = 1; */
 	} else if (mode) {
-		fprintf(stderr,"DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
+		fprintf(stderr, "DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
 		return 1;
 	}
 
 	if (DEBUG_DCL_INFLATE) {
 		int i;
 		for (i = 0; i < reader->length; i++) {
-			fprintf(stderr,"%02x ", reader->data[i]);
-			if (!((i+1) & 0x1f))
-				fprintf(stderr,"\n");
+			fprintf(stderr, "%02x ", reader->data[i]);
+			if (!((i + 1) & 0x1f))
+				fprintf(stderr, "\n");
 		}
 
 
-		fprintf(stderr,"\n---\n");
+		fprintf(stderr, "\n---\n");
 	}
 
 
 	if (length_param < 3 || length_param > 6)
-		fprintf(stderr,"Warning: Unexpected length_param value %d (expected in [3,6])\n", length_param);
+		fprintf(stderr, "Warning: Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
 	while (write_pos < length) {
 		CALLC(value = getbits(reader, 1));
@@ -196,7 +192,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			}
 
 			if (DEBUG_DCL_INFLATE)
-				fprintf(stderr," | ");
+				fprintf(stderr, " | ");
 
 			CALLC(value = huffman_lookup(reader, distance_tree));
 
@@ -214,7 +210,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			++val_distance;
 
 			if (DEBUG_DCL_INFLATE)
-				fprintf(stderr,"\nCOPY(%d from %d)\n", val_length, val_distance);
+				fprintf(stderr, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
 			if (val_length + write_pos > length) {
 				fprintf(stderr, "DCL-INFLATE Error: Write out of bounds while copying %d bytes\n", val_length);
@@ -227,14 +223,14 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			}
 
 			while (val_length) {
-				int copy_length = (val_length > val_distance)? val_distance : val_length;
+				int copy_length = (val_length > val_distance) ? val_distance : val_length;
 
 				memcpy(dest + write_pos, dest + write_pos - val_distance, copy_length);
 
 				if (DEBUG_DCL_INFLATE) {
 					int i;
 					for (i = 0; i < copy_length; i++)
-						fprintf(stderr,"\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
+						fprintf(stderr, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
 					fprintf(stderr, "\n");
 				}
 
@@ -261,8 +257,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 }
 
 int
-decrypt4(guint8* dest, guint8* src, int length, int complength)
-{
+decrypt4(guint8* dest, guint8* src, int length, int complength) {
 	struct bit_read_struct reader;
 
 	reader.length = complength;
@@ -280,15 +275,14 @@ void decryptinit3(void);
 int decrypt3(guint8* dest, guint8* src, int length, int complength);
 int decompress1(resource_t *result, int resh, int early);
 
-int decompress1(resource_t *result, int resh, int sci_version)
-{
+int decompress1(resource_t *result, int resh, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod, result_size;
 	guint8 *buffer;
 	guint8 tempid;
 
 	if (sci_version == SCI_VERSION_1_EARLY) {
-		if (read(resh, &(result->id),2) != 2)
+		if (read(resh, &(result->id), 2) != 2)
 			return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -306,7 +300,7 @@ int decompress1(resource_t *result, int resh, int sci_version)
 
 		result->id = tempid;
 
-		result->type = result->id &0x7f;
+		result->type = result->id & 0x7f;
 		if (read(resh, &(result->number), 2) != 2)
 			return SCI_ERROR_IO_ERROR;
 
@@ -318,8 +312,8 @@ int decompress1(resource_t *result, int resh, int sci_version)
 	}
 
 	if ((read(resh, &compressedLength, 2) != 2) ||
-	    (read(resh, &result_size, 2) != 2) ||
-	    (read(resh, &compressionMethod, 2) != 2))
+	        (read(resh, &result_size, 2) != 2) ||
+	        (read(resh, &compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -330,7 +324,7 @@ int decompress1(resource_t *result, int resh, int sci_version)
 	result->size = result_size;
 
 	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	    (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
 	if (compressedLength > 4)
@@ -353,17 +347,17 @@ int decompress1(resource_t *result, int resh, int sci_version)
 
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%%"
-		" ratio\n",
-		result->number, sci_resource_type_suffixes[result->type],
-		early? 'e' : 'l',
-		compressionMethod,
-		(result->size == 0)? -1.0 :
-		(100.0 * compressedLength / result->size));
+	        " ratio\n",
+	        result->number, sci_resource_type_suffixes[result->type],
+	        early ? 'e' : 'l',
+	        compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
 	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
-		compressedLength, result->size);
+	        compressedLength, result->size);
 #endif
 
-	switch(compressionMethod) {
+	switch (compressionMethod) {
 
 	case 0: /* no compression */
 		if (result->size != compressedLength) {
@@ -400,7 +394,7 @@ int decompress1(resource_t *result, int resh, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 3: 
+	case 3:
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
@@ -425,11 +419,11 @@ int decompress1(resource_t *result, int resh, int sci_version)
 		result->data = pic_reorder(result->data, result->size);
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
-		
+
 	default:
-		fprintf(stderr,"Resource %s.%03hi: Compression method SCI1/%hi not "
-			"supported!\n", sci_resource_types[result->type], result->number,
-			compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; /* So that we know that it didn't work */
 		result->status = SCI_STATUS_NOMALLOC;

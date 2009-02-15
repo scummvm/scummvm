@@ -183,4 +183,4 @@ TYPE##_hash_map_remove_value(TYPE##_hash_map_t *map, TYPE value)		\
 		return oldnode->value;						\
 	} else return -1; /* Not found */					\
 }										\
-
+ 

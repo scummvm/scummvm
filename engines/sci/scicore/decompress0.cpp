@@ -36,7 +36,7 @@
 /* 9-12 bit LZW encoding */
 int
 decrypt1(guint8 *dest, guint8 *src, int length, int complength)
-     /* Doesn't do length checking yet */
+/* Doesn't do length checking yet */
 {
 	/* Theory: Considering the input as a bit stream, we get a series of
 	** 9 bit elements in the beginning. Every one of them is a 'token'
@@ -73,9 +73,9 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 
 		guint32 tokenmaker = src[bytectr++] >> bitctr;
 		if (bytectr < complength)
-			tokenmaker |= (src[bytectr] << (8-bitctr));
-		if (bytectr+1 < complength)
-			tokenmaker |= (src[bytectr+1] << (16-bitctr));
+			tokenmaker |= (src[bytectr] << (8 - bitctr));
+		if (bytectr + 1 < complength)
+			tokenmaker |= (src[bytectr+1] << (16 - bitctr));
 
 		token = tokenmaker & bitmask;
 
@@ -98,44 +98,40 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 				int i;
 
 				if (token > 0xff) {
-				  if (token >= tokenctr)
-				    {
+					if (token >= tokenctr) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-				      fprintf(stderr, "decrypt1: Bad token %x!\n", token);
+						fprintf(stderr, "decrypt1: Bad token %x!\n", token);
 #endif
-				      /* Well this is really bad  */
-				      /* May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE */
-				    } else
-				      {
-					tokenlastlength = tokenlengthlist[token]+1;
-					if (destctr+tokenlastlength>length)
-					  {
+						/* Well this is really bad  */
+						/* May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE */
+					} else {
+						tokenlastlength = tokenlengthlist[token] + 1;
+						if (destctr + tokenlastlength > length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 
-					    /* For me this seems a normal situation, It's necessary to handle it*/
-					    printf ("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)!\n",
-						    length, destctr, tokenlastlength);
+							/* For me this seems a normal situation, It's necessary to handle it*/
+							printf("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)!\n",
+							       length, destctr, tokenlastlength);
 #endif
 
-					    i = 0;
-					    for (; destctr<length; destctr++) {
-					      dest[destctr++] = dest [tokenlist[token]+i];
-					      i++;
-					    }
-					  } else
-					for (i=0; i< tokenlastlength; i++) {
-						dest[destctr++] = dest[tokenlist[token]+i];
+							i = 0;
+							for (; destctr < length; destctr++) {
+								dest[destctr++] = dest [tokenlist[token] + i];
+								i++;
+							}
+						} else
+							for (i = 0; i < tokenlastlength; i++) {
+								dest[destctr++] = dest[tokenlist[token] + i];
+							}
 					}
-				      }
 				} else {
 					tokenlastlength = 1;
-				  if (destctr >= length)
-				    {
+					if (destctr >= length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-				      printf ("decrypt1: Try to write single byte beyond end of array!\n");
+						printf("decrypt1: Try to write single byte beyond end of array!\n");
 #endif
-				    } else
-					dest[destctr++] = (byte)token;
+					} else
+						dest[destctr++] = (byte)token;
 				}
 
 			}
@@ -149,7 +145,7 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 				} else continue; /* no further tokens allowed */
 			}
 
-			tokenlist[tokenctr] = destctr-tokenlastlength;
+			tokenlist[tokenctr] = destctr - tokenlastlength;
 			tokenlengthlist[tokenctr++] = tokenlastlength;
 
 		}
@@ -169,8 +165,7 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 
 /* decrypt2 helper function */
 gint16 getc2(guint8 *node, guint8 *src,
-	     guint16 *bytectr, guint16 *bitctr, int complength)
-{
+             guint16 *bytectr, guint16 *bitctr, int complength) {
 	guint16 next;
 
 	while (node[1] != 0) {
@@ -189,23 +184,22 @@ gint16 getc2(guint8 *node, guint8 *src,
 				if (++(*bytectr) > complength)
 					return -1;
 				else if (*bytectr < complength)
-					result |= src[*bytectr] >> (8-(*bitctr));
+					result |= src[*bytectr] >> (8 - (*bitctr));
 
 				result &= 0x0ff;
 				return (result | 0x100);
 			}
-		}
-		else {
+		} else {
 			next = node[1] >> 4;  /* high 4 bits */
 		}
-		node += next<<1;
+		node += next << 1;
 	}
 	return getInt16(node);
 }
 
 /* Huffman token decryptor */
 int decrypt2(guint8* dest, guint8* src, int length, int complength)
-     /* no complength checking atm */
+/* no complength checking atm */
 {
 	guint8 numnodes, terminator;
 	guint8 *nodes;
@@ -214,11 +208,11 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength)
 
 	numnodes = src[0];
 	terminator = src[1];
-	bytectr = 2+ (numnodes << 1);
-	nodes = src+2;
+	bytectr = 2 + (numnodes << 1);
+	nodes = src + 2;
 
 	while (((c = getc2(nodes, src, &bytectr, &bitctr, complength))
-		!= (0x0100 | terminator)) && (c >= 0)) {
+	        != (0x0100 | terminator)) && (c >= 0)) {
 		if (length-- == 0) return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 
 		*dest = (guint8)c;
@@ -232,8 +226,7 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength)
 /* Carl Muckenhoupt's decompression code ends here                         */
 /***************************************************************************/
 
-int sci0_get_compression_method(int resh)
-{
+int sci0_get_compression_method(int resh) {
 	guint16 compressedLength;
 	guint16 compressionMethod;
 	guint16 result_size;
@@ -243,8 +236,8 @@ int sci0_get_compression_method(int resh)
 		return SCI_ERROR_IO_ERROR;
 
 	if ((read(resh, &compressedLength, 2) != 2) ||
-	    (read(resh, &result_size, 2) != 2) ||
-	    (read(resh, &compressionMethod, 2) != 2))
+	        (read(resh, &result_size, 2) != 2) ||
+	        (read(resh, &compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -255,14 +248,13 @@ int sci0_get_compression_method(int resh)
 }
 
 
-int decompress0(resource_t *result, int resh, int sci_version)
-{
+int decompress0(resource_t *result, int resh, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod;
 	guint16 result_size;
 	guint8 *buffer;
 
-	if (read(resh, &(result->id),2) != 2)
+	if (read(resh, &(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -275,8 +267,8 @@ int decompress0(resource_t *result, int resh, int sci_version)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
 	if ((read(resh, &compressedLength, 2) != 2) ||
-	    (read(resh, &result_size, 2) != 2) ||
-	    (read(resh, &compressionMethod, 2) != 2))
+	        (read(resh, &result_size, 2) != 2) ||
+	        (read(resh, &compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -287,7 +279,7 @@ int decompress0(resource_t *result, int resh, int sci_version)
 	result->size = result_size;
 
 	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	    (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 	/* With SCI0, this simply cannot happen. */
 
@@ -311,15 +303,15 @@ int decompress0(resource_t *result, int resh, int sci_version)
 
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %s.%03hi encrypted with method %hi at %.2f%%"
-		" ratio\n",
-		sci_resource_types[result->type], result->number, compressionMethod,
-		(result->size == 0)? -1.0 :
-		(100.0 * compressedLength / result->size));
+	        " ratio\n",
+	        sci_resource_types[result->type], result->number, compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
 	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
-		compressedLength, result->size);
+	        compressedLength, result->size);
 #endif
 
-	switch(compressionMethod) {
+	switch (compressionMethod) {
 
 	case 0: /* no compression */
 		if (result->size != compressedLength) {
@@ -356,9 +348,9 @@ int decompress0(resource_t *result, int resh, int sci_version)
 		break;
 
 	default:
-		fprintf(stderr,"Resource %s.%03hi: Compression method %hi not "
-			"supported!\n", sci_resource_types[result->type], result->number,
-			compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method %hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; /* So that we know that it didn't work */
 		result->status = SCI_STATUS_NOMALLOC;

@@ -28,16 +28,14 @@
 #include <stdio.h>
 #include "sci/include/sci_memory.h"
 
-struct _exe_handle
-{
+struct _exe_handle {
 	FILE *f;
 };
 
 #include "sci/scicore/exe_dec.h"
 
 static exe_handle_t *
-raw_open(const char *filename)
-{
+raw_open(const char *filename) {
 	FILE *f = sci_fopen(filename, "rb");
 	exe_handle_t *handle;
 
@@ -51,14 +49,12 @@ raw_open(const char *filename)
 }
 
 static int
-raw_read(exe_handle_t *handle, void *buf, int count)
-{
+raw_read(exe_handle_t *handle, void *buf, int count) {
 	return fread(buf, 1, count, handle->f);
 }
 
 static void
-raw_close(exe_handle_t *handle)
-{
+raw_close(exe_handle_t *handle) {
 	fclose(handle->f);
 
 	sci_free(handle);

@@ -35,7 +35,7 @@ typedef struct _exe_decompressor {
 	            ** of lower-case (where applicable) alphanumerics
 	            */
 
-	exe_handle_t * (*open) (const char *filename);
+	exe_handle_t * (*open)(const char *filename);
 	/* Opens an executable file
 	** Parameters: (const char *) filename: Filename of executable to open.
 	** Returns   : (exe_handle_t *) Decompressor file handle, or NULL on
@@ -44,7 +44,7 @@ typedef struct _exe_decompressor {
 	** decompressor. If this is not the case the function will fail.
 	*/
 
-	int (*read) (exe_handle_t *handle, void *buf, int count);
+	int (*read)(exe_handle_t *handle, void *buf, int count);
 	/* Reads from executable file
 	** Parameters: (exe_handle_t *) handle: Decompressor file handle.
 	**             (void *) buf: Buffer to store decompressed data.
@@ -56,7 +56,7 @@ typedef struct _exe_decompressor {
 	**                   reached.
 	*/
 
-	void (*close) (exe_handle_t *handle);
+	void (*close)(exe_handle_t *handle);
 	/* Closes a decompressor file handle.
 	** Parameters: (exe_handle_t *) handle: Decompressor file handle.
 	** Returns   : (void)

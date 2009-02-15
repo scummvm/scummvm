@@ -39,15 +39,13 @@ exe_decompressor_t *exe_decompressors[] = {
 	NULL
 };
 
-struct _exe_file
-{
+struct _exe_file {
 	struct _exe_decompressor *decompressor;
 	struct _exe_handle *handle;
 };
 
 exe_file_t *
-exe_open(const char *filename)
-{
+exe_open(const char *filename) {
 	int i = 0;
 	exe_decompressor_t *dec;
 
@@ -58,7 +56,7 @@ exe_open(const char *filename)
 			exe_file_t *file = (exe_file_t*)sci_malloc(sizeof(exe_file_t));
 
 			sciprintf("Scanning '%s' with decompressor '%s'\n",
-				  filename, dec->name);
+			          filename, dec->name);
 
 			file->handle = handle;
 			file->decompressor = dec;
@@ -72,14 +70,12 @@ exe_open(const char *filename)
 }
 
 int
-exe_read(exe_file_t *file, void *buf, int count)
-{
+exe_read(exe_file_t *file, void *buf, int count) {
 	return file->decompressor->read(file->handle, buf, count);
 }
 
 void
-exe_close(exe_file_t *file)
-{
+exe_close(exe_file_t *file) {
 	file->decompressor->close(file->handle);
 
 	sci_free(file);

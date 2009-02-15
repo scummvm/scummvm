@@ -34,22 +34,19 @@
 #endif
 
 void
-sci0_sprintf_patch_file_name(char *string, resource_t *res)
-{
+sci0_sprintf_patch_file_name(char *string, resource_t *res) {
 	sprintf(string, "%s.%03i", sci_resource_types[res->type], res->number);
 }
 
 void
-sci1_sprintf_patch_file_name(char *string, resource_t *res)
-{
+sci1_sprintf_patch_file_name(char *string, resource_t *res) {
 	sprintf(string, "%d.%s", res->number, sci_resource_type_suffixes[res->type]);
 }
 
 /* version-agnostic patch application */
 static void
 process_patch(resource_source_t *source,
-	      char *entry, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p)
-{
+              char *entry, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
 	int fsize;
 	char filename[MAXPATHLEN];
 
@@ -66,9 +63,9 @@ process_patch(resource_source_t *source,
 		int file;
 		guint8 filehdr[2];
 		resource_t *newrsc = _scir_find_resource_unsorted(*resource_p,
-								  *resource_nr_p,
-								  restype,
-								  resnumber);
+		                     *resource_nr_p,
+		                     restype,
+		                     resnumber);
 
 		if (fsize < 3) {
 			printf("File too small\n");
@@ -100,9 +97,9 @@ process_patch(resource_source_t *source,
 					/* Completely new resource! */
 					++(*resource_nr_p);
 					*resource_p = (resource_t*)sci_realloc(*resource_p,
-									       *resource_nr_p
-									       * sizeof(resource_t));
-					newrsc = (*resource_p-1) + *resource_nr_p;
+					                                       *resource_nr_p
+					                                       * sizeof(resource_t));
+					newrsc = (*resource_p - 1) + *resource_nr_p;
 					newrsc->alt_sources = NULL;
 				}
 
@@ -128,8 +125,7 @@ process_patch(resource_source_t *source,
 
 
 int
-sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p)
-{
+sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p) {
 	sci_dir_t dir;
 	char *entry;
 	char *caller_cwd = sci_getcwd();
@@ -146,7 +142,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 
 		for (i = sci_view; i < sci_invalid_resource; i++)
 			if (strncasecmp(sci_resource_types[i], entry,
-					strlen(sci_resource_types[i])) == 0)
+			                strlen(sci_resource_types[i])) == 0)
 				restype = i;
 
 		if (restype != sci_invalid_resource) {
@@ -156,8 +152,8 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 				restype = sci_invalid_resource;
 			else {
 				resnumber = strtol(entry + 1 + resname_len,
-						   &endptr, 10); /* Get resource number */
-				if ((*endptr != '\0') || (resname_len+1 == strlen(entry)))
+				                   &endptr, 10); /* Get resource number */
+				if ((*endptr != '\0') || (resname_len + 1 == strlen(entry)))
 					restype = sci_invalid_resource;
 
 				if ((resnumber < 0) || (resnumber > 1000))
@@ -165,7 +161,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 			}
 		}
 
-		process_patch (source, entry, restype, resnumber, resource_p, resource_nr_p);
+		process_patch(source, entry, restype, resnumber, resource_p, resource_nr_p);
 
 		entry = sci_find_next(&dir);
 	}
@@ -176,8 +172,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 }
 
 int
-sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p)
-{
+sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p) {
 	sci_dir_t dir;
 	char *entry;
 	char *caller_cwd = sci_getcwd();
@@ -194,7 +189,7 @@ sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 
 		for (i = sci_view; i < sci_invalid_resource; i++) {
 			if (dot != NULL) {
-				if (strncasecmp(sci_resource_type_suffixes[i], dot+1, 3) == 0) {
+				if (strncasecmp(sci_resource_type_suffixes[i], dot + 1, 3) == 0) {
 					restype = i;
 				}
 			}
@@ -202,20 +197,20 @@ sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 
 		if (restype != sci_invalid_resource) {
 
-		  resnumber = strtol(entry,
-				     &endptr, 10); /* Get resource number */
+			resnumber = strtol(entry,
+			                   &endptr, 10); /* Get resource number */
 
-		  if (endptr != dot)
-			  restype = sci_invalid_resource;
+			if (endptr != dot)
+				restype = sci_invalid_resource;
 
-		  if (*(dot + 4) != '\0')
-			  restype = sci_invalid_resource;
-		  
-		  if ((resnumber < 0) || (resnumber > 8192))
-			  restype = sci_invalid_resource;
+			if (*(dot + 4) != '\0')
+				restype = sci_invalid_resource;
+
+			if ((resnumber < 0) || (resnumber > 8192))
+				restype = sci_invalid_resource;
 		}
 
-		process_patch (source, entry, restype, resnumber, resource_p, resource_nr_p);
+		process_patch(source, entry, restype, resnumber, resource_p, resource_nr_p);
 
 		entry = sci_find_next(&dir);
 	}

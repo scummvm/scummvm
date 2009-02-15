@@ -49,8 +49,7 @@
 */
 #define LZEXE_BUFFER_MAX (LZEXE_BUFFER_SIZE - 256)
 
-struct _exe_handle
-{
+struct _exe_handle {
 	FILE *f;
 
 	/* Output buffer. */
@@ -66,8 +65,7 @@ struct _exe_handle
 };
 
 static int
-lzexe_read_uint16(FILE *f, int *value)
-{
+lzexe_read_uint16(FILE *f, int *value) {
 	int data;
 
 	if ((*value = fgetc(f)) == EOF)
@@ -81,8 +79,7 @@ lzexe_read_uint16(FILE *f, int *value)
 }
 
 static int
-lzexe_read_uint8(FILE *f, int *value)
-{
+lzexe_read_uint8(FILE *f, int *value) {
 	if ((*value = fgetc(f)) == EOF)
 		return 0;
 
@@ -90,8 +87,7 @@ lzexe_read_uint8(FILE *f, int *value)
 }
 
 static int
-lzexe_init(exe_handle_t *handle, FILE *f)
-{
+lzexe_init(exe_handle_t *handle, FILE *f) {
 	handle->f = f;
 	handle->bufptr = handle->buffer;
 	handle->eod = 0;
@@ -104,27 +100,23 @@ lzexe_init(exe_handle_t *handle, FILE *f)
 }
 
 static int
-lzexe_get_bit(exe_handle_t *handle, int *bit)
-{
+lzexe_get_bit(exe_handle_t *handle, int *bit) {
 	*bit = handle->buf & 1;
 
-	if (--handle->count == 0)
-	{
+	if (--handle->count == 0) {
 		if (!lzexe_read_uint16(handle->f, &handle->buf))
 			return 0;
 		handle->count = 16;
-	}
-	else
+	} else
 		handle->buf >>= 1;
 
 	return 1;
 }
 
 static int
-lzexe_decompress(exe_handle_t *handle)
-{
+lzexe_decompress(exe_handle_t *handle) {
 	while (!handle->eod
-	       && handle->bufptr - handle->buffer <= LZEXE_BUFFER_MAX) {
+	        && handle->bufptr - handle->buffer <= LZEXE_BUFFER_MAX) {
 		int bit;
 		int len, span;
 
@@ -222,8 +214,7 @@ lzexe_decompress(exe_handle_t *handle)
 }
 
 static exe_handle_t *
-lzexe_open(const char *filename)
-{
+lzexe_open(const char *filename) {
 	exe_handle_t *handle;
 	guint8 head[0x20];
 	guint8 size[2];
@@ -242,7 +233,7 @@ lzexe_open(const char *filename)
 	** overlays == 0.
 	*/
 	if (UINT16(head) != 0x5a4d || UINT16(head + 8) != 2
-	    || UINT16(head + 0x1a) != 0)
+	        || UINT16(head + 0x1a) != 0)
 		return NULL;
 
 	/* Verify that first relocation item offset is 0x1c. */
@@ -251,7 +242,7 @@ lzexe_open(const char *filename)
 
 	/* Look for lzexe signature. */
 	if (memcmp(head + 0x1c, "LZ09", 4)
-            && memcmp(head + 0x1c, "LZ91", 4)) {
+	        && memcmp(head + 0x1c, "LZ91", 4)) {
 		return NULL;
 	}
 
@@ -281,8 +272,7 @@ lzexe_open(const char *filename)
 }
 
 static int
-lzexe_read(exe_handle_t *handle, void *buf, int count)
-{
+lzexe_read(exe_handle_t *handle, void *buf, int count) {
 	int done = 0;
 
 	while (done != count) {
@@ -326,8 +316,7 @@ lzexe_read(exe_handle_t *handle, void *buf, int count)
 }
 
 static void
-lzexe_close(exe_handle_t *handle)
-{
+lzexe_close(exe_handle_t *handle) {
 	fclose(handle->f);
 
 	sci_free(handle);

@@ -34,19 +34,18 @@
 
 
 static sci_module_t *
-_sci_try_open_module(char *filename, char *path, char *struct_name, void **handle)
-{
+_sci_try_open_module(char *filename, char *path, char *struct_name, void **handle) {
 	char *fullname = sci_malloc(strlen(path) + strlen(DIR_SEPARATOR_STR)
-				+ strlen(filename));
+	                            + strlen(filename));
 	sci_module_t *module;
-fprintf(stderr,"Trying module %s at %s\n", filename, path);
+	fprintf(stderr, "Trying module %s at %s\n", filename, path);
 	strcpy(fullname, path);
 	strcat(fullname, DIR_SEPARATOR_STR);
 	strcat(fullname, filename);
 
-fprintf(stderr,"Total name is %s\n", fullname);
+	fprintf(stderr, "Total name is %s\n", fullname);
 	*handle = dlopen(fullname, RTLD_NOW);
-fprintf(stderr,"Could not open because: %s\n", dlerror());
+	fprintf(stderr, "Could not open because: %s\n", dlerror());
 	free(fullname);
 
 	if (!*handle)
@@ -54,19 +53,18 @@ fprintf(stderr,"Could not open because: %s\n", dlerror());
 
 	module = (sci_module_t *) dlsym(*handle, struct_name);
 	if (!module)
-		fprintf(stderr,"%s: Failed to find symbol '%s'.\n",
-			fullname, struct_name);
+		fprintf(stderr, "%s: Failed to find symbol '%s'.\n",
+		        fullname, struct_name);
 
 	return module;
 }
 
 void *
 sci_find_module(char *path, char *name, char *type, char *struct_prefix,
-		char *file_suffix, int magic, int version, void **handle)
-{
+                char *file_suffix, int magic, int version, void **handle) {
 	char *module_name = sci_malloc(strlen(type) + strlen(DIR_SEPARATOR_STR)
-				 + strlen(name) + strlen(file_suffix)
-				 + strlen(MODULE_NAME_SUFFIX) + 1);
+	                               + strlen(name) + strlen(file_suffix)
+	                               + strlen(MODULE_NAME_SUFFIX) + 1);
 	char *struct_name = sci_malloc(strlen(struct_prefix) + strlen(name) + 1);
 	char *dir_end;
 	char *path_pos = path;
@@ -88,19 +86,19 @@ sci_find_module(char *path, char *name, char *type, char *struct_prefix,
 			*dir_end = 0;
 
 		module = _sci_try_open_module(module_name, path_pos,
-					      struct_name, handle);
+		                              struct_name, handle);
 
 		if (module) {
 			if (module->class_magic != magic) {
 				fprintf(stderr, "%s at %s is not a %s module, skipping...\n",
-					module_name, path_pos, type);
+				        module_name, path_pos, type);
 				dlclose(*handle);
 				module = NULL;
 			} else if (module->class_version != version) {
 				fprintf(stderr, "%s at %s has %s module version %d,"
-					" expected %d- skipping...\n",
-					module_name, path_pos, type, module->class_version,
-					version);
+				        " expected %d- skipping...\n",
+				        module_name, path_pos, type, module->class_version,
+				        version);
 				dlclose(*handle);
 				module = NULL;
 			}
@@ -115,8 +113,8 @@ sci_find_module(char *path, char *name, char *type, char *struct_prefix,
 
 	if (!module) {
 		*handle = NULL;
-		fprintf(stderr,"%s module '%s' not found in path '%s'.\n",
-			type, name, path);
+		fprintf(stderr, "%s module '%s' not found in path '%s'.\n",
+		        type, name, path);
 	} else {
 		if (dir_end)
 			*dir_end = 0;
@@ -137,14 +135,13 @@ sci_find_module(char *path, char *name, char *type, char *struct_prefix,
 
 
 void
-sci_close_module(void *module, char *type, char *name)
-{
+sci_close_module(void *module, char *type, char *name) {
 	if (!module)
 		return;
 
 	if (dlclose(module)) {
-		fprintf(stderr,"Error while closing %s module '%s': %s\n",
-			type, name, dlerror());
+		fprintf(stderr, "Error while closing %s module '%s': %s\n",
+		        type, name, dlerror());
 	}
 }
 

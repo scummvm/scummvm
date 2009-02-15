@@ -35,8 +35,7 @@ void decryptinit3(void);
 int decrypt3(guint8* dest, guint8* src, int length, int complength);
 int decrypt4(guint8* dest, guint8* src, int length, int complength);
 
-int decompress11(resource_t *result, int resh, int sci_version)
-{
+int decompress11(resource_t *result, int resh, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod, result_size;
 	guint8 *buffer;
@@ -49,7 +48,7 @@ int decompress11(resource_t *result, int resh, int sci_version)
 
 	result->id = tempid;
 
-	result->type = result->id &0x7f;
+	result->type = result->id & 0x7f;
 	if (read(resh, &(result->number), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
@@ -60,8 +59,8 @@ int decompress11(resource_t *result, int resh, int sci_version)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
 	if ((read(resh, &compressedLength, 2) != 2) ||
-	    (read(resh, &result_size, 2) != 2) ||
-	    (read(resh, &compressionMethod, 2) != 2))
+	        (read(resh, &result_size, 2) != 2) ||
+	        (read(resh, &compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -71,12 +70,12 @@ int decompress11(resource_t *result, int resh, int sci_version)
 #endif
 	result->size = result_size;
 
-  /*  if ((result->size < 0) || (compressedLength < 0))
-      return SCI_ERROR_DECOMPRESSION_INSANE; */
-  /* This return will never happen in SCI0 or SCI1 (does it have any use?) */
+	/*  if ((result->size < 0) || (compressedLength < 0))
+	    return SCI_ERROR_DECOMPRESSION_INSANE; */
+	/* This return will never happen in SCI0 or SCI1 (does it have any use?) */
 
 	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	    (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
 	if (compressedLength > 0)
@@ -103,18 +102,18 @@ int decompress11(resource_t *result, int resh, int sci_version)
 
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%%"
-		" ratio\n",
-		result->number, sci_resource_type_suffixes[result->type],
-		compressionMethod,
-		(result->size == 0)? -1.0 :
-		(100.0 * compressedLength / result->size));
+	        " ratio\n",
+	        result->number, sci_resource_type_suffixes[result->type],
+	        compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
 	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
-		compressedLength, result->size);
+	        compressedLength, result->size);
 #endif
 
 	DDEBUG("/%d[%d]", compressionMethod, result->size);
 
-	switch(compressionMethod) {
+	switch (compressionMethod) {
 
 	case 0: /* no compression */
 		if (result->size != compressedLength) {
@@ -143,17 +142,17 @@ int decompress11(resource_t *result, int resh, int sci_version)
 
 	case 3:
 	case 4: /* NYI */
-		fprintf(stderr,"Resource %d.%s: Warning: compression type #%d not yet implemented\n",
-			result->number, sci_resource_type_suffixes[result->type], compressionMethod);
+		fprintf(stderr, "Resource %d.%s: Warning: compression type #%d not yet implemented\n",
+		        result->number, sci_resource_type_suffixes[result->type], compressionMethod);
 		free(result->data);
 		result->data = NULL;
 		result->status = SCI_STATUS_NOMALLOC;
 		break;
 
 	default:
-		fprintf(stderr,"Resource %d.%s: Compression method SCI1/%hi not "
-			"supported!\n", result->number, sci_resource_type_suffixes[result->type],
-			compressionMethod);
+		fprintf(stderr, "Resource %d.%s: Compression method SCI1/%hi not "
+		        "supported!\n", result->number, sci_resource_type_suffixes[result->type],
+		        compressionMethod);
 		free(result->data);
 		result->data = NULL; /* So that we know that it didn't work */
 		result->status = SCI_STATUS_NOMALLOC;
@@ -161,7 +160,7 @@ int decompress11(resource_t *result, int resh, int sci_version)
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-  free(buffer);
-  return 0;
+	free(buffer);
+	return 0;
 }
 

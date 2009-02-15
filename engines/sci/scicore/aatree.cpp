@@ -30,8 +30,7 @@
 
 #include "sci/include/sci_memory.h"
 
-struct aatree
-{
+struct aatree {
 	struct aatree *left, *right;
 	int level;
 	void *key;
@@ -41,8 +40,7 @@ struct aatree
 static aatree_t bottom = {&bottom, &bottom, 0, NULL};
 
 static void
-skew(aatree_t **t)
-{
+skew(aatree_t **t) {
 	if ((*t)->left->level == (*t)->level) {
 		/* Rotate right */
 		aatree_t *temp = *t;
@@ -53,8 +51,7 @@ skew(aatree_t **t)
 }
 
 static void
-split(aatree_t **t)
-{
+split(aatree_t **t) {
 	if ((*t)->right->right->level == (*t)->level) {
 		/* Rotate left */
 		aatree_t *temp = *t;
@@ -66,8 +63,7 @@ split(aatree_t **t)
 }
 
 static int
-delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *, const void *))
-{
+delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *, const void *)) {
 	int retval = -1;
 
 	if (*t != &bottom) {
@@ -91,8 +87,7 @@ delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *
 			*t = (*t)->right;
 			sci_free(temp);
 			retval = 0;
-		}
-		else if (((*t)->left->level < (*t)->level - 1) || ((*t)->right->level < (*t)->level - 1)) {
+		} else if (((*t)->left->level < (*t)->level - 1) || ((*t)->right->level < (*t)->level - 1)) {
 			(*t)->level--;
 			if ((*t)->right->level > (*t)->level)
 				(*t)->right->level = (*t)->level;
@@ -108,14 +103,12 @@ delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *
 }
 
 aatree_t *
-aatree_new()
-{
+aatree_new() {
 	return &bottom;
 }
 
 int
-aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *))
-{
+aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
 	int retval = -1;
 	int c;
 
@@ -145,14 +138,12 @@ aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *))
 }
 
 int
-aatree_delete(void *x, aatree_t **t, int (*compar)(const void *, const void *))
-{
+aatree_delete(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
 	return delete_node(x, t, &bottom, compar);
 }
 
 aatree_t *
-aatree_walk(aatree_t *t, int direction)
-{
+aatree_walk(aatree_t *t, int direction) {
 	if ((direction == AATREE_WALK_LEFT) && (t->left != &bottom))
 		return t->left;
 
@@ -163,14 +154,12 @@ aatree_walk(aatree_t *t, int direction)
 }
 
 void *
-aatree_get_data(aatree_t *t)
-{
+aatree_get_data(aatree_t *t) {
 	return t->key;
 }
 
 void
-aatree_free(aatree_t *t)
-{
+aatree_free(aatree_t *t) {
 	if (t == &bottom)
 		return;
 

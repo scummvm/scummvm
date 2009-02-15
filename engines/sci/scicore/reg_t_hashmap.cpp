@@ -31,8 +31,7 @@
 #include "sci/scicore/hashmap.cpp"
 
 static inline int
-compare_reg_t (reg_t lhs, reg_t rhs)
-{
+compare_reg_t (reg_t lhs, reg_t rhs) {
 	if (lhs.segment == rhs.segment)
 		return lhs.offset - rhs.offset;
 	else

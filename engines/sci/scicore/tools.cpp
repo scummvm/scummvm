@@ -51,7 +51,7 @@
 #  include <windows.h>
 #  include <mmsystem.h>
 
-void usleep (long usec);
+void usleep(long usec);
 
 #	ifdef sleep
 #		undef sleep
@@ -89,12 +89,11 @@ int sci_debug_flags = 0; /* Special flags */
 #define MEMTEST_HARDNESS 31
 
 int
-memtest(const char *file, int line)
-{
+memtest(const char *file, int line) {
 	/* va_list argp; -- unused */
 	int i;
 	void *blocks[MEMTEST_HARDNESS + 1];
-	fprintf(stderr,"Memtesting in %s, L%d\n", file, line);
+	fprintf(stderr, "Memtesting in %s, L%d\n", file, line);
 
 	for (i = 0; i < MEMTEST_HARDNESS; i++) {
 		blocks[i] = sci_malloc(1 + i);
@@ -108,7 +107,7 @@ memtest(const char *file, int line)
 		free(blocks[i]);
 
 	for (i = 0; i < MEMTEST_HARDNESS; i++) {
-		blocks[i] = sci_malloc(5 + i*5);
+		blocks[i] = sci_malloc(5 + i * 5);
 #ifdef HAVE_MEMFROB
 		memfrob(blocks[i], 5 + i*5);
 #else
@@ -119,7 +118,7 @@ memtest(const char *file, int line)
 		free(blocks[i]);
 
 	for (i = 0; i < MEMTEST_HARDNESS; i++) {
-		blocks[i] = sci_malloc(5 + i*100);
+		blocks[i] = sci_malloc(5 + i * 100);
 #ifdef HAVE_MEMFROB
 		memfrob(blocks[i], 5 + i*100);
 #else
@@ -130,7 +129,7 @@ memtest(const char *file, int line)
 		free(blocks[i]);
 
 	for (i = 0; i < MEMTEST_HARDNESS; i++) {
-		blocks[i] = sci_malloc(5 + i*1000);
+		blocks[i] = sci_malloc(5 + i * 1000);
 #ifdef HAVE_MEMFROB
 		memfrob(blocks[i], 5 + i * 1000);
 #else
@@ -139,26 +138,23 @@ memtest(const char *file, int line)
 	}
 	for (i = 0; i < MEMTEST_HARDNESS; i++)
 		free(blocks[i]);
-	fprintf(stderr,"Memtest succeeded!\n");
+	fprintf(stderr, "Memtest succeeded!\n");
 	return 0;
 }
 
 void *
-memdup(void *src, int size)
-{
+memdup(void *src, int size) {
 	void *b = malloc(size);
 	memcpy(b, src, size);
 	return b;
 }
 
-int sci_ffs(int _mask)
-{
+int sci_ffs(int _mask) {
 	int retval = 0;
 
 	if (!_mask) return 0;
 	retval++;
-	while (! (_mask & 1))
-	{
+	while (!(_mask & 1)) {
 		retval++;
 		_mask >>= 1;
 	}
@@ -170,26 +166,23 @@ int sci_ffs(int _mask)
 /******************** Debug functions ********************/
 
 void
-_SCIkvprintf(FILE *file, const char *format, va_list args)
-{
+_SCIkvprintf(FILE *file, const char *format, va_list args) {
 	vfprintf(file, format, args);
 	if (con_file) vfprintf(con_file, format, args);
 }
 
 void
-_SCIkprintf(FILE *file, const char *format, ...)
-{
+_SCIkprintf(FILE *file, const char *format, ...) {
 	va_list args;
 
 	va_start(args, format);
 	_SCIkvprintf(file, format, args);
-	va_end (args);
+	va_end(args);
 }
 
 
 void
-_SCIkwarn(state_t *s, const char *file, int line, int area, const char *format, ...)
-{
+_SCIkwarn(state_t *s, const char *file, int line, int area, const char *format, ...) {
 	va_list args;
 
 	if (area == SCIkERROR_NR)
@@ -202,12 +195,11 @@ _SCIkwarn(state_t *s, const char *file, int line, int area, const char *format, 
 	va_end(args);
 	fflush(NULL);
 
-	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS) script_debug_flag=1;
+	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS) script_debug_flag = 1;
 }
 
 void
-_SCIkdebug(state_t *s, const char *file, int line, int area, const char *format, ...)
-{
+_SCIkdebug(state_t *s, const char *file, int line, int area, const char *format, ...) {
 	va_list args;
 
 	if (s->debug_mode & (1 << area)) {
@@ -220,8 +212,7 @@ _SCIkdebug(state_t *s, const char *file, int line, int area, const char *format,
 }
 
 void
-_SCIGNUkdebug(const char *funcname, state_t *s, const char *file, int line, int area, const char *format, ...)
-{
+_SCIGNUkdebug(const char *funcname, state_t *s, const char *file, int line, int area, const char *format, ...) {
 	va_list xargs;
 	int error = ((area == SCIkWARNING_NR) || (area == SCIkERROR_NR));
 
@@ -247,8 +238,7 @@ _SCIGNUkdebug(const char *funcname, state_t *s, const char *file, int line, int 
 
 #if defined(HAVE_GETTIMEOFDAY)
 void
-sci_gettime(long *seconds, long *useconds)
-{
+sci_gettime(long *seconds, long *useconds) {
 	struct timeval tv;
 
 	assert(!gettimeofday(&tv, NULL));
@@ -261,24 +251,21 @@ sci_gettime(long *seconds, long *useconds)
 /* Warning: This function only retrieves the amount of mseconds since the start of
 ** the Win32 kernel; it does /not/ provide the number of seconds since the epoch!
 ** There are no known cases where this causes problems, though.  */
-void sci_gettime(long *seconds, long *useconds)
-{
+void sci_gettime(long *seconds, long *useconds) {
 	DWORD tm;
 
-	if (TIMERR_NOERROR != timeBeginPeriod(1))
-	{
+	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
 		fprintf(stderr, "timeBeginPeriod(1) failed in sci_gettime\n");
 	}
 
 	tm = timeGetTime();
 
-	if (TIMERR_NOERROR != timeEndPeriod(1))
-	{
+	if (TIMERR_NOERROR != timeEndPeriod(1)) {
 		fprintf(stderr, "timeEndPeriod(1) failed in sci_gettime\n");
 	}
 
-	*seconds = tm/1000;
-	*useconds = (tm%1000)*1000;
+	*seconds = tm / 1000;
+	*useconds = (tm % 1000) * 1000;
 }
 #else
 #  error "You need to provide a microsecond resolution sci_gettime implementation for your platform!"
@@ -286,8 +273,7 @@ void sci_gettime(long *seconds, long *useconds)
 
 
 void
-sci_get_current_time(GTimeVal *val)
-{
+sci_get_current_time(GTimeVal *val) {
 	long foo, bar;
 	sci_gettime(&foo, &bar);
 	val->tv_sec = foo;
@@ -300,57 +286,46 @@ sci_get_current_time(GTimeVal *val)
 /******** Dir: Win32 CODE ********/
 
 void
-sci_init_dir(sci_dir_t *dir)
-{
+sci_init_dir(sci_dir_t *dir) {
 	dir->search = -1;
 }
 
 char *
-sci_find_first(sci_dir_t *dir, const char *mask)
-{
+sci_find_first(sci_dir_t *dir, const char *mask) {
 	dir->search = _findfirst(mask, &(dir->fileinfo));
 
-	if (dir->search != -1)
-	{
-		if (dir->fileinfo.name == NULL)
-		{
+	if (dir->search != -1) {
+		if (dir->fileinfo.name == NULL) {
 			return NULL;
 		}
 
 		if (strcmp(dir->fileinfo.name, ".") == 0 ||
-			strcmp(dir->fileinfo.name, "..") == 0)
-		{
-			if (sci_find_next(dir) == NULL)
-			{
+		        strcmp(dir->fileinfo.name, "..") == 0) {
+			if (sci_find_next(dir) == NULL) {
 				return NULL;
 			}
 		}
 
 		return dir->fileinfo.name;
-	}
-	else
-	{
-		switch (errno)
-		{
-			case ENOENT:
-			{
+	} else {
+		switch (errno) {
+		case ENOENT: {
 #ifdef _DEBUG
-				printf("_findfirst errno = ENOENT: no match\n");
+			printf("_findfirst errno = ENOENT: no match\n");
 
-				if (mask)
-					printf(" in: %s\n", mask);
-				else
-					printf(" - searching in undefined directory\n");
+			if (mask)
+				printf(" in: %s\n", mask);
+			else
+				printf(" - searching in undefined directory\n");
 #endif
-				break;
-			}
-			case EINVAL:
-			{
-				printf("_findfirst errno = EINVAL: invalid filename\n");
-				break;
-			}
-			default:
-				printf("_findfirst errno = unknown (%d)", errno);
+			break;
+		}
+		case EINVAL: {
+			printf("_findfirst errno = EINVAL: invalid filename\n");
+			break;
+		}
+		default:
+			printf("_findfirst errno = unknown (%d)", errno);
 		}
 	}
 
@@ -358,34 +333,30 @@ sci_find_first(sci_dir_t *dir, const char *mask)
 }
 
 char *
-sci_find_next(sci_dir_t *dir)
-{
-			  if (dir->search == -1)
-			          return NULL;
+sci_find_next(sci_dir_t *dir) {
+	if (dir->search == -1)
+		return NULL;
 
-			  if (_findnext(dir->search, &(dir->fileinfo)) < 0) {
-			          _findclose(dir->search);
-			          dir->search = -1;
-			          return NULL;
-			  }
+	if (_findnext(dir->search, &(dir->fileinfo)) < 0) {
+		_findclose(dir->search);
+		dir->search = -1;
+		return NULL;
+	}
 
-		if (strcmp(dir->fileinfo.name, ".") == 0 ||
-			strcmp(dir->fileinfo.name, "..") == 0)
-		{
-			if (sci_find_next(dir) == NULL)
-			{
-				return NULL;
-			}
+	if (strcmp(dir->fileinfo.name, ".") == 0 ||
+	        strcmp(dir->fileinfo.name, "..") == 0) {
+		if (sci_find_next(dir) == NULL) {
+			return NULL;
 		}
+	}
 
-		return dir->fileinfo.name;
+	return dir->fileinfo.name;
 }
 
 void
-sci_finish_find(sci_dir_t *dir)
-{
-			  if(dir->search != -1) {
-			          _findclose(dir->search);
+sci_finish_find(sci_dir_t *dir) {
+	if (dir->search != -1) {
+		_findclose(dir->search);
 		dir->search = -1;
 	}
 }
@@ -394,15 +365,13 @@ sci_finish_find(sci_dir_t *dir)
 /******** Dir: UNIX CODE ********/
 
 void
-sci_init_dir(sci_dir_t *dir)
-{
+sci_init_dir(sci_dir_t *dir) {
 	dir->dir = NULL;
 	dir->mask_copy = NULL;
 }
 
 char *
-sci_find_first(sci_dir_t *dir, const char *mask)
-{
+sci_find_first(sci_dir_t *dir, const char *mask) {
 	if (dir->dir)
 		closedir(dir->dir);
 
@@ -422,8 +391,7 @@ sci_find_first(sci_dir_t *dir, const char *mask)
 #endif
 
 char *
-sci_find_next(sci_dir_t *dir)
-{
+sci_find_next(sci_dir_t *dir) {
 	struct dirent *match;
 
 	while ((match = readdir(dir->dir))) {
@@ -439,8 +407,7 @@ sci_find_next(sci_dir_t *dir)
 }
 
 void
-sci_finish_find(sci_dir_t *dir)
-{
+sci_finish_find(sci_dir_t *dir) {
 	if (dir->dir) {
 		closedir(dir->dir);
 		dir->dir = NULL;
@@ -455,30 +422,29 @@ sci_finish_find(sci_dir_t *dir)
 
 
 int
-sci_mkpath(const char *path)
-{
+sci_mkpath(const char *path) {
 	const char *path_position = path;
-        char *next_separator = NULL;
+	char *next_separator = NULL;
 
-        if (chdir(G_DIR_SEPARATOR_S)) { /* Go to root */
-                sciprintf("Error: Could not change to root directory '%s'!\n",
-			  G_DIR_SEPARATOR_S);
-                return -1;
-        }
+	if (chdir(G_DIR_SEPARATOR_S)) { /* Go to root */
+		sciprintf("Error: Could not change to root directory '%s'!\n",
+		          G_DIR_SEPARATOR_S);
+		return -1;
+	}
 
-        do {
-                if (next_separator)
-                        *next_separator = G_DIR_SEPARATOR_S[0];
-                next_separator = (char *)strchr(path_position, G_DIR_SEPARATOR_S[0]);
+	do {
+		if (next_separator)
+			*next_separator = G_DIR_SEPARATOR_S[0];
+		next_separator = (char *)strchr(path_position, G_DIR_SEPARATOR_S[0]);
 
-                if (next_separator)
-                        *next_separator = 0;
+		if (next_separator)
+			*next_separator = 0;
 
 		if (*path_position) { /* Unless we're at the first slash... */
 			if (chdir(path_position)) {
 				if (scimkdir(path_position, 0700) || chdir(path_position)) {
 					sciprintf("Error: Could not create subdirectory '%s' in",
-						  path_position);
+					          path_position);
 					if (next_separator)
 						*next_separator = G_DIR_SEPARATOR_S[0];
 					sciprintf(" '%s'!\n", path);
@@ -488,16 +454,15 @@ sci_mkpath(const char *path)
 		}
 		path_position = next_separator + 1;
 
-        } while (next_separator);
+	} while (next_separator);
 
-        return 0;
+	return 0;
 }
 
 
 
 char *
-sci_get_homedir(void)
-{
+sci_get_homedir(void) {
 #ifdef WIN32
 	char *_path_buf = (char*)malloc(MAX_PATH);
 	char *dr = getenv("HOMEDRIVE");
@@ -523,15 +488,13 @@ sci_get_homedir(void)
 
 
 sci_queue_t *
-sci_init_queue(sci_queue_t *queue)
-{
+sci_init_queue(sci_queue_t *queue) {
 	queue->start = queue->end = NULL;
 	return queue;
 }
 
 sci_queue_t *
-sci_add_to_queue(sci_queue_t *queue, void *data, int type)
-{
+sci_add_to_queue(sci_queue_t *queue, void *data, int type) {
 	sci_queue_node_t *node = (sci_queue_node_t*)sci_malloc(sizeof(sci_queue_node_t));
 
 	node->next = NULL;
@@ -550,8 +513,7 @@ sci_add_to_queue(sci_queue_t *queue, void *data, int type)
 }
 
 void *
-sci_get_from_queue(sci_queue_t *queue, int *type)
-{
+sci_get_from_queue(sci_queue_t *queue, int *type) {
 	sci_queue_node_t *node = queue->end;
 	if (node) {
 		void *retval = node->data;
@@ -576,40 +538,35 @@ sci_get_from_queue(sci_queue_t *queue, int *type)
 #  include <sched.h>
 
 void
-sci_sched_yield(void)
-{
+sci_sched_yield(void) {
 	sched_yield();
 }
 
 #elif defined (__DC__)
 
 void
-sci_sched_yield()
-{
+sci_sched_yield() {
 	thd_pass();
 }
 
 #elif defined (__BEOS__)
 
 void
-sci_sched_yield()
-{
+sci_sched_yield() {
 	snooze(0);
 }
 
 #elif defined (WIN32)
 
 void
-sci_sched_yield()
-{
+sci_sched_yield() {
 	sleep(1);
 }
 
 #else
 
 void
-sci_sched_yield()
-{
+sci_sched_yield() {
 }
 
 #endif /* !HAVE_SCHED_YIELD */
@@ -666,8 +623,7 @@ _fcaseseek(const char *fname, sci_dir_t *dir)
 
 
 FILE *
-sci_fopen(const char *fname, const char *mode)
-{
+sci_fopen(const char *fname, const char *mode) {
 	sci_dir_t dir;
 	char *name = _fcaseseek(fname, &dir);
 	FILE *file = NULL;
@@ -683,8 +639,7 @@ sci_fopen(const char *fname, const char *mode)
 }
 
 int
-sci_open(const char *fname, int flags)
-{
+sci_open(const char *fname, int flags) {
 	sci_dir_t dir;
 	char *name;
 	int file = SCI_INVALID_FD;
@@ -695,11 +650,10 @@ sci_open(const char *fname, int flags)
 	sci_init_dir(&dir);
 
 	separator_position = (char *)strrchr(fname, G_DIR_SEPARATOR);
-	if (separator_position)
-	{
-		path = (char *) malloc(separator_position-fname+1);
+	if (separator_position) {
+		path = (char *) malloc(separator_position - fname + 1);
 		path[separator_position-fname] = 0;
-		strncpy(path, fname, separator_position-fname);
+		strncpy(path, fname, separator_position - fname);
 		chdir(path);
 		free(path);
 	}
@@ -718,35 +672,32 @@ sci_open(const char *fname, int flags)
 }
 
 char *
-sci_getcwd(void)
-{
+sci_getcwd(void) {
 	int size = 0;
 	char *cwd = NULL;
 
 	while (size < 8192) {
 		size += 256;
 		cwd = (char*)sci_malloc(size);
-		if (getcwd(cwd, size-1))
+		if (getcwd(cwd, size - 1))
 			return cwd;
 
 		sci_free(cwd);
 	}
 
-	fprintf(stderr,"Could not determine current working directory!\n");
+	fprintf(stderr, "Could not determine current working directory!\n");
 	return NULL;
 }
 
 #ifdef __DC__
 
 int
-sci_fd_size(int fd)
-{
+sci_fd_size(int fd) {
 	return fs_total(fd);
 }
 
 int
-sci_file_size(const char *fname)
-{
+sci_file_size(const char *fname) {
 	int fd = fs_open(fname, O_RDONLY);
 	int retval = -1;
 
@@ -761,16 +712,14 @@ sci_file_size(const char *fname)
 #else
 
 int
-sci_fd_size(int fd)
-{
+sci_fd_size(int fd) {
 	struct stat fd_stat;
 	if (fstat(fd, &fd_stat)) return -1;
 	return fd_stat.st_size;
 }
 
 int
-sci_file_size(const char *fname)
-{
+sci_file_size(const char *fname) {
 	struct stat fn_stat;
 	if (stat(fname, &fn_stat)) return -1;
 	return fn_stat.st_size;
@@ -781,15 +730,13 @@ sci_file_size(const char *fname)
 /* Simple heuristic to work around array handling peculiarity in SQ4:
 It uses StrAt() to read the individual elements, so we must determine
 whether a string is really a string or an array. */
-int is_print_str(char *str)
-{
+int is_print_str(char *str) {
 	int printable = 0;
 	int len = strlen(str);
-	
+
 	if (len == 0) return 1;
 
-	while (*str)
-	{
+	while (*str) {
 		if (isprint(*str)) printable++;
 		str++;
 	}

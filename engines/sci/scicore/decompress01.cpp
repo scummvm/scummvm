@@ -50,25 +50,23 @@ static gint16 curtoken, endtoken;
 
 guint32 gbits(int numbits,  guint8 * data, int dlen);
 
-void decryptinit3(void)
-{
+void decryptinit3(void) {
 	int i;
 	lastchar = lastbits = s_bitstring = stakptr = 0;
 	numbits = 9;
 	curtoken = 0x102;
 	endtoken = 0x1ff;
 	decryptstart = 0;
-	gbits(0,0,0);
-	for(i=0;i<0x1004;i++) {
-		tokens[i].next=0;
-		tokens[i].data=0;
+	gbits(0, 0, 0);
+	for (i = 0;i < 0x1004;i++) {
+		tokens[i].next = 0;
+		tokens[i].data = 0;
 	}
 }
 
-int decrypt3(guint8 *dest, guint8 *src, int length, int complength)
-{
+int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
 	static gint16 token;
-	while(length != 0) {
+	while (length != 0) {
 
 		switch (decryptstart) {
 		case 0:
@@ -97,7 +95,7 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength)
 				token = lastbits;
 				stak[stakptr++] = lastchar;
 			}
-			while ((token > 0xff)&&(token < 0x1004)) { /* follow links back in data */
+			while ((token > 0xff) && (token < 0x1004)) { /* follow links back in data */
 				stak[stakptr++] = tokens[token].data;
 				token = tokens[token].next;
 			}
@@ -131,26 +129,24 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength)
 	return 0;     /* [DJ] shut up compiler warning */
 }
 
-guint32 gbits(int numbits,  guint8 * data, int dlen)
-{
+guint32 gbits(int numbits,  guint8 * data, int dlen) {
 	int place; /* indicates location within byte */
 	guint32 bitstring;
-	static guint32 whichbit=0;
+	static guint32 whichbit = 0;
 	int i;
 
-	if(numbits==0) {whichbit=0; return 0;}
+	if (numbits == 0) {whichbit = 0; return 0;}
 
 	place = whichbit >> 3;
-	bitstring=0;
-	for(i=(numbits>>3)+1;i>=0;i--)
-		{
-			if (i+place < dlen)
-				bitstring |=data[place+i] << (8*(2-i));
-		}
+	bitstring = 0;
+	for (i = (numbits >> 3) + 1;i >= 0;i--) {
+		if (i + place < dlen)
+			bitstring |= data[place+i] << (8 * (2 - i));
+	}
 	/*  bitstring = data[place+2] | (long)(data[place+1])<<8
 	    | (long)(data[place])<<16;*/
-	bitstring >>= 24-(whichbit & 7)-numbits;
-	bitstring &= (0xffffffff >> (32-numbits));
+	bitstring >>= 24 - (whichbit & 7) - numbits;
+	bitstring &= (0xffffffff >> (32 - numbits));
 	/* Okay, so this could be made faster with a table lookup.
 	   It doesn't matter. It's fast enough as it is. */
 	whichbit += numbits;
@@ -193,25 +189,22 @@ enum {
 #define EXTRA_MAGIC_SIZE 15
 
 static
-void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size)
-{
+void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size) {
 	int pos = 0;
 	char nextbyte;
 	byte *rd = *rledata;
 	byte *ob = outbuffer;
 	byte *pd = *pixeldata;
 
-	while (pos < size)
-	{
+	while (pos < size) {
 		nextbyte = *(rd++);
 		*(ob++) = nextbyte;
 		pos ++;
-		switch (nextbyte&0xC0)
-		{
+		switch (nextbyte&0xC0) {
 		case 0x40 :
 		case 0x00 :
 			memcpy(ob, pd, nextbyte);
-			pd +=nextbyte;
+			pd += nextbyte;
 			ob += nextbyte;
 			pos += nextbyte;
 			break;
@@ -236,20 +229,17 @@ void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size)
  * Yes, this is inefficient.
  */
 static
-int rle_size(byte *rledata, int dsize)
-{
+int rle_size(byte *rledata, int dsize) {
 	int pos = 0;
 	char nextbyte;
 	int size = 0;
-	
-	while (pos < dsize)
-	{
+
+	while (pos < dsize) {
 		nextbyte = *(rledata++);
 		pos ++;
 		size ++;
-		
-		switch (nextbyte&0xC0)
-		{
+
+		switch (nextbyte&0xC0) {
 		case 0x40 :
 		case 0x00 :
 			pos += nextbyte;
@@ -265,8 +255,7 @@ int rle_size(byte *rledata, int dsize)
 	return size;
 }
 
-byte *pic_reorder(byte *inbuffer, int dsize)
-{
+byte *pic_reorder(byte *inbuffer, int dsize) {
 	byte *reorderBuffer;
 	int view_size;
 	int view_start;
@@ -276,13 +265,13 @@ byte *pic_reorder(byte *inbuffer, int dsize)
 	byte *writer;
 	char viewdata[CEL_HEADER_SIZE];
 	byte *cdata, *cdata_start;
-	
-	writer = reorderBuffer=(byte *) malloc(dsize);
+
+	writer = reorderBuffer = (byte *) malloc(dsize);
 
 	*(writer++) = PIC_OP_OPX;
 	*(writer++) = PIC_OPX_SET_PALETTE;
 
-	for (i=0;i<256;i++) /* Palette translation map */
+	for (i = 0;i < 256;i++) /* Palette translation map */
 		*(writer++) = i;
 
 	putInt16(writer, 0); /* Palette stamp */
@@ -299,29 +288,27 @@ byte *pic_reorder(byte *inbuffer, int dsize)
 
 	memcpy(viewdata, seeker, sizeof(viewdata));
 	seeker += sizeof(viewdata);
-	
-	memcpy(writer, seeker, 4*256); /* Palette */
-	seeker += 4*256;
-	writer += 4*256;
 
-	if (view_start != PAL_SIZE + 2) /* +2 for the opcode */
-	{
-		memcpy(writer, seeker, view_start-PAL_SIZE-2);
+	memcpy(writer, seeker, 4*256); /* Palette */
+	seeker += 4 * 256;
+	writer += 4 * 256;
+
+	if (view_start != PAL_SIZE + 2) { /* +2 for the opcode */
+		memcpy(writer, seeker, view_start - PAL_SIZE - 2);
 		seeker += view_start - PAL_SIZE - 2;
 		writer += view_start - PAL_SIZE - 2;
 	}
 
-	if (dsize != view_start+EXTRA_MAGIC_SIZE+view_size)
-	{
-		memcpy(reorderBuffer+view_size+view_start+EXTRA_MAGIC_SIZE, seeker, 
-		       dsize-view_size-view_start-EXTRA_MAGIC_SIZE);
-		seeker += dsize-view_size-view_start-EXTRA_MAGIC_SIZE;
+	if (dsize != view_start + EXTRA_MAGIC_SIZE + view_size) {
+		memcpy(reorderBuffer + view_size + view_start + EXTRA_MAGIC_SIZE, seeker,
+		       dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
+		seeker += dsize - view_size - view_start - EXTRA_MAGIC_SIZE;
 	}
 
-	cdata_start=cdata=(byte *) malloc(cdata_size);
+	cdata_start = cdata = (byte *) malloc(cdata_size);
 	memcpy(cdata, seeker, cdata_size);
 	seeker += cdata_size;
-	
+
 	writer = reorderBuffer + view_start;
 	*(writer++) = PIC_OP_OPX;
 	*(writer++) = PIC_OPX_EMBEDDED_VIEW;
@@ -335,9 +322,9 @@ byte *pic_reorder(byte *inbuffer, int dsize)
 	writer += sizeof(viewdata);
 
 	*(writer++) = 0;
-	
+
 	decode_rle(&seeker, &cdata, writer, view_size);
-	
+
 	free(cdata_start);
 	free(inbuffer);
 	return reorderBuffer;
@@ -346,22 +333,23 @@ byte *pic_reorder(byte *inbuffer, int dsize)
 #define VIEW_HEADER_COLORS_8BIT 0x80
 
 static
-void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max)
-{
+void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max) {
 	int c, w;
-	
-	for (c=0;c<max;c++)
-	{
-		w=getUInt16(*seeker);
-		putInt16(*writer, w); 
-		*seeker += 2; *writer += 2;
-		w=getUInt16(*seeker);
-		putInt16(*writer, w); 
-		*seeker += 2; *writer += 2;
-		w=getUInt16(*seeker);
-		putInt16(*writer, w); 
-		*seeker += 2; *writer += 2;
-		w=*((*seeker)++);
+
+	for (c = 0;c < max;c++) {
+		w = getUInt16(*seeker);
+		putInt16(*writer, w);
+		*seeker += 2;
+		*writer += 2;
+		w = getUInt16(*seeker);
+		putInt16(*writer, w);
+		*seeker += 2;
+		*writer += 2;
+		w = getUInt16(*seeker);
+		putInt16(*writer, w);
+		*seeker += 2;
+		*writer += 2;
+		w = *((*seeker)++);
 		putInt16(*writer, w); /* Zero extension */
 		*writer += 2;
 
@@ -372,8 +360,7 @@ void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengt
 
 
 
-byte *view_reorder(byte *inbuffer, int dsize)
-{
+byte *view_reorder(byte *inbuffer, int dsize) {
 	byte *cellengths;
 	int loopheaders;
 	int lh_present;
@@ -386,15 +373,15 @@ byte *view_reorder(byte *inbuffer, int dsize)
 	byte *outbuffer = (byte *) malloc(dsize);
 	byte *writer = outbuffer;
 	byte *lh_ptr;
-	byte *rle_ptr,*pix_ptr;
+	byte *rle_ptr, *pix_ptr;
 	int l, lb, c, celindex, lh_last = -1;
 	int chptr;
 	int w;
 	int *cc_lengths;
 	byte **cc_pos;
-	
+
 	/* Parse the main header */
-	cellengths = inbuffer+getUInt16(seeker)+2;
+	cellengths = inbuffer + getUInt16(seeker) + 2;
 	seeker += 2;
 	loopheaders = *(seeker++);
 	lh_present = *(seeker++);
@@ -407,12 +394,12 @@ byte *view_reorder(byte *inbuffer, int dsize)
 	cel_total = getUInt16(seeker);
 	seeker += 2;
 
-	cc_pos = (byte **) malloc(sizeof(byte *)*cel_total);
-	cc_lengths = (int *) malloc(sizeof(int)*cel_total);
-	
-	for (c=0;c<cel_total;c++)
-		cc_lengths[c] = getUInt16(cellengths+2*c);
-	
+	cc_pos = (byte **) malloc(sizeof(byte *) * cel_total);
+	cc_lengths = (int *) malloc(sizeof(int) * cel_total);
+
+	for (c = 0;c < cel_total;c++)
+		cc_lengths[c] = getUInt16(cellengths + 2 * c);
+
 	*(writer++) = loopheaders;
 	*(writer++) = VIEW_HEADER_COLORS_8BIT;
 	putInt16(writer, lh_mask);
@@ -423,32 +410,29 @@ byte *view_reorder(byte *inbuffer, int dsize)
 	writer += 2;
 
 	lh_ptr = writer;
-	writer += 2*loopheaders; /* Make room for the loop offset table */
+	writer += 2 * loopheaders; /* Make room for the loop offset table */
 
 	pix_ptr = writer;
-	
+
 	memcpy(celcounts, seeker, lh_present);
 	seeker += lh_present;
 
 	lb = 1;
 	celindex = 0;
 
-	rle_ptr = pix_ptr = cellengths + (2*cel_total);
+	rle_ptr = pix_ptr = cellengths + (2 * cel_total);
 	w = 0;
-	
-	for (l=0;l<loopheaders;l++)
-	{
-		if (lh_mask & lb) /* The loop is _not_ present */
-		{
+
+	for (l = 0;l < loopheaders;l++) {
+		if (lh_mask & lb) { /* The loop is _not_ present */
 			if (lh_last == -1) {
 				fprintf(stderr, "Error: While reordering view: Loop not present, but can't re-use last loop!\n");
 				lh_last = 0;
 			}
 			putInt16(lh_ptr, lh_last);
 			lh_ptr += 2;
-		} else
-		{
-			lh_last = writer-outbuffer;
+		} else {
+			lh_last = writer - outbuffer;
 			putInt16(lh_ptr, lh_last);
 			lh_ptr += 2;
 			putInt16(writer, celcounts[w]);
@@ -457,64 +441,61 @@ byte *view_reorder(byte *inbuffer, int dsize)
 			writer += 2;
 
 			/* Now, build the cel offset table */
-			chptr = (writer - outbuffer)+(2*celcounts[w]);
+			chptr = (writer - outbuffer) + (2 * celcounts[w]);
 
-			for (c=0;c<celcounts[w];c++)
-			{
+			for (c = 0;c < celcounts[w];c++) {
 				putInt16(writer, chptr);
 				writer += 2;
 				cc_pos[celindex+c] = outbuffer + chptr;
-				chptr += 8 + getUInt16(cellengths+2*(celindex+c));
+				chptr += 8 + getUInt16(cellengths + 2 * (celindex + c));
 			}
 
 			build_cel_headers(&seeker, &writer, celindex, cc_lengths, celcounts[w]);
-			
+
 			celindex += celcounts[w];
 			w++;
 		}
 
-		lb = lb << 1;	
-	}	
+		lb = lb << 1;
+	}
 
-	if (celindex < cel_total)
-	{
+	if (celindex < cel_total) {
 		fprintf(stderr, "View decompression generated too few (%d / %d) headers!\n", celindex, cel_total);
 		return NULL;
 	}
-	
+
 	/* Figure out where the pixel data begins. */
-	for (c=0;c<cel_total;c++)
+	for (c = 0;c < cel_total;c++)
 		pix_ptr += rle_size(pix_ptr, cc_lengths[c]);
 
-	rle_ptr = cellengths + (2*cel_total);
-	for (c=0;c<cel_total;c++)
-		decode_rle(&rle_ptr, &pix_ptr, cc_pos[c]+8, cc_lengths[c]);
+	rle_ptr = cellengths + (2 * cel_total);
+	for (c = 0;c < cel_total;c++)
+		decode_rle(&rle_ptr, &pix_ptr, cc_pos[c] + 8, cc_lengths[c]);
 
 	*(writer++) = 'P';
 	*(writer++) = 'A';
 	*(writer++) = 'L';
-	
-	for (c=0;c<256;c++)
+
+	for (c = 0;c < 256;c++)
 		*(writer++) = c;
 
 	seeker -= 4; /* The missing four. Don't ask why. */
-	memcpy(writer, seeker, 4*256+4);
-	
+	memcpy(writer, seeker, 4*256 + 4);
+
 	free(cc_pos);
 	free(cc_lengths);
 	free(inbuffer);
-	return outbuffer;	
+	return outbuffer;
 }
 
 
 
-int decompress01(resource_t *result, int resh, int sci_version)
-{
+int decompress01(resource_t *result, int resh, int sci_version) {
 	guint16 compressedLength, result_size;
 	guint16 compressionMethod;
 	guint8 *buffer;
 
-	if (read(resh, &(result->id),2) != 2)
+	if (read(resh, &(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -528,8 +509,8 @@ int decompress01(resource_t *result, int resh, int sci_version)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
 	if ((read(resh, &compressedLength, 2) != 2) ||
-	    (read(resh, &result_size, 2) != 2) ||
-	    (read(resh, &compressionMethod, 2) != 2))
+	        (read(resh, &result_size, 2) != 2) ||
+	        (read(resh, &compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -544,7 +525,7 @@ int decompress01(resource_t *result, int resh, int sci_version)
 	/* This return will never happen in SCI0 or SCI1 (does it have any use?) */
 
 	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	    (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
 	if (compressedLength > 4)
@@ -567,15 +548,15 @@ int decompress01(resource_t *result, int resh, int sci_version)
 
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %s.%03hi encrypted with method SCI01/%hi at %.2f%%"
-		" ratio\n",
-		sci_resource_types[result->type], result->number, compressionMethod,
-		(result->size == 0)? -1.0 :
-		(100.0 * compressedLength / result->size));
+	        " ratio\n",
+	        sci_resource_types[result->type], result->number, compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
 	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
-		compressedLength, result->size);
+	        compressedLength, result->size);
 #endif
 
-	switch(compressionMethod) {
+	switch (compressionMethod) {
 
 	case 0: /* no compression */
 		if (result->size != compressedLength) {
@@ -612,7 +593,7 @@ int decompress01(resource_t *result, int resh, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 3: 
+	case 3:
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
@@ -637,11 +618,11 @@ int decompress01(resource_t *result, int resh, int sci_version)
 		result->data = pic_reorder(result->data, result->size);
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
-		
+
 	default:
-		fprintf(stderr,"Resource %s.%03hi: Compression method SCI1/%hi not "
-			"supported!\n", sci_resource_types[result->type], result->number,
-			compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; /* So that we know that it didn't work */
 		result->status = SCI_STATUS_NOMALLOC;

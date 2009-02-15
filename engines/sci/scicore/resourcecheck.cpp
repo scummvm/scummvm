@@ -31,8 +31,7 @@
 
 /* #include "resource.h" */
 
-int main()
-{
-  /* No checks yet... */
-  return 0;
+int main() {
+	/* No checks yet... */
+	return 0;
 }

@@ -32,8 +32,7 @@
 #define VERSION_DETECT_BUF_SIZE 4096
 
 static int
-scan_file(char *filename, sci_version_t *version)
-{
+scan_file(char *filename, sci_version_t *version) {
 	char buf[VERSION_DETECT_BUF_SIZE];
 	char result_string[10]; /* string-encoded result, copied from buf */
 	int characters_left;
@@ -67,16 +66,15 @@ scan_file(char *filename, sci_version_t *version)
 
 			if (isalnum((unsigned char) ch)) {
 				accept = (state != 1
-					  && state != 5
-					  && state != 9);
+				          && state != 5
+				          && state != 9);
 			} else if (ch == '.') {
 				accept = (state == 1
-					  || state == 5);
+				          || state == 5);
 			} else if (state == 9) {
 				result_string[9] = 0; /* terminate string */
 
-				if (!version_parse(result_string, version))
-				{
+				if (!version_parse(result_string, version)) {
 					exe_close(f);
 					return 0; /* success! */
 				}
@@ -98,20 +96,17 @@ scan_file(char *filename, sci_version_t *version)
 }
 
 static guint32
-read_uint32(byte *data)
-{
+read_uint32(byte *data) {
 	return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 }
 
 static guint16
-read_uint16(byte *data)
-{
+read_uint16(byte *data) {
 	return (data[0] << 8) | data[1];
 }
 
 static int
-is_mac_exe(char *filename)
-{
+is_mac_exe(char *filename) {
 	FILE *file;
 	byte buf[4];
 	guint32 val;
@@ -175,15 +170,14 @@ is_mac_exe(char *filename)
 }
 
 static int
-is_exe(char *filename)
-{
+is_exe(char *filename) {
 	FILE *file;
 	char buf[4];
 	unsigned char header[] = {0x00, 0x00, 0x03, 0xf3};
 
 	/* PC and Atari ST executable extensions */
 	if (strstr(filename, ".exe") || strstr(filename, ".EXE")
-	    || strstr(filename, ".prg") || strstr(filename, ".PRG"))
+	        || strstr(filename, ".prg") || strstr(filename, ".PRG"))
 		return 1;
 
 	/* Check for Amiga executable */
@@ -206,41 +200,37 @@ is_exe(char *filename)
 }
 
 void
-version_require_earlier_than(state_t *s, sci_version_t version)
-{
+version_require_earlier_than(state_t *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 
 	if (version <= s->min_version) {
 		sciprintf("Version autodetect conflict: Less than %d.%03d.%03d was requested, but "
-			  "%d.%03d.%03d is the current minimum\n",
-			  SCI_VERSION_MAJOR(version), SCI_VERSION_MINOR(version), SCI_VERSION_PATCHLEVEL(version),
-			  SCI_VERSION_MAJOR(s->min_version), SCI_VERSION_MINOR(s->min_version),
-			  SCI_VERSION_PATCHLEVEL(s->min_version));
+		          "%d.%03d.%03d is the current minimum\n",
+		          SCI_VERSION_MAJOR(version), SCI_VERSION_MINOR(version), SCI_VERSION_PATCHLEVEL(version),
+		          SCI_VERSION_MAJOR(s->min_version), SCI_VERSION_MINOR(s->min_version),
+		          SCI_VERSION_PATCHLEVEL(s->min_version));
 		return;
-	}
-	else if (version < s->max_version) {
-		s->max_version = version -1;
+	} else if (version < s->max_version) {
+		s->max_version = version - 1;
 		if (s->max_version < s->version)
 			s->version = s->max_version;
 	}
 }
 
 void
-version_require_later_than(state_t *s, sci_version_t version)
-{
+version_require_later_than(state_t *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 
 	if (version > s->max_version) {
 		sciprintf("Version autodetect conflict: More than %d.%03d.%03d was requested, but less than"
-			  "%d.%03d.%03d is required ATM\n",
-			  SCI_VERSION_MAJOR(version), SCI_VERSION_MINOR(version), SCI_VERSION_PATCHLEVEL(version),
-			  SCI_VERSION_MAJOR(s->max_version), SCI_VERSION_MINOR(s->max_version),
-			  SCI_VERSION_PATCHLEVEL(s->max_version));
+		          "%d.%03d.%03d is required ATM\n",
+		          SCI_VERSION_MAJOR(version), SCI_VERSION_MINOR(version), SCI_VERSION_PATCHLEVEL(version),
+		          SCI_VERSION_MAJOR(s->max_version), SCI_VERSION_MINOR(s->max_version),
+		          SCI_VERSION_PATCHLEVEL(s->max_version));
 		return;
-	}
-	else if (version > s->min_version) {
+	} else if (version > s->min_version) {
 		s->min_version = version;
 		if (s->min_version > s->version)
 			s->version = s->min_version;
@@ -248,15 +238,14 @@ version_require_later_than(state_t *s, sci_version_t version)
 }
 
 int
-version_parse(const char *vn, sci_version_t *result)
-{
+version_parse(const char *vn, sci_version_t *result) {
 	char *endptr[3];
 	int major = strtol(vn, &endptr[0], 10);
 	int minor = strtol(vn + 2, &endptr[1], 10);
 	int patchlevel = strtol(vn + 6, &endptr[2], 10);
 
 	if (endptr[0] != vn + 1 || endptr[1] != vn + 5
-	    || *endptr[2] != '\0') {
+	        || *endptr[2] != '\0') {
 		sciprintf("Warning: Failed to parse version string '%s'\n", vn);
 		return 1;
 	}
@@ -266,8 +255,7 @@ version_parse(const char *vn, sci_version_t *result)
 }
 
 int
-version_detect_from_executable(sci_version_t *result)
-{
+version_detect_from_executable(sci_version_t *result) {
 	sci_dir_t dir;
 	char *filename;
 	int mac = 0;
@@ -303,17 +291,16 @@ version_detect_from_executable(sci_version_t *result)
 #define HASHCODE_MAGIC_RESOURCE_001 0x00000001
 
 const char *  /* Original version by Solomon Peachy */
-version_guess_from_hashcode(sci_version_t *result, int *res_version, guint32 *code)
-{
+version_guess_from_hashcode(sci_version_t *result, int *res_version, guint32 *code) {
 	int i;
 	int fd = -1;
 	int left = VERSION_DETECT_HASH_SIZE;
 	guint32 hash_code;
 	guint8 buf[VERSION_DETECT_BUF_SIZE];
 
-	if (IS_VALID_FD(fd = sci_open("resource.001", O_RDONLY|O_BINARY))) {
+	if (IS_VALID_FD(fd = sci_open("resource.001", O_RDONLY | O_BINARY))) {
 		hash_code = HASHCODE_MAGIC_RESOURCE_001;
-	} else if (IS_VALID_FD(fd = sci_open("resource.000", O_RDONLY|O_BINARY))) {
+	} else if (IS_VALID_FD(fd = sci_open("resource.000", O_RDONLY | O_BINARY))) {
 		hash_code = HASHCODE_MAGIC_RESOURCE_000;
 	} else {
 		sciprintf("Warning: Could not find RESOURCE.000 or RESOURCE.001, cannot determine hash code\n");
