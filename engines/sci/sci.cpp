@@ -29,7 +29,7 @@
 #include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
-#include "sci/scummvm/scummvm_engine.h"
+#include "sci/sci.h"
 #include "sci/include/engine.h"
 
 //namespace Sci {

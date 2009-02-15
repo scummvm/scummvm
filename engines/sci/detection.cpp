@@ -23,7 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
-#include "scummvm_engine.h"
+#include "sci/sci.h"
 
 // Titles of the games
 static const PlainGameDescriptor SciGameTitles[] = {

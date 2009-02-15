@@ -1,6 +1,8 @@
 MODULE := engines/sci
 
 MODULE_OBJS = \
+	detection.o \
+	sci.o \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
@@ -28,6 +30,7 @@ MODULE_OBJS = \
 	gfx/font.o \
 	gfx/font-5x8.o \
 	gfx/font-6x10.o \
+	gfx/gfx_driver.o \
 	gfx/gfx_res_options.o \
 	gfx/gfx_resource.o \
 	gfx/gfx_support.o \
@@ -38,7 +41,6 @@ MODULE_OBJS = \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \
 	gfx/widgets.o \
-	gfx/drivers/scummvm_driver.o \
 	gfx/resource/sci_cursor_0.o \
 	gfx/resource/sci_font.o \
 	gfx/resource/sci_pal_1.o \
@@ -66,8 +68,6 @@ MODULE_OBJS = \
 	scicore/versions.o \
 	scicore/vocab.o \
 	scicore/vocab_debug.o \
-	scummvm/detection.o \
-	scummvm/scummvm_engine.o \
 	sfx/adlib.o \
 	sfx/core.o \
 	sfx/iterator.o \
