@@ -1163,14 +1163,16 @@ yydestruct (yymsg, yytype, yyvaluep)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
+#if 0
   switch (yytype)
     {
 
       default:
 	break;
     }
+#endif
 }
-
+
 
 /* Prevent warnings from -Wmissing-prototypes.  */
 
