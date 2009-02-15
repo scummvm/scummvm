@@ -221,12 +221,13 @@ main_()
 
 	init_console(); /* So we can get any output */
 
-	char startdir[MAXPATHLEN+1] = "";
-	getcwd(startdir, MAXPATHLEN);
 	script_debug_flag = 0;
 
 	sci_version_t version;
 	int res_version;
+
+	// FIXME. An evil hack until File class will be used properly
+	chdir(ConfMan.get("path").c_str());
 
 	detect_versions(&version, &res_version);
 
@@ -242,8 +243,6 @@ main_()
 	}
 
 	script_adjust_opcode_formats(resmgr->sci_version);
-
-	chdir(startdir);
 
 #if 0
 	printf("Mapping instruments to General Midi\n");
@@ -338,8 +337,6 @@ main_()
 	scir_free_resource_manager(resmgr);
 
 	close_console_file();
-
-	chdir (startdir); /* ? */
 
 	gfxop_exit(&gfx_state);
 
