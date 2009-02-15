@@ -60,7 +60,6 @@
 #ifdef SCUMMVM
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
 #ifndef _MSC_VER
-#define HAVE_ISBLANK
 #define HAVE_UNISTD_H
 #define HAVE_FCNTL_H
 #define HAVE_UNLINK
@@ -102,18 +101,8 @@
 
 #include "sci/include/scitypes.h"
 
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
-
-#ifdef _WIN32
-#  include <io.h>
-#endif /* !_WIN32 */
-
-#ifdef __BEOS__
-#  include <kernel/OS.h>
-#  define usleep snooze
-#endif
+// FIXME: Mostly for close() in lots of places. Get rid of this!
+#include <unistd.h>
 
 #ifdef _MSC_VER
 #	include <sys/timeb.h>
@@ -148,10 +137,6 @@
 #else
 #  define G_DIR_SEPARATOR_S "/"
 #  define G_DIR_SEPARATOR '/'
-#endif
-
-#if defined(__MORPHOS__) || defined(_MSC_VER) || defined(ARM_WINCE) || defined(__amigaos4__)
-#  define PATH_MAX 255
 #endif
 
 #ifndef MIN
@@ -228,14 +213,6 @@ putInt16(byte* dest, int src)
 ** Parameters: (byte *) dest: The position to write to
 **             (int) src: value to write
 */
-
-#ifndef HAVE_ISBLANK
-static inline int
-isblank(int foo)
-{
-	return (foo == ' ') || (foo == '\t');
-}
-#endif
 
 #ifdef _cplusplus
 #  define delete _freesci_cplusplus_workaround_delete
@@ -493,9 +470,3 @@ sci_sched_yield(void);
 #define WARNING(foo) {char i; i = 500;}
 
 #endif
-
-
-
-
-
-

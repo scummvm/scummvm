@@ -44,7 +44,7 @@ struct tokenlist {
 static gint8 stak[0x1014] = {0};
 static gint8 lastchar = 0;
 static gint16 stakptr = 0;
-static guint16 numbits, bitstring, lastbits, decryptstart;
+static guint16 numbits, s_bitstring, lastbits, decryptstart;
 static gint16 curtoken, endtoken;
 
 
@@ -53,7 +53,7 @@ guint32 gbits(int numbits,  guint8 * data, int dlen);
 void decryptinit3(void)
 {
 	int i;
-	lastchar = lastbits = bitstring = stakptr = 0;
+	lastchar = lastbits = s_bitstring = stakptr = 0;
 	numbits = 9;
 	curtoken = 0x102;
 	endtoken = 0x1ff;
@@ -73,26 +73,26 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength)
 		switch (decryptstart) {
 		case 0:
 		case 1:
-			bitstring = gbits(numbits, src, complength);
-			if (bitstring == 0x101) { /* found end-of-data signal */
+			s_bitstring = gbits(numbits, src, complength);
+			if (s_bitstring == 0x101) { /* found end-of-data signal */
 				decryptstart = 4;
 				return 0;
 			}
 			if (decryptstart == 0) { /* first char */
 				decryptstart = 1;
-				lastbits = bitstring;
-				*(dest++) = lastchar = (bitstring & 0xff);
+				lastbits = s_bitstring;
+				*(dest++) = lastchar = (s_bitstring & 0xff);
 				if (--length != 0) continue;
 				return 0;
 			}
-			if (bitstring == 0x100) { /* start-over signal */
+			if (s_bitstring == 0x100) { /* start-over signal */
 				numbits = 9;
 				endtoken = 0x1ff;
 				curtoken = 0x102;
 				decryptstart = 0;
 				continue;
 			}
-			token = bitstring;
+			token = s_bitstring;
 			if (token >= curtoken) { /* index past current point */
 				token = lastbits;
 				stak[stakptr++] = lastchar;
@@ -122,7 +122,7 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength)
 					endtoken++;
 				}
 			}
-			lastbits = bitstring;
+			lastbits = s_bitstring;
 			continue; /* When are "break" and "continue" synonymous? */
 		case 4:
 			return 0;

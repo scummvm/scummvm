@@ -123,10 +123,8 @@ gfx_pixmap_color_t embedded_view_colors[16] = {
 void
 gfxr_init_static_palette()
 {
-	int i;
-
 	if (!_gfxr_pic0_colors_initialized) {
-		for (i = 0; i < 256; i++) {
+		for (int i = 0; i < 256; i++) {
 			gfx_sci0_pic_colors[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
 			gfx_sci0_pic_colors[i].r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
 							    gfx_sci0_image_colors[sci0_palette][i >> 4].r);
@@ -285,7 +283,6 @@ _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int sci_titleba
 	int y = line.y + sci_titlebar_size;
 	unsigned char *buffer = pic->aux_map;
 	int linewidth = 320;
-	int color2 = color;
 
 	dx = line.xl;
 	dy = line.yl;
@@ -341,14 +338,13 @@ _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask)
 		| (bitmask << (3+8))
 		| (bitmask << (3+16))
 		| (bitmask << (3+24));
-	int i;
 
 	if (sizeof(unsigned long) == 8) { /* UltraSparc, Alpha, newer MIPSens, etc */
 		andmask |= (andmask << 32);
 		clearmask |= (clearmask << 32);
 	}
 
-	for (i = 0; i < GFXR_AUX_MAP_SIZE / sizeof(unsigned long); i++) {
+	for (int i = 0; i < GFXR_AUX_MAP_SIZE / sizeof(unsigned long); i++) {
 		unsigned long temp = *data & andmask;
 		temp >>= 3;
 		*data = (temp | *data) & clearmask;
@@ -1396,7 +1392,6 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 	};
 	int palette[GFXR_PIC0_NUM_PALETTES][GFXR_PIC0_PALETTE_SIZE];
 	int priority_table[GFXR_PIC0_PALETTE_SIZE];
-	int i;
 	int drawenable = GFX_MASK_VISUAL | GFX_MASK_PRIORITY;
 	int priority = 0;
 	int color = 0;
@@ -1420,7 +1415,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 #endif /* FILL_RECURSIVE_DEBUG */
 
 	/* Initialize palette */
-	for (i = 0; i < GFXR_PIC0_NUM_PALETTES; i++)
+	for (int i = 0; i < GFXR_PIC0_NUM_PALETTES; i++)
 		memcpy(palette[i], default_palette_table, sizeof(int) * GFXR_PIC0_PALETTE_SIZE);
 
 	memcpy(priority_table, default_priority_table, sizeof(int) * GFXR_PIC0_PALETTE_SIZE);
@@ -1839,7 +1834,6 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 			case PIC_SCI0_OPX_SET_PRIORITY_TABLE: 
 			case PIC_SCI1_OPX_PRIORITY_TABLE_EXPLICIT: {
-				int i;
 				int *pri_table;
 
 				p0printf("Explicit priority table @%d\n", pos);
@@ -1856,7 +1850,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				pri_table[0] = 0;
 				pri_table[15] = 190;
 
-				for (i = 1; i < 15; i++)
+				for (int i = 1; i < 15; i++)
 					pri_table[i] = resource[pos++];
 			}
 				goto end_op_loop;

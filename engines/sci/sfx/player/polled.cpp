@@ -30,6 +30,8 @@
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
 
+#include <unistd.h> // for close()
+
 static song_iterator_t *play_it;
 static int play_paused = 0;
 static sfx_softseq_t *seq;

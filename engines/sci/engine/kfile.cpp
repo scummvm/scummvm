@@ -31,10 +31,6 @@
 
 
 #ifdef _WIN32
-#define MAX_PATHLEN MAXPATHLEN
-#  ifndef PATH_MAX
-#    define PATH_MAX 255
-#  endif
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <sys/types.h>
@@ -414,7 +410,7 @@ delete_savegame(state_t *s, int savedir_nr)
 reg_t
 kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv)
 {
-	char dir_buffer [MAXPATHLEN], dir_buffer2 [MAX_PATHLEN];
+	char dir_buffer[MAXPATHLEN], dir_buffer2[MAXPATHLEN];
 	int mode = UKPV(0);
 
 

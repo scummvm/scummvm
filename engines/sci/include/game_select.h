@@ -1,12 +1,12 @@
-#include "list.h"
-
 #ifndef _SCI_GAME_SELECT_H
 #define _SCI_GAME_SELECT_H
+
+#include "sci/include/list.h"
 
 typedef struct game
 {
 	char *name;
-	char dir[PATH_MAX];
+	char dir[MAXPATHLEN];
 	int conf_nr;
 } game_t;
 

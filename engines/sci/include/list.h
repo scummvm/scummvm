@@ -31,10 +31,10 @@
 
 /* 2006-04-21 Modified by Walter van Niftrik. */
 
-#include <stdlib.h>
-
 #ifndef _SCI_LIST_H
 #define _SCI_LIST_H
+
+#include "common/scummsys.h"
 
 /* List definitions. */
 #define LIST_HEAD(name, type)						\

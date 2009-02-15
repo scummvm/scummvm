@@ -222,7 +222,7 @@ static message_handler_t fixed_handler = {3411,
 
 void message_state_initialize(resource_mgr_t *resmgr, message_state_t *state)
 {
-	resource_t *tester = scir_find_resource(resmgr, sci_message, 0, 0);
+//	resource_t *tester = scir_find_resource(resmgr, sci_message, 0, 0);
 	//int version;
 
 //	if (tester == NULL) return;

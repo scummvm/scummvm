@@ -319,7 +319,7 @@ gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
 	int fore_0, fore_1, back;
 	int i;
 	int hack = 0;
-	gfx_pixmap_color_t dummy = {0};
+	gfx_pixmap_color_t dummy = {0, 0, 0, 0};
 	byte *offset;
 
 	for (i = 0; i < characters; i++) {

@@ -1879,7 +1879,7 @@ songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask)
 	do {
 		retval = (*it)->next(*it, buf, result);
 		if (retval == SI_MORPH) {
-			fprintf(stderr, "  Morphing %p (stored at %p)\n", *it, it);
+			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				BREAKPOINT();
 			} else fprintf(stderr, "SI_MORPH successful\n");

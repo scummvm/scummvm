@@ -2472,7 +2472,7 @@ gfxw_port_t *
 gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags)
 {
 	gfxw_port_t *result = NULL;
-	gfx_color_t transparent = {0};
+	gfx_color_t transparent = {{0, 0, 0, 0}, 0, 0, 0, 0};
 	int id = 0;
 
 	if (!(flags & GFXW_CHRONO_NON_TOPMOST))

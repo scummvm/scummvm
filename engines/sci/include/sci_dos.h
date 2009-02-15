@@ -74,9 +74,6 @@ extern gpointer g_malloc0(guint32 size);
 /* directory separator */
 #define G_DIR_SEPARATOR_S "/"
 
-/* paths longer than 128 chars? nah... */
-#define PATH_MAX 128
-
 #define SSIZE_MAX 1024
 
 #define g_get_current_time(x) gettimeofday(x,NULL)

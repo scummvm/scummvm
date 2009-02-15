@@ -489,7 +489,7 @@ _scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version, resource_sour
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
-	resource_t **concat_ptr = &(mgr->resources[mgr->resources_nr-1].next);
+//	resource_t **concat_ptr = &(mgr->resources[mgr->resources_nr-1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
