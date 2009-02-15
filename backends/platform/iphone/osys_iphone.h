@@ -105,9 +105,11 @@ protected:
 	TimerProc _timerCallback;
 
 	Common::Array<Common::Rect> _dirtyRects;
+	Common::Array<Common::Rect> _dirtyOverlayRects;	
 	ScreenOrientation _screenOrientation;
 	bool _fullScreenIsDirty;
-
+	bool _fullScreenOverlayIsDirty;
+	int _screenChangeCount;
 	FilesystemFactory *_fsFactory;
 
 public:
@@ -163,10 +165,11 @@ public:
 	virtual void setupMixer(void);
 	virtual int getOutputSampleRate() const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
-
+ 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
 	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);	
 	virtual void getTimeAndDate(struct tm &t) const;
 
 	virtual void setWindowCaption(const char *caption);
@@ -182,12 +185,15 @@ public:
 	virtual Common::WriteStream *createConfigWriteStream();
 
 protected:
-	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
 	void internUpdateScreen();
-	void dirtyMouseCursor();
 	void dirtyFullScreen();
+	void dirtyFullOverlayScreen();	
 	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
+	void drawDirtyRect(const Common::Rect& dirtyRect);
+	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);	
+	void drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect);
+	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);	
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
