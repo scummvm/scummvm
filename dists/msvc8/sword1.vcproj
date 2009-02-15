@@ -187,14 +187,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\sword1\credits.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\credits.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\sword1\debug.cpp"
 			>
 		</File>
