@@ -613,8 +613,8 @@ void LoLEngine::gui_initButton(int index, int x) {
 	b->data2Val3 = 0x01;
 
 	b->index = cnt;
-	b->unk6 = _buttonData[index].clickedShapeId;
-	b->unk8 = _buttonData[index].unk2;
+	b->keyCode = _buttonData[index].keyCode;
+	b->keyCode2 = _buttonData[index].keyCode2;
 	b->dimTableIndex = _buttonData[index].screenDim;
 	b->flags = _buttonData[index].buttonflags;
 
@@ -722,6 +722,18 @@ int LoLEngine::clickedAttackButton(Button *button) {
 }
 
 int LoLEngine::clickedMagicButton(Button *button) {
+	if (_characters[button->data2Val2].flags & 0x314C)
+		return 1;
+
+	if (notEnoughMagic(button->data2Val2, _availableSpells[_selectedSpell], 0))
+		return 1;
+
+	_characters[button->data2Val2].flags ^= 0x10;
+
+	gui_drawCharPortraitWithStats(button->data2Val2);
+	spellsub2(button->data2Val2);
+	_unkCharNum = button->data2Val2;
+
 	return 1;
 }
 
@@ -842,90 +854,334 @@ int LoLEngine::clickedUnk32(Button *button) {
 GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
+	_unknownButtonList = _backUpButtonList = 0;
+	_flagsModifier = 0;
+	_buttonListChanged = false;
 }
 
-int GUI_LoL::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) {
-	inputFlag &= 0x7fff;
+void GUI_LoL::processButton(Button *button) {
+	if (!button)
+		return;
+
+	if (button->flags & 8) {
+		if (button->flags & 0x10) {
+			// XXX
+		}
+		return;
+	}
+
+	int entry = button->flags2 & 5;
+
+	byte val1 = 0, val2 = 0, val3 = 0;
+	const uint8 *dataPtr = 0;
+	Button::Callback callback;
+	if (entry == 1) {
+		val1 = button->data1Val1;
+		dataPtr = button->data1ShapePtr;
+		callback = button->data1Callback;
+		val2 = button->data1Val2;
+		val3 = button->data1Val3;
+	} else if (entry == 4 || entry == 5) {
+		val1 = button->data2Val1;
+		dataPtr = button->data2ShapePtr;
+		callback = button->data2Callback;
+		val2 = button->data2Val2;
+		val3 = button->data2Val3;
+	} else {
+		val1 = button->data0Val1;
+		dataPtr = button->data0ShapePtr;
+		callback = button->data0Callback;
+		val2 = button->data0Val2;
+		val3 = button->data0Val3;
+	}
+
+	int x = 0, y = 0, x2 = 0, y2 = 0;
+
+	x = button->x;
+	if (x < 0)
+		x += _screen->getScreenDim(button->dimTableIndex)->w << 3;
+	x += _screen->getScreenDim(button->dimTableIndex)->sx << 3;
+	x2 = x + button->width - 1;
+
+	y = button->y;
+	if (y < 0)
+		y += _screen->getScreenDim(button->dimTableIndex)->h << 3;
+	y += _screen->getScreenDim(button->dimTableIndex)->sy << 3;
+	y2 = y + button->height - 1;
+
+	switch (val1 - 1) {
+	case 0:
+		_screen->hideMouse();
+		_screen->drawShape(_screen->_curPage, dataPtr, x, y, button->dimTableIndex, 0x10);
+		_screen->showMouse();
+		break;
+
+	case 1:
+		_screen->hideMouse();
+		_screen->printText((const char*)dataPtr, x, y, val2, val3);
+		_screen->showMouse();
+		break;
+
+	case 3:
+		if (callback)
+			(*callback)(button);
+		break;
+
+	case 4:
+		_screen->hideMouse();
+		_screen->drawBox(x, y, x2, y2, val2);
+		_screen->showMouse();
+		break;
+
+	case 5:
+		_screen->hideMouse();
+		_screen->fillRect(x, y, x2, y2, val2, -1, true);
+		_screen->showMouse();
+		break;
+
+	default:
+		break;
+	}
+
+	_screen->updateScreen();
+}
+
+int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
+	if (!buttonList)
+		return inputFlag & 0x7FFF;
+
+	if (_backUpButtonList != buttonList || _buttonListChanged) {
+		_unknownButtonList = 0;
+		//flagsModifier |= 0x2200;
+		_backUpButtonList = buttonList;
+		_buttonListChanged = false;
+
+		while (buttonList) {
+			processButton(buttonList);
+			buttonList = buttonList->nextButton;
+		}
+	}
+
+	int mouseX = _vm->_mouseX;
+	int mouseY = _vm->_mouseY;
+
+	uint16 flags = 0;
+
+	if (1/*!_screen_cursorDisable*/) {
+		uint16 inFlags = inputFlag & 0xFF;
+		uint16 temp = 0;
+
+		// HACK: inFlags == 200 is our left button (up)
+		if (inFlags == 199 || inFlags == 200)
+			temp = 0x100;
+		if (inFlags == 201 || inFlags == 202)
+			temp = 0x1000;
+
+		if (inputFlag & 0x800)
+			temp <<= 2;
+
+		flags |= temp;
+
+		_flagsModifier &= ~((temp & 0x4400) >> 1);
+		_flagsModifier |= (temp & 0x1100) * 2;
+		flags |= _flagsModifier;
+		flags |= (_flagsModifier << 2) ^ 0x8800;
+	}
+
+	buttonList = _backUpButtonList;
+	if (_unknownButtonList) {
+		buttonList = _unknownButtonList;
+		if (_unknownButtonList->flags & 8)
+			_unknownButtonList = 0;
+	}
 
 	int returnValue = 0;
-	while (list) {
-		bool processMouseClick = (inputFlag == 199 && list->flags & 0x100) || (inputFlag == 299 && list->flags & 0x1000);
-		bool target = _vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, list->x, list->y, list->x + list->width, list->y + list->height);
-
-		/*if (list->flags & 8) {
-			list = list->nextButton;
+	while (buttonList) {
+		if (buttonList->flags & 8) {
+			buttonList = buttonList->nextButton;
 			continue;
 		}
+		buttonList->flags2 &= ~0x18;
+		buttonList->flags2 |= (buttonList->flags2 & 3) << 3;
 
-		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
-			if ((*list->buttonCallback.get())(list))
+		int x = buttonList->x;
+		if (x < 0)
+			x += _screen->getScreenDim(buttonList->dimTableIndex)->w << 3;
+		x += _screen->getScreenDim(buttonList->dimTableIndex)->sx << 3;
+
+		int y = buttonList->y;
+		if (y < 0)
+			y += _screen->getScreenDim(buttonList->dimTableIndex)->h;
+		y += _screen->getScreenDim(buttonList->dimTableIndex)->sy;
+
+		bool progress = false;
+
+		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
+			progress = true;
+
+		buttonList->flags2 &= ~0x80;
+		uint16 inFlags = inputFlag & 0x7FFF;
+		if (inFlags) {
+			if (buttonList->keyCode == inFlags) {
+				progress = true;
+				flags = buttonList->flags & 0x0F00;
+				buttonList->flags2 |= 0x80;
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			} else if (buttonList->keyCode2 == inFlags) {
+				flags = buttonList->flags & 0xF000;
+				if (!flags)
+					flags = buttonList->flags & 0x0F00;
+				progress = true;
+				buttonList->flags2 |= 0x80;
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			}
+		}
+
+		bool unk1 = false;
+
+		if (mouseWheel && buttonList->mouseWheel == mouseWheel) {
+			progress = true;
+			unk1 = true;
+		}
+
+		if (!progress)
+			buttonList->flags2 &= ~6;
+
+		if ((flags & 0x3300) && (buttonList->flags & 4) && progress && (buttonList == _unknownButtonList || !_unknownButtonList)) {
+			buttonList->flags |= 6;
+			if (!_unknownButtonList)
+				_unknownButtonList = buttonList;
+		} else if ((flags & 0x8800) && !(buttonList->flags & 4) && progress) {
+			buttonList->flags2 |= 6;
+		} else {
+			buttonList->flags2 &= ~6;
+		}
+
+		bool progressSwitch = false;
+		if (!_unknownButtonList) {
+			progressSwitch = progress;
+		} else  {
+			if (_unknownButtonList->flags & 0x40)
+				progressSwitch = (_unknownButtonList == buttonList);
+			else
+				progressSwitch = progress;
+		}
+
+		if (progressSwitch) {
+			if ((flags & 0x1100) && progress && !_unknownButtonList) {
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			}
+
+			if ((buttonList->flags & flags) && (progress || !(buttonList->flags & 1))) {
+				uint16 combinedFlags = (buttonList->flags & flags);
+				combinedFlags = ((combinedFlags & 0xF000) >> 4) | (combinedFlags & 0x0F00);
+				combinedFlags >>= 8;
+
+				static const uint16 flagTable[] = {
+					0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
+					0x200, 0x100, 0x400, 0x100, 0x400, 0x100
+				};
+
+				assert(combinedFlags < ARRAYSIZE(flagTable));
+
+				switch (flagTable[combinedFlags]) {
+				case 0x400:
+					if (!(buttonList->flags & 1) || ((buttonList->flags & 1) && _unknownButtonList == buttonList)) {
+						buttonList->flags2 ^= 1;
+						returnValue = buttonList->index | 0x8000;
+						unk1 = true;
+					}
+
+					if (!(buttonList->flags & 4)) {
+						buttonList->flags2 &= ~4;
+						buttonList->flags2 &= ~2;
+					}
+					break;
+
+				case 0x800:
+					if (!(buttonList->flags & 4)) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+					}
+
+					if (!(buttonList->flags & 1))
+						unk1 = true;
+					break;
+
+				case 0x200:
+					if (buttonList->flags & 4) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+					}
+
+					if (!(buttonList->flags & 1))
+						unk1 = true;
+					break;
+
+				case 0x100:
+				default:
+					buttonList->flags2 ^= 1;
+					returnValue = buttonList->index | 0x8000;
+					unk1 = true;
+					if (buttonList->flags & 4) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+					}
+					_unknownButtonList = buttonList;
+					break;
+				}
+			}
+		}
+
+		bool unk2 = false;
+		if ((flags & 0x2200) && progress) {
+			buttonList->flags2 |= 6;
+			if (!(buttonList->flags & 4) && !(buttonList->flags2 & 1)) {
+				unk2 = true;
+				buttonList->flags2 |= 1;
+			}
+		}
+
+		if ((flags & 0x8800) == 0x8800) {
+			_unknownButtonList = 0;
+			if (!progress || (buttonList->flags & 4))
+				buttonList->flags2 &= ~6;
+		}
+
+		if (!progress && buttonList == _unknownButtonList && !(buttonList->flags & 0x40))
+			_unknownButtonList = 0;
+
+		if ((buttonList->flags2 & 0x18) != ((buttonList->flags2 & 3) << 3))
+			processButton(buttonList);
+
+		if (unk2)
+			buttonList->flags2 &= ~1;
+
+		if (unk1) {
+			buttonList->flags2 &= 0xFF;
+			buttonList->flags2 |= flags;
+
+			if (buttonList->buttonCallback) {
+				_vm->removeInputTop();
+				if ((*buttonList->buttonCallback.get())(buttonList))
+					break;
+			}
+
+			if (buttonList->flags & 0x20)
 				break;
 		}
 
-		int x = list->x;
-		int y = list->y;
-		assert(_screen->getScreenDim(list->dimTableIndex) != 0);
+		if (_unknownButtonList == buttonList && (buttonList->flags & 0x40))
+			break;
 
-		if (x < 0)
-			x += _screen->getScreenDim(list->dimTableIndex)->w << 3;
-		x += _screen->getScreenDim(list->dimTableIndex)->sx << 3;
-
-		if (y < 0)
-			y += _screen->getScreenDim(list->dimTableIndex)->h;
-		y += _screen->getScreenDim(list->dimTableIndex)->sy;
-
-		if (_vm->_mouseX >= x && _vm->_mouseY >= y && x + list->width >= _vm->_mouseX && y + list->height >= _vm->_mouseY) {
-			int processMouseClick = 0;
-			if (list->flags & 0x400) {
-				if ((inputFlag & 0xFF) == 199 || _pressFlag) {
-					if (!(list->flags2 & 1)) {
-						list->flags2 |= 1;
-						list->flags2 |= 4;
-						processButton(list);
-						_screen->updateScreen();
-						inputFlag = 0;
-					}
-				} else if ((inputFlag & 0xFF) == 200) {
-					if (list->flags2 & 1) {
-						list->flags2 &= 0xFFFE;
-						processButton(list);
-						processMouseClick = 1;
-						inputFlag = 0;
-					}
-				}
-			}
-
-			if (processMouseClick) {
-				if (list->buttonCallback) {
-					if ((*list->buttonCallback.get())(list))
-						break;
-				}
-			}
-		} else {
-			if (list->flags2 & 1) {
-				list->flags2 &= 0xFFFE;
-				processButton(list);
-			}
-
-			if (list->flags2 & 4) {
-				list->flags2 &= 0xFFFB;
-				processButton(list);
-				_screen->updateScreen();
-			}
-		}*/
-		if (processMouseClick && target) {
-			if (list->buttonCallback) {
-				if ((*list->buttonCallback.get())(list))
-					break;
-			}
-		}
-
-		list = list->nextButton;
+		buttonList = buttonList->nextButton;
 	}
 
 	if (!returnValue)
-		returnValue = inputFlag & 0xFF;
-
+		returnValue = inputFlag & 0x7FFF;
 	return returnValue;
 }
 

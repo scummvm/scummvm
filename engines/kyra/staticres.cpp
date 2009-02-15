@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 36
+#define RESFILE_VERSION 37
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -1078,9 +1078,8 @@ bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size)
 
 	for (int i = 0; i < size; i++) {
 		r[i].buttonflags = file->readUint16BE();
-		r[i].clickedShapeId = file->readByte();
-		file->readByte();
-		r[i].unk2 = file->readUint16BE();
+		r[i].keyCode = file->readUint16BE();
+		r[i].keyCode2 = file->readUint16BE();
 		r[i].x = file->readSint16BE();
 		r[i].y = file->readSint16BE();
 		r[i].w = file->readUint16BE();

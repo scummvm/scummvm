@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 36,
+	kKyraDatVersion = 37,
 	kIndexSize = 12
 };
 
@@ -1093,8 +1093,8 @@ bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const u
 	for (int i = 0; i < num; i++) {
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2; dst += 2;
-		*dst++ = *src++;
-		*dst++ = *src++;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2; dst += 2;
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 6; dst += 2;
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));

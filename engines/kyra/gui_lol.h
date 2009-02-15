@@ -41,7 +41,7 @@ public:
 	void initStaticData();
 
 	// button specific
-	void processButton(Button *button) {}
+	void processButton(Button *button);
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
 
 	// utilities for thumbnail creation
@@ -52,6 +52,11 @@ private:
 	Screen_LoL *_screen;
 
 	bool _pressFlag;
+
+	Button *_unknownButtonList;
+	Button *_backUpButtonList;
+	bool _buttonListChanged;
+	uint16 _flagsModifier;
 
 	int scrollUp(Button *button) { return 0; }
 	int scrollDown(Button *button) { return 0; }

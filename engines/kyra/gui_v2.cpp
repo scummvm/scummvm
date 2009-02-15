@@ -218,13 +218,13 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		buttonList->flags2 &= ~0x80;
 		uint16 inFlags = inputFlag & 0x7FFF;
 		if (inFlags) {
-			if (buttonList->unk6 == inFlags) {
+			if (buttonList->keyCode == inFlags) {
 				progress = true;
 				flags = buttonList->flags & 0x0F00;
 				buttonList->flags2 |= 0x80;
 				inputFlag = 0;
 				_unknownButtonList = buttonList;
-			} else if (buttonList->unk8 == inFlags) {
+			} else if (buttonList->keyCode2 == inFlags) {
 				flags = buttonList->flags & 0xF000;
 				if (!flags)
 					flags = buttonList->flags & 0x0F00;

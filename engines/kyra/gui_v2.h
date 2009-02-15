@@ -34,8 +34,8 @@ namespace Kyra {
 	do { \
 		button.nextButton = 0; \
 		button.index = a; \
-		button.unk6 = b; \
-		button.unk8 = c; \
+		button.keyCode = b; \
+		button.keyCode2 = c; \
 		button.data0Val1 = d; \
 		button.data1Val1 = e; \
 		button.data2Val1 = f; \

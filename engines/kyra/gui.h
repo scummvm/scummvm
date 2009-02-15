@@ -46,8 +46,8 @@ struct Button {
 	Button *nextButton;
 	uint16 index;
 
-	uint16 unk6;
-	uint16 unk8;
+	uint16 keyCode;
+	uint16 keyCode2;
 
 	byte data0Val1;
 	byte data1Val1;

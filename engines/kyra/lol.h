@@ -209,8 +209,8 @@ struct CompassDef {
 
 struct ButtonDef {
 	uint16 buttonflags;
-	uint8 clickedShapeId;
-	uint16 unk2;
+	uint16 keyCode;
+	uint16 keyCode2;
 	int16 x;
 	int16 y;
 	uint16 w;
@@ -848,6 +848,9 @@ private:
 	void calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs);
 
 	// spells
+	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);
+	void spellsub2(int charNum);
+
 	int8 _availableSpells[7];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;

@@ -260,22 +260,52 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 			} else {
 				switch(event.kbd.keycode) {
 					case Common::KEYCODE_SPACE:
-						keys = 100;
+						keys = 120;
 						break;
 					case Common::KEYCODE_RETURN:
-						keys = 101;
+						keys = 121;
 						break;
 					case Common::KEYCODE_UP:
-						keys = 110;
+					case Common::KEYCODE_KP8:
+						keys = 96;
 						break;
 					case Common::KEYCODE_RIGHT:
-						keys = 111;
+					case Common::KEYCODE_KP6:
+						keys = 102;
 						break;
 					case Common::KEYCODE_DOWN:
-						keys = 112;
+					case Common::KEYCODE_KP2:
+						keys = 97;
 						break;
 					case Common::KEYCODE_LEFT:
+					case Common::KEYCODE_KP4:
+						keys = 92;
+						break;
+					case Common::KEYCODE_HOME:
+					case Common::KEYCODE_KP7:
+						keys = 91;
+						break;
+					case Common::KEYCODE_PAGEUP:
+					case Common::KEYCODE_KP9:
+						keys = 101;
+						break;
+					case Common::KEYCODE_F1:
+						keys = 112;
+						break;
+					case Common::KEYCODE_F2:
 						keys = 113;
+						break;
+					case Common::KEYCODE_F3:
+						keys = 114;
+						break;
+					case Common::KEYCODE_o:
+						keys = 25;
+						break;
+					case Common::KEYCODE_r:
+						keys = 20;
+						break;
+					case Common::KEYCODE_ESCAPE:
+						keys = 110;
 						break;
 					default:
 						break;
@@ -303,7 +333,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 			Common::Point pos = getMousePos();
 			_mouseX = pos.x;
 			_mouseY = pos.y;
-			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 299 : (300 | 0x800));
+			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;
 

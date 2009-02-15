@@ -916,30 +916,30 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			//}
 		}
 	} else {
-		int e = _vm->checkInput(0, false);
+		int e = _vm->checkInput(0, false) & 0xCF;
 		_vm->removeInputTop();
 		switch (e) {
-			case 100:
-			case 101:
+			case 120:
+			case 121:
 				_vm->snd_dialogueSpeechUpdate(1);
 				//_dlgTimer = 0;
 				res = _dialogueHighlightedButton + 1;
 				break;
 
-			case 110:
-			case 111:
+			case 92:
+			case 97:
 				if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
 					_dialogueHighlightedButton--;
 				break;
 
-			case 112:
-			case 113:
+			case 96:
+			case 102:
 				if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
 					_dialogueHighlightedButton++;
 				break;
 
 			case 200:
-			case 300:
+			case 202:
 				x = _dialogueButtonPosX;
 				
 				for (int i = 0; i < _dialogueNumButtons; i++) {

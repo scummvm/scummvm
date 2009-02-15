@@ -114,8 +114,8 @@ void GUI::initMenu(Menu &menu) {
 			menuButtonData->width  = menu.item[i].width - 1;
 			menuButtonData->height = menu.item[i].height - 1;
 			menuButtonData->buttonCallback = menu.item[i].callback;
-			menuButtonData->unk6 = menu.item[i].unk1F;
-			menuButtonData->unk8 = 0;
+			menuButtonData->keyCode = menu.item[i].unk1F;
+			menuButtonData->keyCode2 = 0;
 
 			_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
 		}

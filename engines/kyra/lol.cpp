@@ -1354,5 +1354,21 @@ void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs,
 	y = ((block & 0xffe0) << 3) | yOffs;
 }
 
+bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
+	if (_spellProperties[spellNum].mpRequired[spellLevel] > _characters[charNum].magicPointsCur) {
+
+		return true;
+	} else {
+		
+	}
+
+	return false;	
+}
+
+void LoLEngine::spellsub2(int charNum) {
+
+
+}
+
 } // end of namespace Kyra
 
