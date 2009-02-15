@@ -283,8 +283,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
-	// King's Quest 1 VGA Remake - English
-	{{"kq1sci", "VGA Remake", {
+	// King's Quest 1 SCI Remake - English
+	{{"kq1sci", "SCI Remake", {
 		{"resource.map", 0, "7fe9399a0bec84ca5727309778d27f07", 5790},
 		{"resource.001", 0, "fed9e0072ffd511d248674e60dee2099", 555439},
 		{"resource.002", 0, "fed9e0072ffd511d248674e60dee2099", 714062},
@@ -292,8 +292,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
-	// King's Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
-	{{"kq1sci", "VGA Remake", {
+	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
+	{{"kq1sci", "SCI Remake", {
 		{"resource.map", 0, "37ed1a05eb719629eba15059c2eb6cbe", 6798},
 		{"resource.001", 0, "9ae2a13708d691cd42f9129173c4b39d", 266621},
 		{"resource.002", 0, "9ae2a13708d691cd42f9129173c4b39d", 795123},
