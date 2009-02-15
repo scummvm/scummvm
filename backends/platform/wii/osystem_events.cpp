@@ -149,13 +149,13 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		return true;
 	}
 
-	u32 bd, bh, bu;
+	u32 bd = 0, bh = 0, bu = 0;
 
-	PAD_ScanPads();
-
-	bd = PAD_ButtonsDown(0);
-	bh = PAD_ButtonsHeld(0);
-	bu = PAD_ButtonsUp(0);
+	if (PAD_ScanPads() & 1) {
+		bd = PAD_ButtonsDown(0);
+		bh = PAD_ButtonsHeld(0);
+		bu = PAD_ButtonsUp(0);
+	}
 
 #ifndef GAMECUBE
 	WPAD_ScanPads();
