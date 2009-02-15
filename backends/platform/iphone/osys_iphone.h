@@ -109,7 +109,7 @@ protected:
 	ScreenOrientation _screenOrientation;
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
-	
+	int _screenChangeCount;
 	FilesystemFactory *_fsFactory;
 
 public:
@@ -165,7 +165,7 @@ public:
 	virtual void setupMixer(void);
 	virtual int getOutputSampleRate() const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
-
+ 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();
 
 	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }

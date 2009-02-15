@@ -64,7 +64,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_secondaryTapped(false), _lastSecondaryTap(0), _screenOrientation(kScreenOrientationFlippedLandscape),
 	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false), _touchpadModeEnabled(true),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
-	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1)
+	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0)
 
 {
 	_queuedInputEvent.type = (Common::EventType)0;
@@ -136,7 +136,7 @@ int OSystem_IPHONE::getGraphicsMode() const {
 }
 
 void OSystem_IPHONE::initSize(uint width, uint height) {
-	printf("initSize(%i, %i)\n", width, height);
+	//printf("initSize(%i, %i)\n", width, height);
 
 	_screenWidth = width;
 	_screenHeight = height;
@@ -164,6 +164,7 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 
 	dirtyFullScreen();
 	_mouseVisible = false;
+	_screenChangeCount++;
 	updateScreen();
 }
 
@@ -539,7 +540,7 @@ void OSystem_IPHONE::setShakePos(int shakeOffset) {
 void OSystem_IPHONE::showOverlay() {
 	//printf("showOverlay()\n");
 	_overlayVisible = true;
-	//dirtyFullOverlayScreen();
+	dirtyFullOverlayScreen();
 }
 
 void OSystem_IPHONE::hideOverlay() {
@@ -552,7 +553,7 @@ void OSystem_IPHONE::hideOverlay() {
 void OSystem_IPHONE::clearOverlay() {
 	//printf("clearOverlay()\n");
 	bzero(_overlayBuffer, _screenWidth * _screenHeight * sizeof(OverlayColor));
-	//dirtyFullOverlayScreen();
+	dirtyFullOverlayScreen();
 }
 
 void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
