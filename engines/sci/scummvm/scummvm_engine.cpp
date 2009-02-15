@@ -26,11 +26,11 @@
 ***************************************************************************/
 
 #include "common/system.h"
-#include "common/advancedDetector.h"
 #include "common/config-manager.h"
 
-#include "scummvm_engine.h"
-#include "engine.h"
+#include "engines/advancedDetector.h"
+#include "sci/scummvm/scummvm_engine.h"
+#include "sci/include/engine.h"
 
 //namespace Sci {
 
@@ -375,7 +375,7 @@ SciEngine::~SciEngine() {
 	//Common::clearAllSpecialDebugLevels();
 }
 
-int SciEngine::init(void) {
+Common::Error SciEngine::init() {
 	initCommonGFX(false);
 	_system->beginGFXTransaction();
 	//_system->initSize(640, 400),;
@@ -390,10 +390,10 @@ int SciEngine::init(void) {
 
 	// Additional setup.
 	printf("SciEngine::init\n");
-	return 0;
+	return Common::kNoError;
 }
 
-int SciEngine::go() {
+Common::Error SciEngine::go() {
 	// Your main even loop should be (invoked from) here.
 
 	/* bool end = false;
@@ -408,9 +408,10 @@ int SciEngine::go() {
 		_system->delayMillis(10);
 	} */
 
-	main_(_gameDataPath.c_str());
+	// FIXME: Not a good idea to use _gameDataDir.getPath() like this...
+	main_(_gameDataDir.getPath().c_str());
 
-	return 0;
+	return Common::kNoError;
 }
 
 //} // End of namespace Sci

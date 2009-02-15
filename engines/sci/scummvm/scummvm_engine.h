@@ -22,7 +22,7 @@ struct GameFlags {
 };
 
 struct SciGameDescription {
-	Common::ADGameDescription desc;
+	ADGameDescription desc;
 	GameFlags flags;
 };
 
@@ -33,8 +33,8 @@ class SciEngine : public Engine {
 		SciEngine(OSystem *syst, const SciGameDescription *desc);
 		~SciEngine();
 
-		virtual int init(void);
-		virtual int go(void);
+		virtual Common::Error init(void);
+		virtual Common::Error go(void);
 
 	private:
 		//Console *_console;

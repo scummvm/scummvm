@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/advancedDetector.h"
+#include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
 #include "scummvm_engine.h"
@@ -862,7 +862,7 @@ static const struct SciGameDescription SciGameGeneric[] = {
 };
 
 // Filename based fallback information
-static const struct Common::ADFileBasedFallback SciGameFallback[] = {
+static const struct ADFileBasedFallback SciGameFallback[] = {
 	{(const void*)&SciGameGeneric[0], {"resource.map", "resource.000", NULL} },
 	{(const void*)&SciGameGeneric[0], {"resource.map", "resource.001", NULL} },
 	{(const void*)&SciGameGeneric[0], {"resmap.000", "ressci.000", NULL} },
@@ -870,7 +870,7 @@ static const struct Common::ADFileBasedFallback SciGameFallback[] = {
 	{0, {NULL}}
 };
 
-static const Common::ADParams detectionParams = {
+static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)SciGameDescriptions,
 	// Size of that superset structure
@@ -889,9 +889,9 @@ static const Common::ADParams detectionParams = {
 	0
 };
 
-class SciMetaEngine : public Common::AdvancedMetaEngine {
+class SciMetaEngine : public AdvancedMetaEngine {
 public:
-	SciMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+	SciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "SCI Engine";
@@ -901,11 +901,11 @@ public:
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *gd) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
 
 
-bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *gd) const {
+bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	const SciGameDescription *desc = (const SciGameDescription *)gd;
 
 	*engine = new SciEngine(syst, desc);
