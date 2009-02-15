@@ -59,12 +59,12 @@
 
 #ifdef SCUMMVM
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
-#ifndef _MSC_VER
-#define HAVE_UNISTD_H
-#define HAVE_FCNTL_H
+#define HAVE_MEMCHR
 #define HAVE_UNLINK
 #define HAVE_RMDIR
-#define HAVE_MEMCHR
+#define HAVE_FCNTL_H
+#ifndef _MSC_VER
+#define HAVE_UNISTD_H
 #define HAVE_SYS_TIME_H
 #define HAVE_GETTIMEOFDAY
 #endif
@@ -107,9 +107,6 @@
 #endif
 
 #ifdef _MSC_VER
-//#	include <sys/timeb.h>
-#   include <fcntl.h>
-#	include <windows.h>
 #	undef strcasecmp
 #	undef strncasecmp
 #	define strcasecmp _stricmp
