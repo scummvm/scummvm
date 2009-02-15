@@ -833,7 +833,7 @@ _sci1_song_init(sci1_song_iterator_t *self)
 	offset++;
 
 	while (SONGDATA(0) != 0xff) { /* End of list? */
-		int track_offset;
+		unsigned int track_offset;
 		int end;
 		offset += 2;
 

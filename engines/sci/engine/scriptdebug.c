@@ -729,7 +729,7 @@ c_vr(state_t *s)
 int
 c_segkill(state_t *s)
 {
-	int i = 0;
+	unsigned int i = 0;
 	while (i < cmd_paramlength) {
 		int nr = cmd_params[i++].val;
 
@@ -759,7 +759,7 @@ c_mousepos(state_t *s)
 int
 c_seginfo(state_t *s)
 {
-	int i = 0;
+	unsigned int i = 0;
 
 	if (cmd_paramlength) {
 		while (i < cmd_paramlength) {
@@ -2424,7 +2424,7 @@ c_disasm_addr(state_t *s)
 	int op_count = 1;
 	int do_bwc = 0;
 	int do_bytes = 0;
-	int i;
+	unsigned int i;
 	int invalid = 0;
 	int size;
 	sm_dereference(&s->seg_manager, vpc, &size);
@@ -2571,7 +2571,7 @@ c_send(state_t *s)
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
 	stack_ptr_t stackframe = s->execution_stack->sp;
-	int i, selector_id, selector_type;
+	unsigned int i, selector_id, selector_type;
 	exec_stack_t *xstack;
 	object_t *o;
 	reg_t *vptr;
@@ -2728,7 +2728,7 @@ static int
 c_handle_config_update(const generic_config_flag_t *flags, int flags_nr,
 		       const char *subsystem, int *active_options_p)
 {
-	int i;
+	unsigned int i;
 
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
