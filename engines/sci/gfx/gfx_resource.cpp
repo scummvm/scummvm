@@ -224,7 +224,7 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_1
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_1
 #define COPY_BYTES 1
-#include "gfx_pixmap_scale.c"
+#include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 
 #define SIZETYPE guint16
@@ -232,7 +232,7 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_2
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_2
 #define COPY_BYTES 2
-#include "gfx_pixmap_scale.c"
+#include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 
 #ifdef WORDS_BIGENDIAN
@@ -244,7 +244,7 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_3
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_3
 #define COPY_BYTES 3
-#include "gfx_pixmap_scale.c"
+#include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 #ifdef WORDS_BIGENDIAN
 # undef EXTRA_BYTE_OFFSET
@@ -256,7 +256,7 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_4
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_4
 #define COPY_BYTES 4
-#include "gfx_pixmap_scale.c"
+#include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 #undef EXTRA_BYTE_OFFSET
 #undef SIZETYPE

@@ -39,25 +39,25 @@ int gfx_crossblit_alpha_threshold = 128;
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_1
 #define PIXELWIDTH 1
-#include "gfx_line.c"
+#include "gfx_line.cpp"
 #undef PIXELWIDTH
 #undef DRAWLINE_FUNC
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_2
 #define PIXELWIDTH 2
-#include "gfx_line.c"
+#include "gfx_line.cpp"
 #undef PIXELWIDTH
 #undef DRAWLINE_FUNC
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_3
 #define PIXELWIDTH 3
-#include "gfx_line.c"
+#include "gfx_line.cpp"
 #undef PIXELWIDTH
 #undef DRAWLINE_FUNC
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_4
 #define PIXELWIDTH 4
-#include "gfx_line.c"
+#include "gfx_line.cpp"
 #undef PIXELWIDTH
 #undef DRAWLINE_FUNC
 
@@ -133,25 +133,25 @@ gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color)
 
 # define FUNCTION_NAME _gfx_crossblit_8
 # define BYTESPP 1
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_16
 # define BYTESPP 2
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_24
 # define BYTESPP 3
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_32
 # define BYTESPP 4
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 #define USE_PRIORITY
 
@@ -159,25 +159,25 @@ gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color)
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_8_P
 # define BYTESPP 1
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_16_P
 # define BYTESPP 2
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_24_P
 # define BYTESPP 3
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_32_P
 # define BYTESPP 4
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 #undef USE_PRIORITY
 #undef FUNCTION_NAME
@@ -192,25 +192,25 @@ gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color)
 #define REVERSE_ALPHA
 # define FUNCTION_NAME _gfx_crossblit_8_RA
 # define BYTESPP 1
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_16_RA
 # define BYTESPP 2
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_24_RA
 # define BYTESPP 3
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_32_RA
 # define BYTESPP 4
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 #define USE_PRIORITY
 
@@ -218,25 +218,25 @@ gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color)
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_8_P_RA
 # define BYTESPP 1
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_16_P_RA
 # define BYTESPP 2
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_24_P_RA
 # define BYTESPP 3
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 # undef FUNCTION_NAME
 # undef BYTESPP
 # define FUNCTION_NAME _gfx_crossblit_32_P_RA
 # define BYTESPP 4
-# include "gfx_crossblit.c"
+# include "gfx_crossblit.cpp"
 
 #undef USE_PRIORITY
 #undef FUNCTION_NAME
