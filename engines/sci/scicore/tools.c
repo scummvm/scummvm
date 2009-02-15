@@ -38,6 +38,13 @@
 #  include <mmsystem.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#endif
+
+#ifdef _WIN32
+#  include <windows.h>
+
+void usleep (long usec);
+
 #	ifdef sleep
 #		undef sleep
 #	endif
@@ -54,13 +61,8 @@
 				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
 		} \
 	} while (0);
-#else
-#ifdef _WIN32
-#  include <windows.h>
-#  include <win32/usleep.h>
-#  include <win32/sci_win32.h>
 #endif
-#endif
+
 #if !defined(HAVE_FNMATCH) && !defined(_MSC_VER)
 #  include <beos/fnmatch.h>
 #endif
