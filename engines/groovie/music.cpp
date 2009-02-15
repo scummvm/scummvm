@@ -33,7 +33,7 @@ namespace Groovie {
 
 MusicPlayer::MusicPlayer(GroovieEngine *vm, const Common::String &gtlName) :
 	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
-	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0) {
+	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0), _isPlaying(0) {
 	// Create the parser
 	_midiParser = MidiParser::createParser_XMIDI();
 
@@ -95,6 +95,8 @@ MusicPlayer::~MusicPlayer() {
 void MusicPlayer::playSong(uint16 fileref) {
 	Common::StackLock lock(_mutex);
 
+	_fadingEndVolume = 100;
+	_gameVolume = 100;
 	// Play the referenced file once
 	play(fileref, false);
 }
@@ -174,19 +176,26 @@ void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
 		_fadingEndVolume = 100;
 }
 
-void MusicPlayer::endTrack() {
-	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: End of song");
-	unload();
-	if (_backgroundFileRef) {
+void MusicPlayer::startBackground() {
+	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: startBackground()");
+	if (!_isPlaying && _backgroundFileRef) {
+		debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the background song (0x%4X)", _backgroundFileRef);
 		play(_backgroundFileRef, true);
 	}
 }
 
+void MusicPlayer::endTrack() {
+	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: endTrack()");
+	unload();
+}
+
 void MusicPlayer::applyFading() {
+	debugC(6, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: applyFading() _fadingStartTime = %d, _fadingDuration = %d, _fadingStartVolume = %d, _fadingEndVolume = %d", _fadingStartTime, _fadingDuration, _fadingStartVolume, _fadingEndVolume);
 	Common::StackLock lock(_mutex);
 
 	// Calculate the passed time
 	uint32 time = _vm->_system->getMillis() - _fadingStartTime;
+	debugC(6, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: time = %d, _gameVolume = %d", time, _gameVolume);
 	if (time >= _fadingDuration) {
 		// Set the end volume
 		_gameVolume = _fadingEndVolume;
@@ -195,13 +204,11 @@ void MusicPlayer::applyFading() {
 		_gameVolume = (_fadingStartVolume * (_fadingDuration - time) +
 			_fadingEndVolume * time) / _fadingDuration;
 	}
-
 	if (_gameVolume == _fadingEndVolume) {
 		// If we were fading to 0, stop the playback and restore the volume
 		if (_fadingEndVolume == 0) {
 			debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Faded to zero: end of song");
 			unload();
-			_fadingEndVolume = 100;
 		}
 	}
 
@@ -232,8 +239,8 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 
 	// Set the looping option
 	_midiParser->property(MidiParser::mpAutoLoop, loop);
-	_gameVolume = 100;
 
+	_isPlaying = true;
 	// Load the new file
 	return load(fileref);
 }
@@ -269,6 +276,7 @@ bool MusicPlayer::load(uint16 fileref) {
 void MusicPlayer::unload() {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Stopping the playback");
 
+	_isPlaying = false;
 	// Unload the parser
 	_midiParser->unloadMusic();
 
@@ -355,6 +363,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 }
 
 void MusicPlayer::onTimer(void *refCon) {
+	debugC(9, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: onTimer()");
 	MusicPlayer *music = (MusicPlayer *)refCon;
 	Common::StackLock lock(music->_mutex);
 
