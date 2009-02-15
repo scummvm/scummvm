@@ -95,11 +95,6 @@ MODULE_OBJS = \
 CXXFLAGS += -Wno-variadic-macros
 CPPFLAGS += -DSCUMMVM
 
-# Build .c files as C++
-%.o: %.c
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-
 # Generate savegame.cpp
 $(srcdir)/engines/sci/engine/savegame.c: $(srcdir)/engines/sci/engine/savegame.cfsml
 	cat $< | perl $(srcdir)/engines/sci/engine/cfsml.pl -f savegame.cfsml > $@
