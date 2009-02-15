@@ -332,16 +332,17 @@ protected:
 				return parserError("Malformed comment syntax.");
 
 			_char = _stream->readByte();
-			bool dash = false;
 
 			while (_char) {
 				if (_char == '-') {
-					if (dash && _stream->readByte() == '>') {
+					if (_stream->readByte() == '-') {
+
+						if (_stream->readByte() != '>')
+							return parserError("Malformed comment (double-hyphen inside comment body).");
+
 						_char = _stream->readByte();
 						return true;
 					}
-
-					dash = !dash;
 				}
 
 				_char = _stream->readByte();
