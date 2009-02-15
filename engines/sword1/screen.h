@@ -137,6 +137,7 @@ private:
 	uint8  _rleBuffer[RLE_BUFFER_SIZE];
 	uint8  _shrinkBuffer[SHRINK_BUFFER_SIZE];
 	bool   _fullRefresh;
+	bool   _updatePalette;
 	uint16 _oldScrollX, _oldScrollY; // for drawing additional frames
 
 	uint32  _foreList[MAX_FORE];

@@ -55,6 +55,7 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_backLength = _foreLength = _sortLength = 0;
 	_fadingStep = 0;
 	_currentScreen = 0xFFFF;
+	_updatePalette = false;
 }
 
 Screen::~Screen(void) {
@@ -169,7 +170,7 @@ bool Screen::stillFading(void) {
 }
 
 bool Screen::showScrollFrame(void) {
-	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE])
+	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE] || _updatePalette)
 		return false; // don't draw an additional frame if we aren't scrolling or have to change the palette
 	if ((_oldScrollX == Logic::_scriptVars[SCROLL_OFFSET_X]) &&
 		(_oldScrollY == Logic::_scriptVars[SCROLL_OFFSET_Y]))
@@ -187,9 +188,13 @@ void Screen::updateScreen(void) {
 	if (Logic::_scriptVars[NEW_PALETTE]) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
-		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], true);
-		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], true);
+		_updatePalette = true;
 		Logic::_scriptVars[NEW_PALETTE] = 0;
+	}
+	if (_updatePalette) {
+		fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], false);
+		fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], false);
+		_updatePalette = false;
 	}
 	if (_fadingStep) {
 		fadePalette();
@@ -336,8 +341,7 @@ void Screen::newScreen(uint32 screen) {
 	if (_roomDefTable[_currentScreen].parallax[1])
 		_parallax[1] = (uint8*)_resMan->openFetchRes(_roomDefTable[_currentScreen].parallax[1]);
 
-	fnSetPalette(0, 184, _roomDefTable[_currentScreen].palettes[0], SwordEngine::_systemVars.wantFade);
-	fnSetPalette(184, 72, _roomDefTable[_currentScreen].palettes[1], SwordEngine::_systemVars.wantFade);
+	_updatePalette = true;
 	_fullRefresh = true;
 }
 
