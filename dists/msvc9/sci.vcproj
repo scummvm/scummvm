@@ -274,10 +274,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\simplesaid.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\sys_strings.c"
 				>
 			</File>
@@ -606,14 +602,6 @@
 				>
 				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\amiga.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\fmopl.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\fmopl.h"
 					>
 				</File>
 				<File
