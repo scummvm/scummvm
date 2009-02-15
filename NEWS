@@ -21,7 +21,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for MIDI music.
 
  SCUMM:
-   - Fixed a long-time bug which caused talkspeed and talkdelay to be mixed up.
    - Implemented radio-chatter effect in The DIG.
 
 0.12.0 (2008-08-31)
