@@ -117,7 +117,7 @@ sub create_string_functions
 #endif
 
 static void
-_cfsml_error(char *fmt, ...)
+_cfsml_error(const char *fmt, ...)
 {
   va_list argp;
 
@@ -196,9 +196,9 @@ static void _cfsml_register_pointer(void *ptr)
 
 
 static char *
-_cfsml_mangle_string(char *s)
+_cfsml_mangle_string(const char *s)
 {
-  char *source = s;
+  const char *source = s;
   char c;
   char *target = (char *) sci_malloc(1 + strlen(s) * 2); /* We will probably need less than that */
   char *writer = target;
@@ -220,14 +220,15 @@ _cfsml_mangle_string(char *s)
 
 
 static char *
-_cfsml_unmangle_string(char *s)
+_cfsml_unmangle_string(const char *s, unsigned int length)
 {
   char *target = (char *) sci_malloc(1 + strlen(s));
   char *writer = target;
-  char *source = s;
+  const char *source = s;
+  const char *end = s + length;
   char c;
 
-  while ((c = *source++) && (c > 31)) {
+  while ((source != end) && (c = *source++) && (c > 31)) {
     if (c == '\\') { /* Escaped character? */
       c = *source++;
       if ((c != '\\') && (c != '"')) /* Un-escape 0-31 only */
@@ -430,7 +431,7 @@ sub create_declaration
       $types{$type}{'reader'} = "_cfsml_read_" . $typename;
       write_line_pp(__LINE__, 0);
       print "static void\n$types{$type}{'writer'}(FILE *fh, $ctype* save_struc);\n";
-      print "static int\n$types{$type}{'reader'}(FILE *fh, $ctype* save_struc, char *lastval,".
+      print "static int\n$types{$type}{'reader'}(FILE *fh, $ctype* save_struc, const char *lastval,".
 	" int *line, int *hiteof);\n\n";
     };
 
@@ -455,7 +456,7 @@ sub create_writer
 	print "  if (!(*save_struc))\n";
 	print "    fprintf(fh, \"\\\\null\\\\\");\n";
 	print "  else {\n";
-	print "    char *token = _cfsml_mangle_string((char *) *save_struc);\n";
+	print "    char *token = _cfsml_mangle_string((const char *) *save_struc);\n";
 	print "    fprintf(fh, \"\\\"%s\\\"\", token);\n";
 	print "    free(token);\n";
 	print "  }\n";
@@ -537,7 +538,7 @@ sub create_reader
 
     write_line_pp(__LINE__, 0);
     print "static int\n_cfsml_read_$typename";
-    print "(FILE *fh, $ctype* save_struc, char *lastval, int *line, int *hiteof)\n{\n";
+    print "(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
 
     print "  char *token;\n";
     if ($types{$type}{'type'} eq $type_record) {
@@ -577,18 +578,17 @@ sub create_reader
 	write_line_pp(__LINE__, 0);
 	print "\n";
 	print "  if (strcmp(lastval, \"\\\\null\\\\\")) { /* null pointer? */\n";
+    print "    unsigned int length = strlen(lastval);\n";
 	print "    if (*lastval == '\"') { /* Quoted string? */\n";
-	print "      int seeker = strlen(lastval);\n\n";
-	print "      while (lastval[seeker] != '\"')\n";
-	print "        --seeker;\n\n";
-	print "      if (!seeker) { /* No matching double-quotes? */\n";
+	print "      while (lastval[length] != '\"')\n";
+	print "        --length;\n\n";
+	print "      if (!length) { /* No matching double-quotes? */\n";
 	print "        _cfsml_error(\"Unbalanced quotes at line %d\\n\", *line);\n";
 	print "        return CFSML_FAILURE;\n";
 	print "      }\n\n";
-	print "      lastval[seeker] = 0; /* Terminate string at closing quotes... */\n";
 	print "      lastval++; /* ...and skip the opening quotes locally */\n";
 	print "    }\n";
-	print "    *save_struc = _cfsml_unmangle_string(lastval);\n";
+	print "    *save_struc = _cfsml_unmangle_string(lastval, length);\n";
 	print "    _cfsml_register_pointer(*save_struc);\n";
 	print "    return CFSML_SUCCESS;\n";
 	print "  } else {\n";
@@ -605,7 +605,7 @@ sub create_reader
 	print "  };\n";
 	print "  closed = 0;\n";
 	print "  do {\n";
-	print "    char *value;\n";
+	print "    const char *value;\n";
 	print "    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);\n\n";
 	print "    if (!token) {\n";
 	print "       _cfsml_error(\"Expected token at line %d\\n\", *line);\n";
@@ -837,10 +837,10 @@ sub insert_reader_code {
 
   if ($firsttoken) {
       write_line_pp(__LINE__, 0);
-      print "    char *_cfsml_inp = $firsttoken;\n";
+      print "    const char *_cfsml_inp = $firsttoken;\n";
   } else {
       write_line_pp(__LINE__, 0);
-      print "    char *_cfsml_inp =".
+      print "    const char *_cfsml_inp =".
 	  " _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, &dummy);\n\n";
   }
 

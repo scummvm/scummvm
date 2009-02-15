@@ -64,7 +64,7 @@ write_reg_t(FILE *fh, reg_t *foo)
 }
 
 int
-read_reg_t(FILE *fh, reg_t *foo, char *lastval, int *line, int *hiteof)
+read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof)
 {
 	int segment, offset;
 
@@ -86,7 +86,7 @@ write_sci_version(FILE *fh, sci_version_t *foo)
 }
 
 int
-read_sci_version(FILE *fh, sci_version_t *foo, char *lastval, int *line, int *hiteof)
+read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof)
 {
 	return version_parse(lastval, foo);
 }
@@ -101,10 +101,10 @@ write_PTN(FILE *fh, parse_tree_node_t *foo)
 }
 
 int
-read_PTN(FILE *fh, parse_tree_node_t *foo, char *lastval, int *line, int *hiteof)
+read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof)
 {
 	if (lastval[0] == 'L') {
-		char *c = lastval + 1;
+		const char *c = lastval + 1;
 		char *strend;
 
 		while (*c && isspace(*c))
@@ -119,7 +119,7 @@ read_PTN(FILE *fh, parse_tree_node_t *foo, char *lastval, int *line, int *hiteof
 
 		return 0;
 	} else if (lastval[0] == 'B') {
-		char *c = lastval + 1;
+		const char *c = lastval + 1;
 		char *strend;
 
 		while (*c && isspace(*c)) ++c;
@@ -153,30 +153,30 @@ read_PTN(FILE *fh, parse_tree_node_t *foo, char *lastval, int *line, int *hiteof
 void
 write_menubar_tp(FILE *fh, menubar_t **foo);
 int
-read_menubar_tp(FILE *fh, menubar_t **foo, char *lastval, int *line, int *hiteof);
+read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
 
 void
 write_mem_obj_tp(FILE *fh, mem_obj_t **foo);
 int
-read_mem_obj_tp(FILE *fh, mem_obj_t **foo, char *lastval, int *line, int *hiteof);
+read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
 
 void
 write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo);
 int
-read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, char *lastval, int *line, int *hiteof);
+read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof);
 
 void
 write_songlib_t(FILE *fh, songlib_t *foo);
 int
-read_songlib_t(FILE *fh, songlib_t *foo, char *lastval, int *line, int *hiteof);
+read_songlib_t(FILE *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
 void
 write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo);
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, char *lastval, int *line, int *hiteof);
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof);
 
 int
-read_song_tp(FILE *fh, song_t **foo, char *lastval, int *line, int *hiteof);
+read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
 
 typedef mem_obj_t *mem_obj_ptr;
 
@@ -421,7 +421,7 @@ write_songlib_t(FILE *fh, songlib_t *songlib)
 }
 
 int
-read_songlib_t(FILE *fh, songlib_t *songlib, char *lastval, int *line, int *hiteof)
+read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof)
 {
   int songcount;
   int i;
@@ -447,7 +447,7 @@ read_songlib_t(FILE *fh, songlib_t *songlib, char *lastval, int *line, int *hite
 
 struct {
 	int type;
-	char *name;
+	const char *name;
 } mem_obj_string_names[] = {
 	{MEM_OBJ_INVALID, "INVALID"},
 	{MEM_OBJ_SCRIPT, "SCRIPT"},
@@ -461,7 +461,7 @@ struct {
 	{MEM_OBJ_DYNMEM,"DYNMEM"}};
 
 int
-mem_obj_string_to_enum(char *str)
+mem_obj_string_to_enum(const char *str)
 {
 	int i;
 
@@ -491,7 +491,7 @@ song_iterator_t *
 build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
 
 int
-read_song_tp(FILE *fh, song_t **foo, char *lastval, int *line, int *hiteof)
+read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof)
 {
   char *token;
   int assignment;
@@ -504,7 +504,7 @@ read_song_tp(FILE *fh, song_t **foo, char *lastval, int *line, int *hiteof)
   return 0;
 }
 int
-read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, char *lastval, int *line, int *hiteof)
+read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof)
 {
 	*foo = (int_hash_map_t*)malloc(sizeof(int_hash_map_t));
 	%CFSMLREAD int_hash_map_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
@@ -530,7 +530,7 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
 }
 
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, char *lastval, int *line, int *hiteof)
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof)
 {
 	static char buffer[80];
 
@@ -586,7 +586,7 @@ write_menubar_tp(FILE *fh, menubar_t **foo)
 
 
 int
-read_menubar_tp(FILE *fh, menubar_t **foo, char *lastval, int *line, int *hiteof)
+read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof)
 {
 
 	if (lastval[0] == '\\') {
@@ -637,7 +637,7 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
 }
 
 int
-read_mem_obj_t(FILE *fh, mem_obj_t *foo, char *lastval, int *line, int *hiteof)
+read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof)
 {
 	char buffer[80];
 	foo->type = mem_obj_string_to_enum(lastval);
@@ -696,7 +696,7 @@ write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
 }
 
 int
-read_mem_obj_tp(FILE *fh, mem_obj_t **foo, char *lastval, int *line, int *hiteof)
+read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof)
 {
 
 	if (lastval[0] == '\\') {
