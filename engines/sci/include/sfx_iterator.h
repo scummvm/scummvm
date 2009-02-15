@@ -57,9 +57,9 @@ typedef struct {
 #define _SIMSG_BASE 0 /* Any base decoder */
 #define _SIMSG_BASEMSG_SET_LOOPS 0 /* Set loops */
 #define _SIMSG_BASEMSG_CLONE 1 /* Clone object and data. Must provide the
-			       ** (possibly negative) number of ticks that have
-			       ** passed since the last delay time started being
-			       ** used  */
+** (possibly negative) number of ticks that have
+** passed since the last delay time started being
+** used  */
 #define _SIMSG_BASEMSG_SET_PLAYMASK 2 /* Set the current playmask for filtering */
 #define _SIMSG_BASEMSG_SET_RHYTHM 3 /* Activate/deactivate rhythm channel */
 #define _SIMSG_BASEMSG_ACK_MORPH 4 /* Acknowledge self-morph */
@@ -114,19 +114,19 @@ typedef struct {
         int (*get_timepos) (struct _song_iterator *self);                                         \
 	listener_t death_listeners[SONGIT_MAX_LISTENERS];					  \
 	int death_listeners_nr									  \
-
+ 
 #define SONGIT_MAX_LISTENERS 2
 
 typedef struct _song_iterator {
 
 	songit_id_t ID;
 	guint16 channel_mask; /* Bitmask of all channels this iterator will use */
-        fade_params_t fade;                                                                       
+	fade_params_t fade;
 	unsigned int flags;
 	int priority;
 
-	int (*next) (struct _song_iterator *self,
-		     unsigned char *buf, int *result);
+	int (*next)(struct _song_iterator *self,
+	            unsigned char *buf, int *result);
 	/* Reads the next MIDI operation _or_ delta time
 	** Parameters: (song_iterator_t *) self
 	**             (byte *) buf: The buffer to write to (needs to be able to
@@ -144,7 +144,7 @@ typedef struct _song_iterator {
 	** PCM, but this must be done before any subsequent calls to next().
 	*/
 
-	sfx_pcm_feed_t * (*get_pcm_feed) (struct _song_iterator *self);
+	sfx_pcm_feed_t * (*get_pcm_feed)(struct _song_iterator *self);
 	/* Checks for the presence of a pcm sample
 	** Parameters: (song_iterator_t *) self
 	** Returns   : (sfx_pcm_feed_t *) NULL if no PCM data was found, a
@@ -153,7 +153,7 @@ typedef struct _song_iterator {
 
 
 	struct _song_iterator *
-	(* handle_message)(struct _song_iterator *self, song_iterator_message_t msg);
+				(* handle_message)(struct _song_iterator *self, song_iterator_message_t msg);
 	/* Handles a message to the song iterator
 	** Parameters: (song_iterator_t *) self
 	**             (song_iterator_messag_t) msg: The message to handle
@@ -168,20 +168,20 @@ typedef struct _song_iterator {
 	*/
 
 
-	void (*init) (struct _song_iterator *self);
+	void (*init)(struct _song_iterator *self);
 	/* Resets/initializes the sound iterator
 	** Parameters: (song_iterator_t *) self
 	** Returns   : (void)
 	*/
 
-	void (*cleanup) (struct _song_iterator *self);
+	void (*cleanup)(struct _song_iterator *self);
 	/* Frees any content of the iterator structure
 	** Parameters: (song_iterator_t *) self
 	** Does not physically free(self) yet. May be NULL if nothing needs to be done.
 	** Must not recurse on its delegate.
 	*/
 
-	int (*get_timepos) (struct _song_iterator *self);
+	int (*get_timepos)(struct _song_iterator *self);
 	/* Gets the song position to store in a savegame
 	** Parameters: (song_iterator_t *) self
 	*/
@@ -198,13 +198,13 @@ typedef struct _song_iterator {
 
 /* Song iterator flags */
 #define SONGIT_FLAG_CLONE	(1 << 0)	/* This flag is set for clones, which are exclusively used in song players.
-						** Thus, this flag distinguishes song iterators in the main thread from those
-						** in the song-player thread. */
+** Thus, this flag distinguishes song iterators in the main thread from those
+** in the song-player thread. */
 
 void
 song_iterator_add_death_listener(song_iterator_t *it,
-	     void *client,
-	     void (*notify) (void *self, void *notifier));
+                                 void *client,
+                                 void (*notify)(void *self, void *notifier));
 /* Adds a death listener to a song iterator
 ** Parameters: (song_iterator_t *) it: The iterator to add to
 **             (void *) client: The object wanting to be notified
@@ -217,7 +217,7 @@ song_iterator_add_death_listener(song_iterator_t *it,
 
 void
 song_iterator_remove_death_listener(song_iterator_t *it,
-				    void *client);
+                                    void *client);
 /* Removes a death listener from a song iterator
 ** Parameters: (song_iterator_t *) it: The iterator to modify
 **             (void *) client: The object no longer wanting to be notified
@@ -240,8 +240,8 @@ song_iterator_remove_death_listener(song_iterator_t *it,
 #define IT_READER_MASK_PCM	(1 << 4)
 #define IT_READER_MAY_FREE	(1 << 10) /* Free SI_FINISHED iterators */
 #define IT_READER_MAY_CLEAN	(1 << 11)
-	/* MAY_CLEAN: May instantiate cleanup iterators
-	** (use for players; this closes open channels at the end of a song) */
+/* MAY_CLEAN: May instantiate cleanup iterators
+** (use for players; this closes open channels at the end of a song) */
 
 #define IT_READER_MASK_ALL (  IT_READER_MASK_MIDI	\
 			    | IT_READER_MASK_DELAY	\
@@ -299,7 +299,7 @@ songit_free(song_iterator_t *it);
 
 song_iterator_message_t
 songit_make_message(songit_id_t id,
-		    int recipient_class, int type, int a1, int a2);
+                    int recipient_class, int type, int a1, int a2);
 /* Create a song iterator message
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
 **             (int) recipient_class: Message recipient class
@@ -310,7 +310,7 @@ songit_make_message(songit_id_t id,
 
 song_iterator_message_t
 songit_make_ptr_message(songit_id_t id,
-			int recipient_class, int type, void * a1, int a2);
+                        int recipient_class, int type, void * a1, int a2);
 /* Create a song iterator message, wherein the first parameter is a pointer
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
 **             (int) recipient_class: Message recipient class
@@ -335,7 +335,7 @@ songit_clone(song_iterator_t *it, int delta);
 **             (int) delta: Number of ticks that still need to elapse until
 **                          the next item should be read from the song iterator
 ** Returns   : (song_iterator_t *) A shallow clone of 'it'.
-** This performs a clone on the bottom-most part (containing the actual song data) _only_. 
+** This performs a clone on the bottom-most part (containing the actual song data) _only_.
 ** The justification for requiring 'delta' to be passed in here is that this
 ** is typically maintained outside of the song iterator.
 */

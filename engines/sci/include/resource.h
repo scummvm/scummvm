@@ -188,8 +188,7 @@
 #define _GET_INT_16
 
 static inline gint16
-getInt16(byte *d)
-{
+getInt16(byte *d) {
 	return (gint16)(*d | (d[1] << 8));
 }
 
@@ -202,10 +201,9 @@ getInt16(byte *d)
 */
 
 static inline void
-putInt16(byte* dest, int src)
-{
-	dest[0]=(byte)src&0xff;
-	dest[1]=(byte)(src>>8)&0xff;
+putInt16(byte* dest, int src) {
+	dest[0] = (byte)src & 0xff;
+	dest[1] = (byte)(src >> 8) & 0xff;
 }
 /* Converse of getInt16()
 ** Parameters: (byte *) dest: The position to write to
@@ -383,7 +381,7 @@ sci_fd_size(int fd);
 /* Returns the filesize of an open file
 ** Parameters: (int) fd: File descriptor of open file
 ** Returns   : (int) filesize of file pointed to by fd, -1 on error
-*/ 
+*/
 
 int
 sci_file_size(const char *fname);

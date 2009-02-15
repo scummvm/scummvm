@@ -4,10 +4,9 @@
 #include <sciresource.h>
 #include <util.h>
 
-typedef FLEXARRAY(script_opcode,int number;) script_method;
+typedef FLEXARRAY(script_opcode, int number;) script_method;
 
-typedef struct object_
-{
+typedef struct object_ {
 	/*These are based on cached selector values, and set to the values
 	 *the selectors had at load time. If the selectors are changed in
 	 *instances, inconsistency will follow*/
@@ -24,12 +23,11 @@ typedef struct object_
 	int* selector_numbers;
 } object;
 
-typedef struct
-{
-  int id;
-  object* classID;
-  byte* heap;
-  int offset;
+typedef struct {
+	int id;
+	object* classID;
+	byte* heap;
+	int offset;
 } instance;
 
 extern object **object_map, *object_root;

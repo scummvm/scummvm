@@ -136,7 +136,8 @@ typedef struct {
 	int channels_looped; /* Number of channels that are ready to loop */
 
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
-	int hold;                                                                               \
+	int hold;
+	\
 } sci1_song_iterator_t;
 
 #define PLAYMASK_NONE 0x0
@@ -225,8 +226,8 @@ typedef struct {
 
 sfx_pcm_feed_t *
 sfx_iterator_make_feed(byte *base_data, int offset,
-		       int size,
-		       sfx_pcm_config_t conf);
+                       int size,
+                       sfx_pcm_config_t conf);
 /* Generates a feed for a song iterator
 ** Parameters: (byte *) base_data: A refcounted memory chunk containing
 **                                 (among other things) PCM data

@@ -50,8 +50,8 @@ extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this va
 
 gfx_mode_t *
 gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
-	     unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
-	     int blue_shift, int alpha_shift, int palette, int flags);
+             unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
+             int blue_shift, int alpha_shift, int palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters
 ** Parameters: (int x int) xfact x yfact: Horizontal and vertical scaling factors
 **             (int) bytespp: Bytes per pixel
@@ -160,7 +160,7 @@ gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, point_t start, point_t end, int color)
 
 void
 gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
-		     point_t start, point_t end, unsigned int color);
+                     point_t start, point_t end, unsigned int color);
 /* Draws a line to a linear pixel buffer
 ** Parameters: (byte *) buffer: Pointer to the start of the buffer to draw to
 **             (int) linewidth: Number of bytes per pixel line in the buffer
@@ -217,9 +217,9 @@ gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type
 
 int
 gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
-		     rect_t src_coords, rect_t dest_coords, byte *dest,
-		     int dest_line_width, byte *priority_dest,
-		     int priority_line_width, int priority_skip,
+                     rect_t src_coords, rect_t dest_coords, byte *dest,
+                     int dest_line_width, byte *priority_dest,
+                     int priority_line_width, int priority_skip,
                      int flags);
 /* Transfers the non-transparent part of a pixmap to a linear pixel buffer
 ** Parameters: (gfx_mode_t *) mode: The graphics mode of the target buffer
@@ -277,15 +277,15 @@ extern int axp_have_mvi; /* set to 1 iff the local system has the MVI instructio
 
 void
 alpha_mvi_crossblit_32(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
-		       int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-		       unsigned int alpha_test_mask, int alpha_shift);
+                       int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
+                       unsigned int alpha_test_mask, int alpha_shift);
 /* Internal function for accellerated 32 bit cross-blitting on Alpha hardware */
 
 void
 alpha_mvi_crossblit_32_P(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
-			 int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-			 unsigned int alpha_test_mask, int alpha_shift,
-			 byte *priority_pos, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority);
+                         int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
+                         unsigned int alpha_test_mask, int alpha_shift,
+                         byte *priority_pos, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority);
 /* Internal function for accellerated 32 bit cross-blitting on Alpha hardware (with priority) */
 #endif /* __alpha__ */
 

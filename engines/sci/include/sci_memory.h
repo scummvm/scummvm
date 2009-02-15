@@ -168,7 +168,7 @@ do {\
 /********** memory allocation routines **********/
 
 extern void *
-_SCI_MALLOC(size_t size, const char *file, int line, const char *funct);
+	_SCI_MALLOC(size_t size, const char *file, int line, const char *funct);
 /* Allocates the specified amount of memory.
 ** Parameters: (size_t) size: Number of bytes to allocate
 **             (char *) file: Filename this routine is called from
@@ -183,7 +183,7 @@ _SCI_MALLOC(size_t size, const char *file, int line, const char *funct);
 */
 
 extern void *
-_SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *funct);
+	_SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *funct);
 /* Allocates num * size bytes of zeroed-out memory.
 ** Parameters: (size_t) num: Number of elements to allocate
 **             (size_t) size: Amount of memory per element to allocate
@@ -194,7 +194,7 @@ _SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *fun
 */
 
 extern void *
-_SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *funct);
+	_SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *funct);
 /* Increases the size of an allocated memory chunk.
 ** Parameters: (void *) ptr: The original pointer
 **             (size_t) size: New size of the memory chunk
@@ -208,7 +208,7 @@ _SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *fun
 */
 
 extern void
-_SCI_FREE(void *ptr, const char *file, int line, const char *funct);
+	_SCI_FREE(void *ptr, const char *file, int line, const char *funct);
 /* Frees previously allocated memory chunks
 ** Parameters: (void *) ptr: The pointer to free
 **             Please see _SCI_MALLOC() for details on other parameters.
@@ -216,7 +216,7 @@ _SCI_FREE(void *ptr, const char *file, int line, const char *funct);
 */
 
 extern void *
-_SCI_MEMDUP(const void *src, size_t size, const char *file, int line, const char *funct);
+	_SCI_MEMDUP(const void *src, size_t size, const char *file, int line, const char *funct);
 /* Duplicates a chunk of memory
 ** Parameters: (void *) src: Pointer to the data to duplicate
 **             (size_t) size: Number of bytes to duplicate
@@ -228,7 +228,7 @@ _SCI_MEMDUP(const void *src, size_t size, const char *file, int line, const char
 */
 
 extern char *
-_SCI_STRDUP(const char *src, const char *file, int line, const char *funct);
+	_SCI_STRDUP(const char *src, const char *file, int line, const char *funct);
 /* Duplicates a string.
 ** Parameters: (const char *) src: The original pointer
 **             Please see _SCI_MALLOC() for details on other parameters.
@@ -240,7 +240,7 @@ _SCI_STRDUP(const char *src, const char *file, int line, const char *funct);
 
 
 extern char *
-_SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const char *funct);
+	_SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const char *funct);
 /* Copies a string into a newly allocated memory part, up to a certain length.
 ** Parameters: (char *) src: The source string
 **             (int) length: The maximum length of the string (not counting
@@ -262,7 +262,7 @@ _SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const c
 #define SCI_REFCOUNT_TEST(f) sci_refcount_incref(f); sci_refcount_decref(f);
 
 extern void *
-sci_refcount_alloc(size_t length);
+	sci_refcount_alloc(size_t length);
 /* Allocates "garbage" memory
 ** Parameters: (size_t) length: Number of bytes to allocate
 ** Returns   : (void *) The allocated memory
@@ -271,14 +271,14 @@ sci_refcount_alloc(size_t length);
 */
 
 extern void *
-sci_refcount_incref(void *data);
+	sci_refcount_incref(void *data);
 /* Adds another reference to refcounted memory
 ** Parameters: (void *) data: The data to add a reference to
 ** Returns   : (void *) data
 */
 
 extern void
-sci_refcount_decref(void *data);
+	sci_refcount_decref(void *data);
 /* Decrements the reference count for refcounted memory
 ** Parameters: (void *) data: The data to add a reference to
 ** Returns   : (void *) data
@@ -286,7 +286,7 @@ sci_refcount_decref(void *data);
 */
 
 extern void *
-sci_refcount_memdup(void *data, size_t len);
+	sci_refcount_memdup(void *data, size_t len);
 /* Duplicates non-refcounted memory into a refcounted block
 ** Parameters: (void *) data: The memory to copy from
 **             (size_t) len: The number of bytes to copy/allocate
@@ -373,7 +373,7 @@ sci_refcount_memdup(void *data, size_t len);
 
 #ifdef WIN32
 extern void
-debug_win32_memory(int dbg_setting);
+	debug_win32_memory(int dbg_setting);
 /* Sets debugging for Win32 memory.
 ** Parameters: (bool) dbg_setting:
 **                      0: no debugging

@@ -66,6 +66,6 @@ int
 reg_t_hash_map_remove_value(reg_t_hash_map_ptr, reg_t value);
 
 void
-apply_to_reg_t_hash_map(reg_t_hash_map_ptr map, void *param, void (*note) (void *param, reg_t name, int value));
+apply_to_reg_t_hash_map(reg_t_hash_map_ptr map, void *param, void (*note)(void *param, reg_t name, int value));
 
 #endif /* _INT_HASHMAP_H_ */

@@ -110,7 +110,7 @@
 
 typedef struct {
 	int script; /* number of the script the class is in, -1 for non-existing */
-	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */  
+	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
 } class_t;
 
 #define RAW_GET_CLASS_INDEX(scr, reg) (int_hash_map_check_value((scr)->obj_indices, reg.offset, 0, NULL))
@@ -200,8 +200,8 @@ typedef struct {
 	int lockers; /* Number of classes and objects that require this script */
 
 	object_t *objects; /* Table for objects, contains property variables */
-			   /* Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
-			   ** see VM_OBJECT_[GS]ET_INDEX()  */
+	/* Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
+	** see VM_OBJECT_[GS]ET_INDEX()  */
 	int objects_nr; /* Number of objects and classes */
 	int objects_allocated; /* Number of allocated objects */
 
@@ -260,7 +260,7 @@ typedef struct {
 
 typedef struct _mem_obj {
 	int type;
-        int segmgr_id; /* Internal value used by the seg_manager's hash map */
+	int segmgr_id; /* Internal value used by the seg_manager's hash map */
 	union {
 		script_t script;
 		clone_table_t clones;
@@ -336,7 +336,7 @@ typedef struct {
 
 	selector_t vol;
 	selector_t pri;
-	
+
 	selector_t min;	/* SMPTE time format */
 	selector_t sec;
 	selector_t frame;
@@ -451,9 +451,10 @@ typedef int kernel_function(struct _state* s);
 extern kernel_function* kfuncs[];
 extern int max_instance;
 
-/*inline*/ exec_stack_t *
+/*inline*/
+exec_stack_t *
 execute_method(struct _state *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj,
-	       word argc, stack_ptr_t argp);
+               word argc, stack_ptr_t argp);
 /* Executes function pubfunct of the specified script.
 ** Parameters: (state_t *) s: The state which is to be executed with
 **             (word) script: The script which is called
@@ -468,7 +469,7 @@ execute_method(struct _state *s, word script, word pubfunct, stack_ptr_t sp, reg
 
 exec_stack_t *
 send_selector(struct _state *s, reg_t send_obj, reg_t work_obj,
-	      stack_ptr_t sp, int framesize, stack_ptr_t argp);
+              stack_ptr_t sp, int framesize, stack_ptr_t argp);
 /* Executes a "send" or related operation to a selector
 ** Parameters: (state_t *) s: The state_t to operate on
 **             (reg_t) send_obj: Heap address of the object to send to
@@ -487,8 +488,8 @@ send_selector(struct _state *s, reg_t send_obj, reg_t work_obj,
 
 exec_stack_t *
 add_exec_stack_entry(struct _state *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
-		     stack_ptr_t argp, selector_t selector, reg_t sendp, int origin,
-		     seg_id_t local_segment);
+                     stack_ptr_t argp, selector_t selector, reg_t sendp, int origin,
+                     seg_id_t local_segment);
 /* Adds an entry to the top of the execution stack
 ** Parameters: (state_t *) s: The state with which to execute
 **             (reg_t) pc: The initial program counter
@@ -510,7 +511,7 @@ add_exec_stack_entry(struct _state *s, reg_t pc, stack_ptr_t sp, reg_t objp, int
 
 exec_stack_t *
 add_exec_stack_varselector(struct _state *s, reg_t objp, int argc, stack_ptr_t argp,
-			   selector_t selector, reg_t *address, int origin);
+                           selector_t selector, reg_t *address, int origin);
 /* Adds one varselector access to the execution stack
 ** Parameters: (state_t *) s: The state_t to use
 **             (reg_t) objp: Pointer to the object owning the selector
@@ -545,10 +546,10 @@ vm_handle_fatal_error(struct _state *s, int line, const char *file);
 
 void
 script_debug(struct _state *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
-	     int *restadjust,
-	     seg_id_t *segids, reg_t **variables, reg_t **variables_base,
-	     int *variables_nr,
-	     int bp);
+             int *restadjust,
+             seg_id_t *segids, reg_t **variables, reg_t **variables_base,
+             int *variables_nr,
+             int bp);
 /* Debugger functionality
 ** Parameters: (state_t *) s: The state at which debugging should take place
 **             (reg_t *) pc: Pointer to the program counter
@@ -671,7 +672,7 @@ game_save_state(struct _state *s, char *name, int coredump);
 
 
 struct _state *
-game_restore_state(char *name);
+			game_restore_state(char *name);
 /* Restores the game state from a file
 ** Parameters: (char *) name: Name of the saved game state to restore
 ** Returns   : (state_t *): The restored game state, or NULL on failure

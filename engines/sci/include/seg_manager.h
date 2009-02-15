@@ -36,12 +36,12 @@
 #define DEFAULT_SCRIPTS 32
 #define DEFAULT_OBJECTS 8	    /* default # of objects per script */
 #define DEFAULT_OBJECTS_INCREMENT 4 /* Number of additional objects to
-				    ** instantiate if we're running out of them  */
+** instantiate if we're running out of them  */
 
 /* SCRIPT_ID must be 0 */
 typedef enum {
-	SCRIPT_ID,
-	SEG_ID
+SCRIPT_ID,
+SEG_ID
 } id_flag;
 
 //void dbg_print( const char* msg, void *i );	/* for debug only */
@@ -94,22 +94,22 @@ struct _mem_obj;
 
 
 typedef struct _seg_manager_t {
-	int_hash_map_t* id_seg_map; /* id - script id; seg - index of heap */
-	struct _mem_obj** heap;
-	int heap_size;		/* size of the heap */
-	int reserved_id;
-	int exports_wide;
-	int sci1_1;
+int_hash_map_t* id_seg_map; /* id - script id; seg - index of heap */
+struct _mem_obj** heap;
+int heap_size;		/* size of the heap */
+int reserved_id;
+int exports_wide;
+int sci1_1;
 
-	int gc_mark_bits; /* For standard Mark&Sweep:
-			  ** 1 or 0, depending on what unreachable/freshly allocated
-			  ** memory is tagged as  */
-	size_t mem_allocated; /* Total amount of memory allocated */
+int gc_mark_bits; /* For standard Mark&Sweep:
+** 1 or 0, depending on what unreachable/freshly allocated
+** memory is tagged as  */
+size_t mem_allocated; /* Total amount of memory allocated */
 
-	seg_id_t clones_seg_id; /* ID of the (a) clones segment */
-	seg_id_t lists_seg_id; /* ID of the (a) list segment */
-	seg_id_t nodes_seg_id; /* ID of the (a) node segment */
-	seg_id_t hunks_seg_id; /* ID of the (a) hunk segment */
+seg_id_t clones_seg_id; /* ID of the (a) clones segment */
+seg_id_t lists_seg_id; /* ID of the (a) list segment */
+seg_id_t nodes_seg_id; /* ID of the (a) node segment */
+seg_id_t hunks_seg_id; /* ID of the (a) hunk segment */
 } seg_manager_t;
 
 
@@ -118,12 +118,12 @@ typedef struct _seg_manager_t {
 /* Toplevel functionality					*/
 /*==============================================================*/
 void
-sm_init (seg_manager_t* self, int sci1_1);
+sm_init(seg_manager_t* self, int sci1_1);
 /* Initialize the segment manager
 */
 
 void
-sm_destroy (seg_manager_t* self);
+sm_destroy(seg_manager_t* self);
 /* Deallocate all memory associated with the segment manager
 */
 
@@ -142,7 +142,7 @@ sm_gc(seg_manager_t *self, struct _state *s);
 
 
 void
-sm_free_script ( mem_obj_t* mem );
+sm_free_script(mem_obj_t* mem);
 
 mem_obj_t*
 sm_allocate_script(struct _seg_manager_t* self, struct _state *s, int script_nr, int* seg_id);
@@ -170,7 +170,7 @@ sm_script_is_loaded(struct _seg_manager_t* self, int id, id_flag flag);
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
 **				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 **				but less convenient.
-*/ 
+*/
 
 guint16
 sm_validate_export_func(struct _seg_manager_t* self, int pubfunct, int seg);
@@ -182,7 +182,7 @@ sm_validate_export_func(struct _seg_manager_t* self, int pubfunct, int seg);
 **/
 
 int
-sm_seg_get (seg_manager_t* self, int script_nr);
+sm_seg_get(seg_manager_t* self, int script_nr);
 /* Get the segment ID associated with a script number
 ** Parameters: (int) script_nr: Number of the script to look up
 ** Returns   : (int) The associated segment ID, or -1 if no matching segment exists
@@ -201,7 +201,7 @@ sm_increment_lockers(struct _seg_manager_t* self, int id, id_flag flag);
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
 **				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 **				but less convenient.
-*/ 
+*/
 
 void
 sm_decrement_lockers(struct _seg_manager_t* self, int id, id_flag flag);
@@ -210,7 +210,7 @@ sm_decrement_lockers(struct _seg_manager_t* self, int id, id_flag flag);
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
 **				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 **				but less convenient.
-*/ 
+*/
 
 int
 sm_get_lockers(struct _seg_manager_t* self, int id, id_flag flag);
@@ -220,7 +220,7 @@ sm_get_lockers(struct _seg_manager_t* self, int id, id_flag flag);
 **				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 **				but less convenient.
 ** Returns   : (int) The number of locks held on the previously identified script
-*/ 
+*/
 
 void
 sm_set_lockers(struct _seg_manager_t* self, int lockers, int id, id_flag flag);
@@ -229,10 +229,10 @@ sm_set_lockers(struct _seg_manager_t* self, int lockers, int id, id_flag flag);
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
 **				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 **				but less convenient.
-*/ 
+*/
 
 byte *
-sm_get_synonyms (struct _seg_manager_t* self, int id, id_flag flag);
+sm_get_synonyms(struct _seg_manager_t* self, int id, id_flag flag);
 /* Retrieves a pointer to the synonyms associated with the specified script
 ** Parameters: (int) id: ID of the script or script segment to read from
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
@@ -243,7 +243,7 @@ sm_get_synonyms (struct _seg_manager_t* self, int id, id_flag flag);
 */
 
 int
-sm_get_synonyms_nr (struct _seg_manager_t* self, int id, id_flag flag);
+sm_get_synonyms_nr(struct _seg_manager_t* self, int id, id_flag flag);
 /* Retrieves the number of synonyms associated with the specified script
 ** Parameters: (int) id: ID of the script or script segment to read from
 **             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
@@ -317,7 +317,7 @@ sm_script_free_unused_objects(struct _seg_manager_t *self, seg_id_t segid);
 */
 
 void
-sm_set_export_table_offset (struct _seg_manager_t* self, int offset, int id, id_flag flag);
+sm_set_export_table_offset(struct _seg_manager_t* self, int offset, int id, id_flag flag);
 /* Sets the script-relative offset of the exports table
 ** Parameters: (int) offset: The script-relative exports table offset
 **	       (int) id: ID of the script or script segment to write to
@@ -328,7 +328,7 @@ sm_set_export_table_offset (struct _seg_manager_t* self, int offset, int id, id_
 */
 
 void
-sm_set_synonyms_offset (struct _seg_manager_t* self, int offset, int id, id_flag flag);
+sm_set_synonyms_offset(struct _seg_manager_t* self, int offset, int id, id_flag flag);
 /* Sets the script-relative offset of the synonyms associated with the specified script
 ** Parameters: (int) offset: The script-relative offset of the synonyms block
 **	       (int) id: ID of the script or script segment to write to
@@ -339,7 +339,7 @@ sm_set_synonyms_offset (struct _seg_manager_t* self, int offset, int id, id_flag
 */
 
 void
-sm_set_synonyms_nr (struct _seg_manager_t* self, int nr, int id, id_flag flag);
+sm_set_synonyms_nr(struct _seg_manager_t* self, int nr, int id, id_flag flag);
 /* Sets the number of synonyms associated with the specified script
 ** Parameters: (int) nr: The number of synonyms, as to be stored within the script
 **	       (int) id: ID of the script or script segment to write to
@@ -400,22 +400,22 @@ sm_free_clone(struct _seg_manager_t *self, reg_t addr);
 
 /* Not all of these functions are fully operational for clones ATM */
 
-gint16 
-sm_get_heap(struct _seg_manager_t* self, reg_t reg );
+gint16
+sm_get_heap(struct _seg_manager_t* self, reg_t reg);
 /* Retrieves a 16 bit value from within a script's heap representation
 ** Parameters: (reg_t) reg: The address to read from
 ** Returns   : (gint16) The value read from the specified location
 */
 
 void
-sm_put_heap(struct _seg_manager_t* self, reg_t reg, gint16 value );
+sm_put_heap(struct _seg_manager_t* self, reg_t reg, gint16 value);
 /* Writes a 16 bit value into a script's heap representation
 ** Parameters: (reg_t) reg: The address to write to
 **	       (gint16) value: The value to write
 */
 
 void
-sm_mcpy_in_out (seg_manager_t* self, int dst, const void* src, size_t n, int id, int flag);
+sm_mcpy_in_out(seg_manager_t* self, int dst, const void* src, size_t n, int id, int flag);
 /* Copies a byte string into a script's heap representation
 ** Parameters: (int) dst: The script-relative offset of the destination area
 **	       (const void *) src: Pointer to the data source location
@@ -536,7 +536,7 @@ sm_get_description(struct _seg_manager_t *self, reg_t addr);
 /* Gets the description of a dynmem segment
 ** Parameters: (reg_t) addr: Segment to describe
 ** Returns   : (const char *): Pointer to the descriptive string set in
-** sm_alloc_dynmem 
+** sm_alloc_dynmem
 */
 
 /*==============================================================*/

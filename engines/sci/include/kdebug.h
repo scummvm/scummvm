@@ -109,7 +109,7 @@ _SCIGNUkdebug(const char *funcname, struct _state *s, const char *file, int line
 */
 
 void
-set_debug_mode (struct _state *s, int mode, const char *areas);
+set_debug_mode(struct _state *s, int mode, const char *areas);
 
 extern int sci_debug_flags;
 

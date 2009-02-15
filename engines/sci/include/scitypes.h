@@ -119,8 +119,8 @@ typedef guint8 byte;
 typedef guint16 word;
 
 typedef struct {
-        long tv_sec;
-        long tv_usec;
+	long tv_sec;
+	long tv_usec;
 } GTimeVal;
 
 typedef struct {
@@ -142,9 +142,9 @@ enum {
 	FRAC_BITS = 16,
 	FRAC_LO_MASK = ((1L << FRAC_BITS) - 1),
 	FRAC_HI_MASK = (((1L << (32 - FRAC_BITS)) - 1) << FRAC_BITS),
- 
+
 	FRAC_ONE = (1L << FRAC_BITS),		// 1.0
-	FRAC_HALF = (1L << (FRAC_BITS-1))	// 0.5
+	FRAC_HALF = (1L << (FRAC_BITS - 1))	// 0.5
 };
 
 /*

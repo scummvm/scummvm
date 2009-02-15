@@ -43,11 +43,10 @@
 /* Number of bytes allocated on the heap to store bad words if parsing fails */
 
 
-typedef struct opcode_
-{
-  int type;
-  int number;
-  char* name;
+typedef struct opcode_ {
+	int type;
+	int number;
+	char* name;
 } opcode;
 
 #define VOCAB_RESOURCE_OPCODES 998
@@ -111,63 +110,62 @@ extern const char *class_names[]; /* Vocabulary class names */
 
 typedef struct {
 
-  int w_class; /* Word class */
-  int group; /* Word group */
-  char word[1]; /* The actual word */
+	int w_class; /* Word class */
+	int group; /* Word group */
+	char word[1]; /* The actual word */
 
 } word_t;
 
 
 typedef struct {
-  int id; /* non-terminal ID */
-  int first_special; /* first terminal or non-terminal */
-  int specials_nr; /* number of terminals and non-terminals */
-  int length;
-  int data[1]; /* actual data (size 1 to avoid compiler warnings) */
+	int id; /* non-terminal ID */
+	int first_special; /* first terminal or non-terminal */
+	int specials_nr; /* number of terminals and non-terminals */
+	int length;
+	int data[1]; /* actual data (size 1 to avoid compiler warnings) */
 } parse_rule_t;
 
 
 typedef struct _parse_rule_list {
-  int terminal; /* Terminal character this rule matches against or 0 for a non-terminal rule */
-  parse_rule_t *rule;
-  struct _parse_rule_list *next;
+	int terminal; /* Terminal character this rule matches against or 0 for a non-terminal rule */
+	parse_rule_t *rule;
+	struct _parse_rule_list *next;
 } parse_rule_list_t;
 
 
 typedef struct {
 
-  int class_mask; /* the word class this suffix applies to */
-  int result_class; /* the word class a word is morphed to if it doesn't fail this check */
+	int class_mask; /* the word class this suffix applies to */
+	int result_class; /* the word class a word is morphed to if it doesn't fail this check */
 
-  int alt_suffix_length; /* String length of the suffix */
-  int word_suffix_length; /* String length of the other suffix */
+	int alt_suffix_length; /* String length of the suffix */
+	int word_suffix_length; /* String length of the other suffix */
 
-  char *alt_suffix; /* The alternative suffix */
-  char *word_suffix; /* The suffix as used in the word vocabulary */
+	char *alt_suffix; /* The alternative suffix */
+	char *word_suffix; /* The suffix as used in the word vocabulary */
 
 } suffix_t;
 
 
 typedef struct {
 
-  int w_class; /* Word class */
-  int group; /* Word group */
+	int w_class; /* Word class */
+	int group; /* Word group */
 
 } result_word_t;
 
 
-typedef struct
-{
-  int replaceant; /* The word group to replace */
-  int replacement; /* The replacement word group for this one */
+typedef struct {
+	int replaceant; /* The word group to replace */
+	int replacement; /* The replacement word group for this one */
 } synonym_t;
 
 
 typedef struct {
 
-  int id;
+	int id;
 
-  int data[10];
+	int data[10];
 
 } parse_tree_branch_t;
 
@@ -177,14 +175,14 @@ typedef struct {
 
 typedef struct {
 
-  short type;  /* leaf or branch */
+	short type;  /* leaf or branch */
 
-  union {
+	union {
 
-    int value;  /* For leaves */
-    short branches[2]; /* For branches */
+		int value;  /* For leaves */
+		short branches[2]; /* For branches */
 
-  } content;
+	} content;
 
 } parse_tree_node_t;
 
@@ -291,8 +289,8 @@ vocab_free_branches(parse_tree_branch_t *parser_branches);
 
 result_word_t *
 vocab_lookup_word(char *word, int word_len,
-		  word_t **words, int words_nr,
-		  suffix_t **suffices, int suffices_nr);
+                  word_t **words, int words_nr,
+                  suffix_t **suffices, int suffices_nr);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
 **             (int) word_len: Length of the word to look up
@@ -307,9 +305,9 @@ vocab_lookup_word(char *word, int word_len,
 
 result_word_t *
 vocab_tokenize_string(char *sentence, int *result_nr,
-		      word_t **words, int words_nr,
-		      suffix_t **suffices, int suffices_nr,
-		      char **error);
+                      word_t **words, int words_nr,
+                      suffix_t **suffices, int suffices_nr,
+                      char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
 **             (int *) result_nr: The variable to store the resulting number of words in
@@ -415,7 +413,7 @@ vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms,
 
 int
 vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-		parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
+                parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 
 void
 vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);

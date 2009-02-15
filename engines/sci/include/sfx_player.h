@@ -117,9 +117,9 @@ typedef struct {
 	*/
 
 	tell_synth_func *tell_synth;
-        /* Pass a raw MIDI event to the synth
-	   Parameters: (int) argc: Length of buffer holding the midi event
-	               (byte *) argv: The buffer itself
+	/* Pass a raw MIDI event to the synth
+	Parameters: (int) argc: Length of buffer holding the midi event
+	           (byte *) argv: The buffer itself
 	*/
 
 	int polyphony; /* Number of voices that can play simultaneously */

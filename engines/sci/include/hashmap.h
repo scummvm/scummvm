@@ -37,7 +37,7 @@
 **             (e.g. '#define DUPLICATOR strdup').
 */
 
-                       /**-- WARNING!!! --**/
+/**-- WARNING!!! --**/
 
 /* This file uses a lot of dark magic (aka preprocessor macros) to define
 ** its semantics. It is not to be taken lightly. It is not to be taken
@@ -78,7 +78,7 @@ typedef struct {                                                            \
 	TYPE##_hash_map_node_t *holes; /* List of freed entries to minimize \
 				     ** memory operations and modifications \
 				     ** to base_value  */                   \
-} TYPE##_hash_map_t, *TYPE##_hash_map_ptr;							    
+} TYPE##_hash_map_t, *TYPE##_hash_map_ptr;
 
 
 #define DECLARE_FUNCTIONS(TYPE) \

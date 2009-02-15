@@ -96,10 +96,10 @@ reg_t
 read_selector(struct _state *s,  reg_t object, selector_t selector_id, const char *fname, int line);
 void
 write_selector(struct _state *s, reg_t object, selector_t selector_id, reg_t value,
-	       const char *fname, int line);
+               const char *fname, int line);
 int
 invoke_selector(struct _state *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-		stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
+                stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
 
 
@@ -140,7 +140,7 @@ kernel_lookup_text(struct _state *s, reg_t address, int index);
   } \
   sciprintf(")\n"); \
 } \
-
+ 
 #else /* !SCI_KERNEL_DEBUG */
 
 #define CHECK_THIS_KERNEL_FUNCTION
@@ -281,7 +281,7 @@ set_base(struct _state *s, reg_t object);
 */
 
 extern abs_rect_t
-get_nsrect(struct _state *s, reg_t object, byte clip);
+	get_nsrect(struct _state *s, reg_t object, byte clip);
 /* Determines the now-seen rectangle of a view object
 ** Parameters: (state_t *) s: The state to use
 **             (reg_t) object: The object to check
@@ -293,10 +293,10 @@ get_nsrect(struct _state *s, reg_t object, byte clip);
 
 void
 _k_dyn_view_list_prepare_change(struct _state *s);
-     /* Removes all views in anticipation of a new window or text */
+/* Removes all views in anticipation of a new window or text */
 void
 _k_dyn_view_list_accept_change(struct _state *s);
-     /* Redraws all views after a new window or text was added */
+/* Redraws all views after a new window or text was added */
 
 
 

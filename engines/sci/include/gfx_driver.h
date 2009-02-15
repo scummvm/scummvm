@@ -148,7 +148,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Initialization ***/
 
-	int (*set_parameter) (struct _gfx_driver *drv, char *attribute, char *value);
+	int (*set_parameter)(struct _gfx_driver *drv, char *attribute, char *value);
 	/* Sets a driver-specific parameter
 	** Parameters: (gfx_driver_t *) drv: Pointer to the affected driver
 	**             (char *) attribute: Name of the attribute/parameter to set
@@ -162,8 +162,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** console).
 	*/
 
-	int (*init_specific) (struct _gfx_driver *drv, int xres, int yres,
-			int bytespp);
+	int (*init_specific)(struct _gfx_driver *drv, int xres, int yres,
+	                     int bytespp);
 	/* Attempts to initialize a specific graphics mode
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (int x int) xres, yres: Horizontal and vertical scaling
@@ -180,7 +180,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** specified in gfx_tools.h.
 	*/
 
-	int (*init) (struct _gfx_driver *drv);
+	int (*init)(struct _gfx_driver *drv);
 	/* Initialize any graphics mode
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	** Returns   : (int) GFX_OK on success, GFX_FATAL otherwise.
@@ -192,7 +192,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** specified in gfx_tools.h.
 	*/
 
-	void (*exit) (struct _gfx_driver *drv);
+	void (*exit)(struct _gfx_driver *drv);
 	/* Uninitializes the current graphics mode
 	** Paramters: (gfx_driver_t *) drv: The driver to uninitialize
 	** Return   : (void)
@@ -206,10 +206,10 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Drawing operations ***/
 
-	int (*draw_line) (struct _gfx_driver *drv,
-			  point_t start, point_t end,
-			  gfx_color_t color,
-			  gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+	int (*draw_line)(struct _gfx_driver *drv,
+	                 point_t start, point_t end,
+	                 gfx_color_t color,
+	                 gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 	/* Draws a single line to the back buffer.
 	** Parameters: (gfx_driver_t *) drv: The driver affected
 	**             (point_t) start: Starting point of the line to draw
@@ -227,9 +227,9 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** set.
 	*/
 
-	int (*draw_filled_rect) (struct _gfx_driver *drv, rect_t rect,
-			   gfx_color_t color1, gfx_color_t color2,
-			   gfx_rectangle_fill_t shade_mode);
+	int (*draw_filled_rect)(struct _gfx_driver *drv, rect_t rect,
+	                        gfx_color_t color1, gfx_color_t color2,
+	                        gfx_rectangle_fill_t shade_mode);
 	/* Draws a single filled and possibly shaded rectangle to the back buffer.
 	** Parameters: (gfx_driver_t *) drv: The driver affected
 	**             (rect_t *) rect: The rectangle to draw
@@ -244,7 +244,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Pixmap operations ***/
 
-	int (*register_pixmap) (struct _gfx_driver *drv, gfx_pixmap_t *pxm);
+	int (*register_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm);
 	/* Registers a pixmap with the driver.
 	** Parameters: (gfx_driver_t *) drv: The driver
 	**             (gfx_pixmap_t *) pxm: The pixmap to register
@@ -254,7 +254,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** pxm->internal may be used to store any handle or meta information.
 	*/
 
-	int (*unregister_pixmap) (struct _gfx_driver *drv, gfx_pixmap_t *pxm);
+	int (*unregister_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm);
 	/* Unregisters a pixmap previously registered with register_pixmap()
 	** Parameters: (gfx_driver_t *) drv: The driver
 	**             (gfx_pixmap_t *) pxm: The pixmap to register
@@ -264,8 +264,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** GFX_CAPABILITY_PIXMAP_REGISTRY is set.
 	*/
 
-	int (*draw_pixmap) (struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority,
-		      rect_t src, rect_t dest, gfx_buffer_t buffer);
+	int (*draw_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority,
+	                   rect_t src, rect_t dest, gfx_buffer_t buffer);
 	/* Draws part of a pixmap to the static or back buffer
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (gfx_pixmap_t *) pxm: The pixmap to draw
@@ -281,8 +281,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** GFX_CAPABILITY_SCALEABLE_PIXMAPS is supported.
 	*/
 
-	int (*grab_pixmap) (struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
-		      gfx_map_mask_t map);
+	int (*grab_pixmap)(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
+	                   gfx_map_mask_t map);
 	/* Grabs an image from the visual or priority back buffer
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (rect_t) src: The rectangle to grab
@@ -298,8 +298,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Buffer operations ***/
 
-	int (*update) (struct _gfx_driver *drv, rect_t src, point_t dest,
-		 gfx_buffer_t buffer);
+	int (*update)(struct _gfx_driver *drv, rect_t src, point_t dest,
+	              gfx_buffer_t buffer);
 	/* Updates the front buffer or the back buffers
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (rect_t) src: Source rectangle
@@ -314,8 +314,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** If they aren't, the priority map will not be required to be copied.
 	*/
 
-	int (*set_static_buffer) (struct _gfx_driver *drv, gfx_pixmap_t *pic,
-				  gfx_pixmap_t *priority);
+	int (*set_static_buffer)(struct _gfx_driver *drv, gfx_pixmap_t *pic,
+	                         gfx_pixmap_t *priority);
 	/* Sets the contents of the static visual and priority buffers
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (gfx_pixmap_t *) pic: The image defining the new content
@@ -337,7 +337,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Mouse pointer operations ***/
 
-	int (*set_pointer) (struct _gfx_driver *drv, gfx_pixmap_t *pointer);
+	int (*set_pointer)(struct _gfx_driver *drv, gfx_pixmap_t *pointer);
 	/* Sets a new mouse pointer.
 	** Parameters: (gfx_driver_t *) drv: The driver to modify
 	**             (gfx_pixmap_t *) pointer: The pointer to set, or NULL to set
@@ -354,8 +354,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Palette operations ***/
 
-	int (*set_palette) (struct _gfx_driver *drv, int index, byte red, byte green,
-		      byte blue);
+	int (*set_palette)(struct _gfx_driver *drv, int index, byte red, byte green,
+	                   byte blue);
 	/* Manipulates a palette index in the hardware palette
 	** Parameters: (gfx_driver_t *) drv: The driver affected
 	**             (int) index: The index of the palette entry to modify
@@ -371,14 +371,14 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Event management ***/
 
-	sci_event_t (*get_event) (struct _gfx_driver *drv);
+	sci_event_t (*get_event)(struct _gfx_driver *drv);
 	/* Returns the next event in the event queue for this driver
 	** Parameters: (gfx_driver_t *) drv: The driver to query
 	** Returns   : (sci_event_t) The oldest event still in the driver's event
 	**                           queue, or the null event if there is none.
 	*/
 
-	int (*usec_sleep) (struct _gfx_driver *drv, long usecs);
+	int (*usec_sleep)(struct _gfx_driver *drv, long usecs);
 	/* Sleeps the specified amount of microseconds, or until the mouse moves
 	** Parameters: (gfx_driver_t *) drv: The relevant driver
 	**             (long) usecs: Amount of microseconds to sleep

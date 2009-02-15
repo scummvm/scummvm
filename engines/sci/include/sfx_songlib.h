@@ -58,9 +58,9 @@ typedef struct _song {
 	int restore_behavior;
 	int restore_time;
 
-/* Grabbed from the sound iterator, for save/restore purposes */
-	int loops; 
-	int hold; 
+	/* Grabbed from the sound iterator, for save/restore purposes */
+	int loops;
+	int hold;
 
 	song_iterator_t *it;
 	long delay; /* Delay before accessing the iterator, in microseconds */
@@ -188,8 +188,8 @@ song_next_wakeup_time(GTimeVal *lastslept, long ticks);
 */
 
 void
-song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle, 
-			      RESTORE_BEHAVIOR action);
+song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle,
+                              RESTORE_BEHAVIOR action);
 /* Determines what should be done with the song "handle" when
 ** restoring it from a saved game.
 ** Parameters: (songlib_t) songlib: The library that contains the song

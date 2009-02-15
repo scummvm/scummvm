@@ -38,13 +38,13 @@
 
 
 #define SFX_STATE_FLAG_MULTIPLAY (1 << 0) /* More than one song playable
-					  ** simultaneously ? */
+** simultaneously ? */
 #define SFX_STATE_FLAG_NOSOUND	 (1 << 1) /* Completely disable sound playing */
 
 
 #define SFX_DEBUG_SONGS		(1 << 0) /* Debug song changes */
 #define SFX_DEBUG_CUES		(1 << 1) /* Debug cues, loops, and
-					 ** song completions */
+** song completions */
 
 typedef struct {
 	song_iterator_t *it; /* The song iterator at the heart of things */

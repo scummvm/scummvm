@@ -109,7 +109,7 @@ struct _gfx_options;
 
 int
 gfx_update_conf(struct _gfx_options *options,
-		char *line);
+                char *line);
 /* Updates the configuration
 ** Parameters: (gfx_options_t *) options: The options list to update
 **             (char *) line: The text line to parse
@@ -121,7 +121,7 @@ gfx_update_conf(struct _gfx_options *options,
 
 int
 gfx_get_res_config(struct _gfx_options *options,
-		   gfx_pixmap_t *pxm);
+                   gfx_pixmap_t *pxm);
 /* Configures a graphical pixmap according to config options
 ** Parameters: (gfx_options_t *) options: The options according to which
 **                                        configuration should be performed

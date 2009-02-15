@@ -74,7 +74,7 @@ typedef struct _gfx_options {
 	int dirty_frames;
 
 	int workarounds; /* Workaround flags- see below */
-	
+
 	rect_t pic_port_bounds;
 } gfx_options_t;
 

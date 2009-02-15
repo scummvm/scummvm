@@ -3,15 +3,13 @@
 
 #include "sci/include/list.h"
 
-typedef struct game
-{
+typedef struct game {
 	char *name;
 	char dir[MAXPATHLEN];
 	int conf_nr;
 } game_t;
 
-typedef struct games_list
-{
+typedef struct games_list {
 	LIST_ENTRY(games_list) entries;
 
 	game_t game;
@@ -33,6 +31,6 @@ void game_select_scan_info(gfx_driver_t *gfx_driver, gfx_bitmap_font_t* font_def
 /* this can be used to generate code that creates a particular font at runtime */
 /* this is meant to be used as a development tool */
 void save_font(int id, gfx_bitmap_font_t* font)
-#endif 
+#endif
 
 #endif /* _SCI_GAME_SELECT_H */

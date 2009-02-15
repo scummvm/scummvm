@@ -84,30 +84,30 @@ struct _state;
 #define MENU_ATTRIBUTE_FLAGS_SAID 0x02
 
 typedef struct {
-  int type; /* Normal or hbar */
-  char *keytext; /* right-centered part of the text (the key) */
-  int keytext_size; /* Width of the right-centered text */
+	int type; /* Normal or hbar */
+	char *keytext; /* right-centered part of the text (the key) */
+	int keytext_size; /* Width of the right-centered text */
 
-  int flags;
-  byte said[MENU_SAID_SPEC_SIZE]; /* Said spec for this item */
-  reg_t said_pos;
-  char *text;
-  reg_t text_pos;
-  int modifiers, key; /* Hotkey for this item */
-  int enabled;
-  int tag;
+	int flags;
+	byte said[MENU_SAID_SPEC_SIZE]; /* Said spec for this item */
+	reg_t said_pos;
+	char *text;
+	reg_t text_pos;
+	int modifiers, key; /* Hotkey for this item */
+	int enabled;
+	int tag;
 
 } menu_item_t;
 
 
 typedef struct {
-  char *title;
+	char *title;
 
-  int title_width; /* Width of the title in pixels */
-  int width; /* Pixel width of the menu window */
+	int title_width; /* Width of the title in pixels */
+	int width; /* Pixel width of the menu window */
 
-  int items_nr; /* Window height equals to intems_nr * 10 */
-  menu_item_t *items; /* Actual entries into the menu */
+	int items_nr; /* Window height equals to intems_nr * 10 */
+	menu_item_t *items; /* Actual entries into the menu */
 
 } menu_t;
 
@@ -115,8 +115,8 @@ typedef struct {
 
 typedef struct {
 
-  int menus_nr;
-  menu_t *menus; /* The actual menus */
+	int menus_nr;
+	menu_t *menus; /* The actual menus */
 
 } menubar_t;
 

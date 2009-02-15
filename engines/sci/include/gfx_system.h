@@ -68,7 +68,7 @@ typedef struct { /* gfx_palette_color_t: Palette color description */
 	int lockers; /* Number of pixmaps holding a lock on that color.
 		     ** 0 means that the color is unused, -1 means that it is
 		     ** "system allocated" and may not be freed.  */
-	byte r,g,b; /* Red, green, blue; intensity varies from 0 (min) to 255 (max) */
+	byte r, g, b; /* Red, green, blue; intensity varies from 0 (min) to 255 (max) */
 
 } gfx_palette_color_t;
 
@@ -150,8 +150,7 @@ typedef struct { /* rect_t: Rectangle description */
 ** Returns   : (rect_t) A rectangle matching the supplied parameters
 */
 static inline rect_t
-gfx_rect(int x, int y, int xl, int yl)
-{
+gfx_rect(int x, int y, int xl, int yl) {
 	rect_t rect;
 
 	rect.x = x;
@@ -171,10 +170,9 @@ gfx_rect(int x, int y, int xl, int yl)
 ** Returns   : (int) 1 if they overlap, 0 otherwise
 */
 static inline int
-gfx_rects_overlap(rect_t a, rect_t b)
-{
+gfx_rects_overlap(rect_t a, rect_t b) {
 	return (OVERLAP(a, b, x, xl) || OVERLAP(b, a, x, xl))
-		&& (OVERLAP(a, b, y, yl) || OVERLAP(b, a, y, yl));
+	       && (OVERLAP(a, b, y, yl) || OVERLAP(b, a, y, yl));
 }
 
 #undef OVERLAP
@@ -200,8 +198,7 @@ else SUBMERGE_PARTIAL(b, a, z, zl)
 ** Returns   : (rect_t) The smallest rect containing both a and b
 */
 static inline rect_t
-gfx_rects_merge(rect_t a, rect_t b)
-{
+gfx_rects_merge(rect_t a, rect_t b) {
 	rect_t retval;
 	MERGE_PARTIAL(x, xl);
 	MERGE_PARTIAL(y, yl);
@@ -216,11 +213,10 @@ gfx_rects_merge(rect_t a, rect_t b)
 ** Returns   : non-zero iff for each pixel p in a the following holds: p is in b.
 */
 static inline int
-gfx_rect_subset(rect_t a, rect_t b)
-{
+gfx_rect_subset(rect_t a, rect_t b) {
 	return ((a.x >= b.x) && (a.y >= b.y)
-		&& ((a.x + a.xl) <= (b.x + b.xl))
-		&& ((a.y + a.yl) <= (b.y + b.yl)));
+	        && ((a.x + a.xl) <= (b.x + b.xl))
+	        && ((a.y + a.yl) <= (b.y + b.yl)));
 }
 
 
@@ -229,12 +225,11 @@ gfx_rect_subset(rect_t a, rect_t b)
 ** Returns   : (int) gfx_rect_subset(a,b) AND gfx_rect_subset(b,a)
 */
 static inline int
-gfx_rect_equals(rect_t a, rect_t b)
-{
+gfx_rect_equals(rect_t a, rect_t b) {
 	return (a.x == b.x
-		&& a.xl == b.xl
-		&& a.y == b.y
-		&& a.yl == b.yl);
+	        && a.xl == b.xl
+	        && a.y == b.y
+	        && a.yl == b.yl);
 }
 
 
@@ -254,8 +249,7 @@ typedef struct {
 ** Returns   : (point_t) The resulting structure
 */
 static inline point_t
-gfx_point(int x, int y)
-{
+gfx_point(int x, int y) {
 	point_t point;
 
 	point.x = x;
@@ -270,8 +264,7 @@ gfx_point(int x, int y)
 ** Returns   : (rect_t) The translated rect
 */
 static inline rect_t
-gfx_rect_translate(rect_t rect, point_t offset)
-{
+gfx_rect_translate(rect_t rect, point_t offset) {
 	rect.x += offset.x;
 	rect.y += offset.y;
 
@@ -381,9 +374,9 @@ enum gfx_return_value_t {
 	GFX_OK = 0, /* Indicates "operation successful" */
 	GFX_ERROR = -1, /* Indicates "operation failed" */
 	GFX_FATAL = -2
-/* Fatal error: Used by graphics drivers to indicate that they were unable to
-** do anything useful
-*/
+	/* Fatal error: Used by graphics drivers to indicate that they were unable to
+	** do anything useful
+	*/
 };
 
 

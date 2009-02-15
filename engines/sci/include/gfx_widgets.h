@@ -161,7 +161,7 @@ extern point_t gfxw_point_zero;
 ** function.
 **
 **
-** -- superarea_of(gfxw_widget_t *self, gfxw_widget_t *other) 
+** -- superarea_of(gfxw_widget_t *self, gfxw_widget_t *other)
 ** Tests whether drawing self after other would reduce all traces of other
 ** Parameters: (gfxw_widget_t *) self: self reference
 **             (gxfw_widget_t *) other: The widget to compare for containment
@@ -280,7 +280,7 @@ gfxw_new_line(point_t start, point_t end, gfx_color_t color, gfx_line_mode_t lin
 
 gfxw_view_t *
 gfxw_new_view(gfx_state_t *state, point_t pos, int view, int loop, int cel, int palette, int priority, int control,
-	      gfx_alignment_t halign, gfx_alignment_t valign, int flags);
+              gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 /* Creates a new view (a cel, actually)
 ** Parameters: (gfx_state_t *) state: The graphics state
 **             (point_t) pos: The position to place the view at
@@ -295,8 +295,8 @@ gfxw_new_view(gfx_state_t *state, point_t pos, int view, int loop, int cel, int 
 
 gfxw_dyn_view_t *
 gfxw_new_dyn_view(gfx_state_t *state, point_t pos, int z, int view, int loop, int cel, int palette,
-		  int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign,
-		  int sequence);
+                  int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign,
+                  int sequence);
 /* Creates a new dyn view
 ** Parameters: (gfx_state_t *) state: The graphics state
 **             (point_t) pos: The position to place the dynamic view at
@@ -315,8 +315,8 @@ gfxw_new_dyn_view(gfx_state_t *state, point_t pos, int z, int view, int loop, in
 
 gfxw_text_t *
 gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
-	      gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
-	      gfx_color_t bgcolor, int flags);
+              gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
+              gfx_color_t bgcolor, int flags);
 /* Creates a new text widget
 ** Parameters: (gfx_state_t *) state: The state the text is to be calculated from
 **             (rect_t) area: The area the text is to be confined to (the yl value is only
@@ -333,7 +333,7 @@ gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_a
 
 void
 gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines_nr,
-	       int *lineheight, int *offset);
+               int *lineheight, int *offset);
 /* Determines text widget meta-information
 ** Parameters: (gfx_state_t *) state: The state to operate on
 **             (gfx_text_t *) text: The widget to query
@@ -497,7 +497,7 @@ gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget);
 */
 
 gfxw_snapshot_t *
-gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot); 
+gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot);
 /* Restores a snapshot to a visual
 ** Parameters: (gfxw_visual_t *) visual: The visual to operate on
 **             (gfxw_snapshot_t *) snapshot: The snapshot to restore

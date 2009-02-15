@@ -118,7 +118,7 @@ typedef struct _sfx_pcm_device {
 	*/
 
 	int (*output)(struct _sfx_pcm_device *self, byte *buf,
-		      int count, sfx_timestamp_t *timestamp);
+	              int count, sfx_timestamp_t *timestamp);
 	/* Writes output to the device
 	** Parameters: (sfx_pcm_device_t *) self: Self reference
 	**             (byte *) buf: The buffer to write

@@ -83,8 +83,7 @@ typedef struct {
 	int palette;
 } drawn_pic_t;
 
-typedef struct _state
-{
+typedef struct _state {
 	int savegame_version;
 
 	int widget_serial_counter; /* Used for savegames */
@@ -298,10 +297,10 @@ other_libs_exit(void);
 */
 
 static inline
-reg_t not_register(state_t *s, reg_t r)
-{
+reg_t not_register(state_t *s, reg_t r) {
 	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
-		return make_reg(0, !r.offset); else
+		return make_reg(0, !r.offset);
+	else
 		return r;
 
 }

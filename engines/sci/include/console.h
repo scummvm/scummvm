@@ -247,4 +247,4 @@ close_console_file(void);
 ** Returns   : (void)
 */
 
-#endif /* _SCI_CONSOLE_H_ */ 
+#endif /* _SCI_CONSOLE_H_ */

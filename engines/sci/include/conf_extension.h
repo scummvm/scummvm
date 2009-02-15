@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-/* Config extensions handle special-purpose configuration options such as the 
+/* Config extensions handle special-purpose configuration options such as the
 ** graphics operations.  To add new special-purpose operations, modify this file,
 ** the lexer, and conf_extensions.c.
 */
@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CONF_EXT_TYPE_INVALID	-1	
+#define CONF_EXT_TYPE_INVALID	-1
 #define CONF_EXT_TYPE_GFX	0
 
 typedef struct {

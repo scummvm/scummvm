@@ -41,7 +41,8 @@ typedef struct {
 	unsigned int type;
 	unsigned int flags;
 	union { char * str;
-		int nr } default;	/* Optional default value */
+		int nr
+	} default;	/* Optional default value */
 	int min;			/* For subrange types */
 	int max;			/* For subrange types; for enum types */
 	conf_value_t *values;		/* For enum types; NULL-terminated */
@@ -72,9 +73,10 @@ typedef struct conf_header {
 	unsigned int dependencies;	/* CONF_DRIVER_DEPENDENCY_* */
 	conf_option_t *options;		/* Last option has name of NULL */
 	char * (*set_option)(void * self, /* points to base struct */
-			     conf_option_t *,
-			     union { char *str;
-				     int nr });	/* Set option, return static error (if applicable) or NULL on success */
+	                     conf_option_t *,
+	                     union { char *str;
+	                             int nr
+	                           });	/* Set option, return static error (if applicable) or NULL on success */
 } conf_header_t; /* Universal driver header */
 
 struct conf_driver;
@@ -94,23 +96,23 @@ struct conf_main;
 typedef struct conf_driver {
 	conf_header_t header;
 	char * (*init)(struct conf_driver *self,
-		       struct conf_subsystem *owner);	/* Initialise, return static error message on error or NULL on success.
+	               struct conf_subsystem *owner);	/* Initialise, return static error message on error or NULL on success.
 							** The owner is guaranteed to have been configured and guaranteed NOT to have
 							** been initialised. */
-	
+
 	void (*exit)(void);
 } conf_driver_t;
 
 typedef struct conf_subsystem {
 	conf_header_t header;
 	char * (*init)(struct conf_subsystem *self,
-		       struct conf_main *main,
-		       struct conf_driver *driver);	/* Initialise, return static error message on error or NULL on success.
+	               struct conf_main *main,
+	               struct conf_driver *driver);	/* Initialise, return static error message on error or NULL on success.
 							** The driver is configured and initialised, the main reference configured but
 							** not initialised. */
 	void (*exit)(void);
 	char *(*get_default_driver)(struct conf_subsystem *self,
-				    int index);	/* Get the nth default driver name, or NULL if there is none.  These are tried in order if
+	                            int index);	/* Get the nth default driver name, or NULL if there is none.  These are tried in order if
 						** there is no explicit choice. */
 	conf_driver_t **builtin_drivers;	/* NULL terminated list of built-in drivers */
 	char *dynamic_driver_prefix;		/* string prefix to dynamically loaded drivers for this subsystem */
@@ -146,10 +148,11 @@ typedef struct conf_main {
 /* ---------------------------------------------- */
 
 
-char * 
+char *
 conf_default_set_option(void * self, conf_option_t *option,
-			union { char *str;
-				int nr } value);
+                        union { char *str;
+                                int nr
+                              } value);
 /* Default implementation of the option setting function
 ** Parameters: (void *) self: Reference to the structure we should be accessing
 **             (conf_option_t *) option: The option to set

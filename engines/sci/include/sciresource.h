@@ -112,7 +112,7 @@ extern const int sci_max_resource_nr[]; /* Highest possible resource numbers */
 
 
 enum ResourceTypes {
-	sci_view=0, sci_pic, sci_script, sci_text,
+	sci_view = 0, sci_pic, sci_script, sci_text,
 	sci_sound, sci_memory, sci_vocab, sci_font,
 	sci_cursor, sci_patch, sci_bitmap, sci_palette,
 	sci_cdaudio, sci_audio, sci_sync, sci_message,
@@ -187,7 +187,7 @@ typedef struct {
 	resource_source_t *sources;
 	resource_t *resources;
 
-	int memory_locked; /* Amount of resource bytes in locked memory */ 
+	int memory_locked; /* Amount of resource bytes in locked memory */
 	int memory_lru; /* Amount of resource bytes under LRU control */
 
 	char *resource_path; /* Path to the resource and patch files */
@@ -222,7 +222,7 @@ resource_source_t *
 scir_add_patch_dir(resource_mgr_t *mgr, int type, char *path);
 /* Add a path to the resource manager's list of sources.
 ** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
-**             (int) dirtype: The type of patch directory to add, 
+**             (int) dirtype: The type of patch directory to add,
 **             either RESSOURCE_TYPE_DIRECTORY or RESSOURCE_TYPE_AUDIO_DIRECTORY
 **             (char *) path: The path to add
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
@@ -233,7 +233,7 @@ scir_get_volume(resource_mgr_t *mgr, resource_source_t *map, int volume_nr);
 
 resource_source_t *
 scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
-	        int number, int extended_addressing);
+                int number, int extended_addressing);
 /* Add a volume to the resource manager's list of sources.
 ** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
 **             (resource_source_t *) map: The map associated with this volume
@@ -261,11 +261,11 @@ scir_add_internal_map(resource_mgr_t *mgr, resource_t *map);
 
 int
 scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version);
-/* Scans newly registered resource sources for resources, earliest addition first. 
+/* Scans newly registered resource sources for resources, earliest addition first.
 ** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
 **             (int *) detected_version: Pointer to the detected version number,
 **					 used during startup. May be NULL.
-** Returns: One of SCI_ERROR_*. 
+** Returns: One of SCI_ERROR_*.
 */
 
 resource_t *
@@ -329,7 +329,7 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 
 int
 sci1_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_source_t *vol,
-		       resource_t **resource_p, int *resource_nr_p, int *sci_version);
+                       resource_t **resource_p, int *resource_nr_p, int *sci_version);
 /* Reads the SCI1 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -458,7 +458,7 @@ resource_t *
 _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number);
 /* Finds a resource matching type.number in an unsorted resource_t block
 ** To be used during initial resource loading, when the resource list
-** may not have been sorted yet. 
+** may not have been sorted yet.
 ** Parameters: (resource_t *) res: Pointer to the block to search in
 **             (int) res_nr: Number of resource_t structs allocated and defined
 **                           in the block pointed to by res

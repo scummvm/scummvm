@@ -150,10 +150,10 @@ typedef struct {
 typedef struct {
 	VIEW_COMMON;
 	/* fixme: This code is specific to SCI */
-        rect_t draw_bounds; /* The correct position to draw to */
+	rect_t draw_bounds; /* The correct position to draw to */
 	void *under_bitsp, *signalp;
 	int under_bits, signal;
-	int z; /* The z coordinate: Added to y, but used for sorting */ 
+	int z; /* The z coordinate: Added to y, but used for sorting */
 	int sequence; /* Sequence number: For sorting */
 	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
 } gfxw_dyn_view_t;

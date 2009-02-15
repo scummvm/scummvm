@@ -89,7 +89,7 @@ sbtree_get(sbtree_t *tree, int key);
 
 void
 sbtree_foreach(sbtree_t *tree, void *args, void *(*operation)(sbtree_t *, const int,
-							      const void *, void *));
+               const void *, void *));
 /* Operates once on each entry in the tree
 ** Parameters: (sbtree_t *) tree: The tree to operate on
 **             (void *) arguments: Additional arguments to pass to 'operation'

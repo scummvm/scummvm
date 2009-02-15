@@ -96,7 +96,7 @@ struct _state;
 */
 
 #define SCI_VERSION_RESUME_SUSPENDED_SONG SCI_VERSION(0,000,490)
-/* First version (PQ2-new) known to use the different song resumption 
+/* First version (PQ2-new) known to use the different song resumption
    mechanism -- When a new song is initialized, we store its state and
    resume it when the new one finishes.  Older versions completely
    clobbered the old songs.
