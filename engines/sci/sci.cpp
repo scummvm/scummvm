@@ -252,36 +252,36 @@ main_()
 
 	sciprintf("Imported FreeSCI, version "VERSION"\n");
 
-	state_t gamestate;
-	memset(&gamestate, 0, sizeof(state_t));
-	gamestate.resmgr = resmgr;
-	gamestate.gfx_state = NULL;
+	state_t* gamestate = (state_t *) sci_malloc(sizeof(state_t));
+	memset(gamestate, 0, sizeof(state_t));
+	gamestate->resmgr = resmgr;
+	gamestate->gfx_state = NULL;
 
-	if (init_gamestate(&gamestate, version))
+	if (init_gamestate(gamestate, version))
 		return 1;
 
 
-	if (game_init(&gamestate)) { /* Initialize */
+	if (game_init(gamestate)) { /* Initialize */
 		fprintf(stderr,"Game initialization failed: Aborting...\n");
 		return 1;
 	}
 
 	/* Set the savegame dir */
-	script_set_gamestate_save_dir(&gamestate, ConfMan.get("savepath").c_str());
+	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
 
 	// Originally, work_dir tried to be ~/.freesci/game_name
-	gamestate.work_dir = sci_strdup(ConfMan.get("savepath").c_str());
-	gamestate.resource_dir = resource_dir;
-	gamestate.port_serial = 0;
-	gamestate.have_mouse_flag = 1;
-	gamestate.animation_delay = 5;
-	gamestate.animation_granularity = 4;
+	gamestate->work_dir = sci_strdup(ConfMan.get("savepath").c_str());
+	gamestate->resource_dir = resource_dir;
+	gamestate->port_serial = 0;
+	gamestate->have_mouse_flag = 1;
+	gamestate->animation_delay = 5;
+	gamestate->animation_granularity = 4;
 	gfx_crossblit_alpha_threshold = 0x90;
 
 	gfx_state_t gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
 	gfx_state.version = resmgr->sci_version;
-	gamestate.gfx_state = &gfx_state;
+	gamestate->gfx_state = &gfx_state;
 
 /**** Default config: */
 	gfx_options_t gfx_options;
@@ -311,28 +311,28 @@ main_()
 		return 1;
 	}
 
-	if (game_init_graphics(&gamestate)) { /* Init interpreter graphics */
+	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
 		fprintf(stderr,"Game initialization failed: Error in GFX subsystem. Aborting...\n");
 		return 1;
 	}
 
-	if (game_init_sound(&gamestate, 0)) {
+	if (game_init_sound(gamestate, 0)) {
 		fprintf(stderr,"Game initialization failed: Error in sound subsystem. Aborting...\n");
 		return 1;
 	}
 
 	printf("Emulating SCI version %d.%03d.%03d\n",
-		SCI_VERSION_MAJOR(gamestate.version),
-		SCI_VERSION_MINOR(gamestate.version),
-		SCI_VERSION_PATCHLEVEL(gamestate.version));
+		SCI_VERSION_MAJOR(gamestate->version),
+		SCI_VERSION_MINOR(gamestate->version),
+		SCI_VERSION_PATCHLEVEL(gamestate->version));
 
-	state_t *tmp = &gamestate;
-	game_run(&tmp); /* Run the game */
+	game_run(&gamestate); /* Run the game */
 
-	game_exit(&gamestate);
-	script_free_engine(&gamestate); /* Uninitialize game state */
-	script_free_breakpoints(&gamestate);
-	sci_free(gamestate.work_dir);
+	game_exit(gamestate);
+	script_free_engine(gamestate); /* Uninitialize game state */
+	script_free_breakpoints(gamestate);
+	sci_free(gamestate->work_dir);
+	sci_free(gamestate);
 
 	scir_free_resource_manager(resmgr);
 
