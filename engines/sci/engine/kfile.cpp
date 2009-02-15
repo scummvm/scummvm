@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include "common/str.h"
+
 #include "sci/include/engine.h"
 
 
@@ -516,14 +518,8 @@ kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv)
 		char *path1_s = kernel_dereference_char_pointer(s, argv[1], 0);
 		char *path2_s = kernel_dereference_char_pointer(s, argv[2], 0);
 
-#ifndef HAVE_FNMATCH_H
-#ifndef _DOS
-#  warning "File matches will be unprecise!"
-#endif
-		return make_reg(0, !strcmp(path1_s, path2_s));
-#else
-		return make_reg(0, fnmatch(path1_s, path2_s, FNM_PATHNAME) /* POSIX.2 */);
-#endif
+		//return make_reg(0, !strcmp(path1_s, path2_s));
+		return make_reg(0, Common::matchString(path2_s, path1_s, true));
   }
 		break;
 

@@ -35,10 +35,6 @@
 #include "sci/include/vm.h"
 #include "sci/include/console.h" /* sciprintf() */
 
-#ifdef HAVE_FNMATCH_H
-#include <fnmatch.h>
-#endif /* HAVE_FNMATCH_H */
-
 #ifdef _MSC_VER
 #  include <direct.h>
 #  include <ctype.h>
