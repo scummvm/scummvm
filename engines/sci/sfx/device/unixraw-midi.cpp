@@ -42,11 +42,10 @@ static int fd;
 static const char *devicename = "/dev/midi";
 
 static int
-unixraw_init(midi_writer_t *self)
-{
+unixraw_init(midi_writer_t *self) {
 	sciprintf("[SFX] Initialising UNIX raw MIDI backend, v%s\n", SCI_UNIXRAW_MIDI_VERSION);
 
-	fd = open(devicename, O_WRONLY|O_SYNC);
+	fd = open(devicename, O_WRONLY | O_SYNC);
 
 	if (!IS_VALID_FD(fd)) {
 		sciprintf("[SFX] Failed to open %s\n", devicename);
@@ -57,14 +56,12 @@ unixraw_init(midi_writer_t *self)
 }
 
 static int
-unixraw_set_option(midi_writer_t *self, char *name, char *value)
-{
+unixraw_set_option(midi_writer_t *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 static int
-unixraw_write(midi_writer_t *self, unsigned char *buffer, int len)
-{
+unixraw_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	if (write(fd, buffer, len) != len) {
 		sciprintf("[SFX] MIDI write error\n");
 		return SFX_ERROR;
@@ -73,18 +70,15 @@ unixraw_write(midi_writer_t *self, unsigned char *buffer, int len)
 }
 
 static void
-unixraw_delay(midi_writer_t *self, int ticks)
-{
+unixraw_delay(midi_writer_t *self, int ticks) {
 }
 
 static void
-unixraw_reset_timer(midi_writer_t *self)
-{
+unixraw_reset_timer(midi_writer_t *self) {
 }
 
 static void
-unixraw_close(midi_writer_t *self)
-{
+unixraw_close(midi_writer_t *self) {
 	close(fd);
 }
 

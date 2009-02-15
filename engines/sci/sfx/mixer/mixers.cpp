@@ -43,8 +43,7 @@ static sfx_pcm_mixer_t *mixers[] = {
 };
 
 sfx_pcm_mixer_t *
-sfx_pcm_find_mixer(char *name)
-{
+sfx_pcm_find_mixer(char *name) {
 	int i = 0;
 
 	if (name)

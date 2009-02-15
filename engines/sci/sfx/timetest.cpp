@@ -31,11 +31,10 @@
 #include <sfx_time.h>
 #include <assert.h>
 
-sfx_timestamp_t a,b,c;
+sfx_timestamp_t a, b, c;
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	int i;
 	a = sfx_new_timestamp(10, 0, 1000);
 	b = sfx_new_timestamp(10, 1000, 1000);

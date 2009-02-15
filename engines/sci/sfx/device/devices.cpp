@@ -49,16 +49,16 @@ extern struct _midi_device sfx_device_midi_camd;
 static struct _midi_device *devices_midi[] = {
 #ifndef SCUMMVM
 #ifdef HAVE_PROTO_CAMD_H
-		&sfx_device_midi_camd,
+	&sfx_device_midi_camd,
 #endif
 #ifdef HAVE_ALSA
-		&sfx_device_midi_alsa,
+	&sfx_device_midi_alsa,
 #endif
 #ifdef UNIX
-		&sfx_device_midi_unixraw,
+	&sfx_device_midi_unixraw,
 #endif
 #endif // SCUMMVM
-		NULL
+	NULL
 };
 
 static struct _midi_device *devices_opl2[] = {
@@ -76,8 +76,7 @@ struct _midi_device **devices[] = {
 
 
 static struct _midi_device *
-find_dev(int type, char *name)
-{
+			find_dev(int type, char *name) {
 	int i = 0;
 
 	if (!type)
@@ -94,19 +93,18 @@ find_dev(int type, char *name)
 
 
 void *
-sfx_find_device(int type, char *name)
-{
+sfx_find_device(int type, char *name) {
 	struct _midi_device *dev = find_dev(type, name);
 
 	if (dev) {
 		if (dev->init(dev)) {
 			fprintf(stderr, "[SFX] Opening device '%s' failed\n",
-				dev->name);
+			        dev->name);
 			return NULL;
 		}
 
 		return dev;
 	};
-	
+
 	return NULL;
 }

@@ -42,7 +42,7 @@ extern sfx_softseq_t sfx_softseq_fluidsynth;
 
 static sfx_softseq_t *sw_sequencers[] = {
 	&sfx_softseq_opl2,
-/*	&sfx_softseq_mt32, */
+	/*	&sfx_softseq_mt32, */
 	&sfx_softseq_SN76496,
 	&sfx_softseq_pcspeaker,
 	&sfx_softseq_amiga,
@@ -54,8 +54,7 @@ static sfx_softseq_t *sw_sequencers[] = {
 
 
 sfx_softseq_t *
-sfx_find_softseq(const char *name)
-{
+sfx_find_softseq(const char *name) {
 	if (!name)
 		return sw_sequencers[0];
 	else {

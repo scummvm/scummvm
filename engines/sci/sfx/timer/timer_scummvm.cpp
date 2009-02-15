@@ -19,13 +19,13 @@ void scummvm_timer_update_internal(void *ptr) {
 int scummvm_timer_start(void (*func)(void *), void *data) {
 	if (scummvm_timer_callback) {
 		fprintf(stderr,
-				"Error: Attempt to initialize gametick timer more than once\n");
+		        "Error: Attempt to initialize gametick timer more than once\n");
 		return SFX_ERROR;
 	}
 
 	if (!func) {
 		fprintf(stderr,
-				"Error: Attempt to initialize gametick timer w/o callback\n");
+		        "Error: Attempt to initialize gametick timer w/o callback\n");
 		return SFX_ERROR;
 	}
 
@@ -45,10 +45,10 @@ int scummvm_timer_stop() {
 sfx_timer_t sfx_timer_scummvm = {
 	"ScummVM",
 	"0.1",
-	DELAY/1000, 0,
+	DELAY / 1000, 0,
 	NULL,
 	&scummvm_timer_start,
 	&scummvm_timer_stop,
 	0,
 	0
-	};
+};

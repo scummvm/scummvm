@@ -7,24 +7,25 @@ static char calledDeathListenerCallback;
 
 static unsigned char song[] = {
 // PCM not present
-0,
+	0,
 // channel defs
-0, 0x20, 0, 0x21, 0, 0, 0, 0, 
-0, 0,    0, 0,    0, 0, 0, 0, 
-0, 0,    0, 0,    0, 0, 0, 0, 
-0, 0,    0, 0,    0, 0, 0, 0,
+	0, 0x20, 0, 0x21, 0, 0, 0, 0,
+	0, 0,    0, 0,    0, 0, 0, 0,
+	0, 0,    0, 0,    0, 0, 0, 0,
+	0, 0,    0, 0,    0, 0, 0, 0,
 // note on, wait, note off
-0xAA,
-0x90, 0xAA, 0xAA,
-0xAA, 
-0x80, 0xAA, 0xAA,
-0xAA,
-0x91, 0xAA, 0xAA,
-0xAA,
-0x81, 0xAA, 0xAA,
-0xAA,
+	0xAA,
+	0x90, 0xAA, 0xAA,
+	0xAA,
+	0x80, 0xAA, 0xAA,
+	0xAA,
+	0x91, 0xAA, 0xAA,
+	0xAA,
+	0x81, 0xAA, 0xAA,
+	0xAA,
 // end track
-0xFC};
+	0xFC
+};
 
 #define SONG_CMD_COUNT 10
 
@@ -43,8 +44,7 @@ static unsigned char song[] = {
 	songit_free(it);
 
 
-void testFinishSong()
-{
+void testFinishSong() {
 	TEST_SETUP();
 	message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
 	TESTEQUAL(0xAA, message);
@@ -53,8 +53,7 @@ void testFinishSong()
 	TESTEQUAL(0, message);
 	TESTEQUAL(3, result);
 
-	for (i=0; i < SONG_CMD_COUNT - 2; i++)
-	{
+	for (i = 0; i < SONG_CMD_COUNT - 2; i++) {
 		message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
 	}
 
@@ -64,23 +63,20 @@ void testFinishSong()
 }
 
 
-void DeathListenerCallback(void *v1, void *v2)
-{
+void DeathListenerCallback(void *v1, void *v2) {
 	calledDeathListenerCallback++;
 	return;
 }
 
-void testDeathListener()
-{
+void testDeathListener() {
 	TEST_SETUP();
 
 	song_iterator_add_death_listener(
-			it,
-			it, 
-			(void (*)(void *, void*))DeathListenerCallback);
+	    it,
+	    it,
+	    (void(*)(void *, void*))DeathListenerCallback);
 
-	for (i=0; i < SONG_CMD_COUNT; i++)
-	{
+	for (i = 0; i < SONG_CMD_COUNT; i++) {
 		message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
 	}
 
@@ -91,22 +87,20 @@ void testDeathListener()
 	TESTEQUAL(1, calledDeathListenerCallback);
 }
 
-void testMultipleDeathListeners()
-{
+void testMultipleDeathListeners() {
 	TEST_SETUP();
 
 	song_iterator_add_death_listener(
-			it,
-			it, 
-			(void (*)(void *, void*))DeathListenerCallback);
+	    it,
+	    it,
+	    (void(*)(void *, void*))DeathListenerCallback);
 
 	song_iterator_add_death_listener(
-			it,
-			it, 
-			(void (*)(void *, void*))DeathListenerCallback);
+	    it,
+	    it,
+	    (void(*)(void *, void*))DeathListenerCallback);
 
-	for (i=0; i < SONG_CMD_COUNT; i++)
-	{
+	for (i = 0; i < SONG_CMD_COUNT; i++) {
 		message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
 	}
 
@@ -117,19 +111,17 @@ void testMultipleDeathListeners()
 	TESTEQUAL(2, calledDeathListenerCallback);
 }
 
-void testStopSong()
-{
+void testStopSong() {
 	TEST_SETUP();
 	SIMSG_SEND(it, SIMSG_STOP);
-	
+
 	message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
 	TESTEQUAL(SI_FINISHED, message);
 
 	TEST_TEARDOWN();
 }
 
-void testStopLoopedSong()
-{
+void testStopLoopedSong() {
 	TEST_SETUP();
 
 	SIMSG_SEND(it, SIMSG_SET_LOOPS(3));
@@ -143,8 +135,7 @@ void testStopLoopedSong()
 	TEST_TEARDOWN();
 }
 
-void testChangeSongMask()
-{
+void testChangeSongMask() {
 	TEST_SETUP();
 
 	message = songit_next(&it, &cmds, &result, IT_READER_MASK_ALL);
@@ -159,8 +150,7 @@ void testChangeSongMask()
 }
 
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	testFinishSong();
 	testDeathListener();
 	testMultipleDeathListeners();

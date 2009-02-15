@@ -44,7 +44,7 @@ static snd_pcm_format_t format = SND_PCM_FORMAT_S16;
 static unsigned int rate = 44100; /* FIXME */
 static unsigned int channels = 2; /* FIXME */
 static unsigned int buffer_time = 100000; /* FIXME */
-static unsigned int period_time = 1000000/60; /* 60Hz */ /* FIXME */
+static unsigned int period_time = 1000000 / 60; /* 60Hz */ /* FIXME */
 
 static snd_pcm_sframes_t buffer_size;
 static snd_pcm_sframes_t period_size;
@@ -64,8 +64,7 @@ static volatile byte run_thread;
 static pthread_mutex_t mutex;
 
 static int
-xrun_recovery(snd_pcm_t *handle, int err)
-{
+xrun_recovery(snd_pcm_t *handle, int err) {
 	if (err == -EPIPE) {	/* under-run */
 		err = snd_pcm_prepare(handle);
 		if (err < 0)
@@ -85,8 +84,7 @@ xrun_recovery(snd_pcm_t *handle, int err)
 }
 
 static void *
-alsa_thread(void *arg)
-{
+alsa_thread(void *arg) {
 	gint16 *ptr;
 	int err, cptr;
 	guint8 *buf;
@@ -130,22 +128,20 @@ alsa_thread(void *arg)
 }
 
 static sfx_timestamp_t
-pcmout_alsa_output_timestamp(sfx_pcm_device_t *self)
-{
+pcmout_alsa_output_timestamp(sfx_pcm_device_t *self) {
 	/* Number of frames enqueued in the output device: */
 	int delta = (buffer_size - period_size) / frame_size
-		/* Number of frames enqueued in the internal audio buffer: */
-		+ audio_buffer.frames_nr;
+	            /* Number of frames enqueued in the internal audio buffer: */
+	            + audio_buffer.frames_nr;
 
 	return sfx_timestamp_add(sfx_new_timestamp(last_callback_secs,
-						   last_callback_usecs,
-						   rate),
-				 delta);
+	                         last_callback_usecs,
+	                         rate),
+	                         delta);
 }
 
 static int
-pcmout_alsa_init(sfx_pcm_device_t *self)
-{
+pcmout_alsa_init(sfx_pcm_device_t *self) {
 	unsigned int rrate;
 	int err, dir;
 	snd_pcm_hw_params_t *hwparams;
@@ -195,7 +191,7 @@ pcmout_alsa_init(sfx_pcm_device_t *self)
 		sciprintf("[SND:ALSA] Unable to set buffer time %i for playback: %s\n", buffer_time, snd_strerror(err));
 		return SFX_ERROR;
 	}
-	err = snd_pcm_hw_params_get_buffer_size(hwparams, (snd_pcm_uframes_t*)&buffer_size);
+	err = snd_pcm_hw_params_get_buffer_size(hwparams, (snd_pcm_uframes_t*) & buffer_size);
 	if (err < 0) {
 		sciprintf("[SND:ALSA] Unable to get buffer size for playback: %s\n", snd_strerror(err));
 		return SFX_ERROR;
@@ -205,7 +201,7 @@ pcmout_alsa_init(sfx_pcm_device_t *self)
 		sciprintf("[SND:ALSA] Unable to set period time %i for playback: %s\n", period_time, snd_strerror(err));
 		return SFX_ERROR;
 	}
-	err = snd_pcm_hw_params_get_period_size(hwparams, (snd_pcm_uframes_t*)&period_size, &dir);
+	err = snd_pcm_hw_params_get_period_size(hwparams, (snd_pcm_uframes_t*) & period_size, &dir);
 	if (err < 0) {
 		sciprintf("[SND:ALSA] Unable to get period size for playback: %s\n", snd_strerror(err));
 		return SFX_ERROR;
@@ -270,8 +266,7 @@ pcmout_alsa_init(sfx_pcm_device_t *self)
 
 static int
 pcmout_alsa_output(sfx_pcm_device_t *self, byte *buf,
-		  int count, sfx_timestamp_t *ts)
-{
+                   int count, sfx_timestamp_t *ts) {
 	if (ts)
 		sfx_audbuf_write_timestamp(&audio_buffer, *ts);
 
@@ -280,14 +275,12 @@ pcmout_alsa_output(sfx_pcm_device_t *self, byte *buf,
 }
 
 static int
-pcmout_alsa_set_option(sfx_pcm_device_t *self, char *name, char *value)
-{
+pcmout_alsa_set_option(sfx_pcm_device_t *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 static void
-pcmout_alsa_exit(sfx_pcm_device_t *self)
-{
+pcmout_alsa_exit(sfx_pcm_device_t *self) {
 	int err;
 
 	run_thread = 0;
@@ -310,15 +303,13 @@ pcmout_alsa_exit(sfx_pcm_device_t *self)
 }
 
 static int
-timer_alsa_set_option(char *name, char *value)
-{
+timer_alsa_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
 
 static int
-timer_alsa_init(void (*callback)(void *data), void *data)
-{
+timer_alsa_init(void (*callback)(void *data), void *data) {
 	alsa_sfx_timer_callback = callback;
 	alsa_sfx_timer_data = data;
 
@@ -326,16 +317,14 @@ timer_alsa_init(void (*callback)(void *data), void *data)
 }
 
 static int
-timer_alsa_stop(void)
-{
+timer_alsa_stop(void) {
 	alsa_sfx_timer_callback = NULL;
 
 	return SFX_OK;
 }
 
 static int
-timer_alsa_block(void)
-{
+timer_alsa_block(void) {
 	if (pthread_mutex_lock(&mutex) != 0) {
 		fprintf(stderr, "[SND:ALSA] Failed to lock mutex\n");
 		return SFX_ERROR;
@@ -345,8 +334,7 @@ timer_alsa_block(void)
 }
 
 static int
-timer_alsa_unblock(void)
-{
+timer_alsa_unblock(void) {
 	if (pthread_mutex_unlock(&mutex) != 0) {
 		fprintf(stderr, "[SND:ALSA] Failed to unlock mutex\n");
 		return SFX_ERROR;

@@ -57,15 +57,14 @@ sfx_timer_t *sfx_timers[] = {
 
 
 sfx_timer_t *
-sfx_find_timer(char *name)
-{
+sfx_find_timer(char *name) {
 	if (!name) {
 		/* Policies go here */
 		return sfx_timers[0];
 	} else {
 		int n = 0;
 		while (sfx_timers[n]
-		       && strcasecmp(sfx_timers[n]->name, name))
+		        && strcasecmp(sfx_timers[n]->name, name))
 			++n;
 
 		return sfx_timers[n];

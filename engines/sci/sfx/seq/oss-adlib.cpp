@@ -50,8 +50,7 @@ static unsigned char oper_note[ADLIB_VOICES];
 static unsigned char oper_chn[ADLIB_VOICES];
 
 #if 1
-void seqbuf_dump(void) /* OSS upcall */
-{
+void seqbuf_dump(void) { /* OSS upcall */
 	if (_seqbufptr)
 		if (write(seqfd, _seqbuf, _seqbufptr) == -1) {
 			perror("ADLIB write ");
@@ -62,10 +61,9 @@ void seqbuf_dump(void) /* OSS upcall */
 #endif
 
 /* initialise note/operator lists, etc. */
-void adlib_init_lists(void)
-{
+void adlib_init_lists(void) {
 	int i;
-	for(i = 0 ; i < ADLIB_VOICES ; i++) {
+	for (i = 0 ; i < ADLIB_VOICES ; i++) {
 		oper_note[i] = 255;
 		oper_chn[i] = 255;
 		note_time[i] = 0;
@@ -73,40 +71,38 @@ void adlib_init_lists(void)
 	free_voices = ADLIB_VOICES;
 }
 
-int adlib_stop_note(int chn, int note, int velocity)
-{
-	int i, op=255;
-  
-	for (i=0;i<ADLIB_VOICES && op==255;i++) {
+int adlib_stop_note(int chn, int note, int velocity) {
+	int i, op = 255;
+
+	for (i = 0;i < ADLIB_VOICES && op == 255;i++) {
 		if (oper_chn[i] == chn)
 			if (oper_note[i] == note)
-				op=i;
+				op = i;
 	}
 
-	if (op==255) {
-		printf ("can't stop.. chn %d %d %d\n", chn, note, velocity);
+	if (op == 255) {
+		printf("can't stop.. chn %d %d %d\n", chn, note, velocity);
 		return 255;	/* not playing */
 	}
-  
+
 	SEQ_STOP_NOTE(dev, op, note, velocity);
 	SEQ_DUMPBUF();
 
 	oper_chn[op] = 255;
 	oper_note[op] = 255;
 	note_time[op] = 0;
-  
+
 	free_voices++;
 
 	return op;
 }
 
-int adlib_kill_one_note(int chn)
-{
+int adlib_kill_one_note(int chn) {
 	int oldest = 255, i = 255;
 	long time = 0;
-     
+
 	if (free_voices >= ADLIB_VOICES) {
-		printf("Free list empty but no notes playing\n"); 
+		printf("Free list empty but no notes playing\n");
 		return 255;
 	}	/* No notes playing */
 
@@ -128,7 +124,7 @@ int adlib_kill_one_note(int chn)
 
 	/*	printf("Killing chn %d, oper %d\n", chn, oldest); */
 
-	if (oldest == 255) 
+	if (oldest == 255)
 		return 255;	/* Was already stopped. Why? */
 
 	SEQ_STOP_NOTE(dev, oldest, oper_note[oldest], 0);
@@ -143,9 +139,8 @@ int adlib_kill_one_note(int chn)
 }
 
 static void
-adlib_start_note(int chn, int note, int velocity)
-{
-	int free;    
+adlib_start_note(int chn, int note, int velocity) {
+	int free;
 	struct timeval now;
 
 	if (velocity == 0) {
@@ -153,11 +148,11 @@ adlib_start_note(int chn, int note, int velocity)
 		return;
 	}
 
-	gettimeofday(&now, NULL);  
+	gettimeofday(&now, NULL);
 
 	if (free_voices <= 0)
 		free = adlib_kill_one_note(chn);
-	else 
+	else
 		for (free = 0; free < ADLIB_VOICES ; free++)
 			if (oper_chn[free] == 255)
 				break;
@@ -176,27 +171,26 @@ adlib_start_note(int chn, int note, int velocity)
 
 static int
 midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
-		byte *data2_ptr, void *seq)
-{
+                byte *data2_ptr, void *seq) {
 	int nrdevs, i, n;
 	struct synth_info info;
 	struct sbi_instrument sbi;
 
 	if (data_length < 1344) {
-		printf ("invalid patch.003");
+		printf("invalid patch.003");
 		return -1;
 	}
 
-	for (i = 0; i < 48; i++) 
-		make_sbi((adlib_def *)(data_ptr+(28 * i)), adlib_sbi[i]);
+	for (i = 0; i < 48; i++)
+		make_sbi((adlib_def *)(data_ptr + (28 * i)), adlib_sbi[i]);
 
 	if (data_length > 1344)
-		for (i = 48; i < 96; i++) 
-			make_sbi((adlib_def *)(data_ptr+2+(28 * i)), adlib_sbi[i]);
+		for (i = 48; i < 96; i++)
+			make_sbi((adlib_def *)(data_ptr + 2 + (28 * i)), adlib_sbi[i]);
 
 	memset(instr, 0, sizeof(instr));
- 
-	if (!IS_VALID_FD(seqfd=open("/dev/sequencer", O_WRONLY, 0))) {
+
+	if (!IS_VALID_FD(seqfd = open("/dev/sequencer", O_WRONLY, 0))) {
 		perror("/dev/sequencer");
 		return(-1);
 	}
@@ -204,9 +198,9 @@ midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
 		perror("/dev/sequencer");
 		return(-1);
 	}
-	for (i=0;i<nrdevs && dev==-1;i++) {
+	for (i = 0;i < nrdevs && dev == -1;i++) {
 		info.device = i;
-		if (ioctl(seqfd, SNDCTL_SYNTH_INFO, &info)==-1) {
+		if (ioctl(seqfd, SNDCTL_SYNTH_INFO, &info) == -1) {
 			perror("info: /dev/sequencer");
 			return(-1);
 		}
@@ -227,7 +221,7 @@ midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
 	for (i = 0; i < 96; i++) {
 		for (n = 0; n < 32; n++)
 			memcpy(sbi.operators, &adlib_sbi[i], sizeof(sbi_instr_data));
-		sbi.channel=i;
+		sbi.channel = i;
 		SEQ_WRPATCH(&sbi, sizeof(sbi));
 		SEQ_DUMPBUF();
 	}
@@ -239,16 +233,14 @@ midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
 
 
 static int
-midi_adlib_close(void)
-{
+midi_adlib_close(void) {
 	SEQ_DUMPBUF();
 	return close(seqfd);
 }
 
 
 static int
-midi_adlib_allstop(void)
-{
+midi_adlib_allstop(void) {
 	int i;
 	for (i = 0; i < ADLIB_VOICES ; i++) {
 		if (oper_chn[i] == 255)
@@ -261,26 +253,24 @@ midi_adlib_allstop(void)
 }
 
 static int
-midi_adlib_reverb(int param)
-{
+midi_adlib_reverb(int param) {
 	printf("reverb NYI %04x \n", param);
 	return 0;
 }
 
 static inline int
-midi_adlib_event1(guint8 command, guint8 note, guint8 velocity)
-{
+midi_adlib_event1(guint8 command, guint8 note, guint8 velocity) {
 	guint8 channel, oper;
 
 	channel = command & 0x0f;
 	oper = command & 0xf0;
 
-	switch (oper) {    
+	switch (oper) {
 	case 0x80:
 		adlib_stop_note(channel, note, velocity);
 		return 0;
-	case 0x90:  
-		adlib_start_note(channel,note,velocity);
+	case 0x90:
+		adlib_start_note(channel, note, velocity);
 		return 0;
 	case 0xe0:    /* Pitch bend needs scaling? */
 		SEQ_BENDER(dev, channel, ((note << 8) & velocity));
@@ -291,23 +281,22 @@ midi_adlib_event1(guint8 command, guint8 note, guint8 velocity)
 		return 0;
 	case 0xd0:    /* aftertouch */
 		SEQ_CHN_PRESSURE(dev, channel, note);
-		SEQ_DUMPBUF();    
+		SEQ_DUMPBUF();
 		return 0;
 	default:
 		printf("ADLIB: Unknown event %02x\n", command);
 		return 0;
 	}
-  
+
 	SEQ_DUMPBUF();
 	return 0;
 }
 
 static inline int
-midi_adlib_event2(guint8 command, guint8 param)
-{
+midi_adlib_event2(guint8 command, guint8 param) {
 	guint8 channel;
 	guint8 oper;
-  
+
 	channel = command & 0x0f;
 	oper = command & 0xf0;
 	switch (oper) {
@@ -327,8 +316,7 @@ midi_adlib_event2(guint8 command, guint8 param)
 }
 
 static int
-midi_adlib_event(byte command, int argc, byte *argv)
-{
+midi_adlib_event(byte command, int argc, byte *argv) {
 	if (argc > 1)
 		return midi_adlib_event1(command, argv[0], argv[1]);
 	else
@@ -336,15 +324,13 @@ midi_adlib_event(byte command, int argc, byte *argv)
 }
 
 static int
-midi_adlib_delay(int ticks)
-{
+midi_adlib_delay(int ticks) {
 	SEQ_DELTA_TIME(ticks);
 	return SFX_OK;
 }
 
 static int
-midi_adlib_set_option(char *name, char *value)
-{
+midi_adlib_set_option(char *name, char *value) {
 	return SFX_ERROR; /* No options are supported at this time */
 }
 

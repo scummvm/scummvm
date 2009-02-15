@@ -36,12 +36,11 @@ sfx_audio_buf_t buf;
 
 
 void
-tester_write(unsigned char *data, int datalen, int framesize, int gran)
-{
+tester_write(unsigned char *data, int datalen, int framesize, int gran) {
 	int i;
 
 	for (i = 0; i < datalen; i += gran) {
-		int size = (i + gran < datalen)? gran : datalen - i;
+		int size = (i + gran < datalen) ? gran : datalen - i;
 
 		sfx_audbuf_write(&buf, data + (i * framesize), framesize, size);
 	}
@@ -49,22 +48,21 @@ tester_write(unsigned char *data, int datalen, int framesize, int gran)
 
 
 void
-tester_read(unsigned char *data, int datalen, int framesize, int gran)
-{
+tester_read(unsigned char *data, int datalen, int framesize, int gran) {
 	unsigned char *readdata = malloc(datalen * framesize);
 	int i;
 
 	for (i = 0; i < datalen; i += gran) {
-		int size = (i + gran < datalen)? gran : datalen - i;
+		int size = (i + gran < datalen) ? gran : datalen - i;
 		int j;
 
 		sfx_audbuf_read(&buf, readdata + (i * framesize), framesize, size);
 		for (j = 0; j < gran * framesize; j++) {
-			int offset = i*framesize + j;
+			int offset = i * framesize + j;
 
 			if (data[i] != readdata[i]) {
 				fprintf(stderr, "[ERROR] Mismatch at offset %08x (sample #%d): Expected %02x, got %02x\n",
-					offset, i,  readdata[i], data[i]);
+				        offset, i,  readdata[i], data[i]);
 			}
 		}
 	}
@@ -75,7 +73,7 @@ tester_read(unsigned char *data, int datalen, int framesize, int gran)
 
 void
 test1(unsigned char *data, int len)
-     /* Test the 'regular' case */
+/* Test the 'regular' case */
 {
 	int framesize;
 	int stepsize;
@@ -102,7 +100,7 @@ test1(unsigned char *data, int len)
 
 void
 test2(unsigned char *data, int framesize)
-     /* Test whether buffer underrun repeats are handled correctly */
+/* Test whether buffer underrun repeats are handled correctly */
 {
 	int i;
 	unsigned char *src;
@@ -123,7 +121,7 @@ test2(unsigned char *data, int framesize)
 			for (j = 0; j < framesize; j++)
 				if (src[j + offset] != data[j]) {
 					fprintf(stderr, "[ERROR] At copy sample %d, frame %d, offset %d: Expected %02x, got %02x\n",
-						i, inst, j, data[j], src[j+offset]);
+					        i, inst, j, data[j], src[j+offset]);
 				}
 		}
 		memset(src, 0xbf, framesize * TEST2_LEN);
@@ -141,21 +139,20 @@ test2(unsigned char *data, int framesize)
 #define CHUNK_LEN_2 16
 #define CHUNK_LEN_3 40
 
-unsigned char test_data_0[CHUNK_LEN_0] =
-	{ 0x01, 0x02, 0x03, 0x04,  0x05, 0x06, 0x07, 0x08 };
-unsigned char test_data_1[CHUNK_LEN_1] = 
-	{ 0xff, 0xff, 0xff, 0xff,  0xff, 0xff, 0xff, 0xff,
-	  0x00, 0xff, 0x00, 0xff,  0x00, 0xff, 0x00, 0xff,
-	  0xff, 0x00, 0xff, 0x00};
-unsigned char test_data_2[CHUNK_LEN_2] = 
-	{ 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00,
-	  0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00 };
-unsigned char test_data_3[CHUNK_LEN_3] = 
-	{ 0x01, 0x02, 0x03, 0x04,  0x05, 0x06, 0x07, 0x08,
-	  0x11, 0x12, 0x13, 0x14,  0x15, 0x16, 0x17, 0x18,
-	  0x21, 0x22, 0x23, 0x24,  0x25, 0x26, 0x27, 0x28,
-	  0x41, 0x42, 0x43, 0x44,  0x45, 0x46, 0x47, 0x48,
-	  0x8f, 0x8e, 0x8d, 0x8c,  0x8b, 0x8a, 0x89, 0x88 };
+unsigned char test_data_0[CHUNK_LEN_0] = { 0x01, 0x02, 0x03, 0x04,  0x05, 0x06, 0x07, 0x08 };
+unsigned char test_data_1[CHUNK_LEN_1] = { 0xff, 0xff, 0xff, 0xff,  0xff, 0xff, 0xff, 0xff,
+        0x00, 0xff, 0x00, 0xff,  0x00, 0xff, 0x00, 0xff,
+        0xff, 0x00, 0xff, 0x00
+                                         };
+unsigned char test_data_2[CHUNK_LEN_2] = { 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00
+                                         };
+unsigned char test_data_3[CHUNK_LEN_3] = { 0x01, 0x02, 0x03, 0x04,  0x05, 0x06, 0x07, 0x08,
+        0x11, 0x12, 0x13, 0x14,  0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24,  0x25, 0x26, 0x27, 0x28,
+        0x41, 0x42, 0x43, 0x44,  0x45, 0x46, 0x47, 0x48,
+        0x8f, 0x8e, 0x8d, 0x8c,  0x8b, 0x8a, 0x89, 0x88
+                                         };
 
 struct {
 	int len;
@@ -168,8 +165,7 @@ struct {
 };
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	int i;
 
 	sfx_audbuf_init(&buf);

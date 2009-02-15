@@ -98,7 +98,7 @@ typedef struct _sfx_sequencer {
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
 
-        int (*volume)(guint8 volume);  /* OPTIONAL -- can be NULL */
+	int (*volume)(guint8 volume);  /* OPTIONAL -- can be NULL */
 	/* Sets the sequencer volume
 	** Parameters; (byte) volume: The volume to set, with 0 being mute and 127 full volume
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise

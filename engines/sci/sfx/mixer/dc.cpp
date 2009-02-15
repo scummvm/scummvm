@@ -65,8 +65,7 @@ TAILQ_HEAD(feed_list, feed_state) feeds;
 static char buf[BUF_SIZE * 2];
 
 static feed_state_t *
-find_feed_state(snd_stream_hnd_t hnd)
-{
+find_feed_state(snd_stream_hnd_t hnd) {
 	feed_state_t *state;
 	TAILQ_FOREACH(state, &feeds, entry) {
 		if (state->handle == hnd)
@@ -77,8 +76,7 @@ find_feed_state(snd_stream_hnd_t hnd)
 }
 
 static void
-query_timestamp(feed_state_t *state)
-{
+query_timestamp(feed_state_t *state) {
 	sfx_pcm_feed_t *feed = state->feed;
 
 	if (feed->get_timestamp) {
@@ -117,8 +115,7 @@ query_timestamp(feed_state_t *state)
 }
 
 void
-U8_to_S16(char *buf, int frames, int stereo)
-{
+U8_to_S16(char *buf, int frames, int stereo) {
 	int samples = frames * (stereo ? 2 : 1);
 	int i;
 
@@ -129,8 +126,7 @@ U8_to_S16(char *buf, int frames, int stereo)
 }
 
 static void *
-callback(snd_stream_hnd_t hnd, sfx_timestamp_t timestamp, int bytes_req, int *bytes_recv)
-{
+callback(snd_stream_hnd_t hnd, sfx_timestamp_t timestamp, int bytes_req, int *bytes_recv) {
 	feed_state_t *state = find_feed_state(hnd);
 	sfx_pcm_feed_t *feed;
 	int channels, frames_req;
@@ -191,8 +187,7 @@ callback(snd_stream_hnd_t hnd, sfx_timestamp_t timestamp, int bytes_req, int *by
 }
 
 static int
-mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device)
-{
+mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	if (snd_stream_init() < 0) {
 		fprintf(stderr, "[dc-mixer] Failed to initialize streaming sound driver\n");
 		return SFX_ERROR;
@@ -204,13 +199,12 @@ mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device)
 }
 
 static void
-mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed)
-{
+mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	feed_state_t *state = sci_malloc(sizeof(feed_state_t));
 	long secs, usecs;
 
 	if ((feed->conf.format != SFX_PCM_FORMAT_S16_LE) &&
-	  (feed->conf.format != SFX_PCM_FORMAT_U8)) {
+	        (feed->conf.format != SFX_PCM_FORMAT_U8)) {
 		fprintf(stderr, "[dc-mixer] Unsupported feed format\n");
 		feed->destroy(feed);
 		return;
@@ -234,18 +228,16 @@ mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed)
 	sci_gettime(&secs, &usecs);
 	state->time = sfx_new_timestamp(secs, usecs, feed->conf.rate);
 	snd_stream_start(state->handle, feed->conf.rate,
-			 feed->conf.stereo != SFX_PCM_MONO);
+	                 feed->conf.stereo != SFX_PCM_MONO);
 }
 
 static void
-mix_exit(sfx_pcm_mixer_t *self)
-{
+mix_exit(sfx_pcm_mixer_t *self) {
 	snd_stream_shutdown();
 }
 
 static int
-mix_process(sfx_pcm_mixer_t *self)
-{
+mix_process(sfx_pcm_mixer_t *self) {
 	feed_state_t *state, *state_next;
 
 	TAILQ_FOREACH(state, &feeds, entry) {
@@ -260,11 +252,10 @@ mix_process(sfx_pcm_mixer_t *self)
 			snd_stream_destroy(state->handle);
 			state->feed->destroy(state->feed);
 			TAILQ_REMOVE(&feeds, state, entry);
-		}
-		else if (state->mode == FEED_MODE_RESTART) {
+		} else if (state->mode == FEED_MODE_RESTART) {
 			snd_stream_stop(state->handle);
 			snd_stream_start(state->handle, state->feed->conf.rate,
-					 state->feed->conf.stereo != SFX_PCM_MONO);
+			                 state->feed->conf.stereo != SFX_PCM_MONO);
 			state->mode = FEED_MODE_ALIVE;
 		}
 		state = state_next;
@@ -274,24 +265,20 @@ mix_process(sfx_pcm_mixer_t *self)
 }
 
 static void
-mix_pause(sfx_pcm_mixer_t *self)
-{
+mix_pause(sfx_pcm_mixer_t *self) {
 }
 
 static void
-mix_resume(sfx_pcm_mixer_t *self)
-{
+mix_resume(sfx_pcm_mixer_t *self) {
 }
 
 static int
-pcm_init(sfx_pcm_device_t *self)
-{
+pcm_init(sfx_pcm_device_t *self) {
 	return SFX_OK;
 }
 
 static void
-pcm_exit(sfx_pcm_device_t *self)
-{
+pcm_exit(sfx_pcm_device_t *self) {
 }
 
 sfx_pcm_device_t sfx_pcm_driver_dc = {

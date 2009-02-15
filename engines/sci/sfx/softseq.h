@@ -52,7 +52,7 @@ typedef struct sfx_softseq {
 
 	int
 	(*init)(struct sfx_softseq *self, byte *res_data, int res_size,
-		byte *res2_data, int res2_size);
+	        byte *res2_data, int res2_size);
 	/* Initialises the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (byte *) res_data: Resource data for 'patch_nr' (see below)
@@ -128,7 +128,7 @@ sfx_softseq_t *
 sfx_find_softseq(const char *name);
 /* Finds a given or default software sequencer
 ** Parameters: (const char *) name: Name of the sequencer to look up, or NULL for default
-** Returns   : (sfx_softseq_t *) The requested sequencer, or NULL if not found 
+** Returns   : (sfx_softseq_t *) The requested sequencer, or NULL if not found
 */
 
 #endif /* !defined(SFX_SOFTSEQ_H_) */

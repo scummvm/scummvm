@@ -39,16 +39,16 @@ extern sfx_pcm_device_t sfx_pcm_driver_dc;
 sfx_pcm_device_t *pcmout_drivers[] = {
 #ifndef NO_PCMOUT
 #ifdef SCUMMVM
-		&sfx_pcm_driver_scummvm,
+	&sfx_pcm_driver_scummvm,
 #else // SCUMMVM
 #	ifdef HAVE_SDL
-		&sfx_pcm_driver_sdl,
+	&sfx_pcm_driver_sdl,
 #	endif
 #	ifdef HAVE_ALSA
-		&sfx_pcm_driver_alsa,
+	&sfx_pcm_driver_alsa,
 #	endif
 #	ifdef __DC__
-		&sfx_pcm_driver_dc,
+	&sfx_pcm_driver_dc,
 #	endif
 #endif // SCUMMVM
 #endif
@@ -56,18 +56,17 @@ sfx_pcm_device_t *pcmout_drivers[] = {
 };
 
 sfx_pcm_device_t *
-sfx_pcm_find_device(char *name)
-{
-        int retval = 0;
+sfx_pcm_find_device(char *name) {
+	int retval = 0;
 
-        if (!name) { /* Find default driver */
-	  return pcmout_drivers[0];
-        }
+	if (!name) { /* Find default driver */
+		return pcmout_drivers[0];
+	}
 
-        while (pcmout_drivers[retval] &&
-	       strcasecmp(name, pcmout_drivers[retval]->name))
-                retval++;
+	while (pcmout_drivers[retval] &&
+	        strcasecmp(name, pcmout_drivers[retval]->name))
+		retval++;
 
-        return pcmout_drivers[retval];
+	return pcmout_drivers[retval];
 }
 

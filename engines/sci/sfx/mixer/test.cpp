@@ -45,10 +45,10 @@ int dev_output(sfx_pcm_device_t *self, byte *buf, int count);
 
 sfx_pcm_device_t devices[DEVICES_NR] = {
 	{ "test-1", "0", dev_init, dev_exit, dev_option, dev_output,
-	  { 200, SFX_PCM_MONO, SFX_PCM_FORMAT_U8 }, 1024, NULL },
+		{ 200, SFX_PCM_MONO, SFX_PCM_FORMAT_U8 }, 1024, NULL },
 #if (DEVICES_NR > 1)
-	{ "test-2", "0", dev_init, dev_exit, dev_option, dev_output,
-	  { 200, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_U8 }, 1024, NULL },
+	{ "test-2", "0", dev_init, dev_exit, dev_option, dev_output, { 200, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_U8 }, 1024, NULL
+	},
 	{ "test-3", "0", dev_init, dev_exit, dev_option, dev_output,
 	  { 200, SFX_PCM_STEREO_RL, SFX_PCM_FORMAT_U8 }, 1024, NULL },
 	{ "test-4", "0", dev_init, dev_exit, dev_option, dev_output,
@@ -70,42 +70,38 @@ sfx_pcm_device_t devices[DEVICES_NR] = {
 
 int output_count;
 
-int dev_init(sfx_pcm_device_t *self)
-{
+int dev_init(sfx_pcm_device_t *self) {
 	output_count = 0;
 
 	fprintf(stderr, "[DEV] Initialised device %p as follows:\n"
-		"\trate = %d\n"
-		"\tstereo = %s\n"
-		"\tbias = %x\n"
-		"\tbytes/sample = %d\n"
-		"\tendianness = %s\n",
-	       self,
-	       self->conf.rate,
-	       self->conf.stereo? ((self->conf.stereo == SFX_PCM_STEREO_LR)? "Left, Right" : "Right, Left") : "No",
-	       self->conf.format & ~SFX_PCM_FORMAT_LMASK,
-	       (self->conf.format & SFX_PCM_FORMAT_16)? 2 : 1,
-	       ((self->conf.format & SFX_PCM_FORMAT_ENDIANNESS) == SFX_PCM_FORMAT_BE)? "big" : "little");
+	        "\trate = %d\n"
+	        "\tstereo = %s\n"
+	        "\tbias = %x\n"
+	        "\tbytes/sample = %d\n"
+	        "\tendianness = %s\n",
+	        self,
+	        self->conf.rate,
+	        self->conf.stereo ? ((self->conf.stereo == SFX_PCM_STEREO_LR) ? "Left, Right" : "Right, Left") : "No",
+			        self->conf.format & ~SFX_PCM_FORMAT_LMASK,
+			        (self->conf.format & SFX_PCM_FORMAT_16) ? 2 : 1,
+			        ((self->conf.format & SFX_PCM_FORMAT_ENDIANNESS) == SFX_PCM_FORMAT_BE) ? "big" : "little");
 	return 0;
 }
 
-void dev_exit(sfx_pcm_device_t *self)
-{
+void dev_exit(sfx_pcm_device_t *self) {
 	fprintf(stderr, "[DEV] Uninitialising device\n");
 }
 
-int dev_option(sfx_pcm_device_t *self, char *name, char *value)
-{
+int dev_option(sfx_pcm_device_t *self, char *name, char *value) {
 	fprintf(stderr, "[DEV] Set option '%s' to '%s'\n", name, value);
 	return 0;
 }
 
 int dev_output_enabled = 0;
 
-int dev_output(sfx_pcm_device_t *self, byte *buf, int count)
-{
-	int mono_sample_size = ((self->conf.format & SFX_PCM_FORMAT_16)? 2 : 1);
-	int sample_size = (self->conf.stereo? 2 : 1) * mono_sample_size;
+int dev_output(sfx_pcm_device_t *self, byte *buf, int count) {
+	int mono_sample_size = ((self->conf.format & SFX_PCM_FORMAT_16) ? 2 : 1);
+	int sample_size = (self->conf.stereo ? 2 : 1) * mono_sample_size;
 	int bias = self->conf.format & ~SFX_PCM_FORMAT_LMASK;
 	int is_bigendian = (self->conf.format & SFX_PCM_FORMAT_ENDIANNESS) == SFX_PCM_FORMAT_BE;
 	byte *left_channel = buf;
@@ -125,7 +121,7 @@ int dev_output(sfx_pcm_device_t *self, byte *buf, int count)
 	while (count--) {
 		int right = right_channel[0];
 		int left = left_channel[0];
-		int second_byte = ((self->conf.format & SFX_PCM_FORMAT_16)? 1 : 0);
+		int second_byte = ((self->conf.format & SFX_PCM_FORMAT_16) ? 1 : 0);
 
 		if (second_byte) {
 
@@ -186,18 +182,18 @@ typedef struct {
 
 sfx_pcm_feed_t feeds[FEEDS_NR] = {
 	{ feed_poll, feed_destroy, &(private_bits[0]),
-	  { 200, SFX_PCM_MONO, SFX_PCM_FORMAT_S8 }, "test-feed", 0, 0}
+		{ 200, SFX_PCM_MONO, SFX_PCM_FORMAT_S8 }, "test-feed", 0, 0}
 #if FEEDS_NR > 1
-	,{ feed_poll, feed_destroy, &(private_bits[1]),
-	  { 400, SFX_PCM_MONO, SFX_PCM_FORMAT_U8 }, "test-feed", 1, 0}
+	, { feed_poll, feed_destroy, &(private_bits[1]),
+	    { 400, SFX_PCM_MONO, SFX_PCM_FORMAT_U8 }, "test-feed", 1, 0}
 #endif
 #if FEEDS_NR > 2
-	,{ feed_poll, feed_destroy, &(private_bits[2]),
-	  { 20, SFX_PCM_MONO, SFX_PCM_FORMAT_S16_LE }, "test-feed", 2, 0}
+	, { feed_poll, feed_destroy, &(private_bits[2]),
+	    { 20, SFX_PCM_MONO, SFX_PCM_FORMAT_S16_LE }, "test-feed", 2, 0}
 #endif
 #if FEEDS_NR > 3
-	,{ feed_poll, feed_destroy, &(private_bits[3]),
-	  { 150, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_S8 }, "test-feed", 3, 0}
+	, { feed_poll, feed_destroy, &(private_bits[3]),
+	    { 150, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_S8 }, "test-feed", 3, 0}
 #endif
 	/*
 	,{ feed_poll, feed_destroy, &(private_bits[4]),
@@ -208,46 +204,47 @@ sfx_pcm_feed_t feeds[FEEDS_NR] = {
 };
 
 byte feed_data_0[] = {0xfd, 0xfe, 0xff, 0, 1, 2, 3, 4, 5, 6};
-byte feed_data_1[] = {0x80, 0x90, 0xA0, 0xB0, 0xC0, 
-		      0xD0, 0xD0, 0xC0, 0xB0, 0xA0, 0x90, 0x80};
+byte feed_data_1[] = {0x80, 0x90, 0xA0, 0xB0, 0xC0,
+                      0xD0, 0xD0, 0xC0, 0xB0, 0xA0, 0x90, 0x80
+                     };
 byte feed_data_2[] = {0x00, 0x00,
-		      0x00, 0x80,
-		      0xe8, 0x03};
+                      0x00, 0x80,
+                      0xe8, 0x03
+                     };
 byte feed_data_3[] = {0x00, 0x10,
-		      0x01, 0x20,
-		      0x02, 0x30};
+                      0x01, 0x20,
+                      0x02, 0x30
+                     };
 
 sample_feed_t sample_feeds[FEEDS_NR] = {
 	{ 1, 10, feed_data_0 }
 #if FEEDS_NR > 1
-	,{ 21, 12, feed_data_1 }
+	, { 21, 12, feed_data_1 }
 #endif
 #if FEEDS_NR > 2
-	,{ 0, 3, feed_data_2 }
+	, { 0, 3, feed_data_2 }
 #endif
 #if FEEDS_NR > 3
-	,{ 40, 3, feed_data_3 }
+	, { 40, 3, feed_data_3 }
 #endif
 };
 
 void
-feed_destroy(sfx_pcm_feed_t *self)
-{
+feed_destroy(sfx_pcm_feed_t *self) {
 	int_struct *s = (int_struct *) self->internal;
 	s->i = 0; /* reset */
 }
 
 
 int
-feed_poll(sfx_pcm_feed_t *self, byte *dest, int size)
-{
+feed_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	int_struct *s = (int_struct *) self->internal;
 	int sample_size = self->sample_size;
 	sample_feed_t *data = &(sample_feeds[self->debug_nr]);
 	int bias = self->conf.format & ~SFX_PCM_FORMAT_LMASK;
 	byte neutral[4] = {0, 0, 0, 0};
 	int i;
-fprintf(stderr, "[feed] Asked for %d at %p, ss=%d\n", size, dest, sample_size);
+	fprintf(stderr, "[feed] Asked for %d at %p, ss=%d\n", size, dest, sample_size);
 	if (bias) {
 		byte first = bias >> 8;
 		byte second = bias & 0xff;
@@ -295,8 +292,7 @@ extern FILE *con_file;
 
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	int dev_nr;
 
 	mix = sfx_pcm_find_mixer(NULL);
@@ -306,7 +302,7 @@ main(int argc, char **argv)
 		return 1;
 	} else {
 		fprintf(stderr, "Running %s, v%s\n",
-			mix->name, mix->version);
+		        mix->name, mix->version);
 	}
 	con_file = stderr;
 
@@ -332,7 +328,7 @@ main(int argc, char **argv)
 			mix->subscribe(mix, &(feeds[j]));
 
 		fprintf(stderr, "[test] Subscribed %d feeds.\n",
-			FEEDS_NR);
+		        FEEDS_NR);
 
 		while (output_count < MIN_OUTPUT) {
 			DELAY;

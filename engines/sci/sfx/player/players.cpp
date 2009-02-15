@@ -37,8 +37,7 @@ sfx_player_t *sfx_players[] = {
 };
 
 sfx_player_t *
-sfx_find_player(char *name)
-{
+sfx_find_player(char *name) {
 	if (!name) {
 		/* Implement platform policy here */
 
@@ -46,7 +45,7 @@ sfx_find_player(char *name)
 	} else {
 		int n = 0;
 		while (sfx_players[n] &&
-		       strcasecmp(sfx_players[n]->name, name))
+		        strcasecmp(sfx_players[n]->name, name))
 			++n;
 
 		return sfx_players[n];

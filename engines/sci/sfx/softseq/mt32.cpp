@@ -49,20 +49,17 @@ static int initializing;
 /* MIDI writer */
 
 static int
-mt32_midi_init(struct _midi_writer *self)
-{
+mt32_midi_init(struct _midi_writer *self) {
 	return SFX_OK;
 }
 
 static int
-mt32_midi_set_option(struct _midi_writer *self, char *name, char *value)
-{
+mt32_midi_set_option(struct _midi_writer *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 static int
-mt32_midi_write(struct _midi_writer *self, unsigned char *buf, int len)
-{
+mt32_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
 	if (buf[0] == 0xf0)
 		synth->playSysex(buf, len);
 	else if (len < 4) {
@@ -73,26 +70,22 @@ mt32_midi_write(struct _midi_writer *self, unsigned char *buf, int len)
 		if (len > 1)
 			msg |= buf[2] << 16;
 		synth->playMsg(msg);
-	}
-	else
+	} else
 		sciprintf("MT32EMU: Skipping non-sysex message of more than 3 bytes.\n");
 
 	return SFX_OK;
 }
 
 static void
-mt32_midi_delay(struct _midi_writer *self, int ticks)
-{
+mt32_midi_delay(struct _midi_writer *self, int ticks) {
 }
 
 static void
-mt32_midi_reset_timer(struct _midi_writer *self)
-{
+mt32_midi_reset_timer(struct _midi_writer *self) {
 }
 
 static void
-mt32_midi_close(struct _midi_writer *self)
-{
+mt32_midi_close(struct _midi_writer *self) {
 }
 
 static midi_writer_t midi_writer_mt32 = {
@@ -108,8 +101,7 @@ static midi_writer_t midi_writer_mt32 = {
 
 /* Software sequencer */
 
-static void printDebug(void *userData, const char *fmt, va_list list)
-{
+static void printDebug(void *userData, const char *fmt, va_list list) {
 	if (initializing) {
 		vprintf(fmt, list);
 		printf("\n");
@@ -117,15 +109,13 @@ static void printDebug(void *userData, const char *fmt, va_list list)
 }
 
 static void
-mt32_poll(sfx_softseq_t *self, byte *dest, int count)
-{
+mt32_poll(sfx_softseq_t *self, byte *dest, int count) {
 	synth->render((MT32Emu::Bit16s *) dest, count);
 }
 
 static int
 mt32_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
-	  int data2_length)
-{
+          int data2_length) {
 	MT32Emu::SynthProperties prop;
 	char *home = sci_get_homedir();
 	char *romdir;
@@ -136,7 +126,7 @@ mt32_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 	}
 
 	romdir = (char *) sci_malloc(sizeof(home) + 2 * sizeof(G_DIR_SEPARATOR_S)
-		 + sizeof(FREESCI_GAMEDIR) + 1);
+	                             + sizeof(FREESCI_GAMEDIR) + 1);
 
 	strcpy(romdir, home);
 	strcat(romdir, G_DIR_SEPARATOR_S);
@@ -166,7 +156,7 @@ mt32_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 	initializing = 0;
 
 	mt32seq->open(data_length, data_ptr, data2_length, data2_ptr,
-		      &midi_writer_mt32);
+	              &midi_writer_mt32);
 
 	free(romdir);
 
@@ -174,8 +164,7 @@ mt32_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 }
 
 static void
-mt32_exit(sfx_softseq_t *self)
-{
+mt32_exit(sfx_softseq_t *self) {
 	synth->close();
 	delete synth;
 
@@ -183,28 +172,24 @@ mt32_exit(sfx_softseq_t *self)
 }
 
 static void
-mt32_allstop(sfx_softseq_t *self)
-{
+mt32_allstop(sfx_softseq_t *self) {
 	if (mt32seq->allstop)
 		mt32seq->allstop();
 }
 
 static void
-mt32_volume(sfx_softseq_t *self, int volume)
-{
+mt32_volume(sfx_softseq_t *self, int volume) {
 	if (mt32seq->volume)
 		mt32seq->volume(volume / 2); /* High volume causes clipping. */
 }
 
 static int
-mt32_set_option(sfx_softseq_t *self, const char *name, const char *value)
-{
+mt32_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
 static void
-mt32_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv)
-{
+mt32_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
 	mt32seq->event(cmd, argc, argv);
 }
 

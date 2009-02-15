@@ -50,7 +50,7 @@ static sfx_pcm_feed_t pcm_it_prototype = {
 	pi_destroy,
 	NULL, /* No timestamp getter */
 	NULL, /* Internal data goes here */
-	{0,0,0}, /* Must fill in configuration */
+	{0, 0, 0}, /* Must fill in configuration */
 	"song-iterator",
 	0, /* Ideally the resource number should go here */
 	0  /* The mixer computes this for us */
@@ -59,10 +59,9 @@ static sfx_pcm_feed_t pcm_it_prototype = {
 
 sfx_pcm_feed_t *
 sfx_iterator_make_feed(byte *base_data,
-		       int offset,
-		       int size,
-		       sfx_pcm_config_t conf)
-{
+                       int offset,
+                       int size,
+                       sfx_pcm_config_t conf) {
 	sfx_pcm_feed_t *feed;
 	pcm_data_internal_t *idat;
 	byte *data = base_data + offset;
@@ -87,8 +86,7 @@ sfx_iterator_make_feed(byte *base_data,
 
 
 static int
-pi_poll(sfx_pcm_feed_t *self, byte *dest, int size)
-{
+pi_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	int data_len;
 
 	if (size >= D->frames_left)
@@ -100,7 +98,7 @@ pi_poll(sfx_pcm_feed_t *self, byte *dest, int size)
 
 	memcpy(dest, D->data, data_len);
 #if 0
-memset(dest, 0xff, data_len);
+	memset(dest, 0xff, data_len);
 #endif
 
 	D->data += data_len;
@@ -109,8 +107,7 @@ memset(dest, 0xff, data_len);
 }
 
 static void
-pi_destroy(sfx_pcm_feed_t *self)
-{
+pi_destroy(sfx_pcm_feed_t *self) {
 	sci_refcount_decref(D->base_data);
 	sci_free(D);
 	sci_free(self);

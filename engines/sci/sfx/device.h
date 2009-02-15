@@ -32,7 +32,7 @@
 /* Various types of resources */
 #define SFX_DEVICE_NONE 0
 #define SFX_DEVICE_MIDI 1 /* midi writer */
-#define SFX_DEVICE_OPL2 2 /* OPL/2 sequencer */ 
+#define SFX_DEVICE_OPL2 2 /* OPL/2 sequencer */
 
 struct _midi_device {
 	const char *name;

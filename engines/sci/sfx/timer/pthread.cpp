@@ -41,8 +41,7 @@ pthread_t thread;
 volatile static int thread_run;
 
 static void *
-timer_thread(void *arg)
-{
+timer_thread(void *arg) {
 	while (thread_run) {
 		if (callback)
 			callback(callback_data);
@@ -54,14 +53,12 @@ timer_thread(void *arg)
 }
 
 static int
-set_option(char *name, char *value)
-{
+set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
 static int
-init(void (*func)(void *), void *data)
-{
+init(void (*func)(void *), void *data) {
 	if (callback) {
 		fprintf(stderr, "Error: Attempt to initialize pthread timer more than once\n");
 		return SFX_ERROR;
@@ -85,8 +82,7 @@ init(void (*func)(void *), void *data)
 }
 
 static int
-stop(void)
-{
+stop(void) {
 	thread_run = 0;
 	pthread_join(thread, NULL);
 

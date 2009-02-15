@@ -43,26 +43,23 @@ static void *sig_callback_data = NULL;
 static sigset_t current_sigset;
 
 static void
-timer_handler(int i)
-{
+timer_handler(int i) {
 	if (sig_callback)
 		sig_callback(sig_callback_data);
 }
 
 static int
-sigalrm_set_option(char *name, char *value)
-{
+sigalrm_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
 
 static int
-sigalrm_start(void)
-{
+sigalrm_start(void) {
 	struct itimerval itimer;
 
 	itimer.it_value.tv_sec = 0;
-	itimer.it_value.tv_usec = 1000000/60;
+	itimer.it_value.tv_usec = 1000000 / 60;
 	itimer.it_interval = itimer.it_value;
 
 	signal(SIGALRM, timer_handler); /* Re-instate timer handler, to make sure */
@@ -73,8 +70,7 @@ sigalrm_start(void)
 
 
 static int
-sigalrm_init(void (*callback)(void *), void *data)
-{
+sigalrm_init(void (*callback)(void *), void *data) {
 	if (sig_callback) {
 		fprintf(stderr, "Error: Attempt to initialize sigalrm timer more than once\n");
 		return SFX_ERROR;
@@ -98,8 +94,7 @@ sigalrm_init(void (*callback)(void *), void *data)
 
 
 static int
-sigalrm_stop(void)
-{
+sigalrm_stop(void) {
 	struct itimerval itimer;
 
 	if (!sig_callback) {
@@ -119,8 +114,7 @@ sigalrm_stop(void)
 
 
 static int
-sigalrm_block(void)
-{
+sigalrm_block(void) {
 	if (sigprocmask(SIG_BLOCK, &current_sigset, NULL) != 0) {
 		fprintf(stderr, "Error: Failed to block sigalrm\n");
 		return SFX_ERROR;
@@ -131,8 +125,7 @@ sigalrm_block(void)
 
 
 static int
-sigalrm_unblock(void)
-{
+sigalrm_unblock(void) {
 	if (sigprocmask(SIG_UNBLOCK, &current_sigset, NULL) != 0) {
 		fprintf(stderr, "Error: Failed to unblock sigalrm\n");
 		return SFX_ERROR;

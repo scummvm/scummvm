@@ -38,40 +38,36 @@
 static int global_volume = 100; /* Base volume */
 static int volumes[CHANNELS_NR] = { 100, 100, 100 };
 static int notes[CHANNELS_NR] = {0, 0, 0}; /* Current halftone, or 0 if off */
-static int freq_count[CHANNELS_NR] = {0, 0, 0}; 
+static int freq_count[CHANNELS_NR] = {0, 0, 0};
 static int channel_assigner = 0;
 static int channels_assigned = 0;
-static int chan_nrs[CHANNELS_NR] = {-1, -1, -1};
+static int chan_nrs[CHANNELS_NR] = { -1, -1, -1};
 
 extern sfx_softseq_t sfx_softseq_pcspeaker;
 /* Forward-declare the sequencer we are defining here */
 
 
 static int
-SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value)
-{
+SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
 static int
 SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
-	     int patch2_len)
-{
+             int patch2_len) {
 	return SFX_OK;
 }
 
 static void
-SN76496_exit(sfx_softseq_t *self)
-{
+SN76496_exit(sfx_softseq_t *self) {
 }
 
 static void
-SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv)
-{
+SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 	int i;
 	int chan = -1;
 #if 0
-	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc?argv[0] : 0, (argc > 1)? argv[1] : 0);
+	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 	if ((command & 0xe0) == 0x80) {
 		int chan_nr = command & 0xf;
@@ -104,7 +100,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv)
 	}
 #if 0
 	fprintf(stderr, " --> %d [%04x], {%d,%d,%d}@%d\n", chan,
-		channels_assigned, chan_nrs[0],chan_nrs[1],chan_nrs[2],channel_assigner);
+	        channels_assigned, chan_nrs[0], chan_nrs[1], chan_nrs[2], channel_assigner);
 #endif
 
 	switch (command & 0xf0) {
@@ -132,7 +128,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv)
 
 	default:
 #if DEBUG
-		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc?argv[0] : 0, (argc > 1)? argv[1] : 0);
+		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 		break; /* ignore */
 	}
@@ -158,20 +154,18 @@ freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 };
 
 static inline int
-get_freq(int note)
-{
+get_freq(int note) {
 	int halftone_delta = note - BASE_NOTE;
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
-	int halftone_index = (halftone_delta + (12*100)) % 12 ;
-	int freq = (!note)? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
+	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;
+	int freq = (!note) ? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
 
 	return freq;
 }
 
 
 void
-SN76496_poll(sfx_softseq_t *self, byte *dest, int len)
-{
+SN76496_poll(sfx_softseq_t *self, byte *dest, int len) {
 	gint16 *buf = (gint16 *) dest;
 	int i;
 	int chan;
@@ -186,7 +180,7 @@ SN76496_poll(sfx_softseq_t *self, byte *dest, int len)
 		for (chan = 0; chan < CHANNELS_NR; chan++)
 			if (notes[chan]) {
 				int volume = (global_volume * volumes[chan])
-					>> VOLUME_SHIFT;
+				             >> VOLUME_SHIFT;
 
 				freq_count[chan] += freq[chan];
 				while (freq_count[chan] >= (FREQUENCY << 1))
@@ -195,12 +189,12 @@ SN76496_poll(sfx_softseq_t *self, byte *dest, int len)
 				if (freq_count[chan] - freq[chan] < 0) {
 					/* Unclean rising edge */
 					int l = volume << 1;
-					result += -volume + (l*freq_count[chan])/freq[chan];
+					result += -volume + (l * freq_count[chan]) / freq[chan];
 				} else if (freq_count[chan] >= FREQUENCY
-					   && freq_count[chan] - freq[chan] < FREQUENCY) {
+				           && freq_count[chan] - freq[chan] < FREQUENCY) {
 					/* Unclean falling edge */
 					int l = volume << 1;
-					result += volume - (l*(freq_count[chan] - FREQUENCY))/freq[chan];
+					result += volume - (l * (freq_count[chan] - FREQUENCY)) / freq[chan];
 				} else {
 					if (freq_count[chan] < FREQUENCY)
 						result += volume;
@@ -214,16 +208,14 @@ SN76496_poll(sfx_softseq_t *self, byte *dest, int len)
 }
 
 void
-SN76496_allstop(sfx_softseq_t *self)
-{
+SN76496_allstop(sfx_softseq_t *self) {
 	int i;
 	for (i = 0; i < CHANNELS_NR; i++)
 		notes[i] = 0;
 }
 
 void
-SN76496_volume(sfx_softseq_t *self, int new_volume)
-{
+SN76496_volume(sfx_softseq_t *self, int new_volume) {
 	global_volume = new_volume;
 }
 

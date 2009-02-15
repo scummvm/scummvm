@@ -176,7 +176,7 @@ static const char
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*30*/  0, 0, 0, 0,
-/* The preceeding percussions are not covered by the GM standard */
+	/* The preceeding percussions are not covered by the GM standard */
 	/*34*/  "Acoustic Bass Drum",
 	/*35*/  "Bass Drum 1",
 	/*36*/  "Side Stick",
@@ -566,8 +566,7 @@ static struct {
 };
 
 static gint8
-lookup_instrument(const char *iname)
-{
+lookup_instrument(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
@@ -579,8 +578,7 @@ lookup_instrument(const char *iname)
 }
 
 static gint8
-lookup_rhythm_key(const char *iname)
-{
+lookup_rhythm_key(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
@@ -592,31 +590,29 @@ lookup_rhythm_key(const char *iname)
 }
 
 static void
-print_map(int sci, int ins, int rhythm, int mt32)
-{
+print_map(int sci, int ins, int rhythm, int mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	if (ins == SFX_UNMAPPED || (ins == SFX_MAPPED_TO_RHYTHM && rhythm == SFX_UNMAPPED)) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s' (%i)\n",
-			  sci, MT32_PresetTimbreMaps[mt32].name, mt32);
+		          sci, MT32_PresetTimbreMaps[mt32].name, mt32);
 		return;
 	}
 
 	if (ins == SFX_MAPPED_TO_RHYTHM) {
 		sciprintf("[MT32-to-GM] Mapping [%i] `%s' (%i) to `%s' [R] (%i)\n",
-			  sci, MT32_PresetTimbreMaps[mt32].name, mt32,
-			  GM_Percussion_Names[rhythm], rhythm);
+		          sci, MT32_PresetTimbreMaps[mt32].name, mt32,
+		          GM_Percussion_Names[rhythm], rhythm);
 		return;
 	}
 
 	sciprintf("[MT32-to-GM] Mapping [%i] `%s' (%i) to `%s' (%i)\n",
-		  sci, MT32_PresetTimbreMaps[mt32].name, mt32,
-		  GM_Instrument_Names[ins], ins);
+	          sci, MT32_PresetTimbreMaps[mt32].name, mt32,
+	          GM_Instrument_Names[ins], ins);
 #endif
 }
 
 static void
-print_map_mem(int sci, int ins, int rhythm, char *mt32)
-{
+print_map_mem(int sci, int ins, int rhythm, char *mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	char name[11];
 
@@ -625,47 +621,45 @@ print_map_mem(int sci, int ins, int rhythm, char *mt32)
 
 	if (ins == SFX_UNMAPPED || (ins == SFX_MAPPED_TO_RHYTHM && rhythm == SFX_UNMAPPED)) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s'\n",
-			  sci, name);
+		          sci, name);
 		return;
 	}
 
 	if (ins == SFX_MAPPED_TO_RHYTHM) {
 		sciprintf("[MT32-to-GM] Mapping [%i] `%s' to `%s' [R] (%i)\n",
-			  sci, name, GM_Percussion_Names[rhythm], rhythm);
+		          sci, name, GM_Percussion_Names[rhythm], rhythm);
 		return;
 	}
 
 	sciprintf("[MT32-to-GM] Mapping [%i] `%s' to `%s' (%i)\n",
-		  sci, name, GM_Instrument_Names[ins], ins);
+	          sci, name, GM_Instrument_Names[ins], ins);
 #endif
 }
 
 static void
-print_map_rhythm(int sci, int ins, int rhythm, int mt32)
-{
+print_map_rhythm(int sci, int ins, int rhythm, int mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	if (ins == SFX_UNMAPPED || (ins == SFX_MAPPED_TO_RHYTHM && rhythm == SFX_UNMAPPED)) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s' [R] (%i)\n",
-			  sci, MT32_RhythmTimbreMaps[mt32].name, mt32);
+		          sci, MT32_RhythmTimbreMaps[mt32].name, mt32);
 		return;
 	}
 
 	if (ins == SFX_MAPPED_TO_RHYTHM) {
 		sciprintf("[MT32-to-GM] Mapping [%i] `%s' [R] (%i) to `%s' [R] (%i)\n",
-			  sci, MT32_RhythmTimbreMaps[mt32].name, mt32,
-			  GM_Percussion_Names[rhythm], rhythm);
+		          sci, MT32_RhythmTimbreMaps[mt32].name, mt32,
+		          GM_Percussion_Names[rhythm], rhythm);
 		return;
 	}
 
 	sciprintf("[MT32-to-GM] Mapping [%i] `%s' [R] (%i) to `%s' (%i)\n",
-		  sci, MT32_RhythmTimbreMaps[mt32].name, mt32,
-		  GM_Instrument_Names[ins], ins);
+	          sci, MT32_RhythmTimbreMaps[mt32].name, mt32,
+	          GM_Instrument_Names[ins], ins);
 #endif
 }
 
 static void
-print_map_rhythm_mem(int sci, int rhythm, char *mt32)
-{
+print_map_rhythm_mem(int sci, int rhythm, char *mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	char name[11];
 
@@ -674,18 +668,17 @@ print_map_rhythm_mem(int sci, int rhythm, char *mt32)
 
 	if (rhythm == SFX_UNMAPPED) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s'\n",
-			  sci, name);
+		          sci, name);
 		return;
 	}
 
 	sciprintf("[MT32-to-GM] Mapping [%i] `%s' to `%s' (%i)\n",
-		  sci, name, GM_Percussion_Names[rhythm], rhythm);
+	          sci, name, GM_Percussion_Names[rhythm], rhythm);
 #endif
 }
 
 sfx_instrument_map_t *
-sfx_instrument_map_mt32_to_gm(byte *data, size_t size)
-{
+sfx_instrument_map_mt32_to_gm(byte *data, size_t size) {
 	int memtimbres, patches;
 	guint8 group, number, keyshift, finetune, bender_range;
 	guint8 *patchpointer;
@@ -731,7 +724,7 @@ sfx_instrument_map_mt32_to_gm(byte *data, size_t size)
 	memtimbres = *(data + 0x1EB);
 	pos = 0x1EC + memtimbres * 0xF6;
 
-	if (size > pos && ((0x100 * *(data + pos) + *(data +pos + 1)) == 0xABCD)) {
+	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xABCD)) {
 		patches = 96;
 		pos += 2 + 8 * 48;
 	} else

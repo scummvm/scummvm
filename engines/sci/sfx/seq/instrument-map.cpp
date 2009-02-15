@@ -32,9 +32,8 @@
 #include "sfx_engine.h"
 
 sfx_instrument_map_t *
-sfx_instrument_map_new(int velocity_maps_nr)
-{
-	sfx_instrument_map_t *map = (sfx_instrument_map_t *)sci_malloc(sizeof (sfx_instrument_map_t));
+sfx_instrument_map_new(int velocity_maps_nr) {
+	sfx_instrument_map_t *map = (sfx_instrument_map_t *)sci_malloc(sizeof(sfx_instrument_map_t));
 	int i;
 
 	map->initialisation_block_size = 0;
@@ -47,7 +46,7 @@ sfx_instrument_map_new(int velocity_maps_nr)
 		map->velocity_map = NULL; /* Yes, this complicates control flow needlessly, but it avoids some of the pointless
 					  ** warnings that certain memory tools seem to find appropriate. */
 	else {
-		map->velocity_map = (byte **)sci_malloc(sizeof (byte *) * velocity_maps_nr);
+		map->velocity_map = (byte **)sci_malloc(sizeof(byte *) * velocity_maps_nr);
 		for (i = 0; i < velocity_maps_nr; ++i)
 			map->velocity_map[i] = (byte *)sci_malloc(SFX_VELOCITIES_NR);
 	}
@@ -56,7 +55,7 @@ sfx_instrument_map_new(int velocity_maps_nr)
 
 	map->percussion_volume_adjust = 0;
 	for (i = 0; i < SFX_RHYTHM_NR; ++i)
-		     map->percussion_map[i] = i;
+		map->percussion_map[i] = i;
 
 
 	for (i = 0; i < SFX_INSTRUMENTS_NR; ++i) {
@@ -69,8 +68,7 @@ sfx_instrument_map_new(int velocity_maps_nr)
 }
 
 void
-sfx_instrument_map_free(sfx_instrument_map_t *map)
-{
+sfx_instrument_map_free(sfx_instrument_map_t *map) {
 	if (!map)
 		return;
 
@@ -106,21 +104,20 @@ sfx_instrument_map_free(sfx_instrument_map_t *map)
 
 
 static int
-patch001_type0_length(byte *data, size_t length)
-{
+patch001_type0_length(byte *data, size_t length) {
 	unsigned int pos = 492 + 246 * data[491];
 
-/*  printf("timbres %d (post = %04x)\n",data[491], pos);*/
+	/*  printf("timbres %d (post = %04x)\n",data[491], pos);*/
 
 	if ((length >= (pos + 386)) && (data[pos] == 0xAB) && (data[pos + 1] == 0xCD))
 		pos += 386;
 
-/*  printf("pos = %04x (%02x %02x)\n", pos, data[pos], data[pos + 1]); */
+	/*  printf("pos = %04x (%02x %02x)\n", pos, data[pos], data[pos + 1]); */
 
 	if ((length >= (pos + 267)) && (data[pos] == 0xDC) && (data[pos + 1] == 0xBA))
 		pos += 267;
 
-/*  printf("pos = %04x %04x (%d)\n", pos, length, pos-length); */
+	/*  printf("pos = %04x %04x (%d)\n", pos, length, pos-length); */
 
 
 	if (pos == length)
@@ -129,34 +126,31 @@ patch001_type0_length(byte *data, size_t length)
 }
 
 static int
-patch001_type1_length(byte *data, size_t length)
-{
+patch001_type1_length(byte *data, size_t length) {
 	if ((length >= 1155) && (((data[1154] << 8) + data[1153] + 1155) == length))
 		return 1;
 	return 0;
 }
 
 int
-sfx_instrument_map_detect(byte *data, size_t length)
-{
+sfx_instrument_map_detect(byte *data, size_t length) {
 	/* length test */
 	if (length < 1155)
 		return SFX_MAP_MT32;
 	if (length > 16889)
 		return SFX_MAP_MT32_GM;
 	if (patch001_type0_length(data, length) &&
-	    !patch001_type1_length(data, length))
+	        !patch001_type1_length(data, length))
 		return SFX_MAP_MT32;
 	if (patch001_type1_length(data, length) &&
-	    !patch001_type0_length(data, length))
+	        !patch001_type0_length(data, length))
 		return SFX_MAP_MT32_GM;
 	return SFX_MAP_UNKNOWN;
 }
 
 
 sfx_instrument_map_t *
-sfx_instrument_map_load_sci(byte *data, size_t size)
-{
+sfx_instrument_map_load_sci(byte *data, size_t size) {
 	sfx_instrument_map_t * map;
 	int i, m;
 
@@ -230,45 +224,39 @@ typedef struct decorated_midi_writer {
 
 
 static void
-init_decorated(struct _midi_writer *self_)
-{
+init_decorated(struct _midi_writer *self_) {
 	decorated_midi_writer_t *self = (decorated_midi_writer_t *) self_;
 	self->writer->init(self->writer);
 }
 
 static void
-set_option_decorated(struct _midi_writer *self_, char *name, char *value)
-{
+set_option_decorated(struct _midi_writer *self_, char *name, char *value) {
 	decorated_midi_writer_t *self = (decorated_midi_writer_t *) self_;
 	self->writer->set_option(self->writer, name, value);
 }
 
 static void
-delay_decorated(struct _midi_writer *self_, int ticks)
-{
+delay_decorated(struct _midi_writer *self_, int ticks) {
 	decorated_midi_writer_t *self = (decorated_midi_writer_t *) self_;
 	self->writer->delay(self->writer, ticks);
 }
 
 static void
-flush_decorated(struct _midi_writer *self_)
-{
+flush_decorated(struct _midi_writer *self_) {
 	decorated_midi_writer_t *self = (decorated_midi_writer_t *) self_;
 	if (self->writer->flush)
 		self->writer->flush(self->writer);
 }
 
 static void
-reset_timer_decorated(struct _midi_writer *self_)
-{
+reset_timer_decorated(struct _midi_writer *self_) {
 	decorated_midi_writer_t *self = (decorated_midi_writer_t *) self_;
 	self->writer->reset_timer(self->writer);
 }
 
 
 static void
-close_decorated(decorated_midi_writer_t *self)
-{
+close_decorated(decorated_midi_writer_t *self) {
 	sfx_instrument_map_free(self->map);
 	self->map = NULL;
 	self->writer->close(self->writer);
@@ -280,8 +268,7 @@ close_decorated(decorated_midi_writer_t *self)
 #define BOUND_127(x) (((x) < 0)? 0 : (((x) > 0x7f)? 0x7f : (x)))
 
 static int
-bound_hard_127(int i, const char *descr)
-{
+bound_hard_127(int i, const char *descr) {
 	int r = BOUND_127(i);
 	if (r != i)
 		fprintf(stderr, "[instrument-map] Hard-clipping %02x to %02x in %s\n", i, r, descr);
@@ -289,8 +276,7 @@ bound_hard_127(int i, const char *descr)
 }
 
 static int
-set_bend_range(midi_writer_t *writer, int channel, int range)
-{
+set_bend_range(midi_writer_t *writer, int channel, int range) {
 	byte buf[3] = {0xb0, 0x65, 0x00};
 
 	buf[0] |= channel & 0xf;
@@ -315,18 +301,18 @@ set_bend_range(midi_writer_t *writer, int channel, int range)
 }
 
 static int
-write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
-{
+write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 	sfx_instrument_map_t *map = self->map;
 	int op = *buf & 0xf0;
 	int chan = *buf & 0x0f;
 	int patch = self->patches[chan].patch;
 	int rhythm = self->patches[chan].rhythm;
 
-	assert (len >= 1);
+	assert(len >= 1);
 
 	if (op == 0xC0 && chan != MIDI_RHYTHM_CHANNEL) { /* Program change */
-		/*int*/ patch = bound_hard_127(buf[1], "program change");
+		/*int*/
+		patch = bound_hard_127(buf[1], "program change");
 		int instrument = map->patch_map[patch].patch;
 		int bend_range = map->patch_bend_range[patch];
 
@@ -335,7 +321,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 		if (instrument == SFX_UNMAPPED || instrument == SFX_MAPPED_TO_RHYTHM)
 			return SFX_OK;
 
-		assert (len >= 2);
+		assert(len >= 2);
 		buf[1] = bound_hard_127(instrument, "patch lookup");
 
 		if (self->writer->write(self->writer, buf, len) != SFX_OK)
@@ -367,7 +353,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 			if (instrument == SFX_UNMAPPED)
 				return SFX_OK;
 
-			assert (len >= 3);
+			assert(len >= 3);
 
 			velocity = bound_hard_127(buf[2], "rhythm velocity");
 			velocity_map_index = map->percussion_velocity_map_index;
@@ -384,13 +370,14 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 		}
 
 		case 0xB0: { /* Controller change */
-			assert (len >= 3);
+			assert(len >= 3);
 			if (buf[1] == 0x7) /* Volume change */
 				buf[2] = BOUND_127(buf[2] + map->percussion_volume_adjust);
 			break;
 		}
 
-		default: break;
+		default:
+			break;
 		}
 
 	} else {
@@ -405,7 +392,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 			int note = bound_hard_127(buf[1], "note");
 			int velocity = bound_hard_127(buf[2], "velocity");
 			int velocity_map_index = map->velocity_map_index[patch];
-			assert (len >= 3);
+			assert(len >= 3);
 
 			note += map->patch_key_shift[patch];
 			/* Not the most efficient solutions, but the least error-prone */
@@ -423,12 +410,13 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 		}
 
 		case 0xB0: /* Controller change */
-			assert (len >= 3);
+			assert(len >= 3);
 			if (buf[1] == 0x7) /* Volume change */
 				buf[2] = BOUND_127(buf[2] + map->patch_volume_adjust[patch]);
 			break;
 
-		default: break;
+		default:
+			break;
 		}
 	}
 
@@ -439,8 +427,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 #define MAX_PER_TICK (MIDI_BYTES_PER_SECOND / 60) /* After this, we ought to issue one tick of pause */
 
 static void
-init(midi_writer_t *writer, byte *data, size_t len)
-{
+init(midi_writer_t *writer, byte *data, size_t len) {
 	int offset = 0;
 	byte status = 0;
 
@@ -479,13 +466,13 @@ init(midi_writer_t *writer, byte *data, size_t len)
 		msg[0] = op;
 
 		switch (op & 0xf0) {
-			case 0xc0:
-			case 0xd0:
-				args = 1;
-				break;
-			default:
-				args = 2;
-			}
+		case 0xc0:
+		case 0xd0:
+			args = 1;
+			break;
+		default:
+			args = 2;
+		}
 
 		if (args > len - offset) {
 			fprintf(stderr, "[instrument-map] Insufficient bytes remaining for MIDI command %02x\n", op);
@@ -506,8 +493,7 @@ init(midi_writer_t *writer, byte *data, size_t len)
 #define NAME_SUFFIX "+instruments"
 
 midi_writer_t *
-sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map)
-{
+sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map) {
 	int i;
 	decorated_midi_writer_t *retval;
 

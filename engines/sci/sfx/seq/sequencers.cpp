@@ -49,8 +49,7 @@ sfx_sequencer_t *sfx_sequencers[] = {
 
 
 sfx_sequencer_t *
-sfx_find_sequencer(char *name)
-{
+sfx_find_sequencer(char *name) {
 	if (!name) {
 		/* Implement default policy for your platform (if any) here, or in a function
 		** called from here (if it's non-trivial). Try to use midi_devices[0], if
@@ -60,8 +59,8 @@ sfx_find_sequencer(char *name)
 	} else {
 		int n = 0;
 		while (sfx_sequencers[n]
-		       && strcasecmp(sfx_sequencers[n]->name, name))
-		       ++n;
+		        && strcasecmp(sfx_sequencers[n]->name, name))
+			++n;
 
 		return sfx_sequencers[n];
 	}

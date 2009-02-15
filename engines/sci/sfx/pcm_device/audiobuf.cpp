@@ -36,8 +36,7 @@ buffer_underrun_status = NO_BUFFER_UNDERRUN;
 
 
 static sfx_audio_buf_chunk_t *
-sfx_audbuf_alloc_chunk(void)
-{
+sfx_audbuf_alloc_chunk(void) {
 	sfx_audio_buf_chunk_t *ch = (sfx_audio_buf_chunk_t*)sci_malloc(sizeof(sfx_audio_buf_chunk_t));
 	ch->used = 0;
 	ch->next = NULL;
@@ -47,8 +46,7 @@ sfx_audbuf_alloc_chunk(void)
 }
 
 void
-sfx_audbuf_init(sfx_audio_buf_t *buf, sfx_pcm_config_t pcm_conf)
-{
+sfx_audbuf_init(sfx_audio_buf_t *buf, sfx_pcm_config_t pcm_conf) {
 	int framesize = SFX_PCM_FRAME_SIZE(pcm_conf);
 	byte silence[16];
 	int silencew = pcm_conf.format & ~SFX_PCM_FORMAT_LMASK;
@@ -81,8 +79,7 @@ sfx_audbuf_init(sfx_audio_buf_t *buf, sfx_pcm_config_t pcm_conf)
 }
 
 static void
-sfx_audbuf_free_chain(sfx_audio_buf_chunk_t *b)
-{
+sfx_audbuf_free_chain(sfx_audio_buf_chunk_t *b) {
 	while (b) {
 		sfx_audio_buf_chunk_t *n = b->next;
 		sci_free(b);
@@ -91,8 +88,7 @@ sfx_audbuf_free_chain(sfx_audio_buf_chunk_t *b)
 }
 
 void
-sfx_audbuf_free(sfx_audio_buf_t *buf)
-{
+sfx_audbuf_free(sfx_audio_buf_t *buf) {
 	sfx_audbuf_free_chain(buf->first);
 	sfx_audbuf_free_chain(buf->unused);
 	buf->first = buf->last = buf->unused = NULL;
@@ -100,8 +96,7 @@ sfx_audbuf_free(sfx_audio_buf_t *buf)
 }
 
 void
-sfx_audbuf_write(sfx_audio_buf_t *buf, unsigned char *src, int frames)
-{
+sfx_audbuf_write(sfx_audio_buf_t *buf, unsigned char *src, int frames) {
 	/* In here, we compute PER BYTE */
 	int data_left = buf->framesize * frames;
 
@@ -147,7 +142,7 @@ sfx_audbuf_write(sfx_audio_buf_t *buf, unsigned char *src, int frames)
 					buf->unused = buf_next_unused;
 				} else /* Allocate */
 					buf->last->next =
-						sfx_audbuf_alloc_chunk();
+					    sfx_audbuf_alloc_chunk();
 
 				buf->last->prev = old;
 			}
@@ -174,13 +169,12 @@ sfx_audbuf_write(sfx_audio_buf_t *buf, unsigned char *src, int frames)
 #endif
 
 	if (frames && (src - buf->framesize) != buf->last_frame)
-	/* Backup last frame, unless we're already filling from it */
+		/* Backup last frame, unless we're already filling from it */
 		memcpy(buf->last_frame, src - buf->framesize, buf->framesize);
 }
 
 int
-sfx_audbuf_read(sfx_audio_buf_t *buf, unsigned char *dest, int frames)
-{
+sfx_audbuf_read(sfx_audio_buf_t *buf, unsigned char *dest, int frames) {
 	int written = 0;
 
 	if (frames <= 0)
@@ -189,9 +183,9 @@ sfx_audbuf_read(sfx_audio_buf_t *buf, unsigned char *dest, int frames)
 	if (buf->read_timestamp.secs >= 0) {
 		/* Have a timestamp? Must update it! */
 		buf->read_timestamp =
-			sfx_timestamp_add(buf->read_timestamp,
-					  frames);
-							
+		    sfx_timestamp_add(buf->read_timestamp,
+		                      frames);
+
 	}
 
 	buf->frames_nr -= frames;
@@ -245,9 +239,9 @@ sfx_audbuf_read(sfx_audio_buf_t *buf, unsigned char *dest, int frames)
 		written += rdframes;
 
 		if (frames &&
-		    (!buf->first || buf->read_offset == buf->first->used)) {
+		        (!buf->first || buf->read_offset == buf->first->used)) {
 			fprintf(stderr, "Underrun by %d frames at %d\n", frames,
-				buf->read_timestamp.frame_rate);
+			        buf->read_timestamp.frame_rate);
 			/* Buffer underrun! */
 			if (!buffer_underrun_status == NO_BUFFER_UNDERRUN) {
 				buffer_underrun_status = SAW_BUFFER_UNDERRUN;
@@ -265,8 +259,7 @@ sfx_audbuf_read(sfx_audio_buf_t *buf, unsigned char *dest, int frames)
 
 #if 0
 static void
-_sfx_audbuf_rewind_stream(sfx_audio_buf_t *buf, int delta)
-{
+_sfx_audbuf_rewind_stream(sfx_audio_buf_t *buf, int delta) {
 	if (delta > buf->frames_nr)
 		delta = buf->frames_nr;
 
@@ -296,8 +289,7 @@ _sfx_audbuf_rewind_stream(sfx_audio_buf_t *buf, int delta)
 #endif
 
 void
-sfx_audbuf_write_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t ts)
-{
+sfx_audbuf_write_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t ts) {
 	sfx_timestamp_t newstamp;
 
 	newstamp = sfx_timestamp_add(ts, -buf->frames_nr);
@@ -308,7 +300,7 @@ sfx_audbuf_write_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t ts)
 		buf->read_timestamp = newstamp;
 	else {
 		int delta = sfx_timestamp_frame_diff(newstamp, buf->read_timestamp);
-		long s1,s2,s3,u1,u2,u3;
+		long s1, s2, s3, u1, u2, u3;
 		sfx_timestamp_gettime(&(buf->read_timestamp), &s1, &u1);
 		sfx_timestamp_gettime(&(newstamp), &s2, &u2);
 		sfx_timestamp_gettime(&(ts), &s3, &u3);
@@ -322,7 +314,7 @@ sfx_audbuf_write_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t ts)
 #endif
 		} else if (delta > 0) {
 			fprintf(stderr, "[SFX-BUF] audiobuf.c: Timestamp delta %d at %d: Filling in as silence frames\n",
-				delta, buf->read_timestamp.frame_rate);
+			        delta, buf->read_timestamp.frame_rate);
 			/* Fill up with silence */
 			while (delta--) {
 				sfx_audbuf_write(buf, buf->last_frame, 1);
@@ -333,8 +325,7 @@ sfx_audbuf_write_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t ts)
 }
 
 int
-sfx_audbuf_read_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t *ts)
-{
+sfx_audbuf_read_timestamp(sfx_audio_buf_t *buf, sfx_timestamp_t *ts) {
 	if (buf->read_timestamp.secs > 0) {
 		*ts = buf->read_timestamp;
 		return 0;

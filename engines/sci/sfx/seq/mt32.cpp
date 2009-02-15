@@ -40,7 +40,7 @@ static midi_writer_t *midi_writer = NULL;
 
 static int midi_mt32_poke(guint32 address, guint8 *data, unsigned int n);
 static int midi_mt32_poke_gather(guint32 address, guint8 *data1, unsigned int count1,
-			  guint8 *data2, unsigned int count2);
+                                 guint8 *data2, unsigned int count2);
 static int midi_mt32_write_block(guint8 *data, unsigned int count);
 static int midi_mt32_sysex_delay(void);
 static int midi_mt32_volume(guint8 volume);
@@ -59,26 +59,27 @@ static int mt32_init_delay = 0; /* Used to count the number of ticks (1/60s of a
 
 /* timbre, volume, panpot, reverb.  keys 24-87 (64 keys)*/
 static guint8 default_rhythm_keymap[256] = { /* MT-32 default */
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1, /* 24-27 */
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1,
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x40,0x64,7,1,
-	0x40,0x64,7,1,  0x4a,0x64,6,1,  0x41,0x64,7,1, 0x4b,0x64,8,1,
-	0x45,0x64,6,1,  0x44,0x64,11,1, 0x46,0x64,6,1, 0x44,0x64,11,1,
-	0x5d,0x64,6,1,  0x43,0x64,8,1,  0x47,0x64,6,1, 0x43,0x64,8,1,
-	0x42,0x64,3,1,  0x48,0x64,6,1,  0x42,0x64,3,1, 0x49,0x64,8,1,
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x56,0x64,9,1, 0x7f,0x64,7,1,
-	0x4c,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1,
-	0x52,0x64,2,1,  0x53,0x64,4,1,  0x4d,0x64,8,1, 0x4e,0x64,9,1,
-	0x4f,0x64,10,1, 0x50,0x64,7,1,  0x51,0x64,5,1, 0x54,0x64,2,1,
-	0x55,0x64,2,1,  0x5b,0x64,9,1,  0x58,0x64,4,1, 0x5a,0x64,9,1,
-	0x59,0x64,9,1,  0x5c,0x64,10,1, 0x7f,0x64,7,1, 0x57,0x64,12,1,
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1,
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1,
-	0x7f,0x64,7,1,  0x7f,0x64,7,1,  0x7f,0x64,7,1, 0x7f,0x64,7,1  /* 84-87 */
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1, /* 24-27 */
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1,
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x40, 0x64, 7, 1,
+	0x40, 0x64, 7, 1,  0x4a, 0x64, 6, 1,  0x41, 0x64, 7, 1, 0x4b, 0x64, 8, 1,
+	0x45, 0x64, 6, 1,  0x44, 0x64, 11, 1, 0x46, 0x64, 6, 1, 0x44, 0x64, 11, 1,
+	0x5d, 0x64, 6, 1,  0x43, 0x64, 8, 1,  0x47, 0x64, 6, 1, 0x43, 0x64, 8, 1,
+	0x42, 0x64, 3, 1,  0x48, 0x64, 6, 1,  0x42, 0x64, 3, 1, 0x49, 0x64, 8, 1,
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x56, 0x64, 9, 1, 0x7f, 0x64, 7, 1,
+	0x4c, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1,
+	0x52, 0x64, 2, 1,  0x53, 0x64, 4, 1,  0x4d, 0x64, 8, 1, 0x4e, 0x64, 9, 1,
+	0x4f, 0x64, 10, 1, 0x50, 0x64, 7, 1,  0x51, 0x64, 5, 1, 0x54, 0x64, 2, 1,
+	0x55, 0x64, 2, 1,  0x5b, 0x64, 9, 1,  0x58, 0x64, 4, 1, 0x5a, 0x64, 9, 1,
+	0x59, 0x64, 9, 1,  0x5c, 0x64, 10, 1, 0x7f, 0x64, 7, 1, 0x57, 0x64, 12, 1,
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1,
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1,
+	0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1,  0x7f, 0x64, 7, 1, 0x7f, 0x64, 7, 1  /* 84-87 */
 };
 
 static guint8 default_partial_reserve[9] = {  /* MT-32 DEFAULT */
-	3, 10, 6, 4, 3, 0, 0, 0, 6 };
+	3, 10, 6, 4, 3, 0, 0, 0, 6
+};
 
 static struct {
 	guint8 mode;
@@ -88,8 +89,7 @@ static struct {
 
 
 static int
-midiout_write_block(byte *buf, int len, int delta)
-{
+midiout_write_block(byte *buf, int len, int delta) {
 	if (delta)
 		midi_writer->delay(midi_writer, delta);
 
@@ -101,7 +101,7 @@ midiout_write_block(byte *buf, int len, int delta)
 
 static int
 midiout_write_delayed_block(byte *buf, int len)
-     /* Only used for initial programming */
+/* Only used for initial programming */
 {
 	int rv = midiout_write_block(buf, len, 0);
 	int delay = 1 + (len / MAGIC_MIDIOUT_DELAY);
@@ -139,8 +139,7 @@ int midi_mt32_defaults(guint8 volume, guint8 reverb) {
 	return SFX_OK;
 }
 
-int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev)
-{
+int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev) {
 	guint8 unknown_sysex[6] = {0x16, 0x16, 0x16, 0x16, 0x16, 0x16};
 	guint8 i, memtimbres;
 	unsigned int block2, block3;
@@ -181,8 +180,8 @@ int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev)
 		printf("MT-32: Writing Patches #01 - #32\n");
 		midi_mt32_poke(0x050000, data + 107, 256);
 		if ((length > block2) &&
-		    data[block2] == 0xAB &&
-		    data[block2 + 1] == 0xCD) {
+		        data[block2] == 0xAB &&
+		        data[block2 + 1] == 0xCD) {
 			printf("MT-32: Writing Patches #33 - #64\n");
 			midi_mt32_poke_gather(0x050200, data + 363, 128, data + block2 + 2, 128);
 			printf("MT-32: Writing Patches #65 - #96\n");
@@ -201,14 +200,14 @@ int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev)
 		}
 		/* Write Rhythm key map and Partial Reserve */
 		if ((length > block3) &&
-		    data[block3] == 0xDC &&
-		    data[block3 + 1] == 0xBA) {
+		        data[block3] == 0xDC &&
+		        data[block3 + 1] == 0xBA) {
 			printf("MT-32: Writing Rhythm key map\n");
 			midi_mt32_poke(0x030110, data + block3 + 2, 256);
 			printf("MT-32: Writing Partial Reserve\n");
 			midi_mt32_poke(0x100004, data + block3 + 258, 9);
 		} else {
-			midi_mt32_defaults(0,0);  /* send default keymap/reserve */
+			midi_mt32_defaults(0, 0); /* send default keymap/reserve */
 		}
 		/* Display MT-32 initialization done message */
 		printf("MT-32: Displaying Text: \"%.20s\"\n", data);
@@ -218,7 +217,7 @@ int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev)
 		midi_mt32_poke(0x52000A, unknown_sysex, 6);
 		printf("MT-32: Setting up reverb levels\n");
 		default_reverb = data[0x3e];
-		memcpy(mt32_reverb,data+ 0x4a, 3 * 11);
+		memcpy(mt32_reverb, data + 0x4a, 3 * 11);
 		midi_mt32_reverb(default_reverb);
 		printf("MT-32: Setting default volume (%d)\n", data[0x3c]);
 		midi_mt32_volume(data[0x3c]);
@@ -229,13 +228,12 @@ int midi_mt32_open(int length, byte *data, int length2, byte *data2, void *dev)
 		return 0;
 	} else {
 		midi_mt32_poke(0x200000, (guint8 *)"   FreeSCI Rocks!  ", 20);
-		return midi_mt32_defaults(0x0c,1);  /* send defaults in absence of patch data */
+		return midi_mt32_defaults(0x0c, 1); /* send defaults in absence of patch data */
 	}
 	return -1;
 }
 
-int midi_mt32_close(void)
-{
+int midi_mt32_close(void) {
 	midi_mt32_allstop();
 	if (type == 0) {
 		printf("MT-32: Displaying Text: \"%.20s\"\n", shutdown_msg);
@@ -245,8 +243,7 @@ int midi_mt32_close(void)
 	return SFX_OK;
 }
 
-int midi_mt32_volume(guint8 volume)
-{
+int midi_mt32_volume(guint8 volume) {
 	volume &= 0x7f; /* (make sure it's not over 127) */
 	if (midi_mt32_poke(0x100016, &volume, 1) < 0)
 		return -1;
@@ -254,8 +251,7 @@ int midi_mt32_volume(guint8 volume)
 	return 0;
 }
 
-int midi_mt32_allstop(void)
-{
+int midi_mt32_allstop(void) {
 	byte buf[4];
 	int i;
 
@@ -270,14 +266,13 @@ int midi_mt32_allstop(void)
 	return 0;
 }
 
-int midi_mt32_reverb(int param)
-{
+int midi_mt32_reverb(int param) {
 	guint8 buffer[3];
 
 	if (param == -1)
 		param = default_reverb;
 
-	printf("MT-32: Sending reverb # %d (%d, %d, %d)\n",param, mt32_reverb[param].mode,
+	printf("MT-32: Sending reverb # %d (%d, %d, %d)\n", param, mt32_reverb[param].mode,
 	       mt32_reverb[param].time,
 	       mt32_reverb[param].level);
 
@@ -291,8 +286,7 @@ int midi_mt32_reverb(int param)
 
 
 static int
-midi_mt32_poke(guint32 address, guint8 *data, unsigned int count)
-{
+midi_mt32_poke(guint32 address, guint8 *data, unsigned int count) {
 	guint8 checksum = 0;
 	unsigned int i;
 
@@ -319,8 +313,7 @@ midi_mt32_poke(guint32 address, guint8 *data, unsigned int count)
 
 static int
 midi_mt32_poke_gather(guint32 address, guint8 *data1, unsigned int count1,
-		      guint8 *data2, unsigned int count2)
-{
+                      guint8 *data2, unsigned int count2) {
 	guint8 checksum = 0;
 	unsigned int i;
 
@@ -347,8 +340,7 @@ midi_mt32_poke_gather(guint32 address, guint8 *data1, unsigned int count1,
 
 
 static int
-midi_mt32_write_block(guint8 *data, unsigned int count)
-{
+midi_mt32_write_block(guint8 *data, unsigned int count) {
 	unsigned int block_start = 0;
 	unsigned int i = 0;
 
@@ -366,7 +358,7 @@ midi_mt32_write_block(guint8 *data, unsigned int count)
 	}
 	if (count >= block_start) {
 		if (midiout_write_delayed_block(data + block_start, count - block_start
-					) != (count - block_start)) {
+		                               ) != (count - block_start)) {
 			fprintf(stderr, "midi_mt32_write_block(): midiout_write_block failed!\n");
 			return 1;
 		}
@@ -376,9 +368,8 @@ midi_mt32_write_block(guint8 *data, unsigned int count)
 }
 
 static int
-midi_mt32_sysex_delay(void)
-{
-  /* Under Win32, we won't get any sound, in any case... */
+midi_mt32_sysex_delay(void) {
+	/* Under Win32, we won't get any sound, in any case... */
 #ifdef HAVE_USLEEP
 	usleep(320 * 63); /* One MIDI byte is 320us, 320us * 63 > 20ms */
 #elif defined (WIN32)
@@ -392,8 +383,7 @@ midi_mt32_sysex_delay(void)
 }
 
 static int
-midi_mt32_event(byte command, int argc, byte *argv)
-{
+midi_mt32_event(byte command, int argc, byte *argv) {
 	byte buf[8];
 
 	buf[0] = command;
@@ -407,8 +397,7 @@ midi_mt32_event(byte command, int argc, byte *argv)
 
 
 static void
-delay_init(void)
-{/* Wait for MT-32 initialisation to complete */
+delay_init(void) {/* Wait for MT-32 initialisation to complete */
 	long endsec = mt32_init_sec, uendsec = mt32_init_usec;
 	long sec, usec;
 	int loopcount = 0;
@@ -430,8 +419,7 @@ delay_init(void)
 }
 
 static int
-midi_mt32_reset_timer(GTimeVal ts)
-{
+midi_mt32_reset_timer(GTimeVal ts) {
 	if (mt32_init_delay) { /* We might still have to wait for initialisation to complete */
 		delay_init();
 		mt32_init_delay = 0;
@@ -444,15 +432,13 @@ midi_mt32_reset_timer(GTimeVal ts)
 
 
 static int
-midi_mt32_delay(int ticks)
-{
+midi_mt32_delay(int ticks) {
 	delta += ticks; /* Accumulate, write before next command */
 	return SFX_OK;
 }
 
 static int
-midi_mt32_set_option(char *name, char *value)
-{
+midi_mt32_set_option(char *name, char *value) {
 	return SFX_ERROR; /* No options are supported at this time */
 }
 

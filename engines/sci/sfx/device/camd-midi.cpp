@@ -63,8 +63,7 @@ static struct MidiNode *midi_node = NULL;
 	}
 
 static int
-camd_init(midi_writer_t *self)
-{
+camd_init(midi_writer_t *self) {
 	sciprintf("[SFX] Initialising CAMD raw MIDI backend, v%s\n", SCI_CAMD_MIDI_VERSION);
 
 	CamdBase = IExec->OpenLibrary("camd.library", 36L);
@@ -72,8 +71,8 @@ camd_init(midi_writer_t *self)
 		ABORT("Could not open 'camd.library'");
 
 	ICamd = (struct CamdIFace *) IExec->GetInterface(CamdBase, "main", 1, NULL);
-        if (!ICamd)
-                ABORT("Error while retrieving CAMD interface\n");
+	if (!ICamd)
+		ABORT("Error while retrieving CAMD interface\n");
 
 	midi_node = ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "freesci", TAG_END);
 	if (!midi_node)
@@ -89,16 +88,14 @@ camd_init(midi_writer_t *self)
 }
 
 static int
-camd_set_option(midi_writer_t *self, char *name, char *value)
-{
+camd_set_option(midi_writer_t *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 #define MAX_MIDI_LEN 3
 
 static int
-camd_write(midi_writer_t *self, unsigned char *buffer, int len)
-{
+camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	if (len == 0)
 		return SFX_OK;
 
@@ -119,7 +116,7 @@ camd_write(midi_writer_t *self, unsigned char *buffer, int len)
 
 		if (len > MAX_MIDI_LEN)
 			sciprintf("[SFX] Warning: Truncated MIDI message to fit CAMD format (sent %d: %02x %02x %02x, real length %d)\n",
-				  MAX_MIDI_LEN, buffer[0], buffer[1], buffer[2], len);
+			          MAX_MIDI_LEN, buffer[0], buffer[1], buffer[2], len);
 
 		ICamd->PutMidi(midi_link, data);
 	}
@@ -128,21 +125,18 @@ camd_write(midi_writer_t *self, unsigned char *buffer, int len)
 }
 
 static void
-camd_delay(midi_writer_t *self, int ticks)
-{
+camd_delay(midi_writer_t *self, int ticks) {
 }
 
 static void
-camd_reset_timer(midi_writer_t *self)
-{
+camd_reset_timer(midi_writer_t *self) {
 }
 
 static void
-camd_close(midi_writer_t *self)
-{
+camd_close(midi_writer_t *self) {
 #ifdef NO_OP
 	return;
-#endif	
+#endif
 	if (CamdBase)
 		IExec->CloseLibrary(CamdBase);
 }

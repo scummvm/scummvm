@@ -46,24 +46,22 @@ static long last_callback_secs, last_callback_usecs;
 static int last_callback_len;
 
 static sfx_timestamp_t
-pcmout_sdl_output_timestamp(sfx_pcm_device_t *self)
-{
+pcmout_sdl_output_timestamp(sfx_pcm_device_t *self) {
 	/* Number of frames enqueued in the output device: */
 	int delta = (buf_size - last_callback_len) / frame_size
-		/* Number of frames enqueued in the internal audio buffer: */
-		+ audio_buffer.frames_nr;
+	            /* Number of frames enqueued in the internal audio buffer: */
+	            + audio_buffer.frames_nr;
 
 	return sfx_timestamp_add(sfx_new_timestamp(last_callback_secs,
-						   last_callback_usecs,
-						   rate),
-				 delta);
+	                         last_callback_usecs,
+	                         rate),
+	                         delta);
 }
 
 FILE *fil = NULL;
 
 static void
-timer_sdl_internal_callback(void *userdata, byte *dest, int len)
-{
+timer_sdl_internal_callback(void *userdata, byte *dest, int len) {
 	sci_gettime(&last_callback_secs, &last_callback_usecs);
 	last_callback_len = len;
 
@@ -83,12 +81,12 @@ timer_sdl_internal_callback(void *userdata, byte *dest, int len)
 		deltatime = sfx_timestamp_usecs_diff(ts, real_ts);
 
 		fprintf(stderr, "[SDL] Frames requested: %d  Playing %ld too late. Needed %ldus for computations.\n",
-				len / frame_size, deltatime,
-			(usec2-usec) + (sec2-sec)*1000000);
+		        len / frame_size, deltatime,
+		        (usec2 - usec) + (sec2 - sec)*1000000);
 
 		if (abs(deltatime) > DELTA_TIME_LIMIT)
 			sciprintf("[SND:SDL] Very high delta time for PCM playback: %ld too late (%d frames in the future)\n",
-				  deltatime, sfx_timestamp_frame_diff(sfx_new_timestamp(sec, usec, rate), ts));
+			          deltatime, sfx_timestamp_frame_diff(sfx_new_timestamp(sec, usec, rate), ts));
 
 #if 0
 		if (deltatime < 0) {
@@ -97,7 +95,7 @@ timer_sdl_internal_callback(void *userdata, byte *dest, int len)
 			int frames_to_kill = sfx_timestamp_frame_diff(real_ts, ts);
 
 			while (frames_to_kill) {
-				int d = frames_to_kill > max_read? max_read : frames_to_kill;
+				int d = frames_to_kill > max_read ? max_read : frames_to_kill;
 				sfx_audbuf_read(&audio_buffer, dest, d);
 				frames_to_kill -= d;
 			}
@@ -126,12 +124,11 @@ timer_sdl_internal_callback(void *userdata, byte *dest, int len)
 
 
 static int
-pcmout_sdl_init(sfx_pcm_device_t *self)
-{
+pcmout_sdl_init(sfx_pcm_device_t *self) {
 	SDL_AudioSpec a;
 
-	if (SDL_Init(SDL_INIT_AUDIO|SDL_INIT_NOPARACHUTE) != 0) {
-		fprintf (stderr, "[SND:SDL] Error while initialising: %s\n", SDL_GetError());
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) != 0) {
+		fprintf(stderr, "[SND:SDL] Error while initialising: %s\n", SDL_GetError());
 		return -1;
 	}
 
@@ -146,8 +143,8 @@ pcmout_sdl_init(sfx_pcm_device_t *self)
 	a.callback = timer_sdl_internal_callback;
 	a.userdata = NULL;
 
-	if (SDL_OpenAudio (&a, NULL) < 0) {
-		fprintf (stderr, "[SND:SDL] Error while opening audio: %s\n", SDL_GetError());
+	if (SDL_OpenAudio(&a, NULL) < 0) {
+		fprintf(stderr, "[SND:SDL] Error while opening audio: %s\n", SDL_GetError());
 		return SFX_ERROR;
 	}
 
@@ -162,15 +159,14 @@ pcmout_sdl_init(sfx_pcm_device_t *self)
 	frame_size = SFX_PCM_FRAME_SIZE(self->conf);
 
 	sfx_audbuf_init(&audio_buffer, self->conf);
-	SDL_PauseAudio (0);
+	SDL_PauseAudio(0);
 
 	return SFX_OK;
 }
 
 int
 pcmout_sdl_output(sfx_pcm_device_t *self, byte *buf,
-		  int count, sfx_timestamp_t *ts)
-{
+                  int count, sfx_timestamp_t *ts) {
 	if (ts)
 		sfx_audbuf_write_timestamp(&audio_buffer, *ts);
 	sfx_audbuf_write(&audio_buffer, buf, count);
@@ -179,15 +175,13 @@ pcmout_sdl_output(sfx_pcm_device_t *self, byte *buf,
 
 
 static int
-pcmout_sdl_set_option(sfx_pcm_device_t *self, char *name, char *value)
-{
+pcmout_sdl_set_option(sfx_pcm_device_t *self, char *name, char *value) {
 	return SFX_ERROR; /* Option not supported */
 }
 
 static void
-pcmout_sdl_exit(sfx_pcm_device_t *self)
-{
-	SDL_PauseAudio (1);
+pcmout_sdl_exit(sfx_pcm_device_t *self) {
+	SDL_PauseAudio(1);
 	SDL_CloseAudio();
 	sfx_audbuf_free(&audio_buffer);
 
@@ -201,15 +195,13 @@ pcmout_sdl_exit(sfx_pcm_device_t *self)
 
 
 static int
-timer_sdl_set_option(char *name, char *value)
-{
+timer_sdl_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
 
 static int
-timer_sdl_init(void (*callback)(void *data), void *data)
-{
+timer_sdl_init(void (*callback)(void *data), void *data) {
 	sdl_sfx_timer_callback = callback;
 	sdl_sfx_timer_data = data;
 
@@ -218,24 +210,21 @@ timer_sdl_init(void (*callback)(void *data), void *data)
 }
 
 static int
-timer_sdl_stop(void)
-{
+timer_sdl_stop(void) {
 	sdl_sfx_timer_callback = NULL;
 
 	return SFX_OK;
 }
 
 static int
-timer_sdl_block(void)
-{
+timer_sdl_block(void) {
 	SDL_LockAudio();
 
 	return SFX_OK;
 }
 
 static int
-timer_sdl_unblock(void)
-{
+timer_sdl_unblock(void) {
 	SDL_UnlockAudio();
 
 	return SFX_OK;

@@ -22,14 +22,13 @@
 adlib_instr adlib_sbi[96];
 
 void
-make_sbi(adlib_def *one, guint8 *buffer)
-{
+make_sbi(adlib_def *one, guint8 *buffer) {
 	memset(buffer, 0, sizeof(adlib_instr));
 
 #if 0
-	printf ("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ", one->keyscale1, one->freqmod1, one->feedback1, one->attackrate1, one->sustainvol1, one->envelope1, one->decayrate1, one->releaserate1, one->volume1, one->ampmod1, one->vibrato1, one->keybdscale1, one->algorithm1, one->waveform1);
+	printf("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ", one->keyscale1, one->freqmod1, one->feedback1, one->attackrate1, one->sustainvol1, one->envelope1, one->decayrate1, one->releaserate1, one->volume1, one->ampmod1, one->vibrato1, one->keybdscale1, one->algorithm1, one->waveform1);
 
-	printf (" %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ", one->keyscale2, one->freqmod2, one->feedback2, one->attackrate2, one->sustainvol2, one->envelope2, one->decayrate2, one->releaserate2, one->volume2, one->ampmod2, one->vibrato2, one->keybdscale2, one->algorithm2, one->waveform2);
+	printf(" %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x ", one->keyscale2, one->freqmod2, one->feedback2, one->attackrate2, one->sustainvol2, one->envelope2, one->decayrate2, one->releaserate2, one->volume2, one->ampmod2, one->vibrato2, one->keybdscale2, one->algorithm2, one->waveform2);
 
 	printf("\n");
 #endif
@@ -60,7 +59,7 @@ make_sbi(adlib_def *one, guint8 *buffer)
 	buffer[9] |= (one->waveform2 & 0x3);
 
 	buffer[10] |= ((one->feedback1 & 0x7) << 1);
-	buffer[10] |= (1-(one->algorithm1 & 0x1));
+	buffer[10] |= (1 - (one->algorithm1 & 0x1));
 
 	return;
 }

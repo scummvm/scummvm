@@ -38,8 +38,7 @@
 int errors = 0;
 
 void
-error(char *fmt, ...)
-{
+error(char *fmt, ...) {
 	va_list ap;
 
 	fprintf(stderr, "[ERROR] ");
@@ -63,8 +62,7 @@ struct simple_it_struct {
 }  simple_iterator;
 
 int
-simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result)
-{
+simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
 	struct simple_it_struct *self = (struct simple_it_struct *) _self;
 
 	if (self->lifetime_remaining == -1) {
@@ -109,26 +107,22 @@ simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result)
 }
 
 sfx_pcm_feed_t *
-simple_it_pcm_feed(song_iterator_t *_self)
-{
+simple_it_pcm_feed(song_iterator_t *_self) {
 	error("No PCM feed!\n");
 	return NULL;
 }
 
 void
-simple_it_init(song_iterator_t *_self)
-{
+simple_it_init(song_iterator_t *_self) {
 }
 
 song_iterator_t *
-simple_it_handle_message(song_iterator_t *_self, song_iterator_message_t msg)
-{
+simple_it_handle_message(song_iterator_t *_self, song_iterator_message_t msg) {
 	return NULL;
 }
 
 void
-simple_it_cleanup(song_iterator_t *_self)
-{
+simple_it_cleanup(song_iterator_t *_self) {
 }
 
 /* Initialises the simple iterator.
@@ -138,8 +132,7 @@ simple_it_cleanup(song_iterator_t *_self)
 ** The first cue is emitted after cues[0] ticks, and it is 1.  After cues[1] additional ticks
 ** the next cue is emitted, and so on. */
 song_iterator_t *
-setup_simple_iterator(int delay, char *cues, int cues_nr)
-{
+setup_simple_iterator(int delay, char *cues, int cues_nr) {
 	simple_iterator.lifetime_remaining = delay;
 	simple_iterator.cues = cues;
 	simple_iterator.cue_counter = 0;
@@ -169,16 +162,15 @@ setup_simple_iterator(int delay, char *cues, int cues_nr)
 #define ASSERT_CUE(n) ASSERT_NEXT(SI_ABSOLUTE_CUE); ASSERT_RESULT(n)
 
 void
-test_simple_it()
-{
+test_simple_it() {
 	song_iterator_t *it;
-	song_iterator_t *simple_it = (song_iterator_t *) &simple_iterator;
+	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
 	unsigned char data[4];
 	int result;
 	puts("[TEST] simple iterator (test artifact)");
 
 	it = setup_simple_iterator(42, NULL, 0);
-	
+
 	ASSERT_SIT;
 	ASSERT_NEXT(42);
 	ASSERT_SIT;
@@ -202,10 +194,9 @@ test_simple_it()
 }
 
 void
-test_fastforward()
-{
+test_fastforward() {
 	song_iterator_t *it;
-	song_iterator_t *simple_it = (song_iterator_t *) &simple_iterator;
+	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
 	song_iterator_t *ff_it;
 	unsigned char data[4];
 	int result;
@@ -287,18 +278,18 @@ test_fastforward()
 #define SIMPLE_SONG_SIZE 50
 
 static unsigned char simple_song[SIMPLE_SONG_SIZE] = {
-  0x00, /* Regular song */
-  /* Only use channel 0 for all devices */
-  0x02, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  /* Song begins here */
-  42, 0x90, 60, 0x7f,		/* Play C after 42 ticks */
-  02, 64, 0x42,			/* Play E after 2 more ticks, using running status mode */
-  0xf8, 10, 0x80, 60, 0x02,	/* Stop C after 250 ticks */
-  0, 64, 0x00,			/* Stop E immediately */
-  00, 0xfc	/* Stop song */
+	0x00, /* Regular song */
+	/* Only use channel 0 for all devices */
+	0x02, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	/* Song begins here */
+	42, 0x90, 60, 0x7f,		/* Play C after 42 ticks */
+	02, 64, 0x42,			/* Play E after 2 more ticks, using running status mode */
+	0xf8, 10, 0x80, 60, 0x02,	/* Stop C after 250 ticks */
+	0, 64, 0x00,			/* Stop E immediately */
+	00, 0xfc	/* Stop song */
 };
 
 #define ASSERT_MIDI3(cmd, arg0, arg1) \
@@ -307,9 +298,8 @@ static unsigned char simple_song[SIMPLE_SONG_SIZE] = {
 	ASSERT(data[2] == arg1);
 
 void
-test_iterator_sci0()
-{
-	song_iterator_t *it = songit_new (simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+test_iterator_sci0() {
+	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */
@@ -333,9 +323,8 @@ test_iterator_sci0()
 
 
 void
-test_iterator_sci0_loop()
-{
-	song_iterator_t *it = songit_new (simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+test_iterator_sci0_loop() {
+	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */
@@ -374,26 +363,25 @@ test_iterator_sci0_loop()
 #define LOOP_SONG_SIZE 54
 
 unsigned char loop_song[LOOP_SONG_SIZE] = {
-  0x00, /* Regular song song */
-  /* Only use channel 0 for all devices */
-  0x02, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  /* Song begins here */
-  42, 0x90, 60, 0x7f,	/* Play C after 42 ticks */
-  13, 0x80, 60, 0x00,	/* Stop C after 13 ticks */
-  00, 0xCF, 0x7f,	/* Set loop point */
-  02, 0x90, 64, 0x42,	/* Play E after 2 more ticks, using running status mode */
-  03, 0x80, 64, 0x00,	/* Stop E after 3 ticks */
-  00, 0xfc	/* Stop song/loop */
+	0x00, /* Regular song song */
+	/* Only use channel 0 for all devices */
+	0x02, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	/* Song begins here */
+	42, 0x90, 60, 0x7f,	/* Play C after 42 ticks */
+	13, 0x80, 60, 0x00,	/* Stop C after 13 ticks */
+	00, 0xCF, 0x7f,	/* Set loop point */
+	02, 0x90, 64, 0x42,	/* Play E after 2 more ticks, using running status mode */
+	03, 0x80, 64, 0x00,	/* Stop E after 3 ticks */
+	00, 0xfc	/* Stop song/loop */
 };
 
 
 void
-test_iterator_sci0_mark_loop()
-{
-	song_iterator_t *it = songit_new (loop_song, LOOP_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+test_iterator_sci0_mark_loop() {
+	song_iterator_t *it = songit_new(loop_song, LOOP_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */
@@ -437,8 +425,7 @@ test_iterator_sci0_mark_loop()
 
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	test_simple_it();
 	test_fastforward();
 	test_iterator_sci0();

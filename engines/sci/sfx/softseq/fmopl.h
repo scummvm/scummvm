@@ -43,9 +43,9 @@ enum {
 };
 
 
-typedef void (*OPL_TIMERHANDLER)(int channel,double interval_Sec);
-typedef void (*OPL_IRQHANDLER)(int param,int irq);
-typedef void (*OPL_UPDATEHANDLER)(int param,int min_interval_us);
+typedef void (*OPL_TIMERHANDLER)(int channel, double interval_Sec);
+typedef void (*OPL_IRQHANDLER)(int param, int irq);
+typedef void (*OPL_UPDATEHANDLER)(int param, int min_interval_us);
 
 #define OPL_TYPE_WAVESEL   0x01  /* waveform select    */
 
@@ -64,7 +64,7 @@ typedef struct fm_opl_slot {
 	guint32 mul;	/* multiple        :ML_TABLE[ML]		*/
 	guint32 Cnt;	/* frequency count						*/
 	guint32 Incr;	/* frequency step						*/
-	
+
 	/* envelope generator state */
 	guint8 eg_typ;/* envelope type flag					*/
 	guint8 evm;	/* envelope phase						*/
@@ -121,7 +121,7 @@ typedef struct fm_opl_f {
 
 	/* Rythm sention */
 	guint8 rythm;		/* Rythm mode , key flag */
-	
+
 	/* time tables */
 	int AR_TABLE[75];	/* atttack rate tables				*/
 	int DR_TABLE[75];	/* decay rate tables				*/

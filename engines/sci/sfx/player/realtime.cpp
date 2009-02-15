@@ -38,16 +38,14 @@ extern sfx_player_t sfx_player_realtime;
 /* Playing mechanism */
 
 static inline GTimeVal
-current_time(void)
-{
+current_time(void) {
 	GTimeVal tv;
 	sci_get_current_time(&tv);
 	return tv;
 }
 
 static inline GTimeVal
-add_time_delta(GTimeVal tv, long delta)
-{
+add_time_delta(GTimeVal tv, long delta) {
 	int sec_d;
 
 	tv.tv_usec += delta;
@@ -60,12 +58,11 @@ add_time_delta(GTimeVal tv, long delta)
 }
 
 static inline long
-delta_time(GTimeVal comp_tv, GTimeVal base)
-{
+delta_time(GTimeVal comp_tv, GTimeVal base) {
 	GTimeVal tv;
 	sci_get_current_time(&tv);
 	return (comp_tv.tv_sec - tv.tv_sec) * 1000000
-		+ (comp_tv.tv_usec - tv.tv_usec);
+	       + (comp_tv.tv_usec - tv.tv_usec);
 }
 
 static song_iterator_t *play_it = NULL;
@@ -79,8 +76,7 @@ static int play_writeahead = 0;
 static int play_moredelay = 0;
 
 static void
-play_song(song_iterator_t *it, GTimeVal *wakeup_time, int writeahead_time)
-{
+play_song(song_iterator_t *it, GTimeVal *wakeup_time, int writeahead_time) {
 	unsigned char buf[8];
 	int result;
 
@@ -89,57 +85,55 @@ play_song(song_iterator_t *it, GTimeVal *wakeup_time, int writeahead_time)
 		sci_get_current_time(&ct);
 
 		*wakeup_time =
-			add_time_delta(*wakeup_time, delta_time(play_pause_counter, ct));
+		    add_time_delta(*wakeup_time, delta_time(play_pause_counter, ct));
 		play_pause_counter = ct;
 	} else
-	/* Not paused: */
-	while (play_it && delta_time(*wakeup_time, current_time())
-	       < writeahead_time) {
-		int delay;
+		/* Not paused: */
+		while (play_it && delta_time(*wakeup_time, current_time())
+		        < writeahead_time) {
+			int delay;
 
-		switch ((delay = songit_next(&(play_it),
-					     &(buf[0]), &result,
-					     IT_READER_MASK_ALL
-					     | IT_READER_MAY_FREE
-					     | IT_READER_MAY_CLEAN))) {
+			switch ((delay = songit_next(&(play_it),
+			                             &(buf[0]), &result,
+			                             IT_READER_MASK_ALL
+			                             | IT_READER_MAY_FREE
+			                             | IT_READER_MAY_CLEAN))) {
 
-		case SI_FINISHED:
-			play_it_done = 1;
-			return;
+			case SI_FINISHED:
+				play_it_done = 1;
+				return;
 
-		case SI_IGNORE:
-		case SI_LOOP:
-		case SI_RELATIVE_CUE:
-		case SI_ABSOLUTE_CUE:
-			break;
+			case SI_IGNORE:
+			case SI_LOOP:
+			case SI_RELATIVE_CUE:
+			case SI_ABSOLUTE_CUE:
+				break;
 
-		case SI_PCM:
-			sfx_play_iterator_pcm(play_it, 0);
-			break;
+			case SI_PCM:
+				sfx_play_iterator_pcm(play_it, 0);
+				break;
 
-		case 0:
-			seq->event(buf[0], result-1, buf+1);
+			case 0:
+				seq->event(buf[0], result - 1, buf + 1);
 
-			break;
+				break;
 
-		default:
-			play_moredelay = delay - 1;
-			*wakeup_time = song_next_wakeup_time(wakeup_time, delay);
-			if (seq->delay)
-				seq->delay(delay);
+			default:
+				play_moredelay = delay - 1;
+				*wakeup_time = song_next_wakeup_time(wakeup_time, delay);
+				if (seq->delay)
+					seq->delay(delay);
+			}
 		}
-	}
 }
 
 static void
-rt_tell_synth(int buf_nr, byte *buf)
-{
-  seq->event(buf[0], buf_nr-1, buf+1);
+rt_tell_synth(int buf_nr, byte *buf) {
+	seq->event(buf[0], buf_nr - 1, buf + 1);
 }
 
 static void
-rt_timer_callback(void)
-{
+rt_timer_callback(void) {
 	if (play_it && !play_it_done) {
 		if (!play_moredelay) {
 			long delta = delta_time(play_last_time, current_time());
@@ -159,15 +153,14 @@ rt_timer_callback(void)
 }
 
 static resource_t *
-find_patch(resource_mgr_t *resmgr, const char *seq_name, int patchfile)
-{
+find_patch(resource_mgr_t *resmgr, const char *seq_name, int patchfile) {
 	resource_t *res = NULL;
 
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
 		res = scir_find_resource(resmgr, sci_patch, patchfile, 0);
 		if (!res) {
 			fprintf(stderr, "[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
-				patchfile, seq_name);
+			        patchfile, seq_name);
 		}
 	}
 
@@ -177,17 +170,15 @@ find_patch(resource_mgr_t *resmgr, const char *seq_name, int patchfile)
 /* API implementation */
 
 static int
-rt_set_option(char *name, char *value)
-{
+rt_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
 static int
-rt_init(resource_mgr_t *resmgr, int expected_latency)
-{
+rt_init(resource_mgr_t *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
-	GTimeVal foo = {0,0};
+	GTimeVal foo = {0, 0};
 
 	seq = sfx_find_sequencer(NULL);
 
@@ -204,11 +195,11 @@ rt_init(resource_mgr_t *resmgr, int expected_latency)
 	if (seq->device)
 		seq_dev = sfx_find_device(seq->device, NULL);
 
-	if (seq->open(res? res->size : 0,
-		      res? res->data : NULL,
-		      res2? res2->size : 0,
-		      res2? res2->data : NULL,
-		      seq_dev)) {
+	if (seq->open(res ? res->size : 0,
+	              res ? res->data : NULL,
+	              res2 ? res2->size : 0,
+	              res2 ? res2->data : NULL,
+	              seq_dev)) {
 		fprintf(stderr, "[SFX] " __FILE__": Sequencer failed to initialize\n");
 		return SFX_ERROR;
 	}
@@ -226,8 +217,7 @@ rt_init(resource_mgr_t *resmgr, int expected_latency)
 }
 
 static int
-rt_add_iterator(song_iterator_t *it, GTimeVal start_time)
-{
+rt_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -243,15 +233,13 @@ rt_add_iterator(song_iterator_t *it, GTimeVal start_time)
 }
 
 static int
-rt_fade_out(void)
-{
+rt_fade_out(void) {
 	fprintf(stderr, __FILE__": Attempt to fade out- not implemented yet\n");
 	return SFX_ERROR;
 }
 
 static int
-rt_stop(void)
-{
+rt_stop(void) {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
@@ -265,8 +253,7 @@ rt_stop(void)
 }
 
 static int
-rt_send_iterator_message(song_iterator_message_t msg)
-{
+rt_send_iterator_message(song_iterator_message_t msg) {
 	if (!play_it)
 		return SFX_ERROR;
 
@@ -275,8 +262,7 @@ rt_send_iterator_message(song_iterator_message_t msg)
 }
 
 static int
-rt_pause(void)
-{
+rt_pause(void) {
 	sci_get_current_time(&play_pause_started);
 	/* Also, indicate that we haven't modified the time counter
 	** yet  */
@@ -291,18 +277,16 @@ rt_pause(void)
 }
 
 static int
-rt_resume(void)
-{
+rt_resume(void) {
 	play_paused = 0;
 	return SFX_OK;
 }
 
 static int
-rt_exit(void)
-{
+rt_exit(void) {
 	int retval = SFX_OK;
 
-	if(seq->close()) {
+	if (seq->close()) {
 		fprintf(stderr, "[SFX] Sequencer reported error on close\n");
 		retval = SFX_ERROR;
 	}

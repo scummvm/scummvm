@@ -35,35 +35,31 @@
 
 static int volume = 0x0600;
 static int note = 0; /* Current halftone, or 0 if off */
-static int freq_count = 0; 
+static int freq_count = 0;
 
 extern sfx_softseq_t sfx_softseq_pcspeaker;
 /* Forward-declare the sequencer we are defining here */
 
 
 static int
-sps_set_option(sfx_softseq_t *self, const char *name, const char *value)
-{
+sps_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
 static int
 sps_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
-	 int patch2_len)
-{
+         int patch2_len) {
 	return SFX_OK;
 }
 
 static void
-sps_exit(sfx_softseq_t *self)
-{
+sps_exit(sfx_softseq_t *self) {
 }
 
 static void
-sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv)
-{
+sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 #if 0
-	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc?argv[0] : 0, (argc > 1)? argv[1] : 0);
+	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 
 	switch (command & 0xf0) {
@@ -89,7 +85,7 @@ sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv)
 
 	default:
 #if DEBUG
-		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc?argv[0] : 0, (argc > 1)? argv[1] : 0);
+		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 		break; /* ignore */
 	}
@@ -116,12 +112,11 @@ freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 
 
 void
-sps_poll(sfx_softseq_t *self, byte *dest, int len)
-{
+sps_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int halftone_delta = note - BASE_NOTE;
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
-	int halftone_index = (halftone_delta + (12*100)) % 12 ;
-	int freq = (!note)? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
+	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;
+	int freq = (!note) ? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
 	gint16 *buf = (gint16 *) dest;
 
 	int i;
@@ -134,12 +129,12 @@ sps_poll(sfx_softseq_t *self, byte *dest, int len)
 			if (freq_count - freq < 0) {
 				/* Unclean rising edge */
 				int l = volume << 1;
-				buf[i] = -volume + (l*freq_count)/freq;
+				buf[i] = -volume + (l * freq_count) / freq;
 			} else if (freq_count >= FREQUENCY
-				   && freq_count - freq < FREQUENCY) {
+			           && freq_count - freq < FREQUENCY) {
 				/* Unclean falling edge */
 				int l = volume << 1;
-				buf[i] = volume - (l*(freq_count - FREQUENCY))/freq;
+				buf[i] = volume - (l * (freq_count - FREQUENCY)) / freq;
 			} else {
 				if (freq_count < FREQUENCY)
 					buf[i] = volume;
@@ -153,14 +148,12 @@ sps_poll(sfx_softseq_t *self, byte *dest, int len)
 }
 
 void
-sps_volume(sfx_softseq_t *self, int new_volume)
-{
+sps_volume(sfx_softseq_t *self, int new_volume) {
 	volume = new_volume << 4;
 }
 
 void
-sps_allstop(sfx_softseq_t *self)
-{
+sps_allstop(sfx_softseq_t *self) {
 	note = 0;
 }
 
