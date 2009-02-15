@@ -648,6 +648,8 @@ _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *misc_payloa
 
 	state->dirty_rects = NULL;
 
+	state->old_pointer_draw_pos.x = -1;
+	state->old_pointer_draw_pos.y = -1;
 
 	return GFX_OK;
 }
