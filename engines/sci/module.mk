@@ -91,7 +91,9 @@ MODULE_OBJS = \
 	sfx/timer/scummvm.o \
 	sfx/timer/timers.o
 
-CPPFLAGS+=-DSCUMMVM -I$(srcdir)/engines/sci/src/include
+# FIXME: The following is supposed to be a set of *temporary* hacks
+CXXFLAGS += -Wno-variadic-macros
+CPPFLAGS := -DSCUMMVM -I$(srcdir)/engines/sci/include $(CPPFLAGS)
 
 # Build .c files as C++
 %.o: %.c
