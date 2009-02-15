@@ -57,7 +57,7 @@
 #define _K_SCI01_SOUND_MIDI_SEND 12
 #define _K_SCI01_SOUND_REVERB 13 /* Get/Set */
 #define _K_SCI01_SOUND_HOLD 14
- 
+
 #define _K_SCI1_SOUND_MASTER_VOLME 0 /* Set/Get */
 #define _K_SCI1_SOUND_MUTE_SOUND 1
 #define _K_SCI1_SOUND_UNUSED1 2
@@ -76,7 +76,7 @@
 #define _K_SCI1_SOUND_SET_HANDLE_PRIORITY 15
 #define _K_SCI1_SOUND_SET_HANDLE_LOOP 16
 #define _K_SCI1_SOUND_UPDATE_CUES 17
-#define _K_SCI1_SOUND_MIDI_SEND 18 
+#define _K_SCI1_SOUND_MIDI_SEND 18
 #define _K_SCI1_SOUND_REVERB 19 /* Get/Set */
 #define _K_SCI1_SOUND_UPDATE_VOL_PRI 20
 
@@ -91,16 +91,15 @@
 
 
 static void
-script_set_priority(state_t *s, reg_t obj, int priority)
-{
+script_set_priority(state_t *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, song_nr, 0);
 	int flags = GET_SEL32V(obj, flags);
 
-	if (priority == -1)
-	{
+	if (priority == -1) {
 		if (song->data[0] == 0xf0)
-			priority = song->data[1]; else
+			priority = song->data[1];
+		else
 			SCIkdebug(SCIkWARNING, "Attempt to unset song priority when there is no built-in value!\n");
 
 		flags &= ~SCI1_SOUND_FLAG_SCRIPTED_PRI;
@@ -111,8 +110,7 @@ script_set_priority(state_t *s, reg_t obj, int priority)
 }
 
 song_iterator_t *
-build_iterator(state_t *s, int song_nr, int type, songit_id_t id)
-{
+build_iterator(state_t *s, int song_nr, int type, songit_id_t id) {
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, song_nr, 0);
 
 	if (!song)
@@ -123,13 +121,12 @@ build_iterator(state_t *s, int song_nr, int type, songit_id_t id)
 
 
 void
-process_sound_events(state_t *s) /* Get all sound events, apply their changes to the heap */
-{
+process_sound_events(state_t *s) { /* Get all sound events, apply their changes to the heap */
 	int result;
 	song_handle_t handle;
 	int cue;
 
-	if (s->version>=SCI_VERSION_FTU_DOSOUND_VARIANT_1)
+	if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_1)
 		return;
 	/* SCI01 and later explicitly poll for everything */
 
@@ -144,26 +141,26 @@ process_sound_events(state_t *s) /* Get all sound events, apply their changes to
 
 		case SI_LOOP:
 			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" looped (to %d)\n",
-				  PRINT_REG(obj), cue);
+			          PRINT_REG(obj), cue);
 			/*			PUT_SEL32V(obj, loops, GET_SEL32V(obj, loop) - 1);*/
 			PUT_SEL32V(obj, signal, -1);
 			break;
 
 		case SI_RELATIVE_CUE:
 			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" received relative cue %d\n",
-				  PRINT_REG(obj), cue);
+			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" received absolute cue %d\n",
-				  PRINT_REG(obj), cue);
+			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
 			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" finished\n",
-				  PRINT_REG(obj));
+			          PRINT_REG(obj));
 			PUT_SEL32V(obj, signal, -1);
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_STOPPED);
 			break;
@@ -177,34 +174,61 @@ process_sound_events(state_t *s) /* Get all sound events, apply their changes to
 
 
 reg_t
-kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = KP_ALT(1, NULL_REG);
 	word command = UKPV(0);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
-	int number = obj.segment ? 
-	  GET_SEL32V(obj, number) : 
-	  -1; /* We were not going to use it anyway */
+	int number = obj.segment ?
+	             GET_SEL32V(obj, number) :
+	             -1; /* We were not going to use it anyway */
 
 	if (s->debug_mode & (1 << SCIkSOUNDCHK_NR)) {
 		int i;
 
 		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
 		switch (command) {
-		case 0: sciprintf("[InitObj]"); break;
-		case 1: sciprintf("[Play]"); break;
-		case 2: sciprintf("[NOP]"); break;
-		case 3: sciprintf("[DisposeHandle]"); break;
-		case 4: sciprintf("[SetSoundOn(?)]"); break;
-		case 5: sciprintf("[Stop]"); break;
-		case 6: sciprintf("[Suspend]"); break;
-		case 7: sciprintf("[Resume]"); break;
-		case 8: sciprintf("[Get(Set?)Volume]"); break;
-		case 9: sciprintf("[Signal: Obj changed]"); break;
-		case 10: sciprintf("[Fade(?)]"); break;
-		case 11: sciprintf("[ChkDriver]"); break;
-		case 12: sciprintf("[PlayNextSong (formerly StopAll)]"); break;
-		default: sciprintf("[unknown]"); break;
+		case 0:
+			sciprintf("[InitObj]");
+			break;
+		case 1:
+			sciprintf("[Play]");
+			break;
+		case 2:
+			sciprintf("[NOP]");
+			break;
+		case 3:
+			sciprintf("[DisposeHandle]");
+			break;
+		case 4:
+			sciprintf("[SetSoundOn(?)]");
+			break;
+		case 5:
+			sciprintf("[Stop]");
+			break;
+		case 6:
+			sciprintf("[Suspend]");
+			break;
+		case 7:
+			sciprintf("[Resume]");
+			break;
+		case 8:
+			sciprintf("[Get(Set?)Volume]");
+			break;
+		case 9:
+			sciprintf("[Signal: Obj changed]");
+			break;
+		case 10:
+			sciprintf("[Fade(?)]");
+			break;
+		case 11:
+			sciprintf("[ChkDriver]");
+			break;
+		case 12:
+			sciprintf("[PlayNextSong (formerly StopAll)]");
+			break;
+		default:
+			sciprintf("[unknown]");
+			break;
 		}
 
 		sciprintf("(");
@@ -222,10 +246,10 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 		if (obj.segment) {
 			sciprintf("Initializing song number %d\n", GET_SEL32V(obj, number));
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
-							build_iterator(s, number,
-								       SCI_SONG_ITERATOR_TYPE_SCI0,
-								       handle),
-							0, handle, number));
+			                                build_iterator(s, number,
+			                                               SCI_SONG_ITERATOR_TYPE_SCI0,
+			                                               handle),
+			                                0, handle, number));
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_INITIALIZED);
 			PUT_SEL32(obj, handle, obj); /* ``sound handle'': we use the object address */
 		}
@@ -234,9 +258,9 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI0_SOUND_PLAY_HANDLE:
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_PLAYING);
+			                    handle, SOUND_STATUS_PLAYING);
 			sfx_song_set_loops(&s->sound,
-					   handle, GET_SEL32V(obj, loop));
+			                   handle, GET_SEL32V(obj, loop));
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_PLAYING);
 		}
 		break;
@@ -254,7 +278,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI0_SOUND_STOP_HANDLE:
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			PUT_SEL32V(obj, state, SOUND_STATUS_STOPPED);
 		}
 		break;
@@ -262,7 +286,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI0_SOUND_SUSPEND_HANDLE:
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_SUSPENDED);
+			                    handle, SOUND_STATUS_SUSPENDED);
 			PUT_SEL32V(obj, state, SOUND_STATUS_SUSPENDED);
 		}
 		break;
@@ -270,7 +294,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case _K_SCI0_SOUND_RESUME_HANDLE:
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_PLAYING);
+			                    handle, SOUND_STATUS_PLAYING);
 			PUT_SEL32V(obj, state, SOUND_STATUS_PLAYING);
 		}
 		break;
@@ -286,7 +310,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 		s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_MUTE, 0, 0);*/
 
 	}
-		break;
+	break;
 
 	case _K_SCI0_SOUND_VOLUME: {
 		/* range from 0x0 to 0xf */
@@ -298,23 +322,23 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 		else
 			s->r_acc = make_reg(0, sfx_get_volume(&s->sound) >> 0xf);
 	}
-		break;
+	break;
 
 	case _K_SCI0_SOUND_UPDATE_VOL_PRI:
 		if (obj.segment) {
 			sfx_song_set_loops(&s->sound,
-					   handle, GET_SEL32V(obj, loop));
+			                   handle, GET_SEL32V(obj, loop));
 			script_set_priority(s, obj, GET_SEL32V(obj, pri));
 		}
 		break;
 
 	case _K_SCI0_SOUND_FADE_HANDLE:
 		/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
-	/* FIXME: The next couple of lines actually STOP the handle, rather
-	** than fading it! */
+		/* FIXME: The next couple of lines actually STOP the handle, rather
+		** than fading it! */
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			PUT_SEL32V(obj, state, SOUND_STATUS_STOPPED);
 			PUT_SEL32V(obj, signal, -1);
 		}
@@ -325,7 +349,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 		break;
 
 	case _K_SCI0_SOUND_PLAY_NEXT:
-	  /* sfx_all_stop(&s->sound);*/
+		/* sfx_all_stop(&s->sound);*/
 		break;
 
 	default:
@@ -339,40 +363,71 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 int
 sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-	      int command, int arg1, int arg2);
+              int command, int arg1, int arg2);
 
 reg_t
-kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	word command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
-	song_handle_t handle = FROBNICATE_HANDLE(obj);	
-	int number = obj.segment ? 
-	  GET_SEL32V(obj, number) : 
-	  -1; /* We were not going to use it anyway */
+	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	int number = obj.segment ?
+	             GET_SEL32V(obj, number) :
+	             -1; /* We were not going to use it anyway */
 
 	if ((s->debug_mode & (1 << SCIkSOUNDCHK_NR))
-	    && command != _K_SCI01_SOUND_UPDATE_CUES) {
+	        && command != _K_SCI01_SOUND_UPDATE_CUES) {
 		int i;
 
 		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
 		switch (command) {
-		case 0: sciprintf("[MasterVolume]"); break;
-		case 1: sciprintf("[Mute]"); break;
-		case 2: sciprintf("[NOP(2)]"); break;
-		case 3: sciprintf("[GetPolyphony]"); break;
-		case 4: sciprintf("[Update]"); break;
-		case 5: sciprintf("[Init]"); break;
-		case 6: sciprintf("[Dispose]"); break;
-		case 7: sciprintf("[Play]"); break;
-		case 8: sciprintf("[Stop]"); break;
-		case 9: sciprintf("[Suspend]"); break;
-		case 10: sciprintf("[Fade]"); break;
-		case 11: sciprintf("[UpdateCues]"); break;
-		case 12: sciprintf("[MidiSend]"); break;
-		case 13: sciprintf("[Reverb]"); break;
-		case 14: sciprintf("[Hold]"); break;
-		default: sciprintf("[unknown]"); break;
+		case 0:
+			sciprintf("[MasterVolume]");
+			break;
+		case 1:
+			sciprintf("[Mute]");
+			break;
+		case 2:
+			sciprintf("[NOP(2)]");
+			break;
+		case 3:
+			sciprintf("[GetPolyphony]");
+			break;
+		case 4:
+			sciprintf("[Update]");
+			break;
+		case 5:
+			sciprintf("[Init]");
+			break;
+		case 6:
+			sciprintf("[Dispose]");
+			break;
+		case 7:
+			sciprintf("[Play]");
+			break;
+		case 8:
+			sciprintf("[Stop]");
+			break;
+		case 9:
+			sciprintf("[Suspend]");
+			break;
+		case 10:
+			sciprintf("[Fade]");
+			break;
+		case 11:
+			sciprintf("[UpdateCues]");
+			break;
+		case 12:
+			sciprintf("[MidiSend]");
+			break;
+		case 13:
+			sciprintf("[Reverb]");
+			break;
+		case 14:
+			sciprintf("[Hold]");
+			break;
+		default:
+			sciprintf("[unknown]");
+			break;
 		}
 
 		sciprintf("(");
@@ -384,10 +439,8 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 		sciprintf(")\n");
 	}
 
-	switch (command)
-	{
-	case _K_SCI01_SOUND_MASTER_VOLME :
-	{
+	switch (command) {
+	case _K_SCI01_SOUND_MASTER_VOLME : {
 		int vol = SKPV_OR_ALT(1, -1);
 
 		if (vol != -1)
@@ -396,8 +449,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 			s->r_acc = make_reg(0, sfx_get_volume(&s->sound) >> 0xf);
 		break;
 	}
-	case _K_SCI01_SOUND_MUTE_SOUND :
-	{
+	case _K_SCI01_SOUND_MUTE_SOUND : {
 		/* if there's a parameter, we're setting it.  Otherwise,
 		   we're querying it. */
 		/*int param = UPARAM_OR_ALT(1,-1);
@@ -409,17 +461,14 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		break;
 	}
-	case _K_SCI01_SOUND_UNUSED :
-	{
+	case _K_SCI01_SOUND_UNUSED : {
 		break;
 	}
-	case _K_SCI01_SOUND_GET_POLYPHONY :
-	{
+	case _K_SCI01_SOUND_GET_POLYPHONY : {
 		s->r_acc = make_reg(0, sfx_get_player_polyphony());
 		break;
 	}
-	case _K_SCI01_SOUND_PLAY_HANDLE :
-	{
+	case _K_SCI01_SOUND_PLAY_HANDLE : {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
@@ -427,46 +476,42 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_PLAYING);
+			                    handle, SOUND_STATUS_PLAYING);
 			sfx_song_set_loops(&s->sound,
-					   handle, looping);
+			                   handle, looping);
 			sfx_song_renice(&s->sound,
-					handle, pri);
+			                handle, pri);
 			song_lib_set_restore_behavior(s->sound.songlib, handle, rb);
 		}
 
 		break;
 	}
-	case _K_SCI01_SOUND_INIT_HANDLE :
-	{
+	case _K_SCI01_SOUND_INIT_HANDLE : {
 		//int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (obj.segment && (scir_test_resource(s->resmgr, sci_sound, number)))
-		{
+		if (obj.segment && (scir_test_resource(s->resmgr, sci_sound, number))) {
 			sciprintf("Initializing song number %d\n", number);
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
-							build_iterator(s, number,
-								       SCI_SONG_ITERATOR_TYPE_SCI1,
-								       handle),
-							0, handle, number));	
+			                                build_iterator(s, number,
+			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
+			                                               handle),
+			                                0, handle, number));
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
 		break;
 	}
-	case _K_SCI01_SOUND_DISPOSE_HANDLE :
-	{
+	case _K_SCI01_SOUND_DISPOSE_HANDLE : {
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			sfx_remove_song(&s->sound, handle);
 		}
 		break;
 	}
-	case _K_SCI01_SOUND_UPDATE_HANDLE :
-	{
+	case _K_SCI01_SOUND_UPDATE_HANDLE : {
 		/* FIXME: Get these from the sound server */
 		int signal = 0;
 		int min = 0;
@@ -479,7 +524,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int pri = GET_SEL32V(obj, pri);
 
 		sfx_song_set_loops(&s->sound,
-				   handle, looping);
+		                   handle, looping);
 		sfx_song_renice(&s->sound, handle, pri);
 
 		SCIkdebug(SCIkSOUND, "[sound01-update-handle] -- CUE "PREG);
@@ -491,42 +536,38 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		break;
 	}
-	case _K_SCI01_SOUND_STOP_HANDLE :
-	{
+	case _K_SCI01_SOUND_STOP_HANDLE : {
 		PUT_SEL32V(obj, signal, -1);
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 		}
 		break;
 	}
-	case _K_SCI01_SOUND_SUSPEND_HANDLE :
-	{
+	case _K_SCI01_SOUND_SUSPEND_HANDLE : {
 		int state = UKPV(2);
-		int setstate = (state)?
-			SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING;
+		int setstate = (state) ?
+		               SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING;
 
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, setstate);
+			                    handle, setstate);
 		}
 		break;
 	}
-	case _K_SCI01_SOUND_FADE_HANDLE :
-	{
+	case _K_SCI01_SOUND_FADE_HANDLE : {
 		/* There are four parameters that control the fade here.
 		 * TODO: Figure out the exact semantics */
 
-	  /* FIXME: The next couple of lines actually STOP the song right away */
+		/* FIXME: The next couple of lines actually STOP the song right away */
 		PUT_SEL32V(obj, signal, -1);
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 		}
 		break;
 	}
-	case _K_SCI01_SOUND_UPDATE_CUES :
-	{
+	case _K_SCI01_SOUND_UPDATE_CUES : {
 		int signal = 0;
 		int min = 0;
 		int sec = 0;
@@ -535,14 +576,14 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int cue = 0;
 
 		while (result == SI_LOOP)
-		       result = sfx_poll_specific(&s->sound, handle, &cue);
+			result = sfx_poll_specific(&s->sound, handle, &cue);
 
 		switch (result) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
 			SCIkdebug(SCIkSOUND, "---    [CUE] "PREG" Absolute Cue: %d\n",
-				  PRINT_REG(obj), signal);
+			          PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
@@ -550,7 +591,7 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 		case SI_RELATIVE_CUE:
 			signal = cue;
 			SCIkdebug(SCIkSOUND, "---    [CUE] "PREG" Relative Cue: %d\n",
-				  PRINT_REG(obj), cue);
+			          PRINT_REG(obj), cue);
 
 			/* FIXME to match commented-out semantics
 			 * below, with proper storage of dataInc and
@@ -568,58 +609,55 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 			break; /* Doesn't happen */
 		}
 
-/* 		switch (signal) */
-/* 		{ */
-/* 		case 0x00: */
-/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
-/* 			{ */
-/* 				PUT_SEL32V(obj, dataInc, dataInc); */
-/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
-/* 			} else */
-/* 			{ */
-/* 				PUT_SEL32V(obj, signal, signal); */
-/* 			} */
-/* 			break; */
-/* 		case 0xFF: /\* May be unnecessary *\/ */
-/* 			sfx_song_set_status(&s->sound, */
-/* 					    handle, SOUND_STATUS_STOPPED); */
-/* 			break; */
-/* 		default : */
-/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
-/* 			{ */
-/* 				PUT_SEL32V(obj, dataInc, dataInc); */
-/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
-/* 			} else */
-/* 			{ */
-/* 				PUT_SEL32V(obj, signal, signal); */
-/* 			} */
-/* 			break; */
-/* 		} */
+		/* 		switch (signal) */
+		/* 		{ */
+		/* 		case 0x00: */
+		/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/* 			{ */
+		/* 				PUT_SEL32V(obj, dataInc, dataInc); */
+		/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/* 			} else */
+		/* 			{ */
+		/* 				PUT_SEL32V(obj, signal, signal); */
+		/* 			} */
+		/* 			break; */
+		/* 		case 0xFF: /\* May be unnecessary *\/ */
+		/* 			sfx_song_set_status(&s->sound, */
+		/* 					    handle, SOUND_STATUS_STOPPED); */
+		/* 			break; */
+		/* 		default : */
+		/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/* 			{ */
+		/* 				PUT_SEL32V(obj, dataInc, dataInc); */
+		/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/* 			} else */
+		/* 			{ */
+		/* 				PUT_SEL32V(obj, signal, signal); */
+		/* 			} */
+		/* 			break; */
+		/* 		} */
 
 		PUT_SEL32V(obj, min, min);
 		PUT_SEL32V(obj, sec, sec);
 		PUT_SEL32V(obj, frame, frame);
 		break;
 	}
-	case _K_SCI01_SOUND_MIDI_SEND :
-	{
+	case _K_SCI01_SOUND_MIDI_SEND : {
 		int channel = SKPV(2);
-		int midiCmd = UKPV(3) == 0xff ? 
-		  0xe0 : /* Pitch wheel */
-		  0xb0; /* UKPV(3) is actually a controller number */
+		int midiCmd = UKPV(3) == 0xff ?
+		              0xe0 : /* Pitch wheel */
+		              0xb0; /* UKPV(3) is actually a controller number */
 		int controller = UKPV(3);
 		int param = UKPV(4);
 
-		sfx_send_midi(&s->sound, handle, 
-			      channel, midiCmd, controller, param);
+		sfx_send_midi(&s->sound, handle,
+		              channel, midiCmd, controller, param);
 		break;
 	}
-	case _K_SCI01_SOUND_REVERB :
-	{
+	case _K_SCI01_SOUND_REVERB : {
 		break;
 	}
-	case _K_SCI01_SOUND_HOLD :
-	{
+	case _K_SCI01_SOUND_HOLD : {
 		//int flag = SKPV(2);
 		break;
 	}
@@ -630,48 +668,91 @@ kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 int
 sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-	      int command, int arg1, int arg2);
+              int command, int arg1, int arg2);
 
 reg_t
-kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	word command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
-	int number = obj.segment ? 
-	  GET_SEL32V(obj, number) : 
-	  -1; /* We were not going to use it anyway */
+	int number = obj.segment ?
+	             GET_SEL32V(obj, number) :
+	             -1; /* We were not going to use it anyway */
 
 	CHECK_THIS_KERNEL_FUNCTION;
 
 	if ((s->debug_mode & (1 << SCIkSOUNDCHK_NR))
-	    && command != _K_SCI1_SOUND_UPDATE_CUES) {
+	        && command != _K_SCI1_SOUND_UPDATE_CUES) {
 		int i;
 
 		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
 		switch (command) {
-		case 0: sciprintf("[MasterVolume]"); break;
-		case 1: sciprintf("[Mute]"); break;
-		case 2: sciprintf("[NOP(2)]"); break;
-		case 3: sciprintf("[GetPolyphony]"); break;
-		case 4: sciprintf("[GetAudioCapability]"); break;
-		case 5: sciprintf("[GlobalSuspend]"); break;
-		case 6: sciprintf("[Init]"); break;
-		case 7: sciprintf("[Dispose]"); break;
-		case 8: sciprintf("[Play]"); break;
-		case 9: sciprintf("[Stop]"); break;
-		case 10: sciprintf("[SuspendHandle]"); break;
-		case 11: sciprintf("[Fade]"); break;
-		case 12: sciprintf("[Hold]"); break;
-		case 13: sciprintf("[Unused(13)]"); break;
-		case 14: sciprintf("[SetVolume]"); break;
-		case 15: sciprintf("[SetPriority]"); break;
-		case 16: sciprintf("[SetLoop]"); break;
-		case 17: sciprintf("[UpdateCues]"); break;
-		case 18: sciprintf("[MidiSend]"); break;
-		case 19: sciprintf("[Reverb]"); break;
-		case 20: sciprintf("[UpdateVolPri]"); break;
-		default: sciprintf("[unknown]"); break;
+		case 0:
+			sciprintf("[MasterVolume]");
+			break;
+		case 1:
+			sciprintf("[Mute]");
+			break;
+		case 2:
+			sciprintf("[NOP(2)]");
+			break;
+		case 3:
+			sciprintf("[GetPolyphony]");
+			break;
+		case 4:
+			sciprintf("[GetAudioCapability]");
+			break;
+		case 5:
+			sciprintf("[GlobalSuspend]");
+			break;
+		case 6:
+			sciprintf("[Init]");
+			break;
+		case 7:
+			sciprintf("[Dispose]");
+			break;
+		case 8:
+			sciprintf("[Play]");
+			break;
+		case 9:
+			sciprintf("[Stop]");
+			break;
+		case 10:
+			sciprintf("[SuspendHandle]");
+			break;
+		case 11:
+			sciprintf("[Fade]");
+			break;
+		case 12:
+			sciprintf("[Hold]");
+			break;
+		case 13:
+			sciprintf("[Unused(13)]");
+			break;
+		case 14:
+			sciprintf("[SetVolume]");
+			break;
+		case 15:
+			sciprintf("[SetPriority]");
+			break;
+		case 16:
+			sciprintf("[SetLoop]");
+			break;
+		case 17:
+			sciprintf("[UpdateCues]");
+			break;
+		case 18:
+			sciprintf("[MidiSend]");
+			break;
+		case 19:
+			sciprintf("[Reverb]");
+			break;
+		case 20:
+			sciprintf("[UpdateVolPri]");
+			break;
+		default:
+			sciprintf("[unknown]");
+			break;
 		}
 
 		sciprintf("(");
@@ -683,20 +764,17 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 		sciprintf(")\n");
 	}
 
-	switch (command)
-	{
-	case _K_SCI1_SOUND_MASTER_VOLME :
-	{
-	   /*int vol = UPARAM_OR_ALT (1, -1);
+	switch (command) {
+	case _K_SCI1_SOUND_MASTER_VOLME : {
+		/*int vol = UPARAM_OR_ALT (1, -1);
 
-		if (vol != -1)
-		        s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_VOLUME, 0, vol);
-		else
-		        s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_VOLUME, 0, 0);
-			break;*/
+		 if (vol != -1)
+		         s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_VOLUME, 0, vol);
+		 else
+		         s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_VOLUME, 0, 0);
+		 	break;*/
 	}
-	case _K_SCI1_SOUND_MUTE_SOUND :
-	{
+	case _K_SCI1_SOUND_MUTE_SOUND : {
 		/* if there's a parameter, we're setting it.  Otherwise,
 		   we're querying it. */
 		/*int param = UPARAM_OR_ALT(1,-1);
@@ -707,167 +785,147 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 			s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_MUTE, 0, 0);
 			break;*/
 	}
-	case _K_SCI1_SOUND_UNUSED1 :
-	{
+	case _K_SCI1_SOUND_UNUSED1 : {
 		break;
 	}
-	case _K_SCI1_SOUND_GET_POLYPHONY :
-	{
+	case _K_SCI1_SOUND_GET_POLYPHONY : {
 		/*s->acc = s->sound_server->command(s, SOUND_COMMAND_TEST, 0, 0);*/
 		break;
 	}
-	case _K_SCI1_SOUND_GET_AUDIO_CAPABILITY :
-	{
+	case _K_SCI1_SOUND_GET_AUDIO_CAPABILITY : {
 		return NULL_REG;
 	}
-	case _K_SCI1_SOUND_PLAY_HANDLE :
-	{
+	case _K_SCI1_SOUND_PLAY_HANDLE : {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
 		song_t *song = song_lib_find(s->sound.songlib, handle);
 
-		if (GET_SEL32V(obj, nodePtr) && (song && number != song->resource_num))
-		{
+		if (GET_SEL32V(obj, nodePtr) && (song && number != song->resource_num)) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			sfx_remove_song(&s->sound, handle);
 			PUT_SEL32(obj, nodePtr, NULL_REG);
 		}
 
-		if (!GET_SEL32V(obj, nodePtr) && obj.segment)
-		{
-			if (!scir_test_resource(s->resmgr, sci_sound, number))
-			{
+		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
+			if (!scir_test_resource(s->resmgr, sci_sound, number)) {
 				sciprintf("Could not open song number %d\n", number);
 				return NULL_REG;
 			}
 
 			sciprintf("Initializing song number %d\n", number);
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
-							 build_iterator(s, number,
-									SCI_SONG_ITERATOR_TYPE_SCI1,
-									handle),
-							 0, handle, number));
+			                                build_iterator(s, number,
+			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
+			                                               handle),
+			                                0, handle, number));
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
 
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_PLAYING);
+			                    handle, SOUND_STATUS_PLAYING);
 			sfx_song_set_loops(&s->sound,
-					   handle, looping);
+			                   handle, looping);
 			sfx_song_renice(&s->sound,
-					handle, pri);
+			                handle, pri);
 		}
 
 		break;
 	}
-	case _K_SCI1_SOUND_INIT_HANDLE :
-	{
+	case _K_SCI1_SOUND_INIT_HANDLE : {
 		//int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (GET_SEL32V(obj, nodePtr))
-		{
+		if (GET_SEL32V(obj, nodePtr)) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			sfx_remove_song(&s->sound, handle);
 		}
 
 		if (obj.segment && (scir_test_resource(s->resmgr, sci_sound, number))) {
 			sciprintf("Initializing song number %d\n", number);
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
-							 build_iterator(s, number,
-									SCI_SONG_ITERATOR_TYPE_SCI1,
-									handle),
-							 0, handle, number));
+			                                build_iterator(s, number,
+			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
+			                                               handle),
+			                                0, handle, number));
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
 		break;
 	}
-	case _K_SCI1_SOUND_DISPOSE_HANDLE :
-	{
+	case _K_SCI1_SOUND_DISPOSE_HANDLE : {
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 			sfx_remove_song(&s->sound, handle);
 		}
 		break;
 	}
-	case _K_SCI1_SOUND_STOP_HANDLE :
-	{
+	case _K_SCI1_SOUND_STOP_HANDLE : {
 		PUT_SEL32V(obj, signal, -1);
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
-					    handle, SOUND_STATUS_STOPPED);
+			                    handle, SOUND_STATUS_STOPPED);
 		}
 		break;
 	}
-	case _K_SCI1_SOUND_SUSPEND_HANDLE :
-	{
+	case _K_SCI1_SOUND_SUSPEND_HANDLE : {
 		break;
 	}
-	case _K_SCI1_SOUND_FADE_HANDLE :
-	{
+	case _K_SCI1_SOUND_FADE_HANDLE : {
 		fade_params_t fade;
 		if (obj.segment) {
 			fade.final_volume = UKPV(2);
 			fade.ticks_per_step = UKPV(3);
 			fade.step_size = UKPV(4);
 			fade.action = UKPV(5) ?
-				FADE_ACTION_FADE_AND_STOP :
-				FADE_ACTION_FADE_AND_CONT;
+			              FADE_ACTION_FADE_AND_STOP :
+			              FADE_ACTION_FADE_AND_CONT;
 
 			sfx_song_set_fade(&s->sound,
-					  handle,
-					  &fade);
+			                  handle,
+			                  &fade);
 
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
-			if (UKPV(5))
-			{
+			if (UKPV(5)) {
 				PUT_SEL32V(obj, signal, -1);
 				PUT_SEL32V(obj, nodePtr, 0);
 				PUT_SEL32V(obj, handle, 0);
 				sfx_song_set_status(&s->sound,
-						    handle, SOUND_STATUS_STOPPED);
+				                    handle, SOUND_STATUS_STOPPED);
 			}
 		}
 		break;
 	}
-	case _K_SCI1_SOUND_HOLD_HANDLE :
-	{
+	case _K_SCI1_SOUND_HOLD_HANDLE : {
 		int value = SKPV(2);
 
 		sfx_song_set_hold(&s->sound,
-				  handle, value);
+		                  handle, value);
 		break;
 	}
-	case _K_SCI1_SOUND_UNUSED2 :
-	{
+	case _K_SCI1_SOUND_UNUSED2 : {
 		break;
 	}
-	case _K_SCI1_SOUND_SET_HANDLE_VOLUME :
-	{
+	case _K_SCI1_SOUND_SET_HANDLE_VOLUME : {
 		break;
 	}
-	case _K_SCI1_SOUND_SET_HANDLE_PRIORITY :
-	{
+	case _K_SCI1_SOUND_SET_HANDLE_PRIORITY : {
 		int value = SKPV(2);
 
 		script_set_priority(s, obj, value);
 		break;
 	}
-	case _K_SCI1_SOUND_SET_HANDLE_LOOP :
-	{
+	case _K_SCI1_SOUND_SET_HANDLE_LOOP : {
 		break;
 	}
-	case _K_SCI1_SOUND_UPDATE_CUES :
-	{
+	case _K_SCI1_SOUND_UPDATE_CUES : {
 		int signal = 0;
 		//int min = 0;
 		//int sec = 0;
@@ -876,21 +934,21 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int cue = 0;
 
 		while (result == SI_LOOP)
-		       result = sfx_poll_specific(&s->sound, handle, &cue);
+			result = sfx_poll_specific(&s->sound, handle, &cue);
 
 		switch (result) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
 			fprintf(stderr, "[CUE] "PREG" Absolute Cue: %d\n",
-				PRINT_REG(obj), signal);
+			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
 			fprintf(stderr, "[CUE] "PREG" Relative Cue: %d\n",
-				PRINT_REG(obj), cue);
+			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);
 			PUT_SEL32V(obj, signal, cue + 127);
@@ -905,18 +963,15 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 		}
 		break;
 	}
-	case _K_SCI1_SOUND_MIDI_SEND :
-	{
-		sfx_send_midi(&s->sound, handle, 
-			      UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+	case _K_SCI1_SOUND_MIDI_SEND : {
+		sfx_send_midi(&s->sound, handle,
+		              UKPV(2), UKPV(3), UKPV(4), UKPV(5));
 		break;
 	}
-	case _K_SCI1_SOUND_REVERB :
-	{
+	case _K_SCI1_SOUND_REVERB : {
 		break;
 	}
-	case _K_SCI1_SOUND_UPDATE_VOL_PRI :
-	{
+	case _K_SCI1_SOUND_UPDATE_VOL_PRI : {
 		break;
 	}
 	}
@@ -924,21 +979,18 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kDoSound(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	if (s->version>=SCI_VERSION_FTU_DOSOUND_VARIANT_2)
+kDoSound(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_2)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->version>=SCI_VERSION_FTU_DOSOUND_VARIANT_1)
+	else if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_1)
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
 }
 
 reg_t
-kDoAudio(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	switch (UKPV(0))
-	{
+kDoAudio(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	switch (UKPV(0)) {
 	case _K_SCI1_AUDIO_POSITION :
 		return make_reg(0, -1); /* Finish immediately */
 	}

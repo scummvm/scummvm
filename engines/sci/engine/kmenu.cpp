@@ -31,13 +31,12 @@
 
 
 reg_t
-kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *contents = kernel_dereference_char_pointer(s, argv[1], 0);
 
 	menubar_add_menu(s->gfx_state, s->menubar, name,
-			 contents, s->titlebar_port->font_nr, argv[1]);
+	                 contents, s->titlebar_port->font_nr, argv[1]);
 
 	return s->r_acc;
 
@@ -45,8 +44,7 @@ kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kSetMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV(0);
 	int i = 2;
 
@@ -59,8 +57,7 @@ kSetMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kGetMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kGetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV(0);
 
 	return menubar_get_attribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
@@ -68,8 +65,7 @@ kGetMenu(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t text = argv[0];
 	int fgcolor = SKPV_OR_ALT(1, s->status_bar_foreground);
 	int bgcolor = SKPV_OR_ALT(2, s->status_bar_background);
@@ -79,8 +75,8 @@ kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv)
 	s->titlebar_port->bgcolor.visual = *(get_pic_color(s, bgcolor));
 	s->titlebar_port->bgcolor.mask = GFX_MASK_VISUAL;
 
-	s->status_bar_foreground=fgcolor;
-	s->status_bar_background=bgcolor;
+	s->status_bar_foreground = fgcolor;
+	s->status_bar_background = bgcolor;
 
 	if (NULL != s->status_bar_text) {
 		sci_free(s->status_bar_text);
@@ -99,8 +95,7 @@ kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kDrawMenuBar(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDrawMenuBar(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (SKPV(0))
 		sciw_set_menubar(s, s->titlebar_port, s->menubar, -1);
@@ -122,20 +117,20 @@ static struct {
 	int fgcolor, bgcolor;
 } _about_freesci_pages[ABOUT_FREESCI_PAGES_NR] = {
 	{"FreeSCI hackers and contributors",
-	 "Alexander R. Angas\nDirectX 8 driver, Event sound server, Generic memory functions"
-	 "\n\n"
-	 "Anders Baden Nielsen\nPPC testing"
-	 "\n\n"
-	 "Bas Zoetekouw\nMan pages, debian package management, CVS maintenance"
-	 "\n\n"
-	 "Carl Muckenhoupt\nSources to the SCI resource viewer tools that started it all"
-	 "\n\n"
-	 "Chris Kehler\nMakefile enhancements"
-	 "\n\n"
-	 "Christoph Reichenbach\nUN*X code, VM/Graphics/Sound/other infrastructure"
-	 "\n\n"
-	 "Christopher T. Lansdown\nOriginal CVS maintainer, Alpha compatibility fixes"
-	 ,0, 15},
+		"Alexander R. Angas\nDirectX 8 driver, Event sound server, Generic memory functions"
+		"\n\n"
+		"Anders Baden Nielsen\nPPC testing"
+		"\n\n"
+		"Bas Zoetekouw\nMan pages, debian package management, CVS maintenance"
+		"\n\n"
+		"Carl Muckenhoupt\nSources to the SCI resource viewer tools that started it all"
+		"\n\n"
+		"Chris Kehler\nMakefile enhancements"
+		"\n\n"
+		"Christoph Reichenbach\nUN*X code, VM/Graphics/Sound/other infrastructure"
+		"\n\n"
+		"Christopher T. Lansdown\nOriginal CVS maintainer, Alpha compatibility fixes"
+		, 0, 15},
 	{"More FreeSCI hackers and contributors",
 	 "Claudio Matsuoka\nCVS snapshots, daily builds, BeOS and cygwin ports"
 	 "\n\n"
@@ -150,7 +145,7 @@ static struct {
 	 "George Reid\nFreeBSD package management"
 	 "\n\n"
 	 "Hubert Maier\nAmigaOS 4 port"
-	 ,0, 15},
+	 , 0, 15},
 	{"Even more FreeSCI hackers & contributors",
 	 "Hugues Valois\nGame selection menu"
 	 "\n\n"
@@ -165,7 +160,7 @@ static struct {
 	 "Matt Hargett\nClean-ups, bugfixes, Hardcore QA, Win32"
 	 "\n\n"
 	 "Max Horn\nSetJump implementation"
-	 ,0, 15},
+	 , 0, 15},
 	{"Still more of them",
 	 "Paul David Doherty\nGame version information"
 	 "\n\n"
@@ -180,7 +175,7 @@ static struct {
 	 "Ruediger Hanke\nPort to the MorphOS platform"
 	 "\n\n"
 	 "Rune Orsval\nConfiguration file editor"
-	 ,0, 15},
+	 , 0, 15},
 	{"Is there no end to these contributors?",
 	 "Rickard Lind\nMT32->GM MIDI mapping magic, sound research"
 	 "\n\n"
@@ -199,18 +194,17 @@ static struct {
 	{"The CSCI5573 Team at CU Boulder",
 	 "Xiaojun Chen\nSean Terrell\nChristoph Reichenbach\n\n"
 	 "Special thanks to Prof. Dr. Gary Nutt\n\nfor allowing the FreeSCI VM extension as a\ncourse project in his Advanced OS course"
-	 ,0, 15},
+	 , 0, 15},
 	{"Special Thanks",
 	 "Special Thanks as well\n\n\nto the linuxgames.com and telefragged.com crew\nfor hosting us\n\n"
 	 "To the savannah.gnu.org staff\nfor hosting our mailing list\n\n"
 	 "To Bob Heitman and Corey Cole for their support"
-	 ,0, 15}
+	 , 0, 15}
 };
 
 
 void
-about_freesci(state_t *s)
-{
+about_freesci(state_t *s) {
 	int page;
 	gfxw_port_t *port;
 	int bodyfont, titlefont;
@@ -228,7 +222,7 @@ about_freesci(state_t *s)
 		return;
 	}
 
-	bodyfont = i+1;
+	bodyfont = i + 1;
 	for (page = 0; page < ABOUT_FREESCI_PAGES_NR; ++page) {
 		sci_event_t event;
 		int cont = 2;
@@ -238,9 +232,9 @@ about_freesci(state_t *s)
 		_about_freesci_pages[page].bgcolor = 15;
 
 		gfxop_get_text_params(s->gfx_state, bodyfont, _about_freesci_pages[page].body, 300, &width, &height, 0,
-				      NULL, NULL, NULL);
+		                      NULL, NULL, NULL);
 		gfxop_get_text_params(s->gfx_state, titlefont, _about_freesci_pages[page].title, 300, &width2, &foo, 0,
-				      NULL, NULL, NULL);
+		                      NULL, NULL, NULL);
 
 		width += 4;
 		width2 += 4;
@@ -250,21 +244,21 @@ about_freesci(state_t *s)
 			width = width2;
 
 		port = sciw_new_window(s, gfx_rect(156 - (width >> 1), 100 - (height >> 1), width, height),
-				       bodyfont, s->ega_colors[_about_freesci_pages[page].fgcolor],
-				       s->ega_colors[_about_freesci_pages[page].bgcolor],
-				       titlefont, s->ega_colors[15], s->ega_colors[0],
-				       _about_freesci_pages[page].title, WINDOW_FLAG_TITLE);
+		                       bodyfont, s->ega_colors[_about_freesci_pages[page].fgcolor],
+		                       s->ega_colors[_about_freesci_pages[page].bgcolor],
+		                       titlefont, s->ega_colors[15], s->ega_colors[0],
+		                       _about_freesci_pages[page].title, WINDOW_FLAG_TITLE);
 
-		port->add(GFXWC(port), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(0,0,width,height), bodyfont,
-							  _about_freesci_pages[page].body,
-							  ALIGN_CENTER, ALIGN_CENTER, port->color, port->color,
-							  port->bgcolor, 0)
-					    ));
+		port->add(GFXWC(port), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(0, 0, width, height), bodyfont,
+		                            _about_freesci_pages[page].body,
+		                            ALIGN_CENTER, ALIGN_CENTER, port->color, port->color,
+		                            port->bgcolor, 0)
+		                           ));
 
 		s->visual->add(GFXWC(s->visual), GFXW(port));
 
 		port->add_dirty_abs(GFXWC(port), gfx_rect_fullscreen, 1);
-		s->visual->draw(GFXW(s->visual), gfx_point(0,0));
+		s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
 		gfxop_update(s->gfx_state);
 
 		while (cont) {
@@ -286,7 +280,7 @@ about_freesci(state_t *s)
 
 
 		port->widfree(GFXW(port));
-		s->visual->draw(GFXW(s->visual), gfx_point(0,0));
+		s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
 		gfxop_update(s->gfx_state);
 
 	}
@@ -294,8 +288,7 @@ about_freesci(state_t *s)
 
 
 static inline int
-_menu_go_down(state_t *s, int menu_nr, int item_nr)
-{
+_menu_go_down(state_t *s, int menu_nr, int item_nr) {
 	int seeker, max = s->menubar->menus[menu_nr].items_nr;
 	seeker = item_nr + 1;
 
@@ -313,8 +306,7 @@ _menu_go_down(state_t *s, int menu_nr, int item_nr)
 
 
 reg_t
-kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[0];
 	/*int pause_sound = UKPV_OR_ALT(1, 1);*/ /* FIXME: Do this eventually */
 	int claimed = 0;
@@ -333,33 +325,33 @@ kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int menuc, itemc;
 
 		if ((type == SCI_EVT_KEYBOARD)
-		    && (message == SCI_K_ESC))
+		        && (message == SCI_K_ESC))
 			menu_mode = 1;
 
 		else if ((type == SCI_EVT_SAID) || message) { /* Don't claim 0 keyboard event */
-			SCIkdebug(SCIkMENU,"Menu: Got %s event: %04x/%04x\n",
-				  ((type == SCI_EVT_SAID)? "SAID":"KBD"), message, modifiers);
+			SCIkdebug(SCIkMENU, "Menu: Got %s event: %04x/%04x\n",
+			          ((type == SCI_EVT_SAID) ? "SAID" : "KBD"), message, modifiers);
 
 			for (menuc = 0; menuc < s->menubar->menus_nr; menuc++)
 				for (itemc = 0; itemc < s->menubar->menus[menuc].items_nr; itemc++) {
 					item = s->menubar->menus[menuc].items + itemc;
 
-					SCIkdebug(SCIkMENU,"Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
-						  item->text? item->text : "--bar--", item->key, item->modifiers,
-						  item->type, item->enabled? "enabled":"disabled");
+					SCIkdebug(SCIkMENU, "Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
+					          item->text ? item->text : "--bar--", item->key, item->modifiers,
+					          item->type, item->enabled ? "enabled" : "disabled");
 
 					if (((item->type == MENU_TYPE_NORMAL)
-					     && (item->enabled))
-					    && (((type == SCI_EVT_KEYBOARD) /* keyboard event */
-						 && menubar_match_key(item, message, modifiers))
-						|| ((type == SCI_EVT_SAID) /* Said event */
-						    && (item->flags & MENU_ATTRIBUTE_FLAGS_SAID)
-						    && (said(s, item->said, (s->debug_mode & (1 << SCIkPARSER_NR))) != SAID_NO_MATCH)
-						    )
-						)
-					    ) {
+					        && (item->enabled))
+					        && (((type == SCI_EVT_KEYBOARD) /* keyboard event */
+					             && menubar_match_key(item, message, modifiers))
+					            || ((type == SCI_EVT_SAID) /* Said event */
+					                && (item->flags & MENU_ATTRIBUTE_FLAGS_SAID)
+					                && (said(s, item->said, (s->debug_mode & (1 << SCIkPARSER_NR))) != SAID_NO_MATCH)
+					               )
+					           )
+					   ) {
 						/* Claim the event */
-						SCIkdebug(SCIkMENU,"Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
+						SCIkdebug(SCIkMENU, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
 						claimed = 1;
 						menu_nr = menuc;
 						item_nr = itemc;
@@ -526,8 +518,7 @@ kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv)
 			s->r_acc = NULL_REG;
 
 		SCIkdebug(SCIkMENU, "Menu: Claim -> %04x\n", s->r_acc.offset);
-	}
-	else s->r_acc = NULL_REG; /* Not claimed */
+	} else s->r_acc = NULL_REG; /* Not claimed */
 
 	return s->r_acc;
 }

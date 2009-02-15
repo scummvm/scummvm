@@ -30,22 +30,21 @@
 #include "sci/include/sci_memory.h"
 
 void
-sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len)
-{
+sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len) {
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX) {
 		fprintf(stderr, "[SYSSTR] Error: Attempt to acquire string #%d\n",
-			index);
+		        index);
 		BREAKPOINT();
 	}
 
 	if (str->name
-	    && (strcmp(name, str->name)
-		|| (str->max_size != max_len))) {
+	        && (strcmp(name, str->name)
+	            || (str->max_size != max_len))) {
 		fprintf(stderr, "[SYSSTR] Error: Attempt to re-acquire existing string #%d;"
-			"was '%s', tried to claim as '%s'\n",
-			index, str->name, name);
+		        "was '%s', tried to claim as '%s'\n",
+		        index, str->name, name);
 		BREAKPOINT();
 	}
 
@@ -56,13 +55,12 @@ sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_
 }
 
 int
-sys_string_set(sys_strings_t *strings, int index, const char *value)
-{
+sys_string_set(sys_strings_t *strings, int index, const char *value) {
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX || !str->name) {
 		fprintf(stderr, "[SYSSTR] Error: Attempt to write to invalid/unused string #%d\n",
-			index);
+		        index);
 		BREAKPOINT();
 		return 1;
 	}
@@ -73,26 +71,23 @@ sys_string_set(sys_strings_t *strings, int index, const char *value)
 }
 
 void
-sys_string_free(sys_strings_t *strings, int index)
-{
+sys_string_free(sys_strings_t *strings, int index) {
 	sys_string_t *str = strings->strings + index;
-	
+
 	free(str->name);
 	str->name = NULL;
 
 	free(str->value);
 	str->value = NULL;
-	
+
 	str->max_size = 0;
 }
 
 void
-sys_string_free_all(sys_strings_t *strings)
-{
+sys_string_free_all(sys_strings_t *strings) {
 	int i;
 
-	for (i=0;i<SYS_STRINGS_MAX;i++)
-	{
+	for (i = 0;i < SYS_STRINGS_MAX;i++) {
 		if (strings->strings[i].name)
 			sys_string_free(strings, i);
 	}
@@ -100,8 +95,7 @@ sys_string_free_all(sys_strings_t *strings)
 }
 
 void
-sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings)
-{
+sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings) {
 	int i;
 
 	/* First, pad memory */

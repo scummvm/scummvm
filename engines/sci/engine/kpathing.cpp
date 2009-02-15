@@ -78,8 +78,7 @@
 #define PF_FATAL -2
 
 /* Floating point struct */
-typedef struct pointf
-{
+typedef struct pointf {
 	pointf() : x(0), y(0) {}
 	pointf(float x_, float y_) : x(x_), y(y_) {}
 
@@ -87,13 +86,11 @@ typedef struct pointf
 } pointf_t;
 
 pointf_t
-to_pointf(point_t p)
-{
+to_pointf(point_t p) {
 	return pointf(p.x, p.y);
 }
 
-typedef struct vertex
-{
+typedef struct vertex {
 	/* Location */
 	point_t v;
 
@@ -115,8 +112,7 @@ typedef struct vertex
 
 typedef CLIST_HEAD(vertices_head, vertex) vertices_head_t;
 
-typedef struct polygon
-{
+typedef struct polygon {
 	/* Circular list of vertices */
 	vertices_head_t vertices;
 
@@ -128,8 +124,7 @@ typedef struct polygon
 } polygon_t;
 
 /* Pathfinding state */
-typedef struct pf_state
-{
+typedef struct pf_state {
 	/* List of all polygons */
 	LIST_HEAD(polygons_head, polygon) polygons;
 
@@ -156,8 +151,7 @@ static vertex_t *vertex_cur;
 
 /* Temporary hack to deal with points in reg_ts */
 static int
-polygon_is_reg_t(unsigned char *list, int size)
-{
+polygon_is_reg_t(unsigned char *list, int size) {
 	int i;
 
 	/* Check the first three reg_ts */
@@ -171,8 +165,7 @@ polygon_is_reg_t(unsigned char *list, int size)
 }
 
 static point_t
-read_point(unsigned char *list, int is_reg_t, int offset)
-{
+read_point(unsigned char *list, int is_reg_t, int offset) {
 	point_t point;
 
 	if (!is_reg_t) {
@@ -185,11 +178,10 @@ read_point(unsigned char *list, int is_reg_t, int offset)
 }
 
 
-  /*** Debug functions ***/
+/*** Debug functions ***/
 
 static void
-draw_line(state_t *s, point_t p1, point_t p2, int type)
-{
+draw_line(state_t *s, point_t p1, point_t p2, int type) {
 	/* Colors for polygon debugging.
 	** Green: Total access
 	** Red : Barred access
@@ -218,8 +210,7 @@ draw_line(state_t *s, point_t p1, point_t p2, int type)
 }
 
 static void
-draw_point(state_t *s, point_t p, int start)
-{
+draw_point(state_t *s, point_t p, int start) {
 	/* Colors for starting and end point
 	** Green: End point
 	** Blue: Starting point
@@ -243,8 +234,7 @@ draw_point(state_t *s, point_t p, int start)
 }
 
 static void
-draw_polygon(state_t *s, reg_t polygon)
-{
+draw_polygon(state_t *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
@@ -265,8 +255,7 @@ draw_polygon(state_t *s, reg_t polygon)
 }
 
 static void
-draw_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt)
-{
+draw_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -292,8 +281,7 @@ draw_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt)
 }
 
 static void
-print_polygon(state_t *s, reg_t polygon)
-{
+print_polygon(state_t *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
@@ -314,8 +302,7 @@ print_polygon(state_t *s, reg_t polygon)
 }
 
 static void
-print_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt)
-{
+print_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -343,7 +330,7 @@ print_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt)
 }
 
 
-  /*** Basic geometry functions ***/
+/*** Basic geometry functions ***/
 
 static int
 area(point_t a, point_t b, point_t c)
@@ -416,9 +403,9 @@ intersect_proper(point_t a, point_t b, point_t c, point_t d)
 */
 {
 	int ab = (left(a, b, c) && left(b, a, d))
-		  || (left(a, b, d) && left(b, a, c));
+	         || (left(a, b, d) && left(b, a, c));
 	int cd = (left(c, d, a) && left(d, c, b))
-		  || (left(c, d, b) && left(d, c, a));
+	         || (left(c, d, b) && left(d, c, a));
 
 	return ab && cd;
 }
@@ -435,11 +422,11 @@ intersect(point_t a, point_t b, point_t c, point_t d)
 		return 1;
 
 	return between(a, b, c) || between(a, b, d)
-	       || between (c, d, a) || between(c, d, b);
+	       || between(c, d, a) || between(c, d, b);
 }
 
 
-  /*** Pathfinding ***/
+/*** Pathfinding ***/
 
 static vertex_t *
 vertex_new(point_t p)
@@ -585,7 +572,7 @@ fix_vertex_order(polygon_t *polygon)
 	** clockwise
 	*/
 	if (((area > 0) && (polygon->type == POLY_CONTAINED_ACCESS))
-	    || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
+	        || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
 		vertices_head_t vertices;
 
 		/* Create a new circular list */
@@ -788,7 +775,7 @@ visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_t *tree)
 	** if vertex_prev is invisible
 	*/
 	if (vertex_prev && !visible && between(p, w, vertex_prev->v))
-			return 0;
+		return 0;
 
 	/* Find leftmost node of tree */
 	while ((tree_n = aatree_walk(tree_n, AATREE_WALK_LEFT)))
@@ -836,14 +823,14 @@ visible_vertices(pf_state_t *s, vertex_t *vert)
 		/* Check that there is more than one vertex. */
 		if (VERTEX_HAS_EDGES(vertex))
 			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-				point_t high, low;
+			point_t high, low;
 
-				/* Add edges that intersect the initial position of the sweeping line */
-				clockwise(vertex, &high, &low);
+			/* Add edges that intersect the initial position of the sweeping line */
+			clockwise(vertex, &high, &low);
 
-				if ((high.y < p.y) && (low.y >= p.y) && !POINT_EQUAL(low, p))
-					aatree_insert(vertex, &tree, edge_compare);
-			}
+			if ((high.y < p.y) && (low.y >= p.y) && !POINT_EQUAL(low, p))
+				aatree_insert(vertex, &tree, edge_compare);
+		}
 	}
 
 	is_visible = 1;
@@ -926,9 +913,9 @@ edge_on_screen_border(point_t p, point_t q)
 {
 	/* FIXME get dimensions from somewhere? */
 	return ((p.x == 0 && q.x == 0)
-	    || (p.x == 319 && q.x == 319)
-	    || (p.y == 0 && q.y == 0)
-	    || (p.y == 189 && q.y == 189));
+	        || (p.x == 319 && q.x == 319)
+	        || (p.y == 0 && q.y == 0)
+	        || (p.y == 189 && q.y == 189));
 }
 
 static int
@@ -944,7 +931,7 @@ find_free_point(pointf_t f, polygon_t *polygon, point_t *ret)
 
 	/* Try nearest point first */
 	p = gfx_point((int) floor(f.x + 0.5),
-		      (int) floor(f.y + 0.5));
+	              (int) floor(f.y + 0.5));
 
 	if (contained(p, polygon) != CONT_INSIDE) {
 		*ret = p;
@@ -952,7 +939,7 @@ find_free_point(pointf_t f, polygon_t *polygon, point_t *ret)
 	}
 
 	p = gfx_point((int) floor(f.x),
-		      (int) floor(f.y));
+	              (int) floor(f.y));
 
 	/* Try (x, y), (x + 1, y), (x , y + 1) and (x + 1, y + 1) */
 	if (contained(p, polygon) == CONT_INSIDE) {
@@ -1039,24 +1026,24 @@ intersection(point_t a, point_t b, vertex_t *vertex, pointf_t *ret)
 	point_t c = vertex->v;
 	point_t d = CLIST_NEXT(vertex, entries)->v;
 
-	denom = a.x * (float) (d.y - c.y) +
-		b.x * (float) (c.y - d.y) +
-		d.x * (float) (b.y - a.y) +
-		c.x * (float) (a.y - b.y);
+	denom = a.x * (float)(d.y - c.y) +
+	        b.x * (float)(c.y - d.y) +
+	        d.x * (float)(b.y - a.y) +
+	        c.x * (float)(a.y - b.y);
 
 	if (denom == 0.0)
 		/* Segments are parallel, no intersection */
 		return PF_ERROR;
 
-	num = a.x * (float) (d.y - c.y) +
-	      c.x * (float) (a.y - d.y) +
-	      d.x * (float) (c.y - a.y);
+	num = a.x * (float)(d.y - c.y) +
+	      c.x * (float)(a.y - d.y) +
+	      d.x * (float)(c.y - a.y);
 
 	s = num / denom;
 
-	num = -(a.x * (float) (c.y - b.y) +
-		b.x * (float) (a.y - c.y) +
-		c.x * (float) (b.y - a.y));
+	num = -(a.x * (float)(c.y - b.y) +
+	        b.x * (float)(a.y - c.y) +
+	        c.x * (float)(b.y - a.y));
 
 	t = num / denom;
 
@@ -1204,25 +1191,25 @@ merge_point(pf_state_t *s, point_t v)
 	/* Check for already existing vertex */
 	LIST_FOREACH(polygon, &s->polygons, entries) {
 		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-			if (POINT_EQUAL(vertex->v, v))
-				return vertex;
+		if (POINT_EQUAL(vertex->v, v))
+			return vertex;
 	}
 
 	v_new = vertex_new(v);
 
 	/* Check for point being on an edge */
 	LIST_FOREACH(polygon, &s->polygons, entries)
-		/* Skip single-vertex polygons */
-		if (VERTEX_HAS_EDGES(CLIST_FIRST(&polygon->vertices)))
-			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-				vertex_t *next = CLIST_NEXT(vertex, entries);
+	/* Skip single-vertex polygons */
+	if (VERTEX_HAS_EDGES(CLIST_FIRST(&polygon->vertices)))
+		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+		vertex_t *next = CLIST_NEXT(vertex, entries);
 
-				if (between(vertex->v, next->v, v)) {
-					/* Split edge by adding vertex */
-					CLIST_INSERT_AFTER(vertex, v_new, entries);
-					return v_new;
-				}
-			}
+		if (between(vertex->v, next->v, v)) {
+			/* Split edge by adding vertex */
+			CLIST_INSERT_AFTER(vertex, v_new, entries);
+			return v_new;
+		}
+	}
 
 	/* Add point as single-vertex polygon */
 	polygon = polygon_new(POLY_BARRED_ACCESS);
@@ -1368,8 +1355,7 @@ convert_polygon_set(state_t *s, reg_t poly_list, point_t start, point_t end, int
 			sciprintf("[avoidpath] Error: fatal error finding nearest intersecton\n");
 			free_pf_state(pf_s);
 			return NULL;
-		}
-		else if (err == PF_OK)
+		} else if (err == PF_OK)
 			/* Keep original start position if intersection
 			** was found
 			*/
@@ -1379,8 +1365,7 @@ convert_polygon_set(state_t *s, reg_t poly_list, point_t start, point_t end, int
 			sciprintf("[avoidpath] Error: couldn't fix start position for pathfinding\n");
 			free_pf_state(pf_s);
 			return NULL;
-		}
-		else if (polygon) {
+		} else if (polygon) {
 			/* Start position has moved */
 			pf_s->keep_start = 1;
 			if ((polygon->type != POLY_NEAREST_ACCESS))
@@ -1392,8 +1377,7 @@ convert_polygon_set(state_t *s, reg_t poly_list, point_t start, point_t end, int
 		sciprintf("[avoidpath] Error: couldn't fix end position for pathfinding\n");
 		free_pf_state(pf_s);
 		return NULL;
-	}
-	else {
+	} else {
 		/* Keep original end position if it is contained in a
 		** near-point accessible polygon
 		*/
@@ -1440,7 +1424,7 @@ visibility_graph(pf_state_t *s)
 		vertex_t *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-			visible_vertices(s, vertex);
+		visible_vertices(s, vertex);
 	}
 }
 
@@ -1464,11 +1448,11 @@ intersecting_polygons(pf_state_t *s)
 
 			/* Skip neighbouring edges */
 			if ((CLIST_NEXT(v1, entries) == v2)
-			    || CLIST_PREV(v1, entries) == v2)
+			        || CLIST_PREV(v1, entries) == v2)
 				continue;
 
 			if (intersect(v1->v, CLIST_NEXT(v1, entries)->v,
-				      v2->v, CLIST_NEXT(v2, entries)->v))
+			              v2->v, CLIST_NEXT(v2, entries)->v))
 				return 1;
 		}
 	}
@@ -1500,7 +1484,7 @@ dijkstra(pf_state_t *s)
 		vertex_t *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-			LIST_INSERT_HEAD(&remain, vertex, dijkstra);
+		LIST_INSERT_HEAD(&remain, vertex, dijkstra);
 	}
 
 	s->vertex_start->dist = 0.0f;
@@ -1542,7 +1526,7 @@ dijkstra(pf_state_t *s)
 					continue;
 
 				new_dist = vertex_min->dist + distance(to_pointf(vertex_min->v),
-								       to_pointf(s->vertex_index[i]->v));
+				                                       to_pointf(s->vertex_index[i]->v));
 				if (new_dist < s->vertex_index[i]->dist) {
 					s->vertex_index[i]->dist = new_dist;
 					s->vertex_index[i]->path_prev = vertex_min;
@@ -1570,7 +1554,7 @@ output_path(pf_state_t *p, state_t *s)
 	if (unreachable) {
 		/* If pathfinding failed we only return the path up to vertex_start */
 		oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * 3,
-				AVOIDPATH_DYNMEM_STRING, &output);
+		                       AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->keep_start)
 			POLY_SET_POINT(oref, 0, p->start.x, p->start.y);
@@ -1589,7 +1573,7 @@ output_path(pf_state_t *p, state_t *s)
 	}
 
 	oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * (path_len + 1 + p->keep_start + p->keep_end),
-			AVOIDPATH_DYNMEM_STRING, &output);
+	                       AVOIDPATH_DYNMEM_STRING, &output);
 
 	/* Sentinel */
 	POLY_SET_POINT(oref, path_len + p->keep_start + p->keep_end, POLY_LAST_POINT, POLY_LAST_POINT);
@@ -1630,12 +1614,11 @@ output_path(pf_state_t *p, state_t *s)
 }
 
 reg_t
-kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	point_t start = gfx_point(SKPV(0), SKPV(1));
 
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
-		gfxw_port_t *port= s->picture_port;
+		gfxw_port_t *port = s->picture_port;
 
 		if (!port->decorations) {
 			port->decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
@@ -1647,8 +1630,7 @@ kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	switch (argc) {
 
-	case 3 :
-	{
+	case 3 : {
 		reg_t retval;
 		polygon_t *polygon = convert_polygon(s, argv[2]);
 
@@ -1664,8 +1646,7 @@ kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
 		return retval;
 	}
 	case 6 :
-	case 7 :
-	{
+	case 7 : {
 		point_t end = gfx_point(SKPV(2), SKPV(3));
 		reg_t poly_list = argv[4];
 		/* int poly_list_size = UKPV(5); */
@@ -1697,8 +1678,8 @@ kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
 			sciprintf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
 			sciprintf("[avoidpath] Returning direct path from start point to end point\n");
-			oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE*3,
-						     AVOIDPATH_DYNMEM_STRING, &output);
+			oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * 3,
+			                       AVOIDPATH_DYNMEM_STRING, &output);
 
 			POLY_SET_POINT(oref, 0, start.x, start.y);
 			POLY_SET_POINT(oref, 1, end.x, end.y);
@@ -1719,7 +1700,7 @@ kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	default:
 		SCIkwarn(SCIkWARNING, "Unknown AvoidPath subfunction %d\n",
-			 argc);
+		         argc);
 		return NULL_REG;
 		break;
 	}

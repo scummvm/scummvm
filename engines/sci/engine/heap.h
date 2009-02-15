@@ -35,8 +35,7 @@
 typedef guint16 heap_ptr;
 
 
-typedef struct
-{
+typedef struct {
 	byte* start;
 	byte* base;
 	unsigned int first_free;

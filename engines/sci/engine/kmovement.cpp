@@ -29,17 +29,17 @@
 #include "sci/include/engine.h"
 
 /*
-Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy. 
+Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy.
 The gravity is assumed to be non-negative.
 
 If this was ordinary continuous physics, we would compute the desired (floating point!)
 velocity vector (vx,vy) as follows, under the assumption that vx and vy are linearly correlated
-by some constant factor c, i.e. vy = c * vx: 
+by some constant factor c, i.e. vy = c * vx:
    dx = t * vx
    dy = t * vy + gy * t^2 / 2
 => dy = c * dx + gy * (dx/vx)^2 / 2
 => |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
-Here, the sign of vx must be chosen equal to the sign of dx, obviously. 
+Here, the sign of vx must be chosen equal to the sign of dx, obviously.
 
 Clearly, this square root only makes sense in our context if the denominator is positive,
 or equivalently, (dy - c * dx) must be positive. For simplicity and by symmetry
@@ -65,8 +65,7 @@ Still, what we compute in the end is of course not a real velocity anymore, but 
 used in an iterative stepping algorithm
 */
 reg_t
-kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	// Input data
 	reg_t object = argv[0];
 	int dx = SKPV(1);
@@ -98,18 +97,18 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 		// we ensure vx will be less than sqrt(gy * dx)).
 		if (dx + dy < 0) {
 			// dy is negative and |dy| > |dx|
-			c = (2*abs(dy)) / dx;
+			c = (2 * abs(dy)) / dx;
 			//tmp = abs(dy);  // ALMOST the resulting value, except for obvious rounding issues
 		} else {
 			// dy is either positive, or |dy| <= |dx|
-			c = (dx*3/2 - dy) / dx;
+			c = (dx * 3 / 2 - dy) / dx;
 
 			// We force c to be strictly positive
 			if (c < 1)
 				c = 1;
 
 			//tmp = dx*3/2;  // ALMOST the resulting value, except for obvious rounding issues
-			
+
 			// FIXME: Where is the 3 coming from? Maybe they hard/coded, by "accident", that usually gy=3 ?
 			//  Then this choice of will make t equal to roughly sqrt(dx)
 		}
@@ -121,7 +120,7 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 	SCIkdebug(SCIkBRESEN, "c: %d, tmp: %d\n", c, tmp);
-	
+
 	// Compute x step
 	if (tmp != 0)
 		vx = (int)(dx * sqrt(gy / (2.0 * tmp)));
@@ -131,7 +130,7 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 	// Restore the left/right direction: dx and vx should have the same sign.
 	if (dxWasNegative)
 		vx = -vx;
-	
+
 	if ((dy < 0) && (vx == 0)) {
 		// Special case: If this was a jump (almost) straight upward, i.e. dy < 0 (upward),
 		// and vx == 0 (i.e. no horizontal movement, at least not after rounding), then we
@@ -154,10 +153,10 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	SCIkdebug(SCIkBRESEN, "SetJump for object at "PREG"\n", PRINT_REG(object));
 	SCIkdebug(SCIkBRESEN, "xStep: %d, yStep: %d\n", vx, vy);
-	
+
 	PUT_SEL32V(object, xStep, vx);
 	PUT_SEL32V(object, yStep, vy);
-	
+
 	return s->r_acc;
 }
 
@@ -166,13 +165,12 @@ kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 void
 initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mover, int step_factor,
-		  int deltax, int deltay)
-{
+                  int deltax, int deltay) {
 	reg_t client = GET_SEL32(mover, client);
 	int stepx = GET_SEL32SV(client, xStep) * step_factor;
 	int stepy = GET_SEL32SV(client, yStep) * step_factor;
-	int numsteps_x = stepx? (abs(deltax) + stepx-1) / stepx : 0;
-	int numsteps_y = stepy? (abs(deltay) + stepy-1) / stepy : 0;
+	int numsteps_x = stepx ? (abs(deltax) + stepx - 1) / stepx : 0;
+	int numsteps_y = stepy ? (abs(deltay) + stepy - 1) / stepy : 0;
 	int bdi, i1;
 	int numsteps;
 	int deltax_step;
@@ -180,35 +178,35 @@ initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mover, 
 
 	if (numsteps_x > numsteps_y) {
 		numsteps = numsteps_x;
-		deltax_step = (deltax < 0)? -stepx : stepx;
-		deltay_step = numsteps? deltay / numsteps : deltay;
+		deltax_step = (deltax < 0) ? -stepx : stepx;
+		deltay_step = numsteps ? deltay / numsteps : deltay;
 	} else { /* numsteps_x <= numsteps_y */
 		numsteps = numsteps_y;
-		deltay_step = (deltay < 0)? -stepy : stepy;
-		deltax_step = numsteps? deltax / numsteps : deltax;
+		deltay_step = (deltay < 0) ? -stepy : stepy;
+		deltax_step = numsteps ? deltax / numsteps : deltax;
 	}
 
 	/*  if (abs(deltax) > abs(deltay)) {*/ /* Bresenham on y */
 	if (numsteps_y < numsteps_x) {
 
 		PUT_SEL32V(mover, b_xAxis, _K_BRESEN_AXIS_Y);
-		PUT_SEL32V(mover, b_incr, (deltay < 0)? -1 : 1);
+		PUT_SEL32V(mover, b_incr, (deltay < 0) ? -1 : 1);
 		/*
 		i1 = 2 * (abs(deltay) - abs(deltay_step * numsteps)) * abs(deltax_step);
 		bdi = -abs(deltax);
 		*/
-		i1 = 2*(abs(deltay) - abs(deltay_step * (numsteps - 1))) * abs(deltax_step);
+		i1 = 2 * (abs(deltay) - abs(deltay_step * (numsteps - 1))) * abs(deltax_step);
 		bdi = -abs(deltax);
 
 	} else { /* Bresenham on x */
 
 		PUT_SEL32V(mover, b_xAxis, _K_BRESEN_AXIS_X);
-		PUT_SEL32V(mover, b_incr, (deltax < 0)? -1 : 1);
+		PUT_SEL32V(mover, b_incr, (deltax < 0) ? -1 : 1);
 		/*
 		i1= 2 * (abs(deltax) - abs(deltax_step * numsteps)) * abs(deltay_step);
 		bdi = -abs(deltay);
 		*/
-		i1 = 2*(abs(deltax) - abs(deltax_step * (numsteps - 1))) * abs(deltay_step);
+		i1 = 2 * (abs(deltax) - abs(deltax_step * (numsteps - 1))) * abs(deltay_step);
 		bdi = -abs(deltay);
 
 	}
@@ -218,9 +216,9 @@ initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mover, 
 
 	SCIkdebug(SCIkBRESEN, "Init bresen for mover "PREG": d=(%d,%d)\n", PRINT_REG(mover), deltax, deltay);
 	SCIkdebug(SCIkBRESEN, "    steps=%d, mv=(%d, %d), i1= %d, i2=%d\n",
-		  numsteps, deltax_step, deltay_step, i1, bdi*2);
+	          numsteps, deltax_step, deltay_step, i1, bdi*2);
 
-/*	PUT_SEL32V(mover, b_movCnt, numsteps); *//* Needed for HQ1/Ogre? */
+	/*	PUT_SEL32V(mover, b_movCnt, numsteps); *//* Needed for HQ1/Ogre? */
 	PUT_SEL32V(mover, b_di, bdi);
 	PUT_SEL32V(mover, b_i1, i1);
 	PUT_SEL32V(mover, b_i2, bdi * 2);
@@ -228,8 +226,7 @@ initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mover, 
 }
 
 reg_t
-kInitBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kInitBresen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -250,17 +247,15 @@ static enum {
 	INCREMENT_MOVECNT,
 	UNINITIALIZED
 } handle_movecnt = UNINITIALIZED;
-	
+
 int parse_reg_t(state_t *s, const char *str, reg_t *dest); /* In scriptconsole.c */
 
-static int 
-checksum_bytes(byte *data, int size)
-{
+static int
+checksum_bytes(byte *data, int size) {
 	int result = 0;
 	int i;
 
-	for (i = 0; i < size; i++)
-	{
+	for (i = 0; i < size; i++) {
 		result += *data;
 		data++;
 	}
@@ -269,45 +264,39 @@ checksum_bytes(byte *data, int size)
 }
 
 static void
-bresenham_autodetect(state_t *s)
-{
+bresenham_autodetect(state_t *s) {
 	reg_t motion_class;
 
-	if (!parse_reg_t(s, "?Motion", &motion_class))
-	{
+	if (!parse_reg_t(s, "?Motion", &motion_class)) {
 		object_t *obj = obj_get(s, motion_class);
 		reg_t fptr;
 		byte *buf;
-		
-		if (obj == NULL)
-		{
-			SCIkwarn(SCIkWARNING,"bresenham_autodetect failed!");
+
+		if (obj == NULL) {
+			SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
 			handle_movecnt = INCREMENT_MOVECNT; /* Most games do this, so best guess */
 			return;
 		}
-		
-		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != SELECTOR_METHOD)
-		{
-			SCIkwarn(SCIkWARNING,"bresenham_autodetect failed!");
+
+		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != SELECTOR_METHOD) {
+			SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
 			handle_movecnt = INCREMENT_MOVECNT; /* Most games do this, so best guess */
 			return;
 		}
 
 		buf = s->seg_manager.heap[fptr.segment]->data.script.buf + fptr.offset;
 		handle_movecnt = (SCI_VERSION_MAJOR(s->version) == 0 ||
-				  checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
+		                  checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		sciprintf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ?
-			  "ignore" : "increment");
-	} else
-	{
-		SCIkwarn(SCIkWARNING,"bresenham_autodetect failed!");
+		          "ignore" : "increment");
+	} else {
+		SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
 		handle_movecnt = INCREMENT_MOVECNT; /* Most games do this, so best guess */
 	}
 }
 
 reg_t
-kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -318,8 +307,8 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 	int completed = 0;
 	int max_movcnt = GET_SEL32V(client, moveSpeed);
 
-	if (SCI_VERSION_MAJOR(s->version)>0)
-		signal&=~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
+	if (SCI_VERSION_MAJOR(s->version) > 0)
+		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
 
 	if (handle_movecnt == UNINITIALIZED)
 		bresenham_autodetect(s);
@@ -340,16 +329,12 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 //	sciprintf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
-	if (handle_movecnt)
-	{
-		if (max_movcnt > movcnt)
-		{
+	if (handle_movecnt) {
+		if (max_movcnt > movcnt) {
 			++movcnt;
 			PUT_SEL32V(mover, b_movCnt, movcnt); /* Needed for HQ1/Ogre? */
 			return NULL_REG;
-		}
-		else
-		{
+		} else {
 			movcnt = 0;
 			PUT_SEL32V(mover, b_movCnt, movcnt); /* Needed for HQ1/Ogre? */
 		}
@@ -369,33 +354,33 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 	x += dx;
 	y += dy;
 
- 	if ((MOVING_ON_X
-	     && (((x < destx) && (oldx >= destx)) /* Moving left, exceeded? */
-		 ||
-		 ((x > destx) && (oldx <= destx)) /* Moving right, exceeded? */
-		 ||
-		 ((x == destx) && (abs(dx) > abs(dy))) /* Moving fast, reached? */
-		 /* Treat this last case specially- when doing sub-pixel movements
-		 ** on the other axis, we could still be far away from the destination  */
-		 )
-	     )
-	    || (MOVING_ON_Y
-		&& (((y < desty) && (oldy >= desty)) /* Moving upwards, exceeded? */
-		    ||
-		    ((y > desty) && (oldy <= desty)) /* Moving downwards, exceeded? */
-		    ||
-		    ((y == desty) && (abs(dy) >= abs(dx))) /* Moving fast, reached? */
-		    )
-		)
+	if ((MOVING_ON_X
+	        && (((x < destx) && (oldx >= destx)) /* Moving left, exceeded? */
+	            ||
+	            ((x > destx) && (oldx <= destx)) /* Moving right, exceeded? */
+	            ||
+	            ((x == destx) && (abs(dx) > abs(dy))) /* Moving fast, reached? */
+	            /* Treat this last case specially- when doing sub-pixel movements
+	            ** on the other axis, we could still be far away from the destination  */
+	           )
 	    )
+	        || (MOVING_ON_Y
+	            && (((y < desty) && (oldy >= desty)) /* Moving upwards, exceeded? */
+	                ||
+	                ((y > desty) && (oldy <= desty)) /* Moving downwards, exceeded? */
+	                ||
+	                ((y == desty) && (abs(dy) >= abs(dx))) /* Moving fast, reached? */
+	               )
+	           )
+	   )
 		/* Whew... in short: If we have reached or passed our target position */
-		{
-			x = destx;
-			y = desty;
-			completed = 1;
+	{
+		x = destx;
+		y = desty;
+		completed = 1;
 
-			SCIkdebug(SCIkBRESEN, "Finished mover "PREG"\n", PRINT_REG(mover));
-		}
+		SCIkdebug(SCIkBRESEN, "Finished mover "PREG"\n", PRINT_REG(mover));
+	}
 
 
 	PUT_SEL32V(client, x, x);
@@ -404,8 +389,9 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 	SCIkdebug(SCIkBRESEN, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
 	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
-		invoke_selector(INV_SEL(client, cantBeHere, 0), 0); else
-			invoke_selector(INV_SEL(client, canBeHere, 0), 0);
+		invoke_selector(INV_SEL(client, cantBeHere, 0), 0);
+	else
+		invoke_selector(INV_SEL(client, canBeHere, 0), 0);
 
 	s->r_acc = not_register(s, s->r_acc);
 
@@ -422,7 +408,7 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 		completed = 1;
 	}
 
-	if (SCI_VERSION_MAJOR(s->version)>0)
+	if (SCI_VERSION_MAJOR(s->version) > 0)
 		if (completed)
 			invoke_selector(INV_SEL(mover, moveDone, 0), 0);
 
@@ -430,8 +416,8 @@ kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 extern void
-_k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr,
-	   int argc, reg_t *argv);
+	_k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr,
+	           int argc, reg_t *argv);
 /* From kgraphics.c, used as alternative looper */
 
 int
@@ -439,13 +425,12 @@ is_heap_object(state_t *s, reg_t pos);
 /* From kscripts.c */
 
 extern int
-get_angle(int xrel, int yrel);
+	get_angle(int xrel, int yrel);
 /* from kmath.c, used for calculating angles */
 
 
 reg_t
-kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
 	int angle;
@@ -485,8 +470,8 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	if (invoke_selector(INV_SEL(mover, doit, 1) , 0)) {
 		SCIkwarn(SCIkERROR, "Mover "PREG" of avoider "PREG
-			 " doesn't have a doit() funcselector\n", 
-			 PRINT_REG(mover), PRINT_REG(avoider));
+		         " doesn't have a doit() funcselector\n",
+		         PRINT_REG(mover), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
@@ -496,7 +481,7 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	if (invoke_selector(INV_SEL(client, isBlocked, 1) , 0)) {
 		SCIkwarn(SCIkERROR, "Client "PREG" of avoider "PREG" doesn't"
-			 " have an isBlocked() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
+		         " have an isBlocked() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
@@ -505,10 +490,10 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 	angle = get_angle(dx, dy);
 
 	SCIkdebug(SCIkBRESEN, "Movement (%d,%d), angle %d is %sblocked\n",
-		  dx, dy, angle, (s->r_acc.offset)? " ": "not ");
+	          dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { /* isBlocked() returned non-zero */
-		int rotation = (rand() & 1)? 45 : (360-45); /* Clockwise/counterclockwise */
+		int rotation = (rand() & 1) ? 45 : (360 - 45); /* Clockwise/counterclockwise */
 		int oldx = GET_SEL32V(client, x);
 		int oldy = GET_SEL32V(client, y);
 		int xstep = GET_SEL32V(client, xStep);
@@ -518,19 +503,19 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 		SCIkdebug(SCIkBRESEN, " avoider "PREG"\n", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
-			int move_x = (int) (sin(angle * PI / 180.0) * (xstep));
-			int move_y = (int) (-cos(angle * PI / 180.0) * (ystep));
+			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
+			int move_y = (int)(-cos(angle * PI / 180.0) * (ystep));
 
 			PUT_SEL32V(client, x, oldx + move_x);
 			PUT_SEL32V(client, y, oldy + move_y);
 
 			SCIkdebug(SCIkBRESEN, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n",
-				  oldx, oldy, angle, move_x, move_y);
+			          oldx, oldy, angle, move_x, move_y);
 
 			if (invoke_selector(INV_SEL(client, canBeHere, 1) , 0)) {
 				SCIkwarn(SCIkERROR, "Client "PREG" of avoider "PREG" doesn't"
-					 " have a canBeHere() funcselector\n", 
-					 PRINT_REG(client), PRINT_REG(avoider));
+				         " have a canBeHere() funcselector\n",
+				         PRINT_REG(client), PRINT_REG(avoider));
 				return NULL_REG;
 			}
 
@@ -551,7 +536,7 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 		}
 
 		SCIkwarn(SCIkWARNING, "DoAvoider failed for avoider "PREG"\n",
-			 PRINT_REG(avoider));
+		         PRINT_REG(avoider));
 
 	} else {
 		int heading = GET_SEL32V(client, heading);
@@ -566,13 +551,13 @@ kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv)
 		if (looper.segment) {
 			if (invoke_selector(INV_SEL(looper, doit, 1), 2, angle, client)) {
 				SCIkwarn(SCIkERROR, "Looper "PREG" of avoider "PREG" doesn't"
-					 " have a doit() funcselector\n", 
-					 PRINT_REG(looper), PRINT_REG(avoider));
+				         " have a doit() funcselector\n",
+				         PRINT_REG(looper), PRINT_REG(avoider));
 			} else return s->r_acc;
 		} else
-		/* No looper? Fall back to DirLoop */
+			/* No looper? Fall back to DirLoop */
 
-		_k_dirloop(client, (word)angle, s, funct_nr, argc, argv);
+			_k_dirloop(client, (word)angle, s, funct_nr, argc, argv);
 	}
 
 	return s->r_acc;

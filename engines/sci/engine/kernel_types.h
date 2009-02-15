@@ -81,7 +81,7 @@ determine_reg_type(state_t *s, reg_t reg, int allow_invalid);
 ** Parameters: (state_t *) s: The state to operate on
 **             (reg_t) reg: The register to check
 **	       (int) allow_invalid: Allow invalid pointer values
-** Returns   : one of KSIG_* below KSIG_NULL. 
+** Returns   : one of KSIG_* below KSIG_NULL.
 **	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
 **	       0 on error.
 */

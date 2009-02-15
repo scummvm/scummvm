@@ -58,18 +58,15 @@ static state_t *_global_save_state;
 
 
 void
-write_reg_t(FILE *fh, reg_t *foo)
-{
+write_reg_t(FILE *fh, reg_t *foo) {
 	fprintf(fh, PREG, PRINT_REG(*foo));
 }
 
 int
-read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof) {
 	int segment, offset;
 
-	if (sscanf(lastval, PREG, &segment, &offset)<2)
-	{
+	if (sscanf(lastval, PREG, &segment, &offset) < 2) {
 		sciprintf("Error parsing reg_t on line %d\n", *line);
 		return 1;
 	}
@@ -79,21 +76,18 @@ read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof)
 }
 
 void
-write_sci_version(FILE *fh, sci_version_t *foo)
-{
+write_sci_version(FILE *fh, sci_version_t *foo) {
 	fprintf(fh, "%d.%03d.%03d", SCI_VERSION_MAJOR(*foo), SCI_VERSION_MINOR(*foo),
-		SCI_VERSION_PATCHLEVEL(*foo));
+	        SCI_VERSION_PATCHLEVEL(*foo));
 }
 
 int
-read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof) {
 	return version_parse(lastval, foo);
 }
 
 void
-write_PTN(FILE *fh, parse_tree_node_t *foo)
-{
+write_PTN(FILE *fh, parse_tree_node_t *foo) {
 	if (foo->type == PARSE_TREE_NODE_LEAF)
 		fprintf(fh, "L%d", foo->content.value);
 	else
@@ -101,8 +95,7 @@ write_PTN(FILE *fh, parse_tree_node_t *foo)
 }
 
 int
-read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == 'L') {
 		const char *c = lastval + 1;
 		char *strend;
@@ -206,21 +199,20 @@ typedef mem_obj_t *mem_obj_ptr;
 #endif
 
 static void
-_cfsml_error(const char *fmt, ...)
-{
-  va_list argp;
+_cfsml_error(const char *fmt, ...) {
+	va_list argp;
 
-  fprintf(stderr, "Error: ");
-  va_start(argp, fmt);
-  vfprintf(stderr, fmt, argp);
-  va_end(argp);
+	fprintf(stderr, "Error: ");
+	va_start(argp, fmt);
+	vfprintf(stderr, fmt, argp);
+	va_end(argp);
 
 }
 
 
 static struct _cfsml_pointer_refstruct {
-    struct _cfsml_pointer_refstruct *next;
-    void *ptr;
+	struct _cfsml_pointer_refstruct *next;
+	void *ptr;
 } *_cfsml_pointer_references = NULL;
 
 static struct _cfsml_pointer_refstruct **_cfsml_pointer_references_current = &_cfsml_pointer_references;
@@ -229,229 +221,221 @@ static char *_cfsml_last_value_retrieved = NULL;
 static char *_cfsml_last_identifier_retrieved = NULL;
 
 static void
-_cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs, int free_pointers)
-{
-    if (!refs)
-	return;
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
+_cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs, int free_pointers) {
+	if (!refs)
+		return;
+#ifdef CFSML_DEBUG_MALLOC
+	SCI_MEMTEST;
+#endif
 
-    _cfsml_free_pointer_references_recursively(refs->next, free_pointers);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
+	_cfsml_free_pointer_references_recursively(refs->next, free_pointers);
+#ifdef CFSML_DEBUG_MALLOC
+	SCI_MEMTEST;
 
-    fprintf(stderr,"Freeing ptrref %p [%p] %s\n", refs->ptr, refs, free_pointers?
-	    "ALL": "cleanup only");
-    #endif
+	fprintf(stderr, "Freeing ptrref %p [%p] %s\n", refs->ptr, refs, free_pointers ?
+	        "ALL" : "cleanup only");
+#endif
 
-    if (free_pointers)
-	free(refs->ptr);
+	if (free_pointers)
+		free(refs->ptr);
 
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
-    free(refs);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
+#ifdef CFSML_DEBUG_MALLOC
+	SCI_MEMTEST;
+#endif
+	free(refs);
+#ifdef CFSML_DEBUG_MALLOC
+	SCI_MEMTEST;
+#endif
 }
 
 static void
-_cfsml_free_pointer_references(struct _cfsml_pointer_refstruct **meta_ref, int free_pointers)
-{
-    _cfsml_free_pointer_references_recursively(*meta_ref, free_pointers);
-    *meta_ref = NULL;
-    _cfsml_pointer_references_current = meta_ref;
+_cfsml_free_pointer_references(struct _cfsml_pointer_refstruct **meta_ref, int free_pointers) {
+	_cfsml_free_pointer_references_recursively(*meta_ref, free_pointers);
+	*meta_ref = NULL;
+	_cfsml_pointer_references_current = meta_ref;
 }
 
 static struct _cfsml_pointer_refstruct **
-_cfsml_get_current_refpointer()
-{
-    return _cfsml_pointer_references_current;
+			_cfsml_get_current_refpointer() {
+	return _cfsml_pointer_references_current;
 }
 
-static void _cfsml_register_pointer(void *ptr)
-{
-    struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof (struct _cfsml_pointer_refstruct));
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    fprintf(stderr,"Registering ptrref %p [%p]\n", ptr, newref);
-    #endif
-    newref->next = *_cfsml_pointer_references_current;
-    newref->ptr = ptr;
-    *_cfsml_pointer_references_current = newref;
-}
-
-
-static char *
-_cfsml_mangle_string(const char *s)
-{
-  const char *source = s;
-  char c;
-  char *target = (char *) sci_malloc(1 + strlen(s) * 2); /* We will probably need less than that */
-  char *writer = target;
-
-  while ((c = *source++)) {
-
-    if (c < 32) { /* Special character? */
-      *writer++ = '\\'; /* Escape... */
-      c += ('a' - 1);
-    } else if (c == '\\' || c == '"')
-      *writer++ = '\\'; /* Escape, but do not change */
-    *writer++ = c;
-
-  }
-  *writer = 0; /* Terminate string */
-
-  return (char *) sci_realloc(target, strlen(target) + 1);
+static void _cfsml_register_pointer(void *ptr) {
+	struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof(struct _cfsml_pointer_refstruct));
+#ifdef CFSML_DEBUG_MALLOC
+	SCI_MEMTEST;
+	fprintf(stderr, "Registering ptrref %p [%p]\n", ptr, newref);
+#endif
+	newref->next = *_cfsml_pointer_references_current;
+	newref->ptr = ptr;
+	*_cfsml_pointer_references_current = newref;
 }
 
 
 static char *
-_cfsml_unmangle_string(const char *s, unsigned int length)
-{
-  char *target = (char *) sci_malloc(1 + strlen(s));
-  char *writer = target;
-  const char *source = s;
-  const char *end = s + length;
-  char c;
+_cfsml_mangle_string(const char *s) {
+	const char *source = s;
+	char c;
+	char *target = (char *) sci_malloc(1 + strlen(s) * 2); /* We will probably need less than that */
+	char *writer = target;
 
-  while ((source != end) && (c = *source++) && (c > 31)) {
-    if (c == '\\') { /* Escaped character? */
-      c = *source++;
-      if ((c != '\\') && (c != '"')) /* Un-escape 0-31 only */
-	c -= ('a' - 1);
-    }
-    *writer++ = c;
-  }
-  *writer = 0; /* Terminate string */
+	while ((c = *source++)) {
 
-  return (char *) sci_realloc(target, strlen(target) + 1);
+		if (c < 32) { /* Special character? */
+			*writer++ = '\\'; /* Escape... */
+			c += ('a' - 1);
+		} else if (c == '\\' || c == '"')
+			*writer++ = '\\'; /* Escape, but do not change */
+		*writer++ = c;
+
+	}
+	*writer = 0; /* Terminate string */
+
+	return (char *) sci_realloc(target, strlen(target) + 1);
 }
 
 
 static char *
-_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment)
-{
-  int c;
-  int mem = 32;
-  int pos = 0;
-  int done = 0;
-  char *retval = (char *) sci_malloc(mem);
+_cfsml_unmangle_string(const char *s, unsigned int length) {
+	char *target = (char *) sci_malloc(1 + strlen(s));
+	char *writer = target;
+	const char *source = s;
+	const char *end = s + length;
+	char c;
 
-  if (_cfsml_last_identifier_retrieved) {
-      free(_cfsml_last_identifier_retrieved);
-      _cfsml_last_identifier_retrieved = NULL;
-  }
+	while ((source != end) && (c = *source++) && (c > 31)) {
+		if (c == '\\') { /* Escaped character? */
+			c = *source++;
+			if ((c != '\\') && (c != '"')) /* Un-escape 0-31 only */
+				c -= ('a' - 1);
+		}
+		*writer++ = c;
+	}
+	*writer = 0; /* Terminate string */
 
-  while (isspace(c = fgetc(fd)) && (c != EOF));
-  if (c == EOF) {
-    _cfsml_error("Unexpected end of file at line %d\n", *line);
-    free(retval);
-    *hiteof = 1;
-    return NULL;
-  }
+	return (char *) sci_realloc(target, strlen(target) + 1);
+}
 
-  ungetc(c, fd);
 
-  while (((c = fgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
+static char *
+_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment) {
+	int c;
+	int mem = 32;
+	int pos = 0;
+	int done = 0;
+	char *retval = (char *) sci_malloc(mem);
 
-     if (pos == mem - 1) /* Need more memory? */
-       retval = (char *) sci_realloc(retval, mem *= 2);
+	if (_cfsml_last_identifier_retrieved) {
+		free(_cfsml_last_identifier_retrieved);
+		_cfsml_last_identifier_retrieved = NULL;
+	}
 
-     if (!isspace(c)) {
-        if (done) {
-           _cfsml_error("Single word identifier expected at line %d\n", *line);
-           free(retval);
-           return NULL;
-        }
-        retval[pos++] = c;
-     } else
-        if (pos != 0)
-           done = 1; /* Finished the variable name */
-        else if (c == '\n')
-           ++(*line);
-  }
+	while (isspace(c = fgetc(fd)) && (c != EOF));
+	if (c == EOF) {
+		_cfsml_error("Unexpected end of file at line %d\n", *line);
+		free(retval);
+		*hiteof = 1;
+		return NULL;
+	}
 
-  if (c == EOF) {
-    _cfsml_error("Unexpected end of file at line %d\n", *line);
-    free(retval);
-    *hiteof = 1;
-    return NULL;
-  }
+	ungetc(c, fd);
 
-  if (c == '\n') {
-    ++(*line);
-    if (assignment)
-      *assignment = 0;
-  } else
-    if (assignment)
-      *assignment = 1;
+	while (((c = fgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
 
-  if (pos == 0) {
-    _cfsml_error("Missing identifier in assignment at line %d\n", *line);
-    free(retval);
-    return NULL;
-  }
+		if (pos == mem - 1) /* Need more memory? */
+			retval = (char *) sci_realloc(retval, mem *= 2);
 
-  if (pos == mem - 1) /* Need more memory? */
-     retval = (char *) sci_realloc(retval, mem += 1);
+		if (!isspace(c)) {
+			if (done) {
+				_cfsml_error("Single word identifier expected at line %d\n", *line);
+				free(retval);
+				return NULL;
+			}
+			retval[pos++] = c;
+		} else
+			if (pos != 0)
+				done = 1; /* Finished the variable name */
+			else if (c == '\n')
+				++(*line);
+	}
 
-  retval[pos] = 0; /* Terminate string */
+	if (c == EOF) {
+		_cfsml_error("Unexpected end of file at line %d\n", *line);
+		free(retval);
+		*hiteof = 1;
+		return NULL;
+	}
+
+	if (c == '\n') {
+		++(*line);
+		if (assignment)
+			*assignment = 0;
+	} else
+		if (assignment)
+			*assignment = 1;
+
+	if (pos == 0) {
+		_cfsml_error("Missing identifier in assignment at line %d\n", *line);
+		free(retval);
+		return NULL;
+	}
+
+	if (pos == mem - 1) /* Need more memory? */
+		retval = (char *) sci_realloc(retval, mem += 1);
+
+	retval[pos] = 0; /* Terminate string */
 #line 323 "savegame.cfsml"
 
-  return _cfsml_last_identifier_retrieved = retval;
+	return _cfsml_last_identifier_retrieved = retval;
 }
 
 
 static char *
-_cfsml_get_value(FILE *fd, int *line, int *hiteof)
-{
-  int c;
-  int mem = 64;
-  int pos = 0;
-  char *retval = (char *) sci_malloc(mem);
+_cfsml_get_value(FILE *fd, int *line, int *hiteof) {
+	int c;
+	int mem = 64;
+	int pos = 0;
+	char *retval = (char *) sci_malloc(mem);
 
-  if (_cfsml_last_value_retrieved) {
-      free(_cfsml_last_value_retrieved);
-      _cfsml_last_value_retrieved = NULL;
-  }
+	if (_cfsml_last_value_retrieved) {
+		free(_cfsml_last_value_retrieved);
+		_cfsml_last_value_retrieved = NULL;
+	}
 
-  while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
+	while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
 
-     if (pos == mem - 1) /* Need more memory? */
-       retval = (char *) sci_realloc(retval, mem *= 2);
+		if (pos == mem - 1) /* Need more memory? */
+			retval = (char *) sci_realloc(retval, mem *= 2);
 
-     if (pos || (!isspace(c)))
-        retval[pos++] = c;
+		if (pos || (!isspace(c)))
+			retval[pos++] = c;
 
-  }
+	}
 
-  while ((pos > 0) && (isspace(retval[pos - 1])))
-     --pos; /* Strip trailing whitespace */
+	while ((pos > 0) && (isspace(retval[pos - 1])))
+		--pos; /* Strip trailing whitespace */
 
-  if (c == EOF)
-    *hiteof = 1;
+	if (c == EOF)
+		*hiteof = 1;
 
-  if (pos == 0) {
-    _cfsml_error("Missing value in assignment at line %d\n", *line);
-    free(retval);
-    return NULL;
-  }
+	if (pos == 0) {
+		_cfsml_error("Missing value in assignment at line %d\n", *line);
+		free(retval);
+		return NULL;
+	}
 
-  if (c == '\n')
-     ++(*line);
+	if (c == '\n')
+		++(*line);
 
-  if (pos == mem - 1) /* Need more memory? */
-    retval = (char *) sci_realloc(retval, mem += 1);
+	if (pos == mem - 1) /* Need more memory? */
+		retval = (char *) sci_realloc(retval, mem += 1);
 
-  retval[pos] = 0; /* Terminate string */
+	retval[pos] = 0; /* Terminate string */
 #line 380 "savegame.cfsml"
-  return (_cfsml_last_value_retrieved = (char *) sci_realloc(retval, strlen(retval) + 1));
-  /* Re-allocate; this value might be used for quite some while (if we are
-  ** restoring a string)
-  */
+	return (_cfsml_last_value_retrieved = (char *) sci_realloc(retval, strlen(retval) + 1));
+	/* Re-allocate; this value might be used for quite some while (if we are
+	** restoring a string)
+	*/
 }
 #line 432 "savegame.cfsml"
 static void
@@ -653,3474 +637,3396 @@ _cfsml_read_seg_manager_t(FILE *fh, seg_manager_t* save_struc, const char *lastv
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_synonym_t(FILE *fh, synonym_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_synonym_t(FILE *fh, synonym_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "replaceant = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->replaceant));
-    fprintf(fh, "\n");
-  fprintf(fh, "replacement = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->replacement));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "replaceant = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->replaceant));
+	fprintf(fh, "\n");
+	fprintf(fh, "replacement = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->replacement));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_synonym_t(FILE *fh, synonym_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_synonym_t(FILE *fh, synonym_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record synonym_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record synonym_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "replaceant")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "replaceant")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->replaceant), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for replaceant at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "replacement")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->replaceant), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for replaceant at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "replacement")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->replacement), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for replacement at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (_cfsml_read_int(fh, (int*) &(save_struc->replacement), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for replacement at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("synonym_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("synonym_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_sfx_state_t(FILE *fh, sfx_state_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_sfx_state_t(FILE *fh, sfx_state_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "songlib = ");
-    write_songlib_t(fh, (songlib_t*) &(save_struc->songlib));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "songlib = ");
+	write_songlib_t(fh, (songlib_t*) &(save_struc->songlib));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_sfx_state_t(FILE *fh, sfx_state_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_sfx_state_t(FILE *fh, sfx_state_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record sfx_state_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record sfx_state_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "songlib")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "songlib")) {
 #line 750 "savegame.cfsml"
-         if (read_songlib_t(fh, (songlib_t*) &(save_struc->songlib), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_songlib_t() for songlib at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+				if (read_songlib_t(fh, (songlib_t*) &(save_struc->songlib), value, line, hiteof)) {
+					_cfsml_error("Token expected by read_songlib_t() for songlib at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("sfx_state_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+			{
+				_cfsml_error("sfx_state_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+				return CFSML_FAILURE;
+			}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_clone_entry_t(FILE *fh, clone_entry_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_clone_entry_t(FILE *fh, clone_entry_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "next_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->next_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entry = ");
-    _cfsml_write_clone_t(fh, (clone_t*) &(save_struc->entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "next_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->next_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entry = ");
+	_cfsml_write_clone_t(fh, (clone_t*) &(save_struc->entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_clone_entry_t(FILE *fh, clone_entry_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_clone_entry_t(FILE *fh, clone_entry_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record clone_entry_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record clone_entry_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "next_free")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "next_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entry")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_clone_t(fh, (clone_t*) &(save_struc->entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_clone_t() for entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (_cfsml_read_clone_t(fh, (clone_t*) &(save_struc->entry), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_clone_t() for entry at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("clone_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("clone_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_object_t(FILE *fh, object_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_object_t(FILE *fh, object_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "flags = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->flags));
-    fprintf(fh, "\n");
-  fprintf(fh, "pos = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->pos));
-    fprintf(fh, "\n");
-  fprintf(fh, "variables_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->variables_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "variable_names_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->variable_names_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "methods_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->methods_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "variables = ");
-    min = max = save_struc->variables_nr;
-    if (!save_struc->variables)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "flags = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->flags));
+	fprintf(fh, "\n");
+	fprintf(fh, "pos = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->pos));
+	fprintf(fh, "\n");
+	fprintf(fh, "variables_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->variables_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "variable_names_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->variable_names_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "methods_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->methods_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "variables = ");
+	min = max = save_struc->variables_nr;
+	if (!save_struc->variables)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      write_reg_t(fh, &(save_struc->variables[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		write_reg_t(fh, &(save_struc->variables[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_object_t(FILE *fh, object_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_object_t(FILE *fh, object_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record object_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record object_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "flags")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "flags")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "pos")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "pos")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->pos), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for pos at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variables_nr")) {
+					if (read_reg_t(fh, (reg_t*) &(save_struc->pos), value, line, hiteof)) {
+						_cfsml_error("Token expected by read_reg_t() for pos at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "variables_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->variables_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for variables_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variable_names_nr")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->variables_nr), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for variables_nr at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "variable_names_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->variable_names_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for variable_names_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "methods_nr")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->variable_names_nr), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for variable_names_nr at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "methods_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->methods_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for methods_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variables")) {
+								if (_cfsml_read_int(fh, (int*) &(save_struc->methods_nr), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_int() for methods_nr at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "variables")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+									if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+										_cfsml_error("Opening brackets expected at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+									/* Prepare to restore dynamic array */
+									max = strtol(value + 1, NULL, 0);
+									if (max < 0) {
+										_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+										return CFSML_FAILURE;
+									}
 
-         if (max) {
-           save_struc->variables = (reg_t *) sci_malloc(max * sizeof(reg_t));
+									if (max) {
+										save_struc->variables = (reg_t *) sci_malloc(max * sizeof(reg_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->variables, 0, max * sizeof(reg_t));
+										memset(save_struc->variables, 0, max * sizeof(reg_t));
 #endif
-           _cfsml_register_pointer(save_struc->variables);
-         }
-         else
-           save_struc->variables = NULL;
+										_cfsml_register_pointer(save_struc->variables);
+									} else
+										save_struc->variables = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+									done = i = 0;
+									do {
+										if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (read_reg_t(fh, &(save_struc->variables[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by read_reg_t() for variables[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->variables_nr = max ; /* Set array size accordingly */
-      } else
+											_cfsml_error("Token expected at line %d\n", *line);
+											return 1;
+										}
+										if (strcmp(value, "]")) {
+											if (i == max) {
+												_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+												return CFSML_FAILURE;
+											}
+											if (read_reg_t(fh, &(save_struc->variables[i++]), value, line, hiteof)) {
+												_cfsml_error("Token expected by read_reg_t() for variables[i++] at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else done = 1;
+									} while (!done);
+									save_struc->variables_nr = max ; /* Set array size accordingly */
+								} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("object_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+								{
+									_cfsml_error("object_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+									return CFSML_FAILURE;
+								}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_string(FILE *fh, char ** save_struc)
-{
+_cfsml_write_string(FILE *fh, char ** save_struc) {
 #line 455 "savegame.cfsml"
-  if (!(*save_struc))
-    fprintf(fh, "\\null\\");
-  else {
-    char *token = _cfsml_mangle_string((const char *) *save_struc);
-    fprintf(fh, "\"%s\"", token);
-    free(token);
-  }
+	if (!(*save_struc))
+		fprintf(fh, "\\null\\");
+	else {
+		char *token = _cfsml_mangle_string((const char *) * save_struc);
+		fprintf(fh, "\"%s\"", token);
+		free(token);
+	}
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_string(FILE *fh, char ** save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_string(FILE *fh, char ** save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 578 "savegame.cfsml"
 
-  if (strcmp(lastval, "\\null\\")) { /* null pointer? */
-    unsigned int length = strlen(lastval);
-    if (*lastval == '"') { /* Quoted string? */
-      while (lastval[length] != '"')
-        --length;
+	if (strcmp(lastval, "\\null\\")) { /* null pointer? */
+		unsigned int length = strlen(lastval);
+		if (*lastval == '"') { /* Quoted string? */
+			while (lastval[length] != '"')
+				--length;
 
-      if (!length) { /* No matching double-quotes? */
-        _cfsml_error("Unbalanced quotes at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
+			if (!length) { /* No matching double-quotes? */
+				_cfsml_error("Unbalanced quotes at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
 
-      lastval++; /* ...and skip the opening quotes locally */
-      length--;
-    }
-    *save_struc = _cfsml_unmangle_string(lastval, length);
-    _cfsml_register_pointer(*save_struc);
-    return CFSML_SUCCESS;
-  } else {
-    *save_struc = NULL;
-    return CFSML_SUCCESS;
-  }
+			lastval++; /* ...and skip the opening quotes locally */
+			length--;
+		}
+		*save_struc = _cfsml_unmangle_string(lastval, length);
+		_cfsml_register_pointer(*save_struc);
+		return CFSML_SUCCESS;
+	} else {
+		*save_struc = NULL;
+		return CFSML_SUCCESS;
+	}
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_menubar_t(FILE *fh, menubar_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_menubar_t(FILE *fh, menubar_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "menus = ");
-    min = max = save_struc->menus_nr;
-    if (!save_struc->menus)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "menus = ");
+	min = max = save_struc->menus_nr;
+	if (!save_struc->menus)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_menu_t(fh, &(save_struc->menus[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_menu_t(fh, &(save_struc->menus[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_menubar_t(FILE *fh, menubar_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_menubar_t(FILE *fh, menubar_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record menubar_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record menubar_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "menus")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "menus")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+				if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+					_cfsml_error("Opening brackets expected at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+				/* Prepare to restore dynamic array */
+				max = strtol(value + 1, NULL, 0);
+				if (max < 0) {
+					_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
 
-         if (max) {
-           save_struc->menus = (menu_t *) sci_malloc(max * sizeof(menu_t));
+				if (max) {
+					save_struc->menus = (menu_t *) sci_malloc(max * sizeof(menu_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->menus, 0, max * sizeof(menu_t));
+					memset(save_struc->menus, 0, max * sizeof(menu_t));
 #endif
-           _cfsml_register_pointer(save_struc->menus);
-         }
-         else
-           save_struc->menus = NULL;
+					_cfsml_register_pointer(save_struc->menus);
+				} else
+					save_struc->menus = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+				done = i = 0;
+				do {
+					if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_menu_t(fh, &(save_struc->menus[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_menu_t() for menus[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->menus_nr = max ; /* Set array size accordingly */
-      } else
+						_cfsml_error("Token expected at line %d\n", *line);
+						return 1;
+					}
+					if (strcmp(value, "]")) {
+						if (i == max) {
+							_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+							return CFSML_FAILURE;
+						}
+						if (_cfsml_read_menu_t(fh, &(save_struc->menus[i++]), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_menu_t() for menus[i++] at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else done = 1;
+				} while (!done);
+				save_struc->menus_nr = max ; /* Set array size accordingly */
+			} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("menubar_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+			{
+				_cfsml_error("menubar_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+				return CFSML_FAILURE;
+			}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_size_t(FILE *fh, size_t* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_size_t(FILE *fh, size_t* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_size_t(FILE *fh, size_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_size_t(FILE *fh, size_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_list_entry_t(FILE *fh, list_entry_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_list_entry_t(FILE *fh, list_entry_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "next_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->next_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entry = ");
-    _cfsml_write_list_t(fh, (list_t*) &(save_struc->entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "next_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->next_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entry = ");
+	_cfsml_write_list_t(fh, (list_t*) &(save_struc->entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_list_entry_t(FILE *fh, list_entry_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_list_entry_t(FILE *fh, list_entry_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record list_entry_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record list_entry_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "next_free")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "next_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entry")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_list_t(fh, (list_t*) &(save_struc->entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_list_t() for entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (_cfsml_read_list_t(fh, (list_t*) &(save_struc->entry), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_list_t() for entry at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("list_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("list_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_int_hash_map_t(FILE *fh, int_hash_map_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_int_hash_map_t(FILE *fh, int_hash_map_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "base_value = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->base_value));
-    fprintf(fh, "\n");
-  fprintf(fh, "nodes = ");
-    min = max = DCS_INT_HASH_MAX+1;
+	fprintf(fh, "{\n");
+	fprintf(fh, "base_value = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->base_value));
+	fprintf(fh, "\n");
+	fprintf(fh, "nodes = ");
+	min = max = DCS_INT_HASH_MAX + 1;
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      write_int_hash_map_node_tp(fh, &(save_struc->nodes[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		write_int_hash_map_node_tp(fh, &(save_struc->nodes[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_int_hash_map_t(FILE *fh, int_hash_map_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_int_hash_map_t(FILE *fh, int_hash_map_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record int_hash_map_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record int_hash_map_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "base_value")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "base_value")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->base_value), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for base_value at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "nodes")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->base_value), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for base_value at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "nodes")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-         /* Prepare to restore static array */
-         max = DCS_INT_HASH_MAX+1;
+					if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+						_cfsml_error("Opening brackets expected at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+					/* Prepare to restore static array */
+					max = DCS_INT_HASH_MAX + 1;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+					done = i = 0;
+					do {
+						if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (read_int_hash_map_node_tp(fh, &(save_struc->nodes[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by read_int_hash_map_node_tp() for nodes[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-      } else
+							_cfsml_error("Token expected at line %d\n", *line);
+							return 1;
+						}
+						if (strcmp(value, "]")) {
+							if (i == max) {
+								_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+								return CFSML_FAILURE;
+							}
+							if (read_int_hash_map_node_tp(fh, &(save_struc->nodes[i++]), value, line, hiteof)) {
+								_cfsml_error("Token expected by read_int_hash_map_node_tp() for nodes[i++] at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else done = 1;
+					} while (!done);
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("int_hash_map_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("int_hash_map_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_gint16(FILE *fh, gint16* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_gint16(FILE *fh, gint16* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_gint16(FILE *fh, gint16* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_gint16(FILE *fh, gint16* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_song_t(FILE *fh, song_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_song_t(FILE *fh, song_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "handle = ");
-    _cfsml_write_song_handle_t(fh, (song_handle_t*) &(save_struc->handle));
-    fprintf(fh, "\n");
-  fprintf(fh, "resource_num = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->resource_num));
-    fprintf(fh, "\n");
-  fprintf(fh, "priority = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->priority));
-    fprintf(fh, "\n");
-  fprintf(fh, "status = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->status));
-    fprintf(fh, "\n");
-  fprintf(fh, "restore_behavior = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->restore_behavior));
-    fprintf(fh, "\n");
-  fprintf(fh, "restore_time = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->restore_time));
-    fprintf(fh, "\n");
-  fprintf(fh, "loops = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->loops));
-    fprintf(fh, "\n");
-  fprintf(fh, "hold = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->hold));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "handle = ");
+	_cfsml_write_song_handle_t(fh, (song_handle_t*) &(save_struc->handle));
+	fprintf(fh, "\n");
+	fprintf(fh, "resource_num = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->resource_num));
+	fprintf(fh, "\n");
+	fprintf(fh, "priority = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->priority));
+	fprintf(fh, "\n");
+	fprintf(fh, "status = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->status));
+	fprintf(fh, "\n");
+	fprintf(fh, "restore_behavior = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->restore_behavior));
+	fprintf(fh, "\n");
+	fprintf(fh, "restore_time = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->restore_time));
+	fprintf(fh, "\n");
+	fprintf(fh, "loops = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->loops));
+	fprintf(fh, "\n");
+	fprintf(fh, "hold = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->hold));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_song_t(FILE *fh, song_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_song_t(FILE *fh, song_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record song_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record song_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "handle")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "handle")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_song_handle_t(fh, (song_handle_t*) &(save_struc->handle), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_song_handle_t() for handle at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "resource_num")) {
+				if (_cfsml_read_song_handle_t(fh, (song_handle_t*) &(save_struc->handle), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_song_handle_t() for handle at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "resource_num")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->resource_num), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for resource_num at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "priority")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->resource_num), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for resource_num at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "priority")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->priority), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for priority at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "status")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->priority), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for priority at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "status")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->status), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for status at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "restore_behavior")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->status), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for status at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "restore_behavior")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->restore_behavior), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for restore_behavior at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "restore_time")) {
+								if (_cfsml_read_int(fh, (int*) &(save_struc->restore_behavior), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_int() for restore_behavior at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "restore_time")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->restore_time), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for restore_time at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "loops")) {
+									if (_cfsml_read_int(fh, (int*) &(save_struc->restore_time), value, line, hiteof)) {
+										_cfsml_error("Token expected by _cfsml_read_int() for restore_time at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else
+									if (!strcmp(token, "loops")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->loops), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for loops at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "hold")) {
+										if (_cfsml_read_int(fh, (int*) &(save_struc->loops), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_int() for loops at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else
+										if (!strcmp(token, "hold")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->hold), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for hold at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+											if (_cfsml_read_int(fh, (int*) &(save_struc->hold), value, line, hiteof)) {
+												_cfsml_error("Token expected by _cfsml_read_int() for hold at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("song_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+										{
+											_cfsml_error("song_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+											return CFSML_FAILURE;
+										}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_menu_item_t(FILE *fh, menu_item_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_menu_item_t(FILE *fh, menu_item_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "type = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->type));
-    fprintf(fh, "\n");
-  fprintf(fh, "keytext = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->keytext));
-    fprintf(fh, "\n");
-  fprintf(fh, "keytext_size = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->keytext_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "flags = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->flags));
-    fprintf(fh, "\n");
-  fprintf(fh, "said = ");
-    min = max = MENU_SAID_SPEC_SIZE;
+	fprintf(fh, "{\n");
+	fprintf(fh, "type = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->type));
+	fprintf(fh, "\n");
+	fprintf(fh, "keytext = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->keytext));
+	fprintf(fh, "\n");
+	fprintf(fh, "keytext_size = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->keytext_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "flags = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->flags));
+	fprintf(fh, "\n");
+	fprintf(fh, "said = ");
+	min = max = MENU_SAID_SPEC_SIZE;
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_byte(fh, &(save_struc->said[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "said_pos = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->said_pos));
-    fprintf(fh, "\n");
-  fprintf(fh, "text = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->text));
-    fprintf(fh, "\n");
-  fprintf(fh, "text_pos = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->text_pos));
-    fprintf(fh, "\n");
-  fprintf(fh, "modifiers = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->modifiers));
-    fprintf(fh, "\n");
-  fprintf(fh, "key = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->key));
-    fprintf(fh, "\n");
-  fprintf(fh, "enabled = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->enabled));
-    fprintf(fh, "\n");
-  fprintf(fh, "tag = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->tag));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_byte(fh, &(save_struc->said[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "said_pos = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->said_pos));
+	fprintf(fh, "\n");
+	fprintf(fh, "text = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->text));
+	fprintf(fh, "\n");
+	fprintf(fh, "text_pos = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->text_pos));
+	fprintf(fh, "\n");
+	fprintf(fh, "modifiers = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->modifiers));
+	fprintf(fh, "\n");
+	fprintf(fh, "key = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->key));
+	fprintf(fh, "\n");
+	fprintf(fh, "enabled = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->enabled));
+	fprintf(fh, "\n");
+	fprintf(fh, "tag = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->tag));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_menu_item_t(FILE *fh, menu_item_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_menu_item_t(FILE *fh, menu_item_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record menu_item_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record menu_item_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "type")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "type")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->type), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for type at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "keytext")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->type), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for type at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "keytext")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->keytext), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for keytext at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "keytext_size")) {
+					if (_cfsml_read_string(fh, (char **) &(save_struc->keytext), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_string() for keytext at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "keytext_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->keytext_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for keytext_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "flags")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->keytext_size), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for keytext_size at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "flags")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "said")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "said")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-         /* Prepare to restore static array */
-         max = MENU_SAID_SPEC_SIZE;
+								if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+									_cfsml_error("Opening brackets expected at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+								/* Prepare to restore static array */
+								max = MENU_SAID_SPEC_SIZE;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+								done = i = 0;
+								do {
+									if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_byte(fh, &(save_struc->said[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_byte() for said[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-      } else
-      if (!strcmp(token, "said_pos")) {
+										_cfsml_error("Token expected at line %d\n", *line);
+										return 1;
+									}
+									if (strcmp(value, "]")) {
+										if (i == max) {
+											_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+											return CFSML_FAILURE;
+										}
+										if (_cfsml_read_byte(fh, &(save_struc->said[i++]), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_byte() for said[i++] at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else done = 1;
+								} while (!done);
+							} else
+								if (!strcmp(token, "said_pos")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->said_pos), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for said_pos at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "text")) {
+									if (read_reg_t(fh, (reg_t*) &(save_struc->said_pos), value, line, hiteof)) {
+										_cfsml_error("Token expected by read_reg_t() for said_pos at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else
+									if (!strcmp(token, "text")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->text), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for text at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "text_pos")) {
+										if (_cfsml_read_string(fh, (char **) &(save_struc->text), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_string() for text at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else
+										if (!strcmp(token, "text_pos")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->text_pos), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for text_pos at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "modifiers")) {
+											if (read_reg_t(fh, (reg_t*) &(save_struc->text_pos), value, line, hiteof)) {
+												_cfsml_error("Token expected by read_reg_t() for text_pos at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else
+											if (!strcmp(token, "modifiers")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->modifiers), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for modifiers at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "key")) {
+												if (_cfsml_read_int(fh, (int*) &(save_struc->modifiers), value, line, hiteof)) {
+													_cfsml_error("Token expected by _cfsml_read_int() for modifiers at line %d\n", *line);
+													return CFSML_FAILURE;
+												}
+											} else
+												if (!strcmp(token, "key")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->key), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for key at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "enabled")) {
+													if (_cfsml_read_int(fh, (int*) &(save_struc->key), value, line, hiteof)) {
+														_cfsml_error("Token expected by _cfsml_read_int() for key at line %d\n", *line);
+														return CFSML_FAILURE;
+													}
+												} else
+													if (!strcmp(token, "enabled")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->enabled), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for enabled at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "tag")) {
+														if (_cfsml_read_int(fh, (int*) &(save_struc->enabled), value, line, hiteof)) {
+															_cfsml_error("Token expected by _cfsml_read_int() for enabled at line %d\n", *line);
+															return CFSML_FAILURE;
+														}
+													} else
+														if (!strcmp(token, "tag")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->tag), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for tag at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+															if (_cfsml_read_int(fh, (int*) &(save_struc->tag), value, line, hiteof)) {
+																_cfsml_error("Token expected by _cfsml_read_int() for tag at line %d\n", *line);
+																return CFSML_FAILURE;
+															}
+														} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("menu_item_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+														{
+															_cfsml_error("menu_item_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+															return CFSML_FAILURE;
+														}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_node_entry_t(FILE *fh, node_entry_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_node_entry_t(FILE *fh, node_entry_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "next_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->next_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entry = ");
-    _cfsml_write_node_t(fh, (node_t*) &(save_struc->entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "next_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->next_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entry = ");
+	_cfsml_write_node_t(fh, (node_t*) &(save_struc->entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_node_entry_t(FILE *fh, node_entry_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_node_entry_t(FILE *fh, node_entry_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record node_entry_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record node_entry_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "next_free")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "next_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entry")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->next_free), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for next_free at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_node_t(fh, (node_t*) &(save_struc->entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_node_t() for entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (_cfsml_read_node_t(fh, (node_t*) &(save_struc->entry), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_node_t() for entry at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("node_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("node_entry_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_seg_id_t(FILE *fh, seg_id_t* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_seg_id_t(FILE *fh, seg_id_t* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_seg_id_t(FILE *fh, seg_id_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_seg_id_t(FILE *fh, seg_id_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_dynmem_t(FILE *fh, dynmem_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_dynmem_t(FILE *fh, dynmem_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "size = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->size));
-    fprintf(fh, "\n");
-  fprintf(fh, "description = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->description));
-    fprintf(fh, "\n");
-  fprintf(fh, "buf = ");
-    min = max = save_struc->size;
-    if (!save_struc->buf)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "size = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->size));
+	fprintf(fh, "\n");
+	fprintf(fh, "description = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->description));
+	fprintf(fh, "\n");
+	fprintf(fh, "buf = ");
+	min = max = save_struc->size;
+	if (!save_struc->buf)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_byte(fh, &(save_struc->buf[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_byte(fh, &(save_struc->buf[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_dynmem_t(FILE *fh, dynmem_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_dynmem_t(FILE *fh, dynmem_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record dynmem_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record dynmem_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "size")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "description")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->size), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for size at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "description")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->description), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for description at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "buf")) {
+					if (_cfsml_read_string(fh, (char **) &(save_struc->description), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_string() for description at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "buf")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+						if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+							_cfsml_error("Opening brackets expected at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+						/* Prepare to restore dynamic array */
+						max = strtol(value + 1, NULL, 0);
+						if (max < 0) {
+							_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+							return CFSML_FAILURE;
+						}
 
-         if (max) {
-           save_struc->buf = (byte *) sci_malloc(max * sizeof(byte));
+						if (max) {
+							save_struc->buf = (byte *) sci_malloc(max * sizeof(byte));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->buf, 0, max * sizeof(byte));
+							memset(save_struc->buf, 0, max * sizeof(byte));
 #endif
-           _cfsml_register_pointer(save_struc->buf);
-         }
-         else
-           save_struc->buf = NULL;
+							_cfsml_register_pointer(save_struc->buf);
+						} else
+							save_struc->buf = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+						done = i = 0;
+						do {
+							if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_byte(fh, &(save_struc->buf[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_byte() for buf[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->size = max ; /* Set array size accordingly */
-      } else
+								_cfsml_error("Token expected at line %d\n", *line);
+								return 1;
+							}
+							if (strcmp(value, "]")) {
+								if (i == max) {
+									_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+									return CFSML_FAILURE;
+								}
+								if (_cfsml_read_byte(fh, &(save_struc->buf[i++]), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_byte() for buf[i++] at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else done = 1;
+						} while (!done);
+						save_struc->size = max ; /* Set array size accordingly */
+					} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("dynmem_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+					{
+						_cfsml_error("dynmem_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+						return CFSML_FAILURE;
+					}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_local_variables_t(FILE *fh, local_variables_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_local_variables_t(FILE *fh, local_variables_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "script_id = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->script_id));
-    fprintf(fh, "\n");
-  fprintf(fh, "nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "locals = ");
-    min = max = save_struc->nr;
-    if (!save_struc->locals)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "script_id = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->script_id));
+	fprintf(fh, "\n");
+	fprintf(fh, "nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "locals = ");
+	min = max = save_struc->nr;
+	if (!save_struc->locals)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      write_reg_t(fh, &(save_struc->locals[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		write_reg_t(fh, &(save_struc->locals[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_local_variables_t(FILE *fh, local_variables_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_local_variables_t(FILE *fh, local_variables_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record local_variables_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record local_variables_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "script_id")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "script_id")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->script_id), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for script_id at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "nr")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->script_id), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for script_id at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "locals")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->nr), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for nr at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "locals")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+						if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+							_cfsml_error("Opening brackets expected at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+						/* Prepare to restore dynamic array */
+						max = strtol(value + 1, NULL, 0);
+						if (max < 0) {
+							_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+							return CFSML_FAILURE;
+						}
 
-         if (max) {
-           save_struc->locals = (reg_t *) sci_malloc(max * sizeof(reg_t));
+						if (max) {
+							save_struc->locals = (reg_t *) sci_malloc(max * sizeof(reg_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->locals, 0, max * sizeof(reg_t));
+							memset(save_struc->locals, 0, max * sizeof(reg_t));
 #endif
-           _cfsml_register_pointer(save_struc->locals);
-         }
-         else
-           save_struc->locals = NULL;
+							_cfsml_register_pointer(save_struc->locals);
+						} else
+							save_struc->locals = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+						done = i = 0;
+						do {
+							if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (read_reg_t(fh, &(save_struc->locals[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by read_reg_t() for locals[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->nr = max ; /* Set array size accordingly */
-      } else
+								_cfsml_error("Token expected at line %d\n", *line);
+								return 1;
+							}
+							if (strcmp(value, "]")) {
+								if (i == max) {
+									_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+									return CFSML_FAILURE;
+								}
+								if (read_reg_t(fh, &(save_struc->locals[i++]), value, line, hiteof)) {
+									_cfsml_error("Token expected by read_reg_t() for locals[i++] at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else done = 1;
+						} while (!done);
+						save_struc->nr = max ; /* Set array size accordingly */
+					} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("local_variables_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+					{
+						_cfsml_error("local_variables_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+						return CFSML_FAILURE;
+					}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_state_t(FILE *fh, state_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_state_t(FILE *fh, state_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "savegame_version = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->savegame_version));
-    fprintf(fh, "\n");
-  fprintf(fh, "game_version = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->game_version));
-    fprintf(fh, "\n");
-  fprintf(fh, "version = ");
-    write_sci_version(fh, (sci_version_t*) &(save_struc->version));
-    fprintf(fh, "\n");
-  fprintf(fh, "menubar = ");
-    write_menubar_tp(fh, (menubar_t **) &(save_struc->menubar));
-    fprintf(fh, "\n");
-  fprintf(fh, "status_bar_foreground = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->status_bar_foreground));
-    fprintf(fh, "\n");
-  fprintf(fh, "status_bar_background = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->status_bar_background));
-    fprintf(fh, "\n");
-  fprintf(fh, "seg_manager = ");
-    _cfsml_write_seg_manager_t(fh, (seg_manager_t*) &(save_struc->seg_manager));
-    fprintf(fh, "\n");
-  fprintf(fh, "classtable_size = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->classtable_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "classtable = ");
-    min = max = save_struc->classtable_size;
-    if (!save_struc->classtable)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "savegame_version = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->savegame_version));
+	fprintf(fh, "\n");
+	fprintf(fh, "game_version = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->game_version));
+	fprintf(fh, "\n");
+	fprintf(fh, "version = ");
+	write_sci_version(fh, (sci_version_t*) &(save_struc->version));
+	fprintf(fh, "\n");
+	fprintf(fh, "menubar = ");
+	write_menubar_tp(fh, (menubar_t **) &(save_struc->menubar));
+	fprintf(fh, "\n");
+	fprintf(fh, "status_bar_foreground = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->status_bar_foreground));
+	fprintf(fh, "\n");
+	fprintf(fh, "status_bar_background = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->status_bar_background));
+	fprintf(fh, "\n");
+	fprintf(fh, "seg_manager = ");
+	_cfsml_write_seg_manager_t(fh, (seg_manager_t*) &(save_struc->seg_manager));
+	fprintf(fh, "\n");
+	fprintf(fh, "classtable_size = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->classtable_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "classtable = ");
+	min = max = save_struc->classtable_size;
+	if (!save_struc->classtable)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_class_t(fh, &(save_struc->classtable[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "sound = ");
-    _cfsml_write_sfx_state_t(fh, (sfx_state_t*) &(save_struc->sound));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_class_t(fh, &(save_struc->classtable[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "sound = ");
+	_cfsml_write_sfx_state_t(fh, (sfx_state_t*) &(save_struc->sound));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_state_t(FILE *fh, state_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_state_t(FILE *fh, state_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record state_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record state_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "savegame_version")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "savegame_version")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->savegame_version), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for savegame_version at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "game_version")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->savegame_version), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for savegame_version at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "game_version")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->game_version), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for game_version at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "version")) {
+					if (_cfsml_read_string(fh, (char **) &(save_struc->game_version), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_string() for game_version at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "version")) {
 #line 750 "savegame.cfsml"
-         if (read_sci_version(fh, (sci_version_t*) &(save_struc->version), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_sci_version() for version at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "menubar")) {
+						if (read_sci_version(fh, (sci_version_t*) &(save_struc->version), value, line, hiteof)) {
+							_cfsml_error("Token expected by read_sci_version() for version at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "menubar")) {
 #line 750 "savegame.cfsml"
-         if (read_menubar_tp(fh, (menubar_t **) &(save_struc->menubar), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_menubar_tp() for menubar at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "status_bar_foreground")) {
+							if (read_menubar_tp(fh, (menubar_t **) &(save_struc->menubar), value, line, hiteof)) {
+								_cfsml_error("Token expected by read_menubar_tp() for menubar at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "status_bar_foreground")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->status_bar_foreground), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for status_bar_foreground at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "status_bar_background")) {
+								if (_cfsml_read_int(fh, (int*) &(save_struc->status_bar_foreground), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_int() for status_bar_foreground at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "status_bar_background")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->status_bar_background), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for status_bar_background at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "seg_manager")) {
+									if (_cfsml_read_int(fh, (int*) &(save_struc->status_bar_background), value, line, hiteof)) {
+										_cfsml_error("Token expected by _cfsml_read_int() for status_bar_background at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else
+									if (!strcmp(token, "seg_manager")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_seg_manager_t(fh, (seg_manager_t*) &(save_struc->seg_manager), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_seg_manager_t() for seg_manager at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "classtable_size")) {
+										if (_cfsml_read_seg_manager_t(fh, (seg_manager_t*) &(save_struc->seg_manager), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_seg_manager_t() for seg_manager at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else
+										if (!strcmp(token, "classtable_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->classtable_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for classtable_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "classtable")) {
+											if (_cfsml_read_int(fh, (int*) &(save_struc->classtable_size), value, line, hiteof)) {
+												_cfsml_error("Token expected by _cfsml_read_int() for classtable_size at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else
+											if (!strcmp(token, "classtable")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+												if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+													_cfsml_error("Opening brackets expected at line %d\n", *line);
+													return CFSML_FAILURE;
+												}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+												/* Prepare to restore dynamic array */
+												max = strtol(value + 1, NULL, 0);
+												if (max < 0) {
+													_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+													return CFSML_FAILURE;
+												}
 
-         if (max) {
-           save_struc->classtable = (class_t *) sci_malloc(max * sizeof(class_t));
+												if (max) {
+													save_struc->classtable = (class_t *) sci_malloc(max * sizeof(class_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->classtable, 0, max * sizeof(class_t));
+													memset(save_struc->classtable, 0, max * sizeof(class_t));
 #endif
-           _cfsml_register_pointer(save_struc->classtable);
-         }
-         else
-           save_struc->classtable = NULL;
+													_cfsml_register_pointer(save_struc->classtable);
+												} else
+													save_struc->classtable = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+												done = i = 0;
+												do {
+													if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_class_t(fh, &(save_struc->classtable[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_class_t() for classtable[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->classtable_size = max ; /* Set array size accordingly */
-      } else
-      if (!strcmp(token, "sound")) {
+														_cfsml_error("Token expected at line %d\n", *line);
+														return 1;
+													}
+													if (strcmp(value, "]")) {
+														if (i == max) {
+															_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+															return CFSML_FAILURE;
+														}
+														if (_cfsml_read_class_t(fh, &(save_struc->classtable[i++]), value, line, hiteof)) {
+															_cfsml_error("Token expected by _cfsml_read_class_t() for classtable[i++] at line %d\n", *line);
+															return CFSML_FAILURE;
+														}
+													} else done = 1;
+												} while (!done);
+												save_struc->classtable_size = max ; /* Set array size accordingly */
+											} else
+												if (!strcmp(token, "sound")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_sfx_state_t(fh, (sfx_state_t*) &(save_struc->sound), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_sfx_state_t() for sound at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+													if (_cfsml_read_sfx_state_t(fh, (sfx_state_t*) &(save_struc->sound), value, line, hiteof)) {
+														_cfsml_error("Token expected by _cfsml_read_sfx_state_t() for sound at line %d\n", *line);
+														return CFSML_FAILURE;
+													}
+												} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("state_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+												{
+													_cfsml_error("state_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+													return CFSML_FAILURE;
+												}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_node_table_t(FILE *fh, node_table_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_node_table_t(FILE *fh, node_table_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "entries_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "first_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->first_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entries_used = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_used));
-    fprintf(fh, "\n");
-  fprintf(fh, "max_entry = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->max_entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "table = ");
-    min = max = save_struc->entries_nr;
-    if (!save_struc->table)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "entries_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "first_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->first_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entries_used = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_used));
+	fprintf(fh, "\n");
+	fprintf(fh, "max_entry = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->max_entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "table = ");
+	min = max = save_struc->entries_nr;
+	if (!save_struc->table)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_node_entry_t(fh, &(save_struc->table[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_node_entry_t(fh, &(save_struc->table[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_node_table_t(FILE *fh, node_table_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_node_table_t(FILE *fh, node_table_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record node_table_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record node_table_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "entries_nr")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "entries_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "first_free")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "first_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entries_used")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "entries_used")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "max_entry")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "max_entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "table")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "table")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+								if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+									_cfsml_error("Opening brackets expected at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+								/* Prepare to restore dynamic array */
+								max = strtol(value + 1, NULL, 0);
+								if (max < 0) {
+									_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+									return CFSML_FAILURE;
+								}
 
-         if (max) {
-           save_struc->table = (node_entry_t *) sci_malloc(max * sizeof(node_entry_t));
+								if (max) {
+									save_struc->table = (node_entry_t *) sci_malloc(max * sizeof(node_entry_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->table, 0, max * sizeof(node_entry_t));
+									memset(save_struc->table, 0, max * sizeof(node_entry_t));
 #endif
-           _cfsml_register_pointer(save_struc->table);
-         }
-         else
-           save_struc->table = NULL;
+									_cfsml_register_pointer(save_struc->table);
+								} else
+									save_struc->table = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+								done = i = 0;
+								do {
+									if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_node_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_node_entry_t() for table[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->entries_nr = max ; /* Set array size accordingly */
-      } else
+										_cfsml_error("Token expected at line %d\n", *line);
+										return 1;
+									}
+									if (strcmp(value, "]")) {
+										if (i == max) {
+											_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+											return CFSML_FAILURE;
+										}
+										if (_cfsml_read_node_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_node_entry_t() for table[i++] at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else done = 1;
+								} while (!done);
+								save_struc->entries_nr = max ; /* Set array size accordingly */
+							} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("node_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+							{
+								_cfsml_error("node_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+								return CFSML_FAILURE;
+							}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_sys_strings_t(FILE *fh, sys_strings_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_sys_strings_t(FILE *fh, sys_strings_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "strings = ");
-    min = max = SYS_STRINGS_MAX;
+	fprintf(fh, "{\n");
+	fprintf(fh, "strings = ");
+	min = max = SYS_STRINGS_MAX;
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_sys_string_t(fh, &(save_struc->strings[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_sys_string_t(fh, &(save_struc->strings[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_sys_strings_t(FILE *fh, sys_strings_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_sys_strings_t(FILE *fh, sys_strings_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record sys_strings_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record sys_strings_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "strings")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "strings")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-         /* Prepare to restore static array */
-         max = SYS_STRINGS_MAX;
+				if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+					_cfsml_error("Opening brackets expected at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+				/* Prepare to restore static array */
+				max = SYS_STRINGS_MAX;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+				done = i = 0;
+				do {
+					if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_sys_string_t(fh, &(save_struc->strings[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_sys_string_t() for strings[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-      } else
+						_cfsml_error("Token expected at line %d\n", *line);
+						return 1;
+					}
+					if (strcmp(value, "]")) {
+						if (i == max) {
+							_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+							return CFSML_FAILURE;
+						}
+						if (_cfsml_read_sys_string_t(fh, &(save_struc->strings[i++]), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_sys_string_t() for strings[i++] at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else done = 1;
+				} while (!done);
+			} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("sys_strings_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+			{
+				_cfsml_error("sys_strings_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+				return CFSML_FAILURE;
+			}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_byte(FILE *fh, byte* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_byte(FILE *fh, byte* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_byte(FILE *fh, byte* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_byte(FILE *fh, byte* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_node_t(FILE *fh, node_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_node_t(FILE *fh, node_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "pred = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->pred));
-    fprintf(fh, "\n");
-  fprintf(fh, "succ = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->succ));
-    fprintf(fh, "\n");
-  fprintf(fh, "key = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->key));
-    fprintf(fh, "\n");
-  fprintf(fh, "value = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->value));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "pred = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->pred));
+	fprintf(fh, "\n");
+	fprintf(fh, "succ = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->succ));
+	fprintf(fh, "\n");
+	fprintf(fh, "key = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->key));
+	fprintf(fh, "\n");
+	fprintf(fh, "value = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->value));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_node_t(FILE *fh, node_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_node_t(FILE *fh, node_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record node_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record node_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "pred")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "pred")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->pred), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for pred at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "succ")) {
+				if (read_reg_t(fh, (reg_t*) &(save_struc->pred), value, line, hiteof)) {
+					_cfsml_error("Token expected by read_reg_t() for pred at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "succ")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->succ), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for succ at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "key")) {
+					if (read_reg_t(fh, (reg_t*) &(save_struc->succ), value, line, hiteof)) {
+						_cfsml_error("Token expected by read_reg_t() for succ at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "key")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->key), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for key at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "value")) {
+						if (read_reg_t(fh, (reg_t*) &(save_struc->key), value, line, hiteof)) {
+							_cfsml_error("Token expected by read_reg_t() for key at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "value")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->value), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for value at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+							if (read_reg_t(fh, (reg_t*) &(save_struc->value), value, line, hiteof)) {
+								_cfsml_error("Token expected by read_reg_t() for value at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("node_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+						{
+							_cfsml_error("node_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+							return CFSML_FAILURE;
+						}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_list_table_t(FILE *fh, list_table_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_list_table_t(FILE *fh, list_table_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "entries_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "first_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->first_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entries_used = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_used));
-    fprintf(fh, "\n");
-  fprintf(fh, "max_entry = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->max_entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "table = ");
-    min = max = save_struc->entries_nr;
-    if (!save_struc->table)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "entries_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "first_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->first_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entries_used = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_used));
+	fprintf(fh, "\n");
+	fprintf(fh, "max_entry = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->max_entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "table = ");
+	min = max = save_struc->entries_nr;
+	if (!save_struc->table)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_list_entry_t(fh, &(save_struc->table[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_list_entry_t(fh, &(save_struc->table[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_list_table_t(FILE *fh, list_table_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_list_table_t(FILE *fh, list_table_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record list_table_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record list_table_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "entries_nr")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "entries_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "first_free")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "first_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entries_used")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "entries_used")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "max_entry")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "max_entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "table")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "table")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+								if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+									_cfsml_error("Opening brackets expected at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+								/* Prepare to restore dynamic array */
+								max = strtol(value + 1, NULL, 0);
+								if (max < 0) {
+									_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+									return CFSML_FAILURE;
+								}
 
-         if (max) {
-           save_struc->table = (list_entry_t *) sci_malloc(max * sizeof(list_entry_t));
+								if (max) {
+									save_struc->table = (list_entry_t *) sci_malloc(max * sizeof(list_entry_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->table, 0, max * sizeof(list_entry_t));
+									memset(save_struc->table, 0, max * sizeof(list_entry_t));
 #endif
-           _cfsml_register_pointer(save_struc->table);
-         }
-         else
-           save_struc->table = NULL;
+									_cfsml_register_pointer(save_struc->table);
+								} else
+									save_struc->table = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+								done = i = 0;
+								do {
+									if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_list_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_list_entry_t() for table[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->entries_nr = max ; /* Set array size accordingly */
-      } else
+										_cfsml_error("Token expected at line %d\n", *line);
+										return 1;
+									}
+									if (strcmp(value, "]")) {
+										if (i == max) {
+											_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+											return CFSML_FAILURE;
+										}
+										if (_cfsml_read_list_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_list_entry_t() for table[i++] at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else done = 1;
+								} while (!done);
+								save_struc->entries_nr = max ; /* Set array size accordingly */
+							} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("list_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+							{
+								_cfsml_error("list_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+								return CFSML_FAILURE;
+							}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_class_t(FILE *fh, class_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_class_t(FILE *fh, class_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "script = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->script));
-    fprintf(fh, "\n");
-  fprintf(fh, "reg = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->reg));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "script = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->script));
+	fprintf(fh, "\n");
+	fprintf(fh, "reg = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->reg));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_class_t(FILE *fh, class_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_class_t(FILE *fh, class_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record class_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record class_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "script")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "script")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->script), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for script at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "reg")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->script), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for script at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "reg")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->reg), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for reg at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (read_reg_t(fh, (reg_t*) &(save_struc->reg), value, line, hiteof)) {
+						_cfsml_error("Token expected by read_reg_t() for reg at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("class_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("class_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_song_handle_t(FILE *fh, song_handle_t* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_song_handle_t(FILE *fh, song_handle_t* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_song_handle_t(FILE *fh, song_handle_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_song_handle_t(FILE *fh, song_handle_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_int(FILE *fh, int* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_int(FILE *fh, int* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_int(FILE *fh, int* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_int(FILE *fh, int* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_menu_t(FILE *fh, menu_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_menu_t(FILE *fh, menu_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "title = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->title));
-    fprintf(fh, "\n");
-  fprintf(fh, "title_width = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->title_width));
-    fprintf(fh, "\n");
-  fprintf(fh, "width = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->width));
-    fprintf(fh, "\n");
-  fprintf(fh, "items = ");
-    min = max = save_struc->items_nr;
-    if (!save_struc->items)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "title = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->title));
+	fprintf(fh, "\n");
+	fprintf(fh, "title_width = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->title_width));
+	fprintf(fh, "\n");
+	fprintf(fh, "width = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->width));
+	fprintf(fh, "\n");
+	fprintf(fh, "items = ");
+	min = max = save_struc->items_nr;
+	if (!save_struc->items)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_menu_item_t(fh, &(save_struc->items[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_menu_item_t(fh, &(save_struc->items[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_menu_t(FILE *fh, menu_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_menu_t(FILE *fh, menu_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record menu_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record menu_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "title")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "title")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->title), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for title at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "title_width")) {
+				if (_cfsml_read_string(fh, (char **) &(save_struc->title), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_string() for title at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "title_width")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->title_width), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for title_width at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "width")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->title_width), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for title_width at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "width")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->width), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for width at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "items")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->width), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for width at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "items")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+							if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+								_cfsml_error("Opening brackets expected at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+							/* Prepare to restore dynamic array */
+							max = strtol(value + 1, NULL, 0);
+							if (max < 0) {
+								_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+								return CFSML_FAILURE;
+							}
 
-         if (max) {
-           save_struc->items = (menu_item_t *) sci_malloc(max * sizeof(menu_item_t));
+							if (max) {
+								save_struc->items = (menu_item_t *) sci_malloc(max * sizeof(menu_item_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->items, 0, max * sizeof(menu_item_t));
+								memset(save_struc->items, 0, max * sizeof(menu_item_t));
 #endif
-           _cfsml_register_pointer(save_struc->items);
-         }
-         else
-           save_struc->items = NULL;
+								_cfsml_register_pointer(save_struc->items);
+							} else
+								save_struc->items = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+							done = i = 0;
+							do {
+								if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_menu_item_t(fh, &(save_struc->items[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_menu_item_t() for items[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->items_nr = max ; /* Set array size accordingly */
-      } else
+									_cfsml_error("Token expected at line %d\n", *line);
+									return 1;
+								}
+								if (strcmp(value, "]")) {
+									if (i == max) {
+										_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+										return CFSML_FAILURE;
+									}
+									if (_cfsml_read_menu_item_t(fh, &(save_struc->items[i++]), value, line, hiteof)) {
+										_cfsml_error("Token expected by _cfsml_read_menu_item_t() for items[i++] at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else done = 1;
+							} while (!done);
+							save_struc->items_nr = max ; /* Set array size accordingly */
+						} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("menu_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+						{
+							_cfsml_error("menu_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+							return CFSML_FAILURE;
+						}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_long(FILE *fh, long* save_struc)
-{
-  fprintf(fh, "%li", (long) *save_struc);
+_cfsml_write_long(FILE *fh, long* save_struc) {
+	fprintf(fh, "%li", (long) *save_struc);
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_long(FILE *fh, long* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
+_cfsml_read_long(FILE *fh, long* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
 #line 565 "savegame.cfsml"
 
-  *save_struc = strtol(lastval, &token, 0);
-  if ( (*save_struc == 0) && (token == lastval) ) {
-     _cfsml_error("strtol failed at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  if (*token != 0) {
-     _cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
-     return CFSML_FAILURE;
-  }
-  return CFSML_SUCCESS;
+	*save_struc = strtol(lastval, &token, 0);
+	if ((*save_struc == 0) && (token == lastval)) {
+		_cfsml_error("strtol failed at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	if (*token != 0) {
+		_cfsml_error("Non-integer encountered while parsing int value at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_clone_table_t(FILE *fh, clone_table_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_clone_table_t(FILE *fh, clone_table_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "entries_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "first_free = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->first_free));
-    fprintf(fh, "\n");
-  fprintf(fh, "entries_used = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->entries_used));
-    fprintf(fh, "\n");
-  fprintf(fh, "max_entry = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->max_entry));
-    fprintf(fh, "\n");
-  fprintf(fh, "table = ");
-    min = max = save_struc->entries_nr;
-    if (!save_struc->table)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "entries_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "first_free = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->first_free));
+	fprintf(fh, "\n");
+	fprintf(fh, "entries_used = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->entries_used));
+	fprintf(fh, "\n");
+	fprintf(fh, "max_entry = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->max_entry));
+	fprintf(fh, "\n");
+	fprintf(fh, "table = ");
+	min = max = save_struc->entries_nr;
+	if (!save_struc->table)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_clone_entry_t(fh, &(save_struc->table[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_clone_entry_t(fh, &(save_struc->table[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_clone_table_t(FILE *fh, clone_table_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_clone_table_t(FILE *fh, clone_table_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record clone_table_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record clone_table_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "entries_nr")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "entries_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "first_free")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->entries_nr), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for entries_nr at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "first_free")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "entries_used")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->first_free), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for first_free at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "entries_used")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "max_entry")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->entries_used), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for entries_used at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "max_entry")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "table")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->max_entry), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for max_entry at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "table")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+								if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+									_cfsml_error("Opening brackets expected at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+								/* Prepare to restore dynamic array */
+								max = strtol(value + 1, NULL, 0);
+								if (max < 0) {
+									_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+									return CFSML_FAILURE;
+								}
 
-         if (max) {
-           save_struc->table = (clone_entry_t *) sci_malloc(max * sizeof(clone_entry_t));
+								if (max) {
+									save_struc->table = (clone_entry_t *) sci_malloc(max * sizeof(clone_entry_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->table, 0, max * sizeof(clone_entry_t));
+									memset(save_struc->table, 0, max * sizeof(clone_entry_t));
 #endif
-           _cfsml_register_pointer(save_struc->table);
-         }
-         else
-           save_struc->table = NULL;
+									_cfsml_register_pointer(save_struc->table);
+								} else
+									save_struc->table = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+								done = i = 0;
+								do {
+									if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_clone_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_clone_entry_t() for table[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->entries_nr = max ; /* Set array size accordingly */
-      } else
+										_cfsml_error("Token expected at line %d\n", *line);
+										return 1;
+									}
+									if (strcmp(value, "]")) {
+										if (i == max) {
+											_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+											return CFSML_FAILURE;
+										}
+										if (_cfsml_read_clone_entry_t(fh, &(save_struc->table[i++]), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_clone_entry_t() for table[i++] at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else done = 1;
+								} while (!done);
+								save_struc->entries_nr = max ; /* Set array size accordingly */
+							} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("clone_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+							{
+								_cfsml_error("clone_table_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+								return CFSML_FAILURE;
+							}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_clone_t(FILE *fh, clone_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_clone_t(FILE *fh, clone_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "flags = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->flags));
-    fprintf(fh, "\n");
-  fprintf(fh, "pos = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->pos));
-    fprintf(fh, "\n");
-  fprintf(fh, "variables_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->variables_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "variable_names_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->variable_names_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "methods_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->methods_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "variables = ");
-    min = max = save_struc->variables_nr;
-    if (!save_struc->variables)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "flags = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->flags));
+	fprintf(fh, "\n");
+	fprintf(fh, "pos = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->pos));
+	fprintf(fh, "\n");
+	fprintf(fh, "variables_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->variables_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "variable_names_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->variable_names_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "methods_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->methods_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "variables = ");
+	min = max = save_struc->variables_nr;
+	if (!save_struc->variables)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      write_reg_t(fh, &(save_struc->variables[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		write_reg_t(fh, &(save_struc->variables[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_clone_t(FILE *fh, clone_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_clone_t(FILE *fh, clone_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record clone_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record clone_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "flags")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "flags")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "pos")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->flags), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for flags at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "pos")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->pos), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for pos at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variables_nr")) {
+					if (read_reg_t(fh, (reg_t*) &(save_struc->pos), value, line, hiteof)) {
+						_cfsml_error("Token expected by read_reg_t() for pos at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "variables_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->variables_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for variables_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variable_names_nr")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->variables_nr), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for variables_nr at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "variable_names_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->variable_names_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for variable_names_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "methods_nr")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->variable_names_nr), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for variable_names_nr at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "methods_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->methods_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for methods_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "variables")) {
+								if (_cfsml_read_int(fh, (int*) &(save_struc->methods_nr), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_int() for methods_nr at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "variables")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+									if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+										_cfsml_error("Opening brackets expected at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+									/* Prepare to restore dynamic array */
+									max = strtol(value + 1, NULL, 0);
+									if (max < 0) {
+										_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+										return CFSML_FAILURE;
+									}
 
-         if (max) {
-           save_struc->variables = (reg_t *) sci_malloc(max * sizeof(reg_t));
+									if (max) {
+										save_struc->variables = (reg_t *) sci_malloc(max * sizeof(reg_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->variables, 0, max * sizeof(reg_t));
+										memset(save_struc->variables, 0, max * sizeof(reg_t));
 #endif
-           _cfsml_register_pointer(save_struc->variables);
-         }
-         else
-           save_struc->variables = NULL;
+										_cfsml_register_pointer(save_struc->variables);
+									} else
+										save_struc->variables = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+									done = i = 0;
+									do {
+										if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (read_reg_t(fh, &(save_struc->variables[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by read_reg_t() for variables[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->variables_nr = max ; /* Set array size accordingly */
-      } else
+											_cfsml_error("Token expected at line %d\n", *line);
+											return 1;
+										}
+										if (strcmp(value, "]")) {
+											if (i == max) {
+												_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+												return CFSML_FAILURE;
+											}
+											if (read_reg_t(fh, &(save_struc->variables[i++]), value, line, hiteof)) {
+												_cfsml_error("Token expected by read_reg_t() for variables[i++] at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else done = 1;
+									} while (!done);
+									save_struc->variables_nr = max ; /* Set array size accordingly */
+								} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("clone_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+								{
+									_cfsml_error("clone_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+									return CFSML_FAILURE;
+								}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_list_t(FILE *fh, list_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_list_t(FILE *fh, list_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "first = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->first));
-    fprintf(fh, "\n");
-  fprintf(fh, "last = ");
-    write_reg_t(fh, (reg_t*) &(save_struc->last));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "first = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->first));
+	fprintf(fh, "\n");
+	fprintf(fh, "last = ");
+	write_reg_t(fh, (reg_t*) &(save_struc->last));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_list_t(FILE *fh, list_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_list_t(FILE *fh, list_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record list_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record list_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "first")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "first")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->first), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for first at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "last")) {
+				if (read_reg_t(fh, (reg_t*) &(save_struc->first), value, line, hiteof)) {
+					_cfsml_error("Token expected by read_reg_t() for first at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "last")) {
 #line 750 "savegame.cfsml"
-         if (read_reg_t(fh, (reg_t*) &(save_struc->last), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_reg_t() for last at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+					if (read_reg_t(fh, (reg_t*) &(save_struc->last), value, line, hiteof)) {
+						_cfsml_error("Token expected by read_reg_t() for last at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("list_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+				{
+					_cfsml_error("list_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+					return CFSML_FAILURE;
+				}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_sys_string_t(FILE *fh, sys_string_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_sys_string_t(FILE *fh, sys_string_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "name = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->name));
-    fprintf(fh, "\n");
-  fprintf(fh, "max_size = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->max_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "value = ");
-    _cfsml_write_string(fh, (char **) &(save_struc->value));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "{\n");
+	fprintf(fh, "name = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->name));
+	fprintf(fh, "\n");
+	fprintf(fh, "max_size = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->max_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "value = ");
+	_cfsml_write_string(fh, (char **) &(save_struc->value));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_sys_string_t(FILE *fh, sys_string_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_sys_string_t(FILE *fh, sys_string_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record sys_string_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record sys_string_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "name")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "name")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->name), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for name at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "max_size")) {
+				if (_cfsml_read_string(fh, (char **) &(save_struc->name), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_string() for name at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "max_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->max_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for max_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "value")) {
+					if (_cfsml_read_int(fh, (int*) &(save_struc->max_size), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_int() for max_size at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "value")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_string(fh, (char **) &(save_struc->value), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_string() for value at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+						if (_cfsml_read_string(fh, (char **) &(save_struc->value), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_string() for value at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("sys_string_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+					{
+						_cfsml_error("sys_string_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+						return CFSML_FAILURE;
+					}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_script_t(FILE *fh, script_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_script_t(FILE *fh, script_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "buf_size = ");
-    _cfsml_write_size_t(fh, (size_t*) &(save_struc->buf_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "script_size = ");
-    _cfsml_write_size_t(fh, (size_t*) &(save_struc->script_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "heap_size = ");
-    _cfsml_write_size_t(fh, (size_t*) &(save_struc->heap_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "obj_indices = ");
-    write_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->obj_indices));
-    fprintf(fh, "\n");
-  fprintf(fh, "exports_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->exports_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "synonyms_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->synonyms_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "lockers = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->lockers));
-    fprintf(fh, "\n");
-  fprintf(fh, "objects_allocated = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->objects_allocated));
-    fprintf(fh, "\n");
-  fprintf(fh, "objects_nr = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->objects_nr));
-    fprintf(fh, "\n");
-  fprintf(fh, "objects = ");
-    min = max = save_struc->objects_allocated;
-    if (!save_struc->objects)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "buf_size = ");
+	_cfsml_write_size_t(fh, (size_t*) &(save_struc->buf_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "script_size = ");
+	_cfsml_write_size_t(fh, (size_t*) &(save_struc->script_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "heap_size = ");
+	_cfsml_write_size_t(fh, (size_t*) &(save_struc->heap_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "obj_indices = ");
+	write_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->obj_indices));
+	fprintf(fh, "\n");
+	fprintf(fh, "exports_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->exports_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "synonyms_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->synonyms_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "lockers = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->lockers));
+	fprintf(fh, "\n");
+	fprintf(fh, "objects_allocated = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->objects_allocated));
+	fprintf(fh, "\n");
+	fprintf(fh, "objects_nr = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->objects_nr));
+	fprintf(fh, "\n");
+	fprintf(fh, "objects = ");
+	min = max = save_struc->objects_allocated;
+	if (!save_struc->objects)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      _cfsml_write_object_t(fh, &(save_struc->objects[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "locals_offset = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->locals_offset));
-    fprintf(fh, "\n");
-  fprintf(fh, "locals_segment = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->locals_segment));
-    fprintf(fh, "\n");
-  fprintf(fh, "marked_as_deleted = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->marked_as_deleted));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		_cfsml_write_object_t(fh, &(save_struc->objects[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "locals_offset = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->locals_offset));
+	fprintf(fh, "\n");
+	fprintf(fh, "locals_segment = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->locals_segment));
+	fprintf(fh, "\n");
+	fprintf(fh, "marked_as_deleted = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->marked_as_deleted));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_script_t(FILE *fh, script_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_script_t(FILE *fh, script_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record script_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record script_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "nr")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "buf_size")) {
+				if (_cfsml_read_int(fh, (int*) &(save_struc->nr), value, line, hiteof)) {
+					_cfsml_error("Token expected by _cfsml_read_int() for nr at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "buf_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->buf_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_size_t() for buf_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "script_size")) {
+					if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->buf_size), value, line, hiteof)) {
+						_cfsml_error("Token expected by _cfsml_read_size_t() for buf_size at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
+				} else
+					if (!strcmp(token, "script_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->script_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_size_t() for script_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "heap_size")) {
+						if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->script_size), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_size_t() for script_size at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "heap_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->heap_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_size_t() for heap_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "obj_indices")) {
+							if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->heap_size), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_size_t() for heap_size at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "obj_indices")) {
 #line 750 "savegame.cfsml"
-         if (read_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->obj_indices), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_int_hash_map_tp() for obj_indices at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "exports_nr")) {
+								if (read_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->obj_indices), value, line, hiteof)) {
+									_cfsml_error("Token expected by read_int_hash_map_tp() for obj_indices at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "exports_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->exports_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for exports_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "synonyms_nr")) {
+									if (_cfsml_read_int(fh, (int*) &(save_struc->exports_nr), value, line, hiteof)) {
+										_cfsml_error("Token expected by _cfsml_read_int() for exports_nr at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else
+									if (!strcmp(token, "synonyms_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->synonyms_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for synonyms_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "lockers")) {
+										if (_cfsml_read_int(fh, (int*) &(save_struc->synonyms_nr), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_int() for synonyms_nr at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else
+										if (!strcmp(token, "lockers")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->lockers), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for lockers at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "objects_allocated")) {
+											if (_cfsml_read_int(fh, (int*) &(save_struc->lockers), value, line, hiteof)) {
+												_cfsml_error("Token expected by _cfsml_read_int() for lockers at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else
+											if (!strcmp(token, "objects_allocated")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->objects_allocated), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for objects_allocated at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "objects_nr")) {
+												if (_cfsml_read_int(fh, (int*) &(save_struc->objects_allocated), value, line, hiteof)) {
+													_cfsml_error("Token expected by _cfsml_read_int() for objects_allocated at line %d\n", *line);
+													return CFSML_FAILURE;
+												}
+											} else
+												if (!strcmp(token, "objects_nr")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->objects_nr), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for objects_nr at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "objects")) {
+													if (_cfsml_read_int(fh, (int*) &(save_struc->objects_nr), value, line, hiteof)) {
+														_cfsml_error("Token expected by _cfsml_read_int() for objects_nr at line %d\n", *line);
+														return CFSML_FAILURE;
+													}
+												} else
+													if (!strcmp(token, "objects")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+														if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+															_cfsml_error("Opening brackets expected at line %d\n", *line);
+															return CFSML_FAILURE;
+														}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+														/* Prepare to restore dynamic array */
+														max = strtol(value + 1, NULL, 0);
+														if (max < 0) {
+															_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+															return CFSML_FAILURE;
+														}
 
-         if (max) {
-           save_struc->objects = (object_t *) sci_malloc(max * sizeof(object_t));
+														if (max) {
+															save_struc->objects = (object_t *) sci_malloc(max * sizeof(object_t));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->objects, 0, max * sizeof(object_t));
+															memset(save_struc->objects, 0, max * sizeof(object_t));
 #endif
-           _cfsml_register_pointer(save_struc->objects);
-         }
-         else
-           save_struc->objects = NULL;
+															_cfsml_register_pointer(save_struc->objects);
+														} else
+															save_struc->objects = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+														done = i = 0;
+														do {
+															if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (_cfsml_read_object_t(fh, &(save_struc->objects[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by _cfsml_read_object_t() for objects[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->objects_allocated = max ; /* Set array size accordingly */
-      } else
-      if (!strcmp(token, "locals_offset")) {
+																_cfsml_error("Token expected at line %d\n", *line);
+																return 1;
+															}
+															if (strcmp(value, "]")) {
+																if (i == max) {
+																	_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+																	return CFSML_FAILURE;
+																}
+																if (_cfsml_read_object_t(fh, &(save_struc->objects[i++]), value, line, hiteof)) {
+																	_cfsml_error("Token expected by _cfsml_read_object_t() for objects[i++] at line %d\n", *line);
+																	return CFSML_FAILURE;
+																}
+															} else done = 1;
+														} while (!done);
+														save_struc->objects_allocated = max ; /* Set array size accordingly */
+													} else
+														if (!strcmp(token, "locals_offset")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->locals_offset), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for locals_offset at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "locals_segment")) {
+															if (_cfsml_read_int(fh, (int*) &(save_struc->locals_offset), value, line, hiteof)) {
+																_cfsml_error("Token expected by _cfsml_read_int() for locals_offset at line %d\n", *line);
+																return CFSML_FAILURE;
+															}
+														} else
+															if (!strcmp(token, "locals_segment")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->locals_segment), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for locals_segment at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "marked_as_deleted")) {
+																if (_cfsml_read_int(fh, (int*) &(save_struc->locals_segment), value, line, hiteof)) {
+																	_cfsml_error("Token expected by _cfsml_read_int() for locals_segment at line %d\n", *line);
+																	return CFSML_FAILURE;
+																}
+															} else
+																if (!strcmp(token, "marked_as_deleted")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->marked_as_deleted), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for marked_as_deleted at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+																	if (_cfsml_read_int(fh, (int*) &(save_struc->marked_as_deleted), value, line, hiteof)) {
+																		_cfsml_error("Token expected by _cfsml_read_int() for marked_as_deleted at line %d\n", *line);
+																		return CFSML_FAILURE;
+																	}
+																} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("script_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+																{
+																	_cfsml_error("script_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+																	return CFSML_FAILURE;
+																}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 #line 445 "savegame.cfsml"
 static void
-_cfsml_write_seg_manager_t(FILE *fh, seg_manager_t* save_struc)
-{
-  int min, max, i;
+_cfsml_write_seg_manager_t(FILE *fh, seg_manager_t* save_struc) {
+	int min, max, i;
 
 #line 465 "savegame.cfsml"
-  fprintf(fh, "{\n");
-  fprintf(fh, "id_seg_map = ");
-    write_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->id_seg_map));
-    fprintf(fh, "\n");
-  fprintf(fh, "heap = ");
-    min = max = save_struc->heap_size;
-    if (!save_struc->heap)
-       min = max = 0; /* Don't write if it points to NULL */
+	fprintf(fh, "{\n");
+	fprintf(fh, "id_seg_map = ");
+	write_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->id_seg_map));
+	fprintf(fh, "\n");
+	fprintf(fh, "heap = ");
+	min = max = save_struc->heap_size;
+	if (!save_struc->heap)
+		min = max = 0; /* Don't write if it points to NULL */
 #line 491 "savegame.cfsml"
-    fprintf(fh, "[%d][\n", max);
-    for (i = 0; i < min; i++) {
-      write_mem_obj_tp(fh, &(save_struc->heap[i]));
-      fprintf(fh, "\n");
-    }
-    fprintf(fh, "]");
-    fprintf(fh, "\n");
-  fprintf(fh, "heap_size = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->heap_size));
-    fprintf(fh, "\n");
-  fprintf(fh, "reserved_id = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->reserved_id));
-    fprintf(fh, "\n");
-  fprintf(fh, "exports_wide = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->exports_wide));
-    fprintf(fh, "\n");
-  fprintf(fh, "sci1_1 = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->sci1_1));
-    fprintf(fh, "\n");
-  fprintf(fh, "gc_mark_bits = ");
-    _cfsml_write_int(fh, (int*) &(save_struc->gc_mark_bits));
-    fprintf(fh, "\n");
-  fprintf(fh, "mem_allocated = ");
-    _cfsml_write_size_t(fh, (size_t*) &(save_struc->mem_allocated));
-    fprintf(fh, "\n");
-  fprintf(fh, "clones_seg_id = ");
-    _cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->clones_seg_id));
-    fprintf(fh, "\n");
-  fprintf(fh, "lists_seg_id = ");
-    _cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->lists_seg_id));
-    fprintf(fh, "\n");
-  fprintf(fh, "nodes_seg_id = ");
-    _cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->nodes_seg_id));
-    fprintf(fh, "\n");
-  fprintf(fh, "}");
+	fprintf(fh, "[%d][\n", max);
+	for (i = 0; i < min; i++) {
+		write_mem_obj_tp(fh, &(save_struc->heap[i]));
+		fprintf(fh, "\n");
+	}
+	fprintf(fh, "]");
+	fprintf(fh, "\n");
+	fprintf(fh, "heap_size = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->heap_size));
+	fprintf(fh, "\n");
+	fprintf(fh, "reserved_id = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->reserved_id));
+	fprintf(fh, "\n");
+	fprintf(fh, "exports_wide = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->exports_wide));
+	fprintf(fh, "\n");
+	fprintf(fh, "sci1_1 = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->sci1_1));
+	fprintf(fh, "\n");
+	fprintf(fh, "gc_mark_bits = ");
+	_cfsml_write_int(fh, (int*) &(save_struc->gc_mark_bits));
+	fprintf(fh, "\n");
+	fprintf(fh, "mem_allocated = ");
+	_cfsml_write_size_t(fh, (size_t*) &(save_struc->mem_allocated));
+	fprintf(fh, "\n");
+	fprintf(fh, "clones_seg_id = ");
+	_cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->clones_seg_id));
+	fprintf(fh, "\n");
+	fprintf(fh, "lists_seg_id = ");
+	_cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->lists_seg_id));
+	fprintf(fh, "\n");
+	fprintf(fh, "nodes_seg_id = ");
+	_cfsml_write_seg_id_t(fh, (seg_id_t*) &(save_struc->nodes_seg_id));
+	fprintf(fh, "\n");
+	fprintf(fh, "}");
 }
 
 #line 539 "savegame.cfsml"
 static int
-_cfsml_read_seg_manager_t(FILE *fh, seg_manager_t* save_struc, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-int min, max, i;
+_cfsml_read_seg_manager_t(FILE *fh, seg_manager_t* save_struc, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int min, max, i;
 #line 600 "savegame.cfsml"
-  int assignment, closed, done;
+	int assignment, closed, done;
 
-  if (strcmp(lastval, "{")) {
-     _cfsml_error("Reading record seg_manager_t; expected opening braces in line %d, got \"%s\"\n",*line, lastval);
-     return CFSML_FAILURE;
-  };
-  closed = 0;
-  do {
-    const char *value;
-    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Reading record seg_manager_t; expected opening braces in line %d, got \"%s\"\n", *line, lastval);
+		return CFSML_FAILURE;
+	};
+	closed = 0;
+	do {
+		const char *value;
+		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 
-    if (!token) {
-       _cfsml_error("Expected token at line %d\n", *line);
-       return CFSML_FAILURE;
-    }
-    if (!assignment) {
-      if (!strcmp(token, "}")) 
-         closed = 1;
-      else {
-        _cfsml_error("Expected assignment or closing braces in line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-    } else {
-      value = "";
-      while (!value || !strcmp(value, ""))
-        value = _cfsml_get_value(fh, line, hiteof);
-      if (!value) {
-        _cfsml_error("Expected token at line %d\n", *line);
-        return CFSML_FAILURE;
-      }
-      if (!strcmp(token, "id_seg_map")) {
+		if (!token) {
+			_cfsml_error("Expected token at line %d\n", *line);
+			return CFSML_FAILURE;
+		}
+		if (!assignment) {
+			if (!strcmp(token, "}"))
+				closed = 1;
+			else {
+				_cfsml_error("Expected assignment or closing braces in line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+		} else {
+			value = "";
+			while (!value || !strcmp(value, ""))
+				value = _cfsml_get_value(fh, line, hiteof);
+			if (!value) {
+				_cfsml_error("Expected token at line %d\n", *line);
+				return CFSML_FAILURE;
+			}
+			if (!strcmp(token, "id_seg_map")) {
 #line 750 "savegame.cfsml"
-         if (read_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->id_seg_map), value, line, hiteof)) {
-            _cfsml_error("Token expected by read_int_hash_map_tp() for id_seg_map at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "heap")) {
+				if (read_int_hash_map_tp(fh, (int_hash_map_t **) &(save_struc->id_seg_map), value, line, hiteof)) {
+					_cfsml_error("Token expected by read_int_hash_map_tp() for id_seg_map at line %d\n", *line);
+					return CFSML_FAILURE;
+				}
+			} else
+				if (!strcmp(token, "heap")) {
 #line 664 "savegame.cfsml"
-         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
-            _cfsml_error("Opening brackets expected at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
+					if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {
+						_cfsml_error("Opening brackets expected at line %d\n", *line);
+						return CFSML_FAILURE;
+					}
 #line 674 "savegame.cfsml"
-         /* Prepare to restore dynamic array */
-         max = strtol(value + 1, NULL, 0);
-         if (max < 0) {
-            _cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
-            return CFSML_FAILURE;
-         }
+					/* Prepare to restore dynamic array */
+					max = strtol(value + 1, NULL, 0);
+					if (max < 0) {
+						_cfsml_error("Invalid number of elements to allocate for dynamic array '%s' at line %d\n", token, *line);
+						return CFSML_FAILURE;
+					}
 
-         if (max) {
-           save_struc->heap = (mem_obj_ptr *) sci_malloc(max * sizeof(mem_obj_ptr));
+					if (max) {
+						save_struc->heap = (mem_obj_ptr *) sci_malloc(max * sizeof(mem_obj_ptr));
 #ifdef SATISFY_PURIFY
-           memset(save_struc->heap, 0, max * sizeof(mem_obj_ptr));
+						memset(save_struc->heap, 0, max * sizeof(mem_obj_ptr));
 #endif
-           _cfsml_register_pointer(save_struc->heap);
-         }
-         else
-           save_struc->heap = NULL;
+						_cfsml_register_pointer(save_struc->heap);
+					} else
+						save_struc->heap = NULL;
 #line 700 "savegame.cfsml"
-         done = i = 0;
-         do {
-           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
+					done = i = 0;
+					do {
+						if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {
 #line 708 "savegame.cfsml"
-              _cfsml_error("Token expected at line %d\n", *line);
-              return 1;
-           }
-           if (strcmp(value, "]")) {
-             if (i == max) {
-               _cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
-               return CFSML_FAILURE;
-             }
-             if (read_mem_obj_tp(fh, &(save_struc->heap[i++]), value, line, hiteof)) {
-                _cfsml_error("Token expected by read_mem_obj_tp() for heap[i++] at line %d\n", *line);
-                return CFSML_FAILURE;
-             }
-           } else done = 1;
-         } while (!done);
-         save_struc->heap_size = max ; /* Set array size accordingly */
-      } else
-      if (!strcmp(token, "heap_size")) {
+							_cfsml_error("Token expected at line %d\n", *line);
+							return 1;
+						}
+						if (strcmp(value, "]")) {
+							if (i == max) {
+								_cfsml_error("More elements than space available (%d) in '%s' at line %d\n", max, token, *line);
+								return CFSML_FAILURE;
+							}
+							if (read_mem_obj_tp(fh, &(save_struc->heap[i++]), value, line, hiteof)) {
+								_cfsml_error("Token expected by read_mem_obj_tp() for heap[i++] at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else done = 1;
+					} while (!done);
+					save_struc->heap_size = max ; /* Set array size accordingly */
+				} else
+					if (!strcmp(token, "heap_size")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->heap_size), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for heap_size at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "reserved_id")) {
+						if (_cfsml_read_int(fh, (int*) &(save_struc->heap_size), value, line, hiteof)) {
+							_cfsml_error("Token expected by _cfsml_read_int() for heap_size at line %d\n", *line);
+							return CFSML_FAILURE;
+						}
+					} else
+						if (!strcmp(token, "reserved_id")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->reserved_id), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for reserved_id at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "exports_wide")) {
+							if (_cfsml_read_int(fh, (int*) &(save_struc->reserved_id), value, line, hiteof)) {
+								_cfsml_error("Token expected by _cfsml_read_int() for reserved_id at line %d\n", *line);
+								return CFSML_FAILURE;
+							}
+						} else
+							if (!strcmp(token, "exports_wide")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->exports_wide), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for exports_wide at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "sci1_1")) {
+								if (_cfsml_read_int(fh, (int*) &(save_struc->exports_wide), value, line, hiteof)) {
+									_cfsml_error("Token expected by _cfsml_read_int() for exports_wide at line %d\n", *line);
+									return CFSML_FAILURE;
+								}
+							} else
+								if (!strcmp(token, "sci1_1")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->sci1_1), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for sci1_1 at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "gc_mark_bits")) {
+									if (_cfsml_read_int(fh, (int*) &(save_struc->sci1_1), value, line, hiteof)) {
+										_cfsml_error("Token expected by _cfsml_read_int() for sci1_1 at line %d\n", *line);
+										return CFSML_FAILURE;
+									}
+								} else
+									if (!strcmp(token, "gc_mark_bits")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_int(fh, (int*) &(save_struc->gc_mark_bits), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_int() for gc_mark_bits at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "mem_allocated")) {
+										if (_cfsml_read_int(fh, (int*) &(save_struc->gc_mark_bits), value, line, hiteof)) {
+											_cfsml_error("Token expected by _cfsml_read_int() for gc_mark_bits at line %d\n", *line);
+											return CFSML_FAILURE;
+										}
+									} else
+										if (!strcmp(token, "mem_allocated")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->mem_allocated), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_size_t() for mem_allocated at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "clones_seg_id")) {
+											if (_cfsml_read_size_t(fh, (size_t*) &(save_struc->mem_allocated), value, line, hiteof)) {
+												_cfsml_error("Token expected by _cfsml_read_size_t() for mem_allocated at line %d\n", *line);
+												return CFSML_FAILURE;
+											}
+										} else
+											if (!strcmp(token, "clones_seg_id")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->clones_seg_id), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_seg_id_t() for clones_seg_id at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "lists_seg_id")) {
+												if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->clones_seg_id), value, line, hiteof)) {
+													_cfsml_error("Token expected by _cfsml_read_seg_id_t() for clones_seg_id at line %d\n", *line);
+													return CFSML_FAILURE;
+												}
+											} else
+												if (!strcmp(token, "lists_seg_id")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->lists_seg_id), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_seg_id_t() for lists_seg_id at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
-      if (!strcmp(token, "nodes_seg_id")) {
+													if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->lists_seg_id), value, line, hiteof)) {
+														_cfsml_error("Token expected by _cfsml_read_seg_id_t() for lists_seg_id at line %d\n", *line);
+														return CFSML_FAILURE;
+													}
+												} else
+													if (!strcmp(token, "nodes_seg_id")) {
 #line 750 "savegame.cfsml"
-         if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->nodes_seg_id), value, line, hiteof)) {
-            _cfsml_error("Token expected by _cfsml_read_seg_id_t() for nodes_seg_id at line %d\n", *line);
-            return CFSML_FAILURE;
-         }
-      } else
+														if (_cfsml_read_seg_id_t(fh, (seg_id_t*) &(save_struc->nodes_seg_id), value, line, hiteof)) {
+															_cfsml_error("Token expected by _cfsml_read_seg_id_t() for nodes_seg_id at line %d\n", *line);
+															return CFSML_FAILURE;
+														}
+													} else
 #line 759 "savegame.cfsml"
-       {
-          _cfsml_error("seg_manager_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
-          return CFSML_FAILURE;
-       }
-     }
-  } while (!closed); /* Until closing braces are hit */
-  return CFSML_SUCCESS;
+													{
+														_cfsml_error("seg_manager_t: Assignment to invalid identifier '%s' in line %d\n", token, *line);
+														return CFSML_FAILURE;
+													}
+		}
+	} while (!closed); /* Until closing braces are hit */
+	return CFSML_SUCCESS;
 }
 
 
@@ -4128,77 +4034,73 @@ int min, max, i;
 /* Auto-generation performed by cfsml.pl 0.8.2 */
 #line 402 "savegame.cfsml"
 
-void 
-write_songlib_t(FILE *fh, songlib_t *songlib)
-{
-  song_t *seeker = *(songlib->lib);
-  int songcount = song_lib_count(*songlib);
+void
+write_songlib_t(FILE *fh, songlib_t *songlib) {
+	song_t *seeker = *(songlib->lib);
+	int songcount = song_lib_count(*songlib);
 
-  fprintf(fh, "{\n");
-  fprintf(fh, "songcount = %d\n", songcount);
-  fprintf(fh, "list = \n");
-  fprintf(fh, "[\n");
-  while (seeker)
-    {
-      seeker->restore_time = seeker->it->get_timepos(seeker->it);
+	fprintf(fh, "{\n");
+	fprintf(fh, "songcount = %d\n", songcount);
+	fprintf(fh, "list = \n");
+	fprintf(fh, "[\n");
+	while (seeker) {
+		seeker->restore_time = seeker->it->get_timepos(seeker->it);
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_song_t(fh, seeker);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_song_t(fh, seeker);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 417 "savegame.cfsml"
-      seeker = seeker->next;
-    }
-  fprintf(fh, "]\n");
-  fprintf(fh, "}\n");
+		seeker = seeker->next;
+	}
+	fprintf(fh, "]\n");
+	fprintf(fh, "}\n");
 }
 
 int
-read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof)
-{
-  int songcount;
-  int i;
-  song_t *newsong;
-  int oldstatus;
+read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof) {
+	int songcount;
+	int i;
+	song_t *newsong;
+	int oldstatus;
 
-  fscanf(fh, "{\n");
-  fscanf(fh, "songcount = %d\n", &songcount);
-  fscanf(fh, "list = \n");
-  fscanf(fh, "[\n");
-  *line += 4;
-  song_lib_init(songlib);
-  for (i = 0; i < songcount; i++)
-    {
-/* Auto-generated CFSML data reader code */
+	fscanf(fh, "{\n");
+	fscanf(fh, "songcount = %d\n", &songcount);
+	fscanf(fh, "list = \n");
+	fscanf(fh, "[\n");
+	*line += 4;
+	song_lib_init(songlib);
+	for (i = 0; i < songcount; i++) {
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 840 "savegame.cfsml"
-    const char *_cfsml_inp = lastval;
+			const char *_cfsml_inp = lastval;
 #line 848 "savegame.cfsml"
-    _cfsml_error = read_song_tp(fh, &newsong, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = read_song_tp(fh, &newsong, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 440 "savegame.cfsml"
-      song_lib_add(*songlib, newsong);
-    }  
-  fscanf(fh, "]\n");
-  fscanf(fh, "}\n");;
-  *line += 2;
-  return 0;
+		song_lib_add(*songlib, newsong);
+	}
+	fscanf(fh, "]\n");
+	fscanf(fh, "}\n");;
+	*line += 2;
+	return 0;
 }
 
 struct {
@@ -4210,19 +4112,19 @@ struct {
 	{MEM_OBJ_CLONES, "CLONES"},
 	{MEM_OBJ_LOCALS, "LOCALS"},
 	{MEM_OBJ_STACK, "STACK"},
-	{MEM_OBJ_SYS_STRINGS,"SYS_STRINGS"},
-	{MEM_OBJ_LISTS,"LISTS"},
-	{MEM_OBJ_NODES,"NODES"},
-	{MEM_OBJ_HUNK,"HUNK"},
-	{MEM_OBJ_DYNMEM,"DYNMEM"}};
+	{MEM_OBJ_SYS_STRINGS, "SYS_STRINGS"},
+	{MEM_OBJ_LISTS, "LISTS"},
+	{MEM_OBJ_NODES, "NODES"},
+	{MEM_OBJ_HUNK, "HUNK"},
+	{MEM_OBJ_DYNMEM, "DYNMEM"}
+};
 
 int
-mem_obj_string_to_enum(const char *str)
-{
+mem_obj_string_to_enum(const char *str) {
 	int i;
 
-	for (i = 0; i <= MEM_OBJ_MAX; i++)
-	{		if (!strcasecmp(mem_obj_string_names[i].name, str))
+	for (i = 0; i <= MEM_OBJ_MAX; i++) {
+		if (!strcasecmp(mem_obj_string_names[i].name, str))
 			return i;
 	}
 
@@ -4232,24 +4134,22 @@ mem_obj_string_to_enum(const char *str)
 static int bucket_length;
 
 void
-write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo)
-{
+write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo) {
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_int_hash_map_t(fh, *foo);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+	/* Auto-generated CFSML data writer code */
+	_cfsml_write_int_hash_map_t(fh, *foo);
+	fprintf(fh, "\n");
+	/* End of auto-generated CFSML data writer code */
 #line 482 "savegame.cfsml"
 }
 
 void
-write_song_tp(FILE *fh, song_t **foo)
-{
+write_song_tp(FILE *fh, song_t **foo) {
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_song_t(fh, *foo);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+	/* Auto-generated CFSML data writer code */
+	_cfsml_write_song_t(fh, *foo);
+	fprintf(fh, "\n");
+	/* End of auto-generated CFSML data writer code */
 #line 488 "savegame.cfsml"
 }
 
@@ -4257,89 +4157,83 @@ song_iterator_t *
 build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
 
 int
-read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof)
-{
-  char *token;
-  int assignment;
-  *foo = (song_t*) malloc(sizeof(song_t));
-  token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
-/* Auto-generated CFSML data reader code */
+read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int assignment;
+	*foo = (song_t*) malloc(sizeof(song_t));
+	token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+	{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+		int _cfsml_eof = 0, _cfsml_error;
+		int dummy;
 #line 840 "savegame.cfsml"
-    const char *_cfsml_inp = token;
+		const char *_cfsml_inp = token;
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_song_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
+		_cfsml_error = _cfsml_read_song_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+		*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+		if (_cfsml_last_value_retrieved) {
+			free(_cfsml_last_value_retrieved);
+			_cfsml_last_value_retrieved = NULL;
+		}
+		if (_cfsml_last_identifier_retrieved) {
+			free(_cfsml_last_identifier_retrieved);
+			_cfsml_last_identifier_retrieved = NULL;
+		}
+	}
+	/* End of auto-generated CFSML data reader code */
 #line 501 "savegame.cfsml"
-  (*foo)->delay = 0;
-  (*foo)->it = NULL;
-  (*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
-  return 0;
+	(*foo)->delay = 0;
+	(*foo)->it = NULL;
+	(*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
+	return 0;
 }
 int
-read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
 	*foo = (int_hash_map_t*)malloc(sizeof(int_hash_map_t));
-/* Auto-generated CFSML data reader code */
+	/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+	{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+		int _cfsml_eof = 0, _cfsml_error;
+		int dummy;
 #line 840 "savegame.cfsml"
-    const char *_cfsml_inp = lastval;
+		const char *_cfsml_inp = lastval;
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_int_hash_map_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
+		_cfsml_error = _cfsml_read_int_hash_map_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+		*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+		if (_cfsml_last_value_retrieved) {
+			free(_cfsml_last_value_retrieved);
+			_cfsml_last_value_retrieved = NULL;
+		}
+		if (_cfsml_last_identifier_retrieved) {
+			free(_cfsml_last_identifier_retrieved);
+			_cfsml_last_identifier_retrieved = NULL;
+		}
+	}
+	/* End of auto-generated CFSML data reader code */
 #line 511 "savegame.cfsml"
 	(*foo)->holes = NULL;
 	return 0;
 }
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
-{
-	if (!(*foo))
-	{
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
+	if (!(*foo)) {
 		fputs("\\null", fh);
-	} else
-	{
-		fprintf(fh,"[\n%d=>%d\n", (*foo)->name, (*foo)->value);
-		if ((*foo)->next)
-		{
+	} else {
+		fprintf(fh, "[\n%d=>%d\n", (*foo)->name, (*foo)->value);
+		if ((*foo)->next) {
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  write_int_hash_map_node_tp(fh, &((*foo)->next));
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+			/* Auto-generated CFSML data writer code */
+			write_int_hash_map_node_tp(fh, &((*foo)->next));
+			fprintf(fh, "\n");
+			/* End of auto-generated CFSML data writer code */
 #line 527 "savegame.cfsml"
 		} else fputc('L', fh);
 		fputs("]", fh);
@@ -4347,39 +4241,31 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
 }
 
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No hash map node */
 	} else {
 		*foo = (int_hash_map_node_t*)malloc(sizeof(int_hash_map_node_t));
-		if (lastval[0] != '[')
-		{
+		if (lastval[0] != '[') {
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;
 		}
-		
+
 		do {
 			(*line)++;
 			fgets(buffer, 80, fh);
-			if (buffer[0] == 'L')
-			{
+			if (buffer[0] == 'L') {
 				(*foo)->next = NULL;
 				buffer[0] = buffer[1];
 			} /* HACK: deliberately no else clause here */
-			if (buffer[0] == ']') 
-			{
+			if (buffer[0] == ']') {
 				break;
-			}
-			else if (buffer[0] == '[')
-			{
+			} else if (buffer[0] == '[') {
 				if (read_int_hash_map_node_tp(fh, &((*foo)->next), buffer, line, hiteof))
 					return 1;
-			}
-			else if (sscanf(buffer, "%d=>%d", &((*foo)->name), &((*foo)->value))<2)
-			{
+			} else if (sscanf(buffer, "%d=>%d", &((*foo)->name), &((*foo)->value)) < 2) {
 				sciprintf("Error parsing hash_map_node_t on line %d\n", *line);
 				return 1;
 			}
@@ -4390,15 +4276,14 @@ read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastv
 }
 
 void
-write_menubar_tp(FILE *fh, menubar_t **foo)
-{
+write_menubar_tp(FILE *fh, menubar_t **foo) {
 	if (*foo) {
 
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_menubar_t(fh, (*foo));
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_menubar_t(fh, (*foo));
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 581 "savegame.cfsml"
 
 	} else { /* Nothing to write */
@@ -4408,37 +4293,36 @@ write_menubar_tp(FILE *fh, menubar_t **foo)
 
 
 int
-read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof) {
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No menu bar */
 	} else {
 
 		*foo = (menubar_t *) sci_malloc(sizeof(menubar_t));
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 840 "savegame.cfsml"
-    const char *_cfsml_inp = lastval;
+			const char *_cfsml_inp = lastval;
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_menubar_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_menubar_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 598 "savegame.cfsml"
 
 	}
@@ -4446,359 +4330,353 @@ read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *
 }
 
 void
-write_mem_obj_t(FILE *fh, mem_obj_t *foo)
-{
-	fprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);	
+write_mem_obj_t(FILE *fh, mem_obj_t *foo) {
+	fprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_int(fh, &foo->segmgr_id);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+	/* Auto-generated CFSML data writer code */
+	_cfsml_write_int(fh, &foo->segmgr_id);
+	fprintf(fh, "\n");
+	/* End of auto-generated CFSML data writer code */
 #line 608 "savegame.cfsml"
-	switch (foo->type)
-	{
+	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_script_t(fh, &foo->data.script);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_script_t(fh, &foo->data.script);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 612 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_CLONES:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_clone_table_t(fh, &foo->data.clones);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_clone_table_t(fh, &foo->data.clones);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 615 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_local_variables_t(fh, &foo->data.locals);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_local_variables_t(fh, &foo->data.locals);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 618 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_sys_strings_t(fh, &foo->data.sys_strings);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_sys_strings_t(fh, &foo->data.sys_strings);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 621 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_STACK:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_int(fh, &foo->data.stack.nr);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_int(fh, &foo->data.stack.nr);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 624 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_HUNK:
 		break;
-	case MEM_OBJ_LISTS:	
+	case MEM_OBJ_LISTS:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_list_table_t(fh, &foo->data.lists);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_list_table_t(fh, &foo->data.lists);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 629 "savegame.cfsml"
-	break;
-	case MEM_OBJ_NODES:	
+		break;
+	case MEM_OBJ_NODES:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_node_table_t(fh, &foo->data.nodes);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_node_table_t(fh, &foo->data.nodes);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 632 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_DYNMEM:
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_dynmem_t(fh, &foo->data.dynmem);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		_cfsml_write_dynmem_t(fh, &foo->data.dynmem);
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 635 "savegame.cfsml"
-	break;
+		break;
 	}
 }
 
 int
-read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
 	char buffer[80];
 	foo->type = mem_obj_string_to_enum(lastval);
-	if (foo->type < 0)
-	{
+	if (foo->type < 0) {
 		sciprintf("Unknown mem_obj_t type %s on line %d\n", lastval, *line);
 		return 1;
 	}
 
-/* Auto-generated CFSML data reader code */
+	/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
-#line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
-#line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
-
-#line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_int(fh, &foo->segmgr_id, _cfsml_inp, &(*line), &_cfsml_eof);
-#line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
-#line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
-#line 651 "savegame.cfsml"
-	switch (foo->type)
 	{
+#line 835 "savegame.cfsml"
+		int _cfsml_eof = 0, _cfsml_error;
+		int dummy;
+#line 843 "savegame.cfsml"
+		const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+
+#line 848 "savegame.cfsml"
+		_cfsml_error = _cfsml_read_int(fh, &foo->segmgr_id, _cfsml_inp, &(*line), &_cfsml_eof);
+#line 853 "savegame.cfsml"
+		*hiteof = _cfsml_error;
+#line 860 "savegame.cfsml"
+		if (_cfsml_last_value_retrieved) {
+			free(_cfsml_last_value_retrieved);
+			_cfsml_last_value_retrieved = NULL;
+		}
+		if (_cfsml_last_identifier_retrieved) {
+			free(_cfsml_last_identifier_retrieved);
+			_cfsml_last_identifier_retrieved = NULL;
+		}
+	}
+	/* End of auto-generated CFSML data reader code */
+#line 651 "savegame.cfsml"
+	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_script_t(fh, &foo->data.script, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_script_t(fh, &foo->data.script, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 655 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_CLONES:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_clone_table_t(fh, &foo->data.clones, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_clone_table_t(fh, &foo->data.clones, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 658 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_local_variables_t(fh, &foo->data.locals, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_local_variables_t(fh, &foo->data.locals, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 661 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_sys_strings_t(fh, &foo->data.sys_strings, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_sys_strings_t(fh, &foo->data.sys_strings, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 664 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LISTS:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_list_table_t(fh, &foo->data.lists, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_list_table_t(fh, &foo->data.lists, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 667 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_NODES:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_node_table_t(fh, &foo->data.nodes, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_node_table_t(fh, &foo->data.nodes, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 670 "savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_STACK:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_int(fh, &foo->data.stack.nr, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_int(fh, &foo->data.stack.nr, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 673 "savegame.cfsml"
-	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
-	break;
+		foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
+		break;
 	case MEM_OBJ_HUNK:
 		init_hunk_table(&foo->data.hunks);
 		break;
 	case MEM_OBJ_DYNMEM:
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
+			const char *_cfsml_inp = _cfsml_get_identifier(fh, &(*line), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_dynmem_t(fh, &foo->data.dynmem, _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = _cfsml_read_dynmem_t(fh, &foo->data.dynmem, _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 680 "savegame.cfsml"
-	break;
+		break;
 	}
 
 	return *hiteof;
 }
 
 void
-write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
-{
+write_mem_obj_tp(FILE *fh, mem_obj_t **foo) {
 	if (*foo) {
 
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  write_mem_obj_t(fh, (*foo));
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+		/* Auto-generated CFSML data writer code */
+		write_mem_obj_t(fh, (*foo));
+		fprintf(fh, "\n");
+		/* End of auto-generated CFSML data writer code */
 #line 692 "savegame.cfsml"
 
 	} else { /* Nothing to write */
@@ -4807,36 +4685,35 @@ write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
 }
 
 int
-read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof) {
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No menu bar */
 	} else {
 		*foo = (mem_obj_t *) sci_malloc(sizeof(mem_obj_t));
-/* Auto-generated CFSML data reader code */
+		/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+		{
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+			int _cfsml_eof = 0, _cfsml_error;
+			int dummy;
 #line 840 "savegame.cfsml"
-    const char *_cfsml_inp = lastval;
+			const char *_cfsml_inp = lastval;
 #line 848 "savegame.cfsml"
-    _cfsml_error = read_mem_obj_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
+			_cfsml_error = read_mem_obj_t(fh, (*foo), _cfsml_inp, &(*line), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    *hiteof = _cfsml_error;
+			*hiteof = _cfsml_error;
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+			if (_cfsml_last_value_retrieved) {
+				free(_cfsml_last_value_retrieved);
+				_cfsml_last_value_retrieved = NULL;
+			}
+			if (_cfsml_last_identifier_retrieved) {
+				free(_cfsml_last_identifier_retrieved);
+				_cfsml_last_identifier_retrieved = NULL;
+			}
+		}
+		/* End of auto-generated CFSML data reader code */
 #line 707 "savegame.cfsml"
 		return *hiteof;
 	}
@@ -4849,14 +4726,12 @@ read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *
 ** to writing a gamestate to disk
 */
 void
-_gamestate_unfrob(state_t *s)
-{
+_gamestate_unfrob(state_t *s) {
 }
 
 
 int
-gamestate_save(state_t *s, char *dirname)
-{
+gamestate_save(state_t *s, char *dirname) {
 	FILE *fh;
 	sci_dir_t dir;
 	char *filename;
@@ -4864,18 +4739,18 @@ gamestate_save(state_t *s, char *dirname)
 
 	_global_save_state = s;
 	s->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
-	s->dyn_views_list_serial = (s->dyn_views)? s->dyn_views->serial : -2;
-	s->drop_views_list_serial = (s->drop_views)? s->drop_views->serial : -2;
-	s->port_serial = (s->port)? s->port->serial : -2;
+	s->dyn_views_list_serial = (s->dyn_views) ? s->dyn_views->serial : -2;
+	s->drop_views_list_serial = (s->drop_views) ? s->drop_views->serial : -2;
+	s->port_serial = (s->port) ? s->port->serial : -2;
 
 	if (s->execution_stack_base) {
 		sciprintf("Cannot save from below kernel function\n");
 		return 1;
 	}
 
-	scimkdir (dirname, 0700);
+	scimkdir(dirname, 0700);
 
-	if (chdir (dirname)) {
+	if (chdir(dirname)) {
 		sciprintf("Could not enter directory '%s'\n", dirname);
 		return 1;
 	}
@@ -4889,53 +4764,51 @@ gamestate_save(state_t *s, char *dirname)
 	}
 	sci_finish_find(&dir);
 
-/*
-	if (s->sound_server) {
-		if ((s->sound_server->save)(s, dirname)) {
-			sciprintf("Saving failed for the sound subsystem\n");
-			chdir ("..");
-			return 1;
+	/*
+		if (s->sound_server) {
+			if ((s->sound_server->save)(s, dirname)) {
+				sciprintf("Saving failed for the sound subsystem\n");
+				chdir ("..");
+				return 1;
+			}
 		}
-	}
-*/
+	*/
 	fh = fopen("state", "w" FO_TEXT);
 
 	/* Calculate the time spent with this game */
 	s->game_time = time(NULL) - s->game_start_time.tv_sec;
 
-SCI_MEMTEST;
+	SCI_MEMTEST;
 #line 878 "savegame.cfsml"
-/* Auto-generated CFSML data writer code */
-  _cfsml_write_state_t(fh, s);
-  fprintf(fh, "\n");
-/* End of auto-generated CFSML data writer code */
+	/* Auto-generated CFSML data writer code */
+	_cfsml_write_state_t(fh, s);
+	fprintf(fh, "\n");
+	/* End of auto-generated CFSML data writer code */
 #line 774 "savegame.cfsml"
-SCI_MEMTEST;
+	SCI_MEMTEST;
 
 	fclose(fh);
 
 	_gamestate_unfrob(s);
 
 
-	chdir ("..");
+	chdir("..");
 	return 0;
 }
 
 static seg_id_t
-find_unique_seg_by_type(seg_manager_t *self, int type)
-{
+find_unique_seg_by_type(seg_manager_t *self, int type) {
 	int i;
 
 	for (i = 0; i < self->heap_size; i++)
 		if (self->heap[i] &&
-		    self->heap[i]->type == type)
+		        self->heap[i]->type == type)
 			return i;
 	return -1;
 }
 
 static byte *
-find_unique_script_block(state_t *s, byte *buf, int type)
-{
+find_unique_script_block(state_t *s, byte *buf, int type) {
 	int magic_pos_adder = s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER ? 0 : 2;
 
 	buf += magic_pos_adder;
@@ -4948,14 +4821,13 @@ find_unique_script_block(state_t *s, byte *buf, int type)
 
 		seeker_size = getUInt16(buf + 2);
 		buf += seeker_size;
-	} while(1);
+	} while (1);
 
 	return NULL;
 }
 
 static
-void reconstruct_stack(state_t *retval)
-{
+void reconstruct_stack(state_t *retval) {
 	seg_id_t stack_seg = find_unique_seg_by_type(&retval->seg_manager, MEM_OBJ_STACK);
 	dstack_t *stack = &(retval->seg_manager.heap[stack_seg]->data.stack);
 
@@ -4965,8 +4837,7 @@ void reconstruct_stack(state_t *retval)
 }
 
 static
-int clone_entry_used(clone_table_t *table, int n)
-{
+int clone_entry_used(clone_table_t *table, int n) {
 	int backup;
 	int seeker = table->first_free;
 	clone_entry_t *entries = table->table;
@@ -4983,50 +4854,44 @@ int clone_entry_used(clone_table_t *table, int n)
 }
 
 static
-void load_script(state_t *s, seg_id_t seg)
-{
+void load_script(state_t *s, seg_id_t seg) {
 	resource_t *script, *heap;
 	script_t *scr = &(s->seg_manager.heap[seg]->data.script);
 
 	scr->buf = (byte *) malloc(scr->buf_size);
 
 	script = scir_find_resource(s->resmgr, sci_script, scr->nr, 0);
-	if (s->version >= SCI_VERSION(1,001,000))
+	if (s->version >= SCI_VERSION(1, 001, 000))
 		heap = scir_find_resource(s->resmgr, sci_heap, scr->nr, 0);
 
-	switch (s->seg_manager.sci1_1)
-	{
+	switch (s->seg_manager.sci1_1) {
 	case 0 :
-		sm_mcpy_in_out( &s->seg_manager, 0, script->data, script->size, seg, SEG_ID);
+		sm_mcpy_in_out(&s->seg_manager, 0, script->data, script->size, seg, SEG_ID);
 		break;
 	case 1 :
-		sm_mcpy_in_out( &s->seg_manager, 0, script->data, script->size, seg, SEG_ID);
-		sm_mcpy_in_out( &s->seg_manager, scr->script_size, heap->data, heap->size, seg, SEG_ID);
+		sm_mcpy_in_out(&s->seg_manager, 0, script->data, script->size, seg, SEG_ID);
+		sm_mcpy_in_out(&s->seg_manager, scr->script_size, heap->data, heap->size, seg, SEG_ID);
 		break;
 	}
 }
 
 static
-void reconstruct_scripts(state_t *s, seg_manager_t *self)
-{
+void reconstruct_scripts(state_t *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 	object_t **objects;
 	int *objects_nr;
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_SCRIPT:
-			{
+			switch (mobj->type) {
+			case MEM_OBJ_SCRIPT: {
 				int j;
 				script_t *scr = &mobj->data.script;
 
 				load_script(s, i);
 				scr->locals_block = scr->locals_segment == 0 ? NULL :
-					&s->seg_manager.heap[scr->locals_segment]->data.locals;
+				                    &s->seg_manager.heap[scr->locals_segment]->data.locals;
 				scr->export_table = (guint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
 				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
 				scr->code = NULL;
@@ -5035,9 +4900,8 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 
 				if (!self->sci1_1)
 					scr->export_table += 3;
-				
-				for (j = 0; j < scr->objects_nr; j++)
-				{
+
+				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 					scr->objects[j].base = scr->buf;
 					scr->objects[j].base_obj = data;
@@ -5048,45 +4912,38 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 		}
 
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_SCRIPT:
-			{
+			switch (mobj->type) {
+			case MEM_OBJ_SCRIPT: {
 				int j;
 				script_t *scr = &mobj->data.script;
 
-				for (j = 0; j < scr->objects_nr; j++)
-				{
+				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 
-					if (self->sci1_1)
-					{
-						guint16 *funct_area = (guint16 *) (scr->buf + getUInt16( data + 6 ));
-						guint16 *prop_area = (guint16 *) (scr->buf + getUInt16( data + 4 ));
+					if (self->sci1_1) {
+						guint16 *funct_area = (guint16 *)(scr->buf + getUInt16(data + 6));
+						guint16 *prop_area = (guint16 *)(scr->buf + getUInt16(data + 4));
 
 						scr->objects[j].base_method = funct_area;
 						scr->objects[j].base_vars = prop_area;
-					} else
-					{
-						int funct_area = getUInt16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
+					} else {
+						int funct_area = getUInt16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
 						object_t *base_obj;
 
 						base_obj = obj_get(s, scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
 
-						if (!base_obj)
-						{
+						if (!base_obj) {
 							sciprintf("Object without a base class: Script %d, index %d (reg address "PREG"\n",
-								  scr->nr, j, PRINT_REG(scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
+							          scr->nr, j, PRINT_REG(scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}
 						scr->objects[j].variable_names_nr = base_obj->variables_nr;
 						scr->objects[j].base_obj = base_obj->base_obj;
 
-						scr->objects[j].base_method = (guint16 *) (data + funct_area);
-						scr->objects[j].base_vars = (guint16 *) (data + scr->objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
+						scr->objects[j].base_method = (guint16 *)(data + funct_area);
+						scr->objects[j].base_vars = (guint16 *)(data + scr->objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 					}
 				}
 			}
@@ -5095,50 +4952,42 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 }
 
 void
-reconstruct_clones(state_t *s, seg_manager_t *self)
-{
+reconstruct_clones(state_t *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_CLONES:
-			{
+			switch (mobj->type) {
+			case MEM_OBJ_CLONES: {
 				int j;
 				clone_entry_t *seeker = mobj->data.clones.table;
-				
+
 				sciprintf("Free list: ");
 				for (j = mobj->data.clones.first_free;
-				     j != HEAPENTRY_INVALID;
-				     j = mobj->data.clones.table[j].next_free)
-				{
+				        j != HEAPENTRY_INVALID;
+				        j = mobj->data.clones.table[j].next_free) {
 					sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
 				sciprintf("Entries w/zero vars: ");
-				for (j = 0; j < mobj->data.clones.max_entry; j++)
-				{
+				for (j = 0; j < mobj->data.clones.max_entry; j++) {
 					if (mobj->data.clones.table[j].entry.variables == NULL)
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
-				for (j = 0; j < mobj->data.clones.max_entry; j++)
-				{
- 					object_t *base_obj;
+				for (j = 0; j < mobj->data.clones.max_entry; j++) {
+					object_t *base_obj;
 
 					if (!clone_entry_used(&mobj->data.clones, j)) {
 						seeker++;
 						continue;
 					}
 					base_obj = obj_get(s, seeker->entry.variables[SCRIPT_SPECIES_SELECTOR]);
-					if (!base_obj)
-					{
+					if (!base_obj) {
 						sciprintf("Clone entry without a base class: %d\n", j);
 						seeker->entry.base = seeker->entry.base_obj = NULL;
 						seeker->entry.base_vars = seeker->entry.base_method = NULL;
@@ -5165,49 +5014,45 @@ song_iterator_t *
 new_fast_forward_iterator(song_iterator_t *it, int delta);
 
 static
-void reconstruct_sounds(state_t *s)
-{
-  song_t *seeker;
-  int it_type = s->resmgr->sci_version >= SCI_VERSION_01 ?
-    SCI_SONG_ITERATOR_TYPE_SCI1
-    : SCI_SONG_ITERATOR_TYPE_SCI0;
+void reconstruct_sounds(state_t *s) {
+	song_t *seeker;
+	int it_type = s->resmgr->sci_version >= SCI_VERSION_01 ?
+	              SCI_SONG_ITERATOR_TYPE_SCI1
+	              : SCI_SONG_ITERATOR_TYPE_SCI0;
 
-  if (s->sound.songlib.lib)
-    seeker = *(s->sound.songlib.lib);
-  else
-    {
-      song_lib_init(&s->sound.songlib);
-      seeker = NULL;
-    }
-  while (seeker)
-    {
-      song_iterator_t *base, *ff;
-      int oldstatus;
-      song_iterator_message_t msg;
+	if (s->sound.songlib.lib)
+		seeker = *(s->sound.songlib.lib);
+	else {
+		song_lib_init(&s->sound.songlib);
+		seeker = NULL;
+	}
+	while (seeker) {
+		song_iterator_t *base, *ff;
+		int oldstatus;
+		song_iterator_message_t msg;
 
-      base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
-      if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
-	  ff = (song_iterator_t *) new_fast_forward_iterator(base, seeker->restore_time);
-      ff->init(ff);
+		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
+		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
+			ff = (song_iterator_t *) new_fast_forward_iterator(base, seeker->restore_time);
+		ff->init(ff);
 
-      msg = songit_make_message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
-      songit_handle_message(&ff, msg);
-      msg = songit_make_message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
-      songit_handle_message(&ff, msg);
+		msg = songit_make_message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
+		songit_handle_message(&ff, msg);
+		msg = songit_make_message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
+		songit_handle_message(&ff, msg);
 
 
-      oldstatus = seeker->status;
-      seeker->status = SOUND_STATUS_STOPPED;
-      seeker->it = ff;
-      sfx_song_set_status(&s->sound, seeker->handle, oldstatus);
-      seeker = seeker->next;
-    }
+		oldstatus = seeker->status;
+		seeker->status = SOUND_STATUS_STOPPED;
+		seeker->it = ff;
+		sfx_song_set_status(&s->sound, seeker->handle, oldstatus);
+		seeker = seeker->next;
+	}
 
 }
 
 state_t *
-gamestate_restore(state_t *s, char *dirname)
-{
+gamestate_restore(state_t *s, char *dirname) {
 	FILE *fh;
 	int fd;
 	int i;
@@ -5215,19 +5060,19 @@ gamestate_restore(state_t *s, char *dirname)
 	state_t *retval;
 	songlib_t temp;
 
-	if (chdir (dirname)) {
+	if (chdir(dirname)) {
 		sciprintf("Game state '%s' does not exist\n", dirname);
 		return NULL;
 	}
 
-/*
-	if (s->sound_server) {
-		if ((s->sound_server->restore)(s, dirname)) {
-			sciprintf("Restoring failed for the sound subsystem\n");
-			return NULL;
+	/*
+		if (s->sound_server) {
+			if ((s->sound_server->restore)(s, dirname)) {
+				sciprintf("Restoring failed for the sound subsystem\n");
+				return NULL;
+			}
 		}
-	}
-*/
+	*/
 
 	retval = (state_t *) sci_malloc(sizeof(state_t));
 
@@ -5243,7 +5088,7 @@ gamestate_restore(state_t *s, char *dirname)
 		return NULL;
 	}
 
-	 /* Backwards compatibility settings */
+	/* Backwards compatibility settings */
 	retval->dyn_views = NULL;
 	retval->drop_views = NULL;
 	retval->port = NULL;
@@ -5252,42 +5097,42 @@ gamestate_restore(state_t *s, char *dirname)
 	retval->sound_mute = s->sound_mute;
 	retval->sound_volume = s->sound_volume;
 
-/* Auto-generated CFSML data reader code */
+	/* Auto-generated CFSML data reader code */
 #line 824 "savegame.cfsml"
-  {
+	{
 #line 827 "savegame.cfsml"
-    int _cfsml_line_ctr = 0;
+		int _cfsml_line_ctr = 0;
 #line 832 "savegame.cfsml"
-    struct _cfsml_pointer_refstruct **_cfsml_myptrrefptr = _cfsml_get_current_refpointer();
+		struct _cfsml_pointer_refstruct **_cfsml_myptrrefptr = _cfsml_get_current_refpointer();
 #line 835 "savegame.cfsml"
-    int _cfsml_eof = 0, _cfsml_error;
-    int dummy;
+		int _cfsml_eof = 0, _cfsml_error;
+		int dummy;
 #line 843 "savegame.cfsml"
-    const char *_cfsml_inp = _cfsml_get_identifier(fh, &(_cfsml_line_ctr), &_cfsml_eof, &dummy);
+		const char *_cfsml_inp = _cfsml_get_identifier(fh, &(_cfsml_line_ctr), &_cfsml_eof, &dummy);
 
 #line 848 "savegame.cfsml"
-    _cfsml_error = _cfsml_read_state_t(fh, retval, _cfsml_inp, &(_cfsml_line_ctr), &_cfsml_eof);
+		_cfsml_error = _cfsml_read_state_t(fh, retval, _cfsml_inp, &(_cfsml_line_ctr), &_cfsml_eof);
 #line 853 "savegame.cfsml"
-    read_eof = _cfsml_error;
+		read_eof = _cfsml_error;
 #line 857 "savegame.cfsml"
-     _cfsml_free_pointer_references(_cfsml_myptrrefptr, _cfsml_error);
+		_cfsml_free_pointer_references(_cfsml_myptrrefptr, _cfsml_error);
 #line 860 "savegame.cfsml"
-     if (_cfsml_last_value_retrieved) {
-       free(_cfsml_last_value_retrieved);
-       _cfsml_last_value_retrieved = NULL;
-     }
-     if (_cfsml_last_identifier_retrieved) {
-       free(_cfsml_last_identifier_retrieved);
-       _cfsml_last_identifier_retrieved = NULL;
-     }
-  }
-/* End of auto-generated CFSML data reader code */
+		if (_cfsml_last_value_retrieved) {
+			free(_cfsml_last_value_retrieved);
+			_cfsml_last_value_retrieved = NULL;
+		}
+		if (_cfsml_last_identifier_retrieved) {
+			free(_cfsml_last_identifier_retrieved);
+			_cfsml_last_identifier_retrieved = NULL;
+		}
+	}
+	/* End of auto-generated CFSML data reader code */
 #line 1117 "savegame.cfsml"
 
 	fclose(fh);
 
-	if ((retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) || 
-	    (retval->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
+	if ((retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
+	        (retval->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
 
 		if (retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
 			sciprintf("Old savegame version detected- can't load\n");
@@ -5332,7 +5177,7 @@ gamestate_restore(state_t *s, char *dirname)
 	retval->sys_strings_segment = find_unique_seg_by_type(&retval->seg_manager, MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = &(((mem_obj_t *)(GET_SEGMENT(retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
 	sys_strings_restore(retval->sys_strings,
-			    s->sys_strings);
+	                    s->sys_strings);
 
 	/* Time state: */
 	sci_get_current_time(&(retval->last_wait_time));
@@ -5389,7 +5234,7 @@ gamestate_restore(state_t *s, char *dirname)
 	retval->sound.debug = s->sound.debug;
 	reconstruct_sounds(retval);
 
-	chdir ("..");
+	chdir("..");
 
 	return retval;
 }

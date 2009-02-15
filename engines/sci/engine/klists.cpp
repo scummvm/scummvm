@@ -33,8 +33,7 @@
 #endif
 
 inline node_t *
-inline_lookup_node(state_t *s, reg_t addr, const char *file, int line)
-{
+inline_lookup_node(state_t *s, reg_t addr, const char *file, int line) {
 	mem_obj_t *mobj;
 	node_table_t *nt;
 
@@ -44,7 +43,7 @@ inline_lookup_node(state_t *s, reg_t addr, const char *file, int line)
 	mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_NODES);
 	if (!mobj) {
 		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n",
-			  __FILE__, __LINE__, PRINT_REG(addr));
+		          __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -53,7 +52,7 @@ inline_lookup_node(state_t *s, reg_t addr, const char *file, int line)
 
 	if (!ENTRY_IS_VALID(nt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n",
-			  __FILE__, __LINE__, PRINT_REG(addr));
+		          __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -62,8 +61,7 @@ inline_lookup_node(state_t *s, reg_t addr, const char *file, int line)
 }
 
 node_t *
-lookup_node(state_t *s, reg_t addr, const char *file, int line)
-{
+lookup_node(state_t *s, reg_t addr, const char *file, int line) {
 	return inline_lookup_node(s, addr, file, line);
 }
 
@@ -71,8 +69,7 @@ lookup_node(state_t *s, reg_t addr, const char *file, int line)
 
 
 inline list_t *
-_lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null)
-{
+_lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null) {
 	mem_obj_t *mobj;
 	list_table_t *lt;
 
@@ -83,7 +80,7 @@ _lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null
 
 	if (!mobj) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n",
-			  __FILE__, __LINE__, PRINT_REG(addr));
+		          __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -92,7 +89,7 @@ _lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null
 
 	if (!ENTRY_IS_VALID(lt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n",
-			  __FILE__, __LINE__, PRINT_REG(addr));
+		          __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -101,16 +98,14 @@ _lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null
 }
 
 list_t *
-lookup_list(state_t *s, reg_t addr, const char *file, int line)
-{
+lookup_list(state_t *s, reg_t addr, const char *file, int line) {
 	return _lookup_list(s, addr, file, line, 0);
 }
 
 int
-listp(state_t *s, reg_t addr)
-{
+listp(state_t *s, reg_t addr) {
 	return (s->seg_manager.heap[addr.segment]->type == MEM_OBJ_LISTS
-		&& ENTRY_IS_VALID(&(s->seg_manager.heap[addr.segment]->data.lists), addr.offset));
+	        && ENTRY_IS_VALID(&(s->seg_manager.heap[addr.segment]->data.lists), addr.offset));
 }
 
 #ifdef DISABLE_VALIDATIONS
@@ -121,8 +116,7 @@ listp(state_t *s, reg_t addr)
 #else
 
 static inline int
-sane_nodep(state_t *s, reg_t addr)
-{
+sane_nodep(state_t *s, reg_t addr) {
 	int have_prev = 0;
 	reg_t prev = addr;
 
@@ -133,7 +127,7 @@ sane_nodep(state_t *s, reg_t addr)
 			return 0;
 
 		if ((have_prev)
-		    && !REG_EQ(node->pred, prev))
+		        && !REG_EQ(node->pred, prev))
 			return 0;
 
 		prev = addr;
@@ -147,8 +141,7 @@ sane_nodep(state_t *s, reg_t addr)
 
 
 int
-sane_listp(state_t *s, reg_t addr)
-{
+sane_listp(state_t *s, reg_t addr) {
 	list_t *l = LOOKUP_LIST(addr);
 	int empties = 0;
 
@@ -185,8 +178,7 @@ sane_listp(state_t *s, reg_t addr)
 
 
 reg_t
-kNewList(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNewList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t listbase;
 	list_t *l;
 	l = sm_alloc_list(&s->seg_manager, &listbase);
@@ -197,39 +189,37 @@ kNewList(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kDisposeList(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDisposeList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l) {
 		SCIkwarn(SCIkERROR, "Attempt to dispose non-list at "PREG"!\n",
-			 PRINT_REG(argv[0]));
+		         PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if (!sane_listp(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
-/*	if (!IS_NULL_REG(l->first)) {
-		reg_t n_addr = l->first;
+	/*	if (!IS_NULL_REG(l->first)) {
+			reg_t n_addr = l->first;
 
-		while (!IS_NULL_REG(n_addr)) { /-* Free all nodes *-/
-			node_t *n = LOOKUP_NODE(n_addr);
-			sm_free_node(&s->seg_manager, n_addr);
-			n_addr = n->succ;
-		} 
-	}
+			while (!IS_NULL_REG(n_addr)) { /-* Free all nodes *-/
+				node_t *n = LOOKUP_NODE(n_addr);
+				sm_free_node(&s->seg_manager, n_addr);
+				n_addr = n->succ;
+			}
+		}
 
-	sm_free_list(&s->seg_manager, argv[0]);
-*/
+		sm_free_list(&s->seg_manager, argv[0]);
+	*/
 
 	return s->r_acc;
 }
 
 
 inline reg_t
-_k_new_node(state_t *s, reg_t value, reg_t key)
-{
+_k_new_node(state_t *s, reg_t value, reg_t key) {
 	reg_t nodebase;
 	node_t *n = sm_alloc_node(&s->seg_manager, &nodebase);
 
@@ -246,8 +236,7 @@ _k_new_node(state_t *s, reg_t value, reg_t key)
 }
 
 reg_t
-kNewNode(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNewNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
 	SCIkdebug(SCIkNODES, "New nodebase at "PREG"\n", PRINT_REG(s->r_acc));
@@ -258,13 +247,12 @@ kNewNode(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kFirstNode(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kFirstNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_NULL_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 
 	if (l)
 		return l->first;
@@ -274,13 +262,12 @@ kFirstNode(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kLastNode(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kLastNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
-	if (l&&!sane_listp(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+	if (l && !sane_listp(s, argv[0]))
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 
 	if (l)
 		return l->last;
@@ -290,31 +277,29 @@ kLastNode(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kEmptyList(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kEmptyList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List at "PREG" is invalid or not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is invalid or not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 
-	return make_reg(0, ((l)? IS_NULL_REG(l->first) : 0));
+	return make_reg(0, ((l) ? IS_NULL_REG(l->first) : 0));
 }
 
 inline void
-_k_add_to_front(state_t *s, reg_t listbase, reg_t nodebase)
-{
+_k_add_to_front(state_t *s, reg_t listbase, reg_t nodebase) {
 	list_t *l = LOOKUP_LIST(listbase);
 	node_t *new_n = LOOKUP_NODE(nodebase);
 
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n",
-		  PRINT_REG(nodebase), PRINT_REG(listbase));
+	          PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
 		SCIkwarn(SCIkERROR, "Attempt to add non-node ("PREG") to list at "PREG"\n",
-			 PRINT_REG(nodebase), PRINT_REG(listbase));
+		         PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = l->first;
 	new_n->pred = NULL_REG;
@@ -329,19 +314,18 @@ _k_add_to_front(state_t *s, reg_t listbase, reg_t nodebase)
 }
 
 inline void
-_k_add_to_end(state_t *s, reg_t listbase, reg_t nodebase)
-{
+_k_add_to_end(state_t *s, reg_t listbase, reg_t nodebase) {
 	list_t *l = LOOKUP_LIST(listbase);
 	node_t *new_n = LOOKUP_NODE(nodebase);
 
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n",
-		  PRINT_REG(nodebase), PRINT_REG(listbase));
+	          PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
 		SCIkwarn(SCIkERROR, "Attempt to add non-node ("PREG") to list at "PREG"\n",
-			 PRINT_REG(nodebase), PRINT_REG(listbase));
+		         PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = NULL_REG;
 	new_n->pred = l->last;
@@ -357,13 +341,11 @@ _k_add_to_end(state_t *s, reg_t listbase, reg_t nodebase)
 
 
 reg_t
-kNextNode(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNextNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
-	if (!sane_nodep(s, argv[0]))
-	{
-		SCIkwarn(SCIkERROR,"List node at "PREG" is not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+	if (!sane_nodep(s, argv[0])) {
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 		script_error_flag = script_debug_flag = 0;
 		return NULL_REG;
 	}
@@ -372,25 +354,22 @@ kNextNode(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kPrevNode(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kPrevNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List node at "PREG" is not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 
 	return n->pred;
 }
 
 
 reg_t
-kNodeValue(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNodeValue(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
-	if (!sane_nodep(s, argv[0]))
-	{
-		SCIkwarn(SCIkERROR,"List node at "PREG" is not sane!\n",
-			 PRINT_REG(argv[0]));
+	if (!sane_nodep(s, argv[0])) {
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane!\n",
+		         PRINT_REG(argv[0]));
 		script_debug_flag = script_error_flag = 0;
 		return NULL_REG;
 	}
@@ -400,26 +379,24 @@ kNodeValue(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kAddToFront(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAddToFront(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	_k_add_to_front(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
 reg_t
-kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
-	node_t *firstnode = IS_NULL_REG(argv[1])? NULL : LOOKUP_NODE(argv[1]);
+	node_t *firstnode = IS_NULL_REG(argv[1]) ? NULL : LOOKUP_NODE(argv[1]);
 	node_t *newnode = LOOKUP_NODE(argv[2]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n",
-			 PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n",
+		         PRINT_REG(argv[0]));
 
 	if (!newnode) {
-		SCIkwarn(SCIkERROR,"New 'node' "PREG" is not a node!\n",
-			 argv[1], argv[2]);
+		SCIkwarn(SCIkERROR, "New 'node' "PREG" is not a node!\n",
+		         argv[1], argv[2]);
 		return NULL_REG;
 	}
 
@@ -452,26 +429,24 @@ kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kAddToEnd(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAddToEnd(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	_k_add_to_end(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
 
 reg_t
-kFindKey(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kFindKey(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t node_pos;
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
 
 	SCIkdebug(SCIkNODES, "Looking for key "PREG" in list "PREG"\n",
-		  PRINT_REG(key), PRINT_REG(list_pos));
+	          PRINT_REG(key), PRINT_REG(list_pos));
 
 	if (!sane_listp(s, list_pos))
-		SCIkwarn(SCIkERROR,"List at "PREG" is not sane anymore!\n",
-			 PRINT_REG(list_pos));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n",
+		         PRINT_REG(list_pos));
 
 	node_pos = LOOKUP_LIST(list_pos)->first;
 
@@ -494,8 +469,7 @@ kFindKey(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kDeleteKey(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDeleteKey(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, funct_nr, 2, argv);
 	node_t *n;
 	list_t *l = LOOKUP_LIST(argv[0]);
@@ -514,7 +488,7 @@ kDeleteKey(state_t *s, int funct_nr, int argc, reg_t *argv)
 	if (!IS_NULL_REG(n->succ))
 		LOOKUP_NODE(n->succ)->pred = n->pred;
 
-/*	sm_free_node(&s->seg_manager, node_pos);*/
+	/*	sm_free_node(&s->seg_manager, node_pos);*/
 
 	return make_reg(0, 1); /* Signal success */
 }
@@ -522,34 +496,31 @@ kDeleteKey(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 
-typedef struct
-{
+typedef struct {
 	reg_t key, value;
 	reg_t order;
 } sort_temp_t;
 
 int
-sort_temp_cmp(const void *p1, const void *p2)
-{
+sort_temp_cmp(const void *p1, const void *p2) {
 	sort_temp_t *st1 = (sort_temp_t *) p1;
 	sort_temp_t *st2 = (sort_temp_t *) p2;
 
 	if (st1->order.segment < st1->order.segment ||
-	    (st1->order.segment == st1->order.segment &&
-	     st1->order.offset < st2->order.offset))
+	        (st1->order.segment == st1->order.segment &&
+	         st1->order.offset < st2->order.offset))
 		return -1;
 
 	if (st1->order.segment > st2->order.segment ||
-	    (st1->order.segment == st2->order.segment &&
-	     st1->order.offset > st2->order.offset))
+	        (st1->order.segment == st2->order.segment &&
+	         st1->order.offset > st2->order.offset))
 		return 1;
 
 	return 0;
 }
 
 reg_t
-kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSort(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t source = argv[0];
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];
@@ -558,8 +529,8 @@ kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	int i;
 
-	sort_temp_t *temp_array = (sort_temp_t *) 
-		malloc(sizeof(sort_temp_t)*input_size);
+	sort_temp_t *temp_array = (sort_temp_t *)
+	                          malloc(sizeof(sort_temp_t) * input_size);
 
 	reg_t input_data = GET_SEL32(source, elements);
 	reg_t output_data = GET_SEL32(dest, elements);
@@ -570,8 +541,7 @@ kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
 	if (!input_size)
 		return s->r_acc;
 
-	if (IS_NULL_REG(output_data))
-	{
+	if (IS_NULL_REG(output_data)) {
 		list = sm_alloc_list(&s->seg_manager, &output_data);
 		list->first = list->last = NULL_REG;
 		PUT_SEL32(dest, elements, output_data);
@@ -583,8 +553,7 @@ kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
 	node = LOOKUP_NODE(list->first);
 
 	i = 0;
-	while (node)
-	{
+	while (node) {
 		invoke_selector(INV_SEL(order_func, doit, 0), 1, node->value);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
@@ -595,10 +564,9 @@ kSort(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	qsort(temp_array, input_size, sizeof(sort_temp_t), sort_temp_cmp);
 
-	for (i=0;i<input_size;i++)
-	{
+	for (i = 0;i < input_size;i++) {
 		reg_t lNode = _k_new_node(s, temp_array[i].key,
-					 temp_array[i].value);
+		                          temp_array[i].value);
 		_k_add_to_end(s, output_data, lNode);
 	}
 

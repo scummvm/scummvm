@@ -60,12 +60,11 @@ typedef cmd_mm_entry_t cmd_page_t; /* Simple info page */
 typedef struct {
 	const char *name;
 	const char *description;
-	int (*command) (state_t *);
+	int (*command)(state_t *);
 	const char *param;
 } cmd_command_t;
 
-typedef struct
-{
+typedef struct {
 	const char *name;
 	const char *description;
 	union {
@@ -130,112 +129,101 @@ cmd_param_t *cmd_params;
 #ifdef WITH_DMALLOC
 
 int
-c_dm_stats (state_t * s)
-{
+c_dm_stats(state_t * s) {
 	dmalloc_log_stats();
 	return 0;
 }
 
 int
-c_dm_log_unfreed (state_t * s)
-{
+c_dm_log_unfreed(state_t * s) {
 	dmalloc_log_unfreed();
 	return 0;
 }
 
 int
-c_dm_verify (state_t * s)
-{
+c_dm_verify(state_t * s) {
 	unsigned long pointer_var;
 	void *ptr;
 
-	pointer_var = strtoul (cmd_params[0].str, NULL, 0);
+	pointer_var = strtoul(cmd_params[0].str, NULL, 0);
 	ptr = (void *) pointer_var;
 
-	dmalloc_verify (ptr);
+	dmalloc_verify(ptr);
 
 	return 0;
 }
 
 int
-c_dm_debug (state_t * s)
-{
+c_dm_debug(state_t * s) {
 	if (cmd_paramlength) {
-		long newval = strtol (cmd_params[0].str, NULL, 0);
+		long newval = strtol(cmd_params[0].str, NULL, 0);
 
-		sciprintf ("Setting dmalloc_debug(%ld)\n", newval);
-		dmalloc_debug (newval);
-	}
-	else
-		sciprintf ("dmalloc_debug is at 0x%lx\n", dmalloc_debug_current());
+		sciprintf("Setting dmalloc_debug(%ld)\n", newval);
+		dmalloc_debug(newval);
+	} else
+		sciprintf("dmalloc_debug is at 0x%lx\n", dmalloc_debug_current());
 	return 0;
 }
 
 int
-c_dm_mark (state_t * s)
-{
+c_dm_mark(state_t * s) {
 	unsigned long mark = dmalloc_mark();
 
-	dmalloc_message ("------------- MARK 0x%lx ---------------\n", mark);
-	sciprintf ("mark 0x%lx\n", mark);
+	dmalloc_message("------------- MARK 0x%lx ---------------\n", mark);
+	sciprintf("mark 0x%lx\n", mark);
 	return 0;
 }
 
 int
-c_dm_chmark (state_t * s)
-{
-	unsigned long mark = strtoul (cmd_params[0].str, NULL, 0);
-	sciprintf ("Checking mark 0x%lx\n", mark);
-	dmalloc_message ("--- Mark 0x%lx:\n", mark);
-	dmalloc_log_changed (mark, 1, 1, 1);
+c_dm_chmark(state_t * s) {
+	unsigned long mark = strtoul(cmd_params[0].str, NULL, 0);
+	sciprintf("Checking mark 0x%lx\n", mark);
+	dmalloc_message("--- Mark 0x%lx:\n", mark);
+	dmalloc_log_changed(mark, 1, 1, 1);
 	return 0;
 }
 
 int
-c_dm_print (state_t * s)
-{
+c_dm_print(state_t * s) {
 	int i;
 	for (i = 0; i < cmd_paramlength; i++)
-		dmalloc_message ("%s\n", cmd_params[i].str);
+		dmalloc_message("%s\n", cmd_params[i].str);
 	return 0;
 }
 
 void
-con_init_dmalloc()
-{
-	con_hook_command (c_dm_stats, "dm_stats", "",
-			  "Prints memory usage stats\n  to the dmalloc output file\n\n  dm_stats");
-	con_hook_command (c_dm_log_unfreed, "dm_log_unfreed", "",
-			  "Prints unfreed pointer\n  information to the dmalloc\n  output file\n\n"
-			  "USAGE\n\n  dm_log_unfreed");
-	con_hook_command (c_dm_verify, "dm_verify", "s",
-			  "Verifies one pointer,\n  prints output to dmalloc file\n\nUSAGE\n\n"
-			  "  dm_verify <ptr>\n  dm_verify 0\n\n  'dm_verify 0' will verify\n  ALL current pointers.\n");
-	con_hook_command (c_dm_debug, "dm_debug", "s*",
-			  "Sets the dmalloc debug\n  state or displays it\n\nUSAGE\n\n  dm_debug <mode>\n  dm_debug");
-	con_hook_command (c_dm_mark, "dm_mark", "",
-			  "Gets a mark describing\n  the current heap state\n\nUSAGE\n\n  dm_mark\n\n"
-			  "  The mark is written to the\n  dmalloc output file and\n  to sci output.\n\nSEE ALSO\n\n  cm_chmark");
-	con_hook_command (c_dm_chmark, "dm_chmark", "s",
-			  "Checks changes in the\n  heap state since a certain\n  mark was retrieved\n\n"
-			  "USAGE\n\n  c_dm_chmark <mark>\n\n  Output is written to the\n  dmalloc output file.\n\n  Use dm_mark to retrieve a\n"
-			  "  mark.\n\nSEE ALSO\n\n  c_dm_mark");
-	con_hook_command (c_dm_print, "dm_print", "s*",
-			  "Prints something to the\n  dmalloc output.\n\nUSAGE\n\n  dm_print <text>");
+con_init_dmalloc() {
+	con_hook_command(c_dm_stats, "dm_stats", "",
+	                 "Prints memory usage stats\n  to the dmalloc output file\n\n  dm_stats");
+	con_hook_command(c_dm_log_unfreed, "dm_log_unfreed", "",
+	                 "Prints unfreed pointer\n  information to the dmalloc\n  output file\n\n"
+	                 "USAGE\n\n  dm_log_unfreed");
+	con_hook_command(c_dm_verify, "dm_verify", "s",
+	                 "Verifies one pointer,\n  prints output to dmalloc file\n\nUSAGE\n\n"
+	                 "  dm_verify <ptr>\n  dm_verify 0\n\n  'dm_verify 0' will verify\n  ALL current pointers.\n");
+	con_hook_command(c_dm_debug, "dm_debug", "s*",
+	                 "Sets the dmalloc debug\n  state or displays it\n\nUSAGE\n\n  dm_debug <mode>\n  dm_debug");
+	con_hook_command(c_dm_mark, "dm_mark", "",
+	                 "Gets a mark describing\n  the current heap state\n\nUSAGE\n\n  dm_mark\n\n"
+	                 "  The mark is written to the\n  dmalloc output file and\n  to sci output.\n\nSEE ALSO\n\n  cm_chmark");
+	con_hook_command(c_dm_chmark, "dm_chmark", "s",
+	                 "Checks changes in the\n  heap state since a certain\n  mark was retrieved\n\n"
+	                 "USAGE\n\n  c_dm_chmark <mark>\n\n  Output is written to the\n  dmalloc output file.\n\n  Use dm_mark to retrieve a\n"
+	                 "  mark.\n\nSEE ALSO\n\n  c_dm_mark");
+	con_hook_command(c_dm_print, "dm_print", "s*",
+	                 "Prints something to the\n  dmalloc output.\n\nUSAGE\n\n  dm_print <text>");
 }
 #else /* WITH_DMALLOC */
 
 void
-con_init_dmalloc (void)
-{
+con_init_dmalloc(void) {
 }
 
 #endif /* WITH_DMALLOC */
 
 
 void
-_cmd_exit (void)
-{
+_cmd_exit(void) {
 	int t;
 
 	for (t = 0; t < CMD_MM_ENTRIES; t++)
@@ -243,8 +231,7 @@ _cmd_exit (void)
 }
 
 static cmd_mm_entry_t *
-cmd_mm_find(char *name, int type)
-{
+cmd_mm_find(char *name, int type) {
 	int i;
 
 	for (i = 0; i < cmd_mm[type].entries; i++)
@@ -255,27 +242,24 @@ cmd_mm_find(char *name, int type)
 }
 
 static int
-_cmd_mm_comp (const void *a, const void *b)
-{
-	return strcmp (((cmd_mm_entry_t *) a)->name, ((cmd_mm_entry_t *) b)->name);
+_cmd_mm_comp(const void *a, const void *b) {
+	return strcmp(((cmd_mm_entry_t *) a)->name, ((cmd_mm_entry_t *) b)->name);
 }
 
 void
-con_sort_all (void)
-{
+con_sort_all(void) {
 	int i;
 
 	for (i = 0; i < CMD_MM_ENTRIES; i++)
 		if (cmd_mm[i].entries && _lists_need_sorting & (1 << i))
-			qsort (cmd_mm[i].data, cmd_mm[i].entries, cmd_mm[i].size_per_entry,
-			       _cmd_mm_comp);
+			qsort(cmd_mm[i].data, cmd_mm[i].entries, cmd_mm[i].size_per_entry,
+			      _cmd_mm_comp);
 
 	_lists_need_sorting = 0;
 }
 
 void
-con_init (void)
-{
+con_init(void) {
 	if (!_cmd_initialized) {
 		int i;
 
@@ -288,70 +272,68 @@ con_init (void)
 			cmd_mm[i].data = sci_calloc(cmd_mm[i].allocated, cmd_mm[i].size_per_entry);
 			cmd_mm[i].print = cmd_mm_printers[i];
 		}
-		
-		atexit (_cmd_exit);
+
+		atexit(_cmd_exit);
 
 		/* Hook up some commands */
-		con_hook_command (&c_version, "version", "",
-				  "Displays the version number");
-		con_hook_command (&c_list, "list", "s*",
-				  "Lists various things (try 'list')");
-		con_hook_command (&c_man, "man", "s",
-				  "Gives a short description of something");
-		con_hook_command (&c_print, "print", "s", "Prints an int variable");
-		con_hook_command (&c_set, "set", "si", "Sets an int variable");
-		con_hook_command (&c_size, "size", "si",
-				  "Displays the size of a resource");
-		con_hook_command (&c_dump, "dump", "si", "HexDumps a resource");
-		con_hook_command (&c_hexgrep, "hexgrep", "shh*",
-				  "Searches some resources for a\n"
-				  "  particular sequence of bytes, re-\n  presented"
-				  " as hexadecimal numbers.\n\n"
-				  "EXAMPLES:\n  hexgrep script e8 03 c8 00\n"
-				  "  hexgrep pic.042 fe");
-		con_hook_command (&c_dissectscript, "dissectscript", "i",
-				  "Examines a script.");
+		con_hook_command(&c_version, "version", "",
+		                 "Displays the version number");
+		con_hook_command(&c_list, "list", "s*",
+		                 "Lists various things (try 'list')");
+		con_hook_command(&c_man, "man", "s",
+		                 "Gives a short description of something");
+		con_hook_command(&c_print, "print", "s", "Prints an int variable");
+		con_hook_command(&c_set, "set", "si", "Sets an int variable");
+		con_hook_command(&c_size, "size", "si",
+		                 "Displays the size of a resource");
+		con_hook_command(&c_dump, "dump", "si", "HexDumps a resource");
+		con_hook_command(&c_hexgrep, "hexgrep", "shh*",
+		                 "Searches some resources for a\n"
+		                 "  particular sequence of bytes, re-\n  presented"
+		                 " as hexadecimal numbers.\n\n"
+		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n"
+		                 "  hexgrep pic.042 fe");
+		con_hook_command(&c_dissectscript, "dissectscript", "i",
+		                 "Examines a script.");
 
 		con_hook_page("addresses",
-			      "Passing address parameters\n\n"
-			      "  Address parameters may be passed in one of\n"
-			      "  three forms:\n"
-			      "  - ssss:oooo -- where 'ssss' denotes a\n"
-			      "    segment and 'oooo' an offset. Example:\n"
-			      "    \"a:c5\" would address something in seg-\n"
-			      "    ment 0xa at offset 0xc5.\n"
-			      "  - &scr:oooo -- where 'scr' is a script number\n"
-			      "    and oooo an offset within that script; will\n"
-			      "    fail if the script is not currently loaded\n"
-			      "  - $REG -- where 'REG' is one of 'PC', 'ACC',\n"
-			      "    'PREV' or 'OBJ': References the address\n"
-			      "    indicated by the register of this name.\n"
-			      "  - $REG+n (or -n) -- Like $REG, but modifies\n"
-			      "    the offset part by a specific amount (which\n"
-			      "    is specified in hexadecimal).\n"
-			      "  - ?obj -- Looks up an object with the specified\n"
-			      "    name, uses its address. This will abort if\n"
-			      "    the object name is ambiguous; in that case,\n"
-			      "    a list of addresses and indices is provided.\n"
-			      "    ?obj.idx may be used to disambiguate 'obj'\n"
-			      "    by the index 'idx'.\n");
+		              "Passing address parameters\n\n"
+		              "  Address parameters may be passed in one of\n"
+		              "  three forms:\n"
+		              "  - ssss:oooo -- where 'ssss' denotes a\n"
+		              "    segment and 'oooo' an offset. Example:\n"
+		              "    \"a:c5\" would address something in seg-\n"
+		              "    ment 0xa at offset 0xc5.\n"
+		              "  - &scr:oooo -- where 'scr' is a script number\n"
+		              "    and oooo an offset within that script; will\n"
+		              "    fail if the script is not currently loaded\n"
+		              "  - $REG -- where 'REG' is one of 'PC', 'ACC',\n"
+		              "    'PREV' or 'OBJ': References the address\n"
+		              "    indicated by the register of this name.\n"
+		              "  - $REG+n (or -n) -- Like $REG, but modifies\n"
+		              "    the offset part by a specific amount (which\n"
+		              "    is specified in hexadecimal).\n"
+		              "  - ?obj -- Looks up an object with the specified\n"
+		              "    name, uses its address. This will abort if\n"
+		              "    the object name is ambiguous; in that case,\n"
+		              "    a list of addresses and indices is provided.\n"
+		              "    ?obj.idx may be used to disambiguate 'obj'\n"
+		              "    by the index 'idx'.\n");
 
 		con_init_dmalloc();
 
-		con_hook_int (&con_passthrough, "con_passthrough",
-			      "scicon->stdout passthrough");
+		con_hook_int(&con_passthrough, "con_passthrough",
+		             "scicon->stdout passthrough");
 	}
 }
 
 static inline int
-clone_is_used(clone_table_t *t, int idx)
-{
+clone_is_used(clone_table_t *t, int idx) {
 	return ENTRY_IS_VALID(t, idx);
 }
 
 int
-parse_reg_t(state_t *s, const char *str, reg_t *dest)
-{ /* Returns 0 on success */
+parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success */
 	int rel_offsetting = 0;
 	const char *offsetting = NULL;
 	/* Non-NULL: Parse end of string for relative offsets */
@@ -365,25 +347,25 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 	if (*str == '$') { /* Register */
 		rel_offsetting = 1;
 
-		if (!strncasecmp(str+1, "PC", 2)) {
+		if (!strncasecmp(str + 1, "PC", 2)) {
 			*dest = s->execution_stack[s->execution_stack_pos].addr.pc;
 			offsetting = str + 3;
-		} else if (!strncasecmp(str+1, "P", 1)) {
+		} else if (!strncasecmp(str + 1, "P", 1)) {
 			*dest = s->execution_stack[s->execution_stack_pos].addr.pc;
 			offsetting = str + 2;
-		} else if (!strncasecmp(str+1, "PREV", 4)) {
+		} else if (!strncasecmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
 			offsetting = str + 5;
-		} else if (!strncasecmp(str+1, "ACC", 3)) {
+		} else if (!strncasecmp(str + 1, "ACC", 3)) {
 			*dest = s->r_acc;
 			offsetting = str + 4;
-		} else if (!strncasecmp(str+1, "A", 1)) {
+		} else if (!strncasecmp(str + 1, "A", 1)) {
 			*dest = s->r_acc;
 			offsetting = str + 2;
-		} else if (!strncasecmp(str+1, "OBJ", 3)) {
+		} else if (!strncasecmp(str + 1, "OBJ", 3)) {
 			*dest = s->execution_stack[s->execution_stack_pos].objp;
 			offsetting = str + 4;
-		} else if (!strncasecmp(str+1, "O", 1)) {
+		} else if (!strncasecmp(str + 1, "O", 1)) {
 			*dest = s->execution_stack[s->execution_stack_pos].objp;
 			offsetting = str + 2;
 		} else return 1; /* No matching register */
@@ -400,9 +382,9 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 		if (!colon)
 			return 1;
 		*colon = 0;
-		offsetting = colon+1;
+		offsetting = colon + 1;
 
-		script_nr = strtol(str+1, &endptr, 10);
+		script_nr = strtol(str + 1, &endptr, 10);
 
 		if (*endptr)
 			return 1;
@@ -435,7 +417,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 
 		if (tmp) {
 			*tmp = 0;
-			index = strtol(tmp+1, &endptr, 16);
+			index = strtol(tmp + 1, &endptr, 16);
 			if (*endptr)
 				return -1;
 		}
@@ -473,11 +455,11 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 
 				if (valid) {
 					char *objname = (char *) obj->base
-						+ obj->variables[SCRIPT_NAME_SELECTOR].offset;
+					                + obj->variables[SCRIPT_NAME_SELECTOR].offset;
 					if (!strcmp(objname, str_objname)) {
 						/* Found a match! */
 						if (index < 0 ||
-						    times_found == index)
+						        times_found == index)
 							*dest = objpos;
 						else if (times_found < 0 && index) {
 
@@ -502,7 +484,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 			return 1;
 
 		if (times_found > 1
-		    && index < 0) {
+		        && index < 0) {
 			sciprintf("Ambiguous: Aborting.\n");
 			return 1; /* Ambiguous */
 		}
@@ -522,7 +504,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 			dest->segment = 0;
 		} else {
 			*colon = 0;
-			offsetting = colon+1;
+			offsetting = colon + 1;
 
 			dest->segment = strtol(str, &endptr, 16);
 			if (*endptr)
@@ -545,14 +527,13 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 }
 
 void
-con_parse (state_t *s, const char *command)
-{
+con_parse(state_t *s, const char *command) {
 	int quote = 0;		/* quoting? */
 	int done = 0;			/* are we done yet? */
 	int cdone = 0;		/* Done with the current command? */
 	const char *paramt;			/* parameter types */
-	char *cmd = (command && command[0]) ? (char *) sci_strdup (command) :
-		(char *) sci_strdup(" ");
+	char *cmd = (command && command[0]) ? (char *) sci_strdup(command) :
+	            (char *) sci_strdup(" ");
 	char *_cmd = cmd;
 	int pos = 0;
 
@@ -585,11 +566,11 @@ con_parse (state_t *s, const char *command)
 					cmd[pos] = onvar = 0;
 				break;
 			case '\\':		/* don't check next char for special meaning */
-				memmove (cmd + pos, cmd + pos + 1, strlen (cmd + pos) - 1);
+				memmove(cmd + pos, cmd + pos + 1, strlen(cmd + pos) - 1);
 				break;
 			case '"':
 				quote ^= 1;
-				memmove (cmd + pos, cmd + pos + 1, strlen (cmd + pos));
+				memmove(cmd + pos, cmd + pos + 1, strlen(cmd + pos));
 				pos--;
 				break;
 			default:
@@ -597,9 +578,9 @@ con_parse (state_t *s, const char *command)
 					onvar = 1;
 					if (cmd_paramlength == parammem)
 						cmd_params = (cmd_param_t*)sci_realloc(cmd_params,
-									 sizeof (cmd_param_t)
-									 * (parammem += 8));
-			    
+						                                       sizeof(cmd_param_t)
+						                                       * (parammem += 8));
+
 					cmd_params[cmd_paramlength].str = cmd + pos;
 
 					cmd_paramlength++;
@@ -610,13 +591,13 @@ con_parse (state_t *s, const char *command)
 		}
 
 		if (quote)
-			sciprintf ("unbalanced quotes\n");
-		else if (strcmp (cmd, "") != 0) {
+			sciprintf("unbalanced quotes\n");
+		else if (strcmp(cmd, "") != 0) {
 
 			command_todo = (cmd_command_t *) cmd_mm_find(cmd, CMD_MM_CMD);
 
 			if (!command_todo)
-				sciprintf ("%s: not found\n", cmd);
+				sciprintf("%s: not found\n", cmd);
 			else {
 				unsigned int minparams;
 				int need_state = 0;
@@ -627,19 +608,19 @@ con_parse (state_t *s, const char *command)
 					paramt++;
 				}
 
-				minparams = strlen (paramt);
+				minparams = strlen(paramt);
 
-				if ((paramt[0] != 0) && (paramt[strlen (paramt) - 1] == '*'))
+				if ((paramt[0] != 0) && (paramt[strlen(paramt) - 1] == '*'))
 					minparams -= 2;
 
 				if (cmd_paramlength < minparams)
-					sciprintf ("%s: needs more than %d parameters\n",
-						   cmd, cmd_paramlength);
+					sciprintf("%s: needs more than %d parameters\n",
+					          cmd, cmd_paramlength);
 
-				else if ((cmd_paramlength > strlen (paramt))
-					 && ((strlen (paramt) == 0)
-					     || paramt[strlen (paramt) - 1] != '*'))
-					sciprintf ("%s: too many parameters", cmd);
+				else if ((cmd_paramlength > strlen(paramt))
+				         && ((strlen(paramt) == 0)
+				             || paramt[strlen(paramt) - 1] != '*'))
+					sciprintf("%s: too many parameters", cmd);
 				else {
 					int do_execute = !need_state || s; /* /me wants an
 								      ** implication arrow */
@@ -651,7 +632,7 @@ con_parse (state_t *s, const char *command)
 						paramtype = paramt[paramtypepos];
 
 						if ((paramt[paramtypepos + 1])
-						    && (paramt[paramtypepos + 1] != '*'))
+						        && (paramt[paramtypepos + 1] != '*'))
 							paramtypepos++;
 						/* seek next param type unless end of string or '*						   ' */
 
@@ -663,7 +644,7 @@ con_parse (state_t *s, const char *command)
 						case 'a': {
 							char *oldname = cmd_params[i].str;
 							if (parse_reg_t(s, oldname,
-									&(cmd_params[i].reg))) {
+							                &(cmd_params[i].reg))) {
 								sciprintf("%s: '%s' is not an address or object\n", cmd, oldname);
 								do_execute = 0;
 							}
@@ -673,34 +654,34 @@ con_parse (state_t *s, const char *command)
 						case 'i': {
 							char *orgstr = cmd_params[i].str;
 
-							cmd_params[i].val = strtol (orgstr, &endptr, 0);
+							cmd_params[i].val = strtol(orgstr, &endptr, 0);
 							if (*endptr != '\0') {
 								do_execute = 0;
-								sciprintf ("%s: '%s' is not an int\n", cmd, orgstr);
+								sciprintf("%s: '%s' is not an int\n", cmd, orgstr);
 							}
 						}
-							break;
+						break;
 
 						case 'h': {
 							char *orgstr = cmd_params[i].str;
 
-							cmd_params[i].val = strtol (orgstr, &endptr, 16);
+							cmd_params[i].val = strtol(orgstr, &endptr, 16);
 
 							if (*endptr != '\0') {
 								do_execute = 0;
-								sciprintf ("%s: '%s' is not a hex number\n", cmd, orgstr);
+								sciprintf("%s: '%s' is not a hex number\n", cmd, orgstr);
 							}
 
 							cmd_params[i].val &= 0xff;	/* Clip hex numbers to 0x00 ... 0xff */
 						}
-							break;
+						break;
 
 						case 's':
 							break;
 
 						default:
 							fprintf(stderr, "Internal error: Heap corruption or prior assertion failed:\n"
-								"Unknown parameter type '%c' for funtion\n", paramtype);
+							        "Unknown parameter type '%c' for funtion\n", paramtype);
 
 						}
 					}
@@ -714,9 +695,9 @@ con_parse (state_t *s, const char *command)
 		cmd += pos;
 	}
 
-	free (_cmd);
+	free(_cmd);
 	if (cmd_params)
-		free (cmd_params);
+		free(cmd_params);
 	cmd_params = NULL;
 
 }
@@ -740,8 +721,7 @@ con_iterate_entry(int ID, int *counter)
 */
 
 static cmd_mm_entry_t *
-con_alloc_page_entry(int ID)
-{
+con_alloc_page_entry(int ID) {
 	int entry;
 	con_init();
 
@@ -753,20 +733,19 @@ con_alloc_page_entry(int ID)
 			nextsize <<= 1;
 
 		cmd_mm[ID].data = sci_realloc(cmd_mm[ID].data,
-					      nextsize * cmd_mm[ID].size_per_entry);
+		                              nextsize * cmd_mm[ID].size_per_entry);
 		cmd_mm[ID].allocated = nextsize;
 	}
 
 	_lists_need_sorting |= (1 << ID);
 
 	entry = cmd_mm[ID].entries++;
-	return (cmd_mm_entry_t *) (((byte *)cmd_mm[ID].data)
-				   + entry * cmd_mm[ID].size_per_entry);
+	return (cmd_mm_entry_t *)(((byte *)cmd_mm[ID].data)
+	                          + entry * cmd_mm[ID].size_per_entry);
 }
 
 int
-con_hook_page(const char *name, const char *body)
-{
+con_hook_page(const char *name, const char *body) {
 	cmd_page_t *page = (cmd_page_t *) con_alloc_page_entry(CMD_MM_DOC);
 
 	page->name = name;
@@ -776,9 +755,8 @@ con_hook_page(const char *name, const char *body)
 }
 
 int
-con_hook_command (int command (state_t *), const char *name, const char *param,
-		  const char *description)
-{
+con_hook_command(int command(state_t *), const char *name, const char *param,
+                 const char *description) {
 	cmd_command_t *cmd = NULL;
 	unsigned int i;
 
@@ -829,8 +807,7 @@ con_hook_command (int command (state_t *), const char *name, const char *param,
 
 
 int
-con_hook_int (int *pointer, const char *name, const char *description)
-{
+con_hook_int(int *pointer, const char *name, const char *description) {
 	cmd_var_t *var;
 
 	if (pointer == NULL)
@@ -855,38 +832,36 @@ con_hook_int (int *pointer, const char *name, const char *description)
 
 
 static int
-get_resource_number (char *resid)
+get_resource_number(char *resid)
 /* Gets the resource number of a resource string, or returns -1 */
 {
-  int i, res = -1;
+	int i, res = -1;
 
-  for (i = 0; i < sci_invalid_resource; i++)
-    if (strcmp (sci_resource_types[i], resid) == 0)
-      res = i;
-  return res;
+	for (i = 0; i < sci_invalid_resource; i++)
+		if (strcmp(sci_resource_types[i], resid) == 0)
+			res = i;
+	return res;
 }
 
 static int
-c_version (state_t * s)
-{
+c_version(state_t * s) {
 	if (NULL == s) {
 		sciprintf("console.c: c_version: NULL passed for parameter s\n");
 		return -1;
 	}
 
-	sciprintf ("FreeSCI, version " VERSION "\n");
-	sciprintf ("Resource file version:        %s\n", sci_version_types[s->resmgr->sci_version]);
-	sciprintf ("Emulated interpreter version: %d.%03d.%03d\n", 
-		   SCI_VERSION_MAJOR(s->version),
-		   SCI_VERSION_MINOR(s->version),
-		   SCI_VERSION_PATCHLEVEL(s->version));
-		   
+	sciprintf("FreeSCI, version " VERSION "\n");
+	sciprintf("Resource file version:        %s\n", sci_version_types[s->resmgr->sci_version]);
+	sciprintf("Emulated interpreter version: %d.%03d.%03d\n",
+	          SCI_VERSION_MAJOR(s->version),
+	          SCI_VERSION_MINOR(s->version),
+	          SCI_VERSION_PATCHLEVEL(s->version));
+
 	return 0;
 }
 
 static int
-c_list_words(state_t *s)
-{
+c_list_words(state_t *s) {
 	word_t **words;
 	int words_nr;
 	int i;
@@ -900,18 +875,17 @@ c_list_words(state_t *s)
 
 	for (i = 0; i < words_nr; i++)
 		sciprintf("%4d: %03x [%03x] %s\n",
-			  i,
-			  words[i]->w_class,
-			  words[i]->group,
-			  words[i]->word);
+		          i,
+		          words[i]->w_class,
+		          words[i]->group,
+		          words[i]->word);
 
 	vocab_free_words(words, words_nr);
 	return 0;
 }
 
 int
-c_list_suffices(state_t *s)
-{
+c_list_suffices(state_t *s) {
 	suffix_t **suffices;
 	int suffices_nr;
 	int i;
@@ -928,15 +902,15 @@ c_list_suffices(state_t *s)
 		suffix_t *suf = suffices[i];
 
 		strncpy(word_buf, suf->word_suffix,
-			suf->word_suffix_length);
+		        suf->word_suffix_length);
 		word_buf[suf->word_suffix_length] = 0;
 		strncpy(alt_buf, suf->alt_suffix,
-			suf->alt_suffix_length);
+		        suf->alt_suffix_length);
 		alt_buf[suf->alt_suffix_length] = 0;
 
 		sciprintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n",
-			  i, suf->class_mask, word_buf,
-			  alt_buf, suf->result_class);
+		          i, suf->class_mask, word_buf,
+		          alt_buf, suf->result_class);
 	}
 
 	vocab_free_suffices(s->resmgr, suffices, suffices_nr);
@@ -944,86 +918,81 @@ c_list_suffices(state_t *s)
 }
 
 static void
-_cmd_print_command(cmd_mm_entry_t *data, int full)
-{
+_cmd_print_command(cmd_mm_entry_t *data, int full) {
 	const char *paramseeker = ((cmd_command_t *) data)->param;
 
 	if (full) {
-		sciprintf ("SYNOPSIS\n\n  %s ", data->name, paramseeker);
+		sciprintf("SYNOPSIS\n\n  %s ", data->name, paramseeker);
 
 		while (*paramseeker)      {
 			switch (*paramseeker) {
-			case '!': break;
+			case '!':
+				break;
 			case 'i':
-				sciprintf (" (int)");
+				sciprintf(" (int)");
 				break;
 			case 'a':
-				sciprintf (" (addr)");
+				sciprintf(" (addr)");
 				break;
 			case 's':
-				sciprintf (" (string)");
+				sciprintf(" (string)");
 				break;
 			case 'h':
-				sciprintf (" (hexbyte)");
+				sciprintf(" (hexbyte)");
 				break;
 			case '*':
-				sciprintf ("*");
+				sciprintf("*");
 				break;
 			default:
-				sciprintf (" (Unknown(%c))", *paramseeker);
+				sciprintf(" (Unknown(%c))", *paramseeker);
 			}
 			paramseeker++;
 		}
 
 		sciprintf("\n\nDESCRIPTION\n\n  %s",
-			  data->description);
+		          data->description);
 	} else
 		sciprintf(" %s", data->name);
 }
 
 static void
-_cmd_print_var(cmd_mm_entry_t *data, int full)
-{
+_cmd_print_var(cmd_mm_entry_t *data, int full) {
 	cmd_var_t *var = (cmd_var_t *) data;
 	if (full)
-		sciprintf ("VALUE\n\n");
+		sciprintf("VALUE\n\n");
 	sciprintf("  %s = %d\n", var->name, *(var->var.intp));
 
 	if (full)
 		sciprintf("\n\nDESCRIPTION\n\n  %s",
-			  data->description);
+		          data->description);
 }
 
 static void
-_cmd_print_page(cmd_mm_entry_t *data, int full)
-{
+_cmd_print_page(cmd_mm_entry_t *data, int full) {
 	if (full)
 		sciprintf("\n\nDESCRIPTION\n\n  %s\n",
-			  data->description);
+		          data->description);
 	else sciprintf("%s\n", data->name);
 }
 
 static int
-c_list (state_t * s)
-{
+c_list(state_t * s) {
 	if (_lists_need_sorting)
 		con_sort_all();
 
-	if (cmd_paramlength == 0)
-		{
-			sciprintf ("usage: list [type]\nwhere type is one of the following:\n"
-				   "cmds       - lists all commands\n"
-				   "vars       - lists all variables\n"
-				   "docs       - lists all misc. documentation\n"
-				   "\n"
-				   "restypes   - lists all resource types\n"
-				   "selectors  - lists all selectors\n"
-				   "syscalls   - lists all kernel functions\n"
-				   "words      - lists all kernel words\n"
-				   "suffixes   - lists all suffix replacements\n"
-				   "[resource] - lists all [resource]s");
-		}
-	else if (cmd_paramlength == 1) {
+	if (cmd_paramlength == 0) {
+		sciprintf("usage: list [type]\nwhere type is one of the following:\n"
+		          "cmds       - lists all commands\n"
+		          "vars       - lists all variables\n"
+		          "docs       - lists all misc. documentation\n"
+		          "\n"
+		          "restypes   - lists all resource types\n"
+		          "selectors  - lists all selectors\n"
+		          "syscalls   - lists all kernel functions\n"
+		          "words      - lists all kernel words\n"
+		          "suffixes   - lists all suffix replacements\n"
+		          "[resource] - lists all [resource]s");
+	} else if (cmd_paramlength == 1) {
 		const char *mm_subsects[3] = {"cmds", "vars", "docs"};
 		int mm_found = -1;
 		int i;
@@ -1035,50 +1004,47 @@ c_list (state_t * s)
 		if (mm_found >= 0)
 			for (i = 0; i < cmd_mm[mm_found].entries; i++)
 				cmd_mm[mm_found].print((cmd_mm_entry_t *)
-						       (((byte *)cmd_mm[mm_found].data)
-							+ i * cmd_mm[mm_found].size_per_entry), 0);
+				                       (((byte *)cmd_mm[mm_found].data)
+				                        + i * cmd_mm[mm_found].size_per_entry), 0);
 		else {
 			if (!s) {
 				sciprintf("You need a state to do that!\n");
 				return 1;
 			}
-			
+
 			if (!strcmp("selectors", cmd_params[0].str))
 				return c_selectornames(s);
 			else if (!strcmp("syscalls", cmd_params[0].str))
 				return c_kernelnames(s);
 			else if (!strcmp("suffixes", cmd_params[0].str)
-				 || !strcmp("suffices", cmd_params[0].str)
-				 || !strcmp("sufficos", cmd_params[0].str))
+			         || !strcmp("suffices", cmd_params[0].str)
+			         || !strcmp("sufficos", cmd_params[0].str))
 				/* sufficos: Accusative Plural of 'suffix' */
 				return c_list_suffices(s);
 			else if (!strcmp("words", cmd_params[0].str))
 				return c_list_words(s);
-			else if (strcmp ("restypes", cmd_params[0].str) == 0) {
+			else if (strcmp("restypes", cmd_params[0].str) == 0) {
 				for (i = 0; i < sci_invalid_resource; i++)
-					sciprintf ("%s\n", sci_resource_types[i]);
-			}
-			else {
-				int res = get_resource_number (cmd_params[0].str);
+					sciprintf("%s\n", sci_resource_types[i]);
+			} else {
+				int res = get_resource_number(cmd_params[0].str);
 				if (res == -1)
-					sciprintf ("Unknown resource type: '%s'\n", cmd_params[0].str);
+					sciprintf("Unknown resource type: '%s'\n", cmd_params[0].str);
 				else {
 					for (i = 0; i < sci_max_resource_nr[s->resmgr->sci_version]; i++)
-						if (scir_test_resource (s->resmgr, res, i))
-							sciprintf ("%s.%03d\n", sci_resource_types[res], i);
+						if (scir_test_resource(s->resmgr, res, i))
+							sciprintf("%s.%03d\n", sci_resource_types[res], i);
 				}
 			}
 		}
-	}
-	else
-		sciprintf ("list can only be used with one argument");
+	} else
+		sciprintf("list can only be used with one argument");
 	return 0;
 }
 
 
 static int
-c_man (state_t * s)
-{
+c_man(state_t * s) {
 	int section = 0;
 	unsigned int i;
 	char *name = cmd_params[0].str;
@@ -1092,7 +1058,7 @@ c_man (state_t * s)
 
 	if (section < 0 || section >= CMD_MM_ENTRIES) {
 		sciprintf("Invalid section %d\n",
-			  section);
+		          section);
 		return 1;
 	}
 
@@ -1102,7 +1068,7 @@ c_man (state_t * s)
 	else
 		for (i = 0; i < CMD_MM_ENTRIES && !section; i++) {
 			if ((entry = cmd_mm_find(name, i)))
-				section = i+1;
+				section = i + 1;
 		}
 
 	if (!entry) {
@@ -1110,15 +1076,14 @@ c_man (state_t * s)
 		return 1;
 	}
 
-	sciprintf ("-- %s: %s.%d\n", cmd_mm[section - 1].name, name, section);
+	sciprintf("-- %s: %s.%d\n", cmd_mm[section - 1].name, name, section);
 	cmd_mm[section - 1].print(entry, 1);
 
 	return 0;
 }
 
 static int
-c_set (state_t * s)
-{
+c_set(state_t * s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
@@ -1128,214 +1093,186 @@ c_set (state_t * s)
 }
 
 static int
-c_print (state_t * s)
-{
+c_print(state_t * s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
-		sciprintf ("%d", *(var->var.intp));
+		sciprintf("%d", *(var->var.intp));
 	else
-		sciprintf ("Not defined.");
+		sciprintf("Not defined.");
 
 	return 0;
 }
 
 
 static int
-c_size (state_t * s)
-{
-  int res = get_resource_number (cmd_params[0].str);
-  if (res == -1)
-    sciprintf ("Resource type '%s' is not valid\n", cmd_params[0].str);
-  else
-  {
-    resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
-    if (resource)
-    {
-      sciprintf ("Size: %d\n", resource->size);
-    }
-    else
-      sciprintf ("Resource %s.%03d not found\n", cmd_params[0].str,
-		 cmd_params[1].val);
-  }
-  return 0;
-}
-
-
-static int
-c_dump (state_t * s)
-{
-  int res = get_resource_number (cmd_params[0].str);
-
-  if (res == -1)
-    sciprintf ("Resource type '%s' is not valid\n", cmd_params[0].str);
-  else
-  {
-    resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
-    if (resource)
-      sci_hexdump (resource->data, resource->size, 0);
-    else
-      sciprintf ("Resource %s.%03d not found\n", cmd_params[0].str,
-		 cmd_params[1].val);
-  }
-  return 0;
-}
-
-
-static int
-c_hexgrep (state_t * s)
-{
-  int i, seeklen, resnr, restype, resmax;
-  unsigned char *seekstr	= NULL;
-  resource_t *script		= NULL;
-  char *dot = strchr (cmd_params[0].str, '.');
-
-  if (NULL == s)
-  {
-    fprintf(stderr, "console.c: c_hexgrep(): NULL passed for s\r\n");
-    return(-1);
-  }
-
-  seekstr = (unsigned char*)sci_malloc (seeklen = (cmd_paramlength - 1));
-
-  if (NULL == seekstr)
-  {
-    fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");
-    return(-1);
-  }
-
-  for (i = 0; i < seeklen; i++)
-    seekstr[i] = (byte)cmd_params[i + 1].val;
-
-  if (dot)
-  {
-    *dot = 0;
-    resmax = resnr = atoi (dot + 1);
-  }
-  else
-  {
-    resnr = 0;
-    resmax = 999;
-  }
-
-  if ((restype = get_resource_number (cmd_params[0].str)) == -1)
-  {
-    sciprintf ("Unknown resource type \"%s\"\n", cmd_params[0].str);
-    free(seekstr);
-    return 1;
-  }
-
-  for (; resnr <= resmax; resnr++)
-    if ((script = scir_find_resource(s->resmgr, restype, resnr, 0)))
-    {
-      unsigned int seeker = 0, seekerold = 0;
-      int comppos = 0;
-      int output_script_name = 0;
-
-      while (seeker < script->size)
-      {
-
-	if (script->data[seeker] == seekstr[comppos])
-	{
-	  if (comppos == 0)
-	    seekerold = seeker;
-
-	  comppos++;
-
-	  if (comppos == seeklen)
-	  {
-	    comppos = 0;
-	    seeker = seekerold + 1;
-
-	    if (!output_script_name)
-	    {
-	      sciprintf ("\nIn %s.%03d:\n", sci_resource_types[restype], resnr);
-	      output_script_name = 1;
-	    }
-	    sciprintf ("   0x%04x\n", seekerold);
-	  }
+c_size(state_t * s) {
+	int res = get_resource_number(cmd_params[0].str);
+	if (res == -1)
+		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
+	else {
+		resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
+		if (resource) {
+			sciprintf("Size: %d\n", resource->size);
+		} else
+			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str,
+			          cmd_params[1].val);
 	}
-	else
-	  comppos = 0;
-
-	seeker++;
-      }
-    }
-
-  free (seekstr);
-
-  return 0;
+	return 0;
 }
 
 
 static int
-c_selectornames (state_t * s)
-{
-  int namectr;
-  char **snames	= NULL;
-  int seeker = 0;
+c_dump(state_t * s) {
+	int res = get_resource_number(cmd_params[0].str);
 
-  if (NULL == s)
-  {
-    sciprintf("console.c: c_selectornames(): NULL passed for parameter s\n");
-    return -1;
-  }
+	if (res == -1)
+		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
+	else {
+		resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
+		if (resource)
+			sci_hexdump(resource->data, resource->size, 0);
+		else
+			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str,
+			          cmd_params[1].val);
+	}
+	return 0;
+}
 
-  snames = vocabulary_get_snames (s->resmgr, &namectr, s ? s->version : 0);
 
-  if (!snames)
-  {
-    sciprintf ("No selector name table found!\n");
-    return 1;
-  }
+static int
+c_hexgrep(state_t * s) {
+	int i, seeklen, resnr, restype, resmax;
+	unsigned char *seekstr	= NULL;
+	resource_t *script		= NULL;
+	char *dot = strchr(cmd_params[0].str, '.');
 
-  sciprintf ("Selector names in numeric order:\n");
-  while (snames[seeker])
-  {
-    sciprintf ("%03x: %s\n", seeker, snames[seeker]);
-    seeker++;
-  }
-  vocabulary_free_snames (snames);
-  return 0;
+	if (NULL == s) {
+		fprintf(stderr, "console.c: c_hexgrep(): NULL passed for s\r\n");
+		return(-1);
+	}
+
+	seekstr = (unsigned char*)sci_malloc(seeklen = (cmd_paramlength - 1));
+
+	if (NULL == seekstr) {
+		fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");
+		return(-1);
+	}
+
+	for (i = 0; i < seeklen; i++)
+		seekstr[i] = (byte)cmd_params[i + 1].val;
+
+	if (dot) {
+		*dot = 0;
+		resmax = resnr = atoi(dot + 1);
+	} else {
+		resnr = 0;
+		resmax = 999;
+	}
+
+	if ((restype = get_resource_number(cmd_params[0].str)) == -1) {
+		sciprintf("Unknown resource type \"%s\"\n", cmd_params[0].str);
+		free(seekstr);
+		return 1;
+	}
+
+	for (; resnr <= resmax; resnr++)
+		if ((script = scir_find_resource(s->resmgr, restype, resnr, 0))) {
+			unsigned int seeker = 0, seekerold = 0;
+			int comppos = 0;
+			int output_script_name = 0;
+
+			while (seeker < script->size) {
+
+				if (script->data[seeker] == seekstr[comppos]) {
+					if (comppos == 0)
+						seekerold = seeker;
+
+					comppos++;
+
+					if (comppos == seeklen) {
+						comppos = 0;
+						seeker = seekerold + 1;
+
+						if (!output_script_name) {
+							sciprintf("\nIn %s.%03d:\n", sci_resource_types[restype], resnr);
+							output_script_name = 1;
+						}
+						sciprintf("   0x%04x\n", seekerold);
+					}
+				} else
+					comppos = 0;
+
+				seeker++;
+			}
+		}
+
+	free(seekstr);
+
+	return 0;
+}
+
+
+static int
+c_selectornames(state_t * s) {
+	int namectr;
+	char **snames	= NULL;
+	int seeker = 0;
+
+	if (NULL == s) {
+		sciprintf("console.c: c_selectornames(): NULL passed for parameter s\n");
+		return -1;
+	}
+
+	snames = vocabulary_get_snames(s->resmgr, &namectr, s ? s->version : 0);
+
+	if (!snames) {
+		sciprintf("No selector name table found!\n");
+		return 1;
+	}
+
+	sciprintf("Selector names in numeric order:\n");
+	while (snames[seeker]) {
+		sciprintf("%03x: %s\n", seeker, snames[seeker]);
+		seeker++;
+	}
+	vocabulary_free_snames(snames);
+	return 0;
 }
 
 static int
-c_kernelnames (state_t * s)
-{
-  int knamectr;
-  char **knames = vocabulary_get_knames (s->resmgr, &knamectr);
-  int seeker = 0;
+c_kernelnames(state_t * s) {
+	int knamectr;
+	char **knames = vocabulary_get_knames(s->resmgr, &knamectr);
+	int seeker = 0;
 
-  if (NULL == s) {
-    sciprintf("console.c: c_kernelnames NULL passed for parameter s\n");
-    return -1;
-  }
+	if (NULL == s) {
+		sciprintf("console.c: c_kernelnames NULL passed for parameter s\n");
+		return -1;
+	}
 
-  if (!knames)
-  {
-    sciprintf ("No kernel name table found!\n");
-    return 1;
-  }
+	if (!knames) {
+		sciprintf("No kernel name table found!\n");
+		return 1;
+	}
 
-  sciprintf ("Syscalls in numeric order:\n");
-  for (seeker = 0; seeker < knamectr; seeker++)
-    sciprintf ("%03x: %s\n", seeker, knames[seeker]);
+	sciprintf("Syscalls in numeric order:\n");
+	for (seeker = 0; seeker < knamectr; seeker++)
+		sciprintf("%03x: %s\n", seeker, knames[seeker]);
 
-  vocabulary_free_knames (knames);
-  return 0;
+	vocabulary_free_knames(knames);
+	return 0;
 }
 
 static int
-c_dissectscript (state_t * s)
-{
-  if (NULL == s)
-  {
-    sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
-    return -1;
-  }
+c_dissectscript(state_t * s) {
+	if (NULL == s) {
+		sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
+		return -1;
+	}
 
-  script_dissect (s->resmgr, cmd_params[0].val, s->selector_names, s->selector_names_nr);
-  return 0;
+	script_dissect(s->resmgr, cmd_params[0].val, s->selector_names, s->selector_names_nr);
+	return 0;
 }
 #endif /* SCI_CONSOLE */
 

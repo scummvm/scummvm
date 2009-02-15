@@ -30,8 +30,7 @@
 #include "sci/engine/kernel_types.h"
 
 reg_t
-read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file, int line)
-{
+read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file, int line) {
 	reg_t *address;
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
@@ -43,21 +42,20 @@ read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file
 
 void
 write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t value,
-	       const char *fname, int line)
-{
+               const char *fname, int line) {
 	reg_t *address;
 
 	if ((selector_id < 0) || (selector_id > s->selector_names_nr)) {
 		SCIkwarn(SCIkWARNING, "Attempt to write to invalid selector %d of"
-			 " object at "PREG" (%s L%d).\n", selector_id,
-			 PRINT_REG(object), fname, line);
+		         " object at "PREG" (%s L%d).\n", selector_id,
+		         PRINT_REG(object), fname, line);
 		return;
 	}
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
 		SCIkwarn(SCIkWARNING, "Selector '%s' of object at %04x could not be"
-			 " written to (%s L%d)\n",
-			 s->selector_names[selector_id], object, fname, line);
+		         " written to (%s L%d)\n",
+		         s->selector_names[selector_id], object, fname, line);
 	else
 		*address = value;
 
@@ -65,9 +63,8 @@ write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t value,
 
 int
 invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-		stack_ptr_t k_argp, int k_argc, /* Kernel function argp/argc */
-		const char *fname, int line, int argc, ...)
-{
+                stack_ptr_t k_argp, int k_argc, /* Kernel function argp/argc */
+                const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
 	int framesize = 2 + 1 * argc;
@@ -84,7 +81,7 @@ invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, int kf
 
 	if (slc_type == SELECTOR_NONE) {
 		SCIkwarn(SCIkERROR, "Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
-			 s->selector_names[selector_id], PRINT_REG(object), fname, line);
+		         s->selector_names[selector_id], PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
 		return 1;
@@ -101,17 +98,17 @@ invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, int kf
 
 	/* Write "kernel" call to the stack, for debugging: */
 	xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG,
-				      k_argc, k_argp - 1, 0, NULL_REG,
-				      s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
+	                              k_argc, k_argp - 1, 0, NULL_REG,
+	                              s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = -42 - kfunct; /* Evil debugging hack to identify kernel function */
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 	/* Now commit the actual function: */
 	xstack = send_selector(s, object, object,
-			       stackframe, framesize, stackframe);
+	                       stackframe, framesize, stackframe);
 
-	xstack->sp += argc+2;
-	xstack->fp += argc+2;
+	xstack->sp += argc + 2;
+	xstack->fp += argc + 2;
 
 	run_vm(s, 0); /* Start a new vm */
 
@@ -122,8 +119,7 @@ invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, int kf
 
 
 int
-is_object(state_t *s, reg_t object)
-{
+is_object(state_t *s, reg_t object) {
 	return obj_get(s, object) != NULL;
 }
 
@@ -133,28 +129,25 @@ is_object(state_t *s, reg_t object)
 ** This implementation ignores all resource numbers except the first one.
 */
 reg_t
-kLoad(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	int resnr = KP_UINT(argv[1]);
 
 	if (restype == sci_memory)/* Request to dynamically allocate hunk memory for later use */
 		return kalloc(s, "kLoad()", resnr);
-	
+
 	return make_reg(0, ((restype << 11) | resnr)); /* Return the resource identifier as handle */
 }
 
 reg_t
-kLock(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	int restype = UKPV(0)&0x7f;
+kLock(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	int restype = UKPV(0) & 0x7f;
 	int resnr = UKPV(1);
 	int state = argc > 2 ? UKPV(2) : 1;
 
 	resource_t *which;
 
-	switch (state)
-	{
+	switch (state) {
 	case 1 :
 		scir_find_resource(s->resmgr, restype, resnr, 1);
 		break;
@@ -170,8 +163,7 @@ kLock(state_t *s, int funct_nr, int argc, reg_t *argv)
 ** Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
 */
 reg_t
-kUnLoad(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kUnLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	reg_t resnr = argv[1];
 
@@ -183,8 +175,7 @@ kUnLoad(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kClone(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	object_t *parent_obj = obj_get(s, parent_addr);
 	reg_t clone_addr;
@@ -225,18 +216,17 @@ kClone(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 extern void
-_k_view_list_mark_free(state_t *s, reg_t off); /* kgraphics.c */
+	_k_view_list_mark_free(state_t *s, reg_t off); /* kgraphics.c */
 
 reg_t
-kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
 	clone_t *victim_obj = obj_get(s, victim_addr);
 	word underBits;
 
 	if (!victim_obj) {
 		SCIkwarn(SCIkERROR, "Attempt to dispose non-class/object at "PREG"\n",
-			 PRINT_REG(victim_addr));
+		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
 
@@ -248,7 +238,7 @@ kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	underBits = GET_SEL32V(victim_addr, underBits);
 	if (underBits) {
-		SCIkwarn(SCIkWARNING,"Clone "PREG" was cleared with underBits set\n", PRINT_REG(victim_addr));
+		SCIkwarn(SCIkWARNING, "Clone "PREG" was cleared with underBits set\n", PRINT_REG(victim_addr));
 	}
 #if 0
 	if (s->dyn_views) {  /* Free any widget associated with the clone */
@@ -261,7 +251,7 @@ kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	victim_obj->flags |= OBJECT_FLAG_FREED;
 
-	_k_view_list_mark_free(s, victim_addr); /* Free on view list, if neccessary */ 
+	_k_view_list_mark_free(s, victim_addr); /* Free on view list, if neccessary */
 
 	return s->r_acc;
 }
@@ -271,8 +261,7 @@ kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv)
 ** Returns script dispatch address index in the supplied script
 */
 reg_t
-kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int script = KP_UINT(argv[0]);
 	int index = KP_UINT(KP_ALT(1, NULL_REG));
 
@@ -294,7 +283,7 @@ kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	if (index > scr->exports_nr) {
 		SCIkwarn(SCIkERROR, "Dispatch index too big: %d > %d\n",
-			 index, scr->exports_nr);
+		         index, scr->exports_nr);
 		return NULL_REG;
 	}
 
@@ -303,19 +292,17 @@ kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kDisposeScript(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDisposeScript(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int script = argv[0].offset;
-	
+
 	/* Work around QfG1 graveyard bug */
 	if (argv[0].segment) return s->r_acc;
 
-	if (sm_script_is_loaded(&(s->seg_manager), script, SCRIPT_ID))
-        {
-	    int id = sm_seg_get(&(s->seg_manager), script);
-	    
-	    if (s->execution_stack[s->execution_stack_pos].addr.pc.segment != id)
-		    sm_set_lockers(&(s->seg_manager), 1, script, SCRIPT_ID);
+	if (sm_script_is_loaded(&(s->seg_manager), script, SCRIPT_ID)) {
+		int id = sm_seg_get(&(s->seg_manager), script);
+
+		if (s->execution_stack[s->execution_stack_pos].addr.pc.segment != id)
+			sm_set_lockers(&(s->seg_manager), 1, script, SCRIPT_ID);
 	}
 
 	script_uninstantiate(s, script);
@@ -324,17 +311,15 @@ kDisposeScript(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 int
-is_heap_object(state_t *s, reg_t pos)
-{
+is_heap_object(state_t *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
 	return (obj != NULL
-		&& (!(obj->flags & OBJECT_FLAG_FREED))
-		&& (!sm_script_is_marked_as_deleted(&s->seg_manager, pos.segment)));
+	        && (!(obj->flags & OBJECT_FLAG_FREED))
+	        && (!sm_script_is_marked_as_deleted(&s->seg_manager, pos.segment)));
 }
 
 reg_t
-kIsObject(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kIsObject(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	if (argv[0].offset == 0xffff) /* Treated specially */
 		return NULL_REG;
 	else
@@ -342,12 +327,11 @@ kIsObject(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kRespondsTo(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kRespondsTo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = KP_UINT(argv[1]);
 
 	return make_reg(0, is_heap_object(s, obj)
-			&& lookup_selector(s, obj, selector, NULL, NULL) != SELECTOR_NONE);
+	                && lookup_selector(s, obj, selector, NULL, NULL) != SELECTOR_NONE);
 }
 

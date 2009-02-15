@@ -38,7 +38,7 @@
 
 char *
 kernel_lookup_text(state_t *s, reg_t address, int index)
-     /* Returns the string the script intended to address */
+/* Returns the string the script intended to address */
 {
 	char *seeker;
 	resource_t *textres;
@@ -78,45 +78,43 @@ kernel_lookup_text(state_t *s, reg_t address, int index)
 
 #ifdef SCI_SIMPLE_SAID_CODE
 int
-vocab_match_simple(state_t *s, heap_ptr addr)
-{
-  int nextitem;
-  int listpos = 0;
+vocab_match_simple(state_t *s, heap_ptr addr) {
+	int nextitem;
+	int listpos = 0;
 
-  if (!s->parser_valid)
-    return SAID_NO_MATCH;
+	if (!s->parser_valid)
+		return SAID_NO_MATCH;
 
-  if (s->parser_valid == 2) { /* debug mode: sim_said */
-    do {
-      sciprintf("DEBUGMATCH: ");
-      nextitem = s->heap[addr++];
+	if (s->parser_valid == 2) { /* debug mode: sim_said */
+		do {
+			sciprintf("DEBUGMATCH: ");
+			nextitem = s->heap[addr++];
 
-      if (nextitem < 0xf0) {
-	nextitem = nextitem << 8 | s->heap[addr++];
-	if (s->parser_nodes[listpos].type
-	    || nextitem != s->parser_nodes[listpos++].content.value)
-	  return SAID_NO_MATCH;
-      } else {
+			if (nextitem < 0xf0) {
+				nextitem = nextitem << 8 | s->heap[addr++];
+				if (s->parser_nodes[listpos].type
+				        || nextitem != s->parser_nodes[listpos++].content.value)
+					return SAID_NO_MATCH;
+			} else {
 
-	if (nextitem == 0xff)
-	  return (s->parser_nodes[listpos++].type == -1)? SAID_FULL_MATCH : SAID_NO_MATCH; /* Finished? */
+				if (nextitem == 0xff)
+					return (s->parser_nodes[listpos++].type == -1) ? SAID_FULL_MATCH : SAID_NO_MATCH; /* Finished? */
 
-	if (s->parser_nodes[listpos].type != 1
-	    || nextitem != s->parser_nodes[listpos++].content.value)
-	  return SAID_NO_MATCH;
+				if (s->parser_nodes[listpos].type != 1
+				        || nextitem != s->parser_nodes[listpos++].content.value)
+					return SAID_NO_MATCH;
 
-      }
-    } while (42);
-  } else { /* normal simple match mode */
-    return vocab_simple_said_test(s, addr);
-  }
+			}
+		} while (42);
+	} else { /* normal simple match mode */
+		return vocab_simple_said_test(s, addr);
+	}
 }
 #endif /* SCI_SIMPLE_SAID_CODE */
 
 
 reg_t
-kSaid(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
@@ -142,27 +140,27 @@ kSaid(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 #ifdef SCI_SIMPLE_SAID_CODE
 
-  s->acc = 0;
+	s->acc = 0;
 
-  if (s->parser_lastmatch_word == SAID_FULL_MATCH)
-    return; /* Matched before; we're not doing any more matching work today. */
+	if (s->parser_lastmatch_word == SAID_FULL_MATCH)
+		return; /* Matched before; we're not doing any more matching work today. */
 
-  if ((new_lastmatch = vocab_match_simple(s, said_block)) != SAID_NO_MATCH) {
+	if ((new_lastmatch = vocab_match_simple(s, said_block)) != SAID_NO_MATCH) {
 
-    if (s->debug_mode & (1 << SCIkPARSER_NR))
-      sciprintf("Match (simple).\n");
-    s->acc = 1;
+		if (s->debug_mode & (1 << SCIkPARSER_NR))
+			sciprintf("Match (simple).\n");
+		s->acc = 1;
 
-    if (new_lastmatch == SAID_FULL_MATCH) /* Finished matching? */
-      PUT_SELECTOR(s->parser_event, claimed, 1); /* claim event */
-    /* otherwise, we have a partial match: Set new lastmatch word in all cases. */
+		if (new_lastmatch == SAID_FULL_MATCH) /* Finished matching? */
+			PUT_SELECTOR(s->parser_event, claimed, 1); /* claim event */
+		/* otherwise, we have a partial match: Set new lastmatch word in all cases. */
 
-    s->parser_lastmatch_word = new_lastmatch;
-  }
+		s->parser_lastmatch_word = new_lastmatch;
+	}
 
 #else /* !SCI_SIMPLE_SAID_CODE */
 	if ((new_lastmatch = said(s, said_block, (s->debug_mode & (1 << SCIkPARSER_NR))))
-	    != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
+	        != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 		if (s->debug_mode & (1 << SCIkPARSER_NR))
 			sciprintf("Match.\n");
@@ -184,8 +182,7 @@ kSaid(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 	list_t *list;
 	node_t *node;
@@ -197,7 +194,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	s->synonyms_nr = 0;
 
-	list = LOOKUP_LIST(GET_SEL32(object, elements)); 
+	list = LOOKUP_LIST(GET_SEL32(object, elements));
 	node = LOOKUP_NODE(list->first);
 
 	while (node) {
@@ -218,18 +215,18 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
 				int i;
 				if (s->synonyms_nr)
 					s->synonyms = (synonym_t*)sci_realloc(s->synonyms,
-								  sizeof(synonym_t) * (s->synonyms_nr + synonyms_nr));
+					                                      sizeof(synonym_t) * (s->synonyms_nr + synonyms_nr));
 				else
 					s->synonyms = (synonym_t*)sci_malloc(sizeof(synonym_t) * synonyms_nr);
 
 				s->synonyms_nr +=  synonyms_nr;
 
 				SCIkdebug(SCIkPARSER, "Setting %d synonyms for script.%d\n",
-					  synonyms_nr, script);
+				          synonyms_nr, script);
 
 				if (synonyms_nr > 16384) {
 					SCIkwarn(SCIkERROR, "Segtable corruption: script.%03d has %d synonyms!\n",
-						 script, synonyms_nr);
+					         script, synonyms_nr);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
 				} else
@@ -241,7 +238,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
 					}
 			} else SCIkwarn(SCIkWARNING, "Synonyms of script.%03d were requested, but script is not available\n");
 
-		} 
+		}
 
 		node = LOOKUP_NODE(node->succ);
 	}
@@ -256,8 +253,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kParse(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kParse(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t stringpos = argv[0];
 	char *string = kernel_dereference_char_pointer(s, stringpos, 0);
 	int words_nr;
@@ -275,9 +271,9 @@ kParse(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 
 	words = vocab_tokenize_string(string, &words_nr,
-				      s->parser_words, s->parser_words_nr,
-				      s->parser_suffices, s->parser_suffices_nr,
-				      &error);
+	                              s->parser_words, s->parser_words_nr,
+	                              s->parser_suffices, s->parser_suffices_nr,
+	                              &error);
 	s->parser_valid = 0; /* not valid */
 
 	if (words) {
@@ -298,7 +294,7 @@ kParse(state_t *s, int funct_nr, int argc, reg_t *argv)
 		}
 
 		if (vocab_build_parse_tree(&(s->parser_nodes[0]), words, words_nr, s->parser_branches,
-					   s->parser_rules))
+		                           s->parser_rules))
 			syntax_fail = 1; /* Building a tree failed */
 
 #ifdef SCI_SIMPLE_SAID_CODE
@@ -333,7 +329,7 @@ kParse(state_t *s, int funct_nr, int argc, reg_t *argv)
 		if (error) {
 			char *pbase_str = kernel_dereference_char_pointer(s, s->parser_base, 0);
 			strcpy(pbase_str, error);
-			SCIkdebug(SCIkPARSER,"Word unknown: %s\n", error);
+			SCIkdebug(SCIkPARSER, "Word unknown: %s\n", error);
 			/* Issue warning: */
 
 			invoke_selector(INV_SEL(s->game_obj, wordFail, 0), 2, s->parser_base, stringpos);
@@ -347,8 +343,7 @@ kParse(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kStrEnd(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrEnd(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t address = argv[0];
 	char *seeker = kernel_dereference_char_pointer(s, address, 0);
 
@@ -359,8 +354,7 @@ kStrEnd(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kStrCat(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrCat(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
 
@@ -369,8 +363,7 @@ kStrCat(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kStrCmp(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrCmp(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
 
@@ -382,32 +375,30 @@ kStrCmp(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *dest = (char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
 	char *src = (char *) kernel_dereference_bulk_pointer(s, argv[1], 0);
 
 	if (!dest) {
 		SCIkdebug(SCIkWARNING, "Attempt to strcpy TO invalid pointer "PREG"!\n",
-			  PRINT_REG(argv[0]));
+		          PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 	if (!src) {
 		SCIkdebug(SCIkWARNING, "Attempt to strcpy FROM invalid pointer "PREG"!\n",
-			  PRINT_REG(argv[1]));
+		          PRINT_REG(argv[1]));
 		return NULL_REG;
 	}
 
-	if (argc > 2)
-	{
+	if (argc > 2) {
 		int length = SKPV(2);
 
-		if (length>=0)
+		if (length >= 0)
 			strncpy(dest, src, length);
 		else {
 			if (s->seg_manager.heap[argv[0].segment]->type == MEM_OBJ_DYNMEM) {
 				reg_t *srcp = (reg_t *) src;
-				
+
 				int i;
 				SCIkdebug(SCIkWARNING, "Performing reg_t to raw conversion for AvoidPath\n");
 				for (i = 0; i < -length / 2; i++) {
@@ -418,8 +409,7 @@ kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv)
 			} else
 				memcpy(dest, src, -length);
 		}
-	}
-	else
+	} else
 		strcpy(dest, src);
 
 	return argv[0];
@@ -427,31 +417,30 @@ kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned char *dest = (unsigned char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
 	reg_t *dest2;
 
 	if (!dest) {
 		SCIkdebug(SCIkWARNING, "Attempt to StrAt at invalid pointer "PREG"!\n",
-			  PRINT_REG(argv[0]));
+		          PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if ((argc == 2) &&
-/* Our pathfinder already works around the issue we're trying to fix */
-	    (strcmp(sm_get_description(&(s->seg_manager), argv[0]),
-		    AVOIDPATH_DYNMEM_STRING) != 0)  &&
-	    ((strlen((const char*)dest) < 2) || (!is_print_str((char*)dest))))
-	  /* SQ4 array handling detected */
+	        /* Our pathfinder already works around the issue we're trying to fix */
+	        (strcmp(sm_get_description(&(s->seg_manager), argv[0]),
+	                AVOIDPATH_DYNMEM_STRING) != 0)  &&
+	        ((strlen((const char*)dest) < 2) || (!is_print_str((char*)dest))))
+		/* SQ4 array handling detected */
 	{
 #ifndef WORDS_BIGENDIAN
 		int odd = KP_UINT(argv[1]) & 1;
 #else
 		int odd = !(KP_UINT(argv[1]) & 1);
 #endif
-		dest2 = ((reg_t *) dest)+(KP_UINT(argv[1])/2);
-		dest = ((unsigned char *) (&dest2->offset))+odd;
+		dest2 = ((reg_t *) dest) + (KP_UINT(argv[1]) / 2);
+		dest = ((unsigned char *)(&dest2->offset)) + odd;
 	} else dest += KP_UINT(argv[1]);
 
 	s->r_acc = make_reg(0, *dest);
@@ -464,8 +453,7 @@ kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kReadNumber(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kReadNumber(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *source = kernel_dereference_char_pointer(s, argv[0], 0);
 
 	while (isspace(*source))
@@ -490,8 +478,7 @@ kReadNumber(state_t *s, int funct_nr, int argc, reg_t *argv)
 ** the supplied parameters and writes it to the targ_address.
 */
 reg_t
-kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kFormat(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
 	char *target = (char *) kernel_dereference_bulk_pointer(s, dest, 0);
@@ -549,15 +536,16 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 				char *destp;
 
 				if (xfer == '0')
-					fillchar = '0'; else
+					fillchar = '0';
+				else
 
-				if (xfer == '=') {
-					align = ALIGN_CENTRE;
-					source++;
-				} else 
+					if (xfer == '=') {
+						align = ALIGN_CENTRE;
+						source++;
+					} else
 
-				if (isdigit(xfer))
-					source--; /* Stepped over length argument */
+						if (isdigit(xfer))
+							source--; /* Stepped over length argument */
 
 				str_leng = strtol(source, &destp, 10);
 
@@ -580,7 +568,7 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 			case 's': { /* Copy string */
 				reg_t reg = argv[startarg + paramindex];
 				char *tempsource = kernel_lookup_text(s, reg,
-								      arguments[paramindex + 1]);
+				                                      arguments[paramindex + 1]);
 				int slen = strlen(tempsource);
 				int extralen = str_leng - slen;
 				CHECK_OVERFLOW1(target, extralen, NULL_REG);
@@ -604,9 +592,11 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 					int half_extralen = extralen >> 1;
 					while (half_extralen-- > 0)
 						*target++ = ' '; /* Format into the text */
-					break;}
+					break;
+				}
 
-				default: break;
+				default:
+					break;
 
 				}
 
@@ -621,15 +611,17 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 					half_extralen = extralen - (extralen >> 1);
 					while (half_extralen-- > 0)
 						*target++ = ' '; /* Format into the text */
-					break;}
+					break;
+				}
 
-				default: break;
+				default:
+					break;
 
 				}
 
 				mode = 0;
 			}
-				break;
+			break;
 
 			case 'c': { /* insert character */
 				CHECK_OVERFLOW1(target, 2, NULL_REG);
@@ -640,10 +632,11 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 				*target++ = arguments[paramindex++];
 				mode = 0;
 			}
-				break;
+			break;
 
 			case 'x':
-			case 'u': unsigned_var = 1;
+			case 'u':
+				unsigned_var = 1;
 			case 'd': { /* Copy decimal */
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
@@ -663,7 +656,7 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 				mode = 0;
 			}
-				break;
+			break;
 			default:
 				*target = '%';
 				target++;
@@ -679,7 +672,7 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 				if (padding > 0) {
 					if (align > 0) {
 						memmove(writestart + padding,
-							writestart, written);
+						        writestart, written);
 						memset(writestart, fillchar, padding);
 					} else {
 						memset(target, ' ', padding);
@@ -687,7 +680,7 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 					target += padding;
 				}
 			}
-		}else { /* mode != 1 */
+		} else { /* mode != 1 */
 			*target = xfer;
 			target++;
 		}
@@ -701,8 +694,7 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kStrLen(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kStrLen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *str = kernel_dereference_char_pointer(s, argv[0], 0);
 
 	return make_reg(0, strlen(str));
@@ -710,8 +702,7 @@ kStrLen(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	resource_t *textres = scir_find_resource(s->resmgr, sci_text, UKPV(0), 0);
 	char *seeker;
 	int counter = UKPV(1);
@@ -739,15 +730,12 @@ kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv)
 static message_state_t state;
 
 reg_t
-kMessage(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kMessage(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.initialized)
 		message_state_initialize(s->resmgr, &state);
 
-	switch (UKPV(0))
-	{
-	case 0 :
-	{
+	switch (UKPV(0)) {
+	case 0 : {
 		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
 		message_tuple_t tuple;
 		int module = UKPV(1);
@@ -757,34 +745,28 @@ kMessage(state_t *s, int funct_nr, int argc, reg_t *argv)
 		tuple.cond = UKPV(4);
 		tuple.seq = UKPV(5);
 
-		if (message_state_load_res(&state, module) && message_get_specific(&state, &tuple))
-		{
-			if (buffer) 
+		if (message_state_load_res(&state, module) && message_get_specific(&state, &tuple)) {
+			if (buffer)
 				message_get_text(&state, buffer, 100);
 			return make_reg(0, message_get_talker(&state)); /* Talker id */
-		} else
-		{
+		} else {
 			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
 			return NULL_REG;
 		}
 	}
-	case 1 :
-	{
+	case 1 : {
 		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
 
-		if (message_get_next(&state))
-		{
-			if (buffer) 
+		if (message_get_next(&state)) {
+			if (buffer)
 				message_get_text(&state, buffer, 100);
 			return make_reg(0, message_get_talker(&state)); /* Talker id */
-		} else
-		{
+		} else {
 			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
 			return NULL_REG;
 		}
 	}
-	case 2 :
-	{
+	case 2 : {
 		message_tuple_t tuple;
 		int module = UKPV(1);
 		tuple.noun = UKPV(2);
@@ -793,7 +775,7 @@ kMessage(state_t *s, int funct_nr, int argc, reg_t *argv)
 		tuple.seq = UKPV(5);
 
 		if (message_state_load_res(&state, module) && message_get_specific(&state, &tuple))
-			return make_reg(0, message_get_length(&state)+1);
+			return make_reg(0, message_get_length(&state) + 1);
 		else return NULL_REG;
 	}
 	}

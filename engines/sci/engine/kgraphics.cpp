@@ -109,8 +109,7 @@
 
 
 static inline int
-sign_extend_byte(int value)
-{
+sign_extend_byte(int value) {
 	if (value & 0x80)
 		return value - 256;
 	else
@@ -119,8 +118,7 @@ sign_extend_byte(int value)
 
 
 static void
-assert_primary_widget_lists(state_t *s)
-{
+assert_primary_widget_lists(state_t *s) {
 	if (!s->dyn_views) {
 		rect_t bounds = s->picture_port->bounds;
 
@@ -139,8 +137,7 @@ assert_primary_widget_lists(state_t *s)
 }
 
 static void
-reparentize_primary_widget_lists(state_t *s, gfxw_port_t *newport)
-{
+reparentize_primary_widget_lists(state_t *s, gfxw_port_t *newport) {
 	if (!newport)
 		newport = s->picture_port;
 
@@ -152,10 +149,9 @@ reparentize_primary_widget_lists(state_t *s, gfxw_port_t *newport)
 }
 
 int
-_find_view_priority(state_t *s, int y)
-{
-  /*        if (s->version <= SCI_VERSION_LTU_PRIORITY_OB1)
-	    ++y; */
+_find_view_priority(state_t *s, int y) {
+	/*        if (s->version <= SCI_VERSION_LTU_PRIORITY_OB1)
+	      ++y; */
 
 	if (s->pic_priority_table) { /* SCI01 priority table set? */
 		int j;
@@ -163,19 +159,17 @@ _find_view_priority(state_t *s, int y)
 			if (y < s->pic_priority_table[j+1])
 				return j;
 		return 14; /* Maximum */
-	} else
-	{
+	} else {
 		if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES)
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 :
-				SCI0_VIEW_PRIORITY(y);
+			       SCI0_VIEW_PRIORITY(y);
 	}
 }
 
 int
-_find_priority_band(state_t *s, int nr)
-{
+_find_priority_band(state_t *s, int nr) {
 	if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
@@ -207,8 +201,7 @@ _find_priority_band(state_t *s, int nr)
 }
 
 reg_t
-graph_save_box(state_t *s, rect_t area)
-{
+graph_save_box(state_t *s, rect_t area) {
 	reg_t handle = kalloc(s, "graph_save_box()", sizeof(gfxw_snapshot_t *));
 	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **) kmem(s, handle);
 
@@ -219,8 +212,7 @@ graph_save_box(state_t *s, rect_t area)
 
 
 void
-graph_restore_box(state_t *s, reg_t handle)
-{
+graph_restore_box(state_t *s, reg_t handle) {
 	gfxw_snapshot_t **ptr;
 	int port_nr = s->port->ID;
 
@@ -237,7 +229,7 @@ graph_restore_box(state_t *s, reg_t handle)
 	}
 
 	while (port_nr > 2 && !(s->port->flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS)
-	       &&(gfxw_widget_matches_snapshot(*ptr, GFXW(s->port)))) {
+	        && (gfxw_widget_matches_snapshot(*ptr, GFXW(s->port)))) {
 		/* This shouldn't ever happen, actually, since windows (ports w/ ID > 2) should all be immune */
 		gfxw_port_t *newport = gfxw_find_port(s->visual, port_nr);
 		SCIkwarn(SCIkERROR, "Port %d is not immune against snapshots!\n", s->port->ID);
@@ -285,43 +277,39 @@ graph_restore_box(state_t *s, reg_t handle)
 static gfx_pixmap_color_t white = {GFX_COLOR_INDEX_UNMAPPED, 255, 255, 255};
 
 gfx_pixmap_color_t *
-get_pic_color(state_t *s, int color)
-{
-	if (s->resmgr->sci_version < SCI_VERSION_01_VGA) 
+get_pic_color(state_t *s, int color) {
+	if (s->resmgr->sci_version < SCI_VERSION_01_VGA)
 		return &(s->ega_colors[color].visual);
 
 	if (color == 255)
 		return &white;
 	else if (color < KERNEL_COLORS_NR)
-		return &(KERNEL_COLOR_PALETTE[color]); else
-		{
-			SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)",
-				 color, s->gfx_state->pic_nr, KERNEL_COLORS_NR);
-			BREAKPOINT();
-			return NULL; /* Well, rather, not return.  But gcc gets scared here. */
-		}
+		return &(KERNEL_COLOR_PALETTE[color]);
+	else {
+		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)",
+		         color, s->gfx_state->pic_nr, KERNEL_COLORS_NR);
+		BREAKPOINT();
+		return NULL; /* Well, rather, not return.  But gcc gets scared here. */
+	}
 }
 
 static gfx_color_t
-graph_map_color(state_t *s, int color, int priority, int control)
-{
+graph_map_color(state_t *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
-	if (s->resmgr->sci_version < SCI_VERSION_01_VGA)
-	{
+	if (s->resmgr->sci_version < SCI_VERSION_01_VGA) {
 		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
-		gfxop_set_color(s->gfx_state, &retval, (color < 0)? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
-				(color == -1)? 255 : 0, priority, control);
-	} else
-	{
+		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
+		                (color == -1) ? 255 : 0, priority, control);
+	} else {
 		retval.visual = *(get_pic_color(s, color));
 		retval.alpha = 0;
 		retval.priority = priority;
 		retval.control = control;
-		retval.mask = 
-			GFX_MASK_VISUAL | 
-			((priority >= 0)? GFX_MASK_PRIORITY : 0) |
-			((control >= 0)? GFX_MASK_CONTROL : 0);
+		retval.mask =
+		    GFX_MASK_VISUAL |
+		    ((priority >= 0) ? GFX_MASK_PRIORITY : 0) |
+		    ((control >= 0) ? GFX_MASK_CONTROL : 0);
 	};
 
 	return retval;
@@ -331,27 +319,21 @@ graph_map_color(state_t *s, int color, int priority, int control)
 
 
 reg_t
-kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	switch (argc)
-	{
+kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	switch (argc) {
 	case 1 :
-		if (UKPV(0) == 0)
-		{	
+		if (UKPV(0) == 0) {
 			s->save_mouse_pointer_view = s->mouse_pointer_view;
 			s->save_mouse_pointer_loop = s->mouse_pointer_loop;
 			s->save_mouse_pointer_cel = s->mouse_pointer_cel;
 			s->mouse_pointer_view = s->mouse_pointer_loop = s->mouse_pointer_cel = -1;
 			gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
-		} 
-		else
-		{
+		} else {
 			s->mouse_pointer_view = s->save_mouse_pointer_view;
 			s->mouse_pointer_loop = s->save_mouse_pointer_loop;
 			s->mouse_pointer_cel = s->save_mouse_pointer_cel;
 		}
-	case 2 :
-	{
+	case 2 : {
 		point_t pt;
 		pt.x = UKPV(0);
 		pt.y = UKPV(1);
@@ -360,14 +342,14 @@ kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv)
 		break;
 	}
 	case 3 :
-                GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
+		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
 		s->mouse_pointer_view = UKPV(0);
 		s->mouse_pointer_loop = UKPV(1);
 		s->mouse_pointer_cel = UKPV(2);
 		break;
 	case 9 : {
 		point_t hotspot = gfx_point(SKPV(3), SKPV(4));
-		
+
 //		sciprintf("Setting hotspot at %d/%d\n", hotspot.x, hotspot.y);
 
 		gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot);
@@ -381,15 +363,13 @@ kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	if (s->version >= SCI_VERSION(1,001,000)||
-	    has_kernel_function(s, "MoveCursor"))
-	{
+kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	if (s->version >= SCI_VERSION(1, 001, 000) ||
+	        has_kernel_function(s, "MoveCursor")) {
 		return kSetCursor_SCI11(s, funct_nr, argc, argv);
 	}
-		
-	if (SKPV_OR_ALT(1,1)) {
+
+	if (SKPV_OR_ALT(1, 1)) {
 		s->mouse_pointer_view = SKPV(0);
 	} else
 		s->mouse_pointer_view = GFXOP_NO_POINTER;
@@ -400,7 +380,7 @@ kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	if (argc > 2) {
 		point_t newpos = gfx_point(SKPV(2) + s->port->bounds.x,
-					   SKPV(3) + s->port->bounds.y);
+		                           SKPV(3) + s->port->bounds.y);
 
 		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
 	}
@@ -412,28 +392,25 @@ kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
 extern int oldx, oldy;
 
 reg_t
-kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	point_t newpos;
-	static point_t oldpos = {0,0};
+	static point_t oldpos = {0, 0};
 
 	newpos = s->gfx_state->pointer_pos;
 
-	if (argc == 1)
-	{
+	if (argc == 1) {
 		/* Case ignored on IBM PC */
-	} else
-	{
-		newpos.x = SKPV(0)+s->port->zone.x;
-		newpos.y = SKPV(1)+s->port->zone.y;
+	} else {
+		newpos.x = SKPV(0) + s->port->zone.x;
+		newpos.y = SKPV(1) + s->port->zone.y;
 
-		if (newpos.x > s->port->zone.x+s->port->zone.xl)
-			newpos.x = s->port->zone.x+s->port->zone.xl;
-		if (newpos.y > s->port->zone.y+s->port->zone.yl)
-			newpos.y = s->port->zone.y+s->port->zone.yl;
+		if (newpos.x > s->port->zone.x + s->port->zone.xl)
+			newpos.x = s->port->zone.x + s->port->zone.xl;
+		if (newpos.y > s->port->zone.y + s->port->zone.yl)
+			newpos.y = s->port->zone.y + s->port->zone.yl;
 
-		if (newpos.x < 0) newpos.x=0;
-		if (newpos.y < 0) newpos.y=0;
+		if (newpos.x < 0) newpos.x = 0;
+		if (newpos.y < 0) newpos.y = 0;
 
 		oldpos = newpos;
 	}
@@ -444,15 +421,13 @@ kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 static inline void
-_ascertain_port_contents(gfxw_port_t *port)
-{
+_ascertain_port_contents(gfxw_port_t *port) {
 	if (!port->contents)
 		port->contents = (gfxw_widget_t *) gfxw_new_list(port->bounds, 0);
 }
 
 reg_t
-kShow(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kShow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int old_map = s->pic_visible_map;
 
 	s->pic_visible_map = (gfx_map_mask_t) UKPV_OR_ALT(0, 1);
@@ -466,7 +441,7 @@ kShow(state_t *s, int funct_nr, int argc, reg_t *argv)
 		if (old_map != s->pic_visible_map) {
 
 			if (s->pic_visible_map == GFX_MASK_VISUAL) /* Full widget redraw */
-				s->visual->draw(GFXW(s->visual), gfx_point(0,0));
+				s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
 
 			gfxop_update(s->gfx_state);
 			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
@@ -484,8 +459,7 @@ kShow(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kPicNotValid(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kPicNotValid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, s->pic_not_valid);
 	if (argc)
 		s->pic_not_valid = (byte)UKPV(0);
@@ -494,8 +468,7 @@ kPicNotValid(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 void
-_k_redraw_box(state_t *s, int x1, int y1, int x2, int y2)
-{
+_k_redraw_box(state_t *s, int x1, int y1, int x2, int y2) {
 	sciprintf("_k_redraw_box(): Unimplemented!\n");
 #if 0
 	int i;
@@ -504,37 +477,36 @@ _k_redraw_box(state_t *s, int x1, int y1, int x2, int y2)
 	sciprintf("Reanimating views\n", s->dyn_views_nr);
 
 
-	for (i=0;i<s->dyn_views_nr;i++) {
+	for (i = 0;i < s->dyn_views_nr;i++) {
 		*(list[i].underBitsp) = graph_save_box(s,
-						       list[i].nsLeft,
-						       list[i].nsTop,
-						       list[i].nsRight-list[i].nsLeft,
-						       list[i].nsBottom-list[i].nsTop,
-						       SCI_MAP_VISUAL | SCI_MAP_PRIORITY);
+		                                       list[i].nsLeft,
+		                                       list[i].nsTop,
+		                                       list[i].nsRight - list[i].nsLeft,
+		                                       list[i].nsBottom - list[i].nsTop,
+		                                       SCI_MAP_VISUAL | SCI_MAP_PRIORITY);
 		draw_view0(s->pic, s->ports[0],
-			   list[i].nsLeft, list[i].nsTop,
-			   list[i].priority, list[i].loop,
-			   list[i].cel, 0, list[i].view);
+		           list[i].nsLeft, list[i].nsTop,
+		           list[i].priority, list[i].loop,
+		           list[i].cel, 0, list[i].view);
 	}
 
-	graph_update_box(s, x1, y1, x2-x1, y2-y1);
+	graph_update_box(s, x1, y1, x2 - x1, y2 - y1);
 
-	for (i=0;i<s->dyn_views_nr;i++)	{
+	for (i = 0;i < s->dyn_views_nr;i++)	{
 		graph_restore_box(s, *(list[i].underBitsp));
-		list[i].underBits=0;
+		list[i].underBits = 0;
 	}
 #endif
 }
 
 void
-_k_graph_rebuild_port_with_color(state_t *s, gfx_color_t newbgcolor)
-{
+_k_graph_rebuild_port_with_color(state_t *s, gfx_color_t newbgcolor) {
 	gfxw_port_t *port = s->port;
 	gfxw_port_t *newport;
-	
+
 	newport = sciw_new_window(s, port->zone, port->font_nr, port->color, newbgcolor,
-					       s->titlebar_port->font_nr, s->ega_colors[15], s->ega_colors[8],
-					       port->title_text, port->port_flags & ~WINDOW_FLAG_TRANSPARENT);
+	                          s->titlebar_port->font_nr, s->ega_colors[15], s->ega_colors[8],
+	                          port->title_text, port->port_flags & ~WINDOW_FLAG_TRANSPARENT);
 
 	if (s->dyn_views) {
 		int found = 0;
@@ -555,8 +527,7 @@ static int port_origin_x;
 static int port_origin_y;
 
 reg_t
-kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	rect_t area;
 	gfxw_port_t *port = s->port;
 	int redraw_port = 0;
@@ -566,7 +537,7 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 	area.xl = area.xl - area.x; /* Since the actual coordinates are absolute */
 	area.yl = area.yl - area.y;
 
-	switch(SKPV(0)) {
+	switch (SKPV(0)) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
@@ -578,13 +549,13 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 		gfx_color_t gfxcolor = graph_map_color(s, SKPV(5) & 0xf, SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
 
 		SCIkdebug(SCIkGRAPHICS, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-			  SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1),
-			  gfxcolor.mask);
+		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1),
+		          gfxcolor.mask);
 
 		redraw_port = 1;
 		ADD_TO_CURRENT_BG_WIDGETS(GFXW(gfxw_new_line(gfx_point(SKPV(2), SKPV(1)),
-							     gfx_point(SKPV(4), SKPV(3)),
-							     gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		                               gfx_point(SKPV(4), SKPV(3)),
+		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
 
 	}
 	break;
@@ -627,8 +598,8 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 		color.mask = (byte)UKPV(5);
 
 		SCIkdebug(SCIkGRAPHICS, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-			  SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1),
-			  UKPV(5));
+		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1),
+		          UKPV(5));
 
 		ADD_TO_CURRENT_BG_WIDGETS(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
 
@@ -638,7 +609,7 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 	case K_GRAPH_UPDATE_BOX: {
 
 		SCIkdebug(SCIkGRAPHICS, "update_box(%d, %d, %d, %d)\n",
-			  SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		          SKPV(1), SKPV(2), SKPV(3), SKPV(4));
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -652,7 +623,7 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 		SCIkdebug(SCIkGRAPHICS, "redraw_box(%d, %d, %d, %d)\n",
-			  SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		          SKPV(1), SKPV(2), SKPV(3), SKPV(4));
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -688,8 +659,7 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int width, height;
 	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s, argv[1], 0) : NULL;
 	reg_t *dest = kernel_dereference_reg_pointer(s, argv[0], 4);
@@ -709,9 +679,9 @@ kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 
 	GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text,
-					 maxwidth? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
-					 &width, &height, 0,
-					 NULL, NULL, NULL));
+	                                 maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
+	                                 &width, &height, 0,
+	                                 NULL, NULL, NULL));
 	SCIkdebug(SCIkSTRINGS, "GetTextSize '%s' -> %dx%d\n", text, width, height);
 
 	dest[2] = make_reg(0, height);
@@ -725,21 +695,20 @@ kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv)
 int debug_sleeptime_factor = 1;
 
 reg_t
-kWait(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kWait(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	GTimeVal time;
 	int sleep_time = UKPV(0);
 
-	sci_get_current_time (&time);
+	sci_get_current_time(&time);
 
 	s->r_acc = make_reg(0, ((time.tv_usec - s->last_wait_time.tv_usec) * 60 / 1000000) +
-		(time.tv_sec - s->last_wait_time.tv_sec) * 60);
+	                    (time.tv_sec - s->last_wait_time.tv_sec) * 60);
 
 	memcpy(&(s->last_wait_time), &time, sizeof(GTimeVal));
 
 	/* Reset optimization flags: Game is playing along nicely anyway */
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT
-				 | KERNEL_OPT_FLAG_GOT_2NDEVENT);
+	                         | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 
 	sleep_time *= debug_sleeptime_factor;
 	GFX_ASSERT(gfxop_usleep(s->gfx_state, sleep_time * 1000000 / 60));
@@ -749,8 +718,7 @@ kWait(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kCoordPri(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kCoordPri(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int y = SKPV(0);
 
 	return make_reg(0, VIEW_PRIORITY(y));
@@ -758,8 +726,7 @@ kCoordPri(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kPriCoord(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kPriCoord(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int priority = SKPV(0);
 
 	return make_reg(0, PRIORITY_BAND_FIRST(priority));
@@ -769,8 +736,7 @@ kPriCoord(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 void
 _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr,
-	   int argc, reg_t *argv)
-{
+           int argc, reg_t *argv) {
 	int view = GET_SEL32V(obj, view);
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
@@ -809,7 +775,7 @@ _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr,
 	if (maxloops == GFX_ERROR) {
 		SCIkwarn(SCIkERROR, "Invalid view.%03d\n", view);
 		return;
-	} else if ((loop>1)&&(maxloops < 4))
+	} else if ((loop > 1) && (maxloops < 4))
 		return;
 
 	PUT_SEL32V(obj, loop, loop);
@@ -817,8 +783,7 @@ _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr,
 
 
 reg_t
-kDirLoop(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDirLoop(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	_k_dirloop(argv[0], UKPV(1), s, funct_nr, argc, argv);
 
 	return s->r_acc;
@@ -838,8 +803,7 @@ nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority);
 
 static int
 collides_with(state_t *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc,
-	      reg_t *argv)
-{
+              reg_t *argv) {
 	int other_signal = GET_SEL32V(other_obj, signal);
 	int other_priority = GET_SEL32V(other_obj, priority);
 	int y = GET_SEL32SV(other_obj, y);
@@ -862,20 +826,20 @@ collides_with(state_t *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int 
 		return 0; /* Out of scope */
 
 	SCIkdebug(SCIkBRESEN, "OtherSignal=%04x, z=%04x obj="PREG"\n", other_signal,
-		  (other_signal & view_mask), PRINT_REG(other_obj));
+	          (other_signal & view_mask), PRINT_REG(other_obj));
 
 	if ((other_signal & (view_mask)) == 0) {
-					/* check whether the other object ignores actors */
+		/* check whether the other object ignores actors */
 
 		SCIkdebug(SCIkBRESEN, "  against (%d,%d) to (%d,%d)\n",
-			  other_area.x, other_area.y, other_area.xend, other_area.yend);
+		          other_area.x, other_area.y, other_area.xend, other_area.yend);
 
 
 		if (((other_area.xend > area.x)
-		     && (other_area.x < area.xend)) /* [other_x, other_xend] intersects [x, xend])? */
-		    &&
-		    ((other_area.yend > area.y)
-		     && (other_area.y < area.yend))) /* [other_y, other_yend] intersects [y, yend]? */
+		        && (other_area.x < area.xend)) /* [other_x, other_xend] intersects [x, xend])? */
+		        &&
+		        ((other_area.yend > area.y)
+		         && (other_area.y < area.yend))) /* [other_y, other_yend] intersects [y, yend]? */
 			return 1;
 		/* CR (from :Bob Heitman:) Collision rects have Mac semantics, ((0,0),(1,1)) only
 		** covers the coordinate (0,0)  */
@@ -889,8 +853,7 @@ collides_with(state_t *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int 
 
 
 reg_t
-kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv)
-{
+kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv) {
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
 	list_t *cliplist = NULL;
@@ -910,18 +873,18 @@ kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv)
 	abs_zone.yend = GET_SEL32SV(obj, brBottom);
 
 	zone = gfx_rect(abs_zone.x + port->zone.x, abs_zone.y + port->zone.y,
-			abs_zone.xend - abs_zone.x, abs_zone.yend - abs_zone.y);
+	                abs_zone.xend - abs_zone.x, abs_zone.yend - abs_zone.y);
 
 	signal = GET_SEL32V(obj, signal);
-	SCIkdebug(SCIkBRESEN,"Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj="PREG", sig=%04x, cliplist="PREG"\n",
-		  GFX_PRINT_RECT(zone),
-		  abs_zone.x, abs_zone.xend, abs_zone.y, abs_zone.yend,
-		  PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
+	SCIkdebug(SCIkBRESEN, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj="PREG", sig=%04x, cliplist="PREG"\n",
+	          GFX_PRINT_RECT(zone),
+	          abs_zone.x, abs_zone.xend, abs_zone.y, abs_zone.yend,
+	          PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
 
 	illegal_bits = GET_SEL32V(obj, illegalBits);
 
 	retval = !(illegal_bits
-		   & (edgehit = gfxop_scan_bitmask(s->gfx_state, zone, GFX_MASK_CONTROL)));
+	           & (edgehit = gfxop_scan_bitmask(s->gfx_state, zone, GFX_MASK_CONTROL)));
 
 	SCIkdebug(SCIkBRESEN, "edgehit = %04x (illegalBits %04x)\n", edgehit, illegal_bits);
 	if (retval == 0) {
@@ -931,24 +894,24 @@ kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv)
 
 	retval = 0;
 
-        if ((illegal_bits & 0x8000) /* If we are vulnerable to those views at all... */
-            && s->dyn_views) { /* ...check against all stop-updated dynviews */
-                gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) s->dyn_views->contents;
+	if ((illegal_bits & 0x8000) /* If we are vulnerable to those views at all... */
+	        && s->dyn_views) { /* ...check against all stop-updated dynviews */
+		gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) s->dyn_views->contents;
 
-                SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
+		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
 
-                while (widget) {
-                        if (widget->ID
-			    && (widget->signal & _K_VIEW_SIG_FLAG_FREESCI_STOPUPD)
-			    && ((widget->ID != obj.segment) || (widget->subID != obj.offset))
-                            && is_object(s, make_reg(widget->ID, widget->subID)))
-                                if (collides_with(s, abs_zone, make_reg(widget->ID, widget->subID), 1,
-						  GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
-                                        return not_register(s, NULL_REG);
+		while (widget) {
+			if (widget->ID
+			        && (widget->signal & _K_VIEW_SIG_FLAG_FREESCI_STOPUPD)
+			        && ((widget->ID != obj.segment) || (widget->subID != obj.offset))
+			        && is_object(s, make_reg(widget->ID, widget->subID)))
+				if (collides_with(s, abs_zone, make_reg(widget->ID, widget->subID), 1,
+				                  GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
+					return not_register(s, NULL_REG);
 
-                        widget = (gfxw_dyn_view_t *) widget->next;
-                }
-        }
+			widget = (gfxw_dyn_view_t *) widget->next;
+		}
+	}
 
 	if (signal & GASEOUS_VIEW_MASK_ACTIVE) {
 		retval = signal & GASEOUS_VIEW_MASK_ACTIVE; /* CanBeHere- it's either being disposed, or it ignores actors anyway */
@@ -990,8 +953,7 @@ kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv)
 }  /* CanBeHere */
 
 reg_t
-kIsItSkip(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kIsItSkip(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -1006,17 +968,16 @@ kIsItSkip(state_t *s, int funct_nr, int argc, reg_t *argv)
 	}
 
 	pxm = res->loops[loop].cels[cel];
-	if (x > pxm->index_xl) x = pxm->index_xl-1;
-	if (y > pxm->index_yl) y = pxm->index_yl-1;
+	if (x > pxm->index_xl) x = pxm->index_xl - 1;
+	if (y > pxm->index_yl) y = pxm->index_yl - 1;
 
 	return make_reg(0,
-			pxm->index_data[y*pxm->index_xl+x] ==
-			pxm->color_key);
+	                pxm->index_data[y*pxm->index_xl+x] ==
+	                pxm->color_key);
 }
 
 reg_t
-kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -1035,8 +996,7 @@ kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -1055,8 +1015,7 @@ kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kNumLoops(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNumLoops(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(obj, view);
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
@@ -1074,8 +1033,7 @@ kNumLoops(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kNumCels(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNumCels(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int loop = GET_SEL32V(obj, loop);
 	int view = GET_SEL32V(obj, view);
@@ -1088,14 +1046,13 @@ kNumCels(state_t *s, int funct_nr, int argc, reg_t *argv)
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "NumCels(view.%d, %d) = %d\n", view, loop, cel+1);
+	SCIkdebug(SCIkGRAPHICS, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
 
 	return make_reg(0, cel + 1);
 }
 
 reg_t
-kOnControl(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kOnControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int arg = 0;
 	gfx_map_mask_t map;
 	int xstart, ystart;
@@ -1109,12 +1066,12 @@ kOnControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 		map = (gfx_map_mask_t) SKPV(0);
 	}
 
-	ystart = SKPV(arg+1);
+	ystart = SKPV(arg + 1);
 	xstart = SKPV(arg);
 
 	if (argc > 3) {
-		ylen = SKPV(arg+3) - ystart;
-		xlen = SKPV(arg+2) - xstart;
+		ylen = SKPV(arg + 3) - ystart;
+		xlen = SKPV(arg + 2) - xstart;
 	}
 
 	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
@@ -1126,8 +1083,7 @@ _k_view_list_free_backgrounds(state_t *s, view_object_t *list, int list_nr);
 int sci01_priority_table_flags = 0;
 
 reg_t
-kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int pic_nr = SKPV(0);
 	int add_to_pic = 1;
 	int palette = SKPV_OR_ALT(3, 0);
@@ -1143,14 +1099,14 @@ kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 			add_to_pic = 0;
 
 	gfxop_disable_dirty_frames(s->gfx_state);
-	
+
 	if (NULL != s->old_screen) {
 		gfxop_free_pixmap(s->gfx_state, s->old_screen);
 	}
 
 	s->old_screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
 
-	SCIkdebug(SCIkGRAPHICS,"Drawing pic.%03d\n", SKPV(0));
+	SCIkdebug(SCIkGRAPHICS, "Drawing pic.%03d\n", SKPV(0));
 
 	if (!s->pics) {
 		s->pics = (drawn_pic_t*)sci_malloc(sizeof(drawn_pic_t) * (s->pics_nr = 8));
@@ -1193,10 +1149,10 @@ kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 	if (sci01_priority_table_flags & 0x2) {
 		if (s->pic_priority_table) {
 			int i;
-			fprintf(stderr,"---------------------------\nPriority table:\n");
+			fprintf(stderr, "---------------------------\nPriority table:\n");
 			for (i = 0; i < 16; i++)
-				fprintf(stderr,"\t%d:\t%d\n", i, s->pic_priority_table[i]);
-			fprintf(stderr,"---------------------------\n");
+				fprintf(stderr, "\t%d:\t%d\n", i, s->pic_priority_table[i]);
+			fprintf(stderr, "---------------------------\n");
 		}
 	}
 	if (sci01_priority_table_flags & 0x1)
@@ -1226,8 +1182,7 @@ kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 abs_rect_t
-set_base(state_t *s, reg_t object)
-{
+set_base(state_t *s, reg_t object) {
 	int x, y, original_y, z, ystep, xsize, ysize;
 	int xbase, ybase, xend, yend;
 	int view, loop, cel;
@@ -1268,7 +1223,7 @@ set_base(state_t *s, reg_t object)
 		}
 
 		gfxop_get_cel_parameters(s->gfx_state, view, loop, cel,
-					 &xsize, &ysize, &offset);
+		                         &xsize, &ysize, &offset);
 
 		xmod = offset.x;
 		ymod = offset.y;
@@ -1281,7 +1236,7 @@ set_base(state_t *s, reg_t object)
 	ybase = yend - ystep;
 
 	SCIkdebug(SCIkBASESETTER, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
-		  x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
+	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
 
 	retval.x = xbase;
 	retval.y = ybase;
@@ -1293,12 +1248,11 @@ set_base(state_t *s, reg_t object)
 
 
 void
-_k_base_setter(state_t *s, reg_t object)
-{
+_k_base_setter(state_t *s, reg_t object) {
 	abs_rect_t absrect = set_base(s, object);
 
 	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL)
-	    != SELECTOR_VARIABLE)
+	        != SELECTOR_VARIABLE)
 		return; /* non-fatal */
 
 	if (s->version <= SCI_VERSION_LTU_BASE_OB1)
@@ -1311,8 +1265,7 @@ _k_base_setter(state_t *s, reg_t object)
 }
 
 reg_t
-kBaseSetter(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kBaseSetter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 
@@ -1323,8 +1276,7 @@ kBaseSetter(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 static inline abs_rect_t
-nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority)
-{
+nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority) {
 	int pri_top;
 
 	if (priority == -1)
@@ -1343,11 +1295,10 @@ nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority)
 }
 
 inline abs_rect_t
-calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel)
-{
+calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel) {
 	int xbase, ybase, xend, yend, xsize, ysize;
 	int xmod = 0, ymod = 0;
-	abs_rect_t retval = {0,0,0,0};
+	abs_rect_t retval = {0, 0, 0, 0};
 
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		xsize = ysize = xmod = ymod = 0;
@@ -1355,7 +1306,7 @@ calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel)
 		point_t offset = gfx_point(0, 0);
 
 		gfxop_get_cel_parameters(s->gfx_state, view, loop, cel,
-					 &xsize, &ysize, &offset);
+		                         &xsize, &ysize, &offset);
 
 		xmod = offset.x;
 		ymod = offset.y;
@@ -1375,8 +1326,7 @@ calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel)
 }
 
 inline abs_rect_t
-get_nsrect(state_t *s, reg_t object, byte clip)
-{
+get_nsrect(state_t *s, reg_t object, byte clip) {
 	int x, y, z;
 	int view, loop, cel;
 	abs_rect_t retval;
@@ -1406,12 +1356,11 @@ get_nsrect(state_t *s, reg_t object, byte clip)
 }
 
 static void
-_k_set_now_seen(state_t *s, reg_t object)
-{
+_k_set_now_seen(state_t *s, reg_t object) {
 	abs_rect_t absrect = get_nsrect(s, object, 0);
 
 	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL)
-	    != SELECTOR_VARIABLE) { return; } /* This isn't fatal */
+	        != SELECTOR_VARIABLE) { return; } /* This isn't fatal */
 
 	PUT_SEL32V(object, nsLeft, absrect.x);
 	PUT_SEL32V(object, nsRight, absrect.xend);
@@ -1421,8 +1370,7 @@ _k_set_now_seen(state_t *s, reg_t object)
 
 
 reg_t
-kSetNowSeen(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kSetNowSeen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	_k_set_now_seen(s, object);
@@ -1431,10 +1379,8 @@ kSetNowSeen(state_t *s, int funct_nr, int argc, reg_t *argv)
 } /* kSetNowSeen */
 
 reg_t
-kPalette(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	switch (UKPV(0))
-	{
+kPalette(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	switch (UKPV(0)) {
 	case 5 : {
 		int r = UKPV(1);
 		int g = UKPV(2);
@@ -1443,24 +1389,23 @@ kPalette(state_t *s, int funct_nr, int argc, reg_t *argv)
 		int i, delta, bestindex = -1, bestdelta = 200000;
 
 		for (i = 0; i < KERNEL_COLORS_NR; i++) {
-			int dr = abs (KERNEL_COLOR_PALETTE[i].r - r);
-			int dg = abs (KERNEL_COLOR_PALETTE[i].g - g);
-			int db = abs (KERNEL_COLOR_PALETTE[i].b - b);
+			int dr = abs(KERNEL_COLOR_PALETTE[i].r - r);
+			int dg = abs(KERNEL_COLOR_PALETTE[i].g - g);
+			int db = abs(KERNEL_COLOR_PALETTE[i].b - b);
 
-			delta = dr*dr + dg * dg + db * db;
+			delta = dr * dr + dg * dg + db * db;
 
-			if (delta < bestdelta)
-			{
+			if (delta < bestdelta) {
 				bestdelta = delta;
 				bestindex = i;
 			}
 		}
 
-		/* Don't warn about inexact mappings -- it's actually the 
-                ** rule rather than the exception */
+		/* Don't warn about inexact mappings -- it's actually the
+		        ** rule rather than the exception */
 		return make_reg(0, bestindex);
 	}
-		
+
 	case 4 :
 	case 6 :
 		break;
@@ -1475,23 +1420,21 @@ _k_draw_control(state_t *s, reg_t obj, int inverse);
 
 
 static void
-_k_disable_delete_for_now(state_t *s, reg_t obj)
-{
-  	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos)? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
+_k_disable_delete_for_now(state_t *s, reg_t obj) {
+	reg_t text_pos = GET_SEL32(obj, text);
+	char *text = IS_NULL_REG(text_pos) ? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
 	if (type == K_CONTROL_BUTTON && text &&
-	    !strcmp(s->game_name, "sq4") &&
-	    s->version < SCI_VERSION(1,001,000) &&
-	    !strcmp(text, " Delete "))
+	        !strcmp(s->game_name, "sq4") &&
+	        s->version < SCI_VERSION(1, 001, 000) &&
+	        !strcmp(text, " Delete "))
 		PUT_SEL32V(obj, state, (state | CONTROL_STATE_GRAY) & ~CONTROL_STATE_ENABLED);
 }
 
 reg_t
-kDrawControl(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDrawControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	_k_disable_delete_for_now(s, obj);
@@ -1502,8 +1445,7 @@ kDrawControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kHiliteControl(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kHiliteControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 
@@ -1513,8 +1455,7 @@ kHiliteControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 void
-update_cursor_limits(int *display_offset, int *cursor, int max_displayed)
-{
+update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 	if (*cursor < *display_offset + 4) {
 		if (*cursor < 8)
 			*display_offset = 0;
@@ -1541,8 +1482,7 @@ update_cursor_limits(int *display_offset, int *cursor, int max_displayed)
 
 
 reg_t
-kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	reg_t event = argv[1];
 
@@ -1551,7 +1491,8 @@ kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 		word ct_type = GET_SEL32V(obj, type);
 		switch (ct_type) {
 
-		case 0: break; /* NOP */
+		case 0:
+			break; /* NOP */
 
 		case K_CONTROL_EDIT:
 			if (event.segment && ((GET_SEL32V(event, type)) == SCI_EVT_KEYBOARD)) {
@@ -1568,7 +1509,7 @@ kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 				if (!text) {
 					SCIkdebug(SCIkWARNING, "Could not draw control: "PREG" does not reference text!\n",
-						  PRINT_REG(text_pos));
+					          PRINT_REG(text_pos));
 					return s->r_acc;
 				}
 
@@ -1586,21 +1527,39 @@ kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 				if (modifiers & SCI_EVM_CTRL) {
 
 					switch (tolower((char)key)) {
-					case 'a': cursor = 0; break;
-					case 'e': cursor = textlen; break;
-					case 'f': if (cursor < textlen) ++cursor; break;
-					case 'b': if (cursor > 0) --cursor; break;
-					case 'k': text[cursor] = 0; break; /* Terminate string */
-					case 'h': _K_EDIT_BACKSPACE; break;
-					case 'd': _K_EDIT_DELETE; break;
+					case 'a':
+						cursor = 0;
+						break;
+					case 'e':
+						cursor = textlen;
+						break;
+					case 'f':
+						if (cursor < textlen) ++cursor;
+						break;
+					case 'b':
+						if (cursor > 0) --cursor;
+						break;
+					case 'k':
+						text[cursor] = 0;
+						break; /* Terminate string */
+					case 'h':
+						_K_EDIT_BACKSPACE;
+						break;
+					case 'd':
+						_K_EDIT_DELETE;
+						break;
 					}
 					PUT_SEL32V(event, claimed, 1);
 
 				} else if (modifiers & SCI_EVM_ALT) { /* Ctrl has precedence over Alt */
 
 					switch (key) {
-					case 0x2100 /* A-f */: while ((cursor < textlen) && (text[cursor++] != ' ')); break;
-					case 0x3000 /* A-b */: while ((cursor > 0) && (text[--cursor - 1] != ' ')); break;
+					case 0x2100 /* A-f */:
+						while ((cursor < textlen) && (text[cursor++] != ' '));
+						break;
+					case 0x3000 /* A-b */:
+						while ((cursor > 0) && (text[--cursor - 1] != ' '));
+						break;
 					case 0x2000 /* A-d */: {
 
 						while ((cursor < textlen) && (text[cursor] == ' ')) {
@@ -1621,20 +1580,32 @@ kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 					PUT_SEL32V(event, claimed, 1);
 
-					switch(key) {
-					case SCI_K_BACKSPACE: _K_EDIT_BACKSPACE; break;
+					switch (key) {
+					case SCI_K_BACKSPACE:
+						_K_EDIT_BACKSPACE;
+						break;
 					default:
 						PUT_SEL32V(event, claimed, 0);
 					}
 
 				} else if (key & 0xff00) {
 
-					switch(key) {
-					case SCI_K_HOME: cursor = 0; break;
-					case SCI_K_END: cursor = textlen; break;
-					case SCI_K_RIGHT: if (cursor + 1 <= textlen) ++cursor; break;
-					case SCI_K_LEFT: if (cursor > 0) --cursor; break;
-					case SCI_K_DELETE: _K_EDIT_DELETE; break;
+					switch (key) {
+					case SCI_K_HOME:
+						cursor = 0;
+						break;
+					case SCI_K_END:
+						cursor = textlen;
+						break;
+					case SCI_K_RIGHT:
+						if (cursor + 1 <= textlen) ++cursor;
+						break;
+					case SCI_K_LEFT:
+						if (cursor > 0) --cursor;
+						break;
+					case SCI_K_DELETE:
+						_K_EDIT_DELETE;
+						break;
 					}
 
 					PUT_SEL32V(event, claimed, 1);
@@ -1701,8 +1672,7 @@ kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 static void
-_k_draw_control(state_t *s, reg_t obj, int inverse)
-{
+_k_draw_control(state_t *s, reg_t obj, int inverse) {
 	int x = GET_SEL32SV(obj, nsLeft);
 	int y = GET_SEL32SV(obj, nsTop);
 	int xl = GET_SEL32SV(obj, nsRight) - x;
@@ -1711,7 +1681,7 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos)? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
+	char *text = IS_NULL_REG(text_pos) ? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1732,8 +1702,8 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 
 		SCIkdebug(SCIkGRAPHICS, "drawing button "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_button_control(s->port, obj, area, text, font_nr,
-								  (gint8)(state & CONTROL_STATE_FRAMED),
-								  (gint8)inverse, (gint8)(state & CONTROL_STATE_GRAY)));
+		                          (gint8)(state & CONTROL_STATE_FRAMED),
+		                          (gint8)inverse, (gint8)(state & CONTROL_STATE_GRAY)));
 		break;
 
 	case K_CONTROL_TEXT:
@@ -1742,9 +1712,9 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 		SCIkdebug(SCIkGRAPHICS, "drawing text "PREG" to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
 		ADD_TO_CURRENT_BG_WIDGETS(
-			sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
-					      (gint8)(!!(state & CONTROL_STATE_DITHER_FRAMED)),
-					      (gint8)inverse));
+		    sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
+		                          (gint8)(!!(state & CONTROL_STATE_DITHER_FRAMED)),
+		                          (gint8)inverse));
 		break;
 
 	case K_CONTROL_EDIT:
@@ -1765,10 +1735,10 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 
 	case K_CONTROL_ICON:
 
-		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y -1);
+		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
-							  (gint8)(state & CONTROL_STATE_FRAMED), (gint8)inverse));
+		                          (gint8)(state & CONTROL_STATE_FRAMED), (gint8)inverse));
 		break;
 
 	case K_CONTROL_CONTROL:
@@ -1776,14 +1746,14 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 		char **entries_list = NULL;
 		char *seeker;
 		int entries_nr;
-		int lsTop = GET_SEL32V(obj, lsTop)-text_pos.offset;
+		int lsTop = GET_SEL32V(obj, lsTop) - text_pos.offset;
 		int list_top = 0;
 		int selection = 0;
 		int entry_size = GET_SEL32V(obj, x);
 		int i;
 
 		SCIkdebug(SCIkGRAPHICS, "drawing list control %04x to %d,%d, diff %d\n", obj, x, y,
-			  SCI_MAX_SAVENAME_LENGTH);
+		          SCI_MAX_SAVENAME_LENGTH);
 		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;
 
 		entries_nr = 0;
@@ -1807,7 +1777,7 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 		}
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
-							  list_top, selection, (gint8)inverse));
+		                          list_top, selection, (gint8)inverse));
 		if (entries_nr)
 			free(entries_list);
 	}
@@ -1818,7 +1788,7 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 
 	default:
 		SCIkwarn(SCIkWARNING, "Unknown control type: %d at "PREG", at (%d, %d) size %d x %d\n",
-			 type, PRINT_REG(obj), x, y, xl, yl);
+		         type, PRINT_REG(obj), x, y, xl, yl);
 	}
 
 	if (!s->pic_not_valid) {
@@ -1828,21 +1798,20 @@ _k_draw_control(state_t *s, reg_t obj, int inverse)
 
 
 static void
-draw_rect_to_control_map(state_t *s, abs_rect_t abs_zone)
-{
+draw_rect_to_control_map(state_t *s, abs_rect_t abs_zone) {
 	gfxw_box_t *box;
 	gfx_color_t color;
 
 	gfxop_set_color(s->gfx_state, &color, -1, -1, -1, -1, -1, 0xf);
 
-	SCIkdebug(SCIkGRAPHICS,"    adding control block (%d,%d)to(%d,%d)\n",
-		  abs_zone.x, abs_zone.y, abs_zone.xend, abs_zone.yend);
+	SCIkdebug(SCIkGRAPHICS, "    adding control block (%d,%d)to(%d,%d)\n",
+	          abs_zone.x, abs_zone.y, abs_zone.xend, abs_zone.yend);
 
 	box = gfxw_new_box(s->gfx_state,
-			   gfx_rect(abs_zone.x, abs_zone.y,
-				    abs_zone.xend - abs_zone.x,
-				    abs_zone.yend - abs_zone.y),
-			   color, color, GFX_BOX_SHADE_FLAT);
+	                   gfx_rect(abs_zone.x, abs_zone.y,
+	                            abs_zone.xend - abs_zone.x,
+	                            abs_zone.yend - abs_zone.y),
+	                   color, color, GFX_BOX_SHADE_FLAT);
 
 	assert_primary_widget_lists(s);
 
@@ -1850,8 +1819,7 @@ draw_rect_to_control_map(state_t *s, abs_rect_t abs_zone)
 }
 
 static inline void
-draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view)
-{
+draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view) {
 	reg_t obj = make_reg(view->ID, view->subID);
 
 	if (!is_object(s, obj))
@@ -1859,14 +1827,13 @@ draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view)
 
 	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		abs_rect_t abs_zone = get_nsrect(s, make_reg(view->ID, view->subID), 1);
-		draw_rect_to_control_map (s, abs_zone);
+		draw_rect_to_control_map(s, abs_zone);
 	}
 }
 
 
 static void
-_k_view_list_do_postdraw(state_t *s, gfxw_list_t *list)
-{
+_k_view_list_do_postdraw(state_t *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
 	while (widget) {
@@ -1909,7 +1876,7 @@ _k_view_list_do_postdraw(state_t *s, gfxw_list_t *list)
 			}
 #ifdef DEBUG_LSRECT
 			else fprintf(stderr, "Not lsRecting "PREG" because %d\n", PRINT_REG(obj),
-				     lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
+				             lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1928,15 +1895,14 @@ _k_view_list_do_postdraw(state_t *s, gfxw_list_t *list)
 }
 
 void
-_k_view_list_mark_free(state_t *s, reg_t off)
-{
+_k_view_list_mark_free(state_t *s, reg_t off) {
 	if (s->dyn_views) {
 
 		gfxw_dyn_view_t *w = (gfxw_dyn_view_t *) s->dyn_views->contents;
 
 		while (w) {
 			if (w->ID == off.segment
-			    && w->subID == off.offset) {
+			        && w->subID == off.offset) {
 				w->under_bitsp = NULL;
 			}
 
@@ -1949,9 +1915,9 @@ static int _k_animate_ran = 0;
 
 int
 _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
-			  int funct_nr, int argc, reg_t *argv)
-     /* disposes all list members flagged for disposal; funct_nr is the invoking kfunction */
-     /* returns non-zero IFF views were dropped */
+                          int funct_nr, int argc, reg_t *argv)
+/* disposes all list members flagged for disposal; funct_nr is the invoking kfunction */
+/* returns non-zero IFF views were dropped */
 {
 	int signal;
 	int dropped = 0;
@@ -1974,35 +1940,35 @@ _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 
 				if (!is_object(s, obj)) {
 					SCIkwarn(SCIkERROR, "Non-object "PREG" present"
-						  " in view list during delete time\n",
-						  PRINT_REG(obj));
+					         " in view list during delete time\n",
+					         PRINT_REG(obj));
 					obj = NULL_REG;
 				} else
 
-				if (widget->under_bitsp) { /* Is there a bg picture left to clean? */
+					if (widget->under_bitsp) { /* Is there a bg picture left to clean? */
 
-					reg_t mem_handle = *((reg_t*)(widget->under_bitsp));
+						reg_t mem_handle = *((reg_t*)(widget->under_bitsp));
 
-					if (mem_handle.segment) {
-						if (!kfree(s, mem_handle)) {
-							*((reg_t*)(widget->under_bitsp)) = make_reg(0, widget->under_bits = 0);
-						} else {
-							SCIkwarn(SCIkWARNING,
-								 "Treating viewobj "PREG
-								 " as no longer"
-								 " present\n", PRINT_REG(obj));
-							obj = NULL_REG;
+						if (mem_handle.segment) {
+							if (!kfree(s, mem_handle)) {
+								*((reg_t*)(widget->under_bitsp)) = make_reg(0, widget->under_bits = 0);
+							} else {
+								SCIkwarn(SCIkWARNING,
+								         "Treating viewobj "PREG
+								         " as no longer"
+								         " present\n", PRINT_REG(obj));
+								obj = NULL_REG;
+							}
 						}
 					}
-				}
 
 				if (is_object(s, obj)) {
 					if (invoke_selector(INV_SEL(obj, delete_, 1), 0))
 						SCIkwarn(SCIkWARNING, "Object at "PREG" requested deletion, but does not have"
-							 " a delete funcselector\n", PRINT_REG(obj));
+						         " a delete funcselector\n", PRINT_REG(obj));
 					if (_k_animate_ran) {
 						SCIkwarn(SCIkWARNING, "Object at "PREG" invoked kAnimate() during deletion!\n",
-							 PRINT_REG(obj));
+						         PRINT_REG(obj));
 						return dropped;
 					}
 
@@ -2015,14 +1981,14 @@ _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 					}
 
 					SCIkdebug(SCIkGRAPHICS, "Freeing "PREG" with signal=%04x\n",
-						  PRINT_REG(obj), signal);
+					          PRINT_REG(obj), signal);
 
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
 						SCIkdebug(SCIkGRAPHICS, "Adding view at "PREG" to background\n",
-							  PRINT_REG(obj));
+						          PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->parent, widget->ID, widget->subID) == GFXW(widget))) {
 							SCIkwarn(SCIkERROR, "Attempt to remove view with ID %x:%x from list failed!\n",
-								 widget->ID, widget->subID);
+							         widget->ID, widget->subID);
 							BREAKPOINT();
 						}
 
@@ -2032,8 +1998,7 @@ _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 						widget->draw_bounds.y += s->dyn_views->bounds.y - widget->parent->bounds.y;
 						widget->draw_bounds.x += s->dyn_views->bounds.x - widget->parent->bounds.x;
 						dropped = 1;
-					}
-					else {
+					} else {
 						SCIkdebug(SCIkGRAPHICS, "Deleting view at "PREG"\n", PRINT_REG(obj));
 						widget->flags |= GFXW_FLAG_VISIBLE;
 						gfxw_annihilate(GFXW(widget));
@@ -2054,8 +2019,7 @@ _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 #define _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP 4
 
 static gfxw_dyn_view_t *
-_k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, int argc, reg_t *argv)
-{
+_k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, int argc, reg_t *argv) {
 	short oldloop, oldcel;
 	int cel, loop, view_nr = GET_SEL32SV(obj, view);
 	int palette;
@@ -2082,9 +2046,10 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 	cel = oldcel = sign_extend_byte(GET_SEL32V(obj, cel));
 
 	if (s->selector_map.palette)
-		palette = GET_SEL32V(obj, palette); else
-			palette = 0;
-	
+		palette = GET_SEL32V(obj, palette);
+	else
+		palette = 0;
+
 	/* Clip loop and cel, write back if neccessary */
 	if (gfxop_check_cel(s->gfx_state, view_nr, &loop, &cel)) {
 		return NULL;
@@ -2103,7 +2068,7 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 	}
 
 	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL)
-	    != SELECTOR_VARIABLE) {
+	        != SELECTOR_VARIABLE) {
 		under_bitsp = NULL;
 		under_bits = NULL_REG;
 		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no underBits\n", PRINT_REG(obj));
@@ -2111,7 +2076,7 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 		under_bits = *((reg_t *)under_bitsp);
 
 	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL)
-	    != SELECTOR_VARIABLE) {
+	        != SELECTOR_VARIABLE) {
 		signalp = NULL;
 		signal = 0;
 		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no signal selector\n", PRINT_REG(obj));
@@ -2121,13 +2086,13 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 	}
 
 	widget = gfxw_new_dyn_view(s->gfx_state, pos, z, view_nr, loop, cel, palette,
-				   -1, -1, ALIGN_CENTER, ALIGN_BOTTOM, nr);
+	                           -1, -1, ALIGN_CENTER, ALIGN_BOTTOM, nr);
 
 	if (widget) {
 
 		widget = (gfxw_dyn_view_t *) gfxw_set_id(GFXW(widget), obj.segment, obj.offset);
 		widget = gfxw_dyn_view_set_params(widget, under_bits.segment,
-						  under_bitsp, signal, signalp);
+		                                  under_bitsp, signal, signalp);
 		widget->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS; /* Only works the first time 'round */
 
 		return widget;
@@ -2140,11 +2105,11 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 
 static void
 _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int options,
-		  int funct_nr, int argc, reg_t *argv)
-     /* Creates a view_list from a node list in heap space. Returns the list, stores the
-     ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
-     ** argc, argv, funct_nr should be the same as in the calling kernel function.
-     */
+                  int funct_nr, int argc, reg_t *argv)
+/* Creates a view_list from a node list in heap space. Returns the list, stores the
+** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
+** argc, argv, funct_nr should be the same as in the calling kernel function.
+*/
 {
 	node_t *node;
 	int sequence_nr = 0;
@@ -2183,21 +2148,21 @@ _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int optio
 		next_node = node->succ; /* In case the cast list was changed */
 
 		if (list->first.segment == 0 &&
-		    list->first.offset == 0) /* The cast list was completely emptied! */
+		        list->first.offset == 0) /* The cast list was completely emptied! */
 			break;
 
 		tempWidget = _k_make_dynview_obj(s, obj, options, sequence_nr--,
-					     funct_nr, argc, argv);
-		if (tempWidget) 
+		                                 funct_nr, argc, argv);
+		if (tempWidget)
 			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), GFXW(tempWidget)));
 
-			node = LOOKUP_NODE(next_node); /* Next node */
-		}
+		node = LOOKUP_NODE(next_node); /* Next node */
+	}
 
 
-	widget = (gfxw_dyn_view_t *) (*widget_list)->contents;
+	widget = (gfxw_dyn_view_t *)(*widget_list)->contents;
 
-	while(widget) { /* Read back widget values */
+	while (widget) { /* Read back widget values */
 		if (widget->signalp)
 			widget->signal = ((reg_t *)(widget->signalp))->offset;
 
@@ -2207,13 +2172,12 @@ _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int optio
 
 
 static void
-_k_prepare_view_list(state_t *s, gfxw_list_t *list, int options)
-{
+_k_prepare_view_list(state_t *s, gfxw_list_t *list, int options) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
 		reg_t obj = make_reg(view->ID, view->subID);
 		int priority, _priority;
-		int has_nsrect = (view->ID <=0)? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == SELECTOR_VARIABLE;
+		int has_nsrect = (view->ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == SELECTOR_VARIABLE;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);
@@ -2226,7 +2190,7 @@ _k_prepare_view_list(state_t *s, gfxw_list_t *list, int options)
 				priority = _priority; /* Always for picviews */
 		} else { /* Dynview */
 			if (has_nsrect
-			    && !(view->signal & _K_VIEW_SIG_FLAG_FIX_PRI_ON)) { /* Calculate priority */
+			        && !(view->signal & _K_VIEW_SIG_FLAG_FIX_PRI_ON)) { /* Calculate priority */
 
 				if (options & _K_MAKE_VIEW_LIST_CALC_PRIORITY)
 					PUT_SEL32V(obj, priority, _priority);
@@ -2257,36 +2221,32 @@ _k_prepare_view_list(state_t *s, gfxw_list_t *list, int options)
 
 
 		/* Extreme Pattern Matching ugliness ahead... */
- 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
- 			if (((view->signal & (_K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_FORCE_UPDATE))) /* 9.1.1.1 */
- 			    || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_HIDDEN)
- 			    || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_REMOVE) /* 9.1.1.2 */
- 			    || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_ALWAYS_UPDATE) /* 9.1.1.3 */
- 			    || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))) /* 9.1.1.4 */
- 			{
- 				s->pic_not_valid++;
- 				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
- 			}
- 
- 			else if (((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0)
- 				|| ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE))
- 				|| ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))
- 				|| ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_HIDDEN))
- 			{
- 				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
- 			}
+		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
+			if (((view->signal & (_K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_FORCE_UPDATE))) /* 9.1.1.1 */
+			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_HIDDEN)
+			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_REMOVE) /* 9.1.1.2 */
+			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_ALWAYS_UPDATE) /* 9.1.1.3 */
+			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))) { /* 9.1.1.4 */
+				s->pic_not_valid++;
+				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
+			}
+
+			else if (((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0)
+			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE))
+			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))
+			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_HIDDEN)) {
+				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
+			}
+		} else {
+			if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
+				s->pic_not_valid++;
+				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
+			} else { /* if not STOP_UPDATE */
+				if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
+					s->pic_not_valid++;
+				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
+			}
 		}
- 		else {
- 			if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
- 				s->pic_not_valid++;
- 				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
- 			}
- 			else { /* if not STOP_UPDATE */
- 				if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
- 					s->pic_not_valid++;
- 				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
- 			}
- 		}
 
 		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x -> %04x\n", PRINT_REG(obj), oldsignal, view->signal);
 
@@ -2301,8 +2261,7 @@ _k_prepare_view_list(state_t *s, gfxw_list_t *list, int options)
 }
 
 static void
-_k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *new_list)
-{ /* O(n^2)... a bit painful, but much faster than the redraws it helps prevent */
+_k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *new_list) { /* O(n^2)... a bit painful, but much faster than the redraws it helps prevent */
 	gfxw_dyn_view_t *old_widget = (gfxw_dyn_view_t *) old_list->contents;
 
 	/* Traverses all old widgets, updates them with signals from the new widgets.
@@ -2315,8 +2274,8 @@ _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *new_list)
 		gfxw_dyn_view_t *new_widget = (gfxw_dyn_view_t *) new_list->contents;
 
 		while (new_widget
-		       && (new_widget->ID != old_widget->ID
-			   || new_widget->subID != old_widget->subID))
+		        && (new_widget->ID != old_widget->ID
+		            || new_widget->subID != old_widget->subID))
 			new_widget = (gfxw_dyn_view_t *) new_widget->next;
 
 		if (new_widget) {
@@ -2324,14 +2283,14 @@ _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *new_list)
 			/* Transfer 'stopupd' flag */
 
 			if ((new_widget->pos.x != old_widget->pos.x)
-			    || (new_widget->pos.y != old_widget->pos.y)
-			    /* ** No idea why this is supposed to be bad **
-			    || (new_widget->z != old_widget->z)
-			    || (new_widget->view != old_widget->view)
-			    || (new_widget->loop != old_widget->loop)
-			    || (new_widget->cel != old_widget->cel)
-			    */
-			    )
+			        || (new_widget->pos.y != old_widget->pos.y)
+			        /* ** No idea why this is supposed to be bad **
+			        || (new_widget->z != old_widget->z)
+			        || (new_widget->view != old_widget->view)
+			        || (new_widget->loop != old_widget->loop)
+			        || (new_widget->cel != old_widget->cel)
+			        */
+			   )
 				carry = 0;
 
 			old_widget->signal = new_widget->signal |= carry;
@@ -2342,8 +2301,7 @@ _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *new_list)
 }
 
 static void
-_k_view_list_kryptonize(gfxw_widget_t *v)
-{
+_k_view_list_kryptonize(gfxw_widget_t *v) {
 	if (v) {
 		v->flags &= ~GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 		_k_view_list_kryptonize(v->next);
@@ -2351,8 +2309,7 @@ _k_view_list_kryptonize(gfxw_widget_t *v)
 }
 
 static void
-_k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *view)
-{
+_k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *view) {
 	if (view) {
 		gfxw_dyn_view_t *next = (gfxw_dyn_view_t *) view->next;
 
@@ -2360,10 +2317,10 @@ _k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *vi
 		if ((view->signal & (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0) {
 			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at ["PREG"] with %04x\n", PRINT_REG(make_reg(view->ID, view->subID)), view->signal);
 			view->force_precedence = 2;
- 
- 			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
- 				view->signal &= ~_K_VIEW_SIG_FLAG_REMOVE;
- 			}
+
+			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
+				view->signal &= ~_K_VIEW_SIG_FLAG_REMOVE;
+			}
 		}
 
 		gfxw_remove_widget_from_container(view->parent, GFXW(view));
@@ -2372,7 +2329,7 @@ _k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *vi
 
 		if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
 			gfxw_hide_widget(GFXW(view));
- 		else
+		else
 			gfxw_show_widget(GFXW(view));
 
 		list->add(GFXWC(list), GFXW(view));
@@ -2383,8 +2340,7 @@ _k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *vi
 
 
 static void
-_k_redraw_view_list(state_t *s, gfxw_list_t *list)
-{
+_k_redraw_view_list(state_t *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
 
@@ -2408,7 +2364,7 @@ _k_redraw_view_list(state_t *s, gfxw_list_t *list)
 
 		if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
 			view->signal &= ~(_K_VIEW_SIG_FLAG_STOP_UPDATE | _K_VIEW_SIG_FLAG_UPDATED
-					  | _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
+			                  | _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
 
 		SCIkdebug(SCIkGRAPHICS, "    at substep 11/14: signal %04x\n", view->signal);
 
@@ -2440,7 +2396,7 @@ _k_redraw_view_list(state_t *s, gfxw_list_t *list)
 
 void
 _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags)
-     /* Draws list_nr members of list to s->pic. */
+/* Draws list_nr members of list to s->pic. */
 {
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
@@ -2453,7 +2409,7 @@ _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags)
 			widget = gfxw_picviewize_dynview(widget);
 
 		if (GFXW_IS_DYN_VIEW(widget) && widget->ID) {
-			word signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL)? ((reg_t *)(widget->signalp))->offset : 0;
+			word signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				gfxw_hide_widget(GFXW(widget));
@@ -2461,12 +2417,12 @@ _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags)
 				gfxw_show_widget(GFXW(widget));
 
 			if (!(flags & _K_DRAW_VIEW_LIST_USE_SIGNAL)
-			    || ((flags & _K_DRAW_VIEW_LIST_DISPOSEABLE) && (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))
-			    || ((flags & _K_DRAW_VIEW_LIST_NONDISPOSEABLE) && !(signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))) {
+			        || ((flags & _K_DRAW_VIEW_LIST_DISPOSEABLE) && (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))
+			        || ((flags & _K_DRAW_VIEW_LIST_NONDISPOSEABLE) && !(signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))) {
 
 				if (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) {
 					signal &= ~(_K_VIEW_SIG_FLAG_STOP_UPDATE | _K_VIEW_SIG_FLAG_UPDATED |
-						    _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
+					            _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
 					/* Clear all of those flags */
 
 					if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -2487,8 +2443,7 @@ _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags)
 }
 
 reg_t
-kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_list_t *pic_views;
 	reg_t list_ref = argv[0];
 
@@ -2507,7 +2462,7 @@ kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 		control = KP_SINT(argv[6]);
 
 		widget = GFXW(gfxw_new_dyn_view(s->gfx_state, gfx_point(x, y), 0, view, loop, cel, 0,
-						priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0));
+		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0));
 
 		if (!widget) {
 			SCIkwarn(SCIkERROR, "Attempt to single-add invalid picview (%d/%d/%d)\n", view, loop, cel);
@@ -2515,9 +2470,9 @@ kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 			widget->ID = -1;
 			if (control >= 0) {
 				abs_rect_t abs_zone = nsrect_clip(s, y,
-								  calculate_nsrect(s, x, y,
-										   view, loop, cel),
-								  priority);
+				                                  calculate_nsrect(s, x, y,
+				                                                   view, loop, cel),
+				                                  priority);
 
 				draw_rect_to_control_map(s, abs_zone);
 			}
@@ -2529,11 +2484,11 @@ kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		if (!list_ref.segment) {
 			SCIkdebug(SCIkWARNING, "Attempt to AddToPic single non-list: "PREG"\n",
-				  PRINT_REG(list_ref));
+			          PRINT_REG(list_ref));
 			return s->r_acc;
 		}
 
-		
+
 		list = LOOKUP_LIST(list_ref);
 
 		pic_views = gfxw_new_list(s->picture_port->bounds, 1);
@@ -2556,23 +2511,20 @@ kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kGetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kGetPort(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, s->port->ID);
 }
 
 
 reg_t
-kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
-	if (activated_icon_bar && argc == 6)
-	{
+kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	if (activated_icon_bar && argc == 6) {
 		port_origin_x = port_origin_y = 0;
 		activated_icon_bar = 0;
 		return s->r_acc;
 	}
 
-        switch (argc) {
+	switch (argc) {
 	case 1 : {
 		unsigned int port_nr = SKPV(0);
 		gfxw_port_t *new_port;
@@ -2583,7 +2535,7 @@ kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
 		   official semantics) would cut off the lower part of the
 		   icons in an SCI1 icon bar. Instead we have an
 		   iconbar_port that does not exist in SSCI. */
-		if (port_nr == (unsigned int)-1) port_nr = s->iconbar_port->ID;
+		if (port_nr == (unsigned int) - 1) port_nr = s->iconbar_port->ID;
 
 		new_port = gfxw_find_port(s->visual, port_nr);
 
@@ -2600,8 +2552,7 @@ kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
 		port_origin_y = SKPV(0);
 		port_origin_x = SKPV(1);
 
-		if (SKPV(0) == -10)
-		{
+		if (SKPV(0) == -10) {
 			s->port->draw(GFXW(s->port), gfxw_point_zero); /* Update the port we're leaving */
 			s->port = s->iconbar_port;
 			activated_icon_bar = 1;
@@ -2609,7 +2560,7 @@ kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
 		}
 
 		s->gfx_state->options->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4),
-								 UKPV(3), UKPV(2));
+		        UKPV(3), UKPV(2));
 		/* FIXME: Should really only invalidate all loaded pic resources here;
 		   this is overkill */
 		gfxr_free_all_resources(s->gfx_state->driver, s->gfx_state->resstate);
@@ -2625,8 +2576,7 @@ kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 static inline void
-add_to_chrono(state_t *s, gfxw_widget_t *widget)
-{
+add_to_chrono(state_t *s, gfxw_widget_t *widget) {
 	gfxw_port_t *chrono_port;
 	gfxw_list_t *tw;
 
@@ -2638,8 +2588,7 @@ add_to_chrono(state_t *s, gfxw_widget_t *widget)
 }
 
 reg_t
-kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -2648,23 +2597,23 @@ kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv)
 	int priority = SKPV_OR_ALT(5, -1);
 	gfxw_view_t *new_view;
 
-/*
-	if (!view) {
-		SCIkwarn(SCIkERROR, "Attempt to draw non-existing view.%03d\n", view);
-		return;
-	}
-*/
-	
+	/*
+		if (!view) {
+			SCIkwarn(SCIkERROR, "Attempt to draw non-existing view.%03d\n", view);
+			return;
+		}
+	*/
+
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		SCIkwarn(SCIkERROR, "Attempt to draw non-existing view.%03d\n", view);
 		return s->r_acc;
 	}
 
 	SCIkdebug(SCIkGRAPHICS, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop,
-		  cel, priority);
+	          cel, priority);
 
 	new_view = gfxw_new_view(s->gfx_state, gfx_point(x, y), view, loop, cel, 0, priority, -1,
-				 ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
+	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
 #if 0
 	add_to_chrono(s, GFXW(new_view));
@@ -2673,14 +2622,13 @@ kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv)
 #endif
 	FULL_REDRAW();
 
-	
+
 
 	return s->r_acc;
 }
 
 reg_t
-kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned int goner_nr = SKPV(0);
 	gfxw_port_t *goner;
 	gfxw_port_t *pred;
@@ -2705,9 +2653,9 @@ kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 	if (goner == s->port) /* Did we kill the active port? */
 		s->port = pred;
 
-/* Find the last port that exists and that isn't marked no-switch */
+	/* Find the last port that exists and that isn't marked no-switch */
 	while ((!s->visual->port_refs[id] && id >= 0) ||
-	       (s->visual->port_refs[id]->flags & GFXW_FLAG_NO_IMPLICIT_SWITCH))
+	        (s->visual->port_refs[id]->flags & GFXW_FLAG_NO_IMPLICIT_SWITCH))
 		id--;
 
 	sciprintf("Activating port %d after disposing window %d\n", id, goner_nr);
@@ -2721,8 +2669,7 @@ kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 }
 
 reg_t
-kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_port_t *window;
 	int x, y, xl, yl, flags;
 	gfx_color_t bgcolor;
@@ -2739,19 +2686,19 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	y += s->wm_port->bounds.y;
 
-	if (x+xl > 319)
-		x -= ((x+xl) - 319);
+	if (x + xl > 319)
+		x -= ((x + xl) - 319);
 
-	flags = SKPV(5+argextra);
+	flags = SKPV(5 + argextra);
 
-	priority = SKPV_OR_ALT(6+argextra, -1);
+	priority = SKPV_OR_ALT(6 + argextra, -1);
 	bgcolor.mask = 0;
 
-	if (SKPV_OR_ALT(8+argextra, 255) >= 0) {
+	if (SKPV_OR_ALT(8 + argextra, 255) >= 0) {
 		if (s->resmgr->sci_version < SCI_VERSION_01_VGA)
-			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8+argextra, 15)));
+			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8 + argextra, 15)));
 		else
-			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8+argextra, 255)));
+			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255)));
 		bgcolor.mask = GFX_MASK_VISUAL;
 	}
 
@@ -2760,29 +2707,29 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 	bgcolor.alpha = 0;
 	SCIkdebug(SCIkGRAPHICS, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
 
-	fgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(7+argextra, 0)));
+	fgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0)));
 	fgcolor.mask = GFX_MASK_VISUAL;
 	fgcolor.alpha = 0;
 	black.visual = *(get_pic_color(s, 0));
 	black.mask = GFX_MASK_VISUAL;
 	black.alpha = 0;
 	lWhite.visual = *(get_pic_color(s, s->resmgr->sci_version < SCI_VERSION_01_VGA ? 15 : 255)),
-	lWhite.mask = GFX_MASK_VISUAL;
+	                lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr,
-				 fgcolor, bgcolor, s->titlebar_port->font_nr,
-				 lWhite,
-				 black,
-				 argv[4+argextra].segment ? kernel_dereference_char_pointer(s, argv[4+argextra], 0) : NULL, 
-				 flags);
+	                         fgcolor, bgcolor, s->titlebar_port->font_nr,
+	                         lWhite,
+	                         black,
+	                         argv[4+argextra].segment ? kernel_dereference_char_pointer(s, argv[4+argextra], 0) : NULL,
+	                         flags);
 
 	/* PQ3 has the interpreter store underBits implicitly.
 	   The feature was promptly removed after its release, never to be seen again. */
 	if (argextra)
-		gfxw_port_auto_restore_background(s->visual, window, 
-						  gfx_rect(SKPV(5), SKPV(4), 
-							   SKPV(7)-SKPV(5), SKPV(6)-SKPV(4)));
+		gfxw_port_auto_restore_background(s->visual, window,
+		                                  gfx_rect(SKPV(5), SKPV(4),
+		                                           SKPV(7) - SKPV(5), SKPV(6) - SKPV(4)));
 
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();
@@ -2812,9 +2759,9 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 #define K_ANIMATE_TOP_CLOSE_BOTTOM_OPEN        13 /* close to bottom, reopen from bottom */
 #define K_ANIMATE_BOTTOM_CLOSE_TOP_OPEN        14 /* close to top, reopen from top */
 #define K_ANIMATE_CENTER_CLOSE_F_BORDER_OPEN_F 15 /* close from center to edges,
-						  ** reopen from edges to center */
+** reopen from edges to center */
 #define K_ANIMATE_BORDER_CLOSE_F_CENTER_OPEN_F 16 /* close from edges to center, reopen from
-						  ** center to edges */
+** center to edges */
 #define K_ANIMATE_CLOSE_CHECKERS_OPEN_CHECKERS 17 /* close random checkboard, reopen */
 #define K_ANIMATE_SCROLL_LEFT 0x28
 #define K_ANIMATE_SCROLL_RIGHT 0x29
@@ -2832,8 +2779,7 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 static void
-animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int i, remaining_checkers;
 	int update_counter;
 	int granularity0 = s->animation_granularity << 1;
@@ -2866,13 +2812,13 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 		s->pic_animate = K_ANIMATE_OPEN_SIMPLE;
 
 
-	switch(s->pic_animate) {
+	switch (s->pic_animate) {
 	case K_ANIMATE_BORDER_CLOSE_H_CENTER_OPEN_H :
 
 		for (i = 0; i < 159 + granularity1; i += granularity1) {
 			GRAPH_BLANK_BOX(s, i, 10, granularity1, 190, 0);
 			gfxop_update(s->gfx_state);
-			GRAPH_BLANK_BOX(s, 319-i, 10, granularity1, 190, 0);
+			GRAPH_BLANK_BOX(s, 319 - i, 10, granularity1, 190, 0);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay);
 			process_sound_events(s);
@@ -2881,10 +2827,10 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_CENTER_OPEN_H :
 
-		for (i = 159; i >= 1-granularity1; i -= granularity1) {
+		for (i = 159; i >= 1 - granularity1; i -= granularity1) {
 			GRAPH_UPDATE_BOX(s, i, 10, granularity1, 190);
 			gfxop_update(s->gfx_state);
-			GRAPH_UPDATE_BOX(s, 319-i, 10, granularity1, 190);
+			GRAPH_UPDATE_BOX(s, 319 - i, 10, granularity1, 190);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay);
 			process_sound_events(s);
@@ -2919,7 +2865,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_LEFT_CLOSE_RIGHT_OPEN :
 
-		for(i = 0; i < 319 + granularity0; i += granularity0) {
+		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_BLANK_BOX(s, i, 10, granularity0, 190, 0);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
@@ -2928,7 +2874,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
 
 	case K_ANIMATE_RIGHT_OPEN :
-		for(i = 319; i >= 1 - granularity0; i -= granularity0) {
+		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_UPDATE_BOX(s, i, 10, granularity0, 190);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
@@ -2939,7 +2885,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_RIGHT_CLOSE_LEFT_OPEN :
 
-		for(i = 319; i >= 1-granularity0; i -= granularity0) {
+		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_BLANK_BOX(s, i, 10, granularity0, 190, 0);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
@@ -2949,7 +2895,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_LEFT_OPEN :
 
-		for(i = 0; i < 319 + granularity0; i+= granularity0) {
+		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_UPDATE_BOX(s, i, 10, granularity0, 190);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
@@ -2970,7 +2916,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_BOTTOM_OPEN :
 
-		for (i = 199; i >= 11 - granularity1; i-= granularity1) {
+		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_UPDATE_BOX(s, 0, i, 320, granularity1);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay);
@@ -2981,7 +2927,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_BOTTOM_CLOSE_TOP_OPEN :
 
-		for (i = 199; i >= 11 - granularity1; i-= granularity1) {
+		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_BLANK_BOX(s, 0, i, 320, granularity1, 0);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay);
@@ -2991,7 +2937,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_TOP_OPEN :
 
-		for (i = 10; i < 199 + granularity1; i+= granularity1) {
+		for (i = 10; i < 199 + granularity1; i += granularity1) {
 			GRAPH_UPDATE_BOX(s, 0, i, 320, granularity1);
 			gfxop_update(s->gfx_state);
 			gfxop_usleep(s->gfx_state, s->animation_delay);
@@ -3002,25 +2948,25 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_CENTER_CLOSE_F_BORDER_OPEN_F :
 
-		for (i = 31; i >= 1-granularity3; i -= granularity3) {
-			int real_i = (i < 0)? 0 : i;
+		for (i = 31; i >= 1 - granularity3; i -= granularity3) {
+			int real_i = (i < 0) ? 0 : i;
 			int height_l = 3 * (granularity3 - real_i + i);
 			int width_l = 5 * (granularity3 - real_i + i);
 			int height = real_i * 3;
 			int width = real_i * 5;
 
 			GRAPH_BLANK_BOX(s, width, 10 + height,
-					width_l, 190 - 2*height, 0);
+			                width_l, 190 - 2*height, 0);
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, 320 - width_l - width,
-					10 + height, width_l, 190 - 2*height, 0);
+			                10 + height, width_l, 190 - 2*height, 0);
 			gfxop_update(s->gfx_state);
 
 			GRAPH_BLANK_BOX(s, width, 10 + height,
-					320 - 2*width, height_l, 0);
+			                320 - 2*width, height_l, 0);
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, width, 200 - height_l - height,
-					320 - 2*width, height_l, 0);
+			                320 - 2*width, height_l, 0);
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, 4 * s->animation_delay);
@@ -3030,25 +2976,25 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_BORDER_OPEN_F :
 
-		for (i = 0; i < 31+granularity3; i += granularity3) {
-			int real_i = (i < 0)? 0 : i;
+		for (i = 0; i < 31 + granularity3; i += granularity3) {
+			int real_i = (i < 0) ? 0 : i;
 			int height_l = 3 * (granularity3 - real_i + i);
 			int width_l = 5 * (granularity3 - real_i + i);
 			int height = real_i * 3;
 			int width = real_i * 5;
 
 			GRAPH_UPDATE_BOX(s, width, 10 + height,
-					 width_l, 190 - 2*height);
+			                 width_l, 190 - 2*height);
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, 320 - width_l - width,
-					 10 + height, width_l, 190 - 2*height);
+			                 10 + height, width_l, 190 - 2*height);
 			gfxop_update(s->gfx_state);
 
 			GRAPH_UPDATE_BOX(s, width, 10 + height,
-					 320 - 2*width, height_l);
+			                 320 - 2*width, height_l);
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, width, 200 - height_l - height,
-					 320 - 2*width, height_l);
+			                 320 - 2*width, height_l);
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, 4 * s->animation_delay);
@@ -3060,25 +3006,25 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_BORDER_CLOSE_F_CENTER_OPEN_F :
 
-		for (i = 0; i < 31+granularity3; i += granularity3) {
-			int real_i = (i < 0)? 0 : i;
+		for (i = 0; i < 31 + granularity3; i += granularity3) {
+			int real_i = (i < 0) ? 0 : i;
 			int height_l = 3 * (granularity3 - real_i + i);
 			int width_l = 5 * (granularity3 - real_i + i);
 			int height = real_i * 3;
 			int width = real_i * 5;
 
 			GRAPH_BLANK_BOX(s, width, 10 + height,
-					width_l, 190 - 2*height, 0);
+			                width_l, 190 - 2*height, 0);
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, 320 - width_l - width,
-					10 + height, width_l, 190 - 2*height, 0);
+			                10 + height, width_l, 190 - 2*height, 0);
 			gfxop_update(s->gfx_state);
 
 			GRAPH_BLANK_BOX(s, width, 10 + height,
-					320 - 2*width, height_l, 0);
+			                320 - 2*width, height_l, 0);
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, width, 200 - height_l - height,
-					320 - 2*width, height_l, 0);
+			                320 - 2*width, height_l, 0);
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, 7 * s->animation_delay);
@@ -3088,25 +3034,25 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	case K_ANIMATE_CENTER_OPEN_F :
 
-		for (i = 31; i >= 1-granularity3; i -= granularity3) {
-			int real_i = (i < 0)? 0 : i;
+		for (i = 31; i >= 1 - granularity3; i -= granularity3) {
+			int real_i = (i < 0) ? 0 : i;
 			int height_l = 3 * (granularity3 - real_i + i);
 			int width_l = 5 * (granularity3 - real_i + i);
 			int height = real_i * 3;
 			int width = real_i * 5;
 
 			GRAPH_UPDATE_BOX(s, width, 10 + height,
-					 width_l, 190 - 2*height);
+			                 width_l, 190 - 2*height);
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, 320 - width_l - width,
-					 10 + height, width_l, 190 - 2*height);
+			                 10 + height, width_l, 190 - 2*height);
 			gfxop_update(s->gfx_state);
 
 			GRAPH_UPDATE_BOX(s, width, 10 + height,
-					 320 - 2 * width, height_l);
+			                 320 - 2 * width, height_l);
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, width, 200 - height_l - height,
-					 320 - 2 * width, height_l);
+			                 320 - 2 * width, height_l);
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, 7 * s->animation_delay);
@@ -3123,7 +3069,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 		update_counter = granularity1;
 
 		while (remaining_checkers) {
-			int x, y, checker = 1 + (int) (1.0 * remaining_checkers*rand()/(RAND_MAX+1.0));
+			int x, y, checker = 1 + (int)(1.0 * remaining_checkers * rand() / (RAND_MAX + 1.0));
 			i = -1;
 
 			while (checker)
@@ -3154,7 +3100,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 		update_counter = granularity1;
 
 		while (remaining_checkers) {
-			int x, y, checker = 1 + (int) (1.0 * remaining_checkers * rand()/(RAND_MAX+1.0));
+			int x, y, checker = 1 + (int)(1.0 * remaining_checkers * rand() / (RAND_MAX + 1.0));
 			i = -1;
 
 			while (checker)
@@ -3185,11 +3131,11 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		for (i = 0; i < 319; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
-						     gfx_rect(320 - i, 0, i, 190),
-						     gfx_point(0, 10)));
+			                             gfx_rect(320 - i, 0, i, 190),
+			                             gfx_point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
-						     gfx_rect(0, 0, 320 - i, 190),
-						     gfx_point(i, 10)));
+			                             gfx_rect(0, 0, 320 - i, 190),
+			                             gfx_point(i, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3201,11 +3147,11 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		for (i = 0; i < 319; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
-						     gfx_rect(0, 0, i, 190),
-						     gfx_point(319-i, 10)));
+			                             gfx_rect(0, 0, i, 190),
+			                             gfx_point(319 - i, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
-						     gfx_rect(i, 0, 320 - i, 190),
-						     gfx_point(0, 10)));
+			                             gfx_rect(i, 0, 320 - i, 190),
+			                             gfx_point(0, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3217,11 +3163,11 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		for (i = 0; i < 189; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
-						     gfx_rect(0, 190 - i, 320, i),
-						     gfx_point(0, 10)));
+			                             gfx_rect(0, 190 - i, 320, i),
+			                             gfx_point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
-						     gfx_rect(0, 0, 320, 190 - i),
-						     gfx_point(0, 10 + i)));
+			                             gfx_rect(0, 0, 320, 190 - i),
+			                             gfx_point(0, 10 + i)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3233,11 +3179,11 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		for (i = 0; i < 189; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
-						     gfx_rect(0, 0, 320, i),
-						     gfx_point(0, 200 - i)));
+			                             gfx_rect(0, 0, 320, i),
+			                             gfx_point(0, 200 - i)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
-						     gfx_rect(0, i, 320, 190 - i),
-						     gfx_point(0, 10)));
+			                             gfx_rect(0, i, 320, 190 - i),
+			                             gfx_point(0, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3261,7 +3207,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 reg_t
 kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv)
-     /* Animations are supposed to take a maximum of s->animation_delay milliseconds. */
+/* Animations are supposed to take a maximum of s->animation_delay milliseconds. */
 {
 	reg_t cast_list_ref = KP_ALT(0, NULL_REG);
 	int cycle = (KP_ALT(1, NULL_REG)).offset;
@@ -3286,22 +3232,22 @@ kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv)
 	assert_primary_widget_lists(s);
 
 	if (!s->dyn_views->contents /* Only reparentize empty dynview list */
-	    && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) /* If dynviews are on other port... */
-		|| (s->dyn_views->next))) /* ... or not on top of the view list */
+	        && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) /* If dynviews are on other port... */
+	            || (s->dyn_views->next))) /* ... or not on top of the view list */
 		reparentize_primary_widget_lists(s, s->port);
 
 	if (cast_list) {
 		gfxw_list_t *templist = gfxw_new_list(s->dyn_views->bounds, 0);
 
-		_k_make_view_list(s, &(templist), cast_list, (cycle? _K_MAKE_VIEW_LIST_CYCLE : 0)
-				  | _K_MAKE_VIEW_LIST_CALC_PRIORITY, funct_nr, argc, argv);
+		_k_make_view_list(s, &(templist), cast_list, (cycle ? _K_MAKE_VIEW_LIST_CYCLE : 0)
+		                  | _K_MAKE_VIEW_LIST_CALC_PRIORITY, funct_nr, argc, argv);
 
 		/* Make sure that none of the doits() did something evil */
 		assert_primary_widget_lists(s);
 
 		if (!s->dyn_views->contents /* Only reparentize empty dynview list */
-		    && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) /* If dynviews are on other port... */
-			|| (s->dyn_views->next))) /* ... or not on top of the view list */
+		        && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) /* If dynviews are on other port... */
+		            || (s->dyn_views->next))) /* ... or not on top of the view list */
 			reparentize_primary_widget_lists(s, s->port);
 		/* End of doit() recovery code */
 
@@ -3360,8 +3306,8 @@ kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv)
 		}
 
 		if ((reparentize | retval)
-		    && (GFXWC(s->port) == GFXWC(s->dyn_views->parent)) /* If dynviews are on the same port... */
-		    && (s->dyn_views->next)) /* ... and not on top of the view list...  */
+		        && (GFXWC(s->port) == GFXWC(s->dyn_views->parent)) /* If dynviews are on the same port... */
+		        && (s->dyn_views->next)) /* ... and not on top of the view list...  */
 			reparentize_primary_widget_lists(s, s->port); /* ...then reparentize. */
 
 		_k_view_list_kryptonize(s->dyn_views->contents);
@@ -3375,8 +3321,7 @@ kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv)
 #define SHAKE_RIGHT 2
 
 reg_t
-kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int shakes = SKPV_OR_ALT(0, 1);
 	int directions = SKPV_OR_ALT(1, 1);
 	gfx_pixmap_t *screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 0, 320, 200));
@@ -3388,8 +3333,8 @@ kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv)
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
 	for (i = 0; i < shakes; i++) {
-		int shake_down = (directions & SHAKE_DOWN)? 10 : 0;
-		int shake_right = (directions & SHAKE_RIGHT)? 10 : 0;
+		int shake_down = (directions & SHAKE_DOWN) ? 10 : 0;
+		int shake_right = (directions & SHAKE_RIGHT) ? 10 : 0;
 
 		if (directions & SHAKE_DOWN)
 			gfxop_draw_box(s->gfx_state, gfx_rect(0, 0, 320, 10), s->ega_colors[0], s->ega_colors[0], GFX_BOX_SHADE_FLAT);
@@ -3398,7 +3343,7 @@ kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv)
 			gfxop_draw_box(s->gfx_state, gfx_rect(0, 0, 10, 200), s->ega_colors[0], s->ega_colors[0], GFX_BOX_SHADE_FLAT);
 
 		gfxop_draw_pixmap(s->gfx_state, screen, gfx_rect(0, 0, 320 - shake_right, 200 - shake_down),
-				  gfx_point(shake_right, shake_down));
+		                  gfx_point(shake_right, shake_down));
 
 		gfxop_update(s->gfx_state);
 		gfxop_usleep(s->gfx_state, 50000);
@@ -3427,8 +3372,7 @@ kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 
 reg_t
-kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
-{
+kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int argpt;
 	reg_t textp = argv[0];
 	int index = UKPV_OR_ALT(1, 0);
@@ -3436,13 +3380,13 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 	int save_under = 0;
 	gfx_color_t transparent;
 	char *text;
-	gfxw_port_t *port = (s->port)? s->port : s->picture_port;
+	gfxw_port_t *port = (s->port) ? s->port : s->picture_port;
 	int update_immediately = 1;
 
 	gfx_color_t color0, *color1, bg_color;
 	gfx_alignment_t halign = ALIGN_LEFT;
-	rect_t area = gfx_rect(port->draw_pos.x, port->draw_pos.y, 
-			       320 - port->draw_pos.x, 200 - port->draw_pos.y);
+	rect_t area = gfx_rect(port->draw_pos.x, port->draw_pos.y,
+	                       320 - port->draw_pos.x, 200 - port->draw_pos.y);
 	int gray = port->gray_text;
 	int font_nr = port->font_nr;
 	gfxw_text_t *text_handle;
@@ -3468,7 +3412,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 	while (argpt < argc) {
 
-		switch(UKPV(argpt++)) {
+		switch (UKPV(argpt++)) {
 
 		case K_DISPLAY_SET_COORDS:
 
@@ -3489,7 +3433,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 			SCIkdebug(SCIkGRAPHICS, "Display: set_color(%d)\n", temp);
 			if ((s->resmgr->sci_version < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
-			else 
+			else
 				if ((s->resmgr->sci_version >= SCI_VERSION_01_VGA) && temp >= 0 && temp < 256) {
 					color0.visual = *(get_pic_color(s, temp));
 					color0.mask = GFX_MASK_VISUAL;
@@ -3506,9 +3450,9 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 			SCIkdebug(SCIkGRAPHICS, "Display: set_bg_color(%d)\n", temp);
 			if ((s->resmgr->sci_version < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
-			else 
+			else
 				if ((s->resmgr->sci_version >= SCI_VERSION_01_VGA) && temp >= 0 && temp <= 256) {
-					bg_color.visual = *get_pic_color(s, temp); 
+					bg_color.visual = *get_pic_color(s, temp);
 					bg_color.mask = GFX_MASK_VISUAL;
 				} else
 					if (temp == -1)
@@ -3526,7 +3470,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 		case K_DISPLAY_SET_FONT:
 
 			font_nr = KP_UINT(argv[argpt++]);
-			
+
 			SCIkdebug(SCIkGRAPHICS, "Display: set_font(\"font.%03d\")\n", font_nr);
 			break;
 
@@ -3555,13 +3499,13 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 
 		case K_DONT_UPDATE_IMMEDIATELY:
 
-			update_immediately=0;
+			update_immediately = 0;
 			SCIkdebug(SCIkGRAPHICS, "Display: set_dont_update()\n");
 			argpt++;
 			break;
 
 		default:
-			SCIkdebug(SCIkGRAPHICS, "Unknown Display() command %x\n", UKPV(argpt-1));
+			SCIkdebug(SCIkGRAPHICS, "Unknown Display() command %x\n", UKPV(argpt - 1));
 			return NULL_REG;
 		}
 	}
@@ -3569,15 +3513,14 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 	if (s->version >= SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY) {
 		if (halign == ALIGN_LEFT)
 			GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text,
-							 area.xl, &area.xl, &area.yl, 0,
-							 NULL, NULL, NULL));
+			                                 area.xl, &area.xl, &area.yl, 0,
+			                                 NULL, NULL, NULL));
 
 		/* Make the text fit on the screen */
 		if (area.x + area.xl > 320)
 			area.x += 320 - area.x - area.xl; /* Plus negative number = subtraction */
 
-		if (area.y + area.yl > 200)
-		{
+		if (area.y + area.yl > 200) {
 			area.y += 200 - area.y - area.yl; /* Plus negative number = subtraction */
 		}
 	}
@@ -3590,7 +3533,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 	assert_primary_widget_lists(s);
 
 	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, text, halign,
-				    ALIGN_TOP, color0, *color1, bg_color, 0);
+	                            ALIGN_TOP, color0, *color1, bg_color, 0);
 
 	if (!text_handle) {
 		SCIkwarn(SCIkERROR, "Display: Failed to create text widget!\n");
@@ -3606,7 +3549,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 		text_handle->serial++; /* This is evil! */
 
 		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as "PREG"\n",
-			  save_area.x, save_area.y, save_area.xl, save_area.yl, s->r_acc);
+		          save_area.x, save_area.y, save_area.xl, save_area.yl, s->r_acc);
 
 	}
 
@@ -3618,7 +3561,7 @@ kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv)
 	*/
 
 	ADD_TO_CURRENT_FG_WIDGETS(GFXW(text_handle));
-	if ((!s->pic_not_valid)&&update_immediately) { /* Refresh if drawn to valid picture */
+	if ((!s->pic_not_valid) && update_immediately) { /* Refresh if drawn to valid picture */
 		FULL_REDRAW();
 		SCIkdebug(SCIkGRAPHICS, "Refreshing display...\n");
 	}

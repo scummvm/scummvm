@@ -27,16 +27,14 @@
 
 #include "sci/include/sciresource.h"
 
-typedef struct
-{
+typedef struct {
 	int noun;
 	int verb;
 	int cond;
 	int seq;
 } message_tuple_t;
 
-typedef struct
-{
+typedef struct {
 	byte *index_record;
 	int index;
 	byte *resource_beginning;
@@ -48,20 +46,18 @@ typedef int get_talker_t(index_record_cursor_t *cursor);
 typedef void get_text_t(index_record_cursor_t *cursor, char *buffer, int buffer_size);
 typedef int index_record_count_t(byte *header);
 
-typedef struct
-{
+typedef struct {
 	int version_id;
 	parse_index_record_t *parse;
 	get_talker_t *get_talker;
 	get_text_t *get_text;
 	index_record_count_t *index_record_count;
-	
+
 	int header_size;
 	int index_record_size;
 } message_handler_t;
 
-typedef struct
-{
+typedef struct {
 	int initialized;
 	message_handler_t *handler;
 	resource_mgr_t *resmgr;

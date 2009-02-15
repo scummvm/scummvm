@@ -32,8 +32,7 @@ typedef struct _worklist {
 } worklist_t;
 
 static worklist_t *
-fresh_worklist(worklist_t *old)
-{
+fresh_worklist(worklist_t *old) {
 	worklist_t *retval = (worklist_t*)sci_malloc(sizeof(worklist_t));
 	retval->used = 0;
 	retval->next = old;
@@ -41,14 +40,12 @@ fresh_worklist(worklist_t *old)
 }
 
 static worklist_t *
-new_worklist()
-{
+new_worklist() {
 	return fresh_worklist(NULL);
 }
 
 static void
-worklist_push(worklist_t **wlp, reg_t_hash_map_ptr hashmap, reg_t reg)
-{
+worklist_push(worklist_t **wlp, reg_t_hash_map_ptr hashmap, reg_t reg) {
 	worklist_t *wl = *wlp;
 	char added;
 
@@ -71,14 +68,12 @@ worklist_push(worklist_t **wlp, reg_t_hash_map_ptr hashmap, reg_t reg)
 }
 
 static int
-worklist_has_next(worklist_t *wl)
-{
+worklist_has_next(worklist_t *wl) {
 	return (wl && wl->used);
 }
 
 static reg_t
-worklist_pop(worklist_t **wlp)
-{
+worklist_pop(worklist_t **wlp) {
 	worklist_t *wl = *wlp;
 	reg_t retval;
 
@@ -98,8 +93,7 @@ worklist_pop(worklist_t **wlp)
 }
 
 static void
-free_worklist(worklist_t *wl)
-{
+free_worklist(worklist_t *wl) {
 	if (wl) {
 		if (wl->next)
 			free_worklist(wl->next);
@@ -114,13 +108,12 @@ typedef struct {
 } normaliser_t;
 
 void
-store_normalised(void *pre_normaliser, reg_t reg, int _)
-{
+store_normalised(void *pre_normaliser, reg_t reg, int _) {
 	seg_interface_t *interfce;
 	normaliser_t *normaliser = (normaliser_t *) pre_normaliser;
 	interfce = (reg.segment < normaliser->interfaces_nr)
-		? normaliser->interfaces[reg.segment]
-		: NULL;
+	           ? normaliser->interfaces[reg.segment]
+	           : NULL;
 
 	if (interfce) {
 		reg = interfce->find_canonic_address(interfce, reg);
@@ -129,8 +122,7 @@ store_normalised(void *pre_normaliser, reg_t reg, int _)
 }
 
 static reg_t_hash_map_ptr
-normalise_hashmap_ptrs(reg_t_hash_map_ptr nonnormal_map, seg_interface_t **interfaces, int interfaces_nr)
-{
+normalise_hashmap_ptrs(reg_t_hash_map_ptr nonnormal_map, seg_interface_t **interfaces, int interfaces_nr) {
 	normaliser_t normaliser;
 
 	normaliser.normal_map = new_reg_t_hash_map();
@@ -148,15 +140,13 @@ typedef struct {
 } worklist_manager_t;
 
 void
-add_outgoing_refs(void *pre_wm, reg_t addr)
-{
+add_outgoing_refs(void *pre_wm, reg_t addr) {
 	worklist_manager_t *wm = (worklist_manager_t *) pre_wm;
 	worklist_push(wm->worklist_ref, wm->nonnormal_map, addr);
 }
 
 reg_t_hash_map_ptr
-find_all_used_references(state_t *s)
-{
+find_all_used_references(state_t *s) {
 	seg_manager_t *sm = &(s->seg_manager);
 	seg_interface_t **interfaces = (seg_interface_t**)sci_calloc(sizeof(seg_interface_t *), sm->heap_size);
 	reg_t_hash_map_ptr nonnormal_map = new_reg_t_hash_map();
@@ -210,7 +200,7 @@ find_all_used_references(state_t *s)
 	/* Init: Explicitly loaded scripts */
 	for (i = 1; i < sm->heap_size; i++)
 		if (interfaces[i]
-		    && interfaces[i]->type_id == MEM_OBJ_SCRIPT) {
+		        && interfaces[i]->type_id == MEM_OBJ_SCRIPT) {
 			script_t *script = &(interfaces[i]->mobj->data.script);
 
 			if (script->lockers) { /* Explicitly loaded? */
@@ -223,8 +213,8 @@ find_all_used_references(state_t *s)
 				for (obj_nr = 0; obj_nr < script->objects_nr; obj_nr++) {
 					object_t *obj = script->objects + obj_nr;
 					worklist_push(&worklist,
-						      nonnormal_map,
-						      obj->pos);
+					              nonnormal_map,
+					              obj->pos);
 				}
 			}
 		}
@@ -238,15 +228,15 @@ find_all_used_references(state_t *s)
 		reg_t reg = worklist_pop(&worklist);
 		if (reg.segment != s->stack_segment) { /* No need to repeat this one */
 #ifdef DEBUG_GC_VERBOSE
-			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg)); 
+			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg));
 #endif
 			if (reg.segment < sm->heap_size
-			    && interfaces[reg.segment])
+			        && interfaces[reg.segment])
 				interfaces[reg.segment]->list_all_outgoing_references(interfaces[reg.segment],
-										      s,
-										      reg,
-										      &worklist_manager,
-										      add_outgoing_refs);
+				        s,
+				        reg,
+				        &worklist_manager,
+				        add_outgoing_refs);
 		}
 	}
 
@@ -273,8 +263,7 @@ typedef struct {
 } deallocator_t;
 
 void
-free_unless_used (void *pre_use_map, reg_t addr)
-{
+free_unless_used(void *pre_use_map, reg_t addr) {
 	deallocator_t *deallocator = (deallocator_t *) pre_use_map;
 	reg_t_hash_map_ptr use_map = deallocator->use_map;
 
@@ -290,8 +279,7 @@ free_unless_used (void *pre_use_map, reg_t addr)
 }
 
 void
-run_gc(state_t *s)
-{
+run_gc(state_t *s) {
 	int seg_nr;
 	deallocator_t deallocator;
 	seg_manager_t *sm = &(s->seg_manager);
@@ -312,8 +300,8 @@ run_gc(state_t *s)
 #endif
 
 			deallocator.interfce->list_all_deallocatable(deallocator.interfce,
-								     &deallocator,
-								     free_unless_used);
+			        &deallocator,
+			        free_unless_used);
 
 			deallocator.interfce->deallocate_self(deallocator.interfce);
 		}
@@ -327,8 +315,8 @@ run_gc(state_t *s)
 		for (i = 0; i <= MEM_OBJ_MAX; i++)
 			if (deallocator.segcount[i])
 				sciprintf("\t%d\t* %s\n",
-					  deallocator.segcount[i],
-					  deallocator.segnames[i]);
+				          deallocator.segcount[i],
+				          deallocator.segnames[i]);
 	}
 #endif
 }
