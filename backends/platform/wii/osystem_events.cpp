@@ -36,9 +36,6 @@
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64
 
-#define KBD_THREAD_STACKSIZE (1024 * 8)
-#define KBD_THREAD_PRIO 64
-
 #define PAD_CHECK_TIME 40
 
 #ifndef GAMECUBE
@@ -116,32 +113,6 @@ static void * timer_thread_func(void *arg) {
 	return NULL;
 }
 
-#ifdef USE_WII_KBD
-static lwpq_t kbd_queue;
-static lwp_t kbd_thread;
-static u8 *kbd_stack;
-static bool kbd_thread_running = false;
-static bool kbd_thread_quit = false;
-
-static void * kbd_thread_func(void *arg) {
-	u8 turns = 0;
-
-	while (!kbd_thread_quit) {
-		// scan for new attached keyboards every 3s
-		turns++;
-		if (turns % (3 * 100) == 0) {
-			KEYBOARD_ScanForKeyboard();
-			turns = 0;
-		}
-
-		KEYBOARD_Scan();
-		usleep(1000 * 10);
-	}
-
-	return NULL;
-}
-#endif
-
 void OSystem_Wii::initEvents() {
 	timer_thread_quit = false;
 
@@ -168,25 +139,7 @@ void OSystem_Wii::initEvents() {
 #endif
 
 #ifdef USE_WII_KBD
-	if(KEYBOARD_Init() >= 0) {
-		kbd_thread_quit = false;
-
-		kbd_stack = (u8 *) memalign(32, KBD_THREAD_STACKSIZE);
-		memset(kbd_stack, 0, KBD_THREAD_STACKSIZE);
-
-		LWP_InitQueue(&kbd_queue);
-
-		s32 res = LWP_CreateThread(&kbd_thread, kbd_thread_func, NULL,
-									kbd_stack, KBD_THREAD_STACKSIZE,
-									KBD_THREAD_PRIO);
-
-		if (res) {
-			printf("ERROR creating keyboard thread: %d\n", res);
-			LWP_CloseQueue(kbd_queue);
-		}
-
-		kbd_thread_running = res == 0;
-	}
+	_kbd_active = KEYBOARD_Init() >= 0;
 #endif
 }
 
@@ -202,17 +155,8 @@ void OSystem_Wii::deinitEvents() {
 	}
 
 #ifdef USE_WII_KBD
-	if (kbd_thread_running) {
-		kbd_thread_quit = true;
-		LWP_ThreadBroadcast(kbd_queue);
-
-		LWP_JoinThread(kbd_thread, NULL);
-		LWP_CloseQueue(kbd_queue);
-
-		kbd_thread_running = false;
-
+	if (_kbd_active)
 		KEYBOARD_Deinit();
-	}
 #endif
 
 #ifndef GAMECUBE
@@ -436,7 +380,7 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	}
 
 #ifdef USE_WII_KBD
-	if (kbd_thread_running && pollKeyboard(event))
+	if (_kbd_active && pollKeyboard(event))
 		return true;
 #endif
 

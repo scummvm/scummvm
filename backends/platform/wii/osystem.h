@@ -87,6 +87,8 @@ private:
 	u8 _mouseKeyColor;
 	u8 *_mouseCursor;
 
+	bool _kbd_active;
+
 	bool _event_quit;
 
 	u32 _lastPadCheck;

@@ -67,6 +67,8 @@ OSystem_Wii::OSystem_Wii() :
 	_mouseKeyColor(0),
 	_mouseCursor(NULL),
 
+	_kbd_active(false),
+
 	_event_quit(false),
 
 	_savefile(NULL),
