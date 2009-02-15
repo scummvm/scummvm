@@ -32,6 +32,7 @@
 #include "sci/include/sfx_player.h"
 #include "sci/sfx/mixer.h"
 #include "sci/include/sci_midi.h"
+#include "common/mutex.h"
 
 
 /*#define DEBUG_SONG_API*/
@@ -44,6 +45,9 @@ static sfx_player_t *player = NULL;
 sfx_pcm_mixer_t *mixer = NULL;
 static sfx_pcm_device_t *pcm_device = NULL;
 static sfx_timer_t *timer = NULL;
+
+Common::Mutex* callbackMutex;
+
 
 #define MILLION 1000000
 
@@ -427,11 +431,14 @@ static void
 _sfx_timer_callback(void *data)
 {
 	if (_sfx_timer_active) {
+		Common::StackLock lock(*callbackMutex);
 		/* First run the player, to give it a chance to fill
 		** the audio buffer  */
 
 		if (player)
 			player->maintenance();
+
+		assert(_sfx_timer_active);
 
 		if (mixer)
 			mixer->process(mixer);
@@ -441,6 +448,7 @@ _sfx_timer_callback(void *data)
 void
 sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags)
 {
+	callbackMutex = new Common::Mutex();
 	song_lib_init(&self->songlib);
 	self->song = NULL;
 	self->flags = flags;
@@ -541,6 +549,7 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags)
 void
 sfx_exit(sfx_state_t *self)
 {
+	callbackMutex->lock();
 	_sfx_timer_active = 0;
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
@@ -567,6 +576,9 @@ sfx_exit(sfx_state_t *self)
 		/* See above: This must happen AFTER stopping the mixer */
 		player->exit();
 
+	callbackMutex->unlock();
+	delete callbackMutex;
+	callbackMutex = 0;
 }
 
 static inline int
