@@ -27,12 +27,14 @@
 
 #include <stdlib.h>
 
-#ifndef _WIN32
+#ifdef UNIX
 #define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
 #include <fnmatch.h>
 #endif
 
+#include "common/scummsys.h"
 #include "common/str.h"
+
 #include "sci/include/engine.h"
 
 #ifdef HAVE_SYS_TIME_H
@@ -45,7 +47,7 @@
 #  include <sys/stat.h>
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 #  include <windows.h>
 #  include <mmsystem.h>
 
@@ -253,7 +255,7 @@ sci_gettime(long *seconds, long *useconds)
 	*seconds = tv.tv_sec;
 	*useconds = tv.tv_usec;
 }
-#elif defined (_WIN32)
+#elif defined (WIN32)
 
 /*WARNING(Incorrect)*/
 /* Warning: This function only retrieves the amount of mseconds since the start of
@@ -294,7 +296,7 @@ sci_get_current_time(GTimeVal *val)
 
 
 /************* Directory entities *************/
-#if defined(_WIN32)
+#if defined(WIN32)
 /******** Dir: Win32 CODE ********/
 
 void
@@ -388,7 +390,7 @@ sci_finish_find(sci_dir_t *dir)
 	}
 }
 
-#else /* !_WIN32 */
+#else /* !WIN32 */
 /******** Dir: UNIX CODE ********/
 
 void
@@ -428,13 +430,8 @@ sci_find_next(sci_dir_t *dir)
 		if (match->d_name[0] == '.')
 			continue;
 
-#ifdef _WIN32
-		if (Common::matchString(match->d_name, dir->mask_copy, true))
-			return match->d_name;
-#else
 		if (!fnmatch(dir->mask_copy, match->d_name, FNM_CASEFOLD))
 			return match->d_name;
-#endif
 	}
 
 	sci_finish_find(dir);
@@ -452,7 +449,7 @@ sci_finish_find(sci_dir_t *dir)
 	}
 }
 
-#endif /* !_WIN32 */
+#endif /* !WIN32 */
 
 /************* /Directory entities *************/
 
@@ -501,7 +498,7 @@ sci_mkpath(const char *path)
 char *
 sci_get_homedir(void)
 {
-#ifdef _WIN32
+#ifdef WIN32
 	char *_path_buf = (char*)malloc(MAX_PATH);
 	char *dr = getenv("HOMEDRIVE");
 	char *path = getenv("HOMEPATH");
@@ -600,7 +597,7 @@ sci_sched_yield()
 	snooze(0);
 }
 
-#elif defined (_WIN32)
+#elif defined (WIN32)
 
 void
 sci_sched_yield()
