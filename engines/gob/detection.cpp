@@ -702,15 +702,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
-
-
-
-
-
-
-
-
-
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
