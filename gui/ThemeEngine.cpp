@@ -42,7 +42,7 @@
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -1385,7 +1385,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	listUsableThemes(Common::FSNode(DATA_PATH), list);
 #endif
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
 	if (resourceUrl) {
 		char buf[256];
