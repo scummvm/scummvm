@@ -111,8 +111,6 @@
 
 #ifdef _WIN32
 #  include <io.h>
-#else /* !_WIN32 */
-#  define DLLEXTERN
 #endif /* !_WIN32 */
 
 #ifdef __BEOS__
@@ -145,17 +143,6 @@
 #endif
 #ifdef HAVE_LIMITS_H
 #  include <limits.h>
-#endif
-
-
-#ifdef _MSC_VER
-#  ifdef FREESCI_EXPORTS
-#    define DLLEXTERN
-#  else
-#    define DLLEXTERN __declspec(dllimport)
-#endif
-#else
-#  define DLLEXTERN
 #endif
 
 #if _MSC_VER || _DOS

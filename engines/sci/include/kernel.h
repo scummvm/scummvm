@@ -51,8 +51,8 @@ extern int _kdebug_cheap_event_hack;
 extern int _kdebug_cheap_soundcue_hack;
 extern int stop_on_event;
 
-extern DLLEXTERN int _debug_seeking;
-extern DLLEXTERN int _debug_step_running;
+extern int _debug_seeking;
+extern int _debug_step_running;
 
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 

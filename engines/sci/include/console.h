@@ -49,7 +49,7 @@
 #include "sci/include/gfx_operations.h"
 
 
-extern DLLEXTERN int con_passthrough;
+extern int con_passthrough;
 /* Echo all sciprintf() stuff to the text console */
 extern FILE *con_file;
 /* Echo all sciprintf() output to a text file. Note: clients of freesci.dll

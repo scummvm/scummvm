@@ -419,7 +419,7 @@ typedef struct _breakpoint {
 /* Break when an exported function is called. data contains script_no << 16 |
    export_no. */
 
-extern DLLEXTERN int script_debug_flag;
+extern int script_debug_flag;
 /* Set this to 1 to activate script debugging */
 
 extern int script_error_flag;
@@ -429,7 +429,7 @@ extern int script_checkloads_flag;
 /* Displays the numbers of scripts when they are (un)loaded */
 
 #define SCRIPT_ABORT_WITH_REPLAY 1025
-extern DLLEXTERN int script_abort_flag;
+extern int script_abort_flag;
 /* Set this to 1 to abort script execution immediately. Aborting will leave the
 ** debug exec stack intact.
 ** Set it to SCRIPT_ABORT_WITH_REPLAY to force a replay afterwards.
@@ -444,12 +444,12 @@ extern int script_step_counter;
 /* Number of steps executed */
 
 
-extern DLLEXTERN const char *(*_debug_get_input)(void);
+extern const char *(*_debug_get_input)(void);
 /* The function used to get input for debugging */
 
-extern DLLEXTERN int _debugstate_valid;
-extern DLLEXTERN int _debug_seeking;
-extern DLLEXTERN int _debug_step_running;
+extern int _debugstate_valid;
+extern int _debug_seeking;
+extern int _debug_step_running;
 
 
 typedef int kernel_function(struct _state* s);

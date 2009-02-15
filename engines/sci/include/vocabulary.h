@@ -72,7 +72,7 @@ typedef struct opcode_
 #define VOCAB_CLASS_IMPERATIVE_VERB 0x80
 #define VOCAB_CLASS_NUMBER 0x001
 
-extern DLLEXTERN const char *class_names[]; /* Vocabulary class names */
+extern const char *class_names[]; /* Vocabulary class names */
 
 #define VOCAB_CLASS_ANYWORD 0xff
 /* Anywords are ignored by the parser */

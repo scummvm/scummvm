@@ -196,7 +196,7 @@ typedef enum { /* FIXME */
   op_minusspi
 } sci_opcodes;
 
-extern DLLEXTERN opcode_format formats[128][4];
+extern opcode_format formats[128][4];
 
 void script_adjust_opcode_formats(int res_version);
 

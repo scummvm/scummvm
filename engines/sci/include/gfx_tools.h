@@ -44,7 +44,7 @@ typedef enum {
 } gfxr_antialiasing_t;
 
 
-extern DLLEXTERN int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this value as threshold
+extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this value as threshold
 		 			  ** for distinguishing between transparent and opaque
 					  ** wrt alpha values */
 
