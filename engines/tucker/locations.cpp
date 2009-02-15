@@ -2117,7 +2117,7 @@ void TuckerEngine::updateSprite_locationNum43_2(int i) {
 
 void TuckerEngine::updateSprite_locationNum43_3(int i) {
 	int state;
-	if (_flagsTable[236] > 0) {
+	if (_flagsTable[236] < 4) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 7;
@@ -2131,7 +2131,7 @@ void TuckerEngine::updateSprite_locationNum43_3(int i) {
 
 void TuckerEngine::updateSprite_locationNum43_4(int i) {
 	int state;
-	if (_flagsTable[236] > 0) {
+	if (_flagsTable[236] < 4) {
 		state = -1;
 	} else if (_charSpeechSoundCounter > 0 && _actionCharacterNum == i) {
 		state = 9;
