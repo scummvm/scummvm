@@ -78,26 +78,6 @@ static guint8 sci_adlib_vol_base[16] = {
 };
 static guint8 sci_adlib_vol_tables[16][64];
 
-/* ripped out of the linux kernel, of all places. */
-static gint8 fm_volume_table[128] = {
-  -64, -48, -40, -35, -32, -29, -27, -26,
-  -24, -23, -21, -20, -19, -18, -18, -17,
-  -16, -15, -15, -14, -13, -13, -12, -12,
-  -11, -11, -10, -10, -10, -9, -9, -8,
-  -8, -8, -7, -7, -7, -6, -6, -6,
-  -5, -5, -5, -5, -4, -4, -4, -4,
-  -3, -3, -3, -3, -2, -2, -2, -2,
-  -2, -1, -1, -1, -1, 0, 0, 0,
-  0, 0, 0, 1, 1, 1, 1, 1,
-  1, 2, 2, 2, 2, 2, 2, 2,
-  3, 3, 3, 3, 3, 3, 3, 4,
-  4, 4, 4, 4, 4, 4, 4, 5,
-  5, 5, 5, 5, 5, 5, 5, 5,
-  6, 6, 6, 6, 6, 6, 6, 6,
-  6, 7, 7, 7, 7, 7, 7, 7,
-  7, 7, 7, 8, 8, 8, 8, 8
-};
-
 /* back to your regularly scheduled definitions */
 
 static guint8 instr[MIDI_CHANNELS];
@@ -274,31 +254,32 @@ void synth_setvolume_R (int voice, int volume)
 
 void synth_setnote (int voice, int note, int bend)
 {
-    int n, fre, oct;
-    float delta;
+	int n, fre, oct;
+	float delta;
 
-    delta = 0;
+	delta = 0;
 
-    n = note % 12;
+	n = note % 12;
 
-    if (bend < 8192)
-      bend = 8192-bend;
-    delta = pow(2, (float) (bend%8192)/8192.0);
+	if (bend < 8192)
+	  bend = 8192-bend;
+	delta = pow(2, (float) (bend%8192)/8192.0);
 
-    if (bend > 8192)
-	    fre = ym3812_note[n]*delta; else
-		    fre = ym3812_note[n]/delta;
+	if (bend > 8192)
+		fre = (int)(ym3812_note[n]*delta);
+	else
+		fre = (int)(ym3812_note[n]/delta);
 
-    oct = note / 12 - 1;
+	oct = note / 12 - 1;
 
-    if (oct < 0)
-      oct = 0;
+	if (oct < 0)
+	  oct = 0;
 
-    opl_write(0xa0 + voice, fre & 0xff);
-    opl_write(0xb0 + voice,
-        0x20 | ((oct << 2) & 0x1c) | ((fre >> 8) & 0x03));
+	opl_write(0xa0 + voice, fre & 0xff);
+	opl_write(0xb0 + voice,
+		0x20 | ((oct << 2) & 0x1c) | ((fre >> 8) & 0x03));
 #ifdef DEBUG_ADLIB
-    printf("-- %02x %02x\n", adlib_reg_L[0xa0+voice], adlib_reg_L[0xb0+voice]);
+	printf("-- %02x %02x\n", adlib_reg_L[0xa0+voice], adlib_reg_L[0xb0+voice]);
 #endif
 
 }

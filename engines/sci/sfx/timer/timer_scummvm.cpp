@@ -48,5 +48,7 @@ sfx_timer_t sfx_timer_scummvm = {
 	DELAY/1000, 0,
 	NULL,
 	&scummvm_timer_start,
-	&scummvm_timer_stop
+	&scummvm_timer_stop,
+	0,
+	0
 	};

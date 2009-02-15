@@ -68,8 +68,7 @@
 #ifndef _SCI_MEMORY_H
 #define _SCI_MEMORY_H
 
-#include <stdio.h>
-#include <assert.h>
+#include "common/scummsys.h"
 #include "sci/include/resource.h"
 
 #ifdef _WIN32

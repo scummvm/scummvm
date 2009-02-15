@@ -24,10 +24,8 @@
 
 ***************************************************************************/
 
+#include <time.h>	// for time() to seed rand() via srand()
 #include "sci/include/sci_memory.h"
-#include <assert.h>
-#include <math.h>
-#include <time.h>
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
@@ -577,7 +575,8 @@ enum {
 #ifdef GFXR_DEBUG_PIC0
 #define p0printf sciprintf
 #else
-#define p0printf if (0)
+void do_nothing(...) { }
+#define p0printf do_nothing
 #endif
 
 
