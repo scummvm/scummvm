@@ -78,7 +78,7 @@ bool Debugger::cmd_pc(int argc, const char **argv) {
 		int val = getNumber(argv[1]);
 		_script->_currentInstruction = val;
 	}
-	DebugPrintf("pc = 0x%04X\n", _script->_currentInstruction);
+	DebugPrintf("pc = 0x%04X (%d)\n", _script->_currentInstruction, _script->_currentInstruction);
 	return true;
 }
 
