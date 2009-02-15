@@ -7,6 +7,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added a 'Load' button to the Launcher (not supported by all engines).
    - Added a new global main menu (GMM) dialog usable from all engines.
    - Added the ability to return to the launcher from running games (via the GMM).
+   - Rewrote GUI renderer to use an vector based approach.
+   - Rewrote GUI configuration to use XML.
 
  New Games:
    - Added support for Blue's 123 Time Activities.
