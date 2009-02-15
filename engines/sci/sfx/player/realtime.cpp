@@ -159,7 +159,7 @@ rt_timer_callback(void)
 }
 
 static resource_t *
-find_patch(resource_mgr_t *resmgr, const char *seq, int patchfile)
+find_patch(resource_mgr_t *resmgr, const char *seq_name, int patchfile)
 {
 	resource_t *res = NULL;
 
@@ -167,7 +167,7 @@ find_patch(resource_mgr_t *resmgr, const char *seq, int patchfile)
 		res = scir_find_resource(resmgr, sci_patch, patchfile, 0);
 		if (!res) {
 			fprintf(stderr, "[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
-				patchfile, seq);
+				patchfile, seq_name);
 		}
 	}
 

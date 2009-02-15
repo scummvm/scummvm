@@ -647,7 +647,7 @@ script_free_breakpoints(state_t *s)
 int
 game_init(state_t *s)
 {
-#ifdef __GNUC__
+#ifdef __GNUC__XX
 #  warning "Fixme: Use new VM instantiation code all over the place"
 #endif
 	reg_t game_obj; /* Address of the game object */
@@ -750,7 +750,7 @@ game_exit(state_t *s)
 
 	sciprintf("Freeing miscellaneous data...\n");
 
-#ifdef __GNUC__
+#ifdef __GNUC__XX
 #warning "Free parser segment here"
 #endif
 	if (send_calls_allocated) {
@@ -758,7 +758,7 @@ game_exit(state_t *s)
 		send_calls_allocated = 0;
 	}
 
-#ifdef __GNUC__
+#ifdef __GNUC__XX
 #warning "Free scripts here"
 #endif
 

@@ -229,7 +229,7 @@ fluidsynth_volume(sfx_softseq_t *self, int volume)
 }
 
 static int
-fluidsynth_set_option(sfx_softseq_t *self, char *name, char *value)
+fluidsynth_set_option(sfx_softseq_t *self, const char *name, const char *value)
 {
 	return SFX_ERROR;
 }

@@ -350,10 +350,10 @@ clone_is_used(clone_table_t *t, int idx)
 }
 
 int
-parse_reg_t(state_t *s, char *str, reg_t *dest)
+parse_reg_t(state_t *s, const char *str, reg_t *dest)
 { /* Returns 0 on success */
 	int rel_offsetting = 0;
-	char *offsetting = NULL;
+	const char *offsetting = NULL;
 	/* Non-NULL: Parse end of string for relative offsets */
 	char *endptr;
 
@@ -415,26 +415,27 @@ parse_reg_t(state_t *s, char *str, reg_t *dest)
 	} else if (*str == '?') {
 		int index = -1;
 		int times_found = 0;
-		char *str_objname;
+		char *tmp;
+		const char *str_objname;
 		char *str_suffix;
 		char suffchar = 0; /* Supress spurious -Wall warning */
 		int i;
 		/* Parse obj by name */
 
-		str_objname = strchr(str, '+');
+		tmp = strchr(str, '+');
 		str_suffix = strchr(str, '-');
-		if (str_objname < str_suffix)
-			str_suffix = str_objname;
+		if (tmp < str_suffix)
+			str_suffix = tmp;
 		if (str_suffix) {
 			suffchar = (*str_suffix);
 			*str_suffix = 0;
 		}
 
-		str_objname = strchr(str, '.');
+		tmp = strchr(str, '.');
 
-		if (str_objname) {
-			*str_objname = 0;
-			index = strtol(str_objname+1, &endptr, 16);
+		if (tmp) {
+			*tmp = 0;
+			index = strtol(tmp+1, &endptr, 16);
 			if (*endptr)
 				return -1;
 		}
@@ -1053,7 +1054,6 @@ c_list (state_t * s)
 			else if (!strcmp("words", cmd_params[0].str))
 				return c_list_words(s);
 			else if (strcmp ("restypes", cmd_params[0].str) == 0) {
-				int i;
 				for (i = 0; i < sci_invalid_resource; i++)
 					sciprintf ("%s\n", sci_resource_types[i]);
 			}
@@ -1062,7 +1062,6 @@ c_list (state_t * s)
 				if (res == -1)
 					sciprintf ("Unknown resource type: '%s'\n", cmd_params[0].str);
 				else {
-					int i;
 					for (i = 0; i < sci_max_resource_nr[s->resmgr->sci_version]; i++)
 						if (scir_test_resource (s->resmgr, res, i))
 							sciprintf ("%s.%03d\n", sci_resource_types[res], i);

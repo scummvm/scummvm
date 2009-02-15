@@ -104,59 +104,6 @@ _vfree(parse_rule_t *rule)
   rule = NULL;
 }
 
-#if 0
-// Unreferenced - removed
-
-static parse_rule_t *
-_vbuild(int id, int argc, ...)
-{
-  va_list args;
-  int i;
-  parse_rule_t *rule = (parse_rule_t*)sci_malloc(sizeof(int) * (argc + 4));
-
-  ++_allocd_rules;
-  rule->id = id;
-  rule->first_special = 0;
-  rule->specials_nr = 0;
-  rule->length = argc;
-  va_start(args, argc);
-  for (i = 0; i < argc; i++) {
-    int v;
-    rule->data[i] = v = va_arg(args, int);
-    if ((v & TOKEN_TERMINAL)
-	|| !(v & TOKEN_NON_NT)) {
-
-      ++rule->specials_nr;
-
-      if (!rule->first_special)
-	rule->first_special = i;
-    }
-  }
-  va_end(args);
-  return rule;
-}
-#endif
-
-#if 0
-// Unreferenced - removed
-static parse_rule_t *
-_vcat(int id, parse_rule_t *a, parse_rule_t *b)
-{
-  parse_rule_t *rule = (parse_rule_t*)sci_malloc(sizeof(int) * (a->length + b->length + 4));
-
-  rule->id = id;
-  rule->length = a->length + b->length;
-  rule->specials_nr = a->specials_nr + b->specials_nr;
-  rule->first_special = a->first_special;
-  ++_allocd_rules;
-
-  memcpy(rule->data, a->data, sizeof(int) * a->length);
-  memcpy(&(rule->data[a->length]), b->data, sizeof(int) * b->length);
-
-  return rule;
-}
-#endif
-
 static parse_rule_t *
 _vdup(parse_rule_t *a)
 {
@@ -203,24 +150,6 @@ _vinsert(parse_rule_t *turkey, parse_rule_t *stuffing)
 
   return rule;
 }
-
-#if 0
-// Unreferenced - removed
-static int
-_greibach_rule_p(parse_rule_t *rule)
-{
-  int pos = rule->first_special;
-  while (pos < rule->length
-	 && (rule->data[pos] & TOKEN_NON_NT)
-	 && !(rule->data[pos] & TOKEN_TERMINAL))
-    ++pos;
-
-  if (pos == rule->length)
-    return 0;
-
-  return (rule->data[pos] & TOKEN_TERMINAL);
-}
-#endif
 
 static parse_rule_t *
 _vbuild_rule(parse_tree_branch_t *branch)

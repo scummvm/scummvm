@@ -250,17 +250,6 @@ _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed)
 	BREAKPOINT();
 }
 
-#if 0
-// Unreferenced - removed
-static void
-mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed)
-{
-	ACQUIRE_LOCK();
-	_mix_unsubscribe(self, feed);
-	RELEASE_LOCK();
-}
-#endif
-
 static void
 mix_exit(sfx_pcm_mixer_t *self)
 {

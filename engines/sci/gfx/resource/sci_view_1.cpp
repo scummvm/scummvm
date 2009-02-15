@@ -529,7 +529,6 @@ gfxr_draw_view11(int id, byte *resource, int size)
 	seeker = resource + header_size;
 	for (i = 0; i < view->loops_nr; i++)
 	{
-		static char *truth[2] = {"not ",""};
 		int loop_offset = get_uint_16(seeker + V2_LOOP_OFFSET);
 		int cels = seeker[V2_CELS_NUM];
 		int mirrored = seeker[V2_IS_MIRROR];

@@ -63,16 +63,8 @@ void usleep (long usec);
 	} while (0);
 #endif
 
-#if !defined(HAVE_FNMATCH) && !defined(_WIN32)
-#  include <beos/fnmatch.h>
-#endif
-
 #ifdef _DREAMCAST
 #  include <kos/thread.h>
-#endif
-
-#ifdef __BEOS__
-#  include <be/kernel/OS.h>
 #endif
 
 #ifdef HAVE_MEMFROB

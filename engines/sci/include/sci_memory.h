@@ -134,14 +134,14 @@ do {\
 
 #define ALLOC_MEM(alloc_statement, size, filename, linenum, funcname)\
 do {\
-	if (size < 0)\
+	if (size == 0)\
+	{\
+		PANIC_MEMORY(size, filename, linenum, funcname, "WARNING: allocating zero bytes of memory.")\
+	}\
+	else if (!(size > 0))\
 	{\
 		PANIC_MEMORY(size, filename, linenum, funcname, "Cannot allocate negative bytes of memory!")\
 		BREAKPOINT()\
-	}\
-	else if (size == 0)\
-	{\
-		PANIC_MEMORY(size, filename, linenum, funcname, "WARNING: allocating zero bytes of memory.")\
 	}\
 \
 	alloc_statement; /* attempt to allocate the memory */\

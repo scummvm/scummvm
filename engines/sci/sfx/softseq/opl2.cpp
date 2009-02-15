@@ -682,7 +682,7 @@ opl2_volume(sfx_softseq_t *self, int volume)
 }
 
 int
-opl2_set_option(sfx_softseq_t *self, char *name, char *value)
+opl2_set_option(sfx_softseq_t *self, const char *name, const char *value)
 {
 	return SFX_ERROR;
 }

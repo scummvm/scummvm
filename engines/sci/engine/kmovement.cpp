@@ -251,7 +251,7 @@ static enum {
 	UNINITIALIZED
 } handle_movecnt = UNINITIALIZED;
 	
-int parse_reg_t(state_t *s, char *str, reg_t *dest); /* In scriptconsole.c */
+int parse_reg_t(state_t *s, const char *str, reg_t *dest); /* In scriptconsole.c */
 
 static int 
 checksum_bytes(byte *data, int size)

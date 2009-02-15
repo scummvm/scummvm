@@ -219,6 +219,7 @@ sfx_instrument_map_load_sci(byte *data, size_t size)
 /* Output with the instrument map */
 #define MIDI_CHANNELS_NR 0x10
 
+// FIXME: Replace this ugly hack with simple subclassing once converting to C++
 typedef struct decorated_midi_writer {
 	MIDI_WRITER_BODY
 
@@ -271,7 +272,7 @@ close_decorated(decorated_midi_writer_t *self)
 	sfx_instrument_map_free(self->map);
 	self->map = NULL;
 	self->writer->close(self->writer);
-	sci_free(self->name);
+	sci_free((void *)self->name);
 	self->name = NULL;
 	sci_free(self);
 }
@@ -279,7 +280,7 @@ close_decorated(decorated_midi_writer_t *self)
 #define BOUND_127(x) (((x) < 0)? 0 : (((x) > 0x7f)? 0x7f : (x)))
 
 static int
-bound_hard_127(int i, char *descr)
+bound_hard_127(int i, const char *descr)
 {
 	int r = BOUND_127(i);
 	if (r != i)
@@ -325,7 +326,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len)
 	assert (len >= 1);
 
 	if (op == 0xC0 && chan != MIDI_RHYTHM_CHANNEL) { /* Program change */
-		int patch = bound_hard_127(buf[1], "program change");
+		/*int*/ patch = bound_hard_127(buf[1], "program change");
 		int instrument = map->patch_map[patch].patch;
 		int bend_range = map->patch_bend_range[patch];
 

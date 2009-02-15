@@ -37,7 +37,7 @@
 
 #define DEBUG_MT32_TO_GM
 
-static char
+static const char
 *GM_Instrument_Names[] = {
 	/*000*/  "Acoustic Grand Piano",
 	/*001*/  "Bright Acoustic Piano",
@@ -170,7 +170,7 @@ static char
 };
 
 /* The GM Percussion map is downwards compatible to the MT32 map, which is used in SCI */
-static char
+static const char
 *GM_Percussion_Names[] = {
 	/*00*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -232,7 +232,7 @@ static char
 
 
 static struct {
-	char *name;
+	const char *name;
 	gint8 gm_instr;
 	gint8 gm_rhythm_key;
 } MT32_PresetTimbreMaps[] = {
@@ -367,7 +367,7 @@ static struct {
 };
 
 static struct {
-	char *name;
+	const char *name;
 	gint8 gm_instr;
 	gint8 gm_rhythmkey;
 } MT32_RhythmTimbreMaps[] = {
@@ -428,7 +428,7 @@ MT32_PresetRhythmKeymap[] = {
    ??? - I'm clueless?
    R   - Rhythm... */
 static struct {
-	char *name;
+	const char *name;
 	gint8 gm_instr;
 	gint8 gm_rhythm_key;
 } MT32_MemoryTimbreMaps[] = {
@@ -562,11 +562,11 @@ static struct {
 	{"Wind2   MS", SFX_UNMAPPED, SFX_UNMAPPED}, /* ? (CoC) */
 	{"Woodpecker", 115, SFX_UNMAPPED},   /* ? (CB) */
 	{"WtrFall MS", SFX_UNMAPPED, SFX_UNMAPPED}, /* ? (CoC, HQ, iceMan) */
-	{0, 0}
+	{0, 0, 0}
 };
 
 static gint8
-lookup_instrument(char *iname)
+lookup_instrument(const char *iname)
 {
 	int i = 0;
 
@@ -579,7 +579,7 @@ lookup_instrument(char *iname)
 }
 
 static gint8
-lookup_rhythm_key(char *iname)
+lookup_rhythm_key(const char *iname)
 {
 	int i = 0;
 

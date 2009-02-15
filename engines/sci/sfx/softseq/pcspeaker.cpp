@@ -42,7 +42,7 @@ extern sfx_softseq_t sfx_softseq_pcspeaker;
 
 
 static int
-sps_set_option(sfx_softseq_t *self, char *name, char *value)
+sps_set_option(sfx_softseq_t *self, const char *name, const char *value)
 {
 	return SFX_ERROR;
 }

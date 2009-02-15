@@ -48,7 +48,7 @@ extern sfx_softseq_t sfx_softseq_pcspeaker;
 
 
 static int
-SN76496_set_option(sfx_softseq_t *self, char *name, char *value)
+SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value)
 {
 	return SFX_ERROR;
 }

@@ -466,7 +466,7 @@ static instrument_t *read_instrument(FILE *file, int *id)
 }
 
 static int
-ami_set_option(sfx_softseq_t *self, char *name, char *value)
+ami_set_option(sfx_softseq_t *self, const char *name, const char *value)
 {
 	return SFX_ERROR;
 }

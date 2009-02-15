@@ -67,7 +67,7 @@ struct _state;
 
 #ifdef SCI_KERNEL_DEBUG
 
-#ifdef __GNUC__
+#ifdef __GNUC__XXX
 
 #define SCIkdebug(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__,  ## arguments)
 
@@ -85,7 +85,7 @@ struct _state;
 
 
 
-#ifdef __GNUC__
+#ifdef __GNUC__XXX
 
 #define SCIkwarn(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__, ## arguments)
 

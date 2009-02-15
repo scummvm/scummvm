@@ -32,6 +32,7 @@
 #include "sci/include/kdebug.h"
 #include "sci/include/uinput.h"
 #include "sci/include/event.h"
+#include "sci/include/vm.h"
 #include "sci/include/console.h" /* sciprintf() */
 
 #ifdef HAVE_FNMATCH_H

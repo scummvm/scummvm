@@ -577,7 +577,6 @@ kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv)
   char *path = kernel_dereference_char_pointer(s, argv[0], 0);
   char *testpath = (char*)sci_malloc(strlen(path) + 15);
   char buf[1024];
-  int i;
   int fd;
   int failed = 0;
   int pathlen;
@@ -616,7 +615,7 @@ kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv)
   }
 
   memset(buf, 0, sizeof(buf));
-  for (i = 0; i < 1024; i++) /* Check for 1 MB */
+  for (int i = 0; i < 1024; i++) /* Check for 1 MB */
     if (write(fd, buf, 1024) < 1024)
       failed = 1;
 
@@ -711,7 +710,7 @@ _savegame_index_struct_compare(const void *a, const void *b)
 }
 
 static void
-update_savegame_indices(char *gfname)
+update_savegame_indices(const char *gfname)
 {
 	int i;
 

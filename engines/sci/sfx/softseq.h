@@ -42,11 +42,11 @@ typedef struct sfx_softseq {
 	const char *version;
 
 	int
-	(*set_option)(struct sfx_softseq *self, char *name, char *value);
+	(*set_option)(struct sfx_softseq *self, const char *name, const char *value);
 	/* Sets an option for the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
-	**             (char *) name: Name of the option to set
-	**             (char *0 value: Value to set the option to
+	**             (const char *) name: Name of the option to set
+	**             (const char *) value: Value to set the option to
 	** Returns   : (int) GFX_OK on success, or GFX_ERROR if not supported
 	*/
 
@@ -125,9 +125,9 @@ typedef struct sfx_softseq {
 
 
 sfx_softseq_t *
-sfx_find_softseq(char *name);
+sfx_find_softseq(const char *name);
 /* Finds a given or default software sequencer
-** Parameters: (char *) name: Name of the sequencer to look up, or NULL for default
+** Parameters: (const char *) name: Name of the sequencer to look up, or NULL for default
 ** Returns   : (sfx_softseq_t *) The requested sequencer, or NULL if not found 
 */
 

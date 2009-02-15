@@ -441,7 +441,7 @@ scir_add_appropriate_sources(resource_mgr_t *mgr,
 			     int allow_patches,
 			     char *dir)
 {
-	char *trailing_slash = "";
+	const char *trailing_slash = "";
 	//char path_separator;
 	sci_dir_t dirent;
 	char *name;

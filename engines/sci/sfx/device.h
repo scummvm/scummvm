@@ -52,6 +52,9 @@ struct _midi_device {
 	*/
 };
 
+// FIXME: This evil hack below is needed to create the
+// decorated_midi_writer struct in instrumen-map.c -- in C++, this can
+// be replaced by simple subclassing.
 #define MIDI_WRITER_BODY	\
 	char *name; /* Name description of the device */		\
 									\

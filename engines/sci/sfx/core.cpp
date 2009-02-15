@@ -863,8 +863,6 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 
 static const song_handle_t midi_send_base = 0xffff0000;
 
-static song_handle_t midi_send_handle = 0xffff0000;
-
 int
 sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 	      int command, int arg1, int arg2)
@@ -875,7 +873,7 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 	/* Yes, in that order. SCI channel mutes are actually done via
 	   a counting semaphore. 0 means to decrement the counter, 1
 	   to increment it. */
-	static char *channel_state[] = {"ON","OFF"}; 
+	static const char *channel_state[] = {"ON","OFF"}; 
 
 	if (command == 0xb0 &&
 	    arg1 == SCI_MIDI_CHANNEL_MUTE)

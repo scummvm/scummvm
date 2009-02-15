@@ -29,7 +29,7 @@
 #ifndef _SCI_KERNEL_COMPAT_
 #define _SCI_KERNEL_COMPAT_
 
-#ifdef __GNUC__
+#ifdef __GNUC__XX
 #warning "Old kernel compatibility crap"
 #endif
 
