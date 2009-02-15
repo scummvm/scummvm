@@ -395,7 +395,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 	} else if (*str == '&') {
 		int script_nr;
 		/* Look up by script ID */
-		char *colon = strchr(str, ':');
+		char *colon = (char *)strchr(str, ':');
 
 		if (!colon)
 			return 1;
@@ -422,8 +422,8 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 		int i;
 		/* Parse obj by name */
 
-		tmp = strchr(str, '+');
-		str_suffix = strchr(str, '-');
+		tmp = (char *)strchr(str, '+');
+		str_suffix = (char *)strchr(str, '-');
 		if (tmp < str_suffix)
 			str_suffix = tmp;
 		if (str_suffix) {
@@ -431,7 +431,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 			*str_suffix = 0;
 		}
 
-		tmp = strchr(str, '.');
+		tmp = (char *)strchr(str, '.');
 
 		if (tmp) {
 			*tmp = 0;
@@ -514,7 +514,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest)
 			*str_suffix = suffchar;
 		rel_offsetting = 1;
 	} else {
-		char *colon = strchr(str, ':');
+		char *colon = (char *)strchr(str, ':');
 
 		if (!colon) {
 			offsetting = str;

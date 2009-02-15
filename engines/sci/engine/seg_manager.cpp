@@ -577,7 +577,7 @@ sm_get_heap (seg_manager_t* self, reg_t reg)
 
 	switch( mem_type ) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY( reg.offset + 1 < mem_obj->data.script.buf_size, "invalid offset\n" );
+		VERIFY( reg.offset + 1 < (unsigned int)mem_obj->data.script.buf_size, "invalid offset\n" );
 		return (unsigned char)mem_obj->data.script.buf[reg.offset] |
 		     ( ((unsigned char)mem_obj->data.script.buf[reg.offset+1]) << 8 );
 	case MEM_OBJ_CLONES:

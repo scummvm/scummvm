@@ -163,7 +163,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 	menu_t *menu;
 	char tracker;
 	char *left = NULL, *right;
-	reg_t left_origin;
+	reg_t left_origin = entries_base;
 	int string_len = 0;
 	int tag = 0, c_width, max_width = 0;
 	int height;

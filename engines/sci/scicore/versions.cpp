@@ -354,7 +354,7 @@ version_guess_from_hashcode(sci_version_t *result, int *res_version, guint32 *co
 	*code = hash_code;
 
 	for (i = 0 ; sci_games[i].name ; i++) {
-		if (sci_games[i].id == hash_code) {
+		if ((unsigned int)sci_games[i].id == hash_code) {
 			*result = sci_games[i].version;
 			*res_version = sci_games[i].res_version;
 			return sci_games[i].name;

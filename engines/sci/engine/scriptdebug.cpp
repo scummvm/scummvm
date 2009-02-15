@@ -773,7 +773,7 @@ c_seginfo(state_t *s)
 			sciprintf("[%04x] ", nr);
 			_c_single_seg_info(s, s->seg_manager.heap[nr]);
 		}
-	} else for (i = 0; i < s->seg_manager.heap_size; i++)
+	} else for (i = 0; i < (unsigned int) s->seg_manager.heap_size; i++)
 			if (s->seg_manager.heap[i]) {
 				sciprintf("[%04x] ", i);
 				_c_single_seg_info(s, s->seg_manager.heap[i]);
@@ -1573,7 +1573,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			while (stackframe > 0) {
 				int argc = sb[- stackframe + 1].offset;
 				const char *name = NULL;
-				reg_t called_obj_addr;
+				reg_t called_obj_addr = *p_objp;
 
 				if (opcode == op_send)
 					called_obj_addr = s->r_acc;

@@ -124,7 +124,7 @@ static inline int
 sane_nodep(state_t *s, reg_t addr)
 {
 	int have_prev = 0;
-	reg_t prev;
+	reg_t prev = addr;
 
 	do {
 		node_t *node = LOOKUP_NODE(addr);
