@@ -66,7 +66,9 @@
 #define HAVE_UNLINK
 #define HAVE_RMDIR
 #define HAVE_MEMCHR
+#ifndef _WIN32
 #define HAVE_FNMATCH_H
+#endif
 #define HAVE_SYS_TIME_H
 #define HAVE_GETTIMEOFDAY
 #endif
