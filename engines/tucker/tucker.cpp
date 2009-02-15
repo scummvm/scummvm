@@ -2638,9 +2638,9 @@ void TuckerEngine::updateSprite(int i) {
 			updateSprite_locationNum43_2(i);
 		} else if (i < 2) {
 			if (_flagsTable[236] < 4) {
-				_spritesTable[0].state = i + 1;
+				_spritesTable[i].state = i + 1;
 			} else {
-				_spritesTable[0].state = -1;
+				_spritesTable[i].state = -1;
 			}
 		} else if (i == 3) {
 			updateSprite_locationNum43_3(3);
