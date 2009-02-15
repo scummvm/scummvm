@@ -91,6 +91,14 @@ static int keymap[][2] = {
 	{ KBD_KP_minus, Common::KEYCODE_KP_MINUS },
 	{ KBD_KP_equal, Common::KEYCODE_KP_EQUALS },
 	{ KBD_KP_enter, Common::KEYCODE_KP_ENTER },
+	{ KBD_LeftShift, Common::KEYCODE_LSHIFT },
+	{ KBD_RightShift, Common::KEYCODE_RSHIFT },
+	{ KBD_LeftCtrl, Common::KEYCODE_LCTRL },
+	{ KBD_RightCtrl, Common::KEYCODE_RCTRL },
+	{ KBD_LeftAlt, Common::KEYCODE_LALT },
+	{ KBD_RightAlt, Common::KEYCODE_RALT },
+	{ KBD_LeftMeta, Common::KEYCODE_LMETA },
+	{ KBD_RightMeta, Common::KEYCODE_RMETA },
 	{ 0, 0 }
 };
 #endif
