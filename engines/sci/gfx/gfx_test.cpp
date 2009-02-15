@@ -351,7 +351,7 @@ gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gf
 		fprintf(stderr,"Attempt to reference invalid pic #%d\n", nr);
 	}
 
-	printf(">> resource manager retreived pic #%d\n", nr);
+	printf(">> resource manager retrieved pic #%d\n", nr);
 	return GFX_OK;
 }
 
@@ -434,7 +434,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 		loop->cels[i] = pxm;
 	}
 
-	printf(">> resource manager retreived view #%d\n", nr);
+	printf(">> resource manager retrieved view #%d\n", nr);
 
 	return view;
 }
@@ -464,7 +464,7 @@ gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal)
 	font->char_size = ((BUILTIN_CHARS_WIDTH + 7) >> 3) * BUILTIN_CHARS_HEIGHT;
 	font->data = memdup(builtin_font, font->char_size * BUILTIN_CHARS_NR);
 
-	printf(">> resource manager retreived font #%d\n", nr);
+	printf(">> resource manager retrieved font #%d\n", nr);
 
 	return font;
 }
@@ -543,7 +543,7 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal)
 		return NULL;
 	}
 
-	printf(">> resource manager retreived cursor #%d\n", nr);
+	printf(">> resource manager retrieved cursor #%d\n", nr);
 
 	return cursor;
 }

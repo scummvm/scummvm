@@ -2096,7 +2096,7 @@ aug_get_next_sibling(parse_tree_node_t *tree, int pos, int *first, int *second)
 	AUG_READ_BRANCH(seek, 0, pos);
 	AUG_ASSERT(seek);
 
-	/* Now retreive first value */
+	/* Now retrieve first value */
 	AUG_READ_BRANCH(valpos, 0, seek);
 	AUG_ASSERT(valpos);
 	AUG_READ_VALUE(*first, valpos);

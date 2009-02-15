@@ -634,7 +634,7 @@ scir_new_resource_manager(char *dir, int version,
 			free(mgr->resources);
 			mgr->resources = NULL;
 		}
-		sciprintf("Resmgr: Could not retreive a resource list!\n");
+		sciprintf("Resmgr: Could not retrieve a resource list!\n");
 		_scir_free_resource_sources(mgr->sources);
 		sci_free(mgr);
 		chdir(caller_cwd);

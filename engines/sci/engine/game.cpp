@@ -61,7 +61,7 @@ _init_vocabulary(state_t *s) /* initialize vocabulary and related resources */
 	s->opcodes = vocabulary_get_opcodes(s->resmgr);
 
 	if (!(s->selector_names = vocabulary_get_snames(s->resmgr, NULL, s->version))) {
-		sciprintf("_init_vocabulary(): Could not retreive selector names (vocab.997)!\n");
+		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
 		return 1;
 	}
 

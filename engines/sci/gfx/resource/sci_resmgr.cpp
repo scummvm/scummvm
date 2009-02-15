@@ -237,7 +237,7 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal)
 		return NULL;
 
 	if (state->version >= SCI_VERSION_1_1) {
-		GFXWARN("Attempt to retreive cursor in SCI1.1 or later\n");
+		GFXWARN("Attempt to retrieve cursor in SCI1.1 or later\n");
 		return NULL;
 	}
 

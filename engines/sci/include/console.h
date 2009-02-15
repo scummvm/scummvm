@@ -156,7 +156,7 @@ cmd_param_t
 con_getopt(char *opt);
 /* Retreives the specified optional parameter
 ** -- for use within console functions only --
-** Parameters: (char *) opt: The optional parameter to retreive
+** Parameters: (char *) opt: The optional parameter to retrieve
 ** Returns   : (cmd_param_t) The corresponding parameter
 ** Should only be used if con_hasopt() reports its presence.
 */

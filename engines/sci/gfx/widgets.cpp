@@ -750,7 +750,7 @@ _gfxw_new_simple_view(gfx_state_t *state, point_t pos, int view, int loop, int c
 	}
 
 	if (gfxop_get_cel_parameters(state, view, loop, cel, &width, &height, &offset)) {
-		GFXERROR("Attempt to retreive cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)\n",
+		GFXERROR("Attempt to retrieve cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)\n",
 			 view, cel, loop);
 		return NULL;
 	}
@@ -1051,7 +1051,7 @@ gfxw_new_dyn_view(gfx_state_t *state, point_t pos, int z, int view, int loop, in
 	}
 
 	if (gfxop_get_cel_parameters(state, view, loop, cel, &width, &height, &offset)) {
-		GFXERROR("Attempt to retreive cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)\n",
+		GFXERROR("Attempt to retrieve cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)\n",
 			 view, cel, loop);
 		return NULL;
 	}

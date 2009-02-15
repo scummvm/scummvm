@@ -80,7 +80,7 @@ void *
 sbtree_get(sbtree_t *tree, int key);
 /* Retreives a key
 ** Parameters: (sbtree_t *) tree: The tree to search in
-**             (int) key: The key to retreive
+**             (int) key: The key to retrieve
 ** Returns   : (void *) The value mapped to the key
 ** If key was not found/invalid, NULL is returned. Note that there is no
 ** way of distinguishing between keys mapped to NULL and invalid keys,

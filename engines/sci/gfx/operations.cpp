@@ -1924,7 +1924,7 @@ gfxop_lookup_view_get_loops(gfx_state_t *state, int nr)
 	view = gfxr_get_view(state->resstate, nr, &loop, &cel, 0);
 
 	if (!view) {
-		GFXWARN("Attempt to retreive number of loops from invalid view %d\n", nr);
+		GFXWARN("Attempt to retrieve number of loops from invalid view %d\n", nr);
 		return 0;
 	}
 
@@ -1943,7 +1943,7 @@ gfxop_lookup_view_get_cels(gfx_state_t *state, int nr, int loop)
 	view = gfxr_get_view(state->resstate, nr, &real_loop, &cel, 0);
 
 	if (!view) {
-		GFXWARN("Attempt to retreive number of cels from invalid/broken view %d\n", nr);
+		GFXWARN("Attempt to retrieve number of cels from invalid/broken view %d\n", nr);
 		return 0;
 	} else if (real_loop != loop) {
 		GFXWARN("Loop number was corrected from %d to %d in view %d\n", loop, real_loop, nr);
@@ -2127,13 +2127,13 @@ gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette)
 		state->pic_unscaled = gfxr_get_pic(state->resstate, nr, GFX_MASK_VISUAL, flags, default_palette, 0);
 
 	if (!state->pic || !state->pic_unscaled) {
-		GFXERROR("Could not retreive background pic %d!\n", nr);
+		GFXERROR("Could not retrieve background pic %d!\n", nr);
 		if (state->pic) {
-			GFXERROR("  -- Inconsistency: scaled pic _was_ retreived!\n");
+			GFXERROR("  -- Inconsistency: scaled pic _was_ retrieved!\n");
 		}
 
 		if (state->pic_unscaled) {
-			GFXERROR("  -- Inconsistency: unscaled pic _was_ retreived!\n");
+			GFXERROR("  -- Inconsistency: unscaled pic _was_ retrieved!\n");
 		}
 
 		state->pic = state->pic_unscaled = NULL;

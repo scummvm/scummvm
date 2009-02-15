@@ -217,8 +217,8 @@ con_init_dmalloc()
 			  "Gets a mark describing\n  the current heap state\n\nUSAGE\n\n  dm_mark\n\n"
 			  "  The mark is written to the\n  dmalloc output file and\n  to sci output.\n\nSEE ALSO\n\n  cm_chmark");
 	con_hook_command (c_dm_chmark, "dm_chmark", "s",
-			  "Checks changes in the\n  heap state since a certain\n  mark was retreived\n\n"
-			  "USAGE\n\n  c_dm_chmark <mark>\n\n  Output is written to the\n  dmalloc output file.\n\n  Use dm_mark to retreive a\n"
+			  "Checks changes in the\n  heap state since a certain\n  mark was retrieved\n\n"
+			  "USAGE\n\n  c_dm_chmark <mark>\n\n  Output is written to the\n  dmalloc output file.\n\n  Use dm_mark to retrieve a\n"
 			  "  mark.\n\nSEE ALSO\n\n  c_dm_mark");
 	con_hook_command (c_dm_print, "dm_print", "s*",
 			  "Prints something to the\n  dmalloc output.\n\nUSAGE\n\n  dm_print <text>");

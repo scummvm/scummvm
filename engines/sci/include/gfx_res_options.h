@@ -72,7 +72,7 @@ typedef struct {
 	short type; /* GFX_RES_ASSIGN_TYPE_* */
 
 	union {
-		byte factor[3]; /* divide by 16 to retreive factor */
+		byte factor[3]; /* divide by 16 to retrieve factor */
 	} mod;
 } gfx_res_mod_t;
 

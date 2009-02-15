@@ -437,7 +437,7 @@ gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_
 gfxw_port_t *
 gfxw_find_port(gfxw_visual_t *visual, int ID);
 /* Retrieves a port with the specified ID
-** Parameters: (gfxw_visual_t *) visual: The visual the port is to be retreived from
+** Parameters: (gfxw_visual_t *) visual: The visual the port is to be retrieved from
 **             (int) ID: The port's ID
 ** Returns   : (gfxw_port_t *) The requested port, or NULL if it didn't exist
 ** This function is O(1).
@@ -446,7 +446,7 @@ gfxw_find_port(gfxw_visual_t *visual, int ID);
 gfxw_port_t *
 gfxw_find_default_port(gfxw_visual_t *visual);
 /* Retreives the default port from a visual
-** Parameters: (gfxw_visual_t *) visual: The visual the port should be retreived from
+** Parameters: (gfxw_visual_t *) visual: The visual the port should be retrieved from
 ** Returns   : (gfxw_port_t *) The default port, or NULL if no port is present
 ** The 'default port' is the last port to be instantiated; usually the topmost
 ** or highest-ranking port.

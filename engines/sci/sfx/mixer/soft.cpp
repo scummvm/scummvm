@@ -580,7 +580,7 @@ mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	int write_offset; /* Iterator for translation */
 	int delay_frames = 0; /* Number of frames (dest buffer) at the beginning we skip */
 
-	/* First, compute the number of frames we want to retreive */
+	/* First, compute the number of frames we want to retrieve */
 	frames_nr = fs->spd.val * len;
 	/* A little complicated since we must consider partial frames */
 	frames_nr += (fs->spd.nom * len

@@ -760,7 +760,7 @@ script_map_selectors(struct _state *s, selector_map_t *map);
 int
 script_map_kernel(struct _state *s);
 /* Maps kernel functions
-** Parameters: (state_t *) s: The state which the kernel_names are retreived from
+** Parameters: (state_t *) s: The state which the kernel_names are retrieved from
 ** Returns   : (void)
 ** This function reads from and writes to s. It is called by script_run().
 */
