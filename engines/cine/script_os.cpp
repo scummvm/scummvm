@@ -38,222 +38,228 @@
 
 namespace Cine {
 
-const Opcode OSScript::_opcodeTable[] = {
-	/* 00 */
-	{ &FWScript::o1_modifyObjectParam, "bbw" },
-	{ &FWScript::o1_getObjectParam, "bbb" },
-	{ &FWScript::o1_addObjectParam, "bbw" },
-	{ &FWScript::o1_subObjectParam, "bbw" },
-	/* 04 */
-	{ &FWScript::o1_mulObjectParam, "bbw" },
-	{ &FWScript::o1_divObjectParam, "bbw" },
-	{ &FWScript::o1_compareObjectParam, "bbw" },
-	{ &FWScript::o1_setupObject, "bwwww" },
-	/* 08 */
-	{ &FWScript::o1_checkCollision, "bwwww" },
-	{ &FWScript::o1_loadVar, "bc" },
-	{ &FWScript::o1_addVar, "bc" },
-	{ &FWScript::o1_subVar, "bc" },
-	/* 0C */
-	{ &FWScript::o1_mulVar, "bc" },
-	{ &FWScript::o1_divVar, "bc" },
-	{ &FWScript::o1_compareVar, "bc" },
-	{ &FWScript::o1_modifyObjectParam2, "bbb" },
-	/* 10 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o1_loadMask0, "b" },
-	/* 14 */
-	{ &FWScript::o1_unloadMask0, "b" },
-	{ &FWScript::o1_addToBgList, "b" },
-	{ &FWScript::o1_loadMask1, "b" },
-	{ &FWScript::o1_unloadMask1, "b" },
-	/* 18 */
-	{ &FWScript::o1_loadMask4, "b" },
-	{ &FWScript::o1_unloadMask4, "b" },
-	{ &FWScript::o1_addSpriteFilledToBgList, "b" },
-	{ &FWScript::o1_op1B, "" }, /* TODO: Name this opcode properly. */
-	/* 1C */
-	{ 0, 0 },
-	{ &FWScript::o1_label, "l" },
-	{ &FWScript::o1_goto, "b" },
-	{ &FWScript::o1_gotoIfSup, "b" },
-	/* 20 */
-	{ &FWScript::o1_gotoIfSupEqu, "b" },
-	{ &FWScript::o1_gotoIfInf, "b" },
-	{ &FWScript::o1_gotoIfInfEqu, "b" },
-	{ &FWScript::o1_gotoIfEqu, "b" },
-	/* 24 */
-	{ &FWScript::o1_gotoIfDiff, "b" },
-	{ &FWScript::o1_removeLabel, "b" },
-	{ &FWScript::o1_loop, "bb" },
-	{ 0, 0 },
-	/* 28 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 2C */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 30 */
-	{ 0, 0 },
-	{ &FWScript::o1_startGlobalScript, "b" },
-	{ &FWScript::o1_endGlobalScript, "b" },
-	{ 0, 0 },
-	/* 34 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 38 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o1_loadAnim, "s" },
-	/* 3C */
-	{ &FWScript::o1_loadBg, "s" },
-	{ &FWScript::o2_loadCt, "s" },
-	{ 0, 0 },
-	{ &FWScript::o2_loadPart, "s" },
-	/* 40 */
-	{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
-	{ &FWScript::o1_loadNewPrcName, "bs" },
-	{ &FWScript::o1_requestCheckPendingDataLoad, "" },
-	{ 0, 0 },
-	/* 44 */
-	{ 0, 0 },
-	{ &FWScript::o1_blitAndFade, "" },
-	{ &FWScript::o1_fadeToBlack, "" },
-	{ &FWScript::o1_transformPaletteRange, "bbwww" },
-	/* 48 */
-	{ 0, 0 },
-	{ &FWScript::o1_setDefaultMenuBgColor, "b" },
-	{ &FWScript::o1_palRotate, "bbb" },
-	{ 0, 0 },
-	/* 4C */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o1_break, "" },
-	/* 50 */
-	{ &FWScript::o1_endScript, "x" },
-	{ &FWScript::o1_message, "bwwww" },
-	{ &FWScript::o1_loadGlobalVar, "bc" },
-	{ &FWScript::o1_compareGlobalVar, "bc" },
-	/* 54 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 58 */
-	{ 0, 0 },
-	{ &FWScript::o1_declareFunctionName, "s" },
-	{ &FWScript::o1_freePartRange, "bb" },
-	{ &FWScript::o1_unloadAllMasks, "" },
-	/* 5C */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 60 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o1_setScreenDimensions, "wwww" },
-	/* 64 */
-	{ &FWScript::o1_displayBackground, "" },
-	{ &FWScript::o1_initializeZoneData, "" },
-	{ &FWScript::o1_setZoneDataEntry, "bw" },
-	{ &FWScript::o1_getZoneDataEntry, "bb" },
-	/* 68 */
-	{ &FWScript::o1_setPlayerCommandPosY, "b" },
-	{ &FWScript::o1_allowPlayerInput, "" },
-	{ &FWScript::o1_disallowPlayerInput, "" },
-	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
-	/* 6C */
-	{ 0, 0 },
-	{ &FWScript::o1_loadMusic, "s" },
-	{ &FWScript::o1_playMusic, "" },
-	{ &FWScript::o1_fadeOutMusic, "" },
-	/* 70 */
-	{ &FWScript::o1_stopSample, "" },
-	{ &FWScript::o1_op71, "bw" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x73. TODO: Name this opcode properly. */
-	{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x72. */
-	/* 74 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o2_playSample, "bbwbww" },
-	/* 78 */
-	{ &FWScript::o2_playSampleAlt, "bbwbww" },
-	{ &FWScript::o1_disableSystemMenu, "b" },
-	{ &FWScript::o1_loadMask5, "b" },
-	{ &FWScript::o1_unloadMask5, "b" }, /* Last opcode used by Future Wars. */
-	/* 7C */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o2_addSeqListElement, "bbbbwww" },
-	/* 80 */
-	{ &FWScript::o2_removeSeq, "bb" },
-	{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_modifySeqListElement, "bbwwb" },
-	{ &FWScript::o2_isSeqRunning, "bb" },
-	/* 84 */
-	{ &FWScript::o2_gotoIfSupNearest, "b" },
-	{ &FWScript::o2_gotoIfSupEquNearest, "b" },
-	{ &FWScript::o2_gotoIfInfNearest, "b" },
-	{ &FWScript::o2_gotoIfInfEquNearest, "b" },
-	/* 88 */
-	{ &FWScript::o2_gotoIfEquNearest, "b" },
-	{ &FWScript::o2_gotoIfDiffNearest, "b" },
-	{ 0, 0 },
-	{ &FWScript::o2_startObjectScript, "b" },
-	/* 8C */
-	{ &FWScript::o2_stopObjectScript, "b" },
-	{ &FWScript::o2_op8D, "wwwwwwww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_addBackground, "bs" },
-	{ &FWScript::o2_removeBackground, "b" },
-	/* 90 */
-	{ &FWScript::o2_loadAbs, "bs" },
-	{ &FWScript::o2_loadBg, "b" },
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 94 */
-	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x6B and 0xA9. */
-	{ 0, 0 },
-	{ 0, 0 },
-	/* 98 */
-	{ 0, 0 },
-	{ 0, 0 },
-	{ &FWScript::o2_wasZoneChecked, "b" },
-	{ &FWScript::o2_op9B, "wwwwwwww" }, /* TODO: Name this opcode properly. */
-	/* 9C */
-	{ &FWScript::o2_op9C, "wwww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_useBgScroll, "b" },
-	{ &FWScript::o2_setAdditionalBgVScroll, "c" },
-	{ &FWScript::o2_op9F, "ww" }, /* TODO: Name this opcode properly. */
-	/* A0 */
-	{ &FWScript::o2_addGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_removeGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_addGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_removeGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
-	/* A4 */
-	{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
-	{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
-	{ 0, 0 },
-	{ 0, 0 },
-	/* A8 */
-	{ 0, 0 },
-	{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcodes 0x6B and 0x95. */
-};
-const unsigned int OSScript::_numOpcodes = ARRAYSIZE(OSScript::_opcodeTable);
+Opcode *OSScript::_opcodeTable = 0;
+unsigned int OSScript::_numOpcodes = 0;
+
+void OSScript::setupTable() {
+	static const Opcode opcodeTable[] = {
+		/* 00 */
+		{ &FWScript::o1_modifyObjectParam, "bbw" },
+		{ &FWScript::o1_getObjectParam, "bbb" },
+		{ &FWScript::o1_addObjectParam, "bbw" },
+		{ &FWScript::o1_subObjectParam, "bbw" },
+		/* 04 */
+		{ &FWScript::o1_mulObjectParam, "bbw" },
+		{ &FWScript::o1_divObjectParam, "bbw" },
+		{ &FWScript::o1_compareObjectParam, "bbw" },
+		{ &FWScript::o1_setupObject, "bwwww" },
+		/* 08 */
+		{ &FWScript::o1_checkCollision, "bwwww" },
+		{ &FWScript::o1_loadVar, "bc" },
+		{ &FWScript::o1_addVar, "bc" },
+		{ &FWScript::o1_subVar, "bc" },
+		/* 0C */
+		{ &FWScript::o1_mulVar, "bc" },
+		{ &FWScript::o1_divVar, "bc" },
+		{ &FWScript::o1_compareVar, "bc" },
+		{ &FWScript::o1_modifyObjectParam2, "bbb" },
+		/* 10 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o1_loadMask0, "b" },
+		/* 14 */
+		{ &FWScript::o1_unloadMask0, "b" },
+		{ &FWScript::o1_addToBgList, "b" },
+		{ &FWScript::o1_loadMask1, "b" },
+		{ &FWScript::o1_unloadMask1, "b" },
+		/* 18 */
+		{ &FWScript::o1_loadMask4, "b" },
+		{ &FWScript::o1_unloadMask4, "b" },
+		{ &FWScript::o1_addSpriteFilledToBgList, "b" },
+		{ &FWScript::o1_op1B, "" }, /* TODO: Name this opcode properly. */
+		/* 1C */
+		{ 0, 0 },
+		{ &FWScript::o1_label, "l" },
+		{ &FWScript::o1_goto, "b" },
+		{ &FWScript::o1_gotoIfSup, "b" },
+		/* 20 */
+		{ &FWScript::o1_gotoIfSupEqu, "b" },
+		{ &FWScript::o1_gotoIfInf, "b" },
+		{ &FWScript::o1_gotoIfInfEqu, "b" },
+		{ &FWScript::o1_gotoIfEqu, "b" },
+		/* 24 */
+		{ &FWScript::o1_gotoIfDiff, "b" },
+		{ &FWScript::o1_removeLabel, "b" },
+		{ &FWScript::o1_loop, "bb" },
+		{ 0, 0 },
+		/* 28 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 2C */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 30 */
+		{ 0, 0 },
+		{ &FWScript::o1_startGlobalScript, "b" },
+		{ &FWScript::o1_endGlobalScript, "b" },
+		{ 0, 0 },
+		/* 34 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 38 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o1_loadAnim, "s" },
+		/* 3C */
+		{ &FWScript::o1_loadBg, "s" },
+		{ &FWScript::o2_loadCt, "s" },
+		{ 0, 0 },
+		{ &FWScript::o2_loadPart, "s" },
+		/* 40 */
+		{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
+		{ &FWScript::o1_loadNewPrcName, "bs" },
+		{ &FWScript::o1_requestCheckPendingDataLoad, "" },
+		{ 0, 0 },
+		/* 44 */
+		{ 0, 0 },
+		{ &FWScript::o1_blitAndFade, "" },
+		{ &FWScript::o1_fadeToBlack, "" },
+		{ &FWScript::o1_transformPaletteRange, "bbwww" },
+		/* 48 */
+		{ 0, 0 },
+		{ &FWScript::o1_setDefaultMenuBgColor, "b" },
+		{ &FWScript::o1_palRotate, "bbb" },
+		{ 0, 0 },
+		/* 4C */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o1_break, "" },
+		/* 50 */
+		{ &FWScript::o1_endScript, "x" },
+		{ &FWScript::o1_message, "bwwww" },
+		{ &FWScript::o1_loadGlobalVar, "bc" },
+		{ &FWScript::o1_compareGlobalVar, "bc" },
+		/* 54 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 58 */
+		{ 0, 0 },
+		{ &FWScript::o1_declareFunctionName, "s" },
+		{ &FWScript::o1_freePartRange, "bb" },
+		{ &FWScript::o1_unloadAllMasks, "" },
+		/* 5C */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 60 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o1_setScreenDimensions, "wwww" },
+		/* 64 */
+		{ &FWScript::o1_displayBackground, "" },
+		{ &FWScript::o1_initializeZoneData, "" },
+		{ &FWScript::o1_setZoneDataEntry, "bw" },
+		{ &FWScript::o1_getZoneDataEntry, "bb" },
+		/* 68 */
+		{ &FWScript::o1_setPlayerCommandPosY, "b" },
+		{ &FWScript::o1_allowPlayerInput, "" },
+		{ &FWScript::o1_disallowPlayerInput, "" },
+		{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x95 and 0xA9. */
+		/* 6C */
+		{ 0, 0 },
+		{ &FWScript::o1_loadMusic, "s" },
+		{ &FWScript::o1_playMusic, "" },
+		{ &FWScript::o1_fadeOutMusic, "" },
+		/* 70 */
+		{ &FWScript::o1_stopSample, "" },
+		{ &FWScript::o1_op71, "bw" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x73. TODO: Name this opcode properly. */
+		{ &FWScript::o1_op72, "wbw" }, /* Same as opcode 0x72. */
+		/* 74 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o2_playSample, "bbwbww" },
+		/* 78 */
+		{ &FWScript::o2_playSampleAlt, "bbwbww" },
+		{ &FWScript::o1_disableSystemMenu, "b" },
+		{ &FWScript::o1_loadMask5, "b" },
+		{ &FWScript::o1_unloadMask5, "b" }, /* Last opcode used by Future Wars. */
+		/* 7C */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o2_addSeqListElement, "bbbbwww" },
+		/* 80 */
+		{ &FWScript::o2_removeSeq, "bb" },
+		{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_modifySeqListElement, "bbwwb" },
+		{ &FWScript::o2_isSeqRunning, "bb" },
+		/* 84 */
+		{ &FWScript::o2_gotoIfSupNearest, "b" },
+		{ &FWScript::o2_gotoIfSupEquNearest, "b" },
+		{ &FWScript::o2_gotoIfInfNearest, "b" },
+		{ &FWScript::o2_gotoIfInfEquNearest, "b" },
+		/* 88 */
+		{ &FWScript::o2_gotoIfEquNearest, "b" },
+		{ &FWScript::o2_gotoIfDiffNearest, "b" },
+		{ 0, 0 },
+		{ &FWScript::o2_startObjectScript, "b" },
+		/* 8C */
+		{ &FWScript::o2_stopObjectScript, "b" },
+		{ &FWScript::o2_op8D, "wwwwwwww" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_addBackground, "bs" },
+		{ &FWScript::o2_removeBackground, "b" },
+		/* 90 */
+		{ &FWScript::o2_loadAbs, "bs" },
+		{ &FWScript::o2_loadBg, "b" },
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 94 */
+		{ 0, 0 },
+		{ &FWScript::o1_changeDataDisk, "b" }, /* Same as opcodes 0x6B and 0xA9. */
+		{ 0, 0 },
+		{ 0, 0 },
+		/* 98 */
+		{ 0, 0 },
+		{ 0, 0 },
+		{ &FWScript::o2_wasZoneChecked, "b" },
+		{ &FWScript::o2_op9B, "wwwwwwww" }, /* TODO: Name this opcode properly. */
+		/* 9C */
+		{ &FWScript::o2_op9C, "wwww" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_useBgScroll, "b" },
+		{ &FWScript::o2_setAdditionalBgVScroll, "c" },
+		{ &FWScript::o2_op9F, "ww" }, /* TODO: Name this opcode properly. */
+		/* A0 */
+		{ &FWScript::o2_addGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_removeGfxElementType20, "ww" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_addGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_removeGfxElementType21, "ww" }, /* TODO: Name this opcode properly. */
+		/* A4 */
+		{ &FWScript::o2_loadMask22, "b" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_unloadMask22, "b" }, /* TODO: Name this opcode properly. */
+		{ 0, 0 },
+		{ 0, 0 },
+		/* A8 */
+		{ 0, 0 },
+		{ &FWScript::o1_changeDataDisk, "b" } /* Same as opcodes 0x6B and 0x95. */
+	};
+	OSScript::_opcodeTable = (Opcode *)opcodeTable;
+	OSScript::_numOpcodes = ARRAYSIZE(opcodeTable);
+}
 
 /*! \brief Contructor for global scripts
  * \param script Script bytecode reference

@@ -147,10 +147,10 @@ private:
 	ScriptVars &_globalVars; ///< Global variables reference
 	FWScriptInfo *_info; ///< Script info
 
-	static const Opcode _opcodeTable[];
-	static const unsigned int _numOpcodes;
-
 protected:
+	static Opcode *_opcodeTable;
+	static unsigned int _numOpcodes;
+
 	int o1_modifyObjectParam();
 	int o1_getObjectParam();
 	int o1_addObjectParam();
@@ -278,6 +278,8 @@ protected:
 public:
 	int16 _index; ///< Index in script table
 
+	static void setupTable();
+
 	FWScript(const RawScript &script, int16 index);
 //	FWScript(const RawObjectScript &script, int16 index);
 	FWScript(const FWScript &src);
@@ -298,13 +300,15 @@ public:
  */
 class OSScript : public FWScript {
 private:
-	static const Opcode _opcodeTable[];
-	static const unsigned int _numOpcodes;
+	static Opcode *_opcodeTable;
+	static unsigned int _numOpcodes;
 
 protected:
 	void load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos);
 
 public:
+	static void setupTable();
+
 	OSScript(const RawScript &script, int16 index);
 	OSScript(RawObjectScript &script, int16 index);
 	OSScript(const OSScript &src);
