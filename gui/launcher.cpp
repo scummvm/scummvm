@@ -703,7 +703,7 @@ void LauncherDialog::addGame() {
 
 				// Update the ListWidget, select the new item, and force a redraw
 				updateListing();
-				selectGame(domain);
+				selectGame(editDialog.getDomain());
 				draw();
 			} else {
 				// User aborted, remove the the new domain again
@@ -773,7 +773,7 @@ void LauncherDialog::removeGame(int item) {
 }
 
 void LauncherDialog::editGame(int item) {
-	// Set game specifc options. Most of these should be "optional", i.e. by
+	// Set game specific options. Most of these should be "optional", i.e. by
 	// default set nothing and use the global ScummVM settings. E.g. the user
 	// can set here an optional alternate music volume, or for specific games
 	// a different music driver etc.
@@ -790,8 +790,9 @@ void LauncherDialog::editGame(int item) {
 		// Write config to disk
 		ConfMan.flushToDisk();
 
-		// Update the ListWidget and force a redraw
+		// Update the ListWidget, reselect the edited game and force a redraw
 		updateListing();
+		selectGame(editDialog.getDomain());
 		draw();
 	}
 }
