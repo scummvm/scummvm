@@ -141,6 +141,12 @@ public:
 	 */
 	virtual bool decodeNextFrame() = 0;
 
+	/**
+	 * Used to read the sound header from DXA files. It's not pretty,
+	 * but it's slightly better than exposing _fileStream
+	 */
+	uint32 readSoundHeader() { return _fileStream->readUint32BE(); }
+
 protected:
 	struct {
 		uint32 width;

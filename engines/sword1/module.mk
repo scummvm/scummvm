@@ -3,7 +3,6 @@ MODULE := engines/sword1
 MODULE_OBJS := \
 	animation.o \
 	control.o \
-	credits.o \
 	debug.o \
 	detection.o \
 	eventman.o \

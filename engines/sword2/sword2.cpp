@@ -252,9 +252,11 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("CLUSTERS"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("SWORD2"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("SMACKS"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("sword2"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("smacks"));
 
 	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo"))
 		_features = GF_DEMO;

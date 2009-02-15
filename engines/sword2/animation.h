@@ -29,7 +29,7 @@
 #define SWORD2_ANIMATION_H
 
 #include "graphics/video/dxa_player.h"
-#include "graphics/video/mpeg_player.h"
+#include "graphics/video/smk_player.h"
 #include "sound/mixer.h"
 
 #include "sword2/screen.h"
@@ -97,7 +97,6 @@ protected:
 	bool _seamless;
 
 	int _framesSkipped;
-	bool _forceFrame;
 
 	static const MovieInfo _movies[];
 
@@ -126,7 +125,6 @@ public:
 	MoviePlayer(Sword2Engine *vm, const char *name);
 	virtual ~MoviePlayer();
 
-	void updatePalette(byte *pal, bool packed = true);
 	virtual bool load();
 	bool userInterrupt();
 	void play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn, int32 leadOut);
@@ -148,57 +146,20 @@ public:
 	bool load();
 };
 
-#ifdef USE_MPEG2
-class AnimationState : public ::Graphics::BaseAnimationState {
-private:
-	Sword2Engine *_vm;
-	MoviePlayer *_player;
-
-public:
-	AnimationState(Sword2Engine *vm, MoviePlayer *player);
-	~AnimationState();
-
-#ifndef BACKEND_8BIT
-	void drawTextObject(SpriteInfo *s, byte *src);
-#endif
-
-	void clearFrame();
-
-private:
-	void drawYUV(int width, int height, byte *const *dat);
-
-#ifdef BACKEND_8BIT
-	void setPalette(byte *pal);
-#endif
-};
-
-class MoviePlayerMPEG : public MoviePlayer {
+class MoviePlayerSMK : public MoviePlayer, ::Graphics::SMKPlayer {
 protected:
-	AnimationState *_anim;
-
-	virtual bool decodeFrame();
-
-#ifndef BACKEND_8BIT
-	void handleScreenChanged();
-	void clearFrame();
-	void drawFrame();
-	void updateScreen();
-	void drawTextObject();
-	void undrawTextObject();
-#endif
+	bool decodeFrame();
 
 public:
-	MoviePlayerMPEG(Sword2Engine *vm, const char *name);
-	~MoviePlayerMPEG();
+	MoviePlayerSMK(Sword2Engine *vm, const char *name);
+	~MoviePlayerSMK();
 
 	bool load();
 };
-#endif
 
 #ifdef USE_ZLIB
 class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
 protected:
-	void setPalette(byte *pal);
 	bool decodeFrame();
 
 public:

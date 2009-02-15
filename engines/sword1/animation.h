@@ -27,7 +27,8 @@
 #define SWORD1_ANIMATION_H
 
 #include "graphics/video/dxa_player.h"
-#include "graphics/video/mpeg_player.h"
+#include "graphics/video/smk_player.h"
+#include "graphics/video/video_player.h"
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"
@@ -35,31 +36,10 @@
 
 namespace Sword1 {
 
-enum {
-	SEQ_FERRARI = 0,
-	SEQ_LADDER,
-	SEQ_STEPS,
-	SEQ_SEWER,
-	SEQ_INTRO,
-	SEQ_RIVER,
-	SEQ_TRUCK,
-	SEQ_GRAVE,
-	SEQ_MONTFCON,
-	SEQ_TAPESTRY,
-	SEQ_IRELAND,
-	SEQ_FINALE,
-	SEQ_HISTORY,
-	SEQ_SPANISH,
-	SEQ_WELL,
-	SEQ_CANDLE,
-	SEQ_GEODROP,
-	SEQ_VULTURE,
-	SEQ_ENDDEMO,
-	SEQ_CREDITS
+enum DecoderType {
+	kVideoDecoderDXA = 0,
+	kVideoDecoderSMK = 1
 };
-
-#define INTRO_LOGO_OVLS 12
-#define INTRO_TEXT_OVLS 8
 
 class MovieText {
 public:
@@ -76,126 +56,39 @@ public:
 	}
 };
 
-class MoviePlayer {
+class DXAPlayerWithSound : public Graphics::DXAPlayer {
 public:
-	MoviePlayer(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
-	virtual ~MoviePlayer(void);
-	virtual bool load(uint32 id);
-	void play(void);
-	void updatePalette(byte *pal, bool packed = true);
+	DXAPlayerWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
+	~DXAPlayerWithSound() {}
+
+	int32 getAudioLag();
 private:
-	bool checkSkipFrame(void);
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle *_bgSoundHandle;
+};
+
+class MoviePlayer : public Graphics::VideoPlayer {
+public:
+	MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
+	virtual ~MoviePlayer(void);
+	bool load(uint32 id);
+	void play(void);
 protected:
 	SwordEngine *_vm;
-	Screen *_screen;
 	Text *_textMan;
 	Audio::Mixer *_snd;
 	OSystem *_system;
 	Common::Array<MovieText *> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
-	byte _black, _white;
+	DecoderType _decoderType;
 
-	uint32 _id;
-
-	uint _currentFrame;
-	int _framesSkipped;
-	bool _forceFrame;
-
-	int _frameWidth, _frameHeight;
-	int _frameX, _frameY;
-
-	Audio::SoundHandle _bgSoundHandle;
+	Audio::SoundHandle *_bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
-	uint32 _ticks;
 
-	virtual void handleScreenChanged(void);
-	virtual bool initOverlays(uint32 id);
-	virtual bool decodeFrame(void) = 0;
-	virtual void processFrame(void) = 0;
-	virtual bool syncFrame(void);
-	virtual void updateScreen(void) = 0;
+	void performPostProcessing(byte *screen);
 };
 
-#ifdef USE_ZLIB
-
-class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
-protected:
-	virtual void setPalette(byte *pal);
-public:
-	MoviePlayerDXA(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
-	virtual ~MoviePlayerDXA(void);
-	bool load(uint32 id);
-protected:
-	bool initOverlays(uint32 id);
-	bool decodeFrame(void);
-	void processFrame(void);
-	void updateScreen(void);
-};
-
-#endif
-
-#ifdef USE_MPEG2
-
-class AnimationState : public Graphics::BaseAnimationState {
-private:
-	MoviePlayer *_player;
-	Screen *_screen;
-
-public:
-	AnimationState(MoviePlayer *player, Screen *screen, OSystem *system);
-	~AnimationState(void);
-	OverlayColor *giveRgbBuffer(void);
-
-private:
-	void drawYUV(int width, int height, byte *const *dat);
-
-#ifdef BACKEND_8BIT
-	void setPalette(byte *pal);
-#endif
-
-protected:
-	virtual Audio::AudioStream *createAudioStream(const char *name, void *arg);
-};
-
-class MoviePlayerMPEG : public MoviePlayer {
-public:
-	MoviePlayerMPEG(SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
-	virtual ~MoviePlayerMPEG(void);
-	bool load(uint32 id);
-protected:
-	void insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor *pal);
-	AnimationState *_anim;
-	OverlayColor *_introPal;
-	uint8 *_logoOvls[INTRO_LOGO_OVLS];
-
-	bool initOverlays(uint32 id);
-	bool decodeFrame(void);
-	void processFrame(void);
-	void updateScreen(void);
-	void handleScreenChanged(void);
-};
-
-#endif
-
-struct FileQueue {
-	Audio::AudioStream *stream;
-	FileQueue *next;
-};
-
-class SplittedAudioStream : public Audio::AudioStream {
-public:
-	SplittedAudioStream(void);
-	~SplittedAudioStream(void);
-	void appendStream(Audio::AudioStream *stream);
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo(void) const;
-	virtual bool endOfData(void) const;
-	virtual int getRate(void) const;
-private:
-	FileQueue *_queue;
-};
-
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Screen *screen, Text *textMan, Audio::Mixer *snd, OSystem *system);
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system);
 
 } // End of namespace Sword1
 

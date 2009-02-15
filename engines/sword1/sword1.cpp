@@ -58,10 +58,12 @@ SwordEngine::SwordEngine(OSystem *syst)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("MUSIC"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("SMACKSHI"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("speech"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("smackshi"));
 }
 
 SwordEngine::~SwordEngine() {
@@ -475,12 +477,6 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	*/
 	// make the demo flag depend on the Gamesettings for now, and not on what the datafiles look like
 	_systemVars.isDemo = (_features & GF_DEMO) != 0;
-	_systemVars.cutscenePackVersion = 0;
-#ifdef USE_MPEG2
-	if (Common::File::exists("intro.snd")) {
-		_systemVars.cutscenePackVersion = 1;
-	}
-#endif
 }
 
 Common::Error SwordEngine::go() {

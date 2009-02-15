@@ -42,6 +42,8 @@
 #include "sword2/sound.h"
 #include "sword2/animation.h"
 
+#include "gui/message.h"
+
 namespace Sword2 {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,6 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm, const char *name) {
 	_leadOutFrame = (uint)-1;
 	_seamless = false;
 	_framesSkipped = 0;
-	_forceFrame = false;
 	_currentText = 0;
 }
 
@@ -101,43 +102,6 @@ MoviePlayer::~MoviePlayer() {
 
 uint32 MoviePlayer::getTick() {
 	return _system->getMillis() - _pauseTicks;
-}
-
-void MoviePlayer::updatePalette(byte *pal, bool packed) {
-	byte palette[4 * 256];
-	byte *p = palette;
-
-	uint32 maxWeight = 0;
-	uint32 minWeight = 0xFFFFFFFF;
-
-	for (int i = 0; i < 256; i++) {
-		int r = *pal++;
-		int g = *pal++;
-		int b = *pal++;
-
-		if (!packed)
-			pal++;
-
-		uint32 weight = 3 * r * r + 6 * g * g + 2 * b * b;
-
-		if (weight >= maxWeight) {
-			_white = i;
-			maxWeight = weight;
-		}
-
-		if (weight <= minWeight) {
-			_black = i;
-			minWeight = i;
-		}
-
-		*p++ = r;
-		*p++ = g;
-		*p++ = b;
-		*p++ = 0;
-	}
-
-	_vm->_screen->setPalette(0, 256, palette, RDPAL_INSTANT);
-	_forceFrame = true;
 }
 
 void MoviePlayer::savePalette() {
@@ -157,11 +121,6 @@ void MoviePlayer::updateScreen() {
 }
 
 bool MoviePlayer::checkSkipFrame() {
-	if (_forceFrame) {
-		_forceFrame = false;
-		return false;
-	}
-
 	if (_framesSkipped > 10) {
 		warning("Forced frame %d to be displayed", _currentFrame);
 		_framesSkipped = 0;
@@ -512,6 +471,48 @@ void MoviePlayer::pauseMovie(bool pause) {
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Movie player for the original SMK movies
+///////////////////////////////////////////////////////////////////////////////
+
+MoviePlayerSMK::MoviePlayerSMK(Sword2Engine *vm, const char *name)
+	: MoviePlayer(vm, name), SMKPlayer(vm->_mixer) {
+	debug(0, "Creating SMK cutscene player");
+}
+
+MoviePlayerSMK::~MoviePlayerSMK() {
+	closeFile();
+}
+
+bool MoviePlayerSMK::decodeFrame() {
+	decodeNextFrame();
+	copyFrameToBuffer(_frameBuffer, _frameX, _frameY, _vm->_screen->getScreenWide());
+	return true;
+}
+
+bool MoviePlayerSMK::load() {
+	if (!MoviePlayer::load())
+		return false;
+
+	char filename[20];
+
+	snprintf(filename, sizeof(filename), "%s.smk", _name);
+
+	if (loadFile(filename)) {
+		_frameBuffer = _vm->_screen->getScreen();
+
+		_frameWidth = getWidth();
+		_frameHeight = getHeight();
+
+		_frameX = (_vm->_screen->getScreenWide() - _frameWidth) / 2;
+		_frameY = (_vm->_screen->getScreenDeep() - _frameHeight) / 2;
+
+		return true;
+	}
+
+	return false;
+}
+
 #ifdef USE_ZLIB
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -525,10 +526,6 @@ MoviePlayerDXA::MoviePlayerDXA(Sword2Engine *vm, const char *name)
 
 MoviePlayerDXA::~MoviePlayerDXA() {
 	closeFile();
-}
-
-void MoviePlayerDXA::setPalette(byte *pal) {
-	updatePalette(pal);
 }
 
 bool MoviePlayerDXA::decodeFrame() {
@@ -562,199 +559,6 @@ bool MoviePlayerDXA::load() {
 	}
 
 	return false;
-}
-
-#endif
-
-#ifdef USE_MPEG2
-
-///////////////////////////////////////////////////////////////////////////////
-// Movie player for the old MPEG movies
-///////////////////////////////////////////////////////////////////////////////
-
-MoviePlayerMPEG::MoviePlayerMPEG(Sword2Engine *vm, const char *name)
-	: MoviePlayer(vm, name) {
-#ifdef BACKEND_8BIT
-	debug(0, "Creating MPEG cutscene player (8-bit)");
-#else
-	debug(0, "Creating MPEG cutscene player (16-bit)");
-#endif
-}
-
-MoviePlayerMPEG::~MoviePlayerMPEG() {
-	delete _anim;
-	_anim = NULL;
-}
-
-bool MoviePlayerMPEG::load() {
-	if (!MoviePlayer::load())
-		return false;
-
-	_anim = new AnimationState(_vm, this);
-
-	if (!_anim->init(_name)) {
-		delete _anim;
-		_anim = NULL;
-		return false;
-	}
-
-#ifdef BACKEND_8BIT
-	_frameBuffer = _vm->_screen->getScreen();
-#endif
-
-	return true;
-}
-
-bool MoviePlayerMPEG::decodeFrame() {
-	bool result = _anim->decodeFrame();
-
-#ifdef BACKEND_8BIT
-	_frameWidth = _anim->getFrameWidth();
-	_frameHeight = _anim->getFrameHeight();
-
-	_frameX = (_vm->_screen->getScreenWide() - _frameWidth) / 2;
-	_frameY = (_vm->_screen->getScreenDeep() - _frameHeight) / 2;
-#endif
-
-	return result;
-}
-
-AnimationState::AnimationState(Sword2Engine *vm, MoviePlayer *player)
-	: BaseAnimationState(vm->_system, 640, 480) {
-	_vm = vm;
-	_player = player;
-}
-
-AnimationState::~AnimationState() {
-}
-
-#ifdef BACKEND_8BIT
-
-void AnimationState::setPalette(byte *pal) {
-	_player->updatePalette(pal, false);
-}
-
-#else
-
-void MoviePlayerMPEG::handleScreenChanged() {
-	_anim->handleScreenChanged();
-}
-
-void MoviePlayerMPEG::clearFrame() {
-	_anim->clearFrame();
-}
-
-void MoviePlayerMPEG::drawFrame() {
-}
-
-void MoviePlayerMPEG::updateScreen() {
-	_anim->updateScreen();
-}
-
-void MoviePlayerMPEG::drawTextObject() {
-	if (_textObject.textMem && _textSurface) {
-		_anim->drawTextObject(&_textObject.textSprite, _textSurface);
-	}
-}
-
-void MoviePlayerMPEG::undrawTextObject() {
-	// As long as we only have subtitles for full-sized cutscenes, we don't
-	// really need to implement this function.
-}
-
-void AnimationState::drawTextObject(SpriteInfo *s, byte *src) {
-	int moviePitch = _movieScale * _movieWidth;
-	int textX = _movieScale * s->x;
-	int textY = _movieScale * (_frameHeight - s->h - 12);
-
-	OverlayColor *dst = _overlay + textY * moviePitch + textX;
-
-	Graphics::PixelFormat format = _sys->getOverlayFormat();
-	OverlayColor pen = format.RGBToColor(255, 255, 255);
-	OverlayColor border = format.RGBToColor(0, 0, 0);
-
-	// TODO: Use the AdvMame scalers for the text? Pre-scale it?
-
-	for (int y = 0; y < s->h; y++) {
-		OverlayColor *ptr = dst;
-
-		for (int x = 0; x < s->w; x++) {
-			switch (src[x]) {
-			case 1:
-				*ptr++ = border;
-				if (_movieScale > 1) {
-					*ptr++ = border;
-					if (_movieScale > 2)
-						*ptr++ = border;
-				}
-				break;
-			case 255:
-				*ptr++ = pen;
-				if (_movieScale > 1) {
-					*ptr++ = pen;
-					if (_movieScale > 2)
-						*ptr++ = pen;
-				}
-				break;
-			default:
-				ptr += _movieScale;
-				break;
-			}
-		}
-
-		if (_movieScale > 1) {
-			memcpy(dst + moviePitch, dst, _movieScale * s->w * sizeof(OverlayColor));
-			if (_movieScale > 2)
-				memcpy(dst + 2 * moviePitch, dst, _movieScale * s->w * sizeof(OverlayColor));
-		}
-
-		dst += _movieScale * moviePitch;
-		src += s->w;
-	}
-}
-#endif
-
-void AnimationState::clearFrame() {
-#ifdef BACKEND_8BIT
-	memset(_vm->_screen->getScreen(), 0, _movieWidth * _movieHeight);
-#else
-	Graphics::PixelFormat format = _sys->getOverlayFormat();
-	OverlayColor black = format.RGBToColor(0, 0, 0);
-
-	for (int i = 0; i < _movieScale * _movieWidth * _movieScale * _movieHeight; i++)
-		_overlay[i] = black;
-#endif
-}
-
-void AnimationState::drawYUV(int width, int height, byte *const *dat) {
-	_frameWidth = width;
-	_frameHeight = height;
-
-#ifdef BACKEND_8BIT
-	byte *buf = _vm->_screen->getScreen() + ((480 - height) / 2) * RENDERWIDE + (640 - width) / 2;
-
-	int x, y;
-
-	int ypos = 0;
-	int cpos = 0;
-	int linepos = 0;
-
-	for (y = 0; y < height; y += 2) {
-		for (x = 0; x < width; x += 2) {
-			int i = ((((dat[2][cpos] + ROUNDADD) >> SHIFT) * (BITDEPTH + 1)) + ((dat[1][cpos] + ROUNDADD) >> SHIFT)) * (BITDEPTH + 1);
-			cpos++;
-
-			buf[linepos               ] = _lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
-			buf[RENDERWIDE + linepos++] = _lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
-			buf[linepos               ] = _lut[i + ((dat[0][        ypos  ] + ROUNDADD) >> SHIFT)];
-			buf[RENDERWIDE + linepos++] = _lut[i + ((dat[0][width + ypos++] + ROUNDADD) >> SHIFT)];
-		}
-		linepos += (2 * RENDERWIDE - width);
-		ypos += width;
-	}
-#else
-	plotYUV(width, height, dat);
-#endif
 }
 
 #endif
@@ -802,10 +606,10 @@ bool MoviePlayerDummy::decodeFrame() {
 
 		byte msgNoCutscenesRU[] = "Po\344uk - to\344\345ko pev\345: hagmute k\344abuwy Ucke\343n, u\344u nocetute ca\343t npoekta u ckava\343te budeo po\344uku";
 
-#if defined(USE_MPEG2) || defined(USE_ZLIB)
+#if defined(USE_ZLIB)
 		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or visit www.scummvm.org to download cutscene videos";
 #else
-		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with MPEG2 or ZLib support";
+		byte msgNoCutscenes[] = "Cutscene - Narration Only: Press ESC to exit, or recompile ScummVM with ZLib support";
 #endif
 
 		byte *msg;
@@ -885,6 +689,12 @@ void MoviePlayerDummy::undrawTextObject() {
 MoviePlayer *makeMoviePlayer(Sword2Engine *vm, const char *name) {
 	static char filename[20];
 
+	snprintf(filename, sizeof(filename), "%s.smk", name);
+
+	if (Common::File::exists(filename)) {
+		return new MoviePlayerSMK(vm, name);
+	}
+
 #ifdef USE_ZLIB
 	snprintf(filename, sizeof(filename), "%s.dxa", name);
 
@@ -893,13 +703,12 @@ MoviePlayer *makeMoviePlayer(Sword2Engine *vm, const char *name) {
 	}
 #endif
 
-#ifdef USE_MPEG2
 	snprintf(filename, sizeof(filename), "%s.mp2", name);
 
 	if (Common::File::exists(filename)) {
-		return new MoviePlayerMPEG(vm, name);
+ 	 	GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
+ 	 	dialog.runModal();
 	}
-#endif
 
 	return new MoviePlayerDummy(vm, name);
 }

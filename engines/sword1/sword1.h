@@ -67,8 +67,6 @@ struct SystemVars {
 	uint8	language;
 	bool    isDemo;
 	bool    isMac;
-
-	uint8	cutscenePackVersion;
 };
 
 class SwordEngine : public Engine {

@@ -41,7 +41,6 @@
 #include "sword1/music.h"
 #include "sword1/swordres.h"
 #include "sword1/animation.h"
-#include "sword1/credits.h"
 
 #include "sword1/debug.h"
 
@@ -960,16 +959,12 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	// meantime, we don't want any looping sound effects still playing.
 	_sound->quitScreen();
 
-	if ((SwordEngine::_systemVars.cutscenePackVersion == 1) && (sequenceId == SEQ_CREDITS)) {
-		CreditsPlayer player(_system, _mixer);
-		player.play();
-	} else {
-		MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _screen, _textMan, _mixer, _system);
-		if (player) {
-			if (player->load(sequenceId))
-				player->play();
-			delete player;
-		}
+	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _mixer, _system);
+	if (player) {
+		_screen->clearScreen();
+		if (player->load(sequenceId))
+			player->play();
+		delete player;
 	}
 	return SCRIPT_CONT;
 }
