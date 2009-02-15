@@ -25,20 +25,6 @@
 
 ***************************************************************************/
 
-
-/* Attempt to guess if recent version of Platform SDK */
-#ifdef _MSC_VER
-#	pragma message("******************** IMPORTANT MESSAGE ********************")
-#	pragma message("You must have installed a recent Platform and DirectX SDK")
-#	pragma message("for this build to be successful. Download MS SDKs from:")
-#	pragma message("www.microsoft.com/msdownload/platformsdk/sdkupdate")
-#	pragma message("***********************************************************")
-#	include <windows.h>
-#	if (WINVER < 0x500)
-#		error *** BUILD FAILED: Need more recent SDKs or fix your SDK paths in Tools Options ***
-#	endif
-#endif
-
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
 #include "sci/include/versions.h"

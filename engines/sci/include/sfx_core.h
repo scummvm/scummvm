@@ -30,7 +30,9 @@
 #ifndef _SFX_CORE_H_
 #define _SFX_CORE_H_
 
+#ifndef _MSC_VER
 #include <config.h>
+#endif
 
 #define SFX_OK 0
 #define SFX_ERROR -1

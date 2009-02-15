@@ -33,7 +33,13 @@
 
 // TODO: rework sci_dir_t to use common/fs.h and remove these includes
 #include <sys/types.h>
+#ifndef _MSC_VER
 #include <dirent.h>
+#else
+#include <io.h>
+#	undef inline /* just to be sure it is not defined */
+#	define inline __inline
+#endif
 
 typedef int8 gint8;
 typedef uint8 guint8;

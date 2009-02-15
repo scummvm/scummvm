@@ -27,8 +27,6 @@
 
 #include <stdio.h>	/* for debugging */
 				
-#include <beos/fnmatch.h>
-#include <beos/collsyms.h>
 #include <ctype.h>
 
 #if defined (HAVE_STRING_H)

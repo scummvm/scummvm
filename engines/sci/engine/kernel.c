@@ -32,6 +32,10 @@
 #	include <windows.h>
 #endif /* _WIN32 */
 
+#ifdef _MSC_VER
+#	include <mmsystem.h>
+#endif
+
 #include "sci/include/gfx_operations.h"
 #include "sci/engine/kernel_types.h"
 

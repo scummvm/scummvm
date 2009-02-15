@@ -60,6 +60,7 @@
 #ifdef SCUMMVM
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
 #define HAVE_ISBLANK
+#ifndef _MSC_VER
 #define HAVE_UNISTD_H
 #define HAVE_FCNTL_H
 #define HAVE_UNLINK
@@ -68,6 +69,7 @@
 #define HAVE_FNMATCH_H
 #define HAVE_SYS_TIME_H
 #define HAVE_GETTIMEOFDAY
+#endif
 #define VERSION "0.6.4"
 #endif // SCUMMVM
 
@@ -107,7 +109,6 @@
 
 #ifdef _WIN32
 #  include <io.h>
-#  include <sci_win32.h>
 #else /* !_WIN32 */
 #  define DLLEXTERN
 #endif /* !_WIN32 */
@@ -121,6 +122,10 @@
 #	include <sys/timeb.h>
 #   include <fcntl.h>
 #	include <windows.h>
+#	undef strcasecmp
+#	undef strncasecmp
+#	define strcasecmp _stricmp
+#	define strncasecmp _strnicmp
 #endif
 
 

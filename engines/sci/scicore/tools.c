@@ -35,9 +35,25 @@
 #ifdef _MSC_VER
 #  include <sys/timeb.h>
 #  include <windows.h>
-#  include <sci_win32.h>
+#  include <mmsystem.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#	ifdef sleep
+#		undef sleep
+#	endif
+
+#	define sleep(x) \
+	do { \
+		if (x == 0) { \
+			Sleep(0); \
+		} else { \
+			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
+				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
+			Sleep(x); \
+			if (timeEndPeriod(1) != TIMERR_NOERROR) \
+				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
+		} \
+	} while (0);
 #else
 #ifdef _WIN32
 #  include <windows.h>

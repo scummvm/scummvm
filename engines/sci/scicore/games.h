@@ -32,7 +32,7 @@
 #  error "You shouldn't be including this header file."
 #endif
 
-#include <versions.h>
+#include "sci/include/versions.h"
 
 typedef struct _sci_game {
   int id; /* currently CRC of resource.001 */

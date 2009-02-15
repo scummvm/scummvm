@@ -37,10 +37,30 @@
 #include "sci/include/reg_t_hashmap.h"
 
 #ifdef _WIN32
-#	include <win32/sci_win32.h>
 #	include <windows.h>
 #	include <io.h>
 #endif
+
+#	ifdef sleep
+#		undef sleep
+#	endif
+
+#ifdef _MSC_VER
+#	include <mmsystem.h>
+#	define sleep(x) \
+	do { \
+		if (x == 0) { \
+			Sleep(0); \
+		} else { \
+			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
+				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
+			Sleep(x); \
+			if (timeEndPeriod(1) != TIMERR_NOERROR) \
+				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
+		} \
+	} while (0);
+#endif
+
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 /* Assume this is a sufficient precondition */

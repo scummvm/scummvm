@@ -27,8 +27,8 @@
 /* Second half of the console implementation: VM dependent stuff */
 /* Remember, it doesn't have to be fast. */
 
-#include <sci_memory.h>
-#include <engine.h>
+#include "sci/include/sci_memory.h"
+#include "sci/include/engine.h"
 #ifdef SCI_CONSOLE
 
 state_t *con_gamestate = NULL;

@@ -17,8 +17,8 @@
 
 ***************************************************************************/
 
-#include <resource.h>
-#include <sfx_iterator.h>
+#include "sci/include/resource.h"
+#include "sci/include/sfx_iterator.h"
 #include "../softseq.h"
 #include "../adlib.h"
 #include <math.h>

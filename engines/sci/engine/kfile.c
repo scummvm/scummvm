@@ -27,6 +27,11 @@
 
 #include "sci/include/engine.h"
 
+
+#ifdef _MSC_VER
+#define MAX_PATHLEN MAXPATHLEN
+#endif
+
 #ifdef _WIN32
 #  ifndef PATH_MAX
 #    define PATH_MAX 255

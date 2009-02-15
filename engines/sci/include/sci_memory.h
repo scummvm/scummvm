@@ -81,6 +81,13 @@
 #  define scim_inline inline
 #endif
 
+#ifdef _MSC_VER
+#	undef strcasecmp
+#	undef strncasecmp
+#	define strcasecmp _stricmp
+#	define strncasecmp _strnicmp
+#endif
+
 /********** macros for error messages **********/
 
 /*

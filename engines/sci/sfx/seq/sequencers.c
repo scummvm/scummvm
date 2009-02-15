@@ -26,7 +26,7 @@
 ***************************************************************************/
 
 #include "../sequencer.h"
-#include <resource.h>
+#include "sci/include/resource.h"
 
 #ifndef SCUMMVM
 extern sfx_sequencer_t sfx_sequencer_gm;
