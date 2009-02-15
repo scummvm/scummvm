@@ -38,15 +38,14 @@
 
 
 gfx_pixmap_t *
-gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored)
-{
+gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored) {
 	int xl = get_int_16(resource);
 	int yl = get_int_16(resource + 2);
 	int xhot = ((signed char *) resource)[4];
 	int yhot = ((signed char *) resource)[5];
 	int color_key = resource[6];
 	int pos = 7;
-	int writepos = mirrored? xl : 0;
+	int writepos = mirrored ? xl : 0;
 	int pixmap_size = xl * yl;
 	int line_base = 0;
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
@@ -54,15 +53,14 @@ gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t 
 
 	retval->color_key = 255; /* Pick something larger than 15  */
 
-	retval->xoffset = mirrored? xhot : -xhot;
+	retval->xoffset = mirrored ? xhot : -xhot;
 	retval->yoffset = -yhot;
 
 	if (view) {
 		retval->colors = view->colors;
 		retval->colors_nr = view->colors_nr;
 		retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	} else
-	{
+	} else {
 		retval->colors = gfx_sci0_image_colors[sci0_palette];
 		retval->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
 		retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
@@ -131,8 +129,7 @@ gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t 
 }
 
 static int
-gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored)
-{
+gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored) {
 	int i;
 	int cels_nr = get_int_16(resource + offset);
 
@@ -179,8 +176,7 @@ gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset,
 #define V0_MIRROR_LIST_OFFSET 2
 
 gfxr_view_t *
-gfxr_draw_view0(int id, byte *resource, int size, int palette)
-{
+gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	int i;
 	gfxr_view_t *view;
 	int mirror_bitpos = 1;
@@ -202,8 +198,7 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette)
 	view->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 	view->colors = gfx_sci0_image_colors[sci0_palette];
 
-	if ((palette_ofs)&&(palette>=0))
-	{
+	if ((palette_ofs) && (palette >= 0)) {
 		byte *paldata = resource + palette_ofs + (palette * GFX_SCI0_IMAGE_COLORS_NR);
 
 		for (i = 0; i < GFX_SCI0_IMAGE_COLORS_NR; i++)
@@ -218,7 +213,7 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette)
 		return NULL;
 	}
 
-	view->loops = (gfxr_loop_t*)sci_malloc(sizeof (gfxr_loop_t) * ((view->loops_nr)? view->loops_nr : 1)); /* Alloc 1 if no loop */
+	view->loops = (gfxr_loop_t*)sci_malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
 
 	for (i = 0; i < view->loops_nr; i++) {
 		int error_token = 0;

@@ -31,8 +31,7 @@
 #include "sci/include/gfx_tools.h"
 
 static void
-antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode)
-{
+antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode) {
 	int x, y, c;
 	int bytespp = mode->bytespp;
 	int line_size = bytespp * pixmap->xl;
@@ -44,7 +43,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 	lastline[1] = (char*)sci_malloc(line_size);
 
 	for (y = 0; y < pixmap->yl; y++) {
-		int visimode = (y > 0 && y+1 < pixmap->yl)? 1 : 0;
+		int visimode = (y > 0 && y + 1 < pixmap->yl) ? 1 : 0;
 		unsigned long last_pixel;
 
 		memcpy(lastline[y & 1], data_p, line_size);
@@ -55,7 +54,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 
 			if (x == 1)
 				visimode++;
-			else if (x+1 == pixmap->xl)
+			else if (x + 1 == pixmap->xl)
 				visimode--;
 
 			for (c = 0; c < 3; c++) {
@@ -69,9 +68,9 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 				*/
 				for (y_mode = 0; y_mode < 2; y_mode++)
 					if ((y_mode == 0 && y > 0)
-					    || (y_mode == 1 && y+1 < pixmap->yl)) {
+					        || (y_mode == 1 && y + 1 < pixmap->yl)) {
 
-						char *src = (y_mode)? data_p + line_size : lastline_p;
+						char *src = (y_mode) ? data_p + line_size : lastline_p;
 
 						if (x > 0) {
 							memcpy(&reader, src - bytespp, bytespp);
@@ -81,7 +80,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 						memcpy(&reader, src, bytespp);
 						accum += ((reader >> shift_const) & mask[c]) << 1;
 
-						if (x+1 < pixmap->xl) {
+						if (x + 1 < pixmap->xl) {
 							memcpy(&reader, src + bytespp, bytespp);
 							accum += ((reader >> shift_const) & mask[c]) << 0;
 						}
@@ -95,23 +94,27 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 					last_pixel = reader;
 				accum += ((reader >> shift_const) & mask[c]) << 2;
 
-				if (x+1 < pixmap->xl) {
+				if (x + 1 < pixmap->xl) {
 					memcpy(&reader, data_p + bytespp, bytespp);
 					accum += ((reader >> shift_const) & mask[c]) << 1;
 				}
 
 				switch (visimode) {
 
-				case 0: accum /= 9; /* Only happens twelve times */
+				case 0:
+					accum /= 9; /* Only happens twelve times */
 					break;
 
-				case 1: accum = (accum >> 6) + (accum >> 4); /* 15/16 intensity */
+				case 1:
+					accum = (accum >> 6) + (accum >> 4); /* 15/16 intensity */
 					break;
 
-				case 2: accum >>= 4;
+				case 2:
+					accum >>= 4;
 					break;
 
-				default: accum = (c == 0)? 0xffffffff : 0; /* Error: mark as red */
+				default:
+					accum = (c == 0) ? 0xffffffff : 0; /* Error: mark as red */
 				}
 
 				result |= (accum & mask[c]);
@@ -130,8 +133,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 }
 
 void
-gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type)
-{
+gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type) {
 	int masks[3];
 	int shift_const = 0;
 

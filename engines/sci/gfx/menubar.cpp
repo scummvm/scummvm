@@ -69,8 +69,7 @@ __my_free(void *origin, char *function, int line)
 */
 
 menubar_t *
-menubar_new()
-{
+menubar_new() {
 	menubar_t *tmp = (menubar_t*)sci_malloc(sizeof(menubar_t));
 	tmp->menus_nr = 0;
 
@@ -78,8 +77,7 @@ menubar_new()
 }
 
 void
-menubar_free(menubar_t *menubar)
-{
+menubar_free(menubar_t *menubar) {
 	int i;
 
 	for (i = 0; i < menubar->menus_nr; i++) {
@@ -88,9 +86,9 @@ menubar_free(menubar_t *menubar)
 
 		for (j = 0; j < menu->items_nr; j++) {
 			if (menu->items[j].keytext)
-				free (menu->items[j].keytext);
+				free(menu->items[j].keytext);
 			if (menu->items[j].text)
-				free (menu->items[j].text);
+				free(menu->items[j].text);
 		}
 
 		free(menu->items);
@@ -98,7 +96,7 @@ menubar_free(menubar_t *menubar)
 	}
 
 	if (menubar->menus_nr)
-		free (menubar->menus);
+		free(menubar->menus);
 
 	free(menubar);
 }
@@ -106,7 +104,7 @@ menubar_free(menubar_t *menubar)
 
 int
 _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *left, char *right,
-		       int font, int key, int modifiers, int tag, reg_t text_pos)
+                       int font, int key, int modifiers, int tag, reg_t text_pos)
 /* Returns the total text size, plus MENU_BOX_CENTER_PADDING if (right != NULL) */
 {
 	menu_item_t *item;
@@ -136,13 +134,13 @@ _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *left, c
 		item->key = key;
 		item->modifiers = modifiers;
 	} else {
-		item->keytext=NULL;
+		item->keytext = NULL;
 		item->flags = 0;
 	}
 
 	if (right) {
 		gfxop_get_text_params(state, font, right, SIZE_INF, &width, &height, 0,
-				      NULL, NULL, NULL);
+		                      NULL, NULL, NULL);
 		total_left_size = MENU_BOX_CENTER_PADDING + (item->keytext_size = width);
 	}
 
@@ -150,15 +148,14 @@ _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *left, c
 	item->tag = tag;
 	item->text_pos = text_pos;
 	gfxop_get_text_params(state, font, left, SIZE_INF, &width, &height, 0,
-			      NULL, NULL, NULL);
+	                      NULL, NULL, NULL);
 
 	return total_left_size + width;
 }
 
 void
 menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font,
-		 reg_t entries_base)
-{
+                 reg_t entries_base) {
 	int i, add_freesci = 0;
 	menu_t *menu;
 	char tracker;
@@ -174,7 +171,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 #endif
 		menubar->menus = (menu_t*)sci_malloc(sizeof(menu_t));
 		menubar->menus_nr = 1;
-	} else menubar->menus = (menu_t*)sci_realloc(menubar->menus, ++(menubar->menus_nr) * sizeof (menu_t));
+	} else menubar->menus = (menu_t*)sci_realloc(menubar->menus, ++(menubar->menus_nr) * sizeof(menu_t));
 
 	menu = &(menubar->menus[menubar->menus_nr-1]);
 	memset(menu, 0, sizeof(menu_t));
@@ -182,7 +179,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 	menu->title = sci_strdup(title);
 
 	gfxop_get_text_params(state, font, menu->title, SIZE_INF, &(menu->title_width), &height, 0,
-			      NULL, NULL, NULL);
+	                      NULL, NULL, NULL);
 
 	do {
 		tracker = *entries++;
@@ -209,17 +206,17 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 					inleft++; /* Seek beginning of actual string */
 
 				if (!strncmp(inleft, MENU_HBAR_STRING_1, strlen(MENU_HBAR_STRING_1))
-				    || !strncmp(inleft, MENU_HBAR_STRING_2, strlen(MENU_HBAR_STRING_2))
-				    || !strncmp(inleft, MENU_HBAR_STRING_3, strlen(MENU_HBAR_STRING_3)))
-					{
-						entrytype = MENU_TYPE_HBAR; /* Horizontal bar */
-						free(left);
-						left = NULL;
-					}
+				        || !strncmp(inleft, MENU_HBAR_STRING_2, strlen(MENU_HBAR_STRING_2))
+				        || !strncmp(inleft, MENU_HBAR_STRING_3, strlen(MENU_HBAR_STRING_3))) {
+					entrytype = MENU_TYPE_HBAR; /* Horizontal bar */
+					free(left);
+					left = NULL;
+				}
 
-				beginning = entries_base; beginning.offset -= string_len + 1;
+				beginning = entries_base;
+				beginning.offset -= string_len + 1;
 				c_width = _menubar_add_menu_item(state, menu, entrytype, left, NULL, font, 0, 0, tag,
-								 beginning);
+				                                 beginning);
 				if (c_width > max_width)
 					max_width = c_width;
 
@@ -228,15 +225,14 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 
 			} else if (tracker == '`') { /* Start of right string */
 
-				if (!left)
-				{
-					left_origin = entries_base; left_origin.offset -= string_len + 1;
-					left = sci_strndup(entries - string_len -1, string_len);
+				if (!left) {
+					left_origin = entries_base;
+					left_origin.offset -= string_len + 1;
+					left = sci_strndup(entries - string_len - 1, string_len);
 				}
 				string_len = 0; /* Continue with the right string */
 
-			}
-			else string_len++; /* Nothing special */
+			} else string_len++; /* Nothing special */
 
 		} else { /* Left string finished => working on right string */
 			if ((tracker == ':') || (tracker == 0)) { /* End of entry */
@@ -252,12 +248,11 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 					if (right[1] == '0')
 						key = SCI_K_F10; /* F10 */
 
-					if (right[2]=='=') {
+					if (right[2] == '=') {
 						tag = atoi(right + 3);
 						right[2] = 0;
 					};
-				}
-				else if (right[0] == '@') { /* Alt key */
+				} else if (right[0] == '@') { /* Alt key */
 					right[0] = SCI_SPECIAL_CHAR_ALT; /* ALT */
 					key = right[1];
 					modifiers = SCI_EVM_ALT;
@@ -265,13 +260,12 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 					if ((key >= 'a') && (key <= 'z'))
 						right[1] = key - 'a' + 'A';
 
-					if (right[2]=='=') {
-						tag = atoi(right+3);
+					if (right[2] == '=') {
+						tag = atoi(right + 3);
 						right[2] = 0;
 					};
 
-				}
-				else {
+				} else {
 
 					if (right[0] == '^') {
 						right[0] = SCI_SPECIAL_CHAR_CTRL; /* Control key - there must be a replacement... */
@@ -281,19 +275,18 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 						if ((key >= 'a') && (key <= 'z'))
 							right[1] = key - 'a' + 'A';
 
-						if (right[2]=='=') {
-							tag = atoi(right+3);
+						if (right[2] == '=') {
+							tag = atoi(right + 3);
 							right[2] = 0;
 						}
 
-					}
-					else {
+					} else {
 						key = right[0];
 						if ((key >= 'a') && (key <= 'z'))
 							right[0] = key - 'a' + 'A';
 
-						if (right[1]=='=') {
-							tag=atoi(right+2);
+						if (right[1] == '=') {
+							tag = atoi(right + 2);
 							right[1] = 0;
 						}
 					}
@@ -305,11 +298,11 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 
 				i = strlen(right);
 
-				while (i>0 && right[--i] == ' ')
+				while (i > 0 && right[--i] == ' ')
 					right[i] = 0; /* Cut off chars to the right */
 
 				c_width = _menubar_add_menu_item(state, menu, MENU_TYPE_NORMAL, left, right, font, key,
-								 modifiers, tag, left_origin);
+				                                 modifiers, tag, left_origin);
 				tag = 0;
 				if (c_width > max_width)
 					max_width = c_width;
@@ -325,7 +318,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 #ifdef MENU_FREESCI_BLATANT_PLUG
 	if (add_freesci) {
 
-		char *freesci_text = sci_strdup ("About FreeSCI");
+		char *freesci_text = sci_strdup("About FreeSCI");
 		c_width = _menubar_add_menu_item(state, menu, MENU_TYPE_NORMAL, freesci_text, NULL, font, 0, 0, 0, NULL_REG);
 		if (c_width > max_width)
 			max_width = c_width;
@@ -337,24 +330,22 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 }
 
 int
-menubar_match_key(menu_item_t *item, int message, int modifiers)
-{
+menubar_match_key(menu_item_t *item, int message, int modifiers) {
 	if ((item->key == message)
-	    && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == item->modifiers))
+	        && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == item->modifiers))
 		return 1;
 
 	if (message == '\t'
-	    && item->key == 'i'
-	    && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == 0)
-	    && item->modifiers == SCI_EVM_CTRL)
+	        && item->key == 'i'
+	        && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == 0)
+	        && item->modifiers == SCI_EVM_CTRL)
 		return 1; /* Match TAB to ^I */
 
 	return 0;
 }
 
 int
-menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, reg_t value)
-{
+menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, reg_t value) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -421,7 +412,7 @@ menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, reg_t
 
 	default:
 		sciprintf("Attempt to set invalid attribute of menu %d, item %d: 0x%04x\n",
-			  menu_nr, item_nr, attribute);
+		          menu_nr, item_nr, attribute);
 		return 1;
 	}
 
@@ -429,8 +420,7 @@ menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, reg_t
 }
 
 reg_t
-menubar_get_attribute(state_t *s, int menu_nr, int item_nr, int attribute)
-{
+menubar_get_attribute(state_t *s, int menu_nr, int item_nr, int attribute) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -460,14 +450,13 @@ menubar_get_attribute(state_t *s, int menu_nr, int item_nr, int attribute)
 
 	default:
 		sciprintf("Attempt to read invalid attribute from menu %d, item %d: 0x%04x\n",
-			  menu_nr, item_nr, attribute);
+		          menu_nr, item_nr, attribute);
 		return make_reg(0, -1);
 	}
 }
 
 int
-menubar_item_valid(state_t *s, int menu_nr, int item_nr)
-{
+menubar_item_valid(state_t *s, int menu_nr, int item_nr) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -480,7 +469,7 @@ menubar_item_valid(state_t *s, int menu_nr, int item_nr)
 	item = menubar->menus[menu_nr].items + item_nr;
 
 	if ((item->type == MENU_TYPE_NORMAL)
-	    && item->enabled)
+	        && item->enabled)
 		return 1;
 
 	return 0; /* May not be selected */
@@ -488,8 +477,7 @@ menubar_item_valid(state_t *s, int menu_nr, int item_nr)
 
 
 int
-menubar_map_pointer(state_t *s, int *menu_nr, int *item_nr, gfxw_port_t *port)
-{
+menubar_map_pointer(state_t *s, int *menu_nr, int *item_nr, gfxw_port_t *port) {
 	menubar_t *menubar = s->menubar;
 	menu_t *menu;
 

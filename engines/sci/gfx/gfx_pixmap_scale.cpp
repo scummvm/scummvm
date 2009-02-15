@@ -24,20 +24,19 @@
 #define PALETTE_MODE mode->palette
 
 void
-FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	SIZETYPE result_colors[GFX_PIC_COLORS];
 	SIZETYPE alpha_color = 0xffffffff & mode->alpha_mask;
 	SIZETYPE alpha_ormask = 0;
-	int xfact = (scale)? mode->xfact: 1;
-	int yfact = (scale)? mode->yfact: 1;
+	int xfact = (scale) ? mode->xfact : 1;
+	int yfact = (scale) ? mode->yfact : 1;
 	int widthc, heightc; /* Width duplication counter */
 	int line_width = xfact * pxm->index_xl;
 	int bytespp = mode->bytespp;
 	int x, y;
 	int i;
-	byte byte_transparent = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA)?  0 : 255;
-	byte byte_opaque = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA)?  255 : 0;
+	byte byte_transparent = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA) ?  0 : 255;
+	byte byte_opaque = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA) ?  255 : 0;
 	byte *src = pxm->index_data;
 	byte *dest = pxm->data;
 	byte *alpha_dest = pxm->alpha_map;
@@ -49,7 +48,7 @@ FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 		alpha_color = 0;
 	}
 
-        assert(bytespp == COPY_BYTES);
+	assert(bytespp == COPY_BYTES);
 
 	if (separate_alpha_map && !alpha_dest)
 		alpha_dest = pxm->alpha_map = (byte*)sci_malloc(pxm->index_xl * xfact * pxm->index_yl * yfact);
@@ -91,7 +90,7 @@ FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 			}
 
 			if (separate_alpha_map) { /* Set separate alpha map */
-				memset(alpha_dest, (isalpha)? byte_transparent : byte_opaque, xfact);
+				memset(alpha_dest, (isalpha) ? byte_transparent : byte_opaque, xfact);
 				alpha_dest += xfact;
 			}
 		}
@@ -182,12 +181,11 @@ FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 
 
 void
-FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	int xfact = mode->xfact;
 	int yfact = mode->yfact;
-	int line_step = (yfact < 2)? 0 : 256 / (yfact & ~1);
-	int column_step = (xfact < 2)? 0 : 256 / (xfact & ~1);
+	int line_step = (yfact < 2) ? 0 : 256 / (yfact & ~1);
+	int column_step = (xfact < 2) ? 0 : 256 / (xfact & ~1);
 	int bytespp = mode->bytespp;
 	byte *src = pxm->index_data;
 	byte *dest = pxm->data;
@@ -195,7 +193,7 @@ FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 	int using_alpha = pxm->color_key != GFX_PIXMAP_COLOR_KEY_NONE;
 	int separate_alpha_map = (!mode->alpha_mask) && using_alpha;
 	unsigned int masks[4], shifts[4], zero[3];
-	int x,y;
+	int x, y;
 	byte inverse_alpha = mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA;
 
 	zero[0] = 255;
@@ -206,7 +204,7 @@ FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 		shifts[3] = 24;
 	}
 
-        assert(bytespp == COPY_BYTES);
+	assert(bytespp == COPY_BYTES);
 	assert(!PALETTE_MODE);
 
 	masks[0] = mode->red_mask;
@@ -229,7 +227,7 @@ FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 			int otherline[4]; /* the above line or the line below */
 			int ctexel[4]; /* Current texel */
 			int subx, suby;
-			int line_valuator = line_step? 128 - (line_step >> 1) : 256;
+			int line_valuator = line_step ? 128 - (line_step >> 1) : 256;
 			byte *wrpos, *alpha_wrpos;
 			byte *sublinepos = linepos;
 			byte *alpha_sublinepos = alpha_linepos;
@@ -261,7 +259,7 @@ FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 
 			/*-- Lower half --*/
 			line_valuator -= line_step;
-			MAKE_PIXEL((y+1 == pxm->index_yl), otherline, ctexel, src[pxm->index_xl]);
+			MAKE_PIXEL((y + 1 == pxm->index_yl), otherline, ctexel, src[pxm->index_xl]);
 			WRITE_YPART(1, Y_CALC_INTENSITY_NORMAL);
 
 			src++;
@@ -284,9 +282,8 @@ FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 #ifndef GFX_GET_PIXEL_DELTA
 #define GFX_GET_PIXEL_DELTA
 static inline void
-gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned int *pixel0, unsigned int *pixel1)
-{
-        int j;
+gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned int *pixel0, unsigned int *pixel1) {
+	int j;
 	int transp0 = pixel0[3] == 0xffffff;
 	int transp1 = pixel1[3] == 0xffffff;
 
@@ -311,11 +308,10 @@ gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned int *pixel0, unsig
 
 
 static inline void
-gfx_apply_delta(unsigned int *color, int *delta, int factor)
-{
-        int i;
+gfx_apply_delta(unsigned int *color, int *delta, int factor) {
+	int i;
 	for (i = 0; i < 4; i++)
-	        color[i] += delta[i] * factor;
+		color[i] += delta[i] * factor;
 }
 #endif
 
@@ -335,12 +331,11 @@ gfx_apply_delta(unsigned int *color, int *delta, int factor)
 #define REVERSE_ALPHA(foo) ((inverse_alpha)? ~(foo) : (foo))
 
 void
-FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	int xfact = mode->xfact;
 	int yfact = mode->yfact;
-	int line_step = (yfact < 2)? 0 : 256 / yfact;
-	int column_step = (xfact < 2)? 0 : 256 / xfact;
+	int line_step = (yfact < 2) ? 0 : 256 / yfact;
+	int column_step = (xfact < 2) ? 0 : 256 / xfact;
 	int bytespp = mode->bytespp;
 	byte *src = pxm->index_data;
 	byte *dest = pxm->data;
@@ -351,7 +346,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 	unsigned int pixels[4][4];
 	/* 0 1
 	** 2 3 */
-	int x,y;
+	int x, y;
 	byte inverse_alpha = mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA;
 
 	if (separate_alpha_map) {
@@ -359,7 +354,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 		shifts[3] = 24;
 	}
 
-        assert(bytespp == COPY_BYTES);
+	assert(bytespp == COPY_BYTES);
 	assert(!PALETTE_MODE);
 
 	masks[0] = mode->red_mask;
@@ -382,7 +377,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 	for (y = 0; y <= pxm->index_yl; y++) {
 		byte *y_dest_backup = dest;
 		byte *y_alpha_dest_backup = alpha_dest;
-		int y_valuator = (y > 0)? 0 : 128;
+		int y_valuator = (y > 0) ? 0 : 128;
 		int yc_count;
 
 
@@ -399,7 +394,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 		for (x = 0; x <= pxm->index_xl; x++) {
 			byte *x_dest_backup = dest;
 			byte *x_alpha_dest_backup = alpha_dest;
-			int x_valuator = (x > 0)? 0 : 128;
+			int x_valuator = (x > 0) ? 0 : 128;
 			int xc_count;
 			unsigned int leftcolor[4], rightcolor[4];
 			int leftdelta[4], rightdelta[4];
@@ -419,7 +414,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 			MAKE_PIXEL_TRILINEAR((y && (x < pxm->index_xl)), pixels[1], src[1]);
 			MAKE_PIXEL_TRILINEAR(((y < pxm->index_yl) && x), pixels[2], src[pxm->index_xl]);
 			MAKE_PIXEL_TRILINEAR(((y < pxm->index_yl) && (x < pxm->index_xl)),
-					     pixels[3], src[pxm->index_xl + 1]);
+			                     pixels[3], src[pxm->index_xl + 1]);
 
 			/* OptimizeMe */
 
@@ -429,7 +424,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 			gfx_apply_delta(rightcolor, rightdelta, y_valuator);
 
 			for (yc = 0; yc < yc_count; yc++) {
-			        unsigned int color[4];
+				unsigned int color[4];
 				int delta[4];
 				byte *yc_dest_backup = dest;
 				byte *yc_alpha_dest_backup = alpha_dest;
@@ -468,7 +463,7 @@ FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 			alpha_dest = x_alpha_dest_backup + xc_count;
 
 			if (x < pxm->index_xl)
-			  src++;
+				src++;
 		}
 		dest = y_dest_backup + pxm->index_xl * xfact * yc_count * COPY_BYTES;
 		alpha_dest = y_alpha_dest_backup + pxm->index_xl * xfact * yc_count;

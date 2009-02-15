@@ -51,25 +51,25 @@ int sci0_palette = 0;
 /* Default color maps */
 gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLORS_NR] = {
 	{{GFX_COLOR_SYSTEM, 0x00, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0x00, 0xaa},
-	 {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
-	 {GFX_COLOR_SYSTEM, 0xaa, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0x00, 0xaa},
-	 {GFX_COLOR_SYSTEM, 0xaa, 0x55, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0xaa, 0xaa},
-	 {GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0x55, 0xff},
-	 {GFX_COLOR_SYSTEM, 0x55, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
-	 {GFX_COLOR_SYSTEM, 0xff, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
-	 {GFX_COLOR_SYSTEM, 0xff, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, /* "Normal" EGA */
+		{GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
+		{GFX_COLOR_SYSTEM, 0xaa, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0x00, 0xaa},
+		{GFX_COLOR_SYSTEM, 0xaa, 0x55, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0xaa, 0xaa},
+		{GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0x55, 0xff},
+		{GFX_COLOR_SYSTEM, 0x55, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
+		{GFX_COLOR_SYSTEM, 0xff, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
+		{GFX_COLOR_SYSTEM, 0xff, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, /* "Normal" EGA */
 
 
 	{{GFX_COLOR_SYSTEM, 0x00, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0x00, 0xff},
-	 {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
-	 {GFX_COLOR_SYSTEM, 0xce, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0x71, 0xde},
-	 {GFX_COLOR_SYSTEM, 0x8d, 0x50, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0xbe, 0xbe},
-	 {GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x00, 0xbe, 0xff},
-	 {GFX_COLOR_SYSTEM, 0x00, 0xce, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
-	 {GFX_COLOR_SYSTEM, 0xff, 0x9d, 0x8d}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
-	 {GFX_COLOR_SYSTEM, 0xff, 0xff, 0x00}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, /* AGI Amiga-ish */
+		{GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
+		{GFX_COLOR_SYSTEM, 0xce, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0x71, 0xde},
+		{GFX_COLOR_SYSTEM, 0x8d, 0x50, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0xbe, 0xbe},
+		{GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x00, 0xbe, 0xff},
+		{GFX_COLOR_SYSTEM, 0x00, 0xce, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
+		{GFX_COLOR_SYSTEM, 0xff, 0x9d, 0x8d}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
+		{GFX_COLOR_SYSTEM, 0xff, 0xff, 0x00}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, /* AGI Amiga-ish */
 
-/* RGB and I intensities (former taken from the GIMP) */
+	/* RGB and I intensities (former taken from the GIMP) */
 #define GR 30
 #define GG 59
 #define GB 11
@@ -80,13 +80,14 @@ gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLO
 #define CC(x) (((x)*255)/FULL),(((x)*255)/FULL),(((x)*255)/FULL)         /* Combines color intensities */
 
 	{{GFX_COLOR_SYSTEM, CC(0)           }, {GFX_COLOR_SYSTEM, CC(GB)          },
-	 {GFX_COLOR_SYSTEM, CC(GG)          }, {GFX_COLOR_SYSTEM, CC(GB+GG)       },
-	 {GFX_COLOR_SYSTEM, CC(GR)          }, {GFX_COLOR_SYSTEM, CC(GB+GR)       },
-	 {GFX_COLOR_SYSTEM, CC(GG+GR)       }, {GFX_COLOR_SYSTEM, CC(GB+GG+GR)    },
-	 {GFX_COLOR_SYSTEM, CC(GI)          }, {GFX_COLOR_SYSTEM, CC(GB+GI)       },
-	 {GFX_COLOR_SYSTEM, CC(GG+GI)       }, {GFX_COLOR_SYSTEM, CC(GB+GG+GI)    },
-	 {GFX_COLOR_SYSTEM, CC(GR+GI)       }, {GFX_COLOR_SYSTEM, CC(GB+GR+GI)    },
-	 {GFX_COLOR_SYSTEM, CC(GG+GR+GI)    }, {GFX_COLOR_SYSTEM, CC(GB+GG+GR+GI) }}}; /* Grayscale */
+		{GFX_COLOR_SYSTEM, CC(GG)          }, {GFX_COLOR_SYSTEM, CC(GB + GG)       },
+		{GFX_COLOR_SYSTEM, CC(GR)          }, {GFX_COLOR_SYSTEM, CC(GB + GR)       },
+		{GFX_COLOR_SYSTEM, CC(GG + GR)       }, {GFX_COLOR_SYSTEM, CC(GB + GG + GR)    },
+		{GFX_COLOR_SYSTEM, CC(GI)          }, {GFX_COLOR_SYSTEM, CC(GB + GI)       },
+		{GFX_COLOR_SYSTEM, CC(GG + GI)       }, {GFX_COLOR_SYSTEM, CC(GB + GG + GI)    },
+		{GFX_COLOR_SYSTEM, CC(GR + GI)       }, {GFX_COLOR_SYSTEM, CC(GB + GR + GI)    },
+		{GFX_COLOR_SYSTEM, CC(GG + GR + GI)    }, {GFX_COLOR_SYSTEM, CC(GB + GG + GR + GI) }}
+}; /* Grayscale */
 
 #undef GR
 #undef GG
@@ -115,33 +116,31 @@ int fillmagc = 30000000;
 /* Color mapping used while scaling embedded views. */
 gfx_pixmap_color_t embedded_view_colors[16] = {
 	{0x00, 0, 0, 0}, {0x11, 0, 0, 0}, {0x22, 0, 0, 0}, {0x33, 0, 0, 0},
-	 {0x44, 0, 0, 0}, {0x55, 0, 0, 0}, {0x66, 0, 0, 0}, {0x77, 0, 0, 0},
-	 {0x88, 0, 0, 0}, {0x99, 0, 0, 0}, {0xaa, 0, 0, 0}, {0xbb, 0, 0, 0},
-	 {0xcc, 0, 0, 0}, {0xdd, 0, 0, 0}, {0xee, 0, 0, 0}, {0xff, 0, 0, 0}
+	{0x44, 0, 0, 0}, {0x55, 0, 0, 0}, {0x66, 0, 0, 0}, {0x77, 0, 0, 0},
+	{0x88, 0, 0, 0}, {0x99, 0, 0, 0}, {0xaa, 0, 0, 0}, {0xbb, 0, 0, 0},
+	{0xcc, 0, 0, 0}, {0xdd, 0, 0, 0}, {0xee, 0, 0, 0}, {0xff, 0, 0, 0}
 };
 
 void
-gfxr_init_static_palette()
-{
+gfxr_init_static_palette() {
 	if (!_gfxr_pic0_colors_initialized) {
 		for (int i = 0; i < 256; i++) {
 			gfx_sci0_pic_colors[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
 			gfx_sci0_pic_colors[i].r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
-							    gfx_sci0_image_colors[sci0_palette][i >> 4].r);
+			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].r);
 			gfx_sci0_pic_colors[i].g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
-							    gfx_sci0_image_colors[sci0_palette][i >> 4].g);
+			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].g);
 			gfx_sci0_pic_colors[i].b = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].b,
-							    gfx_sci0_image_colors[sci0_palette][i >> 4].b);
+			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].b);
 		}
 		//WARNING("Uncomment me after fixing sci0_palette changes to reset me");
-                /*  _gfxr_pic0_colors_initialized = 1; */
+		/*  _gfxr_pic0_colors_initialized = 1; */
 	}
 }
 
 
 gfxr_pic_t *
-gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1)
-{
+gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 	gfxr_pic_t *pic = (gfxr_pic_t*)sci_malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
@@ -149,11 +148,11 @@ gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1)
 	pic->control_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320, 200, ID, 2, 0));
 
 	pic->priority_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(mode->xfact * 320, mode->yfact * 200,
-								       ID, 1, 0));
+	                    ID, 1, 0));
 
 
 	pic->visual_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320 * mode->xfact,
-								     200 * mode->yfact, ID, 0, 0));
+	                  200 * mode->yfact, ID, 0, 0));
 	pic->visual_map->colors = gfx_sci0_pic_colors;
 	pic->visual_map->colors_nr = GFX_SCI0_PIC_COLORS_NR;
 	pic->visual_map->color_key = GFX_PIXMAP_COLOR_KEY_NONE;
@@ -190,8 +189,7 @@ gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1)
 /****************************/
 
 void
-gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size)
-{
+gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size) {
 	memset(pic->visual_map->index_data, 0x00, (320 * pic->mode->xfact * sci_titlebar_size * pic->mode->yfact));
 	memset(pic->visual_map->index_data + (320 * pic->mode->xfact * sci_titlebar_size * pic->mode->yfact),
 	       0xff, pic->mode->xfact * 320 * pic->mode->yfact * (200 - sci_titlebar_size)); /* white */
@@ -228,8 +226,7 @@ gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size)
   buffer[linewidth * y + x] operation color;
 
 static void
-_gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int sci_titlebar_size)
-{
+_gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int sci_titlebar_size) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = line.x;
 	int y = line.y + sci_titlebar_size;
@@ -276,8 +273,7 @@ _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int 
 }
 
 static void
-_gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int sci_titlebar_size)
-{
+_gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int sci_titlebar_size) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = line.x;
 	int y = line.y + sci_titlebar_size;
@@ -328,16 +324,15 @@ _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int sci_titleba
 
 #ifdef WITH_PIC_SCALING
 static void
-_gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask)
-{
+_gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask) {
 	/* Propagates all filled bits into the planes described by bitmask */
 	unsigned long *data = (unsigned long *) pic->aux_map;
 	unsigned long clearmask = 0x07070707;
 	unsigned long andmask =
-		(bitmask << 3)
-		| (bitmask << (3+8))
-		| (bitmask << (3+16))
-		| (bitmask << (3+24));
+	    (bitmask << 3)
+	    | (bitmask << (3 + 8))
+	    | (bitmask << (3 + 16))
+	    | (bitmask << (3 + 24));
 
 	if (sizeof(unsigned long) == 8) { /* UltraSparc, Alpha, newer MIPSens, etc */
 		andmask |= (andmask << 32);
@@ -355,8 +350,7 @@ _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask)
 
 
 static inline void
-_gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width)
-{
+_gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
 	int i;
 	for (i = 0; i < width; i++)
 		pic->aux_map[i+pos] |= FRESH_PAINT;
@@ -365,15 +359,14 @@ _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width)
 #if 0
 // Unreferenced - removed
 static void
-_gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *max_y)
-{
+_gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *max_y) {
 	/* Tries to spread by approximating the first derivation of the border function.
 	** Draws to the current and the last line, thus taking up to twice as long as neccessary.
 	** Other than that, it's O(n^2)
 	*/
 
 	int intervals_nr = 0, old_intervals_nr;
-	int x, y, i, pos = 10*320;
+	int x, y, i, pos = 10 * 320;
 	struct interval_struct {
 		int xl, xr, tag;
 	} intervals[2][160];
@@ -383,11 +376,11 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 
 #ifdef FILL_RECURSIVE_DEBUG
 	if (!fillmagc) {
-		fprintf(stderr,"------------------------------------------------\n");
-		fprintf(stderr,"LineID:   ");
+		fprintf(stderr, "------------------------------------------------\n");
+		fprintf(stderr, "LineID:   ");
 		for (i = 0; i < 5; i++)
-			fprintf(stderr,"  %d       ", i);
-		fprintf(stderr,"\n");
+			fprintf(stderr, "  %d       ", i);
+		fprintf(stderr, "\n");
 	}
 #endif
 
@@ -419,10 +412,10 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 
 				i = old_intervals_start_offset;
 				while (!done && i < old_intervals_nr) {
-					if (intervals[!ivi][i].xl > xr+1)
+					if (intervals[!ivi][i].xl > xr + 1)
 						done = 1;
 
-					else if (intervals[!ivi][i].xr < xl-1) {
+					else if (intervals[!ivi][i].xr < xl - 1) {
 						int o_xl = intervals[!ivi][i].xl;
 						int o_xr = intervals[!ivi][i].xr;
 						if (o_xr == o_xl && !intervals[!ivi][i].tag) { /* thin bar */
@@ -444,7 +437,7 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 						int write_left_width, write_right_width;
 
 						intervals[!ivi][i].tag = 1;
-						while (k+1 < old_intervals_nr && intervals[!ivi][k+1].xl <= xr) {
+						while (k + 1 < old_intervals_nr && intervals[!ivi][k+1].xl <= xr) {
 							++k;
 							intervals[!ivi][i].tag = 1;
 						}
@@ -453,10 +446,10 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 						dwidth_r = abs(old_xr - xr);
 
 						/* Current line */
-						write_left_width = (dwidth_l > xl)? xl : dwidth_l;
+						write_left_width = (dwidth_l > xl) ? xl : dwidth_l;
 						_gfxr_auxbuf_tag_line(pic, pos + xl - write_left_width, write_left_width);
 
-						write_right_width = (dwidth_r + xr > 319)? 320 - xr : dwidth_r;
+						write_right_width = (dwidth_r + xr > 319) ? 320 - xr : dwidth_r;
 						_gfxr_auxbuf_tag_line(pic, pos + xr, write_right_width);
 
 						if (xl - write_left_width < *min_x)
@@ -465,15 +458,15 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 							*max_x = xr + write_right_width;
 
 						/* Previous line */
-						write_left_width = (dwidth_l > old_xl)? old_xl : dwidth_l;
-						write_right_width = (dwidth_r + old_xr > 319)? 320 - old_xr : dwidth_r;
+						write_left_width = (dwidth_l > old_xl) ? old_xl : dwidth_l;
+						write_right_width = (dwidth_r + old_xr > 319) ? 320 - old_xr : dwidth_r;
 
 						if (i == k) { /* Only one predecessor interval */
 							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xl - write_left_width, write_left_width);
 							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xr, write_right_width);
 						} else /* Fill entire line */
 							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xl - write_left_width, old_xr - old_xl
-									      + 1 + write_left_width + write_right_width);
+							                      + 1 + write_left_width + write_right_width);
 
 						if (xl - write_left_width < *min_x)
 							*min_x = xl - write_left_width;
@@ -489,10 +482,10 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 
 #ifdef FILL_RECURSIVE_DEBUG
 		if (!fillmagc && intervals_nr) {
-			fprintf(stderr,"AI L#%03d:", y);
+			fprintf(stderr, "AI L#%03d:", y);
 			for (int j = 0; j < intervals_nr; j++)
-				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag? ' ':'-', intervals[ivi][j].xl, intervals[ivi][j].xr);
-			fprintf(stderr,"\n");
+				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].xl, intervals[ivi][j].xr);
+			fprintf(stderr, "\n");
 		}
 #endif
 
@@ -505,7 +498,7 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 		pos += 320;
 	}
 
-	for (pos = 320*200 - 1; pos >= 320; pos--)
+	for (pos = 320 * 200 - 1; pos >= 320; pos--)
 		if (pic->aux_map[pos - 320] & 0x40)
 			pic->aux_map[pos] |= 0x40;
 
@@ -560,13 +553,13 @@ enum {
 #define SCI1_OP_OFFSET 42
 
 enum {
-	PIC_SCI1_OPX_SET_PALETTE_ENTRIES = 0+SCI1_OP_OFFSET,
-	PIC_SCI1_OPX_EMBEDDED_VIEW = 1+SCI1_OP_OFFSET,
-	PIC_SCI1_OPX_SET_PALETTE = 2+SCI1_OP_OFFSET,
-	PIC_SCI1_OPX_PRIORITY_TABLE_EQDIST = 3+SCI1_OP_OFFSET,
-	PIC_SCI1_OPX_PRIORITY_TABLE_EXPLICIT = 4+SCI1_OP_OFFSET
+	PIC_SCI1_OPX_SET_PALETTE_ENTRIES = 0 + SCI1_OP_OFFSET,
+	PIC_SCI1_OPX_EMBEDDED_VIEW = 1 + SCI1_OP_OFFSET,
+	PIC_SCI1_OPX_SET_PALETTE = 2 + SCI1_OP_OFFSET,
+	PIC_SCI1_OPX_PRIORITY_TABLE_EQDIST = 3 + SCI1_OP_OFFSET,
+	PIC_SCI1_OPX_PRIORITY_TABLE_EXPLICIT = 4 + SCI1_OP_OFFSET
 };
-	
+
 
 #ifdef GFXR_DEBUG_PIC0
 #define p0printf sciprintf
@@ -583,15 +576,14 @@ enum {
 
 static void
 _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
-		   int rad_x, int rad_y, int color, int fillstyle)
-{
+                   int rad_x, int rad_y, int color, int fillstyle) {
 	int xx = 0, yy = rad_y;
 	int i, x_i, y_i;
 	int xr = 2 * rad_x * rad_x;
 	int yr = 2 * rad_y * rad_y;
 
 	x_i = 1;
-	y_i = xr * rad_y -1;
+	y_i = xr * rad_y - 1;
 	i = y_i >> 1;
 
 	while (yy >= 0) {
@@ -612,11 +604,11 @@ _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
 
 		if (oldyy != yy) {
 			int j;
-			int offset0 = (y-oldyy) * linewidth;
-			int offset1 = (y+oldyy) * linewidth;
+			int offset0 = (y - oldyy) * linewidth;
+			int offset1 = (y + oldyy) * linewidth;
 
-			offset0 += x-oldxx;
-			offset1 += x-oldxx;
+			offset0 += x - oldxx;
+			offset1 += x - oldxx;
 
 			if (oldyy == 0)
 				offset1 = 0; /* We never have to draw ellipses in the menu bar */
@@ -632,7 +624,7 @@ _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
 				break;
 
 			case ELLIPSE_OR:
-				for (j=0; j < (oldxx << 1) + 1; j++) {
+				for (j = 0; j < (oldxx << 1) + 1; j++) {
 					buffer[offset0 + j] |= color;
 					if (offset1)
 						buffer[offset1 + j] |= color;
@@ -640,7 +632,7 @@ _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
 				break;
 
 			default:
-				fprintf(stderr,"%s L%d: Invalid ellipse fill mode!\n", __FILE__, __LINE__);
+				fprintf(stderr, "%s L%d: Invalid ellipse fill mode!\n", __FILE__, __LINE__);
 				return;
 
 			}
@@ -650,8 +642,7 @@ _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
 
 static inline void
 _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int plot,
-		    int color, gfx_brush_mode_t brush_mode, int randseed)
-{
+                    int color, gfx_brush_mode_t brush_mode, int randseed) {
 	/* yoffset 63680, offset 320, plot 1, color 34, brush_mode 0, randseed 432)*/
 	/* Auxplot: Used by plot_aux_pattern to plot to visual and priority */
 	int xc, yc;
@@ -673,38 +664,38 @@ _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int 
 
 	case GFX_BRUSH_MODE_ELLIPSES:
 		if (plot) {
-			int x = offset * pic->mode->xfact + ((pic->mode->xfact -1) >> 1);
-			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact -1) >> 1); /* Ouch! */
+			int x = offset * pic->mode->xfact + ((pic->mode->xfact - 1) >> 1);
+			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact - 1) >> 1); /* Ouch! */
 
 			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->xfact >> 1, pic->mode->yfact >> 1,
-					   color, ELLIPSE_SOLID);
+			                   color, ELLIPSE_SOLID);
 		}
 		break;
 
 	case GFX_BRUSH_MODE_RANDOM_ELLIPSES:
 		if (plot) {
-			int x = offset * pic->mode->xfact + ((pic->mode->xfact -1) >> 1);
-			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact -1) >> 1); /* Ouch! */
+			int x = offset * pic->mode->xfact + ((pic->mode->xfact - 1) >> 1);
+			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact - 1) >> 1); /* Ouch! */
 			int sizex = pic->mode->xfact >> 1;
 			int sizey = pic->mode->yfact >> 1;
 
 			srand(randseed);
 
-			x -= (int) ((sizex * rand()*1.0)/(RAND_MAX + 1.0));
-			x += (int) ((sizex * rand()*1.0)/(RAND_MAX + 1.0));
-			y -= (int) ((sizey * rand()*1.0)/(RAND_MAX + 1.0));
-			y += (int) ((sizey * rand()*1.0)/(RAND_MAX + 1.0));
-			sizex = (int) ((sizex * rand()*1.0)/(RAND_MAX + 1.0));
-			sizey = (int) ((sizey * rand()*1.0)/(RAND_MAX + 1.0));
+			x -= (int)((sizex * rand() * 1.0) / (RAND_MAX + 1.0));
+			x += (int)((sizex * rand() * 1.0) / (RAND_MAX + 1.0));
+			y -= (int)((sizey * rand() * 1.0) / (RAND_MAX + 1.0));
+			y += (int)((sizey * rand() * 1.0) / (RAND_MAX + 1.0));
+			sizex = (int)((sizex * rand() * 1.0) / (RAND_MAX + 1.0));
+			sizey = (int)((sizey * rand() * 1.0) / (RAND_MAX + 1.0));
 
 			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->xfact >> 1, pic->mode->yfact >> 1,
-					   color, ELLIPSE_SOLID);
+			                   color, ELLIPSE_SOLID);
 			srand(time(NULL)); /* Make sure we don't accidently forget to re-init the random number generator */
 		}
 		break;
 
 	case GFX_BRUSH_MODE_MORERANDOM: {
-		int mask = plot? 7 : 1;
+		int mask = plot ? 7 : 1;
 		srand(randseed);
 		for (yc = 0; yc < pic->mode->yfact; yc++) {
 			for (xc = 0; xc < pic->mode->xfact; xc++)
@@ -722,9 +713,8 @@ _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int 
 
 static void
 _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int random,
-		       int mask, int color, int priority, int control,
-		       gfx_brush_mode_t brush_mode, int map_nr)
-{
+                       int mask, int color, int priority, int control,
+                       gfx_brush_mode_t brush_mode, int map_nr) {
 	/* Plots an appropriate pattern to the aux buffer and the control buffer,
 	** if mask & GFX_MASK_CONTROL
 	** random should be set to the random index, or -1 to disable
@@ -739,13 +729,15 @@ _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int 
 		{4, 4, 4, 3, 1},
 		{5, 5, 4, 4, 3, 1},
 		{6, 6, 6, 5, 5, 4, 2},
-		{7, 7, 7, 6, 6, 5, 4, 2}};
+		{7, 7, 7, 6, 6, 5, 4, 2}
+	};
 
 	/* 'Random' fill patterns, provided by Carl Muckenhoupt: */
 	byte random_data[32] = {
 		0x20, 0x94, 0x02, 0x24, 0x90, 0x82, 0xa4, 0xa2, 0x82, 0x09, 0x0a, 0x22,
 		0x12, 0x10, 0x42, 0x14, 0x91, 0x4a, 0x91, 0x11, 0x08, 0x12, 0x25, 0x10,
-		0x22, 0xa8, 0x14, 0x24, 0x00, 0x50, 0x24, 0x04};
+		0x22, 0xa8, 0x14, 0x24, 0x00, 0x50, 0x24, 0x04
+	};
 
 	/* 'Random' fill offsets, provided by Carl Muckenhoupt: */
 	byte random_offset[128] = {
@@ -773,9 +765,15 @@ _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int 
 	gfx_pixmap_t *map = NULL;
 
 	switch (map_nr) {
-	case GFX_MASK_VISUAL: map = pic->visual_map; break;
-	case GFX_MASK_PRIORITY: map = pic->priority_map; break;
-	default: map = pic->control_map; break;
+	case GFX_MASK_VISUAL:
+		map = pic->visual_map;
+		break;
+	case GFX_MASK_PRIORITY:
+		map = pic->priority_map;
+		break;
+	default:
+		map = pic->control_map;
+		break;
 	}
 
 	if (random >= 0)
@@ -816,24 +814,24 @@ _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int 
 
 					if (mask & GFX_MASK_VISUAL)
 						_gfxr_auxplot_brush(pic, pic->visual_map->index_data,
-								    yoffset, x + offset + j,
-								    1, color, brush_mode, random_index + x);
+						                    yoffset, x + offset + j,
+						                    1, color, brush_mode, random_index + x);
 
 					if (mask & GFX_MASK_PRIORITY)
 						_gfxr_auxplot_brush(pic, pic->priority_map->index_data,
-								    yoffset, x + offset + j,
-								    1, priority, brush_mode, random_index + x);
+						                    yoffset, x + offset + j,
+						                    1, priority, brush_mode, random_index + x);
 
 				} else {
 					if (mask & GFX_MASK_VISUAL)
 						_gfxr_auxplot_brush(pic, pic->visual_map->index_data,
-								    yoffset, x + offset + j,
-								    0, color, brush_mode, random_index + x);
+						                    yoffset, x + offset + j,
+						                    0, color, brush_mode, random_index + x);
 
 					if (mask & GFX_MASK_PRIORITY)
 						_gfxr_auxplot_brush(pic, pic->priority_map->index_data,
-								    yoffset, x + offset + j,
-								    0, priority, brush_mode, random_index + x);
+						                    yoffset, x + offset + j,
+						                    0, priority, brush_mode, random_index + x);
 				}
 				random_index = (random_index + 1) & 0xff;
 			}
@@ -846,14 +844,13 @@ _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int 
 
 static void
 _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int control, int drawenable,
-		   int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode,
-		   int sci_titlebar_size)
-{
+                   int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode,
+                   int sci_titlebar_size) {
 	int xsize = (pattern_size + 1) * pic->mode->xfact - 1;
 	int ysize = (pattern_size + 1) * pic->mode->yfact - 1;
 	int scaled_x, scaled_y;
 	rect_t boundaries;
-	int max_x = (pattern_code & PATTERN_FLAG_RECTANGLE)? 318 : 319; /* Rectangles' width is size+1 */
+	int max_x = (pattern_code & PATTERN_FLAG_RECTANGLE) ? 318 : 319; /* Rectangles' width is size+1 */
 
 	p0printf(stderr, "Pattern at (%d,%d) size %d, rand=%d, code=%02x\n", x, y, pattern_size, pattern_nr, pattern_code);
 
@@ -896,15 +893,15 @@ _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int c
 
 		if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 0, pattern_nr,
-					       drawenable, color, priority,
-					       control, brush_mode, GFX_MASK_CONTROL);
+			                       drawenable, color, priority,
+			                       control, brush_mode, GFX_MASK_CONTROL);
 		} else {
 
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 0,
-					       PLOT_AUX_PATTERN_NO_RANDOM,
-					       drawenable, 0, 0, control,
-					       GFX_BRUSH_MODE_SCALED,
-					       GFX_MASK_CONTROL);
+			                       PLOT_AUX_PATTERN_NO_RANDOM,
+			                       drawenable, 0, 0, control,
+			                       GFX_BRUSH_MODE_SCALED,
+			                       GFX_MASK_CONTROL);
 
 			if (drawenable & GFX_MASK_VISUAL)
 				gfx_draw_box_pixmap_i(pic->visual_map, boundaries, color);
@@ -919,42 +916,42 @@ _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int c
 		if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1, pattern_nr,
-					       drawenable, color, priority,
-					       control, brush_mode, GFX_MASK_CONTROL);
+			                       drawenable, color, priority,
+			                       control, brush_mode, GFX_MASK_CONTROL);
 		} else {
 
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1,
-					       PLOT_AUX_PATTERN_NO_RANDOM,
-					       drawenable, 0, 0, control,
-					       GFX_BRUSH_MODE_SCALED,
-					       GFX_MASK_CONTROL);
+			                       PLOT_AUX_PATTERN_NO_RANDOM,
+			                       drawenable, 0, 0, control,
+			                       GFX_BRUSH_MODE_SCALED,
+			                       GFX_MASK_CONTROL);
 
 			if (pic->mode->xfact == 1 && pic->mode->yfact == 1) {
 
 				if (drawenable & GFX_MASK_VISUAL)
 					_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1,
-							       PLOT_AUX_PATTERN_NO_RANDOM,
-							       drawenable, 0, 0, color,
-							       GFX_BRUSH_MODE_SCALED,
-							       GFX_MASK_VISUAL);
+					                       PLOT_AUX_PATTERN_NO_RANDOM,
+					                       drawenable, 0, 0, color,
+					                       GFX_BRUSH_MODE_SCALED,
+					                       GFX_MASK_VISUAL);
 
 				if (drawenable & GFX_MASK_PRIORITY)
 					_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1,
-							       PLOT_AUX_PATTERN_NO_RANDOM,
-							       drawenable, 0, 0, priority,
-							       GFX_BRUSH_MODE_SCALED,
-							       GFX_MASK_PRIORITY);
+					                       PLOT_AUX_PATTERN_NO_RANDOM,
+					                       drawenable, 0, 0, priority,
+					                       GFX_BRUSH_MODE_SCALED,
+					                       GFX_MASK_PRIORITY);
 			} else {
 
 				if (drawenable & GFX_MASK_VISUAL)
 					_gfxr_fill_ellipse(pic, pic->visual_map->index_data, 320 * pic->mode->xfact,
-							   scaled_x, scaled_y, xsize, ysize,
-							   color, ELLIPSE_SOLID);
+					                   scaled_x, scaled_y, xsize, ysize,
+					                   color, ELLIPSE_SOLID);
 
 				if (drawenable & GFX_MASK_PRIORITY)
 					_gfxr_fill_ellipse(pic, pic->priority_map->index_data, 320 * pic->mode->xfact,
-							   scaled_x, scaled_y, xsize, ysize,
-							   priority, ELLIPSE_SOLID);
+					                   scaled_x, scaled_y, xsize, ysize,
+					                   priority, ELLIPSE_SOLID);
 			}
 		}
 	}
@@ -962,21 +959,20 @@ _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int c
 
 
 static inline void
-_gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int priority, int drawenable)
-{
+_gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int priority, int drawenable) {
 	point_t start;
 	point_t end;
-	
+
 	start.x = x;
 	start.y = y;
 	end.x = ex;
 	end.y = ey;
 
-        if (ex >= pic->visual_map->index_xl || ey >= pic->visual_map->index_yl || x < 0 || y < 0) {
-                fprintf(stderr,"While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
-                        GFX_PRINT_POINT(start), GFX_PRINT_POINT(end));
-                return;
-        }
+	if (ex >= pic->visual_map->index_xl || ey >= pic->visual_map->index_yl || x < 0 || y < 0) {
+		fprintf(stderr, "While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
+		        GFX_PRINT_POINT(start), GFX_PRINT_POINT(end));
+		return;
+	}
 
 	if (drawenable & GFX_MASK_VISUAL)
 		gfx_draw_line_pixmap_i(pic->visual_map, start, end, color);
@@ -988,16 +984,15 @@ _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int
 
 static void
 _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
-		int priority, int control, int drawenable, int line_mode,
-		int cmd, int sci_titlebar_size)
-{
+                int priority, int control, int drawenable, int line_mode,
+                int cmd, int sci_titlebar_size) {
 	int scale_x = pic->mode->xfact;
 	int scale_y = pic->mode->yfact;
 	int xc, yc;
 	rect_t line;
 	int mask;
 	int partially_white = (drawenable & GFX_MASK_VISUAL)
-		&& (((color & 0xf0) == 0xf0) || ((color & 0x0f) == 0x0f));
+	                      && (((color & 0xf0) == 0xf0) || ((color & 0x0f) == 0x0f));
 
 	line.x = x;
 	line.y = y;
@@ -1005,7 +1000,7 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 	line.yl = ey - y;
 
 	if (x > 319 || y > 199 || x < 0 || y < 0
-	    || ex > 319 || ey > 199 || ex < 0 || ey < 0) {
+	        || ex > 319 || ey > 199 || ex < 0 || ey < 0) {
 		GFXWARN("While building pic: Attempt to draw line (%d,%d) to (%d,%d): cmd was %d\n", x, y, ex, ey, cmd);
 		return;
 	}
@@ -1022,11 +1017,11 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 
 	/* Calculate everything that is changed to SOLID */
 	mask = drawenable &
-		(
-			((color != 0xff)? 1 : 0)
-			| ((priority)? 2 : 0)
-			| ((control)? 4 : 0)
-			);
+	       (
+	           ((color != 0xff) ? 1 : 0)
+	           | ((priority) ? 2 : 0)
+	           | ((control) ? 4 : 0)
+	       );
 
 	if (mask) {
 		int mask2 = mask;
@@ -1037,11 +1032,11 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 
 	/* Calculate everything that is changed to TRANSPARENT */
 	mask = drawenable &
-		(
-			((color == 0xff)? 1 : 0)
-			| ((!priority)? 2 : 0)
-			| ((!control)? 4 : 0)
-			);
+	       (
+	           ((color == 0xff) ? 1 : 0)
+	           | ((!priority) ? 2 : 0)
+	           | ((!control) ? 4 : 0)
+	       );
 
 	if (mask)
 		_gfxr_auxbuf_line_clear(pic, line, ~mask, sci_titlebar_size);
@@ -1093,29 +1088,29 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 
 			for (xc = 0; xc < width; xc++)
 				_gfxr_draw_subline(pic,
-						   x + xc + x_offset, y + y_offset,
-						   ex + xc + x_offset, ey + y_offset,
-						   color, priority, drawenable);
+				                   x + xc + x_offset, y + y_offset,
+				                   ex + xc + x_offset, ey + y_offset,
+				                   color, priority, drawenable);
 
 			if (height > 0)
 				for (xc = 0; xc < width; xc++)
 					_gfxr_draw_subline(pic,
-							   x + xc + x_offset, y + height - 1 + y_offset,
-							   ex + xc + x_offset, ey + height - 1 + y_offset,
-							   color, priority, drawenable);
+					                   x + xc + x_offset, y + height - 1 + y_offset,
+					                   ex + xc + x_offset, ey + height - 1 + y_offset,
+					                   color, priority, drawenable);
 
 			if (height > 1) {
 				for (yc = 1; yc < height - 1; yc++)
 					_gfxr_draw_subline(pic,
-							   x + x_offset, y + yc + y_offset,
-							   ex + x_offset, ey + yc + y_offset,
-							   color, priority, drawenable);
+					                   x + x_offset, y + yc + y_offset,
+					                   ex + x_offset, ey + yc + y_offset,
+					                   color, priority, drawenable);
 				if (width > 0)
 					for (yc = 1; yc < height - 1; yc++)
 						_gfxr_draw_subline(pic,
-								   x + width - 1 + x_offset, y + yc + y_offset,
-								   ex + width - 1 + x_offset, ey + yc + y_offset,
-								   color, priority, drawenable);
+						                   x + width - 1 + x_offset, y + yc + y_offset,
+						                   ex + width - 1 + x_offset, ey + yc + y_offset,
+						                   color, priority, drawenable);
 			}
 		}
 	}
@@ -1145,15 +1140,14 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 
 static inline int /* returns -1 on failure, 0 on success */
 _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
-		      int y_200, int color, int drawenable, int *x, int *y)
-{
+                      int y_200, int color, int drawenable, int *x, int *y) {
 	int linewidth = pic->mode->xfact * 320;
 	int mpos, ix, iy;
 	int size_x = (max_x - min_x + 1) >> 1;
 	int size_y = (max_y - min_y + 1) >> 1;
 	int mid_x = min_x + size_x;
 	int mid_y = min_y + size_y;
-	int max_size = (size_x > size_y)? size_x : size_y;
+	int max_size = (size_x > size_y) ? size_x : size_y;
 	int size;
 	int legalcolor;
 	int legalmask;
@@ -1169,7 +1163,7 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 
 		if ((color & 0xf) == 0xf /* When dithering with white, do more
 					 ** conservative checks  */
-		    || (color & 0xf0) == 0xf0)
+		        || (color & 0xf0) == 0xf0)
 			legalcolor = 0xff;
 		else
 			legalcolor = 0xf0; /* Only check the second color */
@@ -1188,7 +1182,7 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 		int i;
 
 		if (size <= size_y) {
-			int limited_size = (size > size_x)? size_x : size;
+			int limited_size = (size > size_x) ? size_x : size;
 
 			for (i = mid_x - limited_size; i <= mid_x + limited_size; i++) {
 				TEST_POINT(i, mid_y - size);
@@ -1197,7 +1191,7 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 		}
 
 		if (size <= size_x) {
-			int limited_size = (size - 1 > size_y)? size_y : size - 1;
+			int limited_size = (size - 1 > size_y) ? size_y : size - 1;
 
 			for (i = mid_y - limited_size; i <= mid_y + limited_size; i++) {
 				TEST_POINT(mid_x - size, i);
@@ -1269,8 +1263,7 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 
 
 inline static void
-check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r, byte u, byte d)
-{
+check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r, byte u, byte d) {
 	if (*dest == legalcolor) {
 		if (*srcp == legalcolor)
 			return;
@@ -1303,8 +1296,7 @@ check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r
 
 
 void
-gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src)
-{
+gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src) {
 	int x_320, y_200;
 	int bound_x = dest->mode->xfact;
 	int bound_y = dest->mode->yfact;
@@ -1330,11 +1322,11 @@ gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src)
 			for (sub_y = 0; sub_y < bound_y; sub_y++) {
 				for (sub_x = 0; sub_x < bound_x; sub_x++) {
 					check_and_remove_artifact(dest->visual_map->index_data + write_offset,
-								  src_visualp, (int)0xff,
-								  (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
+					                          src_visualp, (int)0xff,
+					                          (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
 					check_and_remove_artifact(dest->priority_map->index_data + write_offset,
-								  src_priorityp, 0,
-								  (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
+					                          src_priorityp, 0,
+					                          (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
 					++write_offset;
 				}
 				write_offset += scaled_line_size - bound_x;
@@ -1347,34 +1339,30 @@ gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src)
 
 static void
 view_transparentize(gfx_pixmap_t *view, byte *pic_index_data,
-		    int posx, int posy,
-		    int width, int height)
-{
-	int i,j;
+                    int posx, int posy,
+                    int width, int height) {
+	int i, j;
 
-	for (i=0;i<width;i++)
-		for (j=0;j<height;j++)
-		{
-			if (view->index_data[j*width+i] == view->color_key)
-			{
-				view->index_data[j*width+i] = 
-					pic_index_data[(j+posy)*width+i+posx];
+	for (i = 0;i < width;i++)
+		for (j = 0;j < height;j++) {
+			if (view->index_data[j*width+i] == view->color_key) {
+				view->index_data[j*width+i] =
+				    pic_index_data[(j+posy)*width+i+posx];
 			}
 		}
 }
 
 extern gfx_pixmap_t *
-gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored);
+	gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored);
 extern gfx_pixmap_t *
-gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game);
+	gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game);
 extern void
-_gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
+	_gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
 
 void
 gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
-		byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
-		gfx_pixmap_color_t *static_pal, int static_pal_nr)
-{
+                byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
+                gfx_pixmap_color_t *static_pal, int static_pal_nr) {
 	const int default_palette_table[GFXR_PIC0_PALETTE_SIZE] = {
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
 		0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
@@ -1461,7 +1449,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				pal = *(resource + pos++);
 				index = pal % GFXR_PIC0_PALETTE_SIZE;
 				pal /= GFXR_PIC0_PALETTE_SIZE; /* Ignore pal */
-				
+
 				priority = priority_table[index];
 			} else priority = *(resource + pos++);
 
@@ -1486,7 +1474,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			GET_ABS_COORDS(x, y);
 
 			_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-					   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+			                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
@@ -1497,7 +1485,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				GET_REL_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-						   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1507,16 +1495,17 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			GET_ABS_COORDS(oldx, oldy);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 #if 0
-				fprintf(stderr,"Medium-line: [%04x] from %d,%d, data %02x %02x (dx=%d)", pos, oldx, oldy,
-					0xff & resource[pos], 0xff & resource[pos+1], *((signed char *) resource + pos + 1));
+				fprintf(stderr, "Medium-line: [%04x] from %d,%d, data %02x %02x (dx=%d)", pos, oldx, oldy,
+				        0xff & resource[pos], 0xff & resource[pos+1], *((signed char *) resource + pos + 1));
 #endif
 				GET_MEDREL_COORDS(oldx, oldy);
 #if 0
 				fprintf(stderr, " to %d,%d\n", x, y);
 #endif
-				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode, 
-						PIC_OP_MEDIUM_LINES, sci_titlebar_size);
-				oldx = x; oldy = y;
+				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
+				                PIC_OP_MEDIUM_LINES, sci_titlebar_size);
+				oldx = x;
+				oldy = y;
 			}
 			goto end_op_loop;
 
@@ -1525,10 +1514,11 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			p0printf("Long lines @%d\n", pos);
 			GET_ABS_COORDS(oldx, oldy);
 			while (*(resource + pos) < PIC_OP_FIRST) {
-				GET_ABS_COORDS(x,y);
-				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode, 
-						PIC_OP_LONG_LINES, sci_titlebar_size);
-				oldx = x; oldy = y;
+				GET_ABS_COORDS(x, y);
+				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
+				                PIC_OP_LONG_LINES, sci_titlebar_size);
+				oldx = x;
+				oldy = y;
 			}
 			goto end_op_loop;
 
@@ -1536,12 +1526,14 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 		case PIC_OP_SHORT_LINES:
 			p0printf("Short lines @%d\n", pos);
 			GET_ABS_COORDS(oldx, oldy);
-			x = oldx; y = oldy;
+			x = oldx;
+			y = oldy;
 			while (*(resource + pos) < PIC_OP_FIRST) {
-				GET_REL_COORDS(x,y);
-				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode, 
-						PIC_OP_SHORT_LINES, sci_titlebar_size);
-				oldx = x; oldy = y;
+				GET_REL_COORDS(x, y);
+				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
+				                PIC_OP_SHORT_LINES, sci_titlebar_size);
+				oldx = x;
+				oldy = y;
 			}
 			goto end_op_loop;
 
@@ -1555,14 +1547,14 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				/*fprintf(stderr,"C=(%d,%d)\n", x, y + sci_titlebar_size);*/
 #ifdef WITH_PIC_SCALING
 				if (pic->mode->xfact > 1
-				    || pic->mode->yfact > 1)
-				_gfxr_fill_any(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY)? 
-					       color : 0, priority, control, drawenable, sci_titlebar_size);
+				        || pic->mode->yfact > 1)
+					_gfxr_fill_any(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
+					               color : 0, priority, control, drawenable, sci_titlebar_size);
 
 				else
 #endif
-				_gfxr_fill_1(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY)? 
-					     color : 0, priority, control, drawenable, sci_titlebar_size);
+					_gfxr_fill_1(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
+					             color : 0, priority, control, drawenable, sci_titlebar_size);
 
 				if (fill_count++ > SCI_PIC0_MAX_FILL) {
 					sci_sched_yield();
@@ -1571,7 +1563,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 #ifdef FILL_RECURSIVE_DEBUG
 				if (!fillmagc) {
-					int x,y;
+					int x, y;
 					if (getenv("FOO1"))
 						for (x = 0; x < 320; x++)
 							for (y = 0; y < 200; y++) {
@@ -1603,7 +1595,8 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 								pic->visual_map->index_data[x + y*320*pic->mode->xfact] = pix;
 							}
 					return;
-				} --fillmagc;
+				}
+				--fillmagc;
 #endif /* GFXR_DEBUG_PIC0 */
 			}
 			goto end_op_loop;
@@ -1627,7 +1620,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				GET_ABS_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-						   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1655,9 +1648,10 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			GET_ABS_COORDS(oldx, oldy);
 
 			_gfxr_draw_pattern(pic, oldx, oldy, color, priority, control, drawenable, pattern_code,
-					   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+			                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
 
-			x = oldx; y = oldy;
+			x = oldx;
+			y = oldy;
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 					pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
@@ -1667,7 +1661,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				GET_MEDREL_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-						   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1724,7 +1718,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				p0printf("Set palette @%d\n", pos);
 				pic->visual_map->flags &= ~GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 				pic->visual_map->colors = gfxr_read_pal1(resid, &pic->visual_map->colors_nr,
-									 resource+pos, SCI1_PALETTE_SIZE);
+				                          resource + pos, SCI1_PALETTE_SIZE);
 				pos += SCI1_PALETTE_SIZE;
 				goto end_op_loop;
 
@@ -1748,11 +1742,10 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 
 			case PIC_SCI0_OPX_EMBEDDED_VIEW:
-			case PIC_SCI1_OPX_EMBEDDED_VIEW:
-			{
+			case PIC_SCI1_OPX_EMBEDDED_VIEW: {
 				int posx, posy;
 				int bytesize;
-/*				byte *vismap = pic->visual_map->index_data; */
+				/*				byte *vismap = pic->visual_map->index_data; */
 				int nodraw = 0;
 
 				gfx_pixmap_t *view;
@@ -1762,27 +1755,27 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 				/* Set up mode structure for resizing the view */
 				mode = gfx_new_mode(
-					pic->visual_map->index_xl/320,
-					pic->visual_map->index_yl/200, 
-					1, /* 1bpp, which handles masks and the rest for us */
-					0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
+				           pic->visual_map->index_xl / 320,
+				           pic->visual_map->index_yl / 200,
+				           1, /* 1bpp, which handles masks and the rest for us */
+				           0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
 
 				GET_ABS_COORDS(posx, posy);
-				bytesize = (*(resource + pos))+(*(resource + pos + 1) << 8);
+				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
 				p0printf("(%d, %d)\n", posx, posy);
 				pos += 2;
-				if (!sci1 && !nodraw) 
-					view = gfxr_draw_cel0(-1,-1,-1, resource + pos, bytesize, NULL, 0); 
+				if (!sci1 && !nodraw)
+					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, 0);
 				else
-					view = gfxr_draw_cel1(-1,-1,-1, 0, resource + pos, bytesize, NULL,
-							      static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR);
-				pos+=bytesize;
+					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, bytesize, NULL,
+					                      static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR);
+				pos += bytesize;
 				if (nodraw) continue;
-				p0printf("(%d, %d)-(%d, %d)\n", 
-					 posx, 
-					 posy, 
-					 posx + view->index_xl,
-					 posy + view->index_yl);
+				p0printf("(%d, %d)-(%d, %d)\n",
+				         posx,
+				         posy,
+				         posx + view->index_xl,
+				         posy + view->index_yl);
 
 				/* we can only safely replace the palette if it's static
 				 *if it's not for some reason, we should die
@@ -1793,7 +1786,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 				/* For SCI0, use special color mapping to copy the low
 				** nibble of the color index to the high
-				** nibble. 
+				** nibble.
 				*/
 				if (sci1) {
 					if (static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR) {
@@ -1815,35 +1808,33 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-					view_transparentize(view, pic->visual_map->index_data, 
-							    posx, sci_titlebar_size+posy, 
-							    view->index_xl, view->index_yl);
+					view_transparentize(view, pic->visual_map->index_data,
+					                    posx, sci_titlebar_size + posy,
+					                    view->index_xl, view->index_yl);
 
-				_gfx_crossblit_simple(pic->visual_map->index_data+(sci_titlebar_size*320)+
-						      posy*320+posx,
-						      view->index_data,
-						      pic->visual_map->index_xl, view->index_xl,
-						      view->index_xl,
-						      view->index_yl,
-						      1);
+				_gfx_crossblit_simple(pic->visual_map->index_data + (sci_titlebar_size*320) +
+				                      posy*320 + posx,
+				                      view->index_data,
+				                      pic->visual_map->index_xl, view->index_xl,
+				                      view->index_xl,
+				                      view->index_yl,
+				                      1);
 
 				gfx_free_mode(mode);
 				gfx_free_pixmap(NULL, view);
 			}
 			goto end_op_loop;
 
-			case PIC_SCI0_OPX_SET_PRIORITY_TABLE: 
+			case PIC_SCI0_OPX_SET_PRIORITY_TABLE:
 			case PIC_SCI1_OPX_PRIORITY_TABLE_EXPLICIT: {
 				int *pri_table;
 
 				p0printf("Explicit priority table @%d\n", pos);
-				if (!pic->internal)
-				{
-					pic->internal = sci_malloc(16 * sizeof(int)); 
-				} else
-				{
-					GFXERROR("pic->internal is not NULL (%08x); this only occurs with overlaid pics, otherwise it's a bug!\n", pic->internal); 
-				}	
+				if (!pic->internal) {
+					pic->internal = sci_malloc(16 * sizeof(int));
+				} else {
+					GFXERROR("pic->internal is not NULL (%08x); this only occurs with overlaid pics, otherwise it's a bug!\n", pic->internal);
+				}
 
 				pri_table = (int*)pic->internal;
 
@@ -1853,32 +1844,30 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				for (int i = 1; i < 15; i++)
 					pri_table[i] = resource[pos++];
 			}
-				goto end_op_loop;
+			goto end_op_loop;
 
-			case PIC_SCI1_OPX_PRIORITY_TABLE_EQDIST:
-			{
+			case PIC_SCI1_OPX_PRIORITY_TABLE_EQDIST: {
 				int first = getInt16(resource + pos);
 				int last = getInt16(resource + pos + 2);
 				int nr;
 				int *pri_table;
 
-				if (!pic->internal)
-				{
-					pic->internal = sci_malloc(16 * sizeof(int)); 
-				} else
-				{
-					GFXERROR("pic->internal is not NULL (%08x); possible memory corruption!\n", pic->internal); 
-				}	
+				if (!pic->internal) {
+					pic->internal = sci_malloc(16 * sizeof(int));
+				} else {
+					GFXERROR("pic->internal is not NULL (%08x); possible memory corruption!\n", pic->internal);
+				}
 
 				pri_table = (int*)pic->internal;
-				
+
 				for (nr = 0; nr < 16; nr ++)
-					pri_table[nr] = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);					
+					pri_table[nr] = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 				pos += 4;
 				goto end_op_loop;
 			}
 
-			default: sciprintf("%s L%d: Warning: Unknown opx %02x\n", __FILE__, __LINE__, opx);
+			default:
+				sciprintf("%s L%d: Warning: Unknown opx %02x\n", __FILE__, __LINE__, opx);
 				return;
 			}
 			goto end_op_loop;
@@ -1889,11 +1878,11 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			/* _gfxr_vismap_remove_artifacts(); */
 			return;
 
-		default: GFXWARN("Unknown op %02x\n", op);
+		default:
+			GFXWARN("Unknown op %02x\n", op);
 			return;
 		}
-end_op_loop: 
-		{}
+end_op_loop: {}
 	}
 
 	GFXWARN("Reached end of pic resource %04x\n", resid);
@@ -1901,9 +1890,8 @@ end_op_loop:
 
 void
 gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size,
-	       byte *resource, gfxr_pic0_params_t *style, int resid,
-	       gfx_pixmap_color_t *static_pal, int static_pal_nr)
-{
+                byte *resource, gfxr_pic0_params_t *style, int resid,
+                gfx_pixmap_color_t *static_pal, int static_pal_nr) {
 	int has_bitmap = getUInt16(resource + 4);
 	int vector_data_ptr = getUInt16(resource + 16);
 	int palette_data_ptr = getUInt16(resource + 28);
@@ -1913,58 +1901,55 @@ gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size,
 	gfx_pixmap_t *view = NULL;
 	/* Set up mode structure for resizing the view */
 	mode = gfx_new_mode(
-			    pic->visual_map->index_xl/320,
-			    pic->visual_map->index_yl/200, 
-			    1, /* 1bpp, which handles masks and the rest for us */
-			    0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
+	           pic->visual_map->index_xl / 320,
+	           pic->visual_map->index_yl / 200,
+	           1, /* 1bpp, which handles masks and the rest for us */
+	           0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
 
 	pic->visual_map->colors = gfxr_read_pal11(-1, &(pic->visual_map->colors_nr), resource + palette_data_ptr, 1284);
 
 	if (has_bitmap)
 		view = gfxr_draw_cel11(-1, 0, 0, 0, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL);
 
-	if (view)
-	{
+	if (view) {
 		view->colors = pic->visual_map->colors;
 		view->colors_nr = pic->visual_map->colors_nr;
-		
+
 		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
-		
+
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-			view_transparentize(view, pic->visual_map->index_data, 
-					    0, 0, 
-					    view->index_xl, view->index_yl);
-		
+			view_transparentize(view, pic->visual_map->index_data,
+			                    0, 0,
+			                    view->index_xl, view->index_yl);
+
 		/* Hack to prevent overflowing the visual map buffer.
 		   Yes, this does happen otherwise. */
 		if (view->index_yl + sci_titlebar_size > 200)
 			sci_titlebar_size = 0;
 
-		_gfx_crossblit_simple(pic->visual_map->index_data+sci_titlebar_size*view->index_xl,
-				      view->index_data,
-				      pic->visual_map->index_xl, view->index_xl,
-				      view->index_xl,
-				      view->index_yl,
-				      1);
-	} else 
-	{
+		_gfx_crossblit_simple(pic->visual_map->index_data + sci_titlebar_size*view->index_xl,
+		                      view->index_data,
+		                      pic->visual_map->index_xl, view->index_xl,
+		                      view->index_xl,
+		                      view->index_yl,
+		                      1);
+	} else {
 		GFXWARN("No view was contained in SCI1.1 pic resource");
 	}
-		
+
 
 
 	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr,
-			resource + vector_data_ptr, style, resid, 1,
-			static_pal, static_pal_nr);
+	                resource + vector_data_ptr, style, resid, 1,
+	                static_pal, static_pal_nr);
 }
 
 void
-gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern)
-{
+gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 	int xl = pic->visual_map->index_xl;
 	int yl = pic->visual_map->index_yl;
-	int xfrob_max = (pattern == GFXR_DITHER_PATTERN_1)? 1 : pic->mode->xfact;
-	int yfrob_max = (pattern == GFXR_DITHER_PATTERN_1)? 1 : pic->mode->yfact;
+	int xfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->xfact;
+	int yfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->yfact;
 	int xfrobc = 0, yfrobc = 0;
 	int selection = 0;
 	int x, y;

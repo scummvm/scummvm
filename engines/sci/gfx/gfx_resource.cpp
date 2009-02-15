@@ -41,8 +41,7 @@ gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 
 
 static void
-gfxr_free_loop(gfx_driver_t *driver, gfxr_loop_t *loop)
-{
+gfxr_free_loop(gfx_driver_t *driver, gfxr_loop_t *loop) {
 	int i;
 
 	if (loop->cels) {
@@ -55,8 +54,7 @@ gfxr_free_loop(gfx_driver_t *driver, gfxr_loop_t *loop)
 }
 
 void
-gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view)
-{
+gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view) {
 	int i;
 
 	if (view->colors && !(view->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE))
@@ -73,147 +71,145 @@ gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view)
 
 
 static void
-pixmap_endianness_reverse_2_simple(byte *data, int area)
-{
-        int c;
-        for (c = 0; c < area; c++) {
-                byte val = *data;
-                *data = data[1];
-                data[1] = val;
+pixmap_endianness_reverse_2_simple(byte *data, int area) {
+	int c;
+	for (c = 0; c < area; c++) {
+		byte val = *data;
+		*data = data[1];
+		data[1] = val;
 
-                data += 2;
-        }
+		data += 2;
+	}
 }
 
 static void
-pixmap_endianness_reverse_2(byte *data, int area)
-{
-        int c;
-        int sl = sizeof(unsigned long);
+pixmap_endianness_reverse_2(byte *data, int area) {
+	int c;
+	int sl = sizeof(unsigned long);
 
-        for (c = 0; c < (area & ~(sl-1)); c += (sl>>1)) {
-                unsigned long temp;
+	for (c = 0; c < (area & ~(sl - 1)); c += (sl >> 1)) {
+		unsigned long temp;
 
-                memcpy(&temp, data, sl);
+		memcpy(&temp, data, sl);
 
-                /* The next line will give warnings on 32 bit archs, but
-                ** that's OK.  */
+		/* The next line will give warnings on 32 bit archs, but
+		** that's OK.  */
 #if SIZEOF_LONG < 8
-                temp = 0;
+		temp = 0;
 #else
-                temp = ((temp & 0xff00ff00ff00ff00l) >> 8)
-                        | ((temp & 0x00ff00ff00ff00ffl) << 8);
+		temp = ((temp & 0xff00ff00ff00ff00l) >> 8)
+		       | ((temp & 0x00ff00ff00ff00ffl) << 8);
 #endif /* SIZEOF_INT < 8 */
 
-                memcpy(data, &temp, sl);
+		memcpy(data, &temp, sl);
 
-                data += sl;
-        }
+		data += sl;
+	}
 
-        pixmap_endianness_reverse_2_simple(data, area & (sl-1));
+	pixmap_endianness_reverse_2_simple(data, area & (sl - 1));
 }
 
 static void
-pixmap_endianness_reverse_3_simple(byte *data, int area)
-{
-        int c;
-        for (c = 0; c < area; c++) {
-                byte val0 = data[0];
+pixmap_endianness_reverse_3_simple(byte *data, int area) {
+	int c;
+	for (c = 0; c < area; c++) {
+		byte val0 = data[0];
 
-                data[0] = data[2];
-                data[2] = val0;
+		data[0] = data[2];
+		data[2] = val0;
 
-                data += 3;
-        }
+		data += 3;
+	}
 }
 
 static void
-pixmap_endianness_reverse_4_simple(byte *data, int area)
-{
-        int c;
-        for (c = 0; c < area; c++) {
-                byte val0 = data[0];
-                byte val1 = data[1];
+pixmap_endianness_reverse_4_simple(byte *data, int area) {
+	int c;
+	for (c = 0; c < area; c++) {
+		byte val0 = data[0];
+		byte val1 = data[1];
 
-                data[0] = data[3];
-                data[3] = val0;
+		data[0] = data[3];
+		data[3] = val0;
 
-                data[1] = data[2];
-                data[2] = val1;
+		data[1] = data[2];
+		data[2] = val1;
 
-                data += 4;
-        }
+		data += 4;
+	}
 }
 
 static void
-pixmap_endianness_reverse_4(byte *data, int area)
-{
-        int c;
-        int sl = sizeof(unsigned long);
+pixmap_endianness_reverse_4(byte *data, int area) {
+	int c;
+	int sl = sizeof(unsigned long);
 
-        for (c = 0; c < (area & ~(sl-1)); c += (sl>>2)) {
-                unsigned long temp;
+	for (c = 0; c < (area & ~(sl - 1)); c += (sl >> 2)) {
+		unsigned long temp;
 
-                memcpy(&temp, data, sl);
+		memcpy(&temp, data, sl);
 
-                /* The next lines will give warnings on 32 bit archs, but
-                ** that's OK.  */
+		/* The next lines will give warnings on 32 bit archs, but
+		** that's OK.  */
 #if SIZEOF_LONG < 8
-                temp = 0l;
+		temp = 0l;
 #else
-                temp = ((temp & 0xffff0000ffff0000l) >> 16)
-                        | ((temp & 0x0000ffff0000ffffl) << 16);
-                temp = ((temp & 0xff00ff00ff00ff00l) >> 8)
-                        | ((temp & 0x00ff00ff00ff00ffl) << 8);
+		temp = ((temp & 0xffff0000ffff0000l) >> 16)
+		       | ((temp & 0x0000ffff0000ffffl) << 16);
+		temp = ((temp & 0xff00ff00ff00ff00l) >> 8)
+		       | ((temp & 0x00ff00ff00ff00ffl) << 8);
 #endif /* SIZEOF_LONG < 8 */
 
-                memcpy(data, &temp, sl);
+		memcpy(data, &temp, sl);
 
-                data += sl;
-        }
+		data += sl;
+	}
 
-        pixmap_endianness_reverse_4_simple(data, area & (sl-1));
+	pixmap_endianness_reverse_4_simple(data, area & (sl - 1));
 }
 
 gfx_pixmap_t *
-gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
-{
-        int bytespp;
-        byte *data;
+gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
+	int bytespp;
+	byte *data;
 
-        if (!pixmap || !pixmap->data || !mode) {
-                GFXERROR("gfxr_endianness_adjust(): Invoked with invalid values\n");
+	if (!pixmap || !pixmap->data || !mode) {
+		GFXERROR("gfxr_endianness_adjust(): Invoked with invalid values\n");
 		BREAKPOINT();
-                return NULL;
-        }
+		return NULL;
+	}
 
-        if (!(mode->flags & GFX_MODE_FLAG_REVERSE_ENDIAN))
-                return pixmap;
+	if (!(mode->flags & GFX_MODE_FLAG_REVERSE_ENDIAN))
+		return pixmap;
 
-        bytespp = mode->bytespp;
+	bytespp = mode->bytespp;
 
-        data = pixmap->data;
+	data = pixmap->data;
 
-        switch (bytespp) {
-        case 1:
-                break;
+	switch (bytespp) {
+	case 1:
+		break;
 
-        case 2: pixmap_endianness_reverse_2(data, pixmap->xl
-                                            * pixmap->yl);
-        break;
+	case 2:
+		pixmap_endianness_reverse_2(data, pixmap->xl
+		                            * pixmap->yl);
+		break;
 
-        case 3: pixmap_endianness_reverse_3_simple(data, pixmap->xl
-                                            * pixmap->yl);
-        break;
+	case 3:
+		pixmap_endianness_reverse_3_simple(data, pixmap->xl
+		                                   * pixmap->yl);
+		break;
 
-        case 4: pixmap_endianness_reverse_4(data, pixmap->xl * pixmap->yl);
-        break;
+	case 4:
+		pixmap_endianness_reverse_4(data, pixmap->xl * pixmap->yl);
+		break;
 
-        default: fprintf(stderr,"gfxr_endianness_adjust(): Cannot adjust endianness for %d bytespp!\n", bytespp);
-                return NULL;
-        }
+	default:
+		fprintf(stderr, "gfxr_endianness_adjust(): Cannot adjust endianness for %d bytespp!\n", bytespp);
+		return NULL;
+	}
 
-        return pixmap;
+	return pixmap;
 }
 
 
@@ -262,20 +258,23 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode)
 #undef SIZETYPE
 
 static inline void
-_gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+_gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	switch (mode->bytespp) {
 
-	case 1:_gfx_xlate_pixmap_unfiltered_1(mode, pxm, scale);
+	case 1:
+		_gfx_xlate_pixmap_unfiltered_1(mode, pxm, scale);
 		break;
 
-	case 2:_gfx_xlate_pixmap_unfiltered_2(mode, pxm, scale);
+	case 2:
+		_gfx_xlate_pixmap_unfiltered_2(mode, pxm, scale);
 		break;
 
-	case 3:_gfx_xlate_pixmap_unfiltered_3(mode, pxm, scale);
+	case 3:
+		_gfx_xlate_pixmap_unfiltered_3(mode, pxm, scale);
 		break;
 
-	case 4:_gfx_xlate_pixmap_unfiltered_4(mode, pxm, scale);
+	case 4:
+		_gfx_xlate_pixmap_unfiltered_4(mode, pxm, scale);
 		break;
 
 	default:
@@ -293,8 +292,7 @@ _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 }
 
 static inline void
-_gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+_gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	if (mode->palette || !scale) { /* fall back to unfiltered */
 		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
 		return;
@@ -305,16 +303,20 @@ _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 
 	switch (mode->bytespp) {
 
-	case 1:_gfx_xlate_pixmap_linear_1(mode, pxm, scale);
+	case 1:
+		_gfx_xlate_pixmap_linear_1(mode, pxm, scale);
 		break;
 
-	case 2:_gfx_xlate_pixmap_linear_2(mode, pxm, scale);
+	case 2:
+		_gfx_xlate_pixmap_linear_2(mode, pxm, scale);
 		break;
 
-	case 3:_gfx_xlate_pixmap_linear_3(mode, pxm, scale);
+	case 3:
+		_gfx_xlate_pixmap_linear_3(mode, pxm, scale);
 		break;
 
-	case 4:_gfx_xlate_pixmap_linear_4(mode, pxm, scale);
+	case 4:
+		_gfx_xlate_pixmap_linear_4(mode, pxm, scale);
 		break;
 
 	default:
@@ -325,8 +327,7 @@ _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 }
 
 static inline void
-_gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
-{
+_gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	if (mode->palette || !scale) { /* fall back to unfiltered */
 		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
 		return;
@@ -337,16 +338,20 @@ _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 
 	switch (mode->bytespp) {
 
-	case 1:_gfx_xlate_pixmap_trilinear_1(mode, pxm, scale);
+	case 1:
+		_gfx_xlate_pixmap_trilinear_1(mode, pxm, scale);
 		break;
 
-	case 2:_gfx_xlate_pixmap_trilinear_2(mode, pxm, scale);
+	case 2:
+		_gfx_xlate_pixmap_trilinear_2(mode, pxm, scale);
 		break;
 
-	case 3:_gfx_xlate_pixmap_trilinear_3(mode, pxm, scale);
+	case 3:
+		_gfx_xlate_pixmap_trilinear_3(mode, pxm, scale);
 		break;
 
-	case 4:_gfx_xlate_pixmap_trilinear_4(mode, pxm, scale);
+	case 4:
+		_gfx_xlate_pixmap_trilinear_4(mode, pxm, scale);
 		break;
 
 	default:
@@ -357,18 +362,17 @@ _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 }
 
 void
-gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter)
-{
+gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter) {
 	int was_allocated = 0;
 
 	if (mode->palette
-	    && !(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED)) {
+	        && !(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED)) {
 		int i;
 
 		for (i = 0; i < pxm->colors_nr; i++) {
 			if (gfx_alloc_color(mode->palette, pxm->colors + i) < 0) {
 				GFXWARN("Failed to allocate color %d/%d in pixmap (color %02x/%02x/%02x)!\n",
-					i, pxm->colors_nr, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
+				        i, pxm->colors_nr, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
 				pxm->colors[i].global_index = 0;
 			}
 			/*
@@ -393,13 +397,16 @@ gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter)
 
 	switch (filter) {
 
-	case GFX_XLATE_FILTER_NONE: _gfx_xlate_pixmap_unfiltered(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+	case GFX_XLATE_FILTER_NONE:
+		_gfx_xlate_pixmap_unfiltered(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
 		break;
 
-	case GFX_XLATE_FILTER_LINEAR: _gfx_xlate_pixmap_linear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+	case GFX_XLATE_FILTER_LINEAR:
+		_gfx_xlate_pixmap_linear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
 		break;
 
-	case GFX_XLATE_FILTER_TRILINEAR: _gfx_xlate_pixmap_trilinear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+	case GFX_XLATE_FILTER_TRILINEAR:
+		_gfx_xlate_pixmap_trilinear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
 		break;
 
 	default:
@@ -415,8 +422,7 @@ gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter)
 
 
 void
-gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic)
-{
+gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic) {
 	gfx_free_pixmap(driver, pic->visual_map);
 	gfx_free_pixmap(driver, pic->priority_map);
 	gfx_free_pixmap(driver, pic->control_map);

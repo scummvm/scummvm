@@ -38,8 +38,7 @@
 #define SCI_PAL_FORMAT_CONSTANT_FLAGS 1
 
 gfx_pixmap_color_t *
-gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size)
-{
+gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
 	int start_color = resource[25];
 	int format = resource[32];
 	int entry_size = 0;
@@ -48,8 +47,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size)
 	int _colors_nr = *colors_nr = getUInt16(resource + 29);
 	int i;
 
-	switch (format)
-	{
+	switch (format) {
 	case SCI_PAL_FORMAT_VARIABLE_FLAGS :
 		entry_size = 4;
 		break;
@@ -59,20 +57,17 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size)
 	}
 
 	retval = (gfx_pixmap_color_t *)
-		sci_malloc(sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
+	         sci_malloc(sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
 	memset(retval, 0, sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
 
-	for (i = 0; i < start_color; i ++)
-	{
+	for (i = 0; i < start_color; i ++) {
 		retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
 		retval[i].r = 0;
 		retval[i].g = 0;
 		retval[i].b = 0;
 	}
-	for (i = start_color; i < start_color + _colors_nr; i ++)
-	{
-		switch (format)
-		{
+	for (i = start_color; i < start_color + _colors_nr; i ++) {
+		switch (format) {
 		case SCI_PAL_FORMAT_CONSTANT_FLAGS:
 			retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
 			retval[i].r = pal_data[0];
@@ -93,8 +88,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size)
 }
 
 gfx_pixmap_color_t *
-gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size)
-{
+gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
 	int counter = 0;
 	int pos;
 	unsigned int colors[MAX_COLORS] = {0};
@@ -110,9 +104,9 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size)
 
 	while (pos < size/* && resource[pos] == COLOR_OK && counter < MAX_COLORS*/) {
 		int color = resource[pos]
-			| (resource[pos + 1] << 8)
-			| (resource[pos + 2] << 16)
-			| (resource[pos + 3] << 24);
+		            | (resource[pos + 1] << 8)
+		            | (resource[pos + 2] << 16)
+		            | (resource[pos + 3] << 24);
 
 		pos += 4;
 
@@ -148,8 +142,7 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size)
 }
 
 gfx_pixmap_color_t *
-gfxr_read_pal1_amiga(int *colors_nr, FILE *f)
-{
+gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
 	int i;
 	gfx_pixmap_color_t *retval;
 

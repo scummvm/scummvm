@@ -18,8 +18,7 @@ struct _scummvm_driver_state {
 #define S ((struct _scummvm_driver_state *)(drv->state))
 
 static int
-scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp)
-{
+scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp) {
 	int i;
 
 	if (!drv->state) // = S
@@ -38,7 +37,7 @@ scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp
 		S->priority[i] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(S->xsize, S->ysize, GFX_RESID_NONE, -i, -777));
 		if (!S->priority[i]) {
 			printf("Out of memory: Could not allocate priority maps! (%dx%d)\n",
-					S->xsize, S->ysize);
+			       S->xsize, S->ysize);
 			return GFX_FATAL;
 		}
 	}
@@ -48,28 +47,26 @@ scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp
 		S->visual[i] = new byte[S->xsize * S->ysize];
 		if (!S->visual[i]) {
 			printf("Out of memory: Could not allocate visual buffers! (%dx%d)\n",
-					S->xsize, S->ysize);
+			       S->xsize, S->ysize);
 			return GFX_FATAL;
 		}
 		memset(S->visual[i], 0, S->xsize * S->ysize);
 	}
 
 	drv->mode = gfx_new_mode(xfact, yfact, bytespp,
-				0, 0, 0, 0,
-				0, 0, 0, 0, 256, 0);
+	                         0, 0, 0, 0,
+	                         0, 0, 0, 0, 256, 0);
 
 	return GFX_OK;
 }
 
 static int
-scummvm_init(struct _gfx_driver *drv)
-{
+scummvm_init(struct _gfx_driver *drv) {
 	return scummvm_init_specific(drv, 1, 1, GFX_COLOR_MODE_INDEX);
 }
 
 static void
-scummvm_exit(struct _gfx_driver *drv)
-{
+scummvm_exit(struct _gfx_driver *drv) {
 	int i;
 	if (S) {
 		for (i = 0; i < 2; i++) {
@@ -97,12 +94,11 @@ scummvm_exit(struct _gfx_driver *drv)
 
 /* This code shamelessly lifted from the SDL_gfxPrimitives package */
 static void
-lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color)
-{
+lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	int pixx, pixy;
-	int x,y;
-	int dx,dy;
-	int sx,sy;
+	int x, y;
+	int dx, dy;
+	int sx, sy;
 	int swaptmp;
 	uint8 *pixel;
 
@@ -119,27 +115,31 @@ lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color)
 	pixx *= sx;
 	pixy *= sy;
 	if (dx < dy) {
-		swaptmp = dx; dx = dy; dy = swaptmp;
-		swaptmp = pixx; pixx = pixy; pixy = swaptmp;
+		swaptmp = dx;
+		dx = dy;
+		dy = swaptmp;
+		swaptmp = pixx;
+		pixx = pixy;
+		pixy = swaptmp;
 	}
 
 	/* Draw */
-	x=0;
-	y=0;
-	for(; x < dx; x++, pixel += pixx) {
+	x = 0;
+	y = 0;
+	for (; x < dx; x++, pixel += pixx) {
 		*pixel = color;
 		y += dy;
 		if (y >= dx) {
-			y -= dx; pixel += pixy;
+			y -= dx;
+			pixel += pixy;
 		}
 	}
 }
 
 static int
 scummvm_draw_line(struct _gfx_driver *drv, point_t start, point_t end,
-		gfx_color_t color,
-		gfx_line_mode_t line_mode, gfx_line_style_t line_style)
-{
+                  gfx_color_t color,
+                  gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.global_index;
 	int xsize = S->xsize;
 	int ysize = S->ysize;
@@ -163,18 +163,18 @@ scummvm_draw_line(struct _gfx_driver *drv, point_t start, point_t end,
 		if (nstart.x > xsize)
 			nstart.x = xsize;
 		if (nend.x >= xsize)
-			nend.x = xsize -1;
+			nend.x = xsize - 1;
 		if (nstart.y > ysize)
 			nstart.y = ysize;
 		if (nend.y >= ysize)
-			nend.y = ysize -1;
+			nend.y = ysize - 1;
 
 		lineColor2(S->visual[1], (int16)nstart.x, (int16)nstart.y,
-			  (int16)nend.x, (int16)nend.y, scolor);
+		           (int16)nend.x, (int16)nend.y, scolor);
 
 		if (color.mask & GFX_MASK_PRIORITY) {
 			gfx_draw_line_pixmap_i(S->priority[0], nstart, nend,
-					       color.priority);
+			                       color.priority);
 		}
 	}
 
@@ -183,9 +183,8 @@ scummvm_draw_line(struct _gfx_driver *drv, point_t start, point_t end,
 
 static int
 scummvm_draw_filled_rect(struct _gfx_driver *drv, rect_t rect,
-		gfx_color_t color1, gfx_color_t color2,
-		gfx_rectangle_fill_t shade_mode)
-{
+                         gfx_color_t color1, gfx_color_t color2,
+                         gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.yl; i++) {
 			memset(S->visual[1] + i * S->xsize + rect.x, color1.visual.global_index, rect.xl);
@@ -203,29 +202,27 @@ scummvm_draw_filled_rect(struct _gfx_driver *drv, rect_t rect,
 
 static int
 scummvm_draw_pixmap(struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority,
-	rect_t src, rect_t dest, gfx_buffer_t buffer)
-{
-	int bufnr = (buffer == GFX_BUFFER_STATIC)? 2:1;
-	int pribufnr = bufnr -1;
+                    rect_t src, rect_t dest, gfx_buffer_t buffer) {
+	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 2 : 1;
+	int pribufnr = bufnr - 1;
 
 	if (dest.xl != src.xl || dest.yl != src.yl) {
 		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n",
-			src.xl, src.yl, dest.xl, dest.yl);
+		       src.xl, src.yl, dest.xl, dest.yl);
 		return GFX_ERROR;
 	}
 
 	gfx_crossblit_pixmap(drv->mode, pxm, priority, src, dest,
-			S->visual[bufnr], S->xsize,
-			S->priority[pribufnr]->index_data,
-			S->priority[pribufnr]->index_xl, 1, 0);
+	                     S->visual[bufnr], S->xsize,
+	                     S->priority[pribufnr]->index_data,
+	                     S->priority[pribufnr]->index_xl, 1, 0);
 
 	return GFX_OK;
 }
 
 static int
 scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
-	gfx_map_mask_t map)
-{
+                    gfx_map_mask_t map) {
 	if (src.x < 0 || src.y < 0) {
 		printf("Attempt to grab pixmap from invalid coordinates (%d,%d)\n", src.x, src.y);
 		return GFX_ERROR;
@@ -262,10 +259,9 @@ scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
 // Buffer operations
 
 static int
-scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t buffer)
-{
+scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t buffer) {
 	//TODO
-	int data_source = (buffer == GFX_BUFFER_BACK)? 2 : 1;
+	int data_source = (buffer == GFX_BUFFER_BACK) ? 2 : 1;
 	int data_dest = data_source - 1;
 
 	/*
@@ -283,7 +279,7 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t b
 		//	S->xsize * S->ysize);
 		for (int i = 0; i < src.yl; i++) {
 			memcpy(S->visual[data_dest] + (dest.y + i) * S->xsize + dest.x,
-				S->visual[data_source] + (src.y + i) * S->xsize + src.x, src.xl);
+			       S->visual[data_source] + (src.y + i) * S->xsize + src.x, src.xl);
 		}
 
 		if ((src.x == dest.x) && (src.y == dest.y))
@@ -291,10 +287,10 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t b
 		break;
 	case GFX_BUFFER_FRONT:
 		memcpy(S->visual[data_dest], S->visual[data_source],
-			S->xsize * S->ysize);
+		       S->xsize * S->ysize);
 
 		g_system->copyRectToScreen(S->visual[data_dest] + src.x + src.y * S->xsize,
-			S->xsize, dest.x, dest.y, src.xl, src.yl);
+		                           S->xsize, dest.x, dest.y, src.xl, src.yl);
 		/*
 		g_system->copyRectToScreen(S->visual[data_dest],
 			S->xsize, 0, 0, S->xsize, S->ysize);
@@ -311,8 +307,7 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t b
 }
 
 static int
-scummvm_set_static_buffer(struct _gfx_driver *drv, gfx_pixmap_t *pic, gfx_pixmap_t *priority)
-{
+scummvm_set_static_buffer(struct _gfx_driver *drv, gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 	memcpy(S->visual[2], pic->data, S->xsize * S->ysize);
 	/*gfx_crossblit_pixmap(drv->mode, pic, 0, rect, rect,
 			S->visual[2], S->xsize,
@@ -328,8 +323,7 @@ scummvm_set_static_buffer(struct _gfx_driver *drv, gfx_pixmap_t *pic, gfx_pixmap
 // Mouse pointer operations
 
 static int
-scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer)
-{
+scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer) {
 	if (pointer == NULL) {
 		g_system->showMouse(false);
 	} else {
@@ -346,8 +340,7 @@ scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer)
 // Palette operations
 
 static int
-scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, byte blue)
-{
+scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, byte blue) {
 	byte color[] = {red, green, blue, 255};
 	g_system->setPalette(color, index, 1);
 	return GFX_OK;
@@ -357,8 +350,7 @@ scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, by
 // Event management
 
 static sci_event_t
-scummvm_get_event(struct _gfx_driver *drv)
-{
+scummvm_get_event(struct _gfx_driver *drv) {
 	sci_event_t input;
 	input.type = SCI_EVT_NONE;
 
@@ -394,13 +386,13 @@ scummvm_get_event(struct _gfx_driver *drv)
 			modifiers = em->getModifierState();
 
 		input.buckybits =
-			((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
-			((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
-			((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0);
-		//TODO: SCI_EVM_SCRLOCK SCI_EVM_NUMLOCK SCI_EVM_CAPSLOCK SCI_EVM_INSERT       
+		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
+		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
+		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0);
+		//TODO: SCI_EVM_SCRLOCK SCI_EVM_NUMLOCK SCI_EVM_CAPSLOCK SCI_EVM_INSERT
 
 		switch (ev.type) {
-		// Keyboard events
+			// Keyboard events
 		case Common::EVENT_KEYDOWN:
 			input.data = ev.kbd.keycode;
 			input.character = ev.kbd.ascii;
@@ -414,7 +406,7 @@ scummvm_get_event(struct _gfx_driver *drv)
 					input.data = SCI_K_TAB;
 					if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
 						input.character = SCI_K_SHIFT_TAB;
-					else 
+					else
 						input.character = SCI_K_TAB;
 				}
 			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
@@ -425,7 +417,7 @@ scummvm_get_event(struct _gfx_driver *drv)
 				input.data = (input.data - Common::KEYCODE_F1 + SCI_K_F1) << 8;
 				if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
 					input.character = input.data + ((SCI_K_SHIFT_F1 - SCI_K_F1) << 8);
-				else 
+				else
 					input.character = input.data;
 			} else {
 				// Special keys that need conversion
@@ -461,7 +453,7 @@ scummvm_get_event(struct _gfx_driver *drv)
 				case Common::KEYCODE_DELETE:
 					input.data = SCI_K_DELETE;
 					break;
-				//TODO: SCI_K_CENTER
+					//TODO: SCI_K_CENTER
 				default:
 					input.type = SCI_EVT_NONE;
 					break;
@@ -470,7 +462,7 @@ scummvm_get_event(struct _gfx_driver *drv)
 			}
 			break;
 
-		// Mouse events
+			// Mouse events
 		case Common::EVENT_LBUTTONDOWN:
 			input.type = SCI_EVT_MOUSE_PRESS;
 			input.data = 1;
@@ -496,7 +488,7 @@ scummvm_get_event(struct _gfx_driver *drv)
 			drv->pointer_y = p.y;
 			break;
 
-		// Misc events
+			// Misc events
 		case Common::EVENT_QUIT:
 			input.type = SCI_EVT_QUIT;
 			break;
@@ -510,9 +502,8 @@ scummvm_get_event(struct _gfx_driver *drv)
 }
 
 static int
-scummvm_usec_sleep(struct _gfx_driver *drv, long usecs)
-{
-	g_system->delayMillis(usecs/1000);
+scummvm_usec_sleep(struct _gfx_driver *drv, long usecs) {
+	g_system->delayMillis(usecs / 1000);
 	return GFX_OK;
 }
 

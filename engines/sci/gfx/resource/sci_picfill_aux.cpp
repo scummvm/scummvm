@@ -34,8 +34,7 @@
 
 static void
 AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
-		   int clipmask, int control, int sci_titlebar_size)
-{
+                   int clipmask, int control, int sci_titlebar_size) {
 	int xl, xr;
 	int oldytotal = y * 320;
 #ifdef DRAW_SCALED
@@ -65,7 +64,7 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 		if (xl > old_xr) /* No fillable strip above the last one */
 			return;
 
-		if ((ytotal + xl) < 0) { fprintf(stderr,"AARGH-%d\n", __LINE__); BREAKPOINT(); }
+		if ((ytotal + xl) < 0) { fprintf(stderr, "AARGH-%d\n", __LINE__); BREAKPOINT(); }
 
 		xr = xl;
 		while (xr < 320 && !(pic->aux_map[ytotal + xr] & clipmask)) {
@@ -73,8 +72,9 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 			++xr;
 		}
 
-		if ((ytotal + xr) > 64000) { fprintf(stderr,"AARGH-%d\n", __LINE__);
-		BREAKPOINT();
+		if ((ytotal + xr) > 64000) {
+			fprintf(stderr, "AARGH-%d\n", __LINE__);
+			BREAKPOINT();
 		}
 
 		--xr;
@@ -84,7 +84,7 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 
 		/* Check whether we need to recurse on branches in the same direction */
 		if ((y > sci_titlebar_size && dy < 0)
-		    || (y < 199 && dy > 0)) {
+		        || (y < 199 && dy > 0)) {
 
 			state = 0;
 			xcont = xr + 1;
@@ -94,7 +94,7 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 				else if (!state) { /* recurse */
 					state = 1;
 					AUXBUF_FILL_HELPER(pic, xcont, old_xr,
-							   y - dy, dy, clipmask, control, sci_titlebar_size);
+					                   y - dy, dy, clipmask, control, sci_titlebar_size);
 				}
 				++xcont;
 			}
@@ -109,7 +109,7 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 					state = xcont;
 				else if (state) { /* recurse */
 					AUXBUF_FILL_HELPER(pic, xcont, state,
-							   y, -dy, clipmask, control, sci_titlebar_size);
+					                   y, -dy, clipmask, control, sci_titlebar_size);
 					state = 0;
 				}
 			}
@@ -123,17 +123,17 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 					state = xcont;
 				else if (state) { /* recurse */
 					AUXBUF_FILL_HELPER(pic, state, xcont,
-							   y, -dy, clipmask, control, sci_titlebar_size);
+					                   y, -dy, clipmask, control, sci_titlebar_size);
 					state = 0;
 				}
 			}
 		}
 
-		if ((ytotal + xl) < 0) { fprintf(stderr,"AARGH-%d\n", __LINE__); BREAKPOINT() }
-		if ((ytotal + xr+1) > 64000) { fprintf(stderr,"AARGH-%d\n", __LINE__); BREAKPOINT(); }
+		if ((ytotal + xl) < 0) { fprintf(stderr, "AARGH-%d\n", __LINE__); BREAKPOINT() }
+		if ((ytotal + xr + 1) > 64000) { fprintf(stderr, "AARGH-%d\n", __LINE__); BREAKPOINT(); }
 
 		if (control)
-			memset(pic->control_map->index_data + ytotal + xl, control, xr-xl+1);
+			memset(pic->control_map->index_data + ytotal + xl, control, xr - xl + 1);
 
 		oldytotal = ytotal;
 		old_xr = xr;
@@ -144,8 +144,7 @@ AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
 
 
 static void
-AUXBUF_FILL(gfxr_pic_t *pic, int x, int y, int clipmask, int control, int sci_titlebar_size)
-{
+AUXBUF_FILL(gfxr_pic_t *pic, int x, int y, int clipmask, int control, int sci_titlebar_size) {
 	/* Fills the aux buffer and the control map (if control != 0) */
 	int xl, xr;
 	int ytotal = y * 320;
@@ -198,7 +197,7 @@ AUXBUF_FILL(gfxr_pic_t *pic, int x, int y, int clipmask, int control, int sci_ti
 		AUXBUF_FILL_HELPER(pic, xl, xr, y, -1, clipmask, control, sci_titlebar_size);
 
 	if (y < 199)
-		AUXBUF_FILL_HELPER(pic, xl, xr, y, +1, clipmask, control, sci_titlebar_size);
+		AUXBUF_FILL_HELPER(pic, xl, xr, y, + 1, clipmask, control, sci_titlebar_size);
 }
 
 

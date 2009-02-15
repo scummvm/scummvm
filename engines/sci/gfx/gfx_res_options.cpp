@@ -42,8 +42,7 @@
 /*#define DEBUG*/
 
 static gfx_res_pattern_list_t*
-pattern_list_insert(gfx_res_pattern_list_t *list, int min, int max)
-{
+pattern_list_insert(gfx_res_pattern_list_t *list, int min, int max) {
 	gfx_res_pattern_list_t *retval = (gfx_res_pattern_list_t*)sci_malloc(sizeof(gfx_res_pattern_list_t));
 	retval->pattern.min = min;
 	retval->pattern.max = max;
@@ -53,8 +52,7 @@ pattern_list_insert(gfx_res_pattern_list_t *list, int min, int max)
 }
 
 static int
-pattern_list_len(gfx_res_pattern_list_t *list)
-{
+pattern_list_len(gfx_res_pattern_list_t *list) {
 	int v = 0;
 	while (list) {
 		++v;
@@ -65,8 +63,7 @@ pattern_list_len(gfx_res_pattern_list_t *list)
 }
 
 static void
-pattern_list_flatten(gfx_res_pattern_t *dest, gfx_res_pattern_list_t *list)
-{
+pattern_list_flatten(gfx_res_pattern_t *dest, gfx_res_pattern_list_t *list) {
 	while (list) {
 		*dest++ = list->pattern;
 		list = list->next;
@@ -74,8 +71,7 @@ pattern_list_flatten(gfx_res_pattern_t *dest, gfx_res_pattern_list_t *list)
 }
 
 static inline void
-pattern_list_free(gfx_res_pattern_list_t *list)
-{
+pattern_list_free(gfx_res_pattern_list_t *list) {
 	if (list)
 		pattern_list_free(list->next);
 
@@ -85,8 +81,7 @@ pattern_list_free(gfx_res_pattern_list_t *list)
 
 static inline int
 extract_pattern(gfx_res_pattern_list_t **destp,
-		char *src, int offset)
-{
+                char *src, int offset) {
 	char *src_orig = src - offset;
 	int final = 0;
 	int wildcard = 0;
@@ -102,7 +97,7 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 			++src;
 
 		if (*src == '*'
-		    || *src == '_') {
+		        || *src == '_') {
 			wildcard = 1;
 			++src;
 		} else if (*src == '.' || isdigit(*src)) {
@@ -110,7 +105,7 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 			int start = strtol(src, &endp, 0);
 
 			if (*src == '.'
-			    && src[1] == '.') {
+			        && src[1] == '.') {
 				start = GFX_RES_PATTERN_MIN;
 				endp = src;
 			}
@@ -123,7 +118,7 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 			if (*src) {
 				int stop;
 				if (*src == '.'
-				    && src[1] == '.') {
+				        && src[1] == '.') {
 
 					src += 2;
 					while (*src && isblank(*src))
@@ -141,7 +136,7 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 					src = endp;
 
 					*destp = pattern_list_insert(*destp,
-								     start, stop);
+					                             start, stop);
 
 				} else { /* No ellipsis */
 					if (end)
@@ -150,7 +145,7 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 				}
 			} else /* End of sub-pattern */
 				*destp = pattern_list_insert(*destp,
-							     start, start);
+				                             start, start);
 
 			while (*src && isblank(*src))
 				++src;
@@ -165,10 +160,10 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 			if (end)
 				*end = ',';
 			sciprintf("[gfx-conf] Unexpected character '%c'\n",
-				  *src);
+			          *src);
 			goto lexical_error_label;
 		}
-		
+
 		if (!final) {
 			*end = ',';
 			src = end + 1;
@@ -182,15 +177,14 @@ extract_pattern(gfx_res_pattern_list_t **destp,
 
 	return 0;
 
- lexical_error_label:
+lexical_error_label:
 	sciprintf("[gfx-conf] Lexical error in pattern at offset %d\n",
-		  src - src_orig);
+	          src - src_orig);
 	return 1;
 }
 
 static int
-extract_mod_rule(char *src, gfx_res_mod_t *rule)
-{
+extract_mod_rule(char *src, gfx_res_mod_t *rule) {
 	char *orig_src = src;
 	char *endp;
 	float f[3];
@@ -212,7 +206,7 @@ extract_mod_rule(char *src, gfx_res_mod_t *rule)
 				++src;
 			if (!*src || !(isdigit(*src) || *src == '.')) {
 				sciprintf("[gfx-conf] Unexpected character '%c'\n",
-					  *src);
+				          *src);
 				goto mod_error_label;
 			}
 			f[i++] = strtod(src, &endp);
@@ -225,9 +219,9 @@ extract_mod_rule(char *src, gfx_res_mod_t *rule)
 			if ((i == 3) && *src != ')') {
 				sciprintf("[gfx-conf] Error: Expected ')' at end of modification rule\n");
 				goto mod_error_label;
-			} else if (i<3 && !isdigit(*src) && *src != '.' && *src != ',') {
+			} else if (i < 3 && !isdigit(*src) && *src != '.' && *src != ',') {
 				sciprintf("[gfx-conf] Error: Expected ',' as separator in modification rule, not '%c'\n",
-					  *src);
+				          *src);
 				goto mod_error_label;
 			}
 			++src;
@@ -247,9 +241,9 @@ extract_mod_rule(char *src, gfx_res_mod_t *rule)
 	}
 
 	return 0;
- mod_error_label:
+mod_error_label:
 	sciprintf("[gfx-conf] Ill-formed modification rule '%s'\n",
-		  orig_src);
+	          orig_src);
 	return 1;
 }
 
@@ -258,8 +252,7 @@ extern gfx_pixmap_color_t gfx_sci0_image_colors[][GFX_SCI0_IMAGE_COLORS_NR];
 
 #define PREDEFINED_PALETTES_NR 4
 static int
-extract_assign_rule(char *src, gfx_res_assign_t *rule)
-{
+extract_assign_rule(char *src, gfx_res_assign_t *rule) {
 	/*char *orig_src = src;*/
 	struct {
 		const char *name;
@@ -278,16 +271,16 @@ extract_assign_rule(char *src, gfx_res_assign_t *rule)
 	for (i = 0; i < PREDEFINED_PALETTES_NR; i++)
 		if (!strcmp(src, predefined_palettes[i].name)) {
 			rule->assign.palette.colors_nr =
-				predefined_palettes[i].colors_nr;
+			    predefined_palettes[i].colors_nr;
 			rule->assign.palette.colors =
-				predefined_palettes[i].colors;
+			    predefined_palettes[i].colors;
 			return 0;
 		}
 
 	sciprintf("[gfx-conf] Unknown palette '%s'\n", src);
 	return 1;
 	/*
- assign_error_label:
+	assign_error_label:
 	sciprintf("[gfx-conf] Ill-formed assignment rule '%s'\n",
 		  orig_src);
 	return 1;
@@ -296,8 +289,7 @@ extract_assign_rule(char *src, gfx_res_assign_t *rule)
 
 #define CLASSES_NR 3
 int
-gfx_update_conf(gfx_options_t *options, char *str)
-{
+gfx_update_conf(gfx_options_t *options, char *str) {
 	int total_patterns;
 	int mod = 0; /* Modifier or assignment rule? */
 	char *orig_str = str;
@@ -356,7 +348,7 @@ gfx_update_conf(gfx_options_t *options, char *str)
 			goto unexpected_end;
 
 		if (*str == '='
-		    || *str == '*')
+		        || *str == '*')
 			break;
 
 		if (*str == '(') {
@@ -364,21 +356,21 @@ gfx_update_conf(gfx_options_t *options, char *str)
 
 			if (fieldcnt >= fields_nr) {
 				sciprintf("[gfx-conf] Error: Patterns of class '%s' may only be"
-					  " constrained by %d arguments\n",
-					  pat_name_str, fields_nr);
+				          " constrained by %d arguments\n",
+				          pat_name_str, fields_nr);
 				goto failure_label;
 			}
 
 			if (!end) {
 				sciprintf("[gfx-conf] Unmatched parentheses at offset %d\n",
-					  str - orig_str);
+				          str - orig_str);
 				goto failure_label;
 			}
 			*end = 0;
 
 			if (extract_pattern(fields[fieldcnt++],
-					    str + 1,
-					    str + 1 - orig_str))
+			                    str + 1,
+			                    str + 1 - orig_str))
 				goto failure_label;
 
 			*end = ')';
@@ -388,10 +380,10 @@ gfx_update_conf(gfx_options_t *options, char *str)
 		}
 
 		sciprintf("[gfx-conf] Lexical error in pattern at offset %d: Unexpected '%c'\n",
-			  str - orig_str, *str);
+		          str - orig_str, *str);
 		goto failure_label;
 	} while (1);
-		    
+
 
 	/* Flatten patterns */
 	conf->patterns = NULL;
@@ -432,7 +424,7 @@ gfx_update_conf(gfx_options_t *options, char *str)
 	}
 	do { *sem_end-- = 0; }
 	while (sem_end >= str
-	       && isblank(*sem_end));
+	        && isblank(*sem_end));
 
 	if (mod) {
 		if (extract_mod_rule(str, &conf->conf.mod))
@@ -456,7 +448,7 @@ gfx_update_conf(gfx_options_t *options, char *str)
 	/* Error handling */
 unexpected_end:
 	sciprintf("[gfx-conf] Unexpected end of pattern encountered\n");
- failure_label:
+failure_label:
 	sciprintf("[gfx-conf] Error occured in: '%s'\n", orig_str);
 	pattern_list_free(patterns);
 	pattern_list_free(loops);
@@ -468,12 +460,11 @@ unexpected_end:
 }
 
 static inline int
-matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val)
-{
+matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
 	int i;
 	for (i = 0; i < nr; i++)
 		if (patterns[i].min <= val
-		    && patterns[i].max >= val)
+		        && patterns[i].max >= val)
 			return 1;
 
 	return 0;
@@ -481,22 +472,20 @@ matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val)
 
 #ifdef DEBUG
 static void
-print_pattern(gfx_res_pattern_t *pat)
-{
+print_pattern(gfx_res_pattern_t *pat) {
 	fprintf(stderr, "[%d..%d]",
-		pat->min, pat->max);
+	        pat->min, pat->max);
 }
 #endif
 
 static inline int
 resource_matches_patternlists(gfx_res_conf_t *conf,
-			      int type, int nr, int loop, int cel)
-{
+                              int type, int nr, int loop, int cel) {
 	int loc;
 #ifdef DEBUG
 	int i;
 	fprintf(stderr, "[DEBUG:gfx-res] Trying to match against %d/%d/%d choices\n",
-		conf->patterns_nr, conf->loops_nr, conf->cels_nr);
+	        conf->patterns_nr, conf->loops_nr, conf->cels_nr);
 	for (i = 0; i < conf->patterns_nr; i++) {
 		fprintf(stderr, "[DEBUG:gfx-res] Pat #%d: ", i);
 		print_pattern(conf->patterns + i);
@@ -516,9 +505,9 @@ resource_matches_patternlists(gfx_res_conf_t *conf,
 	}
 #endif
 	if (conf->patterns_nr &&
-	    !matches_patternlist(conf->patterns,
-				 conf->patterns_nr,
-				 nr))
+	        !matches_patternlist(conf->patterns,
+	                             conf->patterns_nr,
+	                             nr))
 		return 0;
 
 	if (type == GFX_RESOURCE_TYPE_CURSOR)
@@ -528,9 +517,9 @@ resource_matches_patternlists(gfx_res_conf_t *conf,
 	** and, for views, the cel as well  */
 	loc = conf->patterns_nr;
 	if (conf->loops_nr &&
-	    !matches_patternlist(conf->patterns + loc,
-				 conf->loops_nr,
-				 loop))
+	        !matches_patternlist(conf->patterns + loc,
+	                             conf->loops_nr,
+	                             loop))
 		return 0;
 
 	if (type != GFX_RESOURCE_TYPE_VIEW)
@@ -540,19 +529,18 @@ resource_matches_patternlists(gfx_res_conf_t *conf,
 
 	if (!conf->cels_nr)
 		return 1;
-	
+
 	return matches_patternlist(conf->patterns + loc,
-				   conf->cels_nr,
-				   cel);
+	                           conf->cels_nr,
+	                           cel);
 }
 
 static inline gfx_res_conf_t *
 find_match(gfx_res_conf_t *conflist,
-	   int type, int nr, int loop, int cel)
-{
+           int type, int nr, int loop, int cel) {
 	while (conflist) {
 		if (resource_matches_patternlists(conflist,
-						  type, nr, loop, cel)) {
+		                                  type, nr, loop, cel)) {
 #ifdef DEBUG
 			fprintf(stderr, "[DEBUG:gfx-res] Found match!\n");
 #endif
@@ -565,8 +553,7 @@ find_match(gfx_res_conf_t *conflist,
 }
 
 void
-apply_assign(gfx_res_assign_t *conf, gfx_pixmap_t *pxm)
-{
+apply_assign(gfx_res_assign_t *conf, gfx_pixmap_t *pxm) {
 	/* Has a dynamically allocated palette? Must clean up */
 	if (!(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE)) {
 		if (pxm->colors)
@@ -579,8 +566,7 @@ apply_assign(gfx_res_assign_t *conf, gfx_pixmap_t *pxm)
 }
 
 void
-apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm)
-{
+apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 	gfx_pixmap_color_t *pal = pxm->colors;
 	int i, pal_size = pxm->colors_nr;
 
@@ -601,10 +587,10 @@ apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm)
 			int v;
 
 #define UPDATE_COL(nm, idx)                        \
-			v = pal[i].nm;             \
-			v *= mod->mod.factor[idx]; \
-			v >>= 4;                   \
-			pal[i].nm = (v > 255)? 255 : v;
+		v = pal[i].nm;             \
+		v *= mod->mod.factor[idx]; \
+		v >>= 4;                   \
+		pal[i].nm = (v > 255)? 255 : v;
 
 			UPDATE_COL(r, 0);
 			UPDATE_COL(g, 1);
@@ -620,8 +606,7 @@ apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm)
 }
 
 int
-gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm)
-{
+gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 	int restype = GFXR_RES_TYPE(pxm->ID);
 	int nr = GFXR_RES_NR(pxm->ID);
 	int loop = pxm->loop;
@@ -631,14 +616,14 @@ gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm)
 
 #ifdef DEBUG
 	fprintf(stderr, "[DEBUG:gfx-res] Trying to conf %d/%d/%d/%d (ID=%d)\n",
-		restype, nr, loop, cel, pxm->ID);
+	        restype, nr, loop, cel, pxm->ID);
 #endif
 
 	if (pxm->ID < 0 || restype < 0 || restype >= GFX_RESOURCE_TYPES_NR)
 		return 1; /* Not appropriate */
 
 	conf = find_match(options->res_conf.assign[restype],
-			  restype, nr, loop, cel);
+	                  restype, nr, loop, cel);
 
 	if (conf)
 		apply_assign(&(conf->conf.assign), pxm);
@@ -646,7 +631,7 @@ gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm)
 	conf = options->res_conf.mod[restype];
 	while (conf) {
 		conf = find_match(conf,
-				  restype, nr, loop, cel);
+		                  restype, nr, loop, cel);
 		if (conf) {
 			apply_mod(&(conf->conf.mod), pxm);
 			conf = conf->next;

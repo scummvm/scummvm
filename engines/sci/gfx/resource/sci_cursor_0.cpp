@@ -41,12 +41,12 @@
 gfx_pixmap_color_t gfx_sci01_cursor_colors[GFX_SCI01_CURSOR_COLORS_NR] = {
 	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0x00, 0x00},
 	{GFX_COLOR_INDEX_UNMAPPED, 0xff, 0xff, 0xff},
-	{GFX_COLOR_INDEX_UNMAPPED, 0xaa, 0xaa, 0xaa}};
+	{GFX_COLOR_INDEX_UNMAPPED, 0xaa, 0xaa, 0xaa}
+};
 
 
 static gfx_pixmap_t *
-_gfxr_draw_cursor(int id, byte *resource, int size, int sci01)
-{
+_gfxr_draw_cursor(int id, byte *resource, int size, int sci01) {
 	int colors[4] = {0, 1, GFX_CURSOR_TRANSPARENT, 1};
 	int line;
 	byte *data;
@@ -62,7 +62,7 @@ _gfxr_draw_cursor(int id, byte *resource, int size, int sci01)
 
 	retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(CURSOR_SIZE, CURSOR_SIZE, id, 0, 0));
 	retval->colors = gfx_sci01_cursor_colors;
-	retval->colors_nr = sci01? GFX_SCI01_CURSOR_COLORS_NR : GFX_SCI0_CURSOR_COLORS_NR;
+	retval->colors_nr = sci01 ? GFX_SCI01_CURSOR_COLORS_NR : GFX_SCI0_CURSOR_COLORS_NR;
 	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 	retval->color_key = GFX_CURSOR_TRANSPARENT;
 
@@ -84,7 +84,7 @@ _gfxr_draw_cursor(int id, byte *resource, int size, int sci01)
 
 		for (i = 0; i < 16; i++) {
 			int color_code = ((mask_a << i) & 0x8000)
-				| (((mask_b << i) >> 1) & 0x4000);
+			                 | (((mask_b << i) >> 1) & 0x4000);
 
 			*data++ = colors[color_code >> 14];
 		}
@@ -94,14 +94,12 @@ _gfxr_draw_cursor(int id, byte *resource, int size, int sci01)
 
 
 gfx_pixmap_t *
-gfxr_draw_cursor0(int id, byte *resource, int size)
-{
+gfxr_draw_cursor0(int id, byte *resource, int size) {
 	return _gfxr_draw_cursor(id, resource, size, 0);
 }
 
 gfx_pixmap_t *
-gfxr_draw_cursor01(int id, byte *resource, int size)
-{
+gfxr_draw_cursor01(int id, byte *resource, int size) {
 	return _gfxr_draw_cursor(id, resource, size, 1);
 }
 
