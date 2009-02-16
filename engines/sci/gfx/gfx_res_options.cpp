@@ -33,10 +33,8 @@
 
 #include <ctype.h>
 
-#ifdef _MSC_VER
 #ifndef isblank
 #  define isblank(c)	((c) == ' ' || (c) == '\t')
-#endif
 #endif
 
 /*#define DEBUG*/
