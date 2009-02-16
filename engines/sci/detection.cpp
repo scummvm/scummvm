@@ -799,6 +799,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{}},
+		
+	// Shivers - English Demo
+	{{"shivers", "Demo", {
+		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
+		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO},
+		{}},
 
 	// Space Quest 1 VGA Remake - English
 	{{"sq1sci", "VGA Remake", {
@@ -963,13 +970,34 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
-	// Torin's Passage - Spanish? (the cd print says spanish subtitles)
+	// Torin's Passage - English
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
-		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{}},
-
+		
+	// Torin's Passage - Spanish
+	{{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformWindows, 0},
+		{}},
+		
+	// Torin's Passage - French
+	{{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformWindows, 0},
+		{}},
+		
+	// Torin's Passage - German
+	{{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
+		{}},
+		
 	{AD_TABLE_END_MARKER, {}}
 };
 
