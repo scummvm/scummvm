@@ -236,6 +236,9 @@ int32 DXAPlayerWithSound::getAudioLag() {
 	if (!_fileStream)
 		return 0;
 
+	if (!_mixer->isSoundHandleActive(*_bgSoundHandle))
+		return 0;
+
 	int32 frameDelay = getFrameDelay();
 	int32 videoTime = _videoInfo.currentFrame * frameDelay;
 	int32 audioTime;
