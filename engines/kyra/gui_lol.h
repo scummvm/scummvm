@@ -38,8 +38,6 @@ class GUI_LoL : public GUI {
 public:
 	GUI_LoL(LoLEngine *vm);
 
-	void initStaticData();
-
 	// button specific
 	void processButton(Button *button);
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);

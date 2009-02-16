@@ -376,7 +376,6 @@ bool StaticResource::init() {
 		{ lolMusicTrackMap, kRawData, "MUSIC.MAP" },
 		{ lolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
 		{ lolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
-		//{ lolIngameADLSfxIndex, kRawData, "SFX_ADL.MAP" },
 		{ lolSpellProperties, lolSpellData, "SPELLS.DEF" },
 		{ lolGameShapeMap, kRawData, "GAMESHP.MAP" },
 		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
@@ -1057,6 +1056,9 @@ bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size
 bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size) {
 	Common::SeekableReadStream *file = getFile(filename);
 
+	if (!file)
+		return false;
+
 	size = file->size() >> 1;
 
 	uint16 *r = new uint16[size];
@@ -1071,6 +1073,9 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 
 bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size) {
 	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
 
 	size = file->size() / 18;
 
@@ -1756,7 +1761,7 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedMagicButton),
 		cb(clickedMagicButton),
 		cb(clickedMagicButton),
-		cb(clickedUnk9),
+		cb(clickedMagicSubmenu),
 		cb(clickedScreen),
 		cb(clickedPortraitLeft),
 		cb(clickedPortraitLeft),
@@ -2794,10 +2799,6 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 };
 
 // lands of lore static res
-
-void GUI_LoL::initStaticData() {
-
-}
 
 const ScreenDim Screen_LoL::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },	// Taken from Intro

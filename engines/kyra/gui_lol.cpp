@@ -500,33 +500,111 @@ void LoLEngine::gui_toggleFightButtons(bool disable) {
 
 void LoLEngine::gui_updateInput() {
 	int inputFlag = checkInput(_activeButtons, true);
-	removeInputTop();
+	if (_preserveEvents)
+		_preserveEvents = false;
+	else
+		removeInputTop();
 
 	if (inputFlag && _unkCharNum != -1 && !(inputFlag & 0x8800)) {
 		gui_enableDefaultPlayfieldButtons();
 		_characters[_unkCharNum].flags &= 0xffef;
 		gui_drawCharPortraitWithStats(_unkCharNum);
-		//processMouseButtonEvent(inputFlag);
+		gui_triggerEvent(inputFlag);
 		_unkCharNum = -1;
 		inputFlag = 0;
 	}
 
-	if (inputFlag == 1) {
-		if (_weaponsDisabled || _availableSpells[1] == -1)
-			return;
+	switch (inputFlag) {
+		case 43:
+		case 61:
+			// space or enter
+			snd_stopSpeech(true);
+			break;
+		case 55:
+			if (_weaponsDisabled || _availableSpells[1] == -1)
+				return;
 
-		gui_highlightSelectedSpell(0);
-		if (_availableSpells[++_selectedSpell] == -1)
-			_selectedSpell = 0;
-		gui_highlightSelectedSpell(1);
+			gui_highlightSelectedSpell(0);
+			if (_availableSpells[++_selectedSpell] == -1)
+				_selectedSpell = 0;
+			gui_highlightSelectedSpell(1);
 
-		gui_drawAllCharPortraitsWithStats();
-	} else if (inputFlag == 3) {
-		// TODO
-		//processPortraitGuiText
-	} else {
-		snd_dialogueSpeechUpdate(1);
+			gui_drawAllCharPortraitsWithStats();
+				break;
+		case 0x71a:
+			break;
+		default:
+			break;
 	}
+}
+
+void LoLEngine::gui_triggerEvent(int eventType) {
+	Common::Event evt;
+	memset(&evt, 0, sizeof(Common::Event));
+	evt.mouse.x = _mouseX;
+	evt.mouse.y = _mouseY;
+
+	if (eventType == 65) {
+		evt.type = Common::EVENT_LBUTTONDOWN;
+	} else if (eventType == 66) {
+		evt.type = Common::EVENT_RBUTTONDOWN;
+	} else {
+		evt.type = Common::EVENT_KEYDOWN;
+
+		switch (eventType) {
+			case 96:
+				evt.kbd.keycode = Common::KEYCODE_UP;
+				break;
+			case 102:
+				evt.kbd.keycode = Common::KEYCODE_RIGHT;
+				break;
+			case 97:
+				evt.kbd.keycode = Common::KEYCODE_DOWN;
+				break;
+			case 92:
+				evt.kbd.keycode = Common::KEYCODE_LEFT;
+				break;
+			case 91:
+				evt.kbd.keycode = Common::KEYCODE_HOME;
+				break;
+			case 101:
+				evt.kbd.keycode = Common::KEYCODE_PAGEUP;
+				break;
+			case 112:
+				evt.kbd.keycode = Common::KEYCODE_F1;
+				break;
+			case 113:
+				evt.kbd.keycode = Common::KEYCODE_F2;
+				break;
+			case 114:
+				evt.kbd.keycode = Common::KEYCODE_F3;
+				break;
+			case 25:
+				evt.kbd.keycode = Common::KEYCODE_o;
+				break;
+			case 20:
+				evt.kbd.keycode = Common::KEYCODE_r;
+				break;
+			case 110:
+				evt.kbd.keycode = Common::KEYCODE_ESCAPE;
+				break;
+			case 43:
+				evt.kbd.keycode = Common::KEYCODE_SPACE;
+				break;
+			case 61:
+				evt.kbd.keycode = Common::KEYCODE_RETURN;
+				break;
+			case 55:
+				evt.kbd.keycode = Common::KEYCODE_SLASH;
+				break;
+			default:
+				break;
+		}
+	}
+	
+	removeInputTop();
+	_eventList.push_back(Event(evt, true));
+	_preserveEvents = true;
 }
 
 void LoLEngine::gui_enableDefaultPlayfieldButtons() {
@@ -566,6 +644,7 @@ void LoLEngine::gui_resetButtonList() {
 		_activeButtons = n;
 	}
 
+	gui_notifyButtonListChanged();
 	_activeButtons = 0;
 }
 
@@ -582,6 +661,12 @@ void LoLEngine::gui_initCharacterControlButtons(int index, int xOffs) {
 
 void LoLEngine::gui_initMagicScrollButtons() {
 
+}
+
+void LoLEngine::gui_initMagicSubmenu(int charNum) {
+	gui_resetButtonList();
+	_subMenuIndex = charNum;
+	gui_initButtonsFromList(_buttonList7);
 }
 
 void LoLEngine::gui_initButton(int index, int x) {
@@ -620,7 +705,14 @@ void LoLEngine::gui_initButton(int index, int x) {
 
 	b->data2Val2 = _buttonData[index].index;
 
-	if (index == 64) {
+	if (index == 15) {
+		// magic sub menu
+		b->x = _activeCharsXpos[_subMenuIndex] + 44;
+		b->data2Val2 = _subMenuIndex;
+		b->y = _buttonData[index].y;
+		b->width = _buttonData[index].w - 1;
+		b->height = _buttonData[index].h - 1;
+	} else if (index == 64) {
 		// scene window button
 		b->x = _sceneWindowButton.x;
 		b->y = _sceneWindowButton.y;
@@ -722,26 +814,65 @@ int LoLEngine::clickedAttackButton(Button *button) {
 }
 
 int LoLEngine::clickedMagicButton(Button *button) {
-	if (_characters[button->data2Val2].flags & 0x314C)
+	int c = button->data2Val2;
+
+	if (_characters[c].flags & 0x314C)
 		return 1;
 
-	if (notEnoughMagic(button->data2Val2, _availableSpells[_selectedSpell], 0))
+	if (notEnoughMagic(c, _availableSpells[_selectedSpell], 0))
 		return 1;
 
-	_characters[button->data2Val2].flags ^= 0x10;
+	_characters[c].flags ^= 0x10;
 
-	gui_drawCharPortraitWithStats(button->data2Val2);
-	spellsub2(button->data2Val2);
-	_unkCharNum = button->data2Val2;
+	gui_drawCharPortraitWithStats(c);
+	gui_initMagicSubmenu(c);
+	_unkCharNum = c;
 
 	return 1;
 }
 
-int LoLEngine::clickedUnk9(Button *button) {
+int LoLEngine::clickedMagicSubmenu(Button *button) {
+	int spellLevel = (_mouseY - 144) >> 3;
+	int c = button->data2Val2;
+
+	gui_enableDefaultPlayfieldButtons();
+	
+	if (notEnoughMagic(c, _availableSpells[_selectedSpell], spellLevel)) {
+		_characters[c].flags &= 0xffef;
+		gui_drawCharPortraitWithStats(c);
+	} else {
+		_characters[c].flags |= 4;
+		_characters[c].flags &= 0xffef;
+		///
+		// TODO
+		///
+		/*if (processSpellcast(c, _availableSpells[_selectedSpell], spellLevel)) {
+			initCharacterUnkSub(c, 1, 8, 1);
+			sub_718F(c, 2, spellLevel * spellLevel);
+		} else {*/
+			_characters[c].flags &= 0xfffb;
+			gui_drawCharPortraitWithStats(c);
+		//}
+	}
+
+	_unkCharNum = -1;
 	return 1;
 }
 
 int LoLEngine::clickedScreen(Button *button) {
+	_characters[_unkCharNum].flags &= 0xffef;
+	gui_drawCharPortraitWithStats(_unkCharNum);
+	_unkCharNum = -1;
+
+	if (!(button->flags2 & 0x80)) {
+		if (button->flags2 & 0x100)
+			gui_triggerEvent(65);
+		else
+			gui_triggerEvent(66);
+	}
+
+	gui_enableDefaultPlayfieldButtons();
+
 	return 1;
 }
 

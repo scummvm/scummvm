@@ -118,7 +118,7 @@ public:
 	int _drawPage2;
 
 	int _palDelayInc, _palDiff, _palDelayAcc;
-	int _dialogueComplete;
+	int _abortFlag;
 
 protected:
 	virtual KyraEngine_v1 *vm();

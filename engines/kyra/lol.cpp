@@ -98,7 +98,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updateCharV1 = _updateCharV2 = _updateCharV3 = _textColourFlag = _hideInventory = 0;
+	_updateCharNum = _updatePortraitSpeechAnim = _updateCharV2 = _updateCharV3 = _textColourFlag = _hideInventory = 0;
 	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
@@ -183,6 +183,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_buttonData = 0;
 	_activeButtons = 0;
+	_preserveEvents = false;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
 }
 
@@ -323,10 +324,6 @@ Common::Error LoLEngine::init() {
 
 	_gui = new GUI_LoL(this);
 	assert(_gui);
-	_gui->initStaticData();
-
-	_tim = new TIMInterpreter_LoL(this, _screen, _system);
-	assert(_tim);
 
 	_txt = new TextDisplayer_LoL(this, _screen);
 
@@ -472,7 +469,7 @@ Common::Error LoLEngine::go() {
 	if (processSelection == 0) {
 		_sound->loadSoundFile("LOREINTR");
 		_sound->playTrack(6);
-		/*int character = */chooseCharacter();
+		chooseCharacter();
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
 	}
@@ -480,6 +477,7 @@ Common::Error LoLEngine::go() {
 	setupPrologueData(false);
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
+	assert(_tim);
 
 	if (!shouldQuit() && (processSelection == 0 || processSelection == 3))
 		startup();
@@ -488,7 +486,6 @@ Common::Error LoLEngine::go() {
 		startupNew();
 
 	if (!shouldQuit() && (processSelection == 0 || processSelection == 3)) {
-		//_dlgAnimCallback = &TextDisplayer_LoL::portraitAnimation2;
 		_screen->_fadeFlag = 3;
 		_sceneUpdateRequired = true;
 		setUnkFlags(1);
@@ -787,7 +784,7 @@ void LoLEngine::update() {
 	updateWsaAnimations();
 
 	if (_updateCharNum != -1 && _system->getMillis() > _updatePortraitNext)
-		updatePortraitWithStats();
+		updatePortraitSpeechAnim();
 
 	if (_screen->_drawGuiFlag & 0x800 || !(_updateFlags & 4))
 		updateLampStatus();
@@ -915,7 +912,7 @@ void LoLEngine::loadCharFaceShapes(int charNum, int id) {
 		_characterFaceShapes[i][charNum] = _screen->makeShapeCopy(p, i);
 }
 
-void LoLEngine::updatePortraitWithStats() {
+void LoLEngine::updatePortraitSpeechAnim() {
 	int x = 0;
 	int y = 0;
 	bool redraw = false;
@@ -951,19 +948,21 @@ void LoLEngine::updatePortraitWithStats() {
 
 	if (_speechFlag) {
 		if (snd_characterSpeaking() == 2)
-			_updateCharV1 = 2;
+			_updatePortraitSpeechAnim = 2;
 		else
-			_updateCharV1 = 1;
+			_updatePortraitSpeechAnim = 1;
 	}
 
-	if (--_updateCharV1) {
+	_updatePortraitSpeechAnim--;
+
+	if (_updatePortraitSpeechAnim) {
 		setCharFaceFrame(_updateCharNum, f);
 		if (redraw)
 			gui_drawCharPortraitWithStats(_updateCharNum);
 		else
 			gui_drawCharFaceShape(_updateCharNum, x, y, 0);
 		_updatePortraitNext = _system->getMillis() + 10 * _tickLength;
-	} else if (_updateCharV1 == 0 && _updateCharV3 != 0) {
+	} else if (_updateCharV3 != 0) {
 		faceFrameRefresh(_updateCharNum);
 		if (redraw) {
 			gui_drawCharPortraitWithStats(_updateCharNum);
@@ -979,9 +978,9 @@ void LoLEngine::updatePortraits() {
 	if (_updateCharNum == -1)
 		return;
 
-	_updateCharV1 = _updateCharV3 = 1;
-	updatePortraitWithStats();
-	_updateCharV1 = 1;
+	_updatePortraitSpeechAnim = _updateCharV3 = 1;
+	updatePortraitSpeechAnim();
+	_updatePortraitSpeechAnim = 1;
 	_updateCharNum = -1;
 
 	if (!_updateCharV2)
@@ -1171,7 +1170,7 @@ void LoLEngine::loadTalkFile(int index) {
 
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (!_speechFlag)
-		return true;
+		return false;
 
 	if (speaker < 65) {
 		if (_characters[speaker].flags & 1)
@@ -1223,21 +1222,19 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (playList.empty())
 		return false;
 
-	do {
+	while (_sound->voiceIsPlaying(_activeVoiceFile)) {
 		update();
-		if (snd_characterSpeaking() == 0)
-			break;
-	} while (_sound->voiceIsPlaying());
+		delay(_tickLength);
+	};
 
 	strcpy(_activeVoiceFile, *playList.begin());
-
 	_sound->voicePlayFromList(playList);
 
 	for (Common::List<const char*>::iterator i = playList.begin(); i != playList.end(); i++)
 		delete []*i;
 	playList.clear();
 
-	_tim->_dialogueComplete = 0;
+	_tim->_abortFlag = 0;
 
 	return true;
 }
@@ -1251,16 +1248,15 @@ int LoLEngine::snd_characterSpeaking() {
 	return 1;
 }
 
-int LoLEngine::snd_dialogueSpeechUpdate(int finish) {
+void LoLEngine::snd_stopSpeech(bool setFlag) {
 	if (!_sound->voiceIsPlaying(_activeVoiceFile))
-		return -1;
+		return;
 
 	//_dlgTimer = 0;
+	_sound->voiceStop(_activeVoiceFile);
 
-	if (finish)
-		_tim->_dialogueComplete = 1;
-
-	return 1;
+	if (setFlag)
+		_tim->_abortFlag = 1;
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
@@ -1355,20 +1351,47 @@ void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs,
 	y = ((block & 0xffe0) << 3) | yOffs;
 }
 
-bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
-	if (_spellProperties[spellNum].mpRequired[spellLevel] > _characters[charNum].magicPointsCur) {
-
-		return true;
+bool LoLEngine::characterSays(int track, int charId, bool redraw) {
+	if (charId == 1) {
+		charId = _selectedCharacter;
 	} else {
-		
+		if (charId < 0) {
+			for (int i = 0; i < 4; i++) {
+				if (charId != _characters[i].id || !(_characters[i].flags & 1))
+					continue;
+				charId = i;
+				break;
+			}
+		} else {
+			charId = 0;
+		}
+	}
+	
+	bool r = snd_playCharacterSpeech(track, charId, 0);
+
+	if (r && redraw) {
+		updatePortraits();
+		_updateCharNum = charId;
+		_updateCharV2 = 0;
+		_updateCharV3 = 1;
+		_fadeText = false;
+		updatePortraitSpeechAnim();
 	}
 
-	return false;	
+	return r ? textEnabled() : 1;
 }
 
-void LoLEngine::spellsub2(int charNum) {
+bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
+	if (_spellProperties[spellNum].mpRequired[spellLevel] > _characters[charNum].magicPointsCur) {
+		if (characterSays(0x4043, _characters[charNum].id, true))
+			_txt->printMessage(6, getLangString(0x4043), _characters[charNum].name);
+		return true;
+	} else if (_spellProperties[spellNum + 1].unkArr[spellLevel] >= _characters[charNum].hitPointsCur) {
+		_txt->printMessage(2, getLangString(0x4179), _characters[charNum].name);
+		return true;		
+	}
 
-
+	return false;
 }
 
 } // end of namespace Kyra

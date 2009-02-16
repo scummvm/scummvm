@@ -95,7 +95,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_drawPage2 = 8;
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
-	_dialogueComplete = 0;
+	_abortFlag = 0;
 }
 
 TIMInterpreter::~TIMInterpreter() {
@@ -900,28 +900,32 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	}
 
 	if (_dialogueNumButtons == 0) {
-		int e = _vm->checkInput(0, false) & 0xCF;
+		int e = _vm->checkInput(0, false) & 0xFF;
 		_vm->removeInputTop();
+		_vm->gui_notifyButtonListChanged();
 		
-		if (e == 200) {
-			_vm->snd_dialogueSpeechUpdate(1);
+		if (e == 43 || e == 61) {
+			_vm->snd_stopSpeech(true);
 			//_dlgTimer = 0;
 		}
 
 		if (_vm->snd_characterSpeaking() != 2) {
 			//if (_dlgTimer < _system->getMillis()) {
 				res = 1;
-				if (!_vm->shouldQuit())
+				if (!_vm->shouldQuit()) {
 					_vm->removeInputTop();
+					_vm->gui_notifyButtonListChanged();
+				}
 			//}
 		}
 	} else {
-		int e = _vm->checkInput(0, false) & 0xCF;
+		int e = _vm->checkInput(0, false) & 0xFF;
 		_vm->removeInputTop();
+		_vm->gui_notifyButtonListChanged();
 		switch (e) {
-			case 120:
-			case 121:
-				_vm->snd_dialogueSpeechUpdate(1);
+			case 43:
+			case 61:
+				_vm->snd_stopSpeech(true);
 				//_dlgTimer = 0;
 				res = _dialogueHighlightedButton + 1;
 				break;
@@ -1057,7 +1061,7 @@ int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
 	if (!res ||!_currentTim->procParam)
 		return 0;
 
-	_vm->snd_dialogueSpeechUpdate(0);
+	_vm->snd_stopSpeech(false);
 
 	_currentTim->func[_currentTim->procFunc].loopIp = 0;
 	_currentTim->dlgFunc = _currentTim->procFunc;
@@ -1089,6 +1093,7 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 	}
 
 	drawDialogueBox(cnt, tmpStr[0], tmpStr[1], tmpStr[2]);
+	_vm->gui_notifyButtonListChanged();
 
 	return -3;
 }

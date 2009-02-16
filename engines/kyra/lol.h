@@ -322,7 +322,7 @@ private:
 	void snd_playVoiceFile(int track) {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
 	int snd_characterSpeaking();
-	int snd_dialogueSpeechUpdate(int finish);
+	void snd_stopSpeech(bool setFlag);
 	void snd_playSoundEffect(int track, int volume);
 	void snd_loadSoundFile(int track);
 	int snd_playTrack(int track);
@@ -387,6 +387,7 @@ private:
 	int _compassDefsSize;
 
 	void gui_updateInput();
+	void gui_triggerEvent(int eventType);
 	void gui_enableDefaultPlayfieldButtons();
 	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
 
@@ -394,11 +395,14 @@ private:
 	void gui_initButtonsFromList(const int16 *list);
 	void gui_initCharacterControlButtons(int index, int xOffs);
 	void gui_initMagicScrollButtons();
+	void gui_initMagicSubmenu(int charNum);
 	void gui_initButton(int index, int x = -1);
+	void gui_notifyButtonListChanged() { _gui->_buttonListChanged = true; }
 	void assignButtonCallback(Button *button, int index);
 
 	Button *_activeButtons;
 	ButtonDef _sceneWindowButton;
+	bool _preserveEvents;
 
 	int clickedUpArrow(Button *button);
 	int clickedDownArrow(Button *button);
@@ -408,7 +412,7 @@ private:
 	int clickedTurnRightArrow(Button *button);
 	int clickedAttackButton(Button *button);
 	int clickedMagicButton(Button *button);
-	int clickedUnk9(Button *button);
+	int clickedMagicSubmenu(Button *button);
 	int clickedScreen(Button *button);
 	int clickedPortraitLeft(Button *button);
 	int clickedLiveMagicBarsLeft(Button *button);
@@ -573,7 +577,7 @@ private:
 	void loadCharFaceShapes(int charNum, int id);
 	void calcCharPortraitXpos();
 
-	void updatePortraitWithStats();
+	void updatePortraitSpeechAnim();
 	void updatePortraits();
 	void initTextFading(int textType, int clearField);
 	void charCallback4(int redraw);
@@ -584,7 +588,7 @@ private:
 	uint16 _activeCharsXpos[3];
 	int _updateFlags;
 	int _updateCharNum;
-	int _updateCharV1;
+	int _updatePortraitSpeechAnim;
 	int _updateCharV2;
 	int _updateCharV3;
 	int _textColourFlag;
@@ -846,15 +850,16 @@ private:
 	// misc
 	void runLoopSub4(int a);
 	void calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs);
+	bool characterSays(int track, int charId, bool redraw);
 
 	// spells
 	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);
-	void spellsub2(int charNum);
 
 	int8 _availableSpells[7];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
 	int _spellPropertiesSize;
+	int _subMenuIndex;
 
 	// unneeded
 	void setWalkspeed(uint8) {}

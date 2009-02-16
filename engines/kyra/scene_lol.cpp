@@ -938,7 +938,7 @@ void LoLEngine::notifyBlockNotPassable(int scrollFlag) {
 	if (scrollFlag)
 		movePartySmoothScrollBlocked(2);
 
-	snd_dialogueSpeechUpdate(1);
+	snd_stopSpeech(true);
 	_txt->printMessage(0x8002, getLangString(0x403f));
 	snd_playSoundEffect(19, 255);
 }

@@ -118,6 +118,7 @@ void LoLEngine::showIntro() {
 	debugC(9, kDebugLevelMain, "LoLEngine::showIntro()");
 
 	_tim = new TIMInterpreter(this, _screen, _system);
+	assert(_tim);
 
 	uint8 *pal = _screen->getPalette(0);
 	memset(pal, 0, 768);
@@ -182,6 +183,8 @@ int LoLEngine::chooseCharacter() {
 	debugC(9, kDebugLevelMain, "LoLEngine::chooseCharacter()");
 
 	_tim = new TIMInterpreter(this, _screen, _system);
+	assert(_tim);
+
 	_tim->setLangData("LOLINTRO.DIP");
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
