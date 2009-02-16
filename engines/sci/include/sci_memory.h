@@ -38,22 +38,6 @@
  ** Implementations of basic functions found here are in this file and
  ** $(SRCDIR)/src/scicore/sci_memory.c
  *
- * Usage notes:
- **************
- *
- * Define MALLOC_DEBUG to output debug information whenever a memory
- * allocation function is called.
- *
- * Make sure you #define it before any #includes.
- *
- * #define MALLOC_DEBUG
- * #include <...>
- *
- **************
- *
- * Define WITH_DMALLOC to use the dmalloc debug library, available from
- * http://dmalloc.com/
- *
  **************
  *
  * Sets behaviour if memory allocation call fails.
@@ -95,11 +79,6 @@
 /*
  * Called if memory allocation fails.
  */
-#ifdef WITH_DMALLOC
-#	ifdef __unix__
-#		define DISABLE_SCI_MEMORY /* Use malloc() and friends */
-#	endif
-#endif
 #define PANIC_MEMORY(size, filename, linenum, funcname, more_info)\
 	PANIC((stderr, "Memory allocation of %lu bytes failed\n"\
 		" [%s (%s) : %u]\n " #more_info "\n",\
@@ -288,16 +267,6 @@ extern void *
 
 /********** macro definitions for routines **********/
 
-#ifdef DISABLE_SCI_MEMORY
-#	define sci_malloc malloc
-#	define sci_calloc calloc
-#	define sci_realloc realloc
-#	define sci_free free
-#	define sci_strdup strdup
-#	define sci_strndup strndup
-#	define sci_memdup memdup
-#else
-
 #	ifdef __GNUC__
 #		define sci_malloc(size)\
 			_SCI_MALLOC(size, __FILE__, __LINE__, __PRETTY_FUNCTION__)
@@ -358,7 +327,6 @@ extern void *
 #		define sci_strndup(src, length)\
 			_SCI_STRNDUP(src, length, __FILE__, __LINE__, "")
 #	endif
-#endif
 
 
 /********** other memory/debug related routines **********/

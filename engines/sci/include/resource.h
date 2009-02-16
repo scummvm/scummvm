@@ -55,13 +55,9 @@
 
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
-#ifndef WITH_DMALLOC
-#  define SCI_SAFE_ALLOC /* Undefine for debugging */
-#endif
 
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
 #define HAVE_MEMCHR
-#define HAVE_UNLINK
 #define HAVE_RMDIR
 #define HAVE_FCNTL_H
 #ifndef _MSC_VER
@@ -352,11 +348,7 @@ It uses StrAt() to read the individual elements, so we must determine
 whether a string is really a string or an array. */
 int is_print_str(char *str);
 
-#ifdef HAVE_UNLINK
 #  define sci_unlink unlink
-#else  /* !HAVE_UNLINK */
-#  error "Please provide an int sci_unlink(const char *) for removing filesystem entries"
-#endif /* !HAVE_UNLINK */
 
 #ifdef HAVE_RMDIR
 #  define sci_rmdir rmdir

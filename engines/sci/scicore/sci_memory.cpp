@@ -36,8 +36,6 @@
 #include "sci/include/sci_memory.h"
 #include "common/util.h"
 
-/*#define POISON_MEMORY*/
-
 /* set optimisations for Win32: */
 /* g on: enable global optimizations */
 /* t on: use fast code */
@@ -57,15 +55,7 @@
 void *
 _SCI_MALLOC(size_t size, const char *file, int line, const char *funct) {
 	void *res;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_MALLOC()", size, file, line, funct);
-#endif
 	ALLOC_MEM((res = malloc(size)), size, file, line, funct)
-#ifdef POISON_MEMORY
-	{
-		memset(res, 0xa5, size);
-	}
-#endif
 	return res;
 }
 
@@ -73,9 +63,6 @@ _SCI_MALLOC(size_t size, const char *file, int line, const char *funct) {
 void *
 _SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *funct) {
 	void *res;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_CALLOC()", size, file, line, funct);
-#endif
 	ALLOC_MEM((res = calloc(num, size)), num * size, file, line, funct)
 	return res;
 }
@@ -84,9 +71,6 @@ _SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *fun
 void *
 _SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *funct) {
 	void *res;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_REALLOC()", size, file, line, funct);
-#endif
 	ALLOC_MEM((res = realloc(ptr, size)), size, file, line, funct)
 	return res;
 }
@@ -94,9 +78,6 @@ _SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *fun
 
 void
 _SCI_FREE(void *ptr, const char *file, int line, const char *funct) {
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_FREE()", 0, file, line, funct);
-#endif
 	if (!ptr) {
 		fprintf(stderr, "_SCI_FREE() [%s (%s) : %u]\n",
 		        file, funct, line);
@@ -110,9 +91,6 @@ _SCI_FREE(void *ptr, const char *file, int line, const char *funct) {
 void *
 _SCI_MEMDUP(const void *ptr, size_t size, const char *file, int line, const char *funct) {
 	void *res;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_MEMDUP()", size, file, line, funct);
-#endif
 	if (!ptr) {
 		fprintf(stderr, "_SCI_MEMDUP() [%s (%s) : %u]\n",
 		        file, funct, line);
@@ -128,9 +106,6 @@ _SCI_MEMDUP(const void *ptr, size_t size, const char *file, int line, const char
 char *
 _SCI_STRDUP(const char *src, const char *file, int line, const char *funct) {
 	void *res;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_STRDUP()", 0, file, line, funct);
-#endif
 	if (!src) {
 		fprintf(stderr, "_SCI_STRDUP() [%s (%s) : %u]\n",
 		        file, funct, line);
@@ -147,9 +122,6 @@ _SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const c
 	void *res;
 	char *strres;
 	size_t rlen = (int)MIN(strlen(src), length) + 1;
-#ifdef MALLOC_DEBUG
-	INFO_MEMORY("_SCI_STRNDUP()", 0, file, line, funct);
-#endif
 	if (!src) {
 		fprintf(stderr, "_SCI_STRNDUP() [%s (%s) : %u]\n",
 		        file, funct, line);
@@ -179,9 +151,7 @@ debug_win32_memory(int dbg_setting) {
 	        "WARNING: Cannot debug Win32 memory in this mode.\n");
 #else
 
-	int tmpFlag;
-
-	tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 
 	if (dbg_setting > 0)
 		tmpFlag |= _CRTDBG_CHECK_ALWAYS_DF;
