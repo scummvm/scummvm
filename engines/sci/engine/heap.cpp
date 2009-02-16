@@ -32,7 +32,7 @@ heap_t* heap_new() {
 	heap_t* h;
 	if ((h = (heap_t*)sci_malloc(sizeof(heap_t))) == 0) return 0;
 
-	if ((h->start = sci_calloc(SCI_HEAP_SIZE, 1)) == 0) {
+	if ((h->start = (byte *)sci_calloc(SCI_HEAP_SIZE, 1)) == 0) {
 		free(h);
 		return 0;
 	}
