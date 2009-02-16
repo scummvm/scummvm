@@ -210,7 +210,8 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 VectorRenderer *createRenderer(int mode) {
 #ifdef DISABLE_FANCY_THEMES
 	assert(mode == GUI::ThemeEngine::kGfxStandard16bit);
-	return new VectorRendererSpec<uint16, ColorMasks<VECTOR_RENDERER_FORMAT> >;
+	Graphics::PixelFormat format = createPixelFormat<VECTOR_RENDERER_FORMAT>();
+	return new VectorRendererSpec<uint16>(format);
 #else
 	// FIXME/TODO: This looks like a real gross hack.
 	// It might be fine to assume that '1555' only happens for PSP
