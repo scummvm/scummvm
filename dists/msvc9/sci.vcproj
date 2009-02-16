@@ -434,10 +434,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\reg_t_hashmap.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp"
 				>
 			</File>
@@ -727,14 +723,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\menubar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\old_objects.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\reg_t_hashmap.h"
 				>
 			</File>
 			<File

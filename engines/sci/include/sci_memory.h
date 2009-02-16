@@ -85,6 +85,7 @@
 #	undef strncasecmp
 #	define strcasecmp _stricmp
 #	define strncasecmp _strnicmp
+#  include <direct.h> // for chdir, rmdir, _gecwd, getcwd, mkdir
 #endif
 
 /********** macros for error messages **********/
