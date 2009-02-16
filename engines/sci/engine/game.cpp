@@ -211,17 +211,17 @@ _reset_graphics_input(state_t *s) {
 
 	if (s->resmgr->sci_version >= SCI_VERSION_01_VGA) {
 		// This bit sets the foreground and background colors in VGA SCI games
-#if 0
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
 
+#if 0
 		fgcolor.visual = s->gfx_state->resstate->static_palette[0];
 		fgcolor.mask = GFX_MASK_VISUAL;
 		bgcolor.visual = s->gfx_state->resstate->static_palette[255];
 		bgcolor.mask = GFX_MASK_VISUAL;
+#endif
 		s->titlebar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 10),
 		                                 fgcolor, bgcolor);
-#endif
 	} else
 		s->titlebar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 10),
 		                                 s->ega_colors[0], s->ega_colors[15]);
