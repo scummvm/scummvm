@@ -213,6 +213,8 @@ _reset_graphics_input(state_t *s) {
 		// This bit sets the foreground and background colors in VGA SCI games
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
+		memset(&fgcolor, 0, sizeof(gfx_color_t));
+		memset(&bgcolor, 0, sizeof(gfx_color_t));
 
 #if 0
 		fgcolor.visual = s->gfx_state->resstate->static_palette[0];
