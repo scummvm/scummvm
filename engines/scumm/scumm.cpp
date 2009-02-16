@@ -1629,10 +1629,8 @@ void ScummEngine::setupMusic(int midi) {
 		// Setup for digital iMuse is performed in another place
 	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
 		// TODO: Add support for music format
-		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
 		// TODO: Add support for music format
-		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
 		_musicEngine = new Player_NES(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {
@@ -1641,9 +1639,8 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V3A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
 		// TODO: Add support for music format
-		_musicEngine = NULL;
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
-		_musicEngine = NULL;
+		// TODO: Add support for music format
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version <= 2) {
