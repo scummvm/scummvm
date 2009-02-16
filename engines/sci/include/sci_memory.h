@@ -81,10 +81,6 @@
 #endif
 
 #ifdef _MSC_VER
-#	undef strcasecmp
-#	undef strncasecmp
-#	define strcasecmp _stricmp
-#	define strncasecmp _strnicmp
 #  include <direct.h> // for chdir, rmdir, _gecwd, getcwd, mkdir
 #endif
 

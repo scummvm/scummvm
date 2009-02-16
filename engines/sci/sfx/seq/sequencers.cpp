@@ -59,7 +59,7 @@ sfx_find_sequencer(char *name) {
 	} else {
 		int n = 0;
 		while (sfx_sequencers[n]
-		        && strcasecmp(sfx_sequencers[n]->name, name))
+		        && scumm_stricmp(sfx_sequencers[n]->name, name))
 			++n;
 
 		return sfx_sequencers[n];
