@@ -47,6 +47,7 @@
 
 #ifdef WIN32
 #  include <windows.h>
+#  include <errno.h>
 #  include <mmsystem.h>
 
 void usleep(long usec);
