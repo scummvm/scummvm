@@ -181,13 +181,13 @@ void MoviePlayer::play(void) {
 		_system->delayMillis(100);
 
 	// It's tempting to call _screen->fullRefresh() here to restore the old
-	// palette. However, that causes glitches with DXA movies, here the
+	// palette. However, that causes glitches with DXA movies, where the
 	// previous location would be momentarily drawn, before switching to
 	// the new one. Work around this by setting the palette to black.
 
-	byte pal[3 * 256];
+	byte pal[4 * 256];
 	memset(pal, 0, sizeof(pal));
-	_system->setPalette(pal, 0, 255);
+	_system->setPalette(pal, 0, 256);
 }
 
 void MoviePlayer::performPostProcessing(byte *screen) {
