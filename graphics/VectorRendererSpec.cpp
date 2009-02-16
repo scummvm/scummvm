@@ -210,20 +210,21 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 VectorRenderer *createRenderer(int mode) {
 #ifdef DISABLE_FANCY_THEMES
 	assert(mode == GUI::ThemeEngine::kGfxStandard16bit);
-	Graphics::PixelFormat format = createPixelFormat<VECTOR_RENDERER_FORMAT>();
-	return new VectorRendererSpec<uint16>(format);
-#else
+#endif
+
 	PixelFormat format = g_system->getOverlayFormat();
 	switch (mode) {
 	case GUI::ThemeEngine::kGfxStandard16bit:
 		return new VectorRendererSpec<OverlayColor>(format);
+#ifndef DISABLE_FANCY_THEMES
 	case GUI::ThemeEngine::kGfxAntialias16bit:
 		return new VectorRendererAA<OverlayColor>(format);
+#endif
+	default:
+		break;
 	}
 
 	return 0;
-
-#endif
 }
 
 template <typename PixelType>
