@@ -94,8 +94,7 @@ find_free_id(seg_manager_t *self, int *id) {
 	int retval = 0;
 
 	while (!was_added) {
-		retval = int_hash_map_check_value(self->id_seg_map, self->reserved_id,
-		                                  1, &was_added);
+		retval = self->id_seg_map->check_value(self->reserved_id, true, &was_added);
 		*id = self->reserved_id--;
 		if (self->reserved_id < -1000000)
 			self->reserved_id = -10;
@@ -118,9 +117,9 @@ void sm_init(seg_manager_t* self, int sci1_1) {
 
 	self->mem_allocated = 0; /* Initialise memory count */
 
-	self->id_seg_map = new_int_hash_map();
+	self->id_seg_map = new int_hash_map_t();
 	self->reserved_id = INVALID_SCRIPT_ID;
-	int_hash_map_check_value(self->id_seg_map, self->reserved_id, 1, NULL);	/* reserve 0 for seg_id */
+	self->id_seg_map->check_value(self->reserved_id, true);	/* reserve 0 for seg_id */
 	self->reserved_id--;	/* reserved_id runs in the reversed direction to make sure no one will use it. */
 
 	self->heap_size = DEFAULT_SCRIPTS;
@@ -152,7 +151,7 @@ void sm_destroy(seg_manager_t* self) {
 			_sm_deallocate(self, i, 0);
 	}
 
-	free_int_hash_map(self->id_seg_map);
+	delete self->id_seg_map;
 
 	sci_free(self->heap);
 	self->heap = NULL;
@@ -170,7 +169,7 @@ mem_obj_t* sm_allocate_script(seg_manager_t* self, struct _state *s, int script_
 	char was_added;
 	mem_obj_t* mem;
 
-	seg = int_hash_map_check_value(self->id_seg_map, script_nr, 1, &was_added);
+	seg = self->id_seg_map->check_value(script_nr, true, &was_added);
 	if (!was_added) {
 		*seg_id = seg;
 		return self->heap[*seg_id];
@@ -256,7 +255,7 @@ int sm_initialise_script(mem_obj_t *mem, struct _state *s, int script_nr) {
 	scr->marked_as_deleted = 0;
 	scr->relocated = 0;
 
-	scr->obj_indices = new_int_hash_map();
+	scr->obj_indices = new int_hash_map_t();
 
 	if (s->version >= SCI_VERSION(1, 001, 000))
 		scr->heap_start = scr->buf + scr->script_size;
@@ -272,7 +271,7 @@ _sm_deallocate(seg_manager_t* self, int seg, int recursive) {
 	VERIFY(sm_check(self, seg), "invalid seg id");
 
 	mobj = self->heap[seg];
-	int_hash_map_remove_value(self->id_seg_map, mobj->segmgr_id);
+	self->id_seg_map->remove_value(mobj->segmgr_id);
 
 	switch (mobj->type) {
 
@@ -452,7 +451,7 @@ sm_free_script(mem_obj_t* mem) {
 		mem->data.script.objects_nr = 0;
 	}
 
-	free_int_hash_map(mem->data.script.obj_indices);
+	delete mem->data.script.obj_indices;
 	if (NULL != mem->data.script.code) {
 		sci_free(mem->data.script.code);
 	}
@@ -597,7 +596,7 @@ void sm_put_heap(seg_manager_t* self, reg_t reg, gint16 value) {
 
 /* return the seg if script_id is valid and in the map, else -1 */
 int sm_seg_get(seg_manager_t* self, int script_id) {
-	return int_hash_map_check_value(self->id_seg_map, script_id, 0, NULL);
+	return self->id_seg_map->check_value(script_id, false);
 }
 
 /* validate the seg
@@ -966,7 +965,7 @@ sm_script_obj_init0(seg_manager_t *self, state_t *s, reg_t obj_pos) {
 	}
 
 	temp = make_reg(obj_pos.segment, base);
-	id = int_hash_map_check_value(scr->obj_indices, base, 1, NULL);
+	id = scr->obj_indices->check_value(base, true);
 	scr->objects_nr++;
 
 	obj = scr->objects + id;
@@ -1041,7 +1040,7 @@ sm_script_obj_init11(seg_manager_t *self, state_t *s, reg_t obj_pos) {
 
 	}
 
-	id = int_hash_map_check_value(scr->obj_indices, obj_pos.offset, 1, NULL);
+	id = scr->obj_indices->check_value(obj_pos.offset, true);
 	scr->objects_nr++;
 
 	obj = scr->objects + id;

@@ -29,82 +29,38 @@
 
 
 #define HASH_MAX DCS_INT_HASH_MAX
-#define COMP(x, y) ((x)-(y))
 #define HASH(x) (x & 0xff)
 
-int_hash_map_t *
-new_int_hash_map(void) {
-	int_hash_map_t *map = (int_hash_map_t*)calloc(1, sizeof(int_hash_map_t));
-
-	return map;
+int_hash_map_t::int_hash_map_t() {
+	base_value = 0;
+	memset(nodes, 0, sizeof(nodes));
+	holes = 0;
 }
 
-
-static void
-print_int_nodes(int_hash_map_node_t *node) {
-	while (node) {
-		fprintf(stderr, "%p  ", (void *)node);
-		node = node->next;
-	}
-}
-
-void
-print_int_hash_map(int_hash_map_t *map) {
-	int bucket;
-	fprintf(stderr, "int map %p: base value=%d\n", (void *)map,
-	        map->base_value);
-	for (bucket = 0; bucket <= HASH_MAX; bucket++) {
-		fprintf(stderr, "bucket %d: ", bucket);
-		print_int_nodes(map->nodes[bucket]);
-		fprintf(stderr, "\n");
-	}
-	fprintf(stderr, "holes: ");
-	print_int_nodes(map->holes);
-	fprintf(stderr, "\n");
-}
-
-void
-apply_to_int_hash_map(int_hash_map_t *map, void *param, void (*note)(void *param, int name, int value)) {
-	int i;
-	for (i = 0; i < HASH_MAX; i++) {
-		int_hash_map_node_t *node = map->nodes[i];
-		while (node) {
-			note(param, node->name, node->value);
-			node = node->next;
-		}
-	}
-}
-
-
-static void
-free_int_hash_map_node_t_recursive(int_hash_map_node_t *node) {
+void int_hash_map_t::free_node_recursive(node_t *node) {
 	if (node) {
-		free_int_hash_map_node_t_recursive(node->next);
+		free_node_recursive(node->next);
 		free(node);
 	}
 }
 
 
-void
-free_int_hash_map(int_hash_map_t *map) {
+int_hash_map_t::~int_hash_map_t() {
 	int i;
 
 	for (i = 0; i <= HASH_MAX; i++)
-		free_int_hash_map_node_t_recursive(map->nodes[i]);
+		free_node_recursive(nodes[i]);
 
-	free_int_hash_map_node_t_recursive(map->holes);
+	free_node_recursive(holes);
 
-	map->base_value = -42000; /* Trigger problems for people who
-			     ** forget to loose the reference  */
-	free(map);
+	// Trigger problems for people who forget to loose the reference
+	base_value = -42000;
 }
 
-int
-int_hash_map_check_value(int_hash_map_t *map, int value,
-                         char add, char *was_added) {
-	int_hash_map_node_t **node = &(map->nodes[HASH(value)]);
+int int_hash_map_t::check_value(int value, bool add, char *was_added) {
+	node_t **node = &(nodes[HASH(value)]);
 
-	while (*node && COMP(value, (*node)->name))
+	while (*node && (value != (*node)->name))
 		node = &((*node)->next);
 
 	if (was_added)
@@ -121,15 +77,15 @@ int_hash_map_check_value(int_hash_map_t *map, int value,
 	if (was_added)
 		*was_added = 1;
 
-	if (map->holes) { /* Re-use old node */
-		(*node) = map->holes;
-		map->holes = (*node)->next;
+	if (holes) { /* Re-use old node */
+		(*node) = holes;
+		holes = (*node)->next;
 		(*node)->next = NULL;
 		(*node)->name = value;
 	} else {
-		*node = (int_hash_map_node_t*)malloc(sizeof(int_hash_map_node_t));
+		*node = (node_t*)malloc(sizeof(node_t));
 		(*node)->name = value;
-		(*node)->value = map->base_value++;
+		(*node)->value = base_value++;
 		(*node)->next = NULL;
 	}
 
@@ -137,20 +93,20 @@ int_hash_map_check_value(int_hash_map_t *map, int value,
 }
 
 
-int
-int_hash_map_remove_value(int_hash_map_t *map, int value) {
-	int_hash_map_node_t **node = &(map->nodes[HASH(value)]);
+int int_hash_map_t::remove_value(int value) {
+	node_t **node = &(nodes[HASH(value)]);
 
-	while (*node && COMP(value, (*node)->name))
+	while (*node && (value != (*node)->name))
 		node = &((*node)->next);
 
 	if (*node) {
-		int_hash_map_node_t *oldnode = *node;
+		node_t *oldnode = *node;
 		*node = (*node)->next;
 
-		oldnode->next = map->holes; /* Old node is now a 'hole' */
-		map->holes = oldnode;
+		oldnode->next = holes; /* Old node is now a 'hole' */
+		holes = oldnode;
 		return oldnode->value;
-	} else return -1; /* Not found */
+	} else
+		return -1; /* Not found */
 }
 

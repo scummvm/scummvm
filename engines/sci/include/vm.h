@@ -31,7 +31,7 @@
 #include "sci/include/script.h"
 #include "sci/include/vocabulary.h"
 #include "sci/include/versions.h"
-#include "sci/include/seg_manager.h"
+#include "sci/engine/seg_manager.h"
 #include "sci/include/vm_types.h"
 #include "sci/include/sys_strings.h"
 #include "sci/include/heapmgr.h"
@@ -113,7 +113,7 @@ typedef struct {
 	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
 } class_t;
 
-#define RAW_GET_CLASS_INDEX(scr, reg) (int_hash_map_check_value((scr)->obj_indices, reg.offset, 0, NULL))
+#define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->check_value(reg.offset, false))
 #define RAW_IS_OBJECT(datablock) (getUInt16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
@@ -180,7 +180,7 @@ typedef struct {
 
 
 //#define VM_OBJECT_SET_INDEX(ptr, index) { ((byte *) (ptr))[0] = (index) & 0xff; ((byte *) (ptr))[1] = ((index) >> 8) & 0xff; }
-#define VM_OBJECT_GET_INDEX(scr, reg) (int_hash_map_check_value(scr->obj_indices, reg.offset, 0, NULL))
+//#define VM_OBJECT_GET_INDEX(scr, reg) (int_hash_map_check_value(scr->obj_indices, reg.offset, 0, NULL))
 
 typedef struct {
 	int nr; /* Script number */

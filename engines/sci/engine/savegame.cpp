@@ -163,9 +163,9 @@ int
 read_songlib_t(FILE *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo);
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo);
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof);
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof);
 
 int
 read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
@@ -4207,7 +4207,7 @@ int mem_obj_string_to_enum(const char *str) {
 	int i;
 
 	for (i = 0; i <= MEM_OBJ_MAX; i++) {
-		if (!scumm_stricmp(mem_obj_string_names[i].name, str))
+		if (!strcasecmp(mem_obj_string_names[i].name, str))
 			return i;
 	}
 
@@ -4302,7 +4302,7 @@ read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *l
 }
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo) {
 	if (!(*foo)) {
 		fputs("\\null", fh);
 	} else {
@@ -4320,13 +4320,13 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
 }
 
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof) {
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No hash map node */
 	} else {
-		*foo = (int_hash_map_node_t*)malloc(sizeof(int_hash_map_node_t));
+		*foo = (int_hash_map_t::node_t*)malloc(sizeof(int_hash_map_t::node_t));
 		if (lastval[0] != '[') {
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;

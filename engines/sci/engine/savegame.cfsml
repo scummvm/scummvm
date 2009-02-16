@@ -163,9 +163,9 @@ int
 read_songlib_t(FILE *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo);
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo);
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof);
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof);
 
 int
 read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
@@ -185,7 +185,7 @@ TYPE mem_obj_ptr "mem_obj_t *" USING write_mem_obj_tp read_mem_obj_tp;
 TYPE reg_t "reg_t" USING write_reg_t read_reg_t;
 TYPE size_t "size_t" LIKE int;
 TYPE int_hash_map_tp "int_hash_map_t *" USING write_int_hash_map_tp read_int_hash_map_tp;
-TYPE int_hash_map_node_tp "int_hash_map_node_t *" USING write_int_hash_map_node_tp read_int_hash_map_node_tp;
+TYPE int_hash_map_node_tp "int_hash_map_t::node_t *" USING write_int_hash_map_node_tp read_int_hash_map_node_tp;
 TYPE songlib_t "songlib_t" USING write_songlib_t read_songlib_t;
 TYPE song_tp "song_t *" USING write_song_tp read_song_tp;
 TYPE song_iterator_t "song_iterator_t" USING write_song_iterator_t read_song_iterator_t;
@@ -490,7 +490,7 @@ read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *l
 }
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo) {
 	if (!(*foo)) {
 		fputs("\\null", fh);
 	} else {
@@ -503,13 +503,13 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
 }
 
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof) {
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No hash map node */
 	} else {
-		*foo = (int_hash_map_node_t*)malloc(sizeof(int_hash_map_node_t));
+		*foo = (int_hash_map_t::node_t*)malloc(sizeof(int_hash_map_t::node_t));
 		if (lastval[0] != '[') {
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;
