@@ -720,6 +720,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttcircus", "PuttIHC", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "puttcircus", "PuttPuttIHC", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttcircus", "PuttPuttJTC", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "puttcircus", "ToffToff", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttcircus", "ToffToffGZZ", kGenHEPC, Common::DE_DEU, UNK, 0 },
 
 	{ "puttrace", "puttrace", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -734,6 +735,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttrace", "Putt500", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "Putt500 demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "Putt Race", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttrace", "ToffRenn", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "puttrace", "ToffRennen", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "puttrace", "UKPuttRace", kGenHEPC, Common::RU_RUS, UNK, 0 }, // Russian
