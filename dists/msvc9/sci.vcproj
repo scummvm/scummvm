@@ -186,6 +186,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\heap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\heap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\int_hashmap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\int_hashmap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\kernel.cpp"
 				>
 			</File>
@@ -271,6 +287,10 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\seg_manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\seg_manager.h"
 				>
 			</File>
 			<File
@@ -427,10 +447,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\games.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\int_hashmap.cpp"
 				>
 			</File>
 			<File
