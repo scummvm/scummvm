@@ -223,13 +223,4 @@ sfx_pcm_available(void);
 ** Returns   : (int) zero iff no PCM device is available
 */
 
-sfx_pcm_device_t *
-sfx_pcm_find_device(char *name);
-/* Finds a PCM device by name
-** Parameters: (char *) name: Name of the PCM device to look for, or NULL to
-**                            use the system default
-** Returns   : (sfx_pcm_device_t *) The requested device, or NULL if no matching
-**                                  device could be found
-*/
-
 #endif /* !defined(_SFX_PCM_H_) */

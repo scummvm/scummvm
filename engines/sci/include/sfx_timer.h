@@ -83,14 +83,4 @@ typedef struct {
 	*/
 } sfx_timer_t;
 
-extern sfx_timer_t *
-	sfx_find_timer(char *name);
-/* Finds a timer by name
-** Parameters: (char *) name: Name of the timer to look up, or NULL for default
-** Returns   : (sfx_timer_t *) The timer of matching name, or NULL
-**                             if not found
-** This does not consider timers provided by PCM devices; there must be
-** retrieved externally.
-*/
-
 #endif /* !_FREESCI_SFX_TIMER_H_ */

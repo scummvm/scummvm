@@ -45,6 +45,8 @@ static sfx_player_t *player = NULL;
 sfx_pcm_mixer_t *mixer = NULL;
 static sfx_pcm_device_t *pcm_device = NULL;
 static sfx_timer_t *timer = NULL;
+extern sfx_timer_t sfx_timer_scummvm;
+extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
 
 Common::Mutex* callbackMutex;
 
@@ -445,7 +447,7 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 	}
 
 	mixer = sfx_pcm_find_mixer(NULL);
-	pcm_device = sfx_pcm_find_device(NULL);
+	pcm_device = &sfx_pcm_driver_scummvm;
 	player = sfx_find_player(NULL);
 
 
@@ -461,7 +463,7 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 		if (pcm_device && pcm_device->timer)
 			timer = pcm_device->timer;
 		else
-			timer = sfx_find_timer(NULL);
+			timer = &sfx_timer_scummvm;
 
 		if (!timer) {
 			fprintf(stderr, "[SFX] " __FILE__": Could not find timing mechanism\n");

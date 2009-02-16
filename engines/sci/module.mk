@@ -70,14 +70,14 @@ MODULE_OBJS = \
 	sfx/adlib.o \
 	sfx/core.o \
 	sfx/iterator.o \
+	sfx/pcm_device.o \
 	sfx/pcm-iterator.o \
 	sfx/songlib.o \
 	sfx/time.o \
+	sfx/timer.o \
 	sfx/device/devices.o \
 	sfx/mixer/mixers.o \
 	sfx/mixer/soft.o \
-	sfx/pcm_device/pcm_devices.o \
-	sfx/pcm_device/scummvm.o \
 	sfx/player/players.o \
 	sfx/player/polled.o \
 	sfx/player/realtime.o \
@@ -86,9 +86,7 @@ MODULE_OBJS = \
 	sfx/softseq/opl2.o \
 	sfx/softseq/pcspeaker.o \
 	sfx/softseq/SN76496.o \
-	sfx/softseq/softsequencers.o \
-	sfx/timer/timer_scummvm.o \
-	sfx/timer/timers.o
+	sfx/softseq/softsequencers.o
 
 # FIXME: The following is supposed to be a set of *temporary* hacks
 CXXFLAGS += -Wno-variadic-macros

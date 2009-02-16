@@ -393,46 +393,4 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 } gfx_driver_t;
 
-
-
-gfx_driver_t *
-gfx_find_driver(char *, char *name);
-/* Attempts to match a graphics driver to a name
-** Parameters: (char *) path: The path to search in
-**             (char *) name: The name of the graphics driver to look for
-**                            or NULL for the default driver
-** Returns   : (gfx_driver_t *) The resulting driver, or NULL if none
-**                              was found
-*/
-
-const char *
-gfx_get_driver_name(int nr);
-/* Retreives the name of the driver with the specified number
-** Parameters: (int) nr: Number of the driver
-**             (char *) The driver's name
-** Note that this function only makes sense within a loop or if nr=0, since
-** the result value is valid iff nr >= 0 AND there does not exist an nr'
-** with 0 <= nr' < nr so that gfx_get_driver_name(nr') == NULL.
-*/
-
-/*** Utility functions for set_parameter implementations */
-
-int
-string_truep(char *value);
-/* Tests whether a string expresses truth
-** Parameters: (char *) value: The value to test
-** Returns   : non-zero iff 'value' contans a string expressing something
-** along the lines of "yes"
-*/
-
-int
-string_falsep(char *value);
-/* Tests whether a string expresses falsehood
-** Parameters: (char *) value: The value to test
-** Returns   : non-zero iff 'value' contans a string expressing something
-** along the lines of "no"
-*/
-
-
-
 #endif /* !_SCI_GFX_DRIVER_H_ */
