@@ -28,22 +28,7 @@
 #include "../sequencer.h"
 #include "sci/include/resource.h"
 
-#ifndef SCUMMVM
-extern sfx_sequencer_t sfx_sequencer_gm;
-extern sfx_sequencer_t sfx_sequencer_mt32;
-#ifdef HAVE_SYS_SOUNDCARD_H
-extern sfx_sequencer_t sfx_sequencer_oss_adlib;
-#endif
-#endif // SCUMMVM
-
 sfx_sequencer_t *sfx_sequencers[] = {
-#ifndef SCUMMVM
-	&sfx_sequencer_gm,
-	&sfx_sequencer_mt32,
-#ifdef HAVE_SYS_SOUNDCARD_H
-	&sfx_sequencer_oss_adlib,
-#endif
-#endif // SCUMMVM
 	NULL
 };
 

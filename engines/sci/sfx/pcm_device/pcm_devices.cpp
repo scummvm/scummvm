@@ -21,36 +21,12 @@
 #include "sci/include/resource.h"
 
 #ifndef NO_PCMOUT
-#ifdef SCUMMVM
 extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
-#else // SCUMMVM
-#	ifdef HAVE_SDL
-extern sfx_pcm_device_t sfx_pcm_driver_sdl;
-#	endif
-#	ifdef HAVE_ALSA
-extern sfx_pcm_device_t sfx_pcm_driver_alsa;
-#	endif
-#	ifdef __DC__
-extern sfx_pcm_device_t sfx_pcm_driver_dc;
-#	endif
-#endif // SCUMMVM
 #endif
 
 sfx_pcm_device_t *pcmout_drivers[] = {
 #ifndef NO_PCMOUT
-#ifdef SCUMMVM
 	&sfx_pcm_driver_scummvm,
-#else // SCUMMVM
-#	ifdef HAVE_SDL
-	&sfx_pcm_driver_sdl,
-#	endif
-#	ifdef HAVE_ALSA
-	&sfx_pcm_driver_alsa,
-#	endif
-#	ifdef __DC__
-	&sfx_pcm_driver_dc,
-#	endif
-#endif // SCUMMVM
 #endif
 	NULL
 };

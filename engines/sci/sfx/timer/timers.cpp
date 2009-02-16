@@ -28,30 +28,10 @@
 #include "sci/include/sfx_timer.h"
 #include "sci/include/resource.h"
 
-#ifdef SCUMMVM
 extern sfx_timer_t sfx_timer_scummvm;
-#else // SCUMMVM
-
-#ifdef HAVE_SETITIMER
-extern sfx_timer_t sfx_timer_sigalrm;
-#endif
-
-#ifdef __DC__
-extern sfx_timer_t sfx_timer_pthread;
-#endif
-#endif // SCUMMVM
 
 sfx_timer_t *sfx_timers[] = {
-#ifdef SCUMMVM
 	&sfx_timer_scummvm,
-#else // SCUMMVM
-#ifdef HAVE_SETITIMER
-	&sfx_timer_sigalrm,
-#endif
-#ifdef __DC__
-	&sfx_timer_pthread,
-#endif
-#endif // SCUMMVM
 	NULL
 };
 

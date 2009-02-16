@@ -31,33 +31,9 @@
 #include "../device.h"
 #include <stdio.h>
 
-#ifndef SCUMMVM
-#ifdef HAVE_ALSA
-extern struct _midi_device sfx_device_midi_alsa;
-#endif
-#if !defined(WIN32) && !defined(__DC__) && !defined(__MORPHOS__) && !defined(ARM_WINCE) && !defined(_GP32)
-extern struct _midi_device sfx_device_midi_unixraw;
-#endif
-
-#ifdef HAVE_PROTO_CAMD_H
-extern struct _midi_device sfx_device_midi_camd;
-#endif
-#endif // SCUMMVM
-
 #include "sci/include/resource.h"
 
 static struct _midi_device *devices_midi[] = {
-#ifndef SCUMMVM
-#ifdef HAVE_PROTO_CAMD_H
-	&sfx_device_midi_camd,
-#endif
-#ifdef HAVE_ALSA
-	&sfx_device_midi_alsa,
-#endif
-#ifdef UNIX
-	&sfx_device_midi_unixraw,
-#endif
-#endif // SCUMMVM
 	NULL
 };
 

@@ -92,7 +92,6 @@ MODULE_OBJS = \
 
 # FIXME: The following is supposed to be a set of *temporary* hacks
 CXXFLAGS += -Wno-variadic-macros
-CPPFLAGS += -DSCUMMVM
 
 # Generate savegame.cpp
 $(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml
