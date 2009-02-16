@@ -433,10 +433,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\reg_t_hashmap.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp"
 				>
 			</File>
