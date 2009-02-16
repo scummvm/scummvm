@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="made"
 	ProjectGUID="{E29B5D40-08F7-11DD-BD0B-0800200C9A66}"
 	Keyword="Win32Proj">

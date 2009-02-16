@@ -69,6 +69,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tucker", "tucker.vcproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "groovie", "groovie.vcproj", "{2C1EA540-0B09-11DD-BD00-000000000000}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sci", "sci.vcproj", "{53F17B2B-0412-4EC3-A999-ED0537BB5223}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -167,6 +169,10 @@ Global
 		{2C1EA540-0B09-11DD-BD00-000000000000}.Debug|Win32.Build.0 = Debug|Win32
 		{2C1EA540-0B09-11DD-BD00-000000000000}.Release|Win32.ActiveCfg = Release|Win32
 		{2C1EA540-0B09-11DD-BD00-000000000000}.Release|Win32.Build.0 = Release|Win32
+		{53F17B2B-0412-4EC3-A999-ED0537BB5223}.Debug|Win32.ActiveCfg = Debug|Win32
+		{53F17B2B-0412-4EC3-A999-ED0537BB5223}.Debug|Win32.Build.0 = Debug|Win32
+		{53F17B2B-0412-4EC3-A999-ED0537BB5223}.Release|Win32.ActiveCfg = Release|Win32
+		{53F17B2B-0412-4EC3-A999-ED0537BB5223}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

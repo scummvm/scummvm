@@ -43,7 +43,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -722,14 +722,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\menubar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\old_objects.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\reg_t_hashmap.h"
 				>
 			</File>
 			<File

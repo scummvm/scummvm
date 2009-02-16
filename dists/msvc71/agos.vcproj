@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="7,10"
 	Name="agos"
 	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
 	Keyword="Win32Proj">

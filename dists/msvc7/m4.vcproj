@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7,00"
 	Name="m4"
 	ProjectGUID="{6D576A24-B9CE-11DC-BC77-8D2856D89593}"
 	Keyword="Win32Proj">

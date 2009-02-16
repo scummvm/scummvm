@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="7,10"
 	Name="drascula"
 	ProjectGUID="{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}"
 	Keyword="Win32Proj">

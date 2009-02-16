@@ -22,7 +22,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -70,7 +70,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM;HAVE_MEMCHR;HAVE_SYS_STAT_H;HAVE_FCNTL_H;HAVE_STRING_H;HAVE_UNLINK;HAVE_RMDIR"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;SCUMMVM"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
@@ -303,9 +303,6 @@
 				RelativePath="..\..\engines\sci\scicore\int_hashmap.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\reg_t_hashmap.cpp">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp">
 			</File>
 			<File
@@ -523,12 +520,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\menubar.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\old_objects.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\reg_t_hashmap.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\resource.h">
