@@ -213,10 +213,6 @@ VectorRenderer *createRenderer(int mode) {
 	Graphics::PixelFormat format = createPixelFormat<VECTOR_RENDERER_FORMAT>();
 	return new VectorRendererSpec<uint16>(format);
 #else
-	// FIXME/TODO: This looks like a real gross hack.
-	// It might be fine to assume that '1555' only happens for PSP
-	// so it could maybe be handled via DISABLE_FANCY_THEMES,
-	// same goes for 4444, which is only used by DC port.
 	PixelFormat format = g_system->getOverlayFormat();
 	switch (mode) {
 	case GUI::ThemeEngine::kGfxStandard16bit:
