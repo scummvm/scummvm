@@ -341,7 +341,7 @@ vocab_lookup_word(char *word, int word_len,
 			int suff_index = word_len - suffices[i]->alt_suffix_length;
 			/* Offset of the start of the suffix */
 
-			if (strncasecmp(suffices[i]->alt_suffix, word + suff_index,
+			if (scumm_strnicmp(suffices[i]->alt_suffix, word + suff_index,
 			                suffices[i]->alt_suffix_length) == 0) { /* Suffix matched! */
 
 				strncpy(&(tempword->word[0]), word, word_len);

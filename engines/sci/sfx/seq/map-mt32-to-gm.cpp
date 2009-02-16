@@ -570,7 +570,7 @@ lookup_instrument(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
-		if (strncasecmp(iname, MT32_MemoryTimbreMaps[i].name, 10) == 0)
+		if (scumm_strnicmp(iname, MT32_MemoryTimbreMaps[i].name, 10) == 0)
 			return MT32_MemoryTimbreMaps[i].gm_instr;
 		i++;
 	}
@@ -582,7 +582,7 @@ lookup_rhythm_key(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
-		if (strncasecmp(iname, MT32_MemoryTimbreMaps[i].name, 10) == 0)
+		if (scumm_strnicmp(iname, MT32_MemoryTimbreMaps[i].name, 10) == 0)
 			return MT32_MemoryTimbreMaps[i].gm_rhythm_key;
 		i++;
 	}

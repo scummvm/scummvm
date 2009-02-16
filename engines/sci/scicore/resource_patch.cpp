@@ -137,7 +137,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 		char *endptr;
 
 		for (i = sci_view; i < sci_invalid_resource; i++)
-			if (strncasecmp(sci_resource_types[i], entry,
+			if (scumm_strnicmp(sci_resource_types[i], entry,
 			                strlen(sci_resource_types[i])) == 0)
 				restype = i;
 
@@ -185,7 +185,7 @@ sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 
 		for (i = sci_view; i < sci_invalid_resource; i++) {
 			if (dot != NULL) {
-				if (strncasecmp(sci_resource_type_suffixes[i], dot + 1, 3) == 0) {
+				if (scumm_strnicmp(sci_resource_type_suffixes[i], dot + 1, 3) == 0) {
 					restype = i;
 				}
 			}

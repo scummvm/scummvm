@@ -347,25 +347,25 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 	if (*str == '$') { /* Register */
 		rel_offsetting = 1;
 
-		if (!strncasecmp(str + 1, "PC", 2)) {
+		if (!scumm_strnicmp(str + 1, "PC", 2)) {
 			*dest = s->execution_stack[s->execution_stack_pos].addr.pc;
 			offsetting = str + 3;
-		} else if (!strncasecmp(str + 1, "P", 1)) {
+		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
 			*dest = s->execution_stack[s->execution_stack_pos].addr.pc;
 			offsetting = str + 2;
-		} else if (!strncasecmp(str + 1, "PREV", 4)) {
+		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
 			offsetting = str + 5;
-		} else if (!strncasecmp(str + 1, "ACC", 3)) {
+		} else if (!scumm_strnicmp(str + 1, "ACC", 3)) {
 			*dest = s->r_acc;
 			offsetting = str + 4;
-		} else if (!strncasecmp(str + 1, "A", 1)) {
+		} else if (!scumm_strnicmp(str + 1, "A", 1)) {
 			*dest = s->r_acc;
 			offsetting = str + 2;
-		} else if (!strncasecmp(str + 1, "OBJ", 3)) {
+		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
 			*dest = s->execution_stack[s->execution_stack_pos].objp;
 			offsetting = str + 4;
-		} else if (!strncasecmp(str + 1, "O", 1)) {
+		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
 			*dest = s->execution_stack[s->execution_stack_pos].objp;
 			offsetting = str + 2;
 		} else return 1; /* No matching register */
