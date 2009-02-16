@@ -186,7 +186,7 @@ namespace Graphics {
  * @param last Pointer to the last pixel to fill.
  * @param color Color of the pixel
  */
-template <typename PixelType>
+template<typename PixelType>
 void colorFill(PixelType *first, PixelType *last, PixelType color) {
 	register int count = (last - first);
 	if (!count)
@@ -227,7 +227,7 @@ VectorRenderer *createRenderer(int mode) {
 	return 0;
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 	_gradientEnd = _format.RGBToColor(r2, g2, b2);
@@ -238,7 +238,7 @@ setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) {
 	Base::_gradientBytes[2] = (_gradientEnd & _blueMask) - (_gradientStart & _blueMask);
 }
 
-template <typename PixelType>
+template<typename PixelType>
 VectorRendererSpec<PixelType>::
 VectorRendererSpec(PixelFormat format) :
 	_format(format),
@@ -250,7 +250,7 @@ VectorRendererSpec(PixelFormat format) :
 	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 fillSurface() {
 	byte *ptr = (byte *)_activeSurface->getBasePtr(0, 0);
@@ -271,7 +271,7 @@ fillSurface() {
 	}
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 copyFrame(OSystem *sys, const Common::Rect &r) {
 
@@ -282,7 +282,7 @@ copyFrame(OSystem *sys, const Common::Rect &r) {
 	);
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
@@ -303,7 +303,7 @@ blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	}
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
@@ -322,7 +322,7 @@ blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	}
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	int16 x = r.left;
@@ -358,7 +358,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	}
 }
 
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	int pixels = _activeSurface->w * _activeSurface->h;
@@ -394,7 +394,7 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	}
 }
 
-template <typename PixelType>
+template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
 	register int idst = *ptr;
@@ -415,7 +415,7 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
                 (((int)(idst & _alphaMask) * alpha) >> 8))));
 }
 
-template <typename PixelType>
+template<typename PixelType>
 inline PixelType VectorRendererSpec<PixelType>::
 calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
@@ -434,7 +434,7 @@ calcGradient(uint32 pos, uint32 max) {
  * Primitive shapes drawing - Public API calls - VectorRendererSpec *
  ********************************************************************
  ********************************************************************/
-template <typename PixelType>
+template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area,
 			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
