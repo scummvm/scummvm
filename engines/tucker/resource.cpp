@@ -268,7 +268,8 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 		}
 	}
 	if (type != 0) {
-		f.seek(-768, SEEK_END);
+		if (f.readByte() != 12)
+			return;
 		f.read(_currentPalette, 768);
 		setBlackPalette();
 	}
