@@ -138,6 +138,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset (_doorShapes, 0, 2 * sizeof(uint8*));
 
 	_lampOilStatus = _brightness = _lampStatusUnk = 0;
+	_lampStatusSuspended = false;
 	_tempBuffer5120 = 0;
 	_tmpData136 = 0;
 	_cLevelItems = 0;
@@ -189,19 +190,23 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
+	gui_resetButtonList();
 
 	delete[] _landsFile;
 	delete[] _levelLangFile;
 
 	delete _screen;
+	_screen = 0;
 	delete _gui;
+	_gui = 0;
 	delete _tim;
-	delete _txt;
+	_tim = 0;	
+	delete _txt;	
+	_txt = 0;
 
-	delete[]  _itemsInPlay;
-	delete[]  _itemProperties;
-
-	delete[]  _characters;
+	delete[] _itemsInPlay;
+	delete[] _itemProperties;
+	delete[] _characters;
 
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
@@ -302,8 +307,6 @@ LoLEngine::~LoLEngine() {
 			delete[] _ingameSoundList[i];
 		delete[] _ingameSoundList;
 	}
-
-	gui_resetButtonList();
 }
 
 Screen *LoLEngine::screen() {

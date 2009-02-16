@@ -397,7 +397,7 @@ private:
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
 	void gui_initButton(int index, int x = -1);
-	void gui_notifyButtonListChanged() { _gui->_buttonListChanged = true; }
+	void gui_notifyButtonListChanged() { if (_gui) _gui->_buttonListChanged = true; }
 	void assignButtonCallback(Button *button, int index);
 
 	Button *_activeButtons;
