@@ -518,6 +518,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\pcm_device.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\sequencer.h"
 				>
 			</File>
@@ -531,6 +535,10 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\time.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\timer.cpp"
 				>
 			</File>
 			<Filter
@@ -550,18 +558,6 @@
 				</File>
 				<File
 					RelativePath="..\..\engines\sci\sfx\mixer\soft.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="pcm_device"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\pcm_device\pcm_devices.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\pcm_device\scummvm.cpp"
 					>
 				</File>
 			</Filter>
@@ -614,18 +610,6 @@
 				</File>
 				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\softsequencers.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="timer"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\timer\timer_scummvm.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\timer\timers.cpp"
 					>
 				</File>
 			</Filter>
