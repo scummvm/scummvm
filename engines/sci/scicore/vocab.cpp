@@ -31,8 +31,6 @@
 #include "sci/include/engine.h"
 #include "sci/include/kernel.h"
 
-#include <ctype.h>
-
 int vocab_version;
 
 #define VOCAB_RESOURCE_PARSE_TREE_BRANCHES vocab_version==1 ? \

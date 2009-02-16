@@ -34,6 +34,7 @@
 ***************************************************************************/
 
 #include "sci/include/sci_memory.h"
+#include "common/util.h"
 
 /*#define POISON_MEMORY*/
 

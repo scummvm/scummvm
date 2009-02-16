@@ -30,9 +30,6 @@
 ** HASH_MAX: Maximum hash value
 ** HASH(x): Hashes a value of type TYPE to an int from 0 to HASH_MAX
 */
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifdef MUST_FREE
 #  define CLEAR_NODE(n) free(n->name); n->name = NULL
 #  define FREE_PARAM(n) free(n)

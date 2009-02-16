@@ -25,15 +25,13 @@
 ***************************************************************************/
 
 
-#include <stdlib.h>
+#include "common/scummsys.h"
+#include "common/str.h"
 
 #ifdef UNIX
 #define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
 #include <fnmatch.h>
 #endif
-
-#include "common/scummsys.h"
-#include "common/str.h"
 
 #include "sci/include/engine.h"
 

@@ -29,10 +29,6 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/sci_memory.h"
 
-#ifdef WIN32
-#include <direct.h>
-#endif
-
 void
 sci0_sprintf_patch_file_name(char *string, resource_t *res) {
 	sprintf(string, "%s.%03i", sci_resource_types[res->type], res->number);

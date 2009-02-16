@@ -22,7 +22,6 @@
 #include "sci/include/versions.h"
 #include "sci/include/engine.h"
 #include "sci/include/resource.h"
-#include <ctype.h>
 #include "sci/scicore/games.h"
 #include "sci/scicore/exe.h"
 

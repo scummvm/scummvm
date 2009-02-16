@@ -29,6 +29,7 @@
 
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
+#include "common/util.h"
 
 /* #define SCRIPT_DEBUG */
 

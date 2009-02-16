@@ -27,7 +27,6 @@
 
 /* Based on public domain code by Mitugu Kurizono. */
 
-#include <stdio.h>
 #include "sci/include/sci_memory.h"
 #include "sci/scicore/exe_dec.h"
 

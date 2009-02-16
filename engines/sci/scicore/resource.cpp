@@ -34,12 +34,6 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/vocabulary.h" /* For SCI version auto-detection */
 
-#include <ctype.h>
-
-#ifdef WIN32
-#include <direct.h>
-#endif
-
 #undef SCI_REQUIRE_RESOURCE_FILES
 /* #define SCI_VERBOSE_RESMGR 1 */
 

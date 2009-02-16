@@ -3,7 +3,6 @@
 */
 
 
-#include <string.h>
 #include "sci/include/engine.h"
 #include "sci/include/sciresource.h"
 

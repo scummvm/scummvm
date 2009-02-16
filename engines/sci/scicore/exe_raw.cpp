@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include <stdio.h>
 #include "sci/include/sci_memory.h"
 
 struct _exe_handle {
