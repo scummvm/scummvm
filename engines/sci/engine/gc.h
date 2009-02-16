@@ -22,14 +22,32 @@
 #ifndef GC_H_
 #define GC_H_
 
-#include "sci/include/reg_t_hashmap.h"
+#include "common/hashmap.h"
+#include "sci/include/vm_types.h"
 #include "sci/include/engine.h"
 
-reg_t_hash_map_ptr
+
+struct reg_t_EqualTo {
+	bool operator()(const reg_t& x, const reg_t& y) const {
+		return (x.segment == y.segment) && (x.offset == y.offset);
+	}
+};
+
+struct reg_t_Hash {
+	uint operator()(const reg_t& x) const {
+		return (x.segment << 3) | x.offset;
+	}
+};
+
+// The reg_t_hash_map is actually really a hashset
+typedef Common::HashMap<reg_t, bool, reg_t_Hash, reg_t_EqualTo> reg_t_hash_map;
+
+
+reg_t_hash_map *
 find_all_used_references(state_t *s);
 /* Finds all used references and normalises them to their memory addresses
 ** Parameters: (state_t *) s: The state to gather all information from
-** Returns   : (reg_t_hash_map_ptr) A hash map containing entries for all used references
+** Returns   : (reg_t_hash_map *) A hash map containing entries for all used references
 */
 
 void

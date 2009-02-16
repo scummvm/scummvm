@@ -45,9 +45,8 @@ new_worklist() {
 }
 
 static void
-worklist_push(worklist_t **wlp, reg_t_hash_map_ptr hashmap, reg_t reg) {
+worklist_push(worklist_t **wlp, reg_t_hash_map *hashmap, reg_t reg) {
 	worklist_t *wl = *wlp;
-	char added;
 
 	if (!reg.segment) /* No numbers */
 		return;
@@ -56,10 +55,11 @@ worklist_push(worklist_t **wlp, reg_t_hash_map_ptr hashmap, reg_t reg) {
 	sciprintf("[GC] Adding "PREG"\n", PRINT_REG(reg));
 #endif
 
-	reg_t_hash_map_check_value(hashmap, reg, 1, &added);
-
-	if (!added)
+	
+	if (hashmap->contains(reg))
 		return; /* already dealt with it */
+
+	hashmap->setVal(reg, true);
 
 	if (!wl || wl->used == WORKLIST_CHUNK_SIZE)
 		*wlp = wl = fresh_worklist(wl);
@@ -101,41 +101,29 @@ free_worklist(worklist_t *wl) {
 	}
 }
 
-typedef struct {
-	seg_interface_t **interfaces;
-	int interfaces_nr;
-	reg_t_hash_map_ptr normal_map;
-} normaliser_t;
+static reg_t_hash_map *
+normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, seg_interface_t **interfaces, int interfaces_nr) {
+	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
-void
-store_normalised(void *pre_normaliser, reg_t reg, int _) {
-	seg_interface_t *interfce;
-	normaliser_t *normaliser = (normaliser_t *) pre_normaliser;
-	interfce = (reg.segment < normaliser->interfaces_nr)
-	           ? normaliser->interfaces[reg.segment]
-	           : NULL;
-
-	if (interfce) {
-		reg = interfce->find_canonic_address(interfce, reg);
-		reg_t_hash_map_check_value(normaliser->normal_map, reg, 1, NULL);
+	for (reg_t_hash_map::iterator i = nonnormal_map->begin(); i != nonnormal_map->end(); ++i) {
+		seg_interface_t *interfce;
+		reg_t reg = i->_key;
+		interfce = (reg.segment < interfaces_nr)
+				   ? interfaces[reg.segment]
+				   : NULL;
+	
+		if (interfce) {
+			reg = interfce->find_canonic_address(interfce, reg);
+			normal_map->setVal(reg, true);
+		}
 	}
-}
 
-static reg_t_hash_map_ptr
-normalise_hashmap_ptrs(reg_t_hash_map_ptr nonnormal_map, seg_interface_t **interfaces, int interfaces_nr) {
-	normaliser_t normaliser;
-
-	normaliser.normal_map = new_reg_t_hash_map();
-	normaliser.interfaces_nr = interfaces_nr;
-	normaliser.interfaces = interfaces;
-	apply_to_reg_t_hash_map(nonnormal_map, &normaliser, &store_normalised);
-
-	return normaliser.normal_map;
+	return normal_map;
 }
 
 
 typedef struct {
-	reg_t_hash_map_ptr nonnormal_map;
+	reg_t_hash_map *nonnormal_map;
 	worklist_t **worklist_ref;
 } worklist_manager_t;
 
@@ -145,12 +133,12 @@ add_outgoing_refs(void *pre_wm, reg_t addr) {
 	worklist_push(wm->worklist_ref, wm->nonnormal_map, addr);
 }
 
-reg_t_hash_map_ptr
+reg_t_hash_map *
 find_all_used_references(state_t *s) {
 	seg_manager_t *sm = &(s->seg_manager);
 	seg_interface_t **interfaces = (seg_interface_t**)sci_calloc(sizeof(seg_interface_t *), sm->heap_size);
-	reg_t_hash_map_ptr nonnormal_map = new_reg_t_hash_map();
-	reg_t_hash_map_ptr normal_map = NULL;
+	reg_t_hash_map *nonnormal_map = new reg_t_hash_map();
+	reg_t_hash_map *normal_map = NULL;
 	worklist_t *worklist = new_worklist();
 	worklist_manager_t worklist_manager;
 	int i;
@@ -248,7 +236,7 @@ find_all_used_references(state_t *s) {
 		if (interfaces[i])
 			interfaces[i]->deallocate_self(interfaces[i]);
 	sci_free(interfaces);
-	free_reg_t_hash_map(nonnormal_map);
+	delete nonnormal_map;
 	return normal_map;
 }
 
@@ -259,15 +247,15 @@ typedef struct {
 	char *segnames[MEM_OBJ_MAX + 1];
 	int segcount[MEM_OBJ_MAX + 1];
 #endif
-	reg_t_hash_map_ptr use_map;
+	reg_t_hash_map *use_map;
 } deallocator_t;
 
 void
 free_unless_used(void *pre_use_map, reg_t addr) {
 	deallocator_t *deallocator = (deallocator_t *) pre_use_map;
-	reg_t_hash_map_ptr use_map = deallocator->use_map;
+	reg_t_hash_map *use_map = deallocator->use_map;
 
-	if (0 > reg_t_hash_map_check_value(use_map, addr, 0, NULL)) {
+	if (!use_map->contains(addr)) {
 		/* Not found -> we can free it */
 		deallocator->interfce->free_at_address(deallocator->interfce, addr);
 #ifdef DEBUG_GC
@@ -306,7 +294,7 @@ run_gc(state_t *s) {
 			deallocator.interfce->deallocate_self(deallocator.interfce);
 		}
 
-	free_reg_t_hash_map(deallocator.use_map);
+	delete deallocator.use_map;
 
 #ifdef DEBUG_GC
 	{

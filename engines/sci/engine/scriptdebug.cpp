@@ -34,7 +34,6 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/include/sci_midi.h"
 #include "sci/include/sci_widgets.h"
-#include "sci/include/reg_t_hashmap.h"
 
 #include "common/util.h"
 
@@ -3278,19 +3277,16 @@ c_gc(state_t *s) {
 	return 0;
 }
 
-static void
-print_all_of_them(void *_1, reg_t reg, int _2) {
-	sciprintf(" - "PREG"\n", PRINT_REG(reg));
-}
-
 static int
 c_gc_list_reachable(state_t *s) {
-	reg_t_hash_map_ptr use_map = find_all_used_references(s);
+	reg_t_hash_map *use_map = find_all_used_references(s);
 
 	sciprintf("Reachable references (normalised):\n");
-	apply_to_reg_t_hash_map(use_map, NULL, print_all_of_them);
+	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
+		sciprintf(" - "PREG"\n", PRINT_REG(i->_key));
+	}
 
-	free_reg_t_hash_map(use_map);
+	delete use_map;
 	return 0;
 }
 

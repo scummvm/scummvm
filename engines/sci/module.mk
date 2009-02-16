@@ -58,7 +58,6 @@ MODULE_OBJS = \
 	scicore/exe_lzexe.o \
 	scicore/exe_raw.o \
 	scicore/int_hashmap.o \
-	scicore/reg_t_hashmap.o \
 	scicore/resource.o \
 	scicore/resource_map.o \
 	scicore/resource_patch.o \
