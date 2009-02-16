@@ -818,7 +818,6 @@
 		DFC831630F48AF19005EF03C /* exe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309F0F48AF19005EF03C /* exe.cpp */; };
 		DFC831640F48AF19005EF03C /* exe_lzexe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */; };
 		DFC831650F48AF19005EF03C /* exe_raw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830A30F48AF19005EF03C /* exe_raw.cpp */; };
-		DFC8316C0F48AF19005EF03C /* int_hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830AB0F48AF19005EF03C /* int_hashmap.cpp */; };
 		DFC831710F48AF19005EF03C /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B00F48AF19005EF03C /* resource.cpp */; };
 		DFC831720F48AF19005EF03C /* resource_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B10F48AF19005EF03C /* resource_map.cpp */; };
 		DFC831730F48AF19005EF03C /* resource_patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B20F48AF19005EF03C /* resource_patch.cpp */; };
@@ -835,8 +834,6 @@
 		DFC8318C0F48AF19005EF03C /* mixers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830D20F48AF19005EF03C /* mixers.cpp */; };
 		DFC8318D0F48AF19005EF03C /* soft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830D30F48AF19005EF03C /* soft.cpp */; };
 		DFC831970F48AF19005EF03C /* pcm-iterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830DF0F48AF19005EF03C /* pcm-iterator.cpp */; };
-		DFC8319B0F48AF19005EF03C /* pcm_devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830E50F48AF19005EF03C /* pcm_devices.cpp */; };
-		DFC8319C0F48AF19005EF03C /* scummvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830E60F48AF19005EF03C /* scummvm.cpp */; };
 		DFC8319E0F48AF19005EF03C /* players.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830E90F48AF19005EF03C /* players.cpp */; };
 		DFC8319F0F48AF19005EF03C /* polled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830EA0F48AF19005EF03C /* polled.cpp */; };
 		DFC831A00F48AF19005EF03C /* realtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830EB0F48AF19005EF03C /* realtime.cpp */; };
@@ -848,8 +845,6 @@
 		DFC831AD0F48AF19005EF03C /* softsequencers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830FD0F48AF19005EF03C /* softsequencers.cpp */; };
 		DFC831AE0F48AF19005EF03C /* songlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830FF0F48AF19005EF03C /* songlib.cpp */; };
 		DFC831B30F48AF19005EF03C /* time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC831050F48AF19005EF03C /* time.cpp */; };
-		DFC831B60F48AF19005EF03C /* timer_scummvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC831090F48AF19005EF03C /* timer_scummvm.cpp */; };
-		DFC831B70F48AF19005EF03C /* timers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8310A0F48AF19005EF03C /* timers.cpp */; };
 		DFD511480DF3383500854012 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD511460DF3383500854012 /* memorypool.cpp */; };
 		DFD517E20DF33CAC00854012 /* seq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD517E10DF33CAC00854012 /* seq.cpp */; };
 		DFD5183D0DF3411800854012 /* scaler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD5183B0DF3411800854012 /* scaler.cpp */; };
@@ -865,6 +860,9 @@
 		DFD647710F49F7EF008E18EF /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476C0F49F7EF008E18EF /* libmad.a */; };
 		DFD647720F49F7EF008E18EF /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476D0F49F7EF008E18EF /* libmpeg2.a */; };
 		DFD647740F49F7EF008E18EF /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */; };
+		DFD648F10F4A2D8F008E18EF /* pcm_device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD648F00F4A2D8F008E18EF /* pcm_device.cpp */; };
+		DFD648F30F4A2DA7008E18EF /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD648F20F4A2DA7008E18EF /* timer.cpp */; };
+		DFD648FB0F4A2E84008E18EF /* int_hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD648F90F4A2E84008E18EF /* int_hashmap.cpp */; };
 		DFE470CE0D81F4BA00B6D1FB /* commandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */; };
 		DFE470D10D81F4BA00B6D1FB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C70D81F4BA00B6D1FB /* main.cpp */; };
 		DFE470D30D81F4BA00B6D1FB /* plugins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470CA0D81F4BA00B6D1FB /* plugins.cpp */; };
@@ -2347,7 +2345,6 @@
 		DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe_lzexe.cpp; sourceTree = "<group>"; };
 		DFC830A30F48AF19005EF03C /* exe_raw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe_raw.cpp; sourceTree = "<group>"; };
 		DFC830A50F48AF19005EF03C /* games.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = games.h; sourceTree = "<group>"; };
-		DFC830AB0F48AF19005EF03C /* int_hashmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = int_hashmap.cpp; sourceTree = "<group>"; };
 		DFC830B00F48AF19005EF03C /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
 		DFC830B10F48AF19005EF03C /* resource_map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource_map.cpp; sourceTree = "<group>"; };
 		DFC830B20F48AF19005EF03C /* resource_patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource_patch.cpp; sourceTree = "<group>"; };
@@ -2367,8 +2364,6 @@
 		DFC830D30F48AF19005EF03C /* soft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = soft.cpp; sourceTree = "<group>"; };
 		DFC830D50F48AF19005EF03C /* mixer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mixer.h; sourceTree = "<group>"; };
 		DFC830DF0F48AF19005EF03C /* pcm-iterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "pcm-iterator.cpp"; sourceTree = "<group>"; };
-		DFC830E50F48AF19005EF03C /* pcm_devices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcm_devices.cpp; sourceTree = "<group>"; };
-		DFC830E60F48AF19005EF03C /* scummvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scummvm.cpp; sourceTree = "<group>"; };
 		DFC830E90F48AF19005EF03C /* players.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = players.cpp; sourceTree = "<group>"; };
 		DFC830EA0F48AF19005EF03C /* polled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = polled.cpp; sourceTree = "<group>"; };
 		DFC830EB0F48AF19005EF03C /* realtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = realtime.cpp; sourceTree = "<group>"; };
@@ -2383,8 +2378,6 @@
 		DFC830FE0F48AF19005EF03C /* softseq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = softseq.h; sourceTree = "<group>"; };
 		DFC830FF0F48AF19005EF03C /* songlib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = songlib.cpp; sourceTree = "<group>"; };
 		DFC831050F48AF19005EF03C /* time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = time.cpp; sourceTree = "<group>"; };
-		DFC831090F48AF19005EF03C /* timer_scummvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer_scummvm.cpp; sourceTree = "<group>"; };
-		DFC8310A0F48AF19005EF03C /* timers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timers.cpp; sourceTree = "<group>"; };
 		DFD511460DF3383500854012 /* memorypool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memorypool.cpp; sourceTree = "<group>"; };
 		DFD511470DF3383500854012 /* memorypool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorypool.h; sourceTree = "<group>"; };
 		DFD517E10DF33CAC00854012 /* seq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = seq.cpp; sourceTree = "<group>"; };
@@ -2407,6 +2400,10 @@
 		DFD6476C0F49F7EF008E18EF /* libmad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmad.a; path = lib/libmad.a; sourceTree = "<group>"; };
 		DFD6476D0F49F7EF008E18EF /* libmpeg2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmpeg2.a; path = lib/libmpeg2.a; sourceTree = "<group>"; };
 		DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisidec.a; path = lib/libvorbisidec.a; sourceTree = "<group>"; };
+		DFD648F00F4A2D8F008E18EF /* pcm_device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcm_device.cpp; sourceTree = "<group>"; };
+		DFD648F20F4A2DA7008E18EF /* timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer.cpp; sourceTree = "<group>"; };
+		DFD648F90F4A2E84008E18EF /* int_hashmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = int_hashmap.cpp; sourceTree = "<group>"; };
+		DFD648FA0F4A2E84008E18EF /* int_hashmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = int_hashmap.h; sourceTree = "<group>"; };
 		DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commandLine.cpp; sourceTree = "<group>"; };
 		DFE470C20D81F4BA00B6D1FB /* commandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commandLine.h; sourceTree = "<group>"; };
 		DFE470C70D81F4BA00B6D1FB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -4210,6 +4207,8 @@
 		DFC8301B0F48AF18005EF03C /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				DFD648F90F4A2E84008E18EF /* int_hashmap.cpp */,
+				DFD648FA0F4A2E84008E18EF /* int_hashmap.h */,
 				DFC8301D0F48AF18005EF03C /* game.cpp */,
 				DFC8301E0F48AF18005EF03C /* gc.cpp */,
 				DFC8301F0F48AF18005EF03C /* gc.h */,
@@ -4354,7 +4353,6 @@
 				DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */,
 				DFC830A30F48AF19005EF03C /* exe_raw.cpp */,
 				DFC830A50F48AF19005EF03C /* games.h */,
-				DFC830AB0F48AF19005EF03C /* int_hashmap.cpp */,
 				DFC830B00F48AF19005EF03C /* resource.cpp */,
 				DFC830B10F48AF19005EF03C /* resource_map.cpp */,
 				DFC830B20F48AF19005EF03C /* resource_patch.cpp */,
@@ -4371,6 +4369,8 @@
 		DFC830BD0F48AF19005EF03C /* sfx */ = {
 			isa = PBXGroup;
 			children = (
+				DFD648F20F4A2DA7008E18EF /* timer.cpp */,
+				DFD648F00F4A2D8F008E18EF /* pcm_device.cpp */,
 				DFC830BE0F48AF19005EF03C /* adlib.cpp */,
 				DFC830BF0F48AF19005EF03C /* adlib.h */,
 				DFC830C00F48AF19005EF03C /* core.cpp */,
@@ -4380,7 +4380,6 @@
 				DFC830D00F48AF19005EF03C /* mixer */,
 				DFC830D50F48AF19005EF03C /* mixer.h */,
 				DFC830DF0F48AF19005EF03C /* pcm-iterator.cpp */,
-				DFC830E00F48AF19005EF03C /* pcm_device */,
 				DFC830E80F48AF19005EF03C /* player */,
 				DFC830EC0F48AF19005EF03C /* seq */,
 				DFC830F40F48AF19005EF03C /* sequencer.h */,
@@ -4388,7 +4387,6 @@
 				DFC830FE0F48AF19005EF03C /* softseq.h */,
 				DFC830FF0F48AF19005EF03C /* songlib.cpp */,
 				DFC831050F48AF19005EF03C /* time.cpp */,
-				DFC831060F48AF19005EF03C /* timer */,
 			);
 			path = sfx;
 			sourceTree = "<group>";
@@ -4408,15 +4406,6 @@
 				DFC830D30F48AF19005EF03C /* soft.cpp */,
 			);
 			path = mixer;
-			sourceTree = "<group>";
-		};
-		DFC830E00F48AF19005EF03C /* pcm_device */ = {
-			isa = PBXGroup;
-			children = (
-				DFC830E50F48AF19005EF03C /* pcm_devices.cpp */,
-				DFC830E60F48AF19005EF03C /* scummvm.cpp */,
-			);
-			path = pcm_device;
 			sourceTree = "<group>";
 		};
 		DFC830E80F48AF19005EF03C /* player */ = {
@@ -4448,15 +4437,6 @@
 				DFC830FD0F48AF19005EF03C /* softsequencers.cpp */,
 			);
 			path = softseq;
-			sourceTree = "<group>";
-		};
-		DFC831060F48AF19005EF03C /* timer */ = {
-			isa = PBXGroup;
-			children = (
-				DFC831090F48AF19005EF03C /* timer_scummvm.cpp */,
-				DFC8310A0F48AF19005EF03C /* timers.cpp */,
-			);
-			path = timer;
 			sourceTree = "<group>";
 		};
 		DFD5184C0DF3420D00854012 /* scaler */ = {
@@ -5872,7 +5852,6 @@
 				DFC831630F48AF19005EF03C /* exe.cpp in Sources */,
 				DFC831640F48AF19005EF03C /* exe_lzexe.cpp in Sources */,
 				DFC831650F48AF19005EF03C /* exe_raw.cpp in Sources */,
-				DFC8316C0F48AF19005EF03C /* int_hashmap.cpp in Sources */,
 				DFC831710F48AF19005EF03C /* resource.cpp in Sources */,
 				DFC831720F48AF19005EF03C /* resource_map.cpp in Sources */,
 				DFC831730F48AF19005EF03C /* resource_patch.cpp in Sources */,
@@ -5889,8 +5868,6 @@
 				DFC8318C0F48AF19005EF03C /* mixers.cpp in Sources */,
 				DFC8318D0F48AF19005EF03C /* soft.cpp in Sources */,
 				DFC831970F48AF19005EF03C /* pcm-iterator.cpp in Sources */,
-				DFC8319B0F48AF19005EF03C /* pcm_devices.cpp in Sources */,
-				DFC8319C0F48AF19005EF03C /* scummvm.cpp in Sources */,
 				DFC8319E0F48AF19005EF03C /* players.cpp in Sources */,
 				DFC8319F0F48AF19005EF03C /* polled.cpp in Sources */,
 				DFC831A00F48AF19005EF03C /* realtime.cpp in Sources */,
@@ -5902,9 +5879,10 @@
 				DFC831AD0F48AF19005EF03C /* softsequencers.cpp in Sources */,
 				DFC831AE0F48AF19005EF03C /* songlib.cpp in Sources */,
 				DFC831B30F48AF19005EF03C /* time.cpp in Sources */,
-				DFC831B60F48AF19005EF03C /* timer_scummvm.cpp in Sources */,
-				DFC831B70F48AF19005EF03C /* timers.cpp in Sources */,
 				DFD6470C0F495B51008E18EF /* unzip.cpp in Sources */,
+				DFD648F10F4A2D8F008E18EF /* pcm_device.cpp in Sources */,
+				DFD648F30F4A2DA7008E18EF /* timer.cpp in Sources */,
+				DFD648FB0F4A2E84008E18EF /* int_hashmap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
