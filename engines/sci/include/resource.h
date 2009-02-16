@@ -86,18 +86,9 @@
 #	define strncasecmp _strnicmp
 #endif
 
-
+// FIXME: Get rid of the following (needed for O_RDONLY etc.)
 #ifdef HAVE_FCNTL_H
 #  include <fcntl.h>
-#endif
-#include <errno.h>
-#include <sys/types.h>
-#ifdef HAVE_SYS_STAT_H
-#  include <sys/stat.h>
-#endif
-#include <assert.h>
-#ifdef HAVE_LIMITS_H
-#  include <limits.h>
 #endif
 
 // FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
@@ -108,14 +99,6 @@
 #  define G_DIR_SEPARATOR_S "/"
 #  define G_DIR_SEPARATOR '/'
 #endif
-
-// FIXME: Get rid of MIN / MAX, use common/util.h instead
-#ifndef MIN
-#  define MIN(a, b)  (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef MAX
-#  define MAX(a, b)  (((a) > (b)) ? (a) : (b))
-#endif /* HP-UX defines both */
 
 
 #define GUINT16_SWAP_LE_BE_CONSTANT(val) ((((val) & 0x00ff) << 8) | (((val) & 0xff00) >> 8))

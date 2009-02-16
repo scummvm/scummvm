@@ -34,7 +34,6 @@
 #include "sci/include/gfx_operations.h"
 #include "sci/include/sfx_engine.h"
 #include "sci/include/engine.h"
-#include <assert.h>
 #include "sci/engine/heap.h"
 
 #ifdef _MSC_VER
@@ -58,18 +57,15 @@ static state_t *_global_save_state;
 
 
 void
-write_reg_t(FILE *fh, reg_t *foo)
-{
+write_reg_t(FILE *fh, reg_t *foo) {
 	fprintf(fh, PREG, PRINT_REG(*foo));
 }
 
 int
-read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof) {
 	int segment, offset;
 
-	if (sscanf(lastval, PREG, &segment, &offset)<2)
-	{
+	if (sscanf(lastval, PREG, &segment, &offset)<2) {
 		sciprintf("Error parsing reg_t on line %d\n", *line);
 		return 1;
 	}
@@ -79,21 +75,18 @@ read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof)
 }
 
 void
-write_sci_version(FILE *fh, sci_version_t *foo)
-{
+write_sci_version(FILE *fh, sci_version_t *foo) {
 	fprintf(fh, "%d.%03d.%03d", SCI_VERSION_MAJOR(*foo), SCI_VERSION_MINOR(*foo),
 		SCI_VERSION_PATCHLEVEL(*foo));
 }
 
 int
-read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof) {
 	return version_parse(lastval, foo);
 }
 
 void
-write_PTN(FILE *fh, parse_tree_node_t *foo)
-{
+write_PTN(FILE *fh, parse_tree_node_t *foo) {
 	if (foo->type == PARSE_TREE_NODE_LEAF)
 		fprintf(fh, "L%d", foo->content.value);
 	else
@@ -101,8 +94,7 @@ write_PTN(FILE *fh, parse_tree_node_t *foo)
 }
 
 int
-read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == 'L') {
 		const char *c = lastval + 1;
 		char *strend;
@@ -401,48 +393,43 @@ RECORD dynmem_t "dynmem_t" {
 %END CFSML
 
 void 
-write_songlib_t(FILE *fh, songlib_t *songlib)
-{
-  song_t *seeker = *(songlib->lib);
-  int songcount = song_lib_count(*songlib);
+write_songlib_t(FILE *fh, songlib_t *songlib) {
+	song_t *seeker = *(songlib->lib);
+	int songcount = song_lib_count(*songlib);
 
-  fprintf(fh, "{\n");
-  fprintf(fh, "songcount = %d\n", songcount);
-  fprintf(fh, "list = \n");
-  fprintf(fh, "[\n");
-  while (seeker)
-    {
-      seeker->restore_time = seeker->it->get_timepos(seeker->it);
-      %CFSMLWRITE song_t seeker INTO fh;
-      seeker = seeker->next;
-    }
-  fprintf(fh, "]\n");
-  fprintf(fh, "}\n");
+	fprintf(fh, "{\n");
+	fprintf(fh, "songcount = %d\n", songcount);
+	fprintf(fh, "list = \n");
+	fprintf(fh, "[\n");
+	while (seeker) {
+		seeker->restore_time = seeker->it->get_timepos(seeker->it);
+		%CFSMLWRITE song_t seeker INTO fh;
+		seeker = seeker->next;
+	}
+	fprintf(fh, "]\n");
+	fprintf(fh, "}\n");
 }
 
-int
-read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof)
-{
-  int songcount;
-  int i;
-  song_t *newsong;
-  int oldstatus;
+int read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof) {
+	int songcount;
+	int i;
+	song_t *newsong;
+	int oldstatus;
 
-  fscanf(fh, "{\n");
-  fscanf(fh, "songcount = %d\n", &songcount);
-  fscanf(fh, "list = \n");
-  fscanf(fh, "[\n");
-  *line += 4;
-  song_lib_init(songlib);
-  for (i = 0; i < songcount; i++)
-    {
-      %CFSMLREAD song_tp &newsong FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
-      song_lib_add(*songlib, newsong);
-    }  
-  fscanf(fh, "]\n");
-  fscanf(fh, "}\n");;
-  *line += 2;
-  return 0;
+	fscanf(fh, "{\n");
+	fscanf(fh, "songcount = %d\n", &songcount);
+	fscanf(fh, "list = \n");
+	fscanf(fh, "[\n");
+	*line += 4;
+	song_lib_init(songlib);
+	for (i = 0; i < songcount; i++) {
+		%CFSMLREAD song_tp &newsong FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
+		song_lib_add(*songlib, newsong);
+	}  
+	fscanf(fh, "]\n");
+	fscanf(fh, "}\n");;
+	*line += 2;
+	return 0;
 }
 
 struct {
@@ -460,13 +447,11 @@ struct {
 	{MEM_OBJ_HUNK,"HUNK"},
 	{MEM_OBJ_DYNMEM,"DYNMEM"}};
 
-int
-mem_obj_string_to_enum(const char *str)
-{
+int mem_obj_string_to_enum(const char *str) {
 	int i;
 
-	for (i = 0; i <= MEM_OBJ_MAX; i++)
-	{		if (!strcasecmp(mem_obj_string_names[i].name, str))
+	for (i = 0; i <= MEM_OBJ_MAX; i++) {
+		if (!strcasecmp(mem_obj_string_names[i].name, str))
 			return i;
 	}
 
@@ -475,24 +460,17 @@ mem_obj_string_to_enum(const char *str)
 
 static int bucket_length;
 
-void
-write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo)
-{
+void write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo) {
 	%CFSMLWRITE int_hash_map_t *foo INTO fh;
 }
 
-void
-write_song_tp(FILE *fh, song_t **foo)
-{
+void write_song_tp(FILE *fh, song_t **foo) {
 	%CFSMLWRITE song_t *foo INTO fh;
 }
 
-song_iterator_t *
-build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
+song_iterator_t *build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
 
-int
-read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof)
-{
+int read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
   char *token;
   int assignment;
   *foo = (song_t*) malloc(sizeof(song_t));
@@ -504,8 +482,7 @@ read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof
   return 0;
 }
 int
-read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
 	*foo = (int_hash_map_t*)malloc(sizeof(int_hash_map_t));
 	%CFSMLREAD int_hash_map_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	(*foo)->holes = NULL;
@@ -513,16 +490,12 @@ read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *l
 }
 
 void
-write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
-{
-	if (!(*foo))
-	{
+write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo) {
+	if (!(*foo)) {
 		fputs("\\null", fh);
-	} else
-	{
+	} else {
 		fprintf(fh,"[\n%d=>%d\n", (*foo)->name, (*foo)->value);
-		if ((*foo)->next)
-		{
+		if ((*foo)->next) {
 			%CFSMLWRITE int_hash_map_node_tp &((*foo)->next) INTO fh;
 		} else fputc('L', fh);
 		fputs("]", fh);
@@ -530,16 +503,14 @@ write_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo)
 }
 
 int
-read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No hash map node */
 	} else {
 		*foo = (int_hash_map_node_t*)malloc(sizeof(int_hash_map_node_t));
-		if (lastval[0] != '[')
-		{
+		if (lastval[0] != '[') {
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;
 		}
@@ -547,22 +518,18 @@ read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastv
 		do {
 			(*line)++;
 			fgets(buffer, 80, fh);
-			if (buffer[0] == 'L')
-			{
+			if (buffer[0] == 'L') {
 				(*foo)->next = NULL;
 				buffer[0] = buffer[1];
 			} /* HACK: deliberately no else clause here */
-			if (buffer[0] == ']') 
-			{
+			if (buffer[0] == ']')  {
 				break;
 			}
-			else if (buffer[0] == '[')
-			{
+			else if (buffer[0] == '[') {
 				if (read_int_hash_map_node_tp(fh, &((*foo)->next), buffer, line, hiteof))
 					return 1;
 			}
-			else if (sscanf(buffer, "%d=>%d", &((*foo)->name), &((*foo)->value))<2)
-			{
+			else if (sscanf(buffer, "%d=>%d", &((*foo)->name), &((*foo)->value))<2) {
 				sciprintf("Error parsing hash_map_node_t on line %d\n", *line);
 				return 1;
 			}
@@ -573,8 +540,7 @@ read_int_hash_map_node_tp(FILE *fh, int_hash_map_node_t **foo, const char *lastv
 }
 
 void
-write_menubar_tp(FILE *fh, menubar_t **foo)
-{
+write_menubar_tp(FILE *fh, menubar_t **foo) {
 	if (*foo) {
 
 		%CFSMLWRITE menubar_t (*foo) INTO fh;
@@ -586,8 +552,7 @@ write_menubar_tp(FILE *fh, menubar_t **foo)
 
 
 int
-read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof) {
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No menu bar */
@@ -601,12 +566,10 @@ read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *
 }
 
 void
-write_mem_obj_t(FILE *fh, mem_obj_t *foo)
-{
+write_mem_obj_t(FILE *fh, mem_obj_t *foo) {
 	fprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);	
 	%CFSMLWRITE int &foo->segmgr_id INTO fh;
-	switch (foo->type)
-	{
+	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 		%CFSMLWRITE script_t &foo->data.script INTO fh;
 	break;
@@ -637,19 +600,16 @@ write_mem_obj_t(FILE *fh, mem_obj_t *foo)
 }
 
 int
-read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof)
-{
+read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
 	char buffer[80];
 	foo->type = mem_obj_string_to_enum(lastval);
-	if (foo->type < 0)
-	{
+	if (foo->type < 0) {
 		sciprintf("Unknown mem_obj_t type %s on line %d\n", lastval, *line);
 		return 1;
 	}
 
 	%CFSMLREAD int &foo->segmgr_id FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	switch (foo->type)
-	{
+	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 		%CFSMLREAD script_t &foo->data.script FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
@@ -684,8 +644,7 @@ read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hi
 }
 
 void
-write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
-{
+write_mem_obj_tp(FILE *fh, mem_obj_t **foo) {
 	if (*foo) {
 
 		%CFSMLWRITE mem_obj_t (*foo) INTO fh;
@@ -696,8 +655,7 @@ write_mem_obj_tp(FILE *fh, mem_obj_t **foo)
 }
 
 int
-read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof)
-{
+read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof) {
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; /* No menu bar */
@@ -715,14 +673,12 @@ read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *
 ** to writing a gamestate to disk
 */
 void
-_gamestate_unfrob(state_t *s)
-{
+_gamestate_unfrob(state_t *s) {
 }
 
 
 int
-gamestate_save(state_t *s, char *dirname)
-{
+gamestate_save(state_t *s, char *dirname) {
 	FILE *fh;
 	sci_dir_t dir;
 	char *filename;
@@ -741,7 +697,7 @@ gamestate_save(state_t *s, char *dirname)
 
 	scimkdir (dirname, 0700);
 
-	if (chdir (dirname)) {
+	if (chdir(dirname)) {
 		sciprintf("Could not enter directory '%s'\n", dirname);
 		return 1;
 	}
@@ -759,7 +715,7 @@ gamestate_save(state_t *s, char *dirname)
 	if (s->sound_server) {
 		if ((s->sound_server->save)(s, dirname)) {
 			sciprintf("Saving failed for the sound subsystem\n");
-			chdir ("..");
+			chdir("..");
 			return 1;
 		}
 	}
@@ -778,13 +734,12 @@ SCI_MEMTEST;
 	_gamestate_unfrob(s);
 
 
-	chdir ("..");
+	chdir("..");
 	return 0;
 }
 
 static seg_id_t
-find_unique_seg_by_type(seg_manager_t *self, int type)
-{
+find_unique_seg_by_type(seg_manager_t *self, int type) {
 	int i;
 
 	for (i = 0; i < self->heap_size; i++)
@@ -795,8 +750,7 @@ find_unique_seg_by_type(seg_manager_t *self, int type)
 }
 
 static byte *
-find_unique_script_block(state_t *s, byte *buf, int type)
-{
+find_unique_script_block(state_t *s, byte *buf, int type) {
 	int magic_pos_adder = s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER ? 0 : 2;
 
 	buf += magic_pos_adder;
@@ -815,8 +769,7 @@ find_unique_script_block(state_t *s, byte *buf, int type)
 }
 
 static
-void reconstruct_stack(state_t *retval)
-{
+void reconstruct_stack(state_t *retval) {
 	seg_id_t stack_seg = find_unique_seg_by_type(&retval->seg_manager, MEM_OBJ_STACK);
 	dstack_t *stack = &(retval->seg_manager.heap[stack_seg]->data.stack);
 
@@ -826,8 +779,7 @@ void reconstruct_stack(state_t *retval)
 }
 
 static
-int clone_entry_used(clone_table_t *table, int n)
-{
+int clone_entry_used(clone_table_t *table, int n) {
 	int backup;
 	int seeker = table->first_free;
 	clone_entry_t *entries = table->table;
@@ -844,8 +796,7 @@ int clone_entry_used(clone_table_t *table, int n)
 }
 
 static
-void load_script(state_t *s, seg_id_t seg)
-{
+void load_script(state_t *s, seg_id_t seg) {
 	resource_t *script, *heap;
 	script_t *scr = &(s->seg_manager.heap[seg]->data.script);
 
@@ -855,8 +806,7 @@ void load_script(state_t *s, seg_id_t seg)
 	if (s->version >= SCI_VERSION(1,001,000))
 		heap = scir_find_resource(s->resmgr, sci_heap, scr->nr, 0);
 
-	switch (s->seg_manager.sci1_1)
-	{
+	switch (s->seg_manager.sci1_1) {
 	case 0 :
 		sm_mcpy_in_out( &s->seg_manager, 0, script->data, script->size, seg, SEG_ID);
 		break;
@@ -868,20 +818,16 @@ void load_script(state_t *s, seg_id_t seg)
 }
 
 static
-void reconstruct_scripts(state_t *s, seg_manager_t *self)
-{
+void reconstruct_scripts(state_t *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 	object_t **objects;
 	int *objects_nr;
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_SCRIPT:
-			{
+			switch (mobj->type)  {
+			case MEM_OBJ_SCRIPT: {
 				int j;
 				script_t *scr = &mobj->data.script;
 
@@ -897,8 +843,7 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 				if (!self->sci1_1)
 					scr->export_table += 3;
 				
-				for (j = 0; j < scr->objects_nr; j++)
-				{
+				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 					scr->objects[j].base = scr->buf;
 					scr->objects[j].base_obj = data;
@@ -909,36 +854,29 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 		}
 
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_SCRIPT:
-			{
+			switch (mobj->type)  {
+			case MEM_OBJ_SCRIPT: {
 				int j;
 				script_t *scr = &mobj->data.script;
 
-				for (j = 0; j < scr->objects_nr; j++)
-				{
+				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 
-					if (self->sci1_1)
-					{
+					if (self->sci1_1) {
 						guint16 *funct_area = (guint16 *) (scr->buf + getUInt16( data + 6 ));
 						guint16 *prop_area = (guint16 *) (scr->buf + getUInt16( data + 4 ));
 
 						scr->objects[j].base_method = funct_area;
 						scr->objects[j].base_vars = prop_area;
-					} else
-					{
+					} else {
 						int funct_area = getUInt16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						object_t *base_obj;
 
 						base_obj = obj_get(s, scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
 
-						if (!base_obj)
-						{
+						if (!base_obj) {
 							sciprintf("Object without a base class: Script %d, index %d (reg address "PREG"\n",
 								  scr->nr, j, PRINT_REG(scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
@@ -956,41 +894,34 @@ void reconstruct_scripts(state_t *s, seg_manager_t *self)
 }
 
 void
-reconstruct_clones(state_t *s, seg_manager_t *self)
-{
+reconstruct_clones(state_t *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 
 	for (i = 0; i < self->heap_size; i++)
-		if (self->heap[i])
-		{
+		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) 
-			{
-			case MEM_OBJ_CLONES:
-			{
+			switch (mobj->type) {
+			case MEM_OBJ_CLONES: {
 				int j;
 				clone_entry_t *seeker = mobj->data.clones.table;
 				
 				sciprintf("Free list: ");
 				for (j = mobj->data.clones.first_free;
 				     j != HEAPENTRY_INVALID;
-				     j = mobj->data.clones.table[j].next_free)
-				{
+				     j = mobj->data.clones.table[j].next_free) {
 					sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
 				sciprintf("Entries w/zero vars: ");
-				for (j = 0; j < mobj->data.clones.max_entry; j++)
-				{
+				for (j = 0; j < mobj->data.clones.max_entry; j++) {
 					if (mobj->data.clones.table[j].entry.variables == NULL)
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
-				for (j = 0; j < mobj->data.clones.max_entry; j++)
-				{
+				for (j = 0; j < mobj->data.clones.max_entry; j++) {
  					object_t *base_obj;
 
 					if (!clone_entry_used(&mobj->data.clones, j)) {
@@ -998,8 +929,7 @@ reconstruct_clones(state_t *s, seg_manager_t *self)
 						continue;
 					}
 					base_obj = obj_get(s, seeker->entry.variables[SCRIPT_SPECIES_SELECTOR]);
-					if (!base_obj)
-					{
+					if (!base_obj) {
 						sciprintf("Clone entry without a base class: %d\n", j);
 						seeker->entry.base = seeker->entry.base_obj = NULL;
 						seeker->entry.base_vars = seeker->entry.base_method = NULL;
@@ -1026,8 +956,7 @@ song_iterator_t *
 new_fast_forward_iterator(song_iterator_t *it, int delta);
 
 static
-void reconstruct_sounds(state_t *s)
-{
+void reconstruct_sounds(state_t *s) {
   song_t *seeker;
   int it_type = s->resmgr->sci_version >= SCI_VERSION_01 ?
     SCI_SONG_ITERATOR_TYPE_SCI1
@@ -1035,13 +964,11 @@ void reconstruct_sounds(state_t *s)
 
   if (s->sound.songlib.lib)
     seeker = *(s->sound.songlib.lib);
-  else
-    {
+  else {
       song_lib_init(&s->sound.songlib);
       seeker = NULL;
     }
-  while (seeker)
-    {
+  while (seeker) {
       song_iterator_t *base, *ff;
       int oldstatus;
       song_iterator_message_t msg;
@@ -1067,8 +994,7 @@ void reconstruct_sounds(state_t *s)
 }
 
 state_t *
-gamestate_restore(state_t *s, char *dirname)
-{
+gamestate_restore(state_t *s, char *dirname) {
 	FILE *fh;
 	int fd;
 	int i;
@@ -1076,7 +1002,7 @@ gamestate_restore(state_t *s, char *dirname)
 	state_t *retval;
 	songlib_t temp;
 
-	if (chdir (dirname)) {
+	if (chdir(dirname)) {
 		sciprintf("Game state '%s' does not exist\n", dirname);
 		return NULL;
 	}
@@ -1104,7 +1030,7 @@ gamestate_restore(state_t *s, char *dirname)
 		return NULL;
 	}
 
-	 /* Backwards compatibility settings */
+	/* Backwards compatibility settings */
 	retval->dyn_views = NULL;
 	retval->drop_views = NULL;
 	retval->port = NULL;
@@ -1117,7 +1043,7 @@ gamestate_restore(state_t *s, char *dirname)
 
 	fclose(fh);
 
-	if ((retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) || 
+	if ((retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (retval->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
 
 		if (retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
@@ -1162,8 +1088,7 @@ gamestate_restore(state_t *s, char *dirname)
 	retval->save_dir_edit_offset = 0;
 	retval->sys_strings_segment = find_unique_seg_by_type(&retval->seg_manager, MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = &(((mem_obj_t *)(GET_SEGMENT(retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
-	sys_strings_restore(retval->sys_strings,
-			    s->sys_strings);
+	sys_strings_restore(retval->sys_strings, s->sys_strings);
 
 	/* Time state: */
 	sci_get_current_time(&(retval->last_wait_time));

@@ -26,8 +26,6 @@
 #include "sci/include/resource.h"
 #include "sci/include/vocabulary.h"
 #include "sci/include/console.h"
-#include <stdarg.h>
-#include <string.h>
 
 #define TOKEN_OPAREN 0xff000000
 #define TOKEN_CPAREN 0xfe000000

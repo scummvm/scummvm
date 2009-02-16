@@ -36,6 +36,8 @@
 #include "sci/include/sci_widgets.h"
 #include "sci/include/reg_t_hashmap.h"
 
+#include "common/util.h"
+
 #ifdef WIN32
 #	include <windows.h>
 #	include <mmsystem.h>

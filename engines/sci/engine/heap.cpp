@@ -1,7 +1,3 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "sci/include/engine.h"
 #include "sci/include/console.h"
 #include "sci/engine/heap.h"

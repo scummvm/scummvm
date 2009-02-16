@@ -29,8 +29,6 @@
 ** which can be downloaded from FIXME.
 */
 
-#include <math.h>
-
 #include "sci/include/engine.h"
 #include "sci/include/aatree.h"
 #include "sci/include/list.h"

@@ -26,7 +26,6 @@
 ***************************************************************************/
 
 #include "sci/include/sys_strings.h"
-#include <stdio.h>
 #include "sci/include/sci_memory.h"
 
 void

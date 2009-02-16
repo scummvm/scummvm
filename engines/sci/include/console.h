@@ -54,7 +54,7 @@ extern FILE *con_file;
 struct _state; /* state_t later on */
 
 typedef union {
-	long val;
+	int32 val;
 	char *str;
 	reg_t reg;
 } cmd_param_t;

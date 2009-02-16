@@ -31,6 +31,8 @@
 #include "sci/include/gfx_resmgr.h"
 #include "sci/include/gfx_options.h"
 
+#include "common/util.h"
+
 int
 gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
                               gfx_options_t *options,

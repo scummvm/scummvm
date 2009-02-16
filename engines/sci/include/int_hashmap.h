@@ -28,6 +28,8 @@
 #ifndef _INT_HASHMAP_H_
 #define _INT_HASHMAP_H_
 
+#include "common/scummsys.h"
+
 /* Assumes that the ints are relatively evenly distributed */
 
 #define DCS_INT_HASH_MAX 255

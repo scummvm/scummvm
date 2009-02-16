@@ -102,16 +102,11 @@
 #	ifdef __unix__
 #		define DISABLE_SCI_MEMORY /* Use malloc() and friends */
 #	endif
+#endif
 #define PANIC_MEMORY(size, filename, linenum, funcname, more_info)\
 	PANIC((stderr, "Memory allocation of %lu bytes failed\n"\
-		" [%s (%s) : %u]\n " #more_info "\n %s\n",\
-		(unsigned long)size, filename, funcname, linenum, dmalloc_strerror(dmalloc_errno)))
-#else
-#define PANIC_MEMORY(size, filename, linenum, funcname, more_info)\
-	PANIC((stderr, "Memory allocation of %lu bytes\n"\
-		" [%s (%s) : %u]\n " #more_info "\n %s\n",\
-		(unsigned long)size, filename, funcname, linenum, strerror(errno)))
-#endif
+		" [%s (%s) : %u]\n " #more_info "\n",\
+		(unsigned long)size, filename, funcname, linenum))
 
 
 /********** the memory allocation macros **********/
