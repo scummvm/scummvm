@@ -59,10 +59,8 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 }
 
 Screen::~Screen(void) {
-	if (_screenBuf)
-		free(_screenBuf);
-	if (_screenGrid)
-		free(_screenGrid);
+	free(_screenBuf);
+	free(_screenGrid);
 	if (_currentScreen != 0xFFFF)
 		quitScreen();
 }
