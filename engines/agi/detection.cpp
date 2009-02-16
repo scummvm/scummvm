@@ -135,13 +135,13 @@ namespace Agi {
 
 #define GAME_LFPS(id,name,md5,size,lang,ver,flags,gid,platform) GAME_LVFPN(id,name,"logdir",md5,size,lang,ver,flags,gid,platform,GType_V2)
 
-#define GAME3_P(id,name,fname,md5,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V3)
+#define GAME3_P(id,name,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
 #define GAMEpre_P(id,name,fname,md5,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
 
 #define GAMEpre_PS(id,name,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
 
-#define GAME3_PS(id,name,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V3)
+#define GAME3_PS(id,name,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
 #define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
@@ -182,7 +182,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Black Cauldron (Apple IIgs) 1.0O 2/24/89 (CE)
 	// Menus not tested
-	GAME3_P("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, GID_BC, Common::kPlatformApple2GS),
+	GAME3_P("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS),
 
 	// Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
 	GAME("bc", "2.00 1987-06-14", "7f598d4712319b09d7bd5b3be10a2e4a", 0x2440, GID_BC),
@@ -210,14 +210,14 @@ static const AGIGameDescription gameDescriptions[] = {
 #endif
 
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
-	GAME3_PS("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, GID_GOLDRUSH, Common::kPlatformAmiga),
+	GAME3_PS("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga),
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
 	// Menus not tested
-	GAME3_P("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GID_GOLDRUSH, Common::kPlatformApple2GS),
+	GAME3_P("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformApple2GS),
 
 	// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
-	GAME3_P("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, GID_GOLDRUSH, Common::kPlatformAtariST),
+	GAME3_P("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAtariST),
 
 	// Gold Rush! (PC 5.25") 2.01 12/22/88 [AGI 3.002.149]
 	GAME3("goldrush", "2.01 1988-12-22 5.25\"", "grdir", "db733d199238d4009a9e95f11ece34e9", 0x3149, GID_GOLDRUSH),
@@ -301,7 +301,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS),
 
 	// King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
-	GAME3_PS("kq3", "2.15 1989-11-15", "dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805, 0x3086, GID_KQ3, Common::kPlatformAmiga),
+	GAME3_PS("kq3", "2.15 1989-11-15", "dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805, 0x3086, 0, GID_KQ3, Common::kPlatformAmiga),
 
 	// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
@@ -328,7 +328,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 	// Menus not tested
-	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, GID_KQ4, Common::kPlatformApple2GS),
+	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS),
 
 	// King's Quest 4 (PC 3.5") 2.0 7/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.0 1988-07-27 3.5\"", "kq4dir", "fe44655c42f16c6f81046fdf169b6337", 0x3086, GID_KQ4),
@@ -363,26 +363,26 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("lsl1", "1.05 1987-06-26", "8a0076429890531832f0dc113285e31e", 0x2440, GID_LSL1, Common::kPlatformMacintosh),
 
 	// Manhunter NY (ST) 1.03 10/20/88
-	GAME3_P("mh1", "1.03 1988-10-20", "mhdir", "f2d58056ad802452d60776ee920a52a6", 0x3149, GID_MH1, Common::kPlatformAtariST),
+	GAME3_P("mh1", "1.03 1988-10-20", "mhdir", "f2d58056ad802452d60776ee920a52a6", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
 	// Manhunter NY (IIgs) 2.0E 10/05/88 (CE)
-	GAME3_P("mh1", "2.0E 1988-10-05 (CE)", "mhdir", "2f1509f76f24e6e7d213f2dadebbf156", 0x3149, GID_MH1, Common::kPlatformApple2GS),
+	GAME3_P("mh1", "2.0E 1988-10-05 (CE)", "mhdir", "2f1509f76f24e6e7d213f2dadebbf156", 0x3149, 0, GID_MH1, Common::kPlatformApple2GS),
 
 	// Manhunter NY (Amiga) 1.06 3/18/89
-	GAME3_P("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, GID_MH1, Common::kPlatformAmiga),
+	GAME3_P("mh1", "1.06 1989-03-18", "dirs", "92c6183042d1c2bb76236236a7d7a847", 0x3149, GF_OLDAMIGAV20, GID_MH1, Common::kPlatformAmiga),
 
 	// reported by Filippos (thebluegr) in bugreport #1654500
 	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
-	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, GID_MH1, Common::kPlatformPC),
+	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformPC),
 
 	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
-	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, GID_MH1, Common::kPlatformPC),
+	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformPC),
 
 	// Manhunter SF (ST) 1.0 7/29/89
-	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, GID_MH1, Common::kPlatformAtariST),
+	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
 	// Manhunter SF (Amiga) 3.06 8/17/89		# 2.333
-	GAME3_PS("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3086, GID_MH2, Common::kPlatformAmiga),
+	GAME3_PS("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3086, GF_OLDAMIGAV20, GID_MH2, Common::kPlatformAmiga),
 
 	// Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
 	GAME3("mh2", "3.03 1989-08-17 5.25\"", "mh2dir", "b90e4795413c43de469a715fb3c1fa93", 0x3149, GID_MH2),
@@ -398,7 +398,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Mixed-Up Mother Goose (Amiga) 1.1
 	// Problematic: crashes
 	// Menus not tested
-	GAME3_PS("mixedup", "1.1 1986-12-10", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3086, GID_MIXEDUP, Common::kPlatformAmiga),
+	GAME3_PS("mixedup", "1.1 1986-12-10", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3086, 0, GID_MIXEDUP, Common::kPlatformAmiga),
 #endif
 
 	// Mixed Up Mother Goose (IIgs)
@@ -423,7 +423,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("pq1", "2.0B 1988-04-21", "e7c175918372336461e3811d594f482f", 0x2917, GID_PQ1, Common::kPlatformApple2GS),
 
 	// Police Quest 1 (Amiga) 2.0B 2/22/89	# 2.310
-	GAME3_PS("pq1", "2.0B 1989-02-22", "dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613, 0x3149, GID_PQ1, Common::kPlatformAmiga),
+	GAME3_PS("pq1", "2.0B 1989-02-22", "dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613, 0x3149, 0, GID_PQ1, Common::kPlatformAmiga),
 
 	// Police Quest 1 (IIgs) 2.0A-88318
 	GAME_P("pq1", "2.0A 1988-03-18", "8994e39d0901de3d07cecfb954075bb5", 0x2917, GID_PQ1, Common::kPlatformApple2GS),

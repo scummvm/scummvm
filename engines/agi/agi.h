@@ -299,8 +299,9 @@ enum AgiMonitorType {
  *
  * At least these Amiga AGI versions use value 20:
  * 2.082 (Space Quest I v1.2 1986)
+ * x.yyy (Manhunter NY 1.06 3/18/89)
+ * 2.333 (Manhunter SF 3.06 8/17/89)
  *
- * TODO: Check Amiga versions of Manhunter I & II (I'd guess they use value 5 though).
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
