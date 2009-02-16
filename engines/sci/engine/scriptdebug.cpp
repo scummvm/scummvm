@@ -1601,7 +1601,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 
 int
 c_dumpnodes(state_t *s) {
-	int end = MIN(cmd_params[0].val, VOCAB_TREE_NODES);
+	int end = MIN<int>(cmd_params[0].val, VOCAB_TREE_NODES);
 	int i;
 
 
