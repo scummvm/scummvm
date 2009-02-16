@@ -1723,7 +1723,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 		SDL_LockSurface(_hwscreen);
 		srcPitch = toolbarSurface->pitch;
 		dstPitch = _hwscreen->pitch;
-		_scalerProc((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
+		Normal2x((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
 		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);
 
