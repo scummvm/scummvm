@@ -76,7 +76,6 @@ class MusicPlayer;
 
 class MadeEngine : public ::Engine {
 	int _gameId;
-	Common::KeyState _keyPressed;
 
 protected:
 
