@@ -1627,25 +1627,32 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
-	} else if (_game.platform == Common::kPlatformApple2GS || _game.platform == Common::kPlatformC64 ||
-		_game.platform == Common::kPlatformPCEngine) {
-		// TODO
+	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
+		// TODO: Add support for music format
 		_musicEngine = NULL;
-	} else if (_game.platform == Common::kPlatformNES) {
+	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
+		// TODO: Add support for music format
+		_musicEngine = NULL;
+	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
 		_musicEngine = new Player_NES(this, _mixer);
-	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 2)) {
+	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {
 		_musicEngine = new Player_V2A(this, _mixer);
-	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 3)) {
+	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 3) {
 		_musicEngine = new Player_V3A(this, _mixer);
-	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version <= 4)) {
+	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
+		// TODO: Add support for music format
 		_musicEngine = NULL;
-	} else if (_game.id == GID_MANIAC && (_game.version == 1)) {
+	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
+		_musicEngine = NULL;
+	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && ((_game.version > 2) && (_game.version <= 4))) {
+	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
-	} else if (_game.version >= 3 && _game.heversion <= 61 && _game.platform != Common::kPlatform3DO) {
+	} else if (_game.platform == Common::kPlatform3DO && _game.heversion == 61) {
+		// 3DO versions use digital music and sound samples.
+	} else if (_game.version >= 3 && _game.heversion <= 61) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
