@@ -431,6 +431,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 
 	if (_storage[ctr] == NULL) {
 		_storage[ctr] = allocNode(key);
+		assert(_storage[ctr] != NULL);
 		_size++;
 
 		// Keep the load factor below a certain threshold.
@@ -439,6 +440,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 			capacity = capacity < 500 ? (capacity * 4) : (capacity * 2);
 			expandStorage(capacity);
 			ctr = lookup(key);
+			assert(_storage[ctr] != NULL);
 		}
 	}
 
