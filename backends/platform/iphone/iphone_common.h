@@ -66,7 +66,8 @@ void iPhone_lockSurface();
 void iPhone_unlockSurface();
 void iPhone_initSurface(int width, int height, bool landscape);
 bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
-
+const char* iPhone_getDocumentsDir();
+	
 #ifdef __cplusplus
 }
 #endif

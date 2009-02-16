@@ -88,7 +88,12 @@ int OSystem_IPHONE::timerHandler(int t) {
 }
 
 void OSystem_IPHONE::initBackend() {
+#ifdef IPHONE_OFFICIAL
+	_savefile = new DefaultSaveFileManager(iPhone_getDocumentsDir());	
+#else
 	_savefile = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
+#endif
+
 	_timer = new DefaultTimerManager();
 
 	gettimeofday(&_startTime, NULL);
@@ -1345,12 +1350,26 @@ OSystem *OSystem_IPHONE_create() {
 }
 
 Common::SeekableReadStream *OSystem_IPHONE::createConfigReadStream() {
-	Common::FSNode file(SCUMMVM_PREFS_PATH);
+#ifdef IPHONE_OFFICIAL
+	char buf[256];
+	strncpy(buf, iPhone_getDocumentsDir(), 256);
+	strncat(buf, "/Preferences", 256 - strlen(buf) );
+	Common::FSNode file(buf);
+#else
+	Common::FSNode file(SCUMMVM_PREFS_PATH);	
+#endif
 	return file.createReadStream();
 }
 
 Common::WriteStream *OSystem_IPHONE::createConfigWriteStream() {
-	Common::FSNode file(SCUMMVM_PREFS_PATH);
+#ifdef IPHONE_OFFICIAL
+	char buf[256];
+	strncpy(buf, iPhone_getDocumentsDir(), 256);
+	strncat(buf, "/Preferences", 256 - strlen(buf) );
+	Common::FSNode file(buf);	
+#else
+	Common::FSNode file(SCUMMVM_PREFS_PATH);	
+#endif	
 	return file.createWriteStream();
 }
 

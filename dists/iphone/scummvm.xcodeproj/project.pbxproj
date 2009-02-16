@@ -861,6 +861,10 @@
 		DFD518C50DF34BA600854012 /* scale2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD518B50DF34BA600854012 /* scale2x.cpp */; };
 		DFD518C70DF34BA600854012 /* scale3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFD518B80DF34BA600854012 /* scale3x.cpp */; };
 		DFD6470C0F495B51008E18EF /* unzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473C10D81F4E800B6D1FB /* unzip.cpp */; };
+		DFD647700F49F7EF008E18EF /* libFLAC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476B0F49F7EF008E18EF /* libFLAC.a */; };
+		DFD647710F49F7EF008E18EF /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476C0F49F7EF008E18EF /* libmad.a */; };
+		DFD647720F49F7EF008E18EF /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476D0F49F7EF008E18EF /* libmpeg2.a */; };
+		DFD647740F49F7EF008E18EF /* libvorbisidec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */; };
 		DFE470CE0D81F4BA00B6D1FB /* commandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */; };
 		DFE470D10D81F4BA00B6D1FB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C70D81F4BA00B6D1FB /* main.cpp */; };
 		DFE470D30D81F4BA00B6D1FB /* plugins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470CA0D81F4BA00B6D1FB /* plugins.cpp */; };
@@ -2399,6 +2403,10 @@
 		DFD518B60DF34BA600854012 /* scale2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale2x.h; sourceTree = "<group>"; };
 		DFD518B80DF34BA600854012 /* scale3x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scale3x.cpp; sourceTree = "<group>"; };
 		DFD518B90DF34BA600854012 /* scale3x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scale3x.h; sourceTree = "<group>"; };
+		DFD6476B0F49F7EF008E18EF /* libFLAC.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFLAC.a; path = lib/libFLAC.a; sourceTree = "<group>"; };
+		DFD6476C0F49F7EF008E18EF /* libmad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmad.a; path = lib/libmad.a; sourceTree = "<group>"; };
+		DFD6476D0F49F7EF008E18EF /* libmpeg2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmpeg2.a; path = lib/libmpeg2.a; sourceTree = "<group>"; };
+		DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libvorbisidec.a; path = lib/libvorbisidec.a; sourceTree = "<group>"; };
 		DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = commandLine.cpp; sourceTree = "<group>"; };
 		DFE470C20D81F4BA00B6D1FB /* commandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commandLine.h; sourceTree = "<group>"; };
 		DFE470C70D81F4BA00B6D1FB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -2610,6 +2618,10 @@
 				DF842A2F0E7BB39E00F5680E /* QuartzCore.framework in Frameworks */,
 				DF2FFC510F48638A0006E566 /* CoreSurface.framework in Frameworks */,
 				DF2FFC6E0F4867590006E566 /* GraphicsServices.framework in Frameworks */,
+				DFD647700F49F7EF008E18EF /* libFLAC.a in Frameworks */,
+				DFD647710F49F7EF008E18EF /* libmad.a in Frameworks */,
+				DFD647720F49F7EF008E18EF /* libmpeg2.a in Frameworks */,
+				DFD647740F49F7EF008E18EF /* libvorbisidec.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2650,6 +2662,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				DFD6476A0F49F7D2008E18EF /* libs */,
 				DF841FF50E7BA6A600F5680E /* engines */,
 				DFE470D50D81F4E700B6D1FB /* backends */,
 				DFE473950D81F4E800B6D1FB /* common */,
@@ -4467,6 +4480,17 @@
 			path = scaler;
 			sourceTree = "<group>";
 		};
+		DFD6476A0F49F7D2008E18EF /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				DFD6476B0F49F7EF008E18EF /* libFLAC.a */,
+				DFD6476C0F49F7EF008E18EF /* libmad.a */,
+				DFD6476D0F49F7EF008E18EF /* libmpeg2.a */,
+				DFD6476F0F49F7EF008E18EF /* libvorbisidec.a */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
 		DFE470C00D81F4BA00B6D1FB /* base */ = {
 			isa = PBXGroup;
 			children = (
@@ -5908,6 +5932,7 @@
 					"\"$(SRCROOT)/../../sound/softsynth/mt32\"",
 					"\"$(SRCROOT)/../../engines/cruise\"",
 					"\"$(SRCROOT)/../../engines/m4\"",
+					"\"$(SRCROOT)/lib\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
@@ -5933,6 +5958,7 @@
 					"\"$(SRCROOT)/../../sound/softsynth/mt32\"",
 					"\"$(SRCROOT)/../../engines/cruise\"",
 					"\"$(SRCROOT)/../../engines/m4\"",
+					"\"$(SRCROOT)/lib\"",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
@@ -5946,11 +5972,17 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Oystein Eftevaag";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk/System/Library/PrivateFrameworks;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					IPHONE_OFFICIAL,
+					USE_VORBIS,
+					USE_FLAC,
+					USE_TREMOR,
+					USE_MPEG2,
+					USE_MAD,
 					USE_ZLIB,
 					SCUMMVM,
 					ENABLE_SCI,
@@ -5976,7 +6008,6 @@
 					ENABLE_AGI,
 					ENABLE_SCUMM,
 					ENABLE_SCUMM_7_8,
-					IPHONE_OPENGLES,
 					CONFIG_H,
 					SCUMM_NEED_ALIGNMENT,
 					SCUMM_LITTLE_ENDIAN,
@@ -5990,9 +6021,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					include/,
 					../../engines/,
 					../../,
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
@@ -6008,10 +6041,16 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Oystein Eftevaag";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk/System/Library/PrivateFrameworks;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					IPHONE_OFFICIAL,
+					USE_VORBIS,
+					USE_FLAC,
+					USE_TREMOR,
+					USE_MPEG2,
+					USE_MAD,
 					USE_ZLIB,
 					SCUMMVM,
 					ENABLE_SCI,
@@ -6037,7 +6076,6 @@
 					ENABLE_AGI,
 					ENABLE_SCUMM,
 					ENABLE_SCUMM_7_8,
-					IPHONE_OPENGLES,
 					CONFIG_H,
 					SCUMM_NEED_ALIGNMENT,
 					SCUMM_LITTLE_ENDIAN,
@@ -6049,9 +6087,11 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				HEADER_SEARCH_PATHS = (
+					include/,
 					../../engines/,
 					../../,
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;

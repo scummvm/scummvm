@@ -87,6 +87,12 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 	return true;
 }
 
+const char* iPhone_getDocumentsDir() {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectory = [paths objectAtIndex:0];
+	return [documentsDirectory UTF8String];
+}
+
 bool getLocalMouseCoords(CGPoint *point) {
 	if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
 		point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
