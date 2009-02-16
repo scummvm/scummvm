@@ -61,7 +61,7 @@ test_file(char *filename) {
 	*dot = 0;
 
 	for (res_type = 0; res_type < sci_invalid_resource
-	        && strcasecmp(filename, sci_resource_types[res_type]); res_type++);
+	        && scumm_stricmp(filename, sci_resource_types[res_type]); res_type++);
 
 	*dot = '.';
 

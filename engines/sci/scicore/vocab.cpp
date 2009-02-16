@@ -62,7 +62,7 @@ const char *class_names[] = {"",              /* These strange names were taken 
 
 int
 _vocab_cmp_words(const void *word1, const void *word2) {
-	return strcasecmp((*((word_t **) word1))->word, (*((word_t **) word2))->word);
+	return scumm_stricmp((*((word_t **) word1))->word, (*((word_t **) word2))->word);
 }
 
 

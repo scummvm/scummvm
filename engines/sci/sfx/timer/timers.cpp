@@ -64,7 +64,7 @@ sfx_find_timer(char *name) {
 	} else {
 		int n = 0;
 		while (sfx_timers[n]
-		        && strcasecmp(sfx_timers[n]->name, name))
+		        && scumm_stricmp(sfx_timers[n]->name, name))
 			++n;
 
 		return sfx_timers[n];

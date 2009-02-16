@@ -2374,9 +2374,9 @@ c_disasm_addr(state_t *s) {
 	size += vpc.offset; /* total segment size */
 
 	for (i = 1; i < cmd_paramlength; i++) {
-		if (!strcasecmp(cmd_params[i].str, "bwt"))
+		if (!scumm_stricmp(cmd_params[i].str, "bwt"))
 			do_bwc = 1;
-		else if (!strcasecmp(cmd_params[i].str, "bc"))
+		else if (!scumm_stricmp(cmd_params[i].str, "bc"))
 			do_bytes = 1;
 		else if (toupper(cmd_params[i].str[0]) == 'C')
 			op_count = atoi(cmd_params[i].str + 1);

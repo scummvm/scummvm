@@ -608,7 +608,7 @@ _fcaseseek(const char *fname, sci_dir_t *dir)
 	name = sci_find_first(dir, buf);
 
 	while (name && !retval) {
-		if (!strcasecmp(fname, name))
+		if (!scumm_stricmp(fname, name))
 			retval = name;
 		else
 			name = sci_find_next(dir);

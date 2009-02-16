@@ -64,7 +64,7 @@ sfx_pcm_find_device(char *name) {
 	}
 
 	while (pcmout_drivers[retval] &&
-	        strcasecmp(name, pcmout_drivers[retval]->name))
+	        scumm_stricmp(name, pcmout_drivers[retval]->name))
 		retval++;
 
 	return pcmout_drivers[retval];

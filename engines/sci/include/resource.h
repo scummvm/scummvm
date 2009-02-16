@@ -78,14 +78,6 @@
 #include <unistd.h>
 #endif
 
-// FIXME: Replace strcasecmp by scumm_stricmp
-#ifdef _MSC_VER
-#	undef strcasecmp
-#	undef strncasecmp
-#	define strcasecmp _stricmp
-#	define strncasecmp _strnicmp
-#endif
-
 // FIXME: Get rid of the following (needed for O_RDONLY etc.)
 #ifdef HAVE_FCNTL_H
 #  include <fcntl.h>

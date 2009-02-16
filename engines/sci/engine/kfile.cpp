@@ -425,11 +425,7 @@ kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		GetFullPathName(path1_s, sizeof(dir_buffer) - 1, dir_buffer, NULL);
 		GetFullPathName(path2_s, sizeof(dir_buffer2) - 1, dir_buffer2, NULL);
 
-#ifdef _MSC_VER
-		return make_reg(0, !stricmp(path1_s, path2_s));
-#else
-		return make_reg(0, !strcasecmp(path1_s, path2_s));
-#endif
+		return make_reg(0, !scumm_stricmp(path1_s, path2_s));
 	}
 	break;
 

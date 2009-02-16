@@ -4207,7 +4207,7 @@ int mem_obj_string_to_enum(const char *str) {
 	int i;
 
 	for (i = 0; i <= MEM_OBJ_MAX; i++) {
-		if (!strcasecmp(mem_obj_string_names[i].name, str))
+		if (!scumm_stricmp(mem_obj_string_names[i].name, str))
 			return i;
 	}
 

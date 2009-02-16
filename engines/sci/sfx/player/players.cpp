@@ -45,7 +45,7 @@ sfx_find_player(char *name) {
 	} else {
 		int n = 0;
 		while (sfx_players[n] &&
-		        strcasecmp(sfx_players[n]->name, name))
+		        scumm_stricmp(sfx_players[n]->name, name))
 			++n;
 
 		return sfx_players[n];
