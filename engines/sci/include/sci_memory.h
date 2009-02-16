@@ -87,12 +87,6 @@
 
 /********** the memory allocation macros **********/
 
-#define INFO_MEMORY(alloc_statement, size, filename, linenum, funcname)\
-	fprintf(stderr, "ALLOC_MEM(%lu bytes) [%s (%s) : %u] "\
-		#alloc_statement "\n",\
-		(unsigned long)size, filename, funcname, linenum);
-
-
 #ifdef UNCHECKED_MALLOCS
 
 #define ALLOC_MEM(alloc_statement, size, filename, linenum, funcname)\
@@ -122,14 +116,6 @@ do {\
 		PANIC_MEMORY(size, filename, linenum, funcname, "Failed! Exiting...")\
 		BREAKPOINT()\
 \
-		/* attempt to allocate memory indefinitely\
-		do\
-		{\
-			PANIC_MEMORY(size, filename, linenum, funcname, "Failed! Trying again...");\
-			sleep(1000);\
-			alloc_statement;\
-		} while (res == NULL);\
-		*/\
 	}\
 } while (0);
 
@@ -139,37 +125,29 @@ do {\
 /********** memory allocation routines **********/
 
 extern void *
-	_SCI_MALLOC(size_t size, const char *file, int line, const char *funct);
+	sci_malloc(size_t size);
 /* Allocates the specified amount of memory.
 ** Parameters: (size_t) size: Number of bytes to allocate
-**             (char *) file: Filename this routine is called from
-**                            (use __FILE__)
-**             (int) line: Line number this routine is called from
-**                            (use __LINE__)
-**             (char *) funct: Function this routine is called from
-**                            (use __PRETTY_FUNCTION__ if available)
 ** Returns   : (void *) A pointer to the allocated memory chunk
 ** To free this string, use the sci_free() command.
 ** If the call fails, behaviour is dependent on the definition of SCI_ALLOC.
 */
 
 extern void *
-	_SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *funct);
+	sci_calloc(size_t num, size_t size);
 /* Allocates num * size bytes of zeroed-out memory.
 ** Parameters: (size_t) num: Number of elements to allocate
 **             (size_t) size: Amount of memory per element to allocate
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (void *) A pointer to the allocated memory chunk
 ** To free this string, use the sci_free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
 extern void *
-	_SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *funct);
+	sci_realloc(void *ptr, size_t size);
 /* Increases the size of an allocated memory chunk.
 ** Parameters: (void *) ptr: The original pointer
 **             (size_t) size: New size of the memory chunk
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (void *) A possibly new pointer, containing 'size'
 **             bytes of memory and everything contained in the original 'ptr'
 **             (possibly minus some trailing data if the new memory area is
@@ -179,19 +157,17 @@ extern void *
 */
 
 extern void
-	_SCI_FREE(void *ptr, const char *file, int line, const char *funct);
+	sci_free(void *ptr);
 /* Frees previously allocated memory chunks
 ** Parameters: (void *) ptr: The pointer to free
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (void)
 */
 
 extern void *
-	_SCI_MEMDUP(const void *src, size_t size, const char *file, int line, const char *funct);
+	sci_memdup(const void *src, size_t size);
 /* Duplicates a chunk of memory
 ** Parameters: (void *) src: Pointer to the data to duplicate
 **             (size_t) size: Number of bytes to duplicate
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (void *) An appropriately allocated duplicate, or NULL on error
 ** Please try to avoid data duplication unless absolutely neccessary!
 ** To free this string, use the sci_free() command.
@@ -199,10 +175,9 @@ extern void *
 */
 
 extern char *
-	_SCI_STRDUP(const char *src, const char *file, int line, const char *funct);
+	sci_strdup(const char *src);
 /* Duplicates a string.
 ** Parameters: (const char *) src: The original pointer
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (char *) a pointer to the storage location for the copied
 **             string.
 ** To free this string, use the sci_free() command.
@@ -211,12 +186,11 @@ extern char *
 
 
 extern char *
-	_SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const char *funct);
+	sci_strndup(const char *src, size_t length);
 /* Copies a string into a newly allocated memory part, up to a certain length.
 ** Parameters: (char *) src: The source string
 **             (int) length: The maximum length of the string (not counting
 **                           a trailing \0).
-**             Please see _SCI_MALLOC() for details on other parameters.
 ** Returns   : (char *) The resulting copy, allocated with sci_malloc().
 ** To free this string, use the sci_free() command.
 ** See _SCI_MALLOC() for more information if call fails.
@@ -264,84 +238,5 @@ extern void *
 ** Returns   : (void *) Newly allocated refcounted memory
 ** The number of references accounted for will be one.
 */
-
-/********** macro definitions for routines **********/
-
-#	ifdef __GNUC__
-#		define sci_malloc(size)\
-			_SCI_MALLOC(size, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_malloc(size)\
-			_SCI_MALLOC(size, __FILE__, __LINE__, "")
-#	endif
-
-#	ifdef __GNUC__
-#		define sci_calloc(num, count)\
-			_SCI_CALLOC(num, count, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_calloc(num, count)\
-			_SCI_CALLOC(num, count, __FILE__, __LINE__, "")
-#	endif
-
-
-#	ifdef __GNUC__
-#		define sci_realloc(ptr, size)\
-			_SCI_REALLOC(ptr, size, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_realloc(ptr, size)\
-			_SCI_REALLOC(ptr, size, __FILE__, __LINE__, "")
-#	endif
-
-
-#	ifdef __GNUC__
-#		define sci_free(ptr)\
-			_SCI_FREE(ptr, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_free(ptr)\
-			_SCI_FREE(ptr, __FILE__, __LINE__, "")
-#	endif
-
-
-#	ifdef __GNUC__
-#		define sci_memdup(src, size)\
-			_SCI_MEMDUP(src, size, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_memdup(src, size)\
-			_SCI_MEMDUP(src, size, __FILE__, __LINE__, "")
-#	endif
-
-
-#	ifdef __GNUC__
-#		define sci_strdup(src)\
-			_SCI_STRDUP(src, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_strdup(src)\
-			_SCI_STRDUP(src, __FILE__, __LINE__, "")
-#	endif
-
-
-#	ifdef __GNUC__
-#		define sci_strndup(src, length)\
-			_SCI_STRNDUP(src, length, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#	else
-#		define sci_strndup(src, length)\
-			_SCI_STRNDUP(src, length, __FILE__, __LINE__, "")
-#	endif
-
-
-/********** other memory/debug related routines **********/
-
-#ifdef WIN32
-extern void
-	debug_win32_memory(int dbg_setting);
-/* Sets debugging for Win32 memory.
-** Parameters: (bool) dbg_setting:
-**                      0: no debugging
-**                      1: call _CrtCheckMemory at every memory request
-**                      2: perform automatic leak checking at program exit
-**                      3: enable debug heap allocations
-*/
-#endif
-
 
 #endif	/* _SCI_MEMORY_H */

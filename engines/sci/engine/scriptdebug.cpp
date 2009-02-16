@@ -1680,154 +1680,6 @@ c_vmvars(state_t *s) {
 	return 0;
 }
 
-#ifdef HAVE_SYSV_IPC
-static int _codebug_pid = 0;
-static int _codebug_stdin[2];
-static int _codebug_stdout[2];
-static int _codebug_commands[2]; /* sends commands to intermediate process */
-
-/* Codebugging uses two child processes:
-** The first one only performs output "coloring", its child process
-** is an actual secondary freesci process
-*/
-
-#define CODEBUG_BUFSIZE 512
-static const char *_codebug_colstr = "\033[31m\033[1m";
-static const char *_codebug_uncolstr = "\033[0m";
-
-static void
-codebug_send_command(const char *cmd) {
-	if (_codebug_pid)
-		write(_codebug_commands[1], cmd, strlen(cmd));
-}
-
-static void
-_print_colored(int from_fd) {
-	char buf[CODEBUG_BUFSIZE + 64];
-	char *buf_offset;
-	int br;
-	int length_increment;
-
-	strcpy(buf, _codebug_colstr);
-	length_increment = strlen(_codebug_colstr);
-	buf_offset = buf + length_increment;
-	length_increment += strlen(_codebug_uncolstr);
-
-	do {
-		br = read(from_fd, buf_offset, CODEBUG_BUFSIZE);
-		if (br > 0) {
-			strcpy(buf_offset + br, _codebug_uncolstr);
-			/* Atomic write with colors to nullify risk of
-			** interference from fg process  */
-			write(1, buf, br + length_increment);
-		}
-	} while (br == CODEBUG_BUFSIZE);
-}
-
-void
-_codebug_kill_children() {
-	if (_codebug_pid)
-		kill(_codebug_pid, SIGTERM);
-}
-
-void
-_codebug_sighandler(int i) {
-	if (i == SIGPIPE || i == SIGTERM)
-		kill(_codebug_pid, SIGTERM);
-
-	write(1, _codebug_uncolstr, strlen(_codebug_uncolstr));
-	fprintf(stderr, "Child process failed, aborting!\n");
-	fprintf(stderr, "(if you're using the UNIX sound server, you'll probably get spurious"
-	        " warnings regarding the sound server now...)\n");
-	exit(1);
-}
-
-static void
-do_codebug(char *path, char *datapath) {
-	pipe(_codebug_stdin);
-	pipe(_codebug_stdout);
-	close(_codebug_commands[1]);
-
-	_codebug_pid = fork();
-	if (_codebug_pid) {
-		fd_set fs;
-		int max_n;
-
-		/* parent process */
-		close(_codebug_stdin[0]);
-		close(_codebug_stdout[1]);
-
-		max_n = _codebug_commands[0];
-		if (max_n < _codebug_stdout[0])
-			max_n = _codebug_stdout[0];
-
-		signal(SIGCHLD, _codebug_sighandler);
-		signal(SIGPIPE, _codebug_sighandler);
-		signal(SIGTERM, _codebug_sighandler);
-
-		while (1) { /* Until sigchild */
-			FD_ZERO(&fs);
-			FD_SET(_codebug_commands[0], &fs);
-			FD_SET(_codebug_stdout[0], &fs);
-
-			fflush(NULL);
-			select(max_n + 1, &fs, NULL, NULL, NULL);
-
-			if (FD_ISSET(_codebug_commands[0], &fs)) {
-				char buf[CODEBUG_BUFSIZE];
-				int br;
-				do {
-					br = read(_codebug_commands[0], buf, CODEBUG_BUFSIZE);
-					if (br > 0)
-						write(_codebug_stdin[1], buf, br);
-				} while (br == CODEBUG_BUFSIZE);
-			}
-
-			if (FD_ISSET(_codebug_stdout[0], &fs))
-				_print_colored(_codebug_stdout[0]);
-
-		}
-	} else {
-		/* child */
-		close(_codebug_stdin[1]);
-		close(_codebug_stdout[0]);
-
-		/* Re-associate stdin, stdout, stderr with i/o pipes */
-		dup2(_codebug_stdin[0], 0);
-		dup2(_codebug_stdout[1], 1);
-		dup2(_codebug_stdout[1], 2);
-
-		printf("Calling '%s' on data directory '%s'...\n", path, datapath);
-		execlp(path, path, "-D", "-gnull", "-Pnull", "-Onull", "-Mmt32gm",
-		       "--disable-readline", "-d", datapath, NULL);
-		perror("execlp of FreeSCI");
-		exit(1);
-	}
-}
-
-static int
-c_codebug(state_t *s) {
-	char *path = cmd_params[0].str;
-
-	if (_codebug_pid) {
-		sciprintf("Already codebugging!\n");
-		return 1;
-	}
-
-	pipe(_codebug_commands);
-	_codebug_pid = fork();
-
-	if (!_codebug_pid)
-		do_codebug(path, s->resource_dir); /* Do codebugging in a child process */
-	else {
-		close(_codebug_commands[0]);
-		sleep(1); /* Yield to the scheduler, at least a bit */
-		atexit(_codebug_kill_children);
-	}
-	return 0;
-}
-#endif
-
 static int
 c_backtrace(state_t *s) {
 	int i;
@@ -3618,15 +3470,6 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			                 "  s.1, snk.1, so.1, bpx.1");
 			con_hook_command(c_songlib_print, "songlib_print", "",
 			                 "");
-#ifdef HAVE_SYSV_IPC
-			con_hook_command(c_codebug, "codebug", "!s",
-			                 "Starts codebugging mode\n\nUSAGE\n\n"
-			                 "  codebug path/to/old/freesci\n\n"
-			                 "  A different version of FreeSCI may be\n"
-			                 "  spawned as a child process; all commands\n"
-			                 "  send to this debugger will also be sent to\n"
-			                 "  to the child process.\n\nSEE ALSO\n\n  codebugging.3");
-#endif
 			con_hook_command(c_type, "type", "!a",
 			                 "Determines the type of a value\n\n"
 			                 "SEE ALSO\n\n  addresses.3, vo.1");
@@ -3743,19 +3586,14 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 		sfx_suspend(&s->sound, 1);
 
 #ifdef WANT_CONSOLE
-#  ifndef FORCE_CONSOLE
 		if (!have_windowed) {
-#  endif
 			con_gfx_show(s->gfx_state);
 			input = con_gfx_read(s->gfx_state);
 			con_gfx_hide(s->gfx_state);
 			commandstring = input;
 			sciprintf("> %s\n", commandstring);
-#  ifndef FORCE_CONSOLE
 		} else
-#  endif
 #endif
-#ifndef FORCE_CONSOLE
 			commandstring = _debug_get_input();
 
 		/* Check if a specific destination has been given */
@@ -3764,14 +3602,6 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 		            || commandstring[0] == ':'))
 			skipfirst = 1;
 
-#endif
-#ifdef HAVE_SYSV_IPC
-		if (commandstring
-		        && commandstring[0] != '.') {
-			codebug_send_command(commandstring + skipfirst);
-			codebug_send_command("\n");
-		}
-#endif
 		if (commandstring
 		        && commandstring[0] != ':')
 			con_parse(s, commandstring + skipfirst);

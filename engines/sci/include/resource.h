@@ -58,7 +58,6 @@
 
 //TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
 #define HAVE_MEMCHR
-#define HAVE_RMDIR
 #define HAVE_FCNTL_H
 #ifndef _MSC_VER
 #define HAVE_UNISTD_H
@@ -153,8 +152,6 @@ putInt16(byte* dest, int src) {
 ** Parameters: (byte *) dest: The position to write to
 **             (int) src: value to write
 */
-
-#define SCI_MEMTEST memtest(__FILE__, __LINE__)
 
 /*-- queues --*/
 
@@ -349,16 +346,7 @@ whether a string is really a string or an array. */
 int is_print_str(char *str);
 
 #  define sci_unlink unlink
-
-#ifdef HAVE_RMDIR
 #  define sci_rmdir rmdir
-#else  /* !HAVE_RMDIR */
-#  ifdef WIN32
-#    define sci_rmdir _rmdir
-#  else
-#    error "Please provide an int sci_rmdir(const char *) for removing directories"
-#  endif
-#endif /* !HAVE_RMDIR */
 
 #ifndef HAVE_FFS
 int sci_ffs(int _mask);

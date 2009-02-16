@@ -184,19 +184,6 @@ typedef mem_obj_t *mem_obj_ptr;
 #include <stdarg.h> /* We need va_lists */
 #include "sci/include/sci_memory.h"
 
-#ifdef CFSML_DEBUG_MALLOC
-/*
-#define free(p)        dbg_sci_free(p)
-#define malloc(s)      dbg_sci_malloc(s)
-#define calloc(n, s)   dbg_sci_calloc(n, s)
-#define realloc(p, s)  dbg_sci_realloc(p, s)
-*/
-#define free        dbg_sci_free
-#define malloc      dbg_sci_malloc
-#define calloc      dbg_sci_calloc
-#define realloc     dbg_sci_realloc
-#endif
-
 static void
 _cfsml_error(const char *fmt, ...)
 {
@@ -225,28 +212,13 @@ _cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs
 {
     if (!refs)
 	return;
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
 
     _cfsml_free_pointer_references_recursively(refs->next, free_pointers);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-
-    fprintf(stderr,"Freeing ptrref %p [%p] %s\n", refs->ptr, refs, free_pointers?
-	    "ALL": "cleanup only");
-    #endif
 
     if (free_pointers)
 	free(refs->ptr);
 
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
     free(refs);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
 }
 
 static void
@@ -266,10 +238,6 @@ _cfsml_get_current_refpointer()
 static void _cfsml_register_pointer(void *ptr)
 {
     struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof (struct _cfsml_pointer_refstruct));
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    fprintf(stderr,"Registering ptrref %p [%p]\n", ptr, newref);
-    #endif
     newref->next = *_cfsml_pointer_references_current;
     newref->ptr = ptr;
     *_cfsml_pointer_references_current = newref;
@@ -4859,14 +4827,12 @@ gamestate_save(state_t *s, char *dirname) {
 	/* Calculate the time spent with this game */
 	s->game_time = time(NULL) - s->game_start_time.tv_sec;
 
-SCI_MEMTEST;
 #line 878 "savegame.cfsml"
 /* Auto-generated CFSML data writer code */
   _cfsml_write_state_t(fh, s);
   fprintf(fh, "\n");
 /* End of auto-generated CFSML data writer code */
 #line 730 "savegame.cfsml"
-SCI_MEMTEST;
 
 	fclose(fh);
 

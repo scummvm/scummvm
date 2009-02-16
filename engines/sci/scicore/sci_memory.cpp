@@ -53,34 +53,34 @@
 
 
 void *
-_SCI_MALLOC(size_t size, const char *file, int line, const char *funct) {
+sci_malloc(size_t size) {
 	void *res;
-	ALLOC_MEM((res = malloc(size)), size, file, line, funct)
+	ALLOC_MEM((res = malloc(size)), size, __FILE__, __LINE__, "")
 	return res;
 }
 
 
 void *
-_SCI_CALLOC(size_t num, size_t size, const char *file, int line, const char *funct) {
+sci_calloc(size_t num, size_t size) {
 	void *res;
-	ALLOC_MEM((res = calloc(num, size)), num * size, file, line, funct)
+	ALLOC_MEM((res = calloc(num, size)), num * size, __FILE__, __LINE__, "")
 	return res;
 }
 
 
 void *
-_SCI_REALLOC(void *ptr, size_t size, const char *file, int line, const char *funct) {
+sci_realloc(void *ptr, size_t size) {
 	void *res;
-	ALLOC_MEM((res = realloc(ptr, size)), size, file, line, funct)
+	ALLOC_MEM((res = realloc(ptr, size)), size, __FILE__, __LINE__, "")
 	return res;
 }
 
 
 void
-_SCI_FREE(void *ptr, const char *file, int line, const char *funct) {
+sci_free(void *ptr) {
 	if (!ptr) {
 		fprintf(stderr, "_SCI_FREE() [%s (%s) : %u]\n",
-		        file, funct, line);
+		        __FILE__, "", __LINE__);
 		fprintf(stderr, " attempt to free NULL pointer\n");
 		BREAKPOINT();
 	}
@@ -89,46 +89,46 @@ _SCI_FREE(void *ptr, const char *file, int line, const char *funct) {
 
 
 void *
-_SCI_MEMDUP(const void *ptr, size_t size, const char *file, int line, const char *funct) {
+sci_memdup(const void *ptr, size_t size) {
 	void *res;
 	if (!ptr) {
 		fprintf(stderr, "_SCI_MEMDUP() [%s (%s) : %u]\n",
-		        file, funct, line);
+		        __FILE__, "", __LINE__);
 		fprintf(stderr, " attempt to memdup NULL pointer\n");
 		BREAKPOINT();
 	}
-	ALLOC_MEM((res = malloc(size)), size, file, line, funct)
+	ALLOC_MEM((res = malloc(size)), size, __FILE__, __LINE__, "")
 	memcpy(res, ptr, size);
 	return res;
 }
 
 
 char *
-_SCI_STRDUP(const char *src, const char *file, int line, const char *funct) {
+sci_strdup(const char *src) {
 	void *res;
 	if (!src) {
 		fprintf(stderr, "_SCI_STRDUP() [%s (%s) : %u]\n",
-		        file, funct, line);
+		        __FILE__, "", __LINE__);
 		fprintf(stderr, " attempt to strdup NULL pointer\n");
 		BREAKPOINT();
 	}
-	ALLOC_MEM((res = strdup(src)), strlen(src), file, line, funct)
+	ALLOC_MEM((res = strdup(src)), strlen(src), __FILE__, __LINE__, "")
 	return (char*)res;
 }
 
 
 char *
-_SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const char *funct) {
+sci_strndup(const char *src, size_t length) {
 	void *res;
 	char *strres;
 	size_t rlen = (int)MIN(strlen(src), length) + 1;
 	if (!src) {
 		fprintf(stderr, "_SCI_STRNDUP() [%s (%s) : %u]\n",
-		        file, funct, line);
+		        __FILE__, "", __LINE__);
 		fprintf(stderr, " attempt to strndup NULL pointer\n");
 		BREAKPOINT();
 	}
-	ALLOC_MEM((res = malloc(rlen)), rlen, file, line, funct)
+	ALLOC_MEM((res = malloc(rlen)), rlen, __FILE__, __LINE__, "")
 
 	strres = (char*)res;
 	strncpy(strres, src, rlen);
@@ -136,54 +136,6 @@ _SCI_STRNDUP(const char *src, size_t length, const char *file, int line, const c
 
 	return strres;
 }
-
-
-/********** Win32 functions **********/
-
-#ifdef _MSC_VER
-void
-debug_win32_memory(int dbg_setting) {
-#if defined(NDEBUG)
-	fprintf(stderr,
-	        "WARNING: Cannot debug Win32 memory in release mode.\n");
-#elif defined(SATISFY_PURIFY)
-	fprintf(stderr,
-	        "WARNING: Cannot debug Win32 memory in this mode.\n");
-#else
-
-	int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-
-	if (dbg_setting > 0)
-		tmpFlag |= _CRTDBG_CHECK_ALWAYS_DF;
-	/* call _CrtCheckMemory at every request */
-
-	if (dbg_setting > 1)
-		tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
-	/* perform automatic leak checking at program exit */
-
-	if (dbg_setting > 2)
-		tmpFlag |= _CRTDBG_DELAY_FREE_MEM_DF;
-	/* enable debug heap allocations */
-
-	if (dbg_setting > 3) {
-		PANIC((stderr, "Invalid value for debug_win32_memory!\n"));
-		BREAKPOINT();
-	}
-
-	if (dbg_setting <= 0) {
-		/* turn off above */
-		tmpFlag &= ~_CRTDBG_CHECK_ALWAYS_DF;
-		tmpFlag &= ~_CRTDBG_DELAY_FREE_MEM_DF;
-		tmpFlag &= ~_CRTDBG_LEAK_CHECK_DF;
-	}
-
-	/* set new state for flag */
-	_CrtSetDbgFlag(tmpFlag);
-#endif
-}
-#endif
-
-
 
 /*-------- Refcounting ----------*/
 
