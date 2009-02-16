@@ -203,6 +203,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{}},
 
+	// Freddy Pharkas - German (from Tobis87)
+	{{"freddypharkas", "", {
+		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
+		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
 	// Freddy Pharkas - Spanish CD
 	{{"freddypharkas", "CD", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
@@ -218,6 +225,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{}},
+
+	// Gabriel Knight - German CD (from Tobis87)
+	{{"gk1", "CD", {
+		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
 	// Gabriel Knight - Spanish CD
@@ -378,6 +392,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{}},
 
+	// Laura Bow - German (from Tobis87)
+	{{"laurabow", "", {
+		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 108032},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 354680},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 361815},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 339714},
+		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
+		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
+		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
 	// Laura Bow 2 - Spanish CD
 	{{"laurabow2", "CD", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
@@ -456,6 +483,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// Larry 3 - German (from Tobis87)
+	{{"lsl3", "", {
+		{"resource.map", 0, "4a77c8382e48a90c4168d3c144fc1b8f", 6480},
+		{"resource.001", 0, "3827a9b17b926e12dcc336860f50612a", 460488},
+		{"resource.002", 0, "3827a9b17b926e12dcc336860f50612a", 672403},
+		{"resource.003", 0, "3827a9b17b926e12dcc336860f50612a", 587036},
+		{"resource.004", 0, "3827a9b17b926e12dcc336860f50612a", 691932},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
 	// Larry 3 - English Amiga (from www.back2roots.org)
 	{{"lsl3", "", {
 		{"resource.map", 0, "4a6da6322ce189431b5ffbac992bad3a", 5328},
@@ -480,6 +517,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1024810},
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 1030656},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{}},
+
+	// Larry 5 - German (from Tobis87)
+	{{"lsl5", "", {
+		{"resource.map", 0, "c97297aa76d4dd2ed144c7b7769e2caf", 6867},
+		{"resource.000", 0, "4c00c14b8181ad47076a51d86097d97e", 759095},
+		{"resource.001", 0, "245c44f8ccd796732e61857e67b30079", 918742},
+		{"resource.002", 0, "e86aeb27711f4a673e06ec32cfc84125", 947382},
+		{"resource.003", 0, "74edc89d8c1cb346ca346081b927e4c6", 1006884},
+		{"resource.004", 0, "999f407c9f38f937d4b8c4230ff5bb38", 1023776},
+		{"resource.005", 0, "0cc8d35a744031c772ca7cd21ae95273", 959342},
+		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1021774},
+		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 993408},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
 	// Larry 5 - English Amiga (from www.back2roots.org)
@@ -516,6 +567,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// Larry 6 - German (from Tobis87)
+	{{"lsl6", "", {
+		{"resource.map", 0, "badfdf446ffed569a310d2c63a249421", 8896},
+		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18534274},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
 	// Larry 6 - Spanish
 	{{"lsl6", "", {
 		{"resource.map", 0, "633bf8f42170b6271019917c8009989b", 6943},
@@ -528,6 +586,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
 		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{}},
+
+	// Larry 7 - German (from Tobis87)
+	{{"lsl7", "", {
+		{"resmap.000", 0, "c11e6bfcfc2f2d05da47e5a7df3e9b1a", 8188},
+		{"ressci.000", 0, "a8c6817bb94f332ff498a71c8b47f893", 66971724},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
 	// Larry 7 - Spanish
@@ -728,6 +793,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{}},
 
+	// Shivers - German (from Tobis87)
+	{{"shivers", "", {
+		{"resmap.000", 0, "f483d0a1f78334c18052e92785c3086e", 46537},
+		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
+		{}},
+
 	// Space Quest 1 VGA Remake - English
 	{{"sq1sci", "VGA Remake", {
 		{"resource.map", 0, "38a74d8f555a2da9ca4f21d14e3c1d33", 5913},
@@ -772,6 +844,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// Space Quest 3 - German (from Tobis87)
+	{{"sq3", "", {
+		{"resource.map", 0, "4965c78b5eff50d5e4148ce114594ba8", 7584},
+		{"resource.001", 0, "9107c2aa5398e28b5c5406df13491f85", 117869},
+		{"resource.002", 0, "9107c2aa5398e28b5c5406df13491f85", 336101},
+		{"resource.003", 0, "9107c2aa5398e28b5c5406df13491f85", 350391},
+		{"resource.004", 0, "9107c2aa5398e28b5c5406df13491f85", 349750},
+		{"resource.005", 0, "9107c2aa5398e28b5c5406df13491f85", 322107},
+		{"resource.006", 0, "9107c2aa5398e28b5c5406df13491f85", 320643},
+		{"resource.007", 0, "9107c2aa5398e28b5c5406df13491f85", 344287},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	{{"sq3", "", {
 		{"resource.map", 0, "bad41385acde6d677a8d55a7b20437e3", 5868},
@@ -787,6 +872,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{}},
+
+	// Space Quest 4 - German (from Tobis87)
+	{{"sq4", "", {
+		{"resource.map", 0, "71715e775e3791178d606cfe6c7e1fb9", 6339},
+		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 206032},
+		{"resource.001", 0, "e924cf86a72ada7736043f045cce345f", 1065442},
+		{"resource.002", 0, "e18d731c3fba51333a7f402e454714a5", 858402},
+		{"resource.003", 0, "7c2e7508af1a6af877d921e476f70b5e", 1172738},
+		{"resource.004", 0, "b8d6efbd3235329bfe844c794097b2c9", 1064761},
+		{"resource.005", 0, "47ee647b5b12232d27e63cc627c25899", 1156765},
+		{"resource.006", 0, "dfb023e4e2a1e7a00fa18f9ede72a91b", 924059},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
 	// Space Quest 4 - English Amiga
@@ -849,6 +947,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{}},
+
+	// Space Quest 6 - German (from Tobis87)
+	{{"sq6", "", {
+		{"resource.map", 0, "664d797415484f85c90b1b45aedc7686", 10534},
+		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
 	// The Island of Dr. Brain - English
