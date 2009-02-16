@@ -30,6 +30,7 @@ chdir("../../../");
 	"mmp/scummvm_touche.mmp", 
 	"mmp/scummvm_tinsel.mmp", 
 	"mmp/scummvm_tucker.mmp", 
+	"mmp/scummvm_sci.mmp", 
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
@@ -129,6 +130,7 @@ ParseModule("_m4",	"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);
 ParseModule("_groovie",	"groovie",	\@section_empty);
 ParseModule("_tucker",	"tucker",	\@section_empty);
+ParseModule("_sci",	"sci",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P
