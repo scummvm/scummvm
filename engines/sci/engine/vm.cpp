@@ -30,7 +30,7 @@
 #include "sci/include/versions.h"
 #include "sci/include/kdebug.h"
 #include "sci/engine/kernel_types.h"
-#include "sci/include/seg_manager.h"
+#include "sci/engine/seg_manager.h"
 #include "sci/engine/gc.h"
 #include "sci/include/sfx_player.h"
 

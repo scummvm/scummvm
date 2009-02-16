@@ -25,7 +25,7 @@
 
 ***************************************************************************/
 
-#include "sci/include/seg_manager.h"
+#include "sci/engine/seg_manager.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/versions.h"
 #include "sci/include/engine.h"
