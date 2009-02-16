@@ -53,8 +53,6 @@ namespace Common {
  */
 class ConfigFile {
 public:
-	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
-
 	struct KeyValue {
 		String key;
 		String value;
@@ -120,7 +118,6 @@ public:
 	const SectionList getSections() const { return _sections; }
 	const SectionKeyList getKeys(const String &section) const;
 
-	void listSections(StringSet &set);
 	void listKeyValues(StringMap &kv);
 
 private:
