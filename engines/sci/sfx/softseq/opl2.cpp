@@ -48,7 +48,7 @@
 #include "../adlib.h"
 #include <math.h>
 
-#include "fmopl.h"
+#include "sound/fmopl.h"
 
 #ifdef __DC__
 #define SAMPLE_RATE 22050
