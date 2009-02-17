@@ -1096,6 +1096,10 @@ drawTriangleFast(int x1, int y1, int size, bool inverted, PixelType color, Vecto
 
 	PixelType *ptr_right = 0, *ptr_left = 0;
 
+	if (x1 + size > Base::_activeSurface->w || x1 < 0 ||
+		y1 + size > Base::_activeSurface->h || y1 < 0)
+		return;
+
 	if (inverted) {
 		ptr_left = (PixelType *)_activeSurface->getBasePtr(x1, y1);
 		ptr_right = (PixelType *)_activeSurface->getBasePtr(x1 + size, y1);
