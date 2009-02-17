@@ -341,6 +341,12 @@ scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer) {
 
 static int
 scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, byte blue) {
+	if (index < 0 || index > 255)
+	{
+		GFXERROR("Attempt to set invalid palette entry %d\n", index);
+		return GFX_ERROR;
+	}
+
 	byte color[] = {red, green, blue, 255};
 	g_system->setPalette(color, index, 1);
 	return GFX_OK;
