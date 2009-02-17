@@ -548,13 +548,6 @@ sci_sched_yield() {
 	thd_pass();
 }
 
-#elif defined (__BEOS__)
-
-void
-sci_sched_yield() {
-	snooze(0);
-}
-
 #elif defined (WIN32)
 
 void
