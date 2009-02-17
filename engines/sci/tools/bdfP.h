@@ -23,7 +23,7 @@
 #define _h_bdfP
 
 /*
- * $Id: bdfP.h 1284 2004-04-02 07:42:44Z jameson $
+ * $Id$
  */
 
 #include "bdf.h"

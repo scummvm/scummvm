@@ -23,7 +23,7 @@
 #define _h_bdf
 
 /*
- * $Id: bdf.h 1284 2004-04-02 07:42:44Z jameson $
+ * $Id$
  */
 
 #include <stdio.h>
