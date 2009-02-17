@@ -208,134 +208,6 @@ detect_versions(sci_version_t *version, int *res_version) {
 		sciprintf("Using resource version %d\n", *res_version);
 }
 
-int
-main_() {
-	resource_mgr_t *resmgr;
-
-	init_console(); /* So we can get any output */
-
-	script_debug_flag = 0;
-
-	sci_version_t version;
-	int res_version;
-
-	// FIXME. An evil hack until File class will be used properly
-	chdir(ConfMan.get("path").c_str());
-
-	detect_versions(&version, &res_version);
-
-	char resource_dir[MAXPATHLEN+1] = "";
-	getcwd(resource_dir, MAXPATHLEN); /* Store resource directory */
-
-	resmgr = scir_new_resource_manager(resource_dir, res_version, 1, 256 * 1024);
-
-	if (!resmgr) {
-		printf("No resources found in '%s'.\nAborting...\n",
-		       resource_dir);
-		exit(1);
-	}
-
-	script_adjust_opcode_formats(resmgr->sci_version);
-
-#if 0
-	printf("Mapping instruments to General Midi\n");
-
-	map_MIDI_instruments(resmgr);
-#endif
-
-	sciprintf("Imported FreeSCI, version "VERSION"\n");
-
-	state_t* gamestate = (state_t *) sci_malloc(sizeof(state_t));
-	memset(gamestate, 0, sizeof(state_t));
-	gamestate->resmgr = resmgr;
-	gamestate->gfx_state = NULL;
-
-	if (init_gamestate(gamestate, version))
-		return 1;
-
-
-	if (game_init(gamestate)) { /* Initialize */
-		fprintf(stderr, "Game initialization failed: Aborting...\n");
-		return 1;
-	}
-
-	/* Set the savegame dir */
-	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
-
-	// Originally, work_dir tried to be ~/.freesci/game_name
-	gamestate->work_dir = sci_strdup(ConfMan.get("savepath").c_str());
-	gamestate->resource_dir = resource_dir;
-	gamestate->port_serial = 0;
-	gamestate->have_mouse_flag = 1;
-	gamestate->animation_delay = 5;
-	gamestate->animation_granularity = 4;
-	gfx_crossblit_alpha_threshold = 0x90;
-
-	gfx_state_t gfx_state;
-	gfx_state.driver = &gfx_driver_scummvm;
-	gfx_state.version = resmgr->sci_version;
-	gamestate->gfx_state = &gfx_state;
-
-	/**** Default config: */
-	gfx_options_t gfx_options;
-	gfx_options.workarounds = 0;
-	gfx_options.buffer_pics_nr = 0;
-	gfx_options.correct_rendering = 1;
-	gfx_options.pic0_unscaled = 1;
-	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_D256;
-	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;
-	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
-	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
-	gfx_options.cursor_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.view_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.pic_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
-	gfx_options.pic0_antialiasing = GFXR_ANTIALIASING_NONE;
-	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
-	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
-		gfx_options.res_conf.assign[i] = NULL;
-		gfx_options.res_conf.mod[i] = NULL;
-	}
-	/**** Default config ends */
-
-	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
-		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
-		return 1;
-	}
-
-	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
-		fprintf(stderr, "Game initialization failed: Error in GFX subsystem. Aborting...\n");
-		return 1;
-	}
-
-	if (game_init_sound(gamestate, 0)) {
-		fprintf(stderr, "Game initialization failed: Error in sound subsystem. Aborting...\n");
-		return 1;
-	}
-
-	printf("Emulating SCI version %d.%03d.%03d\n",
-	       SCI_VERSION_MAJOR(gamestate->version),
-	       SCI_VERSION_MINOR(gamestate->version),
-	       SCI_VERSION_PATCHLEVEL(gamestate->version));
-
-	game_run(&gamestate); /* Run the game */
-
-	game_exit(gamestate);
-	script_free_engine(gamestate); /* Uninitialize game state */
-	script_free_breakpoints(gamestate);
-	free(gamestate->work_dir);
-	free(gamestate);
-
-	scir_free_resource_manager(resmgr);
-
-	close_console_file();
-
-	gfxop_exit(&gfx_state);
-
-	return 0;
-}
-
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 		: Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -389,7 +261,130 @@ Common::Error SciEngine::go() {
 		_system->delayMillis(10);
 	} */
 
-	main_();
+	// FIXME/TODO: Move some of the stuff below to init()
+	resource_mgr_t *resmgr;
+
+	init_console(); /* So we can get any output */
+
+	script_debug_flag = 0;
+
+	sci_version_t version;
+	int res_version;
+
+	// FIXME. An evil hack until File class will be used properly
+	chdir(ConfMan.get("path").c_str());
+
+	detect_versions(&version, &res_version);
+
+	char resource_dir[MAXPATHLEN+1] = "";
+	getcwd(resource_dir, MAXPATHLEN); /* Store resource directory */
+
+	resmgr = scir_new_resource_manager(resource_dir, res_version, 1, 256 * 1024);
+
+	if (!resmgr) {
+		printf("No resources found in '%s'.\nAborting...\n",
+		       resource_dir);
+		return Common::kNoGameDataFoundError;
+	}
+
+	script_adjust_opcode_formats(resmgr->sci_version);
+
+#if 0
+	printf("Mapping instruments to General Midi\n");
+
+	map_MIDI_instruments(resmgr);
+#endif
+
+	sciprintf("Imported FreeSCI, version "VERSION"\n");
+
+	state_t* gamestate = (state_t *) sci_malloc(sizeof(state_t));
+	memset(gamestate, 0, sizeof(state_t));
+	gamestate->resmgr = resmgr;
+	gamestate->gfx_state = NULL;
+
+	if (init_gamestate(gamestate, version))
+		return Common::kUnknownError;
+
+
+	if (game_init(gamestate)) { /* Initialize */
+		fprintf(stderr, "Game initialization failed: Aborting...\n");
+		// TODO: Add an "init failed" error?
+		return Common::kUnknownError;
+	}
+
+	/* Set the savegame dir */
+	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
+
+	// Originally, work_dir tried to be ~/.freesci/game_name
+	gamestate->work_dir = sci_strdup(ConfMan.get("savepath").c_str());
+	gamestate->resource_dir = resource_dir;
+	gamestate->port_serial = 0;
+	gamestate->have_mouse_flag = 1;
+	gamestate->animation_delay = 5;
+	gamestate->animation_granularity = 4;
+	gfx_crossblit_alpha_threshold = 0x90;
+
+	gfx_state_t gfx_state;
+	gfx_state.driver = &gfx_driver_scummvm;
+	gfx_state.version = resmgr->sci_version;
+	gamestate->gfx_state = &gfx_state;
+
+	/**** Default config: */
+	gfx_options_t gfx_options;
+	gfx_options.workarounds = 0;
+	gfx_options.buffer_pics_nr = 0;
+	gfx_options.correct_rendering = 1;
+	gfx_options.pic0_unscaled = 1;
+	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_D256;
+	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;
+	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
+	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
+	gfx_options.cursor_xlate_filter = GFX_XLATE_FILTER_NONE;
+	gfx_options.view_xlate_filter = GFX_XLATE_FILTER_NONE;
+	gfx_options.pic_xlate_filter = GFX_XLATE_FILTER_NONE;
+	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
+	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
+	gfx_options.pic0_antialiasing = GFXR_ANTIALIASING_NONE;
+	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
+	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
+		gfx_options.res_conf.assign[i] = NULL;
+		gfx_options.res_conf.mod[i] = NULL;
+	}
+	/**** Default config ends */
+
+	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
+		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
+		return Common::kUnknownError;
+	}
+
+	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
+		fprintf(stderr, "Game initialization failed: Error in GFX subsystem. Aborting...\n");
+		return Common::kUnknownError;
+	}
+
+	if (game_init_sound(gamestate, 0)) {
+		fprintf(stderr, "Game initialization failed: Error in sound subsystem. Aborting...\n");
+		return Common::kUnknownError;
+	}
+
+	printf("Emulating SCI version %d.%03d.%03d\n",
+	       SCI_VERSION_MAJOR(gamestate->version),
+	       SCI_VERSION_MINOR(gamestate->version),
+	       SCI_VERSION_PATCHLEVEL(gamestate->version));
+
+	game_run(&gamestate); /* Run the game */
+
+	game_exit(gamestate);
+	script_free_engine(gamestate); /* Uninitialize game state */
+	script_free_breakpoints(gamestate);
+	free(gamestate->work_dir);
+	free(gamestate);
+
+	scir_free_resource_manager(resmgr);
+
+	close_console_file();
+
+	gfxop_exit(&gfx_state);
 
 	return Common::kNoError;
 }
