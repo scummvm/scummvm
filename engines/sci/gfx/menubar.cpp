@@ -35,39 +35,6 @@
 
 #define SIZE_INF 32767
 
-/*
-static int __active = 0;
-
-inline void*
-__my_malloc(long size, char *function, int line)
-{
-  void *retval = sci_malloc(size);
-  __active++;
-  fprintf(stderr,"[%d] line %d, %s: malloc(%d) -> %p\n", __active, line, function, size, retval);
-  return retval;
-}
-
-inline void*
-__my_realloc(void *origin, long size, char *function, int line)
-{
-  void *retval = sci_realloc(origin, size);
-  fprintf(stderr,"line %d, %s: realloc(%p, %d) -> %p\n", line, function, origin, size, retval);
-  return retval;
-}
-
-inline void
-__my_free(void *origin, char *function, int line)
-{
-  free(origin);
-  fprintf(stderr,"[%d] line %d, %s: free(%p)\n", __active, line, function, origin);
-  __active--;
-}
-
-#define malloc(x) __my_malloc(x, __PRETTY_FUNCTION__, __LINE__)
-#define realloc(x,y) __my_realloc(x,y, __PRETTY_FUNCTION__, __LINE__)
-#define free(x) __my_free(x, __PRETTY_FUNCTION__, __LINE__)
-*/
-
 menubar_t *
 menubar_new() {
 	menubar_t *tmp = (menubar_t*)sci_malloc(sizeof(menubar_t));
