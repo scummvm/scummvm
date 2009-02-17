@@ -25,22 +25,9 @@
 
 /* Script debugger functionality. Absolutely not threadsafe. */
 
-#include "sci/engine/gc.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/engine.h"
-#include "sci/include/console.h"
-#include "sci/include/kdebug.h"
-#include "sci/include/vocabulary.h"
-#include "sci/engine/kernel_types.h"
-#include "sci/include/sci_midi.h"
-#include "sci/include/sci_widgets.h"
-
-#include "common/util.h"
-
 #ifdef WIN32
 #	include <windows.h>
 #	include <mmsystem.h>
-#	include <io.h>
 #	ifdef sleep
 #		undef sleep
 #	endif
@@ -58,6 +45,18 @@
 		} \
 	} while (0);
 #endif
+
+#include "sci/engine/gc.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/include/console.h"
+#include "sci/include/kdebug.h"
+#include "sci/include/vocabulary.h"
+#include "sci/engine/kernel_types.h"
+#include "sci/include/sci_midi.h"
+#include "sci/include/sci_widgets.h"
+
+#include "common/util.h"
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>

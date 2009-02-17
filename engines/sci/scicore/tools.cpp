@@ -24,19 +24,6 @@
  */
 
 
-#include "common/scummsys.h"
-#include "common/str.h"
-
-#ifdef UNIX
-#define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
-#include <fnmatch.h>
-#endif
-
-#include "sci/include/engine.h"
-
-#ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-#endif
 #ifdef _MSC_VER
 #  include <sys/timeb.h>
 #  include <windows.h>
@@ -48,8 +35,6 @@
 #  include <windows.h>
 #  include <errno.h>
 #  include <mmsystem.h>
-
-void usleep(long usec);
 
 #	ifdef sleep
 #		undef sleep
@@ -67,6 +52,20 @@ void usleep(long usec);
 				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
 		} \
 	} while (0);
+#endif
+
+#include "common/scummsys.h"
+#include "common/str.h"
+
+#ifdef UNIX
+#define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
+#include <fnmatch.h>
+#endif
+
+#include "sci/include/engine.h"
+
+#ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
 #endif
 
 #ifdef __DC__

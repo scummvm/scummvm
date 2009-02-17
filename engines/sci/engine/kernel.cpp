@@ -23,14 +23,15 @@
  *
  */
 
-#include "sci/engine/gc.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/engine.h"
 #ifdef WIN32
 #	include <windows.h>
 #	include <mmsystem.h>
+#	undef ARRAYSIZE
 #endif
 
+#include "sci/engine/gc.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
 #include "sci/include/gfx_operations.h"
 #include "sci/engine/kernel_types.h"
 

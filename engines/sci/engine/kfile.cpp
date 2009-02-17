@@ -23,20 +23,17 @@
  *
  */
 
+#ifdef WIN32
+#  include <windows.h>
+#elif defined (__DC__)
+#  include <dc.h>
+#endif
+
 #include "common/str.h"
 
 #include "sci/include/engine.h"
 
 #include <errno.h>
-
-#ifdef WIN32
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#elif defined (__DC__)
-#  include <dc.h>
-#endif
 
 #ifndef O_BINARY
 #define O_BINARY 0
