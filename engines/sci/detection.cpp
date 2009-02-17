@@ -1060,33 +1060,6 @@ bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	*engine = new SciEngine(syst, desc);
 
 	return true;
-
-	/*
-	const char *gameid = ConfMan.get("gameid").c_str();
-	
-	if (gd == 0) {
-		// maybe add non md5 based detection again?
-		return kNoGameDataFoundError;
-	}
-
-	Kyra::GameFlags flags = gd->flags;
-	
-	flags.lang = gd->desc.language;
-	flags.platform = gd->desc.platform;
-
-	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
-	if (platform != Common::kPlatformUnknown) {
-		flags.platform = platform;
-	}
-
-	if (flags.lang == Common::UNK_LANG) {
-		Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-		if (lang != Common::UNK_LANG) {
-			flags.lang = lang;
-		} else {
-			flags.lang = Common::EN_ANY;
-		}
-	}*/
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCI)
