@@ -230,14 +230,6 @@ gfxop_set_clip_zone(gfx_state_t *state, rect_t zone);
 ** Returns   : (int) GFX_OK
 */
 
-int
-gfxop_have_mouse(gfx_state_t *state);
-/* Determines whether a pointing device is attached
-** Parameters: (gfx_state_t *) state: The state to inspect
-** Returns   : (int) zero iff no pointing device is attached
-*/
-
-
 /******************************/
 /* Generic drawing operations */
 /******************************/

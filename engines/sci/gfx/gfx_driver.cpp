@@ -172,27 +172,10 @@ scummvm_draw_line(struct _gfx_driver *drv, Common::Point start, Common::Point en
 	if (color.mask & GFX_MASK_VISUAL) {
 		Common::Point nstart, nend;
 
-		nstart.x = start.x;
-		nstart.y = start.y;
-		nend.x = end.x;
-		nend.y = end.y;
-
-		if (nstart.x < 0)
-			nstart.x = 0;
-		if (nend.x < 0)
-			nstart.x = 0;
-		if (nstart.y < 0)
-			nstart.y = 0;
-		if (nend.y < 0)
-			nend.y = 0;
-		if (nstart.x > xsize)
-			nstart.x = xsize;
-		if (nend.x >= xsize)
-			nend.x = xsize - 1;
-		if (nstart.y > ysize)
-			nstart.y = ysize;
-		if (nend.y >= ysize)
-			nend.y = ysize - 1;
+		nstart.x = CLIP<int16>(start.x, 0, xsize);
+		nstart.y = CLIP<int16>(start.y, 0, ysize);
+		nend.x = CLIP<int16>(end.x, 0, xsize - 1);
+		nend.y = CLIP<int16>(end.y, 0, ysize - 1);
 
 		lineColor2(S->visual[1], (int16)nstart.x, (int16)nstart.y,
 		           (int16)nend.x, (int16)nend.y, scolor);
@@ -544,7 +527,7 @@ gfx_driver_scummvm = {
 	SCI_GFX_DRIVER_VERSION,
 	NULL,
 	0, 0,
-	GFX_CAPABILITY_MOUSE_POINTER | GFX_CAPABILITY_COLOR_MOUSE_POINTER | GFX_CAPABILITY_MOUSE_SUPPORT | GFX_CAPABILITY_FINE_LINES | GFX_CAPABILITY_WINDOWED,
+	0,		// flags here
 	0,
 	NULL,
 	scummvm_init_specific,

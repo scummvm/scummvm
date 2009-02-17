@@ -3148,34 +3148,8 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
              seg_id_t *segids, reg_t **variables,
              reg_t **variables_base, int *variables_nr,
              int bp) {
-	int have_windowed = s->gfx_state->driver->capabilities & GFX_CAPABILITY_WINDOWED;
 	static int last_step;
 	/* Do we support a separate console? */
-
-#ifndef WANT_CONSOLE
-	int missing_tty = !isatty(0) || !isatty(1);
-
-	if (!have_windowed || missing_tty) {
-		script_debug_flag = sci_debug_flags = 0;
-
-		fprintf(stderr, "On-screen console disabled and ");
-		if (!have_windowed)
-			fprintf(stderr, "driver claims to be running fullscreen.\n");
-		else
-			fprintf(stderr, "no terminal found.\n");
-
-		if (last_step == script_step_counter)
-			fprintf(stderr, "This error seems to be unrecoverable.\n");
-		if (script_error_flag || script_step_counter == last_step) {
-			fprintf(stderr, "Aborting...\n");
-			exit(1);
-		} else
-			fprintf(stderr, "Continuing...\n");
-		last_step = script_step_counter;
-		return;
-	}
-#endif
-
 
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
 		int old_debugstate = _debugstate_valid;

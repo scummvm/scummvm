@@ -707,12 +707,6 @@ gfxop_exit(gfx_state_t *state) {
 }
 
 
-int
-gfxop_have_mouse(gfx_state_t *state) {
-	return state->driver->capabilities & GFX_CAPABILITY_MOUSE_SUPPORT;
-}
-
-
 static int
 _gfxop_scan_one_bitmask(gfx_pixmap_t *pixmap, rect_t zone) {
 	int retval = 0;
@@ -1117,10 +1111,6 @@ _gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Common::Point 
 			return simulate_stippled_line_draw(state->driver, skipone, start, end, color, line_mode);
 	}
 
-	if (line_mode == GFX_LINE_MODE_FINE
-	        && !(state->driver->capabilities & GFX_CAPABILITY_FINE_LINES))
-		line_mode = GFX_LINE_MODE_FAST;
-
 	if ((retval = state->driver->draw_line(state->driver, start, end, color, line_mode, line_style))) {
 		GFXERROR("Failed to draw line (%d,%d) -- (%d,%d)\n",
 		         start.x, start.y, end.x, end.y);
@@ -1173,8 +1163,7 @@ gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx_lin
 	xfact = state->driver->mode->xfact;
 	yfact = state->driver->mode->yfact;
 
-	if (line_mode == GFX_LINE_MODE_FINE
-	        && state->driver->capabilities & GFX_CAPABILITY_FINE_LINES) {
+	if (line_mode == GFX_LINE_MODE_FINE) {
 		xunit = yunit = 1;
 		xl = 1 + (rect.xl - 1) * xfact;
 		yl = 1 + (rect.yl - 1) * yfact;
@@ -1551,37 +1540,26 @@ _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
 
 	draw_old = state->mouse_pointer != NULL;
 
-	if (state->driver->capabilities & GFX_CAPABILITY_MOUSE_POINTER) {
+	if (draw_old && state->mouse_pointer->colors_nr > 2)
+		draw_old = 1;
 
-		if (draw_old && state->mouse_pointer->colors_nr > 2)
-			draw_old = state->driver->capabilities & GFX_CAPABILITY_COLOR_MOUSE_POINTER;
-
-		if (!draw_old
-		        && state->mouse_pointer
-		        && (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY))
-			if ((retval = state->driver->unregister_pixmap(state->driver, state->mouse_pointer))) {
-				GFXERROR("Pointer un-registration failed!\n");
-				return retval;
-			}
-
-		if (pxm == NULL
-		        || (state->driver->capabilities & GFX_CAPABILITY_COLOR_MOUSE_POINTER)
-		        || pxm->colors_nr <= 2) {
-			if (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY) {
-				if ((pxm) && (retval = state->driver->register_pixmap(state->driver, pxm))) {
-					GFXERROR("Pixmap-registering a new mouse pointer failed!\n");
-					return retval;
-				}
-			}
-			draw_new = 0;
-			state->driver->set_pointer(state->driver, pxm);
-			state->mouse_pointer_in_hw = 1;
-		} else {
-			draw_new = 1;
-			state->mouse_pointer_in_hw = 0;
+	if (!draw_old
+	        && state->mouse_pointer
+	        && (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY))
+		if ((retval = state->driver->unregister_pixmap(state->driver, state->mouse_pointer))) {
+			GFXERROR("Pointer un-registration failed!\n");
+			return retval;
 		}
 
-	} else draw_new = 1;
+	if (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY) {
+		if ((pxm) && (retval = state->driver->register_pixmap(state->driver, pxm))) {
+			GFXERROR("Pixmap-registering a new mouse pointer failed!\n");
+			return retval;
+		}
+	}
+	draw_new = 0;
+	state->driver->set_pointer(state->driver, pxm);
+	state->mouse_pointer_in_hw = 1;
 
 	if (!state->mouse_pointer_in_hw)
 		draw_old = state->mouse_pointer != NULL;

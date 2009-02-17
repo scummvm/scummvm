@@ -5266,7 +5266,7 @@ gamestate_restore(state_t *s, char *dirname) {
 	retval->resource_dir = s->resource_dir;
 	retval->work_dir = s->work_dir;
 	retval->kernel_opt_flags = 0;
-	retval->have_mouse_flag = s->have_mouse_flag;
+	retval->have_mouse_flag = 1;
 
 	retval->successor = NULL;
 	retval->pic_priority_table = (int*)gfxop_get_pic_metainfo(retval->gfx_state);

@@ -39,15 +39,10 @@ typedef enum {
 
 /* graphics driver hints */
 #define GFX_CAPABILITY_SHADING (1<<0)
-#define GFX_CAPABILITY_MOUSE_POINTER (1<<1)
-#define GFX_CAPABILITY_COLOR_MOUSE_POINTER (1<<2)
 #define GFX_CAPABILITY_PIXMAP_REGISTRY (1<<3)
 #define GFX_CAPABILITY_SCALEABLE_PIXMAPS (1<<4)
 #define GFX_CAPABILITY_STIPPLED_LINES (1<<6)
-#define GFX_CAPABILITY_MOUSE_SUPPORT (1<<7)
 #define GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY (1<<8)
-#define GFX_CAPABILITY_FINE_LINES (1<<9)
-#define GFX_CAPABILITY_WINDOWED (1<<10)
 #define GFX_CAPABILITY_KEYTRANSLATE (1<<11)
 
 #define GFX_DEBUG_POINTER (1<<0)
@@ -109,10 +104,6 @@ typedef struct _gfx_driver { /* Graphics driver */
 	**
 	** GFX_CAPABILITY_SHADING: draw_filled_rect() supports drawing shaded
 	**    rectangles.
-	** GFX_CAPABILITY_MOUSE_POINTER: The driver has built-in support for mouse
-	**    pointers (monochrome or colored).
-	** GFX_CAPABILITY_COLOR_MOUSE_POINTER: The driver has built-in support for
-	**    colored mouse pointers.
 	** GFX_CAPABILITY_PIXMAP_REGISTRY: System provides a pixmap registry. The
 	**    invoking functions will assume that all pixmaps MUST be registered;
 	**    if this flag is not set, it assumes that pixmaps MUST NOT be
@@ -127,14 +118,6 @@ typedef struct _gfx_driver { /* Graphics driver */
 	**    will be unscaled.
 	** GFX_CAPABILITY_STIPPLED_LINES: The driver is able to draw stippled lines
 	**    horizontally and vertically (xl = 0 or yl = 0).
-	** GFX_CAPABILITY_MOUSE_SUPPORT: There is some support for mouse (or similar)
-	**    input. Note that this flag may be disabled by external code after
-	**    initialization time, if no support for mouse pointer /drawing/ is
-	**    available.
-	** GFX_CAPABILITY_FINE_LINES: Should be set IFF the driver supports drawing
-	**    fine (width 1) lines
-	** GFX_CAPABILITY_WINDOWED: Driver runs in a window and supports a debug
-	**    console running on stdin/stdout
 	** GFX_CAPABILITY_KEYTRANSLATE: The driver's input layer automatically
 	**    handles 'shifted' keys (i.e. turning shift-'a' to 'A' etc.).
 	**    Drivers only need to handle this if they desire to support
@@ -342,7 +325,6 @@ typedef struct _gfx_driver { /* Graphics driver */
 	**             (gfx_pixmap_t *) pointer: The pointer to set, or NULL to set
 	**                              no pointer
 	** Returns   : (int) GFX_OK or GFX_FATAL
-	** This function may be NULL if GFX_CAPABILITY_MOUSE_POINTER is not set.
 	** If pointer is not NULL, it will have been scaled to the appropriate
 	** size and registered as a pixmap (if neccessary) beforehand.
 	** If this function is called for a target that supports only two-color
