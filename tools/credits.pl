@@ -491,6 +491,7 @@ begin_credits("Credits");
 		  add_person("Matthew Hoops", "clone2727", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		  add_person("Walter van Niftrik", "waltervn", "");
 		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
@@ -573,6 +574,14 @@ begin_credits("Credits");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
+	  begin_section("SCI");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Walter van Niftrik", "waltervn", "");
+		  add_person("Jordi Vilalta Prat", "jvprat", "");
+		  add_person("Lars Skovlund", "lskovlun", "");
 	  end_section();
 
 	  begin_section("Tinsel");
