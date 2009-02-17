@@ -155,8 +155,7 @@ void MassAddDialog::handleTickle() {
 
 		Common::FSList files;
 		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-			error("browser returned a node that is not a directory: '%s'",
-					dir.getPath().c_str());
+			continue;
 		}
 
 		// Run the detector on the dir
