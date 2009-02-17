@@ -625,10 +625,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\conf_extension.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\conf_parse.h"
 				>
 			</File>
@@ -646,10 +642,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\event.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\game_select.h"
 				>
 			</File>
 			<File
@@ -730,10 +722,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\sbtree.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sci_dos.h"
 				>
 			</File>
 			<File
