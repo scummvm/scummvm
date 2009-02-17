@@ -88,9 +88,6 @@ MODULE_OBJS = \
 	sfx/softseq/SN76496.o \
 	sfx/softseq/softsequencers.o
 
-# FIXME: The following is supposed to be a set of *temporary* hacks
-CXXFLAGS += -Wno-variadic-macros
-
 # Generate savegame.cpp
 $(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml
 	cat $< | perl $(srcdir)/engines/sci/engine/cfsml.pl -f savegame.cfsml > $@
