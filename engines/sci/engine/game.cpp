@@ -278,7 +278,7 @@ _free_graphics_input(state_t *s) {
 	s->port = NULL;
 
 	if (s->pics)
-		sci_free(s->pics);
+		free(s->pics);
 	s->pics = NULL;
 }
 
@@ -415,7 +415,7 @@ create_class_table_sci0(state_t *s) {
 					seeker += getInt16(script->data + seeker + 2);
 					if (seeker <= lastseeker) {
 						sciprintf("Warning: Script version is invalid.\n");
-						sci_free(s->classtable);
+						free(s->classtable);
 						return  SCI_ERROR_INVALID_SCRIPT_VERSION;
 					}
 				}
@@ -572,7 +572,7 @@ script_free_vm_memory(state_t *s) {
 	sciprintf("Freeing VM memory\n");
 	s->save_dir_copy_buf = NULL;
 
-	sci_free(s->classtable);
+	free(s->classtable);
 	s->classtable = NULL;
 
 	/* Close all opened file handles */
@@ -580,7 +580,7 @@ script_free_vm_memory(state_t *s) {
 		if (s->file_handles[i])
 			fclose(s->file_handles[i]);
 
-	sci_free(s->file_handles);
+	free(s->file_handles);
 	s->file_handles = NULL;
 
 	/* FIXME: file handles will NOT be closed under DOS. DJGPP generates an
@@ -611,7 +611,7 @@ script_free_breakpoints(state_t *s) {
 	bp = s->bp_list;
 	while (bp) {
 		bp_next = bp->next;
-		if (bp->type == BREAK_SELECTOR) sci_free(bp->data.name);
+		if (bp->type == BREAK_SELECTOR) free(bp->data.name);
 		free(bp);
 		bp = bp_next;
 	}
@@ -708,7 +708,7 @@ game_init(state_t *s) {
 int
 game_exit(state_t *s) {
 	if (s->execution_stack) {
-		sci_free(s->execution_stack);
+		free(s->execution_stack);
 	}
 
 	sfx_exit(&s->sound);
@@ -718,7 +718,7 @@ game_exit(state_t *s) {
 	sm_destroy(&s->seg_manager);
 
 	if (s->synonyms_nr) {
-		sci_free(s->synonyms);
+		free(s->synonyms);
 		s->synonyms = NULL;
 		s->synonyms_nr = 0;
 	}
@@ -729,7 +729,7 @@ game_exit(state_t *s) {
 #warning "Free parser segment here"
 #endif
 	if (send_calls_allocated) {
-		sci_free(send_calls);
+		free(send_calls);
 		send_calls_allocated = 0;
 	}
 
@@ -741,7 +741,7 @@ game_exit(state_t *s) {
 
 	_free_graphics_input(s);
 
-	sci_free(s->game_name);
+	free(s->game_name);
 
 	return 0;
 }

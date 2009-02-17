@@ -528,8 +528,8 @@ ami_exit(sfx_softseq_t *self) {
 
 	for (i = 0; i < bank.size; i++) {
 		if (bank.instruments[i]) {
-			sci_free(bank.instruments[i]->samples);
-			sci_free(bank.instruments[i]);
+			free(bank.instruments[i]->samples);
+			free(bank.instruments[i]);
 		}
 	}
 }

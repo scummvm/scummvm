@@ -216,7 +216,7 @@ _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 			feed->destroy(feed);
 
 			if (fs->buf)
-				sci_free(fs->buf);
+				free(fs->buf);
 
 			self->feeds_nr--;
 
@@ -255,16 +255,16 @@ mix_exit(sfx_pcm_mixer_t *self) {
 		_mix_unsubscribe(self, self->feeds[0].feed);
 
 	if (P->outbuf)
-		sci_free(P->outbuf);
+		free(P->outbuf);
 	if (P->writebuf)
-		sci_free(P->writebuf);
+		free(P->writebuf);
 
 	if (P->compbuf_l)
-		sci_free(P->compbuf_l);
+		free(P->compbuf_l);
 	if (P->compbuf_l)
-		sci_free(P->compbuf_r);
+		free(P->compbuf_r);
 
-	sci_free(P);
+	free(P);
 	self->private_bits /* = P */ = NULL;
 	RELEASE_LOCK();
 

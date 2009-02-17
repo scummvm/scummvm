@@ -76,18 +76,6 @@ sci_realloc(void *ptr, size_t size) {
 }
 
 
-void
-sci_free(void *ptr) {
-	if (!ptr) {
-		fprintf(stderr, "_SCI_FREE() [%s (%s) : %u]\n",
-		        __FILE__, "", __LINE__);
-		fprintf(stderr, " attempt to free NULL pointer\n");
-		BREAKPOINT();
-	}
-	free(ptr);
-}
-
-
 void *
 sci_memdup(const void *ptr, size_t size) {
 	void *res;
@@ -201,7 +189,7 @@ extern void
 #ifdef TRACE_REFCOUNT
 		fprintf(stderr, "[] REF: Freeing (%p)...\n", fdata - 3);
 #endif
-		sci_free(fdata - 3);
+		free(fdata - 3);
 #ifdef TRACE_REFCOUNT
 		fprintf(stderr, "[] REF: Done.\n");
 #endif

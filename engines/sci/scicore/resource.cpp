@@ -608,7 +608,7 @@ scir_new_resource_manager(char *dir, int version,
 		}
 		sciprintf("Resmgr: Could not retrieve a resource list!\n");
 		_scir_free_resource_sources(mgr->sources);
-		sci_free(mgr);
+		free(mgr);
 		chdir(caller_cwd);
 		free(caller_cwd);
 		return NULL;
@@ -721,10 +721,10 @@ _scir_free_resources(resource_t *resources, int resources_nr) {
 		_scir_free_altsources(res->alt_sources);
 
 		if (res->status != SCI_STATUS_NOMALLOC)
-			sci_free(res->data);
+			free(res->data);
 	}
 
-	sci_free(resources);
+	free(resources);
 }
 
 void
@@ -733,13 +733,13 @@ scir_free_resource_manager(resource_mgr_t *mgr) {
 	_scir_free_resource_sources(mgr->sources);
 	mgr->resources = NULL;
 
-	sci_free(mgr);
+	free(mgr);
 }
 
 
 static void
 _scir_unalloc(resource_t *res) {
-	sci_free(res->data);
+	free(res->data);
 	res->data = NULL;
 	res->status = SCI_STATUS_NOMALLOC;
 }

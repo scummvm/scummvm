@@ -78,5 +78,5 @@ void
 exe_close(exe_file_t *file) {
 	file->decompressor->close(file->handle);
 
-	sci_free(file);
+	free(file);
 }

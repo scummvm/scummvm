@@ -79,7 +79,7 @@ kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	s->status_bar_background = bgcolor;
 
 	if (NULL != s->status_bar_text) {
-		sci_free(s->status_bar_text);
+		free(s->status_bar_text);
 		s->status_bar_text = NULL;
 	}
 

@@ -109,6 +109,6 @@ pi_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 static void
 pi_destroy(sfx_pcm_feed_t *self) {
 	sci_refcount_decref(D->base_data);
-	sci_free(D);
-	sci_free(self);
+	free(D);
+	free(self);
 }

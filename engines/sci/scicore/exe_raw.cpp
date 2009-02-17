@@ -56,7 +56,7 @@ static void
 raw_close(exe_handle_t *handle) {
 	fclose(handle->f);
 
-	sci_free(handle);
+	free(handle);
 }
 
 exe_decompressor_t

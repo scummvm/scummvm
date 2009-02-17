@@ -902,7 +902,7 @@ script_map_kernel(state_t *s) {
 
 void
 free_kfunct_tables(state_t *s) {
-	sci_free(s->kfunct_table);
+	free(s->kfunct_table);
 	s->kfunct_table = NULL;
 
 }

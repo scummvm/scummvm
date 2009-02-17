@@ -2269,11 +2269,11 @@ gfxop_new_text(gfx_state_t *state, int font_nr, char *text, int maxwidth,
 
 			for (j = 0; j < i; j++)
 				gfx_free_pixmap(state->driver, handle->text_pixmaps[j]);
-			sci_free(handle->text_pixmaps);
-			sci_free(handle->text);
-			sci_free(handle->lines);
+			free(handle->text_pixmaps);
+			free(handle->text);
+			free(handle->lines);
 			GFXERROR("Failed to draw text pixmap for line %d/%d\n", i, handle->lines_nr);
-			sci_free(handle);
+			free(handle);
 			return NULL;
 		}
 	}

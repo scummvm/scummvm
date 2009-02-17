@@ -674,7 +674,7 @@ sci_getcwd(void) {
 		if (getcwd(cwd, size - 1))
 			return cwd;
 
-		sci_free(cwd);
+		free(cwd);
 	}
 
 	fprintf(stderr, "Could not determine current working directory!\n");

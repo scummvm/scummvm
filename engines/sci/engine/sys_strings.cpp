@@ -104,7 +104,7 @@ sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings) {
 		if (data) {
 			s->value = (char *)sci_malloc(s->max_size + 1);
 			strcpy(s->value, data);
-			sci_free(data);
+			free(data);
 		}
 	}
 

@@ -153,7 +153,7 @@ void sm_destroy(seg_manager_t* self) {
 
 	delete self->id_seg_map;
 
-	sci_free(self->heap);
+	free(self->heap);
 	self->heap = NULL;
 }
 
@@ -285,44 +285,44 @@ _sm_deallocate(seg_manager_t* self, int seg, int recursive) {
 		break;
 
 	case MEM_OBJ_LOCALS:
-		sci_free(mobj->data.locals.locals);
+		free(mobj->data.locals.locals);
 		mobj->data.locals.locals = NULL;
 		break;
 
 	case MEM_OBJ_DYNMEM:
 		if (mobj->data.dynmem.buf)
-			sci_free(mobj->data.dynmem.buf);
+			free(mobj->data.dynmem.buf);
 		mobj->data.dynmem.buf = NULL;
 		break;
 	case MEM_OBJ_SYS_STRINGS:
 		sys_string_free_all(&(mobj->data.sys_strings));
 		break;
 	case MEM_OBJ_STACK:
-		sci_free(mobj->data.stack.entries);
+		free(mobj->data.stack.entries);
 		mobj->data.stack.entries = NULL;
 		break;
 	case MEM_OBJ_LISTS:
-		sci_free(mobj->data.lists.table);
+		free(mobj->data.lists.table);
 		mobj->data.lists.table = NULL;
 		mobj->data.lists.entries_nr = mobj->data.lists.max_entry = 0;
 		break;
 	case MEM_OBJ_NODES:
-		sci_free(mobj->data.nodes.table);
+		free(mobj->data.nodes.table);
 		mobj->data.nodes.table = NULL;
 		mobj->data.nodes.entries_nr = mobj->data.nodes.max_entry = 0;
 		break;
 	case MEM_OBJ_CLONES:
-		sci_free(mobj->data.clones.table);
+		free(mobj->data.clones.table);
 		mobj->data.clones.table = NULL;
 		mobj->data.clones.entries_nr = mobj->data.clones.max_entry = 0;
 		break;
 	case MEM_OBJ_HUNK:
-		sci_free(mobj->data.hunks.table);
+		free(mobj->data.hunks.table);
 		mobj->data.hunks.table = NULL;
 		mobj->data.hunks.entries_nr = mobj->data.hunks.max_entry = 0;
 		break;
 	case MEM_OBJ_RESERVED:
-		sci_free(mobj->data.reserved);
+		free(mobj->data.reserved);
 		break;
 	default:
 		fprintf(stderr, "Deallocating segment type %d not supported!\n",
@@ -432,7 +432,7 @@ void
 sm_free_script(mem_obj_t* mem) {
 	if (!mem) return;
 	if (mem->data.script.buf) {
-		sci_free(mem->data.script.buf);
+		free(mem->data.script.buf);
 		mem->data.script.buf = NULL;
 		mem->data.script.buf_size = 0;
 	}
@@ -453,7 +453,7 @@ sm_free_script(mem_obj_t* mem) {
 
 	delete mem->data.script.obj_indices;
 	if (NULL != mem->data.script.code) {
-		sci_free(mem->data.script.code);
+		free(mem->data.script.code);
 	}
 }
 
@@ -1283,7 +1283,7 @@ sm_script_free_unused_objects(seg_manager_t *self, seg_id_t seg) {
 			                                      * scr->objects_nr);
 		else {
 			if (scr->objects_allocated)
-				sci_free(scr->objects);
+				free(scr->objects);
 			scr->objects = NULL;
 		}
 		scr->objects_allocated = scr->objects_nr;
@@ -1378,7 +1378,7 @@ sm_alloc_hunk_entry(seg_manager_t *self, const char *hunk_type, int size, reg_t 
 static void
 _clone_cleanup(clone_t *clone) {
 	if (clone->variables)
-		sci_free(clone->variables); /* Free the dynamically allocated memory part */
+		free(clone->variables); /* Free the dynamically allocated memory part */
 }
 
 static void
@@ -1604,7 +1604,7 @@ list_all_outgoing_references_nop(seg_interface_t *self, state_t *s, reg_t addr, 
 
 static void
 deallocate_self(seg_interface_t *self) {
-	sci_free(self);
+	free(self);
 }
 
 
@@ -1728,7 +1728,7 @@ free_at_address_clones(seg_interface_t *self, reg_t addr) {
 		sciprintf("[GC] Clone "PREG": Freeing\n", PRINT_REG(addr));
 		sciprintf("[GC] Clone had pos "PREG"\n", PRINT_REG(victim_obj->pos));
 	*/
-	sci_free(victim_obj->variables);
+	free(victim_obj->variables);
 	victim_obj->variables = NULL;
 	sm_free_clone(self->segmgr, addr);
 }

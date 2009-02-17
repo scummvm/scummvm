@@ -84,7 +84,7 @@ delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *
 			deleted->key = (*t)->key;
 			temp = *t;
 			*t = (*t)->right;
-			sci_free(temp);
+			free(temp);
 			retval = 0;
 		} else if (((*t)->left->level < (*t)->level - 1) || ((*t)->right->level < (*t)->level - 1)) {
 			(*t)->level--;
@@ -165,5 +165,5 @@ aatree_free(aatree_t *t) {
 	aatree_free(t->left);
 	aatree_free(t->right);
 
-	sci_free(t);
+	free(t);
 }

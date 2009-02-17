@@ -236,7 +236,7 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 			int i;
 
 			if (sci_res_read_entry(mgr, map, buf, resources + resource_index, *sci_version)) {
-				sci_free(resources);
+				free(resources);
 				close(fd);
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}

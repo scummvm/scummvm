@@ -129,7 +129,7 @@ extern void *
 /* Allocates the specified amount of memory.
 ** Parameters: (size_t) size: Number of bytes to allocate
 ** Returns   : (void *) A pointer to the allocated memory chunk
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** If the call fails, behaviour is dependent on the definition of SCI_ALLOC.
 */
 
@@ -139,7 +139,7 @@ extern void *
 ** Parameters: (size_t) num: Number of elements to allocate
 **             (size_t) size: Amount of memory per element to allocate
 ** Returns   : (void *) A pointer to the allocated memory chunk
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
@@ -152,15 +152,8 @@ extern void *
 **             bytes of memory and everything contained in the original 'ptr'
 **             (possibly minus some trailing data if the new memory area is
 **             smaller than the old one).
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
-*/
-
-extern void
-	sci_free(void *ptr);
-/* Frees previously allocated memory chunks
-** Parameters: (void *) ptr: The pointer to free
-** Returns   : (void)
 */
 
 extern void *
@@ -170,7 +163,7 @@ extern void *
 **             (size_t) size: Number of bytes to duplicate
 ** Returns   : (void *) An appropriately allocated duplicate, or NULL on error
 ** Please try to avoid data duplication unless absolutely neccessary!
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
@@ -180,7 +173,7 @@ extern char *
 ** Parameters: (const char *) src: The original pointer
 ** Returns   : (char *) a pointer to the storage location for the copied
 **             string.
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
@@ -192,7 +185,7 @@ extern char *
 **             (int) length: The maximum length of the string (not counting
 **                           a trailing \0).
 ** Returns   : (char *) The resulting copy, allocated with sci_malloc().
-** To free this string, use the sci_free() command.
+** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */
 

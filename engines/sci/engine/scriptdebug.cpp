@@ -2559,7 +2559,7 @@ set_debug_mode(struct _state *s, int mode, const char *areas) {
 	                     (int *) &(s->debug_mode),
 	                     param);
 
-	sci_free(param);
+	free(param);
 }
 
 int
@@ -2954,7 +2954,7 @@ int c_bpdel(state_t *s) {
 	/* Delete it */
 	bp_next = bp->next;
 	type = bp->type;
-	if (type == BREAK_SELECTOR) sci_free(bp->data.name);
+	if (type == BREAK_SELECTOR) free(bp->data.name);
 	free(bp);
 	if (bp_prev)
 		bp_prev->next = bp_next;

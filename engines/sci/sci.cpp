@@ -325,8 +325,8 @@ main_() {
 	game_exit(gamestate);
 	script_free_engine(gamestate); /* Uninitialize game state */
 	script_free_breakpoints(gamestate);
-	sci_free(gamestate->work_dir);
-	sci_free(gamestate);
+	free(gamestate->work_dir);
+	free(gamestate);
 
 	scir_free_resource_manager(resmgr);
 

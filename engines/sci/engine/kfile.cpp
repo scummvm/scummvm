@@ -298,7 +298,7 @@ _chdir_savedir(state_t *s) {
 		sciprintf(__FILE__": Can't chdir to savegame dir '%s' or "
 		          "create it\n", save_dir);
 
-		sci_free(cwd);
+		free(cwd);
 		return NULL;
 	}
 
@@ -590,7 +590,7 @@ kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	remove(testpath);
 
-	sci_free(testpath);
+	free(testpath);
 
 	return make_reg(0, !failed);
 }

@@ -263,7 +263,7 @@ lzexe_open(const char *filename) {
 	handle = (exe_handle_t*)sci_malloc(sizeof(exe_handle_t));
 
 	if (!lzexe_init(handle, f)) {
-		sci_free(handle);
+		free(handle);
 		return NULL;
 	}
 
@@ -318,7 +318,7 @@ static void
 lzexe_close(exe_handle_t *handle) {
 	fclose(handle->f);
 
-	sci_free(handle);
+	free(handle);
 }
 
 exe_decompressor_t

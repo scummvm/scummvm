@@ -2212,7 +2212,7 @@ _game_run(state_t *s, int restoring) {
 		run_vm(s, (successor || restoring) ? 1 : 0);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { /* Restart was requested? */
 
-			sci_free(s->execution_stack);
+			free(s->execution_stack);
 			s->execution_stack = NULL;
 			s->execution_stack_pos = -1;
 			s->execution_stack_pos_changed = 0;
@@ -2237,7 +2237,7 @@ _game_run(state_t *s, int restoring) {
 			if (successor) {
 				game_exit(s);
 				script_free_vm_memory(s);
-				sci_free(s);
+				free(s);
 				s = successor;
 
 				if (!send_calls_allocated)

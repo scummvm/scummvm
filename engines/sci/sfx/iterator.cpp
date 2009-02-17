@@ -1000,7 +1000,7 @@ _sci1_get_pcm(sci1_song_iterator_t *self) {
 
 		self->next_sample = self->next_sample->next;
 
-		sci_free(sample);
+		free(sample);
 
 		return feed;
 	} else
@@ -1269,7 +1269,7 @@ _sci1_cleanup(sci1_song_iterator_t *it) {
 	while (sample_seeker) {
 		sci1_sample_t *old_sample = sample_seeker;
 		sample_seeker = sample_seeker->next;
-		sci_free(old_sample);
+		free(old_sample);
 	}
 
 	_sci0_cleanup((sci0_song_iterator_t *)it);
@@ -1383,7 +1383,7 @@ _ff_handle_message(fast_forward_song_iterator_t *self,
 		case _SIMSG_PLASTICWRAP_ACK_MORPH:
 			if (self->delta <= 0) {
 				song_iterator_t *it = self->delegate;
-				sci_free(self);
+				free(self);
 				return it;
 			}
 			break;
@@ -1658,13 +1658,13 @@ _tee_handle_message(tee_song_iterator_t *self, song_iterator_message_t msg) {
 				if (self->may_destroy)
 					songit_free(self->children[TEE_LEFT].it);
 				old_it = self->children[TEE_RIGHT].it;
-				sci_free(self);
+				free(self);
 				return old_it;
 			} else if (!(self->status & TEE_RIGHT_ACTIVE)) {
 				if (self->may_destroy)
 					songit_free(self->children[TEE_RIGHT].it);
 				old_it = self->children[TEE_LEFT].it;
-				sci_free(self);
+				free(self);
 				return old_it;
 			} else {
 				sciprintf("[tee-iterator] WARNING:"
@@ -1949,7 +1949,7 @@ songit_free(song_iterator_t *it) {
 		for (i = 0; i < it->death_listeners_nr; i++)
 			it->death_listeners[i].notify(it->death_listeners[i].self, it);
 
-		sci_free(it);
+		free(it);
 	}
 }
 

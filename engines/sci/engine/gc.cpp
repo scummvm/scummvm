@@ -86,7 +86,7 @@ worklist_pop(worklist_t **wlp) {
 
 	if (!wl->used) {
 		*wlp = wl->next;
-		sci_free(wl);
+		free(wl);
 	}
 
 	return retval;
@@ -97,7 +97,7 @@ free_worklist(worklist_t *wl) {
 	if (wl) {
 		if (wl->next)
 			free_worklist(wl->next);
-		sci_free(wl);
+		free(wl);
 	}
 }
 
@@ -235,7 +235,7 @@ find_all_used_references(state_t *s) {
 	for (i = 1; i < sm->heap_size; i++)
 		if (interfaces[i])
 			interfaces[i]->deallocate_self(interfaces[i]);
-	sci_free(interfaces);
+	free(interfaces);
 	delete nonnormal_map;
 	return normal_map;
 }
