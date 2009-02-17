@@ -556,9 +556,9 @@ sm_get_heap(seg_manager_t* self, reg_t reg) {
 
 	switch (mem_type) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < (unsigned int)mem_obj->data.script.buf_size, "invalid offset\n");
-		return (unsigned char)mem_obj->data.script.buf[reg.offset] |
-		       (((unsigned char)mem_obj->data.script.buf[reg.offset+1]) << 8);
+		VERIFY(reg.offset + 1 < (guint16)mem_obj->data.script.buf_size, "invalid offset\n");
+		return (mem_obj->data.script.buf[reg.offset] |
+		       (mem_obj->data.script.buf[reg.offset+1]) << 8);
 	case MEM_OBJ_CLONES:
 		sciprintf("memcpy for clones hasn't been implemented yet\n");
 		break;
@@ -579,7 +579,7 @@ void sm_put_heap(seg_manager_t* self, reg_t reg, gint16 value) {
 
 	switch (mem_type) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < mem_obj->data.script.buf_size, "invalid offset");
+		VERIFY(reg.offset + 1 < (guint16)mem_obj->data.script.buf_size, "invalid offset");
 		mem_obj->data.script.buf[reg.offset] = value & 0xff;
 		mem_obj->data.script.buf[reg.offset + 1] = value >> 8;
 		break;
@@ -827,8 +827,8 @@ sm_script_relocate(seg_manager_t *self, reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < scr->buf_size
-	       && getUInt16(scr->buf + block.offset)*2 + block.offset < scr->buf_size,
+	VERIFY(block.offset < (guint16)scr->buf_size
+	       && getUInt16(scr->buf + block.offset)*2 + block.offset < (guint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
 	count = getUInt16(scr->buf + block.offset);
@@ -887,8 +887,8 @@ sm_heap_relocate(seg_manager_t *self, state_t *s, reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < scr->heap_size
-	       && getUInt16(scr->heap_start + block.offset)*2 + block.offset < scr->buf_size,
+	VERIFY(block.offset < (guint16)scr->heap_size
+	       && getUInt16(scr->heap_start + block.offset)*2 + block.offset < (guint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
 	if (scr->relocated) return;
@@ -1023,7 +1023,7 @@ sm_script_obj_init11(seg_manager_t *self, state_t *s, reg_t obj_pos) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(base < scr->buf_size,
+	VERIFY(base < (guint16)scr->buf_size,
 	       "Attempt to initialize object beyond end of script\n");
 
 	if (!scr->objects) {
@@ -1043,7 +1043,7 @@ sm_script_obj_init11(seg_manager_t *self, state_t *s, reg_t obj_pos) {
 
 	obj = scr->objects + id;
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->buf_size,
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < (guint16)scr->buf_size,
 	       "Function area pointer stored beyond end of script\n");
 
 	{
@@ -1149,7 +1149,7 @@ sm_script_initialise_locals(seg_manager_t *self, reg_t location) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(location.offset + 1 < scr->buf_size,
+	VERIFY(location.offset + 1 < (guint16)scr->buf_size,
 	       "Locals beyond end of script\n");
 
 	if (self->sci1_1)
@@ -1168,7 +1168,7 @@ sm_script_initialise_locals(seg_manager_t *self, reg_t location) {
 
 	locals = _sm_alloc_locals_segment(self, scr, count);
 	if (locals) {
-		int i;
+		uint i;
 		byte *base = (byte *)(scr->buf + location.offset);
 
 		for (i = 0; i < count; i++)
