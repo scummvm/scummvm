@@ -1709,7 +1709,7 @@ void KyraEngine_LoK::setupPanPages() {
 
 void KyraEngine_LoK::freePanPages() {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::freePanPages()");
-	delete _endSequenceBackUpRect;
+	delete[] _endSequenceBackUpRect;
 	_endSequenceBackUpRect = 0;
 	for (int i = 0; i <= 19; ++i) {
 		delete[] _panPagesTable[i];
