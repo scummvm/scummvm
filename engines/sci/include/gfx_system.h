@@ -35,15 +35,6 @@
 #define GFX_DEBUG
 
 /* General output macros */
-#ifdef __GNUC__
-#  define GFXERROR gfxprintf("GFX Error: %s, %s() L%d:", __FILE__, __FUNCTION__, __LINE__); sciprintf
-#  define GFXWARN gfxprintf("GFX Warning: %s, %s() L%d:", __FILE__, __FUNCTION__, __LINE__); sciprintf
-#  ifdef GFX_DEBUG
-#    define GFXDEBUG gfxprintf("GFX-debug: %s, %s() L%d:", __FILE__, __FUNCTION__, __LINE__); sciprintf
-#  else /* !GFX_DEBUG */
-#    define GFXDEBUG if (0) printf
-#  endif /* !GFX_DEBUG */
-#else /* !__GNUC__ */
 #  define GFXERROR gfxprintf("GFX Error: %s, L%d:", __FILE__, __LINE__); sciprintf
 #  define GFXWARN gfxprintf("GFX Warning: %s, L%d:", __FILE__, __LINE__); sciprintf
 #  ifdef GFX_DEBUG
@@ -51,7 +42,6 @@
 #  else /* !GFX_DEBUG */
 #    define GFXDEBUG if (0) printf
 #  endif /* !GFX_DEBUG */
-#endif /* !__GNUC__ */
 
 /***********************/
 /*** Data structures ***/

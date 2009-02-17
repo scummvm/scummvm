@@ -1540,9 +1540,6 @@ _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
 
 	draw_old = state->mouse_pointer != NULL;
 
-	if (draw_old && state->mouse_pointer->colors_nr > 2)
-		draw_old = 1;
-
 	if (!draw_old
 	        && state->mouse_pointer
 	        && (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY))

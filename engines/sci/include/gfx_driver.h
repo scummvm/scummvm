@@ -74,21 +74,7 @@ typedef enum {
 ** must use a reasonable default value.
 */
 
-#define SCI_GFX_DRIVER_VERSION 0
-#define SCI_GFX_DRIVER_MAGIC 0xf001337
-
 typedef struct _gfx_driver { /* Graphics driver */
-
-	const char *name; /* Graphics driver name. Unique identifier, should consist of
-	                   ** lower-case (where applicable) alphanumerics
-	                   */
-
-	const char *version; /* Free-form version description (for informative purposes
-		           ** only)
-		           */
-
-	int sci_driver_magic; /* SCI_GFX_DRIVER_MAGIC */
-	int sci_driver_version; /* SCI_GFX_DRIVER_VERSION */
 
 	gfx_mode_t *mode; /* Currently active mode, NULL if no mode is active */
 

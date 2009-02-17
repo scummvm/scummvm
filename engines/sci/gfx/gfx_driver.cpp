@@ -521,10 +521,6 @@ scummvm_usec_sleep(struct _gfx_driver *drv, long usecs) {
 
 gfx_driver_t
 gfx_driver_scummvm = {
-	"ScummVM",
-	"0.1",
-	SCI_GFX_DRIVER_MAGIC,
-	SCI_GFX_DRIVER_VERSION,
 	NULL,
 	0, 0,
 	0,		// flags here
