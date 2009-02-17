@@ -64,41 +64,71 @@
 
 #ifdef USE_WII_KBD
 static int keymap[][2] = {
-	{ KBD_return, Common::KEYCODE_RETURN },
-	{ KBD_Up, Common::KEYCODE_UP },
-	{ KBD_Down, Common::KEYCODE_DOWN },
-	{ KBD_Left, Common::KEYCODE_LEFT },
-	{ KBD_Right, Common::KEYCODE_RIGHT },
-	{ KBD_KP_0, Common::KEYCODE_KP0 },
-	{ KBD_KP_1, Common::KEYCODE_KP1 },
-	{ KBD_KP_2, Common::KEYCODE_KP2 },
-	{ KBD_KP_3, Common::KEYCODE_KP3 },
-	{ KBD_KP_4, Common::KEYCODE_KP4 },
-	{ KBD_KP_5, Common::KEYCODE_KP5 },
-	{ KBD_KP_6, Common::KEYCODE_KP6 },
-	{ KBD_KP_7, Common::KEYCODE_KP7 },
-	{ KBD_KP_8, Common::KEYCODE_KP8 },
-	{ KBD_KP_9, Common::KEYCODE_KP9 },
-	{ KBD_Home, Common::KEYCODE_HOME },
-	{ KBD_Insert, Common::KEYCODE_INSERT },
-	{ KBD_End, Common::KEYCODE_END },
-	{ KBD_Pageup, Common::KEYCODE_PAGEUP },
-	{ KBD_Pagedown, Common::KEYCODE_PAGEDOWN },
-	{ KBD_KP_period, Common::KEYCODE_KP_PERIOD },
-	{ KBD_KP_slash, Common::KEYCODE_KP_DIVIDE },
-	{ KBD_KP_asterisk, Common::KEYCODE_KP_MULTIPLY },
-	{ KBD_KP_plus, Common::KEYCODE_KP_PLUS },
-	{ KBD_KP_minus, Common::KEYCODE_KP_MINUS },
-	{ KBD_KP_equal, Common::KEYCODE_KP_EQUALS },
-	{ KBD_KP_enter, Common::KEYCODE_KP_ENTER },
-	{ KBD_LeftShift, Common::KEYCODE_LSHIFT },
-	{ KBD_RightShift, Common::KEYCODE_RSHIFT },
-	{ KBD_LeftCtrl, Common::KEYCODE_LCTRL },
-	{ KBD_RightCtrl, Common::KEYCODE_RCTRL },
-	{ KBD_LeftAlt, Common::KEYCODE_LALT },
-	{ KBD_RightAlt, Common::KEYCODE_RALT },
-	{ KBD_LeftMeta, Common::KEYCODE_LMETA },
-	{ KBD_RightMeta, Common::KEYCODE_RMETA },
+	{ KS_Return, Common::KEYCODE_RETURN },
+	{ KS_Up, Common::KEYCODE_UP },
+	{ KS_Down, Common::KEYCODE_DOWN },
+	{ KS_Left, Common::KEYCODE_LEFT },
+	{ KS_Right, Common::KEYCODE_RIGHT },
+	{ KS_Shift_L, Common::KEYCODE_LSHIFT },
+	{ KS_Shift_R, Common::KEYCODE_RSHIFT },
+	{ KS_Control_L, Common::KEYCODE_LCTRL },
+	{ KS_Control_R, Common::KEYCODE_RCTRL },
+	{ KS_Alt_L, Common::KEYCODE_LALT },
+	{ KS_Alt_R, Common::KEYCODE_RALT },
+	{ KS_Meta_L, Common::KEYCODE_LMETA },
+	{ KS_Meta_R, Common::KEYCODE_RMETA },
+	{ KS_KP_0, Common::KEYCODE_KP0 },
+	{ KS_KP_1, Common::KEYCODE_KP1 },
+	{ KS_KP_2, Common::KEYCODE_KP2 },
+	{ KS_KP_3, Common::KEYCODE_KP3 },
+	{ KS_KP_4, Common::KEYCODE_KP4 },
+	{ KS_KP_5, Common::KEYCODE_KP5 },
+	{ KS_KP_6, Common::KEYCODE_KP6 },
+	{ KS_KP_7, Common::KEYCODE_KP7 },
+	{ KS_KP_8, Common::KEYCODE_KP8 },
+	{ KS_KP_9, Common::KEYCODE_KP9 },
+	{ KS_Home, Common::KEYCODE_HOME },
+	{ KS_Insert, Common::KEYCODE_INSERT },
+	{ KS_End, Common::KEYCODE_END },
+	{ KS_Prior, Common::KEYCODE_PAGEUP },
+	{ KS_Next, Common::KEYCODE_PAGEDOWN },
+	{ KS_f1, Common::KEYCODE_F1 },
+	{ KS_f2, Common::KEYCODE_F2 },
+	{ KS_f3, Common::KEYCODE_F3 },
+	{ KS_f4, Common::KEYCODE_F4 },
+	{ KS_f5, Common::KEYCODE_F5 },
+	{ KS_f6, Common::KEYCODE_F6 },
+	{ KS_f7, Common::KEYCODE_F7 },
+	{ KS_f8, Common::KEYCODE_F8 },
+	{ KS_f9, Common::KEYCODE_F9 },
+	{ KS_f10, Common::KEYCODE_F10 },
+	{ KS_f11, Common::KEYCODE_F11 },
+	{ KS_f12, Common::KEYCODE_F12 },
+	{ KS_f13, Common::KEYCODE_F13 },
+	{ KS_f14, Common::KEYCODE_F14 },
+	{ KS_f15, Common::KEYCODE_F15 },
+	{ KS_F1, Common::KEYCODE_F1 },
+	{ KS_F2, Common::KEYCODE_F2 },
+	{ KS_F3, Common::KEYCODE_F3 },
+	{ KS_F4, Common::KEYCODE_F4 },
+	{ KS_F5, Common::KEYCODE_F5 },
+	{ KS_F6, Common::KEYCODE_F6 },
+	{ KS_F7, Common::KEYCODE_F7 },
+	{ KS_F8, Common::KEYCODE_F8 },
+	{ KS_F9, Common::KEYCODE_F9 },
+	{ KS_F10, Common::KEYCODE_F10 },
+	{ KS_F11, Common::KEYCODE_F11 },
+	{ KS_F12, Common::KEYCODE_F12 },
+	{ KS_F13, Common::KEYCODE_F13 },
+	{ KS_F14, Common::KEYCODE_F14 },
+	{ KS_F15, Common::KEYCODE_F15 },
+	{ KS_KP_Separator, Common::KEYCODE_KP_PERIOD },
+	{ KS_KP_Subtract, Common::KEYCODE_KP_DIVIDE },
+	{ KS_KP_Multiply, Common::KEYCODE_KP_MULTIPLY },
+	{ KS_KP_Add, Common::KEYCODE_KP_PLUS },
+	{ KS_KP_Subtract, Common::KEYCODE_KP_MINUS },
+	{ KS_KP_Equal, Common::KEYCODE_KP_EQUALS },
+	{ KS_KP_Enter, Common::KEYCODE_KP_ENTER },
 	{ 0, 0 }
 };
 #endif
@@ -211,42 +241,30 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 		return false;
 	}
 
-	if (kbdEvent.keysym.mod & KMOD_LSHIFT ||
-	    kbdEvent.keysym.mod & KMOD_RSHIFT)
+	if (MOD_ONESET(kbdEvent.modifiers, MOD_ANYSHIFT))
 		event.kbd.flags |= Common::KBD_SHIFT;
-	if (kbdEvent.keysym.mod & KMOD_LCTRL ||
-	    kbdEvent.keysym.mod & KMOD_RCTRL)
+	if (MOD_ONESET(kbdEvent.modifiers, MOD_ANYCONTROL))
 		event.kbd.flags |= Common::KBD_CTRL;
-	if (kbdEvent.keysym.mod & KMOD_LALT ||
-	    kbdEvent.keysym.mod & KMOD_RALT)
+	if (MOD_ONESET(kbdEvent.modifiers, MOD_ANYMETA))
 		event.kbd.flags |= Common::KBD_ALT;
 
 	i = 0;
 	while (keymap[i][0] != 0) {
-		if (keymap[i][0] == kbdEvent.keysym.sym) {
+		if (keymap[i][0] == kbdEvent.symbol) {
 			event.kbd.keycode = static_cast<Common::KeyCode>(keymap[i][1]);
-			event.kbd.ascii = kbdEvent.keysym.sym & 0xff;
+			event.kbd.ascii = 0;
 			return true;
 		}
 
 		i++;
 	}
 
-	// function keys
-	if (kbdEvent.keysym.sym >> 8 == 0xd8) {
-		event.kbd.keycode =
-			static_cast<Common::KeyCode>(kbdEvent.keysym.sym - 0xd6e7);
-		event.kbd.ascii = kbdEvent.keysym.sym - 0xd6c6;
-
-		return true;
-	}
-
 	// skip unmapped special keys
-	if (kbdEvent.keysym.sym > 0xff)
+	if (kbdEvent.symbol > 0xff)
 		return false;
 
-	event.kbd.keycode = static_cast<Common::KeyCode>(kbdEvent.keysym.sym);
-	event.kbd.ascii = kbdEvent.keysym.sym;
+	event.kbd.keycode = static_cast<Common::KeyCode>(kbdEvent.symbol);
+	event.kbd.ascii = kbdEvent.symbol;
 
 	return true;
 }
