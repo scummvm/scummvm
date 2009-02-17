@@ -1,34 +1,27 @@
-/***************************************************************************
- map-mt32-to-gm.c (C) 1999,2001 Christoph Reichenbach, TU Darmstadt
-        (C) 1999-2000 Rickard Lind
-        (C) 2008 Walter van Niftrik
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
- This program may be modified and copied freely according to the terms of
- the GNU general public license (GPL), as long as the above copyright
- notice and the licensing information contained herein are preserved.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
- Please refer to www.gnu.org for licensing details.
-
- This work is provided AS IS, without warranty of any kind, expressed or
- implied, including but not limited to the warranties of merchantibility,
- noninfringement, and fitness for a specific purpose. The author will not
- be held liable for any damage caused by this work or derivatives of it.
-
- By using this source code, you agree to the licensing terms as stated
- above.
-
-
- Please contact the maintainer for bug reports or inquiries.
-
- Current Maintainer:
-
-    Christoph Reichenbach (CJR) [creichen@rbg.informatik.tu-darmstadt.de]
-
- Roland MT-32 to General MIDI conversion:
-
-    Rickard Lind [rpl@dd.chalmers.se]
-
-***************************************************************************/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
 
 #include <sciresource.h>
 #include <engine.h>
