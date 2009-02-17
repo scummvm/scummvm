@@ -4901,7 +4901,7 @@ int clone_entry_used(clone_table_t *table, int n) {
 
 static
 void load_script(state_t *s, seg_id_t seg) {
-	resource_t *script, *heap;
+	resource_t *script, *heap=NULL;
 	script_t *scr = &(s->seg_manager.heap[seg]->data.script);
 
 	scr->buf = (byte *) malloc(scr->buf_size);
