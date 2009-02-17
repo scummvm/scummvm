@@ -1,7 +1,0 @@
-The files in this direcory are a bit outdated. There are some small non
-critical errors in "patch.001", they are obvious if you bother to read
-the source (which is correct). "sound01.txt" is just meant to give you a
-basic understanding of the structures invovled in
-SCI01/SCI1/SCI1.1/SCI32 sound resources.
-
-Ravi has made some really good documentation for SCI0.
