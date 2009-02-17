@@ -22,5 +22,7 @@
 	<string>@VERSION@</string>
 	<key>CFBundleVersion</key>
 	<string>svn</string>
+	<key>CFBundleIconFile</key>
+	<string>icon.png</string>
 </dict>
 </plist>

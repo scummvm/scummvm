@@ -2599,6 +2599,7 @@
 		DFE47C820D81F86900B6D1FB /* lure.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = lure.dat; path = "../engine-data/lure.dat"; sourceTree = "<group>"; };
 		DFE47C830D81F86900B6D1FB /* queen.tbl */ = {isa = PBXFileReference; lastKnownFileType = file; name = queen.tbl; path = "../engine-data/queen.tbl"; sourceTree = "<group>"; };
 		DFE47C850D81F86900B6D1FB /* sky.cpt */ = {isa = PBXFileReference; lastKnownFileType = file; name = sky.cpt; path = "../engine-data/sky.cpt"; sourceTree = "<group>"; };
+		DFF4DFFC0F4B449F00C50BC7 /* Info.plist.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Info.plist.in; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2677,6 +2678,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DFF4DFFC0F4B449F00C50BC7 /* Info.plist.in */,
 				DF2FFD290F48717F0006E566 /* Default.png */,
 				DF2FFD2A0F48717F0006E566 /* icon.png */,
 				DFE47C800D81F86900B6D1FB /* igor.tbl */,
@@ -4905,6 +4907,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "ScummVM" */;
 			buildPhases = (
+				DFF4E00D0F4B450A00C50BC7 /* ShellScript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -4953,6 +4956,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DFF4E00D0F4B450A00C50BC7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Info.plist.in",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ../../\nmake dists/iphone/Info.plist";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
