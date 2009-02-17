@@ -29,9 +29,6 @@ static int pcmout_scummvm_init(sfx_pcm_device_t *self) {
 	return SFX_OK;
 }
 
-static void pcmout_scummvm_exit(sfx_pcm_device_t *self) {
-}
-
 static int pcmout_scummvm_output(sfx_pcm_device_t *self, byte *buf, int count,
                                  sfx_timestamp_t *timestamp) {
 
@@ -46,15 +43,9 @@ static int pcmout_scummvm_output(sfx_pcm_device_t *self, byte *buf, int count,
 
 
 sfx_pcm_device_t sfx_pcm_driver_scummvm = {
-	"ScummVM",
-	"0.1",
 	&pcmout_scummvm_init,
-	&pcmout_scummvm_exit,
-	NULL,
 	&pcmout_scummvm_output,
 	NULL,
 	{0, 0, 0},
-	0,
-	NULL,
-	NULL
+	0
 };

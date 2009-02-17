@@ -43,12 +43,7 @@ int scummvm_timer_stop() {
 
 
 sfx_timer_t sfx_timer_scummvm = {
-	"ScummVM",
-	"0.1",
-	DELAY / 1000, 0,
-	NULL,
+	DELAY / 1000,
 	&scummvm_timer_start,
-	&scummvm_timer_stop,
-	0,
-	0
+	&scummvm_timer_stop
 };

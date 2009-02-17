@@ -31,20 +31,7 @@
 #include "sci/include/sfx_core.h"
 
 typedef struct {
-	const char *name;
-	const char *version;
-
 	int delay_ms; /* Approximate delay (in milliseconds) between calls */
-	int flags;
-
-	int
-	(*set_option)(char *name, char *value);
-	/* Sets an option for the timing mechanism
-	** Parameters: (char *) name: The name describing what to set
-	**             (char *) value: The value to set
-	** Returns   : (int) SFX_OK, or SFX_ERROR if the name wasn't understood
-	** May be NULL
-	*/
 
 	int
 	(*init)(void (*callback)(void *data), void *data);
@@ -63,23 +50,6 @@ typedef struct {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	** All resources allocated with the timer should be freed as an effect
 	** of this.
-	*/
-
-	int
-	(*block)(void);
-	/* Blocks the timer
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
-	** When this function returns it is guaranteed that no timer callback is
-	** currently being executed and that no new timer callback will occur
-	** until unblock() is called.
-	*/
-
-	int
-	(*unblock)(void);
-	/* Unblocks the timer
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
-	** Any callbacks that were blocked should be executed immediately when
-	** possible.
 	*/
 } sfx_timer_t;
 

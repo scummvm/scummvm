@@ -33,13 +33,6 @@
 #include "sci/include/sfx_time.h"
 #include "sci/include/scitypes.h"
 
-/* A number of standard options most devices will support */
-#define SFX_PCM_OPTION_RATE "rate"            /* Sampling rate: Number of samples per second */
-#define SFX_PCM_OPTION_BITS "bits"            /* Sample size in bits */
-#define SFX_PCM_OPTION_STEREO "stereo"        /* Whether to support stereo output */
-#define SFX_PCM_OPTION_BUF_SIZE "buffer-size" /* Requested buffer size */
-/* Device implementors are advised to use these constants whenever possible. */
-
 #define SFX_PCM_MONO 0
 #define SFX_PCM_STEREO_LR 1 /* left sample, then right sample */
 #define SFX_PCM_STEREO_RL 2 /* right sample, then left sample */
@@ -91,9 +84,6 @@ typedef struct _sfx_pcm_device {
 	** endianness/signedness/bit size/mono-vs-stereo conversions.
 	*/
 
-	const char *name;
-	const char *version;
-
 	int (*init)(struct _sfx_pcm_device *self);
 	/* Initializes the device
 	** Parameters: (sfx_pcm_device_t *) self: Self reference
@@ -101,20 +91,6 @@ typedef struct _sfx_pcm_device {
 	**                   opened
 	** This should attempt to open the highest quality output allowed by any options
 	** specified beforehand.
-	*/
-
-	void (*exit)(struct _sfx_pcm_device *self);
-	/* Uninitialises the device
-	** Parameters: (sfx_pcm_device_t *) self: Self reference
-	*/
-
-	int (*set_option)(struct _sfx_pcm_device *self, char *name, char *value);
-	/* Sets an option for the device
-	** Parameters: (sfx_pcm_device_t *) self: Self reference
-	**             (char *) name: Name of the option to set
-	**             (char *) value: Value of the option to set
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise (unsupported option)
-	** May be NULL
 	*/
 
 	int (*output)(struct _sfx_pcm_device *self, byte *buf,
@@ -152,18 +128,6 @@ typedef struct _sfx_pcm_device {
 		      ** that can be queued by this driver before calling
 		      ** output() will block or fail, drained according
 		      ** to conf.rate  */
-
-	/* The following are optional */
-	sfx_timer_t *timer;
-	/* Many PCM drivers use a callback mechanism, which can be
-	** exploited as a timer. Such a timer may be exported here and
-	** will be preferred over other timers.  */
-	/* This is an _optional_ timer provided by the PCM
-	** subsystem (may be NULL). It is checked for afer
-	** initialisation, and used in preference to any
-	** other timers available.
-	*/
-	void *internal; /* The private bits */
 
 } sfx_pcm_device_t;
 

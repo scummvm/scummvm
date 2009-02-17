@@ -460,10 +460,7 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 	/*------------------*/
 
 	if (pcm_device || player->maintenance) {
-		if (pcm_device && pcm_device->timer)
-			timer = pcm_device->timer;
-		else
-			timer = &sfx_timer_scummvm;
+		timer = &sfx_timer_scummvm;
 
 		if (!timer) {
 			fprintf(stderr, "[SFX] " __FILE__": Could not find timing mechanism\n");
@@ -483,9 +480,6 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 			mixer = NULL;
 			return;
 		}
-
-		sciprintf("[SFX] Initialised timer '%s', v%s\n",
-		          timer->name, timer->version);
 	} /* With no PCM device and no player, we don't need a timer */
 
 	/*----------------*/
@@ -504,7 +498,6 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 			if (mixer->init(mixer, pcm_device)) {
 				sciprintf("[SFX] Failed to initialise PCM mixer; disabling PCM support\n");
 				mixer = NULL;
-				pcm_device->exit(pcm_device);
 				pcm_device = NULL;
 			}
 		}
@@ -540,10 +533,8 @@ sfx_exit(sfx_state_t *self) {
 
 	song_lib_free(self->songlib);
 
-	if (pcm_device) {
-		pcm_device->exit(pcm_device);
-		pcm_device = NULL;
-	}
+	pcm_device = NULL;
+
 	if (timer && timer->exit())
 		fprintf(stderr, "[SFX] Timer reported error on exit\n");
 
