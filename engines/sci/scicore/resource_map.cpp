@@ -26,9 +26,9 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/resource.h"
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
+
+#include "common/file.h"
+
 
 #define RESOURCE_MAP_FILENAME "resource.map"
 
@@ -37,13 +37,13 @@
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
 static int
-detect_odd_sci01(int fh) {
+detect_odd_sci01(Common::File &file) {
 	byte buf[6];
 	int files_ok = 1;
-	int fsize, resources_nr, tempfh, read_ok;
+	int fsize, resources_nr, read_ok;
 	char filename[14];
 
-	fsize = sci_fd_size(fh);
+	fsize = file.size();
 	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
 		return SCI_ERROR_RESMAP_NOT_FOUND;
@@ -52,22 +52,21 @@ detect_odd_sci01(int fh) {
 	resources_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
 
 	while (resources_nr-- > 1) {
-		read_ok = read(fh, &buf, SCI0_RESMAP_ENTRIES_SIZE);
+		read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
 
 		if (read_ok) {
 			sprintf(filename, "resource.%03i", SCI0_RESFILE_GET_FILE(buf + 2));
-			tempfh = sci_open(filename, O_RDONLY | O_BINARY);
-
-			if (tempfh == SCI_INVALID_FD) {
+			Common::File temp;
+			
+			// FIXME: Maybe better to use File::exists here?
+			if (!temp.open(filename)) {
 				files_ok = 0;
 				break;
 			}
-
-			close(tempfh);
 		}
 	}
 
-	lseek(fh, 0, SEEK_SET);
+	file.seek(0, SEEK_SET);
 
 	return files_ok;
 }
@@ -148,10 +147,9 @@ int sci1_parse_header(int fd, int *types, int *lastrt) {
 
 
 
-int
-sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+int sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
-	int fd;
+	Common::File file;
 	resource_t *resources;
 	int resources_nr;
 	int resource_index = 0;
@@ -160,12 +158,11 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 	int max_resfile_nr = 0;
 
 	byte buf[SCI0_RESMAP_ENTRIES_SIZE];
-	fd = sci_open(map->location.file.name, O_RDONLY | O_BINARY);
 
-	if (!IS_VALID_FD(fd))
+	if (!file.open(map->location.file.name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
-	read(fd, &buf, 4);
+	file.read(&buf, 4);
 
 	/* Theory: An SCI1 map file begins with an index that allows us to seek quickly
 	   to a particular resource type. The entries are three bytes long; one byte
@@ -186,13 +183,12 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 	if ((buf[0] == 0x80) &&
 	        (buf[1] % 3 == 0) &&
 	        (buf[3] == 0x81)) {
-		close(fd);
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 
-	lseek(fd, 0, SEEK_SET);
+	file.seek(0, SEEK_SET);
 
-	switch (detect_odd_sci01(fd)) {
+	switch (detect_odd_sci01(file)) {
 	case 0 : /* Odd SCI01 */
 		if (*sci_version == SCI_VERSION_AUTODETECT)
 			*sci_version = SCI_VERSION_01_VGA_ODD;
@@ -205,7 +201,8 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	if ((fsize = sci_fd_size(fd)) < 0) {
+	fsize = file.size();
+	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
@@ -216,7 +213,7 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 	/* Sets valid default values for most entries */
 
 	do {
-		int read_ok = read(fd, &buf, SCI0_RESMAP_ENTRIES_SIZE);
+		int read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
 		next_entry = 1;
 
 		if (read_ok < 0) {
@@ -235,7 +232,6 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 
 			if (sci_res_read_entry(mgr, map, buf, resources + resource_index, *sci_version)) {
 				free(resources);
-				close(fd);
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 
@@ -263,7 +259,7 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 
 	} while (next_entry);
 
-	close(fd);
+	file.close();
 
 	if (!resource_index) {
 		sciprintf("resource.map was empty!\n");
@@ -280,14 +276,12 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 		/* Check whether the highest resfile used exists */
 		char filename_buf[14];
 		sprintf(filename_buf, "resource.%03d", max_resfile_nr);
-		fd = sci_open(filename_buf, O_RDONLY);
 
-		if (!IS_VALID_FD(fd)) {
+		if (!file.open(filename_buf) {
 			_scir_free_resources(resources, resources_nr);
 			sciprintf("'%s' requested by resource.map, but not found\n", filename_buf);
 			return SCI_ERROR_INVALID_RESMAP_ENTRY;
-		} else
-			close(fd);
+		}
 #endif
 	}
 

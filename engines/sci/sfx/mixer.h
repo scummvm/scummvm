@@ -32,6 +32,14 @@
 #define SFX_PCM_FEED_MODE_ALIVE 0
 #define SFX_PCM_FEED_MODE_DEAD 1
 
+/** Finitary unsigned rational numbers */
+struct sfx_pcm_urat_t {
+	int nom, den;
+	int val;
+
+	/* Total value: val + nom/den, where (nom < den) guaranteed. */
+};
+
 struct twochannel_data {
 	int left, right;
 };
@@ -49,7 +57,7 @@ typedef struct {
 	int mode; /* Whether the feed is alive or pending destruction */
 
 	int pending_review; /* Timestamp needs to be checked for this stream */
-	struct twochannel_data ch_old, ch_new; /* Intermediate results of output computation */
+	twochannel_data ch_old, ch_new; /* Intermediate results of output computation */
 } sfx_pcm_feed_state_t;
 
 

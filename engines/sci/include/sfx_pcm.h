@@ -64,13 +64,6 @@
 
 
 typedef struct {
-	int nom, den;
-	int val;
-
-	/* Total value: val + nom/den, where (nom < den) guaranteed. */
-} sfx_pcm_urat_t; /* Finitary unsigned rational numbers */
-
-typedef struct {
 	int rate;   /* Sampling rate */
 	int stereo; /* The stereo mode used (SFX_PCM_MONO or SFX_PCM_STEREO_*) */
 	unsigned int format; /* Sample format (SFX_PCM_FORMAT_*) */

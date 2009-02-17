@@ -870,7 +870,8 @@ run_vm(state_t *s, int restoring) {
 
 			}
 
-
+		// TODO: Replace the following by an opcode table, and several methods for
+		// each opcode.
 		switch (opnumber) {
 
 		case 0x00: /* bnot */
