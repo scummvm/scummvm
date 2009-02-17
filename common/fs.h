@@ -140,7 +140,7 @@ public:
 	virtual String getDisplayName() const;
 
 	/**
-	 * Return a string representation of the name of the file. This is can be
+	 * Return a string representation of the name of the file. This can be
 	 * used e.g. by detection code that relies on matching the name of a given
 	 * file. But it is *not* suitable for use with fopen / File::open, nor
 	 * should it be archived.

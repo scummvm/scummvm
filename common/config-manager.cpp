@@ -128,7 +128,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			if (*p == '\0')
 				error("Config file buggy: missing ] in line %d", lineno);
 			else if (*p != ']')
-				error("Config file buggy: Invalid character '%c' occured in section name in line %d", *p, lineno);
+				error("Config file buggy: Invalid character '%c' occurred in section name in line %d", *p, lineno);
 
 			domain = String(line.c_str() + 1, p);
 
