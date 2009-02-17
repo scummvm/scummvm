@@ -422,10 +422,9 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 		maxDiff = MAX<uint8>(maxDiff, diff);
 	}
 
-	delayInc = delay << 8;
+	delayInc = (delay << 8) & 0x7FFF;
 	if (maxDiff != 0)
 		delayInc /= maxDiff;
-	delayInc &= 0x7FFF;
 
 	delay = delayInc;
 	for (diff = 1; diff <= maxDiff; ++diff) {
