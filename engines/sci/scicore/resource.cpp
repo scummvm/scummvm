@@ -25,6 +25,8 @@
 
 /* Resource library */
 
+#include "common/util.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/vocabulary.h" /* For SCI version auto-detection */
@@ -883,9 +885,10 @@ scir_find_resource(resource_mgr_t *mgr, int type, int number, int lock) {
 void
 scir_unlock_resource(resource_mgr_t *mgr, resource_t *res, int resnum, int restype) {
 	if (!res) {
-		sciprintf("Resmgr: Warning: Attempt to unlock non-existant"
-		          " resource %s.%03d!\n",
-		          sci_resource_types[restype], resnum);
+		if (restype >= ARRAYSIZE(sci_resource_types))
+			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);
+		else
+			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d!\n", sci_resource_types[restype], resnum);
 		return;
 	}
 
