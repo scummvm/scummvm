@@ -35,9 +35,6 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_resmgr.h"
 
-#define GFX_RES_PATTERN_MIN 0
-#define GFX_RES_PATTERN_MAX 65535
-
 typedef struct _gfx_res_pattern {
 	int min, max;
 } gfx_res_pattern_t;
@@ -49,8 +46,6 @@ typedef struct _gfx_res_pattern_list {
 
 
 /* GFX resource assignments */
-
-#define GFX_RES_ASSIGN_TYPE_PALETTE 0 /* Assign a palette */
 
 typedef struct {
 	short type; /* GFX_RES_ASSIGN_TYPE_* */
@@ -106,18 +101,6 @@ typedef struct {
 
 
 struct _gfx_options;
-
-int
-gfx_update_conf(struct _gfx_options *options,
-                char *line);
-/* Updates the configuration
-** Parameters: (gfx_options_t *) options: The options list to update
-**             (char *) line: The text line to parse
-** Modifies  : (gfx_options_t *) options
-** Returns   : (int) 0 on success, 1 if an error occured
-** The line passed to it should begin with the resource type and be
-** terminated by a semicolon.
-*/
 
 int
 gfx_get_res_config(struct _gfx_options *options,
