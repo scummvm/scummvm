@@ -1047,8 +1047,7 @@ void ScummEngine::killAllScriptsExceptCurrent() {
 	for (int i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (i != _currentScript) {
 			vm.slot[i].status = ssDead;
-			if (_game.version == 6)
-				vm.slot[i].cutsceneOverride = 0;
+			vm.slot[i].cutsceneOverride = 0;
 		}
 	}
 }
