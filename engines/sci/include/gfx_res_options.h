@@ -35,6 +35,12 @@ typedef struct _gfx_res_pattern {
 	int min, max;
 } gfx_res_pattern_t;
 
+typedef struct _gfx_res_pattern_list {
+	gfx_res_pattern_t pattern;
+	struct _gfx_res_pattern_list *next;
+} gfx_res_pattern_list_t;
+
+
 /* GFX resource assignments */
 
 typedef struct {
