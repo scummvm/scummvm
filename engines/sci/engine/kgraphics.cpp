@@ -332,7 +332,7 @@ kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			s->mouse_pointer_cel = s->save_mouse_pointer_cel;
 		}
 	case 2 : {
-		point_t pt;
+		Common::Point pt;
 		pt.x = UKPV(0);
 		pt.y = UKPV(1);
 
@@ -346,7 +346,7 @@ kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		s->mouse_pointer_cel = UKPV(2);
 		break;
 	case 9 : {
-		point_t hotspot = gfx_point(SKPV(3), SKPV(4));
+		Common::Point hotspot = Common::Point(SKPV(3), SKPV(4));
 
 //		sciprintf("Setting hotspot at %d/%d\n", hotspot.x, hotspot.y);
 
@@ -377,7 +377,7 @@ kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, s->mouse_pointer_view));
 
 	if (argc > 2) {
-		point_t newpos = gfx_point(SKPV(2) + s->port->bounds.x,
+		Common::Point newpos = Common::Point(SKPV(2) + s->port->bounds.x,
 		                           SKPV(3) + s->port->bounds.y);
 
 		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
@@ -391,8 +391,8 @@ extern int oldx, oldy;
 
 reg_t
 kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	point_t newpos;
-	static point_t oldpos = {0, 0};
+	Common::Point newpos;
+	static Common::Point oldpos(0, 0);
 
 	newpos = s->gfx_state->pointer_pos;
 
@@ -439,7 +439,7 @@ kShow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		if (old_map != s->pic_visible_map) {
 
 			if (s->pic_visible_map == GFX_MASK_VISUAL) /* Full widget redraw */
-				s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
+				s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 
 			gfxop_update(s->gfx_state);
 			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
@@ -551,8 +551,8 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		          gfxcolor.mask);
 
 		redraw_port = 1;
-		ADD_TO_CURRENT_BG_WIDGETS(GFXW(gfxw_new_line(gfx_point(SKPV(2), SKPV(1)),
-		                               gfx_point(SKPV(4), SKPV(3)),
+		ADD_TO_CURRENT_BG_WIDGETS(GFXW(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)),
+		                               Common::Point(SKPV(4), SKPV(3)),
 		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
 
 	}
@@ -627,7 +627,7 @@ kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		area.y += s->port->zone.y;
 
 		if (s->dyn_views && s->dyn_views->parent == GFXWC(s->port))
-			s->dyn_views->draw(GFXW(s->dyn_views), gfx_point(0, 0));
+			s->dyn_views->draw(GFXW(s->dyn_views), Common::Point(0, 0));
 
 		gfxop_update_box(s->gfx_state, area);
 
@@ -980,7 +980,7 @@ kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int loop = SKPV(1);
 	int cel = SKPV(2);
 	int height, width;
-	point_t offset;
+	Common::Point offset;
 
 	if (argc != 3) {
 		SCIkwarn(SCIkWARNING, "CelHigh called with %d parameters!\n", argc);
@@ -999,7 +999,7 @@ kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int loop = SKPV(1);
 	int cel = SKPV(2);
 	int height, width;
-	point_t offset;
+	Common::Point offset;
 
 	if (argc != 3) {
 		SCIkwarn(SCIkWARNING, "CelHigh called with %d parameters!\n", argc);
@@ -1207,7 +1207,7 @@ set_base(state_t *s, reg_t object) {
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		xsize = ysize = xmod = ymod = 0;
 	} else {
-		point_t offset = gfx_point(0, 0);
+		Common::Point offset = Common::Point(0, 0);
 
 		if (loop != oldloop) {
 			loop = 0;
@@ -1301,7 +1301,7 @@ calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel) {
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		xsize = ysize = xmod = ymod = 0;
 	} else {
-		point_t offset = gfx_point(0, 0);
+		Common::Point offset = Common::Point(0, 0);
 
 		gfxop_get_cel_parameters(s->gfx_state, view, loop, cel,
 		                         &xsize, &ysize, &offset);
@@ -2024,7 +2024,7 @@ _k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, in
 	int signal;
 	reg_t under_bits;
 	reg_t *under_bitsp, *signalp;
-	point_t pos;
+	Common::Point pos;
 	int z;
 	gfxw_dyn_view_t *widget;
 
@@ -2459,7 +2459,7 @@ kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		priority = KP_SINT(argv[5]);
 		control = KP_SINT(argv[6]);
 
-		widget = GFXW(gfxw_new_dyn_view(s->gfx_state, gfx_point(x, y), 0, view, loop, cel, 0,
+		widget = GFXW(gfxw_new_dyn_view(s->gfx_state, Common::Point(x, y), 0, view, loop, cel, 0,
 		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0));
 
 		if (!widget) {
@@ -2610,7 +2610,7 @@ kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkGRAPHICS, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop,
 	          cel, priority);
 
-	new_view = gfxw_new_view(s->gfx_state, gfx_point(x, y), view, loop, cel, 0, priority, -1,
+	new_view = gfxw_new_view(s->gfx_state, Common::Point(x, y), view, loop, cel, 0, priority, -1,
 	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
 #if 0
@@ -2773,7 +2773,7 @@ kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
              gfx_rect(x, (((y) < 10)? 10 : (y)),      xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), s->ega_colors[color]));
 
 #define GRAPH_UPDATE_BOX(s, x, y, xl, yl) GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, \
-             gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), gfx_point(x, ((y) < 10)? 10 : (y) )));
+             gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) )));
 
 
 static void
@@ -2799,7 +2799,7 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return;
 	}
 
-	GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190), gfx_point(0, 10)));
+	GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190), Common::Point(0, 10)));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 
 	/*SCIkdebug(SCIkGRAPHICS, "Animating pic opening type %x\n", s->pic_animate);*/
@@ -3130,10 +3130,10 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		for (i = 0; i < 319; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
 			                             gfx_rect(320 - i, 0, i, 190),
-			                             gfx_point(0, 10)));
+			                             Common::Point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
 			                             gfx_rect(0, 0, 320 - i, 190),
-			                             gfx_point(i, 10)));
+			                             Common::Point(i, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3146,10 +3146,10 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		for (i = 0; i < 319; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
 			                             gfx_rect(0, 0, i, 190),
-			                             gfx_point(319 - i, 10)));
+			                             Common::Point(319 - i, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
 			                             gfx_rect(i, 0, 320 - i, 190),
-			                             gfx_point(0, 10)));
+			                             Common::Point(0, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3162,10 +3162,10 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		for (i = 0; i < 189; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
 			                             gfx_rect(0, 190 - i, 320, i),
-			                             gfx_point(0, 10)));
+			                             Common::Point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
 			                             gfx_rect(0, 0, 320, 190 - i),
-			                             gfx_point(0, 10 + i)));
+			                             Common::Point(0, 10 + i)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3178,10 +3178,10 @@ animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		for (i = 0; i < 189; i += granularity0) {
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen,
 			                             gfx_rect(0, 0, 320, i),
-			                             gfx_point(0, 200 - i)));
+			                             Common::Point(0, 200 - i)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen,
 			                             gfx_rect(0, i, 320, 190 - i),
-			                             gfx_point(0, 10)));
+			                             Common::Point(0, 10)));
 			gfxop_update(s->gfx_state);
 
 			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
@@ -3341,13 +3341,13 @@ kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			gfxop_draw_box(s->gfx_state, gfx_rect(0, 0, 10, 200), s->ega_colors[0], s->ega_colors[0], GFX_BOX_SHADE_FLAT);
 
 		gfxop_draw_pixmap(s->gfx_state, screen, gfx_rect(0, 0, 320 - shake_right, 200 - shake_down),
-		                  gfx_point(shake_right, shake_down));
+		                  Common::Point(shake_right, shake_down));
 
 		gfxop_update(s->gfx_state);
 		gfxop_usleep(s->gfx_state, 50000);
 
 
-		gfxop_draw_pixmap(s->gfx_state, screen, gfx_rect(0, 0, 320, 200), gfx_point(0, 0));
+		gfxop_draw_pixmap(s->gfx_state, screen, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		gfxop_update(s->gfx_state);
 		gfxop_usleep(s->gfx_state, 50000);
 	}

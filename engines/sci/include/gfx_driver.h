@@ -206,13 +206,13 @@ typedef struct _gfx_driver { /* Graphics driver */
 	/*** Drawing operations ***/
 
 	int (*draw_line)(struct _gfx_driver *drv,
-	                 point_t start, point_t end,
+	                 Common::Point start, Common::Point end,
 	                 gfx_color_t color,
 	                 gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 	/* Draws a single line to the back buffer.
 	** Parameters: (gfx_driver_t *) drv: The driver affected
-	**             (point_t) start: Starting point of the line to draw
-	**             (point_t) end: End point of the line to draw
+	**             (Common::Point) start: Starting point of the line to draw
+	**             (Common::Point) end: End point of the line to draw
 	**             (gfx_color_t *) color: The color to draw with
 	**             (int) line_mode: Any of the line modes
 	**             (int) line_style: Any of the line styles
@@ -297,12 +297,12 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Buffer operations ***/
 
-	int (*update)(struct _gfx_driver *drv, rect_t src, point_t dest,
+	int (*update)(struct _gfx_driver *drv, rect_t src, Common::Point dest,
 	              gfx_buffer_t buffer);
 	/* Updates the front buffer or the back buffers
 	** Parameters: (gfx_driver_t *) drv: The affected driver
 	**             (rect_t) src: Source rectangle
-	**             (point_t) dest: Destination point
+	**             (Common::Point) dest: Destination point
 	**             (int) buffer: One of GFX_BUFFER_FRONT or GFX_BUFFER_BACK
 	** Returns   : (int) GFX_OK, GFX_ERROR or GFX_FATAL
 	** This function updates either the visual front buffer, or the two back

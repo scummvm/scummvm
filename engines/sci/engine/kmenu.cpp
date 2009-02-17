@@ -100,7 +100,7 @@ kDrawMenuBar(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	else
 		sciw_set_status_bar(s, s->titlebar_port, NULL, 0, 0);
 
-	s->titlebar_port->draw(GFXW(s->titlebar_port), gfx_point(0, 0));
+	s->titlebar_port->draw(GFXW(s->titlebar_port), Common::Point(0, 0));
 	gfxop_update(s->gfx_state);
 
 	return s->r_acc;
@@ -256,7 +256,7 @@ about_freesci(state_t *s) {
 		s->visual->add(GFXWC(s->visual), GFXW(port));
 
 		port->add_dirty_abs(GFXWC(port), gfx_rect_fullscreen, 1);
-		s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
+		s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 		gfxop_update(s->gfx_state);
 
 		while (cont) {
@@ -278,7 +278,7 @@ about_freesci(state_t *s) {
 
 
 		port->widfree(GFXW(port));
-		s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
+		s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 		gfxop_update(s->gfx_state);
 
 	}
@@ -299,7 +299,7 @@ _menu_go_down(state_t *s, int menu_nr, int item_nr) {
 }
 
 #define FULL_REDRAW \
-  s->visual->draw(GFXW(s->visual), gfx_point(0, 0)); \
+  s->visual->draw(GFXW(s->visual), Common::Point(0, 0)); \
   gfxop_update(s->gfx_state);
 
 

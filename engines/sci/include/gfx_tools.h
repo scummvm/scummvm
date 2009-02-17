@@ -147,11 +147,11 @@ gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm);
 */
 
 void
-gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, point_t start, point_t end, int color);
+gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end, int color);
 /* Draws a line to a pixmap's index data buffer
 ** Parameters: (gfx_pixmap_t *) pxm: The pixmap to draw to
-**             (point_t) start: Starting point of the line to draw
-**             (point_t) end: End point of the line to draw
+**             (Common::Point) start: Starting point of the line to draw
+**             (Common::Point) end: End point of the line to draw
 **             (int) color: The byte value to write
 ** Returns   : (void)
 ** Remember, this only draws to the /index/ buffer, not to the drawable buffer.
@@ -160,13 +160,13 @@ gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, point_t start, point_t end, int color)
 
 void
 gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
-                     point_t start, point_t end, unsigned int color);
+                     Common::Point start, Common::Point end, unsigned int color);
 /* Draws a line to a linear pixel buffer
 ** Parameters: (byte *) buffer: Pointer to the start of the buffer to draw to
 **             (int) linewidth: Number of bytes per pixel line in the buffer
 **             (int) pixelwidth: Number of bytes per pixel
-**             (point_t) start: Starting point of the line to draw
-**             (point_t) end: End point of the line to draw
+**             (Common::Point) start: Starting point of the line to draw
+**             (Common::Point) end: End point of the line to draw
 **             (rect_t) Coordinates: the line should be drawn to (must be clipped already)
 **                      xl and yl describe relative offsets, as usual.
 **             (unsigned int) color: The color to draw (only the lowest 8 * pixelwidth bits are relevant)

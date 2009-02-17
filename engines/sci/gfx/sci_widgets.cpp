@@ -63,8 +63,8 @@ finish_titlebar_list(state_t *s, gfxw_list_t *list, gfxw_port_t *status_bar) {
 	gfx_color_t black = s->ega_colors[0];
 	gfxw_primitive_t *line;
 
-	line = gfxw_new_line(gfx_point(0, status_bar->bounds.yl - 1),
-	                     gfx_point(status_bar->bounds.xl, status_bar->bounds.yl - 1),
+	line = gfxw_new_line(Common::Point(0, status_bar->bounds.yl - 1),
+	                     Common::Point(status_bar->bounds.xl, status_bar->bounds.yl - 1),
 	                     black, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL);
 	list->add((gfxw_container_t *) list, (gfxw_widget_t *) line);
 
@@ -254,8 +254,8 @@ sciw_new_window(state_t *s, rect_t area, int font, gfx_color_t color, gfx_color_
 
 			if (flags & WINDOW_FLAG_TITLE)
 				decorations->add((gfxw_container_t *) decorations, (gfxw_widget_t *)
-				                 gfxw_new_line(gfx_point(1, 9),
-				                               gfx_point(frame.xl - 2, 9),
+				                 gfxw_new_line(Common::Point(1, 9),
+				                               Common::Point(frame.xl - 2, 9),
 				                               black, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 		} else {
 			decorations->add((gfxw_container_t *) decorations, (gfxw_widget_t *)
@@ -277,7 +277,7 @@ sciw_new_window(state_t *s, rect_t area, int font, gfx_color_t color, gfx_color_
 /**** Controls ****/
 /*----------------*/
 static inline rect_t
-_move_and_extend_rect(rect_t rect, point_t point, int yplus) {
+_move_and_extend_rect(rect_t rect, Common::Point point, int yplus) {
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl + 1, rect.yl + yplus);
 }
 
@@ -326,7 +326,7 @@ sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, in
 	zone.xl++;
 	zone.yl++;
 
-	list = gfxw_new_list(_move_and_extend_rect(zone, gfx_point(port->zone.x, port->zone.y), 1), 0);
+	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
 
@@ -361,7 +361,7 @@ sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, in
 gfxw_list_t *
 sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font,
                       gfx_alignment_t align, char framed, char inverse) {
-	gfxw_list_t *list = gfxw_new_list(_move_and_extend_rect(zone, gfx_point(port->zone.x, port->zone.y), 2), 0);
+	gfxw_list_t *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 2), 0);
 
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
 
@@ -387,7 +387,7 @@ sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int 
 	zone.xl++;
 	zone.yl++;
 
-	list = gfxw_new_list(_move_and_extend_rect(zone, gfx_point(port->zone.x, port->zone.y), 1), 0);
+	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
 	zone.x = 1;
 	zone.y = 1;
@@ -437,8 +437,8 @@ sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int 
 		};
 
 		if (cursor == strlen(text))
-			list->add(GFXWC(list), GFXW(gfxw_new_line(gfx_point(zone.x, zone.y),
-			                            gfx_point(zone.x, zone.y + cursor_height - 1),
+			list->add(GFXWC(list), GFXW(gfxw_new_line(Common::Point(zone.x, zone.y),
+			                            Common::Point(zone.x, zone.y + cursor_height - 1),
 			                            port->color, GFX_LINE_MODE_FAST, GFX_LINE_STYLE_NORMAL)));
 		free(textdup);
 	}
@@ -456,7 +456,7 @@ sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int 
 gfxw_list_t *
 sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
                       char frame, char inverse) {
-	gfxw_list_t *list = gfxw_new_list(_move_and_extend_rect(zone, gfx_point(port->zone.x, port->zone.y), 1), 0);
+	gfxw_list_t *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 	gfxw_widget_t *icon;
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
 
@@ -468,7 +468,7 @@ sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int lo
 	zone.x = 0;
 	zone.y = 0;
 
-	icon = GFXW(gfxw_new_view(port->visual->gfx_state, gfx_point(zone.x, zone.y), view, loop, cel, 0, -1, -1,
+	icon = GFXW(gfxw_new_view(port->visual->gfx_state, Common::Point(zone.x, zone.y), view, loop, cel, 0, -1, -1,
 	                          ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET));
 
 	if (!icon) {
@@ -500,7 +500,7 @@ sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, cha
 	zone.xl++;
 	zone.yl++;
 
-	list = gfxw_new_list(_move_and_extend_rect(zone, gfx_point(port->zone.x, port->zone.y), 1), 0);
+	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 
 	font_height = gfxop_get_font_height(port->visual->gfx_state, font_nr);
 	columns = (zone.yl - 20);
@@ -693,8 +693,8 @@ _make_menu_hbar(int offset, int width, gfxw_port_t *port, gfx_color_t color, gfx
 	bgcolor = un_prioritize(bgcolor);
 
 	list->add(GFXWC(list), GFXW(gfxw_new_box(port->visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT)));
-	list->add(GFXWC(list), GFXW(gfxw_new_line(gfx_point(0, 5),
-	                            gfx_point(width, 5),
+	list->add(GFXWC(list), GFXW(gfxw_new_line(Common::Point(0, 5),
+	                            Common::Point(width, 5),
 	                            color,
 	                            GFX_LINE_MODE_FAST, GFX_LINE_STYLE_STIPPLED)));
 

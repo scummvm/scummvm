@@ -34,7 +34,7 @@
 #  define DDIRTY if (0) fprintf
 #endif
 
-point_t gfxw_point_zero = {0, 0};
+Common::Point gfxw_point_zero(0, 0);
 
 #define MAX_SERIAL_NUMBER 0x7fffffff
 static int widget_serial_number_counter = 0x10000; /* Avoid confusion with IDs */
@@ -412,25 +412,25 @@ _gfxwop_basic_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
 /*-------------*/
 
 static inline rect_t
-_move_rect(rect_t rect, point_t point) {
+_move_rect(rect_t rect, Common::Point point) {
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl, rect.yl);
 }
 
 static inline void
-_split_rect(rect_t rect, point_t *p1, point_t *p2) {
+_split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
 	p1->x = rect.x;
 	p1->y = rect.y;
 	p2->x = rect.x + rect.xl;
 	p2->y = rect.y + rect.yl;
 }
 
-static inline point_t
-_move_point(rect_t rect, point_t point) {
-	return gfx_point(rect.x + point.x, rect.y + point.y);
+static inline Common::Point
+_move_point(rect_t rect, Common::Point point) {
+	return Common::Point(rect.x + point.x, rect.y + point.y);
 }
 
 static int
-_gfxwop_box_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_box_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_box_t *box = (gfxw_box_t *) widget;
 	DRAW_ASSERT(widget, GFXW_BOX);
 	GFX_ASSERT(gfxop_draw_box(box->visual->gfx_state, _move_rect(box->bounds, pos), box->color1,
@@ -568,7 +568,7 @@ _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 }
 
 static int
-_gfxwop_rect_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_rect_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_primitive_t *rect = (gfxw_primitive_t *) widget;
 	DRAW_ASSERT(widget, GFXW_RECT);
 
@@ -616,10 +616,10 @@ gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_lin
 /*-------------*/
 
 static int
-_gfxwop_line_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_primitive_t *line = (gfxw_primitive_t *) widget;
 	rect_t linepos = widget->bounds;
-	point_t p1, p2;
+	Common::Point p1, p2;
 
 	linepos.xl--;
 	linepos.yl--;
@@ -662,7 +662,7 @@ _gfxw_set_ops_LINE(gfxw_widget_t *prim) {
 }
 
 gfxw_primitive_t *
-gfxw_new_line(point_t start, point_t end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim;
 	/* Encode into internal representation */
 	rect_t line = gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y);
@@ -698,11 +698,11 @@ gfxw_new_line(point_t start, point_t end, gfx_color_t color, gfx_line_mode_t lin
 
 
 gfxw_view_t *
-_gfxw_new_simple_view(gfx_state_t *state, point_t pos, int view, int loop, int cel, int palette, int priority, int control,
+_gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
                       gfx_alignment_t halign, gfx_alignment_t valign, int size, gfxw_widget_type_t type) {
 	gfxw_view_t *widget;
 	int width, height;
-	point_t offset;
+	Common::Point offset;
 
 	if (!state) {
 		GFXERROR("Attempt to create view widget with NULL state!\n");
@@ -747,19 +747,19 @@ _gfxw_new_simple_view(gfx_state_t *state, point_t pos, int view, int loop, int c
 }
 
 int
-_gfxwop_view_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_view_t *view = (gfxw_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_VIEW);
 
 	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state, view->view, view->loop,
-	                          view->cel, gfx_point(view->pos.x + pos.x, view->pos.y + pos.y),
+	                          view->cel, Common::Point(view->pos.x + pos.x, view->pos.y + pos.y),
 	                          view->color, view->palette));
 
 	return 0;
 }
 
 static int
-_gfxwop_static_view_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_static_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_view_t *view = (gfxw_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_VIEW);
 
@@ -805,13 +805,13 @@ _gfxw_set_ops_VIEW(gfxw_widget_t *view, char stat) {
 }
 
 gfxw_view_t *
-gfxw_new_view(gfx_state_t *state, point_t pos, int view_nr, int loop, int cel, int palette, int priority, int control,
+gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
               gfx_alignment_t halign, gfx_alignment_t valign, int flags) {
 	gfxw_view_t *view;
 
 	if (flags & GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET) {
 		int foo;
-		point_t offset;
+		Common::Point offset;
 		gfxop_get_cel_parameters(state, view_nr, loop, cel, &foo, &foo, &offset);
 		pos.x += offset.x;
 		pos.y += offset.y;
@@ -830,7 +830,7 @@ gfxw_new_view(gfx_state_t *state, point_t pos, int view_nr, int loop, int cel, i
 /*---------------------*/
 
 static int
-_gfxwop_dyn_view_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_dyn_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_DYN_VIEW);
 
@@ -852,12 +852,12 @@ _gfxwop_dyn_view_draw(gfxw_widget_t *widget, point_t pos) {
 }
 
 static int
-_gfxwop_draw_nop(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_draw_nop(gfxw_widget_t *widget, Common::Point pos) {
 	return 0;
 }
 
 static int
-_gfxwop_pic_view_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_pic_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_PIC_VIEW);
 
@@ -980,12 +980,12 @@ _gfxw_set_ops_PICVIEW(gfxw_widget_t *widget) {
 }
 
 gfxw_dyn_view_t *
-gfxw_new_dyn_view(gfx_state_t *state, point_t pos, int z, int view, int loop, int cel, int palette, int priority, int control,
+gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
                   gfx_alignment_t halign, gfx_alignment_t valign, int sequence) {
 	gfxw_dyn_view_t *widget;
 	int width, height;
 	int xalignmod, yalignmod;
-	point_t offset;
+	Common::Point offset;
 
 	if (!state) {
 		GFXERROR("Attempt to create view widget with NULL state!\n");
@@ -1062,7 +1062,7 @@ _gfxwop_text_free(gfxw_widget_t *widget) {
 }
 
 static int
-_gfxwop_text_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_text_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_text_t *text = (gfxw_text_t *) widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
@@ -1072,7 +1072,7 @@ _gfxwop_text_draw(gfxw_widget_t *widget, point_t pos) {
 }
 
 static int
-_gfxwop_text_alloc_and_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_text_alloc_and_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_text_t *text = (gfxw_text_t *) widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
@@ -1220,7 +1220,7 @@ gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines,
 static int
 _gfxwop_container_add_dirty_rel(gfxw_container_t *cont, rect_t rect, int propagate) {
 	DDIRTY(stderr, "->container_add_dirty_rel(%d,%d,%d,%d, %d)\n", GFX_PRINT_RECT(rect), propagate);
-	return cont->add_dirty_abs(cont, _move_rect(rect, gfx_point(cont->zone.x, cont->zone.y)), propagate);
+	return cont->add_dirty_abs(cont, _move_rect(rect, Common::Point(cont->zone.x, cont->zone.y)), propagate);
 }
 
 static inline void
@@ -1384,7 +1384,7 @@ _gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) 
 					** descend into containers.
 					** Doing this is relatively cheap, though. */
 					if (draw_noncontainers || GFXW_IS_CONTAINER(seeker))
-						seeker->draw(seeker, gfx_point(container->zone.x, container->zone.y));
+						seeker->draw(seeker, Common::Point(container->zone.x, container->zone.y));
 
 					if (!dirty->next)
 						seeker->flags &= ~GFXW_FLAG_DIRTY;
@@ -1581,7 +1581,7 @@ _gfxwop_container_add(gfxw_container_t *container, gfxw_widget_t *widget) {
 /*------------------------------*/
 
 static int
-_gfxwop_list_draw(gfxw_widget_t *list, point_t pos) {
+_gfxwop_list_draw(gfxw_widget_t *list, Common::Point pos) {
 	DRAW_ASSERT(list, GFXW_LIST);
 
 	_gfxwop_container_draw_contents(list, ((gfxw_list_t *)list)->contents);
@@ -1592,7 +1592,7 @@ _gfxwop_list_draw(gfxw_widget_t *list, point_t pos) {
 }
 
 static int
-_gfxwop_sorted_list_draw(gfxw_widget_t *list, point_t pos) {
+_gfxwop_sorted_list_draw(gfxw_widget_t *list, Common::Point pos) {
 	DRAW_ASSERT(list, GFXW_SORTED_LIST);
 
 	_gfxwop_container_draw_contents(list, ((gfxw_list_t *)list)->contents);
@@ -1788,7 +1788,7 @@ gfxw_new_list(rect_t area, int sorted) {
 /*---------------*/
 
 static int
-_gfxwop_visual_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_visual_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_visual_t *visual = (gfxw_visual_t *) widget;
 	gfx_dirty_rect_t *dirty = visual->dirty;
 	DRAW_ASSERT(widget, GFXW_VISUAL);
@@ -1936,7 +1936,7 @@ _gfxwop_add_dirty_rects(gfxw_container_t *dest, gfx_dirty_rect_t *src) {
 /*-------------*/
 
 static int
-_gfxwop_port_draw(gfxw_widget_t *widget, point_t pos) {
+_gfxwop_port_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_port_t *port = (gfxw_port_t *) widget;
 	DRAW_ASSERT(widget, GFXW_PORT);
 
@@ -2098,7 +2098,7 @@ gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_
 	widget->parent = NULL;
 	widget->decorations = NULL;
 	widget->title_text = NULL;
-	widget->draw_pos = gfx_point(0, 0);
+	widget->draw_pos = Common::Point(0, 0);
 	widget->gray_text = 0;
 	widget->color = fgcolor;
 	widget->bgcolor = bgcolor;
@@ -2409,7 +2409,7 @@ gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget_t *widget) {
 
 	seeker = tw->contents;
 	while (seeker) {
-		point_t origin;
+		Common::Point origin;
 		rect_t bounds = widget->bounds;
 
 		bounds = widget->bounds;
@@ -2437,7 +2437,7 @@ gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_lis
 
 	intersector = gfxw_widget_intersects_chrono(tw, view);
 	if (intersector) {
-		point_t origin = gfx_point(intersector->parent->zone.x,
+		Common::Point origin = Common::Point(intersector->parent->zone.x,
 		                           intersector->parent->zone.y);
 
 		gfxw_remove_widget_from_container(GFXWC(chrono), GFXW(tw));

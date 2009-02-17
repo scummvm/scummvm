@@ -95,7 +95,7 @@ typedef struct {
 
 	gfx_options_t *options;
 
-	point_t pointer_pos; /* Mouse pointer coordinates */
+	Common::Point pointer_pos; /* Mouse pointer coordinates */
 
 	rect_t clip_zone_unscaled; /* The current UNSCALED clipping zone */
 	rect_t clip_zone; /* The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
@@ -114,7 +114,7 @@ typedef struct {
 
 
 	int mouse_pointer_visible; /* Whether the pointer is drawn right now */
-	point_t old_pointer_draw_pos; /* Mouse pointer draw coordinates */
+	Common::Point old_pointer_draw_pos; /* Mouse pointer draw coordinates */
 	rect_t pointer_bg_zone; /* old-pointer-draw-pos relative zone inside the pointer
 				** pixmap that was drawn  */
 
@@ -244,13 +244,13 @@ gfxop_have_mouse(gfx_state_t *state);
 
 int
 gfxop_draw_line(gfx_state_t *state,
-                point_t start, point_t end,
+                Common::Point start, Common::Point end,
                 gfx_color_t color, gfx_line_mode_t line_mode,
                 gfx_line_style_t line_style);
 /* Renders a clipped line to the back buffer
 ** Parameters: (gfx_state_t *) state: The state affected
-**             (point_t) start: Starting point of the line
-**	       (point_t) end: End point of the line
+**             (Common::Point) start: Starting point of the line
+**	       (Common::Point) end: End point of the line
 **             (gfx_color_t) color: The color to use for drawing
 **             (gfx_line_mode_t) line_mode: Any valid line mode to use
 **             (gfx_line_style_t) line_style: The line style to use
@@ -418,23 +418,23 @@ gfxop_set_pointer_cursor(gfx_state_t *state, int nr);
 */
 
 int
-gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, point_t *hotspot);
+gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common::Point *hotspot);
 /* Sets the mouse pointer to a view resource
 ** Parameters: (gfx_state_t *) state: The affected state
 **             (int) nr: Number of the view resource to use
 **             (int) loop: View loop to use
 **             (int) cel: View cel to use
-**             (point_t *) hotspot: Manually set hotspot to use, or NULL for default.
+**             (Common::Point *) hotspot: Manually set hotspot to use, or NULL for default.
 ** Returns   : (int) GFX_OK or GFX_FATAL
 ** Use gfxop_set_pointer_cursor(state, GFXOP_NO_POINTER) to disable the
 ** pointer.
 */
 
 int
-gfxop_set_pointer_position(gfx_state_t *state, point_t pos);
+gfxop_set_pointer_position(gfx_state_t *state, Common::Point pos);
 /* Teleports the mouse pointer to a specific position
 ** Parameters: (gfx_state_t *) state: The state the pointer is in
-**             (point_t) pos: The position to teleport it to
+**             (Common::Point) pos: The position to teleport it to
 ** Returns   : (int) Any error code or GFX_OK
 ** Depending on the graphics driver, this operation may be without
 ** any effect
@@ -503,7 +503,7 @@ gfxop_overflow_cel(gfx_state_t *state, int nr, int *loop, int *cel);
 
 int
 gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
-                         int *width, int *height, point_t *offset);
+                         int *width, int *height, Common::Point *offset);
 /* Retreives the width and height of a cel
 ** Parameters: (gfx_state_t *) state: The state to use
 **             (int) nr: Number of the view
@@ -511,20 +511,20 @@ gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
 **             (int) cel: The cel (inside the loop) to look up
 **             (int *) width: The variable the width will be stored in
 **             (int *) height: The variable the height will be stored in
-**             (point_t *) offset: The variable the cel's x/y offset will be stored in
+**             (Common::Point *) offset: The variable the cel's x/y offset will be stored in
 ** Returns   : (int) GFX_OK if the lookup succeeded, GFX_ERROR if the nr/loop/cel
 **             combination was invalid
 */
 
 int
-gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
+gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
                gfx_color_t color, int palette);
 /* Draws (part of) a cel to the back buffer
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
 **             (int) loop: Loop of the cel to draw
 **             (int) cel: The cel number of the cel to draw
-**             (point_t) pos: The positino the cel is to be drawn to
+**             (Common::Point) pos: The positino the cel is to be drawn to
 **             (gfx_color_t color): The priority and control values to use for drawing
 **	       (int) palette: The palette to use
 ** Returns   : (int) GFX_OK or GFX_FATAL
@@ -532,14 +532,14 @@ gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
 
 
 int
-gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
+gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
                       gfx_color_t color, int palette);
 /* Draws a cel to the static buffer; no clipping is performed
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
 **             (int) loop: Loop of the cel to draw
 **             (int) cel: The cel number of the cel to draw
-**             (point_t) pos: The positino the cel is to be drawn to
+**             (Common::Point) pos: The positino the cel is to be drawn to
 **             (gfx_color_t color): The priority and control values to use for drawing
 **	       (int) palette: The palette to use
 ** Returns   : (int) GFX_OK or GFX_FATAL
@@ -548,14 +548,14 @@ gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, point_t pos
 
 
 int
-gfxop_draw_cel_static_clipped(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
+gfxop_draw_cel_static_clipped(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
                               gfx_color_t color, int palette);
 /* Draws (part of) a clipped cel to the static buffer
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
 **             (int) loop: Loop of the cel to draw
 **             (int) cel: The cel number of the cel to draw
-**             (point_t) pos: The positino the cel is to be drawn to
+**             (Common::Point) pos: The positino the cel is to be drawn to
 **             (gfx_color_t color): The priority and control values to use for drawing
 **	       (int) palette: The palette to use
 ** Returns   : (int) GFX_OK or GFX_FATAL
@@ -691,12 +691,12 @@ gfxop_grab_pixmap(gfx_state_t *state, rect_t area);
 */
 
 int
-gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, point_t pos);
+gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common::Point pos);
 /* Draws part of a pixmap to the screen
 ** Parameters: (gfx_state_t *) state: The affected state
 **             (gfx_pixmap_t *) pxm: The pixmap to draw
 **             (rect_t) zone: The segment of the pixmap to draw
-**             (point_t) pos: The position the pixmap should be drawn to
+**             (Common::Point) pos: The position the pixmap should be drawn to
 ** Returns   : (int) GFX_OK or any error code
 */
 

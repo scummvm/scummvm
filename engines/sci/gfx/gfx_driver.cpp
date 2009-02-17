@@ -162,7 +162,7 @@ lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 }
 
 static int
-scummvm_draw_line(struct _gfx_driver *drv, point_t start, point_t end,
+scummvm_draw_line(struct _gfx_driver *drv, Common::Point start, Common::Point end,
                   gfx_color_t color,
                   gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.global_index;
@@ -170,7 +170,7 @@ scummvm_draw_line(struct _gfx_driver *drv, point_t start, point_t end,
 	int ysize = S->ysize;
 
 	if (color.mask & GFX_MASK_VISUAL) {
-		point_t nstart, nend;
+		Common::Point nstart, nend;
 
 		nstart.x = start.x;
 		nstart.y = start.y;
@@ -284,7 +284,7 @@ scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
 // Buffer operations
 
 static int
-scummvm_update(struct _gfx_driver *drv, rect_t src, point_t dest, gfx_buffer_t buffer) {
+scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	//TODO
 	int data_source = (buffer == GFX_BUFFER_BACK) ? 2 : 1;
 	int data_dest = data_source - 1;

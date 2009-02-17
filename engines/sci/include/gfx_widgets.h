@@ -79,7 +79,7 @@
 /* Typecasts a container widget to gfxw_container_widget_t *. */
 
 /* gfxw_point_zero is declared in gfx/widgets.c */
-extern point_t gfxw_point_zero;
+extern Common::Point gfxw_point_zero;
 
 /*********************/
 /* Widget operations */
@@ -90,10 +90,10 @@ extern point_t gfxw_point_zero;
 **
 **
 **
-** -- draw(gfxw_widget_t *self, point_t pos)
+** -- draw(gfxw_widget_t *self, Common::Point pos)
 ** Draws the widget.
 ** Parameters: (gfxw_widget_t *) self: self reference
-**             (point_t) pos: The position to draw to (added to the widget's
+**             (Common::Point) pos: The position to draw to (added to the widget's
 **                            internal position)
 ** Returns   : (int) 0
 ** The widget is drawn iff it is flagged as dirty. Invoking this operation on
@@ -261,9 +261,9 @@ gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_lin
 */
 
 gfxw_primitive_t *
-gfxw_new_line(point_t start, point_t end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 /* Creates a new line
-** Parameters: (point_t * point_t) (start, line): The line origin and end point
+** Parameters: (Common::Point * Common::Point) (start, line): The line origin and end point
 **             (gfx_color_t) color: The line's color
 **             (gfx_line_mode_t) line_mode: The line mode to use for drawing
 **             (gfx_line_style_t) line_style: The line style
@@ -278,11 +278,11 @@ gfxw_new_line(point_t start, point_t end, gfx_color_t color, gfx_line_mode_t lin
 #define GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET (1 << 1)
 
 gfxw_view_t *
-gfxw_new_view(gfx_state_t *state, point_t pos, int view, int loop, int cel, int palette, int priority, int control,
+gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
               gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 /* Creates a new view (a cel, actually)
 ** Parameters: (gfx_state_t *) state: The graphics state
-**             (point_t) pos: The position to place the view at
+**             (Common::Point) pos: The position to place the view at
 **             (int x int x int) view, loop, cel: The global cel ID
 **             (int) priority: The priority to use for drawing, or -1 for none
 **             (int) control: The value to write to the control map, or -1 for none
@@ -293,12 +293,12 @@ gfxw_new_view(gfx_state_t *state, point_t pos, int view, int loop, int cel, int 
 */
 
 gfxw_dyn_view_t *
-gfxw_new_dyn_view(gfx_state_t *state, point_t pos, int z, int view, int loop, int cel, int palette,
+gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
                   int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign,
                   int sequence);
 /* Creates a new dyn view
 ** Parameters: (gfx_state_t *) state: The graphics state
-**             (point_t) pos: The position to place the dynamic view at
+**             (Common::Point) pos: The position to place the dynamic view at
 **             (int) z: The z coordinate
 **             (int x int x int) view, loop, cel: The global cel ID
 **             (int) priority: The priority to use for drawing, or -1 for none

@@ -27,6 +27,7 @@
 #define _SCI_GFX_SYSTEM_
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "sci/include/sci_memory.h"
 #include "sci/include/resource.h"
 
@@ -232,35 +233,13 @@ gfx_rect_equals(rect_t a, rect_t b) {
 /* gfx_rect_fullscreen is declared in gfx/gfx_tools.c */
 extern rect_t gfx_rect_fullscreen;
 
-/*** points ***/
-
-typedef struct {
-	int x, y;
-} point_t;
-
-#define GFX_PRINT_POINT(p) (p).x, (p).y
-
-/* Generates a point_t from index data
-** Parameters: (int x int) x,y: Indicated point
-** Returns   : (point_t) The resulting structure
-*/
-static inline point_t
-gfx_point(int x, int y) {
-	point_t point;
-
-	point.x = x;
-	point.y = y;
-
-	return point;
-}
-
 /* Translation operation for rects
 ** Parameters: (rect_t) rect: The rect to translate
-**             (point_t) offset: The offset to translate it by
+**             (Common::Point) offset: The offset to translate it by
 ** Returns   : (rect_t) The translated rect
 */
 static inline rect_t
-gfx_rect_translate(rect_t rect, point_t offset) {
+gfx_rect_translate(rect_t rect, Common::Point offset) {
 	rect.x += offset.x;
 	rect.y += offset.y;
 

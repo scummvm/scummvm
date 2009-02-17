@@ -61,7 +61,7 @@ int gfx_crossblit_alpha_threshold = 128;
 #undef DRAWLINE_FUNC
 
 inline void
-gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, point_t start, point_t end, unsigned int color) {
+gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, Common::Point start, Common::Point end, unsigned int color) {
 	switch (pixelwidth) {
 
 	case 1:
@@ -91,7 +91,7 @@ gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, point_t start,
 
 
 void
-gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, point_t start, point_t end, int color) {
+gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end, int color) {
 	gfx_draw_line_buffer(pxm->index_data, pxm->index_xl, 1, start, end, color);
 }
 

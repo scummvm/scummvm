@@ -82,13 +82,13 @@ typedef struct pointf {
 } pointf_t;
 
 pointf_t
-to_pointf(point_t p) {
+to_pointf(Common::Point p) {
 	return pointf(p.x, p.y);
 }
 
 typedef struct vertex {
 	/* Location */
-	point_t v;
+	Common::Point v;
 
 	/* Index */
 	int idx;
@@ -125,7 +125,7 @@ typedef struct pf_state {
 	LIST_HEAD(polygons_head, polygon) polygons;
 
 	/* Original start and end points */
-	point_t start, end;
+	Common::Point start, end;
 
 	/* Flags for adding original points to final path */
 	char keep_start, keep_end;
@@ -160,9 +160,9 @@ polygon_is_reg_t(unsigned char *list, int size) {
 	return 1;
 }
 
-static point_t
+static Common::Point
 read_point(unsigned char *list, int is_reg_t, int offset) {
-	point_t point;
+	Common::Point point;
 
 	if (!is_reg_t) {
 		POLY_GET_POINT(list, offset, point.x, point.y);
@@ -177,7 +177,7 @@ read_point(unsigned char *list, int is_reg_t, int offset) {
 /*** Debug functions ***/
 
 static void
-draw_line(state_t *s, point_t p1, point_t p2, int type) {
+draw_line(state_t *s, Common::Point p1, Common::Point p2, int type) {
 	/* Colors for polygon debugging.
 	** Green: Total access
 	** Red : Barred access
@@ -206,7 +206,7 @@ draw_line(state_t *s, point_t p1, point_t p2, int type) {
 }
 
 static void
-draw_point(state_t *s, point_t p, int start) {
+draw_point(state_t *s, Common::Point p, int start) {
 	/* Colors for starting and end point
 	** Green: End point
 	** Blue: Starting point
@@ -234,7 +234,7 @@ draw_polygon(state_t *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
-	point_t first, prev;
+	Common::Point first, prev;
 	unsigned char *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(list, size);
 	int i;
@@ -242,7 +242,7 @@ draw_polygon(state_t *s, reg_t polygon) {
 	prev = first = read_point(list, is_reg_t, 0);
 
 	for (i = 1; i < size; i++) {
-		point_t point = read_point(list, is_reg_t, i);
+		Common::Point point = read_point(list, is_reg_t, i);
 		draw_line(s, prev, point, type);
 		prev = point;
 	}
@@ -251,7 +251,7 @@ draw_polygon(state_t *s, reg_t polygon) {
 }
 
 static void
-draw_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt) {
+draw_input(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -284,7 +284,7 @@ print_polygon(state_t *s, reg_t polygon) {
 	int i;
 	unsigned char *point_array = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(point_array, size);
-	point_t point;
+	Common::Point point;
 
 	sciprintf("%i:", type);
 
@@ -298,7 +298,7 @@ print_polygon(state_t *s, reg_t polygon) {
 }
 
 static void
-print_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt) {
+print_input(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -329,9 +329,9 @@ print_input(state_t *s, reg_t poly_list, point_t start, point_t end, int opt) {
 /*** Basic geometry functions ***/
 
 static int
-area(point_t a, point_t b, point_t c)
+area(Common::Point a, Common::Point b, Common::Point c)
 /* Computes the area of a triangle
-** Parameters: (point_t) a, b, c: The points of the triangle
+** Parameters: (Common::Point) a, b, c: The points of the triangle
 ** Returns   : (int) The area multiplied by two
 */
 {
@@ -339,10 +339,10 @@ area(point_t a, point_t b, point_t c)
 }
 
 static int
-left(point_t a, point_t b, point_t c)
+left(Common::Point a, Common::Point b, Common::Point c)
 /* Determines whether or not a point is to the left of a directed line
-** Parameters: (point_t) a, b: The directed line (a, b)
-**             (point_t) c: The query point
+** Parameters: (Common::Point) a, b: The directed line (a, b)
+**             (Common::Point) c: The query point
 ** Returns   : (int) 1 if c is to the left of (a, b), 0 otherwise
 */
 {
@@ -350,11 +350,11 @@ left(point_t a, point_t b, point_t c)
 }
 
 static int
-left_on(point_t a, point_t b, point_t c)
+left_on(Common::Point a, Common::Point b, Common::Point c)
 /* Determines whether or not a point is to the left of or collinear with a
 ** directed line
-** Parameters: (point_t) a, b: The directed line (a, b)
-**             (point_t) c: The query point
+** Parameters: (Common::Point) a, b: The directed line (a, b)
+**             (Common::Point) c: The query point
 ** Returns   : (int) 1 if c is to the left of or collinear with (a, b), 0
 **                   otherwise
 */
@@ -363,9 +363,9 @@ left_on(point_t a, point_t b, point_t c)
 }
 
 static int
-collinear(point_t a, point_t b, point_t c)
+collinear(Common::Point a, Common::Point b, Common::Point c)
 /* Determines whether or not three points are collinear
-** Parameters: (point_t) a, b, c: The three points
+** Parameters: (Common::Point) a, b, c: The three points
 ** Returns   : (int) 1 if a, b, and c are collinear, 0 otherwise
 */
 {
@@ -373,10 +373,10 @@ collinear(point_t a, point_t b, point_t c)
 }
 
 static int
-between(point_t a, point_t b, point_t c)
+between(Common::Point a, Common::Point b, Common::Point c)
 /* Determines whether or not a point lies on a line segment
-** Parameters: (point_t) a, b: The line segment (a, b)
-**             (point_t) c: The query point
+** Parameters: (Common::Point) a, b: The line segment (a, b)
+**             (Common::Point) c: The query point
 ** Returns   : (int) 1 if c lies on (a, b), 0 otherwise
 */
 {
@@ -391,10 +391,10 @@ between(point_t a, point_t b, point_t c)
 }
 
 static int
-intersect_proper(point_t a, point_t b, point_t c, point_t d)
+intersect_proper(Common::Point a, Common::Point b, Common::Point c, Common::Point d)
 /* Determines whether or not two line segments properly intersect
-** Parameters: (point_t) a, b: The line segment (a, b)
-**             (point_t) c, d: The line segment (c, d)
+** Parameters: (Common::Point) a, b: The line segment (a, b)
+**             (Common::Point) c, d: The line segment (c, d)
 ** Returns   : (int) 1 if (a, b) properly intersects (c, d), 0 otherwise
 */
 {
@@ -407,10 +407,10 @@ intersect_proper(point_t a, point_t b, point_t c, point_t d)
 }
 
 static int
-intersect(point_t a, point_t b, point_t c, point_t d)
+intersect(Common::Point a, Common::Point b, Common::Point c, Common::Point d)
 /* Determines whether or not two line segments intersect
-** Parameters: (point_t) a, b: The line segment (a, b)
-**             (point_t) c, d: The line segment (c, d)
+** Parameters: (Common::Point) a, b: The line segment (a, b)
+**             (Common::Point) c, d: The line segment (c, d)
 ** Returns   : (int) 1 if (a, b) intersects (c, d), 0 otherwise
 */
 {
@@ -425,9 +425,9 @@ intersect(point_t a, point_t b, point_t c, point_t d)
 /*** Pathfinding ***/
 
 static vertex_t *
-vertex_new(point_t p)
+vertex_new(Common::Point p)
 /* Allocates and initialises a new vertex
-** Parameters: (point_t) p: The position of the vertex
+** Parameters: (Common::Point) p: The position of the vertex
 ** Returns   : (vertex_t *) A newly allocated vertex
 */
 {
@@ -456,9 +456,9 @@ polygon_new(int type)
 }
 
 static int
-contained(point_t p, polygon_t *polygon)
+contained(Common::Point p, polygon_t *polygon)
 /* Polygon containment test
-** Parameters: (point_t) p: The point
+** Parameters: (Common::Point) p: The point
 **             (polygon_t *) polygon: The polygon
 ** Returns   : (int) CONT_INSIDE if p is strictly contained in polygon,
 **                   CONT_ON_EDGE if p lies on an edge of polygon,
@@ -471,8 +471,8 @@ contained(point_t p, polygon_t *polygon)
 
 	/* Iterate over edges */
 	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-		point_t v1 = vertex->v;
-		point_t v2 = CLIST_NEXT(vertex, entries)->v;
+		Common::Point v1 = vertex->v;
+		Common::Point v2 = CLIST_NEXT(vertex, entries)->v;
 
 		/* Flags for ray straddling left and right */
 		int rstrad, lstrad;
@@ -595,9 +595,9 @@ vertex_compare(const void *a, const void *b)
 **                   0 if a and b are equal
 */
 {
-	point_t p0 = vertex_cur->v;
-	point_t p1 = (*(vertex_t **) a)->v;
-	point_t p2 = (*(vertex_t **) b)->v;
+	Common::Point p0 = vertex_cur->v;
+	Common::Point p1 = (*(vertex_t **) a)->v;
+	Common::Point p2 = (*(vertex_t **) b)->v;
 
 	if (POINT_EQUAL(p1, p2))
 		return 0;
@@ -642,13 +642,13 @@ vertex_compare(const void *a, const void *b)
 }
 
 static void
-clockwise(vertex_t *v, point_t *p1, point_t *p2)
+clockwise(vertex_t *v, Common::Point *p1, Common::Point *p2)
 /* Orders the points of an edge clockwise around vertex_cur. If all three
 ** points are collinear the original order is used
 ** Parameters: (vertex_t *) v: The first vertex of the edge
 ** Returns   : (void)
-**             (point_t) *p1: The first point in clockwise order
-**             (point_t) *p2: The second point in clockwise order
+**             (Common::Point) *p1: The first point in clockwise order
+**             (Common::Point) *p2: The second point in clockwise order
 */
 {
 	vertex_t *w = CLIST_NEXT(v, entries);
@@ -673,7 +673,7 @@ edge_compare(const void *a, const void *b)
 **                   0 if a and b are equal
 */
 {
-	point_t v1, v2, w1, w2;
+	Common::Point v1, v2, w1, w2;
 
 	/* We can assume that the sweeping line intersects both edges and
 	** that the edges do not properly intersect
@@ -711,10 +711,10 @@ edge_compare(const void *a, const void *b)
 }
 
 static int
-inside(point_t p, vertex_t *vertex)
+inside(Common::Point p, vertex_t *vertex)
 /* Determines whether or not a line from a point to a vertex intersects the
 ** interior of the polygon, locally at that vertex
-** Parameters: (point_t) p: The point
+** Parameters: (Common::Point) p: The point
 **             (vertex_t *) vertex: The vertex
 ** Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
 **                   the polygon, locally at the vertex. 0 otherwise
@@ -722,9 +722,9 @@ inside(point_t p, vertex_t *vertex)
 {
 	/* Check that it's not a single-vertex polygon */
 	if (VERTEX_HAS_EDGES(vertex)) {
-		point_t prev = CLIST_PREV(vertex, entries)->v;
-		point_t next = CLIST_NEXT(vertex, entries)->v;
-		point_t cur = vertex->v;
+		Common::Point prev = CLIST_PREV(vertex, entries)->v;
+		Common::Point next = CLIST_NEXT(vertex, entries)->v;
+		Common::Point cur = vertex->v;
 
 		if (left(prev, cur, next)) {
 			/* Convex vertex, line (p, cur) intersects the inside
@@ -757,8 +757,8 @@ visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_t *tree)
 */
 {
 	vertex_t *edge;
-	point_t p = vertex_cur->v;
-	point_t w = vertex->v;
+	Common::Point p = vertex_cur->v;
+	Common::Point w = vertex->v;
 	aatree_t *tree_n = tree;
 
 	/* Check if sweeping line intersects the interior of the polygon
@@ -779,7 +779,7 @@ visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_t *tree)
 	edge = (vertex_t*)aatree_get_data(tree);
 
 	if (edge) {
-		point_t p1, p2;
+		Common::Point p1, p2;
 
 		/* Check for intersection with sweeping line before vertex */
 		clockwise(edge, &p1, &p2);
@@ -800,7 +800,7 @@ visible_vertices(pf_state_t *s, vertex_t *vert)
 */
 {
 	aatree_t *tree = aatree_new();
-	point_t p = vert->v;
+	Common::Point p = vert->v;
 	polygon_t *polygon;
 	int i;
 	int is_visible;
@@ -819,7 +819,7 @@ visible_vertices(pf_state_t *s, vertex_t *vert)
 		/* Check that there is more than one vertex. */
 		if (VERTEX_HAS_EDGES(vertex))
 			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-			point_t high, low;
+			Common::Point high, low;
 
 			/* Add edges that intersect the initial position of the sweeping line */
 			clockwise(vertex, &high, &low);
@@ -879,7 +879,7 @@ visible_vertices(pf_state_t *s, vertex_t *vert)
 static float
 distance(pointf_t a, pointf_t b)
 /* Computes the distance between two pointfs
-** Parameters: (point_t) a, b: The two pointfs
+** Parameters: (Common::Point) a, b: The two pointfs
 ** Returns   : (int) The distance between a and b, rounded to int
 */
 {
@@ -890,9 +890,9 @@ distance(pointf_t a, pointf_t b)
 }
 
 static int
-point_on_screen_border(point_t p)
+point_on_screen_border(Common::Point p)
 /* Determines if a point lies on the screen border
-** Parameters: (point_t) p: The point
+** Parameters: (Common::Point) p: The point
 ** Returns   : (int) 1 if p lies on the screen border, 0 otherwise
 */
 {
@@ -901,9 +901,9 @@ point_on_screen_border(point_t p)
 }
 
 static int
-edge_on_screen_border(point_t p, point_t q)
+edge_on_screen_border(Common::Point p, Common::Point q)
 /* Determines if an edge lies on the screen border
-** Parameters: (point_t) p, q: The edge (p, q)
+** Parameters: (Common::Point) p, q: The edge (p, q)
 ** Returns   : (int) 1 if (p, q) lies on the screen border, 0 otherwise
 */
 {
@@ -915,18 +915,18 @@ edge_on_screen_border(point_t p, point_t q)
 }
 
 static int
-find_free_point(pointf_t f, polygon_t *polygon, point_t *ret)
+find_free_point(pointf_t f, polygon_t *polygon, Common::Point *ret)
 /* Searches for a nearby point that is not contained in a polygon
 ** Parameters: (pointf_t) f: The pointf to search nearby
 **             (polygon_t *) polygon: The polygon
 ** Returns   : (int) PF_OK on success, PF_FATAL otherwise
-**             (point_t) *ret: The non-contained point on success
+**             (Common::Point) *ret: The non-contained point on success
 */
 {
-	point_t p;
+	Common::Point p;
 
 	/* Try nearest point first */
-	p = gfx_point((int) floor(f.x + 0.5),
+	p = Common::Point((int) floor(f.x + 0.5),
 	              (int) floor(f.y + 0.5));
 
 	if (contained(p, polygon) != CONT_INSIDE) {
@@ -934,7 +934,7 @@ find_free_point(pointf_t f, polygon_t *polygon, point_t *ret)
 		return PF_OK;
 	}
 
-	p = gfx_point((int) floor(f.x),
+	p = Common::Point((int) floor(f.x),
 	              (int) floor(f.y));
 
 	/* Try (x, y), (x + 1, y), (x , y + 1) and (x + 1, y + 1) */
@@ -955,12 +955,12 @@ find_free_point(pointf_t f, polygon_t *polygon, point_t *ret)
 }
 
 static int
-near_point(point_t p, polygon_t *polygon, point_t *ret)
+near_point(Common::Point p, polygon_t *polygon, Common::Point *ret)
 /* Computes the near point of a point contained in a polygon
-** Parameters: (point_t) p: The point
+** Parameters: (Common::Point) p: The point
 **             (polygon_t *) polygon: The polygon
 ** Returns   : (int) PF_OK on success, PF_FATAL otherwise
-**             (point_t) *ret: The near point of p in polygon on success
+**             (Common::Point) *ret: The near point of p in polygon on success
 */
 {
 	vertex_t *vertex;
@@ -968,8 +968,8 @@ near_point(point_t p, polygon_t *polygon, point_t *ret)
 	float dist = HUGE_DISTANCE;
 
 	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-		point_t p1 = vertex->v;
-		point_t p2 = CLIST_NEXT(vertex, entries)->v;
+		Common::Point p1 = vertex->v;
+		Common::Point p2 = CLIST_NEXT(vertex, entries)->v;
 		float w, h, l, u;
 		pointf_t new_point;
 		float new_dist;
@@ -1006,10 +1006,10 @@ near_point(point_t p, polygon_t *polygon, point_t *ret)
 }
 
 static int
-intersection(point_t a, point_t b, vertex_t *vertex, pointf_t *ret)
+intersection(Common::Point a, Common::Point b, vertex_t *vertex, pointf_t *ret)
 /* Computes the intersection point of a line segment and an edge (not
 ** including the vertices themselves)
-** Parameters: (point_t) a, b: The line segment (a, b)
+** Parameters: (Common::Point) a, b: The line segment (a, b)
 **             (vertex_t *) vertex: The first vertex of the edge
 ** Returns   : (int) FP_OK on success, PF_ERROR otherwise
 **             (pointf_t) *ret: The intersection point
@@ -1019,8 +1019,8 @@ intersection(point_t a, point_t b, vertex_t *vertex, pointf_t *ret)
 	float s, t;
 	/* Numerator and denominator of equations */
 	float num, denom;
-	point_t c = vertex->v;
-	point_t d = CLIST_NEXT(vertex, entries)->v;
+	Common::Point c = vertex->v;
+	Common::Point d = CLIST_NEXT(vertex, entries)->v;
 
 	denom = a.x * (float)(d.y - c.y) +
 	        b.x * (float)(c.y - d.y) +
@@ -1054,16 +1054,16 @@ intersection(point_t a, point_t b, vertex_t *vertex, pointf_t *ret)
 }
 
 static int
-nearest_intersection(pf_state_t *s, point_t p, point_t q, point_t *ret)
+nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q, Common::Point *ret)
 /* Computes the nearest intersection point of a line segment and the polygon
 ** set. Intersection points that are reached from the inside of a polygon
 ** are ignored as are improper intersections which do not obstruct
 ** visibility
 ** Parameters: (pf_state_t *) s: The pathfinding state
-**             (point_t) p, q: The line segment (p, q)
+**             (Common::Point) p, q: The line segment (p, q)
 ** Returns   : (int) PF_OK on success, PF_ERROR when no intersections were
 **                   found, PF_FATAL otherwise
-**             (point_t) *ret: On success, the closest intersection point
+**             (Common::Point) *ret: On success, the closest intersection point
 */
 {
 	polygon_t *polygon = 0;
@@ -1118,14 +1118,14 @@ nearest_intersection(pf_state_t *s, point_t p, point_t q, point_t *ret)
 }
 
 static int
-fix_point(pf_state_t *s, point_t p, point_t *ret, polygon_t **ret_pol)
+fix_point(pf_state_t *s, Common::Point p, Common::Point *ret, polygon_t **ret_pol)
 /* Checks a point for containment in any of the polygons in the polygon set.
 ** If the point is contained in a totally accessible polygon that polygon
 ** is removed from the set. If the point is contained in a polygon of another
 ** type the near point is returned. Otherwise the original point is returned
-** Parameters: (point_t) p: The point
+** Parameters: (Common::Point) p: The point
 ** Returns   : (int) PF_OK on success, PF_FATAL otherwise
-**             (point_t) *ret: A valid input point for pathfinding
+**             (Common::Point) *ret: A valid input point for pathfinding
 **             (polygon_t *) *ret_pol: The polygon p was contained in if p
 **                                     != *ret, NULL otherwise
 */
@@ -1140,7 +1140,7 @@ fix_point(pf_state_t *s, point_t p, point_t *ret, polygon_t **ret_pol)
 	}
 
 	if (polygon) {
-		point_t near_p;
+		Common::Point near_p;
 
 		if (polygon->type == POLY_TOTAL_ACCESS) {
 			/* Remove totally accessible polygon if it contains
@@ -1170,13 +1170,13 @@ fix_point(pf_state_t *s, point_t p, point_t *ret, polygon_t **ret_pol)
 }
 
 static vertex_t *
-merge_point(pf_state_t *s, point_t v)
+merge_point(pf_state_t *s, Common::Point v)
 /* Merges a point into the polygon set. A new vertex is allocated for this
 ** point, unless a matching vertex already exists. If the point is on an
 ** already existing edge that edge is split up into two edges connected by
 ** the new vertex
 ** Parameters: (pf_state_t *) s: The pathfinding state
-**             (point_t) v: The point to merge
+**             (Common::Point) v: The point to merge
 ** Returns   : (vertex_t *) The vertex corresponding to v
 */
 {
@@ -1304,12 +1304,12 @@ change_polygons_opt_0(pf_state_t *s)
 }
 
 static pf_state_t *
-convert_polygon_set(state_t *s, reg_t poly_list, point_t start, point_t end, int opt)
+convert_polygon_set(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt)
 /* Converts the SCI input data for pathfinding
 ** Parameters: (state_t *) s: The game state
 **             (reg_t) poly_list: Polygon list
-**             (point_t) start: The start point
-**             (point_t) end: The end point
+**             (Common::Point) start: The start point
+**             (Common::Point) end: The end point
 **             (int) opt: Optimization level (0, 1 or 2)
 ** Returns   : (pf_state_t *) On success a newly allocated pathfinding state,
 **                            NULL otherwise
@@ -1599,7 +1599,7 @@ output_path(pf_state_t *p, state_t *s)
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
 		sciprintf("[avoidpath] Returning path:");
 		for (i = 0; i < path_len + p->keep_start + p->keep_end; i++) {
-			point_t pt;
+			Common::Point pt;
 			POLY_GET_POINT(oref, i, pt.x, pt.y);
 			sciprintf(" (%i, %i)", pt.x, pt.y);
 		}
@@ -1611,7 +1611,7 @@ output_path(pf_state_t *p, state_t *s)
 
 reg_t
 kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	point_t start = gfx_point(SKPV(0), SKPV(1));
+	Common::Point start = Common::Point(SKPV(0), SKPV(1));
 
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
 		gfxw_port_t *port = s->picture_port;
@@ -1643,7 +1643,7 @@ kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case 6 :
 	case 7 : {
-		point_t end = gfx_point(SKPV(2), SKPV(3));
+		Common::Point end = Common::Point(SKPV(2), SKPV(3));
 		reg_t poly_list = argv[4];
 		/* int poly_list_size = UKPV(5); */
 		int opt = UKPV_OR_ALT(6, 1);

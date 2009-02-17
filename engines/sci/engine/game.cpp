@@ -173,7 +173,7 @@ _reset_graphics_input(state_t *s) {
 
 	s->mouse_pointer_view = s->mouse_pointer_loop = s->mouse_pointer_cel = -1; /* No mouse pointer resource */
 	s->save_mouse_pointer_view = s->save_mouse_pointer_loop = s->save_mouse_pointer_cel = -1; /* No mouse pointer resource */
-	gfxop_set_pointer_position(s->gfx_state, gfx_point(160, 150));
+	gfxop_set_pointer_position(s->gfx_state, Common::Point(160, 150));
 
 	s->mouse_pointer_view = s->mouse_pointer_loop = s->mouse_pointer_cel = -1; /* No mouse pointer resource */
 	s->save_mouse_pointer_view = s->save_mouse_pointer_loop = s->save_mouse_pointer_cel = -1; /* No mouse pointer resource */

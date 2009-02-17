@@ -959,8 +959,8 @@ _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int c
 
 static inline void
 _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int priority, int drawenable) {
-	point_t start;
-	point_t end;
+	Common::Point start;
+	Common::Point end;
 
 	start.x = x;
 	start.y = y;
@@ -969,7 +969,7 @@ _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int
 
 	if (ex >= pic->visual_map->index_xl || ey >= pic->visual_map->index_yl || x < 0 || y < 0) {
 		fprintf(stderr, "While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
-		        GFX_PRINT_POINT(start), GFX_PRINT_POINT(end));
+		        start.x, start.y, end.x, end.y);
 		return;
 	}
 
@@ -1010,7 +1010,7 @@ _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 	if (drawenable & GFX_MASK_CONTROL) {
 
 		p0printf(" ctl:%x", control);
-		gfx_draw_line_pixmap_i(pic->control_map, gfx_point(x, y), gfx_point(x + line.xl, y + line.yl), control);
+		gfx_draw_line_pixmap_i(pic->control_map, Common::Point(x, y), Common::Point(x + line.xl, y + line.yl), control);
 	}
 
 

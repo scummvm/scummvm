@@ -67,7 +67,7 @@ kGetEvent(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	PUT_SEL32V(obj, x, s->gfx_state->pointer_pos.x);
 	PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
 
-	/*  gfxop_set_pointer_position(s->gfx_state, gfx_point(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y)); */
+	/*  gfxop_set_pointer_position(s->gfx_state, Common::Point(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y)); */
 
 
 	if (e.type)

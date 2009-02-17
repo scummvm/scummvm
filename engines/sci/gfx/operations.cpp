@@ -89,7 +89,7 @@ _gfxop_scale_rect(rect_t *rect, gfx_mode_t *mode) {
 }
 
 static void
-_gfxop_scale_point(point_t *point, gfx_mode_t *mode) {
+_gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
 	int xfact = mode->xfact;
 	int yfact = mode->yfact;
 
@@ -225,12 +225,12 @@ _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, int y,
 }
 
 static void
-_gfxop_draw_control(gfx_pixmap_t *map, gfx_pixmap_t *pxm, int color, point_t pos)
+_gfxop_draw_control(gfx_pixmap_t *map, gfx_pixmap_t *pxm, int color, Common::Point pos)
 DRAW_LOOP(1) /* Always draw */
 
 #ifdef PRECISE_PRIORITY_MAP
 static void
-_gfxop_draw_priority(gfx_pixmap_t *map, gfx_pixmap_t *pxm, int color, point_t pos)
+_gfxop_draw_priority(gfx_pixmap_t *map, gfx_pixmap_t *pxm, int color, Common::Point pos)
 DRAW_LOOP(map->index_data[offset] < color) /* Draw only lower priority */
 #endif
 
@@ -285,7 +285,7 @@ _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int priority, int co
 	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.xl, dest.yl);
 
 	if (control >= 0 || priority >= 0) {
-		point_t original_pos = gfx_point(dest.x / driver->mode->xfact,
+		Common::Point original_pos = Common::Point(dest.x / driver->mode->xfact,
 		                                 dest.y / driver->mode->yfact);
 
 		if (control >= 0)
@@ -981,7 +981,7 @@ line_clip(rect_t *line, rect_t clip, int xfact, int yfact)
 }
 
 static int
-point_clip(point_t *start, point_t *end, rect_t clip, int xfact, int yfact) {
+point_clip(Common::Point *start, Common::Point *end, rect_t clip, int xfact, int yfact) {
 	rect_t line = gfx_rect(start->x, start->y, end->x - start->x, end->y - start->y);
 	int retval = line_clip(&line, clip, xfact, yfact);
 
@@ -997,14 +997,14 @@ point_clip(point_t *start, point_t *end, rect_t clip, int xfact, int yfact) {
 
 
 static void
-draw_line_to_control_map(gfx_state_t *state, point_t start, point_t end, gfx_color_t color) {
+draw_line_to_control_map(gfx_state_t *state, Common::Point start, Common::Point end, gfx_color_t color) {
 	if (color.mask & GFX_MASK_CONTROL)
 		if (!point_clip(&start, &end, state->clip_zone_unscaled, 0, 0))
 			gfx_draw_line_pixmap_i(state->control_map, start, end, color.control);
 }
 
 static int
-simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, point_t end, gfx_color_t color, gfx_line_mode_t line_mode)
+simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode)
 /* Draws a stippled line if this isn't supported by the driver (skipone is ignored ATM) */
 {
 	int xl = end.x - start.x;
@@ -1018,12 +1018,12 @@ simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, po
 	int length_left;
 
 	if (!xl) { /* xl = 0, so we move along yl */
-		posvar = &start.y;
+		posvar = (int *) &start.y;
 		length = yl;
 		delta = (yl < 0) ? -dbl_stepwidth : dbl_stepwidth;
 	} else {
 		assert(!yl);  /* We don't do diagonals; that's not needed ATM. */
-		posvar = &start.x;
+		posvar = (int *) &start.x;
 		length = xl;
 		delta = (xl < 0) ? -dbl_stepwidth : dbl_stepwidth;
 	}
@@ -1046,12 +1046,12 @@ simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, po
 
 	while (length--) {
 		int retval;
-		point_t nextpos = gfx_point(start.x + xl, start.y + yl);
+		Common::Point nextpos = Common::Point(start.x + xl, start.y + yl);
 
 		if ((retval = driver->draw_line(driver, start, nextpos,
 		                                color, line_mode, GFX_LINE_STYLE_NORMAL))) {
 			GFXERROR("Failed to draw partial stippled line (%d,%d) -- (%d,%d)\n",
-			         GFX_PRINT_POINT(start), GFX_PRINT_POINT(nextpos));
+			         start.x, start.y, nextpos.x, nextpos.y);
 			return retval;
 		}
 		*posvar += delta;
@@ -1059,7 +1059,7 @@ simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, po
 
 	if (length_left) {
 		int retval;
-		point_t nextpos;
+		Common::Point nextpos;
 
 		if (length_left > stepwidth)
 			length_left = stepwidth;
@@ -1070,11 +1070,11 @@ simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, po
 			if (yl)
 				yl = length_left;
 
-		nextpos = gfx_point(start.x + xl, start.y + yl);
+		nextpos = Common::Point(start.x + xl, start.y + yl);
 
 		if ((retval = driver->draw_line(driver, start, nextpos, color, line_mode, GFX_LINE_STYLE_NORMAL))) {
 			GFXERROR("Failed to draw partial stippled line (%d,%d) -- (%d,%d)\n",
-			         GFX_PRINT_POINT(start), GFX_PRINT_POINT(nextpos));
+			         start.x, start.y, nextpos.x, nextpos.y);
 			return retval;
 		}
 	}
@@ -1084,7 +1084,7 @@ simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, point_t start, po
 
 
 static int
-_gfxop_draw_line_clipped(gfx_state_t *state, point_t start, point_t end, gfx_color_t color, gfx_line_mode_t line_mode,
+_gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode,
                          gfx_line_style_t line_style) {
 	int retval;
 	int skipone = (start.x ^ end.y) & 1; /* Used for simulated line stippling */
@@ -1094,7 +1094,7 @@ _gfxop_draw_line_clipped(gfx_state_t *state, point_t start, point_t end, gfx_col
 
 	/* First, make sure that the line is normalized */
 	if (start.y > end.y) {
-		point_t swap = start;
+		Common::Point swap = start;
 		start = end;
 		end = swap;
 	}
@@ -1110,7 +1110,7 @@ _gfxop_draw_line_clipped(gfx_state_t *state, point_t start, point_t end, gfx_col
 	if (line_style == GFX_LINE_STYLE_STIPPLED) {
 		if (start.x != end.x && start.y != end.y) {
 			GFXWARN("Attempt to draw stippled line which is neither an hbar nor a vbar: (%d,%d) -- (%d,%d)\n",
-			        GFX_PRINT_POINT(start), GFX_PRINT_POINT(end));
+			        start.x, start.y, end.x, end.y);
 			return GFX_ERROR;
 		}
 		if (!(state->driver->capabilities & GFX_CAPABILITY_STIPPLED_LINES))
@@ -1123,14 +1123,14 @@ _gfxop_draw_line_clipped(gfx_state_t *state, point_t start, point_t end, gfx_col
 
 	if ((retval = state->driver->draw_line(state->driver, start, end, color, line_mode, line_style))) {
 		GFXERROR("Failed to draw line (%d,%d) -- (%d,%d)\n",
-		         GFX_PRINT_POINT(start), GFX_PRINT_POINT(end));
+		         start.x, start.y, end.x, end.y);
 		return retval;
 	}
 	return GFX_OK;
 }
 
 int
-gfxop_draw_line(gfx_state_t *state, point_t start, point_t end,
+gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
                 gfx_color_t color, gfx_line_mode_t line_mode,
                 gfx_line_style_t line_style) {
 	int xfact, yfact;
@@ -1164,8 +1164,8 @@ gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx_lin
 	int xfact, yfact;
 	int xunit, yunit;
 	int x, y, xl, yl;
-	point_t upper_left_u, upper_right_u, lower_left_u, lower_right_u;
-	point_t upper_left, upper_right, lower_left, lower_right;
+	Common::Point upper_left_u, upper_right_u, lower_left_u, lower_right_u;
+	Common::Point upper_left, upper_right, lower_left, lower_right;
 
 	BASIC_CHECKS(GFX_FATAL);
 	REMOVE_POINTER;
@@ -1189,15 +1189,15 @@ gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx_lin
 		y = rect.y * yfact;
 	}
 
-	upper_left_u = gfx_point(rect.x, rect.y);
-	upper_right_u = gfx_point(rect.x + rect.xl, rect.y);
-	lower_left_u = gfx_point(rect.x, rect.y + rect.yl);
-	lower_right_u = gfx_point(rect.x + rect.xl, rect.y + rect.yl);
+	upper_left_u = Common::Point(rect.x, rect.y);
+	upper_right_u = Common::Point(rect.x + rect.xl, rect.y);
+	lower_left_u = Common::Point(rect.x, rect.y + rect.yl);
+	lower_right_u = Common::Point(rect.x + rect.xl, rect.y + rect.yl);
 
-	upper_left = gfx_point(x, y);
-	upper_right = gfx_point(x + xl, y);
-	lower_left = gfx_point(x, y + yl);
-	lower_right = gfx_point(x + xl, y + yl);
+	upper_left = Common::Point(x, y);
+	upper_right = Common::Point(x + xl, y);
+	lower_left = Common::Point(x, y + yl);
+	lower_right = Common::Point(x + xl, y + yl);
 
 #define PARTIAL_LINE(pt1, pt2)	 								\
 	retval |= _gfxop_draw_line_clipped(state, pt1, pt2, color, line_mode, line_style);	\
@@ -1344,7 +1344,7 @@ _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffer_t buffer)
 	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->mode->xfact, 200 * state->driver->mode->yfact)))
 		return GFX_OK;
 
-	if ((error = state->driver->update(state->driver, box, gfx_point(box.x, box.y), buffer))) {
+	if ((error = state->driver->update(state->driver, box, Common::Point(box.x, box.y), buffer))) {
 		GFXERROR("Error occured while updating region (%d,%d,%d,%d) in buffer %d\n",
 		         box.x, box.y, box.xl, box.yl, buffer);
 		return error;
@@ -1421,7 +1421,7 @@ gfxop_update(gfx_state_t *state) {
 		/* We've been asked to re-draw the active full-screen image, essentially. */
 		rect_t rect = gfx_rect(0, 0, 320, 200);
 		gfx_xlate_pixmap(state->fullscreen_override, state->driver->mode, GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(state, state->fullscreen_override, rect, gfx_point(0, 0));
+		gfxop_draw_pixmap(state, state->fullscreen_override, rect, Common::Point(0, 0));
 		retval |= _gfxop_update_box(state, rect);
 	}
 
@@ -1490,7 +1490,7 @@ _gfxop_full_pointer_refresh(gfx_state_t *state) {
 
 	if (new_x != state->old_pointer_draw_pos.x
 	        || new_y != state->old_pointer_draw_pos.y) {
-		point_t pp_new = gfx_point(new_x / state->driver->mode->xfact,
+		Common::Point pp_new = Common::Point(new_x / state->driver->mode->xfact,
 		                           new_y / state->driver->mode->yfact);
 
 		if (!_gfxop_get_pointer_bounds(state, &pointer_bounds)) {
@@ -1502,7 +1502,7 @@ _gfxop_full_pointer_refresh(gfx_state_t *state) {
 			if (_gfxop_buffer_propagate_box(state, pointer_bounds, GFX_BUFFER_FRONT)) return 1;
 			if (_gfxop_buffer_propagate_box(state, old_pointer_bounds, GFX_BUFFER_FRONT)) return 1;
 
-			state->old_pointer_draw_pos = gfx_point(new_x, new_y);
+			state->old_pointer_draw_pos = Common::Point(new_x, new_y);
 		} else
 			state->pointer_pos = pp_new;
 	}
@@ -1636,7 +1636,7 @@ gfxop_set_pointer_cursor(gfx_state_t *state, int nr) {
 
 
 int
-gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, point_t  *hotspot) {
+gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common::Point  *hotspot) {
 	int real_loop = loop;
 	int real_cel = cel;
 	gfx_pixmap_t *new_pointer = NULL;
@@ -1664,7 +1664,7 @@ gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, point_t  *
 }
 
 int
-gfxop_set_pointer_position(gfx_state_t *state, point_t pos) {
+gfxop_set_pointer_position(gfx_state_t *state, Common::Point pos) {
 	BASIC_CHECKS(GFX_ERROR);
 
 	state->pointer_pos = pos;
@@ -1966,7 +1966,7 @@ gfxop_overflow_cel(gfx_state_t *state, int nr, int *loop, int *cel) {
 
 int
 gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
-                         int *width, int *height, point_t *offset) {
+                         int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
 	BASIC_CHECKS(GFX_ERROR);
@@ -1988,7 +1988,7 @@ gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
 
 static int
 _gfxop_draw_cel_buffer(gfx_state_t *state, int nr, int loop, int cel,
-                       point_t pos, gfx_color_t color, int static_buf,
+                       Common::Point pos, gfx_color_t color, int static_buf,
                        int palette) {
 	int priority = (color.mask & GFX_MASK_PRIORITY) ? color.priority : -1;
 	int control = (color.mask & GFX_MASK_CONTROL) ? color.control : -1;
@@ -2024,14 +2024,14 @@ _gfxop_draw_cel_buffer(gfx_state_t *state, int nr, int loop, int cel,
 
 
 int
-gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
+gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
                gfx_color_t color, int palette) {
 	return _gfxop_draw_cel_buffer(state, nr, loop, cel, pos, color, 0, palette);
 }
 
 
 int
-gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, point_t pos,
+gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
                       gfx_color_t color, int palette) {
 	int retval;
 	rect_t oldclip = state->clip_zone;
@@ -2049,7 +2049,7 @@ gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, point_t pos
 
 int
 gfxop_draw_cel_static_clipped(gfx_state_t *state, int nr, int loop, int cel,
-                              point_t pos, gfx_color_t color, int palette) {
+                              Common::Point pos, gfx_color_t color, int palette) {
 	return _gfxop_draw_cel_buffer(state, nr, loop, cel, pos, color, 1, palette);
 }
 
@@ -2417,7 +2417,7 @@ gfxop_grab_pixmap(gfx_state_t *state, rect_t area) {
 }
 
 int
-gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, point_t pos) {
+gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common::Point pos) {
 	rect_t target;
 	BASIC_CHECKS(GFX_ERROR);
 

@@ -43,7 +43,7 @@
 
 
 static inline
-void DRAWLINE_FUNC(byte *buffer, int linewidth, point_t start, point_t end, unsigned int color) {
+void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = start.x;
 	int y = start.y;

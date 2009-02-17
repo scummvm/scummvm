@@ -964,7 +964,7 @@ c_viewinfo(state_t *s) {
 			for (j = 0; j < cels; j++) {
 				int width;
 				int height;
-				point_t mod;
+				Common::Point mod;
 
 				if (con_can_handle_pixmaps()) {
 					view_pixmaps = gfxr_get_view(s->gfx_state->resstate,
@@ -1760,7 +1760,7 @@ c_redraw_screen(state_t *s) {
 		return 1;
 	}
 
-	s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
+	s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
 	gfxop_usleep(s->gfx_state, 10);
@@ -1977,17 +1977,17 @@ c_gfx_show_map(state_t *s) {
 	switch (map) {
 	case 0:
 		s->visual->add_dirty_abs(GFXWC(s->visual), gfx_rect(0, 0, 320, 200), 0);
-		s->visual->draw(GFXW(s->visual), gfx_point(0, 0));
+		s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 		break;
 
 	case 1:
 		gfx_xlate_pixmap(s->gfx_state->pic->priority_map, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), gfx_point(0, 0));
+		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	case 2:
 		gfx_xlate_pixmap(s->gfx_state->control_map, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->control_map, gfx_rect(0, 0, 320, 200), gfx_point(0, 0));
+		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	default:
@@ -2012,7 +2012,7 @@ c_gfx_draw_cel(state_t *s) {
 	}
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_draw_cel(s->gfx_state, view, loop, cel, gfx_point(160, 100),
+	gfxop_draw_cel(s->gfx_state, view, loop, cel, Common::Point(160, 100),
 	               s->ega_colors[0], palette);
 	gfxop_update(s->gfx_state);
 
@@ -2206,7 +2206,7 @@ c_gfx_update_zone(state_t *s) {
 	                                             cmd_params[1].val,
 	                                             cmd_params[2].val,
 	                                             cmd_params[3].val),
-	                                    gfx_point(cmd_params[0].val,
+	                                    Common::Point(cmd_params[0].val,
 	                                              cmd_params[1].val),
 	                                    GFX_BUFFER_FRONT
 	                                   );

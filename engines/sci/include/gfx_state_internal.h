@@ -80,7 +80,7 @@ struct _gfxw_widget;
 struct _gfxw_container_widget;
 struct _gfxw_visual;
 
-typedef int gfxw_point_op(struct _gfxw_widget *, point_t);
+typedef int gfxw_point_op(struct _gfxw_widget *, Common::Point);
 typedef int gfxw_visual_op(struct _gfxw_widget *, struct _gfxw_visual *);
 typedef int gfxw_op(struct _gfxw_widget *);
 typedef int gfxw_op_int(struct _gfxw_widget *, int);
@@ -133,7 +133,7 @@ typedef struct {
 
 #define VIEW_COMMON \
 	WIDGET_COMMON; \
-	point_t pos; /* Implies the value of 'bounds' in WIDGET_COMMON */ \
+	Common::Point pos; /* Implies the value of 'bounds' in WIDGET_COMMON */ \
 	gfx_color_t color; \
 	int view, loop, cel; \
 	int palette
@@ -221,7 +221,7 @@ typedef struct _gfxw_port {
 	gfx_color_t color, bgcolor;
 	int chrono_port;
 	int font_nr;
-	point_t draw_pos; /* Drawing position */
+	Common::Point draw_pos; /* Drawing position */
 	gfxw_snapshot_t *restore_snap; /* Snapshot to be restored automagically,
 					  experimental feature used in the PQ3 interpreter */
 	int port_flags; /* interpreter-dependant flags */
