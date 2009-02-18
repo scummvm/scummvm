@@ -114,7 +114,7 @@ void OSystem_PSP::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_PSP::getFeatureState(Feature f) {
-	return false;
+	return (f == kFeatureOverlaySupportsAlpha);
 }
 
 const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {
