@@ -240,17 +240,6 @@ static int
 _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	int error;
 
-	if (driver->capabilities & GFX_CAPABILITY_PIXMAP_REGISTRY
-	        && !(pxm->flags & GFX_PIXMAP_FLAG_INSTALLED)) {
-		error = driver->register_pixmap(driver, pxm);
-
-		if (error) {
-			GFXERROR("driver->register_pixmap() returned error!\n");
-			return error;
-		}
-		pxm->flags |= GFX_PIXMAP_FLAG_INSTALLED;
-	}
-
 	if (driver->mode->palette &&
 	        (!(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_SET))) {
 		int i;
@@ -1540,20 +1529,6 @@ _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
 
 	draw_old = state->mouse_pointer != NULL;
 
-	if (!draw_old
-	        && state->mouse_pointer
-	        && (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY))
-		if ((retval = state->driver->unregister_pixmap(state->driver, state->mouse_pointer))) {
-			GFXERROR("Pointer un-registration failed!\n");
-			return retval;
-		}
-
-	if (state->driver->capabilities & GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY) {
-		if ((pxm) && (retval = state->driver->register_pixmap(state->driver, pxm))) {
-			GFXERROR("Pixmap-registering a new mouse pointer failed!\n");
-			return retval;
-		}
-	}
 	draw_new = 0;
 	state->driver->set_pointer(state->driver, pxm);
 	state->mouse_pointer_in_hw = 1;
@@ -1836,8 +1811,7 @@ gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 		return error_event;
 	}
 
-	if (event.type == SCI_EVT_KEYBOARD
-	        && !(state->driver->capabilities & GFX_CAPABILITY_KEYTRANSLATE)) {
+	if (event.type == SCI_EVT_KEYBOARD) {
 		/* Do we still have to translate the key? */
 
 		event.character = event.data;

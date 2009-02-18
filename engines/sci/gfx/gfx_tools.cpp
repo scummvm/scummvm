@@ -174,11 +174,6 @@ gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 void
 gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (driver) {
-		if (pxm->flags & GFX_PIXMAP_FLAG_INSTALLED) {
-			if (driver->capabilities & GFX_CAPABILITY_PIXMAP_REGISTRY)
-				driver->unregister_pixmap(driver, pxm);
-		}
-
 		if (driver->mode->palette
 		        && pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED
 		        && !(pxm->flags & GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE)

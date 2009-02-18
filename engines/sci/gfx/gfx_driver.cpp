@@ -531,8 +531,6 @@ gfx_driver_scummvm = {
 	scummvm_exit,
 	scummvm_draw_line,
 	scummvm_draw_filled_rect,
-	NULL,
-	NULL,
 	scummvm_draw_pixmap,
 	scummvm_grab_pixmap,
 	scummvm_update,

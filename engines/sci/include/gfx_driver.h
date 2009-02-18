@@ -39,11 +39,7 @@ typedef enum {
 
 /* graphics driver hints */
 #define GFX_CAPABILITY_SHADING (1<<0)
-#define GFX_CAPABILITY_PIXMAP_REGISTRY (1<<3)
-#define GFX_CAPABILITY_SCALEABLE_PIXMAPS (1<<4)
 #define GFX_CAPABILITY_STIPPLED_LINES (1<<6)
-#define GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY (1<<8)
-#define GFX_CAPABILITY_KEYTRANSLATE (1<<11)
 
 #define GFX_DEBUG_POINTER (1<<0)
 #define GFX_DEBUG_UPDATES (1<<1)
@@ -90,25 +86,8 @@ typedef struct _gfx_driver { /* Graphics driver */
 	**
 	** GFX_CAPABILITY_SHADING: draw_filled_rect() supports drawing shaded
 	**    rectangles.
-	** GFX_CAPABILITY_PIXMAP_REGISTRY: System provides a pixmap registry. The
-	**    invoking functions will assume that all pixmaps MUST be registered;
-	**    if this flag is not set, it assumes that pixmaps MUST NOT be
-	**    registered. Note that this excludes pointer pixmaps (see below)
-	** GFX_CAPABILITY_POINTER_PIXMAP_REGISTRY: The system provides a pixmap
-	**    registry which mouse pointers have to be registered in explicitly.
-	**    This MUST be used only if the registry is identical to the 'normal' pixmap
-	**    registry. Otherwise, it MUST be handled manually by the driver,
-	**    unless pointer support is disabled completely.
-	** GFX_CAPABILITY_SCALEABLE_PIXMAPS: Pixmap scaling is fully supported.
-	**    If this capability is flag is set, all pixmaps passed to the driver
-	**    will be unscaled.
 	** GFX_CAPABILITY_STIPPLED_LINES: The driver is able to draw stippled lines
 	**    horizontally and vertically (xl = 0 or yl = 0).
-	** GFX_CAPABILITY_KEYTRANSLATE: The driver's input layer automatically
-	**    handles 'shifted' keys (i.e. turning shift-'a' to 'A' etc.).
-	**    Drivers only need to handle this if they desire to support
-	**    non-US keyboard layouts, usually by localisation methods
-	**    provided by the underlying windowing or operating system.
 	*/
 
 	unsigned int debug_flags; /* Driver debug flags */
@@ -212,26 +191,6 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 	/*** Pixmap operations ***/
 
-	int (*register_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm);
-	/* Registers a pixmap with the driver.
-	** Parameters: (gfx_driver_t *) drv: The driver
-	**             (gfx_pixmap_t *) pxm: The pixmap to register
-	** Returns   : GFX_OK or GFX_FATAL
-	** This function may be NULL if GFX_CAPABILITY_PIXMAP_REGISTRY is not
-	** set.
-	** pxm->internal may be used to store any handle or meta information.
-	*/
-
-	int (*unregister_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm);
-	/* Unregisters a pixmap previously registered with register_pixmap()
-	** Parameters: (gfx_driver_t *) drv: The driver
-	**             (gfx_pixmap_t *) pxm: The pixmap to register
-	** Returns   : (int) GFX_OK or GFX_FATAL, or GFX_ERROR if pxm was
-	**             not registered
-	** Just like register_pixmap(), this function may be NULL unless
-	** GFX_CAPABILITY_PIXMAP_REGISTRY is set.
-	*/
-
 	int (*draw_pixmap)(struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority,
 	                   rect_t src, rect_t dest, gfx_buffer_t buffer);
 	/* Draws part of a pixmap to the static or back buffer
@@ -245,8 +204,6 @@ typedef struct _gfx_driver { /* Graphics driver */
 	**             (int) buffer: One of GFX_BUFFER_STATIC and GFX_BUFFER_BACK
 	** Returns   : (int) GFX_OK or GFX_FATAL, or GFX_ERROR if pxm was not
 	**                   (but should have been) registered.
-	** dest.xl and dest.yl must be evaluated and used for scaling if
-	** GFX_CAPABILITY_SCALEABLE_PIXMAPS is supported.
 	*/
 
 	int (*grab_pixmap)(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
@@ -298,8 +255,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 	** exit() was called in between.
 	** Note that later version of the driver interface may disallow modifying
 	** pic and priority.
-	** pic and priority are always scaled to the appropriate resolution, even
-	** if GFX_CAPABILITY_SCALEABLE_PIXMAPS is set.
+	** pic and priority are always scaled to the appropriate resolution
 	*/
 
 
