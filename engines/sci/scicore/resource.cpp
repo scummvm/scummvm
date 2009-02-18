@@ -715,6 +715,7 @@ _scir_free_resources(resource_t *resources, int resources_nr) {
 	for (i = 0; i < resources_nr; i++) {
 		resource_t *res = resources + i;
 
+		// FIXME: alt_sources->next may point to an invalid memory location
 		_scir_free_altsources(res->alt_sources);
 
 		if (res->status != SCI_STATUS_NOMALLOC)
