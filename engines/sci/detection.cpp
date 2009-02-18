@@ -348,6 +348,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// King's Quest 5 - Italian Floppy (from glorifindel)
+	{{"kq5", "", {
+		{"resource.map", 0, "d55c9e83894a0885e37cd79bacf86384", 8283},
+		{"resource.000", 0, "c99bbb11ace4aaacdc98b588a2ecea06", 332246},
+		{"resource.001", 0, "42b98457b1a7282daa27afd89eef53f4", 1136389},
+		{"resource.002", 0, "8cdc160f9dfc84aed7caa6c66fa31000", 1340730},
+		{"resource.003", 0, "d0cb52dc41488c018359aa79a6527f51", 1323676},
+		{"resource.004", 0, "e5c57060adf2b5c6fc24142acba023da", 1331097},
+		{"resource.005", 0, "f4e441f284560eaa8022102315656a7d", 1267757},
+		{"resource.006", 0, "8eeabd92af71e766e323db2100879102", 1209325},
+		{"resource.007", 0, "dc10c107e0923b902326a040b9c166b9", 1337859},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
+		{}},
+
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
 	{{"kq5", "", {
 		{"resource.map", 0, "fcbcca058e1157221ffc27251cd59bc3", 8040},
@@ -536,6 +550,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
+	// Larry 5 - Italian Floppy (from glorifindel)
+	{{"lsl5", "", {
+		{"resource.map", 0, "a99776df795127f387cb35dae872d4e4", 5919},
+		{"resource.000", 0, "a8989a5a89e7d4f702b26b378c7a357a", 7001981},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
+		{}},
+
 	// Larry 5 - English Amiga (from www.back2roots.org)
 	{{"lsl5", "", {
 		{"resource.map", 0, "e36052ae0c8b14d6f074bcb0aee50a38", 6096},
@@ -596,6 +617,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "c11e6bfcfc2f2d05da47e5a7df3e9b1a", 8188},
 		{"ressci.000", 0, "a8c6817bb94f332ff498a71c8b47f893", 66971724},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{}},
+
+	// Larry 7 - Italian CD (from glorifindel)
+	{{"lsl7", "", {
+		{"resmap.000", 0, "9852a97141f789413f29bf956052acdb", 8212},
+		{"ressci.000", 0, "440b9fed89590abb4e4386ed6f948ee2", 67140181},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{}},
 
 	// Larry 7 - Spanish
@@ -789,6 +817,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{}},
 
+	// RAMA - Italian CD (from glorifindel)
+	{{"rama", "", {
+		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70611091},
+		{"resmap.001", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
+		{}},
+
 	// Shivers - English
 	{{"shivers", "", {
 		{"resmap.000", 0, "f2ead37749ed8f6535a2445a7d05a0cc", 46525},
@@ -897,6 +932,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{}},
 
+	// Space Quest 4 - Italian Floppy (from glorifindel)
+	{{"sq4", "", {
+		{"resource.map", 0, "e753dfa96d68dd95f84f6cd80479a35e", 6135},
+		{"resource.000", 0, "2ac39ff61e369b79f3d7a4ad514f8e29", 203170},
+		{"resource.001", 0, "99a6df6d366b3f061271ff3450ac0d32", 1286269},
+		{"resource.002", 0, "a6a8d7a24dbb7a266a26b084e7275e89", 1241124},
+		{"resource.003", 0, "5289000399d503b59da9e23129256f1a", 1325546},
+		{"resource.004", 0, "4277c61bed40a50dadc4b5a344520af2", 1251000},
+		{"resource.005", 0, "5f885abd335978e2fd4e5f886d7676c8", 1102880},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
+		{}},
+
 	// Space Quest 4 - English Amiga
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
@@ -952,6 +999,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{}},
 
+	// Space Quest 5 - Italian Floppy (from glorifindel)
+	{{"sq5", "", {
+		{"resource.000", 0, "5040026519f37199f3616fb1d4704dff", 6047170},
+		{"resource.map", 0, "5b09168baa2f6e2e22787429b2d72f54", 6492},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
+		{}},
+
 	// Space Quest 6 - English
 	{{"sq6", "", {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
@@ -1001,6 +1055,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{}},
 		
+	// Torin's Passage - Italian CD (from glorifindel)
+	{{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
+		{}},
+
 	{AD_TABLE_END_MARKER, {}}
 };
 
