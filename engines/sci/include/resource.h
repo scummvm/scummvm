@@ -243,15 +243,6 @@ sci_getcwd(void);
 ** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
 */
 
-
-char *
-sci_get_homedir(void);
-/* Returns the user's home directory
-** Parameters: (void)
-** Returns   : (char *) Pointer to a static buffer containing the user's home,
-**                      or NULL if there is no such thing.
-*/
-
 int
 sci_mkpath(const char *path);
 /* Asserts that the specified path is available

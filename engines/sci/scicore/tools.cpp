@@ -390,33 +390,6 @@ sci_mkpath(const char *path) {
 }
 
 
-
-char *
-sci_get_homedir(void) {
-#ifdef WIN32
-	char *_path_buf = (char*)malloc(MAX_PATH);
-	char *dr = getenv("HOMEDRIVE");
-	char *path = getenv("HOMEPATH");
-
-	if (!dr || !path)
-		return getenv("WINDIR");
-
-	strncpy(_path_buf, dr, 4);
-	strncat(_path_buf, path, MAX_PATH - 4);
-
-	return _path_buf;
-#elif defined(__unix__) || !defined(X_DISPLAY_MISSING) || defined (__BEOS__) || defined(MACOSX)
-	return getenv("HOME");
-#elif defined(__DC__)
-	return NULL;
-#elif defined(__amigaos4__)
-	return "/PROGDIR/";
-#else
-#  error Please add a $HOME policy for your platform!
-#endif
-}
-
-
 /*-- Yielding to the scheduler --*/
 
 #ifdef HAVE_SCHED_YIELD
