@@ -815,9 +815,6 @@
 		DFC831600F48AF19005EF03C /* decompress01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309C0F48AF19005EF03C /* decompress01.cpp */; };
 		DFC831610F48AF19005EF03C /* decompress1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309D0F48AF19005EF03C /* decompress1.cpp */; };
 		DFC831620F48AF19005EF03C /* decompress11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309E0F48AF19005EF03C /* decompress11.cpp */; };
-		DFC831630F48AF19005EF03C /* exe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309F0F48AF19005EF03C /* exe.cpp */; };
-		DFC831640F48AF19005EF03C /* exe_lzexe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */; };
-		DFC831650F48AF19005EF03C /* exe_raw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830A30F48AF19005EF03C /* exe_raw.cpp */; };
 		DFC831710F48AF19005EF03C /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B00F48AF19005EF03C /* resource.cpp */; };
 		DFC831720F48AF19005EF03C /* resource_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B10F48AF19005EF03C /* resource_map.cpp */; };
 		DFC831730F48AF19005EF03C /* resource_patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B20F48AF19005EF03C /* resource_patch.cpp */; };
@@ -2339,12 +2336,6 @@
 		DFC8309C0F48AF19005EF03C /* decompress01.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompress01.cpp; sourceTree = "<group>"; };
 		DFC8309D0F48AF19005EF03C /* decompress1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompress1.cpp; sourceTree = "<group>"; };
 		DFC8309E0F48AF19005EF03C /* decompress11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompress11.cpp; sourceTree = "<group>"; };
-		DFC8309F0F48AF19005EF03C /* exe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe.cpp; sourceTree = "<group>"; };
-		DFC830A00F48AF19005EF03C /* exe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exe.h; sourceTree = "<group>"; };
-		DFC830A10F48AF19005EF03C /* exe_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exe_dec.h; sourceTree = "<group>"; };
-		DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe_lzexe.cpp; sourceTree = "<group>"; };
-		DFC830A30F48AF19005EF03C /* exe_raw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe_raw.cpp; sourceTree = "<group>"; };
-		DFC830A50F48AF19005EF03C /* games.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = games.h; sourceTree = "<group>"; };
 		DFC830B00F48AF19005EF03C /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
 		DFC830B10F48AF19005EF03C /* resource_map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource_map.cpp; sourceTree = "<group>"; };
 		DFC830B20F48AF19005EF03C /* resource_patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource_patch.cpp; sourceTree = "<group>"; };
@@ -4349,12 +4340,6 @@
 				DFC8309C0F48AF19005EF03C /* decompress01.cpp */,
 				DFC8309D0F48AF19005EF03C /* decompress1.cpp */,
 				DFC8309E0F48AF19005EF03C /* decompress11.cpp */,
-				DFC8309F0F48AF19005EF03C /* exe.cpp */,
-				DFC830A00F48AF19005EF03C /* exe.h */,
-				DFC830A10F48AF19005EF03C /* exe_dec.h */,
-				DFC830A20F48AF19005EF03C /* exe_lzexe.cpp */,
-				DFC830A30F48AF19005EF03C /* exe_raw.cpp */,
-				DFC830A50F48AF19005EF03C /* games.h */,
 				DFC830B00F48AF19005EF03C /* resource.cpp */,
 				DFC830B10F48AF19005EF03C /* resource_map.cpp */,
 				DFC830B20F48AF19005EF03C /* resource_patch.cpp */,
@@ -5870,9 +5855,6 @@
 				DFC831600F48AF19005EF03C /* decompress01.cpp in Sources */,
 				DFC831610F48AF19005EF03C /* decompress1.cpp in Sources */,
 				DFC831620F48AF19005EF03C /* decompress11.cpp in Sources */,
-				DFC831630F48AF19005EF03C /* exe.cpp in Sources */,
-				DFC831640F48AF19005EF03C /* exe_lzexe.cpp in Sources */,
-				DFC831650F48AF19005EF03C /* exe_raw.cpp in Sources */,
 				DFC831710F48AF19005EF03C /* resource.cpp in Sources */,
 				DFC831720F48AF19005EF03C /* resource_map.cpp in Sources */,
 				DFC831730F48AF19005EF03C /* resource_patch.cpp in Sources */,
