@@ -478,7 +478,6 @@ int script_init_engine(state_t *s, sci_version_t version) {
 
 	s->script_000 = &(s->seg_manager.heap[s->script_000_segment]->data.script);
 
-
 	s->sys_strings = sm_allocate_sys_strings(&s->seg_manager, &s->sys_strings_segment);
 	// Allocate static buffer for savegame and CWD directories
 	sys_string_acquire(s->sys_strings, SYS_STRING_SAVEDIR, "savedir", MAX_SAVE_DIR_SIZE);
@@ -635,7 +634,7 @@ int game_init(state_t *s) {
 
 	srand(time(NULL)); // Initialize random number generator
 
-	//script_dissect(0, s->selector_names, s->selector_names_nr);
+//	script_dissect(0, s->selector_names, s->selector_names_nr);
 	game_obj = script_lookup_export(s, 0, 0);
 	// The first entry in the export table of script 0 points to the game object
 
@@ -643,7 +642,7 @@ int game_init(state_t *s) {
 
 	if (!s->game_name) {
 		sciprintf("Error: script.000, export 0 ("PREG") does not\n"
-		          "  yield an object with a name -> sanity check failed\n", PRINT_REG(game_obj));
+		          " yield an object with a name -> sanity check failed\n", PRINT_REG(game_obj));
 		return 1;
 	}
 
