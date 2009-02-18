@@ -333,15 +333,19 @@ void OSystem_PSP_GU::updateScreen() {
 		vertices[1].x = PSP_SCREEN_WIDTH; vertices[1].y = PSP_SCREEN_HEIGHT; vertices[1].z = 0;
 		vertices[0].u = 0.5; vertices[0].v = 0.5;
 		vertices[1].u = _overlayWidth - 0.5; vertices[1].v = _overlayHeight - 0.5;
-		sceGuTexMode(GU_PSM_5551, 0, 0, 0); // 16-bit image
-		sceGuAlphaFunc(GU_GREATER, 0, 0xff);
-		sceGuEnable(GU_ALPHA_TEST);
+		sceGuTexMode(GU_PSM_4444, 0, 0, 0); // 16-bit image
+		sceGuDisable(GU_ALPHA_TEST);
+		sceGuEnable(GU_BLEND);
+
+		//sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
+		sceGuBlendFunc(GU_ADD, GU_FIX, GU_ONE_MINUS_SRC_ALPHA, 0xFFFFFFFF, 0);
+
 		if (_overlayWidth > 320)
 			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer);
 		else
 			sceGuTexImage(0, 512, 256, _overlayWidth, _overlayBuffer);
 
-		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA);
+		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
 		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
 		// need to render twice for textures > 512
 		if ( _overlayWidth > 512) {
@@ -350,6 +354,7 @@ void OSystem_PSP_GU::updateScreen() {
 			vertices[0].x = PSP_SCREEN_WIDTH * 512 / 640; vertices[0].y = 0; vertices[0].z = 0;
 			sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
 		}
+		sceGuDisable(GU_BLEND);
 	}
 
 	// draw mouse

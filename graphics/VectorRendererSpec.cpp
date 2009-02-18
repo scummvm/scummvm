@@ -363,7 +363,8 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	const uint32 shiftMask = (uint32)~(
 		(1 << PixelFormat::kGreenShift) |
 		(1 << PixelFormat::kRedShift) |
-		(1 << PixelFormat::kBlueShift)) >> 1;
+		(1 << PixelFormat::kBlueShift) |
+		(PixelFormat::kAlphaBits ? (1 << PixelFormat::kAlphaShift) : 0)) >> 1;
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 

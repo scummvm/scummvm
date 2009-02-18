@@ -86,8 +86,8 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	sceDisplaySetFrameBuf((char *)DisplayBuffer, 512, 1, 1);
 	sceDisplayWaitVblankStart();
 
-	// Correct pixel format ABBBBBGGGGGRRRRR
-	InitScalers(1555);
+	// Correct pixel format AAAABBBBGGGGRRRR
+	InitScalers(4444);
 }
 
 OSystem_PSP::~OSystem_PSP() {
@@ -117,7 +117,7 @@ void OSystem_PSP::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_PSP::getFeatureState(Feature f) {
-	return false;
+	return (f == kFeatureOverlaySupportsAlpha);
 }
 
 const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {

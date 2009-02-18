@@ -108,7 +108,7 @@ public:
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 	virtual void grabPalette(byte *colors, uint start, uint num);
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
 	virtual bool showMouse(bool visible);
 
