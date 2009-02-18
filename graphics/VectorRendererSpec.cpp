@@ -367,7 +367,7 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	uint lum;
 
 	const uint32 shiftMask = (uint32)~(
-		(1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift)) >> 1;
+		(1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) | (_format.aLoss == 8 ? 0 : (1 << _format.aShift))) >> 1;
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
