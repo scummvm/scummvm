@@ -598,18 +598,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\conf_driver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\conf_parse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\conf_subsystems.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\console.h"
 				>
 			</File>
@@ -771,10 +759,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\uinput.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\util.h"
 				>
 			</File>
 			<File
