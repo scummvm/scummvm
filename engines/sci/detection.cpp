@@ -1320,21 +1320,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
 };
 
-// Generic entries for filename based fallback
-static const struct SciGameDescription SciGameGeneric[] = {
-	{{"sci", 0, AD_ENTRY1("resource.map", NULL), Common::UNK_LANG, Common::kPlatformUnknown, 0},{},SCI_VERSION(0, 000, 000)},
-	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
-};
-
-// Filename based fallback information
-static const struct ADFileBasedFallback SciGameFallback[] = {
-	{(const void*)&SciGameGeneric[0], {"resource.map", "resource.000", NULL} },
-	{(const void*)&SciGameGeneric[0], {"resource.map", "resource.001", NULL} },
-	{(const void*)&SciGameGeneric[0], {"resmap.000", "ressci.000", NULL} },
-	{(const void*)&SciGameGeneric[0], {"resmap.001", "ressci.001", NULL} },
-	{0, {NULL}}
-};
-
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)SciGameDescriptions,
@@ -1349,7 +1334,7 @@ static const ADParams detectionParams = {
 	// Name of single gameid (optional)
 	"sci",
 	// List of files for file-based fallback detection (optional)
-	SciGameFallback,
+	0,
 	// Flags
 	0
 };
@@ -1367,8 +1352,18 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
+
+const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+		printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
+		printf("translation), please, report the data above, including the following\n");
+		printf("version number, from the game's executable: ");
+
+		// TODO
+	return 0;
+}
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	const SciGameDescription *desc = (const SciGameDescription *)gd;
