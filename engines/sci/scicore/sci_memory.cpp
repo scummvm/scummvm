@@ -134,8 +134,7 @@ extern void *
 	return data;
 }
 
-extern void *
-	sci_refcount_incref(void *data) {
+extern void *sci_refcount_incref(void *data) {
 	if (!REFCOUNT_CHECK(data)) {
 		BREAKPOINT();
 	} else
@@ -147,8 +146,7 @@ extern void *
 	return data;
 }
 
-extern void
-	sci_refcount_decref(void *data) {
+extern void sci_refcount_decref(void *data) {
 #ifdef TRACE_REFCOUNT
 	fprintf(stderr, "[] REF: Dec'ing %p (prev ref=%d) OK=%d\n", data, REFCOUNT(data),
 	        REFCOUNT_CHECK(data));
@@ -171,8 +169,7 @@ extern void
 	}
 }
 
-extern void *
-	sci_refcount_memdup(void *data, size_t len) {
+extern void *sci_refcount_memdup(void *data, size_t len) {
 	void *dest = sci_refcount_alloc(len);
 	memcpy(dest, data, len);
 	return dest;

@@ -46,35 +46,9 @@
 #include "common/scummsys.h"
 #include "sci/include/resource.h"
 
-#ifdef WIN32
-#  undef scim_inline /* just to be sure it is not defined */
-#  define scim_inline __inline
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199900L
-#  define scim_inline
-#else
-#  define scim_inline inline
-#endif
-
 #ifdef _MSC_VER
 #  include <direct.h> // for chdir, rmdir, _gecwd, getcwd, mkdir
 #endif
-
-/********** macros for error messages **********/
-
-/*
- * Prints an error message.
- */
-#define PANIC(prn)\
-	fprintf prn;
-
-/*
- * Called if memory allocation fails.
- */
-#define PANIC_MEMORY(size, filename, linenum, funcname, more_info)\
-	PANIC((stderr, "Memory allocation of %lu bytes failed\n"\
-		" [%s (%s) : %u]\n " #more_info "\n",\
-		(unsigned long)size, filename, funcname, linenum))
-
 
 /********** the memory allocation macros **********/
 
@@ -89,24 +63,17 @@ do {\
 
 #define ALLOC_MEM(alloc_statement, size, filename, linenum, funcname)\
 do {\
-	if (size == 0)\
-	{\
-		PANIC_MEMORY(size, filename, linenum, funcname, "WARNING: allocating zero bytes of memory.")\
-	}\
-	else if (!(size > 0))\
-	{\
-		PANIC_MEMORY(size, filename, linenum, funcname, "Cannot allocate negative bytes of memory!")\
-		BREAKPOINT()\
+	if (size == 0) {\
+		warning("Allocating zero bytes of memory [%s (%s) : %u]", filename, funcname, linenum);\
+	} else if (!(size > 0)) {\
+		error("Cannot allocate negative bytes of memory [%s (%s) : %u]", filename, funcname, linenum);\
 	}\
 \
 	alloc_statement; /* attempt to allocate the memory */\
 \
-	if (res == NULL)\
-	{\
+	if (res == NULL) {\
 		/* exit immediately */\
-		PANIC_MEMORY(size, filename, linenum, funcname, "Failed! Exiting...")\
-		BREAKPOINT()\
-\
+		error("Memory allocation of %lu bytes failed [%s (%s) : %u]", size, filename, funcname, linenum);\
 	}\
 } while (0);
 
@@ -115,8 +82,7 @@ do {\
 
 /********** memory allocation routines **********/
 
-extern void *
-	sci_malloc(size_t size);
+extern void *sci_malloc(size_t size);
 /* Allocates the specified amount of memory.
 ** Parameters: (size_t) size: Number of bytes to allocate
 ** Returns   : (void *) A pointer to the allocated memory chunk
@@ -124,8 +90,7 @@ extern void *
 ** If the call fails, behaviour is dependent on the definition of SCI_ALLOC.
 */
 
-extern void *
-	sci_calloc(size_t num, size_t size);
+extern void *sci_calloc(size_t num, size_t size);
 /* Allocates num * size bytes of zeroed-out memory.
 ** Parameters: (size_t) num: Number of elements to allocate
 **             (size_t) size: Amount of memory per element to allocate
@@ -134,8 +99,7 @@ extern void *
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
-extern void *
-	sci_realloc(void *ptr, size_t size);
+extern void *sci_realloc(void *ptr, size_t size);
 /* Increases the size of an allocated memory chunk.
 ** Parameters: (void *) ptr: The original pointer
 **             (size_t) size: New size of the memory chunk
@@ -148,8 +112,7 @@ extern void *
 */
 
 
-extern char *
-	sci_strdup(const char *src);
+extern char *sci_strdup(const char *src);
 /* Duplicates a string.
 ** Parameters: (const char *) src: The original pointer
 ** Returns   : (char *) a pointer to the storage location for the copied
@@ -159,8 +122,7 @@ extern char *
 */
 
 
-extern char *
-	sci_strndup(const char *src, size_t length);
+extern char *sci_strndup(const char *src, size_t length);
 /* Copies a string into a newly allocated memory part, up to a certain length.
 ** Parameters: (char *) src: The source string
 **             (int) length: The maximum length of the string (not counting
@@ -175,13 +137,10 @@ extern char *
 /****************************************/
 
 /* Refcounting memory calls are a little slower than the others,
-** and using it improperly may cuase memory leaks. It conserves
+** and using it improperly may cause memory leaks. It conserves
 ** memory, though.  */
 
-#define SCI_REFCOUNT_TEST(f) sci_refcount_incref(f); sci_refcount_decref(f);
-
-extern void *
-	sci_refcount_alloc(size_t length);
+extern void *sci_refcount_alloc(size_t length);
 /* Allocates "garbage" memory
 ** Parameters: (size_t) length: Number of bytes to allocate
 ** Returns   : (void *) The allocated memory
@@ -189,23 +148,20 @@ extern void *
 ** It cannot be freed with 'free()', only by using sci_refcount_decref().
 */
 
-extern void *
-	sci_refcount_incref(void *data);
+extern void *sci_refcount_incref(void *data);
 /* Adds another reference to refcounted memory
 ** Parameters: (void *) data: The data to add a reference to
 ** Returns   : (void *) data
 */
 
-extern void
-	sci_refcount_decref(void *data);
+extern void sci_refcount_decref(void *data);
 /* Decrements the reference count for refcounted memory
 ** Parameters: (void *) data: The data to add a reference to
 ** Returns   : (void *) data
 ** If the refcount reaches zero, the memory will be deallocated
 */
 
-extern void *
-	sci_refcount_memdup(void *data, size_t len);
+extern void *sci_refcount_memdup(void *data, size_t len);
 /* Duplicates non-refcounted memory into a refcounted block
 ** Parameters: (void *) data: The memory to copy from
 **             (size_t) len: The number of bytes to copy/allocate
