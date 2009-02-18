@@ -144,28 +144,13 @@ _cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs
 {
     if (!refs)
 	return;
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
 
     _cfsml_free_pointer_references_recursively(refs->next, free_pointers);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-
-    fprintf(stderr,"Freeing ptrref %p [%p] %s\n", refs->ptr, refs, free_pointers?
-	    "ALL": "cleanup only");
-    #endif
 
     if (free_pointers)
 	free(refs->ptr);
 
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
     free(refs);
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    #endif
 }
 
 static void
@@ -185,10 +170,6 @@ _cfsml_get_current_refpointer()
 static void _cfsml_register_pointer(void *ptr)
 {
     struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof (struct _cfsml_pointer_refstruct));
-    #ifdef CFSML_DEBUG_MALLOC
-    SCI_MEMTEST;
-    fprintf(stderr,"Registering ptrref %p [%p]\n", ptr, newref);
-    #endif
     newref->next = *_cfsml_pointer_references_current;
     newref->ptr = ptr;
     *_cfsml_pointer_references_current = newref;
