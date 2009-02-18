@@ -147,16 +147,6 @@ extern void *
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
-extern void *
-	sci_memdup(const void *src, size_t size);
-/* Duplicates a chunk of memory
-** Parameters: (void *) src: Pointer to the data to duplicate
-**             (size_t) size: Number of bytes to duplicate
-** Returns   : (void *) An appropriately allocated duplicate, or NULL on error
-** Please try to avoid data duplication unless absolutely neccessary!
-** To free this string, use the free() command.
-** See _SCI_MALLOC() for more information if call fails.
-*/
 
 extern char *
 	sci_strdup(const char *src);

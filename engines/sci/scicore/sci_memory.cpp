@@ -66,21 +66,6 @@ sci_realloc(void *ptr, size_t size) {
 }
 
 
-void *
-sci_memdup(const void *ptr, size_t size) {
-	void *res;
-	if (!ptr) {
-		fprintf(stderr, "_SCI_MEMDUP() [%s (%s) : %u]\n",
-		        __FILE__, "", __LINE__);
-		fprintf(stderr, " attempt to memdup NULL pointer\n");
-		BREAKPOINT();
-	}
-	ALLOC_MEM((res = malloc(size)), size, __FILE__, __LINE__, "")
-	memcpy(res, ptr, size);
-	return res;
-}
-
-
 char *
 sci_strdup(const char *src) {
 	void *res;

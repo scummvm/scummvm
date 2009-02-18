@@ -188,18 +188,6 @@ sci_get_from_queue(sci_queue_t *queue, int *type);
 
 /* --- */
 
-int
-memtest(const char *file, int line);
-/* Allocates, manipulates, and frees some memory
-** Parameters: (const char *) file: The file name to print when starting the
-**				tests
-**             (int) line: The line number to claim it was executed on
-** Returns   : (int) 0
-** This function calls malloc(), free(), and memfrob() or memset()
-** to provocate segmentation faults caused by dynamic allocation bugs
-** in previous parts of the code.
-*/
-
 void
 sci_gettime(long *seconds, long *useconds);
 /* Calculates the current time in seconds and microseconds
