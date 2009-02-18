@@ -451,7 +451,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
-		{}},
+		{},
+		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+	},
 
 	// King's Quest 7 - English DOS
 	{{"kq7", "", {
@@ -1295,13 +1297,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 
-	{AD_TABLE_END_MARKER, {}}
+	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
 };
 
 // Generic entries for filename based fallback
 static const struct SciGameDescription SciGameGeneric[] = {
-	{{"sci", 0, AD_ENTRY1("resource.map", NULL), Common::UNK_LANG, Common::kPlatformUnknown, 0},{}},
-	{AD_TABLE_END_MARKER, {}}
+	{{"sci", 0, AD_ENTRY1("resource.map", NULL), Common::UNK_LANG, Common::kPlatformUnknown, 0},{},SCI_VERSION(0, 000, 000)},
+	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
 };
 
 // Filename based fallback information
