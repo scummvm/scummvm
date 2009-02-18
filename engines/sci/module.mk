@@ -55,6 +55,9 @@ MODULE_OBJS = \
 	scicore/decompress01.o \
 	scicore/decompress1.o \
 	scicore/decompress11.o \
+	scicore/exe.o \
+	scicore/exe_lzexe.o \
+	scicore/exe_raw.o \
 	scicore/resource.o \
 	scicore/resource_map.o \
 	scicore/resource_patch.o \

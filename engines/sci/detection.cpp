@@ -1044,7 +1044,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
-		
+#if 0	
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	{{"sq1sci", "VGA Remake", {
 		{"resource.map", 0, "106484b372af1d4cbf866472cc2813dc", 6396},
@@ -1085,7 +1085,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-
+#endif
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	{{"sq3", "", {
 		{"resource.map", 0, "bad41385acde6d677a8d55a7b20437e3", 5868},
@@ -1357,11 +1357,30 @@ public:
 
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
-		printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
-		printf("translation), please, report the data above, including the following\n");
-		printf("version number, from the game's executable: ");
+	int exeVersion = 0;
 
-		// TODO
+	// First grab all filenames
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) continue;
+		Common::String filename = file->getName();
+		filename.toLowercase();
+
+		// FIXME: This is all quite hackish
+		if (filename.contains("scidhuv")) {
+			exeVersion = version_detect_from_executable((char *)file->getPath().c_str());
+			break;
+		} 
+	}
+
+	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
+	printf("translation), please, report the data above, including the following\n");
+	printf("version number, from the game's executable:\n");
+
+	printf("Interpreter version: %d.%03d.%03d (by executable scan)\n",
+			SCI_VERSION_MAJOR(exeVersion),
+ 			SCI_VERSION_MINOR(exeVersion),
+ 			SCI_VERSION_PATCHLEVEL(exeVersion));
+		
 	return 0;
 }
 
