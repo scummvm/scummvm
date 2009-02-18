@@ -386,18 +386,6 @@ gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 #endif
 	}
 
-#ifdef HAVE_ALPHA_EV6_SUPPORT
-	if (mode->alpha_mask && axp_have_mvi && bpp == 4) {
-		if (priority == GFX_NO_PRIORITY)
-			alpha_mvi_crossblit_32(dest, src, dest_line_width, pxm->xl * bpp,
-			                       xl, yl, NULL, 0, 0, mode->alpha_mask, 24 - mode->alpha_shift);
-		else
-			alpha_mvi_crossblit_32_P(dest, src, dest_line_width, pxm->xl * bpp,
-			                         xl, yl, NULL, 0, 0, mode->alpha_mask, 24 - mode->alpha_shift,
-			                         priority_pos, priority_line_width, priority_skip, priority);
-	} else {
-#endif
-
 		if (alpha_mask & 0xff)
 			alpha_min = ((alpha_mask * gfx_crossblit_alpha_threshold) >> 8) & alpha_mask;
 		else
@@ -431,9 +419,6 @@ gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 					return GFX_ERROR;
 				}
 			}
-#ifdef HAVE_ALPHA_EV6_SUPPORT
-	}
-#endif
 
 	return GFX_OK;
 }
