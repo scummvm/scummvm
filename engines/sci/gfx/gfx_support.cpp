@@ -30,10 +30,6 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_tools.h"
 
-#ifdef HAVE_ALPHA_EV6_SUPPORT
-int axp_have_mvi = 0;
-#endif
-
 int gfx_crossblit_alpha_threshold = 128;
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_1

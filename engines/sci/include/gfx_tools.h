@@ -271,23 +271,4 @@ gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 */
 
 
-#ifdef HAVE_ALPHA_EV6_SUPPORT
-
-extern int axp_have_mvi; /* set to 1 iff the local system has the MVI instruction set extension */
-
-void
-alpha_mvi_crossblit_32(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
-                       int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-                       unsigned int alpha_test_mask, int alpha_shift);
-/* Internal function for accellerated 32 bit cross-blitting on Alpha hardware */
-
-void
-alpha_mvi_crossblit_32_P(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
-                         int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-                         unsigned int alpha_test_mask, int alpha_shift,
-                         byte *priority_pos, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority);
-/* Internal function for accellerated 32 bit cross-blitting on Alpha hardware (with priority) */
-#endif /* __alpha__ */
-
-
 #endif /* !_GFX_TOOLS_H_ */
