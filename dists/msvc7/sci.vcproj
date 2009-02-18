@@ -297,21 +297,6 @@
 				RelativePath="..\..\engines\sci\scicore\decompress11.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\exe.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\exe.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\exe_dec.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\exe_lzexe.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\exe_raw.cpp">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp">
 			</File>
 			<File
