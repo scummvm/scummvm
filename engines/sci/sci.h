@@ -49,6 +49,7 @@ struct GameFlags {
 struct SciGameDescription {
 	ADGameDescription desc;
 	GameFlags flags;
+	int version;
 };
 
 //class Console;
@@ -60,8 +61,9 @@ public:
 
 	virtual Common::Error init(void);
 	virtual Common::Error go(void);
-
+	int getVersion() { return _version; }
 private:
+	int _version;
 	//Console *_console;
 };
 
