@@ -413,10 +413,12 @@ _cfsml_get_value(FILE *fd, int *line, int *hiteof)
   */
 }
 #line 432 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_synonym_t(FILE *fh, synonym_t* save_struc);
 static int
 _cfsml_read_synonym_t(FILE *fh, synonym_t* save_struc, const char *lastval, int *line, int *hiteof);
+#endif
 
 #line 432 "savegame.cfsml"
 static void
@@ -467,10 +469,12 @@ static int
 _cfsml_read_int_hash_map_t(FILE *fh, int_hash_map_t* save_struc, const char *lastval, int *line, int *hiteof);
 
 #line 432 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_gint16(FILE *fh, gint16* save_struc);
 static int
 _cfsml_read_gint16(FILE *fh, gint16* save_struc, const char *lastval, int *line, int *hiteof);
+#endif
 
 #line 432 "savegame.cfsml"
 static void
@@ -569,10 +573,12 @@ static int
 _cfsml_read_menu_t(FILE *fh, menu_t* save_struc, const char *lastval, int *line, int *hiteof);
 
 #line 432 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_long(FILE *fh, long* save_struc);
 static int
 _cfsml_read_long(FILE *fh, long* save_struc, const char *lastval, int *line, int *hiteof);
+#endif
 
 #line 432 "savegame.cfsml"
 static void
@@ -611,6 +617,7 @@ static int
 _cfsml_read_seg_manager_t(FILE *fh, seg_manager_t* save_struc, const char *lastval, int *line, int *hiteof);
 
 #line 445 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_synonym_t(FILE *fh, synonym_t* save_struc)
 {
@@ -626,8 +633,10 @@ _cfsml_write_synonym_t(FILE *fh, synonym_t* save_struc)
     fprintf(fh, "\n");
   fprintf(fh, "}");
 }
+#endif
 
 #line 539 "savegame.cfsml"
+#if 0
 static int
 _cfsml_read_synonym_t(FILE *fh, synonym_t* save_struc, const char *lastval, int *line, int *hiteof)
 {
@@ -687,6 +696,7 @@ int min, max, i;
   } while (!closed); /* Until closing braces are hit */
   return CFSML_SUCCESS;
 }
+#endif
 
 #line 445 "savegame.cfsml"
 static void
@@ -1367,13 +1377,16 @@ int min, max, i;
 }
 
 #line 445 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_gint16(FILE *fh, gint16* save_struc)
 {
   fprintf(fh, "%li", (long) *save_struc);
 }
+#endif
 
 #line 539 "savegame.cfsml"
+#if 0
 static int
 _cfsml_read_gint16(FILE *fh, gint16* save_struc, const char *lastval, int *line, int *hiteof)
 {
@@ -1391,6 +1404,7 @@ _cfsml_read_gint16(FILE *fh, gint16* save_struc, const char *lastval, int *line,
   }
   return CFSML_SUCCESS;
 }
+#endif
 
 #line 445 "savegame.cfsml"
 static void
@@ -3115,13 +3129,16 @@ int min, max, i;
 }
 
 #line 445 "savegame.cfsml"
+#if 0
 static void
 _cfsml_write_long(FILE *fh, long* save_struc)
 {
   fprintf(fh, "%li", (long) *save_struc);
 }
+#endif
 
 #line 539 "savegame.cfsml"
+#if 0
 static int
 _cfsml_read_long(FILE *fh, long* save_struc, const char *lastval, int *line, int *hiteof)
 {
@@ -3139,6 +3156,7 @@ _cfsml_read_long(FILE *fh, long* save_struc, const char *lastval, int *line, int
   }
   return CFSML_SUCCESS;
 }
+#endif
 
 #line 445 "savegame.cfsml"
 static void
