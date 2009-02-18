@@ -143,6 +143,8 @@ void SymbianActions::initInstanceGame() {
 	bool is_lure = (gameid == "lure");
 	bool is_feeble = (gameid == "feeble");
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
+	bool is_tucker = (gameid == "tucker");
+	bool is_groovie = (gameid == "groovie");
 
 	Actions::initInstanceGame();
 
@@ -153,7 +155,7 @@ void SymbianActions::initInstanceGame() {
 
 
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_feeble || is_tucker || is_groovie)
 		_action_enabled[ACTION_SAVE] = false;
 	else {
 		_action_enabled[ACTION_SAVE] = true;
@@ -176,10 +178,10 @@ void SymbianActions::initInstanceGame() {
 	_action_enabled[ACTION_QUIT] = true;
 
 	// Skip text
-	if (!is_cine && !is_parallaction)
+	if (!is_cine && !is_parallaction && !is_groovie)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
-		is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula)
+			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
 		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {
 		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
