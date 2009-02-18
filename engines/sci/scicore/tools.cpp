@@ -64,6 +64,17 @@
 
 #include "sci/include/engine.h"
 
+
+// FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
+#if _MSC_VER
+#  define G_DIR_SEPARATOR_S "\\"
+#  define G_DIR_SEPARATOR '\\'
+#else
+#  define G_DIR_SEPARATOR_S "/"
+#  define G_DIR_SEPARATOR '/'
+#endif
+
+
 #ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
 #endif
@@ -389,7 +400,6 @@ sci_mkpath(const char *path) {
 	return 0;
 }
 
-
 /*-- Yielding to the scheduler --*/
 
 #ifdef HAVE_SCHED_YIELD
@@ -423,13 +433,17 @@ sci_sched_yield() {
 #endif /* !HAVE_SCHED_YIELD */
 
 
-char *
-_fcaseseek(const char *fname, sci_dir_t *dir)
+/* Returns the case-sensitive filename of a file.
+** Expects *dir to be uninitialized and the caller to free it afterwards.
+** Parameters: (const char *) fname: Name of file to get case-sensitive.
+**             (sci_dir_t *) dir: Directory to find file within.
+** Returns   : (char *) Case-sensitive filename of the file.
+*/
+char *_fcaseseek(const char *fname, sci_dir_t *dir) {
 /* Expects *dir to be uninitialized and the caller to
  ** free it afterwards  */
-{
-	char *buf, *iterator;
-	char _buf[14];
+
+	Common::String buf;
 	char *retval = NULL, *name;
 
 #ifdef _MSC_VER
@@ -441,23 +455,17 @@ _fcaseseek(const char *fname, sci_dir_t *dir)
 		BREAKPOINT();
 	}
 
-	if (strlen(fname) > 12) /* not a DOS file? */
-		buf = (char*)sci_malloc(strlen(fname) + 1);
-	else
-		buf = _buf;
-
 	sci_init_dir(dir);
 
 	/* Replace all letters with '?' chars */
-	strcpy(buf, fname);
-	iterator = buf;
-	while (*iterator) {
+	buf = fname;
+	
+	for (Common::String::iterator iterator = buf.begin(); iterator != buf.end(); ++iterator) {
 		if (isalpha(*iterator))
 			*iterator = '?';
-		iterator++;
 	}
 
-	name = sci_find_first(dir, buf);
+	name = sci_find_first(dir, buf.c_str());
 
 	while (name && !retval) {
 		if (!scumm_stricmp(fname, name))
@@ -465,9 +473,6 @@ _fcaseseek(const char *fname, sci_dir_t *dir)
 		else
 			name = sci_find_next(dir);
 	}
-
-	if (strlen(fname) > 12)
-		free(buf);
 
 	return retval;
 }

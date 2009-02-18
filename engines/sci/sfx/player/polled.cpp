@@ -29,9 +29,7 @@
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
 
-#ifndef _MSC_VER
-#include <unistd.h> // for close()
-#endif
+#include "common/file.h"
 
 static song_iterator_t *play_it;
 static int play_paused = 0;
@@ -167,20 +165,15 @@ pp_set_option(char *name, char *value) {
 static int
 pp_init(resource_mgr_t *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
-	int fd;
 
 	if (!mixer)
 		return SFX_ERROR;
 
 	/* FIXME Temporary hack to detect Amiga games. */
-	fd = sci_open("bank.001", O_RDONLY);
-
-	if (fd == SCI_INVALID_FD)
+	if (!Common::File::exists("bank.001"))
 		seq = sfx_find_softseq(NULL);
-	else {
-		close(fd);
+	else
 		seq = sfx_find_softseq("amiga");
-	}
 
 	if (!seq) {
 		sciprintf("[sfx:seq:polled] Initialisation failed: Could not find software sequencer\n");

@@ -72,16 +72,6 @@
 #  include <fcntl.h>
 #endif
 
-// FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
-#if _MSC_VER
-#  define G_DIR_SEPARATOR_S "\\"
-#  define G_DIR_SEPARATOR '\\'
-#else
-#  define G_DIR_SEPARATOR_S "/"
-#  define G_DIR_SEPARATOR '/'
-#endif
-
-
 #define GUINT16_SWAP_LE_BE_CONSTANT(val) ((((val) & 0x00ff) << 8) | (((val) & 0xff00) >> 8))
 
 #define GUINT32_SWAP_LE_BE_CONSTANT(val)  ( \
@@ -121,16 +111,13 @@
 #    define scimkdir(arg1,arg2) mkdir(arg1,arg2)
 #endif
 
-#ifndef _GET_INT_16
-#define _GET_INT_16
-
 static inline gint16
 getInt16(byte *d) {
 	return (gint16)(*d | (d[1] << 8));
 }
 
 #define getUInt16(d) (guint16)(getInt16(d))
-#endif
+
 /* Turns a little endian 16 bit value into a machine-dependant 16 bit value
 ** Parameters: d: Pointer to the memory position from which to read
 ** Returns   : (gint16) The (possibly converted) 16 bit value
@@ -263,15 +250,6 @@ sci_file_size(const char *fname);
 /* Returns the filesize of a file
 ** Parameters: (const char *) fname: Name of file to get filesize of
 ** Returns   : (int) filesize of the file, -1 on error
-*/
-
-char *
-_fcaseseek(const char *fname, sci_dir_t *dir);
-/* Returns the case-sensitive filename of a file.
-** Expects *dir to be uninitialized and the caller to free it afterwards.
-** Parameters: (const char *) fname: Name of file to get case-sensitive.
-**             (sci_dir_t *) dir: Directory to find file within.
-** Returns   : (char *) Case-sensitive filename of the file.
 */
 
 /* Simple heuristic to work around array handling peculiarity in SQ4:
