@@ -171,11 +171,20 @@ read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof
 
 typedef mem_obj_t *mem_obj_ptr;
 
+// Unused types
+/*
+TYPE long "long" LIKE int;
+TYPE gint16 "gint16" LIKE int;
+
+RECORD synonym_t "synonym_t" {
+	int replaceant;
+	int replacement;
+}
+*/
+
 %CFSML
 
 TYPE byte "byte" LIKE int;
-TYPE long "long" LIKE int;
-TYPE gint16 "gint16" LIKE int;
 TYPE seg_id_t "seg_id_t" LIKE int;
 TYPE sci_version_t "sci_version_t" USING write_sci_version read_sci_version;
 TYPE menubar_tp "menubar_t *" USING write_menubar_tp read_menubar_tp;
@@ -233,12 +242,6 @@ RECORD menu_t "menu_t" {
 RECORD menubar_t "menubar_t" {
 	menu_t menus[DYNAMIC menus_nr];
 }
-
-RECORD synonym_t "synonym_t" {
-	int replaceant;
-	int replacement;
-}
-
 
 RECORD seg_manager_t "seg_manager_t" {
 	int_hash_map_tp id_seg_map;
@@ -724,9 +727,7 @@ gamestate_save(state_t *s, char *dirname) {
 	/* Calculate the time spent with this game */
 	s->game_time = time(NULL) - s->game_start_time.tv_sec;
 
-SCI_MEMTEST;
 	%CFSMLWRITE state_t s INTO fh;
-SCI_MEMTEST;
 
 	fclose(fh);
 
@@ -1131,7 +1132,7 @@ gamestate_restore(state_t *s, char *dirname) {
 	retval->resource_dir = s->resource_dir;
 	retval->work_dir = s->work_dir;
 	retval->kernel_opt_flags = 0;
-	retval->have_mouse_flag = s->have_mouse_flag;
+	retval->have_mouse_flag = 1;
 
 	retval->successor = NULL;
 	retval->pic_priority_table = (int*)gfxop_get_pic_metainfo(retval->gfx_state);
