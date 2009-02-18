@@ -1205,7 +1205,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
