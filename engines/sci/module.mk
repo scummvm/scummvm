@@ -87,7 +87,7 @@ MODULE_OBJS = \
 
 # Generate savegame.cpp
 $(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml
-	cat $< | perl $(srcdir)/engines/sci/engine/cfsml.pl -f savegame.cfsml > $@
+	cat $< | perl $(srcdir)/tools/cfsml.pl -f savegame.cfsml > $@
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SCI), DYNAMIC_PLUGIN)
