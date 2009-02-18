@@ -72,10 +72,6 @@
 #  include <kos/thread.h>
 #endif
 
-#ifdef HAVE_MEMFROB
-void *memfrob(void *s, size_t n);
-#endif
-
 int script_debug_flag = 0; /* Defaulting to running mode */
 int sci_debug_flags = 0; /* Special flags */
 
@@ -418,51 +414,6 @@ sci_get_homedir(void) {
 #else
 #  error Please add a $HOME policy for your platform!
 #endif
-}
-
-
-sci_queue_t *
-sci_init_queue(sci_queue_t *queue) {
-	queue->start = queue->end = NULL;
-	return queue;
-}
-
-sci_queue_t *
-sci_add_to_queue(sci_queue_t *queue, void *data, int type) {
-	sci_queue_node_t *node = (sci_queue_node_t*)sci_malloc(sizeof(sci_queue_node_t));
-
-	node->next = NULL;
-	node->data = data;
-	node->type = type;
-
-	if (queue->start)
-		queue->start->next = node;
-
-	queue->start = node;
-
-	if (!queue->end)
-		queue->end = node;
-
-	return queue;
-}
-
-void *
-sci_get_from_queue(sci_queue_t *queue, int *type) {
-	sci_queue_node_t *node = queue->end;
-	if (node) {
-		void *retval = node->data;
-		if (type)
-			*type = node->type;
-
-		queue->end = node->next;
-
-		if (queue->end == NULL) /* Queue empty? */
-			queue->start = NULL;
-
-		free(node);
-		return retval;
-	}
-	return NULL;
 }
 
 
