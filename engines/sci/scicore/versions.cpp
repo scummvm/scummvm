@@ -27,7 +27,6 @@
 #include "sci/include/versions.h"
 #include "sci/include/engine.h"
 #include "sci/include/resource.h"
-#include "sci/scicore/exe.h"
 
 void
 version_require_earlier_than(state_t *s, sci_version_t version) {
