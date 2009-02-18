@@ -129,7 +129,7 @@ init_gamestate(state_t *gamestate, sci_version_t version) {
 }
 
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
-		: Engine(syst) {
+		: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -141,7 +141,6 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	// Set up the engine specific debug levels
 	//Common::addSpecialDebugLevel(SCI_DEBUG_RESOURCES, "resources", "Debug the resources loading");
 
-	_version = desc->version;
 	printf("SciEngine::SciEngine\n");
 }
 

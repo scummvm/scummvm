@@ -89,6 +89,26 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{0, 0}
 };
 
+const char* SciEngine::getGameID() const {
+	return _gameDescription->desc.gameid;
+}
+
+Common::Platform SciEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
+Common::Language SciEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
+uint32 SciEngine::getFlags() const {
+	return _gameDescription->desc.flags;
+}
+
+uint16 SciEngine::getVersion() const {
+	return _gameDescription->version;
+}
+
 /*
 	// Missing - from FreeSCI
 	{ 0x980CEAD3, SCI_VERSION(0, 000, 629), "Demo Quest" },

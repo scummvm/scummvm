@@ -61,9 +61,15 @@ public:
 
 	virtual Common::Error init(void);
 	virtual Common::Error go(void);
-	int getVersion() { return _version; }
+
+	const SciGameDescription *_gameDescription;
+	const char* getGameID() const;
+	uint16 getVersion() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+	uint32 getFlags() const;
+
 private:
-	int _version;
 	//Console *_console;
 };
 
