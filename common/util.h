@@ -273,7 +273,7 @@ inline void warning(const char *s, ...) {}
 #else
 
 /**
- * Print a warning message to the text console (stdout).
+ * Print a warning message to the text console (stderr).
  * Automatically prepends the text "WARNING: " and appends
  * an exclamation mark and a newline.
  */
