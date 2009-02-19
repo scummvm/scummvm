@@ -67,7 +67,7 @@ int int_hash_map_t::check_value(int value, bool add, char *was_added) {
 	if (*node) {
 		return (*node)->value;
 	}
-	/* Not found */
+	// Not found
 
 	if (!add)
 		return -1;
@@ -75,7 +75,7 @@ int int_hash_map_t::check_value(int value, bool add, char *was_added) {
 	if (was_added)
 		*was_added = 1;
 
-	if (holes) { /* Re-use old node */
+	if (holes) { // Re-use old node
 		(*node) = holes;
 		holes = (*node)->next;
 		(*node)->next = NULL;
@@ -90,7 +90,6 @@ int int_hash_map_t::check_value(int value, bool add, char *was_added) {
 	return (*node)->value;
 }
 
-
 int int_hash_map_t::remove_value(int value) {
 	node_t **node = &(nodes[HASH(value)]);
 
@@ -101,10 +100,10 @@ int int_hash_map_t::remove_value(int value) {
 		node_t *oldnode = *node;
 		*node = (*node)->next;
 
-		oldnode->next = holes; /* Old node is now a 'hole' */
+		oldnode->next = holes; // Old node is now a 'hole'
 		holes = oldnode;
 		return oldnode->value;
 	} else
-		return -1; /* Not found */
+		return -1; // Not found
 }
 

@@ -37,7 +37,7 @@
  */
 
 
-/* Assumes that the ints are relatively evenly distributed */
+// Assumes that the ints are relatively evenly distributed
 
 #define DCS_INT_HASH_MAX 255
 
@@ -49,8 +49,8 @@ struct int_hash_map_t {
 		node_t *next;
 	};
 
-	int base_value;  /* Starts at zero, counts upwards */
-	node_t *nodes[DCS_INT_HASH_MAX+1];
+	int base_value;  // Starts at zero, counts upwards 
+	node_t *nodes[DCS_INT_HASH_MAX + 1];
 	node_t *holes; /* List of freed entries to minimize
 				     ** memory operations and modifications
 				     ** to base_value  */
@@ -83,4 +83,4 @@ public:
 typedef int_hash_map_t *int_hash_map_ptr;
 
 
-#endif /* INT_HASHMAP_H */
+#endif // INT_HASHMAP_H
