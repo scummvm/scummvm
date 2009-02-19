@@ -257,7 +257,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		pAni = (ANI_SCRIPT *)LockMem(FROM_LE_32(pReel->script));
 
 		if (_ctx->speed == -1) {
-			_ctx->speed = (ONE_SECOND/pFilm->frate);
+			_ctx->speed = (ONE_SECOND/FROM_LE_32(pFilm->frate));
 
 			// Restored reel
 			for (;;) {
@@ -713,7 +713,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	if ((int32)FROM_LE_32(_ctx->pmi->mulID) == -2) {
 		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
-			_ctx->pmi->otherFlags & OTH_RELATEDACTOR));
+			FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
 		return;
 	}
 
