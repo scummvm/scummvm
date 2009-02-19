@@ -408,7 +408,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "3fac034c7d130e055d05bc43a1f8d5f8", 549993},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(0, 000, 274)	// FIXME: some versions are v. 0.000.409/0.000.502
+		SCI_VERSION(0, 000, 502)
 	},
 
 	// King's Quest 4 - English DOS
