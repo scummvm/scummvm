@@ -254,7 +254,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 001, 064)
+		SCI_VERSION(1, 001, 64)
 	},
 
 	// Eco Quest - Spanish DOS Floppy
