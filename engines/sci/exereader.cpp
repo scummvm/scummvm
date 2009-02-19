@@ -116,6 +116,7 @@ bool isLZEXECompressed(Common::SeekableReadStream *exeStream) {
 
 	// Calculate code segment offset in exe file
 	filepos += exeStream->readUint16LE();		// at pos 22, +2
+	filepos <<= 4;
 
 	// First relocation item offset should be 0x1c
 	if (exeStream->readUint16LE() != 0x1c)		// at pos 24, +2
@@ -156,7 +157,8 @@ uint getBit(Common::SeekableReadStream *input) {
 	_bitCount--;
 
 	if (_bitCount <= 0) {
-		_bits = input->readByte() | input->readByte() << 8;
+		_bits = input->readByte();
+		_bits |= input->readByte() << 8;
 
 		if (_bitCount == -1) { /* special case for first bit word */
 			bit = _bits & 1;
@@ -174,19 +176,6 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 	int len = exeStream->size();
 	unsigned char *buffer = NULL;
 	char result_string[10]; /* string-encoded result, copied from buf */
-	int state = 0;
-	/* 'state' encodes how far we have matched the version pattern
-	**   "n.nnn.nnn"
-	**
-	**   n.nnn.nnn
-	**  0123456789
-	**
-	** Since we cannot be certain that the pattern does not begin with an
-	** alphanumeric character, some states are ambiguous.
-	** The pattern is expected to be terminated with a non-alphanumeric
-	** character.
-	*/
-
 	// Read the executable
 	bool isLZEXE = isLZEXECompressed(exeStream);
 
@@ -235,7 +224,8 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 					} else
 						repeat += 2;
 				} else {
-					repeat = ((getBit(exeStream) << 1) | getBit(exeStream)) + 2;
+					repeat = getBit(exeStream) << 1;
+					repeat += getBit(exeStream) + 2;
 					offset = exeStream->readByte() | 0xFF00;
 				}
 
@@ -249,6 +239,20 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 	}
 
 	// Find SCI version number
+
+	int state = 0;
+	/* 'state' encodes how far we have matched the version pattern
+	**   "n.nnn.nnn"
+	**
+	**   n.nnn.nnn
+	**  0123456789
+	**
+	** Since we cannot be certain that the pattern does not begin with an
+	** alphanumeric character, some states are ambiguous.
+	** The pattern is expected to be terminated with a non-alphanumeric
+	** character.
+	*/
+
 
 	int accept;
 	unsigned char *buf = buffer;
