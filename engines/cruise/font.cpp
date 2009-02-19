@@ -27,138 +27,105 @@
 #include "common/util.h"
 
 #include "cruise/cruise_main.h"
+#include "common/endian.h"
 
 namespace Cruise {
 
-// (old: fontProc1(int16 param, uint8* ptr1, uint8* ptr2))
-int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc) {
-	uint8 *dest;
+/**
+ * Determines the line size by finding the highest character in the given font set
+ */
+int32 getLineHeight(int16 charCount, const FontEntry *fontPtr) {
 	int32 highestChar = 0;
-	int32 i;
 
-	if (!charCount) {
+	if (!charCount)
 		return (0);
-	}
-	dest = fontPrt_Desc + 6;	// fontPtr + 20         // char height
 
-	for (i = 0; i < charCount; i++) {
-		if ((*(int16 *) dest) > highestChar) {
-			highestChar = *(int16 *) dest;
-		}
-		dest += 12;
+	for (int i = 0; i < charCount; ++i) {
+		int charHeight = FROM_LE_16(fontPtr[i].charHeight);
+		if (charHeight > highestChar) highestChar = charHeight;
 	}
+
 	return highestChar;
 }
 
-// this function determins how many lines the text will have (old: fontProc2(int32 param1, int32 param2, uint8* ptr, uint8* string))
-int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
-                       uint8 *ptr, const uint8 *textString) {
-	const uint8 *localString = textString;
-	const uint8 *currentStringPtr;
-	uint8 character;
+/**
+ * This function determins how many lines the text will have
+ */
+int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
+                       const FontEntry *fontData, const char *textString) {
+	const char *localString = textString;
+	const char *tempPtr = textString;
+	uint8 ch;
+	int32 total = 0, lineLength = 0;
 
-	int32 var_6 = 0;
-	int32 lineLength = 0;
-
-	const uint8 *tempPtr = 0;
-
-	if (!*localString) {
+	if (!*textString)
 		return (0);
-	}
-	currentStringPtr = localString;
-	character = *localString;
+
+	ch = *localString;
 
 	do {
-		int32 charData = fontCharacterTable[character];
+		int32 charData = fontCharacterTable[ch];
 
-		if (character == '|') {
+		if (ch == '|') {
 			lineLength = rightBorder_X;
 			localString = tempPtr;
-		} else {
-			if (charData >= 0) {	// + 0xA jump to last 2 bytes of the 12 bytes slice = letter width
-				lineLength +=
-				    wordSpacingWidth + *(int16 *)(ptr + 0xA +
-				                                  charData * 12);
-			} else {
-				if (character == ' ') {
-					lineLength += wordSpacingWidth + 5;
-					localString = currentStringPtr;
-				}
-			}
+		} else if (charData >= 0) {
+			lineLength += wordSpacingWidth + FROM_LE_16(fontData[charData].charWidth);
+		} else if (ch == ' ') {
+			lineLength += wordSpacingWidth + 5;
+			localString = tempPtr;
 		}
 
-		tempPtr = currentStringPtr;
-
-		if (rightBorder_X <= lineLength) {
-			var_6 += rightBorder_X;
-			currentStringPtr = localString;
+		if (lineLength >= rightBorder_X) {
+			total += rightBorder_X;
 			tempPtr = localString;
 			lineLength = 0;
 		}
 
-		character = *(tempPtr++);
-		currentStringPtr = tempPtr;
+		ch = *++tempPtr;
+	} while (ch);
 
-	} while (character);
+	if (lineLength > 0)
+		total += rightBorder_X;
 
-	if (lineLength == 0) {
-		return (var_6 / rightBorder_X);
-	} else {
-		return ((var_6 + rightBorder_X) / rightBorder_X);
-	}
+	return (total / rightBorder_X);
 }
 
 void loadFNT(const char *fileName) {
-	uint8 header[6];
-	int32 fontSize;
-	int32 data2;
-	uint8 data3[6];
+	uint8 header[4];
 
 	_systemFNT = NULL;
 
 	Common::File fontFileHandle;
 
-	if (!fontFileHandle.exists(fileName)) {
+	if (!fontFileHandle.exists(fileName))
 		return;
-	}
 
 	fontFileHandle.open((const char *)fileName);
 
 	fontFileHandle.read(header, 4);
 
 	if (strcmp((char*)header, "FNT") == 0) {
-		fontFileHandle.read(&fontSize, 4);
-		flipLong(&fontSize);
-
-		fontFileHandle.read(&data2, 4);
-		flipLong(&data2);
-
-		fontFileHandle.read(data3, 6);	// may need an endian flip ?
-		flipGen(&data3, 6);
+		uint32 fontSize = fontFileHandle.readUint32BE();
 
 		_systemFNT = (uint8 *)mallocAndZero(fontSize);
 
 		if (_systemFNT != NULL) {
-			int32 i;
-			uint8 *currentPtr;
-
-			fontFileHandle.seek(0);
-			fontFileHandle.read(header, 4);	// not really require, we could fseek to 4
-
+			fontFileHandle.seek(4);
 			fontFileHandle.read(_systemFNT, fontSize);
 
-			flipLong((int32 *) _systemFNT);
-			flipLong((int32 *)(_systemFNT + 4));
-			flipGen(_systemFNT + 8, 6);
+			// Flip structure values from BE to LE for font files - this is for consistency
+			// with font resources, which are in LE formatt
+			FontInfo *f = (FontInfo *)_systemFNT;
+			flipLong(&f->offset);
+			flipLong(&f->size);
+			flipGen(&f->numChars, 6);	// numChars, hSpacing, and vSpacing
 
-			currentPtr = _systemFNT + 14;
+			FontEntry *fe = (FontEntry *)(_systemFNT + sizeof(FontInfo));
 
-			for (i = 0; i < *(int16 *)(_systemFNT + 8); i++) {
-				flipLong((int32 *)currentPtr);
-				currentPtr += 4;
-
-				flipGen(currentPtr, 8);
-				currentPtr += 8;
+			for (int i = 0; i < FROM_LE_16(f->numChars); ++i, ++fe) {
+				flipLong(&fe->offset);	// Flip 32-bit offset field
+				flipGen(&fe->v1, 8);	// Flip remaining 16-bit fields
 			}
 		}
 	}
@@ -195,6 +162,10 @@ void initSystem(void) {
 	loadFNT("system.fnt");
 }
 
+void freeSystem(void) {
+	free(_systemFNT);
+}
+
 void flipShort(int16 *var) {
 	uint8 *varPtr = (uint8 *) var;
 	SWAP(varPtr[0], varPtr[1]);
@@ -206,14 +177,14 @@ void flipShort(uint16 *var) {
 }
 
 void flipLong(int32 *var) {
-	char *varPtr = (char *)var;
+	uint8 *varPtr = (uint8 *)var;
 
 	SWAP(varPtr[0], varPtr[3]);
 	SWAP(varPtr[1], varPtr[2]);
 }
 
 void flipLong(uint32 *var) {
-	char *varPtr = (char *)var;
+	uint8 *varPtr = (uint8 *)var;
 
 	SWAP(varPtr[0], varPtr[3]);
 	SWAP(varPtr[1], varPtr[2]);
@@ -228,42 +199,38 @@ void flipGen(void *var, int32 length) {
 	}
 }
 
-void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
+void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr,
                 int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
                 int32 stringRenderBufferSize, int32 width, int32 charWidth) {
 	int i;
 	int j;
-	uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
+	const uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
 
 	outBufferPtr += heightOff * width * 2;	// param2 = height , param6 = width
 	outBufferPtr += drawPosPixel_X;	// param1 = drawPosPixel_X
 
 	for (i = 0; i < height; i++) {	// y++
-		uint16 currentColor1 =
-		    (*(fontPtr_Data) << 8) | *(fontPtr_Data + 1);
-		uint16 currentColor2 =
-		    (*(fontPtr_Data2) << 8) | *(fontPtr_Data2 + 1);
+		uint16 bitSet1 = READ_BE_UINT16(fontPtr_Data);
+		uint16 bitSet2 = READ_BE_UINT16(fontPtr_Data2);
 
-		fontPtr_Data += 2;
-		fontPtr_Data2 += 2;
+		fontPtr_Data += sizeof(uint16);
+		fontPtr_Data2 += sizeof(uint16);
 
 		for (j = 0; j < charWidth; j++) {
-			*outBufferPtr =
-			    ((currentColor1 >> 15) & 1) | ((currentColor2 >>
-			                                    14) & 2);
+			*outBufferPtr = ((bitSet1 >> 15) & 1) | ((bitSet2 >>14) & 2);
 			outBufferPtr++;
 
-			currentColor1 <<= 1;
-			currentColor2 <<= 1;
+			bitSet1 <<= 1;
+			bitSet2 <<= 1;
 		}
 		outBufferPtr += (width * 2) - charWidth;
 	}
 }
 
 // returns character count and pixel size (via pointer) per line of the string (old: prepareWordRender(int32 param, int32 var1, int16* out2, uint8* ptr3, uint8* string))
-int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
-                        int16 * strPixelLength, uint8 * ptr3, const uint8 *textString) {
-	const uint8 *localString = textString;
+int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
+                        int16 *strPixelLength, const FontEntry *fontData, const char *textString) {
+	const char *localString = textString;
 
 	int32 counter = 0;
 	int32 finish = 0;
@@ -291,19 +258,15 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 			} else {
 				if (charData) {
 					if (pixelCount + wordSpacingWidth +
-					        *(int16 *)((ptr3 +
-					                    charData * 12) + 0xA) >=
-					        inRightBorder_X) {
+							FROM_LE_16(fontData[charData].charWidth) >= inRightBorder_X) {
 						finish = 1;
 						if (temp_pc) {
 							pixelCount = temp_pc;
 							counter = temp_cc;
 						}
 					} else {
-						pixelCount +=
-						    wordSpacingWidth +
-						    *(int16 *)((ptr3 +
-						                charData * 12) + 0xA);
+						pixelCount += wordSpacingWidth +
+							FROM_LE_16(fontData[charData].charWidth);
 					}
 				}
 			}
@@ -315,13 +278,13 @@ int32 prepareWordRender(int32 inRightBorder_X, int32 wordSpacingWidth,
 	return counter;
 }
 
-void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 color,
+void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 color,
                 int32 inRightBorder_X) {
-	uint8 *fontPtr;
-	uint8 *fontPtr_Data;	// ptr2
-	uint8 *fontPtr_Desc;	// ptr3
-	int32 wordSpacingWidth;	// var1
-	int32 wordSpacingHeight;	// var2
+	const FontInfo *fontPtr;
+	const FontEntry *fontPtr_Desc;
+	const uint8 *fontPtr_Data;
+	int16 wordSpacingWidth;	// var1
+	int16 wordSpacingHeight;	// var2
 	int32 rightBorder_X;	// param2
 	int32 lineHeight;	// fontProc1result
 	int32 numLines;
@@ -336,31 +299,30 @@ void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 colo
 	int32 renderBufferSize;	// var_1E
 	int needFlip;
 
-	if (!buffer || !string) {
+	if (!buffer || !string)
 		return;
-	}
 
 	if (fontFileIndex != -1) {
-		fontPtr = filesDatabase[fontFileIndex].subData.ptr;
+		fontPtr = (const FontInfo *)filesDatabase[fontFileIndex].subData.ptr;
 
 		if (!fontPtr) {
-			fontPtr = _systemFNT;
+			fontPtr = (const FontInfo *)_systemFNT;
 		}
 	} else {
-		fontPtr = _systemFNT;
+		fontPtr = (const FontInfo *)_systemFNT;
 	}
 
 	if (!fontPtr) {
 		return;
 	}
 
-	fontPtr_Data = fontPtr + *(int16 *)(fontPtr + 4);
-	fontPtr_Desc = fontPtr + 14;
+	fontPtr_Desc = (const FontEntry *)((const uint8 *)fontPtr + sizeof(FontInfo));
+	fontPtr_Data = (const uint8 *)fontPtr + FROM_LE_32(fontPtr->offset);
 
-	lineHeight = getLineHeight(*(int16 *)(fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
+	lineHeight = getLineHeight(FROM_LE_16(fontPtr->numChars), fontPtr_Desc);
 
-	wordSpacingWidth = *(int16 *)(fontPtr + 10);
-	wordSpacingHeight = *(int16 *)(fontPtr + 12);
+	wordSpacingWidth = FROM_LE_16(fontPtr->hSpacing);
+	wordSpacingHeight = FROM_LE_16(fontPtr->vSpacing);
 
 	if (inRightBorder_X > 310) {
 		rightBorder_X = 310;
@@ -414,7 +376,7 @@ void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 colo
 		int spacesCount = 0;	// si
 		char character = *(string);
 		short int strPixelLength;	// var_16;
-		const uint8 *ptrStringEnd;	// var_4        //ok
+		const char *ptrStringEnd;	// var_4        //ok
 		int drawPosPixel_X;	// di
 
 		while (character == ' ') {
@@ -443,23 +405,21 @@ void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 colo
 					drawPosPixel_X += wordSpacingWidth + 5;
 				} else {
 					if (data) {
-						short int *si =
-						    (int16 *)(fontPtr_Desc +
-						              data * 12);
-						//int var_2     = si[5];
+						const FontEntry &fe = fontPtr_Desc[data];
 
-						renderWord(fontPtr_Data +
-						           si[0],
+						renderWord((const uint8 *)fontPtr_Data + FROM_LE_32(fe.offset),
 						           currentStrRenderBuffer,
 						           drawPosPixel_X,
-						           si[4] - si[3] +
+								   FROM_LE_16(fe.height2) - FROM_LE_16(fe.charHeight) +
 						           lineHeight + heightOffset,
-						           si[3], si[2],
+								   FROM_LE_16(fe.charHeight),
+								   FROM_LE_16(fe.v1),
 						           renderBufferSize / 2,
-						           stringWidth * 2, si[5]);
+						           stringWidth * 2,
+								   FROM_LE_16(fe.charWidth));
 
 						drawPosPixel_X +=
-						    wordSpacingWidth + si[5];
+						    wordSpacingWidth + FROM_LE_16(fe.charWidth);
 					}
 				}
 			} else {
@@ -503,14 +463,14 @@ void drawString(int32 x, int32 y, const uint8 *string, uint8 *buffer, uint8 colo
 }
 
 // calculates all necessary datas and renders text
-gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
-	uint8 *fontPtr;
-	uint8 *fontPtr_Data;	// pt2
-	uint8 *fontPtr_Desc;	// ptr3
-	int32 wordSpacingWidth;	// var1               //0 or -1
-	int32 wordSpacingHeight;	// var2               //0 or -1
+gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
+	const FontInfo *fontPtr;
+	const FontEntry *fontPtr_Desc;
+	const uint8 *fontPtr_Data;
+	int16 wordSpacingWidth;	// 0 or -1
+	int16 wordSpacingHeight;// 0 or -1
 	int32 rightBorder_X;
-	int32 lineHeight;	// fontProc1result
+	int32 lineHeight;
 	int32 numLines;
 	int32 stringHeight;
 	int32 stringFinished;
@@ -529,25 +489,26 @@ gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 	}
 	// check if font has been loaded, else get system font
 	if (fontFileIndex != -1) {
-		fontPtr = filesDatabase[fontFileIndex].subData.ptr;
+		fontPtr = (const FontInfo *)filesDatabase[fontFileIndex].subData.ptr;
 
 		if (!fontPtr) {
-			fontPtr = _systemFNT;
+			fontPtr = (const FontInfo *)_systemFNT;
 		}
 	} else {
-		fontPtr = _systemFNT;
+		fontPtr = (const FontInfo *)_systemFNT;
 	}
 
 	if (!fontPtr) {
 		return NULL;
 	}
-	fontPtr_Data = fontPtr + *(int16 *)(fontPtr + 4);	// offset to char data
-	fontPtr_Desc = fontPtr + 14;	// offset to char description
 
-	lineHeight = getLineHeight(*(int16 *)(fontPtr + 8), fontPtr, fontPtr_Desc);	// ok
+	fontPtr_Desc = (const FontEntry *)((const uint8 *)fontPtr + sizeof(FontInfo));
+	fontPtr_Data = (const uint8 *)fontPtr + FROM_LE_32(fontPtr->offset);
 
-	wordSpacingWidth = *(int16 *)(fontPtr + 10);
-	wordSpacingHeight = *(int16 *)(fontPtr + 12);
+	lineHeight = getLineHeight(FROM_LE_16(fontPtr->numChars), fontPtr_Desc);
+
+	wordSpacingWidth = FROM_LE_16(fontPtr->hSpacing);
+	wordSpacingHeight = FROM_LE_16(fontPtr->vSpacing);
 
 	// if right border is higher then screenwidth (+ spacing), adjust border
 	if (inRightBorder_X > 310) {
@@ -585,7 +546,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 		int spacesCount = 0;	// si
 		unsigned char character = *string;
 		short int strPixelLength;	// var_16
-		const uint8 *ptrStringEnd;	// var_4     //ok
+		const char *ptrStringEnd;	// var_4     //ok
 		int drawPosPixel_X;	// di
 
 		// find first letter in string, skip all spaces
@@ -620,22 +581,22 @@ gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string) {
 					drawPosPixel_X += wordSpacingWidth + 5;	// if char = "space" adjust word starting postion (don't render space though);
 				} else {
 					if (charData >= 0) {
-						short int *si = (int16 *)(fontPtr_Desc + charData * 12);	// offset font data
-						// int var_2 = si[5];                                   // don't need this
+						const FontEntry &fe = fontPtr_Desc[charData];
 
 						// should ist be stringRenderBufferSize/2 for the second last param?
-						renderWord(fontPtr_Data +
-						           si[0],
+						renderWord((const uint8 *)fontPtr_Data + FROM_LE_32(fe.offset),
 						           currentStrRenderBuffer,
 						           drawPosPixel_X,
-						           si[4] - si[3] +
+						           FROM_LE_16(fe.height2) - FROM_LE_16(fe.charHeight) +
 						           lineHeight + heightOffset,
-						           si[3], si[2],
+						           FROM_LE_16(fe.charHeight),
+								   FROM_LE_16(fe.v1),
 						           stringRenderBufferSize,
-						           stringWidth / 2, si[5]);
+						           stringWidth / 2,
+								   FROM_LE_16(fe.charWidth));
 
 						drawPosPixel_X +=
-						    wordSpacingWidth + si[5];
+						    wordSpacingWidth + FROM_LE_16(fe.charWidth);
 					}
 				}
 			} else {

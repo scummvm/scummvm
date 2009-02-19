@@ -27,7 +27,7 @@
 
 namespace Cruise {
 
-uint8 *_systemFNT;
+uint8 *_systemFNT = NULL;
 
 uint8 itemColor = 1;
 uint8 selectColor = 3;

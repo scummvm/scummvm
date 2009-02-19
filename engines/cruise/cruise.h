@@ -57,6 +57,7 @@ private:
 	bool _preLoad;
 	Debugger *_debugger;
 	Common::StringList _langStrings;
+	CursorType _savedCursor;
 
 protected:
 	// Engine APIs
@@ -76,6 +77,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual void pauseEngineIntern(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
 	bool loadSaveDirectory(void);

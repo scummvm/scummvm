@@ -26,10 +26,33 @@
 #ifndef CRUISE_FONT_H
 #define CRUISE_FONT_H
 
+#include "common/scummsys.h"
+
 namespace Cruise {
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
+struct FontInfo {
+	uint32 size;
+	uint32 offset;
+	uint16 numChars;
+	int16 hSpacing;
+	int16 vSpacing;
+} PACKED_STRUCT;
+
+struct FontEntry {
+	uint32 offset;
+	int16 v1;
+	int16 charHeight;
+	int16 height2;
+	int16 charWidth;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 void loadFNT(const char *fileName);
 void initSystem(void);
+void freeSystem(void);
 
 //////////////////////////////////////////////////
 void flipShort(int16 * var);
@@ -38,14 +61,14 @@ void flipLong(int32 * var);	// TODO: move away
 void flipLong(uint32 * var);	// TODO: move away
 void flipGen(void *var, int32 length);
 
-int32 getLineHeight(int16 charCount, uint8 * fontPtr, uint8 * fontPrt_Desc);	// fontProc1
-int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, uint8 * ptr, const uint8 *textString);	// fontProc2
-
-void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
+int32 getLineHeight(int16 charCount, const FontEntry *fontPtr, const uint8 *fontPrt_Desc);	// fontProc1
+int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth, const FontEntry *fontData,
+					   const char *textString);
+void renderWord(uint8 *fontPtr_Data, uint8 *outBufferPtr,
                 int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
                 int32 stringRenderBufferSize, int32 width, int32 charWidth);
-gfxEntryStruct *renderText(int inRightBorder_X, const uint8 *string);
-void drawString(int32 x, int32 y, const uint8 * string, uint8 * buffer, uint8 color,
+gfxEntryStruct *renderText(int inRightBorder_X, const char *string);
+void drawString(int32 x, int32 y, const char *string, uint8 * buffer, uint8 color,
                 int32 inRightBorder_X);
 
 } // End of namespace Cruise

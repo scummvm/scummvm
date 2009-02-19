@@ -35,6 +35,8 @@
 #include "sound/mixer.h"
 
 #include "cruise/cruise.h"
+#include "cruise/font.h"
+#include "cruise/gfxModule.h"
 
 namespace Cruise {
 
@@ -65,10 +67,8 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 }
 
 CruiseEngine::~CruiseEngine() {
-#ifdef PALMOS_MODE
-	delete _currentVolumeFile;
-#endif
 	delete _debugger;
+	freeSystem();
 }
 
 Common::Error CruiseEngine::init() {
@@ -93,7 +93,6 @@ Common::Error CruiseEngine::go() {
 }
 
 void CruiseEngine::initialize() {
-
 	PCFadeFlag = 0;
 	workBuffer = (uint8 *) mallocAndZero(8192);
 
@@ -109,7 +108,6 @@ void CruiseEngine::initialize() {
 	// another bit of video init
 
 	readVolCnf();
-
 }
 
 bool CruiseEngine::loadLanguageStrings() {
@@ -138,5 +136,24 @@ bool CruiseEngine::loadLanguageStrings() {
 	f.close();
 	return true;
 }
+
+void CruiseEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (pause) {
+		// Draw the 'Paused' message
+		drawSolidBox(64, 100, 256, 117, 0);
+		drawString(10, 100, langString(ID_PAUSED), gfxModuleData.pPage00, itemColor, 300);
+		gfxModuleData_flipScreen();
+
+		_savedCursor = currentCursor;
+		changeCursor(CURSOR_NOMOUSE);
+	} else {
+		processAnimation();
+		flipScreen();
+		changeCursor(_savedCursor);
+	}
+}
+
 
 } // End of namespace Cruise

@@ -128,7 +128,7 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 
 void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x, int y, int width, int16 color, int backgroundPlane, int parentOvl, int parentIdx) {
 
-	char *ax;
+	const char *ax;
 	cellStruct *savePObject = pObject;
 	cellStruct *cx;
 
@@ -173,7 +173,7 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	ax = getText(messageIdx, overlayIdx);
 
 	if (ax) {
-		pNewElement->gfxPtr = renderText(width, (uint8 *) ax);
+		pNewElement->gfxPtr = renderText(width, ax);
 	}
 }
 
