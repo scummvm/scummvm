@@ -801,7 +801,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 3 - English DOS
 	{{"lsl3", "", {
 		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
@@ -813,7 +812,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 572)
 	},
-#endif
 
 #if 0
 	// Larry 3 - German DOS (from Tobis87)
