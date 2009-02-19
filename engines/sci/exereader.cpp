@@ -81,7 +81,8 @@ bool isGameExe(Common::SeekableReadStream *exeStream) {
 
 	// Check if it's a Mac exe
 	// Is there a better way to do this?
-	int32 offset = MKID_BE(magic) + 28;	// Resource map offset
+	// FIXME: MKID_BE() does /not/ work that way.
+	int32 offset = 0; //MKID_BE(magic) + 28;	// Resource map offset
 	if (exeStream->size() <= offset)
 		return false;
 
