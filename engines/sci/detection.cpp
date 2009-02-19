@@ -1007,6 +1007,24 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 
+	// Quest for Glory 4 - German DOS/Windows (from PCJoker 2/98)
+	{{"qfg4", "", {
+		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
+		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 100, 002)
+	},
+
+	// Quest for Glory 4 - German DOS/Windows Disk V1.1 (from PCJoker 2/89)
+	{{"qfg4", "", {
+		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301 },
+		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 000, 000)
+	},
+
 	// RAMA - English Windows
 	{{"rama", "", {
 		{"resmap.001", 0, "3bac72a1910a563f8f92cf5b77c8b7f2", 8338},
