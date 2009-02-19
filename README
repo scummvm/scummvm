@@ -1122,6 +1122,7 @@ other games.
         m                      - Music on/off
         s                      - Sound effects on/off
         b                      - Background sounds on/off
+                                 [Simon the Sorcerer 2 only]
         p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
@@ -1143,7 +1144,6 @@ other games.
         F7                     - Switch characters
         F9                     - Hitbox names on/off
         s                      - Sound effects on/off
-        b                      - Background sounds on/off
         p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
