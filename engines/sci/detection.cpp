@@ -1136,7 +1136,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ade814bc4d56244c156d9e9bcfebbc11", 664085},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(1, 000, 200)
+		SCI_VERSION(1, 000, 744)
 	},
 
 	// Space Quest 4 - German Amiga (from www.back2roots.org)
@@ -1151,7 +1151,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "67fb188b191d88efe8414af6ea297b93", 672675},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(1, 000, 200)
+		SCI_VERSION(1, 000, 744)
 	},
 
 	// Space Quest 4 - English DOS
