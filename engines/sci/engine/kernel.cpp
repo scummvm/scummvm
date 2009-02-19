@@ -35,8 +35,7 @@
 #include "sci/include/gfx_operations.h"
 #include "sci/engine/kernel_types.h"
 
-
-/* New kernel functions */
+// New kernel functions
 reg_t kStrLen(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kGetFarText(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kReadNumber(struct _state *s, int funct_nr, int argc, reg_t *argv);
@@ -167,27 +166,27 @@ reg_t kMessage(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kDoAudio(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(struct _state *s, int funct_nr, int argc, reg_t *argv);
 
-/* The Unknown/Unnamed kernel function */
+// The Unknown/Unnamed kernel function
 reg_t kstub(struct _state *s, int funct_nr, int argc, reg_t *argv);
-/* for unimplemented kernel functions */
+// for unimplemented kernel functions
 reg_t kNOP(struct _state *s, int funct_nr, int argc, reg_t *argv);
-/* for kernel functions that don't do anything */
+// for kernel functions that don't do anything
 reg_t kFsciEmu(struct _state *s, int funct_nr, int argc, reg_t *argv);
-/* Emulating "old" kernel functions on the heap */
+// Emulating "old" kernel functions on the heap
 
 
 #define SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR 0x75
-/* kfunct_mappers below doubles for unknown kfunctions */
+// kfunct_mappers below doubles for unknown kfunctions
 
 static int sci_max_allowed_unknown_kernel_functions[] = {
 	0,
-	0x72, /* SCI0 */
-	0x7b, /* SCI01/EGA */
-	0x7b, /* SCI01/VGA */
-	0x7b, /* SCI1/EARLY */
-	0x7b, /* SCI1/LATE */
-	0x7b, /* SCI1.1 */
-	0x0, /* SCI32 */
+	0x72, // SCI0
+	0x7b, // SCI01/EGA
+	0x7b, // SCI01/VGA
+	0x7b, // SCI1/EARLY
+	0x7b, // SCI1/LATE
+	0x7b, // SCI1.1
+	0x0, // SCI32
 };
 
 #define DEFUN(nm, cname, sig) {KF_NEW, nm, {cname, sig, NULL}}
@@ -197,7 +196,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
 	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),
 	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
-	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oi"), /* Work around QfG1 bug */
+	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oi"), // Work around QfG1 bug
 	/*04*/	DEFUN("Clone", kClone, "o"),
 	/*05*/	DEFUN("DisposeClone", kDisposeClone, "o"),
 	/*06*/	DEFUN("IsObject", kIsObject, "."),
@@ -205,8 +204,8 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*08*/	DEFUN("DrawPic", kDrawPic, "i*"),
 	/*09*/	DEFUN("Show", kShow, "i"),
 	/*0a*/	DEFUN("PicNotValid", kPicNotValid, "i*"),
-	/*0b*/	DEFUN("Animate", kAnimate, "LI*"), /* More like (li?)? */
-	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), /* The second parameter is ignored */
+	/*0b*/	DEFUN("Animate", kAnimate, "LI*"), // More like (li?)?
+	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), // The second parameter is ignored
 	/*0d*/	DEFUN("NumLoops", kNumLoops, "o"),
 	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
 	/*0f*/	DEFUN("CelWide", kCelWide, "iOiOi"),
@@ -322,7 +321,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*72*/	NOFUN(NULL),
 	/*73*/	NOFUN(NULL),
 
-	/* Experimental functions */
+	// Experimental functions
 	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
 	/*(?)*/	DEFUN("Memory", kMemory, "i.*"),
 	/*(?)*/	DEFUN("Sort", kSort, "ooo"),
@@ -331,7 +330,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*(?)*/	DEFUN("Palette", kPalette, "i*"),
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 
-	/* Non-experimental Functions without a fixed ID */
+	// Non-experimental Functions without a fixed ID
 
 	DEFUN("CosMult", kTimesCos, "ii"),
 	DEFUN("SinMult", kTimesSin, "ii"),
@@ -344,29 +343,23 @@ sci_kernel_function_t kfunct_mappers[] = {
 	DEFUN("DoAudio", kDoAudio, ".*"),
 
 
-	/* Special and NOP stuff */
+	// Special and NOP stuff
 	{KF_NEW, NULL, {k_Unknown, NULL, NULL}},
 
-	{KF_TERMINATOR, NULL, {NULL, NULL, NULL}} /* Terminator */
+	{KF_TERMINATOR, NULL, {NULL, NULL, NULL}} // Terminator
 };
 
-static const char *argtype_description[] = {"Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic"};
+static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic" };
 
-
-/******************** Kernel Oops ********************/
-
-int
-kernel_oops(state_t *s, const char *file, int line, const char *reason) {
+int kernel_oops(state_t *s, const char *file, int line, const char *reason) {
 	sciprintf("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
 	fprintf(stderr, "Kernel Oops in file %s, line %d: %s\n", file, line, reason);
 	script_debug_flag = script_error_flag = 1;
 	return 0;
 }
 
-
-/* Allocates a set amount of memory for a specified use and returns a handle to it. */
-reg_t
-kalloc(state_t *s, const char *type, int space) {
+// Allocates a set amount of memory for a specified use and returns a handle to it.
+reg_t kalloc(state_t *s, const char *type, int space) {
 	reg_t reg;
 
 	sm_alloc_hunk_entry(&s->seg_manager, type, space, &reg);
@@ -375,8 +368,7 @@ kalloc(state_t *s, const char *type, int space) {
 	return reg;
 }
 
-int
-has_kernel_function(state_t *s, const char *kname) {
+int has_kernel_function(state_t *s, const char *kname) {
 	int i = 0;
 
 	while (s->kernel_names[i]) {
@@ -388,9 +380,8 @@ has_kernel_function(state_t *s, const char *kname) {
 	return 0;
 }
 
-/* Returns a pointer to the memory indicated by the specified handle */
-byte *
-kmem(state_t *s, reg_t handle) {
+// Returns a pointer to the memory indicated by the specified handle
+byte *kmem(state_t *s, reg_t handle) {
 	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 	hunk_table_t *ht = &(mobj->data.hunks);
 
@@ -402,39 +393,30 @@ kmem(state_t *s, reg_t handle) {
 	return (byte *) ht->table[handle.offset].entry.mem;
 }
 
-/* Frees the specified handle. Returns 0 on success, 1 otherwise. */
-int
-kfree(state_t *s, reg_t handle) {
+// Frees the specified handle. Returns 0 on success, 1 otherwise.
+int kfree(state_t *s, reg_t handle) {
 	sm_free_hunk_entry(&s->seg_manager, handle);
 
 	return 0;
 }
 
-
-/*****************************************/
-/************* Kernel functions **********/
-/*****************************************/
-
 char *old_save_dir;
 
-reg_t
-kRestartGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRestartGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
 	old_save_dir = strdup(deref_save_dir);
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; /* This appears to help */
+	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 	s->execution_stack_pos = s->execution_stack_base;
-	script_abort_flag = 1; /* Force vm to abort ASAP */
+	script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }
-
 
 /* kGameIsRestarting():
 ** Returns the restarting_flag in acc
 */
-reg_t
-kGameIsRestarting(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGameIsRestarting(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
 	if (old_save_dir && deref_save_dir) {
@@ -445,69 +427,60 @@ kGameIsRestarting(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
 
-	if (argc) {/* Only happens during replay */
-		if (!UKPV(0)) /* Set restarting flag */
+	if (argc) { // Only happens during replay
+		if (!UKPV(0)) // Set restarting flag
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
 	return s->r_acc;
 }
 
-reg_t
-kHaveMouse(state_t *s, int funct_nr, int argc, reg_t *argv) {
-
+reg_t kHaveMouse(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, -1);
 }
 
-
-
-reg_t
-kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argv[0].offset) {
-	case 0: /* Total free heap memory */
-	case 1: /* Largest heap block available */
-	case 2: /* Largest available hunk memory block */
-	case 3: /* Total amount of hunk memory */
-	case 4: /* Amount of free DOS paragraphs- SCI01 */
-		return make_reg(0, 0x7fff); /* Must not be 0xffff, or some memory calculations will overflow */
+	case 0: // Total free heap memory
+	case 1: // Largest heap block available
+	case 2: // Largest available hunk memory block
+	case 3: // Total amount of hunk memory
+	case 4: // Amount of free DOS paragraphs- SCI01
+		return make_reg(0, 0x7fff); // Must not be 0xffff, or some memory calculations will overflow
 
 	default:
 		SCIkwarn(SCIkWARNING, "Unknown MemoryInfo operation: %04x\n", argv[0].offset);
 	}
+
 	return NULL_REG;
 }
 
-
-reg_t
-k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	if (funct_nr >= SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR) {
 		SCIkwarn(SCIkSTUB, "Unhandled Unknown function %04x\n", funct_nr);
 		return NULL_REG;
-	} else switch (kfunct_mappers[funct_nr].type) {
-
+	} else {
+		switch (kfunct_mappers[funct_nr].type) {
 		case KF_NEW:
 			return kfunct_mappers[funct_nr].sig_pair.fun(s, funct_nr, argc, argv);
-
 		case KF_NONE:
 		default:
 			SCIkwarn(SCIkSTUB, "Unhandled Unknown function %04x\n", funct_nr);
 			return NULL_REG;
 		}
+	}
 }
 
-
-reg_t
-kFlushResources(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFlushResources(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	run_gc(s);
 	SCIkdebug(SCIkROOM, "Entering room number %d\n", UKPV(0));
 	return s->r_acc;
 }
 
-reg_t
-kSetDebug(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetDebug(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
-	script_debug_flag = 1; /* Enter debug mode */
+	script_debug_flag = 1; // Enter debug mode
 	_debug_seeking = _debug_step_running = 0;
 	return s->r_acc;
 }
@@ -517,25 +490,23 @@ kSetDebug(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_NEW_GETTIME_TIME_24HOUR 2
 #define _K_NEW_GETTIME_DATE 3
 
-reg_t
-kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	struct tm* loc_time;
 	GTimeVal time_prec;
 	time_t the_time;
-	int retval = 0; /* Avoid spurious warning */
+	int retval = 0; // Avoid spurious warning
 
 #if 0
-	/* Reset optimization flags: If this function is called,
-	** the game may be waiting for a timeout  */
-	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT
-	                         | KERNEL_OPT_FLAG_GOT_2NDEVENT);
+	// Reset optimization flags: If this function is called,
+	// the game may be waiting for a timeout
+	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 #endif
 
 #ifdef WIN32
 	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
 		fprintf(stderr, "timeBeginPeriod(1) failed in kGetTime!\n");
 	}
-#endif /* WIN32 */
+#endif // WIN32
 
 	the_time = time(NULL);
 	loc_time = localtime(&the_time);
@@ -544,21 +515,23 @@ kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	if (TIMERR_NOERROR != timeEndPeriod(1)) {
 		fprintf(stderr, "timeEndPeriod(1) failed in kGetTime!\n");
 	}
-#endif /* WIN32 */
+#endif // WIN32
 
-	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { /* Use old semantics */
-		if (argc) { /* Get seconds since last am/pm switch */
+	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
+		if (argc) { // Get seconds since last am/pm switch
 			retval = loc_time->tm_sec + loc_time->tm_min * 60 + (loc_time->tm_hour % 12) * 3600;
 			SCIkdebug(SCIkTIME, "GetTime(timeofday) returns %d\n", retval);
-		} else { /* Get time since game started */
+		} else { // Get time since game started
 			sci_get_current_time(&time_prec);
 			retval = ((time_prec.tv_usec - s->game_start_time.tv_usec) * 60 / 1000000) +
 			         (time_prec.tv_sec - s->game_start_time.tv_sec) * 60;
 			SCIkdebug(SCIkTIME, "GetTime(elapsed) returns %d\n", retval);
 		}
 	} else {
-		int mode = UKPV_OR_ALT(0, 0); /* The same strange method is still used for distinguishing
-					         mode 0 and the others. We assume that this is safe, though */
+		int mode = UKPV_OR_ALT(0, 0);	
+		// The same strange method is still used for distinguishing
+		// mode 0 and the others. We assume that this is safe, though
+
 		switch (mode) {
 		case _K_NEW_GETTIME_TICKS : {
 			sci_get_current_time(&time_prec);
@@ -593,43 +566,30 @@ kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, retval);
 }
 
-#define K_MEMORY_ALLOCATE_CRITICAL 	1
+#define K_MEMORY_ALLOCATE_CRITICAL 		1
 #define K_MEMORY_ALLOCATE_NONCRITICAL   2
 #define K_MEMORY_FREE			3
 #define	K_MEMORY_MEMCPY			4
 #define K_MEMORY_PEEK			5
 #define K_MEMORY_POKE			6
 
-reg_t
-kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
-
+reg_t kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
-
 	case K_MEMORY_ALLOCATE_CRITICAL :
-
-		if (!sm_alloc_dynmem(&s->seg_manager, UKPV(1),
-		                     "kMemory() critical", &s->r_acc)) {
+		if (!sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() critical", &s->r_acc)) {
 			SCIkwarn(SCIkERROR, "Critical heap allocation failed\n");
 			script_error_flag = script_debug_flag = 1;
 		}
-
 		return s->r_acc;
 		break;
-
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-
-		sm_alloc_dynmem(&s->seg_manager, UKPV(1),
-		                "kMemory() non-critical", &s->r_acc);
+		sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() non-critical", &s->r_acc);
 		break;
-
 	case K_MEMORY_FREE :
-
 		if (sm_free_dynmem(&s->seg_manager, argv[1])) {
-			SCIkwarn(SCIkERROR, "Attempt to kMemory::free() non-dynmem pointer "PREG"!\n",
-			         PRINT_REG(argv[1]));
+			SCIkwarn(SCIkERROR, "Attempt to kMemory::free() non-dynmem pointer "PREG"!\n", PRINT_REG(argv[1]));
 		}
 		break;
-
 	case K_MEMORY_MEMCPY : {
 		int size = UKPV(3);
 		byte *dest = kernel_dereference_bulk_pointer(s, argv[1], size);
@@ -646,31 +606,26 @@ kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 				SCIkdebug(SCIkWARNING, "  src ptr ("PREG") invalid/memory region too small\n", PRINT_REG(argv[2]));
 			}
 		}
-
 		break;
 	}
-
 	case K_MEMORY_PEEK : {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n",
-			          PRINT_REG(argv[1]));
+			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (s->seg_manager.heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, getInt16(ref));
+		break;
 	}
-	break;
-
 	case K_MEMORY_POKE : {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n",
-			          PRINT_REG(argv[1]));
+			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -678,58 +633,48 @@ kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
-				SCIkdebug(SCIkERROR, "Attempt to poke memory reference "PREG" to "PREG"!\n",
-				          PRINT_REG(argv[2]), PRINT_REG(argv[1]));
+				SCIkdebug(SCIkERROR, "Attempt to poke memory reference "PREG" to "PREG"!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
-				putInt16(ref, argv[2].offset);
+				putInt16(ref, argv[2].offset); // ???
 			}
-
 		}
 		return s->r_acc;
 		break;
-
 	}
 	}
 
 	return s->r_acc;
 }
 
-reg_t
-kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int i;
 
-	SCIkwarn(SCIkWARNING, "Unimplemented syscall: %s[%x](",
-	         s->kernel_names[funct_nr], funct_nr);
+	SCIkwarn(SCIkWARNING, "Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
 
 	for (i = 0; i < argc; i++) {
 		sciprintf(PREG, PRINT_REG(argv[i]));
 		if (i + 1 < argc) sciprintf(", ");
 	}
 	sciprintf(")\n");
+
 	return NULL_REG;
 }
 
-
-reg_t
-kNOP(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	const char *problem = (const char*)(s->kfunct_table[funct_nr].orig_name ?
-	                                    "unmapped" : "NOP");
+reg_t kNOP(state_t *s, int funct_nr, int argc, reg_t *argv) {
+	const char *problem = (const char*)(s->kfunct_table[funct_nr].orig_name ? "unmapped" : "NOP");
 
 	SCIkwarn(SCIkWARNING, "Warning: Kernel function 0x%02x invoked: %s", funct_nr, problem);
 
-	if (s->kfunct_table[funct_nr].orig_name &&
-	        strcmp(s->kfunct_table[funct_nr].orig_name, SCRIPT_UNKNOWN_FUNCTION_STRING)) {
+	if (s->kfunct_table[funct_nr].orig_name && strcmp(s->kfunct_table[funct_nr].orig_name, SCRIPT_UNKNOWN_FUNCTION_STRING)) {
 		sciprintf(" (but its name is known to be %s)", s->kfunct_table[funct_nr].orig_name);
 	}
 
 	sciprintf("\n");
+
 	return NULL_REG;
 }
 
-
-
-void
-kernel_compile_signature(const char **s) {
+void kernel_compile_signature(const char **s) {
 	const char *src = *s;
 	char *result;
 	int ellipsis = 0;
@@ -737,7 +682,7 @@ kernel_compile_signature(const char **s) {
 	int index = 0;
 
 	if (!src)
-		return; /* NULL signature: Nothing to do */
+		return; // NULL signature: Nothing to do
 
 	result = (char*)sci_malloc(strlen(*s) + 1);
 
@@ -746,9 +691,7 @@ kernel_compile_signature(const char **s) {
 		v = 0;
 
 		if (ellipsis) {
-			sciprintf("INTERNAL ERROR when compiling kernel"
-			          " function signature '%s': non-terminal ellipsis\n", *s,
-			          *src);
+			sciprintf("INTERNAL ERROR when compiling kernel function signature '%s': non-terminal ellipsis\n", *s, *src);
 			exit(1);
 		}
 
@@ -759,7 +702,6 @@ kernel_compile_signature(const char **s) {
 				cc = c | KSIG_SPEC_SUM_DONE;
 
 			switch (cc) {
-
 			case KSIG_SPEC_LIST:
 				v |= KSIG_LIST;
 				break;
@@ -798,49 +740,37 @@ kernel_compile_signature(const char **s) {
 				break;
 
 			default: {
-				sciprintf("INTERNAL ERROR when compiling kernel"
-				          " function signature '%s': (%02x) not understood (aka"
-				          " '%c')\n",
-				          *s, c, c);
+				sciprintf("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
+				          " '%c')\n", *s, c, c);
 				exit(1);
 			}
-
 			}
-		} while (*src && (*src == KSIG_SPEC_ALLOW_INV ||
-		                  *src == KSIG_SPEC_ELLIPSIS ||
-		                  (c < 'a' && c != KSIG_SPEC_ANY)));
+		} while (*src && (*src == KSIG_SPEC_ALLOW_INV || *src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
 
-		/* To handle sum types */
+		// To handle sum types
 		result[index++] = v;
 	}
 
 	result[index] = 0;
-	*s = result; /* Write back */
+	*s = result; // Write back
 }
 
-int
-script_map_kernel(state_t *s) {
+int script_map_kernel(state_t *s) {
 	int functnr;
 	int mapped = 0;
 	int ignored = 0;
 	int functions_nr = s->kernel_names_nr;
-	int max_functions_nr
-	= sci_max_allowed_unknown_kernel_functions[s->resmgr
-	        ->sci_version];
+	int max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->sci_version];
 
 	if (functions_nr < max_functions_nr) {
 		sciprintf("Warning: SCI version believed to have %d kernel"
-		          " functions, but only %d reported-- filling up"
-		          " remaining %d\n",
-		          max_functions_nr, functions_nr,
-		          max_functions_nr - functions_nr);
+		          " functions, but only %d reported-- filling up remaining %d\n",
+		          max_functions_nr, functions_nr, max_functions_nr - functions_nr);
 
 		functions_nr = max_functions_nr;
 	}
 
 	s->kfunct_table = (kfunct_sig_pair_t*)sci_malloc(sizeof(kfunct_sig_pair_t) * functions_nr);
-
-
 	s->kfunct_nr = functions_nr;
 
 	for (functnr = 0; functnr < functions_nr; functnr++) {
@@ -851,27 +781,23 @@ script_map_kernel(state_t *s) {
 			sought_name = s->kernel_names[functnr];
 
 		if (sought_name)
-			for (seeker = 0; (found == -1)
-			        && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
-				if (kfunct_mappers[seeker].name
-				        && strcmp(kfunct_mappers[seeker].name, sought_name) == 0)
-					found = seeker; /* Found a kernel function with the same name! */
+			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
+				if (kfunct_mappers[seeker].name && strcmp(kfunct_mappers[seeker].name, sought_name) == 0)
+					found = seeker; // Found a kernel function with the same name!
 
 		if (found == -1) {
 			if (sought_name) {
-				sciprintf("Warning: Kernel function %s[%x] unmapped\n",
-				          s->kernel_names[functnr], functnr);
+				sciprintf("Warning: Kernel function %s[%x] unmapped\n", s->kernel_names[functnr], functnr);
 				s->kfunct_table[functnr].fun = kNOP;
 			} else {
-				sciprintf("Warning: Flagging kernel function %x as unknown\n",
-				          functnr);
+				sciprintf("Warning: Flagging kernel function %x as unknown\n", functnr);
 				s->kfunct_table[functnr].fun = k_Unknown;
 			}
 
 			s->kfunct_table[functnr].signature = NULL;
 			s->kfunct_table[functnr].orig_name = sought_name;
-		} else switch (kfunct_mappers[found].type) {
-
+		} else
+			switch (kfunct_mappers[found].type) {
 			case KF_OLD:
 				sciprintf("Emulated kernel function found.\nThis shouldn't happen anymore.");
 				return 1;
@@ -888,43 +814,39 @@ script_map_kernel(state_t *s) {
 				break;
 			}
 
-	} /* for all functions requesting to be mapped */
+	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d",
-	          mapped + ignored, s->kernel_names_nr, mapped);
+	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->kernel_names_nr, mapped);
 	if (ignored)
 		sciprintf(" and ignoring %d", ignored);
 	sciprintf(".\n");
+
 	return 0;
 }
 
-void
-free_kfunct_tables(state_t *s) {
+void free_kfunct_tables(state_t *s) {
 	free(s->kfunct_table);
 	s->kfunct_table = NULL;
-
 }
-int
-determine_reg_type(state_t *s, reg_t reg, int allow_invalid) {
+
+int determine_reg_type(state_t *s, reg_t reg, int allow_invalid) {
 	mem_obj_t *mobj;
 
 	if (!reg.segment) {
 		if (!reg.offset)
 			return KSIG_ARITHMETIC | KSIG_NULL;
+
 		return KSIG_ARITHMETIC;
 	}
 
-	if ((reg.segment >= s->seg_manager.heap_size)
-	        || !s->seg_manager.heap[reg.segment])
-		return 0; /* Invalid */
+	if ((reg.segment >= s->seg_manager.heap_size) || !s->seg_manager.heap[reg.segment])
+		return 0; // Invalid
 
 	mobj = s->seg_manager.heap[reg.segment];
 
 	switch (mobj->type) {
-
 	case MEM_OBJ_SCRIPT:
-		if (reg.offset <= mobj->data.script.buf_size
-		        && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+		if (reg.offset <= mobj->data.script.buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 		        && RAW_IS_OBJECT(mobj->data.script.buf + reg.offset)) {
 			int idx = RAW_GET_CLASS_INDEX(&(mobj->data.script), reg);
 			if (idx >= 0 && idx < mobj->data.script.objects_nr)
@@ -983,15 +905,13 @@ determine_reg_type(state_t *s, reg_t reg, int allow_invalid) {
 	}
 }
 
-const char *
-kernel_argtype_description(int type) {
+const char *kernel_argtype_description(int type) {
 	type &= ~KSIG_INVALID;
 
 	return argtype_description[sci_ffs(type)];
 }
 
-int
-kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv) {
+int kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv) {
 	if (!sig)
 		return 1;
 
@@ -1000,15 +920,12 @@ kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv) {
 			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
-				sciprintf("[KERN] Could not determine type of ref "PREG";"
-				          " failing signature check\n",
-				          PRINT_REG(*argv));
+				sciprintf("[KERN] Could not determine type of ref "PREG"; failing signature check\n", PRINT_REG(*argv));
 				return 0;
 			}
 
 			if (type & KSIG_INVALID) {
-				sciprintf("[KERN] ref "PREG" was determined to be a %s, "
-				          "but the reference itself is invalid\n",
+				sciprintf("[KERN] ref "PREG" was determined to be a %s, but the reference itself is invalid\n",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return 0;
 			}
@@ -1024,38 +941,32 @@ kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv) {
 	}
 
 	if (argc)
-		return 0; /* Too many arguments */
+		return 0; // Too many arguments
 	else
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static inline void *
-_kernel_dereference_pointer(struct _state *s, reg_t pointer, int entries, int align) {
+static inline void *_kernel_dereference_pointer(struct _state *s, reg_t pointer, int entries, int align) {
 	int maxsize;
 	void *retval = sm_dereference(&s->seg_manager, pointer, &maxsize);
 
 	if (pointer.offset & (align - 1)) {
-		SCIkdebug(SCIkERROR, "Unaligned pointer read: "PREG" expected with %d alignment!\n",
-		          PRINT_REG(pointer), align);
+		SCIkdebug(SCIkERROR, "Unaligned pointer read: "PREG" expected with %d alignment!\n", PRINT_REG(pointer), align);
 		return NULL;
 	}
 
 	if (entries > maxsize) {
-		SCIkdebug(SCIkERROR, "Trying to dereference pointer "PREG" beyond end of segment!\n",
-		          PRINT_REG(pointer));
+		SCIkdebug(SCIkERROR, "Trying to dereference pointer "PREG" beyond end of segment!\n", PRINT_REG(pointer));
 		return NULL;
 	}
 	return retval;
 
 }
 
-byte *
-kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries) {
+byte *kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries) {
 	return (byte*)_kernel_dereference_pointer(s, pointer, entries, 1);
 }
 
-
-reg_t *
-kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries) {
+reg_t *kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries) {
 	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
 }

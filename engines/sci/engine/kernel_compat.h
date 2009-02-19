@@ -32,43 +32,43 @@
 #warning "Old kernel compatibility crap"
 #endif
 
-/* Minimal heap position */
+// Minimal heap position/
 #define HEAP_MIN 800
 
-#define GET_HEAP(address) ((((guint16)(address)) < HEAP_MIN)? \
-KERNEL_OOPS("Heap address space violation on read")  \
-: getHeapInt16(s->heap, ((guint16)(address))))
-/* Reads a heap value if allowed */
+#define GET_HEAP(address) ((((guint16)(address)) < HEAP_MIN) ? \
+			KERNEL_OOPS("Heap address space violation on read")  \
+			: getHeapInt16(s->heap, ((guint16)(address))))
+// Reads a heap value if allowed
 
 #define UGET_HEAP(address) ((((guint16)(address)) < HEAP_MIN)? \
-KERNEL_OOPS("Heap address space violation on read")  \
-: getHeapUInt16(s->heap, ((guint16)(address))))
-/* Reads a heap value if allowed */
+			KERNEL_OOPS("Heap address space violation on read")  \
+			: getHeapUInt16(s->heap, ((guint16)(address))))
+// Reads a heap value if allowed
 
-#define PUT_HEAP(address, value) { if (((guint16)(address)) < HEAP_MIN) \
-KERNEL_OOPS("Heap address space violation on write");        \
-else { s->heap[((guint16)(address))] = (value) &0xff;               \
- s->heap[((guint16)(address)) + 1] = ((value) >> 8) & 0xff;}    \
-if ((address) & 1)                                                 \
-  sciprintf("Warning: Unaligned write to %04x\n", (address) & 0xffff); }
-/* Sets a heap value if allowed */
+#define PUT_HEAP(address, value) { \
+			if (((guint16)(address)) < HEAP_MIN) \
+				KERNEL_OOPS("Heap address space violation on write");        \
+			else { \
+				s->heap[((guint16)(address))] = (value) &0xff;               \
+				s->heap[((guint16)(address)) + 1] = ((value) >> 8) & 0xff;}    \
+				if ((address) & 1)                                                 \
+					sciprintf("Warning: Unaligned write to %04x\n", (address) & 0xffff); \
+			} \
+}
+// Sets a heap value if allowed
 
-static inline int
-getHeapInt16(unsigned char *base, int address) {
+static inline int getHeapInt16(unsigned char *base, int address) {
 	if (address & 1)
 		sciprintf("Warning: Unaligned read from %04x\n", (address) & 0xffff);
 
 	return getInt16(base + address);
 }
 
-static inline unsigned int
-getHeapUInt16(unsigned char *base, int address) {
+static inline unsigned int getHeapUInt16(unsigned char *base, int address) {
 	if (address & 1)
 		sciprintf("Warning: Unaligned unsigned read from %04x\n", (address) & 0xffff);
 
 	return getUInt16(base + address);
 }
 
-
-
-#endif /* !_SCI_KERNEL_COMPAT_ */
+#endif // !_SCI_KERNEL_COMPAT_
