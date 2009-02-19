@@ -517,6 +517,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
 	},
 
+	// Laura Bow - English DOS (from "The Roberta Williams Anthology"/1996)
+	{{"laurabow", "", {
+		{"resource.map", 0, "4e511f47d9893fa529d6621a93fa0030", 8478},
+		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 515788},
+		{"resource.002", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 721381},
+		{"resource.003", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 667468},
+		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 683807},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(0, 000, 631)
+
+	},
+
 	// Laura Bow - German DOS (from Tobis87)
 	{{"laurabow", "", {
 		{"resource.map", 0, "b1905f6aa68ff65a057b080b1eae954c", 12030},
@@ -530,6 +543,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
+	},
+
+	// Laura Bow 2 - English DOS CD (from "The Roberta Williams Antology"/1996)
+	{{"laurabow2", "CD", {
+		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
+		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 001, 69)		// FIXME: some version are v. 1.001.072
 	},
 
 	// Laura Bow 2 - German DOS CD (from Tobis87)
