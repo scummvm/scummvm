@@ -247,6 +247,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 510)
 	},
 
+	// Eco Quest - English DOS CD 1.1
+	{{"ecoquest", "CD", {
+		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
+		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 001, 064)
+	},
+
 	// Eco Quest - Spanish DOS Floppy
 	{{"ecoquest", "Floppy", {
 		{"resource.map", 0, "82e6b1e3bdb2f064b18380009df7b345", 4395},

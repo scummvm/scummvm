@@ -551,8 +551,6 @@ _scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version, resource_sour
 					_scir_init_trivial(mgr);
 					resource_error = 0;
 				}
-
-				*detected_version = SCI_VERSION_1;
 			}
 
 			mgr->sci_version = *detected_version;
@@ -676,10 +674,12 @@ scir_new_resource_manager(char *dir, int version,
 
 			if (res->status == SCI_STATUS_NOMALLOC)
 				mgr->sci_version = version = SCI_VERSION_1_LATE;
-
-			/* No need to handle SCI 1.1 here - it was done in resource_map.c */
 			break;
 		}
+		case SCI_VERSION_1_1:
+			/* No need to handle SCI 1.1 here - it was done in resource_map.c */
+			version = SCI_VERSION_1_1;
+			break;
 		default:
 			sciprintf("Resmgr: Warning: While autodetecting: Couldn't"
 			          " determine SCI version!\n");
