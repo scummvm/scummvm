@@ -596,7 +596,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "a0d4a625311d307257da7fc43d00459d", 717844},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(0, 000, 343)	// FIXME: some versions are v. 0.000.409/0.000.572
+		SCI_VERSION(0, 000, 572)
 	},
 
 	// Larry 2 - English DOS
