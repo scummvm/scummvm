@@ -52,7 +52,7 @@ bool isGameExe(Common::SeekableReadStream *exeStream) {
 	}
 
 	// Check if it's an Amiga executable
-	if ((magic[0] == 0x03 && magic[1] == 0xF3) ||
+	if ((magic[2] == 0x03 && magic[3] == 0xF3) ||
 		(magic[0] == 0x7F && magic[1] == 'E' && magic[2] == 'L' && magic[3] == 'F')) {
 		return true;
 	}

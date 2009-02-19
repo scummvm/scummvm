@@ -171,7 +171,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Codename: Iceman - English Amiga (from www.back2roots.org)
 	{{"iceman", "", {
 		{"resource.map", 0, "035829b391709a4e542d7c7b224625f6", 6000},
@@ -183,9 +182,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "605b67a9ef199a9bb015745e7c004cf4", 478384},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(0, 000, 685)	// FIXME: some versions are v. 0.000.668
+		SCI_VERSION(0, 000, 685)
 	},
-#endif
 
 	// Codename: Iceman - English DOS
 	{{"iceman", "", {
@@ -1683,17 +1681,19 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 		// Check if it's a known executable name
 		if (filename.contains("scidhuv") || filename.contains("sciv") ||
-			filename.contains("sierra") || filename.contains("sciw")) {
+			filename.contains("sierra") || filename.contains("sciw") ||
+			filename.contains("prog")) {
+			
+			if (foundExe) // We already found a valid exe, no need to check this one.
+				continue;
+			
 			// Is it really an executable file?
 			Common::SeekableReadStream *fileStream = file->createReadStream();
 			bool isExe = isGameExe(fileStream);
 
-			if (isExe && readSciVersionFromExe(fileStream, &exeVersion)) {
-				// All ok, we got the version from the executable successfully
+			if (isExe && readSciVersionFromExe(fileStream, &exeVersion)) // All ok, we got the version from the executable successfully	
 				foundExe = true;
-				delete fileStream;
-				break;
-			} 
+				
 			delete fileStream;
 		}
 
