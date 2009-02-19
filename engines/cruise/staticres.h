@@ -28,6 +28,14 @@
 
 namespace Cruise {
 
+extern int actor_move[][13];
+
+extern int actor_end[][13];
+
+extern int actor_stat[][13];
+
+extern int actor_invstat[][13];
+
 } // End of namespace Cruise
 
 #endif

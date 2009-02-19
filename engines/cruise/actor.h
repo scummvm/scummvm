@@ -61,11 +61,6 @@ struct actorStruct {
 	int16 freeze;
 };
 
-extern int raoul_move[][13];
-extern int raoul_end[][13];
-extern int raoul_stat[][13];
-extern int raoul_invstat[][13];
-
 int16 mainProc13(int overlayIdx, int param1, actorStruct * pStartEntry, int param2);
 actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int type);
 void processAnimation(void);

@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise.h"
+#include "cruise/staticres.h"
 
 namespace Cruise {
 
@@ -714,35 +715,6 @@ void set_anim(int ovl, int obj, int start, int x, int y, int mat, int state) {
 	setObjectPosition(ovl, obj, 5, state);
 }
 
-int raoul_move[][13] = {
-	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0},	/* dos         */
-	{13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0},	/* droite      */
-	{25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 0},	/* face        */
-	{ -13, -14, -15, -16, -17, -18, -19, -20, -21, -22, -23, -24, 0}	/* gauche      */
-};
-
-int raoul_end[][13] = {
-	{37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat dos    */
-	{38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat droite */
-	{39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	/* stat face   */
-	{ -38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}	/* stat gauche */
-};
-
-int raoul_stat[][13] = {
-	{53, 54, 55, 56, 57, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dos-dr  */
-	{59, 60, 62, 63, 78, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dr-face */
-	{ -78, -63, -62, -60, -59, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret face-ga */
-	{ -57, -56, -55, -54, -53, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret ga-dos  */
-};
-
-int raoul_invstat[][13] = {
-	{ -53, -54, -55, -56, -57, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret dos-dr  */
-	{57, 56, 55, 54, 53, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret ga-dos  */
-	{78, 63, 62, 60, 59, 0, 0, 0, 0, 0, 0, 0, 0},	/* ret face-ga */
-	{ -59, -60, -62, -63, -78, 0, 0, 0, 0, 0, 0, 0, 0}	/* ret dr-face */
-
-};
-
 void processAnimation(void) {
 	objectParamsQuery params;
 	int16 returnVar2[5];
@@ -853,14 +825,14 @@ void processAnimation(void) {
 
 						if (inc > 0)
 							newA =
-							    raoul_stat
+							    actor_stat
 							    [currentActor->
 							     startDirection]
 							    [currentActor->
 							     counter++];
 						else
 							newA =
-							    raoul_invstat
+							    actor_invstat
 							    [currentActor->
 							     startDirection]
 							    [currentActor->
@@ -903,7 +875,7 @@ void processAnimation(void) {
 									    ANIM_PHASE_END;
 							} else {
 								newA =
-								    raoul_stat
+								    actor_stat
 								    [currentActor->
 								     startDirection]
 								    [currentActor->
@@ -1016,7 +988,7 @@ void processAnimation(void) {
 						    nextDirection;
 
 						newA =
-						    raoul_move
+						    actor_move
 						    [currentActor->
 						     startDirection]
 						    [currentActor->
@@ -1026,7 +998,7 @@ void processAnimation(void) {
 							counter =
 							    0;
 							newA =
-							    raoul_move
+							    actor_move
 							    [currentActor->
 							     startDirection]
 							    [currentActor->
@@ -1048,7 +1020,7 @@ void processAnimation(void) {
 					break;
 				}
 				case ANIM_PHASE_END: {
-					int newA = raoul_end[currentActor->startDirection][0];
+					int newA = actor_end[currentActor->startDirection][0];
 
 					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start, currentActor->x, currentActor->y, newA, currentActor->poly);
 

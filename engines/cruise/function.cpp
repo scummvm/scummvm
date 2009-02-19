@@ -26,6 +26,7 @@
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
+#include "cruise/staticres.h"
 #include "common/util.h"
 
 namespace Cruise {
@@ -1126,11 +1127,11 @@ int16 Op_AddAnimation(void) {
 			si->stepX = stepX;
 			si->stepY = stepY;
 
-			int newFrame = ABS(raoul_end[direction][0]) - 1;
+			int newFrame = ABS(actor_end[direction][0]) - 1;
 
 			int zoom = computeZoom(params.Y);
 
-			if (raoul_end[direction][0] < 0) {
+			if (actor_end[direction][0] < 0) {
 				zoom = -zoom;
 			}
 
