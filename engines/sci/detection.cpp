@@ -122,7 +122,6 @@ int SciEngine::getVersion() const {
 
 // Game descriptions
 static const struct SciGameDescription SciGameDescriptions[] = {
-#if 0
 	// Astro Chicken DOS
 	{{"astrochicken", "", {
 		{"resource.map", 0, "f3d1be7752d30ba60614533d531e2e98", 474},
@@ -131,7 +130,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 453)
 	},
-#endif
 
 #if 0
 	// Castle of Dr. Brain - English Amiga (from www.back2roots.org)
@@ -457,7 +455,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// King's Quest 1 SCI Remake - English DOS
 	{{"kq1sci", "SCI Remake", {
 		{"resource.map", 0, "7fe9399a0bec84ca5727309778d27f07", 5790},
@@ -468,9 +465,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 999)
 	},
-#endif
 
-#if 0
 	// King's Quest 4 - English Amiga (from www.back2roots.org)
 	{{"kq4", "", {
 		{"resource.map", 0, "f88dd267fb9504d40a04d599c048d42b", 6354},
@@ -483,9 +478,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 502)
 	},
-#endif
 
-#if 0
 	// King's Quest 4 - English DOS
 	{{"kq4", "", {
 		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
@@ -497,7 +490,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 502)
 	},
-#endif
 
 	// King's Quest 4 - English DOS
 	{{"kq4", "", {
@@ -578,16 +570,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// King's Quest 6 - English DOS
 	{{"kq6", "", {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(1, 1, 69)
 	},
-#endif
 
 	// King's Quest 6 - English DOS
 	{{"kq6", "", {
@@ -595,19 +585,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "f2b7f753992c56a0c7a08d6a5077c895", 7863324},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 001, 54)		// verified
+		SCI_VERSION(1, 1, 54)		// verified
 	},
 
-#if 0
 	// King's Quest 7 - English DOS
 	{{"kq7", "", {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
 
 #if 0
 	// King's Quest 7 - Spanish DOS
@@ -755,7 +743,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 2 - English Amiga (from www.back2roots.org)
 	{{"lsl2", "", {
 		{"resource.map", 0, "e36ce0fc94d1678d15acbf12d84ec47d", 6612},
@@ -767,7 +754,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 572)
 	},
-#endif
 
 #if 0
 	// Larry 2 - English DOS
@@ -1395,7 +1381,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Space Quest 4 - English Amiga
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
@@ -1410,9 +1395,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 744)
 	},
-#endif
 
-#if 0
 	// Space Quest 4 - German Amiga (from www.back2roots.org)
 	{{"sq4", "", {
 		{"resource.map", 0, "79641c0d43408e33c251a1d494d2575e", 6252},
@@ -1427,7 +1410,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 744)
 	},
-#endif
 
 #if 0
 	// Space Quest 4 - English DOS
@@ -1578,60 +1560,50 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Torin's Passage - English Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
-
-#if 0		
+		
 	// Torin's Passage - Spanish Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformWindows, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
-
-#if 0		
+	
 	// Torin's Passage - French Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformWindows, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
-
-#if 0		
+		
 	// Torin's Passage - German Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
-
-#if 0		
+	
 	// Torin's Passage - Italian Windows CD (from glorifindel)
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
 
 	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
 };
@@ -1727,17 +1699,13 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	}
 	
-	if (!foundExe) {
-		printf("No original game executable containing a version number was found\n");
+	if (!foundExe)
 		return 0;
-	}
 
 	// If these files aren't found, it can't be SCI
-	if (!foundResMap && !foundRes000) {
-		printf("Necessary data files are missing, or this isn't a SCI game\n");
+	if (!foundResMap && !foundRes000)
 		return 0;
-	}
-
+		
 	// Set some defaults
 	g_fallbackDesc.desc.gameid = "sci";
 	g_fallbackDesc.desc.extra = "";
