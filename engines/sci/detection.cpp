@@ -27,6 +27,7 @@
 #include "base/plugins.h"
 
 #include "sci/sci.h"
+#include "sci/exereader.h"
 #include "sci/include/versions.h"
 
 // Titles of the games
@@ -1053,7 +1054,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
-#if 0	
+
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	{{"sq1sci", "VGA Remake", {
 		{"resource.map", 0, "106484b372af1d4cbf866472cc2813dc", 6396},
@@ -1094,7 +1095,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
+
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	{{"sq3", "", {
 		{"resource.map", 0, "bad41385acde6d677a8d55a7b20437e3", 5868},
@@ -1387,6 +1388,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	int exeVersion = 0;
 	bool foundResMap = false;
 	bool foundRes000 = false;
+	bool foundExe = false;
 
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -1401,18 +1403,46 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
 			foundRes000 = true;
 
-		// FIXME: This is all quite hackish
+		// Check if it's a known executable name
 		if (filename.contains("scidhuv") || filename.contains("sciv") ||
 			filename.contains("sierra") || filename.contains("sciw")) {
-			exeVersion = version_detect_from_executable((char *)file->getPath().c_str());
-			break;
-		} 
+			// Is it really an executable file?
+			Common::SeekableReadStream *fileStream = file->createReadStream();
+			bool isExe = isGameExe(fileStream);
+			int exeVersion = -1;
+
+			if (isExe) {
+				if (!readSciVersionFromExe(fileStream, &exeVersion)) {
+					printf("Error while reading SCI version from the game executable\n");
+					delete fileStream;
+					return 0;
+				} else {
+					// All ok, we got the version from the executable successfully
+					foundExe = true;
+					delete fileStream;
+					break;
+				}
+			} else {
+				printf("The original game executable seems to be corrupted\n");
+				delete fileStream;
+				return 0;
+			}
+
+		}
+
 	}
 	
-	// If these files aren't found, it can't be SCI
-	if (!foundResMap && !foundRes000)
+	if (!foundExe) {
+		printf("The original game executable wasn't found\n");
 		return 0;
-	
+	}
+
+	// If these files aren't found, it can't be SCI
+	if (!foundResMap && !foundRes000) {
+		printf("Necessary data files are missing, or this isn't a SCI game\n");
+		return 0;
+	}
+
 	// Set some defaults
 	g_fallbackDesc.desc.gameid = "sci";
 	g_fallbackDesc.desc.extra = "";

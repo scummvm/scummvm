@@ -2,6 +2,7 @@ MODULE := engines/sci
 
 MODULE_OBJS = \
 	detection.o \
+	exereader.o \
 	sci.o \
 	engine/game.o \
 	engine/gc.o \
@@ -55,9 +56,6 @@ MODULE_OBJS = \
 	scicore/decompress01.o \
 	scicore/decompress1.o \
 	scicore/decompress11.o \
-	scicore/exe.o \
-	scicore/exe_lzexe.o \
-	scicore/exe_raw.o \
 	scicore/resource.o \
 	scicore/resource_map.o \
 	scicore/resource_patch.o \

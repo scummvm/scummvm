@@ -147,10 +147,4 @@ version_parse(const char *vn, sci_version_t *result);
 **             (sci_version_t) *result: The resulting version number on success
 */
 
-int
-version_detect_from_executable(char *filename);
-/* Try to detect version from Sierra executable in cwd
-** Returns   : (int) The version number detected, or 0 if we weren't successful
-*/
-
 #endif /* !_SCI_VERSIONS_H_ */

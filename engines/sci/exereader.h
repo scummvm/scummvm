@@ -23,44 +23,17 @@
  *
  */
 
-#include "sci/include/sci_memory.h"
+#ifndef EXEREADER_H
+#define EXEREADER_H
 
-struct _exe_handle {
-	FILE *f;
-};
+#include "common/file.h"
+#include "common/str.h"
 
-#include "sci/scicore/exe_dec.h"
+//namespace Sci {
 
-static exe_handle_t *
-raw_open(const char *filename) {
-	FILE *f = fopen(filename, "rb");
-	exe_handle_t *handle;
+bool isGameExe(Common::SeekableReadStream *exeStream);
+bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version);
 
-	if (!f)
-		return NULL;
+//} // End of namespace Sci
 
-	handle = (exe_handle_t*)sci_malloc(sizeof(exe_handle_t));
-	handle->f = f;
-
-	return handle;
-}
-
-static int
-raw_read(exe_handle_t *handle, void *buf, int count) {
-	return fread(buf, 1, count, handle->f);
-}
-
-static void
-raw_close(exe_handle_t *handle) {
-	fclose(handle->f);
-
-	free(handle);
-}
-
-exe_decompressor_t
-exe_decompressor_raw = {
-	"raw",
-	raw_open,
-	raw_read,
-	raw_close
-};
+#endif // SCI_H
