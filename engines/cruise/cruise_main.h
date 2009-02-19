@@ -41,7 +41,6 @@
 #include "cruise/vars.h"
 #include "cruise/font.h"
 #include "cruise/volume.h"
-#include "cruise/fontCharacterTable.h"
 #include "cruise/stack.h"
 #include "cruise/script.h"
 #include "cruise/various.h"

@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	delphine-unpack.o \
 	detection.o \
 	font.o \
-	fontCharacterTable.o \
 	function.o \
 	gfxModule.o \
 	linker.o \

@@ -36,6 +36,8 @@ extern int actor_stat[][13];
 
 extern int actor_invstat[][13];
 
+extern short int fontCharacterTable[256];
+
 } // End of namespace Cruise
 
 #endif

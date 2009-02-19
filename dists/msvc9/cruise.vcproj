@@ -256,14 +256,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\cruise\fontCharacterTable.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\fontCharacterTable.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\cruise\function.cpp"
 			>
 		</File>

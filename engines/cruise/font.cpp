@@ -23,11 +23,12 @@
  *
  */
 
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
 
 #include "cruise/cruise_main.h"
-#include "common/endian.h"
+#include "cruise/staticres.h"
 
 namespace Cruise {
 
