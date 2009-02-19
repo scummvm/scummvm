@@ -47,18 +47,15 @@ struct reg_t_Hash {
 // The reg_t_hash_map is actually really a hashset
 typedef Common::HashMap<reg_t, bool, reg_t_Hash, reg_t_EqualTo> reg_t_hash_map;
 
-
-reg_t_hash_map *
-find_all_used_references(state_t *s);
+reg_t_hash_map *find_all_used_references(state_t *s);
 /* Finds all used references and normalises them to their memory addresses
 ** Parameters: (state_t *) s: The state to gather all information from
 ** Returns   : (reg_t_hash_map *) A hash map containing entries for all used references
 */
 
-void
-run_gc(state_t *s);
+void run_gc(state_t *s);
 /* Runs garbage collection on the current system state
 ** Parameters: (state_t *) s: The state in which we should gc
 */
 
-#endif /* !defined(GC_H_) */
+#endif // !defined(GC_H_)
