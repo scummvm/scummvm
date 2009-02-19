@@ -32,52 +32,45 @@
 
 typedef guint16 heap_ptr;
 
-
 typedef struct {
-	byte* start;
-	byte* base;
+	byte *start;
+	byte *base;
 	unsigned int first_free;
 	int old_ff;
 } heap_t;
 
-heap_t*
-heap_new();
+heap_t *heap_new();
 /* Allocates a new heap.
 ** Parameters: (void)
 ** Returns   : (heap_t *) A new 0xffff-sized heap
 */
 
-void
-heap_del(heap_t* h);
+void heap_del(heap_t *h);
 /* Frees an allocated heap
 ** Parameters: (heap_t *) h: The heap to unallocate
 ** Returns   : (void)
 */
 
-int
-heap_meminfo(heap_t* h);
+int heap_meminfo(heap_t *h);
 /* Returns the total number of free bytes on the heap
 ** Parameters: (heap_t *) h: The heap to check
 ** Returns   : (int) The total free space in bytes
 */
 
-int
-heap_largest(heap_t* h);
+int heap_largest(heap_t *h);
 /* Returns the block size of the largest free block on the heap
 ** Parameters: (heap_t *) h: The heap to check
 ** Returns   : (int) The size of the largest free block
 */
 
-heap_ptr
-heap_allocate(heap_t* h, int size);
+heap_ptr heap_allocate(heap_t *h, int size);
 /* Allocates memory on a heap.
 ** Parameters: (heap_t *) h: The heap to work with
 **             (int) size: The block size to allocate
 ** Returns   : (heap_ptr): The heap pointer to the new block, or 0 on failure
 */
 
-void
-heap_free(heap_t* h, unsigned int m);
+void heap_free(heap_t *h, unsigned int m);
 /* Frees allocated heap memory.
 ** Parameters: (heap_t *) h: The heap to work with
 **             (int) m: The handle at which memory is to be unallocated
@@ -85,8 +78,7 @@ heap_free(heap_t* h, unsigned int m);
 ** This function automatically prevents fragmentation from happening.
 */
 
-void
-save_ff(heap_t* h);
+void save_ff(heap_t *h);
 /* Stores the current first free position
 ** Parameters: (heap_t *) h: The heap which is to be manipulated
 ** Returns   : (void)
@@ -94,8 +86,7 @@ save_ff(heap_t* h);
 ** the next function)
 */
 
-void
-restore_ff(heap_t* h);
+void restore_ff(heap_t *h);
 /* Restores the first free heap state
 ** Parameters: (heap_t *) h: The heap to restore
 ** Returns   : (void)
@@ -105,18 +96,16 @@ restore_ff(heap_t* h);
 ** called").
 */
 
-void
-heap_dump_free(heap_t *h);
+void heap_dump_free(heap_t *h);
 /* Dumps debugging information about the stack
 ** Parameters: (heap_t *) h: The heap to check
 ** Returns   : (void)
 */
 
-void
-heap_dump_all(heap_t *h);
+void heap_dump_all(heap_t *h);
 /* Dumps all allocated/unallocated zones on the heap
 ** Parameters: (heap_t *) h: The heap to check
 ** Returns   : (void)
 */
 
-#endif /* !_SCI_HEAP_H */
+#endif // !_SCI_HEAP_H
