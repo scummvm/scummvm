@@ -39,22 +39,21 @@
 #define O_BINARY 0
 #endif
 
-static int _savegame_indices_nr = -1; /* means 'uninitialized' */
+static int _savegame_indices_nr = -1; // means 'uninitialized'
 
 static struct _savegame_index_struct {
 	int id;
 	long timestamp;
 } _savegame_indices[MAX_SAVEGAME_NR];
 
-/* This assumes modern stream implementations. It may break on DOS. */
+// This assumes modern stream implementations. It may break on DOS.
 
 
 /* Attempts to mirror a file by copying it from the resource firectory
 ** to the working directory. Returns NULL if the file didn't exist.
 ** Otherwise, the new file is then opened for reading or writing.
 */
-static FILE *
-f_open_mirrored(state_t *s, char *fname) {
+static FILE *f_open_mirrored(state_t *s, char *fname) {
 	int fd;
 	char *buf = NULL;
 	int fsize;
@@ -76,7 +75,7 @@ f_open_mirrored(state_t *s, char *fname) {
 
 	chdir(s->work_dir);
 
-	/* Visual C++ doesn't allow to specify O_BINARY with creat() */
+	// Visual C++ doesn't allow to specify O_BINARY with creat()
 #ifdef _MSC_VER
 	fd = _open(fname, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
 #else
@@ -85,8 +84,7 @@ f_open_mirrored(state_t *s, char *fname) {
 
 	if (!IS_VALID_FD(fd) && buf) {
 		free(buf);
-		sciprintf("kfile.c: f_open_mirrored(): Warning: Could not create '%s' in '%s' (%d bytes to copy)\n",
-		          fname, s->work_dir, fsize);
+		sciprintf("kfile.c: f_open_mirrored(): Warning: Could not create '%s' in '%s' (%d bytes to copy)\n", fname, s->work_dir, fsize);
 		return NULL;
 	}
 
@@ -106,20 +104,17 @@ f_open_mirrored(state_t *s, char *fname) {
 	return sci_fopen(fname, "r" FO_BINARY "+");
 }
 
-
 #define _K_FILE_MODE_OPEN_OR_CREATE 0
 #define _K_FILE_MODE_OPEN_OR_FAIL 1
 #define _K_FILE_MODE_CREATE 2
 
-
-void
-file_open(state_t *s, char *filename, int mode) {
-	int retval = 1; /* Ignore file_handles[0] */
+void file_open(state_t *s, char *filename, int mode) {
+	int retval = 1; // Ignore file_handles[0]
 	FILE *file = NULL;
 
 	SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
 	if ((mode == _K_FILE_MODE_OPEN_OR_FAIL) || (mode == _K_FILE_MODE_OPEN_OR_CREATE)) {
-		file = sci_fopen(filename, "r" FO_BINARY "+"); /* Attempt to open existing file */
+		file = sci_fopen(filename, "r" FO_BINARY "+"); // Attempt to open existing file
 		SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
 		if (!file) {
 			SCIkdebug(SCIkFILE, "Failed. Attempting to copy from resource dir...\n");
@@ -135,7 +130,7 @@ file_open(state_t *s, char *filename, int mode) {
 		file = sci_fopen(filename, "w" FO_BINARY "+"); /* Attempt to create file */
 		SCIkdebug(SCIkFILE, "Creating file %s with mode %d\n", filename, mode);
 	}
-	if (!file) { /* Failed */
+	if (!file) { // Failed
 		SCIkdebug(SCIkFILE, "file_open() failed\n");
 		s->r_acc = make_reg(0, 0xffff);
 		return;
@@ -144,7 +139,7 @@ file_open(state_t *s, char *filename, int mode) {
 	while (s->file_handles[retval] && (retval < s->file_handles_nr))
 		retval++;
 
-	if (retval == s->file_handles_nr) /* Hit size limit => Allocate more space */
+	if (retval == s->file_handles_nr) // Hit size limit => Allocate more space
 		s->file_handles = (FILE**)sci_realloc(s->file_handles, sizeof(FILE *) * ++(s->file_handles_nr));
 
 	s->file_handles[retval] = file;
@@ -152,8 +147,7 @@ file_open(state_t *s, char *filename, int mode) {
 	s->r_acc = make_reg(0, retval);
 }
 
-reg_t
-kFOpen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFOpen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
 	int mode = UKPV(1);
 
@@ -179,8 +173,7 @@ void file_close(state_t *s, int handle) {
 	s->file_handles[handle] = NULL;
 }
 
-reg_t
-kFClose(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFClose(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	file_close(s, UKPV(0));
 	return s->r_acc;
 }
@@ -217,7 +210,6 @@ void fwrite_wrapper(state_t *s, int handle, char *data, int length) {
 	fwrite(data, 1, length, s->file_handles[handle]);
 }
 
-
 reg_t kFPuts(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int handle = UKPV(0);
 	char *data = kernel_dereference_char_pointer(s, argv[1], 0);
@@ -226,10 +218,8 @@ reg_t kFPuts(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void
-fgets_wrapper(state_t *s, char *dest, int maxsize, int handle) {
+static void fgets_wrapper(state_t *s, char *dest, int maxsize, int handle) {
 	SCIkdebug(SCIkFILE, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
-
 
 	if (handle == 0) {
 		SCIkwarn(SCIkERROR, "Attempt to read from file handle 0\n");
@@ -246,9 +236,7 @@ fgets_wrapper(state_t *s, char *dest, int maxsize, int handle) {
 	SCIkdebug(SCIkFILE, "FGets'ed \"%s\"\n", dest);
 }
 
-
-static void
-fread_wrapper(state_t *s, char *dest, int bytes, int handle) {
+static void fread_wrapper(state_t *s, char *dest, int bytes, int handle) {
 	SCIkdebug(SCIkFILE, "fread()'ing %d bytes from handle %d\n", bytes, handle);
 
 	if (handle == 0) {
@@ -264,10 +252,7 @@ fread_wrapper(state_t *s, char *dest, int bytes, int handle) {
 	s->r_acc = make_reg(0, fread(dest, 1, bytes, s->file_handles[handle]));
 }
 
-
-static void
-fseek_wrapper(state_t *s, int handle, int offset, int whence) {
-
+static void fseek_wrapper(state_t *s, int handle, int offset, int whence) {
 	if (handle == 0) {
 		SCIkwarn(SCIkERROR, "Attempt seek on file handle 0\n");
 		return;
@@ -281,18 +266,12 @@ fseek_wrapper(state_t *s, int handle, int offset, int whence) {
 	s->r_acc = make_reg(0, fseek(s->file_handles[handle], offset, whence));
 }
 
-
-static char *
-_chdir_savedir(state_t *s) {
+static char *_chdir_savedir(state_t *s) {
 	char *cwd = sci_getcwd();
-	char *save_dir = kernel_dereference_char_pointer(s,
-	                 make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR), 0);
+	char *save_dir = kernel_dereference_char_pointer(s, make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR), 0);
 
 	if (chdir(save_dir) && sci_mkpath(save_dir)) {
-
-		sciprintf(__FILE__": Can't chdir to savegame dir '%s' or "
-		          "create it\n", save_dir);
-
+		sciprintf(__FILE__": Can't chdir to savegame dir '%s' or create it\n", save_dir);
 		free(cwd);
 		return NULL;
 	}
@@ -300,22 +279,19 @@ _chdir_savedir(state_t *s) {
 	if (!cwd)
 		cwd = strdup(s->work_dir);
 
-	return cwd; /* Potentially try again */
+	return cwd; // Potentially try again
 }
 
-static void
-_chdir_restoredir(char *dir) {
+static void _chdir_restoredir(char *dir) {
 	if (chdir(dir)) {
-		sciprintf(__FILE__": Can't seem to return to previous homedir '%s'\n",
-		          dir);
+		sciprintf(__FILE__": Can't seem to return to previous homedir '%s'\n", dir);
 	}
 	free(dir);
 }
 
 #define TEST_DIR_OR_QUIT(dir) if (!dir) { return NULL_REG; }
 
-reg_t
-kFGets(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFGets(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *dest = kernel_dereference_char_pointer(s, argv[0], 0);
 	int maxsize = UKPV(1);
 	int handle = UKPV(2);
@@ -324,28 +300,24 @@ kFGets(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-
 /* kGetCWD(address):
 ** Writes the cwd to the supplied address and returns the address in acc.
 */
-reg_t
-kGetCWD(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetCWD(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *wd = sci_getcwd();
 	char *targetaddr = kernel_dereference_char_pointer(s, argv[0], 0);
 
 	strncpy(targetaddr, wd, MAX_SAVE_DIR_SIZE - 1);
-	targetaddr[MAX_SAVE_DIR_SIZE - 1] = 0; /* Terminate */
+	targetaddr[MAX_SAVE_DIR_SIZE - 1] = 0; // Terminate
 
-	SCIkdebug(SCIkFILE, "Copying cwd='%s'(%d chars) to %p",
-	          wd, strlen(wd), targetaddr);
+	SCIkdebug(SCIkFILE, "Copying cwd='%s'(%d chars) to %p", wd, strlen(wd), targetaddr);
 
 	free(wd);
 	return argv[0];
 }
 
-/* Returns a dynamically allocated pointer to the name of the requested save dir */
-char *
-_k_get_savedir_name(int nr) {
+// Returns a dynamically allocated pointer to the name of the requested save dir
+char *_k_get_savedir_name(int nr) {
 	char suffices[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 	char *savedir_name = (char*)sci_malloc(strlen(FREESCI_SAVEDIR_PREFIX) + 2);
 	assert(nr >= 0);
@@ -357,8 +329,7 @@ _k_get_savedir_name(int nr) {
 	return savedir_name;
 }
 
-void
-delete_savegame(state_t *s, int savedir_nr) {
+void delete_savegame(state_t *s, int savedir_nr) {
 	char *workdir = _chdir_savedir(s);
 	char *savedir = _k_get_savedir_name(savedir_nr);
 	char buffer[256];
@@ -386,14 +357,11 @@ delete_savegame(state_t *s, int savedir_nr) {
 
 #ifdef WIN32
 
-reg_t
-kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char dir_buffer[MAXPATHLEN], dir_buffer2[MAXPATHLEN];
 	int mode = UKPV(0);
 
-
 	switch (mode) {
-
 	case K_DEVICE_INFO_GET_DEVICE: {
 		char *input_s = (char*)kernel_dereference_bulk_pointer(s, argv[1], 0);
 		char *output_s = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
@@ -461,14 +429,12 @@ kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#else /* !WIN32 */
+#else // !WIN32
 
-reg_t
-kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int mode = UKPV(0);
 
 	switch (mode) {
-
 	case K_DEVICE_INFO_GET_DEVICE: {
 		char *output_s = kernel_dereference_char_pointer(s, argv[2], 0);
 
@@ -504,7 +470,7 @@ kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	*/
 	case K_DEVICE_INFO_GET_SAVECAT_NAME: {
 		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		/*		char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);*/
+		//char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 
 		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
 	}
@@ -512,7 +478,7 @@ kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
 		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		/*		char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);*/
+		//char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 		int savegame_id = UKPV(3);
 		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
 		delete_savegame(s, savegame_id);
@@ -526,17 +492,13 @@ kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#endif /* !WIN32 */
+#endif // !WIN32
 
-
-reg_t
-kGetSaveDir(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetSaveDir(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 }
 
-
-reg_t
-kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *path = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *testpath = (char*)sci_malloc(strlen(path) + 15);
 	char buf[1024];
@@ -550,7 +512,7 @@ kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	while (IS_VALID_FD(fd = open(testpath, O_RDONLY))) {
 		close(fd);
-		if (testpath[pathlen - 2] == 'z') { /* Failed. */
+		if (testpath[pathlen - 2] == 'z') { // Failed.
 			SCIkwarn(SCIkWARNING, "Failed to find non-existing file for free space test\n");
 			free(testpath);
 			return NULL_REG;
@@ -577,53 +539,44 @@ kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	memset(buf, 0, sizeof(buf));
-	for (int i = 0; i < 1024; i++) /* Check for 1 MB */
+	for (int i = 0; i < 1024; i++) // Check for 1 MB
 		if (write(fd, buf, 1024) < 1024)
 			failed = 1;
 
 	close(fd);
-
 	remove(testpath);
-
 	free(testpath);
 
 	return make_reg(0, !failed);
 }
 
-
-
-int
-_k_check_file(char *filename, int minfilesize)
-/* Returns 0 if the file exists and is big enough */
-{
+int _k_check_file(char *filename, int minfilesize) {
+	// Returns 0 if the file exists and is big enough
 	return (sci_file_size(filename) < minfilesize);
 }
 
-int
-_k_find_savegame_by_name(char *game_id_file, char *name) {
+int _k_find_savegame_by_name(char *game_id_file, char *name) {
 	int savedir_nr = -1;
 	int i;
 	char *buf = NULL;
 
 	for (i = 0; i < MAX_SAVEGAME_NR; i++) {
 		if (!chdir((buf = _k_get_savedir_name(i)))) {
-			char namebuf[32]; /* Save game name buffer */
+			char namebuf[32]; // Save game name buffer
 			FILE *idfile = sci_fopen(game_id_file, "r");
 
 			if (idfile) {
 				fgets(namebuf, 31, idfile);
 				if (strlen(namebuf) > 0)
 					if (namebuf[strlen(namebuf) - 1] == '\n')
-						namebuf[strlen(namebuf) - 1] = 0; /* Remove trailing newlines */
+						namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newlines
 
 				if (strcmp(name, namebuf) == 0) {
 					sciprintf("Save game name matched entry %d\n", i);
 					savedir_nr = i;
 				}
-
 				fclose(idfile);
 			}
-
 			chdir("..");
 		}
 		free(buf);
@@ -632,8 +585,7 @@ _k_find_savegame_by_name(char *game_id_file, char *name) {
 }
 
 #ifdef __DC__
-static long
-get_file_mtime(int fd) {
+static long get_file_mtime(int fd) {
 	/* FIXME (Dreamcast): Not yet implemented */
 	return 0;
 }
@@ -652,8 +604,7 @@ get_file_mtime(int fd) {
 ** f2 was modified.
 */
 
-static long
-get_file_mtime_Unix(int fd) { /* returns the  */
+static long get_file_mtime_Unix(int fd) {
 	struct stat fd_stat;
 	fstat(fd, &fd_stat);
 
@@ -661,14 +612,11 @@ get_file_mtime_Unix(int fd) { /* returns the  */
 }
 #endif
 
-static int
-_savegame_index_struct_compare(const void *a, const void *b) {
-	return ((struct _savegame_index_struct *)b)->timestamp
-	       - ((struct _savegame_index_struct *)a)->timestamp;
+static int _savegame_index_struct_compare(const void *a, const void *b) {
+	return ((struct _savegame_index_struct *)b)->timestamp - ((struct _savegame_index_struct *)a)->timestamp;
 }
 
-static void
-update_savegame_indices(const char *gfname) {
+static void update_savegame_indices(const char *gfname) {
 	int i;
 
 	_savegame_indices_nr = 0;
@@ -690,13 +638,10 @@ update_savegame_indices(const char *gfname) {
 		free(dirname);
 	}
 
-	qsort(_savegame_indices, _savegame_indices_nr, sizeof(struct _savegame_index_struct),
-	      _savegame_index_struct_compare);
-
+	qsort(_savegame_indices, _savegame_indices_nr, sizeof(struct _savegame_index_struct), _savegame_index_struct_compare);
 }
 
-int
-test_savegame(state_t *s, char *savegame_id, char *savegame_name, int savegame_name_length) {
+int test_savegame(state_t *s, char *savegame_id, char *savegame_name, int savegame_name_length) {
 	FILE *f;
 	char buffer[80];
 	int version = -1;
@@ -716,12 +661,10 @@ test_savegame(state_t *s, char *savegame_id, char *savegame_name, int savegame_n
 	}
 
 	fclose(f);
-	return version >= FREESCI_MINIMUM_SAVEGAME_VERSION &&
-	       version <= FREESCI_CURRENT_SAVEGAME_VERSION;
+	return version >= FREESCI_MINIMUM_SAVEGAME_VERSION && version <= FREESCI_CURRENT_SAVEGAME_VERSION;
 }
 
-reg_t
-kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
 	char *buf = NULL;
@@ -739,7 +682,6 @@ kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	savedir_nr = _savegame_indices[savedir_nr].id;
 
-
 	if (savedir_nr > MAX_SAVEGAME_NR - 1) {
 		_chdir_restoredir(workdir);
 		return NULL_REG;
@@ -753,9 +695,7 @@ kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-
-reg_t
-kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *nametarget = kernel_dereference_char_pointer(s, argv[1], 0);
 	reg_t nametarget_base = argv[1];
@@ -767,7 +707,7 @@ kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	TEST_DIR_OR_QUIT(workdir);
 
 	strcpy(gfname, game_id);
-	strcat(gfname, FREESCI_ID_SUFFIX); /* This file is used to identify in-game savegames */
+	strcat(gfname, FREESCI_ID_SUFFIX); // This file is used to identify in-game savegames
 
 	update_savegame_indices(gfname);
 
@@ -778,25 +718,21 @@ kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		FILE *idfile;
 
 		if (!chdir(savedir_name)) {
-
-
-			if ((idfile = sci_fopen(gfname, "r"))) { /* Valid game ID file: Assume valid game */
-				char namebuf[SCI_MAX_SAVENAME_LENGTH]; /* Save game name buffer */
+			if ((idfile = sci_fopen(gfname, "r"))) { // Valid game ID file: Assume valid game
+				char namebuf[SCI_MAX_SAVENAME_LENGTH]; // Save game name buffer
 				fgets(namebuf, SCI_MAX_SAVENAME_LENGTH - 1, idfile);
 				if (strlen(namebuf) > 0) {
-
 					if (namebuf[strlen(namebuf) - 1] == '\n')
-						namebuf[strlen(namebuf) - 1] = 0; /* Remove trailing newline */
+						namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newline
 
-					*nameoffsets = s->r_acc; /* Store savegame ID */
-					++s->r_acc.offset; /* Increase number of files found */
+					*nameoffsets = s->r_acc; // Store savegame ID
+					++s->r_acc.offset; // Increase number of files found
 
-					nameoffsets++; /* Make sure the next ID string address is written to the next pointer */
-					strncpy(nametarget, namebuf, SCI_MAX_SAVENAME_LENGTH); /* Copy identifier string */
-					*(nametarget + SCI_MAX_SAVENAME_LENGTH - 1) = 0; /* Make sure it's terminated */
-					nametarget += SCI_MAX_SAVENAME_LENGTH; /* Increase name offset pointer accordingly */
+					nameoffsets++; // Make sure the next ID string address is written to the next pointer
+					strncpy(nametarget, namebuf, SCI_MAX_SAVENAME_LENGTH); // Copy identifier string
+					*(nametarget + SCI_MAX_SAVENAME_LENGTH - 1) = 0; // Make sure it's terminated
+					nametarget += SCI_MAX_SAVENAME_LENGTH; // Increase name offset pointer accordingly
 					nametarget_base.offset += SCI_MAX_SAVENAME_LENGTH;
-
 					fclose(idfile);
 				}
 			}
@@ -806,18 +742,17 @@ kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	free(gfname);
-	*nametarget = 0; /* Terminate list */
+	*nametarget = 0; // Terminate list
 
 	_chdir_restoredir(workdir);
 	return s->r_acc;
 }
 
-reg_t
-kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
 	char *savegame_dir;
 	int savedir_nr = UKPV(1);
-	int savedir_id; /* Savegame ID, derived from savedir_nr and the savegame ID list */
+	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
 	char *game_id_file_name = (char*)sci_malloc(strlen(game_id) + strlen(FREESCI_ID_SUFFIX) + 1);
 	char *game_description = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
 	char *workdir = _chdir_savedir(s);
@@ -832,27 +767,26 @@ kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	update_savegame_indices(game_id_file_name);
 
 	if (savedir_nr >= 0 && savedir_nr < _savegame_indices_nr)
-		/* Overwrite */
+		// Overwrite
 		savedir_id = _savegame_indices[savedir_nr].id;
 	else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
 		int i = 0;
 
 		savedir_id = 0;
 
-		/* First, look for holes */
-		while (i < _savegame_indices_nr)
+		// First, look for holes
+		while (i < _savegame_indices_nr) {
 			if (_savegame_indices[i].id == savedir_id) {
 				++savedir_id;
 				i = 0;
 			} else ++i;
-
+		}
 		if (savedir_id >= MAX_SAVEGAME_NR) {
-			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen!\n",
-			          savedir_id);
+			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen!\n", savedir_id);
 			return NULL_REG;
 		}
 
-		/* This loop terminates when savedir_id is not in [x | ex. n. _savegame_indices[n].id = x] */
+		// This loop terminates when savedir_id is not in [x | ex. n. _savegame_indices[n].id = x]
 	} else {
 		sciprintf("Savegame ID %d is not allowed!\n", savedir_nr);
 		return NULL_REG;
@@ -869,10 +803,8 @@ kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		chdir(savegame_dir);
 
 		if ((idfile = sci_fopen(game_id_file_name, "w"))) {
-
 			fprintf(idfile, "%s", game_description);
 			fclose(idfile);
-
 		} else {
 			sciprintf("Creating the game ID file failed.\n");
 			sciprintf("You can still restore from inside the debugger with \"restore_game %s\"\n", savegame_dir);
@@ -887,12 +819,11 @@ kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	free(s->game_version);
 	s->game_version = NULL;
+
 	return s->r_acc;
 }
 
-
-reg_t
-kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
 	char *workdir = _chdir_savedir(s);
@@ -909,42 +840,35 @@ kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	savedir_nr = _savegame_indices[savedir_nr].id;
 
-
 	if (savedir_nr > -1) {
 		char *savedir_name = _k_get_savedir_name(savedir_nr);
 		state_t *newstate = gamestate_restore(s, savedir_name);
 
 		free(savedir_name);
-
 		if (newstate) {
-
 			s->successor = newstate;
-			script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; /* Abort current game */
+			script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
 			s->execution_stack_pos = s->execution_stack_base;
-
 		} else {
 			s->r_acc = make_reg(0, 1);
 			sciprintf("Restoring failed (game_id = '%s').\n", game_id);
 		}
-
 	} else {
 		s->r_acc = make_reg(0, 1);
 		sciprintf("Savegame #%d not found!\n", savedir_nr);
 	}
 
 	_chdir_restoredir(workdir);
+
 	return s->r_acc;
 }
 
-
-reg_t
-kValidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kValidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *pathname = kernel_dereference_char_pointer(s, argv[0], 0);
 	char cpath[MAXPATHLEN + 1];
 	getcwd(cpath, MAXPATHLEN + 1);
 
-	s->r_acc = make_reg(0, !chdir(pathname)); /* Try to go there. If it works, return 1, 0 otherwise. */
-
+	s->r_acc = make_reg(0, !chdir(pathname)); // Try to go there. If it works, return 1, 0 otherwise.
 	chdir(cpath);
 
 	return s->r_acc;
@@ -962,9 +886,7 @@ kValidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define K_FILEIO_FIND_NEXT	9
 #define K_FILEIO_STAT		10
 
-
-char *
-write_filename_to_mem(state_t *s, reg_t address, char *string) {
+char * write_filename_to_mem(state_t *s, reg_t address, char *string) {
 	char *mem = kernel_dereference_char_pointer(s, address, 0);
 
 	if (string) {
@@ -975,50 +897,42 @@ write_filename_to_mem(state_t *s, reg_t address, char *string) {
 	return string;
 }
 
-void
-next_file(state_t *s) {
-	if (write_filename_to_mem(s, s->dirseeker_outbuffer,
-	                          sci_find_next(&(s->dirseeker))))
+void next_file(state_t *s) {
+	if (write_filename_to_mem(s, s->dirseeker_outbuffer, sci_find_next(&(s->dirseeker))))
 		s->r_acc = s->dirseeker_outbuffer;
 	else
 		s->r_acc = NULL_REG;
 }
 
-void
-first_file(state_t *s, const char *dir, char *mask, reg_t buffer) {
+void first_file(state_t *s, const char *dir, char *mask, reg_t buffer) {
 	if (!buffer.segment) {
-		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n",
-		          dir, mask);
+		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n", dir, mask);
 		s->r_acc = NULL_REG;
 		return;
 	}
 
 	if (strcmp(dir, ".")) {
-		sciprintf("%s L%d: Non-local first_file: Not implemented yet\n",
-		          __FILE__, __LINE__);
+		sciprintf("%s L%d: Non-local first_file: Not implemented yet\n", __FILE__, __LINE__);
 		s->r_acc = NULL_REG;
 		return;
 	}
 
-	/* Get rid of the old find structure */
+	// Get rid of the old find structure
 	if (s->dirseeker_outbuffer.segment)
 		sci_finish_find(&(s->dirseeker));
 
 	s->dirseeker_outbuffer = buffer;
 
-	if (write_filename_to_mem(s, s->dirseeker_outbuffer,
-	                          sci_find_first(&(s->dirseeker), mask)))
+	if (write_filename_to_mem(s, s->dirseeker_outbuffer, sci_find_first(&(s->dirseeker), mask)))
 		s->r_acc = s->dirseeker_outbuffer;
 	else
 		s->r_acc = NULL_REG;
 }
 
-reg_t
-kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int func_nr = UKPV(0);
 
 	switch (func_nr) {
-
 	case K_FILEIO_OPEN : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
 		int mode = UKPV(2);
@@ -1082,10 +996,11 @@ kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	case K_FILEIO_FIND_FIRST : {
 		char *mask = kernel_dereference_char_pointer(s, argv[1], 0);
 		reg_t buf = argv[2];
-		/* int attr = UKPV(3); */ /* We won't use this, Win32 might, though... */
+		// int attr = UKPV(3); */ /* We won't use this, Win32 might, though...
 
 #ifndef WIN32
-		if (strcmp(mask, "*.*") == 0) strcpy(mask, "*"); /* For UNIX */
+		if (strcmp(mask, "*.*") == 0)
+			strcpy(mask, "*"); // For UNIX
 #endif
 		first_file(s, ".", mask, buf);
 
