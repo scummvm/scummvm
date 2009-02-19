@@ -109,7 +109,6 @@ void resetFileEntryRange(int param1, int param2);
 int getProcParam(int overlayIdx, int param2, const char * name);
 void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);
 uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
-int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3, const uint8 * string);
 void removeExtention(const char *name, char *buffer);
 void resetRaster(uint8 * rasterPtr, int32 rasterSize);
 void resetPtr2(scriptInstanceStruct * ptr);

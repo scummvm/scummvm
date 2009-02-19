@@ -38,17 +38,6 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
-void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
-	int32 i;
-	int32 j;
-
-	for (i = x1; i < x2; i++) {
-		for (j = y1; j < y2; j++) {
-			globalScreen[j * 320 + i] = color;
-		}
-	}
-}
-
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
 	drawSolidBox(64, 100, 256, 117, 0);
@@ -56,18 +45,6 @@ void drawBlackSolidBoxSmall() {
 
 void resetRaster(uint8 *rasterPtr, int32 rasterSize) {
 	memset(rasterPtr, 0, rasterSize);
-}
-
-void drawInfoStringSmallBlackBox(const char *s) {
-	gfxModuleData_field_90();
-	gfxModuleData_gfxWaitVSync();
-	drawBlackSolidBoxSmall();
-
-	drawString(10, 100, (const uint8 *)s, gfxModuleData.pPage10, titleColor, 300);
-
-	gfxModuleData_flip();
-
-	flipScreen();
 }
 
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
@@ -1290,6 +1267,7 @@ void closeAllMenu(void) {
 }
 
 int processInput(void) {
+	static bool pausedButtonDown = false;
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1332,7 +1310,30 @@ int processInput(void) {
 
 	// Check for Pause 'P' key
 	if (keyboardCode == Common::KEYCODE_p) {
-		drawInfoStringSmallBlackBox(_vm->langString(ID_PAUSED));
+		keyboardCode = Common::KEYCODE_INVALID;
+		_vm->pauseEngine(true);
+
+		while (!_vm->shouldQuit()) {
+			getMouseStatus(&main10, &mouseX, &button, &mouseY);
+
+			if (button) pausedButtonDown = true;
+			else if (pausedButtonDown)
+				// Button released, so exit pause
+				break;
+			else if (keyboardCode != Common::KEYCODE_INVALID)
+				break;
+
+			g_system->delayMillis(10);
+		}
+
+		if (keyboardCode == Common::KEYCODE_x)
+			// Exit the game
+			return 1;
+
+		keyboardCode = Common::KEYCODE_INVALID;
+		pausedButtonDown = false;
+		_vm->pauseEngine(false);
+		return 0;
 	}
 
 	if (!userEnabled) {
@@ -1488,7 +1489,7 @@ int processInput(void) {
 							strcpy(text, menuTable[0]->stringPtr);
 							strcat(text, ":");
 							strcat(text, currentMenuElement->string);
-							linkedMsgList = renderText(320, (const uint8 *)text);
+							linkedMsgList = renderText(320, (const char *)text);
 							changeCursor(CURSOR_CROSS);
 						}
 					}
@@ -1534,6 +1535,7 @@ int processInput(void) {
 			buttonDown = 1;
 		}
 	}
+
 	return 0;
 }
 
