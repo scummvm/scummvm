@@ -1716,29 +1716,19 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			Common::SeekableReadStream *fileStream = file->createReadStream();
 			bool isExe = isGameExe(fileStream);
 
-			if (isExe) {
-				if (!readSciVersionFromExe(fileStream, &exeVersion)) {
-					printf("Error while reading SCI version from the game executable\n");
-					delete fileStream;
-					return 0;
-				} else {
-					// All ok, we got the version from the executable successfully
-					foundExe = true;
-					delete fileStream;
-					break;
-				}
-			} else {
-				printf("The original game executable seems to be corrupted\n");
+			if (isExe && readSciVersionFromExe(fileStream, &exeVersion)) {
+				// All ok, we got the version from the executable successfully
+				foundExe = true;
 				delete fileStream;
-				return 0;
-			}
-
+				break;
+			} 
+			delete fileStream;
 		}
 
 	}
 	
 	if (!foundExe) {
-		printf("The original game executable wasn't found\n");
+		printf("No original game executable containing a version number was found\n");
 		return 0;
 	}
 
