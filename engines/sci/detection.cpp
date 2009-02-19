@@ -930,7 +930,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 395)	// FIXME: some versions are v. 0.000.409/0.000.490
+		SCI_VERSION(0, 000, 490)	// verified
 	},
 
 	// Police Quest 3 - English Amiga (from www.back2roots.org)
@@ -1449,7 +1449,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			// Is it really an executable file?
 			Common::SeekableReadStream *fileStream = file->createReadStream();
 			bool isExe = isGameExe(fileStream);
-			int exeVersion = -1;
 
 			if (isExe) {
 				if (!readSciVersionFromExe(fileStream, &exeVersion)) {

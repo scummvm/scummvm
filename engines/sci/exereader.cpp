@@ -236,7 +236,8 @@ void readExe(Common::SeekableReadStream *exeStream, byte *buffer) {
 	bool isLZEXE = isLZEXECompressed(exeStream);
 
 	if (!isLZEXE) {
-		exeStream->seek(0, SEEK_SET);
+		// Read the last VERSION_DETECT_BUF_SIZE bytes
+		exeStream->seek(exeStream->size() - VERSION_DETECT_BUF_SIZE, SEEK_SET);
 		exeStream->read(buffer, VERSION_DETECT_BUF_SIZE);
 	} else {
 		// Read the two initial bytes
