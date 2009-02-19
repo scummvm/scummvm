@@ -150,8 +150,6 @@ void Widget::setEnabled(bool e) {
 		setFlags(WIDGET_ENABLED);
 	else
 		clearFlags(WIDGET_ENABLED);
-
-	_boss->draw();
 }
 
 bool Widget::isEnabled() const {
@@ -166,8 +164,6 @@ void Widget::setVisible(bool e) {
 		clearFlags(WIDGET_INVISIBLE);
 	else
 		setFlags(WIDGET_INVISIBLE);
-
-	_boss->draw();
 }
 
 bool Widget::isVisible() const {

@@ -307,6 +307,8 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		_playtime->draw();
 		_chooseButton->draw();
 		_deleteButton->draw();
+
+		draw();
 	}
 }
 
