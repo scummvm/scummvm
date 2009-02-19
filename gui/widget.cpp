@@ -150,6 +150,8 @@ void Widget::setEnabled(bool e) {
 		setFlags(WIDGET_ENABLED);
 	else
 		clearFlags(WIDGET_ENABLED);
+
+	_boss->draw();
 }
 
 bool Widget::isEnabled() const {
@@ -164,6 +166,8 @@ void Widget::setVisible(bool e) {
 		clearFlags(WIDGET_INVISIBLE);
 	else
 		setFlags(WIDGET_INVISIBLE);
+
+	_boss->draw();
 }
 
 bool Widget::isVisible() const {
@@ -398,7 +402,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	OverlayColor *dst = (OverlayColor*)_gfx.pixels;
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
-	OverlayColor fillCol = Graphics::RGBToColor(r, g, b, overlayFormat);
+	OverlayColor fillCol = overlayFormat.RGBToColor(r, g, b);
 	while (h--) {
 		for (int i = 0; i < w; ++i) {
 			*dst++ = fillCol;
