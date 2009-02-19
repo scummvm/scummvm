@@ -269,7 +269,7 @@ version_detect_from_executable(char *filename) {
 	int result;
 
 	if (mac ? is_mac_exe(filename) : is_exe(filename)) {
-		if (scan_file(filename, &result)) {
+		if (scan_file(filename, &result) == 0) {
 			return result;
 		}
 	}
