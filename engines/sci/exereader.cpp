@@ -24,38 +24,20 @@
  */
 
 #include "common/endian.h"
+#include "common/util.h"
 
 #include "sci/exereader.h"
 #include "sci/include/versions.h"
 
 //namespace Sci {
 
-#define VERSION_DETECT_BUF_SIZE 4096
-
-// LZEXE related defines
-// The LZEXE code is based on public domain code by Mitugu Kurizono
-
-/* The amount of most recent data (in bytes) that we need to keep in the
-** buffer. lzexe compression is based on copying chunks of previous data to
-** form new data.
-*/
-#define LZEXE_WINDOW VERSION_DETECT_BUF_SIZE * 2
-
-/* Buffer size. */
-#define LZEXE_BUFFER_SIZE VERSION_DETECT_BUF_SIZE * 3
-
-/* Maximum amount of data (in bytes) that can be in the buffer at the start
-** of the decompression loop. The maximum amount of data that can be added
-** to the buffer during a single step of the loop is 256 bytes.
-*/
-#define LZEXE_BUFFER_MAX (LZEXE_BUFFER_SIZE - 256)
-
-int curBits;
-byte lzexeBuf[2];
+int _bitCount;
+uint16 _bits;
 
 bool isGameExe(Common::SeekableReadStream *exeStream) {
 	byte magic[4];
-	if (exeStream->size() < VERSION_DETECT_BUF_SIZE)
+	// Make sure that the executable is at least 4KB big
+	if (exeStream->size() < 4096)
 		return false;
 
 	// Read exe header
@@ -169,90 +151,28 @@ bool isLZEXECompressed(Common::SeekableReadStream *exeStream) {
 	return true;
 }
 
-byte getBitFromlzexe(Common::SeekableReadStream *exeStream) {
-	byte result = lzexeBuf[1] & 1;
+uint getBit(Common::SeekableReadStream *input) {
+	uint bit = _bits & 1;
+	_bitCount--;
 
-	if (--curBits == 0) {
-		lzexeBuf[0] = exeStream->readByte();
-		lzexeBuf[1] = exeStream->readByte();
-		curBits = 16;
-	} else {
-		// Shift buffer to the right by 1 bit
-		uint16 curBuffer = (lzexeBuf[0] << 8) | lzexeBuf[1];
-		curBuffer >>= 1;
-		lzexeBuf[0] = (curBuffer >> 8) & 0xFF;
-		lzexeBuf[1] = curBuffer & 0xFF;
-	}
+	if (_bitCount <= 0) {
+		_bits = input->readByte() | input->readByte() << 8;
 
-	return result;
-}
-
-void readLzexe(Common::SeekableReadStream *exeStream, byte *buffer) {
-	// TODO: finish this (from lzexe_read)
-	printf("TODO: LZEXE support\n");
-	return;
-#if 0
-	int done = 0;
-
-	while (done != VERSION_DETECT_BUF_SIZE) {
-		int size, copy, i;
-		int left = count - done;
-
-		if (!lzexe_decompress(exeStream))
-			return done;
-
-		/* Total amount of bytes in buffer. */
-		//size = handle->bufptr - handle->buffer;
-
-		// If we're not at end of data we need to maintain the window
-		if (!exeStream->eos())
-			copy = size - LZEXE_WINDOW;
-		else {
-			if (size == 0)
-				/* No data left. */
-				return done;
-
-			copy = size;
+		if (_bitCount == -1) { /* special case for first bit word */
+			bit = _bits & 1;
+			_bits >>= 1;
 		}
 
-		/* Do not copy more than requested. */
-		if (copy > left)
-			copy = left;
+		_bitCount += 16;
+	} else
+		_bits >>= 1;
 
-		memcpy((char *) buffer + done, handle->buffer, copy);
-
-		/* Move remaining data to start of buffer. */
-		for (i = copy; i < size; i++)
-			handle->buffer[i - copy] = handle->buffer[i];
-
-		handle->bufptr -= copy;
-		done += copy;
-	}
-
-	return done;
-#endif
-}
-
-void readExe(Common::SeekableReadStream *exeStream, byte *buffer) {
-	bool isLZEXE = isLZEXECompressed(exeStream);
-
-	if (!isLZEXE) {
-		// Read the last VERSION_DETECT_BUF_SIZE bytes
-		exeStream->seek(exeStream->size() - VERSION_DETECT_BUF_SIZE, SEEK_SET);
-		exeStream->read(buffer, VERSION_DETECT_BUF_SIZE);
-	} else {
-		// Read the two initial bytes
-		lzexeBuf[0] = exeStream->readByte();
-		lzexeBuf[1] = exeStream->readByte();
-
-		curBits = 16;
-
-		readLzexe(exeStream, buffer);
-	}
+	return bit;
 }
 
 bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) {
-	byte buffer[VERSION_DETECT_BUF_SIZE];
+	int len = exeStream->size();
+	unsigned char *buffer = NULL;
 	char result_string[10]; /* string-encoded result, copied from buf */
 	int state = 0;
 	/* 'state' encodes how far we have matched the version pattern
@@ -267,15 +187,77 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 	** character.
 	*/
 
-	readExe(exeStream, buffer);
+	// Read the executable
+	bool isLZEXE = isLZEXECompressed(exeStream);
+
+	if (!isLZEXE) {
+		buffer = new unsigned char[exeStream->size()];
+
+		exeStream->seek(0, SEEK_SET);
+		exeStream->read(buffer, exeStream->size());
+	} else {
+		buffer = new unsigned char[exeStream->size() * 3];
+
+		// Skip LZEXE header
+		exeStream->seek(32, SEEK_SET);
+
+		int pos = 0;
+		int repeat;
+		short offset;
+
+		while (1) {
+			if (exeStream->ioFailed()) {
+				warning("Error reading from input file");
+				delete[] buffer;
+				return false;
+			}
+
+			if (getBit(exeStream)) {
+				buffer[pos++] = exeStream->readByte();
+			} else {
+				if (getBit(exeStream)) {
+					byte tmp[2];
+					exeStream->read(tmp, 2);
+					repeat = (tmp[1] & 0x07);
+					offset = ((tmp[1] & ~0x07) << 5) | tmp[0] | 0xE000;
+
+					if (repeat == 0) {
+						repeat = exeStream->readByte();
+
+						if (repeat == 0) {
+							len = pos;
+							break;
+						}
+						else if (repeat == 1)
+							continue;
+						else
+							repeat++;
+					} else
+						repeat += 2;
+				} else {
+					repeat = ((getBit(exeStream) << 1) | getBit(exeStream)) + 2;
+					offset = exeStream->readByte() | 0xFF00;
+				}
+
+				while (repeat > 0) {
+					buffer[pos] = buffer[pos + offset];
+					pos++;
+					repeat--;
+				}
+			}
+		}
+	}
+
+	// Find SCI version number
 
 	int accept;
+	unsigned char *buf = buffer;
 
-	for (int i = 0; i < VERSION_DETECT_BUF_SIZE; i++) {
-		const char ch = buffer[i];
-		accept = 0; /* By default, we don't like this character */
+	for (int i = 0; i < len; i++) {
+		unsigned char ch = *buf++;
+		accept = 0; // By default, we don't like this character
 
-		if (isalnum((unsigned char) ch)) {
+		if (isalnum(ch)) {
 			accept = (state != 1
 			          && state != 5
 			          && state != 9);
@@ -286,6 +268,7 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 			result_string[9] = 0; /* terminate string */
 
 			if (!version_parse(result_string, version)) {
+				delete[] buffer;
 				return true;	// success
 			}
 
@@ -298,157 +281,8 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 			state = 0;
 	}
 
+	delete[] buffer;
 	return false; // failure
 }
-
-#if 0
-//TODO
-// Code from exe_lzexe.cpp (left for reference, to be converted)
-
-static int
-lzexe_decompress(exe_handle_t *handle) {
-	while (!handle->eod
-	        && handle->bufptr - handle->buffer <= LZEXE_BUFFER_MAX) {
-		int bit;
-		int len, span;
-
-		if (!lzexe_get_bit(handle, &bit))
-			return 0;
-
-		if (bit) {
-			/* 1: copy byte verbatim. */
-
-			int data;
-
-			if (!lzexe_read_uint8(handle->f, &data))
-				return 0;
-
-			*handle->bufptr++ = data;
-
-			continue;
-		}
-
-		if (!lzexe_get_bit(handle, &bit))
-			return 0;
-
-		if (!bit) {
-			/* 00: copy small block. */
-
-			/* Next two bits indicate block length - 2. */
-			if (!lzexe_get_bit(handle, &bit))
-				return 0;
-
-			len = bit << 1;
-
-			if (!lzexe_get_bit(handle, &bit))
-				return 0;
-
-			len |= bit;
-			len += 2;
-
-			/* Read span byte. This forms the low byte of a
-			** negative two's compliment value.
-			*/
-			if (!lzexe_read_uint8(handle->f, &span))
-				return 0;
-
-			/* Convert to negative integer. */
-			span -= 256;
-		} else {
-			/* 01: copy large block. */
-			int data;
-
-			/* Read low byte of span value. */
-			if (!lzexe_read_uint8(handle->f, &span))
-				return 0;
-
-			/* Read next byte. Bits [7..3] contain bits [12..8]
-			** of span value. Bits [2..0] contain block length -
-			** 2.
-			*/
-			if (!lzexe_read_uint8(handle->f, &data))
-				return 0;
-			span |= (data & 0xf8) << 5;
-			/* Convert to negative integer. */
-			span -= 8192;
-
-			len = (data & 7) + 2;
-
-			if (len == 2) {
-				/* Next byte is block length value - 1. */
-				if (!lzexe_read_uint8(handle->f, &len))
-					return 0;
-
-				if (len == 0) {
-					/* End of data reached. */
-					handle->eod = 1;
-					break;
-				}
-
-				if (len == 1)
-					/* Segment change marker. */
-					continue;
-
-				len++;
-			}
-		}
-
-		assert(handle->bufptr + span >= handle->buffer);
-
-		/* Copy block. */
-		while (len-- > 0) {
-			*handle->bufptr = *(handle->bufptr + span);
-			handle->bufptr++;
-		}
-	}
-
-	return 1;
-}
-
-static int
-lzexe_read(exe_handle_t *handle, void *buf, int count) {
-	int done = 0;
-
-	while (done != count) {
-		int size, copy, i;
-		int left = count - done;
-
-		if (!lzexe_decompress(handle))
-			return done;
-
-		/* Total amount of bytes in buffer. */
-		size = handle->bufptr - handle->buffer;
-
-		/* If we're not at end of data we need to maintain the
-		** window.
-		*/
-		if (!handle->eod)
-			copy = size - LZEXE_WINDOW;
-		else {
-			if (size == 0)
-				/* No data left. */
-				return done;
-
-			copy = size;
-		}
-
-		/* Do not copy more than requested. */
-		if (copy > left)
-			copy = left;
-
-		memcpy((char *) buf + done, handle->buffer, copy);
-
-		/* Move remaining data to start of buffer. */
-		for (i = copy; i < size; i++)
-			handle->buffer[i - copy] = handle->buffer[i];
-
-		handle->bufptr -= copy;
-		done += copy;
-	}
-
-	return done;
-}
-
-#endif
 
 //} // End of namespace Sci
