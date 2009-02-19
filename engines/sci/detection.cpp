@@ -105,7 +105,7 @@ uint32 SciEngine::getFlags() const {
 	return _gameDescription->desc.flags;
 }
 
-uint16 SciEngine::getVersion() const {
+int SciEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
@@ -1320,6 +1320,24 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
 };
 
+/**
+ * The fallback game descriptor used by the SCI engine's fallbackDetector.
+ * Contents of this struct are to be overwritten by the fallbackDetector.
+ */
+static SciGameDescription g_fallbackDesc = {
+	{
+		"",
+		"",
+		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+		Common::UNK_LANG,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS
+	},
+	{},
+	SCI_VERSION(0, 000, 000)
+};
+
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)SciGameDescriptions,
@@ -1358,19 +1376,41 @@ public:
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	int exeVersion = 0;
+	bool foundResMap = false;
+	bool foundRes000 = false;
 
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) continue;
 		Common::String filename = file->getName();
 		filename.toLowercase();
+		
+		if (filename.contains("resource.map") || filename.contains("resmap.000"))
+			foundResMap = true;
+		
+		if (filename.contains("resource.000") || filename.contains("resource.001")
+			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
+			foundRes000 = true;
 
 		// FIXME: This is all quite hackish
-		if (filename.contains("scidhuv")) {
+		if (filename.contains("scidhuv") || filename.contains("sciv") ||
+			filename.contains("sierra") || filename.contains("sciw")) {
 			exeVersion = version_detect_from_executable((char *)file->getPath().c_str());
 			break;
 		} 
 	}
+	
+	// If these files aren't found, it can't be SCI
+	if (!foundResMap && !foundRes000)
+		return 0;
+	
+	// Set some defaults
+	g_fallbackDesc.desc.gameid = "sci";
+	g_fallbackDesc.desc.extra = "";
+	g_fallbackDesc.desc.language = Common::UNK_LANG;
+	g_fallbackDesc.desc.platform = Common::kPlatformPC;
+	g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
+	g_fallbackDesc.version = exeVersion;
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
@@ -1381,7 +1421,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
  			SCI_VERSION_MINOR(exeVersion),
  			SCI_VERSION_PATCHLEVEL(exeVersion));
 		
-	return 0;
+	return (const ADGameDescription *)&g_fallbackDesc;
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {

@@ -64,7 +64,7 @@ public:
 
 	const SciGameDescription *_gameDescription;
 	const char* getGameID() const;
-	uint16 getVersion() const;
+	int getVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;

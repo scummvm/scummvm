@@ -217,7 +217,7 @@ lzexe_open(const char *filename) {
 	guint8 size[2];
 	off_t fpos;
 
-	FILE *f = sci_fopen(filename, "rb");
+	FILE *f = fopen(filename, "rb");
 
 	if (!f)
 		return NULL;

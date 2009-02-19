@@ -33,7 +33,7 @@ struct _exe_handle {
 
 static exe_handle_t *
 raw_open(const char *filename) {
-	FILE *f = sci_fopen(filename, "rb");
+	FILE *f = fopen(filename, "rb");
 	exe_handle_t *handle;
 
 	if (!f)
