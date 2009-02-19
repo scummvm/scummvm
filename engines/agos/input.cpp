@@ -594,7 +594,9 @@ bool AGOSEngine::processSpecialKeys() {
 		}
 		break;
 	case Common::KEYCODE_b:
-		_sound->ambientPause(_ambientPaused ^= 1);
+		if (getGameType() == GType_SIMON2) {
+			_sound->ambientPause(_ambientPaused ^= 1);
+		}
 		break;
 	case Common::KEYCODE_r:
 		if (_debugMode)
