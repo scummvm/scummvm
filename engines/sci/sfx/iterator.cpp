@@ -243,7 +243,7 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 			channel->state = SI_STATE_DELTA_TIME;
 			channel->total_timepos = channel->loop_timepos;
 			channel->last_cmd = 0xfe;
-			error("Looping song iterator %08lx.\n", self->ID);
+			warning("Looping song iterator %08lx.", self->ID);
 			return SI_LOOP;
 		} else {
 			channel->state = SI_STATE_FINISHED;
