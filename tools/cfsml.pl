@@ -100,7 +100,7 @@ sub create_string_functions
     write_line_pp($firstline, 0);
     print <<'EOF';
 
-#include <stdarg.h> /* We need va_lists */
+#include <stdarg.h> // We need va_lists
 #include "sci/include/sci_memory.h"
 
 #ifdef CFSML_DEBUG_MALLOC
@@ -116,22 +116,19 @@ sub create_string_functions
 #define realloc     dbg_sci_realloc
 #endif
 
-static void
-_cfsml_error(const char *fmt, ...)
-{
-  va_list argp;
+static void _cfsml_error(const char *fmt, ...) {
+	va_list argp;
 
-  fprintf(stderr, "Error: ");
-  va_start(argp, fmt);
-  vfprintf(stderr, fmt, argp);
-  va_end(argp);
-
+	fprintf(stderr, "Error: ");
+	va_start(argp, fmt);
+	vfprintf(stderr, fmt, argp);
+	va_end(argp);
 }
 
 
 static struct _cfsml_pointer_refstruct {
-    struct _cfsml_pointer_refstruct *next;
-    void *ptr;
+	struct _cfsml_pointer_refstruct *next;
+	void *ptr;
 } *_cfsml_pointer_references = NULL;
 
 static struct _cfsml_pointer_refstruct **_cfsml_pointer_references_current = &_cfsml_pointer_references;
@@ -139,162 +136,143 @@ static struct _cfsml_pointer_refstruct **_cfsml_pointer_references_current = &_c
 static char *_cfsml_last_value_retrieved = NULL;
 static char *_cfsml_last_identifier_retrieved = NULL;
 
-static void
-_cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs, int free_pointers)
-{
-    if (!refs)
-	return;
+static void _cfsml_free_pointer_references_recursively(struct _cfsml_pointer_refstruct *refs, int free_pointers) {
+	if (!refs)
+		return;
 
-    _cfsml_free_pointer_references_recursively(refs->next, free_pointers);
+	_cfsml_free_pointer_references_recursively(refs->next, free_pointers);
 
-    if (free_pointers)
-	free(refs->ptr);
+	if (free_pointers)
+		free(refs->ptr);
 
-    free(refs);
+	free(refs);
 }
 
-static void
-_cfsml_free_pointer_references(struct _cfsml_pointer_refstruct **meta_ref, int free_pointers)
-{
-    _cfsml_free_pointer_references_recursively(*meta_ref, free_pointers);
-    *meta_ref = NULL;
-    _cfsml_pointer_references_current = meta_ref;
+static void _cfsml_free_pointer_references(struct _cfsml_pointer_refstruct **meta_ref, int free_pointers) {
+	_cfsml_free_pointer_references_recursively(*meta_ref, free_pointers);
+	*meta_ref = NULL;
+	_cfsml_pointer_references_current = meta_ref;
 }
 
-static struct _cfsml_pointer_refstruct **
-_cfsml_get_current_refpointer()
-{
-    return _cfsml_pointer_references_current;
+static struct _cfsml_pointer_refstruct **_cfsml_get_current_refpointer() {
+	return _cfsml_pointer_references_current;
 }
 
-static void _cfsml_register_pointer(void *ptr)
-{
-    struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof (struct _cfsml_pointer_refstruct));
-    newref->next = *_cfsml_pointer_references_current;
-    newref->ptr = ptr;
-    *_cfsml_pointer_references_current = newref;
+static void _cfsml_register_pointer(void *ptr) {
+	struct _cfsml_pointer_refstruct *newref = (struct _cfsml_pointer_refstruct*)sci_malloc(sizeof (struct _cfsml_pointer_refstruct));
+	newref->next = *_cfsml_pointer_references_current;
+	newref->ptr = ptr;
+	*_cfsml_pointer_references_current = newref;
 }
 
+static char *_cfsml_mangle_string(const char *s) {
+	const char *source = s;
+	char c;
+	char *target = (char *)sci_malloc(1 + strlen(s) * 2); // We will probably need less than that
+	char *writer = target;
 
-static char *
-_cfsml_mangle_string(const char *s)
-{
-  const char *source = s;
-  char c;
-  char *target = (char *) sci_malloc(1 + strlen(s) * 2); /* We will probably need less than that */
-  char *writer = target;
+	while ((c = *source++)) {
+		if (c < 32) { // Special character?
+			*writer++ = '\\'; // Escape...
+			c += ('a' - 1);
+		} else if (c == '\\' || c == '"')
+			*writer++ = '\\'; // Escape, but do not change
+		*writer++ = c;
+	}
+	*writer = 0; // Terminate string
 
-  while ((c = *source++)) {
-
-    if (c < 32) { /* Special character? */
-      *writer++ = '\\'; /* Escape... */
-      c += ('a' - 1);
-    } else if (c == '\\' || c == '"')
-      *writer++ = '\\'; /* Escape, but do not change */
-    *writer++ = c;
-
-  }
-  *writer = 0; /* Terminate string */
-
-  return (char *) sci_realloc(target, strlen(target) + 1);
+	return (char *)sci_realloc(target, strlen(target) + 1);
 }
 
+static char *_cfsml_unmangle_string(const char *s, unsigned int length) {
+	char *target = (char *)sci_malloc(1 + strlen(s));
+	char *writer = target;
+	const char *source = s;
+	const char *end = s + length;
+	char c;
 
-static char *
-_cfsml_unmangle_string(const char *s, unsigned int length)
-{
-  char *target = (char *) sci_malloc(1 + strlen(s));
-  char *writer = target;
-  const char *source = s;
-  const char *end = s + length;
-  char c;
+	while ((source != end) && (c = *source++) && (c > 31)) {
+		if (c == '\\') { // Escaped character?
+    			c = *source++;
+			if ((c != '\\') && (c != '"')) // Un-escape 0-31 only
+				c -= ('a' - 1);
+		}
+		*writer++ = c;
+	}
+	*writer = 0; // Terminate string
 
-  while ((source != end) && (c = *source++) && (c > 31)) {
-    if (c == '\\') { /* Escaped character? */
-      c = *source++;
-      if ((c != '\\') && (c != '"')) /* Un-escape 0-31 only */
-	c -= ('a' - 1);
-    }
-    *writer++ = c;
-  }
-  *writer = 0; /* Terminate string */
-
-  return (char *) sci_realloc(target, strlen(target) + 1);
+	return (char *)sci_realloc(target, strlen(target) + 1);
 }
 
+static char *_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment) {
+	int c;
+	int mem = 32;
+	int pos = 0;
+	int done = 0;
+	char *retval = (char *)sci_malloc(mem);
 
-static char *
-_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment)
-{
-  int c;
-  int mem = 32;
-  int pos = 0;
-  int done = 0;
-  char *retval = (char *) sci_malloc(mem);
+	if (_cfsml_last_identifier_retrieved) {
+		free(_cfsml_last_identifier_retrieved);
+		_cfsml_last_identifier_retrieved = NULL;
+	}
 
-  if (_cfsml_last_identifier_retrieved) {
-      free(_cfsml_last_identifier_retrieved);
-      _cfsml_last_identifier_retrieved = NULL;
-  }
+	while (isspace(c = fgetc(fd)) && (c != EOF));
+	if (c == EOF) {
+	    _cfsml_error("Unexpected end of file at line %d\n", *line);
+	    free(retval);
+	    *hiteof = 1;
+	    return NULL;
+	}
 
-  while (isspace(c = fgetc(fd)) && (c != EOF));
-  if (c == EOF) {
-    _cfsml_error("Unexpected end of file at line %d\n", *line);
-    free(retval);
-    *hiteof = 1;
-    return NULL;
-  }
+	ungetc(c, fd);
 
-  ungetc(c, fd);
+	while (((c = fgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
+		if (pos == mem - 1) // Need more memory?
+			retval = (char *)sci_realloc(retval, mem *= 2);
 
-  while (((c = fgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
+		if (!isspace(c)) {
+			if (done) {
+				_cfsml_error("Single word identifier expected at line %d\n", *line);
+				free(retval);
+				return NULL;
+			}
+			retval[pos++] = c;
+		} else
+			if (pos != 0)
+				done = 1; // Finished the variable name
+			else if (c == '\n')
+				++(*line);
+	}
 
-     if (pos == mem - 1) /* Need more memory? */
-       retval = (char *) sci_realloc(retval, mem *= 2);
+	if (c == EOF) {
+		_cfsml_error("Unexpected end of file at line %d\n", *line);
+		free(retval);
+		*hiteof = 1;
+		return NULL;
+	}
 
-     if (!isspace(c)) {
-        if (done) {
-           _cfsml_error("Single word identifier expected at line %d\n", *line);
-           free(retval);
-           return NULL;
-        }
-        retval[pos++] = c;
-     } else
-        if (pos != 0)
-           done = 1; /* Finished the variable name */
-        else if (c == '\n')
-           ++(*line);
-  }
+	if (c == '\n') {
+		++(*line);
+		if (assignment)
+			*assignment = 0;
+	} else
+		if (assignment)
+			*assignment = 1;
 
-  if (c == EOF) {
-    _cfsml_error("Unexpected end of file at line %d\n", *line);
-    free(retval);
-    *hiteof = 1;
-    return NULL;
-  }
+	if (pos == 0) {
+		_cfsml_error("Missing identifier in assignment at line %d\n", *line);
+		free(retval);
+		return NULL;
+	}
 
-  if (c == '\n') {
-    ++(*line);
-    if (assignment)
-      *assignment = 0;
-  } else
-    if (assignment)
-      *assignment = 1;
+	if (pos == mem - 1) // Need more memory?
+		retval = (char *)sci_realloc(retval, mem += 1);
 
-  if (pos == 0) {
-    _cfsml_error("Missing identifier in assignment at line %d\n", *line);
-    free(retval);
-    return NULL;
-  }
-
-  if (pos == mem - 1) /* Need more memory? */
-     retval = (char *) sci_realloc(retval, mem += 1);
-
-  retval[pos] = 0; /* Terminate string */
+	retval[pos] = 0; // Terminate string
 EOF
 
 if ($debug) {
-    print "  printf(\"identifier is '%s'\\n\", retval);\n";
+    print "		printf(\"identifier is '%s'\\n\", retval);\n";
 }
 
   $firstline = __LINE__;
@@ -302,66 +280,59 @@ if ($debug) {
   write_line_pp($firstline, 0);
   print <<'EOF2';
 
-  return _cfsml_last_identifier_retrieved = retval;
+	return _cfsml_last_identifier_retrieved = retval;
 }
 
+static char *_cfsml_get_value(FILE *fd, int *line, int *hiteof) {
+	int c;
+	int mem = 64;
+	int pos = 0;
+	char *retval = (char *)sci_malloc(mem);
 
-static char *
-_cfsml_get_value(FILE *fd, int *line, int *hiteof)
-{
-  int c;
-  int mem = 64;
-  int pos = 0;
-  char *retval = (char *) sci_malloc(mem);
+	if (_cfsml_last_value_retrieved) {
+		free(_cfsml_last_value_retrieved);
+		_cfsml_last_value_retrieved = NULL;
+	}
 
-  if (_cfsml_last_value_retrieved) {
-      free(_cfsml_last_value_retrieved);
-      _cfsml_last_value_retrieved = NULL;
-  }
+	while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
+		if (pos == mem - 1) // Need more memory?
+			retval = (char *)sci_realloc(retval, mem *= 2);
 
-  while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
+		if (pos || (!isspace(c)))
+			retval[pos++] = c;
+	}
 
-     if (pos == mem - 1) /* Need more memory? */
-       retval = (char *) sci_realloc(retval, mem *= 2);
+	while ((pos > 0) && (isspace(retval[pos - 1])))
+		--pos; // Strip trailing whitespace
 
-     if (pos || (!isspace(c)))
-        retval[pos++] = c;
+	if (c == EOF)
+		*hiteof = 1;
 
-  }
+	if (pos == 0) {
+	    _cfsml_error("Missing value in assignment at line %d\n", *line);
+	    free(retval);
+	    return NULL;
+	}
 
-  while ((pos > 0) && (isspace(retval[pos - 1])))
-     --pos; /* Strip trailing whitespace */
+	if (c == '\n')
+		++(*line);
 
-  if (c == EOF)
-    *hiteof = 1;
+	if (pos == mem - 1) // Need more memory?
+		retval = (char *)sci_realloc(retval, mem += 1);
 
-  if (pos == 0) {
-    _cfsml_error("Missing value in assignment at line %d\n", *line);
-    free(retval);
-    return NULL;
-  }
-
-  if (c == '\n')
-     ++(*line);
-
-  if (pos == mem - 1) /* Need more memory? */
-    retval = (char *) sci_realloc(retval, mem += 1);
-
-  retval[pos] = 0; /* Terminate string */
+	retval[pos] = 0; // Terminate string
 EOF2
 
     if ($debug) {
-	print "  printf(\"value is '%s'\\n\", retval);\n";
+	print "		printf(\"value is '%s'\\n\", retval);\n";
     }
 
     $firstline = __LINE__;
     $firstline += 4;
     write_line_pp($firstline, 0);
   print <<'EOF3';
-  return (_cfsml_last_value_retrieved = (char *) sci_realloc(retval, strlen(retval) + 1));
-  /* Re-allocate; this value might be used for quite some while (if we are
-  ** restoring a string)
-  */
+	return (_cfsml_last_value_retrieved = (char *)sci_realloc(retval, strlen(retval) + 1));
+	// Re-allocate; this value might be used for quite some while (if we are restoring a string)
 }
 EOF3
   }
@@ -411,9 +382,8 @@ sub create_declaration
       $types{$type}{'writer'} = "_cfsml_write_" . $typename;
       $types{$type}{'reader'} = "_cfsml_read_" . $typename;
       write_line_pp(__LINE__, 0);
-      print "static void\n$types{$type}{'writer'}(FILE *fh, $ctype* save_struc);\n";
-      print "static int\n$types{$type}{'reader'}(FILE *fh, $ctype* save_struc, const char *lastval,".
-	" int *line, int *hiteof);\n\n";
+      print "static void $types{$type}{'writer'}(FILE *fh, $ctype* save_struc);\n";
+      print "static int $types{$type}{'reader'}(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof);\n\n";
     };
 
   }
@@ -426,83 +396,82 @@ sub create_writer
     write_line_pp(__LINE__, 0);
     print "static void\n_cfsml_write_$typename(FILE *fh, $ctype* save_struc)\n{\n";
     if ($types{$type}{'type'} eq $type_record) {
-        print "  int min, max, i;\n\n";
+        print "	int min, max, i;\n\n";
     }
 
     if ($types{$type}{'type'} eq $type_integer) {
-      print "  fprintf(fh, \"%li\", (long) *save_struc);\n";
+      print "	fprintf(fh, \"%li\", (long)*save_struc);\n";
     }
     elsif ($types{$type}{'type'} eq $type_string) {
 	write_line_pp(__LINE__, 0);
-	print "  if (!(*save_struc))\n";
-	print "    fprintf(fh, \"\\\\null\\\\\");\n";
-	print "  else {\n";
-	print "    char *token = _cfsml_mangle_string((const char *) *save_struc);\n";
-	print "    fprintf(fh, \"\\\"%s\\\"\", token);\n";
-	print "    free(token);\n";
-	print "  }\n";
+	print "	if (!(*save_struc))\n";
+	print "		fprintf(fh, \"\\\\null\\\\\");\n";
+	print "	else {\n";
+	print "		char *token = _cfsml_mangle_string((const char *) *save_struc);\n";
+	print "		fprintf(fh, \"\\\"%s\\\"\", token);\n";
+	print "		free(token);\n";
+	print "	}\n";
     }
     elsif ($types{$type}{'type'} eq $type_record) {
 	write_line_pp(__LINE__, 0);
-	print "  fprintf(fh, \"{\\n\");\n";
+	print "	fprintf(fh, \"{\\n\");\n";
 
 	for $n (@{$records{$type}}) {
 
-	    print "  fprintf(fh, \"$n->{'name'} = \");\n";
+	    print "	fprintf(fh, \"$n->{'name'} = \");\n";
 
 	    if ($n->{'array'}) { # Check for arrays
 
 		if ($n->{'array'} eq 'static' or $n->{'size'} * 2) { # fixed integer value?
-		    print "    min = max = $n->{'size'};\n";
+		    print "	min = max = $n->{'size'};\n";
 		}
 		else { # No, a variable
-		    print "    min = max = save_struc->$n->{'size'};\n";
+		    print "	min = max = save_struc->$n->{'size'};\n";
 		}
 
 		if ($n->{'maxwrite'}) { # A write limit?
-		    print "    if (save_struc->$n->{'maxwrite'} < min)\n";
-		    print "       min = save_struc->$n->{'maxwrite'};\n";
+		    print "	if (save_struc->$n->{'maxwrite'} < min)\n";
+		    print "		min = save_struc->$n->{'maxwrite'};\n";
 		}
 
 		if ($n->{'array'} eq 'dynamic') {
-		    print "    if (!save_struc->$n->{'name'})\n";
-		    print "       min = max = 0; /* Don't write if it points to NULL */\n";
+		    print "	if (!save_struc->$n->{'name'})\n";
+		    print "		min = max = 0; /* Don't write if it points to NULL */\n";
 		}
 
 		write_line_pp(__LINE__, 0);
-		print "    fprintf(fh, \"[%d][\\n\", max);\n";
-		print "    for (i = 0; i < min; i++) {\n";
-		print "      $types{$n->{'type'}}{'writer'}";
+		print "	fprintf(fh, \"[%d][\\n\", max);\n";
+		print "	for (i = 0; i < min; i++) {\n";
+		print "		$types{$n->{'type'}}{'writer'}";
 		my $subscribstr = "[i]"; # To avoid perl interpolation problems
 		print "(fh, &(save_struc->$n->{'name'}$subscribstr));\n";
-		print "      fprintf(fh, \"\\n\");\n";
-		print "    }\n";
-		print "    fprintf(fh, \"]\");\n";
+		print "		fprintf(fh, \"\\n\");\n";
+		print "	}\n";
+		print "	fprintf(fh, \"]\");\n";
 
 	} elsif ($n->{'type'} eq $type_pointer) { # Relative pointer
 
-	  print "    fprintf(fh, \"%d\", save_struc->$n->{'name'} - save_struc->$n->{'anchor'});" .
-	    " /* Relative pointer */\n";
+	  print "	fprintf(fh, \"%d\", save_struc->$n->{'name'} - save_struc->$n->{'anchor'}); // Relative pointer\n";
 
       } elsif ($n->{'type'} eq $type_abspointer) { # Absolute pointer
 
-	  print "    if (!save_struc->$n->{'name'})\n";
-	  print "      fprintf(fh, \"\\\\null\\\\\");\n";
-	  print "    else \n";
-	  print "      $types{$n->{'reftype'}}{'writer'}";
+	  print "	if (!save_struc->$n->{'name'})\n";
+	  print "		fprintf(fh, \"\\\\null\\\\\");\n";
+	  print "	else \n";
+	  print "		$types{$n->{'reftype'}}{'writer'}";
 	  print "(fh, save_struc->$n->{'name'});\n";
 
 	} else { # Normal record entry
 
-	  print "    $types{$n->{'type'}}{'writer'}";
+	  print "	$types{$n->{'type'}}{'writer'}";
 	  print "(fh, ($types{$n->{'type'}}{'ctype'}*) &(save_struc->$n->{'name'}));\n";
 
 	}
 
-	print "    fprintf(fh, \"\\n\");\n";
+	print "	fprintf(fh, \"\\n\");\n";
       }
 
-      print "  fprintf(fh, \"}\");\n";
+      print "	fprintf(fh, \"}\");\n";
     }
     else {
       print STDERR "Warning: Attempt to create_writer for invalid type '$types{$type}{'type'}'\n";
@@ -518,12 +487,10 @@ sub create_reader
     $ctype = $types{$type}{'ctype'};
 
     write_line_pp(__LINE__, 0);
-    print "static int\n_cfsml_read_$typename";
-    print "(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
-
-    print "  char *token;\n";
+    print "static int\n_cfsml_read_$typename(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
+    print "	char *token;\n";
     if ($types{$type}{'type'} eq $type_record) {
-      print "int min, max, i;\n";
+      print "	int min, max, i;\n";
     }
     my $reladdress_nr = 0; # Number of relative addresses needed
     my $reladdress = 0; # Current relative address number
@@ -538,77 +505,75 @@ sub create_reader
       }
 
       if ($reladdress_nr) { # Allocate stack space for all relative addresses needed
-	print "  int reladdresses[$reladdress_nr] = {0};\n";
+	print "	int reladdresses[$reladdress_nr] = {0};\n";
       }
     }
 
     if ($types{$type}{'type'} eq $type_integer) {
 	write_line_pp(__LINE__, 0);
-	print "\n  *save_struc = strtol(lastval, &token, 0);\n";
-	print "  if ( (*save_struc == 0) && (token == lastval) ) {\n";
-	print "     _cfsml_error(\"strtol failed at line %d\\n\", *line);\n";
-	print "     return CFSML_FAILURE;\n";
-	print "  }\n";
-	print "  if (*token != 0) {\n";
-	print "     _cfsml_error(\"Non-integer encountered while parsing int value at line %d\\n\",";
-	print " *line);\n";
-	print "     return CFSML_FAILURE;\n";
-	print "  }\n";
-	print "  return CFSML_SUCCESS;\n";
+	print "\n	*save_struc = strtol(lastval, &token, 0);\n";
+	print "	if ((*save_struc == 0) && (token == lastval)) {\n";
+	print "		_cfsml_error(\"strtol failed at line %d\\n\", *line);\n";
+	print "		return CFSML_FAILURE;\n";
+	print "	}\n";
+	print "	if (*token != 0) {\n";
+	print "		_cfsml_error(\"Non-integer encountered while parsing int value at line %d\\n\", *line);\n";
+	print "		return CFSML_FAILURE;\n";
+	print "	}\n";
+	print "	return CFSML_SUCCESS;\n";
     } elsif ($types{$type}{'type'} eq $type_string) {
 	write_line_pp(__LINE__, 0);
 	print "\n";
-	print "  if (strcmp(lastval, \"\\\\null\\\\\")) { /* null pointer? */\n";
-    print "    unsigned int length = strlen(lastval);\n";
-	print "    if (*lastval == '\"') { /* Quoted string? */\n";
-	print "      while (lastval[length] != '\"')\n";
-	print "        --length;\n\n";
-	print "      if (!length) { /* No matching double-quotes? */\n";
-	print "        _cfsml_error(\"Unbalanced quotes at line %d\\n\", *line);\n";
-	print "        return CFSML_FAILURE;\n";
-	print "      }\n\n";
-	print "      lastval++; /* ...and skip the opening quotes locally */\n";
-	print "      length--;\n";
-	print "    }\n";
-	print "    *save_struc = _cfsml_unmangle_string(lastval, length);\n";
-	print "    _cfsml_register_pointer(*save_struc);\n";
-	print "    return CFSML_SUCCESS;\n";
-	print "  } else {\n";
-	print "    *save_struc = NULL;\n";
-	print "    return CFSML_SUCCESS;\n";
-	print "  }\n";
+	print "	if (strcmp(lastval, \"\\\\null\\\\\")) { // null pointer?\n";
+	print "		unsigned int length = strlen(lastval);\n";
+	print "		if (*lastval == '\"') { // Quoted string?\n";
+	print "			while (lastval[length] != '\"')\n";
+	print "				--length;\n\n";
+	print "			if (!length) { // No matching double-quotes?\n";
+	print "				_cfsml_error(\"Unbalanced quotes at line %d\\n\", *line);\n";
+	print "				return CFSML_FAILURE;\n";
+	print "			}\n\n";
+	print "			lastval++; // ...and skip the opening quotes locally\n";
+	print "			length--;\n";
+	print "		}\n";
+	print "		*save_struc = _cfsml_unmangle_string(lastval, length);\n";
+	print "		_cfsml_register_pointer(*save_struc);\n";
+	print "		return CFSML_SUCCESS;\n";
+	print "	} else {\n";
+	print "		*save_struc = NULL;\n";
+	print "		return CFSML_SUCCESS;\n";
+	print "	}\n";
     } elsif ($types{$type}{'type'} eq $type_record) {
 	write_line_pp(__LINE__, 0);
-	print "  int assignment, closed, done;\n\n";
-	print "  if (strcmp(lastval, \"{\")) {\n";
-	print "     _cfsml_error(\"Reading record $type; expected opening braces in line %d, got \\\"%s\\\"\\n\",";
-	print "*line, lastval);\n";
-	print "     return CFSML_FAILURE;\n";
-	print "  };\n";
-	print "  closed = 0;\n";
-	print "  do {\n";
-	print "    const char *value;\n";
-	print "    token = _cfsml_get_identifier(fh, line, hiteof, &assignment);\n\n";
-	print "    if (!token) {\n";
-	print "       _cfsml_error(\"Expected token at line %d\\n\", *line);\n";
-	print "       return CFSML_FAILURE;\n";
-	print "    }\n";
-	print "    if (!assignment) {\n";
-	print "      if (!strcmp(token, \"}\")) \n";
-	print "         closed = 1;\n";
-	print "      else {\n";
-	print "        _cfsml_error(\"Expected assignment or closing braces in line %d\\n\", *line);\n";
-	print "        return CFSML_FAILURE;\n";
-	print "      }\n";
-	print "    } else {\n";
-	print "      value = \"\";\n";
-	print "      while (!value || !strcmp(value, \"\"))\n";
-	print "        value = _cfsml_get_value(fh, line, hiteof);\n";
-	print "      if (!value) {\n";
-	print "        _cfsml_error(\"Expected token at line %d\\n\", *line);\n";
-	print "        return CFSML_FAILURE;\n";
-	print "      }\n";
-#	print "    }\n";
+	print "	int assignment, closed, done;\n\n";
+	print "	if (strcmp(lastval, \"{\")) {\n";
+	print "		_cfsml_error(\"Reading record $type; expected opening braces in line %d, got \\\"%s\\\"\\n\", *line, lastval);\n";
+	print "		return CFSML_FAILURE;\n";
+	print "	};\n";
+	print "	closed = 0;\n";
+	print "	do {\n";
+	print "		const char *value;\n";
+	print "		token = _cfsml_get_identifier(fh, line, hiteof, &assignment);\n\n";
+	print "		if (!token) {\n";
+	print "			_cfsml_error(\"Expected token at line %d\\n\", *line);\n";
+	print "			return CFSML_FAILURE;\n";
+	print "		}\n";
+	print "		if (!assignment) {\n";
+	print "			if (!strcmp(token, \"}\")) \n";
+	print "				closed = 1;\n";
+	print "			else {\n";
+	print "				_cfsml_error(\"Expected assignment or closing braces in line %d\\n\", *line);\n";
+	print "				return CFSML_FAILURE;\n";
+	print "			}\n";
+	print "		} else {\n";
+	print "			value = \"\";\n";
+	print "			while (!value || !strcmp(value, \"\"))\n";
+	print "				value = _cfsml_get_value(fh, line, hiteof);\n";
+	print "			if (!value) {\n";
+	print "				_cfsml_error(\"Expected token at line %d\\n\", *line);\n";
+	print "				return CFSML_FAILURE;\n";
+	print "			}\n";
+#	print "		}\n";
 
 
       foreach $n (@{$records{$type}}) { # Now take care of all record elements
@@ -623,133 +588,130 @@ sub create_reader
 	my $reader = $types{$type}{'reader'};
 	my $size = $n->{'size'};
 
-	print "      if (!strcmp(token, \"$name\")) {\n";
+	print "				if (!strcmp(token, \"$name\")) {\n";
 
 	if ($type eq $type_pointer) { # A relative pointer
 
 	  $reader = $types{'int'}{'reader'}; # Read relpointer as int
 
 	  write_line_pp(__LINE__, 0);
-	  print "         if ($reader(fh, &(reladdresses[$reladdress]), value, line, hiteof)) {\n";
-	  print "            _cfsml_error(\"Expected token at line %d\\n\", *line);\n";
-	  print "            return CFSML_FAILURE;\n";
-	  print "         }\n";
+	  print "				if ($reader(fh, &(reladdresses[$reladdress]), value, line, hiteof)) {\n";
+	  print "					_cfsml_error(\"Expected token at line %d\\n\", *line);\n";
+	  print "					return CFSML_FAILURE;\n";
+	  print "				}\n";
 
 	  # Make sure that the resulting variable is interpreted correctly
-	  $reladdress_resolver .= "  save_struc->$n->{'name'} =".
-	    " save_struc->$n->{'anchor'} + reladdresses[$reladdress];\n";
+	  $reladdress_resolver .= "			save_struc->$n->{'name'} = save_struc->$n->{'anchor'} + reladdresses[$reladdress];\n";
 
 	  ++$reladdress; # Prepare reladdress for next element
 
 	} elsif ($n->{'array'}) { # Is it an array?
 	    write_line_pp(__LINE__, 0);
-	    print "         if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {\n";
+	    print "			if ((value[0] != '[') || (value[strlen(value) - 1] != '[')) {\n";
 	    # The value must end with [, since we're starting array data, and it must also
 	    # begin with [, since this is either the only character in the line, or it starts
 	    # the "amount of memory to allocate" block
-	    print "            _cfsml_error(\"Opening brackets expected at line %d\\n\", *line);\n";
-	    print "            return CFSML_FAILURE;\n";
-	    print "         }\n";
+	    print "				_cfsml_error(\"Opening brackets expected at line %d\\n\", *line);\n";
+	    print "				return CFSML_FAILURE;\n";
+	    print "			}\n";
 
 	  if ($n->{'array'} eq 'dynamic') {
 	      write_line_pp(__LINE__, 0);
 	    # We need to allocate the array first
-	    print "         /* Prepare to restore dynamic array */\n";
+	    print "			// Prepare to restore dynamic array\n";
 	    # Read amount of memory to allocate
-	    print "         max = strtol(value + 1, NULL, 0);\n";
-	    print "         if (max < 0) {\n";
-	    print "            _cfsml_error(\"Invalid number of elements to allocate for dynamic ";
-	    print "array '%s' at line %d\\n\", token, *line);\n";
-	    print "            return CFSML_FAILURE;\n";
-	    print "         }\n\n";
+	    print "			max = strtol(value + 1, NULL, 0);\n";
+	    print "			if (max < 0) {\n";
+	    print "				_cfsml_error(\"Invalid number of elements to allocate for dynamic array '%s' at line %d\\n\", token, *line);\n";
+	    print "				return CFSML_FAILURE;\n";
+	    print "			}\n\n";
 
-	    print "         if (max) {\n";
-	    print "           save_struc->$name = ($n->{'type'} *) sci_malloc(max * sizeof($type));\n";
+	    print "			if (max) {\n";
+	    print "				save_struc->$name = ($n->{'type'} *)sci_malloc(max * sizeof($type));\n";
 	    print "#ifdef SATISFY_PURIFY\n";
-            print "           memset(save_struc->$name, 0, max * sizeof($type));\n";
+            print "				memset(save_struc->$name, 0, max * sizeof($type));\n";
 	    print "#endif\n";
-	    print "           _cfsml_register_pointer(save_struc->$name);\n";
-	    print "         }\n";
-	    print "         else\n";
-	    print "           save_struc->$name = NULL;\n"
+	    print "				_cfsml_register_pointer(save_struc->$name);\n";
+	    print "			} else\n";
+	    print "				save_struc->$name = NULL;\n"
 
 	    } else { # static array
-		print "         /* Prepare to restore static array */\n";
-		print "         max = $size;\n";
+		print "			// Prepare to restore static array\n";
+		print "			max = $size;\n";
 	    }
 
 	    write_line_pp(__LINE__, 0);
-	    print "         done = i = 0;\n";
-	    print "         do {\n";
+	    print "			done = i = 0;\n";
+	    print "			do {\n";
 	    if ($type eq $type_record) {
-		print "           if (!(value = _cfsml_get_value(fh, line, hiteof))) {\n";
+		print "			if (!(value = _cfsml_get_value(fh, line, hiteof))) {\n";
 	    } else {
-		print "           if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {\n";
+		print "			if (!(value = _cfsml_get_identifier(fh, line, hiteof, NULL))) {\n";
 	    }
 	    write_line_pp(__LINE__, 0);
 	    
-	    print "              _cfsml_error(\"Token expected at line %d\\n\", *line);\n";
-	    print "              return 1;\n";
-	    print "           }\n";
-	    print "           if (strcmp(value, \"]\")) {\n";
-	    print "             if (i == max) {\n";
-	    print "               _cfsml_error(\"More elements than space available (%d) in '%s' at ";
-	    print "line %d\\n\", max, token, *line);\n";
-	    print "               return CFSML_FAILURE;\n";
-	    print "             }\n";
+	    print "				_cfsml_error(\"Token expected at line %d\\n\", *line);\n";
+	    print "				return 1;\n";
+	    print "			}\n";
+	    print "			if (strcmp(value, \"]\")) {\n";
+	    print "				if (i == max) {\n";
+	    print "					_cfsml_error(\"More elements than space available (%d) in '%s' at line %d\\n\", max, token, *line);\n";
+	    print "					return CFSML_FAILURE;\n";
+	    print "				}\n";
 	    my $helper = "[i++]";
-	    print "             if ($reader(fh, &(save_struc->$name$helper), value, line, hiteof)) {\n";
-	    print "                _cfsml_error(\"Token expected by $reader() for $name$helper at line %d\\n\", *line);\n";
-	    print "                return CFSML_FAILURE;\n";
-	    print "             }\n";
-	    print "           } else done = 1;\n";
-	    print "         } while (!done);\n";
+	    print "				if ($reader(fh, &(save_struc->$name$helper), value, line, hiteof)) {\n";
+	    print "					_cfsml_error(\"Token expected by $reader() for $name$helper at line %d\\n\", *line);\n";
+	    print "					return CFSML_FAILURE;\n";
+	    print "				}\n";
+	    print "			} else \n";
+	    print "				done = 1;\n";
+	    print "			} while (!done);\n";
 
 	    if ($n->{'array'} eq "dynamic") {
 		my @xpr = lvaluize($expression = $n->{'size'});
-		print "         save_struc->$xpr[0] = max $xpr[1]; /* Set array size accordingly */\n";
+		print "		 	save_struc->$xpr[0] = max $xpr[1]; // Set array size accordingly\n";
 	    }
 
 	    if ($n->{'maxwrite'}) {
 		my @xpr = lvaluize($expression = $n->{'maxwrite'});
-		print "         save_struc->$xpr[0] = i $xpr[1]; /* Set number of elements */\n";
+		print "			save_struc->$xpr[0] = i $xpr[1]; // Set number of elements\n";
 	    }
 
 	}
 	elsif ($reference) {
 	    write_line_pp(__LINE__, 0);
-	    print "        if (strcmp(value, \"\\\\null\\\\\")) { /* null pointer? */\n";
-	    print "           save_struc->$name = sci_malloc(sizeof ($type));\n";
-	    print "           _cfsml_register_pointer(save_struc->$name);\n";
-	    print "           if ($reader(fh, save_struc->$name, value, line, hiteof)) {\n";
-	    print "              _cfsml_error(\"Token expected by $reader() for $name at line %d\\n\", *line);\n";
-	    print "              return CFSML_FAILURE;\n";
-	    print "           }\n";
-	    print "        } else save_struc->$name = NULL;\n";
+	    print "			if (strcmp(value, \"\\\\null\\\\\")) { // null pointer?\n";
+	    print "				save_struc->$name = sci_malloc(sizeof ($type));\n";
+	    print "				_cfsml_register_pointer(save_struc->$name);\n";
+	    print "				if ($reader(fh, save_struc->$name, value, line, hiteof)) {\n";
+	    print "					_cfsml_error(\"Token expected by $reader() for $name at line %d\\n\", *line);\n";
+	    print "					return CFSML_FAILURE;\n";
+	    print "				}\n";
+	    print "			} else \n";
+	    print "				save_struc->$name = NULL;\n";
 	}
 	else { # It's a simple variable or a struct
 	    write_line_pp(__LINE__, 0);
-	    print "         if ($reader(fh, ($types{$type}{'ctype'}*) &(save_struc->$name), value, line, hiteof)) {\n";
-	    print "            _cfsml_error(\"Token expected by $reader() for $name at line %d\\n\", *line);\n";
-	    print "            return CFSML_FAILURE;\n";
-	    print "         }\n";
+	    print "				if ($reader(fh, ($types{$type}{'ctype'}*) &(save_struc->$name), value, line, hiteof)) {\n";
+	    print "					_cfsml_error(\"Token expected by $reader() for $name at line %d\\n\", *line);\n";
+	    print "					return CFSML_FAILURE;\n";
+	    print "				}\n";
 	}
-	print "      } else\n";
+	print "			} else\n";
 
       }
 	write_line_pp(__LINE__, 0);
-	print "       {\n";
-	print "          _cfsml_error(\"$type: Assignment to invalid identifier '%s' in line %d\\n\",";
-	print " token, *line);\n";
-	print "          return CFSML_FAILURE;\n";
-	print "       }\n";
-	print "     }\n";
+	print "			{\n";
+	print "				_cfsml_error(\"$type: Assignment to invalid identifier '%s' in line %d\\n\", token, *line);\n";
+	print "				return CFSML_FAILURE;\n";
+	print "			}\n";
+	print "		}\n";
 
-      print "  } while (!closed); /* Until closing braces are hit */\n";
+      print "	} while (!closed); // Until closing braces are hit\n";
 
       print $reladdress_resolver; # Resolves any relative addresses
 
-      print "  return CFSML_SUCCESS;\n";
+      print "	return CFSML_SUCCESS;\n";
     } else {
       print STDERR "Warning: Attempt to create_reader for invalid type '$types{$type}{'type'}'\n";
     }
@@ -774,7 +736,7 @@ sub create_reader
 
 
 sub create_function_block {
-  print "\n/* Auto-generated CFSML declaration and function block */\n\n";
+  print "\n// Auto-generated CFSML declaration and function block\n\n";
   write_line_pp(__LINE__, 0);
   print "#define CFSML_SUCCESS 0\n";
   print "#define CFSML_FAILURE 1\n\n";
@@ -790,8 +752,8 @@ sub create_function_block {
       create_reader($type = $n);
     }
   }
-  print "\n/* Auto-generated CFSML declaration and function block ends here */\n";
-  print "/* Auto-generation performed by cfsml.pl $version */\n";
+  print "\n// Auto-generated CFSML declaration and function block ends here\n";
+  print "// Auto-generation performed by cfsml.pl $version \n";
 }
 
 
@@ -801,54 +763,52 @@ sub create_function_block {
 #             $fh: Existing filehandle of an open file to use
 #             $eofvar: Variable to store _cfsml_eof into
 sub insert_reader_code {
-  print "/* Auto-generated CFSML data reader code */\n";
+  print "// Auto-generated CFSML data reader code\n";
   write_line_pp(__LINE__, 0);
-  print "  {\n";
+  print "	{\n";
   if (!$linecounter) {
       write_line_pp(__LINE__, 0);
-      print "    int _cfsml_line_ctr = 0;\n";
+      print "		int _cfsml_line_ctr = 0;\n";
       $linecounter = '_cfsml_line_ctr';
   }
   if ($atomic) {
       write_line_pp(__LINE__, 0);
-      print "    struct _cfsml_pointer_refstruct **_cfsml_myptrrefptr = _cfsml_get_current_refpointer();\n";
+      print "		struct _cfsml_pointer_refstruct **_cfsml_myptrrefptr = _cfsml_get_current_refpointer();\n";
   }
   write_line_pp(__LINE__, 0);
-  print "    int _cfsml_eof = 0, _cfsml_error;\n";
-  print "    int dummy;\n";
+  print "		int _cfsml_eof = 0, _cfsml_error;\n";
+  print "		int dummy;\n";
 
   if ($firsttoken) {
       write_line_pp(__LINE__, 0);
-      print "    const char *_cfsml_inp = $firsttoken;\n";
+      print "		const char *_cfsml_inp = $firsttoken;\n";
   } else {
       write_line_pp(__LINE__, 0);
-      print "    const char *_cfsml_inp =".
-	  " _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, &dummy);\n\n";
+      print "		const char *_cfsml_inp = _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, &dummy);\n\n";
   }
 
   write_line_pp(__LINE__, 0);
-  print "    _cfsml_error =".
-      " $types{$type}{'reader'}($fh, $datap, _cfsml_inp, &($linecounter), &_cfsml_eof);\n";
+  print "		_cfsml_error = $types{$type}{'reader'}($fh, $datap, _cfsml_inp, &($linecounter), &_cfsml_eof);\n";
 
   if ($eofvar) {
       write_line_pp(__LINE__, 0);
-      print "    $eofvar = _cfsml_error;\n";
+      print "		$eofvar = _cfsml_error;\n";
   }
   if ($atomic) {
       write_line_pp(__LINE__, 0);
-      print "     _cfsml_free_pointer_references(_cfsml_myptrrefptr, _cfsml_error);\n";
+      print "		_cfsml_free_pointer_references(_cfsml_myptrrefptr, _cfsml_error);\n";
   }
   write_line_pp(__LINE__, 0);
-  print "     if (_cfsml_last_value_retrieved) {\n";
-  print "       free(_cfsml_last_value_retrieved);\n";
-  print "       _cfsml_last_value_retrieved = NULL;\n";
-  print "     }\n";
-  print "     if (_cfsml_last_identifier_retrieved) {\n";
-  print "       free(_cfsml_last_identifier_retrieved);\n";
-  print "       _cfsml_last_identifier_retrieved = NULL;\n";
-  print "     }\n";
-  print "  }\n";
-  print "/* End of auto-generated CFSML data reader code */\n";
+  print "		if (_cfsml_last_value_retrieved) {\n";
+  print "			free(_cfsml_last_value_retrieved);\n";
+  print "			_cfsml_last_value_retrieved = NULL;\n";
+  print "		}\n";
+  print "		if (_cfsml_last_identifier_retrieved) {\n";
+  print "			free(_cfsml_last_identifier_retrieved);\n";
+  print "			_cfsml_last_identifier_retrieved = NULL;\n";
+  print "		}\n";
+  print "	}\n";
+  print "// End of auto-generated CFSML data reader code\n";
 }
 
 # Generates code to write a data type
@@ -857,10 +817,10 @@ sub insert_reader_code {
 #             $fh: Existing filehandle of an open file to use
 sub insert_writer_code {
     write_line_pp(__LINE__, 0);
-    print "/* Auto-generated CFSML data writer code */\n";
-    print "  $types{$type}{'writer'}($fh, $datap);\n";
-    print "  fprintf($fh, \"\\n\");\n";
-    print "/* End of auto-generated CFSML data writer code */\n";
+    print "// Auto-generated CFSML data writer code\n";
+    print "	$types{$type}{'writer'}($fh, $datap);\n";
+    print "	fprintf($fh, \"\\n\");\n";
+    print "// End of auto-generated CFSML data writer code\n";
 }
 
 
