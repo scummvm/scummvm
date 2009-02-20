@@ -1811,14 +1811,9 @@ yyreturn:
 #line 251 "../../full-svn/scummvm/trunk/engines/sci/engine/said.y"
 
 
+int parse_yy_token_lookup[] = {YY_COMMA, YY_AMP, YY_SLASH, YY_PARENO, YY_PARENC, YY_BRACKETSO, YY_BRACKETSC, YY_HASH, YY_LT, YY_GT};
 
-int
-parse_yy_token_lookup[] = {YY_COMMA, YY_AMP, YY_SLASH, YY_PARENO, YY_PARENC, YY_BRACKETSO, YY_BRACKETSC,
-                           YY_HASH, YY_LT, YY_GT
-                          };
-
-static int
-yylex(void) {
+static int yylex(void) {
 	int retval = said_tokens[said_token++];
 
 	if (retval < SAID_LONG(SAID_FIRST)) {
@@ -1849,10 +1844,9 @@ yylex(void) {
 	return retval;
 }
 
-#define SAID_NEXT_NODE ((said_tree_pos == 0) || (said_tree_pos >= VOCAB_TREE_NODES))? said_tree_pos = 0 : said_tree_pos++
+#define SAID_NEXT_NODE ((said_tree_pos == 0) || (said_tree_pos >= VOCAB_TREE_NODES)) ? said_tree_pos = 0 : said_tree_pos++
 
-static inline int
-said_leaf_node(tree_t pos, int value) {
+static inline int said_leaf_node(tree_t pos, int value) {
 	said_tree[pos].type = PARSE_TREE_NODE_LEAF;
 
 	if (value != VALUE_IGNORE)
@@ -1861,8 +1855,7 @@ said_leaf_node(tree_t pos, int value) {
 	return pos;
 }
 
-static inline int
-said_branch_node(tree_t pos, int left, int right) {
+static inline int said_branch_node(tree_t pos, int left, int right) {
 	said_tree[pos].type = PARSE_TREE_NODE_BRANCH;
 
 	if (left != VALUE_IGNORE)
@@ -1874,47 +1867,27 @@ said_branch_node(tree_t pos, int left, int right) {
 	return pos;
 }
 
-
-static tree_t
-said_paren(tree_t t1, tree_t t2) {
+static tree_t said_paren(tree_t t1, tree_t t2) {
 	if (t1)
-		return said_branch_node(SAID_NEXT_NODE,
-		                        t1,
-		                        t2
-		                       );
+		return said_branch_node(SAID_NEXT_NODE, t1, t2);
 	else
 		return t2;
 }
 
-static tree_t
-said_value(int val, tree_t t) {
-	return said_branch_node(SAID_NEXT_NODE,
-	                        said_leaf_node(SAID_NEXT_NODE, val),
-	                        t
-	                       );
-
+static tree_t said_value(int val, tree_t t) {
+	return said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, val), t);
+			  
 }
 
-static tree_t
-said_terminal(int val) {
+static tree_t said_terminal(int val) {
 	return said_leaf_node(SAID_NEXT_NODE, val);
 }
 
-
-static tree_t
-said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
+static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 	int retval;
 
-	retval = said_branch_node(SAID_NEXT_NODE,
-	                          said_branch_node(SAID_NEXT_NODE,
-	                                           said_leaf_node(SAID_NEXT_NODE, n1),
-	                                           said_branch_node(SAID_NEXT_NODE,
-	                                                            said_leaf_node(SAID_NEXT_NODE, n2),
-	                                                            t1
-	                                                           )
-	                                          ),
-	                          t2
-	                         );
+	retval = said_branch_node(SAID_NEXT_NODE, said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, n1),
+				said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, n2), t1)), t2);
 
 #ifdef SAID_DEBUG
 	fprintf(stderr, "AUG(0x%x, 0x%x, [%04x], [%04x]) = [%04x]\n", n1, n2, t1, t2, retval);
@@ -1923,8 +1896,7 @@ said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 	return retval;
 }
 
-static tree_t
-said_attach_branch(tree_t base, tree_t attacheant) {
+static tree_t said_attach_branch(tree_t base, tree_t attacheant) {
 #ifdef SAID_DEBUG
 	fprintf(stderr, "ATT2([%04x], [%04x]) = [%04x]\n", base, attacheant, base);
 #endif
@@ -1935,31 +1907,28 @@ said_attach_branch(tree_t base, tree_t attacheant) {
 		return attacheant;
 
 	if (!base)
-		return 0; /* Happens if we're out of space */
+		return 0; // Happens if we're out of space
 
 	said_branch_node(base, VALUE_IGNORE, attacheant);
 
 	return base;
 }
 
-static said_spec_t
-said_top_branch(tree_t first) {
+static said_spec_t said_top_branch(tree_t first) {
 #ifdef SAID_DEBUG
 	fprintf(stderr, "TOP([%04x])\n", first);
 #endif
 	said_branch_node(0, 1, 2);
-	said_leaf_node(1, 0x141); /* Magic number #1 */
+	said_leaf_node(1, 0x141); // Magic number #1
 	said_branch_node(2, 3, first);
-	said_leaf_node(3, 0x13f); /* Magic number #2 */
+	said_leaf_node(3, 0x13f); // Magic number #2
 
 	++said_blessed;
 
 	return 0;
 }
 
-
-int
-said_parse_spec(state_t *s, byte *spec) {
+int said_parse_spec(state_t *s, byte *spec) {
 	int nextitem;
 
 	said_parse_error = NULL;
@@ -2008,29 +1977,25 @@ said_parse_spec(state_t *s, byte *spec) {
 /**** Augmentation ****/
 /**********************/
 
-
-/** primitive functions **/
+// primitive functions
 
 #define AUG_READ_BRANCH(a, br, p) \
-  if (tree[p].type != PARSE_TREE_NODE_BRANCH) \
-    return 0; \
-  a = tree[p].content.branches[br];
+	if (tree[p].type != PARSE_TREE_NODE_BRANCH) \
+		return 0; \
+	a = tree[p].content.branches[br];
 
 #define AUG_READ_VALUE(a, p) \
-  if (tree[p].type != PARSE_TREE_NODE_LEAF) \
-    return 0; \
-  a = tree[p].content.value;
+	if (tree[p].type != PARSE_TREE_NODE_LEAF) \
+		return 0; \
+	a = tree[p].content.value;
 
 #define AUG_ASSERT(i) \
-  if (!i) return 0;
+	if (!i) return 0;
 
-static int
-aug_get_next_sibling(parse_tree_node_t *tree, int pos, int *first, int *second)
-/* Returns the next sibling relative to the specified position in 'tree',
-** sets *first and *second to its augment node values, returns the new position
-** or 0 if there was no next sibling
-*/
-{
+static int aug_get_next_sibling(parse_tree_node_t *tree, int pos, int *first, int *second) {
+	// Returns the next sibling relative to the specified position in 'tree',
+	// sets *first and *second to its augment node values, returns the new position
+	// or 0 if there was no next sibling
 	int seek, valpos;
 
 	AUG_READ_BRANCH(pos, 1, pos);
@@ -2038,12 +2003,12 @@ aug_get_next_sibling(parse_tree_node_t *tree, int pos, int *first, int *second)
 	AUG_READ_BRANCH(seek, 0, pos);
 	AUG_ASSERT(seek);
 
-	/* Now retrieve first value */
+	// Now retreive first value
 	AUG_READ_BRANCH(valpos, 0, seek);
 	AUG_ASSERT(valpos);
 	AUG_READ_VALUE(*first, valpos);
 
-	/* Get second value */
+	// Get second value
 	AUG_READ_BRANCH(seek, 1, seek);
 	AUG_ASSERT(seek);
 	AUG_READ_BRANCH(valpos, 0, seek);
@@ -2053,13 +2018,9 @@ aug_get_next_sibling(parse_tree_node_t *tree, int pos, int *first, int *second)
 	return pos;
 }
 
-
-static int
-aug_get_wgroup(parse_tree_node_t *tree, int pos)
-/* Returns 0 if pos in tree is not the root of a 3-element list, otherwise
-** it returns the last element (which, in practice, is the word group
-*/
-{
+static int aug_get_wgroup(parse_tree_node_t *tree, int pos) {
+	// Returns 0 if pos in tree is not the root of a 3-element list, otherwise
+	// it returns the last element (which, in practice, is the word group
 	int val;
 
 	AUG_READ_BRANCH(pos, 0, pos);
@@ -2073,25 +2034,19 @@ aug_get_wgroup(parse_tree_node_t *tree, int pos)
 	return val;
 }
 
-
-static int
-aug_get_base_node(parse_tree_node_t *tree) {
+static int aug_get_base_node(parse_tree_node_t *tree) {
 	int startpos = 0;
 	AUG_READ_BRANCH(startpos, 1, startpos);
+
 	return startpos;
 }
 
+// semi-primitive functions
 
-/** semi-primitive functions **/
-
-
-static int
-aug_get_first_child(parse_tree_node_t *tree, int pos, int *first, int *second)
-/* like aug_get_next_sibling, except that it recurses into the tree and
-** finds the first child (usually *not* Ayanami Rei) of the current branch
-** rather than its next sibling.
-*/
-{
+static int aug_get_first_child(parse_tree_node_t *tree, int pos, int *first, int *second) {
+	// like aug_get_next_sibling, except that it recurses into the tree and
+	// finds the first child (usually *not* Ayanami Rei) of the current branch
+	// rather than its next sibling.
 	AUG_READ_BRANCH(pos, 0, pos);
 	AUG_ASSERT(pos);
 	AUG_READ_BRANCH(pos, 1, pos);
@@ -2100,62 +2055,53 @@ aug_get_first_child(parse_tree_node_t *tree, int pos, int *first, int *second)
 	return aug_get_next_sibling(tree, pos, first, second);
 }
 
-static void
-aug_find_words_recursively(parse_tree_node_t *tree, int startpos,
-                           int *base_words, int *base_words_nr,
-                           int *ref_words, int *ref_words_nr,
-                           int maxwords, int refbranch)
-/* Finds and lists all base (141) and reference (144) words */
-{
+static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, int *base_words, int *base_words_nr,
+			   int *ref_words, int *ref_words_nr, int maxwords, int refbranch) {
+	// Finds and lists all base (141) and reference (144) words */
 	int major, minor;
 	int word;
 	int pos = aug_get_first_child(tree, startpos, &major, &minor);
 
-	/*	if (major == WORD_TYPE_REF)
-		refbranch = 1;*/
+	//if (major == WORD_TYPE_REF)
+	//	refbranch = 1;
 
 	while (pos) {
-		if ((word = aug_get_wgroup(tree, pos))) { /* found a word */
-
-			if (!refbranch && major == WORD_TYPE_BASE) {
+		if ((word = aug_get_wgroup(tree, pos))) { // found a word
+			if (!refbranch && major == WORD_TYPE_BASE) {	
 				if ((*base_words_nr) == maxwords) {
 					sciprintf("Out of regular words\n");
-					return; /* return gracefully */
+					return; // return gracefully
 				}
 
-				base_words[*base_words_nr] = word; /* register word */
+				base_words[*base_words_nr] = word; // register word
 				++(*base_words_nr);
 
 			}
 			if (major == WORD_TYPE_REF || refbranch) {
 				if ((*ref_words_nr) == maxwords) {
 					sciprintf("Out of reference words\n");
-					return; /* return gracefully */
+					return; // return gracefully
 				}
 
-				ref_words[*ref_words_nr] = word; /* register word */
+				ref_words[*ref_words_nr] = word; // register word
 				++(*ref_words_nr);
 
 			}
 			if (major != WORD_TYPE_SYNTACTIC_SUGAR && major != WORD_TYPE_BASE && major != WORD_TYPE_REF)
 				sciprintf("aug_find_words_recursively(): Unknown word type %03x\n", major);
-
-		} else /* Did NOT find a word group: Attempt to recurse */
-			aug_find_words_recursively(tree, pos, base_words, base_words_nr,
-			                           ref_words, ref_words_nr, maxwords, refbranch || major == WORD_TYPE_REF);
+    
+		} else // Did NOT find a word group: Attempt to recurse
+			aug_find_words_recursively(tree, pos, base_words, base_words_nr, 
+						   ref_words, ref_words_nr, maxwords, refbranch || major == WORD_TYPE_REF);
 
 		pos = aug_get_next_sibling(tree, pos, &major, &minor);
 	}
 }
 
 
-static void
-aug_find_words(parse_tree_node_t *tree, int startpos,
-               int *base_words, int *base_words_nr,
-               int *ref_words, int *ref_words_nr,
-               int maxwords)
-/* initializing wrapper for aug_find_words_recursively() */
-{
+static void aug_find_words(parse_tree_node_t *tree, int startpos, int *base_words, int *base_words_nr,
+				int *ref_words, int *ref_words_nr, int maxwords) {
+	// initializing wrapper for aug_find_words_recursively()
 	*base_words_nr = 0;
 	*ref_words_nr = 0;
 
@@ -2163,9 +2109,9 @@ aug_find_words(parse_tree_node_t *tree, int startpos,
 }
 
 
-static inline int
-aug_contains_word(int *list, int length, int word) {
+static inline int aug_contains_word(int *list, int length, int word) {
 	int i;
+
 	if (word == ANYWORD)
 		return (length);
 
@@ -2177,19 +2123,13 @@ aug_contains_word(int *list, int length, int word) {
 }
 
 
-static int
-augment_sentence_expression(parse_tree_node_t *saidt, int augment_pos,
-                            parse_tree_node_t *parset, int parse_branch,
-                            int major, int minor,
-                            int *base_words, int base_words_nr,
-                            int *ref_words, int ref_words_nr);
+static int augment_sentence_expression(parse_tree_node_t *saidt, int augment_pos, parse_tree_node_t *parset,
+					int parse_branch, int major, int minor, int *base_words, int base_words_nr,
+					int *ref_words, int ref_words_nr);
 
-static int
-augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
-                           parse_tree_node_t *parset, int parse_basepos,
-                           int major, int minor,
-                           int *base_words, int base_words_nr,
-                           int *ref_words, int ref_words_nr) {
+static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos, parse_tree_node_t *parset,
+					int parse_basepos, int major, int minor,
+			   int *base_words, int base_words_nr, int *ref_words, int ref_words_nr) {
 	int cmajor, cminor, cpos;
 	cpos = aug_get_first_child(saidt, augment_pos, &cmajor, &cminor);
 	if (!cpos) {
@@ -2200,12 +2140,8 @@ augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 	scidprintf("Attempting to match (%03x %03x (%03x %03x\n", major, minor, cmajor, cminor);
 
 	if ((major == WORD_TYPE_BASE) && (minor == AUGMENT_SENTENCE_MINOR_RECURSE))
-		return augment_match_expression_p(saidt, cpos,
-		                                  parset, parse_basepos,
-		                                  cmajor, cminor,
-		                                  base_words, base_words_nr,
-		                                  ref_words, ref_words_nr);
-
+		return augment_match_expression_p(saidt, cpos, parset, parse_basepos, cmajor, cminor,
+						  base_words, base_words_nr, ref_words, ref_words_nr);
 
 	switch (major) {
 
@@ -2218,22 +2154,17 @@ augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 				if (aug_contains_word(base_words, base_words_nr, word))
 					return 1;
 			} else if (cminor == AUGMENT_SENTENCE_MINOR_MATCH_PHRASE) {
-				if (augment_sentence_expression(saidt, cpos,
-				                                parset, parse_basepos,
-				                                cmajor, cminor,
-				                                base_words, base_words_nr,
-				                                ref_words, ref_words_nr))
+				if (augment_sentence_expression(saidt, cpos, parset, parse_basepos, cmajor, cminor,
+								base_words, base_words_nr, ref_words, ref_words_nr))
 					return 1;
 			} else if (cminor == AUGMENT_SENTENCE_MINOR_PARENTHESES) {
 				int gc_major, gc_minor;
 				int gchild = aug_get_first_child(saidt, cpos, &gc_major, &gc_minor);
 
 				while (gchild) {
-					if (augment_match_expression_p(saidt, cpos,
-					                               parset, parse_basepos,
-					                               major, minor,
-					                               base_words, base_words_nr,
-					                               ref_words, ref_words_nr))
+					if (augment_match_expression_p(saidt, cpos, parset, parse_basepos, major,
+									minor, base_words, base_words_nr,
+								       ref_words, ref_words_nr))
 						return 1;
 					gchild = aug_get_next_sibling(saidt, gchild, &gc_major, &gc_minor);
 				}
@@ -2254,22 +2185,17 @@ augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 				if (aug_contains_word(ref_words, ref_words_nr, word))
 					return 1;
 			} else if (cminor == AUGMENT_SENTENCE_MINOR_MATCH_PHRASE) {
-				if (augment_match_expression_p(saidt, cpos,
-				                               parset, parse_basepos,
-				                               cmajor, cminor,
-				                               base_words, base_words_nr,
-				                               ref_words, ref_words_nr))
+				if (augment_match_expression_p(saidt, cpos, parset, parse_basepos, cmajor, cminor,
+							       base_words, base_words_nr, ref_words, ref_words_nr))
 					return 1;
 			} else if (cminor == AUGMENT_SENTENCE_MINOR_PARENTHESES) {
 				int gc_major, gc_minor;
 				int gchild = aug_get_first_child(saidt, cpos, &gc_major, &gc_minor);
 
 				while (gchild) {
-					if (augment_match_expression_p(saidt, cpos,
-					                               parset, parse_basepos,
-					                               major, minor,
-					                               base_words, base_words_nr,
-					                               ref_words, ref_words_nr))
+					if (augment_match_expression_p(saidt, cpos, parset, parse_basepos, major,
+									minor, base_words, base_words_nr,
+									ref_words, ref_words_nr))
 						return 1;
 					gchild = aug_get_next_sibling(saidt, gchild, &gc_major, &gc_minor);
 				}
@@ -2282,11 +2208,8 @@ augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 		break;
 
 	case AUGMENT_SENTENCE_PART_BRACKETS:
-		if (augment_match_expression_p(saidt, cpos,
-		                               parset, parse_basepos,
-		                               cmajor, cminor,
-		                               base_words, base_words_nr,
-		                               ref_words, ref_words_nr))
+		if (augment_match_expression_p(saidt, cpos, parset, parse_basepos, cmajor, cminor,
+					       base_words, base_words_nr, ref_words, ref_words_nr))
 			return 1;
 
 		scidprintf("Didn't match subexpression; checking sub-bracked predicate %03x\n", cmajor);
@@ -2314,32 +2237,25 @@ augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 	}
 
 	scidprintf("Generic failure\n");
+
 	return 0;
 }
 
-static int
-augment_sentence_expression(parse_tree_node_t *saidt, int augment_pos,
-                            parse_tree_node_t *parset, int parse_branch,
-                            int major, int minor,
-                            int *base_words, int base_words_nr,
-                            int *ref_words, int ref_words_nr) {
+static int augment_sentence_expression(parse_tree_node_t *saidt, int augment_pos, parse_tree_node_t *parset,
+					int parse_branch, int major, int minor, int *base_words, int base_words_nr,
+					int *ref_words, int ref_words_nr) {
 	int check_major, check_minor;
 	int check_pos = aug_get_first_child(saidt, augment_pos, &check_major, &check_minor);
 	do {
-		if (!(augment_match_expression_p(saidt, check_pos, parset, parse_branch,
-		                                 check_major, check_minor, base_words, base_words_nr,
-		                                 ref_words, ref_words_nr)))
+		if (!(augment_match_expression_p(saidt, check_pos, parset, parse_branch, check_major, check_minor,
+						base_words, base_words_nr, ref_words, ref_words_nr)))
 			return 0;
 	} while ((check_pos = aug_get_next_sibling(saidt, check_pos, &check_major, &check_minor)));
+
 	return 1;
 }
 
-
-
-static int
-augment_sentence_part(parse_tree_node_t *saidt, int augment_pos,
-                      parse_tree_node_t *parset, int parse_basepos,
-                      int major, int minor) {
+static int augment_sentence_part(parse_tree_node_t *saidt, int augment_pos, parse_tree_node_t *parset, int parse_basepos, int major, int minor) {
 	int pmajor, pminor;
 	int parse_branch = parse_basepos;
 	int optional = 0;
@@ -2347,9 +2263,8 @@ augment_sentence_part(parse_tree_node_t *saidt, int augment_pos,
 
 	scidprintf("Augmenting (%03x %03x\n", major, minor);
 
-	if (major == AUGMENT_SENTENCE_PART_BRACKETS) { /* '[/ foo]' is true if '/foo' or if there
-						       ** exists no x for which '/x' is true
-						       */
+	if (major == AUGMENT_SENTENCE_PART_BRACKETS) { // '[/ foo]' is true if '/foo' or if there
+						       // exists no x for which '/x' is true
 		if ((augment_pos = aug_get_first_child(saidt, augment_pos, &major, &minor))) {
 			scidprintf("Optional part: Now augmenting (%03x %03x\n", major, minor);
 			optional = 1;
@@ -2359,14 +2274,13 @@ augment_sentence_part(parse_tree_node_t *saidt, int augment_pos,
 		}
 	}
 
-	if ((major < 0x141)
-	        || (major > 0x143)) {
+	if ((major < 0x141) || (major > 0x143)) {
 		scidprintf("augment_sentence_part(): Unexpected sentence part major number %03x\n", major);
 		return 0;
 	}
 
-	while ((parse_branch = aug_get_next_sibling(parset, parse_branch, &pmajor, &pminor)))
-		if (pmajor == major) { /* found matching sentence part */
+	while ((parse_branch = aug_get_next_sibling(parset, parse_branch, &pmajor, &pminor))) {
+		if (pmajor == major) { // found matching sentence part
 			int success;
 			int base_words_nr;
 			int ref_words_nr;
@@ -2377,8 +2291,7 @@ augment_sentence_part(parse_tree_node_t *saidt, int augment_pos,
 #endif
 
 			scidprintf("Found match with pminor = %03x\n", pminor);
-			aug_find_words(parset, parse_branch, base_words, &base_words_nr,
-			               ref_words, &ref_words_nr, AUGMENT_MAX_WORDS);
+			aug_find_words(parset, parse_branch, base_words, &base_words_nr, ref_words, &ref_words_nr, AUGMENT_MAX_WORDS);
 			foundwords |= (ref_words_nr | base_words_nr);
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
 			sciprintf("%d base words:", base_words_nr);
@@ -2390,27 +2303,26 @@ augment_sentence_part(parse_tree_node_t *saidt, int augment_pos,
 			sciprintf("\n");
 #endif
 
-			success = augment_sentence_expression(saidt, augment_pos,
-			                                      parset, parse_basepos, major, minor,
-			                                      base_words, base_words_nr,
-			                                      ref_words, ref_words_nr);
+			success = augment_sentence_expression(saidt, augment_pos, parset, parse_basepos, major, minor,
+							      base_words, base_words_nr, ref_words, ref_words_nr);
 
 			if (success) {
 				scidprintf("SUCCESS on augmenting (%03x %03x\n", major, minor);
 				return 1;
 			}
 		}
+	}
 
 	if (optional && (foundwords == 0)) {
 		scidprintf("Found no words and optional branch => SUCCESS on augmenting (%03x %03x\n", major, minor);
 		return 1;
 	}
 	scidprintf("FAILURE on augmenting (%03x %03x\n", major, minor);
+
 	return 0;
 }
 
-static int
-augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *saidt) {
+static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *saidt) {
 	int augment_basepos = 0;
 	int parse_basepos;
 	int major, minor;
@@ -2421,21 +2333,20 @@ augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *saidt) {
 		sciprintf("augment_parse_nodes(): Parse tree is corrupt\n");
 		return 0;
 	}
-
+  
 	augment_basepos = aug_get_base_node(saidt);
 	if (!augment_basepos) {
 		sciprintf("augment_parse_nodes(): Said tree is corrupt\n");
 		return 0;
 	}
-	while ((augment_basepos = aug_get_next_sibling(saidt, augment_basepos, &major, &minor))) {
 
-		if ((major == 0x14b)
-		        && (minor == SAID_LONG(SAID_GT)))
-			dontclaim = 1; /* special case */
-		else /* normal sentence part */
+	while ((augment_basepos = aug_get_next_sibling(saidt, augment_basepos, &major, &minor))) {
+		if ((major == 0x14b) && (minor == SAID_LONG(SAID_GT)))
+			dontclaim = 1; // special case
+		else // normal sentence part
 			if (!(augment_sentence_part(saidt, augment_basepos, parset, parse_basepos, major, minor))) {
 				scidprintf("Returning failure\n");
-				return 0; /* fail */
+				return 0; // fail
 			}
 	}
 
@@ -2443,7 +2354,8 @@ augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *saidt) {
 
 	if (dontclaim)
 		return SAID_PARTIAL_MATCH;
-	else return 1; /* full match */
+	else
+		return 1; // full match
 }
 
 
@@ -2451,14 +2363,12 @@ augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *saidt) {
 /**** Main code ****/
 /*******************/
 
-int
-said(state_t *s, byte *spec, int verbose) {
+int said(state_t *s, byte *spec, int verbose) {
 	int retval;
 
 	parse_tree_node_t *parse_tree_ptr = s->parser_nodes;
 
 	if (s->parser_valid) {
-
 		if (said_parse_spec(s, spec)) {
 			sciprintf("Offending spec was: ");
 			vocab_decypher_said_block(s, spec);
@@ -2466,24 +2376,23 @@ said(state_t *s, byte *spec, int verbose) {
 		}
 
 		if (verbose)
-			vocab_dump_parse_tree("Said-tree", said_tree); /* Nothing better to do yet */
+			vocab_dump_parse_tree("Said-tree", said_tree); // Nothing better to do yet
 		retval = augment_parse_nodes(parse_tree_ptr, &(said_tree[0]));
 
 		if (!retval)
 			return SAID_NO_MATCH;
 		else if (retval != SAID_PARTIAL_MATCH)
 			return SAID_FULL_MATCH;
-		else return SAID_PARTIAL_MATCH;
+		else
+			return SAID_PARTIAL_MATCH;
 	}
 
 	return SAID_NO_MATCH;
 }
 
 
-
 #ifdef SAID_DEBUG_PROGRAM
-int
-main(int argc, char *argv) {
+int main (int argc, char *argv) {
 	byte block[] = {0x01, 0x00, 0xf8, 0xf5, 0x02, 0x01, 0xf6, 0xf2, 0x02, 0x01, 0xf2, 0x01, 0x03, 0xff};
 	state_t s;
 	con_passthrough = 1;

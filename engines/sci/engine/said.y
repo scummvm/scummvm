@@ -304,7 +304,7 @@ static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 				said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, n2), t1)), t2);
 
 #ifdef SAID_DEBUG
-	fprintf(stderr,"AUG(0x%x, 0x%x, [%04x], [%04x]) = [%04x]\n", n1, n2, t1, t2, retval);
+	fprintf(stderr, "AUG(0x%x, 0x%x, [%04x], [%04x]) = [%04x]\n", n1, n2, t1, t2, retval);
 #endif
 
 	return retval;
@@ -312,7 +312,7 @@ static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 
 static tree_t said_attach_branch(tree_t base, tree_t attacheant) {
 #ifdef SAID_DEBUG
-	fprintf(stderr,"ATT2([%04x], [%04x]) = [%04x]\n", base, attacheant, base);
+	fprintf(stderr, "ATT2([%04x], [%04x]) = [%04x]\n", base, attacheant, base);
 #endif
 
 	if (!attacheant)
@@ -514,7 +514,7 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 
 
 static void aug_find_words(parse_tree_node_t *tree, int startpos, int *base_words, int *base_words_nr,
-				int *ref_words, int *ref_words_nr, int maxwords)
+				int *ref_words, int *ref_words_nr, int maxwords) {
 	// initializing wrapper for aug_find_words_recursively()
 	*base_words_nr = 0;
 	*ref_words_nr = 0;
