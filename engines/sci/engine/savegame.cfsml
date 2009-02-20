@@ -472,7 +472,7 @@ int read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hi
 }
 
 int read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
-	*foo = (int_hash_map_t*)malloc(sizeof(int_hash_map_t));
+	*foo = new int_hash_map_t;
 	%CFSMLREAD int_hash_map_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	(*foo)->holes = NULL;
 	return 0;
