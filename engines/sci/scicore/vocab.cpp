@@ -82,14 +82,14 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	vocab_version = 0;
 
 	if (!resource) {
-		error("SCI0: Could not find a main vocabulary, trying SCI01.\n");
+		warning("SCI0: Could not find a main vocabulary, trying SCI01.\n");
 		resource = scir_find_resource(resmgr, sci_vocab,
 		                              VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
 		vocab_version = 1;
 	}
 
 	if (!resource) {
-		error("SCI1: Could not find a main vocabulary");
+		warning("SCI1: Could not find a main vocabulary");
 		return NULL; /* NOT critical: SCI1 games and some demos don't have one! */
 	}
 
@@ -122,7 +122,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 				currentword[currentwordpos++] = c;
 			}
 			if (seeker == resource->size) {
-				error("SCI1: Vocabulary not usable, disabling.\n");
+				warning("SCI1: Vocabulary not usable, disabling.\n");
 				vocab_free_words(words, counter);
 				return NULL;
 			}
