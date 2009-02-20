@@ -38,7 +38,7 @@ typedef struct {
 	byte *resource_beginning;
 } index_record_cursor_t;
 
-typedef int index_record_size_t(void);
+typedef int index_record_size_t();
 typedef void parse_index_record_t(index_record_cursor_t *index_record, message_tuple_t *t);
 typedef int get_talker_t(index_record_cursor_t *cursor);
 typedef void get_text_t(index_record_cursor_t *cursor, char *buffer, int buffer_size);
@@ -73,5 +73,3 @@ int message_get_length(message_state_t *state);
 int message_get_text(message_state_t *state, char *buffer, int length);
 int message_state_load_res(message_state_t *state, int module);
 void message_state_initialize(ResourceManager *resmgr, message_state_t *state);
-
-
