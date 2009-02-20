@@ -527,6 +527,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	d74122362a77ec24525fdd50297dfd82	-1	fr	Mac	-	-	-	ThierryFR
 	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	Windows	HE 99	-	-	Reckless
 	07b810e37be7489263f7bc7627d4765d	-1	ru	Windows	unenc	Unencrypted	-	sev
+	a336134914eaab4892d35625aa15ad1d	-1	ru	Windows	HE 99	-	-	George Kormendi
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	4f138ac6f9b2ac5a41bc68b2c3296064	-1	fr	Windows	HE 99	-	-	gist974
 	78bd5f036ea35a878b74e4f47941f784	-1	ru	Windows	HE 99	-	-	sev
@@ -571,6 +572,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
 	037385a953789190298494d92b89b3d0	-1	en	Windows	HE 72	Demo	-	khalek, sev
+	a56e8d9d4281c53c3f63c9bd22a59e21	10978342	en	All	HE CUP	Preview	George Kormendi
 	74da3494fbe1a7d20213b0afe0954755	10841544	fr	All	HE CUP	Preview	-	George Kormendi
 	4c4820518e16e1a0e3616a3b021a04f3	10927456	de	All	HE CUP	Preview	-	Kirben
 
@@ -770,6 +772,7 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	08cc5c3eedaf72ebe12734eee94f7fa2	-1	en	All	HE 80	-	-	Kirben
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
+	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
 	2232b0b9411575b1f9961713ebc9de61	-1	es	Windows	HE 80	-	-	exiltd
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
 	8e3241ddd6c8dadf64305e8740d45e13	-1	en	All	HE 100	Updated	-	Kirben
