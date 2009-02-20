@@ -280,7 +280,7 @@ void synth_setnote(int voice, int note, int bend) {
 
 	if (bend < 8192)
 		bend = 8192 - bend;
-	delta = pow(2, (float)(bend % 8192) / 8192.0);
+	delta = pow(2.0, (float)(bend % 8192) / 8192.0);
 
 	if (bend > 8192)
 		fre = (int)(ym3812_note[n] * delta);
