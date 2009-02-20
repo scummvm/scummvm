@@ -164,7 +164,7 @@ sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, int 
 		int resnumber = -1;
 		int i;
 		char *endptr;
-		char *dot = strchr(name.c_str(), '.');
+		const char *dot = strchr(name.c_str(), '.');
 
 		for (i = sci_view; i < sci_invalid_resource; i++) {
 			if (dot != NULL) {

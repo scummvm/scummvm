@@ -380,7 +380,7 @@ int scir_add_appropriate_sources(ResourceManager *mgr) {
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
-		char *dot = strrchr(name.c_str(), '.');
+		const char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
 		scir_add_volume(mgr, map, name.c_str(), number, 0);
