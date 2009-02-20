@@ -35,6 +35,7 @@ my @subs_files = qw(
 	dists/redhat/scummvm.spec
 	dists/scummvm.rc
 	dists/slackware/scummvm.SlackBuild
+	backends/platform/psp/README.PSP
 	);
 
 # The following files also contain version data and should possible be modified
