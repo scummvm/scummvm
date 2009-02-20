@@ -36,9 +36,9 @@ namespace Sci {
 static const PlainGameDescriptor SciGameTitles[] = {
 	{"sci",             "Unknown SCI Game"},
 	{"astrochicken",    "Astro Chicken"},
-	//{"christmas1988",   "1988 Christmas Card"},
-	//{"christmas1990",   "1990 Christmas Card - The Seasoned Professional"},
-	//{"christmas1992",   "1992 Christmas Card"},
+	{"christmas1988",   "Christmas Card 1988"},
+	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
+	{"christmas1992",   "Christmas Card 1992"},
 	{"castlebrain",     "Castle of Dr. Brain"},
 	{"iceman",          "Codename: Iceman"},
 	{"camelot",         "Conquests of Camelot: King Arthur, Quest for the Grail"},
@@ -158,6 +158,42 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
+
+	// Christmas Card 1988 - English DOS
+	{{"christmas1988", "", {
+		{"resource.map", 0, "39485580d34a72997f3d5b3aba4d24f1", 426},
+		{"resource.001", 0, "11391434f41c834090d7a1e9488ce936", 129739},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(0, 0, 294)
+	},
+	
+	// Christmas Card 1990: The Seasoned Professional - English DOS (16 Colors)
+	{{"christmas1990", "16 Colors", {
+		{"resource.map", 0, "8f656714a05b94423ac6eb10ee8797d0", 600},
+		{"resource.001", 0, "acde93e58fca4f7a2a5a220558a94aa8", 272629},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 0, 172)
+	},
+	
+	// Christmas Card 1990: The Seasoned Professional - English DOS (256 Colors)
+	{{"christmas1990", "256 Colors", {
+		{"resource.map", 0, "44b8f45b841b9b5e17e939a35e443988", 600},
+		{"resource.001", 0, "acde93e58fca4f7a2a5a220558a94aa8", 335362},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 0, 174)
+	},
+	
+	// Christmas Card 1992 - English DOS
+	{{"christmas1992", "", {
+		{"resource.map", 0, "f1f8c8a8443f523422af70b4ec85b71c", 318},
+		{"resource.000", 0, "62fb9256f8e7e6e65a6875efdb7939ac", 203396},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 1, 55)
+	},
 
 	// Codename: Iceman - English Amiga (from www.back2roots.org)
 	{{"iceman", "", {
