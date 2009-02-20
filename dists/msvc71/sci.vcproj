@@ -388,9 +388,6 @@
 			<Filter
 				Name="mixer">
 				<File
-					RelativePath="..\..\engines\sci\sfx\mixer\mixers.cpp">
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\sfx\mixer\soft.cpp">
 				</File>
 			</Filter>
