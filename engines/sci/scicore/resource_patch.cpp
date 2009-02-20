@@ -39,7 +39,7 @@ sci1_sprintf_patch_file_name(char *string, resource_t *res) {
 
 /* version-agnostic patch application */
 static void
-process_patch(resource_source_t *source,
+process_patch(ResourceSource *source,
               char *entry, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
 	int fsize;
 	char filename[MAXPATHLEN];
@@ -119,7 +119,7 @@ process_patch(resource_source_t *source,
 
 
 int
-sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p) {
+sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
 	sci_dir_t dir;
 	char *entry;
 	char *caller_cwd = sci_getcwd();
@@ -166,7 +166,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resource_p, i
 }
 
 int
-sci1_read_resource_patches(resource_source_t *source, resource_t **resource_p, int *resource_nr_p) {
+sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
 	sci_dir_t dir;
 	char *entry;
 	char *caller_cwd = sci_getcwd();

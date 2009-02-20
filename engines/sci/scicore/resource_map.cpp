@@ -36,6 +36,57 @@
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
+/* Resource type encoding */
+#define SCI0_B1_RESTYPE_MASK  0xf8
+#define SCI0_B1_RESTYPE_SHIFT 3
+#define SCI0_B3_RESFILE_MASK  0xfc
+#define SCI0_B3_RESFILE_SHIFT 2
+#define SCI01V_B3_RESFILE_MASK  0xf0
+#define SCI01V_B3_RESFILE_SHIFT 4
+
+#define SCI0_RESID_GET_TYPE(bytes) \
+    (((bytes)[1] & SCI0_B1_RESTYPE_MASK) >> SCI0_B1_RESTYPE_SHIFT)
+#define SCI0_RESID_GET_NUMBER(bytes) \
+    ((((bytes)[1] & ~SCI0_B1_RESTYPE_MASK) << 8) | ((bytes)[0]))
+
+#define SCI0_RESFILE_GET_FILE(bytes) \
+    (((bytes)[3] & SCI0_B3_RESFILE_MASK) >> SCI0_B3_RESFILE_SHIFT)
+#define SCI0_RESFILE_GET_OFFSET(bytes) \
+    ((((bytes)[3] & ~SCI0_B3_RESFILE_MASK) << 24) \
+      | (((bytes)[2]) << 16) \
+      | (((bytes)[1]) << 8) \
+      | (((bytes)[0]) << 0))
+
+#define SCI01V_RESFILE_GET_FILE(bytes) \
+    (((bytes)[3] & SCI01V_B3_RESFILE_MASK) >> SCI01V_B3_RESFILE_SHIFT)
+#define SCI01V_RESFILE_GET_OFFSET(bytes) \
+    ((((bytes)[3] & ~SCI01V_B3_RESFILE_MASK) << 24) \
+      | (((bytes)[2]) << 16) \
+      | (((bytes)[1]) << 8) \
+      | (((bytes)[0]) << 0))
+
+#define SCI1_B5_RESFILE_MASK 0xf0
+#define SCI1_B5_RESFILE_SHIFT 4
+
+#define SCI1_RESFILE_GET_FILE(bytes) \
+  (((bytes)[5] & SCI1_B5_RESFILE_MASK) >> SCI1_B5_RESFILE_SHIFT)
+
+#define SCI1_RESFILE_GET_OFFSET(bytes) \
+    ((((bytes)[5] & ~SCI1_B5_RESFILE_MASK) << 24) \
+      | (((bytes)[4]) << 16) \
+      | (((bytes)[3]) << 8) \
+      | (((bytes)[2]) << 0))
+
+#define SCI1_RESFILE_GET_NUMBER(bytes) \
+      ((((bytes)[1]) << 8) \
+      | (((bytes)[0]) << 0))
+
+#define SCI11_RESFILE_GET_OFFSET(bytes) \
+    ((((bytes)[4]) << 17) \
+      | (((bytes)[3]) << 9) \
+      | (((bytes)[2]) << 1))
+
+
 static int
 detect_odd_sci01(int fh) {
 	byte buf[6];
@@ -73,7 +124,7 @@ detect_odd_sci01(int fh) {
 }
 
 static int
-sci_res_read_entry(ResourceManager *mgr, resource_source_t *map,
+sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
                    byte *buf, resource_t *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
 	res->type = SCI0_RESID_GET_TYPE(buf);
@@ -149,7 +200,7 @@ int sci1_parse_header(int fd, int *types, int *lastrt) {
 
 
 int
-sci0_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
 	int fd;
 	resource_t *resources;
@@ -334,7 +385,7 @@ static int sci10_or_11(int *types) {
 }
 
 int
-sci1_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_source_t *vol,
+sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
 	int fd;

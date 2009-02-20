@@ -137,7 +137,7 @@ int resourcecmp(const void *first, const void *second) {
 /*-----------------------------*/
 
 void
-_scir_add_altsource(resource_t *res, resource_source_t *source, unsigned int file_offset) {
+_scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset) {
 	resource_altsource_t *rsrc = (resource_altsource_t*)sci_malloc(sizeof(resource_altsource_t));
 
 	rsrc->next = res->alt_sources;
@@ -159,10 +159,10 @@ _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number) 
 /** Resource source list management **/
 /*-----------------------------------*/
 
-resource_source_t *
+ResourceSource *
 scir_add_external_map(ResourceManager *mgr, char *file_name) {
-	resource_source_t *newsrc = (resource_source_t *)
-	                            malloc(sizeof(resource_source_t));
+	ResourceSource *newsrc = (ResourceSource *)
+	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->sources;
@@ -176,11 +176,11 @@ scir_add_external_map(ResourceManager *mgr, char *file_name) {
 	return newsrc;
 }
 
-resource_source_t *
-scir_add_volume(ResourceManager *mgr, resource_source_t *map, char *filename,
+ResourceSource *
+scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
                 int number, int extended_addressing) {
-	resource_source_t *newsrc = (resource_source_t *)
-	                            malloc(sizeof(resource_source_t));
+	ResourceSource *newsrc = (ResourceSource *)
+	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->sources;
@@ -194,10 +194,10 @@ scir_add_volume(ResourceManager *mgr, resource_source_t *map, char *filename,
 	return 0;
 }
 
-resource_source_t *
+ResourceSource *
 scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
-	resource_source_t *newsrc = (resource_source_t *)
-	                            malloc(sizeof(resource_source_t));
+	ResourceSource *newsrc = (ResourceSource *)
+	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->sources;
@@ -209,9 +209,9 @@ scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
 	return 0;
 }
 
-resource_source_t *
-scir_get_volume(ResourceManager *mgr, resource_source_t *map, int volume_nr) {
-	resource_source_t *seeker = mgr->sources;
+ResourceSource *
+scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
+	ResourceSource *seeker = mgr->sources;
 
 	while (seeker) {
 		if (seeker->source_type == RESSOURCE_TYPE_VOLUME &&
@@ -432,7 +432,7 @@ scir_add_appropriate_sources(ResourceManager *mgr,
 	//char path_separator;
 	sci_dir_t dirent;
 	char *name;
-	resource_source_t *map;
+	ResourceSource *map;
 	int fd;
 	char fullname[MAXPATHLEN];
 
@@ -469,7 +469,7 @@ scir_add_appropriate_sources(ResourceManager *mgr,
 }
 
 static int
-_scir_scan_new_sources(ResourceManager *mgr, int *detected_version, resource_source_t *source) {
+_scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSource *source) {
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
@@ -569,7 +569,7 @@ scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
 }
 
 static void
-_scir_free_resource_sources(resource_source_t *rss) {
+_scir_free_resource_sources(ResourceSource *rss) {
 	if (rss) {
 		_scir_free_resource_sources(rss->next);
 		free(rss);

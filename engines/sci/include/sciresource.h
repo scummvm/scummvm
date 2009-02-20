@@ -142,10 +142,10 @@ typedef struct resource_source_struct {
 	} location;
 	struct resource_source_struct *associated_map;
 	struct resource_source_struct *next;
-} resource_source_t;
+} ResourceSource;
 
 typedef struct _resource_altsource_struct {
-	resource_source_t *source;
+	ResourceSource *source;
 	unsigned int file_offset;
 	struct _resource_altsource_struct *next;
 } resource_altsource_t;
@@ -161,7 +161,7 @@ typedef struct _resource_struct {
 	unsigned int size;
 
 	unsigned int file_offset; /* Offset in file */
-	resource_source_t *source;
+	ResourceSource *source;
 
 	unsigned char status;
 	unsigned short lockers; /* Number of places where this resource was locked */
@@ -178,7 +178,7 @@ typedef struct {
 	int sci_version; /* SCI resource version to use */
 
 	int resources_nr;
-	resource_source_t *sources;
+	ResourceSource *sources;
 	resource_t *resources;
 
 	int memory_locked; /* Amount of resource bytes in locked memory */
@@ -212,7 +212,7 @@ scir_new_resource_manager(char *dir, int version, char allow_patches, int max_me
 ** is exceeded.
 */
 
-resource_source_t *
+ResourceSource *
 scir_add_patch_dir(ResourceManager *mgr, int type, char *path);
 /* Add a path to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
@@ -222,22 +222,22 @@ scir_add_patch_dir(ResourceManager *mgr, int type, char *path);
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-resource_source_t *
-scir_get_volume(ResourceManager *mgr, resource_source_t *map, int volume_nr);
+ResourceSource *
+scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr);
 
-resource_source_t *
-scir_add_volume(ResourceManager *mgr, resource_source_t *map, char *filename,
+ResourceSource *
+scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
                 int number, int extended_addressing);
 /* Add a volume to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
-**             (resource_source_t *) map: The map associated with this volume
+**             (ResourceSource *) map: The map associated with this volume
 **             (char *) filename: The name of the volume to add
 **             (int) extended_addressing: 1 if this volume uses extended addressing,
 **                                        0 otherwise.
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-resource_source_t *
+ResourceSource *
 scir_add_external_map(ResourceManager *mgr, char *file_name);
 /* Add an external (i.e. separate file) map resource to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
@@ -245,7 +245,7 @@ scir_add_external_map(ResourceManager *mgr, char *file_name);
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-resource_source_t *
+ResourceSource *
 scir_add_internal_map(ResourceManager *mgr, resource_t *map);
 /* Add an internal (i.e. a resource) map resource to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
@@ -308,7 +308,7 @@ scir_free_resource_manager(ResourceManager *mgr);
 /**--- Resource map decoding functions ---*/
 
 int
-sci0_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_t **resources, int *resource_nr_p, int *sci_version);
+sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resources, int *resource_nr_p, int *sci_version);
 /* Reads the SCI0 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -322,7 +322,7 @@ sci0_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_t 
 */
 
 int
-sci1_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_source_t *vol,
+sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version);
 /* Reads the SCI1 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
@@ -357,7 +357,7 @@ sci1_sprintf_patch_file_name(char *string, resource_t *res);
 */
 
 int
-sci0_read_resource_patches(resource_source_t *source, resource_t **resources, int *resource_nr_p);
+sci0_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
 /* Reads SCI0 patch files from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -370,7 +370,7 @@ sci0_read_resource_patches(resource_source_t *source, resource_t **resources, in
 */
 
 int
-sci1_read_resource_patches(resource_source_t *source, resource_t **resources, int *resource_nr_p);
+sci1_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
 /* Reads SCI1 patch files from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -462,69 +462,15 @@ _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number);
 */
 
 void
-_scir_add_altsource(resource_t *res, resource_source_t *source, unsigned int file_offset);
+_scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset);
 /* Adds an alternative source to a resource
 ** Parameters: (resource_t *) res: The resource to add to
-**             (resource_source_t *) source: The source of the resource
+**             (ResourceSource *) source: The source of the resource
 **             (unsigned int) file_offset: Offset in the file the resource
 **                            is stored at
-** Retruns   : (void)
+** Returns   : (void)
 */
 
-
-/**** Internal #defines ****/
-
-#define SCI_RESOURCE_FILE_PATCH -1 /* Identifies resources read from patches */
-
-/* Resource type encoding */
-#define SCI0_B1_RESTYPE_MASK  0xf8
-#define SCI0_B1_RESTYPE_SHIFT 3
-#define SCI0_B3_RESFILE_MASK  0xfc
-#define SCI0_B3_RESFILE_SHIFT 2
-#define SCI01V_B3_RESFILE_MASK  0xf0
-#define SCI01V_B3_RESFILE_SHIFT 4
-
-#define SCI0_RESID_GET_TYPE(bytes) \
-    (((bytes)[1] & SCI0_B1_RESTYPE_MASK) >> SCI0_B1_RESTYPE_SHIFT)
-#define SCI0_RESID_GET_NUMBER(bytes) \
-    ((((bytes)[1] & ~SCI0_B1_RESTYPE_MASK) << 8) | ((bytes)[0]))
-
-#define SCI0_RESFILE_GET_FILE(bytes) \
-    (((bytes)[3] & SCI0_B3_RESFILE_MASK) >> SCI0_B3_RESFILE_SHIFT)
-#define SCI0_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[3] & ~SCI0_B3_RESFILE_MASK) << 24) \
-      | (((bytes)[2]) << 16) \
-      | (((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
-
-#define SCI01V_RESFILE_GET_FILE(bytes) \
-    (((bytes)[3] & SCI01V_B3_RESFILE_MASK) >> SCI01V_B3_RESFILE_SHIFT)
-#define SCI01V_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[3] & ~SCI01V_B3_RESFILE_MASK) << 24) \
-      | (((bytes)[2]) << 16) \
-      | (((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
-
-#define SCI1_B5_RESFILE_MASK 0xf0
-#define SCI1_B5_RESFILE_SHIFT 4
-
-#define SCI1_RESFILE_GET_FILE(bytes) \
-  (((bytes)[5] & SCI1_B5_RESFILE_MASK) >> SCI1_B5_RESFILE_SHIFT)
-
-#define SCI1_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[5] & ~SCI1_B5_RESFILE_MASK) << 24) \
-      | (((bytes)[4]) << 16) \
-      | (((bytes)[3]) << 8) \
-      | (((bytes)[2]) << 0))
-
-#define SCI1_RESFILE_GET_NUMBER(bytes) \
-      ((((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
-
-#define SCI11_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[4]) << 17) \
-      | (((bytes)[3]) << 9) \
-      | (((bytes)[2]) << 1))
 
 #endif
 
