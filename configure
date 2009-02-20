@@ -138,7 +138,7 @@ _srcdir=`dirname $0`
 if type mktemp > /dev/null 2>&1 ; then
 	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
 else
-	TMPO=scummvm-conf
+	TMPO=./scummvm-conf
 fi
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
