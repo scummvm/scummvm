@@ -449,7 +449,7 @@ reg_t kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, 0x7fff); // Must not be 0xffff, or some memory calculations will overflow
 
 	default:
-		SCIkwarn(SCIkWARNING, "Unknown MemoryInfo operation: %04x\n", argv[0].offset);
+		warning("Unknown MemoryInfo operation: %04x", argv[0].offset);
 	}
 
 	return NULL_REG;
@@ -457,7 +457,7 @@ reg_t kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	if (funct_nr >= SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR) {
-		SCIkwarn(SCIkSTUB, "Unhandled Unknown function %04x\n", funct_nr);
+		warning("Unhandled Unknown function %04x", funct_nr);
 		return NULL_REG;
 	} else {
 		switch (kfunct_mappers[funct_nr].type) {
@@ -465,7 +465,7 @@ reg_t k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			return kfunct_mappers[funct_nr].sig_pair.fun(s, funct_nr, argc, argv);
 		case KF_NONE:
 		default:
-			SCIkwarn(SCIkSTUB, "Unhandled Unknown function %04x\n", funct_nr);
+			warning("Unhandled Unknown function %04x", funct_nr);
 			return NULL_REG;
 		}
 	}
@@ -557,7 +557,7 @@ reg_t kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 		}
 		default: {
-			SCIkdebug(SCIkWARNING, "Attempt to use unknown GetTime mode %d\n", mode);
+			warning("Attempt to use unknown GetTime mode %d\n", mode);
 			break;
 		}
 		}
@@ -598,12 +598,12 @@ reg_t kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		if (dest && src)
 			memcpy(dest, src, size);
 		else {
-			SCIkdebug(SCIkWARNING, "Warning: Could not execute kMemory:memcpy of %d bytes:\n", size);
+			warning("Warning: Could not execute kMemory:memcpy of %d bytes:", size);
 			if (!dest) {
-				SCIkdebug(SCIkWARNING, "  dest ptr ("PREG") invalid/memory region too small\n", PRINT_REG(argv[1]));
+				warning("  dest ptr ("PREG") invalid/memory region too small", PRINT_REG(argv[1]));
 			}
 			if (!src) {
-				SCIkdebug(SCIkWARNING, "  src ptr ("PREG") invalid/memory region too small\n", PRINT_REG(argv[2]));
+				warning("  src ptr ("PREG") invalid/memory region too small", PRINT_REG(argv[2]));
 			}
 		}
 		break;
@@ -649,7 +649,7 @@ reg_t kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int i;
 
-	SCIkwarn(SCIkWARNING, "Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
+	warning("Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
 
 	for (i = 0; i < argc; i++) {
 		sciprintf(PREG, PRINT_REG(argv[i]));
@@ -663,7 +663,7 @@ reg_t kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNOP(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	const char *problem = (const char*)(s->kfunct_table[funct_nr].orig_name ? "unmapped" : "NOP");
 
-	SCIkwarn(SCIkWARNING, "Warning: Kernel function 0x%02x invoked: %s", funct_nr, problem);
+	warning("Warning: Kernel function 0x%02x invoked: %s", funct_nr, problem);
 
 	if (s->kfunct_table[funct_nr].orig_name && strcmp(s->kfunct_table[funct_nr].orig_name, SCRIPT_UNKNOWN_FUNCTION_STRING)) {
 		sciprintf(" (but its name is known to be %s)", s->kfunct_table[funct_nr].orig_name);

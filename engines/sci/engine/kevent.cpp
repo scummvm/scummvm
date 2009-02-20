@@ -219,6 +219,6 @@ reg_t kLocalToGlobal(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kJoystick(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	SCIkdebug(SCIkSTUB, "Unimplemented syscall 'Joystick()'\n", funct_nr);
+	warning("Unimplemented syscall 'Joystick()");
 	return NULL_REG;
 }

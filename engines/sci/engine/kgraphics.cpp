@@ -88,7 +88,7 @@
 	int val = !!(x); \
 	if (val) { \
 		if (val == GFX_ERROR) \
-			SCIkwarn(SCIkWARNING, "GFX subsystem returned error on \"" #x "\"!\n"); \
+			warning("GFX subsystem returned error on \"" #x "\""); \
 		else {\
 			SCIkwarn(SCIkERROR, "GFX subsystem fatal error condition on \"" #x "\"!\n"); \
 			vm_handle_fatal_error(s, __LINE__, __FILE__); \
@@ -164,13 +164,13 @@ int _find_priority_band(state_t *s, int nr) {
 		if (nr == 15)
 			return 0xffff;
 		else {
-			SCIkwarn(SCIkWARNING, "Attempt to get priority band %d\n", nr);
+			warning("Attempt to get priority band %d", nr);
 		}
 		return 0;
 	}
 
 	if (s->version < SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 15)) {
-		SCIkwarn(SCIkWARNING, "Attempt to get priority band %d\n", nr);
+		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
 
@@ -204,14 +204,14 @@ void graph_restore_box(state_t *s, reg_t handle) {
 	int port_nr = s->port->ID;
 
 	if (!handle.segment) {
-		SCIkwarn(SCIkWARNING, "Attempt to restore box with zero handle\n");
+		warning("Attempt to restore box with zero handle");
 		return;
 	}
 
 	ptr = (gfxw_snapshot_t **) kmem(s, handle);
 
 	if (!ptr) {
-		SCIkwarn(SCIkWARNING, "Attempt to restore invalid handle %04x\n", handle);
+		warning("Attempt to restore invalid handle %04x", handle);
 		return;
 	}
 
@@ -418,7 +418,7 @@ reg_t kShow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 	default:
-		SCIkwarn(SCIkWARNING, "Show(%x) selects unknown map\n", s->pic_visible_map);
+		warning("Show(%x) selects unknown map", s->pic_visible_map);
 
 	}
 
@@ -599,7 +599,7 @@ reg_t kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	default:
 
-		SCIkdebug(SCIkSTUB, "Unhandled Graph() operation %04x\n", SKPV(0));
+		warning("Unhandled Graph() operation %04x", SKPV(0));
 
 	}
 
@@ -846,7 +846,7 @@ reg_t kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv) {
 			SCIkdebug(SCIkBRESEN, "  comparing against "PREG"\n", PRINT_REG(other_obj));
 
 			if (!is_object(s, other_obj)) {
-				SCIkdebug(SCIkWARNING, "CanBeHere() cliplist contains non-object %04x\n", other_obj);
+				warning("CanBeHere() cliplist contains non-object %04x", other_obj);
 			} else if (!REG_EQ(other_obj, obj)) { // Clipping against yourself is not recommended
 
 				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, funct_nr, argc, argv)) {
@@ -897,7 +897,7 @@ reg_t kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point offset;
 
 	if (argc != 3) {
-		SCIkwarn(SCIkWARNING, "CelHigh called with %d parameters!\n", argc);
+		warning("CelHigh called with %d parameters", argc);
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
@@ -915,7 +915,7 @@ reg_t kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point offset;
 
 	if (argc != 3) {
-		SCIkwarn(SCIkWARNING, "CelHigh called with %d parameters!\n", argc);
+		warning("CelHigh called with %d parameters", argc);
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
@@ -1296,7 +1296,7 @@ reg_t kPalette(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	case 6 :
 		break;
 	default :
-		SCIkdebug(SCIkWARNING, "Unimplemented subfunction: %d\n", UKPV(0));
+		warning("Unimplemented subfunction: %d", UKPV(0));
 	}
 
 	return s->r_acc;
@@ -1380,7 +1380,7 @@ reg_t kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 				int textlen;
 
 				if (!text) {
-					SCIkdebug(SCIkWARNING, "Could not draw control: "PREG" does not reference text!\n", PRINT_REG(text_pos));
+					warning("Could not draw control: "PREG" does not reference text", PRINT_REG(text_pos));
 					return s->r_acc;
 				}
 
@@ -1527,7 +1527,7 @@ reg_t kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 		default:
-			SCIkwarn(SCIkWARNING, "Attempt to edit control type %d\n", ct_type);
+			warning("Attempt to edit control type %d", ct_type);
 		}
 	}
 
@@ -1643,7 +1643,7 @@ static void _k_draw_control(state_t *s, reg_t obj, int inverse) {
 		break;
 
 	default:
-		SCIkwarn(SCIkWARNING, "Unknown control type: %d at "PREG", at (%d, %d) size %d x %d\n",
+		warning("Unknown control type: %d at "PREG", at (%d, %d) size %d x %d",
 		         type, PRINT_REG(obj), x, y, xl, yl);
 	}
 
@@ -1673,7 +1673,7 @@ static inline void draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view) {
 	reg_t obj = make_reg(view->ID, view->subID);
 
 	if (!is_object(s, obj))
-		SCIkwarn(SCIkWARNING, "View %d does not contain valid object reference "PREG"\n", view->ID, PRINT_REG(obj));
+		warning("View %d does not contain valid object reference "PREG"", view->ID, PRINT_REG(obj));
 
 	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		abs_rect_t abs_zone = get_nsrect(s, make_reg(view->ID, view->subID), 1);
@@ -1793,7 +1793,7 @@ int _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 							if (!kfree(s, mem_handle)) {
 								*((reg_t*)(widget->under_bitsp)) = make_reg(0, widget->under_bits = 0);
 							} else {
-								SCIkwarn(SCIkWARNING, "Treating viewobj "PREG" as no longer present\n", PRINT_REG(obj));
+								warning("Treating viewobj "PREG" as no longer present", PRINT_REG(obj));
 								obj = NULL_REG;
 							}
 						}
@@ -1801,9 +1801,9 @@ int _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 
 				if (is_object(s, obj)) {
 					if (invoke_selector(INV_SEL(obj, delete_, 1), 0))
-						SCIkwarn(SCIkWARNING, "Object at "PREG" requested deletion, but does not have a delete funcselector\n", PRINT_REG(obj));
+						warning("Object at "PREG" requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
 					if (_k_animate_ran) {
-						SCIkwarn(SCIkWARNING, "Object at "PREG" invoked kAnimate() during deletion!\n", PRINT_REG(obj));
+						warning("Object at "PREG" invoked kAnimate() during deletion", PRINT_REG(obj));
 						return dropped;
 					}
 
@@ -1923,7 +1923,7 @@ static gfxw_dyn_view_t *_k_make_dynview_obj(state_t *s, reg_t obj, int options, 
 
 		return widget;
 	} else {
-		SCIkwarn(SCIkWARNING, "Could not generate dynview widget for %d/%d/%d\n", view_nr, loop, cel);
+		warning("Could not generate dynview widget for %d/%d/%d", view_nr, loop, cel);
 		return NULL;
 	}
 }
@@ -2278,7 +2278,7 @@ reg_t kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		list_t *list;
 
 		if (!list_ref.segment) {
-			SCIkdebug(SCIkWARNING, "Attempt to AddToPic single non-list: "PREG"\n", PRINT_REG(list_ref));
+			warning("Attempt to AddToPic single non-list: "PREG"", PRINT_REG(list_ref));
 			return s->r_acc;
 		}
 
@@ -2923,7 +2923,7 @@ static void animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv
 
 	default:
 		if (s->pic_animate != K_ANIMATE_OPEN_SIMPLE)
-			SCIkwarn(SCIkWARNING, "Unknown opening animation 0x%02x\n", s->pic_animate);
+			warning("Unknown opening animation 0x%02x", s->pic_animate);
 		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 
 	}
@@ -3155,7 +3155,7 @@ reg_t kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 					if (temp == -1)
 						color0 = transparent;
 					else
-						SCIkwarn(SCIkWARNING, "Display: Attempt to set invalid fg color %d\n", temp);
+						warning("Display: Attempt to set invalid fg color %d", temp);
 			break;
 
 		case K_DISPLAY_SET_BGCOLOR:
@@ -3172,7 +3172,7 @@ reg_t kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 					if (temp == -1)
 						bg_color = transparent;
 					else
-						SCIkwarn(SCIkWARNING, "Display: Attempt to set invalid fg color %d\n", temp);
+						warning("Display: Attempt to set invalid fg color %d", temp);
 			break;
 
 		case K_DISPLAY_SET_GRAYTEXT:

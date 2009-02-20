@@ -139,7 +139,24 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	//printf("%s\n", _gameDataPath.c_str());
 
 	// Set up the engine specific debug levels
-	//Common::addSpecialDebugLevel(SCI_DEBUG_RESOURCES, "resources", "Debug the resources loading");
+	Common::addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
+	Common::addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
+	Common::addDebugChannel(kDebugLevelGraphics, "Graphics", "Graphics debugging");
+	Common::addDebugChannel(kDebugLevelStrings, "Strings", "Strings debugging");
+	Common::addDebugChannel(kDebugLevelMem, "Memory", "Memory debugging");
+	Common::addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
+	Common::addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
+	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
+	Common::addDebugChannel(kDebugLevelGfxDriver, "Gfxdriver", "Gfx driver debugging");
+	Common::addDebugChannel(kDebugLevelBaseSetter, "Base", "Base Setter debugging");
+	Common::addDebugChannel(kDebugLevelParser, "Parser", "Parser debugging");
+	Common::addDebugChannel(kDebugLevelMenu, "Menu", "Menu handling debugging");
+	Common::addDebugChannel(kDebugLevelSaid, "Said", "Said specs debugging");
+	Common::addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
+	Common::addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
+	Common::addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
+	Common::addDebugChannel(kDebugLevelEmu, "Emu", "Alternate emulation debugging");
+	Common::addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
 
 	printf("SciEngine::SciEngine\n");
 }

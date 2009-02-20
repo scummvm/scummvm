@@ -98,7 +98,7 @@ script_set_priority(state_t *s, reg_t obj, int priority) {
 		if (song->data[0] == 0xf0)
 			priority = song->data[1];
 		else
-			SCIkdebug(SCIkWARNING, "Attempt to unset song priority when there is no built-in value!\n");
+			warning("Attempt to unset song priority when there is no built-in value");
 
 		flags &= ~SCI1_SOUND_FLAG_SCRIPTED_PRI;
 	} else flags |= SCI1_SOUND_FLAG_SCRIPTED_PRI;
@@ -131,7 +131,7 @@ process_sound_events(state_t *s) { /* Get all sound events, apply their changes 
 	while ((result = sfx_poll(&s->sound, &handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);
 		if (!is_object(s, obj)) {
-			SCIkdebug(SCIkWARNING, "Non-object "PREG" received sound signal (%d/%d)\n", PRINT_REG(obj), result, cue);
+			warning("Non-object "PREG" received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
 			return;
 		}
 
@@ -351,7 +351,7 @@ kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 	default:
-		SCIkwarn(SCIkWARNING, "Unhandled DoSound command: %x\n", command);
+		warning("Unhandled DoSound command: %x", command);
 
 	}
 	//	process_sound_events(s); /* Take care of incoming events */

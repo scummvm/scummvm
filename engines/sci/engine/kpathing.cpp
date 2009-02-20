@@ -252,7 +252,7 @@ static void draw_input(state_t *s, reg_t poly_list, Common::Point start, Common:
 	list = LOOKUP_LIST(poly_list);
 
 	if (!list) {
-		SCIkwarn(SCIkWARNING, "Could not obtain polygon list\n");
+		warning("Could not obtain polygon list");
 		return;
 	}
 
@@ -298,7 +298,7 @@ static void print_input(state_t *s, reg_t poly_list, Common::Point start, Common
 	list = LOOKUP_LIST(poly_list);
 
 	if (!list) {
-		SCIkwarn(SCIkWARNING, "Could not obtain polygon list\n");
+		warning("Could not obtain polygon list");
 		return;
 	}
 
@@ -1522,7 +1522,7 @@ reg_t kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	default:
-		SCIkwarn(SCIkWARNING, "Unknown AvoidPath subfunction %d\n",
+		warning("Unknown AvoidPath subfunction %d",
 		         argc);
 		return NULL_REG;
 		break;

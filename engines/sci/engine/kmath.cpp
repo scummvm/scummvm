@@ -124,7 +124,7 @@ reg_t kCosDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	double cosval = cos(angle * PI / 180.0);
 
 	if ((cosval < 0.0001) && (cosval > 0.0001)) {
-		SCIkwarn(SCIkWARNING, "Attepted division by zero\n");
+		warning("Attepted division by zero");
 		return make_reg(0, (gint16)0x8000);
 	} else
 		return make_reg(0, (gint16)(value / cosval));
@@ -136,7 +136,7 @@ reg_t kSinDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	double sinval = sin(angle * PI / 180.0);
 
 	if ((sinval < 0.0001) && (sinval > 0.0001)) {
-		SCIkwarn(SCIkWARNING, "Attepted division by zero\n");
+		warning("Attepted division by zero");
 		return make_reg(0, (gint16)0x8000);
 	} else
 		return make_reg(0, (gint16)(value / sinval));
@@ -148,7 +148,7 @@ reg_t kTimesTan(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	param -= 90;
 	if ((param % 90) == 0) {
-		SCIkwarn(SCIkWARNING, "Attempted tan(pi/2)");
+		warning("Attempted tan(pi/2)");
 		return make_reg(0, (gint16)0x8000);
 	} else
 		return make_reg(0, (gint16) - (tan(param * PI / 180.0) * scale));
@@ -159,7 +159,7 @@ reg_t kTimesCot(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int scale = SKPV_OR_ALT(1, 1);
 
 	if ((param % 90) == 0) {
-		SCIkwarn(SCIkWARNING, "Attempted tan(pi/2)");
+		warning("Attempted tan(pi/2)");
 		return make_reg(0, (gint16)0x8000);
 	} else
 		return make_reg(0, (gint16)(tan(param * PI / 180.0) * scale));

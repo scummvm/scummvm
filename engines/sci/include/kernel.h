@@ -27,6 +27,7 @@
 #define _SCI_KERNEL_H_
 
 #include "common/scummsys.h"
+#include "common/debug.h"
 
 #include "sci/include/kdebug.h"
 #include "sci/include/uinput.h"
@@ -112,12 +113,6 @@ kernel_lookup_text(struct _state *s, reg_t address, int index);
 
 /******************** Debug functionality ********************/
 #define KERNEL_OOPS(reason) kernel_oops(s, __FILE__, __LINE__, reason)
-
-/* Non-fatal assertion */
-#define SCIkASSERT(a) if (!(a)) { \
-  SCIkwarn(SCIkERROR, "Assertion " #a " failed in " __FILE__ " line %d\n", __LINE__); \
-  return; \
-}
 
 #ifdef SCI_KERNEL_DEBUG
 

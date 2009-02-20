@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug.h"
 
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
@@ -739,7 +740,7 @@ run_vm(state_t *s, int restoring) {
 			scr = script_locate_by_segment(s, xs->addr.pc.segment);
 			if (!scr) {
 				/* No script? Implicit return via fake instruction buffer */
-				SCIkdebug(SCIkWARNING, "Running on non-existant script in segment %x!\n", xs->addr.pc.segment);
+				warning("Running on non-existant script in segment %x!\n", xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = 2;
@@ -760,7 +761,7 @@ run_vm(state_t *s, int restoring) {
 
 				local_script = script_locate_by_segment(s, xs->local_segment);
 				if (!local_script) {
-					SCIkdebug(SCIkWARNING, "Could not find local script from segment %x!\n", xs->local_segment);
+					warning("Could not find local script from segment %x", xs->local_segment);
 					local_script = NULL;
 					variables_base[VAR_LOCAL] = variables[VAR_LOCAL] = NULL;
 #ifndef DISABLE_VALIDATIONS

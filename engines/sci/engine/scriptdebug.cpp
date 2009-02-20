@@ -2525,7 +2525,6 @@ c_handle_config_update(const generic_config_flag_t *flags, int flags_nr,
 }
 
 const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
-	{"Stubs", 'u', (1 << SCIkSTUB_NR)},
 	{"Lists and nodes", 'l', (1 << 1)},
 	{"Graphics", 'g', (1 << 2)},
 	{"Character handling", 'c', (1 << 3)},

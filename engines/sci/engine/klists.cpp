@@ -346,7 +346,7 @@ reg_t kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (argc != 3) {
-		SCIkdebug(SCIkWARNING, "Aborting.\n");
+		warning("kAddAfter: Haven't got 3 arguments, aborting");
 		return NULL_REG;
 	}
 

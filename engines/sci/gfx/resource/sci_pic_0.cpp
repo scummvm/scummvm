@@ -132,7 +132,7 @@ gfxr_init_static_palette() {
 			gfx_sci0_pic_colors[i].b = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].b,
 			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].b);
 		}
-		//WARNING("Uncomment me after fixing sci0_palette changes to reset me");
+		//warning("Uncomment me after fixing sci0_palette changes to reset me");
 		/*  _gfxr_pic0_colors_initialized = 1; */
 	}
 }
@@ -1873,7 +1873,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 
 		case PIC_OP_TERMINATE:
 			p0printf("Terminator\n");
-			/* WARNING( "ARTIFACT REMOVAL CODE is commented out!") */
+			/* warning( "ARTIFACT REMOVAL CODE is commented out!") */
 			/* _gfxr_vismap_remove_artifacts(); */
 			return;
 

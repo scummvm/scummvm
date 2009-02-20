@@ -40,14 +40,14 @@ void write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t valu
 	reg_t *address;
 
 	if ((selector_id < 0) || (selector_id > s->selector_names_nr)) {
-		SCIkwarn(SCIkWARNING, "Attempt to write to invalid selector %d of"
-		         " object at "PREG" (%s L%d).\n", selector_id, PRINT_REG(object), fname, line);
+		warning("Attempt to write to invalid selector %d of"
+		         " object at "PREG" (%s L%d).", selector_id, PRINT_REG(object), fname, line);
 		return;
 	}
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
-		SCIkwarn(SCIkWARNING, "Selector '%s' of object at %04x could not be"
-		         " written to (%s L%d)\n", s->selector_names[selector_id], object, fname, line);
+		warning("Selector '%s' of object at %04x could not be"
+		         " written to (%s L%d)", s->selector_names[selector_id], object, fname, line);
 	else
 		*address = value;
 }
@@ -209,7 +209,7 @@ reg_t kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	underBits = GET_SEL32V(victim_addr, underBits);
 	if (underBits) {
-		SCIkwarn(SCIkWARNING, "Clone "PREG" was cleared with underBits set\n", PRINT_REG(victim_addr));
+		warning("Clone "PREG" was cleared with underBits set", PRINT_REG(victim_addr));
 	}
 #if 0
 	if (s->dyn_views) {  // Free any widget associated with the clone

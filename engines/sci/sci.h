@@ -32,9 +32,25 @@
 namespace Sci {
 
 // our engine debug levels
-enum {
-	SCI_DEBUG_RESOURCES = 1 << 0,
-	SCI_DEBUG_todo = 1 << 1
+enum kDebugLevels {
+	kDebugLevelError      = 1 << 0,
+	kDebugLevelNodes      = 1 << 1,
+	kDebugLevelGraphics   = 1 << 2,
+	kDebugLevelStrings    = 1 << 3,
+	kDebugLevelMem        = 1 << 4,
+	kDebugLevelFuncCheck  = 1 << 5,
+	kDebugLevelBresen     = 1 << 6,
+	kDebugLevelSound      = 1 << 7,
+	kDebugLevelGfxDriver  = 1 << 8,
+	kDebugLevelBaseSetter = 1 << 9,
+	kDebugLevelParser     = 1 << 10,
+	kDebugLevelMenu       = 1 << 11,
+	kDebugLevelSaid       = 1 << 12,
+	kDebugLevelFile       = 1 << 13,
+	kDebugLevelTime       = 1 << 14,
+	kDebugLevelRoom       = 1 << 15,
+	kDebugLevelEmu        = 1 << 16,
+	kDebugLevelAvoidPath  = 1 << 17
 };
 
 struct GameFlags {

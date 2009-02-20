@@ -298,6 +298,4 @@ sci_sched_yield(void);
 #  define BREAKPOINT() { fprintf(stderr, "Missed breakpoint in %s, line %d\n", __FILE__, __LINE__); *((int *) NULL) = 42; }
 #endif  /* !BREAKPOINT() */
 
-#define WARNING(foo) {char i; i = 500;}
-
 #endif

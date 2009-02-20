@@ -257,13 +257,13 @@ static void bresenham_autodetect(state_t *s) {
 		byte *buf;
 
 		if (obj == NULL) {
-			SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
+			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
 		}
 
 		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != SELECTOR_METHOD) {
-			SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
+			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
 		}
@@ -272,7 +272,7 @@ static void bresenham_autodetect(state_t *s) {
 		handle_movecnt = (SCI_VERSION_MAJOR(s->version) == 0 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		sciprintf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
-		SCIkwarn(SCIkWARNING, "bresenham_autodetect failed!");
+		warning("bresenham_autodetect failed");
 		handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 	}
 }
@@ -396,14 +396,14 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, -1);
 
 	if (!is_heap_object(s, avoider)) {
-		SCIkwarn(SCIkWARNING, "DoAvoider() where avoider "PREG" is not an object\n", PRINT_REG(avoider));
+		warning("DoAvoider() where avoider "PREG" is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = GET_SEL32(avoider, client);
 
 	if (!is_heap_object(s, client)) {
-		SCIkwarn(SCIkWARNING, "DoAvoider() where client "PREG" is not an object\n", PRINT_REG(client));
+		warning("DoAvoider() where client "PREG" is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
@@ -412,7 +412,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!is_heap_object(s, mover)) {
 		if (mover.segment) {
-			SCIkwarn(SCIkWARNING, "DoAvoider() where mover "PREG" is not an object\n", PRINT_REG(mover));
+			warning("DoAvoider() where mover "PREG" is not an object", PRINT_REG(mover));
 		}
 		return s->r_acc;
 	}
@@ -484,7 +484,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 				angle -= 360;
 		}
 
-		SCIkwarn(SCIkWARNING, "DoAvoider failed for avoider "PREG"\n", PRINT_REG(avoider));
+		warning("DoAvoider failed for avoider "PREG"", PRINT_REG(avoider));
 	} else {
 		int heading = GET_SEL32V(client, heading);
 

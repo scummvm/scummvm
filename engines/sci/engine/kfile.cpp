@@ -511,7 +511,7 @@ reg_t kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	while (IS_VALID_FD(fd = open(testpath, O_RDONLY))) {
 		close(fd);
 		if (testpath[pathlen - 2] == 'z') { // Failed.
-			SCIkwarn(SCIkWARNING, "Failed to find non-existing file for free space test\n");
+			warning("Failed to find non-existing file for free space test");
 			free(testpath);
 			return NULL_REG;
 		}
@@ -530,8 +530,8 @@ reg_t kCheckFreeSpace(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	fd = creat(testpath, 0600);
 
 	if (!IS_VALID_FD(fd)) {
-		SCIkwarn(SCIkWARNING, "Could not test for disk space: %s\n", strerror(errno));
-		SCIkwarn(SCIkWARNING, "Test path was '%s'\n", testpath);
+		warning("Could not test for disk space: %s", strerror(errno));
+		warning("Test path was '%s'", testpath);
 		free(testpath);
 		return NULL_REG;
 	}
@@ -674,7 +674,7 @@ reg_t kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 		strcpy(game_id_file_name, game_id);
 		strcat(game_id_file_name, FREESCI_ID_SUFFIX);
-		SCIkwarn(SCIkWARNING, "Savegame index list not initialized!\n");
+		warning("Savegame index list not initialized");
 		update_savegame_indices(game_id_file_name);
 	}
 
@@ -832,7 +832,7 @@ reg_t kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 		strcpy(game_id_file_name, game_id);
 		strcat(game_id_file_name, FREESCI_ID_SUFFIX);
-		SCIkwarn(SCIkWARNING, "Savegame index list not initialized!\n");
+		warning("Savegame index list not initialized");
 		update_savegame_indices(game_id_file_name);
 	}
 

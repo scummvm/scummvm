@@ -124,7 +124,7 @@ kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	said_block = (byte *) kernel_dereference_bulk_pointer(s, heap_said_block, 0);
 
 	if (!said_block) {
-		SCIkdebug(SCIkWARNING, "Said on non-string, pointer "PREG"\n", PRINT_REG(heap_said_block));
+		warning("Said on non-string, pointer "PREG"", PRINT_REG(heap_said_block));
 		return NULL_REG;
 	}
 
@@ -235,7 +235,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 						synpos++;
 					}
-			} else SCIkwarn(SCIkWARNING, "Synonyms of script.%03d were requested, but script is not available\n");
+			} else warning("Synonyms of script.%03d were requested, but script is not available");
 
 		}
 
@@ -379,12 +379,12 @@ kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *src = (char *) kernel_dereference_bulk_pointer(s, argv[1], 0);
 
 	if (!dest) {
-		SCIkdebug(SCIkWARNING, "Attempt to strcpy TO invalid pointer "PREG"!\n",
+		warning("Attempt to strcpy TO invalid pointer "PREG"",
 		          PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 	if (!src) {
-		SCIkdebug(SCIkWARNING, "Attempt to strcpy FROM invalid pointer "PREG"!\n",
+		warning("Attempt to strcpy FROM invalid pointer "PREG"",
 		          PRINT_REG(argv[1]));
 		return NULL_REG;
 	}
@@ -399,7 +399,7 @@ kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv) {
 				reg_t *srcp = (reg_t *) src;
 
 				int i;
-				SCIkdebug(SCIkWARNING, "Performing reg_t to raw conversion for AvoidPath\n");
+				warning("Performing reg_t to raw conversion for AvoidPath");
 				for (i = 0; i < -length / 2; i++) {
 					dest[2 * i] = srcp->offset & 0xff;
 					dest[2 * i + 1] = srcp->offset >> 8;
@@ -421,7 +421,7 @@ kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t *dest2;
 
 	if (!dest) {
-		SCIkdebug(SCIkWARNING, "Attempt to StrAt at invalid pointer "PREG"!\n",
+		warning("Attempt to StrAt at invalid pointer "PREG"",
 		          PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
