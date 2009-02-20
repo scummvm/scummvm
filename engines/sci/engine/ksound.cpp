@@ -938,14 +938,14 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			fprintf(stderr, "[CUE] "PREG" Absolute Cue: %d\n",
+			error("[CUE] "PREG" Absolute Cue: %d\n",
 			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
-			fprintf(stderr, "[CUE] "PREG" Relative Cue: %d\n",
+			error("[CUE] "PREG" Relative Cue: %d\n",
 			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);

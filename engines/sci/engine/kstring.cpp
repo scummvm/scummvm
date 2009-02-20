@@ -31,7 +31,7 @@
 
 #define CHECK_OVERFLOW1(pt, size, rv) \
 	if (((pt) - (str_base)) + (size) > maxsize) { \
-		SCIkwarn(SCIkERROR, "String expansion exceeded heap boundaries\n"); \
+		error("String expansion exceeded heap boundaries\n"); \
 		return rv;\
 	}
 
@@ -50,7 +50,7 @@ kernel_lookup_text(state_t *s, reg_t address, int index)
 		textres = scir_find_resource(s->resmgr, sci_text, address.offset, 0);
 
 		if (!textres) {
-			SCIkwarn(SCIkERROR, "text.%03d not found\n", address);
+			error("text.%03d not found\n", address);
 			return NULL; /* Will probably segfault */
 		}
 
@@ -63,7 +63,7 @@ kernel_lookup_text(state_t *s, reg_t address, int index)
 		if (textlen)
 			return seeker;
 		else {
-			SCIkwarn(SCIkERROR, "Index %d out of bounds in text.%03d\n", _index, address);
+			error("Index %d out of bounds in text.%03d\n", _index, address);
 			return 0;
 		}
 
@@ -224,7 +224,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
 				          synonyms_nr, script);
 
 				if (synonyms_nr > 16384) {
-					SCIkwarn(SCIkERROR, "Segtable corruption: script.%03d has %d synonyms!\n",
+					error("Segtable corruption: script.%03d has %d synonyms",
 					         script, synonyms_nr);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
@@ -708,7 +708,7 @@ kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 
 	if (!textres) {
-		SCIkwarn(SCIkERROR, "text.%d does not exist\n", UKPV(0));
+		error("text.%d does not exist\n", UKPV(0));
 		return NULL_REG;
 	}
 

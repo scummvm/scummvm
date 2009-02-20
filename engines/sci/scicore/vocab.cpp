@@ -82,14 +82,14 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	vocab_version = 0;
 
 	if (!resource) {
-		fprintf(stderr, "SCI0: Could not find a main vocabulary, trying SCI01.\n");
+		error("SCI0: Could not find a main vocabulary, trying SCI01.\n");
 		resource = scir_find_resource(resmgr, sci_vocab,
 		                              VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
 		vocab_version = 1;
 	}
 
 	if (!resource) {
-		fprintf(stderr, "SCI1: Could not find a main vocabulary!\n");
+		error("SCI1: Could not find a main vocabulary");
 		return NULL; /* NOT critical: SCI1 games and some demos don't have one! */
 	}
 
@@ -99,7 +99,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 		seeker = 26 * 2; /* vocab.000 starts with 26 16-bit pointers which we don't use */
 
 	if (resource->size < seeker) {
-		fprintf(stderr, "Invalid main vocabulary encountered: Too small\n");
+		error("Invalid main vocabulary encountered: Too small\n");
 		return NULL;
 		/* Now this ought to be critical, but it'll just cause parse() and said() not to work */
 	}
@@ -122,7 +122,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 				currentword[currentwordpos++] = c;
 			}
 			if (seeker == resource->size) {
-				fprintf(stderr, "SCI1: Vocabulary not usable, disabling.\n");
+				error("SCI1: Vocabulary not usable, disabling.\n");
 				vocab_free_words(words, counter);
 				return NULL;
 			}
@@ -197,7 +197,7 @@ vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	unsigned int seeker = 1;
 
 	if (!resource) {
-		fprintf(stderr, "Could not find suffix vocabulary!\n");
+		error("Could not find suffix vocabulary");
 		return NULL; /* Not critical */
 	}
 
@@ -269,14 +269,14 @@ vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
 	int i;
 
 	if (!resource) {
-		fprintf(stderr, "No parser tree data found!\n");
+		error("No parser tree data found");
 		return NULL;
 	}
 
 	*branches_nr = resource->size / 20;
 
 	if (*branches_nr == 0) {
-		fprintf(stderr, "Parser tree data is empty!\n");
+		error("Parser tree data is empty");
 		return NULL;
 	}
 

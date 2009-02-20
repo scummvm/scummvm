@@ -116,7 +116,7 @@ heap_ptr heap_allocate(heap_t *h, int size) {
 	unsigned int current = previous;
 
 	if (!size) {
-		fprintf(stderr, "Warning: heap_alloc'd zero bytes!\n");
+		error("Warning: heap_alloc'd zero bytes");
 		size += 2;
 	}
 

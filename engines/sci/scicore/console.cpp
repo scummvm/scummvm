@@ -50,12 +50,12 @@ sciprintf(const char *fmt, ...) {
 	char *buf 	= (char *) sci_malloc(bufsize);
 
 	if (NULL == fmt) {
-		fprintf(stderr, "console.c: sciprintf(): NULL passed for parameter fmt\n");
+		error("console.c: sciprintf(): NULL passed for parameter fmt\n");
 		return -1;
 	}
 
 	if (NULL == buf) {
-		fprintf(stderr, "console.c: sciprintf(): malloc failed for buf\n");
+		error("console.c: sciprintf(): malloc failed for buf\n");
 		return -1;
 	}
 
@@ -116,7 +116,7 @@ open_console_file(char *filename) {
 		fclose(con_file);
 
 	if (NULL == filename) {
-		fprintf(stderr, "console.c: open_console_file(): NULL passed for parameter filename\r\n");
+		error("console.c: open_console_file(): NULL passed for parameter filename\r\n");
 	}
 #ifdef WIN32
 	con_file = fopen(filename, "wt");
@@ -125,7 +125,7 @@ open_console_file(char *filename) {
 #endif
 
 	if (NULL == con_file)
-		fprintf(stderr, "console.c: open_console_file(): Could not open output file %s\n", filename);
+		error("console.c: open_console_file(): Could not open output file %s\n", filename);
 
 }
 

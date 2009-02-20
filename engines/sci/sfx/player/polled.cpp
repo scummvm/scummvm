@@ -25,11 +25,12 @@
 
 /* Polled player, mostly for PCM-based thingies (which _can_ poll, after all) */
 
+#include "common/file.h"
+#include "common/util.h"
+
 #include "sci/include/sfx_player.h"
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
-
-#include "common/file.h"
 
 static song_iterator_t *play_it;
 static int play_paused = 0;
@@ -237,7 +238,7 @@ pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 
 static int
 pp_fade_out(void) {
-	fprintf(stderr, __FILE__": Attempt to fade out- not implemented yet\n");
+	warning(__FILE__": Attempt to fade out- not implemented yet\n");
 	return SFX_ERROR;
 }
 
@@ -246,7 +247,7 @@ pp_stop(void) {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
-	fprintf(stderr, "[play] Now stopping it %p\n", (void *)it);
+	warning("[play] Now stopping it %p\n", (void *)it);
 	if (it)
 		songit_free(it);
 

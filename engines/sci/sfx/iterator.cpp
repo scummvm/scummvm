@@ -25,6 +25,8 @@
 
 /* Song iterators */
 
+#include "common/util.h"
+
 #include <stdio.h>
 #include "sci/include/sfx_iterator_internal.h"
 #include "sci/include/sfx_player.h"
@@ -41,9 +43,9 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 void
 print_tabs_id(int nr, songit_id_t id) {
 	while (nr-- > 0)
-		fprintf(stderr, "\t");
+		error("\t");
 
-	fprintf(stderr, "[%08lx] ", id);
+	error("[%08lx] ", id);
 }
 
 #ifndef HAVE_MEMCHR
@@ -85,14 +87,14 @@ _common_init(base_song_iterator_t *self) {
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
 	if (offset > self->size) { \
-		fprintf(stderr, SIPFX "Reached end of song without terminator (%x/%x) at %d!\n", offset, self->size, __LINE__); \
+		error(SIPFX "Reached end of song without terminator (%x/%x) at %d", offset, self->size, __LINE__); \
 		return SI_FINISHED; \
 	}
 
 #define CHECK_FOR_END(offset_augment) \
 	if ((channel->offset + (offset_augment)) > channel->end) { \
 		channel->state = SI_STATE_FINISHED; \
-		fprintf(stderr, SIPFX "Reached end of track %d without terminator (%x+%x/%x) at %d!\n", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
+		error(SIPFX "Reached end of track %d without terminator (%x+%x/%x) at %d", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -170,7 +172,7 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 	}
 
 	if (cmd == 0xfe) {
-		fprintf(stderr, "song iterator subsystem: Corrupted sound resource detected.\n");
+		error("song iterator subsystem: Corrupted sound resource detected.\n");
 		return SI_FINISHED;
 	}
 
@@ -181,9 +183,9 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 
 #if 0
 	if (1) {
-		fprintf(stderr, "[IT]: off=%x, cmd=%02x, takes %d args ",
+		error("[IT]: off=%x, cmd=%02x, takes %d args ",
 		        channel->offset - 1, cmd, paramsleft);
-		fprintf(stderr, "[%02x %02x <%02x> %02x %02x %02x]\n",
+		error("[%02x %02x <%02x> %02x %02x %02x]\n",
 		        self->data[channel->offset-3],
 		        self->data[channel->offset-2],
 		        self->data[channel->offset-1],
@@ -221,19 +223,19 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 	if (cmd == SCI_MIDI_EOT) {
 		/* End of track? */
 		_reset_synth_channels(self, channel);
-		/*		fprintf(stderr, "eot; loops = %d, notesplayed=%d\n", self->loops, channel->notes_played);*/
+		/*		error("eot; loops = %d, notesplayed=%d\n", self->loops, channel->notes_played);*/
 		if (self->loops > 1 /* && channel->notes_played*/) {
 			/* If allowed, decrement the number of loops */
 			if (!(flags & PARSE_FLAG_LOOPS_UNLIMITED))
 				*result = --self->loops;
 
 #ifdef DEBUG_DECODING
-			fprintf(stderr, "%s L%d: (%p):%d Looping ", __FILE__, __LINE__, self, channel->id);
+			error("%s L%d: (%p):%d Looping ", __FILE__, __LINE__, self, channel->id);
 			if (flags & PARSE_FLAG_LOOPS_UNLIMITED)
-				fprintf(stderr, "(indef.)");
+				error("(indef.)");
 			else
-				fprintf(stderr, "(%d)", self->loops);
-			fprintf(stderr, " %x -> %x\n",
+				error("(%d)", self->loops);
+			error(" %x -> %x\n",
 			        channel->offset, channel->loop_offset);
 #endif
 			channel->offset = channel->loop_offset;
@@ -241,12 +243,12 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 			channel->state = SI_STATE_DELTA_TIME;
 			channel->total_timepos = channel->loop_timepos;
 			channel->last_cmd = 0xfe;
-			fprintf(stderr, "Looping song iterator %08lx.\n", self->ID);
+			error("Looping song iterator %08lx.\n", self->ID);
 			return SI_LOOP;
 		} else {
 			channel->state = SI_STATE_FINISHED;
 #ifdef DEBUG_DECODING
-			fprintf(stderr, "%s L%d: (%p):%d EOT because"
+			error("%s L%d: (%p):%d EOT because"
 			        " %d notes, %d loops\n",
 			        __FILE__, __LINE__, self, channel->id,
 			        channel->notes_played, self->loops);
@@ -389,12 +391,12 @@ _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *res
 		channel->state = SI_STATE_FINISHED;
 		delay = (size * 50 + format.rate - 1) / format.rate; /* number of ticks to completion*/
 
-		fprintf(stderr, "delaying %d ticks\n", delay);
+		error("delaying %d ticks\n", delay);
 		return delay;
 	}
 
 	case SI_STATE_UNINITIALISED:
-		fprintf(stderr, SIPFX "Attempt to read command from uninitialized iterator!\n");
+		error(SIPFX "Attempt to read command from uninitialized iterator");
 		self->init((song_iterator_t *) self);
 		return self->next((song_iterator_t *) self, buf, result);
 
@@ -433,7 +435,7 @@ _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *res
 			if (self->active_channels)
 				--(self->active_channels);
 #ifdef DEBUG_DECODING
-			fprintf(stderr, "%s L%d: (%p):%d Finished channel, %d channels left\n",
+			error("%s L%d: (%p):%d Finished channel, %d channels left\n",
 			        __FILE__, __LINE__, self, channel->id,
 			        self->active_channels);
 #endif
@@ -450,7 +452,7 @@ _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *res
 	}
 
 	default:
-		fprintf(stderr, SIPFX "Invalid iterator state %d!\n",
+		error(SIPFX "Invalid iterator state %d",
 		        channel->state);
 		BREAKPOINT();
 		return SI_FINISHED;
@@ -509,8 +511,8 @@ _sci0_get_pcm_data(sci0_song_iterator_t *self,
 		                    self->size - offset);
 
 		if (!fc) {
-			fprintf(stderr, SIPFX "Warning: Playing unterminated"
-			        " song!\n");
+			error(SIPFX "Warning: Playing unterminated"
+			        " song");
 			return 1;
 		}
 
@@ -523,7 +525,7 @@ _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	}
 
 	if (!found_it) {
-		fprintf(stderr, SIPFX
+		error(SIPFX
 		        "Warning: Song indicates presence of PCM, but"
 		        " none found (finally at offset %04x)\n", offset);
 
@@ -542,9 +544,9 @@ _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	if (offset + SCI0_PCM_DATA_OFFSET + size != self->size) {
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->size;
 
-		fprintf(stderr, SIPFX
+		error(SIPFX
 		        "Warning: PCM advertizes %d bytes of data, but %d"
-		        " bytes are trailing in the resource!\n",
+		        " bytes are trailing in the resource",
 		        size, self->size - (offset + SCI0_PCM_DATA_OFFSET));
 
 		if (d > 0)
@@ -581,7 +583,7 @@ _sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
 
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg.args[0].i, self->ID);
-			fprintf(stderr, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
+			error("SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
 			        self->device_id, self->active_channels, self->size,
 			        self->loops);
 			break;
@@ -596,7 +598,7 @@ _sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
 			memcpy(mem, self, tsize);
 			sci_refcount_incref(mem->data);
 #ifdef DEBUG_VERBOSE
-			fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, self, mem->data);
+			error("** CLONE INCREF for new %p from %p at %p\n", mem, self, mem->data);
 #endif
 			return (struct _song_iterator *) mem; /* Assume caller has another copy of this */
 		}
@@ -692,7 +694,7 @@ _sci0_init(sci0_song_iterator_t *self) {
 static void
 _sci0_cleanup(sci0_song_iterator_t *self) {
 #ifdef DEBUG_VERBOSE
-	fprintf(stderr, "** FREEING it %p: data at %p\n", self, self->data);
+	error("** FREEING it %p: data at %p\n", self, self->data);
 #endif
 	if (self->data)
 		sci_refcount_decref(self->data);
@@ -746,7 +748,7 @@ _sci1_sample_init(sci1_song_iterator_t *self, int offset) {
 	sample->data = self->data + offset + 10;
 
 #ifdef DEBUG_VERBOSE
-	fprintf(stderr, "[SAMPLE] %x/%x/%x/%x l=%x\n",
+	error("[SAMPLE] %x/%x/%x/%x l=%x\n",
 	        offset + 10, begin, end, self->size, length);
 #endif
 
@@ -1080,7 +1082,7 @@ _sci1_process_next_command(sci1_song_iterator_t *self,
 				}
 			} else if (retval == SI_FINISHED) {
 #ifdef DEBUG
-				fprintf(stderr, "FINISHED some channel\n");
+				error("FINISHED some channel\n");
 #endif
 			} else if (retval > 0) {
 				int sd ;
@@ -1116,7 +1118,7 @@ static struct _song_iterator *
 				playmask |= self->channels[i].playmask;
 
 			print_tabs_id(msg.args[0].i, self->ID);
-			fprintf(stderr, "SCI1: chan-nr=%d, playmask=%04x\n",
+			error("SCI1: chan-nr=%d, playmask=%04x\n",
 			        self->channels_nr, playmask);
 		}
 		break;
@@ -1230,7 +1232,7 @@ static struct _song_iterator *
 		}
 
 		default:
-			fprintf(stderr, SIPFX "Unsupported command %d to"
+			error(SIPFX "Unsupported command %d to"
 			        " SCI1 iterator", msg.type);
 		}
 		return (song_iterator_t *) self;
@@ -1300,7 +1302,7 @@ _cleanup_iterator_handle_message(song_iterator_t *i, song_iterator_message_t msg
 	if (msg.recipient == _SIMSG_BASEMSG_PRINT
 	        && msg.type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg.args[0].i, i->ID);
-		fprintf(stderr, "CLEANUP\n");
+		error("CLEANUP\n");
 	}
 
 	return NULL;
@@ -1403,7 +1405,7 @@ _ff_handle_message(fast_forward_song_iterator_t *self,
 
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg.args[0].i, self->ID);
-			fprintf(stderr, "PLASTICWRAP:\n");
+			error("PLASTICWRAP:\n");
 			msg.args[0].i++;
 			songit_handle_message(&(self->delegate), msg);
 			break;
@@ -1476,7 +1478,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 	int retid;
 
 #ifdef DEBUG_TEE_ITERATOR
-	fprintf(stderr, "[Tee] %02x\n", it->status);
+	error("[Tee] %02x\n", it->status);
 #endif
 
 	if (!(it->status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE)))
@@ -1491,7 +1493,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 		/* Not all are is active? */
 		int which = 0;
 #ifdef DEBUG_TEE_ITERATOR
-		fprintf(stderr, "\tRequesting transformation...\n");
+		error("\tRequesting transformation...\n");
 #endif
 		if (it->status & TEE_LEFT_ACTIVE)
 			which = TEE_LEFT;
@@ -1525,7 +1527,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 
 			it->status |= ready_masks[i];
 #ifdef DEBUG_TEE_ITERATOR
-			fprintf(stderr, "\t Must check %d: %d\n", i,
+			error("\t Must check %d: %d\n", i,
 			        it->children[i].retval);
 #endif
 
@@ -1536,7 +1538,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 				it->status &= ~active_masks[i];
 				/* Recurse to complete */
 #ifdef DEBUG_TEE_ITERATOR
-				fprintf(stderr, "\t Child %d signalled completion, recursing w/ status %02x\n", i, it->status);
+				error("\t Child %d signalled completion, recursing w/ status %02x\n", i, it->status);
 #endif
 				return _tee_read_next_command(it, buf, result);
 			} else if (it->children[i].retval == SI_PCM) {
@@ -1557,7 +1559,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 		retid = TEE_RIGHT;
 
 #ifdef DEBUG_TEE_ITERATOR
-	fprintf(stderr, "\tl:%d / r:%d / chose %d\n",
+	error("\tl:%d / r:%d / chose %d\n",
 	        it->children[TEE_LEFT].retval, it->children[TEE_RIGHT].retval, retid);
 #endif
 #if 0
@@ -1621,7 +1623,7 @@ _tee_handle_message(tee_song_iterator_t *self, song_iterator_message_t msg) {
 
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg.args[0].i, self->ID);
-			fprintf(stderr, "TEE:\n");
+			error("TEE:\n");
 			msg.args[0].i++;
 			break; /* And continue with our children */
 
@@ -1752,7 +1754,7 @@ songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy) {
 
 			if (firstfree == MIDI_CHANNELS) {
 				incomplete_map = 1;
-				fprintf(stderr, "[songit-tee <%08lx,%08lx>] "
+				error("[songit-tee <%08lx,%08lx>] "
 				        "Could not remap right channel #%d:"
 				        " Out of channels\n",
 				        left->ID, right->ID, i);
@@ -1766,14 +1768,14 @@ songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy) {
 #ifdef DEBUG_TEE_ITERATOR
 	if (incomplete_map) {
 		int c;
-		fprintf(stderr, "[songit-tee <%08lx,%08lx>] Channels:"
+		error("[songit-tee <%08lx,%08lx>] Channels:"
 		        " %04x <- %04x | %04x\n",
 		        left->ID, right->ID,
 		        it->channel_mask,
 		        left->channel_mask, right->channel_mask);
 		for (c = 0 ; c < 2; c++)
 			for (i = 0 ; i < 16; i++)
-				fprintf(stderr, "  map [%d][%d] -> %d\n",
+				error("  map [%d][%d] -> %d\n",
 				        c, i, it->children[c].channel_remap[i]);
 	}
 #endif
@@ -1821,14 +1823,14 @@ songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask) {
 	do {
 		retval = (*it)->next(*it, buf, result);
 		if (retval == SI_MORPH) {
-			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
+			error("  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				BREAKPOINT();
-			} else fprintf(stderr, "SI_MORPH successful\n");
+			} else error("SI_MORPH successful\n");
 		}
 
 		if (retval == SI_FINISHED)
-			fprintf(stderr, "[song-iterator] Song finished. mask = %04x, cm=%04x\n",
+			error("[song-iterator] Song finished. mask = %04x, cm=%04x\n",
 			        mask, (*it)->channel_mask);
 		if (retval == SI_FINISHED
 		        && (mask & IT_READER_MAY_CLEAN)
@@ -1871,7 +1873,7 @@ songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 	int i;
 
 	if (!data || size < 22) {
-		fprintf(stderr, SIPFX "Attempt to instantiate song iterator for null"
+		error(SIPFX "Attempt to instantiate song iterator for null"
 		        " song data\n");
 		return NULL;
 	}
@@ -1921,7 +1923,7 @@ songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 
 	default:
 		/**-- Invalid/unsupported sound resources --**/
-		fprintf(stderr, SIPFX "Attempt to instantiate invalid/unknown"
+		error(SIPFX "Attempt to instantiate invalid/unknown"
 		        " song iterator type %d\n", type);
 		return NULL;
 	}
@@ -2004,7 +2006,7 @@ song_iterator_add_death_listener(song_iterator_t *it,
                                  void *client,
                                  void (*notify)(void *self, void *notifier)) {
 	if (it->death_listeners_nr >= SONGIT_MAX_LISTENERS) {
-		fprintf(stderr, "FATAL: Too many death listeners for song"
+		error("FATAL: Too many death listeners for song"
 		        " iterator\n");
 		BREAKPOINT();
 		exit(1);
@@ -2033,7 +2035,7 @@ song_iterator_remove_death_listener(song_iterator_t *it,
 		}
 	}
 
-	fprintf(stderr, "FATAL: Could not remove death listener from "
+	error("FATAL: Could not remove death listener from "
 	        "song iterator\n");
 	BREAKPOINT();
 	exit(1);

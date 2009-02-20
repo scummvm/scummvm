@@ -244,7 +244,7 @@ opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 
 	/* if the resource couldn't be loaded, leave */
 	if (r == NULL) {
-		fprintf(stderr, "unable to load vocab.%03d\n", VOCAB_RESOURCE_OPCODES);
+		error("unable to load vocab.%03d\n", VOCAB_RESOURCE_OPCODES);
 		return NULL;
 	}
 

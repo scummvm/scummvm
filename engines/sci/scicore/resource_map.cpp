@@ -147,7 +147,7 @@ sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
 	}
 
 #if 0
-	fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x\n",
+	error("Read [%04x] %6d.%s\tresource.%03d, %08x\n",
 	        res->id, res->number,
 	        sci_resource_type_suffixes[res->type],
 	        res->file, res->file_offset);
@@ -302,7 +302,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 
 			if (++resources_total_read >= resource_nr) {
 				sciprintf("Warning: After %d entries, resource.map"
-				          " is not terminated!\n", resource_index);
+				          " is not terminated", resource_index);
 				next_entry = 0;
 			}
 
@@ -313,7 +313,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 	file.close();
 
 	if (!resource_index) {
-		sciprintf("resource.map was empty!\n");
+		sciprintf("resource.map was empty");
 		_scir_free_resources(resources, resource_nr);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
@@ -345,7 +345,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 	return 0;
 }
 
-#define TEST fprintf(stderr, "OK in line %d\n", __LINE__);
+#define TEST error("OK in line %d\n", __LINE__);
 
 static int sci10_or_11(int *types) {
 	int this_restype = 0;
@@ -474,7 +474,7 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 			}
 
 #if 0
-		fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x ==> %d\n",
+		error("Read [%04x] %6d.%s\tresource.%03d, %08x ==> %d\n",
 		        res->id, res->number,
 		        sci_resource_type_suffixes[res->type],
 		        res->file, res->file_offset, addto);
@@ -506,7 +506,7 @@ main(int argc, char **argv) {
 	int notok = sci0_read_resource_map(".", &resources, &resource_nr);
 
 	if (notok) {
-		fprintf(stderr, "Failed: Error code %d\n", notok);
+		error("Failed: Error code %d\n", notok);
 		return 1;
 	}
 
@@ -524,7 +524,7 @@ main(int argc, char **argv) {
 			       res->number);
 		}
 	} else
-		fprintf(stderr, "Found no resources.\n");
+		error("Found no resources.\n");
 
 	return 0;
 }

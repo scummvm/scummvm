@@ -25,7 +25,7 @@
 
 /* Static binary lookup tree lookup */
 
-
+#include "common/util.h"
 #include "sci/include/sci_memory.h"
 #include "sci/include/sbtree.h"
 #include <stdlib.h>
@@ -84,14 +84,14 @@ sbtree_new(int size, int *keys) {
 		table[i].key = NOT_A_KEY;
 
 	if (!table) {
-		fprintf(stderr, "SBTree: Out of memory: Could not allocate %d cells\n", table_size);
+		error("SBTree: Out of memory: Could not allocate %d cells\n", table_size);
 		return NULL;
 	}
 
 	tree = (sbtree_t*)sci_malloc(sizeof(sbtree_t));
 
 	if (!tree) {
-		fprintf(stderr, "SBTree: Could not allocate tree structure\n");
+		error("SBTree: Could not allocate tree structure\n");
 		free(table);
 		return NULL;
 	}
@@ -103,7 +103,7 @@ sbtree_new(int size, int *keys) {
 	tree->levels = levels;
 	tree->entries_nr = size;
 	if ((tree->min_entry = keys[0]) < 0) {
-		fprintf(stderr, "SBTree: Error: Using negative keys\n");
+		error("SBTree: Error: Using negative keys\n");
 		free(table);
 		free(tree);
 		return NULL;
@@ -118,7 +118,7 @@ sbtree_new(int size, int *keys) {
 void
 sbtree_free(sbtree_t *tree) {
 	if (!tree) {
-		fprintf(stderr, "SBTree: Attempt to free NULL sbtree\n");
+		error("SBTree: Attempt to free NULL sbtree\n");
 		return;
 	}
 
@@ -188,24 +188,24 @@ sbtree_print(sbtree_t *tree) {
 	int l, i;
 	sbcell_t *cells = (sbcell_t *) tree->data;
 
-	fprintf(stderr, "\tTree:\n");
+	error("\tTree:\n");
 	for (l = 0; l <= tree->levels; l++) {
-		fprintf(stderr, "\t  ");
+		error("\t  ");
 		for (i = 0; i < (1 << l); i++) {
 			if (cells->key == NOT_A_KEY)
-				fprintf(stderr, "-- ");
+				error("-- ");
 			else {
 				if (cells->value)
-					fprintf(stderr, "%d+ ", cells->key);
+					error("%d+ ", cells->key);
 				else
-					fprintf(stderr, "%d  ", cells->key);
+					error("%d  ", cells->key);
 			}
 
 			cells = cells + 1;
 		}
-		fprintf(stderr, "\n");
+		error("\n");
 	}
-	fprintf(stderr, "\n");
+	error("\n");
 }
 #endif
 
@@ -223,7 +223,7 @@ foreach_double_func(sbtree_t *tree, const int key, const void *value, void *args
 	int *real_value = (int *) value;
 
 	if (!real_value)
-		fprintf(stderr, "foreach_double_func(): key %d mapped to non-value!\n", key);
+		error("foreach_double_func(): key %d mapped to non-value", key);
 	else *real_value *= 2;
 
 	return real_value;
@@ -267,7 +267,7 @@ insert_values(sbtree_t *tree, int nr, int *data) {
 
 	for (i = 0; i < nr; i++)
 		if (sbtree_set(tree, data[i], (void *)(data + i))) {
-			fprintf(stderr, "While inserting: %d incorrectly deemed invalid\n", data[i]);
+			error("While inserting: %d incorrectly deemed invalid\n", data[i]);
 			any_error = 1;
 		}
 }
@@ -296,18 +296,18 @@ test_value(sbtree_t *tree, int times, int max, int numbers, int *data, int mode)
 				found = 1;
 
 		if (found && !value) {
-			fprintf(stderr, "!%d ", key);
+			error("!%d ", key);
 			++failed;
 		} else if (!found && found) {
-			fprintf(stderr, "?[%d]=%d ", key, *value);
+			error("?[%d]=%d ", key, *value);
 			++failed;
 		}
 	}
 
 	if (failed)
-		fprintf(stderr, "(%d/%d errors)\n", any_error = failed, times);
+		error("(%d/%d errors)\n", any_error = failed, times);
 	else
-		fprintf(stderr, "OK\n");
+		error("OK\n");
 }
 
 
@@ -320,23 +320,23 @@ test_boundary(sbtree_t *tree, int max, int random) {
 	int failure = (value_too_low || value_too_high || (!random && (!value_low || !value_high)));
 
 	if (!failure)
-		fprintf(stderr, "OK\n");
+		error("OK\n");
 	else {
 		any_error = 1;
 
-		fprintf(stderr, "Errors: ");
+		error("Errors: ");
 		if (value_too_low)
-			fprintf(stderr, "too-low=%d ", *value_too_low);
+			error("too-low=%d ", *value_too_low);
 		if (value_too_high)
-			fprintf(stderr, "too-high=%d ", *value_too_high);
+			error("too-high=%d ", *value_too_high);
 
 		if (!random) {
 			if (!value_low)
-				fprintf(stderr, "!low ");
+				error("!low ");
 			if (!value_high)
-				fprintf(stderr, "!high ");
+				error("!high ");
 		}
-		fprintf(stderr, "\n");
+		error("\n");
 	}
 }
 
@@ -351,15 +351,15 @@ test_empty(sbtree_t *tree, int count, int max) {
 		int *value;
 
 		if ((value = (int *) sbtree_get(tree, key))) {
-			fprintf(stderr, "?[%d]=%d\n", key, *value);
+			error("?[%d]=%d\n", key, *value);
 			++errors;
 		}
 	}
 
 	if (errors)
-		fprintf(stderr, " (%d/%d errors)\n", any_error = errors, count);
+		error(" (%d/%d errors)\n", any_error = errors, count);
 	else
-		fprintf(stderr, "OK\n");
+		error("OK\n");
 }
 
 void
@@ -369,23 +369,23 @@ run_test(sbtree_t *tree, int entries, int *data, int random, int max_value) {
 
 	any_error = 0;
 
-	fprintf(stderr, "\tEmpty test: \t\t\t");
+	error("\tEmpty test: \t\t\t");
 	test_empty(tree, entries * 2, entries + 1);
 	insert_values(tree, entries, data);
-	fprintf(stderr, "\tBoundary test: \t\t\t");
+	error("\tBoundary test: \t\t\t");
 	test_boundary(tree, max_value, random);
 
 	for (i = 0; i < 3; i++) {
-		fprintf(stderr, tests[i]);
+		error(tests[i]);
 		test_value(tree, entries * 2, entries * 2, entries, data, i);
 	}
 
 	if (!random) {
 		i = data[0];
 		sbtree_foreach(tree, NULL, foreach_double_func);
-		fprintf(stderr, "\tForeach test: \t\t\t");
+		error("\tForeach test: \t\t\t");
 		if (i * 2 != data[0]) {
-			fprintf(stderr, "Error: No effect: %d * 2 != %d\n", i, data[0]);
+			error("Error: No effect: %d * 2 != %d\n", i, data[0]);
 			any_error = 1;
 		} else
 			test_value(tree, entries * 2, entries * 2, entries, data, MODE_LINEAR_DOUBLE);
@@ -406,46 +406,46 @@ main(int argc, char **argv) {
 	int tests_nr = TESTS_NR;
 	int test_sizes[TESTS_NR] = {1, 2, 3, 7, 8, 9, 1000, 16383, 16384, 16385, 1000000};
 	int i;
-	fprintf(stderr, "sbtree.c Copyright (C) 2000 Christoph Reichenbach <jameson@linuxgames.com>\n"
+	error("sbtree.c Copyright (C) 2000 Christoph Reichenbach <jameson@linuxgames.com>\n"
 	        "This program is provided WITHOUT WARRANTY of any kind\n"
 	        "Please refer to the file COPYING that should have come with this program\n");
-	fprintf(stderr, "Static Binary Tree testing facility\n");
+	error("Static Binary Tree testing facility\n");
 
 	free(malloc(42)); /* Make sure libefence's Copyright message is print here if we're using it */
 
-	fprintf(stderr, "\nsbtree.c: Running %d tests.\n", tests_nr);
+	error("\nsbtree.c: Running %d tests.\n", tests_nr);
 
 	for (i = 0; i < tests_nr; i++) {
 		int entries = test_sizes[i];
 		sbtree_t *tree;
 		int *data;
 
-		fprintf(stderr, "Test #%d: %d entries\n", i + 1, entries);
+		error("Test #%d: %d entries\n", i + 1, entries);
 
-		fprintf(stderr, "\t%da: Linear values\n", i + 1);
+		error("\t%da: Linear values\n", i + 1);
 		data = generate_linear_forward(entries);
 		tree = sbtree_new(entries, data);
 		run_test(tree, entries, data, 0, entries);
 
-		fprintf(stderr, "\t%db: Reverse linear values\n", i + 1);
+		error("\t%db: Reverse linear values\n", i + 1);
 		data = generate_linear_backward(entries);
 		tree = sbtree_new(entries, data);
 		run_test(tree, entries, data, 0, entries);
 
-		fprintf(stderr, "\t%dc: Dense random values\n", i + 1);
+		error("\t%dc: Dense random values\n", i + 1);
 		data = generate_random(entries, 1 + (entries >> 2));
 		tree = sbtree_new(entries, data);
 		run_test(tree, entries, data, 1, 1 + (entries >> 2));
 
-		fprintf(stderr, "\t%dc: Sparse random values\n", i + 1);
+		error("\t%dc: Sparse random values\n", i + 1);
 		data = generate_random(entries, (entries << 2));
 		tree = sbtree_new(entries, data);
 		run_test(tree, entries, data, 1, entries << 2);
 
-		fprintf(stderr, "Test #%d completed.\n\n", i + 1);
+		error("Test #%d completed.\n\n", i + 1);
 	}
 
-	fprintf(stderr, "Test suite completed.\n");
+	error("Test suite completed.\n");
 	return 0;
 }
 

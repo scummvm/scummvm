@@ -375,11 +375,11 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 
 #ifdef FILL_RECURSIVE_DEBUG
 	if (!fillmagc) {
-		fprintf(stderr, "------------------------------------------------\n");
-		fprintf(stderr, "LineID:   ");
+		error("------------------------------------------------\n");
+		error("LineID:   ");
 		for (i = 0; i < 5; i++)
-			fprintf(stderr, "  %d       ", i);
-		fprintf(stderr, "\n");
+			error("  %d       ", i);
+		error("\n");
 	}
 #endif
 
@@ -481,10 +481,10 @@ _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *ma
 
 #ifdef FILL_RECURSIVE_DEBUG
 		if (!fillmagc && intervals_nr) {
-			fprintf(stderr, "AI L#%03d:", y);
+			error("AI L#%03d:", y);
 			for (int j = 0; j < intervals_nr; j++)
-				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].xl, intervals[ivi][j].xr);
-			fprintf(stderr, "\n");
+				error("%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].xl, intervals[ivi][j].xr);
+			error("\n");
 		}
 #endif
 
@@ -631,7 +631,7 @@ _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
 				break;
 
 			default:
-				fprintf(stderr, "%s L%d: Invalid ellipse fill mode!\n", __FILE__, __LINE__);
+				error("%s L%d: Invalid ellipse fill mode", __FILE__, __LINE__);
 				return;
 
 			}
@@ -968,7 +968,7 @@ _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int
 	end.y = ey;
 
 	if (ex >= pic->visual_map->index_xl || ey >= pic->visual_map->index_yl || x < 0 || y < 0) {
-		fprintf(stderr, "While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
+		error("While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
 		        start.x, start.y, end.x, end.y);
 		return;
 	}
@@ -1307,7 +1307,7 @@ gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src) {
 
 	if (bound_x == 1 && bound_y == 1) {
 		/* D'Oh! */
-		GFXWARN("attempt to remove artifacts from unscaled pic!\n");
+		GFXWARN("attempt to remove artifacts from unscaled pic");
 		return;
 	}
 
@@ -1494,12 +1494,12 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 			GET_ABS_COORDS(oldx, oldy);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 #if 0
-				fprintf(stderr, "Medium-line: [%04x] from %d,%d, data %02x %02x (dx=%d)", pos, oldx, oldy,
+				error("Medium-line: [%04x] from %d,%d, data %02x %02x (dx=%d)", pos, oldx, oldy,
 				        0xff & resource[pos], 0xff & resource[pos+1], *((signed char *) resource + pos + 1));
 #endif
 				GET_MEDREL_COORDS(oldx, oldy);
 #if 0
-				fprintf(stderr, " to %d,%d\n", x, y);
+				error(" to %d,%d\n", x, y);
 #endif
 				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
 				                PIC_OP_MEDIUM_LINES, sci_titlebar_size);
@@ -1780,7 +1780,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				 *if it's not for some reason, we should die
 				 */
 				if (!(view->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE) && !sci1) {
-					sciprintf("gfx_draw_pic0(): can't set a non-static palette for an embedded view!\n");
+					sciprintf("gfx_draw_pic0(): can't set a non-static palette for an embedded view");
 				}
 
 				/* For SCI0, use special color mapping to copy the low
@@ -1832,7 +1832,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				if (!pic->internal) {
 					pic->internal = sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%08x); this only occurs with overlaid pics, otherwise it's a bug!\n", pic->internal);
+					GFXERROR("pic->internal is not NULL (%08x); this only occurs with overlaid pics, otherwise it's a bug", pic->internal);
 				}
 
 				pri_table = (int*)pic->internal;
@@ -1854,7 +1854,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				if (!pic->internal) {
 					pic->internal = sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%08x); possible memory corruption!\n", pic->internal);
+					GFXERROR("pic->internal is not NULL (%08x); possible memory corruption", pic->internal);
 				}
 
 				pri_table = (int*)pic->internal;
@@ -1980,7 +1980,7 @@ gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 				break;
 
 			default:
-				GFXERROR("Invalid dither mode %d!\n", dmode);
+				GFXERROR("Invalid dither mode %d", dmode);
 				return;
 			}
 

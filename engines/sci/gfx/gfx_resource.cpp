@@ -203,7 +203,7 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		break;
 
 	default:
-		fprintf(stderr, "gfxr_endianness_adjust(): Cannot adjust endianness for %d bytespp!\n", bytespp);
+		error("gfxr_endianness_adjust(): Cannot adjust endianness for %d bytespp", bytespp);
 		return NULL;
 	}
 
@@ -369,7 +369,7 @@ gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter)
 
 		for (i = 0; i < pxm->colors_nr; i++) {
 			if (gfx_alloc_color(mode->palette, pxm->colors + i) < 0) {
-				GFXWARN("Failed to allocate color %d/%d in pixmap (color %02x/%02x/%02x)!\n",
+				GFXWARN("Failed to allocate color %d/%d in pixmap (color %02x/%02x/%02x)",
 				        i, pxm->colors_nr, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
 				pxm->colors[i].global_index = 0;
 			}

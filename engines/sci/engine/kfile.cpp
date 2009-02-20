@@ -144,7 +144,7 @@ void file_open(state_t *s, char *filename, int mode) {
 			SCIkdebug(SCIkFILE, "Failed. Attempting to copy from resource dir...\n");
 			file = f_open_mirrored(s, filename);
 			if (file)
-				SCIkdebug(SCIkFILE, "Success!\n");
+				SCIkdebug(SCIkFILE, "Success");
 			else
 				SCIkdebug(SCIkFILE, "Not found.\n");
 		}
@@ -181,12 +181,12 @@ reg_t kFOpen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 static FILE *getFileFromHandle(state_t *s, int handle) {
 	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to use file handle 0\n");
+		error("Attempt to use file handle 0\n");
 		return 0;
 	}
 
 	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
+		error("Attempt to use invalid/unused file handle %d\n", handle);
 		return 0;
 	}
 	
@@ -421,7 +421,7 @@ reg_t kDeviceInfo_Win32(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
+		error("Unknown DeviceInfo() sub-command: %d\n", mode);
 	}
 	}
 	return s->r_acc;
@@ -483,7 +483,7 @@ reg_t kDeviceInfo_Unix(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
+		error("Unknown DeviceInfo() sub-command: %d\n", mode);
 	}
 	}
 
@@ -780,13 +780,13 @@ reg_t kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			} else ++i;
 		}
 		if (savedir_id >= MAX_SAVEGAME_NR) {
-			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen!\n", savedir_id);
+			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen", savedir_id);
 			return NULL_REG;
 		}
 
 		// This loop terminates when savedir_id is not in [x | ex. n. _savegame_indices[n].id = x]
 	} else {
-		sciprintf("Savegame ID %d is not allowed!\n", savedir_nr);
+		sciprintf("Savegame ID %d is not allowed", savedir_nr);
 		return NULL_REG;
 	}
 
@@ -853,7 +853,7 @@ reg_t kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	} else {
 		s->r_acc = make_reg(0, 1);
-		sciprintf("Savegame #%d not found!\n", savedir_nr);
+		sciprintf("Savegame #%d not found", savedir_nr);
 	}
 
 	_chdir_restoredir(workdir);
@@ -904,7 +904,7 @@ void next_file(state_t *s) {
 
 void first_file(state_t *s, const char *dir, char *mask, reg_t buffer) {
 	if (!buffer.segment) {
-		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n", dir, mask);
+		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked", dir, mask);
 		s->r_acc = NULL_REG;
 		return;
 	}
@@ -1014,7 +1014,7 @@ reg_t kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		SCIkwarn(SCIkERROR, "Unknown FileIO() sub-command: %d\n", func_nr);
+		error("Unknown FileIO() sub-command: %d\n", func_nr);
 	}
 
 	return s->r_acc;

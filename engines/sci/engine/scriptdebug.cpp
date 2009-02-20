@@ -38,10 +38,10 @@
 			Sleep(0); \
 		} else { \
 			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
+				error("timeBeginPeriod(1) failed\n"); \
 			Sleep(x); \
 			if (timeEndPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
+				error("timeEndPeriod(1) failed\n"); \
 		} \
 	} while (0);
 #endif
@@ -158,24 +158,24 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 		int blanks = 0;
 
 		offset += offset_mod;
-		fprintf(stderr, "  [%04x] %d\t",
+		error("  [%04x] %d\t",
 		        old_offset + notational_offset, time);
 
 		cmd = data[offset];
 		if (!(cmd & 0x80)) {
 			cmd = prev;
 			if (prev < 0x80) {
-				fprintf(stderr, "Track broken at %x after"
+				error("Track broken at %x after"
 				        " offset mod of %d\n",
 				        offset + notational_offset, offset_mod);
 				sci_hexdump(data, size, notational_offset);
 				return;
 			}
-			fprintf(stderr, "(rs %02x) ", cmd);
+			error("(rs %02x) ", cmd);
 			blanks += 8;
 		} else {
 			++offset;
-			fprintf(stderr, "%02x ", cmd);
+			error("%02x ", cmd);
 			blanks += 3;
 		}
 		prev = cmd;
@@ -188,37 +188,37 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 		for (i = 0; i < pleft; i++) {
 			if (i == 0)
 				firstarg = data[offset];
-			fprintf(stderr, "%02x ", data[offset++]);
+			error("%02x ", data[offset++]);
 			blanks += 3;
 		}
 
 		while (blanks < 16) {
 			blanks += 4;
-			fprintf(stderr, "    ");
+			error("    ");
 		}
 
 		while (blanks < 20) {
 			++blanks;
-			fprintf(stderr, " ");
+			error(" ");
 		}
 
 		if (cmd == SCI_MIDI_EOT)
-			fprintf(stderr, ";; EOT");
+			error(";; EOT");
 		else if (cmd == SCI_MIDI_SET_SIGNAL) {
 			if (firstarg == SCI_MIDI_SET_SIGNAL_LOOP)
-				fprintf(stderr, ";; LOOP point");
+				error(";; LOOP point");
 			else
-				fprintf(stderr, ";; CUE (%d)", firstarg);
+				error(";; CUE (%d)", firstarg);
 		} else if (SCI_MIDI_CONTROLLER(cmd)) {
 			if (firstarg == SCI_MIDI_CUMULATIVE_CUE)
-				fprintf(stderr, ";; CUE (cumulative)");
+				error(";; CUE (cumulative)");
 			else if (firstarg == SCI_MIDI_RESET_ON_SUSPEND)
-				fprintf(stderr, ";; RESET-ON-SUSPEND flag");
+				error(";; RESET-ON-SUSPEND flag");
 		}
-		fprintf(stderr, "\n");
+		error("\n");
 
 		if (old_offset >= offset) {
-			fprintf(stderr, "-- Not moving forward anymore,"
+			error("-- Not moving forward anymore,"
 			        " aborting (%x/%x)\n", offset, old_offset);
 			return;
 		}
@@ -406,7 +406,7 @@ print_list(state_t *s, list_t *l) {
 		mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!mobj || !ENTRY_IS_VALID(&(mobj->data.nodes), pos.offset)) {
-			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
+			sciprintf("   WARNING: "PREG": Doesn't contain list node",
 			          PRINT_REG(pos));
 			return;
 		}
@@ -417,7 +417,7 @@ print_list(state_t *s, list_t *l) {
 		          PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
 		if (!REG_EQ(my_prev, node->pred))
-			sciprintf("   WARNING: current node gives "PREG" as predecessor!\n",
+			sciprintf("   WARNING: current node gives "PREG" as predecessor",
 			          PRINT_REG(node->pred));
 
 		my_prev = pos;
@@ -425,7 +425,7 @@ print_list(state_t *s, list_t *l) {
 	}
 
 	if (!REG_EQ(my_prev, l->last))
-		sciprintf("   WARNING: Last node was expected to be "PREG", was "PREG"!\n",
+		sciprintf("   WARNING: Last node was expected to be "PREG", was "PREG"",
 		          PRINT_REG(l->last), PRINT_REG(my_prev));
 	sciprintf("\t>\n");
 }
@@ -2006,7 +2006,7 @@ c_gfx_draw_cel(state_t *s) {
 	int cel = cmd_params[2].val;
 	int palette = cmd_params[3].val;
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		sciprintf("Not in debug state");
 		return 1;
 	}
 
@@ -2023,7 +2023,7 @@ c_gfx_fill_screen(state_t *s) {
 	int col = cmd_params[0].val;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		sciprintf("Not in debug state");
 		return 1;
 	}
 
@@ -2042,7 +2042,7 @@ c_gfx_draw_rect(state_t *s) {
 	int col = cmd_params[4].val;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		sciprintf("Not in debug state");
 		return 1;
 	}
 
@@ -2062,7 +2062,7 @@ c_gfx_propagate_rect(state_t *s) {
 	rect_t rect;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		sciprintf("Not in debug state");
 		return 1;
 	}
 
@@ -2107,7 +2107,7 @@ c_gfx_draw_viewobj(state_t *s) {
 	int brLeft, brRight, brBottom, brTop;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		sciprintf("Not in debug state");
 		return 1;
 	}
 

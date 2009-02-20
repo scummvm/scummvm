@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/util.h"
 #include "sci/include/sfx_time.h"
 #include "sci/include/resource.h"
 
@@ -60,7 +61,7 @@ sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b) {
 	long usecdelta = 0;
 
 	if (a.frame_rate != b.frame_rate) {
-		fprintf(stderr, "Fatal: The semantics of subtracting two timestamps with a different base from each other is not defined!\n");
+		error("Fatal: The semantics of subtracting two timestamps with a different base from each other is not defined");
 		BREAKPOINT();
 	}
 

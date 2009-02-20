@@ -252,7 +252,7 @@ scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
 		break;
 
 	case GFX_MASK_PRIORITY:
-		printf("FIXME: priority map grab not implemented yet!\n");
+		printf("FIXME: priority map grab not implemented yet");
 		break;
 
 	default:
@@ -306,7 +306,7 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buff
 		S->update_screen = true;
 		break;
 	default:
-		GFXERROR("Invalid buffer %d in update!\n", buffer);
+		GFXERROR("Invalid buffer %d in update", buffer);
 		return GFX_ERROR;
 	}
 

@@ -25,6 +25,7 @@
 
 /* Reads data from a resource file and stores the result in memory */
 
+#include "common/util.h"
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
@@ -99,13 +100,13 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 	}
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	fprintf(stderr, "Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%%"
+	error("Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%%"
 	        " ratio\n",
 	        result->number, sci_resource_type_suffixes[result->type],
 	        compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
-	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	error("  compressedLength = 0x%hx, actualLength=0x%hx\n",
 	        compressedLength, result->size);
 #endif
 
@@ -140,7 +141,7 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 
 	case 3:
 	case 4: /* NYI */
-		fprintf(stderr, "Resource %d.%s: Warning: compression type #%d not yet implemented\n",
+		error("Resource %d.%s: Warning: compression type #%d not yet implemented\n",
 		        result->number, sci_resource_type_suffixes[result->type], compressionMethod);
 		free(result->data);
 		result->data = NULL;
@@ -148,8 +149,8 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 		break;
 
 	default:
-		fprintf(stderr, "Resource %d.%s: Compression method SCI1/%hi not "
-		        "supported!\n", result->number, sci_resource_type_suffixes[result->type],
+		error("Resource %d.%s: Compression method SCI1/%hi not "
+		        "supported", result->number, sci_resource_type_suffixes[result->type],
 		        compressionMethod);
 		free(result->data);
 		result->data = NULL; /* So that we know that it didn't work */

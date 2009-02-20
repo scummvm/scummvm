@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/util.h"
 #include "sci/include/sys_strings.h"
 #include "sci/include/sci_memory.h"
 
@@ -31,7 +32,7 @@ sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX) {
-		fprintf(stderr, "[SYSSTR] Error: Attempt to acquire string #%d\n",
+		error("[SYSSTR] Error: Attempt to acquire string #%d\n",
 		        index);
 		BREAKPOINT();
 	}
@@ -39,7 +40,7 @@ sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_
 	if (str->name
 	        && (strcmp(name, str->name)
 	            || (str->max_size != max_len))) {
-		fprintf(stderr, "[SYSSTR] Error: Attempt to re-acquire existing string #%d;"
+		error("[SYSSTR] Error: Attempt to re-acquire existing string #%d;"
 		        "was '%s', tried to claim as '%s'\n",
 		        index, str->name, name);
 		BREAKPOINT();
@@ -56,7 +57,7 @@ sys_string_set(sys_strings_t *strings, int index, const char *value) {
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX || !str->name) {
-		fprintf(stderr, "[SYSSTR] Error: Attempt to write to invalid/unused string #%d\n",
+		error("[SYSSTR] Error: Attempt to write to invalid/unused string #%d\n",
 		        index);
 		BREAKPOINT();
 		return 1;

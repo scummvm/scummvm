@@ -423,7 +423,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkBRESEN, "Doing avoider %04x (dest=%d,%d)\n", avoider, destx, desty);
 
 	if (invoke_selector(INV_SEL(mover, doit, 1) , 0)) {
-		SCIkwarn(SCIkERROR, "Mover "PREG" of avoider "PREG" doesn't have a doit() funcselector\n", PRINT_REG(mover), PRINT_REG(avoider));
+		error("Mover "PREG" of avoider "PREG" doesn't have a doit() funcselector\n", PRINT_REG(mover), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
@@ -432,7 +432,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc; // Return gracefully.
 
 	if (invoke_selector(INV_SEL(client, isBlocked, 1) , 0)) {
-		SCIkwarn(SCIkERROR, "Client "PREG" of avoider "PREG" doesn't"
+		error("Client "PREG" of avoider "PREG" doesn't"
 		         " have an isBlocked() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
 		return NULL_REG;
 	}
@@ -463,7 +463,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkBRESEN, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n", oldx, oldy, angle, move_x, move_y);
 
 			if (invoke_selector(INV_SEL(client, canBeHere, 1) , 0)) {
-				SCIkwarn(SCIkERROR, "Client "PREG" of avoider "PREG" doesn't"
+				error("Client "PREG" of avoider "PREG" doesn't"
 				         " have a canBeHere() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
 				return NULL_REG;
 			}
@@ -497,7 +497,7 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (looper.segment) {
 			if (invoke_selector(INV_SEL(looper, doit, 1), 2, angle, client)) {
-				SCIkwarn(SCIkERROR, "Looper "PREG" of avoider "PREG" doesn't"
+				error("Looper "PREG" of avoider "PREG" doesn't"
 				         " have a doit() funcselector\n", PRINT_REG(looper), PRINT_REG(avoider));
 			} else
 				return s->r_acc;

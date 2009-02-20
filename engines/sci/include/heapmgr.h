@@ -78,8 +78,8 @@ free_##ENTRY##_entry(ENTRY##_table_t *table, int index)				\
 	ENTRY##_entry_t *e = table->table + index;				\
 										\
 	if (index < 0 || index >= table->max_entry) {				\
-		fprintf(stderr, "heapmgr: Attempt to release"			\
-			" invalid table index %d!\n", index);			\
+		error("heapmgr: Attempt to release"			\
+			" invalid table index %d", index);			\
 		BREAKPOINT();							\
 	}									\
 	CLEANUP_FN(&(e->entry));						\

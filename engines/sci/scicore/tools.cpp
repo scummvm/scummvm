@@ -51,10 +51,10 @@
 			Sleep(0); \
 		} else { \
 			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
+				error("timeBeginPeriod(1) failed\n"); \
 			Sleep(x); \
 			if (timeEndPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
+				error("timeEndPeriod(1) failed\n"); \
 		} \
 	} while (0);
 #endif
@@ -201,13 +201,13 @@ void sci_gettime(long *seconds, long *useconds) {
 	DWORD tm;
 
 	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
-		fprintf(stderr, "timeBeginPeriod(1) failed in sci_gettime\n");
+		error("timeBeginPeriod(1) failed in sci_gettime\n");
 	}
 
 	tm = timeGetTime();
 
 	if (TIMERR_NOERROR != timeEndPeriod(1)) {
-		fprintf(stderr, "timeEndPeriod(1) failed in sci_gettime\n");
+		error("timeEndPeriod(1) failed in sci_gettime\n");
 	}
 
 	*seconds = tm / 1000;
@@ -322,7 +322,7 @@ sci_find_first(sci_dir_t *dir, const char *mask) {
 		closedir(dir->dir);
 
 	if (!(dir->dir = opendir("."))) {
-		sciprintf("%s, L%d: opendir(\".\") failed!\n", __FILE__, __LINE__);
+		sciprintf("%s, L%d: opendir(\".\") failed", __FILE__, __LINE__);
 		return NULL;
 	}
 
@@ -373,7 +373,7 @@ sci_mkpath(const char *path) {
 	char *next_separator = NULL;
 
 	if (chdir(G_DIR_SEPARATOR_S)) { /* Go to root */
-		sciprintf("Error: Could not change to root directory '%s'!\n",
+		sciprintf("Error: Could not change to root directory '%s'",
 		          G_DIR_SEPARATOR_S);
 		return -1;
 	}
@@ -393,7 +393,7 @@ sci_mkpath(const char *path) {
 					          path_position);
 					if (next_separator)
 						*next_separator = G_DIR_SEPARATOR_S[0];
-					sciprintf(" '%s'!\n", path);
+					sciprintf(" '%s'", path);
 					return -2;
 				}
 			}
@@ -449,7 +449,7 @@ Common::String _fcaseseek(const char *fname) {
  ** free it afterwards  */
 
 	if (strchr(fname, G_DIR_SEPARATOR)) {
-		fprintf(stderr, "_fcaseseek() does not support subdirs\n");
+		error("_fcaseseek() does not support subdirs\n");
 		BREAKPOINT();
 	}
 
@@ -501,7 +501,7 @@ sci_getcwd(void) {
 		free(cwd);
 	}
 
-	fprintf(stderr, "Could not determine current working directory!\n");
+	error("Could not determine current working directory");
 	return NULL;
 }
 

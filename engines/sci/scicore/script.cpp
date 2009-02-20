@@ -111,7 +111,7 @@ script_find_selector(state_t *s, const char *selectorname) {
 		if (strcmp(selectorname, s->selector_names[i]) == 0)
 			return i;
 
-	sciprintf("Warning: Could not map '%s' to any selector!\n", selectorname);
+	sciprintf("Warning: Could not map '%s' to any selector", selectorname);
 	return -1;
 }
 
@@ -323,7 +323,7 @@ script_dump_class(char *data, int seeker, int objsize, char **snames, int snames
 
 	while (overloads--) {
 		int selector = getInt16((unsigned char *) data + (seeker));
-		fprintf(stderr, "selector=%d; snames_nr =%d\n", selector, snames_nr);
+		error("selector=%d; snames_nr =%d\n", selector, snames_nr);
 		sciprintf("  [%03x] %s: @", selector & 0xffff,
 		          (snames && selector >= 0 && selector < snames_nr) ?
 		          snames[selector] : "<?>");
@@ -343,7 +343,7 @@ script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr
 	int word_count;
 
 	if (!script) {
-		sciprintf("Script not found!\n");
+		sciprintf("Script not found");
 		return;
 	}
 
@@ -480,7 +480,7 @@ script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr
 		break;
 
 		default:
-			sciprintf("Unsupported!\n");
+			sciprintf("Unsupported");
 			return;
 		}
 

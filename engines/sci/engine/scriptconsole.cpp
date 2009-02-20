@@ -579,7 +579,7 @@ con_parse(state_t *s, const char *command) {
 							break;
 
 						default:
-							fprintf(stderr, "Internal error: Heap corruption or prior assertion failed:\n"
+							error("Internal error: Heap corruption or prior assertion failed:\n"
 							        "Unknown parameter type '%c' for funtion\n", paramtype);
 
 						}
@@ -587,7 +587,7 @@ con_parse(state_t *s, const char *command) {
 
 					if (do_execute) {
 						command_todo->command(s);
-					} else fprintf(stderr, "Skipping command...\n");
+					} else error("Skipping command...\n");
 				}
 			}
 		}
@@ -907,7 +907,7 @@ c_list(state_t * s) {
 				                        + i * cmd_mm[mm_found].size_per_entry), 0);
 		else {
 			if (!s) {
-				sciprintf("You need a state to do that!\n");
+				sciprintf("You need a state to do that");
 				return 1;
 			}
 
@@ -1047,14 +1047,14 @@ c_hexgrep(state_t * s) {
 	char *dot = strchr(cmd_params[0].str, '.');
 
 	if (NULL == s) {
-		fprintf(stderr, "console.c: c_hexgrep(): NULL passed for s\r\n");
+		error("console.c: c_hexgrep(): NULL passed for s\r\n");
 		return(-1);
 	}
 
 	seekstr = (unsigned char*)sci_malloc(seeklen = (cmd_paramlength - 1));
 
 	if (NULL == seekstr) {
-		fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");
+		error("console.c: c_hexgrep(): malloc failed for seekstr\r\n");
 		return(-1);
 	}
 
@@ -1126,7 +1126,7 @@ c_selectornames(state_t * s) {
 	snames = vocabulary_get_snames(s->resmgr, &namectr, s ? s->version : 0);
 
 	if (!snames) {
-		sciprintf("No selector name table found!\n");
+		sciprintf("No selector name table found");
 		return 1;
 	}
 
@@ -1151,7 +1151,7 @@ c_kernelnames(state_t * s) {
 	}
 
 	if (!knames) {
-		sciprintf("No kernel name table found!\n");
+		sciprintf("No kernel name table found");
 		return 1;
 	}
 

@@ -832,10 +832,10 @@ yytype_int16 *bottom;
 yytype_int16 *top;
 #endif
 {
-	YYFPRINTF(stderr, "Stack now");
+	YYerror("Stack now");
 	for (; bottom <= top; ++bottom)
-		YYFPRINTF(stderr, " %d", *bottom);
-	YYFPRINTF(stderr, "\n");
+		YYerror(" %d", *bottom);
+	YYerror("\n");
 }
 
 # define YY_STACK_PRINT(Bottom, Top)				\
@@ -863,15 +863,15 @@ int yyrule;
 	int yynrhs = yyr2[yyrule];
 	int yyi;
 	unsigned long int yylno = yyrline[yyrule];
-	YYFPRINTF(stderr, "Reducing stack by rule %d (line %lu):\n",
+	YYerror("Reducing stack by rule %d (line %lu):\n",
 	          yyrule - 1, yylno);
 	/* The symbols being reduced.  */
 	for (yyi = 0; yyi < yynrhs; yyi++) {
-		fprintf(stderr, "   $%d = ", yyi + 1);
+		error("   $%d = ", yyi + 1);
 		yy_symbol_print(stderr, yyrhs[yyprhs[yyrule] + yyi],
 		                &(yyvsp[(yyi + 1) - (yynrhs)])
 		               );
-		fprintf(stderr, "\n");
+		error("\n");
 	}
 }
 
@@ -1890,7 +1890,7 @@ static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 				said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, n2), t1)), t2);
 
 #ifdef SAID_DEBUG
-	fprintf(stderr, "AUG(0x%x, 0x%x, [%04x], [%04x]) = [%04x]\n", n1, n2, t1, t2, retval);
+	error("AUG(0x%x, 0x%x, [%04x], [%04x]) = [%04x]\n", n1, n2, t1, t2, retval);
 #endif
 
 	return retval;
@@ -1898,7 +1898,7 @@ static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 
 static tree_t said_attach_branch(tree_t base, tree_t attacheant) {
 #ifdef SAID_DEBUG
-	fprintf(stderr, "ATT2([%04x], [%04x]) = [%04x]\n", base, attacheant, base);
+	error("ATT2([%04x], [%04x]) = [%04x]\n", base, attacheant, base);
 #endif
 
 	if (!attacheant)
@@ -1916,7 +1916,7 @@ static tree_t said_attach_branch(tree_t base, tree_t attacheant) {
 
 static said_spec_t said_top_branch(tree_t first) {
 #ifdef SAID_DEBUG
-	fprintf(stderr, "TOP([%04x])\n", first);
+	error("TOP([%04x])\n", first);
 #endif
 	said_branch_node(0, 1, 2);
 	said_leaf_node(1, 0x141); // Magic number #1

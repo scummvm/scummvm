@@ -522,7 +522,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			free(_resources);
 			_resources = NULL;
 		}
-		sciprintf("Resmgr: Could not retrieve a resource list!\n");
+		sciprintf("Resmgr: Could not retrieve a resource list");
 		_scir_free_resource_sources(mgr->_sources);
 		error("FIXME: Move this code to an init() method so that we can perform error handling");
 //		return NULL;
@@ -587,7 +587,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			break;
 		default:
 			sciprintf("Resmgr: Warning: While autodetecting: Couldn't"
-			          " determine SCI version!\n");
+			          " determine SCI version");
 		}
 
 	if (!resource_error) {
@@ -678,7 +678,7 @@ _scir_add_to_lru(ResourceManager *mgr, resource_t *res) {
 
 	mgr->memory_lru += res->size;
 #if (SCI_VERBOSE_RESMGR > 1)
-	fprintf(stderr, "Adding %s.%03d (%d bytes) to lru control: %d bytes total\n",
+	error("Adding %s.%03d (%d bytes) to lru control: %d bytes total\n",
 	        sci_resource_types[res->type], res->number, res->size,
 	        mgr->memory_lru);
 
@@ -694,7 +694,7 @@ _scir_print_lru_list(ResourceManager *mgr) {
 	resource_t *res = mgr->lru_first;
 
 	while (res) {
-		fprintf(stderr, "\t%s.%03d: %d bytes\n",
+		error("\t%s.%03d: %d bytes\n",
 		        sci_resource_types[res->type], res->number,
 		        res->size);
 		mem += res->size;
@@ -702,7 +702,7 @@ _scir_print_lru_list(ResourceManager *mgr) {
 		res = res->next;
 	}
 
-	fprintf(stderr, "Total: %d entries, %d bytes (mgr says %d)\n",
+	error("Total: %d entries, %d bytes (mgr says %d)\n",
 	        entries, mem, mgr->memory_lru);
 }
 
@@ -712,9 +712,9 @@ _scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
 	        && (!last_invulnerable || mgr->lru_first != mgr->lru_last)) {
 		resource_t *goner = mgr->lru_last;
 		if (!goner) {
-			fprintf(stderr, "Internal error: mgr->lru_last is NULL!\n");
-			fprintf(stderr, "LRU-mem= %d\n", mgr->memory_lru);
-			fprintf(stderr, "lru_first = %p\n", (void *)mgr->lru_first);
+			error("Internal error: mgr->lru_last is NULL");
+			error("LRU-mem= %d\n", mgr->memory_lru);
+			error("lru_first = %p\n", (void *)mgr->lru_first);
 			_scir_print_lru_list(mgr);
 		}
 
@@ -782,9 +782,9 @@ void
 scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int restype) {
 	if (!res) {
 		if (restype >= ARRAYSIZE(sci_resource_types))
-			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);
+			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d", restype, resnum);
 		else
-			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d!\n", sci_resource_types[restype], resnum);
+			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d", sci_resource_types[restype], resnum);
 		return;
 	}
 

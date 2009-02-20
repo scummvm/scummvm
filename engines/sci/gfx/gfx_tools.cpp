@@ -213,7 +213,7 @@ gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	int size;
 
 	if (pixmap->index_data) {
-		GFXWARN("Attempt to allocate pixmap index data twice!\n");
+		GFXWARN("Attempt to allocate pixmap index data twice");
 		return pixmap;
 	}
 
@@ -232,7 +232,7 @@ gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 gfx_pixmap_t *
 gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->index_data) {
-		GFXWARN("Attempt to free pixmap index data twice!\n");
+		GFXWARN("Attempt to free pixmap index data twice");
 		return pixmap;
 	}
 
@@ -247,7 +247,7 @@ gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	int size;
 
 	if (pixmap->data) {
-		GFXWARN("Attempt to allocate pixmap data twice!\n");
+		GFXWARN("Attempt to allocate pixmap data twice");
 		return pixmap;
 	}
 
@@ -271,7 +271,7 @@ gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 gfx_pixmap_t *
 gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->data) {
-		GFXWARN("Attempt to free pixmap data twice!\n");
+		GFXWARN("Attempt to free pixmap data twice");
 		return pixmap;
 	}
 
@@ -293,14 +293,14 @@ gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		return GFX_OK;
 
 	if (pal->max_colors_nr <= 0) {
-		GFXERROR("Palette has zero or less color entries!\n");
+		GFXERROR("Palette has zero or less color entries");
 		return GFX_ERROR;
 	}
 
 
 	if (color->global_index != GFX_COLOR_INDEX_UNMAPPED) {
 #if 0
-		GFXDEBUG("Attempt to allocate color twice: index 0x%d (%02x/%02x/%02x)!\n",
+		GFXDEBUG("Attempt to allocate color twice: index 0x%d (%02x/%02x/%02x)",
 		         color->global_index, color->r, color->g, color->b);
 #endif
 		return GFX_OK;
@@ -343,7 +343,7 @@ gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 
 	color->global_index = bestcolor;
 
-//	GFXWARN("Out of palette colors- doing approximated mapping!\n");
+//	GFXWARN("Out of palette colors- doing approximated mapping");
 	return GFX_OK;
 }
 
@@ -356,19 +356,19 @@ gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		return GFX_OK;
 
 	if (color->global_index == GFX_COLOR_INDEX_UNMAPPED) {
-		GFXWARN("Attempt to free unmapped color %02x/%02x/%02x!\n", color->r, color->g, color->b);
+		GFXWARN("Attempt to free unmapped color %02x/%02x/%02x", color->r, color->g, color->b);
 		BREAKPOINT();
 		return GFX_ERROR;
 	}
 
 	if (color->global_index >= pal->max_colors_nr) {
-		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)!\n",
+		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)",
 		         color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
 
 	if (!palette_color->lockers) {
-		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)!\n",
+		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)",
 		         color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
@@ -403,7 +403,7 @@ gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	old_data = pixmap->index_data;
 
 	if (!old_data) {
-		GFXERROR("Attempt to scale index data without index data!\n");
+		GFXERROR("Attempt to scale index data without index data");
 		return pixmap;
 	}
 

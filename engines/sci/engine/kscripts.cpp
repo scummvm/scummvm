@@ -69,7 +69,7 @@ int invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, in
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == SELECTOR_NONE) {
-		SCIkwarn(SCIkERROR, "Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
+		error("Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
 		         s->selector_names[selector_id], PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
@@ -158,7 +158,7 @@ reg_t kClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	int varblock_size;
 
 	if (!parent_obj) {
-		SCIkwarn(SCIkERROR, "Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
+		error("Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -167,7 +167,7 @@ reg_t kClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj = sm_alloc_clone(&s->seg_manager, &clone_addr);
 
 	if (!clone_obj) {
-		SCIkwarn(SCIkERROR, "Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
+		error("Cloning "PREG" failed-- internal error", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -196,7 +196,7 @@ reg_t kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	word underBits;
 
 	if (!victim_obj) {
-		SCIkwarn(SCIkERROR, "Attempt to dispose non-class/object at "PREG"\n",
+		error("Attempt to dispose non-class/object at "PREG"\n",
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
@@ -244,12 +244,12 @@ reg_t kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	scr = &(s->seg_manager.heap[scriptid]->data.script);
 
 	if (!scr->exports_nr) {
-		SCIkdebug(SCIkERROR, "Script 0x%x does not have a dispatch table\n", script);
+		error("Script 0x%x does not have a dispatch table\n", script);
 		return NULL_REG;
 	}
 
 	if (index > scr->exports_nr) {
-		SCIkwarn(SCIkERROR, "Dispatch index too big: %d > %d\n", index, scr->exports_nr);
+		error("Dispatch index too big: %d > %d\n", index, scr->exports_nr);
 		return NULL_REG;
 	}
 

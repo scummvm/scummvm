@@ -347,7 +347,7 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 		return NULL;
 	}
 
-	/*	fprintf(stderr, "View flags are 0x%02x\n", resource[3]);*/
+	/*	error("View flags are 0x%02x\n", resource[3]);*/
 
 	/*
 		for (i = 0; i < V1_MAGICS_NR; i++)
