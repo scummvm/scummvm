@@ -573,6 +573,12 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\engines\sci\console.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\console.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\sci\detection.cpp">
 		</File>
 		<File
