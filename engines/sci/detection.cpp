@@ -42,7 +42,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"camelot",         "Conquests of Camelot: King Arthur, Quest for the Grail"},
 	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
 	{"ecoquest",        "EcoQuest: The Search for Cetus"},
-	//{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
+	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
@@ -153,6 +153,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION(1, 000, 510)
+	},
+	
+	// Castle of Dr. Brain - English DOS Demo
+	{{"castlebrain", "Demo", {
+		{"resource.map", 0, "467bb5e3224bb54640c3280032aebff5", 633},
+		{"resource.000", 0, "9780f040d58182994e22d2e34fab85b0", 67367},
+		{"resource.001", 0, "2af49dbd8f2e1db4ab09f9310dc91259", 570553},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(1, 0, 5)
 	},
 
 #if 0
@@ -291,6 +301,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Eco Quest 2 - English DOS Demo
+	{{"ecoquest2", "Demo", {
+		{"resource.map", 0, "607cfa0d8a03b7d348c06ee727e3d939", 1321},
+		{"resource.000", 0, "dd6f614c43c029f063e93cd243af90a4", 525992},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(1, 1, 55)
+	},
+
 #if 0
 	// Freddy Pharkas - German DOS (from Tobis87)
 	{{"freddypharkas", "", {
@@ -315,6 +334,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+  
+	// Freddy Pharkas - English DOS CD Demo
+	{{"freddypharkas", "CD Demo", {
+		{"resource.map", 0, "a62a7eae85dd1e6b07f39662b278437e", 1918},
+		{"resource.000", 0, "4962a3c4dd44e36e78ea4a7a374c2220", 957382},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(1, 1, 95)
+	},
 
 	// Gabriel Knight - English DOS Floppy
 	{{"gk1", "", {
@@ -357,6 +385,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// Gabriel Knight - English DOS CD Demo
+	{{"gk1", "CD Demo", {
+		{"resource.map", 0, "39645952ae0ed8072c7e838f31b75464", 2490},
+		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(1, 1, 92)
+	},
 
 #if 0
 	// Gabriel Knight 2 - English DOS
@@ -604,6 +641,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// King's Quest 7 - English DOS Demo
+	{{"kq7", "Demo", {
+		{"resource.map", 0, "b44f774108d63faa1d021101221c5a54", 1690},
+		{"resource.000", 0, "d9659d2cf0c269c6a9dc776707f5bea0", 2433827},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(2, 100, 2)
+	},
 
 #if 0
 	// Laura Bow - English Amiga (from www.back2roots.org)
@@ -1611,6 +1657,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// The Island of Dr. Brain - English DOS Demo
+	{{"islandbrain", "Demo", {
+		{"resource.map", 0, "a8e5ca8ed1996974afa59f4c45e06195", 986},
+		{"resource.000", 0, "b3acd9b9dd7fe53c4ee133ac9a1acfab", 586560},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION(1, 1, 53)
+	},
 
 	// Torin's Passage - English Windows
 	{{"torin", "", {
