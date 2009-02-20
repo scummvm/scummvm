@@ -58,6 +58,30 @@ static FILE *f_open_mirrored(state_t *s, char *fname) {
 	char *buf = NULL;
 	int fsize;
 
+
+	printf("f_open_mirrored(%s)\n", fname);
+#if 0
+	// TODO/FIXME: Use s->resource_dir to locate the file???
+	File file;
+	if (!file.open(fname))
+		return NULL;
+
+	fsize = file.size();
+	if (fsize > 0) {
+		buf = (char *)sci_malloc(fsize);
+		file.read(buf, fsize);
+	}
+
+	file.close();
+
+	....
+	copy the file to a savegame -> only makes sense to perform this change
+	if we at the same time change the code for loading files to look among the
+	savestates, and also change *all* file writing code to write to savestates,
+	as it should
+	...
+#endif
+
 	chdir(s->resource_dir);
 	fd = sci_open(fname, O_RDONLY | O_BINARY);
 	if (!IS_VALID_FD(fd)) {
@@ -155,20 +179,28 @@ reg_t kFOpen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void file_close(state_t *s, int handle) {
-	SCIkdebug(SCIkFILE, "Closing file %d\n", handle);
-
+static FILE *getFileFromHandle(state_t *s, int handle) {
 	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to close file handle 0\n");
-		return;
+		SCIkwarn(SCIkERROR, "Attempt to use file handle 0\n");
+		return 0;
 	}
 
 	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to close invalid/unused file handle %d\n", handle);
-		return;
+		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
+		return 0;
 	}
+	
+	return s->file_handles[handle];
+}
 
-	fclose(s->file_handles[handle]);
+void file_close(state_t *s, int handle) {
+	SCIkdebug(SCIkFILE, "Closing file %d\n", handle);
+
+	FILE *f = getFileFromHandle(s, handle);
+	if (!f)
+		return;
+
+	fclose(f);
 
 	s->file_handles[handle] = NULL;
 }
@@ -181,33 +213,17 @@ reg_t kFClose(state_t *s, int funct_nr, int argc, reg_t *argv) {
 void fputs_wrapper(state_t *s, int handle, int size, char *data) {
 	SCIkdebug(SCIkFILE, "FPuts'ing \"%s\" to handle %d\n", data, handle);
 
-	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to write to file handle 0\n");
-		return;
-	}
-
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to write to invalid/unused file handle %d\n", handle);
-		return;
-	}
-
-	fwrite(data, 1, size, s->file_handles[handle]);
+	FILE *f = getFileFromHandle(s, handle);
+	if (f)
+		fwrite(data, 1, size, f);
 }
 
 void fwrite_wrapper(state_t *s, int handle, char *data, int length) {
 	SCIkdebug(SCIkFILE, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
 
-	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to write to file handle 0\n");
-		return;
-	}
-
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to write to invalid/unused file handle %d\n", handle);
-		return;
-	}
-
-	fwrite(data, 1, length, s->file_handles[handle]);
+	FILE *f = getFileFromHandle(s, handle);
+	if (f)
+		fwrite(data, 1, length, f);
 }
 
 reg_t kFPuts(state_t *s, int funct_nr, int argc, reg_t *argv) {
@@ -221,17 +237,11 @@ reg_t kFPuts(state_t *s, int funct_nr, int argc, reg_t *argv) {
 static void fgets_wrapper(state_t *s, char *dest, int maxsize, int handle) {
 	SCIkdebug(SCIkFILE, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
 
-	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to read from file handle 0\n");
+	FILE *f = getFileFromHandle(s, handle);
+	if (!f)
 		return;
-	}
 
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to read from invalid/unused file handle %d\n", handle);
-		return;
-	}
-
-	fgets(dest, maxsize, s->file_handles[handle]);
+	fgets(dest, maxsize, f);
 
 	SCIkdebug(SCIkFILE, "FGets'ed \"%s\"\n", dest);
 }
@@ -239,31 +249,19 @@ static void fgets_wrapper(state_t *s, char *dest, int maxsize, int handle) {
 static void fread_wrapper(state_t *s, char *dest, int bytes, int handle) {
 	SCIkdebug(SCIkFILE, "fread()'ing %d bytes from handle %d\n", bytes, handle);
 
-	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to read from file handle 0\n");
+	FILE *f = getFileFromHandle(s, handle);
+	if (!f)
 		return;
-	}
 
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to read from invalid/unused file handle %d\n", handle);
-		return;
-	}
-
-	s->r_acc = make_reg(0, fread(dest, 1, bytes, s->file_handles[handle]));
+	s->r_acc = make_reg(0, fread(dest, 1, bytes, f));
 }
 
 static void fseek_wrapper(state_t *s, int handle, int offset, int whence) {
-	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt seek on file handle 0\n");
+	FILE *f = getFileFromHandle(s, handle);
+	if (!f)
 		return;
-	}
 
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt seek on invalid/unused file handle %d\n", handle);
-		return;
-	}
-
-	s->r_acc = make_reg(0, fseek(s->file_handles[handle], offset, whence));
+	s->r_acc = make_reg(0, fseek(f, offset, whence));
 }
 
 static char *_chdir_savedir(state_t *s) {

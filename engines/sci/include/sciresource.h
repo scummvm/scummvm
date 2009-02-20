@@ -29,6 +29,9 @@
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
 
+#include "common/stream.h"
+#include "common/str.h"
+
 #include "sci/include/resource.h"
 #include "sci/include/versions.h"
 
@@ -89,7 +92,6 @@
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
 
 #define RESSOURCE_TYPE_DIRECTORY 0
-#define RESSOURCE_TYPE_AUDIO_DIRECTORY 1
 #define RESSOURCE_TYPE_VOLUME 2
 #define RESSOURCE_TYPE_EXTERNAL_MAP 3
 #define RESSOURCE_TYPE_INTERNAL_MAP 4
@@ -127,19 +129,10 @@ typedef struct resource_index_struct resource_index_t;
 
 struct ResourceSource {
 	int source_type;
-	int scanned;
-	union {
-		struct {
-			char *name;
-			int volume_number;
-		} file;
-		struct {
-			char *name;
-		} dir;
-		struct {
-			struct _resource_struct *resource;
-		} internal_map;
-	} location;
+	bool scanned;
+	Common::String location_name;	// FIXME: Replace by FSNode ?
+	Common::String location_dir_name;	// FIXME: Get rid of this again, only a temporary HACK!
+	int volume_number;
 	ResourceSource *associated_map;
 	ResourceSource *next;
 };
@@ -184,45 +177,38 @@ struct ResourceManager {
 	int memory_locked; /* Amount of resource bytes in locked memory */
 	int memory_lru; /* Amount of resource bytes under LRU control */
 
-	char *resource_path; /* Path to the resource and patch files */
-
 	resource_t *lru_first, *lru_last; /* Pointers to the first and last LRU queue entries */
 	/* LRU queue: lru_first points to the most recent entry */
+
+public:
+	/**
+	 * Creates a new FreeSCI resource manager.
+	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
+	 *						in the default case.
+	 * @param maxMemory		Maximum number of bytes to allow allocated for resources
+	 *
+	 * @note maxMemory will not be interpreted as a hard limit, only as a restriction
+	 *    for resources which are not explicitly locked. However, a warning will be
+	 *    issued whenever this limit is exceeded.
+	 */
+	ResourceManager(int version, int maxMemory);
+	~ResourceManager();
 };
 
 /**** FUNCTION DECLARATIONS ****/
 
 /**--- New Resource manager ---**/
 
-ResourceManager *
-scir_new_resource_manager(char *dir, int version, int maxMemory);
-/* Creates a new FreeSCI resource manager
-** Parameters: (char *) dir: Path to the resource and patch files (not modified or freed
-**                           by the resource manager)
-**             (int) version: The SCI version to look for; use SCI_VERSION_AUTODETECT
-**                            in the default case.
-**             (int) maxMemory: Maximum number of bytes to allow allocated for resources
-** Returns   : (ResourceManager *) A newly allocated resource manager
-** maxMemory will not be interpreted as a hard limit, only as a restriction for resources
-** which are not explicitly locked. However, a warning will be issued whenever this limit
-** is exceeded.
-*/
-
-ResourceSource *
-scir_add_patch_dir(ResourceManager *mgr, int type, char *path);
+ResourceSource *scir_add_patch_dir(ResourceManager *mgr, const char *path);
 /* Add a path to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
-**             (int) dirtype: The type of patch directory to add,
-**             either RESSOURCE_TYPE_DIRECTORY or RESSOURCE_TYPE_AUDIO_DIRECTORY
-**             (char *) path: The path to add
+**             (const char *) path: The path to add
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-ResourceSource *
-scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr);
+ResourceSource *scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr);
 
-ResourceSource *
-scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
+ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const char *filename,
                 int number, int extended_addressing);
 /* Add a volume to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
@@ -233,19 +219,10 @@ scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-ResourceSource *
-scir_add_external_map(ResourceManager *mgr, char *file_name);
+ResourceSource *scir_add_external_map(ResourceManager *mgr, const char *file_name);
 /* Add an external (i.e. separate file) map resource to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
-**             (char *) file_name: The name of the volume to add
-** Returns: A pointer to the added source structure, or NULL if an error occurred.
-*/
-
-ResourceSource *
-scir_add_internal_map(ResourceManager *mgr, resource_t *map);
-/* Add an internal (i.e. a resource) map resource to the resource manager's list of sources.
-** Parameters: (ResourceManager *) mgr: The resource manager to look up in
-**             (char *) file_name: The name of the volume to add
+**             (const char *) file_name: The name of the volume to add
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
@@ -294,17 +271,9 @@ scir_test_resource(ResourceManager *mgr, int type, int number);
 ** Use scir_find_resource() if you want to use the data contained in the resource.
 */
 
-void
-scir_free_resource_manager(ResourceManager *mgr);
-/* Frees a resource manager and all memory handled by it
-** Parameters: (ResourceManager *) mgr: The Manager to free
-** Returns   : (void)
-*/
-
 /**--- Resource map decoding functions ---*/
 
-int
-sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resources, int *resource_nr_p, int *sci_version);
+int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resources, int *resource_nr_p, int *sci_version);
 /* Reads the SCI0 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -317,8 +286,7 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 ** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 */
 
-int
-sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
+int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version);
 /* Reads the SCI1 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
@@ -352,8 +320,7 @@ sci1_sprintf_patch_file_name(char *string, resource_t *res);
 ** Returns   : (void)
 */
 
-int
-sci0_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
+int sci0_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
 /* Reads SCI0 patch files from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -365,8 +332,7 @@ sci0_read_resource_patches(ResourceSource *source, resource_t **resources, int *
 ** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 */
 
-int
-sci1_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
+int sci1_read_resource_patches(ResourceSource *source, resource_t **resources, int *resource_nr_p);
 /* Reads SCI1 patch files from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -382,39 +348,39 @@ sci1_read_resource_patches(ResourceSource *source, resource_t **resources, int *
 /**--- Decompression functions ---**/
 
 
-int decompress0(resource_t *result, int resh, int sci_version);
+int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version);
 /* Decrypts resource data and stores the result for SCI0-style compression.
 ** Parameters : result: The resource_t the decompressed data is stored in.
-**              resh  : File handle of the resource file
+**              stream: Stream of the resource file
 **              sci_version : Actual SCI resource version
 ** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
 **               encountered.
 */
 
-int decompress01(resource_t *result, int resh, int sci_version);
+int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version);
 /* Decrypts resource data and stores the result for SCI01-style compression.
 ** Parameters : result: The resource_t the decompressed data is stored in.
-**              resh  : File handle of the resource file
+**              stream: Stream of the resource file
 **              sci_version : Actual SCI resource version
 ** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
 **               encountered.
 */
 
-int decompress1(resource_t *result, int resh, int sci_version);
+int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version);
 /* Decrypts resource data and stores the result for SCI1.1-style compression.
 ** Parameters : result: The resource_t the decompressed data is stored in.
 **              sci_version : Actual SCI resource version
-**              resh  : File handle of the resource file
+**              stream: Stream of the resource file
 ** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
 **               encountered.
 */
 
 
-int decompress11(resource_t *result, int resh, int sci_version);
+int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version);
 /* Decrypts resource data and stores the result for SCI1.1-style compression.
 ** Parameters : result: The resource_t the decompressed data is stored in.
 **              sci_version : Actual SCI resource version
-**              resh  : File handle of the resource file
+**              stream: Stream of the resource file
 ** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
 **               encountered.
 */
@@ -437,10 +403,10 @@ byte *pic_reorder(byte *inbuffer, int dsize);
 /*--- Internal helper functions ---*/
 
 void
-_scir_free_resources(resource_t *resources, int resourcesNr);
+_scir_free_resources(resource_t *resources, int _resourcesNr);
 /* Frees a block of resources and associated data
 ** Parameters: (resource_t *) resources: The resources to free
-**             (int) resourcesNr: Number of resources in the block
+**             (int) _resourcesNr: Number of resources in the block
 ** Returns   : (void)
 */
 
@@ -457,8 +423,7 @@ _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number);
 ** Returns   : (resource_t) The matching resource entry, or NULL if not found
 */
 
-void
-_scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset);
+void _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset);
 /* Adds an alternative source to a resource
 ** Parameters: (resource_t *) res: The resource to add to
 **             (ResourceSource *) source: The source of the resource

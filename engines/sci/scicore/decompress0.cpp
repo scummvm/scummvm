@@ -225,18 +225,18 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength)
 /* Carl Muckenhoupt's decompression code ends here                         */
 /***************************************************************************/
 
-int sci0_get_compression_method(int resh) {
+int sci0_get_compression_method(Common::ReadStream &stream) {
 	guint16 compressedLength;
 	guint16 compressionMethod;
 	guint16 result_size;
 
 	/* Dummy variable */
-	if (read(resh, &result_size, 2) != 2)
+	if (stream.read(&result_size, 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
-	if ((read(resh, &compressedLength, 2) != 2) ||
-	        (read(resh, &result_size, 2) != 2) ||
-	        (read(resh, &compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) ||
+	        (stream.read(&result_size, 2) != 2) ||
+	        (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -247,13 +247,13 @@ int sci0_get_compression_method(int resh) {
 }
 
 
-int decompress0(resource_t *result, int resh, int sci_version) {
+int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod;
 	guint16 result_size;
 	guint8 *buffer;
 
-	if (read(resh, &(result->id), 2) != 2)
+	if (stream.read(&(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -265,9 +265,9 @@ int decompress0(resource_t *result, int resh, int sci_version) {
 	if ((result->number > sci_max_resource_nr[sci_version]) || (result->type > sci_invalid_resource))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((read(resh, &compressedLength, 2) != 2) ||
-	        (read(resh, &result_size, 2) != 2) ||
-	        (read(resh, &compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) ||
+	        (stream.read(&result_size, 2) != 2) ||
+	        (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -293,7 +293,7 @@ int decompress0(resource_t *result, int resh, int sci_version) {
 	buffer = (guint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char*)sci_malloc(result->size);
 
-	if (read(resh, buffer, compressedLength) != compressedLength) {
+	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
 		free(buffer);
 		return SCI_ERROR_IO_ERROR;

@@ -26,9 +26,9 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/resource.h"
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
+
+#include "common/file.h"
+
 
 #define RESOURCE_MAP_FILENAME "resource.map"
 
@@ -86,39 +86,36 @@
       | (((bytes)[3]) << 9) \
       | (((bytes)[2]) << 1))
 
-
-static int
-detect_odd_sci01(int fh) {
+static int detect_odd_sci01(Common::File &file) {
 	byte buf[6];
 	int files_ok = 1;
-	int fsize, resources_nr, tempfh, read_ok;
+	int fsize, resource_nr, read_ok;
 	char filename[14];
 
-	fsize = sci_fd_size(fh);
+	fsize = file.size();
 	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	resources_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
+	resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
 
-	while (resources_nr-- > 1) {
-		read_ok = read(fh, &buf, SCI0_RESMAP_ENTRIES_SIZE);
+	while (resource_nr-- > 1) {
+		read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
 
 		if (read_ok) {
 			sprintf(filename, "resource.%03i", SCI0_RESFILE_GET_FILE(buf + 2));
-			tempfh = sci_open(filename, O_RDONLY | O_BINARY);
-
-			if (tempfh == SCI_INVALID_FD) {
+			Common::File temp;
+			
+			// FIXME: Maybe better to use File::exists here?
+			if (!temp.open(filename)) {
 				files_ok = 0;
 				break;
 			}
-
-			close(tempfh);
 		}
 	}
 
-	lseek(fh, 0, SEEK_SET);
+	file.seek(0, SEEK_SET);
 
 	return files_ok;
 }
@@ -163,7 +160,7 @@ sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
 inline int sci1_res_type(int ofs, int *types, int lastrt) {
 	int i, last = -1;
 
-	for (i = 0;i <= sci1_last_resource;i++)
+	for (i = 0; i <= sci1_last_resource;i++)
 		if (types[i]) {
 			if (types[i] > ofs)
 				return last;
@@ -173,16 +170,17 @@ inline int sci1_res_type(int ofs, int *types, int lastrt) {
 	return lastrt;
 }
 
-int sci1_parse_header(int fd, int *types, int *lastrt) {
+int sci1_parse_header(Common::ReadStream &stream, int *types, int *lastrt) {
 	unsigned char rtype;
 	unsigned char offset[2];
 	int read_ok;
 	int size = 0;
 
 	do {
-		read_ok = read(fd, &rtype, 1);
-		if (!read_ok) break;
-		read_ok = read(fd, &offset, 2);
+		read_ok = stream.read(&rtype, 1);
+		if (!read_ok)
+			break;
+		read_ok = stream.read(&offset, 2);
 		if (read_ok < 2)
 			read_ok = 0;
 		if (rtype != 0xff) {
@@ -192,31 +190,30 @@ int sci1_parse_header(int fd, int *types, int *lastrt) {
 		size += 3;
 	} while (read_ok && (rtype != 0xFF));
 
-	if (!read_ok) return 0;
+	if (!read_ok)
+		return 0;
 
 	return size;
 }
 
 
 
-int
-sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
-	int fd;
+	Common::File file;
 	resource_t *resources;
-	int resources_nr;
+	int resource_nr;
 	int resource_index = 0;
 	int resources_total_read = 0;
 	int next_entry;
 	int max_resfile_nr = 0;
 
 	byte buf[SCI0_RESMAP_ENTRIES_SIZE];
-	fd = sci_open(map->location.file.name, O_RDONLY | O_BINARY);
 
-	if (!IS_VALID_FD(fd))
+	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
-	read(fd, &buf, 4);
+	file.read(&buf, 4);
 
 	/* Theory: An SCI1 map file begins with an index that allows us to seek quickly
 	   to a particular resource type. The entries are three bytes long; one byte
@@ -237,13 +234,12 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 	if ((buf[0] == 0x80) &&
 	        (buf[1] % 3 == 0) &&
 	        (buf[3] == 0x81)) {
-		close(fd);
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 
-	lseek(fd, 0, SEEK_SET);
+	file.seek(0, SEEK_SET);
 
-	switch (detect_odd_sci01(fd)) {
+	switch (detect_odd_sci01(file)) {
 	case 0 : /* Odd SCI01 */
 		if (*sci_version == SCI_VERSION_AUTODETECT)
 			*sci_version = SCI_VERSION_01_VGA_ODD;
@@ -256,22 +252,23 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	if ((fsize = sci_fd_size(fd)) < 0) {
+	fsize = file.size();
+	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	resources_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
+	resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
 
-	resources = (resource_t*)sci_calloc(resources_nr, sizeof(resource_t));
+	resources = (resource_t*)sci_calloc(resource_nr, sizeof(resource_t));
 	/* Sets valid default values for most entries */
 
 	do {
-		int read_ok = read(fd, &buf, SCI0_RESMAP_ENTRIES_SIZE);
+		int read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
 		next_entry = 1;
 
 		if (read_ok < 0) {
-			sciprintf("Error while reading %s: ", map->location.file.name);
+			sciprintf("Error while reading %s: ", map->location_name.c_str());
 			perror("");
 			next_entry = 0;
 		} else if (read_ok != SCI0_RESMAP_ENTRIES_SIZE) {
@@ -286,7 +283,6 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 
 			if (sci_res_read_entry(mgr, map, buf, resources + resource_index, *sci_version)) {
 				free(resources);
-				close(fd);
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 
@@ -304,7 +300,7 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 			if (fresh)
 				++resource_index;
 
-			if (++resources_total_read >= resources_nr) {
+			if (++resources_total_read >= resource_nr) {
 				sciprintf("Warning: After %d entries, resource.map"
 				          " is not terminated!\n", resource_index);
 				next_entry = 0;
@@ -314,16 +310,16 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 
 	} while (next_entry);
 
-	close(fd);
+	file.close();
 
 	if (!resource_index) {
 		sciprintf("resource.map was empty!\n");
-		_scir_free_resources(resources, resources_nr);
+		_scir_free_resources(resources, resource_nr);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
 	if (max_resfile_nr > 999) {
-		_scir_free_resources(resources, resources_nr);
+		_scir_free_resources(resources, resource_nr);
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	} else {
 #if 0
@@ -331,18 +327,16 @@ sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **r
 		/* Check whether the highest resfile used exists */
 		char filename_buf[14];
 		sprintf(filename_buf, "resource.%03d", max_resfile_nr);
-		fd = sci_open(filename_buf, O_RDONLY);
 
-		if (!IS_VALID_FD(fd)) {
-			_scir_free_resources(resources, resources_nr);
+		if (!file.open(filename_buf) {
+			_scir_free_resources(resources, resource_nr);
 			sciprintf("'%s' requested by resource.map, but not found\n", filename_buf);
 			return SCI_ERROR_INVALID_RESMAP_ENTRY;
-		} else
-			close(fd);
+		}
 #endif
 	}
 
-	if (resource_index < resources_nr)
+	if (resource_index < resource_nr)
 		resources = (resource_t*)sci_realloc(resources, sizeof(resource_t) * resource_index);
 
 	*resource_p = resources;
@@ -388,9 +382,9 @@ int
 sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
-	int fd;
+	Common::File file;
 	resource_t *resources, *resource_start;
-	int resources_nr;
+	int resource_nr;
 	int resource_index = 0;
 	int ofs, header_size;
 	int *types = (int*)sci_malloc(sizeof(int) * (sci1_last_resource + 1));
@@ -400,15 +394,12 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 	int entrysize;
 	int entry_size_selector;
 
-	fd = sci_open(map->location.file.name, O_RDONLY | O_BINARY);
-
-	if (!IS_VALID_FD(fd))
+	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
 	memset(types, 0, sizeof(int) * (sci1_last_resource + 1));
 
-	if (!(sci1_parse_header(fd, types, &lastrt))) {
-		close(fd);
+	if (!(sci1_parse_header(file, types, &lastrt))) {
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 
@@ -418,7 +409,6 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 
 	if (*sci_version == SCI_VERSION_AUTODETECT) { /* That didn't help */
 		sciprintf("Unable to detect resource map version\n");
-		close(fd);
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 	}
 
@@ -426,24 +416,25 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 	            ? SCI11_RESMAP_ENTRIES_SIZE
 	            : SCI1_RESMAP_ENTRIES_SIZE;
 
-	if ((fsize = sci_fd_size(fd)) < 0) {
+	fsize = file.size();
+	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
-		close(fd);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	resources_nr = (fsize - types[0]) / entrysize;
-	resource_start = resources = (resource_t*)sci_realloc(mgr->_resources, (mgr->_resourcesNr + resources_nr) * sizeof(resource_t));
+	resource_nr = (fsize - types[0]) / entrysize;
+	resource_start = resources = (resource_t*)sci_realloc(mgr->_resources, (mgr->_resourcesNr + resource_nr) * sizeof(resource_t));
 	resources += mgr->_resourcesNr;
 
 	i = 0;
-	while (types[i] == 0) i++;
+	while (types[i] == 0)
+		i++;
 	header_size = ofs = types[i];
 
-	lseek(fd, ofs, SEEK_SET);
+	file.seek(ofs, SEEK_SET);
 
-	for (i = 0; i < resources_nr; i++) {
-		int read_ok = read(fd, &buf, entrysize);
+	for (i = 0; i < resource_nr; i++) {
+		int read_ok = file.read(&buf, entrysize);
 		int j;
 		resource_t *res;
 		int addto = resource_index;
@@ -451,10 +442,11 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 
 		if (read_ok < entrysize) {
 #if 0
-			if (!eof(fd)) {
-				sciprintf("Error while reading %s: ", map->location.file.name);
+			if (!file.eof()) {
+				sciprintf("Error while reading %s: ", map->location_name.c_str());
 				perror("");
-			} else read_ok = 1;
+			} else
+				read_ok = 1;
 			break;
 #endif
 		}
@@ -498,7 +490,6 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 		ofs += entrysize;
 	}
 
-	close(fd);
 	free(types);
 
 	*resource_p = resource_start;
@@ -510,9 +501,9 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 #ifdef TEST_RESOURCE_MAP
 int
 main(int argc, char **argv) {
-	int resources_nr;
+	int resource_nr;
 	resource_t *resources;
-	int notok = sci0_read_resource_map(".", &resources, &resources_nr);
+	int notok = sci0_read_resource_map(".", &resources, &resource_nr);
 
 	if (notok) {
 		fprintf(stderr, "Failed: Error code %d\n", notok);
@@ -522,9 +513,9 @@ main(int argc, char **argv) {
 	if (resources) {
 		int i;
 
-		printf("Found %d resources:\n", resources_nr);
+		printf("Found %d resources:\n", resource_nr);
 
-		for (i = 0; i < resources_nr; i++) {
+		for (i = 0; i < resource_nr; i++) {
 			resource_t *res = resources + i;
 
 			printf("#%04d:\tRESOURCE.%03d:%8d\t%s.%03d\n",

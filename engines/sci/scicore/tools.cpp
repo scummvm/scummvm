@@ -24,6 +24,11 @@
  */
 
 
+#include "common/archive.h"
+#include "common/file.h"
+#include "common/util.h"
+
+
 #ifdef _MSC_VER
 #  include <sys/timeb.h>
 #  include <windows.h>
@@ -439,90 +444,45 @@ sci_sched_yield() {
 **             (sci_dir_t *) dir: Directory to find file within.
 ** Returns   : (char *) Case-sensitive filename of the file.
 */
-char *_fcaseseek(const char *fname, sci_dir_t *dir) {
+Common::String _fcaseseek(const char *fname) {
 /* Expects *dir to be uninitialized and the caller to
  ** free it afterwards  */
-
-	Common::String buf;
-	char *retval = NULL, *name;
-
-#ifdef _MSC_VER
-	return (char *)fname;
-#endif
 
 	if (strchr(fname, G_DIR_SEPARATOR)) {
 		fprintf(stderr, "_fcaseseek() does not support subdirs\n");
 		BREAKPOINT();
 	}
 
-	sci_init_dir(dir);
+	// Look up the file, ignoring case
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, fname);
 
-	/* Replace all letters with '?' chars */
-	buf = fname;
-	
-	for (Common::String::iterator iterator = buf.begin(); iterator != buf.end(); ++iterator) {
-		if (isalpha(*iterator))
-			*iterator = '?';
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String name = (*x)->getName();
+		if (name.equalsIgnoreCase(fname))
+			return name;
 	}
-
-	name = sci_find_first(dir, buf.c_str());
-
-	while (name && !retval) {
-		if (!scumm_stricmp(fname, name))
-			retval = name;
-		else
-			name = sci_find_next(dir);
-	}
-
-	return retval;
+	return Common::String();
 }
 
 
-FILE *
-sci_fopen(const char *fname, const char *mode) {
-	sci_dir_t dir;
-	char *name = _fcaseseek(fname, &dir);
+FILE *sci_fopen(const char *fname, const char *mode) {
+	Common::String name = _fcaseseek(fname);
 	FILE *file = NULL;
 
-	if (name)
-		file = fopen(name, mode);
+	if (!name.empty())
+		file = fopen(name.c_str(), mode);
 	else if (strchr(mode, 'w'))
 		file = fopen(fname, mode);
-
-	sci_finish_find(&dir); /* Free memory */
 
 	return file;
 }
 
-int
-sci_open(const char *fname, int flags) {
-	sci_dir_t dir;
-	char *name;
+int sci_open(const char *fname, int flags) {
 	int file = SCI_INVALID_FD;
-	char *separator_position;
-	char *path;
-	char *caller_cwd;
-
-	sci_init_dir(&dir);
-
-	separator_position = (char *)strrchr(fname, G_DIR_SEPARATOR);
-	if (separator_position) {
-		path = (char *) malloc(separator_position - fname + 1);
-		path[separator_position-fname] = 0;
-		strncpy(path, fname, separator_position - fname);
-		chdir(path);
-		free(path);
-	}
-
-	name = _fcaseseek(separator_position ? separator_position + 1 : fname, &dir);
-	if (name)
-		file = open(name, flags);
-
-	sci_finish_find(&dir); /* Free memory */
-
-	caller_cwd = sci_getcwd();
-	chdir(caller_cwd);
-	free(caller_cwd);
+	Common::String name = _fcaseseek(fname);
+	if (!name.empty())
+		file = open(name.c_str(), flags);
 
 	return file;
 }

@@ -34,7 +34,7 @@ void decryptinit3(void);
 int decrypt3(guint8* dest, guint8* src, int length, int complength);
 int decrypt4(guint8* dest, guint8* src, int length, int complength);
 
-int decompress11(resource_t *result, int resh, int sci_version) {
+int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod, result_size;
 	guint8 *buffer;
@@ -42,13 +42,13 @@ int decompress11(resource_t *result, int resh, int sci_version) {
 
 	DDEBUG("d1");
 
-	if (read(resh, &tempid, 1) != 1)
+	if (stream.read(&tempid, 1) != 1)
 		return SCI_ERROR_IO_ERROR;
 
 	result->id = tempid;
 
 	result->type = result->id & 0x7f;
-	if (read(resh, &(result->number), 2) != 2)
+	if (stream.read(&(result->number), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -57,9 +57,9 @@ int decompress11(resource_t *result, int resh, int sci_version) {
 	if ((result->type > sci_invalid_resource))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((read(resh, &compressedLength, 2) != 2) ||
-	        (read(resh, &result_size, 2) != 2) ||
-	        (read(resh, &compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) ||
+	        (stream.read(&result_size, 2) != 2) ||
+	        (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -88,15 +88,14 @@ int decompress11(resource_t *result, int resh, int sci_version) {
 	buffer = (guint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char*)sci_malloc(result->size);
 
-	if (read(resh, buffer, compressedLength) != compressedLength) {
+	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
 		free(buffer);
 		return SCI_ERROR_IO_ERROR;
 	};
 
 	if (!(compressedLength & 1)) { /* Align */
-		int foo;
-		read(resh, &foo, 1);
+		stream.readByte();
 	}
 
 #ifdef _SCI_DECOMPRESS_DEBUG

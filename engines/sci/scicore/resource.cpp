@@ -25,6 +25,8 @@
 
 /* Resource library */
 
+#include "common/archive.h"
+#include "common/file.h"
 #include "common/util.h"
 
 #include "sci/include/sci_memory.h"
@@ -88,7 +90,7 @@ const char *sci_resource_type_suffixes[] = {"v56", "p56", "scr", "tex", "snd",
 int resourcecmp(const void *first, const void *second);
 
 
-typedef int decomp_funct(resource_t *result, int resh, int sci_version);
+typedef int decomp_funct(resource_t *result, Common::ReadStream &stream, int sci_version);
 typedef void patch_sprintf_funct(char *string, resource_t *res);
 
 static decomp_funct *decompressors[] = {
@@ -136,8 +138,7 @@ int resourcecmp(const void *first, const void *second) {
 /*-- Resmgr helper functions --*/
 /*-----------------------------*/
 
-void
-_scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset) {
+void _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset) {
 	resource_altsource_t *rsrc = (resource_altsource_t*)sci_malloc(sizeof(resource_altsource_t));
 
 	rsrc->next = res->alt_sources;
@@ -146,8 +147,7 @@ _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_o
 	res->alt_sources = rsrc;
 }
 
-resource_t *
-_scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number) {
+resource_t *_scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number) {
 	int i;
 	for (i = 0; i < res_nr; i++)
 		if (res[i].number == number && res[i].type == type)
@@ -159,64 +159,57 @@ _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number) 
 /** Resource source list management **/
 /*-----------------------------------*/
 
-ResourceSource *
-scir_add_external_map(ResourceManager *mgr, char *file_name) {
-	ResourceSource *newsrc = (ResourceSource *)
-	                            malloc(sizeof(ResourceSource));
+ResourceSource *scir_add_external_map(ResourceManager *mgr, const char *file_name) {
+	ResourceSource *newsrc = new ResourceSource();
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_EXTERNAL_MAP;
-	newsrc->location.file.name = strdup(file_name);
-	newsrc->scanned = 0;
+	newsrc->location_name = file_name;
+	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
 
 	return newsrc;
 }
 
-ResourceSource *
-scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
+ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const char *filename,
                 int number, int extended_addressing) {
-	ResourceSource *newsrc = (ResourceSource *)
-	                            malloc(sizeof(ResourceSource));
+	ResourceSource *newsrc = new ResourceSource();
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_VOLUME;
-	newsrc->scanned = 0;
-	newsrc->location.file.name = strdup(filename);
-	newsrc->location.file.volume_number = number;
+	newsrc->scanned = false;
+	newsrc->location_name = filename;
+	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 	return 0;
 }
 
-ResourceSource *
-scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
-	ResourceSource *newsrc = (ResourceSource *)
-	                            malloc(sizeof(ResourceSource));
+ResourceSource *scir_add_patch_dir(ResourceManager *mgr, const char *dirname) {
+	ResourceSource *newsrc = new ResourceSource();
 
 	/* Add the new source to the SLL of sources */
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_DIRECTORY;
-	newsrc->scanned = 0;
-	newsrc->location.dir.name = strdup(dirname);
+	newsrc->scanned = false;
+	newsrc->location_name = dirname;
 	return 0;
 }
 
-ResourceSource *
-scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
+ResourceSource *scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
 	ResourceSource *seeker = mgr->_sources;
 
 	while (seeker) {
 		if (seeker->source_type == RESSOURCE_TYPE_VOLUME &&
 		        seeker->associated_map == map &&
-		        seeker->location.file.volume_number == volume_nr)
+		        seeker->volume_number == volume_nr)
 			return seeker;
 		seeker = seeker->next;
 	}
@@ -229,34 +222,25 @@ scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
 /*------------------------------------------------*/
 
 static void
-_scir_init_trivial(ResourceManager *mgr) {
-	mgr->_resourcesNr = 0;
-	mgr->_resources = (resource_t*)sci_malloc(1);
-}
-
-
-static void
-_scir_load_from_patch_file(int fh, resource_t *res, char *filename) {
+_scir_load_from_patch_file(Common::File &file, resource_t *res, char *filename) {
 	unsigned int really_read;
 
 	res->data = (unsigned char*)sci_malloc(res->size);
-	really_read = read(fh, res->data, res->size);
+	really_read = file.read(res->data, res->size);
 
 	if (really_read < res->size) {
-		sciprintf("Error: Read %d bytes from %s but expected %d!\n",
+		error("Read %d bytes from %s but expected %d!",
 		          really_read, filename, res->size);
-		exit(1);
 	}
 
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
 static void
-_scir_load_resource(ResourceManager *mgr, resource_t *res, int protect) {
+_scir_load_resource(ResourceManager *mgr, resource_t *res, bool protect) {
 	char filename[MAXPATHLEN];
-	int fh;
+	Common::File file;
 	resource_t backup;
-	char *save_cwd = sci_getcwd();
 
 	memcpy(&backup, res, sizeof(resource_t));
 
@@ -264,53 +248,37 @@ _scir_load_resource(ResourceManager *mgr, resource_t *res, int protect) {
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY) {
 
 		if (!patch_sprintfers[mgr->sci_version]) {
-			sciprintf("Resource manager's SCI version (%d) has no patch file name printers -> internal error!\n",
+			error("Resource manager's SCI version (%d) has no patch file name printers",
 			          mgr->sci_version);
-			exit(1);
 		}
 
 		/* Get patch file name */
 		patch_sprintfers[mgr->sci_version](filename, res);
-		chdir(res->source->location.dir.name);
+		
+		// FIXME: Instead of using SearchMan, maybe we should only search
+		// a single dir specified by this RESSOURCE_TYPE_DIRECTORY ResourceSource?
 	} else
-		strcpy(filename, res->source->location.file.name);
+		strcpy(filename, res->source->location_name.c_str());
 
-	fh = open(filename, O_RDONLY | O_BINARY);
-
-
-	if (!IS_VALID_FD(fh)) {
-		char *raiser = filename;
-		while (*raiser) {
-			*raiser = toupper(*raiser); /* Uppercasify */
-			++raiser;
-		}
-		fh = sci_open(filename, O_RDONLY | O_BINARY);
-	}    /* Try case-insensitively name */
-
-	if (!IS_VALID_FD(fh)) {
-		sciprintf("Failed to open %s!\n", filename);
+	if (!file.open(filename)) {
+		warning("Failed to open %s", filename);
 		res->data = NULL;
 		res->status = SCI_STATUS_NOMALLOC;
 		res->size = 0;
-		chdir(save_cwd);
-		free(save_cwd);
 		return;
 	}
 
 
-	lseek(fh, res->file_offset, SEEK_SET);
+	file.seek(res->file_offset, SEEK_SET);
 
-	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY ||
-	        res->source->source_type == RESSOURCE_TYPE_AUDIO_DIRECTORY)
-		_scir_load_from_patch_file(fh, res, filename);
+	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
+		_scir_load_from_patch_file(file, res, filename);
 	else if (!decompressors[mgr->sci_version]) {
 		/* Check whether we support this at all */
-		sciprintf("Resource manager's SCI version (%d) is invalid!\n",
-		          mgr->sci_version);
-		exit(1);
+		error("Resource manager's SCI version (%d) is invalid", mgr->sci_version);
 	} else {
 		int error = /* Decompress from regular resource file */
-		    decompressors[mgr->sci_version](res, fh, mgr->sci_version);
+		    decompressors[mgr->sci_version](res, file, mgr->sci_version);
 
 		if (error) {
 			sciprintf("Error %d occured while reading %s.%03d"
@@ -324,17 +292,12 @@ _scir_load_resource(ResourceManager *mgr, resource_t *res, int protect) {
 			res->data = NULL;
 			res->status = SCI_STATUS_NOMALLOC;
 			res->size = 0;
-			chdir(save_cwd);
-			free(save_cwd);
-			return;
 		}
 	}
 
-	close(fh);
 }
 
-resource_t *
-scir_test_resource(ResourceManager *mgr, int type, int number) {
+resource_t *scir_test_resource(ResourceManager *mgr, int type, int number) {
 	resource_t binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
@@ -343,11 +306,10 @@ scir_test_resource(ResourceManager *mgr, int type, int number) {
 	               sizeof(resource_t), resourcecmp);
 }
 
-int sci0_get_compression_method(int resh);
+int sci0_get_compression_method(Common::ReadStream &stream);
 
-int
-sci_test_view_type(ResourceManager *mgr) {
-	int fh;
+int sci_test_view_type(ResourceManager *mgr) {
+	Common::File file;
 	char filename[MAXPATHLEN];
 	int compression;
 	resource_t *res;
@@ -355,65 +317,46 @@ sci_test_view_type(ResourceManager *mgr) {
 
 	mgr->sci_version = SCI_VERSION_AUTODETECT;
 
-	for (i = 0;i < 1000;i++) {
+	for (i = 0; i < 1000; i++) {
 		res = scir_test_resource(mgr, sci_view, i);
 
-		if (!res) continue;
-
-		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY ||
-		        res->source->source_type == RESSOURCE_TYPE_AUDIO_DIRECTORY)
+		if (!res)
 			continue;
 
-		strcpy(filename, res->source->location.file.name);
-		fh = open(filename, O_RDONLY | O_BINARY);
+		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
+			continue;
 
-		if (!IS_VALID_FD(fh)) {
-			char *raiser = filename;
-			while (*raiser) {
-				*raiser = toupper(*raiser); /* Uppercasify */
-				++raiser;
-			}
-			fh = sci_open(filename, O_RDONLY | O_BINARY);
-		}    /* Try case-insensitively name */
+		strcpy(filename, res->source->location_name.c_str());
 
-		if (!IS_VALID_FD(fh)) continue;
-		lseek(fh, res->file_offset, SEEK_SET);
+		if (!file.open(filename))
+			continue;
+		file.seek(res->file_offset, SEEK_SET);
 
-		compression = sci0_get_compression_method(fh);
-		close(fh);
+		compression = sci0_get_compression_method(file);
+		file.close();
 
 		if (compression == 3)
 			return (mgr->sci_version = SCI_VERSION_01_VGA);
 	}
 
 	/* Try the same thing with pics */
-	for (i = 0;i < 1000;i++) {
+	for (i = 0; i < 1000; i++) {
 		res = scir_test_resource(mgr, sci_pic, i);
 
-		if (!res) continue;
-
-		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY ||
-		        res->source->source_type == RESSOURCE_TYPE_AUDIO_DIRECTORY)
+		if (!res)
 			continue;
 
-		strcpy(filename, res->source->location.file.name);
-		fh = open(filename, O_RDONLY | O_BINARY);
+		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
+			continue;
 
+		strcpy(filename, res->source->location_name.c_str());
 
-		if (!IS_VALID_FD(fh)) {
-			char *raiser = filename;
-			while (*raiser) {
-				*raiser = toupper(*raiser); /* Uppercasify */
-				++raiser;
-			}
-			fh = sci_open(filename, O_RDONLY | O_BINARY);
-		}    /* Try case-insensitively name */
+		if (!file.open(filename))
+			continue;
+		file.seek(res->file_offset, SEEK_SET);
 
-		if (!IS_VALID_FD(fh)) continue;
-		lseek(fh, res->file_offset, SEEK_SET);
-
-		compression = sci0_get_compression_method(fh);
-		close(fh);
+		compression = sci0_get_compression_method(file);
+		file.close();
 
 		if (compression == 3)
 			return (mgr->sci_version = SCI_VERSION_01_VGA);
@@ -424,51 +367,30 @@ sci_test_view_type(ResourceManager *mgr) {
 
 
 
-int
-scir_add_appropriate_sources(ResourceManager *mgr,
-                             char *dir) {
-	const char *trailing_slash = "";
+int scir_add_appropriate_sources(ResourceManager *mgr) {
 	//char path_separator;
-	sci_dir_t dirent;
-	char *name;
 	ResourceSource *map;
-	int fd;
-	char fullname[MAXPATHLEN];
 
-	if (dir[strlen(dir)-1] != G_DIR_SEPARATOR) {
-		trailing_slash = G_DIR_SEPARATOR_S;
-	}
+	if (!Common::File::exists("RESOURCE.MAP"))
+		return 0;
+	map = scir_add_external_map(mgr, "RESOURCE.MAP");
 
-	name = (char *)malloc(strlen(dir) + 1 +
-	                      strlen("RESOURCE.MAP") + 1);
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "RESOURCE.0??");
 
-	sprintf(fullname, "%s%s%s", dir, trailing_slash, "RESOURCE.MAP");
-	fd = sci_open("RESOURCE.MAP", O_RDONLY | O_BINARY);
-	if (!IS_VALID_FD(fd)) return 0;
-	close(fd);
-	map = scir_add_external_map(mgr, fullname);
-	free(name);
-	sci_init_dir(&dirent);
-	name = sci_find_first(&dirent, "RESOURCE.0??");
-	while (name != NULL) {
-		char *dot = strrchr(name, '.');
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String name = (*x)->getName();
+		char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
-		sprintf(fullname, "%s%s%s", dir, G_DIR_SEPARATOR_S, name);
-		scir_add_volume(mgr, map, fullname, number, 0);
-		name = sci_find_next(&dirent);
+		scir_add_volume(mgr, map, name.c_str(), number, 0);
 	}
-	sci_finish_find(&dirent);
-
-	sci_finish_find(&dirent);
-	sprintf(fullname, "%s%s", dir, G_DIR_SEPARATOR_S);
-	scir_add_patch_dir(mgr, RESSOURCE_TYPE_DIRECTORY, fullname);
+	scir_add_patch_dir(mgr, "");	// FIXME: used to pass the 'current' instead of ""
 
 	return 1;
 }
 
-static int
-_scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSource *source) {
+static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSource *source) {
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
@@ -482,7 +404,7 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 		_scir_scan_new_sources(mgr, detected_version, source->next);
 
 	if (!source->scanned) {
-		source->scanned = 1;
+		source->scanned = true;
 		switch (source->source_type) {
 		case RESSOURCE_TYPE_DIRECTORY:
 			if (mgr->sci_version <= SCI_VERSION_01)
@@ -511,8 +433,6 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 					if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND)
 						sciprintf("Running SCI games without a resource map is not supported ATM\n");
 					sci_free(mgr);
-					chdir(caller_cwd);
-					free(caller_cwd);
 					return NULL;
 				}
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
@@ -522,7 +442,8 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
 					/* Initialize empty resource manager */
-					_scir_init_trivial(mgr);
+					mgr->_resourcesNr = 0;
+					mgr->_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
 					resource_error = 0;
 				}
 #endif
@@ -547,7 +468,8 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
 					/* Initialize empty resource manager */
-					_scir_init_trivial(mgr);
+					mgr->_resourcesNr = 0;
+					mgr->_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
 					resource_error = 0;
 				}
 			}
@@ -567,59 +489,46 @@ scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
 	return 0;
 }
 
-static void
-_scir_free_resource_sources(ResourceSource *rss) {
+static void _scir_free_resource_sources(ResourceSource *rss) {
 	if (rss) {
 		_scir_free_resource_sources(rss->next);
-		free(rss);
+		delete rss;
 	}
 }
 
-ResourceManager *
-scir_new_resource_manager(char *dir, int version, int maxMemory) {
+ResourceManager::ResourceManager(int version, int maxMemory) {
 	int resource_error = 0;
-	ResourceManager *mgr = (ResourceManager*)sci_malloc(sizeof(ResourceManager));
-	char *caller_cwd = sci_getcwd();
+	ResourceManager *mgr = this;
 	int resmap_version = version;
 
-	if (chdir(dir)) {
-		sciprintf("Resmgr: Directory '%s' is invalid!\n", dir);
-		free(caller_cwd);
-		return NULL;
-	}
-
-	mgr->_maxMemory = maxMemory;
+	_maxMemory = maxMemory;
 
 	mgr->memory_locked = 0;
 	mgr->memory_lru = 0;
 
-	mgr->resource_path = dir;
-
-	mgr->_resources = NULL;
-	mgr->_resourcesNr = 0;
-	mgr->_sources = NULL;
+	_resources = NULL;
+	_resourcesNr = 0;
+	_sources = NULL;
 	mgr->sci_version = version;
-
-	scir_add_appropriate_sources(mgr, dir);
-	scir_scan_new_sources(mgr, &resmap_version);
-
-	if (!mgr->_resources || !mgr->_resourcesNr) {
-		if (mgr->_resources) {
-			free(mgr->_resources);
-			mgr->_resources = NULL;
-		}
-		sciprintf("Resmgr: Could not retrieve a resource list!\n");
-		_scir_free_resource_sources(mgr->_sources);
-		free(mgr);
-		chdir(caller_cwd);
-		free(caller_cwd);
-		return NULL;
-	}
 
 	mgr->lru_first = NULL;
 	mgr->lru_last = NULL;
 
-	qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
+	scir_add_appropriate_sources(mgr);
+	scir_scan_new_sources(mgr, &resmap_version);
+
+	if (!_resources || !_resourcesNr) {
+		if (_resources) {
+			free(_resources);
+			_resources = NULL;
+		}
+		sciprintf("Resmgr: Could not retrieve a resource list!\n");
+		_scir_free_resource_sources(mgr->_sources);
+		error("FIXME: Move this code to an init() method so that we can perform error handling");
+//		return NULL;
+	}
+
+	qsort(_resources, _resourcesNr, sizeof(resource_t),
 	      resourcecmp); /* Sort resources */
 
 	if (version == SCI_VERSION_AUTODETECT)
@@ -666,7 +575,7 @@ scir_new_resource_manager(char *dir, int version, int maxMemory) {
 			resource_t *res = scir_test_resource(mgr, sci_script, 0);
 
 			mgr->sci_version = version = SCI_VERSION_1_EARLY;
-			_scir_load_resource(mgr, res, 1);
+			_scir_load_resource(mgr, res, true);
 
 			if (res->status == SCI_STATUS_NOMALLOC)
 				mgr->sci_version = version = SCI_VERSION_1_LATE;
@@ -682,27 +591,11 @@ scir_new_resource_manager(char *dir, int version, int maxMemory) {
 		}
 
 	if (!resource_error) {
-#if 0
-		if (version <= SCI_VERSION_01)
-			sci0_read_resource_patches(dir,
-			                           &mgr->_resources,
-			                           &mgr->_resourcesNr);
-		else
-			sci1_read_resource_patches(dir,
-			                           &mgr->_resources,
-			                           &mgr->_resourcesNr);
-#endif
-
-		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
+		qsort(_resources, _resourcesNr, sizeof(resource_t),
 		      resourcecmp); /* Sort resources */
 	}
 
 	mgr->sci_version = version;
-
-	chdir(caller_cwd);
-	free(caller_cwd);
-
-	return mgr;
 }
 
 static void
@@ -730,13 +623,10 @@ _scir_free_resources(resource_t *resources, int _resourcesNr) {
 	free(resources);
 }
 
-void
-scir_free_resource_manager(ResourceManager *mgr) {
-	_scir_free_resources(mgr->_resources, mgr->_resourcesNr);
-	_scir_free_resource_sources(mgr->_sources);
-	mgr->_resources = NULL;
-
-	free(mgr);
+ResourceManager::~ResourceManager() {
+	_scir_free_resources(_resources, _resourcesNr);
+	_scir_free_resource_sources(_sources);
+	_resources = NULL;
 }
 
 
@@ -856,7 +746,7 @@ scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 		return NULL;
 
 	if (!retval->status)
-		_scir_load_resource(mgr, retval, 0);
+		_scir_load_resource(mgr, retval, false);
 
 	else if (retval->status == SCI_STATUS_ENQUEUED)
 		_scir_remove_from_lru(mgr, retval);

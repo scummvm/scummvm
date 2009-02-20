@@ -489,12 +489,12 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 
 
 
-int decompress01(resource_t *result, int resh, int sci_version) {
+int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	guint16 compressedLength, result_size;
 	guint16 compressionMethod;
 	guint8 *buffer;
 
-	if (read(resh, &(result->id), 2) != 2)
+	if (stream.read(&(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -507,9 +507,9 @@ int decompress01(resource_t *result, int resh, int sci_version) {
 	if ((result->number > sci_max_resource_nr[sci_version] || (result->type > sci_invalid_resource)))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((read(resh, &compressedLength, 2) != 2) ||
-	        (read(resh, &result_size, 2) != 2) ||
-	        (read(resh, &compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) ||
+	        (stream.read(&result_size, 2) != 2) ||
+	        (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -538,7 +538,7 @@ int decompress01(resource_t *result, int resh, int sci_version) {
 	buffer = (guint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char*)sci_malloc(result->size);
 
-	if (read(resh, buffer, compressedLength) != compressedLength) {
+	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
 		free(buffer);
 		return SCI_ERROR_IO_ERROR;

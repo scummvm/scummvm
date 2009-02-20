@@ -145,7 +145,6 @@ static int
 decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	int mode, length_param, value, val_length, val_distance;
 	int write_pos = 0;
-	int M[] = {0x07, 0x08, 0x0A, 0x0E, 0x16, 0x26, 0x46, 0x86, 0x106};
 
 	CALLC(mode = getbits(reader, 8));
 	CALLC(length_param = getbits(reader, 8));
@@ -185,7 +184,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 			else {
 				int length_bonus;
 
-				val_length = M[value - 7] + 2;
+				val_length = 1<<(value - 7) + 8;
 				CALLC(length_bonus = getbits(reader, value - 7));
 				val_length += length_bonus;
 			}
@@ -272,16 +271,15 @@ decrypt4(guint8* dest, guint8* src, int length, int complength) {
 
 void decryptinit3(void);
 int decrypt3(guint8* dest, guint8* src, int length, int complength);
-int decompress1(resource_t *result, int resh, int early);
 
-int decompress1(resource_t *result, int resh, int sci_version) {
+int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	guint16 compressedLength;
 	guint16 compressionMethod, result_size;
 	guint8 *buffer;
 	guint8 tempid;
 
 	if (sci_version == SCI_VERSION_1_EARLY) {
-		if (read(resh, &(result->id), 2) != 2)
+		if (stream.read(&(result->id), 2) != 2)
 			return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -294,13 +292,13 @@ int decompress1(resource_t *result, int resh, int sci_version) {
 		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	} else {
-		if (read(resh, &tempid, 1) != 1)
+		if (stream.read(&tempid, 1) != 1)
 			return SCI_ERROR_IO_ERROR;
 
 		result->id = tempid;
 
 		result->type = result->id & 0x7f;
-		if (read(resh, &(result->number), 2) != 2)
+		if (stream.read(&(result->number), 2) != 2)
 			return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -310,9 +308,9 @@ int decompress1(resource_t *result, int resh, int sci_version) {
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	}
 
-	if ((read(resh, &compressedLength, 2) != 2) ||
-	        (read(resh, &result_size, 2) != 2) ||
-	        (read(resh, &compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) ||
+	        (stream.read(&result_size, 2) != 2) ||
+	        (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -337,7 +335,7 @@ int decompress1(resource_t *result, int resh, int sci_version) {
 	buffer = (guint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char*)sci_malloc(result->size);
 
-	if (read(resh, buffer, compressedLength) != compressedLength) {
+	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
 		free(buffer);
 		return SCI_ERROR_IO_ERROR;
