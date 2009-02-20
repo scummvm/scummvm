@@ -579,9 +579,8 @@ void Sound::stopMusic(bool immediately) {
  * @return RD_OK or an error code
  */
 int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
-	//Common::StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 
-	_mutex.lock();
 	int cd = _vm->_resman->getCD();
 
 	if (loop)
@@ -637,7 +636,6 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 
 	// Don't start streaming if the volume is off.
 	if (isMusicMute()) {
-		_mutex.unlock();
 		return RD_OK;
 	}
 
@@ -645,20 +643,15 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 		_music[secondary]->fadeDown();
 	SoundFileHandle *fh = (cd == 1) ? &_musicFile[0] : &_musicFile[1];
 	fh->inUse = true;
-	_mutex.unlock();
 
 	MusicInputStream *tmp = new MusicInputStream(cd, fh, musicId, loop);
 
 	if (tmp->isReady()) {
-		_mutex.lock();
 		_music[primary] = tmp;
 		fh->inUse = false;
-		_mutex.unlock();
 		return RD_OK;
 	} else {
-		_mutex.lock();
 		fh->inUse = false;
-		_mutex.unlock();
 		delete tmp;
 		return RDERR_INVALIDFILENAME;
 	}
