@@ -23,7 +23,7 @@
  *
  */
 
-/* Script debugger functionality. Absolutely not threadsafe. */
+// Script debugger functionality. Absolutely not threadsafe.
 
 #ifdef WIN32
 #	include <windows.h>
@@ -60,26 +60,26 @@
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
-/* Assume this is a sufficient precondition */
+// Assume this is a sufficient precondition
 #  include <signal.h>
 #endif
 
 extern int debug_sleeptime_factor;
-int _debugstate_valid = 0; /* Set to 1 while script_debug is running */
-int _debug_step_running = 0; /* Set to >0 to allow multiple stepping */
-int _debug_commands_not_hooked = 1; /* Commands not hooked to the console yet? */
-int _debug_seeking = 0; /* Stepping forward until some special condition is met */
-int _debug_seek_level = 0; /* Used for seekers that want to check their exec stack depth */
-int _debug_seek_special = 0;  /* Used for special seeks(1) */
-int _weak_validations = 1; /* Some validation errors are reduced to warnings if non-0 */
-reg_t _debug_seek_reg = NULL_REG_INITIALIZER;  /* Used for special seeks(2) */
+int _debugstate_valid = 0; // Set to 1 while script_debug is running
+int _debug_step_running = 0; // Set to >0 to allow multiple stepping
+int _debug_commands_not_hooked = 1; // Commands not hooked to the console yet?
+int _debug_seeking = 0; // Stepping forward until some special condition is met
+int _debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
+int _debug_seek_special = 0;  // Used for special seeks(1)
+int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
+reg_t _debug_seek_reg = NULL_REG_INITIALIZER;  // Used for special seeks(2)
 
 #define _DEBUG_SEEK_NOTHING 0
-#define _DEBUG_SEEK_CALLK 1 /* Step forward until callk is found */
-#define _DEBUG_SEEK_LEVEL_RET 2 /* Step forward until returned from this level */
-#define _DEBUG_SEEK_SPECIAL_CALLK 3 /* Step forward until a /special/ callk is found */
-#define _DEBUG_SEEK_SO 5 /* Step forward until specified PC (after the send command) and stack depth */
-#define _DEBUG_SEEK_GLOBAL 6 /* Step forward until one specified global variable is modified */
+#define _DEBUG_SEEK_CALLK 1 // Step forward until callk is found
+#define _DEBUG_SEEK_LEVEL_RET 2 // Step forward until returned from this level
+#define _DEBUG_SEEK_SPECIAL_CALLK 3 // Step forward until a /special/ callk is found
+#define _DEBUG_SEEK_SO 5 // Step forward until specified PC (after the send command) and stack depth
+#define _DEBUG_SEEK_GLOBAL 6 // Step forward until one specified global variable is modified
 
 static reg_t *p_pc;
 static stack_ptr_t *p_sp;
@@ -89,11 +89,9 @@ static int *p_restadjust;
 static seg_id_t *p_var_segs;
 static reg_t **p_vars;
 static reg_t **p_var_base;
-static int *p_var_max; /* May be NULL even in valid state! */
+static int *p_var_max; // May be NULL even in valid state!
 
-static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
-                                    2, 2, 2, 2, 1, 1, 2, 0
-                                   };
+static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
 
 int _kdebug_cheap_event_hack = 0;
 int _kdebug_cheap_soundcue_hack = -1;
@@ -101,11 +99,10 @@ int _kdebug_cheap_soundcue_hack = -1;
 char inputbuf[256] = "";
 
 #define LOOKUP_SPECIES(species) (\
-   (species >= 1000)? species : *(s->classtable[species].scriptposp) \
+	(species >= 1000) ? species : *(s->classtable[species].scriptposp) \
                                 + s->classtable[species].class_offset)
 
-const char *
-_debug_get_input_default(void) {
+const char *_debug_get_input_default() {
 	char newinpbuf[256];
 
 	printf("> ");
@@ -117,19 +114,15 @@ _debug_get_input_default(void) {
 	return inputbuf;
 }
 
-
-static inline int
-_parse_ticks(byte *data, int *offset_p, int size) {
+static inline int _parse_ticks(byte *data, int *offset_p, int size) {
 	int ticks = 0;
 	int tempticks;
 	int offset = 0;
 
 	do {
 		tempticks = data[offset++];
-		ticks += (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX) ?
-		         SCI_MIDI_TIME_EXPANSION_LENGTH : tempticks;
-	} while (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX
-	         && offset < size);
+		ticks += (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX) ? SCI_MIDI_TIME_EXPANSION_LENGTH : tempticks;
+	} while (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX && offset < size);
 
 	if (offset_p)
 		*offset_p = offset;
@@ -137,20 +130,17 @@ _parse_ticks(byte *data, int *offset_p, int size) {
 	return ticks;
 }
 
-
-static void
-midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for SCI01 tracks (this affects the way cumulative cues are treated ) */
+static void midi_hexdump(byte *data, int size, int notational_offset) { // Specialised for SCI01 tracks (this affects the way cumulative cues are treated )
 	int offset = 0;
 	int prev = 0;
 
-	if (*data == 0xf0) /* SCI1 priority spec */
+	if (*data == 0xf0) // SCI1 priority spec
 		offset = 8;
 
 	while (offset < size) {
 		int old_offset = offset;
 		int offset_mod;
-		int time = _parse_ticks(data + offset, &offset_mod,
-		                        size);
+		int time = _parse_ticks(data + offset, &offset_mod, size);
 		int cmd;
 		int pleft;
 		int firstarg = 0;
@@ -158,16 +148,13 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 		int blanks = 0;
 
 		offset += offset_mod;
-		error("  [%04x] %d\t",
-		        old_offset + notational_offset, time);
+		error("  [%04x] %d\t", old_offset + notational_offset, time);
 
 		cmd = data[offset];
 		if (!(cmd & 0x80)) {
 			cmd = prev;
 			if (prev < 0x80) {
-				error("Track broken at %x after"
-				        " offset mod of %d\n",
-				        offset + notational_offset, offset_mod);
+				error("Track broken at %x after offset mod of %d\n", offset + notational_offset, offset_mod);
 				sci_hexdump(data, size, notational_offset);
 				return;
 			}
@@ -181,9 +168,8 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 		prev = cmd;
 
 		pleft = MIDI_cmdlen[cmd >> 4];
-		if (SCI_MIDI_CONTROLLER(cmd) && data[offset]
-		        == SCI_MIDI_CUMULATIVE_CUE)
-			--pleft; /* This is SCI(0)1 specific */
+		if (SCI_MIDI_CONTROLLER(cmd) && data[offset] == SCI_MIDI_CUMULATIVE_CUE)
+			--pleft; // This is SCI(0)1 specific
 
 		for (i = 0; i < pleft; i++) {
 			if (i == 0)
@@ -218,8 +204,7 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 		error("\n");
 
 		if (old_offset >= offset) {
-			error("-- Not moving forward anymore,"
-			        " aborting (%x/%x)\n", offset, old_offset);
+			error("-- Not moving forward anymore, aborting (%x/%x)\n", offset, old_offset);
 			return;
 		}
 	}
@@ -227,14 +212,14 @@ midi_hexdump(byte *data, int size, int notational_offset) { /* Specialised for S
 
 #define SONGDATA(x) data[offset + (x)]
 #define CHECK_FOR_END_ABSOLUTE(off) if ((off) >= size) return;
-static void
-sci01_song_header_dump(byte *data, int size) {
+
+static void sci01_song_header_dump(byte *data, int size) {
 	int offset = 0;
 	int smallest_start = 10000;
 
 	sciprintf("SCI01 song track mappings:\n");
 
-	if (*data == 0xf0) /* SCI1 priority spec */
+	if (*data == 0xf0) // SCI1 priority spec
 		offset = 8;
 
 	CHECK_FOR_END_ABSOLUTE(0);
@@ -259,20 +244,15 @@ sci01_song_header_dump(byte *data, int size) {
 
 			if (track_offset < smallest_start)
 				smallest_start = track_offset;
+
 			end = getUInt16(data + offset + 2);
-			sciprintf("  - %04x -- %04x",
-			          track_offset, track_offset + end);
+			sciprintf("  - %04x -- %04x", track_offset, track_offset + end);
 
 			if (track_offset == 0xfe)
 				sciprintf(" (PCM data)\n");
 			else
-				sciprintf(" (channel %d, special %d,"
-				          " %d playing notes, %d foo)\n",
-				          header1 & 0xf,
-				          header1 >> 4,
-				          header2 & 0xf,
-				          header2 >> 4);
-
+				sciprintf(" (channel %d, special %d, %d playing notes, %d foo)\n",
+				          header1 & 0xf, header1 >> 4, header2 & 0xf, header2 >> 4);
 			offset += 4;
 		}
 		offset++;
@@ -281,13 +261,8 @@ sci01_song_header_dump(byte *data, int size) {
 #undef CHECK_FOR_END_ABSOLUTE
 #undef SONGDATA
 
-
-
 int c_sfx_01_header(state_t *s) {
-	resource_t *song = scir_find_resource(s->resmgr,
-	                                      sci_sound,
-	                                      cmd_params[0].val,
-	                                      0);
+	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 
 	if (!song) {
 		sciprintf("Doesn't exist\n");
@@ -295,14 +270,12 @@ int c_sfx_01_header(state_t *s) {
 	}
 
 	sci01_song_header_dump(song->data, song->size);
+
 	return 0;
 }
 
 int c_sfx_01_track(state_t *s) {
-	resource_t *song = scir_find_resource(s->resmgr,
-	                                      sci_sound,
-	                                      cmd_params[0].val,
-	                                      0);
+	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 
 	int offset = cmd_params[1].val;
 
@@ -312,15 +285,13 @@ int c_sfx_01_track(state_t *s) {
 	}
 
 	midi_hexdump(song->data + offset, song->size, offset);
+
 	return 0;
 }
 
-
-
 const char *(*_debug_get_input)(void) = _debug_get_input_default;
 
-int
-c_segtable(state_t *s) {
+int c_segtable(state_t *s) {
 	int i;
 
 	sciprintf("  ---- segment table ----\n");
@@ -330,26 +301,20 @@ c_segtable(state_t *s) {
 			sciprintf(" [%04x] ", i);
 
 			switch (mobj->type) {
-
 			case MEM_OBJ_SCRIPT:
-				sciprintf("S  script.%03d l:%d ",
-				          mobj->data.script.nr,
-				          mobj->data.script.lockers);
+				sciprintf("S  script.%03d l:%d ", mobj->data.script.nr, mobj->data.script.lockers);
 				break;
 
 			case MEM_OBJ_CLONES:
-				sciprintf("C  clones (%d allocd)",
-				          mobj->data.clones.entries_used);
+				sciprintf("C  clones (%d allocd)", mobj->data.clones.entries_used);
 				break;
 
 			case MEM_OBJ_LOCALS:
-				sciprintf("V  locals %03d",
-				          mobj->data.locals.script_id);
+				sciprintf("V  locals %03d", mobj->data.locals.script_id);
 				break;
 
 			case MEM_OBJ_STACK:
-				sciprintf("D  data stack (%d)",
-				          mobj->data.stack.nr);
+				sciprintf("D  data stack (%d)", mobj->data.stack.nr);
 				break;
 
 			case MEM_OBJ_SYS_STRINGS:
@@ -381,21 +346,16 @@ c_segtable(state_t *s) {
 		}
 	}
 	sciprintf("\n");
+
 	return 0;
 }
 
-
-static void
-print_obj_head(state_t *s, object_t *obj) {
-	sciprintf(PREG" %s : %3d vars, %3d methods\n",
-	          PRINT_REG(obj->pos),
-	          obj_get_name(s, obj->pos),
-	          obj->variables_nr,
-	          obj->methods_nr);
+static void print_obj_head(state_t *s, object_t *obj) {
+	sciprintf(PREG" %s : %3d vars, %3d methods\n", PRINT_REG(obj->pos), obj_get_name(s, obj->pos),
+				obj->variables_nr, obj->methods_nr);
 }
 
-static void
-print_list(state_t *s, list_t *l) {
+static void print_list(state_t *s, list_t *l) {
 	reg_t pos = l->first;
 	reg_t my_prev = NULL_REG_INITIALIZER;
 
@@ -406,58 +366,46 @@ print_list(state_t *s, list_t *l) {
 		mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!mobj || !ENTRY_IS_VALID(&(mobj->data.nodes), pos.offset)) {
-			sciprintf("   WARNING: "PREG": Doesn't contain list node",
-			          PRINT_REG(pos));
+			sciprintf("   WARNING: "PREG": Doesn't contain list node", PRINT_REG(pos));
 			return;
 		}
 
 		node = &(mobj->data.nodes.table[pos.offset].entry);
 
-		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n",
-		          PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
+		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
 		if (!REG_EQ(my_prev, node->pred))
-			sciprintf("   WARNING: current node gives "PREG" as predecessor",
-			          PRINT_REG(node->pred));
+			sciprintf("   WARNING: current node gives "PREG" as predecessor", PRINT_REG(node->pred));
 
 		my_prev = pos;
 		pos = node->succ;
 	}
 
 	if (!REG_EQ(my_prev, l->last))
-		sciprintf("   WARNING: Last node was expected to be "PREG", was "PREG"",
-		          PRINT_REG(l->last), PRINT_REG(my_prev));
+		sciprintf("   WARNING: Last node was expected to be "PREG", was "PREG"", PRINT_REG(l->last), PRINT_REG(my_prev));
 	sciprintf("\t>\n");
 }
 
-
-static void
-_c_single_seg_info(state_t *s, mem_obj_t *mobj) {
+static void _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 	switch (mobj->type) {
 
 	case MEM_OBJ_SCRIPT: {
 		int i;
 		script_t *scr = &(mobj->data.script);
-		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n",
-		          scr->nr, scr->lockers, scr->buf_size, scr->buf_size);
+		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, scr->buf_size, scr->buf_size);
 		if (scr->export_table)
-			sciprintf("  Exports: %4d at %d\n",
-			          scr->exports_nr,
-			          ((byte *) scr->export_table) - ((byte *)scr->buf));
+			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, ((byte *)scr->export_table) - ((byte *)scr->buf));
 		else
 			sciprintf("  Exports: none\n");
 
 		sciprintf("  Synynms: %4d\n", scr->synonyms_nr);
 
 		if (scr->locals_block)
-			sciprintf("  Locals : %4d in segment 0x%x\n",
-			          scr->locals_block->nr,
-			          scr->locals_segment);
+			sciprintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->nr, scr->locals_segment);
 		else
 			sciprintf("  Locals : none\n");
 
-		sciprintf("  Objects: %4d\n",
-		          scr->objects_nr);
+		sciprintf("  Objects: %4d\n", scr->objects_nr);
 		for (i = 0; i < scr->objects_nr; i++) {
 			sciprintf("    ");
 			print_obj_head(s, scr->objects + i);
@@ -486,17 +434,13 @@ _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 		sciprintf("system string table\n");
 		for (i = 0; i < SYS_STRINGS_MAX; i++)
 			if (strings->strings[i].name)
-				sciprintf("  %s[%d]=\"%s\"\n",
-				          strings->strings[i].name,
-				          strings->strings[i].max_size,
-				          strings->strings[i].value);
+				sciprintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
 	}
 	break;
 
 	case MEM_OBJ_CLONES: {
 		int i = 0;
-		clone_table_t *ct =
-		    &(mobj->data.clones);
+		clone_table_t *ct = &(mobj->data.clones);
 
 		sciprintf("clones\n");
 
@@ -510,8 +454,7 @@ _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 
 	case MEM_OBJ_LISTS: {
 		int i = 0;
-		list_table_t *lt =
-		    &(mobj->data.lists);
+		list_table_t *lt = &(mobj->data.lists);
 
 		sciprintf("lists\n");
 		for (i = 0; i < lt->max_entry; i++)
@@ -529,23 +472,19 @@ _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 
 	case MEM_OBJ_HUNK: {
 		int i;
-		hunk_table_t *ht =
-		    &(mobj->data.hunks);
+		hunk_table_t *ht = &(mobj->data.hunks);
 
 		sciprintf("hunk  (total %d)\n", mobj->data.hunks.entries_used);
 		for (i = 0; i < ht->max_entry; i++)
 			if (ENTRY_IS_VALID(ht, i)) {
 				sciprintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->table[i].entry.size, ht->table[i].entry.mem,
-				          ht->table[i].entry.type);
+				          i, ht->table[i].entry.size, ht->table[i].entry.mem, ht->table[i].entry.type);
 			}
 	}
 
 	case MEM_OBJ_DYNMEM: {
 		sciprintf("dynmem (%s): %d bytes\n",
-		          mobj->data.dynmem.description ?
-		          mobj->data.dynmem.description : "no description",
-		          mobj->data.dynmem.size);
+		          mobj->data.dynmem.description ? mobj->data.dynmem.description : "no description", mobj->data.dynmem.size);
 
 		sci_hexdump(mobj->data.dynmem.buf, mobj->data.dynmem.size, 0);
 	}
@@ -557,9 +496,7 @@ _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 	}
 }
 
-static int
-show_node(state_t *s, reg_t addr) {
-
+static int show_node(state_t *s, reg_t addr) {
 	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
@@ -573,9 +510,7 @@ show_node(state_t *s, reg_t addr) {
 
 		list = &(lt->table[addr.offset].entry);
 
-		sciprintf(PREG" : first x last = ("PREG", "PREG")\n",
-		          PRINT_REG(addr), PRINT_REG(list->first),
-		          PRINT_REG(list->last));
+		sciprintf(PREG" : first x last = ("PREG", "PREG")\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
 		node_table_t *nt;
 		node_t *node;
@@ -595,41 +530,34 @@ show_node(state_t *s, reg_t addr) {
 		node = &(nt->table[addr.offset].entry);
 
 		sciprintf(PREG" : prev x next = ("PREG", "PREG"); maps "PREG" -> "PREG"\n",
-		          PRINT_REG(addr),
-		          PRINT_REG(node->pred),
-		          PRINT_REG(node->succ),
-		          PRINT_REG(node->key),
-		          PRINT_REG(node->value));
+		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
 	}
+
 	return 0;
 }
 
 int objinfo(state_t *s, reg_t pos);
 
-void
-song_lib_dump(songlib_t songlib, int line);
+void song_lib_dump(songlib_t songlib, int line);
 
-static int
-c_songlib_print(state_t *s) {
+static int c_songlib_print(state_t *s) {
 	song_lib_dump(s->sound.songlib, __LINE__);
+
 	return 0;
 }
 
-static int
-c_vr(state_t *s) {
+static int c_vr(state_t *s) {
 	reg_t reg = cmd_params[0].reg;
 	reg_t reg_end = cmd_paramlength > 1 ? cmd_params[1].reg : NULL_REG;
 	int type_mask = determine_reg_type(s, reg, 1);
 	int filter;
 	int found = 0;
 
-	sciprintf(PREG" is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID,
-	          type_mask & KSIG_INVALID ? " (invalid)" : "");
+	sciprintf(PREG" is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
 
 	type_mask &= ~KSIG_INVALID;
 
-	if (reg.segment == 0
-	        && reg.offset == 0) {
+	if (reg.segment == 0 && reg.offset == 0) {
 		sciprintf("Null.\n");
 		return 0;
 	}
@@ -675,8 +603,7 @@ c_vr(state_t *s) {
 
 		case KSIG_REF: {
 			int size;
-			unsigned char *block = sm_dereference(&s->seg_manager,
-			                                      reg, &size);
+			unsigned char *block = sm_dereference(&s->seg_manager, reg, &size);
 
 			sciprintf("raw data\n");
 
@@ -699,7 +626,6 @@ c_vr(state_t *s) {
 			sciprintf("arithmetic value\n  %d (%04x)\n", (gint16) reg.offset, reg.offset);
 			break;
 
-
 		default:
 			sciprintf("unknown.\n", type);
 
@@ -714,10 +640,9 @@ c_vr(state_t *s) {
 	return 0;
 }
 
-
-int
-c_segkill(state_t *s) {
+int c_segkill(state_t *s) {
 	unsigned int i = 0;
+
 	while (i < cmd_paramlength) {
 		int nr = cmd_params[i++].val;
 
@@ -726,49 +651,44 @@ c_segkill(state_t *s) {
 	return 0;
 }
 
-static int
-c_mousepos(state_t *s) {
+static int c_mousepos(state_t *s) {
 	sci_event_t event;
 
 	sciprintf("Click somewhere in the game window...\n");
 
-	while (event = gfxop_get_event(s->gfx_state, SCI_EVT_MOUSE_RELEASE),
-	        event.type != SCI_EVT_MOUSE_RELEASE) {
-	};
+	while (event = gfxop_get_event(s->gfx_state, SCI_EVT_MOUSE_RELEASE), event.type != SCI_EVT_MOUSE_RELEASE) {};
 
-	sciprintf("Mouse pointer at (%d, %d)\n",
-	          s->gfx_state->pointer_pos.x,
-	          s->gfx_state->pointer_pos.y);
+	sciprintf("Mouse pointer at (%d, %d)\n", s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
+
 	return 0;
 }
 
-int
-c_seginfo(state_t *s) {
+int c_seginfo(state_t *s) {
 	unsigned int i = 0;
 
 	if (cmd_paramlength) {
 		while (i < cmd_paramlength) {
 			int nr = cmd_params[i++].val;
-			if (nr < 0
-			        || nr >= s->seg_manager.heap_size
-			        || !s->seg_manager.heap[nr]) {
+			if (nr < 0 || nr >= s->seg_manager.heap_size || !s->seg_manager.heap[nr]) {
 				sciprintf("Segment %04x does not exist\n", nr);
 				return 1;
 			}
 			sciprintf("[%04x] ", nr);
 			_c_single_seg_info(s, s->seg_manager.heap[nr]);
 		}
-	} else for (i = 0; i < (unsigned int) s->seg_manager.heap_size; i++)
+	} else
+		for (i = 0; i < (unsigned int)s->seg_manager.heap_size; i++) {
 			if (s->seg_manager.heap[i]) {
 				sciprintf("[%04x] ", i);
 				_c_single_seg_info(s, s->seg_manager.heap[i]);
 				sciprintf("\n");
 			}
+		}
+
 	return 0;
 }
 
-int
-c_debuginfo(state_t *s) {
+int c_debuginfo(state_t *s) {
 	exec_stack_t *eframe = NULL;
 
 	if (!_debugstate_valid) {
@@ -779,33 +699,27 @@ c_debuginfo(state_t *s) {
 	if (s->execution_stack && s->execution_stack_pos >= 0)
 		eframe = s->execution_stack + s->execution_stack_pos;
 
-	sciprintf("acc="PREG" prev="PREG" &rest=%x\n",
-	          PRINT_REG(s->r_acc),
-	          PRINT_REG(s->r_prev), *p_restadjust);
+	sciprintf("acc="PREG" prev="PREG" &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
+
 	if (eframe)
-		sciprintf("pc="PREG" obj="PREG" fp="PSTK" sp="PSTK"\n",
-		          PRINT_REG(*p_pc),
-		          PRINT_REG(*p_objp),
-		          PRINT_STK(*p_pp),
-		          PRINT_STK(*p_sp));
+		sciprintf("pc="PREG" obj="PREG" fp="PSTK" sp="PSTK"\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
 	else
 		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
+
 	return 0;
 }
 
-
-int
-c_step(state_t *s) {
+int c_step(state_t *s) {
 	_debugstate_valid = 0;
 	if (cmd_paramlength && (cmd_params[0].val > 0))
 		_debug_step_running = cmd_params[0].val - 1;
+
 	return 0;
 }
 
 #if 0
 // TODO Re-implement con:so
-int
-c_stepover(state_t *s) {
+int c_stepover(state_t *s) {
 	int opcode, opnumber;
 
 	if (!_debugstate_valid) {
@@ -817,26 +731,25 @@ c_stepover(state_t *s) {
 	opcode = s->heap [*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
-	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ ||
-	        opnumber == 0x2b /* super */) {
+	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
 		_debug_seeking = _DEBUG_SEEK_SO;
 		_debug_seek_level = s->execution_stack_pos;
-		/* Store in _debug_seek_special the offset of the next command after send */
+		// Store in _debug_seek_special the offset of the next command after send
 		switch (opcode) {
-		case 0x46: /* calle W */
+		case 0x46: // calle W
 			_debug_seek_special = *p_pc + 5;
 			break;
 
-		case 0x44: /* callb W */
-		case 0x47: /* calle B */
-		case 0x56: /* super W */
+		case 0x44: // callb W
+		case 0x47: // calle B
+		case 0x56: // super W
 			_debug_seek_special = *p_pc + 4;
 			break;
 
-		case 0x45: /* callb B */
-		case 0x57: /* super B */
-		case 0x4A: /* send W */
-		case 0x54: /* self W */
+		case 0x45: // callb B
+		case 0x57: // super B
+		case 0x4A: // send W
+		case 0x54: // self W
 			_debug_seek_special = *p_pc + 3;
 			break;
 
@@ -849,8 +762,7 @@ c_stepover(state_t *s) {
 }
 #endif
 
-int
-c_sim_parse(state_t *s) {
+int c_sim_parse(state_t *s) {
 	unsigned int i;
 	const char *operators = ",&/()[]#<>";
 
@@ -868,38 +780,36 @@ c_sim_parse(state_t *s) {
 		int flag = 0;
 		char *token = cmd_params[i].str;
 
-		if (strlen(token) == 1) {/* could be an operator */
+		if (strlen(token) == 1) {// could be an operator
 			int j = 0;
 			while (operators[j] && (operators[j] != token[0]))
 				j++;
 			if (operators[j]) {
 				s->parser_nodes[i].type = 1;
 				s->parser_nodes[i].content.value = j + 0xf0;
-				flag = 1; /* found an operator */
+				flag = 1; // found an operator
 			}
 		}
 
 		if (!flag) {
-			char *openb = strchr(token, '['); /* look for opening braces */
+			char *openb = strchr(token, '['); // look for opening braces
 			result_word_t *result;
 
 			if (openb)
-				*openb = 0; /* remove them and the rest */
+				*openb = 0; // remove them and the rest
 
-			result = vocab_lookup_word(token, strlen(token),
-			                           s->parser_words, s->parser_words_nr,
-			                           s->parser_suffices, s->parser_suffices_nr);
+			result = vocab_lookup_word(token, strlen(token), s->parser_words, s->parser_words_nr, s->parser_suffices, s->parser_suffices_nr);
 
 			if (result) {
 				s->parser_nodes[i].type = 0;
 				s->parser_nodes[i].content.value = result->group;
 				free(result);
-			} else { /* group name was specified directly? */
+			} else { // group name was specified directly?
 				int val = strtol(token, NULL, 0);
 				if (val) {
 					s->parser_nodes[i].type = 0;
 					s->parser_nodes[i].content.value = val;
-				} else { /* invalid and not matched */
+				} else { // invalid and not matched
 					sciprintf("Couldn't interpret '%s'\n", token);
 					s->parser_valid = 0;
 					return 1;
@@ -909,15 +819,14 @@ c_sim_parse(state_t *s) {
 
 	}
 
-	s->parser_nodes[cmd_paramlength].type = -1; /* terminate */
+	s->parser_nodes[cmd_paramlength].type = -1; // terminate
 
 	s->parser_valid = 2;
+
 	return 0;
 }
 
-
-int
-c_classtable(state_t *s) {
+int c_classtable(state_t *s) {
 	int i;
 
 	if (!_debugstate_valid) {
@@ -928,16 +837,12 @@ c_classtable(state_t *s) {
 	sciprintf("Available classes:\n");
 	for (i = 0; i < s->classtable_size; i++)
 		if (s->classtable[i].reg.segment)
-			sciprintf(" Class 0x%x at "PREG" (script 0x%x)\n",
-			          i,
-			          PRINT_REG(s->classtable[i].reg),
-			          s->classtable[i].script);
+			sciprintf(" Class 0x%x at "PREG" (script 0x%x)\n", i, PRINT_REG(s->classtable[i].reg), s->classtable[i].script);
 
 	return 0;
 }
 
-int
-c_viewinfo(state_t *s) {
+int c_viewinfo(state_t *s) {
 	int view = cmd_params[0].val;
 	int palette = cmd_params[1].val;
 	int loops, i;
@@ -966,10 +871,8 @@ c_viewinfo(state_t *s) {
 				Common::Point mod;
 
 				if (con_can_handle_pixmaps()) {
-					view_pixmaps = gfxr_get_view(s->gfx_state->resstate,
-					                             view, &i, &j, palette);
-					con_insert_pixmap(gfx_clone_pixmap(view_pixmaps->loops[i].cels[j],
-					                                   s->gfx_state->driver->mode));
+					view_pixmaps = gfxr_get_view(s->gfx_state->resstate, view, &i, &j, palette);
+					con_insert_pixmap(gfx_clone_pixmap(view_pixmaps->loops[i].cels[j], s->gfx_state->driver->mode));
 				}
 
 				gfxop_get_cel_parameters(s->gfx_state, view, i, j, &width, &height, &mod);
@@ -978,11 +881,11 @@ c_viewinfo(state_t *s) {
 			}
 		}
 	}
+
 	return 0;
 }
 
-int
-c_list_sentence_fragments(state_t *s) {
+int c_list_sentence_fragments(state_t *s) {
 	int i;
 
 	if (!s) {
@@ -1025,6 +928,7 @@ c_list_sentence_fragments(state_t *s) {
 	}
 
 	sciprintf("%d rules.\n", s->parser_branches_nr);
+
 	return 0;
 }
 
@@ -1036,8 +940,7 @@ enum {
 	_parse_token_number
 };
 
-int
-_parse_getinp(int *i, int *nr) {
+int _parse_getinp(int *i, int *nr) {
 	char *token;
 
 	if ((unsigned)*i == cmd_paramlength)
@@ -1055,11 +958,11 @@ _parse_getinp(int *i, int *nr) {
 		return _parse_token_nil;
 
 	*nr = strtol(token, NULL, 0);
+
 	return _parse_token_number;
 }
 
-int
-_parse_nodes(state_t *s, int *i, int *pos, int type, int nr) {
+int _parse_nodes(state_t *s, int *i, int *pos, int type, int nr) {
 	int nexttk, nextval, newpos, oldpos;
 
 	if (type == _parse_token_nil)
@@ -1090,11 +993,11 @@ _parse_nodes(state_t *s, int *i, int *pos, int type, int nr) {
 
 	if (_parse_getinp(i, &nextval) != _parse_token_parenc)
 		sciprintf("Expected ')' at token %d\n", *i);
+
 	return oldpos;
 }
 
-int
-c_set_parse_nodes(state_t *s) {
+int c_set_parse_nodes(state_t *s) {
 	int i = 0;
 	int foo, bar;
 	int pos = -1;
@@ -1112,14 +1015,11 @@ c_set_parse_nodes(state_t *s) {
 	return 0;
 }
 
-/* from grammar.c: */
-int
-vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-                parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
-/* parses with a GNF rule set */
+int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+					parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
+// parses with a GNF rule set
 
-int
-c_parse(state_t *s) {
+int c_parse(state_t *s) {
 	result_word_t *words;
 	int words_nr;
 	char *error;
@@ -1132,12 +1032,9 @@ c_parse(state_t *s) {
 
 	string = cmd_params[0].str;
 	sciprintf("Parsing '%s'\n", string);
-	words = vocab_tokenize_string(string, &words_nr,
-	                              s->parser_words, s->parser_words_nr,
-	                              s->parser_suffices, s->parser_suffices_nr,
-	                              &error);
+	words = vocab_tokenize_string(string, &words_nr, s->parser_words, s->parser_words_nr,
+	                              s->parser_suffices, s->parser_suffices_nr, &error);
 	if (words) {
-
 		int i, syntax_fail = 0;
 
 		vocab_synonymize_tokens(words, words_nr, s->synonyms, s->synonyms_nr);
@@ -1147,9 +1044,8 @@ c_parse(state_t *s) {
 		for (i = 0; i < words_nr; i++)
 			sciprintf("   Type[%04x] Group[%04x]\n", words[i].w_class, words[i].group);
 
-		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, words_nr, s->parser_branches,
-		                    s->parser_rules, 1))
-			syntax_fail = 1; /* Building a tree failed */
+		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, words_nr, s->parser_branches, s->parser_rules, 1))
+			syntax_fail = 1; // Building a tree failed
 
 		free(words);
 
@@ -1159,15 +1055,14 @@ c_parse(state_t *s) {
 			vocab_dump_parse_tree("debug-parse-tree", s->parser_nodes);
 
 	} else {
-
 		sciprintf("Unknown word: '%s'\n", error);
 		free(error);
 	}
+
 	return 0;
 }
 
-int
-c_save_game(state_t *s) {
+int c_save_game(state_t *s) {
 	int omit_check = cmd_params[0].str[0] == '_';
 	int i;
 
@@ -1196,8 +1091,7 @@ c_save_game(state_t *s) {
 	return 0;
 }
 
-int
-c_restore_game(state_t *s) {
+int c_restore_game(state_t *s) {
 	state_t *newstate;
 
 	if (!s) {
@@ -1208,13 +1102,11 @@ c_restore_game(state_t *s) {
 	newstate = gamestate_restore(s, cmd_params[0].str);
 
 	if (newstate) {
+		s->successor = newstate; // Set successor
 
-		s->successor = newstate; /* Set successor */
-
-		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; /* Abort current game */
+		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
 		_debugstate_valid = 0;
 		s->execution_stack_pos = s->execution_stack_base;
-
 		return 0;
 	} else {
 		sciprintf("Restoring gamestate '%s' failed.\n", cmd_params[0].str);
@@ -1222,10 +1114,9 @@ c_restore_game(state_t *s) {
 	}
 }
 
-extern char *old_save_dir; /* Ouch */
+extern char *old_save_dir;
 
-int
-c_restart_game(state_t *s) {
+int c_restart_game(state_t *s) {
 	unsigned int i;
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
@@ -1236,12 +1127,10 @@ c_restart_game(state_t *s) {
 
 	old_save_dir = strdup(deref_save_dir);
 	for (i = 0; i < cmd_paramlength; i++) {
-		if ((strcmp(cmd_params[0].str, "-r") == 0)
-		        || (strcmp(cmd_params[0].str, "--replay") == 0))
+		if ((strcmp(cmd_params[0].str, "-r") == 0) || (strcmp(cmd_params[0].str, "--replay") == 0))
 			s->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 		else
-			if ((strcmp(cmd_params[0].str, "-p") == 0)
-			        || (strcmp(cmd_params[0].str, "--play") == 0))
+			if ((strcmp(cmd_params[0].str, "-p") == 0) || (strcmp(cmd_params[0].str, "--play") == 0))
 				s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 			else {
 				sciprintf("Invalid parameter '%s'\n", cmd_params[0].str);
@@ -1255,12 +1144,11 @@ c_restart_game(state_t *s) {
 
 	script_abort_flag = 1;
 	_debugstate_valid = 0;
+
 	return 0;
 }
 
-
-int
-c_stack(state_t *s) {
+int c_stack(state_t *s) {
 	int i;
 	exec_stack_t *xs;
 
@@ -1280,8 +1168,7 @@ c_stack(state_t *s) {
 		if ((xs->sp - xs->fp - i) == 0)
 			sciprintf("-- temp variables --\n");
 		if (xs->sp - i >= s->stack_base)
-			sciprintf(PSTK" = "PREG"\n",
-			          PRINT_STK(xs->sp - i), PRINT_REG(xs->sp[-i]));
+			sciprintf(PSTK" = "PREG"\n", PRINT_STK(xs->sp - i), PRINT_REG(xs->sp[-i]));
 	}
 
 	return 0;
@@ -1300,8 +1187,7 @@ int prop_ofs_to_id(state_t *s, int prop_ofs, reg_t objp) {
 	int selectors;
 
 	if (!obj) {
-		sciprintf("Applied prop_ofs_to_id on non-object at "PREG"\n",
-		          PRINT_REG(objp));
+		sciprintf("Applied prop_ofs_to_id on non-object at "PREG"\n", PRINT_REG(objp));
 		return -1;
 	}
 
@@ -1312,28 +1198,22 @@ int prop_ofs_to_id(state_t *s, int prop_ofs, reg_t objp) {
 	else {
 		if (!(obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
 			obj = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
-			selectoroffset = (byte *) obj->base_vars;
-		} else selectoroffset = (byte *) obj->base_vars;
+			selectoroffset = (byte *)obj->base_vars;
+		} else
+			selectoroffset = (byte *)obj->base_vars;
 	}
 
 	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {
-		sciprintf("Applied prop_ofs_to_id to invalid property offset %x (property #%d not"
-		          " in [0..%d]) on object at "PREG"\n",
-		          prop_ofs, prop_ofs >> 1, selectors - 1,
-		          PRINT_REG(objp));
+		sciprintf("Applied prop_ofs_to_id to invalid property offset %x (property #%d not in [0..%d]) on object at "PREG"\n",
+		          prop_ofs, prop_ofs >> 1, selectors - 1, PRINT_REG(objp));
 		return -1;
 	}
-
 
 	return getUInt16(selectoroffset + prop_ofs);
 }
 
-reg_t
-disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
-/* Disassembles one command from the heap, returns address of next command or 0 if a ret was
-** encountered.
-*/
-{
+reg_t disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode) {
+// Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 	mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
 	script_t *script_entity = NULL;
 	byte *scr;
@@ -1346,10 +1226,10 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 	int i = 0;
 
 	if (!memobj) {
-		sciprintf("Disassembly failed: Segment %04x non-existant or not a script\n",
-		          pos.segment);
+		sciprintf("Disassembly failed: Segment %04x non-existant or not a script\n", pos.segment);
 		return retval;
-	} else script_entity = &(memobj->data.script);
+	} else
+		script_entity = &(memobj->data.script);
 
 	scr = script_entity->buf;
 	scr_size = script_entity->buf_size;
@@ -1367,8 +1247,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 		return retval;
 	}
 
-	opsize &= 1; /* byte if true, word if false */
-
+	opsize &= 1; // byte if true, word if false
 
 	sciprintf(PREG": ", PRINT_REG(pos));
 
@@ -1415,7 +1294,6 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 
 		for (i = bytecount; i < 5; i++)
 			sciprintf("   ");
-
 	}
 
 	if (print_bw_tag)
@@ -1423,10 +1301,8 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 	sciprintf("%s", s->opcodes[opcode].name);
 
 	i = 0;
-	while (formats[opcode][i])
-
+	while (formats[opcode][i]) {
 		switch (formats[opcode][i++]) {
-
 		case Script_Invalid:
 			sciprintf("-Invalid operation-");
 			break;
@@ -1438,8 +1314,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 
 		case Script_Word:
 		case Script_SWord:
-			sciprintf(" %04x", 0xffff & (scr[retval.offset]
-			                             | (scr[retval.offset+1] << 8)));
+			sciprintf(" %04x", 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8)));
 			retval.offset += 2;
 			break;
 
@@ -1453,16 +1328,16 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset]
-				                        | (scr[retval.offset+1] << 8));
+				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
 
 			if (opcode == op_callk)
 				sciprintf(" %s[%x]", (param_value < s->kfunct_nr) ?
-				          ((param_value < s->kernel_names_nr)  ? s->kernel_names[param_value] : "[Unknown(postulated)]")
-						          : "<invalid>", param_value);
-			else sciprintf(opsize ? " %02x" : " %04x", param_value);
+							((param_value < s->kernel_names_nr) ? s->kernel_names[param_value] : "[Unknown(postulated)]")
+							: "<invalid>", param_value);
+			else
+				sciprintf(opsize ? " %02x" : " %04x", param_value);
 
 			break;
 
@@ -1470,8 +1345,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset]
-				                        | (scr[retval.offset+1] << 8));
+				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
 			sciprintf(opsize ? " %02x  [%04x]" : " %04x", param_value);
@@ -1481,8 +1355,7 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset]
-				                        | (scr[retval.offset+1] << 8));
+				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
 			sciprintf(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
@@ -1496,32 +1369,27 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 			sciprintf("Internal assertion failed in 'disassemble', %s, L%d\n", __FILE__, __LINE__);
 
 		}
+	}
 
-	if (REG_EQ(pos, *p_pc)) /* Extra information if debugging the current opcode */
-
-		if ((opcode == op_pTos) || (opcode == op_sTop) ||
-		        (opcode == op_pToa) || (opcode == op_aTop) ||
-		        (opcode == op_dpToa) || (opcode == op_ipToa) ||
-		        (opcode == op_dpTos) || (opcode == op_ipTos)) {
+	if (REG_EQ(pos, *p_pc)) { // Extra information if debugging the current opcode
+		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
+		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
 			int prop_id = prop_ofs_to_id(s, prop_ofs, *p_objp);
 
 			sciprintf("	(%s)", selector_name(s, prop_id));
 		}
+	}
 
 	sciprintf("\n");
 
-	if (REG_EQ(pos, *p_pc)) { /* Extra information if debugging the current opcode */
-
+	if (REG_EQ(pos, *p_pc)) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1)
-			                 + (*p_restadjust);
+			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
 
 			if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
 				argc += (*p_restadjust);
-
-
 
 			sciprintf(" Kernel params: (");
 
@@ -1531,7 +1399,6 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 					sciprintf(", ");
 			}
 			sciprintf(")\n");
-
 		} else if ((opcode == op_send) || (opcode == op_self)) {
 			int restmod = *p_restadjust;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
@@ -1557,11 +1424,9 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 				if (!name)
 					name = "<invalid>";
 
-				sciprintf("  %s::%s[", name, (selector > s->selector_names_nr)
-				          ? "<invalid>" : selector_name(s, selector));
+				sciprintf("  %s::%s[", name, (selector > s->selector_names_nr) ? "<invalid>" : selector_name(s, selector));
 
-				switch (lookup_selector(s, called_obj_addr, selector,
-				                        &val_ref, &fun_ref)) {
+				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
 				case SELECTOR_METHOD:
 					sciprintf("FUNCT");
 					argc += restmod;
@@ -1578,7 +1443,6 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 				sciprintf("](");
 
 				while (argc--) {
-
 					sciprintf(PREG, PRINT_REG(sb[- stackframe + 2]));
 					if (argc)
 						sciprintf(", ");
@@ -1586,23 +1450,17 @@ disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode)
 				}
 
 				sciprintf(")\n");
-
 				stackframe -= 2;
-			} /* while (stackframe > 0) */
-
-		} /* Send-like opcodes */
-
-	} /* (heappos == *p_pc) */
-
+			} // while (stackframe > 0)
+		} // Send-like opcodes
+	} // (heappos == *p_pc)
 
 	return retval;
 }
 
-int
-c_dumpnodes(state_t *s) {
+int c_dumpnodes(state_t *s) {
 	int end = MIN<int>(cmd_params[0].val, VOCAB_TREE_NODES);
 	int i;
-
 
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -1624,30 +1482,26 @@ c_dumpnodes(state_t *s) {
 static const char *varnames[] = {"global", "local", "temp", "param"};
 static const char *varabbrev = "gltp";
 
-int
-c_vmvarlist(state_t *s) {
+int c_vmvarlist(state_t *s) {
 	int i;
 
 	for (i = 0;i < 4;i++) {
-		sciprintf("%s vars at "PREG" ",
-		          varnames[i],
-		          PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
+		sciprintf("%s vars at "PREG" ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
 		if (p_var_max)
 			sciprintf("  total %d", p_var_max[i]);
 		sciprintf("\n");
 	}
+
 	return 0;
 }
 
-int
-c_vmvars(state_t *s) {
+int c_vmvars(state_t *s) {
 	const char *vartype_pre = strchr(varabbrev, *cmd_params[0].str);
 	int vartype;
 	int idx = cmd_params[1].val;
 
 	if (!vartype_pre) {
-		sciprintf("Invalid variable type '%c'\n",
-		          *cmd_params[0].str);
+		sciprintf("Invalid variable type '%c'\n", *cmd_params[0].str);
 		return 1;
 	}
 	vartype = vartype_pre - varabbrev;
@@ -1656,17 +1510,14 @@ c_vmvars(state_t *s) {
 		sciprintf("Invalid: negative index\n");
 		return 1;
 	}
-	if ((p_var_max)
-	        && (p_var_max[vartype] <= idx)) {
-		sciprintf("Max. index is %d (0x%x)\n",
-		          p_var_max[vartype], p_var_max[vartype]);
+	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
+		sciprintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
 		return 1;
 	}
 
 	switch (cmd_paramlength) {
 	case 2:
-		sciprintf("%s var %d == "PREG"\n", varnames[vartype], idx,
-		          PRINT_REG(p_vars[vartype][idx]));
+		sciprintf("%s var %d == "PREG"\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
 		break;
 
 	case 3:
@@ -1676,11 +1527,11 @@ c_vmvars(state_t *s) {
 	default:
 		sciprintf("Too many arguments\n");
 	}
+
 	return 0;
 }
 
-static int
-c_backtrace(state_t *s) {
+static int c_backtrace(state_t *s) {
 	int i;
 
 	if (!_debugstate_valid) {
@@ -1696,14 +1547,13 @@ c_backtrace(state_t *s) {
 
 		switch (call->type) {
 
-		case EXEC_STACK_TYPE_CALL: {/* Normal function */
-			sciprintf(" %x:[%x]  %s::%s(", i, call->origin,
-			          objname, (call->selector == -1) ? "<call[be]?>" :
+		case EXEC_STACK_TYPE_CALL: {// Normal function
+			sciprintf(" %x:[%x]  %s::%s(", i, call->origin, objname, (call->selector == -1) ? "<call[be]?>" :
 			          selector_name(s, call->selector));
 		}
 		break;
 
-		case EXEC_STACK_TYPE_KERNEL: /* Kernel function */
+		case EXEC_STACK_TYPE_KERNEL: // Kernel function
 			sciprintf(" %x:[%x]  k%s(", i, call->origin, s->kernel_names[-(call->selector)-42]);
 			break;
 
@@ -1711,7 +1561,7 @@ c_backtrace(state_t *s) {
 			sciprintf(" %x:[%x] vs%s %s::%s (", i, call->origin, (call->argc) ? "write" : "read",
 			          objname, s->selector_names[call->selector]);
 			break;
-		} /* switch */
+		}
 
 		totalparamc = call->argc;
 
@@ -1728,18 +1578,14 @@ c_backtrace(state_t *s) {
 		if (call->argc > 16)
 			sciprintf("...");
 
-		sciprintf(")\n    obj@"PREG,
-		          PRINT_REG(call->objp));
+		sciprintf(")\n    obj@"PREG, PRINT_REG(call->objp));
 		if (call->type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc="PREG,
-			          PRINT_REG(call->addr.pc));
+			sciprintf(" pc="PREG, PRINT_REG(call->addr.pc));
 			if (call->sp == CALL_SP_CARRY)
 				sciprintf(" sp,fp:carry");
 			else {
-				sciprintf(" sp="PSTK,
-				          PRINT_STK(call->sp));
-				sciprintf(" fp="PSTK,
-				          PRINT_STK(call->fp));
+				sciprintf(" sp="PSTK, PRINT_STK(call->sp));
+				sciprintf(" fp="PSTK, PRINT_STK(call->fp));
 			}
 		} else
 			sciprintf(" pc:none");
@@ -1749,11 +1595,11 @@ c_backtrace(state_t *s) {
 			sciprintf(" script: %d", s->seg_manager.heap[call->addr.pc.segment]->data.script.nr);
 		sciprintf("\n");
 	}
+
 	return 0;
 }
 
-static int
-c_redraw_screen(state_t *s) {
+static int c_redraw_screen(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1767,9 +1613,7 @@ c_redraw_screen(state_t *s) {
 	return 0;
 }
 
-
-static int
-c_clear_screen(state_t *s) {
+static int c_clear_screen(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1777,21 +1621,23 @@ c_clear_screen(state_t *s) {
 
 	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
+
 	return 0;
 }
 
-static int
-c_visible_map(state_t *s) {
+static int c_visible_map(state_t *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
-//WARNING(fixme!)
+
+	//WARNING(fixme!)
 #if 0
 	if (s->onscreen_console)
 		con_restore_screen(s, s->osc_backup);
 
-	if (cmd_params[0].val <= 3) s->pic_visible_map = cmd_params[0].val;
+	if (cmd_params[0].val <= 3)
+		s->pic_visible_map = cmd_params[0].val;
 	c_redraw_screen(s);
 
 	if (s->onscreen_console)
@@ -1800,9 +1646,7 @@ c_visible_map(state_t *s) {
 	return 0;
 }
 
-
-static int
-c_gfx_current_port(state_t *s) {
+static int c_gfx_current_port(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1812,11 +1656,11 @@ c_gfx_current_port(state_t *s) {
 		sciprintf("none.\n");
 	else
 		sciprintf("%d\n", s->port->ID);
+
 	return 0;
 }
 
-static int
-c_gfx_print_port(state_t *s) {
+static int c_gfx_print_port(state_t *s) {
 	gfxw_port_t *port;
 
 	if (!_debugstate_valid) {
@@ -1843,8 +1687,7 @@ c_gfx_print_port(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_priority(state_t *s) {
+static int c_gfx_priority(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1864,8 +1707,7 @@ c_gfx_priority(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_print_visual(state_t *s) {
+static int c_gfx_print_visual(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1879,8 +1721,7 @@ c_gfx_print_visual(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_print_dynviews(state_t *s) {
+static int c_gfx_print_dynviews(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1894,8 +1735,7 @@ c_gfx_print_dynviews(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_print_dropviews(state_t *s) {
+static int c_gfx_print_dropviews(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1909,8 +1749,7 @@ c_gfx_print_dropviews(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_drawpic(state_t *s) {
+static int c_gfx_drawpic(state_t *s) {
 	int flags = 1, default_palette = 0;
 
 	if (!_debugstate_valid) {
@@ -1929,6 +1768,7 @@ c_gfx_drawpic(state_t *s) {
 	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
 	gfxop_usleep(s->gfx_state, 0);
+
 	return 0;
 }
 
@@ -1936,8 +1776,7 @@ c_gfx_drawpic(state_t *s) {
 extern gfxw_widget_t *debug_widgets[];
 extern int debug_widget_pos;
 
-static int
-c_gfx_print_widget(state_t *s) {
+static int c_gfx_print_widget(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1963,8 +1802,7 @@ c_gfx_print_widget(state_t *s) {
 }
 #endif
 
-static int
-c_gfx_show_map(state_t *s) {
+static int c_gfx_show_map(state_t *s) {
 	int map = cmd_params[0].val;
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -1995,31 +1833,29 @@ c_gfx_show_map(state_t *s) {
 	}
 
 	gfxop_update(s->gfx_state);
+
 	return 0;
 }
 
-
-static int
-c_gfx_draw_cel(state_t *s) {
+static int c_gfx_draw_cel(state_t *s) {
 	int view = cmd_params[0].val;
 	int loop = cmd_params[1].val;
 	int cel = cmd_params[2].val;
 	int palette = cmd_params[3].val;
+
 	if (!s) {
 		sciprintf("Not in debug state");
 		return 1;
 	}
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_draw_cel(s->gfx_state, view, loop, cel, Common::Point(160, 100),
-	               s->ega_colors[0], palette);
+	gfxop_draw_cel(s->gfx_state, view, loop, cel, Common::Point(160, 100), s->ega_colors[0], palette);
 	gfxop_update(s->gfx_state);
 
 	return 0;
 }
 
-static int
-c_gfx_fill_screen(state_t *s) {
+static int c_gfx_fill_screen(state_t *s) {
 	int col = cmd_params[0].val;
 
 	if (!s) {
@@ -2037,8 +1873,7 @@ c_gfx_fill_screen(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_draw_rect(state_t *s) {
+static int c_gfx_draw_rect(state_t *s) {
 	int col = cmd_params[4].val;
 
 	if (!s) {
@@ -2056,8 +1891,7 @@ c_gfx_draw_rect(state_t *s) {
 	return 0;
 }
 
-static int
-c_gfx_propagate_rect(state_t *s) {
+static int c_gfx_propagate_rect(state_t *s) {
 	int map = cmd_params[4].val;
 	rect_t rect;
 
@@ -2071,10 +1905,7 @@ c_gfx_propagate_rect(state_t *s) {
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
-	rect = gfx_rect(cmd_params[0].val,
-	                cmd_params[1].val,
-	                cmd_params[2].val,
-	                cmd_params[3].val);
+	rect = gfx_rect(cmd_params[0].val, cmd_params[1].val, cmd_params[2].val, cmd_params[3].val);
 
 	if (map == 1)
 		gfxop_clear_box(s->gfx_state, rect);
@@ -2094,8 +1925,7 @@ bb = GET_SELECTOR(pos, bb);
 
 #if 0
 // Unreferenced - removed
-static int
-c_gfx_draw_viewobj(state_t *s) {
+static int c_gfx_draw_viewobj(state_t *s) {
 #ifdef __GNUC__
 #warning "Re-implement con:gfx_draw_viewobj"
 #endif
@@ -2122,13 +1952,9 @@ c_gfx_draw_viewobj(state_t *s) {
 	}
 
 
-	is_view =
-	    (lookup_selector(s, pos, s->selector_map.x, NULL) == SELECTOR_VARIABLE)
-	    &&
-	    (lookup_selector(s, pos, s->selector_map.brLeft, NULL) == SELECTOR_VARIABLE)
-	    &&
-	    (lookup_selector(s, pos, s->selector_map.signal, NULL) == SELECTOR_VARIABLE)
-	    &&
+	is_view = (lookup_selector(s, pos, s->selector_map.x, NULL) == SELECTOR_VARIABLE) &&
+	    (lookup_selector(s, pos, s->selector_map.brLeft, NULL) == SELECTOR_VARIABLE) &&
+	    (lookup_selector(s, pos, s->selector_map.signal, NULL) == SELECTOR_VARIABLE) &&
 	    (lookup_selector(s, pos, s->selector_map.nsTop, NULL) == SELECTOR_VARIABLE);
 
 	if (!is_view) {
@@ -2148,28 +1974,15 @@ c_gfx_draw_viewobj(state_t *s) {
 	nsTop += 10;
 	nsBottom += 10;
 
-	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop,
-	                                      nsRight - nsLeft + 1,
-	                                      nsBottom - nsTop + 1),
-	               s->ega_colors[2]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop, nsRight - nsLeft + 1, nsBottom - nsTop + 1), s->ega_colors[2]);
 
-	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop,
-	                                      brRight - brLeft + 1,
-	                                      brBottom - brTop + 1),
-	               s->ega_colors[1]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop, brRight - brLeft + 1, brBottom - brTop + 1), s->ega_colors[1]);
 
+	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1, 3, 3), s->ega_colors[0]);
 
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1,
-	                                      3, 3),
-	               s->ega_colors[0]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y, 3, 1), s->ega_colors[priority]);
 
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y,
-	                                      3, 1),
-	               s->ega_colors[priority]);
-
-	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1,
-	                                      1, 3),
-	               s->ega_colors[priority]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1, 1, 3), s->ega_colors[priority]);
 
 	gfxop_update(s->gfx_state);
 
@@ -2178,8 +1991,7 @@ c_gfx_draw_viewobj(state_t *s) {
 }
 #endif
 
-static int
-c_gfx_flush_resources(state_t *s) {
+static int c_gfx_flush_resources(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2190,30 +2002,21 @@ c_gfx_flush_resources(state_t *s) {
 	s->visual->widfree(GFXW(s->visual));
 	gfxr_free_all_resources(s->gfx_state->driver, s->gfx_state->resstate);
 	s->visual = NULL;
+
 	return 0;
 }
 
-static int
-c_gfx_update_zone(state_t *s) {
+static int c_gfx_update_zone(state_t *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	return s->gfx_state->driver->update(s->gfx_state->driver,
-	                                    gfx_rect(cmd_params[0].val,
-	                                             cmd_params[1].val,
-	                                             cmd_params[2].val,
-	                                             cmd_params[3].val),
-	                                    Common::Point(cmd_params[0].val,
-	                                              cmd_params[1].val),
-	                                    GFX_BUFFER_FRONT
-	                                   );
-
+	return s->gfx_state->driver->update(s->gfx_state->driver, gfx_rect(cmd_params[0].val, cmd_params[1].val, cmd_params[2].val, cmd_params[3].val),
+										Common::Point(cmd_params[0].val, cmd_params[1].val), GFX_BUFFER_FRONT);
 }
 
-static int
-c_disasm_addr(state_t *s) {
+static int c_disasm_addr(state_t *s) {
 	reg_t vpc = cmd_params[0].reg;
 	int op_count = 1;
 	int do_bwc = 0;
@@ -2221,8 +2024,9 @@ c_disasm_addr(state_t *s) {
 	unsigned int i;
 	int invalid = 0;
 	int size;
+
 	sm_dereference(&s->seg_manager, vpc, &size);
-	size += vpc.offset; /* total segment size */
+	size += vpc.offset; // total segment size
 
 	for (i = 1; i < cmd_paramlength; i++) {
 		if (!scumm_stricmp(cmd_params[i].str, "bwt"))
@@ -2242,13 +2046,12 @@ c_disasm_addr(state_t *s) {
 
 	do {
 		vpc = disassemble(s, vpc, do_bwc, do_bytes);
+
 	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
 	return 0;
 }
 
-
-static int
-c_disasm(state_t *s) {
+static int c_disasm(state_t *s) {
 	object_t *obj = obj_get(s, cmd_params[0].reg);
 	int selector_id = script_find_selector(s, cmd_params[1].str);
 	reg_t addr;
@@ -2275,8 +2078,7 @@ c_disasm(state_t *s) {
 	return 0;
 }
 
-static int
-c_sg(state_t *s) {
+static int c_sg(state_t *s) {
 	_debug_seeking = _DEBUG_SEEK_GLOBAL;
 	_debug_seek_special = cmd_params[0].val;
 	_debugstate_valid = 0;
@@ -2284,9 +2086,7 @@ c_sg(state_t *s) {
 	return 0;
 }
 
-
-static int
-c_snk(state_t *s) {
+static int c_snk(state_t *s) {
 	int callk_index;
 	char *endptr;
 
@@ -2323,35 +2123,30 @@ c_snk(state_t *s) {
 		_debug_seeking = _DEBUG_SEEK_CALLK;
 		_debugstate_valid = 0;
 	}
+
 	return 0;
 }
 
-
-static int
-c_sret(state_t *s) {
+static int c_sret(state_t *s) {
 	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
 	_debug_seek_level = s->execution_stack_pos;
 	_debugstate_valid = 0;
 	return 0;
 }
 
-static int
-c_go(state_t *s) {
+static int c_go(state_t *s) {
 	_debug_seeking = 0;
 	_debugstate_valid = 0;
 	script_debug_flag = 0;
 	return 0;
 }
 
-
-static int
-c_set_acc(state_t *s) {
+static int c_set_acc(state_t *s) {
 	s->r_acc = cmd_params[0].reg;
 	return 0;
 }
 
-static int
-c_send(state_t *s) {
+static int c_send(state_t *s) {
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
 	stack_ptr_t stackframe = s->execution_stack->sp;
@@ -2387,16 +2182,13 @@ c_send(state_t *s) {
 	for (i = 2; i < cmd_paramlength; i++)
 		stackframe[i] = cmd_params[i].reg;
 
-	xstack = add_exec_stack_entry(s, fptr, s->execution_stack->sp + cmd_paramlength, object,
-	                              cmd_paramlength - 2, s->execution_stack->sp - 1, 0, object,
-	                              s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
+	xstack = add_exec_stack_entry(s, fptr, s->execution_stack->sp + cmd_paramlength, object, cmd_paramlength - 2,
+									s->execution_stack->sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
-	xstack->type = selector_type == SELECTOR_VARIABLE ? EXEC_STACK_TYPE_VARSELECTOR :
-	               EXEC_STACK_TYPE_CALL;
+	xstack->type = selector_type == SELECTOR_VARIABLE ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 
-	/* Now commit the actual function: */
-	xstack = send_selector(s, object, object,
-	                       stackframe, cmd_paramlength - 2, stackframe);
+	// Now commit the actual function:
+	xstack = send_selector(s, object, object, stackframe, cmd_paramlength - 2, stackframe);
 
 	xstack->sp += cmd_paramlength;
 	xstack->fp += cmd_paramlength;
@@ -2406,32 +2198,31 @@ c_send(state_t *s) {
 	return 0;
 }
 
-static int
-c_resource_id(state_t *s) {
+static int c_resource_id(state_t *s) {
 	int id = cmd_params[0].val;
 
 	sciprintf("%s.%d (0x%x)\n", sci_resource_types[id >> 11], id &0x7ff, id & 0x7ff);
+
 	return 0;
 }
 
-static int
-c_listclones(state_t *s) {
-	/*
-	int i, j = 0;
+static int c_listclones(state_t *s) {
+/*	int i, j = 0;
+
 	sciprintf("Listing all logged clones:\n");
 
-	for (i = 0; i < SCRIPT_MAX_CLONES; i++)
+	for (i = 0; i < SCRIPT_MAX_CLONES; i++) {
 		if (s->clone_list[i]) {
 			sciprintf("  Clone at %04x\n", s->clone_list[i]);
 			j++;
 		}
+	}
 
-	sciprintf("Total of %d clones.\n", j);
-	*/
+	sciprintf("Total of %d clones.\n", j);*/
 	sciprintf("This function is temporarily disabled.\n");
+
 	return 0;
 }
-
 
 typedef struct {
 	const char *name;
@@ -2439,12 +2230,8 @@ typedef struct {
 	unsigned int flag;
 } generic_config_flag_t;
 
-
-static void
-handle_config_update(const generic_config_flag_t *flags_list, int flags_nr,
-                     const char *subsystem,
-                     int *active_options_p,
-                     char *changestring /* or NULL to display*/) {
+static void handle_config_update(const generic_config_flag_t *flags_list, int flags_nr, const char *subsystem,
+								 int *active_options_p, char *changestring /* or NULL to display*/) {
 	if (!changestring) {
 		int j;
 
@@ -2453,13 +2240,9 @@ handle_config_update(const generic_config_flag_t *flags_list, int flags_nr,
 			sciprintf("  (nothing)\n");
 
 		for (j = 0; j < flags_nr; j++)
-			if (*active_options_p
-			        & flags_list[j].flag) {
-				sciprintf("  - %s (%c)\n",
-				          flags_list[j].name,
-				          flags_list[j].option);
+			if (*active_options_p & flags_list[j].flag) {
+				sciprintf("  - %s (%c)\n", flags_list[j].name, flags_list[j].option);
 			}
-
 	} else {
 		int mode;
 		int j = 0;
@@ -2479,32 +2262,27 @@ handle_config_update(const generic_config_flag_t *flags_list, int flags_nr,
 			int flag = 0;
 
 			if (changestring[j] == '*')
-				flags = ~0; /* Everything */
+				flags = ~0; // Everything
 			else
 				for (k = 0; !flag && k < flags_nr; k++)
-					if (flags_list[k].option
-					        == changestring[j])
+					if (flags_list[k].option == changestring[j])
 						flag = flags_list[k].flag;
 
 			if (!flag) {
-				sciprintf("Invalid/unknown mode flag '%c'\n",
-				          changestring[j]);
+				sciprintf("Invalid/unknown mode flag '%c'\n", changestring[j]);
 				return;
 			}
 			flags |= flag;
 		}
 
-		if (mode) /* + */
+		if (mode) // +
 			*active_options_p |= flags;
-		else /* - */
+		else // -
 			*active_options_p &= ~flags;
 	}
-
 }
 
-static int
-c_handle_config_update(const generic_config_flag_t *flags, int flags_nr,
-                       const char *subsystem, int *active_options_p) {
+static int c_handle_config_update(const generic_config_flag_t *flags, int flags_nr, const char *subsystem, int *active_options_p) {
 	unsigned int i;
 
 	if (!_debugstate_valid) {
@@ -2513,14 +2291,11 @@ c_handle_config_update(const generic_config_flag_t *flags, int flags_nr,
 	}
 
 	if (cmd_paramlength == 0)
-		handle_config_update(flags, flags_nr,
-		                     subsystem, active_options_p,
-		                     0);
+		handle_config_update(flags, flags_nr, subsystem, active_options_p, 0);
 
 	for (i = 0; i < cmd_paramlength; i++)
-		handle_config_update(flags, flags_nr,
-		                     subsystem, active_options_p,
-		                     cmd_params[i].str);
+		handle_config_update(flags, flags_nr, subsystem, active_options_p, cmd_params[i].str);
+
 	return 0;
 }
 
@@ -2544,52 +2319,39 @@ const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
 	{"Pathfinding", 'P', (1 << SCIkAVOIDPATH_NR)}
 } ;
 
-
-void
-set_debug_mode(struct _state *s, int mode, const char *areas) {
+void set_debug_mode(struct _state *s, int mode, const char *areas) {
 	char *param = (char*)sci_malloc(strlen(areas) + 2);
 
 	param[0] = (mode) ? '+' : '-';
 	strcpy(param + 1, areas);
 
-	handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES,
-	                     "VM and kernel",
-	                     (int *) &(s->debug_mode),
-	                     param);
+	handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode), param);
 
 	free(param);
 }
 
-int
-c_debuglog(state_t *s) {
-	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES,
-	                              "VM and kernel",
-	                              (int *) &(s->debug_mode));
+int c_debuglog(state_t *s) {
+	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode));
 }
 
 #define SFX_DEBUG_MODES 2
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 
-static int
-c_sfx_debuglog(state_t *s) {
+static int c_sfx_debuglog(state_t *s) {
 	const generic_config_flag_t sfx_debug_modes[SFX_DEBUG_MODES] = {
 		{"Song activation/deactivation", 's', SFX_DEBUG_SONGS},
 		{"Song cue polling and delivery", 'c', SFX_DEBUG_CUES}
 	};
 
-	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES,
-	                              "sound subsystem",
-	                              (int *) &(s->sound.debug));
+	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->sound.debug));
 }
 
-static int
-c_sfx_remove(state_t *s) {
+static int c_sfx_remove(state_t *s) {
 	reg_t id = cmd_params[0].reg;
 	int handle = FROBNICATE_HANDLE(id);
 
 	if (id.segment) {
-		sfx_song_set_status(&s->sound,
-		                    handle, SOUND_STATUS_STOPPED);
+		sfx_song_set_status(&s->sound, handle, SOUND_STATUS_STOPPED);
 		sfx_remove_song(&s->sound, handle);
 		PUT_SEL32V(id, signal, -1);
 		PUT_SEL32V(id, nodePtr, 0);
@@ -2601,8 +2363,7 @@ c_sfx_remove(state_t *s) {
 
 #define GFX_DEBUG_MODES 4
 
-int
-c_gfx_debuglog(state_t *s) {
+int c_gfx_debuglog(state_t *s) {
 	gfx_driver_t *drv = s->gfx_state->driver;
 	const generic_config_flag_t gfx_debug_modes[GFX_DEBUG_MODES] = {
 		{ "Mouse Pointer", 'p', GFX_DEBUG_POINTER},
@@ -2611,14 +2372,10 @@ c_gfx_debuglog(state_t *s) {
 		{ "Basic operations", 'b', GFX_DEBUG_BASIC},
 	};
 
-	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES,
-	                              "graphics subsystem",
-	                              (int *) &(drv->debug_flags));
-
+	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags));
 }
 
-int
-c_dump_words(state_t *s) {
+int c_dump_words(state_t *s) {
 	int i;
 
 	if (!s) {
@@ -2640,18 +2397,14 @@ c_dump_words(state_t *s) {
 	return 0;
 }
 
-int
-c_simkey(state_t *s) {
+int c_simkey(state_t *s) {
 	_kdebug_cheap_event_hack = cmd_params[0].val;
+
 	return 0;
 }
 
-static int
-c_is_sample(state_t *s) {
-	resource_t *song = scir_find_resource(s->resmgr,
-	                                      sci_sound,
-	                                      cmd_params[0].val,
-	                                      0);
+static int c_is_sample(state_t *s) {
+	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 	song_iterator_t *songit;
 	sfx_pcm_feed_t *data;
 
@@ -2660,8 +2413,7 @@ c_is_sample(state_t *s) {
 		return 1;
 	}
 
-	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0,
-	                    0xcaffe /* What do I care about the ID? */);
+	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
 
 	if (!songit) {
 		sciprintf("Error-- Could not convert to song iterator\n");
@@ -2669,11 +2421,8 @@ c_is_sample(state_t *s) {
 	}
 
 	if ((data = songit->get_pcm_feed(songit))) {
-		sciprintf("\nIs sample (encoding %dHz/%s/%04x).\n",
-		          data->conf.rate, (data->conf.stereo) ?
-		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ?
-		           "stereo-LR" : "stereo-RL") : "mono",
-				          data->conf.format);
+		sciprintf("\nIs sample (encoding %dHz/%s/%04x).\n", data->conf.rate, (data->conf.stereo) ?
+		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
 		data->destroy(data);
 	} else
 		sciprintf("Valid song, but not a sample.\n");
@@ -2683,20 +2432,17 @@ c_is_sample(state_t *s) {
 	return 0;
 }
 
-int
-c_simsoundcue(state_t *s) {
+int c_simsoundcue(state_t *s) {
 	_kdebug_cheap_soundcue_hack = cmd_params[0].val;
+
 	return 0;
 }
 
-
 #define ASSERT_PARAMS(number) \
-   if (cmd_paramlength <= number) {\
-     sciprintf("Operation '%s' needs %d parameters\n", op, number); \
-     return 1;\
-   }
-
-
+	if (cmd_paramlength <= number) {\
+		sciprintf("Operation '%s' needs %d parameters\n", op, number); \
+		return 1;\
+	}
 
 #define GETRECT(ll, rr, tt, bb) \
 ll = GET_SELECTOR(pos, ll); \
@@ -2708,9 +2454,7 @@ bb = GET_SELECTOR(pos, bb);
 #ifdef __GNUC__
 #warning "Re-implement viewobjinfo"
 #endif
-static void
-viewobjinfo(state_t *s, heap_ptr pos) {
-
+static void viewobjinfo(state_t *s, heap_ptr pos) {
 	char *signals[16] = {
 		"stop_update",
 		"updated",
@@ -2756,13 +2500,13 @@ viewobjinfo(state_t *s, heap_ptr pos) {
 	if (s->selector_map.z > 0) {
 		z = GET_SELECTOR(pos, z);
 		sciprintf("(%d,%d,%d)\n", x, y, z);
-	} else sciprintf("(%d,%d)\n", x, y);
+	} else
+		sciprintf("(%d,%d)\n", x, y);
 
 	if (priority == -1)
 		sciprintf("No priority.\n\n");
 	else
-		sciprintf("Priority = %d (band starts at %d)\n\n",
-		          priority, PRIORITY_BAND_FIRST(priority));
+		sciprintf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
 
 	if (have_rects) {
 		sciprintf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
@@ -2773,12 +2517,9 @@ viewobjinfo(state_t *s, heap_ptr pos) {
 	nsrect = get_nsrect(s, pos, 0);
 	nsrect_clipped = get_nsrect(s, pos, 1);
 	brrect = set_base(s, pos);
-	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend,
-	          nsrect.y, nsrect.yend);
-	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x,
-	          nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
-	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend,
-	          brrect.y, brrect.yend);
+	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
+	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
+	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
 	sciprintf("\n signals = %04x:\n", signal);
 
 	for (i = 0; i < 16; i++)
@@ -2788,9 +2529,7 @@ viewobjinfo(state_t *s, heap_ptr pos) {
 #endif
 #undef GETRECT
 
-
-int
-objinfo(state_t *s, reg_t pos) {
+int objinfo(state_t *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
 	object_t *var_container = obj;
 	int i;
@@ -2807,11 +2546,9 @@ objinfo(state_t *s, reg_t pos) {
 		var_container = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	sciprintf("  -- member variables:\n");
 	for (i = 0; i < obj->variables_nr; i++) {
-
 		sciprintf("    ");
 		if (i < var_container->variable_names_nr)
-			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i),
-			          selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
 		else
 			sciprintf("p#%x = ", i);
 
@@ -2820,52 +2557,45 @@ objinfo(state_t *s, reg_t pos) {
 	sciprintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		sciprintf("    [%03x] %s = "PREG"\n",
-		          VM_OBJECT_GET_FUNCSELECTOR(obj, i),
-		          selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)),
-		          PRINT_REG(fptr));
+		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager.heap[pos.segment]->type == MEM_OBJ_SCRIPT)
 		sciprintf("\nOwner script:\t%d\n", s->seg_manager.heap[pos.segment]->data.script.nr);
+
 	return 0;
 }
 
-int
-c_vo(state_t *s) {
+int c_vo(state_t *s) {
 	return objinfo(s, cmd_params[0].reg);
 }
 
-int
-c_obj(state_t *s) {
+int c_obj(state_t *s) {
 	return objinfo(s, *p_objp);
 }
 
-int
-c_accobj(state_t *s) {
+int c_accobj(state_t *s) {
 	return objinfo(s, s->r_acc);
 }
 
-int
-c_shownode(state_t *s) {
+int c_shownode(state_t *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	return show_node(s, addr);
 }
 
-/*** Breakpoint commands ***/
+// Breakpoint commands
 
-static breakpoint_t *
-bp_alloc(state_t *s) {
+static breakpoint_t *bp_alloc(state_t *s) {
 	breakpoint_t *bp;
 
 	if (s->bp_list) {
 		bp = s->bp_list;
 		while (bp->next)
 			bp = bp->next;
-		bp->next = (breakpoint_t *) sci_malloc(sizeof(breakpoint_t));
+		bp->next = (breakpoint_t *)sci_malloc(sizeof(breakpoint_t));
 		bp = bp->next;
 	} else {
-		s->bp_list = (breakpoint_t *) sci_malloc(sizeof(breakpoint_t));
+		s->bp_list = (breakpoint_t *)sci_malloc(sizeof(breakpoint_t));
 		bp = s->bp_list;
 	}
 
@@ -2874,8 +2604,7 @@ bp_alloc(state_t *s) {
 	return bp;
 }
 
-int
-c_bpx(state_t *s) {
+int c_bpx(state_t *s) {
 	breakpoint_t *bp;
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
@@ -2885,15 +2614,14 @@ c_bpx(state_t *s) {
 	bp = bp_alloc(s);
 
 	bp->type = BREAK_SELECTOR;
-	bp->data.name = (char*)sci_malloc(strlen(cmd_params [0].str) + 1);
+	bp->data.name = (char *)sci_malloc(strlen(cmd_params [0].str) + 1);
 	strcpy(bp->data.name, cmd_params [0].str);
 	s->have_bp |= BREAK_SELECTOR;
 
 	return 0;
 }
 
-int
-c_bpe(state_t *s) {
+int c_bpe(state_t *s) {
 	breakpoint_t *bp;
 
 	bp = bp_alloc(s);
@@ -2905,8 +2633,7 @@ c_bpe(state_t *s) {
 	return 0;
 }
 
-int
-c_bplist(state_t *s) {
+int c_bplist(state_t *s) {
 	breakpoint_t *bp;
 	int i = 0;
 	long bpdata;
@@ -2936,7 +2663,7 @@ int c_bpdel(state_t *s) {
 	int i = 0, found = 0;
 	int type;
 
-	/* Find breakpoint with given index */
+	// Find breakpoint with given index
 	bp_prev = NULL;
 	bp = s->bp_list;
 	while (bp && i < cmd_params [0].val) {
@@ -2949,7 +2676,7 @@ int c_bpdel(state_t *s) {
 		return 1;
 	}
 
-	/* Delete it */
+	// Delete it
 	bp_next = bp->next;
 	type = bp->type;
 	if (type == BREAK_SELECTOR) free(bp->data.name);
@@ -2959,44 +2686,44 @@ int c_bpdel(state_t *s) {
 	else
 		s->bp_list = bp_next;
 
-	/* Check if there are more breakpoints of the same type. If not, clear
-	   the respective bit in s->have_bp. */
-	for (bp = s->bp_list; bp; bp = bp->next)
+	// Check if there are more breakpoints of the same type. If not, clear
+	// the respective bit in s->have_bp.
+	for (bp = s->bp_list; bp; bp = bp->next) {
 		if (bp->type == type) {
 			found = 1;
 			break;
 		}
+	}
 
-	if (!found) s->have_bp &= ~type;
+	if (!found)
+		s->have_bp &= ~type;
 
 	return 0;
 }
 
-int
-c_gnf(state_t *s) {
+int c_gnf(state_t *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
 	vocab_gnf_dump(s->parser_branches, s->parser_branches_nr);
+
 	return 0;
 }
 
-int
-c_se(state_t *s) {
+int c_se(state_t *s) {
 	stop_on_event = 1;
 	_debugstate_valid = script_debug_flag = script_error_flag = 0;
+
 	return 0;
 }
 
-int
-c_type(state_t *s) {
+int c_type(state_t *s) {
 	int t = determine_reg_type(s, cmd_params[0].reg, 1);
 	int invalid = t & KSIG_INVALID;
 
 	switch (t & ~KSIG_INVALID) {
-
 	case 0:
 		sciprintf("Invalid");
 		break;
@@ -3019,15 +2746,14 @@ c_type(state_t *s) {
 
 	default:
 		sciprintf("Erroneous unknown type %02x(%d decimal)\n", t, t);
-
 	}
 
 	sciprintf("%s\n", invalid ? " (invalid)" : "");
+
 	return 0;
 }
 
-int
-c_statusbar(state_t *s) {
+int c_statusbar(state_t *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -3039,37 +2765,31 @@ c_statusbar(state_t *s) {
 	s->status_bar_foreground = cmd_params[0].val;
 	s->status_bar_background = cmd_params[1].val;
 
-	sciw_set_status_bar(s, s->titlebar_port, s->status_bar_text,
-	                    s->status_bar_foreground,
-	                    s->status_bar_background);
+	sciw_set_status_bar(s, s->titlebar_port, s->status_bar_text, s->status_bar_foreground, s->status_bar_background);
 	gfxop_update(s->gfx_state);
+
 	return 0;
 }
 
-int
-c_sci_version(state_t *s) {
+int c_sci_version(state_t *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	sciprintf("Emulating SCI version %d.%03d.%03d\n",
-	          SCI_VERSION_MAJOR(s->version),
-	          SCI_VERSION_MINOR(s->version),
+	sciprintf("Emulating SCI version %d.%03d.%03d\n", SCI_VERSION_MAJOR(s->version), SCI_VERSION_MINOR(s->version),
 	          SCI_VERSION_PATCHLEVEL(s->version));
 
 	return 0;
 }
 
-
-int
-c_sleep(state_t *s) {
+int c_sleep(state_t *s) {
 	sleep(cmd_params[0].val);
+
 	return 0;
 }
 
-static void
-_print_address(void * _, reg_t addr) {
+static void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
 		sciprintf("  "PREG"\n", PRINT_REG(addr));
 }
@@ -3081,8 +2801,7 @@ _print_address(void * _, reg_t addr) {
 		return 1;								\
 	}
 
-static int
-c_gc_show_reachable(state_t *s) {
+static int c_gc_show_reachable(state_t *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -3091,11 +2810,11 @@ c_gc_show_reachable(state_t *s) {
 	seg_interface->list_all_outgoing_references(seg_interface, s, addr, NULL, _print_address);
 
 	seg_interface->deallocate_self(seg_interface);
+
 	return 0;
 }
 
-static int
-c_gc_show_freeable(state_t *s) {
+static int c_gc_show_freeable(state_t *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -3104,11 +2823,11 @@ c_gc_show_freeable(state_t *s) {
 	seg_interface->list_all_deallocatable(seg_interface, NULL, _print_address);
 
 	seg_interface->deallocate_self(seg_interface);
+
 	return 0;
 }
 
-static int
-c_gc_normalise(state_t *s) {
+static int c_gc_normalise(state_t *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -3117,18 +2836,17 @@ c_gc_normalise(state_t *s) {
 	sciprintf(" "PREG"\n", PRINT_REG(addr));
 
 	seg_interface->deallocate_self(seg_interface);
-	return 0;
 
+	return 0;
 }
 
-static int
-c_gc(state_t *s) {
+static int c_gc(state_t *s) {
 	run_gc(s);
+
 	return 0;
 }
 
-static int
-c_gc_list_reachable(state_t *s) {
+static int c_gc_list_reachable(state_t *s) {
 	reg_t_hash_map *use_map = find_all_used_references(s);
 
 	sciprintf("Reachable references (normalised):\n");
@@ -3137,18 +2855,14 @@ c_gc_list_reachable(state_t *s) {
 	}
 
 	delete use_map;
+
 	return 0;
 }
 
-
-void
-script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
-             int *restadjust,
-             seg_id_t *segids, reg_t **variables,
-             reg_t **variables_base, int *variables_nr,
-             int bp) {
+void script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
+             seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	static int last_step;
-	/* Do we support a separate console? */
+	// Do we support a separate console?
 
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
 		int old_debugstate = _debugstate_valid;
@@ -3175,7 +2889,7 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			return;
 	}
 
-	if (_debug_seeking && !bp) { /* Are we looking for something special? */
+	if (_debug_seeking && !bp) { // Are we looking for something special?
 		mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (memobj) {
@@ -3185,28 +2899,27 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			int opcode = pc->offset >= code_buf_size ? 0 : code_buf[pc->offset];
 			int op = opcode >> 1;
 			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 :
-			              (pc->offset + 2 >= code_buf_size ? 0 : getInt16(code_buf + pc->offset + 1));
+			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : getInt16(code_buf + pc->offset + 1));
 
 			switch (_debug_seeking) {
-
 			case _DEBUG_SEEK_SPECIAL_CALLK:
 				if (paramb1 != _debug_seek_special)
 					return;
 
 			case _DEBUG_SEEK_CALLK: {
-				if (op != op_callk) return;
+				if (op != op_callk)
+					return;
 				break;
 			}
 
 			case _DEBUG_SEEK_LEVEL_RET: {
-				if ((op != op_ret) || (_debug_seek_level < s->execution_stack_pos)) return;
+				if ((op != op_ret) || (_debug_seek_level < s->execution_stack_pos))
+					return;
 				break;
 			}
 
 			case _DEBUG_SEEK_SO:
-				if (!REG_EQ(*pc, _debug_seek_reg) ||
-				        s->execution_stack_pos != _debug_seek_level)
+				if (!REG_EQ(*pc, _debug_seek_reg) || s->execution_stack_pos != _debug_seek_level)
 					return;
 				break;
 
@@ -3215,21 +2928,19 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 				if (op < op_sag)
 					return;
 				if ((op & 0x3) > 1)
-					return; /* param or temp */
+					return; // param or temp
 				if ((op & 0x3) && s->execution_stack[s->execution_stack_pos].local_segment > 0)
-					return; /* locals and not running in script.000 */
+					return; // locals and not running in script.000
 				if (paramf1 != _debug_seek_special)
-					return; /* CORRECT global? */
-
+					return; // CORRECT global?
 				break;
 
-			} /* switch(_debug_seeking) */
+			}
 
-			_debug_seeking = _DEBUG_SEEK_NOTHING; /* OK, found whatever we
-							      ** were looking for   */
+			_debug_seeking = _DEBUG_SEEK_NOTHING; 
+			// OK, found whatever we were looking for
 		}
-	} /* if (_debug_seeking) */
-
+	}
 
 	_debugstate_valid = (_debug_step_running == 0);
 
@@ -3249,11 +2960,9 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 		disassemble(s, *pc, 0, 1);
 
 		if (_debug_commands_not_hooked) {
-
 			_debug_commands_not_hooked = 0;
 
-			con_hook_command(c_sfx_remove, "sfx_remove", "!a",
-			                 "Kills a playing sound.");
+			con_hook_command(c_sfx_remove, "sfx_remove", "!a", "Kills a playing sound.");
 			con_hook_command(c_debuginfo, "registers", "", "Displays all current register values");
 			con_hook_command(c_vmvars, "vmvars", "!sia*", "Displays or changes variables in the VM\n\nFirst parameter is either g(lobal), l(ocal), t(emp) or p(aram).\nSecond parameter is the var number\nThird parameter (if specified) is the value to set the variable to");
 			con_hook_command(c_sci_version, "sci_version", "", "Prints the SCI version currently being emulated");
@@ -3284,8 +2993,7 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			con_hook_command(c_listclones, "clonetable", "", "Lists all registered clones");
 			con_hook_command(c_set_acc, "set_acc", "!a", "Sets the accumulator");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
-			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution"
-			                 " stack\n  level.");
+			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_resource_id, "resource_id", "i", "Identifies a resource number by\n"
 			                 "  splitting it up in resource type\n  and resource number.");
 			con_hook_command(c_clear_screen, "clear_screen", "", "Clears the screen, shows the\n  background pic and picviews");
@@ -3308,20 +3016,17 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
 			                 "  of a specific type is touched:\n  bpx foo::\n");
-			con_hook_command(c_bpe, "bpe", "ii", "Sets a breakpoint on the execution of specified"
-			                 " exported function.\n");
+			con_hook_command(c_bpe, "bpe", "ii", "Sets a breakpoint on the execution of specified exported function.\n");
 			con_hook_command(c_bplist, "bplist", "", "Lists all breakpoints.\n");
 			con_hook_command(c_bpdel, "bpdel", "i", "Deletes a breakpoint with specified index.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
-			con_hook_command(c_dumpnodes, "dumpnodes", "i", "shows the specified number of nodes\n"
-			                 "  from the parse node tree");
+			con_hook_command(c_dumpnodes, "dumpnodes", "i", "shows the specified number of nodes\nfrom the parse node tree");
 			con_hook_command(c_save_game, "save_game", "s", "Saves the current game state to\n  the hard disk");
 			con_hook_command(c_restore_game, "restore_game", "s", "Restores a saved game from the\n  hard disk");
 			con_hook_command(c_restart_game, "restart", "s*", "Restarts the game.\n\nUSAGE\n\n  restart [-r] [-p]"
 			                 " [--play] [--replay]\n\n  There are two ways to restart an SCI\n  game:\n"
 			                 "  play (-p) calls the game object's play()\n    method\n  replay (-r) calls the replay() method");
-			con_hook_command(c_mousepos, "mousepos", "",
-			                 "Reveal the location of a mouse click.\n\n");
+			con_hook_command(c_mousepos, "mousepos", "", "Reveal the location of a mouse click.\n\n");
 			con_hook_command(c_viewinfo, "viewinfo", "ii", "Displays the number of loops\n  and cels of each loop"
 			                 " for the\n  specified view resource and palette.");
 			con_hook_command(c_list_sentence_fragments, "list_sentence_fragments", "", "Lists all sentence fragments (which\n"
@@ -3540,8 +3245,7 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 			              "SEE ALSO\n\n"
 			              "  codebug.1");
 
-		} /* If commands were not hooked up */
-
+		} // If commands were not hooked up
 	}
 
 	if (_debug_step_running)
@@ -3554,7 +3258,7 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 		char *input;
 #endif
 
-		/* Suspend music playing */
+		// Suspend music playing
 		sfx_suspend(&s->sound, 1);
 
 #ifdef WANT_CONSOLE
@@ -3568,19 +3272,15 @@ script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *obj
 #endif
 			commandstring = _debug_get_input();
 
-		/* Check if a specific destination has been given */
-		if (commandstring
-		        && (commandstring[0] == '.'
-		            || commandstring[0] == ':'))
+		// Check if a specific destination has been given
+		if (commandstring && (commandstring[0] == '.' || commandstring[0] == ':'))
 			skipfirst = 1;
 
-		if (commandstring
-		        && commandstring[0] != ':')
+		if (commandstring && commandstring[0] != ':')
 			con_parse(s, commandstring + skipfirst);
 		sciprintf("\n");
 
-		/* Resume music playing */
+		// Resume music playing
 		sfx_suspend(&s->sound, 0);
 	}
 }
-
