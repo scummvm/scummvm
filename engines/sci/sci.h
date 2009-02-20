@@ -27,6 +27,7 @@
 #define SCI_H
 
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 
 namespace Sci {
 
