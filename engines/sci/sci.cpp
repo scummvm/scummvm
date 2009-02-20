@@ -31,9 +31,9 @@
 #include "sci/sci.h"
 #include "sci/include/engine.h"
 
-//namespace Sci {
-
 extern gfx_driver_t gfx_driver_scummvm;
+
+namespace Sci {
 
 int
 c_quit(state_t *s) {
@@ -309,4 +309,24 @@ Common::Error SciEngine::go() {
 	return Common::kNoError;
 }
 
-//} // End of namespace Sci
+const char* SciEngine::getGameID() const {
+	return _gameDescription->desc.gameid;
+}
+
+int SciEngine::getVersion() const {
+	return _gameDescription->version;
+}
+
+Common::Language SciEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
+Common::Platform SciEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
+uint32 SciEngine::getFlags() const {
+	return _gameDescription->desc.flags;
+}
+
+} // End of namespace Sci

@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
-//namespace Sci {
+namespace Sci {
 
 // our engine debug levels
 enum {
@@ -62,7 +62,6 @@ public:
 	virtual Common::Error init(void);
 	virtual Common::Error go(void);
 
-	const SciGameDescription *_gameDescription;
 	const char* getGameID() const;
 	int getVersion() const;
 	Common::Language getLanguage() const;
@@ -70,6 +69,7 @@ public:
 	uint32 getFlags() const;
 
 private:
+	const SciGameDescription *_gameDescription;
 	//Console *_console;
 };
 
@@ -82,6 +82,6 @@ class Console : public GUI::Debugger {
 };
 */
 
-//} // End of namespace Sci
+} // End of namespace Sci
 
 #endif // SCI_H

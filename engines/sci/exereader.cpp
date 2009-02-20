@@ -24,21 +24,20 @@
  */
 
 #include "common/endian.h"
-#include "common/util.h"
 
 #include "sci/exereader.h"
 #include "sci/include/versions.h"
 
-//namespace Sci {
+namespace Sci {
 
 int _bitCount;
 uint16 _bits;
 
-bool isGameExe(Common::SeekableReadStream *exeStream) {
+Common::Platform getGameExePlatform(Common::SeekableReadStream *exeStream) {
 	byte magic[4];
 	// Make sure that the executable is at least 4KB big
 	if (exeStream->size() < 4096)
-		return false;
+		return Common::kPlatformUnknown;
 
 	// Read exe header
 	exeStream->read(magic, 4);
@@ -48,18 +47,18 @@ bool isGameExe(Common::SeekableReadStream *exeStream) {
 	// Information obtained from http://magicdb.org/magic.db
 	// Check if it's a DOS executable
 	if (magic[0] == 'M' && magic[1] == 'Z') {
-		return true;
+		return Common::kPlatformPC;
 	}
 
 	// Check if it's an Amiga executable
 	if ((magic[2] == 0x03 && magic[3] == 0xF3) ||
 		(magic[0] == 0x7F && magic[1] == 'E' && magic[2] == 'L' && magic[3] == 'F')) {
-		return true;
+		return Common::kPlatformAmiga;
 	}
 
 	// Check if it's an Atari executable
 	if ((magic[0] == 0x60 && magic[1] == 0x1A))
-		return true;
+		return Common::kPlatformAtariST;
 
 	// Check if it's a Mac exe
 
@@ -67,7 +66,7 @@ bool isGameExe(Common::SeekableReadStream *exeStream) {
 	int32 offset = (int32)READ_BE_UINT32(magic);
 	offset += 28;
 	if (exeStream->size() <= offset)
-		return false;
+		return Common::kPlatformUnknown;
 
 	// Skip number of types in map
 	exeStream->skip(2);
@@ -77,23 +76,23 @@ bool isGameExe(Common::SeekableReadStream *exeStream) {
 	while (!exeStream->eos()) {
 		exeStream->skip(4);
 		if (exeStream->eos())
-			return false;
+			return Common::kPlatformUnknown;
 
 		exeStream->read(magic, 4);
 		if (exeStream->eos())
-			return false;
+			return Common::kPlatformUnknown;
 
 		if (!memcmp(magic, "CODE", 4)) {
-			return true;
+			return Common::kPlatformMacintosh;
 		}
 		// Skip to the next list entry
 		exeStream->skip(4);
 		if (exeStream->eos())
-			return false;
+			return Common::kPlatformUnknown;
 	}
 
 	// If we've reached here, the file type is unknown
-	return false;
+	return Common::kPlatformUnknown;
 }
 
 bool isLZEXECompressed(Common::SeekableReadStream *exeStream) {
@@ -172,10 +171,10 @@ uint getBit(Common::SeekableReadStream *input) {
 	return bit;
 }
 
-bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) {
+Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream) {
 	int len = exeStream->size();
 	unsigned char *buffer = NULL;
-	char result_string[10]; /* string-encoded result, copied from buf */
+
 	// Read the executable
 	bool isLZEXE = isLZEXECompressed(exeStream);
 
@@ -186,6 +185,7 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 		exeStream->read(buffer, exeStream->size());
 	} else {
 		buffer = new unsigned char[exeStream->size() * 3];
+		_bitCount = 0;
 
 		// Skip LZEXE header
 		exeStream->seek(32, SEEK_SET);
@@ -198,7 +198,7 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 			if (exeStream->ioFailed()) {
 				warning("Error reading from input file");
 				delete[] buffer;
-				return false;
+				return NULL;
 			}
 
 			if (getBit(exeStream)) {
@@ -257,9 +257,14 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 	int accept;
 	unsigned char *buf = buffer;
 
+	// String-encoded result, copied from buffer
+	char currentString[10];
+	Common::String resultString;
+
 	for (int i = 0; i < len; i++) {
 		unsigned char ch = *buf++;
-		accept = 0; // By default, we don't like this character
+		// By default, we don't like this character
+		accept = 0;
 
 		if (isalnum(ch)) {
 			accept = (state != 1
@@ -269,24 +274,63 @@ bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version) 
 			accept = (state == 1
 			          || state == 5);
 		} else if (state == 9) {
-			result_string[9] = 0; /* terminate string */
+			// Terminate string
+			currentString[9] = 0;
 
-			if (!version_parse(result_string, version)) {
+			// Return the current string if it's parseable
+			int version;
+			if (getSciVersionFromString(currentString, &version)) {
 				delete[] buffer;
-				return true;	// success
+				return currentString;
 			}
 
-			// Continue searching
+			// Save the found string and continue searching
+			resultString = currentString;
 		}
 
 		if (accept)
-			result_string[state++] = ch;
+			currentString[state++] = ch;
 		else
 			state = 0;
 	}
 
 	delete[] buffer;
-	return false; // failure
+	return resultString;
 }
 
-//} // End of namespace Sci
+bool getSciVersionFromString(Common::String versionString, int *version) {
+	// Map non-numeric versions to their numeric counterparts
+	Common::String mappedVersion = versionString;
+	if (versionString.hasPrefix("S.old.")) {
+		// SCI 01
+		mappedVersion = "0.001.";
+		mappedVersion += versionString.c_str() + 6;
+	} else if (versionString.hasPrefix("1.ECO.")
+		|| versionString.hasPrefix("1.SQ1.")
+		|| versionString.hasPrefix("1.SQ4.")
+		|| versionString.hasPrefix("1.LS5.")
+		|| versionString.hasPrefix("1.pq3.")
+		|| versionString.hasPrefix("FAIRY.")) {
+		// SCI 1.0
+		mappedVersion = "1.000.";
+		mappedVersion += versionString.c_str() + 6;
+	} else if (versionString.hasPrefix("T.A00.")) {
+		mappedVersion = "1.000.510";
+	} else if (versionString.hasPrefix("L.rry.")
+		|| versionString.hasPrefix("l.cfs.")) {
+		// SCI 1.1
+		mappedVersion = "1.001.";
+		mappedVersion += versionString.c_str() + 6;
+	} else if (versionString == "x.yyy.yyy") {
+		// How to map it?
+	}
+
+	// Parse to a version number
+	if (!version_parse(mappedVersion.c_str(), version)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+} // End of namespace Sci

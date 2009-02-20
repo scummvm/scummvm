@@ -26,14 +26,15 @@
 #ifndef EXEREADER_H
 #define EXEREADER_H
 
-#include "common/file.h"
-#include "common/str.h"
+#include "common/stream.h"
+#include "common/util.h"
 
-//namespace Sci {
+namespace Sci {
 
-bool isGameExe(Common::SeekableReadStream *exeStream);
-bool readSciVersionFromExe(Common::SeekableReadStream *exeStream, int *version);
+Common::Platform getGameExePlatform(Common::SeekableReadStream *exeStream);
+Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream);
+bool getSciVersionFromString(Common::String versionString, int *version);
 
-//} // End of namespace Sci
+} // End of namespace Sci
 
 #endif // SCI_H

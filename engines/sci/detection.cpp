@@ -30,6 +30,8 @@
 #include "sci/exereader.h"
 #include "sci/include/versions.h"
 
+namespace Sci {
+
 // Titles of the games
 static const PlainGameDescriptor SciGameTitles[] = {
 	{"sci",             "Unknown SCI Game"},
@@ -90,26 +92,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{0, 0}
 };
 
-const char* SciEngine::getGameID() const {
-	return _gameDescription->desc.gameid;
-}
-
-Common::Platform SciEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-Common::Language SciEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-uint32 SciEngine::getFlags() const {
-	return _gameDescription->desc.flags;
-}
-
-int SciEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
 /*
 	// Missing - from FreeSCI
 	{ 0x980CEAD3, SCI_VERSION(0, 000, 629), "Demo Quest" },
@@ -154,7 +136,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-	
+
 	// Castle of Dr. Brain - English DOS Demo
 	{{"castlebrain", "Demo", {
 		{"resource.map", 0, "467bb5e3224bb54640c3280032aebff5", 633},
@@ -332,7 +314,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
-  
+
 	// Freddy Pharkas - English DOS CD Demo
 	{{"freddypharkas", "CD Demo", {
 		{"resource.map", 0, "a62a7eae85dd1e6b07f39662b278437e", 1918},
@@ -1681,7 +1663,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(2, 100, 2)
 	},
-		
+
 	// Torin's Passage - Spanish Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
@@ -1690,7 +1672,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(2, 100, 2)
 	},
-	
+
 	// Torin's Passage - French Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
@@ -1699,7 +1681,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(2, 100, 2)
 	},
-		
+
 	// Torin's Passage - German Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
@@ -1708,7 +1690,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(2, 100, 2)
 	},
-	
+
 	// Torin's Passage - Italian Windows CD (from glorifindel)
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
@@ -1776,20 +1758,22 @@ public:
 
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
-	int exeVersion = 0;
 	bool foundResMap = false;
 	bool foundRes000 = false;
-	bool foundExe = false;
+	Common::Platform exePlatform = Common::kPlatformUnknown;
+	Common::String exeVersionString;
 
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) continue;
+		if (file->isDirectory())
+			continue;
+
 		Common::String filename = file->getName();
 		filename.toLowercase();
-		
+
 		if (filename.contains("resource.map") || filename.contains("resmap.000"))
 			foundResMap = true;
-		
+
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
 			foundRes000 = true;
@@ -1798,47 +1782,56 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		if (filename.contains("scidhuv") || filename.contains("sciv") ||
 			filename.contains("sierra") || filename.contains("sciw") ||
 			filename.contains("prog")) {
-			
-			if (foundExe) // We already found a valid exe, no need to check this one.
+
+			// We already found a valid exe, no need to check this one.
+			if (exeVersionString.size())
 				continue;
-			
+
 			// Is it really an executable file?
 			Common::SeekableReadStream *fileStream = file->createReadStream();
-			bool isExe = isGameExe(fileStream);
+			exePlatform = getGameExePlatform(fileStream);
 
-			if (isExe && readSciVersionFromExe(fileStream, &exeVersion)) // All ok, we got the version from the executable successfully	
-				foundExe = true;
-				
+			// It's a valid exe, read the interpreter version string
+			if (exePlatform != Common::kPlatformUnknown)
+				exeVersionString = readSciVersionFromExe(fileStream);
+
 			delete fileStream;
 		}
-
 	}
-	
-	if (!foundExe)
+
+	if (exePlatform == Common::kPlatformUnknown)
 		return 0;
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000)
 		return 0;
-		
+
 	// Set some defaults
 	g_fallbackDesc.desc.gameid = "sci";
 	g_fallbackDesc.desc.extra = "";
 	g_fallbackDesc.desc.language = Common::UNK_LANG;
-	g_fallbackDesc.desc.platform = Common::kPlatformPC;
+	g_fallbackDesc.desc.platform = exePlatform;
 	g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-	g_fallbackDesc.version = exeVersion;
+	g_fallbackDesc.version = SCI_VERSION(0, 0, 0);
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
 	printf("version number, from the game's executable:\n");
 
-	printf("Interpreter version: %d.%03d.%03d (by executable scan)\n",
-			SCI_VERSION_MAJOR(exeVersion),
- 			SCI_VERSION_MINOR(exeVersion),
- 			SCI_VERSION_PATCHLEVEL(exeVersion));
-		
-	return (const ADGameDescription *)&g_fallbackDesc;
+	// Try to parse the executable version
+	if (getSciVersionFromString(exeVersionString, &g_fallbackDesc.version)) {
+		printf("Interpreter version: %d.%03d.%03d (got %s by executable scan)\n",
+			SCI_VERSION_MAJOR(g_fallbackDesc.version),
+			SCI_VERSION_MINOR(g_fallbackDesc.version),
+			SCI_VERSION_PATCHLEVEL(g_fallbackDesc.version),
+			exeVersionString.c_str());
+
+		return (const ADGameDescription *)&g_fallbackDesc;
+	} else {
+		printf("Couldn't parse the interpreter version: %s (by executable scan)\n",
+			exeVersionString.c_str());
+		return NULL;
+	}
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -1849,8 +1842,10 @@ bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	return true;
 }
 
+} // End of namespace Sci
+
 #if PLUGIN_ENABLED_DYNAMIC(SCI)
-	REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, SciMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, SciMetaEngine);
+	REGISTER_PLUGIN_STATIC(SCI, PLUGIN_TYPE_ENGINE, Sci::SciMetaEngine);
 #endif
