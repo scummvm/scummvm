@@ -433,8 +433,8 @@ sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource
 	}
 
 	resources_nr = (fsize - types[0]) / entrysize;
-	resource_start = resources = (resource_t*)sci_realloc(mgr->resources, (mgr->resources_nr + resources_nr) * sizeof(resource_t));
-	resources += mgr->resources_nr;
+	resource_start = resources = (resource_t*)sci_realloc(mgr->_resources, (mgr->_resourcesNr + resources_nr) * sizeof(resource_t));
+	resources += mgr->_resourcesNr;
 
 	i = 0;
 	while (types[i] == 0) i++;

@@ -125,7 +125,7 @@ struct resource_index_struct {
 
 typedef struct resource_index_struct resource_index_t;
 
-typedef struct resource_source_struct {
+struct ResourceSource {
 	int source_type;
 	int scanned;
 	union {
@@ -140,15 +140,15 @@ typedef struct resource_source_struct {
 			struct _resource_struct *resource;
 		} internal_map;
 	} location;
-	struct resource_source_struct *associated_map;
-	struct resource_source_struct *next;
-} ResourceSource;
+	ResourceSource *associated_map;
+	ResourceSource *next;
+};
 
-typedef struct _resource_altsource_struct {
+struct resource_altsource_t {
 	ResourceSource *source;
 	unsigned int file_offset;
-	struct _resource_altsource_struct *next;
-} resource_altsource_t;
+	resource_altsource_t *next;
+};
 
 
 typedef struct _resource_struct {
@@ -173,13 +173,13 @@ typedef struct _resource_struct {
 } resource_t; /* for storing resources in memory */
 
 
-typedef struct {
-	int max_memory; /* Config option: Maximum total byte number allocated */
+struct ResourceManager {
+	int _maxMemory; /* Config option: Maximum total byte number allocated */
 	int sci_version; /* SCI resource version to use */
 
-	int resources_nr;
-	ResourceSource *sources;
-	resource_t *resources;
+	int _resourcesNr;
+	ResourceSource *_sources;
+	resource_t *_resources;
 
 	int memory_locked; /* Amount of resource bytes in locked memory */
 	int memory_lru; /* Amount of resource bytes under LRU control */
@@ -188,22 +188,22 @@ typedef struct {
 
 	resource_t *lru_first, *lru_last; /* Pointers to the first and last LRU queue entries */
 	/* LRU queue: lru_first points to the most recent entry */
-} ResourceManager;
+};
 
 /**** FUNCTION DECLARATIONS ****/
 
 /**--- New Resource manager ---**/
 
 ResourceManager *
-scir_new_resource_manager(char *dir, int version, int max_memory);
+scir_new_resource_manager(char *dir, int version, int maxMemory);
 /* Creates a new FreeSCI resource manager
 ** Parameters: (char *) dir: Path to the resource and patch files (not modified or freed
 **                           by the resource manager)
 **             (int) version: The SCI version to look for; use SCI_VERSION_AUTODETECT
 **                            in the default case.
-**             (int) max_memory: Maximum number of bytes to allow allocated for resources
+**             (int) maxMemory: Maximum number of bytes to allow allocated for resources
 ** Returns   : (ResourceManager *) A newly allocated resource manager
-** max_memory will not be interpreted as a hard limit, only as a restriction for resources
+** maxMemory will not be interpreted as a hard limit, only as a restriction for resources
 ** which are not explicitly locked. However, a warning will be issued whenever this limit
 ** is exceeded.
 */
@@ -437,10 +437,10 @@ byte *pic_reorder(byte *inbuffer, int dsize);
 /*--- Internal helper functions ---*/
 
 void
-_scir_free_resources(resource_t *resources, int resources_nr);
+_scir_free_resources(resource_t *resources, int resourcesNr);
 /* Frees a block of resources and associated data
 ** Parameters: (resource_t *) resources: The resources to free
-**             (int) resources_nr: Number of resources in the block
+**             (int) resourcesNr: Number of resources in the block
 ** Returns   : (void)
 */
 

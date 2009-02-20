@@ -165,8 +165,8 @@ scir_add_external_map(ResourceManager *mgr, char *file_name) {
 	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
-	newsrc->next = mgr->sources;
-	mgr->sources = newsrc;
+	newsrc->next = mgr->_sources;
+	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_EXTERNAL_MAP;
 	newsrc->location.file.name = strdup(file_name);
@@ -183,8 +183,8 @@ scir_add_volume(ResourceManager *mgr, ResourceSource *map, char *filename,
 	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
-	newsrc->next = mgr->sources;
-	mgr->sources = newsrc;
+	newsrc->next = mgr->_sources;
+	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_VOLUME;
 	newsrc->scanned = 0;
@@ -200,8 +200,8 @@ scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
 	                            malloc(sizeof(ResourceSource));
 
 	/* Add the new source to the SLL of sources */
-	newsrc->next = mgr->sources;
-	mgr->sources = newsrc;
+	newsrc->next = mgr->_sources;
+	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_DIRECTORY;
 	newsrc->scanned = 0;
@@ -211,7 +211,7 @@ scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
 
 ResourceSource *
 scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
-	ResourceSource *seeker = mgr->sources;
+	ResourceSource *seeker = mgr->_sources;
 
 	while (seeker) {
 		if (seeker->source_type == RESSOURCE_TYPE_VOLUME &&
@@ -230,8 +230,8 @@ scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr) {
 
 static void
 _scir_init_trivial(ResourceManager *mgr) {
-	mgr->resources_nr = 0;
-	mgr->resources = (resource_t*)sci_malloc(1);
+	mgr->_resourcesNr = 0;
+	mgr->_resources = (resource_t*)sci_malloc(1);
 }
 
 
@@ -339,7 +339,7 @@ scir_test_resource(ResourceManager *mgr, int type, int number) {
 	binseeker.type = type;
 	binseeker.number = number;
 	return (resource_t *)
-	       bsearch(&binseeker, mgr->resources, mgr->resources_nr,
+	       bsearch(&binseeker, mgr->_resources, mgr->_resourcesNr,
 	               sizeof(resource_t), resourcecmp);
 }
 
@@ -472,7 +472,7 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
-//	resource_t **concat_ptr = &(mgr->resources[mgr->resources_nr-1].next);
+//	resource_t **concat_ptr = &(mgr->_resources[mgr->_resourcesNr-1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
@@ -487,12 +487,12 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 		case RESSOURCE_TYPE_DIRECTORY:
 			if (mgr->sci_version <= SCI_VERSION_01)
 				sci0_read_resource_patches(source,
-				                           &mgr->resources,
-				                           &mgr->resources_nr);
+				                           &mgr->_resources,
+				                           &mgr->_resourcesNr);
 			else
 				sci1_read_resource_patches(source,
-				                           &mgr->resources,
-				                           &mgr->resources_nr);
+				                           &mgr->_resources,
+				                           &mgr->_resourcesNr);
 			break;
 		case RESSOURCE_TYPE_EXTERNAL_MAP:
 			if (preset_version <= SCI_VERSION_01_VGA_ODD
@@ -500,8 +500,8 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 				resource_error =
 				    sci0_read_resource_map(mgr,
 				                           source,
-				                           &mgr->resources,
-				                           &mgr->resources_nr,
+				                           &mgr->_resources,
+				                           &mgr->_resourcesNr,
 				                           detected_version);
 
 #if 0
@@ -536,8 +536,8 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 				    sci1_read_resource_map(mgr,
 				                           source,
 				                           scir_get_volume(mgr, source, 0),
-				                           &mgr->resources,
-				                           &mgr->resources_nr,
+				                           &mgr->_resources,
+				                           &mgr->_resourcesNr,
 				                           detected_version);
 
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
@@ -555,7 +555,7 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 			mgr->sci_version = *detected_version;
 			break;
 		}
-		qsort(mgr->resources, mgr->resources_nr, sizeof(resource_t),
+		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
 		      resourcecmp); /* Sort resources */
 	}
 	return resource_error;
@@ -563,7 +563,7 @@ _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, ResourceSour
 
 int
 scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
-	_scir_scan_new_sources(mgr, detected_version, mgr->sources);
+	_scir_scan_new_sources(mgr, detected_version, mgr->_sources);
 	return 0;
 }
 
@@ -576,7 +576,7 @@ _scir_free_resource_sources(ResourceSource *rss) {
 }
 
 ResourceManager *
-scir_new_resource_manager(char *dir, int version, int max_memory) {
+scir_new_resource_manager(char *dir, int version, int maxMemory) {
 	int resource_error = 0;
 	ResourceManager *mgr = (ResourceManager*)sci_malloc(sizeof(ResourceManager));
 	char *caller_cwd = sci_getcwd();
@@ -588,28 +588,28 @@ scir_new_resource_manager(char *dir, int version, int max_memory) {
 		return NULL;
 	}
 
-	mgr->max_memory = max_memory;
+	mgr->_maxMemory = maxMemory;
 
 	mgr->memory_locked = 0;
 	mgr->memory_lru = 0;
 
 	mgr->resource_path = dir;
 
-	mgr->resources = NULL;
-	mgr->resources_nr = 0;
-	mgr->sources = NULL;
+	mgr->_resources = NULL;
+	mgr->_resourcesNr = 0;
+	mgr->_sources = NULL;
 	mgr->sci_version = version;
 
 	scir_add_appropriate_sources(mgr, dir);
 	scir_scan_new_sources(mgr, &resmap_version);
 
-	if (!mgr->resources || !mgr->resources_nr) {
-		if (mgr->resources) {
-			free(mgr->resources);
-			mgr->resources = NULL;
+	if (!mgr->_resources || !mgr->_resourcesNr) {
+		if (mgr->_resources) {
+			free(mgr->_resources);
+			mgr->_resources = NULL;
 		}
 		sciprintf("Resmgr: Could not retrieve a resource list!\n");
-		_scir_free_resource_sources(mgr->sources);
+		_scir_free_resource_sources(mgr->_sources);
 		free(mgr);
 		chdir(caller_cwd);
 		free(caller_cwd);
@@ -619,7 +619,7 @@ scir_new_resource_manager(char *dir, int version, int max_memory) {
 	mgr->lru_first = NULL;
 	mgr->lru_last = NULL;
 
-	qsort(mgr->resources, mgr->resources_nr, sizeof(resource_t),
+	qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
 	      resourcecmp); /* Sort resources */
 
 	if (version == SCI_VERSION_AUTODETECT)
@@ -685,15 +685,15 @@ scir_new_resource_manager(char *dir, int version, int max_memory) {
 #if 0
 		if (version <= SCI_VERSION_01)
 			sci0_read_resource_patches(dir,
-			                           &mgr->resources,
-			                           &mgr->resources_nr);
+			                           &mgr->_resources,
+			                           &mgr->_resourcesNr);
 		else
 			sci1_read_resource_patches(dir,
-			                           &mgr->resources,
-			                           &mgr->resources_nr);
+			                           &mgr->_resources,
+			                           &mgr->_resourcesNr);
 #endif
 
-		qsort(mgr->resources, mgr->resources_nr, sizeof(resource_t),
+		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
 		      resourcecmp); /* Sort resources */
 	}
 
@@ -714,10 +714,10 @@ _scir_free_altsources(resource_altsource_t *dynressrc) {
 }
 
 void
-_scir_free_resources(resource_t *resources, int resources_nr) {
+_scir_free_resources(resource_t *resources, int _resourcesNr) {
 	int i;
 
-	for (i = 0; i < resources_nr; i++) {
+	for (i = 0; i < _resourcesNr; i++) {
 		resource_t *res = resources + i;
 
 		// FIXME: alt_sources->next may point to an invalid memory location
@@ -732,9 +732,9 @@ _scir_free_resources(resource_t *resources, int resources_nr) {
 
 void
 scir_free_resource_manager(ResourceManager *mgr) {
-	_scir_free_resources(mgr->resources, mgr->resources_nr);
-	_scir_free_resource_sources(mgr->sources);
-	mgr->resources = NULL;
+	_scir_free_resources(mgr->_resources, mgr->_resourcesNr);
+	_scir_free_resource_sources(mgr->_sources);
+	mgr->_resources = NULL;
 
 	free(mgr);
 }
@@ -818,7 +818,7 @@ _scir_print_lru_list(ResourceManager *mgr) {
 
 static void
 _scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
-	while (mgr->max_memory < mgr->memory_lru
+	while (mgr->_maxMemory < mgr->memory_lru
 	        && (!last_invulnerable || mgr->lru_first != mgr->lru_last)) {
 		resource_t *goner = mgr->lru_last;
 		if (!goner) {
