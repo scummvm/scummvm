@@ -73,7 +73,7 @@ detect_odd_sci01(int fh) {
 }
 
 static int
-sci_res_read_entry(resource_mgr_t *mgr, resource_source_t *map,
+sci_res_read_entry(ResourceManager *mgr, resource_source_t *map,
                    byte *buf, resource_t *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
 	res->type = SCI0_RESID_GET_TYPE(buf);
@@ -149,7 +149,7 @@ int sci1_parse_header(int fd, int *types, int *lastrt) {
 
 
 int
-sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+sci0_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
 	int fd;
 	resource_t *resources;
@@ -334,7 +334,7 @@ static int sci10_or_11(int *types) {
 }
 
 int
-sci1_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_source_t *vol,
+sci1_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_source_t *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
 	int fd;

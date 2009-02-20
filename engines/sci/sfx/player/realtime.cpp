@@ -152,7 +152,7 @@ rt_timer_callback(void) {
 }
 
 static resource_t *
-find_patch(resource_mgr_t *resmgr, const char *seq_name, int patchfile) {
+find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
 	resource_t *res = NULL;
 
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
@@ -174,7 +174,7 @@ rt_set_option(char *name, char *value) {
 }
 
 static int
-rt_init(resource_mgr_t *resmgr, int expected_latency) {
+rt_init(ResourceManager *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
 	GTimeVal foo = {0, 0};

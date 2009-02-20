@@ -190,13 +190,13 @@ typedef struct {
 	/* LRU queue: lru_first points to the most recent entry */
 
 	unsigned char allow_patches;
-} resource_mgr_t;
+} ResourceManager;
 
 /**** FUNCTION DECLARATIONS ****/
 
 /**--- New Resource manager ---**/
 
-resource_mgr_t *
+ResourceManager *
 scir_new_resource_manager(char *dir, int version, char allow_patches, int max_memory);
 /* Creates a new FreeSCI resource manager
 ** Parameters: (char *) dir: Path to the resource and patch files (not modified or freed
@@ -206,16 +206,16 @@ scir_new_resource_manager(char *dir, int version, char allow_patches, int max_me
 **             (char ) allow_patches: Set to 1 if external patches (those look like
 **                                   "view.101" or "script.093") should be applied
 **             (int) max_memory: Maximum number of bytes to allow allocated for resources
-** Returns   : (resource_mgr_t *) A newly allocated resource manager
+** Returns   : (ResourceManager *) A newly allocated resource manager
 ** max_memory will not be interpreted as a hard limit, only as a restriction for resources
 ** which are not explicitly locked. However, a warning will be issued whenever this limit
 ** is exceeded.
 */
 
 resource_source_t *
-scir_add_patch_dir(resource_mgr_t *mgr, int type, char *path);
+scir_add_patch_dir(ResourceManager *mgr, int type, char *path);
 /* Add a path to the resource manager's list of sources.
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (int) dirtype: The type of patch directory to add,
 **             either RESSOURCE_TYPE_DIRECTORY or RESSOURCE_TYPE_AUDIO_DIRECTORY
 **             (char *) path: The path to add
@@ -223,13 +223,13 @@ scir_add_patch_dir(resource_mgr_t *mgr, int type, char *path);
 */
 
 resource_source_t *
-scir_get_volume(resource_mgr_t *mgr, resource_source_t *map, int volume_nr);
+scir_get_volume(ResourceManager *mgr, resource_source_t *map, int volume_nr);
 
 resource_source_t *
-scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
+scir_add_volume(ResourceManager *mgr, resource_source_t *map, char *filename,
                 int number, int extended_addressing);
 /* Add a volume to the resource manager's list of sources.
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (resource_source_t *) map: The map associated with this volume
 **             (char *) filename: The name of the volume to add
 **             (int) extended_addressing: 1 if this volume uses extended addressing,
@@ -238,34 +238,34 @@ scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
 */
 
 resource_source_t *
-scir_add_external_map(resource_mgr_t *mgr, char *file_name);
+scir_add_external_map(ResourceManager *mgr, char *file_name);
 /* Add an external (i.e. separate file) map resource to the resource manager's list of sources.
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (char *) file_name: The name of the volume to add
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
 resource_source_t *
-scir_add_internal_map(resource_mgr_t *mgr, resource_t *map);
+scir_add_internal_map(ResourceManager *mgr, resource_t *map);
 /* Add an internal (i.e. a resource) map resource to the resource manager's list of sources.
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (char *) file_name: The name of the volume to add
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
 int
-scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version);
+scir_scan_new_sources(ResourceManager *mgr, int *detected_version);
 /* Scans newly registered resource sources for resources, earliest addition first.
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (int *) detected_version: Pointer to the detected version number,
 **					 used during startup. May be NULL.
 ** Returns: One of SCI_ERROR_*.
 */
 
 resource_t *
-scir_find_resource(resource_mgr_t *mgr, int type, int number, int lock);
+scir_find_resource(ResourceManager *mgr, int type, int number, int lock);
 /* Looks up a resource's data
-** Parameters: (resource_mgr_t *) mgr: The resource manager to look up in
+** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (int) type: The resource type to look for
 **             (int) number: The resource number to search
 **             (int) lock: non-zero iff the resource should be locked
@@ -275,9 +275,9 @@ scir_find_resource(resource_mgr_t *mgr, int type, int number, int lock);
 */
 
 void
-scir_unlock_resource(resource_mgr_t *mgr, resource_t *res, int restype, int resnum);
+scir_unlock_resource(ResourceManager *mgr, resource_t *res, int restype, int resnum);
 /* Unlocks a previously locked resource
-** Parameters: (resource_mgr_t *) mgr: The manager the resource should be freed from
+** Parameters: (ResourceManager *) mgr: The manager the resource should be freed from
 **             (resource_t *) res: The resource to free
 **             (int) type: Type of the resource to check (for error checking)
 **             (int) number: Number of the resource to check (ditto)
@@ -285,9 +285,9 @@ scir_unlock_resource(resource_mgr_t *mgr, resource_t *res, int restype, int resn
 */
 
 resource_t *
-scir_test_resource(resource_mgr_t *mgr, int type, int number);
+scir_test_resource(ResourceManager *mgr, int type, int number);
 /* Tests whether a resource exists
-** Parameters: (resource_mgr_t *) mgr: The resource manager to search in
+** Parameters: (ResourceManager *) mgr: The resource manager to search in
 **             (int) type: Type of the resource to check
 **             (int) number: Number of the resource to check
 ** Returns   : (resource_t *) non-NULL if the resource exists, NULL otherwise
@@ -299,16 +299,16 @@ scir_test_resource(resource_mgr_t *mgr, int type, int number);
 */
 
 void
-scir_free_resource_manager(resource_mgr_t *mgr);
+scir_free_resource_manager(ResourceManager *mgr);
 /* Frees a resource manager and all memory handled by it
-** Parameters: (resource_mgr_t *) mgr: The Manager to free
+** Parameters: (ResourceManager *) mgr: The Manager to free
 ** Returns   : (void)
 */
 
 /**--- Resource map decoding functions ---*/
 
 int
-sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t **resources, int *resource_nr_p, int *sci_version);
+sci0_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_t **resources, int *resource_nr_p, int *sci_version);
 /* Reads the SCI0 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer
@@ -322,7 +322,7 @@ sci0_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_t *
 */
 
 int
-sci1_read_resource_map(resource_mgr_t *mgr, resource_source_t *map, resource_source_t *vol,
+sci1_read_resource_map(ResourceManager *mgr, resource_source_t *map, resource_source_t *vol,
                        resource_t **resource_p, int *resource_nr_p, int *sci_version);
 /* Reads the SCI1 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)

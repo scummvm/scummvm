@@ -163,7 +163,7 @@ pp_set_option(char *name, char *value) {
 }
 
 static int
-pp_init(resource_mgr_t *resmgr, int expected_latency) {
+pp_init(ResourceManager *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 
 	if (!mixer)

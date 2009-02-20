@@ -430,7 +430,7 @@ _sfx_timer_callback(void *data) {
 }
 
 void
-sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
+sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	callbackMutex = new Common::Mutex();
 	song_lib_init(&self->songlib);
 	self->song = NULL;

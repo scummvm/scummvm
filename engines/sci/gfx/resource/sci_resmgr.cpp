@@ -81,7 +81,7 @@ gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 int
 gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
                                int flags, int default_palette, int nr, void *internal) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_pic, nr, 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
@@ -165,7 +165,7 @@ gfxr_draw_view11(int id, byte *resource, int size);
 
 gfxr_view_t *
 gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_view, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 	gfxr_view_t *result = 0;
@@ -206,7 +206,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 
 gfx_bitmap_font_t *
 gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_font, nr, 0);
 	if (!res || !res->data)
 		return NULL;
@@ -217,7 +217,7 @@ gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
 
 gfx_pixmap_t *
 gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_cursor, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
 
@@ -239,7 +239,7 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 int *
 gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
                                int version, int *entries_nr, void *internal) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	int restype;
 	int *resources;
 	int count = 0;
@@ -292,7 +292,7 @@ gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *col
 gfx_pixmap_color_t *
 gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
                              void *internal, int nr) {
-	resource_mgr_t *resmgr = (resource_mgr_t *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res;
 
 	if (version < SCI_VERSION_01_VGA)

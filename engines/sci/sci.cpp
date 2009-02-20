@@ -182,7 +182,7 @@ Common::Error SciEngine::go() {
 	} */
 
 	// FIXME/TODO: Move some of the stuff below to init()
-	resource_mgr_t *resmgr;
+	ResourceManager *resmgr;
 
 	init_console(); /* So we can get any output */
 

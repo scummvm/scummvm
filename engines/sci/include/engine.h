@@ -88,7 +88,7 @@ typedef struct _state {
 
 	char *resource_dir; /* Directory the resource files are kept in */
 	char *work_dir; /* Directory the game metadata should be written to */
-	resource_mgr_t *resmgr; /* The resource manager */
+	ResourceManager *resmgr; /* The resource manager */
 
 	char *game_name; /* Designation of the primary object (which inherits from Game) */
 	char *game_version;

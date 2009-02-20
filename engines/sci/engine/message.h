@@ -58,7 +58,7 @@ typedef struct {
 typedef struct {
 	int initialized;
 	message_handler_t *handler;
-	resource_mgr_t *resmgr;
+	ResourceManager *resmgr;
 	resource_t *current_res;
 	int module;
 	int record_count;
@@ -72,6 +72,6 @@ int message_get_talker(message_state_t *state);
 int message_get_length(message_state_t *state);
 int message_get_text(message_state_t *state, char *buffer, int length);
 int message_state_load_res(message_state_t *state, int module);
-void message_state_initialize(resource_mgr_t *resmgr, message_state_t *state);
+void message_state_initialize(ResourceManager *resmgr, message_state_t *state);
 
 

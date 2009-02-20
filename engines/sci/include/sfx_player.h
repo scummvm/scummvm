@@ -47,9 +47,9 @@ typedef struct {
 	*/
 
 	int
-	(*init)(resource_mgr_t *resmgr, int expected_latency);
+	(*init)(ResourceManager *resmgr, int expected_latency);
 	/* Initializes the player
-	** Parameters: (resource_mgr_t *) resmgr: A resource manager for driver initialization
+	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
 	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
 	**                   (in microseconds)
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure

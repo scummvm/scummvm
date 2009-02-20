@@ -25,6 +25,9 @@
 
 /* Resource manager core part */
 
+// FIXME/TODO: The name "(Graphics) resource manager", and the associated
+// filenames, are misleading. This should be renamed to "Graphics manager"
+// or something like that.
 
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"

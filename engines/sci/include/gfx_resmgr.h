@@ -26,6 +26,10 @@
 #ifndef _GFX_RESMGR_H_
 #define _GFX_RESMGR_H_
 
+// FIXME/TODO: The name "(Graphics) resource manager", and the associated
+// filenames, are misleading. This should be renamed to "Graphics manager"
+// or something like that.
+
 #include "sci/include/gfx_resource.h"
 #include "sci/include/sbtree.h"
 

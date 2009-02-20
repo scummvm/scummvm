@@ -335,7 +335,7 @@ script_dump_class(char *data, int seeker, int objsize, char **snames, int snames
 
 
 void
-script_dissect(resource_mgr_t *resmgr, int res_no, char **snames, int snames_nr) {
+script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	resource_t *script = scir_find_resource(resmgr, sci_script, res_no, 0);

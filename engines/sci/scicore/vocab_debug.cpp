@@ -153,7 +153,7 @@ int getInt(unsigned char* d) {
 	return d[0] | (d[1] << 8);
 }
 
-int* vocabulary_get_classes(resource_mgr_t *resmgr, int* count) {
+int* vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 	resource_t* r;
 	int *c;
 	unsigned int i;
@@ -169,13 +169,13 @@ int* vocabulary_get_classes(resource_mgr_t *resmgr, int* count) {
 	return c;
 }
 
-int vocabulary_get_class_count(resource_mgr_t *resmgr) {
+int vocabulary_get_class_count(ResourceManager *resmgr) {
 	resource_t* r;
 	if ((r = scir_find_resource(resmgr, sci_vocab, 996, 0)) == 0) return 0;
 	return r->size / 4;
 }
 
-char** vocabulary_get_snames(resource_mgr_t *resmgr, int* pcount, sci_version_t version) {
+char** vocabulary_get_snames(ResourceManager *resmgr, int* pcount, sci_version_t version) {
 	char** t;
 	int count;
 	int i, j;
@@ -237,7 +237,7 @@ vocabulary_free_snames(char **snames_list) {
 	free(snames_list);
 }
 
-opcode* vocabulary_get_opcodes(resource_mgr_t *resmgr) {
+opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 	opcode* o;
 	int count, i = 0;
 	resource_t* r = scir_find_resource(resmgr, sci_vocab, VOCAB_RESOURCE_OPCODES, 0);
@@ -319,7 +319,7 @@ static char** _vocabulary_get_knames0alt(int *names, resource_t *r) {
 }
 
 
-static char** vocabulary_get_knames0(resource_mgr_t *resmgr, int* names) {
+static char** vocabulary_get_knames0(ResourceManager *resmgr, int* names) {
 	char** t;
 	int count, i, index = 2, empty_to_add = 1;
 	resource_t* r = scir_find_resource(resmgr, sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
@@ -369,7 +369,7 @@ static char** vocabulary_get_knames0(resource_mgr_t *resmgr, int* names) {
 }
 
 /*NOTE: Untested*/
-static char** vocabulary_get_knames1(resource_mgr_t *resmgr, int *count) {
+static char** vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	char** t = NULL;
 	unsigned int size = 64, used = 0, pos = 0;
 	resource_t* r = scir_find_resource(resmgr, sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
@@ -392,7 +392,7 @@ static char** vocabulary_get_knames1(resource_mgr_t *resmgr, int *count) {
 	return t;
 }
 
-char** vocabulary_get_knames(resource_mgr_t *resmgr, int* count) {
+char** vocabulary_get_knames(ResourceManager *resmgr, int* count) {
 	switch (resmgr->sci_version) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:

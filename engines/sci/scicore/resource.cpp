@@ -160,7 +160,7 @@ _scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number) 
 /*-----------------------------------*/
 
 resource_source_t *
-scir_add_external_map(resource_mgr_t *mgr, char *file_name) {
+scir_add_external_map(ResourceManager *mgr, char *file_name) {
 	resource_source_t *newsrc = (resource_source_t *)
 	                            malloc(sizeof(resource_source_t));
 
@@ -177,7 +177,7 @@ scir_add_external_map(resource_mgr_t *mgr, char *file_name) {
 }
 
 resource_source_t *
-scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
+scir_add_volume(ResourceManager *mgr, resource_source_t *map, char *filename,
                 int number, int extended_addressing) {
 	resource_source_t *newsrc = (resource_source_t *)
 	                            malloc(sizeof(resource_source_t));
@@ -195,7 +195,7 @@ scir_add_volume(resource_mgr_t *mgr, resource_source_t *map, char *filename,
 }
 
 resource_source_t *
-scir_add_patch_dir(resource_mgr_t *mgr, int type, char *dirname) {
+scir_add_patch_dir(ResourceManager *mgr, int type, char *dirname) {
 	resource_source_t *newsrc = (resource_source_t *)
 	                            malloc(sizeof(resource_source_t));
 
@@ -210,7 +210,7 @@ scir_add_patch_dir(resource_mgr_t *mgr, int type, char *dirname) {
 }
 
 resource_source_t *
-scir_get_volume(resource_mgr_t *mgr, resource_source_t *map, int volume_nr) {
+scir_get_volume(ResourceManager *mgr, resource_source_t *map, int volume_nr) {
 	resource_source_t *seeker = mgr->sources;
 
 	while (seeker) {
@@ -229,7 +229,7 @@ scir_get_volume(resource_mgr_t *mgr, resource_source_t *map, int volume_nr) {
 /*------------------------------------------------*/
 
 static void
-_scir_init_trivial(resource_mgr_t *mgr) {
+_scir_init_trivial(ResourceManager *mgr) {
 	mgr->resources_nr = 0;
 	mgr->resources = (resource_t*)sci_malloc(1);
 }
@@ -252,7 +252,7 @@ _scir_load_from_patch_file(int fh, resource_t *res, char *filename) {
 }
 
 static void
-_scir_load_resource(resource_mgr_t *mgr, resource_t *res, int protect) {
+_scir_load_resource(ResourceManager *mgr, resource_t *res, int protect) {
 	char filename[MAXPATHLEN];
 	int fh;
 	resource_t backup;
@@ -334,7 +334,7 @@ _scir_load_resource(resource_mgr_t *mgr, resource_t *res, int protect) {
 }
 
 resource_t *
-scir_test_resource(resource_mgr_t *mgr, int type, int number) {
+scir_test_resource(ResourceManager *mgr, int type, int number) {
 	resource_t binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
@@ -346,7 +346,7 @@ scir_test_resource(resource_mgr_t *mgr, int type, int number) {
 int sci0_get_compression_method(int resh);
 
 int
-sci_test_view_type(resource_mgr_t *mgr) {
+sci_test_view_type(ResourceManager *mgr) {
 	int fh;
 	char filename[MAXPATHLEN];
 	int compression;
@@ -425,7 +425,7 @@ sci_test_view_type(resource_mgr_t *mgr) {
 
 
 int
-scir_add_appropriate_sources(resource_mgr_t *mgr,
+scir_add_appropriate_sources(ResourceManager *mgr,
                              int allow_patches,
                              char *dir) {
 	const char *trailing_slash = "";
@@ -469,7 +469,7 @@ scir_add_appropriate_sources(resource_mgr_t *mgr,
 }
 
 static int
-_scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version, resource_source_t *source) {
+_scir_scan_new_sources(ResourceManager *mgr, int *detected_version, resource_source_t *source) {
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
@@ -563,7 +563,7 @@ _scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version, resource_sour
 }
 
 int
-scir_scan_new_sources(resource_mgr_t *mgr, int *detected_version) {
+scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
 	_scir_scan_new_sources(mgr, detected_version, mgr->sources);
 	return 0;
 }
@@ -576,11 +576,11 @@ _scir_free_resource_sources(resource_source_t *rss) {
 	}
 }
 
-resource_mgr_t *
+ResourceManager *
 scir_new_resource_manager(char *dir, int version,
                           char allow_patches, int max_memory) {
 	int resource_error = 0;
-	resource_mgr_t *mgr = (resource_mgr_t*)sci_malloc(sizeof(resource_mgr_t));
+	ResourceManager *mgr = (ResourceManager*)sci_malloc(sizeof(ResourceManager));
 	char *caller_cwd = sci_getcwd();
 	int resmap_version = version;
 
@@ -735,7 +735,7 @@ _scir_free_resources(resource_t *resources, int resources_nr) {
 }
 
 void
-scir_free_resource_manager(resource_mgr_t *mgr) {
+scir_free_resource_manager(ResourceManager *mgr) {
 	_scir_free_resources(mgr->resources, mgr->resources_nr);
 	_scir_free_resource_sources(mgr->sources);
 	mgr->resources = NULL;
@@ -753,7 +753,7 @@ _scir_unalloc(resource_t *res) {
 
 
 static void
-_scir_remove_from_lru(resource_mgr_t *mgr, resource_t *res) {
+_scir_remove_from_lru(ResourceManager *mgr, resource_t *res) {
 	if (res->status != SCI_STATUS_ENQUEUED) {
 		sciprintf("Resmgr: Oops: trying to remove resource that isn't"
 		          " enqueued\n");
@@ -775,7 +775,7 @@ _scir_remove_from_lru(resource_mgr_t *mgr, resource_t *res) {
 }
 
 static void
-_scir_add_to_lru(resource_mgr_t *mgr, resource_t *res) {
+_scir_add_to_lru(ResourceManager *mgr, resource_t *res) {
 	if (res->status != SCI_STATUS_ALLOCATED) {
 		sciprintf("Resmgr: Oops: trying to enqueue resource with state"
 		          " %d\n", res->status);
@@ -802,7 +802,7 @@ _scir_add_to_lru(resource_mgr_t *mgr, resource_t *res) {
 }
 
 static void
-_scir_print_lru_list(resource_mgr_t *mgr) {
+_scir_print_lru_list(ResourceManager *mgr) {
 	int mem = 0;
 	int entries = 0;
 	resource_t *res = mgr->lru_first;
@@ -821,7 +821,7 @@ _scir_print_lru_list(resource_mgr_t *mgr) {
 }
 
 static void
-_scir_free_old_resources(resource_mgr_t *mgr, int last_invulnerable) {
+_scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
 	while (mgr->max_memory < mgr->memory_lru
 	        && (!last_invulnerable || mgr->lru_first != mgr->lru_last)) {
 		resource_t *goner = mgr->lru_last;
@@ -843,7 +843,7 @@ _scir_free_old_resources(resource_mgr_t *mgr, int last_invulnerable) {
 }
 
 resource_t *
-scir_find_resource(resource_mgr_t *mgr, int type, int number, int lock) {
+scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 	resource_t *retval;
 
 	if (number >= sci_max_resource_nr[mgr->sci_version]) {
@@ -893,7 +893,7 @@ scir_find_resource(resource_mgr_t *mgr, int type, int number, int lock) {
 }
 
 void
-scir_unlock_resource(resource_mgr_t *mgr, resource_t *res, int resnum, int restype) {
+scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int restype) {
 	if (!res) {
 		if (restype >= ARRAYSIZE(sci_resource_types))
 			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);

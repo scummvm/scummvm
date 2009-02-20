@@ -66,7 +66,7 @@ _vocab_cmp_words(const void *word1, const void *word2) {
 
 
 word_t **
-vocab_get_words(resource_mgr_t *resmgr, int *word_counter) {
+vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	int counter = 0;
 	unsigned int seeker;
 	word_t **words;
@@ -190,7 +190,7 @@ inverse_16(unsigned int foo) {
 }
 
 suffix_t **
-vocab_get_suffices(resource_mgr_t *resmgr, int *suffices_nr) {
+vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	int counter = 0;
 	suffix_t **suffices;
 	resource_t *resource = scir_find_resource(resmgr, sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
@@ -241,7 +241,7 @@ vocab_get_suffices(resource_mgr_t *resmgr, int *suffices_nr) {
 
 
 void
-vocab_free_suffices(resource_mgr_t *resmgr, suffix_t **suffices, int suffices_nr) {
+vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr) {
 	int i;
 
 	scir_unlock_resource(resmgr, scir_find_resource(resmgr, sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
@@ -262,7 +262,7 @@ vocab_free_branches(parse_tree_branch_t *parser_branches) {
 
 
 parse_tree_branch_t *
-vocab_get_branches(resource_mgr_t * resmgr, int *branches_nr) {
+vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
 	resource_t *resource = scir_find_resource(resmgr, sci_vocab,
 	                       VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
 	parse_tree_branch_t *retval;

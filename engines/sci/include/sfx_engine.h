@@ -60,9 +60,9 @@ typedef struct {
 /***********/
 
 void
-sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags);
+sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags);
 /* Initializes the sound engine
-** Parameters: (resource_mgr_t *) resmgr: Resource manager for initialization
+** Parameters: (ResourceManager *) resmgr: Resource manager for initialization
 **             (int) flags: SFX_STATE_FLAG_*
 */
 

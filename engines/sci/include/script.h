@@ -53,7 +53,7 @@ typedef enum {
 	sci_obj_localvars
 } script_object_types;
 
-void script_dissect(resource_mgr_t *resmgr, int res_no, char **snames, int snames_nr);
+void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr);
 
 /* Opcode formats as used by script.c */
 typedef enum {
