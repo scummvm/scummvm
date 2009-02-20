@@ -76,7 +76,7 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSys
 }
 
 MoviePlayer::~MoviePlayer(void) {
-	delete(_decoder);
+	delete _decoder;
 }
 
 /**
