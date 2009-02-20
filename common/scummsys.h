@@ -52,6 +52,7 @@
 		#pragma warning( disable : 4355 ) // turn off "base member init" warning
 		#pragma warning( disable : 4510 ) // turn off "default constructor could not be generated"
 		#pragma warning( disable : 4610 ) // turn off "struct can never be instantiated - user defined constructor required"
+		#pragma warning( disable : 4701 ) // turn off "potentially uninitialized variables" warning
 		#pragma warning( disable : 4800 ) // turn off "forcing value to bool 'true' or 'false' (performance warning)"
 
 		// vsnprintf is already defined in Visual Studio 2008
