@@ -29,6 +29,7 @@
 
 #include "engines/advancedDetector.h"
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/include/engine.h"
 
 extern gfx_driver_t gfx_driver_scummvm;
@@ -138,6 +139,8 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	//File::addDefaultDirectory(_gameDataPath + "sound/");
 	//printf("%s\n", _gameDataPath.c_str());
 
+	_console = NULL;
+
 	// Set up the engine specific debug levels
 	Common::addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
 	Common::addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
@@ -166,17 +169,17 @@ SciEngine::~SciEngine() {
 	printf("SciEngine::~SciEngine\n");
 
 	// Remove all of our debug levels here
-	//Common::clearAllSpecialDebugLevels();
+	Common::clearAllDebugChannels();
+
+	delete _console;
 }
 
 Common::Error SciEngine::init() {
 	initGraphics(320, 200, false);
 
-	//GUIErrorMessage("lalalal asfa w4 haha hreh au u<w");
-
 	// Create debugger console. It requires GFX to be initialized
+	// FIXME: Enabling this leads to an unresolved external symbol during linking...
 	//_console = new Console(this);
-	//_console = new Console();
 
 	// Additional setup.
 	printf("SciEngine::init\n");

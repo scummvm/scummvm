@@ -1,6 +1,7 @@
 MODULE := engines/sci
 
 MODULE_OBJS = \
+	console.o \
 	detection.o \
 	exereader.o \
 	sci.o \

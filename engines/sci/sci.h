@@ -27,7 +27,6 @@
 #define SCI_H
 
 #include "engines/engine.h"
-#include "gui/debugger.h"
 
 namespace Sci {
 
@@ -68,7 +67,7 @@ struct SciGameDescription {
 	int version;
 };
 
-//class Console;
+class Console;
 
 class SciEngine : public Engine {
 public:
@@ -86,17 +85,8 @@ public:
 
 private:
 	const SciGameDescription *_gameDescription;
-	//Console *_console;
+	Console *_console;
 };
-
-/*
-// Example console
-class Console : public GUI::Debugger {
-	public:
-		//Console(SciEngine *vm);
-		//virtual ~Console(void);
-};
-*/
 
 } // End of namespace Sci
 
