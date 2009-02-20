@@ -27,49 +27,41 @@
 #include "sci/include/sys_strings.h"
 #include "sci/include/sci_memory.h"
 
-void
-sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len) {
+void sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len) {
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX) {
-		error("[SYSSTR] Error: Attempt to acquire string #%d\n",
-		        index);
+		error("[SYSSTR] Error: Attempt to acquire string #%d\n", index);
 		BREAKPOINT();
 	}
 
-	if (str->name
-	        && (strcmp(name, str->name)
-	            || (str->max_size != max_len))) {
-		error("[SYSSTR] Error: Attempt to re-acquire existing string #%d;"
-		        "was '%s', tried to claim as '%s'\n",
-		        index, str->name, name);
+	if (str->name && (strcmp(name, str->name) || (str->max_size != max_len))) {
+		error("[SYSSTR] Error: Attempt to re-acquire existing string #%d; was '%s', tried to claim as '%s'\n", index, str->name, name);
 		BREAKPOINT();
 	}
 
 	str->name = strdup(name);
 	str->max_size = max_len;
 	str->value = (char*)sci_malloc(max_len + 1);
-	str->value[0] = 0; /* Set to empty string */
+	str->value[0] = 0; // Set to empty string
 }
 
-int
-sys_string_set(sys_strings_t *strings, int index, const char *value) {
+int sys_string_set(sys_strings_t *strings, int index, const char *value) {
 	sys_string_t *str = strings->strings + index;
 
 	if (index < 0 || index >= SYS_STRINGS_MAX || !str->name) {
-		error("[SYSSTR] Error: Attempt to write to invalid/unused string #%d\n",
-		        index);
+		error("[SYSSTR] Error: Attempt to write to invalid/unused string #%d\n", index);
 		BREAKPOINT();
 		return 1;
 	}
 
 	strncpy(str->value, value, str->max_size);
-	str->value[str->max_size] = 0; /* Make sure to terminate */
+	str->value[str->max_size] = 0; // Make sure to terminate
+
 	return 0;
 }
 
-void
-sys_string_free(sys_strings_t *strings, int index) {
+void sys_string_free(sys_strings_t *strings, int index) {
 	sys_string_t *str = strings->strings + index;
 
 	free(str->name);
@@ -81,8 +73,7 @@ sys_string_free(sys_strings_t *strings, int index) {
 	str->max_size = 0;
 }
 
-void
-sys_string_free_all(sys_strings_t *strings) {
+void sys_string_free_all(sys_strings_t *strings) {
 	int i;
 
 	for (i = 0;i < SYS_STRINGS_MAX;i++) {
@@ -92,11 +83,10 @@ sys_string_free_all(sys_strings_t *strings) {
 
 }
 
-void
-sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings) {
+void sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings) {
 	int i;
 
-	/* First, pad memory */
+	// First, pad memory
 	for (i = 0; i < SYS_STRINGS_MAX; i++) {
 		sys_string_t *s = new_strings->strings + i;
 		char *data = s->value;
