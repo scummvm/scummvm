@@ -23,20 +23,20 @@
  *
  */
 
-/* SCI constants and definitions */
+// SCI constants and definitions
 
 #ifndef _SCI_GRAPHICS_H_
 #define _SCI_GRAPHICS_H_
 
 #define MAX_TEXT_WIDTH_MAGIC_VALUE 192
-/* This is the real width of a text with a specified width of 0 */
+// This is the real width of a text with a specified width of 0
 
 #define SELECTOR_STATE_SELECTABLE 1
 #define SELECTOR_STATE_FRAMED 2
 #define SELECTOR_STATE_DISABLED 4
 #define SELECTOR_STATE_SELECTED 8
-/* Internal states */
+// Internal states
 #define SELECTOR_STATE_DITHER_FRAMED 0x1000
 
 
-#endif /* !_SCI_GRAPHICS_H_ */
+#endif // !_SCI_GRAPHICS_H_
