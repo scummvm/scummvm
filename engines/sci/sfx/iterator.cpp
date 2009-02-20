@@ -1823,14 +1823,14 @@ songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask) {
 	do {
 		retval = (*it)->next(*it, buf, result);
 		if (retval == SI_MORPH) {
-			error("  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
+			printf("  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				BREAKPOINT();
-			} else error("SI_MORPH successful\n");
+			} else printf("SI_MORPH successful\n");
 		}
 
 		if (retval == SI_FINISHED)
-			error("[song-iterator] Song finished. mask = %04x, cm=%04x\n",
+			printf("[song-iterator] Song finished. mask = %04x, cm=%04x\n",
 			        mask, (*it)->channel_mask);
 		if (retval == SI_FINISHED
 		        && (mask & IT_READER_MAY_CLEAN)
@@ -1873,8 +1873,8 @@ songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 	int i;
 
 	if (!data || size < 22) {
-		error(SIPFX "Attempt to instantiate song iterator for null"
-		        " song data\n");
+		warning(SIPFX "Attempt to instantiate song iterator for null"
+		        " song data");
 		return NULL;
 	}
 
@@ -1923,7 +1923,7 @@ songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 
 	default:
 		/**-- Invalid/unsupported sound resources --**/
-		error(SIPFX "Attempt to instantiate invalid/unknown"
+		warning(SIPFX "Attempt to instantiate invalid/unknown"
 		        " song iterator type %d\n", type);
 		return NULL;
 	}
