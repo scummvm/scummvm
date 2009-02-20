@@ -614,12 +614,14 @@ void Script::opCcall(SCRIPTOP_PARAMS) {
 
 	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true; // cause abortAllThreads called and _this_ thread destroyed
+		breakOut = true;
 		return;
 	}
 
 #ifdef ENABLE_IHNM
 	if (scriptFunction == &Saga::Script::sfVsetTrack) {
 		stopParsing = true;
+		breakOut = true;
 		return;		// cause abortAllThreads called and _this_ thread destroyed
 	}
 #endif
@@ -661,12 +663,14 @@ void Script::opCcallV(SCRIPTOP_PARAMS) {
 	
 	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true;
+		breakOut = true;
 		return;		// cause abortAllThreads called and _this_ thread destroyed
 	}
 
 #ifdef ENABLE_IHNM
 	if (scriptFunction == &Saga::Script::sfVsetTrack) {
 		stopParsing = true;
+		breakOut = true;
 		return;		// cause abortAllThreads called and _this_ thread destroyed
 	}
 #endif
@@ -691,6 +695,7 @@ void Script::opReturn(SCRIPTOP_PARAMS) {
 	if (thread->pushedSize() == 0) {
 		thread->_flags |= kTFlagFinished;
 		stopParsing = true;
+		breakOut = true;
 		return;
 	} else {
 		thread->pop(); //cause it 0
@@ -712,6 +717,7 @@ void Script::opReturnV(SCRIPTOP_PARAMS) {
 	if (thread->pushedSize() == 0) {
 		thread->_flags |= kTFlagFinished;
 		stopParsing = true;
+		breakOut = true;
 		return;
 	} else {
 		thread->pop(); //cause it 0
@@ -954,7 +960,8 @@ void Script::opLXor(SCRIPTOP_PARAMS) {
 void Script::opSpeak(SCRIPTOP_PARAMS) {
 	if (_vm->_actor->isSpeaking()) {
 		thread->wait(kWaitTypeSpeech);
-		stopParsing = false;
+		stopParsing = true;
+		breakOut = false;
 		return;
 	}
 
@@ -1007,7 +1014,8 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 void Script::opDialogBegin(SCRIPTOP_PARAMS) {
 	if (_conversingThread) {
 		thread->wait(kWaitTypeDialogBegin);
-		stopParsing = false;
+		stopParsing = true;
+		breakOut = false;
 		return;
 	}
 	_conversingThread = thread;
@@ -1019,7 +1027,8 @@ void Script::opDialogEnd(SCRIPTOP_PARAMS) {
 		_vm->_interface->activate();
 		_vm->_interface->setMode(kPanelConverse);
 		thread->wait(kWaitTypeDialogEnd);
-		stopParsing = false;
+		stopParsing = true;
+		breakOut = false;
 		return;
 	}
 }

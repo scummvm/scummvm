@@ -213,10 +213,10 @@ bool Script::runThread(ScriptThread *thread) {
 		debug(8, "Executing thread offset: %u (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
 
 		stopParsing = false;
-		(this->*_scriptOpsList[operandChar].scriptOp)(thread, &scriptS, stopParsing, breakOut);
 		debug(4, "Calling op %s", this->_scriptOpsList[operandChar].scriptOpName);
+		(this->*_scriptOpsList[operandChar].scriptOp)(thread, &scriptS, stopParsing, breakOut);
 		if (stopParsing)
-			return true;
+			return breakOut;
 
 		if (thread->_flags & (kTFlagFinished | kTFlagAborted)) {
 			error("Wrong flags %d in thread", thread->_flags);
