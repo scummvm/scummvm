@@ -67,7 +67,6 @@ public:
 		fname.Copy(ptr);
 		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*> (g_system)->FsSession(), fname);
 		if(!fileExists) {
-
 			TParsePtrC parser(fname);
 			if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
 				fileExists = ETrue;
