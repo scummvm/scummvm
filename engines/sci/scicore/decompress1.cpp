@@ -184,7 +184,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 			else {
 				int length_bonus;
 
-				val_length = 1<<(value - 7) + 8;
+				val_length = (1 << (value - 7)) + 8;
 				CALLC(length_bonus = getbits(reader, value - 7));
 				val_length += length_bonus;
 			}
