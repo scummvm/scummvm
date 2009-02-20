@@ -199,7 +199,7 @@ Common::Error SciEngine::go() {
 	char resource_dir[MAXPATHLEN+1] = "";
 	getcwd(resource_dir, MAXPATHLEN); /* Store resource directory */
 
-	resmgr = scir_new_resource_manager(resource_dir, res_version, 1, 256 * 1024);
+	resmgr = scir_new_resource_manager(resource_dir, res_version, 256 * 1024);
 
 	if (!resmgr) {
 		printf("No resources found in '%s'.\nAborting...\n",

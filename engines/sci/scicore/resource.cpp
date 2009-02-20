@@ -426,7 +426,6 @@ sci_test_view_type(ResourceManager *mgr) {
 
 int
 scir_add_appropriate_sources(ResourceManager *mgr,
-                             int allow_patches,
                              char *dir) {
 	const char *trailing_slash = "";
 	//char path_separator;
@@ -577,8 +576,7 @@ _scir_free_resource_sources(ResourceSource *rss) {
 }
 
 ResourceManager *
-scir_new_resource_manager(char *dir, int version,
-                          char allow_patches, int max_memory) {
+scir_new_resource_manager(char *dir, int version, int max_memory) {
 	int resource_error = 0;
 	ResourceManager *mgr = (ResourceManager*)sci_malloc(sizeof(ResourceManager));
 	char *caller_cwd = sci_getcwd();
@@ -602,7 +600,7 @@ scir_new_resource_manager(char *dir, int version,
 	mgr->sources = NULL;
 	mgr->sci_version = version;
 
-	scir_add_appropriate_sources(mgr, allow_patches, dir);
+	scir_add_appropriate_sources(mgr, dir);
 	scir_scan_new_sources(mgr, &resmap_version);
 
 	if (!mgr->resources || !mgr->resources_nr) {
@@ -620,8 +618,6 @@ scir_new_resource_manager(char *dir, int version,
 
 	mgr->lru_first = NULL;
 	mgr->lru_last = NULL;
-
-	mgr->allow_patches = allow_patches;
 
 	qsort(mgr->resources, mgr->resources_nr, sizeof(resource_t),
 	      resourcecmp); /* Sort resources */

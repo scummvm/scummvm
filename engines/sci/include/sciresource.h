@@ -188,8 +188,6 @@ typedef struct {
 
 	resource_t *lru_first, *lru_last; /* Pointers to the first and last LRU queue entries */
 	/* LRU queue: lru_first points to the most recent entry */
-
-	unsigned char allow_patches;
 } ResourceManager;
 
 /**** FUNCTION DECLARATIONS ****/
@@ -197,14 +195,12 @@ typedef struct {
 /**--- New Resource manager ---**/
 
 ResourceManager *
-scir_new_resource_manager(char *dir, int version, char allow_patches, int max_memory);
+scir_new_resource_manager(char *dir, int version, int max_memory);
 /* Creates a new FreeSCI resource manager
 ** Parameters: (char *) dir: Path to the resource and patch files (not modified or freed
 **                           by the resource manager)
 **             (int) version: The SCI version to look for; use SCI_VERSION_AUTODETECT
 **                            in the default case.
-**             (char ) allow_patches: Set to 1 if external patches (those look like
-**                                   "view.101" or "script.093") should be applied
 **             (int) max_memory: Maximum number of bytes to allow allocated for resources
 ** Returns   : (ResourceManager *) A newly allocated resource manager
 ** max_memory will not be interpreted as a hard limit, only as a restriction for resources
