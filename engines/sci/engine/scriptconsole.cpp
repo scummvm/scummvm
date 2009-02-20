@@ -32,29 +32,28 @@
 
 state_t *con_gamestate = NULL;
 
-/***************************************************************************/
-/* console commands */
+// console commands
 
-static int c_version(struct _state *s); /* displays the package and version number */
-static int c_list(struct _state *s); /* lists various types of things */
-static int c_man(struct _state *s); /* 'manual page' */
-static int c_set(struct _state *s); /* sets an int variable */
-static int c_print(struct _state *s); /* prints a variable */
-static int c_size(struct _state *s); /* displays the size of a resource */
-static int c_dump(struct _state *s); /* gives a hex dump of a resource */
-//static int c_objinfo(struct _state *s); /* shows some info about one class */
-//static int c_objmethods(struct _state *s); /* Disassembles all methods of a class */
-static int c_hexgrep(struct _state *s); /* Searches a string in one resource or resource class */
-static int c_selectornames(struct _state *s); /* Displays all selector names */
-static int c_kernelnames(struct _state *s); /* Displays all kernel function names */
-static int c_dissectscript(struct _state *s); /* Splits a script into objects and explains them */
+static int c_version(struct _state *s); // displays the package and version number
+static int c_list(struct _state *s); // lists various types of things
+static int c_man(struct _state *s); // 'manual page'
+static int c_set(struct _state *s); // sets an int variable
+static int c_print(struct _state *s); // prints a variable
+static int c_size(struct _state *s); // displays the size of a resource
+static int c_dump(struct _state *s); // gives a hex dump of a resource
+//static int c_objinfo(struct _state *s); // shows some info about one class
+//static int c_objmethods(struct _state *s); // Disassembles all methods of a class
+static int c_hexgrep(struct _state *s); // Searches a string in one resource or resource class
+static int c_selectornames(struct _state *s); // Displays all selector names
+static int c_kernelnames(struct _state *s); // Displays all kernel function names
+static int c_dissectscript(struct _state *s); // Splits a script into objects and explains them
 
 typedef struct {
 	const char *name;
 	const char *description;
-} cmd_mm_entry_t; /* All later structures must "extend" this */
+} cmd_mm_entry_t; // All later structures must "extend" this
 
-typedef cmd_mm_entry_t cmd_page_t; /* Simple info page */
+typedef cmd_mm_entry_t cmd_page_t; // Simple info page
 
 typedef struct {
 	const char *name;
@@ -78,19 +77,19 @@ typedef void printfunc_t(cmd_mm_entry_t *data, int full);
 
 typedef struct {
 	const char *name;
-	void *data; /* cmd_mm_entry_t */
+	void *data; // cmd_mm_entry_t
 	size_t size_per_entry;
 	printfunc_t *print;
-	int entries; /* Number of used entries */
-	int allocated;  /* Number of allocated entries */
+	int entries; // Number of used entries
+	int allocated;  // Number of allocated entries
 } cmd_mm_struct_t;
 
-#define CMD_MM_ENTRIES 3 /* command console memory and manual page manager */
-#define CMD_MM_DEFAULT_ALLOC 4 /* Number of table entries to allocate per default */
+#define CMD_MM_ENTRIES 3 // command console memory and manual page manager
+#define CMD_MM_DEFAULT_ALLOC 4 // Number of table entries to allocate per default
 
-#define CMD_MM_CMD 0 /* Commands */
-#define CMD_MM_VAR 1 /* Variables */
-#define CMD_MM_DOC 2 /* Misc. documentation */
+#define CMD_MM_CMD 0 // Commands
+#define CMD_MM_VAR 1 // Variables
+#define CMD_MM_DOC 2 // Misc. documentation
 
 static const char *cmd_mm_names[CMD_MM_ENTRIES] = {
 	"Commands",
@@ -102,7 +101,6 @@ static size_t cmd_mm_sizes_per_entry[CMD_MM_ENTRIES] = {
 	sizeof(cmd_var_t),
 	sizeof(cmd_page_t)
 };
-
 
 static void _cmd_print_command(cmd_mm_entry_t *data, int full);
 static void _cmd_print_var(cmd_mm_entry_t *data, int full);
@@ -122,17 +120,14 @@ static int _lists_need_sorting = 0;
 unsigned int cmd_paramlength;
 cmd_param_t *cmd_params;
 
-
-void
-_cmd_exit(void) {
+void _cmd_exit() {
 	int t;
 
 	for (t = 0; t < CMD_MM_ENTRIES; t++)
 		free(cmd_mm[t].data);
 }
 
-static cmd_mm_entry_t *
-cmd_mm_find(char *name, int type) {
+static cmd_mm_entry_t *cmd_mm_find(char *name, int type) {
 	int i;
 
 	for (i = 0; i < cmd_mm[type].entries; i++)
@@ -142,25 +137,21 @@ cmd_mm_find(char *name, int type) {
 	return NULL;
 }
 
-static int
-_cmd_mm_comp(const void *a, const void *b) {
+static int _cmd_mm_comp(const void *a, const void *b) {
 	return strcmp(((cmd_mm_entry_t *) a)->name, ((cmd_mm_entry_t *) b)->name);
 }
 
-void
-con_sort_all(void) {
+void con_sort_all() {
 	int i;
 
 	for (i = 0; i < CMD_MM_ENTRIES; i++)
 		if (cmd_mm[i].entries && _lists_need_sorting & (1 << i))
-			qsort(cmd_mm[i].data, cmd_mm[i].entries, cmd_mm[i].size_per_entry,
-			      _cmd_mm_comp);
+			qsort(cmd_mm[i].data, cmd_mm[i].entries, cmd_mm[i].size_per_entry, _cmd_mm_comp);
 
 	_lists_need_sorting = 0;
 }
 
-void
-con_init(void) {
+void con_init() {
 	if (!_cmd_initialized) {
 		int i;
 
@@ -176,29 +167,20 @@ con_init(void) {
 
 		atexit(_cmd_exit);
 
-		/* Hook up some commands */
-		con_hook_command(&c_version, "version", "",
-		                 "Displays the version number");
-		con_hook_command(&c_list, "list", "s*",
-		                 "Lists various things (try 'list')");
-		con_hook_command(&c_man, "man", "s",
-		                 "Gives a short description of something");
+		// Hook up some commands
+		con_hook_command(&c_version, "version", "", "Displays the version number");
+		con_hook_command(&c_list, "list", "s*", "Lists various things (try 'list')");
+		con_hook_command(&c_man, "man", "s", "Gives a short description of something");
 		con_hook_command(&c_print, "print", "s", "Prints an int variable");
 		con_hook_command(&c_set, "set", "si", "Sets an int variable");
-		con_hook_command(&c_size, "size", "si",
-		                 "Displays the size of a resource");
+		con_hook_command(&c_size, "size", "si", "Displays the size of a resource");
 		con_hook_command(&c_dump, "dump", "si", "HexDumps a resource");
-		con_hook_command(&c_hexgrep, "hexgrep", "shh*",
-		                 "Searches some resources for a\n"
-		                 "  particular sequence of bytes, re-\n  presented"
-		                 " as hexadecimal numbers.\n\n"
-		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n"
-		                 "  hexgrep pic.042 fe");
-		con_hook_command(&c_dissectscript, "dissectscript", "i",
-		                 "Examines a script.");
+		con_hook_command(&c_hexgrep, "hexgrep", "shh*", "Searches some resources for a\n"
+		                 "  particular sequence of bytes, re-\n  presented as hexadecimal numbers.\n\n"
+		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n  hexgrep pic.042 fe");
+		con_hook_command(&c_dissectscript, "dissectscript", "i", "Examines a script.");
 
-		con_hook_page("addresses",
-		              "Passing address parameters\n\n"
+		con_hook_page("addresses", "Passing address parameters\n\n"
 		              "  Address parameters may be passed in one of\n"
 		              "  three forms:\n"
 		              "  - ssss:oooo -- where 'ssss' denotes a\n"
@@ -221,29 +203,26 @@ con_init(void) {
 		              "    ?obj.idx may be used to disambiguate 'obj'\n"
 		              "    by the index 'idx'.\n");
 
-		con_hook_int(&con_passthrough, "con_passthrough",
-		             "scicon->stdout passthrough");
+		con_hook_int(&con_passthrough, "con_passthrough", "scicon->stdout passthrough");
 	}
 }
 
-static inline int
-clone_is_used(clone_table_t *t, int idx) {
+static inline int clone_is_used(clone_table_t *t, int idx) {
 	return ENTRY_IS_VALID(t, idx);
 }
 
-int
-parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success */
+int parse_reg_t(state_t *s, const char *str, reg_t *dest) { // Returns 0 on success
 	int rel_offsetting = 0;
 	const char *offsetting = NULL;
-	/* Non-NULL: Parse end of string for relative offsets */
+	// Non-NULL: Parse end of string for relative offsets
 	char *endptr;
 
 	if (!s) {
 		sciprintf("Addresses can only be parsed if a global state is present");
-		return 1; /* Requires a valid state */
+		return 1; // Requires a valid state
 	}
 
-	if (*str == '$') { /* Register */
+	if (*str == '$') { // Register
 		rel_offsetting = 1;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
@@ -267,7 +246,8 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
 			*dest = s->execution_stack[s->execution_stack_pos].objp;
 			offsetting = str + 2;
-		} else return 1; /* No matching register */
+		} else
+			return 1; // No matching register
 
 		if (!*offsetting)
 			offsetting = NULL;
@@ -275,7 +255,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 			return 1;
 	} else if (*str == '&') {
 		int script_nr;
-		/* Look up by script ID */
+		// Look up by script ID
 		char *colon = (char *)strchr(str, ':');
 
 		if (!colon)
@@ -299,9 +279,9 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 		char *tmp;
 		const char *str_objname;
 		char *str_suffix;
-		char suffchar = 0; /* Supress spurious -Wall warning */
+		char suffchar = 0;
 		int i;
-		/* Parse obj by name */
+		// Parse obj by name
 
 		tmp = (char *)strchr(str, '+');
 		str_suffix = (char *)strchr(str, '-');
@@ -323,7 +303,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 
 		str_objname = str + 1;
 
-		/* Now all values are available; iterate over all objects. */
+		// Now all values are available; iterate over all objects.
 		for (i = 0; i < s->seg_manager.heap_size; i++) {
 			mem_obj_t *mobj = s->seg_manager.heap[i];
 			int idx = 0;
@@ -338,7 +318,7 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 
 			while (idx < max_index) {
 				int valid = 1;
-				object_t *obj = NULL; /* Surpress spurious warning */
+				object_t *obj = NULL;
 				reg_t objpos;
 				objpos.offset = 0;
 				objpos.segment = i;
@@ -356,15 +336,13 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 					char *objname = (char *) obj->base
 					                + obj->variables[SCRIPT_NAME_SELECTOR].offset;
 					if (!strcmp(objname, str_objname)) {
-						/* Found a match! */
+						// Found a match!
 						if (index < 0 ||
 						        times_found == index)
 							*dest = objpos;
 						else if (times_found < 0 && index) {
-
 							if (index == 1) {
-								/* First time we realized
-								** the ambiguity  */
+								// First time we realized the ambiguity
 								sciprintf("Ambiguous:\n");
 								sciprintf("  %3x: ["PREG"] %s\n", 0, PRINT_REG(*dest), str_objname);
 							}
@@ -373,7 +351,6 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 						++times_found;
 					}
 				}
-
 				++idx;
 			}
 
@@ -382,14 +359,13 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 		if (!times_found)
 			return 1;
 
-		if (times_found > 1
-		        && index < 0) {
+		if (times_found > 1 && index < 0) {
 			sciprintf("Ambiguous: Aborting.\n");
-			return 1; /* Ambiguous */
+			return 1; // Ambiguous
 		}
 
 		if (times_found <= index)
-			return 1; /* Not found */
+			return 1; // Not found
 
 		offsetting = str_suffix;
 		if (offsetting)
@@ -425,14 +401,12 @@ parse_reg_t(state_t *s, const char *str, reg_t *dest) { /* Returns 0 on success 
 	return 0;
 }
 
-void
-con_parse(state_t *s, const char *command) {
-	int quote = 0;		/* quoting? */
-	int done = 0;			/* are we done yet? */
-	int cdone = 0;		/* Done with the current command? */
-	const char *paramt;			/* parameter types */
-	char *cmd = (command && command[0]) ? (char *) sci_strdup(command) :
-	            (char *) sci_strdup(" ");
+void con_parse(state_t *s, const char *command) {
+	int quote = 0;		// quoting?
+	int done = 0;		// are we done yet?
+	int cdone = 0;		// Done with the current command?
+	const char *paramt;	// parameter types
+	char *cmd = (command && command[0]) ? (char *)sci_strdup(command) : (char *)sci_strdup(" ");
 	char *_cmd = cmd;
 	int pos = 0;
 
@@ -441,13 +415,13 @@ con_parse(state_t *s, const char *command) {
 
 	while (!done) {
 		cmd_command_t *command_todo;
-		int onvar = 1;		/* currently working on a variable? */
+		int onvar = 1;		// currently working on a variable?
 		unsigned int parammem = 0;
 		unsigned int i;
 		cdone = 0;
 		pos = 0;
 
-		/*    cmd_params = sci_realloc(cmd_params, parammem); */
+		//cmd_params = sci_realloc(cmd_params, parammem);
 		cmd_paramlength = 0;
 
 		while (*cmd == ' ')
@@ -464,7 +438,7 @@ con_parse(state_t *s, const char *command) {
 				if (!quote)
 					cmd[pos] = onvar = 0;
 				break;
-			case '\\':		/* don't check next char for special meaning */
+			case '\\':		// don't check next char for special meaning
 				memmove(cmd + pos, cmd + pos + 1, strlen(cmd + pos) - 1);
 				break;
 			case '"':
@@ -476,12 +450,8 @@ con_parse(state_t *s, const char *command) {
 				if (!onvar) {
 					onvar = 1;
 					if (cmd_paramlength == parammem)
-						cmd_params = (cmd_param_t*)sci_realloc(cmd_params,
-						                                       sizeof(cmd_param_t)
-						                                       * (parammem += 8));
-
+						cmd_params = (cmd_param_t*)sci_realloc(cmd_params, sizeof(cmd_param_t)* (parammem += 8));
 					cmd_params[cmd_paramlength].str = cmd + pos;
-
 					cmd_paramlength++;
 				}
 				break;
@@ -492,9 +462,7 @@ con_parse(state_t *s, const char *command) {
 		if (quote)
 			sciprintf("unbalanced quotes\n");
 		else if (strcmp(cmd, "") != 0) {
-
 			command_todo = (cmd_command_t *) cmd_mm_find(cmd, CMD_MM_CMD);
-
 			if (!command_todo)
 				sciprintf("%s: not found\n", cmd);
 			else {
@@ -513,16 +481,12 @@ con_parse(state_t *s, const char *command) {
 					minparams -= 2;
 
 				if (cmd_paramlength < minparams)
-					sciprintf("%s: needs more than %d parameters\n",
-					          cmd, cmd_paramlength);
+					sciprintf("%s: needs more than %d parameters\n", cmd, cmd_paramlength);
 
-				else if ((cmd_paramlength > strlen(paramt))
-				         && ((strlen(paramt) == 0)
-				             || paramt[strlen(paramt) - 1] != '*'))
+				else if ((cmd_paramlength > strlen(paramt)) && ((strlen(paramt) == 0) || paramt[strlen(paramt) - 1] != '*'))
 					sciprintf("%s: too many parameters", cmd);
 				else {
-					int do_execute = !need_state || s; /* /me wants an
-								      ** implication arrow */
+					int do_execute = !need_state || s; // /me wants an implication arrow
 					char paramtype;
 					int paramtypepos = 0;
 					char *endptr;
@@ -530,20 +494,18 @@ con_parse(state_t *s, const char *command) {
 					for (i = 0; i < cmd_paramlength; i++) {
 						paramtype = paramt[paramtypepos];
 
-						if ((paramt[paramtypepos + 1])
-						        && (paramt[paramtypepos + 1] != '*'))
+						if ((paramt[paramtypepos + 1]) && (paramt[paramtypepos + 1] != '*'))
 							paramtypepos++;
-						/* seek next param type unless end of string or '*						   ' */
+						// seek next param type unless end of string or '*						   '
 
 						switch (paramtype) {
-							/* Now turn the parameters into variables of the appropriate types,
-							** unless they're strings, and store them in the global cmd_params[]
-							** structure  */
+							// Now turn the parameters into variables of the appropriate types,
+							// unless they're strings, and store them in the global cmd_params[]
+							// structure
 
 						case 'a': {
 							char *oldname = cmd_params[i].str;
-							if (parse_reg_t(s, oldname,
-							                &(cmd_params[i].reg))) {
+							if (parse_reg_t(s, oldname, &(cmd_params[i].reg))) {
 								sciprintf("%s: '%s' is not an address or object\n", cmd, oldname);
 								do_execute = 0;
 							}
@@ -571,7 +533,7 @@ con_parse(state_t *s, const char *command) {
 								sciprintf("%s: '%s' is not a hex number\n", cmd, orgstr);
 							}
 
-							cmd_params[i].val &= 0xff;	/* Clip hex numbers to 0x00 ... 0xff */
+							cmd_params[i].val &= 0xff;	// Clip hex numbers to 0x00 ... 0xff
 						}
 						break;
 
@@ -587,7 +549,8 @@ con_parse(state_t *s, const char *command) {
 
 					if (do_execute) {
 						command_todo->command(s);
-					} else error("Skipping command...\n");
+					} else
+						error("Skipping command...\n");
 				}
 			}
 		}
@@ -598,13 +561,10 @@ con_parse(state_t *s, const char *command) {
 	if (cmd_params)
 		free(cmd_params);
 	cmd_params = NULL;
-
 }
 
 /* (unused)
-static cmd_mm_entry_t *
-con_iterate_entry(int ID, int *counter)
-{
+static cmd_mm_entry_t *con_iterate_entry(int ID, int *counter) {
 	byte *retval;
 	con_init();
 
@@ -615,13 +575,12 @@ con_iterate_entry(int ID, int *counter)
 
 	(*counter)++;
 
-	return (cmd_mm_entry_t *) retval;
-}
-*/
+	return (cmd_mm_entry_t *)retval;
+}*/
 
-static cmd_mm_entry_t *
-con_alloc_page_entry(int ID) {
+static cmd_mm_entry_t *con_alloc_page_entry(int ID) {
 	int entry;
+
 	con_init();
 
 	if (cmd_mm[ID].entries >= cmd_mm[ID].allocated) {
@@ -631,21 +590,18 @@ con_alloc_page_entry(int ID) {
 		else
 			nextsize <<= 1;
 
-		cmd_mm[ID].data = sci_realloc(cmd_mm[ID].data,
-		                              nextsize * cmd_mm[ID].size_per_entry);
+		cmd_mm[ID].data = sci_realloc(cmd_mm[ID].data, nextsize * cmd_mm[ID].size_per_entry);
 		cmd_mm[ID].allocated = nextsize;
 	}
 
 	_lists_need_sorting |= (1 << ID);
 
 	entry = cmd_mm[ID].entries++;
-	return (cmd_mm_entry_t *)(((byte *)cmd_mm[ID].data)
-	                          + entry * cmd_mm[ID].size_per_entry);
+	return (cmd_mm_entry_t *)(((byte *)cmd_mm[ID].data) + entry * cmd_mm[ID].size_per_entry);
 }
 
-int
-con_hook_page(const char *name, const char *body) {
-	cmd_page_t *page = (cmd_page_t *) con_alloc_page_entry(CMD_MM_DOC);
+int con_hook_page(const char *name, const char *body) {
+	cmd_page_t *page = (cmd_page_t *)con_alloc_page_entry(CMD_MM_DOC);
 
 	page->name = name;
 	page->description = body;
@@ -653,12 +609,9 @@ con_hook_page(const char *name, const char *body) {
 	return 0;
 }
 
-int
-con_hook_command(int command(state_t *), const char *name, const char *param,
-                 const char *description) {
+int con_hook_command(int command(state_t *), const char *name, const char *param, const char *description) {
 	cmd_command_t *cmd = NULL;
 	unsigned int i;
-
 
 	if (NULL == name) {
 		sciprintf("console.c: con_hook_command(): NULL passed for name\n");
@@ -694,7 +647,7 @@ con_hook_command(int command(state_t *), const char *name, const char *param,
 		}
 		i++;
 	}
-	cmd = (cmd_command_t *) con_alloc_page_entry(CMD_MM_CMD);
+	cmd = (cmd_command_t *)con_alloc_page_entry(CMD_MM_CMD);
 
 	cmd->command = command;
 	cmd->name = name;
@@ -704,9 +657,7 @@ con_hook_command(int command(state_t *), const char *name, const char *param,
 	return 0;
 }
 
-
-int
-con_hook_int(int *pointer, const char *name, const char *description) {
+int con_hook_int(int *pointer, const char *name, const char *description) {
 	cmd_var_t *var;
 
 	if (pointer == NULL)
@@ -724,26 +675,20 @@ con_hook_int(int *pointer, const char *name, const char *description) {
 	return 0;
 }
 
+// Console commands and support functions
 
-/***************************************************************************
- * Console commands and support functions
- ***************************************************************************/
-
-
-static int
-get_resource_number(char *resid)
-/* Gets the resource number of a resource string, or returns -1 */
-{
+static int get_resource_number(char *resid) {
+	// Gets the resource number of a resource string, or returns -1
 	int i, res = -1;
 
 	for (i = 0; i < sci_invalid_resource; i++)
 		if (strcmp(sci_resource_types[i], resid) == 0)
 			res = i;
+
 	return res;
 }
 
-static int
-c_version(state_t * s) {
+static int c_version(state_t * s) {
 	if (NULL == s) {
 		sciprintf("console.c: c_version: NULL passed for parameter s\n");
 		return -1;
@@ -751,16 +696,13 @@ c_version(state_t * s) {
 
 	sciprintf("FreeSCI, version " VERSION "\n");
 	sciprintf("Resource file version:        %s\n", sci_version_types[s->resmgr->sci_version]);
-	sciprintf("Emulated interpreter version: %d.%03d.%03d\n",
-	          SCI_VERSION_MAJOR(s->version),
-	          SCI_VERSION_MINOR(s->version),
-	          SCI_VERSION_PATCHLEVEL(s->version));
+	sciprintf("Emulated interpreter version: %d.%03d.%03d\n", SCI_VERSION_MAJOR(s->version),
+	          SCI_VERSION_MINOR(s->version), SCI_VERSION_PATCHLEVEL(s->version));
 
 	return 0;
 }
 
-static int
-c_list_words(state_t *s) {
+static int c_list_words(state_t *s) {
 	word_t **words;
 	int words_nr;
 	int i;
@@ -773,18 +715,13 @@ c_list_words(state_t *s) {
 	}
 
 	for (i = 0; i < words_nr; i++)
-		sciprintf("%4d: %03x [%03x] %s\n",
-		          i,
-		          words[i]->w_class,
-		          words[i]->group,
-		          words[i]->word);
+		sciprintf("%4d: %03x [%03x] %s\n", i, words[i]->w_class, words[i]->group, words[i]->word);
 
 	vocab_free_words(words, words_nr);
 	return 0;
 }
 
-int
-c_list_suffices(state_t *s) {
+int c_list_suffices(state_t *s) {
 	suffix_t **suffices;
 	int suffices_nr;
 	int i;
@@ -800,30 +737,26 @@ c_list_suffices(state_t *s) {
 	for (i = 0; i < suffices_nr; i++) {
 		suffix_t *suf = suffices[i];
 
-		strncpy(word_buf, suf->word_suffix,
-		        suf->word_suffix_length);
+		strncpy(word_buf, suf->word_suffix, suf->word_suffix_length);
 		word_buf[suf->word_suffix_length] = 0;
-		strncpy(alt_buf, suf->alt_suffix,
-		        suf->alt_suffix_length);
+		strncpy(alt_buf, suf->alt_suffix, suf->alt_suffix_length);
 		alt_buf[suf->alt_suffix_length] = 0;
 
-		sciprintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n",
-		          i, suf->class_mask, word_buf,
-		          alt_buf, suf->result_class);
+		sciprintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n", i, suf->class_mask, word_buf, alt_buf, suf->result_class);
 	}
 
 	vocab_free_suffices(s->resmgr, suffices, suffices_nr);
+
 	return 0;
 }
 
-static void
-_cmd_print_command(cmd_mm_entry_t *data, int full) {
-	const char *paramseeker = ((cmd_command_t *) data)->param;
+static void _cmd_print_command(cmd_mm_entry_t *data, int full) {
+	const char *paramseeker = ((cmd_command_t *)data)->param;
 
 	if (full) {
 		sciprintf("SYNOPSIS\n\n  %s ", data->name, paramseeker);
 
-		while (*paramseeker)      {
+		while (*paramseeker) {
 			switch (*paramseeker) {
 			case '!':
 				break;
@@ -848,34 +781,29 @@ _cmd_print_command(cmd_mm_entry_t *data, int full) {
 			paramseeker++;
 		}
 
-		sciprintf("\n\nDESCRIPTION\n\n  %s",
-		          data->description);
+		sciprintf("\n\nDESCRIPTION\n\n  %s", data->description);
 	} else
 		sciprintf(" %s", data->name);
 }
 
-static void
-_cmd_print_var(cmd_mm_entry_t *data, int full) {
+static void _cmd_print_var(cmd_mm_entry_t *data, int full) {
 	cmd_var_t *var = (cmd_var_t *) data;
 	if (full)
 		sciprintf("VALUE\n\n");
 	sciprintf("  %s = %d\n", var->name, *(var->var.intp));
 
 	if (full)
-		sciprintf("\n\nDESCRIPTION\n\n  %s",
-		          data->description);
+		sciprintf("\n\nDESCRIPTION\n\n  %s", data->description);
 }
 
-static void
-_cmd_print_page(cmd_mm_entry_t *data, int full) {
+static void _cmd_print_page(cmd_mm_entry_t *data, int full) {
 	if (full)
-		sciprintf("\n\nDESCRIPTION\n\n  %s\n",
-		          data->description);
-	else sciprintf("%s\n", data->name);
+		sciprintf("\n\nDESCRIPTION\n\n  %s\n", data->description);
+	else
+		sciprintf("%s\n", data->name);
 }
 
-static int
-c_list(state_t * s) {
+static int c_list(state_t *s) {
 	if (_lists_need_sorting)
 		con_sort_all();
 
@@ -902,9 +830,7 @@ c_list(state_t * s) {
 
 		if (mm_found >= 0)
 			for (i = 0; i < cmd_mm[mm_found].entries; i++)
-				cmd_mm[mm_found].print((cmd_mm_entry_t *)
-				                       (((byte *)cmd_mm[mm_found].data)
-				                        + i * cmd_mm[mm_found].size_per_entry), 0);
+				cmd_mm[mm_found].print((cmd_mm_entry_t *)(((byte *)cmd_mm[mm_found].data) + i * cmd_mm[mm_found].size_per_entry), 0);
 		else {
 			if (!s) {
 				sciprintf("You need a state to do that");
@@ -915,10 +841,8 @@ c_list(state_t * s) {
 				return c_selectornames(s);
 			else if (!strcmp("syscalls", cmd_params[0].str))
 				return c_kernelnames(s);
-			else if (!strcmp("suffixes", cmd_params[0].str)
-			         || !strcmp("suffices", cmd_params[0].str)
-			         || !strcmp("sufficos", cmd_params[0].str))
-				/* sufficos: Accusative Plural of 'suffix' */
+			else if (!strcmp("suffixes", cmd_params[0].str) || !strcmp("suffices", cmd_params[0].str) || !strcmp("sufficos", cmd_params[0].str))
+				// sufficos: Accusative Plural of 'suffix'
 				return c_list_suffices(s);
 			else if (!strcmp("words", cmd_params[0].str))
 				return c_list_words(s);
@@ -941,9 +865,7 @@ c_list(state_t * s) {
 	return 0;
 }
 
-
-static int
-c_man(state_t * s) {
+static int c_man(state_t *s) {
 	int section = 0;
 	unsigned int i;
 	char *name = cmd_params[0].str;
@@ -956,8 +878,7 @@ c_man(state_t * s) {
 	}
 
 	if (section < 0 || section >= CMD_MM_ENTRIES) {
-		sciprintf("Invalid section %d\n",
-		          section);
+		sciprintf("Invalid section %d\n", section);
 		return 1;
 	}
 
@@ -981,8 +902,7 @@ c_man(state_t * s) {
 	return 0;
 }
 
-static int
-c_set(state_t * s) {
+static int c_set(state_t *s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
@@ -991,8 +911,7 @@ c_set(state_t * s) {
 	return 0;
 }
 
-static int
-c_print(state_t * s) {
+static int c_print(state_t *s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
@@ -1003,9 +922,7 @@ c_print(state_t * s) {
 	return 0;
 }
 
-
-static int
-c_size(state_t * s) {
+static int c_size(state_t *s) {
 	int res = get_resource_number(cmd_params[0].str);
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
@@ -1014,15 +931,13 @@ c_size(state_t * s) {
 		if (resource) {
 			sciprintf("Size: %d\n", resource->size);
 		} else
-			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str,
-			          cmd_params[1].val);
+			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str, cmd_params[1].val);
 	}
+
 	return 0;
 }
 
-
-static int
-c_dump(state_t * s) {
+static int c_dump(state_t *s) {
 	int res = get_resource_number(cmd_params[0].str);
 
 	if (res == -1)
@@ -1032,18 +947,16 @@ c_dump(state_t * s) {
 		if (resource)
 			sci_hexdump(resource->data, resource->size, 0);
 		else
-			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str,
-			          cmd_params[1].val);
+			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str, cmd_params[1].val);
 	}
+
 	return 0;
 }
 
-
-static int
-c_hexgrep(state_t * s) {
+static int c_hexgrep(state_t *s) {
 	int i, seeklen, resnr, restype, resmax;
-	unsigned char *seekstr	= NULL;
-	resource_t *script		= NULL;
+	unsigned char *seekstr = NULL;
+	resource_t *script = NULL;
 	char *dot = strchr(cmd_params[0].str, '.');
 
 	if (NULL == s) {
@@ -1051,7 +964,7 @@ c_hexgrep(state_t * s) {
 		return(-1);
 	}
 
-	seekstr = (unsigned char*)sci_malloc(seeklen = (cmd_paramlength - 1));
+	seekstr = (unsigned char *)sci_malloc(seeklen = (cmd_paramlength - 1));
 
 	if (NULL == seekstr) {
 		error("console.c: c_hexgrep(): malloc failed for seekstr\r\n");
@@ -1082,7 +995,6 @@ c_hexgrep(state_t * s) {
 			int output_script_name = 0;
 
 			while (seeker < script->size) {
-
 				if (script->data[seeker] == seekstr[comppos]) {
 					if (comppos == 0)
 						seekerold = seeker;
@@ -1111,9 +1023,7 @@ c_hexgrep(state_t * s) {
 	return 0;
 }
 
-
-static int
-c_selectornames(state_t * s) {
+static int c_selectornames(state_t * s) {
 	int namectr;
 	char **snames	= NULL;
 	int seeker = 0;
@@ -1136,11 +1046,11 @@ c_selectornames(state_t * s) {
 		seeker++;
 	}
 	vocabulary_free_snames(snames);
+
 	return 0;
 }
 
-static int
-c_kernelnames(state_t * s) {
+static int c_kernelnames(state_t * s) {
 	int knamectr;
 	char **knames = vocabulary_get_knames(s->resmgr, &knamectr);
 	int seeker = 0;
@@ -1160,11 +1070,11 @@ c_kernelnames(state_t * s) {
 		sciprintf("%03x: %s\n", seeker, knames[seeker]);
 
 	vocabulary_free_knames(knames);
+
 	return 0;
 }
 
-static int
-c_dissectscript(state_t * s) {
+static int c_dissectscript(state_t * s) {
 	if (NULL == s) {
 		sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
 		return -1;
@@ -1173,6 +1083,5 @@ c_dissectscript(state_t * s) {
 	script_dissect(s->resmgr, cmd_params[0].val, s->selector_names, s->selector_names_nr);
 	return 0;
 }
-#endif /* SCI_CONSOLE */
 
-
+#endif // SCI_CONSOLE
