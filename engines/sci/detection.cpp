@@ -1647,16 +1647,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-	// The Island of Dr. Brain DOS - English (from Quietust)
+	// The Island of Dr. Brain - English 1.1 2.3.93 (from Quietust)
 	{{"islandbrain", "", {
 		{"resource.map", 0, "3c07da06bdd1689f9d07af78fb94d0ec", 3101},
 		{"resource.000", 0, "ecc686e0034fb4d41de077ac7167b3cf", 1947866},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1.001.53)
+		SCI_VERSION(1, 1, 53)
 	},
 #if 0
-	// The Island of Dr. Brain DOS - English
+	// The Island of Dr. Brain - English DOS
 	{{"islandbrain", "", {
 		{"resource.map", 0, "2388efef8430b041b0f3b00b9050e4a2", 3281},
 		{"resource.000", 0, "b3acd9b9dd7fe53c4ee133ac9a1acfab", 2103560},
