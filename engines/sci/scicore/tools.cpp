@@ -23,18 +23,17 @@
  *
  */
 
-
-#include "common/archive.h"
-#include "common/file.h"
-#include "common/util.h"
-
-
 #ifdef _MSC_VER
 #  include <sys/timeb.h>
 #  include <windows.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  undef ARRAYSIZE
 #endif
+
+#include "common/archive.h"
+#include "common/file.h"
+#include "common/util.h"
 
 #ifdef WIN32
 #  include <windows.h>
@@ -61,6 +60,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#  undef ARRAYSIZE
 
 #ifdef UNIX
 #define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
