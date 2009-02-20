@@ -158,7 +158,6 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
 	Common::addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
 	Common::addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
-	Common::addDebugChannel(kDebugLevelEmu, "Emu", "Alternate emulation debugging");
 	Common::addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
 
 	printf("SciEngine::SciEngine\n");

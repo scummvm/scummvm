@@ -53,9 +53,6 @@ struct _state;
 #define SCIkMENU       s, __FILE__, __LINE__, 11
 #define SCIkSAID       s, __FILE__, __LINE__, 12
 #define SCIkFILE       s, __FILE__, __LINE__, 13
-#define SCIkTIME       s, __FILE__, __LINE__, 14
-#define SCIkROOM       s, __FILE__, __LINE__, 15
-#define SCIkEMU	       s, __FILE__, __LINE__, 16
 #define SCIkAVOIDPATH  s, __FILE__, __LINE__, SCIkAVOIDPATH_NR
 
 #define SCI_KERNEL_DEBUG
