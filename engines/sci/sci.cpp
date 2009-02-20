@@ -348,4 +348,10 @@ uint32 SciEngine::getFlags() const {
 	return _gameDescription->desc.flags;
 }
 
+Common::String SciEngine::getSavegameName(int nr) const {
+	char extension[6];
+	snprintf(extension, sizeof(extension), ".%03d", nr);
+	return _targetName + extension;
+}
+
 } // End of namespace Sci

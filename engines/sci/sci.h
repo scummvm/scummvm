@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
+#include "engines/advancedDetector.h"
 
 namespace Sci {
 
@@ -82,6 +83,8 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
+
+	Common::String getSavegameName(int nr) const;
 
 private:
 	const SciGameDescription *_gameDescription;

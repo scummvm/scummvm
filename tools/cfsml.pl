@@ -204,7 +204,7 @@ static char *_cfsml_unmangle_string(const char *s, unsigned int length) {
 	return (char *)sci_realloc(target, strlen(target) + 1);
 }
 
-static char *_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assignment) {
+static char *_cfsml_get_identifier(Common::SeekableReadStream *fd, int *line, int *hiteof, int *assignment) {
 	int c;
 	int mem = 32;
 	int pos = 0;
@@ -216,7 +216,7 @@ static char *_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assign
 		_cfsml_last_identifier_retrieved = NULL;
 	}
 
-	while (isspace(c = fgetc(fd)) && (c != EOF));
+	while (isspace(c = SRSgetc(fd)) && (c != EOF));
 	if (c == EOF) {
 	    _cfsml_error("Unexpected end of file at line %d\n", *line);
 	    free(retval);
@@ -224,12 +224,11 @@ static char *_cfsml_get_identifier(FILE *fd, int *line, int *hiteof, int *assign
 	    return NULL;
 	}
 
-	ungetc(c, fd);
-
-	while (((c = fgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
+	int first = 1;
+	while ((first || (c = SRSgetc(fd)) != EOF) && ((pos == 0) || (c != '\n')) && (c != '=')) {
+		first = 0;
 		if (pos == mem - 1) // Need more memory?
 			retval = (char *)sci_realloc(retval, mem *= 2);
-
 		if (!isspace(c)) {
 			if (done) {
 				_cfsml_error("Single word identifier expected at line %d\n", *line);
@@ -283,7 +282,7 @@ if ($debug) {
 	return _cfsml_last_identifier_retrieved = retval;
 }
 
-static char *_cfsml_get_value(FILE *fd, int *line, int *hiteof) {
+static char *_cfsml_get_value(Common::SeekableReadStream *fd, int *line, int *hiteof) {
 	int c;
 	int mem = 64;
 	int pos = 0;
@@ -294,7 +293,7 @@ static char *_cfsml_get_value(FILE *fd, int *line, int *hiteof) {
 		_cfsml_last_value_retrieved = NULL;
 	}
 
-	while (((c = fgetc(fd)) != EOF) && (c != '\n')) {
+	while (((c = SRSgetc(fd)) != EOF) && (c != '\n')) {
 		if (pos == mem - 1) // Need more memory?
 			retval = (char *)sci_realloc(retval, mem *= 2);
 
@@ -382,8 +381,8 @@ sub create_declaration
       $types{$type}{'writer'} = "_cfsml_write_" . $typename;
       $types{$type}{'reader'} = "_cfsml_read_" . $typename;
       write_line_pp(__LINE__, 0);
-      print "static void $types{$type}{'writer'}(FILE *fh, $ctype* save_struc);\n";
-      print "static int $types{$type}{'reader'}(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof);\n\n";
+      print "static void $types{$type}{'writer'}(Common::WriteStream *fh, $ctype* save_struc);\n";
+      print "static int $types{$type}{'reader'}(Common::SeekableReadStream *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof);\n\n";
     };
 
   }
@@ -394,84 +393,84 @@ sub create_writer
     $ctype = $types{$type}{'ctype'};
 
     write_line_pp(__LINE__, 0);
-    print "static void\n_cfsml_write_$typename(FILE *fh, $ctype* save_struc)\n{\n";
+    print "static void\n_cfsml_write_$typename(Common::WriteStream *fh, $ctype* save_struc)\n{\n";
     if ($types{$type}{'type'} eq $type_record) {
         print "	int min, max, i;\n\n";
     }
 
     if ($types{$type}{'type'} eq $type_integer) {
-      print "	fprintf(fh, \"%li\", (long)*save_struc);\n";
+      print "	WSprintf(fh, \"%li\", (long)*save_struc);\n";
     }
     elsif ($types{$type}{'type'} eq $type_string) {
-	write_line_pp(__LINE__, 0);
-	print "	if (!(*save_struc))\n";
-	print "		fprintf(fh, \"\\\\null\\\\\");\n";
-	print "	else {\n";
-	print "		char *token = _cfsml_mangle_string((const char *) *save_struc);\n";
-	print "		fprintf(fh, \"\\\"%s\\\"\", token);\n";
-	print "		free(token);\n";
-	print "	}\n";
+    write_line_pp(__LINE__, 0);
+    print "	if (!(*save_struc))\n";
+    print "		WSprintf(fh, \"\\\\null\\\\\");\n";
+    print "	else {\n";
+    print "		char *token = _cfsml_mangle_string((const char *) *save_struc);\n";
+    print "		WSprintf(fh, \"\\\"%s\\\"\", token);\n";
+    print "		free(token);\n";
+    print "	}\n";
     }
     elsif ($types{$type}{'type'} eq $type_record) {
-	write_line_pp(__LINE__, 0);
-	print "	fprintf(fh, \"{\\n\");\n";
+    write_line_pp(__LINE__, 0);
+    print "	WSprintf(fh, \"{\\n\");\n";
 
-	for $n (@{$records{$type}}) {
+    for $n (@{$records{$type}}) {
 
-	    print "	fprintf(fh, \"$n->{'name'} = \");\n";
+        print "	WSprintf(fh, \"$n->{'name'} = \");\n";
 
-	    if ($n->{'array'}) { # Check for arrays
+        if ($n->{'array'}) { # Check for arrays
 
-		if ($n->{'array'} eq 'static' or $n->{'size'} * 2) { # fixed integer value?
-		    print "	min = max = $n->{'size'};\n";
-		}
-		else { # No, a variable
-		    print "	min = max = save_struc->$n->{'size'};\n";
-		}
+        if ($n->{'array'} eq 'static' or $n->{'size'} * 2) { # fixed integer value?
+            print "	min = max = $n->{'size'};\n";
+        }
+        else { # No, a variable
+            print "	min = max = save_struc->$n->{'size'};\n";
+        }
 
-		if ($n->{'maxwrite'}) { # A write limit?
-		    print "	if (save_struc->$n->{'maxwrite'} < min)\n";
-		    print "		min = save_struc->$n->{'maxwrite'};\n";
-		}
+        if ($n->{'maxwrite'}) { # A write limit?
+            print "	if (save_struc->$n->{'maxwrite'} < min)\n";
+            print "		min = save_struc->$n->{'maxwrite'};\n";
+        }
 
-		if ($n->{'array'} eq 'dynamic') {
-		    print "	if (!save_struc->$n->{'name'})\n";
-		    print "		min = max = 0; /* Don't write if it points to NULL */\n";
-		}
+        if ($n->{'array'} eq 'dynamic') {
+            print "	if (!save_struc->$n->{'name'})\n";
+            print "		min = max = 0; /* Don't write if it points to NULL */\n";
+        }
 
-		write_line_pp(__LINE__, 0);
-		print "	fprintf(fh, \"[%d][\\n\", max);\n";
-		print "	for (i = 0; i < min; i++) {\n";
-		print "		$types{$n->{'type'}}{'writer'}";
-		my $subscribstr = "[i]"; # To avoid perl interpolation problems
-		print "(fh, &(save_struc->$n->{'name'}$subscribstr));\n";
-		print "		fprintf(fh, \"\\n\");\n";
-		print "	}\n";
-		print "	fprintf(fh, \"]\");\n";
+        write_line_pp(__LINE__, 0);
+        print "	WSprintf(fh, \"[%d][\\n\", max);\n";
+        print "	for (i = 0; i < min; i++) {\n";
+        print "		$types{$n->{'type'}}{'writer'}";
+        my $subscribstr = "[i]"; # To avoid perl interpolation problems
+        print "(fh, &(save_struc->$n->{'name'}$subscribstr));\n";
+        print "		WSprintf(fh, \"\\n\");\n";
+        print "	}\n";
+        print "	WSprintf(fh, \"]\");\n";
 
-	} elsif ($n->{'type'} eq $type_pointer) { # Relative pointer
+    } elsif ($n->{'type'} eq $type_pointer) { # Relative pointer
 
-	  print "	fprintf(fh, \"%d\", save_struc->$n->{'name'} - save_struc->$n->{'anchor'}); // Relative pointer\n";
+      print "	WSprintf(fh, \"%d\", save_struc->$n->{'name'} - save_struc->$n->{'anchor'}); // Relative pointer\n";
 
       } elsif ($n->{'type'} eq $type_abspointer) { # Absolute pointer
 
-	  print "	if (!save_struc->$n->{'name'})\n";
-	  print "		fprintf(fh, \"\\\\null\\\\\");\n";
-	  print "	else \n";
-	  print "		$types{$n->{'reftype'}}{'writer'}";
-	  print "(fh, save_struc->$n->{'name'});\n";
+      print "	if (!save_struc->$n->{'name'})\n";
+      print "		WSprintf(fh, \"\\\\null\\\\\");\n";
+      print "	else \n";
+      print "		$types{$n->{'reftype'}}{'writer'}";
+      print "(fh, save_struc->$n->{'name'});\n";
 
-	} else { # Normal record entry
+    } else { # Normal record entry
 
-	  print "	$types{$n->{'type'}}{'writer'}";
-	  print "(fh, ($types{$n->{'type'}}{'ctype'}*) &(save_struc->$n->{'name'}));\n";
+      print "	$types{$n->{'type'}}{'writer'}";
+      print "(fh, ($types{$n->{'type'}}{'ctype'}*) &(save_struc->$n->{'name'}));\n";
 
-	}
+    }
 
-	print "	fprintf(fh, \"\\n\");\n";
+    print "	WSprintf(fh, \"\\n\");\n";
       }
 
-      print "	fprintf(fh, \"}\");\n";
+      print "	WSprintf(fh, \"}\");\n";
     }
     else {
       print STDERR "Warning: Attempt to create_writer for invalid type '$types{$type}{'type'}'\n";
@@ -487,7 +486,7 @@ sub create_reader
     $ctype = $types{$type}{'ctype'};
 
     write_line_pp(__LINE__, 0);
-    print "static int\n_cfsml_read_$typename(FILE *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
+    print "static int\n_cfsml_read_$typename(Common::SeekableReadStream *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
     print "	char *token;\n";
     if ($types{$type}{'type'} eq $type_record) {
       print "	int min, max, i;\n";
@@ -819,7 +818,7 @@ sub insert_writer_code {
     write_line_pp(__LINE__, 0);
     print "// Auto-generated CFSML data writer code\n";
     print "	$types{$type}{'writer'}($fh, $datap);\n";
-    print "	fprintf($fh, \"\\n\");\n";
+    print "	WSprintf($fh, \"\\n\");\n";
     print "// End of auto-generated CFSML data writer code\n";
 }
 

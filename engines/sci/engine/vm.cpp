@@ -2113,6 +2113,7 @@ int game_run(state_t **_s) {
 	return 0;
 }
 
+#if 0
 int game_restore(state_t **_s, char *game_name) {
 	state_t *s;
 	int debug_state = _debugstate_valid;
@@ -2139,6 +2140,7 @@ int game_restore(state_t **_s, char *game_name) {
 	sciprintf(" Game::play() finished.\n");
 	return 0;
 }
+#endif
 
 object_t *obj_get(state_t *s, reg_t offset) {
 	mem_obj_t *memobj = GET_OBJECT_SEGMENT(s->seg_manager, offset.segment);

@@ -55,8 +55,10 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/include/sci_midi.h"
 #include "sci/include/sci_widgets.h"
+#include "sci/sci.h"
 
 #include "common/util.h"
+#include "common/savefile.h"
 
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
@@ -1084,7 +1086,15 @@ int c_save_game(state_t *s) {
 		}
 	}
 
-	if (gamestate_save(s, cmd_params[0].str)) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::OutSaveFile *out;
+	if (!(out = saveFileMan->openForSaving(cmd_params[0].str))) {
+		sciprintf("Error opening savegame \"%s\" for writing\n", cmd_params[0].str);
+		return 0;
+	}
+
+	// TODO: enable custom descriptions? force filename into a specific format?
+	if (gamestate_save(s, out, "debugging")) {
 		sciprintf("Saving the game state to '%s' failed\n", cmd_params[0].str);
 	}
 
@@ -1092,14 +1102,20 @@ int c_save_game(state_t *s) {
 }
 
 int c_restore_game(state_t *s) {
-	state_t *newstate;
+	state_t *newstate = NULL;
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	newstate = gamestate_restore(s, cmd_params[0].str);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SeekableReadStream *in;
+	if (!(in = saveFileMan->openForLoading(cmd_params[0].str))) {
+		// found a savegame file
+		newstate = gamestate_restore(s, in);
+		delete in;
+	}
 
 	if (newstate) {
 		s->successor = newstate; // Set successor

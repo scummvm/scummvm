@@ -821,16 +821,4 @@ obj_get(struct _state *s, reg_t offset);
 ** Returns   : (object_t *) The object in question, or NULL if there is none
 */
 
-int
-test_savegame(struct _state *s, char *savegame_id, char *savegame_name, int savegame_name_length);
-/* Simple savegame validity check
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
-**             (char *) savegame_id: Name of the savegame to check
-**             (char *) savegame_name: Pointer to a static buffer the savegame
-**                      name string should be stored in
-**             (int) savegame_name_length: Max. number of bytes to write into the
-**                   static string
-** Returns   : (int) 1 if it might be a savegame, 0 if not
-*/
-
 #endif /* !_SCI_VM_H */

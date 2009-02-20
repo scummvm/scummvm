@@ -24,16 +24,19 @@
  */
 
 /* Savegame handling for state_t structs. Makes heavy use of cfsml magic. */
-/* DON'T EDIT savegame.c ! Only modify savegame.cfsml, if something needs
+/* DON'T EDIT savegame.cpp ! Only modify savegame.cfsml, if something needs
 ** to be changed. Refer to freesci/docs/misc/cfsml.spec if you don't understand
 ** savegame.cfsml. If this doesn't solve your problem, contact the maintainer.
 */
 
+#include <stdarg.h>
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_operations.h"
 #include "sci/include/sfx_engine.h"
 #include "sci/include/engine.h"
 #include "sci/engine/heap.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #ifdef _MSC_VER
 #include <direct.h>
@@ -50,16 +53,77 @@
 ** - File input/output state (this is likely not to happen)
 */
 
+
+const unsigned int PRINTFBUFLEN = 128;
+int WSprintf(Common::WriteStream* str, const char *format, ...) {
+	va_list args;
+	char buf[PRINTFBUFLEN]; // default buffer to prevent new in common case
+	char* writebuf = buf;
+
+	unsigned int s = PRINTFBUFLEN;
+	unsigned int outsize;
+	while (true) {
+		va_start(args, format);
+		outsize = vsnprintf(writebuf, s, format, args);
+		va_end(args);
+
+		if (outsize == s) {
+			if (s > 16384) { // there are limits...
+				delete[] writebuf;
+				warning("Saving failed: line much too long");
+				return 0;
+			}
+			s *= 2;
+			if (writebuf != buf) delete[] writebuf;
+			writebuf = new char[s];
+		} else {
+			break;
+		}
+	}
+
+	uint32 ret = str->write(writebuf, outsize);
+
+	if (writebuf != buf) delete[] writebuf;
+
+	return ret;
+}
+
+// Only supports scanf on a full line
+int SRSscanf(Common::SeekableReadStream* str, const char *format, ...) {
+	assert(strlen(format) > 0 && format[strlen(format)-1] == '\n');
+	va_list args;
+	Common::String line = str->readLine() + "\n";
+
+	va_start(args, format);
+	int ret = vsscanf(line.c_str(), format, args);
+	va_end(args);
+
+	return ret;
+}
+
+int SRSgetc(Common::SeekableReadStream* str) {
+	char c = str->readSByte();
+	if (str->err() || str->eos())
+		return EOF;
+	return c;
+}
+
+char* SRSgets(char* s, int size, Common::SeekableReadStream* str) {
+	return str->readLine_NEW(s, size);
+}
+
+
+
 static state_t *_global_save_state;
 // Needed for some graphical stuff.
 #define FILE_VERSION _global_save_state->savegame_version
 
 
-void write_reg_t(FILE *fh, reg_t *foo) {
-	fprintf(fh, PREG, PRINT_REG(*foo));
+void write_reg_t(Common::WriteStream *fh, reg_t *foo) {
+	WSprintf(fh, PREG, PRINT_REG(*foo));
 }
 
-int read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof) {
+int read_reg_t(Common::SeekableReadStream *fh, reg_t *foo, const char *lastval, int *line, int *hiteof) {
 	int segment, offset;
 
 	if (sscanf(lastval, PREG, &segment, &offset) < 2) {
@@ -71,22 +135,22 @@ int read_reg_t(FILE *fh, reg_t *foo, const char *lastval, int *line, int *hiteof
 	return 0;
 }
 
-void write_sci_version(FILE *fh, sci_version_t *foo) {
-	fprintf(fh, "%d.%03d.%03d", SCI_VERSION_MAJOR(*foo), SCI_VERSION_MINOR(*foo), SCI_VERSION_PATCHLEVEL(*foo));
+void write_sci_version(Common::WriteStream *fh, sci_version_t *foo) {
+	WSprintf(fh, "%d.%03d.%03d", SCI_VERSION_MAJOR(*foo), SCI_VERSION_MINOR(*foo), SCI_VERSION_PATCHLEVEL(*foo));
 }
 
-int read_sci_version(FILE *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof) {
+int read_sci_version(Common::SeekableReadStream *fh, sci_version_t *foo, const char *lastval, int *line, int *hiteof) {
 	return version_parse(lastval, foo);
 }
 
-void write_PTN(FILE *fh, parse_tree_node_t *foo) {
+void write_PTN(Common::WriteStream *fh, parse_tree_node_t *foo) {
 	if (foo->type == PARSE_TREE_NODE_LEAF)
-		fprintf(fh, "L%d", foo->content.value);
+		WSprintf(fh, "L%d", foo->content.value);
 	else
-		fprintf(fh, "B(%d,%d)", foo->content.branches[0], foo->content.branches[1]);
+		WSprintf(fh, "B(%d,%d)", foo->content.branches[0], foo->content.branches[1]);
 }
 
-int read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof) {
+int read_PTN(Common::SeekableReadStream *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == 'L') {
 		const char *c = lastval + 1;
 		char *strend;
@@ -140,22 +204,22 @@ int read_PTN(FILE *fh, parse_tree_node_t *foo, const char *lastval, int *line, i
 }
 
 
-void write_menubar_tp(FILE *fh, menubar_t **foo);
-int read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
+void write_menubar_tp(Common::WriteStream *fh, menubar_t **foo);
+int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_mem_obj_tp(FILE *fh, mem_obj_t **foo);
-int read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
+void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo);
+int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo);
-int read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof);
+void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo);
+int read_int_hash_map_tp(Common::SeekableReadStream *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_songlib_t(FILE *fh, songlib_t *foo);
-int read_songlib_t(FILE *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
+void write_songlib_t(Common::WriteStream *fh, songlib_t *foo);
+int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
-void write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo);
-int read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof);
+void write_int_hash_map_node_tp(Common::WriteStream *fh, int_hash_map_t::node_t **foo);
+int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof);
 
-int read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
+int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
 
 typedef mem_obj_t *mem_obj_ptr;
 
@@ -252,6 +316,15 @@ RECORD class_t "class_t" {
 
 RECORD sfx_state_t "sfx_state_t" {
 	songlib_t songlib;
+}
+
+RECORD SavegameMetadata "SavegameMetadata" {
+	string savegame_name;
+	int savegame_version;
+	string game_version;
+	sci_version_t version;
+	int savegame_date;
+	int savegame_time;
 }
 
 RECORD state_t "state_t" {
@@ -382,41 +455,45 @@ RECORD dynmem_t "dynmem_t" {
 
 %END CFSML
 
-void write_songlib_t(FILE *fh, songlib_t *songlib) {
+void write_songlib_t(Common::WriteStream *fh, songlib_t *songlib) {
 	song_t *seeker = *(songlib->lib);
 	int songcount = song_lib_count(*songlib);
 
-	fprintf(fh, "{\n");
-	fprintf(fh, "songcount = %d\n", songcount);
-	fprintf(fh, "list = \n");
-	fprintf(fh, "[\n");
+	WSprintf(fh, "{\n");
+	WSprintf(fh, "songcount = %d\n", songcount);
+	WSprintf(fh, "list = \n");
+	WSprintf(fh, "[\n");
 	while (seeker) {
 		seeker->restore_time = seeker->it->get_timepos(seeker->it);
 		%CFSMLWRITE song_t seeker INTO fh;
 		seeker = seeker->next;
 	}
-	fprintf(fh, "]\n");
-	fprintf(fh, "}\n");
+	WSprintf(fh, "]\n");
+	WSprintf(fh, "}\n");
 }
 
-int read_songlib_t(FILE *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof) {
+int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const char *lastval, int *line, int *hiteof) {
 	int songcount;
 	int i;
 	song_t *newsong;
 	int oldstatus;
 
-	fscanf(fh, "{\n");
-	fscanf(fh, "songcount = %d\n", &songcount);
-	fscanf(fh, "list = \n");
-	fscanf(fh, "[\n");
+	if (strcmp(lastval, "{")) {
+		_cfsml_error("Opening brackets expected at line %d\n", *line);
+		return CFSML_FAILURE;
+	}
+	// FIXME: error checking
+	SRSscanf(fh, "songcount = %d\n", &songcount);
+	SRSscanf(fh, "list = \n");
+	SRSscanf(fh, "[\n");
 	*line += 4;
 	song_lib_init(songlib);
 	for (i = 0; i < songcount; i++) {
 		%CFSMLREAD song_tp &newsong FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 		song_lib_add(*songlib, newsong);
 	}  
-	fscanf(fh, "]\n");
-	fscanf(fh, "}\n");;
+	SRSscanf(fh, "]\n");
+	SRSscanf(fh, "}\n");
 	*line += 2;
 	return 0;
 }
@@ -449,17 +526,17 @@ int mem_obj_string_to_enum(const char *str) {
 
 static int bucket_length;
 
-void write_int_hash_map_tp(FILE *fh, int_hash_map_t **foo) {
+void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo) {
 	%CFSMLWRITE int_hash_map_t *foo INTO fh;
 }
 
-void write_song_tp(FILE *fh, song_t **foo) {
+void write_song_tp(Common::WriteStream *fh, song_t **foo) {
 	%CFSMLWRITE song_t *foo INTO fh;
 }
 
 song_iterator_t *build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
 
-int read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
 	char *token;
 	int assignment;
 	*foo = (song_t*) malloc(sizeof(song_t));
@@ -471,27 +548,27 @@ int read_song_tp(FILE *fh, song_t **foo, const char *lastval, int *line, int *hi
 	return 0;
 }
 
-int read_int_hash_map_tp(FILE *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_int_hash_map_tp(Common::SeekableReadStream *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
 	*foo = new int_hash_map_t;
 	%CFSMLREAD int_hash_map_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	(*foo)->holes = NULL;
 	return 0;
 }
 
-void write_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo) {
+void write_int_hash_map_node_tp(Common::WriteStream *fh, int_hash_map_t::node_t **foo) {
 	if (!(*foo)) {
-		fputs("\\null", fh);
+		WSprintf(fh, "\\null");
 	} else {
-		fprintf(fh,"[\n%d=>%d\n", (*foo)->name, (*foo)->value);
+		WSprintf(fh,"[\n%d=>%d\n", (*foo)->name, (*foo)->value);
 		if ((*foo)->next) {
 			%CFSMLWRITE int_hash_map_node_tp &((*foo)->next) INTO fh;
 		} else
-			fputc('L', fh);
-		fputs("]", fh);
+			WSprintf(fh, "L");
+		WSprintf(fh, "]");
 	}
 }
 
-int read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
@@ -505,7 +582,7 @@ int read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char
 		
 		do {
 			(*line)++;
-			fgets(buffer, 80, fh);
+			SRSgets(buffer, 80, fh);
 			if (buffer[0] == 'L') {
 				(*foo)->next = NULL;
 				buffer[0] = buffer[1];
@@ -527,16 +604,16 @@ int read_int_hash_map_node_tp(FILE *fh, int_hash_map_t::node_t **foo, const char
 	return 0;
 }
 
-void write_menubar_tp(FILE *fh, menubar_t **foo) {
+void write_menubar_tp(Common::WriteStream *fh, menubar_t **foo) {
 	if (*foo) {
 		%CFSMLWRITE menubar_t (*foo) INTO fh;
 	} else { // Nothing to write
-		fputs("\\null\\", fh);
+		WSprintf(fh, "\\null\\");
 	}
 }
 
 
-int read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == '\\') {
 		*foo = NULL; // No menu bar
 	} else {
@@ -546,8 +623,8 @@ int read_menubar_tp(FILE *fh, menubar_t **foo, const char *lastval, int *line, i
 	return *hiteof;
 }
 
-void write_mem_obj_t(FILE *fh, mem_obj_t *foo) {
-	fprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);	
+void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
+	WSprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);	
 	%CFSMLWRITE int &foo->segmgr_id INTO fh;
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
@@ -579,7 +656,7 @@ void write_mem_obj_t(FILE *fh, mem_obj_t *foo) {
 	}
 }
 
-int read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
+int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
 	char buffer[80];
 	foo->type = mem_obj_string_to_enum(lastval);
 	if (foo->type < 0) {
@@ -622,15 +699,15 @@ int read_mem_obj_t(FILE *fh, mem_obj_t *foo, const char *lastval, int *line, int
 	return *hiteof;
 }
 
-void write_mem_obj_tp(FILE *fh, mem_obj_t **foo) {
+void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo) {
 	if (*foo) {
 		%CFSMLWRITE mem_obj_t (*foo) INTO fh;
 	} else { // Nothing to write
-		fputs("\\null\\", fh);
+		WSprintf(fh, "\\null\\");
 	}
 }
 
-int read_mem_obj_tp(FILE *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == '\\') {
 		*foo = NULL; // No menu bar
 	} else {
@@ -648,11 +725,22 @@ void _gamestate_unfrob(state_t *s) {
 }
 
 
-int gamestate_save(state_t *s, char *dirname) {
-	FILE *fh;
+int gamestate_save(state_t *s, Common::WriteStream *fh, const char* savename) {
 	sci_dir_t dir;
 	char *filename;
 	int fd;
+
+	tm curTime;
+	g_system->getTimeAndDate(curTime);
+
+	SavegameMetadata *meta = new SavegameMetadata;
+	meta->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
+	meta->savegame_name = savename;
+	meta->version = s->version;
+	meta->game_version = s->game_version;
+	meta->savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta->savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+	fprintf(stderr, "date/time: %d %d\n", meta->savegame_date, meta->savegame_time);
 
 	_global_save_state = s;
 	s->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
@@ -665,22 +753,6 @@ int gamestate_save(state_t *s, char *dirname) {
 		return 1;
 	}
 
-	scimkdir (dirname, 0700);
-
-	if (chdir(dirname)) {
-		sciprintf("Could not enter directory '%s'\n", dirname);
-		return 1;
-	}
-
-	sci_init_dir(&dir);
-	filename = sci_find_first(&dir, "*");
-	while (filename) {
-		if (strcmp(filename, "..") && strcmp(filename, "."))
-			unlink(filename); // Delete all files in directory
-		filename = sci_find_next(&dir);
-	}
-	sci_finish_find(&dir);
-
 /*
 	if (s->sound_server) {
 		if ((s->sound_server->save)(s, dirname)) {
@@ -690,18 +762,15 @@ int gamestate_save(state_t *s, char *dirname) {
 		}
 	}
 */
-	fh = fopen("state", "w" FO_TEXT);
-
 	// Calculate the time spent with this game
 	s->game_time = time(NULL) - s->game_start_time.tv_sec;
 
+	%CFSMLWRITE SavegameMetadata meta INTO fh;
 	%CFSMLWRITE state_t s INTO fh;
 
-	fclose(fh);
+	delete meta;
 
 	_gamestate_unfrob(s);
-
-	chdir("..");
 
 	return 0;
 }
@@ -948,18 +1017,12 @@ static void reconstruct_sounds(state_t *s) {
 	}
 }
 
-state_t *gamestate_restore(state_t *s, char *dirname) {
-	FILE *fh;
+state_t *gamestate_restore(state_t *s, Common::SeekableReadStream *fh) {
 	int fd;
 	int i;
 	int read_eof = 0;
 	state_t *retval;
 	songlib_t temp;
-
-	if (chdir(dirname)) {
-		sciprintf("Game state '%s' does not exist\n", dirname);
-		return NULL;
-	}
 
 /*
 	if (s->sound_server) {
@@ -978,11 +1041,22 @@ state_t *gamestate_restore(state_t *s, char *dirname) {
 	_global_save_state = retval;
 	retval->gfx_state = s->gfx_state;
 
-	fh = fopen("state", "r" FO_TEXT);
-	if (!fh) {
-		free(retval);
+	SavegameMetadata* meta = new SavegameMetadata;
+	memset(retval, 0, sizeof(SavegameMetadata));
+
+	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM fh ERRVAR read_eof;
+	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
+	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
+		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
+			sciprintf("Old savegame version detected- can't load\n");
+		else
+			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
+
+		delete meta;
 		return NULL;
 	}
+
+	delete meta;
 
 	// Backwards compatibility settings
 	retval->dyn_views = NULL;
@@ -994,19 +1068,6 @@ state_t *gamestate_restore(state_t *s, char *dirname) {
 	retval->sound_volume = s->sound_volume;
 
 	%CFSMLREAD-ATOMIC state_t retval FROM fh ERRVAR read_eof;
-
-	fclose(fh);
-
-	if ((retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) || (retval->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
-		if (retval->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
-			sciprintf("Old savegame version detected- can't load\n");
-		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", retval->savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
-
-		chdir("..");
-		free(retval);
-		return NULL;
-	}
 
 	sfx_exit(&s->sound);
 	_gamestate_unfrob(retval);
@@ -1097,7 +1158,27 @@ state_t *gamestate_restore(state_t *s, char *dirname) {
 	retval->sound.debug = s->sound.debug;
 	reconstruct_sounds(retval);
 
-	chdir ("..");
-
 	return retval;
 }
+
+bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata* meta) {
+	int read_eof = 0;
+
+	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM stream ERRVAR read_eof;
+
+	if (read_eof)
+		return false;
+
+	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
+	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
+		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
+			sciprintf("Old savegame version detected- can't load\n");
+		else
+			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
+
+		return false;
+	}
+
+	return true;
+}
+

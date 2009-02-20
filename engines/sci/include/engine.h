@@ -28,6 +28,11 @@
 
 #include "common/scummsys.h"
 
+namespace Common {
+	class SeekableReadStream;
+	class WriteStream;
+}
+
 // FIXME. Remove after transiton to File class
 #include <sys/stat.h>
 
@@ -44,8 +49,8 @@
 #include "sci/include/gfx_state_internal.h"
 #include "sci/include/sfx_engine.h"
 
-#define FREESCI_CURRENT_SAVEGAME_VERSION 7
-#define FREESCI_MINIMUM_SAVEGAME_VERSION 7
+#define FREESCI_CURRENT_SAVEGAME_VERSION 8
+#define FREESCI_MINIMUM_SAVEGAME_VERSION 8
 
 #ifdef WIN32
 #  define FREESCI_GAMEDIR "FreeSCI"
@@ -80,6 +85,16 @@ typedef struct {
 	int nr;
 	int palette;
 } drawn_pic_t;
+
+// Savegame metadata
+struct SavegameMetadata {
+	const char *savegame_name;
+	int savegame_version;
+	char *game_version;
+	sci_version_t version;
+	int savegame_date;
+	int savegame_time;
+};
 
 typedef struct _state {
 	int savegame_version;
@@ -266,19 +281,24 @@ typedef struct _state {
 #define STATE_T_DEFINED
 
 int
-gamestate_save(state_t *s, char *dirname);
+gamestate_save(state_t *s, Common::WriteStream *save, const char *savename);
 /* Saves a game state to the hard disk in a portable way
 ** Parameters: (state_t *) s: The state to save
-**             (char *) dirname: The subdirectory to store it in
+**             (WriteStream *) save: The stream to save to
+**             (char *) savename: The description of the savegame
 ** Returns   : (int) 0 on success, 1 otherwise
 */
 
 state_t *
-gamestate_restore(state_t *s, char *dirname);
+gamestate_restore(state_t *s, Common::SeekableReadStream *save);
 /* Restores a game state from a directory
 ** Parameters: (state_t *) s: An older state from the same game
 **             (char *) dirname: The subdirectory to restore from
 ** Returns   : (state_t *) NULL on failure, a pointer to a valid state_t otherwise
+*/
+
+bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata* meta);
+/* Read the header from a savegame
 */
 
 gfx_pixmap_color_t *

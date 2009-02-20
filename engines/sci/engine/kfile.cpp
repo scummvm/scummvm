@@ -30,8 +30,10 @@
 #endif
 
 #include "common/str.h"
+#include "common/savefile.h"
 
 #include "sci/include/engine.h"
+#include "sci/sci.h"
 
 #include <errno.h>
 
@@ -43,7 +45,8 @@ static int _savegame_indices_nr = -1; // means 'uninitialized'
 
 static struct _savegame_index_struct {
 	int id;
-	long timestamp;
+	int date;
+	int time;
 } _savegame_indices[MAX_SAVEGAME_NR];
 
 // This assumes modern stream implementations. It may break on DOS.
@@ -264,29 +267,6 @@ static void fseek_wrapper(state_t *s, int handle, int offset, int whence) {
 	s->r_acc = make_reg(0, fseek(f, offset, whence));
 }
 
-static char *_chdir_savedir(state_t *s) {
-	char *cwd = sci_getcwd();
-	char *save_dir = kernel_dereference_char_pointer(s, make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR), 0);
-
-	if (chdir(save_dir) && sci_mkpath(save_dir)) {
-		sciprintf(__FILE__": Can't chdir to savegame dir '%s' or create it\n", save_dir);
-		free(cwd);
-		return NULL;
-	}
-
-	if (!cwd)
-		cwd = strdup(s->work_dir);
-
-	return cwd; // Potentially try again
-}
-
-static void _chdir_restoredir(char *dir) {
-	if (chdir(dir)) {
-		sciprintf(__FILE__": Can't seem to return to previous homedir '%s'\n", dir);
-	}
-	free(dir);
-}
-
 #define TEST_DIR_OR_QUIT(dir) if (!dir) { return NULL_REG; }
 
 reg_t kFGets(state_t *s, int funct_nr, int argc, reg_t *argv) {
@@ -314,36 +294,13 @@ reg_t kGetCWD(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-// Returns a dynamically allocated pointer to the name of the requested save dir
-char *_k_get_savedir_name(int nr) {
-	char suffices[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-	char *savedir_name = (char*)sci_malloc(strlen(FREESCI_SAVEDIR_PREFIX) + 2);
-	assert(nr >= 0);
-	assert(nr < MAX_SAVEGAME_NR);
-	strcpy(savedir_name, FREESCI_SAVEDIR_PREFIX);
-	savedir_name[strlen(FREESCI_SAVEDIR_PREFIX)] = suffices[nr];
-	savedir_name[strlen(FREESCI_SAVEDIR_PREFIX) + 1] = 0;
-
-	return savedir_name;
-}
-
 void delete_savegame(state_t *s, int savedir_nr) {
-	char *workdir = _chdir_savedir(s);
-	char *savedir = _k_get_savedir_name(savedir_nr);
-	char buffer[256];
+	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
 
-	sciprintf("Deleting savegame '%s'\n", savedir);
+	sciprintf("Deleting savegame '%s'\n", filename.c_str());
 
-	sprintf(buffer, "%s/%s.id", savedir, s->game_name);
-	sci_unlink(buffer);
-
-	sprintf(buffer, "%s/state", savedir);
-	sci_unlink(buffer);
-
-	sci_rmdir(savedir);
-
-	free(savedir);
-	_chdir_restoredir(workdir);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	saveFileMan->removeSavefile(filename.c_str());
 }
 
 #define K_DEVICE_INFO_GET_DEVICE 0
@@ -553,222 +510,153 @@ int _k_check_file(char *filename, int minfilesize) {
 	return (sci_file_size(filename) < minfilesize);
 }
 
-int _k_find_savegame_by_name(char *game_id_file, char *name) {
-	int savedir_nr = -1;
-	int i;
-	char *buf = NULL;
-
-	for (i = 0; i < MAX_SAVEGAME_NR; i++) {
-		if (!chdir((buf = _k_get_savedir_name(i)))) {
-			char namebuf[32]; // Save game name buffer
-			FILE *idfile = sci_fopen(game_id_file, "r");
-
-			if (idfile) {
-				fgets(namebuf, 31, idfile);
-				if (strlen(namebuf) > 0)
-					if (namebuf[strlen(namebuf) - 1] == '\n')
-						namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newlines
-
-				if (strcmp(name, namebuf) == 0) {
-					sciprintf("Save game name matched entry %d\n", i);
-					savedir_nr = i;
-				}
-				fclose(idfile);
-			}
-			chdir("..");
-		}
-		free(buf);
-	}
-	return 0;
-}
-
-#ifdef __DC__
-static long get_file_mtime(int fd) {
-	/* FIXME (Dreamcast): Not yet implemented */
-	return 0;
-}
-
-#else
-
-#define get_file_mtime(fd) get_file_mtime_Unix(fd)
-/* Returns the time of the specified file's last modification
-** Parameters: (int) fd: The file descriptor of the file in question
-** Returns   : (long) An integer value describing the time of the
-**                    file's last modification.
-** The only thing that must be ensured is that
-** get_file_mtime(f1) > get_file_mtime(f2)
-**   <=>
-** if f1 was modified at a later point in time than the last time
-** f2 was modified.
-*/
-
-static long get_file_mtime_Unix(int fd) {
-	struct stat fd_stat;
-	fstat(fd, &fd_stat);
-
-	return fd_stat.st_ctime;
-}
-#endif
-
 static int _savegame_index_struct_compare(const void *a, const void *b) {
-	return ((struct _savegame_index_struct *)b)->timestamp - ((struct _savegame_index_struct *)a)->timestamp;
+	struct _savegame_index_struct *A = (struct _savegame_index_struct *)a;
+	struct _savegame_index_struct *B = (struct _savegame_index_struct *)b;
+
+	if (B->date != A->date)
+		return B->date - A->date;
+	return B->time - A->time;
 }
 
-static void update_savegame_indices(const char *gfname) {
+static void update_savegame_indices() {
 	int i;
 
 	_savegame_indices_nr = 0;
 
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
 	for (i = 0; i < MAX_SAVEGAME_NR; i++) {
-		char *dirname = _k_get_savedir_name(i);
-		int fd;
-
-		if (!chdir(dirname)) {
-
-			if (IS_VALID_FD(fd = sci_open(gfname, O_RDONLY))) {
-				_savegame_indices[_savegame_indices_nr].id = i;
-				_savegame_indices[_savegame_indices_nr++].timestamp = get_file_mtime(fd);
-				close(fd);
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(i);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta)) {
+				// invalid
+				delete in;
+				continue;
 			}
-			chdir("..");
-		}
+			delete in;
 
-		free(dirname);
+			fprintf(stderr, "Savegame in %s file ok\n", filename.c_str());
+			_savegame_indices[_savegame_indices_nr].id = i;
+			_savegame_indices[_savegame_indices_nr].date = meta.savegame_date;
+			_savegame_indices[_savegame_indices_nr].time = meta.savegame_time;
+			_savegame_indices_nr++;
+		}
 	}
 
 	qsort(_savegame_indices, _savegame_indices_nr, sizeof(struct _savegame_index_struct), _savegame_index_struct_compare);
 }
 
-int test_savegame(state_t *s, char *savegame_id, char *savegame_name, int savegame_name_length) {
-	FILE *f;
-	char buffer[80];
-	int version = -1;
-
-	chdir(savegame_id);
-	f = fopen("state", "r");
-
-	if (!f) return 0;
-	while (!feof(f)) {
-		char *seeker;
-		fgets(buffer, sizeof(buffer), f);
-		if ((seeker = strstr(buffer, "savegame_version = ")) != NULL) {
-			seeker += strlen("savegame_version = ");
-			version = strtol(seeker, NULL, 10);
-			break;
-		}
-	}
-
-	fclose(f);
-	return version >= FREESCI_MINIMUM_SAVEGAME_VERSION && version <= FREESCI_CURRENT_SAVEGAME_VERSION;
-}
-
 reg_t kCheckSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
+	//char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
-	char *buf = NULL;
-	char *workdir = _chdir_savedir(s);
-	TEST_DIR_OR_QUIT(workdir);
 
 	if (_savegame_indices_nr < 0) {
-		char *game_id_file_name = (char*)sci_malloc(strlen(game_id) + strlen(FREESCI_ID_SUFFIX) + 1);
-
-		strcpy(game_id_file_name, game_id);
-		strcat(game_id_file_name, FREESCI_ID_SUFFIX);
 		warning("Savegame index list not initialized");
-		update_savegame_indices(game_id_file_name);
+		update_savegame_indices();
 	}
 
 	savedir_nr = _savegame_indices[savedir_nr].id;
 
 	if (savedir_nr > MAX_SAVEGAME_NR - 1) {
-		_chdir_restoredir(workdir);
 		return NULL_REG;
 	}
 
-	s->r_acc = make_reg(0, test_savegame(s, (buf = _k_get_savedir_name(savedir_nr)), NULL, 0));
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+	Common::SeekableReadStream *in;
+	if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+		// found a savegame file
 
-	_chdir_restoredir(workdir);
-	free(buf);
+		SavegameMetadata meta;
+		if (!get_savegame_metadata(in, &meta)) {
+			// invalid
+			s->r_acc = make_reg(0, 0);
+		} else {
+			s->r_acc = make_reg(0, 1);
+		}
+		delete in;
+	} else {
+		s->r_acc = make_reg(0, 1);
+	}
 
 	return s->r_acc;
 }
 
 reg_t kGetSaveFiles(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
+	//char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *nametarget = kernel_dereference_char_pointer(s, argv[1], 0);
 	reg_t nametarget_base = argv[1];
 	reg_t *nameoffsets = kernel_dereference_reg_pointer(s, argv[2], 0);
-	int gfname_len = strlen(game_id) + strlen(FREESCI_ID_SUFFIX) + 1;
-	char *gfname = (char*)sci_malloc(gfname_len);
 	int i;
-	char *workdir = _chdir_savedir(s);
-	TEST_DIR_OR_QUIT(workdir);
 
-	strcpy(gfname, game_id);
-	strcat(gfname, FREESCI_ID_SUFFIX); // This file is used to identify in-game savegames
-
-	update_savegame_indices(gfname);
+	update_savegame_indices();
 
 	s->r_acc = NULL_REG;
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	for (i = 0; i < _savegame_indices_nr; i++) {
-		char *savedir_name = _k_get_savedir_name(_savegame_indices[i].id);
-		FILE *idfile;
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(_savegame_indices[i].id);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+			// found a savegame file
 
-		if (!chdir(savedir_name)) {
-			if ((idfile = sci_fopen(gfname, "r"))) { // Valid game ID file: Assume valid game
-				char namebuf[SCI_MAX_SAVENAME_LENGTH]; // Save game name buffer
-				fgets(namebuf, SCI_MAX_SAVENAME_LENGTH - 1, idfile);
-				if (strlen(namebuf) > 0) {
-					if (namebuf[strlen(namebuf) - 1] == '\n')
-						namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newline
-
-					*nameoffsets = s->r_acc; // Store savegame ID
-					++s->r_acc.offset; // Increase number of files found
-
-					nameoffsets++; // Make sure the next ID string address is written to the next pointer
-					strncpy(nametarget, namebuf, SCI_MAX_SAVENAME_LENGTH); // Copy identifier string
-					*(nametarget + SCI_MAX_SAVENAME_LENGTH - 1) = 0; // Make sure it's terminated
-					nametarget += SCI_MAX_SAVENAME_LENGTH; // Increase name offset pointer accordingly
-					nametarget_base.offset += SCI_MAX_SAVENAME_LENGTH;
-					fclose(idfile);
-				}
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta)) {
+				// invalid
+				delete in;
+				continue;
 			}
-			chdir("..");
+
+			char namebuf[SCI_MAX_SAVENAME_LENGTH]; // Save game name buffer
+			strncpy(namebuf, meta.savegame_name, SCI_MAX_SAVENAME_LENGTH);
+			namebuf[SCI_MAX_SAVENAME_LENGTH-1] = 0;
+			
+			if (strlen(namebuf) > 0) {
+				if (namebuf[strlen(namebuf) - 1] == '\n')
+					namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newline
+
+				*nameoffsets = s->r_acc; // Store savegame ID
+				++s->r_acc.offset; // Increase number of files found
+
+				nameoffsets++; // Make sure the next ID string address is written to the next pointer
+				strncpy(nametarget, namebuf, SCI_MAX_SAVENAME_LENGTH); // Copy identifier string
+				*(nametarget + SCI_MAX_SAVENAME_LENGTH - 1) = 0; // Make sure it's terminated
+				nametarget += SCI_MAX_SAVENAME_LENGTH; // Increase name offset pointer accordingly
+				nametarget_base.offset += SCI_MAX_SAVENAME_LENGTH;
+			}
+			delete in;
 		}
-		free(savedir_name);
 	}
 
-	free(gfname);
+	//free(gfname);
 	*nametarget = 0; // Terminate list
 
-	_chdir_restoredir(workdir);
 	return s->r_acc;
 }
 
 reg_t kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
-	char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
-	char *savegame_dir;
+	//char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
 	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
-	char *game_id_file_name = (char*)sci_malloc(strlen(game_id) + strlen(FREESCI_ID_SUFFIX) + 1);
 	char *game_description = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
-	char *workdir = _chdir_savedir(s);
 	char *version = argc > 3 ? strdup((char*)kernel_dereference_bulk_pointer(s, argv[3], 0)) : NULL;
-	TEST_DIR_OR_QUIT(workdir);
 
 	s->game_version = version;
 
-	strcpy(game_id_file_name, game_id);
-	strcat(game_id_file_name, FREESCI_ID_SUFFIX);
+	update_savegame_indices();
 
-	update_savegame_indices(game_id_file_name);
+	fprintf(stderr, "savedir_nr = %d\n", savedir_nr);
 
 	if (savedir_nr >= 0 && savedir_nr < _savegame_indices_nr)
 		// Overwrite
 		savedir_id = _savegame_indices[savedir_nr].id;
 	else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
 		int i = 0;
+
+		fprintf(stderr, "searching for hole\n");
 
 		savedir_id = 0;
 
@@ -790,31 +678,29 @@ reg_t kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	savegame_dir = _k_get_savedir_name(savedir_id);
+	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_id);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::OutSaveFile *out;
+	if (!(out = saveFileMan->openForSaving(filename.c_str()))) {
+		sciprintf("Error opening savegame \"%s\" for writing\n", filename.c_str());
+		s->r_acc = NULL_REG;
+		return NULL_REG;
+	}
 
-	if (gamestate_save(s, savegame_dir)) {
+	if (gamestate_save(s, out, game_description)) {
 		sciprintf("Saving the game failed.\n");
 		s->r_acc = NULL_REG;
 	} else {
-		FILE *idfile;
-
-		chdir(savegame_dir);
-
-		if ((idfile = sci_fopen(game_id_file_name, "w"))) {
-			fprintf(idfile, "%s", game_description);
-			fclose(idfile);
-		} else {
-			sciprintf("Creating the game ID file failed.\n");
-			sciprintf("You can still restore from inside the debugger with \"restore_game %s\"\n", savegame_dir);
+		out->finalize();
+		if (out->err()) {
+			delete out;
+			sciprintf("Writing the savegame failed.\n");
 			s->r_acc = NULL_REG;
+		} else {
+			delete out;
+			s->r_acc = make_reg(0, 1);
 		}
-
-		chdir("..");
-		s->r_acc = make_reg(0, 1);
 	}
-	free(game_id_file_name);
-	_chdir_restoredir(workdir);
-
 	free(s->game_version);
 	s->game_version = NULL;
 
@@ -824,39 +710,38 @@ reg_t kSaveGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kRestoreGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
-	char *workdir = _chdir_savedir(s);
-	TEST_DIR_OR_QUIT(workdir);
 
 	if (_savegame_indices_nr < 0) {
-		char *game_id_file_name = (char*)sci_malloc(strlen(game_id) + strlen(FREESCI_ID_SUFFIX) + 1);
-
-		strcpy(game_id_file_name, game_id);
-		strcat(game_id_file_name, FREESCI_ID_SUFFIX);
 		warning("Savegame index list not initialized");
-		update_savegame_indices(game_id_file_name);
+		update_savegame_indices();
 	}
 
 	savedir_nr = _savegame_indices[savedir_nr].id;
 
 	if (savedir_nr > -1) {
-		char *savedir_name = _k_get_savedir_name(savedir_nr);
-		state_t *newstate = gamestate_restore(s, savedir_name);
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+			// found a savegame file
 
-		free(savedir_name);
-		if (newstate) {
-			s->successor = newstate;
-			script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
-			s->execution_stack_pos = s->execution_stack_base;
-		} else {
-			s->r_acc = make_reg(0, 1);
-			sciprintf("Restoring failed (game_id = '%s').\n", game_id);
+			state_t *newstate = gamestate_restore(s, in);
+			delete in;
+
+			if (newstate) {
+				s->successor = newstate;
+				script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
+				s->execution_stack_pos = s->execution_stack_base;
+			} else {
+				s->r_acc = make_reg(0, 1);
+				sciprintf("Restoring failed (game_id = '%s').\n", game_id);
+			}
+			return s->r_acc;
 		}
-	} else {
-		s->r_acc = make_reg(0, 1);
-		sciprintf("Savegame #%d not found", savedir_nr);
 	}
 
-	_chdir_restoredir(workdir);
+	s->r_acc = make_reg(0, 1);
+	sciprintf("Savegame #%d not found!\n", savedir_nr);
 
 	return s->r_acc;
 }
