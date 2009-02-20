@@ -74,7 +74,6 @@ MODULE_OBJS = \
 	sfx/time.o \
 	sfx/timer.o \
 	sfx/device/devices.o \
-	sfx/mixer/mixers.o \
 	sfx/mixer/soft.o \
 	sfx/player/players.o \
 	sfx/player/polled.o \

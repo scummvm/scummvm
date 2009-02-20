@@ -122,4 +122,6 @@ sfx_pcm_find_mixer(char *name);
 
 extern sfx_pcm_mixer_t *mixer; /* _THE_ global pcm mixer */
 
+sfx_pcm_mixer_t* getMixer();
+
 #endif /* !defined(_SFX_MIXER_H_) */

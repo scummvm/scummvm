@@ -445,7 +445,7 @@ sfx_init(sfx_state_t *self, resource_mgr_t *resmgr, int flags) {
 		return;
 	}
 
-	mixer = sfx_pcm_find_mixer(NULL);
+	mixer = getMixer();
 	pcm_device = &sfx_pcm_driver_scummvm;
 	player = sfx_find_player(NULL);
 

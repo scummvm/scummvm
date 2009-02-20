@@ -968,3 +968,5 @@ sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear = {
 	NULL,
 	NULL
 };
+
+sfx_pcm_mixer_t* getMixer() { return &sfx_pcm_mixer_soft_linear; }
