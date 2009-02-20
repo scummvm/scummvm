@@ -938,7 +938,7 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			error("[CUE] "PREG" Absolute Cue: %d\n",
+			warning("[CUE] "PREG" Absolute Cue: %d",
 			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
