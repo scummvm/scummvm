@@ -344,4 +344,13 @@ gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
 **             if a static palette must be used, NULL otherwise
 */
 
+int
+gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
+/* Determines whether support for pointers with more than two colors is required
+** Parameters: (int) version: Interpreter version to test for
+**             (void *) internal: Internal information provided by the interpreter
+** Returns   : (int) 0 if no support for multi-colored pointers is required, non-0
+**                   otherwise
+*/
+
 #endif /* !_GFX_RSMGR_H_ */

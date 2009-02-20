@@ -319,4 +319,10 @@ gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
 	}
 }
 
+int
+gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
+	return (version > SCI_VERSION_1);
+}
+
+
 
