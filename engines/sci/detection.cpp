@@ -195,7 +195,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "8613c45fc771d658e5a505b9a4a54f31", 670883},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 685)		// verified
+		SCI_VERSION(0, 000, 685)
 	},
 
 #if 0
@@ -215,7 +215,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Conquests of Camelot - English DOS
 	{{"camelot", "", {
 		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
@@ -227,7 +226,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 685)
 	},
-#endif
 
 #if 0
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
@@ -273,7 +271,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1284609},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 000, 168)		// verified
+		SCI_VERSION(1, 000, 168)
 	},
 
 #if 0
@@ -325,6 +323,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// Gabriel Knight - English DOS Floppy
+	{{"gk1", "", {
+		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10783},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 000, 000)
+	},
 
 #if 0
 	// Gabriel Knight - English DOS CD
@@ -501,7 +508,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 274)		// verified
+		SCI_VERSION(0, 000, 274)
 	},
 
 #if 0
@@ -547,7 +554,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "2f48faf27666b58c276dda20f91f4a93", 1240456},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 000, 60)		// verified
+		SCI_VERSION(1, 000, 60)
 	},
 
 #if 0
@@ -583,7 +590,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "f2b7f753992c56a0c7a08d6a5077c895", 7863324},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 1, 54)		// verified
+		SCI_VERSION(1, 1, 54)
 	},
 
 	// King's Quest 7 - English DOS
@@ -652,6 +659,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
 	},
 #endif
+
+	// Laura Bow 2 - English DOS Floppy
+	{{"laurabow2", "", {
+		{"resource.map", 0, "610bfd9a852004222f0faaf5fc9e630a", 6489},
+		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5035964},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 000, 274)
+	},
 
 #if 0
 	// Laura Bow 2 - English DOS CD (from "The Roberta Williams Antology"/1996)
@@ -1092,7 +1108,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 490)	// verified
+		SCI_VERSION(0, 000, 490)
 	},
 
 #if 0
@@ -1136,6 +1152,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Police Quest 4 - English DOS
+	{{"pq4", "", {
+		{"resource.map", 0, "aed9643158ccf01b71f359db33137f82", 9895},
+		{"resource.000", 0, "da383857b3be1e4514daeba2524359e0", 15141432},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 000, 000)
+	},
+
 #if 0
 	// Quest for Glory 1 - English Amiga (from www.back2roots.org)
 	{{"qfg1", "", {
@@ -1167,6 +1192,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Quest for Glory 1 - English DOS
+	{{"qfg1", "", {
+		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
+		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 000, 411)
+	},
+
 #if 0
 	// Quest for Glory 2 - English Amiga (from www.back2roots.org)
 	{{"qfg2", "", {
@@ -1184,6 +1218,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// Quest for Glory 3 - English DOS
+	{{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868000},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 1, 50)
+	},
 
 #if 0
 	// Quest for Glory 3 - Spanish DOS
@@ -1207,14 +1250,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Quest for Glory 4 - English DOS/Windows
+	{{"qfg4", "", {
+		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
+		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 100, 2)
+	},
+
 #if 0
+	// NOTE: This version looks to be exactly the same as the English one
+	// Perhaps it's the English one?
+
 	// Quest for Glory 4 - German DOS/Windows (from PCJoker 2/98)
 	{{"qfg4", "", {
 		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(2, 100, 002)
+		SCI_VERSION(2, 100, 2)
 	},
 #endif
 
@@ -1349,7 +1404,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Space Quest 3 - English DOS
 	{{"sq3", "", {
 		{"resource.map", 0, "55e91aeef1705bce2a9b79172682f36d", 5730},
@@ -1358,9 +1412,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 703370},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
+		SCI_VERSION(0, 000, 685)
 	},
-#endif
 
 #if 0
 	// Space Quest 3 - German DOS (from Tobis87)
@@ -1426,7 +1479,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 5502009},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 000, 753)		// verified
+		SCI_VERSION(1, 000, 753)
 	},
 
 #if 0
@@ -1502,6 +1555,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// Space Quest 5 - English DOS
+	{{"sq5", "", {
+		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c983", 6473},
+		{"resource.000", 0, "f4a48705764544d7cc64a7bb22a610df", 6025184},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 1, 67)
+	},
 
 #if 0
 	// Space Quest 5 - German DOS (from Tobis87)
