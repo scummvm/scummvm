@@ -131,7 +131,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 453)
 	},
 
-#if 0
 	// Castle of Dr. Brain - English Amiga (from www.back2roots.org)
 	{{"castlebrain", "", {
 		{"resource.map", 0, "9f9fb826aa7e944b95eadbf568244a68", 2766},
@@ -143,9 +142,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
 
-#if 0
 	// Castle of Dr. Brain - German Amiga (from www.back2roots.org)
 	{{"castlebrain", "", {
 		{"resource.map", 0, "8e60424682db52a982bcc3535a7e86f3", 2796},
@@ -157,7 +154,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
 
 #if 0
 	// Castle of Dr. Brain - Spanish DOS
@@ -198,7 +194,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685)
 	},
 
-#if 0
 	// Conquests of Camelot - English Amiga (from www.back2roots.org)
 	{{"camelot", "", {
 		{"resource.map", 0, "51aba42f8e63b219755d4372ea424509", 6654},
@@ -213,7 +208,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(0, 000, 685)
 	},
-#endif
 
 	// Conquests of Camelot - English DOS
 	{{"camelot", "", {
@@ -227,7 +221,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685)
 	},
 
-#if 0
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
 	{{"longbow", "", {
 		{"resource.map", 0, "6204f3d00c0f6c0f5f95a29a4190f2f9", 6048},
@@ -242,7 +235,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
 
 #if 0
 	// Conquests of the Longbow - English DOS
