@@ -51,7 +51,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"hoyle3",          "Hoyle's Official Book of Games: Volume 3"},
 	{"jones",           "Jones in the Fast Lane"},
 	{"kq1sci",          "King's Quest I: Quest for the Crown"},
-	{"kq4",             "King's Quest IV: The Perils of Rosella"},
+	{"kq4sci",          "King's Quest IV: The Perils of Rosella"},
 	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
@@ -501,7 +501,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// King's Quest 4 - English Amiga (from www.back2roots.org)
-	{{"kq4", "", {
+	{{"kq4sci", "", {
 		{"resource.map", 0, "f88dd267fb9504d40a04d599c048d42b", 6354},
 		{"resource.000", 0, "77615c595388acf3d1df8e107bfb6b52", 138523},
 		{"resource.001", 0, "52c2231765eced34faa7f7bcff69df83", 44751},
@@ -514,7 +514,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// King's Quest 4 - English DOS
-	{{"kq4", "", {
+	{{"kq4sci", "", {
 		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
 		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
 		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
@@ -526,7 +526,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// King's Quest 4 - English DOS
-	{{"kq4", "", {
+	{{"kq4sci", "", {
 		{"resource.map", 0, "adbe267662a5915d3c89c9075ec8cf3e", 9474},
 		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 188239},
 		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 329895},
