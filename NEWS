@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
-0.13.0 (2009-02-29)
+0.13.0 (2009-02-28)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
    - Added a 'Load' button to the Launcher (not supported by all engines).
