@@ -119,7 +119,7 @@ static FILE *f_open_mirrored(state_t *s, char *fname) {
 		int ret;
 		ret = write(fd, buf, fsize);
 		if (ret < fsize) {
-			sciprintf("kfile.c: f_open_mirrored(): Warning: Could not write all %ld bytes to '%s' in '%s' (only wrote %ld)\n",
+			sciprintf("kfile.c: f_open_mirrored(): Warning: Could not write all %ld bytes to '%s' in '%s' (only wrote %d)\n",
 			          (long)fsize, fname, s->work_dir, ret);
 		}
 

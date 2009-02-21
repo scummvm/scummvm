@@ -221,7 +221,7 @@ reg_t get_class_address(state_t *s, int classnr, int lock, reg_t caller) {
 
 			if (!the_class->reg.segment) {
 				sciprintf("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
-				          " Entering debugger.\n", classnr, the_class->script);
+				          " Entering debugger.\n", classnr, the_class->script, the_class->script);
 				script_error_flag = script_debug_flag = 1;
 				return NULL_REG;
 			}
@@ -1648,7 +1648,7 @@ reg_t script_lookup_export(state_t *s, int script_nr, int export_index) {
 #ifndef DISABLE_VALIDATIONS
 	if (!seg) {
 		CORE_ERROR("EXPORTS", "Script invalid or not loaded");
-		sciprintf("Script was script.03d (0x%x)\n",
+		sciprintf("Script was script.%03d (0x%x)\n",
 		          script_nr, script_nr);
 		return NULL_REG;
 	}

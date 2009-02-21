@@ -1076,7 +1076,7 @@ void sm_script_initialise_locals(seg_manager_t *self, reg_t location) {
 	scr->locals_offset = location.offset;
 
 	if (!(location.offset + count * 2 + 1 < scr->buf_size)) {
-		sciprintf("Locals extend beyond end of script: offset %04x, count %x vs size %x\n", location.offset, count, scr->buf_size);
+		sciprintf("Locals extend beyond end of script: offset %04x, count %x vs size %x\n", location.offset, count, (uint)scr->buf_size);
 		count = (scr->buf_size - location.offset) >> 1;
 	}
 
@@ -1329,7 +1329,7 @@ byte *sm_dereference(seg_manager_t *self, reg_t pointer, int *size) {
 	case MEM_OBJ_SCRIPT:
 		if (pointer.offset > mobj->data.script.buf_size) {
 			sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
-			          PRINT_REG(pointer), mobj->data.script.buf_size);
+			          PRINT_REG(pointer), (uint)mobj->data.script.buf_size);
 			return NULL;
 		}
 		if (size)
@@ -1363,7 +1363,7 @@ byte *sm_dereference(seg_manager_t *self, reg_t pointer, int *size) {
 		}
 
 	case MEM_OBJ_RESERVED:
-		sciprintf("Error: Trying to dereference pointer "PREG" to reserved segment `%s'", mobj->data.reserved);
+		sciprintf("Error: Trying to dereference pointer "PREG" to reserved segment `%s'", PRINT_REG(pointer), mobj->data.reserved);
 		return NULL;
 		break;
 

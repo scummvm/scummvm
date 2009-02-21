@@ -394,7 +394,7 @@ static void _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 	case MEM_OBJ_SCRIPT: {
 		int i;
 		script_t *scr = &(mobj->data.script);
-		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, scr->buf_size, scr->buf_size);
+		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
 		if (scr->export_table)
 			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, ((byte *)scr->export_table) - ((byte *)scr->buf));
 		else
@@ -629,7 +629,7 @@ static int c_vr(state_t *s) {
 			break;
 
 		default:
-			sciprintf("unknown.\n", type);
+			sciprintf("unknown type %d.\n", type);
 
 		}
 
@@ -1364,7 +1364,7 @@ reg_t disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
-			sciprintf(opsize ? " %02x  [%04x]" : " %04x", param_value);
+			sciprintf(opsize ? " %02x" : " %04x", param_value);
 			break;
 
 		case Script_SRelative:
@@ -2653,7 +2653,7 @@ int c_bpe(state_t *s) {
 int c_bplist(state_t *s) {
 	breakpoint_t *bp;
 	int i = 0;
-	long bpdata;
+	int bpdata;
 
 	bp = s->bp_list;
 	while (bp) {

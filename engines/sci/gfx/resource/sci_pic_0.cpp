@@ -1832,7 +1832,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				if (!pic->internal) {
 					pic->internal = sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%08x); this only occurs with overlaid pics, otherwise it's a bug", pic->internal);
+					GFXERROR("pic->internal is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", pic->internal);
 				}
 
 				pri_table = (int*)pic->internal;
@@ -1854,7 +1854,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size,
 				if (!pic->internal) {
 					pic->internal = sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%08x); possible memory corruption", pic->internal);
+					GFXERROR("pic->internal is not NULL (%p); possible memory corruption", pic->internal);
 				}
 
 				pri_table = (int*)pic->internal;

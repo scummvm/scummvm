@@ -889,7 +889,7 @@ _gfxwop_some_view_print(gfxw_widget_t *widget, int indentation, const char *type
 	_gfxw_print_widget(widget, indentation);
 
 	sciprintf(type_string);
-	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%04x]", view->force_precedence, view->z,
+	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%p]", view->force_precedence, view->z,
 	          view->sequence, view->view, view->loop, view->cel, view->pos.x, view->pos.y,
 	          (view->color.mask & GFX_MASK_PRIORITY) ? view->color.priority : -1,
 	          (view->color.mask & GFX_MASK_CONTROL) ? view->color.control : -1,
@@ -1973,7 +1973,7 @@ _gfxwop_port_free(gfxw_widget_t *widget) {
 
 		if (visual->port_refs[ID] != port) {
 			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p",
-			        ID, port, visual->port_refs[ID]);
+			        ID, (void *)port, (void *)visual->port_refs[ID]);
 		} else visual->port_refs[ID] = NULL;
 
 	}

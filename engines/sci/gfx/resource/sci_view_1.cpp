@@ -388,7 +388,7 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 		int loop_offset = get_uint_16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
 
 		if (loop_offset >= size) {
-			GFXERROR("View %04x:(%d) supposed to be at illegal offset 0x%04x\n", id, i);
+			GFXERROR("View %04x:(%d) supposed to be at illegal offset 0x%04x\n", id, i, loop_offset);
 			error_token = 1;
 		}
 

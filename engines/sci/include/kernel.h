@@ -154,7 +154,7 @@ is_object(struct _state *s, reg_t obj);
 void
 _SCIkvprintf(FILE *file, const char *format, va_list args);
 void
-_SCIkprintf(FILE *file, const char *format, ...);
+_SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
 
 
 

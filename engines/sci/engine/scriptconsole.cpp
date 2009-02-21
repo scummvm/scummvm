@@ -754,7 +754,7 @@ static void _cmd_print_command(cmd_mm_entry_t *data, int full) {
 	const char *paramseeker = ((cmd_command_t *)data)->param;
 
 	if (full) {
-		sciprintf("SYNOPSIS\n\n  %s ", data->name, paramseeker);
+		sciprintf("SYNOPSIS\n\n  %s (%s) ", data->name, paramseeker);
 
 		while (*paramseeker) {
 			switch (*paramseeker) {

@@ -699,8 +699,7 @@ void kernel_compile_signature(const char **s) {
 		v = 0;
 
 		if (ellipsis) {
-			sciprintf("INTERNAL ERROR when compiling kernel function signature '%s': non-terminal ellipsis\n", *s, *src);
-			exit(1);
+			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'\n", *s, *src);
 		}
 
 		do {
