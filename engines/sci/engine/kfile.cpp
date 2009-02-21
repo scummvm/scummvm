@@ -24,6 +24,7 @@
  */
 
 #ifdef WIN32
+#  include <sys/stat.h>		// for S_IREAD/S_IWRITE
 #  include <windows.h>
 #elif defined (__DC__)
 #  include <dc.h>
