@@ -960,12 +960,12 @@ void TuckerEngine::loadActionsTable() {
 				found = t.findNextToken(kDataTokenDw);
 				assert(found);
 			}
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 1;
 			setCursorType(2);
 			_tableInstructionsPtr = _csDataBuf + t._pos + 1;
 			_csDataLoaded = true;
-			_csDataHandled = 1;
+			_csDataHandled = true;
 			debug(2, "loadActionsTable() _nextAction %d", _nextAction);
 		}
 		if (_csDataTableFlag2 == 1 && _charSpeechSoundCounter > 0) {
@@ -982,11 +982,11 @@ void TuckerEngine::loadActionsTable() {
 			--_stopActionCounter;
 			break;
 		}
-		if (_stopActionOnSoundFlag != 0) {
+		if (_stopActionOnSoundFlag) {
 			if (isSoundPlaying(_soundInstructionIndex)) {
 				break;
 			}
-			_stopActionOnSoundFlag = 0;
+			_stopActionOnSoundFlag = false;
 		}
 		if (_csDataTableCount != 0) {
 			if (_csDataTableCount == 99) {
@@ -1025,10 +1025,10 @@ void TuckerEngine::loadActionsTable() {
 	if (table == 2) {
 		_nextAction = 0;
 		_csDataLoaded = false;
-		_forceRedrawPanelItems = 1;
+		_forceRedrawPanelItems = true;
 		_panelState = 0;
 		setCursorType(0);
-		_csDataHandled = 0;
+		_csDataHandled = false;
 		_skipPanelObjectUnderCursor = 0;
 		_mouseClick = 1;
 	}

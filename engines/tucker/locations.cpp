@@ -154,7 +154,7 @@ void TuckerEngine::updateSprite_locationNum2() {
 		_spritesTable[0].needUpdate = 1;
 		return;
 	}
-	if (_csDataHandled != 0) {
+	if (_csDataHandled) {
 		_spritesTable[0].needUpdate = 0;
 		if (_flagsTable[199] == 0) {
 			_flagsTable[199] = 1;
@@ -288,7 +288,7 @@ void TuckerEngine::updateSprite_locationNum3_1(int i) {
 		}
 	} else {
 		_spritesTable[i].needUpdate = 0;
-		if (_csDataHandled != 0) {
+		if (_csDataHandled) {
 			num = 6;
 			if (getRandomNumber() < 32000) {
 				_spritesTable[i].updateDelay = 5;
@@ -1402,7 +1402,7 @@ void TuckerEngine::execData3PreUpdate_locationNum22() {
 			_flagsTable[53] = 5;
 		}
 	}
-	if (_flagsTable[210] < 2 && _csDataHandled == 0 && _flagsTable[54] == 1) {
+	if (_flagsTable[210] < 2 && !_csDataHandled && _flagsTable[54] == 1) {
 		_nextAction = 25;
 		_csDataLoaded = 0;
 		_flagsTable[210] = 2;
@@ -3029,11 +3029,11 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 		_execData3Counter = 1;
 		_flagsTable[143] = 0;
 		_updateLocation70StringLen = 0;
-		_forceRedrawPanelItems = 1;
+		_forceRedrawPanelItems = true;
 		_panelState = 1;
 		setCursorType(2);
 	}
-	_forceRedrawPanelItems = 1;
+	_forceRedrawPanelItems = true;
 	_panelState = 1;
 	setCursorType(2);
 	int pos = getPositionForLine(22, _infoBarBuf);

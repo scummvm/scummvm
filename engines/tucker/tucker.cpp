@@ -181,11 +181,11 @@ void TuckerEngine::restart() {
 	memset(_inputKeys, 0, sizeof(_inputKeys));
 	_cursorNum = 0;
 	_cursorType = 0;
-	_updateCursorFlag = 0;
+	_updateCursorFlag = false;
 
 	_panelNum = 1;
 	_panelState = 0;
-	_forceRedrawPanelItems = 1;
+	_forceRedrawPanelItems = true;
 	_redrawPanelItemsCounter = 0;
 	_switchPanelFlag = 0;
 	memset(_panelObjectsOffsetTable, 0, sizeof(_panelObjectsOffsetTable));
@@ -243,8 +243,8 @@ void TuckerEngine::restart() {
 	_actionCharacterNum = 0;
 
 	_csDataLoaded = false;
-	_csDataHandled = 0;
-	_stopActionOnSoundFlag = 0;
+	_csDataHandled = false;
+	_stopActionOnSoundFlag = false;
 	_csDataTableFlag2 = 0;
 	_stopActionOnPanelLock = 0;
 	_csDataTableCount = 0;
@@ -259,7 +259,7 @@ void TuckerEngine::restart() {
 	_tableInstructionFlag = 0;
 	_tableInstructionItemNum1 = _tableInstructionItemNum2 = 0;
 	memset(_instructionsActionsTable, 0, sizeof(_instructionsActionsTable));
-	_validInstructionId = 0;
+	_validInstructionId = false;
 
 	memset(_spriteFramesTable, 0, sizeof(_spriteFramesTable));
 	memset(_spriteAnimationsTable, 0, sizeof(_spriteAnimationsTable));
@@ -921,7 +921,7 @@ void TuckerEngine::updateFlagsForCharPosition() {
 			_flagsTable[_charPositionFlagNum] = _charPositionFlagValue;
 		} else if (_updateCharPositionType == 6 && _charPositionFlagValue == 1) {
 			addObjectToInventory(_charPositionFlagNum);
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 		}
 		if (_pendingActionIndex > 0) {
 			_nextAction = _pendingActionIndex;
@@ -982,17 +982,17 @@ void TuckerEngine::updateCursor() {
 		return;
 	}
 	if (_rightMouseButtonPressed) {
-		if (_updateCursorFlag == 0) {
+		if (!_updateCursorFlag) {
 			++_actionVerb;
 			if (_actionVerb > 8) {
 				_actionVerb = 0;
 			}
-			_updateCursorFlag = 1;
+			_updateCursorFlag = true;
 			_skipPanelObjectUnderCursor = 1;
 			_actionRequiresTwoObjects = false;
 		}
 	} else {
-		_updateCursorFlag = 0;
+		_updateCursorFlag = false;
 	}
 	if (_skipPanelObjectUnderCursor == 0) {
 		setActionVerbUnderCursor();
@@ -1285,19 +1285,19 @@ void TuckerEngine::saveOrLoad() {
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 154 && _mousePosY < 170) {
 			if (_currentSaveLoadGameState < 99) {
 				++_currentSaveLoadGameState;
-				_forceRedrawPanelItems = 1;
+				_forceRedrawPanelItems = true;
 			}
 			return;
 		}
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 170 && _mousePosY < 188) {
 			if (_currentSaveLoadGameState > 1) {
 				--_currentSaveLoadGameState;
-				_forceRedrawPanelItems = 1;
+				_forceRedrawPanelItems = true;
 			}
 			return;
 		}
 		if (_mousePosX > 244 && _mousePosX < 310 && _mousePosY > 170 && _mousePosY < 188) {
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 2;
 			return;
 		}
@@ -1307,7 +1307,7 @@ void TuckerEngine::saveOrLoad() {
 			} else if (_currentSaveLoadGameState > 0) {
 				loadGameState(_currentSaveLoadGameState);
 			}
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 0;
 			setCursorType(0);
 			return;
@@ -1329,14 +1329,14 @@ void TuckerEngine::handleMouseOnPanel() {
 		}
 		if (_mousePosX < 96) {
 			_saveOrLoadGamePanel = 0;
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 3;
 		} else if (_mousePosX < 158) {
 			_saveOrLoadGamePanel = 1;
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 3;
 		} else if (_mousePosX < 218) {
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 0;
 			setCursorType(0);
 		} else {
@@ -1366,7 +1366,7 @@ void TuckerEngine::switchPanelType() {
 			}
 			_switchPanelFlag = 2;
 			loadPanel();
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 		} else {
 			++_switchPanelCounter;
 		}
@@ -1435,7 +1435,7 @@ void TuckerEngine::updateScreenScrolling() {
 	int scrollPrevOffset = _scrollOffset;
 	if (_locationWidthTable[_locationNum] != 2) {
 		_scrollOffset = 0;
-	} else if (_validInstructionId == 1) {
+	} else if (_validInstructionId) {
 		_scrollOffset = _xPosCurrent - 200;
 	} else if (_locationNum == 16 && _backgroundSpriteCurrentAnimation == 6 && _scrollOffset + 200 < _xPosCurrent) {
 		++_scrollOffset;
@@ -1810,8 +1810,8 @@ void TuckerEngine::redrawPanelItems() {
 	const uint8 *src = 0;
 	uint8 *dst = 0;
 	int sz = 0;
-	if (_forceRedrawPanelItems != 0 || (_redrawPanelItemsCounter != 0 && _panelState == 0)) {
-		_forceRedrawPanelItems = 0;
+	if (_forceRedrawPanelItems || (_redrawPanelItemsCounter != 0 && _panelState == 0)) {
+		_forceRedrawPanelItems = false;
 		if (_redrawPanelItemsCounter > 0) {
 			--_redrawPanelItemsCounter;
 		}
@@ -2133,7 +2133,7 @@ void TuckerEngine::updateCharacterAnimation() {
 	if (frame == 999 || (_characterFacingDirection != _characterPrevFacingDirection && _characterFacingDirection < 5)) {
 		_mirroredDrawing = 0;
 		if (_characterFacingDirection == 6) {
-			if (_csDataHandled != 0) {
+			if (_csDataHandled) {
 				switch (_selectedCharacterDirection) {
 				case 1:
 					num = 17;
@@ -2157,7 +2157,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			_characterFacingDirection = 0;
 		}
 		if (_characterFacingDirection == 0) {
-			if (_csDataHandled != 0) {
+			if (_csDataHandled) {
 				_mirroredDrawing = 0;
 				switch (_selectedCharacterDirection) {
 				case 1:
@@ -2860,7 +2860,7 @@ void TuckerEngine::updateCharSpeechSound() {
 			_characterSpriteAnimationFrameCounter = 0;
 		}
 	}
-	if (_charSpeechSoundCounter == 0 && _csDataHandled == 0) {
+	if (_charSpeechSoundCounter == 0 && !_csDataHandled) {
 		setCursorType(0);
 		return;
 	}
@@ -2949,7 +2949,7 @@ int TuckerEngine::parseTableInstruction() {
 		if (_tableInstructionsPtr[1] == 'a') { // 0
 			_tableInstructionsPtr += 4;
 			_panelState = parseInt(_tableInstructionsPtr, 0, 2);
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_tableInstructionsPtr += 3;
 			return 0;
 		}
@@ -3272,19 +3272,19 @@ int TuckerEngine::parseTableInstruction() {
 			return 1;
 		}
 		if (_tableInstructionsPtr[2] == 'x') { // 18
-			_stopActionOnSoundFlag = 1;
+			_stopActionOnSoundFlag = true;
 			_tableInstructionsPtr += 4;
 			return 1;
 		}
 		break;
 	case 'x': // 18
 		if (_tableInstructionsPtr[2] == 'r') { // 13
-			_validInstructionId = 1;
+			_validInstructionId = true;
 			_tableInstructionsPtr += 4;
 			return 0;
 		}
 		if (_tableInstructionsPtr[2] == 'm') { // 9
-			_validInstructionId = 0;
+			_validInstructionId = false;
 			_tableInstructionsPtr += 4;
 			return 0;
 		}
@@ -3297,14 +3297,14 @@ int TuckerEngine::parseTableInstruction() {
 void TuckerEngine::moveUpInventoryObjects() {
 	if (_inventoryObjectsOffset + 6 < _inventoryObjectsCount) {
 		_inventoryObjectsOffset += 3;
-		_forceRedrawPanelItems = 1;
+		_forceRedrawPanelItems = true;
 	}
 }
 
 void TuckerEngine::moveDownInventoryObjects() {
 	if (_inventoryObjectsOffset > 2) {
 		_inventoryObjectsOffset -= 3;
-		_forceRedrawPanelItems = 1;
+		_forceRedrawPanelItems = true;
 	}
 }
 
@@ -3518,7 +3518,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 			_selectedObjectNum = 0;
 			_actionVerb = 0;
 			_skipPanelObjectUnderCursor = 0;
-			_forceRedrawPanelItems = 1;
+			_forceRedrawPanelItems = true;
 			_panelState = 2;
 			setCursorType(1);
 		}

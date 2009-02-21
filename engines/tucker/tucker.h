@@ -639,11 +639,11 @@ protected:
 	bool _inputKeys[kInputKeyCount];
 	int _cursorNum;
 	int _cursorType;
-	int _updateCursorFlag;
+	bool _updateCursorFlag;
 
 	int _panelNum;
 	int _panelState;
-	int _forceRedrawPanelItems;
+	bool _forceRedrawPanelItems;
 	int _redrawPanelItemsCounter;
 	int _switchPanelFlag;
 	int _panelObjectsOffsetTable[50];
@@ -733,8 +733,8 @@ protected:
 	int _actionCharacterNum;
 
 	bool _csDataLoaded;
-	int _csDataHandled;
-	int _stopActionOnSoundFlag;
+	bool _csDataHandled;
+	bool _stopActionOnSoundFlag;
 	int _csDataTableFlag2;
 	int _stopActionOnPanelLock;
 	int _csDataTableCount;
@@ -749,7 +749,7 @@ protected:
 	int _tableInstructionFlag;
 	int _tableInstructionItemNum1, _tableInstructionItemNum2;
 	int _instructionsActionsTable[6];
-	int _validInstructionId;
+	bool _validInstructionId;
 
 	SpriteFrame _spriteFramesTable[kSpriteFramesTableSize];
 	SpriteAnimation _spriteAnimationsTable[200];
