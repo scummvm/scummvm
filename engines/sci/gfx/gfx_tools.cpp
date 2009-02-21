@@ -323,12 +323,12 @@ int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 	}
 
 	if (color->global_index >= pal->max_colors_nr) {
-		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)", color->global_index, color->r, color->g, color->b);
+		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)\n", color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
 
 	if (!palette_color->lockers) {
-		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)", color->global_index, color->r, color->g, color->b);
+		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)\n", color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
 
