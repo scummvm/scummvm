@@ -88,19 +88,6 @@ int WSprintf(Common::WriteStream* str, const char *format, ...) {
 	return ret;
 }
 
-// Only supports scanf on a full line
-int SRSscanf(Common::SeekableReadStream* str, const char *format, ...) {
-	assert(strlen(format) > 0 && format[strlen(format)-1] == '\n');
-	va_list args;
-	Common::String line = str->readLine() + "\n";
-
-	va_start(args, format);
-	int ret = vsscanf(line.c_str(), format, args);
-	va_end(args);
-
-	return ret;
-}
-
 int SRSgetc(Common::SeekableReadStream* str) {
 	char c = str->readSByte();
 	if (str->err() || str->eos())
@@ -483,17 +470,18 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 		return CFSML_FAILURE;
 	}
 	// FIXME: error checking
-	SRSscanf(fh, "songcount = %d\n", &songcount);
-	SRSscanf(fh, "list = \n");
-	SRSscanf(fh, "[\n");
+	Common::String l = fh->readLine();
+	sscanf(l.c_str(), "songcount = %d", &songcount);
+	l = fh->readLine(); // "list = "
+	l = fh->readLine(); // "["
 	*line += 4;
 	song_lib_init(songlib);
 	for (i = 0; i < songcount; i++) {
 		%CFSMLREAD song_tp &newsong FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 		song_lib_add(*songlib, newsong);
 	}  
-	SRSscanf(fh, "]\n");
-	SRSscanf(fh, "}\n");
+	l = fh->readLine(); // "]"
+	l = fh->readLine(); // "}"
 	*line += 2;
 	return 0;
 }
