@@ -69,8 +69,7 @@ extern struct EngineState *con_gamestate;
 
 /*** FUNCTION DEFINITIONS ***/
 
-void
-con_set_string_callback(void(*callback)(char *));
+void con_set_string_callback(void(*callback)(char *));
 /* Sets the console string callback
 ** Parameters: (void -> char *) callback: The closure to invoke after
 **                              a string for sciprintf() has been generated
@@ -78,8 +77,7 @@ con_set_string_callback(void(*callback)(char *));
 ** is used.
 */
 
-void
-con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *));
+void con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *));
 /* Sets the console pixmap callback
 ** Parameters: (void -> gfx_pixmap_t *) callback: The closure to invoke after
 **                                      a pixmap has been provided to be
@@ -88,8 +86,7 @@ con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *));
 ** is used.
 */
 
-void
-con_init(void);
+void con_init();
 /* Initializes the command parser
 ** Parameters: (void)
 ** Returns   : (void)
@@ -98,8 +95,7 @@ con_init(void);
 */
 
 
-void
-con_parse(EngineState *s, const char *command);
+void con_parse(EngineState *s, const char *command);
 /* Parses a command and summons appropriate facilities to handle it
 ** Parameters: (EngineState *) s: The EngineState to use
 **             command: The command to execute
@@ -107,8 +103,7 @@ con_parse(EngineState *s, const char *command);
 */
 
 
-int
-con_hook_command(int command(EngineState *s), const char *name, const char *param, const char *description);
+int con_hook_command(int command(EngineState *s), const char *name, const char *param, const char *description);
 /* Adds a command to the parser's command list
 ** Parameters: command: The command to add
 **             name: The command's name
@@ -144,8 +139,7 @@ con_hook_command(int command(EngineState *s), const char *name, const char *para
 ** as no element beyond strlen(cmd_params[x].str)+1 is accessed.
 */
 
-cmd_param_t
-con_getopt(char *opt);
+cmd_param_t con_getopt(char *opt);
 /* Retreives the specified optional parameter
 ** -- for use within console functions only --
 ** Parameters: (char *) opt: The optional parameter to retrieve
@@ -153,22 +147,19 @@ con_getopt(char *opt);
 ** Should only be used if con_hasopt() reports its presence.
 */
 
-int
-con_hasopt(char *opt);
+int con_hasopt(char *opt);
 /* Checks whether an optional parameter was specified
 ** -- for use within console functions only --
 ** Parameters: (char *) opt: The optional parameter to check for
 ** Returns   : (int) non-zero iff the parameter was specified
 */
 
-int
-con_can_handle_pixmaps(void);
+int con_can_handle_pixmaps();
 /* Determines whether the console supports pixmap inserts
 ** Returns   : (int) non-zero iff pixmap inserts are supported
 */
 
-int
-con_insert_pixmap(gfx_pixmap_t *pixmap);
+int con_insert_pixmap(gfx_pixmap_t *pixmap);
 /* Inserts a pixmap into the console history buffer
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to insert
 ** Returns   : (int) 0 on success, non-zero if no receiver for
@@ -178,16 +169,14 @@ con_insert_pixmap(gfx_pixmap_t *pixmap);
 ** If the pixmap could not be inserted, the called must destroy it
 */
 
-int
-con_hook_page(const char *topic, const char *body);
+int con_hook_page(const char *topic, const char *body);
 /* Hooks a general information page to the manual page system
 ** Parameters: (const char *) topic: The topic name
 **             (const char *) body: The text body to assign to the topic
 ** Returns   : (int) 0 on success
 */
 
-int
-con_hook_int(int *pointer, const char *name, const char *description);
+int con_hook_int(int *pointer, const char *name, const char *description);
 /* Adds an int to the list of modifyable ints.
 ** Parameters: pointer: Pointer to the int to add to the list
 **             name: Name for this value
@@ -198,46 +187,39 @@ con_hook_int(int *pointer, const char *name, const char *description);
 */
 
 
-void
-con_gfx_init(void);
+void con_gfx_init();
 /* Initializes the gfx console
 */
 
-void
-con_gfx_show(gfx_state_t *state);
+void con_gfx_show(gfx_state_t *state);
 /* Enters on-screen console mode
 ** Parameters: (gfx_state_t *state): The graphics state to use for interaction
 ** Returns   : (void)
 */
 
-char *
-con_gfx_read(gfx_state_t *state);
+char *con_gfx_read(gfx_state_t *state);
 /* Reads a single line from the on-screen console, if it is open
 ** Parameters: (gfx_state_t *state): The graphics state to use for interaction
 ** Returns   : (char *) The input, in a static buffer
 */
 
-void
-con_gfx_hide(gfx_state_t *stae);
+void con_gfx_hide(gfx_state_t *stae);
 /* Closes the on-screen console
 ** Parameters: (gfx_state_t *state): The graphics state to use for interaction
 ** Returns   : (void)
 */
 
 
-int
-sci_hexdump(byte *data, int length, int offsetplus);
+int sci_hexdump(byte *data, int length, int offsetplus);
 
-void
-open_console_file(char *filename);
+void open_console_file(char *filename);
 /* Opens the file to which the console output is echoed. If a file was opened
 ** before, closes it.
 ** Parameters: filename - name of the file
 ** Returns   : (void)
 */
 
-void
-close_console_file(void);
+void close_console_file();
 /* Closes the console output file.
 ** Parameters: (void)
 ** Returns   : (void)

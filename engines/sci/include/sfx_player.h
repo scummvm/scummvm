@@ -40,16 +40,14 @@ typedef struct {
 	const char *name;
 	const char *version;
 
-	int
-	(*set_option)(char *name, char *value);
+	int (*set_option)(char *name, char *value);
 	/* Sets an option for player timing mechanism
 	** Parameters: (char *) name: The name describing what to set
 	**             (char *) value: The value to set
 	** Returns   : (int) SFX_OK, or SFX_ERROR if the name wasn't understood
 	*/
 
-	int
-	(*init)(ResourceManager *resmgr, int expected_latency);
+	int (*init)(ResourceManager *resmgr, int expected_latency);
 	/* Initializes the player
 	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
 	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
@@ -57,8 +55,7 @@ typedef struct {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int
-	(*add_iterator)(song_iterator_t *it, GTimeVal start_time);
+	int (*add_iterator)(song_iterator_t *it, GTimeVal start_time);
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
 	**             (GTimeVal) start_time: The time to assume as the
@@ -70,20 +67,17 @@ typedef struct {
 	** to add iterators onto their already existing iterators
 	*/
 
-	int
-	(*fade_out)(void);
+	int (*fade_out)(void);
 	/* Fades out the currently playing song (within two seconds
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int
-	(*stop)(void);
+	int (*stop)(void);
 	/* Stops the currently playing song and deletes the associated iterator
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int
-	(*iterator_message)(song_iterator_message_t msg);
+	int (*iterator_message)(song_iterator_message_t msg);
 	/* Transmits a song iterator message to the active song
 	** Parameters: (song_iterator_message_t) msg: The message to transmit
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
@@ -92,26 +86,22 @@ typedef struct {
 	** and re-start playing, so it is preferred that it is present
 	*/
 
-	int
-	(*pause)(void); /* OPTIONAL -- may be NULL */
+	int (*pause)(void); /* OPTIONAL -- may be NULL */
 	/* Pauses song playing
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int
-	(*resume)(void); /* OPTIONAL -- may be NULL */
+	int (*resume)(void); /* OPTIONAL -- may be NULL */
 	/* Resumes song playing after a pause
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int
-	(*exit)(void);
+	int (*exit)(void);
 	/* Stops the player
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	void
-	(*maintenance)(void); /* OPTIONAL -- may be NULL */
+	void (*maintenance)(void); /* OPTIONAL -- may be NULL */
 	/* Regularly called maintenance function
 	** This function is called frequently and regularly (if present), it can be
 	** used to emit sound.
@@ -127,34 +117,29 @@ typedef struct {
 
 } sfx_player_t;
 
-sfx_player_t *
-sfx_find_player(char *name);
+sfx_player_t *sfx_find_player(char *name);
 /* Looks up a player by name or finds the default player
 ** Parameters: (char *) name: Name of the player to look up, or NULL for dedault
 ** Returns   : (sfx_player_t *) The player requested, or NULL if none was found
 */
 
-tell_synth_func *
-sfx_get_player_tell_func(void);
+tell_synth_func *sfx_get_player_tell_func(void);
 /* Gets the callback function of the player in use.
 ** Returns:   (tell_synth_func *) The callback function.
 */
 
-int
-sfx_get_player_polyphony(void);
+int sfx_get_player_polyphony(void);
 /* Determines the polyphony of the player in use
 ** Returns   : (int) Number of voices the active player can emit
 */
 
-void
-sfx_reset_player(void);
+void sfx_reset_player(void);
 /* Tells the player to stop its internal iterator
 ** Parameters: None.
 ** Returns: Nothing.
  */
 
-song_iterator_t *
-sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2);
+song_iterator_t *sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2);
 /* Combines two song iterators into one
 ** Parameters: (sfx_iterator_t *) it1: One of the two iterators, or NULL
 **             (sfx_iterator_t *) it2: The other iterator, or NULL

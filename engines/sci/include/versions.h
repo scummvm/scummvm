@@ -125,22 +125,19 @@ typedef int sci_version_t;
 
 struct EngineState;
 
-void
-version_require_earlier_than(EngineState *s, sci_version_t version);
+void version_require_earlier_than(EngineState *s, sci_version_t version);
 /* Function used in autodetection
 ** Parameters: (EngineState *) s: EngineState containing the version
 **             (sci_version_t) version: The version that we're earlier than
 */
 
-void
-version_require_later_than(EngineState *s, sci_version_t version);
+void version_require_later_than(EngineState *s, sci_version_t version);
 /* Function used in autodetection (read this function "version_require_later_than_or_equal_to")
 ** Parameters: (EngineState *) s: EngineState containing the version
 **             (sci_version_t) version: The version that we're later than
 */
 
-int
-version_parse(const char *vn, sci_version_t *result);
+int version_parse(const char *vn, sci_version_t *result);
 /* Parse a string containing an SCI version number
 ** Parameters: (char *) vn: The string to parse
 ** Returns   : (int) 0 on success, 1 on failure

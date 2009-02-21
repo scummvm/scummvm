@@ -137,8 +137,7 @@ typedef struct { /* rect_t: Rectangle description */
 **             (int x int) xl, yl: Horizontal and vertical extension of the rectangle
 ** Returns   : (rect_t) A rectangle matching the supplied parameters
 */
-static inline rect_t
-gfx_rect(int x, int y, int xl, int yl) {
+static inline rect_t gfx_rect(int x, int y, int xl, int yl) {
 	rect_t rect;
 
 	rect.x = x;
@@ -157,10 +156,8 @@ gfx_rect(int x, int y, int xl, int yl) {
 ** Parameters: (rect_t x rect_t) a,b: The two rect_ts to check for overlap
 ** Returns   : (int) 1 if they overlap, 0 otherwise
 */
-static inline int
-gfx_rects_overlap(rect_t a, rect_t b) {
-	return (OVERLAP(a, b, x, xl) || OVERLAP(b, a, x, xl))
-	       && (OVERLAP(a, b, y, yl) || OVERLAP(b, a, y, yl));
+static inline int gfx_rects_overlap(rect_t a, rect_t b) {
+	return (OVERLAP(a, b, x, xl) || OVERLAP(b, a, x, xl)) && (OVERLAP(a, b, y, yl) || OVERLAP(b, a, y, yl));
 }
 
 #undef OVERLAP
@@ -185,8 +182,7 @@ else SUBMERGE_PARTIAL(b, a, z, zl)
 ** Parameters: (rect_t x rect_t) a,b: The two rects to merge
 ** Returns   : (rect_t) The smallest rect containing both a and b
 */
-static inline rect_t
-gfx_rects_merge(rect_t a, rect_t b) {
+static inline rect_t gfx_rects_merge(rect_t a, rect_t b) {
 	rect_t retval;
 	MERGE_PARTIAL(x, xl);
 	MERGE_PARTIAL(y, yl);
@@ -200,11 +196,8 @@ gfx_rects_merge(rect_t a, rect_t b) {
 ** Parameters: (rect_t) a, b: The two rects to compare
 ** Returns   : non-zero iff for each pixel p in a the following holds: p is in b.
 */
-static inline int
-gfx_rect_subset(rect_t a, rect_t b) {
-	return ((a.x >= b.x) && (a.y >= b.y)
-	        && ((a.x + a.xl) <= (b.x + b.xl))
-	        && ((a.y + a.yl) <= (b.y + b.yl)));
+static inline int gfx_rect_subset(rect_t a, rect_t b) {
+	return ((a.x >= b.x) && (a.y >= b.y) && ((a.x + a.xl) <= (b.x + b.xl)) && ((a.y + a.yl) <= (b.y + b.yl)));
 }
 
 
@@ -212,12 +205,8 @@ gfx_rect_subset(rect_t a, rect_t b) {
 ** Parameters: (rect_t) a, b
 ** Returns   : (int) gfx_rect_subset(a,b) AND gfx_rect_subset(b,a)
 */
-static inline int
-gfx_rect_equals(rect_t a, rect_t b) {
-	return (a.x == b.x
-	        && a.xl == b.xl
-	        && a.y == b.y
-	        && a.yl == b.yl);
+static inline int gfx_rect_equals(rect_t a, rect_t b) {
+	return (a.x == b.x && a.xl == b.xl && a.y == b.y && a.yl == b.yl);
 }
 
 
@@ -229,8 +218,7 @@ extern rect_t gfx_rect_fullscreen;
 **             (Common::Point) offset: The offset to translate it by
 ** Returns   : (rect_t) The translated rect
 */
-static inline rect_t
-gfx_rect_translate(rect_t rect, Common::Point offset) {
+static inline rect_t gfx_rect_translate(rect_t rect, Common::Point offset) {
 	rect.x += offset.x;
 	rect.y += offset.y;
 

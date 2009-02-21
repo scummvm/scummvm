@@ -60,8 +60,7 @@ namespace Sci {
 /* Used by the interpreter to flag buttons that are enabled */
 #define CONTROL_STATE_ENABLED 0x0001
 
-void
-sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor);
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor);
 /* Sets the contents of a port used as status bar
 ** Parmeters: (EngineState *) s: The affected game state
 **            (gfxw_port_t *) status_bar: The status bar port
@@ -69,8 +68,7 @@ sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgc
 ** Returns  : (void)
 */
 
-gfxw_port_t *
-sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
+gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
                 int title_font, gfx_color_t title_color, gfx_color_t title_bg_color,
                 const char *title, int flags);
 /* Creates a new SCI style window
@@ -91,8 +89,7 @@ sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_co
 /*** Control widgets ***/
 /*---------------------*/
 
-gfxw_list_t *
-sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, char selected, char inverse, char gray);
+gfxw_list_t *sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, char selected, char inverse, char gray);
 /* Creates a new button control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use for the
 **                                   button (the button is /not/ appended to the port there)
@@ -106,8 +103,7 @@ sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, in
 ** Returns   : (gfxw_list_t *) The button
 */
 
-gfxw_list_t *
-sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font,
+gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font,
                       gfx_alignment_t align, char frame, char inverse);
 /* Creates a new text control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
@@ -121,8 +117,7 @@ sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int 
 ** Returns   : (gfxw_list_t *) The text control widget list
 */
 
-gfxw_list_t *
-sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
+gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
                       char inverse);
 /* Creates a new edit control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
@@ -135,8 +130,7 @@ sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int 
 ** Returns   : (gfxw_list_t *) An appropriate widget list
 */
 
-gfxw_list_t *
-sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
+gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
                       char frame, char inverse);
 /* Creates a new icon control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
@@ -148,8 +142,7 @@ sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int lo
 ** Returns   : (gfxw_list_t *) An appropriate widget list
 */
 
-gfxw_list_t *
-sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
+gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
                       int entries_nr, int list_top, int selection, char inverse);
 /* Creates a new list control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
@@ -168,8 +161,7 @@ sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, cha
 /*** Menubar widgets ***/
 /*---------------------*/
 
-void
-sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
+void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
 /* Draws the menu bar
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) status_bar: The status bar port to modify
@@ -178,8 +170,7 @@ sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, in
 ** Returns   : (void)
 */
 
-gfxw_port_t *
-sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
+gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
 /* Creates a menu port
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) status_bar: The status bar
@@ -188,8 +179,7 @@ sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int s
 ** Returns   : (gfxw_port_t *) The result port
 */
 
-gfxw_port_t *
-sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection);
+gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection);
 /* Unselects a previously selected item from a menu port
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) menu_port: The port modify

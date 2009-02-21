@@ -35,9 +35,9 @@ namespace Sci {
 
 typedef struct aatree aatree_t;
 
-/* Left child */
+// Left child
 #define AATREE_WALK_LEFT 0
-/* Right child */
+// Right child
 #define AATREE_WALK_RIGHT 1
 
 aatree_t *aatree_new();
@@ -84,4 +84,4 @@ void *aatree_get_data(aatree_t *t);
 
 } // End of namespace Sci
 
-#endif /* !_SCI_AATREE_H */
+#endif // !_SCI_AATREE_H

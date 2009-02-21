@@ -306,7 +306,7 @@ gfx_pixmap_color_t *get_pic_color(EngineState *s, int color);
 ** Returns   : (gfx_pixmap_color_t *) The requested color.
 */
 
-void other_libs_exit(void);
+void other_libs_exit();
 /* Called directly before FreeSCI ends to allow libraries to clean up
 */
 
@@ -319,4 +319,4 @@ static inline reg_t not_register(EngineState *s, reg_t r) {
 
 } // End of namespace Sci
 
-#endif /* !_SCI_ENGINE_H */
+#endif // !_SCI_ENGINE_H

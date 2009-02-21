@@ -191,14 +191,14 @@ typedef struct {
 
 /*FIXME: These need freeing functions...*/
 
-int* vocabulary_get_classes(ResourceManager *resmgr, int *count);
+int *vocabulary_get_classes(ResourceManager *resmgr, int *count);
 
 int vocabulary_get_class_count(ResourceManager *resmgr);
 
 /**
  * Returns a null terminated array of selector names.
  */
-char** vocabulary_get_snames(ResourceManager *resmgr, int *pcount, sci_version_t version);
+char **vocabulary_get_snames(ResourceManager *resmgr, int *pcount, sci_version_t version);
 
 /**
  * Frees the aforementioned array
@@ -212,10 +212,9 @@ int vocabulary_lookup_sname(char **snames_list, char *sname);
 /**
  * Returns a null terminated array of opcodes.
  */
-opcode* vocabulary_get_opcodes(ResourceManager *resmgr);
+opcode *vocabulary_get_opcodes(ResourceManager *resmgr);
 
-void
-vocabulary_free_opcodes(opcode *opcodes);
+void vocabulary_free_opcodes(opcode *opcodes);
 /* Frees a previously allocated list of opcodes
 ** Parameters: (opcode *) opcodes: Opcodes to free
 ** Returns   : (void)
@@ -229,13 +228,12 @@ vocabulary_free_opcodes(opcode *opcodes);
  * The returned array has the same format regardless of the format of the
  * name table of the resource (the format changed between version 0 and 1).
  */
-char** vocabulary_get_knames(ResourceManager *resmgr, int* count);
+char **vocabulary_get_knames(ResourceManager *resmgr, int* count);
 void vocabulary_free_knames(char** names);
 
 
 
-word_t **
-vocab_get_words(ResourceManager *resmgr, int *word_counter);
+word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter);
 /* Gets all words from the main vocabulary
 ** Parameters: (ResourceManager *) resmr: The resource manager to read from
 **             (int *) word_counter: The int which the number of words is stored in
@@ -252,8 +250,7 @@ vocab_free_words(word_t **words, int words_nr);
 */
 
 
-suffix_t **
-vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr);
+suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr);
 /* Gets all suffixes from the suffix vocabulary
 ** Parameters: (ResourceManager*) resmgr: Resource manager the resources are
 **                               read from
@@ -261,8 +258,7 @@ vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr);
 ** Returns   : (suffix_t **): A list of suffixes
 */
 
-void
-vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr);
+void vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr);
 /* Frees suffices_nr suffices
 ** Parameters: (ResourceManager *) resmgr: The resource manager to free from
 **             (suffix_t **) suffices: The suffixes to free
@@ -270,8 +266,7 @@ vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_n
 ** Returns   : (void)
 */
 
-parse_tree_branch_t *
-vocab_get_branches(ResourceManager *resmgr, int *branches_nr);
+parse_tree_branch_t *vocab_get_branches(ResourceManager *resmgr, int *branches_nr);
 /* Retrieves all grammar rules from the resource data
 ** Parameters: (ResourceManager*) resmgr: Resource manager the rules are
 **                               read from
@@ -280,15 +275,13 @@ vocab_get_branches(ResourceManager *resmgr, int *branches_nr);
 ** Returns   : (parse_tree_branch_t *): The rules, or NULL on error
 */
 
-void
-vocab_free_branches(parse_tree_branch_t *parser_branches);
+void vocab_free_branches(parse_tree_branch_t *parser_branches);
 /* Frees all branches
 ** Parameters: (parse_tree_branch_t *) parser_branches: The branches to free
 ** Returns   : (null)
 */
 
-result_word_t *
-vocab_lookup_word(char *word, int word_len,
+result_word_t *vocab_lookup_word(char *word, int word_len,
                   word_t **words, int words_nr,
                   suffix_t **suffices, int suffices_nr);
 /* Looks up a single word in the words and suffixes list
@@ -303,8 +296,7 @@ vocab_lookup_word(char *word, int word_len,
 */
 
 
-result_word_t *
-vocab_tokenize_string(char *sentence, int *result_nr,
+result_word_t *vocab_tokenize_string(char *sentence, int *result_nr,
                       word_t **words, int words_nr,
                       suffix_t **suffices, int suffices_nr,
                       char **error);
@@ -323,8 +315,7 @@ vocab_tokenize_string(char *sentence, int *result_nr,
 */
 
 
-parse_rule_list_t *
-vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr);
+parse_rule_list_t *vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr);
 /* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
 ** Parameters: (parse_tree_branch_t *) branches: The parser's branches
 **             (int) branches_nr: Number of parser branches
@@ -337,16 +328,14 @@ vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr);
 */
 
 
-void
-vocab_free_rule_list(parse_rule_list_t *rule_list);
+void vocab_free_rule_list(parse_rule_list_t *rule_list);
 /* Frees a parser rule list as returned by vocab_build_gnf()
 ** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
 ** Returns   : (void)
 */
 
 
-int
-vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
                        parse_tree_branch_t *branch0, parse_rule_list_t *rules);
 /* Builds a parse tree from a list of words
 ** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
@@ -361,8 +350,7 @@ vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words
 **             described by the grammar passed in 'rules'.
 */
 
-void
-vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
+void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 /* Prints a parse tree
 ** Parameters: (const char *) tree_name: Name of the tree to dump (free-form)
 **             (parse_tree_node_t *) nodes: The nodes containing the parse tree
@@ -372,8 +360,7 @@ vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 
 
 
-int
-said(EngineState *s, byte *spec, int verbose);
+int said(EngineState *s, byte *spec, int verbose);
 /* Builds a parse tree from a spec and compares it to a parse tree
 ** Parameters: (EngineState *) s: The affected state
 **             (byte *) spec: Pointer to the spec to build
@@ -381,8 +368,7 @@ said(EngineState *s, byte *spec, int verbose);
 ** Returns   : (int) 1 on a match, 0 otherwise
 */
 
-const char *
-vocab_get_any_group_word(int group, word_t **words, int words_nr);
+const char *vocab_get_any_group_word(int group, word_t **words, int words_nr);
 /* Gets any word from the specified group.
 ** Parameters: (int) group: Group number.
 **             (word_t **) words: List of words
@@ -391,8 +377,7 @@ vocab_get_any_group_word(int group, word_t **words, int words_nr);
 */
 
 
-void
-vocab_decypher_said_block(EngineState *s, byte *pos);
+void vocab_decypher_said_block(EngineState *s, byte *pos);
 /* Decyphers a said block and dumps its content via sciprintf.
 ** Parameters: (EngineState *) s: The state to use
 **             (byte *) pos: Pointer to the data to dump
@@ -400,8 +385,7 @@ vocab_decypher_said_block(EngineState *s, byte *pos);
 */
 
 
-void
-vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms, int synonyms_nr);
+void vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms, int synonyms_nr);
 /* Synonymizes a token list
 ** Parameters: (result_wort_t *) words: The word list to synonymize
 **             (int) words_nr: Number of word_ts in the list
@@ -409,12 +393,10 @@ vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms,
 **             (int) synonyms_nr: Number of synonyms in the list
 */
 
-int
-vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
                 parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 
-void
-vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
+void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
 
 } // End of namespace Sci
 

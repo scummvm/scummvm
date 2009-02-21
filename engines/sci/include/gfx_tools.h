@@ -50,8 +50,7 @@ extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this va
 		 			  ** for distinguishing between transparent and opaque
 					  ** wrt alpha values */
 
-gfx_mode_t *
-gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
              unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
              int blue_shift, int alpha_shift, int palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters
@@ -71,8 +70,7 @@ gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned 
 */
 
 
-void
-gfx_clip_box_basic(rect_t *box, int maxx, int maxy);
+void gfx_clip_box_basic(rect_t *box, int maxx, int maxy);
 /* Clips a rect_t
 ** Parameters: (rect_t *) box: Pointer to the box to clip
 **             (int x int) maxx, maxy: Maximum allowed width and height
@@ -80,16 +78,14 @@ gfx_clip_box_basic(rect_t *box, int maxx, int maxy);
 */
 
 
-void
-gfx_free_mode(gfx_mode_t *mode);
+void gfx_free_mode(gfx_mode_t *mode);
 /* Frees all memory allocated by a mode structure
 ** Parameters: (gfx_mode_t *) mode: The mode to free
 ** Returns   : (void)
 */
 
 
-gfx_pixmap_t *
-gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel);
+gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel);
 /* Creates a new pixmap structure
 ** Parameters: (int x int) xl x yl: The dimensions (in SCI coordinates) of the pixmap
 **             (int) resid: The pixmap's resource ID, or GFX_RESID_NONE
@@ -102,8 +98,7 @@ gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel);
 ** index_scaled <- 0
 */
 
-gfx_pixmap_t *
-gfx_clone_pixmap(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
+gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 /* Clones a pixmap, minus its index data, palette and driver-specific handles
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to clone
 **             (gfx_mode_t *) mode: The mode to be applied to the pixmap
@@ -111,45 +106,39 @@ gfx_clone_pixmap(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 */
 
 
-gfx_pixmap_t *
-gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap);
+gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap);
 /* Allocates the index_data field of a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to allocate for
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
-gfx_pixmap_t *
-gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap);
+gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap);
 /* Frees the index_data field of a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to modify
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
-gfx_pixmap_t *
-gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
+gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 /* Allocates the data field of a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to allocate for
 **             (gfx_mode_t *) mode: The mode the memory is to be allocated for
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
-gfx_pixmap_t *
-gfx_pixmap_free_data(gfx_pixmap_t *pixmap);
+gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap);
 /* Frees the memory allocated for a pixmap's data field
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to modify
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
-void
-gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm);
+void gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm);
 /* Frees all memory associated with a pixmap
 ** Parameters: (gfx_driver_t *) driver: The driver the pixmap is to be removed from
 **             (gfx_pixmap_t *) pxm: The pixmap to free
 ** Returns   : (void)
 */
 
-void
-gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end, int color);
+void gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end, int color);
 /* Draws a line to a pixmap's index data buffer
 ** Parameters: (gfx_pixmap_t *) pxm: The pixmap to draw to
 **             (Common::Point) start: Starting point of the line to draw
@@ -160,8 +149,7 @@ gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end
 ** The line is not clipped. Invalid x, y, x1, y1 values will result in memory corruption.
 */
 
-void
-gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
+void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
                      Common::Point start, Common::Point end, unsigned int color);
 /* Draws a line to a linear pixel buffer
 ** Parameters: (byte *) buffer: Pointer to the start of the buffer to draw to
@@ -176,8 +164,7 @@ gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
 ** This function assumes 1 <= pixelwidth <= 4
 */
 
-void
-gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color);
+void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color);
 /* Draws a filled rectangular area to a pixmap's index buffer
 ** Parameters: (gfx_pixmap_t *) pxm: The pixmap to draw to
 **             (rect_t) box: The box to fill
@@ -186,8 +173,7 @@ gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color);
 ** This function only draws to the index buffer.
 */
 
-void
-gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box);
+void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box);
 /* Copies part of a pixmap to another pixmap, with clipping
 ** Parameters: (gfx_pixmap_t *) dest: The destination pixmap
 **             (gfx_pixmap_t *) src: The source pixmap
@@ -195,8 +181,7 @@ gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box);
 ** Returns   : (void)
 */
 
-void
-gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter);
+void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter);
 /* Translates a pixmap's index data to drawable graphics data
 ** Parameters: (gfx_pixmap_t *) pxm: The pixmap to translate
 **             (gfx_mode_t *) mode: The mode according which to scale
@@ -204,8 +189,7 @@ gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter)
 ** Returns   : (void)
 */
 
-void
-gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type);
+void gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type);
 /* Performs antialiasing on a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to antialiase
 **             (gfx_mode_t *) mode: The current mode
@@ -217,8 +201,7 @@ gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type
 /* Means that the first byte in the visual data refers to the
 ** point corresponding to (dest.x, dest.y) */
 
-int
-gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
+int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
                      rect_t src_coords, rect_t dest_coords, byte *dest,
                      int dest_line_width, byte *priority_dest,
                      int priority_line_width, int priority_skip,
@@ -246,8 +229,7 @@ gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 ** linear access.
 */
 
-int
-gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
+int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 /* Allocates a color entry for the specified pixmap color
 ** Parameters: (gfx_palette_t *) pal: The palette structure the color should be allocated in
 **             (gfx_pixmap_color_t *) color: The color to allocate
@@ -256,16 +238,14 @@ gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 **                   palette.
 */
 
-int
-gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
+int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 /* Frees the color entry allocated for the specified pixmap color
 ** Parameters: (gfx_palette_t *) pal: The palette structure the color was previously allocated in
 **             (gfx_pixmap_color_t *) color: The color to free
 ** Returns   : (int) GFX_ERROR if any error occured, GFX_OK otherwise
 */
 
-gfx_pixmap_t *
-gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
+gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 /* Scales the index data associated with a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap whose index data should be scaled
 **             (gfx_mode_t *) mode: The mode to scale it to

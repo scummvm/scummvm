@@ -319,4 +319,4 @@ typedef struct _gfx_driver { /* Graphics driver */
 
 } // End of namespace Sci
 
-#endif /* !_SCI_GFX_DRIVER_H_ */
+#endif // !_SCI_GFX_DRIVER_H_

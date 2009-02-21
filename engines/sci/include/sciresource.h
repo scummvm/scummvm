@@ -228,8 +228,7 @@ ResourceSource *scir_add_external_map(ResourceManager *mgr, const char *file_nam
 ** Returns: A pointer to the added source structure, or NULL if an error occurred.
 */
 
-int
-scir_scan_new_sources(ResourceManager *mgr, int *detected_version);
+int scir_scan_new_sources(ResourceManager *mgr, int *detected_version);
 /* Scans newly registered resource sources for resources, earliest addition first.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (int *) detected_version: Pointer to the detected version number,
@@ -237,8 +236,7 @@ scir_scan_new_sources(ResourceManager *mgr, int *detected_version);
 ** Returns: One of SCI_ERROR_*.
 */
 
-resource_t *
-scir_find_resource(ResourceManager *mgr, int type, int number, int lock);
+resource_t *scir_find_resource(ResourceManager *mgr, int type, int number, int lock);
 /* Looks up a resource's data
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (int) type: The resource type to look for
@@ -249,8 +247,7 @@ scir_find_resource(ResourceManager *mgr, int type, int number, int lock);
 ** they are unlocked explicitly (by scir_unlock_resource).
 */
 
-void
-scir_unlock_resource(ResourceManager *mgr, resource_t *res, int restype, int resnum);
+void scir_unlock_resource(ResourceManager *mgr, resource_t *res, int restype, int resnum);
 /* Unlocks a previously locked resource
 ** Parameters: (ResourceManager *) mgr: The manager the resource should be freed from
 **             (resource_t *) res: The resource to free
@@ -259,8 +256,7 @@ scir_unlock_resource(ResourceManager *mgr, resource_t *res, int restype, int res
 ** Returns   : (void)
 */
 
-resource_t *
-scir_test_resource(ResourceManager *mgr, int type, int number);
+resource_t *scir_test_resource(ResourceManager *mgr, int type, int number);
 /* Tests whether a resource exists
 ** Parameters: (ResourceManager *) mgr: The resource manager to search in
 **             (int) type: Type of the resource to check
@@ -304,8 +300,7 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 
 /**--- Patch management functions ---*/
 
-void
-sci0_sprintf_patch_file_name(char *string, resource_t *res);
+void sci0_sprintf_patch_file_name(char *string, resource_t *res);
 /* Prints the name of a matching patch to a string buffer
 ** Parameters: (char *) string: The buffer to print to
 **             (resource_t *) res: Resource containing the number and type of the
@@ -313,8 +308,7 @@ sci0_sprintf_patch_file_name(char *string, resource_t *res);
 ** Returns   : (void)
 */
 
-void
-sci1_sprintf_patch_file_name(char *string, resource_t *res);
+void sci1_sprintf_patch_file_name(char *string, resource_t *res);
 /* Prints the name of a matching patch to a string buffer
 ** Parameters: (char *) string: The buffer to print to
 **             (resource_t *) res: Resource containing the number and type of the
@@ -404,16 +398,14 @@ byte *pic_reorder(byte *inbuffer, int dsize);
 
 /*--- Internal helper functions ---*/
 
-void
-_scir_free_resources(resource_t *resources, int _resourcesNr);
+void _scir_free_resources(resource_t *resources, int _resourcesNr);
 /* Frees a block of resources and associated data
 ** Parameters: (resource_t *) resources: The resources to free
 **             (int) _resourcesNr: Number of resources in the block
 ** Returns   : (void)
 */
 
-resource_t *
-_scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number);
+resource_t *_scir_find_resource_unsorted(resource_t *res, int res_nr, int type, int number);
 /* Finds a resource matching type.number in an unsorted resource_t block
 ** To be used during initial resource loading, when the resource list
 ** may not have been sorted yet.

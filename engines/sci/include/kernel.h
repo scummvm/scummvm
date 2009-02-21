@@ -86,12 +86,9 @@ typedef struct {
 
 
 reg_t read_selector(EngineState *s,  reg_t object, selector_t selector_id, const char *fname, int line);
-void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value,
-               const char *fname, int line);
+void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line);
 int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
                 stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
-
-
 
 
 /******************** Text functionality ********************/
@@ -106,7 +103,6 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 ** while the index either refers to the number of the string in the specified source,
 ** or to a relative position inside the text.
 */
-
 
 
 /******************** Debug functionality ********************/
@@ -137,8 +133,6 @@ bool is_object(EngineState *s, reg_t obj);
 **             (reg_t) obj: The address to check
 ** Returns   : (int) 1 if it is an object, 0 otherwise
 */
-
-
 
 /******************** Kernel function parameter macros ********************/
 
@@ -176,10 +170,6 @@ byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries
 #define RESOURCE_NUMBER(resid) ((resid) & 0x7ff)
 #define RESOURCE_TYPE(resid) ((resid) >> 11)
 
-
-
-
-
 int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
 /* Halts script execution and informs the user about an internal kernel error or failed assertion
 ** Paramters: (EngineState *) s: The state to use
@@ -187,9 +177,6 @@ int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
 **            (int) line: The line the oops occured in
 **            (const char *) reason: Reason for the kernel oops
 */
-
-
-
 
 /******************** Priority macros/functions ********************/
 
@@ -280,7 +267,6 @@ list_t *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
 **             (int) line: The line number the function was called from
 ** Returns   : (list_t *) The list referenced, or NULL on error
 */
-
 
 
 /******************** Constants ********************/

@@ -134,15 +134,13 @@ typedef struct {
 */
 extern gfx_mode_t mode_1x1_color_index;
 
-void
-gfxr_init_static_palette(void);
+void gfxr_init_static_palette();
 /* Initializes the static 256 color palette
 ** Parameters: (void)
 ** Returns   : (void)
 */
 
-gfxr_pic_t *
-gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1);
+gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1);
 /* Initializes a gfxr_pic_t for a specific mode
 ** Parameters: (gfx_mode_t *) mode: The specific graphics mode
 **             (int) ID: The ID to assign to the resulting pixmaps
@@ -150,16 +148,14 @@ gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1);
 ** This function allocates memory for use by resource drawer functions.
 */
 
-void
-gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic);
+void gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic);
 /* Uninitializes a pic resource
 ** Parameters: (gfx_driver_t *) driver: The driver the pic should be removed from
 **             (gfxr_pic_t *) pic: The pic to free
 ** Returns   : (void)
 */
 
-void
-gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view);
+void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view);
 /* Frees all memory associated with a view
 ** Paremeters: (gfx_driver_t *) driver: The driver the view should be removed from
 **             (gfxr_view_t *) view: The view to free
@@ -181,8 +177,7 @@ gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view);
 #define GFXR_FONT_FLAG_EAT_TRAILING_LF (1<<2)
 
 
-gfx_bitmap_font_t *
-gfxr_read_font(int id, byte *resource, int size);
+gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size);
 /* Geneartes a bitmap font data structure from a resource
 ** Parameters: (int) id: Resource ID of the resulting font
 **             (byte *) resource: Pointer to the resource data
@@ -191,15 +186,13 @@ gfxr_read_font(int id, byte *resource, int size);
 **                                   NULL on error
 */
 
-void
-gfxr_free_font(gfx_bitmap_font_t *font);
+void gfxr_free_font(gfx_bitmap_font_t *font);
 /* Frees a previously allocated font structure
 ** Parameters: (gfx_bitmap_font_t *) font: The font to free
 ** Returns   : (void)
 */
 
-gfx_bitmap_font_t *
-gfxr_scale_font(gfx_bitmap_font_t *font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter);
+gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter);
 /* Scales a font resource
 ** Parameters: (gfx_bitmap_font_t *) font: The font to scale
 **             (gfx_mode_t *) mode: The graphics mode to scale it for
@@ -207,8 +200,7 @@ gfxr_scale_font(gfx_bitmap_font_t *font, gfx_mode_t *mode, gfxr_font_scale_filte
 ** Returns   : (gfx_bitmap_font_t *) A scaled font, or NULL on error
 */
 
-text_fragment_t *
-gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
+text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
                          int *width, int *height,
                          int *lines, int *line_height, int *last_offset,
                          int flags);
@@ -228,8 +220,7 @@ gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *tex
 ** This function assumes 320x200 mode.
 */
 
-gfx_pixmap_t *
-gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
+gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
                gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg);
 /* Draws text in a specific font to a pixmap
 ** Parameters: (gfx_bitmap_font_t *) font: The font to use for drawing
@@ -252,8 +243,7 @@ gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
 /*********************/
 
 
-void
-gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size);
+void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size);
 /* Clears all pic buffers of one pic
 ** Parameters: (gfxr_pic_t) pic: The picture to clear
 **             (int) sci_titlebar_size: How much space to reserve for the title bar
@@ -263,8 +253,7 @@ gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size);
 */
 
 
-void
-gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
+void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
                 int size, byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
                 gfx_pixmap_color_t *static_pal, int static_pal_nr);
 /* Draws a pic resource (all formats prior to SCI1.1)
@@ -285,8 +274,7 @@ gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
 ** Note that the picture will not be drawn dithered; use gfxr_dither_pic0 for that.
 */
 
-void
-gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
+void gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
                 int size, byte *resource, gfxr_pic0_params_t *style, int resid,
                 gfx_pixmap_color_t *static_pal, int static_pal_nr);
 /* Draws a pic resource (SCI1.1)
@@ -306,8 +294,7 @@ gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
 ** Note that the picture will not be drawn dithered; use gfxr_dither_pic0 for that.
 */
 
-void
-gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
+void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
 /* Removes artifacts from a scaled pic
 ** Parameters: (gfxr_pic_t *) dest: The scaled pic
 **             (gfxr_pic_t *) src: An unscaled pic
@@ -317,8 +304,7 @@ gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
 ** called, because it operates on the index buffer.
 */
 
-void
-gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
+void gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
 /* Dithers a gfxr_visual_map
 ** Parameters: (gfxr_pic_t *) pic: The pic to dither
 **             (int) mode: One of GFXR_DITHER_MODE
@@ -326,8 +312,7 @@ gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
 ** Returns   : (void)
 */
 
-gfxr_view_t *
-gfxr_draw_view0(int id, byte *resource, int size, int palette);
+gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette);
 /* Calculates an SCI0 view
 ** Parameters: (int) id: Resource ID of the view
 **             (byte *) resource: Pointer to the resource to read
@@ -336,8 +321,7 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette);
 ** Returns   : (gfxr_view_t *) The resulting view
 */
 
-gfx_pixmap_t *
-gfxr_draw_cursor0(int id, byte *resource, int size);
+gfx_pixmap_t *gfxr_draw_cursor0(int id, byte *resource, int size);
 /* Calculates an SCI0 cursor
 ** Parameters: (int) id: The cursor's resource ID
 **             (byte *) resource: Pointer to the resource data
@@ -349,8 +333,7 @@ gfxr_draw_cursor0(int id, byte *resource, int size);
 /*  SCI01 operations  */
 /**********************/
 
-gfx_pixmap_t *
-gfxr_draw_cursor01(int id, byte *resource, int size);
+gfx_pixmap_t *gfxr_draw_cursor01(int id, byte *resource, int size);
 /* Calculates an SCI01 cursor
 ** Parameters: (int) id: The cursor's resource ID
 **             (byte *) resource: Pointer to the resource data
@@ -364,8 +347,7 @@ gfxr_draw_cursor01(int id, byte *resource, int size);
 /*  SCI1 operations  */
 /*********************/
 
-gfx_pixmap_color_t *
-gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size);
+gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size);
 /* Reads an SCI1 palette
 ** Parameters: (int) id: Resource ID for the palette (or the view it was found in)
 **             (int *) colors_nr: Pointer to the variable the number of colors
@@ -375,8 +357,7 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size);
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
 */
 
-gfx_pixmap_color_t *
-gfxr_read_pal1_amiga(int *colors_nr, FILE *f);
+gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f);
 /* Reads an SCI1 palette
 ** Parameters: (int *) colors_nr: Pointer to the variable the number of colors
 **                                will be stored in
@@ -384,8 +365,7 @@ gfxr_read_pal1_amiga(int *colors_nr, FILE *f);
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
 */
 
-gfx_pixmap_color_t *
-gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size);
+gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size);
 /* Reads an SCI1.1 palette
 ** Parameters: (int) id: Resource ID for the palette (or the view it was found in)
 **             (int *) colors_nr: Pointer to the variable the number of colors
@@ -395,8 +375,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size);
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
 */
 
-gfxr_view_t *
-gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
+gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
                 int static_pal_nr);
 /* Calculates an SCI1 view
 ** Parameters: (int) id: Resource ID of the view
@@ -407,12 +386,10 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 ** Returns   : (gfxr_view_t *) The resulting view
 */
 
-gfx_pixmap_t *
-gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view);
+gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view);
 
 
-gfx_pixmap_t *
-gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
+gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 /* Endianness-adjusts a pixmap, if neccessary
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to adjust
 **             (gfx_mode_t *) mode: The mode to adjust it for
@@ -423,13 +400,11 @@ gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 */
 
 
-static inline int
-get_uint_16(const byte *offset) {
+static inline int get_uint_16(const byte *offset) {
 	return ((unsigned int) offset[0] | (((unsigned int) offset[1]) << 8));
 }
 
-static inline int
-get_int_16(const byte *offset) {
+static inline int get_int_16(const byte *offset) {
 	return ((int) offset[0] | (((int) offset[1]) << 8));
 }
 

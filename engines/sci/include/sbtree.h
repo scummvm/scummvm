@@ -48,8 +48,7 @@ typedef struct {
 } sbtree_t;
 
 
-sbtree_t *
-sbtree_new(int size, int *keys);
+sbtree_t *sbtree_new(int size, int *keys);
 /* Generates a new sbtree with the specified key set
 ** Parameters: (int) size: Number of entries in 'keys'
 **             (int *) keys: Array of 'size' integer keys
@@ -59,15 +58,13 @@ sbtree_new(int size, int *keys);
 ** beforehand.
 */
 
-void
-sbtree_free(sbtree_t *tree);
+void sbtree_free(sbtree_t *tree);
 /* Frees an sbtree
 ** Parameters: (sbtree_t *) tree: The tree to free
 ** Returns   : (void) Nothing at all
 */
 
-int
-sbtree_set(sbtree_t *tree, int key, void *value);
+int sbtree_set(sbtree_t *tree, int key, void *value);
 /* Sets a key to a value
 ** Parameters: (sbtree_t *) tree: The tree to modify
 **             (int) key: The key to set
@@ -76,8 +73,7 @@ sbtree_set(sbtree_t *tree, int key, void *value);
 ** value may, of course, be NULL here.
 */
 
-void *
-sbtree_get(sbtree_t *tree, int key);
+void *sbtree_get(sbtree_t *tree, int key);
 /* Retreives a key
 ** Parameters: (sbtree_t *) tree: The tree to search in
 **             (int) key: The key to retrieve
@@ -87,8 +83,7 @@ sbtree_get(sbtree_t *tree, int key);
 ** short of attempting to set that key.
 */
 
-void
-sbtree_foreach(sbtree_t *tree, void *args, void *(*operation)(sbtree_t *, const int,
+void sbtree_foreach(sbtree_t *tree, void *args, void *(*operation)(sbtree_t *, const int,
                const void *, void *));
 /* Operates once on each entry in the tree
 ** Parameters: (sbtree_t *) tree: The tree to operate on

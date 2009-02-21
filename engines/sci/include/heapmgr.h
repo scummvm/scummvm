@@ -53,30 +53,23 @@ typedef struct {								\
 	ENTRY##_entry_t *table;							\
 } ENTRY##_table_t;								\
 										\
-void										\
-init_##ENTRY##_table(ENTRY##_table_t *table);					\
-int										\
-alloc_##ENTRY##_entry(ENTRY##_table_t *table);					\
-void										\
-free_##ENTRY##_entry(ENTRY##_table_t *table, int index);
+void init_##ENTRY##_table(ENTRY##_table_t *table);					\
+int	alloc_##ENTRY##_entry(ENTRY##_table_t *table);					\
+void free_##ENTRY##_entry(ENTRY##_table_t *table, int index);
 
 
 
 #define DEFINE_HEAPENTRY_WITH_CLEANUP(ENTRY, INITIAL, INCREMENT, CLEANUP_FN)	\
-void										\
-init_##ENTRY##_table(ENTRY##_table_t *table)					\
-{										\
+void init_##ENTRY##_table(ENTRY##_table_t *table) {										\
 	table->entries_nr = INITIAL;						\
 	table->max_entry = 0;							\
 	table->entries_used = 0;						\
 	table->first_free = HEAPENTRY_INVALID;					\
-	table->table = (ENTRY##_entry_t*)sci_malloc(sizeof(ENTRY##_entry_t) * INITIAL);\
+	table->table = (ENTRY##_entry_t *)sci_malloc(sizeof(ENTRY##_entry_t) * INITIAL);\
 	memset(table->table, 0, sizeof(ENTRY##_entry_t) * INITIAL);		\
 }										\
 										\
-void										\
-free_##ENTRY##_entry(ENTRY##_table_t *table, int index)				\
-{										\
+void free_##ENTRY##_entry(ENTRY##_table_t *table, int index) {										\
 	ENTRY##_entry_t *e = table->table + index;				\
 										\
 	if (index < 0 || index >= table->max_entry) {				\
@@ -91,9 +84,7 @@ free_##ENTRY##_entry(ENTRY##_table_t *table, int index)				\
 	table->entries_used--;							\
 }										\
 										\
-int										\
-alloc_##ENTRY##_entry(ENTRY##_table_t *table)					\
-{										\
+int	alloc_##ENTRY##_entry(ENTRY##_table_t *table) {										\
 	table->entries_used++;							\
 	if (table->first_free != HEAPENTRY_INVALID) {				\
 		int oldff = table->first_free;					\
@@ -106,13 +97,10 @@ alloc_##ENTRY##_entry(ENTRY##_table_t *table)					\
 			table->entries_nr += INCREMENT;				\
 										\
 			table->table = (ENTRY##_entry_t*)sci_realloc(table->table,\
-						   sizeof(ENTRY##_entry_t)	\
-						   * table->entries_nr);	\
-			memset(&table->table[table->entries_nr-INCREMENT],	\
-			       0, INCREMENT*sizeof(ENTRY##_entry_t));		\
+						   sizeof(ENTRY##_entry_t) * table->entries_nr);	\
+			memset(&table->table[table->entries_nr-INCREMENT], 0, INCREMENT*sizeof(ENTRY##_entry_t));		\
 		}								\
-		table->table[table->max_entry].next_free =			\
-			table->max_entry; /* Tag as 'valid' */			\
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */			\
 		return table->max_entry++;					\
 	}									\
 }

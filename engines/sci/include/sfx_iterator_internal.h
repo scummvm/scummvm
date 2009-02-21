@@ -146,15 +146,13 @@ typedef struct {
 /*********************************/
 
 
-song_iterator_t *
-new_cleanup_iterator(unsigned int channels);
+song_iterator_t *new_cleanup_iterator(unsigned int channels);
 /* Creates a new song iterator with the purpose of sending notes-off channel commands
 ** Parameters: (unsigned int) channels: Channel mask to send these commands for
 ** Returns   : A song iterator with the aforementioned purpose
 */
 
-int
-is_cleanup_iterator(song_iterator_t *it);
+int is_cleanup_iterator(song_iterator_t *it);
 /* Determines whether a given song iterator is a cleanup song iterator
 ** Parameters: (song_iterator_t *) it: The iterator to check
 ** Returns   : (int) 1 iff 'it' is a cleanup song iterator
@@ -173,8 +171,7 @@ typedef struct {
 } fast_forward_song_iterator_t;
 
 
-song_iterator_t *
-new_fast_forward_iterator(song_iterator_t *it, int delta);
+song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 /* Creates a new song iterator which fast-forwards
 ** Parameters: (song_iterator_t *) it: The iterator to wrap
 **             (int) delta: The number of ticks to skip
@@ -223,8 +220,7 @@ typedef struct {
 } tee_song_iterator_t;
 
 
-sfx_pcm_feed_t *
-sfx_iterator_make_feed(byte *base_data, int offset,
+sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset,
                        int size,
                        sfx_pcm_config_t conf);
 /* Generates a feed for a song iterator

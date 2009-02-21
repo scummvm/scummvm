@@ -33,8 +33,7 @@ namespace Sci {
 typedef struct {
 	int delay_ms; /* Approximate delay (in milliseconds) between calls */
 
-	int
-	(*init)(void (*callback)(void *data), void *data);
+	int (*init)(void (*callback)(void *data), void *data);
 	/* Initializes the timer
 	** Parameters: (void* -> void) callback:
 	**                                   'data' must contain the next argument:
@@ -44,8 +43,7 @@ typedef struct {
 	** This function is called exactly once (provided that the timer is used at all).
 	*/
 
-	int
-	(*exit)(void);
+	int (*exit)(void);
 	/* Stops the timer
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	** All resources allocated with the timer should be freed as an effect

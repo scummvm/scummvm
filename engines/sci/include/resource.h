@@ -113,8 +113,7 @@ namespace Sci {
 #    define scimkdir(arg1,arg2) mkdir(arg1,arg2)
 #endif
 
-static inline gint16
-getInt16(byte *d) {
+static inline gint16 getInt16(byte *d) {
 	return (gint16)(*d | (d[1] << 8));
 }
 
@@ -126,8 +125,7 @@ getInt16(byte *d) {
 ** getUInt16 returns the int unsigned.
 */
 
-static inline void
-putInt16(byte* dest, int src) {
+static inline void putInt16(byte* dest, int src) {
 	dest[0] = (byte)src & 0xff;
 	dest[1] = (byte)(src >> 8) & 0xff;
 }
@@ -138,8 +136,7 @@ putInt16(byte* dest, int src) {
 
 /* --- */
 
-void
-sci_gettime(long *seconds, long *useconds);
+void sci_gettime(long *seconds, long *useconds);
 /* Calculates the current time in seconds and microseconds
 ** Parameters: (long *) seconds: Pointer to the variable the seconds part of the
 **                               current time will be stored in
@@ -150,15 +147,13 @@ sci_gettime(long *seconds, long *useconds);
 ** (typically 01/01/1970 on *NIX systems).
 */
 
-void
-sci_get_current_time(GTimeVal *val);
+void sci_get_current_time(GTimeVal *val);
 /* GTimeVal version of sci_gettime()
 ** Parameters: (GTimeVal *) val: Pointer to the structure the values will be stored in
 ** Returns   : (void)
 */
 
-void
-sci_init_dir(sci_dir_t *dirent);
+void sci_init_dir(sci_dir_t *dirent);
 /* Initializes an sci directory search structure
 ** Parameters: (sci_dir_t *) dirent: The entity to initialize
 ** Returns   : (void)
@@ -168,23 +163,20 @@ sci_init_dir(sci_dir_t *dirent);
 ** subjected to any of the other dirent calls.
 */
 
-char *
-sci_find_first(sci_dir_t *dirent, const char *mask);
+char *sci_find_first(sci_dir_t *dirent, const char *mask);
 /* Finds the first file matching the specified file mask
 ** Parameters: (sci_dir_t *) dirent: Pointer to an unused dirent structure
 **             (const char *) mask: File mask to apply
 ** Returns   : (char *) Name of the first matching file found, or NULL
 */
 
-char *
-sci_find_next(sci_dir_t *dirent);
+char *sci_find_next(sci_dir_t *dirent);
 /* Finds the next file specified by an sci_dir initialized by sci_find_first()
 ** Parameters: (sci_dir_t *) dirent: Pointer to SCI dir entity
 ** Returns   : (char *) Name of the next matching file, or NULL
 */
 
-void
-sci_finish_find(sci_dir_t *dirent);
+void sci_finish_find(sci_dir_t *dirent);
 /* Completes an 'sci_find_first/next' procedure
 ** Parameters: (sci_dir_t *) dirent: Pointer to the dirent used
 ** Returns   : (void)
@@ -195,8 +187,7 @@ sci_finish_find(sci_dir_t *dirent);
 ** the second operation is guaranteed to be a no-op.
 */
 
-FILE *
-sci_fopen(const char *fname, const char *mode);
+FILE *sci_fopen(const char *fname, const char *mode);
 /* Opens a FILE* case-insensitively
 ** Parameters: (const char *) fname: Name of the file to open
 **             (const char *) mode: Mode to open it with
@@ -204,8 +195,7 @@ sci_fopen(const char *fname, const char *mode);
 ** Always refers to the cwd, cannot address subdirectories
 */
 
-int
-sci_open(const char *fname, int flags);
+int sci_open(const char *fname, int flags);
 /* Opens a file descriptor case-insensitively
 ** Parameters: (const char *) fname: Name of the file to open
 **             (int) flags: open(2) flags for the file
@@ -215,8 +205,7 @@ sci_open(const char *fname, int flags);
 */
 
 
-int
-sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
+int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 #define gfxprintf sciprintf
 /* Prints a string to the console stack
 ** Parameters: fmt: a printf-style format string
@@ -225,30 +214,26 @@ sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 ** Implementation is in src/scicore/console.c
 */
 
-char *
-sci_getcwd(void);
+char *sci_getcwd();
 /* Returns the current working directory, malloc'd.
 ** Parameters: (void)
 ** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
 */
 
-int
-sci_mkpath(const char *path);
+int sci_mkpath(const char *path);
 /* Asserts that the specified path is available
 ** Parameters: (const char *) path: Path to verify/create
 ** Returns   : (int) 0 on success, <0 on error
 ** This function will create any directories that couldn't be found
 */
 
-int
-sci_fd_size(int fd);
+int sci_fd_size(int fd);
 /* Returns the filesize of an open file
 ** Parameters: (int) fd: File descriptor of open file
 ** Returns   : (int) filesize of file pointed to by fd, -1 on error
 */
 
-int
-sci_file_size(const char *fname);
+int sci_file_size(const char *fname);
 /* Returns the filesize of a file
 ** Parameters: (const char *) fname: Name of file to get filesize of
 ** Returns   : (int) filesize of the file, -1 on error

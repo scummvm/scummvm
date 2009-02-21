@@ -50,8 +50,7 @@ typedef int selector_t; /* Selector ID */
 #define PSTK "ST:%04x"
 #define PRINT_STK(v) (unsigned) (v - s->stack_base)
 
-static inline reg_t
-make_reg(int segment, int offset) {
+static inline reg_t make_reg(int segment, int offset) {
 	reg_t r;
 	r.offset = offset;
 	r.segment = segment;

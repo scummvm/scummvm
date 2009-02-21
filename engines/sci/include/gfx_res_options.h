@@ -94,8 +94,7 @@ typedef struct {
 
 struct _gfx_options;
 
-int
-gfx_get_res_config(struct _gfx_options *options,
+int gfx_get_res_config(struct _gfx_options *options,
                    gfx_pixmap_t *pxm);
 /* Configures a graphical pixmap according to config options
 ** Parameters: (gfx_options_t *) options: The options according to which

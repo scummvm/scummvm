@@ -45,8 +45,7 @@ typedef struct {
 	sys_string_t strings[SYS_STRINGS_MAX];
 } sys_strings_t;
 
-void
-sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len);
+void sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len);
 /* Reserves a new system string
 ** Parameters: (sys_strings_t *) strings: The string table to reserve in
 **             (int) index: Index number to reserve
@@ -54,8 +53,7 @@ sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_
 **             (int) max_len: Maximum string length in bytes
 */
 
-int
-sys_string_set(sys_strings_t *strings, int index, const char *value);
+int sys_string_set(sys_strings_t *strings, int index, const char *value);
 /* Sets the value of a system string
 ** Parameters: (sys_strings_t *) strings: The string table to use
 **             (int) index: Index of the string to write to
@@ -64,15 +62,13 @@ sys_string_set(sys_strings_t *strings, int index, const char *value);
 ** Length clipping is performed.
 */
 
-void
-sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings);
+void sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings);
 /* Cleanup system strings after a gamestate restore
 ** Parameters: (sys_strings_t *) The freshly loaded system strings to clean up
 **             (sys_strings_t *) The old system strings to clean up
 */
 
-void
-sys_string_free_all(sys_strings_t *strings);
+void sys_string_free_all(sys_strings_t *strings);
 /* Deallocates all allocated system strings
 ** Parameters: (sys_strings_t *) strings: The string table to deallocate
 */

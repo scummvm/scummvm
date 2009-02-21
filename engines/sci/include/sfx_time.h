@@ -37,23 +37,20 @@ typedef struct {
 } sfx_timestamp_t;
 
 
-sfx_timestamp_t
-sfx_new_timestamp(long secs, long usecs, int frame_rate);
+sfx_timestamp_t sfx_new_timestamp(long secs, long usecs, int frame_rate);
 /* Creates a new mutable timestamp
 ** Parameters: (long x long) (secs, usecs): Initial timestamp
 **             (int) frame_rate: Frame rate, for increasing the time stamp
 */
 
-sfx_timestamp_t
-sfx_timestamp_add(sfx_timestamp_t timestamp, int frames);
+sfx_timestamp_t sfx_timestamp_add(sfx_timestamp_t timestamp, int frames);
 /* Adds a number of frames to a timestamp
 ** Parameters: (sfx_timestampt_t *) timestamp: The timestamp to update
 **             (int) frames: Number of frames to add
 ** Returns   : (sfx_timestamp_t) The increased timestamp
 */
 
-sfx_timestamp_t
-sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq);
+sfx_timestamp_t sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq);
 /* Translates a timestamp to a new base frame frequency
 ** Parameters: (sfx_timestamp_t *) timestamp: The timestamp to normalise
 **             (int) new_freq: The new frequency to normalise to
@@ -62,24 +59,21 @@ sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq);
 ** for "usual" sampling frequencies.
 */
 
-int
-sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b);
+int sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b);
 /* Computes the difference (# of frames) between two timestamps
 ** Parameters: (sfx_timestamp) a: See below
 **             (sfx_timestamp) b: See below
 ** Returns   : (int) a-b
 */
 
-long
-sfx_timestamp_usecs_diff(sfx_timestamp_t a, sfx_timestamp_t b);
+long sfx_timestamp_usecs_diff(sfx_timestamp_t a, sfx_timestamp_t b);
 /* Computes the difference (# of microseconds) between two timestamps
 ** Parameters: (sfx_timestamp) a: See below
 **             (sfx_timestamp) b: See below
 ** Returns   : (long) a-b
 */
 
-void
-sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs);
+void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs);
 /* Determines the time described by a given timestamp
 ** Parameters: (sfx_timestamp_t *) timestamp: Timestamp to read from
 ** Returns   : (int * x int *) (secs, usecs): Seconds and microseconds since

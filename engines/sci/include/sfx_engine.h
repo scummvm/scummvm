@@ -61,54 +61,46 @@ typedef struct {
 /* General */
 /***********/
 
-void
-sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags);
+void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags);
 /* Initializes the sound engine
 ** Parameters: (ResourceManager *) resmgr: Resource manager for initialization
 **             (int) flags: SFX_STATE_FLAG_*
 */
 
-void
-sfx_exit(sfx_state_t *self);
+void sfx_exit(sfx_state_t *self);
 /* Deinitializes the sound subsystem
 */
 
-void
-sfx_suspend(sfx_state_t *self, int suspend);
+void sfx_suspend(sfx_state_t *self, int suspend);
 /* Suspends/unsuspends the sound sybsystem
 ** Parameters: (int) suspend: Whether to suspend (non-null) or to unsuspend
 */
 
-int
-sfx_poll(sfx_state_t *self, song_handle_t *handle, int *cue);
+int sfx_poll(sfx_state_t *self, song_handle_t *handle, int *cue);
 /* Polls the sound server for cues etc.
 ** Returns   : (int) 0 if the cue queue is empty, SI_LOOP, SI_CUE, or SI_FINISHED otherwise
 **             (song_handle_t) *handle: The affected handle
 **             (int) *cue: The sound cue number (if SI_CUE), or the loop number (if SI_LOOP)
 */
 
-int
-sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue);
+int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue);
 /* Polls the sound server for cues etc.
 ** Parameters: (song_handle_t) handle: The handle to poll
 ** Returns   : (int) 0 if the cue queue is empty, SI_LOOP, SI_CUE, or SI_FINISHED otherwise
 **             (int) *cue: The sound cue number (if SI_CUE), or the loop number (if SI_LOOP)
 */
 
-int
-sfx_get_volume(sfx_state_t *self);
+int sfx_get_volume(sfx_state_t *self);
 /* Determines the current global volume settings
 ** Returns   : (int) The global volume, between 0 (silent) and 127 (max. volume)
 */
 
-void
-sfx_set_volume(sfx_state_t *self, int volume);
+void sfx_set_volume(sfx_state_t *self, int volume);
 /* Determines the current global volume settings
 ** Parameters: (int) volume: The new global volume, between 0 and 127 (see above)
 */
 
-void
-sfx_all_stop(sfx_state_t *self);
+void sfx_all_stop(sfx_state_t *self);
 /* Stops all songs currently playing, purges song library
 */
 
@@ -117,8 +109,7 @@ sfx_all_stop(sfx_state_t *self);
 /*  Song basics  */
 /*****************/
 
-int
-sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t handle, int resnum);
+int sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t handle, int resnum);
 /* Adds a song to the internal sound library
 ** Parameters: (song_iterator_t *) it: The iterator describing the song
 **             (int) priority: Initial song priority (higher <-> more important)
@@ -127,8 +118,7 @@ sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t
 */
 
 
-void
-sfx_remove_song(sfx_state_t *self, song_handle_t handle);
+void sfx_remove_song(sfx_state_t *self, song_handle_t handle);
 /* Deletes a song and its associated song iterator from the song queue
 ** Parameters: (song_handle_t) handle: The song to remove
 */
@@ -139,8 +129,7 @@ sfx_remove_song(sfx_state_t *self, song_handle_t handle);
 /**********************/
 
 
-void
-sfx_song_set_status(sfx_state_t *self, song_handle_t handle, int status);
+void sfx_song_set_status(sfx_state_t *self, song_handle_t handle, int status);
 /* Sets the song status, i.e. whether it is playing, suspended, or stopped.
 ** Parameters: (song_handle_t) handle: Handle of the song to modify
 **             (int) status: The song status the song should assume
@@ -148,29 +137,25 @@ sfx_song_set_status(sfx_state_t *self, song_handle_t handle, int status);
 ** as far as this function is concerned.
 */
 
-void
-sfx_song_renice(sfx_state_t *self, song_handle_t handle, int priority);
+void sfx_song_renice(sfx_state_t *self, song_handle_t handle, int priority);
 /* Sets the new song priority
 ** Parameters: (song_handle_t) handle: The handle to modify
 **             (int) priority: The priority to set
 */
 
-void
-sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops);
+void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops);
 /* Sets the number of loops for the specified song
 ** Parameters: (song_handle_t) handle: The song handle to reference
 **             (int) loops: Number of loops to set
 */
 
-void
-sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold);
+void sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold);
 /* Sets the number of loops for the specified song
 ** Parameters: (song_handle_t) handle: The song handle to reference
 **             (int) hold: Number of loops to setn
 */
 
-void
-sfx_song_set_fade(sfx_state_t *self, song_handle_t handle, fade_params_t *fade_setup);
+void sfx_song_set_fade(sfx_state_t *self, song_handle_t handle, fade_params_t *fade_setup);
 /* Instructs a song to be faded out
 ** Parameters: (song_handle_t) handle: The song handle to reference
 **             (fade_params_t *) fade_setup: The precise fade-out configuration to use

@@ -240,8 +240,7 @@ extern Common::Point gfxw_point_zero;
 
 /*-- Primitive types --*/
 
-gfxw_box_t *
-gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
+gfxw_box_t *gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
 /* Creates a new box
 ** Parameters: (gfx_state_t *) state: The (optional) state
 **             (rect_t) area: The box's dimensions, relative to its container widget
@@ -252,8 +251,7 @@ gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t co
 ** The graphics state- if non-NULL- is used here for some optimizations.
 */
 
-gfxw_primitive_t *
-gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+gfxw_primitive_t *gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 /* Creates a new rectangle
 ** Parameters: (rect_t) rect: The rectangle area
 **             (gfx_color_t) color: The rectangle's color
@@ -262,8 +260,7 @@ gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_lin
 ** Returns   : (gfxw_primitive_t *) The newly allocated rectangle widget (a Primitive)
 */
 
-gfxw_primitive_t *
-gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 /* Creates a new line
 ** Parameters: (Common::Point * Common::Point) (start, line): The line origin and end point
 **             (gfx_color_t) color: The line's color
@@ -279,8 +276,7 @@ gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_lin
 /* Whether the view should _not_ apply its x/y offset modifyers */
 #define GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET (1 << 1)
 
-gfxw_view_t *
-gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
+gfxw_view_t *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
               gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 /* Creates a new view (a cel, actually)
 ** Parameters: (gfx_state_t *) state: The graphics state
@@ -294,8 +290,7 @@ gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel
 ** Returns   : (gfxw_cel_t *) A newly allocated cel according to the specs
 */
 
-gfxw_dyn_view_t *
-gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
+gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
                   int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign,
                   int sequence);
 /* Creates a new dyn view
@@ -314,8 +309,7 @@ gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int lo
 ** optimizations when they move or change shape.
 */
 
-gfxw_text_t *
-gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
               gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
               gfx_color_t bgcolor, int flags);
 /* Creates a new text widget
@@ -332,8 +326,7 @@ gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_a
 ** Returns   : (gfxw_text_t *) The resulting text widget
 */
 
-void
-gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines_nr,
+void gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines_nr,
                int *lineheight, int *offset);
 /* Determines text widget meta-information
 ** Parameters: (gfx_state_t *) state: The state to operate on
@@ -344,8 +337,7 @@ gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines_nr,
 **                           last character in the last line
 */
 
-gfxw_widget_t *
-gfxw_set_id(gfxw_widget_t *widget, int ID, int subID);
+gfxw_widget_t *gfxw_set_id(gfxw_widget_t *widget, int ID, int subID);
 /* Sets a widget's ID
 ** Parmaeters: (gfxw_widget_t *) widget: The widget whose ID should be set
 **             (int x int) ID, subID: The ID to set
@@ -355,8 +347,7 @@ gfxw_set_id(gfxw_widget_t *widget, int ID, int subID);
 ** This function handles widget = NULL gracefully (by doing nothing and returning NULL).
 */
 
-gfxw_widget_t *
-gfxw_remove_id(gfxw_container_t *container, int ID, int subID);
+gfxw_widget_t *gfxw_remove_id(gfxw_container_t *container, int ID, int subID);
 /* Finds a widget with a specific ID in a container and removes it from there
 ** Parameters: (gfxw_container_t *) container: The container to search in
 **             (int) ID: The ID to look for
@@ -366,32 +357,28 @@ gfxw_remove_id(gfxw_container_t *container, int ID, int subID);
 */
 
 
-gfxw_dyn_view_t *
-gfxw_dyn_view_set_params(gfxw_dyn_view_t *widget, int under_bits, void *under_bitsp, int signal, void *signalp);
+gfxw_dyn_view_t *gfxw_dyn_view_set_params(gfxw_dyn_view_t *widget, int under_bits, void *under_bitsp, int signal, void *signalp);
 /* Initializes a dyn view's interpreter attributes
 ** Parameters: (gfxw_dyn_view_t *) widget: The widget affected
 **             (int x void * x int x void *) under_bits, inder_bitsp, signal, signalp: Interpreter-dependant data
 ** Returns   : (gfxw_dyn_view_t *) widget
 */
 
-gfxw_widget_t *
-gfxw_hide_widget(gfxw_widget_t *widget);
+gfxw_widget_t *gfxw_hide_widget(gfxw_widget_t *widget);
 /* Makes a widget invisible without removing it from the list of widgets
 ** Parameters: (gfxw_widget_t *) widget: The widget to invisibilize
 ** Returns   : (gfxw_widget_t *) widget
 ** Has no effect on invisible widgets
 */
 
-gfxw_widget_t *
-gfxw_show_widget(gfxw_widget_t *widget);
+gfxw_widget_t *gfxw_show_widget(gfxw_widget_t *widget);
 /* Makes an invisible widget reappear
 ** Parameters: (gfxw_widget_t *) widget: The widget to show again
 ** Returns   : (gfxw_widget_t *) widget
 ** Does not affect visible widgets
 */
 
-gfxw_widget_t *
-gfxw_abandon_widget(gfxw_widget_t *widget);
+gfxw_widget_t *gfxw_abandon_widget(gfxw_widget_t *widget);
 /* Marks a widget as "abandoned"
 ** Parameters: (gfxw_widget_t *) widget: The widget to abandon
 ** Returns   : (gfxw_widget_t *) widget
@@ -402,8 +389,7 @@ gfxw_abandon_widget(gfxw_widget_t *widget);
 #define GFXW_LIST_UNSORTED 0
 #define GFXW_LIST_SORTED 1
 
-gfxw_list_t *
-gfxw_new_list(rect_t area, int sorted);
+gfxw_list_t *gfxw_new_list(rect_t area, int sorted);
 /* Creates a new list widget
 ** Parameters: (rect_t) area: The area covered by the list (absolute position)
 **             (int) sorted: Whether the list should be a sorted list
@@ -411,8 +397,7 @@ gfxw_new_list(rect_t area, int sorted);
 ** List widgets are also referred to as Display Lists.
 */
 
-gfxw_visual_t *
-gfxw_new_visual(gfx_state_t *state, int font);
+gfxw_visual_t *gfxw_new_visual(gfx_state_t *state, int font);
 /* Creates a new visual widget
 ** Parameters: (gfx_state_t *) state: The graphics state
 **             (int) font: The default font number for contained ports
@@ -421,8 +406,7 @@ gfxw_new_visual(gfx_state_t *state, int font);
 */
 
 
-gfxw_port_t *
-gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
+gfxw_port_t *gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 /* Creates a new port widget with the default settings
 ** Paramaters: (gfxw_visual_t *) visual: The visual the port is added to
 **             (gfxw_port_t *) predecessor: The port's predecessor
@@ -435,8 +419,7 @@ gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_
 ** Ports are assigned implicit IDs identifying their position within the port stack.
 */
 
-gfxw_port_t *
-gfxw_find_port(gfxw_visual_t *visual, int ID);
+gfxw_port_t *gfxw_find_port(gfxw_visual_t *visual, int ID);
 /* Retrieves a port with the specified ID
 ** Parameters: (gfxw_visual_t *) visual: The visual the port is to be retrieved from
 **             (int) ID: The port's ID
@@ -444,8 +427,7 @@ gfxw_find_port(gfxw_visual_t *visual, int ID);
 ** This function is O(1).
 */
 
-gfxw_port_t *
-gfxw_find_default_port(gfxw_visual_t *visual);
+gfxw_port_t *gfxw_find_default_port(gfxw_visual_t *visual);
 /* Retreives the default port from a visual
 ** Parameters: (gfxw_visual_t *) visual: The visual the port should be retrieved from
 ** Returns   : (gfxw_port_t *) The default port, or NULL if no port is present
@@ -453,8 +435,7 @@ gfxw_find_default_port(gfxw_visual_t *visual);
 ** or highest-ranking port.
 */
 
-void
-gfxw_port_set_auto_restore(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect);
+void gfxw_port_set_auto_restore(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect);
 /* Sets rectangle to be restored upon port removal
 ** Parameters: (state_t *) s: The state to operate on
                (gfxw_port_t *) window: The affected window
@@ -462,24 +443,21 @@ gfxw_port_set_auto_restore(gfxw_visual_t *visual, gfxw_port_t *window, rect_t au
 ** Returns   : (void)
 */
 
-gfxw_port_t *
-gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port);
+gfxw_port_t *gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port);
 /* Removes a port from a visual
 ** Parameters: (gfxw_visual_t *) visual: The visual the port should be removed from
 **             (gfxw_port_t *) port: The port to remove
 ** Returns   : (gfxw_port_t *) port's parent port, or NULL if it had none
 */
 
-void
-gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_t *widget);
+void gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_t *widget);
 /* Removes the widget from the specified port
 ** Parameters: (gfxw_container_t *) container: The container it should be removed from
 **             (gfxw_widget_t *) widget: The widget to remove
 ** Returns   : (void)
 */
 
-gfxw_snapshot_t *
-gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area);
+gfxw_snapshot_t *gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area);
 /* Makes a "snapshot" of a visual
 ** Parameters: (gfxw_visual_t *) visual: The visual a snapshot is to be taken of
 **             (rect_t) area: The area a snapshot should be taken of
@@ -489,16 +467,14 @@ gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area);
 ** This operation also increases the global serial number counter by one.
 */
 
-int
-gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget);
+int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget);
 /* Predicate to test whether a widget would be destroyed by applying a snapshot
 ** Parameters: (gfxw_snapshot_t *) snapshot: The snapshot to test against
 **             (gfxw_widget_t *) widget: The widget to test
 ** Retunrrs  : (int) An appropriate boolean value
 */
 
-gfxw_snapshot_t *
-gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot);
+gfxw_snapshot_t *gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot);
 /* Restores a snapshot to a visual
 ** Parameters: (gfxw_visual_t *) visual: The visual to operate on
 **             (gfxw_snapshot_t *) snapshot: The snapshot to restore
@@ -507,8 +483,7 @@ gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot);
 ** the snapshotted area are destroyed.
 */
 
-void
-gfxw_annihilate(gfxw_widget_t *widget);
+void gfxw_annihilate(gfxw_widget_t *widget);
 /* As widget->widfree(widget), but destroys all overlapping widgets
 ** Parameters: (gfxw_widget_t *) widget: The widget to use
 ** Returns   : (void)
@@ -516,16 +491,14 @@ gfxw_annihilate(gfxw_widget_t *widget);
 ** all widgets with a higher or equal priority drawn after this widget.
 */
 
-gfxw_dyn_view_t *
-gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview);
+gfxw_dyn_view_t *gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview);
 /* Turns a dynview into a picview
 ** Parameters: (gfxw_dyn_view_t *) dynview: The victim
 ** Returns   : (gfxw_dyn_view_t *) The victim, after his transformation
 ** The only changes are in function and type variables, actually.
 */
 
-void
-gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect);
+void gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect);
 /* Tags a window widget as automatically restoring the visual background upon removal
 ** Parameters: (gfx_visual_t *) visual: The base visual
 **             (gfxw_port_t *) window: The window to tag
@@ -534,17 +507,13 @@ gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *window, re
 */
 
 
-gfxw_port_t *
-gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags);
+gfxw_port_t *gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags);
 
-void
-gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget);
+void gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget);
 
-void
-gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target);
+void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target);
 
-void
-gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window);
+void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window);
 
 } // End of namespace Sci
 

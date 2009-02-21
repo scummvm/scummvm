@@ -125,8 +125,7 @@ struct gfx_picture; /* forward declarations for graphics.h */
 
 /********** function definitions *********/
 
-menubar_t *
-menubar_new(void);
+menubar_t *menubar_new();
 /* Creates a new menubar struct
 ** Parameters: (void)
 ** Returns   : (menubar_t *) A pointer to the new menubar entity
@@ -134,16 +133,14 @@ menubar_new(void);
 */
 
 
-void
-menubar_free(menubar_t *menubar);
+void menubar_free(menubar_t *menubar);
 /* Frees all memory associated with a menubar
 ** Parameters: (menubar_t *) menubar: The menubar to free
 ** Returns   : (void)
 */
 
 
-void
-menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font, reg_t entries_base);
+void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font, reg_t entries_base);
 /* Adds a menu to the menubar.
 ** Parameters: (gfx_state_t *) state: The state the fonts are stored in
 **             (menubar_t *) menubar: The menubar to operate on
@@ -165,8 +162,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 */
 
 
-int
-menubar_set_attribute(EngineState *s, int menu, int item, int attribute, reg_t value);
+int menubar_set_attribute(EngineState *s, int menu, int item, int attribute, reg_t value);
 /* Sets the (currently unidentified) foo and bar values.
 ** Parameters: (state_t *) s: The current state
 **             (int) menu: The menu number to edit
@@ -177,8 +173,7 @@ menubar_set_attribute(EngineState *s, int menu, int item, int attribute, reg_t v
 */
 
 
-reg_t
-menubar_get_attribute(EngineState *s, int menu, int item, int attribute);
+reg_t menubar_get_attribute(EngineState *s, int menu, int item, int attribute);
 /* Sets the (currently unidentified) foo and bar values.
 ** Parameters: (state_t *) s: The current state
 **             (int) menu: The menu number
@@ -188,8 +183,7 @@ menubar_get_attribute(EngineState *s, int menu, int item, int attribute);
 */
 
 
-int
-menubar_item_valid(EngineState *s, int menu, int item);
+int menubar_item_valid(EngineState *s, int menu, int item);
 /* Determines whether the specified menu entry may be activated
 ** Parameters: (state_t *) s: The current state
 **             (int x int) (menu, item): The menu item to check
@@ -197,8 +191,7 @@ menubar_item_valid(EngineState *s, int menu, int item);
 */
 
 
-int
-menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port);
+int menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port);
 /* Maps the pointer position to a (menu,item) tuple.
 ** Parameters: (state_t *) s: The current state
 **             ((int *) x (int *)) (menu_nr, item_nr): Pointers to the current menu/item tuple
@@ -206,8 +199,7 @@ menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *por
 ** Returns   : (int) 1 if the pointer is outside a valid port, 0 otherwise.
 */
 
-int
-menubar_match_key(menu_item_t *item, int message, int modifiers);
+int menubar_match_key(menu_item_t *item, int message, int modifiers);
 /* Determines whether a message/modifiers key pair matches a menu item's key parameters
 ** Parameters: (menu_item_t *) item: The menu item to match
 **             (int x int) message, modifiers: The input to compare

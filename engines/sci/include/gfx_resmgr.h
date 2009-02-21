@@ -95,8 +95,7 @@ typedef struct {
 
 
 
-gfx_resstate_t *
-gfxr_new_resource_manager(int version, struct _gfx_options *options,
+gfx_resstate_t *gfxr_new_resource_manager(int version, struct _gfx_options *options,
                           gfx_driver_t *driver, void *misc_payload);
 /* Allocates and initializes a new resource manager
 ** Parameters: (int) version: Interpreter version
@@ -109,8 +108,7 @@ gfxr_new_resource_manager(int version, struct _gfx_options *options,
 ** The options are considered to be read-only, as they belong to the overlying state object.
 */
 
-void
-gfxr_free_resource_manager(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_resource_manager(gfx_driver_t *driver, gfx_resstate_t *state);
 /* Frees a previously allocated resource manager, and all allocated resources.
 ** Parameters: (gfx_driver_t *) driver: The graphics driver; used to free pixmaps that
 **                                      are installed in a driver-specific registry
@@ -118,8 +116,7 @@ gfxr_free_resource_manager(gfx_driver_t *driver, gfx_resstate_t *state);
 ** Return    : (void)
 */
 
-void
-gfxr_free_all_resources(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_all_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 /* Frees all resources currently allocated
 ** Parameter: (gfx_driver_t *) driver: The driver to free with
 **            (gfx_resstate_t *) state: The state to do this on
@@ -127,16 +124,14 @@ gfxr_free_all_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 ** This function is intended to be used primarily for debugging.
 */
 
-void
-gfxr_tag_resources(gfx_resstate_t *state);
+void gfxr_tag_resources(gfx_resstate_t *state);
 /* 'Tags' all resources for deletion
 ** Paramters: (gfx_resstate_t *) state: The resource state to modify
 ** Returns  : (void)
 ** Tagged resources are untagged if they are referenced.
 */
 
-void
-gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 /* Frees all tagged resources.
 ** Parameters: (gfx_driver_t *) driver: The graphics driver the pixmaps are potentially
 **                                      registered in
@@ -149,8 +144,7 @@ gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 */
 
 
-gfxr_pic_t *
-gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
+gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
              int default_palette, int scaled);
 /* Retreives a displayable (translated) pic resource
 ** Parameters: (gfx_resstate_t *) state: The resource state
@@ -164,8 +158,7 @@ gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
 **                           neccessarily translated) data.
 */
 
-gfxr_pic_t *
-gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
+gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
                 int old_default_palette, int default_palette, int scaled);
 /* Retreives a displayable (translated) pic resource written ontop of an existing pic
 ** Parameters: (gfx_resstate_t *) state: The resource state
@@ -183,8 +176,7 @@ gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int fla
 ** cause it to be removed from the cache and to be replaced by a clean version.
 */
 
-gfxr_view_t *
-gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette);
+gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette);
 /* Retreives a translated view cel
 ** Parameters: (gfx_resstate_t *) state: The resource state
 **             (int) nr: The view number
@@ -197,8 +189,7 @@ gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette);
 ** loop and cel numbers have to be interpreted as 'maximum' or 'minimum' by the interpreter)
 */
 
-gfx_bitmap_font_t *
-gfxr_get_font(gfx_resstate_t *state, int nr, int scaled);
+gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled);
 /* Retreives a font
 ** Parameters: (gfx_resstate_t *) state: The relevant resource state
 **             (int) nr: The font number
@@ -206,16 +197,14 @@ gfxr_get_font(gfx_resstate_t *state, int nr, int scaled);
 ** Returns   : (gfx_font_t *) The appropriate font, or NULL on error
 */
 
-gfx_pixmap_t *
-gfxr_get_cursor(gfx_resstate_t *state, int nr);
+gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr);
 /* Retreives an SCI0/SCI01 mouse cursor
 ** Parameters: (gfx_resstate_t *) state: The resource state
 **             (int) nr: The cursour number
 ** Returns   : (gfx_font_t *) The approprate cursor as a pixmap, or NULL on error
 */
 
-gfx_pixmap_color_t *
-gfxr_get_palette(gfx_resstate_t *state, int nr);
+gfx_pixmap_color_t *gfxr_get_palette(gfx_resstate_t *state, int nr);
 /* Retreives a palette
 ** Parameters: (gfx_resstate_t *) state: The resource state
 **             (int) nr: The cursour number
@@ -228,8 +217,7 @@ gfxr_get_palette(gfx_resstate_t *state, int nr);
 /* =========================== */
 
 
-int
-gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
+int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
                               struct _gfx_options *options, void *internal, int palette);
 /* Calculates a unique hash value for the specified options/type setup
 ** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
@@ -247,8 +235,7 @@ gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 ** (Yes, this isn't really a "hash" in the traditional sense...)
 */
 
-int *
-gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
+int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
                                int version, int *entries_nr, void *internal);
 /* Retreives all resources of a specified type that are available from the interpreter
 ** Parameters: (gfx_resstate_t *) state: The relevant resource state
@@ -262,8 +249,7 @@ gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
 ** The returned structure (if non-zero) must be freed by the querying code (the resource manager).
 */
 
-gfxr_pic_t *
-gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal);
+gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal);
 /* Initializes a pic
 ** Parameters: (int) version: Interpreter version to use
 **             (gfx_mode_t *) mode: The graphics mode the pic will be using
@@ -274,8 +260,7 @@ gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal)
 ** Must remember to initialize 'internal' to NULL or a malloc()'d area.
 */
 
-void
-gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal);
+void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal);
 /* Clears a previously allocated pic
 ** Parameters: (int) version: Interpreter version
 **             (gfxr_pic_t *) pic: The pic to clear
@@ -284,8 +269,7 @@ gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal);
 ** This function is called in preparation for the pic to be drawn with gfxr_interpreter_calculate_pic.
 */
 
-int
-gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
+int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
                                int flags, int default_palette, int nr, void *internal);
 /* Instructs the interpreter-specific code to calculate a picture
 ** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
@@ -299,8 +283,7 @@ gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gf
 ** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
 */
 
-gfxr_view_t *
-gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette);
+gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette);
 /* Instructs the interpreter-specific code to calculate a view
 ** Parameters: (gfx_resstate_t *) state: The resource manager state
 **             (int) nr: The view resource number
@@ -308,8 +291,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 ** Returns   : (gfx_view_t *) The appropriate view, or NULL on error
 */
 
-gfx_bitmap_font_t *
-gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal);
+gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal);
 /* Instructs the interpreter-specific code to calculate a font
 ** Parameters: (gfx_resstate_t *) state: The resource manager state
 **             (int) nr: The font resource number
@@ -317,8 +299,7 @@ gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal);
 ** Returns   : (gfx_font_t *) The newly calculated font, or NULL on error
 */
 
-gfx_pixmap_t *
-gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal);
+gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal);
 /* Instructs the interpreter-specific code to calculate a cursor
 ** Paramaters: (gfx_resstate_t *) state: The resource manager state
 **             (int nr): The cursor resource number
@@ -326,8 +307,7 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal);
 ** Returns   : (gfx_pixmap_t *) The cursor pixmap, or NULL on error
 */
 
-gfx_pixmap_color_t *
-gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal);
+gfx_pixmap_color_t *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal);
 /* Retreives the static palette from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
@@ -336,8 +316,7 @@ gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *col
 **             if a static palette must be used, NULL otherwise
 */
 
-gfx_pixmap_color_t *
-gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr);
+gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr);
 /* Retreives the static palette from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
@@ -346,8 +325,7 @@ gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
 **             if a static palette must be used, NULL otherwise
 */
 
-int
-gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
+int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
 /* Determines whether support for pointers with more than two colors is required
 ** Parameters: (int) version: Interpreter version to test for
 **             (void *) internal: Internal information provided by the interpreter

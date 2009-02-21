@@ -79,9 +79,9 @@ typedef struct _gfx_options {
 } gfx_options_t;
 
 /* SQ3 counts whitespaces towards the total text size, as does gfxop_get_text_params() if this is set: */
-#define GFX_WORKAROUND_WHITESPACE_COUNT (1<<0)
+#define GFX_WORKAROUND_WHITESPACE_COUNT (1 << 0)
 
 } // End of namespace Sci
 
-#endif /* !_GFX_OPTIONS_H_ */
+#endif // !_GFX_OPTIONS_H_
 
