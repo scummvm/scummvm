@@ -222,10 +222,10 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 #include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 # undef EXTRA_BYTE_OFFSET
 # define EXTRA_BYTE_OFFSET 1
-#endif // WORDS_BIGENDIAN
+#endif // SCUMM_BIG_ENDIAN
 #define SIZETYPE guint32
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_3
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_3
@@ -233,10 +233,10 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 #define COPY_BYTES 3
 #include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 # undef EXTRA_BYTE_OFFSET
 # define EXTRA_BYTE_OFFSET 0
-#endif // WORDS_BIGENDIAN
+#endif // SCUMM_BIG_ENDIAN
 
 #define SIZETYPE guint32
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_4

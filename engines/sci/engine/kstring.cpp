@@ -426,7 +426,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	        ((strlen((const char*)dest) < 2) || (!is_print_str((char*)dest))))
 		/* SQ4 array handling detected */
 	{
-#ifndef WORDS_BIGENDIAN
+#ifndef SCUMM_BIG_ENDIAN
 		int odd = KP_UINT(argv[1]) & 1;
 #else
 		int odd = !(KP_UINT(argv[1]) & 1);

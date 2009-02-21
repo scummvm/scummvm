@@ -135,7 +135,7 @@ void gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t
 	int masks[3];
 	int shift_const = 0;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	shift_const = (sizeof(unsigned long) - mode->bytespp) << 3;
 #endif
 

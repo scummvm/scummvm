@@ -54,7 +54,7 @@ namespace Sci {
 #define SFX_PCM_FORMAT_U16_BE (0x8000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_BE)	/* Unsigned (bias 32768) 16 bit BE format */
 #define SFX_PCM_FORMAT_S16_BE (0x0000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_BE)	/* Signed 16 bit format, big endian */
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 #  define SFX_PCM_FORMAT_U16_NATIVE SFX_PCM_FORMAT_U16_BE
 #  define SFX_PCM_FORMAT_S16_NATIVE SFX_PCM_FORMAT_S16_BE
 #else

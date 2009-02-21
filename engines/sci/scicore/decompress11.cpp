@@ -54,7 +54,7 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 	if (stream.read(&(result->number), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	result->number = GUINT16_SWAP_LE_BE_CONSTANT(result->number);
 #endif
 	if ((result->type > sci_invalid_resource))
@@ -63,7 +63,7 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
 	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
 	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);

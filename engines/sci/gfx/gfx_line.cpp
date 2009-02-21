@@ -52,7 +52,7 @@ static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point star
 	dy = end.y - start.y;
 	finalx = end.x;
 	finaly = end.y;
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	color = GUINT32_SWAP_LE_BE_CONSTANT(color);
 #endif
 	dx = abs(dx);

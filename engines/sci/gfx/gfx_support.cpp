@@ -362,7 +362,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 			alpha_mask &= 0xff;
 		}
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 		alpha += (mode->bytespp) - (shift_nr + 1);
 #else
 		alpha += shift_nr;

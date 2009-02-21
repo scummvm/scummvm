@@ -231,7 +231,7 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
 #endif
 
@@ -247,7 +247,7 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 	if (stream.read(&(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	result->id = GUINT16_SWAP_LE_BE_CONSTANT(result->id);
 #endif
 	result->number = result->id & 0x07ff;
@@ -259,7 +259,7 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef WORDS_BIGENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
 	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
 	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
