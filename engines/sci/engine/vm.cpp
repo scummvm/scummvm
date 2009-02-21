@@ -34,10 +34,6 @@
 #include "sci/engine/gc.h"
 #include "sci/sfx/sfx_player.h"
 
-#ifdef HAVE_SETJMP_H
-#include <setjmp.h>
-#endif
-
 namespace Sci {
 
 reg_t NULL_REG = NULL_REG_INITIALIZER;
@@ -62,11 +58,6 @@ calls_struct_t *send_calls = NULL;
 int send_calls_allocated = 0;
 int bp_flag = 0;
 static reg_t _dummy_register = NULL_REG_INITIALIZER;
-
-#ifdef HAVE_SETJMP_H
-static int jump_initialized = 0;
-static jmp_buf vm_error_address;
-#endif
 
 // validation functionality
 
@@ -536,10 +527,6 @@ exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg
 
 void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 	fprintf(stderr, "Fatal VM error in %s, L%d; aborting...\n", file, line);
-#ifdef HAVE_SETJMP_H
-	if (jump_initialized)
-		longjmp(vm_error_address, 0);
-#endif
 	error("Could not recover, exitting...\n");
 }
 
@@ -623,11 +610,6 @@ void run_vm(EngineState *s, int restoring) {
 		sciprintf("vm.c: run_vm(): NULL passed for \"s\"\n");
 		return;
 	}
-
-#ifdef HAVE_SETJMP_H
-	setjmp(vm_error_address);
-	jump_initialized = 1;
-#endif
 
 	if (!restoring)
 		s->execution_stack_base = s->execution_stack_pos;
