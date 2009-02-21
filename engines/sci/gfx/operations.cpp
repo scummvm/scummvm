@@ -28,6 +28,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/gfx/gfx_operations.h"
 
+#include "common/system.h"
+
 #include <ctype.h>
 
 namespace Sci {
@@ -1365,24 +1367,17 @@ static int _gfxop_full_pointer_refresh(gfx_state_t *state) {
 }
 
 int gfxop_usleep(gfx_state_t *state, long usecs) {
-	long time, utime;
-	long wakeup_time, wakeup_utime;
-	long add_seconds;
+	uint32 time, wakeup_time;
 	int retval = GFX_OK;
 
 	BASIC_CHECKS(GFX_FATAL);
 
-	sci_gettime(&wakeup_time, &wakeup_utime);
-	wakeup_utime += usecs;
-
-	add_seconds = (wakeup_utime / MILLION);
-	wakeup_time += add_seconds;
-	wakeup_utime -= (MILLION * add_seconds);
+	wakeup_time = g_system->getMillis() + usecs / 1000;
 
 	do {
 		GFXOP_FULL_POINTER_REFRESH;
-		sci_gettime(&time, &utime);
-		usecs = (wakeup_time - time) * MILLION + wakeup_utime - utime;
+		time = g_system->getMillis();
+		usecs = 1000l * (wakeup_time - time);
 	} while ((usecs > 0) && !(retval = state->driver->usec_sleep(state->driver, usecs)));
 
 	if (retval) {
@@ -1391,7 +1386,6 @@ int gfxop_usleep(gfx_state_t *state, long usecs) {
 
 	return retval;
 }
-
 
 int _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
 	rect_t old_pointer_bounds = {0, 0, 0, 0};
