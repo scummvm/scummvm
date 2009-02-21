@@ -44,16 +44,16 @@ struct tokenlist {
 static gint8 stak[0x1014] = {0};
 static gint8 lastchar = 0;
 static gint16 stakptr = 0;
-static guint16 numbits, s_bitstring, lastbits, decryptstart;
+static guint16 s_numbits, s_bitstring, lastbits, decryptstart;
 static gint16 curtoken, endtoken;
 
 
-guint32 gbits(int numbits,  guint8 * data, int dlen);
+uint32 gbits(int numbits,  guint8 * data, int dlen);
 
 void decryptinit3(void) {
 	int i;
 	lastchar = lastbits = s_bitstring = stakptr = 0;
-	numbits = 9;
+	s_numbits = 9;
 	curtoken = 0x102;
 	endtoken = 0x1ff;
 	decryptstart = 0;
@@ -71,7 +71,7 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
 		switch (decryptstart) {
 		case 0:
 		case 1:
-			s_bitstring = gbits(numbits, src, complength);
+			s_bitstring = gbits(s_numbits, src, complength);
 			if (s_bitstring == 0x101) { /* found end-of-data signal */
 				decryptstart = 4;
 				return 0;
@@ -84,7 +84,7 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
 				return 0;
 			}
 			if (s_bitstring == 0x100) { /* start-over signal */
-				numbits = 9;
+				s_numbits = 9;
 				endtoken = 0x1ff;
 				curtoken = 0x102;
 				decryptstart = 0;
@@ -114,8 +114,8 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
 				tokens[curtoken].data = lastchar;
 				tokens[curtoken].next = lastbits;
 				curtoken++;
-				if (curtoken == endtoken && numbits != 12) {
-					numbits++;
+				if (curtoken == endtoken && s_numbits != 12) {
+					s_numbits++;
 					endtoken <<= 1;
 					endtoken++;
 				}
@@ -491,9 +491,9 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 
 
 int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version) {
-	guint16 compressedLength, result_size;
-	guint16 compressionMethod;
-	guint8 *buffer;
+	uint16 compressedLength, result_size;
+	uint16 compressionMethod;
+	uint8 *buffer;
 
 	if (stream.read(&(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
@@ -524,8 +524,7 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 	    return SCI_ERROR_DECOMPRESSION_INSANE; */
 	/* This return will never happen in SCI0 or SCI1 (does it have any use?) */
 
-	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
 	if (compressedLength > 4)

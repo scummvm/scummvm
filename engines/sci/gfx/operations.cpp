@@ -1521,7 +1521,6 @@ int
 _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
 	rect_t old_pointer_bounds = {0, 0, 0, 0};
 	rect_t pointer_bounds = {0, 0, 0, 0};
-	int retval = -1;
 	int draw_old;
 	int draw_new = 0;
 

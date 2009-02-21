@@ -74,8 +74,7 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 	    return SCI_ERROR_DECOMPRESSION_INSANE; */
 	/* This return will never happen in SCI0 or SCI1 (does it have any use?) */
 
-	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
 	if (compressedLength > 0)

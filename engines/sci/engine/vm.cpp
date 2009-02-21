@@ -1084,7 +1084,7 @@ void run_vm(state_t *s, int restoring) {
 
 		case 0x24: // ret 
 			do {
-				stack_ptr_t old_sp = xs->sp;
+				stack_ptr_t old_sp2 = xs->sp;
 				stack_ptr_t old_fp = xs->fp;
 				exec_stack_t *old_xs = s->execution_stack + s->execution_stack_pos;
 
@@ -1114,7 +1114,7 @@ void run_vm(state_t *s, int restoring) {
 
 				if (xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer 
 				        || xs->type != EXEC_STACK_TYPE_CALL) {
-					xs->sp = old_sp;
+					xs->sp = old_sp2;
 					xs->fp = old_fp;
 				}
 
@@ -1765,9 +1765,6 @@ int script_instantiate_sci0(state_t *s, int script_nr) {
 
 	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
 		//
-		int locals_size = getUInt16(script->data)*2;
-		int locals = (locals_size)? script->size : 0;
-		
 		int locals_nr = getUInt16(script->data);
 
 		// Old script block 

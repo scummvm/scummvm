@@ -62,7 +62,6 @@
 #include "common/str.h"
 
 #ifdef UNIX
-#define _GNU_SOURCE /* For FNM_CASEFOLD in fnmatch.h */
 #include <fnmatch.h>
 #endif
 

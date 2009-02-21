@@ -249,10 +249,10 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 
 
 int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version) {
-	guint16 compressedLength;
-	guint16 compressionMethod;
-	guint16 result_size;
-	guint8 *buffer;
+	uint16 compressedLength;
+	uint16 compressionMethod;
+	uint16 result_size;
+	uint8 *buffer;
 
 	if (stream.read(&(result->id), 2) != 2)
 		return SCI_ERROR_IO_ERROR;
@@ -278,8 +278,7 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 #endif
 	result->size = result_size;
 
-	if ((result->size > SCI_MAX_RESOURCE_SIZE) ||
-	        (compressedLength > SCI_MAX_RESOURCE_SIZE))
+	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 	/* With SCI0, this simply cannot happen. */
 

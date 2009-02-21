@@ -42,12 +42,11 @@ static void (*_con_pixmap_callback)(gfx_pixmap_t *) = NULL;
 /****************************************/
 
 
-int
-sciprintf(const char *fmt, ...) {
+int sciprintf(const char *fmt, ...) {
 	va_list argp;
-	size_t bufsize = 256;
-	unsigned int i;
-	char *buf 	= (char *) sci_malloc(bufsize);
+	int bufsize = 256;
+	int i;
+	char *buf 	= (char *)sci_malloc(bufsize);
 
 	if (NULL == fmt) {
 		error("console.c: sciprintf(): NULL passed for parameter fmt\n");
@@ -67,7 +66,7 @@ sciprintf(const char *fmt, ...) {
 		va_start(argp, fmt);	/* reset argp */
 
 		free(buf);
-		buf = (char *) sci_malloc(bufsize <<= 1);
+		buf = (char *)sci_malloc(bufsize <<= 1);
 	}
 	va_end(argp);
 
@@ -85,8 +84,7 @@ sciprintf(const char *fmt, ...) {
 	return 1;
 }
 
-void
-con_set_string_callback(void(*callback)(char *)) {
+void con_set_string_callback(void(*callback)(char *)) {
 	_con_string_callback = callback;
 }
 

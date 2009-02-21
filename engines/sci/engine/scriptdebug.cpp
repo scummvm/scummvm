@@ -2166,7 +2166,8 @@ static int c_send(state_t *s) {
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
 	stack_ptr_t stackframe = s->execution_stack->sp;
-	unsigned int i, selector_id, selector_type;
+	int selector_id;
+	unsigned int i, selector_type;
 	exec_stack_t *xstack;
 	object_t *o;
 	reg_t *vptr;
@@ -2877,7 +2878,6 @@ static int c_gc_list_reachable(state_t *s) {
 
 void script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
              seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
-	static int last_step;
 	// Do we support a separate console?
 
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {

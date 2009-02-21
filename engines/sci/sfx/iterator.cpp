@@ -780,7 +780,6 @@ _sci1_song_init(sci1_song_iterator_t *self) {
 	self->next_sample = 0;
 //	self->device_id = 0x0c;
 
-	CHECK_FOR_END_ABSOLUTE(0);
 	if (SONGDATA(0) == 0xf0) {
 		self->priority = SONGDATA(1);
 
