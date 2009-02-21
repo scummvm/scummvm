@@ -39,7 +39,7 @@ void sci1_sprintf_patch_file_name(char *string, resource_t *res) {
 	sprintf(string, "%d.%s", res->number, sci_resource_type_suffixes[res->type]);
 }
 
-/* version-agnostic patch application */
+// version-agnostic patch application
 static void process_patch(ResourceSource *source,
               Common::ArchiveMember &member, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
 	Common::File file;
@@ -52,10 +52,7 @@ static void process_patch(ResourceSource *source,
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 	else {
 		guint8 filehdr[2];
-		resource_t *newrsc = _scir_find_resource_unsorted(*resource_p,
-		                     *resource_nr_p,
-		                     restype,
-		                     resnumber);
+		resource_t *newrsc = _scir_find_resource_unsorted(*resource_p, *resource_nr_p, restype, resnumber);
 		int fsize = file.size();
 		if (fsize < 3) {
 			printf("File too small\n");
@@ -73,21 +70,19 @@ static void process_patch(ResourceSource *source,
 		} else if (patch_data_offset + 2 >= fsize) {
 			printf("Failed; patch starting at offset %d can't be in file of size %d\n", filehdr[1] + 2, fsize);
 		} else {
-			/* Adjust for file offset */
+			// Adjust for file offset
 			fsize -= patch_data_offset;
 
-			/* Prepare destination, if neccessary */
+			// Prepare destination, if neccessary
 			if (!newrsc) {
-				/* Completely new resource! */
+				// Completely new resource!
 				++(*resource_nr_p);
-				*resource_p = (resource_t*)sci_realloc(*resource_p,
-													   *resource_nr_p
-													   * sizeof(resource_t));
+				*resource_p = (resource_t *)sci_realloc(*resource_p, *resource_nr_p * sizeof(resource_t));
 				newrsc = (*resource_p - 1) + *resource_nr_p;
 				newrsc->alt_sources = NULL;
 			}
 
-			/* Overwrite everything, because we're patching */
+			// Overwrite everything, because we're patching
 			newrsc->size = fsize - 2;
 			newrsc->id = restype << 11 | resnumber;
 			newrsc->number = resnumber;
@@ -99,7 +94,6 @@ static void process_patch(ResourceSource *source,
 			_scir_add_altsource(newrsc, source, 2);
 
 			printf("OK\n");
-
 		}
 	}
 }
@@ -118,8 +112,7 @@ int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 		char *endptr;
 
 		for (i = sci_view; i < sci_invalid_resource; i++)
-			if (scumm_strnicmp(sci_resource_types[i], name.c_str(),
-			                strlen(sci_resource_types[i])) == 0)
+			if (scumm_strnicmp(sci_resource_types[i], name.c_str(), strlen(sci_resource_types[i])) == 0)
 				restype = i;
 
 		if (restype != sci_invalid_resource) {
@@ -128,8 +121,7 @@ int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 			if (name[resname_len] != '.')
 				restype = sci_invalid_resource;
 			else {
-				resnumber = strtol(name.c_str() + 1 + resname_len,
-				                   &endptr, 10); /* Get resource number */
+				resnumber = strtol(name.c_str() + 1 + resname_len, &endptr, 10); // Get resource number
 				if ((*endptr != '\0') || (resname_len + 1 == name.size()))
 					restype = sci_invalid_resource;
 
@@ -165,9 +157,7 @@ int sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 		}
 
 		if (restype != sci_invalid_resource) {
-
-			resnumber = strtol(name.c_str(),
-			                   &endptr, 10); /* Get resource number */
+			resnumber = strtol(name.c_str(), &endptr, 10); // Get resource number
 
 			if (endptr != dot)
 				restype = sci_invalid_resource;

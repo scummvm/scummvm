@@ -23,7 +23,7 @@
  *
  */
 
-/* Resource library */
+// Resource library
 
 #include "common/archive.h"
 #include "common/file.h"
@@ -31,12 +31,12 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
-#include "sci/include/vocabulary.h" /* For SCI version auto-detection */
+#include "sci/include/vocabulary.h"
 
 namespace Sci {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
-/* #define SCI_VERBOSE_RESMGR 1 */
+//#define SCI_VERBOSE_RESMGR 1
 
 // FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
 #if _MSC_VER
@@ -80,7 +80,7 @@ const char* sci_resource_types[] = {"view", "pic", "script", "text", "sound",
                                     "patch", "bitmap", "palette", "cdaudio",
                                     "audio", "sync", "message", "map", "heap"
                                    };
-/* These are the 18 resource types supported by SCI1 */
+// These are the 18 resource types supported by SCI1
 
 const char *sci_resource_type_suffixes[] = {"v56", "p56", "scr", "tex", "snd",
         "   ", "voc", "fon", "cur", "pat",
@@ -90,7 +90,6 @@ const char *sci_resource_type_suffixes[] = {"v56", "p56", "scr", "tex", "snd",
 
 
 int resourcecmp(const void *first, const void *second);
-
 
 typedef int decomp_funct(resource_t *result, Common::ReadStream &stream, int sci_version);
 typedef void patch_sprintf_funct(char *string, resource_t *res);
@@ -133,15 +132,10 @@ int resourcecmp(const void *first, const void *second) {
 }
 
 
-
-
-
-/*-----------------------------*/
-/*-- Resmgr helper functions --*/
-/*-----------------------------*/
+//-- Resmgr helper functions --
 
 void _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int file_offset) {
-	resource_altsource_t *rsrc = (resource_altsource_t*)sci_malloc(sizeof(resource_altsource_t));
+	resource_altsource_t *rsrc = (resource_altsource_t *)sci_malloc(sizeof(resource_altsource_t));
 
 	rsrc->next = res->alt_sources;
 	rsrc->source = source;
@@ -157,14 +151,12 @@ resource_t *_scir_find_resource_unsorted(resource_t *res, int res_nr, int type, 
 	return NULL;
 }
 
-/*-----------------------------------*/
-/** Resource source list management **/
-/*-----------------------------------*/
+// Resource source list management
 
 ResourceSource *scir_add_external_map(ResourceManager *mgr, const char *file_name) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	/* Add the new source to the SLL of sources */
+	// Add the new source to the SLL of sources
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
@@ -176,11 +168,10 @@ ResourceSource *scir_add_external_map(ResourceManager *mgr, const char *file_nam
 	return newsrc;
 }
 
-ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const char *filename,
-                int number, int extended_addressing) {
+ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const char *filename, int number, int extended_addressing) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	/* Add the new source to the SLL of sources */
+	// Add the new source to the SLL of sources
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
@@ -189,19 +180,21 @@ ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const
 	newsrc->location_name = filename;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
+
 	return 0;
 }
 
 ResourceSource *scir_add_patch_dir(ResourceManager *mgr, const char *dirname) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	/* Add the new source to the SLL of sources */
+	// Add the new source to the SLL of sources
 	newsrc->next = mgr->_sources;
 	mgr->_sources = newsrc;
 
 	newsrc->source_type = RESSOURCE_TYPE_DIRECTORY;
 	newsrc->scanned = false;
 	newsrc->location_name = dirname;
+
 	return 0;
 }
 
@@ -209,8 +202,7 @@ ResourceSource *scir_get_volume(ResourceManager *mgr, ResourceSource *map, int v
 	ResourceSource *seeker = mgr->_sources;
 
 	while (seeker) {
-		if (seeker->source_type == RESSOURCE_TYPE_VOLUME &&
-		        seeker->associated_map == map &&
+		if (seeker->source_type == RESSOURCE_TYPE_VOLUME && seeker->associated_map == map &&
 		        seeker->volume_number == volume_nr)
 			return seeker;
 		seeker = seeker->next;
@@ -219,42 +211,35 @@ ResourceSource *scir_get_volume(ResourceManager *mgr, ResourceSource *map, int v
 	return NULL;
 }
 
-/*------------------------------------------------*/
-/** Resource manager constructors and operations **/
-/*------------------------------------------------*/
+// Resource manager constructors and operations
 
-static void
-_scir_load_from_patch_file(Common::File &file, resource_t *res, char *filename) {
+static void _scir_load_from_patch_file(Common::File &file, resource_t *res, char *filename) {
 	unsigned int really_read;
 
-	res->data = (unsigned char*)sci_malloc(res->size);
+	res->data = (unsigned char *)sci_malloc(res->size);
 	really_read = file.read(res->data, res->size);
 
 	if (really_read < res->size) {
-		error("Read %d bytes from %s but expected %d!",
-		          really_read, filename, res->size);
+		error("Read %d bytes from %s but expected %d!", really_read, filename, res->size);
 	}
 
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
-static void
-_scir_load_resource(ResourceManager *mgr, resource_t *res, bool protect) {
+static void _scir_load_resource(ResourceManager *mgr, resource_t *res, bool protect) {
 	char filename[MAXPATHLEN];
 	Common::File file;
 	resource_t backup;
 
 	memcpy(&backup, res, sizeof(resource_t));
 
-	/* First try lower-case name */
+	// First try lower-case name
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY) {
-
 		if (!patch_sprintfers[mgr->sci_version]) {
-			error("Resource manager's SCI version (%d) has no patch file name printers",
-			          mgr->sci_version);
+			error("Resource manager's SCI version (%d) has no patch file name printers", mgr->sci_version);
 		}
 
-		/* Get patch file name */
+		// Get patch file name
 		patch_sprintfers[mgr->sci_version](filename, res);
 		
 		// FIXME: Instead of using SearchMan, maybe we should only search
@@ -270,23 +255,20 @@ _scir_load_resource(ResourceManager *mgr, resource_t *res, bool protect) {
 		return;
 	}
 
-
 	file.seek(res->file_offset, SEEK_SET);
 
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
 		_scir_load_from_patch_file(file, res, filename);
 	else if (!decompressors[mgr->sci_version]) {
-		/* Check whether we support this at all */
+		// Check whether we support this at all
 		error("Resource manager's SCI version (%d) is invalid", mgr->sci_version);
 	} else {
-		int error = /* Decompress from regular resource file */
+		int error = // Decompress from regular resource file
 		    decompressors[mgr->sci_version](res, file, mgr->sci_version);
 
 		if (error) {
-			sciprintf("Error %d occured while reading %s.%03d"
-			          " from resource file: %s\n",
-			          error, sci_resource_types[res->type], res->number,
-			          sci_error_types[error]);
+			sciprintf("Error %d occured while reading %s.%03d from resource file: %s\n",
+			          error, sci_resource_types[res->type], res->number, sci_error_types[error]);
 
 			if (protect)
 				memcpy(res, &backup, sizeof(resource_t));
@@ -303,9 +285,7 @@ resource_t *scir_test_resource(ResourceManager *mgr, int type, int number) {
 	resource_t binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
-	return (resource_t *)
-	       bsearch(&binseeker, mgr->_resources, mgr->_resourcesNr,
-	               sizeof(resource_t), resourcecmp);
+	return (resource_t *)bsearch(&binseeker, mgr->_resources, mgr->_resourcesNr, sizeof(resource_t), resourcecmp);
 }
 
 int sci0_get_compression_method(Common::ReadStream &stream);
@@ -341,7 +321,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 			return (mgr->sci_version = SCI_VERSION_01_VGA);
 	}
 
-	/* Try the same thing with pics */
+	// Try the same thing with pics
 	for (i = 0; i < 1000; i++) {
 		res = scir_test_resource(mgr, sci_pic, i);
 
@@ -366,8 +346,6 @@ int sci_test_view_type(ResourceManager *mgr) {
 
 	return mgr->sci_version;
 }
-
-
 
 int scir_add_appropriate_sources(ResourceManager *mgr) {
 	//char path_separator;
@@ -396,7 +374,7 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 	int preset_version = mgr->sci_version;
 	int resource_error = 0;
 	int dummy = mgr->sci_version;
-//	resource_t **concat_ptr = &(mgr->_resources[mgr->_resourcesNr-1].next);
+	//resource_t **concat_ptr = &(mgr->_resources[mgr->_resourcesNr - 1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
@@ -410,40 +388,28 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 		switch (source->source_type) {
 		case RESSOURCE_TYPE_DIRECTORY:
 			if (mgr->sci_version <= SCI_VERSION_01)
-				sci0_read_resource_patches(source,
-				                           &mgr->_resources,
-				                           &mgr->_resourcesNr);
+				sci0_read_resource_patches(source, &mgr->_resources, &mgr->_resourcesNr);
 			else
-				sci1_read_resource_patches(source,
-				                           &mgr->_resources,
-				                           &mgr->_resourcesNr);
+				sci1_read_resource_patches(source, &mgr->_resources, &mgr->_resourcesNr);
 			break;
 		case RESSOURCE_TYPE_EXTERNAL_MAP:
-			if (preset_version <= SCI_VERSION_01_VGA_ODD
-			        /* || preset_version == SCI_VERSION_AUTODETECT -- subsumed by the above line */) {
-				resource_error =
-				    sci0_read_resource_map(mgr,
-				                           source,
-				                           &mgr->_resources,
-				                           &mgr->_resourcesNr,
-				                           detected_version);
-
+			if (preset_version <= SCI_VERSION_01_VGA_ODD /* || preset_version == SCI_VERSION_AUTODETECT -- subsumed by the above line */) {
+				resource_error = sci0_read_resource_map(mgr, source, &mgr->_resources, &mgr->_resourcesNr, detected_version);
 #if 0
 				if (resource_error >= SCI_ERROR_CRITICAL) {
-					sciprintf("Resmgr: Error while loading resource map: %s\n",
-					          sci_error_types[resource_error]);
+					sciprintf("Resmgr: Error while loading resource map: %s\n", sci_error_types[resource_error]);
 					if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND)
 						sciprintf("Running SCI games without a resource map is not supported ATM\n");
 					sci_free(mgr);
 					return NULL;
 				}
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-					/* fixme: Try reading w/o resource.map */
+					// fixme: Try reading w/o resource.map
 					resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 				}
 
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
-					/* Initialize empty resource manager */
+					// Initialize empty resource manager
 					mgr->_resourcesNr = 0;
 					mgr->_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
 					resource_error = 0;
@@ -451,25 +417,17 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 #endif
 			}
 
-			if ((preset_version == SCI_VERSION_1_EARLY) ||
-			        (preset_version == SCI_VERSION_1_LATE) ||
-			        (preset_version == SCI_VERSION_1_1) ||
+			if ((preset_version == SCI_VERSION_1_EARLY) || (preset_version == SCI_VERSION_1_LATE) || (preset_version == SCI_VERSION_1_1) ||
 			        ((*detected_version == SCI_VERSION_AUTODETECT) && (preset_version == SCI_VERSION_AUTODETECT))) {
-				resource_error =
-				    sci1_read_resource_map(mgr,
-				                           source,
-				                           scir_get_volume(mgr, source, 0),
-				                           &mgr->_resources,
-				                           &mgr->_resourcesNr,
-				                           detected_version);
-
+				resource_error = sci1_read_resource_map(mgr, source, scir_get_volume(mgr, source, 0),
+														&mgr->_resources, &mgr->_resourcesNr, detected_version);
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-					/* fixme: Try reading w/o resource.map */
+					// fixme: Try reading w/o resource.map
 					resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 				}
 
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
-					/* Initialize empty resource manager */
+					// Initialize empty resource manager
 					mgr->_resourcesNr = 0;
 					mgr->_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
 					resource_error = 0;
@@ -479,15 +437,14 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 			mgr->sci_version = *detected_version;
 			break;
 		}
-		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t),
-		      resourcecmp); /* Sort resources */
+		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
 	}
 	return resource_error;
 }
 
-int
-scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
+int scir_scan_new_sources(ResourceManager *mgr, int *detected_version) {
 	_scir_scan_new_sources(mgr, detected_version, mgr->_sources);
+
 	return 0;
 }
 
@@ -530,14 +487,12 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 //		return NULL;
 	}
 
-	qsort(_resources, _resourcesNr, sizeof(resource_t),
-	      resourcecmp); /* Sort resources */
+	qsort(_resources, _resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
 
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (resmap_version) {
 		case SCI_VERSION_0:
-			if (scir_test_resource(mgr, sci_vocab,
-			                       VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
+			if (scir_test_resource(mgr, sci_vocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
 				version = sci_test_view_type(mgr);
 				if (version == SCI_VERSION_01_VGA) {
 					sciprintf("Resmgr: Detected KQ5 or similar\n");
@@ -545,8 +500,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 					sciprintf("Resmgr: Detected SCI0\n");
 					version = SCI_VERSION_0;
 				}
-			} else if (scir_test_resource(mgr, sci_vocab,
-			                              VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
+			} else if (scir_test_resource(mgr, sci_vocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
 				version = sci_test_view_type(mgr);
 				if (version == SCI_VERSION_01_VGA) {
 					sciprintf("Resmgr: Detected KQ5 or similar\n");
@@ -584,32 +538,28 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			break;
 		}
 		case SCI_VERSION_1_1:
-			/* No need to handle SCI 1.1 here - it was done in resource_map.c */
+			// No need to handle SCI 1.1 here - it was done in resource_map.cpp
 			version = SCI_VERSION_1_1;
 			break;
 		default:
-			sciprintf("Resmgr: Warning: While autodetecting: Couldn't"
-			          " determine SCI version");
+			sciprintf("Resmgr: Warning: While autodetecting: Couldn't determine SCI version");
 		}
 
 	if (!resource_error) {
-		qsort(_resources, _resourcesNr, sizeof(resource_t),
-		      resourcecmp); /* Sort resources */
+		qsort(_resources, _resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
 	}
 
 	mgr->sci_version = version;
 }
 
-static void
-_scir_free_altsources(resource_altsource_t *dynressrc) {
+static void _scir_free_altsources(resource_altsource_t *dynressrc) {
 	if (dynressrc) {
 		_scir_free_altsources(dynressrc->next);
 		free(dynressrc);
 	}
 }
 
-void
-_scir_free_resources(resource_t *resources, int _resourcesNr) {
+void _scir_free_resources(resource_t *resources, int _resourcesNr) {
 	int i;
 
 	for (i = 0; i < _resourcesNr; i++) {
@@ -631,20 +581,15 @@ ResourceManager::~ResourceManager() {
 	_resources = NULL;
 }
 
-
-static void
-_scir_unalloc(resource_t *res) {
+static void _scir_unalloc(resource_t *res) {
 	free(res->data);
 	res->data = NULL;
 	res->status = SCI_STATUS_NOMALLOC;
 }
 
-
-static void
-_scir_remove_from_lru(ResourceManager *mgr, resource_t *res) {
+static void _scir_remove_from_lru(ResourceManager *mgr, resource_t *res) {
 	if (res->status != SCI_STATUS_ENQUEUED) {
-		sciprintf("Resmgr: Oops: trying to remove resource that isn't"
-		          " enqueued\n");
+		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
 		return;
 	}
 
@@ -662,11 +607,9 @@ _scir_remove_from_lru(ResourceManager *mgr, resource_t *res) {
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
-static void
-_scir_add_to_lru(ResourceManager *mgr, resource_t *res) {
+static void _scir_add_to_lru(ResourceManager *mgr, resource_t *res) {
 	if (res->status != SCI_STATUS_ALLOCATED) {
-		sciprintf("Resmgr: Oops: trying to enqueue resource with state"
-		          " %d\n", res->status);
+		sciprintf("Resmgr: Oops: trying to enqueue resource with state %d\n", res->status);
 		return;
 	}
 
@@ -680,38 +623,31 @@ _scir_add_to_lru(ResourceManager *mgr, resource_t *res) {
 
 	mgr->memory_lru += res->size;
 #if (SCI_VERBOSE_RESMGR > 1)
-	error("Adding %s.%03d (%d bytes) to lru control: %d bytes total\n",
-	        sci_resource_types[res->type], res->number, res->size,
-	        mgr->memory_lru);
+	error("Adding %s.%03d (%d bytes) to lru control: %d bytes total\n", sci_resource_types[res->type],
+			res->number, res->size, mgr->memory_lru);
 
 #endif
 
 	res->status = SCI_STATUS_ENQUEUED;
 }
 
-static void
-_scir_print_lru_list(ResourceManager *mgr) {
+static void _scir_print_lru_list(ResourceManager *mgr) {
 	int mem = 0;
 	int entries = 0;
 	resource_t *res = mgr->lru_first;
 
 	while (res) {
-		error("\t%s.%03d: %d bytes\n",
-		        sci_resource_types[res->type], res->number,
-		        res->size);
+		error("\t%s.%03d: %d bytes\n", sci_resource_types[res->type], res->number, res->size);
 		mem += res->size;
 		++entries;
 		res = res->next;
 	}
 
-	error("Total: %d entries, %d bytes (mgr says %d)\n",
-	        entries, mem, mgr->memory_lru);
+	error("Total: %d entries, %d bytes (mgr says %d)\n", entries, mem, mgr->memory_lru);
 }
 
-static void
-_scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
-	while (mgr->_maxMemory < mgr->memory_lru
-	        && (!last_invulnerable || mgr->lru_first != mgr->lru_last)) {
+static void _scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
+	while (mgr->_maxMemory < mgr->memory_lru && (!last_invulnerable || mgr->lru_first != mgr->lru_last)) {
 		resource_t *goner = mgr->lru_last;
 		if (!goner) {
 			error("Internal error: mgr->lru_last is NULL");
@@ -723,22 +659,18 @@ _scir_free_old_resources(ResourceManager *mgr, int last_invulnerable) {
 		_scir_remove_from_lru(mgr, goner);
 		_scir_unalloc(goner);
 #ifdef SCI_VERBOSE_RESMGR
-		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n",
-		          sci_resource_types[goner->type], goner->number,
-		          goner->size);
+		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", sci_resource_types[goner->type], goner->number, goner->size);
 #endif
 	}
 }
 
-resource_t *
-scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
+resource_t * scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 	resource_t *retval;
 
 	if (number >= sci_max_resource_nr[mgr->sci_version]) {
 		int modded_number = number % sci_max_resource_nr[mgr->sci_version];
 		sciprintf("[resmgr] Requested invalid resource %s.%d, mapped to %s.%d\n",
-		          sci_resource_types[type], number,
-		          sci_resource_types[type], modded_number);
+		          sci_resource_types[type], number, sci_resource_types[type], modded_number);
 		number = modded_number;
 	}
 
@@ -752,8 +684,8 @@ scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 
 	else if (retval->status == SCI_STATUS_ENQUEUED)
 		_scir_remove_from_lru(mgr, retval);
-	/* Unless an error occured, the resource is now either
-	** locked or allocated, but never queued or freed.  */
+	// Unless an error occured, the resource is now either
+	// locked or allocated, but never queued or freed.
 
 	if (lock) {
 		if (retval->status == SCI_STATUS_ALLOCATED) {
@@ -764,7 +696,7 @@ scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 
 		++retval->lockers;
 
-	} else if (retval->status != SCI_STATUS_LOCKED) { /* Don't lock it */
+	} else if (retval->status != SCI_STATUS_LOCKED) { // Don't lock it
 		if (retval->status == SCI_STATUS_ALLOCATED)
 			_scir_add_to_lru(mgr, retval);
 	}
@@ -774,14 +706,12 @@ scir_find_resource(ResourceManager *mgr, int type, int number, int lock) {
 	if (retval->data)
 		return retval;
 	else {
-		sciprintf("Resmgr: Failed to read %s.%03d\n",
-		          sci_resource_types[retval->type], retval->number);
+		sciprintf("Resmgr: Failed to read %s.%03d\n", sci_resource_types[retval->type], retval->number);
 		return NULL;
 	}
 }
 
-void
-scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int restype) {
+void scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int restype) {
 	if (!res) {
 		if (restype >= ARRAYSIZE(sci_resource_types))
 			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d", restype, resnum);
@@ -791,13 +721,12 @@ scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int rest
 	}
 
 	if (res->status != SCI_STATUS_LOCKED) {
-		sciprintf("Resmgr: Warning: Attempt to unlock unlocked"
-		          " resource %s.%03d\n",
+		sciprintf("Resmgr: Warning: Attempt to unlock unlocked resource %s.%03d\n",
 		          sci_resource_types[res->type], res->number);
 		return;
 	}
 
-	if (!--res->lockers) { /* No more lockers? */
+	if (!--res->lockers) { // No more lockers?
 		res->status = SCI_STATUS_ALLOCATED;
 		mgr->memory_locked -= res->size;
 		_scir_add_to_lru(mgr, res);
