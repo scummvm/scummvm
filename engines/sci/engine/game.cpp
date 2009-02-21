@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
 #include "sci/include/versions.h"
@@ -627,9 +629,7 @@ int game_init(EngineState *s) {
 	sys_string_acquire(s->sys_strings, SYS_STRING_PARSER_BASE, "parser-base", MAX_PARSER_BASE);
 	s->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
-	sci_get_current_time(&(s->game_start_time)); // Get start time
-	memcpy(&(s->last_wait_time), &(s->game_start_time), sizeof(GTimeVal));
-	// Use start time as last_wait_time
+	s->last_wait_time = g_system->getMillis();
 
 	s->debug_mode = 0x0; // Disable all debugging
 	s->onscreen_console = 0; // No onscreen console unless explicitly requested

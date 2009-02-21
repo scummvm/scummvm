@@ -29,6 +29,8 @@
 #	undef ARRAYSIZE
 #endif
 
+#include "common/system.h"
+
 #include "sci/sci.h"
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
@@ -495,9 +497,8 @@ reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_NEW_GETTIME_DATE 3
 
 reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	struct tm* loc_time;
-	GTimeVal time_prec;
-	time_t the_time;
+	tm loc_time;
+	uint32 start_time;
 	int retval = 0; // Avoid spurious warning
 
 #if 0
@@ -506,62 +507,46 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 #endif
 
-#ifdef WIN32
-	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
-		fprintf(stderr, "timeBeginPeriod(1) failed in kGetTime!\n");
-	}
-#endif // WIN32
-
-	the_time = time(NULL);
-	loc_time = localtime(&the_time);
-
-#ifdef WIN32
-	if (TIMERR_NOERROR != timeEndPeriod(1)) {
-		fprintf(stderr, "timeEndPeriod(1) failed in kGetTime!\n");
-	}
-#endif // WIN32
+	g_system->getTimeAndDate(loc_time);
+	start_time = g_system->getMillis() / 1000;
 
 	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
 		if (argc) { // Get seconds since last am/pm switch
-			retval = loc_time->tm_sec + loc_time->tm_min * 60 + (loc_time->tm_hour % 12) * 3600;
+			retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		} else { // Get time since game started
-			sci_get_current_time(&time_prec);
-			retval = ((time_prec.tv_usec - s->game_start_time.tv_usec) * 60 / 1000000) +
-			         (time_prec.tv_sec - s->game_start_time.tv_sec) * 60;
+			retval = start_time * 60;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		}
 	} else {
-		int mode = UKPV_OR_ALT(0, 0);	
+		int mode = UKPV_OR_ALT(0, 0);
 		// The same strange method is still used for distinguishing
 		// mode 0 and the others. We assume that this is safe, though
 
 		switch (mode) {
 		case _K_NEW_GETTIME_TICKS : {
-			sci_get_current_time(&time_prec);
-			retval = ((time_prec.tv_usec - s->game_start_time.tv_usec) * 60 / 1000000) +
-			         (time_prec.tv_sec - s->game_start_time.tv_sec) * 60;
+			retval = start_time * 60;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_12HOUR : {
-			loc_time->tm_hour %= 12;
-			retval = (loc_time->tm_min << 6) | (loc_time->tm_hour << 12) | (loc_time->tm_sec);
+			loc_time.tm_hour %= 12;
+			retval = (loc_time.tm_min << 6) | (loc_time.tm_hour << 12) | (loc_time.tm_sec);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(12h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_24HOUR : {
-			retval = (loc_time->tm_min << 5) | (loc_time->tm_sec >> 1) | (loc_time->tm_hour << 11);
+			retval = (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1) | (loc_time.tm_hour << 11);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(24h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_DATE : {
-			retval = (loc_time->tm_mon << 5) | loc_time->tm_mday | (loc_time->tm_year << 9);
+			retval = (loc_time.tm_mon << 5) | loc_time.tm_mday | (loc_time.tm_year << 9);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 			debugC(2, Sci::kDebugLevelTime, "GetTime(date) returns %d", retval);
 			break;

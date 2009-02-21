@@ -4686,7 +4686,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	}
 */
 	// Calculate the time spent with this game
-	s->game_time = time(NULL) - s->game_start_time.tv_sec;
+	s->game_time = g_system->getMillis() / 1000;
 
 #line 814 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -5091,9 +5091,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	sys_strings_restore(retval->sys_strings, s->sys_strings);
 
 	// Time state:
-	sci_get_current_time(&(retval->last_wait_time));
-	retval->game_start_time.tv_sec = time(NULL) - retval->game_time;
-	retval->game_start_time.tv_usec = 0;
+	retval->last_wait_time = g_system->getMillis();
 
 	// File IO state:
 	retval->file_handles_nr = 2;
@@ -5180,7 +5178,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1146 "engines/sci/engine/savegame.cfsml"
+#line 1144 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;

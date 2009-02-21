@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
 #include "sci/include/gfx_widgets.h"
@@ -645,14 +647,12 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 int debug_sleeptime_factor = 1;
 
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	GTimeVal time;
+	uint32 time;
 	int sleep_time = UKPV(0);
 
-	sci_get_current_time(&time);
-
-	s->r_acc = make_reg(0, ((time.tv_usec - s->last_wait_time.tv_usec) * 60 / 1000000) + (time.tv_sec - s->last_wait_time.tv_sec) * 60);
-
-	memcpy(&(s->last_wait_time), &time, sizeof(GTimeVal));
+	time = g_system->getMillis();
+	s->r_acc = make_reg(0, ((time - s->last_wait_time) / 1000) * 60);
+	s->last_wait_time = time;
 
 	// Reset optimization flags: Game is playing along nicely anyway
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
