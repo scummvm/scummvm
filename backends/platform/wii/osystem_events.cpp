@@ -323,7 +323,12 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		PAD_EVENT(PADS_UP, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
 		PAD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, 0);
 		//PAD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, 0);
-		//PAD_EVENT(PADS_RIGHT, Common::KEYCODE_n, 'n', 0);
+
+		if (bd & PADS_RIGHT) {
+			event.type = Common::EVENT_PREDICTIVE_DIALOG;
+
+			return true;
+		}
 
 		if ((bd | bu) & (PADS_A | PADS_B)) {
 			if (bd & PADS_A)
