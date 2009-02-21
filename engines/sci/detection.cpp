@@ -574,7 +574,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// King's Quest 5 - English DOS
 	{{"kq5", "", {
 		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
@@ -584,7 +583,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 60)
 	},
-#endif
 
 	// King's Quest 5 - English DOS
 	{{"kq5", "", {
