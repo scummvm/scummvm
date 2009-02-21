@@ -50,7 +50,7 @@ namespace Sci {
 #define SIPFX __FILE__" : "
 
 
-typedef struct {
+struct song_iterator_channel_t {
 	int state;	/* SI_STATE_* */
 	int offset;     /* Offset into the data chunk */
 	int end;	/* Last allowed byte in track */
@@ -73,7 +73,7 @@ typedef struct {
 
 	int saw_notes;  /* Bitmask of channels we have currently played notes on */
 	byte last_cmd;	/* Last operation executed, for running status */
-} song_iterator_channel_t;
+};
 
 #define INHERITS_BASE_SONG_ITERATOR								\
 	INHERITS_SONG_ITERATOR; /* aka "extends song iterator" */				\
@@ -92,19 +92,19 @@ typedef struct {
 	int loops; /* Number of loops remaining */						\
 	int recover_delay
 
-typedef struct _base_song_iterator {
+struct base_song_iterator_t {
 	INHERITS_BASE_SONG_ITERATOR;
-} base_song_iterator_t;
+};
 
 /********************************/
 /*--------- SCI 0 --------------*/
 /********************************/
 
-typedef struct {
+struct sci0_song_iterator_t {
 	INHERITS_BASE_SONG_ITERATOR;
 	song_iterator_channel_t channel;
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
-} sci0_song_iterator_t;
+};
 
 
 /********************************/
@@ -112,17 +112,17 @@ typedef struct {
 /********************************/
 
 
-typedef struct _sci1_sample {
+struct sci1_sample_t {
 	int delta; /* Time left-- initially, this is 'Sample point 1'.
 		   ** After initialisation, it is 'sample point 1 minus the sample point of the previous sample'  */
 	int size;
 	int announced; /* Announced for download (SI_PCM) */
 	sfx_pcm_config_t format;
 	byte *data;
-	struct _sci1_sample *next;
-} sci1_sample_t;
+	sci1_sample_t *next;
+};
 
-typedef struct {
+struct sci1_song_iterator_t {
 	INHERITS_BASE_SONG_ITERATOR;
 	song_iterator_channel_t channels[MIDI_CHANNELS];
 
@@ -136,8 +136,7 @@ typedef struct {
 
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
 	int hold;
-	\
-} sci1_song_iterator_t;
+};
 
 #define PLAYMASK_NONE 0x0
 
@@ -164,11 +163,11 @@ int is_cleanup_iterator(song_iterator_t *it);
 /*--------- Fast Forward ---------*/
 /**********************************/
 
-typedef struct {
+struct fast_forward_song_iterator_t {
 	INHERITS_SONG_ITERATOR;
 	song_iterator_t *delegate;
 	int delta; /* Remaining time */
-} fast_forward_song_iterator_t;
+};
 
 
 song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
@@ -198,7 +197,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 #define TEE_MORPH_NONE 0 /* Not waiting to self-morph */
 #define TEE_MORPH_READY 1 /* Ready to self-morph */
 
-typedef struct {
+struct tee_song_iterator_t {
 	INHERITS_SONG_ITERATOR;
 
 	int status;
@@ -217,7 +216,7 @@ typedef struct {
 		/* Remapping for channels */
 
 	} children[2];
-} tee_song_iterator_t;
+};
 
 
 sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset,

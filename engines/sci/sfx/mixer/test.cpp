@@ -153,9 +153,9 @@ int dev_output(sfx_pcm_device_t *self, byte *buf, int count) {
 
 /* Feeds for debugging */
 
-typedef struct {
+struct int_struct {
 	int i;
-} int_struct;
+};
 
 int feed_poll(sfx_pcm_feed_t *self, byte *dest, int size);
 void feed_destroy(sfx_pcm_feed_t *self);
@@ -173,11 +173,11 @@ int_struct private_bits[10] = {
 };
 
 
-typedef struct {
+struct sample_feed_t {
 	int start;
 	int samples_nr;
 	byte *data;
-} sample_feed_t;
+};
 
 #define FEEDS_NR 4
 

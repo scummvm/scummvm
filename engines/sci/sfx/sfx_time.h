@@ -28,13 +28,13 @@
 
 namespace Sci {
 
-typedef struct {
+struct sfx_timestamp_t {
 	long secs;
 	long usecs;
 	int frame_rate;
 	int frame_offset;
 	/* Total time: secs + usecs + frame_offset/frame_rate */
-} sfx_timestamp_t;
+};
 
 
 sfx_timestamp_t sfx_new_timestamp(long secs, long usecs, int frame_rate);

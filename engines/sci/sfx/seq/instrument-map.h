@@ -51,12 +51,12 @@ namespace Sci {
 /* Maximum velocity (used for scaling) */
 #define SFX_MAX_VELOCITY 128
 
-typedef struct {
+struct sfx_patch_map_t {
 	int patch; /* Native instrument, SFX_UNMAPPED or SFX_MAPPED_TO_RHYTHM */
 	int rhythm; /* Rhythm key when patch == SFX_MAPPED_TO_RHYTHM */
-} sfx_patch_map_t;
+};
 
-typedef struct {
+struct sfx_instrument_map_t {
 	sfx_patch_map_t patch_map[SFX_INSTRUMENTS_NR]; /* Map patch nr to which native instrument or rhythm key */
 	int patch_key_shift[SFX_INSTRUMENTS_NR]; /* Shift patch key by how much? */
 	int patch_volume_adjust[SFX_INSTRUMENTS_NR]; /* Adjust controller 7 by how much? */
@@ -73,7 +73,7 @@ typedef struct {
 
 	size_t initialisation_block_size;
 	byte *initialisation_block; /* Initial MIDI commands to set up the device */
-} sfx_instrument_map_t;
+};
 
 sfx_instrument_map_t *
 sfx_instrument_map_new(int velocity_maps_nr);

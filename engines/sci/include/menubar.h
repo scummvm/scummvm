@@ -82,7 +82,7 @@ namespace Sci {
 #define MENU_ATTRIBUTE_FLAGS_KEY 0x01
 #define MENU_ATTRIBUTE_FLAGS_SAID 0x02
 
-typedef struct {
+struct menu_item_t {
 	int type; /* Normal or hbar */
 	char *keytext; /* right-centered part of the text (the key) */
 	int keytext_size; /* Width of the right-centered text */
@@ -96,10 +96,10 @@ typedef struct {
 	int enabled;
 	int tag;
 
-} menu_item_t;
+};
 
 
-typedef struct {
+struct menu_t {
 	char *title;
 
 	int title_width; /* Width of the title in pixels */
@@ -108,16 +108,16 @@ typedef struct {
 	int items_nr; /* Window height equals to intems_nr * 10 */
 	menu_item_t *items; /* Actual entries into the menu */
 
-} menu_t;
+};
 
 
 
-typedef struct {
+struct menubar_t {
 
 	int menus_nr;
 	menu_t *menus; /* The actual menus */
 
-} menubar_t;
+};
 
 struct gfx_port;
 struct gfx_picture; /* forward declarations for graphics.h */

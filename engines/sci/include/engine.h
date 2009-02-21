@@ -79,10 +79,10 @@ namespace Sci {
 #define SCI_GAME_IS_RESTARTING_NOW 2
 #define SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE 4
 
-typedef struct {
+struct drawn_pic_t {
 	int nr;
 	int palette;
-} drawn_pic_t;
+};
 
 // Savegame metadata
 struct SavegameMetadata {

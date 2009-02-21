@@ -33,10 +33,10 @@ namespace Sci {
 
 #define NOT_A_KEY -1
 
-typedef struct {
+struct sbcell_t {
 	int key;
 	void *value;
-} sbcell_t;
+};
 
 int int_compar(const void *a, const void *b) {
 	return (*((int *)a)) - (*((int *)b));

@@ -1643,7 +1643,8 @@ gfxw_visual_t *gfxw_new_visual(gfx_state_t *state, int font) {
 	visual->font_nr = font;
 	visual->gfx_state = state;
 
-	visual->port_refs = (struct _gfxw_port **)sci_calloc(sizeof(gfxw_port_t), visual->port_refs_nr = 16);
+	visual->port_refs_nr = 16;
+	visual->port_refs = (gfxw_port_t **)sci_calloc(sizeof(gfxw_port_t), visual->port_refs_nr);
 
 	_gfxw_set_ops_VISUAL(GFXWC(visual));
 
@@ -1658,7 +1659,8 @@ static int _visual_find_free_ID(gfxw_visual_t *visual) {
 		id++;
 
 	if (id == visual->port_refs_nr) { // Out of ports?
-		visual->port_refs = (struct _gfxw_port**)sci_realloc(visual->port_refs, visual->port_refs_nr += newports);
+		visual->port_refs_nr += newports;
+		visual->port_refs = (gfxw_port_t**)sci_realloc(visual->port_refs, visual->port_refs_nr);
 		memset(visual->port_refs + id, 0, newports * sizeof(gfxw_port_t *)); // Clear new port refs
 	}
 

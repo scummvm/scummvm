@@ -47,9 +47,9 @@ extern int _debug_step_running;
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 
 
-typedef struct {
+struct abs_rect_t {
 	int x, y, xend, yend;
-} abs_rect_t;
+};
 
 /* Formerly, the heap macros were here; they have been deprecated, however. */
 
@@ -315,22 +315,22 @@ typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 #define FREESCI_KFUNCT_GLUTTON 1
 
-typedef struct {
+struct kfunct_sig_pair_t {
 	kfunct *fun; /* The actual function */
 	const char *signature;  /* kfunct signature */
 	const char *orig_name; /* Original name, in case we couldn't map it */
-} kfunct_sig_pair_t;
+};
 
 #define KF_OLD 0
 #define KF_NEW 1
 #define KF_NONE -1 /* No mapping, but name is known */
 #define KF_TERMINATOR -42 /* terminates kfunct_mappers */
 
-typedef struct {
+struct sci_kernel_function_t {
 	int type; /* KF_* */
 	const char *name;
 	kfunct_sig_pair_t sig_pair;
-} sci_kernel_function_t;
+};
 
 extern sci_kernel_function_t kfunct_mappers[];
 

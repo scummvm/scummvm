@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-typedef struct {
+struct sfx_timer_t {
 	int delay_ms; /* Approximate delay (in milliseconds) between calls */
 
 	int (*init)(void (*callback)(void *data), void *data);
@@ -49,7 +49,7 @@ typedef struct {
 	** All resources allocated with the timer should be freed as an effect
 	** of this.
 	*/
-} sfx_timer_t;
+};
 
 } // End of namespace Sci
 

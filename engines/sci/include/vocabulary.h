@@ -110,32 +110,32 @@ extern const char *class_names[]; /* Vocabulary class names */
 
 #define SAID_LONG(x) ((x) << 8)
 
-typedef struct {
+struct word_t {
 
 	int w_class; /* Word class */
 	int group; /* Word group */
 	char word[1]; /* The actual word */
 
-} word_t;
+};
 
 
-typedef struct {
+struct parse_rule_t {
 	int id; /* non-terminal ID */
 	int first_special; /* first terminal or non-terminal */
 	int specials_nr; /* number of terminals and non-terminals */
 	int length;
 	int data[1]; /* actual data (size 1 to avoid compiler warnings) */
-} parse_rule_t;
+};
 
 
-typedef struct _parse_rule_list {
+struct parse_rule_list_t {
 	int terminal; /* Terminal character this rule matches against or 0 for a non-terminal rule */
 	parse_rule_t *rule;
-	struct _parse_rule_list *next;
-} parse_rule_list_t;
+	parse_rule_list_t *next;
+};
 
 
-typedef struct {
+struct suffix_t {
 
 	int class_mask; /* the word class this suffix applies to */
 	int result_class; /* the word class a word is morphed to if it doesn't fail this check */
@@ -146,36 +146,36 @@ typedef struct {
 	char *alt_suffix; /* The alternative suffix */
 	char *word_suffix; /* The suffix as used in the word vocabulary */
 
-} suffix_t;
+};
 
 
-typedef struct {
+struct result_word_t {
 
 	int w_class; /* Word class */
 	int group; /* Word group */
 
-} result_word_t;
+};
 
 
-typedef struct {
+struct synonym_t {
 	int replaceant; /* The word group to replace */
 	int replacement; /* The replacement word group for this one */
-} synonym_t;
+};
 
 
-typedef struct {
+struct parse_tree_branch_t {
 
 	int id;
 
 	int data[10];
 
-} parse_tree_branch_t;
+};
 
 #define PARSE_TREE_NODE_LEAF 0
 #define PARSE_TREE_NODE_BRANCH 1
 
 
-typedef struct {
+struct parse_tree_node_t {
 
 	short type;  /* leaf or branch */
 
@@ -186,7 +186,7 @@ typedef struct {
 
 	} content;
 
-} parse_tree_node_t;
+};
 
 
 

@@ -44,12 +44,12 @@ namespace Sci {
 #define FADE_ACTION_FADE_AND_STOP     1
 #define FADE_ACTION_FADE_AND_CONT     2
 
-typedef struct {
+struct fade_params_t {
 	int ticks_per_step;
 	int final_volume;
 	int step_size;
 	int action;
-} fade_params_t;
+};
 
 #define SONG_ITERATOR_MESSAGE_ARGUMENTS_NR 2
 
@@ -96,7 +96,7 @@ struct listener_t {
 
 typedef unsigned long songit_id_t;
 
-typedef struct {
+struct song_iterator_message_t {
 	songit_id_t ID;
 	unsigned int recipient; /* Type of iterator supposed to receive this */
 	unsigned int type;
@@ -104,7 +104,7 @@ typedef struct {
 		unsigned int i;
 		void * p;
 	} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
-} song_iterator_message_t;
+};
 
 #define INHERITS_SONG_ITERATOR \
 	songit_id_t ID;										  \
@@ -115,15 +115,15 @@ typedef struct {
 	int (*next) (song_iterator_t *self, unsigned char *buf, int *buf_size);			  \
 	sfx_pcm_feed_t * (*get_pcm_feed) (song_iterator_t *s);					  \
 	song_iterator_t * (* handle_message)(song_iterator_t *self, song_iterator_message_t msg); \
-	void (*init) (struct _song_iterator *self);						  \
-	void (*cleanup) (struct _song_iterator *self);						  \
-        int (*get_timepos) (struct _song_iterator *self);                                         \
+	void (*init) (song_iterator_t *self);						  \
+	void (*cleanup) (song_iterator_t *self);						  \
+        int (*get_timepos) (song_iterator_t *self);                                         \
 	listener_t death_listeners[SONGIT_MAX_LISTENERS];					  \
 	int death_listeners_nr									  \
  
 #define SONGIT_MAX_LISTENERS 2
 
-typedef struct _song_iterator {
+struct song_iterator_t {
 
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
@@ -131,7 +131,7 @@ typedef struct _song_iterator {
 	unsigned int flags;
 	int priority;
 
-	int (*next)(struct _song_iterator *self,
+	int (*next)(song_iterator_t *self,
 	            unsigned char *buf, int *result);
 	/* Reads the next MIDI operation _or_ delta time
 	** Parameters: (song_iterator_t *) self
@@ -150,7 +150,7 @@ typedef struct _song_iterator {
 	** PCM, but this must be done before any subsequent calls to next().
 	*/
 
-	sfx_pcm_feed_t * (*get_pcm_feed)(struct _song_iterator *self);
+	sfx_pcm_feed_t * (*get_pcm_feed)(song_iterator_t *self);
 	/* Checks for the presence of a pcm sample
 	** Parameters: (song_iterator_t *) self
 	** Returns   : (sfx_pcm_feed_t *) NULL if no PCM data was found, a
@@ -158,8 +158,8 @@ typedef struct _song_iterator {
 	*/
 
 
-	struct _song_iterator *
-				(* handle_message)(struct _song_iterator *self, song_iterator_message_t msg);
+	song_iterator_t *
+				(* handle_message)(song_iterator_t *self, song_iterator_message_t msg);
 	/* Handles a message to the song iterator
 	** Parameters: (song_iterator_t *) self
 	**             (song_iterator_messag_t) msg: The message to handle
@@ -174,20 +174,20 @@ typedef struct _song_iterator {
 	*/
 
 
-	void (*init)(struct _song_iterator *self);
+	void (*init)(song_iterator_t *self);
 	/* Resets/initializes the sound iterator
 	** Parameters: (song_iterator_t *) self
 	** Returns   : (void)
 	*/
 
-	void (*cleanup)(struct _song_iterator *self);
+	void (*cleanup)(song_iterator_t *self);
 	/* Frees any content of the iterator structure
 	** Parameters: (song_iterator_t *) self
 	** Does not physically free(self) yet. May be NULL if nothing needs to be done.
 	** Must not recurse on its delegate.
 	*/
 
-	int (*get_timepos)(struct _song_iterator *self);
+	int (*get_timepos)(song_iterator_t *self);
 	/* Gets the song position to store in a savegame
 	** Parameters: (song_iterator_t *) self
 	*/
@@ -199,7 +199,7 @@ typedef struct _song_iterator {
 
 	/* See songit_* for the constructor and non-virtual member functions */
 
-} song_iterator_t;
+};
 
 
 /* Song iterator flags */

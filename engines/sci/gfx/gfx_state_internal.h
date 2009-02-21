@@ -43,10 +43,10 @@ namespace Sci {
 #define GFXW_FLAG_IMMUNE_TO_SNAPSHOTS (1<<6) /* Snapshot restoring doesn't kill this widget, and +5 bonus to saving throws vs. Death Magic */
 #define GFXW_FLAG_NO_IMPLICIT_SWITCH (1<<7) /* Ports: Don't implicitly switch to this port when disposing windows */
 
-typedef struct {
+struct gfxw_snapshot_t {
 	int serial; /* The first serial number to kill */
 	rect_t area;
-} gfxw_snapshot_t;
+};
 
 typedef enum {
 	GFXW_, /* Base widget */
@@ -77,15 +77,16 @@ typedef enum {
 
 #define GFXW_NO_ID -1
 
-struct _gfxw_widget;
-struct _gfxw_container_widget;
-struct _gfxw_visual;
+struct gfxw_widget_t;
+struct gfxw_container_t;
+struct gfxw_visual_t;
+struct gfxw_port_t;
 
-typedef int gfxw_point_op(struct _gfxw_widget *, Common::Point);
-typedef int gfxw_visual_op(struct _gfxw_widget *, struct _gfxw_visual *);
-typedef int gfxw_op(struct _gfxw_widget *);
-typedef int gfxw_op_int(struct _gfxw_widget *, int);
-typedef int gfxw_bin_op(struct _gfxw_widget *, struct _gfxw_widget *);
+typedef int gfxw_point_op(gfxw_widget_t *, Common::Point);
+typedef int gfxw_visual_op(gfxw_widget_t *, gfxw_visual_t *);
+typedef int gfxw_op(gfxw_widget_t *);
+typedef int gfxw_op_int(gfxw_widget_t *, int);
+typedef int gfxw_bin_op(gfxw_widget_t *, gfxw_widget_t *);
 
 #define WIDGET_COMMON \
    int magic; /* Extra check after typecasting */ \
@@ -93,11 +94,11 @@ typedef int gfxw_bin_op(struct _gfxw_widget *, struct _gfxw_widget *);
    int flags; /* Widget flags */ \
    gfxw_widget_type_t type; \
    rect_t bounds; /* Boundaries */ \
-   struct _gfxw_widget *next; /* Next widget in widget list */ \
+   gfxw_widget_t *next; /* Next widget in widget list */ \
    int ID; /* Unique ID or GFXW_NO_ID */ \
    int subID; /* A 'sub-ID', or GFXW_NO_ID */ \
-   struct _gfxw_container_widget *parent; /* The parent widget, or NULL if not owned */ \
-   struct _gfxw_visual *visual; /* The owner visual */ \
+   gfxw_container_t *parent; /* The parent widget, or NULL if not owned */ \
+   gfxw_visual_t *visual; /* The owner visual */ \
    int widget_priority; /* Drawing priority, or -1 */ \
    gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */ \
    gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */ \
@@ -109,26 +110,26 @@ typedef int gfxw_bin_op(struct _gfxw_widget *, struct _gfxw_widget *);
    gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */ \
    gfxw_visual_op *set_visual /* Sets the visual the widget belongs to */
 
-typedef struct _gfxw_widget {
+struct gfxw_widget_t {
 	WIDGET_COMMON;
-} gfxw_widget_t;
+};
 
 
 #define GFXW_IS_BOX(widget) ((widget)->type == GFXW_BOX)
-typedef struct {
+struct gfxw_box_t {
 	WIDGET_COMMON;
 	gfx_color_t color1, color2;
 	gfx_box_shade_t shade_type;
-} gfxw_box_t;
+};
 
 
 #define GFXW_IS_PRIMITIVE(widget) ((widget)->type == GFXW_RECT || (widget)->type == GFXW_LINE || (widget->type == GFXW_INVERSE_LINE))
-typedef struct {
+struct gfxw_primitive_t {
 	WIDGET_COMMON;
 	gfx_color_t color;
 	gfx_line_mode_t line_mode;
 	gfx_line_style_t line_style;
-} gfxw_primitive_t;
+};
 
 
 
@@ -141,12 +142,12 @@ typedef struct {
 
 #define GFXW_IS_VIEW(widget) ((widget)->type == GFXW_VIEW || (widget)->type == GFXW_STATIC_VIEW \
 			      || (widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
-typedef struct {
+struct gfxw_view_t {
 	VIEW_COMMON;
-} gfxw_view_t;
+};
 
 #define GFXW_IS_DYN_VIEW(widget) ((widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
-typedef struct {
+struct gfxw_dyn_view_t {
 	VIEW_COMMON;
 	/* fixme: This code is specific to SCI */
 	rect_t draw_bounds; /* The correct position to draw to */
@@ -155,12 +156,12 @@ typedef struct {
 	int z; /* The z coordinate: Added to y, but used for sorting */
 	int sequence; /* Sequence number: For sorting */
 	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
-} gfxw_dyn_view_t;
+};
 
 
 
 #define GFXW_IS_TEXT(widget) ((widget)->type == GFXW_TEXT)
-typedef struct {
+struct gfxw_text_t {
 	WIDGET_COMMON;
 	int font_nr;
 	int lines_nr, lineheight, lastline_width;
@@ -170,14 +171,14 @@ typedef struct {
 	int text_flags;
 	int width, height; /* Real text width and height */
 	gfx_text_handle_t *text_handle;
-} gfxw_text_t;
+};
 
 
 /* Container widgets */
 
-typedef int gfxw_unary_container_op(struct _gfxw_container_widget *);
-typedef int gfxw_container_op(struct _gfxw_container_widget *, gfxw_widget_t *);
-typedef int gfxw_rect_op(struct _gfxw_container_widget *, rect_t, int);
+typedef int gfxw_unary_container_op(gfxw_container_t *);
+typedef int gfxw_container_op(gfxw_container_t *, gfxw_widget_t *);
+typedef int gfxw_rect_op(gfxw_container_t *, rect_t, int);
 
 #define WIDGET_CONTAINER \
    WIDGET_COMMON; \
@@ -192,9 +193,9 @@ typedef int gfxw_rect_op(struct _gfxw_container_widget *, rect_t, int);
    gfxw_container_op *add  /* Append widget to an appropriate position (for view and control lists) */
 
 
-typedef struct _gfxw_container_widget {
+struct gfxw_container_t {
 	WIDGET_CONTAINER;
-} gfxw_container_t;
+};
 
 
 #define GFXW_IS_CONTAINER(widget) ((widget)->type == GFXW_PORT || (widget)->type == GFXW_VISUAL || \
@@ -205,16 +206,16 @@ typedef struct _gfxw_container_widget {
 typedef gfxw_container_t gfxw_list_t;
 
 #define GFXW_IS_VISUAL(widget) ((widget)->type == GFXW_VISUAL)
-typedef struct _gfxw_visual {
+struct gfxw_visual_t {
 	WIDGET_CONTAINER;
-	struct _gfxw_port **port_refs; /* References to ports */
+	gfxw_port_t **port_refs; /* References to ports */
 	int port_refs_nr;
 	int font_nr; /* Default font */
 	gfx_state_t *gfx_state;
-}  gfxw_visual_t;
+};
 
 #define GFXW_IS_PORT(widget) ((widget)->type == GFXW_PORT)
-typedef struct _gfxw_port {
+struct gfxw_port_t {
 	WIDGET_CONTAINER;
 
 	gfxw_list_t *decorations; /* optional window decorations- drawn before the contents */
@@ -228,7 +229,7 @@ typedef struct _gfxw_port {
 	int port_flags; /* interpreter-dependant flags */
 	const char *title_text;
 	byte gray_text; /* Whether text is 'grayed out' (dithered) */
-} gfxw_port_t;
+};
 
 #undef WIDGET_COMMON
 #undef WIDGET_CONTAINER

@@ -23,15 +23,12 @@
  *
  */
 
-#ifndef _SCI_VM_TYPES_H_
-#define _SCI_VM_TYPES_H_
+#ifndef SCI_VM_TYPES_H
+#define SCI_VM_TYPES_H
 
 #include "common/scummsys.h"
 
 namespace Sci {
-
-#define SCI_REG_SIZE 16;
-#define SCI_SEG_SIZE 16;
 
 typedef int seg_id_t; /* Segment ID type */
 
@@ -64,4 +61,4 @@ extern reg_t NULL_REG;
 
 } // End of namespace Sci
 
-#endif /* !_SCI_VM_TYPES_H_ */
+#endif // SCI_VM_TYPES_H

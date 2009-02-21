@@ -427,10 +427,10 @@ reg_t kDeleteKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, 1); // Signal success
 }
 
-typedef struct {
+struct sort_temp_t {
 	reg_t key, value;
 	reg_t order;
-} sort_temp_t;
+};
 
 int sort_temp_cmp(const void *p1, const void *p2) {
 	sort_temp_t *st1 = (sort_temp_t *)p1;

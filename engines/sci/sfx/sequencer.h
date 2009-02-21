@@ -37,7 +37,7 @@ namespace Sci {
 
 #define SFX_SEQ_PATCHFILE_NONE -1
 
-typedef struct _sfx_sequencer {
+struct sfx_sequencer_t {
 	const char *name;    /* Sequencer name */
 	const char *version; /* Sequencer version */
 
@@ -129,7 +129,7 @@ typedef struct _sfx_sequencer {
 	int min_write_ahead_ms; /* Minimal write-ahead, in milliseconds */
 	/* Note that write-ahead is tuned automatically; this enforces a lower limit */
 
-} sfx_sequencer_t;
+};
 
 
 sfx_sequencer_t *sfx_find_sequencer(char *name);

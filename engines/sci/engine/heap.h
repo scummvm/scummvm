@@ -34,12 +34,12 @@ namespace Sci {
 
 typedef uint16 heap_ptr;
 
-typedef struct {
+struct heap_t {
 	byte *start;
 	byte *base;
 	unsigned int first_free;
 	int old_ff;
-} heap_t;
+};
 
 heap_t *heap_new();
 /* Allocates a new heap.

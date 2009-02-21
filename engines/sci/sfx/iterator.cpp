@@ -583,7 +583,7 @@ static song_iterator_t *_sci0_handle_message(sci0_song_iterator_t *self, song_it
 #ifdef DEBUG_VERBOSE
 			fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, self, mem->data);
 #endif
-			return (struct _song_iterator *) mem; /* Assume caller has another copy of this */
+			return (song_iterator_t *) mem; /* Assume caller has another copy of this */
 		}
 
 		case _SIMSG_BASEMSG_STOP: {
@@ -1072,7 +1072,7 @@ static int _sci1_process_next_command(sci1_song_iterator_t *self,
 	return retval;
 }
 
-static struct _song_iterator *
+static song_iterator_t *
 			_sci1_handle_message(sci1_song_iterator_t *self,
 			                     song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_BASE) { /* May extend this in the future */
@@ -1114,7 +1114,7 @@ static struct _song_iterator *
 				samplep = &(newsample->next);
 			}
 
-			return (struct _song_iterator *) mem; /* Assume caller has another copy of this */
+			return (song_iterator_t *) mem; /* Assume caller has another copy of this */
 		}
 
 		case _SIMSG_BASEMSG_STOP: {

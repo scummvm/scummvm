@@ -49,7 +49,7 @@ int _debug_seeking = 0; // Stepping forward until some special condition is met
 int _debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 int _debug_seek_special = 0;  // Used for special seeks(1)
 int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
-reg_t _debug_seek_reg = NULL_REG_INITIALIZER;  // Used for special seeks(2)
+reg_t _debug_seek_reg = NULL_REG;  // Used for special seeks(2)
 
 #define _DEBUG_SEEK_NOTHING 0
 #define _DEBUG_SEEK_CALLK 1 // Step forward until callk is found
@@ -338,7 +338,7 @@ static void print_obj_head(EngineState *s, object_t *obj) {
 
 static void print_list(EngineState *s, list_t *l) {
 	reg_t pos = l->first;
-	reg_t my_prev = NULL_REG_INITIALIZER;
+	reg_t my_prev = NULL_REG;
 
 	sciprintf("\t<\n");
 
@@ -2223,11 +2223,11 @@ static int c_listclones(EngineState *s) {
 	return 0;
 }
 
-typedef struct {
+struct generic_config_flag_t {
 	const char *name;
 	const char option;
 	unsigned int flag;
-} generic_config_flag_t;
+};
 
 static void handle_config_update(const generic_config_flag_t *flags_list, int flags_nr, const char *subsystem,
 								 int *active_options_p, char *changestring /* or NULL to display*/) {

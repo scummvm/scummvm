@@ -34,11 +34,11 @@
 namespace Sci {
 
 /* Software sequencer */
-typedef struct sfx_softseq {
+struct sfx_softseq_t {
 	const char *name;
 	const char *version;
 
-	int (*set_option)(struct sfx_softseq *self, const char *name, const char *value);
+	int (*set_option)(sfx_softseq_t *self, const char *name, const char *value);
 	/* Sets an option for the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (const char *) name: Name of the option to set
@@ -46,7 +46,7 @@ typedef struct sfx_softseq {
 	** Returns   : (int) GFX_OK on success, or GFX_ERROR if not supported
 	*/
 
-	int (*init)(struct sfx_softseq *self, byte *res_data, int res_size,
+	int (*init)(sfx_softseq_t *self, byte *res_data, int res_size,
 	        byte *res2_data, int res2_size);
 	/* Initialises the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
@@ -61,18 +61,18 @@ typedef struct sfx_softseq {
 	** /even if/ patch_nr is set.
 	*/
 
-	void (*exit)(struct sfx_softseq *self);
+	void (*exit)(sfx_softseq_t *self);
 	/* Uninitialises the sequencer and frees all used resources
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	*/
 
-	void (*set_volume)(struct sfx_softseq *self, int new_volume);
+	void (*set_volume)(sfx_softseq_t *self, int new_volume);
 	/* Sets the sequencer volume
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (int) new_volume: A volume, between 0 (quiet) and 127 (max)
 	*/
 
-	void (*handle_command)(struct sfx_softseq *self, byte cmd, int argc, byte *argv);
+	void (*handle_command)(sfx_softseq_t *self, byte cmd, int argc, byte *argv);
 	/* Handle a MIDI command
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (byte) cmd: Basic MIDI command, always includes command and channel
@@ -80,14 +80,14 @@ typedef struct sfx_softseq {
 	**             (byte *) argv: Additional arguments to 'cmd'
 	*/
 
-	void (*poll)(struct sfx_softseq *self, byte *dest, int len);
+	void (*poll)(sfx_softseq_t *self, byte *dest, int len);
 	/* Asks the software sequencer to fill in parts of a buffer
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (int) len: Number of _frames_ to write
 	** Returns   : (byte) *dest: 'len' frames must be written to this buffer
 	*/
 
-	void (*allstop)(struct sfx_softseq *self);
+	void (*allstop)(sfx_softseq_t *self);
 	/* Stops all sound generation
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	*/
@@ -111,7 +111,7 @@ typedef struct sfx_softseq {
 
 	sfx_pcm_config_t pcm_conf; /* Setup of the channel the sequencer writes to */
 
-} sfx_softseq_t;
+};
 
 
 sfx_softseq_t *sfx_find_softseq(const char *name);

@@ -64,19 +64,19 @@ namespace Sci {
 #define SFX_PCM_FRAME_SIZE(conf) ((conf).stereo? 2 : 1) * (((conf).format & SFX_PCM_FORMAT_16)? 2 : 1)
 
 
-typedef struct {
+struct sfx_pcm_config_t {
 	int rate;   /* Sampling rate */
 	int stereo; /* The stereo mode used (SFX_PCM_MONO or SFX_PCM_STEREO_*) */
 	unsigned int format; /* Sample format (SFX_PCM_FORMAT_*) */
-} sfx_pcm_config_t;
+};
 
-typedef struct _sfx_pcm_device {
+struct sfx_pcm_device_t {
 	/* SFX devices are PCM players, i.e. output drivers for digitalised audio (sequences of audio samples).
 	** Implementors are (in general) allowed to export specifics of these devices and let the mixer handle
 	** endianness/signedness/bit size/mono-vs-stereo conversions.
 	*/
 
-	int (*init)(struct _sfx_pcm_device *self);
+	int (*init)(sfx_pcm_device_t *self);
 	/* Initializes the device
 	** Parameters: (sfx_pcm_device_t *) self: Self reference
 	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be
@@ -85,7 +85,7 @@ typedef struct _sfx_pcm_device {
 	** specified beforehand.
 	*/
 
-	int (*output)(struct _sfx_pcm_device *self, byte *buf,
+	int (*output)(sfx_pcm_device_t *self, byte *buf,
 	              int count, sfx_timestamp_t *timestamp);
 	/* Writes output to the device
 	** Parameters: (sfx_pcm_device_t *) self: Self reference
@@ -103,7 +103,7 @@ typedef struct _sfx_pcm_device {
 	*/
 
 	sfx_timestamp_t
-	(*get_output_timestamp)(struct _sfx_pcm_device *self);
+	(*get_output_timestamp)(sfx_pcm_device_t *self);
 	/* Determines the timestamp for 'output'
 	** Parameters: (sfx_pcm_device_t *) self: Self reference
 	** Returns   : (sfx_timestamp_t) A timestamp (with the device's conf.rate)
@@ -121,14 +121,14 @@ typedef struct _sfx_pcm_device {
 		      ** output() will block or fail, drained according
 		      ** to conf.rate  */
 
-} sfx_pcm_device_t;
+};
 
 
 #define PCM_FEED_TIMESTAMP 0	/* New timestamp available */
 #define PCM_FEED_IDLE 1		/* No sound ATM, but new timestamp may be available later */
 #define PCM_FEED_EMPTY 2	/* Feed is finished, can be destroyed */
 
-typedef struct _sfx_pcm_feed_t {
+struct sfx_pcm_feed_t {
 	/* PCM feeds are sources of input for the PCM mixer. Their member functions
 	** are invoked as callbacks on demand, to provide the mixer with input it
 	** (in turn) passes on to PCM output devices.
@@ -136,7 +136,7 @@ typedef struct _sfx_pcm_feed_t {
 	** to be considered.
 	*/
 
-	int (*poll)(struct _sfx_pcm_feed_t *self, byte *dest, int size);
+	int (*poll)(sfx_pcm_feed_t *self, byte *dest, int size);
 	/* Asks the PCM feed to write out the next stuff it would like to have written
 	** Parameters: (sfx_pcm_feed_t *) self: Self reference
 	**             (byte *) dest: The destination buffer to write to
@@ -148,14 +148,14 @@ typedef struct _sfx_pcm_feed_t {
 	** is available.
 	*/
 
-	void (*destroy)(struct _sfx_pcm_feed_t *self);
+	void (*destroy)(sfx_pcm_feed_t *self);
 	/* Asks the PCM feed to free all resources it occupies
 	** Parameters: (sfx_pcm_feed_t *) self: Self reference
 	** free(self) should be part of this function, if applicable.
 	*/
 
 	int
-	(*get_timestamp)(struct _sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp);
+	(*get_timestamp)(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp);
 	/* Determines the timestamp of the next frame-to-read
 	** Returns   : (sfx_timestamp_t) timestamp: The timestamp of the next frame
 	**             (int) PCM_FEED_*
@@ -171,7 +171,7 @@ typedef struct _sfx_pcm_feed_t {
 		      ** (print in hex)  */
 	int frame_size; /* Frame size, computed by the mixer for the feed */
 
-} sfx_pcm_feed_t;
+};
 
 int sfx_pcm_available();
 /* Determines whether a PCM device is available and has been initialised

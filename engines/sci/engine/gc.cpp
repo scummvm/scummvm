@@ -32,11 +32,11 @@ namespace Sci {
 //#define DEBUG_GC
 //#define DEBUG_GC_VERBOSE
 
-typedef struct _worklist {
+struct worklist_t {
 	int used;
 	reg_t entries[WORKLIST_CHUNK_SIZE];
-	struct _worklist *next;
-} worklist_t;
+	worklist_t *next;
+};
 
 static worklist_t *fresh_worklist(worklist_t *old) {
 	worklist_t *retval = (worklist_t*)sci_malloc(sizeof(worklist_t));
@@ -118,10 +118,10 @@ static reg_t_hash_map * normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, se
 }
 
 
-typedef struct {
+struct worklist_manager_t {
 	reg_t_hash_map *nonnormal_map;
 	worklist_t **worklist_ref;
-} worklist_manager_t;
+};
 
 void add_outgoing_refs(void *pre_wm, reg_t addr) {
 	worklist_manager_t *wm = (worklist_manager_t *) pre_wm;
@@ -228,14 +228,14 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	return normal_map;
 }
 
-typedef struct {
+struct deallocator_t {
 	seg_interface_t *interfce;
 #ifdef DEBUG_GC
 	char *segnames[MEM_OBJ_MAX + 1];
 	int segcount[MEM_OBJ_MAX + 1];
 #endif
 	reg_t_hash_map *use_map;
-} deallocator_t;
+};
 
 void free_unless_used(void *pre_use_map, reg_t addr) {
 	deallocator_t *deallocator = (deallocator_t *)pre_use_map;

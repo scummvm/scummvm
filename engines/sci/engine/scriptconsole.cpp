@@ -51,21 +51,21 @@ static int c_selectornames(EngineState *s); // Displays all selector names
 static int c_kernelnames(EngineState *s); // Displays all kernel function names
 static int c_dissectscript(EngineState *s); // Splits a script into objects and explains them
 
-typedef struct {
+struct cmd_mm_entry_t {
 	const char *name;
 	const char *description;
-} cmd_mm_entry_t; // All later structures must "extend" this
+}; // All later structures must "extend" this
 
 typedef cmd_mm_entry_t cmd_page_t; // Simple info page
 
-typedef struct {
+struct cmd_command_t {
 	const char *name;
 	const char *description;
 	int (*command)(EngineState *);
 	const char *param;
-} cmd_command_t;
+};
 
-typedef struct {
+struct cmd_var_t {
 	const char *name;
 	const char *description;
 	union {
@@ -73,19 +73,19 @@ typedef struct {
 		char **charpp;
 		reg_t *reg;
 	} var;
-} cmd_var_t;
+};
 
 
 typedef void printfunc_t(cmd_mm_entry_t *data, int full);
 
-typedef struct {
+struct cmd_mm_struct_t {
 	const char *name;
 	void *data; // cmd_mm_entry_t
 	size_t size_per_entry;
 	printfunc_t *print;
 	int entries; // Number of used entries
 	int allocated;  // Number of allocated entries
-} cmd_mm_struct_t;
+};
 
 #define CMD_MM_ENTRIES 3 // command console memory and manual page manager
 #define CMD_MM_DEFAULT_ALLOC 4 // Number of table entries to allocate per default

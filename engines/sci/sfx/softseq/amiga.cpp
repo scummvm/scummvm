@@ -48,19 +48,19 @@ namespace Sci {
 
 /* #define DEBUG */
 
-typedef struct envelope {
+struct envelope_t {
 	/* Phase period length in samples */
 	int length;
 	/* Velocity delta per period */
 	int delta;
 	/* Target velocity */
 	int target;
-} envelope_t;
+};
 
 /* Fast decay envelope */
 static envelope_t env_decay = {FREQUENCY / (32 * 64), 1, 0};
 
-typedef struct instrument {
+struct instrument_t {
 	char name[30];
 	int mode;
 	/* Size of non-looping part in bytes */
@@ -73,15 +73,15 @@ typedef struct instrument {
 	envelope_t envelope[4];
 	int8 *samples;
 	int8 *loop;
-} instrument_t;
+};
 
-typedef struct bank {
+struct bank_t {
 	char name[30];
 	int size;
 	instrument_t *instruments[256];
-} bank_t;
+};
 
-typedef struct channel {
+struct channel_t {
 	int instrument;
 	int note;
 	int note_velocity;
@@ -94,13 +94,13 @@ typedef struct channel {
 	int hw_channel;
 	frac_t offset;
 	frac_t rate;
-} channel_t;
+};
 
-typedef struct hw_channel {
+struct hw_channel_t {
 	int instrument;
 	int volume;
 	int pan;
-} hw_channel_t;
+};
 
 /* Instrument bank */
 static bank_t bank;

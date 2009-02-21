@@ -38,14 +38,14 @@
 
 namespace Sci {
 
-typedef struct {
+struct sbtree_t {
 	int entries_nr;
 	int min_entry;
 	int max_entry;
 	int levels;
 	int alloced_entries;
 	void *data;
-} sbtree_t;
+};
 
 
 sbtree_t *sbtree_new(int size, int *keys);

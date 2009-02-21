@@ -43,7 +43,7 @@ namespace Sci {
 */
 #define GFXOP_ALPHA_THRESHOLD 0xff
 
-typedef struct {
+struct gfx_text_handle_t {
 	char *text; /* Copy of the actual text */
 
 	int lines_nr;
@@ -56,7 +56,7 @@ typedef struct {
 
 	int priority, control;
 	gfx_alignment_t halign, valign;
-} gfx_text_handle_t;
+};
 
 /* Unless individually stated otherwise, the following applies:
 ** All operations herein apply to the standard 320x200 coordinate system.
@@ -81,18 +81,18 @@ typedef enum {
 } gfx_box_shade_t;
 
 
-typedef struct _dirty_rect {
+struct gfx_dirty_rect_t {
 	rect_t rect;
-	struct _dirty_rect *next;
-} gfx_dirty_rect_t;
+	gfx_dirty_rect_t *next;
+};
 
 
-typedef struct _gfx_event {
+struct gfx_input_event_t {
 	sci_event_t event;
-	struct _gfx_event *next;
-} gfx_input_event_t;
+	gfx_input_event_t *next;
+};
 
-typedef struct {
+struct gfx_state_t {
 	int version; /* Interpreter version */
 
 	gfx_options_t *options;
@@ -143,11 +143,11 @@ typedef struct {
 
 	gfxr_pic_t *pic, *pic_unscaled; /* The background picture and its unscaled equivalent */
 
-	struct _dirty_rect *dirty_rects; /* Dirty rectangles */
+	gfx_dirty_rect_t *dirty_rects; /* Dirty rectangles */
 
 	void *internal_state; /* Internal interpreter information */
 
-} gfx_state_t;
+};
 
 
 /**************************/

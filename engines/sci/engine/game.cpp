@@ -615,8 +615,10 @@ int game_init(EngineState *s) {
 
 	// Initialize send_calls buffer
 
-	if (!send_calls_allocated)
-		send_calls = (calls_struct_t*)sci_calloc(sizeof(calls_struct_t), send_calls_allocated = 16);
+	if (!send_calls_allocated) {
+		send_calls_allocated = 16;
+		send_calls = (calls_struct_t*)sci_calloc(sizeof(calls_struct_t), send_calls_allocated);
+	}
 
 	if (s->gfx_state && _reset_graphics_input(s))
 		return 1;

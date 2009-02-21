@@ -75,11 +75,11 @@ struct gfx_resource_t {
 };
 
 
-struct _gfx_options;
+struct gfx_options_t;
 
-typedef struct {
+struct gfx_resstate_t {
 	int version; /* Interpreter version */
-	struct _gfx_options *options;
+	gfx_options_t *options;
 	gfx_driver_t *driver;
 	gfx_pixmap_color_t *static_palette;
 	int static_palette_entries;
@@ -91,11 +91,11 @@ typedef struct {
 
 	sbtree_t *resource_trees[GFX_RESOURCE_TYPES_NR];
 	void *misc_payload;
-} gfx_resstate_t;
+};
 
 
 
-gfx_resstate_t *gfxr_new_resource_manager(int version, struct _gfx_options *options,
+gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
                           gfx_driver_t *driver, void *misc_payload);
 /* Allocates and initializes a new resource manager
 ** Parameters: (int) version: Interpreter version
@@ -218,7 +218,7 @@ gfx_pixmap_color_t *gfxr_get_palette(gfx_resstate_t *state, int nr);
 
 
 int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
-                              struct _gfx_options *options, void *internal, int palette);
+                              gfx_options_t *options, void *internal, int palette);
 /* Calculates a unique hash value for the specified options/type setup
 ** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
 **             (int) version: The interpreter type and version

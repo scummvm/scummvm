@@ -240,7 +240,7 @@ static inline rect_t gfx_rect_translate(rect_t rect, Common::Point offset) {
 
 #define GFX_PIXMAP_COLOR_KEY_NONE -1 /* No transpacency colour key */
 
-typedef struct { /* gfx_pixmap_t: Pixel map */
+struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 
 	/*** Meta information ***/
 	int ID; /* Resource ID, or GFX_RESID_NONE for anonymous graphical data */
@@ -285,13 +285,13 @@ typedef struct { /* gfx_pixmap_t: Pixel map */
 		void *info; /* initialized to NULL */
 	} internal;
 
-} gfx_pixmap_t;
+};
 
 
 #define GFX_FONT_BUILTIN_5x8  -1
 #define GFX_FONT_BUILTIN_6x10 -2
 
-typedef struct { /* gfx_bitmap_font_t: Bitmap font information */
+struct gfx_bitmap_font_t { /* gfx_bitmap_font_t: Bitmap font information */
 	int ID; /* Unique resource ID */
 
 	int chars_nr; /* Numer of available characters */
@@ -312,7 +312,7 @@ typedef struct { /* gfx_bitmap_font_t: Bitmap font information */
 		    ** its pixel width is widths[ch], provided that (ch < chars_nr).
 		    */
 
-} gfx_bitmap_font_t;
+};
 
 
 

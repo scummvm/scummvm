@@ -51,11 +51,11 @@ extern FILE *con_file;
 ** directly to the con_file variable.
 */
 
-typedef union {
+union cmd_param_t {
 	int32 val;
 	char *str;
 	reg_t reg;
-} cmd_param_t;
+};
 
 extern unsigned int cmd_paramlength;
 /* The number of parameters passed to a function called from the parser */

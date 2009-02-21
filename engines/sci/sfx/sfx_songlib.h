@@ -50,7 +50,7 @@ typedef enum {
 	RESTORE_BEHAVIOR_RESTART /* continue it from where it was */
 } RESTORE_BEHAVIOR;
 
-typedef struct _song {
+struct song_t {
 	song_handle_t handle;
 	int resource_num; /* Resource number */
 	int priority; /* Song priority (more important if priority is higher) */
@@ -70,18 +70,18 @@ typedef struct _song {
 			      ** Playing -> time at which 'delay' has elapsed
 			      ** Suspended/Waiting -> stopping time */
 
-	struct _song *next; /* Next song or NULL if this is the last one */
-	struct _song *next_playing; /* Next playing song; used by the
+	song_t *next; /* Next song or NULL if this is the last one */
+	song_t *next_playing; /* Next playing song; used by the
 				    ** core song system */
-	struct _song *next_stopping; /* Next song pending stopping; used exclusively by
+	song_t *next_stopping; /* Next song pending stopping; used exclusively by
 				     ** the core song system's _update_multi_song() */
-} song_t;
+};
 
 
-typedef struct {
+struct songlib_t {
 	song_t **lib;
 	song_t *_s;
-} songlib_t;
+};
 
 /**************************/
 /* Song library commands: */

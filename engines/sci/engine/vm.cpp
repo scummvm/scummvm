@@ -57,18 +57,18 @@ extern int _weak_validations;
 calls_struct_t *send_calls = NULL;
 int send_calls_allocated = 0;
 int bp_flag = 0;
-static reg_t _dummy_register = NULL_REG_INITIALIZER;
+static reg_t _dummy_register;
 
 // validation functionality
 
 #ifndef DISABLE_VALIDATIONS
 
-static inline reg_t *validate_property(object_t *obj, int index) {
+static inline reg_t &validate_property(object_t *obj, int index) {
 	if (!obj) {
 		if (sci_debug_flags & 4)
 			sciprintf("[VM] Sending to disposed object!\n");
 		_dummy_register = NULL_REG;
-		return &_dummy_register;
+		return _dummy_register;
 	}
 
 	if (index < 0 || index >= obj->variables_nr) {
@@ -77,10 +77,10 @@ static inline reg_t *validate_property(object_t *obj, int index) {
 			          obj->variables_nr);
 
 		_dummy_register = NULL_REG;
-		return &_dummy_register;
+		return _dummy_register;
 	}
 
-	return obj->variables + index;
+	return obj->variables[index];
 }
 
 static inline stack_ptr_t validate_stack_addr(EngineState *s, stack_ptr_t sp) {
@@ -175,7 +175,7 @@ static inline void validate_write_var(reg_t *r, reg_t *stack_base, int type, int
 #  define validate_variable(r, sb, t, m, i, l)
 #  define validate_read_var(r, sb, t, m, i, l) ((r)[i])
 #  define validate_write_var(r, sb, t, m, i, l, v) ((r)[i] = (v))
-#  define validate_property(o, p) (&((o)->variables[p]))
+#  define validate_property(o, p) ((o)->variables[p])
 #  define ASSERT_ARITHMETIC(v) (v).offset
 
 #endif
@@ -188,7 +188,7 @@ static inline void validate_write_var(reg_t *r, reg_t *stack_base, int type, int
 #define ACC_AUX_LOAD() aux_acc = signed_validate_arithmetic(s->r_acc)
 #define ACC_AUX_STORE() s->r_acc = make_reg(0, aux_acc)
 
-#define OBJ_PROPERTY(o, p) (*validate_property(o, p))
+#define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
 int script_error(EngineState *s, const char *file, int line, const char *reason) {
 	sciprintf("Script error in file %s, line %d: %s\n", file, line, reason);
@@ -368,8 +368,10 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 		sciprintf("Send to "PREG", selector %04x (%s):", PRINT_REG(send_obj), selector, s->selector_names[selector]);
 #endif // VM_DEBUG_SEND
 
-		if (++send_calls_nr == (send_calls_allocated - 1))
-			send_calls = (calls_struct_t *)sci_realloc(send_calls, sizeof(calls_struct_t) * (send_calls_allocated *= 2));
+		if (++send_calls_nr == (send_calls_allocated - 1)) {
+			send_calls_allocated *= 2;
+			send_calls = (calls_struct_t *)sci_realloc(send_calls, sizeof(calls_struct_t) * send_calls_allocated);
+		}
 
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case SELECTOR_NONE:
@@ -2052,8 +2054,10 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				free(s);
 				s = successor;
 
-				if (!send_calls_allocated)
-					send_calls = (calls_struct_t *)sci_calloc(sizeof(calls_struct_t), send_calls_allocated = 16);
+				if (!send_calls_allocated) {
+					send_calls_allocated = 16;
+					send_calls = (calls_struct_t *)sci_calloc(sizeof(calls_struct_t), 16);
+				}
 
 				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
 					sciprintf("Restarting with replay()\n");

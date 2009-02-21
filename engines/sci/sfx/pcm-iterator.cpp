@@ -34,11 +34,11 @@ namespace Sci {
 static int pi_poll(sfx_pcm_feed_t *self, byte *dest, int size);
 static void pi_destroy(sfx_pcm_feed_t *self);
 
-typedef struct {
+struct pcm_data_internal_t {
 	byte *base_data;
 	byte *data;
 	int frames_left;
-} pcm_data_internal_t;
+};
 
 
 static sfx_pcm_feed_t pcm_it_prototype = {

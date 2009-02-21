@@ -39,7 +39,7 @@ struct gfx_res_pattern_t {
 
 /* GFX resource assignments */
 
-typedef struct {
+struct gfx_res_assign_t {
 	short type; /* GFX_RES_ASSIGN_TYPE_* */
 
 	union {
@@ -48,23 +48,23 @@ typedef struct {
 			gfx_pixmap_color_t *colors;
 		} palette;
 	} assign;
-} gfx_res_assign_t;
+};
 
 
 /* GFX resource modifications */
 
 #define GFX_RES_MULTIPLY_FIXED 0 /* Linear palette update */
 
-typedef struct {
+struct gfx_res_mod_t {
 	short type; /* GFX_RES_ASSIGN_TYPE_* */
 
 	union {
 		byte factor[3]; /* divide by 16 to retrieve factor */
 	} mod;
-} gfx_res_mod_t;
+};
 
 
-typedef struct _gfx_res_conf {
+struct gfx_res_conf_t {
 	int type; /* Resource type-- only one allowed */
 
 	/* If any of the following is 0, it means that there is no restriction.
@@ -80,22 +80,21 @@ typedef struct _gfx_res_conf {
 		gfx_res_mod_t mod;
 	} conf; /* The actual configuration */
 
-	struct _gfx_res_conf *next;
-} gfx_res_conf_t;
+	gfx_res_conf_t *next;
+};
 
 
 typedef gfx_res_conf_t *gfx_res_conf_p_t;
 
-typedef struct {
+struct gfx_res_fullconf_t {
 	gfx_res_conf_p_t assign[GFX_RESOURCE_TYPES_NR];
 	gfx_res_conf_p_t mod[GFX_RESOURCE_TYPES_NR];
-} gfx_res_fullconf_t;
+};
 
 
-struct _gfx_options;
+struct gfx_options_t;
 
-int gfx_get_res_config(struct _gfx_options *options,
-                   gfx_pixmap_t *pxm);
+int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm);
 /* Configures a graphical pixmap according to config options
 ** Parameters: (gfx_options_t *) options: The options according to which
 **                                        configuration should be performed

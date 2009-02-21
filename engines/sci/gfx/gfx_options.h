@@ -42,7 +42,7 @@ namespace Sci {
 #define GFXOP_DIRTY_FRAMES_CLUSTERS 2
 
 
-typedef struct _gfx_options {
+struct gfx_options_t {
 	/* gfx_options_t: Contains all user options to the rendering pipeline */
 	/* See note in sci_conf.h for config_entry_t before changing types of
 	** variables */
@@ -76,7 +76,7 @@ typedef struct _gfx_options {
 	int workarounds; /* Workaround flags- see below */
 
 	rect_t pic_port_bounds;
-} gfx_options_t;
+};
 
 /* SQ3 counts whitespaces towards the total text size, as does gfxop_get_text_params() if this is set: */
 #define GFX_WORKAROUND_WHITESPACE_COUNT (1 << 0)

@@ -106,10 +106,10 @@ namespace Sci {
 #define SELECTOR_METHOD 2
 /* Types of selectors as returned by grep_selector() below */
 
-typedef struct {
+struct class_t {
 	int script; /* number of the script the class is in, -1 for non-existing */
 	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
-} class_t;
+};
 
 #define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->check_value(reg.offset, false))
 #define RAW_IS_OBJECT(datablock) (getUInt16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
@@ -117,7 +117,7 @@ typedef struct {
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
 
 /* This struct is used to buffer the list of send calls in send_selector() */
-typedef struct {
+struct calls_struct_t {
 	union {
 		reg_t func;
 		reg_t *var;
@@ -127,17 +127,17 @@ typedef struct {
 	selector_t selector;
 	stack_ptr_t sp; /* Stack pointer */
 	int type; /* Same as exec_stack_t.type */
-} calls_struct_t;
+};
 
-typedef struct {
+struct local_variables_t {
 	int script_id; /* Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
-} local_variables_t;
+};
 
 #define OBJECT_FLAG_FREED (0x1 << 0)	/* Clone has been marked as 'freed' */
 
-typedef struct {
+struct object_t {
 	int flags;
 	reg_t pos; /* Object offset within its script; for clones, this is their base */
 	int variables_nr;
@@ -148,12 +148,12 @@ typedef struct {
 	uint16 *base_method; /* Pointer to the method selector area for this object */
 	uint16 *base_vars; /* Pointer to the varselector area for this object */
 	reg_t *variables;
-} object_t;
+};
 
-typedef struct {
+struct code_block_t {
 	reg_t pos;
 	int size;
-} code_block_t;
+};
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
   (s->version < SCI_VERSION(1,001,000) ? \
@@ -180,7 +180,7 @@ typedef struct {
 //#define VM_OBJECT_SET_INDEX(ptr, index) { ((byte *) (ptr))[0] = (index) & 0xff; ((byte *) (ptr))[1] = ((index) >> 8) & 0xff; }
 //#define VM_OBJECT_GET_INDEX(scr, reg) (int_hash_map_check_value(scr->obj_indices, reg.offset, 0, NULL))
 
-typedef struct {
+struct script_t {
 	int nr; /* Script number */
 	byte* buf; /* Static data buffer, or NULL if not used */
 	size_t buf_size;
@@ -212,34 +212,34 @@ typedef struct {
 	int code_blocks_allocated;
 	int relocated;
 	int marked_as_deleted;
-} script_t;
+};
 
-typedef struct {
+struct dstack_t {
 	int nr; /* Number of stack entries */
 	reg_t *entries;
-} dstack_t; /* Data stack */
+}; /* Data stack */
 
 #define CLONE_USED -1
 #define CLONE_NONE -1
 
 typedef object_t clone_t;
 
-typedef struct _node_struct {
+struct node_t {
 	reg_t pred, succ; /* Predecessor, successor */
 	reg_t key;
 	reg_t value;
-} node_t; /* List nodes */
+}; /* List nodes */
 
-typedef struct _list_struct {
+struct list_t {
 	reg_t first;
 	reg_t last;
-} list_t;
+};
 
-typedef struct {
+struct hunk_t {
 	void *mem;
 	unsigned int size;
 	const char *type;
-} hunk_t;
+};
 
 /* clone_table_t */
 DECLARE_HEAPENTRY(clone)
@@ -250,13 +250,13 @@ DECLARE_HEAPENTRY(list) /* list entries */
 /* hunk_table_t */
 DECLARE_HEAPENTRY(hunk)
 
-typedef struct {
+struct dynmem_t {
 	int size;
 	const char *description;
 	byte *buf;
-} dynmem_t; /* Free-style memory */
+}; /* Free-style memory */
 
-typedef struct _mem_obj {
+struct mem_obj_t {
 	int type;
 	int segmgr_id; /* Internal value used by the seg_manager's hash map */
 	union {
@@ -271,11 +271,11 @@ typedef struct _mem_obj {
 		dynmem_t dynmem;
 		char *reserved;
 	} data;
-} mem_obj_t;
+};
 
 
 
-typedef struct {
+struct selector_map_t {
 	selector_t init; /* Init function */
 	selector_t play; /* Play function (first function to be called) */
 	selector_t replay; /* Replay function */
@@ -347,9 +347,9 @@ typedef struct {
 	selector_t flags;
 
 	selector_t points; /* Used by AvoidPath() */
-} selector_map_t; /* Contains selector IDs for a few selected selectors */
+}; /* Contains selector IDs for a few selected selectors */
 
-typedef struct {
+struct view_object_t {
 	reg_t obj;
 	reg_t *signalp;    /* Used only indirectly */
 	reg_t *underBitsp; /* The same goes for the handle storage */
@@ -361,7 +361,7 @@ typedef struct {
 	int view_nr, loop, cel; /* view_nr is ised for save/restore */
 	int nsTop, nsLeft, nsRight, nsBottom;
 	int real_y, z, index_nr; /* Used for sorting */
-} view_object_t;
+};
 
 #define VAR_GLOBAL 0
 #define VAR_LOCAL 1
@@ -372,7 +372,7 @@ typedef struct {
 #define EXEC_STACK_TYPE_KERNEL 1
 #define EXEC_STACK_TYPE_VARSELECTOR 2
 
-typedef struct {
+struct exec_stack_t {
 	reg_t objp;
 	reg_t sendp; /* Pointer to the object containing the invoked method */
 	union {
@@ -392,16 +392,16 @@ typedef struct {
 		      ** was the initial call.  */
 	byte type; /* EXEC_STACK_TYPE* */
 
-} exec_stack_t;
+};
 
-typedef struct _breakpoint {
+struct breakpoint_t {
 	int type;
 	union {
 		uint32 address;  /* Breakpoints on exports */
 		char *name; /* Breakpoints on selector names */
 	} data;
-	struct _breakpoint *next;
-} breakpoint_t;
+	breakpoint_t *next;
+};
 
 #define BREAK_SELECTOR 1
 /* Break when selector is executed. data contains (char *) selector name

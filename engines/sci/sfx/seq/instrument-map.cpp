@@ -214,13 +214,13 @@ sfx_instrument_map_load_sci(byte *data, size_t size) {
 #define MIDI_CHANNELS_NR 0x10
 
 // FIXME: Replace this ugly hack with simple subclassing once converting to C++
-typedef struct decorated_midi_writer {
+struct decorated_midi_writer_t {
 	MIDI_WRITER_BODY
 
 	midi_writer_t *writer;
 	sfx_patch_map_t patches[MIDI_CHANNELS_NR];
 	sfx_instrument_map_t *map;
-} decorated_midi_writer_t;
+};
 
 
 static void

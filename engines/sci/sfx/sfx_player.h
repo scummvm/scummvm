@@ -36,7 +36,7 @@ namespace Sci {
 
 typedef void tell_synth_func(int buf_nr, byte *buf);
 
-typedef struct {
+struct sfx_player_t {
 	const char *name;
 	const char *version;
 
@@ -115,7 +115,7 @@ typedef struct {
 
 	int polyphony; /* Number of voices that can play simultaneously */
 
-} sfx_player_t;
+};
 
 sfx_player_t *sfx_find_player(char *name);
 /* Looks up a player by name or finds the default player

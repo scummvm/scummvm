@@ -83,12 +83,12 @@
 namespace Sci {
 
 
-typedef struct {
+struct GTimeVal {
 	long tv_sec;
 	long tv_usec;
-} GTimeVal;
+};
 
-typedef struct {
+struct sci_dir_t {
 #ifdef WIN32
 	long search;
 	struct _finddata_t fileinfo;
@@ -96,7 +96,7 @@ typedef struct {
 	DIR *dir;
 	char *mask_copy;
 #endif
-} sci_dir_t; /* used by sci_find_first and friends */
+}; /* used by sci_find_first and friends */
 
 
 

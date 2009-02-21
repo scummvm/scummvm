@@ -452,39 +452,39 @@ byte *sm_dereference(SegManager *self, reg_t reg, int *size);
 
 // 11. Segment interface, primarily for GC			
 
-typedef struct _seg_interface {
+struct seg_interface_t {
 	SegManager *segmgr;
 	mem_obj_t *mobj;
 	seg_id_t seg_id;
 	mem_obj_enum type_id;	// Segment type 
 	const char *type;	// String description of the segment type 
 
-	reg_t (*find_canonic_address)(struct _seg_interface *self, reg_t sub_addr);
+	reg_t (*find_canonic_address)(seg_interface_t *self, reg_t sub_addr);
 	// Finds the canonic address associated with sub_reg
 	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
 	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
 	
-	void (*free_at_address)(struct _seg_interface *self, reg_t sub_addr);
+	void (*free_at_address)(seg_interface_t *self, reg_t sub_addr);
 	// Deallocates all memory associated with the specified address
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
 	
-	void (*list_all_deallocatable)(struct _seg_interface *self, void *param, void (*note)(void *param, reg_t addr));
+	void (*list_all_deallocatable)(seg_interface_t *self, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over and reports all addresses within the current segment
 	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
 	//                                makes sense
 	//             (void *) param: Parameter passed to 'note'
 	
-	void (*list_all_outgoing_references)(struct _seg_interface *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
+	void (*list_all_outgoing_references)(seg_interface_t *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over all references reachable from the specified object
 	// Parameters: (reg_t) object: The object (within the current segment) to analyse
 	//             (void *) param: Parameter passed to 'note'
 	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
 	// Note: This function may also choose to report numbers (segment 0) as adresses
 	
-	void (*deallocate_self)(struct _seg_interface *self);
+	void (*deallocate_self)(seg_interface_t *self);
 	// Deallocates the segment interface
-} seg_interface_t;
+};
 
 seg_interface_t *get_seg_interface(SegManager *self, seg_id_t segid);
 // Retrieves the segment interface to the specified segment

@@ -47,7 +47,7 @@ namespace Sci {
 #define SFX_DEBUG_CUES		(1 << 1) /* Debug cues, loops, and
 ** song completions */
 
-typedef struct {
+struct sfx_state_t {
 	song_iterator_t *it; /* The song iterator at the heart of things */
 	unsigned int flags; /* SFX_STATE_FLAG_* */
 	songlib_t songlib; /* Song library */
@@ -55,7 +55,7 @@ typedef struct {
 	int suspended; /* Whether we are suspended */
 	unsigned int debug; /* Debug flags */
 
-} sfx_state_t;
+};
 
 /***********/
 /* General */

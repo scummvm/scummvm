@@ -23,17 +23,10 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <stdio.h>
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
-#include "../sequencer.h"
-#include "../device.h"
-#include "instrument-map.h"
-#include <resource.h>
+#include "sci/tools.h"
+#include "sci/sfx/sequencer.h"
+#include "sci/sfx/device.h"
+#include "sci/sfx/seq/instrument-map.h"
 
 namespace Sci {
 

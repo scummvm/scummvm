@@ -33,7 +33,7 @@ namespace Sci {
 
 #define ADLIB_VOICES 12
 
-typedef struct _sci_adlib_def {
+struct adlib_def {
 	uint8 keyscale1;       /* 0-3 !*/
 	uint8 freqmod1;        /* 0-15 !*/
 	uint8 feedback1;       /* 0-7 !*/
@@ -62,7 +62,7 @@ typedef struct _sci_adlib_def {
 	uint8 algorithm2;      /* 0,1 UNUSED */
 	uint8 waveform1;       /* 0-3 !*/
 	uint8 waveform2;       /* 0-3 !*/
-} adlib_def;
+};
 
 typedef unsigned char adlib_instr[12];
 

@@ -413,10 +413,10 @@ static inline int _gfxop_update_box(gfx_state_t *state, rect_t box) {
 	return GFX_OK;
 }
 
-static struct _dirty_rect *_rect_create(rect_t box) {
-	struct _dirty_rect *rect;
+static gfx_dirty_rect_t *_rect_create(rect_t box) {
+	gfx_dirty_rect_t *rect;
 
-	rect = (struct _dirty_rect *)sci_malloc(sizeof(struct _dirty_rect));
+	rect = (gfx_dirty_rect_t *)sci_malloc(sizeof(gfx_dirty_rect_t));
 	rect->next = NULL;
 	rect->rect = box;
 
@@ -450,11 +450,11 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 		break;
 
 	case GFXOP_DIRTY_FRAMES_CLUSTERS: {
-		struct _dirty_rect **rectp = &(base);
+		gfx_dirty_rect_t **rectp = &(base);
 
 		while (*rectp) {
 			if (gfx_rects_overlap((*rectp)->rect, box)) {
-				struct _dirty_rect *next = (*rectp)->next;
+				gfx_dirty_rect_t *next = (*rectp)->next;
 				box = gfx_rects_merge((*rectp)->rect, box);
 				free(*rectp);
 				*rectp = next;
@@ -496,7 +496,7 @@ static inline void _gfxop_add_dirty_x(gfx_state_t *state, rect_t box) {
 	_gfxop_add_dirty(state, box);
 }
 
-static int _gfxop_clear_dirty_rec(gfx_state_t *state, struct _dirty_rect *rect) {
+static int _gfxop_clear_dirty_rec(gfx_state_t *state, gfx_dirty_rect_t *rect) {
 	int retval;
 
 	if (!rect)

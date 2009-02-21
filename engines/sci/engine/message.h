@@ -27,18 +27,18 @@
 
 namespace Sci {
 
-typedef struct {
+struct message_tuple_t {
 	int noun;
 	int verb;
 	int cond;
 	int seq;
-} message_tuple_t;
+};
 
-typedef struct {
+struct index_record_cursor_t {
 	byte *index_record;
 	int index;
 	byte *resource_beginning;
-} index_record_cursor_t;
+};
 
 typedef int index_record_size_t();
 typedef void parse_index_record_t(index_record_cursor_t *index_record, message_tuple_t *t);
@@ -46,7 +46,7 @@ typedef int get_talker_t(index_record_cursor_t *cursor);
 typedef void get_text_t(index_record_cursor_t *cursor, char *buffer, int buffer_size);
 typedef int index_record_count_t(byte *header);
 
-typedef struct {
+struct message_handler_t {
 	int version_id;
 	parse_index_record_t *parse;
 	get_talker_t *get_talker;
@@ -55,9 +55,9 @@ typedef struct {
 
 	int header_size;
 	int index_record_size;
-} message_handler_t;
+};
 
-typedef struct {
+struct message_state_t {
 	int initialized;
 	message_handler_t *handler;
 	ResourceManager *resmgr;
@@ -66,7 +66,7 @@ typedef struct {
 	int record_count;
 	byte *index_records;
 	index_record_cursor_t engine_cursor;
-} message_state_t;
+};
 
 int message_get_specific(message_state_t *state, message_tuple_t *t);
 int message_get_next(message_state_t *state);

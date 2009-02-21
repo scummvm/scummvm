@@ -66,13 +66,13 @@ extern gfx_pixmap_color_t gfx_sci0_image_colors[][16];
 extern gfx_pixmap_color_t gfx_sci0_pic_colors[];
 
 
-typedef struct {
+struct gfxr_pic0_params_t {
 	gfx_line_mode_t line_mode; /* one of GFX_LINE_MODE_* */
 	gfx_brush_mode_t brush_mode;
 	rect_t pic_port_bounds;
-} gfxr_pic0_params_t;
+};
 
-typedef struct {
+struct gfxr_pic_t {
 	int ID; /* pic number (NOT resource ID, just number) */
 	gfx_mode_t *mode;
 	gfx_pixmap_t *visual_map;
@@ -96,16 +96,16 @@ typedef struct {
 	void *internal; /* Interpreter information, or NULL. Will be freed
 			** automatically when the pic is freed!  */
 
-} gfxr_pic_t;
+};
 
 
-typedef struct {
+struct gfxr_loop_t {
 	int cels_nr;
 	gfx_pixmap_t **cels;
-} gfxr_loop_t;
+};
 
 
-typedef struct {
+struct gfxr_view_t {
 	int ID;
 
 	int flags;
@@ -116,7 +116,7 @@ typedef struct {
 	gfxr_loop_t *loops;
 
 	int translation[GFX_SCI0_IMAGE_COLORS_NR];
-} gfxr_view_t;
+};
 
 
 typedef enum {
@@ -124,10 +124,10 @@ typedef enum {
 } gfxr_font_scale_filter_t;
 
 
-typedef struct {
+struct text_fragment_t {
 	const char *offset;
 	int length;
-} text_fragment_t;
+};
 
 /* unscaled color index mode: Used in addition to a scaled mode
 ** to render the pic resource twice. See gfxr_remove_artifacts_pic0().
