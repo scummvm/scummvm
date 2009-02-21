@@ -54,6 +54,8 @@ public:
 	int16 getRandom(int16 max);
 	void beep(int16 freq);
 
+	void notifyPaused(uint32 duration);
+
 	void delay(uint16 msecs);
 	void longDelay(uint16 msecs);
 
@@ -99,6 +101,9 @@ protected:
 	uint8 _fastMode;
 
 	int16 _frameRate;
+	int16 _frameWaitTime;
+	uint32 _startFrameTime;
+	int32 _frameWaitLag;
 
 	GobEngine *_vm;
 

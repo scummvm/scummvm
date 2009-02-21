@@ -78,9 +78,6 @@ public:
 	int16 _fakeVideoMode;
 	int16 _oldMode;
 
-	int16 _frameWaitTime;
-	int32 _startFrameTime;
-
 	uint16 _soundFlags;
 
 	uint16 _language;

@@ -43,6 +43,9 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 	_keyBufferTail = 0;
 	_fastMode = 0;
 	_frameRate = 12;
+	_frameWaitTime = 0;
+	_startFrameTime = 0;
+	_frameWaitLag = 0;
 }
 
 uint32 Util::getTimeKey(void) {
@@ -61,6 +64,10 @@ void Util::beep(int16 freq) {
 		return;
 
 	_vm->_sound->speakerOn(freq, 50);
+}
+
+void Util::notifyPaused(uint32 duration) {
+	_startFrameTime += duration;
 }
 
 void Util::delay(uint16 msecs) {
@@ -309,8 +316,8 @@ void Util::setFrameRate(int16 rate) {
 		rate = 1;
 
 	_frameRate = rate;
-	_vm->_global->_frameWaitTime = 1000 / rate;
-	_vm->_global->_startFrameTime = getTimeKey();
+	_frameWaitTime = 1000 / rate;
+	_startFrameTime = getTimeKey();
 }
 
 void Util::waitEndFrame() {
@@ -318,16 +325,23 @@ void Util::waitEndFrame() {
 
 	_vm->_video->waitRetrace();
 
-	time = getTimeKey() - _vm->_global->_startFrameTime;
+	time = getTimeKey() - _startFrameTime;
 	if ((time > 1000) || (time < 0)) {
-		_vm->_global->_startFrameTime = getTimeKey();
+		_startFrameTime = getTimeKey();
 		return;
 	}
 
-	if ((_vm->_global->_frameWaitTime - time) > 0)
-		delay(_vm->_global->_frameWaitTime - time);
+	int32 waitTime = _frameWaitTime - _frameWaitLag;
+	int32 toWait = waitTime - time;
 
-	_vm->_global->_startFrameTime = getTimeKey();
+	if (toWait > 0)
+		delay(toWait);
+
+	int32 now = getTimeKey();
+
+	_frameWaitLag = (now - _startFrameTime) - waitTime;
+
+	_startFrameTime = now;
 }
 
 void Util::setScrollOffset(int16 x, int16 y) {

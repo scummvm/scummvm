@@ -41,9 +41,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_fakeVideoMode = 0;
 	_oldMode = 3;
 
-	_frameWaitTime = 0;
-	_startFrameTime = 0;
-
 	_soundFlags = 0;
 
 	_language = 0x8000;
