@@ -111,7 +111,7 @@ void write_reg_t(Common::WriteStream *fh, reg_t *foo) {
 }
 
 int read_reg_t(Common::SeekableReadStream *fh, reg_t *foo, const char *lastval, int *line, int *hiteof) {
-	int segment, offset;
+	unsigned int segment, offset;
 
 	if (sscanf(lastval, PREG, &segment, &offset) < 2) {
 		sciprintf("Error parsing reg_t on line %d\n", *line);
@@ -463,7 +463,6 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 	int songcount;
 	int i;
 	song_t *newsong;
-	int oldstatus;
 
 	if (strcmp(lastval, "{")) {
 		_cfsml_error("Opening brackets expected at line %d\n", *line);
@@ -486,7 +485,7 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 	return 0;
 }
 
-struct {
+static struct {
 	int type;
 	const char *name;
 } mem_obj_string_names[] = {
@@ -511,8 +510,6 @@ int mem_obj_string_to_enum(const char *str) {
 
 	return -1;
 }
-
-static int bucket_length;
 
 void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo) {
 	%CFSMLWRITE int_hash_map_t *foo INTO fh;
@@ -645,7 +642,6 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 }
 
 int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
-	char buffer[80];
 	foo->type = mem_obj_string_to_enum(lastval);
 	if (foo->type < 0) {
 		sciprintf("Unknown mem_obj_t type %s on line %d\n", lastval, *line);
@@ -714,10 +710,6 @@ void _gamestate_unfrob(state_t *s) {
 
 
 int gamestate_save(state_t *s, Common::WriteStream *fh, const char* savename) {
-	sci_dir_t dir;
-	char *filename;
-	int fd;
-
 	tm curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -840,8 +832,6 @@ static void load_script(state_t *s, seg_id_t seg) {
 static void reconstruct_scripts(state_t *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
-	object_t **objects;
-	int *objects_nr;
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
 			mobj = self->heap[i];
@@ -1006,8 +996,6 @@ static void reconstruct_sounds(state_t *s) {
 }
 
 state_t *gamestate_restore(state_t *s, Common::SeekableReadStream *fh) {
-	int fd;
-	int i;
 	int read_eof = 0;
 	state_t *retval;
 	songlib_t temp;

@@ -87,8 +87,8 @@ MODULE_OBJS = \
 	sfx/softseq/softsequencers.o
 
 # Generate savegame.cpp
-$(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml
-	cat $< | perl $(srcdir)/tools/cfsml.pl -f savegame.cfsml > $@
+$(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml $(srcdir)/tools/cfsml.pl
+	cat $< | perl $(srcdir)/tools/cfsml.pl -f $(<) > $@
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SCI), DYNAMIC_PLUGIN)

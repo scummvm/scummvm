@@ -394,9 +394,6 @@ sub create_writer
 
     write_line_pp(__LINE__, 0);
     print "static void\n_cfsml_write_$typename(Common::WriteStream *fh, $ctype* save_struc)\n{\n";
-    if ($types{$type}{'type'} eq $type_record) {
-        print "	int min, max, i;\n\n";
-    }
 
     if ($types{$type}{'type'} eq $type_integer) {
       print "	WSprintf(fh, \"%li\", (long)*save_struc);\n";
@@ -421,6 +418,7 @@ sub create_writer
 
         if ($n->{'array'}) { # Check for arrays
 
+        print "	int min, max;\n";
         if ($n->{'array'} eq 'static' or $n->{'size'} * 2) { # fixed integer value?
             print "	min = max = $n->{'size'};\n";
         }
@@ -440,7 +438,7 @@ sub create_writer
 
         write_line_pp(__LINE__, 0);
         print "	WSprintf(fh, \"[%d][\\n\", max);\n";
-        print "	for (i = 0; i < min; i++) {\n";
+        print "	for (int i = 0; i < min; i++) {\n";
         print "		$types{$n->{'type'}}{'writer'}";
         my $subscribstr = "[i]"; # To avoid perl interpolation problems
         print "(fh, &(save_struc->$n->{'name'}$subscribstr));\n";
@@ -487,10 +485,6 @@ sub create_reader
 
     write_line_pp(__LINE__, 0);
     print "static int\n_cfsml_read_$typename(Common::SeekableReadStream *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof)\n{\n";
-    print "	char *token;\n";
-    if ($types{$type}{'type'} eq $type_record) {
-      print "	int min, max, i;\n";
-    }
     my $reladdress_nr = 0; # Number of relative addresses needed
     my $reladdress = 0; # Current relative address number
     my $reladdress_resolver = ""; # Relative addresses are resolved after the main while block
@@ -510,6 +504,7 @@ sub create_reader
 
     if ($types{$type}{'type'} eq $type_integer) {
 	write_line_pp(__LINE__, 0);
+	print "	char *token;\n";
 	print "\n	*save_struc = strtol(lastval, &token, 0);\n";
 	print "	if ((*save_struc == 0) && (token == lastval)) {\n";
 	print "		_cfsml_error(\"strtol failed at line %d\\n\", *line);\n";
@@ -544,7 +539,8 @@ sub create_reader
 	print "	}\n";
     } elsif ($types{$type}{'type'} eq $type_record) {
 	write_line_pp(__LINE__, 0);
-	print "	int assignment, closed, done;\n\n";
+	print "	char *token;\n";
+	print "	int assignment, closed;\n\n";
 	print "	if (strcmp(lastval, \"{\")) {\n";
 	print "		_cfsml_error(\"Reading record $type; expected opening braces in line %d, got \\\"%s\\\"\\n\", *line, lastval);\n";
 	print "		return CFSML_FAILURE;\n";
@@ -614,6 +610,7 @@ sub create_reader
 	    print "				return CFSML_FAILURE;\n";
 	    print "			}\n";
 
+	  print "			int max,done,i;\n";
 	  if ($n->{'array'} eq 'dynamic') {
 	      write_line_pp(__LINE__, 0);
 	    # We need to allocate the array first
@@ -776,14 +773,13 @@ sub insert_reader_code {
   }
   write_line_pp(__LINE__, 0);
   print "		int _cfsml_eof = 0, _cfsml_error;\n";
-  print "		int dummy;\n";
 
   if ($firsttoken) {
       write_line_pp(__LINE__, 0);
       print "		const char *_cfsml_inp = $firsttoken;\n";
   } else {
       write_line_pp(__LINE__, 0);
-      print "		const char *_cfsml_inp = _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, &dummy);\n\n";
+      print "		const char *_cfsml_inp = _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, 0);\n\n";
   }
 
   write_line_pp(__LINE__, 0);
