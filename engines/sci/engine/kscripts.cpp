@@ -46,8 +46,8 @@ void write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t valu
 	}
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
-		warning("Selector '%s' of object at %04x could not be"
-		         " written to (%s L%d)", s->selector_names[selector_id], object, fname, line);
+		warning("Selector '%s' of object at "PREG" could not be"
+		         " written to (%s L%d)", s->selector_names[selector_id], PRINT_REG(object), fname, line);
 	else
 		*address = value;
 }

@@ -208,10 +208,10 @@ void graph_restore_box(state_t *s, reg_t handle) {
 		return;
 	}
 
-	ptr = (gfxw_snapshot_t **) kmem(s, handle);
+	ptr = (gfxw_snapshot_t **)kmem(s, handle);
 
 	if (!ptr) {
-		warning("Attempt to restore invalid handle %04x", handle);
+		warning("Attempt to restore invalid handle "PREG, PRINT_REG(handle));
 		return;
 	}
 
@@ -241,7 +241,7 @@ void graph_restore_box(state_t *s, reg_t handle) {
 
 
 	if (!ptr) {
-		error("Attempt to restore invalid snaphot with handle %04x", handle);
+		error("Attempt to restore invalid snaphot with handle "PREG, PRINT_REG(handle));
 		return;
 	}
 
@@ -846,7 +846,7 @@ reg_t kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv) {
 			SCIkdebug(SCIkBRESEN, "  comparing against "PREG"\n", PRINT_REG(other_obj));
 
 			if (!is_object(s, other_obj)) {
-				warning("CanBeHere() cliplist contains non-object %04x", other_obj);
+				warning("CanBeHere() cliplist contains non-object "PREG, PRINT_REG(other_obj));
 			} else if (!REG_EQ(other_obj, obj)) { // Clipping against yourself is not recommended
 
 				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, funct_nr, argc, argv)) {

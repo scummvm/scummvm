@@ -35,22 +35,20 @@
 		return rv;\
 	}
 
-char *
-kernel_lookup_text(state_t *s, reg_t address, int index)
 /* Returns the string the script intended to address */
-{
+char *kernel_lookup_text(state_t *s, reg_t address, int index) {
 	char *seeker;
 	resource_t *textres;
 
 	if (address.segment)
-		return (char *) kernel_dereference_bulk_pointer(s, address, 0);
+		return (char *)kernel_dereference_bulk_pointer(s, address, 0);
 	else {
 		int textlen;
 		int _index = index;
 		textres = scir_find_resource(s->resmgr, sci_text, address.offset, 0);
 
 		if (!textres) {
-			error("text.%03d not found\n", address);
+			error("text.%03d not found", address.offset);
 			return NULL; /* Will probably segfault */
 		}
 
@@ -58,12 +56,13 @@ kernel_lookup_text(state_t *s, reg_t address, int index)
 		seeker = (char *) textres->data;
 
 		while (index--)
-			while ((textlen--) && (*seeker++));
+			while ((textlen--) && (*seeker++))
+				;
 
 		if (textlen)
 			return seeker;
 		else {
-			error("Index %d out of bounds in text.%03d\n", _index, address);
+			error("Index %d out of bounds in text.%03d\n", _index, address.offset);
 			return 0;
 		}
 
@@ -76,8 +75,7 @@ kernel_lookup_text(state_t *s, reg_t address, int index)
 /**********/
 
 #ifdef SCI_SIMPLE_SAID_CODE
-int
-vocab_match_simple(state_t *s, heap_ptr addr) {
+int vocab_match_simple(state_t *s, heap_ptr addr) {
 	int nextitem;
 	int listpos = 0;
 
@@ -112,8 +110,7 @@ vocab_match_simple(state_t *s, heap_ptr addr) {
 #endif /* SCI_SIMPLE_SAID_CODE */
 
 
-reg_t
-kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
@@ -235,7 +232,8 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 						synpos++;
 					}
-			} else warning("Synonyms of script.%03d were requested, but script is not available");
+			} else
+				warning("Synonyms of script.%03d were requested, but script is not available", script);
 
 		}
 

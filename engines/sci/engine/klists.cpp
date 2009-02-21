@@ -341,7 +341,7 @@ reg_t kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
 
 	if (!newnode) {
-		error("New 'node' "PREG" is not a node", argv[1], argv[2]);
+		error("New 'node' "PREG" is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
 
