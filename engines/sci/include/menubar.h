@@ -31,6 +31,8 @@
 #include "sci/include/gfx_operations.h"
 #include "sci/include/gfx_widgets.h"
 
+namespace Sci {
+
 struct _state;
 
 #define MENU_FREESCI_BLATANT_PLUG 0xfff0
@@ -213,6 +215,8 @@ menubar_match_key(menu_item_t *item, int message, int modifiers);
 **             (int x int) message, modifiers: The input to compare
 ** Returns   : (int) 1 on match, 0 otherwise
 */
+
+} // End of namespace Sci
 
 #endif /* !_SCI_MENUBAR_H_ */
 

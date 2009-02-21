@@ -29,6 +29,8 @@
 
 #include <alsa/asoundlib.h>
 
+namespace Sci {
+
 #define SCI_ALSA_MIDI_VERSION "0.1"
 
 static snd_midi_event_t *parser = NULL;
@@ -213,5 +215,7 @@ midi_writer_t sfx_device_midi_alsa = {
 	amreset_timer,
 	amclose,
 };
+
+} // End of namespace Sci
 
 #endif

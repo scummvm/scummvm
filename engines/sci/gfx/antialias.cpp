@@ -28,6 +28,8 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 static void antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode) {
 	int x, y, c;
 	int bytespp = mode->bytespp;
@@ -157,3 +159,5 @@ void gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t
 		GFXERROR("Invalid antialiasing mode %d (internal error)\n", type);
 	}
 }
+
+} // End of namespace Sci

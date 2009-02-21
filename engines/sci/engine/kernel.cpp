@@ -36,6 +36,8 @@
 #include "sci/include/gfx_operations.h"
 #include "sci/engine/kernel_types.h"
 
+namespace Sci {
+
 // New kernel functions
 reg_t kStrLen(struct _state *s, int funct_nr, int argc, reg_t *argv);
 reg_t kGetFarText(struct _state *s, int funct_nr, int argc, reg_t *argv);
@@ -977,3 +979,5 @@ byte *kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entri
 reg_t *kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries) {
 	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
 }
+
+} // End of namespace Sci

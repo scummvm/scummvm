@@ -29,6 +29,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 #define DDEBUG if (0) printf
 
 void decryptinit3(void);
@@ -162,3 +164,4 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 	return 0;
 }
 
+} // End of namespace Sci

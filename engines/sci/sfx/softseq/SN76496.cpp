@@ -28,6 +28,8 @@
 #include "sci/sfx/softseq.h"
 #include "sci/include/sci_midi.h"
 
+namespace Sci {
+
 #define FREQUENCY 44100
 #define CHANNELS_NR 3
 #define VOLUME_SHIFT 3
@@ -235,3 +237,5 @@ sfx_softseq_t sfx_softseq_SN76496 = {
 	3, /* # of voices */
 	{FREQUENCY, SFX_PCM_MONO, SFX_PCM_FORMAT_S16_NATIVE}
 };
+
+} // End of namespace Sci

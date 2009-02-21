@@ -25,6 +25,8 @@
 
 #include "sci/include/gfx_resource.h"
 
+namespace Sci {
+
 /* Generic pic filling code, to be included by sci_pic_0.c
  *
  *
@@ -416,3 +418,5 @@ static void FILL_FUNCTION(gfxr_pic_t *pic, int x_320, int y_200, int color, int 
 #  undef proj_xl_bound
 #  undef proj_xr_bound
 #endif
+
+} // End of namespace Sci

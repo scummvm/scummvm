@@ -46,6 +46,8 @@
 #pragma warning( disable : 4101 )
 #endif
 
+namespace Sci {
+
 #define HUNK_TYPE_GFX_SNAPSHOT_STRING "g\n"
 
 /* Missing:
@@ -5196,3 +5198,4 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 	return true;
 }
 
+} // End of namespace Sci

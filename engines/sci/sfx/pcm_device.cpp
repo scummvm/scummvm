@@ -29,6 +29,7 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
+namespace Sci {
 
 static int pcmout_scummvm_framesize;
 static Audio::AppendableAudioStream * pcmout_scummvm_audiostream;
@@ -74,3 +75,5 @@ sfx_pcm_device_t sfx_pcm_driver_scummvm = {
 	{0, 0, 0},
 	0
 };
+
+} // End of namespace Sci

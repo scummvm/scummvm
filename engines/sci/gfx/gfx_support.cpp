@@ -30,8 +30,6 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_tools.h"
 
-int gfx_crossblit_alpha_threshold = 128;
-
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_1
 #define PIXELWIDTH 1
 #include "gfx_line.cpp"
@@ -55,6 +53,10 @@ int gfx_crossblit_alpha_threshold = 128;
 #include "gfx_line.cpp"
 #undef PIXELWIDTH
 #undef DRAWLINE_FUNC
+
+namespace Sci {
+
+int gfx_crossblit_alpha_threshold = 128;
 
 inline void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, Common::Point start, Common::Point end, unsigned int color) {
 	switch (pixelwidth) {
@@ -105,6 +107,7 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
 	gfx_draw_box_buffer(pxm->index_data, pxm->index_xl, box, color);
 }
 
+} // End of namespace Sci
 
 // Import various crossblit functions
 #undef USE_PRIORITY
@@ -222,6 +225,8 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
 #undef FUNCTION_NAME
 #undef BYTESPP
 #undef REVERSE_ALPHA
+
+namespace Sci {
 
 static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int) = { NULL,
         _gfx_crossblit_8,
@@ -397,3 +402,5 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 	return GFX_OK;
 }
+
+} // End of namespace Sci

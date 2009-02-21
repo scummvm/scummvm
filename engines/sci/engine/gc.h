@@ -31,6 +31,7 @@
 #include "sci/include/vm_types.h"
 #include "sci/include/engine.h"
 
+namespace Sci {
 
 struct reg_t_EqualTo {
 	bool operator()(const reg_t& x, const reg_t& y) const {
@@ -57,5 +58,7 @@ void run_gc(state_t *s);
 /* Runs garbage collection on the current system state
 ** Parameters: (state_t *) s: The state in which we should gc
 */
+
+} // End of namespace Sci
 
 #endif // !defined(GC_H_)

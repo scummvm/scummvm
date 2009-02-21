@@ -28,6 +28,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored) {
 	int xl = get_int_16(resource);
 	int yl = get_int_16(resource + 2);
@@ -226,3 +228,5 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 
 	return view;
 }
+
+} // End of namespace Sci

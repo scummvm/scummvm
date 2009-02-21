@@ -29,7 +29,7 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
-
+namespace Sci {
 
 /* DEFLATE-DCL
 ** Refer to the FreeSCI docs for a full description.
@@ -432,3 +432,4 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 	return 0;
 }
 
+} // End of namespace Sci

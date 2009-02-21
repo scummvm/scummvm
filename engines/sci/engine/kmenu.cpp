@@ -27,6 +27,7 @@
 #include "sci/include/engine.h"
 #include "sci/include/sci_widgets.h"
 
+namespace Sci {
 
 reg_t
 kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
@@ -520,3 +521,5 @@ kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+} // End of namespace Sci

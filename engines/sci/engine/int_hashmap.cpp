@@ -25,6 +25,7 @@
 
 #include "sci/engine/int_hashmap.h"
 
+namespace Sci {
 
 #define HASH_MAX DCS_INT_HASH_MAX
 #define HASH(x) (x & 0xff)
@@ -107,3 +108,4 @@ int int_hash_map_t::remove_value(int value) {
 		return -1; // Not found
 }
 
+} // End of namespace Sci

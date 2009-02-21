@@ -27,6 +27,8 @@
 #include "sci/include/engine.h"
 #include "common/util.h"
 
+namespace Sci {
+
 /* #define SCRIPT_DEBUG */
 
 #define END Script_None
@@ -491,3 +493,5 @@ script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr
 
 	/*vocabulary_free_snames(snames);*/
 }
+
+} // End of namespace Sci

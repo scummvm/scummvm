@@ -28,6 +28,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 #undef GFXR_DEBUG_PIC0 /* Enable to debug pic0 messages */
 #undef FILL_RECURSIVE_DEBUG /* Enable for verbose fill debugging */
 
@@ -1204,6 +1206,8 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 
 #undef TEST_POINT
 
+} // End of namespace Sci
+	
 /* Now include the actual filling code (with scaling support) */
 #define FILL_FUNCTION _gfxr_fill_any
 #define FILL_FUNCTION_RECURSIVE _gfxr_fill_any_recursive
@@ -1218,8 +1222,12 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 #undef FILL_FUNCTION_RECURSIVE
 #undef FILL_FUNCTION
 
-#endif /* defined(WITH_PIC_SCALING) */
+namespace Sci {
 
+#endif /* defined(WITH_PIC_SCALING) */
+	
+} // End of namespace Sci
+	
 /* Include again, but this time without support for scaling */
 #define FILL_FUNCTION _gfxr_fill_1
 #define FILL_FUNCTION_RECURSIVE _gfxr_fill_1_recursive
@@ -1232,6 +1240,7 @@ _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_
 #undef FILL_FUNCTION_RECURSIVE
 #undef FILL_FUNCTION
 
+namespace Sci {
 
 #define GET_ABS_COORDS(x, y) \
   temp = *(resource + pos++); \
@@ -1999,3 +2008,4 @@ gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 	}
 }
 
+} // End of namespace Sci

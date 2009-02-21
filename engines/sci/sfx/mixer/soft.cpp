@@ -27,6 +27,8 @@
 #include "../mixer.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 /* Max. number of microseconds in difference allowed between independent audio streams */
 #define TIMESTAMP_MAX_ALLOWED_DELTA 2000
 
@@ -971,3 +973,5 @@ sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear = {
 };
 
 sfx_pcm_mixer_t* getMixer() { return &sfx_pcm_mixer_soft_linear; }
+
+} // End of namespace Sci

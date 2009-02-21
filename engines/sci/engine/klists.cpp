@@ -25,6 +25,8 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 #ifdef LOOKUP_NODE
 #  undef LOOKUP_NODE
 #  define LOOKUP_NODE(addr) inline_lookup_node(s, (addr), __FILE__, __LINE__)
@@ -494,3 +496,5 @@ reg_t kSort(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+} // End of namespace Sci

@@ -27,6 +27,8 @@
 #include "sci/include/console.h"
 #include "sci/engine/heap.h"
 
+namespace Sci {
+
 #define assert_in_range(pos) assert(pos >= 1000 && pos <= 0xffff)
 
 static void set_size(heap_t *h, int block_pos, int size) {
@@ -280,3 +282,5 @@ int main(int argc, char **argv) {
 	return 0;
 }
 */
+
+} // End of namespace Sci

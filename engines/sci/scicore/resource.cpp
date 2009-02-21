@@ -33,6 +33,8 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/vocabulary.h" /* For SCI version auto-detection */
 
+namespace Sci {
+
 #undef SCI_REQUIRE_RESOURCE_FILES
 /* #define SCI_VERBOSE_RESMGR 1 */
 
@@ -804,3 +806,4 @@ scir_unlock_resource(ResourceManager *mgr, resource_t *res, int resnum, int rest
 	_scir_free_old_resources(mgr, 0);
 }
 
+} // End of namespace Sci

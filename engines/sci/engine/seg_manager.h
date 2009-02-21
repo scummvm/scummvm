@@ -31,6 +31,8 @@
 #include "sci/include/sys_strings.h"
 #include "sci/include/vm.h"
 
+namespace Sci {
+
 #define DEFAULT_SCRIPTS 32
 #define DEFAULT_OBJECTS 8	    // default # of objects per script
 #define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
@@ -491,5 +493,7 @@ seg_interface_t *get_seg_interface(seg_manager_t *self, seg_id_t segid);
 // Parameters: (seg_id_t) segid: ID of the segment to look up
 // Returns   : (seg_interface_t *): An interface to the specified segment ID, or NULL on error
 // The returned interface 'si' must be freed after use by calling 'si->dealloc_self(si)';
+
+} // End of namespace Sci
 
 #endif

@@ -29,6 +29,8 @@
 #include "instrument-map.h"
 #include "sfx_engine.h"
 
+namespace Sci {
+
 sfx_instrument_map_t *
 sfx_instrument_map_new(int velocity_maps_nr) {
 	sfx_instrument_map_t *map = (sfx_instrument_map_t *)sci_malloc(sizeof(sfx_instrument_map_t));
@@ -522,3 +524,4 @@ sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map) {
 	return (midi_writer_t *) retval;
 }
 
+} // End of namespace Sci

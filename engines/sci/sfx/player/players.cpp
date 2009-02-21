@@ -25,6 +25,8 @@
 
 #include "sci/include/sfx_player.h"
 
+namespace Sci {
+
 extern sfx_player_t sfx_player_realtime;
 extern sfx_player_t sfx_player_polled;
 
@@ -49,3 +51,5 @@ sfx_find_player(char *name) {
 		return sfx_players[n];
 	}
 }
+
+} // End of namespace Sci

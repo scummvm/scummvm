@@ -26,6 +26,8 @@
 #ifndef _SFX_TIME_H_
 #define _SFX_TIME_H_
 
+namespace Sci {
+
 typedef struct {
 	long secs;
 	long usecs;
@@ -84,6 +86,6 @@ sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs);
 **                                            the epoch described there
 */
 
-
+} // End of namespace Sci
 
 #endif /* !defined(_SFX_TIME_H_) */

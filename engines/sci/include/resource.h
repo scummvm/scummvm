@@ -103,6 +103,8 @@
 #  define O_BINARY 0
 #endif
 
+namespace Sci {
+
 /**** FUNCTION DECLARATIONS ****/
 
 #ifdef WIN32
@@ -117,7 +119,7 @@ getInt16(byte *d) {
 }
 
 #define getUInt16(d) (guint16)(getInt16(d))
-
+	
 /* Turns a little endian 16 bit value into a machine-dependant 16 bit value
 ** Parameters: d: Pointer to the memory position from which to read
 ** Returns   : (gint16) The (possibly converted) 16 bit value
@@ -292,5 +294,7 @@ void sci_sched_yield(void);
 #ifndef BREAKPOINT
 #  define BREAKPOINT() { error("Missed breakpoint in %s, line %d\n", __FILE__, __LINE__); *((int *) NULL) = 42; }
 #endif  /* !BREAKPOINT() */
+
+} // End of namespace Sci
 
 #endif

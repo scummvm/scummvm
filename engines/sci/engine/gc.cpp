@@ -25,6 +25,8 @@
 
 #include "sci/engine/gc.h"
 
+namespace Sci {
+
 #define WORKLIST_CHUNK_SIZE 32
 
 //#define DEBUG_GC
@@ -287,3 +289,5 @@ void run_gc(state_t *s) {
 	}
 #endif
 }
+
+} // End of namespace Sci

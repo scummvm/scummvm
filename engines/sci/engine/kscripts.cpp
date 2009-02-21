@@ -27,6 +27,8 @@
 #include "sci/include/engine.h"
 #include "sci/engine/kernel_types.h"
 
+namespace Sci {
+
 reg_t read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file, int line) {
 	reg_t *address;
 
@@ -293,3 +295,5 @@ reg_t kRespondsTo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s, obj, selector, NULL, NULL) != SELECTOR_NONE);
 }
+
+} // End of namespace Sci

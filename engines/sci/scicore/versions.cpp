@@ -32,6 +32,8 @@
 #include "sci/include/engine.h"
 #include "sci/include/resource.h"
 
+namespace Sci {
+
 void
 version_require_earlier_than(state_t *s, sci_version_t version) {
 	if (s->version_lock_flag)
@@ -88,3 +90,5 @@ version_parse(const char *vn, sci_version_t *result) {
 }
 
 #undef VERSION_DETECT_BUF_SIZE
+
+} // End of namespace Sci

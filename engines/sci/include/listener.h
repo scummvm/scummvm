@@ -26,11 +26,15 @@
 #ifndef _LISTENER_H_
 #  define _LISTENER_H_
 
+namespace Sci {
+
 /* Event listener interface */
 
 typedef struct {
 	void (*notify)(void *self, void *notifier);
 	void *self;
 } listener_t;
+
+} // End of namespace Sci
 
 #endif

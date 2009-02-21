@@ -29,6 +29,7 @@
 
 #include "common/file.h"
 
+namespace Sci {
 
 #define RESOURCE_MAP_FILENAME "resource.map"
 
@@ -529,3 +530,5 @@ main(int argc, char **argv) {
 	return 0;
 }
 #endif
+
+} // End of namespace Sci

@@ -26,6 +26,8 @@
 #include "sci/include/engine.h"
 #include "sci/include/sfx_player.h"
 
+namespace Sci {
+
 #define _K_SCI0_SOUND_INIT_HANDLE 0
 #define _K_SCI0_SOUND_PLAY_HANDLE 1
 #define _K_SCI0_SOUND_NOP 2
@@ -996,3 +998,4 @@ kDoAudio(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+} // End of namespace Sci

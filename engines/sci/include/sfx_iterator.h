@@ -31,6 +31,8 @@
 #include "sci/include/sfx_pcm.h"
 #include "sci/include/listener.h"
 
+namespace Sci {
+
 #define SI_FINISHED -1 /* Song finished playing */
 #define SI_LOOP -2 /* Song just looped */
 #define SI_ABSOLUTE_CUE -3 /* Found a song cue (absolute) */
@@ -349,5 +351,7 @@ sfx_play_iterator_pcm(song_iterator_t *it, unsigned long handle);
 ** Returns   : (int) 0 if the effect will not be played, nonzero if it will
 ** This assumes that the last call to 'it->next()' returned SI_PCM.
 */
+
+} // End of namespace Sci
 
 #endif

@@ -32,6 +32,8 @@
 #include "sci/include/vocabulary.h"
 #include "sci/include/console.h"
 
+namespace Sci {
+
 #define TOKEN_OPAREN 0xff000000
 #define TOKEN_CPAREN 0xfe000000
 #define TOKEN_TERMINAL_CLASS 0x10000
@@ -583,3 +585,5 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr
 
 	return 0;
 }
+
+} // End of namespace Sci

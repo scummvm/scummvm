@@ -27,6 +27,7 @@
 #include "engines/engine.h"
 #include "sci/include/sfx_timer.h"
 
+namespace Sci {
 
 #define FREQ 60
 #define DELAY (1000000 / FREQ)
@@ -72,3 +73,5 @@ sfx_timer_t sfx_timer_scummvm = {
 	&scummvm_timer_start,
 	&scummvm_timer_stop
 };
+
+} // End of namespace Sci

@@ -30,6 +30,8 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 /* The following flags are applicable to windows in SCI0: */
 #define WINDOW_FLAG_TRANSPARENT 0x01
 
@@ -205,6 +207,8 @@ sciw_select_item(state_t *s, gfxw_port_t *menu_port, menu_t *menu, int selection
 **             (int) selection: Number of the menu entry to select, or -1 to do a NOP
 ** Returns   : (gfxw_port_t *) The modified menu
 */
+
+} // End of namespace Sci
 
 #endif /* _!SCI_WIDGETS_H_ */
 

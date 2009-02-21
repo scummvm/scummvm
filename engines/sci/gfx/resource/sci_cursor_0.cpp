@@ -27,6 +27,7 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
 
 #define CURSOR_RESOURCE_SIZE 68
 #define CURSOR_SIZE 16
@@ -93,3 +94,5 @@ gfx_pixmap_t *gfxr_draw_cursor0(int id, byte *resource, int size) {
 gfx_pixmap_t *gfxr_draw_cursor01(int id, byte *resource, int size) {
 	return _gfxr_draw_cursor(id, resource, size, 1);
 }
+
+} // End of namespace Sci

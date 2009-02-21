@@ -28,6 +28,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+using namespace Sci;
+
 #define ASSERT_S(x) if (!(x)) { error("Failed assertion in L%d: " #x "\n", __LINE__); return; }
 #define ASSERT(x) ASSERT_S(x)
 

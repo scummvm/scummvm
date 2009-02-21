@@ -28,6 +28,8 @@
 
 #include "sci/include/resource.h"
 
+namespace Sci {
+
 #define SCI_HEAP_SIZE 0x10000
 
 typedef guint16 heap_ptr;
@@ -107,5 +109,7 @@ void heap_dump_all(heap_t *h);
 ** Parameters: (heap_t *) h: The heap to check
 ** Returns   : (void)
 */
+
+} // End of namespace Sci
 
 #endif // !_SCI_HEAP_H

@@ -27,6 +27,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* xfact */ 1, /* yfact */ 1,
 	/* bytespp */ 1,
@@ -200,6 +202,8 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	return pixmap;
 }
 
+} // End of namespace Sci
+
 // Now construct the pixmap scaling functions
 #define EXTRA_BYTE_OFFSET 0
 #define SIZETYPE guint8
@@ -243,6 +247,8 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 #undef COPY_BYTES
 #undef EXTRA_BYTE_OFFSET
 #undef SIZETYPE
+
+namespace Sci {
 
 static inline void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	switch (mode->bytespp) {
@@ -414,3 +420,5 @@ void gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic) {
 	pic->undithered_buffer = 0;
 	free(pic);
 }
+
+} // End of namespace Sci

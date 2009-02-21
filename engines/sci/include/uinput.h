@@ -32,6 +32,7 @@
 #  include <unistd.h>
 #endif
 
+namespace Sci {
 
 struct _state;
 
@@ -125,5 +126,7 @@ typedef struct {
 
 #define SCI_EVM_NO_FOOLOCK      (~(SCI_EVM_SCRLOCK | SCI_EVM_NUMLOCK | SCI_EVM_CAPSLOCK | SCI_EVM_INSERT))
 #define SCI_EVM_ALL             0xFF
+
+} // End of namespace Sci
 
 #endif /* _SCI_UINPUT_H */

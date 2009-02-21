@@ -25,6 +25,8 @@
 
 #include "sci/sfx/adlib.h"
 
+namespace Sci {
+
 adlib_instr adlib_sbi[96];
 
 void
@@ -69,3 +71,5 @@ make_sbi(adlib_def *one, guint8 *buffer) {
 
 	return;
 }
+
+} // End of namespace Sci

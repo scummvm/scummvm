@@ -35,6 +35,8 @@
 #include "sci/include/vm.h"
 #include "sci/include/console.h" /* sciprintf() */
 
+namespace Sci {
+
 extern int _kdebug_cheap_event_hack;
 extern int _kdebug_cheap_soundcue_hack;
 extern int stop_on_event;
@@ -347,5 +349,7 @@ typedef struct {
 } sci_kernel_function_t;
 
 extern sci_kernel_function_t kfunct_mappers[];
+
+} // End of namespace Sci
 
 #endif /* _SCI_KERNEL_H_ */

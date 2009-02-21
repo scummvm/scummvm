@@ -31,6 +31,8 @@
 #include "sci/include/sfx_time.h"
 #include "sci/include/scitypes.h"
 
+namespace Sci {
+
 #define SFX_PCM_MONO 0
 #define SFX_PCM_STEREO_LR 1 /* left sample, then right sample */
 #define SFX_PCM_STEREO_RL 2 /* right sample, then left sample */
@@ -177,5 +179,7 @@ sfx_pcm_available(void);
 /* Determines whether a PCM device is available and has been initialised
 ** Returns   : (int) zero iff no PCM device is available
 */
+
+} // End of namespace Sci
 
 #endif /* !defined(_SFX_PCM_H_) */

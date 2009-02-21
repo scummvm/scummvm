@@ -28,6 +28,8 @@
 #ifndef _SFX_DEVICE_H
 #define _SFX_DEVICE_H
 
+namespace Sci {
+
 /* Various types of resources */
 #define SFX_DEVICE_NONE 0
 #define SFX_DEVICE_MIDI 1 /* midi writer */
@@ -115,5 +117,7 @@ sfx_find_device(int type, char *name);
 **                            (in the order specified), or NULL for default
 ** Returns   : (void *) The device requested, or NULL if no match was found
 */
+
+} // End of namespace Sci
 
 #endif /* !_SFX_PLAYER_H */

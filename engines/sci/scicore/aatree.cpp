@@ -27,6 +27,8 @@
 
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 struct aatree {
 	struct aatree *left, *right;
 	int level;
@@ -165,3 +167,5 @@ aatree_free(aatree_t *t) {
 
 	free(t);
 }
+
+} // End of namespace Sci

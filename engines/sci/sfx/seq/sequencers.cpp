@@ -26,6 +26,8 @@
 #include "../sequencer.h"
 #include "sci/include/resource.h"
 
+namespace Sci {
+
 sfx_sequencer_t *sfx_sequencers[] = {
 	NULL
 };
@@ -48,3 +50,5 @@ sfx_find_sequencer(char *name) {
 		return sfx_sequencers[n];
 	}
 }
+
+} // End of namespace Sci

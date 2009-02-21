@@ -27,6 +27,8 @@
 #include "sci/include/sfx_engine.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 #define debug_stream stderr
 
 GTimeVal
@@ -264,3 +266,4 @@ song_lib_dump(songlib_t songlib, int line) {
 
 }
 
+} // End of namespace Sci

@@ -50,6 +50,8 @@
 #  include <direct.h> // for chdir, rmdir, _gecwd, getcwd, mkdir
 #endif
 
+namespace Sci {
+
 /********** the memory allocation macros **********/
 
 #ifdef UNCHECKED_MALLOCS
@@ -168,5 +170,7 @@ extern void *sci_refcount_memdup(void *data, size_t len);
 ** Returns   : (void *) Newly allocated refcounted memory
 ** The number of references accounted for will be one.
 */
+
+} // End of namespace Sci
 
 #endif	/* _SCI_MEMORY_H */

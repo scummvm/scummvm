@@ -28,6 +28,8 @@
 #ifndef _SCI_GRAPHICS_H_
 #define _SCI_GRAPHICS_H_
 
+namespace Sci {
+
 #define MAX_TEXT_WIDTH_MAGIC_VALUE 192
 // This is the real width of a text with a specified width of 0
 
@@ -38,5 +40,6 @@
 // Internal states
 #define SELECTOR_STATE_DITHER_FRAMED 0x1000
 
+} // End of namespace Sci
 
 #endif // !_SCI_GRAPHICS_H_

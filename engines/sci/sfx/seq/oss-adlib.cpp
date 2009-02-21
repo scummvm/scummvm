@@ -38,6 +38,8 @@
 #include <sys/soundcard.h>
 #include <sfx_iterator.h> /* for some MIDI information */
 
+namespace Sci {
+
 #if 1
 SEQ_DEFINEBUF(2048);
 static int seqfd;
@@ -362,5 +364,7 @@ sfx_sequencer_t sfx_sequencer_oss_adlib = {
 	ADLIB_VOICES,  /* Max polyphony */
 	0 /* Does not require any write-ahead by its own */
 };
+
+} // End of namespace Sci
 
 #endif /* HAVE_SYS_SOUNDCARD_H */

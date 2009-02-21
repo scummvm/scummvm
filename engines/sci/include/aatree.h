@@ -26,6 +26,8 @@
 #ifndef _SCI_AATREE_H
 #define _SCI_AATREE_H
 
+namespace Sci {
+
 /* Andersson tree implementation. Stores data pointers in a balanced binary
 ** tree. A user-supplied comparison function defines the ordering. For the
 ** semantics of this function see qsort(3)
@@ -79,5 +81,7 @@ void *aatree_get_data(aatree_t *t);
 ** Parameters: (aatree_t *) t: The node
 ** Returns   : (void *) The data element
 */
+
+} // End of namespace Sci
 
 #endif /* !_SCI_AATREE_H */

@@ -41,6 +41,7 @@
 #define SCI_CONSOLE
 #include "sci/include/gfx_operations.h"
 
+namespace Sci {
 
 extern int con_passthrough;
 /* Echo all sciprintf() stuff to the text console */
@@ -243,5 +244,7 @@ close_console_file(void);
 ** Parameters: (void)
 ** Returns   : (void)
 */
+
+} // End of namespace Sci
 
 #endif /* _SCI_CONSOLE_H_ */

@@ -31,6 +31,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_resmgr.h"
 
+namespace Sci {
+
 typedef struct _gfx_res_pattern {
 	int min, max;
 } gfx_res_pattern_t;
@@ -103,5 +105,7 @@ gfx_get_res_config(struct _gfx_options *options,
 ** Modifies pxm as considered appropriate by configuration options. Does
 ** not do anything in colour index mode.
 */
+
+} // End of namespace Sci
 
 #endif /* !_GFX_RES_OPTIONS_H_ */

@@ -33,6 +33,7 @@
 #include "sci/include/sci_midi.h"
 #include "common/mutex.h"
 
+namespace Sci {
 
 /*#define DEBUG_SONG_API*/
 /*#define DEBUG_CUES*/
@@ -903,3 +904,5 @@ sfx_all_stop(sfx_state_t *self) {
 	song_lib_free(self->songlib);
 	_update(self);
 }
+
+} // End of namespace Sci

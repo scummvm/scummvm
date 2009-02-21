@@ -30,6 +30,8 @@
 
 #include <ctype.h>
 
+namespace Sci {
+
 #define PRECISE_PRIORITY_MAP // Duplicate all operations on the local priority map as appropriate
 
 #undef GFXW_DEBUG_DIRTY 
@@ -2180,3 +2182,5 @@ int gfxop_free_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm) {
 	gfx_free_pixmap(state->driver, pxm);
 	return GFX_OK;
 }
+
+} // End of namespace Sci

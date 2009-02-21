@@ -31,6 +31,8 @@
 #include "sci/include/gfx_tools.h"
 #include "sci/include/gfx_res_options.h"
 
+namespace Sci {
+
 /* Dirty rectangle heuristics: */
 
 /* One: Redraw one rectangle surrounding the dirty area (insert is O(1)) */
@@ -79,6 +81,7 @@ typedef struct _gfx_options {
 /* SQ3 counts whitespaces towards the total text size, as does gfxop_get_text_params() if this is set: */
 #define GFX_WORKAROUND_WHITESPACE_COUNT (1<<0)
 
+} // End of namespace Sci
 
 #endif /* !_GFX_OPTIONS_H_ */
 

@@ -35,6 +35,8 @@
 #include "sci/include/resource.h"
 #include "sci/include/versions.h"
 
+namespace Sci {
+
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 /* The maximum allowed size for a compressed or decompressed resource */
 
@@ -432,6 +434,7 @@ void _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int f
 ** Returns   : (void)
 */
 
+} // End of namespace Sci
 
 #endif
 

@@ -49,6 +49,8 @@ namespace Common {
 #include "sci/include/gfx_state_internal.h"
 #include "sci/include/sfx_engine.h"
 
+namespace Sci {
+
 #define FREESCI_CURRENT_SAVEGAME_VERSION 8
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 8
 
@@ -322,5 +324,7 @@ reg_t not_register(state_t *s, reg_t r) {
 		return r;
 
 }
+
+} // End of namespace Sci
 
 #endif /* !_SCI_ENGINE_H */

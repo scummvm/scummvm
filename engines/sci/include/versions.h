@@ -30,6 +30,8 @@
 
 #include "sci/include/scitypes.h"
 
+namespace Sci {
+
 struct _state;
 
 #define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)
@@ -146,5 +148,7 @@ version_parse(const char *vn, sci_version_t *result);
 ** Returns   : (int) 0 on success, 1 on failure
 **             (sci_version_t) *result: The resulting version number on success
 */
+
+} // End of namespace Sci
 
 #endif /* !_SCI_VERSIONS_H_ */

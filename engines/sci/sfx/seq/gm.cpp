@@ -35,6 +35,8 @@
 #include "instrument-map.h"
 #include <resource.h>
 
+namespace Sci {
+
 static midi_writer_t *writer = NULL;
 
 static int
@@ -175,3 +177,5 @@ sfx_sequencer_t sfx_sequencer_gm = {
 	64,	/* max polyphony */
 	0	/* no write-ahead needed inherently */
 };
+
+} // End of namespace Sci

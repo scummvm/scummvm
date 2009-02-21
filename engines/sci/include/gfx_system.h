@@ -31,6 +31,7 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/resource.h"
 
+namespace Sci {
 
 #define GFX_DEBUG
 
@@ -399,5 +400,7 @@ typedef enum {
 	GFX_COLOR_MODE_HIGH = 2, /* High color mode (15bpp or 16 bpp) */
 	GFX_COLOR_MODE_TRUE = 4 /* True color mode (24 bpp padded to 32 bpp) */
 } gfx_color_mode_t;
+
+} // End of namespace Sci
 
 #endif /* !_SCI_GFX_SYSTEM_ */

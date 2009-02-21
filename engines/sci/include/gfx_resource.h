@@ -31,6 +31,8 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_driver.h"
 
+namespace Sci {
+
 /*** Styles for pic0 drawing ***/
 /* Dithering modes */
 #define GFXR_DITHER_MODE_D16 0  /* Sierra SCI style */
@@ -431,6 +433,7 @@ get_int_16(const byte *offset) {
 	return ((int) offset[0] | (((int) offset[1]) << 8));
 }
 
+} // End of namespace Sci
 
 #endif /* !_GFX_RESOURCE_H_ */
 

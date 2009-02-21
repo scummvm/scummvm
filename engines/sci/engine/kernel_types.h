@@ -28,6 +28,8 @@
 
 #include "sci/include/vm_types.h"
 
+namespace Sci {
+
 #define KSIG_TERMINATOR 0
 
 // Uncompiled signatures
@@ -86,5 +88,7 @@ const char *kernel_argtype_description(int type);
 ** Parameters: (int) type: The type value to describe
 ** Returns: (const char *) Pointer to a (static) descriptive string
 */
+
+} // End of namespace Sci
 
 #endif // ! _FREESCI_KERNEL_TYPES_H_

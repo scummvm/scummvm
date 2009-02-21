@@ -32,6 +32,7 @@
 #include "sci/include/gfx_resmgr.h"
 #include "sci/include/gfx_system.h"
 
+namespace Sci {
 
 #define GFXW_FLAG_VISIBLE (1<<0)
 #define GFXW_FLAG_OPAQUE (1<<1)
@@ -231,6 +232,8 @@ typedef struct _gfxw_port {
 
 #undef WIDGET_COMMON
 #undef WIDGET_CONTAINER
+
+} // End of namespace Sci
 
 #endif /* !_GFX_STATE_INTERNAL_H_ */
 

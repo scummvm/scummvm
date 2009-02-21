@@ -27,6 +27,8 @@
 #include "sci/include/sfx_time.h"
 #include "sci/include/resource.h"
 
+namespace Sci {
+
 sfx_timestamp_t
 sfx_new_timestamp(long secs, long usecs, int frame_rate) {
 	sfx_timestamp_t r;
@@ -120,3 +122,4 @@ sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs) {
 	*usecs = ust;
 }
 
+} // End of namespace Sci

@@ -29,6 +29,8 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 void sci0_sprintf_patch_file_name(char *string, resource_t *res) {
 	sprintf(string, "%s.%03i", sci_resource_types[res->type], res->number);
 }
@@ -183,3 +185,4 @@ int sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 	return 0;
 }
 
+} // End of namespace Sci

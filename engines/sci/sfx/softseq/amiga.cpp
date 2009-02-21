@@ -29,6 +29,8 @@
 
 #include "common/frac.h"
 
+namespace Sci {
+
 #define FREQUENCY 44100
 #define CHANNELS_NR 10
 #define HW_CHANNELS_NR 16
@@ -635,3 +637,5 @@ sfx_softseq_t sfx_softseq_amiga = {
 	HW_CHANNELS_NR, /* # of voices */
 	{FREQUENCY, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_S16_NATIVE}
 };
+
+} // End of namespace Sci

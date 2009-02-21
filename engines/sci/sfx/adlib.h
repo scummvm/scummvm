@@ -29,6 +29,7 @@
 
 #include "sci/include/resource.h"
 
+namespace Sci {
 
 #define ADLIB_VOICES 12
 
@@ -69,5 +70,7 @@ extern adlib_instr adlib_sbi[96];
 
 void make_sbi(adlib_def *one, guint8 *buffer);
 /* Converts a raw SCI adlib instrument into the adlib register format. */
+
+} // End of namespace Sci
 
 #endif /* _SFX_ADLIB_H_ */

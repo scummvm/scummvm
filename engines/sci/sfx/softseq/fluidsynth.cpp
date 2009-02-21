@@ -36,6 +36,8 @@
 #include "../device.h"
 #include "resource.h"
 
+namespace Sci {
+
 static sfx_sequencer_t *gmseq;
 static fluid_settings_t* settings;
 static fluid_synth_t* synth;
@@ -242,5 +244,7 @@ sfx_softseq_t sfx_softseq_fluidsynth = {
 	32, /* Max polypgony */
 	{SAMPLE_RATE, CHANNELS, SFX_PCM_FORMAT_S16_NATIVE}
 };
+
+} // End of namespace Sci
 
 #endif /* HAVE_FLUIDSYNTH_H */

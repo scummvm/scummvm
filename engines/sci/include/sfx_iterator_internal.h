@@ -29,6 +29,7 @@
 #include "sci/include/sfx_iterator.h"
 #include "sci/include/sci_midi.h"
 
+namespace Sci {
 
 /* States */
 
@@ -233,5 +234,7 @@ sfx_iterator_make_feed(byte *base_data, int offset,
 **             (int) size: Number of bytes to consider
 **             (pcm_data_internal_t) conf: PCM encoding
 */
+
+} // End of namespace Sci
 
 #endif /* !defined(_SFX_ITERATOR_INTERNAL_ */

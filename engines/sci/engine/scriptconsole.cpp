@@ -28,6 +28,9 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/engine.h"
+
+namespace Sci {
+
 #ifdef SCI_CONSOLE
 
 state_t *con_gamestate = NULL;
@@ -1085,3 +1088,5 @@ static int c_dissectscript(state_t * s) {
 }
 
 #endif // SCI_CONSOLE
+
+} // End of namespace Sci

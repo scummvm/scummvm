@@ -26,6 +26,8 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 #define SAID_BRANCH_NULL 0
 
 #define MAX_SAID_TOKENS 128
@@ -826,3 +828,5 @@ int main (int argc, char *argv) {
 	said(&s, block);
 }
 #endif
+
+} // End of namespace Sci

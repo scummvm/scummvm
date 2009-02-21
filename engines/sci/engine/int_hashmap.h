@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 
+namespace Sci {
 
 /*
  * Defines a hash map that maps values to small integers.
@@ -82,5 +83,6 @@ public:
 
 typedef int_hash_map_t *int_hash_map_ptr;
 
+} // End of namespace Sci
 
 #endif // INT_HASHMAP_H

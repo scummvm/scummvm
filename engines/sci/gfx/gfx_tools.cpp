@@ -26,6 +26,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 rect_t gfx_rect_fullscreen = {0, 0, 320, 200};
 
 void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
@@ -398,3 +400,5 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 
 	return pixmap;
 }
+
+} // End of namespace Sci

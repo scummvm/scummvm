@@ -31,6 +31,8 @@
 #include "sci/include/sfx_player.h"
 #include "sci/sfx/sequencer.h"
 
+namespace Sci {
+
 static sfx_sequencer_t *seq;
 
 extern sfx_player_t sfx_player_realtime;
@@ -310,3 +312,5 @@ sfx_player_t sfx_player_realtime = {
 	&rt_tell_synth,
 	0 /* polyphony */
 };
+
+} // End of namespace Sci

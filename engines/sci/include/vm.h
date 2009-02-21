@@ -37,6 +37,8 @@
 #ifndef _SCI_VM_H
 #define _SCI_VM_H
 
+namespace Sci {
+
 #define VM_STACK_SIZE 0x1000
 /* Number of bytes to be allocated for the stack */
 
@@ -820,5 +822,7 @@ obj_get(struct _state *s, reg_t offset);
 **             (reg_t) offset: The object's offset
 ** Returns   : (object_t *) The object in question, or NULL if there is none
 */
+
+} // End of namespace Sci
 
 #endif /* !_SCI_VM_H */

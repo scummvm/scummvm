@@ -32,9 +32,9 @@
 #include "sci/console.h"
 #include "sci/include/engine.h"
 
-extern gfx_driver_t gfx_driver_scummvm;
-
 namespace Sci {
+
+extern gfx_driver_t gfx_driver_scummvm;
 
 int
 c_quit(state_t *s) {

@@ -30,6 +30,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 #define V1_LOOPS_NR_OFFSET 0
 #define V1_MIRROR_MASK 2
 #define V1_PALETTE_OFFSET 6
@@ -516,3 +518,5 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 
 	return view;
 }
+
+} // End of namespace Sci

@@ -36,6 +36,7 @@
 #  include <stdio.h>
 #endif
 
+namespace Sci {
 
 typedef struct {
 	int entries_nr;
@@ -104,6 +105,7 @@ sbtree_foreach(sbtree_t *tree, void *args, void *(*operation)(sbtree_t *, const 
 ** This function will only work properly the original data contained no duplicate keys.
 */
 
+} // End of namespace Sci
 
 #endif /* !_SBTREE_H_ */
 

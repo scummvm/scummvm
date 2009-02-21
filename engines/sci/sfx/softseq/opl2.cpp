@@ -50,6 +50,8 @@
 
 #include "sound/fmopl.h"
 
+namespace Sci {
+
 #ifdef __DC__
 #define SAMPLE_RATE 22050
 #define CHANNELS SFX_PCM_MONO
@@ -699,3 +701,5 @@ sfx_softseq_t sfx_softseq_opl2 = {
 	ADLIB_VOICES, /* # of voices */
 	{SAMPLE_RATE, CHANNELS, SFX_PCM_FORMAT_S16_NATIVE}
 };
+
+} // End of namespace Sci

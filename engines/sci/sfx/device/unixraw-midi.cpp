@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+namespace Sci {
+
 #define SCI_UNIXRAW_MIDI_VERSION "0.1"
 
 #ifndef O_SYNC
@@ -90,3 +92,5 @@ midi_writer_t sfx_device_midi_unixraw = {
 	&unixraw_reset_timer,
 	&unixraw_close
 };
+
+} // End of namespace Sci

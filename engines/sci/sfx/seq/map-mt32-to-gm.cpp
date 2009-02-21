@@ -28,6 +28,8 @@
 #include <stdarg.h>
 #include "instrument-map.h"
 
+namespace Sci {
+
 #define DEBUG_MT32_TO_GM
 
 static const char
@@ -797,3 +799,4 @@ sfx_instrument_map_mt32_to_gm(byte *data, size_t size) {
 	return map;
 }
 
+} // End of namespace Sci

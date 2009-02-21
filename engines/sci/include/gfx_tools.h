@@ -32,6 +32,8 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_driver.h"
 
+namespace Sci {
+
 typedef enum {
 	GFX_XLATE_FILTER_NONE,
 	GFX_XLATE_FILTER_LINEAR,
@@ -270,5 +272,6 @@ gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
+} // End of namespace Sci
 
 #endif /* !_GFX_TOOLS_H_ */

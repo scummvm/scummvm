@@ -27,6 +27,8 @@
 #include <sfx_time.h>
 #include <assert.h>
 
+using namespace Sci;
+
 sfx_timestamp_t a, b, c;
 
 int

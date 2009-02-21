@@ -28,6 +28,7 @@
 
 #include "sci/include/sfx_pcm.h"
 
+namespace Sci {
 
 #define SFX_PCM_FEED_MODE_ALIVE 0
 #define SFX_PCM_FEED_MODE_DEAD 1
@@ -123,5 +124,7 @@ sfx_pcm_find_mixer(char *name);
 extern sfx_pcm_mixer_t *mixer; /* _THE_ global pcm mixer */
 
 sfx_pcm_mixer_t* getMixer();
+
+} // End of namespace Sci
 
 #endif /* !defined(_SFX_MIXER_H_) */

@@ -26,6 +26,8 @@
 #include "sci/include/sci_memory.h"
 #include "common/util.h"
 
+namespace Sci {
+
 /* set optimisations for Win32: */
 /* g on: enable global optimizations */
 /* t on: use fast code */
@@ -174,3 +176,5 @@ extern void *sci_refcount_memdup(void *data, size_t len) {
 	memcpy(dest, data, len);
 	return dest;
 }
+
+} // End of namespace Sci

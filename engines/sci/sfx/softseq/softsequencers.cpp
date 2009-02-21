@@ -29,6 +29,8 @@
 
 #include "../softseq.h"
 
+namespace Sci {
+
 extern sfx_softseq_t sfx_softseq_opl2;
 extern sfx_softseq_t sfx_softseq_SN76496;
 extern sfx_softseq_t sfx_softseq_pcspeaker;
@@ -64,3 +66,5 @@ sfx_find_softseq(const char *name) {
 		return NULL; /* Not found */
 	}
 }
+
+} // End of namespace Sci

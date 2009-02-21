@@ -28,6 +28,8 @@
 
 #include "sci/include/scitypes.h"
 
+namespace Sci {
+
 #define SCI_REG_SIZE 16;
 #define SCI_SEG_SIZE 16;
 
@@ -63,5 +65,6 @@ make_reg(int segment, int offset) {
 #define NULL_REG_INITIALIZER {0, 0}
 extern reg_t NULL_REG;
 
+} // End of namespace Sci
 
 #endif /* !_SCI_VM_TYPES_H_ */

@@ -2,6 +2,8 @@
 
 #include "sci/include/gfx_system.h"
 
+namespace Sci {
+
 static int gfxfont_5x8_widths[] = {
 	5,	/* 0x00 */
 	5,	/* 0x01 */
@@ -2578,3 +2580,5 @@ gfx_bitmap_font_t gfxfont_5x8 = {
 	8, /* Char size (occupied, in bytes) */
 	gfxfont_5x8_data /* Bulk data */
 };
+
+} // End of namespace Sci

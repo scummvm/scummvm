@@ -35,6 +35,8 @@
 #include "sci/include/gfx_resmgr.h"
 #include "sci/include/gfx_state_internal.h"
 
+namespace Sci {
+
 #undef TIME_PICDRAWING
 
 // Invalid hash mode: Used to invalidate modified pics
@@ -617,3 +619,5 @@ gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 		return res->unscaled_data.pointer;
 	}
 }
+
+} // End of namespace Sci

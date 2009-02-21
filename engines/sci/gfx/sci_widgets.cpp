@@ -29,6 +29,8 @@
 #include "sci/include/menubar.h"
 #include "sci/include/sci_widgets.h"
 
+namespace Sci {
+
 #define SCI_SPECIAL_CHAR_ARROW_UP 0x18
 #define SCI_SPECIAL_CHAR_ARROW_DOWN 0x19
 
@@ -663,3 +665,5 @@ gfxw_port_t *sciw_select_item(state_t *s, gfxw_port_t *menu_port, menu_t *menu, 
 
 	return menu_port;
 }
+
+} // End of namespace Sci

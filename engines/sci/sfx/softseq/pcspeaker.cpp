@@ -28,6 +28,8 @@
 #include "sci/sfx/softseq.h"
 #include "sci/include/sci_midi.h"
 
+namespace Sci {
+
 #define FREQUENCY 94020
 
 static int volume = 0x0600;
@@ -172,3 +174,5 @@ sfx_softseq_t sfx_softseq_pcspeaker = {
 	1, /* # of voices */
 	{FREQUENCY, SFX_PCM_MONO, SFX_PCM_FORMAT_S16_NATIVE}
 };
+
+} // End of namespace Sci

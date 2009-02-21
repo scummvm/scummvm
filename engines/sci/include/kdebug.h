@@ -28,6 +28,8 @@
 #ifndef _SCI_KDEBUG_H_
 #define _SCI_KDEBUG_H_
 
+namespace Sci {
+
 struct _state;
 #define SCIk_DEBUG_MODES 17
 
@@ -93,5 +95,6 @@ extern int sci_debug_flags;
 #define _DEBUG_FLAG_LOGGING 1 /* Log each command executed */
 #define _DEBUG_FLAG_BREAK_ON_WARNINGS 2 /* Break on warnings */
 
+} // End of namespace Sci
 
 #endif

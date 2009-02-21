@@ -28,6 +28,9 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/engine.h"
+
+namespace Sci {
+
 #ifdef SCI_CONSOLE
 
 int con_passthrough = 0;
@@ -137,3 +140,5 @@ close_console_file(void) {
 
 
 #endif /* SCI_CONSOLE */
+
+} // End of namespace Sci

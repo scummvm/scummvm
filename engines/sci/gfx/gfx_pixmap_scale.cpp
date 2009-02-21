@@ -31,6 +31,8 @@
 
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 #define EXTEND_COLOR(x) (unsigned) ((((unsigned) x) << 24) | (((unsigned) x) << 16) | (((unsigned) x) << 8) | ((unsigned) x))
 #define PALETTE_MODE mode->palette
 
@@ -485,3 +487,4 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 #undef SIZETYPE
 #undef EXTEND_COLOR
 
+} // End of namespace Sci

@@ -30,6 +30,8 @@
 #include "sci/include/engine.h"
 #include "sci/include/kernel.h"
 
+namespace Sci {
+
 int vocab_version;
 
 #define VOCAB_RESOURCE_PARSE_TREE_BRANCHES vocab_version==1 ? \
@@ -708,3 +710,5 @@ vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms,
 			if (words[i].group == synonyms[sync].replaceant)
 				words[i].group = synonyms[sync].replacement;
 }
+
+} // End of namespace Sci

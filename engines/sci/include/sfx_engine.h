@@ -32,6 +32,8 @@
 #include "sci/include/sfx_iterator.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 #define SOUND_TICK 1000000 / 60
 /* Approximately 16666 microseconds */
 
@@ -174,5 +176,6 @@ sfx_song_set_fade(sfx_state_t *self, song_handle_t handle, fade_params_t *fade_s
 **             (fade_params_t *) fade_setup: The precise fade-out configuration to use
 */
 
+} // End of namespace Sci
 
 #endif /* !defined(_SFX_ENGINE_H_) */

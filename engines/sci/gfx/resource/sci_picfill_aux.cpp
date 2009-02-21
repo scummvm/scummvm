@@ -35,6 +35,8 @@
  *
  */
 
+namespace Sci {
+
 #define CLIPMASK_HARD_BOUND 0x80 /* ensures that we don't re-fill filled stuff */
 
 static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
@@ -209,3 +211,5 @@ static void AUXBUF_FILL(gfxr_pic_t *pic, int x, int y, int clipmask, int control
 
 
 #undef CLIPMASK_HARD_BOUND
+
+} // End of namespace Sci

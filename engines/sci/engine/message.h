@@ -25,6 +25,8 @@
 
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 typedef struct {
 	int noun;
 	int verb;
@@ -73,3 +75,5 @@ int message_get_length(message_state_t *state);
 int message_get_text(message_state_t *state, char *buffer, int length);
 int message_state_load_res(message_state_t *state, int module);
 void message_state_initialize(ResourceManager *resmgr, message_state_t *state);
+
+} // End of namespace Sci

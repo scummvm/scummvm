@@ -25,6 +25,8 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 int stop_on_event;
 
 #define SCI_VARIABLE_GAME_SPEED 3
@@ -222,3 +224,5 @@ reg_t kJoystick(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	warning("Unimplemented syscall 'Joystick()");
 	return NULL_REG;
 }
+
+} // End of namespace Sci

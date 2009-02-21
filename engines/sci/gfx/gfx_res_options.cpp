@@ -29,6 +29,8 @@
 
 #include <ctype.h>
 
+namespace Sci {
+
 //#define DEBUG
 
 static inline int matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
@@ -196,3 +198,5 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 
 	return 0;
 }
+
+} // End of namespace Sci

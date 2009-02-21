@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+namespace Sci {
+
 #define NOT_A_KEY -1
 
 typedef struct {
@@ -421,3 +423,5 @@ int main(int argc, char **argv) {
 }
 
 #endif // SBTREE_DEBUG
+
+} // End of namespace Sci

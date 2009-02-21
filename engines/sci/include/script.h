@@ -28,6 +28,8 @@
 
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 /*#define SCRIPT_DEBUG */
 
 #define SCI_SCRIPTS_NR 1000
@@ -215,5 +217,7 @@ script_find_selector(struct _state *s, const char *selector_name);
 
 struct _state;
 void script_free_breakpoints(struct _state *s);
+
+} // End of namespace Sci
 
 #endif

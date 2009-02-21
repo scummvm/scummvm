@@ -29,6 +29,7 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/uinput.h"
 
+namespace Sci {
 
 typedef enum {
 	GFX_BUFFER_FRONT = 0,
@@ -315,5 +316,7 @@ typedef struct _gfx_driver { /* Graphics driver */
 	void *state; /* Reserved for internal use */
 
 } gfx_driver_t;
+
+} // End of namespace Sci
 
 #endif /* !_SCI_GFX_DRIVER_H_ */

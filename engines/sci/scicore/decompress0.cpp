@@ -31,6 +31,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 /* #define _SCI_DECOMPRESS_DEBUG */
 
 /* 9-12 bit LZW encoding */
@@ -361,3 +363,4 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 	return 0;
 }
 
+} // End of namespace Sci

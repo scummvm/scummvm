@@ -28,6 +28,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 int font_counter = 0;
 
 void gfxr_free_font(gfx_bitmap_font_t *font) {
@@ -352,3 +354,5 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 
 	return pxm;
 }
+
+} // End of namespace Sci

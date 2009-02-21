@@ -30,6 +30,8 @@
 #include "sci/include/gfx_driver.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
+
 struct _scummvm_driver_state {
 	gfx_pixmap_t *priority[2];
 	byte *visual[3];
@@ -504,3 +506,5 @@ gfx_driver_t gfx_driver_scummvm = {
 	scummvm_usec_sleep,
 	NULL
 };
+
+} // End of namespace Sci

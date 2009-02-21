@@ -36,6 +36,8 @@
 #include <io.h>
 #endif
 
+namespace Sci {
+
 typedef int8 gint8;
 typedef uint8 guint8;
 
@@ -65,5 +67,7 @@ typedef struct {
 	char *mask_copy;
 #endif
 } sci_dir_t; /* used by sci_find_first and friends */
+
+} // End of namespace Sci
 
 #endif /* !SCI_TYPES */

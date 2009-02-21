@@ -66,6 +66,8 @@
 #  include <signal.h>
 #endif
 
+namespace Sci {
+
 extern int debug_sleeptime_factor;
 int _debugstate_valid = 0; // Set to 1 while script_debug is running
 int _debug_step_running = 0; // Set to >0 to allow multiple stepping
@@ -3300,3 +3302,5 @@ void script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t
 		sfx_suspend(&s->sound, 0);
 	}
 }
+
+} // End of namespace Sci

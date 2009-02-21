@@ -27,6 +27,8 @@
 #include "sci/include/resource.h" /* for BREAKPOINT */
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 #define D ((pcm_data_internal_t *)self->internal)
 
 static int
@@ -108,3 +110,5 @@ pi_destroy(sfx_pcm_feed_t *self) {
 	free(D);
 	free(self);
 }
+
+} // End of namespace Sci

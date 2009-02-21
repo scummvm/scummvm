@@ -23,6 +23,8 @@
  *
  */
 
+namespace Sci {
+
 #define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
                   linearend, nonlinearstart, linearmod, nonlinearmod) \
 	x = (startx); y = (starty); \
@@ -89,3 +91,5 @@ static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point star
 
 
 #undef LINEMACRO
+
+} // End of namespace Sci

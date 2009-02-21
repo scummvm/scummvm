@@ -29,6 +29,8 @@
 #include "sci/include/engine.h"
 #include "sci/engine/message.h"
 
+namespace Sci {
+
 #define CHECK_OVERFLOW1(pt, size, rv) \
 	if (((pt) - (str_base)) + (size) > maxsize) { \
 		error("String expansion exceeded heap boundaries\n"); \
@@ -779,3 +781,5 @@ kMessage(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return NULL_REG;
 }
+
+} // End of namespace Sci

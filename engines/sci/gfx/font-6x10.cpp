@@ -2,6 +2,8 @@
 
 #include "sci/include/gfx_system.h"
 
+namespace Sci {
+
 static int gfxfont_6x10_widths[] = {
 	6,	/* 0x00 */
 	6,	/* 0x01 */
@@ -3090,3 +3092,5 @@ gfx_bitmap_font_t gfxfont_6x10 = {
 	10, /* Char size (occupied, in bytes) */
 	gfxfont_6x10_data /* Bulk data */
 };
+
+} // End of namespace Sci

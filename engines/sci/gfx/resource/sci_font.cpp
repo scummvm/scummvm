@@ -28,6 +28,7 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
+namespace Sci {
 
 extern int font_counter;
 
@@ -137,3 +138,5 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 
 	return font;
 }
+
+} // End of namespace Sci

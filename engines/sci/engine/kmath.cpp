@@ -25,6 +25,8 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 reg_t kRandom(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, SKPV(0) + (int)((SKPV(1) + 1.0 - SKPV(0)) * (rand() / (RAND_MAX + 1.0))));
 }
@@ -164,3 +166,5 @@ reg_t kTimesCot(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	} else
 		return make_reg(0, (gint16)(tan(param * PI / 180.0) * scale));
 }
+
+} // End of namespace Sci

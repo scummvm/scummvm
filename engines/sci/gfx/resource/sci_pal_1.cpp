@@ -29,6 +29,8 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_resource.h"
 
+namespace Sci {
+
 #define MAX_COLORS 256
 #define PALETTE_START 260
 #define COLOR_OK 0x01
@@ -157,3 +159,5 @@ gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
 
 	return retval;
 }
+
+} // End of namespace Sci

@@ -61,6 +61,8 @@
 
 #include "common/scummsys.h"
 
+namespace Sci {
+
 /* List definitions. */
 #define LIST_HEAD(name, type)						\
 struct name {								\
@@ -183,5 +185,7 @@ struct {								\
 #define CLIST_FIRST(head)		((head)->clh_first)
 #define CLIST_NEXT(elm, field)		((elm)->field.cle_next)
 #define CLIST_PREV(elm, field)		((elm)->field.cle_prev)
+
+} // End of namespace Sci
 
 #endif /* !_SCI_LIST_H */

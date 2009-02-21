@@ -35,6 +35,8 @@
 #include "sci/sfx/device.h"
 #include "sci/include/scitypes.h"
 
+namespace Sci {
+
 #define SFX_SEQ_PATCHFILE_NONE -1
 
 typedef struct _sfx_sequencer {
@@ -142,5 +144,6 @@ sfx_find_sequencer(char *name);
 **                                 if not found
 */
 
+} // End of namespace Sci
 
 #endif /* _SFX_SEQUENCER_H_ */

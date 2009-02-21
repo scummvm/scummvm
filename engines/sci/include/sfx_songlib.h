@@ -34,6 +34,8 @@
 #include "sci/include/scitypes.h"
 #include "sci/include/sfx_iterator.h"
 
+namespace Sci {
+
 #define SOUND_STATUS_STOPPED   0
 #define SOUND_STATUS_PLAYING   1
 #define SOUND_STATUS_SUSPENDED 2
@@ -196,5 +198,7 @@ song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle,
 **             (song_handle_t) handle: Its handle
 **             (RESTORE_BEHAVIOR) action: The desired action
 */
+
+} // End of namespace Sci
 
 #endif /* !_SCI_SOUND_SERVER_H_ */

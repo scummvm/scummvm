@@ -28,6 +28,7 @@
 #include "sci/include/versions.h"
 #include "sci/include/engine.h"
 
+namespace Sci {
 
 //#define GC_DEBUG*/ // Debug garbage collection
 //#define GC_DEBUG_VERBOSE*/ // Debug garbage verbosely
@@ -1812,3 +1813,5 @@ seg_interface_t *get_seg_interface(seg_manager_t *self, seg_id_t segid) {
 
 	return retval;
 }
+
+} // End of namespace Sci

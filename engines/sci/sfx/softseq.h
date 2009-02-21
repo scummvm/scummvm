@@ -31,6 +31,7 @@
 #include "sci/sfx/sequencer.h"
 #include "sci/include/resource.h"
 
+namespace Sci {
 
 /* Software sequencer */
 typedef struct sfx_softseq {
@@ -126,5 +127,7 @@ sfx_find_softseq(const char *name);
 ** Parameters: (const char *) name: Name of the sequencer to look up, or NULL for default
 ** Returns   : (sfx_softseq_t *) The requested sequencer, or NULL if not found
 */
+
+} // End of namespace Sci
 
 #endif /* !defined(SFX_SOFTSEQ_H_) */

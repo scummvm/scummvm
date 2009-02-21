@@ -32,6 +32,8 @@
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
 
+namespace Sci {
+
 static song_iterator_t *play_it;
 static int play_paused = 0;
 static sfx_softseq_t *seq;
@@ -315,3 +317,5 @@ sfx_player_t sfx_player_polled = {
 	&pp_tell_synth,
 	0 /* polyphony */
 };
+
+} // End of namespace Sci

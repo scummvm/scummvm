@@ -27,6 +27,8 @@
 #include "sci/include/sys_strings.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 void sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len) {
 	sys_string_t *str = strings->strings + index;
 
@@ -99,3 +101,5 @@ void sys_strings_restore(sys_strings_t *new_strings, sys_strings_t *old_strings)
 
 	sys_string_set(new_strings, SYS_STRING_SAVEDIR, old_strings->strings[SYS_STRING_SAVEDIR].value);
 }
+
+} // End of namespace Sci

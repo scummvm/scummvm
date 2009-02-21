@@ -26,6 +26,8 @@
 #ifndef _FREESCI_SYSTEM_STRINGS_H_
 #define _FREESCI_SYSTEM_STRINGS_H_
 
+namespace Sci {
+
 #define SYS_STRINGS_MAX 4
 
 #define SYS_STRING_SAVEDIR 0
@@ -74,5 +76,7 @@ sys_string_free_all(sys_strings_t *strings);
 /* Deallocates all allocated system strings
 ** Parameters: (sys_strings_t *) strings: The string table to deallocate
 */
+
+} // End of namespace Sci
 
 #endif /* !_FREESCI_SYSTEM_STRINGS_H_ */

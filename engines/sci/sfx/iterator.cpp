@@ -33,6 +33,8 @@
 #include "sci/include/resource.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                     2, 2, 2, 2, 1, 1, 2, 0
                                    };
@@ -2051,3 +2053,5 @@ sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2) {
 	/* Both are non-NULL: */
 	return songit_new_tee(it1, it2, 1); /* 'may destroy' */
 }
+
+} // End of namespace Sci

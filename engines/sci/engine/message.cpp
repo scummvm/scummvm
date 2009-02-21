@@ -25,6 +25,8 @@
 
 #include "sci/engine/message.h"
 
+namespace Sci {
+
 #if 0
 // Unreferenced - removed
 static int get_talker_trivial(index_record_cursor_t *cursor) {
@@ -198,3 +200,5 @@ void message_state_initialize(ResourceManager *resmgr, message_state_t *state) {
 	state->record_count = 0;
 	state->handler = &fixed_handler;
 }
+
+} // End of namespace Sci

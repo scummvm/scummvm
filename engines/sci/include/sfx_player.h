@@ -25,12 +25,14 @@
 
 /* song player structure */
 
+#ifndef _SFX_PLAYER_H
+#define _SFX_PLAYER_H
+
 #include "sci/include/sfx_engine.h"
 #include "sci/include/sfx_iterator.h"
 #include "sci/include/sciresource.h"
 
-#ifndef _SFX_PLAYER_H
-#define _SFX_PLAYER_H
+namespace Sci {
 
 typedef void tell_synth_func(int buf_nr, byte *buf);
 
@@ -161,5 +163,7 @@ sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2);
 ** dispose of 'it1' and 'it2', where applicable. This means that this
 ** call should be used by song players, but not by the core sound system
 */
+
+} // End of namespace Sci
 
 #endif /* !_SFX_PLAYER_H */

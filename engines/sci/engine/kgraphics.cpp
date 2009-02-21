@@ -29,6 +29,8 @@
 #include "sci/engine/sci_graphics.h"
 #include "sci/include/sci_widgets.h"
 
+namespace Sci {
+
 #undef DEBUG_LSRECT
 
 // Graph subfunctions
@@ -3274,3 +3276,5 @@ reg_t kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+} // End of namespace Sci

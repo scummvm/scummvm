@@ -67,6 +67,7 @@
 
 #include "sci/include/engine.h"
 
+namespace Sci {
 
 // FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
 #if _MSC_VER
@@ -535,3 +536,5 @@ int is_print_str(char *str) {
 
 	return ((float) printable / (float) len >= 0.5);
 }
+
+} // End of namespace Sci

@@ -34,6 +34,8 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/uinput.h"
 
+namespace Sci {
+
 #define GFXOP_NO_POINTER -1
 
 /* Threshold in color index mode to differentiate between visible and non-visible stuff.
@@ -721,5 +723,7 @@ _gfxop_clip(rect_t *rect, rect_t clipzone);
 **             (rect_t) clipzone: The outer bounds rect must be in
 ** Reuturns  : (int) 1 if rect is empty now, 0 otherwise
 */
+
+} // End of namespace Sci
 
 #endif /* !_GFX_OPERATIONS_H_ */

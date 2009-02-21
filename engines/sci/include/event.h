@@ -28,6 +28,8 @@
 
 #include "sci/include/uinput.h"
 
+namespace Sci {
+
 struct _state;
 
 sci_event_t getEvent(struct _state *s);
@@ -36,5 +38,7 @@ sci_event_t getEvent(struct _state *s);
 ** Returns   : (sci_event_t) The next event, which may be any of the
 **             existing events.
 */
+
+} // End of namespace Sci
 
 #endif

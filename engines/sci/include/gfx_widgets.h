@@ -30,6 +30,8 @@
 
 #include "sci/include/gfx_state_internal.h"
 
+namespace Sci {
+
 /* Enable the next line to keep a list of pointers to all widgets, with up to the specified amount
 ** of members (/SLOW/) */
 /* #define GFXW_DEBUG_WIDGETS 2048 */
@@ -543,5 +545,7 @@ gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_lis
 
 void
 gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window);
+
+} // End of namespace Sci
 
 #endif /* !_GFX_WIDGETS_H_ */

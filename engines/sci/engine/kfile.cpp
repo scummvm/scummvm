@@ -37,6 +37,8 @@
 
 #include <errno.h>
 
+namespace Sci {
+
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
@@ -904,3 +906,5 @@ reg_t kFileIO(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+} // End of namespace Sci

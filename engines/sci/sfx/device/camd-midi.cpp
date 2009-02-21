@@ -37,6 +37,7 @@
 #include <proto/intuition.h>
 #include <stdio.h>
 
+namespace Sci {
 
 #define SWAP_BYTES
 #define FILL_BYTES
@@ -149,5 +150,7 @@ midi_writer_t sfx_device_midi_camd = {
 	&camd_reset_timer,
 	&camd_close
 };
+
+} // End of namespace Sci
 
 #endif /* HAVE_PROTO_CAMD_H */

@@ -29,6 +29,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 /***************************************************************************
 * The following code was originally created by Carl Muckenhoupt for his
 * SCI decoder. It has been ported to the FreeSCI environment by Sergey Lapin.
@@ -633,3 +635,4 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 	return 0;
 }
 
+} // End of namespace Sci

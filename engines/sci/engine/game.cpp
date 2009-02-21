@@ -29,6 +29,8 @@
 #include "sci/include/kernel.h"
 #include "sci/engine/kernel_types.h"
 
+namespace Sci {
+
 // Structures and data from vm.c:
 extern calls_struct_t *send_calls;
 extern int send_calls_allocated;
@@ -704,3 +706,4 @@ int game_exit(state_t *s) {
 	return 0;
 }
 
+} // End of namespace Sci

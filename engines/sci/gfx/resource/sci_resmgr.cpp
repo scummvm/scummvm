@@ -33,6 +33,8 @@
 
 #include "common/util.h"
 
+namespace Sci {
+
 int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_options_t *options, void *internal, int palette) {
 	switch (type) {
 	case GFX_RESOURCE_TYPE_VIEW:
@@ -292,3 +294,5 @@ gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int vers
 int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
 	return (version > SCI_VERSION_1);
 }
+
+} // End of namespace Sci

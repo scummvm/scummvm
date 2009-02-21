@@ -29,6 +29,8 @@
 #include "sci/include/versions.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 /*#define VOCABULARY_DEBUG */
 /*#define SCI_SIMPLE_SAID_CODE */ /* Whether the simplified Said() matching should be used */
 /*#define SCI_SIMPLE_SAID_DEBUG */ /* uncomment to enable simple said debugging */
@@ -416,5 +418,6 @@ vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
 void
 vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
 
+} // End of namespace Sci
 
 #endif

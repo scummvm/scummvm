@@ -26,6 +26,8 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_widgets.h"
 
+namespace Sci {
+
 #undef GFXW_DEBUG_DIRTY // Enable to debug dirty rectangle propagation (writes to stderr)
 
 #ifdef GFXW_DEBUG_DIRTY
@@ -2147,3 +2149,5 @@ void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window) {
 			gfxw_annihilate(GFXW(visual->port_refs[i]));
 	}
 }
+
+} // End of namespace Sci

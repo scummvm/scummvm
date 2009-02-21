@@ -31,6 +31,8 @@
 #include "sci/include/aatree.h"
 #include "sci/include/list.h"
 
+namespace Sci {
+
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 
@@ -1528,3 +1530,5 @@ reg_t kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 }
+
+} // End of namespace Sci

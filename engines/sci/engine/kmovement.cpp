@@ -26,6 +26,8 @@
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
 
+namespace Sci {
+
 /*
 Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy.
 The gravity is assumed to be non-negative.
@@ -509,3 +511,5 @@ reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+} // End of namespace Sci

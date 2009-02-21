@@ -27,6 +27,8 @@
 #include "sci/include/engine.h"
 #include "sci/include/sciresource.h"
 
+namespace Sci {
+
 /* Default kernel name table */
 #define SCI0_KNAMES_WELL_DEFINED 0x6e
 #define SCI0_KNAMES_DEFAULT_ENTRIES_NR 0x72
@@ -418,3 +420,5 @@ void vocabulary_free_knames(char** names) {
 
 	free(names);
 }
+
+} // End of namespace Sci

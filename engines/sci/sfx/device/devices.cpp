@@ -33,6 +33,8 @@
 
 #include "sci/include/resource.h"
 
+namespace Sci {
+
 static struct _midi_device *devices_midi[] = {
 	NULL
 };
@@ -84,3 +86,5 @@ sfx_find_device(int type, char *name) {
 
 	return NULL;
 }
+
+} // End of namespace Sci

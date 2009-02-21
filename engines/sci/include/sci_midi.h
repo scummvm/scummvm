@@ -26,6 +26,8 @@
 #ifndef _SCI_MIDI_H_
 #define _SCI_MIDI_H_
 
+namespace Sci {
+
 #define MIDI_RHYTHM_CHANNEL 9
 
 /* Special SCI sound stuff */
@@ -47,5 +49,7 @@
 /* If this is the parameter of 0xCF, the loop point is set here */
 
 #define SCI_MIDI_CONTROLLER(status) ((status & 0xF0) == 0xB0)
+
+} // End of namespace Sci
 
 #endif /* !defined(_SCI_MIDI_H_) */

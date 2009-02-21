@@ -32,6 +32,8 @@
 #include "sci/include/engine.h"
 #include "sci/include/menubar.h"
 
+namespace Sci {
+
 #define SIZE_INF 32767
 
 menubar_t *menubar_new() {
@@ -449,3 +451,5 @@ int menubar_map_pointer(state_t *s, int *menu_nr, int *item_nr, gfxw_port_t *por
 		return 0;
 	}
 }
+
+} // End of namespace Sci

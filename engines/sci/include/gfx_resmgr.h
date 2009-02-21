@@ -33,6 +33,8 @@
 #include "sci/include/gfx_resource.h"
 #include "sci/include/sbtree.h"
 
+namespace Sci {
+
 typedef enum {
 	GFX_RESOURCE_TYPE_VIEW = 0,
 	GFX_RESOURCE_TYPE_PIC,
@@ -352,5 +354,7 @@ gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
 ** Returns   : (int) 0 if no support for multi-colored pointers is required, non-0
 **                   otherwise
 */
+
+} // End of namespace Sci
 
 #endif /* !_GFX_RSMGR_H_ */

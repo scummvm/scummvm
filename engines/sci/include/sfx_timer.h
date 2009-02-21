@@ -28,6 +28,8 @@
 
 #include "sci/include/sfx_core.h"
 
+namespace Sci {
+
 typedef struct {
 	int delay_ms; /* Approximate delay (in milliseconds) between calls */
 
@@ -50,5 +52,7 @@ typedef struct {
 	** of this.
 	*/
 } sfx_timer_t;
+
+} // End of namespace Sci
 
 #endif /* !_FREESCI_SFX_TIMER_H_ */

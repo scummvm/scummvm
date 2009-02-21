@@ -38,6 +38,8 @@
 #include <setjmp.h>
 #endif
 
+namespace Sci {
+
 reg_t NULL_REG = NULL_REG_INITIALIZER;
 
 //#define VM_DEBUG_SEND
@@ -2175,3 +2177,5 @@ void quit_vm() {
 	_debug_seeking = 0;
 	_debug_step_running = 0;
 }
+
+} // End of namespace Sci

@@ -32,6 +32,8 @@
 #include "resource.h"
 #include "../device.h"
 
+namespace Sci {
+
 #define SFX_INSTRUMENTS_NR	0x80
 #define SFX_RHYTHM_NR		0x80
 #define SFX_VELOCITIES_NR	0x80
@@ -126,5 +128,6 @@ sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map);
 ** deallocates the instrument map when the writer is closed.
 */
 
+} // End of namespace Sci
 
 #endif /* !defined(SCI_INSTRUMENT_MAP_) */

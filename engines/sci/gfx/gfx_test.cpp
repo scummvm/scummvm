@@ -43,6 +43,8 @@
 #include <gfx_tools.h>
 #include <gfx_operations.h>
 
+namespace Sci {
+
 int
 sci0_palette;
 
@@ -1469,6 +1471,4 @@ byte builtin_font[] = {
 	0xc6, 0x00, 0xc6, 0xc6, 0xc6, 0x7e, 0x06, 0xfc
 };
 
-
-
-
+} // End of namespace Sci

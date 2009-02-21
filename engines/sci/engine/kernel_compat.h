@@ -32,6 +32,8 @@
 #warning "Old kernel compatibility crap"
 #endif
 
+namespace Sci {
+
 // Minimal heap position/
 #define HEAP_MIN 800
 
@@ -70,5 +72,7 @@ static inline unsigned int getHeapUInt16(unsigned char *base, int address) {
 
 	return getUInt16(base + address);
 }
+
+} // End of namespace Sci
 
 #endif // !_SCI_KERNEL_COMPAT_

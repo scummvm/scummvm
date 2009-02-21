@@ -29,6 +29,8 @@
 #include "../mixer.h"
 #include <time.h>
 
+namespace Sci {
+
 #if 0
 sfx_pcm_mixer_t *mix;
 
@@ -344,3 +346,5 @@ main(int argc, char **argv) {
 #else
 int main() {}
 #endif
+
+} // End of namespace Sci

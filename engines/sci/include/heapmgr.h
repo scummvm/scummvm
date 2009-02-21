@@ -31,6 +31,8 @@
 #include "sci/include/resource.h"
 #include "sci/include/sci_memory.h"
 
+namespace Sci {
+
 #define HEAPENTRY_INVALID -1
 
 // FIXME: We write (i == 0 || i > 0) instead of (i >= 0) to silence certain annoying warnings:
@@ -117,5 +119,7 @@ alloc_##ENTRY##_entry(ENTRY##_table_t *table)					\
 
 #define _HEAPENTRY_IGNORE_ME(x)
 #define DEFINE_HEAPENTRY(e, i, p) DEFINE_HEAPENTRY_WITH_CLEANUP(e, i, p, _HEAPENTRY_IGNORE_ME)
+
+} // End of namespace Sci
 
 #endif /* !_FREESCI_HEAPMGR_H_ */
