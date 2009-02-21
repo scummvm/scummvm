@@ -70,7 +70,8 @@ Common::Platform getGameExePlatform(Common::SeekableReadStream *exeStream) {
 
 	// Skip number of types in map
 	exeStream->skip(2);
-	uint16 val = exeStream->readUint16BE() + 1;
+//	uint16 val = exeStream->readUint16BE() + 1;
+	exeStream->skip(2);
 
 	// Keep reading till we find the "CODE" bit
 	while (!exeStream->eos()) {

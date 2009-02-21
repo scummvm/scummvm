@@ -189,7 +189,7 @@ static int
 yylex(void);
 
 static int
-yyerror(char *s) {
+yyerror(const char *s) {
 	said_parse_error = sci_strdup(s);
 	return 1; /* Abort */
 }
@@ -1844,7 +1844,11 @@ static int yylex(void) {
 	return retval;
 }
 
-#define SAID_NEXT_NODE ((said_tree_pos == 0) || (said_tree_pos >= VOCAB_TREE_NODES)) ? said_tree_pos = 0 : said_tree_pos++
+static inline int said_next_node() {
+	return ((said_tree_pos == 0) || (said_tree_pos >= VOCAB_TREE_NODES)) ? said_tree_pos = 0 : said_tree_pos++;
+}
+
+#define SAID_NEXT_NODE said_next_node()
 
 static inline int said_leaf_node(tree_t pos, int value) {
 	said_tree[pos].type = PARSE_TREE_NODE_LEAF;
