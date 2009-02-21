@@ -23,19 +23,17 @@
  *
  */
 
+#ifndef _SCI_VM_H
+#define _SCI_VM_H
+
 /* VM and kernel declarations */
 
-
-#include "sci/include/script.h"
-#include "sci/include/vocabulary.h"
-#include "sci/include/versions.h"
-#include "sci/engine/seg_manager.h"
-#include "sci/include/vm_types.h"
+#include "sci/include/versions.h"	// for sci_version_t
+#include "sci/include/vm_types.h"	// for reg_t
 #include "sci/include/sys_strings.h"
 #include "sci/include/heapmgr.h"
 
-#ifndef _SCI_VM_H
-#define _SCI_VM_H
+#include "sci/engine/int_hashmap.h"
 
 namespace Sci {
 

@@ -23,27 +23,29 @@
  *
  */
 
-#ifndef _FREESCI_SYSTEM_STRINGS_H_
-#define _FREESCI_SYSTEM_STRINGS_H_
+#ifndef SCI_SYS_STRINGS_H
+#define SCI_SYS_STRINGS_H
 
 namespace Sci {
 
-#define SYS_STRINGS_MAX 4
+enum {
+	SYS_STRINGS_MAX = 4,
 
-#define SYS_STRING_SAVEDIR 0
-#define SYS_STRING_PARSER_BASE 1
+	SYS_STRING_SAVEDIR = 0,
+	SYS_STRING_PARSER_BASE = 1,
 
-#define MAX_PARSER_BASE 64
+	MAX_PARSER_BASE = 64
+};
 
-typedef struct {
+struct sys_string_t {
 	char *name;
 	int max_size;
 	char *value;
-} sys_string_t;
+};
 
-typedef struct {
+struct sys_strings_t {
 	sys_string_t strings[SYS_STRINGS_MAX];
-} sys_strings_t;
+};
 
 void sys_string_acquire(sys_strings_t *strings, int index, const char *name, int max_len);
 /* Reserves a new system string
@@ -75,4 +77,4 @@ void sys_string_free_all(sys_strings_t *strings);
 
 } // End of namespace Sci
 
-#endif /* !_FREESCI_SYSTEM_STRINGS_H_ */
+#endif // SCI_SYS_STRINGS_H

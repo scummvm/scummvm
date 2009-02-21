@@ -30,18 +30,21 @@
 
 namespace Sci {
 
+struct EngineState;
+struct ResourceManager;
+
 /*#define SCRIPT_DEBUG */
 
 #define SCI_SCRIPTS_NR 1000
 
-typedef struct script_opcode_ {
+struct script_opcode {
 	unsigned opcode;
 	int arg1, arg2, arg3;
 	int pos, size;
-} script_opcode;
+};
 
 
-typedef enum {
+enum script_object_types {
 	sci_obj_terminator,
 	sci_obj_object,
 	sci_obj_code,
@@ -53,12 +56,12 @@ typedef enum {
 	sci_obj_pointers,
 	sci_obj_preload_text, /* This is really just a flag. */
 	sci_obj_localvars
-} script_object_types;
+};
 
 void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr);
 
 /* Opcode formats as used by script.c */
-typedef enum {
+enum opcode_format {
 	Script_Invalid = -1,
 	Script_None = 0,
 	Script_Byte,
@@ -75,9 +78,9 @@ typedef enum {
 	Script_Param,
 	Script_Offset,
 	Script_End
-} opcode_format;
+};
 
-typedef enum { /* FIXME */
+enum sci_opcodes { /* FIXME */
 	op_bnot = 0,
 	op_add,
 	op_sub,
@@ -201,7 +204,7 @@ typedef enum { /* FIXME */
 	op_minussli,
 	op_minussti,
 	op_minusspi
-} sci_opcodes;
+};
 
 extern opcode_format formats[128][4];
 

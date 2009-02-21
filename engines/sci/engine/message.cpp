@@ -24,6 +24,7 @@
  */
 
 #include "sci/engine/message.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

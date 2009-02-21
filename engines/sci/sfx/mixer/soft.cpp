@@ -25,6 +25,7 @@
 
 #include "common/mutex.h"
 
+#include "sci/tools.h"
 #include "sci/sfx/mixer.h"
 #include "sci/include/sci_memory.h"
 

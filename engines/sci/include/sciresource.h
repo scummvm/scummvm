@@ -29,11 +29,13 @@
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
 
-#include "common/stream.h"
 #include "common/str.h"
 
-#include "sci/tools.h"
-#include "sci/include/versions.h"
+namespace Common {
+	class ReadStream;
+}
+
+#include "sci/include/scitypes.h"
 
 namespace Sci {
 

@@ -23,8 +23,9 @@
  *
  */
 
-#include "sci/include/sci_memory.h"
 #include "common/util.h"
+#include "sci/tools.h"
+#include "sci/include/sci_memory.h"
 
 namespace Sci {
 

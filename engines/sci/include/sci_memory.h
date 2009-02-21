@@ -44,7 +44,6 @@
 #define _SCI_MEMORY_H
 
 #include "common/scummsys.h"
-#include "sci/tools.h"
 
 namespace Sci {
 

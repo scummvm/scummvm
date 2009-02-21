@@ -27,6 +27,9 @@
 ** This is for SCI version 0 style compression.
 */
 
+#include "common/stream.h"
+#include "common/endian.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
@@ -188,7 +191,7 @@ gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int c
 		node += next << 1;
 	}
 
-	return getInt16(node);
+	return (int16)READ_UINT16(node);
 }
 
 // Huffman token decryptor
