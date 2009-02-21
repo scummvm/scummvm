@@ -298,6 +298,19 @@ void Parallaction_ns::_c_setMask(void *parm) {
 }
 
 void Parallaction_ns::_c_endComment(void *param) {
+	/*
+		NOTE: this routine is only run when the full game
+		is over. The following command in the scripts is
+		QUIT, which causes the engine to exit and return
+		to system.
+		Since this routine is still *blocking*, QUIT is
+		not executed until the user presses a mouse
+		button. If the input is reconciled with the main
+		loop then the command sequence must be suspended
+		to avoid executing QUIT before this actual
+		routine gets a chance to be run. See bug #2619824
+		for a similar situation.
+	*/
 
 	showLocationComment(_location._endComment, true);
 
@@ -416,6 +429,14 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 }
 
 void Parallaction_ns::_c_endIntro(void *parm) {
+	// NOTE: suspend command execution queue, to
+	// avoid running the QUIT command before
+	// credits are displayed. This solves bug
+	// #2619824.
+	// Execution of the command list will resume
+	// as soon as runGameFrame is run.
+	_cmdExec->suspend();
+
 	startCreditSequence();
 	_intro = false;
 }

@@ -155,7 +155,7 @@ DECLARE_COMMAND_OPCODE(drop) {
 
 DECLARE_COMMAND_OPCODE(move) {
 	_vm->_char.scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
-	_ctxt.suspend = true;
+	suspend();
 }
 
 DECLARE_COMMAND_OPCODE(start) {

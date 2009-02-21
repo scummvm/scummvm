@@ -49,7 +49,6 @@ protected:
 	struct ParallactionStruct1 {
 		CommandPtr cmd;
 		ZonePtr	z;
-		bool suspend;
 	} _ctxt;
 
 	OpcodeSet	_opcodes;
@@ -66,13 +65,19 @@ protected:
 	void createSuspendList(CommandList::iterator first, CommandList::iterator last);
 	void cleanSuspendedList();
 
+	bool _running;
+	bool _suspend;
+
 public:
 	virtual void init() = 0;
 	virtual void run(CommandList &list, ZonePtr z = nullZonePtr);
 	void runSuspended();
+	void suspend();
 
 	CommandExec(Parallaction *vm) : _vm(vm) {
 		_suspendedCtxt.valid = false;
+		_suspend = false;
+		_running = false;
 	}
 	virtual ~CommandExec() {
 		for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
