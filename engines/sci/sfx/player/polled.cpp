@@ -45,8 +45,7 @@ static int new_song = 0;
 #define TIME_INC 60
 static int time_counter = 0;
 
-static void
-pp_tell_synth(int buf_nr, byte *buf) {
+static void pp_tell_synth(int buf_nr, byte *buf) {
 	seq->handle_command(seq, buf[0], buf_nr - 1, buf + 1);
 }
 
@@ -54,8 +53,7 @@ pp_tell_synth(int buf_nr, byte *buf) {
 /*----------------------*/
 /* Mixer implementation */
 /*----------------------*/
-int
-ppf_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
+int ppf_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	int written = 0;
 	byte buf[4];
 	int buf_nr;
@@ -115,13 +113,11 @@ ppf_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	return size; /* Apparently, we wrote all that was requested */
 }
 
-void
-ppf_destroy(sfx_pcm_feed_t *self) {
+void ppf_destroy(sfx_pcm_feed_t *self) {
 	/* no-op */
 }
 
-int
-ppf_get_timestamp(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp) {
+int ppf_get_timestamp(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp) {
 	if (!new_song)
 		return PCM_FEED_IDLE;
 
@@ -133,8 +129,8 @@ ppf_get_timestamp(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp) {
 }
 
 extern sfx_player_t sfx_player_polled;
-static
-sfx_pcm_feed_t pcmfeed = {
+
+static sfx_pcm_feed_t pcmfeed = {
 	ppf_poll,
 	ppf_destroy,
 	ppf_get_timestamp,
@@ -154,18 +150,15 @@ sfx_pcm_feed_t pcmfeed = {
 /* API implementation */
 /*--------------------*/
 
-static void
-pp_timer_callback(void) {
+static void pp_timer_callback(void) {
 	/* Hey, we're polled anyway ;-) */
 }
 
-static int
-pp_set_option(char *name, char *value) {
+static int pp_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
-static int
-pp_init(ResourceManager *resmgr, int expected_latency) {
+static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 
 	if (!mixer)
@@ -209,8 +202,7 @@ pp_init(ResourceManager *resmgr, int expected_latency) {
 	return SFX_OK;
 }
 
-static int
-pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
+static int pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 	song_iterator_t *old = play_it;
 
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(seq->playmask));
@@ -237,14 +229,12 @@ pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 	return SFX_OK;
 }
 
-static int
-pp_fade_out(void) {
+static int pp_fade_out(void) {
 	warning(__FILE__": Attempt to fade out- not implemented yet");
 	return SFX_ERROR;
 }
 
-static int
-pp_stop(void) {
+static int pp_stop(void) {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
@@ -257,8 +247,7 @@ pp_stop(void) {
 	return SFX_OK;
 }
 
-static int
-pp_send_iterator_message(song_iterator_message_t msg) {
+static int pp_send_iterator_message(song_iterator_message_t msg) {
 	if (!play_it)
 		return SFX_ERROR;
 
@@ -266,16 +255,14 @@ pp_send_iterator_message(song_iterator_message_t msg) {
 	return SFX_OK;
 }
 
-static int
-pp_pause(void) {
+static int pp_pause(void) {
 	play_paused = 1;
 	seq->set_volume(seq, 0);
 
 	return SFX_OK;
 }
 
-static int
-pp_resume(void) {
+static int pp_resume(void) {
 	if (!play_it) {
 		play_paused = 0;
 		return SFX_OK; /* Nothing to resume */
@@ -291,8 +278,7 @@ pp_resume(void) {
 	return SFX_OK;
 }
 
-static int
-pp_exit(void) {
+static int pp_exit(void) {
 	seq->exit(seq);
 	songit_free(play_it);
 	play_it = NULL;

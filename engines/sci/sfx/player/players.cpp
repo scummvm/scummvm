@@ -36,8 +36,7 @@ sfx_player_t *sfx_players[] = {
 	NULL
 };
 
-sfx_player_t *
-sfx_find_player(char *name) {
+sfx_player_t *sfx_find_player(char *name) {
 	if (!name) {
 		/* Implement platform policy here */
 

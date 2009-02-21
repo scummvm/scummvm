@@ -33,8 +33,7 @@ sfx_sequencer_t *sfx_sequencers[] = {
 };
 
 
-sfx_sequencer_t *
-sfx_find_sequencer(char *name) {
+sfx_sequencer_t *sfx_find_sequencer(char *name) {
 	if (!name) {
 		/* Implement default policy for your platform (if any) here, or in a function
 		** called from here (if it's non-trivial). Try to use midi_devices[0], if

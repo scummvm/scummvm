@@ -51,8 +51,7 @@ static sfx_softseq_t *sw_sequencers[] = {
 };
 
 
-sfx_softseq_t *
-sfx_find_softseq(const char *name) {
+sfx_softseq_t *sfx_find_softseq(const char *name) {
 	if (!name)
 		return sw_sequencers[0];
 	else {

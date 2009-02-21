@@ -131,8 +131,7 @@ static int freq_table[] = {
 	59932, 63496, 67271, 71271, 75509, 80000, 84757, 89796
 };
 
-static void
-set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
+static void set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
 	channel->envelope = phase;
 	channel->envelope_samples = envelope[phase].length;
 
@@ -142,16 +141,14 @@ set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
 		channel->velocity = envelope[phase - 1].target;
 }
 
-static inline int
-interpolate(sbyte *samples, frac_t offset) {
+static inline int interpolate(sbyte *samples, frac_t offset) {
 	int x = fracToInt(offset);
 	int diff = (samples[x + 1] - samples[x]) << 8;
 
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
-static void
-play_instrument(gint16 *dest, channel_t *channel, int count) {
+static void play_instrument(gint16 *dest, channel_t *channel, int count) {
 	int index = 0;
 	int vol = hw_channels[channel->hw_channel].volume;
 	instrument_t *instrument = bank.instruments[channel->instrument];
@@ -253,8 +250,7 @@ play_instrument(gint16 *dest, channel_t *channel, int count) {
 	}
 }
 
-static void
-change_instrument(int channel, int instrument) {
+static void change_instrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (bank.instruments[instrument])
 		sciprintf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, bank.instruments[instrument]->name, instrument);
@@ -264,8 +260,7 @@ change_instrument(int channel, int instrument) {
 	hw_channels[channel].instrument = instrument;
 }
 
-static void
-stop_channel(int ch) {
+static void stop_channel(int ch) {
 	int i;
 
 	/* Start decay phase for note on this hw channel, if any */
@@ -278,8 +273,7 @@ stop_channel(int ch) {
 		}
 }
 
-static void
-stop_note(int ch, int note) {
+static void stop_note(int ch, int note) {
 	int channel;
 	instrument_t *instrument;
 
@@ -301,8 +295,7 @@ stop_note(int ch, int note) {
 		set_envelope(&channels[channel], instrument->envelope, 2);
 }
 
-static void
-start_note(int ch, int note, int velocity) {
+static void start_note(int ch, int note, int velocity) {
 	instrument_t *instrument;
 	int channel;
 
@@ -453,13 +446,11 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 	return instrument;
 }
 
-static int
-ami_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+static int ami_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
-static int
-ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
+static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
 	FILE *file;
 	byte header[40];
 	int i;
@@ -520,8 +511,7 @@ ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patc
 	return SFX_OK;
 }
 
-static void
-ami_exit(sfx_softseq_t *self) {
+static void ami_exit(sfx_softseq_t *self) {
 	int i;
 
 	for (i = 0; i < bank.size; i++) {
@@ -532,8 +522,7 @@ ami_exit(sfx_softseq_t *self) {
 	}
 }
 
-static void
-ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
+static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 	int channel, oper;
 
 	channel = command & 0x0f;
@@ -578,8 +567,7 @@ ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 	}
 }
 
-void
-ami_poll(sfx_softseq_t *self, byte *dest, int len) {
+void ami_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int i, j;
 	gint16 *buf = (gint16 *) dest;
 	gint16 *buffers = (gint16*)malloc(len * 2 * CHANNELS_NR);
@@ -607,13 +595,11 @@ ami_poll(sfx_softseq_t *self, byte *dest, int len) {
 	}
 }
 
-void
-ami_volume(sfx_softseq_t *self, int new_volume) {
+void ami_volume(sfx_softseq_t *self, int new_volume) {
 	volume = new_volume;
 }
 
-void
-ami_allstop(sfx_softseq_t *self) {
+void ami_allstop(sfx_softseq_t *self) {
 	int i;
 	for (i = 0; i < HW_CHANNELS_NR; i++)
 		stop_channel(i);

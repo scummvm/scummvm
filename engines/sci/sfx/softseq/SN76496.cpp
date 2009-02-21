@@ -46,23 +46,19 @@ extern sfx_softseq_t sfx_softseq_pcspeaker;
 /* Forward-declare the sequencer we are defining here */
 
 
-static int
-SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+static int SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
-static int
-SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
+static int SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
              int patch2_len) {
 	return SFX_OK;
 }
 
-static void
-SN76496_exit(sfx_softseq_t *self) {
+static void SN76496_exit(sfx_softseq_t *self) {
 }
 
-static void
-SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
+static void SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 	int i;
 	int chan = -1;
 #if 0
@@ -136,8 +132,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 #define BASE_NOTE 129	/* A10 */
 #define BASE_OCTAVE 10	/* A10, as I said */
 
-static int
-freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
+static int freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 	28160, /* A10 */
 	29834,
 	31608,
@@ -152,8 +147,7 @@ freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 	53159
 };
 
-static inline int
-get_freq(int note) {
+static inline int get_freq(int note) {
 	int halftone_delta = note - BASE_NOTE;
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
 	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;
@@ -163,8 +157,7 @@ get_freq(int note) {
 }
 
 
-void
-SN76496_poll(sfx_softseq_t *self, byte *dest, int len) {
+void SN76496_poll(sfx_softseq_t *self, byte *dest, int len) {
 	gint16 *buf = (gint16 *) dest;
 	int i;
 	int chan;
@@ -206,15 +199,13 @@ SN76496_poll(sfx_softseq_t *self, byte *dest, int len) {
 
 }
 
-void
-SN76496_allstop(sfx_softseq_t *self) {
+void SN76496_allstop(sfx_softseq_t *self) {
 	int i;
 	for (i = 0; i < CHANNELS_NR; i++)
 		notes[i] = 0;
 }
 
-void
-SN76496_volume(sfx_softseq_t *self, int new_volume) {
+void SN76496_volume(sfx_softseq_t *self, int new_volume) {
 	global_volume = new_volume;
 }
 

@@ -40,23 +40,19 @@ extern sfx_softseq_t sfx_softseq_pcspeaker;
 /* Forward-declare the sequencer we are defining here */
 
 
-static int
-sps_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+static int sps_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
-static int
-sps_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
+static int sps_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
          int patch2_len) {
 	return SFX_OK;
 }
 
-static void
-sps_exit(sfx_softseq_t *self) {
+static void sps_exit(sfx_softseq_t *self) {
 }
 
-static void
-sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
+static void sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 #if 0
 	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
@@ -93,8 +89,7 @@ sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 #define BASE_NOTE 129	/* A10 */
 #define BASE_OCTAVE 10	/* A10, as I said */
 
-static int
-freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
+static int freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 	28160, /* A10 */
 	29834,
 	31608,
@@ -110,8 +105,7 @@ freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) */
 };
 
 
-void
-sps_poll(sfx_softseq_t *self, byte *dest, int len) {
+void sps_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int halftone_delta = note - BASE_NOTE;
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
 	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;
@@ -146,13 +140,11 @@ sps_poll(sfx_softseq_t *self, byte *dest, int len) {
 
 }
 
-void
-sps_volume(sfx_softseq_t *self, int new_volume) {
+void sps_volume(sfx_softseq_t *self, int new_volume) {
 	volume = new_volume << 4;
 }
 
-void
-sps_allstop(sfx_softseq_t *self) {
+void sps_allstop(sfx_softseq_t *self) {
 	note = 0;
 }
 

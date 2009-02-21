@@ -103,8 +103,7 @@ mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	return SFX_OK;
 }
 
-static inline unsigned int
-gcd(unsigned int a, unsigned int b) {
+static inline unsigned int gcd(unsigned int a, unsigned int b) {
 	if (a == b)
 		return a;
 
@@ -119,8 +118,7 @@ gcd(unsigned int a, unsigned int b) {
 		return gcd(b, a);
 }
 
-static sfx_pcm_urat_t
-urat(unsigned int nom, unsigned int denom) {
+static sfx_pcm_urat_t urat(unsigned int nom, unsigned int denom) {
 	sfx_pcm_urat_t rv;
 	unsigned int g;
 
@@ -137,8 +135,7 @@ urat(unsigned int nom, unsigned int denom) {
 	return rv;
 }
 
-static void
-mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
+static void mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	sfx_pcm_feed_state_t *fs;
 	ACQUIRE_LOCK();
 	if (!self->feeds) {
@@ -203,8 +200,7 @@ mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 }
 
 
-static void
-_mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
+static void _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	int i;
 #ifdef DEBUG
 	sciprintf("[soft-mixer] Unsubscribing %s-%x\n", feed->debug_name, feed->debug_nr);
@@ -248,8 +244,7 @@ _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	BREAKPOINT();
 }
 
-static void
-mix_exit(sfx_pcm_mixer_t *self) {
+static void mix_exit(sfx_pcm_mixer_t *self) {
 	ACQUIRE_LOCK();
 	while (self->feeds_nr)
 		_mix_unsubscribe(self, self->feeds[0].feed);
@@ -280,8 +275,7 @@ mix_exit(sfx_pcm_mixer_t *self) {
 		else if (v > 32766)		\
 			v = 32767
 
-static inline void
-mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
+static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 	int frame_i;
 	sfx_pcm_config_t conf = self->dev->conf;
 	int use_16 = conf.format & SFX_PCM_FORMAT_16;
@@ -375,8 +369,7 @@ mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 	}
 }
 
-static inline void
-mix_swap_buffers(sfx_pcm_mixer_t *self) { /* Swap buffers */
+static inline void mix_swap_buffers(sfx_pcm_mixer_t *self) { /* Swap buffers */
 	byte *tmp = P->outbuf;
 	P->outbuf = P->writebuf;
 	P->writebuf = tmp;
@@ -388,8 +381,7 @@ mix_swap_buffers(sfx_pcm_mixer_t *self) { /* Swap buffers */
 			 * ((long) self->dev->conf.rate)) \
 			/ (1000000L >> 7)
 
-static inline int
-mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
+static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 /* Computes the number of frames we ought to write. It tries to minimise the number,
 ** in order to reduce latency. */
 /* It sets 'skip_frames' to the number of frames to assume lost by latency, effectively
@@ -543,12 +535,10 @@ mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 static volatile int xx_offset;
 static volatile int xx_size;
 
-static void
-mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
-                         int len, sfx_timestamp_t *ts, sfx_timestamp_t base_ts)
+static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
+									 int len, sfx_timestamp_t *ts, sfx_timestamp_t base_ts) {
 /* if add_result is non-zero, P->outbuf should be added to rather than overwritten. */
 /* base_ts is the timestamp for the first frame */
-{
 	sfx_pcm_feed_state_t *fs = self->feeds + add_result;
 	sfx_pcm_feed_t *f = fs->feed;
 	sfx_pcm_config_t conf = f->conf;
@@ -811,8 +801,7 @@ mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	}
 }
 
-static int
-mix_process_linear(sfx_pcm_mixer_t *self) {
+static int mix_process_linear(sfx_pcm_mixer_t *self) {
 	ACQUIRE_LOCK();
 	{
 		int src_i; /* source feed index counter */
@@ -939,15 +928,13 @@ mix_process_linear(sfx_pcm_mixer_t *self) {
 	return SFX_OK;
 }
 
-static void
-mix_pause(sfx_pcm_mixer_t *self) {
+static void mix_pause(sfx_pcm_mixer_t *self) {
 	ACQUIRE_LOCK();
 	P->paused = 1;
 	RELEASE_LOCK();
 }
 
-static void
-mix_resume(sfx_pcm_mixer_t *self) {
+static void mix_resume(sfx_pcm_mixer_t *self) {
 	ACQUIRE_LOCK();
 	P->paused = 0;
 	RELEASE_LOCK();

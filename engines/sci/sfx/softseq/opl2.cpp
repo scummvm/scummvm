@@ -403,8 +403,7 @@ int adlibemu_start_note(int chn, int note, int velocity) {
 	return 0;
 }
 
-static
-void adlibemu_update_pitch(int chn, int note, int newpitch) {
+static void adlibemu_update_pitch(int chn, int note, int newpitch) {
 	int i;
 	int matched = 0;
 
@@ -469,8 +468,7 @@ void test_adlib(void) {
 /* count is # of FRAMES, not bytes.
    We assume 16-bit stereo frames (ie 4 bytes)
 */
-static void
-opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
+static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	gint16 *buffer = (gint16 *) dest;
 	gint16 *ptr = buffer;
 
@@ -517,8 +515,7 @@ opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	}
 }
 
-static int
-opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
+static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
           int data2_length) {
 	int i;
 
@@ -550,8 +547,7 @@ opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 }
 
 
-static void
-opl2_exit(sfx_softseq_t *self) {
+static void opl2_exit(sfx_softseq_t *self) {
 	FM_OPL *opl = ym3812_L;
 	ym3812_L = NULL;
 	OPLDestroy(opl);
@@ -562,8 +558,7 @@ opl2_exit(sfx_softseq_t *self) {
 	// XXX deregister with pcm layer.
 }
 
-static void
-opl2_allstop(sfx_softseq_t *self) {
+static void opl2_allstop(sfx_softseq_t *self) {
 	//  printf("AdlibEmu:  Reset\n");
 	if (! ready)
 		return;
@@ -655,8 +650,7 @@ int midi_adlibemu_event2(guint8 command, guint8 param, guint32 delta) {
 	return 0;
 }
 
-static void
-opl2_volume(sfx_softseq_t *self, int volume) {
+static void opl2_volume(sfx_softseq_t *self, int volume) {
 	guint8 i;
 
 	i = (guint8)volume * 15 / 100;
@@ -668,13 +662,11 @@ opl2_volume(sfx_softseq_t *self, int volume) {
 #endif
 }
 
-int
-opl2_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+int opl2_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
-void
-opl2_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
+void opl2_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
 	if (argc == 1)
 		midi_adlibemu_event2(cmd, argv[0], 0);
 	else if (argc == 2)
