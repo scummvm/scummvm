@@ -1,3 +1,4 @@
+%{
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -22,8 +23,6 @@
  * $Id$
  *
  */
-
-%{
 
 #include "sci/include/engine.h"
 
@@ -392,7 +391,7 @@ int said_parse_spec(state_t *s, byte *spec) {
 	}
 
 	if (said_blessed != 1) {
-		sciprintf("Error: Found %d top branches\n");
+		sciprintf("Error: Found multiple top branches\n");
 		return 1;
 	}
 
