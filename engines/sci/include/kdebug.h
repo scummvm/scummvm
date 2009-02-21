@@ -77,31 +77,15 @@ struct _state;
 
 
 
-#ifdef __GNUC__XXX
-
-#define SCIkwarn(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__, ## arguments)
-
-#else /* !__GNUC__ */
-
-#define SCIkwarn _SCIkwarn
-
-#endif /* !__GNUC__ */
-
 /* Internal functions */
-void
-_SCIkwarn(struct _state *s, const char *file, int line, int area, const char *format, ...);
-void
-_SCIkdebug(struct _state *s, const char *file, int line, int area, const char *format, ...);
-void
-_SCIGNUkdebug(const char *funcname, struct _state *s, const char *file, int line, int area, const char *format, ...);
+void _SCIkdebug(struct _state *s, const char *file, int line, int area, const char *format, ...);
+void _SCIGNUkdebug(const char *funcname, struct _state *s, const char *file, int line, int area, const char *format, ...);
 
 /* If mode=1, enables debugging for specified areas. If mode=0, disables
 ** debugging for specified areas.
 ** Valid area characters: ulgcmfbad
 */
-
-void
-set_debug_mode(struct _state *s, int mode, const char *areas);
+void set_debug_mode(struct _state *s, int mode, const char *areas);
 
 extern int sci_debug_flags;
 

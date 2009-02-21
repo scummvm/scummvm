@@ -96,7 +96,8 @@ int sci_debug_flags = 0; /* Special flags */
 int sci_ffs(int _mask) {
 	int retval = 0;
 
-	if (!_mask) return 0;
+	if (!_mask)
+		return 0;
 	retval++;
 	while (!(_mask & 1)) {
 		retval++;
@@ -109,45 +110,22 @@ int sci_ffs(int _mask) {
 
 /******************** Debug functions ********************/
 
-void
-_SCIkvprintf(FILE *file, const char *format, va_list args) {
+
+
+/* Functions for internal macro use */
+void _SCIkvprintf(FILE *file, const char *format, va_list args);
+void _SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
+
+void _SCIkvprintf(FILE *file, const char *format, va_list args) {
 	vfprintf(file, format, args);
 	if (con_file) vfprintf(con_file, format, args);
 }
 
-void
-_SCIkprintf(FILE *file, const char *format, ...) {
-	va_list args;
-
-	va_start(args, format);
-	_SCIkvprintf(file, format, args);
-	va_end(args);
-}
-
-
-void
-_SCIkwarn(state_t *s, const char *file, int line, int area, const char *format, ...) {
-	va_list args;
-
-	if (area == SCIkERROR_NR)
-		_SCIkprintf(stderr, "ERROR: ");
-	else
-		_SCIkprintf(stderr, "Warning: ");
-
-	va_start(args, format);
-	_SCIkvprintf(stderr, format, args);
-	va_end(args);
-	fflush(NULL);
-
-	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS) script_debug_flag = 1;
-}
-
-void
-_SCIkdebug(state_t *s, const char *file, int line, int area, const char *format, ...) {
+void _SCIkdebug(state_t *s, const char *file, int line, int area, const char *format, ...) {
 	va_list args;
 
 	if (s->debug_mode & (1 << area)) {
-		_SCIkprintf(stdout, " kernel: (%s L%d): ", file, line);
+		fprintf(stdout, " kernel: (%s L%d): ", file, line);
 		va_start(args, format);
 		_SCIkvprintf(stdout, format, args);
 		va_end(args);
@@ -155,22 +133,22 @@ _SCIkdebug(state_t *s, const char *file, int line, int area, const char *format,
 	}
 }
 
-void
-_SCIGNUkdebug(const char *funcname, state_t *s, const char *file, int line, int area, const char *format, ...) {
+void _SCIGNUkdebug(const char *funcname, state_t *s, const char *file, int line, int area, const char *format, ...) {
 	va_list xargs;
 	int error = ((area == SCIkWARNING_NR) || (area == SCIkERROR_NR));
 
 	if (error || (s->debug_mode & (1 << area))) { /* Is debugging enabled for this area? */
 
-		_SCIkprintf(stderr, "FSCI: ");
+		fprintf(stderr, "FSCI: ");
 
 		if (area == SCIkERROR_NR)
-			_SCIkprintf(stderr, "ERROR in %s ", funcname);
+			fprintf(stderr, "ERROR in %s ", funcname);
 		else if (area == SCIkWARNING_NR)
-			_SCIkprintf(stderr, "%s: Warning ", funcname);
-		else _SCIkprintf(stderr, funcname);
+			fprintf(stderr, "%s: Warning ", funcname);
+		else
+			fprintf(stderr, funcname);
 
-		_SCIkprintf(stderr, "(%s L%d): ", file, line);
+		fprintf(stderr, "(%s L%d): ", file, line);
 
 		va_start(xargs, format);
 		_SCIkvprintf(stderr, format, xargs);

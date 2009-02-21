@@ -83,21 +83,17 @@ typedef struct {
 */
 
 
-reg_t
-read_selector(struct _state *s,  reg_t object, selector_t selector_id, const char *fname, int line);
-void
-write_selector(struct _state *s, reg_t object, selector_t selector_id, reg_t value,
+reg_t read_selector(struct _state *s,  reg_t object, selector_t selector_id, const char *fname, int line);
+void write_selector(struct _state *s, reg_t object, selector_t selector_id, reg_t value,
                const char *fname, int line);
-int
-invoke_selector(struct _state *s, reg_t object, int selector_id, int noinvalid, int kfunct,
+int invoke_selector(struct _state *s, reg_t object, int selector_id, int noinvalid, int kfunct,
                 stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
 
 
 
 /******************** Text functionality ********************/
-char *
-kernel_lookup_text(struct _state *s, reg_t address, int index);
+char *kernel_lookup_text(struct _state *s, reg_t address, int index);
 /* Looks up text referenced by scripts
 ** Parameters: (state_t *s): The current state
 **             (reg_t) address: The address to look up
@@ -133,30 +129,12 @@ kernel_lookup_text(struct _state *s, reg_t address, int index);
 #endif /* !SCI_KERNEL_DEBUG */
 
 
-int
-listp(struct _state *s, reg_t address);
-/* Determines whether the object at <address> is a list
-** Parameters: (state_t *) s: The state to use
-**             (reg_t) address: The address to check
-** Returns   : (int) 0 if not, non-zero if it is a list.
-*/
-
-int
-is_object(struct _state *s, reg_t obj);
+bool is_object(struct _state *s, reg_t obj);
 /* Checks whether a heap address contains an object
 ** Parameters: (state_t *) s: The current state
 **             (reg_t) obj: The address to check
 ** Returns   : (int) 1 if it is an object, 0 otherwise
 */
-
-
-/* Functions for internal macro use */
-void
-_SCIkvprintf(FILE *file, const char *format, va_list args);
-void
-_SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
-
-
 
 
 
@@ -175,10 +153,8 @@ _SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
 #define SKPV_OR_ALT(x,a) KP_SINT(KP_ALT(x, make_reg(0, a)))
 #define UKPV_OR_ALT(x,a) KP_UINT(KP_ALT(x, make_reg(0, a)))
 
-reg_t *
-kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries);
-byte *
-kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries);
+reg_t *kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries);
+byte *kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries);
 #define kernel_dereference_char_pointer(state, pointer, entries) (char*)kernel_dereference_bulk_pointer(state, pointer, entries)
 /* Dereferences a heap pointer
 ** Parameters: (state_t *) s: The state to operate on
@@ -202,8 +178,7 @@ kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries);
 
 
 
-int
-kernel_oops(struct _state *s, const char *file, int line, const char *reason);
+int kernel_oops(struct _state *s, const char *file, int line, const char *reason);
 /* Halts script execution and informs the user about an internal kernel error or failed assertion
 ** Paramters: (state_t *) s: The state to use
 **            (const char *) file: The file the oops occured in
@@ -220,16 +195,14 @@ struct _state;
 
 extern int sci01_priority_table_flags; /* 1: delete, 2: print */
 
-int
-_find_priority_band(struct _state *s, int band);
+int _find_priority_band(struct _state *s, int band);
 /* Finds the position of the priority band specified
 ** Parameters: (state_t *) s: State to search in
 **             (int) band: Band to look for
 ** Returns   : (int) Offset at which the band starts
 */
 
-int
-_find_view_priority(struct _state *s, int y);
+int _find_view_priority(struct _state *s, int y);
 /* Does the opposite of _find_priority_band
 ** Parameters: (state_t *) s: State
 **             (int) y: Coordinate to check
@@ -257,16 +230,14 @@ _find_view_priority(struct _state *s, int y);
 
 /******************** Dynamic view list functions ********************/
 
-abs_rect_t
-set_base(struct _state *s, reg_t object);
+abs_rect_t set_base(struct _state *s, reg_t object);
 /* Determines the base rectangle of the specified view object
 ** Parameters: (state_t *) s: The state to use
 **             (reg_t) object: The object to set
 ** Returns   : (abs_rect) The absolute base rectangle
 */
 
-extern abs_rect_t
-	get_nsrect(struct _state *s, reg_t object, byte clip);
+extern abs_rect_t get_nsrect(struct _state *s, reg_t object, byte clip);
 /* Determines the now-seen rectangle of a view object
 ** Parameters: (state_t *) s: The state to use
 **             (reg_t) object: The object to check
@@ -276,11 +247,9 @@ extern abs_rect_t
 ** now-seen area.
 */
 
-void
-_k_dyn_view_list_prepare_change(struct _state *s);
+void _k_dyn_view_list_prepare_change(struct _state *s);
 /* Removes all views in anticipation of a new window or text */
-void
-_k_dyn_view_list_accept_change(struct _state *s);
+void _k_dyn_view_list_accept_change(struct _state *s);
 /* Redraws all views after a new window or text was added */
 
 
@@ -288,14 +257,12 @@ _k_dyn_view_list_accept_change(struct _state *s);
 
 /******************** Misc functions ********************/
 
-void
-process_sound_events(struct _state *s); /* Get all sound events, apply their changes to the heap */
+void process_sound_events(struct _state *s); /* Get all sound events, apply their changes to the heap */
 
 #define LOOKUP_NODE(addr) lookup_node(s, (addr), __FILE__, __LINE__)
 #define LOOKUP_LIST(addr) lookup_list(s, addr, __FILE__, __LINE__)
 
-node_t *
-lookup_node(struct _state *s, reg_t addr, const char *file, int line);
+node_t *lookup_node(struct _state *s, reg_t addr, const char *file, int line);
 /* Resolves an address into a list node
 ** Parameters: (state_t *) s: The state to operate on
 **             (reg_t) addr: The address to resolve
@@ -305,8 +272,7 @@ lookup_node(struct _state *s, reg_t addr, const char *file, int line);
 */
 
 
-list_t *
-lookup_list(struct _state *s, reg_t addr, const char *file, int line);
+list_t *lookup_list(struct _state *s, reg_t addr, const char *file, int line);
 /* Resolves a list pointer to a list
 ** Parameters: (state_t *) s: The state to operate on
 **             (reg_t) addr: The address to resolve

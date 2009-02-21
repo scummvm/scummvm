@@ -104,11 +104,6 @@ static void process_patch(ResourceSource *source,
 
 
 int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
-	// FIXME: Use only one specific dir, instead of SearchMan?
-	//chdir(source->location_dir_name.c_str());
-	//sci_init_dir(&dir);
-	//entry = sci_find_first(&dir, "*.???");
-
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.???");
 
@@ -119,7 +114,6 @@ int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 		int i;
 		unsigned int resname_len;
 		char *endptr;
-printf("sci0_read_resource_patches: scanning '%s'\n", name.c_str());
 
 		for (i = sci_view; i < sci_invalid_resource; i++)
 			if (scumm_strnicmp(sci_resource_types[i], name.c_str(),
@@ -148,13 +142,7 @@ printf("sci0_read_resource_patches: scanning '%s'\n", name.c_str());
 	return 0;
 }
 
-int
-sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
-	// FIXME: Use only one specific dir, instead of SearchMan?
-	//chdir(source->location_dir_name.c_str());
-	//sci_init_dir(&dir);
-	//entry = sci_find_first(&dir, "*.*");
-
+int sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.*");
 

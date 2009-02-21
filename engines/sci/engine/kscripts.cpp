@@ -104,7 +104,7 @@ int invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, in
 	return 0;
 }
 
-int is_object(state_t *s, reg_t object) {
+bool is_object(state_t *s, reg_t object) {
 	return obj_get(s, object) != NULL;
 }
 

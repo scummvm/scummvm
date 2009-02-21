@@ -91,10 +91,6 @@ list_t *lookup_list(state_t *s, reg_t addr, const char *file, int line) {
 	return _lookup_list(s, addr, file, line, 0);
 }
 
-int listp(state_t *s, reg_t addr) {
-	return (s->seg_manager.heap[addr.segment]->type == MEM_OBJ_LISTS && ENTRY_IS_VALID(&(s->seg_manager.heap[addr.segment]->data.lists), addr.offset));
-}
-
 #ifdef DISABLE_VALIDATIONS
 
 #define sane_nodep(a, b) 1

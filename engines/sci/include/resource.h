@@ -260,15 +260,10 @@ int is_print_str(char *str);
 #  define sci_unlink unlink
 #  define sci_rmdir rmdir
 
-#ifndef HAVE_FFS
-int sci_ffs(int _mask);
-#else
-#define sci_ffs ffs
-#endif
+/** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
+int sci_ffs(int bits);
 
-
-void
-sci_sched_yield(void);
+void sci_sched_yield(void);
 /* Yields the running process/thread to the scheduler
 ** Parameters: (void)
 ** Returns   : after a while.
