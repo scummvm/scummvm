@@ -964,6 +964,24 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 113)
 	},
 
+	// Larry 6 - English/German DOS CD - LORES
+	{{"lsl6", "", {
+		{"resource.map", 0, "0b91234b7112782962cb480b7791b6e2", 7263},
+		{"resource.000", 0, "57d5fe8bb9e044158514476ea7678eb0", 5754790},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(1, 001, 115)
+	},
+
+        // Larry 6 - English/German DOS CD - HIRES
+        {{"lsl6", "", {
+		{"resource.map", 0, "0c0804434ea62278dd15032b1947426c", 8872},
+		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18520872},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION(2, 100, 002)
+	},
+
 #if 0
 	// Larry 6 - German DOS (from Tobis87)
 	{{"lsl6", "", {
@@ -986,16 +1004,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
-	// Larry 7 - English DOS (from spookypeanut)
+	// Larry 7 - English DOS CD (from spookypeanut)
 	{{"lsl7", "", {
 		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
 		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
 #if 0
 	// Larry 7 - German DOS (from Tobis87)
@@ -1502,16 +1518,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 744)
 	},
 
-#if 0
-	// Space Quest 4 - English DOS
+	// Space Quest 4 - English DOS CD
 	{{"sq4", "", {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 000, 200)
+		SCI_VERSION(1, 001, 64)
 	},
-#endif
 
 	// Space Quest 4 - English DOS
 	{{"sq4", "", {
@@ -1627,16 +1641,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
-	// Space Quest 6 - English DOS
+	// Space Quest 6 - English DOS/Win3.11 CD
 	{{"sq6", "", {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 002)
 	},
-#endif
 
 #if 0
 	// Space Quest 6 - German DOS (from Tobis87)
