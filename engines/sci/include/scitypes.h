@@ -28,14 +28,6 @@
 
 #include "common/scummsys.h"
 
-// TODO: rework sci_dir_t to use common/fs.h and remove these includes
-#include <sys/types.h>
-#ifndef _MSC_VER
-#include <dirent.h>
-#else
-#include <io.h>
-#endif
-
 namespace Sci {
 
 typedef int8 gint8;
@@ -52,21 +44,6 @@ typedef uint32 guint32;
 typedef gint8 sbyte;
 typedef guint8 byte;
 typedef guint16 word;
-
-typedef struct {
-	long tv_sec;
-	long tv_usec;
-} GTimeVal;
-
-typedef struct {
-#ifdef WIN32
-	long search;
-	struct _finddata_t fileinfo;
-#else
-	DIR *dir;
-	char *mask_copy;
-#endif
-} sci_dir_t; /* used by sci_find_first and friends */
 
 } // End of namespace Sci
 

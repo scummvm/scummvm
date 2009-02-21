@@ -66,6 +66,16 @@
 #  include <fcntl.h>
 #endif
 
+
+// FIXME: rework sci_dir_t to use common/fs.h and remove these includes
+#include <sys/types.h>
+#ifndef _MSC_VER
+#include <dirent.h>
+#else
+#include <io.h>
+#endif
+
+
 #define GUINT16_SWAP_LE_BE_CONSTANT(val) ((((val) & 0x00ff) << 8) | (((val) & 0xff00) >> 8))
 
 #define GUINT32_SWAP_LE_BE_CONSTANT(val)  ( \
@@ -96,6 +106,24 @@
 #endif
 
 namespace Sci {
+
+
+typedef struct {
+	long tv_sec;
+	long tv_usec;
+} GTimeVal;
+
+typedef struct {
+#ifdef WIN32
+	long search;
+	struct _finddata_t fileinfo;
+#else
+	DIR *dir;
+	char *mask_copy;
+#endif
+} sci_dir_t; /* used by sci_find_first and friends */
+
+
 
 /**** FUNCTION DECLARATIONS ****/
 

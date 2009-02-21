@@ -30,6 +30,7 @@
 
 #include "common/scummsys.h"
 
+#include "sci/tools.h"	// For GTimeVal
 #include "sci/include/scitypes.h"
 #include "sci/include/sfx_iterator.h"
 
