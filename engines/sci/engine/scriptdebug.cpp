@@ -25,27 +25,6 @@
 
 // Script debugger functionality. Absolutely not threadsafe.
 
-#ifdef WIN32
-#	include <windows.h>
-#	include <mmsystem.h>
-#	ifdef sleep
-#		undef sleep
-#	endif
-
-#	define sleep(x) \
-	do { \
-		if (x == 0) { \
-			Sleep(0); \
-		} else { \
-			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
-			Sleep(x); \
-			if (timeEndPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
-		} \
-	} while (0);
-#endif
-
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
@@ -59,12 +38,6 @@
 
 #include "common/util.h"
 #include "common/savefile.h"
-
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-// Assume this is a sufficient precondition
-#  include <signal.h>
-#endif
 
 namespace Sci {
 
@@ -2809,11 +2782,11 @@ int c_sci_version(EngineState *s) {
 	return 0;
 }
 
-int c_sleep(EngineState *s) {
-	sleep(cmd_params[0].val);
-
-	return 0;
-}
+// int c_sleep(EngineState *s) {
+// 	sleep(cmd_params[0].val);
+// 
+// 	return 0;
+// }
 
 static void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
@@ -3192,8 +3165,8 @@ void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, r
 			                 "  sfx-01-track <song> <offset>\n\n"
 			                 "SEE ALSO\n\n"
 			                 "  sfx-01-header.1\n\n");
-			con_hook_command(c_sleep, "sleep", "i", "Suspends everything for the\n"
-			                 " specified number of seconds");
+// 			con_hook_command(c_sleep, "sleep", "i", "Suspends everything for the\n"
+// 			                 " specified number of seconds");
 			con_hook_command(c_gc_show_reachable, "gc-list-reachable", "!a",
 			                 "Prints all addresses directly reachable from\n"
 			                 "  the memory object specified as parameter.\n\n"
