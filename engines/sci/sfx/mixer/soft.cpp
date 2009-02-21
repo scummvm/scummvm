@@ -92,19 +92,13 @@ static int mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	return SFX_OK;
 }
 
-static inline unsigned int gcd(unsigned int a, unsigned int b) {
-	if (a == b)
-		return a;
-
-	if (a < b) {
-		unsigned int c = b % a;
-
-		if (!c)
-			return a;
-
-		return gcd(c, a);
-	} else
-		return gcd(b, a);
+static inline uint gcd(uint a, uint b) {
+	while (a) {
+		uint c = b % a;
+		b = a;
+		a = c;
+	}
+	return b;
 }
 
 static sfx_pcm_urat_t urat(unsigned int nom, unsigned int denom) {
