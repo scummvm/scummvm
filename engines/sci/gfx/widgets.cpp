@@ -26,7 +26,7 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_widgets.h"
 
-#undef GFXW_DEBUG_DIRTY /* Enable to debug dirty rectangle propagation (writes to stderr) */
+#undef GFXW_DEBUG_DIRTY // Enable to debug dirty rectangle propagation (writes to stderr)
 
 #ifdef GFXW_DEBUG_DIRTY
 #  define DDIRTY error("%s:%5d| ", __FILE__, __LINE__); fprintf
@@ -37,15 +37,14 @@
 Common::Point gfxw_point_zero(0, 0);
 
 #define MAX_SERIAL_NUMBER 0x7fffffff
-static int widget_serial_number_counter = 0x10000; /* Avoid confusion with IDs */
+static int widget_serial_number_counter = 0x10000; // Avoid confusion with IDs
 
 #ifdef GFXW_DEBUG_WIDGETS
 
 gfxw_widget_t *debug_widgets[GFXW_DEBUG_WIDGETS];
 int debug_widget_pos = 0;
 
-static void
-_gfxw_debug_add_widget(gfxw_widget_t *widget) {
+static void _gfxw_debug_add_widget(gfxw_widget_t *widget) {
 	if (debug_widget_pos == GFXW_DEBUG_WIDGETS) {
 		GFXERROR("WIDGET DEBUG: Allocated the maximum number of %d widgets- Aborting", GFXW_DEBUG_WIDGETS);
 		BREAKPOINT();
@@ -53,14 +52,12 @@ _gfxw_debug_add_widget(gfxw_widget_t *widget) {
 	debug_widgets[debug_widget_pos++] = widget;
 }
 
-static void
-_gfxw_debug_remove_widget(gfxw_widget_t *widget) {
+static void _gfxw_debug_remove_widget(gfxw_widget_t *widget) {
 	int i;
 	int found = 0;
 	for (i = 0; i < debug_widget_pos; i++) {
 		if (debug_widgets[i] == widget) {
-			memmove(debug_widgets + i, debug_widgets + i + 1,
-			        (sizeof(gfxw_widget_t *)) * (debug_widget_pos - i - 1));
+			memmove(debug_widgets + i, debug_widgets + i + 1, (sizeof(gfxw_widget_t *)) * (debug_widget_pos - i - 1));
 			debug_widgets[debug_widget_pos--] = NULL;
 			found++;
 		}
@@ -76,21 +73,19 @@ _gfxw_debug_remove_widget(gfxw_widget_t *widget) {
 		BREAKPOINT();
 	}
 }
-#else /* !GFXW_DEBUG_WIDGETS */
+#else // !GFXW_DEBUG_WIDGETS
 #define _gfxw_debug_add_widget(a)
 #define _gfxw_debug_remove_widget(a)
 #endif
 
 
-static inline void
-indent(int indentation) {
+static inline void indent(int indentation) {
 	int i;
 	for (i = 0; i < indentation; i++)
 		sciprintf("    ");
 }
 
-static void
-_gfxw_print_widget(gfxw_widget_t *widget, int indentation) {
+static void _gfxw_print_widget(gfxw_widget_t *widget, int indentation) {
 	unsigned int i;
 	char flags_list[] = "VOCDTMI";
 
@@ -124,17 +119,14 @@ _gfxw_print_widget(gfxw_widget_t *widget, int indentation) {
 	sciprintf(" ");
 }
 
-static int
-_gfxwop_print_empty(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_print_empty(gfxw_widget_t *widget, int indentation) {
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("<untyped #%d>", widget->type);
 
 	return 0;
 }
 
-
-gfxw_widget_t *
-_gfxw_new_widget(int size, gfxw_widget_type_t type) {
+gfxw_widget_t * _gfxw_new_widget(int size, gfxw_widget_type_t type) {
 	gfxw_widget_t *widget = (gfxw_widget_t*)sci_malloc(size);
 #ifdef SATISFY_PURIFY
 	memset(widget, 0, size);
@@ -166,14 +158,12 @@ _gfxw_new_widget(int size, gfxw_widget_type_t type) {
 	return widget;
 }
 
-
-static inline int
-verify_widget(gfxw_widget_t *widget) {
+static inline int verify_widget(gfxw_widget_t *widget) {
 	if (!widget) {
 		GFXERROR("Attempt to use NULL widget\n");
 #ifdef GFXW_DEBUG_WIDGETS
 		BREAKPOINT();
-#endif /* GFXW_DEBUG_WIDGETS */
+#endif
 		return 1;
 	} else if (widget->magic != GFXW_MAGIC_VALID) {
 		if (widget->magic == GFXW_MAGIC_INVALID) {
@@ -183,7 +173,7 @@ verify_widget(gfxw_widget_t *widget) {
 		}
 #ifdef GFXW_DEBUG_WIDGETS
 		BREAKPOINT();
-#endif /* GFXW_DEBUG_WIDGETS */
+#endif
 		return 1;
 	}
 	return 0;
@@ -192,8 +182,7 @@ verify_widget(gfxw_widget_t *widget) {
 #define VERIFY_WIDGET(w) \
   if (verify_widget((gfxw_widget_t *)(w))) { GFXERROR("Error occured while validating widget\n"); }
 
-static void
-_gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
+static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 	if (GFXW_IS_TEXT(widget)) {
 		gfxw_text_t *text = (gfxw_text_t *) widget;
 
@@ -225,52 +214,42 @@ _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 	  } \
   }
 
+//********** Widgets *************
 
-/**********************************/
-/*********** Widgets **************/
-/**********************************/
+// Base class operations and common stuff
 
-/* Base class operations and common stuff */
-
-/* Assertion for drawing */
+// Assertion for drawing
 #define DRAW_ASSERT(widget, exp_type) \
-  if (!(widget)) { \
-	sciprintf("L%d: NULL widget", __LINE__); \
-	return 1; \
-  } \
-  if (!(widget)->print) { \
-	  sciprintf("L%d: Widget of type %d does not have print function", __LINE__, \
-		    (widget)->type); \
-  } \
-  if ((widget)->type != (exp_type)) { \
-	  sciprintf("L%d: Error in widget: Expected type " # exp_type "(%d) but got %d\n", \
-		    __LINE__, exp_type, (widget)->type); \
-	  sciprintf("Erroneous widget: "); \
-	  widget->print(widget, 4); \
-	  sciprintf("\n"); \
-	  return 1; \
-  } \
-  if (!(widget->flags & GFXW_FLAG_VISIBLE)) \
-	  return 0; \
-  if (!(widget->type == GFXW_VISUAL || widget->visual)) { \
-	  sciprintf("L%d: Error while drawing widget: Widget has no visual\n", __LINE__); \
-	  sciprintf("Erroneous widget: "); \
-	  widget->print(widget, 1); \
-	  sciprintf("\n"); \
-	  return 1; \
-  }
+	if (!(widget)) { \
+		sciprintf("L%d: NULL widget", __LINE__); \
+		return 1; \
+	} \
+	if (!(widget)->print) { \
+		sciprintf("L%d: Widget of type %d does not have print function", __LINE__, (widget)->type); \
+	} \
+	if ((widget)->type != (exp_type)) { \
+		sciprintf("L%d: Error in widget: Expected type " # exp_type "(%d) but got %d\n", __LINE__, exp_type, (widget)->type); \
+		sciprintf("Erroneous widget: "); \
+		widget->print(widget, 4); \
+		sciprintf("\n"); \
+		return 1; \
+	} \
+	if (!(widget->flags & GFXW_FLAG_VISIBLE)) \
+		return 0; \
+	if (!(widget->type == GFXW_VISUAL || widget->visual)) { \
+		sciprintf("L%d: Error while drawing widget: Widget has no visual\n", __LINE__); \
+		sciprintf("Erroneous widget: "); \
+		widget->print(widget, 1); \
+		sciprintf("\n"); \
+		return 1; \
+	}
 
-
-static inline int
-_color_equals(gfx_color_t a, gfx_color_t b) {
+static inline int _color_equals(gfx_color_t a, gfx_color_t b) {
 	if (a.mask != b.mask)
 		return 0;
 
 	if (a.mask & GFX_MASK_VISUAL) {
-		if (a.visual.r != b.visual.r
-		        || a.visual.g != b.visual.g
-		        || a.visual.b != b.visual.b
-		        || a.alpha != b.alpha)
+		if (a.visual.r != b.visual.r || a.visual.g != b.visual.g || a.visual.b != b.visual.b || a.alpha != b.alpha)
 			return 0;
 	}
 
@@ -285,27 +264,22 @@ _color_equals(gfx_color_t a, gfx_color_t b) {
 	return 1;
 }
 
-static int
-_gfxwop_basic_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
+static int _gfxwop_basic_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
 	widget->visual = visual;
 
 	if (widget->parent) {
-		DDIRTY(stderr, "basic_set_visual: DOWNWARDS rel(%d,%d,%d,%d, 1)\n",
-		       GFX_PRINT_RECT(widget->bounds));
+		DDIRTY(stderr, "basic_set_visual: DOWNWARDS rel(%d,%d,%d,%d, 1)\n", GFX_PRINT_RECT(widget->bounds));
 		widget->parent->add_dirty_rel(widget->parent, widget->bounds, 1);
 	}
 
 	return 0;
 }
 
-
-static int
-_gfxwop_basic_should_replace(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_basic_should_replace(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 0;
 }
 
-static inline void
-_gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag, gfxw_op_int *print,
+static inline void _gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag, gfxw_op_int *print,
               gfxw_bin_op *compare_to, gfxw_bin_op *equals, gfxw_bin_op *superarea_of) {
 	widget->draw = draw;
 	widget->widfree = free;
@@ -319,8 +293,7 @@ _gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op
 	widget->set_visual = _gfxwop_basic_set_visual;
 }
 
-void
-gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_t *widget) {
+void gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_t *widget) {
 	gfxw_widget_t **seekerp;
 
 	if (!container) {
@@ -354,13 +327,12 @@ gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_t *wi
 	if (container->nextpp == &(widget->next))
 		container->nextpp = seekerp;
 
-	*seekerp = widget->next; /* Remove it */
+	*seekerp = widget->next; // Remove it
 	widget->parent = NULL;
 	widget->next = NULL;
 }
 
-static int
-_gfxwop_basic_free(gfxw_widget_t *widget) {
+static int _gfxwop_basic_free(gfxw_widget_t *widget) {
 	gfxw_visual_t *visual = widget->visual;
 	gfx_state_t *state = (visual) ? visual->gfx_state : NULL;
 
@@ -377,77 +349,59 @@ _gfxwop_basic_free(gfxw_widget_t *widget) {
 
 	_gfxw_unallocate_widget(state, widget);
 
-
 	return 0;
 }
 
-
-static int
-_gfxwop_basic_tag(gfxw_widget_t *widget) {
+static int _gfxwop_basic_tag(gfxw_widget_t *widget) {
 	widget->flags |= GFXW_FLAG_TAGGED;
 
 	return 0;
 }
 
-
-static int
-_gfxwop_basic_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_basic_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-
-static int
-_gfxwop_basic_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_basic_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 0;
 }
 
-
-static int
-_gfxwop_basic_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_basic_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return (widget == other);
 }
 
-/*-------------*/
-/**** Boxes ****/
-/*-------------*/
+//*** Boxes ***
 
-static inline rect_t
-_move_rect(rect_t rect, Common::Point point) {
+static inline rect_t _move_rect(rect_t rect, Common::Point point) {
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl, rect.yl);
 }
 
-static inline void
-_split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
+static inline void _split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
 	p1->x = rect.x;
 	p1->y = rect.y;
 	p2->x = rect.x + rect.xl;
 	p2->y = rect.y + rect.yl;
 }
 
-static inline Common::Point
-_move_point(rect_t rect, Common::Point point) {
+static inline Common::Point _move_point(rect_t rect, Common::Point point) {
 	return Common::Point(rect.x + point.x, rect.y + point.y);
 }
 
-static int
-_gfxwop_box_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_box_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_box_t *box = (gfxw_box_t *) widget;
 	DRAW_ASSERT(widget, GFXW_BOX);
-	GFX_ASSERT(gfxop_draw_box(box->visual->gfx_state, _move_rect(box->bounds, pos), box->color1,
-	                          box->color2, box->shade_type));
+	GFX_ASSERT(gfxop_draw_box(box->visual->gfx_state, _move_rect(box->bounds, pos), box->color1, box->color2, box->shade_type));
 
 	return 0;
 }
 
-static int
-_gfxwop_box_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_box_print(gfxw_widget_t *widget, int indentation) {
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("BOX");
 	return 0;
 }
 
-static int
-_gfxwop_box_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_box_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	gfxw_box_t *box = (gfxw_box_t *) widget;
 
 	if (box->color1.alpha)
@@ -462,9 +416,8 @@ _gfxwop_box_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-static int
-_gfxwop_box_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
-	gfxw_box_t *wbox = (gfxw_box_t *) widget, *obox;
+static int _gfxwop_box_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+	gfxw_box_t *wbox = (gfxw_box_t *)widget, *obox;
 	if (other->type != GFXW_BOX)
 		return 0;
 
@@ -486,25 +439,17 @@ _gfxwop_box_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-void
-_gfxw_set_ops_BOX(gfxw_widget_t *widget) {
-	_gfxw_set_ops(GFXW(widget), _gfxwop_box_draw,
-	              _gfxwop_basic_free,
-	              _gfxwop_basic_tag,
-	              _gfxwop_box_print,
-	              _gfxwop_basic_compare_to,
-	              _gfxwop_box_equals,
-	              _gfxwop_box_superarea_of);
+void _gfxw_set_ops_BOX(gfxw_widget_t *widget) {
+	_gfxw_set_ops(GFXW(widget), _gfxwop_box_draw, _gfxwop_basic_free, _gfxwop_basic_tag, _gfxwop_box_print,
+	              _gfxwop_basic_compare_to, _gfxwop_box_equals, _gfxwop_box_superarea_of);
 }
 
-static inline int
-_gfxw_color_get_priority(gfx_color_t color) {
+static inline int _gfxw_color_get_priority(gfx_color_t color) {
 	return (color.mask & GFX_MASK_PRIORITY) ? color.priority : -1;
 }
 
-gfxw_box_t *
-gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
-	gfxw_box_t *widget = (gfxw_box_t *) _gfxw_new_widget(sizeof(gfxw_box_t), GFXW_BOX);
+gfxw_box_t *gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
+	gfxw_box_t *widget = (gfxw_box_t *)_gfxw_new_widget(sizeof(gfxw_box_t), GFXW_BOX);
 
 	widget->widget_priority = _gfxw_color_get_priority(color1);
 	widget->bounds = area;
@@ -514,9 +459,7 @@ gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t co
 
 	widget->flags |= GFXW_FLAG_VISIBLE;
 
-	if ((color1.mask & GFX_MASK_VISUAL)
-	        && ((state && (state->driver->mode->palette))
-	            || (!color1.alpha && !color2.alpha)))
+	if ((color1.mask & GFX_MASK_VISUAL) && ((state && (state->driver->mode->palette)) || (!color1.alpha && !color2.alpha)))
 		widget->flags |= GFXW_FLAG_OPAQUE;
 
 	_gfxw_set_ops_BOX(GFXW(widget));
@@ -524,11 +467,9 @@ gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t co
 	return widget;
 }
 
-
-static inline gfxw_primitive_t *
-_gfxw_new_primitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
-                    gfx_line_style_t style, gfxw_widget_type_t type) {
-	gfxw_primitive_t *widget = (gfxw_primitive_t *) _gfxw_new_widget(sizeof(gfxw_primitive_t), type);
+static inline gfxw_primitive_t *_gfxw_new_primitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
+													gfx_line_style_t style, gfxw_widget_type_t type) {
+	gfxw_primitive_t *widget = (gfxw_primitive_t *)_gfxw_new_widget(sizeof(gfxw_primitive_t), type);
 
 	widget->widget_priority = _gfxw_color_get_priority(color);
 	widget->bounds = area;
@@ -540,12 +481,9 @@ _gfxw_new_primitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
 	return widget;
 }
 
-/*------------------*/
-/**** Rectangles ****/
-/*------------------*/
+//*** Rectangles ***
 
-static int
-_gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	gfxw_primitive_t *wprim = (gfxw_primitive_t *) widget, *oprim;
 	if (widget->type != other->type)
 		return 0;
@@ -567,57 +505,41 @@ _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-static int
-_gfxwop_rect_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_rect_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_primitive_t *rect = (gfxw_primitive_t *) widget;
 	DRAW_ASSERT(widget, GFXW_RECT);
 
-	GFX_ASSERT(gfxop_draw_rectangle(rect->visual->gfx_state,
-	                                gfx_rect(rect->bounds.x + pos.x, rect->bounds.y + pos.y,
-	                                         rect->bounds.xl - 1, rect->bounds.yl - 1),
-	                                rect->color, rect->line_mode, rect->line_style));
-
+	GFX_ASSERT(gfxop_draw_rectangle(rect->visual->gfx_state, gfx_rect(rect->bounds.x + pos.x, rect->bounds.y + pos.y,
+	                                         rect->bounds.xl - 1, rect->bounds.yl - 1), rect->color, rect->line_mode, rect->line_style));
 	return 0;
 }
 
-static int
-_gfxwop_rect_print(gfxw_widget_t *rect, int indentation) {
+static int _gfxwop_rect_print(gfxw_widget_t *rect, int indentation) {
 	_gfxw_print_widget(GFXW(rect), indentation);
 	sciprintf("RECT");
+
 	return 0;
 }
 
-
-void
-_gfxw_set_ops_RECT(gfxw_widget_t *prim) {
-	_gfxw_set_ops(GFXW(prim), _gfxwop_rect_draw,
-	              _gfxwop_basic_free,
-	              _gfxwop_basic_tag,
-	              _gfxwop_rect_print,
-	              _gfxwop_basic_compare_to,
-	              _gfxwop_primitive_equals,
-	              _gfxwop_basic_superarea_of);
+void _gfxw_set_ops_RECT(gfxw_widget_t *prim) {
+	_gfxw_set_ops(GFXW(prim), _gfxwop_rect_draw, _gfxwop_basic_free, _gfxwop_basic_tag, _gfxwop_rect_print,
+	              _gfxwop_basic_compare_to, _gfxwop_primitive_equals, _gfxwop_basic_superarea_of);
 }
 
-gfxw_primitive_t *
-gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+gfxw_primitive_t *gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim = _gfxw_new_primitive(rect, color, line_mode, line_style, GFXW_RECT);
 	prim->bounds.xl++;
-	prim->bounds.yl++; /* Since it is actually one pixel bigger in each direction */
+	prim->bounds.yl++; // Since it is actually one pixel bigger in each direction
 
 	_gfxw_set_ops_RECT(GFXW(prim));
 
 	return prim;
 }
 
+//*** Lines ***
 
-/*-------------*/
-/**** Lines ****/
-/*-------------*/
-
-static int
-_gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
-	gfxw_primitive_t *line = (gfxw_primitive_t *) widget;
+static int _gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
+	gfxw_primitive_t *line = (gfxw_primitive_t *)widget;
 	rect_t linepos = widget->bounds;
 	Common::Point p1, p2;
 
@@ -631,40 +553,29 @@ _gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
 		DRAW_ASSERT(widget, GFXW_LINE);
 	}
 
-
 	_split_rect(_move_rect(linepos, pos), &p1, &p2);
-	GFX_ASSERT(gfxop_draw_line(line->visual->gfx_state, p1, p2,
-	                           line->color, line->line_mode, line->line_style));
-
+	GFX_ASSERT(gfxop_draw_line(line->visual->gfx_state, p1, p2, line->color, line->line_mode, line->line_style));
 	return 0;
 }
 
-static int
-_gfxwop_line_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_line_print(gfxw_widget_t *widget, int indentation) {
 	_gfxw_print_widget(widget, indentation);
 	if (widget->type == GFXW_INVERSE_LINE)
 		sciprintf("INVERSE-LINE");
 	else
 		sciprintf("LINE");
+
 	return 0;
 }
 
-void
-_gfxw_set_ops_LINE(gfxw_widget_t *prim) {
-	_gfxw_set_ops(GFXW(prim), _gfxwop_line_draw,
-	              _gfxwop_basic_free,
-	              _gfxwop_basic_tag,
-	              _gfxwop_line_print,
-	              _gfxwop_basic_compare_to,
-	              _gfxwop_primitive_equals,
-	              _gfxwop_basic_superarea_of);
-
+void _gfxw_set_ops_LINE(gfxw_widget_t *prim) {
+	_gfxw_set_ops(GFXW(prim), _gfxwop_line_draw, _gfxwop_basic_free, _gfxwop_basic_tag, _gfxwop_line_print,
+	              _gfxwop_basic_compare_to, _gfxwop_primitive_equals, _gfxwop_basic_superarea_of);
 }
 
-gfxw_primitive_t *
-gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim;
-	/* Encode into internal representation */
+	// Encode into internal representation
 	rect_t line = gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y);
 
 	byte inverse = 0;
@@ -692,14 +603,10 @@ gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_lin
 	return prim;
 }
 
-/*------------------------------*/
-/**** Views and static views ****/
-/*------------------------------*/
+//*** Views and static views ***
 
-
-gfxw_view_t *
-_gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
-                      gfx_alignment_t halign, gfx_alignment_t valign, int size, gfxw_widget_type_t type) {
+gfxw_view_t *_gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
+								   gfx_alignment_t halign, gfx_alignment_t valign, int size, gfxw_widget_type_t type) {
 	gfxw_view_t *widget;
 	int width, height;
 	Common::Point offset;
@@ -715,13 +622,11 @@ _gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int view, int loop,
 		return NULL;
 	}
 
-	widget = (gfxw_view_t *) _gfxw_new_widget(size, type);
+	widget = (gfxw_view_t *)_gfxw_new_widget(size, type);
 
 	widget->widget_priority = priority;
 	widget->pos = pos;
-	widget->color.mask =
-	    ((priority < 0) ? 0 : GFX_MASK_PRIORITY)
-	    | ((control < 0) ? 0 : GFX_MASK_CONTROL);
+	widget->color.mask = ((priority < 0) ? 0 : GFX_MASK_PRIORITY) | ((control < 0) ? 0 : GFX_MASK_CONTROL);
 	widget->color.priority = priority;
 	widget->color.control = control;
 	widget->view = view;
@@ -746,33 +651,28 @@ _gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int view, int loop,
 	return widget;
 }
 
-int
-_gfxwop_view_draw(gfxw_widget_t *widget, Common::Point pos) {
-	gfxw_view_t *view = (gfxw_view_t *) widget;
+int _gfxwop_view_draw(gfxw_widget_t *widget, Common::Point pos) {
+	gfxw_view_t *view = (gfxw_view_t *)widget;
 	DRAW_ASSERT(widget, GFXW_VIEW);
 
-	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state, view->view, view->loop,
-	                          view->cel, Common::Point(view->pos.x + pos.x, view->pos.y + pos.y),
-	                          view->color, view->palette));
+	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state, view->view, view->loop, view->cel,
+				Common::Point(view->pos.x + pos.x, view->pos.y + pos.y), view->color, view->palette));
 
 	return 0;
 }
 
-static int
-_gfxwop_static_view_draw(gfxw_widget_t *widget, Common::Point pos) {
-	gfxw_view_t *view = (gfxw_view_t *) widget;
+static int _gfxwop_static_view_draw(gfxw_widget_t *widget, Common::Point pos) {
+	gfxw_view_t *view = (gfxw_view_t *)widget;
 	DRAW_ASSERT(widget, GFXW_VIEW);
 
 	GFX_ASSERT(gfxop_draw_cel_static(view->visual->gfx_state, view->view, view->loop,
-	                                 view->cel, _move_point(view->bounds, pos),
-	                                 view->color, view->palette));
+	                                 view->cel, _move_point(view->bounds, pos), view->color, view->palette));
 
 	return 0;
 }
 
-static int
-_w_gfxwop_view_print(gfxw_widget_t *widget, const char *name, int indentation) {
-	gfxw_view_t *view = (gfxw_view_t *) widget;
+static int _w_gfxwop_view_print(gfxw_widget_t *widget, const char *name, int indentation) {
+	gfxw_view_t *view = (gfxw_view_t *)widget;
 	_gfxw_print_widget(widget, indentation);
 
 	sciprintf(name);
@@ -783,29 +683,21 @@ _w_gfxwop_view_print(gfxw_widget_t *widget, const char *name, int indentation) {
 	return 0;
 }
 
-static int
-_gfxwop_view_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_view_print(gfxw_widget_t *widget, int indentation) {
 	return _w_gfxwop_view_print(widget, "VIEW", indentation);
 }
 
-static int
-_gfxwop_static_view_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_static_view_print(gfxw_widget_t *widget, int indentation) {
 	return _w_gfxwop_view_print(widget, "PICVIEW", indentation);
 }
 
-void
-_gfxw_set_ops_VIEW(gfxw_widget_t *view, char stat) {
-	_gfxw_set_ops(GFXW(view), (stat) ? _gfxwop_static_view_draw : _gfxwop_view_draw,
-	              _gfxwop_basic_free,
-	              _gfxwop_basic_tag,
-	              (stat) ? _gfxwop_static_view_print : _gfxwop_view_print,
-	              _gfxwop_basic_compare_to,
-	              _gfxwop_basic_equals,
-	              _gfxwop_basic_superarea_of);
+void _gfxw_set_ops_VIEW(gfxw_widget_t *view, char stat) {
+	_gfxw_set_ops(GFXW(view), (stat) ? _gfxwop_static_view_draw : _gfxwop_view_draw, _gfxwop_basic_free,
+	              _gfxwop_basic_tag, (stat) ? _gfxwop_static_view_print : _gfxwop_view_print,
+	              _gfxwop_basic_compare_to, _gfxwop_basic_equals, _gfxwop_basic_superarea_of);
 }
 
-gfxw_view_t *
-gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
+gfxw_view_t *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
               gfx_alignment_t halign, gfx_alignment_t valign, int flags) {
 	gfxw_view_t *view;
 
@@ -825,66 +717,52 @@ gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int 
 	return view;
 }
 
-/*---------------------*/
-/**** Dynamic Views ****/
-/*---------------------*/
+//*** Dynamic Views ***
 
-static int
-_gfxwop_dyn_view_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_dyn_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_DYN_VIEW);
 
 	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state, view->view, view->loop,
-	                          view->cel, _move_point(view->draw_bounds, pos),
-	                          view->color, view->palette));
+	                          view->cel, _move_point(view->draw_bounds, pos), view->color, view->palette));
 
 	/*
-	  gfx_color_t red; red.visual.r = 0xff; red.visual.g = red.visual.b = 0; red.mask = GFX_MASK_VISUAL;
+	  gfx_color_t red;
+	  red.visual.r = 0xff;
+	  red.visual.g = red.visual.b = 0;
+	  red.mask = GFX_MASK_VISUAL;
 	  GFX_ASSERT(gfxop_draw_rectangle(view->visual->gfx_state,
-	  gfx_rect(view->bounds.x + pos.x, view->bounds.y + pos.y,
-	  view->bounds.xl - 1, view->bounds.yl - 1),
-	  red, 0, 0));
+	  gfx_rect(view->bounds.x + pos.x, view->bounds.y + pos.y, view->bounds.xl - 1, view->bounds.yl - 1), red, 0, 0));
 	*/
 
-
 	return 0;
 
 }
 
-static int
-_gfxwop_draw_nop(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_draw_nop(gfxw_widget_t *widget, Common::Point pos) {
 	return 0;
 }
 
-static int
-_gfxwop_pic_view_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_pic_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) widget;
 	DRAW_ASSERT(widget, GFXW_PIC_VIEW);
 
 	GFX_ASSERT(gfxop_set_clip_zone(view->visual->gfx_state, view->parent->zone));
-	GFX_ASSERT(gfxop_draw_cel_static_clipped(view->visual->gfx_state,
-	           view->view, view->loop,
-	           view->cel,
-	           _move_point(view->draw_bounds, pos),
-	           view->color, view->palette));
+	GFX_ASSERT(gfxop_draw_cel_static_clipped(view->visual->gfx_state, view->view, view->loop,
+	           view->cel, _move_point(view->draw_bounds, pos), view->color, view->palette));
 
-	/* Draw again on the back buffer */
-	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state,
-	                          view->view, view->loop,
-	                          view->cel,
-	                          _move_point(view->draw_bounds, pos),
-	                          view->color, view->palette));
+	// Draw again on the back buffer
+	GFX_ASSERT(gfxop_draw_cel(view->visual->gfx_state, view->view, view->loop, view->cel,
+	                          _move_point(view->draw_bounds, pos), view->color, view->palette));
 
 
-	widget->draw = _gfxwop_draw_nop; /* No more drawing needs to be done */
-
+	widget->draw = _gfxwop_draw_nop; // No more drawing needs to be done
 
 	return 0;
 }
 
-static int
-_gfxwop_some_view_print(gfxw_widget_t *widget, int indentation, const char *type_string) {
-	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) widget;
+static int _gfxwop_some_view_print(gfxw_widget_t *widget, int indentation, const char *type_string) {
+	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *)widget;
 
 	_gfxw_print_widget(widget, indentation);
 
@@ -892,39 +770,30 @@ _gfxwop_some_view_print(gfxw_widget_t *widget, int indentation, const char *type
 	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%p]", view->force_precedence, view->z,
 	          view->sequence, view->view, view->loop, view->cel, view->pos.x, view->pos.y,
 	          (view->color.mask & GFX_MASK_PRIORITY) ? view->color.priority : -1,
-	          (view->color.mask & GFX_MASK_CONTROL) ? view->color.control : -1,
-	          view->signal, view->signalp);
+	          (view->color.mask & GFX_MASK_CONTROL) ? view->color.control : -1, view->signal, view->signalp);
 
 	return 0;
 }
 
-static int
-_gfxwop_dyn_view_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_dyn_view_print(gfxw_widget_t *widget, int indentation) {
 	return _gfxwop_some_view_print(widget, indentation, "DYNVIEW");
 }
 
-static int
-_gfxwop_pic_view_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_pic_view_print(gfxw_widget_t *widget, int indentation) {
 	return _gfxwop_some_view_print(widget, indentation, "PICVIEW");
 }
 
-
-static int
-_gfxwop_dyn_view_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
-	gfxw_dyn_view_t *wview = (gfxw_dyn_view_t *) widget, *oview;
+static int _gfxwop_dyn_view_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+	gfxw_dyn_view_t *wview = (gfxw_dyn_view_t *)widget, *oview;
 	if (!GFXW_IS_DYN_VIEW(other))
 		return 0;
 
-	oview = (gfxw_dyn_view_t *) other;
+	oview = (gfxw_dyn_view_t *)other;
 
-	if (wview->pos.x != oview->pos.x
-	        || wview->pos.y != oview->pos.y
-	        || wview->z != oview->z)
+	if (wview->pos.x != oview->pos.x || wview->pos.y != oview->pos.y || wview->z != oview->z)
 		return 0;
 
-	if (wview->view != oview->view
-	        || wview->loop != oview->loop
-	        || wview->cel != oview->cel)
+	if (wview->view != oview->view || wview->loop != oview->loop || wview->cel != oview->cel)
 		return 0;
 
 	if (!_color_equals(wview->color, oview->color))
@@ -936,8 +805,7 @@ _gfxwop_dyn_view_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-static int
-_gfxwop_dyn_view_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
+static int _gfxwop_dyn_view_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	int retval;
 	gfxw_dyn_view_t *wview = (gfxw_dyn_view_t *) widget, *oview;
 	if (!GFXW_IS_DYN_VIEW(other))
@@ -960,27 +828,18 @@ _gfxwop_dyn_view_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return -(wview->sequence - oview->sequence);
 }
 
-
-void
-_gfxw_set_ops_DYNVIEW(gfxw_widget_t *widget) {
-	_gfxw_set_ops(GFXW(widget), _gfxwop_dyn_view_draw,
-	              _gfxwop_basic_free,
-	              _gfxwop_basic_tag,
-	              _gfxwop_dyn_view_print,
-	              _gfxwop_dyn_view_compare_to,
-	              _gfxwop_dyn_view_equals,
-	              _gfxwop_basic_superarea_of);
+void _gfxw_set_ops_DYNVIEW(gfxw_widget_t *widget) {
+	_gfxw_set_ops(GFXW(widget), _gfxwop_dyn_view_draw, _gfxwop_basic_free, _gfxwop_basic_tag,
+	              _gfxwop_dyn_view_print, _gfxwop_dyn_view_compare_to, _gfxwop_dyn_view_equals, _gfxwop_basic_superarea_of);
 }
 
-void
-_gfxw_set_ops_PICVIEW(gfxw_widget_t *widget) {
+void _gfxw_set_ops_PICVIEW(gfxw_widget_t *widget) {
 	_gfxw_set_ops_DYNVIEW(widget);
 	widget->draw = _gfxwop_pic_view_draw;
 	widget->print = _gfxwop_pic_view_print;
 }
 
-gfxw_dyn_view_t *
-gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
+gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
                   gfx_alignment_t halign, gfx_alignment_t valign, int sequence) {
 	gfxw_dyn_view_t *widget;
 	int width, height;
@@ -998,12 +857,10 @@ gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int lo
 		return NULL;
 	}
 
-	widget = (gfxw_dyn_view_t *) _gfxw_new_widget(sizeof(gfxw_dyn_view_t), GFXW_DYN_VIEW);
+	widget = (gfxw_dyn_view_t *)_gfxw_new_widget(sizeof(gfxw_dyn_view_t), GFXW_DYN_VIEW);
 
 	widget->pos = pos;
-	widget->color.mask =
-	    ((priority < 0) ? 0 : GFX_MASK_PRIORITY)
-	    | ((control < 0) ? 0 : GFX_MASK_CONTROL);
+	widget->color.mask = ((priority < 0) ? 0 : GFX_MASK_PRIORITY) | ((control < 0) ? 0 : GFX_MASK_CONTROL);
 	widget->widget_priority = priority;
 	widget->color.priority = priority;
 	widget->color.control = control;
@@ -1035,10 +892,8 @@ gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int lo
 
 	widget->z = z;
 
-	widget->draw_bounds = gfx_rect(widget->pos.x - xalignmod,
-	                               widget->pos.y - yalignmod - z, width, height);
-	widget->bounds = gfx_rect(widget->pos.x - offset.x - xalignmod,
-	                          widget->pos.y - offset.y - yalignmod - z, width, height);
+	widget->draw_bounds = gfx_rect(widget->pos.x - xalignmod, widget->pos.y - yalignmod - z, width, height);
+	widget->bounds = gfx_rect(widget->pos.x - offset.x - xalignmod, widget->pos.y - offset.y - yalignmod - z, width, height);
 
 	widget->flags |= GFXW_FLAG_VISIBLE;
 
@@ -1050,20 +905,17 @@ gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int lo
 	return widget;
 }
 
-/*------------*/
-/**** Text ****/
-/*------------*/
+//*** Text ***
 
-static int
-_gfxwop_text_free(gfxw_widget_t *widget) {
-	gfxw_text_t *text = (gfxw_text_t *) widget;
+static int _gfxwop_text_free(gfxw_widget_t *widget) {
+	gfxw_text_t *text = (gfxw_text_t *)widget;
 	free(text->text);
+
 	return _gfxwop_basic_free(widget);
 }
 
-static int
-_gfxwop_text_draw(gfxw_widget_t *widget, Common::Point pos) {
-	gfxw_text_t *text = (gfxw_text_t *) widget;
+static int _gfxwop_text_draw(gfxw_widget_t *widget, Common::Point pos) {
+	gfxw_text_t *text = (gfxw_text_t *)widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
 	GFX_ASSERT(gfxop_draw_text(text->visual->gfx_state, text->text_handle, _move_rect(text->bounds, pos)));
@@ -1071,44 +923,36 @@ _gfxwop_text_draw(gfxw_widget_t *widget, Common::Point pos) {
 	return 0;
 }
 
-static int
-_gfxwop_text_alloc_and_draw(gfxw_widget_t *widget, Common::Point pos) {
-	gfxw_text_t *text = (gfxw_text_t *) widget;
+static int _gfxwop_text_alloc_and_draw(gfxw_widget_t *widget, Common::Point pos) {
+	gfxw_text_t *text = (gfxw_text_t *)widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
-	text->text_handle =
-	    gfxop_new_text(widget->visual->gfx_state, text->font_nr, text->text, text->bounds.xl,
-	                   text->halign, text->valign, text->color1,
-	                   text->color2, text->bgcolor, text->text_flags);
+	text->text_handle = gfxop_new_text(widget->visual->gfx_state, text->font_nr, text->text, text->bounds.xl,
+	                   text->halign, text->valign, text->color1, text->color2, text->bgcolor, text->text_flags);
 
 	text->draw = _gfxwop_text_draw;
 
 	return _gfxwop_text_draw(widget, pos);
 }
 
-
-static int
-_gfxwop_text_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_text_print(gfxw_widget_t *widget, int indentation) {
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("TEXT:'%s'", ((gfxw_text_t *)widget)->text);
+
 	return 0;
 }
 
-
-static int
-_gfxwop_text_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
-	gfxw_text_t *wtext = (gfxw_text_t *) widget, *otext;
+static int _gfxwop_text_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+	gfxw_text_t *wtext = (gfxw_text_t *)widget, *otext;
 	if (other->type != GFXW_TEXT)
 		return 0;
 
-	otext = (gfxw_text_t *) other;
+	otext = (gfxw_text_t *)other;
 
-	if ((wtext->bounds.x != otext->bounds.x)
-	        || (wtext->bounds.y != otext->bounds.y))
+	if ((wtext->bounds.x != otext->bounds.x) || (wtext->bounds.y != otext->bounds.y))
 		return 0;
 
-	if (wtext->halign != otext->halign
-	        || wtext->valign != otext->valign)
+	if (wtext->halign != otext->halign || wtext->valign != otext->valign)
 		return 0;
 
 	if (wtext->text_flags != otext->text_flags)
@@ -1117,55 +961,42 @@ _gfxwop_text_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	if (wtext->font_nr != otext->font_nr)
 		return 0;
 
-	/* if (!(_color_equals(wtext->color1, otext->color1)
-	      && _color_equals(wtext->color2, otext->color2)
-	      && _color_equals(wtext->bgcolor, otext->bgcolor)))
-	      return 0; */
+	/* if (!(_color_equals(wtext->color1, otext->color1) && _color_equals(wtext->color2, otext->color2)
+			&& _color_equals(wtext->bgcolor, otext->bgcolor)))
+		return 0; */
 
 	return 1;
 }
 
-static int
-_gfxwop_text_should_replace(gfxw_widget_t *widget, gfxw_widget_t *other) {
-	gfxw_text_t *wtext = (gfxw_text_t *) widget, *otext;
+static int _gfxwop_text_should_replace(gfxw_widget_t *widget, gfxw_widget_t *other) {
+	gfxw_text_t *wtext = (gfxw_text_t *)widget, *otext;
 
 	if (other->type != GFXW_TEXT)
 		return 0;
 
-	otext = (gfxw_text_t *) other;
+	otext = (gfxw_text_t *)other;
 
 	return strcmp(wtext->text, otext->text);
 }
 
-
-static int
-_gfxwop_text_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
-
+static int _gfxwop_text_compare_to(gfxw_widget_t *widget, gfxw_widget_t *other) {
 	return 1;
 }
 
-void
-_gfxw_set_ops_TEXT(gfxw_widget_t *widget) {
-	_gfxw_set_ops(GFXW(widget), _gfxwop_text_alloc_and_draw,
-	              _gfxwop_text_free,
-	              _gfxwop_basic_tag,
-	              _gfxwop_text_print,
-	              _gfxwop_text_compare_to,
-	              _gfxwop_text_equals,
+void _gfxw_set_ops_TEXT(gfxw_widget_t *widget) {
+	_gfxw_set_ops(GFXW(widget), _gfxwop_text_alloc_and_draw, _gfxwop_text_free, _gfxwop_basic_tag,
+	              _gfxwop_text_print, _gfxwop_text_compare_to, _gfxwop_text_equals,
 	              _gfxwop_basic_superarea_of);
 	widget->should_replace = _gfxwop_text_should_replace;
 }
 
-gfxw_text_t *
-gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
-              gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
-              gfx_color_t bgcolor, int text_flags) {
-	gfxw_text_t *widget = (gfxw_text_t *)
-	                      _gfxw_new_widget(sizeof(gfxw_text_t), GFXW_TEXT);
+gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+              gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags) {
+	gfxw_text_t *widget = (gfxw_text_t *)_gfxw_new_widget(sizeof(gfxw_text_t), GFXW_TEXT);
 
 	widget->widget_priority = _gfxw_color_get_priority(color1);
 	widget->font_nr = font;
-	widget->text = (char*)sci_malloc(strlen(text) + 1);
+	widget->text = (char *)sci_malloc(strlen(text) + 1);
 	widget->halign = halign;
 	widget->valign = valign;
 	widget->color1 = color1;
@@ -1176,10 +1007,8 @@ gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_a
 
 	strcpy(widget->text, text);
 
-	gfxop_get_text_params(state, font, text, area.xl, &(widget->width),
-	                      &(widget->height), text_flags,
-	                      &(widget->lines_nr), &(widget->lineheight),
-	                      &(widget->lastline_width));
+	gfxop_get_text_params(state, font, text, area.xl, &(widget->width), &(widget->height), text_flags,
+	                      &(widget->lines_nr), &(widget->lineheight), &(widget->lastline_width));
 
 	/* FIXME: Window is too big
 	area.x += _calc_needmove(halign, area.xl, widget->width);
@@ -1200,10 +1029,7 @@ gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_a
 	return widget;
 }
 
-
-void
-gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines,
-               int *lineheight, int *offset) {
+void gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines, int *lineheight, int *offset) {
 	if (lines)
 		*lines = text->lines_nr;
 	if (lineheight)
@@ -1212,31 +1038,19 @@ gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines,
 		*offset = text->lastline_width;
 }
 
+//-- Container types --
 
-/***********************/
-/*-- Container types --*/
-/***********************/
-
-static int
-_gfxwop_container_add_dirty_rel(gfxw_container_t *cont, rect_t rect, int propagate) {
+static int _gfxwop_container_add_dirty_rel(gfxw_container_t *cont, rect_t rect, int propagate) {
 	DDIRTY(stderr, "->container_add_dirty_rel(%d,%d,%d,%d, %d)\n", GFX_PRINT_RECT(rect), propagate);
 	return cont->add_dirty_abs(cont, _move_rect(rect, Common::Point(cont->zone.x, cont->zone.y)), propagate);
 }
 
-static inline void
-_gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag,
+static inline void _gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag,
                         gfxw_op_int *print, gfxw_bin_op *compare_to, gfxw_bin_op *equals,
                         gfxw_bin_op *superarea_of, gfxw_visual_op *set_visual,
                         gfxw_unary_container_op *free_tagged, gfxw_unary_container_op *free_contents,
                         gfxw_rect_op *add_dirty, gfxw_container_op *add) {
-	_gfxw_set_ops(GFXW(container),
-	              draw,
-	              free,
-	              tag,
-	              print,
-	              compare_to,
-	              equals,
-	              superarea_of);
+	_gfxw_set_ops(GFXW(container), draw, free, tag, print, compare_to, equals, superarea_of);
 
 	container->free_tagged = free_tagged;
 	container->free_contents = free_contents;
@@ -1246,8 +1060,7 @@ _gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_o
 	container->set_visual = set_visual;
 }
 
-static int
-_w_gfxwop_container_print_contents(const char *name, gfxw_widget_t *widget, int indentation) {
+static int _w_gfxwop_container_print_contents(const char *name, gfxw_widget_t *widget, int indentation) {
 	gfxw_widget_t *seeker = widget;
 
 	indent(indentation);
@@ -1263,10 +1076,9 @@ _w_gfxwop_container_print_contents(const char *name, gfxw_widget_t *widget, int 
 	return 0;
 }
 
-static int
-_w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
+static int _w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
 	gfx_dirty_rect_t *dirty;
-	gfxw_container_t *container = (gfxw_container_t *) widget;
+	gfxw_container_t *container = (gfxw_container_t *)widget;
 	if (!GFXW_IS_CONTAINER(widget)) {
 		GFXERROR("_w_gfxwop_container_print() called on type %d widget\n", widget->type);
 		return 1;
@@ -1281,8 +1093,7 @@ _w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
 	dirty = container->dirty;
 	while (dirty) {
 		indent(indentation + 1);
-		sciprintf("dirty(%d,%d, (%dx%d))\n",
-		          dirty->rect.x, dirty->rect.y, dirty->rect.xl, dirty->rect.yl);
+		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->rect.x, dirty->rect.y, dirty->rect.xl, dirty->rect.yl);
 		dirty = dirty->next;
 	}
 
@@ -1291,12 +1102,8 @@ _w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
 	return 0;
 }
 
-
-
-gfxw_container_t *
-_gfxw_new_container_widget(rect_t area, int size, gfxw_widget_type_t type) {
-	gfxw_container_t *widget = (gfxw_container_t *)
-	                           _gfxw_new_widget(size, type);
+gfxw_container_t *_gfxw_new_container_widget(rect_t area, int size, gfxw_widget_type_t type) {
+	gfxw_container_t *widget = (gfxw_container_t *)_gfxw_new_widget(size, type);
 
 	widget->bounds = widget->zone = area;
 	widget->contents = NULL;
@@ -1308,28 +1115,24 @@ _gfxw_new_container_widget(rect_t area, int size, gfxw_widget_type_t type) {
 	return widget;
 }
 
-
-static void
-recursively_free_dirty_rects(gfx_dirty_rect_t *dirty) {
+static void recursively_free_dirty_rects(gfx_dirty_rect_t *dirty) {
 	if (dirty) {
 		recursively_free_dirty_rects(dirty->next);
 		free(dirty);
 	}
 }
 
-
 int ti = 0;
 
-static inline int
-_gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds, rect_t dirty) {
+static inline int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds, rect_t dirty) {
 	bounds.x += port_zone.x;
 	bounds.y += port_zone.y;
+
 	return gfx_rects_overlap(bounds, dirty);
 }
 
-static int
-_gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) {
-	gfxw_container_t *container = (gfxw_container_t *) widget;
+static int _gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) {
+	gfxw_container_t *container = (gfxw_container_t *)widget;
 	gfx_dirty_rect_t *dirty = container->dirty;
 	gfx_state_t *gfx_state = (widget->visual) ? widget->visual->gfx_state : ((gfxw_visual_t *) widget)->gfx_state;
 	int draw_ports;
@@ -1343,10 +1146,10 @@ _gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) 
 
 		while (seeker) {
 			if (_gfxw_dirty_rect_overlaps_normal_rect(GFXW_IS_CONTAINER(seeker) ? nullzone : container->zone,
-			        /* Containers have absolute coordinates, reflect this. */
+			        // Containers have absolute coordinates, reflect this.
 			        seeker->bounds, dirty->rect)) {
 
-				if (GFXW_IS_CONTAINER(seeker)) {/* Propagate dirty rectangles /upwards/ */
+				if (GFXW_IS_CONTAINER(seeker)) {// Propagate dirty rectangles /upwards/
 					DDIRTY(stderr, "container_draw_contents: propagate upwards (%d,%d,%d,%d ,0)\n", GFX_PRINT_RECT(dirty->rect));
 					((gfxw_container_t *)seeker)->add_dirty_abs((gfxw_container_t *)seeker, dirty->rect, 0);
 				}
@@ -1360,13 +1163,11 @@ _gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) 
 		dirty = dirty->next;
 	}
 
-	/* The draw loop is executed twice: Once for normal data, and once for ports. */
+	// The draw loop is executed twice: Once for normal data, and once for ports.
 	for (draw_ports = 0; draw_ports < 2; draw_ports++) {
-
 		dirty = container->dirty;
 
 		while (dirty) {
-
 			gfxw_widget_t *seeker = contents;
 			while (seeker && (draw_ports || !GFXW_IS_PORT(seeker))) {
 				rect_t small_rect;
@@ -1395,14 +1196,13 @@ _gfxwop_container_draw_contents(gfxw_widget_t *widget, gfxw_widget_t *contents) 
 			dirty = dirty->next;
 		}
 	}
-	/* Remember that the dirty rects should be freed afterwards! */
+	// Remember that the dirty rects should be freed afterwards!
 
 	return 0;
 }
 
-static int
-_gfxwop_container_free(gfxw_widget_t *widget) {
-	gfxw_container_t *container = (gfxw_container_t *) widget;
+static int _gfxwop_container_free(gfxw_widget_t *widget) {
+	gfxw_container_t *container = (gfxw_container_t *)widget;
 	gfxw_widget_t *seeker = container->contents;
 
 	while (seeker) {
@@ -1417,8 +1217,7 @@ _gfxwop_container_free(gfxw_widget_t *widget) {
 	return _gfxwop_basic_free(widget);
 }
 
-static int
-_gfxwop_container_tag(gfxw_widget_t *widget) {
+static int _gfxwop_container_tag(gfxw_widget_t *widget) {
 	gfxw_container_t *container = (gfxw_container_t *) widget;
 	gfxw_widget_t *seeker = container->contents;
 
@@ -1426,12 +1225,11 @@ _gfxwop_container_tag(gfxw_widget_t *widget) {
 		seeker->tag(seeker);
 		seeker = seeker->next;
 	}
+
 	return 0;
 }
 
-
-static int
-_w_gfxwop_container_set_visual_contents(gfxw_widget_t *contents, gfxw_visual_t *visual) {
+static int _w_gfxwop_container_set_visual_contents(gfxw_widget_t *contents, gfxw_visual_t *visual) {
 	while (contents) {
 		contents->set_visual(contents, visual);
 		contents = contents->next;
@@ -1439,8 +1237,7 @@ _w_gfxwop_container_set_visual_contents(gfxw_widget_t *contents, gfxw_visual_t *
 	return 0;
 }
 
-static int
-_gfxwop_container_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
+static int _gfxwop_container_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
 	gfxw_container_t *container = (gfxw_container_t *) widget;
 
 	container->visual = visual;
@@ -1454,8 +1251,7 @@ _gfxwop_container_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
 	return _w_gfxwop_container_set_visual_contents(container->contents, visual);
 }
 
-static int
-_gfxwop_container_free_tagged(gfxw_container_t *container) {
+static int _gfxwop_container_free_tagged(gfxw_container_t *container) {
 	gfxw_widget_t *seekerp = (container->contents);
 
 	while (seekerp) {
@@ -1463,15 +1259,15 @@ _gfxwop_container_free_tagged(gfxw_container_t *container) {
 
 		if (redshirt->flags & GFXW_FLAG_TAGGED) {
 			seekerp = (redshirt->next);
-			redshirt->widfree(redshirt); /* He's dead, Jim. */
+			redshirt->widfree(redshirt);
 		} else
 			seekerp = (seekerp)->next;
 	}
+
 	return 0;
 }
 
-static int
-_gfxwop_container_free_contents(gfxw_container_t *container) {
+static int _gfxwop_container_free_contents(gfxw_container_t *container) {
 	gfxw_widget_t *seeker = container->contents;
 
 	while (seeker) {
@@ -1482,16 +1278,14 @@ _gfxwop_container_free_contents(gfxw_container_t *container) {
 	return 0;
 }
 
-static void
-_gfxw_dirtify_container(gfxw_container_t *container, gfxw_widget_t *widget) {
+static void _gfxw_dirtify_container(gfxw_container_t *container, gfxw_widget_t *widget) {
 	if (GFXW_IS_CONTAINER(widget))
 		container->add_dirty_abs(GFXWC(container), widget->bounds, 1);
 	else
 		container->add_dirty_rel(GFXWC(container), widget->bounds, 1);
 }
 
-static int
-_parentize_widget(gfxw_container_t *container, gfxw_widget_t *widget) {
+static int _parentize_widget(gfxw_container_t *container, gfxw_widget_t *widget) {
 	if (widget->parent) {
 		GFXERROR("_gfxwop_container_add(): Attempt to give second parent node to widget!\nWidget:");
 		widget->print(GFXW(widget), 3);
@@ -1511,26 +1305,22 @@ _parentize_widget(gfxw_container_t *container, gfxw_widget_t *widget) {
 	return 0;
 }
 
-static int
-_gfxw_container_id_equals(gfxw_container_t *container, gfxw_widget_t *widget) {
+static int _gfxw_container_id_equals(gfxw_container_t *container, gfxw_widget_t *widget) {
 	gfxw_widget_t **seekerp = &(container->contents);
 
 	if (GFXW_IS_PORT(widget))
-		return 0; /* Don't match ports */
+		return 0;
 
 	if (widget->ID == GFXW_NO_ID)
 		return 0;
 
-	while (*seekerp
-	        && ((*seekerp)->ID != widget->ID
-	            || (*seekerp)->subID != widget->subID))
+	while (*seekerp && ((*seekerp)->ID != widget->ID || (*seekerp)->subID != widget->subID))
 		seekerp = &((*seekerp)->next);
 
 	if (!*seekerp)
 		return 0;
 
-	if ((*seekerp)->equals(*seekerp, widget)
-	        && !(*seekerp)->should_replace(*seekerp, widget)) {
+	if ((*seekerp)->equals(*seekerp, widget) && !(*seekerp)->should_replace(*seekerp, widget)) {
 		widget->widfree(widget);
 		(*seekerp)->flags &= ~GFXW_FLAG_TAGGED;
 		return 1;
@@ -1541,12 +1331,10 @@ _gfxw_container_id_equals(gfxw_container_t *container, gfxw_widget_t *widget) {
 	}
 }
 
-
-static int
-_gfxwop_container_add_dirty(gfxw_container_t *container, rect_t dirty, int propagate) {
+static int _gfxwop_container_add_dirty(gfxw_container_t *container, rect_t dirty, int propagate) {
 #if 0
-	/* This code has been disabled because containers may contain sub-containers with
-	** bounds greater than their own. */
+	// This code has been disabled because containers may contain sub-containers with
+	// bounds greater than their own.
 	if (_gfxop_clip(&dirty, container->bounds))
 		return 0;
 #endif
@@ -1556,16 +1344,14 @@ _gfxwop_container_add_dirty(gfxw_container_t *container, rect_t dirty, int propa
 	return 0;
 }
 
-
-static int
-_gfxwop_container_add(gfxw_container_t *container, gfxw_widget_t *widget) {
+static int _gfxwop_container_add(gfxw_container_t *container, gfxw_widget_t *widget) {
 	if (_gfxw_container_id_equals(container, widget))
 		return 0;
 
 	if (_parentize_widget(container, widget))
 		return 1;
 
-	if (!(GFXW_IS_LIST(widget) && (!GFXWC(widget)->contents))) { /* Don't dirtify self on empty lists */
+	if (!(GFXW_IS_LIST(widget) && (!GFXWC(widget)->contents))) { // Don't dirtify self on empty lists
 		DDIRTY(stderr, "container_add: dirtify DOWNWARDS (%d,%d,%d,%d, 1)\n", GFX_PRINT_RECT(widget->bounds));
 		_gfxw_dirtify_container(container, widget);
 	}
@@ -1576,57 +1362,51 @@ _gfxwop_container_add(gfxw_container_t *container, gfxw_widget_t *widget) {
 	return 0;
 }
 
-/*------------------------------*/
-/**** Lists and sorted lists ****/
-/*------------------------------*/
+//*** Lists and sorted lists ***
 
-static int
-_gfxwop_list_draw(gfxw_widget_t *list, Common::Point pos) {
+static int _gfxwop_list_draw(gfxw_widget_t *list, Common::Point pos) {
 	DRAW_ASSERT(list, GFXW_LIST);
 
 	_gfxwop_container_draw_contents(list, ((gfxw_list_t *)list)->contents);
 	recursively_free_dirty_rects(GFXWC(list)->dirty);
 	GFXWC(list)->dirty = NULL;
 	list->flags &= ~GFXW_FLAG_DIRTY;
+
 	return 0;
 }
 
-static int
-_gfxwop_sorted_list_draw(gfxw_widget_t *list, Common::Point pos) {
+static int _gfxwop_sorted_list_draw(gfxw_widget_t *list, Common::Point pos) {
 	DRAW_ASSERT(list, GFXW_SORTED_LIST);
 
 	_gfxwop_container_draw_contents(list, ((gfxw_list_t *)list)->contents);
 	recursively_free_dirty_rects(GFXWC(list)->dirty);
 	GFXWC(list)->dirty = NULL;
+
 	return 0;
 }
 
-static inline int
-_w_gfxwop_list_print(gfxw_widget_t *list, const char *name, int indentation) {
+static inline int _w_gfxwop_list_print(gfxw_widget_t *list, const char *name, int indentation) {
 	_gfxw_print_widget(list, indentation);
 	sciprintf(name);
+
 	return _w_gfxwop_container_print(list, indentation);
 }
 
-static int
-_gfxwop_list_print(gfxw_widget_t *list, int indentation) {
+static int _gfxwop_list_print(gfxw_widget_t *list, int indentation) {
 	return _w_gfxwop_list_print(list, "LIST", indentation);
 }
 
-static int
-_gfxwop_sorted_list_print(gfxw_widget_t *list, int indentation) {
+static int _gfxwop_sorted_list_print(gfxw_widget_t *list, int indentation) {
 	return _w_gfxwop_list_print(list, "SORTED_LIST", indentation);
 }
 
-/* --- */
 #if 0
 struct gfxw_widget_list {
 	gfxw_widget_t *widget;
 	struct gfxw_widget_list *next;
 };
 
-static struct gfxw_widtet_list *
-			_gfxw_make_widget_list_recursive(gfxw_widget_t *widget) {
+static struct gfxw_widtet_list *_gfxw_make_widget_list_recursive(gfxw_widget_t *widget) {
 	gfxw_widget_list *node;
 
 	if (!widget)
@@ -1639,18 +1419,13 @@ static struct gfxw_widtet_list *
 	return node;
 }
 
-static struct gfxw_widget_list *
-			_gfxw_make_widget_list(gfxw_container_t *container) {
+static struct gfxw_widget_list *_gfxw_make_widget_list(gfxw_container_t *container) {
 	return _gfxw_make_widget_list_recursive(container->contents);
 }
 #endif
-/* --- */
 
-
-static int
-_gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
-/* Requires identical order of list elements. */
-{
+static int _gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
+	// Requires identical order of list elements.
 	gfxw_list_t *wlist, *olist;
 
 	if (widget->type != other->type)
@@ -1663,8 +1438,8 @@ _gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 		return 0;
 	}
 
-	wlist = (gfxw_list_t *) widget;
-	olist = (gfxw_list_t *) other;
+	wlist = (gfxw_list_t *)widget;
+	olist = (gfxw_list_t *)other;
 
 	if (memcmp(&(wlist->bounds), &(olist->bounds), sizeof(rect_t)))
 		return 0;
@@ -1673,7 +1448,6 @@ _gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 	other = olist->contents;
 
 	while (widget && other) {
-
 		if (!(widget->equals(widget, other) && !widget->should_replace(widget, other)))
 			return 0;
 
@@ -1681,12 +1455,11 @@ _gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 		other = other->next;
 	}
 
-	return (!widget && !other); /* True if both are finished now */
+	return (!widget && !other); // True if both are finished now
 }
 
-static int
-_gfxwop_list_add_dirty(gfxw_container_t *container, rect_t dirty, int propagate) {
-	/* Lists add dirty boxes to both themselves and their parenting port/visual */
+static int _gfxwop_list_add_dirty(gfxw_container_t *container, rect_t dirty, int propagate) {
+	// Lists add dirty boxes to both themselves and their parenting port/visual
 
 	container->flags |= GFXW_FLAG_DIRTY;
 
@@ -1700,11 +1473,8 @@ _gfxwop_list_add_dirty(gfxw_container_t *container, rect_t dirty, int propagate)
 	return _gfxwop_container_add_dirty(container, dirty, propagate);
 }
 
-/* static inline */
-int
-_gfxwop_ordered_add(gfxw_container_t *container, gfxw_widget_t *widget, int compare_all)
-/* O(n) */
-{
+int _gfxwop_ordered_add(gfxw_container_t *container, gfxw_widget_t *widget, int compare_all) {
+	// O(n)
 	gfxw_widget_t **seekerp = &(container->contents);
 
 	if (widget->next) {
@@ -1725,11 +1495,11 @@ _gfxwop_ordered_add(gfxw_container_t *container, gfxw_widget_t *widget, int comp
 		if (widget->equals(GFXW(widget), GFXW(*seekerp))) {
 			if (compare_all) {
 				if ((*seekerp)->visual)
-					(*seekerp)->widfree(GFXW(*seekerp)); /* If it's a fresh widget */
+					(*seekerp)->widfree(GFXW(*seekerp)); // If it's a fresh widget
 				else
 					gfxw_annihilate(GFXW(*seekerp));
 
-				return _gfxwop_ordered_add(container, widget, compare_all); /* We might have destroyed the container's contents */
+				return _gfxwop_ordered_add(container, widget, compare_all); // We might have destroyed the container's contents
 			} else {
 				widget->next = (*seekerp)->next;
 				(*seekerp)->widfree(GFXW(*seekerp));
@@ -1748,32 +1518,22 @@ _gfxwop_ordered_add(gfxw_container_t *container, gfxw_widget_t *widget, int comp
 	return _parentize_widget(container, widget);
 }
 
-static int
-_gfxwop_sorted_list_add(gfxw_container_t *container, gfxw_widget_t *widget)
-/* O(n) */
-{
+static int _gfxwop_sorted_list_add(gfxw_container_t *container, gfxw_widget_t *widget) {
+	// O(n)
 	return _gfxwop_ordered_add(container, widget, 0);
 }
 
-void
-_gfxw_set_ops_LIST(gfxw_container_t *list, char sorted) {
-	_gfxw_set_container_ops((gfxw_container_t *) list,
-	                        sorted ? _gfxwop_sorted_list_draw : _gfxwop_list_draw,
-	                        _gfxwop_container_free,
-	                        _gfxwop_container_tag,
+void _gfxw_set_ops_LIST(gfxw_container_t *list, char sorted) {
+	_gfxw_set_container_ops((gfxw_container_t *)list, sorted ? _gfxwop_sorted_list_draw : _gfxwop_list_draw,
+	                        _gfxwop_container_free, _gfxwop_container_tag,
 	                        sorted ? _gfxwop_sorted_list_print : _gfxwop_list_print,
-	                        _gfxwop_basic_compare_to,
-	                        sorted ? _gfxwop_basic_equals : _gfxwop_list_equals,
-	                        _gfxwop_basic_superarea_of,
-	                        _gfxwop_container_set_visual,
-	                        _gfxwop_container_free_tagged,
-	                        _gfxwop_container_free_contents,
-	                        _gfxwop_list_add_dirty,
-	                        sorted ? _gfxwop_sorted_list_add : _gfxwop_container_add);
+	                        _gfxwop_basic_compare_to, sorted ? _gfxwop_basic_equals : _gfxwop_list_equals,
+	                        _gfxwop_basic_superarea_of, _gfxwop_container_set_visual,
+	                        _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
+	                        _gfxwop_list_add_dirty, sorted ? _gfxwop_sorted_list_add : _gfxwop_container_add);
 }
 
-gfxw_list_t *
-gfxw_new_list(rect_t area, int sorted) {
+gfxw_list_t *gfxw_new_list(rect_t area, int sorted) {
 	gfxw_list_t *list = (gfxw_list_t *) _gfxw_new_container_widget(area, sizeof(gfxw_list_t),
 	                    sorted ? GFXW_SORTED_LIST : GFXW_LIST);
 
@@ -1782,13 +1542,9 @@ gfxw_new_list(rect_t area, int sorted) {
 	return list;
 }
 
+//*** Visuals ***
 
-/*---------------*/
-/**** Visuals ****/
-/*---------------*/
-
-static int
-_gfxwop_visual_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_visual_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_visual_t *visual = (gfxw_visual_t *) widget;
 	gfx_dirty_rect_t *dirty = visual->dirty;
 	DRAW_ASSERT(widget, GFXW_VISUAL);
@@ -1815,8 +1571,7 @@ _gfxwop_visual_draw(gfxw_widget_t *widget, Common::Point pos) {
 	return 0;
 }
 
-static int
-_gfxwop_visual_free(gfxw_widget_t *widget) {
+static int _gfxwop_visual_free(gfxw_widget_t *widget) {
 	gfxw_visual_t *visual = (gfxw_visual_t *) widget;
 	gfxw_port_t **portrefs;
 	int retval;
@@ -1832,11 +1587,11 @@ _gfxwop_visual_free(gfxw_widget_t *widget) {
 	retval = _gfxwop_container_free(widget);
 
 	free(portrefs);
+
 	return 0;
 }
 
-static int
-_gfxwop_visual_print(gfxw_widget_t *widget, int indentation) {
+static int _gfxwop_visual_print(gfxw_widget_t *widget, int indentation) {
 	int i;
 	int comma = 0;
 	gfxw_visual_t *visual = (gfxw_visual_t *) widget;
@@ -1863,80 +1618,65 @@ _gfxwop_visual_print(gfxw_widget_t *widget, int indentation) {
 	return _w_gfxwop_container_print(widget, indentation);
 }
 
-static int
-_gfxwop_visual_set_visual(gfxw_widget_t *self, gfxw_visual_t *visual) {
+static int _gfxwop_visual_set_visual(gfxw_widget_t *self, gfxw_visual_t *visual) {
 	if (self != GFXW(visual)) {
 		GFXWARN("Attempt to set a visual's parent visual to something else");
 	} else {
 		GFXWARN("Attempt to set a visual's parent visual");
 	}
+
 	return 1;
 }
 
-void
-_gfxw_set_ops_VISUAL(gfxw_container_t *visual) {
-	_gfxw_set_container_ops((gfxw_container_t *) visual,
-	                        _gfxwop_visual_draw,
-	                        _gfxwop_visual_free,
-	                        _gfxwop_container_tag,
-	                        _gfxwop_visual_print,
-	                        _gfxwop_basic_compare_to,
-	                        _gfxwop_basic_equals,
-	                        _gfxwop_basic_superarea_of,
-	                        _gfxwop_visual_set_visual,
-	                        _gfxwop_container_free_tagged,
-	                        _gfxwop_container_free_contents,
-	                        _gfxwop_container_add_dirty,
-	                        _gfxwop_container_add);
+void _gfxw_set_ops_VISUAL(gfxw_container_t *visual) {
+	_gfxw_set_container_ops((gfxw_container_t *)visual, _gfxwop_visual_draw, _gfxwop_visual_free,
+	                        _gfxwop_container_tag, _gfxwop_visual_print, _gfxwop_basic_compare_to,
+	                        _gfxwop_basic_equals, _gfxwop_basic_superarea_of, _gfxwop_visual_set_visual,
+	                        _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
+	                        _gfxwop_container_add_dirty, _gfxwop_container_add);
 }
 
-gfxw_visual_t *
-gfxw_new_visual(gfx_state_t *state, int font) {
+gfxw_visual_t *gfxw_new_visual(gfx_state_t *state, int font) {
 	gfxw_visual_t *visual = (gfxw_visual_t *) _gfxw_new_container_widget(gfx_rect(0, 0, 320, 200), sizeof(gfxw_visual_t), GFXW_VISUAL);
 
 	visual->font_nr = font;
 	visual->gfx_state = state;
 
-	visual->port_refs = (struct _gfxw_port**)sci_calloc(sizeof(gfxw_port_t), visual->port_refs_nr = 16);
+	visual->port_refs = (struct _gfxw_port **)sci_calloc(sizeof(gfxw_port_t), visual->port_refs_nr = 16);
 
 	_gfxw_set_ops_VISUAL(GFXWC(visual));
 
 	return visual;
 }
 
-
-static int
-_visual_find_free_ID(gfxw_visual_t *visual) {
+static int _visual_find_free_ID(gfxw_visual_t *visual) {
 	int id = 0;
 	int newports = 16;
 
 	while (visual->port_refs[id] && id < visual->port_refs_nr)
 		id++;
 
-	if (id == visual->port_refs_nr) {/* Out of ports? */
+	if (id == visual->port_refs_nr) { // Out of ports?
 		visual->port_refs = (struct _gfxw_port**)sci_realloc(visual->port_refs, visual->port_refs_nr += newports);
-		memset(visual->port_refs + id, 0, newports * sizeof(gfxw_port_t *)); /* Clear new port refs */
+		memset(visual->port_refs + id, 0, newports * sizeof(gfxw_port_t *)); // Clear new port refs
 	}
 
 	return id;
 }
 
-static int
-_gfxwop_add_dirty_rects(gfxw_container_t *dest, gfx_dirty_rect_t *src) {
+static int _gfxwop_add_dirty_rects(gfxw_container_t *dest, gfx_dirty_rect_t *src) {
 	DDIRTY(stderr, "Adding multiple dirty to #%d\n", dest->ID);
 	if (src) {
 		dest->dirty = gfxdr_add_dirty(dest->dirty, src->rect, GFXW_DIRTY_STRATEGY);
 		_gfxwop_add_dirty_rects(dest, src->next);
 	}
+
 	return 0;
 }
 
-/*-------------*/
-/**** Ports ****/
-/*-------------*/
+//*** Ports ***
 
-static int
-_gfxwop_port_draw(gfxw_widget_t *widget, Common::Point pos) {
+static int _gfxwop_port_draw(gfxw_widget_t *widget, Common::Point pos) {
 	gfxw_port_t *port = (gfxw_port_t *) widget;
 	DRAW_ASSERT(widget, GFXW_PORT);
 
@@ -1955,11 +1695,11 @@ _gfxwop_port_draw(gfxw_widget_t *widget, Common::Point pos) {
 	recursively_free_dirty_rects(port->dirty);
 	port->dirty = NULL;
 	widget->flags &= ~GFXW_FLAG_DIRTY;
+
 	return 0;
 }
 
-static int
-_gfxwop_port_free(gfxw_widget_t *widget) {
+static int _gfxwop_port_free(gfxw_widget_t *widget) {
 	gfxw_port_t *port = (gfxw_port_t *) widget;
 
 	if (port->visual) {
@@ -1972,9 +1712,9 @@ _gfxwop_port_free(gfxw_widget_t *widget) {
 		}
 
 		if (visual->port_refs[ID] != port) {
-			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p",
-			        ID, (void *)port, (void *)visual->port_refs[ID]);
-		} else visual->port_refs[ID] = NULL;
+			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p", ID, (void *)port, (void *)visual->port_refs[ID]);
+		} else
+			visual->port_refs[ID] = NULL;
 
 	}
 
@@ -1984,9 +1724,8 @@ _gfxwop_port_free(gfxw_widget_t *widget) {
 	return _gfxwop_container_free(widget);
 }
 
-static int
-_gfxwop_port_print(gfxw_widget_t *widget, int indentation) {
-	gfxw_port_t *port = (gfxw_port_t *) widget;
+static int _gfxwop_port_print(gfxw_widget_t *widget, int indentation) {
+	gfxw_port_t *port = (gfxw_port_t *)widget;
 
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("PORT");
@@ -1994,12 +1733,11 @@ _gfxwop_port_print(gfxw_widget_t *widget, int indentation) {
 	if (port->gray_text)
 		sciprintf(" (gray)");
 	_w_gfxwop_container_print(GFXW(port), indentation);
-	return _w_gfxwop_container_print_contents("decorations", GFXW(port->decorations), indentation);
 
+	return _w_gfxwop_container_print_contents("decorations", GFXW(port->decorations), indentation);
 }
 
-static int
-_gfxwop_port_superarea_of(gfxw_widget_t *self, gfxw_widget_t *other) {
+static int _gfxwop_port_superarea_of(gfxw_widget_t *self, gfxw_widget_t *other) {
 	gfxw_port_t *port = (gfxw_port_t *) self;
 
 	if (!port->port_bg)
@@ -2008,8 +1746,7 @@ _gfxwop_port_superarea_of(gfxw_widget_t *self, gfxw_widget_t *other) {
 	return port->port_bg->superarea_of(port->port_bg, other);
 }
 
-static int
-_gfxwop_port_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
+static int _gfxwop_port_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
 	gfxw_list_t *decorations = ((gfxw_port_t *) widget)->decorations;
 	widget->visual = visual;
 
@@ -2023,8 +1760,7 @@ _gfxwop_port_set_visual(gfxw_widget_t *widget, gfxw_visual_t *visual) {
 	return _gfxwop_container_set_visual(widget, visual);
 }
 
-static int
-_gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int propagate) {
+static int _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int propagate) {
 	gfxw_port_t *self = (gfxw_port_t *) widget;
 
 	self->flags |= GFXW_FLAG_DIRTY;
@@ -2035,11 +1771,11 @@ _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int propagate) {
 	DDIRTY(stderr, "dirty= (%d,%d,%d,%d) bounds (%d,%d,%d,%d)\n", dirty.x, dirty.x, dirty.xl, dirty.yl,
 	       widget->bounds.x, widget->bounds.y, widget->bounds.xl, widget->bounds.yl);
 #if 0
-	/* FIXME: This is a worthwhile optimization */
+	// FIXME: This is a worthwhile optimization
 	if (self->port_bg) {
 		gfxw_widget_t foo;
 
-		foo.bounds = dirty; /* Yeah, sub-elegant, I know */
+		foo.bounds = dirty; // Yeah, sub-elegant, I know
 		foo.bounds.x -= self->zone.x;
 		foo.bounds.y -= self->zone.y;
 		if (self->port_bg->superarea_of(self->port_bg, &foo)) {
@@ -2051,7 +1787,7 @@ _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int propagate) {
 			}
 			return 0;
 		}
-	} /* else propagate to the parent, since we're not 'catching' the dirty rect */
+	} // else propagate to the parent, since we're not 'catching' the dirty rect
 #endif
 
 	if (propagate)
@@ -2063,34 +1799,20 @@ _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int propagate) {
 	return 0;
 }
 
-static int
-_gfxwop_port_add(gfxw_container_t *container, gfxw_widget_t *widget)
-/* O(n) */
-{
+static int _gfxwop_port_add(gfxw_container_t *container, gfxw_widget_t *widget) {
+	// O(n)
 	return _gfxwop_ordered_add(container, widget, 1);
 }
 
-void
-_gfxw_set_ops_PORT(gfxw_container_t *widget) {
-	_gfxw_set_container_ops((gfxw_container_t *) widget,
-	                        _gfxwop_port_draw,
-	                        _gfxwop_port_free,
-	                        _gfxwop_container_tag,
-	                        _gfxwop_port_print,
-	                        _gfxwop_basic_compare_to,
-	                        _gfxwop_basic_equals,
-	                        _gfxwop_port_superarea_of,
-	                        _gfxwop_port_set_visual,
-	                        _gfxwop_container_free_tagged,
-	                        _gfxwop_container_free_contents,
-	                        _gfxwop_port_add_dirty,
-	                        _gfxwop_port_add);
+void _gfxw_set_ops_PORT(gfxw_container_t *widget) {
+	_gfxw_set_container_ops((gfxw_container_t *)widget, _gfxwop_port_draw, _gfxwop_port_free, _gfxwop_container_tag,
+	                        _gfxwop_port_print, _gfxwop_basic_compare_to, _gfxwop_basic_equals, _gfxwop_port_superarea_of,
+	                        _gfxwop_port_set_visual, _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
+	                        _gfxwop_port_add_dirty, _gfxwop_port_add);
 }
 
-gfxw_port_t *
-gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor) {
-	gfxw_port_t *widget = (gfxw_port_t *)
-	                      _gfxw_new_container_widget(area, sizeof(gfxw_port_t), GFXW_PORT);
+gfxw_port_t *gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor) {
+	gfxw_port_t *widget = (gfxw_port_t *)_gfxw_new_container_widget(area, sizeof(gfxw_port_t), GFXW_PORT);
 
 	VERIFY_WIDGET(visual);
 
@@ -2117,8 +1839,7 @@ void gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *windo
 	window->restore_snap = gfxw_make_snapshot(visual, auto_rect);
 }
 
-gfxw_port_t *
-gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port) {
+gfxw_port_t *gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port) {
 	gfxw_port_t *parent;
 	VERIFY_WIDGET(visual);
 	VERIFY_WIDGET(port);
@@ -2128,7 +1849,7 @@ gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port) {
 		return NULL;
 	}
 
-	parent = (gfxw_port_t *) port->parent;
+	parent = (gfxw_port_t *)port->parent;
 	if (port->port_flags & WINDOW_FLAG_AUTO_RESTORE)
 		gfxw_restore_snapshot(visual, port->restore_snap);
 
@@ -2136,23 +1857,19 @@ gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port) {
 		return parent;
 
 	while (parent && !GFXW_IS_PORT(parent))
-		parent = (gfxw_port_t *) parent->parent; /* Ascend through ancestors */
+		parent = (gfxw_port_t *)parent->parent; // Ascend through ancestors
 
 	return parent;
 }
 
-
-gfxw_port_t *
-gfxw_find_port(gfxw_visual_t *visual, int ID) {
+gfxw_port_t *gfxw_find_port(gfxw_visual_t *visual, int ID) {
 	if (ID < 0 || ID >= visual->port_refs_nr)
 		return NULL;
 
 	return visual->port_refs[ID];
 }
 
-
-gfxw_port_t *
-gfxw_find_default_port(gfxw_visual_t *visual) {
+gfxw_port_t *gfxw_find_default_port(gfxw_visual_t *visual) {
 	int id = visual->port_refs_nr;
 
 	while (id--) {
@@ -2165,11 +1882,9 @@ gfxw_find_default_port(gfxw_visual_t *visual) {
 	return NULL;
 }
 
+// - other functions -
 
-/*** - other functions - ***/
-
-gfxw_widget_t *
-gfxw_set_id(gfxw_widget_t *widget, int ID, int subID) {
+gfxw_widget_t *gfxw_set_id(gfxw_widget_t *widget, int ID, int subID) {
 	if (widget) {
 		widget->ID = ID;
 		widget->subID = subID;
@@ -2178,9 +1893,7 @@ gfxw_set_id(gfxw_widget_t *widget, int ID, int subID) {
 	return widget;
 }
 
-gfxw_dyn_view_t *
-gfxw_dyn_view_set_params(gfxw_dyn_view_t *widget, int under_bits, void *under_bitsp,
-                         int signal, void *signalp) {
+gfxw_dyn_view_t *gfxw_dyn_view_set_params(gfxw_dyn_view_t *widget, int under_bits, void *under_bitsp, int signal, void *signalp) {
 	if (!widget)
 		return NULL;
 
@@ -2192,14 +1905,11 @@ gfxw_dyn_view_set_params(gfxw_dyn_view_t *widget, int under_bits, void *under_bi
 	return widget;
 }
 
-gfxw_widget_t *
-gfxw_remove_id(gfxw_container_t *container, int ID, int subID) {
+gfxw_widget_t *gfxw_remove_id(gfxw_container_t *container, int ID, int subID) {
 	gfxw_widget_t **wp = &(container->contents);
 
 	while (*wp) {
-		if ((*wp)->ID == ID
-		        && (subID == GFXW_NO_ID
-		            || (*wp)->subID == subID)) {
+		if ((*wp)->ID == ID && (subID == GFXW_NO_ID || (*wp)->subID == subID)) {
 			gfxw_widget_t *widget = *wp;
 
 			*wp = (*wp)->next;
@@ -2216,9 +1926,7 @@ gfxw_remove_id(gfxw_container_t *container, int ID, int subID) {
 	return NULL;
 }
 
-
-gfxw_widget_t *
-gfxw_hide_widget(gfxw_widget_t *widget) {
+gfxw_widget_t *gfxw_hide_widget(gfxw_widget_t *widget) {
 	if (widget->flags & GFXW_FLAG_VISIBLE) {
 		widget->flags &= ~GFXW_FLAG_VISIBLE;
 
@@ -2229,8 +1937,7 @@ gfxw_hide_widget(gfxw_widget_t *widget) {
 	return widget;
 }
 
-gfxw_widget_t *
-gfxw_show_widget(gfxw_widget_t *widget) {
+gfxw_widget_t *gfxw_show_widget(gfxw_widget_t *widget) {
 	if (!(widget->flags & GFXW_FLAG_VISIBLE)) {
 		widget->flags |= GFXW_FLAG_VISIBLE;
 
@@ -2241,25 +1948,21 @@ gfxw_show_widget(gfxw_widget_t *widget) {
 	return widget;
 }
 
-
-gfxw_snapshot_t *
-gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area) {
+gfxw_snapshot_t *gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area) {
 	gfxw_snapshot_t *retval = (gfxw_snapshot_t*)sci_malloc(sizeof(gfxw_snapshot_t));
 
 	retval->serial = widget_serial_number_counter++;
 
 	retval->area = area;
 
-	/* Work around subset semantics in gfx_rect_subset.
-	   This fixes the help icon in LSL5. */
+	// Work around subset semantics in gfx_rect_subset.
+	// This fixes the help icon in LSL5. */
 	if (retval->area.xl == 320) retval->area.xl = 321;
 
 	return retval;
 }
 
-
-int
-gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget) {
+int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget) {
 	int free_below = (snapshot->serial < widget_serial_number_counter) ? 0 : widget_serial_number_counter;
 	int free_above_eq = snapshot->serial;
 	rect_t bounds = widget->bounds;
@@ -2269,15 +1972,12 @@ gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widget) {
 		bounds.y += widget->parent->bounds.y;
 	}
 
-	return ((widget->serial >= free_above_eq
-	         || widget->serial < free_below)
-	        && gfx_rect_subset(bounds, snapshot->area));
+	return ((widget->serial >= free_above_eq || widget->serial < free_below) && gfx_rect_subset(bounds, snapshot->area));
 }
 
 #define MAGIC_FREE_NUMBER -42
 
-void
-_gfxw_free_contents_appropriately(gfxw_container_t *container, gfxw_snapshot_t *snapshot, int priority) {
+void _gfxw_free_contents_appropriately(gfxw_container_t *container, gfxw_snapshot_t *snapshot, int priority) {
 	gfxw_widget_t *widget = container->contents;
 
 	while (widget) {
@@ -2295,15 +1995,13 @@ _gfxw_free_contents_appropriately(gfxw_container_t *container, gfxw_snapshot_t *
 	}
 }
 
-gfxw_snapshot_t *
-gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot) {
+gfxw_snapshot_t *gfxw_restore_snapshot(gfxw_visual_t *visual, gfxw_snapshot_t *snapshot) {
 	_gfxw_free_contents_appropriately(GFXWC(visual), snapshot, MAGIC_FREE_NUMBER);
 
 	return snapshot;
 }
 
-void
-gfxw_annihilate(gfxw_widget_t *widget) {
+void gfxw_annihilate(gfxw_widget_t *widget) {
 	gfxw_visual_t *visual = widget->visual;
 	int widget_priority = 0;
 	int free_overdrawn = 0;
@@ -2324,10 +2022,7 @@ gfxw_annihilate(gfxw_widget_t *widget) {
 		_gfxw_free_contents_appropriately(GFXWC(visual), &snapshot, widget_priority);
 }
 
-
-
-gfxw_dyn_view_t *
-gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
+gfxw_dyn_view_t *gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
 	dynview->type = GFXW_PIC_VIEW;
 	dynview->flags |= GFXW_FLAG_DIRTY;
 
@@ -2339,10 +2034,9 @@ gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
 	return dynview;
 }
 
-/* Chrono-Ports (tm) */
+// Chrono-Ports (tm)
 
-gfxw_port_t *
-gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
+gfxw_port_t * gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
 	gfxw_port_t *result = NULL;
 	gfx_color_t transparent = {{0, 0, 0, 0}, 0, 0, 0, 0};
 	int id = 0;
@@ -2351,8 +2045,7 @@ gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int
 		result = gfxw_find_default_port(visual);
 	} else {
 		id = visual->port_refs_nr;
-		while (id >= 0 && (!visual->port_refs[id] ||
-		                   !visual->port_refs[id]->chrono_port))
+		while (id >= 0 && (!visual->port_refs[id] || !visual->port_refs[id]->chrono_port))
 			id--;
 
 		if (id >= 0)
@@ -2360,7 +2053,8 @@ gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int
 	}
 
 	if (!result || !result->chrono_port) {
-		if (flags & GFXW_CHRONO_NO_CREATE) return NULL;
+		if (flags & GFXW_CHRONO_NO_CREATE)
+			return NULL;
 		result = gfxw_new_port(visual, NULL, gfx_rect(0, 0, 320, 200), transparent, transparent);
 		*temp_widgets_list = gfxw_new_list(gfx_rect(0, 0, 320, 200), 1);
 		result->add(GFXWC(result), GFXW(*temp_widgets_list));
@@ -2372,11 +2066,11 @@ gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int
 
 	if (temp_widgets_list)
 		*temp_widgets_list = GFXWC(result->contents);
+
 	return result;
 }
 
-static int
-gfxw_check_chrono_overlaps(gfxw_port_t *chrono, gfxw_widget_t *widget) {
+static int gfxw_check_chrono_overlaps(gfxw_port_t *chrono, gfxw_widget_t *widget) {
 	gfxw_widget_t *seeker = GFXWC(chrono->contents)->contents;
 
 	while (seeker) {
@@ -2391,18 +2085,15 @@ gfxw_check_chrono_overlaps(gfxw_port_t *chrono, gfxw_widget_t *widget) {
 	return 0;
 }
 
-void
-gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget) {
+void gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget) {
 	gfxw_list_t *tw;
-	gfxw_port_t *chrono =
-	    gfxw_get_chrono_port(visual, &tw, 0);
+	gfxw_port_t *chrono = gfxw_get_chrono_port(visual, &tw, 0);
 
 	gfxw_check_chrono_overlaps(chrono, widget);
 	chrono->add(GFXWC(chrono), widget);
 }
 
-static gfxw_widget_t *
-gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget_t *widget) {
+static gfxw_widget_t *gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget_t *widget) {
 	gfxw_widget_t *seeker;
 
 	assert(tw->type == GFXW_SORTED_LIST);
@@ -2426,19 +2117,18 @@ gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget_t *widget) {
 	return 0;
 }
 
-void
-gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target) {
+void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target) {
 	gfxw_list_t *tw;
 	gfxw_port_t *chrono;
 	gfxw_widget_t *intersector;
 
 	chrono = gfxw_get_chrono_port(visual, &tw, GFXW_CHRONO_NO_CREATE);
-	if (chrono == NULL) return;
+	if (chrono == NULL)
+		return;
 
 	intersector = gfxw_widget_intersects_chrono(tw, view);
 	if (intersector) {
-		Common::Point origin = Common::Point(intersector->parent->zone.x,
-		                           intersector->parent->zone.y);
+		Common::Point origin = Common::Point(intersector->parent->zone.x, intersector->parent->zone.y);
 
 		gfxw_remove_widget_from_container(GFXWC(chrono), GFXW(tw));
 		gfxw_remove_widget_from_container(GFXWC(chrono->parent), GFXW(chrono));
@@ -2449,8 +2139,7 @@ gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_lis
 	}
 }
 
-void
-gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window) {
+void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window) {
 	int i;
 
 	for (i = window; i < visual->port_refs_nr ; i++) {
