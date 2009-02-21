@@ -87,8 +87,8 @@ namespace Sci {
 #  include <kos/thread.h>
 #endif
 
-int script_debug_flag = 0; /* Defaulting to running mode */
-int sci_debug_flags = 0; /* Special flags */
+int script_debug_flag = 0; // Defaulting to running mode
+int sci_debug_flags = 0; // Special flags
 
 #ifndef con_file
 #	define con_file 0
@@ -108,12 +108,9 @@ int sci_ffs(int _mask) {
 	return retval;
 }
 
+//******************* Debug functions *******************
 
-/******************** Debug functions ********************/
-
-
-
-/* Functions for internal macro use */
+// Functions for internal macro use
 void _SCIkvprintf(FILE *file, const char *format, va_list args);
 void _SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
 
@@ -138,7 +135,7 @@ void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int l
 	va_list xargs;
 	int error = ((area == SCIkWARNING_NR) || (area == SCIkERROR_NR));
 
-	if (error || (s->debug_mode & (1 << area))) { /* Is debugging enabled for this area? */
+	if (error || (s->debug_mode & (1 << area))) { // Is debugging enabled for this area?
 
 		fprintf(stderr, "FSCI: ");
 
@@ -160,8 +157,7 @@ void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int l
 
 
 #if defined(HAVE_GETTIMEOFDAY)
-void
-sci_gettime(long *seconds, long *useconds) {
+void sci_gettime(long *seconds, long *useconds) {
 	struct timeval tv;
 
 	assert(!gettimeofday(&tv, NULL));
@@ -195,26 +191,19 @@ void sci_gettime(long *seconds, long *useconds) {
 #endif
 
 
-void
-sci_get_current_time(GTimeVal *val) {
+void sci_get_current_time(GTimeVal *val) {
 	long foo, bar;
 	sci_gettime(&foo, &bar);
 	val->tv_sec = foo;
 	val->tv_usec = bar;
 }
 
-
-/************* Directory entities *************/
 #if defined(WIN32)
-/******** Dir: Win32 CODE ********/
-
-void
-sci_init_dir(sci_dir_t *dir) {
+void sci_init_dir(sci_dir_t *dir) {
 	dir->search = -1;
 }
 
-char *
-sci_find_first(sci_dir_t *dir, const char *mask) {
+char *sci_find_first(sci_dir_t *dir, const char *mask) {
 	dir->search = _findfirst(mask, &(dir->fileinfo));
 
 	if (dir->search != -1) {
@@ -255,8 +244,7 @@ sci_find_first(sci_dir_t *dir, const char *mask) {
 	return NULL;
 }
 
-char *
-sci_find_next(sci_dir_t *dir) {
+char *sci_find_next(sci_dir_t *dir) {
 	if (dir->search == -1)
 		return NULL;
 
@@ -276,25 +264,21 @@ sci_find_next(sci_dir_t *dir) {
 	return dir->fileinfo.name;
 }
 
-void
-sci_finish_find(sci_dir_t *dir) {
+void sci_finish_find(sci_dir_t *dir) {
 	if (dir->search != -1) {
 		_findclose(dir->search);
 		dir->search = -1;
 	}
 }
 
-#else /* !WIN32 */
-/******** Dir: UNIX CODE ********/
+#else
 
-void
-sci_init_dir(sci_dir_t *dir) {
+void sci_init_dir(sci_dir_t *dir) {
 	dir->dir = NULL;
 	dir->mask_copy = NULL;
 }
 
-char *
-sci_find_first(sci_dir_t *dir, const char *mask) {
+char *sci_find_first(sci_dir_t *dir, const char *mask) {
 	if (dir->dir)
 		closedir(dir->dir);
 
@@ -313,8 +297,7 @@ sci_find_first(sci_dir_t *dir, const char *mask) {
 #warning "File searches will not be case-insensitive!"
 #endif
 
-char *
-sci_find_next(sci_dir_t *dir) {
+char *sci_find_next(sci_dir_t *dir) {
 	struct dirent *match;
 
 	while ((match = readdir(dir->dir))) {
@@ -326,11 +309,11 @@ sci_find_next(sci_dir_t *dir) {
 	}
 
 	sci_finish_find(dir);
+
 	return NULL;
 }
 
-void
-sci_finish_find(sci_dir_t *dir) {
+void sci_finish_find(sci_dir_t *dir) {
 	if (dir->dir) {
 		closedir(dir->dir);
 		dir->dir = NULL;
@@ -339,19 +322,14 @@ sci_finish_find(sci_dir_t *dir) {
 	}
 }
 
-#endif /* !WIN32 */
+#endif
 
-/************* /Directory entities *************/
-
-
-int
-sci_mkpath(const char *path) {
+int sci_mkpath(const char *path) {
 	const char *path_position = path;
 	char *next_separator = NULL;
 
-	if (chdir(G_DIR_SEPARATOR_S)) { /* Go to root */
-		sciprintf("Error: Could not change to root directory '%s'",
-		          G_DIR_SEPARATOR_S);
+	if (chdir(G_DIR_SEPARATOR_S)) { // Go to root
+		sciprintf("Error: Could not change to root directory '%s'", G_DIR_SEPARATOR_S);
 		return -1;
 	}
 
@@ -363,11 +341,10 @@ sci_mkpath(const char *path) {
 		if (next_separator)
 			*next_separator = 0;
 
-		if (*path_position) { /* Unless we're at the first slash... */
+		if (*path_position) { // Unless we're at the first slash...
 			if (chdir(path_position)) {
 				if (scimkdir(path_position, 0700) || chdir(path_position)) {
-					sciprintf("Error: Could not create subdirectory '%s' in",
-					          path_position);
+					sciprintf("Error: Could not create subdirectory '%s' in", path_position);
 					if (next_separator)
 						*next_separator = G_DIR_SEPARATOR_S[0];
 					sciprintf(" '%s'", path);
@@ -382,37 +359,33 @@ sci_mkpath(const char *path) {
 	return 0;
 }
 
-/*-- Yielding to the scheduler --*/
+//-- Yielding to the scheduler --
 
 #ifdef HAVE_SCHED_YIELD
 #  include <sched.h>
 
-void
-sci_sched_yield(void) {
+void sci_sched_yield(void) {
 	sched_yield();
 }
 
 #elif defined (__DC__)
 
-void
-sci_sched_yield() {
+void sci_sched_yield() {
 	thd_pass();
 }
 
 #elif defined (WIN32)
 
-void
-sci_sched_yield() {
+void sci_sched_yield() {
 	sleep(1);
 }
 
 #else
 
-void
-sci_sched_yield() {
+void sci_sched_yield() {
 }
 
-#endif /* !HAVE_SCHED_YIELD */
+#endif
 
 
 /* Returns the case-sensitive filename of a file.
@@ -422,8 +395,8 @@ sci_sched_yield() {
 ** Returns   : (char *) Case-sensitive filename of the file.
 */
 Common::String _fcaseseek(const char *fname) {
-/* Expects *dir to be uninitialized and the caller to
- ** free it afterwards  */
+	// Expects *dir to be uninitialized and the caller to
+	// free it afterwards  */
 
 	if (strchr(fname, G_DIR_SEPARATOR)) {
 		error("_fcaseseek() does not support subdirs\n");
@@ -439,9 +412,9 @@ Common::String _fcaseseek(const char *fname) {
 		if (name.equalsIgnoreCase(fname))
 			return name;
 	}
+
 	return Common::String();
 }
-
 
 FILE *sci_fopen(const char *fname, const char *mode) {
 	Common::String name = _fcaseseek(fname);
@@ -464,8 +437,7 @@ int sci_open(const char *fname, int flags) {
 	return file;
 }
 
-char *
-sci_getcwd(void) {
+char *sci_getcwd() {
 	int size = 0;
 	char *cwd = NULL;
 
@@ -479,18 +451,17 @@ sci_getcwd(void) {
 	}
 
 	error("Could not determine current working directory");
+
 	return NULL;
 }
 
 #ifdef __DC__
 
-int
-sci_fd_size(int fd) {
+int sci_fd_size(int fd) {
 	return fs_total(fd);
 }
 
-int
-sci_file_size(const char *fname) {
+int sci_file_size(const char *fname) {
 	int fd = fs_open(fname, O_RDONLY);
 	int retval = -1;
 
@@ -504,17 +475,21 @@ sci_file_size(const char *fname) {
 
 #else
 
-int
-sci_fd_size(int fd) {
+int sci_fd_size(int fd) {
 	struct stat fd_stat;
-	if (fstat(fd, &fd_stat)) return -1;
+
+	if (fstat(fd, &fd_stat))
+		return -1;
+
 	return fd_stat.st_size;
 }
 
-int
-sci_file_size(const char *fname) {
+int sci_file_size(const char *fname) {
 	struct stat fn_stat;
-	if (stat(fname, &fn_stat)) return -1;
+
+	if (stat(fname, &fn_stat))
+		return -1;
+
 	return fn_stat.st_size;
 }
 
@@ -534,7 +509,7 @@ int is_print_str(char *str) {
 		str++;
 	}
 
-	return ((float) printable / (float) len >= 0.5);
+	return ((float)printable / (float)len >= 0.5);
 }
 
 } // End of namespace Sci
