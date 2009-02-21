@@ -35,10 +35,10 @@ typedef int seg_id_t; /* Segment ID type */
 
 struct _state; /* engine.h */
 
-typedef struct {
-	guint16 segment;
-	guint16 offset;
-} reg_t;
+struct reg_t {
+	uint16 segment;
+	uint16 offset;
+};
 
 #define PREG "%04x:%04x"
 #define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset
