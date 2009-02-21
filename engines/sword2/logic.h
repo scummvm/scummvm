@@ -86,7 +86,7 @@ private:
 	// keeps count of number of text lines to disaply during the sequence
 	uint32 _sequenceTextLines;
 
-	SequenceTextInfo _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
+	MovieText _sequenceTextList[MAX_SEQUENCE_TEXT_LINES];
 
 	// when not playing a wav we calculate the speech time based upon
 	// length of ascii

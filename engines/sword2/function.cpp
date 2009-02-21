@@ -2139,9 +2139,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	// pause sfx during sequence
 	_vm->_sound->pauseFx();
 
-	_moviePlayer = makeMoviePlayer(_vm, filename);
+	_moviePlayer = makeMoviePlayer(filename, _vm, _vm->_mixer, _vm->_system);
 
-	if (_moviePlayer->load()) {
+	if (_moviePlayer->load(filename)) {
 		_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
 	}
 
@@ -2230,9 +2230,10 @@ int32 Logic::fnAddSequenceText(int32 *params) {
 	if (!readVar(DEMO)) {
 		assert(_sequenceTextLines < MAX_SEQUENCE_TEXT_LINES);
 
-		_sequenceTextList[_sequenceTextLines].textNumber = params[0];
-		_sequenceTextList[_sequenceTextLines].startFrame = params[1];
-		_sequenceTextList[_sequenceTextLines].endFrame = params[2];
+		_sequenceTextList[_sequenceTextLines].reset();
+		_sequenceTextList[_sequenceTextLines]._textNumber = params[0];
+		_sequenceTextList[_sequenceTextLines]._startFrame = params[1];
+		_sequenceTextList[_sequenceTextLines]._endFrame = params[2];
 		_sequenceTextLines++;
 	}
 

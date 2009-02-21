@@ -266,6 +266,7 @@ public:
 	void unpauseAllSound();
 
 	void playMovieSound(int32 res, int type);
+	void stopMovieSounds();
 
 	void queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan);
 	int32 playFx(FxQueueEntry *fx);

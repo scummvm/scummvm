@@ -217,6 +217,15 @@ void Sound::playMovieSound(int32 res, int type) {
 	_vm->_sound->playFx(handle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 }
 
+void Sound::stopMovieSounds() {
+	if (_vm->_mixer->isSoundHandleActive(_leadInHandle)) {
+		_vm->_mixer->stopHandle(_leadInHandle);
+	}
+	if (_vm->_mixer->isSoundHandleActive(_leadOutHandle)) {
+		_vm->_mixer->stopHandle(_leadOutHandle);
+	}
+}
+
 /**
  * Queue a sound effect for playing later.
  * @param res the sound resource number
