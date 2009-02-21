@@ -54,8 +54,9 @@ char *sci_strdup(const char *src) {
 	void *res;
 
 	if (!src) {
-		error("_SCI_STRDUP() [%s (%s) : %u]\n", __FILE__, "", __LINE__);
-		error(" attempt to strdup NULL pointer\n");
+		fprintf(stderr, "_SCI_STRDUP() [%s (%s) : %u]\n",
+		        __FILE__, "", __LINE__);
+		fprintf(stderr, " attempt to strdup NULL pointer\n");
 		BREAKPOINT();
 	}
 	ALLOC_MEM((res = strdup(src)), strlen(src), __FILE__, __LINE__, "")
@@ -69,8 +70,9 @@ char *sci_strndup(const char *src, size_t length) {
 	size_t rlen = (int)MIN(strlen(src), length) + 1;
 
 	if (!src) {
-		error("_SCI_STRNDUP() [%s (%s) : %u]\n", __FILE__, "", __LINE__);
-		error(" attempt to strndup NULL pointer\n");
+		fprintf(stderr, "_SCI_STRNDUP() [%s (%s) : %u]\n",
+		        __FILE__, "", __LINE__);
+		fprintf(stderr, " attempt to strndup NULL pointer\n");
 		BREAKPOINT();
 	}
 	ALLOC_MEM((res = malloc(rlen)), rlen, __FILE__, __LINE__, "")
@@ -99,7 +101,7 @@ char *sci_strndup(const char *src, size_t length) {
 extern void *sci_refcount_alloc(size_t length) {
 	guint32 *data = (guint32 *)sci_malloc(REFCOUNT_OVERHEAD + length);
 #ifdef TRACE_REFCOUNT
-	error("[] REF: Real-alloc at %p\n", data);
+	fprintf(stderr, "[] REF: Real-alloc at %p\n", data);
 #endif
 	data += 3;
 
@@ -107,7 +109,8 @@ extern void *sci_refcount_alloc(size_t length) {
 	data[-3] = REFCOUNT_MAGIC_LIVE_2;
 	REFCOUNT(data) = 1;
 #ifdef TRACE_REFCOUNT
-	error("[] REF: Alloc'd %p (ref=%d) OK=%d\n", data, REFCOUNT(data), REFCOUNT_CHECK(data));
+	fprintf(stderr, "[] REF: Alloc'd %p (ref=%d) OK=%d\n", data, REFCOUNT(data),
+	        REFCOUNT_CHECK(data));
 #endif
 	return data;
 }
@@ -119,14 +122,15 @@ extern void *sci_refcount_incref(void *data) {
 		REFCOUNT(data)++;
 
 #ifdef TRACE_REFCOUNT
-	error("[] REF: Inc'ing %p (now ref=%d)\n", data, REFCOUNT(data));
+	fprintf(stderr, "[] REF: Inc'ing %p (now ref=%d)\n", data, REFCOUNT(data));
 #endif
 	return data;
 }
 
 extern void sci_refcount_decref(void *data) {
 #ifdef TRACE_REFCOUNT
-	error("[] REF: Dec'ing %p (prev ref=%d) OK=%d\n", data, REFCOUNT(data), REFCOUNT_CHECK(data));
+	fprintf(stderr, "[] REF: Dec'ing %p (prev ref=%d) OK=%d\n", data, REFCOUNT(data),
+	        REFCOUNT_CHECK(data));
 #endif
 	if (!REFCOUNT_CHECK(data)) {
 		BREAKPOINT();
@@ -137,11 +141,11 @@ extern void sci_refcount_decref(void *data) {
 		fdata[-3] = REFCOUNT_MAGIC_DEAD_2;
 
 #ifdef TRACE_REFCOUNT
-		error("[] REF: Freeing (%p)...\n", fdata - 3);
+		fprintf(stderr, "[] REF: Freeing (%p)...\n", fdata - 3);
 #endif
 		free(fdata - 3);
 #ifdef TRACE_REFCOUNT
-		error("[] REF: Done.\n");
+		fprintf(stderr, "[] REF: Done.\n");
 #endif
 	}
 }

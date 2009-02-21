@@ -31,7 +31,7 @@ namespace Sci {
 #undef GFXW_DEBUG_DIRTY // Enable to debug dirty rectangle propagation (writes to stderr)
 
 #ifdef GFXW_DEBUG_DIRTY
-#  define DDIRTY error("%s:%5d| ", __FILE__, __LINE__); fprintf
+#  define DDIRTY fprintf(stderr, "%s:%5d| ", __FILE__, __LINE__); fprintf
 #else
 #  define DDIRTY if (0) fprintf
 #endif
@@ -48,7 +48,7 @@ int debug_widget_pos = 0;
 
 static void _gfxw_debug_add_widget(gfxw_widget_t *widget) {
 	if (debug_widget_pos == GFXW_DEBUG_WIDGETS) {
-		GFXERROR("WIDGET DEBUG: Allocated the maximum number of %d widgets- Aborting", GFXW_DEBUG_WIDGETS);
+		GFXERROR("WIDGET DEBUG: Allocated the maximum number of %d widgets- Aborting!\n", GFXW_DEBUG_WIDGETS);
 		BREAKPOINT();
 	}
 	debug_widgets[debug_widget_pos++] = widget;
@@ -66,12 +66,12 @@ static void _gfxw_debug_remove_widget(gfxw_widget_t *widget) {
 	}
 
 	if (found > 1) {
-		GFXERROR("While removing widget: Found it %d times", found);
+		GFXERROR("While removing widget: Found it %d times!\n", found);
 		BREAKPOINT();
 	}
 
 	if (found == 0) {
-		GFXERROR("Attempted removal of unregistered widget");
+		GFXERROR("Attempted removal of unregistered widget!\n");
 		BREAKPOINT();
 	}
 }
@@ -190,7 +190,7 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 
 		if (text->text_handle) {
 			if (!state) {
-				GFXERROR("Attempt to free text without supplying mode to free it from");
+				GFXERROR("Attempt to free text without supplying mode to free it from!\n");
 				BREAKPOINT();
 			} else {
 				gfxop_free_text(state, text->text_handle);
@@ -208,7 +208,7 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
   { \
 	  int retval = (_x); \
 	  if (retval == GFX_ERROR) { \
-		  GFXERROR("Error occured while drawing widget"); \
+		  GFXERROR("Error occured while drawing widget!\n"); \
 		  return 1; \
 	  } else if (retval == GFX_FATAL) { \
 		  GFXERROR("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
@@ -299,7 +299,7 @@ void gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_
 	gfxw_widget_t **seekerp;
 
 	if (!container) {
-		GFXERROR("Attempt to remove widget from NULL container");
+		GFXERROR("Attempt to remove widget from NULL container!\n");
 		BREAKPOINT();
 	}
 
@@ -317,7 +317,7 @@ void gfxw_remove_widget_from_container(gfxw_container_t *container, gfxw_widget_
 		seekerp = &((*seekerp)->next);
 
 	if (!*seekerp) {
-		GFXERROR("Internal error: Attempt to remove widget from container it was not contained in");
+		GFXERROR("Internal error: Attempt to remove widget from container it was not contained in!\n");
 		sciprintf("Widget:");
 		widget->print(GFXW(widget), 1);
 		sciprintf("Container:");
@@ -614,7 +614,7 @@ gfxw_view_t *_gfxw_new_simple_view(gfx_state_t *state, Common::Point pos, int vi
 	Common::Point offset;
 
 	if (!state) {
-		GFXERROR("Attempt to create view widget with NULL state");
+		GFXERROR("Attempt to create view widget with NULL state!\n");
 		return NULL;
 	}
 
@@ -849,7 +849,7 @@ gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z,
 	Common::Point offset;
 
 	if (!state) {
-		GFXERROR("Attempt to create view widget with NULL state");
+		GFXERROR("Attempt to create view widget with NULL state!\n");
 		return NULL;
 	}
 
@@ -1434,7 +1434,7 @@ static int _gfxwop_list_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 		return 0;
 
 	if (!GFXW_IS_LIST(widget)) {
-		GFXWARN("_gfxwop_list_equals(): Method called on non-list");
+		GFXWARN("_gfxwop_list_equals(): Method called on non-list!\n");
 		widget->print(widget, 0);
 		sciprintf("\n");
 		return 0;
@@ -1622,9 +1622,9 @@ static int _gfxwop_visual_print(gfxw_widget_t *widget, int indentation) {
 
 static int _gfxwop_visual_set_visual(gfxw_widget_t *self, gfxw_visual_t *visual) {
 	if (self != GFXW(visual)) {
-		GFXWARN("Attempt to set a visual's parent visual to something else");
+		GFXWARN("Attempt to set a visual's parent visual to something else!\n");
 	} else {
-		GFXWARN("Attempt to set a visual's parent visual");
+		GFXWARN("Attempt to set a visual's parent visual!\n");
 	}
 
 	return 1;
@@ -1709,7 +1709,7 @@ static int _gfxwop_port_free(gfxw_widget_t *widget) {
 		int ID = port->ID;
 
 		if (ID < 0 || ID >= visual->port_refs_nr) {
-			GFXWARN("Attempt to free port #%d; allowed: [0..%d]", ID, visual->port_refs_nr);
+			GFXWARN("Attempt to free port #%d; allowed: [0..%d]!\n", ID, visual->port_refs_nr);
 			return GFX_ERROR;
 		}
 
@@ -1783,7 +1783,7 @@ static int _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int pr
 		if (self->port_bg->superarea_of(self->port_bg, &foo)) {
 			gfxw_container_t *parent = self->parent;
 			while (parent) {
-				error("Dirtifying parent id %d\n", parent->ID);
+				fprintf(stderr, "Dirtifying parent id %d\n", parent->ID);
 				parent->flags |= GFXW_FLAG_DIRTY;
 				parent = parent->parent;
 			}

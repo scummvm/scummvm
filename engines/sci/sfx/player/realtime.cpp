@@ -27,7 +27,6 @@
 ** prays for some reasonable amount of soft real-time, but it's close
 ** enough, I guess.  */
 
-#include "common/util.h"
 #include "sci/include/sfx_player.h"
 #include "sci/sfx/sequencer.h"
 
@@ -161,7 +160,7 @@ find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
 		res = scir_find_resource(resmgr, sci_patch, patchfile, 0);
 		if (!res) {
-			error("[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
+			fprintf(stderr, "[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
 			        patchfile, seq_name);
 		}
 	}
@@ -185,7 +184,7 @@ rt_init(ResourceManager *resmgr, int expected_latency) {
 	seq = sfx_find_sequencer(NULL);
 
 	if (!seq) {
-		error("[SFX] " __FILE__": Could not find sequencer\n");
+		fprintf(stderr, "[SFX] " __FILE__": Could not find sequencer\n");
 		return SFX_ERROR;
 	}
 
@@ -202,7 +201,7 @@ rt_init(ResourceManager *resmgr, int expected_latency) {
 	              res2 ? res2->size : 0,
 	              res2 ? res2->data : NULL,
 	              seq_dev)) {
-		error("[SFX] " __FILE__": Sequencer failed to initialize\n");
+		fprintf(stderr, "[SFX] " __FILE__": Sequencer failed to initialize\n");
 		return SFX_ERROR;
 	}
 
@@ -236,7 +235,7 @@ rt_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 
 static int
 rt_fade_out(void) {
-	error(__FILE__": Attempt to fade out- not implemented yet\n");
+	fprintf(stderr, __FILE__": Attempt to fade out- not implemented yet\n");
 	return SFX_ERROR;
 }
 
@@ -289,7 +288,7 @@ rt_exit(void) {
 	int retval = SFX_OK;
 
 	if (seq->close()) {
-		error("[SFX] Sequencer reported error on close\n");
+		fprintf(stderr, "[SFX] Sequencer reported error on close\n");
 		retval = SFX_ERROR;
 	}
 

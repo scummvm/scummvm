@@ -170,12 +170,12 @@ reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l) {
-		error("Attempt to dispose non-list at "PREG"", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "Attempt to dispose non-list at "PREG"!\n", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if (!sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
 /*	if (!IS_NULL_REG(l->first)) {
 		reg_t n_addr = l->first;
@@ -220,7 +220,7 @@ reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_NULL_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->first;
@@ -232,7 +232,7 @@ reg_t kLastNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->last;
@@ -244,7 +244,7 @@ reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at "PREG" is invalid or not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is invalid or not sane anymore!\n", PRINT_REG(argv[0]));
 
 	return make_reg(0, ((l) ? IS_NULL_REG(l->first) : 0));
 }
@@ -256,9 +256,9 @@ inline void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
-		error("Attempt to add non-node ("PREG") to list at "PREG"", PRINT_REG(nodebase), PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at "PREG" is not sane anymore", PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = l->first;
 	new_n->pred = NULL_REG;
@@ -279,9 +279,9 @@ inline void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
-		error("Attempt to add non-node ("PREG") to list at "PREG"", PRINT_REG(nodebase), PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at "PREG" is not sane anymore", PRINT_REG(listbase));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = NULL_REG;
 	new_n->pred = l->last;
@@ -298,7 +298,7 @@ inline void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 		script_error_flag = script_debug_flag = 0;
 		return NULL_REG;
 	}
@@ -309,7 +309,7 @@ reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0]))
-		error("List node at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	return n->pred;
 }
@@ -317,7 +317,7 @@ reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at "PREG" is not sane", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List node at "PREG" is not sane!\n", PRINT_REG(argv[0]));
 		script_debug_flag = script_error_flag = 0;
 		return NULL_REG;
 	}
@@ -336,10 +336,10 @@ reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *newnode = LOOKUP_NODE(argv[2]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	if (!newnode) {
-		error("New 'node' "PREG" is not a node", PRINT_REG(argv[2]));
+		SCIkwarn(SCIkERROR, "New 'node' "PREG" is not a node!\n", argv[1], argv[2]);
 		return NULL_REG;
 	}
 
@@ -382,7 +382,7 @@ reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkNODES, "Looking for key "PREG" in list "PREG"\n", PRINT_REG(key), PRINT_REG(list_pos));
 
 	if (!sane_listp(s, list_pos))
-		error("List at "PREG" is not sane anymore", PRINT_REG(list_pos));
+		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(list_pos));
 
 	node_pos = LOOKUP_LIST(list_pos)->first;
 

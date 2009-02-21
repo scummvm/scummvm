@@ -149,7 +149,7 @@ void file_open(EngineState *s, char *filename, int mode) {
 			SCIkdebug(SCIkFILE, "Failed. Attempting to copy from resource dir...\n");
 			file = f_open_mirrored(s, filename);
 			if (file)
-				SCIkdebug(SCIkFILE, "Success");
+				SCIkdebug(SCIkFILE, "Success!\n");
 			else
 				SCIkdebug(SCIkFILE, "Not found.\n");
 		}
@@ -186,12 +186,12 @@ reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 static FILE *getFileFromHandle(EngineState *s, int handle) {
 	if (handle == 0) {
-		error("Attempt to use file handle 0");
+		SCIkwarn(SCIkERROR, "Attempt to use file handle 0\n");
 		return 0;
 	}
 
 	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		error("Attempt to use invalid/unused file handle %d", handle);
+		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
 		return 0;
 	}
 	
@@ -380,7 +380,7 @@ reg_t kDeviceInfo_Win32(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		error("Unknown DeviceInfo() sub-command: %d", mode);
+		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
 	}
 	}
 	return s->r_acc;
@@ -442,7 +442,7 @@ reg_t kDeviceInfo_Unix(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		error("Unknown DeviceInfo() sub-command: %d", mode);
+		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
 	}
 	}
 
@@ -670,13 +670,13 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			} else ++i;
 		}
 		if (savedir_id >= MAX_SAVEGAME_NR) {
-			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen", savedir_id);
+			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen!\n", savedir_id);
 			return NULL_REG;
 		}
 
 		// This loop terminates when savedir_id is not in [x | ex. n. _savegame_indices[n].id = x]
 	} else {
-		sciprintf("Savegame ID %d is not allowed", savedir_nr);
+		sciprintf("Savegame ID %d is not allowed!\n", savedir_nr);
 		return NULL_REG;
 	}
 
@@ -791,7 +791,7 @@ void next_file(EngineState *s) {
 
 void first_file(EngineState *s, const char *dir, char *mask, reg_t buffer) {
 	if (!buffer.segment) {
-		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked", dir, mask);
+		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n", dir, mask);
 		s->r_acc = NULL_REG;
 		return;
 	}
@@ -901,7 +901,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		error("Unknown FileIO() sub-command: %d", func_nr);
+		SCIkwarn(SCIkERROR, "Unknown FileIO() sub-command: %d\n", func_nr);
 	}
 
 	return s->r_acc;

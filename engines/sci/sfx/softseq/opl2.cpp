@@ -475,12 +475,12 @@ opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	gint16 *ptr = buffer;
 
 	if (!ready) {
-		error("synth_mixer(): !ready \n");
+		fprintf(stderr, "synth_mixer(): !ready \n");
 		exit(1);
 	}
 
 	if (!buffer) {
-		error("synth_mixer(): !buffer \n");
+		fprintf(stderr, "synth_mixer(): !buffer \n");
 		exit(1);
 	}
 
@@ -539,7 +539,7 @@ opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 
 	if (!(ym3812_L = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, SAMPLE_RATE)) ||
 	        !(ym3812_R = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, SAMPLE_RATE))) {
-		sciprintf("[sfx:seq:opl2] Failure: Emulator init failed");
+		sciprintf("[sfx:seq:opl2] Failure: Emulator init failed!\n");
 		return SFX_ERROR;
 	}
 

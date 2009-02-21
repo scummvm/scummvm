@@ -203,7 +203,7 @@ static void sm_set_script_size(mem_obj_t *mem, EngineState *s, int script_nr) {
 			sciprintf("Script and heap sizes combined exceed 64K.\n"
 			          "This means a fundamental design bug was made in FreeSCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
-			          "fixed in the next major version");
+			          "fixed in the next major version!\n");
 			return;
 		}
 	}
@@ -308,7 +308,8 @@ int _sm_deallocate(SegManager *self, int seg, int recursive) {
 		free(mobj->data.reserved);
 		break;
 	default:
-		error("Deallocating segment type %d not supported", mobj->type);
+		fprintf(stderr, "Deallocating segment type %d not supported!\n",
+		        mobj->type);
 		BREAKPOINT();
 	}
 
@@ -1320,8 +1321,9 @@ byte *sm_dereference(SegManager *self, reg_t pointer, int *size) {
 	int count;
 
 	if (!pointer.segment || (pointer.segment >= self->heap_size) || !self->heap[pointer.segment]) {
-		sciprintf("Error: Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
-		return NULL; // Invalid
+		sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
+		          PRINT_REG(pointer));
+		return NULL; /* Invalid */
 	}
 
 	mobj = self->heap[pointer.segment];
@@ -1359,17 +1361,22 @@ byte *sm_dereference(SegManager *self, reg_t pointer, int *size) {
 		if (pointer.offset < SYS_STRINGS_MAX && mobj->data.sys_strings.strings[pointer.offset].name)
 			return (byte *)(mobj->data.sys_strings.strings[pointer.offset].value);
 		else {
-			sciprintf("Error: Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
+			sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
+			          PRINT_REG(pointer));
 			return NULL;
 		}
 
 	case MEM_OBJ_RESERVED:
-		sciprintf("Error: Trying to dereference pointer "PREG" to reserved segment `%s'", PRINT_REG(pointer), mobj->data.reserved);
+		sciprintf("Error: Trying to dereference pointer "PREG" to reserved segment `%s'!\n",
+		          PRINT_REG(pointer),
+		          mobj->data.reserved);
 		return NULL;
 		break;
 
 	default:
-		sciprintf("Error: Trying to dereference pointer "PREG" to inappropriate segment", PRINT_REG(pointer));
+		sciprintf("Error: Trying to dereference pointer "PREG" to inappropriate"
+		          " segment!\n",
+		          PRINT_REG(pointer));
 		return NULL;
 	}
 
@@ -1484,11 +1491,11 @@ static void list_all_outgoing_references_script(seg_interface_t *self, EngineSta
 			for (i = 0; i < obj->variables_nr; i++)
 				(*note)(param, obj->variables[i]);
 		} else {
-			error("Request for outgoing script-object reference at "PREG" yielded invalid index %d", PRINT_REG(addr), idx);
+			fprintf(stderr, "Request for outgoing script-object reference at "PREG" yielded invalid index %d\n", PRINT_REG(addr), idx);
 		}
 	} else {
-		//error("Unexpected request for outgoing script-object references at "PREG"", PRINT_REG(addr));
-		// Happens e.g. when we're looking into strings
+		/*		fprintf(stderr, "Unexpected request for outgoing script-object references at "PREG"\n", PRINT_REG(addr));*/
+		/* Happens e.g. when we're looking into strings */
 	}
 }
 
@@ -1529,7 +1536,7 @@ static void list_all_outgoing_references_clones(seg_interface_t *self, EngineSta
 	assert(addr.segment == self->seg_id);
 
 	if (!(ENTRY_IS_VALID(clone_table, addr.offset))) {
-		error("Unexpected request for outgoing references from clone at "PREG"", PRINT_REG(addr));
+		fprintf(stderr, "Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
 //		BREAKPOINT();
 		return;
 	}
@@ -1619,12 +1626,10 @@ static seg_interface_t seg_interface_locals = {
 
 static void list_all_outgoing_references_stack(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	int i;
-
-	printf("Emitting %d stack entries\n", self->mobj->data.stack.nr);
+	fprintf(stderr, "Emitting %d stack entries\n", self->mobj->data.stack.nr);
 	for (i = 0; i < self->mobj->data.stack.nr; i++)
 		(*note)(param, self->mobj->data.stack.entries[i]);
-
-	error("DONE");
+	fprintf(stderr, "DONE");
 }
 
 //-------------------- stack --------------------
@@ -1665,7 +1670,7 @@ static void list_all_outgoing_references_list(seg_interface_t *self, EngineState
 	list_t *list = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		error("Invalid list referenced for outgoing references: "PREG"", PRINT_REG(addr));
+		fprintf(stderr, "Invalid list referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
 		return;
 	}
 
@@ -1702,7 +1707,7 @@ static void list_all_outgoing_references_nodes(seg_interface_t *self, EngineStat
 	node_t *node = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		error("Invalid node referenced for outgoing references: "PREG"", PRINT_REG(addr));
+		fprintf(stderr, "Invalid node referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
 		return;
 	}
 
@@ -1803,7 +1808,7 @@ seg_interface_t *get_seg_interface(SegManager *self, seg_id_t segid) {
 	memcpy(retval, seg_interfaces[mobj->type - 1], sizeof(seg_interface_t));
 
 	if (mobj->type != retval->type_id) {
-		error("Improper segment interface for %d", mobj->type);
+		fprintf(stderr, "Improper segment interface for %d", mobj->type);
 		exit(1);
 	}
 

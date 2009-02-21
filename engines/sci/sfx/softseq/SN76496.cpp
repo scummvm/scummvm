@@ -66,7 +66,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 	int i;
 	int chan = -1;
 #if 0
-	error("Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
+	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 	if ((command & 0xe0) == 0x80) {
 		int chan_nr = command & 0xf;
@@ -98,7 +98,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 		}
 	}
 #if 0
-	error(" --> %d [%04x], {%d,%d,%d}@%d\n", chan,
+	fprintf(stderr, " --> %d [%04x], {%d,%d,%d}@%d\n", chan,
 	        channels_assigned, chan_nrs[0], chan_nrs[1], chan_nrs[2], channel_assigner);
 #endif
 
@@ -127,7 +127,7 @@ SN76496_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 
 	default:
 #if DEBUG
-		error("[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
+		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 		break; /* ignore */
 	}

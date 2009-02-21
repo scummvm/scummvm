@@ -544,7 +544,7 @@ void con_parse(EngineState *s, const char *command) {
 							break;
 
 						default:
-							error("Internal error: Heap corruption or prior assertion failed:\n"
+							fprintf(stderr, "Internal error: Heap corruption or prior assertion failed:\n"
 							        "Unknown parameter type '%c' for funtion\n", paramtype);
 
 						}
@@ -552,8 +552,7 @@ void con_parse(EngineState *s, const char *command) {
 
 					if (do_execute) {
 						command_todo->command(s);
-					} else
-						error("Skipping command...\n");
+					} else fprintf(stderr, "Skipping command...\n");
 				}
 			}
 		}
@@ -836,7 +835,7 @@ static int c_list(EngineState *s) {
 				cmd_mm[mm_found].print((cmd_mm_entry_t *)(((byte *)cmd_mm[mm_found].data) + i * cmd_mm[mm_found].size_per_entry), 0);
 		else {
 			if (!s) {
-				sciprintf("You need a state to do that");
+				sciprintf("You need a state to do that!\n");
 				return 1;
 			}
 
@@ -963,14 +962,14 @@ static int c_hexgrep(EngineState *s) {
 	char *dot = strchr(cmd_params[0].str, '.');
 
 	if (NULL == s) {
-		error("console.c: c_hexgrep(): NULL passed for s\r\n");
+		fprintf(stderr, "console.c: c_hexgrep(): NULL passed for s\r\n");
 		return(-1);
 	}
 
 	seekstr = (unsigned char *)sci_malloc(seeklen = (cmd_paramlength - 1));
 
 	if (NULL == seekstr) {
-		error("console.c: c_hexgrep(): malloc failed for seekstr\r\n");
+		fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");
 		return(-1);
 	}
 
@@ -1039,7 +1038,7 @@ static int c_selectornames(EngineState * s) {
 	snames = vocabulary_get_snames(s->resmgr, &namectr, s ? s->version : 0);
 
 	if (!snames) {
-		sciprintf("No selector name table found");
+		sciprintf("No selector name table found!\n");
 		return 1;
 	}
 
@@ -1064,7 +1063,7 @@ static int c_kernelnames(EngineState * s) {
 	}
 
 	if (!knames) {
-		sciprintf("No kernel name table found");
+		sciprintf("No kernel name table found!\n");
 		return 1;
 	}
 

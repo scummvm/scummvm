@@ -25,7 +25,6 @@
 
 // Reads data from a resource file and stores the result in memory
 
-#include "common/util.h"
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
@@ -425,7 +424,7 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	for (l = 0;l < loopheaders;l++) {
 		if (lh_mask & lb) { // The loop is _not_ present
 			if (lh_last == -1) {
-				error("Error: While reordering view: Loop not present, but can't re-use last loop");
+				fprintf(stderr, "Error: While reordering view: Loop not present, but can't re-use last loop!\n");
 				lh_last = 0;
 			}
 			putInt16(lh_ptr, lh_last);
@@ -459,7 +458,7 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	}
 
 	if (celindex < cel_total) {
-		error("View decompression generated too few (%d / %d) headers", celindex, cel_total);
+		fprintf(stderr, "View decompression generated too few (%d / %d) headers!\n", celindex, cel_total);
 		return NULL;
 	}
 
@@ -542,9 +541,13 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	error("Resource %s.%03hi encrypted with method SCI01/%hi at %.2f%% ratio\n", sci_resource_types[result->type],
-			result->number, compressionMethod, (result->size == 0) ? -1.0 : (100.0 * compressedLength / result->size));
-	error("  compressedLength = 0x%hx, actualLength=0x%hx\n", compressedLength, result->size);
+	fprintf(stderr, "Resource %s.%03hi encrypted with method SCI01/%hi at %.2f%%"
+	        " ratio\n",
+	        sci_resource_types[result->type], result->number, compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
+	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	        compressedLength, result->size);
 #endif
 
 	switch (compressionMethod) {
@@ -611,8 +614,9 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 		break;
 
 	default:
-		error("Resource %s.%03hi: Compression method SCI1/%hi not supported", sci_resource_types[result->type],
-				result->number, compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;

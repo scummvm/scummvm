@@ -41,6 +41,7 @@ namespace Sci {
 #define SCIkPARSER_NR 10
 #define SCIkAVOIDPATH_NR 17
 
+#define SCIkERROR      s, __FILE__, __LINE__, SCIkERROR_NR
 #define SCIkNODES      s, __FILE__, __LINE__, 1
 #define SCIkGRAPHICS   s, __FILE__, __LINE__, 2
 #define SCIkSTRINGS    s, __FILE__, __LINE__, 3
@@ -77,8 +78,18 @@ namespace Sci {
 #endif /* !SCI_KERNEL_DEBUG */
 
 
+#ifdef __GNUC__XXX
 
-/* Internal functions */
+#define SCIkwarn(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__, ## arguments)
+
+#else /* !__GNUC__ */
+
+#define SCIkwarn _SCIkwarn
+
+#endif /* !__GNUC__ */
+
+ /* Internal functions */
+void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char *format, ...);
 void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char *format, ...);
 void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int line, int area, const char *format, ...);
 

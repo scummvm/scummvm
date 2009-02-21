@@ -25,9 +25,8 @@
 
 /* Polled player, mostly for PCM-based thingies (which _can_ poll, after all) */
 
-#include "common/file.h"
 #include "common/util.h"
-
+#include "common/file.h"
 #include "sci/include/sfx_player.h"
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"

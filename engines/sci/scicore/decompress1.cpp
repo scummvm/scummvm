@@ -71,7 +71,8 @@ static inline int getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n", inp->bytepos, morebytes, inp->length);
+		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -95,7 +96,8 @@ static inline int getbits(struct bit_read_struct *inp, int bits) {
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n", inp->bytepos, morebytes, inp->length);
+		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -109,7 +111,7 @@ static inline int getbits(struct bit_read_struct *inp, int bits) {
 	inp->bytepos += morebytes;
 
 	if (DEBUG_DCL_INFLATE)
-		error("(%d:%04x)", bits, result);
+		fprintf(stderr, "(%d:%04x)", bits, result);
 
 	return result;
 }
@@ -121,14 +123,14 @@ static int huffman_lookup(struct bit_read_struct *inp, int *tree) {
 	while (!(tree[pos] & HUFFMAN_LEAF)) {
 		CALLC(bit = getbits(inp, 1));
 		if (DEBUG_DCL_INFLATE)
-			error("[%d]:%d->", pos, bit);
+			fprintf(stderr, "[%d]:%d->", pos, bit);
 		if (bit)
 			pos = tree[pos] & ~(~0 << BRANCH_SHIFT);
 		else
 			pos = tree[pos] >> BRANCH_SHIFT;
 	}
 	if (DEBUG_DCL_INFLATE)
-		error("=%02x\n", tree[pos] & 0xffff);
+		fprintf(stderr, "=%02x\n", tree[pos] & 0xffff);
 	return tree[pos] & 0xffff;
 }
 
@@ -147,7 +149,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 		warning("DCL-INFLATE: Warning: Decompressing ASCII mode (untested)");
 		//DEBUG_DCL_INFLATE = 1;
 	} else if (mode) {
-		error("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
+		fprintf(stderr, "DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
 		return 1;
 	}
 
@@ -155,18 +157,18 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 		int i;
 
 		for (i = 0; i < reader->length; i++) {
-			error("%02x ", reader->data[i]);
+			fprintf(stderr, "%02x ", reader->data[i]);
 			if (!((i + 1) & 0x1f))
-				error("\n");
+				fprintf(stderr, "\n");
 		}
 
 
-		error("\n---\n");
+		fprintf(stderr, "\n---\n");
 	}
 
 
 	if (length_param < 3 || length_param > 6)
-		error("Warning: Unexpected length_param value %d (expected in [3,6])\n", length_param);
+		fprintf(stderr, "Warning: Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
 	while (write_pos < length) {
 		CALLC(value = getbits(reader, 1));
@@ -185,7 +187,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			}
 
 			if (DEBUG_DCL_INFLATE)
-				error(" | ");
+				fprintf(stderr, " | ");
 
 			CALLC(value = huffman_lookup(reader, distance_tree));
 
@@ -203,15 +205,15 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			++val_distance;
 
 			if (DEBUG_DCL_INFLATE)
-				error("\nCOPY(%d from %d)\n", val_length, val_distance);
+				fprintf(stderr, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
 			if (val_length + write_pos > length) {
-				error("DCL-INFLATE Error: Write out of bounds while copying %d bytes\n", val_length);
+				fprintf(stderr, "DCL-INFLATE Error: Write out of bounds while copying %d bytes\n", val_length);
 				return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 			}
 
 			if (write_pos < val_distance) {
-				error("DCL-INFLATE Error: Attempt to copy from before beginning of input stream\n");
+				fprintf(stderr, "DCL-INFLATE Error: Attempt to copy from before beginning of input stream\n");
 				return -SCI_ERROR_DECOMPRESSION_INSANE;
 			}
 
@@ -223,8 +225,8 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 				if (DEBUG_DCL_INFLATE) {
 					int i;
 					for (i = 0; i < copy_length; i++)
-						error("\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
-					error("\n");
+						fprintf(stderr, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
+					fprintf(stderr, "\n");
 				}
 
 				val_length -= copy_length;
@@ -242,7 +244,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			dest[write_pos++] = value;
 
 			if (DEBUG_DCL_INFLATE)
-				error("\33[32;31m%02x \33[37;37m", value);
+				fprintf(stderr, "\33[32;31m%02x \33[37;37m", value);
 		}
 	}
 
@@ -331,10 +333,15 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	error("Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%% ratio\n", result->number,
-			sci_resource_type_suffixes[result->type], early ? 'e' : 'l', compressionMethod,
-			(result->size == 0) ? -1.0 : (100.0 * compressedLength / result->size));
-	error("  compressedLength = 0x%hx, actualLength=0x%hx\n", compressedLength, result->size);
+	fprintf(stderr, "Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%%"
+	        " ratio\n",
+	        result->number, sci_resource_type_suffixes[result->type],
+	        early ? 'e' : 'l',
+	        compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
+	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	        compressedLength, result->size);
 #endif
 
 	switch (compressionMethod) {
@@ -400,8 +407,9 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		break;
 
 	default:
-		error("Resource %s.%03hi: Compression method SCI1/%hi not supported", sci_resource_types[result->type],
-				result->number, compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;

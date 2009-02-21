@@ -68,7 +68,7 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 		else {
 			tree = sbtree_new(entries_nr, resources);
 			if (!tree) {
-				GFXWARN("Failed to allocate tree for %d entries of resource type %d", entries_nr, i);
+				GFXWARN("Failed to allocate tree for %d entries of resource type %d!\n", entries_nr, i);
 			}
 			state->resource_trees[i] = tree;
 			free(resources);
@@ -274,7 +274,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 			pic = gfxr_interpreter_init_pic(state->version, state->driver->mode, GFXR_RES_ID(restype, nr), state->misc_payload);
 
 		if (!pic) {
-			GFXERROR("Failed to allocate scaled pic");
+			GFXERROR("Failed to allocate scaled pic!\n");
 			return NULL;
 		}
 
@@ -284,7 +284,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 			unscaled_pic = gfxr_interpreter_init_pic(state->version, &mode_1x1_color_index, GFXR_RES_ID(restype, nr),
 													state->misc_payload);
 			if (!unscaled_pic) {
-				GFXERROR("Failed to allocate unscaled pic");
+				GFXERROR("Failed to allocate unscaled pic!\n");
 				return NULL;
 			}
 			gfxr_interpreter_clear_pic(state->version, unscaled_pic, state->misc_payload);

@@ -120,7 +120,7 @@ gfx_bitmap_font_t *gfxr_scale_font_unfiltered(gfx_bitmap_font_t *orig_font, gfx_
 }
 
 gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter) {
-	GFXWARN("This function hasn't been tested yet");
+	GFXWARN("This function hasn't been tested yet!\n");
 
 	switch (filter) {
 
@@ -128,7 +128,7 @@ gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mod
 		return gfxr_scale_font_unfiltered(orig_font, mode);
 
 	default:
-		GFXERROR("Invalid font filter mode %d", filter);
+		GFXERROR("Invalid font filter mode %d!\n", filter);
 		return NULL;
 	}
 }
@@ -297,7 +297,7 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 		int ch = (int) text[i];
 
 		if (ch >= font->chars_nr) {
-			GFXERROR("Invalid character 0x%02x encountered", text[i]);
+			GFXERROR("Invalid character 0x%02x encountered!\n", text[i]);
 			return NULL;
 		}
 
@@ -308,7 +308,7 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 
 	pxm->colors_nr = !!fg0 + !!fg1 + !!bg;
 	if (pxm->colors_nr == 0) {
-		GFXWARN("Pixmap would have zero colors, resetting");
+		GFXWARN("Pixmap would have zero colors, resetting!\n");
 		pxm->colors_nr = 3;
 		hack = 1;
 		fg0 = fg1 = bg = &dummy;

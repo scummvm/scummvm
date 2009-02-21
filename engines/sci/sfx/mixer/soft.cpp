@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/util.h"
 #include "../mixer.h"
 #include "sci/include/sci_memory.h"
 
@@ -51,9 +50,9 @@ static volatile int mixer_lock = 0;
 
 /*#define DEBUG_LOCKS*/
 #ifdef DEBUG_LOCKS
-#  define DEBUG_ACQUIRE warning("[ -LOCK -] ACKQ %d: %d", __LINE__, mixer_lock)
-#  define DEBUG_WAIT warning("[ -LOCK -] WAIT %d: %d", __LINE__, mixer_lock);
-#  define DEBUG_RELEASE ; warning("[ -LOCK -] REL %d: %d", __LINE__, mixer_lock);
+#  define DEBUG_ACQUIRE fprintf(stderr, "[ -LOCK -] ACKQ %d: %d\n", __LINE__, mixer_lock)
+#  define DEBUG_WAIT fprintf(stderr, "[ -LOCK -] WAIT %d: %d\n", __LINE__, mixer_lock);
+#  define DEBUG_RELEASE ; fprintf(stderr, "[ -LOCK -] REL %d: %d\n", __LINE__, mixer_lock);
 #else
 #  define DEBUG_ACQUIRE
 #  define DEBUG_WAIT
@@ -167,7 +166,7 @@ mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	fs->buf_size = 2 + /* Additional safety */
 	               (self->dev->buf_size *
 	                (1 + (feed->conf.rate / self->dev->conf.rate)));
-	warning(" ---> %d/%d/%d/%d = %d",
+	fprintf(stderr, " ---> %d/%d/%d/%d = %d\n",
 	        self->dev->buf_size,
 	        feed->conf.rate,
 	        self->dev->conf.rate,
@@ -175,7 +174,7 @@ mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	        fs->buf_size);
 
 	fs->buf = (byte*)sci_malloc(fs->buf_size * feed->frame_size);
-	warning(" ---> --> %d for %p at %p", fs->buf_size * feed->frame_size, (void *)fs, (void *)fs->buf);
+	fprintf(stderr, " ---> --> %d for %p at %p\n", fs->buf_size * feed->frame_size, (void *)fs, (void *)fs->buf);
 	{
 		int i;
 		for (i = 0; i < fs->buf_size * feed->frame_size; i++)
@@ -235,7 +234,7 @@ _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 			}
 
 			for (i = 0; i < self->feeds_nr; i++)
-				warning("  Feed #%d: %s-%x",
+				fprintf(stderr, "  Feed #%d: %s-%x\n",
 				        i, self->feeds[i].feed->debug_name,
 				        self->feeds[i].feed->debug_nr);
 
@@ -243,7 +242,7 @@ _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 		}
 	}
 
-	error("[sfx-mixer] Assertion failed: Deleting invalid feed %p out of %d",
+	fprintf(stderr, "[sfx-mixer] Assertion failed: Deleting invalid feed %p out of %d\n",
 	        (void *)feed, self->feeds_nr);
 
 	BREAKPOINT();
@@ -415,7 +414,7 @@ mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 		return self->dev->buf_size;
 	}
 
-	/*	error("[%d:%d]S%d ", secs, usecs, P->skew);*/
+	/*	fprintf(stderr, "[%d:%d]S%d ", secs, usecs, P->skew);*/
 
 	if (P->skew > usecs) {
 		secs--;
@@ -428,7 +427,7 @@ mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 	played_frames = frame_pos - P->played_this_second
 	                + ((secs - P->lsec) * self->dev->conf.rate);
 	/*
-	error("%d:%d - %d:%d  => %d", secs, frame_pos,
+	fprintf(stderr, "%d:%d - %d:%d  => %d\n", secs, frame_pos,
 		P->lsec, P->played_this_second, played_frames);
 	*/
 
@@ -436,7 +435,7 @@ mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 		played_frames = self->dev->buf_size;
 
 	/*
-	error("Between %d:? offset=%d and %d:%d offset=%d: Played %d at %d", P->lsec, P->played_this_second,
+	fprintf(stderr, "Between %d:? offset=%d and %d:%d offset=%d: Played %d at %d\n", P->lsec, P->played_this_second,
 	secs, usecs, frame_pos, played_frames, self->dev->conf.rate);
 	*/
 
@@ -492,7 +491,7 @@ mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 	}
 
 	if (result_frames > self->dev->buf_size) {
-		error("[soft-mixer] Internal assertion failed: frames-to-write %d > %d",
+		fprintf(stderr, "[soft-mixer] Internal assertion failed: frames-to-write %d > %d\n",
 		        result_frames, self->dev->buf_size);
 	}
 	return result_frames;
@@ -587,7 +586,7 @@ mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	ts->secs = -1;
 
 	if (frames_nr > fs->buf_size) {
-		error("%d (%d*%d + somethign) bytes, but only %d allowed!!!!",
+		fprintf(stderr, "%d (%d*%d + somethign) bytes, but only %d allowed!!!!!\n",
 		        frames_nr * f->frame_size,
 		        fs->spd.val, len,
 		        fs->buf_size);
@@ -638,7 +637,7 @@ mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 			return;
 
 		default:
-			error("[soft-mixer] Fatal: Invalid mode returned by PCM feed %s-%d's get_timestamp(): %d",
+			fprintf(stderr, "[soft-mixer] Fatal: Invalid mode returned by PCM feed %s-%d's get_timestamp(): %d\n",
 			        f->debug_name, f->debug_nr, newmode);
 			exit(1);
 		}
@@ -791,7 +790,7 @@ mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 		xx_size = frames_left * f->frame_size;
 		if (xx_offset + xx_size
 		        >= fs->buf_size * f->frame_size) {
-			error("offset %d >= max %d",
+			fprintf(stderr, "offset %d >= max %d!\n",
 			        (xx_offset + xx_size), fs->buf_size * f->frame_size);
 			BREAKPOINT();
 		}

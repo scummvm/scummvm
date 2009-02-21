@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/util.h"
-
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -76,7 +74,7 @@ sfx_find_device(int type, char *name) {
 
 	if (dev) {
 		if (dev->init(dev)) {
-			error("[SFX] Opening device '%s' failed\n",
+			fprintf(stderr, "[SFX] Opening device '%s' failed\n",
 			        dev->name);
 			return NULL;
 		}

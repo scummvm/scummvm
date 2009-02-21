@@ -46,7 +46,8 @@ static inline int matches_patternlist(gfx_res_pattern_t *patterns, int nr, int v
 
 #ifdef DEBUG
 static void print_pattern(gfx_res_pattern_t *pat) {
-	error("[%d..%d]", pat->min, pat->max);
+	fprintf(stderr, "[%d..%d]",
+	        pat->min, pat->max);
 }
 #endif
 
@@ -54,24 +55,24 @@ static inline int resource_matches_patternlists(gfx_res_conf_t *conf, int type, 
 	int loc;
 #ifdef DEBUG
 	int i;
-
-	error("[DEBUG:gfx-res] Trying to match against %d/%d/%d choices\n", conf->patterns_nr, conf->loops_nr, conf->cels_nr);
+	fprintf(stderr, "[DEBUG:gfx-res] Trying to match against %d/%d/%d choices\n",
+	        conf->patterns_nr, conf->loops_nr, conf->cels_nr);
 	for (i = 0; i < conf->patterns_nr; i++) {
-		error("[DEBUG:gfx-res] Pat #%d: ", i);
+		fprintf(stderr, "[DEBUG:gfx-res] Pat #%d: ", i);
 		print_pattern(conf->patterns + i);
-		error("\n");
+		fprintf(stderr, "\n");
 	}
 	loc = conf->patterns_nr;
 	for (i = 0; i < conf->loops_nr; i++) {
-		error("[DEBUG:gfx-res] Loop #%d: ", i);
+		fprintf(stderr, "[DEBUG:gfx-res] Loop #%d: ", i);
 		print_pattern(conf->patterns + i + loc);
-		error("\n");
+		fprintf(stderr, "\n");
 	}
 	loc += conf->loops_nr;
 	for (i = 0; i < conf->cels_nr; i++) {
-		error("[DEBUG:gfx-res] Cel #%d: ", i);
+		fprintf(stderr, "[DEBUG:gfx-res] Cel #%d: ", i);
 		print_pattern(conf->patterns + i + loc);
-		error("\n");
+		fprintf(stderr, "\n");
 	}
 #endif
 	if (conf->patterns_nr && !matches_patternlist(conf->patterns, conf->patterns_nr, nr))
@@ -104,7 +105,7 @@ static inline gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int
 	while (conflist) {
 		if (resource_matches_patternlists(conflist, type, nr, loop, cel)) {
 #ifdef DEBUG
-			error("[DEBUG:gfx-res] Found match");
+			fprintf(stderr, "[DEBUG:gfx-res] Found match!\n");
 #endif
 			return conflist;
 		}
@@ -175,7 +176,8 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 	gfx_res_conf_t *conf;
 
 #ifdef DEBUG
-	error("[DEBUG:gfx-res] Trying to conf %d/%d/%d/%d (ID=%d)\n", restype, nr, loop, cel, pxm->ID);
+	fprintf(stderr, "[DEBUG:gfx-res] Trying to conf %d/%d/%d/%d (ID=%d)\n",
+	        restype, nr, loop, cel, pxm->ID);
 #endif
 
 	if (pxm->ID < 0 || restype < 0 || restype >= GFX_RESOURCE_TYPES_NR)

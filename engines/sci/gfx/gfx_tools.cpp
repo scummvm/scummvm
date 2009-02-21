@@ -183,7 +183,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	int size;
 
 	if (pixmap->index_data) {
-		GFXWARN("Attempt to allocate pixmap index data twice");
+		GFXWARN("Attempt to allocate pixmap index data twice!\n");
 		return pixmap;
 	}
 
@@ -200,7 +200,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 
 gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->index_data) {
-		GFXWARN("Attempt to free pixmap index data twice");
+		GFXWARN("Attempt to free pixmap index data twice!\n");
 		return pixmap;
 	}
 
@@ -213,7 +213,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	int size;
 
 	if (pixmap->data) {
-		GFXWARN("Attempt to allocate pixmap data twice");
+		GFXWARN("Attempt to allocate pixmap data twice!\n");
 		return pixmap;
 	}
 
@@ -235,7 +235,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 
 gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->data) {
-		GFXWARN("Attempt to free pixmap data twice");
+		GFXWARN("Attempt to free pixmap data twice!\n");
 		return pixmap;
 	}
 
@@ -256,14 +256,14 @@ int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		return GFX_OK;
 
 	if (pal->max_colors_nr <= 0) {
-		GFXERROR("Palette has zero or less color entries");
+		GFXERROR("Palette has zero or less color entries!\n");
 		return GFX_ERROR;
 	}
 
 
 	if (color->global_index != GFX_COLOR_INDEX_UNMAPPED) {
 #if 0
-		GFXDEBUG("Attempt to allocate color twice: index 0x%d (%02x/%02x/%02x)",
+		GFXDEBUG("Attempt to allocate color twice: index 0x%d (%02x/%02x/%02x)!\n",
 		         color->global_index, color->r, color->g, color->b);
 #endif
 		return GFX_OK;
@@ -317,7 +317,7 @@ int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		return GFX_OK;
 
 	if (color->global_index == GFX_COLOR_INDEX_UNMAPPED) {
-		GFXWARN("Attempt to free unmapped color %02x/%02x/%02x", color->r, color->g, color->b);
+		GFXWARN("Attempt to free unmapped color %02x/%02x/%02x!\n", color->r, color->g, color->b);
 		BREAKPOINT();
 		return GFX_ERROR;
 	}
@@ -361,7 +361,7 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 	old_data = pixmap->index_data;
 
 	if (!old_data) {
-		GFXERROR("Attempt to scale index data without index data");
+		GFXERROR("Attempt to scale index data without index data!\n");
 		return pixmap;
 	}
 

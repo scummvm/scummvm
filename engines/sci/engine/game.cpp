@@ -55,7 +55,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 	s->opcodes = vocabulary_get_opcodes(s->resmgr);
 
 	if (!(s->selector_names = vocabulary_get_snames(s->resmgr, NULL, s->version))) {
-		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)");
+		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
 		return 1;
 	}
 
@@ -152,7 +152,7 @@ int _reset_graphics_input(EngineState *s) {
 				_sci1_alloc_system_colors(s);
 				scir_unlock_resource(s->resmgr, resource, sci_palette, 999);
 			} else {
-				sciprintf("Couldn't find the default palette");
+				sciprintf("Couldn't find the default palette!\n");
 			}
 		}
 	}
@@ -330,7 +330,7 @@ int create_class_table_sci11(EngineState *s) {
 					classnr = getUInt16((byte*)seeker_ptr + 10);
 					if (classnr >= s->classtable_size) {
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
+							fprintf(stderr, "Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
 							        classnr, scriptnr, scriptnr, seeker_offset);
 							return 1;
 						}
@@ -404,7 +404,7 @@ static int create_class_table_sci0(EngineState *s) {
 					if (classnr >= s->classtable_size) {
 
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
+							fprintf(stderr, "Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
 							        classnr, scriptnr, scriptnr, seeker);
 							return 1;
 						}

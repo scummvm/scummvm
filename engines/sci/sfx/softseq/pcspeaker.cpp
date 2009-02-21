@@ -58,7 +58,7 @@ sps_exit(sfx_softseq_t *self) {
 static void
 sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 #if 0
-	error("Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
+	fprintf(stderr, "Note [%02x : %02x %02x]\n", command,  argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 
 	switch (command & 0xf0) {
@@ -84,7 +84,7 @@ sps_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 
 	default:
 #if DEBUG
-		error("[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
+		fprintf(stderr, "[SFX:PCM-PC] Unused MIDI command %02x %02x %02x\n", command, argc ? argv[0] : 0, (argc > 1) ? argv[1] : 0);
 #endif
 		break; /* ignore */
 	}

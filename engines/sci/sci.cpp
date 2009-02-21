@@ -122,7 +122,7 @@ init_gamestate(EngineState *gamestate, sci_version_t version) {
 		}
 
 		if (!recovered) {
-			error("Script initialization failed. Aborting...\n");
+			fprintf(stderr, "Script initialization failed. Aborting...\n");
 			return 1;
 		}
 	}
@@ -246,7 +246,7 @@ Common::Error SciEngine::go() {
 
 
 	if (game_init(gamestate)) { /* Initialize */
-		error("Game initialization failed: Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Aborting...\n");
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
 	}
@@ -292,17 +292,17 @@ Common::Error SciEngine::go() {
 	/**** Default config ends */
 
 	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
-		error("Graphics initialization failed. Aborting...\n");
+		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}
 
 	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
-		error("Game initialization failed: Error in GFX subsystem. Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Error in GFX subsystem. Aborting...\n");
 		return Common::kUnknownError;
 	}
 
 	if (game_init_sound(gamestate, 0)) {
-		error("Game initialization failed: Error in sound subsystem. Aborting...\n");
+		fprintf(stderr, "Game initialization failed: Error in sound subsystem. Aborting...\n");
 		return Common::kUnknownError;
 	}
 

@@ -147,8 +147,10 @@ static int sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
 	}
 
 #if 0
-	error("Read [%04x] %6d.%s\tresource.%03d, %08x\n", res->id, res->number,
-	        sci_resource_type_suffixes[res->type], res->file, res->file_offset);
+	fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x\n",
+	        res->id, res->number,
+	        sci_resource_type_suffixes[res->type],
+	        res->file, res->file_offset);
 #endif
 
 	if (res->source == NULL)
@@ -307,7 +309,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 	file.close();
 
 	if (!resource_index) {
-		sciprintf("resource.map was empty");
+		sciprintf("resource.map was empty!\n");
 		_scir_free_resources(resources, resource_nr);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
@@ -339,7 +341,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 	return 0;
 }
 
-#define TEST error("OK in line %d\n", __LINE__);
+#define TEST fprintf(stderr, "OK in line %d\n", __LINE__);
 
 static int sci10_or_11(int *types) {
 	int this_restype = 0;
@@ -464,7 +466,9 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 			}
 
 #if 0
-		error("Read [%04x] %6d.%s\tresource.%03d, %08x ==> %d\n", res->id, res->number, sci_resource_type_suffixes[res->type],
+		fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x ==> %d\n",
+		        res->id, res->number,
+		        sci_resource_type_suffixes[res->type],
 		        res->file, res->file_offset, addto);
 #endif
 
@@ -491,7 +495,7 @@ int main(int argc, char **argv) {
 	int notok = sci0_read_resource_map(".", &resources, &resource_nr);
 
 	if (notok) {
-		error("Failed: Error code %d\n", notok);
+		fprintf(stderr, "Failed: Error code %d\n", notok);
 		return 1;
 	}
 
@@ -507,7 +511,7 @@ int main(int argc, char **argv) {
 					sci_resource_types[res->type], res->number);
 		}
 	} else
-		error("Found no resources.\n");
+		fprintf(stderr, "Found no resources.\n");
 
 	return 0;
 }

@@ -78,7 +78,7 @@ inline void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, Co
 		return;
 
 	default:
-		GFXERROR("pixelwidth=%d not supported", pixelwidth);
+		GFXERROR("pixelwidth=%d not supported!\n", pixelwidth);
 		return;
 
 	}
@@ -350,7 +350,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 		alpha_mask = mode->alpha_mask;
 		if (!alpha_mask && pxm->alpha_map) {
-			GFXERROR("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white");
+			GFXERROR("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white!\n");
 			return GFX_ERROR;
 		}
 

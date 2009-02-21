@@ -76,14 +76,14 @@ void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, in
 	gfx_color_t black = s->ega_colors[0];
 
 	if (!status_bar->visual) {
-		GFXERROR("Attempt to change title bar without visual");
+		GFXERROR("Attempt to change title bar without visual!\n");
 		return;
 	}
 
 	state = status_bar->visual->gfx_state;
 
 	if (!state) {
-		GFXERROR("Attempt to change title bar with stateless visual");
+		GFXERROR("Attempt to change title bar with stateless visual!\n");
 		return;
 	}
 
@@ -211,7 +211,7 @@ gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t 
 
 		if (!(flags & WINDOW_FLAG_NO_DROP_SHADOW)) {
 			if (gfxop_set_color(state, &black, 0, 0, 0, 0x80, bgcolor.priority, -1)) {
-				GFXERROR("Could not get black/semitrans color entry");
+				GFXERROR("Could not get black/semitrans color entry!\n");
 				return NULL;
 			}
 
@@ -227,7 +227,7 @@ gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t 
 		// Draw frame
 
 		if (gfxop_set_color(state, &black, 0, 0, 0, 0, bgcolor.priority, -1)) {
-			GFXERROR("Could not get black color entry");
+			GFXERROR("Could not get black color entry!\n");
 			return NULL;
 		}
 
@@ -416,7 +416,7 @@ gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
 
 	if (!port->visual) {
-		GFXERROR("Attempting to create icon control for virtual port");
+		GFXERROR("Attempting to create icon control for virtual port!\n");
 		return NULL;
 	}
 

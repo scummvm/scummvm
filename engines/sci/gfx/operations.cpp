@@ -38,7 +38,7 @@ namespace Sci {
 // Enable to debug stuff relevant for dirty rectsin widget management
 
 #ifdef GFXW_DEBUG_DIRTY
-#  define DDIRTY error("%s:%5d| ", __FILE__, __LINE__); fprintf
+#  define DDIRTY fprintf(stderr, "%s:%5d| ", __FILE__, __LINE__); fprintf
 #else
 #  define DDIRTY if (0) fprintf
 #endif
@@ -61,19 +61,19 @@ gfx_pixmap_color_t default_colors[DEFAULT_COLORS_NR] = {{GFX_COLOR_SYSTEM, 0x00,
 // Performs basic checks that apply to most functions
 #define BASIC_CHECKS(error_retval) \
 if (!state) { \
-	GFXERROR("Null state"); \
+	GFXERROR("Null state!\n"); \
 	return error_retval; \
 } \
 if (!state->driver) { \
-	GFXERROR("GFX driver invalid"); \
+	GFXERROR("GFX driver invalid!\n"); \
 	return error_retval; \
 }
 
 // How to determine whether colors have to be allocated
 #define PALETTE_MODE state->driver->mode->palette
 
-#define DRAW_POINTER { int __x = _gfxop_draw_pointer(state); if (__x) { GFXERROR("Drawing the mouse pointer failed"); return __x;} }
-#define REMOVE_POINTER { int __x = _gfxop_remove_pointer(state); if (__x) { GFXERROR("Removing the mouse pointer failed"); return __x;} }
+#define DRAW_POINTER { int __x = _gfxop_draw_pointer(state); if (__x) { GFXERROR("Drawing the mouse pointer failed!\n"); return __x;} }
+#define REMOVE_POINTER { int __x = _gfxop_remove_pointer(state); if (__x) { GFXERROR("Removing the mouse pointer failed!\n"); return __x;} }
 
 //#define GFXOP_DEBUG_DIRTY
 
@@ -235,7 +235,7 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 			if ((error = driver->set_palette(driver, pxm->colors[i].global_index, pxm->colors[i].r,
 			                                 pxm->colors[i].g, pxm->colors[i].b))) {
 
-				GFXWARN("driver->set_palette(%d, %02x/%02x/%02x) failed",
+				GFXWARN("driver->set_palette(%d, %02x/%02x/%02x) failed!\n",
 				        pxm->colors[i].global_index, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
 
 				if (error == GFX_FATAL)
@@ -283,7 +283,7 @@ static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int prior
 	error = driver->draw_pixmap(driver, pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 
 	if (error) {
-		GFXERROR("driver->draw_pixmap() returned error");
+		GFXERROR("driver->draw_pixmap() returned error!\n");
 		return error;
 	}
 
@@ -432,7 +432,8 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 		box.yl = - box.yl;
 	}
 #ifdef GFXOP_DEBUG_DIRTY
-	error("Adding new dirty (%d %d %d %d)\n", GFX_PRINT_RECT(box));
+	fprintf(stderr, "Adding new dirty (%d %d %d %d)\n",
+	        GFX_PRINT_RECT(box));
 #endif
 	if (_gfxop_clip(&box, gfx_rect(0, 0, 320, 200)))
 		return base;
@@ -500,7 +501,8 @@ static int _gfxop_clear_dirty_rec(gfx_state_t *state, struct _dirty_rect *rect) 
 		return GFX_OK;
 
 #ifdef GFXOP_DEBUG_DIRTY
-	error("\tClearing dirty (%d %d %d %d)\n", GFX_PRINT_RECT(rect->rect));
+	fprintf(stderr, "\tClearing dirty (%d %d %d %d)\n",
+	        GFX_PRINT_RECT(rect->rect));
 #endif
 	if (!state->fullscreen_override)
 		retval = _gfxop_update_box(state, rect->rect);
@@ -526,7 +528,7 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 	state->options = options;
 
 	if (!((state->resstate = gfxr_new_resource_manager(state->version, state->options, state->driver, misc_payload)))) {
-		GFXERROR("Failed to initialize resource manager");
+		GFXERROR("Failed to initialize resource manager!\n");
 		return GFX_FATAL;
 	}
 
@@ -1169,7 +1171,7 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
 	else {
 		if (PALETTE_MODE) {
-			GFXWARN("Attempting to draw shaded box in palette mode");
+			GFXWARN("Attempting to draw shaded box in palette mode!\n");
 			return GFX_ERROR;
 		}
 
@@ -1261,7 +1263,7 @@ int gfxop_set_visible_map(gfx_state_t *state, gfx_map_mask_t visible_map) {
 		break;
 
 	default:
-		error("Invalid display map %d selected", visible_map);
+		fprintf(stderr, "Invalid display map %d selected!\n", visible_map);
 		return GFX_ERROR;
 	}
 
@@ -1289,7 +1291,7 @@ int gfxop_update(gfx_state_t *state) {
 	}
 
 	if (retval) {
-		GFXERROR("Clearing the dirty rectangles failed");
+		GFXERROR("Clearing the dirty rectangles failed!\n");
 	}
 
 	if (state->tag_mode) {
@@ -1335,7 +1337,7 @@ int gfxop_disable_dirty_frames(gfx_state_t *state) {
 #define MILLION 1000000
 // Sure, this may seem silly, but it's too easy to miss a zero...)
 
-#define GFXOP_FULL_POINTER_REFRESH if (_gfxop_full_pointer_refresh(state)) { GFXERROR("Failed to do full pointer refresh"); return GFX_ERROR; }
+#define GFXOP_FULL_POINTER_REFRESH if (_gfxop_full_pointer_refresh(state)) { GFXERROR("Failed to do full pointer refresh!\n"); return GFX_ERROR; }
 
 static int _gfxop_full_pointer_refresh(gfx_state_t *state) {
 	rect_t pointer_bounds;
@@ -1630,7 +1632,7 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 
 	BASIC_CHECKS(error_event);
 	if (_gfxop_remove_pointer(state)) {
-		GFXERROR("Failed to remove pointer before processing event");
+		GFXERROR("Failed to remove pointer before processing event!\n");
 	}
 
 	while (*seekerp && !((*seekerp)->event.type & mask))
@@ -1663,7 +1665,7 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 	}
 
 	if (_gfxop_full_pointer_refresh(state)) {
-		GFXERROR("Failed to update the mouse pointer");
+		GFXERROR("Failed to update the mouse pointer!\n");
 		return error_event;
 	}
 
@@ -1857,13 +1859,13 @@ int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette) {
 		state->pic_unscaled = gfxr_get_pic(state->resstate, nr, GFX_MASK_VISUAL, flags, default_palette, 0);
 
 	if (!state->pic || !state->pic_unscaled) {
-		GFXERROR("Could not retrieve background pic %d", nr);
+		GFXERROR("Could not retrieve background pic %d!\n", nr);
 		if (state->pic) {
-			GFXERROR("  -- Inconsistency: scaled pic _was_ retrieved");
+			GFXERROR("  -- Inconsistency: scaled pic _was_ retrieved!\n");
 		}
 
 		if (state->pic_unscaled) {
-			GFXERROR("  -- Inconsistency: unscaled pic _was_ retrieved");
+			GFXERROR("  -- Inconsistency: unscaled pic _was_ retrieved!\n");
 		}
 
 		state->pic = state->pic_unscaled = NULL;
@@ -1879,12 +1881,12 @@ int gfxop_add_to_pic(gfx_state_t *state, int nr, int flags, int default_palette)
 	BASIC_CHECKS(GFX_FATAL);
 
 	if (!state->pic) {
-		GFXERROR("Attempt to add to pic with no pic active");
+		GFXERROR("Attempt to add to pic with no pic active!\n");
 		return GFX_ERROR;
 	}
 
 	if (!(state->pic = gfxr_add_to_pic(state->resstate, state->pic_nr, nr, GFX_MASK_VISUAL, flags, state->palette_nr, default_palette, 1))) {
-		GFXERROR("Could not add pic #%d to pic #%d", state->pic_nr, nr);
+		GFXERROR("Could not add pic #%d to pic #%d!\n", state->pic_nr, nr);
 		return GFX_ERROR;
 	}
 	state->pic_unscaled = gfxr_add_to_pic(state->resstate, state->pic_nr, nr, GFX_MASK_VISUAL, flags,
@@ -2052,7 +2054,7 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 	REMOVE_POINTER;
 
 	if (!handle) {
-		GFXERROR("Attempt to draw text with NULL handle");
+		GFXERROR("Attempt to draw text with NULL handle!\n");
 		return GFX_ERROR;
 	}
 
@@ -2081,7 +2083,7 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		break;
 
 	default:
-		GFXERROR("Invalid vertical alignment %d", handle->valign);
+		GFXERROR("Invalid vertical alignment %d!\n", handle->valign);
 		return GFX_FATAL; // Internal error...
 	}
 
@@ -2114,7 +2116,7 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 			break;
 
 		default:
-			GFXERROR("Invalid vertical alignment %d", handle->valign);
+			GFXERROR("Invalid vertical alignment %d!\n", handle->valign);
 			return GFX_FATAL; // Internal error...
 		}
 
@@ -2137,7 +2139,7 @@ gfx_pixmap_t *gfxop_grab_pixmap(gfx_state_t *state, rect_t area) {
 	rect_t resultzone; // Ignored for this application
 	BASIC_CHECKS(NULL);
 	if (_gfxop_remove_pointer(state)) {
-		GFXERROR("Could not remove pointer");
+		GFXERROR("Could not remove pointer!\n");
 		return NULL;
 	}
 
@@ -2155,7 +2157,7 @@ int gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common
 	BASIC_CHECKS(GFX_ERROR);
 
 	if (!pxm) {
-		GFXERROR("Attempt to draw NULL pixmap");
+		GFXERROR("Attempt to draw NULL pixmap!\n");
 		return GFX_ERROR;
 	}
 

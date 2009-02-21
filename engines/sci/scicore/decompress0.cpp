@@ -27,7 +27,6 @@
 ** This is for SCI version 0 style compression.
 */
 
-#include "common/util.h"
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
@@ -100,7 +99,7 @@ int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
 				if (token > 0xff) {
 					if (token >= tokenctr) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						error("decrypt1: Bad token %x", token);
+						fprintf(stderr, "decrypt1: Bad token %x!\n", token);
 #endif
 						// Well this is really bad
 						// May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE
@@ -109,7 +108,7 @@ int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
 						if (destctr + tokenlastlength > length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 							// For me this seems a normal situation, It's necessary to handle it
-							printf("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
+							printf("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)!\n",
 							       length, destctr, tokenlastlength);
 #endif
 							i = 0;
@@ -126,7 +125,7 @@ int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
 					tokenlastlength = 1;
 					if (destctr >= length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						printf("decrypt1: Try to write single byte beyond end of array");
+						printf("decrypt1: Try to write single byte beyond end of array!\n");
 #endif
 					} else
 						dest[destctr++] = (byte)token;
@@ -289,9 +288,13 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	error("Resource %s.%03hi encrypted with method %hi at %.2f%% ratio\n", sci_resource_types[result->type],
-			result->number, compressionMethod, (result->size == 0) ? -1.0 : (100.0 * compressedLength / result->size));
-	error("  compressedLength = 0x%hx, actualLength=0x%hx\n", compressedLength, result->size);
+	fprintf(stderr, "Resource %s.%03hi encrypted with method %hi at %.2f%%"
+	        " ratio\n",
+	        sci_resource_types[result->type], result->number, compressionMethod,
+	        (result->size == 0) ? -1.0 :
+	        (100.0 * compressedLength / result->size));
+	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	        compressedLength, result->size);
 #endif
 
 	switch (compressionMethod) {
@@ -330,8 +333,9 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 		break;
 
 	default:
-		error("Resource %s.%03hi: Compression method %hi not supported", sci_resource_types[result->type],
-				result->number, compressionMethod);
+		fprintf(stderr, "Resource %s.%03hi: Compression method %hi not "
+		        "supported!\n", sci_resource_types[result->type], result->number,
+		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;

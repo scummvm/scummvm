@@ -101,7 +101,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 		seeker = 26 * 2; /* vocab.000 starts with 26 16-bit pointers which we don't use */
 
 	if (resource->size < seeker) {
-		error("Invalid main vocabulary encountered: Too small\n");
+		fprintf(stderr, "Invalid main vocabulary encountered: Too small\n");
 		return NULL;
 		/* Now this ought to be critical, but it'll just cause parse() and said() not to work */
 	}
@@ -199,7 +199,7 @@ vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	unsigned int seeker = 1;
 
 	if (!resource) {
-		error("Could not find suffix vocabulary");
+		fprintf(stderr, "Could not find suffix vocabulary!\n");
 		return NULL; /* Not critical */
 	}
 
@@ -271,14 +271,14 @@ vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
 	int i;
 
 	if (!resource) {
-		error("No parser tree data found");
+		fprintf(stderr, "No parser tree data found!\n");
 		return NULL;
 	}
 
 	*branches_nr = resource->size / 20;
 
 	if (*branches_nr == 0) {
-		error("Parser tree data is empty");
+		fprintf(stderr, "Parser tree data is empty!\n");
 		return NULL;
 	}
 

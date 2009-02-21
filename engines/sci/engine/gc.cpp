@@ -79,7 +79,7 @@ static reg_t worklist_pop(worklist_t **wlp) {
 	reg_t retval;
 
 	if (!wl || !wl->used) {
-		error("Attempt to pop from empty worklist");
+		fprintf(stderr, "Attempt to pop from empty worklist");
 		exit(1);
 	}
 

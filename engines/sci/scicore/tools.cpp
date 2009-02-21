@@ -50,10 +50,10 @@
 			Sleep(0); \
 		} else { \
 			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
-				error("timeBeginPeriod(1) failed\n"); \
+				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
 			Sleep(x); \
 			if (timeEndPeriod(1) != TIMERR_NOERROR) \
-				error("timeEndPeriod(1) failed\n"); \
+				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
 		} \
 	} while (0);
 #endif
@@ -112,11 +112,27 @@ int sci_ffs(int _mask) {
 
 // Functions for internal macro use
 void _SCIkvprintf(FILE *file, const char *format, va_list args);
-void _SCIkprintf(FILE *file, const char *format, ...)  GCC_PRINTF(2, 3);
 
 void _SCIkvprintf(FILE *file, const char *format, va_list args) {
 	vfprintf(file, format, args);
 	if (con_file) vfprintf(con_file, format, args);
+}
+
+
+void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char *format, ...) {
+	va_list args;
+
+	if (area == SCIkERROR_NR)
+		fprintf(stderr, "ERROR: ");
+	else
+		fprintf(stderr, "Warning: ");
+
+	va_start(args, format);
+	_SCIkvprintf(stderr, format, args);
+	va_end(args);
+	fflush(NULL);
+
+	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS) script_debug_flag = 1;
 }
 
 void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char *format, ...) {
@@ -174,13 +190,13 @@ void sci_gettime(long *seconds, long *useconds) {
 	DWORD tm;
 
 	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
-		error("timeBeginPeriod(1) failed in sci_gettime\n");
+		fprintf(stderr, "timeBeginPeriod(1) failed in sci_gettime\n");
 	}
 
 	tm = timeGetTime();
 
 	if (TIMERR_NOERROR != timeEndPeriod(1)) {
-		error("timeEndPeriod(1) failed in sci_gettime\n");
+		fprintf(stderr, "timeEndPeriod(1) failed in sci_gettime\n");
 	}
 
 	*seconds = tm / 1000;
@@ -283,7 +299,7 @@ char *sci_find_first(sci_dir_t *dir, const char *mask) {
 		closedir(dir->dir);
 
 	if (!(dir->dir = opendir("."))) {
-		sciprintf("%s, L%d: opendir(\".\") failed", __FILE__, __LINE__);
+		sciprintf("%s, L%d: opendir(\".\") failed!\n", __FILE__, __LINE__);
 		return NULL;
 	}
 
@@ -347,7 +363,7 @@ int sci_mkpath(const char *path) {
 					sciprintf("Error: Could not create subdirectory '%s' in", path_position);
 					if (next_separator)
 						*next_separator = G_DIR_SEPARATOR_S[0];
-					sciprintf(" '%s'", path);
+					sciprintf(" '%s'!\n", path);
 					return -2;
 				}
 			}
@@ -399,7 +415,7 @@ Common::String _fcaseseek(const char *fname) {
 	// free it afterwards  */
 
 	if (strchr(fname, G_DIR_SEPARATOR)) {
-		error("_fcaseseek() does not support subdirs\n");
+		fprintf(stderr, "_fcaseseek() does not support subdirs\n");
 		BREAKPOINT();
 	}
 
@@ -450,7 +466,7 @@ char *sci_getcwd() {
 		free(cwd);
 	}
 
-	error("Could not determine current working directory");
+	fprintf(stderr, "Could not determine current working directory!\n");
 
 	return NULL;
 }

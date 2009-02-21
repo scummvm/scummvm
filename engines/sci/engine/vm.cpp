@@ -75,14 +75,15 @@ static jmp_buf vm_error_address;
 static inline reg_t *validate_property(object_t *obj, int index) {
 	if (!obj) {
 		if (sci_debug_flags & 4)
-			sciprintf("[VM] Sending to disposed object");
+			sciprintf("[VM] Sending to disposed object!\n");
 		_dummy_register = NULL_REG;
 		return &_dummy_register;
 	}
 
 	if (index < 0 || index >= obj->variables_nr) {
 		if (sci_debug_flags & 4)
-			sciprintf("[VM] Invalid property #%d (out of [0..%d]) requested", index, obj->variables_nr);
+			sciprintf("[VM] Invalid property #%d (out of [0..%d]) requested!\n", index,
+			          obj->variables_nr);
 
 		_dummy_register = NULL_REG;
 		return &_dummy_register;
@@ -534,12 +535,12 @@ exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg
 #endif
 
 void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
-	error("Fatal VM error in %s, L%d; aborting...\n", file, line);
+	fprintf(stderr, "Fatal VM error in %s, L%d; aborting...\n", file, line);
 #ifdef HAVE_SETJMP_H
 	if (jump_initialized)
 		longjmp(vm_error_address, 0);
 #endif
-	error("Could not recover, exitting...\n");
+	fprintf(stderr, "Could not recover, exitting...\n");
 	exit(1);
 }
 
@@ -672,7 +673,7 @@ void run_vm(EngineState *s, int restoring) {
 			scr = script_locate_by_segment(s, xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
-				warning("Running on non-existant script in segment %x", xs->addr.pc.segment);
+				warning("Running on non-existant script in segment %x!\n", xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = 2;
@@ -814,7 +815,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to add two pointers, stack="PREG" and acc="PREG"", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
+						sciprintf("Error: Attempt to add two pointers, stack="PREG" and acc="PREG"!\n",
+						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 						script_debug_flag = script_error_flag = 1;
 						offset = 0;
 					} else {
@@ -840,7 +842,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to subtract two pointers, stack="PREG" and acc="PREG"", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
+						sciprintf("Error: Attempt to subtract two pointers, stack="PREG" and acc="PREG"!\n",
+						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 						script_debug_flag = script_error_flag = 1;
 						offset = 0;
 					} else {
