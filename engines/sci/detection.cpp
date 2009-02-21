@@ -1531,7 +1531,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 5502009},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(1, 000, 753)
+		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
 	},
 
 #if 0
