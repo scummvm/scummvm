@@ -393,7 +393,7 @@ static sci_event_t scummvm_get_event(struct _gfx_driver *drv) {
 				input.type = SCI_EVT_KEYBOARD;
 				// SCI_K_F1 == 59 << 8
 				// SCI_K_SHIFT_F1 == 84 << 8
-				input.data = (input.data - Common::KEYCODE_F1 + SCI_K_F1) << 8;
+				input.data = SCI_K_F1 + ((input.data - Common::KEYCODE_F1)<<8);
 				if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
 					input.character = input.data + ((SCI_K_SHIFT_F1 - SCI_K_F1) << 8);
 				else
