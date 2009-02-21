@@ -250,11 +250,6 @@ int is_print_str(char *str);
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);
 
-void sci_sched_yield(void);
-/* Yields the running process/thread to the scheduler
-** Parameters: (void)
-** Returns   : after a while.
-*/
 
 /* The following was originally based on glib.h code, which was
  * Copyright (C) 1995-1997  Peter Mattis, Spencer Kimball and Josh MacDonald

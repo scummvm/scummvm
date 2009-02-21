@@ -23,47 +23,26 @@
  *
  */
 
-#ifdef _MSC_VER
-#  include <sys/timeb.h>
-#  include <windows.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  undef ARRAYSIZE
-#endif
-
-#include "common/archive.h"
-#include "common/file.h"
-#include "common/util.h"
+#include "common/scummsys.h"
 
 #ifdef WIN32
 #  include <windows.h>
 #  include <errno.h>
 #  include <mmsystem.h>
-
-#	ifdef sleep
-#		undef sleep
-#	endif
-
-#	define sleep(x) \
-	do { \
-		if (x == 0) { \
-			Sleep(0); \
-		} else { \
-			if (timeBeginPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeBeginPeriod(1) failed\n"); \
-			Sleep(x); \
-			if (timeEndPeriod(1) != TIMERR_NOERROR) \
-				fprintf(stderr, "timeEndPeriod(1) failed\n"); \
-		} \
-	} while (0);
+#  include <sys/timeb.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  undef ARRAYSIZE
 #endif
-
-#include "common/scummsys.h"
-#include "common/str.h"
 
 #ifdef UNIX
 #include <fnmatch.h>
 #endif
+
+#include "common/archive.h"
+#include "common/file.h"
+#include "common/util.h"
+#include "common/str.h"
 
 #include "sci/include/engine.h"
 
@@ -81,10 +60,6 @@ namespace Sci {
 
 #ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-#endif
-
-#ifdef __DC__
-#  include <kos/thread.h>
 #endif
 
 int script_debug_flag = 0; // Defaulting to running mode
@@ -374,34 +349,6 @@ int sci_mkpath(const char *path) {
 
 	return 0;
 }
-
-//-- Yielding to the scheduler --
-
-#ifdef HAVE_SCHED_YIELD
-#  include <sched.h>
-
-void sci_sched_yield() {
-	sched_yield();
-}
-
-#elif defined (__DC__)
-
-void sci_sched_yield() {
-	thd_pass();
-}
-
-#elif defined (WIN32)
-
-void sci_sched_yield() {
-	sleep(1);
-}
-
-#else
-
-void sci_sched_yield() {
-}
-
-#endif
 
 
 /* Returns the case-sensitive filename of a file.

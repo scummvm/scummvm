@@ -39,8 +39,6 @@ namespace Sci {
 #define INTERCOL(a, b) ((int) sqrt((((3.3 * (a))*(a)) + ((1.7 * (b))*(b))) / 5.0))
 // Macro for color interpolation
 
-#define SCI_PIC0_MAX_FILL 30 // Number of times to fill before yielding to scheduler
-
 #define SCI0_MAX_PALETTE 2
 
 int sci0_palette = 0;
@@ -1310,7 +1308,6 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int temp;
 	int line_mode = style->line_mode;
 	int sci_titlebar_size = style->pic_port_bounds.y;
-	int fill_count = 0;
 	byte op, opx;
 
 #ifdef FILL_RECURSIVE_DEBUG
@@ -1463,11 +1460,6 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 #endif
 					_gfxr_fill_1(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
 					             color : 0, priority, control, drawenable, sci_titlebar_size);
-
-				if (fill_count++ > SCI_PIC0_MAX_FILL) {
-					sci_sched_yield();
-					fill_count = 0;
-				}
 
 #ifdef FILL_RECURSIVE_DEBUG
 				if (!fillmagc) {
