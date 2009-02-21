@@ -6,6 +6,7 @@
 	ProjectGUID="{53F17B2B-0412-4EC3-A999-ED0537BB5223}"
 	RootNamespace="sci"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -322,7 +323,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_driver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_options.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_res_options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_resmgr.h"
 				>
 			</File>
 			<File
@@ -330,11 +347,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_state_internal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_support.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_system.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_tools.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_tools.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_widgets.h"
 				>
 			</File>
 			<File
@@ -351,6 +388,10 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\sbtree.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\sbtree.h"
 				>
 			</File>
 			<File
@@ -590,46 +631,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\gfx_driver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_operations.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_res_options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_resmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_state_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_system.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_tools.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\gfx_widgets.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\heapmgr.h"
 				>
 			</File>
@@ -647,10 +648,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\menubar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sbtree.h"
 				>
 			</File>
 			<File
@@ -679,42 +676,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\script.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_core.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_engine.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_iterator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_iterator_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_pcm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_player.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_songlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_time.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sfx_timer.h"
 				>
 			</File>
 			<File

@@ -6,6 +6,7 @@
 	ProjectGUID="{D4986356-D0BB-4981-924A-854157BDF11F}"
 	RootNamespace="touche"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

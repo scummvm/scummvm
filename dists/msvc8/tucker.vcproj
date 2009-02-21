@@ -6,6 +6,7 @@
 	ProjectGUID="{FF064FD0-AF6E-11DD-AD8B-0800200C9A66}"
 	RootNamespace="tucker"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

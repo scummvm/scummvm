@@ -6,6 +6,7 @@
 	ProjectGUID="{C8AAE83E-198B-4ECA-A877-166827953979}"
 	RootNamespace="sword1"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

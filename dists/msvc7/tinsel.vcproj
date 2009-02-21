@@ -4,18 +4,40 @@
 	Version="7,00"
 	Name="tinsel"
 	ProjectGUID="{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
-	Keyword="Win32Proj">
+	#RootNamespace="tinsel"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="tinsel_Debug"
 			IntermediateDirectory="tinsel_Debug"
 			ConfigurationType="4"
-			CharacterSet="2">
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -36,24 +58,36 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/tinsel.lib"/>
+				OutputFile="$(OutDir)/tinsel.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -61,7 +95,23 @@
 			IntermediateDirectory="tinsel_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="TRUE"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -82,290 +132,392 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/tinsel.lib"/>
+				OutputFile="$(OutDir)/tinsel.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\tinsel\actors.cpp">
+			RelativePath="..\..\engines\tinsel\actors.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\actors.h">
+			RelativePath="..\..\engines\tinsel\actors.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\anim.cpp">
+			RelativePath="..\..\engines\tinsel\anim.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\anim.h">
+			RelativePath="..\..\engines\tinsel\anim.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\background.cpp">
+			RelativePath="..\..\engines\tinsel\background.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\background.h">
+			RelativePath="..\..\engines\tinsel\background.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\bg.cpp">
+			RelativePath="..\..\engines\tinsel\bg.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\bmv.cpp">
+			RelativePath="..\..\engines\tinsel\bmv.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\cliprect.cpp">
+			RelativePath="..\..\engines\tinsel\cliprect.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\cliprect.h">
+			RelativePath="..\..\engines\tinsel\cliprect.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\config.cpp">
+			RelativePath="..\..\engines\tinsel\config.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\config.h">
+			RelativePath="..\..\engines\tinsel\config.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\coroutine.h">
+			RelativePath="..\..\engines\tinsel\coroutine.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\cursor.cpp">
+			RelativePath="..\..\engines\tinsel\cursor.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\cursor.h">
+			RelativePath="..\..\engines\tinsel\cursor.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\debugger.cpp">
+			RelativePath="..\..\engines\tinsel\debugger.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\debugger.h">
+			RelativePath="..\..\engines\tinsel\debugger.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\detection.cpp">
+			RelativePath="..\..\engines\tinsel\detection.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\dialogs.cpp">
+			RelativePath="..\..\engines\tinsel\dialogs.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\dialogs.h">
+			RelativePath="..\..\engines\tinsel\dialogs.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\drives.cpp">
+			RelativePath="..\..\engines\tinsel\drives.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\drives.h">
+			RelativePath="..\..\engines\tinsel\drives.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\dw.h">
+			RelativePath="..\..\engines\tinsel\dw.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\effect.cpp">
+			RelativePath="..\..\engines\tinsel\effect.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\events.cpp">
+			RelativePath="..\..\engines\tinsel\events.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\events.h">
+			RelativePath="..\..\engines\tinsel\events.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\faders.cpp">
+			RelativePath="..\..\engines\tinsel\faders.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\faders.h">
+			RelativePath="..\..\engines\tinsel\faders.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\film.h">
+			RelativePath="..\..\engines\tinsel\film.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\font.cpp">
+			RelativePath="..\..\engines\tinsel\font.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\font.h">
+			RelativePath="..\..\engines\tinsel\font.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\graphics.cpp">
+			RelativePath="..\..\engines\tinsel\graphics.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\graphics.h">
+			RelativePath="..\..\engines\tinsel\graphics.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\handle.cpp">
+			RelativePath="..\..\engines\tinsel\handle.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\handle.h">
+			RelativePath="..\..\engines\tinsel\handle.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\heapmem.cpp">
+			RelativePath="..\..\engines\tinsel\heapmem.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\heapmem.h">
+			RelativePath="..\..\engines\tinsel\heapmem.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\mareels.cpp">
+			RelativePath="..\..\engines\tinsel\mareels.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\mareels.h">
+			RelativePath="..\..\engines\tinsel\mareels.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\move.cpp">
+			RelativePath="..\..\engines\tinsel\move.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\move.h">
+			RelativePath="..\..\engines\tinsel\move.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\multiobj.cpp">
+			RelativePath="..\..\engines\tinsel\multiobj.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\multiobj.h">
+			RelativePath="..\..\engines\tinsel\multiobj.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\music.cpp">
+			RelativePath="..\..\engines\tinsel\music.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\music.h">
+			RelativePath="..\..\engines\tinsel\music.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\object.cpp">
+			RelativePath="..\..\engines\tinsel\object.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\object.h">
+			RelativePath="..\..\engines\tinsel\object.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\palette.cpp">
+			RelativePath="..\..\engines\tinsel\palette.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\palette.h">
+			RelativePath="..\..\engines\tinsel\palette.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\pcode.cpp">
+			RelativePath="..\..\engines\tinsel\pcode.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\pcode.h">
+			RelativePath="..\..\engines\tinsel\pcode.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\pdisplay.cpp">
+			RelativePath="..\..\engines\tinsel\pdisplay.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\pdisplay.h">
+			RelativePath="..\..\engines\tinsel\pdisplay.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\pid.h">
+			RelativePath="..\..\engines\tinsel\pid.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\play.cpp">
+			RelativePath="..\..\engines\tinsel\play.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\play.h">
+			RelativePath="..\..\engines\tinsel\play.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\polygons.cpp">
+			RelativePath="..\..\engines\tinsel\polygons.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\polygons.h">
+			RelativePath="..\..\engines\tinsel\polygons.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\rince.cpp">
+			RelativePath="..\..\engines\tinsel\rince.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\rince.h">
+			RelativePath="..\..\engines\tinsel\rince.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\saveload.cpp">
+			RelativePath="..\..\engines\tinsel\saveload.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\savescn.cpp">
+			RelativePath="..\..\engines\tinsel\savescn.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\savescn.h">
+			RelativePath="..\..\engines\tinsel\savescn.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scene.cpp">
+			RelativePath="..\..\engines\tinsel\scene.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scene.h">
+			RelativePath="..\..\engines\tinsel\scene.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sched.cpp">
+			RelativePath="..\..\engines\tinsel\sched.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sched.h">
+			RelativePath="..\..\engines\tinsel\sched.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scn.cpp">
+			RelativePath="..\..\engines\tinsel\scn.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scn.h">
+			RelativePath="..\..\engines\tinsel\scn.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scroll.cpp">
+			RelativePath="..\..\engines\tinsel\scroll.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\scroll.h">
+			RelativePath="..\..\engines\tinsel\scroll.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\serializer.h">
+			RelativePath="..\..\engines\tinsel\serializer.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sound.cpp">
+			RelativePath="..\..\engines\tinsel\sound.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sound.h">
+			RelativePath="..\..\engines\tinsel\sound.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\strres.cpp">
+			RelativePath="..\..\engines\tinsel\strres.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\strres.h">
+			RelativePath="..\..\engines\tinsel\strres.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sysvar.cpp">
+			RelativePath="..\..\engines\tinsel\sysvar.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\sysvar.h">
+			RelativePath="..\..\engines\tinsel\sysvar.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\text.cpp">
+			RelativePath="..\..\engines\tinsel\text.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\text.h">
+			RelativePath="..\..\engines\tinsel\text.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\timers.cpp">
+			RelativePath="..\..\engines\tinsel\timers.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\timers.h">
+			RelativePath="..\..\engines\tinsel\timers.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\tinlib.cpp">
+			RelativePath="..\..\engines\tinsel\tinlib.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\tinlib.h">
+			RelativePath="..\..\engines\tinsel\tinlib.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\tinsel.cpp">
+			RelativePath="..\..\engines\tinsel\tinsel.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\tinsel.h">
+			RelativePath="..\..\engines\tinsel\tinsel.h"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\token.cpp">
+			RelativePath="..\..\engines\tinsel\token.cpp"
+			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\token.h">
+			RelativePath="..\..\engines\tinsel\token.h"
+			>
 		</File>
 	</Files>
 	<Globals>

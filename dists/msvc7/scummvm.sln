@@ -1,4 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scummvm", "scummvm.vcproj", "{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8863B00B-059A-471E-876D-A955ECEFD0D2} = {8863B00B-059A-471E-876D-A955ECEFD0D2}
@@ -177,9 +178,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
 	EndGlobalSection
 EndGlobal

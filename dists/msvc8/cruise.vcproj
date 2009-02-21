@@ -6,6 +6,7 @@
 	ProjectGUID="{8863B00B-059A-471E-876D-A955ECEFD0D2}"
 	RootNamespace="cruise"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

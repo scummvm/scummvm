@@ -6,6 +6,7 @@
 	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
 	RootNamespace="agos"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

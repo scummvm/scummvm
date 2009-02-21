@@ -6,6 +6,7 @@
 	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
 	RootNamespace="cine"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

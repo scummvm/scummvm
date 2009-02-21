@@ -6,6 +6,7 @@
 	ProjectGUID="{2C1EA540-0B09-11DD-BD00-000000000000}"
 	RootNamespace="groovie"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

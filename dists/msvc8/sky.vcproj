@@ -6,6 +6,7 @@
 	ProjectGUID="{B5527758-2F51-4CCD-AAE1-B0E28654BD6A}"
 	RootNamespace="sky"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

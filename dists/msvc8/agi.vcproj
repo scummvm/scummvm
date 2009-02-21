@@ -6,6 +6,7 @@
 	ProjectGUID="{F5F57066-CDF4-4F80-B9E7-7F4D21850D6E}"
 	RootNamespace="agi"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

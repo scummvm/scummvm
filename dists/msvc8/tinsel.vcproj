@@ -6,6 +6,7 @@
 	ProjectGUID="{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
 	RootNamespace="tinsel"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
