@@ -1377,7 +1377,7 @@ int gfxop_usleep(gfx_state_t *state, long usecs) {
 	do {
 		GFXOP_FULL_POINTER_REFRESH;
 		time = g_system->getMillis();
-		usecs = 1000l * (wakeup_time - time);
+		usecs = 1000 * ((long)wakeup_time - (long)time);
 	} while ((usecs > 0) && !(retval = state->driver->usec_sleep(state->driver, usecs)));
 
 	if (retval) {
