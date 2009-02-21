@@ -53,7 +53,7 @@ static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point star
 	finalx = end.x;
 	finaly = end.y;
 #ifdef SCUMM_BIG_ENDIAN
-	color = GUINT32_SWAP_LE_BE_CONSTANT(color);
+	color = SWAP_BYTES_32(color);
 #endif
 	dx = abs(dx);
 	dy = abs(dy);

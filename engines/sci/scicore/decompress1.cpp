@@ -267,49 +267,39 @@ int decrypt3(guint8* dest, guint8* src, int length, int complength);
 
 int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
-	uint16 compressionMethod, result_size;
+	uint16 compressionMethod;
 	uint8 *buffer;
-	uint8 tempid;
 
 	if (sci_version == SCI_VERSION_1_EARLY) {
-		if (stream.read(&(result->id), 2) != 2)
+		result->id = stream.readUint16LE();
+		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-		result->id = GUINT16_SWAP_LE_BE_CONSTANT(result->id);
-#endif
 
 		result->number = result->id & 0x07ff;
 		result->type = result->id >> 11;
 
+		// FIXME: Shouldn't it be SCI_VERSION_1_EARLY instead of SCI_VERSION_1_LATE?
 		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	} else {
-		if (stream.read(&tempid, 1) != 1)
+		result->id = stream.readByte();
+		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
-
-		result->id = tempid;
 
 		result->type = result->id & 0x7f;
-		if (stream.read(&(result->number), 2) != 2)
+		result->number = stream.readUint16LE();
+		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
 
-#ifdef SCUMM_BIG_ENDIAN
-		result->number = GUINT16_SWAP_LE_BE_CONSTANT(result->number);
-#endif
 		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	}
 
-	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
+	compressedLength = stream.readUint16LE();
+	result->size = stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
-	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
-	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
-#endif
-	result->size = result_size;
 
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;

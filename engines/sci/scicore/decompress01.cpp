@@ -488,16 +488,13 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 }
 
 int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version) {
-	uint16 compressedLength, result_size;
+	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;
 
-	if (stream.read(&(result->id), 2) != 2)
+	result->id = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	result->id = GUINT16_SWAP_LE_BE_CONSTANT(result->id);
-#endif
 
 	result->number = result->id & 0x07ff;
 	result->type = result->id >> 11;
@@ -505,15 +502,11 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 	if ((result->number > sci_max_resource_nr[sci_version] || (result->type > sci_invalid_resource)))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
+	compressedLength = stream.readUint16LE();
+	result->size = stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
-	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
-	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
-#endif
-	result->size = result_size;
 
 	//if ((result->size < 0) || (compressedLength < 0))
 	//	return SCI_ERROR_DECOMPRESSION_INSANE;

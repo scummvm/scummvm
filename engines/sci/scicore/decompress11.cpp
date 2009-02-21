@@ -38,36 +38,25 @@ int decrypt4(guint8* dest, guint8* src, int length, int complength);
 
 int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	guint16 compressedLength;
-	guint16 compressionMethod, result_size;
+	guint16 compressionMethod;
 	guint8 *buffer;
-	guint8 tempid;
 
 	DDEBUG("d1");
 
-	if (stream.read(&tempid, 1) != 1)
+	result->id = stream.readByte();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-	result->id = tempid;
 
 	result->type = result->id & 0x7f;
-	if (stream.read(&(result->number), 2) != 2)
-		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	result->number = GUINT16_SWAP_LE_BE_CONSTANT(result->number);
-#endif
 	if ((result->type > sci_invalid_resource))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
+	result->number = stream.readUint16LE();
+	compressedLength = stream.readUint16LE();
+	result->size = stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
-	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
-	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
-#endif
-	result->size = result_size;
 
 	//if ((result->size < 0) || (compressedLength < 0))
 	//	return SCI_ERROR_DECOMPRESSION_INSANE;

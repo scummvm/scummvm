@@ -37,8 +37,8 @@
 
 namespace Sci {
 
+/** The maximum allowed size for a compressed or decompressed resource */
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
-/* The maximum allowed size for a compressed or decompressed resource */
 
 /*** RESOURCE STATUS TYPES ***/
 #define SCI_STATUS_NOMALLOC 0

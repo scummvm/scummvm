@@ -76,33 +76,10 @@
 #endif
 
 
-#define GUINT16_SWAP_LE_BE_CONSTANT(val) ((((val) & 0x00ff) << 8) | (((val) & 0xff00) >> 8))
-
-#define GUINT32_SWAP_LE_BE_CONSTANT(val)  ( \
-                                             (((val) & 0xff000000) >> 24) \
-                                           | (((val) & 0x00ff0000) >> 8) \
-                                           | (((val) & 0x0000ff00) << 8) \
-                                           | (((val) & 0x000000ff) << 24))
-
-#define SCI_MAX_RESOURCE_SIZE 0x0400000
-/* The maximum allowed size for a compressed or decompressed resource */
-
-
-
 #ifdef WIN32
 #  define FO_BINARY "b"
 #else
 #  define FO_BINARY ""
-#endif
-
-#ifdef WIN32
-#  define FO_TEXT "t"
-#else
-#  define FO_TEXT ""
-#endif
-
-#ifndef O_BINARY
-#  define O_BINARY 0
 #endif
 
 namespace Sci {

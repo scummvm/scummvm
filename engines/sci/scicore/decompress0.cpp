@@ -219,20 +219,14 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength) {
 // Carl Muckenhoupt's decompression code ends here
 
 int sci0_get_compression_method(Common::ReadStream &stream) {
-	guint16 compressedLength;
 	guint16 compressionMethod;
-	guint16 result_size;
 
-	// Dummy variable
-	if (stream.read(&result_size, 2) != 2)
+	stream.readUint16LE();
+	stream.readUint16LE();
+	stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
-		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
-#endif
 
 	return compressionMethod;
 }
@@ -240,30 +234,23 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
-	uint16 result_size;
 	uint8 *buffer;
 
-	if (stream.read(&(result->id), 2) != 2)
+	result->id = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
 
-#ifdef SCUMM_BIG_ENDIAN
-	result->id = GUINT16_SWAP_LE_BE_CONSTANT(result->id);
-#endif
 	result->number = result->id & 0x07ff;
 	result->type = result->id >> 11;
 
 	if ((result->number > sci_max_resource_nr[sci_version]) || (result->type > sci_invalid_resource))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
+	compressedLength = stream.readUint16LE();
+	result->size = stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-#ifdef SCUMM_BIG_ENDIAN
-	compressedLength = GUINT16_SWAP_LE_BE_CONSTANT(compressedLength);
-	result_size = GUINT16_SWAP_LE_BE_CONSTANT(result_size);
-	compressionMethod = GUINT16_SWAP_LE_BE_CONSTANT(compressionMethod);
-#endif
-	result->size = result_size;
 
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
