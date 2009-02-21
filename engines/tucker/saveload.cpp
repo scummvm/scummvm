@@ -95,6 +95,7 @@ Common::Error TuckerEngine::loadGameState(int num) {
 				_nextLocationNum = _locationNum;
 				setBlackPalette();
 				loadBudSpr(0);
+				_forceRedrawPanelItems = true;
 			}
 		}
 		delete f;
