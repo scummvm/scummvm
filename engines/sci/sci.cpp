@@ -173,8 +173,7 @@ Common::Error SciEngine::init() {
 	initGraphics(320, 200, false);
 
 	// Create debugger console. It requires GFX to be initialized
-	// FIXME: Enabling this leads to an unresolved external symbol during linking...
-	//_console = new Console(this);
+	_console = new Console(this);
 
 	// Additional setup.
 	printf("SciEngine::init\n");

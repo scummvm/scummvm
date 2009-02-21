@@ -30,7 +30,7 @@
 
 #include "sci/tools.h"
 #include "sci/include/vocabulary.h"
-#include "sci/include/console.h"
+#include "sci/include/sciconsole.h"
 
 namespace Sci {
 

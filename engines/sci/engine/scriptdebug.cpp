@@ -49,7 +49,7 @@
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
-#include "sci/include/console.h"
+#include "sci/include/sciconsole.h"
 #include "sci/include/kdebug.h"
 #include "sci/include/vocabulary.h"
 #include "sci/engine/kernel_types.h"

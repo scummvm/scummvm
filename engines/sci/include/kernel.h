@@ -33,7 +33,7 @@
 #include "sci/include/uinput.h"
 #include "sci/include/event.h"
 #include "sci/include/vm.h"
-#include "sci/include/console.h" /* sciprintf() */
+#include "sci/include/sciconsole.h" /* sciprintf() */
 
 namespace Sci {
 

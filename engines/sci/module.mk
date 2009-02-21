@@ -53,7 +53,7 @@ MODULE_OBJS = \
 	gfx/resource/sci_view_0.o \
 	gfx/resource/sci_view_1.o \
 	scicore/aatree.o \
-	scicore/console.o \
+	scicore/sciconsole.o \
 	scicore/decompress0.o \
 	scicore/decompress01.o \
 	scicore/decompress1.o \
