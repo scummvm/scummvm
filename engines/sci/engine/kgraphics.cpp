@@ -234,7 +234,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		} while (parent && (gfxw_widget_matches_snapshot(*ptr, GFXW(parent))));
 
 		if (!parent) {
-			error("Attempted widget mass destruction by a snapshot\n");
+			error("Attempted widget mass destruction by a snapshot");
 			BREAKPOINT();
 		}
 
@@ -712,7 +712,7 @@ void _k_dirloop(reg_t obj, word angle, EngineState *s, int funct_nr, int argc, r
 	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
 
 	if (maxloops == GFX_ERROR) {
-		error("Invalid view.%03d\n", view);
+		error("Invalid view.%03d", view);
 		return;
 	} else if ((loop > 1) && (maxloops < 4))
 		return;
@@ -903,7 +903,7 @@ reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid\n", loop, cel, view, view);
+		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
 		return NULL_REG;
 	} else
 		return make_reg(0, height);
@@ -921,7 +921,7 @@ reg_t kCelWide(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid\n", loop, cel, view, view);
+		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
 		return NULL_REG;
 	} else
 		return make_reg(0, width);
@@ -933,7 +933,7 @@ reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
 
 	if (loops_nr < 0) {
-		error("view.%d (0x%x) not found\n", view, view);
+		error("view.%d (0x%x) not found", view, view);
 		return NULL_REG;
 	}
 
@@ -952,7 +952,7 @@ reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) { 
 		// OK, this is a hack and there's a
 		// real function to calculate cel numbers...
-		error("view.%d (0x%x) not found\n", view, view);
+		error("view.%d (0x%x) not found", view, view);
 		return NULL_REG;
 	}
 
@@ -1056,10 +1056,11 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (sci01_priority_table_flags & 0x2) {
 		if (s->pic_priority_table) {
 			int i;
-			error("---------------------------\nPriority table:\n");
+			printf("---------------------------\nPriority table:\n");
 			for (i = 0; i < 16; i++)
-				error("\t%d:\t%d\n", i, s->pic_priority_table[i]);
-			error("---------------------------\n");
+				printf("\t%d:\t%d\n", i, s->pic_priority_table[i]);
+			printf("---------------------------\n");
+			error("Error");
 		}
 	}
 	if (sci01_priority_table_flags & 0x1)
@@ -1721,19 +1722,19 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 				temp = GET_SEL32V(obj, nsBottom);
 				PUT_SEL32V(obj, lsBottom, temp);
 #ifdef DEBUG_LSRECT
-				error("lsRected "PREG"\n", PRINT_REG(obj));
+				error("lsRected "PREG"", PRINT_REG(obj));
 #endif
 			}
 #ifdef DEBUG_LSRECT
 			else 
-				error("Not lsRecting "PREG" because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
+				error("Not lsRecting "PREG" because %d", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				widget->signal |= _K_VIEW_SIG_FLAG_REMOVE;
 		}
 #ifdef DEBUG_LSRECT
-		error("obj "PREG" has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
+		error("obj "PREG" has pflags %x", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
 #endif
 
 		if (widget->signalp) {
@@ -1785,7 +1786,7 @@ int _k_view_list_dispose_loop(EngineState *s, list_t *list, gfxw_dyn_view_t *wid
 				reg_t under_bits = NULL_REG;
 
 				if (!is_object(s, obj)) {
-					error("Non-object "PREG" present in view list during delete time\n", PRINT_REG(obj));
+					error("Non-object "PREG" present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else
 					if (widget->under_bitsp) { // Is there a bg picture left to clean?
@@ -1940,7 +1941,7 @@ static void _k_make_view_list(EngineState *s, gfxw_list_t **widget_list, list_t 
 	gfxw_dyn_view_t *widget;
 
 	if (!*widget_list) {
-		error("make_view_list with widget_list == ()\n");
+		error("make_view_list with widget_list == ()");
 		BREAKPOINT();
 	};
 
@@ -2068,7 +2069,7 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 		// Never happens
 /*		if (view->signal & 0) {
 			view->signal &= ~_K_VIEW_SIG_FLAG_FREESCI_STOPUPD;
-			error("Unsetting magic StopUpd for view "PREG"\n", PRINT_REG(obj));
+			error("Unsetting magic StopUpd for view "PREG"", PRINT_REG(obj));
 		} */
 
 		view = (gfxw_dyn_view_t *) view->next;
@@ -2267,7 +2268,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0));
 
 		if (!widget) {
-			error("Attempt to single-add invalid picview (%d/%d/%d)\n", view, loop, cel);
+			error("Attempt to single-add invalid picview (%d/%d/%d)", view, loop, cel);
 		} else {
 			widget->ID = -1;
 			if (control >= 0) {
@@ -2331,7 +2332,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		new_port = gfxw_find_port(s->visual, port_nr);
 
 		if (!new_port) {
-			error("Invalid port %04x requested\n", port_nr);
+			error("Invalid port %04x requested", port_nr);
 			return NULL_REG;
 		}
 
@@ -2359,7 +2360,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		error("SetPort was called with %d parameters\n", argc);
+		error("SetPort was called with %d parameters", argc);
 		break;
 	}
 
@@ -2388,13 +2389,13 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 /*
 	if (!view) {
-		error("Attempt to draw non-existing view.%03d\n", view);
+		error("Attempt to draw non-existing view.%03d", view);
 		return;
 	}
 */
 
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		error("Attempt to draw non-existing view.%03d\n", view);
+		error("Attempt to draw non-existing view.%03d", view);
 		return s->r_acc;
 	}
 
@@ -2422,7 +2423,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_widget_kill_chrono(s->visual, goner_nr);
 	goner = gfxw_find_port(s->visual, goner_nr);
 	if ((goner_nr < 3) || (goner == NULL)) {
-		error("Removal of invalid window %04x requested\n", goner_nr);
+		error("Removal of invalid window %04x requested", goner_nr);
 		return s->r_acc;
 	}
 

@@ -71,7 +71,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == SELECTOR_NONE) {
-		error("Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
+		error("Selector '%s' of object at "PREG" could not be invoked (%s L%d)",
 		         s->selector_names[selector_id], PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
@@ -198,7 +198,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	word underBits;
 
 	if (!victim_obj) {
-		error("Attempt to dispose non-class/object at "PREG"\n",
+		error("Attempt to dispose non-class/object at "PREG"",
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
@@ -246,12 +246,12 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	scr = &(s->seg_manager.heap[scriptid]->data.script);
 
 	if (!scr->exports_nr) {
-		error("Script 0x%x does not have a dispatch table\n", script);
+		error("Script 0x%x does not have a dispatch table", script);
 		return NULL_REG;
 	}
 
 	if (index > scr->exports_nr) {
-		error("Dispatch index too big: %d > %d\n", index, scr->exports_nr);
+		error("Dispatch index too big: %d > %d", index, scr->exports_nr);
 		return NULL_REG;
 	}
 

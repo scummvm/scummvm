@@ -947,7 +947,7 @@ kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 
 		case SI_RELATIVE_CUE:
-			error("[CUE] "PREG" Relative Cue: %d\n",
+			error("[CUE] "PREG" Relative Cue: %d",
 			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);

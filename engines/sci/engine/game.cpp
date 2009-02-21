@@ -330,7 +330,7 @@ int create_class_table_sci11(EngineState *s) {
 					classnr = getUInt16((byte*)seeker_ptr + 10);
 					if (classnr >= s->classtable_size) {
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
 							        classnr, scriptnr, scriptnr, seeker_offset);
 							return 1;
 						}
@@ -404,7 +404,7 @@ static int create_class_table_sci0(EngineState *s) {
 					if (classnr >= s->classtable_size) {
 
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							error("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
 							        classnr, scriptnr, scriptnr, seeker);
 							return 1;
 						}

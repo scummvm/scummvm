@@ -1484,10 +1484,10 @@ static void list_all_outgoing_references_script(seg_interface_t *self, EngineSta
 			for (i = 0; i < obj->variables_nr; i++)
 				(*note)(param, obj->variables[i]);
 		} else {
-			error("Request for outgoing script-object reference at "PREG" yielded invalid index %d\n", PRINT_REG(addr), idx);
+			error("Request for outgoing script-object reference at "PREG" yielded invalid index %d", PRINT_REG(addr), idx);
 		}
 	} else {
-		//error("Unexpected request for outgoing script-object references at "PREG"\n", PRINT_REG(addr));
+		//error("Unexpected request for outgoing script-object references at "PREG"", PRINT_REG(addr));
 		// Happens e.g. when we're looking into strings
 	}
 }
@@ -1529,7 +1529,7 @@ static void list_all_outgoing_references_clones(seg_interface_t *self, EngineSta
 	assert(addr.segment == self->seg_id);
 
 	if (!(ENTRY_IS_VALID(clone_table, addr.offset))) {
-		error("Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
+		error("Unexpected request for outgoing references from clone at "PREG"", PRINT_REG(addr));
 //		BREAKPOINT();
 		return;
 	}
@@ -1620,7 +1620,7 @@ static seg_interface_t seg_interface_locals = {
 static void list_all_outgoing_references_stack(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	int i;
 
-	error("Emitting %d stack entries\n", self->mobj->data.stack.nr);
+	printf("Emitting %d stack entries\n", self->mobj->data.stack.nr);
 	for (i = 0; i < self->mobj->data.stack.nr; i++)
 		(*note)(param, self->mobj->data.stack.entries[i]);
 
@@ -1665,7 +1665,7 @@ static void list_all_outgoing_references_list(seg_interface_t *self, EngineState
 	list_t *list = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		error("Invalid list referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
+		error("Invalid list referenced for outgoing references: "PREG"", PRINT_REG(addr));
 		return;
 	}
 
@@ -1702,7 +1702,7 @@ static void list_all_outgoing_references_nodes(seg_interface_t *self, EngineStat
 	node_t *node = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		error("Invalid node referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
+		error("Invalid node referenced for outgoing references: "PREG"", PRINT_REG(addr));
 		return;
 	}
 

@@ -380,7 +380,7 @@ reg_t kDeviceInfo_Win32(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		error("Unknown DeviceInfo() sub-command: %d\n", mode);
+		error("Unknown DeviceInfo() sub-command: %d", mode);
 	}
 	}
 	return s->r_acc;
@@ -442,7 +442,7 @@ reg_t kDeviceInfo_Unix(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	break;
 	default: {
-		error("Unknown DeviceInfo() sub-command: %d\n", mode);
+		error("Unknown DeviceInfo() sub-command: %d", mode);
 	}
 	}
 

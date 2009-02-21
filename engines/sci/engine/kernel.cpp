@@ -356,7 +356,7 @@ static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Nod
 
 int kernel_oops(EngineState *s, const char *file, int line, const char *reason) {
 	sciprintf("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
-	error("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
+	error("Kernel Oops in file %s, line %d: %s", file, line, reason);
 	script_debug_flag = script_error_flag = 1;
 	return 0;
 }
@@ -389,7 +389,7 @@ byte *kmem(EngineState *s, reg_t handle) {
 	hunk_table_t *ht = &(mobj->data.hunks);
 
 	if (!mobj || !ENTRY_IS_VALID(ht, handle.offset)) {
-		error("Error: kmem() with invalid handle\n");
+		error("Error: kmem() with invalid handle");
 		return NULL;
 	}
 
@@ -477,7 +477,7 @@ reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	run_gc(s);
 	// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-	debugC(2, Sci::kDebugLevelRoom, "Entering room number %d\n", UKPV(0));
+	debugC(2, Sci::kDebugLevelRoom, "Entering room number %d", UKPV(0));
 	return s->r_acc;
 }
 
@@ -525,13 +525,13 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (argc) { // Get seconds since last am/pm switch
 			retval = loc_time->tm_sec + loc_time->tm_min * 60 + (loc_time->tm_hour % 12) * 3600;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(timeofday) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		} else { // Get time since game started
 			sci_get_current_time(&time_prec);
 			retval = ((time_prec.tv_usec - s->game_start_time.tv_usec) * 60 / 1000000) +
 			         (time_prec.tv_sec - s->game_start_time.tv_sec) * 60;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		}
 	} else {
 		int mode = UKPV_OR_ALT(0, 0);	
@@ -544,26 +544,26 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			retval = ((time_prec.tv_usec - s->game_start_time.tv_usec) * 60 / 1000000) +
 			         (time_prec.tv_sec - s->game_start_time.tv_sec) * 60;
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_12HOUR : {
 			loc_time->tm_hour %= 12;
 			retval = (loc_time->tm_min << 6) | (loc_time->tm_hour << 12) | (loc_time->tm_sec);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(12h) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(12h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_24HOUR : {
 			retval = (loc_time->tm_min << 5) | (loc_time->tm_sec >> 1) | (loc_time->tm_hour << 11);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(24h) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(24h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_DATE : {
 			retval = (loc_time->tm_mon << 5) | loc_time->tm_mday | (loc_time->tm_year << 9);
 			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(date) returns %d\n", retval);
+			debugC(2, Sci::kDebugLevelTime, "GetTime(date) returns %d", retval);
 			break;
 		}
 		default: {
@@ -587,7 +587,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() critical", &s->r_acc)) {
-			error("Critical heap allocation failed\n");
+			error("Critical heap allocation failed");
 			script_error_flag = script_debug_flag = 1;
 		}
 		return s->r_acc;

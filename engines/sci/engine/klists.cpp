@@ -256,7 +256,7 @@ inline void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
-		error("Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		error("Attempt to add non-node ("PREG") to list at "PREG"", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
 		error("List at "PREG" is not sane anymore", PRINT_REG(listbase));
 
@@ -279,7 +279,7 @@ inline void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	if (!new_n)
-		error("Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		error("Attempt to add non-node ("PREG") to list at "PREG"", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
 		error("List at "PREG" is not sane anymore", PRINT_REG(listbase));
 

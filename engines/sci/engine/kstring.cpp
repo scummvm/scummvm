@@ -33,7 +33,7 @@ namespace Sci {
 
 #define CHECK_OVERFLOW1(pt, size, rv) \
 	if (((pt) - (str_base)) + (size) > maxsize) { \
-		error("String expansion exceeded heap boundaries\n"); \
+		error("String expansion exceeded heap boundaries"); \
 		return rv;\
 	}
 
@@ -64,7 +64,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 		if (textlen)
 			return seeker;
 		else {
-			error("Index %d out of bounds in text.%03d\n", _index, address.offset);
+			error("Index %d out of bounds in text.%03d", _index, address.offset);
 			return 0;
 		}
 
@@ -697,7 +697,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 	if (!textres) {
-		error("text.%d does not exist\n", UKPV(0));
+		error("text.%d does not exist", UKPV(0));
 		return NULL_REG;
 	}
 

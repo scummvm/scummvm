@@ -435,7 +435,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (invoke_selector(INV_SEL(client, isBlocked, 1) , 0)) {
 		error("Client "PREG" of avoider "PREG" doesn't"
-		         " have an isBlocked() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
+		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
@@ -466,7 +466,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			if (invoke_selector(INV_SEL(client, canBeHere, 1) , 0)) {
 				error("Client "PREG" of avoider "PREG" doesn't"
-				         " have a canBeHere() funcselector\n", PRINT_REG(client), PRINT_REG(avoider));
+				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 				return NULL_REG;
 			}
 
@@ -500,7 +500,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (looper.segment) {
 			if (invoke_selector(INV_SEL(looper, doit, 1), 2, angle, client)) {
 				error("Looper "PREG" of avoider "PREG" doesn't"
-				         " have a doit() funcselector\n", PRINT_REG(looper), PRINT_REG(avoider));
+				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
 			} else
 				return s->r_acc;
 		} else {
