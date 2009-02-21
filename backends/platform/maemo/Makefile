@@ -6,7 +6,7 @@ all:
 SRCDIR = ../../..
 
 config:
-	cd $(SRCDIR) ; CXXFLAGS="-Os -mcpu=arm926ej-s -fomit-frame-pointer -DMAEMO_SDL" ./configure  --host=arm-linux --prefix=/usr --disable-debug --disable-mt32emu  --disable-hq-scalers --with-tremor-prefix=/usr --enable-tremor --with-zlib-prefix=/usr --enable-zlib --with-mad-prefix=/usr --enable-mad --enable-flac --disable-fluidsynth
+	cd $(SRCDIR) ; CXXFLAGS="-Os -mcpu=arm926ej-s -fomit-frame-pointer -DMAEMO_SDL -I/usr/X11R6/include" ./configure  --host=arm-linux --prefix=/usr --disable-debug --disable-mt32emu  --disable-hq-scalers --with-tremor-prefix=/usr --enable-tremor --with-zlib-prefix=/usr --enable-zlib --with-mad-prefix=/usr --enable-mad --enable-flac --disable-fluidsynth
 
 scummvm:
 	cd $(SRCDIR) ; make

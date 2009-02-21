@@ -708,10 +708,10 @@ public:
 	}
 
 	virtual void enter() {
-		_vm->_soundMan->stopMusic();
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		if (!_isDemo) {
+			_vm->_soundMan->stopMusic();
 			int label = _vm->_gfx->createLabel(_vm->_menuFont, "CLICK MOUSE BUTTON TO START", 1);
 			_vm->_gfx->showLabel(label, CENTER_LABEL_HORIZONTAL, 80);
 		}

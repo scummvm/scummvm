@@ -356,7 +356,8 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	uint32 useFlags = 0;
 	bool useLocalFlags;
 
-	_ctxt.suspend = false;
+	_suspend = false;
+	_running = true;
 
 	for ( ; first != last; first++) {
 		if (_vm->shouldQuit())
@@ -385,11 +386,13 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 
 		(*_opcodes[cmd->_id])();
 
-		if (_ctxt.suspend) {
+		if (_suspend) {
 			createSuspendList(++first, last);
 			return;
 		}
 	}
+
+	_running = false;
 
 }
 
@@ -425,6 +428,13 @@ void CommandExec::cleanSuspendedList() {
 	_suspendedCtxt.valid = false;
 	_suspendedCtxt.first = _suspendedCtxt.last;
 	_suspendedCtxt.zone = nullZonePtr;
+}
+
+void CommandExec::suspend() {
+	if (!_running)
+		return;
+
+	_suspend = true;
 }
 
 void CommandExec::runSuspended() {

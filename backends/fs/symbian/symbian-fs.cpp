@@ -66,6 +66,12 @@ public:
 		TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
 		fname.Copy(ptr);
 		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*> (g_system)->FsSession(), fname);
+		if(!fileExists) {
+			TParsePtrC parser(fname);
+			if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
+				fileExists = ETrue;
+			}
+		}
 		return fileExists;
 	}
 	virtual Common::String getDisplayName() const { return _displayName; }
@@ -130,6 +136,10 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	} else {
 		_isValid = ETrue;
 		_isDirectory = EFalse;
+		TParsePtrC parser(fname);		
+		if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {		
+			_isDirectory = ETrue;
+		}		
 	}
 }
 

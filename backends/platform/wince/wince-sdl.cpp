@@ -1688,6 +1688,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 		// It can be drawn, scale it
 		uint32 srcPitch, dstPitch;
 		SDL_Surface *toolbarSurface;
+		ScalerProc *toolbarScaler;
 
 		if (_videoMode.screenHeight > 240) {
 			if (!_toolbarHighDrawn) {
@@ -1713,7 +1714,15 @@ void OSystem_WINCE3::internUpdateScreen() {
 		SDL_LockSurface(_hwscreen);
 		srcPitch = toolbarSurface->pitch;
 		dstPitch = _hwscreen->pitch;
-		Normal2x((byte *)toolbarSurface->pixels, srcPitch, (byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
+
+		toolbarScaler = _scalerProc;
+		if (_videoMode.scaleFactor == 2)
+			toolbarScaler = Normal2x;
+		else if (_videoMode.scaleFactor == 3)
+			toolbarScaler = Normal3x;
+		toolbarScaler((byte *)toolbarSurface->pixels, srcPitch, 
+					(byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), 
+					dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
 		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);
 
