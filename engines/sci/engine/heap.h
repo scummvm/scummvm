@@ -26,7 +26,7 @@
 #ifndef _SCI_HEAP_H
 #define _SCI_HEAP_H
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

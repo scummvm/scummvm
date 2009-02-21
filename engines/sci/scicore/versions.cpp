@@ -30,7 +30,7 @@
 
 #include "sci/include/versions.h"
 #include "sci/include/engine.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

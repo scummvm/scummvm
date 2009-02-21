@@ -29,7 +29,7 @@
 #include "sci/include/sfx_core.h"
 #include "sci/include/sfx_pcm.h"
 #include "sci/sfx/sequencer.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

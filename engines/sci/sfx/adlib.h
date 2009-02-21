@@ -27,7 +27,7 @@
 #ifndef _SFX_ADLIB_H_
 #define _SFX_ADLIB_H_
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

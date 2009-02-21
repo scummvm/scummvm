@@ -32,7 +32,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 #include "sci/include/versions.h"
 
 namespace Sci {

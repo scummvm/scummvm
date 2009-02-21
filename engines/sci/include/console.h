@@ -35,7 +35,7 @@
 #include "common/scummsys.h"
 
 #include "sci/include/sci_memory.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 #include "sci/include/vm_types.h"
 
 #define SCI_CONSOLE

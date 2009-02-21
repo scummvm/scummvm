@@ -29,7 +29,7 @@
 #include "../device.h"
 #include <stdio.h>
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

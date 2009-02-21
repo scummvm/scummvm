@@ -44,8 +44,9 @@
 #define _SCI_MEMORY_H
 
 #include "common/scummsys.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
+// FIXME: Get rid of the following #include
 #ifdef _MSC_VER
 #  include <direct.h> // for chdir, rmdir, _gecwd, getcwd, mkdir
 #endif

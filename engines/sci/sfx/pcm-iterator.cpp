@@ -24,7 +24,7 @@
  */
 
 #include "sci/include/sfx_iterator.h"
-#include "sci/include/resource.h" /* for BREAKPOINT */
+#include "sci/tools.h" /* for BREAKPOINT */
 #include "sci/include/sci_memory.h"
 
 namespace Sci {

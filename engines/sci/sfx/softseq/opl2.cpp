@@ -42,7 +42,7 @@
 
 ***************************************************************************/
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 #include "sci/include/sfx_iterator.h"
 #include "../softseq.h"
 #include "../adlib.h"

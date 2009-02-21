@@ -28,7 +28,7 @@
 ** that grammar, writing an appropriate node tree if successful.
 */
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 #include "sci/include/vocabulary.h"
 #include "sci/include/console.h"
 

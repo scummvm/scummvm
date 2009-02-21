@@ -25,7 +25,7 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 #include "common/file.h"
 

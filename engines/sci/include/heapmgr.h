@@ -28,7 +28,7 @@
 #ifndef _FREESCI_HEAPMGR_H_
 #define _FREESCI_HEAPMGR_H_
 
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 #include "sci/include/sci_memory.h"
 
 namespace Sci {

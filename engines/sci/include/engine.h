@@ -36,14 +36,16 @@ namespace Common {
 // FIXME. Remove after transiton to File class
 #include <sys/stat.h>
 
-#include "sci/include/resource.h"
+// FIXME. Remove this eventually
+#include <time.h>
+
+#include "sci/tools.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/script.h"
 #include "sci/include/vocabulary.h"
 #include "sci/include/console.h"
 #include "sci/include/vm.h"
 #include "sci/include/menubar.h"
-#include <time.h>
 #include "sci/include/versions.h"
 #include "sci/include/kernel.h"
 #include "sci/include/gfx_state_internal.h"

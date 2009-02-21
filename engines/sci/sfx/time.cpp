@@ -24,7 +24,7 @@
  */
 
 #include "sci/include/sfx_time.h"
-#include "sci/include/resource.h"
+#include "sci/tools.h"
 
 namespace Sci {
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef FREESCI_PRIMARY_RESOURCE_H_
-#define FREESCI_PRIMARY_RESOURCE_H_
+#ifndef SCI_TOOLS_H
+#define SCI_TOOLS_H
 
 #include "common/scummsys.h"
 
