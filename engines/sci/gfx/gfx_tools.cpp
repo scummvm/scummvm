@@ -26,18 +26,9 @@
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_tools.h"
 
-/* set optimisations for Win32: */
-#ifdef WIN32
-#	include <memory.h>
-#	ifndef SATISFY_PURIFY
-#		pragma intrinsic( memcpy, memset )
-#	endif
-#endif
-
 rect_t gfx_rect_fullscreen = {0, 0, 320, 200};
 
-void
-gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
+void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 	if (box->x < 0)
 		box->x = 0;
 
@@ -51,15 +42,10 @@ gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 		box->yl = maxy - box->y + 1;
 }
 
-
-gfx_mode_t *
-gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
              unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
              int blue_shift, int alpha_shift, int palette, int flags) {
-	gfx_mode_t *mode = (gfx_mode_t*)sci_malloc(sizeof(gfx_mode_t));
-#ifdef SATISFY_PURIFY
-	memset(mode, 0, sizeof(gfx_mode_t));
-#endif
+	gfx_mode_t *mode = (gfx_mode_t *)sci_malloc(sizeof(gfx_mode_t));
 
 	mode->xfact = xfact;
 	mode->yfact = yfact;
@@ -75,20 +61,16 @@ gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned 
 	mode->flags = flags;
 
 	if (palette) {
-		mode->palette = (gfx_palette_t*)sci_malloc(sizeof(gfx_palette_t));
-#ifdef SATISFY_PURIFY
-		memset(mode->palette, 0, sizeof(gfx_palette_t));
-#endif
+		mode->palette = (gfx_palette_t *)sci_malloc(sizeof(gfx_palette_t));
 		mode->palette->max_colors_nr = palette;
-		mode->palette->colors = (gfx_palette_color_t*)sci_calloc(sizeof(gfx_palette_color_t), palette); /* Initialize with empty entries */
-	} else mode->palette = NULL;
+		mode->palette->colors = (gfx_palette_color_t *)sci_calloc(sizeof(gfx_palette_color_t), palette); // Initialize with empty entries
+	} else
+		mode->palette = NULL;
 
 	return mode;
 }
 
-
-void
-gfx_free_mode(gfx_mode_t *mode) {
+void gfx_free_mode(gfx_mode_t *mode) {
 	if (mode->palette) {
 		free(mode->palette->colors);
 		free(mode->palette);
@@ -96,10 +78,7 @@ gfx_free_mode(gfx_mode_t *mode) {
 	free(mode);
 }
 
-
-
-void
-gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
+void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
 	int width, height;
 	int offset;
 
@@ -122,10 +101,8 @@ gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
 	}
 }
 
-
-gfx_pixmap_t *
-gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
-	gfx_pixmap_t *clone = (gfx_pixmap_t*)sci_malloc(sizeof(gfx_pixmap_t));
+gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
+	gfx_pixmap_t *clone = (gfx_pixmap_t *)sci_malloc(sizeof(gfx_pixmap_t));
 	*clone = *pxm;
 	clone->index_data = NULL;
 	clone->colors = NULL;
@@ -141,12 +118,8 @@ gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 	return clone;
 }
 
-gfx_pixmap_t *
-gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
-	gfx_pixmap_t *pxm = (gfx_pixmap_t*)sci_malloc(sizeof(gfx_pixmap_t));
-#ifdef SATISFY_PURIFY
-	memset(pxm, 0, sizeof(gfx_pixmap_t));
-#endif
+gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
+	gfx_pixmap_t *pxm = (gfx_pixmap_t *)sci_malloc(sizeof(gfx_pixmap_t));
 
 	pxm->alpha_map = NULL;
 	pxm->data = NULL;
@@ -170,16 +143,13 @@ gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	return pxm;
 }
 
-
-void
-gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
+void gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (driver) {
-		if (driver->mode->palette
-		        && pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED
-		        && !(pxm->flags & GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE)
-		        && !(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE)) {
+		if (driver->mode->palette && pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED
+		        && !(pxm->flags & GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE) && !(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE)) {
 			int i;
 			int error = 0;
+
 			GFXDEBUG("UNALLOCATING %d\n", pxm->colors_nr);
 			for (i = 0; i < pxm->colors_nr; i++)
 				if (gfx_free_color(driver->mode->palette, pxm->colors + i))
@@ -207,9 +177,7 @@ gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	free(pxm);
 }
 
-
-gfx_pixmap_t *
-gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
+gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	int size;
 
 	if (pixmap->index_data) {
@@ -228,9 +196,7 @@ gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	return pixmap;
 }
 
-
-gfx_pixmap_t *
-gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
+gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->index_data) {
 		GFXWARN("Attempt to free pixmap index data twice");
 		return pixmap;
@@ -241,9 +207,7 @@ gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
 	return pixmap;
 }
 
-
-gfx_pixmap_t *
-gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
+gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	int size;
 
 	if (pixmap->data) {
@@ -267,9 +231,7 @@ gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	return pixmap;
 }
 
-
-gfx_pixmap_t *
-gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
+gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->data) {
 		GFXWARN("Attempt to free pixmap data twice");
 		return pixmap;
@@ -277,14 +239,13 @@ gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 
 	free(pixmap->data);
 	pixmap->data = NULL;
+
 	return pixmap;
 }
 
-
-int
-gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
+int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 	int i;
-	int dr, dg, db; /* deltas */
+	int dr, dg, db;
 	int bestdelta = 1 + ((0x100 * 0x100) * 3);
 	int bestcolor = -1;
 	int firstfree = -1;
@@ -338,18 +299,16 @@ gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		pal->colors[firstfree].lockers = 1;
 		color->global_index = firstfree;
 
-		return 42; /* positive value to indicate that this color still needs to be set */
+		return 42; // positive value to indicate that this color still needs to be set
 	}
 
 	color->global_index = bestcolor;
 
-//	GFXWARN("Out of palette colors- doing approximated mapping");
+	//GFXWARN("Out of palette colors- doing approximated mapping");
 	return GFX_OK;
 }
 
-
-int
-gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
+int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 	gfx_palette_color_t *palette_color = pal->colors + color->global_index;
 
 	if (!pal)
@@ -362,14 +321,12 @@ gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 	}
 
 	if (color->global_index >= pal->max_colors_nr) {
-		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)",
-		         color->global_index, color->r, color->g, color->b);
+		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)", color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
 
 	if (!palette_color->lockers) {
-		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)",
-		         color->global_index, color->r, color->g, color->b);
+		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)", color->global_index, color->r, color->g, color->b);
 		return GFX_ERROR;
 	}
 
@@ -377,12 +334,11 @@ gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 		--(palette_color->lockers);
 
 	color->global_index = GFX_COLOR_INDEX_UNMAPPED;
+
 	return GFX_OK;
 }
 
-
-gfx_pixmap_t *
-gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
+gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	byte *old_data, *new_data, *initial_new_data;
 	byte *linestart;
 	int linewidth;
@@ -398,7 +354,7 @@ gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		return NULL;
 
 	if (pixmap->flags & GFX_PIXMAP_FLAG_SCALED_INDEX)
-		return pixmap; /* Already done */
+		return pixmap; // Already done
 
 	old_data = pixmap->index_data;
 
@@ -410,7 +366,7 @@ gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	xl = pixmap->index_xl;
 	yl = pixmap->index_yl;
 	linewidth = xfact * xl;
-	initial_new_data = new_data = (byte *) sci_malloc(linewidth * yfact * yl);
+	initial_new_data = new_data = (byte *)sci_malloc(linewidth * yfact * yl);
 
 	for (yc = 0; yc < yl; yc++) {
 

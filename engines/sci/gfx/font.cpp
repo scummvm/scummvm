@@ -30,8 +30,7 @@
 
 int font_counter = 0;
 
-void
-gfxr_free_font(gfx_bitmap_font_t *font) {
+void gfxr_free_font(gfx_bitmap_font_t *font) {
 	if (font->widths)
 		free(font->widths);
 
@@ -43,10 +42,7 @@ gfxr_free_font(gfx_bitmap_font_t *font) {
 	free(font);
 }
 
-
-
-void
-scale_char(byte *dest, byte *src, int width, int height, int newwidth, int xfact, int yfact) {
+void scale_char(byte *dest, byte *src, int width, int height, int newwidth, int xfact, int yfact) {
 	int x, y;
 
 	for (y = 0; y < height; y++) {
@@ -85,9 +81,8 @@ scale_char(byte *dest, byte *src, int width, int height, int newwidth, int xfact
 	}
 }
 
-gfx_bitmap_font_t *
-gfxr_scale_font_unfiltered(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode) {
-	gfx_bitmap_font_t *font = (gfx_bitmap_font_t*)sci_malloc(sizeof(gfx_bitmap_font_t));
+gfx_bitmap_font_t *gfxr_scale_font_unfiltered(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode) {
+	gfx_bitmap_font_t *font = (gfx_bitmap_font_t *)sci_malloc(sizeof(gfx_bitmap_font_t));
 	int height = orig_font->height * mode->yfact;
 	int width = 0;
 	int byte_width;
@@ -115,18 +110,14 @@ gfxr_scale_font_unfiltered(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode) {
 
 	for (i = 0; i < font->chars_nr; i++) {
 		font->widths[i] = orig_font->widths[i] * mode->xfact;
-		scale_char(font->data + font->char_size * i,
-		           orig_font->data + orig_font->char_size * i,
-		           orig_font->row_size, orig_font->height,
-		           font->row_size,
-		           mode->xfact, mode->yfact);
+		scale_char(font->data + font->char_size * i, orig_font->data + orig_font->char_size * i,
+		           orig_font->row_size, orig_font->height, font->row_size, mode->xfact, mode->yfact);
 	}
+
 	return font;
 }
 
-
-gfx_bitmap_font_t *
-gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter) {
+gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter) {
 	GFXWARN("This function hasn't been tested yet");
 
 	switch (filter) {
@@ -140,16 +131,10 @@ gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode, gfxr_font_scale_
 	}
 }
 
-
-
-
-text_fragment_t *
-gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
-                         int *width, int *height,
-                         int *lines, int *line_height_p, int *last_offset_p,
-                         int flags) {
+text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text, int *width, int *height, 
+                         int *lines, int *line_height_p, int *last_offset_p, int flags) {
 	int est_char_width = font->widths[(font->chars_nr > 'M')? 'M' : font->chars_nr - 1];
-	/* 'M' is typically among the widest chars */
+	// 'M' is typically among the widest chars
 	int fragments_nr;
 	text_fragment_t *fragments;
 	int lineheight = font->line_height;
@@ -168,13 +153,11 @@ gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *tex
 	if (max_width > 1) fragments_nr = 3 + (strlen(text) * est_char_width) * 3 / (max_width << 1);
 	else fragments_nr = 1;
 
-	fragments = (text_fragment_t*)sci_calloc(sizeof(text_fragment_t), fragments_nr);
-
+	fragments = (text_fragment_t *)sci_calloc(sizeof(text_fragment_t), fragments_nr);
 
 	fragments[0].offset = text;
 
 	while ((foo = *text++)) {
-
 		if (foo >= font->chars_nr) {
 			GFXWARN("Invalid char 0x%02x (max. 0x%02x) encountered in text string '%s', font %04x\n",
 			        foo, font->chars_nr, text, font->ID);
@@ -186,16 +169,14 @@ gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *tex
 			}
 		}
 
-		if (((foo == '\n') || (foo == 0x0d))
-		        && !(flags & GFXR_FONT_FLAG_NO_NEWLINES)) {
-
+		if (((foo == '\n') || (foo == 0x0d)) && !(flags & GFXR_FONT_FLAG_NO_NEWLINES)) {
 			fragments[current_fragment-1].length = text - 1 - fragments[current_fragment-1].offset;
 
 			if (*text)
 				maxheight += lineheight;
 
 			if (foo == 0x0d && *text == '\n')
-				text++; /* Interpret DOS-style CR LF as single NL */
+				text++; // Interpret DOS-style CR LF as single NL
 
 			fragments[current_fragment++].offset = text;
 
@@ -207,27 +188,26 @@ gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *tex
 
 			localmaxwidth = 0;
 
-		} else { /* foo != '\n' */
+		} else { // foo != '\n'
 			localmaxwidth += font->widths[foo];
 
 			if (localmaxwidth > max_allowed_width) {
-				int blank_break = 1; /* break is at a blank char, i.e. not within a word */
+				int blank_break = 1; // break is at a blank char, i.e. not within a word
 
 				maxheight += lineheight;
 
-				if (last_breakpoint == 0) { /* Text block too long and without whitespace? */
+				if (last_breakpoint == 0) { // Text block too long and without whitespace?
 					last_breakpoint = localmaxwidth - font->widths[foo];
 					last_break_width = 0;
 					--text;
-					blank_break = 0; /* non-blank break */
+					blank_break = 0; // non-blank break
 				} else {
 					text = breakpoint_ptr + 1;
 					assert(breakpoint_ptr);
 				}
 
 				if (last_breakpoint == 0) {
-					GFXWARN("Warning: maxsize %d too small for '%s'\n",
-					        max_allowed_width, text);
+					GFXWARN("Warning: maxsize %d too small for '%s'\n", max_allowed_width, text);
 				}
 
 				if (last_breakpoint > maxwidth)
@@ -271,9 +251,7 @@ gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *tex
 	return fragments;
 }
 
-
-static inline void
-render_char(byte *dest, byte *src, int width, int line_width, int lines, int bytes_per_src_line, int fg0, int fg1, int bg) {
+static inline void render_char(byte *dest, byte *src, int width, int line_width, int lines, int bytes_per_src_line, int fg0, int fg1, int bg) {
 	int x, y;
 
 	for (y = 0; y < lines; y++) {
@@ -301,10 +279,9 @@ render_char(byte *dest, byte *src, int width, int line_width, int lines, int byt
 	}
 }
 
-gfx_pixmap_t *
-gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
+gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
                gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg) {
-	unsigned char *text = (unsigned char *) stext;
+	unsigned char *text = (unsigned char *)stext;
 	int height = font->height;
 	int width = 0;
 	gfx_pixmap_t *pxm;
@@ -334,7 +311,7 @@ gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
 		hack = 1;
 		fg0 = fg1 = bg = &dummy;
 	}
-	pxm->colors = (gfx_pixmap_color_t*)sci_malloc(sizeof(gfx_pixmap_color_t) * pxm->colors_nr);
+	pxm->colors = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * pxm->colors_nr);
 #ifdef SATISFY_PURIFY
 	memset(pxm->colors, 0, sizeof(gfx_pixmap_color_t) * pxm->colors_nr);
 #endif
@@ -345,17 +322,20 @@ gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
 	if (fg0 || hack) {
 		memcpy(pxm->colors + i, fg0, sizeof(gfx_pixmap_color_t));
 		fore_0 = i++;
-	} else fore_0 = pxm->color_key;
+	} else
+		fore_0 = pxm->color_key;
 
 	if (fg1 || hack) {
 		memcpy(pxm->colors + i, fg1, sizeof(gfx_pixmap_color_t));
 		fore_1 = i++;
-	} else fore_1 = pxm->color_key;
+	} else
+		fore_1 = pxm->color_key;
 
 	if (bg || hack) {
 		memcpy(pxm->colors + i, bg, sizeof(gfx_pixmap_color_t));
 		back = i++;
-	} else back = pxm->color_key;
+	} else
+		back = pxm->color_key;
 
 	offset = pxm->index_data;
 
@@ -365,12 +345,10 @@ gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
 		width = font->widths[ch];
 
 		render_char(offset, font->data + (ch * font->char_size), width,
-		            pxm->index_xl, pxm->index_yl, font->row_size,
-		            fore_0, fore_1, back);
+		            pxm->index_xl, pxm->index_yl, font->row_size, fore_0, fore_1, back);
 
 		offset += width;
 	}
 
 	return pxm;
 }
-

@@ -61,8 +61,7 @@ scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp
 	for (i = 0; i < 2; i++) {
 		S->priority[i] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(S->xsize, S->ysize, GFX_RESID_NONE, -i, -777));
 		if (!S->priority[i]) {
-			printf("Out of memory: Could not allocate priority maps! (%dx%d)\n",
-			       S->xsize, S->ysize);
+			printf("Out of memory: Could not allocate priority maps! (%dx%d)\n", S->xsize, S->ysize);
 			return GFX_FATAL;
 		}
 	}
@@ -71,27 +70,22 @@ scummvm_init_specific(struct _gfx_driver *drv, int xfact, int yfact, int bytespp
 		S->visual[i] = NULL;
 		S->visual[i] = new byte[S->xsize * S->ysize];
 		if (!S->visual[i]) {
-			printf("Out of memory: Could not allocate visual buffers! (%dx%d)\n",
-			       S->xsize, S->ysize);
+			printf("Out of memory: Could not allocate visual buffers! (%dx%d)\n", S->xsize, S->ysize);
 			return GFX_FATAL;
 		}
 		memset(S->visual[i], 0, S->xsize * S->ysize);
 	}
 
-	drv->mode = gfx_new_mode(xfact, yfact, bytespp,
-	                         0, 0, 0, 0,
-	                         0, 0, 0, 0, 256, 0);
+	drv->mode = gfx_new_mode(xfact, yfact, bytespp, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0);
 
 	return GFX_OK;
 }
 
-static int
-scummvm_init(struct _gfx_driver *drv) {
+static int scummvm_init(struct _gfx_driver *drv) {
 	return scummvm_init_specific(drv, 1, 1, GFX_COLOR_MODE_INDEX);
 }
 
-static void
-scummvm_exit(struct _gfx_driver *drv) {
+static void scummvm_exit(struct _gfx_driver *drv) {
 	int i;
 	if (S) {
 		for (i = 0; i < 2; i++) {
@@ -117,9 +111,8 @@ scummvm_exit(struct _gfx_driver *drv) {
 
 // Drawing operations
 
-/* This code shamelessly lifted from the SDL_gfxPrimitives package */
-static void
-lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
+// This code shamelessly lifted from the SDL_gfxPrimitives package
+static void lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	int pixx, pixy;
 	int x, y;
 	int dx, dy;
@@ -148,7 +141,7 @@ lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 		pixy = swaptmp;
 	}
 
-	/* Draw */
+	// Draw
 	x = 0;
 	y = 0;
 	for (; x < dx; x++, pixel += pixx) {
@@ -161,10 +154,8 @@ lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	}
 }
 
-static int
-scummvm_draw_line(struct _gfx_driver *drv, Common::Point start, Common::Point end,
-                  gfx_color_t color,
-                  gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+static int scummvm_draw_line(struct _gfx_driver *drv, Common::Point start, Common::Point end,
+                  gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.global_index;
 	int xsize = S->xsize;
 	int ysize = S->ysize;
@@ -177,21 +168,17 @@ scummvm_draw_line(struct _gfx_driver *drv, Common::Point start, Common::Point en
 		nend.x = CLIP<int16>(end.x, 0, xsize - 1);
 		nend.y = CLIP<int16>(end.y, 0, ysize - 1);
 
-		lineColor2(S->visual[1], (int16)nstart.x, (int16)nstart.y,
-		           (int16)nend.x, (int16)nend.y, scolor);
+		lineColor2(S->visual[1], (int16)nstart.x, (int16)nstart.y, (int16)nend.x, (int16)nend.y, scolor);
 
 		if (color.mask & GFX_MASK_PRIORITY) {
-			gfx_draw_line_pixmap_i(S->priority[0], nstart, nend,
-			                       color.priority);
+			gfx_draw_line_pixmap_i(S->priority[0], nstart, nend, color.priority);
 		}
 	}
 
 	return GFX_OK;
 }
 
-static int
-scummvm_draw_filled_rect(struct _gfx_driver *drv, rect_t rect,
-                         gfx_color_t color1, gfx_color_t color2,
+static int scummvm_draw_filled_rect(struct _gfx_driver *drv, rect_t rect, gfx_color_t color1, gfx_color_t color2,
                          gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.yl; i++) {
@@ -205,32 +192,25 @@ scummvm_draw_filled_rect(struct _gfx_driver *drv, rect_t rect,
 	return GFX_OK;
 }
 
-
 // Pixmap operations
 
-static int
-scummvm_draw_pixmap(struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority,
-                    rect_t src, rect_t dest, gfx_buffer_t buffer) {
+static int scummvm_draw_pixmap(struct _gfx_driver *drv, gfx_pixmap_t *pxm, int priority, 
+							   rect_t src, rect_t dest, gfx_buffer_t buffer) {
 	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 2 : 1;
 	int pribufnr = bufnr - 1;
 
 	if (dest.xl != src.xl || dest.yl != src.yl) {
-		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n",
-		       src.xl, src.yl, dest.xl, dest.yl);
+		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.xl, src.yl, dest.xl, dest.yl);
 		return GFX_ERROR;
 	}
 
-	gfx_crossblit_pixmap(drv->mode, pxm, priority, src, dest,
-	                     S->visual[bufnr], S->xsize,
-	                     S->priority[pribufnr]->index_data,
-	                     S->priority[pribufnr]->index_xl, 1, 0);
+	gfx_crossblit_pixmap(drv->mode, pxm, priority, src, dest, S->visual[bufnr], S->xsize,
+	                     S->priority[pribufnr]->index_data, S->priority[pribufnr]->index_xl, 1, 0);
 
 	return GFX_OK;
 }
 
-static int
-scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
-                    gfx_map_mask_t map) {
+static int scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
 	if (src.x < 0 || src.y < 0) {
 		printf("Attempt to grab pixmap from invalid coordinates (%d,%d)\n", src.x, src.y);
 		return GFX_ERROR;
@@ -263,19 +243,16 @@ scummvm_grab_pixmap(struct _gfx_driver *drv, rect_t src, gfx_pixmap_t *pxm,
 	return GFX_OK;
 }
 
-
 // Buffer operations
 
-static int
-scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buffer_t buffer) {
+static int scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	//TODO
 	int data_source = (buffer == GFX_BUFFER_BACK) ? 2 : 1;
 	int data_dest = data_source - 1;
 
 	/*
 	if (src.x != dest.x || src.y != dest.y) {
-		printf("Updating %d (%d,%d)(%dx%d) to (%d,%d) on %d\n", buffer, src.x, src.y,
-			src.xl, src.yl, dest.x, dest.y, data_dest);
+		printf("Updating %d (%d,%d)(%dx%d) to (%d,%d) on %d\n", buffer, src.x, src.y, src.xl, src.yl, dest.x, dest.y, data_dest);
 	} else {
 		printf("Updating %d (%d,%d)(%dx%d) to %d\n", buffer, src.x, src.y, src.xl, src.yl, data_dest);
 	}
@@ -294,14 +271,11 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buff
 			gfx_copy_pixmap_box_i(S->priority[0], S->priority[1], src);
 		break;
 	case GFX_BUFFER_FRONT:
-		memcpy(S->visual[data_dest], S->visual[data_source],
-		       S->xsize * S->ysize);
+		memcpy(S->visual[data_dest], S->visual[data_source], S->xsize * S->ysize);
 
-		g_system->copyRectToScreen(S->visual[data_dest] + src.x + src.y * S->xsize,
-		                           S->xsize, dest.x, dest.y, src.xl, src.yl);
+		g_system->copyRectToScreen(S->visual[data_dest] + src.x + src.y * S->xsize, S->xsize, dest.x, dest.y, src.xl, src.yl);
 		/*
-		g_system->copyRectToScreen(S->visual[data_dest],
-			S->xsize, 0, 0, S->xsize, S->ysize);
+		g_system->copyRectToScreen(S->visual[data_dest], S->xsize, 0, 0, S->xsize, S->ysize);
 		*/
 		S->update_screen = true;
 		break;
@@ -310,28 +284,22 @@ scummvm_update(struct _gfx_driver *drv, rect_t src, Common::Point dest, gfx_buff
 		return GFX_ERROR;
 	}
 
-
 	return GFX_OK;
 }
 
-static int
-scummvm_set_static_buffer(struct _gfx_driver *drv, gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
+static int scummvm_set_static_buffer(struct _gfx_driver *drv, gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 	memcpy(S->visual[2], pic->data, S->xsize * S->ysize);
-	/*gfx_crossblit_pixmap(drv->mode, pic, 0, rect, rect,
-			S->visual[2], S->xsize,
-			S->priority[1]->index_data,
-			S->priority[1]->index_xl, 1, 0);*/
+	/*gfx_crossblit_pixmap(drv->mode, pic, 0, rect, rect, S->visual[2], S->xsize, S->priority[1]->index_data,
+							S->priority[1]->index_xl, 1, 0);*/
 
 	gfx_copy_pixmap_box_i(S->priority[1], priority, gfx_rect(0, 0, S->xsize, S->ysize));
 
 	return GFX_OK;
 }
 
-
 // Mouse pointer operations
 
-static int
-scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer) {
+static int scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer) {
 	if (pointer == NULL) {
 		g_system->showMouse(false);
 	} else {
@@ -344,11 +312,9 @@ scummvm_set_pointer(struct _gfx_driver *drv, gfx_pixmap_t *pointer) {
 	return GFX_OK;
 }
 
-
 // Palette operations
 
-static int
-scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, byte blue) {
+static int scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, byte blue) {
 	if (index < 0 || index > 255) {
 		GFXERROR("Attempt to set invalid palette entry %d\n", index);
 		return GFX_ERROR;
@@ -356,14 +322,13 @@ scummvm_set_palette(struct _gfx_driver *drv, int index, byte red, byte green, by
 
 	byte color[] = {red, green, blue, 255};
 	g_system->setPalette(color, index, 1);
+
 	return GFX_OK;
 }
 
-
 // Event management
 
-static sci_event_t
-scummvm_get_event(struct _gfx_driver *drv) {
+static sci_event_t scummvm_get_event(struct _gfx_driver *drv) {
 	sci_event_t input = { SCI_EVT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
@@ -513,14 +478,12 @@ scummvm_get_event(struct _gfx_driver *drv) {
 	return input;
 }
 
-static int
-scummvm_usec_sleep(struct _gfx_driver *drv, long usecs) {
+static int scummvm_usec_sleep(struct _gfx_driver *drv, long usecs) {
 	g_system->delayMillis(usecs / 1000);
 	return GFX_OK;
 }
 
-gfx_driver_t
-gfx_driver_scummvm = {
+gfx_driver_t gfx_driver_scummvm = {
 	NULL,
 	0, 0,
 	0,		// flags here

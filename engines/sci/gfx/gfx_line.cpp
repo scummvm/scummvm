@@ -25,25 +25,24 @@
 
 #define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
                   linearend, nonlinearstart, linearmod, nonlinearmod) \
-   x = (startx); y = (starty); \
-   incrNE = ((deltalinear) > 0)? (deltalinear) : -(deltalinear); \
-   incrNE <<= 1; \
-   deltanonlinear <<= 1; \
-   incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
-   d = nonlinearstart-1;  \
-   while (linearvar != (linearend)) { \
-     memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH); \
-     linearvar += linearmod; \
-     if ((d+=incrE) < 0) { \
-       d += incrNE; \
-       nonlinearvar += nonlinearmod; \
-     }; \
-   }; \
-   memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH);
+	x = (startx); y = (starty); \
+	incrNE = ((deltalinear) > 0) ? (deltalinear) : -(deltalinear); \
+	incrNE <<= 1; \
+	deltanonlinear <<= 1; \
+	incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
+	d = nonlinearstart - 1;  \
+	while (linearvar != (linearend)) { \
+		memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH); \
+		linearvar += linearmod; \
+		if ((d += incrE) < 0) { \
+			d += incrNE; \
+			nonlinearvar += nonlinearmod; \
+		}; \
+	}; \
+	memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH);
 
 
-static inline
-void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
+static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = start.x;
 	int y = start.y;
@@ -59,35 +58,34 @@ void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Poi
 
 	if (dx > dy) {
 		if (finalx < x) {
-			if (finaly < y) { /* llu == left-left-up */
+			if (finaly < y) { // llu == left-left-up
 				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, -PIXELWIDTH, -1);
 			} else {         /* lld */
 				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, -PIXELWIDTH, 1);
 			}
-		} else { /* x1 >= x */
-			if (finaly < y) { /* rru */
+		} else { // x1 >= x
+			if (finaly < y) { // rru
 				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, PIXELWIDTH, -1);
-			} else {         /* rrd */
+			} else {         // rrd
 				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, PIXELWIDTH, 1);
 			}
 		}
-	} else { /* dx <= dy */
+	} else { // dx <= dy
 		if (finaly < y) {
-			if (finalx < x) { /* luu */
+			if (finalx < x) { // luu
 				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, -1, -PIXELWIDTH);
 			} else {         /* ruu */
 				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, -1, PIXELWIDTH);
 			}
-		} else { /* y1 >= y */
-			if (finalx < x) { /* ldd */
+		} else { // y1 >= y
+			if (finalx < x) { // ldd
 				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, 1, -PIXELWIDTH);
-			} else {         /* rdd */
+			} else {         // rdd
 				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, 1, PIXELWIDTH);
 			}
 		}
 	}
 }
-
 
 
 #undef LINEMACRO
