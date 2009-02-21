@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	exereader.o \
 	sci.o \
 	tools.o \
+	engine/aatree.o \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
@@ -52,7 +53,6 @@ MODULE_OBJS = \
 	gfx/resource/sci_resmgr.o \
 	gfx/resource/sci_view_0.o \
 	gfx/resource/sci_view_1.o \
-	scicore/aatree.o \
 	scicore/sciconsole.o \
 	scicore/decompress0.o \
 	scicore/decompress01.o \

@@ -28,7 +28,7 @@
 */
 
 #include "sci/include/engine.h"
-#include "sci/include/aatree.h"
+#include "sci/engine/aatree.h"
 #include "sci/include/list.h"
 #include "sci/gfx/gfx_widgets.h"
 

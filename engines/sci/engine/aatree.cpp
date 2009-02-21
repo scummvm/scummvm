@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/aatree.h"
+#include "sci/engine/aatree.h"
 
 #include "sci/include/sci_memory.h"
 
