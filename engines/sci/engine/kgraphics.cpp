@@ -651,7 +651,7 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int sleep_time = UKPV(0);
 
 	time = g_system->getMillis();
-	s->r_acc = make_reg(0, ((time - s->last_wait_time) / 1000) * 60);
+	s->r_acc = make_reg(0, ((long)time - (long)s->last_wait_time) * 60 / 1000);
 	s->last_wait_time = time;
 
 	// Reset optimization flags: Game is playing along nicely anyway

@@ -510,14 +510,14 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #endif
 
 	g_system->getTimeAndDate(loc_time);
-	start_time = g_system->getMillis() / 1000;
+	start_time = g_system->getMillis();
 
 	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
 		if (argc) { // Get seconds since last am/pm switch
 			retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
 			debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		} else { // Get time since game started
-			retval = start_time * 60;
+			retval = start_time * 60 / 1000;
 			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		}
 	} else {
@@ -527,7 +527,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		switch (mode) {
 		case _K_NEW_GETTIME_TICKS : {
-			retval = start_time * 60;
+			retval = start_time * 60 / 1000;
 			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 			break;
 		}
