@@ -18,7 +18,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the original Smacker cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
 
-0.13.0 (2009-02-29)
+0.13.0 (2009-02-28)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
    - Added a 'Load' button to the Launcher (not supported by all engines).
