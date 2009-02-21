@@ -24,7 +24,6 @@
  */
 
 #ifdef WIN32
-#  include <sys/stat.h>		// for S_IREAD/S_IWRITE
 #  include <windows.h>
 #elif defined (__DC__)
 #  include <dc.h>
@@ -37,6 +36,7 @@
 #include "sci/sci.h"
 
 #include <errno.h>
+#include <sys/stat.h>		// for S_IREAD/S_IWRITE
 
 namespace Sci {
 
