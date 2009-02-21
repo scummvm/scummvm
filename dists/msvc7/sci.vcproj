@@ -33,6 +33,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
+				WarnAsError="FALSE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"/>
@@ -130,9 +131,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\kernel.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kernel_compat.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\kernel_types.h">
@@ -282,9 +280,6 @@
 				RelativePath="..\..\engines\sci\scicore\aatree.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\console.cpp">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\decompress0.cpp">
 			</File>
 			<File
@@ -309,10 +304,10 @@
 				RelativePath="..\..\engines\sci\scicore\sci_memory.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\script.cpp">
+				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\tools.cpp">
+				RelativePath="..\..\engines\sci\scicore\script.cpp">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\versions.cpp">
@@ -401,9 +396,6 @@
 					RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp">
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\fmopl.h">
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\opl2.cpp">
 				</File>
 				<File
@@ -421,9 +413,6 @@
 			Name="include">
 			<File
 				RelativePath="..\..\engines\sci\include\aatree.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\console.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\engine.h">
@@ -462,13 +451,7 @@
 				RelativePath="..\..\engines\sci\include\gfx_widgets.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\hashmap.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\heapmgr.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\int_hashmap.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\kdebug.h">
@@ -480,13 +463,7 @@
 				RelativePath="..\..\engines\sci\include\list.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\listener.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\menubar.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\resource.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\sbtree.h">
@@ -501,6 +478,9 @@
 				RelativePath="..\..\engines\sci\include\sci_widgets.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\include\sciconsole.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\include\sciresource.h">
 			</File>
 			<File
@@ -508,9 +488,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\script.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\seg_manager.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\sfx_core.h">
@@ -578,6 +555,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\sci.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\tools.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\tools.h">
 		</File>
 	</Files>
 	<Globals>
