@@ -28,7 +28,7 @@
 #ifndef _SCI_SFX_ITERATOR_H_
 #define _SCI_SFX_ITERATOR_H_
 
-#include "sci/include/sfx_pcm.h"
+#include "sci/sfx/sfx_pcm.h"
 
 namespace Sci {
 

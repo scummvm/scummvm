@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/sfx_time.h"
+#include "sci/sfx/sfx_time.h"
 #include "sci/tools.h"
 
 namespace Sci {

@@ -42,8 +42,8 @@ namespace Common {
 #include "sci/include/menubar.h"
 #include "sci/include/versions.h"
 #include "sci/include/kernel.h"
-#include "sci/include/gfx_state_internal.h"
-#include "sci/include/sfx_engine.h"
+#include "sci/gfx/gfx_state_internal.h"
+#include "sci/sfx/sfx_engine.h"
 
 namespace Sci {
 

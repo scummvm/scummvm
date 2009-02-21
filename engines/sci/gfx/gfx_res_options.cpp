@@ -23,9 +23,9 @@
  *
  */
 
-#include "sci/include/gfx_system.h"
-#include "sci/include/gfx_options.h"
-#include "sci/include/gfx_resmgr.h"
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/gfx_options.h"
+#include "sci/gfx/gfx_resmgr.h"
 
 #include <ctype.h>
 

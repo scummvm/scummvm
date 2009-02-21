@@ -24,7 +24,7 @@
  */
 
 #include <stdio.h>
-#include "sci/include/sfx_engine.h"
+#include "sci/sfx/sfx_engine.h"
 #include "sci/include/sci_memory.h"
 
 namespace Sci {

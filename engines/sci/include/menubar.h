@@ -28,8 +28,8 @@
 #ifndef _SCI_MENUBAR_H_
 #define _SCI_MENUBAR_H_
 
-#include "sci/include/gfx_operations.h"
-#include "sci/include/gfx_widgets.h"
+#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/gfx_widgets.h"
 
 namespace Sci {
 

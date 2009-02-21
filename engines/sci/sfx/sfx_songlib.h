@@ -32,7 +32,7 @@
 
 #include "sci/tools.h"	// For GTimeVal
 #include "sci/include/scitypes.h"
-#include "sci/include/sfx_iterator.h"
+#include "sci/sfx/sfx_iterator.h"
 
 namespace Sci {
 

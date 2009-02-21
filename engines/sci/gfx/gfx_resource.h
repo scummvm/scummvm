@@ -28,8 +28,8 @@
 #ifndef _GFX_RESOURCE_H_
 #define _GFX_RESOURCE_H_
 
-#include "sci/include/gfx_system.h"
-#include "sci/include/gfx_driver.h"
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/gfx_driver.h"
 
 namespace Sci {
 

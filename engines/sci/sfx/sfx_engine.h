@@ -27,9 +27,9 @@
 #ifndef _SFX_ENGINE_H_
 #define _SFX_ENGINE_H_
 
-#include "sci/include/sfx_core.h"
-#include "sci/include/sfx_songlib.h"
-#include "sci/include/sfx_iterator.h"
+#include "sci/sfx/sfx_core.h"
+#include "sci/sfx/sfx_songlib.h"
+#include "sci/sfx/sfx_iterator.h"
 #include "sci/include/sciresource.h"
 
 namespace Sci {

@@ -26,8 +26,8 @@
 #ifndef SCI_SFX_SOFTSEQ_H
 #define SCI_SFX_SOFTSEQ_H
 
-#include "sci/include/sfx_core.h"
-#include "sci/include/sfx_pcm.h"
+#include "sci/sfx/sfx_core.h"
+#include "sci/sfx/sfx_pcm.h"
 #include "sci/sfx/sequencer.h"
 #include "sci/tools.h"
 

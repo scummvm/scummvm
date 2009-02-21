@@ -26,7 +26,7 @@
 #ifndef _FREESCI_SFX_TIMER_H_
 #define _FREESCI_SFX_TIMER_H_
 
-#include "sci/include/sfx_core.h"
+#include "sci/sfx/sfx_core.h"
 
 namespace Sci {
 

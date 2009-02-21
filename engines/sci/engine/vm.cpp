@@ -32,7 +32,7 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/gc.h"
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_player.h"
 
 #ifdef HAVE_SETJMP_H
 #include <setjmp.h>

@@ -27,9 +27,9 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
-#include "sci/include/gfx_widgets.h"
-#include "sci/include/gfx_resmgr.h"
-#include "sci/include/gfx_options.h"
+#include "sci/gfx/gfx_widgets.h"
+#include "sci/gfx/gfx_resmgr.h"
+#include "sci/gfx/gfx_options.h"
 
 #include "common/util.h"
 

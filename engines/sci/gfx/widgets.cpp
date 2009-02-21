@@ -24,7 +24,7 @@
  */
 
 #include "sci/include/sci_memory.h"
-#include "sci/include/gfx_widgets.h"
+#include "sci/gfx/gfx_widgets.h"
 
 namespace Sci {
 

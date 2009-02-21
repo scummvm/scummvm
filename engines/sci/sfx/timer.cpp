@@ -25,7 +25,7 @@
 
 #include "common/timer.h"
 #include "engines/engine.h"
-#include "sci/include/sfx_timer.h"
+#include "sci/sfx/sfx_timer.h"
 
 namespace Sci {
 

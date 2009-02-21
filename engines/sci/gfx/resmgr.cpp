@@ -29,11 +29,11 @@
 // filenames, are misleading. This should be renamed to "Graphics manager"
 // or something like that.
 
-#include "sci/include/gfx_resource.h"
-#include "sci/include/gfx_tools.h"
-#include "sci/include/gfx_driver.h"
-#include "sci/include/gfx_resmgr.h"
-#include "sci/include/gfx_state_internal.h"
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/gfx_tools.h"
+#include "sci/gfx/gfx_driver.h"
+#include "sci/gfx/gfx_resmgr.h"
+#include "sci/gfx/gfx_state_internal.h"
 
 #include "common/system.h"
 

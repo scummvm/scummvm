@@ -27,7 +27,7 @@
 
 #include "common/util.h"
 #include "common/file.h"
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_player.h"
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/mixer.h"
 

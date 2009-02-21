@@ -26,9 +26,9 @@
 #ifndef _SFX_PCM_H_
 #define _SFX_PCM_H_
 
-#include "sci/include/sfx_core.h"
-#include "sci/include/sfx_timer.h"
-#include "sci/include/sfx_time.h"
+#include "sci/sfx/sfx_core.h"
+#include "sci/sfx/sfx_timer.h"
+#include "sci/sfx/sfx_time.h"
 #include "sci/include/scitypes.h"
 
 namespace Sci {

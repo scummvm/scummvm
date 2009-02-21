@@ -27,8 +27,8 @@
 #include "common/system.h"
 #include "common/events.h"
 
-#include "sci/include/gfx_driver.h"
-#include "sci/include/gfx_tools.h"
+#include "sci/gfx/gfx_driver.h"
+#include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
 

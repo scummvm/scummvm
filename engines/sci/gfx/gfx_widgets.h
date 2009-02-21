@@ -28,7 +28,7 @@
 #ifndef _GFX_WIDGETS_H_
 #define _GFX_WIDGETS_H_
 
-#include "sci/include/gfx_state_internal.h"
+#include "sci/gfx/gfx_state_internal.h"
 
 namespace Sci {
 

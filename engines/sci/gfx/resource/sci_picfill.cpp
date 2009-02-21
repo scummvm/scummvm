@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/gfx_resource.h"
+#include "sci/gfx/gfx_resource.h"
 
 namespace Sci {
 

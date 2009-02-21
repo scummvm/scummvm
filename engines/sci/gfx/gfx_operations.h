@@ -28,10 +28,10 @@
 #ifndef _GFX_OPERATIONS_H_
 #define _GFX_OPERATIONS_H_
 
-#include "sci/include/gfx_resmgr.h"
-#include "sci/include/gfx_tools.h"
-#include "sci/include/gfx_options.h"
-#include "sci/include/gfx_system.h"
+#include "sci/gfx/gfx_resmgr.h"
+#include "sci/gfx/gfx_tools.h"
+#include "sci/gfx/gfx_options.h"
+#include "sci/gfx/gfx_system.h"
 #include "sci/include/uinput.h"
 
 namespace Sci {

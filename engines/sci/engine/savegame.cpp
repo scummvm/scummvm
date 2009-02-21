@@ -32,8 +32,8 @@
 #include <stdarg.h>
 #include <time.h>	// FIXME: For struct tm
 #include "sci/include/sci_memory.h"
-#include "sci/include/gfx_operations.h"
-#include "sci/include/sfx_engine.h"
+#include "sci/gfx/gfx_operations.h"
+#include "sci/sfx/sfx_engine.h"
 #include "sci/include/engine.h"
 #include "sci/engine/heap.h"
 #include "common/stream.h"

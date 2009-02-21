@@ -24,9 +24,9 @@
  */
 
 #include "sci/include/sci_memory.h"
-#include "sci/include/gfx_system.h"
-#include "sci/include/gfx_resource.h"
-#include "sci/include/gfx_tools.h"
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
 

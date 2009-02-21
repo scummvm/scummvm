@@ -27,7 +27,7 @@
 ** prays for some reasonable amount of soft real-time, but it's close
 ** enough, I guess.  */
 
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_player.h"
 #include "sci/sfx/sequencer.h"
 
 namespace Sci {

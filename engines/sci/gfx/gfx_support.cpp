@@ -27,8 +27,8 @@
 ** for use with the graphical state manager
 */
 
-#include "sci/include/gfx_system.h"
-#include "sci/include/gfx_tools.h"
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/gfx_tools.h"
 
 #define DRAWLINE_FUNC _gfx_draw_line_buffer_1
 #define PIXELWIDTH 1

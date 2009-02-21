@@ -26,7 +26,7 @@
 #ifndef SCI_SFX_MIXER_H
 #define SCI_SFX_MIXER_H
 
-#include "sci/include/sfx_pcm.h"
+#include "sci/sfx/sfx_pcm.h"
 
 namespace Sci {
 

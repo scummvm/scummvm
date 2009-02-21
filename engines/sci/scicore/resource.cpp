@@ -38,15 +38,6 @@ namespace Sci {
 #undef SCI_REQUIRE_RESOURCE_FILES
 //#define SCI_VERBOSE_RESMGR 1
 
-// FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
-#if _MSC_VER
-#  define G_DIR_SEPARATOR_S "\\"
-#  define G_DIR_SEPARATOR '\\'
-#else
-#  define G_DIR_SEPARATOR_S "/"
-#  define G_DIR_SEPARATOR '/'
-#endif
-
 const char* sci_version_types[] = {
 	"SCI version undetermined (Autodetect failed / not run)",
 	"SCI version 0.xxx",

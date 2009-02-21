@@ -26,7 +26,7 @@
 #ifndef _SCI_GFX_DRIVER_H_
 #define _SCI_GFX_DRIVER_H_
 
-#include "sci/include/gfx_system.h"
+#include "sci/gfx/gfx_system.h"
 #include "sci/include/uinput.h"
 
 namespace Sci {

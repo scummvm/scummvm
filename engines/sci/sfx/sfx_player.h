@@ -28,8 +28,8 @@
 #ifndef _SFX_PLAYER_H
 #define _SFX_PLAYER_H
 
-#include "sci/include/sfx_engine.h"
-#include "sci/include/sfx_iterator.h"
+#include "sci/sfx/sfx_engine.h"
+#include "sci/sfx/sfx_iterator.h"
 #include "sci/include/sciresource.h"
 
 namespace Sci {

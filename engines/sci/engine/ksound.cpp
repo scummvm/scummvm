@@ -24,7 +24,7 @@
  */
 
 #include "sci/include/engine.h"
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_player.h"
 
 namespace Sci {
 

@@ -38,7 +38,7 @@
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
-#include "sci/include/gfx_operations.h"
+#include "sci/gfx/gfx_operations.h"
 #include "sci/engine/kernel_types.h"
 
 namespace Sci {

@@ -43,7 +43,7 @@
 ***************************************************************************/
 
 #include "sci/tools.h"
-#include "sci/include/sfx_iterator.h"
+#include "sci/sfx/sfx_iterator.h"
 #include "../softseq.h"
 #include "../adlib.h"
 #include <math.h>

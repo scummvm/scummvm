@@ -27,9 +27,7 @@
 
 
 #include "sci/include/sci_memory.h"
-#include "sci/include/sbtree.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "sci/gfx/sbtree.h"
 
 namespace Sci {
 

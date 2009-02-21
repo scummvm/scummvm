@@ -27,8 +27,8 @@
 
 #include <stdio.h>
 #include "common/util.h"
-#include "sci/include/sfx_iterator_internal.h"
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_iterator_internal.h"
+#include "sci/sfx/sfx_player.h"
 #include "sci/tools.h"
 #include "sci/include/sci_memory.h"
 

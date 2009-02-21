@@ -28,8 +28,8 @@
 #ifndef _GFX_RES_OPTIONS_H_
 #define _GFX_RES_OPTIONS_H_
 
-#include "sci/include/gfx_resource.h"
-#include "sci/include/gfx_resmgr.h"
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/gfx_resmgr.h"
 
 namespace Sci {
 

@@ -30,8 +30,8 @@
 // filenames, are misleading. This should be renamed to "Graphics manager"
 // or something like that.
 
-#include "sci/include/gfx_resource.h"
-#include "sci/include/sbtree.h"
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/sbtree.h"
 
 namespace Sci {
 

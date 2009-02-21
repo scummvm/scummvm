@@ -26,9 +26,9 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include <stdio.h>
-#include "sci/include/sfx_timer.h"
-#include "sci/include/sfx_iterator_internal.h"
-#include "sci/include/sfx_player.h"
+#include "sci/sfx/sfx_timer.h"
+#include "sci/sfx/sfx_iterator_internal.h"
+#include "sci/sfx/sfx_player.h"
 #include "sci/sfx/mixer.h"
 #include "sci/include/sci_midi.h"
 #include "common/mutex.h"
