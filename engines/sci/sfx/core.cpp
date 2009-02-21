@@ -130,22 +130,22 @@ static void
 _dump_playing_list(sfx_state_t *self, char *msg) {
 	song_t *song = self->song;
 
-	warning("[] Song list : [ ");
+	sciprintf("[] Song list : [ ");
 	song = *(self->songlib.lib);
 	while (song) {
-		warning("%08lx:%d ", song->handle, song->status);
+		sciprintf("%08lx:%d ", song->handle, song->status);
 		song = song->next_playing;
 	}
-	warning("]\n");
+	sciprintf("]\n");
 
-	warning("[] Play list (%s) : [ " , msg);
+	sciprintf("[] Play list (%s) : [ " , msg);
 
 	while (song) {
-		warning("%08lx ", song->handle);
+		sciprintf("%08lx ", song->handle);
 		song = song->next_playing;
 	}
 
-	warning("]\n");
+	sciprintf("]\n");
 }
 #endif
 
@@ -154,17 +154,17 @@ _dump_songs(sfx_state_t *self) {
 #if 0
 	song_t *song = self->song;
 
-	warning("Cue iterators:\n");
+	sciprintf("Cue iterators:\n");
 	song = *(self->songlib.lib);
 	while (song) {
-		warning("  **\tHandle %08x (p%d): status %d\n",
+		sciprintf("  **\tHandle %08x (p%d): status %d\n",
 		        song->handle, song->priority, song->status);
 		SIMSG_SEND(song->it, SIMSG_PRINT(1));
 		song = song->next;
 	}
 
 	if (player) {
-		warning("Audio iterator:\n");
+		sciprintf("Audio iterator:\n");
 		player->iterator_message(songit_make_message(0, SIMSG_PRINT(1)));
 	}
 #endif
@@ -400,7 +400,7 @@ static int _sfx_timer_active = 0; /* Timer toggle */
 int
 sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Playing PCM: %08lx\n", handle);
+	warning("[sfx-core] Playing PCM: %08lx", handle);
 #endif
 	if (mixer) {
 		sfx_pcm_feed_t *newfeed = it->get_pcm_feed(it);
@@ -452,7 +452,7 @@ sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 
 
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Initialising: flags=%x\n", flags);
+	warning("[sfx-core] Initialising: flags=%x", flags);
 #endif
 
 	/*------------------*/
@@ -463,8 +463,8 @@ sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		timer = &sfx_timer_scummvm;
 
 		if (!timer) {
-			warning("[SFX] " __FILE__": Could not find timing mechanism\n");
-			warning("[SFX] Disabled sound support\n");
+			warning("[SFX] " __FILE__": Could not find timing mechanism");
+			warning("[SFX] Disabled sound support");
 			pcm_device = NULL;
 			player = NULL;
 			mixer = NULL;
@@ -472,8 +472,8 @@ sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		}
 
 		if (timer->init(_sfx_timer_callback, NULL)) {
-			warning("[SFX] " __FILE__": Timer failed to initialize\n");
-			warning("[SFX] Disabled sound support\n");
+			warning("[SFX] " __FILE__": Timer failed to initialize");
+			warning("[SFX] Disabled sound support");
 			timer = NULL;
 			pcm_device = NULL;
 			player = NULL;
@@ -528,7 +528,7 @@ sfx_exit(sfx_state_t *self) {
 	callbackMutex->lock();
 	_sfx_timer_active = 0;
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Uninitialising\n");
+	warning("[sfx-core] Uninitialising");
 #endif
 
 	song_lib_free(self->songlib);
@@ -536,7 +536,7 @@ sfx_exit(sfx_state_t *self) {
 	pcm_device = NULL;
 
 	if (timer && timer->exit())
-		warning("[SFX] Timer reported error on exit\n");
+		warning("[SFX] Timer reported error on exit");
 
 	/* WARNING: The mixer may hold feeds from the
 	** player, so we must stop the mixer BEFORE
@@ -563,7 +563,7 @@ time_le(GTimeVal a, GTimeVal b) {
 void
 sfx_suspend(sfx_state_t *self, int suspend) {
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Suspending? = %d\n", suspend);
+	warning("[sfx-core] Suspending? = %d", suspend);
 #endif
 	if (suspend && (!self->suspended)) {
 		/* suspend */
@@ -600,7 +600,7 @@ sfx_poll(sfx_state_t *self, song_handle_t *handle, int *cue)
 	*handle = self->song->handle;
 
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Polling any (%08lx)\n", *handle);
+	warning("[sfx-core] Polling any (%08lx)", *handle);
 #endif
 	return sfx_poll_specific(self, *handle, cue);
 }
@@ -678,10 +678,10 @@ sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t
 	song_t *song = song_lib_find(self->songlib, handle);
 
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Adding song: %08lx at %d, it=%p\n", handle, priority, it);
+	warning("[sfx-core] Adding song: %08lx at %d, it=%p", handle, priority, it);
 #endif
 	if (!it) {
-		warning("[SFX] Attempt to add empty song with handle %08lx\n", handle);
+		warning("[SFX] Attempt to add empty song with handle %08lx", handle);
 		return -1;
 	}
 
@@ -697,10 +697,10 @@ sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t
 	if (song) {
 		_sfx_set_song_status(self, song, SOUND_STATUS_STOPPED);
 
-		warning("Overwriting old song (%08lx) ...\n", handle);
+		warning("Overwriting old song (%08lx) ...", handle);
 		if (song->status == SOUND_STATUS_PLAYING
 		        || song->status == SOUND_STATUS_SUSPENDED) {
-			warning("Unexpected (error): Song %ld still playing/suspended (%d)\n",
+			warning("Unexpected (error): Song %ld still playing/suspended (%d)",
 			        handle, song->status);
 			songit_free(it);
 			return -1;
@@ -725,7 +725,7 @@ sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t
 void
 sfx_remove_song(sfx_state_t *self, song_handle_t handle) {
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Removing song: %08lx\n", handle);
+	warning("[sfx-core] Removing song: %08lx", handle);
 #endif
 	if (self->song && self->song->handle == handle)
 		self->song = NULL;
@@ -740,7 +740,7 @@ sfx_remove_song(sfx_state_t *self, song_handle_t handle) {
 /* Song modifications */
 /**********************/
 
-#define ASSERT_SONG(s) if (!(s)) { warning("Looking up song handle %08lx failed in %s, L%d\n", handle, __FILE__, __LINE__); return; }
+#define ASSERT_SONG(s) if (!(s)) { warning("Looking up song handle %08lx failed in %s, L%d", handle, __FILE__, __LINE__); return; }
 
 void
 sfx_song_set_status(sfx_state_t *self, song_handle_t handle, int status) {
@@ -768,7 +768,7 @@ sfx_song_set_fade(sfx_state_t *self, song_handle_t handle,
 
 #ifdef DEBUG_SONG_API
 	warning("[sfx-core] Setting fade params of %08lx to "
-	        "final volume %d in steps of %d per %d ticks. %s.\n",
+	        "final volume %d in steps of %d per %d ticks. %s.",
 	        handle, fade->final_volume, fade->step_size, fade->ticks_per_step,
 	        stopmsg[fade->action]);
 #endif
@@ -783,7 +783,7 @@ sfx_song_renice(sfx_state_t *self, song_handle_t handle, int priority) {
 	song_t *song = song_lib_find(self->songlib, handle);
 	ASSERT_SONG(song);
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Renicing song %08lx to %d\n",
+	warning("[sfx-core] Renicing song %08lx to %d",
 	        handle, priority);
 #endif
 
@@ -800,7 +800,7 @@ sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	ASSERT_SONG(song);
 
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Setting loops on %08lx to %d\n",
+	warning("[sfx-core] Setting loops on %08lx to %d",
 	        handle, loops);
 #endif
 	songit_handle_message(&(song->it), msg);
@@ -820,7 +820,7 @@ sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold) {
 
 	song->hold = hold;
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] Setting hold on %08lx to %d\n",
+	warning("[sfx-core] Setting hold on %08lx to %d",
 	        handle, loops);
 #endif
 	songit_handle_message(&(song->it), msg);
@@ -886,19 +886,19 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 
 int
 sfx_get_volume(sfx_state_t *self) {
-	warning("FIXME: Implement volume\n");
+	warning("FIXME: Implement volume");
 	return 0;
 }
 
 void
 sfx_set_volume(sfx_state_t *self, int volume) {
-	warning("FIXME: Implement volume\n");
+	warning("FIXME: Implement volume");
 }
 
 void
 sfx_all_stop(sfx_state_t *self) {
 #ifdef DEBUG_SONG_API
-	warning("[sfx-core] All stop\n");
+	warning("[sfx-core] All stop");
 #endif
 
 	song_lib_free(self->songlib);

@@ -84,7 +84,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	vocab_version = 0;
 
 	if (!resource) {
-		warning("SCI0: Could not find a main vocabulary, trying SCI01.\n");
+		warning("SCI0: Could not find a main vocabulary, trying SCI01");
 		resource = scir_find_resource(resmgr, sci_vocab,
 		                              VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
 		vocab_version = 1;
@@ -124,7 +124,7 @@ vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 				currentword[currentwordpos++] = c;
 			}
 			if (seeker == resource->size) {
-				warning("SCI1: Vocabulary not usable, disabling.\n");
+				warning("SCI1: Vocabulary not usable, disabling");
 				vocab_free_words(words, counter);
 				return NULL;
 			}

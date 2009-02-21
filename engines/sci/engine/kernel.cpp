@@ -567,7 +567,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 		}
 		default: {
-			warning("Attempt to use unknown GetTime mode %d\n", mode);
+			warning("Attempt to use unknown GetTime mode %d", mode);
 			break;
 		}
 		}
@@ -659,7 +659,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i;
 
-	warning("Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
+	sciprintf("Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
 
 	for (i = 0; i < argc; i++) {
 		sciprintf(PREG, PRINT_REG(argv[i]));

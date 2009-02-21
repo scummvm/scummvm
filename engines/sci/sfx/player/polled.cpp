@@ -240,7 +240,7 @@ pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 
 static int
 pp_fade_out(void) {
-	warning(__FILE__": Attempt to fade out- not implemented yet\n");
+	warning(__FILE__": Attempt to fade out- not implemented yet");
 	return SFX_ERROR;
 }
 
@@ -249,7 +249,7 @@ pp_stop(void) {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
-	warning("[play] Now stopping it %p\n", (void *)it);
+	warning("[play] Now stopping it %p", (void *)it);
 	if (it)
 		songit_free(it);
 
