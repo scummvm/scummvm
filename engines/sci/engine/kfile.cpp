@@ -108,7 +108,7 @@ static FILE *f_open_mirrored(EngineState *s, char *fname) {
 #ifdef _MSC_VER
 	fd = _open(fname, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
 #else
-	fd = creat(fname, 0600);
+	fd = open(fname, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
 #endif
 
 	if (!IS_VALID_FD(fd) && buf) {
@@ -486,7 +486,7 @@ reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			++testpath[pathlen - 1];
 	}
 
-	fd = creat(testpath, 0600);
+	fd = open(testpath, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
 
 	if (!IS_VALID_FD(fd)) {
 		warning("Could not test for disk space: %s", strerror(errno));
