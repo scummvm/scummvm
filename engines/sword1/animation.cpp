@@ -85,7 +85,7 @@ MoviePlayer::~MoviePlayer(void) {
  */
 bool MoviePlayer::load(uint32 id) {
 	Common::File f;
-	char fileName[20];
+	char filename[20];
 
 	if (_decoderType == kVideoDecoderDXA) {
 		_bgSoundStream = Audio::AudioStream::openStreamFile(sequenceList[id]);
@@ -94,8 +94,8 @@ bool MoviePlayer::load(uint32 id) {
 	}
 
 	if (SwordEngine::_systemVars.showText) {
-		sprintf(fileName, "%s.txt", sequenceList[id]);
-		if (f.open(fileName)) {
+		sprintf(filename, "%s.txt", sequenceList[id]);
+		if (f.open(filename)) {
 			Common::String line;
 			int lineNo = 0;
 			int lastEnd = -1;
@@ -118,22 +118,22 @@ bool MoviePlayer::load(uint32 id) {
 					ptr++;
 
 				if (startFrame > endFrame) {
-					warning("%s:%d: startFrame (%d) > endFrame (%d)", fileName, lineNo, startFrame, endFrame);
+					warning("%s:%d: startFrame (%d) > endFrame (%d)", filename, lineNo, startFrame, endFrame);
 					continue;
 				}
 
 				if (startFrame <= lastEnd) {
-					warning("%s:%d startFrame (%d) <= lastEnd (%d)", fileName, lineNo, startFrame, lastEnd);
+					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename, lineNo, startFrame, lastEnd);
 					continue;
 				}
 
 				_movieTexts.push_back(new MovieText(startFrame, endFrame, ptr));
 				lastEnd = endFrame;
 			}
+			f.close();
 		}
 	}
 
-	char filename[20];
 	switch (_decoderType) {
 	case kVideoDecoderDXA:
 		snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
