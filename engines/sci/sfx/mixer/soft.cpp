@@ -23,7 +23,9 @@
  *
  */
 
-#include "../mixer.h"
+#include "common/mutex.h"
+
+#include "sci/sfx/mixer.h"
 #include "sci/include/sci_memory.h"
 
 namespace Sci {
@@ -46,23 +48,11 @@ namespace Sci {
 
 static int diagnosed_too_slow = 0;
 
-static volatile int mixer_lock = 0;
-
-/*#define DEBUG_LOCKS*/
-#ifdef DEBUG_LOCKS
-#  define DEBUG_ACQUIRE fprintf(stderr, "[ -LOCK -] ACKQ %d: %d\n", __LINE__, mixer_lock)
-#  define DEBUG_WAIT fprintf(stderr, "[ -LOCK -] WAIT %d: %d\n", __LINE__, mixer_lock);
-#  define DEBUG_RELEASE ; fprintf(stderr, "[ -LOCK -] REL %d: %d\n", __LINE__, mixer_lock);
-#else
-#  define DEBUG_ACQUIRE
-#  define DEBUG_WAIT
-#  define DEBUG_RELEASE
-#endif
-
-#define ACQUIRE_LOCK() ++mixer_lock; while (mixer_lock != 1) { DEBUG_WAIT sci_sched_yield(); } DEBUG_ACQUIRE
-#define RELEASE_LOCK() --mixer_lock DEBUG_RELEASE
+#define ACQUIRE_LOCK() P->_mixerLock.lock()
+#define RELEASE_LOCK() P->_mixerLock.unlock()
 
 struct mixer_private {
+	Common::Mutex _mixerLock;
 	byte *outbuf; /* Output buffer to write to the PCM device next time */
 	sfx_timestamp_t outbuf_timestamp; /* Timestamp associated with the output buffer */
 	int have_outbuf_timestamp; /* Whether we really _have_ an associated timestamp */
@@ -85,10 +75,9 @@ struct mixer_private {
 #define P ((struct mixer_private *)(self->private_bits))
 
 
-static int
-mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
+static int mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	self->dev = device;
-	self->private_bits /* = P */ = sci_malloc(sizeof(struct mixer_private));
+	self->private_bits = new mixer_private();
 	P->outbuf = P->writebuf = NULL;
 	P->lastbuf_len = 0;
 	P->compbuf_l = (gint32*)sci_malloc(sizeof(gint32) * device->buf_size);
@@ -248,20 +237,16 @@ static void mix_exit(sfx_pcm_mixer_t *self) {
 	ACQUIRE_LOCK();
 	while (self->feeds_nr)
 		_mix_unsubscribe(self, self->feeds[0].feed);
-
-	if (P->outbuf)
-		free(P->outbuf);
-	if (P->writebuf)
-		free(P->writebuf);
-
-	if (P->compbuf_l)
-		free(P->compbuf_l);
-	if (P->compbuf_l)
-		free(P->compbuf_r);
-
-	free(P);
-	self->private_bits /* = P */ = NULL;
 	RELEASE_LOCK();
+
+	free(P->outbuf);
+	free(P->writebuf);
+
+	free(P->compbuf_l);
+	free(P->compbuf_r);
+
+	delete P;
+	self->private_bits = NULL;
 
 #ifdef DEBUG
 	sciprintf("[soft-mixer] Uninitialising mixer\n");
