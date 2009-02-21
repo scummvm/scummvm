@@ -25,6 +25,9 @@
 
 // Reads data from a resource file and stores the result in memory
 
+#include "common/stream.h"
+#include "common/endian.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
 
@@ -274,16 +277,16 @@ byte *pic_reorder(byte *inbuffer, int dsize) {
 	for (i = 0;i < 256;i++) // Palette translation map
 		*(writer++) = i;
 
-	putInt16(writer, 0); // Palette stamp
+	WRITE_UINT16(writer, 0); // Palette stamp
 	writer += 2;
-	putInt16(writer, 0);
+	WRITE_UINT16(writer, 0);
 	writer += 2;
 
-	view_size = getUInt16(seeker);
+	view_size = READ_UINT16(seeker);
 	seeker += 2;
-	view_start = getUInt16(seeker);
+	view_start = READ_UINT16(seeker);
 	seeker += 2;
-	cdata_size = getUInt16(seeker);
+	cdata_size = READ_UINT16(seeker);
 	seeker += 2;
 
 	memcpy(viewdata, seeker, sizeof(viewdata));
@@ -315,7 +318,7 @@ byte *pic_reorder(byte *inbuffer, int dsize) {
 	*(writer++) = 0;
 	*(writer++) = 0;
 	*(writer++) = 0;
-	putInt16(writer, view_size + 8);
+	WRITE_UINT16(writer, view_size + 8);
 	writer += 2;
 
 	memcpy(writer, viewdata, sizeof(viewdata));
@@ -337,20 +340,20 @@ static void build_cel_headers(byte **seeker, byte **writer, int celindex, int *c
 	int c, w;
 
 	for (c = 0;c < max;c++) {
-		w = getUInt16(*seeker);
-		putInt16(*writer, w);
+		w = READ_UINT16(*seeker);
+		WRITE_UINT16(*writer, w);
 		*seeker += 2;
 		*writer += 2;
-		w = getUInt16(*seeker);
-		putInt16(*writer, w);
+		w = READ_UINT16(*seeker);
+		WRITE_UINT16(*writer, w);
 		*seeker += 2;
 		*writer += 2;
-		w = getUInt16(*seeker);
-		putInt16(*writer, w);
+		w = READ_UINT16(*seeker);
+		WRITE_UINT16(*writer, w);
 		*seeker += 2;
 		*writer += 2;
 		w = *((*seeker)++);
-		putInt16(*writer, w); // Zero extension
+		WRITE_UINT16(*writer, w); // Zero extension
 		*writer += 2;
 
 		*writer += cc_lengths[celindex];
@@ -379,32 +382,32 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	byte **cc_pos;
 
 	// Parse the main header
-	cellengths = inbuffer + getUInt16(seeker) + 2;
+	cellengths = inbuffer + READ_UINT16(seeker) + 2;
 	seeker += 2;
 	loopheaders = *(seeker++);
 	lh_present = *(seeker++);
-	lh_mask = getUInt16(seeker);
+	lh_mask = READ_UINT16(seeker);
 	seeker += 2;
-	unknown = getUInt16(seeker);
+	unknown = READ_UINT16(seeker);
 	seeker += 2;
-	pal_offset = getUInt16(seeker);
+	pal_offset = READ_UINT16(seeker);
 	seeker += 2;
-	cel_total = getUInt16(seeker);
+	cel_total = READ_UINT16(seeker);
 	seeker += 2;
 
 	cc_pos = (byte **)malloc(sizeof(byte *) * cel_total);
 	cc_lengths = (int *)malloc(sizeof(int) * cel_total);
 
 	for (c = 0;c < cel_total;c++)
-		cc_lengths[c] = getUInt16(cellengths + 2 * c);
+		cc_lengths[c] = READ_UINT16(cellengths + 2 * c);
 
 	*(writer++) = loopheaders;
 	*(writer++) = VIEW_HEADER_COLORS_8BIT;
-	putInt16(writer, lh_mask);
+	WRITE_UINT16(writer, lh_mask);
 	writer += 2;
-	putInt16(writer, unknown);
+	WRITE_UINT16(writer, unknown);
 	writer += 2;
-	putInt16(writer, pal_offset);
+	WRITE_UINT16(writer, pal_offset);
 	writer += 2;
 
 	lh_ptr = writer;
@@ -427,25 +430,25 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 				fprintf(stderr, "Error: While reordering view: Loop not present, but can't re-use last loop!\n");
 				lh_last = 0;
 			}
-			putInt16(lh_ptr, lh_last);
+			WRITE_UINT16(lh_ptr, lh_last);
 			lh_ptr += 2;
 		} else {
 			lh_last = writer - outbuffer;
-			putInt16(lh_ptr, lh_last);
+			WRITE_UINT16(lh_ptr, lh_last);
 			lh_ptr += 2;
-			putInt16(writer, celcounts[w]);
+			WRITE_UINT16(writer, celcounts[w]);
 			writer += 2;
-			putInt16(writer, 0);
+			WRITE_UINT16(writer, 0);
 			writer += 2;
 
 			// Now, build the cel offset table
 			chptr = (writer - outbuffer) + (2 * celcounts[w]);
 
 			for (c = 0; c < celcounts[w]; c++) {
-				putInt16(writer, chptr);
+				WRITE_UINT16(writer, chptr);
 				writer += 2;
 				cc_pos[celindex + c] = outbuffer + chptr;
-				chptr += 8 + getUInt16(cellengths + 2 * (celindex + c));
+				chptr += 8 + READ_UINT16(cellengths + 2 * (celindex + c));
 			}
 
 			build_cel_headers(&seeker, &writer, celindex, cc_lengths, celcounts[w]);
