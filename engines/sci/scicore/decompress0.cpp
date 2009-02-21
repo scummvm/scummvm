@@ -33,13 +33,11 @@
 
 namespace Sci {
 
-/* #define _SCI_DECOMPRESS_DEBUG */
+//#define _SCI_DECOMPRESS_DEBUG
 
-/* 9-12 bit LZW encoding */
-int
-decrypt1(guint8 *dest, guint8 *src, int length, int complength)
-/* Doesn't do length checking yet */
-{
+// 9-12 bit LZW encoding
+int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
+	// Doesn't do length checking yet
 	/* Theory: Considering the input as a bit stream, we get a series of
 	** 9 bit elements in the beginning. Every one of them is a 'token'
 	** and either represents a literal (if < 0x100), or a link to a previous
@@ -56,16 +54,16 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 	** be faster than the recursive approach.
 	*/
 
-	guint16 bitlen = 9; /* no. of bits to read (max. 12) */
+	guint16 bitlen = 9; // no. of bits to read (max. 12)
 	guint16 bitmask = 0x01ff;
-	guint16 bitctr = 0; /* current bit position */
-	guint16 bytectr = 0; /* current byte position */
-	guint16 token; /* The last received value */
-	guint16 maxtoken = 0x200; /* The biggest token */
+	guint16 bitctr = 0; // current bit position
+	guint16 bytectr = 0; // current byte position
+	guint16 token; // The last received value
+	guint16 maxtoken = 0x200; // The biggest token
 
-	guint16 tokenlist[4096]; /* pointers to dest[] */
-	guint16 tokenlengthlist[4096]; /* char length of each token */
-	guint16 tokenctr = 0x102; /* no. of registered tokens (starts here)*/
+	guint16 tokenlist[4096]; // pointers to dest[]
+	guint16 tokenlengthlist[4096]; // char length of each token
+	guint16 tokenctr = 0x102; // no. of registered tokens (starts here)
 
 	guint16 tokenlastlength = 0;
 
@@ -88,14 +86,14 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 			bytectr++;
 		}
 
-		if (token == 0x101) return 0; /* terminator */
-		if (token == 0x100) { /* reset command */
+		if (token == 0x101) 
+			return 0; // terminator
+		if (token == 0x100) { // reset command
 			maxtoken = 0x200;
 			bitlen = 9;
 			bitmask = 0x01ff;
 			tokenctr = 0x0102;
 		} else {
-
 			{
 				int i;
 
@@ -104,18 +102,16 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 #ifdef _SCI_DECOMPRESS_DEBUG
 						error("decrypt1: Bad token %x", token);
 #endif
-						/* Well this is really bad  */
-						/* May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE */
+						// Well this is really bad
+						// May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE
 					} else {
 						tokenlastlength = tokenlengthlist[token] + 1;
 						if (destctr + tokenlastlength > length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-
-							/* For me this seems a normal situation, It's necessary to handle it*/
+							// For me this seems a normal situation, It's necessary to handle it
 							printf("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
 							       length, destctr, tokenlastlength);
 #endif
-
 							i = 0;
 							for (; destctr < length; destctr++) {
 								dest[destctr++] = dest [tokenlist[token] + i];
@@ -144,30 +140,26 @@ decrypt1(guint8 *dest, guint8 *src, int length, int complength)
 					bitmask <<= 1;
 					bitmask |= 1;
 					maxtoken <<= 1;
-				} else continue; /* no further tokens allowed */
+				} else
+					continue; // no further tokens allowed
 			}
 
 			tokenlist[tokenctr] = destctr - tokenlastlength;
 			tokenlengthlist[tokenctr++] = tokenlastlength;
-
 		}
-
 	}
 
 	return 0;
-
 }
 
-
-/* Huffman-style token encoding */
+// Huffman-style token encoding
 /***************************************************************************/
 /* This code was taken from Carl Muckenhoupt's sde.c, with some minor      */
 /* modifications.                                                          */
 /***************************************************************************/
 
-/* decrypt2 helper function */
-gint16 getc2(guint8 *node, guint8 *src,
-             guint16 *bytectr, guint16 *bitctr, int complength) {
+// decrypt2 helper function
+gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int complength) {
 	guint16 next;
 
 	while (node[1] != 0) {
@@ -179,7 +171,7 @@ gint16 getc2(guint8 *node, guint8 *src,
 		}
 
 		if (value & 0x80) {
-			next = node[1] & 0x0f; /* low 4 bits */
+			next = node[1] & 0x0f; // low 4 bits
 			if (next == 0) {
 				guint16 result = (src[*bytectr] << (*bitctr));
 
@@ -192,17 +184,17 @@ gint16 getc2(guint8 *node, guint8 *src,
 				return (result | 0x100);
 			}
 		} else {
-			next = node[1] >> 4;  /* high 4 bits */
+			next = node[1] >> 4;  // high 4 bits
 		}
 		node += next << 1;
 	}
+
 	return getInt16(node);
 }
 
-/* Huffman token decryptor */
-int decrypt2(guint8* dest, guint8* src, int length, int complength)
-/* no complength checking atm */
-{
+// Huffman token decryptor
+int decrypt2(guint8* dest, guint8* src, int length, int complength) {
+	// no complength checking atm */
 	guint8 numnodes, terminator;
 	guint8 *nodes;
 	gint16 c;
@@ -213,9 +205,9 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength)
 	bytectr = 2 + (numnodes << 1);
 	nodes = src + 2;
 
-	while (((c = getc2(nodes, src, &bytectr, &bitctr, complength))
-	        != (0x0100 | terminator)) && (c >= 0)) {
-		if (length-- == 0) return SCI_ERROR_DECOMPRESSION_OVERFLOW;
+	while (((c = getc2(nodes, src, &bytectr, &bitctr, complength)) != (0x0100 | terminator)) && (c >= 0)) {
+		if (length-- == 0)
+			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 
 		*dest = (guint8)c;
 		dest++;
@@ -224,22 +216,19 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength)
 	return (c == -1) ? SCI_ERROR_DECOMPRESSION_OVERFLOW : 0;
 
 }
-/***************************************************************************/
-/* Carl Muckenhoupt's decompression code ends here                         */
-/***************************************************************************/
+
+// Carl Muckenhoupt's decompression code ends here
 
 int sci0_get_compression_method(Common::ReadStream &stream) {
 	guint16 compressedLength;
 	guint16 compressionMethod;
 	guint16 result_size;
 
-	/* Dummy variable */
+	// Dummy variable
 	if (stream.read(&result_size, 2) != 2)
 		return SCI_ERROR_IO_ERROR;
 
-	if ((stream.read(&compressedLength, 2) != 2) ||
-	        (stream.read(&result_size, 2) != 2) ||
-	        (stream.read(&compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -248,7 +237,6 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 
 	return compressionMethod;
 }
-
 
 int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
@@ -268,9 +256,7 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 	if ((result->number > sci_max_resource_nr[sci_version]) || (result->type > sci_invalid_resource))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
-	if ((stream.read(&compressedLength, 2) != 2) ||
-	        (stream.read(&result_size, 2) != 2) ||
-	        (stream.read(&compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -282,18 +268,18 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
-	/* With SCI0, this simply cannot happen. */
+	// With SCI0, this simply cannot happen.
 
 	if (compressedLength > 4)
 		compressedLength -= 4;
-	else { /* Object has size zero (e.g. view.000 in sq3) (does this really exist?) */
+	else { // Object has size zero (e.g. view.000 in sq3) (does this really exist?)
 		result->data = 0;
 		result->status = SCI_STATUS_NOMALLOC;
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
 	buffer = (guint8*)sci_malloc(compressedLength);
-	result->data = (unsigned char*)sci_malloc(result->size);
+	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
@@ -303,18 +289,13 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	error("Resource %s.%03hi encrypted with method %hi at %.2f%%"
-	        " ratio\n",
-	        sci_resource_types[result->type], result->number, compressionMethod,
-	        (result->size == 0) ? -1.0 :
-	        (100.0 * compressedLength / result->size));
-	error("  compressedLength = 0x%hx, actualLength=0x%hx\n",
-	        compressedLength, result->size);
+	error("Resource %s.%03hi encrypted with method %hi at %.2f%% ratio\n", sci_resource_types[result->type],
+			result->number, compressionMethod, (result->size == 0) ? -1.0 : (100.0 * compressedLength / result->size));
+	error("  compressedLength = 0x%hx, actualLength=0x%hx\n", compressedLength, result->size);
 #endif
 
 	switch (compressionMethod) {
-
-	case 0: /* no compression */
+	case 0: // no compression
 		if (result->size != compressedLength) {
 			free(result->data);
 			result->data = NULL;
@@ -326,10 +307,10 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 1: /* LZW compression */
+	case 1: // LZW compression
 		if (decrypt1(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -337,10 +318,10 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 2: /* Some sort of Huffman encoding */
+	case 2: // Some sort of Huffman encoding
 		if (decrypt2(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -349,17 +330,17 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 		break;
 
 	default:
-		error("Resource %s.%03hi: Compression method %hi not "
-		        "supported", sci_resource_types[result->type], result->number,
-		        compressionMethod);
+		error("Resource %s.%03hi: Compression method %hi not supported", sci_resource_types[result->type],
+				result->number, compressionMethod);
 		free(result->data);
-		result->data = 0; /* So that we know that it didn't work */
+		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;
 		free(buffer);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
 	free(buffer);
+
 	return 0;
 }
 

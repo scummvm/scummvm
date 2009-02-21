@@ -35,13 +35,12 @@ struct aatree {
 	void *key;
 };
 
-/* Sentinel node */
+// Sentinel node
 static aatree_t bottom = {&bottom, &bottom, 0, NULL};
 
-static void
-skew(aatree_t **t) {
+static void skew(aatree_t **t) {
 	if ((*t)->left->level == (*t)->level) {
-		/* Rotate right */
+		// Rotate right
 		aatree_t *temp = *t;
 		*t = (*t)->left;
 		temp->left = (*t)->right;
@@ -49,10 +48,9 @@ skew(aatree_t **t) {
 	}
 }
 
-static void
-split(aatree_t **t) {
+static void split(aatree_t **t) {
 	if ((*t)->right->right->level == (*t)->level) {
-		/* Rotate left */
+		// Rotate left
 		aatree_t *temp = *t;
 		*t = (*t)->right;
 		temp->right = (*t)->left;
@@ -61,12 +59,11 @@ split(aatree_t **t) {
 	}
 }
 
-static int
-delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *, const void *)) {
+static int delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *, const void *)) {
 	int retval = -1;
 
 	if (*t != &bottom) {
-		/* Search down the tree */
+		// Search down the tree
 		aatree_t **n;
 
 		if (compar(x, (*t)->key) < 0)
@@ -78,7 +75,7 @@ delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *
 
 		retval = delete_node(x, n, deleted, compar);
 
-		/* At the bottom of the tree we remove the element (if it is present) */
+		// At the bottom of the tree we remove the element (if it is present)
 		if ((*n == &bottom) && (deleted != &bottom) && (compar(x, deleted->key) == 0)) {
 			aatree_t *temp;
 			deleted->key = (*t)->key;
@@ -101,18 +98,16 @@ delete_node(void *x, aatree_t **t, aatree_t *deleted, int (*compar)(const void *
 	return retval;
 }
 
-aatree_t *
-aatree_new() {
+aatree_t *aatree_new() {
 	return &bottom;
 }
 
-int
-aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
+int aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
 	int retval = -1;
 	int c;
 
 	if (*t == &bottom) {
-		*t = (aatree_t*)sci_malloc(sizeof(aatree_t));
+		*t = (aatree_t *)sci_malloc(sizeof(aatree_t));
 
 		if (*t == NULL)
 			return 1;
@@ -136,13 +131,11 @@ aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *)) 
 	return retval;
 }
 
-int
-aatree_delete(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
+int aatree_delete(void *x, aatree_t **t, int (*compar)(const void *, const void *)) {
 	return delete_node(x, t, &bottom, compar);
 }
 
-aatree_t *
-aatree_walk(aatree_t *t, int direction) {
+aatree_t *aatree_walk(aatree_t *t, int direction) {
 	if ((direction == AATREE_WALK_LEFT) && (t->left != &bottom))
 		return t->left;
 
@@ -152,13 +145,11 @@ aatree_walk(aatree_t *t, int direction) {
 	return NULL;
 }
 
-void *
-aatree_get_data(aatree_t *t) {
+void *aatree_get_data(aatree_t *t) {
 	return t->key;
 }
 
-void
-aatree_free(aatree_t *t) {
+void aatree_free(aatree_t *t) {
 	if (t == &bottom)
 		return;
 

@@ -23,7 +23,7 @@
  *
  */
 
-/* Reads data from a resource file and stores the result in memory */
+// Reads data from a resource file and stores the result in memory
 
 #include "common/util.h"
 #include "sci/include/sci_memory.h"
@@ -31,9 +31,8 @@
 
 namespace Sci {
 
-/* DEFLATE-DCL
-** Refer to the FreeSCI docs for a full description.
-*/
+// DEFLATE-DCL
+// Refer to the FreeSCI docs for a full description.
 
 #define HUFFMAN_LEAF 0x40000000
 
@@ -51,30 +50,28 @@ struct bit_read_struct {
 
 static int length_tree[] = {
 #include "treedef.1"
-	0 /* We need something witout a comma at the end */
+	0 // We need something witout a comma at the end
 };
 
 static int distance_tree[] = {
 #include "treedef.2"
-	0 /* We need something witout a comma at the end */
+	0 // We need something witout a comma at the end
 };
 
 static int ascii_tree[] = {
 #include "treedef.3"
-	0 /* We need something witout a comma at the end */
+	0 // We need something witout a comma at the end
 };
 
 #define CALLC(x) { if ((x) == -SCI_ERROR_DECOMPRESSION_OVERFLOW) return -SCI_ERROR_DECOMPRESSION_OVERFLOW; }
 
-static inline int
-getbits_msb_first(struct bit_read_struct *inp, int bits) {
+static inline int getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	int morebytes = (bits + inp->bitpos - 1) >> 3;
 	int result = 0;
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
-		        inp->bytepos, morebytes, inp->length);
+		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n", inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -90,17 +87,15 @@ getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	return result;
 }
 
-static int DEBUG_DCL_INFLATE = 0; /* FIXME: Make this a define eventually */
+static int DEBUG_DCL_INFLATE = 0; // FIXME: Make this a define eventually
 
-static inline int
-getbits(struct bit_read_struct *inp, int bits) {
+static inline int getbits(struct bit_read_struct *inp, int bits) {
 	int morebytes = (bits + inp->bitpos - 1) >> 3;
 	int result = 0;
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
-		        inp->bytepos, morebytes, inp->length);
+		error("read out-of-bounds with bytepos %d + morebytes %d >= length %d\n", inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
 
@@ -119,8 +114,7 @@ getbits(struct bit_read_struct *inp, int bits) {
 	return result;
 }
 
-static int
-huffman_lookup(struct bit_read_struct *inp, int *tree) {
+static int huffman_lookup(struct bit_read_struct *inp, int *tree) {
 	int pos = 0;
 	int bit;
 
@@ -142,8 +136,7 @@ huffman_lookup(struct bit_read_struct *inp, int *tree) {
 
 #define DCL_ASCII_MODE 1
 
-static int
-decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
+static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	int mode, length_param, value, val_length, val_distance;
 	int write_pos = 0;
 
@@ -152,7 +145,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 
 	if (mode == DCL_ASCII_MODE) {
 		warning("DCL-INFLATE: Warning: Decompressing ASCII mode (untested)");
-		/*		DEBUG_DCL_INFLATE = 1; */
+		//DEBUG_DCL_INFLATE = 1;
 	} else if (mode) {
 		error("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
 		return 1;
@@ -160,6 +153,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 
 	if (DEBUG_DCL_INFLATE) {
 		int i;
+
 		for (i = 0; i < reader->length; i++) {
 			error("%02x ", reader->data[i]);
 			if (!((i + 1) & 0x1f))
@@ -177,7 +171,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	while (write_pos < length) {
 		CALLC(value = getbits(reader, 1));
 
-		if (value) { /* (length,distance) pair */
+		if (value) { // (length,distance) pair
 			CALLC(value = huffman_lookup(reader, length_tree));
 
 			if (value < 8)
@@ -238,7 +232,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 				write_pos += copy_length;
 			}
 
-		} else { /* Copy byte verbatim */
+		} else { // Copy byte verbatim
 			if (mode == DCL_ASCII_MODE) {
 				CALLC(value = huffman_lookup(reader, ascii_tree));
 			} else {
@@ -255,8 +249,7 @@ decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	return 0;
 }
 
-int
-decrypt4(guint8* dest, guint8* src, int length, int complength) {
+int decrypt4(guint8* dest, guint8* src, int length, int complength) {
 	struct bit_read_struct reader;
 
 	reader.length = complength;
@@ -267,10 +260,7 @@ decrypt4(guint8* dest, guint8* src, int length, int complength) {
 	return -decrypt4_hdyn(dest, length, &reader);
 }
 
-
-
-
-void decryptinit3(void);
+void decryptinit3();
 int decrypt3(guint8* dest, guint8* src, int length, int complength);
 
 int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version) {
@@ -304,14 +294,12 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 #ifdef WORDS_BIGENDIAN
 		result->number = GUINT16_SWAP_LE_BE_CONSTANT(result->number);
-#endif /* WORDS_BIGENDIAN */
+#endif
 		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	}
 
-	if ((stream.read(&compressedLength, 2) != 2) ||
-	        (stream.read(&result_size, 2) != 2) ||
-	        (stream.read(&compressionMethod, 2) != 2))
+	if ((stream.read(&compressedLength, 2) != 2) || (stream.read(&result_size, 2) != 2) || (stream.read(&compressionMethod, 2) != 2))
 		return SCI_ERROR_IO_ERROR;
 
 #ifdef WORDS_BIGENDIAN
@@ -326,14 +314,14 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 	if (compressedLength > 4)
 		compressedLength -= 4;
-	else { /* Object has size zero (e.g. view.000 in sq3) (does this really exist?) */
+	else { // Object has size zero (e.g. view.000 in sq3) (does this really exist?)
 		result->data = 0;
 		result->status = SCI_STATUS_NOMALLOC;
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (guint8*)sci_malloc(compressedLength);
-	result->data = (unsigned char*)sci_malloc(result->size);
+	buffer = (guint8 *)sci_malloc(compressedLength);
+	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
@@ -343,20 +331,14 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	error("Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%%"
-	        " ratio\n",
-	        result->number, sci_resource_type_suffixes[result->type],
-	        early ? 'e' : 'l',
-	        compressionMethod,
-	        (result->size == 0) ? -1.0 :
-	        (100.0 * compressedLength / result->size));
-	error("  compressedLength = 0x%hx, actualLength=0x%hx\n",
-	        compressedLength, result->size);
+	error("Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%% ratio\n", result->number,
+			sci_resource_type_suffixes[result->type], early ? 'e' : 'l', compressionMethod,
+			(result->size == 0) ? -1.0 : (100.0 * compressedLength / result->size));
+	error("  compressedLength = 0x%hx, actualLength=0x%hx\n", compressedLength, result->size);
 #endif
 
 	switch (compressionMethod) {
-
-	case 0: /* no compression */
+	case 0: // no compression
 		if (result->size != compressedLength) {
 			free(result->data);
 			result->data = NULL;
@@ -368,10 +350,10 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 1: /* LZW */
+	case 1: // LZW
 		if (decrypt2(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -379,11 +361,11 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
-	case 2: /* ??? */
+	case 2: // ???
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -395,7 +377,7 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -408,7 +390,7 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
-			result->data = 0; /* So that we know that it didn't work */
+			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
@@ -418,17 +400,17 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		break;
 
 	default:
-		error("Resource %s.%03hi: Compression method SCI1/%hi not "
-		        "supported", sci_resource_types[result->type], result->number,
-		        compressionMethod);
+		error("Resource %s.%03hi: Compression method SCI1/%hi not supported", sci_resource_types[result->type],
+				result->number, compressionMethod);
 		free(result->data);
-		result->data = 0; /* So that we know that it didn't work */
+		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;
 		free(buffer);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
 	free(buffer);
+
 	return 0;
 }
 

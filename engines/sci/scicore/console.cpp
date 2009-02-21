@@ -39,17 +39,11 @@ FILE *con_file = NULL;
 static void(*_con_string_callback)(char*) = NULL;
 static void (*_con_pixmap_callback)(gfx_pixmap_t *) = NULL;
 
-
-/****************************************/
-/* sciprintf                            */
-/****************************************/
-
-
 int sciprintf(const char *fmt, ...) {
 	va_list argp;
 	int bufsize = 256;
 	int i;
-	char *buf 	= (char *)sci_malloc(bufsize);
+	char *buf = (char *)sci_malloc(bufsize);
 
 	if (NULL == fmt) {
 		error("console.c: sciprintf(): NULL passed for parameter fmt\n");
@@ -62,11 +56,10 @@ int sciprintf(const char *fmt, ...) {
 	}
 
 	va_start(argp, fmt);
-	while ((i = vsnprintf(buf, bufsize - 1, fmt, argp)) == -1
-	        || (i >= bufsize - 2)) {
-		/* while we're out of space... */
+	while ((i = vsnprintf(buf, bufsize - 1, fmt, argp)) == -1 || (i >= bufsize - 2)) {
+		// while we're out of space...
 		va_end(argp);
-		va_start(argp, fmt);	/* reset argp */
+		va_start(argp, fmt); // reset argp
 
 		free(buf);
 		buf = (char *)sci_malloc(bufsize <<= 1);
@@ -77,7 +70,6 @@ int sciprintf(const char *fmt, ...) {
 		printf("%s", buf);
 	if (con_file)
 		fprintf(con_file, "%s", buf);
-
 
 	if (_con_string_callback)
 		_con_string_callback(buf);
@@ -91,18 +83,15 @@ void con_set_string_callback(void(*callback)(char *)) {
 	_con_string_callback = callback;
 }
 
-void
-con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *)) {
+void con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *)) {
 	_con_pixmap_callback = callback;
 }
 
-int
-con_can_handle_pixmaps(void) {
+int con_can_handle_pixmaps() {
 	return _con_pixmap_callback != NULL;
 }
 
-int
-con_insert_pixmap(gfx_pixmap_t *pixmap) {
+int con_insert_pixmap(gfx_pixmap_t *pixmap) {
 	if (_con_pixmap_callback)
 		_con_pixmap_callback(pixmap);
 	else
@@ -110,9 +99,7 @@ con_insert_pixmap(gfx_pixmap_t *pixmap) {
 	return 0;
 }
 
-
-void
-open_console_file(char *filename) {
+void open_console_file(char *filename) {
 	if (con_file != NULL)
 		fclose(con_file);
 
@@ -127,18 +114,15 @@ open_console_file(char *filename) {
 
 	if (NULL == con_file)
 		error("console.c: open_console_file(): Could not open output file %s\n", filename);
-
 }
 
-void
-close_console_file(void) {
+void close_console_file() {
 	if (con_file != NULL) {
 		fclose(con_file);
 		con_file = NULL;
 	}
 }
 
-
-#endif /* SCI_CONSOLE */
+#endif // SCI_CONSOLE
 
 } // End of namespace Sci
