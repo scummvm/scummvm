@@ -191,7 +191,7 @@ gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int c
 		node += next << 1;
 	}
 
-	return (int16)READ_UINT16(node);
+	return (int16)READ_LE_UINT16(node);
 }
 
 // Huffman token decryptor
