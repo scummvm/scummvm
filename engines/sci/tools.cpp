@@ -37,6 +37,7 @@
 
 #ifdef UNIX
 #include <fnmatch.h>
+#include <sys/stat.h>
 #endif
 
 #include "common/archive.h"
@@ -314,41 +315,6 @@ void sci_finish_find(sci_dir_t *dir) {
 }
 
 #endif
-
-int sci_mkpath(const char *path) {
-	const char *path_position = path;
-	char *next_separator = NULL;
-
-	if (chdir(G_DIR_SEPARATOR_S)) { // Go to root
-		sciprintf("Error: Could not change to root directory '%s'", G_DIR_SEPARATOR_S);
-		return -1;
-	}
-
-	do {
-		if (next_separator)
-			*next_separator = G_DIR_SEPARATOR_S[0];
-		next_separator = (char *)strchr(path_position, G_DIR_SEPARATOR_S[0]);
-
-		if (next_separator)
-			*next_separator = 0;
-
-		if (*path_position) { // Unless we're at the first slash...
-			if (chdir(path_position)) {
-				if (scimkdir(path_position, 0700) || chdir(path_position)) {
-					sciprintf("Error: Could not create subdirectory '%s' in", path_position);
-					if (next_separator)
-						*next_separator = G_DIR_SEPARATOR_S[0];
-					sciprintf(" '%s'!\n", path);
-					return -2;
-				}
-			}
-		}
-		path_position = next_separator + 1;
-
-	} while (next_separator);
-
-	return 0;
-}
 
 
 /* Returns the case-sensitive filename of a file.

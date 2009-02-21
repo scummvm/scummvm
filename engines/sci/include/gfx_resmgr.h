@@ -53,7 +53,7 @@ typedef enum {
 #define GFXR_RES_NR(id) (id & 0xffff)
 
 
-typedef struct gfx_resource_struct {
+struct gfx_resource_t {
 	int ID; /* Resource ID */
 	int lock_sequence_nr; /* See description of lock_counter in gfx_resstate_t */
 	int mode; /* A mode type hash */
@@ -72,7 +72,7 @@ typedef struct gfx_resource_struct {
 		gfxr_pic_t *pic;
 	} unscaled_data;
 
-} gfx_resource_t;
+};
 
 
 struct _gfx_options;

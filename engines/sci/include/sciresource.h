@@ -40,15 +40,6 @@ namespace Sci {
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 /* The maximum allowed size for a compressed or decompressed resource */
 
-#ifdef WIN32
-#  define DIR_SEPARATOR_STR "\\"
-#  define PATH_SEPARATOR_STR ";"
-#else
-#  define DIR_SEPARATOR_STR "/"
-#  define PATH_SEPARATOR_STR ":"
-#endif
-
-
 /*** RESOURCE STATUS TYPES ***/
 #define SCI_STATUS_NOMALLOC 0
 #define SCI_STATUS_ALLOCATED 1
@@ -146,7 +137,8 @@ struct resource_altsource_t {
 };
 
 
-typedef struct _resource_struct {
+/** Struct for storing resources in memory */
+struct resource_t {
 	unsigned char *data;
 
 	unsigned short number;
@@ -161,11 +153,11 @@ typedef struct _resource_struct {
 	unsigned char status;
 	unsigned short lockers; /* Number of places where this resource was locked */
 
-	struct _resource_struct *next; /* Position marker for the LRU queue */
-	struct _resource_struct *prev;
+	resource_t *next; /* Position marker for the LRU queue */
+	resource_t *prev;
 
 	resource_altsource_t *alt_sources; /* SLL of alternative resource data sources */
-} resource_t; /* for storing resources in memory */
+}; 
 
 
 struct ResourceManager {

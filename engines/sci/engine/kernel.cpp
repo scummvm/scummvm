@@ -29,6 +29,9 @@
 #	undef ARRAYSIZE
 #endif
 
+
+#include <time.h>	// FIXME: For struct tm
+
 #include "common/system.h"
 
 #include "sci/sci.h"

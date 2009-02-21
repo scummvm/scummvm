@@ -30,6 +30,7 @@
 */
 
 #include <stdarg.h>
+#include <time.h>	// FIXME: For struct tm
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_operations.h"
 #include "sci/include/sfx_engine.h"
@@ -3991,7 +3992,7 @@ _cfsml_read_script_t(Common::SeekableReadStream *fh, script_t* save_struc, const
 
 // Auto-generated CFSML declaration and function block ends here
 // Auto-generation performed by cfsml.pl 0.8.2 
-#line 446 "engines/sci/engine/savegame.cfsml"
+#line 447 "engines/sci/engine/savegame.cfsml"
 
 void write_songlib_t(Common::WriteStream *fh, songlib_t *songlib) {
 	song_t *seeker = *(songlib->lib);
@@ -4008,7 +4009,7 @@ void write_songlib_t(Common::WriteStream *fh, songlib_t *songlib) {
 	_cfsml_write_song_t(fh, seeker);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 458 "engines/sci/engine/savegame.cfsml"
+#line 459 "engines/sci/engine/savegame.cfsml"
 		seeker = seeker->next;
 	}
 	WSprintf(fh, "]\n");
@@ -4054,7 +4055,7 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 482 "engines/sci/engine/savegame.cfsml"
+#line 483 "engines/sci/engine/savegame.cfsml"
 		song_lib_add(*songlib, newsong);
 	}  
 	l = fh->readLine(); // "]"
@@ -4095,7 +4096,7 @@ void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo) {
 	_cfsml_write_int_hash_map_t(fh, *foo);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 518 "engines/sci/engine/savegame.cfsml"
+#line 519 "engines/sci/engine/savegame.cfsml"
 }
 
 void write_song_tp(Common::WriteStream *fh, song_t **foo) {
@@ -4104,7 +4105,7 @@ void write_song_tp(Common::WriteStream *fh, song_t **foo) {
 	_cfsml_write_song_t(fh, *foo);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 522 "engines/sci/engine/savegame.cfsml"
+#line 523 "engines/sci/engine/savegame.cfsml"
 }
 
 song_iterator_t *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id);
@@ -4136,7 +4137,7 @@ int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastv
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 532 "engines/sci/engine/savegame.cfsml"
+#line 533 "engines/sci/engine/savegame.cfsml"
 	(*foo)->delay = 0;
 	(*foo)->it = NULL;
 	(*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
@@ -4167,7 +4168,7 @@ int read_int_hash_map_tp(Common::SeekableReadStream *fh, int_hash_map_t **foo, c
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 541 "engines/sci/engine/savegame.cfsml"
+#line 542 "engines/sci/engine/savegame.cfsml"
 	(*foo)->holes = NULL;
 	return 0;
 }
@@ -4183,7 +4184,7 @@ void write_int_hash_map_node_tp(Common::WriteStream *fh, int_hash_map_t::node_t 
 	write_int_hash_map_node_tp(fh, &((*foo)->next));
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 552 "engines/sci/engine/savegame.cfsml"
+#line 553 "engines/sci/engine/savegame.cfsml"
 		} else
 			WSprintf(fh, "L");
 		WSprintf(fh, "]");
@@ -4233,7 +4234,7 @@ void write_menubar_tp(Common::WriteStream *fh, menubar_t **foo) {
 	_cfsml_write_menubar_t(fh, (*foo));
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 597 "engines/sci/engine/savegame.cfsml"
+#line 598 "engines/sci/engine/savegame.cfsml"
 	} else { // Nothing to write
 		WSprintf(fh, "\\null\\");
 	}
@@ -4267,7 +4268,7 @@ int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char 
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 609 "engines/sci/engine/savegame.cfsml"
+#line 610 "engines/sci/engine/savegame.cfsml"
 	}
 	return *hiteof;
 }
@@ -4279,7 +4280,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_int(fh, &foo->segmgr_id);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 616 "engines/sci/engine/savegame.cfsml"
+#line 617 "engines/sci/engine/savegame.cfsml"
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4287,7 +4288,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_script_t(fh, &foo->data.script);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 619 "engines/sci/engine/savegame.cfsml"
+#line 620 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_CLONES:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4295,7 +4296,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_clone_table_t(fh, &foo->data.clones);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 622 "engines/sci/engine/savegame.cfsml"
+#line 623 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_LOCALS:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4303,7 +4304,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_local_variables_t(fh, &foo->data.locals);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 625 "engines/sci/engine/savegame.cfsml"
+#line 626 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4311,7 +4312,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_sys_strings_t(fh, &foo->data.sys_strings);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 628 "engines/sci/engine/savegame.cfsml"
+#line 629 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_STACK:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4319,7 +4320,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_int(fh, &foo->data.stack.nr);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 631 "engines/sci/engine/savegame.cfsml"
+#line 632 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_HUNK:
 		break;
@@ -4329,7 +4330,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_list_table_t(fh, &foo->data.lists);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 636 "engines/sci/engine/savegame.cfsml"
+#line 637 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_NODES:	
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4337,7 +4338,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_node_table_t(fh, &foo->data.nodes);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 639 "engines/sci/engine/savegame.cfsml"
+#line 640 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_DYNMEM:
 #line 814 "engines/sci/engine/savegame.cfsml"
@@ -4345,7 +4346,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	_cfsml_write_dynmem_t(fh, &foo->data.dynmem);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 642 "engines/sci/engine/savegame.cfsml"
+#line 643 "engines/sci/engine/savegame.cfsml"
 	break;
 	}
 }
@@ -4380,7 +4381,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 654 "engines/sci/engine/savegame.cfsml"
+#line 655 "engines/sci/engine/savegame.cfsml"
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 // Auto-generated CFSML data reader code
@@ -4406,7 +4407,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 657 "engines/sci/engine/savegame.cfsml"
+#line 658 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_CLONES:
 // Auto-generated CFSML data reader code
@@ -4432,7 +4433,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 660 "engines/sci/engine/savegame.cfsml"
+#line 661 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_LOCALS:
 // Auto-generated CFSML data reader code
@@ -4458,7 +4459,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 663 "engines/sci/engine/savegame.cfsml"
+#line 664 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 // Auto-generated CFSML data reader code
@@ -4484,7 +4485,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 666 "engines/sci/engine/savegame.cfsml"
+#line 667 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_LISTS:
 // Auto-generated CFSML data reader code
@@ -4510,7 +4511,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 669 "engines/sci/engine/savegame.cfsml"
+#line 670 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_NODES:
 // Auto-generated CFSML data reader code
@@ -4536,7 +4537,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 672 "engines/sci/engine/savegame.cfsml"
+#line 673 "engines/sci/engine/savegame.cfsml"
 	break;
 	case MEM_OBJ_STACK:
 // Auto-generated CFSML data reader code
@@ -4562,7 +4563,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 675 "engines/sci/engine/savegame.cfsml"
+#line 676 "engines/sci/engine/savegame.cfsml"
 	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
 	break;
 	case MEM_OBJ_HUNK:
@@ -4592,7 +4593,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 682 "engines/sci/engine/savegame.cfsml"
+#line 683 "engines/sci/engine/savegame.cfsml"
 	break;
 	}
 
@@ -4606,7 +4607,7 @@ void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo) {
 	write_mem_obj_t(fh, (*foo));
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 691 "engines/sci/engine/savegame.cfsml"
+#line 692 "engines/sci/engine/savegame.cfsml"
 	} else { // Nothing to write
 		WSprintf(fh, "\\null\\");
 	}
@@ -4639,7 +4640,7 @@ int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char 
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 702 "engines/sci/engine/savegame.cfsml"
+#line 703 "engines/sci/engine/savegame.cfsml"
 		return *hiteof;
 	}
 	return 0;
@@ -4693,13 +4694,13 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	_cfsml_write_SavegameMetadata(fh, meta);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 751 "engines/sci/engine/savegame.cfsml"
+#line 752 "engines/sci/engine/savegame.cfsml"
 #line 814 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
 	_cfsml_write_EngineState(fh, s);
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
-#line 752 "engines/sci/engine/savegame.cfsml"
+#line 753 "engines/sci/engine/savegame.cfsml"
 
 	delete meta;
 
@@ -5002,7 +5003,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1026 "engines/sci/engine/savegame.cfsml"
+#line 1027 "engines/sci/engine/savegame.cfsml"
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
 		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
@@ -5054,7 +5055,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1049 "engines/sci/engine/savegame.cfsml"
+#line 1050 "engines/sci/engine/savegame.cfsml"
 
 	sfx_exit(&s->sound);
 	_gamestate_unfrob(retval);
@@ -5178,7 +5179,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1144 "engines/sci/engine/savegame.cfsml"
+#line 1145 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;

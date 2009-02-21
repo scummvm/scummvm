@@ -27,6 +27,7 @@
 #define SCI_TOOLS_H
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 
 /** This header file defines (mostly) generic tools and utility functions.
  ** It also handles portability stuff, in cooperation with scitypes.h
@@ -39,13 +40,6 @@
 
 #define SCI_INVALID_FD -1
 #define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
-
-#ifdef WIN32
-#  ifndef _Win32
-#    define _Win32
-/* Work around problem with some versions of flex */
-#  endif
-#endif
 
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
@@ -85,8 +79,6 @@
 
 
 
-#define MAX_HOMEDIR_SIZE 255
-
 #ifdef WIN32
 #  define FO_BINARY "b"
 #else
@@ -107,32 +99,10 @@ namespace Sci {
 
 /**** FUNCTION DECLARATIONS ****/
 
-#ifdef WIN32
-#    define scimkdir(arg1,arg2) mkdir(arg1)
-#else
-#    define scimkdir(arg1,arg2) mkdir(arg1,arg2)
-#endif
+#define getInt16	(int16)READ_UINT16
+#define getUInt16	READ_UINT16
+#define putInt16	WRITE_UINT16
 
-static inline gint16 getInt16(byte *d) {
-	return (gint16)(*d | (d[1] << 8));
-}
-
-#define getUInt16(d) (guint16)(getInt16(d))
-	
-/* Turns a little endian 16 bit value into a machine-dependant 16 bit value
-** Parameters: d: Pointer to the memory position from which to read
-** Returns   : (gint16) The (possibly converted) 16 bit value
-** getUInt16 returns the int unsigned.
-*/
-
-static inline void putInt16(byte* dest, int src) {
-	dest[0] = (byte)src & 0xff;
-	dest[1] = (byte)(src >> 8) & 0xff;
-}
-/* Converse of getInt16()
-** Parameters: (byte *) dest: The position to write to
-**             (int) src: value to write
-*/
 
 /* --- */
 
@@ -220,13 +190,6 @@ char *sci_getcwd();
 ** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
 */
 
-int sci_mkpath(const char *path);
-/* Asserts that the specified path is available
-** Parameters: (const char *) path: Path to verify/create
-** Returns   : (int) 0 on success, <0 on error
-** This function will create any directories that couldn't be found
-*/
-
 int sci_fd_size(int fd);
 /* Returns the filesize of an open file
 ** Parameters: (int) fd: File descriptor of open file
@@ -243,9 +206,6 @@ int sci_file_size(const char *fname);
 It uses StrAt() to read the individual elements, so we must determine
 whether a string is really a string or an array. */
 int is_print_str(char *str);
-
-#  define sci_unlink unlink
-#  define sci_rmdir rmdir
 
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);

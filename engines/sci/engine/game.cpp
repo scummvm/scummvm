@@ -634,7 +634,7 @@ int game_init(EngineState *s) {
 	s->debug_mode = 0x0; // Disable all debugging
 	s->onscreen_console = 0; // No onscreen console unless explicitly requested
 
-	srand(time(NULL)); // Initialize random number generator
+	srand(g_system->getMillis()); // Initialize random number generator
 
 //	script_dissect(0, s->selector_names, s->selector_names_nr);
 	game_obj = script_lookup_export(s, 0, 0);

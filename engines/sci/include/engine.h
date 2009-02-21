@@ -33,12 +33,6 @@ namespace Common {
 	class WriteStream;
 }
 
-// FIXME. Remove after transiton to File class
-#include <sys/stat.h>
-
-// FIXME. Remove this eventually
-#include <time.h>
-
 #include "sci/tools.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/script.h"
@@ -76,7 +70,7 @@ namespace Sci {
 #define MAX_GAMEDIR_SIZE 32 /* Used for subdirectory inside of "~/.freesci/" */
 #define MAX_SAVEGAME_NR 20 /* Maximum number of savegames */
 
-#define MAX_SAVE_DIR_SIZE MAX_HOMEDIR_SIZE + STRLEN_FREESCI_GAMEDIR + MAX_GAMEDIR_SIZE + 4
+#define MAX_SAVE_DIR_SIZE MAXPATHLEN + STRLEN_FREESCI_GAMEDIR + MAX_GAMEDIR_SIZE + 4
 /* +4 for the three slashes and trailing \0 */
 
 /* values for EngineState.restarting_flag */
