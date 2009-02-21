@@ -35,6 +35,7 @@
 #include "sci/include/sci_midi.h"
 #include "sci/include/sci_widgets.h"
 #include "sci/sci.h"
+#include "sci/gfx/gfx_widgets.h"
 
 #include "common/util.h"
 #include "common/savefile.h"

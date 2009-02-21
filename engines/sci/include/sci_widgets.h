@@ -32,6 +32,8 @@
 
 namespace Sci {
 
+struct menu_t;
+
 /* The following flags are applicable to windows in SCI0: */
 #define WINDOW_FLAG_TRANSPARENT 0x01
 

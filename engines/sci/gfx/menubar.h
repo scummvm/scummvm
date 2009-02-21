@@ -28,10 +28,13 @@
 #ifndef _SCI_MENUBAR_H_
 #define _SCI_MENUBAR_H_
 
+#include "sci/include/vm_types.h"
 #include "sci/gfx/gfx_operations.h"
 #include "sci/gfx/gfx_widgets.h"
 
 namespace Sci {
+
+struct EngineState;
 
 #define MENU_FREESCI_BLATANT_PLUG 0xfff0
 /* This adds an "About FreeSCI" menu option to the first menu */

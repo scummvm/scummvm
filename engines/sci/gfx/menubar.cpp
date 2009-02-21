@@ -30,7 +30,7 @@
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/engine.h"
-#include "sci/include/menubar.h"
+#include "sci/gfx/menubar.h"
 
 namespace Sci {
 

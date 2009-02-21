@@ -24,6 +24,7 @@
  */
 
 #include "sci/include/engine.h"
+#include "sci/gfx/gfx_widgets.h"
 
 namespace Sci {
 

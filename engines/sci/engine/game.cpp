@@ -30,6 +30,8 @@
 #include "sci/include/versions.h"
 #include "sci/include/kernel.h"
 #include "sci/engine/kernel_types.h"
+#include "sci/gfx/gfx_widgets.h"
+#include "sci/gfx/menubar.h"
 
 namespace Sci {
 

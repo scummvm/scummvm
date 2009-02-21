@@ -29,15 +29,15 @@
 ** savegame.cfsml. If this doesn't solve your problem, contact the maintainer.
 */
 
-#include <stdarg.h>
 #include <time.h>	// FIXME: For struct tm
+#include "common/stream.h"
+#include "common/system.h"
 #include "sci/include/sci_memory.h"
 #include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/menubar.h"
 #include "sci/sfx/sfx_engine.h"
 #include "sci/include/engine.h"
 #include "sci/engine/heap.h"
-#include "common/stream.h"
-#include "common/system.h"
 
 #ifdef _MSC_VER
 #include <direct.h>

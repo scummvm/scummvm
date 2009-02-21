@@ -38,7 +38,6 @@ namespace Common {
 #include "sci/include/script.h"
 #include "sci/include/sciconsole.h"
 #include "sci/include/vm.h"
-#include "sci/include/menubar.h"
 #include "sci/include/versions.h"
 #include "sci/include/kernel.h"
 #include "sci/engine/seg_manager.h"
@@ -46,6 +45,8 @@ namespace Common {
 #include "sci/sfx/sfx_engine.h"
 
 namespace Sci {
+
+struct menubar_t;
 
 #define FREESCI_CURRENT_SAVEGAME_VERSION 8
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 8
