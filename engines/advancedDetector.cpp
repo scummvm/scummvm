@@ -322,7 +322,10 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	debug(3, "Starting detection");
+	if (fslist.empty())
+		return ADGameDescList();
+	Common::FSNode parent = fslist.begin()->getParent();
+	debug(3, "Starting detection in dir '%s'", parent.getPath().c_str());
 
 	// First we compose a hashmap of all files in fslist.
 	// Includes nifty stuff like removing trailing dots and ignoring case.
@@ -444,7 +447,6 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 	// We didn't find a match
 	if (matched.empty()) {
 		if (!filesSizeMD5.empty()) {
-			Common::FSNode parent = fslist.begin()->getParent();
 			reportUnknown(parent, filesSizeMD5);
 		}
 
