@@ -23,7 +23,7 @@
  *
  */
 
-/* The interpreter-specific part of the resource manager, for SCI */
+// The interpreter-specific part of the resource manager, for SCI
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/sciresource.h"
@@ -33,12 +33,8 @@
 
 #include "common/util.h"
 
-int
-gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
-                              gfx_options_t *options,
-                              void *internal, int palette) {
+int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_options_t *options, void *internal, int palette) {
 	switch (type) {
-
 	case GFX_RESOURCE_TYPE_VIEW:
 		return palette;
 
@@ -46,11 +42,8 @@ gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 		if (version >= SCI_VERSION_01_VGA)
 			return options->pic_port_bounds.y;
 		else
-			return (options->pic0_unscaled) ? 0x10000 :
-			       (options->pic0_dither_mode << 12)
-			       | (options->pic0_dither_pattern << 8)
-			       | (options->pic0_brush_mode << 4)
-			       | (options->pic0_line_mode);
+			return (options->pic0_unscaled) ? 0x10000 : (options->pic0_dither_mode << 12)
+			       | (options->pic0_dither_pattern << 8) | (options->pic0_brush_mode << 4) | (options->pic0_line_mode);
 
 	case GFX_RESOURCE_TYPE_FONT:
 		return 0;
@@ -65,23 +58,17 @@ gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 	}
 }
 
-
-gfxr_pic_t *
-gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal) {
+gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal) {
 	return gfxr_init_pic(mode, ID, version >= SCI_VERSION_01_VGA);
 }
 
-
-void
-gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
+void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 	gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 }
 
-
-int
-gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
+int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
                                int flags, int default_palette, int nr, void *internal) {
-	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
+	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_pic, nr, 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
@@ -136,7 +123,7 @@ gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gf
 		gfxr_dither_pic0(scaled_pic, state->options->pic0_dither_mode, state->options->pic0_dither_pattern);
 	}
 
-	/* Mark default palettes */
+	// Mark default palettes
 	if (scaled_pic)
 		scaled_pic->visual_map->loop = default_palette;
 
@@ -146,25 +133,19 @@ gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gf
 	return GFX_OK;
 }
 
-
-void
-gfxr_palettize_view(gfxr_view_t *view, gfx_pixmap_color_t *source, int source_entries) {
+void gfxr_palettize_view(gfxr_view_t *view, gfx_pixmap_color_t *source, int source_entries) {
 	int i;
 
 	for (i = 0;i < MIN(view->colors_nr, source_entries);i++) {
-		if ((view->colors[i].r == 0) &&
-		        (view->colors[i].g == 0) &&
-		        (view->colors[i].b == 0)) {
+		if ((view->colors[i].r == 0) && (view->colors[i].g == 0) && (view->colors[i].b == 0)) {
 			view->colors[i] = source[i];
 		}
 	}
 }
 
-gfxr_view_t *
-gfxr_draw_view11(int id, byte *resource, int size);
+gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
 
-gfxr_view_t *
-gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
+gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_view, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
@@ -194,7 +175,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 
 	if (state->version >= SCI_VERSION_01_VGA) {
 		if (!result->colors) {
-			result->colors = (gfx_pixmap_color_t*)sci_malloc(sizeof(gfx_pixmap_color_t) * state->static_palette_entries);
+			result->colors = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * state->static_palette_entries);
 			memset(result->colors, 0, sizeof(gfx_pixmap_color_t) * state->static_palette_entries);
 			result->colors_nr = state->static_palette_entries;
 		}
@@ -203,10 +184,8 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 	return result;
 }
 
-
-gfx_bitmap_font_t *
-gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
-	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
+gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
+	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_font, nr, 0);
 	if (!res || !res->data)
 		return NULL;
@@ -214,9 +193,7 @@ gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
 	return gfxr_read_font(res->id, res->data, res->size);
 }
 
-
-gfx_pixmap_t *
-gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
+gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_cursor, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
@@ -235,10 +212,7 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 		return gfxr_draw_cursor01(resid, res->data, res->size);
 }
 
-
-int *
-gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
-                               int version, int *entries_nr, void *internal) {
+int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type, int version, int *entries_nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	int restype;
 	int *resources;
@@ -265,11 +239,10 @@ gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
 
 	default:
 		GFXDEBUG("Unsupported resource %d\n", type);
-		return NULL; /* unsupported resource */
-
+		return NULL;
 	}
 
-	resources = (int*)sci_malloc(sizeof(int) * top);
+	resources = (int *)sci_malloc(sizeof(int) * top);
 
 	for (i = 0; i < top; i++)
 		if (scir_test_resource(resmgr, restype, i))
@@ -280,8 +253,7 @@ gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
 	return resources;
 }
 
-gfx_pixmap_color_t *
-gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal) {
+gfx_pixmap_color_t *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal) {
 	if (version >= SCI_VERSION_01_VGA)
 		return gfxr_interpreter_get_palette(state, version, colors_nr, internal, 999);
 
@@ -289,10 +261,8 @@ gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *col
 	return gfx_sci0_pic_colors;
 }
 
-gfx_pixmap_color_t *
-gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
-                             void *internal, int nr) {
-	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
+gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr) {
+	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
 	resource_t *res;
 
 	if (version < SCI_VERSION_01_VGA)
@@ -319,10 +289,6 @@ gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr,
 	}
 }
 
-int
-gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
+int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
 	return (version > SCI_VERSION_1);
 }
-
-
-

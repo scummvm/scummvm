@@ -23,7 +23,7 @@
  *
  */
 
-/* SCI 1 view resource defrobnicator */
+// SCI 1 view resource defrobnicator
 
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_system.h"
@@ -35,21 +35,20 @@
 #define V1_PALETTE_OFFSET 6
 #define V1_FIRST_LOOP_OFFSET 8
 
-#define V1_RLE 0x80 /* run-length encode? */
-#define V1_RLE_BG 0x40 /* background fill */
+#define V1_RLE 0x80 // run-length encode?
+#define V1_RLE_BG 0x40 // background fill
 
 #define NEXT_RUNLENGTH_BYTE(n) \
-  if (literal_pos == runlength_pos) \
-    literal_pos += n; \
-  runlength_pos += n;
+	if (literal_pos == runlength_pos) \
+		literal_pos += n; \
+	runlength_pos += n;
 
 #define NEXT_LITERAL_BYTE(n) \
-  if (literal_pos == runlength_pos) \
-    runlength_pos += n; \
-  literal_pos += n;
+	if (literal_pos == runlength_pos) \
+		runlength_pos += n; \
+	literal_pos += n;
 
-static int
-decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
+static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
                     int runlength_pos, int literal_pos, int xl, int yl, int color_key) {
 	int writepos = mirrored ? xl : 0;
 
@@ -79,11 +78,11 @@ decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int m
 				return 1;
 			}
 			/*
-						if (writepos - bytes < 0) {
-							GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
-								id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
-							bytes = pixmap_size - writepos;
-						}
+			if (writepos - bytes < 0) {
+				GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
+						id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
+				bytes = pixmap_size - writepos;
+			}
 			*/
 			if (op == V1_RLE) {
 				color = resource[literal_pos];
@@ -176,8 +175,7 @@ decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int m
 	return 0;
 }
 
-static int
-decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
+static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
                           int pos, int xl, int yl, int color_key) {
 	int writepos = mirrored ? xl - 1 : 0;
 
@@ -197,9 +195,9 @@ decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, byte *dest,
 		if (mirrored) {
 			while (bytes--) {
 				dest[writepos--] = color;
-				/* If we've just written the first pixel of a line... */
+				// If we've just written the first pixel of a line...
 				if (!((writepos + 1) % xl)) {
-					/* Then move to the end of next line */
+					// Then move to the end of next line
 					writepos += 2 * xl;
 
 					if (writepos >= pixmap_size && bytes) {
@@ -227,8 +225,7 @@ decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, byte *dest,
 	return 0;
 }
 
-gfx_pixmap_t *
-gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game) {
+gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game) {
 	int xl = get_int_16(resource);
 	int yl = get_int_16(resource + 2);
 	int xhot = (gint8) resource[4];
@@ -257,12 +254,10 @@ gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size
 	}
 
 	if (amiga_game)
-		decompress_failed = decompress_sci_view_amiga(id, loop, cel,
-		                    resource, dest, mirrored, pixmap_size, size, pos,
+		decompress_failed = decompress_sci_view_amiga(id, loop, cel, resource, dest, mirrored, pixmap_size, size, pos,
 		                    xl, yl, retval->color_key);
 	else
-		decompress_failed = decompress_sci_view(id, loop, cel,
-		                                        resource, dest, mirrored, pixmap_size, size, pos,
+		decompress_failed = decompress_sci_view(id, loop, cel, resource, dest, mirrored, pixmap_size, size, pos,
 		                                        pos, xl, yl, retval->color_key);
 
 	if (decompress_failed) {
@@ -273,8 +268,7 @@ gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size
 	return retval;
 }
 
-static int
-gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resource, int offset, int size, gfxr_view_t *view, int amiga_game) {
+static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resource, int offset, int size, gfxr_view_t *view, int amiga_game) {
 	int i;
 	int cels_nr = get_int_16(resource + offset);
 
@@ -284,7 +278,7 @@ gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resourc
 
 	if (cels_nr * 2 + 4 + offset > size) {
 		GFXERROR("View %02x:(%d): Offset array for %d cels extends beyond resource space\n", id, loop, cels_nr);
-		dest->cels_nr = 0; /* Mark as "delete no cels" */
+		dest->cels_nr = 0; // Mark as "delete no cels"
 		dest->cels = NULL;
 		return 1;
 	}
@@ -314,13 +308,11 @@ gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resourc
 	return 0;
 }
 
-
 #define V1_FIRST_MAGIC 1
 #define V1_MAGICS_NR 5
-/*static byte view_magics[V1_MAGICS_NR] = {0x80, 0x00, 0x00, 0x00, 0x00};*/
+//static byte view_magics[V1_MAGICS_NR] = {0x80, 0x00, 0x00, 0x00, 0x00};
 
-gfxr_view_t *
-gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
+gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
                 int static_pal_nr) {
 	int i;
 	int palette_offset;
@@ -347,13 +339,12 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 		return NULL;
 	}
 
-	/*	error("View flags are 0x%02x\n", resource[3]);*/
+	//error("View flags are 0x%02x\n", resource[3]);
 
 	/*
 		for (i = 0; i < V1_MAGICS_NR; i++)
 			if (resource[V1_FIRST_MAGIC + i] != view_magics[i]) {
-				GFXWARN("View %04x: View magic #%d should be %02x but is %02x\n",
-					id, i, view_magics[i], resource[V1_FIRST_MAGIC + i]);
+				GFXWARN("View %04x: View magic #%d should be %02x but is %02x\n", id, i, view_magics[i], resource[V1_FIRST_MAGIC + i]);
 			}
 	*/
 
@@ -370,7 +361,7 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 			return NULL;
 		}
 	} else if (static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR) {
-		/* Assume we're running an amiga game. */
+		// Assume we're running an amiga game.
 		amiga_game = 1;
 		view->colors = static_pal;
 		view->colors_nr = static_pal_nr;
@@ -392,9 +383,8 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 			error_token = 1;
 		}
 
-		if (error_token || gfxr_draw_loop1(view->loops + i, id, i, mirror_mask & (1 << i),
-		                                   resource, loop_offset, size, view, amiga_game)) {
-			/* An error occured */
+		if (error_token || gfxr_draw_loop1(view->loops + i, id, i, mirror_mask & (1 << i), resource, loop_offset, size, view, amiga_game)) {
+			// An error occured
 			view->loops_nr = i;
 			gfxr_free_view(NULL, view);
 			return NULL;
@@ -423,8 +413,7 @@ gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal
 #define V2_RUNLENGTH_OFFSET 24
 #define V2_LITERAL_OFFSET 28
 
-gfx_pixmap_t *
-gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view) {
+gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view) {
 	int xl = get_uint_16(cel_base + V2_CEL_WIDTH);
 	int yl = get_uint_16(cel_base + V2_CEL_HEIGHT);
 	int xdisplace = get_uint_16(cel_base + V2_X_DISPLACEMENT);
@@ -465,15 +454,13 @@ gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, by
 	return retval;
 }
 
-gfxr_loop_t *
-gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop_base, int size, int cels_nr,
+gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop_base, int size, int cels_nr,
                  gfxr_loop_t *result, gfxr_view_t *view, int bytes_per_cel) {
 	byte *seeker = loop_base;
 	int i;
 
 	result->cels_nr = cels_nr;
-	result->cels = (gfx_pixmap_t **)
-	               sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
+	result->cels = (gfx_pixmap_t **)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
 		result->cels[i] = gfxr_draw_cel11(id, loop, i, mirrored, resource_base, seeker, size, view);
@@ -483,8 +470,7 @@ gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop
 	return result;
 }
 
-gfxr_view_t *
-gfxr_draw_view11(int id, byte *resource, int size) {
+gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	gfxr_view_t *view;
 	int header_size = get_uint_16(resource + V2_HEADER_SIZE);
 	int palette_offset = get_uint_16(resource + V2_PALETTE_OFFSET);
@@ -494,7 +480,7 @@ gfxr_draw_view11(int id, byte *resource, int size) {
 	int i;
 	byte *seeker;
 
-	view = (gfxr_view_t*)sci_malloc(sizeof(gfxr_view_t));
+	view = (gfxr_view_t *)sci_malloc(sizeof(gfxr_view_t));
 
 	memset(view, 0, sizeof(gfxr_view_t));
 	view->ID = id;
@@ -503,7 +489,7 @@ gfxr_draw_view11(int id, byte *resource, int size) {
 	view->loops_nr = loops_num;
 	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
 
-	/* There is no indication of size here, but this is certainly large enough */
+	// There is no indication of size here, but this is certainly large enough
 	view->colors = gfxr_read_pal11(id, &view->colors_nr, resource + palette_offset, 1284);
 
 	seeker = resource + header_size;

@@ -23,24 +23,16 @@
  *
  */
 
-/* set optimisations for Win32: */
-#ifdef WIN32
-#  include <memory.h>
-//#  pragma intrinsic( memcpy, memset )
-#endif
-
 #include "sci/include/sci_memory.h"
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_resource.h"
 #include "sci/include/gfx_tools.h"
 
-
-gfx_pixmap_t *
-gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored) {
+gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored) {
 	int xl = get_int_16(resource);
 	int yl = get_int_16(resource + 2);
-	int xhot = ((signed char *) resource)[4];
-	int yhot = ((signed char *) resource)[5];
+	int xhot = ((signed char *)resource)[4];
+	int yhot = ((signed char *)resource)[5];
 	int color_key = resource[6];
 	int pos = 7;
 	int writepos = mirrored ? xl : 0;
@@ -49,7 +41,7 @@ gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t 
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
 	byte *dest = retval->index_data;
 
-	retval->color_key = 255; /* Pick something larger than 15  */
+	retval->color_key = 255; // Pick something larger than 15
 
 	retval->xoffset = mirrored ? xhot : -xhot;
 	retval->yoffset = -yhot;
@@ -71,7 +63,6 @@ gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t 
 	}
 
 	if (mirrored) {
-
 		while (yl && pos < size) {
 			int op = resource[pos++];
 			int count = op >> 4;
@@ -126,8 +117,7 @@ gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t 
 	return retval;
 }
 
-static int
-gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored) {
+static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored) {
 	int i;
 	int cels_nr = get_int_16(resource + offset);
 
@@ -168,13 +158,11 @@ gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset,
 	return 0;
 }
 
-
 #define V0_LOOPS_NR_OFFSET 0
 #define V0_FIRST_LOOP_OFFSET 8
 #define V0_MIRROR_LIST_OFFSET 2
 
-gfxr_view_t *
-gfxr_draw_view0(int id, byte *resource, int size, int palette) {
+gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	int i;
 	gfxr_view_t *view;
 	int mirror_bitpos = 1;
@@ -186,12 +174,12 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 		return NULL;
 	}
 
-	view = (gfxr_view_t*)sci_malloc(sizeof(gfxr_view_t));
+	view = (gfxr_view_t *)sci_malloc(sizeof(gfxr_view_t));
 	view->ID = id;
 
 	view->loops_nr = resource[V0_LOOPS_NR_OFFSET];
 
-	/* Set palette */
+	// Set palette
 	view->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
 	view->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 	view->colors = gfx_sci0_image_colors[sci0_palette];
@@ -229,7 +217,7 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 		}
 
 		if (error_token || gfxr_draw_loop0(view->loops + i, id, i, resource, loop_offset, size, view, mirrored)) {
-			/* An error occured */
+			// An error occured
 			view->loops_nr = i;
 			gfxr_free_view(NULL, view);
 			return NULL;
@@ -238,10 +226,3 @@ gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 
 	return view;
 }
-
-
-
-
-
-
-
