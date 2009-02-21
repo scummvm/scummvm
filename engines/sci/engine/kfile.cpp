@@ -186,12 +186,12 @@ reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 static FILE *getFileFromHandle(EngineState *s, int handle) {
 	if (handle == 0) {
-		error("Attempt to use file handle 0\n");
+		error("Attempt to use file handle 0");
 		return 0;
 	}
 
 	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
-		error("Attempt to use invalid/unused file handle %d\n", handle);
+		error("Attempt to use invalid/unused file handle %d", handle);
 		return 0;
 	}
 	
@@ -901,7 +901,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		error("Unknown FileIO() sub-command: %d\n", func_nr);
+		error("Unknown FileIO() sub-command: %d", func_nr);
 	}
 
 	return s->r_acc;
