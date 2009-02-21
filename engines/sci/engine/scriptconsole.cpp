@@ -696,7 +696,6 @@ static int c_version(EngineState * s) {
 		return -1;
 	}
 
-	sciprintf("FreeSCI, version " VERSION "\n");
 	sciprintf("Resource file version:        %s\n", sci_version_types[s->resmgr->sci_version]);
 	sciprintf("Emulated interpreter version: %d.%03d.%03d\n", SCI_VERSION_MAJOR(s->version),
 	          SCI_VERSION_MINOR(s->version), SCI_VERSION_PATCHLEVEL(s->version));

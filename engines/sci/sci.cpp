@@ -229,8 +229,6 @@ Common::Error SciEngine::go() {
 	map_MIDI_instruments(resmgr);
 #endif
 
-	sciprintf("Imported FreeSCI, version "VERSION"\n");
-
 	EngineState* gamestate = (EngineState *) sci_malloc(sizeof(EngineState));
 	memset(gamestate, 0, sizeof(EngineState));
 	gamestate->resmgr = resmgr;

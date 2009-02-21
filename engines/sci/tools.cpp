@@ -47,6 +47,9 @@
 
 #include "sci/include/engine.h"
 
+// FIXME: Get rid of the following (needed for O_RDONLY etc.)
+#include <fcntl.h>
+
 namespace Sci {
 
 // FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
@@ -59,7 +62,7 @@ namespace Sci {
 #endif
 
 
-#ifdef HAVE_SYS_TIME_H
+#ifndef _MSC_VER
 #  include <sys/time.h>
 #endif
 
@@ -148,7 +151,7 @@ void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int l
 }
 
 
-#if defined(HAVE_GETTIMEOFDAY)
+#ifndef _MSC_VER
 void sci_gettime(long *seconds, long *useconds) {
 	struct timeval tv;
 

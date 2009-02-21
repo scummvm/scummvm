@@ -48,9 +48,7 @@ void print_tabs_id(int nr, songit_id_t id) {
 	fprintf(stderr, "[%08lx] ", id);
 }
 
-#ifndef HAVE_MEMCHR
-static void *
-memchr(void *_data, int c, int n) {
+static unsigned char *sci_memchr(void *_data, int c, int n) {
 	unsigned char *data = (unsigned char *) _data;
 
 	while (n && !(*data == c)) {
@@ -63,7 +61,6 @@ memchr(void *_data, int c, int n) {
 	else
 		return NULL;
 }
-#endif
 
 static void _common_init(base_song_iterator_t *self) {
 	self->fade.action = FADE_ACTION_NONE;
@@ -491,7 +488,7 @@ static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
 
 	while ((tries--) && (offset < self->size) && (!found_it)) {
 		/* Search through the garbage manually */
-		unsigned char *fc = (unsigned char*)memchr(self->data + offset,
+		unsigned char *fc = sci_memchr(self->data + offset,
 		                    SCI0_END_OF_SONG,
 		                    self->size - offset);
 

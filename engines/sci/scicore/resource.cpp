@@ -396,7 +396,7 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 					return NULL;
 				}
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-					// fixme: Try reading w/o resource.map
+					// FIXME: Try reading w/o resource.map
 					resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 				}
 
@@ -414,7 +414,7 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 				resource_error = sci1_read_resource_map(mgr, source, scir_get_volume(mgr, source, 0),
 														&mgr->_resources, &mgr->_resourcesNr, detected_version);
 				if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-					// fixme: Try reading w/o resource.map
+					// FIXME: Try reading w/o resource.map
 					resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 				}
 

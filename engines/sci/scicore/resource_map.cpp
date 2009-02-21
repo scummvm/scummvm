@@ -106,10 +106,7 @@ static int detect_odd_sci01(Common::File &file) {
 
 		if (read_ok) {
 			sprintf(filename, "resource.%03i", SCI0_RESFILE_GET_FILE(buf + 2));
-			Common::File temp;
-			
-			// FIXME: Maybe better to use File::exists here?
-			if (!temp.open(filename)) {
+			if (!Common::File::exists(filename)) {
 				files_ok = 0;
 				break;
 			}

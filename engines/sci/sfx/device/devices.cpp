@@ -23,11 +23,8 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-#include "../device.h"
-#include <stdio.h>
+#include "common/scummsys.h"
+#include "sci/sfx/device.h"
 
 #include "sci/tools.h"
 

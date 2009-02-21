@@ -79,6 +79,9 @@ MODULE_OBJS = \
 	sfx/player/players.o \
 	sfx/player/polled.o \
 	sfx/player/realtime.o \
+	sfx/seq/gm.o \
+	sfx/seq/instrument-map.o \
+	sfx/seq/map-mt32-to-gm.o \
 	sfx/seq/sequencers.o \
 	sfx/softseq/amiga.o \
 	sfx/softseq/opl2.o \

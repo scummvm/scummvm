@@ -44,27 +44,6 @@
 /*#define _SCI_RESOURCE_DEBUG */
 /*#define _SCI_DECOMPRESS_DEBUG*/
 
-//TODO: Remove these defines by replacing their functionality by their ScummVM counterparts
-#define HAVE_MEMCHR
-#define HAVE_FCNTL_H
-#ifndef _MSC_VER
-#define HAVE_UNISTD_H
-#define HAVE_SYS_TIME_H
-#define HAVE_GETTIMEOFDAY
-#endif
-#define VERSION "0.6.4"
-
-// FIXME: Mostly for close() in lots of places. Get rid of this!
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-
-// FIXME: Get rid of the following (needed for O_RDONLY etc.)
-#ifdef HAVE_FCNTL_H
-#  include <fcntl.h>
-#endif
-
-
 // FIXME: rework sci_dir_t to use common/fs.h and remove these includes
 #include <sys/types.h>
 #ifndef _MSC_VER
@@ -73,11 +52,9 @@
 #include <io.h>
 #endif
 
-
-#ifdef WIN32
-#  define FO_BINARY "b"
-#else
-#  define FO_BINARY ""
+// FIXME: For chdir() etc.
+#ifndef _MSC_VER
+#include <unistd.h>
 #endif
 
 namespace Sci {

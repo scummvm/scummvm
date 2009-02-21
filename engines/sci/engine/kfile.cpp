@@ -38,11 +38,22 @@
 #include <errno.h>
 #include <sys/stat.h>		// for S_IREAD/S_IWRITE
 
+// FIXME: Get rid of the following (needed for O_RDONLY etc.)
+#include <fcntl.h>
+
+
 namespace Sci {
 
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
+
+#ifdef WIN32
+#  define FO_BINARY "b"
+#else
+#  define FO_BINARY ""
+#endif
+
 
 static int _savegame_indices_nr = -1; // means 'uninitialized'
 
