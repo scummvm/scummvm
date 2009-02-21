@@ -31,12 +31,10 @@
 
 extern int font_counter;
 
-
 #define FONT_HEIGHT_OFFSET 4
 #define FONT_MAXCHAR_OFFSET 2
 
-static int
-calc_char(byte *dest, int total_width, int total_height, byte *src, int size) {
+static int calc_char(byte *dest, int total_width, int total_height, byte *src, int size) {
 	int width = src[0];
 	int height = src[1];
 	int byte_width = (width + 7) >> 3;
@@ -63,9 +61,7 @@ calc_char(byte *dest, int total_width, int total_height, byte *src, int size) {
 	return GFX_OK;
 }
 
-
-gfx_bitmap_font_t *
-gfxr_read_font(int id, byte *resource, int size) {
+gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	gfx_bitmap_font_t *font = (gfx_bitmap_font_t*)sci_calloc(sizeof(gfx_bitmap_font_t), 1);
 	int chars_nr;
 	int max_width = 0, max_height;
@@ -84,8 +80,7 @@ gfxr_read_font(int id, byte *resource, int size) {
 
 	if (chars_nr < 0 || chars_nr > 256 || max_height < 0) {
 		if (chars_nr < 0 || chars_nr > 256)
-			GFXERROR("Font %04x: Invalid number of characters: %d\n", id,
-			         chars_nr);
+			GFXERROR("Font %04x: Invalid number of characters: %d\n", id, chars_nr);
 		if (max_height < 0)
 			GFXERROR("Font %04x: Invalid font height: %d\n", id, max_height);
 		gfxr_free_font(font);
@@ -93,8 +88,7 @@ gfxr_read_font(int id, byte *resource, int size) {
 	}
 
 	if (size < 6 + chars_nr * 2) {
-		GFXERROR("Font %04x: Insufficient space for %d characters in font\n",
-		         id, chars_nr);
+		GFXERROR("Font %04x: Insufficient space for %d characters in font\n", id, chars_nr);
 		gfxr_free_font(font);
 		return NULL;
 	}
@@ -106,8 +100,7 @@ gfxr_read_font(int id, byte *resource, int size) {
 		int offset = get_int_16(resource + (i << 1) + 6);
 
 		if (offset >= size) {
-			GFXERROR("Font %04x: Error: Character 0x%02x is at offset 0x%04x (beyond 0x%04x)\n",
-			         id, i, offset, size);
+			GFXERROR("Font %04x: Error: Character 0x%02x is at offset 0x%04x (beyond 0x%04x)\n", id, i, offset, size);
 			gfxr_free_font(font);
 			return NULL;
 		}
@@ -130,13 +123,12 @@ gfxr_read_font(int id, byte *resource, int size) {
 		font->row_size = (font->row_size + 3) & ~3;
 
 	font->char_size = font->row_size * max_height;
-	font->data = (byte*)sci_calloc(font->char_size, chars_nr);
+	font->data = (byte *)sci_calloc(font->char_size, chars_nr);
 
 	for (i = 0; i < chars_nr; i++) {
 		int offset = get_int_16(resource + (i << 1) + 6);
 
-		if (calc_char(font->data + (font->char_size * i), font->row_size, max_height,
-		              resource + offset, size - offset)) {
+		if (calc_char(font->data + (font->char_size * i), font->row_size, max_height, resource + offset, size - offset)) {
 			GFXERROR("Problem occured in font %04x, char %d/%d\n", id, i, chars_nr);
 			gfxr_free_font(font);
 			return NULL;
@@ -145,5 +137,3 @@ gfxr_read_font(int id, byte *resource, int size) {
 
 	return font;
 }
-
-

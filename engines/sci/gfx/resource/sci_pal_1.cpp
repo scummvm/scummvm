@@ -36,8 +36,7 @@
 #define SCI_PAL_FORMAT_VARIABLE_FLAGS 0
 #define SCI_PAL_FORMAT_CONSTANT_FLAGS 1
 
-gfx_pixmap_color_t *
-gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
+gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
 	int start_color = resource[25];
 	int format = resource[32];
 	int entry_size = 0;
@@ -55,8 +54,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
 		break;
 	}
 
-	retval = (gfx_pixmap_color_t *)
-	         sci_malloc(sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
+	retval = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
 	memset(retval, 0, sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
 
 	for (i = 0; i < start_color; i ++) {
@@ -86,8 +84,7 @@ gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
 	return retval;
 }
 
-gfx_pixmap_color_t *
-gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
+gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
 	int counter = 0;
 	int pos;
 	unsigned int colors[MAX_COLORS] = {0};
@@ -98,14 +95,10 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
 		return NULL;
 	}
 
-
 	pos = PALETTE_START;
 
 	while (pos < size/* && resource[pos] == COLOR_OK && counter < MAX_COLORS*/) {
-		int color = resource[pos]
-		            | (resource[pos + 1] << 8)
-		            | (resource[pos + 2] << 16)
-		            | (resource[pos + 3] << 24);
+		int color = resource[pos] | (resource[pos + 1] << 8) | (resource[pos + 2] << 16) | (resource[pos + 3] << 24);
 
 		pos += 4;
 
@@ -123,9 +116,6 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
 	}
 
 	retval = (gfx_pixmap_color_t*)sci_malloc(sizeof(gfx_pixmap_color_t) * counter);
-#ifdef SATISFY_PURIFY
-	memset(retval, 0, sizeof(gfx_pixmap_color_t) * counter);
-#endif
 
 	*colors_nr = counter;
 	for (pos = 0; pos < counter; pos++) {
@@ -140,12 +130,11 @@ gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
 	return retval;
 }
 
-gfx_pixmap_color_t *
-gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
+gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
 	int i;
 	gfx_pixmap_color_t *retval;
 
-	retval = (gfx_pixmap_color_t*)sci_malloc(sizeof(gfx_pixmap_color_t) * 32);
+	retval = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * 32);
 
 	for (i = 0; i < 32; i++) {
 		int b1, b2;
@@ -165,6 +154,6 @@ gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
 	}
 
 	*colors_nr = 32;
+
 	return retval;
 }
-
