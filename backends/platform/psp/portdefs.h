@@ -44,11 +44,10 @@
 #include "trace.h"
 
 
-#define	BREAKPOINT	asm("break\n")
+//#define	BREAKPOINT	asm("break\n")
 
 
 //#define printf  pspDebugScreenPrintf
-#define exit(x) printf("exit() called\n"); sceKernelSleepThread();
 
 #endif /* PORTDEFS_H */
 
