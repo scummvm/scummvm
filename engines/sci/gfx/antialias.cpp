@@ -28,17 +28,16 @@
 #include "sci/include/gfx_system.h"
 #include "sci/include/gfx_tools.h"
 
-static void
-antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode) {
+static void antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t *mode) {
 	int x, y, c;
 	int bytespp = mode->bytespp;
 	int line_size = bytespp * pixmap->xl;
 	char *lastline[2];
 	char *lastline_p = NULL;
-	char *data_p = (char *) pixmap->data;
+	char *data_p = (char *)pixmap->data;
 
-	lastline[0] = (char*)sci_malloc(line_size);
-	lastline[1] = (char*)sci_malloc(line_size);
+	lastline[0] = (char *)sci_malloc(line_size);
+	lastline[1] = (char *)sci_malloc(line_size);
 
 	for (y = 0; y < pixmap->yl; y++) {
 		int visimode = (y > 0 && y + 1 < pixmap->yl) ? 1 : 0;
@@ -100,11 +99,11 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 				switch (visimode) {
 
 				case 0:
-					accum /= 9; /* Only happens twelve times */
+					accum /= 9; // Only happens twelve times
 					break;
 
 				case 1:
-					accum = (accum >> 6) + (accum >> 4); /* 15/16 intensity */
+					accum = (accum >> 6) + (accum >> 4); // 15/16 intensity
 					break;
 
 				case 2:
@@ -112,7 +111,7 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 					break;
 
 				default:
-					accum = (c == 0) ? 0xffffffff : 0; /* Error: mark as red */
+					accum = (c == 0) ? 0xffffffff : 0; // Error: mark as red
 				}
 
 				result |= (accum & mask[c]);
@@ -130,14 +129,13 @@ antialiase_simple(gfx_pixmap_t *pixmap, int mask[], int shift_const, gfx_mode_t 
 	free(lastline[1]);
 }
 
-void
-gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type) {
+void gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type) {
 	int masks[3];
 	int shift_const = 0;
 
 #ifdef WORDS_BIGENDIAN
 	shift_const = (sizeof(unsigned long) - mode->bytespp) << 3;
-#endif /* WORDS_BIGENDIAN */
+#endif
 
 	masks[0] = mode->red_mask;
 	masks[1] = mode->green_mask;
@@ -158,6 +156,4 @@ gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t type
 	default:
 		GFXERROR("Invalid antialiasing mode %d (internal error)\n", type);
 	}
-
-	return;
 }
