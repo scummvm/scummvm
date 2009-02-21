@@ -1170,7 +1170,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Police Quest 3 - English DOS
 	{{"pq3", "", {
 		{"resource.map", 0, "6457bf0c8ca865a42d9ff5827ab49b89", 5559},
@@ -1183,18 +1182,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
 
-#if 0
 	// Police Quest 4 - English DOS
 	{{"pq4", "", {
 		{"resource.map", 0, "379dfe80ed6bd16c47e4b950c4722eac", 11374},
 		{"resource.000", 0, "fd316a09b628b7032248139003369022", 18841068},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 002)
 	},
-#endif
 
 	// Police Quest 4 - English DOS
 	{{"pq4", "", {
