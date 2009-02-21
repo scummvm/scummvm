@@ -1939,10 +1939,7 @@ void song_iterator_add_death_listener(song_iterator_t *it,
                                  void *client,
                                  void (*notify)(void *self, void *notifier)) {
 	if (it->death_listeners_nr >= SONGIT_MAX_LISTENERS) {
-		fprintf(stderr, "FATAL: Too many death listeners for song"
-		        " iterator\n");
-		BREAKPOINT();
-		exit(1);
+		error("FATAL: Too many death listeners for song iterator");
 	}
 
 	it->death_listeners[it->death_listeners_nr].notify = notify;
@@ -1967,10 +1964,7 @@ void song_iterator_remove_death_listener(song_iterator_t *it,
 		}
 	}
 
-	fprintf(stderr, "FATAL: Could not remove death listener from "
-	        "song iterator\n");
-	BREAKPOINT();
-	exit(1);
+	error("FATAL: Could not remove death listener from song iterator\n");
 }
 
 

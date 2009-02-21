@@ -211,8 +211,7 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 		  GFXERROR("Error occured while drawing widget!\n"); \
 		  return 1; \
 	  } else if (retval == GFX_FATAL) { \
-		  GFXERROR("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
-		  exit(1); \
+		  error("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
 	  } \
   }
 

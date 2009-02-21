@@ -473,13 +473,11 @@ static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	gint16 *ptr = buffer;
 
 	if (!ready) {
-		fprintf(stderr, "synth_mixer(): !ready \n");
-		exit(1);
+		error("synth_mixer(): !ready \n");
 	}
 
 	if (!buffer) {
-		fprintf(stderr, "synth_mixer(): !buffer \n");
-		exit(1);
+		error("synth_mixer(): !buffer \n");
 	}
 
 #if 0

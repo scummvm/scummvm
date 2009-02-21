@@ -1808,8 +1808,7 @@ seg_interface_t *get_seg_interface(SegManager *self, seg_id_t segid) {
 	memcpy(retval, seg_interfaces[mobj->type - 1], sizeof(seg_interface_t));
 
 	if (mobj->type != retval->type_id) {
-		fprintf(stderr, "Improper segment interface for %d", mobj->type);
-		exit(1);
+		error(stderr, "Improper segment interface for %d", mobj->type);
 	}
 
 	retval->segmgr = self;

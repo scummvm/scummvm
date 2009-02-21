@@ -727,9 +727,8 @@ void kernel_compile_signature(const char **s) {
 				break;
 
 			default: {
-				sciprintf("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
+				error("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
 				          " '%c')\n", *s, c, c);
-				exit(1);
 			}
 			}
 		} while (*src && (*src == KSIG_SPEC_ALLOW_INV || *src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
