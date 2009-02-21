@@ -478,8 +478,7 @@ reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	run_gc(s);
-	// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-	debugC(2, Sci::kDebugLevelRoom, "Entering room number %d", UKPV(0));
+	debugC(2, kDebugLevelRoom, "Entering room number %d", UKPV(0));
 	return s->r_acc;
 }
 
@@ -513,12 +512,10 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
 		if (argc) { // Get seconds since last am/pm switch
 			retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		} else { // Get time since game started
 			retval = start_time * 60;
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		}
 	} else {
 		int mode = UKPV_OR_ALT(0, 0);
@@ -528,27 +525,23 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		switch (mode) {
 		case _K_NEW_GETTIME_TICKS : {
 			retval = start_time * 60;
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_12HOUR : {
 			loc_time.tm_hour %= 12;
 			retval = (loc_time.tm_min << 6) | (loc_time.tm_hour << 12) | (loc_time.tm_sec);
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(12h) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_TIME_24HOUR : {
 			retval = (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1) | (loc_time.tm_hour << 11);
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(24h) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
 			break;
 		}
 		case _K_NEW_GETTIME_DATE : {
 			retval = (loc_time.tm_mon << 5) | loc_time.tm_mday | (loc_time.tm_year << 9);
-			// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
-			debugC(2, Sci::kDebugLevelTime, "GetTime(date) returns %d", retval);
+			debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 			break;
 		}
 		default: {
