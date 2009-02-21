@@ -51,28 +51,10 @@ struct menubar_t;
 #define FREESCI_CURRENT_SAVEGAME_VERSION 8
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 8
 
-#ifdef WIN32
-#  define FREESCI_GAMEDIR "FreeSCI"
-#  define STRLEN_FREESCI_GAMEDIR 7
-#else
-#  define FREESCI_GAMEDIR ".freesci"
-#  define STRLEN_FREESCI_GAMEDIR 8
-#endif
-
-#define FREESCI_CONFFILE "config"
-#define FREESCI_SAVEDIR_PREFIX "save_"
-#define FREESCI_CONFFILE_DOS "freesci.cfg"
-#define FREESCI_GAMES_DIR "games"
-
-#define FREESCI_FILE_STATE "state"
-#define FREESCI_ID_SUFFIX ".id"
-/* Used for <gamename>.id files ("real" save games) */
-
 #define MAX_GAMEDIR_SIZE 32 /* Used for subdirectory inside of "~/.freesci/" */
 #define MAX_SAVEGAME_NR 20 /* Maximum number of savegames */
 
-#define MAX_SAVE_DIR_SIZE MAXPATHLEN + STRLEN_FREESCI_GAMEDIR + MAX_GAMEDIR_SIZE + 4
-/* +4 for the three slashes and trailing \0 */
+#define MAX_SAVE_DIR_SIZE MAXPATHLEN
 
 /* values for EngineState.restarting_flag */
 #define SCI_GAME_IS_NOT_RESTARTING 0
