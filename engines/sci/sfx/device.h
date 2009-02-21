@@ -55,60 +55,54 @@ struct _midi_device {
 	*/
 };
 
-// FIXME: This evil hack below is needed to create the
-// decorated_midi_writer struct in instrumen-map.c -- in C++, this can
-// be replaced by simple subclassing.
-#define MIDI_WRITER_BODY	\
-	char *name; /* Name description of the device */		\
-									\
-	int (*init)(struct _midi_writer *self);				\
-	/* Initializes the writer					\
-	** Parameters: (midi_writer_t *) self: Self reference		\
-	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be \
-	**                   opened					\
-	*/								\
-									\
-	int (*set_option)(struct _midi_writer *self, char *name, char *value); \
-	/* Sets an option for the writer				\
-	** Parameters: (char *) name: Name of the option to set		\
-	**             (char *) value: Value of the option to set	\
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise (unsupported option) \
-	*/								\
-									\
-	int (*write)(struct _midi_writer *self, unsigned char *buf, int len); \
-	/* Writes some bytes to the MIDI stream				\
-	** Parameters: (char *) buf: The buffer to write		\
-	**             (int) len: Number of bytes to write		\
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure	\
-	** No delta time is expected here.				\
-	*/								\
-									\
-	void (*delay)(struct _midi_writer *self, int ticks);		\
-	/* Introduces an explicit delay					\
-	** Parameters: (int) ticks: Number of 60 Hz ticks to sleep	\
-	*/								\
-									\
-	void (*flush)(struct _midi_writer *self); /* May be NULL */	\
-	/* Flushes the MIDI file descriptor				\
-	** Parameters: (midi_writer_t *) self: Self reference		\
-	*/								\
-									\
-	void (*reset_timer)(struct _midi_writer *self);			\
-	/* Resets the timer associated with this device			\
-	** Parameters: (midi_writer_t *) self: Self reference		\
-	** This function makes sure that a subsequent write would have effect \
-	** immediately, and any delay() would be relative to the point in time \
-	** this function was invoked at.				\
-	*/								\
-									\
-	void (*close)(struct _midi_writer *self);			\
-	/* Closes the associated MIDI device				\
-	** Parameters: (midi_writer_t *) self: Self reference		\
+struct midi_writer_t {
+	char *name; /* Name description of the device */
+
+	int (*init)(midi_writer_t *self);
+	/* Initializes the writer
+	** Parameters: (midi_writer_t *) self: Self reference
+	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be
+	**                   opened
 	*/
 
-typedef struct _midi_writer {
-	MIDI_WRITER_BODY
-} midi_writer_t;
+	int (*set_option)(midi_writer_t *self, char *name, char *value);
+	/* Sets an option for the writer
+	** Parameters: (char *) name: Name of the option to set
+	**             (char *) value: Value of the option to set
+	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise (unsupported option)
+	*/
+
+	int (*write)(midi_writer_t *self, unsigned char *buf, int len);
+	/* Writes some bytes to the MIDI stream
+	** Parameters: (char *) buf: The buffer to write
+	**             (int) len: Number of bytes to write
+	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** No delta time is expected here.
+	*/
+
+	void (*delay)(midi_writer_t *self, int ticks);
+	/* Introduces an explicit delay
+	** Parameters: (int) ticks: Number of 60 Hz ticks to sleep
+	*/
+
+	void (*flush)(midi_writer_t *self); /* May be NULL */
+	/* Flushes the MIDI file descriptor
+	** Parameters: (midi_writer_t *) self: Self reference
+	*/
+
+	void (*reset_timer)(midi_writer_t *self);
+	/* Resets the timer associated with this device
+	** Parameters: (midi_writer_t *) self: Self reference
+	** This function makes sure that a subsequent write would have effect
+	** immediately, and any delay() would be relative to the point in time
+	** this function was invoked at.
+	*/
+
+	void (*close)(midi_writer_t *self);
+	/* Closes the associated MIDI device
+	** Parameters: (midi_writer_t *) self: Self reference
+	*/
+};
 
 
 void *sfx_find_device(int type, char *name);

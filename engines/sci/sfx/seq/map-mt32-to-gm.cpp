@@ -23,10 +23,10 @@
  *
  */
 
-#include <sciresource.h>
-#include <engine.h>
-#include <stdarg.h>
-#include "instrument-map.h"
+#include "common/scummsys.h"
+#include "sci/include/sciresource.h"
+#include "sci/include/engine.h"
+#include "sci/sfx/seq/instrument-map.h"
 
 namespace Sci {
 

@@ -23,11 +23,11 @@
  *
  */
 
-#include <assert.h>
-#include "sci_midi.h"
-#include "sci_memory.h"
-#include "instrument-map.h"
-#include "sfx_engine.h"
+#include "common/scummsys.h"
+#include "sci/include/sci_midi.h"
+#include "sci/include/sci_memory.h"
+#include "sci/sfx/seq/instrument-map.h"
+#include "sci/sfx/sfx_engine.h"
 
 namespace Sci {
 
@@ -75,17 +75,17 @@ sfx_instrument_map_free(sfx_instrument_map_t *map) {
 	if (map->velocity_map) {
 		int i;
 		for (i = 0; i < map->velocity_maps_nr; i++)
-			sci_free(map->velocity_map[i]);
-		sci_free(map->velocity_map);
+			free(map->velocity_map[i]);
+		free(map->velocity_map);
 		map->velocity_map = NULL;
 	}
 
 	if (map->initialisation_block) {
-		sci_free(map->initialisation_block);
+		free(map->initialisation_block);
 		map->initialisation_block = NULL;
 	}
 
-	sci_free(map);
+	free(map);
 }
 
 #define PATCH_MAP_OFFSET		0x0000
@@ -127,7 +127,7 @@ patch001_type0_length(byte *data, size_t length) {
 
 static int
 patch001_type1_length(byte *data, size_t length) {
-	if ((length >= 1155) && (((data[1154] << 8) + data[1153] + 1155) == length))
+	if ((length >= 1155) && (((data[1154] << 8) + data[1153] + 1155) == (int)length))
 		return 1;
 	return 0;
 }
@@ -213,10 +213,7 @@ sfx_instrument_map_load_sci(byte *data, size_t size) {
 /* Output with the instrument map */
 #define MIDI_CHANNELS_NR 0x10
 
-// FIXME: Replace this ugly hack with simple subclassing once converting to C++
-struct decorated_midi_writer_t {
-	MIDI_WRITER_BODY
-
+struct decorated_midi_writer_t : public midi_writer_t {
 	midi_writer_t *writer;
 	sfx_patch_map_t patches[MIDI_CHANNELS_NR];
 	sfx_instrument_map_t *map;
@@ -260,9 +257,9 @@ close_decorated(decorated_midi_writer_t *self) {
 	sfx_instrument_map_free(self->map);
 	self->map = NULL;
 	self->writer->close(self->writer);
-	sci_free((void *)self->name);
+	free((void *)self->name);
 	self->name = NULL;
-	sci_free(self);
+	free(self);
 }
 
 #define BOUND_127(x) (((x) < 0)? 0 : (((x) > 0x7f)? 0x7f : (x)))
@@ -428,7 +425,7 @@ write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 
 static void
 init(midi_writer_t *writer, byte *data, size_t len) {
-	int offset = 0;
+	size_t offset = 0;
 	byte status = 0;
 
 	/* Send init data as separate MIDI commands */
@@ -474,7 +471,7 @@ init(midi_writer_t *writer, byte *data, size_t len) {
 			args = 2;
 		}
 
-		if (args > len - offset) {
+		if (args + offset > len) {
 			fprintf(stderr, "[instrument-map] Insufficient bytes remaining for MIDI command %02x\n", op);
 			return;
 		}
