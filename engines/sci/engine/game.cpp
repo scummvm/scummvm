@@ -36,7 +36,7 @@ extern calls_struct_t *send_calls;
 extern int send_calls_allocated;
 extern int bp_flag;
 
-static int _init_vocabulary(state_t *s) { // initialize vocabulary and related resources
+static int _init_vocabulary(EngineState *s) { // initialize vocabulary and related resources
 	s->parser_lastmatch_word = SAID_NO_MATCH;
 	s->parser_rules = NULL;
 
@@ -70,7 +70,7 @@ static int _init_vocabulary(state_t *s) { // initialize vocabulary and related r
 
 extern int _allocd_rules;
 
-static void _free_vocabulary(state_t *s) {
+static void _free_vocabulary(EngineState *s) {
 	sciprintf("Freeing vocabulary\n");
 
 	if (s->parser_words) {
@@ -91,14 +91,14 @@ static void _free_vocabulary(state_t *s) {
 }
 
 
-static int _init_graphics_input(state_t *s) {
+static int _init_graphics_input(EngineState *s) {
 	s->pic_priority_table = NULL;
 	s->pics = NULL;
 	s->pics_nr = 0;
 	return 0;
 }
 
-static void _sci1_alloc_system_colors(state_t *s) {
+static void _sci1_alloc_system_colors(EngineState *s) {
 	gfx_color_t white;
 	gfx_color_t black;
 
@@ -117,7 +117,7 @@ static void _sci1_alloc_system_colors(state_t *s) {
 	gfxop_set_system_color(s->gfx_state, &black);
 }
 
-int _reset_graphics_input(state_t *s) {
+int _reset_graphics_input(EngineState *s) {
 	resource_t *resource;
 	int font_nr;
 	gfx_color_t transparent;
@@ -241,7 +241,7 @@ int _reset_graphics_input(state_t *s) {
 	return 0;
 }
 
-int game_init_graphics(state_t *s) {
+int game_init_graphics(EngineState *s) {
 #ifndef WITH_PIC_SCALING
 	if (s->gfx_state->options->pic0_unscaled == 0)
 		sciprintf("WARNING: Pic scaling was disabled; your version of FreeSCI has no support for scaled pic drawing built in.\n");
@@ -251,7 +251,7 @@ int game_init_graphics(state_t *s) {
 	return _reset_graphics_input(s);
 }
 
-static void _free_graphics_input(state_t *s) {
+static void _free_graphics_input(EngineState *s) {
 	sciprintf("Freeing graphics\n");
 
 	s->visual->widfree(GFXW(s->visual));
@@ -266,7 +266,7 @@ static void _free_graphics_input(state_t *s) {
 	s->pics = NULL;
 }
 
-int game_init_sound(state_t *s, int sound_flags) {
+int game_init_sound(EngineState *s, int sound_flags) {
 	if (s->resmgr->sci_version >= SCI_VERSION_01)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
@@ -290,7 +290,7 @@ static int suggested_script(resource_t *res, unsigned int classId) {
 	return getInt16(res->data + offset);
 }
 
-int test_cursor_style(state_t *s) {
+int test_cursor_style(EngineState *s) {
 	int resource_nr = 0;
 	int ok = 0;
 
@@ -301,7 +301,7 @@ int test_cursor_style(state_t *s) {
 	return ok;
 }
 
-int create_class_table_sci11(state_t *s) {
+int create_class_table_sci11(EngineState *s) {
 	int scriptnr;
 	unsigned int seeker_offset;
 	char *seeker_ptr;
@@ -356,7 +356,7 @@ int create_class_table_sci11(state_t *s) {
 	return 0;
 }
 
-static int create_class_table_sci0(state_t *s) {
+static int create_class_table_sci0(EngineState *s) {
 	int scriptnr;
 	unsigned int seeker;
 	int classnr;
@@ -441,7 +441,7 @@ static int create_class_table_sci0(state_t *s) {
 }
 
 // Architectural stuff: Init/Unintialize engine
-int script_init_engine(state_t *s, sci_version_t version) {
+int script_init_engine(EngineState *s, sci_version_t version) {
 	int result;
 
 	s->max_version = SCI_VERSION(9, 999, 999);
@@ -531,11 +531,11 @@ int script_init_engine(state_t *s, sci_version_t version) {
 	return 0;
 }
 
-void script_set_gamestate_save_dir(state_t *s, const char *path) {
+void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 	sys_string_set(s->sys_strings, SYS_STRING_SAVEDIR, path);
 }
 
-void script_free_vm_memory(state_t *s) {
+void script_free_vm_memory(EngineState *s) {
 	int i;
 
 	sciprintf("Freeing VM memory\n");
@@ -556,10 +556,10 @@ void script_free_vm_memory(state_t *s) {
 	// exception fault whenever you try to close a never-opened file
 }
 
-extern void free_kfunct_tables(state_t *s);
+extern void free_kfunct_tables(EngineState *s);
 // From kernel.c
 
-void script_free_engine(state_t *s) {
+void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
 	sciprintf("Freeing state-dependant data\n");
@@ -569,7 +569,7 @@ void script_free_engine(state_t *s) {
 	_free_vocabulary(s);
 }
 
-void script_free_breakpoints(state_t *s) {
+void script_free_breakpoints(EngineState *s) {
 	breakpoint_t *bp, *bp_next;
 
 	// Free breakpoint list
@@ -589,7 +589,7 @@ void script_free_breakpoints(state_t *s) {
 /* Game instance stuff: Init/Unitialize state-dependant data */
 /*************************************************************/
 
-int game_init(state_t *s) {
+int game_init(EngineState *s) {
 #ifdef __GNUC__XX
 #  warning "Fixme: Use new VM instantiation code all over the place"
 #endif
@@ -666,7 +666,7 @@ int game_init(state_t *s) {
 	return 0;
 }
 
-int game_exit(state_t *s) {
+int game_exit(EngineState *s) {
 	if (s->execution_stack) {
 		free(s->execution_stack);
 	}

@@ -30,7 +30,7 @@
 namespace Sci {
 
 reg_t
-kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *contents = kernel_dereference_char_pointer(s, argv[1], 0);
 
@@ -43,7 +43,7 @@ kAddMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t
-kSetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV(0);
 	int i = 2;
 
@@ -56,7 +56,7 @@ kSetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t
-kGetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV(0);
 
 	return menubar_get_attribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
@@ -64,7 +64,7 @@ kGetMenu(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t
-kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t text = argv[0];
 	int fgcolor = SKPV_OR_ALT(1, s->status_bar_foreground);
 	int bgcolor = SKPV_OR_ALT(2, s->status_bar_background);
@@ -94,7 +94,7 @@ kDrawStatus(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t
-kDrawMenuBar(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (SKPV(0))
 		sciw_set_menubar(s, s->titlebar_port, s->menubar, -1);
@@ -203,7 +203,7 @@ static struct {
 
 
 void
-about_freesci(state_t *s) {
+about_freesci(EngineState *s) {
 	int page;
 	gfxw_port_t *port;
 	int bodyfont, titlefont;
@@ -287,7 +287,7 @@ about_freesci(state_t *s) {
 
 
 static inline int
-_menu_go_down(state_t *s, int menu_nr, int item_nr) {
+_menu_go_down(EngineState *s, int menu_nr, int item_nr) {
 	int seeker, max = s->menubar->menus[menu_nr].items_nr;
 	seeker = item_nr + 1;
 
@@ -305,7 +305,7 @@ _menu_go_down(state_t *s, int menu_nr, int item_nr) {
 
 
 reg_t
-kMenuSelect(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[0];
 	/*int pause_sound = UKPV_OR_ALT(1, 1);*/ /* FIXME: Do this eventually */
 	int claimed = 0;

@@ -65,7 +65,7 @@ Still, what we compute in the end is of course not a real velocity anymore, but 
 used in an iterative stepping algorithm
 */
 
-reg_t kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Input data
 	reg_t object = argv[0];
 	int dx = SKPV(1);
@@ -162,7 +162,7 @@ reg_t kSetJump(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
-void initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
+void initialize_bresen(EngineState *s, int funct_nr, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
 	reg_t client = GET_SEL32(mover, client);
 	int stepx = GET_SEL32SV(client, xStep) * step_factor;
 	int stepy = GET_SEL32SV(client, yStep) * step_factor;
@@ -215,7 +215,7 @@ void initialize_bresen(state_t *s, int funct_nr, int argc, reg_t *argv, reg_t mo
 	PUT_SEL32V(mover, b_i2, bdi * 2);
 }
 
-reg_t kInitBresen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -236,7 +236,7 @@ static enum {
 	UNINITIALIZED
 } handle_movecnt = UNINITIALIZED;
 
-int parse_reg_t(state_t *s, const char *str, reg_t *dest);
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 
 static int checksum_bytes(byte *data, int size) {
 	int result = 0;
@@ -250,7 +250,7 @@ static int checksum_bytes(byte *data, int size) {
 	return result;
 }
 
-static void bresenham_autodetect(state_t *s) {
+static void bresenham_autodetect(EngineState *s) {
 	reg_t motion_class;
 
 	if (!parse_reg_t(s, "?Motion", &motion_class)) {
@@ -279,7 +279,7 @@ static void bresenham_autodetect(state_t *s) {
 	}
 }
 
-reg_t kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -384,11 +384,11 @@ reg_t kDoBresen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, completed);
 }
 
-extern void _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr, int argc, reg_t *argv);
-int is_heap_object(state_t *s, reg_t pos);
+extern void _k_dirloop(reg_t obj, word angle, EngineState *s, int funct_nr, int argc, reg_t *argv);
+int is_heap_object(EngineState *s, reg_t pos);
 extern int get_angle(int xrel, int yrel);
 
-reg_t kDoAvoider(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
 	int angle;

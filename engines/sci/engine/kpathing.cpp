@@ -172,7 +172,7 @@ static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
 	return point;
 }
 
-static void draw_line(state_t *s, Common::Point p1, Common::Point p2, int type) {
+static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type) {
 	// Colors for polygon debugging.
 	// Green: Total access
 	// Red : Barred access
@@ -199,7 +199,7 @@ static void draw_line(state_t *s, Common::Point p1, Common::Point p2, int type) 
 	decorations->add((gfxw_container_t *)decorations, (gfxw_widget_t *)line);
 }
 
-static void draw_point(state_t *s, Common::Point p, int start) {
+static void draw_point(EngineState *s, Common::Point p, int start) {
 	// Colors for starting and end point
 	// Green: End point
 	// Blue: Starting point
@@ -221,7 +221,7 @@ static void draw_point(state_t *s, Common::Point p, int start) {
 	decorations->add((gfxw_container_t *) decorations, (gfxw_widget_t *) box);
 }
 
-static void draw_polygon(state_t *s, reg_t polygon) {
+static void draw_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
@@ -241,7 +241,7 @@ static void draw_polygon(state_t *s, reg_t polygon) {
 	draw_line(s, prev, first, type % 3);
 }
 
-static void draw_input(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -266,7 +266,7 @@ static void draw_input(state_t *s, reg_t poly_list, Common::Point start, Common:
 	}
 }
 
-static void print_polygon(state_t *s, reg_t polygon) {
+static void print_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
@@ -286,7 +286,7 @@ static void print_polygon(state_t *s, reg_t polygon) {
 	sciprintf(" (%i, %i);\n", point.x, point.y);
 }
 
-static void print_input(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	list_t *list;
 	node_t *node;
 
@@ -1077,9 +1077,9 @@ static vertex_t *merge_point(pf_state_t *s, Common::Point v) {
 	return v_new;
 }
 
-static polygon_t *convert_polygon(state_t *s, reg_t polygon) {
+static polygon_t *convert_polygon(EngineState *s, reg_t polygon) {
 	// Converts an SCI polygon into a polygon_t
-	// Parameters: (state_t *) s: The game state
+	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) polygon: The SCI polygon to convert
 	// Returns   : (polygon_t *) The converted polygon
 	int i;
@@ -1153,9 +1153,9 @@ static void change_polygons_opt_0(pf_state_t *s) {
 	}
 }
 
-static pf_state_t *convert_polygon_set(state_t *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	// Converts the SCI input data for pathfinding
-	// Parameters: (state_t *) s: The game state
+	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) poly_list: Polygon list
 	//             (Common::Point) start: The start point
 	//             (Common::Point) end: The end point
@@ -1366,10 +1366,10 @@ static void dijkstra(pf_state_t *s) {
 	}
 }
 
-static reg_t output_path(pf_state_t *p, state_t *s) {
+static reg_t output_path(pf_state_t *p, EngineState *s) {
 	// Stores the final path in newly allocated dynmem
 	// Parameters: (pf_state_t *) p: The pathfinding state
-	//             (state_t *) s: The game state
+	//             (EngineState *) s: The game state
 	// Returns   : (reg_t) Pointer to dynmem containing path
 	int path_len = 0;
 	byte *oref;
@@ -1439,7 +1439,7 @@ static reg_t output_path(pf_state_t *p, state_t *s) {
 	return output;
 }
 
-reg_t kAvoidPath(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point start = Common::Point(SKPV(0), SKPV(1));
 
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {

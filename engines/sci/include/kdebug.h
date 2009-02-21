@@ -30,7 +30,6 @@
 
 namespace Sci {
 
-struct _state;
 #define SCIk_DEBUG_MODES 17
 
 #define SCIkERROR_NR -2
@@ -80,14 +79,14 @@ struct _state;
 
 
 /* Internal functions */
-void _SCIkdebug(struct _state *s, const char *file, int line, int area, const char *format, ...);
-void _SCIGNUkdebug(const char *funcname, struct _state *s, const char *file, int line, int area, const char *format, ...);
+void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char *format, ...);
+void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int line, int area, const char *format, ...);
 
 /* If mode=1, enables debugging for specified areas. If mode=0, disables
 ** debugging for specified areas.
 ** Valid area characters: ulgcmfbad
 */
-void set_debug_mode(struct _state *s, int mode, const char *areas);
+void set_debug_mode(EngineState *s, int mode, const char *areas);
 
 extern int sci_debug_flags;
 

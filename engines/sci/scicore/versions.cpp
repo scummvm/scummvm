@@ -35,7 +35,7 @@
 namespace Sci {
 
 void
-version_require_earlier_than(state_t *s, sci_version_t version) {
+version_require_earlier_than(EngineState *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 
@@ -54,7 +54,7 @@ version_require_earlier_than(state_t *s, sci_version_t version) {
 }
 
 void
-version_require_later_than(state_t *s, sci_version_t version) {
+version_require_later_than(EngineState *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 

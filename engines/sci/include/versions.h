@@ -32,8 +32,6 @@
 
 namespace Sci {
 
-struct _state;
-
 #define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)
 /* This allows version numbers to be compared directly */
 
@@ -125,19 +123,19 @@ struct _state;
 
 typedef int sci_version_t;
 
-struct _state;
+struct EngineState;
 
 void
-version_require_earlier_than(struct _state *s, sci_version_t version);
+version_require_earlier_than(EngineState *s, sci_version_t version);
 /* Function used in autodetection
-** Parameters: (state_t *) s: state_t containing the version
+** Parameters: (EngineState *) s: EngineState containing the version
 **             (sci_version_t) version: The version that we're earlier than
 */
 
 void
-version_require_later_than(struct _state *s, sci_version_t version);
+version_require_later_than(EngineState *s, sci_version_t version);
 /* Function used in autodetection (read this function "version_require_later_than_or_equal_to")
-** Parameters: (state_t *) s: state_t containing the version
+** Parameters: (EngineState *) s: EngineState containing the version
 **             (sci_version_t) version: The version that we're later than
 */
 

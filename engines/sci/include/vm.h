@@ -446,17 +446,16 @@ extern int _debug_seeking;
 extern int _debug_step_running;
 
 
-typedef int kernel_function(struct _state* s);
+typedef int kernel_function(struct EngineState *s);
 
 extern kernel_function* kfuncs[];
 extern int max_instance;
 
 /*inline*/
-exec_stack_t *
-execute_method(struct _state *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj,
+exec_stack_t *execute_method(EngineState *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj,
                word argc, stack_ptr_t argp);
 /* Executes function pubfunct of the specified script.
-** Parameters: (state_t *) s: The state which is to be executed with
+** Parameters: (EngineState *) s: The state which is to be executed with
 **             (word) script: The script which is called
 **             (word) pubfunct: The exported script function which is to be called
 **             (stack_ptr_t) sp: Stack pointer position
@@ -467,11 +466,10 @@ execute_method(struct _state *s, word script, word pubfunct, stack_ptr_t sp, reg
 */
 
 
-exec_stack_t *
-send_selector(struct _state *s, reg_t send_obj, reg_t work_obj,
+exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
               stack_ptr_t sp, int framesize, stack_ptr_t argp);
 /* Executes a "send" or related operation to a selector
-** Parameters: (state_t *) s: The state_t to operate on
+** Parameters: (EngineState *) s: The EngineState to operate on
 **             (reg_t) send_obj: Heap address of the object to send to
 **             (reg_t) work_obj: Heap address of the object initiating the send
 **             (stack_ptr_t) sp: Stack pointer position
@@ -486,12 +484,11 @@ send_selector(struct _state *s, reg_t send_obj, reg_t work_obj,
 
 #define SCI_XS_CALLEE_LOCALS -1
 
-exec_stack_t *
-add_exec_stack_entry(struct _state *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
+exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
                      stack_ptr_t argp, selector_t selector, reg_t sendp, int origin,
                      seg_id_t local_segment);
 /* Adds an entry to the top of the execution stack
-** Parameters: (state_t *) s: The state with which to execute
+** Parameters: (EngineState *) s: The state with which to execute
 **             (reg_t) pc: The initial program counter
 **             (stack_ptr_t) sp: The initial stack pointer
 **             (reg_t) objp: Pointer to the beginning of the current object
@@ -509,11 +506,10 @@ add_exec_stack_entry(struct _state *s, reg_t pc, stack_ptr_t sp, reg_t objp, int
 */
 
 
-exec_stack_t *
-add_exec_stack_varselector(struct _state *s, reg_t objp, int argc, stack_ptr_t argp,
+exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, stack_ptr_t argp,
                            selector_t selector, reg_t *address, int origin);
 /* Adds one varselector access to the execution stack
-** Parameters: (state_t *) s: The state_t to use
+** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) objp: Pointer to the object owning the selector
 **             (int) argc: 1 for writing, 0 for reading
 **             (stack_ptr_t) argp: Pointer to the address of the data to write -2
@@ -525,33 +521,30 @@ add_exec_stack_varselector(struct _state *s, reg_t objp, int argc, stack_ptr_t a
 */
 
 
-void
-run_vm(struct _state *s, int restoring);
+void run_vm(EngineState *s, int restoring);
 /* Executes the code on s->heap[pc] until it hits a 'ret' operation while (stack_base == stack_pos)
-** Parameters: (state_t *) s: The state to use
+** Parameters: (EngineState *) s: The state to use
 **             (int) restoring: 1 if s has just been restored, 0 otherwise
 ** Returns   : (void)
 ** This function will execute SCI bytecode. It requires s to be set up
 ** correctly.
 */
 
-void
-vm_handle_fatal_error(struct _state *s, int line, const char *file);
+void vm_handle_fatal_error(EngineState *s, int line, const char *file);
 /* Handles a fatal error condition
-** Parameters: (state_t *) s: The state to recover from
+** Parameters: (EngineState *) s: The state to recover from
 **             (int) line: Source code line number the error occured in
 **             (const char *) file: File the error occured in
 */
 
 
-void
-script_debug(struct _state *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
+void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
              int *restadjust,
              seg_id_t *segids, reg_t **variables, reg_t **variables_base,
              int *variables_nr,
              int bp);
 /* Debugger functionality
-** Parameters: (state_t *) s: The state at which debugging should take place
+** Parameters: (EngineState *) s: The state at which debugging should take place
 **             (reg_t *) pc: Pointer to the program counter
 **             (stack_ptr_t *) sp: Pointer to the stack pointer
 **             (stack_ptr_t *) pp: Pointer to the frame pointer
@@ -566,42 +559,37 @@ script_debug(struct _state *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_
 ** Returns   : (void)
 */
 
-int
-script_init_engine(struct _state *s, sci_version_t version);
-/* Initializes a state_t block
-** Parameters: (state_t *) s: The state to initialize
+int script_init_engine(EngineState *s, sci_version_t version);
+/* Initializes a EngineState block
+** Parameters: (EngineState *) s: The state to initialize
 ** Returns   : 0 on success, 1 if vocab.996 (the class table) is missing or corrupted
 */
 
-void
-script_set_gamestate_save_dir(struct _state *s, const char *path);
+void script_set_gamestate_save_dir(EngineState *s, const char *path);
 /* Sets the gamestate's save_dir to the parameter path
-** Parameters: (state_t *) s: The state to set
+** Parameters: (EngineState *) s: The state to set
 **             (const char *) path: Path where save_dir will point to
 ** Returns   : (void)
 */
 
-void
-script_free_engine(struct _state *s);
-/* Frees all additional memory associated with a state_t block
-** Parameters: (state_t *) s: The state_t whose elements should be cleared
+void script_free_engine(EngineState *s);
+/* Frees all additional memory associated with a EngineState block
+** Parameters: (EngineState *) s: The EngineState whose elements should be cleared
 ** Returns   : (void)
 */
 
-void
-script_free_vm_memory(struct _state *s);
+void script_free_vm_memory(EngineState *s);
 /* Frees all script memory (heap, hunk, and class tables).
-** Parameters: (state_t *) s: The state_t to free
+** Parameters: (EngineState *) s: The EngineState to free
 ** Returns   : (void)
 ** This operation is implicit in script_free_engine(), but is required for restoring
 ** the game state.
 */
 
 
-int
-lookup_selector(struct _state *s, reg_t obj, selector_t selectorid, reg_t **vptr, reg_t *fptr);
+int lookup_selector(EngineState *s, reg_t obj, selector_t selectorid, reg_t **vptr, reg_t *fptr);
 /* Looks up a selector and returns its type and value
-** Parameters: (state_t *) s: The state_t to use
+** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) obj: Address of the object to look the selector up in
 **             (selector_t) selectorid: The selector to look up
 ** Returns   : (int) SELECTOR_NONE if the selector was not found in the object or its superclasses.
@@ -620,27 +608,24 @@ lookup_selector(struct _state *s, reg_t obj, selector_t selectorid, reg_t **vptr
 #define SCRIPT_GET_LOAD 1 /* Load, if neccessary */
 #define SCRIPT_GET_LOCK 3 /* Load, if neccessary, and lock */
 
-seg_id_t
-script_get_segment(struct _state *s, int script_id, int load);
+seg_id_t script_get_segment(EngineState *s, int script_id, int load);
 /* Determines the segment occupied by a certain script
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (int) script_id: The script in question
 **             (int) load: One of SCRIPT_GET_*
 ** Returns   : The script's segment, or 0 on failure
 */
 
-reg_t
-script_lookup_export(struct _state *s, int script_nr, int export_index);
+reg_t script_lookup_export(EngineState *s, int script_nr, int export_index);
 /* Looks up an entry of the exports table of a script
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (int) script_nr: The script to look up in
 ** Returns   : (int) export_index: index of the export entry to look up
 */
 
-int
-script_instantiate(struct _state *s, int script_nr);
+int script_instantiate(EngineState *s, int script_nr);
 /* Makes sure that a script and its superclasses get loaded to the heap
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (int) script_nr: The script number to load
 ** Returns   : (int) The script's segment ID or 0 if out of heap
 ** If the script already has been loaded, only the number of lockers is increased.
@@ -650,10 +635,9 @@ script_instantiate(struct _state *s, int script_nr);
 */
 
 
-void
-script_uninstantiate(struct _state *s, int script_nr);
+void script_uninstantiate(EngineState *s, int script_nr);
 /* Decreases the numer of lockers of a script and unloads it if that number reaches zero
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (int) script_nr: The script number that is requestet to be unloaded
 ** Returns   : (void)
 ** This function will recursively unload scripts containing its superclasses, if those
@@ -661,46 +645,41 @@ script_uninstantiate(struct _state *s, int script_nr);
 */
 
 
-int
-game_save_state(struct _state *s, char *name, int coredump);
+int game_save_state(EngineState *s, char *name, int coredump);
 /* Saves the game state to the harddisk
-** Parameters: (state_t *) s: The game state to save
+** Parameters: (EngineState *) s: The game state to save
 **             (char *) name: Name of the subdirectory (relative to s->save_dir)
 **             (int) coredump: Set to non-zero in order to write additional debug information
 ** Returns   : (int) 0 on success, 1 otherwise
 */
 
 
-struct _state *
-			game_restore_state(char *name);
+EngineState *game_restore_state(char *name);
 /* Restores the game state from a file
 ** Parameters: (char *) name: Name of the saved game state to restore
-** Returns   : (state_t *): The restored game state, or NULL on failure
+** Returns   : (EngineState *): The restored game state, or NULL on failure
 */
 
 
-int
-game_init(struct _state *s);
+int game_init(EngineState *s);
 /* Initializes an SCI game
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 ** Returns   : (int): 0 on success, 1 if an error occured.
 ** This function must be run before script_run() is executed.
 ** Graphics data is initialized iff s->gfx_state != NULL.
 */
 
-int
-game_init_graphics(struct _state *s);
+int game_init_graphics(EngineState *s);
 /* Initializes the graphics part of an SCI game
-** Parameters: (state_t *) s: The state to initialize the graphics in
+** Parameters: (EngineState *) s: The state to initialize the graphics in
 ** Returns   : (int) 0 on success, 1 if an error occured
 ** This function may only be called if game_init() did not initialize
 ** the graphics data.
 */
 
-int
-game_init_sound(struct _state *s, int sound_flags);
+int game_init_sound(EngineState *s, int sound_flags);
 /* Initializes the sound part of an SCI game
-** Parameters: (state_t *) s: The state to initialize the sound in
+** Parameters: (EngineState *) s: The state to initialize the sound in
 **             (int) sound_flags:  Flags to pass to the sound subsystem
 ** Returns   : (int) 0 on success, 1 if an error occured
 ** This function may only be called if game_init() did not initialize
@@ -708,10 +687,9 @@ game_init_sound(struct _state *s, int sound_flags);
 */
 
 
-int
-game_run(struct _state **s);
+int game_run(EngineState **s);
 /* Runs an SCI game
-** Parameters: (state_t **) s: Pointer to the pointer of the state to operate on
+** Parameters: (EngineState **) s: Pointer to the pointer of the state to operate on
 ** Returns   : (int): 0 on success, 1 if an error occured.
 ** This is the main function for SCI games. It takes a valid state, loads script 0 to it,
 ** finds the game object, allocates a stack, and runs the init method of the game object.
@@ -719,94 +697,83 @@ game_run(struct _state **s);
 ** By the way, *s may be changed during the game, e.g. if a game state is restored.
 */
 
-int
-game_restore(struct _state **s, char *savegame_name);
+int game_restore(EngineState **s, char *savegame_name);
 /* Restores an SCI game state and runs the game
-** Parameters: (state_t **) s: Pointer to the pointer of the state to operate on
+** Parameters: (EngineState **) s: Pointer to the pointer of the state to operate on
 **             (char *) savegame_name: Name of the savegame to restore
 ** Returns   : (int): 0 on success, 1 if an error occured.
 ** This restores a savegame; otherwise, it behaves just like game_run().
 */
 
-int
-game_exit(struct _state *s);
+int game_exit(EngineState *s);
 /* Uninitializes an initialized SCI game
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 ** Returns   : (int): 0 on success, 1 if an error occured.
 ** This function should be run after each script_run() call.
 */
 
-void
-quit_vm(void);
+void quit_vm(void);
 /* Instructs the virtual machine to abort
 ** Paramteres: (void)
 ** Returns   : (void)
 */
 
-void
-script_map_selectors(struct _state *s, selector_map_t *map);
+void script_map_selectors(EngineState *s, selector_map_t *map);
 /* Maps special selectors
-** Parameters: (state_t *) s: The state from which the selector information should be taken
+** Parameters: (EngineState *) s: The state from which the selector information should be taken
 **             (selector_map_t *) map: Pointer to the selector map to map
 ** Returns   : (void)
 ** Called by script_run();
 */
 
-int
-script_map_kernel(struct _state *s);
+int script_map_kernel(EngineState *s);
 /* Maps kernel functions
-** Parameters: (state_t *) s: The state which the kernel_names are retrieved from
+** Parameters: (EngineState *) s: The state which the kernel_names are retrieved from
 ** Returns   : (void)
 ** This function reads from and writes to s. It is called by script_run().
 */
 
 
-void
-script_detect_versions(struct _state *s);
+void script_detect_versions(EngineState *s);
 /* Detects SCI versions by their different script header
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 ** Returns   : (void)
 */
 
-reg_t
-kalloc(struct _state *s, const char *type, int space);
+reg_t kalloc(EngineState *s, const char *type, int space);
 /* Allocates "kernel" memory and returns a handle suitable to be passed on to SCI scripts
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (const char *) type: A free-form type description string (static)
 **             (int) space: The space to allocate
 ** Returns   : (reg_t) The handle
 */
 
-int
-has_kernel_function(struct _state *s, const char *kname);
+int has_kernel_function(EngineState *s, const char *kname);
 /* Detects whether a particular kernel function is required in the game
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (const char *) kname: The name of the desired kernel function
 ** Returns   : (int) 1 if the kernel function is listed in the kernel table,
 **                   0 otherwise
 */
 
-byte *
-kmem(struct _state *s, reg_t handle);
+byte *kmem(EngineState *s, reg_t handle);
 /* Returns a pointer to "kernel" memory based on the handle
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) handle: The handle to use
 ** Returns   : (byte *) A pointer to the allocated memory
 */
 
 
-int
-kfree(struct _state *s, reg_t handle);
+int kfree(EngineState *s, reg_t handle);
 /* Frees all "kernel" memory associated with a handle
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) handle: The handle to free
 ** Returns   : (int) 0 on success, 1 otherwise
 */
 
-const char *
-obj_get_name(struct _state *s, reg_t pos);
+const char *obj_get_name(EngineState *s, reg_t pos);
 /* Determines the name of an object
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) pos: Location of the object whose name we want to
 **                          inspect
 ** Returns   : (const char *) A name for that object, or a string describing
@@ -815,10 +782,9 @@ obj_get_name(struct _state *s, reg_t pos);
 ** may it be modified).
 */
 
-object_t *
-obj_get(struct _state *s, reg_t offset);
+object_t *obj_get(EngineState *s, reg_t offset);
 /* Retreives an object from the specified location
-** Parameters: (state_t *) s: Pointer to the state_t to operate on
+** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) offset: The object's offset
 ** Returns   : (object_t *) The object in question, or NULL if there is none
 */

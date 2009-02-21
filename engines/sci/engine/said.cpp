@@ -1999,7 +1999,7 @@ static said_spec_t said_top_branch(tree_t first) {
 	return 0;
 }
 
-int said_parse_spec(state_t *s, byte *spec) {
+int said_parse_spec(EngineState *s, byte *spec) {
 	int nextitem;
 
 	said_parse_error = NULL;
@@ -2434,7 +2434,7 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 /**** Main code ****/
 /*******************/
 
-int said(state_t *s, byte *spec, int verbose) {
+int said(EngineState *s, byte *spec, int verbose) {
 	int retval;
 
 	parse_tree_node_t *parse_tree_ptr = s->parser_nodes;
@@ -2465,7 +2465,7 @@ int said(state_t *s, byte *spec, int verbose) {
 #ifdef SAID_DEBUG_PROGRAM
 int main (int argc, char *argv) {
 	byte block[] = {0x01, 0x00, 0xf8, 0xf5, 0x02, 0x01, 0xf6, 0xf2, 0x02, 0x01, 0xf2, 0x01, 0x03, 0xff};
-	state_t s;
+	EngineState s;
 	con_passthrough = 1;
 
 	s.parser_valid = 1;

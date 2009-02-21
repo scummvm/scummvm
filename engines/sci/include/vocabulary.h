@@ -372,12 +372,10 @@ vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 
 
 
-struct _state;
-
 int
-said(struct _state *s, byte *spec, int verbose);
+said(EngineState *s, byte *spec, int verbose);
 /* Builds a parse tree from a spec and compares it to a parse tree
-** Parameters: (state_t *) s: The affected state
+** Parameters: (EngineState *) s: The affected state
 **             (byte *) spec: Pointer to the spec to build
 **             (int) verbose: Whether to display the parse tree after building it
 ** Returns   : (int) 1 on a match, 0 otherwise
@@ -394,9 +392,9 @@ vocab_get_any_group_word(int group, word_t **words, int words_nr);
 
 
 void
-vocab_decypher_said_block(struct _state *s, byte *pos);
+vocab_decypher_said_block(EngineState *s, byte *pos);
 /* Decyphers a said block and dumps its content via sciprintf.
-** Parameters: (state_t *) s: The state to use
+** Parameters: (EngineState *) s: The state to use
 **             (byte *) pos: Pointer to the data to dump
 ** For debugging only.
 */

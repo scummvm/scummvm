@@ -42,7 +42,7 @@ static void clear_titlebar(gfxw_port_t *titlebar) {
 	}
 }
 
-static gfxw_list_t *make_titlebar_list(state_t *s, rect_t bounds, gfxw_port_t *status_bar) {
+static gfxw_list_t *make_titlebar_list(EngineState *s, rect_t bounds, gfxw_port_t *status_bar) {
 	gfx_color_t color = status_bar->bgcolor;
 	gfxw_list_t *list;
 	gfxw_box_t *bgbox;
@@ -57,7 +57,7 @@ static gfxw_list_t *make_titlebar_list(state_t *s, rect_t bounds, gfxw_port_t *s
 	return list;
 }
 
-static gfxw_list_t *finish_titlebar_list(state_t *s, gfxw_list_t *list, gfxw_port_t *status_bar) {
+static gfxw_list_t *finish_titlebar_list(EngineState *s, gfxw_list_t *list, gfxw_port_t *status_bar) {
 	gfx_color_t black = s->ega_colors[0];
 	gfxw_primitive_t *line;
 
@@ -68,7 +68,7 @@ static gfxw_list_t *finish_titlebar_list(state_t *s, gfxw_list_t *list, gfxw_por
 	return list;
 }
 
-void sciw_set_status_bar(state_t *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor) {
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor) {
 	gfx_state_t *state;
 	gfxw_list_t *list;
 	gfx_color_t bg = status_bar->bgcolor;
@@ -125,7 +125,7 @@ static void sciw_make_window_fit(rect_t *rect, gfxw_port_t *parent) {
 		rect->y -= (rect->y + rect->yl) - (parent->bounds.y + parent->bounds.yl) + 2;
 }
 
-gfxw_port_t *sciw_new_window(state_t *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
+gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
                 int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor, const char *title, int flags) {
 	gfxw_visual_t *visual = s->visual;
 	gfx_state_t *state = s->gfx_state;
@@ -525,7 +525,7 @@ gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 	return list;
 }
 
-void sciw_set_menubar(state_t *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
+void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
 	gfxw_list_t *list = make_titlebar_list(s, status_bar->bounds, status_bar);
 	int offset = MENU_LEFT_BORDER;
 	int i;
@@ -553,7 +553,7 @@ void sciw_set_menubar(state_t *s, gfxw_port_t *status_bar, menubar_t *menubar, i
 	finish_titlebar_list(s, list, status_bar);
 }
 
-gfxw_port_t *sciw_new_menu(state_t *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
+gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
 	gfxw_port_t *retval;
 	menu_t *menu = menubar->menus + selection;
 	rect_t area = gfx_rect(MENU_LEFT_BORDER, 10, 0, 0);
@@ -632,7 +632,7 @@ gfxw_widget_t *_make_menu_hbar(int offset, int width, gfxw_port_t *port, gfx_col
 	return GFXW(list);
 }
 
-gfxw_port_t *sciw_unselect_item(state_t *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
+gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
 	menu_item_t *item = menu->items + selection;
 
 	if (selection < 0 || selection >= menu->items_nr)
@@ -649,7 +649,7 @@ gfxw_port_t *sciw_unselect_item(state_t *s, gfxw_port_t *menu_port, menu_t *menu
 	return menu_port;
 }
 
-gfxw_port_t *sciw_select_item(state_t *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
+gfxw_port_t *sciw_select_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
 	menu_item_t *item = menu->items + selection;
 
 	if (selection < 0 || selection >= menu->items_nr)

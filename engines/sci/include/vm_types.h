@@ -35,8 +35,6 @@ namespace Sci {
 
 typedef int seg_id_t; /* Segment ID type */
 
-struct _state; /* engine.h */
-
 struct reg_t {
 	uint16 segment;
 	uint16 offset;

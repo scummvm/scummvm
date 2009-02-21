@@ -208,15 +208,14 @@ extern opcode_format formats[128][4];
 void script_adjust_opcode_formats(int res_version);
 
 int
-script_find_selector(struct _state *s, const char *selector_name);
+script_find_selector(EngineState *s, const char *selector_name);
 /* Determines the selector ID of a selector by its name
 ** Parameters: (state_t *) s: VM state
 **             (char *) selector_name: Name of the selector to look up
 ** Returns   : (int) The appropriate selector ID, or -1 on error
 */
 
-struct _state;
-void script_free_breakpoints(struct _state *s);
+void script_free_breakpoints(EngineState *s);
 
 } // End of namespace Sci
 

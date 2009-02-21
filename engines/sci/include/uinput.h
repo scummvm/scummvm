@@ -34,8 +34,6 @@
 
 namespace Sci {
 
-struct _state;
-
 #define SCI_INPUT_DEFAULT_CLOCKTIME 100000
 #define SCI_INPUT_DEFAULT_REDRAWTIME 30000
 

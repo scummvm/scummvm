@@ -91,7 +91,7 @@ namespace Sci {
 
 
 static void
-script_set_priority(state_t *s, reg_t obj, int priority) {
+script_set_priority(EngineState *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, song_nr, 0);
 	int flags = GET_SEL32V(obj, flags);
@@ -110,7 +110,7 @@ script_set_priority(state_t *s, reg_t obj, int priority) {
 }
 
 song_iterator_t *
-build_iterator(state_t *s, int song_nr, int type, songit_id_t id) {
+build_iterator(EngineState *s, int song_nr, int type, songit_id_t id) {
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, song_nr, 0);
 
 	if (!song)
@@ -121,7 +121,7 @@ build_iterator(state_t *s, int song_nr, int type, songit_id_t id) {
 
 
 void
-process_sound_events(state_t *s) { /* Get all sound events, apply their changes to the heap */
+process_sound_events(EngineState *s) { /* Get all sound events, apply their changes to the heap */
 	int result;
 	song_handle_t handle;
 	int cue;
@@ -174,7 +174,7 @@ process_sound_events(state_t *s) { /* Get all sound events, apply their changes 
 
 
 reg_t
-kDoSound_SCI0(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = KP_ALT(1, NULL_REG);
 	word command = UKPV(0);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
@@ -366,7 +366,7 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
               int command, int arg1, int arg2);
 
 reg_t
-kDoSound_SCI01(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	word command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
@@ -671,7 +671,7 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
               int command, int arg1, int arg2);
 
 reg_t
-kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	word command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
@@ -979,7 +979,7 @@ kDoSound_SCI1(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t
-kDoSound(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_2)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
 	else if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_1)
@@ -989,7 +989,7 @@ kDoSound(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t
-kDoAudio(state_t *s, int funct_nr, int argc, reg_t *argv) {
+kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case _K_SCI1_AUDIO_POSITION :
 		return make_reg(0, -1); /* Finish immediately */

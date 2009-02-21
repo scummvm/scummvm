@@ -77,7 +77,7 @@ namespace Sci {
 #define MAX_SAVE_DIR_SIZE MAX_HOMEDIR_SIZE + STRLEN_FREESCI_GAMEDIR + MAX_GAMEDIR_SIZE + 4
 /* +4 for the three slashes and trailing \0 */
 
-/* values for state_t.restarting_flag */
+/* values for EngineState.restarting_flag */
 #define SCI_GAME_IS_NOT_RESTARTING 0
 #define SCI_GAME_WAS_RESTARTED 1
 #define SCI_GAME_IS_RESTARTING_NOW 2
@@ -98,7 +98,7 @@ struct SavegameMetadata {
 	int savegame_time;
 };
 
-typedef struct _state {
+struct EngineState {
 	int savegame_version;
 
 	int widget_serial_counter; /* Used for savegames */
@@ -275,54 +275,47 @@ typedef struct _state {
 	/* Backwards compatibility crap */
 	int port_ID;
 
-	struct _state *successor; /* Successor of this state: Used for restoring */
-
-} state_t;
+	EngineState *successor; /* Successor of this state: Used for restoring */
+};
 
 
 #define STATE_T_DEFINED
 
-int
-gamestate_save(state_t *s, Common::WriteStream *save, const char *savename);
+int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename);
 /* Saves a game state to the hard disk in a portable way
-** Parameters: (state_t *) s: The state to save
+** Parameters: (EngineState *) s: The state to save
 **             (WriteStream *) save: The stream to save to
 **             (char *) savename: The description of the savegame
 ** Returns   : (int) 0 on success, 1 otherwise
 */
 
-state_t *
-gamestate_restore(state_t *s, Common::SeekableReadStream *save);
+EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
 /* Restores a game state from a directory
-** Parameters: (state_t *) s: An older state from the same game
+** Parameters: (EngineState *) s: An older state from the same game
 **             (char *) dirname: The subdirectory to restore from
-** Returns   : (state_t *) NULL on failure, a pointer to a valid state_t otherwise
+** Returns   : (EngineState *) NULL on failure, a pointer to a valid EngineState otherwise
 */
 
 bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata* meta);
 /* Read the header from a savegame
 */
 
-gfx_pixmap_color_t *
-get_pic_color(state_t *s, int color);
+gfx_pixmap_color_t *get_pic_color(EngineState *s, int color);
 /* Retrieves the gfx_pixmap_color_t associated with a game color index
-** Parameters: (state_t *) s: The game state
+** Parameters: (EngineState *) s: The game state
 **             (int) color: The color to look up
 ** Returns   : (gfx_pixmap_color_t *) The requested color.
 */
 
-void
-other_libs_exit(void);
+void other_libs_exit(void);
 /* Called directly before FreeSCI ends to allow libraries to clean up
 */
 
-static inline
-reg_t not_register(state_t *s, reg_t r) {
+static inline reg_t not_register(EngineState *s, reg_t r) {
 	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
 		return make_reg(0, !r.offset);
 	else
 		return r;
-
 }
 
 } // End of namespace Sci

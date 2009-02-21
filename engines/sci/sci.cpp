@@ -37,7 +37,7 @@ namespace Sci {
 extern gfx_driver_t gfx_driver_scummvm;
 
 int
-c_quit(state_t *s) {
+c_quit(EngineState *s) {
 	script_abort_flag = 1; /* Terminate VM */
 	_debugstate_valid = 0;
 	_debug_seeking = 0;
@@ -46,7 +46,7 @@ c_quit(state_t *s) {
 }
 
 int
-c_die(state_t *s) {
+c_die(EngineState *s) {
 	exit(0); /* Die */
 	return 0; /* ;-P (fixes warning) */
 }
@@ -82,7 +82,7 @@ init_console() {
 }
 
 static int
-init_gamestate(state_t *gamestate, sci_version_t version) {
+init_gamestate(EngineState *gamestate, sci_version_t version) {
 	int errc;
 
 	if ((errc = script_init_engine(gamestate, version))) { /* Initialize game state */
@@ -236,8 +236,8 @@ Common::Error SciEngine::go() {
 
 	sciprintf("Imported FreeSCI, version "VERSION"\n");
 
-	state_t* gamestate = (state_t *) sci_malloc(sizeof(state_t));
-	memset(gamestate, 0, sizeof(state_t));
+	EngineState* gamestate = (EngineState *) sci_malloc(sizeof(EngineState));
+	memset(gamestate, 0, sizeof(EngineState));
 	gamestate->resmgr = resmgr;
 	gamestate->gfx_state = NULL;
 

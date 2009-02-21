@@ -91,7 +91,7 @@ static inline reg_t *validate_property(object_t *obj, int index) {
 	return obj->variables + index;
 }
 
-static inline stack_ptr_t validate_stack_addr(state_t *s, stack_ptr_t sp) {
+static inline stack_ptr_t validate_stack_addr(EngineState *s, stack_ptr_t sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
@@ -198,14 +198,14 @@ static inline void validate_write_var(reg_t *r, reg_t *stack_base, int type, int
 
 #define OBJ_PROPERTY(o, p) (*validate_property(o, p))
 
-int script_error(state_t *s, const char *file, int line, const char *reason) {
+int script_error(EngineState *s, const char *file, int line, const char *reason) {
 	sciprintf("Script error in file %s, line %d: %s\n", file, line, reason);
 	script_debug_flag = script_error_flag = 1;
 	return 0;
 }
 #define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
 
-reg_t get_class_address(state_t *s, int classnr, int lock, reg_t caller) {
+reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 	class_t *the_class = s->classtable + classnr;
 
 	if (NULL == s) {
@@ -258,7 +258,7 @@ reg_t get_class_address(state_t *s, int classnr, int lock, reg_t caller) {
 #define OBJ_SUPERCLASS(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SUPERCLASS_OFFSET))
 // Returns an object's superclass
 
-inline exec_stack_t *execute_method(state_t *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj, word argc, stack_ptr_t argp) {
+inline exec_stack_t *execute_method(EngineState *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj, word argc, stack_ptr_t argp) {
 	int seg;
 	guint16 temp;
 
@@ -300,7 +300,7 @@ inline exec_stack_t *execute_method(state_t *s, word script, word pubfunct, stac
 }
 
 
-static void _exec_varselectors(state_t *s) { 
+static void _exec_varselectors(EngineState *s) { 
 	// Executes all varselector read/write ops on the TOS
 	// Now check the TOS to execute all varselector entries
 	if (s->execution_stack_pos >= 0)
@@ -317,7 +317,7 @@ static void _exec_varselectors(state_t *s) {
 		}
 }
 
-exec_stack_t *send_selector(state_t *s, reg_t send_obj, reg_t work_obj, stack_ptr_t sp, int framesize, stack_ptr_t argp) {
+exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stack_ptr_t sp, int framesize, stack_ptr_t argp) {
 // send_obj and work_obj are equal for anything but 'super'
 // Returns a pointer to the TOS exec_stack element
 #ifdef VM_DEBUG_SEND
@@ -479,7 +479,7 @@ exec_stack_t *send_selector(state_t *s, reg_t send_obj, reg_t work_obj, stack_pt
 	return retval;
 }
 
-exec_stack_t *add_exec_stack_varselector(state_t *s, reg_t objp, int argc, stack_ptr_t argp, selector_t selector, reg_t *address, int origin) {
+exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, stack_ptr_t argp, selector_t selector, reg_t *address, int origin) {
 	exec_stack_t *xstack = add_exec_stack_entry(s, NULL_REG, address, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
@@ -489,7 +489,7 @@ exec_stack_t *add_exec_stack_varselector(state_t *s, reg_t objp, int argc, stack
 	return xstack;
 }
 
-exec_stack_t *add_exec_stack_entry(state_t *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
+exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
 								   stack_ptr_t argp, selector_t selector, reg_t sendp, int origin, seg_id_t locals_segment) {
 	// Returns new TOS element for the execution stack
 	// locals_segment may be -1 if derived from the called object
@@ -533,7 +533,7 @@ exec_stack_t *add_exec_stack_entry(state_t *s, reg_t pc, stack_ptr_t sp, reg_t o
 #  define kernel_matches_signature(a, b, c, d) 1
 #endif
 
-void vm_handle_fatal_error(state_t *s, int line, const char *file) {
+void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 	error("Fatal VM error in %s, L%d; aborting...\n", file, line);
 #ifdef HAVE_SETJMP_H
 	if (jump_initialized)
@@ -543,7 +543,7 @@ void vm_handle_fatal_error(state_t *s, int line, const char *file) {
 	exit(1);
 }
 
-static inline script_t *script_locate_by_segment(state_t *s, seg_id_t seg) {
+static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
 	mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, seg, MEM_OBJ_SCRIPT);
 	if (memobj)
 		return &(memobj->data.script);
@@ -551,7 +551,7 @@ static inline script_t *script_locate_by_segment(state_t *s, seg_id_t seg) {
 	return NULL;
 }
 
-static reg_t pointer_add(state_t *s, reg_t base, int offset) {
+static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	mem_obj_t *mobj = GET_SEGMENT_ANY(s->seg_manager, base.segment);
 
 	if (!mobj) {
@@ -580,7 +580,7 @@ static reg_t pointer_add(state_t *s, reg_t base, int offset) {
 	}
 }
 
-static inline void gc_countdown(state_t *s) {
+static inline void gc_countdown(EngineState *s) {
 	if (s->gc_countdown-- <= 0) {
 		s->gc_countdown = script_gc_interval;
 		run_gc(s);
@@ -589,7 +589,7 @@ static inline void gc_countdown(state_t *s) {
 
 static byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 
-void run_vm(state_t *s, int restoring) {
+void run_vm(EngineState *s, int restoring) {
 	reg_t *variables[4]; // global, local, temp, param, as immediate pointers
 	reg_t *variables_base[4]; // Used for referencing VM ops
 	seg_id_t variables_seg[4]; // Same as above, contains segment IDs
@@ -1488,7 +1488,7 @@ void run_vm(state_t *s, int restoring) {
 	}
 }
 
-static inline int _obj_locate_varselector(state_t *s, object_t *obj, selector_t slc) {
+static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selector_t slc) {
 	// Determines if obj explicitly defines slc as a varselector 
 	// Returns -1 if not found 
 
@@ -1521,7 +1521,7 @@ static inline int _obj_locate_varselector(state_t *s, object_t *obj, selector_t 
 	}
 }
 
-static inline int _class_locate_funcselector(state_t *s, object_t *obj, selector_t slc) {
+static inline int _class_locate_funcselector(EngineState *s, object_t *obj, selector_t slc) {
 	// Determines if obj is a class and explicitly defines slc as a funcselector 
 	// Does NOT say anything about obj's superclasses, i.e. failure may be
 	// returned even if one of the superclasses defines the funcselector. 
@@ -1535,7 +1535,7 @@ static inline int _class_locate_funcselector(state_t *s, object_t *obj, selector
 	return -1; // Failed 
 }
 
-static inline int _lookup_selector_function(state_t *s, int seg_id, object_t *obj, selector_t selector_id, reg_t *fptr) {
+static inline int _lookup_selector_function(EngineState *s, int seg_id, object_t *obj, selector_t selector_id, reg_t *fptr) {
 	int index;
 
 	// "recursive" lookup 
@@ -1561,7 +1561,7 @@ static inline int _lookup_selector_function(state_t *s, int seg_id, object_t *ob
 	return SELECTOR_NONE;
 }
 
-int lookup_selector(state_t *s, reg_t obj_location, selector_t selector_id, reg_t **vptr, reg_t *fptr) {
+int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, reg_t **vptr, reg_t *fptr) {
 	object_t *obj = obj_get(s, obj_location);
 	object_t *species;
 	int index;
@@ -1603,7 +1603,7 @@ int lookup_selector(state_t *s, reg_t obj_location, selector_t selector_id, reg_
 }
 
 // Detects SCI versions by their different script header 
-void script_detect_versions(state_t *s) {
+void script_detect_versions(EngineState *s) {
 	int c;
 	resource_t *script = {0};
 
@@ -1625,7 +1625,7 @@ void script_detect_versions(state_t *s) {
 	}
 }
 
-seg_id_t script_get_segment(state_t *s, int script_nr, int load) {
+seg_id_t script_get_segment(EngineState *s, int script_nr, int load) {
 	seg_id_t segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
@@ -1642,7 +1642,7 @@ seg_id_t script_get_segment(state_t *s, int script_nr, int load) {
 		return 0;
 }
 
-reg_t script_lookup_export(state_t *s, int script_nr, int export_index) {
+reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	seg_id_t seg = script_get_segment(s, script_nr, SCRIPT_GET_DONT_LOAD);
 	mem_obj_t *memobj;
 	script_t *script = NULL;
@@ -1683,8 +1683,8 @@ reg_t script_lookup_export(state_t *s, int script_nr, int export_index) {
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, reg))
 
 int sm_script_marked_deleted(seg_manager_t* self, int script_nr);
-int sm_initialise_script(mem_obj_t *mem, struct _state *s, int script_nr);
-int script_instantiate_common(state_t *s, int script_nr, resource_t **script, resource_t **heap, int *was_new) {
+int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr);
+int script_instantiate_common(EngineState *s, int script_nr, resource_t **script, resource_t **heap, int *was_new) {
 	int seg;
 	int seg_id;
 	int marked_for_deletion;
@@ -1747,7 +1747,7 @@ int script_instantiate_common(state_t *s, int script_nr, resource_t **script, re
 	return seg_id;
 }
 
-int script_instantiate_sci0(state_t *s, int script_nr) {
+int script_instantiate_sci0(EngineState *s, int script_nr) {
 	int objtype;
 	unsigned int objlength;
 	reg_t reg, reg_tmp;
@@ -1902,10 +1902,10 @@ int script_instantiate_sci0(state_t *s, int script_nr) {
 }
 
 void sm_script_relocate_exports_sci11(seg_manager_t *self, int seg);
-void sm_script_initialise_objects_sci11(seg_manager_t *self, state_t *s, int seg);
-void sm_heap_relocate(seg_manager_t *self, state_t *s, reg_t block);
+void sm_script_initialise_objects_sci11(seg_manager_t *self, EngineState *s, int seg);
+void sm_heap_relocate(seg_manager_t *self, EngineState *s, reg_t block);
 
-int script_instantiate_sci11(state_t *s, int script_nr) {
+int script_instantiate_sci11(EngineState *s, int script_nr) {
 	resource_t *script, *heap;
 	int seg_id;
 	int heap_start;
@@ -1940,7 +1940,7 @@ int script_instantiate_sci11(state_t *s, int script_nr) {
 	return seg_id;
 }
 
-int script_instantiate(state_t *s, int script_nr) {
+int script_instantiate(EngineState *s, int script_nr) {
 	if (s->version >= SCI_VERSION(1, 001, 000))
 		return script_instantiate_sci11(s, script_nr);
 	else
@@ -1949,7 +1949,7 @@ int script_instantiate(state_t *s, int script_nr) {
 
 void sm_mark_script_deleted(seg_manager_t* self, int script_nr);
 
-void script_uninstantiate_sci0(state_t *s, int script_nr, seg_id_t seg) {
+void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
 	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
 	int objtype, objlength;
 
@@ -1991,7 +1991,7 @@ void script_uninstantiate_sci0(state_t *s, int script_nr, seg_id_t seg) {
 	} while (objtype != 0);
 }
 
-void script_uninstantiate(state_t *s, int script_nr) {
+void script_uninstantiate(EngineState *s, int script_nr) {
 	reg_t reg = make_reg(0, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
 	int i;
 
@@ -2031,13 +2031,13 @@ void script_uninstantiate(state_t *s, int script_nr) {
 	return;
 }
 
-static void _init_stack_base_with_selector(state_t *s, selector_t selector) {
+static void _init_stack_base_with_selector(EngineState *s, selector_t selector) {
 	s->stack_base[0] = make_reg(0, (word)selector);
 	s->stack_base[1] = NULL_REG;
 }
 
-static state_t *_game_run(state_t *s, int restoring) {
-	state_t *successor = NULL;
+static EngineState *_game_run(EngineState *s, int restoring) {
+	EngineState *successor = NULL;
 	int game_is_finished = 0;
 	do {
 		s->execution_stack_pos_changed = 0;
@@ -2090,10 +2090,10 @@ static state_t *_game_run(state_t *s, int restoring) {
 	return s;
 }
 
-int objinfo(state_t *s, reg_t pos);
+int objinfo(EngineState *s, reg_t pos);
 
-int game_run(state_t **_s) {
-	state_t *s = *_s;
+int game_run(EngineState **_s) {
+	EngineState *s = *_s;
 
 	sciprintf(" Calling %s::play()\n", s->game_name);
 	_init_stack_base_with_selector(s, s->selector_map.play); // Call the play selector
@@ -2113,8 +2113,8 @@ int game_run(state_t **_s) {
 }
 
 #if 0
-int game_restore(state_t **_s, char *game_name) {
-	state_t *s;
+int game_restore(EngineState **_s, char *game_name) {
+	EngineState *s;
 	int debug_state = _debugstate_valid;
 
 	sciprintf("Restoring savegame '%s'...\n", game_name);
@@ -2141,7 +2141,7 @@ int game_restore(state_t **_s, char *game_name) {
 }
 #endif
 
-object_t *obj_get(state_t *s, reg_t offset) {
+object_t *obj_get(EngineState *s, reg_t offset) {
 	mem_obj_t *memobj = GET_OBJECT_SEGMENT(s->seg_manager, offset.segment);
 	object_t *obj = NULL;
 	int idx;
@@ -2162,7 +2162,7 @@ object_t *obj_get(state_t *s, reg_t offset) {
 	return obj;
 }
 
-const char *obj_get_name(struct _state *s, reg_t pos) {
+const char *obj_get_name(EngineState *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
 
 	if (!obj)

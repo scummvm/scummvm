@@ -51,8 +51,6 @@ extern FILE *con_file;
 ** directly to the con_file variable.
 */
 
-struct _state; /* state_t later on */
-
 typedef union {
 	int32 val;
 	char *str;
@@ -65,7 +63,7 @@ extern unsigned int cmd_paramlength;
 extern cmd_param_t *cmd_params;
 /* The parameters passed to a function called by the parser */
 
-extern struct _state *con_gamestate;
+extern struct EngineState *con_gamestate;
 /* The game state as used by some of the console commands */
 
 
@@ -101,16 +99,16 @@ con_init(void);
 
 
 void
-con_parse(struct _state *s, const char *command);
+con_parse(EngineState *s, const char *command);
 /* Parses a command and summons appropriate facilities to handle it
-** Parameters: (state_t *) s: The state_t to use
+** Parameters: (EngineState *) s: The EngineState to use
 **             command: The command to execute
 ** Returns   : (void)
 */
 
 
 int
-con_hook_command(int command(struct _state *s), const char *name, const char *param, const char *description);
+con_hook_command(int command(EngineState *s), const char *name, const char *param, const char *description);
 /* Adds a command to the parser's command list
 ** Parameters: command: The command to add
 **             name: The command's name
@@ -121,7 +119,7 @@ con_hook_command(int command(struct _state *s), const char *name, const char *pa
 **             'name' already being in use.
 ** A valid param string is either empty (no parameters allowed)
 ** or contains one of the following tokens:
-**   ! Special token: state_t* must be set for this function to be called
+**   ! Special token: EngineState* must be set for this function to be called
 **   i (an int)
 **   s (a 'string' (char *))
 **   h (a byte, described in hexadecimal digits)

@@ -29,7 +29,7 @@
 
 namespace Sci {
 
-reg_t read_selector(state_t *s, reg_t object, selector_t selector_id, const char *file, int line) {
+reg_t read_selector(EngineState *s, reg_t object, selector_t selector_id, const char *file, int line) {
 	reg_t *address;
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
@@ -38,7 +38,7 @@ reg_t read_selector(state_t *s, reg_t object, selector_t selector_id, const char
 		return *address;
 }
 
-void write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line) {
+void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line) {
 	reg_t *address;
 
 	if ((selector_id < 0) || (selector_id > s->selector_names_nr)) {
@@ -54,7 +54,7 @@ void write_selector(state_t *s, reg_t object, selector_t selector_id, reg_t valu
 		*address = value;
 }
 
-int invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, int kfunct,
+int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
                 stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
@@ -106,13 +106,13 @@ int invoke_selector(state_t *s, reg_t object, int selector_id, int noinvalid, in
 	return 0;
 }
 
-bool is_object(state_t *s, reg_t object) {
+bool is_object(EngineState *s, reg_t object) {
 	return obj_get(s, object) != NULL;
 }
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
-reg_t kLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	int resnr = KP_UINT(argv[1]);
 
@@ -122,7 +122,7 @@ reg_t kLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
-reg_t kLock(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = UKPV(0) & 0x7f;
 	int resnr = UKPV(1);
 	int state = argc > 2 ? UKPV(2) : 1;
@@ -142,7 +142,7 @@ reg_t kLock(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
-reg_t kUnLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	reg_t resnr = argv[1];
 
@@ -152,7 +152,7 @@ reg_t kUnLoad(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	object_t *parent_obj = obj_get(s, parent_addr);
 	reg_t clone_addr;
@@ -190,9 +190,9 @@ reg_t kClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return clone_addr;
 }
 
-extern void _k_view_list_mark_free(state_t *s, reg_t off);
+extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
-reg_t kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
 	clone_t *victim_obj = obj_get(s, victim_addr);
 	word underBits;
@@ -230,7 +230,7 @@ reg_t kDisposeClone(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 // Returns script dispatch address index in the supplied script
-reg_t kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int script = KP_UINT(argv[0]);
 	int index = KP_UINT(KP_ALT(1, NULL_REG));
 
@@ -258,7 +258,7 @@ reg_t kScriptID(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(scriptid, sm_validate_export_func(&s->seg_manager, index, scriptid));
 }
 
-reg_t kDisposeScript(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int script = argv[0].offset;
 
 	// Work around QfG1 graveyard bug
@@ -277,19 +277,19 @@ reg_t kDisposeScript(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-int is_heap_object(state_t *s, reg_t pos) {
+int is_heap_object(EngineState *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
 	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!sm_script_is_marked_as_deleted(&s->seg_manager, pos.segment)));
 }
 
-reg_t kIsObject(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (argv[0].offset == 0xffff) // Treated specially
 		return NULL_REG;
 	else
 		return make_reg(0, is_heap_object(s, argv[0]));
 }
 
-reg_t kRespondsTo(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = KP_UINT(argv[1]);
 

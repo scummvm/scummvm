@@ -23,7 +23,7 @@
  *
  */
 
-/* Savegame handling for state_t structs. Makes heavy use of cfsml magic. */
+/* Savegame handling for EngineState structs. Makes heavy use of cfsml magic. */
 /* DON'T EDIT savegame.cpp ! Only modify savegame.cfsml, if something needs
 ** to be changed. Refer to freesci/docs/misc/cfsml.spec if you don't understand
 ** savegame.cfsml. If this doesn't solve your problem, contact the maintainer.
@@ -103,7 +103,7 @@ char* SRSgets(char* s, int size, Common::SeekableReadStream* str) {
 
 
 
-static state_t *_global_save_state;
+static EngineState *_global_save_state;
 // Needed for some graphical stuff.
 #define FILE_VERSION _global_save_state->savegame_version
 
@@ -316,7 +316,7 @@ RECORD SavegameMetadata "SavegameMetadata" {
 	int savegame_time;
 }
 
-RECORD state_t "state_t" {
+RECORD EngineState "EngineState" {
 	int savegame_version;
 
 	string game_version;
@@ -521,7 +521,7 @@ void write_song_tp(Common::WriteStream *fh, song_t **foo) {
 	%CFSMLWRITE song_t *foo INTO fh;
 }
 
-song_iterator_t *build_iterator(state_t *s, int song_nr, int type, songit_id_t id);
+song_iterator_t *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id);
 
 int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
 	char *token;
@@ -707,11 +707,11 @@ int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char 
 
 // This function is called to undo some strange stuff done in preparation
 // to writing a gamestate to disk
-void _gamestate_unfrob(state_t *s) {
+void _gamestate_unfrob(EngineState *s) {
 }
 
 
-int gamestate_save(state_t *s, Common::WriteStream *fh, const char* savename) {
+int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename) {
 	tm curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -748,7 +748,7 @@ int gamestate_save(state_t *s, Common::WriteStream *fh, const char* savename) {
 	s->game_time = time(NULL) - s->game_start_time.tv_sec;
 
 	%CFSMLWRITE SavegameMetadata meta INTO fh;
-	%CFSMLWRITE state_t s INTO fh;
+	%CFSMLWRITE EngineState s INTO fh;
 
 	delete meta;
 
@@ -767,7 +767,7 @@ static seg_id_t find_unique_seg_by_type(seg_manager_t *self, int type) {
 	return -1;
 }
 
-static byte *find_unique_script_block(state_t *s, byte *buf, int type) {
+static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 	int magic_pos_adder = s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER ? 0 : 2;
 
 	buf += magic_pos_adder;
@@ -785,7 +785,7 @@ static byte *find_unique_script_block(state_t *s, byte *buf, int type) {
 	return NULL;
 }
 
-static void reconstruct_stack(state_t *retval) {
+static void reconstruct_stack(EngineState *retval) {
 	seg_id_t stack_seg = find_unique_seg_by_type(&retval->seg_manager, MEM_OBJ_STACK);
 	dstack_t *stack = &(retval->seg_manager.heap[stack_seg]->data.stack);
 
@@ -810,7 +810,7 @@ static int clone_entry_used(clone_table_t *table, int n) {
 	return 1;
 }
 
-static void load_script(state_t *s, seg_id_t seg) {
+static void load_script(EngineState *s, seg_id_t seg) {
 	resource_t *script, *heap = NULL;
 	script_t *scr = &(s->seg_manager.heap[seg]->data.script);
 
@@ -831,7 +831,7 @@ static void load_script(state_t *s, seg_id_t seg) {
 	}
 }
 
-static void reconstruct_scripts(state_t *s, seg_manager_t *self) {
+static void reconstruct_scripts(EngineState *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 	for (i = 0; i < self->heap_size; i++) {
@@ -905,7 +905,7 @@ static void reconstruct_scripts(state_t *s, seg_manager_t *self) {
 	}
 }
 
-void reconstruct_clones(state_t *s, seg_manager_t *self) {
+void reconstruct_clones(EngineState *s, seg_manager_t *self) {
 	int i;
 	mem_obj_t *mobj;
 
@@ -959,11 +959,11 @@ void reconstruct_clones(state_t *s, seg_manager_t *self) {
 	}
 }
 
-int _reset_graphics_input(state_t *s);
+int _reset_graphics_input(EngineState *s);
 
 song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 
-static void reconstruct_sounds(state_t *s) {
+static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
 	int it_type = s->resmgr->sci_version >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
@@ -997,9 +997,9 @@ static void reconstruct_sounds(state_t *s) {
 	}
 }
 
-state_t *gamestate_restore(state_t *s, Common::SeekableReadStream *fh) {
+EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	int read_eof = 0;
-	state_t *retval;
+	EngineState *retval;
 	songlib_t temp;
 
 /*
@@ -1011,9 +1011,9 @@ state_t *gamestate_restore(state_t *s, Common::SeekableReadStream *fh) {
 	}
 */
 
-	retval = (state_t *) sci_malloc(sizeof(state_t));
+	retval = (EngineState *) sci_malloc(sizeof(EngineState));
 
-	memset(retval, 0, sizeof(state_t));
+	memset(retval, 0, sizeof(EngineState));
 
 	retval->savegame_version = -1;
 	_global_save_state = retval;
@@ -1045,7 +1045,7 @@ state_t *gamestate_restore(state_t *s, Common::SeekableReadStream *fh) {
 	retval->sound_mute = s->sound_mute;
 	retval->sound_volume = s->sound_volume;
 
-	%CFSMLREAD-ATOMIC state_t retval FROM fh ERRVAR read_eof;
+	%CFSMLREAD-ATOMIC EngineState retval FROM fh ERRVAR read_eof;
 
 	sfx_exit(&s->sound);
 	_gamestate_unfrob(retval);

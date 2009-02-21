@@ -288,7 +288,7 @@ int menubar_match_key(menu_item_t *item, int message, int modifiers) {
 	return 0;
 }
 
-int menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, reg_t value) {
+int menubar_set_attribute(EngineState *s, int menu_nr, int item_nr, int attribute, reg_t value) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -357,7 +357,7 @@ int menubar_set_attribute(state_t *s, int menu_nr, int item_nr, int attribute, r
 	return 0;
 }
 
-reg_t menubar_get_attribute(state_t *s, int menu_nr, int item_nr, int attribute) {
+reg_t menubar_get_attribute(EngineState *s, int menu_nr, int item_nr, int attribute) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -391,7 +391,7 @@ reg_t menubar_get_attribute(state_t *s, int menu_nr, int item_nr, int attribute)
 	}
 }
 
-int menubar_item_valid(state_t *s, int menu_nr, int item_nr) {
+int menubar_item_valid(EngineState *s, int menu_nr, int item_nr) {
 	menubar_t *menubar = s->menubar;
 	menu_item_t *item;
 
@@ -409,7 +409,7 @@ int menubar_item_valid(state_t *s, int menu_nr, int item_nr) {
 	return 0; // May not be selected
 }
 
-int menubar_map_pointer(state_t *s, int *menu_nr, int *item_nr, gfxw_port_t *port) {
+int menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port) {
 	menubar_t *menubar = s->menubar;
 	menu_t *menu;
 

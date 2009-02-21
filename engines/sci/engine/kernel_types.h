@@ -64,18 +64,18 @@ namespace Sci {
 #define KSIG_ALLOW_INV  0x20
 #define KSIG_INVALID	KSIG_ALLOW_INV
 
-int kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv);
+int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *argv);
 /* Determines whether a list of registers matches a given signature
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (char *) sig: The signature to test against
 **             (int) argc: Number of arguments to test
 **             (reg_t *) argv: Argument list
 ** Returns   : (int) 0 iff the signature was not matched
 */
 
-int determine_reg_type(state_t *s, reg_t reg, int allow_invalid);
+int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid);
 /* Determines the type of the object indicated by reg
-** Parameters: (state_t *) s: The state to operate on
+** Parameters: (EngineState *) s: The state to operate on
 **             (reg_t) reg: The register to check
 **	       (int) allow_invalid: Allow invalid pointer values
 ** Returns   : one of KSIG_* below KSIG_NULL.

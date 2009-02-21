@@ -146,12 +146,12 @@ void sm_destroy(seg_manager_t* self) {
 }
 
 // allocate a memory for script from heap
-// Parameters: (state_t *) s: The state to operate on
+// Parameters: (EngineState *) s: The state to operate on
 //             (int) script_nr: The script number to load
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-mem_obj_t* sm_allocate_script(seg_manager_t* self, struct _state *s, int script_nr, int* seg_id) {
+mem_obj_t* sm_allocate_script(seg_manager_t* self, EngineState *s, int script_nr, int* seg_id) {
 	int seg;
 	char was_added;
 	mem_obj_t* mem;
@@ -173,7 +173,7 @@ mem_obj_t* sm_allocate_script(seg_manager_t* self, struct _state *s, int script_
 	return mem;
 }
 
-static void sm_set_script_size(mem_obj_t *mem, struct _state *s, int script_nr) {
+static void sm_set_script_size(mem_obj_t *mem, EngineState *s, int script_nr) {
 	resource_t *script = scir_find_resource(s->resmgr, sci_script, script_nr, 0);
 	resource_t *heap = scir_find_resource(s->resmgr, sci_heap, script_nr, 0);
 
@@ -209,7 +209,7 @@ static void sm_set_script_size(mem_obj_t *mem, struct _state *s, int script_nr) 
 	}
 }
 
-int sm_initialise_script(mem_obj_t *mem, struct _state *s, int script_nr) {
+int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr) {
 	// allocate the script.buf
 	script_t *scr;
 
@@ -826,7 +826,7 @@ void sm_script_relocate(seg_manager_t *self, reg_t block) {
 	}
 }
 
-void sm_heap_relocate(seg_manager_t *self, state_t *s, reg_t block) {
+void sm_heap_relocate(seg_manager_t *self, EngineState *s, reg_t block) {
 	mem_obj_t *mobj = self->heap[block.segment];
 	script_t *scr;
 	int count;
@@ -873,9 +873,9 @@ void sm_heap_relocate(seg_manager_t *self, state_t *s, reg_t block) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, NULL_REG))
 
-reg_t get_class_address(state_t *s, int classnr, int lock, reg_t caller);
+reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
 
-static object_t *sm_script_obj_init0(seg_manager_t *self, state_t *s, reg_t obj_pos) {
+static object_t *sm_script_obj_init0(seg_manager_t *self, EngineState *s, reg_t obj_pos) {
 	mem_obj_t *mobj = self->heap[obj_pos.segment];
 	script_t *scr;
 	object_t *obj;
@@ -943,7 +943,7 @@ static object_t *sm_script_obj_init0(seg_manager_t *self, state_t *s, reg_t obj_
 	return obj;
 }
 
-static object_t *sm_script_obj_init11(seg_manager_t *self, state_t *s, reg_t obj_pos) {
+static object_t *sm_script_obj_init11(seg_manager_t *self, EngineState *s, reg_t obj_pos) {
 	mem_obj_t *mobj = self->heap[obj_pos.segment];
 	script_t *scr;
 	object_t *obj;
@@ -1010,7 +1010,7 @@ static object_t *sm_script_obj_init11(seg_manager_t *self, state_t *s, reg_t obj
 	return obj;
 }
 
-object_t *sm_script_obj_init(seg_manager_t *self, state_t *s, reg_t obj_pos) {
+object_t *sm_script_obj_init(seg_manager_t *self, EngineState *s, reg_t obj_pos) {
 	if (!self->sci1_1)
 		return sm_script_obj_init0(self, s, obj_pos);
 	else
@@ -1114,7 +1114,7 @@ void sm_script_relocate_exports_sci11(seg_manager_t *self, int seg) {
 	}
 }
 
-void sm_script_initialise_objects_sci11(seg_manager_t *self, state_t *s, int seg) {
+void sm_script_initialise_objects_sci11(seg_manager_t *self, EngineState *s, int seg) {
 	mem_obj_t *mobj = self->heap[seg];
 	script_t *scr;
 	byte *seeker;
@@ -1447,7 +1447,7 @@ static void list_all_deallocatable_base(seg_interface_t *self, void *param, void
 	(*note)(param, make_reg(self->seg_id, 0));
 }
 
-static void list_all_outgoing_references_nop(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_nop(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 }
 
 static void deallocate_self(seg_interface_t *self) {
@@ -1468,7 +1468,7 @@ static void free_at_address_script(seg_interface_t *self, reg_t addr) {
 		sm_deallocate_script(self->segmgr, script->nr);
 }
 
-static void list_all_outgoing_references_script(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_script(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	script_t *script = &(self->mobj->data.script);
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
@@ -1520,7 +1520,7 @@ static void list_all_deallocatable_clones(seg_interface_t *self, void *param, vo
 	LIST_ALL_DEALLOCATABLE(clone, clones);
 }
 
-static void list_all_outgoing_references_clones(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_clones(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	mem_obj_t *mobj = self->mobj;
 	clone_table_t *clone_table = &(mobj->data.clones);
 	clone_t *clone;
@@ -1593,7 +1593,7 @@ static reg_t find_canonic_address_locals(seg_interface_t *self, reg_t addr) {
 	return make_reg(owner_seg, 0);
 }
 
-static void list_all_outgoing_references_locals(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_locals(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	local_variables_t *locals = &(self->mobj->data.locals);
 	int i;
 
@@ -1617,7 +1617,7 @@ static seg_interface_t seg_interface_locals = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static void list_all_outgoing_references_stack(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_stack(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	int i;
 
 	error("Emitting %d stack entries\n", self->mobj->data.stack.nr);
@@ -1660,7 +1660,7 @@ static void list_all_deallocatable_list(seg_interface_t *self, void *param, void
 	LIST_ALL_DEALLOCATABLE(list, lists);
 }
 
-static void list_all_outgoing_references_list(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_list(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	list_table_t *table = &(self->mobj->data.lists);
 	list_t *list = &(table->table[addr.offset].entry);
 
@@ -1697,7 +1697,7 @@ static void list_all_deallocatable_nodes(seg_interface_t *self, void *param, voi
 	LIST_ALL_DEALLOCATABLE(node, nodes);
 }
 
-static void list_all_outgoing_references_nodes(seg_interface_t *self, state_t *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_nodes(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	node_table_t *table = &(self->mobj->data.nodes);
 	node_t *node = &(table->table[addr.offset].entry);
 

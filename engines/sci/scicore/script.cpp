@@ -108,7 +108,7 @@ void script_adjust_opcode_formats(int res_version) {
 }
 
 int
-script_find_selector(state_t *s, const char *selectorname) {
+script_find_selector(EngineState *s, const char *selectorname) {
 	int i;
 	for (i = 0; i < s->selector_names_nr; i++)
 		if (strcmp(selectorname, s->selector_names[i]) == 0)
@@ -121,7 +121,7 @@ script_find_selector(state_t *s, const char *selectorname) {
 #define FIND_SELECTOR(_slc_, _slcstr_) map->_slc_ = script_find_selector(s, _slcstr_);
 
 void
-script_map_selectors(state_t *s, selector_map_t *map) {
+script_map_selectors(EngineState *s, selector_map_t *map) {
 	map->init = script_find_selector(s, "init");
 	map->play = script_find_selector(s, "play");
 	FIND_SELECTOR(replay, "replay");

@@ -38,7 +38,7 @@ namespace Sci {
 	}
 
 /* Returns the string the script intended to address */
-char *kernel_lookup_text(state_t *s, reg_t address, int index) {
+char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	char *seeker;
 	resource_t *textres;
 
@@ -77,7 +77,7 @@ char *kernel_lookup_text(state_t *s, reg_t address, int index) {
 /**********/
 
 #ifdef SCI_SIMPLE_SAID_CODE
-int vocab_match_simple(state_t *s, heap_ptr addr) {
+int vocab_match_simple(EngineState *s, heap_ptr addr) {
 	int nextitem;
 	int listpos = 0;
 
@@ -112,7 +112,7 @@ int vocab_match_simple(state_t *s, heap_ptr addr) {
 #endif /* SCI_SIMPLE_SAID_CODE */
 
 
-reg_t kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
@@ -179,8 +179,7 @@ reg_t kSaid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 	list_t *list;
 	node_t *node;
@@ -251,8 +250,7 @@ kSetSynonyms(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 
 
-reg_t
-kParse(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t stringpos = argv[0];
 	char *string = kernel_dereference_char_pointer(s, stringpos, 0);
 	int words_nr;
@@ -341,8 +339,7 @@ kParse(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kStrEnd(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t address = argv[0];
 	char *seeker = kernel_dereference_char_pointer(s, address, 0);
 
@@ -352,8 +349,7 @@ kStrEnd(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return address;
 }
 
-reg_t
-kStrCat(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
 
@@ -361,8 +357,7 @@ kStrCat(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-reg_t
-kStrCmp(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
 
@@ -373,8 +368,7 @@ kStrCmp(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *dest = (char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
 	char *src = (char *) kernel_dereference_bulk_pointer(s, argv[1], 0);
 
@@ -415,8 +409,7 @@ kStrCpy(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned char *dest = (unsigned char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
 	reg_t *dest2;
 
@@ -451,8 +444,7 @@ kStrAt(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kReadNumber(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *source = kernel_dereference_char_pointer(s, argv[0], 0);
 
 	while (isspace(*source))
@@ -476,8 +468,7 @@ kReadNumber(state_t *s, int funct_nr, int argc, reg_t *argv) {
 ** Formats the text from text.textresnr (offset index_inside_res) or heap_text_addr according to
 ** the supplied parameters and writes it to the targ_address.
 */
-reg_t
-kFormat(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
 	char *target = (char *) kernel_dereference_bulk_pointer(s, dest, 0);
@@ -692,16 +683,14 @@ kFormat(state_t *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t
-kStrLen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *str = kernel_dereference_char_pointer(s, argv[0], 0);
 
 	return make_reg(0, strlen(str));
 }
 
 
-reg_t
-kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	resource_t *textres = scir_find_resource(s->resmgr, sci_text, UKPV(0), 0);
 	char *seeker;
 	int counter = UKPV(1);
@@ -728,8 +717,7 @@ kGetFarText(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 static message_state_t state;
 
-reg_t
-kMessage(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.initialized)
 		message_state_initialize(s->resmgr, &state);
 

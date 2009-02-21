@@ -33,23 +33,23 @@ namespace Sci {
 
 #ifdef SCI_CONSOLE
 
-state_t *con_gamestate = NULL;
+EngineState *con_gamestate = NULL;
 
 // console commands
 
-static int c_version(struct _state *s); // displays the package and version number
-static int c_list(struct _state *s); // lists various types of things
-static int c_man(struct _state *s); // 'manual page'
-static int c_set(struct _state *s); // sets an int variable
-static int c_print(struct _state *s); // prints a variable
-static int c_size(struct _state *s); // displays the size of a resource
-static int c_dump(struct _state *s); // gives a hex dump of a resource
-//static int c_objinfo(struct _state *s); // shows some info about one class
-//static int c_objmethods(struct _state *s); // Disassembles all methods of a class
-static int c_hexgrep(struct _state *s); // Searches a string in one resource or resource class
-static int c_selectornames(struct _state *s); // Displays all selector names
-static int c_kernelnames(struct _state *s); // Displays all kernel function names
-static int c_dissectscript(struct _state *s); // Splits a script into objects and explains them
+static int c_version(EngineState *s); // displays the package and version number
+static int c_list(EngineState *s); // lists various types of things
+static int c_man(EngineState *s); // 'manual page'
+static int c_set(EngineState *s); // sets an int variable
+static int c_print(EngineState *s); // prints a variable
+static int c_size(EngineState *s); // displays the size of a resource
+static int c_dump(EngineState *s); // gives a hex dump of a resource
+//static int c_objinfo(EngineState *s); // shows some info about one class
+//static int c_objmethods(EngineState *s); // Disassembles all methods of a class
+static int c_hexgrep(EngineState *s); // Searches a string in one resource or resource class
+static int c_selectornames(EngineState *s); // Displays all selector names
+static int c_kernelnames(EngineState *s); // Displays all kernel function names
+static int c_dissectscript(EngineState *s); // Splits a script into objects and explains them
 
 typedef struct {
 	const char *name;
@@ -61,7 +61,7 @@ typedef cmd_mm_entry_t cmd_page_t; // Simple info page
 typedef struct {
 	const char *name;
 	const char *description;
-	int (*command)(state_t *);
+	int (*command)(EngineState *);
 	const char *param;
 } cmd_command_t;
 
@@ -214,7 +214,7 @@ static inline int clone_is_used(clone_table_t *t, int idx) {
 	return ENTRY_IS_VALID(t, idx);
 }
 
-int parse_reg_t(state_t *s, const char *str, reg_t *dest) { // Returns 0 on success
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
 	int rel_offsetting = 0;
 	const char *offsetting = NULL;
 	// Non-NULL: Parse end of string for relative offsets
@@ -404,7 +404,7 @@ int parse_reg_t(state_t *s, const char *str, reg_t *dest) { // Returns 0 on succ
 	return 0;
 }
 
-void con_parse(state_t *s, const char *command) {
+void con_parse(EngineState *s, const char *command) {
 	int quote = 0;		// quoting?
 	int done = 0;		// are we done yet?
 	int cdone = 0;		// Done with the current command?
@@ -612,7 +612,7 @@ int con_hook_page(const char *name, const char *body) {
 	return 0;
 }
 
-int con_hook_command(int command(state_t *), const char *name, const char *param, const char *description) {
+int con_hook_command(int command(EngineState *), const char *name, const char *param, const char *description) {
 	cmd_command_t *cmd = NULL;
 	unsigned int i;
 
@@ -691,7 +691,7 @@ static int get_resource_number(char *resid) {
 	return res;
 }
 
-static int c_version(state_t * s) {
+static int c_version(EngineState * s) {
 	if (NULL == s) {
 		sciprintf("console.c: c_version: NULL passed for parameter s\n");
 		return -1;
@@ -705,7 +705,7 @@ static int c_version(state_t * s) {
 	return 0;
 }
 
-static int c_list_words(state_t *s) {
+static int c_list_words(EngineState *s) {
 	word_t **words;
 	int words_nr;
 	int i;
@@ -724,7 +724,7 @@ static int c_list_words(state_t *s) {
 	return 0;
 }
 
-int c_list_suffices(state_t *s) {
+int c_list_suffices(EngineState *s) {
 	suffix_t **suffices;
 	int suffices_nr;
 	int i;
@@ -806,7 +806,7 @@ static void _cmd_print_page(cmd_mm_entry_t *data, int full) {
 		sciprintf("%s\n", data->name);
 }
 
-static int c_list(state_t *s) {
+static int c_list(EngineState *s) {
 	if (_lists_need_sorting)
 		con_sort_all();
 
@@ -868,7 +868,7 @@ static int c_list(state_t *s) {
 	return 0;
 }
 
-static int c_man(state_t *s) {
+static int c_man(EngineState *s) {
 	int section = 0;
 	unsigned int i;
 	char *name = cmd_params[0].str;
@@ -905,7 +905,7 @@ static int c_man(state_t *s) {
 	return 0;
 }
 
-static int c_set(state_t *s) {
+static int c_set(EngineState *s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
@@ -914,7 +914,7 @@ static int c_set(state_t *s) {
 	return 0;
 }
 
-static int c_print(state_t *s) {
+static int c_print(EngineState *s) {
 	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
 
 	if (var)
@@ -925,7 +925,7 @@ static int c_print(state_t *s) {
 	return 0;
 }
 
-static int c_size(state_t *s) {
+static int c_size(EngineState *s) {
 	int res = get_resource_number(cmd_params[0].str);
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
@@ -940,7 +940,7 @@ static int c_size(state_t *s) {
 	return 0;
 }
 
-static int c_dump(state_t *s) {
+static int c_dump(EngineState *s) {
 	int res = get_resource_number(cmd_params[0].str);
 
 	if (res == -1)
@@ -956,7 +956,7 @@ static int c_dump(state_t *s) {
 	return 0;
 }
 
-static int c_hexgrep(state_t *s) {
+static int c_hexgrep(EngineState *s) {
 	int i, seeklen, resnr, restype, resmax;
 	unsigned char *seekstr = NULL;
 	resource_t *script = NULL;
@@ -1026,7 +1026,7 @@ static int c_hexgrep(state_t *s) {
 	return 0;
 }
 
-static int c_selectornames(state_t * s) {
+static int c_selectornames(EngineState * s) {
 	int namectr;
 	char **snames	= NULL;
 	int seeker = 0;
@@ -1053,7 +1053,7 @@ static int c_selectornames(state_t * s) {
 	return 0;
 }
 
-static int c_kernelnames(state_t * s) {
+static int c_kernelnames(EngineState * s) {
 	int knamectr;
 	char **knames = vocabulary_get_knames(s->resmgr, &knamectr);
 	int seeker = 0;
@@ -1077,7 +1077,7 @@ static int c_kernelnames(state_t * s) {
 	return 0;
 }
 
-static int c_dissectscript(state_t * s) {
+static int c_dissectscript(EngineState * s) {
 	if (NULL == s) {
 		sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
 		return -1;

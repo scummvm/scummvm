@@ -39,142 +39,142 @@
 namespace Sci {
 
 // New kernel functions
-reg_t kStrLen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetFarText(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kReadNumber(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kStrCat(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kStrCmp(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetSynonyms(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kLock(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kPalette(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNumCels(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNumLoops(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDrawCel(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCoordPri(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kPriCoord(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kShakeScreen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetCursor(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMoveCursor(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kShow(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kPicNotValid(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kOnControl(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDrawPic(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetPort(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetPort(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNewWindow(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDisposeWindow(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCelWide(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCelHigh(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetJump(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDirLoop(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDoAvoider(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetAngle(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetDistance(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kRandom(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAbs(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSqrt(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kTimesSin(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kTimesCos(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCosMult(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSinMult(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kTimesTan(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kTimesCot(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCosDiv(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSinDiv(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kValidPath(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFOpen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFPuts(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFGets(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFClose(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMapKeyToDir(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGlobalToLocal(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kLocalToGlobal(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kWait(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kRestartGame(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrCat(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCoordPri(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kPriCoord(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kPicNotValid(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kOnControl(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetPort(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCelWide(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDirLoop(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetAngle(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetDistance(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kRandom(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAbs(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSqrt(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kTimesSin(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kTimesCos(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCosMult(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSinMult(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCosDiv(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFPuts(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGlobalToLocal(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv);
 #ifdef WIN32
-reg_t kDeviceInfo_Win32(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDeviceInfo_Win32(EngineState *s, int funct_nr, int argc, reg_t *argv);
 #else
-reg_t kDeviceInfo_Unix(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDeviceInfo_Unix(EngineState *s, int funct_nr, int argc, reg_t *argv);
 #endif
-reg_t kGetEvent(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCheckFreeSpace(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFlushResources(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetSaveFiles(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetDebug(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCheckSaveGame(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSaveGame(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kRestoreGame(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFileIO(struct _state *s, int funct_nr, int argc, reg_t *argp);
-reg_t kGetTime(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kHaveMouse(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kJoystick(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGameIsRestarting(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetCWD(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSort(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kStrEnd(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMemory(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAvoidPath(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kParse(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSaid(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kStrCpy(struct _state *s, int funct_nr, int argc, reg_t *argp);
-reg_t kStrAt(struct _state *s, int funct_nr, int argc, reg_t *argp);
-reg_t kEditControl(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDrawControl(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kHiliteControl(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kClone(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDisposeClone(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kCanBeHere(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetNowSeen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kInitBresen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDoBresen(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kBaseSetter(struct _state *s, int funct_nr, int argc, reg_t *argp);
-reg_t kAddToPic(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAnimate(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDisplay(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGraph(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFormat(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDoSound(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAddMenu(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kSetMenu(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetMenu(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDrawStatus(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDrawMenuBar(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMenuSelect(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argp);
+reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kHaveMouse(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kJoystick(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argp);
+reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argp);
+reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDrawControl(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kHiliteControl(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kBaseSetter(EngineState *s, int funct_nr, int argc, reg_t *argp);
+reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
-reg_t kLoad(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kUnLoad(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kScriptID(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDisposeScript(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kIsObject(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kRespondsTo(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNewList(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDisposeList(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNewNode(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFirstNode(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kLastNode(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kEmptyList(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNextNode(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kPrevNode(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kNodeValue(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAddAfter(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAddToFront(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kAddToEnd(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kFindKey(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDeleteKey(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMemoryInfo(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetSaveDir(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kTextSize(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kIsItSkip(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kMessage(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t kDoAudio(struct _state *s, int funct_nr, int argc, reg_t *argv);
-reg_t k_Unknown(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNewList(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNewNode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kLastNode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAddToFront(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kAddToEnd(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDeleteKey(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMemoryInfo(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function
-reg_t kstub(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for unimplemented kernel functions
-reg_t kNOP(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for kernel functions that don't do anything
-reg_t kFsciEmu(struct _state *s, int funct_nr, int argc, reg_t *argv);
+reg_t kFsciEmu(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // Emulating "old" kernel functions on the heap
 
 
@@ -354,7 +354,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 
 static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic" };
 
-int kernel_oops(state_t *s, const char *file, int line, const char *reason) {
+int kernel_oops(EngineState *s, const char *file, int line, const char *reason) {
 	sciprintf("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
 	error("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
 	script_debug_flag = script_error_flag = 1;
@@ -362,7 +362,7 @@ int kernel_oops(state_t *s, const char *file, int line, const char *reason) {
 }
 
 // Allocates a set amount of memory for a specified use and returns a handle to it.
-reg_t kalloc(state_t *s, const char *type, int space) {
+reg_t kalloc(EngineState *s, const char *type, int space) {
 	reg_t reg;
 
 	sm_alloc_hunk_entry(&s->seg_manager, type, space, &reg);
@@ -371,7 +371,7 @@ reg_t kalloc(state_t *s, const char *type, int space) {
 	return reg;
 }
 
-int has_kernel_function(state_t *s, const char *kname) {
+int has_kernel_function(EngineState *s, const char *kname) {
 	int i = 0;
 
 	while (s->kernel_names[i]) {
@@ -384,7 +384,7 @@ int has_kernel_function(state_t *s, const char *kname) {
 }
 
 // Returns a pointer to the memory indicated by the specified handle
-byte *kmem(state_t *s, reg_t handle) {
+byte *kmem(EngineState *s, reg_t handle) {
 	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 	hunk_table_t *ht = &(mobj->data.hunks);
 
@@ -397,7 +397,7 @@ byte *kmem(state_t *s, reg_t handle) {
 }
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.
-int kfree(state_t *s, reg_t handle) {
+int kfree(EngineState *s, reg_t handle) {
 	sm_free_hunk_entry(&s->seg_manager, handle);
 
 	return 0;
@@ -405,7 +405,7 @@ int kfree(state_t *s, reg_t handle) {
 
 char *old_save_dir;
 
-reg_t kRestartGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
 	old_save_dir = strdup(deref_save_dir);
@@ -419,7 +419,7 @@ reg_t kRestartGame(state_t *s, int funct_nr, int argc, reg_t *argv) {
 /* kGameIsRestarting():
 ** Returns the restarting_flag in acc
 */
-reg_t kGameIsRestarting(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
 	if (old_save_dir && deref_save_dir) {
@@ -438,11 +438,11 @@ reg_t kGameIsRestarting(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kHaveMouse(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kHaveMouse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, -1);
 }
 
-reg_t kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMemoryInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argv[0].offset) {
 	case 0: // Total free heap memory
 	case 1: // Largest heap block available
@@ -458,7 +458,7 @@ reg_t kMemoryInfo(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (funct_nr >= SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR) {
 		warning("Unhandled Unknown function %04x", funct_nr);
 		return NULL_REG;
@@ -474,14 +474,14 @@ reg_t k_Unknown(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 }
 
-reg_t kFlushResources(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	run_gc(s);
 	// FIXME: remove the Sci:: bit once this belongs to the Sci namespace
 	debugC(2, Sci::kDebugLevelRoom, "Entering room number %d\n", UKPV(0));
 	return s->r_acc;
 }
 
-reg_t kSetDebug(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
 	script_debug_flag = 1; // Enter debug mode
@@ -494,7 +494,7 @@ reg_t kSetDebug(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_NEW_GETTIME_TIME_24HOUR 2
 #define _K_NEW_GETTIME_DATE 3
 
-reg_t kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	struct tm* loc_time;
 	GTimeVal time_prec;
 	time_t the_time;
@@ -583,7 +583,7 @@ reg_t kGetTime(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define K_MEMORY_PEEK			5
 #define K_MEMORY_POKE			6
 
-reg_t kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() critical", &s->r_acc)) {
@@ -656,7 +656,7 @@ reg_t kMemory(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i;
 
 	warning("Unimplemented syscall: %s[%x](", s->kernel_names[funct_nr], funct_nr);
@@ -670,7 +670,7 @@ reg_t kstub(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kNOP(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *problem = (const char*)(s->kfunct_table[funct_nr].orig_name ? "unmapped" : "NOP");
 
 	warning("Warning: Kernel function 0x%02x invoked: %s", funct_nr, problem);
@@ -764,7 +764,7 @@ void kernel_compile_signature(const char **s) {
 	*s = result; // Write back
 }
 
-int script_map_kernel(state_t *s) {
+int script_map_kernel(EngineState *s) {
 	int functnr;
 	int mapped = 0;
 	int ignored = 0;
@@ -833,12 +833,12 @@ int script_map_kernel(state_t *s) {
 	return 0;
 }
 
-void free_kfunct_tables(state_t *s) {
+void free_kfunct_tables(EngineState *s) {
 	free(s->kfunct_table);
 	s->kfunct_table = NULL;
 }
 
-int determine_reg_type(state_t *s, reg_t reg, int allow_invalid) {
+int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 	mem_obj_t *mobj;
 
 	if (!reg.segment) {
@@ -920,7 +920,7 @@ const char *kernel_argtype_description(int type) {
 	return argtype_description[sci_ffs(type)];
 }
 
-int kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv) {
+int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *argv) {
 	if (!sig)
 		return 1;
 
@@ -955,7 +955,7 @@ int kernel_matches_signature(state_t *s, const char *sig, int argc, reg_t *argv)
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static inline void *_kernel_dereference_pointer(struct _state *s, reg_t pointer, int entries, int align) {
+static inline void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
 	int maxsize;
 	void *retval = sm_dereference(&s->seg_manager, pointer, &maxsize);
 
@@ -972,11 +972,11 @@ static inline void *_kernel_dereference_pointer(struct _state *s, reg_t pointer,
 
 }
 
-byte *kernel_dereference_bulk_pointer(struct _state *s, reg_t pointer, int entries) {
+byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries) {
 	return (byte*)_kernel_dereference_pointer(s, pointer, entries, 1);
 }
 
-reg_t *kernel_dereference_reg_pointer(struct _state *s, reg_t pointer, int entries) {
+reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries) {
 	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
 }
 

@@ -32,7 +32,7 @@ namespace Sci {
 #  define LOOKUP_NODE(addr) inline_lookup_node(s, (addr), __FILE__, __LINE__)
 #endif
 
-inline node_t *inline_lookup_node(state_t *s, reg_t addr, const char *file, int line) {
+inline node_t *inline_lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 	mem_obj_t *mobj;
 	node_table_t *nt;
 
@@ -57,13 +57,13 @@ inline node_t *inline_lookup_node(state_t *s, reg_t addr, const char *file, int 
 	return &(nt->table[addr.offset].entry);
 }
 
-node_t *lookup_node(state_t *s, reg_t addr, const char *file, int line) {
+node_t *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 	return inline_lookup_node(s, addr, file, line);
 }
 
 #define LOOKUP_NULL_LIST(addr) _lookup_list(s, addr, __FILE__, __LINE__, 1)
 
-inline list_t *_lookup_list(state_t *s, reg_t addr, const char *file, int line, int may_be_null) {
+inline list_t *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int may_be_null) {
 	mem_obj_t *mobj;
 	list_table_t *lt;
 
@@ -89,7 +89,7 @@ inline list_t *_lookup_list(state_t *s, reg_t addr, const char *file, int line, 
 	return &(lt->table[addr.offset].entry);
 }
 
-list_t *lookup_list(state_t *s, reg_t addr, const char *file, int line) {
+list_t *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
 	return _lookup_list(s, addr, file, line, 0);
 }
 
@@ -100,7 +100,7 @@ list_t *lookup_list(state_t *s, reg_t addr, const char *file, int line) {
 
 #else
 
-static inline int sane_nodep(state_t *s, reg_t addr) {
+static inline int sane_nodep(EngineState *s, reg_t addr) {
 	int have_prev = 0;
 	reg_t prev = addr;
 
@@ -121,7 +121,7 @@ static inline int sane_nodep(state_t *s, reg_t addr) {
 	return 1;
 }
 
-int sane_listp(state_t *s, reg_t addr) {
+int sane_listp(EngineState *s, reg_t addr) {
 	list_t *l = LOOKUP_LIST(addr);
 	int empties = 0;
 
@@ -156,7 +156,7 @@ int sane_listp(state_t *s, reg_t addr) {
 }
 #endif
 
-reg_t kNewList(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNewList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t listbase;
 	list_t *l;
 	l = sm_alloc_list(&s->seg_manager, &listbase);
@@ -166,7 +166,7 @@ reg_t kNewList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return listbase; // Return list base address
 }
 
-reg_t kDisposeList(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l) {
@@ -192,7 +192,7 @@ reg_t kDisposeList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-inline reg_t _k_new_node(state_t *s, reg_t value, reg_t key) {
+inline reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
 	node_t *n = sm_alloc_node(&s->seg_manager, &nodebase);
 
@@ -208,7 +208,7 @@ inline reg_t _k_new_node(state_t *s, reg_t value, reg_t key) {
 	return nodebase;
 }
 
-reg_t kNewNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNewNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
 	SCIkdebug(SCIkNODES, "New nodebase at "PREG"\n", PRINT_REG(s->r_acc));
@@ -216,7 +216,7 @@ reg_t kNewNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kFirstNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_NULL_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
@@ -228,7 +228,7 @@ reg_t kFirstNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 }
 
-reg_t kLastNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLastNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
@@ -240,7 +240,7 @@ reg_t kLastNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 }
 
-reg_t kEmptyList(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
@@ -249,7 +249,7 @@ reg_t kEmptyList(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, ((l) ? IS_NULL_REG(l->first) : 0));
 }
 
-inline void _k_add_to_front(state_t *s, reg_t listbase, reg_t nodebase) {
+inline void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	list_t *l = LOOKUP_LIST(listbase);
 	node_t *new_n = LOOKUP_NODE(nodebase);
 
@@ -272,7 +272,7 @@ inline void _k_add_to_front(state_t *s, reg_t listbase, reg_t nodebase) {
 	l->first = nodebase;
 }
 
-inline void _k_add_to_end(state_t *s, reg_t listbase, reg_t nodebase) {
+inline void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	list_t *l = LOOKUP_LIST(listbase);
 	node_t *new_n = LOOKUP_NODE(nodebase);
 
@@ -295,7 +295,7 @@ inline void _k_add_to_end(state_t *s, reg_t listbase, reg_t nodebase) {
 	l->last = nodebase;
 }
 
-reg_t kNextNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at "PREG" is not sane anymore", PRINT_REG(argv[0]));
@@ -306,7 +306,7 @@ reg_t kNextNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return n->succ;
 }
 
-reg_t kPrevNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0]))
 		error("List node at "PREG" is not sane anymore", PRINT_REG(argv[0]));
@@ -314,7 +314,7 @@ reg_t kPrevNode(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return n->pred;
 }
 
-reg_t kNodeValue(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	node_t *n = LOOKUP_NODE(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at "PREG" is not sane", PRINT_REG(argv[0]));
@@ -325,12 +325,12 @@ reg_t kNodeValue(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return n->value;
 }
 
-reg_t kAddToFront(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAddToFront(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	_k_add_to_front(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
-reg_t kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	list_t *l = LOOKUP_LIST(argv[0]);
 	node_t *firstnode = IS_NULL_REG(argv[1]) ? NULL : LOOKUP_NODE(argv[1]);
 	node_t *newnode = LOOKUP_NODE(argv[2]);
@@ -369,12 +369,12 @@ reg_t kAddAfter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	}
 }
 
-reg_t kAddToEnd(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAddToEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	_k_add_to_end(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
-reg_t kFindKey(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t node_pos;
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
@@ -403,7 +403,7 @@ reg_t kFindKey(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kDeleteKey(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDeleteKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, funct_nr, 2, argv);
 	node_t *n;
 	list_t *l = LOOKUP_LIST(argv[0]);
@@ -445,7 +445,7 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 	return 0;
 }
 
-reg_t kSort(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t source = argv[0];
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];

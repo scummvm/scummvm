@@ -31,7 +31,7 @@ int stop_on_event;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
-reg_t kGetEvent(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int mask = UKPV(0);
 	reg_t obj = argv[1];
 	sci_event_t e;
@@ -143,7 +143,7 @@ reg_t kGetEvent(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kMapKeyToDir(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	if (GET_SEL32V(obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
@@ -191,7 +191,7 @@ reg_t kMapKeyToDir(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGlobalToLocal(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGlobalToLocal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 
 	if (obj.segment) {
@@ -206,7 +206,7 @@ reg_t kGlobalToLocal(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 }
 
-reg_t kLocalToGlobal(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 
 	if (obj.segment) {
@@ -220,7 +220,7 @@ reg_t kLocalToGlobal(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kJoystick(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kJoystick(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	warning("Unimplemented syscall 'Joystick()");
 	return NULL_REG;
 }

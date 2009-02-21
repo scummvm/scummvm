@@ -404,7 +404,7 @@ vocab_get_said_spec_length(byte *addr) {
 }
 
 void
-vocab_decypher_said_block(state_t *s, byte *addr) {
+vocab_decypher_said_block(EngineState *s, byte *addr) {
 	int nextitem;
 
 	do {

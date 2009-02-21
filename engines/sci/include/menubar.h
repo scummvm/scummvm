@@ -33,8 +33,6 @@
 
 namespace Sci {
 
-struct _state;
-
 #define MENU_FREESCI_BLATANT_PLUG 0xfff0
 /* This adds an "About FreeSCI" menu option to the first menu */
 
@@ -168,7 +166,7 @@ menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entr
 
 
 int
-menubar_set_attribute(struct _state *s, int menu, int item, int attribute, reg_t value);
+menubar_set_attribute(EngineState *s, int menu, int item, int attribute, reg_t value);
 /* Sets the (currently unidentified) foo and bar values.
 ** Parameters: (state_t *) s: The current state
 **             (int) menu: The menu number to edit
@@ -180,7 +178,7 @@ menubar_set_attribute(struct _state *s, int menu, int item, int attribute, reg_t
 
 
 reg_t
-menubar_get_attribute(struct _state *s, int menu, int item, int attribute);
+menubar_get_attribute(EngineState *s, int menu, int item, int attribute);
 /* Sets the (currently unidentified) foo and bar values.
 ** Parameters: (state_t *) s: The current state
 **             (int) menu: The menu number
@@ -191,7 +189,7 @@ menubar_get_attribute(struct _state *s, int menu, int item, int attribute);
 
 
 int
-menubar_item_valid(struct _state *s, int menu, int item);
+menubar_item_valid(EngineState *s, int menu, int item);
 /* Determines whether the specified menu entry may be activated
 ** Parameters: (state_t *) s: The current state
 **             (int x int) (menu, item): The menu item to check
@@ -200,7 +198,7 @@ menubar_item_valid(struct _state *s, int menu, int item);
 
 
 int
-menubar_map_pointer(struct _state *s, int *menu_nr, int *item_nr, gfxw_port_t *port);
+menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port);
 /* Maps the pointer position to a (menu,item) tuple.
 ** Parameters: (state_t *) s: The current state
 **             ((int *) x (int *)) (menu_nr, item_nr): Pointers to the current menu/item tuple

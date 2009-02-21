@@ -129,7 +129,7 @@ void add_outgoing_refs(void *pre_wm, reg_t addr) {
 	worklist_push(wm->worklist_ref, wm->nonnormal_map, addr);
 }
 
-reg_t_hash_map *find_all_used_references(state_t *s) {
+reg_t_hash_map *find_all_used_references(EngineState *s) {
 	seg_manager_t *sm = &(s->seg_manager);
 	seg_interface_t **interfaces = (seg_interface_t**)sci_calloc(sizeof(seg_interface_t *), sm->heap_size);
 	reg_t_hash_map *nonnormal_map = new reg_t_hash_map();
@@ -253,7 +253,7 @@ void free_unless_used(void *pre_use_map, reg_t addr) {
 
 }
 
-void run_gc(state_t *s) {
+void run_gc(EngineState *s) {
 	int seg_nr;
 	deallocator_t deallocator;
 	seg_manager_t *sm = &(s->seg_manager);

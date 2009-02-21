@@ -114,7 +114,7 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-static void assert_primary_widget_lists(state_t *s) {
+static void assert_primary_widget_lists(EngineState *s) {
 	if (!s->dyn_views) {
 		rect_t bounds = s->picture_port->bounds;
 
@@ -132,7 +132,7 @@ static void assert_primary_widget_lists(state_t *s) {
 	}
 }
 
-static void reparentize_primary_widget_lists(state_t *s, gfxw_port_t *newport) {
+static void reparentize_primary_widget_lists(EngineState *s, gfxw_port_t *newport) {
 	if (!newport)
 		newport = s->picture_port;
 
@@ -143,7 +143,7 @@ static void reparentize_primary_widget_lists(state_t *s, gfxw_port_t *newport) {
 	}
 }
 
-int _find_view_priority(state_t *s, int y) {
+int _find_view_priority(EngineState *s, int y) {
 	/*if (s->version <= SCI_VERSION_LTU_PRIORITY_OB1)
 		++y; */
 
@@ -161,7 +161,7 @@ int _find_view_priority(state_t *s, int y) {
 	}
 }
 
-int _find_priority_band(state_t *s, int nr) {
+int _find_priority_band(EngineState *s, int nr) {
 	if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
@@ -192,7 +192,7 @@ int _find_priority_band(state_t *s, int nr) {
 	}
 }
 
-reg_t graph_save_box(state_t *s, rect_t area) {
+reg_t graph_save_box(EngineState *s, rect_t area) {
 	reg_t handle = kalloc(s, "graph_save_box()", sizeof(gfxw_snapshot_t *));
 	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **) kmem(s, handle);
 
@@ -201,7 +201,7 @@ reg_t graph_save_box(state_t *s, rect_t area) {
 	return handle;
 }
 
-void graph_restore_box(state_t *s, reg_t handle) {
+void graph_restore_box(EngineState *s, reg_t handle) {
 	gfxw_snapshot_t **ptr;
 	int port_nr = s->port->ID;
 
@@ -264,7 +264,7 @@ void graph_restore_box(state_t *s, reg_t handle) {
 
 static gfx_pixmap_color_t white = {GFX_COLOR_INDEX_UNMAPPED, 255, 255, 255};
 
-gfx_pixmap_color_t *get_pic_color(state_t *s, int color) {
+gfx_pixmap_color_t *get_pic_color(EngineState *s, int color) {
 	if (s->resmgr->sci_version < SCI_VERSION_01_VGA)
 		return &(s->ega_colors[color].visual);
 
@@ -279,7 +279,7 @@ gfx_pixmap_color_t *get_pic_color(state_t *s, int color) {
 	}
 }
 
-static gfx_color_t graph_map_color(state_t *s, int color, int priority, int control) {
+static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
 	if (s->resmgr->sci_version < SCI_VERSION_01_VGA) {
@@ -297,7 +297,7 @@ static gfx_color_t graph_map_color(state_t *s, int color, int priority, int cont
 	return retval;
 }
 
-reg_t kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetCursor_SCI11(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
 		if (UKPV(0) == 0) {
@@ -340,7 +340,7 @@ reg_t kSetCursor_SCI11(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version >= SCI_VERSION(1, 001, 000) ||
 	        has_kernel_function(s, "MoveCursor")) {
 		return kSetCursor_SCI11(s, funct_nr, argc, argv);
@@ -365,7 +365,7 @@ reg_t kSetCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 extern int oldx, oldy;
 
-reg_t kMoveCursor(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point newpos;
 	static Common::Point oldpos(0, 0);
 
@@ -398,7 +398,7 @@ static inline void _ascertain_port_contents(gfxw_port_t *port) {
 		port->contents = (gfxw_widget_t *) gfxw_new_list(port->bounds, 0);
 }
 
-reg_t kShow(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int old_map = s->pic_visible_map;
 
 	s->pic_visible_map = (gfx_map_mask_t) UKPV_OR_ALT(0, 1);
@@ -428,7 +428,7 @@ reg_t kShow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPicNotValid(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kPicNotValid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, s->pic_not_valid);
 	if (argc)
 		s->pic_not_valid = (byte)UKPV(0);
@@ -436,7 +436,7 @@ reg_t kPicNotValid(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void _k_redraw_box(state_t *s, int x1, int y1, int x2, int y2) {
+void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
 	sciprintf("_k_redraw_box(): Unimplemented");
 #if 0
 	int i;
@@ -461,7 +461,7 @@ void _k_redraw_box(state_t *s, int x1, int y1, int x2, int y2) {
 #endif
 }
 
-void _k_graph_rebuild_port_with_color(state_t *s, gfx_color_t newbgcolor) {
+void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	gfxw_port_t *port = s->port;
 	gfxw_port_t *newport;
 
@@ -487,7 +487,7 @@ static int activated_icon_bar;
 static int port_origin_x;
 static int port_origin_y;
 
-reg_t kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	rect_t area;
 	gfxw_port_t *port = s->port;
 	int redraw_port = 0;
@@ -613,7 +613,7 @@ reg_t kGraph(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int width, height;
 	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s, argv[1], 0) : NULL;
 	reg_t *dest = kernel_dereference_reg_pointer(s, argv[0], 4);
@@ -644,7 +644,7 @@ reg_t kTextSize(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 int debug_sleeptime_factor = 1;
 
-reg_t kWait(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	GTimeVal time;
 	int sleep_time = UKPV(0);
 
@@ -663,19 +663,19 @@ reg_t kWait(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kCoordPri(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCoordPri(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int y = SKPV(0);
 
 	return make_reg(0, VIEW_PRIORITY(y));
 }
 
-reg_t kPriCoord(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kPriCoord(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int priority = SKPV(0);
 
 	return make_reg(0, PRIORITY_BAND_FIRST(priority));
 }
 
-void _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr, int argc, reg_t *argv) {
+void _k_dirloop(reg_t obj, word angle, EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = GET_SEL32V(obj, view);
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
@@ -720,7 +720,7 @@ void _k_dirloop(reg_t obj, word angle, state_t *s, int funct_nr, int argc, reg_t
 	PUT_SEL32V(obj, loop, loop);
 }
 
-reg_t kDirLoop(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDirLoop(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	_k_dirloop(argv[0], UKPV(1), s, funct_nr, argc, argv);
 
 	return s->r_acc;
@@ -729,13 +729,13 @@ reg_t kDirLoop(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define GASEOUS_VIEW_MASK_ACTIVE (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 #define GASEOUS_VIEW_MASK_PASSIVE (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 
-abs_rect_t set_base(struct _state *s, reg_t object);
+abs_rect_t set_base(EngineState *s, reg_t object);
 
-inline abs_rect_t get_nsrect(struct _state *s, reg_t object, byte clip);
+inline abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip);
 
-static inline abs_rect_t nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority);
+static inline abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority);
 
-static int collides_with(state_t *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc, reg_t *argv) {
+static int collides_with(EngineState *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc, reg_t *argv) {
 	int other_signal = GET_SEL32V(other_obj, signal);
 	int other_priority = GET_SEL32V(other_obj, priority);
 	int y = GET_SEL32SV(other_obj, y);
@@ -775,7 +775,7 @@ static int collides_with(state_t *s, abs_rect_t area, reg_t other_obj, int use_n
 	return 0;
 }
 
-reg_t kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv) {
+reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
 	list_t *cliplist = NULL;
@@ -868,7 +868,7 @@ reg_t kCanBeHere(state_t *s, int funct_nr, int argc, reg_t * argv) {
 	return not_register(s, make_reg(0, retval));
 }  // CanBeHere
 
-reg_t kIsItSkip(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -891,7 +891,7 @@ reg_t kIsItSkip(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, pxm->index_data[y * pxm->index_xl + x] == pxm->color_key);
 }
 
-reg_t kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -909,7 +909,7 @@ reg_t kCelHigh(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, height);
 }
 
-reg_t kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCelWide(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -927,7 +927,7 @@ reg_t kCelWide(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, width);
 }
 
-reg_t kNumLoops(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(obj, view);
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
@@ -942,7 +942,7 @@ reg_t kNumLoops(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, loops_nr);
 }
 
-reg_t kNumCels(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int loop = GET_SEL32V(obj, loop);
 	int view = GET_SEL32V(obj, view);
@@ -961,7 +961,7 @@ reg_t kNumCels(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, cel + 1);
 }
 
-reg_t kOnControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kOnControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int arg = 0;
 	gfx_map_mask_t map;
 	int xstart, ystart;
@@ -985,11 +985,11 @@ reg_t kOnControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
 }
 
-void _k_view_list_free_backgrounds(state_t *s, view_object_t *list, int list_nr);
+void _k_view_list_free_backgrounds(EngineState *s, view_object_t *list, int list_nr);
 
 int sci01_priority_table_flags = 0;
 
-reg_t kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int pic_nr = SKPV(0);
 	int add_to_pic = 1;
 	int palette = SKPV_OR_ALT(3, 0);
@@ -1085,7 +1085,7 @@ reg_t kDrawPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 
 }
 
-abs_rect_t set_base(state_t *s, reg_t object) {
+abs_rect_t set_base(EngineState *s, reg_t object) {
 	int x, y, original_y, z, ystep, xsize, ysize;
 	int xbase, ybase, xend, yend;
 	int view, loop, cel;
@@ -1147,7 +1147,7 @@ abs_rect_t set_base(state_t *s, reg_t object) {
 	return retval;
 }
 
-void _k_base_setter(state_t *s, reg_t object) {
+void _k_base_setter(EngineState *s, reg_t object) {
 	abs_rect_t absrect = set_base(s, object);
 
 	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != SELECTOR_VARIABLE)
@@ -1162,7 +1162,7 @@ void _k_base_setter(state_t *s, reg_t object) {
 	PUT_SEL32V(object, brBottom, absrect.yend);
 }
 
-reg_t kBaseSetter(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kBaseSetter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	_k_base_setter(s, object);
@@ -1170,7 +1170,7 @@ reg_t kBaseSetter(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 } // kBaseSetter
 
-static inline abs_rect_t nsrect_clip(state_t *s, int y, abs_rect_t retval, int priority) {
+static inline abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority) {
 	int pri_top;
 
 	if (priority == -1)
@@ -1188,7 +1188,7 @@ static inline abs_rect_t nsrect_clip(state_t *s, int y, abs_rect_t retval, int p
 	return retval;
 }
 
-inline abs_rect_t calculate_nsrect(state_t *s, int x, int y, int view, int loop, int cel) {
+inline abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
 	int xbase, ybase, xend, yend, xsize, ysize;
 	int xmod = 0, ymod = 0;
 	abs_rect_t retval = {0, 0, 0, 0};
@@ -1217,7 +1217,7 @@ inline abs_rect_t calculate_nsrect(state_t *s, int x, int y, int view, int loop,
 	return retval;
 }
 
-inline abs_rect_t get_nsrect(state_t *s, reg_t object, byte clip) {
+inline abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
 	int x, y, z;
 	int view, loop, cel;
 	abs_rect_t retval;
@@ -1246,7 +1246,7 @@ inline abs_rect_t get_nsrect(state_t *s, reg_t object, byte clip) {
 	return retval;
 }
 
-static void _k_set_now_seen(state_t *s, reg_t object) {
+static void _k_set_now_seen(EngineState *s, reg_t object) {
 	abs_rect_t absrect = get_nsrect(s, object, 0);
 
 	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != SELECTOR_VARIABLE) {
@@ -1259,7 +1259,7 @@ static void _k_set_now_seen(state_t *s, reg_t object) {
 	PUT_SEL32V(object, nsBottom, absrect.yend);
 }
 
-reg_t kSetNowSeen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	_k_set_now_seen(s, object);
@@ -1267,7 +1267,7 @@ reg_t kSetNowSeen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 } // kSetNowSeen
 
-reg_t kPalette(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case 5 : {
 		int r = UKPV(1);
@@ -1304,9 +1304,9 @@ reg_t kPalette(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void _k_draw_control(state_t *s, reg_t obj, int inverse);
+static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
-static void _k_disable_delete_for_now(state_t *s, reg_t obj) {
+static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
 	char *text = IS_NULL_REG(text_pos) ? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
@@ -1318,7 +1318,7 @@ static void _k_disable_delete_for_now(state_t *s, reg_t obj) {
 	}
 }
 
-reg_t kDrawControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDrawControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	_k_disable_delete_for_now(s, obj);
@@ -1327,7 +1327,7 @@ reg_t kDrawControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kHiliteControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kHiliteControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	_k_draw_control(s, obj, 1);
@@ -1357,7 +1357,7 @@ void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 		--textlen; \
 	}
 
-reg_t kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	reg_t event = argv[1];
 
@@ -1536,7 +1536,7 @@ reg_t kEditControl(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void _k_draw_control(state_t *s, reg_t obj, int inverse) {
+static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	int x = GET_SEL32SV(obj, nsLeft);
 	int y = GET_SEL32SV(obj, nsTop);
 	int xl = GET_SEL32SV(obj, nsRight) - x;
@@ -1655,7 +1655,7 @@ static void _k_draw_control(state_t *s, reg_t obj, int inverse) {
 }
 
 
-static void draw_rect_to_control_map(state_t *s, abs_rect_t abs_zone) {
+static void draw_rect_to_control_map(EngineState *s, abs_rect_t abs_zone) {
 	gfxw_box_t *box;
 	gfx_color_t color;
 
@@ -1671,7 +1671,7 @@ static void draw_rect_to_control_map(state_t *s, abs_rect_t abs_zone) {
 	ADD_TO_CURRENT_PICTURE_PORT(box);
 }
 
-static inline void draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view) {
+static inline void draw_obj_to_control_map(EngineState *s, gfxw_dyn_view_t *view) {
 	reg_t obj = make_reg(view->ID, view->subID);
 
 	if (!is_object(s, obj))
@@ -1683,7 +1683,7 @@ static inline void draw_obj_to_control_map(state_t *s, gfxw_dyn_view_t *view) {
 	}
 }
 
-static void _k_view_list_do_postdraw(state_t *s, gfxw_list_t *list) {
+static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
 	while (widget) {
@@ -1744,7 +1744,7 @@ static void _k_view_list_do_postdraw(state_t *s, gfxw_list_t *list) {
 	}
 }
 
-void _k_view_list_mark_free(state_t *s, reg_t off) {
+void _k_view_list_mark_free(EngineState *s, reg_t off) {
 	if (s->dyn_views) {
 
 		gfxw_dyn_view_t *w = (gfxw_dyn_view_t *) s->dyn_views->contents;
@@ -1762,7 +1762,7 @@ void _k_view_list_mark_free(state_t *s, reg_t off) {
 
 static int _k_animate_ran = 0;
 
-int _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget, int funct_nr, int argc, reg_t *argv) {
+int _k_view_list_dispose_loop(EngineState *s, list_t *list, gfxw_dyn_view_t *widget, int funct_nr, int argc, reg_t *argv) {
 // disposes all list members flagged for disposal; funct_nr is the invoking kfunction
 // returns non-zero IFF views were dropped
 	int signal;
@@ -1852,7 +1852,7 @@ int _k_view_list_dispose_loop(state_t *s, list_t *list, gfxw_dyn_view_t *widget,
 #define _K_MAKE_VIEW_LIST_CALC_PRIORITY 2
 #define _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP 4
 
-static gfxw_dyn_view_t *_k_make_dynview_obj(state_t *s, reg_t obj, int options, int nr, int funct_nr, int argc, reg_t *argv) {
+static gfxw_dyn_view_t *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, int nr, int funct_nr, int argc, reg_t *argv) {
 	short oldloop, oldcel;
 	int cel, loop, view_nr = GET_SEL32SV(obj, view);
 	int palette;
@@ -1930,7 +1930,7 @@ static gfxw_dyn_view_t *_k_make_dynview_obj(state_t *s, reg_t obj, int options, 
 	}
 }
 
-static void _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *list, int options, int funct_nr, int argc, reg_t *argv) {
+static void _k_make_view_list(EngineState *s, gfxw_list_t **widget_list, list_t *list, int options, int funct_nr, int argc, reg_t *argv) {
 /* Creates a view_list from a node list in heap space. Returns the list, stores the
 ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
 ** argc, argv, funct_nr should be the same as in the calling kernel function.
@@ -1991,7 +1991,7 @@ static void _k_make_view_list(state_t *s, gfxw_list_t **widget_list, list_t *lis
 	}
 }
 
-static void _k_prepare_view_list(state_t *s, gfxw_list_t *list, int options) {
+static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
 		reg_t obj = make_reg(view->ID, view->subID);
@@ -2121,7 +2121,7 @@ static void _k_view_list_kryptonize(gfxw_widget_t *v) {
 	}
 }
 
-static void _k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dyn_view_t *view) {
+static void _k_raise_topmost_in_view_list(EngineState *s, gfxw_list_t *list, gfxw_dyn_view_t *view) {
 	if (view) {
 		gfxw_dyn_view_t *next = (gfxw_dyn_view_t *)view->next;
 
@@ -2150,7 +2150,7 @@ static void _k_raise_topmost_in_view_list(state_t *s, gfxw_list_t *list, gfxw_dy
 	}
 }
 
-static void _k_redraw_view_list(state_t *s, gfxw_list_t *list) {
+static void _k_redraw_view_list(EngineState *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
 
@@ -2201,7 +2201,7 @@ static void _k_redraw_view_list(state_t *s, gfxw_list_t *list) {
 // Draw as picviews
 #define _K_DRAW_VIEW_LIST_PICVIEW 8
 
-void _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags) {
+void _k_draw_view_list(EngineState *s, gfxw_list_t *list, int flags) {
 	// Draws list_nr members of list to s->pic.
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
@@ -2245,7 +2245,7 @@ void _k_draw_view_list(state_t *s, gfxw_list_t *list, int flags) {
 
 }
 
-reg_t kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_list_t *pic_views;
 	reg_t list_ref = argv[0];
 
@@ -2304,11 +2304,11 @@ reg_t kAddToPic(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetPort(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, s->port->ID);
 }
 
-reg_t kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (activated_icon_bar && argc == 6) {
 		port_origin_x = port_origin_y = 0;
 		activated_icon_bar = 0;
@@ -2366,7 +2366,7 @@ reg_t kSetPort(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-static inline void add_to_chrono(state_t *s, gfxw_widget_t *widget) {
+static inline void add_to_chrono(EngineState *s, gfxw_widget_t *widget) {
 	gfxw_port_t *chrono_port;
 	gfxw_list_t *tw;
 
@@ -2377,7 +2377,7 @@ static inline void add_to_chrono(state_t *s, gfxw_widget_t *widget) {
 		ADD_TO_CURRENT_PORT(chrono_port);
 }
 
-reg_t kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
@@ -2413,7 +2413,7 @@ reg_t kDrawCel(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned int goner_nr = SKPV(0);
 	gfxw_port_t *goner;
 	gfxw_port_t *pred;
@@ -2453,7 +2453,7 @@ reg_t kDisposeWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_port_t *window;
 	int x, y, xl, yl, flags;
 	gfx_color_t bgcolor;
@@ -2553,7 +2553,7 @@ reg_t kNewWindow(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define GRAPH_UPDATE_BOX(s, x, y, xl, yl) GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, \
              gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) )));
 
-static void animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv) {
+static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i, remaining_checkers;
 	int update_counter;
 	int granularity0 = s->animation_granularity << 1;
@@ -2935,7 +2935,7 @@ static void animate_do_animation(state_t *s, int funct_nr, int argc, reg_t *argv
 	s->old_screen = NULL;
 }
 
-reg_t kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Animations are supposed to take a maximum of s->animation_delay milliseconds.
 	reg_t cast_list_ref = KP_ALT(0, NULL_REG);
 	int cycle = (KP_ALT(1, NULL_REG)).offset;
@@ -3045,7 +3045,7 @@ reg_t kAnimate(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define SHAKE_DOWN 1
 #define SHAKE_RIGHT 2
 
-reg_t kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int shakes = SKPV_OR_ALT(0, 1);
 	int directions = SKPV_OR_ALT(1, 1);
 	gfx_pixmap_t *screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 0, 320, 200));
@@ -3093,7 +3093,7 @@ reg_t kShakeScreen(state_t *s, int funct_nr, int argc, reg_t *argv) {
 #define K_DISPLAY_RESTORE_UNDER 108
 #define K_DONT_UPDATE_IMMEDIATELY 121
 
-reg_t kDisplay(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int argpt;
 	reg_t textp = argv[0];
 	int index = UKPV_OR_ALT(1, 0);

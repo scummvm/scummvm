@@ -27,18 +27,18 @@
 
 namespace Sci {
 
-reg_t kRandom(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRandom(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, SKPV(0) + (int)((SKPV(1) + 1.0 - SKPV(0)) * (rand() / (RAND_MAX + 1.0))));
 }
 
-reg_t kAbs(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAbs(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// This is a hack, but so is the code in Hoyle1 that needs it.
 	if (argv[0].segment)
 		return make_reg(0, 0x3e8); // Yes people, this is an object
 	return make_reg(0, abs(SKPV(0)));
 }
 
-reg_t kSqrt(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSqrt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, (gint16) sqrt((float) abs(SKPV(0))));
 }
 
@@ -62,7 +62,7 @@ int get_angle(int xrel, int yrel) {
 	}
 }
 
-reg_t kGetAngle(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetAngle(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Based on behavior observed with a test program created with
 	// SCI Studio.
 	int x1 = SKPV(0);
@@ -99,28 +99,28 @@ reg_t kGetAngle(state_t *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, angle);
 }
 
-reg_t kGetDistance(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetDistance(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int xrel = (int)(((float) SKPV(1) - SKPV_OR_ALT(3, 0)) / cos(SKPV_OR_ALT(5, 0) * PI / 180.0)); // This works because cos(0)==1
 	int yrel = SKPV(0) - SKPV_OR_ALT(2, 0);
 
 	return make_reg(0, (gint16)sqrt((float) xrel*xrel + yrel*yrel));
 }
 
-reg_t kTimesSin(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kTimesSin(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int angle = SKPV(0);
 	int factor = SKPV(1);
 
 	return make_reg(0, (int)(factor * 1.0 * sin(angle * PI / 180.0)));
 }
 
-reg_t kTimesCos(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kTimesCos(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int angle = SKPV(0);
 	int factor = SKPV(1);
 
 	return make_reg(0, (int)(factor * 1.0 * cos(angle * PI / 180.0)));
 }
 
-reg_t kCosDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCosDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int angle = SKPV(0);
 	int value = SKPV(1);
 	double cosval = cos(angle * PI / 180.0);
@@ -132,7 +132,7 @@ reg_t kCosDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, (gint16)(value / cosval));
 }
 
-reg_t kSinDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int angle = SKPV(0);
 	int value = SKPV(1);
 	double sinval = sin(angle * PI / 180.0);
@@ -144,7 +144,7 @@ reg_t kSinDiv(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, (gint16)(value / sinval));
 }
 
-reg_t kTimesTan(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int param = SKPV(0);
 	int scale = SKPV_OR_ALT(1, 1);
 
@@ -156,7 +156,7 @@ reg_t kTimesTan(state_t *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, (gint16) - (tan(param * PI / 180.0) * scale));
 }
 
-reg_t kTimesCot(state_t *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int param = SKPV(0);
 	int scale = SKPV_OR_ALT(1, 1);
 

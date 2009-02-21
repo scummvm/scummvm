@@ -111,7 +111,7 @@ void sm_init(seg_manager_t *self, int sci1_1);
 void sm_destroy(seg_manager_t *self);
 // Deallocate all memory associated with the segment manager
 
-void sm_gc(seg_manager_t *self, struct _state *s);
+void sm_gc(seg_manager_t *self, EngineState *s);
 // Perform garbage collection
 // Parameters: (state_t *) s: The state to operate on
 // Effects   : Unreachable objects in 's' are deallocated
@@ -120,7 +120,7 @@ void sm_gc(seg_manager_t *self, struct _state *s);
 
 void sm_free_script(mem_obj_t* mem);
 
-mem_obj_t *sm_allocate_script(struct _seg_manager_t* self, struct _state *s, int script_nr, int* seg_id);
+mem_obj_t *sm_allocate_script(struct _seg_manager_t* self, EngineState *s, int script_nr, int* seg_id);
 // Allocate a script into the segment manager
 // Parameters: (int) script_nr: number of the script to load
 //	       (state_t *) s: The state containing resource manager handlers to load the
@@ -230,7 +230,7 @@ void sm_script_initialise_locals(struct _seg_manager_t *self, reg_t location);
 // Parameters: (reg_t) location: Location to initialize from
 
 
-object_t *sm_script_obj_init(seg_manager_t *self, struct _state *s, reg_t obj_pos);
+object_t *sm_script_obj_init(seg_manager_t *self, EngineState *s, reg_t obj_pos);
 // Initializes an object within the segment manager
 // Parameters: (reg_t) obj_pos: Location (segment, offset) of the object
 // Returns   : (object_t *) A newly created object_t describing the object
@@ -477,7 +477,7 @@ typedef struct _seg_interface {
 	//                                makes sense
 	//             (void *) param: Parameter passed to 'note'
 	
-	void (*list_all_outgoing_references)(struct _seg_interface *self, struct _state *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
+	void (*list_all_outgoing_references)(struct _seg_interface *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over all references reachable from the specified object
 	// Parameters: (reg_t) object: The object (within the current segment) to analyse
 	//             (void *) param: Parameter passed to 'note'

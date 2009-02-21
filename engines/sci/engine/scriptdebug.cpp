@@ -265,7 +265,7 @@ static void sci01_song_header_dump(byte *data, int size) {
 #undef CHECK_FOR_END_ABSOLUTE
 #undef SONGDATA
 
-int c_sfx_01_header(state_t *s) {
+int c_sfx_01_header(EngineState *s) {
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 
 	if (!song) {
@@ -278,7 +278,7 @@ int c_sfx_01_header(state_t *s) {
 	return 0;
 }
 
-int c_sfx_01_track(state_t *s) {
+int c_sfx_01_track(EngineState *s) {
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 
 	int offset = cmd_params[1].val;
@@ -295,7 +295,7 @@ int c_sfx_01_track(state_t *s) {
 
 const char *(*_debug_get_input)(void) = _debug_get_input_default;
 
-int c_segtable(state_t *s) {
+int c_segtable(EngineState *s) {
 	int i;
 
 	sciprintf("  ---- segment table ----\n");
@@ -354,12 +354,12 @@ int c_segtable(state_t *s) {
 	return 0;
 }
 
-static void print_obj_head(state_t *s, object_t *obj) {
+static void print_obj_head(EngineState *s, object_t *obj) {
 	sciprintf(PREG" %s : %3d vars, %3d methods\n", PRINT_REG(obj->pos), obj_get_name(s, obj->pos),
 				obj->variables_nr, obj->methods_nr);
 }
 
-static void print_list(state_t *s, list_t *l) {
+static void print_list(EngineState *s, list_t *l) {
 	reg_t pos = l->first;
 	reg_t my_prev = NULL_REG_INITIALIZER;
 
@@ -390,7 +390,7 @@ static void print_list(state_t *s, list_t *l) {
 	sciprintf("\t>\n");
 }
 
-static void _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
+static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 	switch (mobj->type) {
 
 	case MEM_OBJ_SCRIPT: {
@@ -500,7 +500,7 @@ static void _c_single_seg_info(state_t *s, mem_obj_t *mobj) {
 	}
 }
 
-static int show_node(state_t *s, reg_t addr) {
+static int show_node(EngineState *s, reg_t addr) {
 	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
@@ -540,17 +540,17 @@ static int show_node(state_t *s, reg_t addr) {
 	return 0;
 }
 
-int objinfo(state_t *s, reg_t pos);
+int objinfo(EngineState *s, reg_t pos);
 
 void song_lib_dump(songlib_t songlib, int line);
 
-static int c_songlib_print(state_t *s) {
+static int c_songlib_print(EngineState *s) {
 	song_lib_dump(s->sound.songlib, __LINE__);
 
 	return 0;
 }
 
-static int c_vr(state_t *s) {
+static int c_vr(EngineState *s) {
 	reg_t reg = cmd_params[0].reg;
 	reg_t reg_end = cmd_paramlength > 1 ? cmd_params[1].reg : NULL_REG;
 	int type_mask = determine_reg_type(s, reg, 1);
@@ -644,7 +644,7 @@ static int c_vr(state_t *s) {
 	return 0;
 }
 
-int c_segkill(state_t *s) {
+int c_segkill(EngineState *s) {
 	unsigned int i = 0;
 
 	while (i < cmd_paramlength) {
@@ -655,7 +655,7 @@ int c_segkill(state_t *s) {
 	return 0;
 }
 
-static int c_mousepos(state_t *s) {
+static int c_mousepos(EngineState *s) {
 	sci_event_t event;
 
 	sciprintf("Click somewhere in the game window...\n");
@@ -667,7 +667,7 @@ static int c_mousepos(state_t *s) {
 	return 0;
 }
 
-int c_seginfo(state_t *s) {
+int c_seginfo(EngineState *s) {
 	unsigned int i = 0;
 
 	if (cmd_paramlength) {
@@ -692,7 +692,7 @@ int c_seginfo(state_t *s) {
 	return 0;
 }
 
-int c_debuginfo(state_t *s) {
+int c_debuginfo(EngineState *s) {
 	exec_stack_t *eframe = NULL;
 
 	if (!_debugstate_valid) {
@@ -713,7 +713,7 @@ int c_debuginfo(state_t *s) {
 	return 0;
 }
 
-int c_step(state_t *s) {
+int c_step(EngineState *s) {
 	_debugstate_valid = 0;
 	if (cmd_paramlength && (cmd_params[0].val > 0))
 		_debug_step_running = cmd_params[0].val - 1;
@@ -723,7 +723,7 @@ int c_step(state_t *s) {
 
 #if 0
 // TODO Re-implement con:so
-int c_stepover(state_t *s) {
+int c_stepover(EngineState *s) {
 	int opcode, opnumber;
 
 	if (!_debugstate_valid) {
@@ -766,7 +766,7 @@ int c_stepover(state_t *s) {
 }
 #endif
 
-int c_sim_parse(state_t *s) {
+int c_sim_parse(EngineState *s) {
 	unsigned int i;
 	const char *operators = ",&/()[]#<>";
 
@@ -830,7 +830,7 @@ int c_sim_parse(state_t *s) {
 	return 0;
 }
 
-int c_classtable(state_t *s) {
+int c_classtable(EngineState *s) {
 	int i;
 
 	if (!_debugstate_valid) {
@@ -846,7 +846,7 @@ int c_classtable(state_t *s) {
 	return 0;
 }
 
-int c_viewinfo(state_t *s) {
+int c_viewinfo(EngineState *s) {
 	int view = cmd_params[0].val;
 	int palette = cmd_params[1].val;
 	int loops, i;
@@ -889,7 +889,7 @@ int c_viewinfo(state_t *s) {
 	return 0;
 }
 
-int c_list_sentence_fragments(state_t *s) {
+int c_list_sentence_fragments(EngineState *s) {
 	int i;
 
 	if (!s) {
@@ -966,7 +966,7 @@ int _parse_getinp(int *i, int *nr) {
 	return _parse_token_number;
 }
 
-int _parse_nodes(state_t *s, int *i, int *pos, int type, int nr) {
+int _parse_nodes(EngineState *s, int *i, int *pos, int type, int nr) {
 	int nexttk, nextval, newpos, oldpos;
 
 	if (type == _parse_token_nil)
@@ -1001,7 +1001,7 @@ int _parse_nodes(state_t *s, int *i, int *pos, int type, int nr) {
 	return oldpos;
 }
 
-int c_set_parse_nodes(state_t *s) {
+int c_set_parse_nodes(EngineState *s) {
 	int i = 0;
 	int foo, bar;
 	int pos = -1;
@@ -1023,7 +1023,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr
 					parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 // parses with a GNF rule set
 
-int c_parse(state_t *s) {
+int c_parse(EngineState *s) {
 	result_word_t *words;
 	int words_nr;
 	char *error;
@@ -1066,7 +1066,7 @@ int c_parse(state_t *s) {
 	return 0;
 }
 
-int c_save_game(state_t *s) {
+int c_save_game(EngineState *s) {
 	int omit_check = cmd_params[0].str[0] == '_';
 	int i;
 
@@ -1103,8 +1103,8 @@ int c_save_game(state_t *s) {
 	return 0;
 }
 
-int c_restore_game(state_t *s) {
-	state_t *newstate = NULL;
+int c_restore_game(EngineState *s) {
+	EngineState *newstate = NULL;
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -1134,7 +1134,7 @@ int c_restore_game(state_t *s) {
 
 extern char *old_save_dir;
 
-int c_restart_game(state_t *s) {
+int c_restart_game(EngineState *s) {
 	unsigned int i;
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
@@ -1166,7 +1166,7 @@ int c_restart_game(state_t *s) {
 	return 0;
 }
 
-int c_stack(state_t *s) {
+int c_stack(EngineState *s) {
 	int i;
 	exec_stack_t *xs;
 
@@ -1192,14 +1192,14 @@ int c_stack(state_t *s) {
 	return 0;
 }
 
-const char *selector_name(state_t *s, int selector) {
+const char *selector_name(EngineState *s, int selector) {
 	if (selector >= 0 && selector < s->selector_names_nr)
 		return s->selector_names[selector];
 	else
 		return "--INVALID--";
 }
 
-int prop_ofs_to_id(state_t *s, int prop_ofs, reg_t objp) {
+int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 	object_t *obj = obj_get(s, objp);
 	byte *selectoroffset;
 	int selectors;
@@ -1230,7 +1230,7 @@ int prop_ofs_to_id(state_t *s, int prop_ofs, reg_t objp) {
 	return getUInt16(selectoroffset + prop_ofs);
 }
 
-reg_t disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 	mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
 	script_t *script_entity = NULL;
@@ -1476,7 +1476,7 @@ reg_t disassemble(state_t *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	return retval;
 }
 
-int c_dumpnodes(state_t *s) {
+int c_dumpnodes(EngineState *s) {
 	int end = MIN<int>(cmd_params[0].val, VOCAB_TREE_NODES);
 	int i;
 
@@ -1500,7 +1500,7 @@ int c_dumpnodes(state_t *s) {
 static const char *varnames[] = {"global", "local", "temp", "param"};
 static const char *varabbrev = "gltp";
 
-int c_vmvarlist(state_t *s) {
+int c_vmvarlist(EngineState *s) {
 	int i;
 
 	for (i = 0;i < 4;i++) {
@@ -1513,7 +1513,7 @@ int c_vmvarlist(state_t *s) {
 	return 0;
 }
 
-int c_vmvars(state_t *s) {
+int c_vmvars(EngineState *s) {
 	const char *vartype_pre = strchr(varabbrev, *cmd_params[0].str);
 	int vartype;
 	int idx = cmd_params[1].val;
@@ -1549,7 +1549,7 @@ int c_vmvars(state_t *s) {
 	return 0;
 }
 
-static int c_backtrace(state_t *s) {
+static int c_backtrace(EngineState *s) {
 	int i;
 
 	if (!_debugstate_valid) {
@@ -1617,7 +1617,7 @@ static int c_backtrace(state_t *s) {
 	return 0;
 }
 
-static int c_redraw_screen(state_t *s) {
+static int c_redraw_screen(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1631,7 +1631,7 @@ static int c_redraw_screen(state_t *s) {
 	return 0;
 }
 
-static int c_clear_screen(state_t *s) {
+static int c_clear_screen(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1643,7 +1643,7 @@ static int c_clear_screen(state_t *s) {
 	return 0;
 }
 
-static int c_visible_map(state_t *s) {
+static int c_visible_map(EngineState *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1664,7 +1664,7 @@ static int c_visible_map(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_current_port(state_t *s) {
+static int c_gfx_current_port(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1678,7 +1678,7 @@ static int c_gfx_current_port(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_print_port(state_t *s) {
+static int c_gfx_print_port(EngineState *s) {
 	gfxw_port_t *port;
 
 	if (!_debugstate_valid) {
@@ -1705,7 +1705,7 @@ static int c_gfx_print_port(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_priority(state_t *s) {
+static int c_gfx_priority(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1725,7 +1725,7 @@ static int c_gfx_priority(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_print_visual(state_t *s) {
+static int c_gfx_print_visual(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1739,7 +1739,7 @@ static int c_gfx_print_visual(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_print_dynviews(state_t *s) {
+static int c_gfx_print_dynviews(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1753,7 +1753,7 @@ static int c_gfx_print_dynviews(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_print_dropviews(state_t *s) {
+static int c_gfx_print_dropviews(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1767,7 +1767,7 @@ static int c_gfx_print_dropviews(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_drawpic(state_t *s) {
+static int c_gfx_drawpic(EngineState *s) {
 	int flags = 1, default_palette = 0;
 
 	if (!_debugstate_valid) {
@@ -1794,7 +1794,7 @@ static int c_gfx_drawpic(state_t *s) {
 extern gfxw_widget_t *debug_widgets[];
 extern int debug_widget_pos;
 
-static int c_gfx_print_widget(state_t *s) {
+static int c_gfx_print_widget(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1820,7 +1820,7 @@ static int c_gfx_print_widget(state_t *s) {
 }
 #endif
 
-static int c_gfx_show_map(state_t *s) {
+static int c_gfx_show_map(EngineState *s) {
 	int map = cmd_params[0].val;
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -1855,7 +1855,7 @@ static int c_gfx_show_map(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_draw_cel(state_t *s) {
+static int c_gfx_draw_cel(EngineState *s) {
 	int view = cmd_params[0].val;
 	int loop = cmd_params[1].val;
 	int cel = cmd_params[2].val;
@@ -1873,7 +1873,7 @@ static int c_gfx_draw_cel(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_fill_screen(state_t *s) {
+static int c_gfx_fill_screen(EngineState *s) {
 	int col = cmd_params[0].val;
 
 	if (!s) {
@@ -1891,7 +1891,7 @@ static int c_gfx_fill_screen(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_draw_rect(state_t *s) {
+static int c_gfx_draw_rect(EngineState *s) {
 	int col = cmd_params[4].val;
 
 	if (!s) {
@@ -1909,7 +1909,7 @@ static int c_gfx_draw_rect(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_propagate_rect(state_t *s) {
+static int c_gfx_propagate_rect(EngineState *s) {
 	int map = cmd_params[4].val;
 	rect_t rect;
 
@@ -1943,7 +1943,7 @@ bb = GET_SELECTOR(pos, bb);
 
 #if 0
 // Unreferenced - removed
-static int c_gfx_draw_viewobj(state_t *s) {
+static int c_gfx_draw_viewobj(EngineState *s) {
 #ifdef __GNUC__
 #warning "Re-implement con:gfx_draw_viewobj"
 #endif
@@ -2009,7 +2009,7 @@ static int c_gfx_draw_viewobj(state_t *s) {
 }
 #endif
 
-static int c_gfx_flush_resources(state_t *s) {
+static int c_gfx_flush_resources(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2024,7 +2024,7 @@ static int c_gfx_flush_resources(state_t *s) {
 	return 0;
 }
 
-static int c_gfx_update_zone(state_t *s) {
+static int c_gfx_update_zone(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2034,7 +2034,7 @@ static int c_gfx_update_zone(state_t *s) {
 										Common::Point(cmd_params[0].val, cmd_params[1].val), GFX_BUFFER_FRONT);
 }
 
-static int c_disasm_addr(state_t *s) {
+static int c_disasm_addr(EngineState *s) {
 	reg_t vpc = cmd_params[0].reg;
 	int op_count = 1;
 	int do_bwc = 0;
@@ -2069,7 +2069,7 @@ static int c_disasm_addr(state_t *s) {
 	return 0;
 }
 
-static int c_disasm(state_t *s) {
+static int c_disasm(EngineState *s) {
 	object_t *obj = obj_get(s, cmd_params[0].reg);
 	int selector_id = script_find_selector(s, cmd_params[1].str);
 	reg_t addr;
@@ -2096,7 +2096,7 @@ static int c_disasm(state_t *s) {
 	return 0;
 }
 
-static int c_sg(state_t *s) {
+static int c_sg(EngineState *s) {
 	_debug_seeking = _DEBUG_SEEK_GLOBAL;
 	_debug_seek_special = cmd_params[0].val;
 	_debugstate_valid = 0;
@@ -2104,7 +2104,7 @@ static int c_sg(state_t *s) {
 	return 0;
 }
 
-static int c_snk(state_t *s) {
+static int c_snk(EngineState *s) {
 	int callk_index;
 	char *endptr;
 
@@ -2145,26 +2145,26 @@ static int c_snk(state_t *s) {
 	return 0;
 }
 
-static int c_sret(state_t *s) {
+static int c_sret(EngineState *s) {
 	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
 	_debug_seek_level = s->execution_stack_pos;
 	_debugstate_valid = 0;
 	return 0;
 }
 
-static int c_go(state_t *s) {
+static int c_go(EngineState *s) {
 	_debug_seeking = 0;
 	_debugstate_valid = 0;
 	script_debug_flag = 0;
 	return 0;
 }
 
-static int c_set_acc(state_t *s) {
+static int c_set_acc(EngineState *s) {
 	s->r_acc = cmd_params[0].reg;
 	return 0;
 }
 
-static int c_send(state_t *s) {
+static int c_send(EngineState *s) {
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
 	stack_ptr_t stackframe = s->execution_stack->sp;
@@ -2217,7 +2217,7 @@ static int c_send(state_t *s) {
 	return 0;
 }
 
-static int c_resource_id(state_t *s) {
+static int c_resource_id(EngineState *s) {
 	int id = cmd_params[0].val;
 
 	sciprintf("%s.%d (0x%x)\n", sci_resource_types[id >> 11], id &0x7ff, id & 0x7ff);
@@ -2225,7 +2225,7 @@ static int c_resource_id(state_t *s) {
 	return 0;
 }
 
-static int c_listclones(state_t *s) {
+static int c_listclones(EngineState *s) {
 /*	int i, j = 0;
 
 	sciprintf("Listing all logged clones:\n");
@@ -2338,7 +2338,7 @@ const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
 	{"Pathfinding", 'P', (1 << SCIkAVOIDPATH_NR)}
 } ;
 
-void set_debug_mode(struct _state *s, int mode, const char *areas) {
+void set_debug_mode(EngineState *s, int mode, const char *areas) {
 	char *param = (char*)sci_malloc(strlen(areas) + 2);
 
 	param[0] = (mode) ? '+' : '-';
@@ -2349,14 +2349,14 @@ void set_debug_mode(struct _state *s, int mode, const char *areas) {
 	free(param);
 }
 
-int c_debuglog(state_t *s) {
+int c_debuglog(EngineState *s) {
 	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode));
 }
 
 #define SFX_DEBUG_MODES 2
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 
-static int c_sfx_debuglog(state_t *s) {
+static int c_sfx_debuglog(EngineState *s) {
 	const generic_config_flag_t sfx_debug_modes[SFX_DEBUG_MODES] = {
 		{"Song activation/deactivation", 's', SFX_DEBUG_SONGS},
 		{"Song cue polling and delivery", 'c', SFX_DEBUG_CUES}
@@ -2365,7 +2365,7 @@ static int c_sfx_debuglog(state_t *s) {
 	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->sound.debug));
 }
 
-static int c_sfx_remove(state_t *s) {
+static int c_sfx_remove(EngineState *s) {
 	reg_t id = cmd_params[0].reg;
 	int handle = FROBNICATE_HANDLE(id);
 
@@ -2382,7 +2382,7 @@ static int c_sfx_remove(state_t *s) {
 
 #define GFX_DEBUG_MODES 4
 
-int c_gfx_debuglog(state_t *s) {
+int c_gfx_debuglog(EngineState *s) {
 	gfx_driver_t *drv = s->gfx_state->driver;
 	const generic_config_flag_t gfx_debug_modes[GFX_DEBUG_MODES] = {
 		{ "Mouse Pointer", 'p', GFX_DEBUG_POINTER},
@@ -2394,7 +2394,7 @@ int c_gfx_debuglog(state_t *s) {
 	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags));
 }
 
-int c_dump_words(state_t *s) {
+int c_dump_words(EngineState *s) {
 	int i;
 
 	if (!s) {
@@ -2416,13 +2416,13 @@ int c_dump_words(state_t *s) {
 	return 0;
 }
 
-int c_simkey(state_t *s) {
+int c_simkey(EngineState *s) {
 	_kdebug_cheap_event_hack = cmd_params[0].val;
 
 	return 0;
 }
 
-static int c_is_sample(state_t *s) {
+static int c_is_sample(EngineState *s) {
 	resource_t *song = scir_find_resource(s->resmgr, sci_sound, cmd_params[0].val, 0);
 	song_iterator_t *songit;
 	sfx_pcm_feed_t *data;
@@ -2451,7 +2451,7 @@ static int c_is_sample(state_t *s) {
 	return 0;
 }
 
-int c_simsoundcue(state_t *s) {
+int c_simsoundcue(EngineState *s) {
 	_kdebug_cheap_soundcue_hack = cmd_params[0].val;
 
 	return 0;
@@ -2473,7 +2473,7 @@ bb = GET_SELECTOR(pos, bb);
 #ifdef __GNUC__
 #warning "Re-implement viewobjinfo"
 #endif
-static void viewobjinfo(state_t *s, heap_ptr pos) {
+static void viewobjinfo(EngineState *s, heap_ptr pos) {
 	char *signals[16] = {
 		"stop_update",
 		"updated",
@@ -2548,7 +2548,7 @@ static void viewobjinfo(state_t *s, heap_ptr pos) {
 #endif
 #undef GETRECT
 
-int objinfo(state_t *s, reg_t pos) {
+int objinfo(EngineState *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
 	object_t *var_container = obj;
 	int i;
@@ -2584,19 +2584,19 @@ int objinfo(state_t *s, reg_t pos) {
 	return 0;
 }
 
-int c_vo(state_t *s) {
+int c_vo(EngineState *s) {
 	return objinfo(s, cmd_params[0].reg);
 }
 
-int c_obj(state_t *s) {
+int c_obj(EngineState *s) {
 	return objinfo(s, *p_objp);
 }
 
-int c_accobj(state_t *s) {
+int c_accobj(EngineState *s) {
 	return objinfo(s, s->r_acc);
 }
 
-int c_shownode(state_t *s) {
+int c_shownode(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	return show_node(s, addr);
@@ -2604,7 +2604,7 @@ int c_shownode(state_t *s) {
 
 // Breakpoint commands
 
-static breakpoint_t *bp_alloc(state_t *s) {
+static breakpoint_t *bp_alloc(EngineState *s) {
 	breakpoint_t *bp;
 
 	if (s->bp_list) {
@@ -2623,7 +2623,7 @@ static breakpoint_t *bp_alloc(state_t *s) {
 	return bp;
 }
 
-int c_bpx(state_t *s) {
+int c_bpx(EngineState *s) {
 	breakpoint_t *bp;
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
@@ -2640,7 +2640,7 @@ int c_bpx(state_t *s) {
 	return 0;
 }
 
-int c_bpe(state_t *s) {
+int c_bpe(EngineState *s) {
 	breakpoint_t *bp;
 
 	bp = bp_alloc(s);
@@ -2652,7 +2652,7 @@ int c_bpe(state_t *s) {
 	return 0;
 }
 
-int c_bplist(state_t *s) {
+int c_bplist(EngineState *s) {
 	breakpoint_t *bp;
 	int i = 0;
 	int bpdata;
@@ -2677,7 +2677,7 @@ int c_bplist(state_t *s) {
 	return 0;
 }
 
-int c_bpdel(state_t *s) {
+int c_bpdel(EngineState *s) {
 	breakpoint_t *bp, *bp_next, *bp_prev;
 	int i = 0, found = 0;
 	int type;
@@ -2720,7 +2720,7 @@ int c_bpdel(state_t *s) {
 	return 0;
 }
 
-int c_gnf(state_t *s) {
+int c_gnf(EngineState *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2731,14 +2731,14 @@ int c_gnf(state_t *s) {
 	return 0;
 }
 
-int c_se(state_t *s) {
+int c_se(EngineState *s) {
 	stop_on_event = 1;
 	_debugstate_valid = script_debug_flag = script_error_flag = 0;
 
 	return 0;
 }
 
-int c_type(state_t *s) {
+int c_type(EngineState *s) {
 	int t = determine_reg_type(s, cmd_params[0].reg, 1);
 	int invalid = t & KSIG_INVALID;
 
@@ -2772,7 +2772,7 @@ int c_type(state_t *s) {
 	return 0;
 }
 
-int c_statusbar(state_t *s) {
+int c_statusbar(EngineState *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2790,7 +2790,7 @@ int c_statusbar(state_t *s) {
 	return 0;
 }
 
-int c_sci_version(state_t *s) {
+int c_sci_version(EngineState *s) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2802,7 +2802,7 @@ int c_sci_version(state_t *s) {
 	return 0;
 }
 
-int c_sleep(state_t *s) {
+int c_sleep(EngineState *s) {
 	sleep(cmd_params[0].val);
 
 	return 0;
@@ -2820,7 +2820,7 @@ static void _print_address(void * _, reg_t addr) {
 		return 1;								\
 	}
 
-static int c_gc_show_reachable(state_t *s) {
+static int c_gc_show_reachable(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -2833,7 +2833,7 @@ static int c_gc_show_reachable(state_t *s) {
 	return 0;
 }
 
-static int c_gc_show_freeable(state_t *s) {
+static int c_gc_show_freeable(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -2846,7 +2846,7 @@ static int c_gc_show_freeable(state_t *s) {
 	return 0;
 }
 
-static int c_gc_normalise(state_t *s) {
+static int c_gc_normalise(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
 	GET_SEG_INTERFACE(addr.segment);
@@ -2859,13 +2859,13 @@ static int c_gc_normalise(state_t *s) {
 	return 0;
 }
 
-static int c_gc(state_t *s) {
+static int c_gc(EngineState *s) {
 	run_gc(s);
 
 	return 0;
 }
 
-static int c_gc_list_reachable(state_t *s) {
+static int c_gc_list_reachable(EngineState *s) {
 	reg_t_hash_map *use_map = find_all_used_references(s);
 
 	sciprintf("Reachable references (normalised):\n");
@@ -2878,7 +2878,7 @@ static int c_gc_list_reachable(state_t *s) {
 	return 0;
 }
 
-void script_debug(state_t *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
+void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
              seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
