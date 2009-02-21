@@ -17,6 +17,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Broken Sword 2:
    - Added support for the original Smacker cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
+   - Dropped support for playing cutscene sound without the video.
 
 0.13.0 (2009-02-28)
  General:
