@@ -80,9 +80,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_itemsInPlay = 0;
 	_itemProperties = 0;
 	_itemInHand = 0;
-	memset(_inventory, 0, 48);
+	memset(_inventory, 0, 48 * sizeof(uint16));
 	_inventoryCurItem = 0;
 	_hideControls = 0;
+	_lastCharInventory = -1;
 
 	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _iceShapes = _fireballShapes = 0;
 	_levelShpList = _levelDatList = 0;
@@ -104,6 +105,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lampStatusTimer = 0xffffffff;
 
 	_weaponsDisabled = false;
+	_charInventoryUnk = 0;
 	_lastButtonShape = 0;
 	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
@@ -182,6 +184,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 
+	_pageBuffer1 = _pageBuffer2 = 0;
+
+	memset(_charStatsTemp, 0, 5 * sizeof(int));
+
 	_buttonData = 0;
 	_activeButtons = 0;
 	_preserveEvents = false;
@@ -207,6 +213,9 @@ LoLEngine::~LoLEngine() {
 	delete[] _itemsInPlay;
 	delete[] _itemProperties;
 	delete[] _characters;
+
+	delete[] _pageBuffer1;
+	delete[] _pageBuffer2;
 
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
@@ -332,6 +341,11 @@ Common::Error LoLEngine::init() {
 
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
+
+	_pageBuffer1 = new uint8[0xfa00];
+	memset(_pageBuffer1, 0, 0xfa00);
+	_pageBuffer2 = new uint8[0xfa00];
+	memset(_pageBuffer2, 0, 0xfa00);
 
 	_itemsInPlay = new ItemInPlay[401];
 	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
@@ -711,9 +725,9 @@ void LoLEngine::startupNew() {
 	_currentLevel = 1;
 
 	giveCredits(41, 0);
-	_inventory[0] = makeItem(0xd8, 0, 0);
-	_inventory[1] = makeItem(0xd9, 0, 0);
-	_inventory[2] = makeItem(0xda, 0, 0);
+	_inventory[0] = makeItem(216, 0, 0);
+	_inventory[1] = makeItem(217, 0, 0);
+	_inventory[2] = makeItem(218, 0, 0);
 
 	memset(_availableSpells, -1, 7);
 	_availableSpells[0] = 0;
@@ -763,7 +777,8 @@ void LoLEngine::runLoop() {
 			_nextScriptFunc = 0;
 		}
 
-		//processUnkAnimStructs();
+		//updateTimers();
+
 		//checkFloatingPointerRegions();
 		gui_updateInput();
 
@@ -778,8 +793,8 @@ void LoLEngine::runLoop() {
 			checkForPartyDeath(_partyDeathFlag);
 			_partyDeathFlag = -1;
 		}*/
-
-		_system->delayMillis(_tickLength);
+		
+		delay(_tickLength);
 	}
 }
 
@@ -841,6 +856,9 @@ uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
 }
 
 bool LoLEngine::addCharacter(int id) {
+	const uint16 *cdf[] = { _charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
+		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel };
+
 	int numChars = countActiveCharacters();
 	if (numChars == 4)
 		return false;
@@ -849,6 +867,7 @@ bool LoLEngine::addCharacter(int id) {
 	for (; i < _charDefaultsSize; i++) {
 		if (_charDefaults[i].id == id) {
 			memcpy(&_characters[numChars], &_charDefaults[i], sizeof(LoLCharacter));
+			_characters[numChars].defaultModifiers = cdf[i];
 			break;
 		}
 	}
@@ -859,8 +878,7 @@ bool LoLEngine::addCharacter(int id) {
 
 	_characters[numChars].rand = _rnd.getRandomNumberRng(1, 12);
 
-	i = 0;
-	for (; i < 11; i++) {
+	for (i = 0; i < 11; i++) {
 		if (_characters[numChars].items[i]) {
 			_characters[numChars].items[i] = makeItem(_characters[numChars].items[i], 0, 0);
 			runItemScript(numChars, _characters[numChars].items[i], 0x80, 0, 0);
@@ -1041,6 +1059,61 @@ void LoLEngine::faceFrameRefresh(int charNum) {
 			_characters[charNum].curFaceFrame = 5;
 	else
 		_characters[charNum].curFaceFrame = 0;
+}
+
+void LoLEngine::recalcCharacterStats(int charNum) {
+	for (int i = 0; i < 5; i++)
+		_charStatsTemp[i] = calculateCharacterStats(charNum, i);
+}
+
+int LoLEngine::calculateCharacterStats(int charNum, int index) {
+	if (index == 0) {
+		// Might
+		int c = 0;
+		for (int i = 0; i < 8; i++)
+			c += _characters[charNum].itemsMight[i];
+		if (c)
+			c += _characters[charNum].might2;
+		else
+			c = _characters[charNum].defaultModifiers[8];
+
+		c = (c * _characters[charNum].defaultModifiers[1]) >> 8;
+		c = (c * _characters[charNum].might3) >> 8;
+
+		return c;
+
+	} else if (index == 1) {
+		// Protection
+		return calculateProtection(charNum);
+
+	} else if (index > 4) {
+		return -1;
+
+	} else {
+		// Fighter
+		// Rogue
+		// Mage
+		index -= 2;
+		return _characters[charNum].skillLevels[index] + _characters[charNum].skillModifiers[index];
+	}
+
+	return 1;
+}
+
+int LoLEngine::calculateProtection(int index) {
+	int c = 0;
+	if (index & 0x8000) {
+		// Monster
+		index &= 0x7fff;
+		c = (_cLevelItems[index].monsters->itemProtection * _cLevelItems[index].monsters->protection) >> 8;
+	} else {
+		// Character
+		c = _characters[index].itemsProtection + _characters[index].protection2;
+		c = (c * _characters[index].defaultModifiers[2]) >> 8;
+		c = (c * _characters[index].protection3) >> 8;
+	}
+
+	return c;
 }
 
 void LoLEngine::setupScreenDims() {
@@ -1343,6 +1416,15 @@ int LoLEngine::snd_stopMusic() {
 		_sound->haltTrack();
 	}
 	return snd_playTrack(-1);
+}
+
+void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
+	uint32 endTime = _system->getMillis() + millis;
+	while (endTime > _system->getMillis()) {
+		if (cUpdate)
+			update();
+		_system->delayMillis(4);
+	}
 }
 
 void LoLEngine::runLoopSub4(int a) {

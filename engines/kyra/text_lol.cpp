@@ -45,9 +45,6 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
-
-	_pageBuffer1 = new uint8[0xfa00];
-	_pageBuffer2 = new uint8[0xfa00];
 }
 
 TextDisplayer_LoL::~TextDisplayer_LoL() {
@@ -55,22 +52,20 @@ TextDisplayer_LoL::~TextDisplayer_LoL() {
 	delete[] _out;
 	delete[] _backupBuffer;
 	delete[] _currentLine;
-	delete[] _pageBuffer1;
-	delete[] _pageBuffer2;
 }
 
 void TextDisplayer_LoL::setupField(bool mode) {
 	if (_vm->textEnabled()) {
 		if (mode) {
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 			_screen->copyRegion(80, 142, 0, 0, 240, 37, 0, 3, Screen::CR_NO_P_CHECK);
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _pageBuffer2);
-			_screen->copyBlockToPage(3, 0, 0, 320, 200, _pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer2);
+			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 		} else {
 			_screen->clearDim(4);
 			int cp = _screen->setCurPage(2);
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _pageBuffer1);
-			_screen->copyBlockToPage(3, 0, 0, 320, 200, _pageBuffer2);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
+			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer2);
 			_screen->copyRegion(80, 142, 0, 0, 240, 37, 3, 2, Screen::CR_NO_P_CHECK);
 
 			for (int i = 177; i > 141; i--) {
@@ -83,7 +78,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 				_vm->delayUntil(endTime);
 			}
 
-			_screen->copyBlockToPage(3, 0, 0, 320, 200, _pageBuffer1);
+			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 			_screen->setCurPage(cp);
 
 			_vm->_updateFlags &= 0xfffd;
@@ -101,7 +96,7 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_textColourFlag = 0;
 		//_vm->toggleGuiUnk(11, 0);
 		_screen->clearDim(3);
-		_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _pageBuffer1);
+		_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 		_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);
 
 		for (int i = 140; i < 177; i++) {
@@ -113,7 +108,7 @@ void TextDisplayer_LoL::expandField() {
 			_vm->delayUntil(endTime);
 		}
 
-		_screen->copyBlockToPage(3, 0, 0, 320, 200, _pageBuffer1);
+		_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 		_vm->_updateFlags |= 2;
 
 	} else {

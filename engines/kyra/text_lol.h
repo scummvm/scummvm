@@ -93,9 +93,6 @@ private:
 	uint8 _colour2;
 	bool _colour1prot;
 
-	uint8 *_pageBuffer1;
-	uint8 *_pageBuffer2;
-
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
 };

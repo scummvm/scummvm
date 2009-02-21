@@ -220,6 +220,16 @@ enum kKyraResources {
 	//lolIngameADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
+	lolCharInvIndex,
+	lolCharInvDefs,
+	lolCharDefsMan,
+	lolCharDefsWoman,
+	lolCharDefsKieran,
+	//lolCharDefsUnk,
+	lolCharDefsAkshel,
+	lolExpRequirements,
+	lolInventoryDesc,
+
 	lolLevelShpList,
 	lolLevelDatList,
 	lolCompassDefs,
@@ -291,6 +301,7 @@ public:
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
 	const uint16 *loadRawDataBe16(int id, int &entries);
+	const uint32 *loadRawDataBe32(int id, int &entries);
 	const ButtonDef *loadButtonDefs(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
@@ -327,6 +338,7 @@ private:
 	bool loadSpellData(const char *filename, void *&ptr, int &size);
 	bool loadCompassData(const char *filename, void *&ptr, int &size);
 	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
+	bool loadRawDataBe32(const char *filename, void *&ptr, int &size);
 	bool loadButtonDefs(const char *filename, void *&ptr, int &size);
 
 	void freeRawData(void *&ptr, int &size);
@@ -341,6 +353,7 @@ private:
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
 	void freeRawDataBe16(void *&ptr, int &size);
+	void freeRawDataBe32(void *&ptr, int &size);
 	void freeButtonDefs(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
@@ -362,6 +375,7 @@ private:
 		lolSpellData,
 		lolCompassData,
 		lolRawDataBe16,
+		lolRawDataBe32,
 		lolButtonData
 	};
 

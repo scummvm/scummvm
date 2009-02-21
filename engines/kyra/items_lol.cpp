@@ -25,6 +25,7 @@
 
 
 #include "kyra/lol.h"
+#include "kyra/screen_lol.h"
 
 namespace Kyra {
 
@@ -63,7 +64,7 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 		if (redraw) {
 			gui_drawMoneyBox(6);
 			if (credits)
-				update();
+				delay(_tickLength, 1);
 		}
 		credits -= t;
 	}
@@ -110,14 +111,14 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 		if (testUnkItemFlags(r)) {
 			if (_itemsInPlay[r].itemIndexUnk)
 				_itemsInPlay[_itemsInPlay[r].itemIndexUnk].level = _itemsInPlay[r].level;
-			clearItemTableEntry(r);
+			deleteItem(r);
 			slot = r;
 		} else {
 			int ii = _itemsInPlay[slot].itemIndexUnk;
 			while (ii) {
 				if (testUnkItemFlags(ii)) {
 					_itemsInPlay[slot].itemIndexUnk = _itemsInPlay[ii].itemIndexUnk;
-					clearItemTableEntry(ii);
+					deleteItem(ii);
 					slot = ii;
 					break;
 				} else {
@@ -148,7 +149,7 @@ bool LoLEngine::testUnkItemFlags(int itemIndex) {
 
 }
 
-void LoLEngine::clearItemTableEntry(int itemIndex) {
+void LoLEngine::deleteItem(int itemIndex) {
 	memset(&_itemsInPlay[itemIndex], 0, sizeof(ItemInPlay));
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
 }
@@ -160,7 +161,7 @@ CLevelItem *LoLEngine::findItem(uint16 index) {
 		return (CLevelItem *)&_itemsInPlay[index];
 }
 
-void LoLEngine::runItemScript(int reg1, int item, int reg0, int reg3, int reg4) {
+void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
@@ -172,13 +173,32 @@ void LoLEngine::runItemScript(int reg1, int item, int reg0, int reg3, int reg4) 
 	_emc->start(&scriptState, func);
 
 	scriptState.regs[0] = reg0;
-	scriptState.regs[1] = reg1;
+	scriptState.regs[1] = charNum;
 	scriptState.regs[2] = item;
 	scriptState.regs[3] = reg3;
 	scriptState.regs[4] = reg4;
 
 	while (_emc->isValid(&scriptState))
 		_emc->run(&scriptState);
+}
+
+void LoLEngine::pickupItem(int itemIndex) {
+	if (itemIndex && _itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].flags & 0x80) {
+		runItemScript(-1, itemIndex, 0x400, 0, 0);
+		if (_itemsInPlay[itemIndex].shpCurFrame_flg & 0x8000)
+			itemIndex = 0;
+	}
+
+	int mouseOffs = 0;
+
+	if (itemIndex && !(_screen->_drawGuiFlag & 0x200)) {
+		mouseOffs = 10;
+		if (!_hideControls || textEnabled())
+			_txt->printMessage(0, getLangString(0x403E), getLangString(_itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].nameStringId));
+	}
+
+	_itemInHand = itemIndex;
+	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(itemIndex));
 }
 
 } // end of namespace Kyra

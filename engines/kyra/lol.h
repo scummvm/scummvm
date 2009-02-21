@@ -48,13 +48,9 @@ struct LoLCharacter {
 	int16 id;
 	uint8 curFaceFrame;
 	uint8 nextFaceFrame;
-	uint16 field_12;
-	uint16 field_14;
-	uint8 field_16;
-	uint16 field_17[5];
-	uint16 field_21;
-	uint16 field_23;
-	uint16 field_25;
+	uint8 field_12;
+	const uint16 *defaultModifiers;
+	uint16 itemsMight[8];
 	uint16 field_27[2];
 	uint8 field_2B;
 	uint16 field_2C;
@@ -63,7 +59,7 @@ struct LoLCharacter {
 	uint16 field_32;
 	uint16 field_34;
 	uint8 field_36;
-	uint16 field_37;
+	uint16 itemsProtection;
 	uint16 hitPointsCur;
 	uint16 hitPointsMax;
 	uint16 magicPointsCur;
@@ -71,21 +67,15 @@ struct LoLCharacter {
 	uint8 field_41;
 	uint16 damageSuffered;
 	uint16 weaponHit;
-	uint16 field_46;
-	uint16 field_48;
-	uint16 field_4A;
-	uint16 field_4C;
+	uint16 might3;
+	uint16 protection3;
+	uint16 might2;
+	uint16 protection2;
 	uint16 rand;
 	uint16 items[11];
-	uint8 field_66[3];
-	uint8 field_69[3];
-	uint8 field_6C;
-	uint8 field_6D;
-	uint16 field_6E;
-	uint16 field_70;
-	uint16 field_72;
-	uint16 field_74;
-	uint16 field_76;
+	uint8 skillLevels[3];
+	uint8 skillModifiers[3];
+	int32 experiencePts[3];
 	uint8 arrayUnk2[5];
 	uint8 arrayUnk1[5];
 };
@@ -113,11 +103,14 @@ struct LevelBlockProperty {
 struct MonsterProperty {
 	uint8 id;
 	uint8 maxWidth;
-	uint16 unk[9];
+	uint16 field2[2];
+	uint16 protection;
+	uint16 unk[6];
 	uint16 *pos;
 	uint16 unk2[8];
 	uint16 unk3[8];
-	uint16 unk4[2];
+	uint16 itemProtection;
+	uint16 might;
 	uint8 b;
 	uint16 unk5[2];
 	uint16 unk6[5];
@@ -182,11 +175,11 @@ struct ItemProperty {
 	uint16 nameStringId;
 	uint8 shpIndex;
 	uint16 flags;
-	uint16 unk5;
+	uint16 type;
 	uint8 itemScriptFunc;
-	int8 unk8;
-	uint8 unk9;
-	uint8 unkA;
+	int8 might;
+	uint8 skill;
+	uint8 protection;
 	uint16 unkB;
 	uint8 unkD;
 };
@@ -368,6 +361,12 @@ private:
 	void gui_drawCompass();
 	void gui_drawScroll();
 	void gui_highlightSelectedSpell(int unk);
+	void gui_displayCharInventory(int charNum);
+	void gui_printCharInventoryStats(int charNum);
+	void gui_printCharacterStats(int index, int redraw, int value);
+	void gui_changeCharacterStats(int charNum);
+	void gui_drawCharInventoryItem(int itemIndex);
+	void gui_drawBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
 
 	int gui_enableControls();
 	int gui_disableControls(int controlMode);
@@ -382,6 +381,7 @@ private:
 	int _compassDirection;
 	int _compassUnk;
 	int _compassDirectionIndex;
+	int _charInventoryUnk;
 
 	const CompassDef *_compassDefs;
 	int _compassDefsSize;
@@ -390,13 +390,15 @@ private:
 	void gui_triggerEvent(int eventType);
 	void gui_enableDefaultPlayfieldButtons();
 	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
+	void gui_enableCharInventoryButtons(int charNum);
 
 	void gui_resetButtonList();
 	void gui_initButtonsFromList(const int16 *list);
 	void gui_initCharacterControlButtons(int index, int xOffs);
+	void gui_initCharInventorySpecialButtons(int charNum);
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
-	void gui_initButton(int index, int x = -1);
+	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
 	void gui_notifyButtonListChanged() { if (_gui) _gui->_buttonListChanged = true; }
 	void assignButtonCallback(Button *button, int index);
 
@@ -417,10 +419,10 @@ private:
 	int clickedPortraitLeft(Button *button);
 	int clickedLiveMagicBarsLeft(Button *button);
 	int clickedPortraitEtcRight(Button *button);
-	int clickedUnk14(Button *button);
-	int clickedUnk15(Button *button);
+	int clickedCharInventorySlot(Button *button);
+	int clickedExitCharInventory(Button *button);
 	int clickedUnk16(Button *button);
-	int clickedUnk17(Button *button);
+	int clickedScene1(Button *button);
 	int clickedInventorySlot(Button *button);
 	int clickedInventoryScroll(Button *button);
 	int clickedUnk20(Button *button);
@@ -584,6 +586,10 @@ private:
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
 
+	void recalcCharacterStats(int charNum);
+	int calculateCharacterStats(int charNum, int index);
+	int calculateProtection(int index);
+
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
 	int _updateFlags;
@@ -601,6 +607,8 @@ private:
 	int _levelFlagUnk;
 	int _unkCharNum;
 
+	int _charStatsTemp[5];
+
 	uint8 **_monsterShapes;
 	uint8 **_monsterPalettes;
 	uint8 **_buf4;
@@ -608,6 +616,17 @@ private:
 
 	const LoLCharacter *_charDefaults;
 	int _charDefaultsSize;
+
+	const uint16 *_charDefsMan;
+	int _charDefsManSize;
+	const uint16 *_charDefsWoman;
+	int _charDefsWomanSize;
+	const uint16 *_charDefsKieran;
+	int _charDefsKieranSize;
+	const uint16 *_charDefsAkshel;
+	int _charDefsAkshelSize;
+	const int32 *_expRequirements;
+	int _expRequirementsSize;
 
 	// lamp
 	void resetLampStatus();
@@ -830,9 +849,11 @@ private:
 	void giveCredits(int credits, int redraw);
 	int makeItem(int itemIndex, int curFrame, int flags);
 	bool testUnkItemFlags(int itemIndex);
-	void clearItemTableEntry(int itemIndex);
+	void deleteItem(int itemIndex);
 	CLevelItem *findItem(uint16 index);
-	void runItemScript(int reg1, int item, int reg0, int reg3, int reg4);
+	void runItemScript(int charNum, int item, int reg0, int reg3, int reg4);
+
+	void pickupItem(int itemIndex);
 
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;
@@ -844,13 +865,26 @@ private:
 	uint16 _inventory[48];
 	int _inventoryCurItem;
 	int _hideControls;
+	int _lastCharInventory;
+
+	const uint8 *_charInvIndex;
+	int _charInvIndexSize;
+	const int8 *_charInvDefs;
+	int _charInvDefsSize;
 
 	EMCData _itemScript;
 
+	const uint16 *_inventorySlotDesc;
+	int _inventorySlotDescSize;
+
 	// misc
+	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
 	void runLoopSub4(int a);
 	void calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs);
 	bool characterSays(int track, int charId, bool redraw);
+
+	uint8 *_pageBuffer1;
+	uint8 *_pageBuffer2;
 
 	// spells
 	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);

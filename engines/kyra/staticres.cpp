@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 38
+#define RESFILE_VERSION 39
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -226,6 +226,7 @@ bool StaticResource::init() {
 		{ lolSpellData, proc(loadSpellData), proc(freeSpellData) },
 		{ lolCompassData, proc(loadCompassData), proc(freeCompassData) },
 		{ lolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+		{ lolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
 		{ lolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
 
 		{ 0, 0, 0 }
@@ -378,6 +379,16 @@ bool StaticResource::init() {
 		{ lolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
 		{ lolSpellProperties, lolSpellData, "SPELLS.DEF" },
 		{ lolGameShapeMap, kRawData, "GAMESHP.MAP" },
+		{ lolCharInvIndex, kRawData, "CHARINV.MAP" },
+		{ lolCharInvDefs, kRawData, "CHARINV.DEF" },
+		{ lolCharDefsMan, lolRawDataBe16, "CHMAN.DEF" },
+		{ lolCharDefsWoman, lolRawDataBe16, "CHWOMAN.DEF" },
+		{ lolCharDefsKieran, lolRawDataBe16, "CHKIERAN.DEF" },
+		//{ lolCharDefsUnk, lolRawDataBe16, "CHUNK.DEF" },
+		{ lolCharDefsAkshel, lolRawDataBe16, "CHAKSHEL.DEF" },
+		{ lolExpRequirements, lolRawDataBe32, "EXPERIENCE.DEF" },
+		{ lolInventoryDesc, lolRawDataBe16, "INVDESC.DEF" },
+
 		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
 		{ lolLevelDatList, kStringList, "DATFILES.TXT" },
 		{ lolCompassDefs, lolCompassData, "COMPASS.DEF" },
@@ -496,6 +507,10 @@ const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
 
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
 	return (const uint16*)getData(id, lolRawDataBe16, entries);
+}
+
+const uint32 *StaticResource::loadRawDataBe32(int id, int &entries) {
+	return (const uint32*)getData(id, lolRawDataBe32, entries);
 }
 
 const ButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
@@ -948,14 +963,10 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->id = file->readSint16LE();
 		t->curFaceFrame = file->readByte();
 		t->nextFaceFrame = file->readByte();
-		t->field_12 = file->readUint16LE();
-		t->field_14 = file->readUint16LE();
-		t->field_16 = file->readByte();
-		for (int ii = 0; ii < 5; ii++)
-			t->field_17[ii] = file->readUint16LE();
-		t->field_21 = file->readUint16LE();
-		t->field_23 = file->readUint16LE();
-		t->field_25 = file->readUint16LE();
+		t->field_12 = file->readByte();
+		file->readUint32LE();
+		for (int ii = 0; ii < 8; ii++)
+			t->itemsMight[ii] = file->readUint16LE();
 		for (int ii = 0; ii < 2; ii++)
 			t->field_27[ii] = file->readUint16LE();
 		t->field_2B = file->readByte();
@@ -965,7 +976,7 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->field_32 = file->readUint16LE();
 		t->field_34 = file->readUint16LE();
 		t->field_36 = file->readByte();
-		t->field_37 = file->readUint16LE();
+		t->itemsProtection = file->readUint16LE();
 		t->hitPointsCur = file->readUint16LE();;
 		t->hitPointsMax = file->readUint16LE();;
 		t->magicPointsCur = file->readUint16LE();;
@@ -973,24 +984,19 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->field_41 = file->readByte();
 		t->damageSuffered = file->readUint16LE();
 		t->weaponHit = file->readUint16LE();
-		t->field_46 = file->readUint16LE();
-		t->field_48 = file->readUint16LE();
-		t->field_4A = file->readUint16LE();
-		t->field_4C = file->readUint16LE();
+		t->might3 = file->readUint16LE();
+		t->protection3 = file->readUint16LE();
+		t->might2 = file->readUint16LE();
+		t->protection2 = file->readUint16LE();
 		t->rand = file->readUint16LE();
 		for (int ii = 0; ii < 11; ii++)
 			t->items[ii] = file->readUint16LE();
 		for (int ii = 0; ii < 3; ii++)
-			t->field_66[ii] = file->readByte();
+			t->skillLevels[ii] = file->readByte();
 		for (int ii = 0; ii < 3; ii++)
-			t->field_69[ii] = file->readByte();
-		t->field_6C = file->readByte();
-		t->field_6D = file->readByte();
-		t->field_6E = file->readUint16LE();
-		t->field_70 = file->readUint16LE();
-		t->field_72 = file->readUint16LE();
-		t->field_74 = file->readUint16LE();
-		t->field_76 = file->readUint16LE();
+			t->skillModifiers[ii] = file->readByte();
+		for (int ii = 0; ii < 3; ii++)
+			t->experiencePts[ii] = file->readUint32LE();
 		for (int ii = 0; ii < 5; ii++)
 			t->arrayUnk2[ii] = file->readByte();
 		for (int ii = 0; ii < 5; ii++)
@@ -1065,6 +1071,24 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 
 	for (int i = 0; i < size; i++)
 		r[i] = file->readUint16BE();
+
+	ptr = r;
+
+	return true;
+}
+
+bool StaticResource::loadRawDataBe32(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
+
+	size = file->size() >> 2;
+
+	uint32 *r = new uint32[size];
+
+	for (int i = 0; i < size; i++)
+		r[i] = file->readUint32BE();
 
 	ptr = r;
 
@@ -1189,6 +1213,13 @@ void StaticResource::freeCompassData(void *&ptr, int &size) {
 
 void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
 	uint16 *data = (uint16*)ptr;
+	delete[] data;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeRawDataBe32(void *&ptr, int &size) {
+	uint32 *data = (uint32*)ptr;
 	delete[] data;
 	ptr = 0;
 	size = 0;
@@ -1693,6 +1724,14 @@ void LoLEngine::initStaticResource() {
 	//_ingameADLSoundIndex = _staticres->loadRawData(lolIngameADLSfxIndex, _ingameADLSoundIndexSize);
 	_spellProperties = _staticres->loadSpellData(lolSpellProperties, _spellPropertiesSize);
 	_gameShapeMap = (const int8*)_staticres->loadRawData(lolGameShapeMap, _gameShapeMapSize);
+	_charInvIndex = _staticres->loadRawData(lolCharInvIndex, _charInvIndexSize);
+	_charInvDefs = (const int8*)_staticres->loadRawData(lolCharInvDefs, _charInvDefsSize);
+	_charDefsMan = _staticres->loadRawDataBe16(lolCharDefsMan, _charDefsManSize);
+	_charDefsWoman = _staticres->loadRawDataBe16(lolCharDefsWoman, _charDefsWomanSize);
+	_charDefsKieran = _staticres->loadRawDataBe16(lolCharDefsKieran, _charDefsKieranSize);
+	_charDefsAkshel = _staticres->loadRawDataBe16(lolCharDefsAkshel, _charDefsAkshelSize);
+	_expRequirements = (const int32*)_staticres->loadRawDataBe32(lolExpRequirements, _expRequirementsSize);
+	_inventorySlotDesc = _staticres->loadRawDataBe16(lolInventoryDesc, _inventorySlotDescSize);
 	_levelShpList = _staticres->loadStrings(lolLevelShpList, _levelShpListSize);
 	_levelDatList = _staticres->loadStrings(lolLevelDatList, _levelDatListSize);
 	_compassDefs = _staticres->loadCompassData(lolCompassDefs, _compassDefsSize);
@@ -1779,23 +1818,23 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedPortraitEtcRight),
 		cb(clickedPortraitEtcRight),
 		cb(clickedPortraitEtcRight),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk14),
-		cb(clickedUnk15),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedCharInventorySlot),
+		cb(clickedExitCharInventory),
 		cb(clickedUnk16),
 		cb(clickedUnk16),
 		cb(clickedUnk16),
 		cb(clickedUnk16),
-		cb(clickedUnk17),
+		cb(clickedScene1),
 		cb(clickedInventorySlot),
 		cb(clickedInventorySlot),
 		cb(clickedInventorySlot),

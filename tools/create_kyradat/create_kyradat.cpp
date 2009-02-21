@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 38,
+	kKyraDatVersion = 39,
 	kIndexSize = 12
 };
 
@@ -74,6 +74,7 @@ bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const u
 bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 
 int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
@@ -100,6 +101,7 @@ const ExtractType extractTypeTable[] = {
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
 
 	{ lolTypeRaw16, extractRaw16, createFilename },
+	{ lolTypeRaw32, extractRaw32, createFilename },
 	{ lolTypeButtonDef, extractLolButtonDefs, createFilename },
 
 	{ -1, 0, 0}
@@ -274,6 +276,15 @@ const ExtractFilename extractFilenames[] = {
 	//{ lolADLSfxIndex, kTypeRawData, "SFX_ADL.MAP" },
 	{ lolSpellProperties, kTypeRawData, "SPELLS.DEF" },
 	{ lolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
+	{ lolCharInvIndex, k3TypeRaw16to8, "CHARINV.MAP" },
+	{ lolCharInvDefs, kTypeRawData, "CHARINV.DEF" },
+	{ lolCharDefsMan, lolTypeRaw16, "CHMAN.DEF" },
+	{ lolCharDefsWoman, lolTypeRaw16, "CHWOMAN.DEF" },
+	{ lolCharDefsKieran, lolTypeRaw16, "CHKIERAN.DEF" },
+	//{ lolCharDefsUnk, lolTypeRaw16, "CHUNK.DEF" },
+	{ lolCharDefsAkshel, lolTypeRaw16, "CHAKSHEL.DEF" },
+	{ lolExpRequirements, lolTypeRaw32, "EXPERIENCE.DEF" },
+	{ lolInventoryDesc, lolTypeRaw16, "INVDESC.DEF" },
 	{ lolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
 	{ lolLevelDatList, kTypeStringList, "DATFILES.TXT" },
 	{ lolCompassDefs, k3TypeRaw16to8, "COMPASS.DEF" },
@@ -1078,6 +1089,20 @@ bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 si
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2;
 		dst += 2;
+	}
+
+	return out.addFile(filename, buffer, size);
+}
+
+bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	uint8 *buffer = new uint8[size];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (uint32 i = 0; i < (size >> 2); i++) {
+		WRITE_BE_UINT32(dst, READ_LE_UINT32(src));
+		src += 4;
+		dst += 4;
 	}
 
 	return out.addFile(filename, buffer, size);

@@ -155,11 +155,11 @@ int LoLEngine::olol_setItemProperty(EMCState *script) {
 
 	tmp->nameStringId = stackPos(1);
 	tmp->shpIndex = stackPos(2);
-	tmp->unk5 = stackPos(3);
+	tmp->type = stackPos(3);
 	tmp->itemScriptFunc = stackPos(4);
-	tmp->unk8 = stackPos(5);
-	tmp->unk9 = stackPos(6);
-	tmp->unkA = stackPos(7);
+	tmp->might = stackPos(5);
+	tmp->skill = stackPos(6);
+	tmp->protection = stackPos(7);
 	tmp->flags = stackPos(8);
 	tmp->unkB = stackPos(9);
 	return 1;
@@ -198,13 +198,15 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 8:
 		return p->shpIndex;
 	case 9:
-		return p->unk5;
+		return p->type;
 	case 10:
 		return p->itemScriptFunc;
 	case 11:
+		return p->might;
 	case 12:
+		return p->skill;
 	case 13:
-		return p[stackPos(1)].unkB & 0x0f;
+		return p->protection;
 	case 14:
 		return p->unkB;
 	case 15:
@@ -212,7 +214,7 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 16:
 		return p->flags;
 	case 17:
-		return (p->unk9 << 8) | p->unk8;
+		return (p->skill << 8) | p->might;
 	default:
 		break;
 	}
@@ -245,22 +247,22 @@ int LoLEngine::olol_getCharacterStat(EMCState *script) {
 		return c->magicPointsMax;
 
 	case 9:
-		return c->field_37;
+		return c->itemsProtection;
 
 	case 10:
 		return c->items[d];
 
 	case 11:
-		return c->field_66[d] + c->field_69[d];
+		return c->skillLevels[d] + c->skillModifiers[d];
 
 	case 12:
 		return c->field_27[d];
 
 	case 13:
-		return (d & 0x80) ? c->field_25 : c->field_17[d];
+		return (d & 0x80) ? c->itemsMight[7] : c->itemsMight[d];
 
 	case 14:
-		return c->field_69[d];
+		return c->skillModifiers[d];
 
 	case 15:
 		return c->id;
@@ -304,7 +306,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 9:
-		c->field_37 = e;
+		c->itemsProtection = e;
 		break;
 
 	case 10:
@@ -312,7 +314,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 11:
-		c->field_66[d] = e;
+		c->skillLevels[d] = e;
 		break;
 
 	case 12:
@@ -321,13 +323,13 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 
 	case 13:
 		if (d & 0x80)
-			c->field_25 = e;
+			c->itemsMight[7] = e;
 		else
-			c->field_17[d] = e;
+			c->itemsMight[d] = e;
 		break;
 
 	case 14:
-		c->field_69[d] = e;
+		c->skillModifiers[d] = e;
 		break;
 
 	default:
@@ -520,15 +522,15 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 
 	l->maxWidth = shpWidthMax;
 
-	l->unk[0] = (stackPos(2) << 8) / 100;
-	l->unk[1] = 256;
-	l->unk[2] = (stackPos(3) << 8) / 100;
-	l->unk[3] = stackPos(4);
-	l->unk[4] = (stackPos(5) << 8) / 100;
-	l->unk[5] = (stackPos(6) << 8) / 100;
-	l->unk[6] = (stackPos(7) << 8) / 100;
-	l->unk[7] = (stackPos(8) << 8) / 100;
-	l->unk[8] = 0;
+	l->field2[0] = (stackPos(2) << 8) / 100;
+	l->field2[1] = 256;
+	l->protection = (stackPos(3) << 8) / 100;
+	l->unk[0] = stackPos(4);
+	l->unk[1] = (stackPos(5) << 8) / 100;
+	l->unk[2] = (stackPos(6) << 8) / 100;
+	l->unk[3] = (stackPos(7) << 8) / 100;
+	l->unk[4] = (stackPos(8) << 8) / 100;
+	l->unk[5] = 0;
 
 	for (int i = 0; i < 8; i++) {
 		l->unk2[i] = stackPos(9 + i);
@@ -536,8 +538,8 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	}
 
 	l->pos = &l->unk[0];
-	l->unk4[0] = stackPos(25);
-	l->unk4[1] = stackPos(26);
+	l->itemProtection = stackPos(25);
+	l->might = stackPos(26);
 	l->b = 1;
 	l->unk5[0] = stackPos(27);
 	l->unk5[1] = stackPos(28);

@@ -185,6 +185,16 @@ enum kExtractID {
 	//lolADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
+	lolCharInvIndex,
+	lolCharInvDefs,
+	lolCharDefsMan,
+	lolCharDefsWoman,
+	lolCharDefsKieran,
+	//lolCharDefsUnk,
+	lolCharDefsAkshel,
+	lolExpRequirements,
+	lolInventoryDesc,
+
 	lolLevelShpList,
 	lolLevelDatList,
 	lolCompassDefs,
@@ -322,6 +332,7 @@ enum kExtractType {
 	k3TypeShpData,
 
 	lolTypeRaw16,
+	lolTypeRaw32,
 	lolTypeButtonDef
 };
 
