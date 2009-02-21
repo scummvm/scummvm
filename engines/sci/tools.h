@@ -104,9 +104,9 @@ typedef struct {
 
 /**** FUNCTION DECLARATIONS ****/
 
-#define getInt16	(int16)READ_UINT16
-#define getUInt16	READ_UINT16
-#define putInt16	WRITE_UINT16
+#define getInt16	(int16)READ_LE_UINT16
+#define getUInt16	READ_LE_UINT16
+#define putInt16	WRITE_LE_UINT16
 
 
 /* --- */
