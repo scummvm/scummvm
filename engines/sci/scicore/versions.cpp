@@ -34,14 +34,12 @@
 
 namespace Sci {
 
-void
-version_require_earlier_than(EngineState *s, sci_version_t version) {
+void version_require_earlier_than(EngineState *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 
 	if (version <= s->min_version) {
-		sciprintf("Version autodetect conflict: Less than %d.%03d.%03d was requested, but "
-		          "%d.%03d.%03d is the current minimum\n",
+		sciprintf("Version autodetect conflict: Less than %d.%03d.%03d was requested, but %d.%03d.%03d is the current minimum\n",
 		          SCI_VERSION_MAJOR(version), SCI_VERSION_MINOR(version), SCI_VERSION_PATCHLEVEL(version),
 		          SCI_VERSION_MAJOR(s->min_version), SCI_VERSION_MINOR(s->min_version),
 		          SCI_VERSION_PATCHLEVEL(s->min_version));
@@ -53,8 +51,7 @@ version_require_earlier_than(EngineState *s, sci_version_t version) {
 	}
 }
 
-void
-version_require_later_than(EngineState *s, sci_version_t version) {
+void version_require_later_than(EngineState *s, sci_version_t version) {
 	if (s->version_lock_flag)
 		return;
 
@@ -72,20 +69,19 @@ version_require_later_than(EngineState *s, sci_version_t version) {
 	}
 }
 
-int
-version_parse(const char *vn, sci_version_t *result) {
+int version_parse(const char *vn, sci_version_t *result) {
 	char *endptr[3];
 	int major = strtol(vn, &endptr[0], 10);
 	int minor = strtol(vn + 2, &endptr[1], 10);
 	int patchlevel = strtol(vn + 6, &endptr[2], 10);
 
-	if (endptr[0] != vn + 1 || endptr[1] != vn + 5
-	        || *endptr[2] != '\0') {
+	if (endptr[0] != vn + 1 || endptr[1] != vn + 5 || *endptr[2] != '\0') {
 		sciprintf("Warning: Failed to parse version string '%s'\n", vn);
 		return 1;
 	}
 
 	*result = SCI_VERSION(major, minor, patchlevel);
+
 	return 0;
 }
 
