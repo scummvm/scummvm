@@ -712,7 +712,7 @@ int game_exit(EngineState *s);
 ** This function should be run after each script_run() call.
 */
 
-void quit_vm(void);
+void quit_vm();
 /* Instructs the virtual machine to abort
 ** Paramteres: (void)
 ** Returns   : (void)

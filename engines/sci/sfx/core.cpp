@@ -57,19 +57,19 @@ int sfx_pcm_available() {
 	return (pcm_device != NULL);
 }
 
-void sfx_reset_player(void) {
+void sfx_reset_player() {
 	if (player)
 		player->stop();
 }
 
-tell_synth_func *sfx_get_player_tell_func(void) {
+tell_synth_func *sfx_get_player_tell_func() {
 	if (player)
 		return player->tell_synth;
 	else
 		return NULL;
 }
 
-int sfx_get_player_polyphony(void) {
+int sfx_get_player_polyphony() {
 	if (player)
 		return player->polyphony;
 	else

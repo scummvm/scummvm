@@ -380,7 +380,7 @@ int sci_mkpath(const char *path) {
 #ifdef HAVE_SCHED_YIELD
 #  include <sched.h>
 
-void sci_sched_yield(void) {
+void sci_sched_yield() {
 	sched_yield();
 }
 

@@ -124,7 +124,7 @@ static guint8 adlib_master;
 
 
 /* initialise note/operator lists, etc. */
-void adlibemu_init_lists(void) {
+void adlibemu_init_lists() {
 	int i;
 
 	int j;
@@ -419,7 +419,7 @@ static void adlibemu_update_pitch(int chn, int note, int newpitch) {
 //  printf("Matched %d notes on channel %d.\n", matched, chn);
 }
 
-void test_adlib(void) {
+void test_adlib() {
 
 	int voice = 0;
 #if 0

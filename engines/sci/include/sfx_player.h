@@ -67,12 +67,12 @@ typedef struct {
 	** to add iterators onto their already existing iterators
 	*/
 
-	int (*fade_out)(void);
+	int (*fade_out)();
 	/* Fades out the currently playing song (within two seconds
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*stop)(void);
+	int (*stop)();
 	/* Stops the currently playing song and deletes the associated iterator
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
@@ -86,22 +86,22 @@ typedef struct {
 	** and re-start playing, so it is preferred that it is present
 	*/
 
-	int (*pause)(void); /* OPTIONAL -- may be NULL */
+	int (*pause)(); /* OPTIONAL -- may be NULL */
 	/* Pauses song playing
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*resume)(void); /* OPTIONAL -- may be NULL */
+	int (*resume)(); /* OPTIONAL -- may be NULL */
 	/* Resumes song playing after a pause
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*exit)(void);
+	int (*exit)();
 	/* Stops the player
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	void (*maintenance)(void); /* OPTIONAL -- may be NULL */
+	void (*maintenance)(); /* OPTIONAL -- may be NULL */
 	/* Regularly called maintenance function
 	** This function is called frequently and regularly (if present), it can be
 	** used to emit sound.
@@ -123,17 +123,17 @@ sfx_player_t *sfx_find_player(char *name);
 ** Returns   : (sfx_player_t *) The player requested, or NULL if none was found
 */
 
-tell_synth_func *sfx_get_player_tell_func(void);
+tell_synth_func *sfx_get_player_tell_func();
 /* Gets the callback function of the player in use.
 ** Returns:   (tell_synth_func *) The callback function.
 */
 
-int sfx_get_player_polyphony(void);
+int sfx_get_player_polyphony();
 /* Determines the polyphony of the player in use
 ** Returns   : (int) Number of voices the active player can emit
 */
 
-void sfx_reset_player(void);
+void sfx_reset_player();
 /* Tells the player to stop its internal iterator
 ** Parameters: None.
 ** Returns: Nothing.

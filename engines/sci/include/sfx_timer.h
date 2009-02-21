@@ -43,7 +43,7 @@ typedef struct {
 	** This function is called exactly once (provided that the timer is used at all).
 	*/
 
-	int (*exit)(void);
+	int (*exit)();
 	/* Stops the timer
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	** All resources allocated with the timer should be freed as an effect

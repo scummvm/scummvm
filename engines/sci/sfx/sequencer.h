@@ -68,7 +68,7 @@ typedef struct _sfx_sequencer {
 	** data.
 	*/
 
-	int (*close)(void);
+	int (*close)();
 	/* Closes the sequencer
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
@@ -97,7 +97,7 @@ typedef struct _sfx_sequencer {
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
 
-	int (*allstop)(void); /* OPTIONAL -- may be NULL */
+	int (*allstop)(); /* OPTIONAL -- may be NULL */
 	/* Stops playing everything in the sequencer queue
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/

@@ -150,7 +150,7 @@ static sfx_pcm_feed_t pcmfeed = {
 /* API implementation */
 /*--------------------*/
 
-static void pp_timer_callback(void) {
+static void pp_timer_callback() {
 	/* Hey, we're polled anyway ;-) */
 }
 
@@ -229,12 +229,12 @@ static int pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 	return SFX_OK;
 }
 
-static int pp_fade_out(void) {
+static int pp_fade_out() {
 	warning(__FILE__": Attempt to fade out- not implemented yet");
 	return SFX_ERROR;
 }
 
-static int pp_stop(void) {
+static int pp_stop() {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
@@ -255,14 +255,14 @@ static int pp_send_iterator_message(song_iterator_message_t msg) {
 	return SFX_OK;
 }
 
-static int pp_pause(void) {
+static int pp_pause() {
 	play_paused = 1;
 	seq->set_volume(seq, 0);
 
 	return SFX_OK;
 }
 
-static int pp_resume(void) {
+static int pp_resume() {
 	if (!play_it) {
 		play_paused = 0;
 		return SFX_OK; /* Nothing to resume */
@@ -278,7 +278,7 @@ static int pp_resume(void) {
 	return SFX_OK;
 }
 
-static int pp_exit(void) {
+static int pp_exit() {
 	seq->exit(seq);
 	songit_free(play_it);
 	play_it = NULL;
