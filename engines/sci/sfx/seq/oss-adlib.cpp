@@ -50,7 +50,7 @@ extern int _seqbufptr;
 extern int seqfd;
 #endif
 
-static guint8 instr[MIDI_CHANNELS];
+static uint8 instr[MIDI_CHANNELS];
 static int dev;
 static int free_voices = ADLIB_VOICES;
 static long note_time[ADLIB_VOICES];
@@ -267,8 +267,8 @@ midi_adlib_reverb(int param) {
 }
 
 static inline int
-midi_adlib_event1(guint8 command, guint8 note, guint8 velocity) {
-	guint8 channel, oper;
+midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
+	uint8 channel, oper;
 
 	channel = command & 0x0f;
 	oper = command & 0xf0;
@@ -301,9 +301,9 @@ midi_adlib_event1(guint8 command, guint8 note, guint8 velocity) {
 }
 
 static inline int
-midi_adlib_event2(guint8 command, guint8 param) {
-	guint8 channel;
-	guint8 oper;
+midi_adlib_event2(uint8 command, uint8 param) {
+	uint8 channel;
+	uint8 oper;
 
 	channel = command & 0x0f;
 	oper = command & 0xf0;

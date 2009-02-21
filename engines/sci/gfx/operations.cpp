@@ -1182,17 +1182,17 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 		draw_color1.priority = draw_color2.priority = color1.priority;
 
 		if (draw_color1.mask & GFX_MASK_VISUAL) {
-			draw_color1.visual.r = (guint8) COLOR_MIX(visual.r, mod_offset);
-			draw_color1.visual.g = (guint8) COLOR_MIX(visual.g, mod_offset);
-			draw_color1.visual.b = (guint8) COLOR_MIX(visual.b, mod_offset);
-			draw_color1.alpha = (guint8) COLOR_MIX(alpha, mod_offset);
+			draw_color1.visual.r = (uint8) COLOR_MIX(visual.r, mod_offset);
+			draw_color1.visual.g = (uint8) COLOR_MIX(visual.g, mod_offset);
+			draw_color1.visual.b = (uint8) COLOR_MIX(visual.b, mod_offset);
+			draw_color1.alpha = (uint8) COLOR_MIX(alpha, mod_offset);
 
 			mod_offset += mod_breadth;
 
-			draw_color2.visual.r = (guint8) COLOR_MIX(visual.r, mod_offset);
-			draw_color2.visual.g = (guint8) COLOR_MIX(visual.g, mod_offset);
-			draw_color2.visual.b = (guint8) COLOR_MIX(visual.b, mod_offset);
-			draw_color2.alpha = (guint8) COLOR_MIX(alpha, mod_offset);
+			draw_color2.visual.r = (uint8) COLOR_MIX(visual.r, mod_offset);
+			draw_color2.visual.g = (uint8) COLOR_MIX(visual.g, mod_offset);
+			draw_color2.visual.b = (uint8) COLOR_MIX(visual.b, mod_offset);
+			draw_color2.alpha = (uint8) COLOR_MIX(alpha, mod_offset);
 		}
 		if (reverse)
 			return drv->draw_filled_rect(drv, new_box, draw_color2, draw_color1, driver_shade_type);

@@ -94,7 +94,7 @@ midi_gm_reset_timer(GTimeVal ts) {
 #define MIDI_MASTER_VOLUME_LEN 8
 
 static int
-midi_gm_volume(guint8 volume) {
+midi_gm_volume(uint8 volume) {
 	byte data[MIDI_MASTER_VOLUME_LEN] = {
 		0xf0,
 		0x7f,

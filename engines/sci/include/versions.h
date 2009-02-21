@@ -28,8 +28,6 @@
 #ifndef _SCI_VERSIONS_H_
 #define _SCI_VERSIONS_H_
 
-#include "sci/include/scitypes.h"
-
 namespace Sci {
 
 #define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)

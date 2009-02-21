@@ -26,7 +26,7 @@
 #ifndef _SCI_VM_TYPES_H_
 #define _SCI_VM_TYPES_H_
 
-#include "sci/include/scitypes.h"
+#include "common/scummsys.h"
 
 namespace Sci {
 

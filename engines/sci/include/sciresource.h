@@ -35,8 +35,6 @@ namespace Common {
 	class ReadStream;
 }
 
-#include "sci/include/scitypes.h"
-
 namespace Sci {
 
 /** The maximum allowed size for a compressed or decompressed resource */
@@ -145,7 +143,7 @@ struct resource_t {
 
 	unsigned short number;
 	unsigned short type;
-	guint16 id; /* contains number and type */
+	uint16 id; /* contains number and type */
 
 	unsigned int size;
 
@@ -376,11 +374,11 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 */
 
 
-int decrypt2(guint8* dest, guint8* src, int length, int complength);
+int decrypt2(uint8* dest, uint8* src, int length, int complength);
 /* Huffman token decryptor - defined in decompress0.c and used in decompress01.c
 */
 
-int decrypt4(guint8* dest, guint8* src, int length, int complength);
+int decrypt4(uint8* dest, uint8* src, int length, int complength);
 /* DCL inflate- implemented in decompress1.c
 */
 

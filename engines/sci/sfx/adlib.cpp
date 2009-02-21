@@ -29,7 +29,7 @@ namespace Sci {
 
 adlib_instr adlib_sbi[96];
 
-void make_sbi(adlib_def *one, guint8 *buffer) {
+void make_sbi(adlib_def *one, uint8 *buffer) {
 	memset(buffer, 0, sizeof(adlib_instr));
 
 #if 0

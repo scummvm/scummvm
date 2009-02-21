@@ -110,7 +110,7 @@ void sps_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
 	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;
 	int freq = (!note) ? 0 : freq_table[halftone_index] / (1 << (-oct_diff));
-	gint16 *buf = (gint16 *) dest;
+	int16 *buf = (int16 *) dest;
 
 	int i;
 	for (i = 0; i < len; i++) {

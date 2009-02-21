@@ -451,9 +451,9 @@ reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		source++; /* Skip whitespace */
 
 	if (*source == '$') /* SCI uses this for hex numbers */
-		return make_reg(0, (gint16)strtol(source + 1, NULL, 16)); /* Hex */
+		return make_reg(0, (int16)strtol(source + 1, NULL, 16)); /* Hex */
 	else
-		return make_reg(0, (gint16)strtol(source, NULL, 10)); /* Force decimal */
+		return make_reg(0, (int16)strtol(source, NULL, 10)); /* Force decimal */
 }
 
 

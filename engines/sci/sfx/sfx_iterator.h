@@ -108,7 +108,7 @@ typedef struct {
 
 #define INHERITS_SONG_ITERATOR \
 	songit_id_t ID;										  \
-	guint16 channel_mask;									  \
+	uint16 channel_mask;									  \
         fade_params_t fade;                                                                       \
 	unsigned int flags;									  \
 	int priority;                                                                             \
@@ -126,7 +126,7 @@ typedef struct {
 typedef struct _song_iterator {
 
 	songit_id_t ID;
-	guint16 channel_mask; /* Bitmask of all channels this iterator will use */
+	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
 	fade_params_t fade;
 	unsigned int flags;
 	int priority;

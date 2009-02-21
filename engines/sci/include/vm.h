@@ -145,8 +145,8 @@ typedef struct {
 	int methods_nr;
 	byte *base; /* Points to a buffer all relative references (code, strings) point to */
 	byte *base_obj; /* base + object offset within base */
-	guint16 *base_method; /* Pointer to the method selector area for this object */
-	guint16 *base_vars; /* Pointer to the varselector area for this object */
+	uint16 *base_method; /* Pointer to the method selector area for this object */
+	uint16 *base_vars; /* Pointer to the varselector area for this object */
 	reg_t *variables;
 } object_t;
 
@@ -189,7 +189,7 @@ typedef struct {
 
 	byte *synonyms; /* Synonyms block  or 0 if not present*/
 	byte *heap_start; /* Start of heap if SCI1.1, NULL otherwise */
-	guint16 *export_table; /* Abs. offset of the export table or 0 if not present */
+	uint16 *export_table; /* Abs. offset of the export table or 0 if not present */
 
 	int_hash_map_t *obj_indices;
 
@@ -397,7 +397,7 @@ typedef struct {
 typedef struct _breakpoint {
 	int type;
 	union {
-		guint32 address;  /* Breakpoints on exports */
+		uint32 address;  /* Breakpoints on exports */
 		char *name; /* Breakpoints on selector names */
 	} data;
 	struct _breakpoint *next;
@@ -450,15 +450,15 @@ extern kernel_function* kfuncs[];
 extern int max_instance;
 
 /*inline*/
-exec_stack_t *execute_method(EngineState *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj,
-               word argc, stack_ptr_t argp);
+exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, stack_ptr_t sp, reg_t calling_obj,
+               uint16 argc, stack_ptr_t argp);
 /* Executes function pubfunct of the specified script.
 ** Parameters: (EngineState *) s: The state which is to be executed with
-**             (word) script: The script which is called
-**             (word) pubfunct: The exported script function which is to be called
+**             (uint16) script: The script which is called
+**             (uint16) pubfunct: The exported script function which is to be called
 **             (stack_ptr_t) sp: Stack pointer position
 **             (reg_t) calling_obj: The heap address of the object which executed the call
-**             (word) argc: Number of arguments supplied
+**             (uint16) argc: Number of arguments supplied
 **             (stack_ptr_t) argp: Pointer to the first supplied argument
 ** Returns   : (exec_stack_t *): A pointer to the new exec stack TOS entry
 */

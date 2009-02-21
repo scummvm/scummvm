@@ -195,7 +195,7 @@ extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
 	clone_t *victim_obj = obj_get(s, victim_addr);
-	word underBits;
+	uint16 underBits;
 
 	if (!victim_obj) {
 		SCIkwarn(SCIkERROR, "Attempt to dispose non-class/object at "PREG"\n",

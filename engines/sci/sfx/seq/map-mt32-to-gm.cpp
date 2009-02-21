@@ -228,8 +228,8 @@ static const char
 
 static struct {
 	const char *name;
-	gint8 gm_instr;
-	gint8 gm_rhythm_key;
+	int8 gm_instr;
+	int8 gm_rhythm_key;
 } MT32_PresetTimbreMaps[] = {
 	/*000*/  {"AcouPiano1", 0, SFX_UNMAPPED},
 	/*001*/  {"AcouPiano2", 1, SFX_UNMAPPED},
@@ -363,8 +363,8 @@ static struct {
 
 static struct {
 	const char *name;
-	gint8 gm_instr;
-	gint8 gm_rhythmkey;
+	int8 gm_instr;
+	int8 gm_rhythmkey;
 } MT32_RhythmTimbreMaps[] = {
 	/*00*/  {"Acou BD   ", SFX_MAPPED_TO_RHYTHM, 34},
 	/*01*/  {"Acou SD   ", SFX_MAPPED_TO_RHYTHM, 37},
@@ -398,7 +398,7 @@ static struct {
 	/*29*/  {"OpenHiHat2", SFX_MAPPED_TO_RHYTHM, 43}
 };
 
-static gint8
+static int8
 MT32_PresetRhythmKeymap[] = {
 	SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED,
 	SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED,
@@ -424,8 +424,8 @@ MT32_PresetRhythmKeymap[] = {
    R   - Rhythm... */
 static struct {
 	const char *name;
-	gint8 gm_instr;
-	gint8 gm_rhythm_key;
+	int8 gm_instr;
+	int8 gm_rhythm_key;
 } MT32_MemoryTimbreMaps[] = {
 	{"AccPnoKA2 ", 1, SFX_UNMAPPED},     /* ++ (KQ1) */
 	{"Acou BD   ", SFX_MAPPED_TO_RHYTHM, 34},   /* R (PQ2) */
@@ -560,7 +560,7 @@ static struct {
 	{0, 0, 0}
 };
 
-static gint8
+static int8
 lookup_instrument(const char *iname) {
 	int i = 0;
 
@@ -572,7 +572,7 @@ lookup_instrument(const char *iname) {
 	return SFX_UNMAPPED;
 }
 
-static gint8
+static int8
 lookup_rhythm_key(const char *iname) {
 	int i = 0;
 
@@ -675,9 +675,9 @@ print_map_rhythm_mem(int sci, int rhythm, char *mt32) {
 sfx_instrument_map_t *
 sfx_instrument_map_mt32_to_gm(byte *data, size_t size) {
 	int memtimbres, patches;
-	guint8 group, number, keyshift, finetune, bender_range;
-	guint8 *patchpointer;
-	guint32 pos;
+	uint8 group, number, keyshift, finetune, bender_range;
+	uint8 *patchpointer;
+	uint32 pos;
 	sfx_instrument_map_t * map;
 	int i;
 	int type;

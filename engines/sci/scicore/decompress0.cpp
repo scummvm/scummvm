@@ -38,7 +38,7 @@ namespace Sci {
 //#define _SCI_DECOMPRESS_DEBUG
 
 // 9-12 bit LZW encoding
-int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
+int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 	// Doesn't do length checking yet
 	/* Theory: Considering the input as a bit stream, we get a series of
 	** 9 bit elements in the beginning. Every one of them is a 'token'
@@ -56,24 +56,24 @@ int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
 	** be faster than the recursive approach.
 	*/
 
-	guint16 bitlen = 9; // no. of bits to read (max. 12)
-	guint16 bitmask = 0x01ff;
-	guint16 bitctr = 0; // current bit position
-	guint16 bytectr = 0; // current byte position
-	guint16 token; // The last received value
-	guint16 maxtoken = 0x200; // The biggest token
+	uint16 bitlen = 9; // no. of bits to read (max. 12)
+	uint16 bitmask = 0x01ff;
+	uint16 bitctr = 0; // current bit position
+	uint16 bytectr = 0; // current byte position
+	uint16 token; // The last received value
+	uint16 maxtoken = 0x200; // The biggest token
 
-	guint16 tokenlist[4096]; // pointers to dest[]
-	guint16 tokenlengthlist[4096]; // char length of each token
-	guint16 tokenctr = 0x102; // no. of registered tokens (starts here)
+	uint16 tokenlist[4096]; // pointers to dest[]
+	uint16 tokenlengthlist[4096]; // char length of each token
+	uint16 tokenctr = 0x102; // no. of registered tokens (starts here)
 
-	guint16 tokenlastlength = 0;
+	uint16 tokenlastlength = 0;
 
-	guint16 destctr = 0;
+	uint16 destctr = 0;
 
 	while (bytectr < complength) {
 
-		guint32 tokenmaker = src[bytectr++] >> bitctr;
+		uint32 tokenmaker = src[bytectr++] >> bitctr;
 		if (bytectr < complength)
 			tokenmaker |= (src[bytectr] << (8 - bitctr));
 		if (bytectr + 1 < complength)
@@ -161,11 +161,11 @@ int decrypt1(guint8 *dest, guint8 *src, int length, int complength) {
 /***************************************************************************/
 
 // decrypt2 helper function
-gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int complength) {
-	guint16 next;
+int16 getc2(uint8 *node, uint8 *src, uint16 *bytectr, uint16 *bitctr, int complength) {
+	uint16 next;
 
 	while (node[1] != 0) {
-		gint16 value = (src[*bytectr] << (*bitctr));
+		int16 value = (src[*bytectr] << (*bitctr));
 		(*bitctr)++;
 		if (*bitctr == 8) {
 			(*bitctr) = 0;
@@ -175,7 +175,7 @@ gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int c
 		if (value & 0x80) {
 			next = node[1] & 0x0f; // low 4 bits
 			if (next == 0) {
-				guint16 result = (src[*bytectr] << (*bitctr));
+				uint16 result = (src[*bytectr] << (*bitctr));
 
 				if (++(*bytectr) > complength)
 					return -1;
@@ -195,12 +195,12 @@ gint16 getc2(guint8 *node, guint8 *src, guint16 *bytectr, guint16 *bitctr, int c
 }
 
 // Huffman token decryptor
-int decrypt2(guint8* dest, guint8* src, int length, int complength) {
+int decrypt2(uint8* dest, uint8* src, int length, int complength) {
 	// no complength checking atm */
-	guint8 numnodes, terminator;
-	guint8 *nodes;
-	gint16 c;
-	guint16 bitctr = 0, bytectr;
+	uint8 numnodes, terminator;
+	uint8 *nodes;
+	int16 c;
+	uint16 bitctr = 0, bytectr;
 
 	numnodes = src[0];
 	terminator = src[1];
@@ -211,7 +211,7 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength) {
 		if (length-- == 0)
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 
-		*dest = (guint8)c;
+		*dest = (uint8)c;
 		dest++;
 	}
 
@@ -222,7 +222,7 @@ int decrypt2(guint8* dest, guint8* src, int length, int complength) {
 // Carl Muckenhoupt's decompression code ends here
 
 int sci0_get_compression_method(Common::ReadStream &stream) {
-	guint16 compressionMethod;
+	uint16 compressionMethod;
 
 	stream.readUint16LE();
 	stream.readUint16LE();
@@ -267,7 +267,7 @@ int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version)
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (guint8*)sci_malloc(compressedLength);
+	buffer = (uint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {

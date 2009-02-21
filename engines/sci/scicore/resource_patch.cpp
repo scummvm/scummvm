@@ -51,7 +51,7 @@ static void process_patch(ResourceSource *source,
 	if (!file.open(member.createReadStream(), member.getName()))
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 	else {
-		guint8 filehdr[2];
+		uint8 filehdr[2];
 		resource_t *newrsc = _scir_find_resource_unsorted(*resource_p, *resource_nr_p, restype, resnumber);
 		int fsize = file.size();
 		if (fsize < 3) {

@@ -34,34 +34,34 @@ namespace Sci {
 #define ADLIB_VOICES 12
 
 typedef struct _sci_adlib_def {
-	guint8 keyscale1;       /* 0-3 !*/
-	guint8 freqmod1;        /* 0-15 !*/
-	guint8 feedback1;       /* 0-7 !*/
-	guint8 attackrate1;     /* 0-15 !*/
-	guint8 sustainvol1;     /* 0-15 !*/
-	guint8 envelope1;       /* t/f !*/
-	guint8 decayrate1;      /* 0-15 !*/
-	guint8 releaserate1;    /* 0-15 !*/
-	guint8 volume1;         /* 0-63 !*/
-	guint8 ampmod1;         /* t/f !*/
-	guint8 vibrato1;        /* t/f !*/
-	guint8 keybdscale1;     /* t/f !*/
-	guint8 algorithm1;      /* 0,1 REVERSED */
-	guint8 keyscale2;       /* 0-3 !*/
-	guint8 freqmod2;        /* 0-15 !*/
-	guint8 feedback2;       /* 0-7 UNUSED */
-	guint8 attackrate2;     /* 0-15 !*/
-	guint8 sustainvol2;     /* 0-15 !*/
-	guint8 envelope2;       /* t/f !*/
-	guint8 decayrate2;      /* 0-15 !*/
-	guint8 releaserate2;    /* 0-15 !*/
-	guint8 volume2;         /* 0-63 !*/
-	guint8 ampmod2;         /* t/f !*/
-	guint8 vibrato2;        /* t/f !*/
-	guint8 keybdscale2;     /* t/f !*/
-	guint8 algorithm2;      /* 0,1 UNUSED */
-	guint8 waveform1;       /* 0-3 !*/
-	guint8 waveform2;       /* 0-3 !*/
+	uint8 keyscale1;       /* 0-3 !*/
+	uint8 freqmod1;        /* 0-15 !*/
+	uint8 feedback1;       /* 0-7 !*/
+	uint8 attackrate1;     /* 0-15 !*/
+	uint8 sustainvol1;     /* 0-15 !*/
+	uint8 envelope1;       /* t/f !*/
+	uint8 decayrate1;      /* 0-15 !*/
+	uint8 releaserate1;    /* 0-15 !*/
+	uint8 volume1;         /* 0-63 !*/
+	uint8 ampmod1;         /* t/f !*/
+	uint8 vibrato1;        /* t/f !*/
+	uint8 keybdscale1;     /* t/f !*/
+	uint8 algorithm1;      /* 0,1 REVERSED */
+	uint8 keyscale2;       /* 0-3 !*/
+	uint8 freqmod2;        /* 0-15 !*/
+	uint8 feedback2;       /* 0-7 UNUSED */
+	uint8 attackrate2;     /* 0-15 !*/
+	uint8 sustainvol2;     /* 0-15 !*/
+	uint8 envelope2;       /* t/f !*/
+	uint8 decayrate2;      /* 0-15 !*/
+	uint8 releaserate2;    /* 0-15 !*/
+	uint8 volume2;         /* 0-63 !*/
+	uint8 ampmod2;         /* t/f !*/
+	uint8 vibrato2;        /* t/f !*/
+	uint8 keybdscale2;     /* t/f !*/
+	uint8 algorithm2;      /* 0,1 UNUSED */
+	uint8 waveform1;       /* 0-3 !*/
+	uint8 waveform2;       /* 0-3 !*/
 } adlib_def;
 
 typedef unsigned char adlib_instr[12];
@@ -69,7 +69,7 @@ typedef unsigned char adlib_instr[12];
 extern adlib_instr adlib_sbi[96];
 
 /** Converts a raw SCI adlib instrument into the adlib register format. */
-void make_sbi(adlib_def *one, guint8 *buffer);
+void make_sbi(adlib_def *one, uint8 *buffer);
 
 } // End of namespace Sci
 

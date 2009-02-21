@@ -216,7 +216,7 @@ typedef mem_obj_t *mem_obj_ptr;
 // Unused types
 /*
 TYPE long "long" LIKE int;
-TYPE gint16 "gint16" LIKE int;
+TYPE int16 "int16" LIKE int;
 
 RECORD synonym_t "synonym_t" {
 	int replaceant;
@@ -845,7 +845,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 				load_script(s, i);
 				scr->locals_block = scr->locals_segment == 0 ? NULL : &s->seg_manager.heap[scr->locals_segment]->data.locals;
-				scr->export_table = (guint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
+				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
 				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
 				scr->code = NULL;
 				scr->code_blocks_nr = 0;
@@ -877,8 +877,8 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 
 					if (self->sci1_1) {
-						guint16 *funct_area = (guint16 *) (scr->buf + getUInt16( data + 6 ));
-						guint16 *prop_area = (guint16 *) (scr->buf + getUInt16( data + 4 ));
+						uint16 *funct_area = (uint16 *) (scr->buf + getUInt16( data + 6 ));
+						uint16 *prop_area = (uint16 *) (scr->buf + getUInt16( data + 4 ));
 
 						scr->objects[j].base_method = funct_area;
 						scr->objects[j].base_vars = prop_area;
@@ -896,8 +896,8 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						scr->objects[j].variable_names_nr = base_obj->variables_nr;
 						scr->objects[j].base_obj = base_obj->base_obj;
 
-						scr->objects[j].base_method = (guint16 *) (data + funct_area);
-						scr->objects[j].base_vars = (guint16 *) (data + scr->objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
+						scr->objects[j].base_method = (uint16 *) (data + funct_area);
+						scr->objects[j].base_vars = (uint16 *) (data + scr->objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 					}
 				}
 			}

@@ -87,20 +87,20 @@ char *sci_strndup(const char *src, size_t length) {
 
 //-------- Refcounting ----------
 
-#define REFCOUNT_OVERHEAD (sizeof(guint32) * 3)
+#define REFCOUNT_OVERHEAD (sizeof(uint32) * 3)
 #define REFCOUNT_MAGIC_LIVE_1 0xebdc1741
 #define REFCOUNT_MAGIC_LIVE_2 0x17015ac9
 #define REFCOUNT_MAGIC_DEAD_1 0x11dead11
 #define REFCOUNT_MAGIC_DEAD_2 0x22dead22
 
-#define REFCOUNT_CHECK(p) ((((guint32 *)(p))[-3] == REFCOUNT_MAGIC_LIVE_2) && (((guint32 *)(p))[-1] == REFCOUNT_MAGIC_LIVE_1))
+#define REFCOUNT_CHECK(p) ((((uint32 *)(p))[-3] == REFCOUNT_MAGIC_LIVE_2) && (((uint32 *)(p))[-1] == REFCOUNT_MAGIC_LIVE_1))
 
-#define REFCOUNT(p) (((guint32 *)p)[-2])
+#define REFCOUNT(p) (((uint32 *)p)[-2])
 
 #undef TRACE_REFCOUNT
 
 extern void *sci_refcount_alloc(size_t length) {
-	guint32 *data = (guint32 *)sci_malloc(REFCOUNT_OVERHEAD + length);
+	uint32 *data = (uint32 *)sci_malloc(REFCOUNT_OVERHEAD + length);
 #ifdef TRACE_REFCOUNT
 	fprintf(stderr, "[] REF: Real-alloc at %p\n", data);
 #endif
@@ -136,7 +136,7 @@ extern void sci_refcount_decref(void *data) {
 	if (!REFCOUNT_CHECK(data)) {
 		BREAKPOINT();
 	} else if (--REFCOUNT(data) == 0) {
-		guint32 *fdata = (guint32 *)data;
+		uint32 *fdata = (uint32 *)data;
 
 		fdata[-1] = REFCOUNT_MAGIC_DEAD_1;
 		fdata[-3] = REFCOUNT_MAGIC_DEAD_2;

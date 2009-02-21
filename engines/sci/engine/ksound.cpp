@@ -176,7 +176,7 @@ process_sound_events(EngineState *s) { /* Get all sound events, apply their chan
 reg_t
 kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = KP_ALT(1, NULL_REG);
-	word command = UKPV(0);
+	uint16 command = UKPV(0);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
@@ -367,7 +367,7 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 
 reg_t
 kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	word command = UKPV(0);
+	uint16 command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
@@ -672,7 +672,7 @@ sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 
 reg_t
 kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	word command = UKPV(0);
+	uint16 command = UKPV(0);
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?

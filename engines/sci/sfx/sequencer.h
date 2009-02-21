@@ -32,7 +32,6 @@
 #include "sci/tools.h"	// For GTimeVal
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/device.h"
-#include "sci/include/scitypes.h"
 
 namespace Sci {
 
@@ -101,7 +100,7 @@ typedef struct _sfx_sequencer {
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
 
-	int (*volume)(guint8 volume);  /* OPTIONAL -- can be NULL */
+	int (*volume)(uint8 volume);  /* OPTIONAL -- can be NULL */
 	/* Sets the sequencer volume
 	** Parameters; (byte) volume: The volume to set, with 0 being mute and 127 full volume
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
@@ -115,7 +114,7 @@ typedef struct _sfx_sequencer {
 
 	int patchfile, patchfile2; /* Patch resources to pass into the call to open(),
 		       ** if present, or SFX_SEQ_PATCHFILE_NONE  */
-	guint8 playmask; /* SCI 'playflag' mask to determine which SCI song channels
+	uint8 playmask; /* SCI 'playflag' mask to determine which SCI song channels
 			 ** this sequencer should play */
 	/* 0x01	-- MT-32
 	** 0x02	-- Yamaha FB-01
@@ -124,8 +123,8 @@ typedef struct _sfx_sequencer {
 	** 0x10	-- Tandy 3-voice
 	** 0x20 -- PC speaker
 	*/
-	guint8 play_rhythm; /* Plays the rhythm channel? */
-	gint8 polyphony; /* Device polyphony (# of voices) */
+	uint8 play_rhythm; /* Plays the rhythm channel? */
+	int8 polyphony; /* Device polyphony (# of voices) */
 
 	int min_write_ahead_ms; /* Minimal write-ahead, in milliseconds */
 	/* Note that write-ahead is tuned automatically; this enforces a lower limit */

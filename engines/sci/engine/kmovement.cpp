@@ -286,7 +286,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int x = GET_SEL32SV(client, x);
 	int y = GET_SEL32SV(client, y);
 	int oldx, oldy, destx, desty, dx, dy, bdi, bi1, bi2, movcnt, bdelta, axis;
-	word signal = GET_SEL32V(client, signal);
+	uint16 signal = GET_SEL32V(client, signal);
 	int completed = 0;
 	int max_movcnt = GET_SEL32V(client, moveSpeed);
 
@@ -384,7 +384,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, completed);
 }
 
-extern void _k_dirloop(reg_t obj, word angle, EngineState *s, int funct_nr, int argc, reg_t *argv);
+extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc, reg_t *argv);
 int is_heap_object(EngineState *s, reg_t pos);
 extern int get_angle(int xrel, int yrel);
 
@@ -505,7 +505,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
-			_k_dirloop(client, (word)angle, s, funct_nr, argc, argv);
+			_k_dirloop(client, (uint16)angle, s, funct_nr, argc, argv);
 		}
 	}
 

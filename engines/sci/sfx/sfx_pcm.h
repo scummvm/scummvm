@@ -29,7 +29,6 @@
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/sfx_timer.h"
 #include "sci/sfx/sfx_time.h"
-#include "sci/include/scitypes.h"
 
 namespace Sci {
 

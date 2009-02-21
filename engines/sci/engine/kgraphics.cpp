@@ -675,7 +675,7 @@ reg_t kPriCoord(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, PRIORITY_BAND_FIRST(priority));
 }
 
-void _k_dirloop(reg_t obj, word angle, EngineState *s, int funct_nr, int argc, reg_t *argv) {
+void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = GET_SEL32V(obj, view);
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
@@ -780,13 +780,13 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
 	list_t *cliplist = NULL;
 	gfxw_port_t *port = s->picture_port;
-	word signal;
+	uint16 signal;
 	int retval;
 
 	abs_rect_t abs_zone;
 	rect_t zone;
-	word edgehit;
-	word illegal_bits;
+	uint16 edgehit;
+	uint16 illegal_bits;
 
 	abs_zone.x = GET_SEL32SV(obj, brLeft);
 	abs_zone.xend = GET_SEL32SV(obj, brRight);
@@ -1362,7 +1362,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[1];
 
 	if (obj.segment) {
-		word ct_type = GET_SEL32V(obj, type);
+		uint16 ct_type = GET_SEL32V(obj, type);
 		switch (ct_type) {
 
 		case 0:
@@ -1564,7 +1564,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	case K_CONTROL_BUTTON:
 		SCIkdebug(SCIkGRAPHICS, "drawing button "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_button_control(s->port, obj, area, text, font_nr,
-		                          (gint8)(state & CONTROL_STATE_FRAMED), (gint8)inverse, (gint8)(state & CONTROL_STATE_GRAY)));
+		                          (int8)(state & CONTROL_STATE_FRAMED), (int8)inverse, (int8)(state & CONTROL_STATE_GRAY)));
 		break;
 
 	case K_CONTROL_TEXT:
@@ -1573,7 +1573,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		SCIkdebug(SCIkGRAPHICS, "drawing text "PREG" to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
-									(gint8)(!!(state & CONTROL_STATE_DITHER_FRAMED)), (gint8)inverse));
+									(int8)(!!(state & CONTROL_STATE_DITHER_FRAMED)), (int8)inverse));
 		break;
 
 	case K_CONTROL_EDIT:
@@ -1589,7 +1589,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 			update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
 
 		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (gint8)inverse));
+		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (int8)inverse));
 		break;
 
 	case K_CONTROL_ICON:
@@ -1597,7 +1597,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
-		                          (gint8)(state & CONTROL_STATE_FRAMED), (gint8)inverse));
+		                          (int8)(state & CONTROL_STATE_FRAMED), (int8)inverse));
 		break;
 
 	case K_CONTROL_CONTROL:
@@ -1635,7 +1635,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		}
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
-		                          list_top, selection, (gint8)inverse));
+		                          list_top, selection, (int8)inverse));
 		if (entries_nr)
 			free(entries_list);
 	}
@@ -2213,7 +2213,7 @@ void _k_draw_view_list(EngineState *s, gfxw_list_t *list, int flags) {
 			widget = gfxw_picviewize_dynview(widget);
 
 		if (GFXW_IS_DYN_VIEW(widget) && widget->ID) {
-			word signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
+			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				gfxw_hide_widget(GFXW(widget));

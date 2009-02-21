@@ -41,7 +41,7 @@ namespace Sci {
 static sfx_sequencer_t *gmseq;
 static fluid_settings_t* settings;
 static fluid_synth_t* synth;
-static guint8 status;
+static uint8 status;
 static char *soundfont = "/etc/midi/8MBGMSFX.SF2";
 static int rpn[16];
 
@@ -65,7 +65,7 @@ fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
 	if (buf[0] == 0xf0)
 		sciprintf("FluidSynth: Skipping sysex message.\n");
 	else if (len == 2) {
-		guint8 command, channel;
+		uint8 command, channel;
 
 		command = buf[0] & 0xf0;
 		channel = buf[0] & 0x0f;
@@ -78,7 +78,7 @@ fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
 			printf("FluidSynth: MIDI command [%02x %02x] not supported\n", buf[0], buf[1]);
 		}
 	} else if (len == 3) {
-		guint8 command, channel;
+		uint8 command, channel;
 
 		command = buf[0] & 0xf0;
 		channel = buf[0] & 0x0f;

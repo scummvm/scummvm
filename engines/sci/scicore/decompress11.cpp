@@ -35,13 +35,13 @@ namespace Sci {
 #define DDEBUG if (0) printf
 
 void decryptinit3();
-int decrypt3(guint8* dest, guint8* src, int length, int complength);
-int decrypt4(guint8* dest, guint8* src, int length, int complength);
+int decrypt3(uint8* dest, uint8* src, int length, int complength);
+int decrypt4(uint8* dest, uint8* src, int length, int complength);
 
 int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version) {
-	guint16 compressedLength;
-	guint16 compressionMethod;
-	guint8 *buffer;
+	uint16 compressedLength;
+	uint16 compressionMethod;
+	uint8 *buffer;
 
 	DDEBUG("d1");
 
@@ -75,7 +75,7 @@ int decompress11(resource_t *result, Common::ReadStream &stream, int sci_version
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (guint8*)sci_malloc(compressedLength);
+	buffer = (uint8*)sci_malloc(compressedLength);
 	result->data = (unsigned char*)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {

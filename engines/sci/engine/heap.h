@@ -32,7 +32,7 @@ namespace Sci {
 
 #define SCI_HEAP_SIZE 0x10000
 
-typedef guint16 heap_ptr;
+typedef uint16 heap_ptr;
 
 typedef struct {
 	byte *start;

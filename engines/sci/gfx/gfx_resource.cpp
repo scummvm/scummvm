@@ -206,7 +206,7 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 
 // Now construct the pixmap scaling functions
 #define EXTRA_BYTE_OFFSET 0
-#define SIZETYPE guint8
+#define SIZETYPE uint8
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_1
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_1
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_1
@@ -214,7 +214,7 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 #include "gfx_pixmap_scale.cpp"
 #undef COPY_BYTES
 
-#define SIZETYPE guint16
+#define SIZETYPE uint16
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_2
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_2
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_2
@@ -226,7 +226,7 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 # undef EXTRA_BYTE_OFFSET
 # define EXTRA_BYTE_OFFSET 1
 #endif // SCUMM_BIG_ENDIAN
-#define SIZETYPE guint32
+#define SIZETYPE uint32
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_3
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_3
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_3
@@ -238,7 +238,7 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 # define EXTRA_BYTE_OFFSET 0
 #endif // SCUMM_BIG_ENDIAN
 
-#define SIZETYPE guint32
+#define SIZETYPE uint32
 #define FUNCNAME _gfx_xlate_pixmap_unfiltered_4
 #define FUNCNAME_LINEAR _gfx_xlate_pixmap_linear_4
 #define FUNCNAME_TRILINEAR _gfx_xlate_pixmap_trilinear_4

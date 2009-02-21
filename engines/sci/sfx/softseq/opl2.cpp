@@ -99,28 +99,28 @@ static int ym3812_note[13] = {
 	0x2ae
 };
 
-static guint8 sci_adlib_vol_base[16] = {
+static uint8 sci_adlib_vol_base[16] = {
 	0x00, 0x11, 0x15, 0x19, 0x1D, 0x22, 0x26, 0x2A,
 	0x2E, 0x23, 0x37, 0x3B, 0x3F, 0x3F, 0x3F, 0x3F
 };
-static guint8 sci_adlib_vol_tables[16][64];
+static uint8 sci_adlib_vol_tables[16][64];
 
 /* back to your regularly scheduled definitions */
 
-static guint8 instr[MIDI_CHANNELS];
-static guint16 pitch[MIDI_CHANNELS];
-static guint8 vol[MIDI_CHANNELS];
-static guint8 pan[MIDI_CHANNELS];
+static uint8 instr[MIDI_CHANNELS];
+static uint16 pitch[MIDI_CHANNELS];
+static uint8 vol[MIDI_CHANNELS];
+static uint8 pan[MIDI_CHANNELS];
 static int free_voices = ADLIB_VOICES;
-static guint8 oper_note[ADLIB_VOICES];
-static guint8 oper_chn[ADLIB_VOICES];
+static uint8 oper_note[ADLIB_VOICES];
+static uint8 oper_chn[ADLIB_VOICES];
 
 static FM_OPL *ym3812_L = NULL;
 static FM_OPL *ym3812_R = NULL;
 
-static guint8 adlib_reg_L[256];
-static guint8 adlib_reg_R[256];
-static guint8 adlib_master;
+static uint8 adlib_reg_L[256];
+static uint8 adlib_reg_R[256];
+static uint8 adlib_master;
 
 
 /* initialise note/operator lists, etc. */
@@ -131,7 +131,7 @@ void adlibemu_init_lists() {
 
 	for (i = 0 ; i < 16 ; i++) {
 		for (j = 0; j < 64 ; j++) {
-			sci_adlib_vol_tables[i][j] = ((guint16)sci_adlib_vol_base[i]) * j / 63;
+			sci_adlib_vol_tables[i][j] = ((uint16)sci_adlib_vol_base[i]) * j / 63;
 		}
 	}
 
@@ -171,14 +171,14 @@ static inline int opl_write(int a, int v) {
 }
 
 /*
-static inline guint8 opl_read (int a)
+static inline uint8 opl_read (int a)
 {
   OPLWrite (ym3812_L, 0x388, a);
   return OPLRead (ym3812_L, 0x389);
 }
 */
 
-void synth_setpatch(int voice, guint8 *data) {
+void synth_setpatch(int voice, uint8 *data) {
 	int i;
 
 	opl_write(0xBD, 0);
@@ -201,7 +201,7 @@ void synth_setpatch(int voice, guint8 *data) {
 }
 
 void synth_setvolume_L(int voice, int volume) {
-	gint8 level1, level2;
+	int8 level1, level2;
 
 	level1 = ~adlib_reg_L[register_base[2] + register_offset[voice]] & 0x3f;
 	level2 = ~adlib_reg_L[register_base[3] + register_offset[voice]] & 0x3f;
@@ -227,17 +227,17 @@ void synth_setvolume_L(int voice, int volume) {
 	/* algorithm-dependent; we may need to set both operators. */
 	if (adlib_reg_L[register_base[10] + voice] & 1)
 		opl_write_L(register_base[2] + register_offset[voice],
-		            (guint8)((~level1 &0x3f) |
+		            (uint8)((~level1 &0x3f) |
 		                     (adlib_reg_L[register_base[2] + register_offset[voice]]&0xc0)));
 
 	opl_write_L(register_base[3] + register_offset[voice],
-	            (guint8)((~level2 &0x3f) |
+	            (uint8)((~level2 &0x3f) |
 	                     (adlib_reg_L[register_base[3] + register_offset[voice]]&0xc0)));
 
 }
 
 void synth_setvolume_R(int voice, int volume) {
-	gint8 level1, level2;
+	int8 level1, level2;
 
 	level1 = ~adlib_reg_R[register_base[2] + register_offset[voice]] & 0x3f;
 	level2 = ~adlib_reg_R[register_base[3] + register_offset[voice]] & 0x3f;
@@ -263,11 +263,11 @@ void synth_setvolume_R(int voice, int volume) {
 	/* now for the other side. */
 	if (adlib_reg_R[register_base[10] + voice] & 1)
 		opl_write_R(register_base[2] + register_offset[voice],
-		            (guint8)((~level1 &0x3f) |
+		            (uint8)((~level1 &0x3f) |
 		                     (adlib_reg_R[register_base[2] + register_offset[voice]]&0xc0)));
 
 	opl_write_R(register_base[3] + register_offset[voice],
-	            (guint8)((~level2 &0x3f) |
+	            (uint8)((~level2 &0x3f) |
 	                     (adlib_reg_R[register_base[3] + register_offset[voice]]&0xc0)));
 
 }
@@ -423,9 +423,9 @@ void test_adlib() {
 
 	int voice = 0;
 #if 0
-	guint8 data[] = { 0x25, 0x21, 0x48, 0x48, 0xf0, 0xf2, 0xf0, 0xa5, 0x00, 0x00, 0x06 };
+	uint8 data[] = { 0x25, 0x21, 0x48, 0x48, 0xf0, 0xf2, 0xf0, 0xa5, 0x00, 0x00, 0x06 };
 #else
-	guint8 *data = adlib_sbi[0x0a];
+	uint8 *data = adlib_sbi[0x0a];
 #endif
 
 #if 1
@@ -469,8 +469,8 @@ void test_adlib() {
    We assume 16-bit stereo frames (ie 4 bytes)
 */
 static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
-	gint16 *buffer = (gint16 *) dest;
-	gint16 *ptr = buffer;
+	int16 *buffer = (int16 *) dest;
+	int16 *ptr = buffer;
 
 	if (!ready) {
 		error("synth_mixer(): !ready \n");
@@ -580,8 +580,8 @@ int midi_adlibemu_reverb(short param) {
 	return 0;
 }
 
-int midi_adlibemu_event(guint8 command, guint8 note, guint8 velocity, guint32 delta) {
-	guint8 channel, oper;
+int midi_adlibemu_event(uint8 command, uint8 note, uint8 velocity, uint32 delta) {
+	uint8 channel, oper;
 
 	channel = command & 0x0f;
 	oper = command & 0xf0;
@@ -628,9 +628,9 @@ int midi_adlibemu_event(guint8 command, guint8 note, guint8 velocity, guint32 de
 	return 0;
 }
 
-int midi_adlibemu_event2(guint8 command, guint8 param, guint32 delta) {
-	guint8 channel;
-	guint8 oper;
+int midi_adlibemu_event2(uint8 command, uint8 param, uint32 delta) {
+	uint8 channel;
+	uint8 oper;
 
 	channel = command & 0x0f;
 	oper = command & 0xf0;
@@ -649,9 +649,9 @@ int midi_adlibemu_event2(guint8 command, guint8 param, guint32 delta) {
 }
 
 static void opl2_volume(sfx_softseq_t *self, int volume) {
-	guint8 i;
+	uint8 i;
 
-	i = (guint8)volume * 15 / 100;
+	i = (uint8)volume * 15 / 100;
 
 	adlib_master = i;
 

@@ -140,11 +140,11 @@ int sm_script_is_loaded(SegManager* self, int id, id_flag flag);
 //				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 //				but less convenient.
 
-guint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg);
+uint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg);
 // Validate whether the specified public function is exported by the script in the specified segment
 // Parameters:	(int) pubfunct: Index of the function to validate
 //		(int) seg: Segment ID of the script the check is to be performed for
-// Returns   :  (guint16) 0 if the public function is invalid, its offset into the script's segment
+// Returns   :  (uint16) 0 if the public function is invalid, its offset into the script's segment
 //			  otherwise
 
 int sm_seg_get(SegManager* self, int script_nr);
@@ -329,16 +329,16 @@ void sm_free_clone(SegManager *self, reg_t addr);
 
 // Not all of these functions are fully operational for clones ATM 
 
-gint16 sm_get_heap(SegManager* self, reg_t reg);
+int16 sm_get_heap(SegManager* self, reg_t reg);
 // Retrieves a 16 bit value from within a script's heap representation
 // Parameters: (reg_t) reg: The address to read from
-// Returns   : (gint16) The value read from the specified location
+// Returns   : (int16) The value read from the specified location
 
 
-void sm_put_heap(SegManager *self, reg_t reg, gint16 value);
+void sm_put_heap(SegManager *self, reg_t reg, int16 value);
 // Writes a 16 bit value into a script's heap representation
 // Parameters: (reg_t) reg: The address to write to
-//	       (gint16) value: The value to write
+//	       (int16) value: The value to write
 
 
 void sm_mcpy_in_out(SegManager* self, int dst, const void *src, size_t n, int id, int flag);

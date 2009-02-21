@@ -54,8 +54,6 @@
 #endif
 #define VERSION "0.6.4"
 
-#include "sci/include/scitypes.h"
-
 // FIXME: Mostly for close() in lots of places. Get rid of this!
 #ifndef _MSC_VER
 #include <unistd.h>

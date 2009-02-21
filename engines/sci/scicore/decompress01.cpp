@@ -39,17 +39,17 @@ namespace Sci {
 // TODO: Clean up, re-organize, improve speed-wise */
 
 struct tokenlist {
-	guint8 data;
-	gint16 next;
+	uint8 data;
+	int16 next;
 } tokens[0x1004];
 
-static gint8 stak[0x1014] = {0};
-static gint8 lastchar = 0;
-static gint16 stakptr = 0;
-static guint16 s_numbits, s_bitstring, lastbits, decryptstart;
-static gint16 curtoken, endtoken;
+static int8 stak[0x1014] = {0};
+static int8 lastchar = 0;
+static int16 stakptr = 0;
+static uint16 s_numbits, s_bitstring, lastbits, decryptstart;
+static int16 curtoken, endtoken;
 
-uint32 gbits(int numbits,  guint8 * data, int dlen);
+uint32 gbits(int numbits,  uint8 * data, int dlen);
 
 void decryptinit3() {
 	int i;
@@ -67,8 +67,8 @@ void decryptinit3() {
 	}
 }
 
-int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
-	static gint16 token;
+int decrypt3(uint8 *dest, uint8 *src, int length, int complength) {
+	static int16 token;
 	while (length != 0) {
 		switch (decryptstart) {
 		case 0:
@@ -133,10 +133,10 @@ int decrypt3(guint8 *dest, guint8 *src, int length, int complength) {
 	return 0;
 }
 
-guint32 gbits(int numbits,  guint8 * data, int dlen) {
+uint32 gbits(int numbits,  uint8 * data, int dlen) {
 	int place; // indicates location within byte
-	guint32 bitstring;
-	static guint32 whichbit = 0;
+	uint32 bitstring;
+	static uint32 whichbit = 0;
 	int i;
 
 	if (numbits == 0) {
@@ -526,7 +526,7 @@ int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (guint8 *)sci_malloc(compressedLength);
+	buffer = (uint8 *)sci_malloc(compressedLength);
 	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {

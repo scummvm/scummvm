@@ -71,8 +71,8 @@ typedef struct instrument {
 	int transpose;
 	/* Envelope */
 	envelope_t envelope[4];
-	sbyte *samples;
-	sbyte *loop;
+	int8 *samples;
+	int8 *loop;
 } instrument_t;
 
 typedef struct bank {
@@ -141,14 +141,14 @@ static void set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
 		channel->velocity = envelope[phase - 1].target;
 }
 
-static inline int interpolate(sbyte *samples, frac_t offset) {
+static inline int interpolate(int8 *samples, frac_t offset) {
 	int x = fracToInt(offset);
 	int diff = (samples[x + 1] - samples[x]) << 8;
 
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
-static void play_instrument(gint16 *dest, channel_t *channel, int count) {
+static void play_instrument(int16 *dest, channel_t *channel, int count) {
 	int index = 0;
 	int vol = hw_channels[channel->hw_channel].volume;
 	instrument_t *instrument = bank.instruments[channel->instrument];
@@ -157,7 +157,7 @@ static void play_instrument(gint16 *dest, channel_t *channel, int count) {
 		/* Available source samples until end of segment */
 		frac_t lin_avail;
 		int seg_end, rem, i, amount;
-		sbyte *samples;
+		int8 *samples;
 
 		if (channel->looping) {
 			samples = instrument->loop;
@@ -352,11 +352,11 @@ static void start_note(int ch, int note, int velocity) {
 	channels[channel].looping = 0;
 }
 
-static gint16 read_int16(byte *data) {
+static int16 read_int16(byte *data) {
 	return (data[0] << 8) | data[1];
 }
 
-static gint32 read_int32(byte *data) {
+static int32 read_int32(byte *data) {
 	return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 }
 
@@ -380,15 +380,15 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 	seg_size[2] = read_int16(header + 47) * 2;
 
 	instrument->mode = header[33];
-	instrument->transpose = (gint8) header[34];
+	instrument->transpose = (int8) header[34];
 	for (i = 0; i < 4; i++) {
-		int length = (gint8) header[49 + i];
+		int length = (int8) header[49 + i];
 
 		if (length == 0 && i > 0)
 			length = 256;
 
 		instrument->envelope[i].length = length * FREQUENCY / 60;
-		instrument->envelope[i].delta = (gint8) header[53 + i];
+		instrument->envelope[i].delta = (int8) header[53 + i];
 		instrument->envelope[i].target = header[57 + i];
 	}
 	/* Final target must be 0 */
@@ -410,7 +410,7 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 	sciprintf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
 	sciprintf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
-	instrument->samples = (sbyte *) sci_malloc(size + 1);
+	instrument->samples = (int8 *) sci_malloc(size + 1);
 	if (fread(instrument->samples, 1, size, file) < (unsigned int)size) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read instrument samples\n");
 		return NULL;
@@ -433,7 +433,7 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 		instrument->size = seg_size[0];
 		instrument->loop_size = seg_size[1];
 
-		instrument->loop = (sbyte*)sci_malloc(instrument->loop_size + 1);
+		instrument->loop = (int8*)sci_malloc(instrument->loop_size + 1);
 		memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 		instrument->samples[instrument->size] = instrument->loop[0];
@@ -569,8 +569,8 @@ static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 
 void ami_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int i, j;
-	gint16 *buf = (gint16 *) dest;
-	gint16 *buffers = (gint16*)malloc(len * 2 * CHANNELS_NR);
+	int16 *buf = (int16 *) dest;
+	int16 *buffers = (int16*)malloc(len * 2 * CHANNELS_NR);
 
 	memset(buffers, 0, len * 2 * CHANNELS_NR);
 	memset(dest, 0, len * 4);

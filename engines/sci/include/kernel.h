@@ -57,11 +57,11 @@ typedef struct {
 
 #define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->selector_map._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
-#define GET_SEL32SV(_o_, _slc_) ((gint16)(GET_SEL32(_o_, _slc_).offset))
+#define GET_SEL32SV(_o_, _slc_) ((int16)(GET_SEL32(_o_, _slc_).offset))
 /* Retrieves a selector from an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be read from
 **             (selector_name) selector: The selector to read
-** Returns   : (gint16/guint16/reg_t) The selector value
+** Returns   : (int16/uint16/reg_t) The selector value
 ** This macro halts on error. 'selector' must be a selector name registered in vm.h's
 ** selector_map_t and mapped in script.c.
 */
@@ -71,7 +71,7 @@ typedef struct {
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
-**             (gint16) value: The value to write
+**             (int16) value: The value to write
 ** Returns   : (void)
 ** This macro halts on error. 'selector' must be a selector name registered in vm.h's
 ** selector_map_t and mapped in script.c.
@@ -140,8 +140,8 @@ bool is_object(EngineState *s, reg_t obj);
 
 
 #define KP_ALT(x, alt) ((x < argc)? argv[x] : (alt))
-#define KP_UINT(x) ((guint16) x.offset)
-#define KP_SINT(x) ((gint16) x.offset)
+#define KP_UINT(x) ((uint16) x.offset)
+#define KP_SINT(x) ((int16) x.offset)
 
 
 #define SKPV(x) KP_SINT(argv[x])

@@ -528,7 +528,7 @@ static void sm_mcpy_out_in(SegManager *self, void *dst, const int src, size_t n,
 }
 #endif
 
-gint16 sm_get_heap(SegManager *self, reg_t reg) {
+int16 sm_get_heap(SegManager *self, reg_t reg) {
 	mem_obj_t *mem_obj;
 	mem_obj_enum mem_type;
 
@@ -538,7 +538,7 @@ gint16 sm_get_heap(SegManager *self, reg_t reg) {
 
 	switch (mem_type) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < (guint16)mem_obj->data.script.buf_size, "invalid offset\n");
+		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset\n");
 		return (mem_obj->data.script.buf[reg.offset] | (mem_obj->data.script.buf[reg.offset+1]) << 8);
 	case MEM_OBJ_CLONES:
 		sciprintf("memcpy for clones hasn't been implemented yet\n");
@@ -550,7 +550,7 @@ gint16 sm_get_heap(SegManager *self, reg_t reg) {
 	return 0; // never get here
 }
 
-void sm_put_heap(SegManager *self, reg_t reg, gint16 value) {
+void sm_put_heap(SegManager *self, reg_t reg, int16 value) {
 	mem_obj_t *mem_obj;
 	mem_obj_enum mem_type;
 
@@ -560,7 +560,7 @@ void sm_put_heap(SegManager *self, reg_t reg, gint16 value) {
 
 	switch (mem_type) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < (guint16)mem_obj->data.script.buf_size, "invalid offset");
+		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset");
 		mem_obj->data.script.buf[reg.offset] = value & 0xff;
 		mem_obj->data.script.buf[reg.offset + 1] = value >> 8;
 		break;
@@ -636,7 +636,7 @@ void sm_set_export_table_offset(SegManager *self, int offset, int id, id_flag fl
 
 	GET_SEGID();
 	if (offset) {
-		scr->export_table = (guint16 *)(scr->buf + offset + 2);
+		scr->export_table = (uint16 *)(scr->buf + offset + 2);
 		scr->exports_nr = getUInt16((byte *)(scr->export_table - 1));
 	} else {
 		scr->export_table = NULL;
@@ -668,7 +668,7 @@ void sm_set_export_width(SegManager *self, int flag) {
 
 #if 0
 // Unreferenced - removed
-static guint16 *sm_get_export_table_offset(SegManager *self, int id, int flag, int *max) {
+static uint16 *sm_get_export_table_offset(SegManager *self, int id, int flag, int *max) {
 	GET_SEGID();
 	if (max)
 		*max = self->heap[id]->data.script.exports_nr;
@@ -785,7 +785,7 @@ void sm_script_relocate(SegManager *self, reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < (guint16)scr->buf_size && getUInt16(scr->buf + block.offset) * 2 + block.offset < (guint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->buf_size && getUInt16(scr->buf + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
 	count = getUInt16(scr->buf + block.offset);
@@ -837,7 +837,7 @@ void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < (guint16)scr->heap_size && getUInt16(scr->heap_start + block.offset) * 2 + block.offset < (guint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->heap_size && getUInt16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
 	if (scr->relocated)
@@ -934,7 +934,7 @@ static object_t *sm_script_obj_init0(SegManager *self, EngineState *s, reg_t obj
 		obj->methods_nr = functions_nr;
 		obj->base = scr->buf;
 		obj->base_obj = data;
-		obj->base_method = (guint16 *)(data + funct_area);
+		obj->base_method = (uint16 *)(data + funct_area);
 		obj->base_vars = NULL;
 
 		for (i = 0; i < variables_nr; i++)
@@ -955,7 +955,7 @@ static object_t *sm_script_obj_init11(SegManager *self, EngineState *s, reg_t ob
 
 	scr = &(mobj->data.script);
 
-	VERIFY(base < (guint16)scr->buf_size, "Attempt to initialize object beyond end of script\n");
+	VERIFY(base < (uint16)scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
 	if (!scr->objects) {
 		scr->objects_allocated = DEFAULT_OBJECTS;
@@ -971,12 +971,12 @@ static object_t *sm_script_obj_init11(SegManager *self, EngineState *s, reg_t ob
 
 	obj = scr->objects + id;
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < (guint16)scr->buf_size, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < (uint16)scr->buf_size, "Function area pointer stored beyond end of script\n");
 
 	{
 		byte *data = (byte *)(scr->buf + base);
-		guint16 *funct_area = (guint16 *)(scr->buf + getUInt16(data + 6));
-		guint16 *prop_area = (guint16 *)(scr->buf + getUInt16(data + 4));
+		uint16 *funct_area = (uint16 *)(scr->buf + getUInt16(data + 6));
+		uint16 *prop_area = (uint16 *)(scr->buf + getUInt16(data + 4));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
@@ -1067,7 +1067,7 @@ void sm_script_initialise_locals(SegManager *self, reg_t location) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(location.offset + 1 < (guint16)scr->buf_size, "Locals beyond end of script\n");
+	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
 	if (self->sci1_1)
 		count = getUInt16(scr->buf + location.offset - 2);
@@ -1228,9 +1228,9 @@ seg_id_t sm_allocate_reserved_segment(SegManager *self, char *src_name) {
 	return segid;
 }
 
-guint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg) {
+uint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg) {
 	script_t* script;
-	guint16 offset;
+	uint16 offset;
 	VERIFY(sm_check(self, seg), "invalid seg id");
 	VERIFY(self->heap[seg]->type == MEM_OBJ_SCRIPT, "Can only validate exports on scripts");
 

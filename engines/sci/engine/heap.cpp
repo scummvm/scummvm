@@ -46,12 +46,12 @@ static void set_next(heap_t *h, int block_pos, int next) {
 
 static unsigned int get_size(heap_t *h, int block_pos) {
 	assert_in_range(block_pos);
-	return (guint16)getInt16(h->start + block_pos);
+	return (uint16)getInt16(h->start + block_pos);
 }
 
 static unsigned int get_next(heap_t *h, int block_pos) {
 	assert_in_range(block_pos);
-	return (guint16)getInt16(h->start + block_pos + 2);
+	return (uint16)getInt16(h->start + block_pos + 2);
 }
 
 // Allocates a new heap

@@ -114,13 +114,13 @@ struct gfx_mode_t {
 /** Pixmap-specific color entries */
 struct  gfx_pixmap_color_t{
 	int global_index; /* Global index color or GFX_COLOR_INDEX_UNMAPPED. */
-	guint8 r, g, b; /* Real color */
+	uint8 r, g, b; /* Real color */
 };
 
 /** Full color */
 struct gfx_color_t {
 	gfx_pixmap_color_t visual;
-	guint8 alpha; /* transparency = (1-opacity) */
+	uint8 alpha; /* transparency = (1-opacity) */
 	signed char priority, control;
 	byte mask; /* see mask values below */
 };

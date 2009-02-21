@@ -634,7 +634,7 @@ static int c_vr(EngineState *s) {
 		break;
 
 		case KSIG_ARITHMETIC:
-			sciprintf("arithmetic value\n  %d (%04x)\n", (gint16) reg.offset, reg.offset);
+			sciprintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
 			break;
 
 		default:
@@ -1244,7 +1244,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
-	word param_value;
+	uint16 param_value;
 	int opsize;
 	int opcode;
 	int bytecount = 1;
@@ -1428,7 +1428,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int restmod = *p_restadjust;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
 			reg_t *sb = *p_sp;
-			word selector;
+			uint16 selector;
 			reg_t *val_ref;
 			reg_t fun_ref;
 

@@ -58,7 +58,7 @@ struct mixer_private {
 	sfx_timestamp_t outbuf_timestamp; /* Timestamp associated with the output buffer */
 	int have_outbuf_timestamp; /* Whether we really _have_ an associated timestamp */
 	byte *writebuf; /* Buffer we're supposed to write to */
-	gint32 *compbuf_l, *compbuf_r; /* Intermediate buffers for computation */
+	int32 *compbuf_l, *compbuf_r; /* Intermediate buffers for computation */
 	int lastbuf_len; /* Number of frames stored in the last buffer */
 
 	long skew; /* Millisecond relative to which we compute time. This is the millisecond
@@ -81,8 +81,8 @@ static int mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	self->private_bits = new mixer_private();
 	P->outbuf = P->writebuf = NULL;
 	P->lastbuf_len = 0;
-	P->compbuf_l = (gint32*)sci_malloc(sizeof(gint32) * device->buf_size);
-	P->compbuf_r = (gint32*)sci_malloc(sizeof(gint32) * device->buf_size);
+	P->compbuf_l = (int32*)sci_malloc(sizeof(int32) * device->buf_size);
+	P->compbuf_r = (int32*)sci_malloc(sizeof(int32) * device->buf_size);
 	P->played_this_second = 0;
 	P->paused = 0;
 #ifdef DEBUG
@@ -263,8 +263,8 @@ static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 	byte *lchan, *rchan = NULL;
 	/* Don't see how this could possibly wind up being
 	** used w/o initialisation, but you never know... */
-	gint32 *lsrc = P->compbuf_l;
-	gint32 *rsrc = P->compbuf_r;
+	int32 *lsrc = P->compbuf_l;
+	int32 *rsrc = P->compbuf_r;
 	int frame_size = SFX_PCM_FRAME_SIZE(conf);
 
 
@@ -523,8 +523,8 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	sfx_pcm_feed_t *f = fs->feed;
 	sfx_pcm_config_t conf = f->conf;
 	int use_16 = conf.format & SFX_PCM_FORMAT_16;
-	gint32 *lchan = P->compbuf_l;
-	gint32 *rchan = P->compbuf_r;
+	int32 *lchan = P->compbuf_l;
+	int32 *rchan = P->compbuf_r;
 	int frame_size = f->frame_size;
 	byte *wr_dest = fs->buf + (frame_size * fs->frame_bufstart);
 	byte *lsrc = fs->buf;
@@ -601,8 +601,8 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 		case PCM_FEED_IDLE:
 			/* Clear audio buffer, if neccessary, and return */
 			if (!add_result) {
-				memset(P->compbuf_l, 0, sizeof(gint32) * len);
-				memset(P->compbuf_r, 0, sizeof(gint32) * len);
+				memset(P->compbuf_l, 0, sizeof(int32) * len);
+				memset(P->compbuf_r, 0, sizeof(int32) * len);
 			}
 			return;
 
@@ -632,8 +632,8 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	/* Skip at the beginning: */
 	if (delay_frames) {
 		if (!add_result) {
-			memset(lchan, 0, sizeof(gint32) * delay_frames);
-			memset(rchan, 0, sizeof(gint32) * delay_frames);
+			memset(lchan, 0, sizeof(int32) * delay_frames);
+			memset(rchan, 0, sizeof(int32) * delay_frames);
 		}
 		lchan += delay_frames;
 		rchan += delay_frames;
@@ -747,8 +747,8 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 
 	/* If neccessary, zero out the rest */
 	if (write_offset < len && !add_result) {
-		memset(lchan, 0, sizeof(gint32) * (len - write_offset));
-		memset(rchan, 0, sizeof(gint32) * (len - write_offset));
+		memset(lchan, 0, sizeof(int32) * (len - write_offset));
+		memset(rchan, 0, sizeof(int32) * (len - write_offset));
 	}
 
 	/* Save whether we have a partial frame still stored */
@@ -869,8 +869,8 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 			} while (frames_skip >= 0);
 
 		} else { /* Zero it out */
-			memset(P->compbuf_l, 0, sizeof(gint32) * buflen);
-			memset(P->compbuf_r, 0, sizeof(gint32) * buflen);
+			memset(P->compbuf_l, 0, sizeof(int32) * buflen);
+			memset(P->compbuf_r, 0, sizeof(int32) * buflen);
 		}
 
 #if (DEBUG >= 1)

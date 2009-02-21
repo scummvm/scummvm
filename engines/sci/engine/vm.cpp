@@ -245,10 +245,10 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define POP32() (*(validate_stack_addr(s, --(xs->sp))))
 
 // Getting instruction parameters
-#define GET_OP_BYTE() ((guint8)code_buf[(xs->addr.pc.offset)++])
+#define GET_OP_BYTE() ((uint8)code_buf[(xs->addr.pc.offset)++])
 #define GET_OP_WORD() (getUInt16(code_buf + ((xs->addr.pc.offset) += 2) - 2))
 #define GET_OP_FLEX() ((opcode & 1)? GET_OP_BYTE() : GET_OP_WORD())
-#define GET_OP_SIGNED_BYTE() ((gint8)(code_buf[(xs->addr.pc.offset)++]))
+#define GET_OP_SIGNED_BYTE() ((int8)(code_buf[(xs->addr.pc.offset)++]))
 #define GET_OP_SIGNED_WORD() ((getInt16(code_buf + ((xs->addr.pc.offset) += 2) - 2)))
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
@@ -259,9 +259,9 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define OBJ_SUPERCLASS(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SUPERCLASS_OFFSET))
 // Returns an object's superclass
 
-inline exec_stack_t *execute_method(EngineState *s, word script, word pubfunct, stack_ptr_t sp, reg_t calling_obj, word argc, stack_ptr_t argp) {
+inline exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, stack_ptr_t sp, reg_t calling_obj, uint16 argc, stack_ptr_t argp) {
 	int seg;
-	guint16 temp;
+	uint16 temp;
 
 	if (!sm_script_is_loaded(&s->seg_manager, script, SCRIPT_ID))  // Script not present yet?
 		script_instantiate(s, script);
@@ -281,7 +281,7 @@ inline exec_stack_t *execute_method(EngineState *s, word script, word pubfunct, 
 	// Check if a breakpoint is set on this method
 	if (s->have_bp & BREAK_EXPORT) {
 		breakpoint_t *bp;
-		guint32 bpaddress;
+		uint32 bpaddress;
 
 		bpaddress = (script << 16 | pubfunct);
 
@@ -598,10 +598,10 @@ void run_vm(EngineState *s, int restoring) {
 	unsigned int code_buf_size = 0 ; // (Avoid spurious warning)
 #endif
 	int temp;
-	gint16 aux_acc; // Auxiliary 16 bit accumulator
+	int16 aux_acc; // Auxiliary 16 bit accumulator
 	reg_t r_temp; // Temporary register
 	stack_ptr_t s_temp; // Temporary stack pointer
-	gint16 opparams[4]; // opcode parameters
+	int16 opparams[4]; // opcode parameters
 
 	int restadjust = s->r_amp_rest;
 	// &rest adjusts the parameter count by this value
@@ -861,27 +861,27 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x03: // mul
-			s->r_acc = ACC_ARITHMETIC_L(((gint16)POP()) * (gint16)/*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L(((int16)POP()) * (int16)/*acc*/);
 			break;
 
 		case 0x04: // div
 			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((gint16)POP()) / aux_acc : 0;
+			aux_acc = aux_acc != 0 ? ((int16)POP()) / aux_acc : 0;
 			ACC_AUX_STORE();
 			break;
 
 		case 0x05: // mod
 			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((gint16)POP()) % aux_acc : 0;
+			aux_acc = aux_acc != 0 ? ((int16)POP()) % aux_acc : 0;
 			ACC_AUX_STORE();
 			break;
 
 		case 0x06: // shr
-			s->r_acc = ACC_ARITHMETIC_L(((guint16) POP()) >> /*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L(((uint16) POP()) >> /*acc*/);
 			break;
 
 		case 0x07: // shl
-			s->r_acc = ACC_ARITHMETIC_L(((guint16)POP()) << /*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) << /*acc*/);
 			break;
 
 		case 0x08: // xor
@@ -921,22 +921,22 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x0f: // gt?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((gint16)POP() > (gint16)/*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L((int16)POP() > (int16)/*acc*/);
 			break;
 
 		case 0x10: // ge?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((gint16)POP() >= (gint16)/*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L((int16)POP() >= (int16)/*acc*/);
 			break;
 
 		case 0x11: // lt? 
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((gint16)POP() < (gint16)/*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L((int16)POP() < (int16)/*acc*/);
 			break;
 
 		case 0x12: // le? 
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((gint16)POP() <= (gint16)/*acc*/);
+			s->r_acc = ACC_ARITHMETIC_L((int16)POP() <= (int16)/*acc*/);
 			break;
 
 		case 0x13: // ugt? 
@@ -1134,7 +1134,7 @@ void run_vm(EngineState *s, int restoring) {
 			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack 
 
 			xs->sp[1].offset += restadjust;
-			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp, (int)(opparams[0] >> 1) + (word)restadjust, xs->sp);
+			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
 
 			if (xs_new && xs_new != xs)
 				s->execution_stack_pos_changed = 1;
@@ -1152,7 +1152,7 @@ void run_vm(EngineState *s, int restoring) {
 			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack 
 
 			xs->sp[1].offset += restadjust;
-			xs_new = send_selector(s, xs->objp, xs->objp, s_temp, (int)(opparams[0] >> 1) + (word)restadjust, xs->sp);
+			xs_new = send_selector(s, xs->objp, xs->objp, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
 
 			if (xs_new && xs_new != xs)
 				s->execution_stack_pos_changed = 1;
@@ -1170,7 +1170,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs->sp -= ((opparams[1] >> 1) + restadjust); // Adjust stack 
 
 				xs->sp[1].offset += restadjust;
-				xs_new = send_selector(s, r_temp, xs->objp, s_temp, (int)(opparams[1] >> 1) + (word)restadjust, xs->sp);
+				xs_new = send_selector(s, r_temp, xs->objp, s_temp, (int)(opparams[1] >> 1) + (uint16)restadjust, xs->sp);
 
 				if (xs_new && xs_new != xs)
 					s->execution_stack_pos_changed = 1;
@@ -1181,7 +1181,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x2c: // &rest 
-			temp = (guint16) opparams[0]; // First argument 
+			temp = (uint16) opparams[0]; // First argument 
 			restadjust = xs->argc - temp + 1; // +1 because temp counts the paramcount while argc doesn't 
 			if (restadjust < 0)
 				restadjust = 0;
@@ -1192,7 +1192,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x2d: // lea 
-			temp = (guint16) opparams[0] >> 1;
+			temp = (uint16) opparams[0] >> 1;
 			var_number = temp & 0x03; // Get variable type 
 
 			// Get variable block offset 
@@ -1500,7 +1500,7 @@ static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selecto
 		int i;
 		byte *buf = obj->base_obj + selector_name_offset;
 
-		obj->base_vars = (guint16 *) buf;
+		obj->base_vars = (uint16 *) buf;
 
 		for (i = 0; i < varnum; i++)
 			if (getUInt16(buf + (i << 1)) == slc) // Found it? 
@@ -2034,7 +2034,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 }
 
 static void _init_stack_base_with_selector(EngineState *s, selector_t selector) {
-	s->stack_base[0] = make_reg(0, (word)selector);
+	s->stack_base[0] = make_reg(0, (uint16)selector);
 	s->stack_base[1] = NULL_REG;
 }
 

@@ -158,7 +158,7 @@ static inline int get_freq(int note) {
 
 
 void SN76496_poll(sfx_softseq_t *self, byte *dest, int len) {
-	gint16 *buf = (gint16 *) dest;
+	int16 *buf = (int16 *) dest;
 	int i;
 	int chan;
 	int freq[CHANNELS_NR];

@@ -39,7 +39,7 @@ reg_t kAbs(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kSqrt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	return make_reg(0, (gint16) sqrt((float) abs(SKPV(0))));
+	return make_reg(0, (int16) sqrt((float) abs(SKPV(0))));
 }
 
 int get_angle(int xrel, int yrel) {
@@ -103,7 +103,7 @@ reg_t kGetDistance(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int xrel = (int)(((float) SKPV(1) - SKPV_OR_ALT(3, 0)) / cos(SKPV_OR_ALT(5, 0) * PI / 180.0)); // This works because cos(0)==1
 	int yrel = SKPV(0) - SKPV_OR_ALT(2, 0);
 
-	return make_reg(0, (gint16)sqrt((float) xrel*xrel + yrel*yrel));
+	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
 }
 
 reg_t kTimesSin(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -127,9 +127,9 @@ reg_t kCosDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((cosval < 0.0001) && (cosval > 0.0001)) {
 		warning("Attepted division by zero");
-		return make_reg(0, (gint16)0x8000);
+		return make_reg(0, (int16)0x8000);
 	} else
-		return make_reg(0, (gint16)(value / cosval));
+		return make_reg(0, (int16)(value / cosval));
 }
 
 reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -139,9 +139,9 @@ reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((sinval < 0.0001) && (sinval > 0.0001)) {
 		warning("Attepted division by zero");
-		return make_reg(0, (gint16)0x8000);
+		return make_reg(0, (int16)0x8000);
 	} else
-		return make_reg(0, (gint16)(value / sinval));
+		return make_reg(0, (int16)(value / sinval));
 }
 
 reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -151,9 +151,9 @@ reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	param -= 90;
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");
-		return make_reg(0, (gint16)0x8000);
+		return make_reg(0, (int16)0x8000);
 	} else
-		return make_reg(0, (gint16) - (tan(param * PI / 180.0) * scale));
+		return make_reg(0, (int16) - (tan(param * PI / 180.0) * scale));
 }
 
 reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -162,9 +162,9 @@ reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");
-		return make_reg(0, (gint16)0x8000);
+		return make_reg(0, (int16)0x8000);
 	} else
-		return make_reg(0, (gint16)(tan(param * PI / 180.0) * scale));
+		return make_reg(0, (int16)(tan(param * PI / 180.0) * scale));
 }
 
 } // End of namespace Sci
