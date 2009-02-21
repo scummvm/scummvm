@@ -606,7 +606,7 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 			return;
 
 		default:
-			error("[soft-mixer] Fatal: Invalid mode returned by PCM feed %s-%d's get_timestamp(): %d\n",
+			error("[soft-mixer] Fatal: Invalid mode returned by PCM feed %s-%d's get_timestamp(): %d",
 			        f->debug_name, f->debug_nr, newmode);
 		}
 	}
