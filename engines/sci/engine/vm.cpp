@@ -540,7 +540,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 	if (jump_initialized)
 		longjmp(vm_error_address, 0);
 #endif
-	error(stderr, "Could not recover, exitting...\n");
+	error("Could not recover, exitting...\n");
 }
 
 static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
