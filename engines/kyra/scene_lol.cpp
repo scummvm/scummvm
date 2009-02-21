@@ -26,6 +26,7 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
+#include "kyra/timer.h"
 #include "kyra/sound.h"
 
 #include "common/endian.h"
@@ -54,7 +55,8 @@ void LoLEngine::loadLevel(int index) {
 	releaseMonsterShapes(0);
 	releaseMonsterShapes(1);
 
-	// TODO
+	for (int i = 0x50; i < 0x53; i++)
+		_timer->disable(i);
 
 	_currentLevel = index;
 	_updateFlags = 0;
@@ -148,7 +150,7 @@ void LoLEngine::initCMZ1(CLevelItem *l, int a) {
 			l->field_15 = 0;
 			l->itemPosX = _partyPosX;
 			l->itemPosY = _partyPosY;
-			cmzS2(l, cmzS1(l->p_1a, l->p_1b, l->itemPosX, l->itemPosY));
+			cmzS2(l, cmzS1(l->x, l->y, l->itemPosX, l->itemPosY));
 		}
 	} else {
 		l->field_14 = a;
@@ -160,7 +162,7 @@ void LoLEngine::initCMZ1(CLevelItem *l, int a) {
 			cmzS3(l);
 			if (_currentLevel != 29)
 				initCMZ1(l, 14);
-			runSceneScriptCustom(0x404, -1, l->field_16, l->field_16, 0, 0);
+			runLevelScriptCustom(0x404, -1, l->field_16, l->field_16, 0, 0);
 			checkScriptUnk(l->blockPropertyIndex);
 			if (l->field_14 == 14)
 				initCMZ2(l, 0, 0);
@@ -182,9 +184,9 @@ void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
 
 	l->blockPropertyIndex = cmzS5(a, b);
 
-	if (l->p_1a != a || l->p_1b != b) {
-		l->p_1a = a;
-		l->p_1b = b;
+	if (l->x != a || l->y != b) {
+		l->x = a;
+		l->y = b;
 		l->anon9 = (++l->anon9) & 3;
 	}
 
@@ -202,7 +204,7 @@ void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
 		return;
 
 	if (l->blockPropertyIndex != t)
-		runSceneScriptCustom(l->blockPropertyIndex, 0x800, -1, l->field_16, 0, 0);
+		runLevelScriptCustom(l->blockPropertyIndex, 0x800, -1, l->field_16, 0, 0);
 
 	if (_updateFlags & 1)
 		return;
@@ -432,7 +434,7 @@ void LoLEngine::loadLevelCmzFile(int index) {
 		if (_cLevelItems[i].blockPropertyIndex) {
 			_cLevelItems[i].blockPropertyIndex = 0;
 			_cLevelItems[i].monsters = _monsterProperties + _cLevelItems[i].field_20;
-			initCMZ2(&_cLevelItems[i], _cLevelItems[i].p_1a, _cLevelItems[i].p_1b);
+			initCMZ2(&_cLevelItems[i], _cLevelItems[i].x, _cLevelItems[i].y);
 		}
 	}
 
@@ -873,8 +875,8 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
 	_unkFlag &= 0xfdff;
 
-	runSceneScript(opos, 4);
-	runSceneScript(npos, 1);
+	runLevelScript(opos, 4);
+	runLevelScript(npos, 1);
 
 	if (!(_unkFlag & 0x200)) {
 		initTextFading(2, 0);
@@ -903,8 +905,8 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 		gui_toggleButtonDisplayMode(buttonShape, 0);
 
 		if (npos == _currentBlock) {
-			runSceneScript(opos, 8);
-			runSceneScript(npos, 2);
+			runLevelScript(opos, 8);
+			runLevelScript(npos, 2);
 
 			if (_levelBlockProperties[npos].walls[0] == 0x1a)
 				memset(_levelBlockProperties[npos].walls, 0, 4);
@@ -1785,8 +1787,8 @@ void LoLEngine::drawIceShapes(int index, int iceShapeIndex) {
 		return;
 }
 
-void LoLEngine::drawMonstersAndItems(int index) {
-
+void LoLEngine::drawMonstersAndItems(int block) {
+	
 
 }
 

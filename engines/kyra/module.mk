@@ -71,6 +71,7 @@ MODULE_OBJS := \
 	text_mr.o \
 	timer.o \
 	timer_lok.o \
+	timer_lol.o \
 	timer_hof.o \
 	timer_mr.o \
 	util.o \

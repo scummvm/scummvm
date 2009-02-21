@@ -25,6 +25,7 @@
 
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
+#include "kyra/timer.h"
 #include "kyra/util.h"
 
 namespace Kyra {
@@ -94,7 +95,7 @@ void TextDisplayer_LoL::expandField() {
 	if (_vm->textEnabled()) {
 		_vm->_fadeText = false;
 		_vm->_textColourFlag = 0;
-		//_vm->toggleGuiUnk(11, 0);
+		_vm->_timer->disable(11);
 		_screen->clearDim(3);
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 		_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);
@@ -149,7 +150,7 @@ void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16
 			_colour1 = 192;
 			_colour1prot = true;
 			_screen->copyColour(192, 254);
-			//toggleGuiUnk(11, 1);
+			_vm->enableTimer(11);
 			_vm->_textColourFlag = 0;
 			_vm->_fadeText = false;
 		}
@@ -207,7 +208,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 		_screen->setScreenDim(3);
 		_screen->clearCurDim();
 		_screen->copyColour(192, col);
-		//toggleGuiUnk(11, 1);
+		_vm->enableTimer(11);
 	}
 
 	_colour1 = 192;

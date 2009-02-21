@@ -27,6 +27,7 @@
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
+#include "kyra/timer.h"
 #include "kyra/util.h"
 
 #include "sound/voc.h"
@@ -773,11 +774,11 @@ void LoLEngine::runLoop() {
 
 	while (!shouldQuit() && _runFlag) {
 		if (_nextScriptFunc) {
-			runSceneScript(_nextScriptFunc, 2);
+			runLevelScript(_nextScriptFunc, 2);
 			_nextScriptFunc = 0;
 		}
 
-		//updateTimers();
+		_timer->update();
 
 		//checkFloatingPointerRegions();
 		gui_updateInput();
@@ -1022,7 +1023,7 @@ void LoLEngine::initTextFading(int textType, int clearField) {
 		_screen->clearDim(3);
 
 	_fadeText = false;
-	//initGuiUnk(11);
+	_timer->disable(11);
 }
 
 void LoLEngine::charCallback4(int redraw) {
@@ -1214,7 +1215,7 @@ void LoLEngine::fadeText() {
 
 	_screen->clearDim(3);
 
-	///initGuiUnk(11);
+	_timer->disable(11);
 
 	_fadeText = false;
 }

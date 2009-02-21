@@ -123,8 +123,8 @@ struct CLevelItem {
 	uint8 unk2;
 	uint16 unk3;
 	uint16 blockPropertyIndex;
-	uint16 p_1a;
-	uint16 p_1b;
+	uint16 x;
+	uint16 y;
 	int8 level;
 	uint16 itemPosX;
 	uint16 itemPosY;
@@ -161,8 +161,8 @@ struct ItemInPlay {
 	uint8 unk2;
 	uint16 unk3;
 	uint16 blockPropertyIndex;
-	uint16 p_1a;
-	uint16 p_1b;
+	uint16 x;
+	uint16 y;
 	int8 level;
 	uint16 itemPropertyIndex;
 	uint16 shpCurFrame_flg;
@@ -307,8 +307,19 @@ private:
 
 	static const uint8 _charInfoFrameTable[];
 
-	// timer
-	void setupTimers() {}
+	// timers
+	void setupTimers();
+	void enableTimer(int id);
+
+	void timerSub1(int timerNum);
+	void timerSub2(int timerNum);
+	void timerSub3(int timerNum);
+	void timerSub4(int timerNum);
+	void timerSub5(int timerNum);
+	void timerSub6(int timerNum);
+	void timerSub7(int timerNum);
+	void timerUpdateLampState(int timerNum);
+	void timerFadeMessageText(int timerNum);
 
 	// sound
 	void loadTalkFile(int index);
@@ -464,8 +475,8 @@ private:
 	// emc scripts
 	void runInitScript(const char *filename, int func);
 	void runInfScript(const char *filename);
-	void runSceneScript(int block, int sub);
-	void runSceneScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4);
+	void runLevelScript(int block, int sub);
+	void runLevelScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4);
 	bool checkScriptUnk(int func);
 
 	EMCData _scriptData;
@@ -502,6 +513,7 @@ private:
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
+	int olol_setScriptTimer(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
@@ -685,7 +697,7 @@ private:
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawDecorations(int index);
 	void drawIceShapes(int index, int iceShapeIndex);
-	void drawMonstersAndItems(int index);
+	void drawMonstersAndItems(int block);
 	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
 	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
 	void drawScriptShapes(int pageNum);
@@ -852,8 +864,9 @@ private:
 	void deleteItem(int itemIndex);
 	CLevelItem *findItem(uint16 index);
 	void runItemScript(int charNum, int item, int reg0, int reg3, int reg4);
-
-	void pickupItem(int itemIndex);
+	void setHandItem(uint16 itemIndex);
+	void clickSceneSub1();
+	void clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY);
 
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;
@@ -897,7 +910,6 @@ private:
 
 	// unneeded
 	void setWalkspeed(uint8) {}
-	void setHandItem(uint16) {}
 	void removeHandItem() {}
 	bool lineIsPassable(int, int) { return false; }
 

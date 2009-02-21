@@ -980,7 +980,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 
 	_sceneDefaultUpdate = 1;
 
-	runSceneScript(_currentBlock, 0x4000);
+	runLevelScript(_currentBlock, 0x4000);
 	initTextFading(2, 0);
 
 	if (!_sceneDefaultUpdate)
@@ -989,7 +989,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 		movePartySmoothScrollTurnLeft(1);
 
 	gui_toggleButtonDisplayMode(79, 0);
-	runSceneScript(_currentBlock, 0x10);
+	runLevelScript(_currentBlock, 0x10);
 	return 1;
 }
 
@@ -1002,7 +1002,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 
 	_sceneDefaultUpdate = 1;
 
-	runSceneScript(_currentBlock, 0x4000);
+	runLevelScript(_currentBlock, 0x4000);
 	initTextFading(2, 0);
 
 	if (!_sceneDefaultUpdate)
@@ -1011,7 +1011,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 		movePartySmoothScrollTurnRight(1);
 
 	gui_toggleButtonDisplayMode(81, 0);
-	runSceneScript(_currentBlock, 0x10);
+	runLevelScript(_currentBlock, 0x10);
 
 	return 1;
 }
@@ -1142,7 +1142,7 @@ int LoLEngine::clickedCharInventorySlot(Button *button) {
 
 	int ih = _itemInHand;
 
-	pickupItem(_characters[_selectedCharacter].items[button->data2Val2]);
+	setHandItem(_characters[_selectedCharacter].items[button->data2Val2]);
 	_characters[_selectedCharacter].items[button->data2Val2] = ih;
 	gui_drawCharInventoryItem(button->data2Val2);
 
@@ -1198,6 +1198,8 @@ int LoLEngine::clickedScene1(Button *button) {
 		return 0;
 	int cp = _screen->setCurPage(_sceneDrawPage1);
 
+	clickSceneSub1();
+
 	_screen->setCurPage(cp);
 
 	return 1;
@@ -1245,10 +1247,10 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		deleteItem(slotItem);
 		deleteItem(hItem);
 
-		pickupItem(0);
+		setHandItem(0);
 		_inventory[slot] = makeItem(280, 0, 0);
 	} else {
-		pickupItem(slotItem);
+		setHandItem(slotItem);
 		_inventory[slot] = hItem;
 	}
 

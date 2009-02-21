@@ -25,6 +25,7 @@
 
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
+#include "kyra/timer.h"
 #include "kyra/resource.h"
 
 #include "common/endian.h"
@@ -54,14 +55,14 @@ void LoLEngine::runInitScript(const char *filename, int func) {
 
 void LoLEngine::runInfScript(const char *filename) {
 	_emc->load(filename, &_scriptData, &_opcodes);
-	runSceneScript(0x400, -1);
+	runLevelScript(0x400, -1);
 }
 
-void LoLEngine::runSceneScript(int block, int sub) {
-	runSceneScriptCustom(block, sub, -1, 0, 0, 0);
+void LoLEngine::runLevelScript(int block, int sub) {
+	runLevelScriptCustom(block, sub, -1, 0, 0, 0);
 }
 
-void LoLEngine::runSceneScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4) {
+void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
@@ -182,9 +183,9 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 0:
 		return i->blockPropertyIndex;
 	case 1:
-		return i->p_1a;
+		return i->x;
 	case 2:
-		return i->p_1b;
+		return i->y;
 	case 3:
 		return i->level;
 	case 4:
@@ -561,6 +562,21 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_setScriptTimer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setScriptTimer(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	uint8 id = 0x50 + stackPos(0);
+
+	if (stackPos(1)) {
+		_timer->enable(id);
+		_timer->setCountdown(id, stackPos(1));
+
+	} else {
+		_timer->disable(id);
+	}
+
+	return true;
+}
+
 int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
@@ -843,7 +859,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x48
-	OpcodeUnImpl();
+	Opcode(olol_setScriptTimer);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();

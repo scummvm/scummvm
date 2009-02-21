@@ -182,7 +182,7 @@ void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg
 		_emc->run(&scriptState);
 }
 
-void LoLEngine::pickupItem(int itemIndex) {
+void LoLEngine::setHandItem(uint16 itemIndex) {
 	if (itemIndex && _itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].flags & 0x80) {
 		runItemScript(-1, itemIndex, 0x400, 0, 0);
 		if (_itemsInPlay[itemIndex].shpCurFrame_flg & 0x8000)
@@ -199,6 +199,14 @@ void LoLEngine::pickupItem(int itemIndex) {
 
 	_itemInHand = itemIndex;
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(itemIndex));
+}
+
+void LoLEngine::clickSceneSub1() {
+
+}
+
+void LoLEngine::clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY) {
+
 }
 
 } // end of namespace Kyra
