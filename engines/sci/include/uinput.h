@@ -28,9 +28,6 @@
 #ifndef _SCI_UINPUT_H
 #define _SCI_UINPUT_H
 
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
 
 namespace Sci {
 
@@ -38,7 +35,7 @@ namespace Sci {
 #define SCI_INPUT_DEFAULT_REDRAWTIME 30000
 
 
-typedef struct {
+struct sci_event_t {
 	short type;
 	short data;
 	short buckybits;
@@ -52,7 +49,7 @@ typedef struct {
 			 ** For 'Alt', characters are interpreted by their
 			 ** PC keyboard scancodes.
 			 */
-} sci_event_t;
+};
 
 /*Values for type*/
 #define SCI_EVT_NONE            0

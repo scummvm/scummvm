@@ -29,7 +29,6 @@
 #define _SCI_SFX_ITERATOR_H_
 
 #include "sci/include/sfx_pcm.h"
-#include "sci/include/listener.h"
 
 namespace Sci {
 
@@ -89,6 +88,11 @@ typedef struct {
 #define SIMSG_SEND(o, m) songit_handle_message(&(o), songit_make_message((o)->ID, m))
 #define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), songit_make_ptr_message((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
 
+/* Event listener interface */
+struct listener_t {
+	void (*notify)(void *self, void *notifier);
+	void *self;
+};
 
 typedef unsigned long songit_id_t;
 

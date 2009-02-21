@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SFX_SOFTSEQ_H_
-#define SFX_SOFTSEQ_H_
+#ifndef SCI_SFX_SOFTSEQ_H
+#define SCI_SFX_SOFTSEQ_H
 
 #include "sci/include/sfx_core.h"
 #include "sci/include/sfx_pcm.h"
@@ -122,4 +122,4 @@ sfx_softseq_t *sfx_find_softseq(const char *name);
 
 } // End of namespace Sci
 
-#endif /* !defined(SFX_SOFTSEQ_H_) */
+#endif // SCI_SFX_SOFTSEQ_H

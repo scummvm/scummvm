@@ -71,8 +71,6 @@ typedef enum {
 
 typedef int mem_obj_enum;
 
-struct _mem_obj;
-
 #define GET_SEGMENT(mgr, index, rtype) ((index) > 0 && (mgr).heap_size > index) ?		\
 		(((mgr).heap[index] && (mgr).heap[index]->type == rtype)? (mgr).heap[index]	: NULL) : NULL
 
@@ -85,7 +83,7 @@ struct _mem_obj;
 
 struct SegManager {
 	int_hash_map_t *id_seg_map; // id - script id; seg - index of heap
-	struct _mem_obj **heap;
+	mem_obj_t **heap;
 	int heap_size;		// size of the heap
 	int reserved_id;
 	int exports_wide;

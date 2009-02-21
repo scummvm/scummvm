@@ -24,8 +24,8 @@
  */
 
 
-#ifndef _SFX_ADLIB_H_
-#define _SFX_ADLIB_H_
+#ifndef SCI_SFX_ADLIB_H
+#define SCI_SFX_ADLIB_H
 
 #include "sci/tools.h"
 
@@ -68,9 +68,9 @@ typedef unsigned char adlib_instr[12];
 
 extern adlib_instr adlib_sbi[96];
 
+/** Converts a raw SCI adlib instrument into the adlib register format. */
 void make_sbi(adlib_def *one, guint8 *buffer);
-/* Converts a raw SCI adlib instrument into the adlib register format. */
 
 } // End of namespace Sci
 
-#endif /* _SFX_ADLIB_H_ */
+#endif // SCI_SFX_ADLIB_H

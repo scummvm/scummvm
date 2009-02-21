@@ -33,9 +33,9 @@
 
 namespace Sci {
 
-typedef struct _gfx_res_pattern {
+struct gfx_res_pattern_t {
 	int min, max;
-} gfx_res_pattern_t;
+};
 
 /* GFX resource assignments */
 

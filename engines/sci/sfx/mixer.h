@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SFX_MIXER_H_
-#define _SFX_MIXER_H_
+#ifndef SCI_SFX_MIXER_H
+#define SCI_SFX_MIXER_H
 
 #include "sci/include/sfx_pcm.h"
 
@@ -45,7 +45,7 @@ struct twochannel_data {
 	int left, right;
 };
 
-typedef struct {
+struct sfx_pcm_feed_state_t {
 	sfx_pcm_feed_t *feed;
 
 	/* The following fields are for use by the mixer only and must not be
@@ -59,10 +59,10 @@ typedef struct {
 
 	int pending_review; /* Timestamp needs to be checked for this stream */
 	twochannel_data ch_old, ch_new; /* Intermediate results of output computation */
-} sfx_pcm_feed_state_t;
+};
 
 
-typedef struct _sfx_pcm_mixer {
+struct sfx_pcm_mixer_t {
 	/* Mixers are the heart of all matters PCM. They take PCM data from subscribed feeds,
 	** mix it (hence the name) and ask the pcm device they are attached to to play the
 	** result.  */
@@ -70,34 +70,34 @@ typedef struct _sfx_pcm_mixer {
 	const char *name;
 	const char *version;
 
-	int (*init)(struct _sfx_pcm_mixer *self, sfx_pcm_device_t *device);
+	int (*init)(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device);
 	/* Initialises the mixer
 	** Parameters: (sfx_pcm_mixer_t *) self: Self reference
 	**             (sfx_pcm_device_t *) device: An _already initialised_ PCM output driver
 	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise
 	*/
 
-	void (*exit)(struct _sfx_pcm_mixer *self);
+	void (*exit)(sfx_pcm_mixer_t *self);
 	/* Uninitialises the mixer
 	** Parameters: (sfx_pcm_mixer_t *) self: Self reference
 	** Also uninitialises all feeds and the attached output device.
 	*/
 
-	void (*subscribe)(struct _sfx_pcm_mixer *self, sfx_pcm_feed_t *feed);
+	void (*subscribe)(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed);
 	/* Subscribes the mixer to a new feed
 	** Parameters: (sfx_pcm_mixer_t *) self: Self reference
 	**             (sfx_pcm_feed_t *) feed: The feed to subscribe to
 	*/
 
-	void (*pause)(struct _sfx_pcm_mixer *self);
+	void (*pause)(sfx_pcm_mixer_t *self);
 	/* Pauses the processing of input and output
 	*/
 
-	void (*resume)(struct _sfx_pcm_mixer *self);
+	void (*resume)(sfx_pcm_mixer_t *self);
 	/* Resumes the processing of input and output after a pause
 	*/
 
-	int (*process)(struct _sfx_pcm_mixer *self);
+	int (*process)(sfx_pcm_mixer_t *self);
 	/* Processes all feeds, mixes their results, and passes everything to the output device
 	** Returns  : (int) SFX_OK on success, SFX_ERROR otherwise (output device error or
 	**                  internal assertion failure)
@@ -112,7 +112,7 @@ typedef struct _sfx_pcm_mixer {
 	sfx_pcm_device_t *dev;
 
 	void *private_bits;
-} sfx_pcm_mixer_t;
+};
 
 sfx_pcm_mixer_t *sfx_pcm_find_mixer(char *name);
 /* Looks up a mixer by name, or a default mixer
@@ -126,4 +126,4 @@ sfx_pcm_mixer_t* getMixer();
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_MIXER_H_) */
+#endif // SCI_SFX_MIXER_H

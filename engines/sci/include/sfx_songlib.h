@@ -28,9 +28,8 @@
 #ifndef _SCI_SFX_SONGLIB_H_
 #define _SCI_SFX_SONGLIB_H_
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include "common/scummsys.h"
+
 #include "sci/include/scitypes.h"
 #include "sci/include/sfx_iterator.h"
 

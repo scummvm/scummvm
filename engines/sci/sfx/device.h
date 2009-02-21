@@ -25,8 +25,10 @@
 
 /* song player structure */
 
-#ifndef _SFX_DEVICE_H
-#define _SFX_DEVICE_H
+#ifndef SCI_SFX_DEVICE_H
+#define SCI_SFX_DEVICE_H
+
+#include "common/scummsys.h"
 
 namespace Sci {
 
@@ -119,4 +121,4 @@ void *sfx_find_device(int type, char *name);
 
 } // End of namespace Sci
 
-#endif /* !_SFX_PLAYER_H */
+#endif // SCI_SFX_DEVICE_H

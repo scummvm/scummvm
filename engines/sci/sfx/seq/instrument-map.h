@@ -25,12 +25,11 @@
 
 /* Implementation of SCI instrument maps for GM and MT-32. */
 
-#ifndef SCI_INSTRUMENT_MAP_
-#define SCI_INSTRUMENT_MAP_
+#ifndef SCI_SFX_SEQ_INSTRUMENT_MAP_H
+#define SCI_SFX_SEQ_INSTRUMENT_MAP_H
 
-#include <stdlib.h>
-#include "resource.h"
-#include "../device.h"
+#include "sci/tools.h"
+#include "sci/sfx/device.h"
 
 namespace Sci {
 
@@ -130,4 +129,4 @@ sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map);
 
 } // End of namespace Sci
 
-#endif /* !defined(SCI_INSTRUMENT_MAP_) */
+#endif // SCI_SFX_SEQ_INSTRUMENT_MAP_H

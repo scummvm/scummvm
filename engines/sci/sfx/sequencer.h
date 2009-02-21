@@ -24,14 +24,12 @@
  */
 
 
-#ifndef _SFX_SEQUENCER_H_
-#define _SFX_SEQUENCER_H_
+#ifndef SCI_SFX_SEQUENCER_H
+#define SCI_SFX_SEQUENCER_H
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include "common/scummsys.h"
+
 #include "sci/include/sfx_core.h"
-#include <stdio.h>
 #include "sci/sfx/device.h"
 #include "sci/include/scitypes.h"
 
@@ -143,4 +141,4 @@ sfx_sequencer_t *sfx_find_sequencer(char *name);
 
 } // End of namespace Sci
 
-#endif /* _SFX_SEQUENCER_H_ */
+#endif // SCI_SFX_SEQUENCER_H

@@ -51,22 +51,22 @@ namespace Sci {
 #define GFX_COLOR_SYSTEM -1
 
 
-typedef struct { /* gfx_palette_color_t: Palette color description */
+/** Palette color description */
+struct gfx_palette_color_t { 
 
 	int lockers; /* Number of pixmaps holding a lock on that color.
 		     ** 0 means that the color is unused, -1 means that it is
 		     ** "system allocated" and may not be freed.  */
 	byte r, g, b; /* Red, green, blue; intensity varies from 0 (min) to 255 (max) */
 
-} gfx_palette_color_t;
+};
 
-
-
-typedef struct { /* gfx_palette_t: Palette description for color index modes */
+/** Palette description for color index modes */
+struct gfx_palette_t{
 
 	int max_colors_nr; /* Maximum number of allocated colors */
 	gfx_palette_color_t *colors; /* Actual colors, malloc()d as a block */
-} gfx_palette_t;
+};
 
 
 
@@ -79,7 +79,8 @@ typedef struct { /* gfx_palette_t: Palette description for color index modes */
 ** enabled  */
 #define GFX_MODE_FLAG_REVERSE_ALPHA  (1<<1)
 
-typedef struct { /* gfx_mode_t: Graphics mode description */
+/** Graphics mode description */
+struct gfx_mode_t {
 
 	int xfact, yfact; /* Horizontal and vertical scaling factors */
 	int bytespp; /* Bytes per pixel */
@@ -104,32 +105,32 @@ typedef struct { /* gfx_mode_t: Graphics mode description */
 	** gether. The alpha values are used as appropriate; if alpha_mask is
 	** zero, then images use a special alpha map.  */
 
-} gfx_mode_t;
+};
 
 
 
 #define GFX_COLOR_INDEX_UNMAPPED -1
 
-typedef struct { /* gfx_pixmap_color_t: Pixmap-specific color entries */
+/** Pixmap-specific color entries */
+struct  gfx_pixmap_color_t{
 	int global_index; /* Global index color or GFX_COLOR_INDEX_UNMAPPED. */
 	guint8 r, g, b; /* Real color */
-} gfx_pixmap_color_t;
+};
 
-
-
-typedef struct { /* gfx_color_t: Full color */
+/** Full color */
+struct gfx_color_t {
 	gfx_pixmap_color_t visual;
 	guint8 alpha; /* transparency = (1-opacity) */
 	signed char priority, control;
 	byte mask; /* see mask values below */
-} gfx_color_t;
+};
 
 
-
-typedef struct { /* rect_t: Rectangle description */
+/** Rectangle description */
+struct rect_t{
 	int x, y;
 	int xl, yl; /* width, height: (x,y,xl,yl)=(5,5,1,1) occupies 1 pixel */
-} rect_t;
+};
 
 
 /* Generates a rect_t from index data

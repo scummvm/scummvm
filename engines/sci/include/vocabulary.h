@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef VOCABULARY_H
-#define VOCABULARY_H
+#ifndef SCI_VOCABULARY_H
+#define SCI_VOCABULARY_H
 
 #include "sci/include/versions.h"
 #include "sci/include/sciresource.h"
@@ -43,11 +43,11 @@ namespace Sci {
 /* Number of bytes allocated on the heap to store bad words if parsing fails */
 
 
-typedef struct opcode_ {
+struct opcode {
 	int type;
 	int number;
 	char* name;
-} opcode;
+};
 
 #define VOCAB_RESOURCE_OPCODES 998
 #define VOCAB_RESOURCE_KNAMES 999
