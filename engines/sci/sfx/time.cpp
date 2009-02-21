@@ -28,8 +28,7 @@
 
 namespace Sci {
 
-sfx_timestamp_t
-sfx_new_timestamp(long secs, long usecs, int frame_rate) {
+sfx_timestamp_t sfx_new_timestamp(long secs, long usecs, int frame_rate) {
 	sfx_timestamp_t r;
 	r.secs = secs;
 	r.usecs = usecs;
@@ -39,9 +38,7 @@ sfx_new_timestamp(long secs, long usecs, int frame_rate) {
 	return r;
 }
 
-
-sfx_timestamp_t
-sfx_timestamp_add(sfx_timestamp_t timestamp, int frames) {
+sfx_timestamp_t sfx_timestamp_add(sfx_timestamp_t timestamp, int frames) {
 	timestamp.frame_offset += frames;
 
 	if (timestamp.frame_offset < 0) {
@@ -57,8 +54,7 @@ sfx_timestamp_add(sfx_timestamp_t timestamp, int frames) {
 	return timestamp;
 }
 
-int
-sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b) {
+int sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b) {
 	long usecdelta = 0;
 
 	if (a.frame_rate != b.frame_rate) {
@@ -81,8 +77,7 @@ sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b) {
 	       + a.frame_offset - b.frame_offset;
 }
 
-long
-sfx_timestamp_usecs_diff(sfx_timestamp_t t1, sfx_timestamp_t t2) {
+long sfx_timestamp_usecs_diff(sfx_timestamp_t t1, sfx_timestamp_t t2) {
 	long secs1, secs2;
 	long usecs1, usecs2;
 
@@ -92,8 +87,7 @@ sfx_timestamp_usecs_diff(sfx_timestamp_t t1, sfx_timestamp_t t2) {
 	return (usecs1 - usecs2) + ((secs1 - secs2) * 1000000);
 }
 
-sfx_timestamp_t
-sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq) {
+sfx_timestamp_t sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq) {
 	sfx_timestamp_t r;
 	sfx_timestamp_gettime(&timestamp, &r.secs, &r.usecs);
 	r.frame_rate = new_freq;
@@ -102,8 +96,7 @@ sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq) {
 	return r;
 }
 
-void
-sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs) {
+void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs) {
 	long ust = timestamp->usecs;
 	/* On 64 bit machines, we can do an accurate computation */
 #if (SIZEOF_LONG >= 8)

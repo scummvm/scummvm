@@ -109,8 +109,7 @@ typedef struct _midi_writer {
 } midi_writer_t;
 
 
-void *
-sfx_find_device(int type, char *name);
+void *sfx_find_device(int type, char *name);
 /* Looks up a device by name
 ** Parameters: (int) type: Device type to look up
 **             (char *) name: Comma-separated list of devices to choose from

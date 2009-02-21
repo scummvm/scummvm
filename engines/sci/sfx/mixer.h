@@ -114,8 +114,7 @@ typedef struct _sfx_pcm_mixer {
 	void *private_bits;
 } sfx_pcm_mixer_t;
 
-sfx_pcm_mixer_t *
-sfx_pcm_find_mixer(char *name);
+sfx_pcm_mixer_t *sfx_pcm_find_mixer(char *name);
 /* Looks up a mixer by name, or a default mixer
 ** Parameters: (char *) name: Name of the mixer to look for, or NULL to
 **                            take a default

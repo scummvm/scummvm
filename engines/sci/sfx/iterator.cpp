@@ -41,8 +41,7 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 /*#define DEBUG_DECODING*/
 /*#define DEBUG_VERBOSE*/
 
-void
-print_tabs_id(int nr, songit_id_t id) {
+void print_tabs_id(int nr, songit_id_t id) {
 	while (nr-- > 0)
 		fprintf(stderr, "\t");
 
@@ -66,8 +65,7 @@ memchr(void *_data, int c, int n) {
 }
 #endif
 
-static void
-_common_init(base_song_iterator_t *self) {
+static void _common_init(base_song_iterator_t *self) {
 	self->fade.action = FADE_ACTION_NONE;
 	self->resetflag = 0;
 	self->loops = 0;
@@ -100,8 +98,7 @@ _common_init(base_song_iterator_t *self) {
 	}
 
 
-static inline int
-_parse_ticks(byte *data, int *offset_p, int size) {
+static inline int _parse_ticks(byte *data, int *offset_p, int size) {
 	int ticks = 0;
 	int tempticks;
 	int offset = 0;
@@ -120,13 +117,11 @@ _parse_ticks(byte *data, int *offset_p, int size) {
 }
 
 
-static int
-_sci0_read_next_command(sci0_song_iterator_t *self,
+static int _sci0_read_next_command(sci0_song_iterator_t *self,
                         unsigned char *buf, int *result);
 
 
-static int
-_sci0_get_pcm_data(sci0_song_iterator_t *self,
+static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
                    sfx_pcm_config_t *format,
                    int *xoffset,
                    unsigned int *xsize);
@@ -135,8 +130,7 @@ _sci0_get_pcm_data(sci0_song_iterator_t *self,
 #define PARSE_FLAG_PARAMETRIC_CUE (1 << 1) /* Assume that cues take an additional "cue value" argument */
 /* This implements a difference between SCI0 and SCI1 cues. */
 
-void
-_reset_synth_channels(base_song_iterator_t *self, song_iterator_channel_t *channel) {
+void _reset_synth_channels(base_song_iterator_t *self, song_iterator_channel_t *channel) {
 	int i;
 	byte buf[5];
 	tell_synth_func *tell = sfx_get_player_tell_func();
@@ -153,8 +147,7 @@ _reset_synth_channels(base_song_iterator_t *self, song_iterator_channel_t *chann
 	}
 }
 
-static int
-_parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *result,
+static int _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *result,
                         song_iterator_channel_t *channel,
                         int flags) {
 	unsigned char cmd;
@@ -363,9 +356,7 @@ _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *res
 	}
 }
 
-
-static int
-_sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *result,
+static int _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *result,
                         song_iterator_channel_t *channel,
                         int flags) {
 	CHECK_FOR_END(0);
@@ -460,26 +451,20 @@ _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *res
 	}
 }
 
-static inline int
-_sci_midi_process(base_song_iterator_t *self, unsigned char *buf, int *result,
-                  song_iterator_channel_t *channel,
-                  int flags) {
+static inline int _sci_midi_process(base_song_iterator_t *self, unsigned char *buf, int *result,
+                  song_iterator_channel_t *channel, int flags) {
 	return _sci_midi_process_state(self, buf, result,
 	                               channel,
 	                               flags);
 }
 
-static int
-_sci0_read_next_command(sci0_song_iterator_t *self, unsigned char *buf,
-                        int *result) {
+static int _sci0_read_next_command(sci0_song_iterator_t *self, unsigned char *buf, int *result) {
 	return _sci_midi_process((base_song_iterator_t *) self, buf, result,
 	                         &(self->channel),
 	                         PARSE_FLAG_PARAMETRIC_CUE);
 }
 
-
-static inline int
-_sci0_header_magic_p(unsigned char *data, int offset, int size) {
+static inline int _sci0_header_magic_p(unsigned char *data, int offset, int size) {
 	if (offset + 0x10 > size)
 		return 0;
 	return
@@ -490,8 +475,7 @@ _sci0_header_magic_p(unsigned char *data, int offset, int size) {
 }
 
 
-static int
-_sci0_get_pcm_data(sci0_song_iterator_t *self,
+static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
                    sfx_pcm_config_t *format,
                    int *xoffset,
                    unsigned int *xsize) {
@@ -560,8 +544,7 @@ _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	return 0;
 }
 
-static sfx_pcm_feed_t *
-_sci0_check_pcm(sci0_song_iterator_t *self) {
+static sfx_pcm_feed_t *_sci0_check_pcm(sci0_song_iterator_t *self) {
 	sfx_pcm_config_t format;
 	int offset;
 	unsigned int size;
@@ -577,8 +560,7 @@ _sci0_check_pcm(sci0_song_iterator_t *self) {
 	                              format);
 }
 
-static song_iterator_t *
-_sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
+static song_iterator_t *_sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_BASE) {
 		switch (msg.type) {
 
@@ -650,13 +632,11 @@ _sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
 	return NULL;
 }
 
-static int
-_sci0_get_timepos(sci0_song_iterator_t *self) {
+static int _sci0_get_timepos(sci0_song_iterator_t *self) {
 	return self->channel.total_timepos;
 }
 
-static void
-_base_init_channel(song_iterator_channel_t *channel, int id, int offset,
+static void _base_init_channel(song_iterator_channel_t *channel, int id, int offset,
                    int end) {
 	channel->playmask = PLAYMASK_NONE; /* Disable all channels */
 	channel->id = id;
@@ -676,8 +656,7 @@ _base_init_channel(song_iterator_channel_t *channel, int id, int offset,
 	channel->saw_notes = 0;
 }
 
-static void
-_sci0_init(sci0_song_iterator_t *self) {
+static void _sci0_init(sci0_song_iterator_t *self) {
 	_common_init((base_song_iterator_t *) self);
 
 	self->ccc = 0; /* Reset cumulative cue counter */
@@ -692,8 +671,7 @@ _sci0_init(sci0_song_iterator_t *self) {
 }
 
 
-static void
-_sci0_cleanup(sci0_song_iterator_t *self) {
+static void _sci0_cleanup(sci0_song_iterator_t *self) {
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "** FREEING it %p: data at %p\n", self, self->data);
 #endif
@@ -723,8 +701,7 @@ static int sci0_to_sci1_device_map[][2] = {
 #define SONGDATA(x) self->data[offset + (x)]
 #define SCI1_CHANDATA(off) self->data[channel->offset + (off)]
 
-static int
-_sci1_sample_init(sci1_song_iterator_t *self, int offset) {
+static int _sci1_sample_init(sci1_song_iterator_t *self, int offset) {
 	sci1_sample_t *sample, **seekerp;
 	int rate;
 	int length;
@@ -771,9 +748,7 @@ _sci1_sample_init(sci1_song_iterator_t *self, int offset) {
 	return 0; /* Everything's fine */
 }
 
-
-static int
-_sci1_song_init(sci1_song_iterator_t *self) {
+static int _sci1_song_init(sci1_song_iterator_t *self) {
 	sci1_sample_t *seeker;
 	int last_time;
 	unsigned int offset = 0;
@@ -882,8 +857,7 @@ _sci1_song_init(sci1_song_iterator_t *self) {
 
 #undef SONGDATA
 
-static inline int
-_sci1_get_smallest_delta(sci1_song_iterator_t *self) {
+static inline int _sci1_get_smallest_delta(sci1_song_iterator_t *self) {
 	int i, d = -1;
 	for (i = 0; i < self->channels_nr; i++)
 		if (self->channels[i].state == SI_STATE_COMMAND
@@ -896,8 +870,7 @@ _sci1_get_smallest_delta(sci1_song_iterator_t *self) {
 		return d;
 }
 
-static inline void
-_sci1_update_delta(sci1_song_iterator_t *self, int delta) {
+static inline void _sci1_update_delta(sci1_song_iterator_t *self, int delta) {
 	int i;
 
 	if (self->next_sample)
@@ -908,8 +881,7 @@ _sci1_update_delta(sci1_song_iterator_t *self, int delta) {
 			self->channels[i].delay -= delta;
 }
 
-static inline int
-_sci1_no_delta_time(sci1_song_iterator_t *self) { /* Checks that none of the channels is waiting for its delta to be read */
+static inline int _sci1_no_delta_time(sci1_song_iterator_t *self) { /* Checks that none of the channels is waiting for its delta to be read */
 	int i;
 
 	for (i = 0; i < self->channels_nr; i++)
@@ -921,8 +893,7 @@ _sci1_no_delta_time(sci1_song_iterator_t *self) { /* Checks that none of the cha
 
 #if 0
 // Unreferenced - removed
-static void
-_sci1_dump_state(sci1_song_iterator_t *self) {
+static void _sci1_dump_state(sci1_song_iterator_t *self) {
 	int i;
 
 	sciprintf("-- [%p] ------------------------\n", self);
@@ -960,8 +931,8 @@ _sci1_dump_state(sci1_song_iterator_t *self) {
 #define COMMAND_INDEX_NONE -1
 #define COMMAND_INDEX_PCM -2
 
-static inline int /* Determine the channel # of the next active event, or -1 */
-_sci1_command_index(sci1_song_iterator_t *self) {
+static inline int _sci1_command_index(sci1_song_iterator_t *self) {
+	/* Determine the channel # of the next active event, or -1 */
 	int i;
 	int base_delay = 0x7ffffff;
 	int best_chan = COMMAND_INDEX_NONE;
@@ -988,8 +959,7 @@ _sci1_command_index(sci1_song_iterator_t *self) {
 }
 
 
-static sfx_pcm_feed_t *
-_sci1_get_pcm(sci1_song_iterator_t *self) {
+static sfx_pcm_feed_t *_sci1_get_pcm(sci1_song_iterator_t *self) {
 	if (self->next_sample
 	        && self->next_sample->delta <= 0) {
 		sci1_sample_t *sample = self->next_sample;
@@ -1008,9 +978,7 @@ _sci1_get_pcm(sci1_song_iterator_t *self) {
 		return NULL;
 }
 
-
-static int
-_sci1_process_next_command(sci1_song_iterator_t *self,
+static int _sci1_process_next_command(sci1_song_iterator_t *self,
                            unsigned char *buf, int *result) {
 	int retval = -42; /* Shouldn't happen, but gcc doesn't agree */
 	int chan;
@@ -1240,16 +1208,11 @@ static struct _song_iterator *
 	return NULL;
 }
 
-
-static int
-_sci1_read_next_command(sci1_song_iterator_t *self,
-                        unsigned char *buf, int *result) {
+static int _sci1_read_next_command(sci1_song_iterator_t *self, unsigned char *buf, int *result) {
 	return _sci1_process_next_command(self, buf, result);
 }
 
-
-static void
-_sci1_init(sci1_song_iterator_t *self) {
+static void _sci1_init(sci1_song_iterator_t *self) {
 	_common_init((base_song_iterator_t *) self);
 	self->ccc = 127;
 	self->device_id = 0x00; /* Default to Sound Blaster/Adlib for purposes
@@ -1264,8 +1227,7 @@ _sci1_init(sci1_song_iterator_t *self) {
 	memset(self->importance, 0, sizeof(self->importance));
 }
 
-static void
-_sci1_cleanup(sci1_song_iterator_t *it) {
+static void _sci1_cleanup(sci1_song_iterator_t *it) {
 	sci1_sample_t *sample_seeker = it->next_sample;
 	while (sample_seeker) {
 		sci1_sample_t *old_sample = sample_seeker;
@@ -1276,8 +1238,7 @@ _sci1_cleanup(sci1_song_iterator_t *it) {
 	_sci0_cleanup((sci0_song_iterator_t *)it);
 }
 
-static int
-_sci1_get_timepos(sci1_song_iterator_t *self) {
+static int _sci1_get_timepos(sci1_song_iterator_t *self) {
 	int max = 0;
 	int i;
 
@@ -1293,12 +1254,10 @@ _sci1_get_timepos(sci1_song_iterator_t *self) {
 /*****************************/
 
 
-static void
-_cleanup_iterator_init(song_iterator_t *it) {
+static void _cleanup_iterator_init(song_iterator_t *it) {
 }
 
-static song_iterator_t *
-_cleanup_iterator_handle_message(song_iterator_t *i, song_iterator_message_t msg) {
+static song_iterator_t *_cleanup_iterator_handle_message(song_iterator_t *i, song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_BASEMSG_PRINT
 	        && msg.type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg.args[0].i, i->ID);
@@ -1308,8 +1267,7 @@ _cleanup_iterator_handle_message(song_iterator_t *i, song_iterator_message_t msg
 	return NULL;
 }
 
-static int
-_cleanup_iterator_next(song_iterator_t *self, unsigned char *buf, int *result) {
+static int _cleanup_iterator_next(song_iterator_t *self, unsigned char *buf, int *result) {
 	/* Task: Return channel-notes-off for each channel */
 	if (self->channel_mask) {
 		int bs = sci_ffs(self->channel_mask) - 1;
@@ -1324,8 +1282,7 @@ _cleanup_iterator_next(song_iterator_t *self, unsigned char *buf, int *result) {
 		return SI_FINISHED;
 }
 
-song_iterator_t *
-new_cleanup_iterator(unsigned int channels) {
+song_iterator_t *new_cleanup_iterator(unsigned int channels) {
 	song_iterator_t *it = (song_iterator_t*)sci_malloc(sizeof(song_iterator_t));
 	it->channel_mask = channels;
 	it->ID = 17;
@@ -1345,8 +1302,7 @@ new_cleanup_iterator(unsigned int channels) {
 /*-- Fast-forward song iterator --*/
 /**********************************/
 
-static int
-_ff_read_next_command(fast_forward_song_iterator_t *self,
+static int _ff_read_next_command(fast_forward_song_iterator_t *self,
                       byte *buf, int *result) {
 	int rv;
 
@@ -1370,13 +1326,11 @@ _ff_read_next_command(fast_forward_song_iterator_t *self,
 	}
 }
 
-static sfx_pcm_feed_t *
-_ff_check_pcm(fast_forward_song_iterator_t *self) {
+static sfx_pcm_feed_t *_ff_check_pcm(fast_forward_song_iterator_t *self) {
 	return self->delegate->get_pcm_feed(self->delegate);
 }
 
-static song_iterator_t *
-_ff_handle_message(fast_forward_song_iterator_t *self,
+static song_iterator_t *_ff_handle_message(fast_forward_song_iterator_t *self,
                    song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_PLASTICWRAP)
 		switch (msg.type) {
@@ -1420,18 +1374,15 @@ _ff_handle_message(fast_forward_song_iterator_t *self,
 }
 
 
-static void
-_ff_init(fast_forward_song_iterator_t *self) {
+static void _ff_init(fast_forward_song_iterator_t *self) {
 	return;
 }
 
-static int
-_ff_get_timepos(fast_forward_song_iterator_t *self) {
+static int _ff_get_timepos(fast_forward_song_iterator_t *self) {
 	return self->delegate->get_timepos(self->delegate);
 }
 
-song_iterator_t *
-new_fast_forward_iterator(song_iterator_t *capsit, int delta) {
+song_iterator_t *new_fast_forward_iterator(song_iterator_t *capsit, int delta) {
 	fast_forward_song_iterator_t *it =
 	    (fast_forward_song_iterator_t*)sci_malloc(sizeof(fast_forward_song_iterator_t));
 
@@ -1468,8 +1419,7 @@ new_fast_forward_iterator(song_iterator_t *capsit, int delta) {
 /********************/
 
 
-static int
-_tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
+static int _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
                        int *result) {
 	static int ready_masks[2] = {TEE_LEFT_READY, TEE_RIGHT_READY};
 	static int active_masks[2] = {TEE_LEFT_ACTIVE, TEE_RIGHT_ACTIVE};
@@ -1600,8 +1550,7 @@ _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 	return it->children[retid].retval;
 }
 
-static sfx_pcm_feed_t *
-_tee_check_pcm(tee_song_iterator_t *it) {
+static sfx_pcm_feed_t *_tee_check_pcm(tee_song_iterator_t *it) {
 	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
 	int i;
 
@@ -1616,8 +1565,7 @@ _tee_check_pcm(tee_song_iterator_t *it) {
 	return NULL; /* No iterator */
 }
 
-static song_iterator_t *
-_tee_handle_message(tee_song_iterator_t *self, song_iterator_message_t msg) {
+static song_iterator_t *_tee_handle_message(tee_song_iterator_t *self, song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_BASE) {
 		switch (msg.type) {
 
@@ -1686,8 +1634,7 @@ _tee_handle_message(tee_song_iterator_t *self, song_iterator_message_t msg) {
 	return NULL;
 }
 
-static void
-_tee_init(tee_song_iterator_t *it) {
+static void _tee_init(tee_song_iterator_t *it) {
 	it->status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
 	it->children[TEE_LEFT].it->init(it->children[TEE_LEFT].it);
 	it->children[TEE_RIGHT].it->init(it->children[TEE_RIGHT].it);
@@ -1695,8 +1642,7 @@ _tee_init(tee_song_iterator_t *it) {
 
 #if 0
 // Unreferenced - removed
-static void
-_tee_free(tee_song_iterator_t *it) {
+static void _tee_free(tee_song_iterator_t *it) {
 	int i;
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
 		if (it->children[i].it && it->may_destroy)
@@ -1704,8 +1650,7 @@ _tee_free(tee_song_iterator_t *it) {
 }
 #endif
 
-static void
-songit_tee_death_notification(tee_song_iterator_t *self,
+static void songit_tee_death_notification(tee_song_iterator_t *self,
                               song_iterator_t *corpse) {
 	if (corpse == self->children[TEE_LEFT].it) {
 		self->status &= ~TEE_LEFT_ACTIVE;
@@ -1719,8 +1664,7 @@ songit_tee_death_notification(tee_song_iterator_t *self,
 }
 
 
-song_iterator_t *
-songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy) {
+song_iterator_t *songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy) {
 	int i;
 	int firstfree = 1; /* First free channel */
 	int incomplete_map = 0;
@@ -1813,8 +1757,7 @@ songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy) {
 /*-- General purpose functionality --*/
 /*************************************/
 
-int
-songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask) {
+int songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask) {
 	int retval;
 
 	if (!*it)
@@ -1865,10 +1808,7 @@ songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask) {
 	return retval;
 }
 
-
-
-song_iterator_t *
-songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
+song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 	base_song_iterator_t *it;
 	int i;
 
@@ -1939,8 +1879,7 @@ songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
 	return (song_iterator_t *) it;
 }
 
-void
-songit_free(song_iterator_t *it) {
+void songit_free(song_iterator_t *it) {
 	if (it) {
 		int i;
 
@@ -1954,8 +1893,7 @@ songit_free(song_iterator_t *it) {
 	}
 }
 
-song_iterator_message_t
-songit_make_message(songit_id_t id, int recipient, int type, int a1, int a2) {
+song_iterator_message_t songit_make_message(songit_id_t id, int recipient, int type, int a1, int a2) {
 	song_iterator_message_t rv;
 	rv.ID = id;
 	rv.recipient = recipient;
@@ -1966,8 +1904,7 @@ songit_make_message(songit_id_t id, int recipient, int type, int a1, int a2) {
 	return rv;
 }
 
-song_iterator_message_t
-songit_make_ptr_message(songit_id_t id, int recipient, int type, void * a1, int a2) {
+song_iterator_message_t songit_make_ptr_message(songit_id_t id, int recipient, int type, void * a1, int a2) {
 	song_iterator_message_t rv;
 	rv.ID = id;
 	rv.recipient = recipient;
@@ -1978,9 +1915,7 @@ songit_make_ptr_message(songit_id_t id, int recipient, int type, void * a1, int 
 	return rv;
 }
 
-
-int
-songit_handle_message(song_iterator_t **it_reg_p, song_iterator_message_t msg) {
+int songit_handle_message(song_iterator_t **it_reg_p, song_iterator_message_t msg) {
 	song_iterator_t *it = *it_reg_p;
 	song_iterator_t *newit;
 
@@ -1993,16 +1928,14 @@ songit_handle_message(song_iterator_t **it_reg_p, song_iterator_message_t msg) {
 	return 1;
 }
 
-song_iterator_t *
-songit_clone(song_iterator_t *it, int delta) {
+song_iterator_t *songit_clone(song_iterator_t *it, int delta) {
 	SIMSG_SEND(it, SIMSG_CLONE(delta));
 	it->death_listeners_nr = 0;
 	it->flags |= SONGIT_FLAG_CLONE;
 	return it;
 }
 
-void
-song_iterator_add_death_listener(song_iterator_t *it,
+void song_iterator_add_death_listener(song_iterator_t *it,
                                  void *client,
                                  void (*notify)(void *self, void *notifier)) {
 	if (it->death_listeners_nr >= SONGIT_MAX_LISTENERS) {
@@ -2018,8 +1951,7 @@ song_iterator_add_death_listener(song_iterator_t *it,
 	it->death_listeners_nr++;
 }
 
-void
-song_iterator_remove_death_listener(song_iterator_t *it,
+void song_iterator_remove_death_listener(song_iterator_t *it,
                                     void *client) {
 	int i;
 	for (i = 0; i < it->death_listeners_nr; i++) {
@@ -2042,8 +1974,7 @@ song_iterator_remove_death_listener(song_iterator_t *it,
 }
 
 
-song_iterator_t *
-sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2) {
+song_iterator_t *sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2) {
 	if (it1 == NULL)
 		return it2;
 	if (it2 == NULL)

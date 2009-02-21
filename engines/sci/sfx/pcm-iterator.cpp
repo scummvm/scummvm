@@ -31,10 +31,8 @@ namespace Sci {
 
 #define D ((pcm_data_internal_t *)self->internal)
 
-static int
-pi_poll(sfx_pcm_feed_t *self, byte *dest, int size);
-static void
-pi_destroy(sfx_pcm_feed_t *self);
+static int pi_poll(sfx_pcm_feed_t *self, byte *dest, int size);
+static void pi_destroy(sfx_pcm_feed_t *self);
 
 typedef struct {
 	byte *base_data;
@@ -55,11 +53,7 @@ static sfx_pcm_feed_t pcm_it_prototype = {
 };
 
 
-sfx_pcm_feed_t *
-sfx_iterator_make_feed(byte *base_data,
-                       int offset,
-                       int size,
-                       sfx_pcm_config_t conf) {
+sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset, int size, sfx_pcm_config_t conf) {
 	sfx_pcm_feed_t *feed;
 	pcm_data_internal_t *idat;
 	byte *data = base_data + offset;
@@ -83,8 +77,7 @@ sfx_iterator_make_feed(byte *base_data,
 }
 
 
-static int
-pi_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
+static int pi_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	int data_len;
 
 	if (size >= D->frames_left)
@@ -104,8 +97,7 @@ pi_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	return size;
 }
 
-static void
-pi_destroy(sfx_pcm_feed_t *self) {
+static void pi_destroy(sfx_pcm_feed_t *self) {
 	sci_refcount_decref(D->base_data);
 	free(D);
 	free(self);

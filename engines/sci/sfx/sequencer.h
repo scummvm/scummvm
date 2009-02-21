@@ -45,16 +45,14 @@ typedef struct _sfx_sequencer {
 
 	int device;  /* Type of device the sequencer depends on, may be SFX_DEVICE_NONE. */
 
-	int
-	(*set_option)(char *name, char *value);
+	int (*set_option)(char *name, char *value);
 	/* Sets an option for the sequencing mechanism
 	** Parameters: (char *) name: The name describing what to set
 	**             (char *) value: The value to set
 	** Returns   : (int) SFX_OK, or SFX_ERROR if the name wasn't understood
 	*/
 
-	int
-	(*open)(int patch_len, byte *patch, int patch2_len, byte *patch2, void *device);
+	int (*open)(int patch_len, byte *patch, int patch2_len, byte *patch2, void *device);
 	/* Opens the sequencer for writing
 	** Parameters: (int) patch_len, patch2_len: Length of the patch data
 	**             (byte *) patch, patch2: Bulk patch data
@@ -136,8 +134,7 @@ typedef struct _sfx_sequencer {
 } sfx_sequencer_t;
 
 
-sfx_sequencer_t *
-sfx_find_sequencer(char *name);
+sfx_sequencer_t *sfx_find_sequencer(char *name);
 /* Finds a sequencer by name
 ** Parameters: (char *) name: Name of the sequencer to look up, or NULL for default
 ** Returns   : (sfx_sequencer_t *) The sequencer of matching name, or NULL

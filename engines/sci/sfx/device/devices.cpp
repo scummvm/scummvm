@@ -50,9 +50,7 @@ struct _midi_device **devices[] = {
 	devices_opl2,
 };
 
-
-static struct _midi_device *
-			find_dev(int type, char *name) {
+static struct _midi_device *find_dev(int type, char *name) {
 	int i = 0;
 
 	if (!type)
@@ -67,15 +65,12 @@ static struct _midi_device *
 	return devices[type][i];
 }
 
-
-void *
-sfx_find_device(int type, char *name) {
+void *sfx_find_device(int type, char *name) {
 	struct _midi_device *dev = find_dev(type, name);
 
 	if (dev) {
 		if (dev->init(dev)) {
-			fprintf(stderr, "[SFX] Opening device '%s' failed\n",
-			        dev->name);
+			fprintf(stderr, "[SFX] Opening device '%s' failed\n", dev->name);
 			return NULL;
 		}
 
