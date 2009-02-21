@@ -782,7 +782,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	{{"lsl1sci", "VGA Remake", {
 		{"resource.map", 0, "6d04d26466337a1a64b8c6c0eb65c9a9", 3222},
@@ -791,9 +790,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "85d6935ef77e6b0e16bc307640a0d913", 1088312},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
+		SCI_VERSION(1, 000, 577)
 	},
-#endif
 
 #if 0
 	// Larry 1 VGA Remake - Spanish DOS
@@ -821,7 +819,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 572)
 	},
 
-#if 0
 	// Larry 2 - English DOS
 	{{"lsl2", "", {
 		{"resource.map", 0, "42258cf767a8ebaa9e66b6151a80e601", 5628},
@@ -833,9 +830,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "4a24443a25e2b1492462a52809605dc2", 345683},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 343)	// FIXME: some versions are v. 0.000.409/0.000.572
+		SCI_VERSION(0, 000, 409)
 	},
-#endif
 
 #if 0
 	// Larry 3 - English Amiga (from www.back2roots.org)
@@ -896,7 +892,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 5 - English DOS (from spookypeanut)
 	{{"lsl5", "", {
 		{"resource.map", 0, "be00ef895197754ae4eab021ca44cbcd", 6417},
@@ -912,7 +907,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION(1, 000, 510)
 	},
-#endif
 
 #if 0
 	// Larry 5 - German DOS (from Tobis87)
@@ -961,16 +955,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 6 - English DOS (from spookypeanut)
 	{{"lsl6", "", {
 		{"resource.map", 0, "bb8a39d9e2a77ba449a1e591109ad9a8", 6973},
 		{"resource.000", 0, "4462fe48c7452d98fddcec327a3e738d", 5789138},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(1, 001, 113)
 	},
-#endif
 
 #if 0
 	// Larry 6 - German DOS (from Tobis87)
