@@ -284,7 +284,7 @@ RECORD menubar_t "menubar_t" {
 	menu_t menus[DYNAMIC menus_nr];
 }
 
-RECORD seg_manager_t "seg_manager_t" {
+RECORD SegManager "SegManager" {
 	int_hash_map_tp id_seg_map;
 	mem_obj_ptr heap[DYNAMIC heap_size];
 	int heap_size;
@@ -324,7 +324,7 @@ RECORD EngineState "EngineState" {
 	menubar_tp menubar;
 	int status_bar_foreground;
 	int status_bar_background;
-	seg_manager_t seg_manager;
+	SegManager seg_manager;
 	int classtable_size;
 	class_t classtable[DYNAMIC classtable_size];
 	sfx_state_t sound;
@@ -757,7 +757,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-static seg_id_t find_unique_seg_by_type(seg_manager_t *self, int type) {
+static seg_id_t find_unique_seg_by_type(SegManager *self, int type) {
 	int i;
 
 	for (i = 0; i < self->heap_size; i++)
@@ -831,7 +831,7 @@ static void load_script(EngineState *s, seg_id_t seg) {
 	}
 }
 
-static void reconstruct_scripts(EngineState *s, seg_manager_t *self) {
+static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	int i;
 	mem_obj_t *mobj;
 	for (i = 0; i < self->heap_size; i++) {
@@ -905,7 +905,7 @@ static void reconstruct_scripts(EngineState *s, seg_manager_t *self) {
 	}
 }
 
-void reconstruct_clones(EngineState *s, seg_manager_t *self) {
+void reconstruct_clones(EngineState *s, SegManager *self) {
 	int i;
 	mem_obj_t *mobj;
 

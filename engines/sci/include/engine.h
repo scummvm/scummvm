@@ -256,7 +256,7 @@ struct EngineState {
 	int classtable_size; /* Number of classes in the table- for debugging */
 	class_t *classtable; /* Table of all classes */
 
-	seg_manager_t seg_manager;
+	SegManager seg_manager;
 	int gc_countdown; /* Number of kernel calls until next gc */
 
 	int selector_names_nr; /* Number of selector names */

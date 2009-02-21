@@ -130,7 +130,7 @@ void add_outgoing_refs(void *pre_wm, reg_t addr) {
 }
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
-	seg_manager_t *sm = &(s->seg_manager);
+	SegManager *sm = &(s->seg_manager);
 	seg_interface_t **interfaces = (seg_interface_t**)sci_calloc(sizeof(seg_interface_t *), sm->heap_size);
 	reg_t_hash_map *nonnormal_map = new reg_t_hash_map();
 	reg_t_hash_map *normal_map = NULL;
@@ -256,7 +256,7 @@ void free_unless_used(void *pre_use_map, reg_t addr) {
 void run_gc(EngineState *s) {
 	int seg_nr;
 	deallocator_t deallocator;
-	seg_manager_t *sm = &(s->seg_manager);
+	SegManager *sm = &(s->seg_manager);
 
 #ifdef DEBUG_GC
 	c_segtable(s);

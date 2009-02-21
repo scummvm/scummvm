@@ -1682,7 +1682,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, reg))
 
-int sm_script_marked_deleted(seg_manager_t* self, int script_nr);
+int sm_script_marked_deleted(SegManager* self, int script_nr);
 int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr);
 int script_instantiate_common(EngineState *s, int script_nr, resource_t **script, resource_t **heap, int *was_new) {
 	int seg;
@@ -1901,9 +1901,9 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	return reg.segment;		// instantiation successful 
 }
 
-void sm_script_relocate_exports_sci11(seg_manager_t *self, int seg);
-void sm_script_initialise_objects_sci11(seg_manager_t *self, EngineState *s, int seg);
-void sm_heap_relocate(seg_manager_t *self, EngineState *s, reg_t block);
+void sm_script_relocate_exports_sci11(SegManager *self, int seg);
+void sm_script_initialise_objects_sci11(SegManager *self, EngineState *s, int seg);
+void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block);
 
 int script_instantiate_sci11(EngineState *s, int script_nr) {
 	resource_t *script, *heap;
@@ -1947,7 +1947,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 		return script_instantiate_sci0(s, script_nr);
 }
 
-void sm_mark_script_deleted(seg_manager_t* self, int script_nr);
+void sm_mark_script_deleted(SegManager* self, int script_nr);
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
 	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
