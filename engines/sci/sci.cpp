@@ -36,23 +36,20 @@ namespace Sci {
 
 extern gfx_driver_t gfx_driver_scummvm;
 
-int
-c_quit(EngineState *s) {
-	script_abort_flag = 1; /* Terminate VM */
+int c_quit(EngineState *s) {
+	script_abort_flag = 1; // Terminate VM
 	_debugstate_valid = 0;
 	_debug_seeking = 0;
 	_debug_step_running = 0;
 	return 0;
 }
 
-int
-c_die(EngineState *s) {
-	exit(0); /* Die */
-	return 0; /* ;-P (fixes warning) */
+int c_die(EngineState *s) {
+	exit(0); //
+	return 0;
 }
 
-static void
-init_console() {
+static void init_console() {
 #ifdef WANT_CONSOLE
 	con_gfx_init();
 #endif
@@ -78,14 +75,13 @@ init_console() {
 	con_hook_int(&sci01_priority_table_flags, "sci01_priority_table_flags",
 	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
 
-	con_passthrough = 1; /* enables all sciprintf data to be sent to stdout */
+	con_passthrough = 1; // enables all sciprintf data to be sent to stdout
 }
 
-static int
-init_gamestate(EngineState *gamestate, sci_version_t version) {
+static int init_gamestate(EngineState *gamestate, sci_version_t version) {
 	int errc;
 
-	if ((errc = script_init_engine(gamestate, version))) { /* Initialize game state */
+	if ((errc = script_init_engine(gamestate, version))) { // Initialize game state
 		int recovered = 0;
 
 		if (errc == SCI_ERROR_INVALID_SCRIPT_VERSION) {
@@ -216,7 +212,7 @@ Common::Error SciEngine::go() {
 	version = getVersion();
 
 	char resource_dir[MAXPATHLEN+1] = "";
-	getcwd(resource_dir, MAXPATHLEN); /* Store resource directory */
+	getcwd(resource_dir, MAXPATHLEN); // Store resource directory
 
 	resmgr = new ResourceManager(res_version, 256 * 1024);
 
@@ -251,7 +247,7 @@ Common::Error SciEngine::go() {
 		return Common::kUnknownError;
 	}
 
-	/* Set the savegame dir */
+	// Set the savegame dir
 	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
 
 	// Originally, work_dir tried to be ~/.freesci/game_name
@@ -268,7 +264,7 @@ Common::Error SciEngine::go() {
 	gfx_state.version = resmgr->sci_version;
 	gamestate->gfx_state = &gfx_state;
 
-	/**** Default config: */
+	// Default config:
 	gfx_options_t gfx_options;
 	gfx_options.workarounds = 0;
 	gfx_options.buffer_pics_nr = 0;
@@ -289,14 +285,14 @@ Common::Error SciEngine::go() {
 		gfx_options.res_conf.assign[i] = NULL;
 		gfx_options.res_conf.mod[i] = NULL;
 	}
-	/**** Default config ends */
+	// Default config ends
 
 	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}
 
-	if (game_init_graphics(gamestate)) { /* Init interpreter graphics */
+	if (game_init_graphics(gamestate)) { // Init interpreter graphics
 		fprintf(stderr, "Game initialization failed: Error in GFX subsystem. Aborting...\n");
 		return Common::kUnknownError;
 	}
@@ -311,10 +307,10 @@ Common::Error SciEngine::go() {
 	       SCI_VERSION_MINOR(gamestate->version),
 	       SCI_VERSION_PATCHLEVEL(gamestate->version));
 
-	game_run(&gamestate); /* Run the game */
+	game_run(&gamestate); // Run the game
 
 	game_exit(gamestate);
-	script_free_engine(gamestate); /* Uninitialize game state */
+	script_free_engine(gamestate); // Uninitialize game state
 	script_free_breakpoints(gamestate);
 	free(gamestate->work_dir);
 	free(gamestate);

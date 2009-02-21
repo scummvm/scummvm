@@ -37,7 +37,7 @@ class SciEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *vm);
-	virtual ~Console(void);
+	virtual ~Console();
 
 private:
 	bool cmdGetVersion(int argc, const char **argv);

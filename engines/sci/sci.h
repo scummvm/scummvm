@@ -74,8 +74,8 @@ public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
 	~SciEngine();
 
-	virtual Common::Error init(void);
-	virtual Common::Error go(void);
+	virtual Common::Error init();
+	virtual Common::Error go();
 
 	GUI::Debugger *getDebugger() { return _console; }
 

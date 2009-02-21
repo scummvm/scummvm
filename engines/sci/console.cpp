@@ -42,10 +42,7 @@ Console::~Console() {
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	int ver = _vm->getVersion();
-	DebugPrintf("SCI version: %d.%03d.%03d\n",
-	       SCI_VERSION_MAJOR(ver),
-	       SCI_VERSION_MINOR(ver),
-	       SCI_VERSION_PATCHLEVEL(ver));
+	DebugPrintf("SCI version: %d.%03d.%03d\n", SCI_VERSION_MAJOR(ver), SCI_VERSION_MINOR(ver), SCI_VERSION_PATCHLEVEL(ver));
 
 	return true;
 }

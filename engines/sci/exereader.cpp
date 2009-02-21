@@ -160,7 +160,7 @@ uint getBit(Common::SeekableReadStream *input) {
 		_bits = input->readByte();
 		_bits |= input->readByte() << 8;
 
-		if (_bitCount == -1) { /* special case for first bit word */
+		if (_bitCount == -1) { // special case for first bit word
 			bit = _bits & 1;
 			_bits >>= 1;
 		}
@@ -268,12 +268,9 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream) {
 		accept = 0;
 
 		if (isalnum(ch)) {
-			accept = (state != 1
-			          && state != 5
-			          && state != 9);
+			accept = (state != 1 && state != 5 && state != 9);
 		} else if (ch == '.') {
-			accept = (state == 1
-			          || state == 5);
+			accept = (state == 1 || state == 5);
 		} else if (state == 9) {
 			// Terminate string
 			currentString[9] = 0;
