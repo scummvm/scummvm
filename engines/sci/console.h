@@ -32,6 +32,8 @@
 
 namespace Sci {
 
+class SciEngine;
+
 class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *vm);

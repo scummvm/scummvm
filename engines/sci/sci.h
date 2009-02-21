@@ -28,7 +28,8 @@
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
-#include "engines/advancedDetector.h"
+
+#include "sci/console.h"
 
 namespace Sci {
 
@@ -68,8 +69,6 @@ struct SciGameDescription {
 	int version;
 };
 
-class Console;
-
 class SciEngine : public Engine {
 public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
@@ -77,6 +76,8 @@ public:
 
 	virtual Common::Error init(void);
 	virtual Common::Error go(void);
+
+	GUI::Debugger *getDebugger() { return _console; }
 
 	const char* getGameID() const;
 	int getVersion() const;
