@@ -6,23 +6,26 @@ Release version: 0.12.0
 New in this version
 -------------------
 
-0.12.0:
-- Improved SMUSH support (deprecated 'Smush_force_redraw' option)
-No skipped frames in Full Throttle action sequences. The 'Smush_force_redraw'
-option is not needed/honored anymore.
+0.13.0:
+Important: Two builds for ScummVM CE
 
-- Fixed MultiFuntion key in Full Throttle
+For this release, two binaries (executables) are provided. The first,
+with file name scummvm1.exe, includes support for the following engines:
+ - scumm, sword1, sword2, queen, sky, lure, agi, touche
+while the second, with file name scummvm2.exe:
+ - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker
+The user must make sure to execute the correct file for a game. All 
+previously detected games will be shown in the launcher. Trying to launch
+a gob engine game with scummvm1.exe will not work.
+Detection also works as implied: scummvm1.exe will detect only the games
+for which it has support; the same holds for scummvm2.exe.
+This change has been done so users with less free memory can play more
+memory hungry games.
 
-- Improved sound output
-Fixed a long standing bug which led to distorted sound output in all games.
+Also noted are problems with flac support. Your mileage may vary. Please
+consider using ogg or mp3 for those games (smaller sizes are better for
+handheld devices too!)
 
-- Switched to faster ogg vorbis library
-Robin Watts' libTremolo is used for ogg vorbis (tremor) replay. Info patch
-by Lostech.
-
-- New right click through double tap inhibiting option
-Check out the 'no_doubletap_rightclick' option if double-tapping as a right
-click input method annoys you. Patch by spookypeanut.
 
 ------------------------------------------------------------------------
 
@@ -623,6 +626,25 @@ http://www.scummvm.org/
 ------------------------------------------------------------------------
 Old news follow ...
 ------------------------------------------------------------------------
+
+0.12.0:
+- Improved SMUSH support (deprecated 'Smush_force_redraw' option)
+No skipped frames in Full Throttle action sequences. The 'Smush_force_redraw'
+option is not needed/honored anymore.
+
+- Fixed MultiFuntion key in Full Throttle
+
+- Improved sound output
+Fixed a long standing bug which led to distorted sound output in all games.
+
+- Switched to faster ogg vorbis library
+Robin Watts' libTremolo is used for ogg vorbis (tremor) replay. Info patch
+by Lostech.
+
+- New right click through double tap inhibiting option
+Check out the 'no_doubletap_rightclick' option if double-tapping as a right
+click input method annoys you. Patch by spookypeanut.
+
 
 0.11.0:
 - Redesigned 'Free Look' action (Pocket PCs)
