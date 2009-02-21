@@ -100,11 +100,11 @@ static void free_worklist(worklist_t *wl) {
 	}
 }
 
-static reg_t_hash_map * normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, seg_interface_t **interfaces, int interfaces_nr) {
+static reg_t_hash_map * normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, SegInterface **interfaces, int interfaces_nr) {
 	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
 	for (reg_t_hash_map::iterator i = nonnormal_map->begin(); i != nonnormal_map->end(); ++i) {
-		seg_interface_t *interfce;
+		SegInterface *interfce;
 		reg_t reg = i->_key;
 		interfce = (reg.segment < interfaces_nr) ? interfaces[reg.segment] : NULL;
 
@@ -129,8 +129,8 @@ void add_outgoing_refs(void *pre_wm, reg_t addr) {
 }
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
-	SegManager *sm = &(s->seg_manager);
-	seg_interface_t **interfaces = (seg_interface_t**)sci_calloc(sizeof(seg_interface_t *), sm->heap_size);
+	SegManager *sm = s->seg_manager;
+	SegInterface **interfaces = (SegInterface **)sci_calloc(sizeof(SegInterface *), sm->heap_size);
 	reg_t_hash_map *nonnormal_map = new reg_t_hash_map();
 	reg_t_hash_map *normal_map = NULL;
 	worklist_t *worklist = new_worklist();
@@ -144,7 +144,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		if (sm->heap[i] == NULL)
 			interfaces[i] = NULL;
 		else
-			interfaces[i] = get_seg_interface(sm, i);
+			interfaces[i] = sm->getSegInterface(i);
 
 	// Initialise
 	// Init: Registers
@@ -229,7 +229,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 }
 
 struct deallocator_t {
-	seg_interface_t *interfce;
+	SegInterface *interfce;
 #ifdef DEBUG_GC
 	char *segnames[MEM_OBJ_MAX + 1];
 	int segcount[MEM_OBJ_MAX + 1];
@@ -255,7 +255,7 @@ void free_unless_used(void *pre_use_map, reg_t addr) {
 void run_gc(EngineState *s) {
 	int seg_nr;
 	deallocator_t deallocator;
-	SegManager *sm = &(s->seg_manager);
+	SegManager *sm = s->seg_manager;
 
 #ifdef DEBUG_GC
 	c_segtable(s);
@@ -267,7 +267,7 @@ void run_gc(EngineState *s) {
 
 	for (seg_nr = 1; seg_nr < sm->heap_size; seg_nr++) {
 		if (sm->heap[seg_nr] != NULL) {
-			deallocator.interfce = get_seg_interface(sm, seg_nr);
+			deallocator.interfce = sm->getSegInterface(seg_nr);
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.interfce->type_id] = deallocator.interfce->type;
 #endif

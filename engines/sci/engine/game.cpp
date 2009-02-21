@@ -467,7 +467,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	else
 		result = create_class_table_sci0(s);
 
-	sm_init(&s->seg_manager, s->version >= SCI_VERSION(1, 001, 000));
+	s->seg_manager = new SegManager(s->version >= SCI_VERSION(1, 001, 000));
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	if (result) {
@@ -482,9 +482,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 		return 1;
 	}
 
-	s->script_000 = &(s->seg_manager.heap[s->script_000_segment]->data.script);
+	s->script_000 = &(s->seg_manager->heap[s->script_000_segment]->data.script);
 
-	s->sys_strings = sm_allocate_sys_strings(&s->seg_manager, &s->sys_strings_segment);
+	s->sys_strings = s->seg_manager->allocateSysStrings(&s->sys_strings_segment);
 	// Allocate static buffer for savegame and CWD directories
 	sys_string_acquire(s->sys_strings, SYS_STRING_SAVEDIR, "savedir", MAX_SAVE_DIR_SIZE);
 
@@ -523,9 +523,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE &&
 	        s->version < SCI_VERSION(1, 001, 000))
-		sm_set_export_width(&s->seg_manager, 1);
+		s->seg_manager->setExportWidth(1);
 	else
-		sm_set_export_width(&s->seg_manager, 0);
+		s->seg_manager->setExportWidth(0);
 
 	sciprintf("Engine initialized\n");
 
@@ -600,7 +600,7 @@ int game_init(EngineState *s) {
 	reg_t game_obj; // Address of the game object
 	dstack_t *stack;
 
-	stack = sm_allocate_stack(&s->seg_manager, VM_STACK_SIZE, &s->stack_segment);
+	stack = s->seg_manager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
 	s->stack_base = stack->entries;
 	s->stack_top = s->stack_base + VM_STACK_SIZE;
 
@@ -679,7 +679,7 @@ int game_exit(EngineState *s) {
 	// Reinit because some other code depends on having a valid state
 	game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 
-	sm_destroy(&s->seg_manager);
+	delete s->seg_manager;
 
 	if (s->synonyms_nr) {
 		free(s->synonyms);

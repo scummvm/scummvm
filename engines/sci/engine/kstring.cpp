@@ -200,14 +200,14 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int synonyms_nr = 0;
 
 		script = GET_SEL32V(objpos, number);
-		seg = sm_seg_get(&(s->seg_manager), script);
+		seg = s->seg_manager->segGet(script);
 
-		if (seg >= 0) synonyms_nr = sm_get_synonyms_nr(&(s->seg_manager), seg, SEG_ID);
+		if (seg >= 0) synonyms_nr = s->seg_manager->getSynonymsNr(seg, SEG_ID);
 
 		if (synonyms_nr) {
 			byte *synonyms;
 
-			synonyms = sm_get_synonyms(&(s->seg_manager), seg, SEG_ID);
+			synonyms = s->seg_manager->getSynonyms(seg, SEG_ID);
 			if (synonyms) {
 				int i;
 				if (s->synonyms_nr)
@@ -389,7 +389,7 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (length >= 0)
 			strncpy(dest, src, length);
 		else {
-			if (s->seg_manager.heap[argv[0].segment]->type == MEM_OBJ_DYNMEM) {
+			if (s->seg_manager->heap[argv[0].segment]->type == MEM_OBJ_DYNMEM) {
 				reg_t *srcp = (reg_t *) src;
 
 				int i;
@@ -421,7 +421,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
-	        (strcmp(sm_get_description(&(s->seg_manager), argv[0]),
+	        (strcmp(s->seg_manager->getDescription(argv[0]),
 	                AVOIDPATH_DYNMEM_STRING) != 0)  &&
 	        ((strlen((const char*)dest) < 2) || (!is_print_str((char*)dest))))
 		/* SQ4 array handling detected */

@@ -24,125 +24,102 @@
  */
 
 #include "sci/engine/seg_manager.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/versions.h"
 #include "sci/include/engine.h"
 
 namespace Sci {
 
-//#define GC_DEBUG*/ // Debug garbage collection
-//#define GC_DEBUG_VERBOSE*/ // Debug garbage verbosely
+#define DEFAULT_SCRIPTS 32
+#define DEFAULT_OBJECTS 8	    // default # of objects per script
+#define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
 
-#define SM_MEMORY_POISON	// Poison memory upon deallocation
-
-mem_obj_t* mem_obj_allocate(SegManager *self, seg_id_t segid, int hash_id, mem_obj_enum type);
+//#define GC_DEBUG // Debug garbage collection
+//#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
 #undef DEBUG_SEG_MANAGER // Define to turn on debugging
 
 #define GET_SEGID() 	\
 	if (flag == SCRIPT_ID) \
-		id = sm_seg_get (self, id); \
-		VERIFY(sm_check(self, id), "invalid seg id");
+		id = segGet(id); \
+		VERIFY(check(id), "invalid seg id");
 
+#if 0
+// Unreferenced - removed
 #define VERIFY_MEM(mem_ptr, ret) \
 	if (!(mem_ptr)) {\
 		sciprintf( "%s, *d, no enough memory", __FILE__, __LINE__ ); \
 		return ret; \
 	}
+#endif
 
 #define INVALID_SCRIPT_ID -1
 
-void dbg_print(const char* msg, void *i) {
-#ifdef DEBUG_SEG_MANAGER
-	char buf[1000];
-	sprintf(buf, "%s = [0x%x], dec:[%d]", msg, i, i);
-	perror(buf);
-#endif
-}
-
-//-- forward declarations --
-
-void sm_script_initialise_locals_zero(SegManager *self, seg_id_t seg, int count);
-void sm_script_initialise_locals(SegManager *self, reg_t location);
-static int _sm_deallocate(SegManager* self, int seg, int recursive);
-static hunk_t *sm_alloc_hunk(SegManager *self, reg_t *);
-static void sm_free_hunk(SegManager *self, reg_t addr);
-static int sm_check(SegManager* self, int seg);
-/* Check segment validity
-** Parameters: (int) seg: The segment to validate
-** Returns   : (int)	0 if 'seg' is an invalid segment
-**			1 if 'seg' is a valid segment
-*/
-
-// End of Memory Management
-
-static inline int find_free_id(SegManager *self, int *id) {
+inline int SegManager::findFreeId(int *id) {
 	char was_added = 0;
 	int retval = 0;
 
 	while (!was_added) {
-		retval = self->id_seg_map->check_value(self->reserved_id, true, &was_added);
-		*id = self->reserved_id--;
-		if (self->reserved_id < -1000000)
-			self->reserved_id = -10;
+		retval = id_seg_map->check_value(reserved_id, true, &was_added);
+		*id = reserved_id--;
+		if (reserved_id < -1000000)
+			reserved_id = -10;
 		// Make sure we don't underflow
 	}
 
 	return retval;
 }
 
-static mem_obj_t * alloc_nonscript_segment(SegManager *self, mem_obj_enum type, seg_id_t *segid) {
+mem_obj_t *SegManager::allocNonscriptSegment(memObjType type, seg_id_t *segid) {
 	// Allocates a non-script segment
 	int id;
 
-	*segid = find_free_id(self, &id);
-	return mem_obj_allocate(self, *segid, id, type);
+	*segid = findFreeId(&id);
+	return memObjAllocate(*segid, id, type);
 }
 
-void sm_init(SegManager* self, int sci1_1) {
+SegManager::SegManager(bool sci1_1) {
 	int i;
 
-	self->mem_allocated = 0; // Initialise memory count
+	// Initialise memory count
+	mem_allocated = 0;
 
-	self->id_seg_map = new int_hash_map_t();
-	self->reserved_id = INVALID_SCRIPT_ID;
-	self->id_seg_map->check_value(self->reserved_id, true);	// reserve 0 for seg_id
-	self->reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
+	id_seg_map = new int_hash_map_t();
+	reserved_id = INVALID_SCRIPT_ID;
+	id_seg_map->check_value(reserved_id, true);	// reserve 0 for seg_id
+	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
 
-	self->heap_size = DEFAULT_SCRIPTS;
-	self->heap = (mem_obj_t**)sci_calloc(self->heap_size, sizeof(mem_obj_t *));
+	heap_size = DEFAULT_SCRIPTS;
+	heap = (mem_obj_t **)sci_calloc(heap_size, sizeof(mem_obj_t *));
 
-	self->clones_seg_id = 0;
-	self->lists_seg_id = 0;
-	self->nodes_seg_id = 0;
-	self->hunks_seg_id = 0;
+	clones_seg_id = 0;
+	lists_seg_id = 0;
+	nodes_seg_id = 0;
+	hunks_seg_id = 0;
 
-	self->exports_wide = 0;
-	self->sci1_1 = sci1_1;
+	exports_wide = 0;
+	isSci1_1 = sci1_1;
 
 	// initialize the heap pointers
-	for (i = 0; i < self->heap_size; i++) {
-		self->heap[i] = NULL;
+	for (i = 0; i < heap_size; i++) {
+		heap[i] = NULL;
 	}
 
 	// gc initialisation
-	self->gc_mark_bits = 0;
+	gc_mark_bits = 0;
 }
 
-// destroy the object, free the memorys if allocated before
-void sm_destroy(SegManager* self) {
+// Destroy the object, free the memorys if allocated before
+SegManager::~SegManager() {
 	int i;
 
-	// free memory
-	for (i = 0; i < self->heap_size; i++) {
-		if (self->heap[i])
-			_sm_deallocate(self, i, 0);
+	// Free memory
+	for (i = 0; i < heap_size; i++) {
+		if (heap[i])
+			deallocate(i, false);
 	}
 
-	delete self->id_seg_map;
+	delete id_seg_map;
 
-	free(self->heap);
-	self->heap = NULL;
+	free(heap);
 }
 
 // allocate a memory for script from heap
@@ -151,19 +128,19 @@ void sm_destroy(SegManager* self) {
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-mem_obj_t *sm_allocate_script(SegManager* self, EngineState *s, int script_nr, int* seg_id) {
+mem_obj_t *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
 	int seg;
 	char was_added;
 	mem_obj_t* mem;
 
-	seg = self->id_seg_map->check_value(script_nr, true, &was_added);
+	seg = id_seg_map->check_value(script_nr, true, &was_added);
 	if (!was_added) {
 		*seg_id = seg;
-		return self->heap[*seg_id];
+		return heap[*seg_id];
 	}
 
 	// allocate the mem_obj_t
-	mem = mem_obj_allocate(self, seg, script_nr, MEM_OBJ_SCRIPT);
+	mem = memObjAllocate(seg, script_nr, MEM_OBJ_SCRIPT);
 	if (!mem) {
 		sciprintf("%s, %d, Not enough memory, ", __FILE__, __LINE__);
 		return NULL;
@@ -173,7 +150,7 @@ mem_obj_t *sm_allocate_script(SegManager* self, EngineState *s, int script_nr, i
 	return mem;
 }
 
-static void sm_set_script_size(mem_obj_t *mem, EngineState *s, int script_nr) {
+void SegManager::setScriptSize(mem_obj_t *mem, EngineState *s, int script_nr) {
 	resource_t *script = scir_find_resource(s->resmgr, sci_script, script_nr, 0);
 	resource_t *heap = scir_find_resource(s->resmgr, sci_heap, script_nr, 0);
 
@@ -209,17 +186,17 @@ static void sm_set_script_size(mem_obj_t *mem, EngineState *s, int script_nr) {
 	}
 }
 
-int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr) {
+int SegManager::initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr) {
 	// allocate the script.buf
 	script_t *scr;
 
-	sm_set_script_size(mem, s, script_nr);
+	setScriptSize(mem, s, script_nr);
 	mem->data.script.buf = (byte*) sci_malloc(mem->data.script.buf_size);
 
-	dbg_print("mem->data.script.buf ", mem->data.script.buf);
+	dbgPrint("mem->data.script.buf ", mem->data.script.buf);
 	if (!mem->data.script.buf) {
-		sm_free_script(mem);
-		sciprintf("seg_manager.c: Not enough memory space for script size");
+		freeScript(mem);
+		sciprintf("SegManager: Not enough memory space for script size");
 		mem->data.script.buf_size = 0;
 		return 0;
 	}
@@ -251,20 +228,20 @@ int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr) {
 	return 1;
 }
 
-int _sm_deallocate(SegManager *self, int seg, int recursive) {
+int SegManager::deallocate(int seg, bool recursive) {
 	mem_obj_t *mobj;
-	VERIFY(sm_check(self, seg), "invalid seg id");
+	VERIFY(check(seg), "invalid seg id");
 
-	mobj = self->heap[seg];
-	self->id_seg_map->remove_value(mobj->segmgr_id);
+	mobj = heap[seg];
+	id_seg_map->remove_value(mobj->segmgr_id);
 
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
-		sm_free_script(mobj);
+		freeScript(mobj);
 
 		mobj->data.script.buf = NULL;
 		if (recursive && mobj->data.script.locals_segment)
-			_sm_deallocate(self, mobj->data.script.locals_segment, recursive);
+			deallocate(mobj->data.script.locals_segment, recursive);
 		break;
 
 	case MEM_OBJ_LOCALS:
@@ -314,105 +291,105 @@ int _sm_deallocate(SegManager *self, int seg, int recursive) {
 	}
 
 	free(mobj);
-	self->heap[seg] = NULL;
+	heap[seg] = NULL;
 
 	return 1;
 }
 
-int sm_script_marked_deleted(SegManager *self, int script_nr) {
+int SegManager::scriptMarkedDeleted(int script_nr) {
 	script_t *scr;
-	int seg = sm_seg_get(self, script_nr);
-	VERIFY(sm_check(self, seg), "invalid seg id");
+	int seg = segGet(script_nr);
+	VERIFY(check(seg), "invalid seg id");
 
-	scr = &(self->heap[seg]->data.script);
+	scr = &(heap[seg]->data.script);
 	return scr->marked_as_deleted;
 }
 
-void sm_mark_script_deleted(SegManager *self, int script_nr) {
+void SegManager::markScriptDeleted(int script_nr) {
 	script_t *scr;
-	int seg = sm_seg_get(self, script_nr);
-	VERIFY(sm_check(self, seg), "invalid seg id");
+	int seg = segGet(script_nr);
+	VERIFY(check(seg), "invalid seg id");
 
-	scr = &(self->heap[seg]->data.script);
+	scr = &(heap[seg]->data.script);
 	scr->marked_as_deleted = 1;
 }
 
-void sm_unmark_script_deleted(SegManager* self, int script_nr) {
+void SegManager::unmarkScriptDeleted(int script_nr) {
 	script_t *scr;
-	int seg = sm_seg_get(self, script_nr);
-	VERIFY(sm_check(self, seg), "invalid seg id");
+	int seg = segGet(script_nr);
+	VERIFY(check(seg), "invalid seg id");
 
-	scr = &(self->heap[seg]->data.script);
+	scr = &(heap[seg]->data.script);
 	scr->marked_as_deleted = 0;
 }
 
-int sm_script_is_marked_as_deleted(SegManager* self, seg_id_t seg) {
+int SegManager::scriptIsMarkedAsDeleted(seg_id_t seg) {
 	script_t *scr;
 
-	if (!sm_check(self, seg))
+	if (!check(seg))
 		return 0;
 
-	if (self->heap[seg]->type != MEM_OBJ_SCRIPT)
+	if (heap[seg]->type != MEM_OBJ_SCRIPT)
 		return 0;
 
-	scr = &(self->heap[seg]->data.script);
+	scr = &(heap[seg]->data.script);
 
 	return scr->marked_as_deleted;
 }
 
 
-int sm_deallocate_script(SegManager* self, int script_nr) {
-	int seg = sm_seg_get(self, script_nr);
+int SegManager::deallocateScript(int script_nr) {
+	int seg = segGet(script_nr);
 
-	_sm_deallocate(self, seg, 1);
+	deallocate(seg, true);
 
 	return 1;
 }
 
-mem_obj_t* mem_obj_allocate(SegManager *self, seg_id_t segid, int hash_id, mem_obj_enum type) {
-	mem_obj_t* mem = (mem_obj_t*) sci_calloc(sizeof(mem_obj_t), 1);
+mem_obj_t *SegManager::memObjAllocate(seg_id_t segid, int hash_id, memObjType type) {
+	mem_obj_t *mem = (mem_obj_t *)sci_calloc(sizeof(mem_obj_t), 1);
 	if (!mem) {
-		sciprintf("seg_manager.c: invalid mem_obj ");
+		sciprintf("SegManager: invalid mem_obj ");
 		return NULL;
 	}
 
-	if (segid >= self->heap_size) {
+	if (segid >= heap_size) {
 		void *temp;
-		int oldhs = self->heap_size;
+		int oldhs = heap_size;
 
-		if (segid >= self->heap_size * 2) {
-			sciprintf("seg_manager.c: hash_map error or others??");
+		if (segid >= heap_size * 2) {
+			sciprintf("SegManager: hash_map error or others??");
 			return NULL;
 		}
-		self->heap_size *= 2;
-		temp = sci_realloc((void*)self->heap, self->heap_size * sizeof(mem_obj_t*));
+		heap_size *= 2;
+		temp = sci_realloc((void *)heap, heap_size * sizeof(mem_obj_t *));
 		if (!temp) {
-			sciprintf("seg_manager.c: Not enough memory space for script size");
+			sciprintf("SegManager: Not enough memory space for script size");
 			return NULL;
 		}
-		self->heap = (mem_obj_t**)  temp;
+		heap = (mem_obj_t **)temp;
 
 		// Clear pointers
-		memset(self->heap + oldhs, 0, sizeof(mem_obj_t *) * (self->heap_size - oldhs));
+		memset(heap + oldhs, 0, sizeof(mem_obj_t *) * (heap_size - oldhs));
 	}
 
 	mem->segmgr_id = hash_id;
 	mem->type = type;
 
 	// hook it to the heap
-	self->heap[segid] = mem;
+	heap[segid] = mem;
 	return mem;
 }
 
 /* No longer in use?
-void sm_object_init(object_t *object) {
+void SegManager::sm_object_init(object_t *object) {
  	if (!object)
 		return;
  	object->variables_nr = 0;
  	object->variables = NULL;
 };*/
 
-void sm_free_script(mem_obj_t *mem) {
+void SegManager::freeScript(mem_obj_t *mem) {
 	if (!mem)
 		return;
 	if (mem->data.script.buf) {
@@ -445,10 +422,10 @@ void sm_free_script(mem_obj_t *mem) {
 // memory operations
 #if 0
 // Unreferenced - removed
-static void sm_mset(SegManager *self, int offset, int c, size_t n, int id, int flag) {
+static void SegManager::sm_mset(int offset, int c, size_t n, int id, int flag) {
 	mem_obj_t *mem_obj;
 	GET_SEGID();
-	mem_obj = self->heap[id];
+	mem_obj = heap[id];
 	switch (mem_obj->type) {
 	case MEM_OBJ_SCRIPT:
 		if (mem_obj->data.script.buf) {
@@ -467,10 +444,10 @@ static void sm_mset(SegManager *self, int offset, int c, size_t n, int id, int f
 
 #if 0
 // Unreferenced - removed
-static void sm_mcpy_in_in(SegManager *self, int dst, const int src, size_t n, int id, int flag) {
+static void SegManager::sm_mcpy_in_in(int dst, const int src, size_t n, int id, int flag) {
 	mem_obj_t *mem_obj;
 	GET_SEGID();
-	mem_obj = self->heap[id];
+	mem_obj = heap[id];
 	switch (mem_obj->type) {
 	case MEM_OBJ_SCRIPT:
 		if (mem_obj->data.script.buf) {
@@ -487,10 +464,10 @@ static void sm_mcpy_in_in(SegManager *self, int dst, const int src, size_t n, in
 }
 #endif
 
-void sm_mcpy_in_out(SegManager *self, int dst, const void *src, size_t n, int id, int flag) {
+void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag) {
 	mem_obj_t *mem_obj;
 	GET_SEGID();
-	mem_obj = self->heap[id];
+	mem_obj = heap[id];
 	switch (mem_obj->type) {
 	case MEM_OBJ_SCRIPT:
 		if (mem_obj->data.script.buf) {
@@ -508,10 +485,10 @@ void sm_mcpy_in_out(SegManager *self, int dst, const void *src, size_t n, int id
 
 #if 0
 // Unreferenced - removed
-static void sm_mcpy_out_in(SegManager *self, void *dst, const int src, size_t n, int id, int flag) {
+static void SegManager::sm_mcpy_out_in(void *dst, const int src, size_t n, int id, int flag) {
 	mem_obj_t *mem_obj;
 	GET_SEGID();
-	mem_obj = self->heap[id];
+	mem_obj = heap[id];
 	switch (mem_obj->type) {
 	case MEM_OBJ_SCRIPT:
 		if (mem_obj->data.script.buf) {
@@ -528,12 +505,12 @@ static void sm_mcpy_out_in(SegManager *self, void *dst, const int src, size_t n,
 }
 #endif
 
-int16 sm_get_heap(SegManager *self, reg_t reg) {
+int16 SegManager::getHeap(reg_t reg) {
 	mem_obj_t *mem_obj;
-	mem_obj_enum mem_type;
+	memObjType mem_type;
 
-	VERIFY(sm_check(self, reg.segment), "Invalid seg id");
-	mem_obj = self->heap[reg.segment];
+	VERIFY(check(reg.segment), "Invalid seg id");
+	mem_obj = heap[reg.segment];
 	mem_type = mem_obj->type;
 
 	switch (mem_type) {
@@ -550,12 +527,14 @@ int16 sm_get_heap(SegManager *self, reg_t reg) {
 	return 0; // never get here
 }
 
-void sm_put_heap(SegManager *self, reg_t reg, int16 value) {
+#if 0
+// Unreferenced - removed
+void SegManager::sm_put_heap(reg_t reg, int16 value) {
 	mem_obj_t *mem_obj;
-	mem_obj_enum mem_type;
+	memObjType mem_type;
 
-	VERIFY(sm_check(self, reg.segment), "Invalid seg id");
-	mem_obj = self->heap[reg.segment];
+	VERIFY(check(reg.segment), "Invalid seg id");
+	mem_obj = heap[reg.segment];
 	mem_type = mem_obj->type;
 
 	switch (mem_type) {
@@ -572,67 +551,68 @@ void sm_put_heap(SegManager *self, reg_t reg, int16 value) {
 		break;
 	}
 }
+#endif
 
 // return the seg if script_id is valid and in the map, else -1
-int sm_seg_get(SegManager *self, int script_id) {
-	return self->id_seg_map->check_value(script_id, false);
+int SegManager::segGet(int script_id) {
+	return id_seg_map->check_value(script_id, false);
 }
 
 // validate the seg
 // return:
-//	0 - invalid seg
-//	1 - valid seg
-static int sm_check(SegManager *self, int seg) {
-	if (seg < 0 || seg >= self->heap_size) {
-		return 0;
+//	false - invalid seg
+//	true  - valid seg
+bool SegManager::check(int seg) {
+	if (seg < 0 || seg >= heap_size) {
+		return false;
 	}
-	if (!self->heap[seg]) {
-		sciprintf("seg_manager.c: seg %x is removed from memory, but not removed from hash_map\n", seg);
-		return 0;
+	if (!heap[seg]) {
+		sciprintf("SegManager: seg %x is removed from memory, but not removed from hash_map\n", seg);
+		return false;
 	}
-	return 1;
+	return true;
 }
 
-int sm_script_is_loaded(SegManager *self, int id, id_flag flag) {
+int SegManager::scriptIsLoaded(int id, idFlag flag) {
 	if (flag == SCRIPT_ID)
-		id = sm_seg_get(self, id);
+		id = segGet(id);
 
-	return sm_check(self, id);
+	return check(id);
 }
 
-void sm_increment_lockers(SegManager *self, int id, id_flag flag) {
+void SegManager::incrementLockers(int id, idFlag flag) {
 	if (flag == SCRIPT_ID)
-		id = sm_seg_get(self, id);
-	VERIFY(sm_check(self, id), "invalid seg id");
-	self->heap[id]->data.script.lockers++;
+		id = segGet(id);
+	VERIFY(check(id), "invalid seg id");
+	heap[id]->data.script.lockers++;
 }
 
-void sm_decrement_lockers(SegManager *self, int id, id_flag flag) {
+void SegManager::decrementLockers(int id, idFlag flag) {
 	if (flag == SCRIPT_ID)
-		id = sm_seg_get(self, id);
-	VERIFY(sm_check(self, id), "invalid seg id");
+		id = segGet(id);
+	VERIFY(check(id), "invalid seg id");
 
-	if (self->heap[id]->data.script.lockers > 0)
-		self->heap[id]->data.script.lockers--;
+	if (heap[id]->data.script.lockers > 0)
+		heap[id]->data.script.lockers--;
 }
 
-int sm_get_lockers(SegManager *self, int id, id_flag flag) {
+int SegManager::getLockers(int id, idFlag flag) {
 	if (flag == SCRIPT_ID)
-		id = sm_seg_get(self, id);
-	VERIFY(sm_check(self, id), "invalid seg id");
+		id = segGet(id);
+	VERIFY(check(id), "invalid seg id");
 
-	return self->heap[id]->data.script.lockers;
+	return heap[id]->data.script.lockers;
 }
 
-void sm_set_lockers(SegManager *self, int lockers, int id, id_flag flag) {
+void SegManager::setLockers(int lockers, int id, idFlag flag) {
 	if (flag == SCRIPT_ID)
-		id = sm_seg_get(self, id);
-	VERIFY(sm_check(self, id), "invalid seg id");
-	self->heap[id]->data.script.lockers = lockers;
+		id = segGet(id);
+	VERIFY(check(id), "invalid seg id");
+	heap[id]->data.script.lockers = lockers;
 }
 
-void sm_set_export_table_offset(SegManager *self, int offset, int id, id_flag flag) {
-	script_t *scr = &(self->heap[id]->data.script);
+void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
+	script_t *scr = &(heap[id]->data.script);
 
 	GET_SEGID();
 	if (offset) {
@@ -644,62 +624,65 @@ void sm_set_export_table_offset(SegManager *self, int offset, int id, id_flag fl
 	}
 }
 
-int sm_hash_segment_data(SegManager *self, int id) {
+#if 0
+// Unreferenced - removed
+int SegManager::sm_hash_segment_data(int id) {
 	int i, len, hash_code = 0x55555555;
 	char *buf;
 
-	if (self->heap[id]->type == MEM_OBJ_LISTS)
+	if (heap[id]->type == MEM_OBJ_LISTS)
 		return 0;
-	if (self->heap[id]->type == MEM_OBJ_NODES)
+	if (heap[id]->type == MEM_OBJ_NODES)
 		return 0;
-	if (self->heap[id]->type == MEM_OBJ_CLONES) 
+	if (heap[id]->type == MEM_OBJ_CLONES) 
 		return 0;
-	buf = (char *)sm_dereference(self, make_reg(id, 0), &len);
+	buf = (char *)dereference(make_reg(id, 0), &len);
 
 	for (i = 0; i < len; i++)
 		hash_code = (hash_code * 19) + *(buf + i);
 
 	return hash_code;
 }
+#endif
 
-void sm_set_export_width(SegManager *self, int flag) {
-	self->exports_wide = flag;
+void SegManager::setExportWidth(int flag) {
+	exports_wide = flag;
 }
 
 #if 0
 // Unreferenced - removed
-static uint16 *sm_get_export_table_offset(SegManager *self, int id, int flag, int *max) {
+static uint16 *SegManager::sm_get_export_table_offset(int id, int flag, int *max) {
 	GET_SEGID();
 	if (max)
-		*max = self->heap[id]->data.script.exports_nr;
+		*max = heap[id]->data.script.exports_nr;
 
-	return self->heap[id]->data.script.export_table;
+	return heap[id]->data.script.export_table;
 }
 #endif
 
-void sm_set_synonyms_offset(SegManager *self, int offset, int id, id_flag flag) {
+void SegManager::setSynonymsOffset(int offset, int id, idFlag flag) {
 	GET_SEGID();
-	self->heap[id]->data.script.synonyms = self->heap[id]->data.script.buf + offset;
+	heap[id]->data.script.synonyms = heap[id]->data.script.buf + offset;
 }
 
-byte *sm_get_synonyms(SegManager *self, int id, id_flag flag) {
+byte *SegManager::getSynonyms(int id, idFlag flag) {
 	GET_SEGID();
-	return self->heap[id]->data.script.synonyms;
+	return heap[id]->data.script.synonyms;
 }
 
-void sm_set_synonyms_nr(SegManager *self, int nr, int id, id_flag flag) {
+void SegManager::setSynonymsNr(int nr, int id, idFlag flag) {
 	GET_SEGID();
-	self->heap[id]->data.script.synonyms_nr = nr;
+	heap[id]->data.script.synonyms_nr = nr;
 }
 
-int sm_get_synonyms_nr(SegManager *self, int id, id_flag flag) {
+int SegManager::getSynonymsNr(int id, idFlag flag) {
 	GET_SEGID();
-	return self->heap[id]->data.script.synonyms_nr;
+	return heap[id]->data.script.synonyms_nr;
 }
 
 #if 0
 // Unreferenced - removed
-static int sm_get_heappos(SegManager *self, int id, int flag) {
+static int SegManager::sm_get_heappos(int id, int flag) {
 	GET_SEGID();
 	return 0;
 }
@@ -707,12 +690,12 @@ static int sm_get_heappos(SegManager *self, int id, int flag) {
 
 #if 0
 // Unreferenced - removed
-static void sm_set_variables(SegManager *self, reg_t reg, int obj_index, reg_t variable_reg, int variable_index) {
+static void SegManager::sm_set_variables(reg_t reg, int obj_index, reg_t variable_reg, int variable_index) {
 	script_t *script;
-	VERIFY(sm_check(self, reg.segment), "invalid seg id");
-	VERIFY(self->heap[reg.segment], "invalid mem");
+	VERIFY(check(reg.segment), "invalid seg id");
+	VERIFY(heap[reg.segment], "invalid mem");
 
-	script = &(self->heap[reg.segment]->data.script);
+	script = &(heap[reg.segment]->data.script);
 
 	VERIFY(obj_index < script->objects_nr, "Invalid obj_index");
 
@@ -722,7 +705,7 @@ static void sm_set_variables(SegManager *self, reg_t reg, int obj_index, reg_t v
 }
 #endif
 
-static inline int _relocate_block(SegManager *self, reg_t *block, int block_location, int block_items, seg_id_t segment, int location) {
+inline int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, seg_id_t segment, int location) {
 	int rel = location - block_location;
 	int index;
 
@@ -739,29 +722,29 @@ static inline int _relocate_block(SegManager *self, reg_t *block, int block_loca
 		return 0;
 	}
 	block[index].segment = segment; // Perform relocation
-	if (self->sci1_1)
-		block[index].offset += self->heap[segment]->data.script.script_size;
+	if (isSci1_1)
+		block[index].offset += heap[segment]->data.script.script_size;
 
 	return 1;
 }
 
-static inline int _relocate_local(SegManager *self, script_t *scr, seg_id_t segment, int location) {
+inline int SegManager::relocateLocal(script_t *scr, seg_id_t segment, int location) {
 	if (scr->locals_block)
-		return _relocate_block(self, scr->locals_block->locals, scr->locals_offset, scr->locals_block->nr, segment, location);
+		return relocateBlock(scr->locals_block->locals, scr->locals_offset, scr->locals_block->nr, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
 
-static inline int _relocate_object(SegManager *self, object_t *obj, seg_id_t segment, int location) {
-	return _relocate_block(self, obj->variables, obj->pos.offset, obj->variables_nr, segment, location);
+inline int SegManager::relocateObject(object_t *obj, seg_id_t segment, int location) {
+	return relocateBlock(obj->variables, obj->pos.offset, obj->variables_nr, segment, location);
 }
 
-void sm_script_add_code_block(SegManager *self, reg_t location) {
-	mem_obj_t *mobj = self->heap[location.segment];
+void SegManager::scriptAddCodeBlock(reg_t location) {
+	mem_obj_t *mobj = heap[location.segment];
 	script_t *scr;
 	int index;
 
-	VERIFY(!(location.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to add a code block to non-script\n");
+	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to add a code block to non-script\n");
 
 	scr = &(mobj->data.script);
 
@@ -775,13 +758,13 @@ void sm_script_add_code_block(SegManager *self, reg_t location) {
 	scr->code[index].size = getUInt16(scr->buf + location.offset - 2);
 }
 
-void sm_script_relocate(SegManager *self, reg_t block) {
-	mem_obj_t *mobj = self->heap[block.segment];
+void SegManager::scriptRelocate(reg_t block) {
+	mem_obj_t *mobj = heap[block.segment];
 	script_t *scr;
 	int count;
 	int i;
 
-	VERIFY(!(block.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
+	VERIFY(!(block.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
 
 	scr = &(mobj->data.script);
 
@@ -795,11 +778,11 @@ void sm_script_relocate(SegManager *self, reg_t block) {
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
-		if (!_relocate_local(self, scr, block.segment, pos)) {
+		if (!relocateLocal(scr, block.segment, pos)) {
 			int k, done = 0;
 
 			for (k = 0; !done && k < scr->objects_nr; k++) {
-				if (_relocate_object(self, scr->objects + k, block.segment, pos))
+				if (relocateObject(scr->objects + k, block.segment, pos))
 					done = 1;
 			}
 
@@ -827,13 +810,13 @@ void sm_script_relocate(SegManager *self, reg_t block) {
 	}
 }
 
-void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block) {
-	mem_obj_t *mobj = self->heap[block.segment];
+void SegManager::heapRelocate(EngineState *s, reg_t block) {
+	mem_obj_t *mobj = heap[block.segment];
 	script_t *scr;
 	int count;
 	int i;
 
-	VERIFY(!(block.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
+	VERIFY(!(block.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
 
 	scr = &(mobj->data.script);
 
@@ -848,11 +831,11 @@ void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block) {
 	for (i = 0; i < count; i++) {
 		int pos = getUInt16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
 
-		if (!_relocate_local(self, scr, block.segment, pos)) {
+		if (!relocateLocal(scr, block.segment, pos)) {
 			int k, done = 0;
 
 			for (k = 0; !done && k < scr->objects_nr; k++) {
-				if (_relocate_object(self, scr->objects + k, block.segment, pos))
+				if (relocateObject(scr->objects + k, block.segment, pos))
 					done = 1;
 			}
 
@@ -876,15 +859,15 @@ void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block) {
 
 reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
 
-static object_t *sm_script_obj_init0(SegManager *self, EngineState *s, reg_t obj_pos) {
-	mem_obj_t *mobj = self->heap[obj_pos.segment];
+object_t *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
+	mem_obj_t *mobj = heap[obj_pos.segment];
 	script_t *scr;
 	object_t *obj;
 	int id;
 	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
 
-	VERIFY(!(obj_pos.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
+	VERIFY(!(obj_pos.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
 
 	scr = &(mobj->data.script);
 
@@ -944,14 +927,14 @@ static object_t *sm_script_obj_init0(SegManager *self, EngineState *s, reg_t obj
 	return obj;
 }
 
-static object_t *sm_script_obj_init11(SegManager *self, EngineState *s, reg_t obj_pos) {
-	mem_obj_t *mobj = self->heap[obj_pos.segment];
+object_t *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
+	mem_obj_t *mobj = heap[obj_pos.segment];
 	script_t *scr;
 	object_t *obj;
 	int id;
 	int base = obj_pos.offset;
 
-	VERIFY(!(obj_pos.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
+	VERIFY(!(obj_pos.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
 
 	scr = &(mobj->data.script);
 
@@ -1011,14 +994,14 @@ static object_t *sm_script_obj_init11(SegManager *self, EngineState *s, reg_t ob
 	return obj;
 }
 
-object_t *sm_script_obj_init(SegManager *self, EngineState *s, reg_t obj_pos) {
-	if (!self->sci1_1)
-		return sm_script_obj_init0(self, s, obj_pos);
+object_t *SegManager::scriptObjInit(EngineState *s, reg_t obj_pos) {
+	if (!isSci1_1)
+		return scriptObjInit0(s, obj_pos);
 	else
-		return sm_script_obj_init11(self, s, obj_pos);
+		return scriptObjInit11(s, obj_pos);
 }
 
-static local_variables_t *_sm_alloc_locals_segment(SegManager *self, script_t *scr, int count) {
+local_variables_t *SegManager::allocLocalsSegment(script_t *scr, int count) {
 	if (!count) { // No locals
 		scr->locals_segment = 0;
 		scr->locals_block = NULL;
@@ -1028,12 +1011,12 @@ static local_variables_t *_sm_alloc_locals_segment(SegManager *self, script_t *s
 		local_variables_t *locals;
 
 		if (scr->locals_segment) {
-			mobj = self->heap[scr->locals_segment];
+			mobj = heap[scr->locals_segment];
 			VERIFY(mobj != NULL, "Re-used locals segment was NULL'd out");
 			VERIFY(mobj->type == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(mobj->data.locals.script_id == scr->nr, "Re-used locals segment belonged to other script");
 		} else
-			mobj = alloc_nonscript_segment(self, MEM_OBJ_LOCALS, &scr->locals_segment);
+			mobj = allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
 
 		locals = scr->locals_block = &(mobj->data.locals);
 		locals->script_id = scr->nr;
@@ -1044,32 +1027,32 @@ static local_variables_t *_sm_alloc_locals_segment(SegManager *self, script_t *s
 	}
 }
 
-void sm_script_initialise_locals_zero(SegManager *self, seg_id_t seg, int count) {
-	mem_obj_t *mobj = self->heap[seg];
+void SegManager::scriptInitialiseLocalsZero(seg_id_t seg, int count) {
+	mem_obj_t *mobj = heap[seg];
 	script_t *scr;
 
-	VERIFY(!(seg >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
+	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
 
 	scr = &(mobj->data.script);
 
 	scr->locals_offset = -count * 2; // Make sure it's invalid
 
-	_sm_alloc_locals_segment(self, scr, count);
+	allocLocalsSegment(scr, count);
 }
 
-void sm_script_initialise_locals(SegManager *self, reg_t location) {
-	mem_obj_t *mobj = self->heap[location.segment];
+void SegManager::scriptInitialiseLocals(reg_t location) {
+	mem_obj_t *mobj = heap[location.segment];
 	unsigned int count;
 	script_t *scr;
 	local_variables_t *locals;
 
-	VERIFY(!(location.segment >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
+	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
 
 	scr = &(mobj->data.script);
 
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
-	if (self->sci1_1)
+	if (isSci1_1)
 		count = getUInt16(scr->buf + location.offset - 2);
 	else
 		count = (getUInt16(scr->buf + location.offset - 2) - 4) >> 1;
@@ -1082,7 +1065,7 @@ void sm_script_initialise_locals(SegManager *self, reg_t location) {
 		count = (scr->buf_size - location.offset) >> 1;
 	}
 
-	locals = _sm_alloc_locals_segment(self, scr, count);
+	locals = allocLocalsSegment(scr, count);
 	if (locals) {
 		uint i;
 		byte *base = (byte *)(scr->buf + location.offset);
@@ -1092,13 +1075,13 @@ void sm_script_initialise_locals(SegManager *self, reg_t location) {
 	}
 }
 
-void sm_script_relocate_exports_sci11(SegManager *self, int seg) {
-	mem_obj_t *mobj = self->heap[seg];
+void SegManager::scriptRelocateExportsSci11(int seg) {
+	mem_obj_t *mobj = heap[seg];
 	script_t *scr;
 	int i;
 	int location;
 
-	VERIFY(!(seg >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
+	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
 
 	scr = &(mobj->data.script);
 	for (i = 0; i < scr->exports_nr; i++) {
@@ -1115,12 +1098,12 @@ void sm_script_relocate_exports_sci11(SegManager *self, int seg) {
 	}
 }
 
-void sm_script_initialise_objects_sci11(SegManager *self, EngineState *s, int seg) {
-	mem_obj_t *mobj = self->heap[seg];
+void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
+	mem_obj_t *mobj = heap[seg];
 	script_t *scr;
 	byte *seeker;
 
-	VERIFY(!(seg >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
+	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
 
 	scr = &(mobj->data.script);
 	seeker = scr->heap_start + 4 + getUInt16(scr->heap_start + 2) * 2;
@@ -1151,7 +1134,7 @@ void sm_script_initialise_objects_sci11(SegManager *self, EngineState *s, int se
 
 		reg.segment = seg;
 		reg.offset = seeker - scr->buf;
-		obj = sm_script_obj_init(&s->seg_manager, s, reg);
+		obj = scriptObjInit(s, reg);
 
 #if 0
 		if (obj->variables[5].offset != 0xffff) {
@@ -1169,11 +1152,11 @@ void sm_script_initialise_objects_sci11(SegManager *self, EngineState *s, int se
 	}
 }
 
-void sm_script_free_unused_objects(SegManager *self, seg_id_t seg) {
-	mem_obj_t *mobj = self->heap[seg];
+void SegManager::scriptFreeUnusedObjects(seg_id_t seg) {
+	mem_obj_t *mobj = heap[seg];
 	script_t *scr;
 
-	VERIFY(!(seg >= self->heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to free unused objects in non-script\n");
+	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to free unused objects in non-script\n");
 
 	scr = &(mobj->data.script);
 	if (scr->objects_allocated > scr->objects_nr) {
@@ -1188,7 +1171,8 @@ void sm_script_free_unused_objects(SegManager *self, seg_id_t seg) {
 	}
 }
 
-static inline char *dynprintf(char *msg, ...) {
+/*
+static inline char *SegManager::dynprintf(char *msg, ...) {
 	va_list argp;
 	char *buf = (char *)sci_malloc(strlen(msg) + 100);
 
@@ -1198,9 +1182,10 @@ static inline char *dynprintf(char *msg, ...) {
 
 	return buf;
 }
+*/
 
-dstack_t *sm_allocate_stack(SegManager *self, int size, seg_id_t *segid) {
-	mem_obj_t *memobj = alloc_nonscript_segment(self, MEM_OBJ_STACK, segid);
+dstack_t *SegManager::allocateStack(int size, seg_id_t *segid) {
+	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
 	dstack_t *retval = &(memobj->data.stack);
 
 	retval->entries = (reg_t*)sci_calloc(size, sizeof(reg_t));
@@ -1209,8 +1194,8 @@ dstack_t *sm_allocate_stack(SegManager *self, int size, seg_id_t *segid) {
 	return retval;
 }
 
-sys_strings_t *sm_allocate_sys_strings(SegManager *self, seg_id_t *segid) {
-	mem_obj_t *memobj = alloc_nonscript_segment(self, MEM_OBJ_SYS_STRINGS, segid);
+sys_strings_t *SegManager::allocateSysStrings(seg_id_t *segid) {
+	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
 	sys_strings_t *retval = &(memobj->data.sys_strings);
 
 	memset(retval, 0, sizeof(sys_string_t)*SYS_STRINGS_MAX);
@@ -1218,29 +1203,32 @@ sys_strings_t *sm_allocate_sys_strings(SegManager *self, seg_id_t *segid) {
 	return retval;
 }
 
-seg_id_t sm_allocate_reserved_segment(SegManager *self, char *src_name) {
+#if 0
+// Unreferenced - removed
+seg_id_t SegManager::sm_allocate_reserved_segment(char *src_name) {
 	seg_id_t segid;
-	mem_obj_t *memobj = alloc_nonscript_segment(self, MEM_OBJ_RESERVED, &segid);
+	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_RESERVED, &segid);
 	char *name = sci_strdup(src_name);
 
 	memobj->data.reserved = name;
 
 	return segid;
 }
+#endif
 
-uint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg) {
+uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 	script_t* script;
 	uint16 offset;
-	VERIFY(sm_check(self, seg), "invalid seg id");
-	VERIFY(self->heap[seg]->type == MEM_OBJ_SCRIPT, "Can only validate exports on scripts");
+	VERIFY(check(seg), "invalid seg id");
+	VERIFY(heap[seg]->type == MEM_OBJ_SCRIPT, "Can only validate exports on scripts");
 
-	script = &self->heap[seg]->data.script;
+	script = &heap[seg]->data.script;
 	if (script->exports_nr <= pubfunct) {
 		sciprintf("pubfunct is invalid");
 		return 0;
 	}
 
-	if (self->exports_wide)
+	if (exports_wide)
 		pubfunct *= 2;
 	offset = getUInt16((byte *)(script->export_table + pubfunct));
 	VERIFY(offset < script->buf_size, "invalid export function pointer");
@@ -1248,12 +1236,12 @@ uint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg) {
 	return offset;
 }
 
-void sm_free_hunk_entry(SegManager *self, reg_t addr) {
-	sm_free_hunk(self, addr);
+void SegManager::free_hunk_entry(reg_t addr) {
+	free_hunk(addr);
 }
 
-hunk_t *sm_alloc_hunk_entry(SegManager *self, const char *hunk_type, int size, reg_t *reg) {
-	hunk_t *h = sm_alloc_hunk(self, reg);
+hunk_t *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
+	hunk_t *h = alloc_hunk(reg);
 
 	if (!h)
 		return NULL;
@@ -1265,12 +1253,12 @@ hunk_t *sm_alloc_hunk_entry(SegManager *self, const char *hunk_type, int size, r
 	return h;
 }
 
-static void _clone_cleanup(clone_t *clone) {
+void _clone_cleanup(clone_t *clone) {
 	if (clone->variables)
 		free(clone->variables); // Free the dynamically allocated memory part
 }
 
-static void _hunk_cleanup(hunk_t *hunk) {
+void _hunk_cleanup(hunk_t *hunk) {
 	if (hunk->mem)
 		free(hunk->mem);
 }
@@ -1280,53 +1268,53 @@ DEFINE_HEAPENTRY(node, 32, 16)
 DEFINE_HEAPENTRY_WITH_CLEANUP(clone, 16, 4, _clone_cleanup)
 DEFINE_HEAPENTRY_WITH_CLEANUP(hunk, 4, 4, _hunk_cleanup)
 
-#define DEFINE_ALLOC_DEALLOC(STATIC, TYPE, SEGTYPE, PLURAL) \
-STATIC TYPE##_t *sm_alloc_##TYPE(SegManager *self, reg_t *addr) {												  \
+#define DEFINE_ALLOC_DEALLOC(TYPE, SEGTYPE, PLURAL) \
+TYPE##_t *SegManager::alloc_##TYPE(reg_t *addr) {											 \
 	mem_obj_t *mobj;									  \
 	TYPE##_table_t *table;									  \
 	int offset;										  \
 												  \
-	if (!self->TYPE##s_seg_id) {								  \
-		mobj = alloc_nonscript_segment(self, SEGTYPE, &(self->TYPE##s_seg_id));		  \
+	if (!TYPE##s_seg_id) {								  \
+		mobj = allocNonscriptSegment(SEGTYPE, &(TYPE##s_seg_id));		  \
 		init_##TYPE##_table(&(mobj->data.PLURAL));					  \
 	} else											  \
-		mobj = self->heap[self->TYPE##s_seg_id];					  \
+		mobj = heap[TYPE##s_seg_id];					  \
 												  \
 	table = &(mobj->data.PLURAL);								  \
-	offset = alloc_##TYPE##_entry(table);							  \
+	offset = Sci::alloc_##TYPE##_entry(table);							  \
 												  \
-	*addr = make_reg(self->TYPE##s_seg_id, offset);						  \
+	*addr = make_reg(TYPE##s_seg_id, offset);						  \
 	return &(mobj->data.PLURAL.table[offset].entry);					  \
 }												  \
 												  \
-STATIC void	sm_free_##TYPE(SegManager *self, reg_t addr) {												  \
-	mem_obj_t *mobj = GET_SEGMENT(*self, addr.segment, SEGTYPE);				  \
+void	SegManager::free_##TYPE(reg_t addr) {					  \
+	mem_obj_t *mobj = GET_SEGMENT(*this, addr.segment, SEGTYPE);				  \
 												  \
 	if (!mobj) {										  \
 		sciprintf("Attempt to free " #TYPE " from address "PREG": Invalid segment type\n", PRINT_REG(addr));							  \
 		return;										  \
 	}											  \
 												  \
-	free_##TYPE##_entry(&(mobj->data.PLURAL), addr.offset);					  \
+	Sci::free_##TYPE##_entry(&(mobj->data.PLURAL), addr.offset);					  \
 }
 
-DEFINE_ALLOC_DEALLOC(, clone, MEM_OBJ_CLONES, clones)
-DEFINE_ALLOC_DEALLOC(, list, MEM_OBJ_LISTS, lists)
-DEFINE_ALLOC_DEALLOC(, node, MEM_OBJ_NODES, nodes)
-DEFINE_ALLOC_DEALLOC(static, hunk, MEM_OBJ_HUNK, hunks)
+DEFINE_ALLOC_DEALLOC(clone, MEM_OBJ_CLONES, clones)
+DEFINE_ALLOC_DEALLOC(list, MEM_OBJ_LISTS, lists)
+DEFINE_ALLOC_DEALLOC(node, MEM_OBJ_NODES, nodes)
+DEFINE_ALLOC_DEALLOC(hunk, MEM_OBJ_HUNK, hunks)
 
-byte *sm_dereference(SegManager *self, reg_t pointer, int *size) {
+byte *SegManager::dereference(reg_t pointer, int *size) {
 	mem_obj_t *mobj;
 	byte *base = NULL;
 	int count;
 
-	if (!pointer.segment || (pointer.segment >= self->heap_size) || !self->heap[pointer.segment]) {
+	if (!pointer.segment || (pointer.segment >= heap_size) || !heap[pointer.segment]) {
 		sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
 		          PRINT_REG(pointer));
 		return NULL; /* Invalid */
 	}
 
-	mobj = self->heap[pointer.segment];
+	mobj = heap[pointer.segment];
 
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
@@ -1387,9 +1375,9 @@ byte *sm_dereference(SegManager *self, reg_t pointer, int *size) {
 	    base + pointer.offset;
 }
 
-unsigned char *sm_alloc_dynmem(SegManager *self, int size, const char *descr, reg_t *addr) {
+unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	seg_id_t seg;
-	mem_obj_t *mobj = alloc_nonscript_segment(self, MEM_OBJ_DYNMEM, &seg);
+	mem_obj_t *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
 
 	mobj->data.dynmem.size = size;
@@ -1404,10 +1392,10 @@ unsigned char *sm_alloc_dynmem(SegManager *self, int size, const char *descr, re
 	return (unsigned char *)(mobj->data.dynmem.buf);
 }
 
-const char *sm_get_description(SegManager *self, reg_t addr) {
-	mem_obj_t *mobj = self->heap[addr.segment];
+const char *SegManager::getDescription(reg_t addr) {
+	mem_obj_t *mobj = heap[addr.segment];
 
-	if (addr.segment >= self->heap_size)
+	if (addr.segment >= heap_size)
 		return "";
 
 	switch (mobj->type) {
@@ -1418,50 +1406,58 @@ const char *sm_get_description(SegManager *self, reg_t addr) {
 	}
 }
 
-int sm_free_dynmem(SegManager *self, reg_t addr) {
-	if (addr.segment <= 0 || addr.segment >= self->heap_size || !self->heap[addr.segment] || self->heap[addr.segment]->type != MEM_OBJ_DYNMEM)
+int SegManager::freeDynmem(reg_t addr) {
+	if (addr.segment <= 0 || addr.segment >= heap_size || !heap[addr.segment] || heap[addr.segment]->type != MEM_OBJ_DYNMEM)
 		return 1; // error
 
-	_sm_deallocate(self, addr.segment, 1);
+	deallocate(addr.segment, true);
 
 	return 0; // OK
 }
 
+void SegManager::dbgPrint(const char* msg, void *i) {
+#ifdef DEBUG_SEG_MANAGER
+	char buf[1000];
+	sprintf(buf, "%s = [0x%x], dec:[%d]", msg, i, i);
+	perror(buf);
+#endif
+}
+
 // ------------------- Segment interface ------------------
 
-static void free_at_address_stub(seg_interface_t *self, reg_t sub_addr) {
+static void free_at_address_stub(SegInterface *self, reg_t sub_addr) {
 	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
 	// STUB
 }
 
-static reg_t find_canonic_address_base(seg_interface_t *self, reg_t addr) {
+static reg_t find_canonic_address_base(SegInterface *self, reg_t addr) {
 	addr.offset = 0;
 
 	return addr;
 }
 
-static reg_t find_canonic_address_id(seg_interface_t *self, reg_t addr) {
+static reg_t find_canonic_address_id(SegInterface *self, reg_t addr) {
 	return addr;
 }
 
-static void free_at_address_nop(seg_interface_t *self, reg_t sub_addr) {
+static void free_at_address_nop(SegInterface *self, reg_t sub_addr) {
 }
 
-static void list_all_deallocatable_nop(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_nop(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 }
 
-static void list_all_deallocatable_base(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_base(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 	(*note)(param, make_reg(self->seg_id, 0));
 }
 
-static void list_all_outgoing_references_nop(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_nop(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 }
 
-static void deallocate_self(seg_interface_t *self) {
+static void deallocate_self(SegInterface *self) {
 	free(self);
 }
 
-static void free_at_address_script(seg_interface_t *self, reg_t addr) {
+static void free_at_address_script(SegInterface *self, reg_t addr) {
 	script_t *script;
 	VERIFY(self->mobj->type == MEM_OBJ_SCRIPT, "Trying to free a non-script!");
 	script = &(self->mobj->data.script);
@@ -1472,10 +1468,10 @@ static void free_at_address_script(seg_interface_t *self, reg_t addr) {
 	*/
 
 	if (script->marked_as_deleted)
-		sm_deallocate_script(self->segmgr, script->nr);
+		self->segmgr->deallocateScript(script->nr);
 }
 
-static void list_all_outgoing_references_script(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_script(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	script_t *script = &(self->mobj->data.script);
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
@@ -1500,7 +1496,7 @@ static void list_all_outgoing_references_script(seg_interface_t *self, EngineSta
 }
 
 //-------------------- script --------------------
-static seg_interface_t seg_interface_script = {
+static SegInterface seg_interface_script = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1523,11 +1519,11 @@ static seg_interface_t seg_interface_script = {
 		if (ENTRY_IS_VALID(table, i))				\
 			(*note) (param, make_reg(self->seg_id, i));
 
-static void list_all_deallocatable_clones(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_clones(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(clone, clones);
 }
 
-static void list_all_outgoing_references_clones(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_clones(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	mem_obj_t *mobj = self->mobj;
 	clone_table_t *clone_table = &(mobj->data.clones);
 	clone_t *clone;
@@ -1552,7 +1548,7 @@ static void list_all_outgoing_references_clones(seg_interface_t *self, EngineSta
 	//sciprintf("[GC] Reporting clone-pos "PREG"\n", PRINT_REG(clone->pos));
 }
 
-void free_at_address_clones(seg_interface_t *self, reg_t addr) {
+void free_at_address_clones(SegInterface *self, reg_t addr) {
 	object_t *victim_obj;
 
 	assert(addr.segment == self->seg_id);
@@ -1573,11 +1569,11 @@ void free_at_address_clones(seg_interface_t *self, reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	sm_free_clone(self->segmgr, addr);
+	self->segmgr->free_clone(addr);
 }
 
 //-------------------- clones --------------------
-static seg_interface_t seg_interface_clones = {
+static SegInterface seg_interface_clones = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1590,17 +1586,17 @@ static seg_interface_t seg_interface_clones = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static reg_t find_canonic_address_locals(seg_interface_t *self, reg_t addr) {
+static reg_t find_canonic_address_locals(SegInterface *self, reg_t addr) {
 	local_variables_t *locals = &(self->mobj->data.locals);
 	// Reference the owning script
-	seg_id_t owner_seg = sm_seg_get(self->segmgr, locals->script_id);
+	seg_id_t owner_seg = self->segmgr->segGet(locals->script_id);
 
 	assert(owner_seg >= 0);
 
 	return make_reg(owner_seg, 0);
 }
 
-static void list_all_outgoing_references_locals(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_locals(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	local_variables_t *locals = &(self->mobj->data.locals);
 	int i;
 
@@ -1611,7 +1607,7 @@ static void list_all_outgoing_references_locals(seg_interface_t *self, EngineSta
 }
 
 //-------------------- locals --------------------
-static seg_interface_t seg_interface_locals = {
+static SegInterface seg_interface_locals = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1624,7 +1620,7 @@ static seg_interface_t seg_interface_locals = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static void list_all_outgoing_references_stack(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_stack(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	int i;
 	fprintf(stderr, "Emitting %d stack entries\n", self->mobj->data.stack.nr);
 	for (i = 0; i < self->mobj->data.stack.nr; i++)
@@ -1634,7 +1630,7 @@ static void list_all_outgoing_references_stack(seg_interface_t *self, EngineStat
 
 //-------------------- stack --------------------
 
-static seg_interface_t seg_interface_stack = {
+static SegInterface seg_interface_stack = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1648,7 +1644,7 @@ static seg_interface_t seg_interface_stack = {
 };
 
 //-------------------- system strings --------------------
-static seg_interface_t seg_interface_sys_strings = {
+static SegInterface seg_interface_sys_strings = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1661,11 +1657,11 @@ static seg_interface_t seg_interface_sys_strings = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static void list_all_deallocatable_list(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_list(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(list, lists);
 }
 
-static void list_all_outgoing_references_list(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_list(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	list_table_t *table = &(self->mobj->data.lists);
 	list_t *list = &(table->table[addr.offset].entry);
 
@@ -1680,12 +1676,12 @@ static void list_all_outgoing_references_list(seg_interface_t *self, EngineState
 	// let's be conservative here.
 }
 
-static void free_at_address_lists(seg_interface_t *self, reg_t sub_addr) {
-	sm_free_list(self->segmgr, sub_addr);
+static void free_at_address_lists(SegInterface *self, reg_t sub_addr) {
+	self->segmgr->free_list(sub_addr);
 }
 
 //-------------------- lists --------------------
-static seg_interface_t seg_interface_lists = {
+static SegInterface seg_interface_lists = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1698,11 +1694,11 @@ static seg_interface_t seg_interface_lists = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static void list_all_deallocatable_nodes(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_nodes(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(node, nodes);
 }
 
-static void list_all_outgoing_references_nodes(seg_interface_t *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_outgoing_references_nodes(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	node_table_t *table = &(self->mobj->data.nodes);
 	node_t *node = &(table->table[addr.offset].entry);
 
@@ -1719,12 +1715,12 @@ static void list_all_outgoing_references_nodes(seg_interface_t *self, EngineStat
 	note(param, node->value);
 }
 
-static void free_at_address_nodes(seg_interface_t *self, reg_t sub_addr) {
-	sm_free_node(self->segmgr, sub_addr);
+static void free_at_address_nodes(SegInterface *self, reg_t sub_addr) {
+	self->segmgr->free_node(sub_addr);
 }
 
 //-------------------- nodes --------------------
-static seg_interface_t seg_interface_nodes = {
+static SegInterface seg_interface_nodes = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1737,12 +1733,12 @@ static seg_interface_t seg_interface_nodes = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static void list_all_deallocatable_hunk(seg_interface_t *self, void *param, void (*note)(void*param, reg_t addr)) {
+static void list_all_deallocatable_hunk(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(hunk, hunks);
 }
 
 //-------------------- hunk --------------------
-static seg_interface_t seg_interface_hunk = {
+static SegInterface seg_interface_hunk = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1756,7 +1752,7 @@ static seg_interface_t seg_interface_hunk = {
 };
 
 //-------------------- dynamic memory --------------------
-static seg_interface_t seg_interface_dynmem = {
+static SegInterface seg_interface_dynmem = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1770,7 +1766,7 @@ static seg_interface_t seg_interface_dynmem = {
 };
 
 //-------------------- reserved --------------------
-static seg_interface_t seg_interface_reserved = {
+static SegInterface seg_interface_reserved = {
 	/* segmgr = */	NULL,
 	/* mobj = */	NULL,
 	/* seg_id = */	0,
@@ -1783,7 +1779,7 @@ static seg_interface_t seg_interface_reserved = {
 	/* deallocate_self = */			deallocate_self
 };
 
-static seg_interface_t* seg_interfaces[MEM_OBJ_MAX] = {
+static SegInterface* seg_interfaces[MEM_OBJ_MAX] = {
 	&seg_interface_script,
 	&seg_interface_clones,
 	&seg_interface_locals,
@@ -1796,22 +1792,22 @@ static seg_interface_t* seg_interfaces[MEM_OBJ_MAX] = {
 	&seg_interface_reserved
 };
 
-seg_interface_t *get_seg_interface(SegManager *self, seg_id_t segid) {
+SegInterface *SegManager::getSegInterface(seg_id_t segid) {
 	mem_obj_t *mobj;
-	seg_interface_t *retval;
+	SegInterface *retval;
 
-	if (!sm_check(self, segid))
+	if (!check(segid))
 		return NULL; // Invalid segment
 
-	mobj = self->heap[segid];
-	retval = (seg_interface_t *)sci_malloc(sizeof(seg_interface_t));
-	memcpy(retval, seg_interfaces[mobj->type - 1], sizeof(seg_interface_t));
+	mobj = heap[segid];
+	retval = (SegInterface *)sci_malloc(sizeof(SegInterface));
+	memcpy(retval, seg_interfaces[mobj->type - 1], sizeof(SegInterface));
 
 	if (mobj->type != retval->type_id) {
 		error("Improper segment interface for %d", mobj->type);
 	}
 
-	retval->segmgr = self;
+	retval->segmgr = this;
 	retval->mobj = mobj;
 	retval->seg_id = segid;
 

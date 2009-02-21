@@ -1308,7 +1308,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos) ? NULL : (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
+	char *text = IS_NULL_REG(text_pos) ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1378,7 +1378,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				reg_t text_pos = GET_SEL32(obj, text);
 				int display_offset = 0;
 
-				char *text = (char *) sm_dereference(&s->seg_manager, text_pos, NULL);
+				char *text = (char *)s->seg_manager->dereference(text_pos, NULL);
 				int textlen;
 
 				if (!text) {
@@ -1545,7 +1545,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos) ? NULL : (char *)sm_dereference(&s->seg_manager, text_pos, NULL);
+	char *text = IS_NULL_REG(text_pos) ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));

@@ -1381,7 +1381,7 @@ static reg_t output_path(pf_state_t *p, EngineState *s) {
 
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
-		oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
+		oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->keep_start)
 			POLY_SET_POINT(oref, 0, p->start.x, p->start.y);
@@ -1400,7 +1400,7 @@ static reg_t output_path(pf_state_t *p, EngineState *s) {
 		vertex = vertex->path_prev;
 	}
 
-	oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * (path_len + 1 + p->keep_start + p->keep_end), AVOIDPATH_DYNMEM_STRING, &output);
+	oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * (path_len + 1 + p->keep_start + p->keep_end), AVOIDPATH_DYNMEM_STRING, &output);
 
 	// Sentinel
 	POLY_SET_POINT(oref, path_len + p->keep_start + p->keep_end, POLY_LAST_POINT, POLY_LAST_POINT);
@@ -1504,8 +1504,8 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			sciprintf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
 			sciprintf("[avoidpath] Returning direct path from start point to end point\n");
-			oref = sm_alloc_dynmem(&s->seg_manager, POLY_POINT_SIZE * 3,
-			                       AVOIDPATH_DYNMEM_STRING, &output);
+			oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3,
+			                                   AVOIDPATH_DYNMEM_STRING, &output);
 
 			POLY_SET_POINT(oref, 0, start.x, start.y);
 			POLY_SET_POINT(oref, 1, end.x, end.y);

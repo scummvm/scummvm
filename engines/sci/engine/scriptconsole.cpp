@@ -271,7 +271,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		if (*endptr)
 			return 1;
 
-		dest->segment = sm_seg_get(&s->seg_manager, script_nr);
+		dest->segment = s->seg_manager->segGet(script_nr);
 
 		if (!dest->segment) {
 			return 1;
@@ -307,8 +307,8 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		str_objname = str + 1;
 
 		// Now all values are available; iterate over all objects.
-		for (i = 0; i < s->seg_manager.heap_size; i++) {
-			mem_obj_t *mobj = s->seg_manager.heap[i];
+		for (i = 0; i < s->seg_manager->heap_size; i++) {
+			mem_obj_t *mobj = s->seg_manager->heap[i];
 			int idx = 0;
 			int max_index = 0;
 

@@ -166,7 +166,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	SCIkdebug(SCIkMEM, "Attempting to clone from "PREG"\n", PRINT_REG(parent_addr));
 
-	clone_obj = sm_alloc_clone(&s->seg_manager, &clone_addr);
+	clone_obj = s->seg_manager->alloc_clone(&clone_addr);
 
 	if (!clone_obj) {
 		SCIkwarn(SCIkERROR, "Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
@@ -184,8 +184,8 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj->variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
 	if (IS_CLASS(parent_obj))
 		clone_obj->variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
-	sm_increment_lockers(&s->seg_manager, parent_obj->pos.segment, SEG_ID);
-	sm_increment_lockers(&s->seg_manager, clone_obj->pos.segment, SEG_ID);
+	s->seg_manager->incrementLockers(parent_obj->pos.segment, SEG_ID);
+	s->seg_manager->incrementLockers(clone_obj->pos.segment, SEG_ID);
 
 	return clone_addr;
 }
@@ -243,7 +243,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!scriptid)
 		return NULL_REG;
 
-	scr = &(s->seg_manager.heap[scriptid]->data.script);
+	scr = &(s->seg_manager->heap[scriptid]->data.script);
 
 	if (!scr->exports_nr) {
 		SCIkdebug(SCIkERROR, "Script 0x%x does not have a dispatch table\n", script);
@@ -255,7 +255,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(scriptid, sm_validate_export_func(&s->seg_manager, index, scriptid));
+	return make_reg(scriptid, s->seg_manager->validateExportFunc(index, scriptid));
 }
 
 reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -265,11 +265,11 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return s->r_acc;
 
-	if (sm_script_is_loaded(&(s->seg_manager), script, SCRIPT_ID)) {
-		int id = sm_seg_get(&(s->seg_manager), script);
+	if (s->seg_manager->scriptIsLoaded(script, SCRIPT_ID)) {
+		int id = s->seg_manager->segGet(script);
 
 		if (s->execution_stack[s->execution_stack_pos].addr.pc.segment != id)
-			sm_set_lockers(&(s->seg_manager), 1, script, SCRIPT_ID);
+			s->seg_manager->setLockers(1, script, SCRIPT_ID);
 	}
 
 	script_uninstantiate(s, script);
@@ -279,7 +279,7 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 int is_heap_object(EngineState *s, reg_t pos) {
 	object_t *obj = obj_get(s, pos);
-	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!sm_script_is_marked_as_deleted(&s->seg_manager, pos.segment)));
+	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->seg_manager->scriptIsMarkedAsDeleted(pos.segment)));
 }
 
 reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv) {

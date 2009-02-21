@@ -370,7 +370,7 @@ int kernel_oops(EngineState *s, const char *file, int line, const char *reason) 
 reg_t kalloc(EngineState *s, const char *type, int space) {
 	reg_t reg;
 
-	sm_alloc_hunk_entry(&s->seg_manager, type, space, &reg);
+	s->seg_manager->alloc_hunk_entry(type, space, &reg);
 	SCIkdebug(SCIkMEM, "Allocated %d at hunk "PREG" (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
@@ -390,7 +390,7 @@ int has_kernel_function(EngineState *s, const char *kname) {
 
 // Returns a pointer to the memory indicated by the specified handle
 byte *kmem(EngineState *s, reg_t handle) {
-	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, handle.segment, MEM_OBJ_HUNK);
+	mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 	hunk_table_t *ht = &(mobj->data.hunks);
 
 	if (!mobj || !ENTRY_IS_VALID(ht, handle.offset)) {
@@ -403,7 +403,7 @@ byte *kmem(EngineState *s, reg_t handle) {
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.
 int kfree(EngineState *s, reg_t handle) {
-	sm_free_hunk_entry(&s->seg_manager, handle);
+	s->seg_manager->free_hunk_entry(handle);
 
 	return 0;
 }
@@ -567,17 +567,17 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() critical", &s->r_acc)) {
+		if (!s->seg_manager->allocDynmem(UKPV(1), "kMemory() critical", &s->r_acc)) {
 			SCIkwarn(SCIkERROR, "Critical heap allocation failed\n");
 			script_error_flag = script_debug_flag = 1;
 		}
 		return s->r_acc;
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-		sm_alloc_dynmem(&s->seg_manager, UKPV(1), "kMemory() non-critical", &s->r_acc);
+		s->seg_manager->allocDynmem(UKPV(1), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (sm_free_dynmem(&s->seg_manager, argv[1])) {
+		if (s->seg_manager->freeDynmem(argv[1])) {
 			SCIkwarn(SCIkERROR, "Attempt to kMemory::free() non-dynmem pointer "PREG"!\n", PRINT_REG(argv[1]));
 		}
 		break;
@@ -606,7 +606,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->seg_manager.heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
+		if (s->seg_manager->heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, getInt16(ref));
@@ -620,7 +620,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		if (s->seg_manager.heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
+		if (s->seg_manager->heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
@@ -828,10 +828,10 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 		return KSIG_ARITHMETIC;
 	}
 
-	if ((reg.segment >= s->seg_manager.heap_size) || !s->seg_manager.heap[reg.segment])
+	if ((reg.segment >= s->seg_manager->heap_size) || !s->seg_manager->heap[reg.segment])
 		return 0; // Invalid
 
-	mobj = s->seg_manager.heap[reg.segment];
+	mobj = s->seg_manager->heap[reg.segment];
 
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
@@ -937,7 +937,7 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 
 static inline void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
 	int maxsize;
-	void *retval = sm_dereference(&s->seg_manager, pointer, &maxsize);
+	void *retval = s->seg_manager->dereference(pointer, &maxsize);
 
 	if (pointer.offset & (align - 1)) {
 		SCIkdebug(SCIkERROR, "Unaligned pointer read: "PREG" expected with %d alignment!\n", PRINT_REG(pointer), align);

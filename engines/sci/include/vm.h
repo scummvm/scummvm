@@ -256,8 +256,23 @@ struct dynmem_t {
 	byte *buf;
 }; /* Free-style memory */
 
+enum memObjType {
+	MEM_OBJ_INVALID = 0,
+	MEM_OBJ_SCRIPT = 1,
+	MEM_OBJ_CLONES = 2,
+	MEM_OBJ_LOCALS = 3,
+	MEM_OBJ_STACK = 4,
+	MEM_OBJ_SYS_STRINGS = 5,
+	MEM_OBJ_LISTS = 6,
+	MEM_OBJ_NODES = 7,
+	MEM_OBJ_HUNK = 8,
+	MEM_OBJ_DYNMEM = 9,
+	MEM_OBJ_RESERVED = 10,
+	MEM_OBJ_MAX = MEM_OBJ_RESERVED // For sanity checking
+};
+
 struct mem_obj_t {
-	int type;
+	memObjType type;
 	int segmgr_id; /* Internal value used by the seg_manager's hash map */
 	union {
 		script_t script;

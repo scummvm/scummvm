@@ -39,7 +39,7 @@ inline node_t *inline_lookup_node(EngineState *s, reg_t addr, const char *file, 
 	if (!addr.offset && !addr.segment)
 		return NULL; // Non-error null
 
-	mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_NODES);
+	mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
 	if (!mobj) {
 		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
@@ -70,7 +70,7 @@ inline list_t *_lookup_list(EngineState *s, reg_t addr, const char *file, int li
 	if (may_be_null && !addr.segment && !addr.offset)
 		return NULL;
 
-	mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_LISTS);
+	mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));
@@ -159,7 +159,7 @@ int sane_listp(EngineState *s, reg_t addr) {
 reg_t kNewList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t listbase;
 	list_t *l;
-	l = sm_alloc_list(&s->seg_manager, &listbase);
+	l = s->seg_manager->alloc_list(&listbase);
 	l->first = l->last = NULL_REG;
 	SCIkdebug(SCIkNODES, "New listbase at "PREG"\n", PRINT_REG(listbase));
 
@@ -182,19 +182,19 @@ reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		while (!IS_NULL_REG(n_addr)) { // Free all nodes
 			node_t *n = LOOKUP_NODE(n_addr);
-			sm_free_node(&s->seg_manager, n_addr);
+			s->seg_manager->free_node(n_addr);
 			n_addr = n->succ;
 		}
 	}
 
-	sm_free_list(&s->seg_manager, argv[0]);
+	s->seg_manager->free_list(argv[0]);
 */
 	return s->r_acc;
 }
 
 inline reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
-	node_t *n = sm_alloc_node(&s->seg_manager, &nodebase);
+	node_t *n = s->seg_manager->alloc_node(&nodebase);
 
 	if (!n) {
 		KERNEL_OOPS("Out of memory while creating a node");
@@ -422,7 +422,7 @@ reg_t kDeleteKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!IS_NULL_REG(n->succ))
 		LOOKUP_NODE(n->succ)->pred = n->pred;
 
-	//sm_free_node(&s->seg_manager, node_pos);
+	//s->seg_manager->free_node(node_pos);
 
 	return make_reg(0, 1); // Signal success
 }
@@ -465,7 +465,7 @@ reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 
 	if (IS_NULL_REG(output_data)) {
-		list = sm_alloc_list(&s->seg_manager, &output_data);
+		list = s->seg_manager->alloc_list(&output_data);
 		list->first = list->last = NULL_REG;
 		PUT_SEL32(dest, elements, output_data);
 	}

@@ -221,7 +221,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 			}
 		} else
 			if (caller.segment != the_class->reg.segment)
-				sm_increment_lockers(&s->seg_manager, the_class->reg.segment, SEG_ID);
+				s->seg_manager->incrementLockers(the_class->reg.segment, SEG_ID);
 
 		return the_class->reg;
 	}
@@ -243,7 +243,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define GET_OP_SIGNED_WORD() ((getInt16(code_buf + ((xs->addr.pc.offset) += 2) - 2)))
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
-#define SEG_GET_HEAP(s, reg) sm_get_heap(&s->seg_manager, reg)
+#define SEG_GET_HEAP(s, reg) s->seg_manager->getHeap(reg)
 #define OBJ_SPECIES(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SPECIES_OFFSET))
 // Returns an object's species
 
@@ -254,14 +254,14 @@ inline exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfun
 	int seg;
 	uint16 temp;
 
-	if (!sm_script_is_loaded(&s->seg_manager, script, SCRIPT_ID))  // Script not present yet?
+	if (!s->seg_manager->scriptIsLoaded(script, SCRIPT_ID))  // Script not present yet?
 		script_instantiate(s, script);
 	else
-		sm_unmark_script_deleted(&s->seg_manager, script);
+		s->seg_manager->unmarkScriptDeleted(script);
 
-	seg = sm_seg_get(&s->seg_manager, script);
+	seg = s->seg_manager->segGet(script);
 
-	temp = sm_validate_export_func(&s->seg_manager, pubfunct, seg);
+	temp = s->seg_manager->validateExportFunc(pubfunct, seg);
 	VERIFY(temp, "Invalid pubfunct in export table");
 	if (!temp) {
 		sciprintf("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
@@ -533,7 +533,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
-	mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, seg, MEM_OBJ_SCRIPT);
+	mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 	if (memobj)
 		return &(memobj->data.script);
 
@@ -541,7 +541,7 @@ static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	mem_obj_t *mobj = GET_SEGMENT_ANY(s->seg_manager, base.segment);
+	mem_obj_t *mobj = GET_SEGMENT_ANY(*s->seg_manager, base.segment);
 
 	if (!mobj) {
 		script_debug_flag = script_error_flag = 1;
@@ -1617,11 +1617,11 @@ seg_id_t script_get_segment(EngineState *s, int script_nr, int load) {
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
 		script_instantiate(s, script_nr);
 
-	segment = sm_seg_get(&s->seg_manager, script_nr);
+	segment = s->seg_manager->segGet(script_nr);
 
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
-			sm_increment_lockers(&s->seg_manager, segment, SEG_ID);
+			s->seg_manager->incrementLockers(segment, SEG_ID);
 
 		return segment;
 	} else
@@ -1642,7 +1642,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	}
 #endif
 
-	memobj = GET_SEGMENT(s->seg_manager, seg, MEM_OBJ_SCRIPT);
+	memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 
 	if (memobj)
 		script = &(memobj->data.script);
@@ -1668,8 +1668,6 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, reg))
 
-int sm_script_marked_deleted(SegManager* self, int script_nr);
-int sm_initialise_script(mem_obj_t *mem, EngineState *s, int script_nr);
 int script_instantiate_common(EngineState *s, int script_nr, resource_t **script, resource_t **heap, int *was_new) {
 	int seg;
 	int seg_id;
@@ -1700,33 +1698,33 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 		return 0;
 	}
 
-	seg = sm_seg_get(&s->seg_manager, script_nr);
-	if (sm_script_is_loaded(&s->seg_manager, script_nr, SCRIPT_ID)) {
-		marked_for_deletion = sm_script_marked_deleted(&s->seg_manager, script_nr);
+	seg = s->seg_manager->segGet(script_nr);
+	if (s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID)) {
+		marked_for_deletion = s->seg_manager->scriptMarkedDeleted(script_nr);
 		if (!marked_for_deletion) {
-			sm_increment_lockers(&s->seg_manager, seg, SEG_ID);
+			s->seg_manager->incrementLockers(seg, SEG_ID);
 			return seg;
 		} else {
 			seg_id = seg;
-			mem = s->seg_manager.heap[seg];
-			sm_free_script(mem);
+			mem = s->seg_manager->heap[seg];
+			s->seg_manager->freeScript(mem);
 		}
-	} else if (!(mem = sm_allocate_script(&s->seg_manager, s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US 
+	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US 
 		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
 		script_debug_flag = script_error_flag = 1;
 		return 0;
 	}
 
-	sm_initialise_script(mem, s, script_nr);
+	s->seg_manager->initialiseScript(mem, s, script_nr);
 
 	reg.segment = seg_id;
 	reg.offset = 0;
 
 	// Set heap position (beyond the size word) 
-	sm_set_lockers(&s->seg_manager, 1, reg.segment, SEG_ID);
-	sm_set_export_table_offset(&s->seg_manager, 0, reg.segment, SEG_ID);
-	sm_set_synonyms_offset(&s->seg_manager, 0, reg.segment, SEG_ID);
-	sm_set_synonyms_nr(&s->seg_manager, 0, reg.segment, SEG_ID);
+	s->seg_manager->setLockers(1, reg.segment, SEG_ID);
+	s->seg_manager->setExportTableOffset(0, reg.segment, SEG_ID);
+	s->seg_manager->setSynonymsOffset(0, reg.segment, SEG_ID);
+	s->seg_manager->setSynonymsNr(0, reg.segment, SEG_ID);
 
 	*was_new = 0;
 
@@ -1760,14 +1758,14 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		// Instead, the script starts with a 16 bit int specifying the
 		// number of locals we need; these are then allocated and zeroed.  
 
-		sm_mcpy_in_out(&s->seg_manager, 0, script->data, script->size, reg.segment, SEG_ID);
+		s->seg_manager->mcpyInOut(0, script->data, script->size, reg.segment, SEG_ID);
 		magic_pos_adder = 2;  // Step over the funny prefix 
 
 		if (locals_nr)
-			sm_script_initialise_locals_zero(&s->seg_manager, reg.segment, locals_nr);
+			s->seg_manager->scriptInitialiseLocalsZero(reg.segment, locals_nr);
 
 	} else {
-		sm_mcpy_in_out(&s->seg_manager, 0, script->data, script->size, reg.segment, SEG_ID);
+		s->seg_manager->mcpyInOut(0, script->data, script->size, reg.segment, SEG_ID);
 		magic_pos_adder = 0;
 	}
 
@@ -1794,17 +1792,17 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 		switch (objtype) {
 		case sci_obj_exports: {
-			sm_set_export_table_offset(&s->seg_manager, data_base.offset, reg.segment, SEG_ID);
+			s->seg_manager->setExportTableOffset(data_base.offset, reg.segment, SEG_ID);
 		}
 		break;
 
 		case sci_obj_synonyms:
-			sm_set_synonyms_offset(&s->seg_manager, addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header 
-			sm_set_synonyms_nr(&s->seg_manager, (objlength) / 4, reg.segment, SEG_ID);
+			s->seg_manager->setSynonymsOffset(addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header 
+			s->seg_manager->setSynonymsNr((objlength) / 4, reg.segment, SEG_ID);
 			break;
 
 		case sci_obj_localvars:
-			sm_script_initialise_locals(&s->seg_manager, data_base);
+			s->seg_manager->scriptInitialiseLocals(data_base);
 			break;
 
 		case sci_obj_class: {
@@ -1849,11 +1847,11 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 		switch (objtype) {
 		case sci_obj_code:
-			sm_script_add_code_block(&s->seg_manager, addr);
+			s->seg_manager->scriptAddCodeBlock(addr);
 			break;
 		case sci_obj_object:
 		case sci_obj_class: { // object or class? 
-			object_t *obj = sm_script_obj_init(&s->seg_manager, s, addr);
+			object_t *obj = s->seg_manager->scriptObjInit(s, addr);
 			object_t *base_obj;
 
 			// Instantiate the superclass, if neccessary 
@@ -1880,16 +1878,12 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	} while ((objtype != 0) && (((unsigned)reg.offset) < script->size - 2));
 
 	if (relocation >= 0)
-		sm_script_relocate(&s->seg_manager, make_reg(reg.segment, relocation));
+		s->seg_manager->scriptRelocate(make_reg(reg.segment, relocation));
 
-	sm_script_free_unused_objects(&s->seg_manager, reg.segment);
+	s->seg_manager->scriptFreeUnusedObjects(reg.segment);
 
 	return reg.segment;		// instantiation successful 
 }
-
-void sm_script_relocate_exports_sci11(SegManager *self, int seg);
-void sm_script_initialise_objects_sci11(SegManager *self, EngineState *s, int seg);
-void sm_heap_relocate(SegManager *self, EngineState *s, reg_t block);
 
 int script_instantiate_sci11(EngineState *s, int script_nr) {
 	resource_t *script, *heap;
@@ -1907,21 +1901,21 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	if (script->size & 2)
 		heap_start ++;
 
-	sm_mcpy_in_out(&s->seg_manager, 0, script->data, script->size, seg_id, SEG_ID);
-	sm_mcpy_in_out(&s->seg_manager, heap_start, heap->data, heap->size, seg_id, SEG_ID);
+	s->seg_manager->mcpyInOut(0, script->data, script->size, seg_id, SEG_ID);
+	s->seg_manager->mcpyInOut(heap_start, heap->data, heap->size, seg_id, SEG_ID);
 
 	if (getUInt16(script->data + 6) > 0)
-		sm_set_export_table_offset(&s->seg_manager, 6, seg_id, SEG_ID);
+		s->seg_manager->setExportTableOffset(6, seg_id, SEG_ID);
 
 	reg.segment = seg_id;
 	reg.offset = heap_start + 4;
-	sm_script_initialise_locals(&s->seg_manager, reg);
+	s->seg_manager->scriptInitialiseLocals(reg);
 
-	sm_script_relocate_exports_sci11(&s->seg_manager, seg_id);
-	sm_script_initialise_objects_sci11(&s->seg_manager, s, seg_id);
+	s->seg_manager->scriptRelocateExportsSci11(seg_id);
+	s->seg_manager->scriptInitialiseObjectsSci11(s, seg_id);
 
 	reg.offset = getUInt16(heap->data);
-	sm_heap_relocate(&s->seg_manager, s, reg);
+	s->seg_manager->heapRelocate(s, reg);
 
 	return seg_id;
 }
@@ -1932,8 +1926,6 @@ int script_instantiate(EngineState *s, int script_nr) {
 	else
 		return script_instantiate_sci0(s, script_nr);
 }
-
-void sm_mark_script_deleted(SegManager* self, int script_nr);
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
 	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
@@ -1962,8 +1954,8 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
 				int superclass_script = s->classtable[superclass].script;
 
 				if (superclass_script == script_nr) {
-					if (sm_get_lockers(&s->seg_manager, reg.segment, SEG_ID))
-						sm_decrement_lockers(&s->seg_manager, reg.segment, SEG_ID);  // Decrease lockers if this is us ourselves
+					if (s->seg_manager->getLockers(reg.segment, SEG_ID))
+						s->seg_manager->decrementLockers(reg.segment, SEG_ID);  // Decrease lockers if this is us ourselves
 				} else
 					script_uninstantiate(s, superclass_script);
 				// Recurse to assure that the superclass lockers number gets decreased
@@ -1981,17 +1973,17 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	reg_t reg = make_reg(0, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
 	int i;
 
-	reg.segment = sm_seg_get(&s->seg_manager, script_nr);
+	reg.segment = s->seg_manager->segGet(script_nr);
 
-	if (!sm_script_is_loaded(&s->seg_manager, script_nr, SCRIPT_ID) || reg.segment <= 0) {   // Is it already loaded?
+	if (!s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID) || reg.segment <= 0) {   // Is it already loaded?
 		//sciprintf("Warning: unloading script 0x%x requested although not loaded\n", script_nr);
 		// This is perfectly valid SCI behaviour
 		return;
 	}
 
-	sm_decrement_lockers(&s->seg_manager, reg.segment, SEG_ID);   // One less locker
+	s->seg_manager->decrementLockers(reg.segment, SEG_ID);   // One less locker
 
-	if (sm_get_lockers(&s->seg_manager, reg.segment, SEG_ID) > 0)
+	if (s->seg_manager->getLockers(reg.segment, SEG_ID) > 0)
 		return;
 
 	// Free all classtable references to this script
@@ -2004,12 +1996,12 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	else
 		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");
 
-	if (sm_get_lockers(&s->seg_manager, reg.segment, SEG_ID))
+	if (s->seg_manager->getLockers(reg.segment, SEG_ID))
 		return; // if xxx.lockers > 0
 
 	// Otherwise unload it completely
 	// Explanation: I'm starting to believe that this work is done by SCI itself.
-	sm_mark_script_deleted(&s->seg_manager, script_nr);
+	s->seg_manager->markScriptDeleted(script_nr);
 
 	if (script_checkloads_flag)
 		sciprintf("Unloaded script 0x%x.\n", script_nr);
@@ -2130,7 +2122,7 @@ int game_restore(EngineState **_s, char *game_name) {
 #endif
 
 object_t *obj_get(EngineState *s, reg_t offset) {
-	mem_obj_t *memobj = GET_OBJECT_SEGMENT(s->seg_manager, offset.segment);
+	mem_obj_t *memobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);
 	object_t *obj = NULL;
 	int idx;
 

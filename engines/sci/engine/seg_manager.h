@@ -23,29 +23,21 @@
  *
  */
 
-
 #ifndef _SCI_SEG_MANAGER_H
 #define _SCI_SEG_MANAGER_H
 
 #include "sci/engine/int_hashmap.h"
-#include "sci/include/sys_strings.h"
 #include "sci/include/vm.h"
 
 namespace Sci {
 
-#define DEFAULT_SCRIPTS 32
-#define DEFAULT_OBJECTS 8	    // default # of objects per script
-#define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
-
 // SCRIPT_ID must be 0
-typedef enum {
+enum idFlag {
 	SCRIPT_ID,
 	SEG_ID
-} id_flag;
+};
 
-//void dbg_print( const char* msg, void *i );	// for debug only
-
-// verify the the given condition is true, output the message if condition is false, and exit
+// Verify the the given condition is true, output the message if condition is false, and exit
 // Parameters:
 //   cond - condition to be verified
 //   msg  - the message to be printed if condition fails
@@ -55,21 +47,6 @@ typedef enum {
 		sciprintf("%s, line, %d, %s\n", __FILE__, __LINE__, msg); \
 		BREAKPOINT(); \
 	}
-
-#define MEM_OBJ_INVALID		0
-#define MEM_OBJ_SCRIPT		1
-#define MEM_OBJ_CLONES		2
-#define MEM_OBJ_LOCALS		3
-#define MEM_OBJ_STACK		4
-#define MEM_OBJ_SYS_STRINGS	5
-#define MEM_OBJ_LISTS		6
-#define MEM_OBJ_NODES		7
-#define MEM_OBJ_HUNK		8
-#define MEM_OBJ_DYNMEM		9
-#define MEM_OBJ_RESERVED	10
-#define MEM_OBJ_MAX		MEM_OBJ_RESERVED // For sanity checking
-
-typedef int mem_obj_enum;
 
 #define GET_SEGMENT(mgr, index, rtype) ((index) > 0 && (mgr).heap_size > index) ?		\
 		(((mgr).heap[index] && (mgr).heap[index]->type == rtype)? (mgr).heap[index]	: NULL) : NULL
@@ -81,13 +58,350 @@ typedef int mem_obj_enum;
 		(((mgr).heap[index]	&& ((mgr).heap[index]->type == MEM_OBJ_SCRIPT || (mgr).heap[index]->type == MEM_OBJ_CLONES))? (mgr).heap[index]	\
 		: NULL): NULL
 
-struct SegManager {
+struct SegInterface;
+
+class SegManager {
+public:
+	// Initialize the segment manager
+	SegManager(bool sci1_1);
+
+	// Deallocate all memory associated with the segment manager
+	~SegManager();
+
+	// 1. Scripts
+
+	void freeScript(mem_obj_t* mem);
+
+	// Allocate a script into the segment manager
+	// Parameters: (int) script_nr: number of the script to load
+	//	       (state_t *) s: The state containing resource manager handlers to load the
+	//			      script data
+	// Returns   : (int) 0 on failure, 1 on success
+	//	       (int) *seg_id: The segment ID of the newly allocated segment, on success
+	mem_obj_t *allocateScript(EngineState *s, int script_nr, int* seg_id);
+
+	// The script must then be initialised; see section (1b.), below.
+
+	// Forcefully deallocate a previously allocated script
+	// Parameters: (int) script_nr: number of the script to deallocate
+	// Returns   : (int) 1 on success, 0 on failure
+	int deallocateScript(int script_nr);
+
+	// Determines whether a script has been loaded yet
+	// Parameters: (int) id: number of the script or ID of the script segment to check for
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	int scriptIsLoaded(int id, idFlag flag);
+
+	// Validate whether the specified public function is exported by the script in the specified segment
+	// Parameters:	(int) pubfunct: Index of the function to validate
+	//		(int) seg: Segment ID of the script the check is to be performed for
+	// Returns   :  (uint16) 0 if the public function is invalid, its offset into the script's segment
+	//			 otherwise
+	uint16 validateExportFunc(int pubfunct, int seg);
+
+	// Get the segment ID associated with a script number
+	// Parameters: (int) script_nr: Number of the script to look up
+	// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
+	// This function is "pure" (i.e, it doesn't modify anything).
+	int segGet(int script_nr);
+
+
+	// script lock operations
+
+	// Increments the number of lockers of the script in question by one
+	// Parameters: (int) id: ID of the script or script segment to modify
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	void incrementLockers(int id, idFlag flag);
+
+	// Decrements the number of lockers of the script in question by one
+	// Parameters: (int) id: ID of the script or script segment to modify
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	void decrementLockers(int id, idFlag flag);
+
+	// Retrieves the number of locks held on this script
+	// Parameters: (int) id: ID of the script or script segment to read from
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// Returns   : (int) The number of locks held on the previously identified script
+	int getLockers(int id, idFlag flag);
+
+	// Sets the number of locks held on the specified script
+	// Parameters: (int) id: ID of the script or script segment to modify
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	void setLockers(int lockers, int id, idFlag flag);
+
+	// Retrieves a pointer to the synonyms associated with the specified script
+	// Parameters: (int) id: ID of the script or script segment to read from
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// Returns   : (byte *) Pointer to the synonyms, in non-parsed format.
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	byte *getSynonyms(int id, idFlag flag);
+
+	// Retrieves the number of synonyms associated with the specified script
+	// Parameters: (int) id: ID of the script or script segment to read from
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// Returns   : (int) The number of synonyms associated with the specified script
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	int getSynonymsNr(int id, idFlag flag);
+
+
+	// 1b. Script Initialisation					
+
+	// The set of functions below are intended 
+	// to be used during script instantiation, 
+	// i.e. loading and linking.		   
+
+	// Initializes a script's local variable block
+	// Parameters: (seg_id_t) seg: Segment containing the script to initialize
+	//             (int) nr: Number of local variables to allocate
+	// All variables are initialized to zero.
+	void scriptInitialiseLocalsZero(seg_id_t seg, int nr);
+
+	// Initializes a script's local variable block according to a prototype
+	// Parameters: (reg_t) location: Location to initialize from
+	void scriptInitialiseLocals(reg_t location);
+
+	// Initializes an object within the segment manager
+	// Parameters: (reg_t) obj_pos: Location (segment, offset) of the object
+	// Returns   : (object_t *) A newly created object_t describing the object
+	// obj_pos must point to the beginning of the script/class block (as opposed
+	// to what the VM considers to be the object location)
+	// The corresponding object_t is stored within the relevant script.
+	object_t *scriptObjInit(EngineState *s, reg_t obj_pos);
+
+	// Informs the segment manager that a code block must be relocated
+	// Parameters: (reg_t) location: Start of block to relocate
+	void scriptAddCodeBlock(reg_t location);
+
+	// Tells the segment manager whether exports are wide (32-bit) or not.
+	// Parameters: (int) flag: 1 if exports are wide, 0 otherwise 
+	void setExportWidth(int flag);
+
+	// Processes a relocation block witin a script
+	// Parameters: (reg_t) obj_pos: Location (segment, offset) of the block
+	// Returns   : (object_t *) Location of the relocation block
+	// This function is idempotent, but it must only be called after all
+	// objects have been instantiated, or a run-time error will occur.
+	void scriptRelocate(reg_t block);
+
+	// Deallocates all unused but allocated entries for objects
+	// Parameters: (seg_id_t) segid: segment of the script to prune in this way
+	// These entries are created during script instantiation; deallocating them
+	// frees up some additional memory.
+	void scriptFreeUnusedObjects(seg_id_t segid);
+
+	// Sets the script-relative offset of the exports table
+	// Parameters: (int) offset: The script-relative exports table offset
+	//	       (int) id: ID of the script or script segment to write to
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	void setExportTableOffset(int offset, int id, idFlag flag);
+
+	// Sets the script-relative offset of the synonyms associated with the specified script
+	// Parameters: (int) offset: The script-relative offset of the synonyms block
+	//	       (int) id: ID of the script or script segment to write to
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	void setSynonymsOffset(int offset, int id, idFlag flag);
+
+	// Sets the number of synonyms associated with the specified script
+	// Parameters: (int) nr: The number of synonyms, as to be stored within the script
+	//	       (int) id: ID of the script or script segment to write to
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	void setSynonymsNr(int nr, int id, idFlag flag);
+
+	// Marks the script identified by its script number as deleted
+	// Parameters: (int) script_nr: Script number to mark as deleted
+	// This will not actually delete the script.  If references remain present on the
+	// heap or the stack, the script will stay in memory in a quasi-deleted state until
+	// either unreachable (resulting in its eventual deletion) or reloaded (resulting
+	// in its data being updated).
+	void markScriptDeleted(int script_nr);
+
+	// Marks the script identified by its script number as not deleted
+	// Parameters: (int) script_nr: Script number to mark as not deleted
+	void unmarkScriptDeleted(int script_nr);
+
+	// Determines whether the script referenced by the indicated segment is marked as being deleted.
+	// Parameters: (seg_id_t) Segment ID of the script to investigate
+	// Returns   : (int) 1 iff seg points to a script and the segment is deleted, 0 otherwise
+	// Will return 0 when applied to an invalid or non-script seg.
+	int scriptIsMarkedAsDeleted(seg_id_t seg);
+
+
+	// 2. Clones							
+
+	// Allocate a fresh clone
+	// Returns : (clone_t*): Reference to the memory allocated for the clone
+	//           (reg_t) *addr: The offset of the freshly allocated clone
+	clone_t *alloc_clone(reg_t *addr);
+
+	// Deallocates a clone
+	// Parameters: (reg_t) addr: Offset of the clone scheduled for termination
+	void free_clone(reg_t addr);
+
+
+	// 3. Objects (static, from Scripts, and dynmic, from Clones)	
+
+	// Not all of these functions are fully operational for clones ATM 
+
+	// Retrieves a 16 bit value from within a script's heap representation
+	// Parameters: (reg_t) reg: The address to read from
+	// Returns   : (int16) The value read from the specified location
+	int16 getHeap(reg_t reg);
+
+	// Writes a 16 bit value into a script's heap representation
+	// Parameters: (reg_t) reg: The address to write to
+	//	       (int16) value: The value to write
+	//void putHeap(reg_t reg, int16 value);
+
+	// Copies a byte string into a script's heap representation
+	// Parameters: (int) dst: The script-relative offset of the destination area
+	//	       (const void *) src: Pointer to the data source location
+	//	       (size_t) n: Number of bytes to copy
+	//	       (int) id: ID of the script or script segment to write to
+	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
+	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	//				but less convenient.
+	// A dynamic failure is issued if the specified ID does not reference a proper script.
+	void mcpyInOut(int dst, const void *src, size_t n, int id, int flag);
+
+
+	// 4. Stack							
+
+	// Allocates a data stack
+	// Parameters: (int) size: Number of stack entries to reserve
+	// Returns   : (dstack_t *): The physical stack
+	//             (seg_id_t) segid: Segment ID of the stack
+	dstack_t *allocateStack(int size, seg_id_t *segid);
+
+
+	// 5. System Strings						
+
+	// Allocates a system string table
+	// Returns   : (dstack_t *): The physical stack
+	//             (seg_id_t) segid: Segment ID of the stack
+	// See also sys_string_acquire();
+	sys_strings_t *allocateSysStrings(seg_id_t *segid);
+
+
+	// 6, 7. Lists and Nodes					
+
+	// Allocate a fresh list
+	// Returns : (listY_t*): Reference to the memory allocated for the list
+	//           (reg_t) *addr: The offset of the freshly allocated list
+	list_t *alloc_list(reg_t *addr);
+
+	// Deallocates a list
+	// Parameters: (reg_t) addr: Offset of the list scheduled for termination
+	void free_list(reg_t addr);
+
+	// Allocate a fresh node
+	// Returns : (node_t*): Reference to the memory allocated for the node
+	//           (reg_t) *addr: The offset of the freshly allocated node
+	node_t *alloc_node(reg_t *addr);
+
+	// Deallocates a list node
+	// Parameters: (reg_t) addr: Offset of the node scheduled for termination
+	void free_node(reg_t addr);
+
+
+	// 8. Hunk Memory
+
+	// Allocate a fresh chunk of the hunk
+	// Parameters: (int) size: Number of bytes to allocate for the hunk entry
+	//             (const char *) hunk_type: A descriptive string for the hunk entry,
+	//				for debugging purposes
+	// Returns   : (hunk_t*): Reference to the memory allocated for the hunk piece
+	//             (reg_t) *addr: The offset of the freshly allocated hunk entry
+	hunk_t *alloc_hunk_entry(const char *hunk_type, int size, reg_t *addr);
+
+	// Deallocates a hunk entry
+	// Parameters: (reg_t) addr: Offset of the hunk entry to delete
+	void free_hunk_entry(reg_t addr);
+
+	// 9. Dynamic Memory
+
+	// Allocate some dynamic memory
+	// Parameters: (int) size: Number of bytes to allocate
+	//             (const char_ *) description: A descriptive string,
+	//				for debugging purposes
+	// Returns   : (unsigned char*): Raw pointer into the allocated dynamic memory
+	//             (reg_t) *addr: The offset of the freshly allocated X
+	unsigned char *allocDynmem(int size, const char *description, reg_t *addr);
+
+	// Deallocates a piece of dynamic memory
+	// Parameters: (reg_t) addr: Offset of the dynmem chunk to free
+	int freeDynmem(reg_t addr);
+
+	// Gets the description of a dynmem segment
+	// Parameters: (reg_t) addr: Segment to describe
+	// Returns   : (const char *): Pointer to the descriptive string set in
+	// allocDynmem
+	const char *getDescription(reg_t addr);
+
+
+	// 10. Reserved segments					
+
+	// Reserves a special-purpose segment
+	// Parameters: (char *) name: A string name identifying the segment (the string is cloned and retained)
+	// Returns   : A fresh segment ID for the segment in question
+	// Reserved segments are never used by the segment manager.  They can be used to tag special-purpose addresses.
+	// Segment 0 is implicitly reserved for numbers.
+	//seg_id_t sm_allocate_reserved_segment(char *name);
+
+
+	// Generic Operations on Segments and Addresses			
+
+	// Dereferences a raw memory pointer
+	// Parameters: (reg_t) reg: The reference to dereference
+	// Returns   : (byte *) The data block referenced
+	//             (int) size: (optionally) the theoretical maximum size of it
+	byte *dereference(reg_t reg, int *size);
+
+
+	// Segment Interface
+
+	// Retrieves the segment interface to the specified segment
+	// Parameters: (seg_id_t) segid: ID of the segment to look up
+	// Returns   : (SegInterface *): An interface to the specified segment ID, or NULL on error
+	// The returned interface 'si' must be freed after use by calling 'si->dealloc_self(si)';
+	SegInterface *getSegInterface(seg_id_t segid);
+
+
+	void heapRelocate(EngineState *s, reg_t block);
+	void scriptRelocateExportsSci11(int seg);
+	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
+	int scriptMarkedDeleted(int script_nr);
+	int initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr);
+
+public: // TODO: make private
 	int_hash_map_t *id_seg_map; // id - script id; seg - index of heap
 	mem_obj_t **heap;
 	int heap_size;		// size of the heap
 	int reserved_id;
 	int exports_wide;
-	int sci1_1;
+	bool isSci1_1;
 
 	int gc_mark_bits;
 	// For standard Mark&Sweep:
@@ -99,398 +413,76 @@ struct SegManager {
 	seg_id_t lists_seg_id; // ID of the (a) list segment
 	seg_id_t nodes_seg_id; // ID of the (a) node segment
 	seg_id_t hunks_seg_id; // ID of the (a) hunk segment
+
+private:
+	mem_obj_t *allocNonscriptSegment(memObjType type, seg_id_t *segid);
+	local_variables_t *allocLocalsSegment(script_t *scr, int count);
+	mem_obj_t *memObjAllocate(seg_id_t segid, int hash_id, memObjType type);
+	int deallocate(int seg, bool recursive);
+
+	hunk_t *alloc_hunk(reg_t *);
+	void free_hunk(reg_t addr);
+
+	inline int relocateLocal(script_t *scr, seg_id_t segment, int location);
+	inline int relocateBlock(reg_t *block, int block_location, int block_items, seg_id_t segment, int location);
+	inline int relocateObject(object_t *obj, seg_id_t segment, int location);
+
+	inline int findFreeId(int *id);
+	static void setScriptSize(mem_obj_t *mem, EngineState *s, int script_nr);
+	object_t *scriptObjInit0(EngineState *s, reg_t obj_pos);
+	object_t *scriptObjInit11(EngineState *s, reg_t obj_pos);
+
+	/* Check segment validity
+	** Parameters: (int) seg: The segment to validate
+	** Returns   : (bool)	false if 'seg' is an invalid segment
+	**			true  if 'seg' is a valid segment
+	*/
+	bool check(int seg);
+
+	void dbgPrint(const char* msg, void *i);	// for debug only
+
+	// Perform garbage collection
+	// Parameters: (EngineState *) s: The state to operate on
+	// Effects   : Unreachable objects in 's' are deallocated
+	//void sm_gc(EngineState *s);
 };
 
-// Toplevel functionality
-
-void sm_init(SegManager *self, int sci1_1);
-// Initialize the segment manager
-
-void sm_destroy(SegManager *self);
-// Deallocate all memory associated with the segment manager
-
-void sm_gc(SegManager *self, EngineState *s);
-// Perform garbage collection
-// Parameters: (state_t *) s: The state to operate on
-// Effects   : Unreachable objects in 's' are deallocated
-
-// 1. Scripts
-
-void sm_free_script(mem_obj_t* mem);
-
-mem_obj_t *sm_allocate_script(SegManager* self, EngineState *s, int script_nr, int* seg_id);
-// Allocate a script into the segment manager
-// Parameters: (int) script_nr: number of the script to load
-//	       (state_t *) s: The state containing resource manager handlers to load the
-//			      script data
-// Returns   : (int) 0 on failure, 1 on success
-//	       (int) *seg_id: The segment ID of the newly allocated segment, on success
-
-// The script must then be initialised; see section (1b.), below.
-
-int sm_deallocate_script(SegManager* self, int script_nr);
-// Forcefully deallocate a previously allocated script
-// Parameters: (int) script_nr: number of the script to deallocate
-// Returns   : (int) 1 on success, 0 on failure
-
-int sm_script_is_loaded(SegManager* self, int id, id_flag flag);
-// Determines whether a script has been loaded yet
-// Parameters: (int) id: number of the script or ID of the script segment to check for
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-
-uint16 sm_validate_export_func(SegManager* self, int pubfunct, int seg);
-// Validate whether the specified public function is exported by the script in the specified segment
-// Parameters:	(int) pubfunct: Index of the function to validate
-//		(int) seg: Segment ID of the script the check is to be performed for
-// Returns   :  (uint16) 0 if the public function is invalid, its offset into the script's segment
-//			  otherwise
-
-int sm_seg_get(SegManager* self, int script_nr);
-// Get the segment ID associated with a script number
-// Parameters: (int) script_nr: Number of the script to look up
-// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
-// This function is "pure" (i.e, it doesn't modify anything).
-
-
-
-// script lock operations
-
-void sm_increment_lockers(SegManager *self, int id, id_flag flag);
-// Increments the number of lockers of the script in question by one
-// Parameters: (int) id: ID of the script or script segment to modify
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-
-
-void sm_decrement_lockers(SegManager *self, int id, id_flag flag);
-// Decrements the number of lockers of the script in question by one
-// Parameters: (int) id: ID of the script or script segment to modify
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-
-int sm_get_lockers(SegManager *self, int id, id_flag flag);
-// Retrieves the number of locks held on this script
-// Parameters: (int) id: ID of the script or script segment to read from
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// Returns   : (int) The number of locks held on the previously identified script
-
-
-void sm_set_lockers(SegManager *self, int lockers, int id, id_flag flag);
-// Sets the number of locks held on the specified script
-// Parameters: (int) id: ID of the script or script segment to modify
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-
-
-byte *sm_get_synonyms(SegManager *self, int id, id_flag flag);
-// Retrieves a pointer to the synonyms associated with the specified script
-// Parameters: (int) id: ID of the script or script segment to read from
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// Returns   : (byte *) Pointer to the synonyms, in non-parsed format.
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-int sm_get_synonyms_nr(SegManager *self, int id, id_flag flag);
-// Retrieves the number of synonyms associated with the specified script
-// Parameters: (int) id: ID of the script or script segment to read from
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// Returns   : (int) The number of synonyms associated with the specified script
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-
-// 1b. Script Initialisation					
-
-// The set of functions below are intended 
-// to be used during script instantiation, 
-// i.e. loading and linking.		   
-
-void sm_script_initialise_locals_zero(SegManager *self, seg_id_t seg, int nr);
-// Initializes a script's local variable block
-// Parameters: (seg_id_t) seg: Segment containing the script to initialize
-//             (int) nr: Number of local variables to allocate
-// All variables are initialized to zero.
-
-
-void sm_script_initialise_locals(SegManager *self, reg_t location);
-// Initializes a script's local variable block according to a prototype
-// Parameters: (reg_t) location: Location to initialize from
-
-
-object_t *sm_script_obj_init(SegManager *self, EngineState *s, reg_t obj_pos);
-// Initializes an object within the segment manager
-// Parameters: (reg_t) obj_pos: Location (segment, offset) of the object
-// Returns   : (object_t *) A newly created object_t describing the object
-// obj_pos must point to the beginning of the script/class block (as opposed
-// to what the VM considers to be the object location)
-// The corresponding object_t is stored within the relevant script.
-
-
-void sm_script_add_code_block(SegManager *self, reg_t location);
-// Informs the segment manager that a code block must be relocated
-// Parameters: (reg_t) location: Start of block to relocate
-
-
-void sm_set_export_width(SegManager *self, int flag);
-// Tells the segment manager whether exports are wide (32-bit) or not.
-// Parameters: (int) flag: 1 if exports are wide, 0 otherwise 
-
-void sm_script_relocate(SegManager *self, reg_t block);
-// Processes a relocation block witin a script
-// Parameters: (reg_t) obj_pos: Location (segment, offset) of the block
-// Returns   : (object_t *) Location of the relocation block
-// This function is idempotent, but it must only be called after all
-// objects have been instantiated, or a run-time error will occur.
-
-
-void sm_script_free_unused_objects(SegManager *self, seg_id_t segid);
-// Deallocates all unused but allocated entries for objects
-// Parameters: (seg_id_t) segid: segment of the script to prune in this way
-// These entries are created during script instantiation; deallocating them
-// frees up some additional memory.
-
-
-void sm_set_export_table_offset(SegManager *self, int offset, int id, id_flag flag);
-// Sets the script-relative offset of the exports table
-// Parameters: (int) offset: The script-relative exports table offset
-//	       (int) id: ID of the script or script segment to write to
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-void sm_set_synonyms_offset(SegManager *self, int offset, int id, id_flag flag);
-// Sets the script-relative offset of the synonyms associated with the specified script
-// Parameters: (int) offset: The script-relative offset of the synonyms block
-//	       (int) id: ID of the script or script segment to write to
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-void sm_set_synonyms_nr(SegManager *self, int nr, int id, id_flag flag);
-// Sets the number of synonyms associated with the specified script
-// Parameters: (int) nr: The number of synonyms, as to be stored within the script
-//	       (int) id: ID of the script or script segment to write to
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-void sm_mark_script_deleted(SegManager *self, int script_nr);
-// Marks the script identified by its script number as deleted
-// Parameters: (int) script_nr: Script number to mark as deleted
-// This will not actually delete the script.  If references remain present on the
-// heap or the stack, the script will stay in memory in a quasi-deleted state until
-// either unreachable (resulting in its eventual deletion) or reloaded (resulting
-// in its data being updated).
-
-
-void sm_unmark_script_deleted(SegManager *self, int script_nr);
-// Marks the script identified by its script number as not deleted
-// Parameters: (int) script_nr: Script number to mark as not deleted
-
-
-int sm_script_is_marked_as_deleted(SegManager *self, seg_id_t seg);
-// Determines whether the script referenced by the indicated segment is marked as being deleted.
-// Parameters: (seg_id_t) Segment ID of the script to investigate
-// Returns   : (int) 1 iff seg points to a script and the segment is deleted, 0 otherwise
-// Will return 0 when applied to an invalid or non-script seg.
-
-
-// 2. Clones							
-
-clone_t *sm_alloc_clone(SegManager *self, reg_t *addr);
-// Allocate a fresh clone
-// Returns : (clone_t*): Reference to the memory allocated for the clone
-//           (reg_t) *addr: The offset of the freshly allocated clone
-
-
-void sm_free_clone(SegManager *self, reg_t addr);
-// Deallocates a clone
-// Parameters: (reg_t) addr: Offset of the clone scheduled for termination
-
-
-// Objects (static, from Scripts, and dynmic, from Clones)	
-
-// Not all of these functions are fully operational for clones ATM 
-
-int16 sm_get_heap(SegManager* self, reg_t reg);
-// Retrieves a 16 bit value from within a script's heap representation
-// Parameters: (reg_t) reg: The address to read from
-// Returns   : (int16) The value read from the specified location
-
-
-void sm_put_heap(SegManager *self, reg_t reg, int16 value);
-// Writes a 16 bit value into a script's heap representation
-// Parameters: (reg_t) reg: The address to write to
-//	       (int16) value: The value to write
-
-
-void sm_mcpy_in_out(SegManager* self, int dst, const void *src, size_t n, int id, int flag);
-// Copies a byte string into a script's heap representation
-// Parameters: (int) dst: The script-relative offset of the destination area
-//	       (const void *) src: Pointer to the data source location
-//	       (size_t) n: Number of bytes to copy
-//	       (int) id: ID of the script or script segment to write to
-//             (id_flag) flag: Whether to address the script by script number (SCRIPT_ID) or
-//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-//				but less convenient.
-// A dynamic failure is issued if the specified ID does not reference a proper script.
-
-
-// 4. Stack							
-
-dstack_t *sm_allocate_stack(SegManager *self, int size, seg_id_t *segid);
-// Allocates a data stack
-// Parameters: (int) size: Number of stack entries to reserve
-// Returns   : (dstack_t *): The physical stack
-//             (seg_id_t) segid: Segment ID of the stack
-
-
-// 5. System Strings						
-
-sys_strings_t *sm_allocate_sys_strings(SegManager *self, seg_id_t *segid);
-// Allocates a system string table
-// Returns   : (dstack_t *): The physical stack
-//             (seg_id_t) segid: Segment ID of the stack
-// See also sys_string_acquire();
-
-
-// 6, 7. Lists and Nodes					
-
-list_t *sm_alloc_list(SegManager *self, reg_t *addr);
-// Allocate a fresh list
-// Returns : (listY_t*): Reference to the memory allocated for the list
-//           (reg_t) *addr: The offset of the freshly allocated list
-
-
-void sm_free_list(SegManager *self, reg_t addr);
-// Deallocates a list
-// Parameters: (reg_t) addr: Offset of the list scheduled for termination
-
-
-node_t *sm_alloc_node(SegManager *self, reg_t *addr);
-// Allocate a fresh node
-// Returns : (node_t*): Reference to the memory allocated for the node
-//           (reg_t) *addr: The offset of the freshly allocated node
-
-void sm_free_node(SegManager *self, reg_t addr);
-// Deallocates a list node
-// Parameters: (reg_t) addr: Offset of the node scheduled for termination
-
-
-// 8. Hunk Memory						
-
-hunk_t *sm_alloc_hunk_entry(SegManager *self, const char *hunk_type, int size, reg_t *addr);
-// Allocate a fresh chunk of the hunk
-// Parameters: (int) size: Number of bytes to allocate for the hunk entry
-//             (const char *) hunk_type: A descriptive string for the hunk entry,
-//				for debugging purposes
-// Returns   : (hunk_t*): Reference to the memory allocated for the hunk piece
-//             (reg_t) *addr: The offset of the freshly allocated hunk entry
-
-
-void sm_free_hunk_entry(SegManager *self, reg_t addr);
-// Deallocates a hunk eentry
-// Parameters: (reg_t) addr: Offset of the hunk entry to delete
-
-
-// 9. Dynamic Memory						
-
-unsigned char *sm_alloc_dynmem(SegManager *self, int size, const char *description, reg_t *addr);
-// Allocate some dynamic memory
-// Parameters: (int) size: Number of bytes to allocate
-//             (const char_ *) description: A descriptive string,
-//				for debugging purposes
-// Returns   : (unsigned char*): Raw pointer into the allocated dynamic memory
-//             (reg_t) *addr: The offset of the freshly allocated X
-
-int sm_free_dynmem(SegManager *self, reg_t addr);
-// Deallocates a piece of dynamic memory
-// Parameters: (reg_t) addr: Offset of the dynmem chunk to free
-
-
-const char *sm_get_description(SegManager *self, reg_t addr);
-// Gets the description of a dynmem segment
-// Parameters: (reg_t) addr: Segment to describe
-// Returns   : (const char *): Pointer to the descriptive string set in
-// sm_alloc_dynmem
-
-
-// 10. Reserved segments					
-
-seg_id_t sm_allocate_reserved_segment(SegManager *self, char *name);
-// Reserves a special-purpose segment
-// Parameters: (char *) name: A string name identifying the segment (the string is cloned and retained)
-// Returns   : A fresh segment ID for the segment in question
-// Reserved segments are never used by the segment manager.  They can be used to tag special-purpose addresses.
-// Segment 0 is implicitly reserved for numbers.
-
-
-// Generic Operations on Segments and Addresses			
-
-byte *sm_dereference(SegManager *self, reg_t reg, int *size);
-// Dereferences a raw memory pointer
-// Parameters: (reg_t) reg: The reference to dereference
-// Returns   : (byte *) The data block referenced
-//             (int) size: (optionally) the theoretical maximum size of it
 
 // 11. Segment interface, primarily for GC			
 
-struct seg_interface_t {
+struct SegInterface {
 	SegManager *segmgr;
 	mem_obj_t *mobj;
 	seg_id_t seg_id;
-	mem_obj_enum type_id;	// Segment type 
+	memObjType type_id;	// Segment type 
 	const char *type;	// String description of the segment type 
 
-	reg_t (*find_canonic_address)(seg_interface_t *self, reg_t sub_addr);
+	reg_t (*find_canonic_address)(SegInterface *self, reg_t sub_addr);
 	// Finds the canonic address associated with sub_reg
 	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
 	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
 	
-	void (*free_at_address)(seg_interface_t *self, reg_t sub_addr);
+	void (*free_at_address)(SegInterface *self, reg_t sub_addr);
 	// Deallocates all memory associated with the specified address
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
 	
-	void (*list_all_deallocatable)(seg_interface_t *self, void *param, void (*note)(void *param, reg_t addr));
+	void (*list_all_deallocatable)(SegInterface *self, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over and reports all addresses within the current segment
 	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
 	//                                makes sense
 	//             (void *) param: Parameter passed to 'note'
 	
-	void (*list_all_outgoing_references)(seg_interface_t *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
+	void (*list_all_outgoing_references)(SegInterface *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over all references reachable from the specified object
 	// Parameters: (reg_t) object: The object (within the current segment) to analyse
 	//             (void *) param: Parameter passed to 'note'
 	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
 	// Note: This function may also choose to report numbers (segment 0) as adresses
 	
-	void (*deallocate_self)(seg_interface_t *self);
+	void (*deallocate_self)(SegInterface *self);
 	// Deallocates the segment interface
 };
-
-seg_interface_t *get_seg_interface(SegManager *self, seg_id_t segid);
-// Retrieves the segment interface to the specified segment
-// Parameters: (seg_id_t) segid: ID of the segment to look up
-// Returns   : (seg_interface_t *): An interface to the specified segment ID, or NULL on error
-// The returned interface 'si' must be freed after use by calling 'si->dealloc_self(si)';
 
 } // End of namespace Sci
 

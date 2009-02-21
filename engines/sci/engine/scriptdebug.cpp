@@ -277,8 +277,8 @@ int c_segtable(EngineState *s) {
 	int i;
 
 	sciprintf("  ---- segment table ----\n");
-	for (i = 0; i < s->seg_manager.heap_size; i++) {
-		mem_obj_t *mobj = s->seg_manager.heap[i];
+	for (i = 0; i < s->seg_manager->heap_size; i++) {
+		mem_obj_t *mobj = s->seg_manager->heap[i];
 		if (mobj && mobj->type) {
 			sciprintf(" [%04x] ", i);
 
@@ -345,7 +345,7 @@ static void print_list(EngineState *s, list_t *l) {
 
 	while (!IS_NULL_REG(pos)) {
 		node_t *node;
-		mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_NODES);
+		mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!mobj || !ENTRY_IS_VALID(&(mobj->data.nodes), pos.offset)) {
 			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
@@ -482,7 +482,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 }
 
 static int show_node(EngineState *s, reg_t addr) {
-	mem_obj_t *mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_LISTS);
+	mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
 		list_table_t *lt = &(mobj->data.lists);
@@ -499,7 +499,7 @@ static int show_node(EngineState *s, reg_t addr) {
 	} else {
 		node_table_t *nt;
 		node_t *node;
-		mobj = GET_SEGMENT(s->seg_manager, addr.segment, MEM_OBJ_NODES);
+		mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
 
 		if (!mobj) {
 			sciprintf("Segment #%04x is not a list or node segment\n", addr.segment);
@@ -588,7 +588,7 @@ static int c_vr(EngineState *s) {
 
 		case KSIG_REF: {
 			int size;
-			unsigned char *block = sm_dereference(&s->seg_manager, reg, &size);
+			unsigned char *block = s->seg_manager->dereference(reg, &size);
 
 			sciprintf("raw data\n");
 
@@ -631,7 +631,7 @@ int c_segkill(EngineState *s) {
 	while (i < cmd_paramlength) {
 		int nr = cmd_params[i++].val;
 
-		sm_set_lockers(&(s->seg_manager), nr, 0, SEG_ID);
+		s->seg_manager->setLockers(nr, 0, SEG_ID);
 	}
 	return 0;
 }
@@ -654,18 +654,18 @@ int c_seginfo(EngineState *s) {
 	if (cmd_paramlength) {
 		while (i < cmd_paramlength) {
 			int nr = cmd_params[i++].val;
-			if (nr < 0 || nr >= s->seg_manager.heap_size || !s->seg_manager.heap[nr]) {
+			if (nr < 0 || nr >= s->seg_manager->heap_size || !s->seg_manager->heap[nr]) {
 				sciprintf("Segment %04x does not exist\n", nr);
 				return 1;
 			}
 			sciprintf("[%04x] ", nr);
-			_c_single_seg_info(s, s->seg_manager.heap[nr]);
+			_c_single_seg_info(s, s->seg_manager->heap[nr]);
 		}
 	} else
-		for (i = 0; i < (unsigned int)s->seg_manager.heap_size; i++) {
-			if (s->seg_manager.heap[i]) {
+		for (i = 0; i < (unsigned int)s->seg_manager->heap_size; i++) {
+			if (s->seg_manager->heap[i]) {
 				sciprintf("[%04x] ", i);
-				_c_single_seg_info(s, s->seg_manager.heap[i]);
+				_c_single_seg_info(s, s->seg_manager->heap[i]);
 				sciprintf("\n");
 			}
 		}
@@ -1213,7 +1213,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-	mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
+	mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
 	script_t *script_entity = NULL;
 	byte *scr;
 	int scr_size;
@@ -1591,7 +1591,7 @@ static int c_backtrace(EngineState *s) {
 
 		sciprintf(" argp:"PSTK, PRINT_STK(call->variables_argp));
 		if (call->type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", s->seg_manager.heap[call->addr.pc.segment]->data.script.nr);
+			sciprintf(" script: %d", s->seg_manager->heap[call->addr.pc.segment]->data.script.nr);
 		sciprintf("\n");
 	}
 
@@ -2024,7 +2024,7 @@ static int c_disasm_addr(EngineState *s) {
 	int invalid = 0;
 	int size;
 
-	sm_dereference(&s->seg_manager, vpc, &size);
+	s->seg_manager->dereference(vpc, &size);
 	size += vpc.offset; // total segment size
 
 	for (i = 1; i < cmd_paramlength; i++) {
@@ -2559,8 +2559,8 @@ int objinfo(EngineState *s, reg_t pos) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
 		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
-	if (s->seg_manager.heap[pos.segment]->type == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager.heap[pos.segment]->data.script.nr);
+	if (s->seg_manager->heap[pos.segment]->type == MEM_OBJ_SCRIPT)
+		sciprintf("\nOwner script:\t%d\n", s->seg_manager->heap[pos.segment]->data.script.nr);
 
 	return 0;
 }
@@ -2795,7 +2795,7 @@ static void _print_address(void * _, reg_t addr) {
 }
 
 #define GET_SEG_INTERFACE(seg_id) \
-	seg_interface_t * seg_interface = get_seg_interface(&(s->seg_manager), seg_id);	\
+	SegInterface *seg_interface = s->seg_manager->getSegInterface(seg_id);	\
 	if (!seg_interface) {								\
 		sciprintf("Unknown segment : %x\n", seg_id);				\
 		return 1;								\
@@ -2889,7 +2889,7 @@ void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, r
 	}
 
 	if (_debug_seeking && !bp) { // Are we looking for something special?
-		mem_obj_t *memobj = GET_SEGMENT(s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
+		mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (memobj) {
 			script_t *scr = &(memobj->data.script);
