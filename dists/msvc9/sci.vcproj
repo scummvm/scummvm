@@ -566,10 +566,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\fmopl.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\opl2.cpp"
 					>
 				</File>
@@ -647,15 +643,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\hashmap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\heapmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\int_hashmap.h"
 				>
 			</File>
 			<File
@@ -708,10 +696,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\script.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\seg_manager.h"
 				>
 			</File>
 			<File
