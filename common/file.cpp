@@ -61,14 +61,13 @@ bool File::open(const String &filename, Archive &archive) {
 	clearIOFailed();
 
 	SeekableReadStream *stream = 0;
-	if (archive.hasFile(filename)) {
+	
+	if ((stream = archive.createReadStreamForMember(filename))) {
 		debug(3, "Opening hashed: %s", filename.c_str());
-		stream = archive.createReadStreamForMember(filename);
-	} else if (archive.hasFile(filename + ".")) {
+	} else if ((stream = archive.createReadStreamForMember(filename + "."))) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(3, "Opening hashed: %s.", filename.c_str());
-		stream = archive.createReadStreamForMember(filename + ".");
 	}
 
 	return open(stream, filename);

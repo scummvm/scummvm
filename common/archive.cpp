@@ -141,15 +141,6 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) c
 		return 0;
 
 	FSNode node = lookupCache(_fileCache, name);
-
-	if (!node.exists()) {
-		warning("FSDirectory::createReadStreamForMember: FSNode does not exist");
-		return 0;
-	} else if (node.isDirectory()) {
-		warning("FSDirectory::createReadStreamForMember: FSNode is a directory");
-		return 0;
-	}
-
 	SeekableReadStream *stream = node.createReadStream();
 	if (!stream)
 		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
