@@ -777,13 +777,18 @@ sub insert_reader_code {
   if ($firsttoken) {
       write_line_pp(__LINE__, 0);
       print "		const char *_cfsml_inp = $firsttoken;\n";
+      print "		{\n";
   } else {
       write_line_pp(__LINE__, 0);
-      print "		const char *_cfsml_inp = _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, 0);\n\n";
+      print "		const char *_cfsml_inp = _cfsml_get_identifier($fh, &($linecounter), &_cfsml_eof, 0);\n";
+      print "		if (!_cfsml_inp) {\n";
+      print "			_cfsml_error = CFSML_FAILURE;\n";
+      print "		} else {\n";
   }
 
   write_line_pp(__LINE__, 0);
-  print "		_cfsml_error = $types{$type}{'reader'}($fh, $datap, _cfsml_inp, &($linecounter), &_cfsml_eof);\n";
+  print "			_cfsml_error = $types{$type}{'reader'}($fh, $datap, _cfsml_inp, &($linecounter), &_cfsml_eof);\n";
+  print "		}\n";
 
   if ($eofvar) {
       write_line_pp(__LINE__, 0);
