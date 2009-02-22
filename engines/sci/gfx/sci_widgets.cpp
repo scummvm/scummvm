@@ -29,6 +29,8 @@
 #include "sci/gfx/menubar.h"
 #include "sci/include/sci_widgets.h"
 
+#include "common/system.h"
+
 namespace Sci {
 
 #define SCI_SPECIAL_CHAR_ARROW_UP 0x18
@@ -340,8 +342,6 @@ gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
 								   char inverse) {
 	gfxw_text_t *text_handle;
-	long draw_cursor;
-	long foo;
 
 	gfxw_list_t *list;
 	int cursor_height = gfxop_get_font_height(port->visual->gfx_state, font);
@@ -356,10 +356,7 @@ gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 	zone.x = 1;
 	zone.y = 1;
 
-	sci_gettime(&foo, &draw_cursor);
-	draw_cursor = draw_cursor > 500000;
-
-	if (!draw_cursor) {
+	if ((g_system->getMillis() % 1000) < 500) {
 		text_handle = gfxw_new_text(port->visual->gfx_state, zone, font, text, ALIGN_LEFT, ALIGN_TOP,
 		                            port->color, port->color, port->bgcolor, GFXR_FONT_FLAG_NO_NEWLINES);
 
