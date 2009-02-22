@@ -55,7 +55,6 @@ namespace Sci {
 #  define FO_BINARY ""
 #endif
 
-
 static int _savegame_indices_nr = -1; // means 'uninitialized'
 
 static struct _savegame_index_struct {
@@ -784,8 +783,28 @@ reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define K_FILEIO_FIND_NEXT	9
 #define K_FILEIO_STAT		10
 
-char * write_filename_to_mem(EngineState *s, reg_t address, char *string) {
-	char *mem = kernel_dereference_char_pointer(s, address, 0);
+
+class DirSeeker {
+protected:
+	EngineState *_vm;
+	reg_t _outbuffer;
+	sci_dir_t _dir;
+
+	const char *write_filename_to_mem(const char *string);
+
+public:
+	DirSeeker(EngineState *s) : _vm(s) {
+		_outbuffer = NULL_REG;
+		sci_init_dir(&_dir);
+	}
+	
+	void first_file(const char *dir, char *mask, reg_t buffer);
+	void next_file();
+};
+
+
+const char *DirSeeker::write_filename_to_mem(const char *string) {
+	char *mem = kernel_dereference_char_pointer(_vm, _outbuffer, 0);
 
 	if (string) {
 		memset(mem, 0, 13);
@@ -795,36 +814,36 @@ char * write_filename_to_mem(EngineState *s, reg_t address, char *string) {
 	return string;
 }
 
-void next_file(EngineState *s) {
-	if (write_filename_to_mem(s, s->dirseeker_outbuffer, sci_find_next(&(s->dirseeker))))
-		s->r_acc = s->dirseeker_outbuffer;
+void DirSeeker::next_file() {
+	if (write_filename_to_mem(sci_find_next(&_dir)))
+		_vm->r_acc = _outbuffer;
 	else
-		s->r_acc = NULL_REG;
+		_vm->r_acc = NULL_REG;
 }
 
-void first_file(EngineState *s, const char *dir, char *mask, reg_t buffer) {
+void DirSeeker::first_file(const char *dir, char *mask, reg_t buffer) {
 	if (!buffer.segment) {
 		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n", dir, mask);
-		s->r_acc = NULL_REG;
+		_vm->r_acc = NULL_REG;
 		return;
 	}
 
 	if (strcmp(dir, ".")) {
 		sciprintf("%s L%d: Non-local first_file: Not implemented yet\n", __FILE__, __LINE__);
-		s->r_acc = NULL_REG;
+		_vm->r_acc = NULL_REG;
 		return;
 	}
 
 	// Get rid of the old find structure
-	if (s->dirseeker_outbuffer.segment)
-		sci_finish_find(&(s->dirseeker));
+	if (_outbuffer.segment)
+		sci_finish_find(&_dir);
+	
+	_outbuffer = buffer;
 
-	s->dirseeker_outbuffer = buffer;
-
-	if (write_filename_to_mem(s, s->dirseeker_outbuffer, sci_find_first(&(s->dirseeker), mask)))
-		s->r_acc = s->dirseeker_outbuffer;
+	if (write_filename_to_mem(sci_find_first(&_dir, mask)))
+		_vm->r_acc = _outbuffer;
 	else
-		s->r_acc = NULL_REG;
+		_vm->r_acc = NULL_REG;
 }
 
 reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -900,12 +919,16 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (strcmp(mask, "*.*") == 0)
 			strcpy(mask, "*"); // For UNIX
 #endif
-		first_file(s, ".", mask, buf);
+		if (!s->dirseeker)
+			s->dirseeker = new DirSeeker(s);
+		assert(s->dirseeker);
+		s->dirseeker->first_file(".", mask, buf);
 
 		break;
 	}
 	case K_FILEIO_FIND_NEXT : {
-		next_file(s);
+		assert(s->dirseeker);
+		s->dirseeker->next_file();
 		break;
 	}
 	case K_FILEIO_STAT : {

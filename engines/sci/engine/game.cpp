@@ -518,9 +518,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->file_handles = (FILE**)sci_calloc(sizeof(FILE *), s->file_handles_nr);
 	// Allocate memory for file handles
 
-	sci_init_dir(&(s->dirseeker));
-	s->dirseeker_outbuffer = NULL_REG;
-	// Those two are used by FileIO for FIND_FIRST, FIND_NEXT
+	s->dirseeker = 0; // Used by FileIO for FIND_FIRST, FIND_NEXT
 
 	if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE &&
 	        s->version < SCI_VERSION(1, 001, 000))

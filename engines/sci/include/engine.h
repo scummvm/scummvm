@@ -48,6 +48,8 @@ namespace Sci {
 
 struct menubar_t;
 
+class DirSeeker;
+
 #define FREESCI_CURRENT_SAVEGAME_VERSION 8
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 8
 
@@ -172,8 +174,7 @@ struct EngineState {
 	int file_handles_nr; /* maximum numer of allowed file handles */
 	FILE **file_handles; /* Array of file handles. Dynamically increased if required. */
 
-	reg_t dirseeker_outbuffer;
-	sci_dir_t dirseeker;
+	DirSeeker *dirseeker;
 
 	/* VM Information */
 
