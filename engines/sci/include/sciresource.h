@@ -84,11 +84,14 @@ namespace Sci {
 
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
 
-#define RESSOURCE_TYPE_DIRECTORY 0
-#define RESSOURCE_TYPE_VOLUME 2
-#define RESSOURCE_TYPE_EXTERNAL_MAP 3
-#define RESSOURCE_TYPE_INTERNAL_MAP 4
-#define RESSOURCE_TYPE_MASK 127
+enum ResourceType {
+	RESSOURCE_TYPE_DIRECTORY = 0,
+	RESSOURCE_TYPE_VOLUME = 2,
+	RESSOURCE_TYPE_EXTERNAL_MAP = 3,
+	RESSOURCE_TYPE_INTERNAL_MAP = 4,
+	RESSOURCE_TYPE_MASK = 127
+};
+
 #define RESSOURCE_ADDRESSING_BASIC 0
 #define RESSOURCE_ADDRESSING_EXTENDED 128
 #define RESSOURCE_ADDRESSING_MASK 128
@@ -121,7 +124,7 @@ struct resource_index_struct {
 typedef struct resource_index_struct resource_index_t;
 
 struct ResourceSource {
-	int source_type;
+	ResourceType source_type;
 	bool scanned;
 	Common::String location_name;	// FIXME: Replace by FSNode ?
 	Common::String location_dir_name;	// FIXME: Get rid of this again, only a temporary HACK!

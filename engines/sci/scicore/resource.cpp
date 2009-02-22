@@ -309,8 +309,10 @@ int sci_test_view_type(ResourceManager *mgr) {
 		compression = sci0_get_compression_method(file);
 		file.close();
 
-		if (compression == 3)
-			return (mgr->sci_version = SCI_VERSION_01_VGA);
+		if (compression == 3) {
+			mgr->sci_version = SCI_VERSION_01_VGA;
+			return mgr->sci_version;
+		}
 	}
 
 	// Try the same thing with pics
@@ -332,8 +334,10 @@ int sci_test_view_type(ResourceManager *mgr) {
 		compression = sci0_get_compression_method(file);
 		file.close();
 
-		if (compression == 3)
-			return (mgr->sci_version = SCI_VERSION_01_VGA);
+		if (compression == 3) {
+			mgr->sci_version = SCI_VERSION_01_VGA;
+			return mgr->sci_version;
+		}
 	}
 
 	return mgr->sci_version;
@@ -427,6 +431,8 @@ static int _scir_scan_new_sources(ResourceManager *mgr, int *detected_version, R
 			}
 
 			mgr->sci_version = *detected_version;
+			break;
+		default:
 			break;
 		}
 		qsort(mgr->_resources, mgr->_resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
