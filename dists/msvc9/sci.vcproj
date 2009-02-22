@@ -623,10 +623,6 @@
 			Name="include"
 			>
 			<File
-				RelativePath="..\..\engines\sci\include\aatree.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\engine.h"
 				>
 			</File>
