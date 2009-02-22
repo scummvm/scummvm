@@ -133,8 +133,8 @@ gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mod
 	}
 }
 
-text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text, int *width, int *height, 
-                         int *lines, int *line_height_p, int *last_offset_p, int flags) {
+text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text, int *width, int *height,
+	int *lines, int *line_height_p, int *last_offset_p, int flags) {
 	int est_char_width = font->widths[(font->chars_nr > 'M')? 'M' : font->chars_nr - 1];
 	// 'M' is typically among the widest chars
 	int fragments_nr;
@@ -282,7 +282,7 @@ static inline void render_char(byte *dest, byte *src, int width, int line_width,
 }
 
 gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
-               gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg) {
+	gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg) {
 	unsigned char *text = (unsigned char *)stext;
 	int height = font->height;
 	int width = 0;

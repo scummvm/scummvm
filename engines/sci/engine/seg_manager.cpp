@@ -37,7 +37,7 @@ namespace Sci {
 
 #undef DEBUG_SEG_MANAGER // Define to turn on debugging
 
-#define GET_SEGID() 	\
+#define GET_SEGID()	\
 	if (flag == SCRIPT_ID) \
 		id = segGet(id); \
 		VERIFY(check(id), "invalid seg id");
@@ -383,10 +383,10 @@ mem_obj_t *SegManager::memObjAllocate(seg_id_t segid, int hash_id, memObjType ty
 
 /* No longer in use?
 void SegManager::sm_object_init(object_t *object) {
- 	if (!object)
+	if (!object)
 		return;
- 	object->variables_nr = 0;
- 	object->variables = NULL;
+	object->variables_nr = 0;
+	object->variables = NULL;
 };*/
 
 void SegManager::freeScript(mem_obj_t *mem) {
@@ -634,7 +634,7 @@ int SegManager::sm_hash_segment_data(int id) {
 		return 0;
 	if (heap[id]->type == MEM_OBJ_NODES)
 		return 0;
-	if (heap[id]->type == MEM_OBJ_CLONES) 
+	if (heap[id]->type == MEM_OBJ_CLONES)
 		return 0;
 	buf = (char *)dereference(make_reg(id, 0), &len);
 

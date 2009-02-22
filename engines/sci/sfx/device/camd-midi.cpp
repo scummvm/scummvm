@@ -54,7 +54,7 @@ static struct MidiNode *midi_node = NULL;
 
 #define ABORT(m) {						\
 			if (CamdBase)				\
-                   		IExec->CloseLibrary(CamdBase);	\
+				IExec->CloseLibrary(CamdBase);	\
 			sciprintf("[SFX] CAMD driver: ");	\
 			sciprintf(m);				\
 			sciprintf("\n");			\

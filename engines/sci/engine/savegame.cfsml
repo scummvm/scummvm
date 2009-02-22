@@ -251,7 +251,7 @@ RECORD song_t "song_t" {
 	int loops;
 	int hold;
 }
-	
+
 RECORD int_hash_map_t "int_hash_map_t" {
 	int base_value;
 	int_hash_map_node_tp nodes[STATIC DCS_INT_HASH_MAX+1];
@@ -481,7 +481,7 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 	for (i = 0; i < songcount; i++) {
 		%CFSMLREAD song_tp &newsong FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 		song_lib_add(*songlib, newsong);
-	}  
+	}
 	l = fh->readLine(); // "]"
 	l = fh->readLine(); // "}"
 	*line += 2;
@@ -567,7 +567,7 @@ int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::no
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;
 		}
-		
+
 		do {
 			(*line)++;
 			SRSgets(buffer, 80, fh);
@@ -612,7 +612,7 @@ int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char 
 }
 
 void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
-	WSprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);	
+	WSprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);
 	%CFSMLWRITE int &foo->segmgr_id INTO fh;
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
@@ -632,10 +632,10 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 	break;
 	case MEM_OBJ_HUNK:
 		break;
-	case MEM_OBJ_LISTS:	
+	case MEM_OBJ_LISTS:
 		%CFSMLWRITE list_table_t &foo->data.lists INTO fh;
 	break;
-	case MEM_OBJ_NODES:	
+	case MEM_OBJ_NODES:
 		%CFSMLWRITE node_table_t &foo->data.nodes INTO fh;
 	break;
 	case MEM_OBJ_DYNMEM:
@@ -857,7 +857,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 				if (!self->isSci1_1)
 					scr->export_table += 3;
-				
+
 				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 					scr->objects[j].base = scr->buf;
@@ -926,7 +926,7 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 			case MEM_OBJ_CLONES: {
 				int j;
 				clone_entry_t *seeker = mobj->data.clones.table;
-				
+
 				sciprintf("Free list: ");
 				for (j = mobj->data.clones.first_free; j != HEAPENTRY_INVALID; j = mobj->data.clones.table[j].next_free) {
 					sciprintf("%d ", j);
@@ -941,7 +941,7 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 				sciprintf("\n");
 
 				for (j = 0; j < mobj->data.clones.max_entry; j++) {
- 					object_t *base_obj;
+					object_t *base_obj;
 
 					if (!clone_entry_used(&mobj->data.clones, j)) {
 						seeker++;

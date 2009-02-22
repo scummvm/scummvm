@@ -46,46 +46,46 @@ namespace Sci {
 #define SCI01V_B3_RESFILE_SHIFT 4
 
 #define SCI0_RESID_GET_TYPE(bytes) \
-    (((bytes)[1] & SCI0_B1_RESTYPE_MASK) >> SCI0_B1_RESTYPE_SHIFT)
+	(((bytes)[1] & SCI0_B1_RESTYPE_MASK) >> SCI0_B1_RESTYPE_SHIFT)
 #define SCI0_RESID_GET_NUMBER(bytes) \
-    ((((bytes)[1] & ~SCI0_B1_RESTYPE_MASK) << 8) | ((bytes)[0]))
+	((((bytes)[1] & ~SCI0_B1_RESTYPE_MASK) << 8) | ((bytes)[0]))
 
 #define SCI0_RESFILE_GET_FILE(bytes) \
-    (((bytes)[3] & SCI0_B3_RESFILE_MASK) >> SCI0_B3_RESFILE_SHIFT)
+	(((bytes)[3] & SCI0_B3_RESFILE_MASK) >> SCI0_B3_RESFILE_SHIFT)
 #define SCI0_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[3] & ~SCI0_B3_RESFILE_MASK) << 24) \
-      | (((bytes)[2]) << 16) \
-      | (((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
+	((((bytes)[3] & ~SCI0_B3_RESFILE_MASK) << 24) \
+		| (((bytes)[2]) << 16) \
+		| (((bytes)[1]) << 8) \
+		| (((bytes)[0]) << 0))
 
 #define SCI01V_RESFILE_GET_FILE(bytes) \
-    (((bytes)[3] & SCI01V_B3_RESFILE_MASK) >> SCI01V_B3_RESFILE_SHIFT)
+	(((bytes)[3] & SCI01V_B3_RESFILE_MASK) >> SCI01V_B3_RESFILE_SHIFT)
 #define SCI01V_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[3] & ~SCI01V_B3_RESFILE_MASK) << 24) \
-      | (((bytes)[2]) << 16) \
-      | (((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
+	((((bytes)[3] & ~SCI01V_B3_RESFILE_MASK) << 24) \
+	| (((bytes)[2]) << 16) \
+	| (((bytes)[1]) << 8) \
+	| (((bytes)[0]) << 0))
 
 #define SCI1_B5_RESFILE_MASK 0xf0
 #define SCI1_B5_RESFILE_SHIFT 4
 
 #define SCI1_RESFILE_GET_FILE(bytes) \
-  (((bytes)[5] & SCI1_B5_RESFILE_MASK) >> SCI1_B5_RESFILE_SHIFT)
+	(((bytes)[5] & SCI1_B5_RESFILE_MASK) >> SCI1_B5_RESFILE_SHIFT)
 
 #define SCI1_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[5] & ~SCI1_B5_RESFILE_MASK) << 24) \
-      | (((bytes)[4]) << 16) \
-      | (((bytes)[3]) << 8) \
-      | (((bytes)[2]) << 0))
+	((((bytes)[5] & ~SCI1_B5_RESFILE_MASK) << 24) \
+		| (((bytes)[4]) << 16) \
+		| (((bytes)[3]) << 8) \
+		| (((bytes)[2]) << 0))
 
 #define SCI1_RESFILE_GET_NUMBER(bytes) \
-      ((((bytes)[1]) << 8) \
-      | (((bytes)[0]) << 0))
+	((((bytes)[1]) << 8) \
+		| (((bytes)[0]) << 0))
 
 #define SCI11_RESFILE_GET_OFFSET(bytes) \
-    ((((bytes)[4]) << 17) \
-      | (((bytes)[3]) << 9) \
-      | (((bytes)[2]) << 1))
+	((((bytes)[4]) << 17) \
+		| (((bytes)[3]) << 9) \
+		| (((bytes)[2]) << 1))
 
 static int detect_odd_sci01(Common::File &file) {
 	byte buf[6];
@@ -119,7 +119,7 @@ static int detect_odd_sci01(Common::File &file) {
 }
 
 static int sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
-                   byte *buf, resource_t *res, int sci_version) {
+	byte *buf, resource_t *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
 	res->type = SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
@@ -372,7 +372,7 @@ static int sci10_or_11(int *types) {
 }
 
 int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
-                       resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+	resource_t **resource_p, int *resource_nr_p, int *sci_version) {
 	int fsize;
 	Common::File file;
 	resource_t *resources, *resource_start;

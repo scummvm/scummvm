@@ -284,8 +284,7 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches);
 */
 
 result_word_t *vocab_lookup_word(char *word, int word_len,
-                  word_t **words, int words_nr,
-                  suffix_t **suffices, int suffices_nr);
+	word_t **words, int words_nr, suffix_t **suffices, int suffices_nr);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
 **             (int) word_len: Length of the word to look up
@@ -299,9 +298,7 @@ result_word_t *vocab_lookup_word(char *word, int word_len,
 
 
 result_word_t *vocab_tokenize_string(char *sentence, int *result_nr,
-                      word_t **words, int words_nr,
-                      suffix_t **suffices, int suffices_nr,
-                      char **error);
+	word_t **words, int words_nr, suffix_t **suffices, int suffices_nr, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
 **             (int *) result_nr: The variable to store the resulting number of words in
@@ -338,7 +335,7 @@ void vocab_free_rule_list(parse_rule_list_t *rule_list);
 
 
 int vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-                       parse_tree_branch_t *branch0, parse_rule_list_t *rules);
+	parse_tree_branch_t *branch0, parse_rule_list_t *rules);
 /* Builds a parse tree from a list of words
 ** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
 **                                          at least VOCAB_TREE_NODES entries)
@@ -396,7 +393,7 @@ void vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *syno
 */
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-                parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
+	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 
 void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
 

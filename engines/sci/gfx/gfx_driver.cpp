@@ -157,7 +157,7 @@ static void lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32
 }
 
 static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Point end,
-                  gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.global_index;
 	int xsize = S->xsize;
 	int ysize = S->ysize;
@@ -181,7 +181,7 @@ static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Poi
 }
 
 static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t color1, gfx_color_t color2,
-                         gfx_rectangle_fill_t shade_mode) {
+	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.yl; i++) {
 			memset(S->visual[1] + i * S->xsize + rect.x, color1.visual.global_index, rect.xl);
@@ -196,7 +196,7 @@ static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t 
 
 // Pixmap operations
 
-static int scummvm_draw_pixmap(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priority, 
+static int scummvm_draw_pixmap(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priority,
 							   rect_t src, rect_t dest, gfx_buffer_t buffer) {
 	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 2 : 1;
 	int pribufnr = bufnr - 1;

@@ -96,7 +96,7 @@ struct gfx_resstate_t {
 
 
 gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
-                          gfx_driver_t *driver, void *misc_payload);
+	gfx_driver_t *driver, void *misc_payload);
 /* Allocates and initializes a new resource manager
 ** Parameters: (int) version: Interpreter version
 **             (gfx_options_t *): Pointer to all relevant drawing options
@@ -145,7 +145,7 @@ void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 
 
 gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
-             int default_palette, int scaled);
+	int default_palette, int scaled);
 /* Retreives a displayable (translated) pic resource
 ** Parameters: (gfx_resstate_t *) state: The resource state
 **             (int) nr: Number of the pic resource
@@ -159,7 +159,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
 */
 
 gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
-                int old_default_palette, int default_palette, int scaled);
+	int old_default_palette, int default_palette, int scaled);
 /* Retreives a displayable (translated) pic resource written ontop of an existing pic
 ** Parameters: (gfx_resstate_t *) state: The resource state
 **             (int) old_nr: Number of the pic resource to write on
@@ -218,7 +218,7 @@ gfx_pixmap_color_t *gfxr_get_palette(gfx_resstate_t *state, int nr);
 
 
 int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
-                              gfx_options_t *options, void *internal, int palette);
+	gfx_options_t *options, void *internal, int palette);
 /* Calculates a unique hash value for the specified options/type setup
 ** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
 **             (int) version: The interpreter type and version
@@ -236,7 +236,7 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 */
 
 int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
-                               int version, int *entries_nr, void *internal);
+	int version, int *entries_nr, void *internal);
 /* Retreives all resources of a specified type that are available from the interpreter
 ** Parameters: (gfx_resstate_t *) state: The relevant resource state
 **             (gfx_respirce_type_t) type: The resource type to query
@@ -270,7 +270,7 @@ void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal);
 */
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
-                               int flags, int default_palette, int nr, void *internal);
+	int flags, int default_palette, int nr, void *internal);
 /* Instructs the interpreter-specific code to calculate a picture
 ** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
 **             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to

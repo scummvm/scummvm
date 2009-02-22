@@ -128,7 +128,7 @@ static void sciw_make_window_fit(rect_t *rect, gfxw_port_t *parent) {
 }
 
 gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
-                int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor, const char *title, int flags) {
+	int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor, const char *title, int flags) {
 	gfxw_visual_t *visual = s->visual;
 	gfx_state_t *state = s->gfx_state;
 	int shadow_offset = 2;
@@ -260,7 +260,7 @@ static inline rect_t _move_and_extend_rect(rect_t rect, Common::Point point, int
 }
 
 gfxw_list_t *_sciw_add_text_to_list(gfxw_list_t *list, gfxw_port_t *port, rect_t zone, char *text,
-                       int font, gfx_alignment_t align, char framed, char inverse, int flags, char gray_text) {
+	int font, gfx_alignment_t align, char framed, char inverse, int flags, char gray_text) {
 	gfx_color_t *color1, *color2, *bgcolor;
 
 	if (inverse) {
@@ -407,7 +407,7 @@ gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 }
 
 gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
-                      char frame, char inverse) {
+	char frame, char inverse) {
 	gfxw_list_t *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 	gfxw_widget_t *icon;
 	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
@@ -436,7 +436,7 @@ gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 }
 
 gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
-                      int entries_nr, int list_top, int selection, char inverse) {
+	int entries_nr, int list_top, int selection, char inverse) {
 	gfxw_list_t *list;
 
 	char arr_up[2], arr_down[2];

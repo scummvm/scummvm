@@ -106,7 +106,7 @@ struct {								\
 
 #define LIST_REMOVE(elm, field) do {					\
 	if ((elm)->field.le_next != NULL)				\
-		(elm)->field.le_next->field.le_prev = 			\
+		(elm)->field.le_next->field.le_prev =			\
 		    (elm)->field.le_prev;				\
 	*(elm)->field.le_prev = (elm)->field.le_next;			\
 } while (0)

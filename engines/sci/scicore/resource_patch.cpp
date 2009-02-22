@@ -41,7 +41,7 @@ void sci1_sprintf_patch_file_name(char *string, resource_t *res) {
 
 // version-agnostic patch application
 static void process_patch(ResourceSource *source,
-              Common::ArchiveMember &member, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
+	Common::ArchiveMember &member, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
 	Common::File file;
 
 	if (restype == sci_invalid_resource)

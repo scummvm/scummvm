@@ -173,7 +173,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 0, 294)
 	},
-	
+
 	// Christmas Card 1990: The Seasoned Professional - English DOS (16 Colors)
 	{{"christmas1990", "16 Colors", {
 		{"resource.map", 0, "8f656714a05b94423ac6eb10ee8797d0", 600},
@@ -183,7 +183,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 172)
 	},
-	
+
 	// Christmas Card 1990: The Seasoned Professional - English DOS (256 Colors)
 	{{"christmas1990", "256 Colors", {
 		{"resource.map", 0, "44b8f45b841b9b5e17e939a35e443988", 600},
@@ -193,7 +193,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 174)
 	},
-	
+
 	// Christmas Card 1992 - English DOS
 	{{"christmas1992", "", {
 		{"resource.map", 0, "f1f8c8a8443f523422af70b4ec85b71c", 318},
@@ -1041,8 +1041,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 115)
 	},
 
-        // Larry 6 - English/German DOS CD - HIRES
-        {{"lsl6", "", {
+	// Larry 6 - English/German DOS CD - HIRES
+	{{"lsl6", "", {
 		{"resource.map", 0, "0c0804434ea62278dd15032b1947426c", 8872},
 		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18520872},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},

@@ -45,7 +45,7 @@ int sci0_palette = 0;
 
 // Copied from include/kernel.h
 #define SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr) ((((nr) == 0)? 0 :  \
-        ((first) + (((nr)-1) * (last - first)) / 14)))
+	((first) + (((nr)-1) * (last - first)) / 14)))
 
 // Default color maps
 gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLORS_NR] = {
@@ -202,22 +202,22 @@ void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size) {
 
 #define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
                   linearend, nonlinearstart, linearmod, nonlinearmod, operation) \
-   x = (startx); y = (starty); \
-   incrNE = ((deltalinear) > 0)? (deltalinear) : -(deltalinear); \
-   incrNE <<= 1; \
-   deltanonlinear <<= 1; \
-   incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
-   d = nonlinearstart-1;  \
-   while (linearvar != (linearend)) { \
-     buffer[linewidth * y + x] operation color; \
+	x = (startx); y = (starty); \
+	incrNE = ((deltalinear) > 0)? (deltalinear) : -(deltalinear); \
+	incrNE <<= 1; \
+	deltanonlinear <<= 1; \
+	incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
+	d = nonlinearstart-1;  \
+	while (linearvar != (linearend)) { \
+		buffer[linewidth * y + x] operation color; \
 /* color ^= color2; color2 ^= color; color ^= color2; */ /* Swap colors */ \
-     linearvar += linearmod; \
-     if ((d+=incrE) < 0) { \
-       d += incrNE; \
-       nonlinearvar += nonlinearmod; \
-     }; \
-   }; \
-  buffer[linewidth * y + x] operation color;
+		linearvar += linearmod; \
+		if ((d+=incrE) < 0) { \
+			d += incrNE; \
+			nonlinearvar += nonlinearmod; \
+		}; \
+	}; \
+	buffer[linewidth * y + x] operation color;
 
 static void _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int sci_titlebar_size) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
@@ -556,7 +556,7 @@ enum {
 };
 
 static void _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int x, int y,
-                   int rad_x, int rad_y, int color, int fillstyle) {
+		int rad_x, int rad_y, int color, int fillstyle) {
 	int xx = 0, yy = rad_y;
 	int i, x_i, y_i;
 	int xr = 2 * rad_x * rad_x;
@@ -621,7 +621,7 @@ static void _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int
 }
 
 static inline void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int plot,
-                    int color, gfx_brush_mode_t brush_mode, int randseed) {
+	int color, gfx_brush_mode_t brush_mode, int randseed) {
 	// yoffset 63680, offset 320, plot 1, color 34, brush_mode 0, randseed 432)*/
 	// Auxplot: Used by plot_aux_pattern to plot to visual and priority
 	int xc, yc;
@@ -690,7 +690,7 @@ static inline void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffse
 #define PLOT_AUX_PATTERN_NO_RANDOM -1
 
 static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int circle, int random,
-                       int mask, int color, int priority, int control, gfx_brush_mode_t brush_mode, int map_nr) {
+	int mask, int color, int priority, int control, gfx_brush_mode_t brush_mode, int map_nr) {
 	// Plots an appropriate pattern to the aux buffer and the control buffer,
 	// if mask & GFX_MASK_CONTROL
 	// random should be set to the random index, or -1 to disable
@@ -813,7 +813,7 @@ static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int 
 }
 
 static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int control, int drawenable,
-                   int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode, int sci_titlebar_size) {
+	int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode, int sci_titlebar_size) {
 	int xsize = (pattern_size + 1) * pic->mode->xfact - 1;
 	int ysize = (pattern_size + 1) * pic->mode->yfact - 1;
 	int scaled_x, scaled_y;
@@ -928,7 +928,7 @@ static inline void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int
 }
 
 static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
-                int priority, int control, int drawenable, int line_mode, int cmd, int sci_titlebar_size) {
+	int priority, int control, int drawenable, int line_mode, int cmd, int sci_titlebar_size) {
 	int scale_x = pic->mode->xfact;
 	int scale_y = pic->mode->yfact;
 	int xc, yc;
@@ -1060,7 +1060,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 	}
 
 static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
-                      int y_200, int color, int drawenable, int *x, int *y) {
+	int y_200, int color, int drawenable, int *x, int *y) {
 	// returns -1 on failure, 0 on success
 	int linewidth = pic->mode->xfact * 320;
 	int mpos, ix, iy;
@@ -1083,7 +1083,7 @@ static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, i
 		test_map = pic->visual_map->index_data;
 
 		if ((color & 0xf) == 0xf // When dithering with white, do more
-								// conservative checks 
+								// conservative checks
 		        || (color & 0xf0) == 0xf0)
 			legalcolor = 0xff;
 		else
@@ -1127,7 +1127,7 @@ static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, i
 #undef TEST_POINT
 
 } // End of namespace Sci
-	
+
 // Now include the actual filling code (with scaling support)
 #define FILL_FUNCTION _gfxr_fill_any
 #define FILL_FUNCTION_RECURSIVE _gfxr_fill_any_recursive
@@ -1145,9 +1145,9 @@ static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, i
 namespace Sci {
 
 #endif // defined(WITH_PIC_SCALING)
-	
+
 } // End of namespace Sci
-	
+
 // Include again, but this time without support for scaling
 #define FILL_FUNCTION _gfxr_fill_1
 #define FILL_FUNCTION_RECURSIVE _gfxr_fill_1_recursive
@@ -1175,7 +1175,7 @@ namespace Sci {
 		x -= ((temp >> 4) & 0x7); \
 	else \
 		x += (temp >> 4); \
-  \
+	\
 	if (temp & 0x08) \
 		y -= (temp & 0x7); \
 	else \
@@ -1666,7 +1666,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				// we can only safely replace the palette if it's static
 				// *if it's not for some reason, we should die
-				
+
 				if (!(view->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE) && !sci1) {
 					sciprintf("gfx_draw_pic0(): can't set a non-static palette for an embedded view!\n");
 				}

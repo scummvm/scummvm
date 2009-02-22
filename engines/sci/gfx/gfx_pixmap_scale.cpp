@@ -128,7 +128,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 
 #define WRITE_XPART(X_CALC_INTENSITY, DO_X_STEP) \
 				for (subx = 0; subx < ((DO_X_STEP) ? (xfact >> 1) : 1); subx++) { \
-                                        unsigned int intensity; \
+					unsigned int intensity; \
 					wrcolor = 0; \
 					for (i = 0; i < 3; i++) { \
 						intensity = X_CALC_INTENSITY; \
@@ -137,17 +137,17 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 					i = 3; \
 					intensity = X_CALC_INTENSITY; \
 					if (inverse_alpha) \
-                                                intensity = ~intensity; \
-                                        wrcolor |= (intensity >> shifts[i]) & masks[i]; \
-                                        if (separate_alpha_map) \
-                                                *alpha_wrpos++ = intensity >> 24; \
+						intensity = ~intensity; \
+					wrcolor |= (intensity >> shifts[i]) & masks[i]; \
+					if (separate_alpha_map) \
+						*alpha_wrpos++ = intensity >> 24; \
 					wrcolor <<= (EXTRA_BYTE_OFFSET * 8); \
 					memcpy(wrpos, &wrcolor, COPY_BYTES); \
 					wrpos += COPY_BYTES; \
 					if (DO_X_STEP) \
-                                                column_valuator -= column_step; \
+						column_valuator -= column_step; \
 				} \
-                                if (DO_X_STEP) \
+				if (DO_X_STEP) \
 				        column_step = -column_step
 // End of macro definition
 
@@ -163,7 +163,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 				int i; \
 				SIZETYPE wrcolor; \
 				wrpos = sublinepos; \
-                                alpha_wrpos = alpha_sublinepos; \
+				alpha_wrpos = alpha_sublinepos; \
 				for (i = 0; i < 4; i++) \
 					linecolor[i] = LINE_COLOR; \
 				/*-- left half --*/ \
@@ -178,7 +178,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 				MAKE_PIXEL((x + 1 == pxm->index_xl), othercolumn, ctexel, src[+1]); \
 				WRITE_XPART(X_CALC_INTENSITY_NORMAL, 1); \
 				if (DO_Y_STEP) \
-                                        line_valuator -= line_step; \
+					line_valuator -= line_step; \
 				sublinepos += pxm->xl * bytespp; \
 				alpha_sublinepos += pxm->xl; \
 			} \

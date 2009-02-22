@@ -71,8 +71,8 @@ void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, in
 */
 
 gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
-                int title_font, gfx_color_t title_color, gfx_color_t title_bg_color,
-                const char *title, int flags);
+	int title_font, gfx_color_t title_color, gfx_color_t title_bg_color,
+	const char *title, int flags);
 /* Creates a new SCI style window
 ** Parameters: (EngineState *) s: The affected game state
 **             (rect_t) area: The screen area to frame (not including a potential window title)
@@ -106,7 +106,7 @@ gfxw_list_t *sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, c
 */
 
 gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font,
-                      gfx_alignment_t align, char frame, char inverse);
+	gfx_alignment_t align, char frame, char inverse);
 /* Creates a new text control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
@@ -120,7 +120,7 @@ gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 */
 
 gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
-                      char inverse);
+	char inverse);
 /* Creates a new edit control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
@@ -133,7 +133,7 @@ gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 */
 
 gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
-                      char frame, char inverse);
+	char frame, char inverse);
 /* Creates a new icon control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
@@ -145,7 +145,7 @@ gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 */
 
 gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
-                      int entries_nr, int list_top, int selection, char inverse);
+	int entries_nr, int list_top, int selection, char inverse);
 /* Creates a new list control list
 ** Parameters: (gfxw_port_t *) port: The port containing the color values to use
 **             (int) ID: Text widget ID

@@ -55,7 +55,7 @@ void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t 
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-                stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...) {
+	stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
 	int framesize = 2 + 1 * argc;
@@ -224,7 +224,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	victim_obj->flags |= OBJECT_FLAG_FREED;
 
-	_k_view_list_mark_free(s, victim_addr); // Free on view list, if neccessary 
+	_k_view_list_mark_free(s, victim_addr); // Free on view list, if neccessary
 
 	return s->r_acc;
 }

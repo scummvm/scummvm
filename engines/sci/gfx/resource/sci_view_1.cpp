@@ -51,7 +51,7 @@ namespace Sci {
 	literal_pos += n;
 
 static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
-                    int runlength_pos, int literal_pos, int xl, int yl, int color_key) {
+	int runlength_pos, int literal_pos, int xl, int yl, int color_key) {
 	int writepos = mirrored ? xl : 0;
 
 	if (mirrored) {
@@ -178,7 +178,7 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 }
 
 static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
-                          int pos, int xl, int yl, int color_key) {
+	int pos, int xl, int yl, int color_key) {
 	int writepos = mirrored ? xl - 1 : 0;
 
 	while (writepos < pixmap_size && pos < size) {
@@ -315,7 +315,7 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 //static byte view_magics[V1_MAGICS_NR] = {0x80, 0x00, 0x00, 0x00, 0x00};
 
 gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
-                int static_pal_nr) {
+	int static_pal_nr) {
 	int i;
 	int palette_offset;
 	gfxr_view_t *view;
@@ -457,7 +457,7 @@ gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *res
 }
 
 gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop_base, int size, int cels_nr,
-                 gfxr_loop_t *result, gfxr_view_t *view, int bytes_per_cel) {
+	gfxr_loop_t *result, gfxr_view_t *view, int bytes_per_cel) {
 	byte *seeker = loop_base;
 	int i;
 

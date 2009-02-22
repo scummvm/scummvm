@@ -52,12 +52,12 @@
 namespace Sci {
 
 static void FUNCTION_NAME(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
-                          int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-                          unsigned int alpha_test_mask, unsigned int alpha_min
+	int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
+	unsigned int alpha_test_mask, unsigned int alpha_min
 #ifdef USE_PRIORITY
-                          , byte *priority_buffer, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority
+	, byte *priority_buffer, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority
 #endif /* USE_PRIORITY */
-                         ) {
+	) {
 	int x, y;
 	int alpha_end = xl * bytes_per_alpha_pixel;
 

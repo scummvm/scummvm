@@ -301,8 +301,8 @@ _menu_go_down(EngineState *s, int menu_nr, int item_nr) {
 }
 
 #define FULL_REDRAW \
-  s->visual->draw(GFXW(s->visual), Common::Point(0, 0)); \
-  gfxop_update(s->gfx_state);
+	s->visual->draw(GFXW(s->visual), Common::Point(0, 0)); \
+	gfxop_update(s->gfx_state);
 
 
 reg_t

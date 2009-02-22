@@ -41,7 +41,7 @@ namespace Sci {
 #define KSIG_SPEC_ARITHMETIC 'i'
 #define KSIG_SPEC_NULL 'z'
 #define KSIG_SPEC_ANY '.'
-#define KSIG_SPEC_ALLOW_INV '!' // Allow invalid pointers 
+#define KSIG_SPEC_ALLOW_INV '!' // Allow invalid pointers
 #define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
 
 #define KSIG_SPEC_SUM_DONE ('a' - 'A') // Use small letters to indicate end of sum type

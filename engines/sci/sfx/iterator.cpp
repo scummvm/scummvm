@@ -115,13 +115,11 @@ static inline int _parse_ticks(byte *data, int *offset_p, int size) {
 
 
 static int _sci0_read_next_command(sci0_song_iterator_t *self,
-                        unsigned char *buf, int *result);
+	unsigned char *buf, int *result);
 
 
 static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
-                   sfx_pcm_config_t *format,
-                   int *xoffset,
-                   unsigned int *xsize);
+	sfx_pcm_config_t *format, int *xoffset, unsigned int *xsize);
 
 #define PARSE_FLAG_LOOPS_UNLIMITED (1 << 0) /* Unlimited # of loops? */
 #define PARSE_FLAG_PARAMETRIC_CUE (1 << 1) /* Assume that cues take an additional "cue value" argument */
@@ -144,9 +142,8 @@ void _reset_synth_channels(base_song_iterator_t *self, song_iterator_channel_t *
 	}
 }
 
-static int _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,	int *result,
-                        song_iterator_channel_t *channel,
-                        int flags) {
+static int _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *buf,
+	int *result, song_iterator_channel_t *channel, int flags) {
 	unsigned char cmd;
 	int paramsleft;
 	int midi_op;
@@ -354,8 +351,7 @@ static int _parse_sci_midi_command(base_song_iterator_t *self, unsigned char *bu
 }
 
 static int _sci_midi_process_state(base_song_iterator_t *self, unsigned char *buf, int *result,
-                        song_iterator_channel_t *channel,
-                        int flags) {
+	song_iterator_channel_t *channel, int flags) {
 	CHECK_FOR_END(0);
 
 	switch (channel->state) {
@@ -449,7 +445,7 @@ static int _sci_midi_process_state(base_song_iterator_t *self, unsigned char *bu
 }
 
 static inline int _sci_midi_process(base_song_iterator_t *self, unsigned char *buf, int *result,
-                  song_iterator_channel_t *channel, int flags) {
+	song_iterator_channel_t *channel, int flags) {
 	return _sci_midi_process_state(self, buf, result,
 	                               channel,
 	                               flags);
@@ -473,9 +469,7 @@ static inline int _sci0_header_magic_p(unsigned char *data, int offset, int size
 
 
 static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
-                   sfx_pcm_config_t *format,
-                   int *xoffset,
-                   unsigned int *xsize) {
+	sfx_pcm_config_t *format, int *xoffset, unsigned int *xsize) {
 	int tries = 2;
 	int found_it = 0;
 	unsigned char *pcm_data;
@@ -634,7 +628,7 @@ static int _sci0_get_timepos(sci0_song_iterator_t *self) {
 }
 
 static void _base_init_channel(song_iterator_channel_t *channel, int id, int offset,
-                   int end) {
+	int end) {
 	channel->playmask = PLAYMASK_NONE; /* Disable all channels */
 	channel->id = id;
 	channel->notes_played = 0;
@@ -976,7 +970,7 @@ static sfx_pcm_feed_t *_sci1_get_pcm(sci1_song_iterator_t *self) {
 }
 
 static int _sci1_process_next_command(sci1_song_iterator_t *self,
-                           unsigned char *buf, int *result) {
+	unsigned char *buf, int *result) {
 	int retval = -42; /* Shouldn't happen, but gcc doesn't agree */
 	int chan;
 
@@ -1300,7 +1294,7 @@ song_iterator_t *new_cleanup_iterator(unsigned int channels) {
 /**********************************/
 
 static int _ff_read_next_command(fast_forward_song_iterator_t *self,
-                      byte *buf, int *result) {
+	byte *buf, int *result) {
 	int rv;
 
 	if (self->delta <= 0)
@@ -1328,7 +1322,7 @@ static sfx_pcm_feed_t *_ff_check_pcm(fast_forward_song_iterator_t *self) {
 }
 
 static song_iterator_t *_ff_handle_message(fast_forward_song_iterator_t *self,
-                   song_iterator_message_t msg) {
+	song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_PLASTICWRAP)
 		switch (msg.type) {
 
@@ -1417,7 +1411,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *capsit, int delta) {
 
 
 static int _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
-                       int *result) {
+	int *result) {
 	static int ready_masks[2] = {TEE_LEFT_READY, TEE_RIGHT_READY};
 	static int active_masks[2] = {TEE_LEFT_ACTIVE, TEE_RIGHT_ACTIVE};
 	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
@@ -1648,7 +1642,7 @@ static void _tee_free(tee_song_iterator_t *it) {
 #endif
 
 static void songit_tee_death_notification(tee_song_iterator_t *self,
-                              song_iterator_t *corpse) {
+	song_iterator_t *corpse) {
 	if (corpse == self->children[TEE_LEFT].it) {
 		self->status &= ~TEE_LEFT_ACTIVE;
 		self->children[TEE_LEFT].it = NULL;
@@ -1933,8 +1927,7 @@ song_iterator_t *songit_clone(song_iterator_t *it, int delta) {
 }
 
 void song_iterator_add_death_listener(song_iterator_t *it,
-                                 void *client,
-                                 void (*notify)(void *self, void *notifier)) {
+	void *client, void (*notify)(void *self, void *notifier)) {
 	if (it->death_listeners_nr >= SONGIT_MAX_LISTENERS) {
 		error("FATAL: Too many death listeners for song iterator");
 	}
@@ -1945,8 +1938,7 @@ void song_iterator_add_death_listener(song_iterator_t *it,
 	it->death_listeners_nr++;
 }
 
-void song_iterator_remove_death_listener(song_iterator_t *it,
-                                    void *client) {
+void song_iterator_remove_death_listener(song_iterator_t *it, void *client) {
 	int i;
 	for (i = 0; i < it->death_listeners_nr; i++) {
 		if (it->death_listeners[i].self == client) {

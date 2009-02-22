@@ -89,26 +89,26 @@ typedef int gfxw_op_int(gfxw_widget_t *, int);
 typedef int gfxw_bin_op(gfxw_widget_t *, gfxw_widget_t *);
 
 #define WIDGET_COMMON \
-   int magic; /* Extra check after typecasting */ \
-   int serial; /* Serial number */ \
-   int flags; /* Widget flags */ \
-   gfxw_widget_type_t type; \
-   rect_t bounds; /* Boundaries */ \
-   gfxw_widget_t *next; /* Next widget in widget list */ \
-   int ID; /* Unique ID or GFXW_NO_ID */ \
-   int subID; /* A 'sub-ID', or GFXW_NO_ID */ \
-   gfxw_container_t *parent; /* The parent widget, or NULL if not owned */ \
-   gfxw_visual_t *visual; /* The owner visual */ \
-   int widget_priority; /* Drawing priority, or -1 */ \
-   gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */ \
-   gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */ \
-   gfxw_op *tag; /* Tag the specified widget */ \
-   gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */ \
-   gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */ \
-   gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */ \
-   gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */ \
-   gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */ \
-   gfxw_visual_op *set_visual /* Sets the visual the widget belongs to */
+	int magic; /* Extra check after typecasting */ \
+	int serial; /* Serial number */ \
+	int flags; /* Widget flags */ \
+	gfxw_widget_type_t type; \
+	rect_t bounds; /* Boundaries */ \
+	gfxw_widget_t *next; /* Next widget in widget list */ \
+	int ID; /* Unique ID or GFXW_NO_ID */ \
+	int subID; /* A 'sub-ID', or GFXW_NO_ID */ \
+	gfxw_container_t *parent; /* The parent widget, or NULL if not owned */ \
+	gfxw_visual_t *visual; /* The owner visual */ \
+	int widget_priority; /* Drawing priority, or -1 */ \
+	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */ \
+	gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */ \
+	gfxw_op *tag; /* Tag the specified widget */ \
+	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */ \
+	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */ \
+	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */ \
+	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */ \
+	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */ \
+	gfxw_visual_op *set_visual /* Sets the visual the widget belongs to */
 
 struct gfxw_widget_t {
 	WIDGET_COMMON;
@@ -181,16 +181,16 @@ typedef int gfxw_container_op(gfxw_container_t *, gfxw_widget_t *);
 typedef int gfxw_rect_op(gfxw_container_t *, rect_t, int);
 
 #define WIDGET_CONTAINER \
-   WIDGET_COMMON; \
-   rect_t zone; /* The writeable zone (absolute) for contained objects */ \
-   gfx_dirty_rect_t *dirty; /* List of dirty rectangles */ \
-   gfxw_widget_t *contents; \
-   gfxw_widget_t **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */ \
-   gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */ \
-   gfxw_unary_container_op *free_contents; /* Free all contained widgets */ \
-   gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */ \
-   gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */ \
-   gfxw_container_op *add  /* Append widget to an appropriate position (for view and control lists) */
+	WIDGET_COMMON; \
+	rect_t zone; /* The writeable zone (absolute) for contained objects */ \
+	gfx_dirty_rect_t *dirty; /* List of dirty rectangles */ \
+	gfxw_widget_t *contents; \
+	gfxw_widget_t **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */ \
+	gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */ \
+	gfxw_unary_container_op *free_contents; /* Free all contained widgets */ \
+	gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */ \
+	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */ \
+	gfxw_container_op *add  /* Append widget to an appropriate position (for view and control lists) */
 
 
 struct gfxw_container_t {

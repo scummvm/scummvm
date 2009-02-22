@@ -158,11 +158,11 @@ public:
 	int getSynonymsNr(int id, idFlag flag);
 
 
-	// 1b. Script Initialisation					
+	// 1b. Script Initialisation
 
-	// The set of functions below are intended 
-	// to be used during script instantiation, 
-	// i.e. loading and linking.		   
+	// The set of functions below are intended
+	// to be used during script instantiation,
+	// i.e. loading and linking.
 
 	// Initializes a script's local variable block
 	// Parameters: (seg_id_t) seg: Segment containing the script to initialize
@@ -187,7 +187,7 @@ public:
 	void scriptAddCodeBlock(reg_t location);
 
 	// Tells the segment manager whether exports are wide (32-bit) or not.
-	// Parameters: (int) flag: 1 if exports are wide, 0 otherwise 
+	// Parameters: (int) flag: 1 if exports are wide, 0 otherwise
 	void setExportWidth(int flag);
 
 	// Processes a relocation block witin a script
@@ -249,7 +249,7 @@ public:
 	int scriptIsMarkedAsDeleted(seg_id_t seg);
 
 
-	// 2. Clones							
+	// 2. Clones
 
 	// Allocate a fresh clone
 	// Returns : (clone_t*): Reference to the memory allocated for the clone
@@ -261,9 +261,9 @@ public:
 	void free_clone(reg_t addr);
 
 
-	// 3. Objects (static, from Scripts, and dynmic, from Clones)	
+	// 3. Objects (static, from Scripts, and dynmic, from Clones)
 
-	// Not all of these functions are fully operational for clones ATM 
+	// Not all of these functions are fully operational for clones ATM
 
 	// Retrieves a 16 bit value from within a script's heap representation
 	// Parameters: (reg_t) reg: The address to read from
@@ -287,7 +287,7 @@ public:
 	void mcpyInOut(int dst, const void *src, size_t n, int id, int flag);
 
 
-	// 4. Stack							
+	// 4. Stack
 
 	// Allocates a data stack
 	// Parameters: (int) size: Number of stack entries to reserve
@@ -296,7 +296,7 @@ public:
 	dstack_t *allocateStack(int size, seg_id_t *segid);
 
 
-	// 5. System Strings						
+	// 5. System Strings
 
 	// Allocates a system string table
 	// Returns   : (dstack_t *): The physical stack
@@ -305,7 +305,7 @@ public:
 	sys_strings_t *allocateSysStrings(seg_id_t *segid);
 
 
-	// 6, 7. Lists and Nodes					
+	// 6, 7. Lists and Nodes
 
 	// Allocate a fresh list
 	// Returns : (listY_t*): Reference to the memory allocated for the list
@@ -362,7 +362,7 @@ public:
 	const char *getDescription(reg_t addr);
 
 
-	// 10. Reserved segments					
+	// 10. Reserved segments
 
 	// Reserves a special-purpose segment
 	// Parameters: (char *) name: A string name identifying the segment (the string is cloned and retained)
@@ -372,7 +372,7 @@ public:
 	//seg_id_t sm_allocate_reserved_segment(char *name);
 
 
-	// Generic Operations on Segments and Addresses			
+	// Generic Operations on Segments and Addresses
 
 	// Dereferences a raw memory pointer
 	// Parameters: (reg_t) reg: The reference to dereference
@@ -449,7 +449,7 @@ private:
 };
 
 
-// 11. Segment interface, primarily for GC			
+// 11. Segment interface, primarily for GC
 
 class SegInterface {
 protected:
@@ -464,7 +464,7 @@ public:
 	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
 	virtual reg_t findCanonicAddress(reg_t sub_addr);
-	
+
 	// Deallocates all memory associated with the specified address
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
 	virtual void freeAtAddress(reg_t sub_addr);
@@ -474,7 +474,7 @@ public:
 	//                                makes sense
 	//             (void *) param: Parameter passed to 'note'
 	virtual void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
-	
+
 	// Iterates over all references reachable from the specified object
 	// Parameters: (reg_t) object: The object (within the current segment) to analyse
 	//             (void *) param: Parameter passed to 'note'

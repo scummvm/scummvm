@@ -51,7 +51,7 @@ static int SN76496_set_option(sfx_softseq_t *self, const char *name, const char 
 }
 
 static int SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
-             int patch2_len) {
+	int patch2_len) {
 	return SFX_OK;
 }
 

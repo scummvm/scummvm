@@ -417,7 +417,7 @@ void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr) {
 }
 
 int vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-                       parse_tree_branch_t *branch0, parse_rule_list_t *rules) {
+	parse_tree_branch_t *branch0, parse_rule_list_t *rules) {
 	return vocab_gnf_parse(nodes, words, words_nr, branch0, rules, 0);
 }
 
@@ -488,7 +488,7 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 }
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-                parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose) {
+	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose) {
 	// Get the start rules:
 	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(tlist, branch0->data[1]);
 	parse_rule_list_t *results = NULL;

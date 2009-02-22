@@ -192,7 +192,7 @@ arrdup(int *src, int count) {
 
 int *
 gfxr_interpreter_get_resources(gfx_resstate_t *resstate, gfx_resource_type_t type,
-                               int version, int *entries_nr, void *internal) {
+	int version, int *entries_nr, void *internal) {
 	switch (type) {
 
 	case GFX_RESOURCE_TYPE_VIEW:
@@ -295,7 +295,7 @@ gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 
 int
 gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
-                               int flags, int default_palette, int nr, void *internal) {
+	int flags, int default_palette, int nr, void *internal) {
 	gfxr_pic_t *pic = scaled_pic;
 	int i, x, y, pos;
 	int xfact = pic->mode->xfact;

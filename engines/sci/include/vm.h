@@ -156,23 +156,23 @@ struct code_block_t {
 };
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
-  (s->version < SCI_VERSION(1,001,000) ? \
-  getUInt16(obj->base_obj + obj->variables_nr * 2 + i*2) : \
-  *(obj->base_vars + i))
+	(s->version < SCI_VERSION(1,001,000) ? \
+	 getUInt16(obj->base_obj + obj->variables_nr * 2 + i*2) : \
+	 *(obj->base_vars + i))
 #define VM_OBJECT_READ_PROPERTY(obj, i) (obj->variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
-  (s->version < SCI_VERSION(1,001,000) ? \
-  getUInt16((byte *) (obj->base_method + i)) : \
-  getUInt16((byte *) (obj->base_method + i*2 + 1)))
+	(s->version < SCI_VERSION(1,001,000) ? \
+	 getUInt16((byte *) (obj->base_method + i)) : \
+	 getUInt16((byte *) (obj->base_method + i*2 + 1)))
 #define VM_OBJECT_READ_FUNCTION(obj, i) \
-  (s->version < SCI_VERSION(1,001,000) ? \
-  make_reg(obj->pos.segment, \
-                         getUInt16((byte *) (obj->base_method \
-                                                 + obj->methods_nr + 1 \
-                                                 + i))) : \
-  make_reg(obj->pos.segment, \
-			 getUInt16((byte *) (obj->base_method \
-					     + i * 2 + 2))))
+	(s->version < SCI_VERSION(1,001,000) ? \
+	 make_reg(obj->pos.segment, \
+		 getUInt16((byte *) (obj->base_method \
+				 + obj->methods_nr + 1 \
+				 + i))) : \
+	 make_reg(obj->pos.segment, \
+		 getUInt16((byte *) (obj->base_method \
+				 + i * 2 + 2))))
 
 
 
@@ -466,7 +466,7 @@ extern int max_instance;
 
 /*inline*/
 exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, stack_ptr_t sp, reg_t calling_obj,
-               uint16 argc, stack_ptr_t argp);
+	uint16 argc, stack_ptr_t argp);
 /* Executes function pubfunct of the specified script.
 ** Parameters: (EngineState *) s: The state which is to be executed with
 **             (uint16) script: The script which is called
@@ -480,7 +480,7 @@ exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, sta
 
 
 exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
-              stack_ptr_t sp, int framesize, stack_ptr_t argp);
+	stack_ptr_t sp, int framesize, stack_ptr_t argp);
 /* Executes a "send" or related operation to a selector
 ** Parameters: (EngineState *) s: The EngineState to operate on
 **             (reg_t) send_obj: Heap address of the object to send to
@@ -498,8 +498,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 #define SCI_XS_CALLEE_LOCALS -1
 
 exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
-                     stack_ptr_t argp, selector_t selector, reg_t sendp, int origin,
-                     seg_id_t local_segment);
+	stack_ptr_t argp, selector_t selector, reg_t sendp, int origin, seg_id_t local_segment);
 /* Adds an entry to the top of the execution stack
 ** Parameters: (EngineState *) s: The state with which to execute
 **             (reg_t) pc: The initial program counter
@@ -520,7 +519,7 @@ exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg
 
 
 exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, stack_ptr_t argp,
-                           selector_t selector, reg_t *address, int origin);
+	selector_t selector, reg_t *address, int origin);
 /* Adds one varselector access to the execution stack
 ** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) objp: Pointer to the object owning the selector
@@ -552,10 +551,8 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file);
 
 
 void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
-             int *restadjust,
-             seg_id_t *segids, reg_t **variables, reg_t **variables_base,
-             int *variables_nr,
-             int bp);
+	int *restadjust, seg_id_t *segids, reg_t **variables, reg_t **variables_base,
+	int *variables_nr, int bp);
 /* Debugger functionality
 ** Parameters: (EngineState *) s: The state at which debugging should take place
 **             (reg_t *) pc: Pointer to the program counter

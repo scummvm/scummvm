@@ -292,7 +292,7 @@ inline exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfun
 }
 
 
-static void _exec_varselectors(EngineState *s) { 
+static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
 	// Now check the TOS to execute all varselector entries
 	if (s->execution_stack_pos >= 0)
@@ -461,7 +461,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 	// placed on the TOS; as soon as it returns, it will cause the second call to be executed.
 	for (; send_calls_nr >= 0; send_calls_nr--)
 		if (send_calls[send_calls_nr].type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			retval = add_exec_stack_varselector(s, work_obj, send_calls[send_calls_nr].argc, send_calls[send_calls_nr].argp, 
+			retval = add_exec_stack_varselector(s, work_obj, send_calls[send_calls_nr].argc, send_calls[send_calls_nr].argp,
 			                                    send_calls[send_calls_nr].selector, send_calls[send_calls_nr].address.var, origin);
 		else
 			retval = add_exec_stack_entry(s, send_calls[send_calls_nr].address.func, send_calls[send_calls_nr].sp, work_obj,
@@ -600,7 +600,7 @@ void run_vm(EngineState *s, int restoring) {
 	object_t *obj = obj_get(s, xs->objp);
 	script_t *local_script = script_locate_by_segment(s, xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
-	// Used to detect the stack bottom, for "physical" returns  
+	// Used to detect the stack bottom, for "physical" returns
 	byte *code_buf = NULL; // (Avoid spurious warning)
 
 	if (!local_script) {
@@ -886,7 +886,7 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x0c: // not
 			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
-			// Must allow pointers to be negated, as this is used for checking whether objects exist  
+			// Must allow pointers to be negated, as this is used for checking whether objects exist
 			break;
 
 		case 0x0d: // eq?
@@ -913,76 +913,76 @@ void run_vm(EngineState *s, int restoring) {
 			s->r_acc = ACC_ARITHMETIC_L((int16)POP() >= (int16)/*acc*/);
 			break;
 
-		case 0x11: // lt? 
+		case 0x11: // lt?
 			s->r_prev = s->r_acc;
 			s->r_acc = ACC_ARITHMETIC_L((int16)POP() < (int16)/*acc*/);
 			break;
 
-		case 0x12: // le? 
+		case 0x12: // le?
 			s->r_prev = s->r_acc;
 			s->r_acc = ACC_ARITHMETIC_L((int16)POP() <= (int16)/*acc*/);
 			break;
 
-		case 0x13: // ugt? 
+		case 0x13: // ugt?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			break;
 
-		case 0x14: // uge? 
+		case 0x14: // uge?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			break;
 
-		case 0x15: // ult? 
+		case 0x15: // ult?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			break;
 
-		case 0x16: // ule? 
+		case 0x16: // ule?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
 			break;
 
-		case 0x17: // bt 
+		case 0x17: // bt
 			if (s->r_acc.offset || s->r_acc.segment)
 				xs->addr.pc.offset += opparams[0];
 			break;
 
-		case 0x18: // bnt 
+		case 0x18: // bnt
 			if (!(s->r_acc.offset || s->r_acc.segment))
 				xs->addr.pc.offset += opparams[0];
 			break;
 
-		case 0x19: // jmp 
+		case 0x19: // jmp
 			xs->addr.pc.offset += opparams[0];
 			break;
 
-		case 0x1a: // ldi 
+		case 0x1a: // ldi
 			s->r_acc = make_reg(0, opparams[0]);
 			break;
 
-		case 0x1b: // push 
+		case 0x1b: // push
 			PUSH32(s->r_acc);
 			break;
 
-		case 0x1c: // pushi 
+		case 0x1c: // pushi
 			PUSH(opparams[0]);
 			break;
 
-		case 0x1d: // toss 
+		case 0x1d: // toss
 			xs->sp--;
 			break;
 
-		case 0x1e: // dup 
+		case 0x1e: // dup
 			r_temp = xs->sp[-1];
 			PUSH32(r_temp);
 			break;
 
-		case 0x1f: { // link 
+		case 0x1f: { // link
 			int i;
 			for (i = 0; i < opparams[0]; i++)
 				xs->sp[i] = NULL_REG;
@@ -990,8 +990,8 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 		}
 
-		case 0x20: { // call 
-			int argc = (opparams[1] >> 1) // Given as offset, but we need count 
+		case 0x20: { // call
+			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + restadjust;
 			stack_ptr_t call_base = xs->sp - argc;
 
@@ -999,20 +999,20 @@ void run_vm(EngineState *s, int restoring) {
 			xs_new = add_exec_stack_entry(s, make_reg(xs->addr.pc.segment, xs->addr.pc.offset + opparams[0]),
 			                              xs->sp, xs->objp, (validate_arithmetic(*call_base)) + restadjust,
 			                              call_base, NULL_SELECTOR, xs->objp, s->execution_stack_pos, xs->local_segment);
-			restadjust = 0; // Used up the &rest adjustment 
+			restadjust = 0; // Used up the &rest adjustment
 			xs->sp = call_base;
 
 			s->execution_stack_pos_changed = 1;
 			break;
 		}
 
-		case 0x21: // callk 
+		case 0x21: // callk
 			gc_countdown(s);
 
 			xs->sp -= (opparams[1] >> 1) + 1;
 			if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
 				xs->sp -= restadjust;
-				s->r_amp_rest = 0; // We just used up the restadjust, remember? 
+				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
 
 			if (opparams[0] >= s->kfunct_nr) {
@@ -1031,10 +1031,10 @@ void run_vm(EngineState *s, int restoring) {
 				} else {
 					s->r_acc = s->kfunct_table[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
 				}
-				// Call kernel function 
+				// Call kernel function
 
 				// Calculate xs again: The kernel function might
-				// have spawned a new VM  
+				// have spawned a new VM
 
 				xs_new = s->execution_stack + s->execution_stack_pos;
 				s->execution_stack_pos_changed = 1;
@@ -1045,77 +1045,77 @@ void run_vm(EngineState *s, int restoring) {
 			}
 			break;
 
-		case 0x22: // callb 
+		case 0x22: // callb
 			temp = ((opparams[1] >> 1) + restadjust + 1);
 			s_temp = xs->sp;
 			xs->sp -= temp;
 
 			xs->sp[0].offset += restadjust;
 			xs_new = execute_method(s, 0, opparams[0], s_temp, xs->objp, xs->sp[0].offset, xs->sp);
-			restadjust = 0; // Used up the &rest adjustment 
-			if (xs_new)    // in case of error, keep old stack 
+			restadjust = 0; // Used up the &rest adjustment
+			if (xs_new)    // in case of error, keep old stack
 				s->execution_stack_pos_changed = 1;
 			break;
 
-		case 0x23: // calle 
+		case 0x23: // calle
 			temp = ((opparams[2] >> 1) + restadjust + 1);
 			s_temp = xs->sp;
 			xs->sp -= temp;
 
 			xs->sp[0].offset += restadjust;
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, xs->objp, xs->sp[0].offset, xs->sp);
-			restadjust = 0; // Used up the &rest adjustment 
+			restadjust = 0; // Used up the &rest adjustment
 
-			if (xs_new)  // in case of error, keep old stack 
+			if (xs_new)  // in case of error, keep old stack
 				s->execution_stack_pos_changed = 1;
 			break;
 
-		case 0x24: // ret 
+		case 0x24: // ret
 			do {
 				stack_ptr_t old_sp2 = xs->sp;
 				stack_ptr_t old_fp = xs->fp;
 				exec_stack_t *old_xs = s->execution_stack + s->execution_stack_pos;
 
-				if (s->execution_stack_pos == s->execution_stack_base) { // Have we reached the base? 
-					s->execution_stack_base = old_execution_stack_base; // Restore stack base 
+				if (s->execution_stack_pos == s->execution_stack_base) { // Have we reached the base?
+					s->execution_stack_base = old_execution_stack_base; // Restore stack base
 
 					--(s->execution_stack_pos);
 
 					s->execution_stack_pos_changed = 1;
-					s->r_amp_rest = restadjust; // Update &rest 
-					return; // "Hard" return 
+					s->r_amp_rest = restadjust; // Update &rest
+					return; // "Hard" return
 				}
 
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
-					// varselector access? 
-					if (old_xs->argc) // write? 
+					// varselector access?
+					if (old_xs->argc) // write?
 						*(old_xs->addr.varp) = old_xs->variables_argp[1];
-					else // No, read 
+					else // No, read
 						s->r_acc = *(old_xs->addr.varp);
 				}
 
-				// Not reached the base, so let's do a soft return 
+				// Not reached the base, so let's do a soft return
 				--(s->execution_stack_pos);
 				xs = old_xs - 1;
 				s->execution_stack_pos_changed = 1;
 				xs = s->execution_stack + s->execution_stack_pos;
 
-				if (xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer 
+				if (xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
 				        || xs->type != EXEC_STACK_TYPE_CALL) {
 					xs->sp = old_sp2;
 					xs->fp = old_fp;
 				}
 
 			} while (xs->type == EXEC_STACK_TYPE_VARSELECTOR);
-			// Iterate over all varselector accesses 
+			// Iterate over all varselector accesses
 			s->execution_stack_pos_changed = 1;
 			xs_new = xs;
 
 			break;
 
-		case 0x25: // send 
+		case 0x25: // send
 			s_temp = xs->sp;
-			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack 
+			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack
 
 			xs->sp[1].offset += restadjust;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
@@ -1127,13 +1127,13 @@ void run_vm(EngineState *s, int restoring) {
 
 			break;
 
-		case 0x28: // class 
+		case 0x28: // class
 			s->r_acc = get_class_address(s, (unsigned)opparams[0], SCRIPT_GET_LOCK, xs->addr.pc);
 			break;
 
-		case 0x2a: // self 
+		case 0x2a: // self
 			s_temp = xs->sp;
-			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack 
+			xs->sp -= ((opparams[0] >> 1) + restadjust); // Adjust stack
 
 			xs->sp[1].offset += restadjust;
 			xs_new = send_selector(s, xs->objp, xs->objp, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
@@ -1144,14 +1144,14 @@ void run_vm(EngineState *s, int restoring) {
 			restadjust = 0;
 			break;
 
-		case 0x2b: // super 
+		case 0x2b: // super
 			r_temp = get_class_address(s, opparams[0], SCRIPT_GET_LOAD, xs->addr.pc);
 
 			if (!r_temp.segment)
 				CORE_ERROR("VM", "Invalid superclass in object");
 			else {
 				s_temp = xs->sp;
-				xs->sp -= ((opparams[1] >> 1) + restadjust); // Adjust stack 
+				xs->sp -= ((opparams[1] >> 1) + restadjust); // Adjust stack
 
 				xs->sp[1].offset += restadjust;
 				xs_new = send_selector(s, r_temp, xs->objp, s_temp, (int)(opparams[1] >> 1) + (uint16)restadjust, xs->sp);
@@ -1164,9 +1164,9 @@ void run_vm(EngineState *s, int restoring) {
 
 			break;
 
-		case 0x2c: // &rest 
-			temp = (uint16) opparams[0]; // First argument 
-			restadjust = xs->argc - temp + 1; // +1 because temp counts the paramcount while argc doesn't 
+		case 0x2c: // &rest
+			temp = (uint16) opparams[0]; // First argument
+			restadjust = xs->argc - temp + 1; // +1 because temp counts the paramcount while argc doesn't
 			if (restadjust < 0)
 				restadjust = 0;
 
@@ -1175,72 +1175,72 @@ void run_vm(EngineState *s, int restoring) {
 
 			break;
 
-		case 0x2d: // lea 
+		case 0x2d: // lea
 			temp = (uint16) opparams[0] >> 1;
-			var_number = temp & 0x03; // Get variable type 
+			var_number = temp & 0x03; // Get variable type
 
-			// Get variable block offset 
+			// Get variable block offset
 			r_temp.segment = variables_seg[var_number];
 			r_temp.offset = variables[var_number] - variables_base[var_number];
 
-			if (temp & 0x08)  // Add accumulator offset if requested 
+			if (temp & 0x08)  // Add accumulator offset if requested
 				r_temp.offset += signed_validate_arithmetic(s->r_acc);
 
-			r_temp.offset += opparams[1];  // Add index 
+			r_temp.offset += opparams[1];  // Add index
 			r_temp.offset *= sizeof(reg_t);
-			// That's the immediate address now 
+			// That's the immediate address now
 			s->r_acc = r_temp;
 			break;
 
 
-		case 0x2e: // selfID 
+		case 0x2e: // selfID
 			s->r_acc = xs->objp;
 			break;
 
-		case 0x30: // pprev 
+		case 0x30: // pprev
 			PUSH32(s->r_prev);
 			break;
 
-		case 0x31: // pToa 
+		case 0x31: // pToa
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
 			break;
 
-		case 0x32: // aTop 
+		case 0x32: // aTop
 			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = s->r_acc;
 			break;
 
-		case 0x33: // pTos 
+		case 0x33: // pTos
 			PUSH32(OBJ_PROPERTY(obj, opparams[0] >> 1));
 			break;
 
-		case 0x34: // sTop 
+		case 0x34: // sTop
 			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
-		case 0x35: // ipToa 
+		case 0x35: // ipToa
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
 			break;
 
-		case 0x36: // dpToa 
+		case 0x36: // dpToa
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
 			break;
 
-		case 0x37: // ipTos 
+		case 0x37: // ipTos
 			ASSERT_ARITHMETIC(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = ++OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
-		case 0x38: // dpTos 
+		case 0x38: // dpTos
 			ASSERT_ARITHMETIC(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = --OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
 
-		case 0x39: // lofsa 
+		case 0x39: // lofsa
 			s->r_acc.segment = xs->addr.pc.segment;
 
 			if (s->version >= SCI_VERSION(1, 001, 000))
@@ -1259,7 +1259,7 @@ void run_vm(EngineState *s, int restoring) {
 #endif
 			break;
 
-		case 0x3a: // lofss 
+		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
 			if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE)
@@ -1276,175 +1276,175 @@ void run_vm(EngineState *s, int restoring) {
 			PUSH32(r_temp);
 			break;
 
-		case 0x3b: // push0 
+		case 0x3b: // push0
 			PUSH(0);
 			break;
 
-		case 0x3c: // push1 
+		case 0x3c: // push1
 			PUSH(1);
 			break;
 
-		case 0x3d: // push2 
+		case 0x3d: // push2
 			PUSH(2);
 			break;
 
-		case 0x3e: // pushSelf 
+		case 0x3e: // pushSelf
 			PUSH32(xs->objp);
 			break;
 
-		case 0x40: // lag 
-		case 0x41: // lal 
-		case 0x42: // lat 
-		case 0x43: // lap 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x40: // lag
+		case 0x41: // lal
+		case 0x42: // lat
+		case 0x43: // lap
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x44: // lsg 
-		case 0x45: // lsl 
-		case 0x46: // lst 
-		case 0x47: // lsp 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x44: // lsg
+		case 0x45: // lsl
+		case 0x46: // lst
+		case 0x47: // lsp
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
 			break;
 
-		case 0x48: // lagi 
-		case 0x49: // lali 
-		case 0x4a: // lati 
-		case 0x4b: // lapi 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x48: // lagi
+		case 0x49: // lali
+		case 0x4a: // lati
+		case 0x4b: // lapi
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x4c: // lsgi 
-		case 0x4d: // lsli 
-		case 0x4e: // lsti 
-		case 0x4f: // lspi 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x4c: // lsgi
+		case 0x4d: // lsli
+		case 0x4e: // lsti
+		case 0x4f: // lspi
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
 			break;
 
-		case 0x50: // sag 
-		case 0x51: // sal 
-		case 0x52: // sat 
-		case 0x53: // sap 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x50: // sag
+		case 0x51: // sal
+		case 0x52: // sat
+		case 0x53: // sap
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x54: // ssg 
-		case 0x55: // ssl 
-		case 0x56: // sst 
-		case 0x57: // ssp 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x54: // ssg
+		case 0x55: // ssl
+		case 0x56: // sst
+		case 0x57: // ssp
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
 
-		case 0x58: // sagi 
-		case 0x59: // sali 
-		case 0x5a: // sati 
-		case 0x5b: // sapi 
+		case 0x58: // sagi
+		case 0x59: // sali
+		case 0x5a: // sati
+		case 0x5b: // sapi
 			// Special semantics because it wouldn't really make a whole lot
 			// of sense otherwise, with acc being used for two things
-			// simultaneously... 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+			// simultaneously...
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			WRITE_VAR(var_type, var_number, s->r_acc = POP32());
 			break;
 
-		case 0x5c: // ssgi 
-		case 0x5d: // ssli 
-		case 0x5e: // ssti 
-		case 0x5f: // sspi 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x5c: // ssgi
+		case 0x5d: // ssli
+		case 0x5e: // ssti
+		case 0x5f: // sspi
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
 
-		case 0x60: // +ag 
-		case 0x61: // +al 
-		case 0x62: // +at 
-		case 0x63: // +ap 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x60: // +ag
+		case 0x61: // +al
+		case 0x62: // +at
+		case 0x63: // +ap
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			s->r_acc = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x64: // +sg 
-		case 0x65: // +sl 
-		case 0x66: // +st 
-		case 0x67: // +sp 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x64: // +sg
+		case 0x65: // +sl
+		case 0x66: // +st
+		case 0x67: // +sp
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
 
-		case 0x68: // +agi 
-		case 0x69: // +ali 
-		case 0x6a: // +ati 
-		case 0x6b: // +api 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x68: // +agi
+		case 0x69: // +ali
+		case 0x6a: // +ati
+		case 0x6b: // +api
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			s->r_acc = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x6c: // +sgi 
-		case 0x6d: // +sli 
-		case 0x6e: // +sti 
-		case 0x6f: // +spi 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x6c: // +sgi
+		case 0x6d: // +sli
+		case 0x6e: // +sti
+		case 0x6f: // +spi
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
 
-		case 0x70: // -ag 
-		case 0x71: // -al 
-		case 0x72: // -at 
-		case 0x73: // -ap 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x70: // -ag
+		case 0x71: // -al
+		case 0x72: // -at
+		case 0x73: // -ap
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			s->r_acc = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x74: // -sg 
-		case 0x75: // -sl 
-		case 0x76: // -st 
-		case 0x77: // -sp 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x74: // -sg
+		case 0x75: // -sl
+		case 0x76: // -st
+		case 0x77: // -sp
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
 
-		case 0x78: // -agi 
-		case 0x79: // -ali 
-		case 0x7a: // -ati 
-		case 0x7b: // -api 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x78: // -agi
+		case 0x79: // -ali
+		case 0x7a: // -ati
+		case 0x7b: // -api
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			s->r_acc = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
-		case 0x7c: // -sgi 
-		case 0x7d: // -sli 
-		case 0x7e: // -sti 
-		case 0x7f: // -spi 
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p 
+		case 0x7c: // -sgi
+		case 0x7d: // -sli
+		case 0x7e: // -sti
+		case 0x7f: // -spi
+			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
 			PUSH32(r_temp);
@@ -1454,9 +1454,9 @@ void run_vm(EngineState *s, int restoring) {
 		default:
 			script_error(s, __FILE__, __LINE__, "Illegal opcode");
 
-		} // switch(opcode >> 1) 
+		} // switch(opcode >> 1)
 
-		if (s->execution_stack_pos_changed) // Force initialization 
+		if (s->execution_stack_pos_changed) // Force initialization
 			xs = xs_new;
 
 #ifndef DISABLE_VALIDATIONS
@@ -1465,8 +1465,8 @@ void run_vm(EngineState *s, int restoring) {
 		}
 #endif
 		if (script_error_flag) {
-			_debug_step_running = 0; // Stop multiple execution 
-			_debug_seeking = 0; // Stop special seeks 
+			_debug_step_running = 0; // Stop multiple execution
+			_debug_seeking = 0; // Stop special seeks
 			xs->addr.pc.offset = old_pc_offset;
 			xs->sp = old_sp;
 		} else
@@ -1475,8 +1475,8 @@ void run_vm(EngineState *s, int restoring) {
 }
 
 static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selector_t slc) {
-	// Determines if obj explicitly defines slc as a varselector 
-	// Returns -1 if not found 
+	// Determines if obj explicitly defines slc as a varselector
+	// Returns -1 if not found
 
 	if (s->version < SCI_VERSION(1, 001, 000)) {
 		int varnum = obj->variable_names_nr;
@@ -1487,10 +1487,10 @@ static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selecto
 		obj->base_vars = (uint16 *) buf;
 
 		for (i = 0; i < varnum; i++)
-			if (getUInt16(buf + (i << 1)) == slc) // Found it? 
-				return i; // report success 
+			if (getUInt16(buf + (i << 1)) == slc) // Found it?
+				return i; // report success
 
-		return -1; // Failed 
+		return -1; // Failed
 	} else {
 		byte *buf = (byte *) obj->base_vars;
 		int i;
@@ -1500,31 +1500,31 @@ static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selecto
 			buf = ((byte *) obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR])->base_vars);
 
 		for (i = 0; i < varnum; i++)
-			if (getUInt16(buf + (i << 1)) == slc) // Found it? 
-				return i; // report success 
+			if (getUInt16(buf + (i << 1)) == slc) // Found it?
+				return i; // report success
 
-		return -1; // Failed 
+		return -1; // Failed
 	}
 }
 
 static inline int _class_locate_funcselector(EngineState *s, object_t *obj, selector_t slc) {
-	// Determines if obj is a class and explicitly defines slc as a funcselector 
+	// Determines if obj is a class and explicitly defines slc as a funcselector
 	// Does NOT say anything about obj's superclasses, i.e. failure may be
-	// returned even if one of the superclasses defines the funcselector. 
+	// returned even if one of the superclasses defines the funcselector.
 	int funcnum = obj->methods_nr;
 	int i;
 
 	for (i = 0; i < funcnum; i++)
-		if (VM_OBJECT_GET_FUNCSELECTOR(obj, i) == slc) // Found it? 
-			return i; // report success 
+		if (VM_OBJECT_GET_FUNCSELECTOR(obj, i) == slc) // Found it?
+			return i; // report success
 
-	return -1; // Failed 
+	return -1; // Failed
 }
 
 static inline int _lookup_selector_function(EngineState *s, int seg_id, object_t *obj, selector_t selector_id, reg_t *fptr) {
 	int index;
 
-	// "recursive" lookup 
+	// "recursive" lookup
 
 	while (obj) {
 		index = _class_locate_funcselector(s, obj, selector_id);
@@ -1553,7 +1553,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 	int index;
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
-	// toggle, meaning that we must remove it for selector lookup.  
+	// toggle, meaning that we must remove it for selector lookup.
 	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
 		selector_id &= ~1;
 
@@ -1579,7 +1579,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 	index = _obj_locate_varselector(s, obj, selector_id);
 
 	if (index >= 0) {
-		// Found it as a variable 
+		// Found it as a variable
 		if (vptr)
 			*vptr = obj->variables + index;
 		return SELECTOR_VARIABLE;
@@ -1588,7 +1588,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 	return _lookup_selector_function(s, obj_location.segment, obj, selector_id, fptr);
 }
 
-// Detects SCI versions by their different script header 
+// Detects SCI versions by their different script header
 void script_detect_versions(EngineState *s) {
 	int c;
 	resource_t *script = {0};
@@ -1683,7 +1683,7 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 
 	if (!*script || (s->version >= SCI_VERSION(1, 001, 000) && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
-		//script_debug_flag = script_error_flag = 1; 
+		//script_debug_flag = script_error_flag = 1;
 		if (s->version >= SCI_VERSION(1, 001, 000)) {
 			if (*heap)
 				sciprintf("Inconsistency: heap resource WAS found\n");
@@ -1709,7 +1709,7 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 			mem = s->seg_manager->heap[seg];
 			s->seg_manager->freeScript(mem);
 		}
-	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US 
+	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
 		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
 		script_debug_flag = script_error_flag = 1;
 		return 0;
@@ -1720,7 +1720,7 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 	reg.segment = seg_id;
 	reg.offset = 0;
 
-	// Set heap position (beyond the size word) 
+	// Set heap position (beyond the size word)
 	s->seg_manager->setLockers(1, reg.segment, SEG_ID);
 	s->seg_manager->setExportTableOffset(0, reg.segment, SEG_ID);
 	s->seg_manager->setSynonymsOffset(0, reg.segment, SEG_ID);
@@ -1737,7 +1737,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	reg_t reg, reg_tmp;
 	int seg_id;
 	int relocation = -1;
-	int magic_pos_adder; // Usually 0; 2 for older SCI versions 
+	int magic_pos_adder; // Usually 0; 2 for older SCI versions
 	resource_t *script;
 	int was_new;
 
@@ -1753,13 +1753,13 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		//
 		int locals_nr = getUInt16(script->data);
 
-		// Old script block 
-		// There won't be a localvar block in this case 
+		// Old script block
+		// There won't be a localvar block in this case
 		// Instead, the script starts with a 16 bit int specifying the
-		// number of locals we need; these are then allocated and zeroed.  
+		// number of locals we need; these are then allocated and zeroed.
 
 		s->seg_manager->mcpyInOut(0, script->data, script->size, reg.segment, SEG_ID);
-		magic_pos_adder = 2;  // Step over the funny prefix 
+		magic_pos_adder = 2;  // Step over the funny prefix
 
 		if (locals_nr)
 			s->seg_manager->scriptInitialiseLocalsZero(reg.segment, locals_nr);
@@ -1779,7 +1779,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	do {
 		reg_t data_base;
 		reg_t addr;
-		reg.offset += objlength; // Step over the last checked object 
+		reg.offset += objlength; // Step over the last checked object
 		objtype = SEG_GET_HEAP(s, reg);
 		if (!objtype) break;
 
@@ -1797,7 +1797,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		break;
 
 		case sci_obj_synonyms:
-			s->seg_manager->setSynonymsOffset(addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header 
+			s->seg_manager->setSynonymsOffset(addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header
 			s->seg_manager->setSynonymsNr((objlength) / 4, reg.segment, SEG_ID);
 			break;
 
@@ -1822,7 +1822,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			s->classtable[species].script = script_nr;
 			s->classtable[species].reg = addr;
 			s->classtable[species].reg.offset = classpos;
-			// Set technical class position-- into the block allocated for it 
+			// Set technical class position-- into the block allocated for it
 		}
 		break;
 
@@ -1830,18 +1830,18 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			break;
 		}
 	} while (objtype != 0);
-	// And now a second pass to adjust objects and class pointers, and the general pointers 
+	// And now a second pass to adjust objects and class pointers, and the general pointers
 
 	objlength = 0;
-	reg.offset = magic_pos_adder; // Reset counter 
+	reg.offset = magic_pos_adder; // Reset counter
 
 	do {
 		reg_t addr;
-		reg.offset += objlength; // Step over the last checked object 
+		reg.offset += objlength; // Step over the last checked object
 		objtype = SEG_GET_HEAP(s, reg);
 		if (!objtype) break;
 		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));
-		reg.offset += 4; // Step over header 
+		reg.offset += 4; // Step over header
 
 		addr = reg;
 
@@ -1850,22 +1850,22 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			s->seg_manager->scriptAddCodeBlock(addr);
 			break;
 		case sci_obj_object:
-		case sci_obj_class: { // object or class? 
+		case sci_obj_class: { // object or class?
 			object_t *obj = s->seg_manager->scriptObjInit(s, addr);
 			object_t *base_obj;
 
-			// Instantiate the superclass, if neccessary 
+			// Instantiate the superclass, if neccessary
 			obj->variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->variables[SCRIPT_SPECIES_SELECTOR].offset);
 
 			base_obj = obj_get(s, obj->variables[SCRIPT_SPECIES_SELECTOR]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
-			// Copy base from species class, as we need its selector IDs 
+			// Copy base from species class, as we need its selector IDs
 
 			obj->variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
-		} // if object or class 
+		} // if object or class
 		break;
-		case sci_obj_pointers: // A relocation table 
+		case sci_obj_pointers: // A relocation table
 			relocation = addr.offset;
 			break;
 
@@ -1873,7 +1873,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			break;
 		}
 
-		reg.offset -= 4; // Step back on header 
+		reg.offset -= 4; // Step back on header
 
 	} while ((objtype != 0) && (((unsigned)reg.offset) < script->size - 2));
 
@@ -1882,7 +1882,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	s->seg_manager->scriptFreeUnusedObjects(reg.segment);
 
-	return reg.segment;		// instantiation successful 
+	return reg.segment;		// instantiation successful
 }
 
 int script_instantiate_sci11(EngineState *s, int script_nr) {
@@ -1931,15 +1931,15 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
 	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
 	int objtype, objlength;
 
-	// Make a pass over the object in order uninstantiate all superclasses 
+	// Make a pass over the object in order uninstantiate all superclasses
 	objlength = 0;
 
 	do {
-		reg.offset += objlength; // Step over the last checked object 
+		reg.offset += objlength; // Step over the last checked object
 
 		objtype = SEG_GET_HEAP(s, reg);
 		if (!objtype) break;
-		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));  // use SEG_UGET_HEAP ?? 
+		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));  // use SEG_UGET_HEAP ??
 
 		reg.offset += 4; // Step over header
 

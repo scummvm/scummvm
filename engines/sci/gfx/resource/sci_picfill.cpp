@@ -62,7 +62,7 @@ namespace Sci {
 #endif
 
 static void FILL_FUNCTION_RECURSIVE(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy, byte *bounds,
-                        int legalcolor, int legalmask, int color, int priority, int drawenable, int sci_titlebar_size) {
+	int legalcolor, int legalmask, int color, int priority, int drawenable, int sci_titlebar_size) {
 	int linewidth = pic->mode->xfact * 320;
 	int miny = pic->mode->yfact * sci_titlebar_size;
 	int maxy = pic->mode->yfact * 200;
@@ -265,7 +265,7 @@ static void FILL_FUNCTION_RECURSIVE(gfxr_pic_t *pic, int old_xl, int old_xr, int
 
 
 static void FILL_FUNCTION(gfxr_pic_t *pic, int x_320, int y_200, int color, int priority, int control, int drawenable,
-              int sci_titlebar_size) {
+	int sci_titlebar_size) {
 	int linewidth = pic->mode->xfact * 320;
 	int x, y;
 	int xl, xr;

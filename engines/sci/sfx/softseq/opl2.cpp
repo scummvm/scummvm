@@ -173,8 +173,8 @@ static inline int opl_write(int a, int v) {
 /*
 static inline uint8 opl_read (int a)
 {
-  OPLWrite (ym3812_L, 0x388, a);
-  return OPLRead (ym3812_L, 0x389);
+	OPLWrite (ym3812_L, 0x388, a);
+	return OPLRead (ym3812_L, 0x389);
 }
 */
 
@@ -514,7 +514,7 @@ static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 }
 
 static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
-          int data2_length) {
+	int data2_length) {
 	int i;
 
 	/* load up the patch.003 file, parse out the instruments */

@@ -220,8 +220,7 @@ struct tee_song_iterator_t {
 
 
 sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset,
-                       int size,
-                       sfx_pcm_config_t conf);
+	int size, sfx_pcm_config_t conf);
 /* Generates a feed for a song iterator
 ** Parameters: (byte *) base_data: A refcounted memory chunk containing
 **                                 (among other things) PCM data

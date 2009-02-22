@@ -65,9 +65,9 @@ namespace Sci {
 // Visibility matrix
 #define VIS_MATRIX_ROW_SIZE(N) (((N) / 8) + ((N) % 8 ? 1 : 0))
 #define SET_VISIBLE(S, P, Q) ((S)->vis_matrix)[(P) * VIS_MATRIX_ROW_SIZE((S)->vertices) \
-                                 + (Q) / 8] |= (1 << ((Q) % 8))
+	+ (Q) / 8] |= (1 << ((Q) % 8))
 #define IS_VISIBLE(S, P, Q) (((S)->vis_matrix[(P) * VIS_MATRIX_ROW_SIZE((S)->vertices) \
-                                 + (Q) / 8] & (1 << ((Q) % 8))) != 0)
+	+ (Q) / 8] & (1 << ((Q) % 8))) != 0)
 
 #define VERTEX_HAS_EDGES(V) ((V) != CLIST_NEXT(V, entries))
 

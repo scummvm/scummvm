@@ -164,7 +164,7 @@ int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, void *misc_in
 */
 
 int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
-           gfx_options_t *options, void *misc_info);
+	gfx_options_t *options, void *misc_info);
 /* Initializes a custom graphics mode
 ** Parameters: (gfx_state_t *) state: The state to initialize
 **             (int x int) xfact, yfact: Horizontal and vertical scale factors
@@ -230,9 +230,8 @@ int gfxop_set_clip_zone(gfx_state_t *state, rect_t zone);
 /******************************/
 
 int gfxop_draw_line(gfx_state_t *state,
-                Common::Point start, Common::Point end,
-                gfx_color_t color, gfx_line_mode_t line_mode,
-                gfx_line_style_t line_style);
+	Common::Point start, Common::Point end, gfx_color_t color,
+	gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 /* Renders a clipped line to the back buffer
 ** Parameters: (gfx_state_t *) state: The state affected
 **             (Common::Point) start: Starting point of the line
@@ -244,7 +243,7 @@ int gfxop_draw_line(gfx_state_t *state,
 */
 
 int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode,
-                     gfx_line_style_t line_style);
+	gfx_line_style_t line_style);
 /* Draws a non-filled rectangular box to the back buffer
 ** Parameters: (gfx_state_t *) state: The affected state
 **             (rect_t) rect: The rectangular area the box is drawn to
@@ -256,7 +255,7 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 */
 
 int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color_t color2,
-               gfx_box_shade_t shade_type);
+	gfx_box_shade_t shade_type);
 /* Draws a filled box to the back buffer
 ** Parameters: (gfx_state_t *) state: The affected state
 **             (rect_t) box: The area to draw to
@@ -326,7 +325,7 @@ int gfxop_disable_dirty_frames(gfx_state_t *state);
 /********************/
 
 int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b, int a,
-                int priority, int control);
+	int priority, int control);
 /* Maps an r/g/b value to a color and sets a gfx_color_t structure
 ** Parameters: (gfx_state_t *) state: The current state
 **             (gfx_color_t *) color: Pointer to the structure to write to
@@ -468,7 +467,7 @@ int gfxop_overflow_cel(gfx_state_t *state, int nr, int *loop, int *cel);
 */
 
 int gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
-                         int *width, int *height, Common::Point *offset);
+	int *width, int *height, Common::Point *offset);
 /* Retreives the width and height of a cel
 ** Parameters: (gfx_state_t *) state: The state to use
 **             (int) nr: Number of the view
@@ -482,7 +481,7 @@ int gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
 */
 
 int gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
-               gfx_color_t color, int palette);
+	gfx_color_t color, int palette);
 /* Draws (part of) a cel to the back buffer
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
@@ -496,7 +495,7 @@ int gfxop_draw_cel(gfx_state_t *state, int nr, int loop, int cel, Common::Point 
 
 
 int gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
-                      gfx_color_t color, int palette);
+	gfx_color_t color, int palette);
 /* Draws a cel to the static buffer; no clipping is performed
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
@@ -511,7 +510,7 @@ int gfxop_draw_cel_static(gfx_state_t *state, int nr, int loop, int cel, Common:
 
 
 int gfxop_draw_cel_static_clipped(gfx_state_t *state, int nr, int loop, int cel, Common::Point pos,
-                              gfx_color_t color, int palette);
+	gfx_color_t color, int palette);
 /* Draws (part of) a clipped cel to the static buffer
 ** Parameters: (gfx_state_t *) state: The state encapsulating the driver to draw with
 **             (int) nr: Number of the view to draw
@@ -574,8 +573,8 @@ int gfxop_get_font_height(gfx_state_t *state, int font_nr);
 */
 
 int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text,
-                      int maxwidth, int *width, int *height, int flags,
-                      int *lines_nr, int *lineheight, int *lastline_width);
+	int maxwidth, int *width, int *height, int flags,
+	int *lines_nr, int *lineheight, int *lastline_width);
 /* Calculates the width and height of a specified text in a specified font
 ** Parameters: (gfx_state_t *) state: The state to use
 **             (int) font_nr: Font number to use for the calculation
@@ -592,9 +591,8 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text,
 */
 
 gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, int maxwidth,
-               gfx_alignment_t halign, gfx_alignment_t valign,
-               gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color,
-               int flags);
+	gfx_alignment_t halign, gfx_alignment_t valign, gfx_color_t color1,
+	gfx_color_t color2, gfx_color_t bg_color, int flags);
 /* Generates a new text handle that can be used to draw any text
 ** Parameters: (gfx_state_t *) state: The state to use
 **             (int) font_nr: Font number to use for the calculation

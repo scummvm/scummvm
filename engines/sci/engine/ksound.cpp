@@ -363,7 +363,7 @@ kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 int
 sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-              int command, int arg1, int arg2);
+	int command, int arg1, int arg2);
 
 reg_t
 kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -472,7 +472,7 @@ kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) UKPV(2); 		/* Too lazy to look up a default value for this */
+		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) UKPV(2);		/* Too lazy to look up a default value for this */
 
 		if (obj.segment) {
 			sfx_song_set_status(&s->sound,
@@ -609,33 +609,33 @@ kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break; /* Doesn't happen */
 		}
 
-		/* 		switch (signal) */
-		/* 		{ */
-		/* 		case 0x00: */
-		/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
-		/* 			{ */
-		/* 				PUT_SEL32V(obj, dataInc, dataInc); */
-		/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
-		/* 			} else */
-		/* 			{ */
-		/* 				PUT_SEL32V(obj, signal, signal); */
-		/* 			} */
-		/* 			break; */
-		/* 		case 0xFF: /\* May be unnecessary *\/ */
-		/* 			sfx_song_set_status(&s->sound, */
-		/* 					    handle, SOUND_STATUS_STOPPED); */
-		/* 			break; */
-		/* 		default : */
-		/* 			if (dataInc!=GET_SEL32V(obj, dataInc)) */
-		/* 			{ */
-		/* 				PUT_SEL32V(obj, dataInc, dataInc); */
-		/* 				PUT_SEL32V(obj, signal, dataInc+0x7f); */
-		/* 			} else */
-		/* 			{ */
-		/* 				PUT_SEL32V(obj, signal, signal); */
-		/* 			} */
-		/* 			break; */
-		/* 		} */
+		/*		switch (signal) */
+		/*		{ */
+		/*		case 0x00: */
+		/*			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/*			{ */
+		/*				PUT_SEL32V(obj, dataInc, dataInc); */
+		/*				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/*			} else */
+		/*			{ */
+		/*				PUT_SEL32V(obj, signal, signal); */
+		/*			} */
+		/*			break; */
+		/*		case 0xFF: /\* May be unnecessary *\/ */
+		/*			sfx_song_set_status(&s->sound, */
+		/*					    handle, SOUND_STATUS_STOPPED); */
+		/*			break; */
+		/*		default : */
+		/*			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/*			{ */
+		/*				PUT_SEL32V(obj, dataInc, dataInc); */
+		/*				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/*			} else */
+		/*			{ */
+		/*				PUT_SEL32V(obj, signal, signal); */
+		/*			} */
+		/*			break; */
+		/*		} */
 
 		PUT_SEL32V(obj, min, min);
 		PUT_SEL32V(obj, sec, sec);
@@ -668,7 +668,7 @@ kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 int
 sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-              int command, int arg1, int arg2);
+	int command, int arg1, int arg2);
 
 reg_t
 kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -772,7 +772,7 @@ kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		         s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_VOLUME, 0, vol);
 		 else
 		         s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_VOLUME, 0, 0);
-		 	break;*/
+			break;*/
 	}
 	case _K_SCI1_SOUND_MUTE_SOUND : {
 		/* if there's a parameter, we're setting it.  Otherwise,

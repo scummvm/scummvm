@@ -207,7 +207,7 @@ static FILE *getFileFromHandle(EngineState *s, int handle) {
 		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
 		return 0;
 	}
-	
+
 	return s->file_handles[handle];
 }
 
@@ -628,7 +628,7 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			char namebuf[SCI_MAX_SAVENAME_LENGTH]; // Save game name buffer
 			strncpy(namebuf, meta.savegame_name, SCI_MAX_SAVENAME_LENGTH);
 			namebuf[SCI_MAX_SAVENAME_LENGTH-1] = 0;
-			
+
 			if (strlen(namebuf) > 0) {
 				if (namebuf[strlen(namebuf) - 1] == '\n')
 					namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newline
@@ -772,7 +772,7 @@ reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#define K_FILEIO_OPEN 		0
+#define K_FILEIO_OPEN		0
 #define K_FILEIO_CLOSE		1
 #define K_FILEIO_READ_RAW	2
 #define K_FILEIO_WRITE_RAW	3

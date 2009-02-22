@@ -118,8 +118,8 @@ static int yyerror(const char *s) {
 
 %%
 
-saidspec :	  leftspec optcont 
-			{ $$ = said_top_branch(said_attach_branch($1, $2)); } 
+saidspec :	  leftspec optcont
+			{ $$ = said_top_branch(said_attach_branch($1, $2)); }
 		| leftspec midspec optcont
 			{ $$ = said_top_branch(said_attach_branch($1, said_attach_branch($2, $3))); }
 		| leftspec midspec rightspec optcont
@@ -180,7 +180,7 @@ wordset :	 word
 			{ $$ = $1; }
 		| wordset YY_COMMA wordset
 			{ $$ = said_attach_branch($1, $3); }
-                | wordset YY_BRACKETSO_LT wordrefset YY_BRACKETSC
+		| wordset YY_BRACKETSO_LT wordrefset YY_BRACKETSC
 			{ $$ = said_attach_branch($1, $3); }
 		| wordset YY_COMMA YY_BRACKETSO wordset YY_BRACKETSC
 			{ $$ = said_attach_branch($1, $3); }
@@ -295,7 +295,7 @@ static tree_t said_paren(tree_t t1, tree_t t2) {
 
 static tree_t said_value(int val, tree_t t) {
 	return said_branch_node(SAID_NEXT_NODE, said_leaf_node(SAID_NEXT_NODE, val), t);
-			  
+
 }
 
 static tree_t said_terminal(int val) {
@@ -494,7 +494,7 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 
 	while (pos) {
 		if ((word = aug_get_wgroup(tree, pos))) { // found a word
-			if (!refbranch && major == WORD_TYPE_BASE) {	
+			if (!refbranch && major == WORD_TYPE_BASE) {
 				if ((*base_words_nr) == maxwords) {
 					sciprintf("Out of regular words\n");
 					return; // return gracefully
@@ -516,9 +516,9 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 			}
 			if (major != WORD_TYPE_SYNTACTIC_SUGAR && major != WORD_TYPE_BASE && major != WORD_TYPE_REF)
 				sciprintf("aug_find_words_recursively(): Unknown word type %03x\n", major);
-    
+
 		} else // Did NOT find a word group: Attempt to recurse
-			aug_find_words_recursively(tree, pos, base_words, base_words_nr, 
+			aug_find_words_recursively(tree, pos, base_words, base_words_nr,
 						   ref_words, ref_words_nr, maxwords, refbranch || major == WORD_TYPE_REF);
 
 		pos = aug_get_next_sibling(tree, pos, &major, &minor);
@@ -760,7 +760,7 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 		sciprintf("augment_parse_nodes(): Parse tree is corrupt\n");
 		return 0;
 	}
-  
+
 	augment_basepos = aug_get_base_node(saidt);
 	if (!augment_basepos) {
 		sciprintf("augment_parse_nodes(): Said tree is corrupt\n");

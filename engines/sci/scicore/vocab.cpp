@@ -279,7 +279,7 @@ parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_
 
 
 result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int words_nr,
-                  suffix_t **suffices, int suffices_nr) {
+	suffix_t **suffices, int suffices_nr) {
 	word_t *tempword = (word_t*)sci_malloc(sizeof(word_t) + word_len + 256);
 	// 256: For suffices. Should suffice.
 	word_t **dict_word;
@@ -518,8 +518,8 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 }
 #endif
 
-result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **words, int words_nr, 
-                      suffix_t **suffices, int suffices_nr, char **error) {
+result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **words, int words_nr,
+	suffix_t **suffices, int suffices_nr, char **error) {
 	char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;

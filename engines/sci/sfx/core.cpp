@@ -731,7 +731,7 @@ void sfx_song_set_status(sfx_state_t *self, song_handle_t handle, int status) {
 }
 
 void sfx_song_set_fade(sfx_state_t *self, song_handle_t handle,
-                  fade_params_t *params) {
+	fade_params_t *params) {
 #ifdef DEBUG_SONG_API
 	static const char *stopmsg[] = {"??? Should not happen", "Do not stop afterwards", "Stop afterwards"};
 #endif
@@ -808,7 +808,7 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 static const song_handle_t midi_send_base = 0xffff0000;
 
 int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-              int command, int arg1, int arg2) {
+	int command, int arg1, int arg2) {
 	byte buffer[5];
 	tell_synth_func *tell = sfx_get_player_tell_func();
 

@@ -58,34 +58,34 @@ namespace Sci {
 
 
 #define ADD_TO_CURRENT_PORT(widget) \
-  {if (s->port)				   \
-       s->port->add(GFXWC(s->port), GFXW(widget)); \
-  else \
-       s->picture_port->add(GFXWC(s->visual), GFXW(widget));}
+	{if (s->port)				   \
+		s->port->add(GFXWC(s->port), GFXW(widget)); \
+	else \
+		s->picture_port->add(GFXWC(s->visual), GFXW(widget));}
 
 #define ADD_TO_CURRENT_PICTURE_PORT(widget) \
-  {if (s->port)				   \
-       s->port->add(GFXWC(s->port), GFXW(widget)); \
-  else \
-       s->picture_port->add(GFXWC(s->picture_port), GFXW(widget));}
+	{if (s->port)				   \
+		s->port->add(GFXWC(s->port), GFXW(widget)); \
+	else \
+		s->picture_port->add(GFXWC(s->picture_port), GFXW(widget));}
 
 #define ADD_TO_WINDOW_PORT(widget) \
-       s->wm_port->add(GFXWC(s->wm_port), GFXW(widget));
+	s->wm_port->add(GFXWC(s->wm_port), GFXW(widget));
 
 #define ADD_TO_CURRENT_FG_WIDGETS(widget) \
-  ADD_TO_CURRENT_PICTURE_PORT(widget)
+	ADD_TO_CURRENT_PICTURE_PORT(widget)
 
 #define ADD_TO_CURRENT_BG_WIDGETS(widget) \
-  ADD_TO_CURRENT_PICTURE_PORT(widget)
+	ADD_TO_CURRENT_PICTURE_PORT(widget)
 
 #define FULL_REDRAW()\
-  if (s->visual) \
-       s->visual->draw(GFXW(s->visual), gfxw_point_zero); \
-  gfxop_update(s->gfx_state);
+	if (s->visual) \
+		s->visual->draw(GFXW(s->visual), gfxw_point_zero); \
+	gfxop_update(s->gfx_state);
 
 #define FULL_INSPECTION()\
-  if (s->visual) \
-       s->visual->print(GFXW(s->visual), 0);
+	if (s->visual) \
+		s->visual->print(GFXW(s->visual), 0);
 
 
 #define GFX_ASSERT(x) { \
@@ -949,7 +949,7 @@ reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int cel = 0xffff;
 
 
-	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) { 
+	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		// OK, this is a hack and there's a
 		// real function to calculate cel numbers...
 		SCIkwarn(SCIkERROR, "view.%d (0x%x) not found\n", view, view);
@@ -1250,7 +1250,7 @@ static void _k_set_now_seen(EngineState *s, reg_t object) {
 	abs_rect_t absrect = get_nsrect(s, object, 0);
 
 	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != SELECTOR_VARIABLE) {
-		return; 
+		return;
 	} // This isn't fatal
 
 	PUT_SEL32V(object, nsLeft, absrect.x);
@@ -1463,7 +1463,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 						cursor = textlen;
 						break;
 					case SCI_K_RIGHT:
-						if (cursor + 1 <= textlen) 
+						if (cursor + 1 <= textlen)
 							++cursor;
 						break;
 					case SCI_K_LEFT:
@@ -1663,7 +1663,7 @@ static void draw_rect_to_control_map(EngineState *s, abs_rect_t abs_zone) {
 
 	SCIkdebug(SCIkGRAPHICS, "    adding control block (%d,%d)to(%d,%d)\n", abs_zone.x, abs_zone.y, abs_zone.xend, abs_zone.yend);
 
-	box = gfxw_new_box(s->gfx_state, gfx_rect(abs_zone.x, abs_zone.y, abs_zone.xend - abs_zone.x, 
+	box = gfxw_new_box(s->gfx_state, gfx_rect(abs_zone.x, abs_zone.y, abs_zone.xend - abs_zone.x,
 						abs_zone.yend - abs_zone.y), color, color, GFX_BOX_SHADE_FLAT);
 
 	assert_primary_widget_lists(s);
@@ -1725,7 +1725,7 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 #endif
 			}
 #ifdef DEBUG_LSRECT
-			else 
+			else
 				fprintf(stderr, "Not lsRecting "PREG" because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
 #endif
 
@@ -2501,7 +2501,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	lWhite.alpha = 0;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr, fgcolor, bgcolor,
-							s->titlebar_port->font_nr, lWhite, black, argv[4 + argextra].segment ? 
+							s->titlebar_port->font_nr, lWhite, black, argv[4 + argextra].segment ?
 							kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL, flags);
 
 	// PQ3 has the interpreter store underBits implicitly.
@@ -2548,10 +2548,10 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define K_ANIMATE_OPEN_SIMPLE 100 // No animation
 
 #define GRAPH_BLANK_BOX(s, x, y, xl, yl, color) GFX_ASSERT(gfxop_fill_box(s->gfx_state, \
-             gfx_rect(x, (((y) < 10)? 10 : (y)), xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), s->ega_colors[color]));
+	gfx_rect(x, (((y) < 10)? 10 : (y)), xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), s->ega_colors[color]));
 
 #define GRAPH_UPDATE_BOX(s, x, y, xl, yl) GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, \
-             gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) )));
+	gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) )));
 
 static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i, remaining_checkers;

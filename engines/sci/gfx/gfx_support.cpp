@@ -229,31 +229,31 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
 namespace Sci {
 
 static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int) = { NULL,
-        _gfx_crossblit_8,
-        _gfx_crossblit_16,
-        _gfx_crossblit_24,
-        _gfx_crossblit_32
+	_gfx_crossblit_8,
+	_gfx_crossblit_16,
+	_gfx_crossblit_24,
+	_gfx_crossblit_32
 };
 
 static void (*crossblit_fns_P[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-        _gfx_crossblit_8_P,
-        _gfx_crossblit_16_P,
-        _gfx_crossblit_24_P,
-        _gfx_crossblit_32_P
+	_gfx_crossblit_8_P,
+	_gfx_crossblit_16_P,
+	_gfx_crossblit_24_P,
+	_gfx_crossblit_32_P
 };
 
 static void (*crossblit_fns_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int) = { NULL,
-        _gfx_crossblit_8_RA,
-        _gfx_crossblit_16_RA,
-        _gfx_crossblit_24_RA,
-        _gfx_crossblit_32_RA
+	_gfx_crossblit_8_RA,
+	_gfx_crossblit_16_RA,
+	_gfx_crossblit_24_RA,
+	_gfx_crossblit_32_RA
 };
 
 static void (*crossblit_fns_P_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-        _gfx_crossblit_8_P_RA,
-        _gfx_crossblit_16_P_RA,
-        _gfx_crossblit_24_P_RA,
-        _gfx_crossblit_32_P_RA
+	_gfx_crossblit_8_P_RA,
+	_gfx_crossblit_16_P_RA,
+	_gfx_crossblit_24_P_RA,
+	_gfx_crossblit_32_P_RA
 };
 
 void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp) {

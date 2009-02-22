@@ -81,20 +81,20 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 }
 
 #define FREEALL(freecmd, type) \
-		if (resource->scaled_data.type) \
-			freecmd(driver, resource->scaled_data.type); \
-                resource->scaled_data.type = NULL; \
-		if (resource->unscaled_data.type) \
-			freecmd(driver, resource->unscaled_data.type); \
-                resource->unscaled_data.type = NULL;
+	if (resource->scaled_data.type) \
+		freecmd(driver, resource->scaled_data.type); \
+	resource->scaled_data.type = NULL; \
+	if (resource->unscaled_data.type) \
+		freecmd(driver, resource->unscaled_data.type); \
+	resource->unscaled_data.type = NULL;
 
 #define FREEALL_SIMPLE(freecmd, type) \
-		if (resource->scaled_data.type) \
-			freecmd(resource->scaled_data.type); \
-                resource->scaled_data.type = NULL; \
-		if (resource->unscaled_data.type) \
-			freecmd(resource->unscaled_data.type); \
-                resource->unscaled_data.type = NULL;
+	if (resource->scaled_data.type) \
+		freecmd(resource->scaled_data.type); \
+	resource->scaled_data.type = NULL; \
+	if (resource->unscaled_data.type) \
+		freecmd(resource->unscaled_data.type); \
+	resource->unscaled_data.type = NULL;
 
 void gfxr_free_resource(gfx_driver_t *driver, gfx_resource_t *resource, int type) {
 	if (!resource)
@@ -227,13 +227,13 @@ void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state) {
 	if (maps & key) { \
 		if (res->unscaled_data.pic&& (force || !res->unscaled_data.pic->entry->data)) { \
 				if (key == GFX_MASK_VISUAL) \
-			        	gfx_get_res_config(options, res->unscaled_data.pic->entry); \
+					gfx_get_res_config(options, res->unscaled_data.pic->entry); \
 			        gfx_xlate_pixmap(res->unscaled_data.pic->entry, mode, filter); \
 		} if (scaled && res->scaled_data.pic && (force || !res->scaled_data.pic->entry->data)) { \
 				if (key == GFX_MASK_VISUAL) \
-			        	gfx_get_res_config(options, res->scaled_data.pic->entry); \
-			        gfx_xlate_pixmap(res->scaled_data.pic->entry, mode, filter); \
-                } \
+					gfx_get_res_config(options, res->scaled_data.pic->entry); \
+				gfx_xlate_pixmap(res->scaled_data.pic->entry, mode, filter); \
+		} \
 	}
 
 static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scaled, int force, gfx_mode_t *mode,

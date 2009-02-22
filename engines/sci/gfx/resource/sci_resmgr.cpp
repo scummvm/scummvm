@@ -69,7 +69,7 @@ void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 }
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
-                               int flags, int default_palette, int nr, void *internal) {
+	int flags, int default_palette, int nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
 	resource_t *res = scir_find_resource(resmgr, sci_pic, nr, 0);
 	int need_unscaled = unscaled_pic != NULL;

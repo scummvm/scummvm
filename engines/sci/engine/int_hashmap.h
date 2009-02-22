@@ -50,7 +50,7 @@ struct int_hash_map_t {
 		node_t *next;
 	};
 
-	int base_value;  // Starts at zero, counts upwards 
+	int base_value;  // Starts at zero, counts upwards
 	node_t *nodes[DCS_INT_HASH_MAX + 1];
 	node_t *holes; /* List of freed entries to minimize
 				     ** memory operations and modifications
@@ -61,7 +61,7 @@ struct int_hash_map_t {
 public:
 	int_hash_map_t();
 	~int_hash_map_t();
-	
+
 	/**
 	 * Checks whether a value is in the map, adds it if neccessary.
 	 * @param value		The value to check for/add

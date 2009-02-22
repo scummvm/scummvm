@@ -88,7 +88,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 			bytectr++;
 		}
 
-		if (token == 0x101) 
+		if (token == 0x101)
 			return 0; // terminator
 		if (token == 0x100) { // reset command
 			maxtoken = 0x200;

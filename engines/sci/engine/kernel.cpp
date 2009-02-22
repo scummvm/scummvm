@@ -557,7 +557,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, retval);
 }
 
-#define K_MEMORY_ALLOCATE_CRITICAL 		1
+#define K_MEMORY_ALLOCATE_CRITICAL		1
 #define K_MEMORY_ALLOCATE_NONCRITICAL   2
 #define K_MEMORY_FREE			3
 #define	K_MEMORY_MEMCPY			4

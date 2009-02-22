@@ -45,7 +45,7 @@ static int sps_set_option(sfx_softseq_t *self, const char *name, const char *val
 }
 
 static int sps_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
-         int patch2_len) {
+	int patch2_len) {
 	return SFX_OK;
 }
 

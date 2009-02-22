@@ -233,7 +233,7 @@ static void _scir_load_resource(ResourceManager *mgr, resource_t *res, bool prot
 
 		// Get patch file name
 		patch_sprintfers[mgr->sci_version](filename, res);
-		
+
 		// FIXME: Instead of using SearchMan, maybe we should only search
 		// a single dir specified by this RESSOURCE_TYPE_DIRECTORY ResourceSource?
 	} else

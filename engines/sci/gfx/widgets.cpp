@@ -182,7 +182,7 @@ static inline int verify_widget(gfxw_widget_t *widget) {
 }
 
 #define VERIFY_WIDGET(w) \
-  if (verify_widget((gfxw_widget_t *)(w))) { GFXERROR("Error occured while validating widget\n"); }
+	if (verify_widget((gfxw_widget_t *)(w))) { GFXERROR("Error occured while validating widget\n"); }
 
 static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 	if (GFXW_IS_TEXT(widget)) {
@@ -205,15 +205,15 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 }
 
 #define GFX_ASSERT(_x) \
-  { \
-	  int retval = (_x); \
-	  if (retval == GFX_ERROR) { \
-		  GFXERROR("Error occured while drawing widget!\n"); \
-		  return 1; \
-	  } else if (retval == GFX_FATAL) { \
-		  error("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
-	  } \
-  }
+{ \
+	int retval = (_x); \
+	if (retval == GFX_ERROR) { \
+		GFXERROR("Error occured while drawing widget!\n"); \
+		return 1; \
+	} else if (retval == GFX_FATAL) { \
+		error("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
+	} \
+}
 
 //********** Widgets *************
 
@@ -281,7 +281,7 @@ static int _gfxwop_basic_should_replace(gfxw_widget_t *widget, gfxw_widget_t *ot
 }
 
 static inline void _gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag, gfxw_op_int *print,
-              gfxw_bin_op *compare_to, gfxw_bin_op *equals, gfxw_bin_op *superarea_of) {
+	gfxw_bin_op *compare_to, gfxw_bin_op *equals, gfxw_bin_op *superarea_of) {
 	widget->draw = draw;
 	widget->widfree = free;
 	widget->tag = tag;
@@ -699,7 +699,7 @@ void _gfxw_set_ops_VIEW(gfxw_widget_t *view, char stat) {
 }
 
 gfxw_view_t *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
-              gfx_alignment_t halign, gfx_alignment_t valign, int flags) {
+	gfx_alignment_t halign, gfx_alignment_t valign, int flags) {
 	gfxw_view_t *view;
 
 	if (flags & GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET) {
@@ -841,7 +841,7 @@ void _gfxw_set_ops_PICVIEW(gfxw_widget_t *widget) {
 }
 
 gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
-                  gfx_alignment_t halign, gfx_alignment_t valign, int sequence) {
+	gfx_alignment_t halign, gfx_alignment_t valign, int sequence) {
 	gfxw_dyn_view_t *widget;
 	int width, height;
 	int xalignmod, yalignmod;
@@ -992,7 +992,7 @@ void _gfxw_set_ops_TEXT(gfxw_widget_t *widget) {
 }
 
 gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
-              gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags) {
+	gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags) {
 	gfxw_text_t *widget = (gfxw_text_t *)_gfxw_new_widget(sizeof(gfxw_text_t), GFXW_TEXT);
 
 	widget->widget_priority = _gfxw_color_get_priority(color1);
@@ -1047,10 +1047,10 @@ static int _gfxwop_container_add_dirty_rel(gfxw_container_t *cont, rect_t rect, 
 }
 
 static inline void _gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag,
-                        gfxw_op_int *print, gfxw_bin_op *compare_to, gfxw_bin_op *equals,
-                        gfxw_bin_op *superarea_of, gfxw_visual_op *set_visual,
-                        gfxw_unary_container_op *free_tagged, gfxw_unary_container_op *free_contents,
-                        gfxw_rect_op *add_dirty, gfxw_container_op *add) {
+	gfxw_op_int *print, gfxw_bin_op *compare_to, gfxw_bin_op *equals,
+	gfxw_bin_op *superarea_of, gfxw_visual_op *set_visual,
+	gfxw_unary_container_op *free_tagged, gfxw_unary_container_op *free_contents,
+	gfxw_rect_op *add_dirty, gfxw_container_op *add) {
 	_gfxw_set_ops(GFXW(container), draw, free, tag, print, compare_to, equals, superarea_of);
 
 	container->free_tagged = free_tagged;

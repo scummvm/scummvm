@@ -201,9 +201,7 @@ gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *font, gfx_mode_t *mode, gf
 */
 
 text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
-                         int *width, int *height,
-                         int *lines, int *line_height, int *last_offset,
-                         int flags);
+	int *width, int *height, int *lines, int *line_height, int *last_offset, int flags);
 /* Calculates the size that would be occupied by drawing a specified text
 ** Parameters: (gfx_bitmap_font_t *) font: The font to calculate with
 **             (int) max_width: Maximum pixel width allowed for the output
@@ -221,7 +219,7 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 */
 
 gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
-               gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg);
+	gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg);
 /* Draws text in a specific font to a pixmap
 ** Parameters: (gfx_bitmap_font_t *) font: The font to use for drawing
 **             (char *) text: The start of the text to draw
@@ -254,8 +252,8 @@ void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size);
 
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
-                int size, byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
-                gfx_pixmap_color_t *static_pal, int static_pal_nr);
+	int size, byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
+	gfx_pixmap_color_t *static_pal, int static_pal_nr);
 /* Draws a pic resource (all formats prior to SCI1.1)
 ** Parameters: (gfxr_pic_t *) pic: The pic to draw to
 **             (int) fill_normally: If 1, the pic is drawn normally; if 0, all
@@ -275,8 +273,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
 */
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
-                int size, byte *resource, gfxr_pic0_params_t *style, int resid,
-                gfx_pixmap_color_t *static_pal, int static_pal_nr);
+	int size, byte *resource, gfxr_pic0_params_t *style, int resid,
+	gfx_pixmap_color_t *static_pal, int static_pal_nr);
 /* Draws a pic resource (SCI1.1)
 ** Parameters: (gfxr_pic_t *) pic: The pic to draw to
 **             (int) fill_normally: If 1, the pic is drawn normally; if 0, all
@@ -376,7 +374,7 @@ gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int 
 */
 
 gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
-                int static_pal_nr);
+	int static_pal_nr);
 /* Calculates an SCI1 view
 ** Parameters: (int) id: Resource ID of the view
 **             (byte *) resource: Pointer to the resource to read

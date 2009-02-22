@@ -56,7 +56,7 @@ static int pcmout_scummvm_init(sfx_pcm_device_t *self) {
 }
 
 static int pcmout_scummvm_output(sfx_pcm_device_t *self, byte *buf, int count,
-                                 sfx_timestamp_t *timestamp) {
+	sfx_timestamp_t *timestamp) {
 
 	byte *__buf = new byte[count * pcmout_scummvm_framesize];
 

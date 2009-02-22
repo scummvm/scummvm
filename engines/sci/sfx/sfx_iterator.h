@@ -109,7 +109,7 @@ struct song_iterator_message_t {
 #define INHERITS_SONG_ITERATOR \
 	songit_id_t ID;										  \
 	uint16 channel_mask;									  \
-        fade_params_t fade;                                                                       \
+	fade_params_t fade;                                                                       \
 	unsigned int flags;									  \
 	int priority;                                                                             \
 	int (*next) (song_iterator_t *self, unsigned char *buf, int *buf_size);			  \
@@ -117,10 +117,10 @@ struct song_iterator_message_t {
 	song_iterator_t * (* handle_message)(song_iterator_t *self, song_iterator_message_t msg); \
 	void (*init) (song_iterator_t *self);						  \
 	void (*cleanup) (song_iterator_t *self);						  \
-        int (*get_timepos) (song_iterator_t *self);                                         \
+	int (*get_timepos) (song_iterator_t *self);                                         \
 	listener_t death_listeners[SONGIT_MAX_LISTENERS];					  \
 	int death_listeners_nr									  \
- 
+
 #define SONGIT_MAX_LISTENERS 2
 
 struct song_iterator_t {
@@ -208,8 +208,7 @@ struct song_iterator_t {
 ** in the song-player thread. */
 
 void song_iterator_add_death_listener(song_iterator_t *it,
-                                 void *client,
-                                 void (*notify)(void *self, void *notifier));
+	void *client, void (*notify)(void *self, void *notifier));
 /* Adds a death listener to a song iterator
 ** Parameters: (song_iterator_t *) it: The iterator to add to
 **             (void *) client: The object wanting to be notified
@@ -220,8 +219,7 @@ void song_iterator_add_death_listener(song_iterator_t *it,
 ** Death listeners are NOT cloned.
 */
 
-void song_iterator_remove_death_listener(song_iterator_t *it,
-                                    void *client);
+void song_iterator_remove_death_listener(song_iterator_t *it, void *client);
 /* Removes a death listener from a song iterator
 ** Parameters: (song_iterator_t *) it: The iterator to modify
 **             (void *) client: The object no longer wanting to be notified
@@ -298,7 +296,7 @@ void songit_free(song_iterator_t *it);
 */
 
 song_iterator_message_t songit_make_message(songit_id_t id,
-                    int recipient_class, int type, int a1, int a2);
+	int recipient_class, int type, int a1, int a2);
 /* Create a song iterator message
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
 **             (int) recipient_class: Message recipient class
@@ -308,7 +306,7 @@ song_iterator_message_t songit_make_message(songit_id_t id,
 */
 
 song_iterator_message_t songit_make_ptr_message(songit_id_t id,
-                        int recipient_class, int type, void * a1, int a2);
+	int recipient_class, int type, void * a1, int a2);
 /* Create a song iterator message, wherein the first parameter is a pointer
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
 **             (int) recipient_class: Message recipient class

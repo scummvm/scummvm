@@ -78,7 +78,7 @@ char inputbuf[256] = "";
 
 #define LOOKUP_SPECIES(species) (\
 	(species >= 1000) ? species : *(s->classtable[species].scriptposp) \
-                                + s->classtable[species].class_offset)
+		+ s->classtable[species].class_offset)
 
 const char *_debug_get_input_default() {
 	char newinpbuf[256];
@@ -2784,9 +2784,9 @@ int c_sci_version(EngineState *s) {
 }
 
 // int c_sleep(EngineState *s) {
-// 	sleep(cmd_params[0].val);
-// 
-// 	return 0;
+//	sleep(cmd_params[0].val);
+//
+//	return 0;
 // }
 
 static void _print_address(void * _, reg_t addr) {
@@ -2860,7 +2860,7 @@ static int c_gc_list_reachable(EngineState *s) {
 }
 
 void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
-             seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
+	seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
@@ -2936,7 +2936,7 @@ void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, r
 
 			}
 
-			_debug_seeking = _DEBUG_SEEK_NOTHING; 
+			_debug_seeking = _DEBUG_SEEK_NOTHING;
 			// OK, found whatever we were looking for
 		}
 	}
@@ -3166,8 +3166,8 @@ void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, r
 			                 "  sfx-01-track <song> <offset>\n\n"
 			                 "SEE ALSO\n\n"
 			                 "  sfx-01-header.1\n\n");
-// 			con_hook_command(c_sleep, "sleep", "i", "Suspends everything for the\n"
-// 			                 " specified number of seconds");
+//			con_hook_command(c_sleep, "sleep", "i", "Suspends everything for the\n"
+//			                 " specified number of seconds");
 			con_hook_command(c_gc_show_reachable, "gc-list-reachable", "!a",
 			                 "Prints all addresses directly reachable from\n"
 			                 "  the memory object specified as parameter.\n\n"

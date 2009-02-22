@@ -160,7 +160,7 @@ struct resource_t {
 	resource_t *prev;
 
 	resource_altsource_t *alt_sources; /* SLL of alternative resource data sources */
-}; 
+};
 
 
 struct ResourceManager {
@@ -206,7 +206,7 @@ ResourceSource *scir_add_patch_dir(ResourceManager *mgr, const char *path);
 ResourceSource *scir_get_volume(ResourceManager *mgr, ResourceSource *map, int volume_nr);
 
 ResourceSource *scir_add_volume(ResourceManager *mgr, ResourceSource *map, const char *filename,
-                int number, int extended_addressing);
+	int number, int extended_addressing);
 /* Add a volume to the resource manager's list of sources.
 ** Parameters: (ResourceManager *) mgr: The resource manager to look up in
 **             (ResourceSource *) map: The map associated with this volume
@@ -280,7 +280,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 */
 
 int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
-                       resource_t **resource_p, int *resource_nr_p, int *sci_version);
+	resource_t **resource_p, int *resource_nr_p, int *sci_version);
 /* Reads the SCI1 resource.map file from a local directory
 ** Parameters: (char *) path: (unused)
 **             (resource_t **) resources: Pointer to a pointer

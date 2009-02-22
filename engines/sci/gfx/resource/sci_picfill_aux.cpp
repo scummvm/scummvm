@@ -40,7 +40,7 @@ namespace Sci {
 #define CLIPMASK_HARD_BOUND 0x80 /* ensures that we don't re-fill filled stuff */
 
 static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy,
-                   int clipmask, int control, int sci_titlebar_size) {
+	int clipmask, int control, int sci_titlebar_size) {
 	int xl, xr;
 	int oldytotal = y * 320;
 #ifdef DRAW_SCALED
@@ -72,7 +72,7 @@ static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, i
 
 		if ((ytotal + xl) < 0) {
 			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT(); 
+			BREAKPOINT();
 		}
 
 		xr = xl;

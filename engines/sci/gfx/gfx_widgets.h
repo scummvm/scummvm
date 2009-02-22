@@ -277,7 +277,7 @@ gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_colo
 #define GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET (1 << 1)
 
 gfxw_view_t *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
-              gfx_alignment_t halign, gfx_alignment_t valign, int flags);
+	gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 /* Creates a new view (a cel, actually)
 ** Parameters: (gfx_state_t *) state: The graphics state
 **             (Common::Point) pos: The position to place the view at
@@ -291,8 +291,7 @@ gfxw_view_t *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int 
 */
 
 gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
-                  int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign,
-                  int sequence);
+	int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 /* Creates a new dyn view
 ** Parameters: (gfx_state_t *) state: The graphics state
 **             (Common::Point) pos: The position to place the dynamic view at
@@ -310,8 +309,8 @@ gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z,
 */
 
 gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
-              gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
-              gfx_color_t bgcolor, int flags);
+	gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
+	gfx_color_t bgcolor, int flags);
 /* Creates a new text widget
 ** Parameters: (gfx_state_t *) state: The state the text is to be calculated from
 **             (rect_t) area: The area the text is to be confined to (the yl value is only
@@ -327,7 +326,7 @@ gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char
 */
 
 void gfxw_text_info(gfx_state_t *state, gfxw_text_t *text, int *lines_nr,
-               int *lineheight, int *offset);
+	int *lineheight, int *offset);
 /* Determines text widget meta-information
 ** Parameters: (gfx_state_t *) state: The state to operate on
 **             (gfx_text_t *) text: The widget to query
@@ -438,7 +437,7 @@ gfxw_port_t *gfxw_find_default_port(gfxw_visual_t *visual);
 void gfxw_port_set_auto_restore(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect);
 /* Sets rectangle to be restored upon port removal
 ** Parameters: (state_t *) s: The state to operate on
-               (gfxw_port_t *) window: The affected window
+**             (gfxw_port_t *) window: The affected window
 **             (rect_t) auto_rect: The area to restore
 ** Returns   : (void)
 */

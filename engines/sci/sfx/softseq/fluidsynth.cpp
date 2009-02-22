@@ -156,7 +156,7 @@ fluidsynth_poll(sfx_softseq_t *self, byte *dest, int count) {
 
 static int
 fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
-                byte *data2_ptr, int data2_length) {
+	byte *data2_ptr, int data2_length) {
 	int sfont_id;
 	double min, max;
 

@@ -177,7 +177,7 @@ GTimeVal song_next_wakeup_time(GTimeVal *lastslept, long ticks);
 */
 
 void song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle,
-                              RESTORE_BEHAVIOR action);
+	RESTORE_BEHAVIOR action);
 /* Determines what should be done with the song "handle" when
 ** restoring it from a saved game.
 ** Parameters: (songlib_t) songlib: The library that contains the song

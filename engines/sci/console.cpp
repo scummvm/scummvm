@@ -47,7 +47,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 	DebugPrintf("Resource file version:        %s\n", sci_version_types[_vm->getResMgr()->sci_version]);
 
-	DebugPrintf("Emulated interpreter version: %d.%03d.%03d\n", 
+	DebugPrintf("Emulated interpreter version: %d.%03d.%03d\n",
 		SCI_VERSION_MAJOR(ver), SCI_VERSION_MINOR(ver), SCI_VERSION_PATCHLEVEL(ver));
 
 	return true;

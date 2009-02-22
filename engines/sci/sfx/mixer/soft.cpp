@@ -434,16 +434,16 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 	if (P->delta_observations > MAX_DELTA_OBSERVATIONS)
 		P->delta_observations = MAX_DELTA_OBSERVATIONS;
 
-	/* 	/\* Disabled, broken *\/ */
-	/* 	if (0 && P->delta_observations > MIN_DELTA_OBSERVATIONS) { /\* Start improving after a while *\/ */
-	/* 		int diff = self->dev->conf.rate - P->max_delta; */
+	/*	/\* Disabled, broken *\/ */
+	/*	if (0 && P->delta_observations > MIN_DELTA_OBSERVATIONS) { /\* Start improving after a while *\/ */
+	/*		int diff = self->dev->conf.rate - P->max_delta; */
 
-	/* 		/\* log-approximate P->max_delta over time *\/ */
-	/* 		recommended_frames = P->max_delta + */
-	/* 			((diff * MIN_DELTA_OBSERVATIONS) / P->delta_observations); */
+	/*		/\* log-approximate P->max_delta over time *\/ */
+	/*		recommended_frames = P->max_delta + */
+	/*			((diff * MIN_DELTA_OBSERVATIONS) / P->delta_observations); */
 	/* /\* WTF? *\/ */
-	/* 	} else */
-	/* 		recommended_frames = self->dev->buf_size; /\* Initially, keep the buffer full *\/ */
+	/*	} else */
+	/*		recommended_frames = self->dev->buf_size; /\* Initially, keep the buffer full *\/ */
 
 #if (DEBUG >= 1)
 	sciprintf("[soft-mixer] played since last time: %d, recommended: %d, free: %d\n",

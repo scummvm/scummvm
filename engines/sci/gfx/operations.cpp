@@ -36,7 +36,7 @@ namespace Sci {
 
 #define PRECISE_PRIORITY_MAP // Duplicate all operations on the local priority map as appropriate
 
-#undef GFXW_DEBUG_DIRTY 
+#undef GFXW_DEBUG_DIRTY
 // Enable to debug stuff relevant for dirty rectsin widget management
 
 #ifdef GFXW_DEBUG_DIRTY
@@ -251,7 +251,7 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 }
 
 static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int priority, int control,
-                   rect_t src, rect_t dest, rect_t clip, int static_buf, gfx_pixmap_t *control_map, gfx_pixmap_t *priority_map) {
+	rect_t src, rect_t dest, rect_t clip, int static_buf, gfx_pixmap_t *control_map, gfx_pixmap_t *priority_map) {
 	int error;
 	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.xl, dest.yl);
 
@@ -577,7 +577,7 @@ int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, void *misc_in
 }
 
 int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
-           gfx_options_t *options, void *misc_info) {
+	gfx_options_t *options, void *misc_info) {
 	int color_depth = bpp ? bpp : 1;
 	int initialized = 0;
 
@@ -974,7 +974,7 @@ static int simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, Common
 }
 
 static int _gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode,
-                         gfx_line_style_t line_style) {
+	gfx_line_style_t line_style) {
 	int retval;
 	int skipone = (start.x ^ end.y) & 1; // Used for simulated line stippling
 
@@ -1013,7 +1013,7 @@ static int _gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Com
 }
 
 int gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
-                gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
+	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	int xfact, yfact;
 
 	BASIC_CHECKS(GFX_FATAL);
@@ -1077,7 +1077,7 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 	lower_left = Common::Point(x, y + yl);
 	lower_right = Common::Point(x + xl, y + yl);
 
-#define PARTIAL_LINE(pt1, pt2)	 								\
+#define PARTIAL_LINE(pt1, pt2)									\
 	retval |= _gfxop_draw_line_clipped(state, pt1, pt2, color, line_mode, line_style);	\
 	draw_line_to_control_map(state, pt1##_u, pt2##_u, color);				\
 	_gfxop_add_dirty_x(state, gfx_rect(pt1##_u.x, pt1##_u.y, pt2##_u.x - pt1##_u.x, pt2##_u.y - pt1##_u.y))
@@ -1222,7 +1222,7 @@ static int _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffe
 	return GFX_OK;
 }
 
-extern int sci0_palette; 
+extern int sci0_palette;
 
 int gfxop_clear_box(gfx_state_t *state, rect_t box) {
 	BASIC_CHECKS(GFX_FATAL);
@@ -1932,18 +1932,18 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text, int
 }
 
 #define COL_XLATE(des,src) \
-  des = src.visual; /* The new gfx_color_t structure makes things a lot easier :-) */ /* \
-  if (gfxop_set_color(state, &src, \
-		      src.visual.r, \
-		      src.visual.g, \
-		      src.visual.b, \
-		      src.alpha, \
-		      src.priority, \
-		      src.control)) \
-  { \
-	  GFXERROR("Unable to set up colors"); \
-	  return NULL; \
-  }
+	des = src.visual; /* The new gfx_color_t structure makes things a lot easier :-) */ /* \
+	if (gfxop_set_color(state, &src, \
+		src.visual.r, \
+		src.visual.g, \
+		src.visual.b, \
+		src.alpha, \
+		src.priority, \
+		src.control)) \
+	{ \
+	GFXERROR("Unable to set up colors"); \
+	return NULL; \
+	}
 */
 
 gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, int maxwidth, gfx_alignment_t halign,

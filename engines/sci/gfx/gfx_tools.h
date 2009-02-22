@@ -47,12 +47,12 @@ typedef enum {
 
 
 extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this value as threshold
-		 			  ** for distinguishing between transparent and opaque
+					  ** for distinguishing between transparent and opaque
 					  ** wrt alpha values */
 
 gfx_mode_t *gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
-             unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
-             int blue_shift, int alpha_shift, int palette, int flags);
+	unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
+	int blue_shift, int alpha_shift, int palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters
 ** Parameters: (int x int) xfact x yfact: Horizontal and vertical scaling factors
 **             (int) bytespp: Bytes per pixel
@@ -150,7 +150,7 @@ void gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Poin
 */
 
 void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
-                     Common::Point start, Common::Point end, unsigned int color);
+	Common::Point start, Common::Point end, unsigned int color);
 /* Draws a line to a linear pixel buffer
 ** Parameters: (byte *) buffer: Pointer to the start of the buffer to draw to
 **             (int) linewidth: Number of bytes per pixel line in the buffer
@@ -202,10 +202,8 @@ void gfxr_antialiase(gfx_pixmap_t *pixmap, gfx_mode_t *mode, gfxr_antialiasing_t
 ** point corresponding to (dest.x, dest.y) */
 
 int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
-                     rect_t src_coords, rect_t dest_coords, byte *dest,
-                     int dest_line_width, byte *priority_dest,
-                     int priority_line_width, int priority_skip,
-                     int flags);
+	rect_t src_coords, rect_t dest_coords, byte *dest, int dest_line_width,
+	byte *priority_dest, int priority_line_width, int priority_skip, int flags);
 /* Transfers the non-transparent part of a pixmap to a linear pixel buffer
 ** Parameters: (gfx_mode_t *) mode: The graphics mode of the target buffer
 **             (gfx_pixmap_t *) pxm: The pixmap to transfer

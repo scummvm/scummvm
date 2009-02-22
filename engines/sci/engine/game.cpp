@@ -415,7 +415,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 						s->classtable = (class_t*)sci_realloc(s->classtable, sizeof(class_t) * (classnr + 1));
 						// Clear after resize
-						memset(&(s->classtable[s->classtable_size]), 0, sizeof(class_t) * (1 + classnr - s->classtable_size)); 
+						memset(&(s->classtable[s->classtable_size]), 0, sizeof(class_t) * (1 + classnr - s->classtable_size));
 
 						s->classtable_size = classnr + 1; // Adjust maximum number of entries
 					}

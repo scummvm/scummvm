@@ -79,7 +79,7 @@ struct abs_rect_t {
 
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-  s, _object_,  s->selector_map._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
+	s, _object_,  s->selector_map._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */
@@ -88,7 +88,7 @@ struct abs_rect_t {
 reg_t read_selector(EngineState *s,  reg_t object, selector_t selector_id, const char *fname, int line);
 void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line);
 int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-                stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
+	stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
 
 /******************** Text functionality ********************/
@@ -111,15 +111,15 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 #ifdef SCI_KERNEL_DEBUG
 
 #define CHECK_THIS_KERNEL_FUNCTION if (s->debug_mode & (1 << SCIkFUNCCHK_NR)) {\
-  int i;\
-  sciprintf("Kernel CHECK: %s[%x](", s->kernel_names[funct_nr], funct_nr); \
-  for (i = 0; i < argc; i++) { \
-    sciprintf("%04x", 0xffff & UKPV(i)); \
-    if (i+1 < argc) sciprintf(", "); \
-  } \
-  sciprintf(")\n"); \
+	int i;\
+	sciprintf("Kernel CHECK: %s[%x](", s->kernel_names[funct_nr], funct_nr); \
+	for (i = 0; i < argc; i++) { \
+		sciprintf("%04x", 0xffff & UKPV(i)); \
+		if (i+1 < argc) sciprintf(", "); \
+	} \
+	sciprintf(")\n"); \
 } \
- 
+
 #else /* !SCI_KERNEL_DEBUG */
 
 #define CHECK_THIS_KERNEL_FUNCTION
@@ -200,13 +200,13 @@ int _find_view_priority(EngineState *s, int y);
 	+ ((((y) - s->priority_first) * 14) / (s->priority_last - s->priority_first))))
 
 #define SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr) ((((nr) == 0)? 0 :  \
-        ((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 14)))
+	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 14)))
 
 #define SCI0_VIEW_PRIORITY(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
 	+ ((((y) - s->priority_first) * 15) / (s->priority_last - s->priority_first))))
 
 #define SCI0_PRIORITY_BAND_FIRST(nr) ((((nr) == 0)? 0 :  \
-        ((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
+	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
 
 #define VIEW_PRIORITY(y) _find_view_priority(s, y)
 #define PRIORITY_BAND_FIRST(nr) _find_priority_band(s, nr)

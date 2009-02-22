@@ -52,7 +52,7 @@ namespace Sci {
 
 
 /** Palette color description */
-struct gfx_palette_color_t { 
+struct gfx_palette_color_t {
 
 	int lockers; /* Number of pixmaps holding a lock on that color.
 		     ** 0 means that the color is unused, -1 means that it is
