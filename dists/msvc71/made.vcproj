@@ -4,40 +4,18 @@
 	Version="7,10"
 	Name="made"
 	ProjectGUID="{E29B5D40-08F7-11DD-BD0B-0800200C9A66}"
-	#RootNamespace="made"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="made_Debug"
 			IntermediateDirectory="made_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,30 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/made.lib"
-			/>
+				OutputFile="$(OutDir)/made.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +67,7 @@
 			IntermediateDirectory="made_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,140 +88,109 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/made.lib"
-			/>
+				OutputFile="$(OutDir)/made.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\made\database.cpp"
-			>
+			RelativePath="..\..\engines\made\database.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\database.h"
-			>
+			RelativePath="..\..\engines\made\database.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\detection.cpp"
-			>
+			RelativePath="..\..\engines\made\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\graphics.cpp"
-			>
+			RelativePath="..\..\engines\made\graphics.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\graphics.h"
-			>
+			RelativePath="..\..\engines\made\graphics.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\made.cpp"
-			>
+			RelativePath="..\..\engines\made\made.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\made.h"
-			>
+			RelativePath="..\..\engines\made\made.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\music.cpp"
-			>
+			RelativePath="..\..\engines\made\music.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\music.h"
-			>
+			RelativePath="..\..\engines\made\music.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\pmvplayer.cpp"
-			>
+			RelativePath="..\..\engines\made\pmvplayer.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\pmvplayer.h"
-			>
+			RelativePath="..\..\engines\made\pmvplayer.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\redreader.cpp"
-			>
+			RelativePath="..\..\engines\made\redreader.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\redreader.h"
-			>
+			RelativePath="..\..\engines\made\redreader.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\resource.cpp"
-			>
+			RelativePath="..\..\engines\made\resource.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\resource.h"
-			>
+			RelativePath="..\..\engines\made\resource.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\screen.cpp"
-			>
+			RelativePath="..\..\engines\made\screen.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\screen.h"
-			>
+			RelativePath="..\..\engines\made\screen.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\screenfx.cpp"
-			>
+			RelativePath="..\..\engines\made\screenfx.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\screenfx.h"
-			>
+			RelativePath="..\..\engines\made\screenfx.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\script.cpp"
-			>
+			RelativePath="..\..\engines\made\script.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\script.h"
-			>
+			RelativePath="..\..\engines\made\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\scriptfuncs.cpp"
-			>
+			RelativePath="..\..\engines\made\scriptfuncs.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\scriptfuncs.h"
-			>
+			RelativePath="..\..\engines\made\scriptfuncs.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\sound.cpp"
-			>
+			RelativePath="..\..\engines\made\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\made\sound.h"
-			>
+			RelativePath="..\..\engines\made\sound.h">
 		</File>
 	</Files>
 	<Globals>

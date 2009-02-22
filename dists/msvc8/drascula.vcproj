@@ -6,7 +6,6 @@
 	ProjectGUID="{CF888EE2-239C-40D7-83F1-1CDD4F7D56E3}"
 	RootNamespace="drascula"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

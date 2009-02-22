@@ -6,7 +6,6 @@
 	ProjectGUID="{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
 	RootNamespace="scumm"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

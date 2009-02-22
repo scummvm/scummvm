@@ -4,40 +4,18 @@
 	Version="7,10"
 	Name="agos"
 	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
-	#RootNamespace="agos"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="agos_Debug"
 			IntermediateDirectory="agos_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,30 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agos.lib"
-			/>
+				OutputFile="$(OutDir)/agos.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +67,7 @@
 			IntermediateDirectory="agos_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,252 +88,193 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agos.lib"
-			/>
+				OutputFile="$(OutDir)/agos.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\agos\agos.cpp"
-			>
+			RelativePath="..\..\engines\agos\agos.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\agos.h"
-			>
+			RelativePath="..\..\engines\agos\agos.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\animation.cpp"
-			>
+			RelativePath="..\..\engines\agos\animation.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\animation.h"
-			>
+			RelativePath="..\..\engines\agos\animation.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\charset-fontdata.cpp"
-			>
+			RelativePath="..\..\engines\agos\charset-fontdata.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\charset.cpp"
-			>
+			RelativePath="..\..\engines\agos\charset.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\contain.cpp"
-			>
+			RelativePath="..\..\engines\agos\contain.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\cursor.cpp"
-			>
+			RelativePath="..\..\engines\agos\cursor.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debug.cpp"
-			>
+			RelativePath="..\..\engines\agos\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debug.h"
-			>
+			RelativePath="..\..\engines\agos\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debugger.cpp"
-			>
+			RelativePath="..\..\engines\agos\debugger.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\debugger.h"
-			>
+			RelativePath="..\..\engines\agos\debugger.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\detection.cpp"
-			>
+			RelativePath="..\..\engines\agos\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\detection_tables.h"
-			>
+			RelativePath="..\..\engines\agos\detection_tables.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\draw.cpp"
-			>
+			RelativePath="..\..\engines\agos\draw.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\event.cpp"
-			>
+			RelativePath="..\..\engines\agos\event.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\gfx.cpp"
-			>
+			RelativePath="..\..\engines\agos\gfx.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\icons.cpp"
-			>
+			RelativePath="..\..\engines\agos\icons.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\input.cpp"
-			>
+			RelativePath="..\..\engines\agos\input.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\intern.h"
-			>
+			RelativePath="..\..\engines\agos\intern.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\items.cpp"
-			>
+			RelativePath="..\..\engines\agos\items.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\menus.cpp"
-			>
+			RelativePath="..\..\engines\agos\menus.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midi.cpp"
-			>
+			RelativePath="..\..\engines\agos\midi.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midi.h"
-			>
+			RelativePath="..\..\engines\agos\midi.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\midiparser_s1d.cpp"
-			>
+			RelativePath="..\..\engines\agos\midiparser_s1d.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\oracle.cpp"
-			>
+			RelativePath="..\..\engines\agos\oracle.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res.cpp"
-			>
+			RelativePath="..\..\engines\agos\res.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res_ami.cpp"
-			>
+			RelativePath="..\..\engines\agos\res_ami.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\res_snd.cpp"
-			>
+			RelativePath="..\..\engines\agos\res_snd.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\rooms.cpp"
-			>
+			RelativePath="..\..\engines\agos\rooms.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\saveload.cpp"
-			>
+			RelativePath="..\..\engines\agos\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script.cpp"
-			>
+			RelativePath="..\..\engines\agos\script.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_e1.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_e1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_e2.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_e2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_ff.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_ff.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_pp.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_pp.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_s1.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_s1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_s2.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_s2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\script_ww.cpp"
-			>
+			RelativePath="..\..\engines\agos\script_ww.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\sound.cpp"
-			>
+			RelativePath="..\..\engines\agos\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\sound.h"
-			>
+			RelativePath="..\..\engines\agos\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\string.cpp"
-			>
+			RelativePath="..\..\engines\agos\string.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\subroutine.cpp"
-			>
+			RelativePath="..\..\engines\agos\subroutine.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\verb.cpp"
-			>
+			RelativePath="..\..\engines\agos\verb.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga.h"
-			>
+			RelativePath="..\..\engines\agos\vga.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_e2.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga_e2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_ff.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga_ff.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_s1.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga_s1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_s2.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga_s2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\vga_ww.cpp"
-			>
+			RelativePath="..\..\engines\agos\vga_ww.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\window.cpp"
-			>
+			RelativePath="..\..\engines\agos\window.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\zones.cpp"
-			>
+			RelativePath="..\..\engines\agos\zones.cpp">
 		</File>
 	</Files>
 	<Globals>

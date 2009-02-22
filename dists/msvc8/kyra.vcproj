@@ -6,7 +6,6 @@
 	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
 	RootNamespace="kyra"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -577,6 +576,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\timer_lok.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\timer_lol.cpp"
 			>
 		</File>
 		<File

@@ -4,40 +4,18 @@
 	Version="7,00"
 	Name="tucker"
 	ProjectGUID="{FF064FD0-AF6E-11DD-AD8B-0800200C9A66}"
-	#RootNamespace="tucker"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="tucker_Debug"
 			IntermediateDirectory="tucker_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,24 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/tucker.lib"
-			/>
+				OutputFile="$(OutDir)/tucker.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +61,7 @@
 			IntermediateDirectory="tucker_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,80 +82,56 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/tucker.lib"
-			/>
+				OutputFile="$(OutDir)/tucker.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\tucker\detection.cpp"
-			>
+			RelativePath="..\..\engines\tucker\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\graphics.cpp"
-			>
+			RelativePath="..\..\engines\tucker\graphics.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\graphics.h"
-			>
+			RelativePath="..\..\engines\tucker\graphics.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\locations.cpp"
-			>
+			RelativePath="..\..\engines\tucker\locations.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\resource.cpp"
-			>
+			RelativePath="..\..\engines\tucker\resource.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\saveload.cpp"
-			>
+			RelativePath="..\..\engines\tucker\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\sequences.cpp"
-			>
+			RelativePath="..\..\engines\tucker\sequences.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\staticres.cpp"
-			>
+			RelativePath="..\..\engines\tucker\staticres.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\tucker.cpp"
-			>
+			RelativePath="..\..\engines\tucker\tucker.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\tucker\tucker.h"
-			>
+			RelativePath="..\..\engines\tucker\tucker.h">
 		</File>
 	</Files>
 	<Globals>

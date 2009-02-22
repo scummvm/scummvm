@@ -4,40 +4,18 @@
 	Version="7,00"
 	Name="kyra"
 	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
-	#RootNamespace="kyra"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="kyra_Debug"
 			IntermediateDirectory="kyra_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,24 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/kyra.lib"
-			/>
+				OutputFile="$(OutDir)/kyra.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +61,7 @@
 			IntermediateDirectory="kyra_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,480 +82,359 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/kyra.lib"
-			/>
+				OutputFile="$(OutDir)/kyra.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\kyra\animator_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\animator_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\animator_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator_lok.h"
-			>
+			RelativePath="..\..\engines\kyra\animator_lok.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\animator_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\animator_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\debugger.cpp"
-			>
+			RelativePath="..\..\engines\kyra\debugger.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\debugger.h"
-			>
+			RelativePath="..\..\engines\kyra\debugger.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\detection.cpp"
-			>
+			RelativePath="..\..\engines\kyra\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui.h"
-			>
+			RelativePath="..\..\engines\kyra\gui.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_hof.h"
-			>
+			RelativePath="..\..\engines\kyra\gui_hof.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_lok.h"
-			>
+			RelativePath="..\..\engines\kyra\gui_lok.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_lol.h"
-			>
+			RelativePath="..\..\engines\kyra\gui_lol.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_mr.h"
-			>
+			RelativePath="..\..\engines\kyra\gui_mr.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\gui_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui_v2.h"
-			>
+			RelativePath="..\..\engines\kyra\gui_v2.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\items_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\items_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\items_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\items_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\items_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\kyra_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_hof.h"
-			>
+			RelativePath="..\..\engines\kyra\kyra_hof.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\kyra_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_lok.h"
-			>
+			RelativePath="..\..\engines\kyra\kyra_lok.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\kyra_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_mr.h"
-			>
+			RelativePath="..\..\engines\kyra\kyra_mr.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_v1.cpp"
-			>
+			RelativePath="..\..\engines\kyra\kyra_v1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_v1.h"
-			>
+			RelativePath="..\..\engines\kyra\kyra_v1.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\kyra_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra_v2.h"
-			>
+			RelativePath="..\..\engines\kyra\kyra_v2.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\lol.h"
-			>
+			RelativePath="..\..\engines\kyra\lol.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource.cpp"
-			>
+			RelativePath="..\..\engines\kyra\resource.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource.h"
-			>
+			RelativePath="..\..\engines\kyra\resource.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource_intern.cpp"
-			>
+			RelativePath="..\..\engines\kyra\resource_intern.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource_intern.h"
-			>
+			RelativePath="..\..\engines\kyra\resource_intern.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload.cpp"
-			>
+			RelativePath="..\..\engines\kyra\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\saveload_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\saveload_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\saveload_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_v1.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_v1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\scene_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen.h"
-			>
+			RelativePath="..\..\engines\kyra\screen.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_hof.h"
-			>
+			RelativePath="..\..\engines\kyra\screen_hof.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_lok.h"
-			>
+			RelativePath="..\..\engines\kyra\screen_lok.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_lol.h"
-			>
+			RelativePath="..\..\engines\kyra\screen_lol.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_mr.h"
-			>
+			RelativePath="..\..\engines\kyra\screen_mr.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\screen_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen_v2.h"
-			>
+			RelativePath="..\..\engines\kyra\screen_v2.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script.h"
-			>
+			RelativePath="..\..\engines\kyra\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_tim.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_tim.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_tim.h"
-			>
+			RelativePath="..\..\engines\kyra\script_tim.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_v1.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_v1.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\script_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\seqplayer.cpp"
-			>
+			RelativePath="..\..\engines\kyra\seqplayer.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\seqplayer.h"
-			>
+			RelativePath="..\..\engines\kyra\seqplayer.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sequences_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sequences_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sequences_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sequences_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_v2.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sequences_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound.h"
-			>
+			RelativePath="..\..\engines\kyra\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_adlib.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound_adlib.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_digital.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound_digital.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_midi.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound_midi.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_towns.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sound_towns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sprites.cpp"
-			>
+			RelativePath="..\..\engines\kyra\sprites.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sprites.h"
-			>
+			RelativePath="..\..\engines\kyra\sprites.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\staticres.cpp"
-			>
+			RelativePath="..\..\engines\kyra\staticres.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text.cpp"
-			>
+			RelativePath="..\..\engines\kyra\text.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text.h"
-			>
+			RelativePath="..\..\engines\kyra\text.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\text_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_hof.h"
-			>
+			RelativePath="..\..\engines\kyra\text_hof.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\text_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_lol.cpp"
-			>
+			RelativePath="..\..\engines\kyra\text_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_lol.h"
-			>
+			RelativePath="..\..\engines\kyra\text_lol.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\text_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text_mr.h"
-			>
+			RelativePath="..\..\engines\kyra\text_mr.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer.cpp"
-			>
+			RelativePath="..\..\engines\kyra\timer.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer.h"
-			>
+			RelativePath="..\..\engines\kyra\timer.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer_hof.cpp"
-			>
+			RelativePath="..\..\engines\kyra\timer_hof.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer_lok.cpp"
-			>
+			RelativePath="..\..\engines\kyra\timer_lok.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer_mr.cpp"
-			>
+			RelativePath="..\..\engines\kyra\timer_lol.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\util.cpp"
-			>
+			RelativePath="..\..\engines\kyra\timer_mr.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\util.h"
-			>
+			RelativePath="..\..\engines\kyra\util.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\vqa.cpp"
-			>
+			RelativePath="..\..\engines\kyra\util.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\vqa.h"
-			>
+			RelativePath="..\..\engines\kyra\vqa.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\wsamovie.cpp"
-			>
+			RelativePath="..\..\engines\kyra\vqa.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\wsamovie.h"
-			>
+			RelativePath="..\..\engines\kyra\wsamovie.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\wsamovie.h">
 		</File>
 	</Files>
 	<Globals>

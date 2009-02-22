@@ -4,40 +4,18 @@
 	Version="7,10"
 	Name="sky"
 	ProjectGUID="{B5527758-2F51-4CCD-AAE1-B0E28654BD6A}"
-	#RootNamespace="sky"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="sky_Debug"
 			IntermediateDirectory="sky_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,30 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sky.lib"
-			/>
+				OutputFile="$(OutDir)/sky.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +67,7 @@
 			IntermediateDirectory="sky_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,220 +88,169 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sky.lib"
-			/>
+				OutputFile="$(OutDir)/sky.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<Filter
-			Name="music"
-			>
+			Name="music">
 			<File
-				RelativePath="..\..\engines\sky\music\adlibchannel.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\adlibchannel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\adlibchannel.h"
-				>
+				RelativePath="..\..\engines\sky\music\adlibchannel.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\adlibmusic.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\adlibmusic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\adlibmusic.h"
-				>
+				RelativePath="..\..\engines\sky\music\adlibmusic.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\gmchannel.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\gmchannel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\gmchannel.h"
-				>
+				RelativePath="..\..\engines\sky\music\gmchannel.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\gmmusic.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\gmmusic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\gmmusic.h"
-				>
+				RelativePath="..\..\engines\sky\music\gmmusic.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\mt32music.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\mt32music.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\mt32music.h"
-				>
+				RelativePath="..\..\engines\sky\music\mt32music.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\musicbase.cpp"
-				>
+				RelativePath="..\..\engines\sky\music\musicbase.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sky\music\musicbase.h"
-				>
+				RelativePath="..\..\engines\sky\music\musicbase.h">
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\engines\sky\autoroute.cpp"
-			>
+			RelativePath="..\..\engines\sky\autoroute.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\autoroute.h"
-			>
+			RelativePath="..\..\engines\sky\autoroute.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\compact.cpp"
-			>
+			RelativePath="..\..\engines\sky\compact.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\compact.h"
-			>
+			RelativePath="..\..\engines\sky\compact.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\control.cpp"
-			>
+			RelativePath="..\..\engines\sky\control.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\control.h"
-			>
+			RelativePath="..\..\engines\sky\control.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\debug.cpp"
-			>
+			RelativePath="..\..\engines\sky\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\debug.h"
-			>
+			RelativePath="..\..\engines\sky\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\detection.cpp"
-			>
+			RelativePath="..\..\engines\sky\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\disk.cpp"
-			>
+			RelativePath="..\..\engines\sky\disk.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\disk.h"
-			>
+			RelativePath="..\..\engines\sky\disk.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\grid.cpp"
-			>
+			RelativePath="..\..\engines\sky\grid.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\grid.h"
-			>
+			RelativePath="..\..\engines\sky\grid.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\hufftext.cpp"
-			>
+			RelativePath="..\..\engines\sky\hufftext.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\intro.cpp"
-			>
+			RelativePath="..\..\engines\sky\intro.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\intro.h"
-			>
+			RelativePath="..\..\engines\sky\intro.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\logic.cpp"
-			>
+			RelativePath="..\..\engines\sky\logic.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\logic.h"
-			>
+			RelativePath="..\..\engines\sky\logic.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\mouse.cpp"
-			>
+			RelativePath="..\..\engines\sky\mouse.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\mouse.h"
-			>
+			RelativePath="..\..\engines\sky\mouse.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\rnc_deco.cpp"
-			>
+			RelativePath="..\..\engines\sky\rnc_deco.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\rnc_deco.h"
-			>
+			RelativePath="..\..\engines\sky\rnc_deco.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\screen.cpp"
-			>
+			RelativePath="..\..\engines\sky\screen.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\screen.h"
-			>
+			RelativePath="..\..\engines\sky\screen.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sky.cpp"
-			>
+			RelativePath="..\..\engines\sky\sky.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sky.h"
-			>
+			RelativePath="..\..\engines\sky\sky.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\skydefs.h"
-			>
+			RelativePath="..\..\engines\sky\skydefs.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sound.cpp"
-			>
+			RelativePath="..\..\engines\sky\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sound.h"
-			>
+			RelativePath="..\..\engines\sky\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\struc.h"
-			>
+			RelativePath="..\..\engines\sky\struc.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\text.cpp"
-			>
+			RelativePath="..\..\engines\sky\text.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\text.h"
-			>
+			RelativePath="..\..\engines\sky\text.h">
 		</File>
 	</Files>
 	<Globals>

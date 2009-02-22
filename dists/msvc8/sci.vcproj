@@ -6,7 +6,6 @@
 	ProjectGUID="{53F17B2B-0412-4EC3-A999-ED0537BB5223}"
 	RootNamespace="sci"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -170,6 +169,14 @@
 		<Filter
 			Name="engine"
 			>
+			<File
+				RelativePath="..\..\engines\sci\engine\aatree.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\aatree.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\game.cpp"
 				>
@@ -438,10 +445,6 @@
 		<Filter
 			Name="scicore"
 			>
-			<File
-				RelativePath="..\..\engines\sci\scicore\aatree.cpp"
-				>
-			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\decompress0.cpp"
 				>

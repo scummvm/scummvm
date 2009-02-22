@@ -580,6 +580,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\timer_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\timer_mr.cpp"
 			>
 		</File>

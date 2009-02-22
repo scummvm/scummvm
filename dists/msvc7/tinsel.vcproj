@@ -164,8 +164,6 @@
 			/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<File
 			RelativePath="..\..\engines\tinsel\actors.cpp"

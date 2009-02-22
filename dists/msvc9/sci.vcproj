@@ -171,6 +171,14 @@
 			Name="engine"
 			>
 			<File
+				RelativePath="..\..\engines\sci\engine\aatree.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\aatree.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\game.cpp"
 				>
 			</File>
@@ -438,10 +446,6 @@
 		<Filter
 			Name="scicore"
 			>
-			<File
-				RelativePath="..\..\engines\sci\scicore\aatree.cpp"
-				>
-			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\decompress0.cpp"
 				>

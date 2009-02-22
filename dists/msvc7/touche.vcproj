@@ -4,40 +4,18 @@
 	Version="7,00"
 	Name="touche"
 	ProjectGUID="{D4986356-D0BB-4981-924A-854157BDF11F}"
-	#RootNamespace="touche"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="touche_Debug"
 			IntermediateDirectory="touche_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -58,36 +36,24 @@
 				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/touche.lib"
-			/>
+				OutputFile="$(OutDir)/touche.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -95,23 +61,7 @@
 			IntermediateDirectory="touche_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -132,88 +82,62 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				WarnAsError="TRUE"
-				DebugInformationFormat="0"
-			/>
+				DebugInformationFormat="0"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/touche.lib"
-			/>
+				OutputFile="$(OutDir)/touche.lib"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\touche\detection.cpp"
-			>
+			RelativePath="..\..\engines\touche\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\graphics.cpp"
-			>
+			RelativePath="..\..\engines\touche\graphics.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\graphics.h"
-			>
+			RelativePath="..\..\engines\touche\graphics.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\menu.cpp"
-			>
+			RelativePath="..\..\engines\touche\menu.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\midi.cpp"
-			>
+			RelativePath="..\..\engines\touche\midi.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\midi.h"
-			>
+			RelativePath="..\..\engines\touche\midi.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\opcodes.cpp"
-			>
+			RelativePath="..\..\engines\touche\opcodes.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\resource.cpp"
-			>
+			RelativePath="..\..\engines\touche\resource.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\saveload.cpp"
-			>
+			RelativePath="..\..\engines\touche\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\staticres.cpp"
-			>
+			RelativePath="..\..\engines\touche\staticres.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\touche.cpp"
-			>
+			RelativePath="..\..\engines\touche\touche.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\touche\touche.h"
-			>
+			RelativePath="..\..\engines\touche\touche.h">
 		</File>
 	</Files>
 	<Globals>
