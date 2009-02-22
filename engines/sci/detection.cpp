@@ -538,7 +538,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
 	{{"kq1sci", "SCI Remake", {
 		{"resource.map", 0, "37ed1a05eb719629eba15059c2eb6cbe", 6798},
@@ -548,10 +547,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "9ae2a13708d691cd42f9129173c4b39d", 820443},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 000)
+		SCI_VERSION_01,
+		SCI_VERSION(0, 001, 10)
 	},
-#endif
 
 	// King's Quest 1 SCI Remake - English DOS
 	{{"kq1sci", "SCI Remake", {
@@ -1163,7 +1161,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Mixed-Up Mother Goose - English Amiga (from www.back2roots.org)
 	{{"mothergoose", "", {
 		{"resource.map", 0, "4aa28ac93fae03cf854594da13d9229c", 2700},
@@ -1171,10 +1168,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "fb552ae550ca1dac19ed8f6a3767612d", 817191},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 685)
+		SCI_VERSION_01,
+		SCI_VERSION(0, 001, 10)
 	},
-#endif
 
 #if 0
 	// Mixed-Up Mother Goose - English DOS CD
