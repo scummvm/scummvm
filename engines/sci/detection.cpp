@@ -69,6 +69,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lighthouse",      "Lighthouse: The Dark Being"},
 	//{"fairytales",      "Mixed-up Fairy Tales"},
 	{"mothergoose",     "Mixed-Up Mother Goose"},
+	{"msastrochicken",  "Ms. Astro Chicken"},
 	//{"pepper",          "Pepper's Adventure in Time"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
@@ -1183,6 +1184,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685)
 	},
 #endif
+
+	// Ms. Astro Chicken
+	{{"msastrochicken", "", {
+		{"resource.map", 0, "5b457cbe5042f557e5b610148171f6c0", 1158},
+		{"resource.001", 0, "453ea81ef66a50cbe33ce06302afe47f", 229737},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 679)
+	},
 
 #if 0
 	// Phantasmagoria - English DOS
