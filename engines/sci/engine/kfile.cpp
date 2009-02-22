@@ -24,6 +24,7 @@
  */
 
 #ifdef WIN32
+#  include <direct.h>
 #  include <windows.h>
 #elif defined (__DC__)
 #  include <dc.h>

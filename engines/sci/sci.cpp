@@ -32,6 +32,10 @@
 #include "sci/console.h"
 #include "sci/include/engine.h"
 
+#ifdef WIN32
+#  include <direct.h>
+#endif
+
 namespace Sci {
 
 extern gfx_driver_t gfx_driver_scummvm;
