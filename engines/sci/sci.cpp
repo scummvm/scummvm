@@ -200,7 +200,6 @@ Common::Error SciEngine::go() {
 	} */
 
 	// FIXME/TODO: Move some of the stuff below to init()
-	ResourceManager *resmgr;
 
 	init_console(); /* So we can get any output */
 
@@ -217,25 +216,25 @@ Common::Error SciEngine::go() {
 	char resource_dir[MAXPATHLEN+1] = "";
 	getcwd(resource_dir, MAXPATHLEN); // Store resource directory
 
-	resmgr = new ResourceManager(res_version, 256 * 1024);
+	_resmgr = new ResourceManager(res_version, 256 * 1024);
 
-	if (!resmgr) {
+	if (!_resmgr) {
 		printf("No resources found in '%s'.\nAborting...\n",
 		       resource_dir);
 		return Common::kNoGameDataFoundError;
 	}
 
-	script_adjust_opcode_formats(resmgr->sci_version);
+	script_adjust_opcode_formats(_resmgr->sci_version);
 
 #if 0
 	printf("Mapping instruments to General Midi\n");
 
-	map_MIDI_instruments(resmgr);
+	map_MIDI_instruments(_resmgr);
 #endif
 
 	EngineState* gamestate = (EngineState *) sci_malloc(sizeof(EngineState));
 	memset(gamestate, 0, sizeof(EngineState));
-	gamestate->resmgr = resmgr;
+	gamestate->resmgr = _resmgr;
 	gamestate->gfx_state = NULL;
 
 	if (init_gamestate(gamestate, version))
@@ -262,7 +261,7 @@ Common::Error SciEngine::go() {
 
 	gfx_state_t gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
-	gfx_state.version = resmgr->sci_version;
+	gfx_state.version = _resmgr->sci_version;
 	gamestate->gfx_state = &gfx_state;
 
 	// Default config:
@@ -288,7 +287,7 @@ Common::Error SciEngine::go() {
 	}
 	// Default config ends
 
-	if (gfxop_init_default(&gfx_state, &gfx_options, resmgr)) {
+	if (gfxop_init_default(&gfx_state, &gfx_options, _resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}
@@ -316,7 +315,7 @@ Common::Error SciEngine::go() {
 	free(gamestate->work_dir);
 	free(gamestate);
 
-	delete resmgr;
+	delete _resmgr;
 
 	close_console_file();
 

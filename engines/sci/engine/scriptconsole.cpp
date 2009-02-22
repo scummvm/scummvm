@@ -37,7 +37,6 @@ EngineState *con_gamestate = NULL;
 
 // console commands
 
-static int c_version(EngineState *s); // displays the package and version number
 static int c_list(EngineState *s); // lists various types of things
 static int c_man(EngineState *s); // 'manual page'
 static int c_set(EngineState *s); // sets an int variable
@@ -171,7 +170,6 @@ void con_init() {
 		atexit(_cmd_exit);
 
 		// Hook up some commands
-		con_hook_command(&c_version, "version", "", "Displays the version number");
 		con_hook_command(&c_list, "list", "s*", "Lists various things (try 'list')");
 		con_hook_command(&c_man, "man", "s", "Gives a short description of something");
 		con_hook_command(&c_print, "print", "s", "Prints an int variable");
@@ -688,19 +686,6 @@ static int get_resource_number(char *resid) {
 			res = i;
 
 	return res;
-}
-
-static int c_version(EngineState * s) {
-	if (NULL == s) {
-		sciprintf("console.c: c_version: NULL passed for parameter s\n");
-		return -1;
-	}
-
-	sciprintf("Resource file version:        %s\n", sci_version_types[s->resmgr->sci_version]);
-	sciprintf("Emulated interpreter version: %d.%03d.%03d\n", SCI_VERSION_MAJOR(s->version),
-	          SCI_VERSION_MINOR(s->version), SCI_VERSION_PATCHLEVEL(s->version));
-
-	return 0;
 }
 
 static int c_list_words(EngineState *s) {

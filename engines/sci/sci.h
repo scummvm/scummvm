@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 
 #include "sci/console.h"
+#include "sci/include/sciresource.h"
 
 namespace Sci {
 
@@ -84,12 +85,13 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
-
+	ResourceManager *getResMgr() { return _resmgr; }
 	Common::String getSavegameName(int nr) const;
 
 private:
 	const SciGameDescription *_gameDescription;
 	Console *_console;
+	ResourceManager *_resmgr;
 };
 
 } // End of namespace Sci

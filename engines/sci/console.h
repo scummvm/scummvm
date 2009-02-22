@@ -41,6 +41,7 @@ public:
 
 private:
 	bool cmdGetVersion(int argc, const char **argv);
+	bool cmdMan(int argc, const char **argv);
 
 private:
 	SciEngine *_vm;
