@@ -1029,8 +1029,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	_global_save_state = retval;
 	retval->gfx_state = s->gfx_state;
 
-	SavegameMetadata* meta = new SavegameMetadata;
-	memset(retval, 0, sizeof(SavegameMetadata));
+	SavegameMetadata *meta = new SavegameMetadata;
+	memset(meta, 0, sizeof(SavegameMetadata));
 
 	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM fh ERRVAR read_eof;
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||

@@ -4980,8 +4980,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	_global_save_state = retval;
 	retval->gfx_state = s->gfx_state;
 
-	SavegameMetadata* meta = new SavegameMetadata;
-	memset(retval, 0, sizeof(SavegameMetadata));
+	SavegameMetadata *meta = new SavegameMetadata;
+	memset(meta, 0, sizeof(SavegameMetadata));
 
 // Auto-generated CFSML data reader code
 #line 763 "engines/sci/engine/savegame.cfsml"
