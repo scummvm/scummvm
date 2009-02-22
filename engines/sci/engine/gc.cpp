@@ -100,7 +100,7 @@ static void free_worklist(worklist_t *wl) {
 	}
 }
 
-static reg_t_hash_map * normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, SegInterface **interfaces, int interfaces_nr) {
+static reg_t_hash_map *normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, SegInterface **interfaces, int interfaces_nr) {
 	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
 	for (reg_t_hash_map::iterator i = nonnormal_map->begin(); i != nonnormal_map->end(); ++i) {
@@ -109,7 +109,7 @@ static reg_t_hash_map * normalise_hashmap_ptrs(reg_t_hash_map *nonnormal_map, Se
 		interfce = (reg.segment < interfaces_nr) ? interfaces[reg.segment] : NULL;
 
 		if (interfce) {
-			reg = interfce->find_canonic_address(interfce, reg);
+			reg = interfce->findCanonicAddress(reg);
 			normal_map->setVal(reg, true);
 		}
 	}
@@ -181,8 +181,8 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Init: Explicitly loaded scripts
 	for (i = 1; i < sm->heap_size; i++)
 		if (interfaces[i]
-		        && interfaces[i]->type_id == MEM_OBJ_SCRIPT) {
-			script_t *script = &(interfaces[i]->mobj->data.script);
+		        && interfaces[i]->getType() == MEM_OBJ_SCRIPT) {
+			script_t *script = &(interfaces[i]->getMobj()->data.script);
 
 			if (script->lockers) { // Explicitly loaded?
 				int obj_nr;
@@ -209,7 +209,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg));
 #endif
 			if (reg.segment < sm->heap_size && interfaces[reg.segment])
-				interfaces[reg.segment]->list_all_outgoing_references(interfaces[reg.segment], s, reg,
+				interfaces[reg.segment]->listAllOutgoingReferences(s, reg,
 																		&worklist_manager, add_outgoing_refs);
 		}
 	}
@@ -220,7 +220,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Cleanup
 	for (i = 1; i < sm->heap_size; i++)
 		if (interfaces[i])
-			interfaces[i]->deallocate_self(interfaces[i]);
+			delete interfaces[i];
 
 	free(interfaces);
 	delete nonnormal_map;
@@ -243,7 +243,7 @@ void free_unless_used(void *pre_use_map, reg_t addr) {
 
 	if (!use_map->contains(addr)) {
 		// Not found -> we can free it
-		deallocator->interfce->free_at_address(deallocator->interfce, addr);
+		deallocator->interfce->freeAtAddress(addr);
 #ifdef DEBUG_GC
 		sciprintf("[GC] Deallocating "PREG"\n", PRINT_REG(addr));
 		deallocator->segcount[deallocator->interfce->type_id]++;
@@ -271,8 +271,8 @@ void run_gc(EngineState *s) {
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.interfce->type_id] = deallocator.interfce->type;
 #endif
-			deallocator.interfce->list_all_deallocatable(deallocator.interfce, &deallocator, free_unless_used);
-			deallocator.interfce->deallocate_self(deallocator.interfce);
+			deallocator.interfce->listAllDeallocatable(&deallocator, free_unless_used);
+			delete deallocator.interfce;
 		}
 	}
 

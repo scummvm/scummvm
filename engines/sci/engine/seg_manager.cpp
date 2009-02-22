@@ -1423,44 +1423,58 @@ void SegManager::dbgPrint(const char* msg, void *i) {
 #endif
 }
 
+
 // ------------------- Segment interface ------------------
-
-static void free_at_address_stub(SegInterface *self, reg_t sub_addr) {
-	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
-	// STUB
+SegInterface::SegInterface(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId) :
+	_segmgr(segmgr), _mobj(mobj), _segId(segId), _typeId(typeId) {
+	VERIFY(_mobj->type == _typeId, "Invalid mem_obj_t type");
 }
 
-static reg_t find_canonic_address_base(SegInterface *self, reg_t addr) {
+reg_t SegInterface::findCanonicAddress(reg_t addr) {
+	return addr;
+}
+
+void SegInterface::freeAtAddress(reg_t sub_addr) {
+}
+
+void SegInterface::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
+}
+
+void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr)) {
+}
+
+
+//-------------------- base --------------------
+class SegInterfaceBase : public SegInterface {
+protected:
+	SegInterfaceBase(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId) :
+		SegInterface(segmgr, mobj, segId, typeId) {}
+public:
+	reg_t findCanonicAddress(reg_t addr);
+	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+};
+
+reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
 	addr.offset = 0;
-
 	return addr;
 }
 
-static reg_t find_canonic_address_id(SegInterface *self, reg_t addr) {
-	return addr;
+void SegInterfaceBase::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
+	(*note)(param, make_reg(_segId, 0));
 }
 
-static void free_at_address_nop(SegInterface *self, reg_t sub_addr) {
-}
 
-static void list_all_deallocatable_nop(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
-}
+//-------------------- script --------------------
+class SegInterfaceScript : public SegInterfaceBase {
+public:
+	SegInterfaceScript(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_SCRIPT) {}
+	void freeAtAddress(reg_t addr);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+};
 
-static void list_all_deallocatable_base(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
-	(*note)(param, make_reg(self->seg_id, 0));
-}
-
-static void list_all_outgoing_references_nop(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-}
-
-static void deallocate_self(SegInterface *self) {
-	free(self);
-}
-
-static void free_at_address_script(SegInterface *self, reg_t addr) {
-	script_t *script;
-	VERIFY(self->mobj->type == MEM_OBJ_SCRIPT, "Trying to free a non-script!");
-	script = &(self->mobj->data.script);
+void SegInterfaceScript::freeAtAddress(reg_t addr) {
+	script_t *script = &(_mobj->data.script);
 	/*
 		sciprintf("[GC] Freeing script "PREG"\n", PRINT_REG(addr));
 		if (script->locals_segment)
@@ -1468,11 +1482,11 @@ static void free_at_address_script(SegInterface *self, reg_t addr) {
 	*/
 
 	if (script->marked_as_deleted)
-		self->segmgr->deallocateScript(script->nr);
+		_segmgr->deallocateScript(script->nr);
 }
 
-static void list_all_outgoing_references_script(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	script_t *script = &(self->mobj->data.script);
+void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
+	script_t *script = &(_mobj->data.script);
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
@@ -1495,41 +1509,36 @@ static void list_all_outgoing_references_script(SegInterface *self, EngineState 
 	}
 }
 
-//-------------------- script --------------------
-static SegInterface seg_interface_script = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_SCRIPT,
-	/* type = */	"script",
-	/* find_canonic_address = */		find_canonic_address_base,
-	/* free_at_address = */			free_at_address_script,
-	/* list_all_deallocatable = */		list_all_deallocatable_base,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_script,
-	/* deallocate_self = */			deallocate_self
-};
-
 
 #define LIST_ALL_DEALLOCATABLE(kind, kind_field) \
-	mem_obj_t *mobj = self->mobj;					\
-	kind##_table_t * table = &(mobj->data.kind_field);		\
+	kind##_table_t * table = &(_mobj->data.kind_field);		\
 	int i;								\
 									\
 	for (i = 0; i < table->max_entry; i++)				\
 		if (ENTRY_IS_VALID(table, i))				\
-			(*note) (param, make_reg(self->seg_id, i));
+			(*note) (param, make_reg(_segId, i));
 
-static void list_all_deallocatable_clones(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
+
+//-------------------- clones --------------------
+class SegInterfaceClones : public SegInterface {
+public:
+	SegInterfaceClones(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_CLONES) {}
+	void freeAtAddress(reg_t addr);
+	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+};
+
+void SegInterfaceClones::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(clone, clones);
 }
 
-static void list_all_outgoing_references_clones(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	mem_obj_t *mobj = self->mobj;
-	clone_table_t *clone_table = &(mobj->data.clones);
+void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
+	clone_table_t *clone_table = &(_mobj->data.clones);
 	clone_t *clone;
 	int i;
 
-	assert(addr.segment == self->seg_id);
+	assert(addr.segment == _segId);
 
 	if (!(ENTRY_IS_VALID(clone_table, addr.offset))) {
 		fprintf(stderr, "Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
@@ -1548,12 +1557,12 @@ static void list_all_outgoing_references_clones(SegInterface *self, EngineState 
 	//sciprintf("[GC] Reporting clone-pos "PREG"\n", PRINT_REG(clone->pos));
 }
 
-void free_at_address_clones(SegInterface *self, reg_t addr) {
+void SegInterfaceClones::freeAtAddress(reg_t addr) {
 	object_t *victim_obj;
 
-	assert(addr.segment == self->seg_id);
+	assert(addr.segment == _segId);
 
-	victim_obj = &(self->mobj->data.clones.table[addr.offset].entry);
+	victim_obj = &(_mobj->data.clones.table[addr.offset].entry);
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
@@ -1569,100 +1578,97 @@ void free_at_address_clones(SegInterface *self, reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	self->segmgr->free_clone(addr);
+	_segmgr->free_clone(addr);
 }
 
-//-------------------- clones --------------------
-static SegInterface seg_interface_clones = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_CLONES,
-	/* type = */	"clones",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_clones,
-	/* list_all_deallocatable = */		list_all_deallocatable_clones,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_clones,
-	/* deallocate_self = */			deallocate_self
+
+//-------------------- locals --------------------
+class SegInterfaceLocals : public SegInterface {
+public:
+	SegInterfaceLocals(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
+	reg_t findCanonicAddress(reg_t addr);
+	void freeAtAddress(reg_t addr);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
 };
 
-static reg_t find_canonic_address_locals(SegInterface *self, reg_t addr) {
-	local_variables_t *locals = &(self->mobj->data.locals);
+reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
+	local_variables_t *locals = &(_mobj->data.locals);
 	// Reference the owning script
-	seg_id_t owner_seg = self->segmgr->segGet(locals->script_id);
+	seg_id_t owner_seg = _segmgr->segGet(locals->script_id);
 
 	assert(owner_seg >= 0);
 
 	return make_reg(owner_seg, 0);
 }
 
-static void list_all_outgoing_references_locals(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	local_variables_t *locals = &(self->mobj->data.locals);
+void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
+	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
+	// STUB
+}
+
+void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+	local_variables_t *locals = &(_mobj->data.locals);
 	int i;
 
-	assert(addr.segment == self->seg_id);
+	assert(addr.segment == _segId);
 
 	for (i = 0; i < locals->nr; i++)
 		(*note)(param, locals->locals[i]);
 }
 
-//-------------------- locals --------------------
-static SegInterface seg_interface_locals = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_LOCALS,
-	/* type = */	"locals",
-	/* find_canonic_address = */		find_canonic_address_locals,
-	/* free_at_address = */			free_at_address_stub,
-	/* list_all_deallocatable = */		list_all_deallocatable_nop,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_locals,
-	/* deallocate_self = */			deallocate_self
+
+//-------------------- stack --------------------
+class SegInterfaceStack : public SegInterface {
+public:
+	SegInterfaceStack(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_STACK) {}
+	reg_t findCanonicAddress(reg_t addr);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
 };
 
-static void list_all_outgoing_references_stack(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
+	addr.offset = 0;
+	return addr;
+}
+
+void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
 	int i;
-	fprintf(stderr, "Emitting %d stack entries\n", self->mobj->data.stack.nr);
-	for (i = 0; i < self->mobj->data.stack.nr; i++)
-		(*note)(param, self->mobj->data.stack.entries[i]);
+	fprintf(stderr, "Emitting %d stack entries\n", _mobj->data.stack.nr);
+	for (i = 0; i < _mobj->data.stack.nr; i++)
+		(*note)(param, _mobj->data.stack.entries[i]);
 	fprintf(stderr, "DONE");
 }
 
-//-------------------- stack --------------------
-
-static SegInterface seg_interface_stack = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_STACK,
-	/* type = */	"stack",
-	/* find_canonic_address = */		find_canonic_address_base,
-	/* free_at_address = */			free_at_address_nop,
-	/* list_all_deallocatable = */		list_all_deallocatable_nop,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_stack,
-	/* deallocate_self = */			deallocate_self
-};
 
 //-------------------- system strings --------------------
-static SegInterface seg_interface_sys_strings = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_SYS_STRINGS,
-	/* type = */	"system strings",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_nop,
-	/* list_all_deallocatable = */		list_all_deallocatable_nop,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_nop,
-	/* deallocate_self = */			deallocate_self
+class SegInterfaceSysStrings : public SegInterface {
+public:
+	SegInterfaceSysStrings(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_SYS_STRINGS) {}
 };
 
-static void list_all_deallocatable_list(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
+
+//-------------------- lists --------------------
+class SegInterfaceLists : public SegInterface {
+public:
+	SegInterfaceLists(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_LISTS) {}
+	void freeAtAddress(reg_t addr);
+	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+};
+
+void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
+	_segmgr->free_list(sub_addr);
+}
+
+void SegInterfaceLists::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(list, lists);
 }
 
-static void list_all_outgoing_references_list(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	list_table_t *table = &(self->mobj->data.lists);
+void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+	list_table_t *table = &(_mobj->data.lists);
 	list_t *list = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
@@ -1676,30 +1682,27 @@ static void list_all_outgoing_references_list(SegInterface *self, EngineState *s
 	// let's be conservative here.
 }
 
-static void free_at_address_lists(SegInterface *self, reg_t sub_addr) {
-	self->segmgr->free_list(sub_addr);
-}
 
-//-------------------- lists --------------------
-static SegInterface seg_interface_lists = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_LISTS,
-	/* type = */	"lists",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_lists,
-	/* list_all_deallocatable = */		list_all_deallocatable_list,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_list,
-	/* deallocate_self = */			deallocate_self
+//-------------------- nodes --------------------
+class SegInterfaceNodes : public SegInterface {
+public:
+	SegInterfaceNodes(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_NODES) {}
+	void freeAtAddress(reg_t addr);
+	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
 };
 
-static void list_all_deallocatable_nodes(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
+	_segmgr->free_node(sub_addr);
+}
+
+void SegInterfaceNodes::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(node, nodes);
 }
 
-static void list_all_outgoing_references_nodes(SegInterface *self, EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	node_table_t *table = &(self->mobj->data.nodes);
+void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+	node_table_t *table = &(_mobj->data.nodes);
 	node_t *node = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
@@ -1715,101 +1718,88 @@ static void list_all_outgoing_references_nodes(SegInterface *self, EngineState *
 	note(param, node->value);
 }
 
-static void free_at_address_nodes(SegInterface *self, reg_t sub_addr) {
-	self->segmgr->free_node(sub_addr);
-}
 
-//-------------------- nodes --------------------
-static SegInterface seg_interface_nodes = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_NODES,
-	/* type = */	"nodes",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_nodes,
-	/* list_all_deallocatable = */		list_all_deallocatable_nodes,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_nodes,
-	/* deallocate_self = */			deallocate_self
+//-------------------- hunk --------------------
+class SegInterfaceHunk : public SegInterface {
+public:
+	SegInterfaceHunk(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_HUNK) {}
+	void freeAtAddress(reg_t addr);
+	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
 };
 
-static void list_all_deallocatable_hunk(SegInterface *self, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
+	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
+	// STUB
+}
+
+void SegInterfaceHunk::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
 	LIST_ALL_DEALLOCATABLE(hunk, hunks);
 }
 
-//-------------------- hunk --------------------
-static SegInterface seg_interface_hunk = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_HUNK,
-	/* type = */	"hunk",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_stub,
-	/* list_all_deallocatable = */		list_all_deallocatable_hunk,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_nop,
-	/* deallocate_self = */			deallocate_self
-};
 
 //-------------------- dynamic memory --------------------
-static SegInterface seg_interface_dynmem = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_DYNMEM,
-	/* type = */	"dynamic memory",
-	/* find_canonic_address = */		find_canonic_address_base,
-	/* free_at_address = */			free_at_address_stub,
-	/* list_all_deallocatable = */		list_all_deallocatable_base,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_nop,
-	/* deallocate_self = */			deallocate_self
+class SegInterfaceDynMem : public SegInterfaceBase {
+public:
+	SegInterfaceDynMem(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_DYNMEM) {}
+	void freeAtAddress(reg_t addr);
 };
+
+void SegInterfaceDynMem::freeAtAddress(reg_t sub_addr) {
+	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
+	// STUB
+}
+
 
 //-------------------- reserved --------------------
-static SegInterface seg_interface_reserved = {
-	/* segmgr = */	NULL,
-	/* mobj = */	NULL,
-	/* seg_id = */	0,
-	/* type_id = */	MEM_OBJ_RESERVED,
-	/* type = */	"reserved",
-	/* find_canonic_address = */		find_canonic_address_id,
-	/* free_at_address = */			free_at_address_nop,
-	/* list_all_deallocatable = */		list_all_deallocatable_nop,
-	/* list_all_outgoing_references = */	list_all_outgoing_references_nop,
-	/* deallocate_self = */			deallocate_self
+class SegInterfaceReserved : public SegInterface {
+public:
+	SegInterfaceReserved(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_RESERVED) {}
 };
 
-static SegInterface* seg_interfaces[MEM_OBJ_MAX] = {
-	&seg_interface_script,
-	&seg_interface_clones,
-	&seg_interface_locals,
-	&seg_interface_stack,
-	&seg_interface_sys_strings,
-	&seg_interface_lists,
-	&seg_interface_nodes,
-	&seg_interface_hunk,
-	&seg_interface_dynmem,
-	&seg_interface_reserved
-};
 
 SegInterface *SegManager::getSegInterface(seg_id_t segid) {
-	mem_obj_t *mobj;
-	SegInterface *retval;
-
 	if (!check(segid))
 		return NULL; // Invalid segment
 
-	mobj = heap[segid];
-	retval = (SegInterface *)sci_malloc(sizeof(SegInterface));
-	memcpy(retval, seg_interfaces[mobj->type - 1], sizeof(SegInterface));
-
-	if (mobj->type != retval->type_id) {
+	SegInterface *retval = NULL;
+	mem_obj_t *mobj = heap[segid];
+	switch (mobj->type) {
+	case MEM_OBJ_SCRIPT:
+		retval = new SegInterfaceScript(this, mobj, segid);
+		break;
+	case MEM_OBJ_CLONES:
+		retval = new SegInterfaceClones(this, mobj, segid);
+		break;
+	case MEM_OBJ_LOCALS:
+		retval = new SegInterfaceLocals(this, mobj, segid);
+		break;
+	case MEM_OBJ_STACK:
+		retval = new SegInterfaceStack(this, mobj, segid);
+		break;
+	case MEM_OBJ_SYS_STRINGS:
+		retval = new SegInterfaceSysStrings(this, mobj, segid);
+		break;
+	case MEM_OBJ_LISTS:
+		retval = new SegInterfaceLists(this, mobj, segid);
+		break;
+	case MEM_OBJ_NODES:
+		retval = new SegInterfaceNodes(this, mobj, segid);
+		break;
+	case MEM_OBJ_HUNK:
+		retval = new SegInterfaceHunk(this, mobj, segid);
+		break;
+	case MEM_OBJ_DYNMEM:
+		retval = new SegInterfaceDynMem(this, mobj, segid);
+		break;
+	case MEM_OBJ_RESERVED:
+		retval = new SegInterfaceReserved(this, mobj, segid);
+		break;
+	default:
 		error("Improper segment interface for %d", mobj->type);
 	}
-
-	retval->segmgr = this;
-	retval->mobj = mobj;
-	retval->seg_id = segid;
 
 	return retval;
 }

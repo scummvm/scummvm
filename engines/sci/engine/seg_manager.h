@@ -58,7 +58,7 @@ enum idFlag {
 		(((mgr).heap[index]	&& ((mgr).heap[index]->type == MEM_OBJ_SCRIPT || (mgr).heap[index]->type == MEM_OBJ_CLONES))? (mgr).heap[index]	\
 		: NULL): NULL
 
-struct SegInterface;
+class SegInterface;
 
 class SegManager {
 public:
@@ -340,6 +340,7 @@ public:
 	// Parameters: (reg_t) addr: Offset of the hunk entry to delete
 	void free_hunk_entry(reg_t addr);
 
+
 	// 9. Dynamic Memory
 
 	// Allocate some dynamic memory
@@ -385,7 +386,7 @@ public:
 	// Retrieves the segment interface to the specified segment
 	// Parameters: (seg_id_t) segid: ID of the segment to look up
 	// Returns   : (SegInterface *): An interface to the specified segment ID, or NULL on error
-	// The returned interface 'si' must be freed after use by calling 'si->dealloc_self(si)';
+	// The returned interface must be deleted after use
 	SegInterface *getSegInterface(seg_id_t segid);
 
 
@@ -450,38 +451,50 @@ private:
 
 // 11. Segment interface, primarily for GC			
 
-struct SegInterface {
-	SegManager *segmgr;
-	mem_obj_t *mobj;
-	seg_id_t seg_id;
-	memObjType type_id;	// Segment type 
-	const char *type;	// String description of the segment type 
+class SegInterface {
+protected:
+	SegInterface(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId);
 
-	reg_t (*find_canonic_address)(SegInterface *self, reg_t sub_addr);
+public:
+	// Deallocates the segment interface
+	virtual ~SegInterface() {}
+
 	// Finds the canonic address associated with sub_reg
 	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
 	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
+	virtual reg_t findCanonicAddress(reg_t sub_addr);
 	
-	void (*free_at_address)(SegInterface *self, reg_t sub_addr);
 	// Deallocates all memory associated with the specified address
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
-	
-	void (*list_all_deallocatable)(SegInterface *self, void *param, void (*note)(void *param, reg_t addr));
+	virtual void freeAtAddress(reg_t sub_addr);
+
 	// Iterates over and reports all addresses within the current segment
 	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
 	//                                makes sense
 	//             (void *) param: Parameter passed to 'note'
+	virtual void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
 	
-	void (*list_all_outgoing_references)(SegInterface *self, EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
 	// Iterates over all references reachable from the specified object
 	// Parameters: (reg_t) object: The object (within the current segment) to analyse
 	//             (void *) param: Parameter passed to 'note'
 	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
 	// Note: This function may also choose to report numbers (segment 0) as adresses
-	
-	void (*deallocate_self)(SegInterface *self);
-	// Deallocates the segment interface
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
+
+	// Get the memory object
+	mem_obj_t *getMobj() { return _mobj; }
+
+	// Get the segment type
+	memObjType getType() { return _typeId; }
+
+protected:
+	SegManager *_segmgr;
+	mem_obj_t *_mobj;
+	seg_id_t _segId;
+
+private:
+	memObjType _typeId; // Segment type
 };
 
 } // End of namespace Sci

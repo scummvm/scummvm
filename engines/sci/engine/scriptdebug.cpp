@@ -2807,9 +2807,9 @@ static int c_gc_show_reachable(EngineState *s) {
 	GET_SEG_INTERFACE(addr.segment);
 
 	sciprintf("Reachable from "PREG":\n", PRINT_REG(addr));
-	seg_interface->list_all_outgoing_references(seg_interface, s, addr, NULL, _print_address);
+	seg_interface->listAllOutgoingReferences(s, addr, NULL, _print_address);
 
-	seg_interface->deallocate_self(seg_interface);
+	delete seg_interface;
 
 	return 0;
 }
@@ -2820,9 +2820,9 @@ static int c_gc_show_freeable(EngineState *s) {
 	GET_SEG_INTERFACE(addr.segment);
 
 	sciprintf("Freeable in segment %04x:\n", addr.segment);
-	seg_interface->list_all_deallocatable(seg_interface, NULL, _print_address);
+	seg_interface->listAllDeallocatable(NULL, _print_address);
 
-	seg_interface->deallocate_self(seg_interface);
+	delete seg_interface;
 
 	return 0;
 }
@@ -2832,10 +2832,10 @@ static int c_gc_normalise(EngineState *s) {
 
 	GET_SEG_INTERFACE(addr.segment);
 
-	addr = seg_interface->find_canonic_address(seg_interface, addr);
+	addr = seg_interface->findCanonicAddress(addr);
 	sciprintf(" "PREG"\n", PRINT_REG(addr));
 
-	seg_interface->deallocate_self(seg_interface);
+	delete seg_interface;
 
 	return 0;
 }
