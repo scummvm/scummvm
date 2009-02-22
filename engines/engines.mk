@@ -93,7 +93,6 @@ endif
 ifdef ENABLE_SAGA2
 DEFINES += -DENABLE_SAGA2
 endif
-
 endif
 
 ifdef ENABLE_SCI
