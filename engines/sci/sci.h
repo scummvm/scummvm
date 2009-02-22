@@ -67,6 +67,7 @@ struct GameFlags {
 struct SciGameDescription {
 	ADGameDescription desc;
 	GameFlags flags;
+	int res_version;
 	int version;
 };
 
@@ -81,6 +82,7 @@ public:
 	GUI::Debugger *getDebugger() { return _console; }
 
 	const char* getGameID() const;
+	int getResourceVersion() const;
 	int getVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;

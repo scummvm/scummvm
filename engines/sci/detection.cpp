@@ -110,6 +110,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "6fd05926c2199af0af6f72f90d0d7260", 126895},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 453)
 	},
 
@@ -122,6 +123,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "d226d7d3b4f77c4a566913fc310487fc", 464348},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 
@@ -134,6 +136,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "85e51acb5f9c539d66e3c8fe40e17da5", 493638},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 
@@ -144,6 +147,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "2af49dbd8f2e1db4ab09f9310dc91259", 570553},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 5)
 	},
 
@@ -155,6 +159,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "735be4e58957180cfc807d5e18fdffcd", 1433302},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -165,6 +170,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "11391434f41c834090d7a1e9488ce936", 129739},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 0, 294)
 	},
 	
@@ -174,6 +180,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "acde93e58fca4f7a2a5a220558a94aa8", 272629},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 172)
 	},
 	
@@ -183,6 +190,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "acde93e58fca4f7a2a5a220558a94aa8", 335362},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 174)
 	},
 	
@@ -192,6 +200,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "62fb9256f8e7e6e65a6875efdb7939ac", 203396},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 55)
 	},
 
@@ -206,6 +215,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "605b67a9ef199a9bb015745e7c004cf4", 478384},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 
@@ -219,6 +229,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "8613c45fc771d658e5a505b9a4a54f31", 670883},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 
@@ -234,6 +245,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "8f880a536908ab496bbc552f7f5c3738", 585255},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 
@@ -246,6 +258,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 
@@ -261,6 +274,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "f9487732289a4f4966b4e34eea413325", 842817},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 
@@ -276,6 +290,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1284720},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -291,6 +306,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1284609},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 168)
 	},
 
@@ -300,6 +316,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 64)
 	},
 
@@ -313,6 +330,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "84dd11b6825255671c703aee5ceff620", 1174993},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -323,6 +341,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "dd6f614c43c029f063e93cd243af90a4", 525992},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 55)
 	},
 
@@ -333,6 +352,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -347,6 +367,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "05acdc256c742e79c50b9fe7ec2cc898", 863310},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -357,6 +378,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4962a3c4dd44e36e78ea4a7a374c2220", 957382},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 95)
 	},
 
@@ -366,6 +388,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 000)
 	},
 
@@ -376,6 +399,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -387,6 +411,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -398,6 +423,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -408,6 +434,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 92)
 	},
 
@@ -428,6 +455,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.006", 0, "8e44e03890205a7be12f45aaba9644b4", 60659424},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -440,6 +468,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "e0dd44069a62a463fd124974b915f10d", 439502},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 519)	// FIXME: some versions are v. 0.000.530
 	},
 #endif
@@ -451,6 +480,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 222704},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
 #endif
@@ -463,6 +493,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "143df8aef214a2db34c2d48190742012", 632273},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -475,6 +506,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "0a98a268ee99b92c233a0d7187c1f0fa", 845795},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -487,6 +519,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 719747},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 172)
 	},
 #endif
@@ -501,6 +534,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "9ae2a13708d691cd42f9129173c4b39d", 820443},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 000)
 	},
 #endif
@@ -513,6 +547,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "fed9e0072ffd511d248674e60dee2099", 717478},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 999)
 	},
 
@@ -526,6 +561,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "3fac034c7d130e055d05bc43a1f8d5f8", 549993},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 502)
 	},
 
@@ -538,6 +574,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "77615c595388acf3d1df8e107bfb6b52", 479562},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 502)
 	},
 
@@ -553,6 +590,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 274)
 	},
 
@@ -569,6 +607,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "b914b5901e786327213e779725d30dd1", 778772},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 784)
 	},
 
@@ -579,6 +618,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 60)
 	},
 
@@ -595,6 +635,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "2f48faf27666b58c276dda20f91f4a93", 1240456},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 60)
 	},
 
@@ -612,6 +653,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "dc10c107e0923b902326a040b9c166b9", 1337859},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 60)
 	},
 #endif
@@ -622,6 +664,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 69)
 	},
 
@@ -631,6 +674,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "f2b7f753992c56a0c7a08d6a5077c895", 7863324},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 54)
 	},
 
@@ -640,6 +684,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -650,6 +695,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -660,6 +706,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "d9659d2cf0c269c6a9dc776707f5bea0", 2433827},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -675,6 +722,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "bfd870d51dc97729f0914095f58e6957", 676881},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
 	},
 #endif
@@ -689,6 +737,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 683807},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 631)
 	},
 #endif
@@ -706,6 +755,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
 	},
 #endif
@@ -716,6 +766,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5035964},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 274)
 	},
 
@@ -726,6 +777,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 69)		// FIXME: some version are v. 1.001.072
 	},
 #endif
@@ -737,6 +789,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -748,6 +801,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -762,6 +816,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "685cd6c1e05a695ab1e0db826337ee2a", 553279},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
 	},
 #endif
@@ -776,6 +831,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "4a34c3367c2fe7eb380d741374da1989", 572251},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
 	},
 #endif
@@ -788,6 +844,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "85d6935ef77e6b0e16bc307640a0d913", 1088312},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 577)
 	},
 
@@ -801,6 +858,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ac175df0ea9a2cba57f0248651856d27", 376556},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
 	},
 #endif
@@ -814,6 +872,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "a0d4a625311d307257da7fc43d00459d", 717844},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
 
@@ -828,6 +887,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "4a24443a25e2b1492462a52809605dc2", 345683},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 409)
 	},
 
@@ -843,6 +903,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "433911eb764089d493aed1f958a5615a", 524259},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
 #endif
@@ -856,6 +917,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
 
@@ -869,6 +931,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "3827a9b17b926e12dcc336860f50612a", 691932},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
 #endif
@@ -886,6 +949,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "bafc64e3144f115dc58c6aee02de98fb", 715598},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -903,6 +967,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 1030656},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 
@@ -920,6 +985,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 993408},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -931,6 +997,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "a8989a5a89e7d4f702b26b378c7a357a", 7001981},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -949,6 +1016,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 987222},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -959,6 +1027,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4462fe48c7452d98fddcec327a3e738d", 5789138},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 113)
 	},
 
@@ -968,6 +1037,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57d5fe8bb9e044158514476ea7678eb0", 5754790},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 115)
 	},
 
@@ -977,6 +1047,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18520872},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
 
@@ -987,6 +1058,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18534274},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -998,6 +1070,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "7884a8db9253e29e6b37a2651fd90ba3", 5733116},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1008,6 +1081,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(3, 000, 000)
 	},
 
@@ -1018,6 +1092,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "a8c6817bb94f332ff498a71c8b47f893", 66971724},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1029,6 +1104,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "440b9fed89590abb4e4386ed6f948ee2", 67140181},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1040,6 +1116,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1053,6 +1130,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.002", 0, "175468431a979b9f317c294ce3bc1430", 94628315},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1066,6 +1144,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.002", 0, "3c8d627c555b0e3e4f1d9955bc0f0df4", 94631127},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1078,6 +1157,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "fb552ae550ca1dac19ed8f6a3767612d", 817191},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 #endif
@@ -1089,6 +1169,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 4369438},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 #endif
@@ -1112,6 +1193,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1131,6 +1213,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1141,6 +1224,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e0d5ddf34eda903a38f0837e2aa7145b", 6401433},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 29)
 	},
 
@@ -1154,6 +1238,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "e008f5d6e2a7c4d4a0da0173e4fa8f8b", 553970},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 395)	// FIXME: some versions are v. 0.000.409/0.000.490
 	},
 #endif
@@ -1166,6 +1251,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 591851},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 490)
 	},
 
@@ -1180,6 +1266,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "7b229fbdf30d670d0728cede3e984a7e", 838663},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -1194,6 +1281,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "1b91e891a3c60a941dac0eecdf83375b", 1143606},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 
@@ -1203,6 +1291,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "fd316a09b628b7032248139003369022", 18841068},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
 
@@ -1212,6 +1301,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "da383857b3be1e4514daeba2524359e0", 15141432},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 000)
 	},
 
@@ -1227,6 +1317,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5f3386ef2f2b1254e4a066f5d9027324", 609529},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 629)
 	},
 #endif
@@ -1242,6 +1333,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "951299a82a8134ed12c5c18118d45c2f", 644443},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 629)
 	},
 #endif
@@ -1252,6 +1344,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 411)
 	},
 
@@ -1269,6 +1362,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "4c9fc1587545879295cb9627f56a2cb8", 575056},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1279,6 +1373,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868000},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 50)
 	},
 
@@ -1289,6 +1384,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "ba7ac86155e4c531e46cd73c86daa80a", 5884098},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1300,6 +1396,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1310,6 +1407,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -1323,6 +1421,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 #endif
@@ -1334,6 +1433,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 000)
 	},
 #endif
@@ -1349,6 +1449,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6860492},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1360,6 +1461,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resmap.001", 0, "70ba2ff04a2b7fb2c52420ba7fbd47c2", 8338},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1371,6 +1473,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "4294c6d7510935f2e0a52e302073c951", 262654836},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1382,6 +1485,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1393,6 +1497,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1409,6 +1514,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "640ffe1a9acde392cc33cc1b1a528328", 806324},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -1424,6 +1530,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "e19ea4ad131472f9238590f2e1d40289", 1203051},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -1440,6 +1547,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "7d4ebcb745c0bf8fc42e4013f52ecd49", 1101812},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
 #endif
@@ -1454,6 +1562,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 761984},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
 	},
 #endif
@@ -1466,6 +1575,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 703370},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685)
 	},
 
@@ -1482,6 +1592,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "9107c2aa5398e28b5c5406df13491f85", 344287},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
 	},
 #endif
@@ -1498,6 +1609,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ade814bc4d56244c156d9e9bcfebbc11", 664085},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 744)
 	},
 
@@ -1513,6 +1625,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "67fb188b191d88efe8414af6ea297b93", 672675},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 744)
 	},
 
@@ -1522,6 +1635,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 64)
 	},
 
@@ -1531,6 +1645,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 5502009},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
 	},
 
@@ -1547,6 +1662,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dfb023e4e2a1e7a00fa18f9ede72a91b", 924059},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)
 	},
 #endif
@@ -1563,6 +1679,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5f885abd335978e2fd4e5f886d7676c8", 1102880},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)
 	},
 #endif
@@ -1579,6 +1696,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "55fae26c2a92f16ef72c1e216e827c0f", 1098328},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)
 	},
 #endif
@@ -1593,6 +1711,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "42a307941edeb1a3be31daeb2e4be90b", 1088408},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)
 	},
 #endif
@@ -1604,6 +1723,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1614,6 +1734,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "f4a48705764544d7cc64a7bb22a610df", 6025184},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 67)
 	},
 
@@ -1624,6 +1745,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1635,6 +1757,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "5b09168baa2f6e2e22787429b2d72f54", 6492},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1645,6 +1768,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
 
@@ -1655,6 +1779,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1665,6 +1790,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "ecc686e0034fb4d41de077ac7167b3cf", 1947866},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 53)
 	},
 #if 0
@@ -1674,6 +1800,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "b3acd9b9dd7fe53c4ee133ac9a1acfab", 2103560},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
@@ -1684,6 +1811,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "b3acd9b9dd7fe53c4ee133ac9a1acfab", 586560},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 53)
 	},
 
@@ -1693,6 +1821,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -1702,6 +1831,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -1711,6 +1841,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -1720,6 +1851,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
@@ -1729,10 +1861,11 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
 		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
 
-	{AD_TABLE_END_MARKER, {}, SCI_VERSION(0, 000, 000)}
+	{AD_TABLE_END_MARKER, {}, SCI_VERSION_AUTODETECT, SCI_VERSION(0, 000, 000)}
 };
 
 /**
@@ -1749,6 +1882,7 @@ static SciGameDescription g_fallbackDesc = {
 		ADGF_NO_FLAGS
 	},
 	{},
+	SCI_VERSION_AUTODETECT,
 	SCI_VERSION(0, 000, 000)
 };
 

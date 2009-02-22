@@ -206,7 +206,7 @@ Common::Error SciEngine::go() {
 	script_debug_flag = 0;
 
 	sci_version_t version;
-	int res_version = SCI_VERSION_AUTODETECT;
+	int res_version = getResourceVersion();
 
 	// FIXME. An evil hack until File class will be used properly
 	chdir(ConfMan.get("path").c_str());
@@ -330,6 +330,10 @@ const char* SciEngine::getGameID() const {
 
 int SciEngine::getVersion() const {
 	return _gameDescription->version;
+}
+
+int SciEngine::getResourceVersion() const {
+	return _gameDescription->res_version;
 }
 
 Common::Language SciEngine::getLanguage() const {
