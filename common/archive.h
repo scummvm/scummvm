@@ -116,7 +116,8 @@ public:
 	virtual ArchiveMemberPtr getMember(const String &name) = 0;
 
 	/**
-	 * Create a stream bound to a file in the archive.
+	 * Create a stream bound to a member in the archive. If no member with the
+	 * specified name exists, then 0 is returned.
 	 * @return the newly created input stream
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;

@@ -99,49 +99,51 @@ FSNode FSDirectory::getFSNode() const {
 	return _node;
 }
 
-FSNode FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
+FSNode *FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
 	// make caching as lazy as possible
 	if (!name.empty()) {
 		ensureCached();
 
 		if (cache.contains(name))
-			return cache[name];
+			return &cache[name];
 	}
 
-	return FSNode();
+	return 0;
 }
 
 bool FSDirectory::hasFile(const String &name) {
 	if (name.empty() || !_node.isDirectory())
 		return false;
 
-	FSNode node = lookupCache(_fileCache, name);
-	return node.exists();
+	FSNode *node = lookupCache(_fileCache, name);
+	return node && node->exists();
 }
 
 ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 	if (name.empty() || !_node.isDirectory())
 		return ArchiveMemberPtr();
 
-	FSNode node = lookupCache(_fileCache, name);
+	FSNode *node = lookupCache(_fileCache, name);
 
-	if (!node.exists()) {
+	if (!node || !node->exists()) {
 		warning("FSDirectory::getMember: FSNode does not exist");
 		return ArchiveMemberPtr();
-	} else if (node.isDirectory()) {
+	} else if (node->isDirectory()) {
 		warning("FSDirectory::getMember: FSNode is a directory");
 		return ArchiveMemberPtr();
 	}
 
-	return ArchiveMemberPtr(new FSNode(node));
+	return ArchiveMemberPtr(new FSNode(*node));
 }
 
 SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
 		return 0;
 
-	FSNode node = lookupCache(_fileCache, name);
-	SeekableReadStream *stream = node.createReadStream();
+	FSNode *node = lookupCache(_fileCache, name);
+	if (!node)
+		return 0;
+	SeekableReadStream *stream = node->createReadStream();
 	if (!stream)
 		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
 
@@ -156,8 +158,11 @@ FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &na
 	if (name.empty() || !_node.isDirectory())
 		return 0;
 
-	FSNode node = lookupCache(_subDirCache, name);
-	return new FSDirectory(prefix, node, depth);
+	FSNode *node = lookupCache(_subDirCache, name);
+	if (!node)
+		return 0;
+
+	return new FSDirectory(prefix, *node, depth);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
@@ -380,8 +385,9 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) con
 
 	ArchiveNodeList::iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(name))
-			return it->_arc->createReadStreamForMember(name);
+		SeekableReadStream *stream = it->_arc->createReadStreamForMember(name);
+		if (stream)
+			return stream;
 	}
 
 	return 0;

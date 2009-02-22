@@ -268,7 +268,7 @@ class FSDirectory : public Archive {
 	mutable int	_depth;
 
 	// look for a match
-	FSNode lookupCache(NodeCache &cache, const String &name) const;
+	FSNode *lookupCache(NodeCache &cache, const String &name) const;
 
 	// cache management
 	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const;
