@@ -34,7 +34,8 @@ namespace Sci {
 
 // Titles of the games
 static const PlainGameDescriptor SciGameTitles[] = {
-	{"sci",             "Unknown SCI Game"},
+	{"sci",             "Sierra SCI Game"},
+	{"sci-fanmade",     "Fanmade SCI Game"},
 	{"astrochicken",    "Astro Chicken"},
 	{"christmas1988",   "Christmas Card 1988"},
 	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
@@ -92,13 +93,26 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{0, 0}
 };
 
+#define FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, lang, ver) \
+	{{"sci-fanmade", name, { \
+		{"resource.map", 0, resMapMd5, resMapSize}, \
+		{"resource.001", 0, resMd5, resSize}, \
+		{NULL, 0, NULL, 0}}, lang, Common::kPlatformPC, 0}, \
+		{}, \
+		SCI_VERSION_AUTODETECT, \
+		ver \
+	}
+	
+#define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, lang, SCI_VERSION(0, 0, 629))
+#define FANMADE_V(name, resMapMd5, resMapSize, resMd5, resSize, ver) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, Common::EN_ANY, ver)
+#define FANMADE(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, Common::EN_ANY, SCI_VERSION(0, 0, 629))
+
+
 /*
 	// Missing - from FreeSCI
-	{ 0x980CEAD3, SCI_VERSION(0, 000, 629), "Demo Quest" },
 	{ 0xE4A3234D, SCI_VERSION(0, 000, 506), "Fun Seekers Guide v1.02"},
 	{ 0x1EACB959, SCI_VERSION(0, 000, 566), "HQ v1.000-5.25"},
 	{ 0x2BEAF5E7, SCI_VERSION(0, 000, 566), "HQ v1.001-5.25"},
-	{ 0x04B0B081, SCI_VERSION(0, 000, 294), "xmascard v1.04"},
 	{ 0x4447B28D, SCI_VERSION(1, 000, 72),  "Trial v1.105"},
 */
 
@@ -1864,6 +1878,30 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
+	
+	// SCI Fanmade Games
+	FANMADE("Al Pond 2: Island Quest", "9625372e710d1a95d2027b48f9e325af", 1506, "a0f9aa65b9bf3d8703adff5a621f243c", 889843),
+	FANMADE("Al Pond: Island Quest 2", "4cba6a5a4c8f66f21935ed78b0511a92", 870, "876587dc9a5ec569287a3dc4b29139d8", 613769),
+	FANMADE("Another DG Game: I Want My C64 Back", "4a8ca7ca2abd18899ef856f47665e2e9", 588, "12ff558d20c72e42cc6adb408f34d6d8", 150513),
+	FANMADE_L("Another DG Game: I Want My C64 Back", "13dc1d9ebc57daf8895412eee5e39fea", 576, "e2ad60b3a280171429db5c85f158f84a", 141697, Common::FR_FRA),
+	FANMADE("Bluntman and Chronic (Politically Correct Version)", "c3ef9fa6c7c5fb840078bf28d87c7f8b", 1362, "441636a9f6f86710844868fded868ee7", 596688),
+	FANMADE_V("Curt Quest 1.0", "b0e555370380d218968a40a68eaaaffc", 1146, "c851182cdf6fc6a81b840f4d4875f1a0", 307165, SCI_VERSION(0, 0, 685)),
+	FANMADE_V("Curt Quest 1.1", "54084c29346683296e45ef32d7ae74f3", 1128, "c851182cdf6fc6a81b840f4d4875f1a0", 302000, SCI_VERSION(0, 0, 685)),
+	FANMADE("Demo Quest", "c89a0c9e0a4e4af0ecedb300a3b31dbf", 384, "a32f3495ba24764cba091119cc3f1e13", 160098),
+	FANMADE("Dr. Jummybummy's Space Adventure 2", "6ae6cb7de423f51736d9487b4ca0c6da", 810, "26e5b563f578e104d79689f36568b7cf", 394670),
+	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, Common::FR_FRA), // FIXME: Accent
+	FANMADE("Jim Quest", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
+	FANMADE("Knight's Quest Demo 1.0", "5e816edf993956752ed06fccfeeae6d9", 1260, "959321f88a22905fa1f8c6d897874744", 703836),
+	FANMADE("LockerGnome Quest", "3eeff9130206cad0c4e1551e2b9dd2c5", 420, "ae05ca90806fd90cc43f147c82d3547c", 158906),
+	FANMADE("New Year's Mystery", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
+	FANMADE_V("Osama", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827, SCI_VERSION(0, 0, 685)),
+	FANMADE("Quest for the Cheat", "a359d4cf27f98264b42b55c017671214", 882, "8a943029f73c4bc85d454b7f473455ba", 455209),
+	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
+	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
+	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
+	
+	// FIXME: The vga demo does not have a resource.000/001 file.
+	//FANMADE_V("SCI VGA Demo", "00b1abd87bad356b90fcdfcb6132c26f", 8, "", 0, SCI_VERSION(1, 0, 577)),
 
 	{AD_TABLE_END_MARKER, {}, SCI_VERSION_AUTODETECT, SCI_VERSION(0, 000, 000)}
 };
