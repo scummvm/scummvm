@@ -27,6 +27,7 @@
 #include "sci/include/sci_memory.h"
 #include "sci/sfx/softseq.h"
 
+#include "common/file.h"
 #include "common/frac.h"
 
 namespace Sci {
@@ -112,7 +113,7 @@ static hw_channel_t hw_channels[HW_CHANNELS_NR];
 static int volume = 127;
 
 /* Frequencies for every note */
-static int freq_table[] = {
+static const int freq_table[] = {
 	58, 62, 65, 69, 73, 78, 82, 87,
 	92, 98, 104, 110, 117, 124, 131, 139,
 	147, 156, 165, 175, 185, 196, 208, 220,
@@ -360,7 +361,7 @@ static int32 read_int32(byte *data) {
 	return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 }
 
-static instrument_t *read_instrument(FILE *file, int *id) {
+static instrument_t *read_instrument(Common::File &file, int *id) {
 	instrument_t *instrument;
 	byte header[61];
 	int size;
@@ -368,7 +369,7 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 	int loop_offset;
 	int i;
 
-	if (fread(header, 1, 61, file) < 61) {
+	if (file.read(header, 61) < 61) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read instrument header\n");
 		return NULL;
 	}
@@ -411,7 +412,7 @@ static instrument_t *read_instrument(FILE *file, int *id) {
 	sciprintf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
 	instrument->samples = (int8 *) sci_malloc(size + 1);
-	if (fread(instrument->samples, 1, size, file) < (unsigned int)size) {
+	if (file.read(instrument->samples, size) < (unsigned int)size) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read instrument samples\n");
 		return NULL;
 	}
@@ -451,20 +452,17 @@ static int ami_set_option(sfx_softseq_t *self, const char *name, const char *val
 }
 
 static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
-	FILE *file;
+	Common::File file;
 	byte header[40];
 	int i;
 
-	file = sci_fopen("bank.001", "rb");
-
-	if (!file) {
+	if (!file.open("bank.001")) {
 		sciprintf("[sfx:seq:amiga] Error: file bank.001 not found\n");
 		return SFX_ERROR;
 	}
 
-	if (fread(header, 1, 40, file) < 40) {
+	if (file.read(header, 40) < 40) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read header of file bank.001\n");
-		fclose(file);
 		return SFX_ERROR;
 	}
 
@@ -494,7 +492,6 @@ static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch
 
 		if (!instrument) {
 			sciprintf("[sfx:seq:amiga] Error: failed to read bank.001\n");
-			fclose(file);
 			return SFX_ERROR;
 		}
 
@@ -505,8 +502,6 @@ static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch
 
 		bank.instruments[id] = instrument;
 	}
-
-	fclose(file);
 
 	return SFX_OK;
 }

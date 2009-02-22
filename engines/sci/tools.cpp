@@ -53,16 +53,6 @@
 
 namespace Sci {
 
-// FIXME: Get rid of G_DIR_SEPARATOR  / G_DIR_SEPARATOR_S
-#if _MSC_VER
-#  define G_DIR_SEPARATOR_S "\\"
-#  define G_DIR_SEPARATOR '\\'
-#else
-#  define G_DIR_SEPARATOR_S "/"
-#  define G_DIR_SEPARATOR '/'
-#endif
-
-
 #ifndef _MSC_VER
 #  include <sys/time.h>
 #endif
@@ -331,11 +321,6 @@ Common::String _fcaseseek(const char *fname) {
 	// Expects *dir to be uninitialized and the caller to
 	// free it afterwards  */
 
-	if (strchr(fname, G_DIR_SEPARATOR)) {
-		fprintf(stderr, "_fcaseseek() does not support subdirs\n");
-		BREAKPOINT();
-	}
-
 	// Look up the file, ignoring case
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, fname);
@@ -388,26 +373,6 @@ char *sci_getcwd() {
 	return NULL;
 }
 
-#ifdef __DC__
-
-int sci_fd_size(int fd) {
-	return fs_total(fd);
-}
-
-int sci_file_size(const char *fname) {
-	int fd = fs_open(fname, O_RDONLY);
-	int retval = -1;
-
-	if (fd != 0) {
-		retval = sci_fd_size(fd);
-		fs_close(fd);
-	}
-
-	return retval;
-}
-
-#else
-
 int sci_fd_size(int fd) {
 	struct stat fd_stat;
 
@@ -424,25 +389,6 @@ int sci_file_size(const char *fname) {
 		return -1;
 
 	return fn_stat.st_size;
-}
-
-#endif
-
-/* Simple heuristic to work around array handling peculiarity in SQ4:
-It uses StrAt() to read the individual elements, so we must determine
-whether a string is really a string or an array. */
-int is_print_str(char *str) {
-	int printable = 0;
-	int len = strlen(str);
-
-	if (len == 0) return 1;
-
-	while (*str) {
-		if (isprint(*str)) printable++;
-		str++;
-	}
-
-	return ((float)printable / (float)len >= 0.5);
 }
 
 } // End of namespace Sci

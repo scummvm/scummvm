@@ -24,6 +24,7 @@
  */
 
 #include "common/system.h"
+#include "common/file.h"
 
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
@@ -139,10 +140,10 @@ int _reset_graphics_input(EngineState *s) {
 		}
 	} else {
 		// Check for Amiga palette file.
-		FILE *f = sci_fopen("spal", "rb");
-		if (f) {
-			s->gfx_state->resstate->static_palette = gfxr_read_pal1_amiga(&s->gfx_state->resstate->static_palette_entries, f);
-			fclose(f);
+		Common::File file;
+		if (file.open("spal")) {
+			s->gfx_state->resstate->static_palette = gfxr_read_pal1_amiga(&s->gfx_state->resstate->static_palette_entries, file);
+			file.close();
 			_sci1_alloc_system_colors(s);
 		} else {
 			resource = scir_find_resource(s->resmgr, sci_palette, 999, 1);

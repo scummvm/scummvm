@@ -25,6 +25,7 @@
 
 /* SCI1 palette resource defrobnicator */
 
+#include "common/file.h"
 #include "sci/include/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
@@ -132,7 +133,7 @@ gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int s
 	return retval;
 }
 
-gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
+gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, Common::File &file) {
 	int i;
 	gfx_pixmap_color_t *retval;
 
@@ -141,8 +142,8 @@ gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f) {
 	for (i = 0; i < 32; i++) {
 		int b1, b2;
 
-		b1 = fgetc(f);
-		b2 = fgetc(f);
+		b1 = file.readByte();
+		b2 = file.readByte();
 
 		if (b1 == EOF || b2 == EOF) {
 			GFXERROR("Palette file ends prematurely\n");

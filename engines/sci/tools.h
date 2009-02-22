@@ -182,11 +182,6 @@ int sci_file_size(const char *fname);
 ** Returns   : (int) filesize of the file, -1 on error
 */
 
-/* Simple heuristic to work around array handling peculiarity in SQ4:
-It uses StrAt() to read the individual elements, so we must determine
-whether a string is really a string or an array. */
-int is_print_str(char *str);
-
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);
 

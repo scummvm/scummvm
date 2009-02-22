@@ -31,6 +31,10 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
 
+namespace Common {
+	class File;
+}
+
 namespace Sci {
 
 /*** Styles for pic0 drawing ***/
@@ -355,7 +359,7 @@ gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int s
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
 */
 
-gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, FILE *f);
+gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, Common::File &file);
 /* Reads an SCI1 palette
 ** Parameters: (int *) colors_nr: Pointer to the variable the number of colors
 **                                will be stored in

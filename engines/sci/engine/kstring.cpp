@@ -408,6 +408,23 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
+/* Simple heuristic to work around array handling peculiarity in SQ4:
+It uses StrAt() to read the individual elements, so we must determine
+whether a string is really a string or an array. */
+static int is_print_str(char *str) {
+	int printable = 0;
+	int len = strlen(str);
+
+	if (len == 0) return 1;
+
+	while (*str) {
+		if (isprint(*str)) printable++;
+		str++;
+	}
+
+	return ((float)printable / (float)len >= 0.5);
+}
+
 
 reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned char *dest = (unsigned char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
