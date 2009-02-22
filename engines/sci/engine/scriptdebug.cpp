@@ -1049,7 +1049,6 @@ int c_parse(EngineState *s) {
 
 int c_save_game(EngineState *s) {
 	int omit_check = cmd_params[0].str[0] == '_';
-	int i;
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -1058,8 +1057,8 @@ int c_save_game(EngineState *s) {
 
 	if (!omit_check) {
 		int result = 0;
-		for (i = 0; i < s->file_handles_nr; i++)
-			if (s->file_handles[i])
+		for (uint i = 0; i < s->_fileHandles.size(); i++)
+			if (s->_fileHandles[i]._file)
 				result++;
 
 		if (result) {

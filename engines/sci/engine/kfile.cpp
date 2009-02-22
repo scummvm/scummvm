@@ -150,7 +150,6 @@ static FILE *f_open_mirrored(EngineState *s, char *fname) {
 #define _K_FILE_MODE_CREATE 2
 
 void file_open(EngineState *s, char *filename, int mode) {
-	int retval = 1; // Ignore file_handles[0]
 	FILE *file = NULL;
 
 	SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
@@ -177,13 +176,15 @@ void file_open(EngineState *s, char *filename, int mode) {
 		return;
 	}
 
-	while (s->file_handles[retval] && (retval < s->file_handles_nr))
+	uint retval = 1; // Ignore _fileHandles[0]
+	while ((retval < s->_fileHandles.size()) && s->_fileHandles[retval]._file)
 		retval++;
 
-	if (retval == s->file_handles_nr) // Hit size limit => Allocate more space
-		s->file_handles = (FILE**)sci_realloc(s->file_handles, sizeof(FILE *) * ++(s->file_handles_nr));
+	if (retval == s->_fileHandles.size()) { // Hit size limit => Allocate more space
+		s->_fileHandles.resize(s->_fileHandles.size() + 1);
+	}
 
-	s->file_handles[retval] = file;
+	s->_fileHandles[retval]._file = file;
 
 	s->r_acc = make_reg(0, retval);
 }
@@ -196,18 +197,18 @@ reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static FILE *getFileFromHandle(EngineState *s, int handle) {
+static FILE *getFileFromHandle(EngineState *s, uint handle) {
 	if (handle == 0) {
 		SCIkwarn(SCIkERROR, "Attempt to use file handle 0\n");
 		return 0;
 	}
 
-	if ((handle >= s->file_handles_nr) || (s->file_handles[handle] == NULL)) {
+	if ((handle >= s->_fileHandles.size()) || (s->_fileHandles[handle]._file == NULL)) {
 		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
 		return 0;
 	}
 
-	return s->file_handles[handle];
+	return s->_fileHandles[handle]._file;
 }
 
 void file_close(EngineState *s, int handle) {
@@ -219,7 +220,7 @@ void file_close(EngineState *s, int handle) {
 
 	fclose(f);
 
-	s->file_handles[handle] = NULL;
+	s->_fileHandles[handle]._file = NULL;
 }
 
 reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {

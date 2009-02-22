@@ -172,7 +172,7 @@ byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries
 
 int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
 /* Halts script execution and informs the user about an internal kernel error or failed assertion
-** Paramters: (EngineState *) s: The state to use
+** Parameters: (EngineState *) s: The state to use
 **            (const char *) file: The file the oops occured in
 **            (int) line: The line the oops occured in
 **            (const char *) reason: Reason for the kernel oops

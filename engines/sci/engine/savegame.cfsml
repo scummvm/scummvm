@@ -1023,9 +1023,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 */
 
-	retval = (EngineState *) sci_malloc(sizeof(EngineState));
-
-	memset(retval, 0, sizeof(EngineState));
+	retval = new EngineState();
 
 	retval->savegame_version = -1;
 	_global_save_state = retval;
@@ -1095,10 +1093,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
-
-	// File IO state:
-	retval->file_handles_nr = 2;
-	retval->file_handles = (FILE **)sci_calloc(2, sizeof(FILE *));
 
 	// static parser information:
 	retval->parser_rules = s->parser_rules;

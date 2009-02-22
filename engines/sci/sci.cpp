@@ -232,8 +232,7 @@ Common::Error SciEngine::go() {
 	map_MIDI_instruments(_resmgr);
 #endif
 
-	EngineState* gamestate = (EngineState *) sci_malloc(sizeof(EngineState));
-	memset(gamestate, 0, sizeof(EngineState));
+	EngineState* gamestate = new EngineState();
 	gamestate->resmgr = _resmgr;
 	gamestate->gfx_state = NULL;
 
@@ -313,7 +312,8 @@ Common::Error SciEngine::go() {
 	script_free_engine(gamestate); // Uninitialize game state
 	script_free_breakpoints(gamestate);
 	free(gamestate->work_dir);
-	free(gamestate);
+
+	delete gamestate;
 
 	delete _resmgr;
 

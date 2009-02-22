@@ -27,6 +27,7 @@
 #define _SCI_ENGINE_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -79,7 +80,22 @@ struct SavegameMetadata {
 	int savegame_time;
 };
 
+class FileHandle {
+public:
+	FILE *_file;
+	
+	FileHandle() : _file(0) {
+	}
+	
+	~FileHandle() {
+		if (_file)
+			fclose(_file);
+	}
+};
+
 struct EngineState {
+	EngineState();
+
 	int savegame_version;
 
 	int widget_serial_counter; /* Used for savegames */
@@ -171,8 +187,7 @@ struct EngineState {
 
 	/* Kernel File IO stuff */
 
-	int file_handles_nr; /* maximum numer of allowed file handles */
-	FILE **file_handles; /* Array of file handles. Dynamically increased if required. */
+	Common::Array<FileHandle> _fileHandles; /* Array of file handles. Dynamically increased if required. */
 
 	DirSeeker *dirseeker;
 
