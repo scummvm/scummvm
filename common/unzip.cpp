@@ -1432,7 +1432,8 @@ Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::
 	if (!_zipFile)
 		return 0;
 
-	unzLocateFile(_zipFile, name.c_str(), 2);
+	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
+		return 0;
 
 	unz_file_info fileInfo;
 	unzOpenCurrentFile(_zipFile);
