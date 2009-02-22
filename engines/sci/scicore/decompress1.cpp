@@ -280,8 +280,7 @@ int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version)
 		result->number = result->id & 0x07ff;
 		result->type = result->id >> 11;
 
-		// FIXME: Shouldn't it be SCI_VERSION_1_EARLY instead of SCI_VERSION_1_LATE?
-		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
+		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_EARLY]) || (result->type > sci_invalid_resource))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
 	} else {
 		result->id = stream.readByte();
