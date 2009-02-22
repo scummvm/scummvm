@@ -529,19 +529,11 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	return view;
 }
 
-extern gfx_bitmap_font_t gfxfont_5x8;
-extern gfx_bitmap_font_t gfxfont_6x10;
-
 gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_FONT;
 	sbtree_t *tree = NULL;
 	gfx_resource_t *res = NULL;
 	int hash;
-
-	if (nr == GFX_FONT_BUILTIN_5x8)
-		return &gfxfont_5x8;
-	else if (nr == GFX_FONT_BUILTIN_6x10)
-		return &gfxfont_6x10;
 
 	tree = state->resource_trees[restype];
 

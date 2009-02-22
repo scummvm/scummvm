@@ -288,9 +288,6 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 };
 
 
-#define GFX_FONT_BUILTIN_5x8  -1
-#define GFX_FONT_BUILTIN_6x10 -2
-
 struct gfx_bitmap_font_t { /* gfx_bitmap_font_t: Bitmap font information */
 	int ID; /* Unique resource ID */
 

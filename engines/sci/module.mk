@@ -33,8 +33,6 @@ MODULE_OBJS = \
 	engine/vm.o \
 	gfx/antialias.o \
 	gfx/font.o \
-	gfx/font-5x8.o \
-	gfx/font-6x10.o \
 	gfx/gfx_driver.o \
 	gfx/gfx_res_options.o \
 	gfx/gfx_resource.o \
