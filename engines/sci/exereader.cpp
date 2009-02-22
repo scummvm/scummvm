@@ -172,7 +172,7 @@ uint getBit(Common::SeekableReadStream *input) {
 	return bit;
 }
 
-Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream) {
+Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Common::Platform platform) {
 	int len = exeStream->size();
 	unsigned char *buffer = NULL;
 
@@ -277,7 +277,7 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream) {
 
 			// Return the current string if it's parseable
 			int version;
-			if (getSciVersionFromString(currentString, &version)) {
+			if (getSciVersionFromString(currentString, &version, platform)) {
 				delete[] buffer;
 				return currentString;
 			}
@@ -296,10 +296,22 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream) {
 	return resultString;
 }
 
-bool getSciVersionFromString(Common::String versionString, int *version) {
+bool getSciVersionFromString(Common::String versionString, int *version, Common::Platform platform) {
 	// Map non-numeric versions to their numeric counterparts
 	Common::String mappedVersion = versionString;
-	if (versionString.hasPrefix("S.old.")) {
+	if (platform == Common::kPlatformAmiga) {
+		if (versionString.hasPrefix("1.002.")) {
+			mappedVersion = "0.000.685";
+		} else if (versionString.hasPrefix("1.003.")) {
+			mappedVersion = "0.001.010";
+		} else if (versionString.hasPrefix("1.004.")) {
+			mappedVersion = "1.000.784";
+		} else if (versionString.hasPrefix("1.005.")) {
+			mappedVersion = "1.000.510";
+		} else if (versionString == "x.yyy.zzz") {
+			// How to map it?
+		}
+	} else if (versionString.hasPrefix("S.old.")) {
 		// SCI 01
 		mappedVersion = "0.001.";
 		mappedVersion += versionString.c_str() + 6;

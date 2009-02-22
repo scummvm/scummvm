@@ -556,7 +556,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 274)
 	},
 
-#if 0
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
 	{{"kq5", "", {
 		{"resource.map", 0, "fcbcca058e1157221ffc27251cd59bc3", 8040},
@@ -570,9 +569,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "b914b5901e786327213e779725d30dd1", 778772},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
-		SCI_VERSION(1, 000, 60)
+		SCI_VERSION(1, 000, 784)
 	},
-#endif
 
 	// King's Quest 5 - English DOS
 	{{"kq5", "", {
@@ -1818,7 +1816,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			filename.contains("prog")) {
 
 			// We already found a valid exe, no need to check this one.
-			if (exeVersionString.size())
+			if (!exeVersionString.empty())
 				continue;
 
 			// Is it really an executable file?
@@ -1827,7 +1825,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 			// It's a valid exe, read the interpreter version string
 			if (exePlatform != Common::kPlatformUnknown)
-				exeVersionString = readSciVersionFromExe(fileStream);
+				exeVersionString = readSciVersionFromExe(fileStream, exePlatform);
 
 			delete fileStream;
 		}
@@ -1853,7 +1851,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	printf("version number, from the game's executable:\n");
 
 	// Try to parse the executable version
-	if (getSciVersionFromString(exeVersionString, &g_fallbackDesc.version)) {
+	if (getSciVersionFromString(exeVersionString, &g_fallbackDesc.version, g_fallbackDesc.desc.platform)) {
 		printf("Interpreter version: %d.%03d.%03d (got %s by executable scan)\n",
 			SCI_VERSION_MAJOR(g_fallbackDesc.version),
 			SCI_VERSION_MINOR(g_fallbackDesc.version),
