@@ -1388,6 +1388,7 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	int16 width = right - left + 1;
 	int16 height = bottom - top + 1;
 	int16 sW = _vidMemWidth;
+	int16 sH = _vidMemHeight;
 	uint32 dataLen = _frameDataLen;
 	byte *dataPtr = _frameData;
 	byte *imdVidMem = _vidMem + sW * top + left;
@@ -1427,6 +1428,7 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 			dest = _vidMemBuffer + postScaleX(_width) * (top - _y) + postScaleX((left - _x));
 			imdVidMem = _vidMem + _vidMemWidth * top + preScaleX(left);
 			sW = postScaleX(_width);
+			sH = _height;
 		}
 
 		if (type & 0x80) { // Frame data is compressed
@@ -1468,11 +1470,15 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 			dest = destBak;
 		}
 	} else if (type == 2) { // Whole block
-		for (int i = 0; i < height; i++) {
-			memcpy(dest, srcPtr, postScaleX(width));
+		int16 w = MIN<int32>(postScaleX(width), sW);
+		int16 h = MIN(height, sH);
+
+		for (int i = 0; i < h; i++) {
+			memcpy(dest, srcPtr, w);
 			srcPtr += postScaleX(width);
 			dest += sW;
 		}
+
 	} else if (type == 3) { // RLE block
 		for (int i = 0; i < height; i++) {
 			destBak = dest;
