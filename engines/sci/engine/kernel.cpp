@@ -96,11 +96,7 @@ reg_t kGlobalToLocal(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv);
-#ifdef WIN32
-reg_t kDeviceInfo_Win32(EngineState *s, int funct_nr, int argc, reg_t *argv);
-#else
-reg_t kDeviceInfo_Unix(EngineState *s, int funct_nr, int argc, reg_t *argv);
-#endif
+reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv);
@@ -306,11 +302,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*64*/	DEFUN("ValidPath", kValidPath, "r"),
 	/*65*/	DEFUN("CoordPri", kCoordPri, "i"),
 	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
-#ifdef WIN32
-	/*67*/	DEFUN("DeviceInfo", kDeviceInfo_Win32, "i.*"),
-#else /* !WIN32 */
-	/*67*/	DEFUN("DeviceInfo", kDeviceInfo_Unix, "i.*"),
-#endif
+	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
 	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ""),
 	/*69*/	DEFUN("CheckSaveGame", kCheckSaveGame, ".*"),
 	/*6a*/	DEFUN("ShakeScreen", kShakeScreen, "ii*"),

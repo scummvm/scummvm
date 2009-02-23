@@ -76,7 +76,7 @@ static FILE *f_open_mirrored(EngineState *s, char *fname) {
 	int fsize;
 
 
-	printf("f_open_mirrored(%s)\n", fname);
+	debug(3, "f_open_mirrored(%s)", fname);
 #if 0
 	// TODO/FIXME: Use s->resource_dir to locate the file???
 	File file;
@@ -194,6 +194,7 @@ reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int mode = UKPV(1);
 
 	file_open(s, name, mode);
+	debug(3, "kFOpen(%s,0x%x) -> %d", name, mode, s->r_acc.offset);
 	return s->r_acc;
 }
 
@@ -224,6 +225,7 @@ void file_close(EngineState *s, int handle) {
 }
 
 reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	debug(3, "kFClose(%d)", UKPV(0));
 	file_close(s, UKPV(0));
 	return s->r_acc;
 }
@@ -289,6 +291,7 @@ reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int maxsize = UKPV(1);
 	int handle = UKPV(2);
 
+	debug(3, "kFGets(%d,%d)", handle, maxsize);
 	fgets_wrapper(s, dest, maxsize, handle);
 	return argv[0];
 }
@@ -302,6 +305,7 @@ reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	strncpy(targetaddr, wd, MAX_SAVE_DIR_SIZE - 1);
 	targetaddr[MAX_SAVE_DIR_SIZE - 1] = 0; // Terminate
+	debug(3, "kGetCWD() -> %s", targetaddr);
 
 	SCIkdebug(SCIkFILE, "Copying cwd='%s'(%d chars) to %p", wd, strlen(wd), targetaddr);
 
@@ -325,144 +329,71 @@ void delete_savegame(EngineState *s, int savedir_nr) {
 #define K_DEVICE_INFO_GET_SAVECAT_NAME 7
 #define K_DEVICE_INFO_GET_SAVEFILE_NAME 8
 
-#ifdef WIN32
-
-reg_t kDeviceInfo_Win32(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char dir_buffer[MAXPATHLEN], dir_buffer2[MAXPATHLEN];
+reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int mode = UKPV(0);
+	char *game_prefix, *input_s, *output_s;
 
 	switch (mode) {
-	case K_DEVICE_INFO_GET_DEVICE: {
-		char *input_s = (char*)kernel_dereference_bulk_pointer(s, argv[1], 0);
-		char *output_s = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
-
-		GetFullPathName(input_s, sizeof(dir_buffer) - 1, dir_buffer, NULL);
-		strncpy(output_s, dir_buffer, 2);
-		output_s [2] = 0;
-	}
-	break;
-
-	case K_DEVICE_INFO_GET_CURRENT_DEVICE: {
-		char *output_s = (char*)kernel_dereference_bulk_pointer(s, argv[1], 0);
-
-		_getcwd(dir_buffer, sizeof(dir_buffer) - 1);
-		strncpy(output_s, dir_buffer, 2);
-		output_s [2] = 0;
-	}
-	break;
-
-	case K_DEVICE_INFO_PATHS_EQUAL: {
-		char *path1_s = (char*)kernel_dereference_bulk_pointer(s, argv[1], 0);
-		char *path2_s = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
-
-		GetFullPathName(path1_s, sizeof(dir_buffer) - 1, dir_buffer, NULL);
-		GetFullPathName(path2_s, sizeof(dir_buffer2) - 1, dir_buffer2, NULL);
-
-		return make_reg(0, !scumm_stricmp(path1_s, path2_s));
-	}
-	break;
-
-	case K_DEVICE_INFO_IS_FLOPPY: {
-		char *input_s = (char*)kernel_dereference_bulk_pointer(s, argv[1], 0);
-
-		GetFullPathName(input_s, sizeof(dir_buffer) - 1, dir_buffer, NULL);
-		dir_buffer [3] = 0;  /* leave X:\ */
-
-		return make_reg(0, GetDriveType(dir_buffer) == DRIVE_REMOVABLE);
-	}
-	break;
-
-	/* SCI uses these in a less-than-portable way to delete savegames.
-	** Read http://www-plan.cs.colorado.edu/creichen/freesci-logs/2005.10/log20051019.html
-	** for more information on our workaround for this.
-	*/
-	case K_DEVICE_INFO_GET_SAVECAT_NAME: {
-		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
-
-		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
-	}
-
-	break;
-	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
-		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
-		int savegame_id = UKPV(3);
-		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
-		delete_savegame(s, savegame_id);
-	}
-	break;
-	default: {
-		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
-	}
-	}
-	return s->r_acc;
-}
-
-#else // !WIN32
-
-reg_t kDeviceInfo_Unix(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int mode = UKPV(0);
-
-	switch (mode) {
-	case K_DEVICE_INFO_GET_DEVICE: {
-		char *output_s = kernel_dereference_char_pointer(s, argv[2], 0);
+	case K_DEVICE_INFO_GET_DEVICE:
+		input_s = kernel_dereference_char_pointer(s, argv[1], 0);
+		output_s = kernel_dereference_char_pointer(s, argv[2], 0);
+		assert(input_s != output_s);
 
 		strcpy(output_s, "/");
-	}
-	break;
+		debug(3, "K_DEVICE_INFO_GET_DEVICE(%s) -> %s", input_s, output_s);
+		break;
 
-	case K_DEVICE_INFO_GET_CURRENT_DEVICE: {
-		char *output_s = kernel_dereference_char_pointer(s, argv[1], 0);
+	case K_DEVICE_INFO_GET_CURRENT_DEVICE:
+		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
 
 		strcpy(output_s, "/");
-	}
-	break;
+		debug(3, "K_DEVICE_INFO_GET_CURRENT_DEVICE() -> %s", output_s);
+		break;
 
 	case K_DEVICE_INFO_PATHS_EQUAL: {
 		char *path1_s = kernel_dereference_char_pointer(s, argv[1], 0);
 		char *path2_s = kernel_dereference_char_pointer(s, argv[2], 0);
+		debug(3, "K_DEVICE_INFO_PATHS_EQUAL(%s,%s)", path1_s, path2_s);
 
-		//return make_reg(0, !strcmp(path1_s, path2_s));
 		return make_reg(0, Common::matchString(path2_s, path1_s, true));
-	}
-	break;
+		}
+		break;
 
-	case K_DEVICE_INFO_IS_FLOPPY: {
-
+	case K_DEVICE_INFO_IS_FLOPPY:
+		input_s = kernel_dereference_char_pointer(s, argv[1], 0);
+		debug(3, "K_DEVICE_INFO_IS_FLOPPY(%s)\n", input_s);
 		return NULL_REG; /* Never */
-	}
-	break;
 
 	/* SCI uses these in a less-than-portable way to delete savegames.
 	** Read http://www-plan.cs.colorado.edu/creichen/freesci-logs/2005.10/log20051019.html
 	** for more information on our workaround for this.
 	*/
 	case K_DEVICE_INFO_GET_SAVECAT_NAME: {
-		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		//char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
+		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
+		game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 
-		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
-	}
+		sprintf(output_s, "%s/__throwaway", s->work_dir);
+		debug(3, "K_DEVICE_INFO_GET_SAVECAT_NAME(%s) -> %s", game_prefix, output_s);
+		}
 
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
-		char *output_buffer = kernel_dereference_char_pointer(s, argv[1], 0);
-		//char *game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
+		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
+		game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 		int savegame_id = UKPV(3);
-		sprintf(output_buffer, "%s/__throwaway", s->work_dir);
+		sprintf(output_s, "%s/__throwaway", s->work_dir);
 		delete_savegame(s, savegame_id);
-	}
-	break;
-	default: {
+		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix, savegame_id, output_s);
+		}
+		break;
+
+	default:
 		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
-	}
+		break;
 	}
 
 	return s->r_acc;
 }
-
-#endif // !WIN32
 
 reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
@@ -470,59 +401,12 @@ reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *path = kernel_dereference_char_pointer(s, argv[0], 0);
-	char *testpath = (char*)sci_malloc(strlen(path) + 15);
-	char buf[1024];
-	int fd;
-	int failed = 0;
-	int pathlen;
 
-	strcpy(testpath, path);
-	strcat(testpath, "freesci.foo");
-	pathlen = strlen(testpath);
-
-	while (IS_VALID_FD(fd = open(testpath, O_RDONLY))) {
-		close(fd);
-		if (testpath[pathlen - 2] == 'z') { // Failed.
-			warning("Failed to find non-existing file for free space test");
-			free(testpath);
-			return NULL_REG;
-		}
-
-		/* If this file couldn't be created, try freesci.fop, freesci.foq etc.,
-		** then freesci.fpa, freesci.fpb. Stop at freesci.fza.
-		** Yes, this is extremely arbitrary and very strange.
-		*/
-		if (testpath[pathlen - 1] == 'z') {
-			testpath[pathlen - 1] = 'a';
-			++testpath[pathlen - 2];
-		} else
-			++testpath[pathlen - 1];
-	}
-
-	fd = open(testpath, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
-
-	if (!IS_VALID_FD(fd)) {
-		warning("Could not test for disk space: %s", strerror(errno));
-		warning("Test path was '%s'", testpath);
-		free(testpath);
-		return NULL_REG;
-	}
-
-	memset(buf, 0, sizeof(buf));
-	for (int i = 0; i < 1024; i++) // Check for 1 MB
-		if (write(fd, buf, 1024) < 1024)
-			failed = 1;
-
-	close(fd);
-	remove(testpath);
-	free(testpath);
-
-	return make_reg(0, !failed);
-}
-
-int _k_check_file(char *filename, int minfilesize) {
-	// Returns 0 if the file exists and is big enough
-	return (sci_file_size(filename) < minfilesize);
+	debug(3, "kCheckFreeSpace(%s)", path);
+	// We simply always pretend that there is enough space.
+	// The alternative would be to write a big test file, which is not nice
+	// on systems where doing so is very slow.
+	return make_reg(0, 1);
 }
 
 static int _savegame_index_struct_compare(const void *a, const void *b) {
@@ -565,9 +449,10 @@ static void update_savegame_indices() {
 }
 
 reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	//char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
+	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
 
+	debug(3, "kCheckSaveGame(%s, %d)", game_id, savedir_nr);
 	if (_savegame_indices_nr < 0) {
 		warning("Savegame index list not initialized");
 		update_savegame_indices();
@@ -601,12 +486,13 @@ reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	//char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
+	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *nametarget = kernel_dereference_char_pointer(s, argv[1], 0);
 	reg_t nametarget_base = argv[1];
 	reg_t *nameoffsets = kernel_dereference_reg_pointer(s, argv[2], 0);
 	int i;
 
+	debug(3, "kGetSaveFiles(%s,%s)", game_id, nametarget);
 	update_savegame_indices();
 
 	s->r_acc = NULL_REG;
@@ -653,12 +539,13 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	//char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
+	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
 	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
-	char *game_description = (char*)kernel_dereference_bulk_pointer(s, argv[2], 0);
-	char *version = argc > 3 ? strdup((char*)kernel_dereference_bulk_pointer(s, argv[3], 0)) : NULL;
+	char *game_description = kernel_dereference_char_pointer(s, argv[2], 0);
+	char *version = argc > 3 ? strdup(kernel_dereference_char_pointer(s, argv[3], 0)) : NULL;
 
+	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id, savedir_nr, game_description, version);
 	s->game_version = version;
 
 	update_savegame_indices();
@@ -723,8 +610,10 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *game_id = (char*)kernel_dereference_bulk_pointer(s, argv[0], 0);
+	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
 	int savedir_nr = UKPV(1);
+
+	debug(3, "kRestoreGame(%s,%d)", game_id, savedir_nr);
 
 	if (_savegame_indices_nr < 0) {
 		warning("Savegame index list not initialized");
@@ -766,8 +655,11 @@ reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char cpath[MAXPATHLEN + 1];
 	getcwd(cpath, MAXPATHLEN + 1);
 
+
 	s->r_acc = make_reg(0, !chdir(pathname)); // Try to go there. If it works, return 1, 0 otherwise.
 	chdir(cpath);
+
+	debug(3, "kValidPath(%s) -> %d", pathname, s->r_acc.offset);
 
 	return s->r_acc;
 }
@@ -856,10 +748,12 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int mode = UKPV(2);
 
 		file_open(s, name, mode);
+		debug(3, "K_FILEIO_OPEN(%s,0x%x) -> %d", name, mode, s->r_acc.offset);
 		break;
 	}
 	case K_FILEIO_CLOSE : {
 		int handle = UKPV(1);
+		debug(3, "K_FILEIO_CLOSE(%d)", handle);
 
 		file_close(s, handle);
 		break;
@@ -868,6 +762,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int handle = UKPV(1);
 		char *dest = kernel_dereference_char_pointer(s, argv[2], 0);
 		int size = UKPV(3);
+		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
 
 		fread_wrapper(s, dest, size, handle);
 		break;
@@ -876,12 +771,14 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int handle = UKPV(1);
 		char *buf = kernel_dereference_char_pointer(s, argv[2], 0);
 		int size = UKPV(3);
+		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
 
 		fwrite_wrapper(s, handle, buf, size);
 		break;
 	}
 	case K_FILEIO_UNLINK : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
+		debug(3, "K_FILEIO_UNLINK(%s)", name);
 
 		unlink(name);
 		break;
@@ -890,6 +787,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		char *dest = kernel_dereference_char_pointer(s, argv[1], 0);
 		int size = UKPV(2);
 		int handle = UKPV(3);
+		debug(3, "K_FILEIO_READ_STRING(%d,%d)", handle, size);
 
 		fgets_wrapper(s, dest, size, handle);
 		return argv[1];
@@ -898,6 +796,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int handle = UKPV(1);
 		int size = UKPV(3);
 		char *buf = kernel_dereference_char_pointer(s, argv[2], size);
+		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
 		if (buf)
 			fputs_wrapper(s, handle, size, buf);
@@ -907,6 +806,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int handle = UKPV(1);
 		int offset = UKPV(2);
 		int whence = UKPV(3);
+		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
 
 		fseek_wrapper(s, handle, offset, whence);
 		break;
@@ -914,7 +814,8 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_FILEIO_FIND_FIRST : {
 		char *mask = kernel_dereference_char_pointer(s, argv[1], 0);
 		reg_t buf = argv[2];
-		// int attr = UKPV(3); */ /* We won't use this, Win32 might, though...
+		int attr = UKPV(3); // We won't use this, Win32 might, though...
+		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask, attr);
 
 #ifndef WIN32
 		if (strcmp(mask, "*.*") == 0)
@@ -929,12 +830,14 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case K_FILEIO_FIND_NEXT : {
 		assert(s->dirseeker);
+		debug(3, "K_FILEIO_FIND_NEXT()");
 		s->dirseeker->next_file();
 		break;
 	}
 	case K_FILEIO_STAT : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
-		s->r_acc = make_reg(0, 1 - _k_check_file(name, 0));
+		s->r_acc = make_reg(0, sci_file_size(name) >= 0);
+		debug(3, "K_FILEIO_STAT(%s) -> %d", name, s->r_acc.offset);
 		break;
 	}
 	default :
