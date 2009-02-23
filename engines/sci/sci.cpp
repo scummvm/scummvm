@@ -208,9 +208,6 @@ Common::Error SciEngine::go() {
 	sci_version_t version;
 	int res_version = getResourceVersion();
 
-	// FIXME. An evil hack until File class will be used properly
-	chdir(ConfMan.get("path").c_str());
-
 	version = getVersion();
 
 	_resmgr = new ResourceManager(res_version, 256 * 1024);
