@@ -325,6 +325,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 168)
 	},
 
+#if 0
+	// Conquests of the Longbow - English DOS Demo
+	{{"longbow", "", {
+		{"resource.map", 0, "cbc5cb73341de1bff1b1e20a640af220", 588},
+		{"resource.001", 0, "f05a20cc07eee85da8e999d0ac0f596b", 869916},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+	},
+#endif
+
 	// Eco Quest - English DOS CD 1.1
 	{{"ecoquest", "CD", {
 		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
@@ -862,6 +874,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 #if 0
+	// Larry 1 VGA Remake - English DOS Demo
+	{{"lsl1sci", "VGA Remake", {
+		{"resource.map", 0, "434e1f6c39d71647b34f0ee57b2bbd68", 444},
+		{"resource.001", 0, "0c0768215c562d9dace4a5ca53696cf3", 359913},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 84)
+	},
+#endif
+
+#if 0
 	// Larry 1 VGA Remake - Spanish DOS
 	{{"lsl1sci", "VGA Remake", {
 		{"resource.map", 0, "4fbe5c25878d51d7b2a68b710de4491b", 3327},
@@ -933,6 +957,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 572)
 	},
+
+#if 0
+	// Larry 3 - English DOS Demo
+	{{"lsl3", "", {
+		{"resource.map", 0, "33a2384f395470af3d2180e37ad0322a", 1140},
+		{"resource.001", 0, "f773d79b93dfd4052ec8c1cc64c1e6ab", 76525},
+		{"resource.002", 0, "f773d79b93dfd4052ec8c1cc64c1e6ab", 268299},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 0, 530)
+	},
+#endif
 
 #if 0
 	// Larry 3 - German DOS (from Tobis87)
@@ -1305,6 +1342,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
 	},
+
+#if 0
+	// Police Quest 3 - English DOS Demo
+	{{"pq3", "", {
+		{"resource.map", 0, "ec8e58e7663ae5173853abf6c76b52bb", 867},
+		{"resource.000", 0, "277f97771f7a6d89677141f02da313d6", 65150},
+		{"resource.001", 0, "5c5a551b6c86cce2ee75becb90e0b586", 624411},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 510)	// T.A00.052
+	},
+#endif
 
 	// Police Quest 4 - English DOS
 	{{"pq4", "", {
