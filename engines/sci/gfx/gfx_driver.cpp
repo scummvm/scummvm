@@ -268,7 +268,8 @@ static int scummvm_set_static_buffer(gfx_driver_t *drv, gfx_pixmap_t *pic, gfx_p
 
 // Mouse pointer operations
 
-static uint8 *create_scaled_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
+// Scale cursor and map its colors to the global palette
+static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 {
 	int linewidth = pointer->xl;
 	int lines = pointer->yl;
@@ -280,8 +281,11 @@ static uint8 *create_scaled_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int
 		pos = linebase;
 
 		for (int xc = 0; xc < pointer->index_xl; xc++) {
+			uint8 color = *src;
+			if (color != 255)
+				color = pointer->colors[color].global_index;
 			for (int scalectr = 0; scalectr < drv->mode->xfact; scalectr++) {
-				*pos++ = *src;
+				*pos++ = color;
 			}
 			src++;
 		}
@@ -297,13 +301,9 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer) {
 	if (pointer == NULL) {
 		g_system->showMouse(false);
 	} else {
-		if (drv->mode->xfact > 1 || drv->mode->yfact > 1) {
-			delete[] S->pointer_data;
-			S->pointer_data = create_scaled_cursor(drv, pointer, 1);
-			g_system->setMouseCursor(S->pointer_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
-		} else {
-			g_system->setMouseCursor(pointer->index_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
-		}
+		delete[] S->pointer_data;
+		S->pointer_data = create_cursor(drv, pointer, 1);
+		g_system->setMouseCursor(S->pointer_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
 		g_system->showMouse(true);
 	}
 
