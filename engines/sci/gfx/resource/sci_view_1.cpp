@@ -25,6 +25,8 @@
 
 // SCI 1 view resource defrobnicator
 
+#include "common/endian.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
@@ -274,8 +276,8 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 	int i;
 	int cels_nr = get_int_16(resource + offset);
 
-	if (get_uint_16(resource + offset + 2)) {
-		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, get_uint_16(resource + offset + 2));
+	if (READ_LE_UINT16(resource + offset + 2)) {
+		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
 	}
 
 	if (cels_nr * 2 + 4 + offset > size) {
@@ -288,7 +290,7 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 	dest->cels = (gfx_pixmap_t**)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
-		int cel_offset = get_uint_16(resource + offset + 4 + (i << 1));
+		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
 		gfx_pixmap_t *cel;
 
 		if (cel_offset >= size) {
@@ -332,8 +334,8 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_
 	view->flags = 0;
 
 	view->loops_nr = resource[V1_LOOPS_NR_OFFSET];
-	palette_offset = get_uint_16(resource + V1_PALETTE_OFFSET);
-	mirror_mask = get_uint_16(resource + V1_MIRROR_MASK);
+	palette_offset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET);
+	mirror_mask = READ_LE_UINT16(resource + V1_MIRROR_MASK);
 
 	if (view->loops_nr * 2 + V1_FIRST_LOOP_OFFSET > size) {
 		GFXERROR("View %04x: Not enough space in resource to accomodate for the claimed %d loops\n", id, view->loops_nr);
@@ -378,7 +380,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_
 
 	for (i = 0; i < view->loops_nr; i++) {
 		int error_token = 0;
-		int loop_offset = get_uint_16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
+		int loop_offset = READ_LE_UINT16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
 
 		if (loop_offset >= size) {
 			GFXERROR("View %04x:(%d) supposed to be at illegal offset 0x%04x\n", id, i, loop_offset);
@@ -416,12 +418,12 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_
 #define V2_LITERAL_OFFSET 28
 
 gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view) {
-	int xl = get_uint_16(cel_base + V2_CEL_WIDTH);
-	int yl = get_uint_16(cel_base + V2_CEL_HEIGHT);
-	int xdisplace = get_uint_16(cel_base + V2_X_DISPLACEMENT);
-	int ydisplace = get_uint_16(cel_base + V2_Y_DISPLACEMENT);
-	int runlength_offset = get_uint_16(cel_base + V2_RUNLENGTH_OFFSET);
-	int literal_offset = get_uint_16(cel_base + V2_LITERAL_OFFSET);
+	int xl = READ_LE_UINT16(cel_base + V2_CEL_WIDTH);
+	int yl = READ_LE_UINT16(cel_base + V2_CEL_HEIGHT);
+	int xdisplace = READ_LE_UINT16(cel_base + V2_X_DISPLACEMENT);
+	int ydisplace = READ_LE_UINT16(cel_base + V2_Y_DISPLACEMENT);
+	int runlength_offset = READ_LE_UINT16(cel_base + V2_RUNLENGTH_OFFSET);
+	int literal_offset = READ_LE_UINT16(cel_base + V2_LITERAL_OFFSET);
 	int pixmap_size = xl * yl;
 
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
@@ -474,8 +476,8 @@ gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_bas
 
 gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	gfxr_view_t *view;
-	int header_size = get_uint_16(resource + V2_HEADER_SIZE);
-	int palette_offset = get_uint_16(resource + V2_PALETTE_OFFSET);
+	int header_size = READ_LE_UINT16(resource + V2_HEADER_SIZE);
+	int palette_offset = READ_LE_UINT16(resource + V2_PALETTE_OFFSET);
 	int bytes_per_loop = resource[V2_BYTES_PER_LOOP];
 	int loops_num = resource[V2_LOOPS_NUM];
 	int bytes_per_cel = resource[V2_BYTES_PER_CEL];
@@ -496,7 +498,7 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 
 	seeker = resource + header_size;
 	for (i = 0; i < view->loops_nr; i++) {
-		int loop_offset = get_uint_16(seeker + V2_LOOP_OFFSET);
+		int loop_offset = READ_LE_UINT16(seeker + V2_LOOP_OFFSET);
 		int cels = seeker[V2_CELS_NUM];
 		int mirrored = seeker[V2_IS_MIRROR];
 		int copy_entry = seeker[V2_COPY_OF_LOOP];
@@ -507,7 +509,7 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 			                 view, bytes_per_cel);
 		else {
 			byte *temp = resource + header_size + copy_entry * bytes_per_loop;
-			loop_offset = get_uint_16(temp + V2_LOOP_OFFSET);
+			loop_offset = READ_LE_UINT16(temp + V2_LOOP_OFFSET);
 			cels = temp[V2_CELS_NUM];
 			gfxr_draw_loop11(id, i, 1, resource, resource + loop_offset, size, cels,
 			                 view->loops + i, view, bytes_per_cel);

@@ -401,11 +401,6 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 ** the mode has a byte depth of more than 1.
 */
 
-
-static inline int get_uint_16(const byte *offset) {
-	return ((unsigned int) offset[0] | (((unsigned int) offset[1]) << 8));
-}
-
 static inline int get_int_16(const byte *offset) {
 	return ((int) offset[0] | (((int) offset[1]) << 8));
 }

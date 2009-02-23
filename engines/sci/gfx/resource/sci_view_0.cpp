@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/endian.h"
+
 #include "sci/include/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
@@ -123,8 +125,8 @@ static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, 
 	int i;
 	int cels_nr = get_int_16(resource + offset);
 
-	if (get_uint_16(resource + offset + 2)) {
-		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, get_uint_16(resource + offset + 2));
+	if (READ_LE_UINT16(resource + offset + 2)) {
+		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
 	}
 
 	if (cels_nr * 2 + 4 + offset > size) {
@@ -137,7 +139,7 @@ static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, 
 	dest->cels = (gfx_pixmap_t**)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
-		int cel_offset = get_uint_16(resource + offset + 4 + (i << 1));
+		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
 		gfx_pixmap_t *cel = NULL;
 
 		if (cel_offset >= size) {
@@ -205,7 +207,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 
 	for (i = 0; i < view->loops_nr; i++) {
 		int error_token = 0;
-		int loop_offset = get_uint_16(resource + V0_FIRST_LOOP_OFFSET + (i << 1));
+		int loop_offset = READ_LE_UINT16(resource + V0_FIRST_LOOP_OFFSET + (i << 1));
 		int mirrored = resource[mirror_bytepos] & mirror_bitpos;
 
 		if ((mirror_bitpos <<= 1) == 0x100) {
