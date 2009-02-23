@@ -328,7 +328,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 	}
 
 	must_post_process_pic = res->scaled_data.pic->visual_map->data == NULL;
-	// If the pic was only just drawn, we'll have to antialiase and endianness-adjust it now
+	// If the pic was only just drawn, we'll have to endianness-adjust it now
 
 	npic = gfxr_pic_xlate_common(res, maps, scaled || state->options->pic0_unscaled, 0, state->driver->mode,
 	                             state->options->pic_xlate_filter, 0, state->options);
