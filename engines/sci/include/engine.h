@@ -100,8 +100,6 @@ struct EngineState {
 
 	int widget_serial_counter; /* Used for savegames */
 
-	char *resource_dir; /* Directory the resource files are kept in */
-	char *work_dir; /* Directory the game metadata should be written to */
 	ResourceManager *resmgr; /* The resource manager */
 
 	char *game_name; /* Designation of the primary object (which inherits from Game) */

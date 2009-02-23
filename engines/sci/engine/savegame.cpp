@@ -5272,8 +5272,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->debug_mode = s->debug_mode;
 
-	retval->resource_dir = s->resource_dir;
-	retval->work_dir = s->work_dir;
 	retval->kernel_opt_flags = 0;
 	retval->have_mouse_flag = 1;
 
@@ -5326,7 +5324,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1169 "engines/sci/engine/savegame.cfsml"
+#line 1167 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;

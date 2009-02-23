@@ -213,14 +213,10 @@ Common::Error SciEngine::go() {
 
 	version = getVersion();
 
-	char resource_dir[MAXPATHLEN+1] = "";
-	getcwd(resource_dir, MAXPATHLEN); // Store resource directory
-
 	_resmgr = new ResourceManager(res_version, 256 * 1024);
 
 	if (!_resmgr) {
-		printf("No resources found in '%s'.\nAborting...\n",
-		       resource_dir);
+		printf("No resources found, aborting...\n");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -232,7 +228,7 @@ Common::Error SciEngine::go() {
 	map_MIDI_instruments(_resmgr);
 #endif
 
-	EngineState* gamestate = new EngineState();
+	EngineState *gamestate = new EngineState();
 	gamestate->resmgr = _resmgr;
 	gamestate->gfx_state = NULL;
 
@@ -249,9 +245,6 @@ Common::Error SciEngine::go() {
 	// Set the savegame dir
 	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
 
-	// Originally, work_dir tried to be ~/.freesci/game_name
-	gamestate->work_dir = sci_strdup(ConfMan.get("savepath").c_str());
-	gamestate->resource_dir = resource_dir;
 	gamestate->port_serial = 0;
 	gamestate->have_mouse_flag = 1;
 	gamestate->animation_delay = 5;
@@ -310,7 +303,6 @@ Common::Error SciEngine::go() {
 	game_exit(gamestate);
 	script_free_engine(gamestate); // Uninitialize game state
 	script_free_breakpoints(gamestate);
-	free(gamestate->work_dir);
 
 	delete gamestate;
 

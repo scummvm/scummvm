@@ -45,10 +45,6 @@
 
 namespace Sci {
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 #ifdef WIN32
 #  define FO_BINARY "b"
 #else
@@ -71,19 +67,14 @@ static struct _savegame_index_struct {
 ** Otherwise, the new file is then opened for reading or writing.
 */
 static FILE *f_open_mirrored(EngineState *s, char *fname) {
-	int fd;
-	char *buf = NULL;
-	int fsize;
-
-
 	debug(3, "f_open_mirrored(%s)", fname);
+
 #if 0
-	// TODO/FIXME: Use s->resource_dir to locate the file???
-	File file;
+	Common::File file;
 	if (!file.open(fname))
 		return NULL;
 
-	fsize = file.size();
+	int fsize = file.size();
 	if (fsize > 0) {
 		buf = (char *)sci_malloc(fsize);
 		file.read(buf, fsize);
@@ -91,58 +82,17 @@ static FILE *f_open_mirrored(EngineState *s, char *fname) {
 
 	file.close();
 
-	....
 	copy the file to a savegame -> only makes sense to perform this change
 	if we at the same time change the code for loading files to look among the
 	savestates, and also change *all* file writing code to write to savestates,
 	as it should
-	...
+	
+	Also, we may have to change the filename when creating a matchin savegame,
+	e.g. prefix it with the target name
 #endif
 
-	chdir(s->resource_dir);
-	fd = sci_open(fname, O_RDONLY | O_BINARY);
-	if (!IS_VALID_FD(fd)) {
-		chdir(s->work_dir);
-		return NULL;
-	}
-
-	fsize = sci_fd_size(fd);
-	if (fsize > 0) {
-		buf = (char*)sci_malloc(fsize);
-		read(fd, buf, fsize);
-	}
-
-	close(fd);
-
-	chdir(s->work_dir);
-
-	// Visual C++ doesn't allow to specify O_BINARY with creat()
-#ifdef _MSC_VER
-	fd = _open(fname, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
-#else
-	fd = open(fname, O_CREAT | O_BINARY | O_RDWR, S_IREAD | S_IWRITE);
-#endif
-
-	if (!IS_VALID_FD(fd) && buf) {
-		free(buf);
-		sciprintf("kfile.c: f_open_mirrored(): Warning: Could not create '%s' in '%s' (%d bytes to copy)\n", fname, s->work_dir, fsize);
-		return NULL;
-	}
-
-	if (fsize) {
-		int ret;
-		ret = write(fd, buf, fsize);
-		if (ret < fsize) {
-			sciprintf("kfile.c: f_open_mirrored(): Warning: Could not write all %ld bytes to '%s' in '%s' (only wrote %d)\n",
-			          (long)fsize, fname, s->work_dir, ret);
-		}
-
-		free(buf);
-	}
-
-	close(fd);
-
-	return sci_fopen(fname, "r" FO_BINARY "+");
+	// FIXME: for now we just pretend this has failed
+	return 0;
 }
 
 #define _K_FILE_MODE_OPEN_OR_CREATE 0
@@ -372,7 +322,7 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
 		game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 
-		sprintf(output_s, "%s/__throwaway", s->work_dir);
+		sprintf(output_s, "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVECAT_NAME(%s) -> %s", game_prefix, output_s);
 		}
 
@@ -381,9 +331,9 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
 		game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
 		int savegame_id = UKPV(3);
-		sprintf(output_s, "%s/__throwaway", s->work_dir);
-		delete_savegame(s, savegame_id);
+		sprintf(output_s, "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix, savegame_id, output_s);
+		delete_savegame(s, savegame_id);
 		}
 		break;
 

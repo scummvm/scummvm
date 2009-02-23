@@ -445,8 +445,6 @@ EngineState::EngineState() {
 
 	widget_serial_counter = 0;
 
-	resource_dir = 0;
-	work_dir = 0;
 	resmgr = 0;
 
 	game_name = 0;
