@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/primitives.h"
 
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_tools.h"
@@ -113,47 +114,9 @@ static void scummvm_exit(gfx_driver_t *drv) {
 
 // Drawing operations
 
-// This code shamelessly lifted from the SDL_gfxPrimitives package
-static void lineColor2(byte *dst, int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
-	int pixx, pixy;
-	int x, y;
-	int dx, dy;
-	int sx, sy;
-	int swaptmp;
-	uint8 *pixel;
-
-	dx = x2 - x1;
-	dy = y2 - y1;
-	sx = (dx >= 0) ? 1 : -1;
-	sy = (dy >= 0) ? 1 : -1;
-
-	dx = sx * dx + 1;
-	dy = sy * dy + 1;
-	pixx = 1;
-	pixy = 320;
-	pixel = ((uint8*)dst) + pixx * (int)x1 + pixy * (int)y1;
-	pixx *= sx;
-	pixy *= sy;
-	if (dx < dy) {
-		swaptmp = dx;
-		dx = dy;
-		dy = swaptmp;
-		swaptmp = pixx;
-		pixx = pixy;
-		pixy = swaptmp;
-	}
-
-	// Draw
-	x = 0;
-	y = 0;
-	for (; x < dx; x++, pixel += pixx) {
-		*pixel = color;
-		y += dy;
-		if (y >= dx) {
-			y -= dx;
-			pixel += pixy;
-		}
-	}
+static void drawProc(int x, int y, int c, void *data) {
+	uint8 *p = (uint8 *)data;
+	p[y * 320 + x] = c;
 }
 
 static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Point end,
@@ -170,7 +133,7 @@ static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Poi
 		nend.x = CLIP<int16>(end.x, 0, xsize - 1);
 		nend.y = CLIP<int16>(end.y, 0, ysize - 1);
 
-		lineColor2(S->visual[1], (int16)nstart.x, (int16)nstart.y, (int16)nend.x, (int16)nend.y, scolor);
+		Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, S->visual[1]);
 
 		if (color.mask & GFX_MASK_PRIORITY) {
 			gfx_draw_line_pixmap_i(S->priority[0], nstart, nend, color.priority);
