@@ -111,28 +111,36 @@ static void scummvm_exit(gfx_driver_t *drv) {
 // Drawing operations
 
 static void drawProc(int x, int y, int c, void *data) {
-	uint8 *p = (uint8 *)data;
-	p[y * 320 + x] = c;
+	gfx_driver_t *drv = (gfx_driver_t *)data;
+	uint8 *p = S->visual[1];
+	p[y * 320*drv->mode->xfact + x] = c;
 }
 
 static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Point end,
 	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.global_index;
+	int xfact = (line_mode == GFX_LINE_MODE_FINE)? 1: drv->mode->xfact;
+	int yfact = (line_mode == GFX_LINE_MODE_FINE)? 1: drv->mode->yfact;
 	int xsize = S->xsize;
 	int ysize = S->ysize;
 
 	if (color.mask & GFX_MASK_VISUAL) {
 		Common::Point nstart, nend;
 
-		nstart.x = CLIP<int16>(start.x, 0, xsize);
-		nstart.y = CLIP<int16>(start.y, 0, ysize);
-		nend.x = CLIP<int16>(end.x, 0, xsize - 1);
-		nend.y = CLIP<int16>(end.y, 0, ysize - 1);
+		for (int xc = 0; xc < xfact; xc++) {
+			for (int yc = 0; yc < yfact; yc++) {
 
-		Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, S->visual[1]);
+				nstart.x = CLIP<int16>(start.x + xc, 0, xsize);
+				nstart.y = CLIP<int16>(start.y + yc, 0, ysize);
+				nend.x = CLIP<int16>(end.x + xc, 0, xsize - 1);
+				nend.y = CLIP<int16>(end.y + yc, 0, ysize - 1);
 
-		if (color.mask & GFX_MASK_PRIORITY) {
-			gfx_draw_line_pixmap_i(S->priority[0], nstart, nend, color.priority);
+				Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, drv);
+
+				if (color.mask & GFX_MASK_PRIORITY) {
+					gfx_draw_line_pixmap_i(S->priority[0], nstart, nend, color.priority);
+				}
+			}
 		}
 	}
 
