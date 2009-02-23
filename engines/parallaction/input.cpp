@@ -297,7 +297,7 @@ bool Input::translateGameInput() {
 	// test if mouse is hovering on an interactive zone for the currently selected inventory item
 	ZonePtr z = _vm->hitZone(_activeItem._id, mousePos.x, mousePos.y);
 
-	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((!z) || (ACTIONTYPE(z) != kZoneCommand))) {
 		walkTo(mousePos);
 		return true;
 	}
@@ -307,7 +307,7 @@ bool Input::translateGameInput() {
  		return true;
  	}
 
-	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
+	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (ACTIONTYPE(z) == kZoneCommand))) {
 
 		if (z->_flags & kFlagsNoWalk) {
 			// character doesn't need to walk to take specified action

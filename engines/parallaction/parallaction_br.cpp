@@ -161,7 +161,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = nullZonePtr;
-		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+		if (ACTIONTYPE(z) == kZoneSpeak) {
 			enterDialogueMode(z);
 		} else {
 			runZone(z);			// FIXME: BRA doesn't handle sound yet
@@ -171,7 +171,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone2) {
 		z = _activeZone2;	// speak Zone or sound
 		_activeZone2 = nullZonePtr;
-		if ((z->_type & 0xFFFF) == kZoneSpeak) {
+		if (ACTIONTYPE(z) == kZoneSpeak) {
 			enterDialogueMode(z);
 		} else {
 			runZone(z);			// FIXME: BRA doesn't handle sound yet

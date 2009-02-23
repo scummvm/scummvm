@@ -503,7 +503,7 @@ void Parallaction::updateZones() {
 	// examine the list of get zones to update
 	for (ZoneList::iterator zit = _zonesToUpdate.begin(); zit != _zonesToUpdate.end(); zit++) {
 		ZonePtr z = *zit;
-		if ((z->_type & 0xFFFF) == kZoneGet) {
+		if (ACTIONTYPE(z) == kZoneGet) {
 			GfxObj *obj = z->u.get->gfxobj;
 			obj->x = z->getX();
 			obj->y = z->getY();
@@ -527,7 +527,7 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 		z->_flags |= kFlagsRemove;
 	}
 
-	if ((z->_type & 0xFFFF) == kZoneGet) {
+	if (ACTIONTYPE(z) == kZoneGet) {
 		_gfx->showGfxObj(z->u.get->gfxobj, visible);
 	}
 }
@@ -600,10 +600,10 @@ void Parallaction::runCommentFrame() {
 void Parallaction::runZone(ZonePtr z) {
 	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
-	uint16 subtype = z->_type & 0xFFFF;
+	uint16 actionType = ACTIONTYPE(z);
 
-	debugC(3, kDebugExec, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
-	switch(subtype) {
+	debugC(3, kDebugExec, "actionType = %x, itemType = %x", actionType, ITEMTYPE(z));
+	switch(actionType) {
 
 	case kZoneExamine:
 		enterCommentMode(z);
@@ -678,8 +678,8 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 	// but we need to check it separately here. The same workaround is applied in freeZones.
-	if ((((z->_type & 0xFFFF) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
-		(((z->_type & 0xFFFF) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
+	if (((ACTIONTYPE(z) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
+		((ACTIONTYPE(z) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
 
 		// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
 		// the EXAMINE/USE action to be applied on some particular item in the inventory.
@@ -691,7 +691,7 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 		if (z->_type == type)
 			return true;
 		// look for item match, but don't accept 0 types
-		if (((z->_type & 0xFFFF0000) == type) && (type))
+		if ((ITEMTYPE(z) == type) && (type))
 			return true;
 	}
 
@@ -718,11 +718,11 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	}
 
 	// normal Zone
-	if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+	if ((type == 0) && (ITEMTYPE(z) == 0))
 		return true;
 	if (z->_type == type)
 		return true;
-	if ((z->_type & 0xFFFF0000) == type)
+	if (ITEMTYPE(z) == type)
 		return true;
 
 	return false;
@@ -744,11 +744,11 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 	// NOTE: the implementation of the following lines is a different in the
 	// original... it is working so far, though
-	if ((type == 0) && ((z->_type & 0xFFFF0000) == 0))
+	if ((type == 0) && (ITEMTYPE(z) == 0))
 		return true;
 	if (z->_type == type)
 		return true;
-	if ((z->_type & 0xFFFF0000) == type)
+	if (ITEMTYPE(z) == type)
 		return true;
 
 	return false;
@@ -778,8 +778,8 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		_ef = a->hitFrameRect(_si, _di);
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
-		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object
-		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
+		_c = ITEMTYPE(a) ? 0 : 1;															// _c: Animation is not an object
+		_d = (ITEMTYPE(a) != type) ? 0 : 1;													// _d: Animation is an object of the same type
 
 		if ((_a != 0 && _ef) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
 			return a;

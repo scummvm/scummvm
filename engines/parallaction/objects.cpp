@@ -180,7 +180,7 @@ Zone::Zone() {
 Zone::~Zone() {
 //	printf("~Zone(%s)\n", _name);
 
-	switch (_type & 0xFFFF) {
+	switch (ACTIONTYPE(this)) {
 	case kZoneExamine:
 		free(u.examine->_filename);
 		u.examine->_description.clear();

@@ -222,7 +222,7 @@ DECLARE_COMMAND_OPCODE(start) {
 
 
 DECLARE_COMMAND_OPCODE(speak) {
-	if ((_ctxt.cmd->u._zone->_type & 0xFFFF) == kZoneSpeak) {
+	if (ACTIONTYPE(_ctxt.cmd->u._zone) == kZoneSpeak) {
 		_vm->enterDialogueMode(_ctxt.cmd->u._zone);
 	} else {
 		_vm->_activeZone = _ctxt.cmd->u._zone;

@@ -808,7 +808,7 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
 
-	switch (z->_type & 0xFFFF) {
+	switch (ACTIONTYPE(z)) {
 	case kZoneExamine:	// examine Zone alloc
 		parseExamineData(z);
 		break;

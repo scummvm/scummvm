@@ -211,12 +211,12 @@ DECLARE_ANIM_PARSER(type)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(type) ");
 
 	if (_tokens[2][0] != '\0') {
-		ctxt.a->_type = ((4 + _vm->_objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
+		ctxt.a->_type = PACK_ZONETYPE(0, 4 + _vm->_objectsNames->lookup(_tokens[2]));
 	}
 	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 	if (_si != Table::notFound) {
 		ctxt.a->_type |= 1 << (_si-1);
-		if (/*((ctxt.a->_type & 0xFFFF) != kZoneNone) &&*/ ((ctxt.a->_type & 0xFFFF) != kZoneCommand)) {
+		if (/*(ACTIONTYPE(ctxt.a) != kZoneNone) &&*/ (ACTIONTYPE(ctxt.a) != kZoneCommand)) {
 			parseZoneTypeBlock(ctxt.a);
 		}
 	}
@@ -1539,7 +1539,7 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
 
-	switch (z->_type & 0xFFFF) {
+	switch (ACTIONTYPE(z)) {
 	case kZoneExamine:	// examine Zone alloc
 		parseExamineData(z);
 		break;
