@@ -178,75 +178,95 @@ void Parallaction_ns::_c_fade(void *parm) {
 }
 
 
+void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
+	if (!_moveSarcGetZones[0]) {
+		// bind sarcophagi zones
+		_moveSarcGetZones[0] = _location.findZone("sarc1");
+		_moveSarcGetZones[1] = _location.findZone("sarc2");
+		_moveSarcGetZones[2] = _location.findZone("sarc3");
+		_moveSarcGetZones[3] = _location.findZone("sarc4");
+		_moveSarcGetZones[4] = _location.findZone("sarc5");
 
-void Parallaction_ns::_c_moveSarc(void *parm) {
-
-	AnimationPtr a;
-
-	if (_introSarcData2 != 0) {
-
-		_introSarcData2 = 0;
-		if (!_moveSarcZones[0]) {
-
-			_moveSarcZones[0] = _location.findZone("sarc1");
-			_moveSarcZones[1] = _location.findZone("sarc2");
-			_moveSarcZones[2] = _location.findZone("sarc3");
-			_moveSarcZones[3] = _location.findZone("sarc4");
-			_moveSarcZones[4] = _location.findZone("sarc5");
-
-			_moveSarcExaZones[0] = _location.findZone("sarc1exa");
-			_moveSarcExaZones[1] = _location.findZone("sarc2exa");
-			_moveSarcExaZones[2] = _location.findZone("sarc3exa");
-			_moveSarcExaZones[3] = _location.findZone("sarc4exa");
-			_moveSarcExaZones[4] = _location.findZone("sarc5exa");
-
+		_moveSarcExaZones[0] = _location.findZone("sarc1exa");
+		_moveSarcExaZones[1] = _location.findZone("sarc2exa");
+		_moveSarcExaZones[2] = _location.findZone("sarc3exa");
+		_moveSarcExaZones[3] = _location.findZone("sarc4exa");
+		_moveSarcExaZones[4] = _location.findZone("sarc5exa");
+	}
+	/*
+		Each sarcophagus is made of 2 visible zones: one responds to
+		'get' actions, the other to 'examine'. We need to find out
+		both so they can be moved.
+	*/
+	for (uint16 i = 0; i < 5; i++) {
+		if (_moveSarcGetZones[i] == sarc) {
+			_moveSarcExaZone = _moveSarcExaZones[i];
+			_moveSarcGetZone = _moveSarcGetZones[i];
 		}
-
-		a = _location.findAnimation("sposta");
-
-		_moveSarcZone1 = *(ZonePtr*)parm;
-
-		for (uint16 _si = 0; _si < 5; _si++) {
-			if (_moveSarcZones[_si] == _moveSarcZone1) {
-				_moveSarcZone0 = _moveSarcExaZones[_si];
-			}
-		}
-
-		_introSarcData1 = _introSarcData3 - _moveSarcZone1->getX();
-		a->setZ(_introSarcData3);
-		a->setF(_moveSarcZone1->getY() - (_introSarcData1 / 20));
-		_introSarcData3 = _moveSarcZone1->getX();
-
-		if (_introSarcData1 > 0) {
-			a->setX(_introSarcData1 / 2);
-			a->setY(2);
-		} else {
-			a->setX(-_introSarcData1 / 2);
-			a->setY(-2);
-		}
-
-		return;
-
 	}
 
-	_introSarcData2 = 1;
-	_moveSarcZone1->translate(_introSarcData1, -_introSarcData1 / 20);
-	_moveSarcZone0->translate(_introSarcData1, -_introSarcData1 / 20);
+	// calculate destination for the sarcophagus
+	int16 destX = _freeSarcophagusSlotX;
+	_sarcophagusDeltaX = destX - _moveSarcGetZone->getX();			// x movement delta
+	int16 destY = _moveSarcGetZone->getY() - (_sarcophagusDeltaX / 20); // gently degrade y when moving sideways
 
-	if (_moveSarcZones[0]->getX() == 35 &&
-		_moveSarcZones[1]->getX() == 68 &&
-		_moveSarcZones[2]->getX() == 101 &&
-		_moveSarcZones[3]->getX() == 134 &&
-		_moveSarcZones[4]->getX() == 167) {
+	// set the new empty position (maybe this should be done on stopMovingSarcophagus?)
+	_freeSarcophagusSlotX = _moveSarcGetZone->getX();
 
-		a = _location.findAnimation("finito");
+	// calculate which way and how many steps the character should move
+	int16 numSteps = _sarcophagusDeltaX / 2; // default to right
+	int16 delta = 2;	// default to right
+	if (_sarcophagusDeltaX < 0) {
+		// move left
+		numSteps = -numSteps;	// keep numSteps positive
+		delta = -delta;			// make delta negative if moving to left
+	}
 
+	// GROSS HACK: since there is no obvious way to provide additional parameters to a script,
+	// the game packs the data needed to calculate the position of the 'sposta' animation in
+	// the coordinate fields of the animation itself, which are accessible from the scripts.
+	// In detail: the sarcophagus destination coords are stored into Z and F, while the number
+	// of calculated steps and step length in X and Y. See any of the sarc#.script files in
+	// disk2 for details about unpacking.
+	AnimationPtr a = _location.findAnimation("sposta");
+	a->forceXYZF(numSteps, delta, destX, destY);
+
+	// start moving
+	_movingSarcophagus = true;
+}
+
+void Parallaction_ns::stopMovingSarcophagus() {
+
+	// moves both sarcophagus zones at the destination, so that the user
+	// can interact with them
+	_moveSarcGetZone->translate(_sarcophagusDeltaX, -_sarcophagusDeltaX / 20);
+	_moveSarcExaZone->translate(_sarcophagusDeltaX, -_sarcophagusDeltaX / 20);
+
+	_zonesToUpdate.push_back(_moveSarcGetZone);
+
+	// check if the puzzle has been completed, by verifying the position of
+	// the sarcophagi
+	if (_moveSarcGetZones[0]->getX() == 35 &&
+		_moveSarcGetZones[1]->getX() == 68 &&
+		_moveSarcGetZones[2]->getX() == 101 &&
+		_moveSarcGetZones[3]->getX() == 134 &&
+		_moveSarcGetZones[4]->getX() == 167) {
+
+		AnimationPtr a = _location.findAnimation("finito");
 		a->_flags |= (kFlagsActive | kFlagsActing);
 		setLocationFlags(0x20);		// GROSS HACK: activates 'finito' flag in dinoit_museo.loc
 	}
 
-	return;
+	// stop moving
+	_movingSarcophagus = false;
+}
 
+void Parallaction_ns::_c_moveSarc(void *parm) {
+	if (!_movingSarcophagus) {
+		startMovingSarcophagus(*(ZonePtr*)parm);
+	} else {
+		stopMovingSarcophagus();
+	}
 }
 
 

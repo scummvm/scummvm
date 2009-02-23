@@ -409,19 +409,21 @@ private:
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	freeLocation(bool removeAll);
 	void 	freeCharacter();
+	void 	startMovingSarcophagus(ZonePtr sarc);
+	void 	stopMovingSarcophagus();
 
 
 	//  callables data
 	typedef void (Parallaction_ns::*Callable)(void*);
 	const Callable *_callables;
-	ZonePtr _moveSarcZone0;
-	ZonePtr _moveSarcZone1;
-	uint16 num_foglie;
-	int16 _introSarcData1;
-	uint16	_introSarcData2;		 // sarcophagus stuff to be saved
-	uint16	_introSarcData3;		 // sarcophagus stuff to be saved
-	ZonePtr _moveSarcZones[5];
+	ZonePtr _moveSarcGetZone;
+	ZonePtr _moveSarcExaZone;
+	ZonePtr _moveSarcGetZones[5];
 	ZonePtr _moveSarcExaZones[5];
+	uint16 num_foglie;
+	int16 _sarcophagusDeltaX;
+	bool	_movingSarcophagus;		 // sarcophagus stuff to be saved
+	uint16	_freeSarcophagusSlotX;		 // sarcophagus stuff to be saved
 	AnimationPtr _rightHandAnim;
 	bool _intro;
 	static const Callable _dosCallables[25];
