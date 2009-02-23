@@ -60,10 +60,6 @@
 #include <unistd.h>
 #endif
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 #ifdef WIN32
 #  define FO_BINARY "b"
 #else
@@ -77,7 +73,6 @@
 
 
 namespace Sci {
-
 
 
 struct sci_dir_t {
@@ -130,27 +125,6 @@ FILE *sci_fopen(const char *fname, const char *mode);
 **             (const char *) mode: Mode to open it with
 ** Returns   : (FILE *) A valid file handle, or NULL on failure
 ** Always refers to the cwd, cannot address subdirectories
-*/
-
-int sci_open(const char *fname, int flags);
-/* Opens a file descriptor case-insensitively
-** Parameters: (const char *) fname: Name of the file to open
-**             (int) flags: open(2) flags for the file
-** Returns   : (int) a file descriptor of the open file,
-**             or SCI_INVALID_FD on failure
-** Always refers to the cwd, cannot address subdirectories
-*/
-
-char *sci_getcwd();
-/* Returns the current working directory, malloc'd.
-** Parameters: (void)
-** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
-*/
-
-int sci_fd_size(int fd);
-/* Returns the filesize of an open file
-** Parameters: (int) fd: File descriptor of open file
-** Returns   : (int) filesize of file pointed to by fd, -1 on error
 */
 
 int sci_file_size(const char *fname);
@@ -322,42 +296,6 @@ FILE *sci_fopen(const char *fname, const char *mode) {
 	return file;
 }
 
-int sci_open(const char *fname, int flags) {
-	int file = SCI_INVALID_FD;
-	Common::String name = _fcaseseek(fname);
-	if (!name.empty())
-		file = open(name.c_str(), flags);
-
-	return file;
-}
-
-char *sci_getcwd() {
-	int size = 0;
-	char *cwd = NULL;
-
-	while (size < 8192) {
-		size += 256;
-		cwd = (char*)sci_malloc(size);
-		if (getcwd(cwd, size - 1))
-			return cwd;
-
-		free(cwd);
-	}
-
-	fprintf(stderr, "Could not determine current working directory!\n");
-
-	return NULL;
-}
-
-int sci_fd_size(int fd) {
-	struct stat fd_stat;
-
-	if (fstat(fd, &fd_stat))
-		return -1;
-
-	return fd_stat.st_size;
-}
-
 int sci_file_size(const char *fname) {
 	struct stat fn_stat;
 
@@ -366,7 +304,6 @@ int sci_file_size(const char *fname) {
 
 	return fn_stat.st_size;
 }
-
 
 
 
@@ -569,16 +506,13 @@ reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 ** Writes the cwd to the supplied address and returns the address in acc.
 */
 reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *wd = sci_getcwd();
 	char *targetaddr = kernel_dereference_char_pointer(s, argv[0], 0);
 
-	strncpy(targetaddr, wd, MAX_SAVE_DIR_SIZE - 1);
+	getcwd(targetaddr, MAX_SAVE_DIR_SIZE - 1);
+
 	targetaddr[MAX_SAVE_DIR_SIZE - 1] = 0; // Terminate
 	debug(3, "kGetCWD() -> %s", targetaddr);
 
-	SCIkdebug(SCIkFILE, "Copying cwd='%s'(%d chars) to %p", wd, strlen(wd), targetaddr);
-
-	free(wd);
 	return argv[0];
 }
 
