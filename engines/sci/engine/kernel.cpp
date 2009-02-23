@@ -543,7 +543,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 		}
 		case _K_NEW_GETTIME_DATE : {
-			retval = (loc_time.tm_mon << 5) | loc_time.tm_mday | (loc_time.tm_year << 9);
+			retval = ((loc_time.tm_mon + 1) << 5) | loc_time.tm_mday | (((loc_time.tm_year + 1900) & 0x7f) << 9);
 			debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 			break;
 		}
