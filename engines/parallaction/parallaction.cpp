@@ -337,12 +337,8 @@ void Parallaction::runGameFrame(int event) {
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	_char._ani->resetZ();
-//	if (_char._ani->gfxobj) {
-//		_char._ani->gfxobj->z = _char._ani->getZ();
-//	}
 	_char._walker->walk();
-	drawAnimations();
-
+	updateZones();
 }
 
 void Parallaction::runGame() {
@@ -403,7 +399,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->setPalette(pal);
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
-	drawAnimations();
+	updateZones();
 	showLocationComment(_location._comment, false);
 	_gfx->updateScreen();
 
@@ -443,66 +439,79 @@ uint32 Parallaction::getLocationFlags() {
 
 
 
-void Parallaction::drawAnimations() {
-	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations()\n");
+void Parallaction::drawAnimation(AnimationPtr anim) {
+	if ((anim->_flags & kFlagsActive) == 0)   {
+		return;
+	}
 
-	uint16 layer = 0, scale = 100;
+	GfxObj *obj = anim->gfxobj;
+	if (!obj) {
+		return;
+	}
 
-	for (AnimationList::iterator it = _location._animations.begin(); it != _location._animations.end(); it++) {
+	// animation display defaults to topmost and no scaling
+	uint16 layer = LAYER_FOREGROUND;
+	uint16 scale = 100;
 
-		AnimationPtr anim = *it;
-		GfxObj *obj = anim->gfxobj;
-
-		if ((anim->_flags & kFlagsActive) && ((anim->_flags & kFlagsRemove) == 0))   {
-
-			if (anim->_flags & kFlagsNoMasked) {
-				layer = LAYER_FOREGROUND;
-			} else {
-				if (getGameType() == GType_Nippon) {
-					// Layer in NS depends on where the animation is on the screen, for each animation.
-					layer = _gfx->_backgroundInfo->getMaskLayer(anim->getBottom());
-				} else {
-					// Layer in BRA is calculated from Z value. For characters it is the same as NS,
-					// but other animations can have Z set from scripts independently from their
-					// position on the screen.
-					layer = _gfx->_backgroundInfo->getMaskLayer(anim->getZ());
-				}
-			}
-
-			scale = 100;
-			if (getGameType() == GType_BRA) {
-				if (anim->_flags & (kFlagsScaled | kFlagsCharacter)) {
-					scale = _location.getScale(anim->getZ());
-				}
-			}
-
-			if (obj) {
-				_gfx->showGfxObj(obj, true);
-				obj->frame = anim->getF();
-				obj->x = anim->getX();
-				obj->y = anim->getY();
-				obj->z = anim->getZ();
-				obj->layer = layer;
-				obj->scale = scale;
-			}
+	switch (getGameType()) {
+	case GType_Nippon:
+		if ((anim->_flags & kFlagsNoMasked) == 0) {
+			// Layer in NS depends on where the animation is on the screen, for each animation.
+			layer = _gfx->_backgroundInfo->getMaskLayer(anim->getBottom());
 		}
+		break;
 
-		if (((anim->_flags & kFlagsActive) == 0) && (anim->_flags & kFlagsRemove))   {
-			anim->_flags &= ~kFlagsRemove;
+	case GType_BRA:
+		if ((anim->_flags & kFlagsNoMasked) == 0) {
+			// Layer in BRA is calculated from Z value. For characters it is the same as NS,
+			// but other animations can have Z set from scripts independently from their
+			// position on the screen.
+			layer = _gfx->_backgroundInfo->getMaskLayer(anim->getZ());
 		}
+		if (anim->_flags & (kFlagsScaled | kFlagsCharacter)) {
+			scale = _location.getScale(anim->getZ());
+		}
+		break;
+	}
 
-		if ((anim->_flags & kFlagsActive) && (anim->_flags & kFlagsRemove))	{
-			anim->_flags &= ~kFlagsActive;
-			anim->_flags |= kFlagsRemove;
-			if (obj) {
-				_gfx->showGfxObj(obj, false);
-			}
+	// updates the data for display
+	_gfx->showGfxObj(obj, true);
+	obj->frame = anim->getF();
+	obj->x = anim->getX();
+	obj->y = anim->getY();
+	obj->z = anim->getZ();
+	obj->layer = layer;
+	obj->scale = scale;
+}
+
+void Parallaction::updateZones() {
+	debugC(9, kDebugExec, "Parallaction::updateZones()\n");
+
+	// go through all animations and mark/unmark each of them for display
+	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
+		AnimationPtr anim = *ait;
+		if ((anim->_flags & kFlagsRemove) != 0)	{
+			// marks the animation as invisible for this frame
+			_gfx->showGfxObj(anim->gfxobj, false);
+			anim->_flags &= ~(kFlagsActive | kFlagsRemove);
+		} else {
+			// updates animation parameters
+			drawAnimation(anim);
 		}
 	}
 
-	debugC(9, kDebugExec, "Parallaction_ns::drawAnimations done()\n");
+	// examine the list of get zones to update
+	for (ZoneList::iterator zit = _zonesToUpdate.begin(); zit != _zonesToUpdate.end(); zit++) {
+		ZonePtr z = *zit;
+		if ((z->_type & 0xFFFF) == kZoneGet) {
+			GfxObj *obj = z->u.get->gfxobj;
+			obj->x = z->getX();
+			obj->y = z->getY();
+		}
+	}
+	_zonesToUpdate.clear();
 
-	return;
+	debugC(9, kDebugExec, "Parallaction::updateZones done()\n");
 }
 
 

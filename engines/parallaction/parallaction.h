@@ -313,12 +313,15 @@ protected:
 	void 	enterCommentMode(ZonePtr z);
 	void 	exitCommentMode();
 	void	updateView();
-	void 	drawAnimations();
+	void 	drawAnimation(AnimationPtr anim);
+	void	updateZones();
 	void	doLocationEnterTransition();
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
 	void	showLocationComment(const Common::String &text, bool end);
 	void 	setupBalloonManager();
+
+	ZoneList	_zonesToUpdate;
 
 public:
 	void	beep();
