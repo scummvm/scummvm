@@ -67,8 +67,6 @@ struct gfx_options_t {
 	gfx_xlate_filter_t text_xlate_filter;
 	gfxr_font_scale_filter_t fixed_font_xlate_filter; /* Scale filter for systems that provide font support which isn't scaled */
 
-	gfxr_antialiasing_t pic0_antialiasing;
-
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
 
 	int dirty_frames;

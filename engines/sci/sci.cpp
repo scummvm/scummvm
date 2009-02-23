@@ -278,7 +278,6 @@ Common::Error SciEngine::go() {
 	gfx_options.pic_xlate_filter = GFX_XLATE_FILTER_NONE;
 	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
 	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
-	gfx_options.pic0_antialiasing = GFXR_ANTIALIASING_NONE;
 	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
 		gfx_options.res_conf.assign[i] = NULL;

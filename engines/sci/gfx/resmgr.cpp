@@ -335,9 +335,6 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 
 
 	if (must_post_process_pic) {
-		if (scaled || state->options->pic0_unscaled && maps & GFX_MASK_VISUAL)
-			gfxr_antialiase(npic->visual_map, state->driver->mode, state->options->pic0_antialiasing);
-
 		gfxr_endianness_adjust(npic->visual_map, state->driver->mode);
 	}
 
@@ -438,9 +435,6 @@ gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int m
 		pic = gfxr_pic_xlate_common(res, maps, scaled, 1, state->driver->mode, state->options->pic_xlate_filter, 1, state->options);
 		set_pic_id(res, old_ID);
 	}
-
-	if (scaled || state->options->pic0_unscaled && maps & GFX_MASK_VISUAL)
-		gfxr_antialiase(pic->visual_map, state->driver->mode, state->options->pic0_antialiasing);
 
 	return pic;
 }

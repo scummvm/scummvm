@@ -31,7 +31,6 @@ MODULE_OBJS = \
 	engine/seg_manager.o \
 	engine/sys_strings.o \
 	engine/vm.o \
-	gfx/antialias.o \
 	gfx/font.o \
 	gfx/gfx_driver.o \
 	gfx/gfx_res_options.o \
