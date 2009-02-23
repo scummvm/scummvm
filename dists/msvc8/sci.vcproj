@@ -310,18 +310,6 @@
 			Name="gfx"
 			>
 			<File
-				RelativePath="..\..\engines\sci\gfx\antialias.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\font-5x8.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\font-6x10.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\gfx\font.cpp"
 				>
 			</File>
