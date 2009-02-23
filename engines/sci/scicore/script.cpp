@@ -108,11 +108,10 @@ void script_adjust_opcode_formats(int res_version) {
 }
 
 int script_find_selector(EngineState *s, const char *selectorname) {
-	int i;
-
-	for (i = 0; i < s->selector_names_nr; i++)
-		if (strcmp(selectorname, s->selector_names[i]) == 0)
-			return i;
+	for (uint pos = 0; pos < s->_selectorNames.size(); ++pos) {
+		if (s->_selectorNames[pos] == selectorname)
+			return pos;
+	}
 
 	sciprintf("Warning: Could not map '%s' to any selector!\n", selectorname);
 
@@ -237,7 +236,7 @@ int sci_hexdump(byte *data, int length, int offsetplus) {
 	return 0;
 }
 
-static void script_dump_object(char *data, int seeker, int objsize, char **snames, int snames_nr) {
+static void script_dump_object(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
 	int selectors, overloads, selectorsize;
 	int species = getInt16((unsigned char *) data + 8 + seeker);
 	int superclass = getInt16((unsigned char *) data + 10 + seeker);
@@ -273,14 +272,14 @@ static void script_dump_object(char *data, int seeker, int objsize, char **sname
 		while (overloads--) {
 			int selector = getInt16((unsigned char *) data + (seeker));
 
-			sciprintf("  [%03x] %s: @", selector & 0xffff, (snames && selector >= 0 && selector < snames_nr) ? snames[selector] : "<?>");
+			sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>");
 			sciprintf("%04x\n", getInt16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
 
 			seeker += 2;
 		}
 }
 
-static void script_dump_class(char *data, int seeker, int objsize, char **snames, int snames_nr) {
+static void script_dump_class(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
 	int selectors, overloads, selectorsize;
 	int species = getInt16((unsigned char *) data + 8 + seeker);
 	int superclass = getInt16((unsigned char *) data + 10 + seeker);
@@ -304,7 +303,7 @@ static void script_dump_class(char *data, int seeker, int objsize, char **snames
 	while (selectors--) {
 		int selector = getInt16((unsigned char *) data + (seeker) + selectorsize);
 
-		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (snames && selector >= 0 && selector < snames_nr) ? snames[selector] : "<?>",
+		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>",
 		          getInt16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
@@ -318,16 +317,16 @@ static void script_dump_class(char *data, int seeker, int objsize, char **snames
 
 	while (overloads--) {
 		int selector = getInt16((unsigned char *)data + (seeker));
-		fprintf(stderr, "selector=%d; snames_nr =%d\n", selector, snames_nr);
-		sciprintf("  [%03x] %s: @", selector & 0xffff, (snames && selector >= 0 && selector < snames_nr) ?
-		          snames[selector] : "<?>");
+		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, selectorNames.size());
+		sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ?
+		          selectorNames[selector].c_str() : "<?>");
 		sciprintf("%04x\n", getInt16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
 
 		seeker += 2;
 	}
 }
 
-void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr) {
+void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringList &selectorNames) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	resource_t *script = scir_find_resource(resmgr, sci_script, res_no, 0);
@@ -350,7 +349,6 @@ void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snam
 			sciprintf("End of script object (#0) encountered.\n");
 			sciprintf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
 			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
-			//vocabulary_free_snames(snames);
 			vocab_free_words(words, word_count);
 			return;
 		}
@@ -367,7 +365,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snam
 
 		switch (objtype) {
 		case sci_obj_object:
-			script_dump_object((char *)script->data, seeker, objsize, snames, snames_nr);
+			script_dump_object((char *)script->data, seeker, objsize, selectorNames);
 			break;
 
 		case sci_obj_code: {
@@ -444,7 +442,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snam
 		break;
 
 		case sci_obj_class:
-			script_dump_class((char *)script->data, seeker, objsize, snames, snames_nr);
+			script_dump_class((char *)script->data, seeker, objsize, selectorNames);
 			break;
 
 		case sci_obj_exports: {
@@ -479,8 +477,6 @@ void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snam
 	}
 
 	sciprintf("Script ends without terminator\n");
-
-	//vocabulary_free_snames(snames);
 }
 
 } // End of namespace Sci

@@ -58,7 +58,7 @@ enum script_object_types {
 	sci_obj_localvars
 };
 
-void script_dissect(ResourceManager *resmgr, int res_no, char **snames, int snames_nr);
+void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringList &selectorNames);
 
 /* Opcode formats as used by script.c */
 enum opcode_format {

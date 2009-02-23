@@ -1173,8 +1173,8 @@ int c_stack(EngineState *s) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < s->selector_names_nr)
-		return s->selector_names[selector];
+	if (selector >= 0 && selector < (int)s->_selectorNames.size())
+		return s->_selectorNames[selector].c_str();
 	else
 		return "--INVALID--";
 }
@@ -1422,7 +1422,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				sciprintf("  %s::%s[", name, (selector > s->selector_names_nr) ? "<invalid>" : selector_name(s, selector));
+				sciprintf("  %s::%s[", name, (selector > s->_selectorNames.size()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
 				case SELECTOR_METHOD:
@@ -1557,7 +1557,7 @@ static int c_backtrace(EngineState *s) {
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
 			sciprintf(" %x:[%x] vs%s %s::%s (", i, call->origin, (call->argc) ? "write" : "read",
-			          objname, s->selector_names[call->selector]);
+			          objname, s->_selectorNames[call->selector].c_str());
 			break;
 		}
 
@@ -2155,7 +2155,7 @@ static int c_send(EngineState *s) {
 	reg_t *vptr;
 	reg_t fptr;
 
-	selector_id = vocabulary_lookup_sname(s->selector_names, selector_name);
+	selector_id = vocabulary_lookup_sname(s->_selectorNames, selector_name);
 
 	if (selector_id < 0) {
 		sciprintf("Unknown selector: \"%s\"\n", selector_name);

@@ -41,7 +41,7 @@ reg_t read_selector(EngineState *s, reg_t object, selector_t selector_id, const 
 void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line) {
 	reg_t *address;
 
-	if ((selector_id < 0) || (selector_id > s->selector_names_nr)) {
+	if ((selector_id < 0) || (selector_id > (int)s->_selectorNames.size())) {
 		warning("Attempt to write to invalid selector %d of"
 		         " object at "PREG" (%s L%d).", selector_id, PRINT_REG(object), fname, line);
 		return;
@@ -49,7 +49,7 @@ void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t 
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
 		warning("Selector '%s' of object at "PREG" could not be"
-		         " written to (%s L%d)", s->selector_names[selector_id], PRINT_REG(object), fname, line);
+		         " written to (%s L%d)", s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 	else
 		*address = value;
 }
@@ -72,7 +72,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 
 	if (slc_type == SELECTOR_NONE) {
 		SCIkwarn(SCIkERROR, "Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
-		         s->selector_names[selector_id], PRINT_REG(object), fname, line);
+		         s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
 		return 1;

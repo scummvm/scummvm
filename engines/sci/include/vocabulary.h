@@ -198,17 +198,13 @@ int *vocabulary_get_classes(ResourceManager *resmgr, int *count);
 int vocabulary_get_class_count(ResourceManager *resmgr);
 
 /**
- * Returns a null terminated array of selector names.
+ * Fills the given StringList with selector names.
+ * Returns true upon success, false oterwise.
  */
-char **vocabulary_get_snames(ResourceManager *resmgr, int *pcount, sci_version_t version);
-
-/**
- * Frees the aforementioned array
- */
-void vocabulary_free_snames(char **snames_list);
+bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames);
 
 /* Look up a selector name in an array, return the index */
-int vocabulary_lookup_sname(char **snames_list, char *sname);
+int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char *sname);
 
 
 /**

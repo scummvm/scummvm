@@ -59,13 +59,10 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 	s->opcodes = vocabulary_get_opcodes(s->resmgr);
 
-	if (!(s->selector_names = vocabulary_get_snames(s->resmgr, NULL, s->version))) {
+	if (!vocabulary_get_snames(s->resmgr, s->version, s->_selectorNames)) {
 		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
 		return 1;
 	}
-
-	for (s->selector_names_nr = 0; s->selector_names[s->selector_names_nr]; s->selector_names_nr++);
-	// Counts the number of selector names
 
 	script_map_selectors(s, &(s->selector_map));
 	// Maps a few special selectors for later use
@@ -85,12 +82,11 @@ static void _free_vocabulary(EngineState *s) {
 		vocab_free_rule_list(s->parser_rules);
 	}
 
-	vocabulary_free_snames(s->selector_names);
+	s->_selectorNames.clear();
 	vocabulary_free_knames(s->kernel_names);
 	vocabulary_free_opcodes(s->opcodes);
 	s->opcodes = NULL;
 
-	s->selector_names = NULL;
 	s->kernel_names = NULL;
 	s->opcodes = NULL;
 }
@@ -586,8 +582,6 @@ EngineState::EngineState() {
 	seg_manager = 0;
 	gc_countdown = 0;
 
-	selector_names_nr = 0;
-	selector_names = 0;
 	kernel_names_nr = 0;
 	kernel_names = 0;
 
@@ -781,7 +775,7 @@ int game_init(EngineState *s) {
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-//	script_dissect(0, s->selector_names, s->selector_names_nr);
+//	script_dissect(0, s->_selectorNames);
 	game_obj = script_lookup_export(s, 0, 0);
 	// The first entry in the export table of script 0 points to the game object
 

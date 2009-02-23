@@ -253,8 +253,7 @@ struct EngineState {
 	SegManager *seg_manager;
 	int gc_countdown; /* Number of kernel calls until next gc */
 
-	int selector_names_nr; /* Number of selector names */
-	char **selector_names; /* Zero-terminated selector name list */
+	Common::StringList _selectorNames;
 	int kernel_names_nr; /* Number of kernel function names */
 	char **kernel_names; /* List of kernel names */
 

@@ -5253,8 +5253,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->parser_branches = s->parser_branches;
 
 	// static VM/Kernel information:
-	retval->selector_names_nr = s->selector_names_nr;
-	retval->selector_names = s->selector_names;
+	retval->_selectorNames = s->_selectorNames;
 	retval->kernel_names_nr = s->kernel_names_nr;
 	retval->kernel_names = s->kernel_names;
 	retval->kfunct_table = s->kfunct_table;
@@ -5327,7 +5326,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1170 "engines/sci/engine/savegame.cfsml"
+#line 1169 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;

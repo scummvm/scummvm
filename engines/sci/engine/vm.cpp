@@ -346,7 +346,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 			breakpoint_t *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->selector_names [selector]);
+			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_selectorNames[selector].c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -365,7 +365,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 		}
 
 #ifdef VM_DEBUG_SEND
-		sciprintf("Send to "PREG", selector %04x (%s):", PRINT_REG(send_obj), selector, s->selector_names[selector]);
+		sciprintf("Send to "PREG", selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
 		if (++send_calls_nr == (send_calls_allocated - 1)) {

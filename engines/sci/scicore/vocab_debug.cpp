@@ -180,67 +180,39 @@ int vocabulary_get_class_count(ResourceManager *resmgr) {
 	return r->size / 4;
 }
 
-char** vocabulary_get_snames(ResourceManager *resmgr, int* pcount, sci_version_t version) {
-	char** t;
+bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames) {
 	int count;
-	int i, j;
-	int magic;
 
-	resource_t* r = scir_find_resource(resmgr, sci_vocab, 997, 0);
+	resource_t *r = scir_find_resource(resmgr, sci_vocab, 997, 0);
 
 	if (!r) // No such resource?
-		return NULL;
+		return false;
 
 	count = getInt(r->data) + 1; // Counter is slightly off
 
-	magic = ((version == 0) || (version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)) ? 1 : 2;
-
-	t = (char **)sci_malloc(sizeof(char*) * magic * (count + 1));
-
-	j = 0;
-
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 		int offset = getInt(r->data + 2 + i * 2);
 		int len = getInt(r->data + offset);
-		t[j] = (char *)sci_malloc(len + 1);
-		memcpy(t[j], r->data + offset + 2, len);
-		t[j][len] = '\0';
-		j++;
+		
+		Common::String tmp((const char *)r->data + offset + 2, len);
+		selectorNames.push_back(tmp);
 		if ((version != 0) && (version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)) {
-			t[j] = (char *)sci_malloc(len + 1);
-			memcpy(t[j], r->data + offset + 2, len);
-			t[j][len] = '\0';
-			j++;
+			// Early SCI versions used the LSB in the selector ID as a read/write
+			// toggle. To compensate for that, we add every selector name twice.
+			selectorNames.push_back(tmp);
 		}
 	}
 
-	t[j] = 0;
-
-	if (pcount != NULL)
-		*pcount = magic * count;
-
-	return t;
+	return true;
 }
 
-int vocabulary_lookup_sname(char **snames_list, char *sname) {
-	int pos = 0;
-
-	while (snames_list[pos]) {
-		if (!scumm_stricmp(sname, snames_list[pos]))
+int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char *sname) {
+	for (uint pos = 0; pos < selectorNames.size(); ++pos) {
+		if (selectorNames[pos] == sname)
 			return pos;
-		pos++;
 	}
 
 	return -1;
-}
-
-void vocabulary_free_snames(char **snames_list) {
-	int pos = 0;
-
-	while (snames_list[pos])
-		free(snames_list[pos++]);
-
-	free(snames_list);
 }
 
 opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {

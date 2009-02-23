@@ -1010,28 +1010,22 @@ static int c_hexgrep(EngineState *s) {
 }
 
 static int c_selectornames(EngineState * s) {
-	int namectr;
-	char **snames	= NULL;
-	int seeker = 0;
+	Common::StringList selectorNames;
 
 	if (NULL == s) {
 		sciprintf("console.c: c_selectornames(): NULL passed for parameter s\n");
 		return -1;
 	}
 
-	snames = vocabulary_get_snames(s->resmgr, &namectr, s ? s->version : 0);
-
-	if (!snames) {
+	if (!vocabulary_get_snames(s->resmgr, s ? s->version : 0, selectorNames)) {
 		sciprintf("No selector name table found!\n");
 		return 1;
 	}
 
 	sciprintf("Selector names in numeric order:\n");
-	while (snames[seeker]) {
-		sciprintf("%03x: %s\n", seeker, snames[seeker]);
-		seeker++;
+	for (uint seeker = 0; seeker < selectorNames.size(); seeker++) {
+		sciprintf("%03x: %s\n", seeker, selectorNames[seeker].c_str());
 	}
-	vocabulary_free_snames(snames);
 
 	return 0;
 }
@@ -1066,7 +1060,7 @@ static int c_dissectscript(EngineState * s) {
 		return -1;
 	}
 
-	script_dissect(s->resmgr, cmd_params[0].val, s->selector_names, s->selector_names_nr);
+	script_dissect(s->resmgr, cmd_params[0].val, s->_selectorNames);
 	return 0;
 }
 
