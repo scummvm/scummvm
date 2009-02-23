@@ -30,6 +30,8 @@
 #  include <dc.h>
 #endif
 
+#include "common/archive.h"
+#include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
 
@@ -42,14 +44,331 @@
 // FIXME: Get rid of the following (needed for O_RDONLY etc.)
 #include <fcntl.h>
 
+#define SCI_INVALID_FD -1
+#define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
 
-namespace Sci {
+// FIXME: rework sci_dir_t to use common/fs.h and remove these includes
+#include <sys/types.h>
+#ifndef _MSC_VER
+#include <dirent.h>
+#else
+#include <io.h>
+#endif
+
+// FIXME: For chdir() etc.
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 #ifdef WIN32
 #  define FO_BINARY "b"
 #else
 #  define FO_BINARY ""
 #endif
+
+#ifdef UNIX
+#include <fnmatch.h>
+#include <sys/stat.h>
+#endif
+
+
+namespace Sci {
+
+
+
+struct sci_dir_t {
+#ifdef WIN32
+	long search;
+	struct _finddata_t fileinfo;
+#else
+	DIR *dir;
+	char *mask_copy;
+#endif
+}; /* used by sci_find_first and friends */
+
+void sci_init_dir(sci_dir_t *dirent);
+/* Initializes an sci directory search structure
+** Parameters: (sci_dir_t *) dirent: The entity to initialize
+** Returns   : (void)
+** The entity is initialized to "empty" values, meaning that it can be
+** used in subsequent sci_find_first/sci_find_next constructs. In no
+** event should this function be used upon a structure which has been
+** subjected to any of the other dirent calls.
+*/
+
+char *sci_find_first(sci_dir_t *dirent, const char *mask);
+/* Finds the first file matching the specified file mask
+** Parameters: (sci_dir_t *) dirent: Pointer to an unused dirent structure
+**             (const char *) mask: File mask to apply
+** Returns   : (char *) Name of the first matching file found, or NULL
+*/
+
+char *sci_find_next(sci_dir_t *dirent);
+/* Finds the next file specified by an sci_dir initialized by sci_find_first()
+** Parameters: (sci_dir_t *) dirent: Pointer to SCI dir entity
+** Returns   : (char *) Name of the next matching file, or NULL
+*/
+
+void sci_finish_find(sci_dir_t *dirent);
+/* Completes an 'sci_find_first/next' procedure
+** Parameters: (sci_dir_t *) dirent: Pointer to the dirent used
+** Returns   : (void)
+** In the operation sequences
+**   sci_init_dir(x); sci_finish_find(x);
+** and
+**   sci_finish_find(x); sci_finish_find(x);
+** the second operation is guaranteed to be a no-op.
+*/
+
+FILE *sci_fopen(const char *fname, const char *mode);
+/* Opens a FILE* case-insensitively
+** Parameters: (const char *) fname: Name of the file to open
+**             (const char *) mode: Mode to open it with
+** Returns   : (FILE *) A valid file handle, or NULL on failure
+** Always refers to the cwd, cannot address subdirectories
+*/
+
+int sci_open(const char *fname, int flags);
+/* Opens a file descriptor case-insensitively
+** Parameters: (const char *) fname: Name of the file to open
+**             (int) flags: open(2) flags for the file
+** Returns   : (int) a file descriptor of the open file,
+**             or SCI_INVALID_FD on failure
+** Always refers to the cwd, cannot address subdirectories
+*/
+
+char *sci_getcwd();
+/* Returns the current working directory, malloc'd.
+** Parameters: (void)
+** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
+*/
+
+int sci_fd_size(int fd);
+/* Returns the filesize of an open file
+** Parameters: (int) fd: File descriptor of open file
+** Returns   : (int) filesize of file pointed to by fd, -1 on error
+*/
+
+int sci_file_size(const char *fname);
+/* Returns the filesize of a file
+** Parameters: (const char *) fname: Name of file to get filesize of
+** Returns   : (int) filesize of the file, -1 on error
+*/
+
+
+#if defined(WIN32)
+void sci_init_dir(sci_dir_t *dir) {
+	dir->search = -1;
+}
+
+char *sci_find_first(sci_dir_t *dir, const char *mask) {
+	dir->search = _findfirst(mask, &(dir->fileinfo));
+
+	if (dir->search != -1) {
+		if (dir->fileinfo.name == NULL) {
+			return NULL;
+		}
+
+		if (strcmp(dir->fileinfo.name, ".") == 0 ||
+		        strcmp(dir->fileinfo.name, "..") == 0) {
+			if (sci_find_next(dir) == NULL) {
+				return NULL;
+			}
+		}
+
+		return dir->fileinfo.name;
+	} else {
+		switch (errno) {
+		case ENOENT: {
+#ifdef _DEBUG
+			printf("_findfirst errno = ENOENT: no match\n");
+
+			if (mask)
+				printf(" in: %s\n", mask);
+			else
+				printf(" - searching in undefined directory\n");
+#endif
+			break;
+		}
+		case EINVAL: {
+			printf("_findfirst errno = EINVAL: invalid filename\n");
+			break;
+		}
+		default:
+			printf("_findfirst errno = unknown (%d)", errno);
+		}
+	}
+
+	return NULL;
+}
+
+char *sci_find_next(sci_dir_t *dir) {
+	if (dir->search == -1)
+		return NULL;
+
+	if (_findnext(dir->search, &(dir->fileinfo)) < 0) {
+		_findclose(dir->search);
+		dir->search = -1;
+		return NULL;
+	}
+
+	if (strcmp(dir->fileinfo.name, ".") == 0 ||
+	        strcmp(dir->fileinfo.name, "..") == 0) {
+		if (sci_find_next(dir) == NULL) {
+			return NULL;
+		}
+	}
+
+	return dir->fileinfo.name;
+}
+
+void sci_finish_find(sci_dir_t *dir) {
+	if (dir->search != -1) {
+		_findclose(dir->search);
+		dir->search = -1;
+	}
+}
+
+#else
+
+void sci_init_dir(sci_dir_t *dir) {
+	dir->dir = NULL;
+	dir->mask_copy = NULL;
+}
+
+char *sci_find_first(sci_dir_t *dir, const char *mask) {
+	if (dir->dir)
+		closedir(dir->dir);
+
+	if (!(dir->dir = opendir("."))) {
+		sciprintf("%s, L%d: opendir(\".\") failed!\n", __FILE__, __LINE__);
+		return NULL;
+	}
+
+	dir->mask_copy = sci_strdup(mask);
+
+	return sci_find_next(dir);
+}
+
+#ifndef FNM_CASEFOLD
+#define FNM_CASEFOLD 0
+#warning "File searches will not be case-insensitive!"
+#endif
+
+char *sci_find_next(sci_dir_t *dir) {
+	struct dirent *match;
+
+	while ((match = readdir(dir->dir))) {
+		if (match->d_name[0] == '.')
+			continue;
+
+		if (!fnmatch(dir->mask_copy, match->d_name, FNM_CASEFOLD))
+			return match->d_name;
+	}
+
+	sci_finish_find(dir);
+
+	return NULL;
+}
+
+void sci_finish_find(sci_dir_t *dir) {
+	if (dir->dir) {
+		closedir(dir->dir);
+		dir->dir = NULL;
+		free(dir->mask_copy);
+		dir->mask_copy = NULL;
+	}
+}
+
+#endif
+
+
+/* Returns the case-sensitive filename of a file.
+** Expects *dir to be uninitialized and the caller to free it afterwards.
+** Parameters: (const char *) fname: Name of file to get case-sensitive.
+**             (sci_dir_t *) dir: Directory to find file within.
+** Returns   : (char *) Case-sensitive filename of the file.
+*/
+Common::String _fcaseseek(const char *fname) {
+	// Expects *dir to be uninitialized and the caller to
+	// free it afterwards  */
+
+	// Look up the file, ignoring case
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, fname);
+
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String name = (*x)->getName();
+		if (name.equalsIgnoreCase(fname))
+			return name;
+	}
+
+	return Common::String();
+}
+
+FILE *sci_fopen(const char *fname, const char *mode) {
+	Common::String name = _fcaseseek(fname);
+	FILE *file = NULL;
+
+	if (!name.empty())
+		file = fopen(name.c_str(), mode);
+	else if (strchr(mode, 'w'))
+		file = fopen(fname, mode);
+
+	return file;
+}
+
+int sci_open(const char *fname, int flags) {
+	int file = SCI_INVALID_FD;
+	Common::String name = _fcaseseek(fname);
+	if (!name.empty())
+		file = open(name.c_str(), flags);
+
+	return file;
+}
+
+char *sci_getcwd() {
+	int size = 0;
+	char *cwd = NULL;
+
+	while (size < 8192) {
+		size += 256;
+		cwd = (char*)sci_malloc(size);
+		if (getcwd(cwd, size - 1))
+			return cwd;
+
+		free(cwd);
+	}
+
+	fprintf(stderr, "Could not determine current working directory!\n");
+
+	return NULL;
+}
+
+int sci_fd_size(int fd) {
+	struct stat fd_stat;
+
+	if (fstat(fd, &fd_stat))
+		return -1;
+
+	return fd_stat.st_size;
+}
+
+int sci_file_size(const char *fname) {
+	struct stat fn_stat;
+
+	if (stat(fname, &fn_stat))
+		return -1;
+
+	return fn_stat.st_size;
+}
+
+
+
 
 static int _savegame_indices_nr = -1; // means 'uninitialized'
 
@@ -86,7 +405,7 @@ static FILE *f_open_mirrored(EngineState *s, char *fname) {
 	if we at the same time change the code for loading files to look among the
 	savestates, and also change *all* file writing code to write to savestates,
 	as it should
-	
+
 	Also, we may have to change the filename when creating a matchin savegame,
 	e.g. prefix it with the target name
 #endif

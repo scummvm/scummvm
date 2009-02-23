@@ -29,34 +29,6 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 
-/** This header file defines (mostly) generic tools and utility functions.
- ** It also handles portability stuff, in cooperation with scitypes.h
- ** (which specializes in primitive data types).
- ** Most implementations of the functions found here are in
- ** $(SRCDIR)/src/scicore/tools.c
- **
- ** -- Christoph Reichenbach
- **/
-
-#define SCI_INVALID_FD -1
-#define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
-
-/*#define _SCI_RESOURCE_DEBUG */
-/*#define _SCI_DECOMPRESS_DEBUG*/
-
-// FIXME: rework sci_dir_t to use common/fs.h and remove these includes
-#include <sys/types.h>
-#ifndef _MSC_VER
-#include <dirent.h>
-#else
-#include <io.h>
-#endif
-
-// FIXME: For chdir() etc.
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-
 namespace Sci {
 
 
@@ -64,16 +36,6 @@ struct GTimeVal {
 	long tv_sec;
 	long tv_usec;
 };
-
-struct sci_dir_t {
-#ifdef WIN32
-	long search;
-	struct _finddata_t fileinfo;
-#else
-	DIR *dir;
-	char *mask_copy;
-#endif
-}; /* used by sci_find_first and friends */
 
 
 
@@ -103,58 +65,6 @@ void sci_get_current_time(GTimeVal *val);
 ** Returns   : (void)
 */
 
-void sci_init_dir(sci_dir_t *dirent);
-/* Initializes an sci directory search structure
-** Parameters: (sci_dir_t *) dirent: The entity to initialize
-** Returns   : (void)
-** The entity is initialized to "empty" values, meaning that it can be
-** used in subsequent sci_find_first/sci_find_next constructs. In no
-** event should this function be used upon a structure which has been
-** subjected to any of the other dirent calls.
-*/
-
-char *sci_find_first(sci_dir_t *dirent, const char *mask);
-/* Finds the first file matching the specified file mask
-** Parameters: (sci_dir_t *) dirent: Pointer to an unused dirent structure
-**             (const char *) mask: File mask to apply
-** Returns   : (char *) Name of the first matching file found, or NULL
-*/
-
-char *sci_find_next(sci_dir_t *dirent);
-/* Finds the next file specified by an sci_dir initialized by sci_find_first()
-** Parameters: (sci_dir_t *) dirent: Pointer to SCI dir entity
-** Returns   : (char *) Name of the next matching file, or NULL
-*/
-
-void sci_finish_find(sci_dir_t *dirent);
-/* Completes an 'sci_find_first/next' procedure
-** Parameters: (sci_dir_t *) dirent: Pointer to the dirent used
-** Returns   : (void)
-** In the operation sequences
-**   sci_init_dir(x); sci_finish_find(x);
-** and
-**   sci_finish_find(x); sci_finish_find(x);
-** the second operation is guaranteed to be a no-op.
-*/
-
-FILE *sci_fopen(const char *fname, const char *mode);
-/* Opens a FILE* case-insensitively
-** Parameters: (const char *) fname: Name of the file to open
-**             (const char *) mode: Mode to open it with
-** Returns   : (FILE *) A valid file handle, or NULL on failure
-** Always refers to the cwd, cannot address subdirectories
-*/
-
-int sci_open(const char *fname, int flags);
-/* Opens a file descriptor case-insensitively
-** Parameters: (const char *) fname: Name of the file to open
-**             (int) flags: open(2) flags for the file
-** Returns   : (int) a file descriptor of the open file,
-**             or SCI_INVALID_FD on failure
-** Always refers to the cwd, cannot address subdirectories
-*/
-
-
 int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 #define gfxprintf sciprintf
 /* Prints a string to the console stack
@@ -162,24 +72,6 @@ int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 **             ...: Additional parameters as defined in fmt
 ** Returns   : (int) 1
 ** Implementation is in src/scicore/console.c
-*/
-
-char *sci_getcwd();
-/* Returns the current working directory, malloc'd.
-** Parameters: (void)
-** Returns   : (char *) a malloc'd cwd, or NULL if it couldn't be determined.
-*/
-
-int sci_fd_size(int fd);
-/* Returns the filesize of an open file
-** Parameters: (int) fd: File descriptor of open file
-** Returns   : (int) filesize of file pointed to by fd, -1 on error
-*/
-
-int sci_file_size(const char *fname);
-/* Returns the filesize of a file
-** Parameters: (const char *) fname: Name of file to get filesize of
-** Returns   : (int) filesize of the file, -1 on error
 */
 
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */

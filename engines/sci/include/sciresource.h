@@ -26,9 +26,6 @@
 #ifndef _SCIRESOURCE_H_
 #define _SCIRESOURCE_H_
 
-/*#define _SCI_RESOURCE_DEBUG */
-/*#define _SCI_DECOMPRESS_DEBUG*/
-
 #include "common/str.h"
 
 namespace Common {
