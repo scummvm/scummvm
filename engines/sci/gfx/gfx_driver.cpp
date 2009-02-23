@@ -36,7 +36,7 @@ namespace Sci {
 struct _scummvm_driver_state {
 	gfx_pixmap_t *priority[2];
 	byte *visual[3];
-	byte *pointer_data[2];
+	uint8 *pointer_data;
 	int xsize, ysize;
 	//int buckystate;
 	bool update_screen;
@@ -57,8 +57,7 @@ scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 	S->xsize = xfact * 320;
 	S->ysize = yfact * 200;
 
-	S->pointer_data[0] = NULL;
-	S->pointer_data[1] = NULL;
+	S->pointer_data = NULL;
 	//S->buckystate = 0;
 
 	for (i = 0; i < 2; i++) {
@@ -101,11 +100,8 @@ static void scummvm_exit(gfx_driver_t *drv) {
 			S->visual[i] = NULL;
 		}
 
-		for (i = 0; i < 2; i++)
-			if (S->pointer_data[i]) {
-				delete[] S->pointer_data[i];
-				S->pointer_data[i] = NULL;
-			}
+		delete[] S->pointer_data;
+		S->pointer_data = NULL;
 
 		delete S;
 	}
@@ -264,11 +260,42 @@ static int scummvm_set_static_buffer(gfx_driver_t *drv, gfx_pixmap_t *pic, gfx_p
 
 // Mouse pointer operations
 
+static uint8 *create_scaled_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
+{
+	int linewidth = pointer->xl;
+	int lines = pointer->yl;
+	uint8 *data = new uint8[linewidth*lines];
+	uint8 *linebase = data, *pos;
+	uint8 *src = pointer->index_data;
+
+	for (int yc = 0; yc < pointer->index_yl; yc++) {
+		pos = linebase;
+
+		for (int xc = 0; xc < pointer->index_xl; xc++) {
+			for (int scalectr = 0; scalectr < drv->mode->xfact; scalectr++) {
+				*pos++ = *src;
+			}
+			src++;
+		}
+		for (int scalectr = 1; scalectr < drv->mode->yfact; scalectr++)
+			memcpy(linebase + linewidth * scalectr, linebase, linewidth);
+		linebase += linewidth * drv->mode->yfact;
+	}
+	return data;
+}
+
+
 static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer) {
 	if (pointer == NULL) {
 		g_system->showMouse(false);
 	} else {
-		g_system->setMouseCursor(pointer->index_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
+		if (drv->mode->xfact > 1 || drv->mode->yfact > 1) {
+			delete[] S->pointer_data;
+			S->pointer_data = create_scaled_cursor(drv, pointer, 1);
+			g_system->setMouseCursor(S->pointer_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
+		} else {
+			g_system->setMouseCursor(pointer->index_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
+		}
 		g_system->showMouse(true);
 	}
 
