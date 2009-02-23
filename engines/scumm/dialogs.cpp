@@ -590,6 +590,7 @@ ConfigDialog::ConfigDialog()
 	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
 #ifdef SMALL_SCREEN_DEVICE
 	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
+	_keysDialog = NULL;
 #endif
 }
 
