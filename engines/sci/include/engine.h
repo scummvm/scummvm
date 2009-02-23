@@ -266,9 +266,6 @@ struct EngineState {
 
 	selector_map_t selector_map; /* Shortcut list for important selectors */
 
-	/* Backwards compatibility crap */
-	int port_ID;
-
 	EngineState *successor; /* Successor of this state: Used for restoring */
 };
 
