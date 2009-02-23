@@ -211,6 +211,9 @@ int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::no
 
 int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
 
+void write_SegManagerPtr(Common::WriteStream *fh, SegManager **foo);
+int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const char *lastval, int *line, int *hiteof);
+
 typedef mem_obj_t *mem_obj_ptr;
 
 // Unused types
@@ -226,6 +229,7 @@ RECORD synonym_t "synonym_t" {
 
 %CFSML
 
+TYPE bool "bool" LIKE int;
 TYPE byte "byte" LIKE int;
 TYPE seg_id_t "seg_id_t" LIKE int;
 TYPE sci_version_t "sci_version_t" USING write_sci_version read_sci_version;
@@ -240,6 +244,7 @@ TYPE songlib_t "songlib_t" USING write_songlib_t read_songlib_t;
 TYPE song_tp "song_t *" USING write_song_tp read_song_tp;
 TYPE song_iterator_t "song_iterator_t" USING write_song_iterator_t read_song_iterator_t;
 TYPE song_handle_t "song_handle_t" LIKE int;
+TYPE SegManagerPtr "SegManager *" USING write_SegManagerPtr read_SegManagerPtr;
 
 RECORD song_t "song_t" {
 	song_handle_t handle;
@@ -291,7 +296,6 @@ RECORD SegManager "SegManager" {
 	int heap_size;
 	int reserved_id;
 	int exports_wide;
-	int isSci1_1;
 	int gc_mark_bits;
 	size_t mem_allocated;
 	seg_id_t clones_seg_id;
@@ -325,7 +329,7 @@ RECORD EngineState "EngineState" {
 	menubar_tp menubar;
 	int status_bar_foreground;
 	int status_bar_background;
-	SegManager seg_manager;
+	SegManagerPtr seg_manager;
 	int classtable_size;
 	class_t classtable[DYNAMIC classtable_size];
 	sfx_state_t sound;
@@ -706,6 +710,22 @@ int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char 
 		%CFSMLREAD mem_obj_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 		return *hiteof;
 	}
+	return 0;
+}
+
+void write_SegManagerPtr(Common::WriteStream *fh, SegManager **foo) {
+	%CFSMLWRITE bool &((*foo)->isSci1_1) INTO fh;
+	%CFSMLWRITE SegManager *foo INTO fh;
+}
+
+int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const char *lastval, int *line, int *hiteof) {
+	char *token;
+	int assignment;
+	bool sci11;
+	%CFSMLREAD bool (&sci11) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
+	*foo = new SegManager(sci11);
+	token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
+	%CFSMLREAD SegManager (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
 	return 0;
 }
 
