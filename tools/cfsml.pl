@@ -193,7 +193,7 @@ static char *_cfsml_unmangle_string(const char *s, unsigned int length) {
 
 	while ((source != end) && (c = *source++) && (c > 31)) {
 		if (c == '\\') { // Escaped character?
-    			c = *source++;
+			c = *source++;
 			if ((c != '\\') && (c != '"')) // Un-escape 0-31 only
 				c -= ('a' - 1);
 		}
@@ -454,7 +454,7 @@ sub create_writer
 
       print "	if (!save_struc->$n->{'name'})\n";
       print "		WSprintf(fh, \"\\\\null\\\\\");\n";
-      print "	else \n";
+      print "	else\n";
       print "		$types{$n->{'reftype'}}{'writer'}";
       print "(fh, save_struc->$n->{'name'});\n";
 
@@ -554,7 +554,7 @@ sub create_reader
 	print "			return CFSML_FAILURE;\n";
 	print "		}\n";
 	print "		if (!assignment) {\n";
-	print "			if (!strcmp(token, \"}\")) \n";
+	print "			if (!strcmp(token, \"}\"))\n";
 	print "				closed = 1;\n";
 	print "			else {\n";
 	print "				_cfsml_error(\"Expected assignment or closing braces in line %d\\n\", *line);\n";
@@ -659,13 +659,13 @@ sub create_reader
 	    print "					_cfsml_error(\"Token expected by $reader() for $name$helper at line %d\\n\", *line);\n";
 	    print "					return CFSML_FAILURE;\n";
 	    print "				}\n";
-	    print "			} else \n";
+	    print "			} else\n";
 	    print "				done = 1;\n";
 	    print "			} while (!done);\n";
 
 	    if ($n->{'array'} eq "dynamic") {
 		my @xpr = lvaluize($expression = $n->{'size'});
-		print "		 	save_struc->$xpr[0] = max $xpr[1]; // Set array size accordingly\n";
+		print "			save_struc->$xpr[0] = max $xpr[1]; // Set array size accordingly\n";
 	    }
 
 	    if ($n->{'maxwrite'}) {
@@ -683,7 +683,7 @@ sub create_reader
 	    print "					_cfsml_error(\"Token expected by $reader() for $name at line %d\\n\", *line);\n";
 	    print "					return CFSML_FAILURE;\n";
 	    print "				}\n";
-	    print "			} else \n";
+	    print "			} else\n";
 	    print "				save_struc->$name = NULL;\n";
 	}
 	else { # It's a simple variable or a struct
@@ -749,7 +749,7 @@ sub create_function_block {
     }
   }
   print "\n// Auto-generated CFSML declaration and function block ends here\n";
-  print "// Auto-generation performed by cfsml.pl $version \n";
+  print "// Auto-generation performed by cfsml.pl $version\n";
 }
 
 
