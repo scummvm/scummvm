@@ -154,11 +154,11 @@ void LoLEngine::deleteItem(int itemIndex) {
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
 }
 
-CLevelItem *LoLEngine::findItem(uint16 index) {
+MonsterInPlay *LoLEngine::findItem(uint16 index) {
 	if (index & 0x8000)
-		return &_cLevelItems[index & 0x7fff];
+		return &_monsters[index & 0x7fff];
 	else
-		return (CLevelItem *)&_itemsInPlay[index];
+		return (MonsterInPlay *)&_itemsInPlay[index];
 }
 
 void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg4) {
@@ -202,10 +202,59 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 }
 
 void LoLEngine::clickSceneSub1() {
+	assignBlockCaps(_currentBlock, _currentDirection);
+	_screen->fillRect(112, 0, 287, 119, 0);
 
+	static const uint8 sceneItemWidth[] = { 0, 254, 1, 255, 2, 0, 1, 255 } ;
+	static const uint8 sceneClickTileIndex[] = { 13, 16};
+
+	int16 x1 = 0;
+	int16 x2 = 0;
+
+	for (int i = 0; i < 2; i++) {
+		uint8 tile = sceneClickTileIndex[i];
+		setLevelShapesDim(sceneClickTileIndex[i], x1, x2, 13);
+		uint16 s = _curBlockCaps[tile]->field_6;
+
+		int t = (i << 7) + 1;		
+		while (s) {
+			if (s & 0x8000) {
+				s &= 0x7fff;
+				s = _monsters[i].unk2;
+			} else {
+				ItemInPlay *item = &_itemsInPlay[s];
+
+				if (item->shpCurFrame_flg & 0x4000) {
+					if (clickSceneSub1Sub1(item->x, item->y, _partyPosX, _partyPosY) > 319)
+						break;
+
+					int w =	sceneItemWidth[s & 7] << 1;
+					int h = sceneItemWidth[(s >> 1) & 7] + 5;
+					if (item->unk4 > 1)
+						h -= ((item->unk4 - 1) * 6);
+
+					uint8 shpIx = _itemProperties[item->itemPropertyIndex].shpIndex;
+					uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[shpIx] : _itemShapes[_gameShapeMap[shpIx]];					
+
+					drawSceneItem(shp, 0, item->x, item->y, w, h, 0, t, 0);
+				}
+
+				s = item->unk2;
+				t++;
+			}
+		}
+	}
 }
 
-void LoLEngine::clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY) {
+int LoLEngine::clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY) {
+	return 1;
+}
+
+int LoLEngine::checkSceneForItems(LevelBlockProperty *block, int pos) {
+	return -1;
+}
+
+void LoLEngine::foundItemSub(int item, int block) {
 
 }
 

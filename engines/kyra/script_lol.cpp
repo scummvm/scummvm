@@ -400,9 +400,27 @@ int LoLEngine::olol_freeAnimStruct(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_getDirection(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getDirection(%p)", (const void *)script);
+	return _currentDirection;
+}
+
 int LoLEngine::olol_setMusicTrack(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setMusicTrack(%p) (%d)", (const void *)script, stackPos(0));
 	_curMusicTheme = stackPos(0);
+	return 1;
+}
+
+int LoLEngine::olol_clearDialogueField(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%d)", (const void *)script, stackPos(0));
+	if (_hideControls && (!textEnabled()))
+		return 1;
+
+	_screen->setScreenDim(5);
+	const ScreenDim *d = _screen->getScreenDim(5);
+	_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
+	_screen->clearDim(4);
+
 	return 1;
 }
 
@@ -456,8 +474,8 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	case 8:
 		_updateFlags = b;
 		if (b == 1) {
-			if (!textEnabled() || !(_hideControls & 2))
-				charCallback4(1);
+			if (!textEnabled() || (!(_hideControls & 2)))
+				timerUpdatePortraitAnimations(1);
 			removeUnkFlags(2);
 		} else {
 			setUnkFlags(2);
@@ -562,6 +580,10 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_68(EMCState *script) {
+	return 1;
+}
+
 int LoLEngine::olol_setScriptTimer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setScriptTimer(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint8 id = 0x50 + stackPos(0);
@@ -610,6 +632,10 @@ int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_85(EMCState *script) {
+	return 1;
+}
+
 int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
 	char filename[13];
@@ -624,6 +650,13 @@ int LoLEngine::olol_stopTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopTimScript(%p) (%d)", (const void *)script, stackPos(0));
 	_tim->stopAllFuncs(_activeTim[stackPos(0)]);
 	return 1;
+}
+
+int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	snd_stopSpeech(1);
+	updatePortraits();
+	return playCharacterScriptChat(stackPos(0), stackPos(1), 1, getLangString(stackPos(2)), script, 0, 3);
 }
 
 int LoLEngine::olol_loadSoundFile(EMCState *script) {
@@ -647,9 +680,18 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
 		char *s = getLangString(track);
-		_txt->playDialogue(4, s, script, 0, 1);
+		_txt->printDialogueText(4, s, script, 0, 1);
 	}
 
+	return 1;
+}
+
+int LoLEngine::olol_checkDialogueState(EMCState *script) {
+	for (int i = 0; i < 30; i++) {
+		if (stackPos(0) != _monsters[i].type && stackPos(0) != -1)
+			continue;
+		return (_monsters[i].field_14 == 1) ? 0 : 1;
+	}
 	return 1;
 }
 
@@ -657,6 +699,12 @@ int LoLEngine::olol_setNextFunc(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setNextFunc(%p) (%d)", (const void *)script, stackPos(0));
 	_nextScriptFunc = stackPos(0);
 	return 1;
+}
+
+int LoLEngine::olol_setDoorState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d)", (const void *)script, stackPos(0));
+	_emcDoorState = stackPos(0);
+	return _emcDoorState;
 }
 
 int LoLEngine::olol_assignCustomSfx(EMCState *script) {
@@ -674,6 +722,18 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 
 	return 0;
 }
+
+int LoLEngine::olol_resetPortraitsArea(EMCState *script) {
+	resetPortraitsArea();
+	return 1;
+}
+
+int LoLEngine::olol_setUnkFlags(EMCState *script) {
+	_hideInventory = 0;
+	setUnkFlags(2);
+	return 1;
+}
+
 
 #pragma mark -
 
@@ -793,7 +853,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_freeAnimStruct);
 
 	// 0x1C
-	OpcodeUnImpl();
+	Opcode(olol_getDirection);
 	OpcodeUnImpl();
 	Opcode(olol_setMusicTrack);
 	OpcodeUnImpl();
@@ -801,7 +861,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x20
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_clearDialogueField);
 	OpcodeUnImpl();
 
 	// 0x24
@@ -853,7 +913,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x44
-	OpcodeUnImpl();
+	Opcode(olol_68);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -878,7 +938,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x54
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_85);
 	Opcode(olol_loadLangFile);
 	OpcodeUnImpl();
 
@@ -891,7 +951,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x5C
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_playCharacterScriptChat);
 	OpcodeUnImpl();
 
 	// 0x60
@@ -934,7 +994,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_playDialogueTalkText);
-	OpcodeUnImpl();
+	Opcode(olol_checkDialogueState);
 
 	// 0x7C
 	Opcode(olol_setNextFunc);
@@ -951,7 +1011,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x84
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_setDoorState);
 	OpcodeUnImpl();
 
 	// 0x88
@@ -981,8 +1041,8 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x98
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_resetPortraitsArea);
+	Opcode(olol_setUnkFlags);
 
 	// 0x9C
 	OpcodeUnImpl();

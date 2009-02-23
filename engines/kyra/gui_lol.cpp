@@ -1193,14 +1193,38 @@ int LoLEngine::clickedUnk16(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedScene1(Button *button) {
+int LoLEngine::clickedScenePickupItem(Button *button) {
+	static const int8 checkX[] = { 0, 0, 1, 0, -1, -1, 1, 1, -1, 0, 2, 0, -2, -1, 1, 2, 2, 1, -1, -2, -2 };
+	static const int8 checkY[] = { 0, -1, 0, 1, 0, -1, -1, 1, 1, -2, 0, 2, 0, -2, -2, -1, 1, 2, 2, 1, -1 };
+
 	if (_updateFlags & 1)
 		return 0;
 	int cp = _screen->setCurPage(_sceneDrawPage1);
 
 	clickSceneSub1();
 
+	int p = 0;
+	for (int i = 0; i < 21; i++) {
+		p = _screen->getPagePixel(_screen->_curPage, _mouseX + checkX[i], _mouseY + checkY[i]);
+		if (p)
+			break;
+	}
+
 	_screen->setCurPage(cp);
+
+	if (!p)
+		return 0;
+
+	uint16 block = (p <= 128) ? calcNewBlockPosition(_currentBlock, _currentDirection) : _currentBlock;
+
+	int found = checkSceneForItems(&_levelBlockProperties[block], p &0x7f);
+
+	if (found != -1) {
+		foundItemSub(found, block);
+		setHandItem(found);
+	}
+
+	_sceneUpdateRequired = true;
 
 	return 1;
 }
@@ -1280,8 +1304,38 @@ int LoLEngine::clickedInventoryScroll(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk20(Button *button) {
-	return 1;
+int LoLEngine::clickedScenePressSwitch(Button *button) {
+	int block = calcNewBlockPosition(_currentBlock, _currentDirection);
+	int dir = _currentDirection ^ 2;
+	uint8 type = _wllBuffer3[_levelBlockProperties[block].walls[dir]];
+	
+	int res = 0;
+	switch (type) {
+		case 1:
+			res = clickedDecoration(block, dir);
+			break;
+
+		case 2:
+			break;
+
+		case 3:
+			break;
+
+		case 4:
+			break;
+
+		case 5:
+			res = switchOpenDoor(block, dir);
+			break;
+
+		case 6:
+			break;
+
+		default:
+			break;
+	}
+
+	return res;
 }
 
 int LoLEngine::clickedScene(Button *button) {
@@ -1300,7 +1354,7 @@ int LoLEngine::clickedUnk24(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk25(Button *button) {
+int LoLEngine::clickedSceneDropItem(Button *button) {
 	return 1;
 }
 

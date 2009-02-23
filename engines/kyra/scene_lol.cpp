@@ -113,7 +113,7 @@ void LoLEngine::addLevelItems() {
 int LoLEngine::initCmzWithScript(int block) {
 	int i = _levelBlockProperties[block].itemIndex;
 	int cnt = 0;
-	CLevelItem *t = 0;
+	MonsterInPlay *t = 0;
 
 	while (i) {
 		t = findItem(i);
@@ -122,7 +122,7 @@ int LoLEngine::initCmzWithScript(int block) {
 			continue;
 
 		i &= 0x7fff;
-		t = &_cLevelItems[i];
+		t = &_monsters[i];
 
 		cnt++;
 		initCMZ1(t, 14);
@@ -134,7 +134,7 @@ int LoLEngine::initCmzWithScript(int block) {
 	return cnt;
 }
 
-void LoLEngine::initCMZ1(CLevelItem *l, int a) {
+void LoLEngine::initCMZ1(MonsterInPlay *l, int a) {
 	if (l->field_14 == 13 && a != 14)
 		return;
 	if (a == 7) {
@@ -156,7 +156,7 @@ void LoLEngine::initCMZ1(CLevelItem *l, int a) {
 		l->field_14 = a;
 		l->field_15 = 0;
 		if (a == 14)
-			l->field_1D = 0;
+			l->monsterMight = 0;
 		if (a == 13 && (l->field_19 & 0x20)) {
 			l->field_14 = 0;
 			cmzS3(l);
@@ -171,7 +171,7 @@ void LoLEngine::initCMZ1(CLevelItem *l, int a) {
 
 }
 
-void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
+void LoLEngine::initCMZ2(MonsterInPlay *l, uint16 a, uint16 b) {
 	bool cont = true;
 	int t = l->blockPropertyIndex;
 	if (l->blockPropertyIndex) {
@@ -197,10 +197,10 @@ void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
 	_levelBlockProperties[l->blockPropertyIndex].field_8 = 5;
 	checkScriptUnk(l->blockPropertyIndex);
 
-	if (l->monsters->unk8[0] == 0 || cont == false)
+	if (l->properties->unk8[0] == 0 || cont == false)
 		return;
 
-	if ((!(l->monsters->unk5[0] & 0x100) || ((l->anon9 & 1) == 0)) && l->blockPropertyIndex == t)
+	if ((!(l->properties->unk5[0] & 0x100) || ((l->anon9 & 1) == 0)) && l->blockPropertyIndex == t)
 		return;
 
 	if (l->blockPropertyIndex != t)
@@ -209,7 +209,7 @@ void LoLEngine::initCMZ2(CLevelItem *l, uint16 a, uint16 b) {
 	if (_updateFlags & 1)
 		return;
 
-	cmzS7(l->monsters->unk3[5], l->blockPropertyIndex);
+	cmzS7(l->properties->unk3[5], l->blockPropertyIndex);
 }
 
 int LoLEngine::cmzS1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
@@ -249,11 +249,11 @@ int LoLEngine::cmzS1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
 	return Retv[r];
 }
 
-void LoLEngine::cmzS2(CLevelItem *l, int a) {
+void LoLEngine::cmzS2(MonsterInPlay *l, int a) {
 	// TODO
 }
 
-void LoLEngine::cmzS3(CLevelItem *l) {
+void LoLEngine::cmzS3(MonsterInPlay *l) {
 	// TODO
 }
 
@@ -278,7 +278,7 @@ void LoLEngine::cmzS7(int a, int block) {
 }
 
 void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
-	CLevelItem *tmp = 0;
+	MonsterInPlay *tmp = 0;
 
 	while (*cmzItemIndex & 0x8000) {
 		tmp = findItem(*cmzItemIndex);
@@ -431,10 +431,10 @@ void LoLEngine::loadLevelCmzFile(int index) {
 		_levelBlockProperties[i].flags = *t++;
 
 	for (int i = 0; i < 30; i++) {
-		if (_cLevelItems[i].blockPropertyIndex) {
-			_cLevelItems[i].blockPropertyIndex = 0;
-			_cLevelItems[i].monsters = _monsterProperties + _cLevelItems[i].field_20;
-			initCMZ2(&_cLevelItems[i], _cLevelItems[i].x, _cLevelItems[i].y);
+		if (_monsters[i].blockPropertyIndex) {
+			_monsters[i].blockPropertyIndex = 0;
+			_monsters[i].properties = &_monsterProperties[_monsters[i].type];
+			initCMZ2(&_monsters[i], _monsters[i].x, _monsters[i].y);
 		}
 	}
 
@@ -450,15 +450,15 @@ void LoLEngine::loadCMZ_Sub(int index1, int index2) {
 	//int r = 0;
 
 	for (int i = 0; i < 30; i++) {
-		if (_cLevelItems[i].field_14 >= 14 || _cLevelItems[i].blockPropertyIndex == 0 || _cLevelItems[i].field_1D <= 0)
+		if (_monsters[i].field_14 >= 14 || _monsters[i].blockPropertyIndex == 0 || _monsters[i].monsterMight <= 0)
 			continue;
 
-		int t = (val * _cLevelItems[i].field_1D) >> 8;
-		_cLevelItems[i].field_1D = t;
+		int t = (val * _monsters[i].monsterMight) >> 8;
+		_monsters[i].monsterMight = t;
 		if (index2 < index1)
-			_cLevelItems[i].field_1D++;
-		if (_cLevelItems[i].field_1D == 0)
-			_cLevelItems[i].field_1D = 1;
+			_monsters[i].monsterMight++;
+		if (_monsters[i].monsterMight == 0)
+			_monsters[i].monsterMight = 1;
 	}
 }
 
@@ -726,10 +726,10 @@ void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].field_8 = 5;
 		uint16 id = _levelBlockProperties[i].itemIndex;
-		CLevelItem *r = 0;
+		MonsterInPlay *r = 0;
 
 		while (id & 0x8000) {
-			r = (CLevelItem*)findItem(id);
+			r = (MonsterInPlay*)findItem(id);
 			assert(r);
 			id = r->itemIndexUnk;
 		}
@@ -748,9 +748,9 @@ void LoLEngine::resetItems(int flag) {
 }
 
 void LoLEngine::resetLvlBuffer() {
-	memset(_cLevelItems, 0, 30 * sizeof(CLevelItem));
+	memset(_monsters, 0, 30 * sizeof(MonsterInPlay));
 	for (int i = 0; i < 30; i++)
-		_cLevelItems[i].field_14 = 0x10;
+		_monsters[i].field_14 = 0x10;
 }
 
 void LoLEngine::resetBlockProperties() {
@@ -860,7 +860,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 		gui_toggleButtonDisplayMode(buttonShape, 1);
 
 	uint16 opos = _currentBlock;
-	uint16 npos = calcNewBlockPostion(_currentBlock, direction);
+	uint16 npos = calcNewBlockPosition(_currentBlock, direction);
 
 	if (!checkBlockPassability(npos, direction)) {
 		notifyBlockNotPassable(unk2 ? 0 : 1);
@@ -916,7 +916,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	setLF2(_currentBlock);
 }
 
-uint16 LoLEngine::calcNewBlockPostion(uint16 curBlock, uint16 direction) {
+uint16 LoLEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
 	static const int16 blockPosTable[] = { -32, 1, 32, -1, 1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32 };
 	return (curBlock + blockPosTable[direction]) & 0x3ff;
 }
@@ -942,7 +942,67 @@ void LoLEngine::notifyBlockNotPassable(int scrollFlag) {
 
 	snd_stopSpeech(true);
 	_txt->printMessage(0x8002, getLangString(0x403f));
-	snd_playSoundEffect(19, 255);
+	snd_playSoundEffect(19, -1);
+}
+
+int LoLEngine::clickedDecoration(uint16 block, uint16 direction) {
+	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
+	if (!clickedShape(v))
+		return 0;
+
+	snd_stopSpeech(true);
+	runLevelScript(block, 0x40);
+	
+	return 1;
+}
+
+int LoLEngine::switchOpenDoor(uint16 block, uint16 direction) {
+	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
+	if (!clickedShape(v))
+		return 0;
+
+	snd_playSoundEffect(78, -1);
+	_emcDoorState = 0;
+	runLevelScript(block, 0x40);
+
+	if (!_emcDoorState) {
+		delay(15 * _tickLength);
+		openDoorSub1(block, 0);
+	}
+
+	return 1;
+}
+
+bool LoLEngine::clickedShape(int shapeIndex) {
+	while (shapeIndex) {
+		uint16 s = _levelShapeProperties[shapeIndex].shapeIndex[1];
+		
+		if (s == 0xffff)
+			continue;
+
+		int w = _levelShapes[s][3];
+		int h = _levelShapes[s][2];
+		int x = _levelShapeProperties[shapeIndex].shapeX[1] + 136;
+		int y = _levelShapeProperties[shapeIndex].shapeY[1] + 8;
+
+		if (_levelShapeProperties[shapeIndex].flags & 1)
+			w <<= 1;
+
+		if (posWithinRect(_mouseX, _mouseY, x - 4, y - 4, x + w + 8, y + h + 8))
+			return true;
+
+		shapeIndex = _levelShapeProperties[shapeIndex].next;
+	}
+
+	return false;
+}
+
+void LoLEngine::openDoorSub1(uint16 block, int unk) {
+
+}
+
+void LoLEngine::openDoorSub2(uint16 block, int unk) {
+
 }
 
 void LoLEngine::movePartySmoothScrollBlocked(int speed) {
@@ -1864,6 +1924,10 @@ void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y,
 		else
 			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x104, ovl, 1, _dmScaleW, _dmScaleH);
 	}
+}
+
+void LoLEngine::drawSceneItem(uint8 *shape, uint8 *ovl, int x, int y, int w, int h, int flags, int unk1, int unk2) {
+
 }
 
 void LoLEngine::drawScriptShapes(int pageNum) {

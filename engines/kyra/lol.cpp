@@ -100,7 +100,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updatePortraitSpeechAnim = _updateCharV2 = _updateCharV3 = _textColourFlag = _hideInventory = 0;
+	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColourFlag = _hideInventory = 0;
 	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
@@ -123,7 +123,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_wllShapeMap = 0;
 	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
 	_levelBlockProperties = 0;
-	_cLevelItems = 0;
+	_monsters = 0;
 	_monsterProperties = 0;
 	_lvlBlockIndex = _lvlShapeIndex = 0;
 	_unkDrawLevelBool = true;
@@ -144,7 +144,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lampStatusSuspended = false;
 	_tempBuffer5120 = 0;
 	_tmpData136 = 0;
-	_cLevelItems = 0;
+	_monsters = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
 	//_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
@@ -284,7 +284,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _lvlShapeLeftRight;
 	delete[] _tempBuffer5120;
 	delete[] _tmpData136;
-	delete[] _cLevelItems;
+	delete[] _monsters;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
 	delete[] _scrollSceneBuffer;
@@ -386,8 +386,8 @@ Common::Error LoLEngine::init() {
 
 	_levelBlockProperties = new LevelBlockProperty[1025];
 	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
-	_cLevelItems = new CLevelItem[30];
-	memset(_cLevelItems, 0, 30 * sizeof(CLevelItem));
+	_monsters = new MonsterInPlay[30];
+	memset(_monsters, 0, 30 * sizeof(MonsterInPlay));
 	_monsterProperties = new MonsterProperty[5];
 	memset(_monsterProperties, 0, 5 * sizeof(MonsterProperty));
 
@@ -877,7 +877,7 @@ bool LoLEngine::addCharacter(int id) {
 
 	loadCharFaceShapes(numChars, id);
 
-	_characters[numChars].rand = _rnd.getRandomNumberRng(1, 12);
+	_characters[numChars].nextAnimUpdateCountdown = (int16) _rnd.getRandomNumberRng(1, 12) + 6;
 
 	for (i = 0; i < 11; i++) {
 		if (_characters[numChars].items[i]) {
@@ -939,11 +939,11 @@ void LoLEngine::updatePortraitSpeechAnim() {
 	int y = 0;
 	bool redraw = false;
 
-	if (_updateCharV2 == 0) {
+	if (_portraitSpeechAnimMode == 0) {
 		x = _activeCharsXpos[_updateCharNum];
 		y = 144;
 		redraw = true;
-	} else if (_updateCharV2 == 1) {
+	} else if (_portraitSpeechAnimMode == 1) {
 		if (textEnabled()) {
 			x = 90;
 			y = 130;
@@ -951,7 +951,7 @@ void LoLEngine::updatePortraitSpeechAnim() {
 			x = _activeCharsXpos[_updateCharNum];
 			y = 144;
 		}
-	} else if (_updateCharV2 == 2) {
+	} else if (_portraitSpeechAnimMode == 2) {
 		if (textEnabled()) {
 			x = 16;
 			y = 134;
@@ -970,14 +970,14 @@ void LoLEngine::updatePortraitSpeechAnim() {
 
 	if (_speechFlag) {
 		if (snd_characterSpeaking() == 2)
-			_updatePortraitSpeechAnim = 2;
+			_updatePortraitSpeechAnimDuration = 2;
 		else
-			_updatePortraitSpeechAnim = 1;
+			_updatePortraitSpeechAnimDuration = 1;
 	}
 
-	_updatePortraitSpeechAnim--;
+	_updatePortraitSpeechAnimDuration--;
 
-	if (_updatePortraitSpeechAnim) {
+	if (_updatePortraitSpeechAnimDuration) {
 		setCharFaceFrame(_updateCharNum, f);
 		if (redraw)
 			gui_drawCharPortraitWithStats(_updateCharNum);
@@ -1000,12 +1000,12 @@ void LoLEngine::updatePortraits() {
 	if (_updateCharNum == -1)
 		return;
 
-	_updatePortraitSpeechAnim = _updateCharV3 = 1;
+	_updatePortraitSpeechAnimDuration = _updateCharV3 = 1;
 	updatePortraitSpeechAnim();
-	_updatePortraitSpeechAnim = 1;
+	_updatePortraitSpeechAnimDuration = 1;
 	_updateCharNum = -1;
 
-	if (!_updateCharV2)
+	if (!_portraitSpeechAnimMode)
 		initTextFading(0, 0);
 }
 
@@ -1024,26 +1024,6 @@ void LoLEngine::initTextFading(int textType, int clearField) {
 
 	_fadeText = false;
 	_timer->disable(11);
-}
-
-void LoLEngine::charCallback4(int redraw) {
-	for (int i = 0; i < 3; i++) {
-		if (!(_characters[i].flags & 1) || (_characters[i].flags & 8) || (_characters[i].curFaceFrame > 1))
-			continue;
-
-		if (_characters[i].curFaceFrame == 1) {
-			_characters[i].curFaceFrame = 0;
-			gui_drawCharPortraitWithStats(i);
-			_characters[i].rand = _rnd.getRandomNumberRng(1, 12);
-		} else {
-			_characters[i].rand--;
-			if (_characters[i].rand <= 0 && !redraw) {
-				_characters[i].curFaceFrame = 1;
-				gui_drawCharPortraitWithStats(i);
-				//resetAnimStructs(9, 0, 1);
-			}
-		}
-	}
 }
 
 void LoLEngine::setCharFaceFrame(int charNum, int frameNum) {
@@ -1074,12 +1054,12 @@ int LoLEngine::calculateCharacterStats(int charNum, int index) {
 		for (int i = 0; i < 8; i++)
 			c += _characters[charNum].itemsMight[i];
 		if (c)
-			c += _characters[charNum].might2;
+			c += _characters[charNum].might;
 		else
 			c = _characters[charNum].defaultModifiers[8];
 
 		c = (c * _characters[charNum].defaultModifiers[1]) >> 8;
-		c = (c * _characters[charNum].might3) >> 8;
+		c = (c * _characters[charNum].totalMightModifier) >> 8;
 
 		return c;
 
@@ -1106,12 +1086,12 @@ int LoLEngine::calculateProtection(int index) {
 	if (index & 0x8000) {
 		// Monster
 		index &= 0x7fff;
-		c = (_cLevelItems[index].monsters->itemProtection * _cLevelItems[index].monsters->protection) >> 8;
+		c = (_monsters[index].properties->itemProtection * _monsters[index].properties->protection) >> 8;
 	} else {
 		// Character
-		c = _characters[index].itemsProtection + _characters[index].protection2;
+		c = _characters[index].itemsProtection + _characters[index].protection;
 		c = (c * _characters[index].defaultModifiers[2]) >> 8;
-		c = (c * _characters[index].protection3) >> 8;
+		c = (c * _characters[index].totalProtectionModifier) >> 8;
 	}
 
 	return c;
@@ -1128,7 +1108,7 @@ void LoLEngine::setupScreenDims() {
 }
 
 void LoLEngine::initDialogueSequence(int controlMode) {
-	unkHideInventory();
+	resetPortraitsArea();
 	gui_prepareForSequence(112, 0, 176, 120, controlMode);
 
 	_updateFlags |= 3;
@@ -1150,15 +1130,6 @@ void LoLEngine::toggleSelectedCharacterFrame(bool mode) {
 
 	_screen->drawBox(x, 143, x + 65, 176, col);
 	_screen->setCurPage(cp);
-}
-
-void LoLEngine::unkHideInventory() {
-	_hideInventory = 1;
-
-	if (!textEnabled() || !(_hideControls & 2))
-		charCallback4(1);
-
-	removeUnkFlags(2);
 }
 
 void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int buttonFlags) {
@@ -1201,6 +1172,14 @@ void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 	}
 
 	_hideInventory = 0;
+}
+
+void LoLEngine::resetPortraitsArea() {
+	_hideInventory = 1;
+	if (!textEnabled() || (!(_hideControls & 2)))
+		timerUpdatePortraitAnimations(1);
+
+	removeUnkFlags(2);		
 }
 
 void LoLEngine::fadeText() {
@@ -1347,15 +1326,15 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	int16 volIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
 
 	if (volIndex > 0)
-		volIndex = (volIndex * volume) >> 8;
+		volume = (volIndex * volume) >> 8;
 	else
-		volIndex *= -1;
+		volume = -volIndex;
 
 	// volume TODO
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1) {
-		_sound->voicePlay(_ingameSoundList[vocIndex], true);
+		_sound->voicePlay(_ingameSoundList[vocIndex], volume & 0xff, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;
@@ -1368,7 +1347,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 			track = 167;
 
 		if (track != -1)
-			KyraEngine_v1::snd_playSoundEffect(track);
+			KyraEngine_v1::snd_playSoundEffect(track, volume);
 	}
 }
 
@@ -1419,24 +1398,6 @@ int LoLEngine::snd_stopMusic() {
 	return snd_playTrack(-1);
 }
 
-void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
-	uint32 endTime = _system->getMillis() + millis;
-	while (endTime > _system->getMillis()) {
-		if (cUpdate)
-			update();
-		_system->delayMillis(4);
-	}
-}
-
-void LoLEngine::runLoopSub4(int a) {
-	cmzS7(a, _currentBlock);
-}
-
-void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs) {
-	x = (block & 0x1f) << 8 | xOffs;
-	y = ((block & 0xffe0) << 3) | yOffs;
-}
-
 bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 	if (charId == 1) {
 		charId = _selectedCharacter;
@@ -1458,13 +1419,104 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 	if (r && redraw) {
 		updatePortraits();
 		_updateCharNum = charId;
-		_updateCharV2 = 0;
+		_portraitSpeechAnimMode = 0;
 		_updateCharV3 = 1;
 		_fadeText = false;
 		updatePortraitSpeechAnim();
 	}
 
 	return r ? textEnabled() : 1;
+}
+
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+	int ch = 0;
+	bool skipAnim = false;
+	
+	if ((charId == -1) || (!(charId & 0x70)))
+		charId = ch = (charId == 1) ? (_selectedCharacter ? _characters[_selectedCharacter].id : 0) : charId;
+	else
+		charId ^= 0x70;
+
+	updatePortraits();
+
+	if (charId < 0) {
+		charId = ch = (_rnd.getRandomNumber(0x7fff) * countActiveCharacters()) / 0x8000;
+		ch = _rnd.getRandomNumber(countActiveCharacters() - 1);
+	} else if (charId > 0) {
+		int i = 0;
+
+		for (; i < 4; i++) {
+			if (_characters[i].id != charId || !(_characters[i].flags & 1))
+				continue;
+			if (charId == ch)
+				ch = i;
+			charId = i;
+			break;
+		}
+
+		if (i == 4) {
+			if (charId == 8)
+				skipAnim = true;
+			else
+				return 0;
+		}
+	}
+
+	if (!skipAnim) {
+		_updateCharNum = charId;
+		_portraitSpeechAnimMode = mode;
+		_updatePortraitSpeechAnimDuration = strlen(str) >> 1;
+		_updateCharV3 = unk1;
+	}
+	
+	if (script)
+		snd_playCharacterSpeech(script->stack[script->sp + 2], ch, 0);
+	else if (paramList)
+		snd_playCharacterSpeech(paramList[1], ch, 0);
+
+	if (textEnabled()) {
+		if (mode == 0) {
+			_txt->printDialogueText(3, str, script, paramList, paramIndex);
+
+		} else if (mode == 1) {
+			_screen->setScreenDim(4);
+			_screen->clearDim(4);
+			_screen->modifyScreenDim(4, 16, 123, 23, 47);
+			_txt->printDialogueText(4, str, script, paramList, paramIndex);
+			_screen->modifyScreenDim(4, 11, 123, 28, 47);
+
+		} else if (mode == 2) {			
+			_screen->setScreenDim(4);
+			_screen->clearDim(4);
+			_screen->modifyScreenDim(4, 9, 133, 30, 60);
+			_txt->printDialogueText(4, str, script, paramList, 3);
+			_screen->modifyScreenDim(4, 1, 133, 37, 60);
+		}
+	}
+
+	_fadeText = 0;
+	if (!skipAnim)
+		updatePortraitSpeechAnim();
+
+	return 1;
+}
+
+void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
+	uint32 endTime = _system->getMillis() + millis;
+	while (endTime > _system->getMillis()) {
+		if (cUpdate)
+			update();
+		_system->delayMillis(4);
+	}
+}
+
+void LoLEngine::runLoopSub4(int a) {
+	cmzS7(a, _currentBlock);
+}
+
+void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs) {
+	x = (block & 0x1f) << 8 | xOffs;
+	y = ((block & 0xffe0) << 3) | yOffs;
 }
 
 bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {

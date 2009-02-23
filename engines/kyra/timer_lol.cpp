@@ -34,7 +34,7 @@ namespace Kyra {
 void LoLEngine::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "LoLEngine::setupTimers()");
 	
-	_timer->addTimer(0, TimerV2(timerSub1), 15, true);	
+	_timer->addTimer(0, TimerV2(timerProcessOpenDoor), 15, true);	
 	_timer->addTimer(0x10, TimerV2(timerSub2), 6, true);
 	_timer->addTimer(0x11, TimerV2(timerSub2), 6, true);
 	_timer->setNextRun(0x11, 3);
@@ -44,7 +44,7 @@ void LoLEngine::setupTimers() {
 	_timer->addTimer(0x51, TimerV2(timerSub5), 0, false);
 	_timer->addTimer(0x52, TimerV2(timerSub5), 0, false);
 	_timer->addTimer(8, TimerV2(timerSub6), 1200, true);
-	_timer->addTimer(9, TimerV2(timerSub7), 10, true);
+	_timer->addTimer(9, TimerV2(timerUpdatePortraitAnimations), 10, true);
 	_timer->addTimer(10, TimerV2(timerUpdateLampState), 360, true);
 	_timer->addTimer(11, TimerV2(timerFadeMessageText), 360, false);
 }
@@ -54,7 +54,7 @@ void LoLEngine::enableTimer(int id) {
 	_timer->setNextRun(id, _system->getMillis() + _timer->getDelay(id) * _tickLength);
 }
 
-void LoLEngine::timerSub1(int timerNum) {
+void LoLEngine::timerProcessOpenDoor(int timerNum) {
 
 }
 
@@ -78,8 +78,26 @@ void LoLEngine::timerSub6(int timerNum) {
 
 }
 
-void LoLEngine::timerSub7(int timerNum) {
+void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
+	if (skipUpdate != 1)
+		skipUpdate = 0;
 
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1) || (_characters[i].flags & 8) || (_characters[i].curFaceFrame > 1))
+			continue;
+
+		if (_characters[i].curFaceFrame != 1) {
+			if (--_characters[i].nextAnimUpdateCountdown <= 0 && !skipUpdate) {
+				_characters[i].curFaceFrame = 1;
+				gui_drawCharPortraitWithStats(i);
+				_timer->setCountdown(9, 10);
+			}
+		} else {
+			_characters[i].curFaceFrame = 0;
+			gui_drawCharPortraitWithStats(i);
+			_characters[i].nextAnimUpdateCountdown = (int16) _rnd.getRandomNumberRng(1, 12) + 6;
+		}
+	}
 }
 
 void LoLEngine::timerUpdateLampState(int timerNum) {

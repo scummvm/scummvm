@@ -38,11 +38,8 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 	_buffer = new char[600];
 	memset(_buffer, 0, 600);
 
-	_out = new char[1024];
-	memset(_out, 0, 1024);
-
-	_backupBuffer = new byte[20];
-	memset(_backupBuffer, 0, 20);
+	_dialogueBuffer = new char[1024];
+	memset(_dialogueBuffer, 0, 1024);
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
@@ -50,24 +47,23 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 
 TextDisplayer_LoL::~TextDisplayer_LoL() {
 	delete[] _buffer;
-	delete[] _out;
-	delete[] _backupBuffer;
+	delete[] _dialogueBuffer;
 	delete[] _currentLine;
 }
 
 void TextDisplayer_LoL::setupField(bool mode) {
 	if (_vm->textEnabled()) {
 		if (mode) {
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 			_screen->copyRegion(80, 142, 0, 0, 240, 37, 0, 3, Screen::CR_NO_P_CHECK);
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer2);
-			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer2);
+			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 		} else {
 			_screen->clearDim(4);
 			int cp = _screen->setCurPage(2);
-			_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
-			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer2);
-			_screen->copyRegion(80, 142, 0, 0, 240, 37, 3, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
+			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer2);
+			_screen->copyRegion(0, 0, 80, 142, 240, 37, 3, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
 			for (int i = 177; i > 141; i--) {
 				uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
@@ -92,12 +88,14 @@ void TextDisplayer_LoL::setupField(bool mode) {
 }
 
 void TextDisplayer_LoL::expandField() {
+	uint8 *tmp = _vm->_pageBuffer1 + 1300;
+
 	if (_vm->textEnabled()) {
 		_vm->_fadeText = false;
 		_vm->_textColourFlag = 0;
 		_vm->_timer->disable(11);
 		_screen->clearDim(3);
-		_screen->copyRegionToBuffer(3, 0, 0, 320, 200, _vm->_pageBuffer1);
+		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
 		_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);
 
 		for (int i = 140; i < 177; i++) {
@@ -109,7 +107,7 @@ void TextDisplayer_LoL::expandField() {
 			_vm->delayUntil(endTime);
 		}
 
-		_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
+		_screen->copyBlockToPage(3, 0, 0, 320, 10, tmp);
 		_vm->_updateFlags |= 2;
 
 	} else {
@@ -133,20 +131,19 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 	}
 }
 
-void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
-	memcpy(_curPara, _stringParameters, 15 * sizeof(char*));
-	//char *cmds = _curPara[0];
+void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
 	_colour1prot = false;
+	int oldDim = _screen->curDimIndex();
 
 	if (dim == 3) {
-		if (_vm->_updateFlags & 2) {
-			_screen->clearDim(4);
-			dim = _screen->curDimIndex();
+		if (_vm->_updateFlags & 2) {			
+			_screen->setScreenDim(4);
+			_screen->clearDim(4);			
 			_colour1 = 254;
 			_colour1prot = true;
 		} else {
+			_screen->setScreenDim(3);
 			_screen->clearDim(3);
-			dim = _screen->curDimIndex();
 			_colour1 = 192;
 			_colour1prot = true;
 			_screen->copyColour(192, 254);
@@ -154,7 +151,6 @@ void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16
 			_vm->_textColourFlag = 0;
 			_vm->_fadeText = false;
 		}
-
 	} else {
 		_screen->setScreenDim(dim);
 		_colour1 = 254;
@@ -164,25 +160,10 @@ void TextDisplayer_LoL::playDialogue(int dim, char *str, EMCState *script, int16
 	int cp = _screen->setCurPage(0);
 	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 
-	memset(_backupBuffer, 0, 20);
+	preprocessString(str, script, paramList, paramIndex);
+	displayText(_dialogueBuffer);
 
-	if (preprocessString(str, script, paramList, paramIndex)) {
-		//vsnprintf(_out, 1024, str, cmds);
-		_stringLength = strlen(_out);
-		displayText(_out);
-	} else {
-		_stringLength = strlen(str);
-		displayText(str);
-		displayText(str);
-	}
-
-	for (int i = 0; i < 10; i++) {
-		if (!_backupBuffer[i << 1])
-			break;
-		str[_backupBuffer[(i << 1) + 1]] = _backupBuffer[i << 1];
-	}
-
-	_screen->setScreenDim(dim);
+	_screen->setScreenDim(oldDim);
 	_screen->setCurPage(cp);
 	_screen->setFont(of);
 
@@ -232,27 +213,25 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 	_vm->_fadeText = false;
 }
 
-bool TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
-	int cnt = 0;
-	bool res = false;
-	char *tmpd = _buffer;
-	char **cmds = _curPara;
+void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+	char *dst = _dialogueBuffer;
 
 	for (char *s = str; *s;) {
-		if (*s++ != '%')
+		if (*s != '%') {
+			*dst++ = *s++;
 			continue;
+		}
 
-		char pos = *s;
-		char para1 = 0;
+		char para = *++s;
 		bool eos = false;
 
-		switch (pos) {
+		switch (para) {
 			case '\0':
 				eos = true;
 				break;
 			case '#':
-				para1 = *++s;
-				switch (para1) {
+				para = *++s;
+				switch (para) {
 					case 'E':
 					case 'G':
 					case 'X':
@@ -281,9 +260,9 @@ bool TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *par
 		if (eos)
 			continue;
 
-		char para2 = *s;
+		para = *s;
 
-		switch (para2) {
+		switch (para) {
 			case '\0':
 				eos = true;
 				break;
@@ -291,53 +270,38 @@ bool TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *par
 				++s;
 				break;
 			default:
-				while(para2 && para2 > 47 && para2 < 58)
-					para2 = *++s;
+				while(para && para > 47 && para < 58)
+					para = *++s;
 				break;
 		}
 
 		if (eos)
 			continue;
 
-		char para3 = *++s;
+		para = *s++;
 
-		switch (para3) {
+		switch (para) {
 			case 'a':
-				_backupBuffer[cnt++] = para3;
-				_backupBuffer[cnt++] = (int16) (s - str);
-				snprintf(tmpd, 7, "%d", _scriptParameter);
-				*cmds++ = tmpd;
-				tmpd += strlen(tmpd) + 1;
-				res = true;
-				*s++ = 's';
+				snprintf(dst, 7, "%d", _scriptParameter);
+				dst += strlen(dst);
 				break;
 
 			case 'n':
-				_backupBuffer[cnt++] = para3;
-				_backupBuffer[cnt++] = (int16) (s - str);				
-				*cmds++ = _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name;
-				paramIndex++;
-				res = true;
-				*s++ = 's';		
+				strcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name);
+				dst += strlen(dst);	
 				break;
 
 			case 's':
-				*cmds++ = _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
-				paramIndex++;
-				res = true;
-				s++;	
+				strcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]));
+				dst += strlen(dst);
 				break;
 
 			case 'X':
 			case 'd':
 			case 'u':
 			case 'x':
-				snprintf(tmpd, 7, "%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
-				*cmds++ = tmpd;
-				tmpd += strlen(tmpd) + 1;
-				paramIndex++;
-				res = true;
-				*s++ = 's';
+				snprintf(dst, 7, "%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
+				dst += strlen(dst);
 				break;
 
 			case '\0':
@@ -345,8 +309,7 @@ bool TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *par
 				continue;
 		}
 	}
-
-	return res;
+	*dst = 0;
 }
 
 void TextDisplayer_LoL::displayText(char *str, ...) {

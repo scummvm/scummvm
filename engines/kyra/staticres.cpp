@@ -984,11 +984,11 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->field_41 = file->readByte();
 		t->damageSuffered = file->readUint16LE();
 		t->weaponHit = file->readUint16LE();
-		t->might3 = file->readUint16LE();
-		t->protection3 = file->readUint16LE();
-		t->might2 = file->readUint16LE();
-		t->protection2 = file->readUint16LE();
-		t->rand = file->readUint16LE();
+		t->totalMightModifier = file->readUint16LE();
+		t->totalProtectionModifier = file->readUint16LE();
+		t->might = file->readUint16LE();
+		t->protection = file->readUint16LE();
+		t->nextAnimUpdateCountdown = file->readSint16LE();
 		for (int ii = 0; ii < 11; ii++)
 			t->items[ii] = file->readUint16LE();
 		for (int ii = 0; ii < 3; ii++)
@@ -1834,7 +1834,7 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedUnk16),
 		cb(clickedUnk16),
 		cb(clickedUnk16),
-		cb(clickedScene1),
+		cb(clickedScenePickupItem),
 		cb(clickedInventorySlot),
 		cb(clickedInventorySlot),
 		cb(clickedInventorySlot),
@@ -1847,8 +1847,8 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedInventorySlot),
 		cb(clickedInventoryScroll),
 		cb(clickedInventoryScroll),
-		cb(clickedUnk20),
-		cb(clickedUnk20),
+		cb(clickedScenePressSwitch),
+		cb(clickedScenePressSwitch),
 		cb(clickedScene),
 		cb(clickedUpArrow),
 		cb(clickedDownArrow),
@@ -1871,8 +1871,8 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedUnk23),
 		cb(clickedUnk23),
 		cb(clickedUnk24),
-		cb(clickedUnk25),
-		cb(clickedUnk25),
+		cb(clickedSceneDropItem),
+		cb(clickedSceneDropItem),
 		cb(clickedOptions),
 		cb(clickedRestParty),
 		cb(clickedMoneyBox),

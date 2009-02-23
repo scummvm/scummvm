@@ -67,11 +67,11 @@ struct LoLCharacter {
 	uint8 field_41;
 	uint16 damageSuffered;
 	uint16 weaponHit;
-	uint16 might3;
-	uint16 protection3;
-	uint16 might2;
-	uint16 protection2;
-	uint16 rand;
+	uint16 totalMightModifier;
+	uint16 totalProtectionModifier;
+	uint16 might;
+	uint16 protection;
+	int16 nextAnimUpdateCountdown;
 	uint16 items[11];
 	uint8 skillLevels[3];
 	uint8 skillModifiers[3];
@@ -94,8 +94,7 @@ struct SpellProperty {
 struct LevelBlockProperty {
 	uint8 walls[4];
 	uint16 itemIndex;
-	uint8 field_6;
-	uint8 field_7;
+	uint16 field_6;
 	uint8 field_8;
 	uint8 flags;
 };
@@ -118,10 +117,10 @@ struct MonsterProperty {
 	uint8 unk8[3];
 };
 
-struct CLevelItem {
+struct MonsterInPlay {
 	uint16 itemIndexUnk;
-	uint8 unk2;
-	uint16 unk3;
+	uint16 unk2;
+	uint8 unk4;
 	uint16 blockPropertyIndex;
 	uint16 x;
 	uint16 y;
@@ -140,26 +139,25 @@ struct CLevelItem {
 	uint16 field_19;
 	uint8 field_1B;
 	uint8 field_1C;
-	int16 field_1D;
+	int16 monsterMight;
 	uint8 field_1F;
-	uint8 field_20;
-	MonsterProperty *monsters;
+	uint8 type;
+	MonsterProperty *properties;
 	uint8 field_25;
 	uint8 field_26;
 	uint8 field_27;
-	uint8 field_28;
-	uint8 field_29;
+	uint16 itix;
 	uint8 field_2A;
 	uint8 field_2B;
-	uint8 field_2C;
+	uint16 field_2C;
 	uint8 field_2D;
 	uint8 field_2E;
 };
 
 struct ItemInPlay {
 	uint16 itemIndexUnk;
-	uint8 unk2;
-	uint16 unk3;
+	uint16 unk2;
+	uint8 unk4;
 	uint16 blockPropertyIndex;
 	uint16 x;
 	uint16 y;
@@ -311,13 +309,13 @@ private:
 	void setupTimers();
 	void enableTimer(int id);
 
-	void timerSub1(int timerNum);
+	void timerProcessOpenDoor(int timerNum);
 	void timerSub2(int timerNum);
 	void timerSub3(int timerNum);
 	void timerSub4(int timerNum);
 	void timerSub5(int timerNum);
 	void timerSub6(int timerNum);
-	void timerSub7(int timerNum);
+	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
 	void timerFadeMessageText(int timerNum);
 
@@ -433,15 +431,15 @@ private:
 	int clickedCharInventorySlot(Button *button);
 	int clickedExitCharInventory(Button *button);
 	int clickedUnk16(Button *button);
-	int clickedScene1(Button *button);
+	int clickedScenePickupItem(Button *button);
 	int clickedInventorySlot(Button *button);
 	int clickedInventoryScroll(Button *button);
-	int clickedUnk20(Button *button);
+	int clickedScenePressSwitch(Button *button);
 	int clickedScene(Button *button);
 	int clickedScroll(Button *button);
 	int clickedUnk23(Button *button);
 	int clickedUnk24(Button *button);
-	int clickedUnk25(Button *button);
+	int clickedSceneDropItem(Button *button);
 	int clickedOptions(Button *button);
 	int clickedRestParty(Button *button);
 	int clickedMoneyBox(Button *button);
@@ -470,6 +468,9 @@ private:
 	int _buttonList8Size;
 
 	// text
+	bool characterSays(int track, int charId, bool redraw);
+	int playCharacterScriptChat(int charId, int y, int unk1, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+
 	TextDisplayer_LoL *_txt;
 
 	// emc scripts
@@ -506,26 +507,35 @@ private:
 	int olol_loadDoorShapes(EMCState *script);
 	int olol_initAnimStruct(EMCState *script);
 	int olol_freeAnimStruct(EMCState *script);
+	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
+	int olol_clearDialogueField(EMCState *script);
 	int olol_getUnkArrayVal(EMCState *script);
 	int olol_setUnkArrayVal(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
+	int olol_68(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
 	int olol_initDialogueSequence(EMCState *script);
 	int olol_restoreSceneAfterDialogueSequence(EMCState *script);
+	int olol_85(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
+	int olol_playCharacterScriptChat(EMCState *script);	
 	int olol_loadSoundFile(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
+	int olol_checkDialogueState(EMCState *script);	
 	int olol_setNextFunc(EMCState *script);
+	int olol_setDoorState(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
+	int olol_resetPortraitsArea(EMCState *script);
+	int olol_setUnkFlags(EMCState *script);
 
 	// tim scripts
 	TIM *_activeTim[10];
@@ -559,8 +569,8 @@ private:
 	// graphics
 	void setupScreenDims();
 	void initDialogueSequence(int controlMode);
-	void unkHideInventory();
 	void restoreSceneAfterDialogueSequence(int redraw);
+	void resetPortraitsArea();
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
 	void updateWsaAnimations();
@@ -594,7 +604,6 @@ private:
 	void updatePortraitSpeechAnim();
 	void updatePortraits();
 	void initTextFading(int textType, int clearField);
-	void charCallback4(int redraw);
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
 
@@ -606,8 +615,8 @@ private:
 	uint16 _activeCharsXpos[3];
 	int _updateFlags;
 	int _updateCharNum;
-	int _updatePortraitSpeechAnim;
-	int _updateCharV2;
+	int _updatePortraitSpeechAnimDuration;
+	int _portraitSpeechAnimMode;
 	int _updateCharV3;
 	int _textColourFlag;
 	bool _fadeText;
@@ -655,11 +664,11 @@ private:
 	void loadLevel(int index);
 	void addLevelItems();
 	int initCmzWithScript(int block);
-	void initCMZ1(CLevelItem *l, int a);
-	void initCMZ2(CLevelItem *l, uint16 a, uint16 b);
+	void initCMZ1(MonsterInPlay *l, int a);
+	void initCMZ2(MonsterInPlay *l, uint16 a, uint16 b);
 	int cmzS1(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void cmzS2(CLevelItem *l, int a);
-	void cmzS3(CLevelItem *l);
+	void cmzS2(MonsterInPlay *l, int a);
+	void cmzS3(MonsterInPlay *l);
 	void cmzS4(uint16 &itemIndex, int a);
 	int cmzS5(uint16 a, uint16 b);
 	void cmzS6(uint16 &itemIndex, int a);
@@ -700,6 +709,7 @@ private:
 	void drawMonstersAndItems(int block);
 	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
 	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
+	void drawSceneItem(uint8 *shape, uint8 *ovl, int x, int y, int w, int h, int flags, int unk1, int unk2);
 	void drawScriptShapes(int pageNum);
 	void updateSceneWindow();
 
@@ -709,9 +719,17 @@ private:
 	void updateCompass();
 
 	void moveParty(uint16 direction, int unk1, int unk2, int buttonShape);
-	uint16 calcNewBlockPostion(uint16 curBlock, uint16 direction);
+	uint16 calcNewBlockPosition(uint16 curBlock, uint16 direction);
 	bool checkBlockPassability(uint16 block, uint16 direction);
 	void notifyBlockNotPassable(int scrollFlag);
+
+	int clickedDecoration(uint16 block, uint16 direction);
+	int switchOpenDoor(uint16 block, uint16 direction);
+	
+	bool clickedShape(int shapeIndex);
+	void openDoorSub1(uint16 block, int unk);
+	void openDoorSub2(uint16 block, int unk);
+	int _emcDoorState;
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -782,7 +800,7 @@ private:
 
 	LevelBlockProperty *_levelBlockProperties;
 	LevelBlockProperty *_curBlockCaps[18];
-	CLevelItem *_cLevelItems;
+	MonsterInPlay *_monsters;
 	MonsterProperty *_monsterProperties;
 
 	uint16 _partyPosX;
@@ -862,11 +880,13 @@ private:
 	int makeItem(int itemIndex, int curFrame, int flags);
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
-	CLevelItem *findItem(uint16 index);
+	MonsterInPlay *findItem(uint16 index);
 	void runItemScript(int charNum, int item, int reg0, int reg3, int reg4);
 	void setHandItem(uint16 itemIndex);
 	void clickSceneSub1();
-	void clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY);
+	int clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY);
+	int checkSceneForItems(LevelBlockProperty *block, int pos);
+	void foundItemSub(int item, int block);
 
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;
@@ -894,7 +914,6 @@ private:
 	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
 	void runLoopSub4(int a);
 	void calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs);
-	bool characterSays(int track, int charId, bool redraw);
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
