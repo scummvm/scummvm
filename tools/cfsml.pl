@@ -101,7 +101,6 @@ sub create_string_functions
     print <<'EOF';
 
 #include <stdarg.h> // We need va_lists
-#include "sci/include/sci_memory.h"
 
 #ifdef CFSML_DEBUG_MALLOC
 /*
