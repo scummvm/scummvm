@@ -32,6 +32,8 @@
 #include "sci/include/list.h"
 #include "sci/gfx/gfx_widgets.h"
 
+#include "common/list.h"
+
 namespace Sci {
 
 #define POLY_LAST_POINT 0x7777
@@ -96,7 +98,7 @@ FloatPoint toFloatPoint(Common::Point p) {
 	return FloatPoint(p.x, p.y);
 }
 
-struct vertex_t {
+struct Vertex {
 	// Location
 	Common::Point v;
 
@@ -105,32 +107,35 @@ struct vertex_t {
 
 	// Vertex circular list entry
 	struct {
-		vertex_t *cle_next;	// next element
-		vertex_t *cle_prev;	// previous element
+		Vertex *cle_next;	// next element
+		Vertex *cle_prev;	// previous element
 	} entries;
 
 	// Dijkstra list entry
-	LIST_ENTRY(vertex_t) dijkstra;
+	LIST_ENTRY(Vertex) dijkstra;	// TODO: Convert this
 
 	// Distance from starting vertex
 	float dist;
 
 	// Previous vertex in shortest path
-	vertex_t *path_prev;
+	Vertex *path_prev;
 };
+
+typedef Common::List<Vertex *> VertexList;
+
 
 class CircularVertexList {
 public:
-	vertex_t *_head;
+	Vertex *_head;
 
 public:
 	CircularVertexList() : _head(0) {}
 	
-	vertex_t *first() {
+	Vertex *first() {
 		return _head;
 	}
 	
-	void insertHead(vertex_t *elm) {
+	void insertHead(Vertex *elm) {
 		if (_head == NULL) {
 			elm->entries.cle_next = elm->entries.cle_prev = elm;
 		} else {
@@ -142,14 +147,14 @@ public:
 		_head = elm;
 	}
 
-	static void insertAfter(vertex_t *listelm, vertex_t *elm) {
+	static void insertAfter(Vertex *listelm, Vertex *elm) {
 		elm->entries.cle_prev = listelm;
 		(elm)->entries.cle_next = listelm->entries.cle_next;
 		listelm->entries.cle_next->entries.cle_prev = elm;
 		listelm->entries.cle_next = elm;
 	}
 
-	void remove(vertex_t *elm) {
+	void remove(Vertex *elm) {
 		if (elm->entries.cle_next == elm) {
 			_head = NULL;
 		} else {
@@ -178,21 +183,20 @@ public:
 #define CLIST_PREV(elm, field)		((elm)->field.cle_prev)
 
 
-struct polygon_t {
-	// Circular list of vertices
-	CircularVertexList vertices;
-
-	// Polygon list entry
-	LIST_ENTRY(polygon_t) entries;
-
+struct Polygon {
 	// SCI polygon type
 	int type;
+
+	// Circular list of vertices
+	CircularVertexList vertices;
 };
 
+typedef Common::List<Polygon *> PolygonList;
+
 // Pathfinding state
-struct pf_state_t {
+struct PathfindingState {
 	// List of all polygons
-	LIST_HEAD(polygons_head, polygon_t) polygons;
+	PolygonList polygons;
 
 	// Original start and end points
 	Common::Point start, end;
@@ -201,19 +205,29 @@ struct pf_state_t {
 	char keep_start, keep_end;
 
 	// Start and end points for pathfinding
-	vertex_t *vertex_start, *vertex_end;
+	Vertex *vertex_start, *vertex_end;
 
 	// Array to quickly find vertices by idx
-	vertex_t **vertex_index;
+	Vertex **vertex_index;
 
 	// Visibility matrix
 	char *vis_matrix;
 
 	// Total number of vertices
 	int vertices;
+	
+	PathfindingState(const Common::Point &s, const Common::Point &e) : start(s), end(e) {
+		keep_start = 0;
+		keep_end = 0;
+		vertex_start = NULL;
+		vertex_end = NULL;
+		vertex_index = NULL;
+		vis_matrix = NULL;
+		vertices = 0;
+	}
 };
 
-static vertex_t *vertex_cur;
+static Vertex *vertex_cur;
 
 // Temporary hack to deal with points in reg_ts
 static int polygon_is_reg_t(unsigned char *list, int size) {
@@ -451,11 +465,11 @@ static int intersect(Common::Point a, Common::Point b, Common::Point c, Common::
 	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
 }
 
-static vertex_t *vertex_new(Common::Point p) {
+static Vertex *vertex_new(Common::Point p) {
 	// Allocates and initialises a new vertex
 	// Parameters: (Common::Point) p: The position of the vertex
-	// Returns   : (vertex_t *) A newly allocated vertex
-	vertex_t *vertex = (vertex_t*)sci_malloc(sizeof(vertex_t));
+	// Returns   : (Vertex *) A newly allocated vertex
+	Vertex *vertex = (Vertex*)sci_malloc(sizeof(Vertex));
 
 	vertex->v = p;
 	vertex->dist = HUGE_DISTANCE;
@@ -464,26 +478,26 @@ static vertex_t *vertex_new(Common::Point p) {
 	return vertex;
 }
 
-static polygon_t *polygon_new(int type) {
+static Polygon *polygon_new(int type) {
 	// Allocates and initialises a new polygon
 	// Parameters: (int) type: The SCI polygon type
-	// Returns   : (polygon_t *) A newly allocated polygon
-	polygon_t *polygon = new polygon_t();
+	// Returns   : (Polygon *) A newly allocated polygon
+	Polygon *polygon = new Polygon();
 	polygon->type = type;
 
 	return polygon;
 }
 
-static int contained(Common::Point p, polygon_t *polygon) {
+static int contained(Common::Point p, Polygon *polygon) {
 	// Polygon containment test
 	// Parameters: (Common::Point) p: The point
-	//             (polygon_t *) polygon: The polygon
+	//             (Polygon *) polygon: The polygon
 	// Returns   : (int) CONT_INSIDE if p is strictly contained in polygon,
 	//                   CONT_ON_EDGE if p lies on an edge of polygon,
 	//                   CONT_OUTSIDE otherwise
 	// Number of ray crossing left and right
 	int lcross = 0, rcross = 0;
-	vertex_t *vertex;
+	Vertex *vertex;
 
 	// Iterate over edges
 	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
@@ -539,12 +553,12 @@ static int contained(Common::Point p, polygon_t *polygon) {
 	return CONT_OUTSIDE;
 }
 
-static int polygon_area(polygon_t *polygon) {
+static int polygon_area(Polygon *polygon) {
 	// Computes polygon area
-	// Parameters: (polygon_t *) polygon: The polygon
+	// Parameters: (Polygon *) polygon: The polygon
 	// Returns   : (int) The area multiplied by two
-	vertex_t *first = polygon->vertices.first();
-	vertex_t *v;
+	Vertex *first = polygon->vertices.first();
+	Vertex *v;
 	int size = 0;
 
 	v = CLIST_NEXT(first, entries);
@@ -557,11 +571,11 @@ static int polygon_area(polygon_t *polygon) {
 	return size;
 }
 
-static void fix_vertex_order(polygon_t *polygon) {
+static void fix_vertex_order(Polygon *polygon) {
 	// Fixes the vertex order of a polygon if incorrect. Contained access
 	// polygons should have their vertices ordered clockwise, all other types
 	// anti-clockwise
-	// Parameters: (polygon_t *) polygon: The polygon
+	// Parameters: (Polygon *) polygon: The polygon
 	// Returns   : (void)
 	int area = polygon_area(polygon);
 
@@ -576,7 +590,7 @@ static void fix_vertex_order(polygon_t *polygon) {
 
 		while (!polygon->vertices.empty()) {
 			// Put first vertex in new list
-			vertex_t *vertex = polygon->vertices.first();
+			Vertex *vertex = polygon->vertices.first();
 			polygon->vertices.remove(vertex);
 			vertices.insertHead(vertex);
 		}
@@ -593,8 +607,8 @@ static int vertex_compare(const void *a, const void *b) {
 	// Returns   : (int) -1 if a is smaller than b, 1 if a is larger than b, and
 	//                   0 if a and b are equal
 	Common::Point p0 = vertex_cur->v;
-	Common::Point p1 = (*(vertex_t **) a)->v;
-	Common::Point p2 = (*(vertex_t **) b)->v;
+	Common::Point p1 = (*(Vertex **) a)->v;
+	Common::Point p2 = (*(Vertex **) b)->v;
 
 	if (POINT_EQUAL(p1, p2))
 		return 0;
@@ -633,14 +647,14 @@ static int vertex_compare(const void *a, const void *b) {
 	return -1;
 }
 
-static void clockwise(vertex_t *v, Common::Point *p1, Common::Point *p2) {
+static void clockwise(Vertex *v, Common::Point *p1, Common::Point *p2) {
 	// Orders the points of an edge clockwise around vertex_cur. If all three
 	// points are collinear the original order is used
-	// Parameters: (vertex_t *) v: The first vertex of the edge
+	// Parameters: (Vertex *) v: The first vertex of the edge
 	// Returns   : (void)
 	//             (Common::Point) *p1: The first point in clockwise order
 	//             (Common::Point) *p2: The second point in clockwise order
-	vertex_t *w = CLIST_NEXT(v, entries);
+	Vertex *w = CLIST_NEXT(v, entries);
 
 	if (left_on(vertex_cur->v, w->v, v->v)) {
 		*p1 = v->v;
@@ -669,8 +683,8 @@ static int edge_compare(const void *a, const void *b) {
 
 	// Order vertices clockwise so we know vertex_cur is to the right of
 	// directed edges (v1, v2) and (w1, w2)
-	clockwise((vertex_t *) a, &v1, &v2);
-	clockwise((vertex_t *) b, &w1, &w2);
+	clockwise((Vertex *) a, &v1, &v2);
+	clockwise((Vertex *) b, &w1, &w2);
 
 	// As the edges do not properly intersect one edge must lie entirely
 	// to one side of another. Note that the special case where edges are
@@ -693,11 +707,11 @@ static int edge_compare(const void *a, const void *b) {
 	return -1;
 }
 
-static int inside(Common::Point p, vertex_t *vertex) {
+static int inside(Common::Point p, Vertex *vertex) {
 	// Determines whether or not a line from a point to a vertex intersects the
 	// interior of the polygon, locally at that vertex
 	// Parameters: (Common::Point) p: The point
-	//             (vertex_t *) vertex: The vertex
+	//             (Vertex *) vertex: The vertex
 	// Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
 	//                   the polygon, locally at the vertex. 0 otherwise
 	// Check that it's not a single-vertex polygon
@@ -722,16 +736,16 @@ static int inside(Common::Point p, vertex_t *vertex) {
 	return 0;
 }
 
-static int visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_t *tree) {
+static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, aatree_t *tree) {
 	// Determines whether or not a vertex is visible from vertex_cur
-	// Parameters: (vertex_t *) vertex: The vertex
-	//             (vertex_t *) vertex_prev: The previous vertex in the sort
+	// Parameters: (Vertex *) vertex: The vertex
+	//             (Vertex *) vertex_prev: The previous vertex in the sort
 	//                                       order, or NULL
 	//             (int) visible: 1 if vertex_prev is visible, 0 otherwise
 	//             (aatree_t *) tree: The tree of edges intersected by the
 	//                                sweeping line
 	// Returns   : (int) 1 if vertex is visible from vertex_cur, 0 otherwise
-	vertex_t *edge;
+	Vertex *edge;
 	Common::Point p = vertex_cur->v;
 	Common::Point w = vertex->v;
 	aatree_t *tree_n = tree;
@@ -750,7 +764,7 @@ static int visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_
 	while ((tree_n = aatree_walk(tree_n, AATREE_WALK_LEFT)))
 		tree = tree_n;
 
-	edge = (vertex_t*)aatree_get_data(tree);
+	edge = (Vertex*)aatree_get_data(tree);
 
 	if (edge) {
 		Common::Point p1, p2;
@@ -764,26 +778,27 @@ static int visible(vertex_t *vertex, vertex_t *vertex_prev, int visible, aatree_
 	return 1;
 }
 
-static void visible_vertices(pf_state_t *s, vertex_t *vert) {
+static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	// Determines all vertices that are visible from a particular vertex and
 	// updates the visibility matrix
-	// Parameters: (pf_state_t *) s: The pathfinding state
-	//             (vertex_t *) vert: The vertex
+	// Parameters: (PathfindingState *) s: The pathfinding state
+	//             (Vertex *) vert: The vertex
 	// Returns   : (void)
 	aatree_t *tree = aatree_new();
 	Common::Point p = vert->v;
-	polygon_t *polygon;
+	Polygon *polygon;
 	int i;
 	int is_visible;
-	vertex_t **vert_sorted = (vertex_t**)sci_malloc(sizeof(vertex_t *) * s->vertices);
+	Vertex **vert_sorted = (Vertex**)sci_malloc(sizeof(Vertex *) * s->vertices);
 
 	// Sort vertices by angle (first) and distance (second)
-	memcpy(vert_sorted, s->vertex_index, sizeof(vertex_t *) * s->vertices);
+	memcpy(vert_sorted, s->vertex_index, sizeof(Vertex *) * s->vertices);
 	vertex_cur = vert;
-	qsort(vert_sorted, s->vertices, sizeof(vertex_t *), vertex_compare);
+	qsort(vert_sorted, s->vertices, sizeof(Vertex *), vertex_compare);
 
-	LIST_FOREACH(polygon, &s->polygons, entries) {
-		vertex_t *vertex;
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
+		Vertex *vertex;
 		vertex = polygon->vertices.first();
 
 		// Check that there is more than one vertex.
@@ -803,7 +818,7 @@ static void visible_vertices(pf_state_t *s, vertex_t *vert) {
 
 	// The first vertex will be vertex_cur, so we skip it
 	for (i = 1; i < s->vertices; i++) {
-		vertex_t *v1;
+		Vertex *v1;
 
 		// Compute visibility of vertex_index[i]
 		is_visible = visible(vert_sorted[i], vert_sorted[i - 1], is_visible, tree);
@@ -872,10 +887,10 @@ static int edge_on_screen_border(Common::Point p, Common::Point q) {
 	return ((p.x == 0 && q.x == 0) || (p.x == 319 && q.x == 319) || (p.y == 0 && q.y == 0) || (p.y == 189 && q.y == 189));
 }
 
-static int find_free_point(FloatPoint f, polygon_t *polygon, Common::Point *ret) {
+static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
 	// Searches for a nearby point that is not contained in a polygon
 	// Parameters: (FloatPoint) f: The pointf to search nearby
-	//             (polygon_t *) polygon: The polygon
+	//             (Polygon *) polygon: The polygon
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: The non-contained point on success
 	Common::Point p;
@@ -907,13 +922,13 @@ static int find_free_point(FloatPoint f, polygon_t *polygon, Common::Point *ret)
 	return PF_OK;
 }
 
-static int near_point(Common::Point p, polygon_t *polygon, Common::Point *ret) {
+static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
 	// Computes the near point of a point contained in a polygon
 	// Parameters: (Common::Point) p: The point
-	//             (polygon_t *) polygon: The polygon
+	//             (Polygon *) polygon: The polygon
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: The near point of p in polygon on success
-	vertex_t *vertex;
+	Vertex *vertex;
 	FloatPoint near_p;
 	float dist = HUGE_DISTANCE;
 
@@ -955,11 +970,11 @@ static int near_point(Common::Point p, polygon_t *polygon, Common::Point *ret) {
 	return find_free_point(near_p, polygon, ret);
 }
 
-static int intersection(Common::Point a, Common::Point b, vertex_t *vertex, FloatPoint *ret) {
+static int intersection(Common::Point a, Common::Point b, Vertex *vertex, FloatPoint *ret) {
 	// Computes the intersection point of a line segment and an edge (not
 	// including the vertices themselves)
 	// Parameters: (Common::Point) a, b: The line segment (a, b)
-	//             (vertex_t *) vertex: The first vertex of the edge
+	//             (Vertex *) vertex: The first vertex of the edge
 	// Returns   : (int) FP_OK on success, PF_ERROR otherwise
 	//             (FloatPoint) *ret: The intersection point
 	// Parameters of parametric equations
@@ -994,23 +1009,24 @@ static int intersection(Common::Point a, Common::Point b, vertex_t *vertex, Floa
 	return PF_ERROR;
 }
 
-static int nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q, Common::Point *ret) {
+static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Point q, Common::Point *ret) {
 	// Computes the nearest intersection point of a line segment and the polygon
 	// set. Intersection points that are reached from the inside of a polygon
 	// are ignored as are improper intersections which do not obstruct
 	// visibility
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Common::Point) p, q: The line segment (p, q)
 	// Returns   : (int) PF_OK on success, PF_ERROR when no intersections were
 	//                   found, PF_FATAL otherwise
 	//             (Common::Point) *ret: On success, the closest intersection point
-	polygon_t *polygon = 0;
+	Polygon *polygon = 0;
 	FloatPoint isec;
-	polygon_t *ipolygon = 0;
+	Polygon *ipolygon = 0;
 	float dist = HUGE_DISTANCE;
 
-	LIST_FOREACH(polygon, &s->polygons, entries) {
-		vertex_t *vertex;
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
+		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
 			float new_dist;
@@ -1053,7 +1069,7 @@ static int nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q,
 	return find_free_point(isec, ipolygon, ret);
 }
 
-static int fix_point(pf_state_t *s, Common::Point p, Common::Point *ret, polygon_t **ret_pol) {
+static int fix_point(PathfindingState *s, Common::Point p, Common::Point *ret, Polygon **ret_pol) {
 	// Checks a point for containment in any of the polygons in the polygon set.
 	// If the point is contained in a totally accessible polygon that polygon
 	// is removed from the set. If the point is contained in a polygon of another
@@ -1061,33 +1077,34 @@ static int fix_point(pf_state_t *s, Common::Point p, Common::Point *ret, polygon
 	// Parameters: (Common::Point) p: The point
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: A valid input point for pathfinding
-	//             (polygon_t *) *ret_pol: The polygon p was contained in if p
+	//             (Polygon *) *ret_pol: The polygon p was contained in if p
 	//                                     != *ret, NULL otherwise
-	polygon_t *polygon;
+	PolygonList::iterator it;
 	*ret_pol = NULL;
 
 	// Check for polygon containment
-	LIST_FOREACH(polygon, &s->polygons, entries) {
-		if (contained(p, polygon) != CONT_OUTSIDE)
+	for (it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		if (contained(p, *it) != CONT_OUTSIDE)
 			break;
 	}
 
-	if (polygon) {
+	if (it != s->polygons.end()) {
 		Common::Point near_p;
 
-		if (polygon->type == POLY_TOTAL_ACCESS) {
+		if ((*it)->type == POLY_TOTAL_ACCESS) {
 			// Remove totally accessible polygon if it contains p
-			LIST_REMOVE(polygon, entries);
+			
+			s->polygons.erase(it);
 			*ret = p;
 			return PF_OK;
 		}
 
 		// Otherwise, compute near point
-		if (near_point(p, polygon, &near_p) == PF_OK) {
+		if (near_point(p, (*it), &near_p) == PF_OK) {
 			*ret = near_p;
 
 			if (!POINT_EQUAL(p, *ret))
-				*ret_pol = polygon;
+				*ret_pol = *it;
 
 			return PF_OK;
 		}
@@ -1100,20 +1117,21 @@ static int fix_point(pf_state_t *s, Common::Point p, Common::Point *ret, polygon
 	return PF_OK;
 }
 
-static vertex_t *merge_point(pf_state_t *s, Common::Point v) {
+static Vertex *merge_point(PathfindingState *s, Common::Point v) {
 	// Merges a point into the polygon set. A new vertex is allocated for this
 	// point, unless a matching vertex already exists. If the point is on an
 	// already existing edge that edge is split up into two edges connected by
 	// the new vertex
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Common::Point) v: The point to merge
-	// Returns   : (vertex_t *) The vertex corresponding to v
-	vertex_t *vertex;
-	vertex_t *v_new;
-	polygon_t *polygon;
+	// Returns   : (Vertex *) The vertex corresponding to v
+	Vertex *vertex;
+	Vertex *v_new;
+	Polygon *polygon;
 
 	// Check for already existing vertex
-	LIST_FOREACH(polygon, &s->polygons, entries) {
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
 		CLIST_FOREACH(vertex, &polygon->vertices, entries)
 		if (POINT_EQUAL(vertex->v, v))
 			return vertex;
@@ -1122,41 +1140,43 @@ static vertex_t *merge_point(pf_state_t *s, Common::Point v) {
 	v_new = vertex_new(v);
 
 	// Check for point being on an edge
-	LIST_FOREACH(polygon, &s->polygons, entries)
-	// Skip single-vertex polygons
-	if (VERTEX_HAS_EDGES(polygon->vertices.first()))
-		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-		vertex_t *next = CLIST_NEXT(vertex, entries);
-
-		if (between(vertex->v, next->v, v)) {
-			// Split edge by adding vertex
-			polygon->vertices.insertAfter(vertex, v_new);
-			return v_new;
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
+		// Skip single-vertex polygons
+		if (VERTEX_HAS_EDGES(polygon->vertices.first()))
+			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+			Vertex *next = CLIST_NEXT(vertex, entries);
+	
+			if (between(vertex->v, next->v, v)) {
+				// Split edge by adding vertex
+				polygon->vertices.insertAfter(vertex, v_new);
+				return v_new;
+			}
 		}
 	}
 
 	// Add point as single-vertex polygon
 	polygon = polygon_new(POLY_BARRED_ACCESS);
 	polygon->vertices.insertHead(v_new);
-	LIST_INSERT_HEAD(&s->polygons, polygon, entries);
+	s->polygons.push_front(polygon);
 
 	return v_new;
 }
 
-static polygon_t *convert_polygon(EngineState *s, reg_t polygon) {
-	// Converts an SCI polygon into a polygon_t
+static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
+	// Converts an SCI polygon into a Polygon
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) polygon: The SCI polygon to convert
-	// Returns   : (polygon_t *) The converted polygon
+	// Returns   : (Polygon *) The converted polygon
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	unsigned char *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
-	polygon_t *poly = polygon_new(KP_UINT(GET_SEL32(polygon, type)));
+	Polygon *poly = polygon_new(KP_UINT(GET_SEL32(polygon, type)));
 	int is_reg_t = polygon_is_reg_t(list, size);
 
 	for (i = 0; i < size; i++) {
-		vertex_t *vertex = vertex_new(read_point(list, is_reg_t, i));
+		Vertex *vertex = vertex_new(read_point(list, is_reg_t, i));
 		poly->vertices.insertHead(vertex);
 	}
 
@@ -1165,12 +1185,12 @@ static polygon_t *convert_polygon(EngineState *s, reg_t polygon) {
 	return poly;
 }
 
-static void free_polygon(polygon_t *polygon) {
+static void free_polygon(Polygon *polygon) {
 	// Frees a polygon and its vertices
-	// Parameters: (polygon_t *) polygons: The polygon
+	// Parameters: (Polygon *) polygons: The polygon
 	// Returns   : (void)
 	while (!polygon->vertices.empty()) {
-		vertex_t *vertex = polygon->vertices.first();
+		Vertex *vertex = polygon->vertices.first();
 		polygon->vertices.remove(vertex);
 		free(vertex);
 	}
@@ -1178,64 +1198,56 @@ static void free_polygon(polygon_t *polygon) {
 	delete polygon;
 }
 
-static void free_pf_state(pf_state_t *p) {
+static void free_pf_state(PathfindingState *p) {
 	// Frees a pathfinding state
-	// Parameters: (pf_state_t *) p: The pathfinding state
+	// Parameters: (PathfindingState *) p: The pathfinding state
 	// Returns   : (void)
 	free(p->vertex_index);
 	free(p->vis_matrix);
 
-	while (!LIST_EMPTY(&p->polygons)) {
-		polygon_t *polygon = LIST_FIRST(&p->polygons);
-		LIST_REMOVE(polygon, entries);
-		free_polygon(polygon);
+	for (PolygonList::iterator it = p->polygons.begin(); it != p->polygons.end(); ++it) {
+		free_polygon(*it);
 	}
 
-	free(p);
+	delete p;
 }
 
-static void change_polygons_opt_0(pf_state_t *s) {
+static void change_polygons_opt_0(PathfindingState *s) {
 	// Changes the polygon list for optimization level 0 (used for keyboard
 	// support). Totally accessible polygons are removed and near-point
 	// accessible polygons are changed into totally accessible polygons.
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	// Returns   : (void)
-	polygon_t *polygon = LIST_FIRST(&s->polygons);
 
-	while (polygon) {
-		polygon_t *next = LIST_NEXT(polygon, entries);
+	PolygonList::iterator it = s->polygons.begin();
+	while (it != s->polygons.end()) {
+		Polygon *polygon = *it;
+		assert(polygon);
 
-		if (polygon->type == POLY_NEAREST_ACCESS)
-			polygon->type = POLY_TOTAL_ACCESS;
-		else  if (polygon->type == POLY_TOTAL_ACCESS) {
-			LIST_REMOVE(polygon, entries);
+		if (polygon->type == POLY_TOTAL_ACCESS) {
 			free_polygon(polygon);
+			it = s->polygons.erase(it);
+		} else {
+			if (polygon->type == POLY_NEAREST_ACCESS)
+				polygon->type = POLY_TOTAL_ACCESS;
+			++it;
 		}
-
-		polygon = next;
 	}
 }
 
-static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	// Converts the SCI input data for pathfinding
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) poly_list: Polygon list
 	//             (Common::Point) start: The start point
 	//             (Common::Point) end: The end point
 	//             (int) opt: Optimization level (0, 1 or 2)
-	// Returns   : (pf_state_t *) On success a newly allocated pathfinding state,
+	// Returns   : (PathfindingState *) On success a newly allocated pathfinding state,
 	//                            NULL otherwise
-	polygon_t *polygon;
+	Polygon *polygon;
 	int err;
 	int count = 0;
-	pf_state_t *pf_s = (pf_state_t*)sci_malloc(sizeof(pf_state_t));
-
-	LIST_INIT(pf_s->polygons);
-	pf_s->start = start;
-	pf_s->end = end;
-	pf_s->keep_start = 0;
-	pf_s->keep_end = 0;
-	pf_s->vertex_index = NULL;
+	PathfindingState *pf_s = new PathfindingState(start, end);
 
 	// Convert all polygons
 	if (poly_list.segment) {
@@ -1244,7 +1256,7 @@ static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::
 
 		while (node) {
 			polygon = convert_polygon(s, node->value);
-			LIST_INSERT_HEAD(&pf_s->polygons, polygon, entries);
+			pf_s->polygons.push_front(polygon);
 			count += KP_UINT(GET_SEL32(node->value, size));
 			node = LOOKUP_NODE(node->succ);
 		}
@@ -1293,12 +1305,13 @@ static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::
 	pf_s->vertex_end = merge_point(pf_s, end);
 
 	// Allocate and build vertex index
-	pf_s->vertex_index = (vertex_t**)sci_malloc(sizeof(vertex_t *) * (count + 2));
+	pf_s->vertex_index = (Vertex**)sci_malloc(sizeof(Vertex *) * (count + 2));
 
 	count = 0;
 
-	LIST_FOREACH(polygon, &pf_s->polygons, entries) {
-		vertex_t *vertex;
+	for (PolygonList::iterator it = pf_s->polygons.begin(); it != pf_s->polygons.end(); ++it) {
+		polygon = *it;
+		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
 			vertex->idx = count;
@@ -1314,32 +1327,33 @@ static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::
 	return pf_s;
 }
 
-static void visibility_graph(pf_state_t *s) {
+static void visibility_graph(PathfindingState *s) {
 	// Computes the visibility graph
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	// Returns   : (void)
-	polygon_t *polygon;
+	Polygon *polygon;
 
-	LIST_FOREACH(polygon, &s->polygons, entries) {
-		vertex_t *vertex;
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
+		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries)
 		visible_vertices(s, vertex);
 	}
 }
 
-static int intersecting_polygons(pf_state_t *s) {
+static int intersecting_polygons(PathfindingState *s) {
 	// Detects (self-)intersecting polygons
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	// Returns   : (int) 1 if s contains (self-)intersecting polygons, 0 otherwise
 	int i, j;
 
 	for (i = 0; i < s->vertices; i++) {
-		vertex_t *v1 = s->vertex_index[i];
+		Vertex *v1 = s->vertex_index[i];
 		if (!VERTEX_HAS_EDGES(v1))
 			continue;
 		for (j = i + 1; j < s->vertices; j++) {
-			vertex_t *v2 = s->vertex_index[j];
+			Vertex *v2 = s->vertex_index[j];
 			if (!VERTEX_HAS_EDGES(v2))
 				continue;
 
@@ -1357,28 +1371,30 @@ static int intersecting_polygons(pf_state_t *s) {
 	return 0;
 }
 
-static void dijkstra(pf_state_t *s) {
+static void dijkstra(PathfindingState *s) {
 	// Computes a shortest path from vertex_start to vertex_end. The caller can
 	// construct the resulting path by following the path_prev links from
 	// vertex_end back to vertex_start. If no path exists vertex_end->path_prev
 	// will be NULL
-	// Parameters: (pf_state_t *) s: The pathfinding state
+	// Parameters: (PathfindingState *) s: The pathfinding state
 	// Returns   : (void)
-	polygon_t *polygon;
+	Polygon *polygon;
 	// Vertices of which the shortest path is known
-	LIST_HEAD(done_head, vertex_t) done;
+	LIST_HEAD(done_head, Vertex) done;
 	// The remaining vertices
-	LIST_HEAD(remain_head, vertex_t) remain;
+	LIST_HEAD(remain_head, Vertex) remain;
 
 	LIST_INIT(remain);
 	LIST_INIT(done);
 
 	// Start out with all vertices in set remain
-	LIST_FOREACH(polygon, &s->polygons, entries) {
-		vertex_t *vertex;
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		polygon = *it;
+		Vertex *vertex;
 
-		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-		LIST_INSERT_HEAD(&remain, vertex, dijkstra);
+		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+			LIST_INSERT_HEAD(&remain, vertex, dijkstra);
+		}
 	}
 
 	s->vertex_start->dist = 0.0f;
@@ -1386,7 +1402,7 @@ static void dijkstra(pf_state_t *s) {
 	// Loop until we find vertex_end
 	while (1) {
 		int i;
-		vertex_t *vertex, *vertex_min = 0;
+		Vertex *vertex, *vertex_min = 0;
 		float min = HUGE_DISTANCE;
 
 		// Find vertex at shortest distance from set done
@@ -1429,15 +1445,15 @@ static void dijkstra(pf_state_t *s) {
 	}
 }
 
-static reg_t output_path(pf_state_t *p, EngineState *s) {
+static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Stores the final path in newly allocated dynmem
-	// Parameters: (pf_state_t *) p: The pathfinding state
+	// Parameters: (PathfindingState *) p: The pathfinding state
 	//             (EngineState *) s: The game state
 	// Returns   : (reg_t) Pointer to dynmem containing path
 	int path_len = 0;
 	byte *oref;
 	reg_t output;
-	vertex_t *vertex = p->vertex_end;
+	Vertex *vertex = p->vertex_end;
 	int i;
 	int unreachable = vertex->path_prev == NULL;
 
@@ -1520,7 +1536,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case 3 : {
 		reg_t retval;
-		polygon_t *polygon = convert_polygon(s, argv[2]);
+		Polygon *polygon = convert_polygon(s, argv[2]);
 
 		if (polygon->type == POLY_CONTAINED_ACCESS) {
 			sciprintf("[avoidpath] Warning: containment test performed on contained access polygon\n");
@@ -1540,7 +1556,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		//int poly_list_size = UKPV(5);
 		int opt = UKPV_OR_ALT(6, 1);
 		reg_t output;
-		pf_state_t *p;
+		PathfindingState *p;
 
 		if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
 			sciprintf("[avoidpath] Pathfinding input:\n");
