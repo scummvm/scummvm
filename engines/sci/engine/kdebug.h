@@ -30,6 +30,8 @@
 
 namespace Sci {
 
+class EngineState;
+
 #define SCIk_DEBUG_MODES 17
 
 #define SCIkERROR_NR -2

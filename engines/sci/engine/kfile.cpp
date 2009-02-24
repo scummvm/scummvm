@@ -35,8 +35,9 @@
 #include "common/str.h"
 #include "common/savefile.h"
 
-#include "sci/include/engine.h"
 #include "sci/sci.h"
+#include "sci/include/engine.h"
+#include "sci/engine/kernel.h"
 
 #include <errno.h>
 #include <sys/stat.h>		// for S_IREAD/S_IWRITE

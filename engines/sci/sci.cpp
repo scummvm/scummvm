@@ -31,6 +31,7 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/include/engine.h"
+#include "sci/engine/kernel.h"
 
 #ifdef WIN32
 #  include <direct.h>

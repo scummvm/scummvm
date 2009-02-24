@@ -27,6 +27,7 @@
 #include "sci/include/engine.h"
 #include "sci/include/sci_widgets.h"
 #include "sci/gfx/menubar.h"
+#include "sci/engine/kernel.h"
 
 namespace Sci {
 

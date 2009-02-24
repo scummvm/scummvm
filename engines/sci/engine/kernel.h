@@ -29,12 +29,14 @@
 #include "common/scummsys.h"
 #include "common/debug.h"
 
-#include "sci/include/kdebug.h"
+#include "sci/engine/kdebug.h"
 #include "sci/include/uinput.h"
-#include "sci/include/vm.h"
 #include "sci/include/sciconsole.h" /* sciprintf() */
 
 namespace Sci {
+
+struct node_t;	// from vm.h
+struct list_t;	// from vm.h
 
 extern int _kdebug_cheap_event_hack;
 extern int _kdebug_cheap_soundcue_hack;

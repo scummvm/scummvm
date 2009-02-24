@@ -40,6 +40,7 @@
 #include "common/str.h"
 
 #include "sci/include/engine.h"
+#include "sci/engine/kernel.h"
 
 namespace Sci {
 

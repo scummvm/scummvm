@@ -30,6 +30,7 @@
 #include "sci/include/engine.h"
 #include "sci/engine/aatree.h"
 #include "sci/gfx/gfx_widgets.h"
+#include "sci/engine/kernel.h"
 
 #include "common/list.h"
 

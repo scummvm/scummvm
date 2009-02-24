@@ -31,6 +31,7 @@
 #include "sci/sci_memory.h"
 #include "sci/include/engine.h"
 #include "sci/gfx/menubar.h"
+#include "sci/engine/kernel.h"
 
 namespace Sci {
 

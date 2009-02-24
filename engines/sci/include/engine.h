@@ -38,9 +38,7 @@ namespace Common {
 #include "sci/include/sciresource.h"
 #include "sci/include/script.h"
 #include "sci/include/sciconsole.h"
-#include "sci/include/vm.h"
 #include "sci/include/versions.h"
-#include "sci/include/kernel.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/sfx/sfx_engine.h"
@@ -48,6 +46,7 @@ namespace Common {
 namespace Sci {
 
 struct menubar_t;
+struct kfunct_sig_pair_t;	// from kernel.h
 
 class DirSeeker;
 

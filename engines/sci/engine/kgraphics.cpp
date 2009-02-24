@@ -27,9 +27,10 @@
 
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
+#include "sci/include/sci_widgets.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/engine/sci_graphics.h"
-#include "sci/include/sci_widgets.h"
+#include "sci/engine/kernel.h"
 
 namespace Sci {
 
