@@ -23,8 +23,6 @@
  *
  */
 
-#include <stdio.h>
-
 #include "sci/tools.h"
 #include "sci/sfx/sfx_engine.h"
 #include "sci/sci_memory.h"

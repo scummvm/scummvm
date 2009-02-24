@@ -32,10 +32,6 @@
 #ifndef SCI_GFX_GFX_SBTREE_H
 #define SCI_GFX_GFX_SBTREE_H
 
-#ifdef SBTREE_DEBUG
-#  include <stdio.h>
-#endif
-
 namespace Sci {
 
 struct sbtree_t {

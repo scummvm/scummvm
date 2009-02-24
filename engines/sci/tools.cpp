@@ -25,16 +25,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef WIN32
-#  include <windows.h>
-#  include <errno.h>
-#  include <mmsystem.h>
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <direct.h>
-#  undef ARRAYSIZE
-#endif
-
 #include "common/util.h"
 #include "common/str.h"
 

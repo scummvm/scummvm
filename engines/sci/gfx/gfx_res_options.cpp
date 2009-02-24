@@ -27,8 +27,6 @@
 #include "sci/gfx/gfx_options.h"
 #include "sci/gfx/gfx_resmgr.h"
 
-#include <ctype.h>
-
 namespace Sci {
 
 //#define DEBUG

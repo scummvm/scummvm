@@ -46,7 +46,6 @@
 #include "sci/sfx/sfx_iterator.h"
 #include "../softseq.h"
 #include "../adlib.h"
-#include <math.h>
 
 #include "sound/fmopl.h"
 

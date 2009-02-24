@@ -25,7 +25,6 @@
 
 /* Song iterators */
 
-#include <stdio.h>
 #include "common/util.h"
 #include "sci/sfx/sfx_iterator_internal.h"
 #include "sci/sfx/sfx_player.h"
