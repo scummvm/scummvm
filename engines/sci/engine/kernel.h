@@ -164,13 +164,6 @@ byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries
 ** reg_t dereferenciation also assures alignedness of data.
 */
 
-/******************** Resource Macros ********************/
-
-/* Returns the composite resource ID: */
-#define RESOURCE_ID(type, number) (number) | ((type) << 11)
-#define RESOURCE_NUMBER(resid) ((resid) & 0x7ff)
-#define RESOURCE_TYPE(resid) ((resid) >> 11)
-
 int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
 /* Halts script execution and informs the user about an internal kernel error or failed assertion
 ** Parameters: (EngineState *) s: The state to use
