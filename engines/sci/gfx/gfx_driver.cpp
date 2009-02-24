@@ -463,11 +463,6 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 	return input;
 }
 
-static int scummvm_usec_sleep(gfx_driver_t *drv, long usecs) {
-	g_system->delayMillis(usecs / 1000);
-	return GFX_OK;
-}
-
 gfx_driver_t gfx_driver_scummvm = {
 	NULL,
 	0, 0,
@@ -486,7 +481,6 @@ gfx_driver_t gfx_driver_scummvm = {
 	scummvm_set_pointer,
 	scummvm_set_palette,
 	scummvm_get_event,
-	scummvm_usec_sleep,
 	NULL
 };
 

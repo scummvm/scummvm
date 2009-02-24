@@ -1363,24 +1363,24 @@ static int _gfxop_full_pointer_refresh(gfx_state_t *state) {
 }
 
 int gfxop_usleep(gfx_state_t *state, long usecs) {
-	uint32 time, wakeup_time;
-	int retval = GFX_OK;
-
 	BASIC_CHECKS(GFX_FATAL);
 
-	wakeup_time = g_system->getMillis() + usecs / 1000;
+	uint32 time;
+	const uint32 wakeup_time = g_system->getMillis() + usecs / 1000;
 
-	do {
+	while (true) {
 		GFXOP_FULL_POINTER_REFRESH;
 		time = g_system->getMillis();
-		usecs = 1000 * ((long)wakeup_time - (long)time);
-	} while ((usecs > 0) && !(retval = state->driver->usec_sleep(state->driver, usecs)));
-
-	if (retval) {
-		GFXWARN("Waiting failed\n");
+		if (time >= wakeup_time)
+			break;
+		// FIXME: Busy waiting like this is usually not a good idea if it is for
+		// more than a few milliseconds. One should invoke OSystem::pollEvent during longer
+		// waits, else the mouse cursor might not be updated properly, and the system
+		// will seem sluggish to the user.
+		g_system->delayMillis(wakeup_time - time);
 	}
 
-	return retval;
+	return GFX_OK;
 }
 
 int _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {

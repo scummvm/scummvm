@@ -31,11 +31,11 @@
 
 namespace Sci {
 
-typedef enum {
+enum gfx_buffer_t {
 	GFX_BUFFER_FRONT = 0,
 	GFX_BUFFER_BACK = 1,
 	GFX_BUFFER_STATIC = 2
-} gfx_buffer_t;
+};
 
 
 /* graphics driver hints */
@@ -71,6 +71,7 @@ typedef enum {
 ** must use a reasonable default value.
 */
 
+// FIXME: Turn this into a class, or get rid of it completely.
 struct gfx_driver_t { /* Graphics driver */
 
 	gfx_mode_t *mode; /* Currently active mode, NULL if no mode is active */
@@ -300,17 +301,6 @@ struct gfx_driver_t { /* Graphics driver */
 	** Parameters: (gfx_driver_t *) drv: The driver to query
 	** Returns   : (sci_event_t) The oldest event still in the driver's event
 	**                           queue, or the null event if there is none.
-	*/
-
-	int (*usec_sleep)(gfx_driver_t *drv, long usecs);
-	/* Sleeps the specified amount of microseconds, or until the mouse moves
-	** Parameters: (gfx_driver_t *) drv: The relevant driver
-	**             (long) usecs: Amount of microseconds to sleep
-	** Returns   : (int) GFX_OK or GFX_FATAL
-	** This function returns when the specified amount of microseconds has
-	** elapsed, or when the mouse pointer has been moved and needs to be redrawn.
-	** Only targets that can handle colored mouse pointers may choose to handle
-	** all mouse management internally.
 	*/
 
 	void *state; /* Reserved for internal use */
