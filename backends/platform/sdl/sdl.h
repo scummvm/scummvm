@@ -341,7 +341,7 @@ protected:
 	// mouse
 	KbdMouse _km;
 	bool _mouseVisible;
-	bool _mouseDrawn;
+	bool _mouseNeedsRedraw;
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;

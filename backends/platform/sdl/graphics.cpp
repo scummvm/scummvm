@@ -652,6 +652,11 @@ void OSystem_SDL::internUpdateScreen() {
 		scale1 = 1;
 	}
 
+	// Add the area covered by the mouse cursor to the list of dirty rects if
+	// we have to redraw the mouse.
+	if (_mouseNeedsRedraw)
+		undrawMouse();
+
 	// Force a full redraw if requested
 	if (_forceFull) {
 		_numDirtyRects = 1;
@@ -659,8 +664,7 @@ void OSystem_SDL::internUpdateScreen() {
 		_dirtyRectList[0].y = 0;
 		_dirtyRectList[0].w = width;
 		_dirtyRectList[0].h = height;
-	} else
-		undrawMouse();
+	}
 
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
@@ -736,14 +740,11 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
-	} else {
-		drawMouse();
-		if (_numDirtyRects)
-			SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}
 
 	_numDirtyRects = 0;
 	_forceFull = false;
+	_mouseNeedsRedraw = false;
 }
 
 bool OSystem_SDL::saveScreenshot(const char *filename) {
@@ -1281,6 +1282,7 @@ bool OSystem_SDL::showMouse(bool visible) {
 
 void OSystem_SDL::setMousePos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		_mouseNeedsRedraw = true;
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
 	}
@@ -1313,6 +1315,7 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	if (w == 0 || h == 0)
 		return;
 
+	_mouseNeedsRedraw = true;
 	_mouseCurState.hotX = hotspot_x;
 	_mouseCurState.hotY = hotspot_y;
 
