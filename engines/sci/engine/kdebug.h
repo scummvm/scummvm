@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-class EngineState;
+struct EngineState;
 
 #define SCIk_DEBUG_MODES 17
 
