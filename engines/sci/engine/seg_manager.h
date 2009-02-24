@@ -27,9 +27,11 @@
 #define _SCI_SEG_MANAGER_H
 
 #include "sci/engine/intmap.h"
-#include "sci/include/vm.h"
+#include "sci/engine/vm.h"
 
 namespace Sci {
+
+class IntMapper;	// from intmap.h
 
 // SCRIPT_ID must be 0
 enum idFlag {
