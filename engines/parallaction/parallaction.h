@@ -367,7 +367,7 @@ public:
 	virtual void runPendingZones() = 0;
 	virtual void cleanupGame() = 0;
 	virtual void updateWalkers() = 0;
-	virtual void scheduleWalk(int16 x, int16 y) = 0;
+	virtual void scheduleWalk(int16 x, int16 y, bool fromUser) = 0;
 	virtual DialogueManager *createDialogueManager(ZonePtr z) = 0;
 };
 
@@ -391,7 +391,7 @@ public:
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 	virtual void updateWalkers();
-	virtual void scheduleWalk(int16 x, int16 y);
+	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
 
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
@@ -490,8 +490,7 @@ public:
 	virtual void runPendingZones();
 	virtual void cleanupGame();
 	virtual void updateWalkers();
-	virtual void scheduleWalk(int16 x, int16 y);
-
+	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
 	void setupSubtitles(char *s, char *s2, int y);
@@ -503,6 +502,8 @@ public:
 	bool	counterExists(const Common::String &name);
 	int		getCounterValue(const Common::String &name);
 	void	setCounterValue(const Common::String &name, int value);
+
+	void	setFollower(const Common::String &name);
 
 	const char **_audioCommandsNamesRes;
 	static const char *_partNames[];
@@ -537,6 +538,8 @@ private:
 	const Callable *_callables;
 	static const Callable _dosCallables[6];
 
+	Common::String		_followerName;
+	AnimationPtr		_follower;
 	PathWalker_BR		*_walker;
 
 	// dos callables

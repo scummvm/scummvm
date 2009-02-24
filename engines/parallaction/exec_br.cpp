@@ -154,7 +154,7 @@ DECLARE_COMMAND_OPCODE(drop) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	_vm->scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
+	_vm->scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y, false);
 	suspend();
 }
 
@@ -174,7 +174,11 @@ DECLARE_COMMAND_OPCODE(character) {
 
 
 DECLARE_COMMAND_OPCODE(followme) {
-	warning("Parallaction_br::cmdOp_followme not yet implemented");
+	Common::String s(_ctxt.cmd->u._string);
+	if (!s.compareToIgnoreCase("NULL")) {
+		s.clear();
+	}
+	_vm->setFollower(s);
 }
 
 

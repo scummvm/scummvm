@@ -261,6 +261,8 @@ void Parallaction_br::changeLocation(char *location) {
 	// load new location
 	parseLocation(location);
 
+	setFollower(_followerName);
+
 	if (_location._startPosition.x != -1000) {
 		_char.setFoot(_location._startPosition);
 		_char._ani->setF(_location._startFrame);
@@ -401,7 +403,7 @@ void Parallaction_br::updateWalkers() {
 	_walker->walk();
 }
 
-void Parallaction_br::scheduleWalk(int16 x, int16 y) {
+void Parallaction_br::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	AnimationPtr a = _char._ani;
 
 	if ((a->_flags & kFlagsRemove) || (a->_flags & kFlagsActive) == 0) {
@@ -409,13 +411,26 @@ void Parallaction_br::scheduleWalk(int16 x, int16 y) {
 	}
 
 	_walker->setCharacterPath(a, x, y);
-#if 0
-	if (_follower && _userEvent) {
-		_walker->setFollowerPath(_follower, x, y);
+
+	if (!fromUser) {
+		_walker->stopFollower();
+	} else {
+		if (_follower) {
+			_walker->setFollowerPath(_follower, x, y);
+		}
 	}
-#endif
+
 	_engineFlags |= kEngineWalking;
 }
 
+void Parallaction_br::setFollower(const Common::String &name) {
+	if (name.empty()) {
+		_followerName.clear();
+		_follower.reset();
+	} else {
+		_followerName = name;
+		_follower = _location.findAnimation(name.c_str());
+	}
+}
 
 } // namespace Parallaction

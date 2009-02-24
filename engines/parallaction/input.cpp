@@ -269,7 +269,7 @@ void Input::takeAction(ZonePtr z) {
 void Input::walkTo(const Common::Point &dest) {
 	stopHovering();
 	setArrowCursor();
-	_vm->scheduleWalk(dest.x, dest.y);
+	_vm->scheduleWalk(dest.x, dest.y, true);
 }
 
 bool Input::translateGameInput() {

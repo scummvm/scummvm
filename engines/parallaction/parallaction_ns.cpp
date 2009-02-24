@@ -497,7 +497,7 @@ void Parallaction_ns::updateWalkers() {
 }
 
 
-void Parallaction_ns::scheduleWalk(int16 x, int16 y) {
+void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	AnimationPtr a = _char._ani;
 
 	if ((a->_flags & kFlagsRemove) || (a->_flags & kFlagsActive) == 0) {
