@@ -522,7 +522,16 @@ public:
 
 	/**
 	 * Flush the whole screen, that is render the current content of the screen
-	 * framebuffer (resp. the dirty/changed parts of it) to the display.
+	 * framebuffer to the display.
+	 *
+	 * Depending on the backend, this can be a relatively slow operation. Since
+	 * a full screen update could take place upon each call, you should call
+	 * this method as rarely as possible, but of course still as often as
+	 * necessary.
+	 *
+	 * @todo Yes, this is vague. We probably should try to specify this clearly.
+	 * See <http://www.nabble.com/ATTN-porters%3A-updateScreen%28%29-OSystem-method-tt3960261.html#a3960261>
+	 * for a discussion on the subject.
 	 */
 	virtual void updateScreen() = 0;
 
