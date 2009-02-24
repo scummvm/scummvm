@@ -37,15 +37,23 @@ namespace Sci {
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 
-#define POLY_GET_POINT(p, i, x, y) do { x = getInt16((p) + (i) * POLY_POINT_SIZE); \
-					y = getInt16((p) + 2 + (i) * POLY_POINT_SIZE); \
-} while (0)
-#define POLY_SET_POINT(p, i, x, y) do { putInt16((p) + (i) * POLY_POINT_SIZE, x); \
-					putInt16((p) + 2 + (i) * POLY_POINT_SIZE, y); \
-} while (0)
-#define POLY_GET_POINT_REG_T(p, i, x, y) do { x = KP_SINT((p)[(i) * 2]); \
-					      y = KP_SINT((p)[(i) * 2 + 1]); \
-} while (0)
+#define POLY_GET_POINT(p, i, x, y) \
+				do { \
+					x = getInt16((p) + (i) * POLY_POINT_SIZE); \
+					y = getInt16((p) + (i) * POLY_POINT_SIZE + 2); \
+				} while (0)
+
+#define POLY_SET_POINT(p, i, x, y) \
+				do { \
+					putInt16((p) + (i) * POLY_POINT_SIZE, x); \
+					putInt16((p) + (i) * POLY_POINT_SIZE + 2, y); \
+				} while (0)
+
+#define POLY_GET_POINT_REG_T(p, i, x, y) \
+				do { \
+					x = KP_SINT((p)[(i) * 2]); \
+					y = KP_SINT((p)[(i) * 2 + 1]); \
+			} while (0)
 
 // SCI-defined polygon types
 #define POLY_TOTAL_ACCESS 0
@@ -77,18 +85,18 @@ namespace Sci {
 #define PF_FATAL -2
 
 // Floating point struct
-typedef struct pointf {
-	pointf() : x(0), y(0) {}
-	pointf(float x_, float y_) : x(x_), y(y_) {}
+struct FloatPoint {
+	FloatPoint() : x(0), y(0) {}
+	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
 
 	float x, y;
-} pointf_t;
+};
 
-pointf_t to_pointf(Common::Point p) {
-	return pointf(p.x, p.y);
+FloatPoint toFloatPoint(Common::Point p) {
+	return FloatPoint(p.x, p.y);
 }
 
-typedef struct vertex {
+struct vertex_t {
 	// Location
 	Common::Point v;
 
@@ -96,35 +104,35 @@ typedef struct vertex {
 	int idx;
 
 	// Vertex list entry
-	CLIST_ENTRY(vertex) entries;
+	CLIST_ENTRY(vertex_t) entries;
 
 	// Dijkstra list entry
-	LIST_ENTRY(vertex) dijkstra;
+	LIST_ENTRY(vertex_t) dijkstra;
 
 	// Distance from starting vertex
 	float dist;
 
 	// Previous vertex in shortest path
-	struct vertex *path_prev;
-} vertex_t;
+	vertex_t *path_prev;
+};
 
-typedef CLIST_HEAD(vertices_head, vertex) vertices_head_t;
+typedef CLIST_HEAD(vertices_head, vertex_t) vertices_head_t;
 
-typedef struct polygon {
+struct polygon_t {
 	// Circular list of vertices
 	vertices_head_t vertices;
 
 	// Polygon list entry
-	LIST_ENTRY(polygon) entries;
+	LIST_ENTRY(polygon_t) entries;
 
 	// SCI polygon type
 	int type;
-} polygon_t;
+};
 
 // Pathfinding state
-typedef struct pf_state {
+struct pf_state_t {
 	// List of all polygons
-	LIST_HEAD(polygons_head, polygon) polygons;
+	LIST_HEAD(polygons_head, polygon_t) polygons;
 
 	// Original start and end points
 	Common::Point start, end;
@@ -143,7 +151,7 @@ typedef struct pf_state {
 
 	// Total number of vertices
 	int vertices;
-} pf_state_t;
+};
 
 static vertex_t *vertex_cur;
 
@@ -167,7 +175,7 @@ static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
 	if (!is_reg_t) {
 		POLY_GET_POINT(list, offset, point.x, point.y);
 	} else {
-		POLY_GET_POINT_REG_T((reg_t *) list, offset, point.x, point.y);
+		POLY_GET_POINT_REG_T((reg_t *)list, offset, point.x, point.y);
 	}
 
 	return point;
@@ -781,7 +789,7 @@ static void visible_vertices(pf_state_t *s, vertex_t *vert) {
 	aatree_free(tree);
 }
 
-static float distance(pointf_t a, pointf_t b) {
+static float distance(FloatPoint a, FloatPoint b) {
 	// Computes the distance between two pointfs
 	// Parameters: (Common::Point) a, b: The two pointfs
 	// Returns   : (int) The distance between a and b, rounded to int
@@ -807,9 +815,9 @@ static int edge_on_screen_border(Common::Point p, Common::Point q) {
 	return ((p.x == 0 && q.x == 0) || (p.x == 319 && q.x == 319) || (p.y == 0 && q.y == 0) || (p.y == 189 && q.y == 189));
 }
 
-static int find_free_point(pointf_t f, polygon_t *polygon, Common::Point *ret) {
+static int find_free_point(FloatPoint f, polygon_t *polygon, Common::Point *ret) {
 	// Searches for a nearby point that is not contained in a polygon
-	// Parameters: (pointf_t) f: The pointf to search nearby
+	// Parameters: (FloatPoint) f: The pointf to search nearby
 	//             (polygon_t *) polygon: The polygon
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: The non-contained point on success
@@ -849,14 +857,14 @@ static int near_point(Common::Point p, polygon_t *polygon, Common::Point *ret) {
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: The near point of p in polygon on success
 	vertex_t *vertex;
-	pointf_t near_p;
+	FloatPoint near_p;
 	float dist = HUGE_DISTANCE;
 
 	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
 		Common::Point p1 = vertex->v;
 		Common::Point p2 = CLIST_NEXT(vertex, entries)->v;
 		float w, h, l, u;
-		pointf_t new_point;
+		FloatPoint new_point;
 		float new_dist;
 
 		// Ignore edges on the screen border
@@ -878,7 +886,7 @@ static int near_point(Common::Point p, polygon_t *polygon, Common::Point *ret) {
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
 
-		new_dist = distance(to_pointf(p), new_point);
+		new_dist = distance(toFloatPoint(p), new_point);
 
 		if (new_dist < dist) {
 			near_p = new_point;
@@ -890,13 +898,13 @@ static int near_point(Common::Point p, polygon_t *polygon, Common::Point *ret) {
 	return find_free_point(near_p, polygon, ret);
 }
 
-static int intersection(Common::Point a, Common::Point b, vertex_t *vertex, pointf_t *ret) {
+static int intersection(Common::Point a, Common::Point b, vertex_t *vertex, FloatPoint *ret) {
 	// Computes the intersection point of a line segment and an edge (not
 	// including the vertices themselves)
 	// Parameters: (Common::Point) a, b: The line segment (a, b)
 	//             (vertex_t *) vertex: The first vertex of the edge
 	// Returns   : (int) FP_OK on success, PF_ERROR otherwise
-	//             (pointf_t) *ret: The intersection point
+	//             (FloatPoint) *ret: The intersection point
 	// Parameters of parametric equations
 	float s, t;
 	// Numerator and denominator of equations
@@ -940,7 +948,7 @@ static int nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q,
 	//                   found, PF_FATAL otherwise
 	//             (Common::Point) *ret: On success, the closest intersection point
 	polygon_t *polygon = 0;
-	pointf_t isec;
+	FloatPoint isec;
 	polygon_t *ipolygon = 0;
 	float dist = HUGE_DISTANCE;
 
@@ -949,7 +957,7 @@ static int nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q,
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
 			float new_dist;
-			pointf_t new_isec;
+			FloatPoint new_isec;
 
 			// Check for intersection with vertex
 			if (between(p, q, vertex->v)) {
@@ -972,7 +980,7 @@ static int nearest_intersection(pf_state_t *s, Common::Point p, Common::Point q,
 					continue;
 			}
 
-			new_dist = distance(to_pointf(p), new_isec);
+			new_dist = distance(toFloatPoint(p), new_isec);
 			if (new_dist < dist) {
 				ipolygon = polygon;
 				isec = new_isec;
@@ -1117,11 +1125,8 @@ static void free_pf_state(pf_state_t *p) {
 	// Frees a pathfinding state
 	// Parameters: (pf_state_t *) p: The pathfinding state
 	// Returns   : (void)
-	if (p->vertex_index)
-		free(p->vertex_index);
-
-	if (p->vis_matrix)
-		free(p->vis_matrix);
+	free(p->vertex_index);
+	free(p->vis_matrix);
 
 	while (!LIST_EMPTY(&p->polygons)) {
 		polygon_t *polygon = LIST_FIRST(&p->polygons);
@@ -1168,7 +1173,7 @@ static pf_state_t *convert_polygon_set(EngineState *s, reg_t poly_list, Common::
 	int count = 0;
 	pf_state_t *pf_s = (pf_state_t*)sci_malloc(sizeof(pf_state_t));
 
-	LIST_INIT(&pf_s->polygons);
+	LIST_INIT(pf_s->polygons);
 	pf_s->start = start;
 	pf_s->end = end;
 	pf_s->keep_start = 0;
@@ -1304,12 +1309,12 @@ static void dijkstra(pf_state_t *s) {
 	// Returns   : (void)
 	polygon_t *polygon;
 	// Vertices of which the shortest path is known
-	LIST_HEAD(done_head, vertex) done;
+	LIST_HEAD(done_head, vertex_t) done;
 	// The remaining vertices
-	LIST_HEAD(remain_head, vertex) remain;
+	LIST_HEAD(remain_head, vertex_t) remain;
 
-	LIST_INIT(&remain);
-	LIST_INIT(&done);
+	LIST_INIT(remain);
+	LIST_INIT(done);
 
 	// Start out with all vertices in set remain
 	LIST_FOREACH(polygon, &s->polygons, entries) {
@@ -1357,7 +1362,7 @@ static void dijkstra(pf_state_t *s) {
 				if ((s->vertex_index[i] != s->vertex_end) && point_on_screen_border(s->vertex_index[i]->v))
 					continue;
 
-				new_dist = vertex_min->dist + distance(to_pointf(vertex_min->v), to_pointf(s->vertex_index[i]->v));
+				new_dist = vertex_min->dist + distance(toFloatPoint(vertex_min->v), toFloatPoint(s->vertex_index[i]->v));
 				if (new_dist < s->vertex_index[i]->dist) {
 					s->vertex_index[i]->dist = new_dist;
 					s->vertex_index[i]->path_prev = vertex_min;

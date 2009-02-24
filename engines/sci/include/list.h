@@ -66,35 +66,17 @@ namespace Sci {
 /* List definitions. */
 #define LIST_HEAD(name, type)						\
 struct name {								\
-	struct type *lh_first;	/* first element */			\
+	type *lh_first;	/* first element */			\
 }
-
-#define LIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
 
 #define LIST_ENTRY(type)						\
 struct {								\
-	struct type *le_next;	/* next element */			\
-	struct type **le_prev;	/* address of previous next element */	\
+	type *le_next;	/* next element */			\
+	type **le_prev;	/* address of previous next element */	\
 }
 
 #define LIST_INIT(head) do {						\
-	(head)->lh_first = NULL;					\
-} while (0)
-
-#define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
-		(listelm)->field.le_next->field.le_prev =		\
-		    &(elm)->field.le_next;				\
-	(listelm)->field.le_next = (elm);				\
-	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
-
-#define LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-	(elm)->field.le_next = (listelm);				\
-	*(listelm)->field.le_prev = (elm);				\
-	(listelm)->field.le_prev = &(elm)->field.le_next;		\
+	(head).lh_first = NULL;					\
 } while (0)
 
 #define LIST_INSERT_HEAD(head, elm, field) do {				\
@@ -125,16 +107,13 @@ struct {								\
 
 #define CLIST_HEAD(name, type)						\
 struct name {								\
-	struct type *clh_first;	/* first element. */			\
+	type *clh_first;	/* first element. */			\
 }
-
-#define CLIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
 
 #define CLIST_ENTRY(type)						\
 struct {								\
-	struct type *cle_next;	/* next element. */			\
-	struct type *cle_prev;	/* previous element */			\
+	type *cle_next;	/* next element. */			\
+	type *cle_prev;	/* previous element */			\
 }
 
 #define CLIST_INIT(head) do {						\
