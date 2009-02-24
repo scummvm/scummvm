@@ -116,6 +116,12 @@ struct Vertex {
 
 	// Previous vertex in shortest path
 	Vertex *path_prev;
+
+public:
+	Vertex(const Common::Point &p) : v(p) {
+		dist = HUGE_DISTANCE;
+		path_prev = NULL;
+	}
 };
 
 typedef Common::List<Vertex *> VertexList;
@@ -186,6 +192,18 @@ struct Polygon {
 
 	// Circular list of vertices
 	CircularVertexList vertices;
+
+public:
+	Polygon(int t) : type(t) {
+	}
+
+	~Polygon() {
+		while (!vertices.empty()) {
+			Vertex *vertex = vertices.first();
+			vertices.remove(vertex);
+			delete vertex;
+		}
+	}
 };
 
 typedef Common::List<Polygon *> PolygonList;
@@ -222,7 +240,17 @@ struct PathfindingState {
 		vis_matrix = NULL;
 		vertices = 0;
 	}
+	
+	~PathfindingState() {
+		free(vertex_index);
+		free(vis_matrix);
+	
+		for (PolygonList::iterator it = polygons.begin(); it != polygons.end(); ++it) {
+			delete *it;
+		}
+	}
 };
+
 
 static Vertex *vertex_cur;
 
@@ -460,29 +488,6 @@ static int intersect(Common::Point a, Common::Point b, Common::Point c, Common::
 		return 1;
 
 	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
-}
-
-static Vertex *vertex_new(Common::Point p) {
-	// Allocates and initialises a new vertex
-	// Parameters: (Common::Point) p: The position of the vertex
-	// Returns   : (Vertex *) A newly allocated vertex
-	Vertex *vertex = (Vertex*)sci_malloc(sizeof(Vertex));
-
-	vertex->v = p;
-	vertex->dist = HUGE_DISTANCE;
-	vertex->path_prev = NULL;
-
-	return vertex;
-}
-
-static Polygon *polygon_new(int type) {
-	// Allocates and initialises a new polygon
-	// Parameters: (int) type: The SCI polygon type
-	// Returns   : (Polygon *) A newly allocated polygon
-	Polygon *polygon = new Polygon();
-	polygon->type = type;
-
-	return polygon;
 }
 
 static int contained(Common::Point p, Polygon *polygon) {
@@ -1131,7 +1136,7 @@ static Vertex *merge_point(PathfindingState *s, Common::Point v) {
 		}
 	}
 
-	v_new = vertex_new(v);
+	v_new = new Vertex(v);
 
 	// Check for point being on an edge
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
@@ -1151,7 +1156,7 @@ static Vertex *merge_point(PathfindingState *s, Common::Point v) {
 	}
 
 	// Add point as single-vertex polygon
-	polygon = polygon_new(POLY_BARRED_ACCESS);
+	polygon = new Polygon(POLY_BARRED_ACCESS);
 	polygon->vertices.insertHead(v_new);
 	s->polygons.push_front(polygon);
 
@@ -1167,42 +1172,17 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	unsigned char *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
-	Polygon *poly = polygon_new(KP_UINT(GET_SEL32(polygon, type)));
+	Polygon *poly = new Polygon(KP_UINT(GET_SEL32(polygon, type)));
 	int is_reg_t = polygon_is_reg_t(list, size);
 
 	for (i = 0; i < size; i++) {
-		Vertex *vertex = vertex_new(read_point(list, is_reg_t, i));
+		Vertex *vertex = new Vertex(read_point(list, is_reg_t, i));
 		poly->vertices.insertHead(vertex);
 	}
 
 	fix_vertex_order(poly);
 
 	return poly;
-}
-
-static void free_polygon(Polygon *polygon) {
-	// Frees a polygon and its vertices
-	// Parameters: (Polygon *) polygons: The polygon
-	while (!polygon->vertices.empty()) {
-		Vertex *vertex = polygon->vertices.first();
-		polygon->vertices.remove(vertex);
-		free(vertex);
-	}
-
-	delete polygon;
-}
-
-static void free_pf_state(PathfindingState *p) {
-	// Frees a pathfinding state
-	// Parameters: (PathfindingState *) p: The pathfinding state
-	free(p->vertex_index);
-	free(p->vis_matrix);
-
-	for (PolygonList::iterator it = p->polygons.begin(); it != p->polygons.end(); ++it) {
-		free_polygon(*it);
-	}
-
-	delete p;
 }
 
 static void change_polygons_opt_0(PathfindingState *s) {
@@ -1217,7 +1197,7 @@ static void change_polygons_opt_0(PathfindingState *s) {
 		assert(polygon);
 
 		if (polygon->type == POLY_TOTAL_ACCESS) {
-			free_polygon(polygon);
+			delete polygon;
 			it = s->polygons.erase(it);
 		} else {
 			if (polygon->type == POLY_NEAREST_ACCESS)
@@ -1263,7 +1243,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 		if (err == PF_FATAL) {
 			sciprintf("[avoidpath] Error: fatal error finding nearest intersecton\n");
-			free_pf_state(pf_s);
+			delete pf_s;
 			return NULL;
 		} else if (err == PF_OK)
 			// Keep original start position if intersection was found
@@ -1271,7 +1251,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	} else {
 		if (fix_point(pf_s, start, &start, &polygon) != PF_OK) {
 			sciprintf("[avoidpath] Error: couldn't fix start position for pathfinding\n");
-			free_pf_state(pf_s);
+			delete pf_s;
 			return NULL;
 		} else if (polygon) {
 			// Start position has moved
@@ -1283,7 +1263,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	if (fix_point(pf_s, end, &end, &polygon) != PF_OK) {
 		sciprintf("[avoidpath] Error: couldn't fix end position for pathfinding\n");
-		free_pf_state(pf_s);
+		delete pf_s;
 		return NULL;
 	} else {
 		// Keep original end position if it is contained in a
@@ -1537,7 +1517,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		retval = make_reg(0, contained(start, polygon) != CONT_OUTSIDE);
-		free_polygon(polygon);
+		delete polygon;
 		return retval;
 	}
 	case 6 :
@@ -1564,7 +1544,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (intersecting_polygons(p)) {
 			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
-			free_pf_state(p);
+			delete p;
 			p = NULL;
 		}
 
@@ -1587,7 +1567,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		dijkstra(p);
 
 		output = output_path(p, s);
-		free_pf_state(p);
+		delete p;
 
 		// Memory is freed by explicit calls to Memory
 		return output;
