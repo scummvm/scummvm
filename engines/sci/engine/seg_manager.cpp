@@ -54,11 +54,11 @@ namespace Sci {
 #define INVALID_SCRIPT_ID -1
 
 inline int SegManager::findFreeId(int *id) {
-	char was_added = 0;
+	bool was_added = false;
 	int retval = 0;
 
 	while (!was_added) {
-		retval = id_seg_map->check_value(reserved_id, true, &was_added);
+		retval = id_seg_map->checkKey(reserved_id, true, &was_added);
 		*id = reserved_id--;
 		if (reserved_id < -1000000)
 			reserved_id = -10;
@@ -82,9 +82,9 @@ SegManager::SegManager(bool sci1_1) {
 	// Initialise memory count
 	mem_allocated = 0;
 
-	id_seg_map = new int_hash_map_t();
+	id_seg_map = new IntMapper();
 	reserved_id = INVALID_SCRIPT_ID;
-	id_seg_map->check_value(reserved_id, true);	// reserve 0 for seg_id
+	id_seg_map->checkKey(reserved_id, true);	// reserve 0 for seg_id
 	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
 
 	heap_size = DEFAULT_SCRIPTS;
@@ -130,10 +130,10 @@ SegManager::~SegManager() {
 //             seg_id - allocated segment id
 mem_obj_t *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
 	int seg;
-	char was_added;
+	bool was_added;
 	mem_obj_t* mem;
 
-	seg = id_seg_map->check_value(script_nr, true, &was_added);
+	seg = id_seg_map->checkKey(script_nr, true, &was_added);
 	if (!was_added) {
 		*seg_id = seg;
 		return heap[*seg_id];
@@ -218,7 +218,7 @@ int SegManager::initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr) 
 	scr->marked_as_deleted = 0;
 	scr->relocated = 0;
 
-	scr->obj_indices = new int_hash_map_t();
+	scr->obj_indices = new IntMapper();
 
 	if (s->version >= SCI_VERSION(1, 001, 000))
 		scr->heap_start = scr->buf + scr->script_size;
@@ -233,7 +233,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 	VERIFY(check(seg), "invalid seg id");
 
 	mobj = heap[seg];
-	id_seg_map->remove_value(mobj->segmgr_id);
+	id_seg_map->removeKey(mobj->segmgr_id);
 
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
@@ -414,9 +414,7 @@ void SegManager::freeScript(mem_obj_t *mem) {
 	}
 
 	delete mem->data.script.obj_indices;
-	if (NULL != mem->data.script.code) {
-		free(mem->data.script.code);
-	}
+	free(mem->data.script.code);
 }
 
 // memory operations
@@ -555,7 +553,7 @@ void SegManager::sm_put_heap(reg_t reg, int16 value) {
 
 // return the seg if script_id is valid and in the map, else -1
 int SegManager::segGet(int script_id) {
-	return id_seg_map->check_value(script_id, false);
+	return id_seg_map->checkKey(script_id, false);
 }
 
 // validate the seg
@@ -883,7 +881,7 @@ object_t *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 	}
 
 	temp = make_reg(obj_pos.segment, base);
-	id = scr->obj_indices->check_value(base, true);
+	id = scr->obj_indices->checkKey(base, true);
 	scr->objects_nr++;
 
 	obj = scr->objects + id;
@@ -949,7 +947,7 @@ object_t *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 		scr->objects = (object_t *)sci_realloc(scr->objects, sizeof(object_t) * scr->objects_allocated);
 	}
 
-	id = scr->obj_indices->check_value(obj_pos.offset, true);
+	id = scr->obj_indices->checkKey(obj_pos.offset, true);
 	scr->objects_nr++;
 
 	obj = scr->objects + id;

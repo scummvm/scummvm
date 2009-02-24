@@ -200,16 +200,16 @@ int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char 
 void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo);
 int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo);
-int read_int_hash_map_tp(Common::SeekableReadStream *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof);
-
 void write_songlib_t(Common::WriteStream *fh, songlib_t *foo);
 int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
-void write_int_hash_map_node_tp(Common::WriteStream *fh, int_hash_map_t::node_t **foo);
-int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof);
-
 int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
+
+void write_IntMapperPtr(Common::WriteStream *fh, IntMapper **foo);
+int read_IntMapperPtr(Common::SeekableReadStream *fh, IntMapper **foo, const char *lastval, int *line, int *hiteof);
+
+void write_IntMapperNodePtr(Common::WriteStream *fh, IntMapper::Node **foo);
+int read_IntMapperNodePtr(Common::SeekableReadStream *fh, IntMapper::Node **foo, const char *lastval, int *line, int *hiteof);
 
 void write_SegManagerPtr(Common::WriteStream *fh, SegManager **foo);
 int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const char *lastval, int *line, int *hiteof);
@@ -238,8 +238,8 @@ TYPE mem_obj_t "mem_obj_t" USING write_mem_obj_t read_mem_obj_t;
 TYPE mem_obj_ptr "mem_obj_t *" USING write_mem_obj_tp read_mem_obj_tp;
 TYPE reg_t "reg_t" USING write_reg_t read_reg_t;
 TYPE size_t "size_t" LIKE int;
-TYPE int_hash_map_tp "int_hash_map_t *" USING write_int_hash_map_tp read_int_hash_map_tp;
-TYPE int_hash_map_node_tp "int_hash_map_t::node_t *" USING write_int_hash_map_node_tp read_int_hash_map_node_tp;
+TYPE IntMapperPtr "IntMapper *" USING write_IntMapperPtr read_IntMapperPtr;
+TYPE IntMapperNodePtr "IntMapper::Node *" USING write_IntMapperNodePtr read_IntMapperNodePtr;
 TYPE songlib_t "songlib_t" USING write_songlib_t read_songlib_t;
 TYPE song_tp "song_t *" USING write_song_tp read_song_tp;
 TYPE song_iterator_t "song_iterator_t" USING write_song_iterator_t read_song_iterator_t;
@@ -257,9 +257,9 @@ RECORD song_t "song_t" {
 	int hold;
 }
 
-RECORD int_hash_map_t "int_hash_map_t" {
+RECORD IntMapper "IntMapper" {
 	int base_value;
-	int_hash_map_node_tp nodes[STATIC DCS_INT_HASH_MAX+1];
+	IntMapperNodePtr nodes[STATIC DCS_INT_HASH_MAX];
 }
 
 RECORD menu_item_t "menu_item_t" {
@@ -291,7 +291,7 @@ RECORD menubar_t "menubar_t" {
 }
 
 RECORD SegManager "SegManager" {
-	int_hash_map_tp id_seg_map;
+	IntMapperPtr id_seg_map;
 	mem_obj_ptr heap[DYNAMIC heap_size];
 	int heap_size;
 	int reserved_id;
@@ -417,7 +417,7 @@ RECORD script_t "script_t" {
 	size_t script_size;
 	size_t heap_size;
 
-	int_hash_map_tp obj_indices;
+	IntMapperPtr obj_indices;
 	int exports_nr;
 	int synonyms_nr;
 	int lockers;
@@ -492,36 +492,6 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 	return 0;
 }
 
-static struct {
-	int type;
-	const char *name;
-} mem_obj_string_names[] = {
-	{MEM_OBJ_INVALID, "INVALID"},
-	{MEM_OBJ_SCRIPT, "SCRIPT"},
-	{MEM_OBJ_CLONES, "CLONES"},
-	{MEM_OBJ_LOCALS, "LOCALS"},
-	{MEM_OBJ_STACK, "STACK"},
-	{MEM_OBJ_SYS_STRINGS,"SYS_STRINGS"},
-	{MEM_OBJ_LISTS,"LISTS"},
-	{MEM_OBJ_NODES,"NODES"},
-	{MEM_OBJ_HUNK,"HUNK"},
-	{MEM_OBJ_DYNMEM,"DYNMEM"}};
-
-int mem_obj_string_to_enum(const char *str) {
-	int i;
-
-	for (i = 0; i <= MEM_OBJ_MAX; i++) {
-		if (!scumm_stricmp(mem_obj_string_names[i].name, str))
-			return i;
-	}
-
-	return -1;
-}
-
-void write_int_hash_map_tp(Common::WriteStream *fh, int_hash_map_t **foo) {
-	%CFSMLWRITE int_hash_map_t *foo INTO fh;
-}
-
 void write_song_tp(Common::WriteStream *fh, song_t **foo) {
 	%CFSMLWRITE song_t *foo INTO fh;
 }
@@ -540,33 +510,37 @@ int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastv
 	return 0;
 }
 
-int read_int_hash_map_tp(Common::SeekableReadStream *fh, int_hash_map_t **foo, const char *lastval, int *line, int *hiteof) {
-	*foo = new int_hash_map_t;
-	%CFSMLREAD int_hash_map_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
+void write_IntMapperPtr(Common::WriteStream *fh, IntMapper **foo) {
+	%CFSMLWRITE IntMapper *foo INTO fh;
+}
+
+int read_IntMapperPtr(Common::SeekableReadStream *fh, IntMapper **foo, const char *lastval, int *line, int *hiteof) {
+	*foo = new IntMapper();
+	%CFSMLREAD IntMapper (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	(*foo)->holes = NULL;
 	return 0;
 }
 
-void write_int_hash_map_node_tp(Common::WriteStream *fh, int_hash_map_t::node_t **foo) {
+void write_IntMapperNodePtr(Common::WriteStream *fh, IntMapper::Node **foo) {
 	if (!(*foo)) {
 		WSprintf(fh, "\\null");
 	} else {
-		WSprintf(fh,"[\n%d=>%d\n", (*foo)->name, (*foo)->value);
+		WSprintf(fh,"[\n%d=>%d\n", (*foo)->key, (*foo)->idx);
 		if ((*foo)->next) {
-			%CFSMLWRITE int_hash_map_node_tp &((*foo)->next) INTO fh;
+			%CFSMLWRITE IntMapperNodePtr &((*foo)->next) INTO fh;
 		} else
 			WSprintf(fh, "L");
 		WSprintf(fh, "]");
 	}
 }
 
-int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::node_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_IntMapperNodePtr(Common::SeekableReadStream *fh, IntMapper::Node **foo, const char *lastval, int *line, int *hiteof) {
 	static char buffer[80];
 
 	if (lastval[0] == '\\') {
 		*foo = NULL; // No hash map node
 	} else {
-		*foo = (int_hash_map_t::node_t*)malloc(sizeof(int_hash_map_t::node_t));
+		*foo = (IntMapper::Node*)malloc(sizeof(IntMapper::Node));
 		if (lastval[0] != '[') {
 			sciprintf("Expected opening bracket in hash_map_node_t on line %d\n", *line);
 			return 1;
@@ -581,12 +555,10 @@ int read_int_hash_map_node_tp(Common::SeekableReadStream *fh, int_hash_map_t::no
 			} // HACK: deliberately no else clause here
 			if (buffer[0] == ']')  {
 				break;
-			}
-			else if (buffer[0] == '[') {
-				if (read_int_hash_map_node_tp(fh, &((*foo)->next), buffer, line, hiteof))
+			} else if (buffer[0] == '[') {
+				if (read_IntMapperNodePtr(fh, &((*foo)->next), buffer, line, hiteof))
 					return 1;
-			}
-			else if (sscanf(buffer, "%d=>%d", &((*foo)->name), &((*foo)->value))<2) {
+			} else if (sscanf(buffer, "%d=>%d", &((*foo)->key), &((*foo)->idx))<2) {
 				sciprintf("Error parsing hash_map_node_t on line %d\n", *line);
 				return 1;
 			}
@@ -613,6 +585,32 @@ int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char 
 		%CFSMLREAD menubar_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	}
 	return *hiteof;
+}
+
+static struct {
+	int type;
+	const char *name;
+} mem_obj_string_names[] = {
+	{MEM_OBJ_INVALID, "INVALID"},
+	{MEM_OBJ_SCRIPT, "SCRIPT"},
+	{MEM_OBJ_CLONES, "CLONES"},
+	{MEM_OBJ_LOCALS, "LOCALS"},
+	{MEM_OBJ_STACK, "STACK"},
+	{MEM_OBJ_SYS_STRINGS,"SYS_STRINGS"},
+	{MEM_OBJ_LISTS,"LISTS"},
+	{MEM_OBJ_NODES,"NODES"},
+	{MEM_OBJ_HUNK,"HUNK"},
+	{MEM_OBJ_DYNMEM,"DYNMEM"}};
+
+int mem_obj_string_to_enum(const char *str) {
+	int i;
+
+	for (i = 0; i <= MEM_OBJ_MAX; i++) {
+		if (!scumm_stricmp(mem_obj_string_names[i].name, str))
+			return i;
+	}
+
+	return -1;
 }
 
 void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {

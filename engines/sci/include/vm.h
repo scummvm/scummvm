@@ -33,7 +33,7 @@
 #include "sci/include/sys_strings.h"
 #include "sci/include/heapmgr.h"
 
-#include "sci/engine/int_hashmap.h"
+#include "sci/engine/intmap.h"
 
 namespace Sci {
 
@@ -111,7 +111,7 @@ struct class_t {
 	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
 };
 
-#define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->check_value(reg.offset, false))
+#define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->checkKey(reg.offset, false))
 #define RAW_IS_OBJECT(datablock) (getUInt16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
@@ -177,9 +177,6 @@ struct code_block_t {
 
 
 
-//#define VM_OBJECT_SET_INDEX(ptr, index) { ((byte *) (ptr))[0] = (index) & 0xff; ((byte *) (ptr))[1] = ((index) >> 8) & 0xff; }
-//#define VM_OBJECT_GET_INDEX(scr, reg) (int_hash_map_check_value(scr->obj_indices, reg.offset, 0, NULL))
-
 struct script_t {
 	int nr; /* Script number */
 	byte* buf; /* Static data buffer, or NULL if not used */
@@ -191,7 +188,7 @@ struct script_t {
 	byte *heap_start; /* Start of heap if SCI1.1, NULL otherwise */
 	uint16 *export_table; /* Abs. offset of the export table or 0 if not present */
 
-	int_hash_map_t *obj_indices;
+	IntMapper *obj_indices;
 
 	int exports_nr; /* Number of entries in the exports table */
 	int synonyms_nr; /* Number of entries in the synonyms block */

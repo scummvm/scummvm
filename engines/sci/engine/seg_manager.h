@@ -26,7 +26,7 @@
 #ifndef _SCI_SEG_MANAGER_H
 #define _SCI_SEG_MANAGER_H
 
-#include "sci/engine/int_hashmap.h"
+#include "sci/engine/intmap.h"
 #include "sci/include/vm.h"
 
 namespace Sci {
@@ -397,7 +397,7 @@ public:
 	int initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr);
 
 public: // TODO: make private
-	int_hash_map_t *id_seg_map; // id - script id; seg - index of heap
+	IntMapper *id_seg_map; // id - script id; seg - index of heap
 	mem_obj_t **heap;
 	int heap_size;		// size of the heap
 	int reserved_id;

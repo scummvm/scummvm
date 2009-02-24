@@ -23,31 +23,31 @@
  *
  */
 
-#include "sci/engine/int_hashmap.h"
+#include "sci/engine/intmap.h"
 
 namespace Sci {
 
-#define HASH_MAX DCS_INT_HASH_MAX
 #define HASH(x) (x & 0xff)
 
-int_hash_map_t::int_hash_map_t() {
+IntMapper::IntMapper() {
 	base_value = 0;
 	memset(nodes, 0, sizeof(nodes));
 	holes = 0;
 }
 
-void int_hash_map_t::free_node_recursive(node_t *node) {
+void IntMapper::free_node_recursive(Node *node) {
 	if (node) {
 		free_node_recursive(node->next);
+		node->next = 0;
 		free(node);
 	}
 }
 
 
-int_hash_map_t::~int_hash_map_t() {
+IntMapper::~IntMapper() {
 	int i;
 
-	for (i = 0; i <= HASH_MAX; i++)
+	for (i = 0; i < DCS_INT_HASH_MAX; i++)
 		free_node_recursive(nodes[i]);
 
 	free_node_recursive(holes);
@@ -56,17 +56,17 @@ int_hash_map_t::~int_hash_map_t() {
 	base_value = -42000;
 }
 
-int int_hash_map_t::check_value(int value, bool add, char *was_added) {
-	node_t **node = &(nodes[HASH(value)]);
+int IntMapper::checkKey(int key, bool add, bool *was_added) {
+	Node **node = &(nodes[HASH(key)]);
 
-	while (*node && (value != (*node)->name))
+	while (*node && (key != (*node)->key))
 		node = &((*node)->next);
 
 	if (was_added)
-		*was_added = 0;
+		*was_added = false;
 
 	if (*node) {
-		return (*node)->value;
+		return (*node)->idx;
 	}
 	// Not found
 
@@ -74,36 +74,36 @@ int int_hash_map_t::check_value(int value, bool add, char *was_added) {
 		return -1;
 
 	if (was_added)
-		*was_added = 1;
+		*was_added = true;
 
 	if (holes) { // Re-use old node
 		(*node) = holes;
 		holes = (*node)->next;
 		(*node)->next = NULL;
-		(*node)->name = value;
+		(*node)->key = key;
 	} else {
-		*node = (node_t*)malloc(sizeof(node_t));
-		(*node)->name = value;
-		(*node)->value = base_value++;
+		*node = (Node*)malloc(sizeof(Node));
+		(*node)->key = key;
+		(*node)->idx = base_value++;
 		(*node)->next = NULL;
 	}
 
-	return (*node)->value;
+	return (*node)->idx;
 }
 
-int int_hash_map_t::remove_value(int value) {
-	node_t **node = &(nodes[HASH(value)]);
+int IntMapper::removeKey(int key) {
+	Node **node = &(nodes[HASH(key)]);
 
-	while (*node && (value != (*node)->name))
+	while (*node && (key != (*node)->key))
 		node = &((*node)->next);
 
 	if (*node) {
-		node_t *oldnode = *node;
+		Node *oldnode = *node;
 		*node = (*node)->next;
 
 		oldnode->next = holes; // Old node is now a 'hole'
 		holes = oldnode;
-		return oldnode->value;
+		return oldnode->key;
 	} else
 		return -1; // Not found
 }

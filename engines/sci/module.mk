@@ -10,7 +10,7 @@ MODULE_OBJS = \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
-	engine/int_hashmap.o \
+	engine/intmap.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \
