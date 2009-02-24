@@ -39,7 +39,7 @@
 #include "sci/include/vm_types.h"
 
 #define SCI_CONSOLE
-#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/operations.h"
 
 namespace Sci {
 

@@ -29,7 +29,7 @@
 #define SCI_GFX_SCI_MENUBAR_H
 
 #include "sci/include/vm_types.h"
-#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
 
 namespace Sci {

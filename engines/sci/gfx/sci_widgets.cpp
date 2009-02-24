@@ -23,11 +23,11 @@
  *
  */
 
-#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/include/engine.h"
 #include "sci/gfx/menubar.h"
-#include "sci/include/sci_widgets.h"
+#include "sci/gfx/sci_widgets.h"
 
 #include "common/system.h"
 

@@ -38,12 +38,12 @@ MODULE_OBJS = \
 	gfx/gfx_resource.o \
 	gfx/gfx_support.o \
 	gfx/gfx_tools.o \
+	gfx/gfx_widgets.o \
 	gfx/menubar.o \
 	gfx/operations.o \
 	gfx/resmgr.o \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \
-	gfx/widgets.o \
 	gfx/resource/sci_cursor_0.o \
 	gfx/resource/sci_font.o \
 	gfx/resource/sci_pal_1.o \

@@ -28,7 +28,7 @@
 
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_options.h"
-#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_system.h"
 

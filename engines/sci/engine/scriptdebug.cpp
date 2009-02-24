@@ -34,7 +34,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/include/sci_midi.h"
-#include "sci/include/sci_widgets.h"
+#include "sci/gfx/sci_widgets.h"
 #include "sci/sci.h"
 #include "sci/gfx/gfx_widgets.h"
 

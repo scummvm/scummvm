@@ -33,7 +33,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "sci/sci_memory.h"
-#include "sci/gfx/gfx_operations.h"
+#include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
 #include "sci/sfx/sfx_engine.h"
 #include "sci/include/engine.h"
