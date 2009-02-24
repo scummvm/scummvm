@@ -30,9 +30,6 @@
 
 namespace Sci {
 
-struct EngineState;
-struct ResourceManager;
-
 /*#define SCRIPT_DEBUG */
 
 #define SCI_SCRIPTS_NR 1000

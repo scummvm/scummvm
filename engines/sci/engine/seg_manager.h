@@ -30,8 +30,6 @@
 
 namespace Sci {
 
-struct IntMapper;	// from intmap.h
-
 // SCRIPT_ID must be 0
 enum idFlag {
 	SCRIPT_ID,

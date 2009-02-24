@@ -37,8 +37,6 @@
 
 namespace Sci {
 
-struct IntMapper;	// from intmap.h
-
 #define VM_STACK_SIZE 0x1000
 /* Number of bytes to be allocated for the stack */
 
