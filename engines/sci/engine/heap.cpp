@@ -24,7 +24,7 @@
  */
 
 #include "sci/include/engine.h"
-#include "sci/include/sciconsole.h"
+#include "sci/scicore/sciconsole.h"
 #include "sci/engine/heap.h"
 
 namespace Sci {

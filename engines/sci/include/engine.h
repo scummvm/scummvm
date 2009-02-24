@@ -37,7 +37,7 @@ namespace Common {
 #include "sci/include/vocabulary.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/script.h"
-#include "sci/include/sciconsole.h"
+#include "sci/scicore/sciconsole.h"
 #include "sci/include/versions.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_state_internal.h"

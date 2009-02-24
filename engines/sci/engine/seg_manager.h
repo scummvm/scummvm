@@ -26,7 +26,6 @@
 #ifndef _SCI_SEG_MANAGER_H
 #define _SCI_SEG_MANAGER_H
 
-#include "sci/engine/intmap.h"
 #include "sci/engine/vm.h"
 
 namespace Sci {

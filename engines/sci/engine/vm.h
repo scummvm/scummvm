@@ -30,10 +30,10 @@
 
 #include "sci/include/versions.h"	// for sci_version_t
 #include "sci/include/vm_types.h"	// for reg_t
-#include "sci/include/sys_strings.h"
 #include "sci/include/heapmgr.h"
 
 #include "sci/engine/intmap.h"
+#include "sci/engine/sys_strings.h"
 
 namespace Sci {
 

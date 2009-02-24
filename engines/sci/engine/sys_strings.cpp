@@ -24,7 +24,7 @@
  */
 
 #include "sci/tools.h"
-#include "sci/include/sys_strings.h"
+#include "sci/engine/sys_strings.h"
 #include "sci/sci_memory.h"
 
 namespace Sci {

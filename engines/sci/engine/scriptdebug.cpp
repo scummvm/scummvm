@@ -28,7 +28,7 @@
 #include "sci/engine/gc.h"
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
-#include "sci/include/sciconsole.h"
+#include "sci/scicore/sciconsole.h"
 #include "sci/engine/kdebug.h"
 #include "sci/include/vocabulary.h"
 #include "sci/engine/kernel.h"
