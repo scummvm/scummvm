@@ -150,6 +150,9 @@
 				RelativePath="..\..\engines\sci\engine\intmap.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\kdebug.cpp">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\kdebug.h">
 			</File>
 			<File

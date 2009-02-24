@@ -211,6 +211,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\kdebug.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\kdebug.h"
 				>
 			</File>
