@@ -90,7 +90,7 @@ static inline stack_ptr_t validate_stack_addr(EngineState *s, stack_ptr_t sp) {
 
 	script_debug_flag = script_error_flag = 1;
 	if (sci_debug_flags & 4)
-		sciprintf("[VM] Stack index %d out of valid range [%d..%d]\n", sp - s->stack_base, 0, s->stack_top - s->stack_base - 1);
+		sciprintf("[VM] Stack index %d out of valid range [%d..%d]\n", (int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
 	return 0;
 }
 
@@ -1462,7 +1462,7 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 		if (xs != s->execution_stack + s->execution_stack_pos) {
-			sciprintf("Error: xs is stale (%d vs %d); last command was %02x\n", xs - s->execution_stack, s->execution_stack_pos, opnumber);
+			sciprintf("Error: xs is stale (%d vs %d); last command was %02x\n", (int)(xs - s->execution_stack), s->execution_stack_pos, opnumber);
 		}
 #endif
 		if (script_error_flag) {

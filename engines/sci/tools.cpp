@@ -121,7 +121,7 @@ void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int l
 		else if (area == SCIkWARNING_NR)
 			fprintf(stderr, "%s: Warning ", funcname);
 		else
-			fprintf(stderr, funcname);
+			fprintf(stderr, "%s", funcname);
 
 		fprintf(stderr, "(%s L%d): ", file, line);
 

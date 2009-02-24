@@ -380,7 +380,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 		script_t *scr = &(mobj->data.script);
 		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
 		if (scr->export_table)
-			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, ((byte *)scr->export_table) - ((byte *)scr->buf));
+			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
 		else
 			sciprintf("  Exports: none\n");
 
