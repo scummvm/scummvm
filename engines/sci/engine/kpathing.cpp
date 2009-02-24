@@ -38,36 +38,35 @@ namespace Sci {
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 
-#define POLY_GET_POINT(p, i, x, y) \
-				do { \
-					x = getInt16((p) + (i) * POLY_POINT_SIZE); \
-					y = getInt16((p) + (i) * POLY_POINT_SIZE + 2); \
-				} while (0)
+static void POLY_GET_POINT(byte *p, int i, Common::Point &pt) {
+	pt.x = getInt16((p) + (i) * POLY_POINT_SIZE);
+	pt.y = getInt16((p) + (i) * POLY_POINT_SIZE + 2);
+}
 
-#define POLY_SET_POINT(p, i, x, y) \
-				do { \
-					putInt16((p) + (i) * POLY_POINT_SIZE, x); \
-					putInt16((p) + (i) * POLY_POINT_SIZE + 2, y); \
-				} while (0)
+static void POLY_SET_POINT(byte *p, int i, const Common::Point &pt) {
+	putInt16((p) + (i) * POLY_POINT_SIZE, pt.x);
+	putInt16((p) + (i) * POLY_POINT_SIZE + 2, pt.y);
+}
 
-#define POLY_GET_POINT_REG_T(p, i, x, y) \
-				do { \
-					x = KP_SINT((p)[(i) * 2]); \
-					y = KP_SINT((p)[(i) * 2 + 1]); \
-			} while (0)
+static void POLY_GET_POINT_REG_T(reg_t *p, int i, Common::Point &pt) {
+	pt.x = KP_SINT((p)[(i) * 2]);
+	pt.y = KP_SINT((p)[(i) * 2 + 1]);
+}
 
 // SCI-defined polygon types
-#define POLY_TOTAL_ACCESS 0
-#define POLY_NEAREST_ACCESS 1
-#define POLY_BARRED_ACCESS 2
-#define POLY_CONTAINED_ACCESS 3
+enum {
+	POLY_TOTAL_ACCESS = 0,
+	POLY_NEAREST_ACCESS = 1,
+	POLY_BARRED_ACCESS = 2,
+	POLY_CONTAINED_ACCESS = 3
+};
 
 // Polygon containment types
-#define CONT_OUTSIDE 0
-#define CONT_ON_EDGE 1
-#define CONT_INSIDE 2
-
-#define POINT_EQUAL(A, B) (((A).x == (B).x) && ((A).y == (B).y))
+enum {
+	CONT_OUTSIDE = 0,
+	CONT_ON_EDGE = 1,
+	CONT_INSIDE = 2
+};
 
 #define HUGE_DISTANCE 1e10
 
@@ -78,12 +77,14 @@ namespace Sci {
 #define IS_VISIBLE(S, P, Q) (((S)->vis_matrix[(P) * VIS_MATRIX_ROW_SIZE((S)->vertices) \
 	+ (Q) / 8] & (1 << ((Q) % 8))) != 0)
 
-#define VERTEX_HAS_EDGES(V) ((V) != CLIST_NEXT(V, entries))
+#define VERTEX_HAS_EDGES(V) ((V) != CLIST_NEXT(V))
 
 // Error codes
-#define PF_OK 0
-#define PF_ERROR -1
-#define PF_FATAL -2
+enum {
+	PF_OK = 0,
+	PF_ERROR = -1,
+	PF_FATAL = -2
+};	
 
 // Floating point struct
 struct FloatPoint {
@@ -168,15 +169,15 @@ public:
 
 /* Circular list definitions. */
 
-#define CLIST_FOREACH(var, head, field)					\
+#define CLIST_FOREACH(var, head)					\
 	for ((var) = (head)->first();					\
 		(var);							\
-		(var) = ((var)->field.cle_next == (head)->first() ?	\
-		    NULL : (var)->field.cle_next))
+		(var) = ((var)->entries.cle_next == (head)->first() ?	\
+		    NULL : (var)->entries.cle_next))
 
 /* Circular list access methods. */
-#define CLIST_NEXT(elm, field)		((elm)->field.cle_next)
-#define CLIST_PREV(elm, field)		((elm)->field.cle_prev)
+#define CLIST_NEXT(elm)		((elm)->entries.cle_next)
+#define CLIST_PREV(elm)		((elm)->entries.cle_prev)
 
 
 struct Polygon {
@@ -243,9 +244,9 @@ static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
 	Common::Point point;
 
 	if (!is_reg_t) {
-		POLY_GET_POINT(list, offset, point.x, point.y);
+		POLY_GET_POINT(list, offset, point);
 	} else {
-		POLY_GET_POINT_REG_T((reg_t *)list, offset, point.x, point.y);
+		POLY_GET_POINT_REG_T((reg_t *)list, offset, point);
 	}
 
 	return point;
@@ -496,15 +497,15 @@ static int contained(Common::Point p, Polygon *polygon) {
 	Vertex *vertex;
 
 	// Iterate over edges
-	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+	CLIST_FOREACH(vertex, &polygon->vertices) {
 		Common::Point v1 = vertex->v;
-		Common::Point v2 = CLIST_NEXT(vertex, entries)->v;
+		Common::Point v2 = CLIST_NEXT(vertex)->v;
 
 		// Flags for ray straddling left and right
 		int rstrad, lstrad;
 
 		// Check if p is a vertex
-		if (POINT_EQUAL(p, v1))
+		if (p == v1)
 			return CONT_ON_EDGE;
 
 		// Check if edge straddles the ray
@@ -557,11 +558,11 @@ static int polygon_area(Polygon *polygon) {
 	Vertex *v;
 	int size = 0;
 
-	v = CLIST_NEXT(first, entries);
+	v = CLIST_NEXT(first);
 
-	while (CLIST_NEXT(v, entries) != first) {
-		size += area(first->v, v->v, CLIST_NEXT(v, entries)->v);
-		v = CLIST_NEXT(v, entries);
+	while (CLIST_NEXT(v) != first) {
+		size += area(first->v, v->v, CLIST_NEXT(v)->v);
+		v = CLIST_NEXT(v);
 	}
 
 	return size;
@@ -572,7 +573,6 @@ static void fix_vertex_order(Polygon *polygon) {
 	// polygons should have their vertices ordered clockwise, all other types
 	// anti-clockwise
 	// Parameters: (Polygon *) polygon: The polygon
-	// Returns   : (void)
 	int area = polygon_area(polygon);
 
 	// When the polygon area is positive the vertices are ordered
@@ -606,7 +606,7 @@ static int vertex_compare(const void *a, const void *b) {
 	Common::Point p1 = (*(Vertex **) a)->v;
 	Common::Point p2 = (*(Vertex **) b)->v;
 
-	if (POINT_EQUAL(p1, p2))
+	if (p1 == p2)
 		return 0;
 
 	// Points above p0 have larger angle than points below p0
@@ -650,17 +650,15 @@ static void clockwise(Vertex *v, Common::Point *p1, Common::Point *p2) {
 	// Returns   : (void)
 	//             (Common::Point) *p1: The first point in clockwise order
 	//             (Common::Point) *p2: The second point in clockwise order
-	Vertex *w = CLIST_NEXT(v, entries);
+	Vertex *w = CLIST_NEXT(v);
 
 	if (left_on(vertex_cur->v, w->v, v->v)) {
 		*p1 = v->v;
 		*p2 = w->v;
-		return;
+	} else {
+		*p1 = w->v;
+		*p2 = v->v;
 	}
-
-	*p1 = w->v;
-	*p2 = v->v;
-	return;
 }
 
 static int edge_compare(const void *a, const void *b) {
@@ -679,8 +677,8 @@ static int edge_compare(const void *a, const void *b) {
 
 	// Order vertices clockwise so we know vertex_cur is to the right of
 	// directed edges (v1, v2) and (w1, w2)
-	clockwise((Vertex *) a, &v1, &v2);
-	clockwise((Vertex *) b, &w1, &w2);
+	clockwise((Vertex *)a, &v1, &v2);
+	clockwise((Vertex *)b, &w1, &w2);
 
 	// As the edges do not properly intersect one edge must lie entirely
 	// to one side of another. Note that the special case where edges are
@@ -712,8 +710,8 @@ static int inside(Common::Point p, Vertex *vertex) {
 	//                   the polygon, locally at the vertex. 0 otherwise
 	// Check that it's not a single-vertex polygon
 	if (VERTEX_HAS_EDGES(vertex)) {
-		Common::Point prev = CLIST_PREV(vertex, entries)->v;
-		Common::Point next = CLIST_NEXT(vertex, entries)->v;
+		Common::Point prev = CLIST_PREV(vertex)->v;
+		Common::Point next = CLIST_NEXT(vertex)->v;
 		Common::Point cur = vertex->v;
 
 		if (left(prev, cur, next)) {
@@ -779,7 +777,6 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	// updates the visibility matrix
 	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Vertex *) vert: The vertex
-	// Returns   : (void)
 	aatree_t *tree = aatree_new();
 	Common::Point p = vert->v;
 	Polygon *polygon;
@@ -799,13 +796,13 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 
 		// Check that there is more than one vertex.
 		if (VERTEX_HAS_EDGES(vertex))
-			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+			CLIST_FOREACH(vertex, &polygon->vertices) {
 			Common::Point high, low;
 
 			// Add edges that intersect the initial position of the sweeping line
 			clockwise(vertex, &high, &low);
 
-			if ((high.y < p.y) && (low.y >= p.y) && !POINT_EQUAL(low, p))
+			if ((high.y < p.y) && (low.y >= p.y) && (low != p))
 				aatree_insert(vertex, &tree, edge_compare);
 		}
 	}
@@ -824,13 +821,13 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 			SET_VISIBLE(s, vert->idx, vert_sorted[i]->idx);
 
 		// Delete anti-clockwise edges from tree
-		v1 = CLIST_PREV(vert_sorted[i], entries);
+		v1 = CLIST_PREV(vert_sorted[i]);
 		if (left(p, vert_sorted[i]->v, v1->v)) {
 			if (aatree_delete(v1, &tree, edge_compare))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
 		}
 
-		v1 = CLIST_NEXT(vert_sorted[i], entries);
+		v1 = CLIST_NEXT(vert_sorted[i]);
 		if (left(p, vert_sorted[i]->v, v1->v)) {
 			if (aatree_delete(vert_sorted[i], &tree, edge_compare))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
@@ -840,11 +837,11 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 		if ((i < s->vertices - 1) && !collinear(p, vert_sorted[i]->v, vert_sorted[i + 1]->v)) {
 			int j;
 			for (j = i; (j >= 1) && collinear(p, vert_sorted[i]->v, vert_sorted[j]->v); j--) {
-				v1 = CLIST_PREV(vert_sorted[j], entries);
+				v1 = CLIST_PREV(vert_sorted[j]);
 				if (left(vert_sorted[j]->v, p, v1->v))
 					aatree_insert(v1, &tree, edge_compare);
 
-				v1 = CLIST_NEXT(vert_sorted[j], entries);
+				v1 = CLIST_NEXT(vert_sorted[j]);
 				if (left(vert_sorted[j]->v, p, v1->v))
 					aatree_insert(vert_sorted[j], &tree, edge_compare);
 			}
@@ -928,9 +925,9 @@ static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
 	FloatPoint near_p;
 	float dist = HUGE_DISTANCE;
 
-	CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+	CLIST_FOREACH(vertex, &polygon->vertices) {
 		Common::Point p1 = vertex->v;
-		Common::Point p2 = CLIST_NEXT(vertex, entries)->v;
+		Common::Point p2 = CLIST_NEXT(vertex)->v;
 		float w, h, l, u;
 		FloatPoint new_point;
 		float new_dist;
@@ -978,7 +975,7 @@ static int intersection(Common::Point a, Common::Point b, Vertex *vertex, FloatP
 	// Numerator and denominator of equations
 	float num, denom;
 	Common::Point c = vertex->v;
-	Common::Point d = CLIST_NEXT(vertex, entries)->v;
+	Common::Point d = CLIST_NEXT(vertex)->v;
 
 	denom = a.x * (float)(d.y - c.y) + b.x * (float)(c.y - d.y) +
 	        d.x * (float)(b.y - a.y) + c.x * (float)(a.y - b.y);
@@ -1024,7 +1021,7 @@ static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Po
 		polygon = *it;
 		Vertex *vertex;
 
-		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+		CLIST_FOREACH(vertex, &polygon->vertices) {
 			float new_dist;
 			FloatPoint new_isec;
 
@@ -1042,7 +1039,7 @@ static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Po
 
 				// Skip this edge if we hit it from the
 				// inside of the polygon
-				if (!left(vertex->v, CLIST_NEXT(vertex, entries)->v, q))
+				if (!left(vertex->v, CLIST_NEXT(vertex)->v, q))
 					continue;
 
 				if (intersection(p, q, vertex, &new_isec) != PF_OK)
@@ -1099,7 +1096,7 @@ static int fix_point(PathfindingState *s, Common::Point p, Common::Point *ret, P
 		if (near_point(p, (*it), &near_p) == PF_OK) {
 			*ret = near_p;
 
-			if (!POINT_EQUAL(p, *ret))
+			if (p != *ret)
 				*ret_pol = *it;
 
 			return PF_OK;
@@ -1128,9 +1125,10 @@ static Vertex *merge_point(PathfindingState *s, Common::Point v) {
 	// Check for already existing vertex
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
 		polygon = *it;
-		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-		if (POINT_EQUAL(vertex->v, v))
-			return vertex;
+		CLIST_FOREACH(vertex, &polygon->vertices) {
+			if (vertex->v == v)
+				return vertex;
+		}
 	}
 
 	v_new = vertex_new(v);
@@ -1139,14 +1137,15 @@ static Vertex *merge_point(PathfindingState *s, Common::Point v) {
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
 		polygon = *it;
 		// Skip single-vertex polygons
-		if (VERTEX_HAS_EDGES(polygon->vertices.first()))
-			CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-			Vertex *next = CLIST_NEXT(vertex, entries);
-	
-			if (between(vertex->v, next->v, v)) {
-				// Split edge by adding vertex
-				polygon->vertices.insertAfter(vertex, v_new);
-				return v_new;
+		if (VERTEX_HAS_EDGES(polygon->vertices.first())) {
+			CLIST_FOREACH(vertex, &polygon->vertices) {
+				Vertex *next = CLIST_NEXT(vertex);
+		
+				if (between(vertex->v, next->v, v)) {
+					// Split edge by adding vertex
+					polygon->vertices.insertAfter(vertex, v_new);
+					return v_new;
+				}
 			}
 		}
 	}
@@ -1184,7 +1183,6 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 static void free_polygon(Polygon *polygon) {
 	// Frees a polygon and its vertices
 	// Parameters: (Polygon *) polygons: The polygon
-	// Returns   : (void)
 	while (!polygon->vertices.empty()) {
 		Vertex *vertex = polygon->vertices.first();
 		polygon->vertices.remove(vertex);
@@ -1197,7 +1195,6 @@ static void free_polygon(Polygon *polygon) {
 static void free_pf_state(PathfindingState *p) {
 	// Frees a pathfinding state
 	// Parameters: (PathfindingState *) p: The pathfinding state
-	// Returns   : (void)
 	free(p->vertex_index);
 	free(p->vis_matrix);
 
@@ -1213,7 +1210,6 @@ static void change_polygons_opt_0(PathfindingState *s) {
 	// support). Totally accessible polygons are removed and near-point
 	// accessible polygons are changed into totally accessible polygons.
 	// Parameters: (PathfindingState *) s: The pathfinding state
-	// Returns   : (void)
 
 	PolygonList::iterator it = s->polygons.begin();
 	while (it != s->polygons.end()) {
@@ -1309,7 +1305,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		polygon = *it;
 		Vertex *vertex;
 
-		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+		CLIST_FOREACH(vertex, &polygon->vertices) {
 			vertex->idx = count;
 			pf_s->vertex_index[count++] = vertex;
 		}
@@ -1326,15 +1322,15 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 static void visibility_graph(PathfindingState *s) {
 	// Computes the visibility graph
 	// Parameters: (PathfindingState *) s: The pathfinding state
-	// Returns   : (void)
 	Polygon *polygon;
 
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
 		polygon = *it;
 		Vertex *vertex;
 
-		CLIST_FOREACH(vertex, &polygon->vertices, entries)
-		visible_vertices(s, vertex);
+		CLIST_FOREACH(vertex, &polygon->vertices) {
+			visible_vertices(s, vertex);
+		}
 	}
 }
 
@@ -1354,12 +1350,11 @@ static int intersecting_polygons(PathfindingState *s) {
 				continue;
 
 			// Skip neighbouring edges
-			if ((CLIST_NEXT(v1, entries) == v2)
-			        || CLIST_PREV(v1, entries) == v2)
+			if ((CLIST_NEXT(v1) == v2) || CLIST_PREV(v1) == v2)
 				continue;
 
-			if (intersect(v1->v, CLIST_NEXT(v1, entries)->v,
-			              v2->v, CLIST_NEXT(v2, entries)->v))
+			if (intersect(v1->v, CLIST_NEXT(v1)->v,
+			              v2->v, CLIST_NEXT(v2)->v))
 				return 1;
 		}
 	}
@@ -1373,7 +1368,6 @@ static void dijkstra(PathfindingState *s) {
 	// vertex_end back to vertex_start. If no path exists vertex_end->path_prev
 	// will be NULL
 	// Parameters: (PathfindingState *) s: The pathfinding state
-	// Returns   : (void)
 	Polygon *polygon;
 
 	// Vertices of which the shortest path is known
@@ -1387,7 +1381,7 @@ static void dijkstra(PathfindingState *s) {
 		polygon = *it;
 		Vertex *vertex;
 
-		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
+		CLIST_FOREACH(vertex, &polygon->vertices) {
 			remain.push_front(vertex);
 		}
 	}
@@ -1459,12 +1453,12 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 		oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->keep_start)
-			POLY_SET_POINT(oref, 0, p->start.x, p->start.y);
+			POLY_SET_POINT(oref, 0, p->start);
 		else
-			POLY_SET_POINT(oref, 0, p->vertex_start->v.x, p->vertex_start->v.y);
+			POLY_SET_POINT(oref, 0, p->vertex_start->v);
 
-		POLY_SET_POINT(oref, 1, p->vertex_start->v.x, p->vertex_start->v.y);
-		POLY_SET_POINT(oref, 2, POLY_LAST_POINT, POLY_LAST_POINT);
+		POLY_SET_POINT(oref, 1, p->vertex_start->v);
+		POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 		return output;
 	}
@@ -1478,26 +1472,26 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * (path_len + 1 + p->keep_start + p->keep_end), AVOIDPATH_DYNMEM_STRING, &output);
 
 	// Sentinel
-	POLY_SET_POINT(oref, path_len + p->keep_start + p->keep_end, POLY_LAST_POINT, POLY_LAST_POINT);
+	POLY_SET_POINT(oref, path_len + p->keep_start + p->keep_end, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 	// Add original start and end points if needed
 	if (p->keep_end)
-		POLY_SET_POINT(oref, path_len + p->keep_start, p->end.x, p->end.y);
+		POLY_SET_POINT(oref, path_len + p->keep_start, p->end);
 	if (p->keep_start)
-		POLY_SET_POINT(oref, 0, p->start.x, p->start.y);
+		POLY_SET_POINT(oref, 0, p->start);
 
 	i = path_len + p->keep_start - 1;
 
 	if (unreachable) {
 		// Return straight trajectory from start to end
-		POLY_SET_POINT(oref, i - 1, p->vertex_start->v.x, p->vertex_start->v.y);
-		POLY_SET_POINT(oref, i, p->vertex_end->v.x, p->vertex_end->v.y);
+		POLY_SET_POINT(oref, i - 1, p->vertex_start->v);
+		POLY_SET_POINT(oref, i, p->vertex_end->v);
 		return output;
 	}
 
 	vertex = p->vertex_end;
 	while (vertex) {
-		POLY_SET_POINT(oref, i, vertex->v.x, vertex->v.y);
+		POLY_SET_POINT(oref, i, vertex->v);
 		vertex = vertex->path_prev;
 		i--;
 	}
@@ -1506,7 +1500,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 		sciprintf("[avoidpath] Returning path:");
 		for (i = 0; i < path_len + p->keep_start + p->keep_end; i++) {
 			Common::Point pt;
-			POLY_GET_POINT(oref, i, pt.x, pt.y);
+			POLY_GET_POINT(oref, i, pt);
 			sciprintf(" (%i, %i)", pt.x, pt.y);
 		}
 		sciprintf("\n");
@@ -1582,9 +1576,9 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3,
 			                                   AVOIDPATH_DYNMEM_STRING, &output);
 
-			POLY_SET_POINT(oref, 0, start.x, start.y);
-			POLY_SET_POINT(oref, 1, end.x, end.y);
-			POLY_SET_POINT(oref, 2, POLY_LAST_POINT, POLY_LAST_POINT);
+			POLY_SET_POINT(oref, 0, start);
+			POLY_SET_POINT(oref, 1, end);
+			POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 			return output;
 		}
