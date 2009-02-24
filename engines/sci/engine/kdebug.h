@@ -63,15 +63,7 @@ struct EngineState;
 
 #ifdef SCI_KERNEL_DEBUG
 
-#ifdef __GNUC__XXX
-
-#define SCIkdebug(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__,  ## arguments)
-
-#else /* !__GNUC__ */
-
 #define SCIkdebug _SCIkdebug
-
-#endif /* !__GNUC__ */
 
 #else /* !SCI_KERNEL_DEBUG */
 
@@ -79,21 +71,11 @@ struct EngineState;
 
 #endif /* !SCI_KERNEL_DEBUG */
 
-
-#ifdef __GNUC__XXX
-
-#define SCIkwarn(arguments...) _SCIGNUkdebug(__PRETTY_FUNCTION__, ## arguments)
-
-#else /* !__GNUC__ */
-
 #define SCIkwarn _SCIkwarn
 
-#endif /* !__GNUC__ */
-
- /* Internal functions */
+/* Internal functions */
 void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char *format, ...);
 void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char *format, ...);
-void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int line, int area, const char *format, ...);
 
 /* If mode=1, enables debugging for specified areas. If mode=0, disables
 ** debugging for specified areas.

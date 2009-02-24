@@ -93,28 +93,4 @@ void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char
 	}
 }
 
-void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int line, int area, const char *format, ...) {
-	va_list xargs;
-	int error = ((area == SCIkWARNING_NR) || (area == SCIkERROR_NR));
-
-	if (error || (s->debug_mode & (1 << area))) { // Is debugging enabled for this area?
-
-		fprintf(stderr, "FSCI: ");
-
-		if (area == SCIkERROR_NR)
-			fprintf(stderr, "ERROR in %s ", funcname);
-		else if (area == SCIkWARNING_NR)
-			fprintf(stderr, "%s: Warning ", funcname);
-		else
-			fprintf(stderr, "%s", funcname);
-
-		fprintf(stderr, "(%s L%d): ", file, line);
-
-		va_start(xargs, format);
-		_SCIkvprintf(stderr, format, xargs);
-		va_end(xargs);
-
-	}
-}
-
 } // End of namespace Sci
