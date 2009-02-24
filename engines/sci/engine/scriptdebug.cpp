@@ -1607,7 +1607,7 @@ static int c_redraw_screen(EngineState *s) {
 	s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
-	gfxop_usleep(s->gfx_state, 10);
+	gfxop_sleep(s->gfx_state, 0);
 
 	return 0;
 }
@@ -1766,7 +1766,7 @@ static int c_gfx_drawpic(EngineState *s) {
 	gfxop_new_pic(s->gfx_state, cmd_params[0].val, flags, default_palette);
 	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
-	gfxop_usleep(s->gfx_state, 0);
+	gfxop_sleep(s->gfx_state, 0);
 
 	return 0;
 }
@@ -1911,7 +1911,7 @@ static int c_gfx_propagate_rect(EngineState *s) {
 	else
 		gfxop_update_box(s->gfx_state, rect);
 	gfxop_update(s->gfx_state);
-	gfxop_usleep(s->gfx_state, 10);
+	gfxop_sleep(s->gfx_state, 0);
 
 	return 0;
 }

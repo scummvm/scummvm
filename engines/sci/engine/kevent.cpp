@@ -45,7 +45,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// waiting!
 		int delay = s->script_000->locals_block->locals[SCI_VARIABLE_GAME_SPEED].offset;
 
-		gfxop_usleep(s->gfx_state, (1000000 * delay) / 60);
+		gfxop_sleep(s->gfx_state, delay * 1000 / 60);
 	}
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the

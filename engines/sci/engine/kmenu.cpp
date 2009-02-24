@@ -276,7 +276,7 @@ about_freesci(EngineState *s) {
 			if (event.type == SCI_EVT_KEYBOARD)
 				cont = 0;
 
-			gfxop_usleep(s->gfx_state, 25000);
+			gfxop_sleep(s->gfx_state, 25);
 		}
 
 
@@ -458,7 +458,7 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				break;
 
 			case SCI_EVT_NONE:
-				gfxop_usleep(s->gfx_state, 2500);
+				gfxop_sleep(s->gfx_state, 2500 / 1000);
 				break;
 			}
 

@@ -30,8 +30,6 @@
 
 #include "common/system.h"
 
-#include <ctype.h>
-
 namespace Sci {
 
 #define PRECISE_PRIORITY_MAP // Duplicate all operations on the local priority map as appropriate
@@ -1362,11 +1360,11 @@ static int _gfxop_full_pointer_refresh(gfx_state_t *state) {
 	return 0;
 }
 
-int gfxop_usleep(gfx_state_t *state, long usecs) {
+int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 	BASIC_CHECKS(GFX_FATAL);
 
 	uint32 time;
-	const uint32 wakeup_time = g_system->getMillis() + usecs / 1000;
+	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
 	while (true) {
 		GFXOP_FULL_POINTER_REFRESH;

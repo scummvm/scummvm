@@ -580,7 +580,7 @@ waitkey(void) {
 		if (event.type)
 			return 0;
 
-		gfxop_usleep(state, 1000);
+		gfxop_sleep(state, 1);
 	}
 	return 1;
 }
@@ -597,7 +597,7 @@ wait_specific_key(int key) {
 		        && event.data == key)
 			return 0;
 
-		gfxop_usleep(state, 1000);
+		gfxop_sleep(state, 1);
 	}
 	return 1;
 }
@@ -800,7 +800,7 @@ test_c(void) {
 	for (i = 0; i <= 40; i++) {
 		gfxop_update_box(state, gfx_rect(i*4, 0 , 4, 150));
 		gfxop_update_box(state, gfx_rect(317 - i*4, 0 , 4, 150));
-		gfxop_usleep(state, 4000);
+		gfxop_sleep(state, 4);
 	}
 
 	gfxop_disable_dirty_frames(state);
@@ -814,7 +814,7 @@ test_c(void) {
 	for (i = 159; i >= 0; i--) {
 		gfxop_update_box(state, gfx_rect(i, 0 , 1, 150));
 		gfxop_update_box(state, gfx_rect(319 - i, 0 , 1, 150));
-		gfxop_usleep(state, 1000);
+		gfxop_sleep(state, 1);
 	}
 
 	clear();
@@ -887,7 +887,7 @@ test_d(void) {
 				gfxop_update_box(state, line);
 			}
 
-		gfxop_usleep(state, 1000);
+		gfxop_sleep(state, 1);
 	}
 
 	event.type = 0;
@@ -929,7 +929,7 @@ test_e(void) {
 		clear_buffer();
 		gfxop_draw_cel(state, 0, 0, 0, gfx_point(x, 40), white, 0);
 		update();
-		gfxop_usleep(state, 10000);
+		gfxop_sleep(state, 10);
 	}
 
 	MESSAGE("E.2: Pic views\nFour pic views will now be added to\nthe static buffer");
@@ -957,7 +957,7 @@ test_e(void) {
 		gfxop_draw_cel(state, 0, 0, 2, gfx_point(x, 20), white8, 0);
 		gfxop_draw_cel(state, 0, 0, 2, gfx_point(x, 100), white16, 0);
 		update();
-		gfxop_usleep(state, 10000);
+		gfxop_sleep(state, 10);
 	}
 
 	gfxop_add_to_pic(state, 1, 0, 0);
@@ -975,7 +975,7 @@ test_e(void) {
 		gfxop_update(state);
 		/*		gfxop_update_box(state, gfx_rect(x-1, 40, 17, 16)); */
 		/*		gfxop_update_box(state, gfx_rect(x-1, 70, 17, 16)); */
-		gfxop_usleep(state, 10000);
+		gfxop_sleep(state, 10);
 	}
 	waitkey();
 }

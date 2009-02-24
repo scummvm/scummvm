@@ -659,7 +659,7 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 
 	sleep_time *= debug_sleeptime_factor;
-	GFX_ASSERT(gfxop_usleep(s->gfx_state, sleep_time * 1000000 / 60));
+	GFX_ASSERT(gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60));
 
 	return s->r_acc;
 }
@@ -2593,7 +2593,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, 319 - i, 10, granularity1, 190, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2605,7 +2605,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, 319 - i, 10, granularity1, 190);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2618,7 +2618,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			gfxop_update(s->gfx_state);
 			GRAPH_BLANK_BOX(s, 0, 199 - i, 320, granularity2, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, 2 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 2 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2630,7 +2630,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			gfxop_update(s->gfx_state);
 			GRAPH_UPDATE_BOX(s, 0, 199 - i, 320, granularity2);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, 2 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 2 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2641,7 +2641,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_BLANK_BOX(s, i, 10, granularity0, 190, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 2 / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2650,7 +2650,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_UPDATE_BOX(s, i, 10, granularity0, 190);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 2 / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2661,7 +2661,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_BLANK_BOX(s, i, 10, granularity0, 190, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 2 / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2671,7 +2671,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_UPDATE_BOX(s, i, 10, granularity0, 190);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay / 2);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 2 / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2682,7 +2682,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 10; i < 199 + granularity1; i += granularity1) {
 			GRAPH_BLANK_BOX(s, 0, i, 320, granularity1, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2692,7 +2692,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_UPDATE_BOX(s, 0, i, 320, granularity1);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2703,7 +2703,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_BLANK_BOX(s, 0, i, 320, granularity1, 0);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		GRAPH_BLANK_BOX(s, 0, 10, 320, 190, 0);
@@ -2713,7 +2713,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		for (i = 10; i < 199 + granularity1; i += granularity1) {
 			GRAPH_UPDATE_BOX(s, 0, i, 320, granularity1);
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay);
+			gfxop_sleep(s->gfx_state, s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2738,7 +2738,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GRAPH_BLANK_BOX(s, width, 200 - height_l - height, 320 - 2 * width, height_l, 0);
 			gfxop_update(s->gfx_state);
 
-			gfxop_usleep(s->gfx_state, 4 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 4 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 
@@ -2761,7 +2761,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GRAPH_UPDATE_BOX(s, width, 200 - height_l - height, 320 - 2 * width, height_l);
 			gfxop_update(s->gfx_state);
 
-			gfxop_usleep(s->gfx_state, 4 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 4 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 
@@ -2786,7 +2786,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GRAPH_BLANK_BOX(s, width, 200 - height_l - height, 320 - 2 * width, height_l, 0);
 			gfxop_update(s->gfx_state);
 
-			gfxop_usleep(s->gfx_state, 7 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 7 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 
@@ -2809,7 +2809,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GRAPH_UPDATE_BOX(s, width, 200 - height_l - height, 320 - 2 * width, height_l);
 			gfxop_update(s->gfx_state);
 
-			gfxop_usleep(s->gfx_state, 7 * s->animation_delay);
+			gfxop_sleep(s->gfx_state, 7 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
 		break;
@@ -2839,7 +2839,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			}
 
 			if (remaining_checkers & 1) {
-				gfxop_usleep(s->gfx_state, s->animation_delay / 4);
+				gfxop_sleep(s->gfx_state, s->animation_delay / 4 / 1000);
 			}
 
 			--remaining_checkers;
@@ -2871,7 +2871,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			}
 
 			if (remaining_checkers & 1) {
-				gfxop_usleep(s->gfx_state, s->animation_delay / 4);
+				gfxop_sleep(s->gfx_state, s->animation_delay / 4 / 1000);
 			}
 
 			--remaining_checkers;
@@ -2886,7 +2886,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(320 - i, 0, i, 190), Common::Point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320 - i, 190), Common::Point(i, 10)));
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
+			gfxop_sleep(s->gfx_state, (s->animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 		break;
@@ -2897,7 +2897,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, i, 190), Common::Point(319 - i, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(i, 0, 320 - i, 190), Common::Point(0, 10)));
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
+			gfxop_sleep(s->gfx_state, (s->animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 		break;
@@ -2908,7 +2908,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 190 - i, 320, i), Common::Point(0, 10)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190 - i), Common::Point(0, 10 + i)));
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
+			gfxop_sleep(s->gfx_state, (s->animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 		break;
@@ -2919,7 +2919,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, 320, i), Common::Point(0, 200 - i)));
 			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, i, 320, 190 - i), Common::Point(0, 10)));
 			gfxop_update(s->gfx_state);
-			gfxop_usleep(s->gfx_state, s->animation_delay >> 3);
+			gfxop_sleep(s->gfx_state, (s->animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 		break;
@@ -3071,11 +3071,11 @@ reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		                  Common::Point(shake_right, shake_down));
 
 		gfxop_update(s->gfx_state);
-		gfxop_usleep(s->gfx_state, 50000);
+		gfxop_sleep(s->gfx_state, 50);
 
 		gfxop_draw_pixmap(s->gfx_state, screen, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		gfxop_update(s->gfx_state);
-		gfxop_usleep(s->gfx_state, 50000);
+		gfxop_sleep(s->gfx_state, 50);
 	}
 
 	gfxop_free_pixmap(s->gfx_state, screen);

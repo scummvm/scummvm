@@ -371,10 +371,10 @@ int gfxop_free_color(gfx_state_t *state, gfx_color_t *color);
 /* Pointer and IO ops */
 /**********************/
 
-int gfxop_usleep(gfx_state_t *state, long usecs);
-/* Suspends program execution for the specified amount of microseconds
+int gfxop_sleep(gfx_state_t *state, uint32 msecs);
+/* Suspends program execution for the specified amount of milliseconds
 ** Parameters: (gfx_state_t *) state: The state affected
-**             (long) usecs: The amount of microseconds to wait
+**             (uint32) usecs: The amount of milliseconds to wait
 ** Returns   : (int) GFX_OK or GFX_ERROR
 ** The mouse pointer will be redrawn continually, if applicable
 */
