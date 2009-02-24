@@ -727,6 +727,7 @@ void script_free_breakpoints(EngineState *s) {
 /*************************************************************/
 
 int game_init(EngineState *s) {
+	// FIXME Use new VM instantiation code all over the place"
 	reg_t game_obj; // Address of the game object
 	dstack_t *stack;
 
@@ -819,10 +820,13 @@ int game_exit(EngineState *s) {
 
 	sciprintf("Freeing miscellaneous data...\n");
 
+	// TODO Free parser segment here
 	if (send_calls_allocated) {
 		free(send_calls);
 		send_calls_allocated = 0;
 	}
+
+	// TODO Free scripts here
 
 	menubar_free(s->menubar);
 
