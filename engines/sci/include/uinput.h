@@ -69,23 +69,9 @@ struct sci_event_t {
 
 
 /* Keycodes of special keys: */
-#define SCI_K_ESC 27
-#define SCI_K_BACKSPACE 8
-#define SCI_K_ENTER 13
-#define SCI_K_TAB '\t'
 #define SCI_K_SHIFT_TAB (0xf << 8)
 
-#define SCI_K_END (79 << 8)
-#define SCI_K_DOWN (80 << 8)
-#define SCI_K_PGDOWN (81 << 8)
-#define SCI_K_LEFT (75 << 8)
 #define SCI_K_CENTER (76 << 8)
-#define SCI_K_RIGHT (77 << 8)
-#define SCI_K_HOME (71 << 8)
-#define SCI_K_UP (72 << 8)
-#define SCI_K_PGUP (73 << 8)
-#define SCI_K_INSERT (82 << 8)
-#define SCI_K_DELETE (83 << 8)
 
 #define SCI_K_F1 (59<<8)
 #define SCI_K_F2 (60<<8)

@@ -382,11 +382,11 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 				if (input.data == Common::KEYCODE_TAB) {
 					// Tab
 					input.type = SCI_EVT_KEYBOARD;
-					input.data = SCI_K_TAB;
+					input.data = Common::KEYCODE_TAB;
 					if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
 						input.character = SCI_K_SHIFT_TAB;
 					else
-						input.character = SCI_K_TAB;
+						input.character = Common::KEYCODE_TAB;
 				}
 			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
 				// F1-F10
@@ -403,34 +403,16 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 				input.type = SCI_EVT_KEYBOARD;
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_UP:
-					input.data = SCI_K_UP;
-					break;
 				case Common::KEYCODE_DOWN:
-					input.data = SCI_K_DOWN;
-					break;
 				case Common::KEYCODE_RIGHT:
-					input.data = SCI_K_RIGHT;
-					break;
 				case Common::KEYCODE_LEFT:
-					input.data = SCI_K_LEFT;
-					break;
 				case Common::KEYCODE_INSERT:
-					input.data = SCI_K_INSERT;
-					break;
 				case Common::KEYCODE_HOME:
-					input.data = SCI_K_HOME;
-					break;
 				case Common::KEYCODE_END:
-					input.data = SCI_K_END;
-					break;
 				case Common::KEYCODE_PAGEUP:
-					input.data = SCI_K_PGUP;
-					break;
 				case Common::KEYCODE_PAGEDOWN:
-					input.data = SCI_K_PGDOWN;
-					break;
 				case Common::KEYCODE_DELETE:
-					input.data = SCI_K_DELETE;
+					input.data = ev.kbd.keycode;
 					break;
 					//TODO: SCI_K_CENTER
 				default:

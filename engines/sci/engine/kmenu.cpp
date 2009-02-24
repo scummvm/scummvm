@@ -29,6 +29,8 @@
 #include "sci/gfx/menubar.h"
 #include "sci/engine/kernel.h"
 
+#include "common/keyboard.h"
+
 namespace Sci {
 
 reg_t
@@ -326,7 +328,7 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int menuc, itemc;
 
 		if ((type == SCI_EVT_KEYBOARD)
-		        && (message == SCI_K_ESC))
+		        && (message == Common::KEYCODE_ESCAPE))
 			menu_mode = 1;
 
 		else if ((type == SCI_EVT_SAID) || message) { /* Don't claim 0 keyboard event */
@@ -403,17 +405,17 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 						s->visual->print(GFXW(s->visual), 0);
 					break;
 
-				case SCI_K_ESC:
+				case Common::KEYCODE_ESCAPE:
 					menu_mode = 0;
 					break;
 
-				case SCI_K_ENTER:
+				case Common::KEYCODE_RETURN:
 					menu_mode = 0;
 					if ((item_nr >= 0) && (menu_nr >= 0))
 						claimed = 1;
 					break;
 
-				case SCI_K_LEFT:
+				case Common::KEYCODE_LEFT:
 					if (menu_nr > 0)
 						--menu_nr;
 					else
@@ -422,7 +424,7 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					item_nr = _menu_go_down(s, menu_nr, -1);
 					break;
 
-				case SCI_K_RIGHT:
+				case Common::KEYCODE_RIGHT:
 					if (menu_nr < (s->menubar->menus_nr - 1))
 						++menu_nr;
 					else
@@ -431,7 +433,7 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					item_nr = _menu_go_down(s, menu_nr, -1);
 					break;
 
-				case SCI_K_UP:
+				case Common::KEYCODE_UP:
 					if (item_nr > -1) {
 
 						do { --item_nr; }
@@ -439,7 +441,7 @@ kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					}
 					break;
 
-				case SCI_K_DOWN: {
+				case Common::KEYCODE_DOWN: {
 					item_nr = _menu_go_down(s, menu_nr, item_nr);
 				}
 				break;
