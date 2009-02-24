@@ -102,12 +102,10 @@ class PathWalker_BR {
 	State _character;
 	State _follower;
 
-	State &_ch;
-
-	void finalizeWalk();
+	void finalizeWalk(State &s);
 	bool directPathExists(const Common::Point &from, const Common::Point &to);
-	void buildPath(uint16 x, uint16 y);
-	bool doWalk(State &s);
+	void buildPath(State &s, uint16 x, uint16 y);
+	void doWalk(State &s);
 	void checkTrap(const Common::Point &p);
 
 public:

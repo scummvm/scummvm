@@ -525,6 +525,8 @@ DECLARE_COMMAND_PARSER(location)  {
 	ctxt.cmd->u._string = strdup(_tokens[1]);
 	ctxt.nextToken++;
 
+	ctxt.cmd->u._startPos.x = -1000;
+	ctxt.cmd->u._startPos2.x = -1000;
 	if (_tokens[ctxt.nextToken][0] != '\0') {
 		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
 			ctxt.cmd->u._startPos.x = atoi(_tokens[ctxt.nextToken]);

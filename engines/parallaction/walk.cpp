@@ -368,15 +368,18 @@ bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Po
 
 void PathWalker_BR::setCharacterPath(AnimationPtr a, uint16 x, uint16 y) {
 	_character._a = a;
-	_ch = _character;
-	buildPath(x, y);
+	_character._first = true;
+	_character._fieldC = 1;
+	buildPath(_character, x, y);
 	_character._active = true;
 }
 
 void PathWalker_BR::setFollowerPath(AnimationPtr a, uint16 x, uint16 y) {
 	_follower._a = a;
-	_ch = _follower;
-	buildPath(x, y);
+	_follower._first = true;
+	_follower._fieldC = 1;
+	_follower._walkDelay = 5;
+	buildPath(_follower, x - 50, y);
 	_follower._active = true;
 }
 
@@ -386,17 +389,17 @@ void PathWalker_BR::stopFollower() {
 }
 
 
-void PathWalker_BR::buildPath(uint16 x, uint16 y) {
+void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	Common::Point foot;
-	_ch._a->getFoot(foot);
+	s._a->getFoot(foot);
 
 	debugC(1, kDebugWalk, "buildPath: from (%i, %i) to (%i, %i)", foot.x, foot.y, x, y);
-	_ch._walkPath.clear();
+	s._walkPath.clear();
 
 	// look for easy path first
 	Common::Point dest(x, y);
 	if (directPathExists(foot, dest)) {
-		_ch._walkPath.push_back(dest);
+		s._walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: direct path found");
 		return;
 	}
@@ -404,13 +407,13 @@ void PathWalker_BR::buildPath(uint16 x, uint16 y) {
 	// look for short circuit cases
 	ZonePtr z0 = _vm->hitZone(kZonePath, x, y);
 	if (!z0) {
-		_ch._walkPath.push_back(dest);
+		s._walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 0");
 		return;
 	}
 	ZonePtr z1 = _vm->hitZone(kZonePath, foot.x, foot.y);
 	if (!z1 || z1 == z0) {
-		_ch._walkPath.push_back(dest);
+		s._walkPath.push_back(dest);
 		debugC(3, kDebugWalk, "buildPath: corner case 1");
 		return;
 	}
@@ -419,7 +422,7 @@ void PathWalker_BR::buildPath(uint16 x, uint16 y) {
 	int id = atoi(z0->_name);
 
 	if (z1->u.path->_lists[id].empty()) {
-		_ch._walkPath.clear();
+		s._walkPath.clear();
 		debugC(3, kDebugWalk, "buildPath: no path");
 		return;
 	}
@@ -427,39 +430,34 @@ void PathWalker_BR::buildPath(uint16 x, uint16 y) {
 	PointList::iterator b = z1->u.path->_lists[id].begin();
 	PointList::iterator e = z1->u.path->_lists[id].end();
 	for ( ; b != e; b++) {
-		_ch._walkPath.push_front(*b);
+		s._walkPath.push_front(*b);
 	}
-	_ch._walkPath.push_back(dest);
+	s._walkPath.push_back(dest);
 	debugC(3, kDebugWalk, "buildPath: complex path");
 }
 
 
-void PathWalker_BR::finalizeWalk() {
+void PathWalker_BR::finalizeWalk(State &s) {
 	_engineFlags &= ~kEngineWalking;
-	_ch._first = true;
-	_ch._fieldC = 1;
 
 	Common::Point foot;
-	_ch._a->getFoot(foot);
+	_character._a->getFoot(foot);
 
 	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
 	if (z && ((z->_flags & kFlagsClosed) == 0)) {
 		_vm->_location._startPosition = z->u.door->_startPos; // foot pos
 		_vm->_location._startFrame = z->u.door->_startFrame;
 
-#if 0
 		// TODO: implement working follower. Must find out a location in which the code is
 		// used and which is stable enough.
-		_followerFootInit.x = -1;
-		if (_follower && z->u.door->startPos2.x != -1) {
-			_followerFootInit.x = z->u.door->startPos2.x;	// foot pos
-			_followerFootInit.y = z->u.door->startPos2.y;	// foot pos
+		if (_follower._active) {
+			_vm->_location._followerStartPosition = z->u.door->_startPos2;	// foot pos
+			_vm->_location._followerStartFrame = z->u.door->_startFrame2;
+		} else {
+			_vm->_location._followerStartPosition.x = -1000;
+			_vm->_location._followerStartPosition.y = -1000;
+			_vm->_location._followerStartFrame = 0;
 		}
-		_followerFootInit.z = -1;
-		if (_follower && z->u.door->startPos2.z != -1) {
-			_followerFootInit.z = z->u.door->startPos2.z;	// foot pos
-		}
-#endif
 
 		_vm->scheduleLocationSwitch(z->u.door->_location);
 		_vm->_cmdExec->run(z->_commands, z);
@@ -467,8 +465,6 @@ void PathWalker_BR::finalizeWalk() {
 
 #if 0
 	// TODO: Input::walkTo must be extended to support destination frame in addition to coordinates
-	// TODO: the frame argument must be passed to PathWalker through PathBuilder, so probably
-	// a merge between the two Path managers is the right solution
 	if (_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
 		_engineFlags &= ~FINAL_WALK_FRAME;
 		_ch._a->_frame = _moveToF; 	// from readInput()...
@@ -478,7 +474,7 @@ void PathWalker_BR::finalizeWalk() {
 	_ch._a->setFoot(foot);
 #endif
 
-	_ch._a->setF(_ch._dirFrame);	// temporary solution
+	s._a->setF(s._dirFrame);	// temporary solution
 
 #if 0
 	// TODO: support scrolling ;)
@@ -488,7 +484,7 @@ void PathWalker_BR::finalizeWalk() {
 	if (foot.y < 80) _gfx->scrollUp(100);
 #endif
 
-	return;
+	s._active = false;
 }
 
 void PathWalker_BR::walk() {
@@ -496,12 +492,12 @@ void PathWalker_BR::walk() {
 		return;
 	}
 
-	bool finalize = doWalk(_character);
+	debugC(3, kDebugWalk, "PathWalker_BR::walk()");
+
+	doWalk(_character);
 	doWalk(_follower);
 
-	if (finalize) {
-		finalizeWalk();
-	}
+	debugC(3, kDebugWalk, "PathWalker_BR::walk() -> done");
 }
 
 void PathWalker_BR::checkTrap(const Common::Point &p) {
@@ -530,12 +526,12 @@ void PathWalker_BR::checkTrap(const Common::Point &p) {
 	_vm->_zoneTrap = z;
 }
 
-bool PathWalker_BR::doWalk(State &s) {
+void PathWalker_BR::doWalk(State &s) {
 	if (!s._active) {
-		return false;
+		return;
 	}
 
-	_ch = s;
+	debugC(3, kDebugWalk, "PathWalker_BR::doWalk(%s)", s._a->_name);
 
 #if 0
 	// TODO: support delays in walking. This requires extending Input::walkIo().
@@ -547,119 +543,122 @@ bool PathWalker_BR::doWalk(State &s) {
 			Script *script = findScript(_ch._ani->_scriptName);
 			script->_nextCommand = script->firstCommand;
 		}
-		return false;
+		return;
 	}
 #endif
 
-	if (_ch._fieldC == 0) {
-		_ch._walkPath.erase(_ch._walkPath.begin());
+	if (s._fieldC == 0) {
+		s._walkPath.erase(s._walkPath.begin());
 
-		if (_ch._walkPath.empty()) {
-			debugC(3, kDebugWalk, "PathWalker_BR::walk, case 0");
-			return true;
+		if (s._walkPath.empty()) {
+			finalizeWalk(s);
+			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 0");
+			return;
 		} else {
-			debugC(3, kDebugWalk, "PathWalker_BR::walk, moving to next node");
+			debugC(3, kDebugWalk, "PathWalker_BR::doWalk, moving to next node");
 		}
 	}
 
-	_ch._a->getFoot(_ch._startFoot);
+	s._a->getFoot(s._startFoot);
 
-	uint scale = _vm->_location.getScale(_ch._startFoot.y);
+	uint scale = _vm->_location.getScale(s._startFoot.y);
 	int xStep = (scale * 16) / 100 + 1;
 	int yStep = (scale * 10) / 100 + 1;
 
 	debugC(9, kDebugWalk, "calculated step: (%i, %i)", xStep, yStep);
 
-	_ch._fieldC = 0;
-	_ch._step++;
-	_ch._step %= 8;
+	s._fieldC = 0;
+	s._step++;
+	s._step %= 8;
 
 	int maxX = _vm->_gfx->_backgroundInfo->width;
 	int minX = 0;
 	int maxY = _vm->_gfx->_backgroundInfo->height;
 	int minY = 0;
 
-	int walkFrame = _ch._step;
-	_ch._dirFrame = 0;
-	Common::Point newpos(_ch._startFoot), delta;
+	int walkFrame = s._step;
+	s._dirFrame = 0;
+	Common::Point newpos(s._startFoot), delta;
 
-	Common::Point p(*_ch._walkPath.begin());
+	Common::Point p(*s._walkPath.begin());
 
-	if (_ch._startFoot.y < p.y && _ch._startFoot.y < maxY && IS_PATH_CLEAR(_ch._startFoot.x, yStep + _ch._startFoot.y)) {
-		if (yStep + _ch._startFoot.y <= p.y) {
-			_ch._fieldC = 1;
+	if (s._startFoot.y < p.y && s._startFoot.y < maxY && IS_PATH_CLEAR(s._startFoot.x, yStep + s._startFoot.y)) {
+		if (yStep + s._startFoot.y <= p.y) {
+			s._fieldC = 1;
 			delta.y = yStep;
-			newpos.y = yStep + _ch._startFoot.y;
+			newpos.y = yStep + s._startFoot.y;
 		} else {
-			delta.y = p.y - _ch._startFoot.y;
+			delta.y = p.y - s._startFoot.y;
 			newpos.y = p.y;
 		}
-		_ch._dirFrame = 9;
+		s._dirFrame = 9;
 	} else
-	if (_ch._startFoot.y > p.y && _ch._startFoot.y > minY && IS_PATH_CLEAR(_ch._startFoot.x, _ch._startFoot.y - yStep)) {
-		if (_ch._startFoot.y - yStep >= p.y) {
-			_ch._fieldC = 1;
+	if (s._startFoot.y > p.y && s._startFoot.y > minY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y - yStep)) {
+		if (s._startFoot.y - yStep >= p.y) {
+			s._fieldC = 1;
 			delta.y = yStep;
-			newpos.y = _ch._startFoot.y - yStep;
+			newpos.y = s._startFoot.y - yStep;
 		} else {
-			delta.y = _ch._startFoot.y - p.y;
+			delta.y = s._startFoot.y - p.y;
 			newpos.y = p.y;
 		}
-		_ch._dirFrame = 0;
+		s._dirFrame = 0;
 	}
 
-	if (_ch._startFoot.x < p.x && _ch._startFoot.x < maxX && IS_PATH_CLEAR(_ch._startFoot.x + xStep, _ch._startFoot.y)) {
-		if (_ch._startFoot.x + xStep <= p.x) {
-			_ch._fieldC = 1;
+	if (s._startFoot.x < p.x && s._startFoot.x < maxX && IS_PATH_CLEAR(s._startFoot.x + xStep, s._startFoot.y)) {
+		if (s._startFoot.x + xStep <= p.x) {
+			s._fieldC = 1;
 			delta.x = xStep;
-			newpos.x = xStep + _ch._startFoot.x;
+			newpos.x = xStep + s._startFoot.x;
 		} else {
-			delta.x = p.x - _ch._startFoot.x;
+			delta.x = p.x - s._startFoot.x;
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			_ch._dirFrame = 18;	// right
+			s._dirFrame = 18;	// right
 		}
 	} else
-	if (_ch._startFoot.x > p.x && _ch._startFoot.x > minX && IS_PATH_CLEAR(_ch._startFoot.x - xStep, _ch._startFoot.y)) {
-		if (_ch._startFoot.x - xStep >= p.x) {
-			_ch._fieldC = 1;
+	if (s._startFoot.x > p.x && s._startFoot.x > minX && IS_PATH_CLEAR(s._startFoot.x - xStep, s._startFoot.y)) {
+		if (s._startFoot.x - xStep >= p.x) {
+			s._fieldC = 1;
 			delta.x = xStep;
-			newpos.x = _ch._startFoot.x - xStep;
+			newpos.x = s._startFoot.x - xStep;
 		} else {
-			delta.x = _ch._startFoot.x - p.x;
+			delta.x = s._startFoot.x - p.x;
 			newpos.x = p.x;
 		}
 		if (delta.y < delta.x) {
-			_ch._dirFrame = 27;	// left
+			s._dirFrame = 27;	// left
 		}
 	}
 
-	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i ", _ch._startFoot.x, _ch._startFoot.y, p.x, p.y, delta.x, delta.y);
+	debugC(9, kDebugWalk, "foot (%i, %i) dest (%i, %i) deltas = %i/%i ", s._startFoot.x, s._startFoot.y, p.x, p.y, delta.x, delta.y);
 
-	if (_ch._fieldC) {
-		debugC(9, kDebugWalk, "PathWalker_BR::walk, foot moved from (%i, %i) to (%i, %i)", _ch._startFoot.x, _ch._startFoot.y, newpos.x, newpos.y);
-		_ch._a->setF(walkFrame + _ch._dirFrame + 1);
-		_ch._startFoot.x = newpos.x;
-		_ch._startFoot.y = newpos.y;
-		_ch._a->setFoot(_ch._startFoot);
-		_ch._a->setZ(newpos.y);
+	if (s._fieldC) {
+		debugC(9, kDebugWalk, "PathWalker_BR::doWalk, foot moved from (%i, %i) to (%i, %i)", s._startFoot.x, s._startFoot.y, newpos.x, newpos.y);
+		s._a->setF(walkFrame + s._dirFrame + 1);
+		s._startFoot.x = newpos.x;
+		s._startFoot.y = newpos.y;
+		s._a->setFoot(s._startFoot);
+		s._a->setZ(newpos.y);
 	}
 
-	if (_ch._fieldC || !_ch._walkPath.empty()) {
+	if (s._fieldC || !s._walkPath.empty()) {
 		Common::Point p;
-		_ch._a->getFoot(p);
+		s._a->getFoot(p);
 		checkTrap(p);
-		debugC(3, kDebugWalk, "PathWalker_BR::walk, case 1");
-		return false;
+		debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 1");
+		return;
 	}
 
-	debugC(3, kDebugWalk, "PathWalker_BR::walk, case 2");
-	return true;
+	debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 2");
+	finalizeWalk(s);
+	return;
 }
 
-PathWalker_BR::PathWalker_BR() : _ch(_character) {
-
+PathWalker_BR::PathWalker_BR() {
+	_character._active = false;
+	_follower._active = false;
 }
 
 

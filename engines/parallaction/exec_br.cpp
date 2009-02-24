@@ -116,6 +116,11 @@ void Parallaction_br::clearSubtitles() {
 DECLARE_COMMAND_OPCODE(location) {
 	warning("Parallaction_br::cmdOp_location command not yet implemented");
 
+	_vm->_location._startPosition = _ctxt.cmd->u._startPos;
+	_vm->_location._startFrame = 0; // TODO: verify this against the disassembly!f
+	_vm->_location._followerStartPosition = _ctxt.cmd->u._startPos2;
+	_vm->_location._followerStartFrame = 0;
+
 	// TODO: handle startPos and startPos2
 	_vm->scheduleLocationSwitch(_ctxt.cmd->u._string);
 }

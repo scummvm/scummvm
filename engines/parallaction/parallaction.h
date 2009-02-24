@@ -153,6 +153,8 @@ struct Location {
 	int			_zeta1;
 	int			_zeta2;
 	CommandList		_escapeCommands;
+	Common::Point	_followerStartPosition;
+	uint16			_followerStartFrame;
 
 protected:
 	void freeAnimations();

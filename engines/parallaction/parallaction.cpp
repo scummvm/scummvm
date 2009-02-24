@@ -111,6 +111,9 @@ Common::Error Parallaction::init() {
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
+	_location._followerStartPosition.x = -1000;
+	_location._followerStartPosition.y = -1000;
+	_location._followerStartFrame = 0;
 	_objects = 0;
 
 	_screenSize = _screenWidth * _screenHeight;

@@ -202,6 +202,8 @@ void Parallaction_br::freeLocation(bool removeAll) {
 
 	_gfx->freeLocationObjects();
 
+	// TODO: avoid removing needed animations from 'common.slf'
+	// when cleaning up!!!
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);
 	_location._animations.push_front(_char._ani);
@@ -261,14 +263,26 @@ void Parallaction_br::changeLocation(char *location) {
 	// load new location
 	parseLocation(location);
 
-	setFollower(_followerName);
-
 	if (_location._startPosition.x != -1000) {
-		_char.setFoot(_location._startPosition);
+		_char._ani->setFoot(_location._startPosition);
 		_char._ani->setF(_location._startFrame);
-		_location._startPosition.y = -1000;
-		_location._startPosition.x = -1000;
 	}
+
+	// re-link the follower animation
+	setFollower(_followerName);
+	if (_follower) {
+		Common::Point p = _location._followerStartPosition;
+		if (p.x == -1000) {
+			_char._ani->getFoot(p);
+		}
+		_follower->setFoot(p);
+		_follower->setF(_location._followerStartFrame);
+	}
+
+	_location._startPosition.x = -1000;
+	_location._startPosition.y = -1000;
+	_location._followerStartPosition.x = -1000;
+	_location._followerStartPosition.y = -1000;
 
 	// kFlagsRemove is cleared because the character is visible by default.
 	// Commands can hide the character, anyway.

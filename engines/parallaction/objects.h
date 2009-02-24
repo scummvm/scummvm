@@ -229,6 +229,9 @@ struct DoorData {
 	GfxObj	*gfxobj;
 	Common::Point	_startPos;
 	uint16	_startFrame;
+	// BRA specific
+	Common::Point	_startPos2;
+	uint16	_startFrame2;
 
 	DoorData() {
 		_location = NULL;
