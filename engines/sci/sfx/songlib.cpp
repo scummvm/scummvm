@@ -24,49 +24,14 @@
  */
 
 #include <stdio.h>
+
+#include "sci/tools.h"
 #include "sci/sfx/sfx_engine.h"
 #include "sci/sci_memory.h"
 
 namespace Sci {
 
 #define debug_stream stderr
-
-GTimeVal song_sleep_time(GTimeVal *lastslept, long ticks) {
-	GTimeVal tv;
-	long timetosleep;
-	long timeslept; /* Time already slept */
-	timetosleep = ticks * SOUND_TICK; /* Time to sleep in us */
-
-	sci_get_current_time(&tv);
-	timeslept = 1000000 * (tv.tv_sec - lastslept->tv_sec) +
-	            tv.tv_usec - lastslept->tv_usec;
-
-	timetosleep -= timeslept;
-
-	if (timetosleep < 0)
-		timetosleep = 0;
-
-	tv.tv_sec = timetosleep / 1000000;
-	tv.tv_usec = timetosleep % 1000000;
-
-	return tv;
-}
-
-
-GTimeVal song_next_wakeup_time(GTimeVal *lastslept, long ticks) {
-	GTimeVal retval;
-
-	retval.tv_sec = lastslept->tv_sec + (ticks / 60);
-	retval.tv_usec = lastslept->tv_usec + ((ticks % 60) * SOUND_TICK);
-
-	if (retval.tv_usec >= 1000000) {
-		retval.tv_usec -= 1000000;
-		++retval.tv_sec;
-	}
-
-	return retval;
-}
-
 
 song_t *song_new(song_handle_t handle, song_iterator_t *it, int priority) {
 	song_t *retval;

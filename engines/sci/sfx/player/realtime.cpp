@@ -27,8 +27,11 @@
 ** prays for some reasonable amount of soft real-time, but it's close
 ** enough, I guess.  */
 
+#include "sci/tools.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/sfx/sequencer.h"
+
+#include "common/system.h"
 
 namespace Sci {
 
@@ -38,38 +41,14 @@ extern sfx_player_t sfx_player_realtime;
 
 /* Playing mechanism */
 
-static inline GTimeVal
-current_time(void) {
-	GTimeVal tv;
-	sci_get_current_time(&tv);
-	return tv;
-}
-
-static inline GTimeVal
-add_time_delta(GTimeVal tv, long delta) {
-	int sec_d;
-
-	tv.tv_usec += delta;
-	sec_d = tv.tv_usec / 1000000;
-	tv.tv_usec -= sec_d * 1000000;
-
-	tv.tv_sec += sec_d;
-
-	return tv;
-}
-
-static inline long
-delta_time(GTimeVal comp_tv, GTimeVal base) {
-	GTimeVal tv;
-	sci_get_current_time(&tv);
-	return (comp_tv.tv_sec - tv.tv_sec) * 1000000
-	       + (comp_tv.tv_usec - tv.tv_usec);
+static inline int delta_time(const uint32 comp, const uint32 base) {
+	return long(comp) - long(base);
 }
 
 static song_iterator_t *play_it = NULL;
-static GTimeVal play_last_time;
-static GTimeVal play_pause_started; /* Beginning of the last pause */
-static GTimeVal play_pause_counter; /* Last point in time to mark a
+static uint32 play_last_time;
+static uint32 play_pause_started; /* Beginning of the last pause */
+static uint32 play_pause_counter; /* Last point in time to mark a
 				    ** play position augmentation  */
 static int play_paused = 0;
 static int play_it_done = 0;
@@ -77,20 +56,19 @@ static int play_writeahead = 0;
 static int play_moredelay = 0;
 
 static void
-play_song(song_iterator_t *it, GTimeVal *wakeup_time, int writeahead_time) {
+play_song(song_iterator_t *it, uint32 *wakeup_time, int writeahead_time) {
 	unsigned char buf[8];
 	int result;
 
 	if (play_paused) {
-		GTimeVal ct;
-		sci_get_current_time(&ct);
+		uint32 ct = g_system->getMillis();
 
-		*wakeup_time =
-		    add_time_delta(*wakeup_time, delta_time(play_pause_counter, ct));
+		*wakeup_time += delta_time(play_pause_counter, ct);
+
 		play_pause_counter = ct;
 	} else
 		/* Not paused: */
-		while (play_it && delta_time(*wakeup_time, current_time())
+		while (play_it && delta_time(*wakeup_time, g_system->getMillis())
 		        < writeahead_time) {
 			int delay;
 
@@ -121,7 +99,7 @@ play_song(song_iterator_t *it, GTimeVal *wakeup_time, int writeahead_time) {
 
 			default:
 				play_moredelay = delay - 1;
-				*wakeup_time = song_next_wakeup_time(wakeup_time, delay);
+				*wakeup_time += delay * SOUND_TICK;
 				if (seq->delay)
 					seq->delay(delay);
 			}
@@ -137,12 +115,12 @@ static void
 rt_timer_callback(void) {
 	if (play_it && !play_it_done) {
 		if (!play_moredelay) {
-			long delta = delta_time(play_last_time, current_time());
+			int delta = delta_time(play_last_time, g_system->getMillis());
 
 			if (delta < 0) {
 				play_writeahead -= (int)((double)delta * 1.2); /* Adjust upwards */
-			} else if (delta > 15000) {
-				play_writeahead -= 2500; /* Adjust downwards */
+			} else if (delta > 15) {
+				play_writeahead -= 3; /* Adjust downwards */
 			}
 		} else --play_moredelay;
 
@@ -179,7 +157,6 @@ static int
 rt_init(ResourceManager *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
-	GTimeVal foo = {0, 0};
 
 	seq = sfx_find_sequencer(NULL);
 
@@ -209,16 +186,16 @@ rt_init(ResourceManager *resmgr, int expected_latency) {
 	if (play_writeahead < seq->min_write_ahead_ms)
 		play_writeahead = seq->min_write_ahead_ms;
 
-	play_writeahead *= 1000; /* microseconds */
+	play_writeahead *= 1; /* milliseconds */
 
 	if (seq->reset_timer)
-		seq->reset_timer(foo);
+		seq->reset_timer(0);
 
 	return SFX_OK;
 }
 
 static int
-rt_add_iterator(song_iterator_t *it, GTimeVal start_time) {
+rt_add_iterator(song_iterator_t *it, uint32 start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -264,7 +241,7 @@ rt_send_iterator_message(song_iterator_message_t msg) {
 
 static int
 rt_pause(void) {
-	sci_get_current_time(&play_pause_started);
+	play_pause_started = g_system->getMillis();
 	/* Also, indicate that we haven't modified the time counter
 	** yet  */
 	play_pause_counter = play_pause_started;

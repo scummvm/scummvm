@@ -26,12 +26,16 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include <stdio.h>
+
+#include "sci/tools.h"
 #include "sci/sfx/sfx_timer.h"
 #include "sci/sfx/sfx_iterator_internal.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/sfx/mixer.h"
 #include "sci/include/sci_midi.h"
+
 #include "common/mutex.h"
+#include "common/system.h"
 
 namespace Sci {
 
@@ -49,9 +53,6 @@ extern sfx_timer_t sfx_timer_scummvm;
 extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
 
 Common::Mutex* callbackMutex;
-
-
-#define MILLION 1000000
 
 int sfx_pcm_available() {
 	return (pcm_device != NULL);
@@ -76,41 +77,16 @@ int sfx_get_player_polyphony() {
 		return 0;
 }
 
-static long time_minus(GTimeVal t1, GTimeVal t2) {
-	return (t1.tv_sec - t2.tv_sec) * MILLION + (t1.tv_usec - t2.tv_usec);
-}
-
-static GTimeVal time_plus(GTimeVal t1, long delta) {
-	if (delta > 0)
-		t1.tv_usec += delta % MILLION;
-	else
-		t1.tv_usec -= (-delta) % MILLION;
-
-	t1.tv_sec += delta / MILLION;
-
-	if (t1.tv_usec > MILLION) {
-		t1.tv_sec++;
-		t1.tv_usec -= MILLION;
-	}
-
-	return t1;
-}
-
-
 static void _freeze_time(sfx_state_t *self) {
 	/* Freezes the top song delay time */
-	GTimeVal ctime;
-	long delta;
-
+	uint32 ctime = g_system->getMillis();
 	song_t *song = self->song;
-	sci_get_current_time(&ctime);
 
 	while (song) {
-		delta = time_minus(song->wakeup_time, ctime);
-		if (delta < 0)
-			delta = 0;
-
-		song->delay = delta;
+		if (ctime > song->wakeup_time)
+			song->delay = 0;
+		else
+			song->delay = song->wakeup_time - ctime;
 
 		song = song->next_playing;
 	}
@@ -162,13 +138,11 @@ static void _dump_songs(sfx_state_t *self) {
 
 static void _thaw_time(sfx_state_t *self) {
 	/* inverse of _freeze_time() */
-	GTimeVal ctime;
+	uint32 ctime = g_system->getMillis();
 	song_t *song = self->song;
 
-	sci_get_current_time(&ctime);
-
 	while (song) {
-		song->wakeup_time = time_plus(ctime, song->delay);
+		song->wakeup_time = ctime + song->delay;
 
 		song = song->next_playing;
 	}
@@ -198,15 +172,11 @@ _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
 
 	case SOUND_STATUS_SUSPENDED:
 	case SOUND_STATUS_WAITING:
-
 		if (song->status == SOUND_STATUS_PLAYING) {
 			/* Update delay, set wakeup_time */
-			GTimeVal time;
-			long delta;
-			sci_get_current_time(&time);
-			delta = time_minus(time, song->wakeup_time);
+			uint32 time = g_system->getMillis();
 
-			song->delay -= delta;
+			song->delay -= long(time) - long(song->wakeup_time);
 			song->wakeup_time = time;
 		}
 		if (status == SOUND_STATUS_SUSPENDED)
@@ -217,7 +187,7 @@ _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
 	case SOUND_STATUS_PLAYING:
 		if (song->status == SOUND_STATUS_STOPPED)
 			/* Starting anew */
-			sci_get_current_time(&song->wakeup_time);
+			song->wakeup_time = g_system->getMillis();
 
 		if (is_playing(self, song))
 			status = SOUND_STATUS_PLAYING;
@@ -239,7 +209,6 @@ static void _update_single_song(sfx_state_t *self) {
 	song_t *newsong = song_lib_find_active(self->songlib);
 
 	if (newsong != self->song) {
-
 		_freeze_time(self); /* Store song delay time */
 
 		if (player)
@@ -286,8 +255,7 @@ static void _update_single_song(sfx_state_t *self) {
 			song_iterator_t *clonesong
 			= songit_clone(newsong->it, newsong->delay);
 
-			player->add_iterator(clonesong,
-			                     newsong->wakeup_time);
+			player->add_iterator(clonesong, newsong->wakeup_time);
 		}
 	}
 }
@@ -301,8 +269,7 @@ static void _update_multi_song(sfx_state_t *self) {
 	song_t not_playing_anymore; /* Dummy object, referenced by
 				    ** songs which are no longer
 				    ** active.  */
-	GTimeVal tv;
-	sci_get_current_time(&tv);
+
 	/*	_dump_playing_list(self, "before");*/
 	_freeze_time(self); /* Store song delay time */
 
@@ -359,7 +326,7 @@ static void _update_multi_song(sfx_state_t *self) {
 
 			player->add_iterator(songit_clone(newseeker->it,
 			                                  newseeker->delay),
-			                     tv);
+			                     g_system->getMillis());
 		}
 		_sfx_set_song_status(self, newseeker,
 		                     SOUND_STATUS_PLAYING);
@@ -535,10 +502,6 @@ void sfx_exit(sfx_state_t *self) {
 	callbackMutex = 0;
 }
 
-static inline int time_le(GTimeVal a, GTimeVal b) {
-	return time_minus(a, b) <= 0;
-}
-
 void sfx_suspend(sfx_state_t *self, int suspend) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Suspending? = %d\n", suspend);
@@ -582,10 +545,8 @@ int sfx_poll(sfx_state_t *self, song_handle_t *handle, int *cue) {
 }
 
 int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
-	GTimeVal ctime;
+	uint32 ctime = g_system->getMillis();
 	song_t *song = self->song;
-
-	sci_get_current_time(&ctime);
 
 	while (song && song->handle != handle)
 		song = song->next_playing;
@@ -601,16 +562,15 @@ int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
 		unsigned char buf[8];
 		int result;
 
-		if (!time_le(song->wakeup_time, ctime))
+		if (song->wakeup_time > ctime)
 			return 0; /* Patience, young hacker! */
-		result = songit_next(&(song->it), buf, cue,
-		                     IT_READER_MASK_ALL);
+
+		result = songit_next(&(song->it), buf, cue, IT_READER_MASK_ALL);
 
 		switch (result) {
 
 		case SI_FINISHED:
-			_sfx_set_song_status(self, song,
-			                     SOUND_STATUS_STOPPED);
+			_sfx_set_song_status(self, song, SOUND_STATUS_STOPPED);
 			_update(self);
 			/* ...fall through... */
 		case SI_LOOP:
@@ -634,9 +594,8 @@ int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
 
 		default:
 			if (result > 0)
-				song->wakeup_time =
-				    time_plus(song->wakeup_time,
-				              result * SOUND_TICK);
+				song->wakeup_time += result * SOUND_TICK;
+
 			/* Delay */
 			break;
 		}
@@ -690,7 +649,7 @@ int sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_hand
 	song->resource_num = number;
 	song->hold = 0;
 	song->loops = 0;
-	sci_get_current_time(&song->wakeup_time); /* No need to delay */
+	song->wakeup_time = g_system->getMillis(); /* No need to delay */
 	song_lib_add(self->songlib, song);
 	self->song = NULL; /* As above */
 	_update(self);

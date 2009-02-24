@@ -31,39 +31,13 @@
 
 namespace Sci {
 
-
-struct GTimeVal {
-	long tv_sec;
-	long tv_usec;
-};
-
-
-
 /**** FUNCTION DECLARATIONS ****/
 
 #define getInt16	(int16)READ_LE_UINT16
 #define getUInt16	READ_LE_UINT16
 #define putInt16	WRITE_LE_UINT16
 
-
 /* --- */
-
-void sci_gettime(long *seconds, long *useconds);
-/* Calculates the current time in seconds and microseconds
-** Parameters: (long *) seconds: Pointer to the variable the seconds part of the
-**                               current time will be stored in
-**             (long *) useconds: Pointer to the variable the microseconds part
-**                                of the current time will be stored in
-** Returns   : (void)
-** The resulting values must be relative to an arbitrary fixed point in time
-** (typically 01/01/1970 on *NIX systems).
-*/
-
-void sci_get_current_time(GTimeVal *val);
-/* GTimeVal version of sci_gettime()
-** Parameters: (GTimeVal *) val: Pointer to the structure the values will be stored in
-** Returns   : (void)
-*/
 
 int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 #define gfxprintf sciprintf

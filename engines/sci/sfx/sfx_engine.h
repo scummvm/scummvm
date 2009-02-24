@@ -34,8 +34,8 @@
 
 namespace Sci {
 
-#define SOUND_TICK 1000000 / 60
-/* Approximately 16666 microseconds */
+#define SOUND_TICK 1000 / 60
+/* Approximately 17 milliseconds */
 
 
 #define SFX_STATE_FLAG_MULTIPLAY (1 << 0) /* More than one song playable

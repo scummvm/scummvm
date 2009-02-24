@@ -29,7 +29,6 @@
 #  include <windows.h>
 #  include <errno.h>
 #  include <mmsystem.h>
-#  include <sys/timeb.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <direct.h>
@@ -43,10 +42,6 @@
 #include "sci/engine/kernel.h"
 
 namespace Sci {
-
-#ifndef _MSC_VER
-#  include <sys/time.h>
-#endif
 
 int script_debug_flag = 0; // Defaulting to running mode
 int sci_debug_flags = 0; // Special flags
@@ -130,49 +125,6 @@ void _SCIGNUkdebug(const char *funcname, EngineState *s, const char *file, int l
 		va_end(xargs);
 
 	}
-}
-
-
-#ifndef _MSC_VER
-void sci_gettime(long *seconds, long *useconds) {
-	struct timeval tv;
-
-	assert(!gettimeofday(&tv, NULL));
-	*seconds = tv.tv_sec;
-	*useconds = tv.tv_usec;
-}
-#elif defined (WIN32)
-
-/*WARNING(Incorrect)*/
-/* Warning: This function only retrieves the amount of mseconds since the start of
-** the Win32 kernel; it does /not/ provide the number of seconds since the epoch!
-** There are no known cases where this causes problems, though.  */
-void sci_gettime(long *seconds, long *useconds) {
-	DWORD tm;
-
-	if (TIMERR_NOERROR != timeBeginPeriod(1)) {
-		fprintf(stderr, "timeBeginPeriod(1) failed in sci_gettime\n");
-	}
-
-	tm = timeGetTime();
-
-	if (TIMERR_NOERROR != timeEndPeriod(1)) {
-		fprintf(stderr, "timeEndPeriod(1) failed in sci_gettime\n");
-	}
-
-	*seconds = tm / 1000;
-	*useconds = (tm % 1000) * 1000;
-}
-#else
-#  error "You need to provide a microsecond resolution sci_gettime implementation for your platform!"
-#endif
-
-
-void sci_get_current_time(GTimeVal *val) {
-	long foo, bar;
-	sci_gettime(&foo, &bar);
-	val->tv_sec = foo;
-	val->tv_usec = bar;
 }
 
 } // End of namespace Sci

@@ -202,7 +202,7 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	return SFX_OK;
 }
 
-static int pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
+static int pp_add_iterator(song_iterator_t *it, uint32 start_time) {
 	song_iterator_t *old = play_it;
 
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(seq->playmask));
@@ -218,9 +218,7 @@ static int pp_add_iterator(song_iterator_t *it, GTimeVal start_time) {
 	/* The check must happen HERE, and not at the beginning of the
 	   function, to avoid a race condition with the mixer. */
 	if (old == NULL) {
-		new_timestamp = sfx_new_timestamp(start_time.tv_sec,
-		                                  start_time.tv_usec,
-		                                  seq->pcm_conf.rate);
+		new_timestamp = sfx_new_timestamp(start_time, seq->pcm_conf.rate);
 		/* ASAP otherwise */
 		time_counter = 0;
 		new_song = 1;

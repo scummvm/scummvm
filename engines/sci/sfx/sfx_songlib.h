@@ -30,7 +30,6 @@
 
 #include "common/scummsys.h"
 
-#include "sci/tools.h"	// For GTimeVal
 #include "sci/sfx/sfx_iterator.h"
 
 namespace Sci {
@@ -66,7 +65,7 @@ struct song_t {
 	song_iterator_t *it;
 	long delay; /* Delay before accessing the iterator, in microseconds */
 
-	GTimeVal wakeup_time; /* Used by the sound core:
+	uint32 wakeup_time; /* Used by the sound core:
 			      ** Playing -> time at which 'delay' has elapsed
 			      ** Suspended/Waiting -> stopping time */
 
@@ -159,21 +158,6 @@ int song_lib_count(songlib_t songlib);
 /* Counts the number of songs in a song library
 ** Parameters: (songlib_t) songlib: The library to count
 ** Returns   : (int) The number of songs
-*/
-
-GTimeVal song_sleep_time(GTimeVal *lastslept, long ticks);
-/* Caluculates the amount of seconds and microseconds to sleep.
-** Parameters: (GTimeVal *) lastslept: The time to start counting on
-**             (long) ticks: Number of ticks to sleep
-** Returns   : (GTimeVal) The amount of time to sleep
-*/
-
-GTimeVal song_next_wakeup_time(GTimeVal *lastslept, long ticks);
-/* Calculates the time at which "ticks" have passed, counting from "lastslept".
-** Parameters: (GTimeVal *) lastslept: The base to start counting on
-**             (long) ticks: Number of ticks to count
-** Returns   : (GTimeVal) A structure describing the time at which the
-**                              specified number of ticks has passed
 */
 
 void song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle,

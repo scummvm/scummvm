@@ -24,6 +24,7 @@
  */
 
 #include "common/mutex.h"
+#include "common/system.h"
 
 #include "sci/tools.h"
 #include "sci/sfx/mixer.h"
@@ -31,8 +32,8 @@
 
 namespace Sci {
 
-/* Max. number of microseconds in difference allowed between independent audio streams */
-#define TIMESTAMP_MAX_ALLOWED_DELTA 2000
+/* Max. number of milliseconds in difference allowed between independent audio streams */
+#define TIMESTAMP_MAX_ALLOWED_DELTA 2
 
 /*#define DEBUG 3*/
 /* Set DEBUG to one of the following:
@@ -42,7 +43,7 @@ namespace Sci {
 **     >= 3 -- fully detailed input and output analysis (once per frame and feed)
 */
 
-/*#define DEBUG 0*/
+//#define DEBUG 1
 
 #define MIN_DELTA_OBSERVATIONS 100 /* Number of times the mixer is called before it starts trying to improve latency */
 #define MAX_DELTA_OBSERVATIONS 1000000 /* Number of times the mixer is called before we assume we truly understand timing */
@@ -61,9 +62,9 @@ struct mixer_private {
 	int32 *compbuf_l, *compbuf_r; /* Intermediate buffers for computation */
 	int lastbuf_len; /* Number of frames stored in the last buffer */
 
-	long skew; /* Millisecond relative to which we compute time. This is the millisecond
+	uint32 skew; /* Millisecond relative to which we compute time. This is the millisecond
 		   ** part of the first time we emitted sound, to simplify some computations.  */
-	long lsec; /* Last point in time we updated buffers, if any (seconds since the epoch) */
+	uint32 lsec; /* Last point in time we updated buffers, if any (seconds since the epoch) */
 	int played_this_second; /* Number of frames emitted so far in second lsec */
 
 	int max_delta; /* maximum observed time delta (using 'frames' as a metric unit) */
@@ -85,11 +86,7 @@ static int mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
 	P->compbuf_r = (int32*)sci_malloc(sizeof(int32) * device->buf_size);
 	P->played_this_second = 0;
 	P->paused = 0;
-#ifdef DEBUG
-	sciprintf("[soft-mixer] Initialised device %s v%s (%d Hz, %d/%x)\n",
-	          device->name, device->version,
-	          device->conf.rate, device->conf.stereo, device->conf.format);
-#endif
+
 	return SFX_OK;
 }
 
@@ -355,12 +352,6 @@ static inline void mix_swap_buffers(sfx_pcm_mixer_t *self) { /* Swap buffers */
 	P->writebuf = tmp;
 }
 
-
-#define FRAME_OFFSET(usecs) \
-			((usecs >> 7) /* approximate, since uint32 is too small */ \
-			 * ((long) self->dev->conf.rate)) \
-			/ (1000000L >> 7)
-
 static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 /* Computes the number of frames we ought to write. It tries to minimise the number,
 ** in order to reduce latency. */
@@ -369,35 +360,32 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 {
 	int free_frames;
 	int played_frames = 0; /* since the last call */
-	long secs, usecs;
+	uint32 msecs;
 	int frame_pos;
 	int result_frames;
 
-	sci_gettime(&secs, &usecs);
+	msecs = g_system->getMillis();
 
 	if (!P->outbuf) {
 		/* Called for the first time ever? */
-		P->skew = usecs;
-		P->lsec = secs;
+		P->skew = msecs % 1000;
+		P->lsec = msecs / 1000;
 		P->max_delta = 0;
 		P->delta_observations = 0;
 		P->played_this_second = 0;
 		*skip_frames = 0;
+
 		return self->dev->buf_size;
 	}
 
 	/*	fprintf(stderr, "[%d:%d]S%d ", secs, usecs, P->skew);*/
 
-	if (P->skew > usecs) {
-		secs--;
-		usecs += (1000000 - P->skew);
-	} else
-		usecs -= P->skew;
+	msecs -= P->skew;
 
-	frame_pos = FRAME_OFFSET(usecs);
+	frame_pos = (msecs % 1000) * self->dev->conf.rate / 1000;
 
 	played_frames = frame_pos - P->played_this_second
-	                + ((secs - P->lsec) * self->dev->conf.rate);
+	                + ((msecs / 1000 - P->lsec) * self->dev->conf.rate);
 	/*
 	fprintf(stderr, "%d:%d - %d:%d  => %d\n", secs, frame_pos,
 		P->lsec, P->played_this_second, played_frames);
@@ -446,8 +434,8 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
 	/*		recommended_frames = self->dev->buf_size; /\* Initially, keep the buffer full *\/ */
 
 #if (DEBUG >= 1)
-	sciprintf("[soft-mixer] played since last time: %d, recommended: %d, free: %d\n",
-	          played_frames, recommended_frames, free_frames);
+	sciprintf("[soft-mixer] played since last time: %d, free: %d\n",
+	          played_frames, free_frames);
 #endif
 
 	result_frames = free_frames;
@@ -553,7 +541,7 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 	             )
 	             / fs->spd.den;
 
-	ts->secs = -1;
+	ts->msecs = 0;
 
 	if (frames_nr > fs->buf_size) {
 		fprintf(stderr, "%d (%d*%d + somethign) bytes, but only %d allowed!!!!!\n",
@@ -791,16 +779,13 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 		int have_timestamp = 0;
 		sfx_timestamp_t start_timestamp; /* The timestamp at which the first frame will be played */
 		sfx_timestamp_t min_timestamp;
-		min_timestamp.secs = 0;
+		min_timestamp.msecs = 0;
 		sfx_timestamp_t timestamp;
 
 		if (self->dev->get_output_timestamp)
 			start_timestamp = self->dev->get_output_timestamp(self->dev);
-		else {
-			long sec, usec;
-			sci_gettime(&sec, &usec);
-			start_timestamp = sfx_new_timestamp(sec, usec, self->dev->conf.rate);
-		}
+		else
+			start_timestamp = sfx_new_timestamp(g_system->getMillis(), self->dev->conf.rate);
 
 		if ((P->outbuf) && (P->lastbuf_len)) {
 			sfx_timestamp_t ts;
@@ -846,9 +831,9 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 					                         fake_buflen, &timestamp,
 					                         start_timestamp);
 
-					if (timestamp.secs >= 0) {
+					if (timestamp.msecs > 0) {
 						if (have_timestamp) {
-							int diff = sfx_timestamp_usecs_diff(min_timestamp, timestamp);
+							int diff = sfx_timestamp_msecs_diff(min_timestamp, timestamp);
 							if (diff > 0) {
 								/* New earlier timestamp */
 								timestamp = min_timestamp;
@@ -890,7 +875,7 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 #endif
 
 		if (timestamp_max_delta > TIMESTAMP_MAX_ALLOWED_DELTA)
-			sciprintf("[soft-mixer] Warning: Difference in timestamps between audio feeds is %d us\n", timestamp_max_delta);
+			sciprintf("[soft-mixer] Warning: Difference in timestamps between audio feeds is %d ms\n", timestamp_max_delta);
 
 		mix_compute_output(self, buflen);
 		P->lastbuf_len = buflen;
@@ -899,7 +884,7 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 		mix_swap_buffers(self);
 		if (have_timestamp)
 			P->outbuf_timestamp = sfx_timestamp_add(min_timestamp,
-			                                        timestamp_max_delta >> 1);
+			                                        timestamp_max_delta * 500);
 		P->have_outbuf_timestamp = have_timestamp;
 
 	}

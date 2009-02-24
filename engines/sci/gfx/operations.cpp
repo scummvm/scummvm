@@ -1335,10 +1335,6 @@ int gfxop_disable_dirty_frames(gfx_state_t *state) {
 
 // Pointer and IO ops
 
-#define SECONDS_OF_DAY (24*60*60)
-#define MILLION 1000000
-// Sure, this may seem silly, but it's too easy to miss a zero...)
-
 #define GFXOP_FULL_POINTER_REFRESH if (_gfxop_full_pointer_refresh(state)) { GFXERROR("Failed to do full pointer refresh!\n"); return GFX_ERROR; }
 
 static int _gfxop_full_pointer_refresh(gfx_state_t *state) {

@@ -78,7 +78,7 @@ midi_gm_delay(int ticks) {
 }
 
 static int
-midi_gm_reset_timer(GTimeVal ts) {
+midi_gm_reset_timer(uint32 ts) {
 	writer->reset_timer(writer);
 
 	return SFX_OK;

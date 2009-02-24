@@ -32,6 +32,8 @@
 #include "sci/sfx/sfx_iterator.h"
 #include "sci/include/sciresource.h"
 
+#include "common/scummsys.h"
+
 namespace Sci {
 
 typedef void tell_synth_func(int buf_nr, byte *buf);
@@ -55,10 +57,10 @@ struct sfx_player_t {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*add_iterator)(song_iterator_t *it, GTimeVal start_time);
+	int (*add_iterator)(song_iterator_t *it, uint32 start_time);
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
-	**             (GTimeVal) start_time: The time to assume as the
+	**             (uint32) start_time: The time to assume as the
 	**                        time the first MIDI command executes at
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	** The iterator should not be cloned (to avoid memory leaks) and

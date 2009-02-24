@@ -29,7 +29,6 @@
 
 #include "common/scummsys.h"
 
-#include "sci/tools.h"	// For GTimeVal
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/device.h"
 
@@ -88,10 +87,10 @@ struct sfx_sequencer_t {
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
 
-	int (*reset_timer)(GTimeVal ts);
+	int (*reset_timer)(uint32 ts);
 	/* OPTIONAL -- may be NULL, but highly recommended in combination with delay() */
 	/* Resets the timer counter associated with the 'delay()' function
-	** Parameters: (GTimeVal) ts: Timestamp of the base time
+	** Parameters: (uint32) ts: Timestamp of the base time
 	** Returns   : SFX_OK on success, SFX_ERROR otherwise
 	*/
 

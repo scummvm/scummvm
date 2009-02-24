@@ -26,20 +26,21 @@
 #ifndef SCI_SFX_SFX_TIME_H
 #define SCI_SFX_SFX_TIME_H
 
+#include "common/scummsys.h"
+
 namespace Sci {
 
 struct sfx_timestamp_t {
-	long secs;
-	long usecs;
+	uint32 msecs;
 	int frame_rate;
 	int frame_offset;
-	/* Total time: secs + usecs + frame_offset/frame_rate */
+	/* Total time: msecs + frame_offset/frame_rate */
 };
 
 
-sfx_timestamp_t sfx_new_timestamp(long secs, long usecs, int frame_rate);
+sfx_timestamp_t sfx_new_timestamp(const uint32 msecs, const int frame_rate);
 /* Creates a new mutable timestamp
-** Parameters: (long x long) (secs, usecs): Initial timestamp
+** Parameters: (uint32) msecs: Initial timestamp
 **             (int) frame_rate: Frame rate, for increasing the time stamp
 */
 
@@ -66,18 +67,17 @@ int sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b);
 ** Returns   : (int) a-b
 */
 
-long sfx_timestamp_usecs_diff(sfx_timestamp_t a, sfx_timestamp_t b);
-/* Computes the difference (# of microseconds) between two timestamps
+int sfx_timestamp_msecs_diff(sfx_timestamp_t a, sfx_timestamp_t b);
+/* Computes the difference (# of milliseconds) between two timestamps
 ** Parameters: (sfx_timestamp) a: See below
 **             (sfx_timestamp) b: See below
-** Returns   : (long) a-b
+** Returns   : (int) a-b
 */
 
-void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs);
+void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, uint32 *msecs);
 /* Determines the time described by a given timestamp
 ** Parameters: (sfx_timestamp_t *) timestamp: Timestamp to read from
-** Returns   : (int * x int *) (secs, usecs): Seconds and microseconds since
-**                                            the epoch described there
+** Returns   : (uint32 *) msecs: Milliseconds since startup
 */
 
 } // End of namespace Sci

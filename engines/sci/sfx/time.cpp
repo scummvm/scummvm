@@ -28,10 +28,9 @@
 
 namespace Sci {
 
-sfx_timestamp_t sfx_new_timestamp(long secs, long usecs, int frame_rate) {
+sfx_timestamp_t sfx_new_timestamp(const uint32 msecs, const int frame_rate) {
 	sfx_timestamp_t r;
-	r.secs = secs;
-	r.usecs = usecs;
+	r.msecs = msecs;
 	r.frame_rate = frame_rate;
 	r.frame_offset = 0;
 
@@ -45,73 +44,50 @@ sfx_timestamp_t sfx_timestamp_add(sfx_timestamp_t timestamp, int frames) {
 		int secsub = 1 + (-timestamp.frame_offset / timestamp.frame_rate);
 
 		timestamp.frame_offset += timestamp.frame_rate * secsub;
-		timestamp.secs -= secsub;
+		timestamp.msecs -= secsub * 1000;
 	}
 
-	timestamp.secs += (timestamp.frame_offset / timestamp.frame_rate);
+	timestamp.msecs += (timestamp.frame_offset / timestamp.frame_rate) * 1000;
 	timestamp.frame_offset %= timestamp.frame_rate;
 
 	return timestamp;
 }
 
 int sfx_timestamp_frame_diff(sfx_timestamp_t a, sfx_timestamp_t b) {
-	long usecdelta = 0;
+	int msecdelta = 0;
 
 	if (a.frame_rate != b.frame_rate) {
 		fprintf(stderr, "Fatal: The semantics of subtracting two timestamps with a different base from each other is not defined!\n");
 		BREAKPOINT();
 	}
 
-	if (a.usecs != b.usecs) {
-#if (SIZEOF_LONG >= 8)
-		usecdelta = (a.usecs * a.frame_rate) / 1000000
-		            - (b.usecs * b.frame_rate) / 1000000;
-#else
-		usecdelta = ((a.usecs / 1000) * a.frame_rate) / 1000
-		            - ((b.usecs / 1000) * b.frame_rate) / 1000;
-#endif
-	}
+	if (a.msecs != b.msecs)
+		msecdelta = (long(a.msecs) - long(b.msecs)) * a.frame_rate / 1000;
 
-	return usecdelta
-	       + (a.secs - b.secs) * a.frame_rate
-	       + a.frame_offset - b.frame_offset;
+	return msecdelta + a.frame_offset - b.frame_offset;
 }
 
-long sfx_timestamp_usecs_diff(sfx_timestamp_t t1, sfx_timestamp_t t2) {
-	long secs1, secs2;
-	long usecs1, usecs2;
+int sfx_timestamp_msecs_diff(sfx_timestamp_t t1, sfx_timestamp_t t2) {
+	uint32 msecs1, msecs2;
 
-	sfx_timestamp_gettime(&t1, &secs1, &usecs1);
-	sfx_timestamp_gettime(&t2, &secs2, &usecs2);
+	sfx_timestamp_gettime(&t1, &msecs1);
+	sfx_timestamp_gettime(&t2, &msecs2);
 
-	return (usecs1 - usecs2) + ((secs1 - secs2) * 1000000);
+	return long(msecs1) - long(msecs2);
 }
 
 sfx_timestamp_t sfx_timestamp_renormalise(sfx_timestamp_t timestamp, int new_freq) {
 	sfx_timestamp_t r;
-	sfx_timestamp_gettime(&timestamp, &r.secs, &r.usecs);
+	sfx_timestamp_gettime(&timestamp, &r.msecs);
 	r.frame_rate = new_freq;
 	r.frame_offset = 0;
 
 	return r;
 }
 
-void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs) {
-	long ust = timestamp->usecs;
-	/* On 64 bit machines, we can do an accurate computation */
-#if (SIZEOF_LONG >= 8)
-	ust += (timestamp->frame_offset * 1000000l) / (timestamp->frame_rate);
-#else
-	ust += (timestamp->frame_offset * 1000l) / (timestamp->frame_rate / 1000l);
-#endif
-
-	if (ust > 1000000) {
-		ust -= 1000000;
-		*secs = timestamp->secs + 1;
-	} else
-		*secs = timestamp->secs;
-
-	*usecs = ust;
+void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, uint32 *msecs) {
+	*msecs = timestamp->msecs +
+			 timestamp->frame_offset * 1000l / timestamp->frame_rate;
 }
 
 } // End of namespace Sci
