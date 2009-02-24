@@ -2044,7 +2044,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 			if (successor) {
 				game_exit(s);
 				script_free_vm_memory(s);
-				free(s);
+				delete s;
 				s = successor;
 
 				if (!send_calls_allocated) {
