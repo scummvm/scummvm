@@ -103,8 +103,11 @@ struct vertex_t {
 	// Index
 	int idx;
 
-	// Vertex list entry
-	CLIST_ENTRY(vertex_t) entries;
+	// Vertex circular list entry
+	struct {
+		vertex_t *cle_next;	// next element
+		vertex_t *cle_prev;	// previous element
+	} entries;
 
 	// Dijkstra list entry
 	LIST_ENTRY(vertex_t) dijkstra;
@@ -116,11 +119,68 @@ struct vertex_t {
 	vertex_t *path_prev;
 };
 
-typedef CLIST_HEAD(vertices_head, vertex_t) vertices_head_t;
+class CircularVertexList {
+public:
+	vertex_t *_head;
+
+public:
+	CircularVertexList() : _head(0) {}
+	
+	vertex_t *first() {
+		return _head;
+	}
+	
+	void insertHead(vertex_t *elm) {
+		if (_head == NULL) {
+			elm->entries.cle_next = elm->entries.cle_prev = elm;
+		} else {
+			elm->entries.cle_next = _head;
+			elm->entries.cle_prev = _head->entries.cle_prev;
+			_head->entries.cle_prev = elm;
+			elm->entries.cle_prev->entries.cle_next = elm;
+		}
+		_head = elm;
+	}
+
+	static void insertAfter(vertex_t *listelm, vertex_t *elm) {
+		elm->entries.cle_prev = listelm;
+		(elm)->entries.cle_next = listelm->entries.cle_next;
+		listelm->entries.cle_next->entries.cle_prev = elm;
+		listelm->entries.cle_next = elm;
+	}
+
+	void remove(vertex_t *elm) {
+		if (elm->entries.cle_next == elm) {
+			_head = NULL;
+		} else {
+			if (_head == elm)
+				_head = elm->entries.cle_next;
+			elm->entries.cle_prev->entries.cle_next = elm->entries.cle_next;
+			elm->entries.cle_next->entries.cle_prev = elm->entries.cle_prev;
+		}
+	}
+
+	bool empty() const {
+		return _head == NULL;
+	}
+};
+
+/* Circular list definitions. */
+
+#define CLIST_FOREACH(var, head, field)					\
+	for ((var) = (head)->first();					\
+		(var);							\
+		(var) = ((var)->field.cle_next == (head)->first() ?	\
+		    NULL : (var)->field.cle_next))
+
+/* Circular list access methods. */
+#define CLIST_NEXT(elm, field)		((elm)->field.cle_next)
+#define CLIST_PREV(elm, field)		((elm)->field.cle_prev)
+
 
 struct polygon_t {
 	// Circular list of vertices
-	vertices_head_t vertices;
+	CircularVertexList vertices;
 
 	// Polygon list entry
 	LIST_ENTRY(polygon_t) entries;
@@ -408,9 +468,7 @@ static polygon_t *polygon_new(int type) {
 	// Allocates and initialises a new polygon
 	// Parameters: (int) type: The SCI polygon type
 	// Returns   : (polygon_t *) A newly allocated polygon
-	polygon_t *polygon = (polygon_t*)sci_malloc(sizeof(polygon_t));
-
-	CLIST_INIT(&polygon->vertices);
+	polygon_t *polygon = new polygon_t();
 	polygon->type = type;
 
 	return polygon;
@@ -485,7 +543,7 @@ static int polygon_area(polygon_t *polygon) {
 	// Computes polygon area
 	// Parameters: (polygon_t *) polygon: The polygon
 	// Returns   : (int) The area multiplied by two
-	vertex_t *first = CLIST_FIRST(&polygon->vertices);
+	vertex_t *first = polygon->vertices.first();
 	vertex_t *v;
 	int size = 0;
 
@@ -512,16 +570,15 @@ static void fix_vertex_order(polygon_t *polygon) {
 	// clockwise
 	if (((area > 0) && (polygon->type == POLY_CONTAINED_ACCESS))
 	        || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
-		vertices_head_t vertices;
 
 		// Create a new circular list
-		CLIST_INIT(&vertices);
+		CircularVertexList vertices;
 
-		while (!CLIST_EMPTY(&polygon->vertices)) {
+		while (!polygon->vertices.empty()) {
 			// Put first vertex in new list
-			vertex_t *vertex = CLIST_FIRST(&polygon->vertices);
-			CLIST_REMOVE(&polygon->vertices, vertex, entries);
-			CLIST_INSERT_HEAD(&vertices, vertex, entries);
+			vertex_t *vertex = polygon->vertices.first();
+			polygon->vertices.remove(vertex);
+			vertices.insertHead(vertex);
 		}
 
 		polygon->vertices = vertices;
@@ -727,7 +784,7 @@ static void visible_vertices(pf_state_t *s, vertex_t *vert) {
 
 	LIST_FOREACH(polygon, &s->polygons, entries) {
 		vertex_t *vertex;
-		vertex = CLIST_FIRST(&polygon->vertices);
+		vertex = polygon->vertices.first();
 
 		// Check that there is more than one vertex.
 		if (VERTEX_HAS_EDGES(vertex))
@@ -1067,20 +1124,20 @@ static vertex_t *merge_point(pf_state_t *s, Common::Point v) {
 	// Check for point being on an edge
 	LIST_FOREACH(polygon, &s->polygons, entries)
 	// Skip single-vertex polygons
-	if (VERTEX_HAS_EDGES(CLIST_FIRST(&polygon->vertices)))
+	if (VERTEX_HAS_EDGES(polygon->vertices.first()))
 		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
 		vertex_t *next = CLIST_NEXT(vertex, entries);
 
 		if (between(vertex->v, next->v, v)) {
 			// Split edge by adding vertex
-			CLIST_INSERT_AFTER(vertex, v_new, entries);
+			polygon->vertices.insertAfter(vertex, v_new);
 			return v_new;
 		}
 	}
 
 	// Add point as single-vertex polygon
 	polygon = polygon_new(POLY_BARRED_ACCESS);
-	CLIST_INSERT_HEAD(&polygon->vertices, v_new, entries);
+	polygon->vertices.insertHead(v_new);
 	LIST_INSERT_HEAD(&s->polygons, polygon, entries);
 
 	return v_new;
@@ -1100,7 +1157,7 @@ static polygon_t *convert_polygon(EngineState *s, reg_t polygon) {
 
 	for (i = 0; i < size; i++) {
 		vertex_t *vertex = vertex_new(read_point(list, is_reg_t, i));
-		CLIST_INSERT_HEAD(&poly->vertices, vertex, entries);
+		poly->vertices.insertHead(vertex);
 	}
 
 	fix_vertex_order(poly);
@@ -1112,13 +1169,13 @@ static void free_polygon(polygon_t *polygon) {
 	// Frees a polygon and its vertices
 	// Parameters: (polygon_t *) polygons: The polygon
 	// Returns   : (void)
-	while (!CLIST_EMPTY(&polygon->vertices)) {
-		vertex_t *vertex = CLIST_FIRST(&polygon->vertices);
-		CLIST_REMOVE(&polygon->vertices, vertex, entries);
+	while (!polygon->vertices.empty()) {
+		vertex_t *vertex = polygon->vertices.first();
+		polygon->vertices.remove(vertex);
 		free(vertex);
 	}
 
-	free(polygon);
+	delete polygon;
 }
 
 static void free_pf_state(pf_state_t *p) {

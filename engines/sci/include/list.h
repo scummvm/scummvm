@@ -103,67 +103,6 @@ struct {								\
 #define LIST_FIRST(head)		((head)->lh_first)
 #define LIST_NEXT(elm, field)		((elm)->field.le_next)
 
-/* Circular list definitions. */
-
-#define CLIST_HEAD(name, type)						\
-struct name {								\
-	type *clh_first;	/* first element. */			\
-}
-
-#define CLIST_ENTRY(type)						\
-struct {								\
-	type *cle_next;	/* next element. */			\
-	type *cle_prev;	/* previous element */			\
-}
-
-#define CLIST_INIT(head) do {						\
-	(head)->clh_first = NULL;					\
-} while (0)
-
-#define CLIST_INSERT_HEAD(head, elm, field) do {			\
-	if ((head)->clh_first == NULL)					\
-		(elm)->field.cle_next = (elm)->field.cle_prev = (elm);	\
-	else {								\
-		(elm)->field.cle_next = (head)->clh_first;		\
-		(elm)->field.cle_prev =					\
-		    (head)->clh_first->field.cle_prev;			\
-		(head)->clh_first->field.cle_prev = (elm);		\
-		(elm)->field.cle_prev->field.cle_next = (elm);		\
-	}								\
-	(head)->clh_first = (elm);					\
-} while (0)
-
-#define CLIST_INSERT_AFTER(listelm, elm, field) do {			\
-	(elm)->field.cle_prev = (listelm);				\
-	(elm)->field.cle_next = (listelm)->field.cle_next;		\
-	(listelm)->field.cle_next->field.cle_prev = (elm);		\
-	(listelm)->field.cle_next = (elm);				\
-} while (0)
-
-#define CLIST_REMOVE(head, elm, field) do {				\
-	if ((elm)->field.cle_next == (elm))				\
-		(head)->clh_first = NULL;				\
-	else {								\
-		if ((head)->clh_first == (elm))				\
-			(head)->clh_first = (elm)->field.cle_next;	\
-		(elm)->field.cle_prev->field.cle_next =			\
-		    (elm)->field.cle_next;				\
-		(elm)->field.cle_next->field.cle_prev =			\
-		    (elm)->field.cle_prev;				\
-	}								\
-} while (0)
-
-#define CLIST_FOREACH(var, head, field)					\
-	for ((var) = (head)->clh_first;					\
-		(var);							\
-		(var) = ((var)->field.cle_next == (head)->clh_first ?	\
-		    NULL : (var)->field.cle_next))
-
-/* Circular list access methods. */
-#define CLIST_EMPTY(head)		((head)->clh_first == NULL)
-#define CLIST_FIRST(head)		((head)->clh_first)
-#define CLIST_NEXT(elm, field)		((elm)->field.cle_next)
-#define CLIST_PREV(elm, field)		((elm)->field.cle_prev)
 
 } // End of namespace Sci
 
