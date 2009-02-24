@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "sci/sci.h"
+#include "sci/engine/intmap.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
 #include "sci/include/sciresource.h"

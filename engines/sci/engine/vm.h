@@ -32,10 +32,11 @@
 #include "sci/include/vm_types.h"	// for reg_t
 #include "sci/include/heapmgr.h"
 
-#include "sci/engine/intmap.h"
 #include "sci/engine/sys_strings.h"
 
 namespace Sci {
+
+struct IntMapper;
 
 #define VM_STACK_SIZE 0x1000
 /* Number of bytes to be allocated for the stack */
