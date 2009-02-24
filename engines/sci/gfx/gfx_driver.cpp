@@ -35,11 +35,10 @@ namespace Sci {
 
 struct _scummvm_driver_state {
 	gfx_pixmap_t *priority[2];
-	byte *visual[3];
+	byte *visual[2];
 	uint8 *pointer_data;
 	int xsize, ysize;
 	//int buckystate;
-	bool update_screen;
 	bool update_mouse;
 };
 
@@ -68,7 +67,7 @@ scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 		}
 	}
 	// create the visual buffers
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 2; i++) {
 		S->visual[i] = NULL;
 		S->visual[i] = new byte[S->xsize * S->ysize];
 		if (!S->visual[i]) {
@@ -95,7 +94,7 @@ static void scummvm_exit(gfx_driver_t *drv) {
 			S->priority[i] = NULL;
 		}
 
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < 2; i++) {
 			delete[] S->visual[i];
 			S->visual[i] = NULL;
 		}
@@ -112,7 +111,7 @@ static void scummvm_exit(gfx_driver_t *drv) {
 
 static void drawProc(int x, int y, int c, void *data) {
 	gfx_driver_t *drv = (gfx_driver_t *)data;
-	uint8 *p = S->visual[1];
+	uint8 *p = S->visual[0];
 	p[y * 320*drv->mode->xfact + x] = c;
 }
 
@@ -151,7 +150,7 @@ static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t 
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.yl; i++) {
-			memset(S->visual[1] + i * S->xsize + rect.x, color1.visual.global_index, rect.xl);
+			memset(S->visual[0] + i * S->xsize + rect.x, color1.visual.global_index, rect.xl);
 		}
 	}
 
@@ -165,8 +164,7 @@ static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t 
 
 static int scummvm_draw_pixmap(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priority,
 							   rect_t src, rect_t dest, gfx_buffer_t buffer) {
-	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 2 : 1;
-	int pribufnr = bufnr - 1;
+	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 1 : 0;
 
 	if (dest.xl != src.xl || dest.yl != src.yl) {
 		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.xl, src.yl, dest.xl, dest.yl);
@@ -174,7 +172,7 @@ static int scummvm_draw_pixmap(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priorit
 	}
 
 	gfx_crossblit_pixmap(drv->mode, pxm, priority, src, dest, S->visual[bufnr], S->xsize,
-	                     S->priority[pribufnr]->index_data, S->priority[pribufnr]->index_xl, 1, 0);
+	                     S->priority[bufnr]->index_data, S->priority[bufnr]->index_xl, 1, 0);
 
 	return GFX_OK;
 }
@@ -196,7 +194,7 @@ static int scummvm_grab_pixmap(gfx_driver_t *drv, rect_t src, gfx_pixmap_t *pxm,
 		pxm->xl = src.xl;
 		pxm->yl = src.yl;
 		for (int i = 0; i < src.yl; i++) {
-			memcpy(pxm->data + i * src.xl, S->visual[1] + (i + src.y) * S->xsize + src.x, src.xl);
+			memcpy(pxm->data + i * src.xl, S->visual[0] + (i + src.y) * S->xsize + src.x, src.xl);
 		}
 		break;
 
@@ -216,8 +214,6 @@ static int scummvm_grab_pixmap(gfx_driver_t *drv, rect_t src, gfx_pixmap_t *pxm,
 
 static int scummvm_update(gfx_driver_t *drv, rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	//TODO
-	int data_source = (buffer == GFX_BUFFER_BACK) ? 2 : 1;
-	int data_dest = data_source - 1;
 
 	/*
 	if (src.x != dest.x || src.y != dest.y) {
@@ -229,24 +225,17 @@ static int scummvm_update(gfx_driver_t *drv, rect_t src, Common::Point dest, gfx
 
 	switch (buffer) {
 	case GFX_BUFFER_BACK:
-		//memcpy(S->visual[data_dest], S->visual[data_source],
-		//	S->xsize * S->ysize);
 		for (int i = 0; i < src.yl; i++) {
-			memcpy(S->visual[data_dest] + (dest.y + i) * S->xsize + dest.x,
-			       S->visual[data_source] + (src.y + i) * S->xsize + src.x, src.xl);
+			memcpy(S->visual[0] + (dest.y + i) * S->xsize + dest.x,
+			       S->visual[1] + (src.y + i) * S->xsize + src.x, src.xl);
 		}
 
 		if ((src.x == dest.x) && (src.y == dest.y))
 			gfx_copy_pixmap_box_i(S->priority[0], S->priority[1], src);
 		break;
 	case GFX_BUFFER_FRONT:
-		memcpy(S->visual[data_dest], S->visual[data_source], S->xsize * S->ysize);
-
-		g_system->copyRectToScreen(S->visual[data_dest] + src.x + src.y * S->xsize, S->xsize, dest.x, dest.y, src.xl, src.yl);
-		/*
-		g_system->copyRectToScreen(S->visual[data_dest], S->xsize, 0, 0, S->xsize, S->ysize);
-		*/
-		S->update_screen = true;
+		g_system->copyRectToScreen(S->visual[0] + src.x + src.y * S->xsize, S->xsize, dest.x, dest.y, src.xl, src.yl);
+		g_system->updateScreen();
 		break;
 	default:
 		GFXERROR("Invalid buffer %d in update!\n", buffer);
@@ -257,10 +246,7 @@ static int scummvm_update(gfx_driver_t *drv, rect_t src, Common::Point dest, gfx
 }
 
 static int scummvm_set_static_buffer(gfx_driver_t *drv, gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
-	memcpy(S->visual[2], pic->data, S->xsize * S->ysize);
-	/*gfx_crossblit_pixmap(drv->mode, pic, 0, rect, rect, S->visual[2], S->xsize, S->priority[1]->index_data,
-							S->priority[1]->index_xl, 1, 0);*/
-
+	memcpy(S->visual[1], pic->data, S->xsize * S->ysize);
 	gfx_copy_pixmap_box_i(S->priority[1], priority, gfx_rect(0, 0, S->xsize, S->ysize));
 
 	return GFX_OK;
@@ -349,9 +335,8 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 	// Update the screen here, since it's called very often
 	if (S->update_mouse)
 		g_system->warpMouse(drv->pointer_x, drv->pointer_y);
-	if (S->update_screen || S->update_mouse) {
+	if (S->update_mouse) {
 		g_system->updateScreen();
-		S->update_screen = false;
 		S->update_mouse = false;
 	}
 
