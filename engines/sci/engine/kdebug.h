@@ -62,14 +62,10 @@ struct EngineState;
 #define SCI_KERNEL_DEBUG
 
 #ifdef SCI_KERNEL_DEBUG
-
-#define SCIkdebug _SCIkdebug
-
-#else /* !SCI_KERNEL_DEBUG */
-
-#define SCIkdebug 1? (void)0 : _SCIkdebug
-
-#endif /* !SCI_KERNEL_DEBUG */
+  #define SCIkdebug _SCIkdebug
+#else
+  #define SCIkdebug 1? (void)0 : _SCIkdebug
+#endif
 
 #define SCIkwarn _SCIkwarn
 
