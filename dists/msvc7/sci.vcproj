@@ -130,13 +130,19 @@
 				RelativePath="..\..\engines\sci\engine\heap.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\int_hashmap.cpp">
+				RelativePath="..\..\engines\sci\engine\intmap.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\int_hashmap.h">
+				RelativePath="..\..\engines\sci\engine\intmap.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\kdebug.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\kernel.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\kernel.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\kernel_types.h">
@@ -205,7 +211,13 @@
 				RelativePath="..\..\engines\sci\engine\sys_strings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\sys_strings.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\vm.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\vm.h">
 			</File>
 		</Filter>
 		<Filter
@@ -253,13 +265,22 @@
 				RelativePath="..\..\engines\sci\gfx\gfx_tools.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_widgets.cpp">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_widgets.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\menubar.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\menubar.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\operations.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\operations.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\resmgr.cpp">
@@ -274,7 +295,7 @@
 				RelativePath="..\..\engines\sci\gfx\sci_widgets.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\widgets.cpp">
+				RelativePath="..\..\engines\sci\gfx\sci_widgets.h">
 			</File>
 			<Filter
 				Name="resource">
@@ -325,10 +346,10 @@
 				RelativePath="..\..\engines\sci\scicore\resource_patch.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\sci_memory.cpp">
+				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp">
+				RelativePath="..\..\engines\sci\scicore\sciconsole.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\script.cpp">
@@ -439,55 +460,22 @@
 				RelativePath="..\..\engines\sci\include\engine.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\event.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\heapmgr.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\kdebug.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\kernel.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\list.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\menubar.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sci_memory.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\sci_midi.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\sci_widgets.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sciconsole.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\sciresource.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\include\scitypes.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\include\script.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sys_strings.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\uinput.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\versions.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\vm.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\include\vm_types.h">
@@ -516,6 +504,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\sci.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\sci_memory.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\sci_memory.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\tools.cpp">
