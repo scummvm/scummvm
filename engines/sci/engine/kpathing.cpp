@@ -29,7 +29,6 @@
 
 #include "sci/include/engine.h"
 #include "sci/engine/aatree.h"
-#include "sci/include/list.h"
 #include "sci/gfx/gfx_widgets.h"
 
 #include "common/list.h"
@@ -110,9 +109,6 @@ struct Vertex {
 		Vertex *cle_next;	// next element
 		Vertex *cle_prev;	// previous element
 	} entries;
-
-	// Dijkstra list entry
-	LIST_ENTRY(Vertex) dijkstra;	// TODO: Convert this
 
 	// Distance from starting vertex
 	float dist;
@@ -1379,13 +1375,12 @@ static void dijkstra(PathfindingState *s) {
 	// Parameters: (PathfindingState *) s: The pathfinding state
 	// Returns   : (void)
 	Polygon *polygon;
-	// Vertices of which the shortest path is known
-	LIST_HEAD(done_head, Vertex) done;
-	// The remaining vertices
-	LIST_HEAD(remain_head, Vertex) remain;
 
-	LIST_INIT(remain);
-	LIST_INIT(done);
+	// Vertices of which the shortest path is known
+	VertexList done;
+
+	// The remaining vertices
+	VertexList remain;
 
 	// Start out with all vertices in set remain
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
@@ -1393,7 +1388,7 @@ static void dijkstra(PathfindingState *s) {
 		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices, entries) {
-			LIST_INSERT_HEAD(&remain, vertex, dijkstra);
+			remain.push_front(vertex);
 		}
 	}
 
@@ -1401,14 +1396,16 @@ static void dijkstra(PathfindingState *s) {
 
 	// Loop until we find vertex_end
 	while (1) {
-		int i;
-		Vertex *vertex, *vertex_min = 0;
-		float min = HUGE_DISTANCE;
-
 		// Find vertex at shortest distance from set done
-		LIST_FOREACH(vertex, &remain, dijkstra) {
+		VertexList::iterator it;
+		VertexList::iterator vertex_min_it = remain.end();
+		Vertex *vertex_min = 0;
+		float min = HUGE_DISTANCE;
+		for (it = remain.begin(); it != remain.end(); ++it) {
+			Vertex *vertex = *it;
 			if (vertex->dist < min) {
-				vertex_min = vertex;
+				vertex_min_it = it;
+				vertex_min = *vertex_min_it;
 				min = vertex->dist;
 			}
 		}
@@ -1423,10 +1420,10 @@ static void dijkstra(PathfindingState *s) {
 			return;
 
 		// Move vertex from set remain to set done
-		LIST_REMOVE(vertex_min, dijkstra);
-		LIST_INSERT_HEAD(&done, vertex_min, dijkstra);
+		done.push_front(vertex_min);
+		remain.erase(vertex_min_it);
 
-		for (i = 0; i < s->vertices; i++) {
+		for (int i = 0; i < s->vertices; i++) {
 			// Adjust upper bound for all vertices that are visible from vertex_min
 			if (IS_VISIBLE(s, vertex_min->idx, i)) {
 				float new_dist;
