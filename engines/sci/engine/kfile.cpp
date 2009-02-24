@@ -25,7 +25,6 @@
 
 #ifdef WIN32
 #  include <direct.h>
-#  include <windows.h>
 #elif defined (__DC__)
 #  include <dc.h>
 #endif
@@ -41,9 +40,6 @@
 
 #include <errno.h>
 #include <sys/stat.h>		// for S_IREAD/S_IWRITE
-
-// FIXME: Get rid of the following (needed for O_RDONLY etc.)
-#include <fcntl.h>
 
 #define SCI_INVALID_FD -1
 #define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
