@@ -26,7 +26,7 @@
 /* First part of the console implmentation: VM independent stuff */
 /* Remember, it doesn't have to be fast. */
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/include/engine.h"
 
 namespace Sci {

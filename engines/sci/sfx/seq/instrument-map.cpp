@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sci/include/sci_midi.h"
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/sfx/seq/instrument-map.h"
 #include "sci/sfx/sfx_engine.h"
 

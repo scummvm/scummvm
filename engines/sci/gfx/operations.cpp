@@ -25,7 +25,7 @@
 
 // Graphical operations, called from the widget state manager
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_operations.h"
 
 #include "common/system.h"

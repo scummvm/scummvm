@@ -47,36 +47,6 @@
 
 namespace Sci {
 
-/********** the memory allocation macros **********/
-
-#ifdef UNCHECKED_MALLOCS
-
-#define ALLOC_MEM(alloc_statement, size, filename, linenum, funcname)\
-do {\
-	alloc_statement;\
-} while (0);
-
-#else /* !UNCHECKED_MALLOCS */
-
-#define ALLOC_MEM(alloc_statement, size, filename, linenum, funcname)\
-do {\
-	if (size == 0) {\
-		warning("Allocating zero bytes of memory [%s (%s) : %u]", filename, funcname, linenum);\
-	} else if (!(size > 0)) {\
-		error("Cannot allocate negative bytes of memory [%s (%s) : %u]", filename, funcname, linenum);\
-	}\
-\
-	alloc_statement; /* attempt to allocate the memory */\
-\
-	if (res == NULL) {\
-		/* exit immediately */\
-		error("Memory allocation of %lu bytes failed [%s (%s) : %u]", size, filename, funcname, linenum);\
-	}\
-} while (0);
-
-#endif /* !UNCHECKED_MALLOCS */
-
-
 /********** memory allocation routines **********/
 
 extern void *sci_malloc(size_t size);

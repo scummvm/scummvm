@@ -30,7 +30,7 @@
 #include "sci/sfx/sfx_iterator_internal.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/tools.h"
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 
 namespace Sci {
 

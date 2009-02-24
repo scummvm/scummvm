@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/include/sciresource.h"
 #include "sci/tools.h"
 

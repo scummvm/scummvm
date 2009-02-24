@@ -29,7 +29,7 @@
 ** EXTRA_BYTE_OFFSET: Extra source byte offset for copying (used on big-endian machines in 24 bit mode)
 */
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 
 namespace Sci {
 

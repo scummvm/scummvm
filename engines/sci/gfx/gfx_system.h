@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/tools.h"
 
 namespace Sci {

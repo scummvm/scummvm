@@ -26,7 +26,7 @@
 // Static binary lookup tree lookup
 
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/gfx/sbtree.h"
 
 namespace Sci {

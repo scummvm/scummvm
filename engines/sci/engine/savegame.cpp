@@ -32,7 +32,7 @@
 #include <time.h>	// FIXME: For struct tm
 #include "common/stream.h"
 #include "common/system.h"
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_operations.h"
 #include "sci/gfx/menubar.h"
 #include "sci/sfx/sfx_engine.h"
@@ -237,7 +237,7 @@ RECORD synonym_t "synonym_t" {
 #line 102 "engines/sci/engine/savegame.cfsml"
 
 #include <stdarg.h> // We need va_lists
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 
 #ifdef CFSML_DEBUG_MALLOC
 /*

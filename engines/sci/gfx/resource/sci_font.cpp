@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"

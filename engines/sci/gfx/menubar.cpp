@@ -28,7 +28,7 @@
 ** used for any actual actions on behalf of the interpreter.
 */
 
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 #include "sci/include/engine.h"
 #include "sci/gfx/menubar.h"
 

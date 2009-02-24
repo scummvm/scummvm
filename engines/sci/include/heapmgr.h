@@ -29,7 +29,7 @@
 #define _FREESCI_HEAPMGR_H_
 
 #include "sci/tools.h"
-#include "sci/include/sci_memory.h"
+#include "sci/sci_memory.h"
 
 namespace Sci {
 

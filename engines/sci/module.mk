@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	detection.o \
 	exereader.o \
 	sci.o \
+	sci_memory.o \
 	tools.o \
 	engine/aatree.o \
 	engine/game.o \
@@ -58,7 +59,6 @@ MODULE_OBJS = \
 	scicore/resource.o \
 	scicore/resource_map.o \
 	scicore/resource_patch.o \
-	scicore/sci_memory.o \
 	scicore/script.o \
 	scicore/versions.o \
 	scicore/vocab.o \
