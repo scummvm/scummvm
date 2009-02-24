@@ -351,7 +351,24 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
 		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
 		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0);
-		//TODO: SCI_EVM_SCRLOCK SCI_EVM_NUMLOCK SCI_EVM_CAPSLOCK SCI_EVM_INSERT
+
+		// We add the modifier key status to buckybits
+		// SDL sends a keydown event if a modifier key is turned on and a keyup event if it's off
+		if (ev.type == Common::EVENT_KEYDOWN) {
+ 			switch (ev.kbd.keycode) {
+			case Common::KEYCODE_CAPSLOCK:
+				input.buckybits |= SCI_EVM_CAPSLOCK;
+				break;
+			case Common::KEYCODE_NUMLOCK:
+				input.buckybits |= SCI_EVM_NUMLOCK;
+				break;
+			case Common::KEYCODE_SCROLLOCK:
+				input.buckybits |= SCI_EVM_SCRLOCK;
+				break;
+			}
+		}
+
+		//TODO: SCI_EVM_INSERT
 
 		switch (ev.type) {
 			// Keyboard events
