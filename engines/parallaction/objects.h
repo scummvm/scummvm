@@ -538,6 +538,9 @@ public:
 
 	int16 getF() 			{ return _frame; }
 	void  setF(int16 value);
+
+	void getFoot(Common::Point &foot);
+	void setFoot(const Common::Point &foot);
 };
 
 class Table {

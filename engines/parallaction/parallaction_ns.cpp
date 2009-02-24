@@ -31,6 +31,7 @@
 #include "parallaction/input.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
+#include "parallaction/walk.h"
 
 
 namespace Parallaction {
@@ -184,6 +185,9 @@ Common::Error Parallaction_ns::init() {
 	_programExec = new ProgramExec_ns(this);
 	_programExec->init();
 
+	_builder = new PathBuilder_NS(&_char);
+	_walker = new PathWalker_NS(&_char);
+
 	_sarcophagusDeltaX = 0;
 	_movingSarcophagus = false;
 	_freeSarcophagusSlotX = INITIAL_FREE_SARCOPHAGUS_SLOT_X;
@@ -211,6 +215,9 @@ Parallaction_ns::~Parallaction_ns() {
 	freeLocation(true);
 
 	_location._animations.remove(_char._ani);
+
+	delete _builder;
+	delete _walker;
 }
 
 
@@ -485,4 +492,20 @@ void Parallaction_ns::cleanupGame() {
 	_movingSarcophagus = false;
 }
 
-} // namespace Parallaction
+void Parallaction_ns::updateWalkers() {
+	_walker->walk();
+}
+
+
+void Parallaction_ns::scheduleWalk(int16 x, int16 y) {
+	AnimationPtr a = _char._ani;
+
+	if ((a->_flags & kFlagsRemove) || (a->_flags & kFlagsActive) == 0) {
+		return;
+	}
+
+	_builder->buildPath(x, y);
+	_engineFlags |= kEngineWalking;
+}
+
+}// namespace Parallaction

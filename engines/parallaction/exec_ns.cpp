@@ -175,7 +175,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
 
-	_vm->_char.scheduleWalk(x, y);
+	_vm->scheduleWalk(x, y);
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
@@ -286,7 +286,7 @@ DECLARE_COMMAND_OPCODE(quit) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	_vm->_char.scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
+	_vm->scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y);
 }
 
 

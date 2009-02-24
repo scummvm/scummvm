@@ -48,6 +48,16 @@ public:
 	virtual void buildPath(uint16 x, uint16 y) = 0;
 };
 
+class PathWalker {
+protected:
+	Character	*_ch;
+public:
+	PathWalker(Character *ch) : _ch(ch) { }
+	virtual ~PathWalker() { }
+	virtual void walk() = 0;
+};
+
+
 
 class PathBuilder_NS : public PathBuilder {
 
@@ -60,25 +70,6 @@ class PathBuilder_NS : public PathBuilder {
 public:
 	PathBuilder_NS(Character *ch);
 	void buildPath(uint16 x, uint16 y);
-};
-
-
-class PathBuilder_BR : public PathBuilder {
-
-	bool directPathExists(const Common::Point &from, const Common::Point &to);
-
-public:
-	PathBuilder_BR(Character *ch);
-	void buildPath(uint16 x, uint16 y);
-};
-
-class PathWalker {
-protected:
-	Character	*_ch;
-public:
-	PathWalker(Character *ch) : _ch(ch) { }
-	virtual ~PathWalker() { }
-	virtual void walk() = 0;
 };
 
 class PathWalker_NS : public PathWalker {
@@ -94,21 +85,39 @@ public:
 };
 
 
-class PathWalker_BR : public PathWalker {
+class PathWalker_BR {
 
+	struct State {
+		bool			_active;
+		AnimationPtr	_a;
+		int				_walkDelay;
+		int				_fieldC;
+		Common::Point 	_startFoot;
+		bool			_first;
+		int				_step;
+		int				_dirFrame;
+		PointList		_walkPath;
+	};
 
-	int			_walkDelay;
-	int			_fieldC;
-	Common::Point _startFoot;
-	bool		_first;
-	int			_step;
+	State _character;
+	State _follower;
 
-	int			_dirFrame;
+	State &_ch;
 
 	void finalizeWalk();
+	bool directPathExists(const Common::Point &from, const Common::Point &to);
+	void buildPath(uint16 x, uint16 y);
+	bool doWalk(State &s);
+	void checkTrap(const Common::Point &p);
 
 public:
-	PathWalker_BR(Character *ch);
+	PathWalker_BR();
+	~PathWalker_BR() { }
+
+	void setCharacterPath(AnimationPtr a, uint16 x, uint16 y);
+	void setFollowerPath(AnimationPtr a, uint16 x, uint16 y);
+	void stopFollower();
+
 	void walk();
 };
 

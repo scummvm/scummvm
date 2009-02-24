@@ -30,6 +30,7 @@
 #include "parallaction/input.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
+#include "parallaction/walk.h"
 
 namespace Parallaction {
 
@@ -84,6 +85,8 @@ Common::Error Parallaction_br::init() {
 	_programExec = new ProgramExec_br(this);
 	_programExec->init();
 
+	_walker = new PathWalker_BR;
+
 	_part = -1;
 
 	_subtitle[0] = -1;
@@ -104,6 +107,8 @@ Parallaction_br::~Parallaction_br() {
 
 	delete _locationParser;
 	delete _programParser;
+
+	delete _walker;
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -392,6 +397,25 @@ void Parallaction_br::testCounterCondition(const Common::String &name, int op, i
 	}
 }
 
+void Parallaction_br::updateWalkers() {
+	_walker->walk();
+}
+
+void Parallaction_br::scheduleWalk(int16 x, int16 y) {
+	AnimationPtr a = _char._ani;
+
+	if ((a->_flags & kFlagsRemove) || (a->_flags & kFlagsActive) == 0) {
+		return;
+	}
+
+	_walker->setCharacterPath(a, x, y);
+#if 0
+	if (_follower && _userEvent) {
+		_walker->setFollowerPath(_follower, x, y);
+	}
+#endif
+	_engineFlags |= kEngineWalking;
+}
 
 
 } // namespace Parallaction

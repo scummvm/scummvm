@@ -112,6 +112,21 @@ void Animation::forceXYZF(int16 x, int16 y, int16 z, int16 f) {
 	_frame = f;
 }
 
+void Animation::getFoot(Common::Point &foot) {
+	Common::Rect rect;
+	gfxobj->getRect(_frame, rect);
+	foot.x = getX() + (rect.left + rect.width() / 2);
+	foot.y = getY() + (rect.top + rect.height());
+}
+
+void Animation::setFoot(const Common::Point &foot) {
+	Common::Rect rect;
+	gfxobj->getRect(_frame, rect);
+
+	setX(foot.x - (rect.left + rect.width() / 2));
+	setY(foot.y - (rect.top + rect.height()));
+}
+
 #define NUM_LOCALS	10
 char	_localNames[NUM_LOCALS][10];
 

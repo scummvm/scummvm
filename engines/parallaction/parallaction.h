@@ -40,7 +40,6 @@
 #include "parallaction/parser.h"
 #include "parallaction/objects.h"
 #include "parallaction/disk.h"
-#include "parallaction/walk.h"
 
 #define PATH_LEN	200
 
@@ -122,6 +121,9 @@ class SoundMan;
 class Input;
 class DialogueManager;
 class MenuInputHelper;
+class PathBuilder_NS;
+class PathWalker_NS;
+class PathWalker_BR;
 
 
 struct Location {
@@ -198,8 +200,6 @@ struct Character {
 	AnimationPtr	_ani;
 	GfxObj			*_head;
 	GfxObj			*_talk;
-	PathBuilder		*_builder;
-	PathWalker		*_walker;
 	PointList		_walkPath;
 
 	Character(Parallaction *vm);
@@ -207,7 +207,6 @@ struct Character {
 
 	void getFoot(Common::Point &foot);
 	void setFoot(const Common::Point &foot);
-	void scheduleWalk(int16 x, int16 y);
 
 protected:
 	CharacterName	_name;
@@ -367,6 +366,8 @@ public:
 	virtual	void callFunction(uint index, void* parm) = 0;
 	virtual void runPendingZones() = 0;
 	virtual void cleanupGame() = 0;
+	virtual void updateWalkers() = 0;
+	virtual void scheduleWalk(int16 x, int16 y) = 0;
 	virtual DialogueManager *createDialogueManager(ZonePtr z) = 0;
 };
 
@@ -383,12 +384,14 @@ public:
 	virtual Common::Error go();
 
 public:
-	virtual void 	parseLocation(const char *filename);
-	virtual void 	changeLocation(char *location);
-	virtual void 	changeCharacter(const char *name);
-	virtual void 	callFunction(uint index, void* parm);
-	virtual void 	runPendingZones();
-	virtual void 	cleanupGame();
+	virtual void parseLocation(const char *filename);
+	virtual void changeLocation(char *location);
+	virtual void changeCharacter(const char *name);
+	virtual void callFunction(uint index, void* parm);
+	virtual void runPendingZones();
+	virtual void cleanupGame();
+	virtual void updateWalkers();
+	virtual void scheduleWalk(int16 x, int16 y);
 
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
@@ -428,6 +431,9 @@ private:
 	bool _intro;
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
+
+	PathBuilder_NS		*_builder;
+	PathWalker_NS		*_walker;
 
 	// common callables
 	void _c_play_boogie(void*);
@@ -483,6 +489,8 @@ public:
 	virtual	void callFunction(uint index, void* parm);
 	virtual void runPendingZones();
 	virtual void cleanupGame();
+	virtual void updateWalkers();
+	virtual void scheduleWalk(int16 x, int16 y);
 
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
@@ -528,6 +536,8 @@ private:
 	typedef void (Parallaction_br::*Callable)(void*);
 	const Callable *_callables;
 	static const Callable _dosCallables[6];
+
+	PathWalker_BR		*_walker;
 
 	// dos callables
 	void _c_blufade(void*);

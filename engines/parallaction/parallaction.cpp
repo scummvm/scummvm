@@ -38,6 +38,7 @@
 #include "parallaction/debug.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
+#include "parallaction/walk.h"
 
 
 
@@ -337,7 +338,7 @@ void Parallaction::runGameFrame(int event) {
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
 	_char._ani->resetZ();
-	_char._walker->walk();
+	updateWalkers();
 	updateZones();
 }
 
@@ -867,23 +868,10 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_ani->_flags = kFlagsActive | kFlagsNoName | kFlagsCharacter;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
-
-	// TODO: move creation into Parallaction. Needs to make Character a pointer first.
-	if (_vm->getGameType() == GType_Nippon) {
-		_builder = new PathBuilder_NS(this);
-		_walker = new PathWalker_NS(this);
-	} else {
-		_builder = new PathBuilder_BR(this);
-		_walker = new PathWalker_BR(this);
-	}
 }
 
 Character::~Character() {
-	delete _builder;
-	_builder = 0;
 
-	delete _walker;
-	_walker = 0;
 }
 
 void Character::getFoot(Common::Point &foot) {
@@ -900,27 +888,6 @@ void Character::setFoot(const Common::Point &foot) {
 
 	_ani->setX(foot.x - (rect.left + rect.width() / 2));
 	_ani->setY(foot.y - (rect.top + rect.height()));
-}
-
-#if 0
-void dumpPath(const PointList &list, const char* text) {
-	for (PointList::iterator it = list.begin(); it != list.end(); it++)
-		printf("node (%i, %i)\n", it->x, it->y);
-
-	return;
-}
-#endif
-
-void Character::scheduleWalk(int16 x, int16 y) {
-	if ((_ani->_flags & kFlagsRemove) || (_ani->_flags & kFlagsActive) == 0) {
-		return;
-	}
-
-	_builder->buildPath(x, y);
-#if 0
-	dumpPath(_walkPath, _name);
-#endif
-	_engineFlags |= kEngineWalking;
 }
 
 

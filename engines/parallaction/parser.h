@@ -29,7 +29,6 @@
 #include "common/stream.h"
 #include "common/stack.h"
 #include "parallaction/objects.h"
-#include "parallaction/walk.h"
 
 namespace Parallaction {
 
