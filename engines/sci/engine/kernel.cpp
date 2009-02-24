@@ -23,13 +23,6 @@
  *
  */
 
-#ifdef WIN32
-#	include <windows.h>
-#	include <mmsystem.h>
-#	undef ARRAYSIZE
-#endif
-
-
 #include <time.h>	// FIXME: For struct tm
 
 #include "common/system.h"
