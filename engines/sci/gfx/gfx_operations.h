@@ -25,8 +25,8 @@
 
 /* Graphical operations, called from the widget state manager */
 
-#ifndef _GFX_OPERATIONS_H_
-#define _GFX_OPERATIONS_H_
+#ifndef SCI_GFX_GFX_OPERATIONS_H
+#define SCI_GFX_GFX_OPERATIONS_H
 
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_tools.h"
@@ -679,4 +679,4 @@ int _gfxop_clip(rect_t *rect, rect_t clipzone);
 
 } // End of namespace Sci
 
-#endif // !_GFX_OPERATIONS_H_
+#endif // SCI_GFX_GFX_OPERATIONS_H

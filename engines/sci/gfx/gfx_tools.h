@@ -26,8 +26,8 @@
 /* FreeSCI 0.3.1+ graphics subsystem helper functions */
 
 
-#ifndef _GFX_TOOLS_H_
-#define _GFX_TOOLS_H_
+#ifndef SCI_GFX_GFX_TOOLS_H
+#define SCI_GFX_GFX_TOOLS_H
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
@@ -239,4 +239,4 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 
 } // End of namespace Sci
 
-#endif /* !_GFX_TOOLS_H_ */
+#endif // SCI_GFX_GFX_TOOLS_H

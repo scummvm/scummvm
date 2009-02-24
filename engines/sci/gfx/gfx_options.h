@@ -24,8 +24,8 @@
  */
 
 
-#ifndef _GFX_OPTIONS_H_
-#define _GFX_OPTIONS_H_
+#ifndef SCI_GFX_GFX_OPTIONS_H
+#define SCI_GFX_GFX_OPTIONS_H
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -81,5 +81,4 @@ struct gfx_options_t {
 
 } // End of namespace Sci
 
-#endif // !_GFX_OPTIONS_H_
-
+#endif // SCI_GFX_GFX_OPTIONS_H

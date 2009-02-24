@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _GFX_STATE_INTERNAL_H_
-#define _GFX_STATE_INTERNAL_H_
+#ifndef SCI_GFX_GFX_STATE_INTERNAL_H
+#define SCI_GFX_GFX_STATE_INTERNAL_H
 
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_options.h"
@@ -236,5 +236,4 @@ struct gfxw_port_t {
 
 } // End of namespace Sci
 
-#endif /* !_GFX_STATE_INTERNAL_H_ */
-
+#endif // SCI_GFX_GFX_STATE_INTERNAL_H

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SFX_TIME_H_
-#define _SFX_TIME_H_
+#ifndef SCI_SFX_SFX_TIME_H
+#define SCI_SFX_SFX_TIME_H
 
 namespace Sci {
 
@@ -82,4 +82,4 @@ void sfx_timestamp_gettime(sfx_timestamp_t *timestamp, long *secs, long *usecs);
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_TIME_H_) */
+#endif // SCI_SFX_SFX_TIME_H

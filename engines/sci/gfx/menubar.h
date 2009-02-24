@@ -25,8 +25,8 @@
 
 /* Header for SCI0 menu bar management */
 
-#ifndef _SCI_MENUBAR_H_
-#define _SCI_MENUBAR_H_
+#ifndef SCI_GFX_SCI_MENUBAR_H
+#define SCI_GFX_SCI_MENUBAR_H
 
 #include "sci/include/vm_types.h"
 #include "sci/gfx/gfx_operations.h"
@@ -211,5 +211,4 @@ int menubar_match_key(menu_item_t *item, int message, int modifiers);
 
 } // End of namespace Sci
 
-#endif /* !_SCI_MENUBAR_H_ */
-
+#endif // SCI_GFX_SCI_MENUBAR_H

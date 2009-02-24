@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_AATREE_H
-#define _SCI_AATREE_H
+#ifndef SCI_ENGINE_AATREE_H
+#define SCI_ENGINE_AATREE_H
 
 namespace Sci {
 
@@ -84,4 +84,4 @@ void *aatree_get_data(aatree_t *t);
 
 } // End of namespace Sci
 
-#endif // !_SCI_AATREE_H
+#endif // SCI_ENIGNE_AATREE_H

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SFX_ITERATOR_INTERNAL_
-#define _SFX_ITERATOR_INTERNAL_
+#ifndef SCI_SFX_SFX_ITERATOR_INTERNAL
+#define SCI_SFX_SFX_ITERATOR_INTERNAL
 
 #include "sci/sfx/sfx_iterator.h"
 #include "sci/include/sci_midi.h"
@@ -231,4 +231,4 @@ sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset,
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_ITERATOR_INTERNAL_ */
+#endif // SCI_SFX_SFX_ITERATOR_INTERNAL

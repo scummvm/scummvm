@@ -25,8 +25,8 @@
 
 /* SCI Resource library */
 
-#ifndef _GFX_RESOURCE_H_
-#define _GFX_RESOURCE_H_
+#ifndef SCI_GFX_GFX_RESOURCE_H
+#define SCI_GFX_GFX_RESOURCE_H
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
@@ -407,5 +407,4 @@ static inline int get_int_16(const byte *offset) {
 
 } // End of namespace Sci
 
-#endif /* !_GFX_RESOURCE_H_ */
-
+#endif // SCI_GFX_GFX_RESOURCE_H

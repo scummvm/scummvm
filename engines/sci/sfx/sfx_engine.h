@@ -24,8 +24,8 @@
  */
 
 /* Sound engine */
-#ifndef _SFX_ENGINE_H_
-#define _SFX_ENGINE_H_
+#ifndef SCI_SFX_SFX_ENGINE_H
+#define SCI_SFX_SFX_ENGINE_H
 
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/sfx_songlib.h"
@@ -163,4 +163,4 @@ void sfx_song_set_fade(sfx_state_t *self, song_handle_t handle, fade_params_t *f
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_ENGINE_H_) */
+#endif // SCI_SFX_SFX_ENGINE_H

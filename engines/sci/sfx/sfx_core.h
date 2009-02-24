@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SFX_CORE_H_
-#define _SFX_CORE_H_
+#ifndef SCI_SFX_SFX_CORE_H
+#define SCI_SFX_SFX_CORE_H
 
 #include "common/scummsys.h"
 
@@ -37,4 +37,4 @@ namespace Sci {
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_CORE_H_) */
+#endif // SCI_SFX_SFX_CORE_H

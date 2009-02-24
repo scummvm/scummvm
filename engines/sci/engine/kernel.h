@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_KERNEL_H_
-#define _SCI_KERNEL_H_
+#ifndef SCI_ENGINE_KERNEL_H
+#define SCI_ENGINE_KERNEL_H
 
 #include "common/scummsys.h"
 #include "common/debug.h"
@@ -337,4 +337,4 @@ extern sci_kernel_function_t kfunct_mappers[];
 
 } // End of namespace Sci
 
-#endif /* _SCI_KERNEL_H_ */
+#endif // SCI_ENGIENE_KERNEL_H

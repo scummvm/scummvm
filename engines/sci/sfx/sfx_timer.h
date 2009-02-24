@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _FREESCI_SFX_TIMER_H_
-#define _FREESCI_SFX_TIMER_H_
+#ifndef SCI_SFX_SFX_TIMER_H
+#define SCI_SFX_SFX_TIMER_H
 
 #include "sci/sfx/sfx_core.h"
 
@@ -53,4 +53,4 @@ struct sfx_timer_t {
 
 } // End of namespace Sci
 
-#endif /* !_FREESCI_SFX_TIMER_H_ */
+#endif // SCI_SFX_SFX_TIMER_H

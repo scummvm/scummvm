@@ -25,8 +25,8 @@
 
 /* Versions management */
 
-#ifndef _SCI_VERSIONS_H_
-#define _SCI_VERSIONS_H_
+#ifndef SCI_INCLUDE_VERSIONS_H
+#define SCI_INCLUDE_VERSIONS_H
 
 namespace Sci {
 
@@ -144,4 +144,4 @@ int version_parse(const char *vn, sci_version_t *result);
 
 } // End of namespace Sci
 
-#endif /* !_SCI_VERSIONS_H_ */
+#endif // SCI_INCLUDE_VERSIONS_H

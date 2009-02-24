@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_SEG_MANAGER_H
-#define _SCI_SEG_MANAGER_H
+#ifndef SCI_ENGINE_SEG_MANAGER_H
+#define SCI_ENGINE_SEG_MANAGER_H
 
 #include "sci/engine/vm.h"
 
@@ -500,4 +500,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_ENGINE_SEG_MANAGER

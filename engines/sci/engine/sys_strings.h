@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_SYS_STRINGS_H
-#define SCI_SYS_STRINGS_H
+#ifndef SCI_ENGINE_SYS_STRINGS_H
+#define SCI_ENGINE_SYS_STRINGS_H
 
 namespace Sci {
 
@@ -77,4 +77,4 @@ void sys_string_free_all(sys_strings_t *strings);
 
 } // End of namespace Sci
 
-#endif // SCI_SYS_STRINGS_H
+#endif // SCI_ENGINE_SYS_STRINGS_H

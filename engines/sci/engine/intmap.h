@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_INTMAP_H
-#define SCI_INTMAP_H
+#ifndef SCI_ENGINE_INTMAP_H
+#define SCI_ENGINE_INTMAP_H
 
 #include "common/scummsys.h"
 
@@ -92,4 +92,4 @@ public:
 
 } // End of namespace Sci
 
-#endif // SCI_INTMAP_H
+#endif // SCI_ENGINE_INTMAP_H

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_MIDI_H_
-#define _SCI_MIDI_H_
+#ifndef SCI_INCLUDE_MIDI_H
+#define SCI_INCLUDE_MIDI_H
 
 namespace Sci {
 
@@ -52,4 +52,4 @@ namespace Sci {
 
 } // End of namespace Sci
 
-#endif /* !defined(_SCI_MIDI_H_) */
+#endif // SCI_INCLUDE_MIDI_H

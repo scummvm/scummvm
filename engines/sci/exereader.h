@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef EXEREADER_H
-#define EXEREADER_H
+#ifndef SCI_EXEREADER_H
+#define SCI_EXEREADER_H
 
 #include "common/stream.h"
 #include "common/util.h"
@@ -37,4 +37,4 @@ bool getSciVersionFromString(Common::String versionString, int *version, Common:
 
 } // End of namespace Sci
 
-#endif // SCI_H
+#endif // SCI_EXEREADER_H

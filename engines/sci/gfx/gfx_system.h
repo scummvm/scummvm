@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_GFX_SYSTEM_
-#define _SCI_GFX_SYSTEM_
+#ifndef SCI_GFX_GFX_SYSTEM
+#define SCI_GFX_GFX_SYSTEM
 
 #include "common/scummsys.h"
 #include "common/rect.h"
@@ -389,4 +389,4 @@ typedef enum {
 
 } // End of namespace Sci
 
-#endif /* !_SCI_GFX_SYSTEM_ */
+#endif // SCI_GFX_GFX_SYSTEM

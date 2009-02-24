@@ -104,4 +104,4 @@ int sci_ffs(int bits);
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_TOOLS_H

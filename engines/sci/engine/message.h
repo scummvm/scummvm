@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_ENGINE_MESSAGE_H
+#define SCI_ENGINE_MESSAGE_H
+
 #include "sci/include/sciresource.h"
 
 namespace Sci {
@@ -77,3 +80,5 @@ int message_state_load_res(message_state_t *state, int module);
 void message_state_initialize(ResourceManager *resmgr, message_state_t *state);
 
 } // End of namespace Sci
+
+#endif // SCI_ENGINE_MESSAGE_H

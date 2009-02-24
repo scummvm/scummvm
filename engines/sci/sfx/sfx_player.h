@@ -25,8 +25,8 @@
 
 /* song player structure */
 
-#ifndef _SFX_PLAYER_H
-#define _SFX_PLAYER_H
+#ifndef SCI_SFX_SFX_PLAYER_H
+#define SCI_SFX_SFX_PLAYER_H
 
 #include "sci/sfx/sfx_engine.h"
 #include "sci/sfx/sfx_iterator.h"
@@ -151,4 +151,4 @@ song_iterator_t *sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2
 
 } // End of namespace Sci
 
-#endif /* !_SFX_PLAYER_H */
+#endif // SCI_SFX_SFX_PLAYER_H

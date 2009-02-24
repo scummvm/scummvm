@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _GFX_RESMGR_H_
-#define _GFX_RESMGR_H_
+#ifndef SCI_GFX_GFX_RESMGR_H
+#define SCI_GFX_GFX_RESMGR_H
 
 // FIXME/TODO: The name "(Graphics) resource manager", and the associated
 // filenames, are misleading. This should be renamed to "Graphics manager"
@@ -335,4 +335,4 @@ int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
 
 } // End of namespace Sci
 
-#endif /* !_GFX_RSMGR_H_ */
+#endif // SCI_GFX_GFX_RSMGR_H

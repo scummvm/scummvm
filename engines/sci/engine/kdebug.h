@@ -25,8 +25,8 @@
 
 /* Kernel debug defines */
 
-#ifndef _SCI_KDEBUG_H_
-#define _SCI_KDEBUG_H_
+#ifndef SCI_ENGINE_KDEBUG_H
+#define SCI_ENGINE_KDEBUG_H
 
 namespace Sci {
 
@@ -109,4 +109,4 @@ extern int sci_debug_flags;
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_ENGINE_KDEBUG_H

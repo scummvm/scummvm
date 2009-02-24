@@ -25,8 +25,8 @@
 
 /* Graphical state management */
 
-#ifndef _GFX_WIDGETS_H_
-#define _GFX_WIDGETS_H_
+#ifndef SCI_GFX_GFX_WIDGETS_H
+#define SCI_GFX_GFX_WIDGETS_H
 
 #include "sci/gfx/gfx_state_internal.h"
 
@@ -516,4 +516,4 @@ void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window);
 
 } // End of namespace Sci
 
-#endif /* !_GFX_WIDGETS_H_ */
+#endif // SCI_GFX_GFX_WIDGETS_H

@@ -29,8 +29,8 @@
 ** of resizing after being initialized.
 */
 
-#ifndef _SBTREE_H_
-#define _SBTREE_H_
+#ifndef SCI_GFX_GFX_SBTREE_H
+#define SCI_GFX_GFX_SBTREE_H
 
 #ifdef SBTREE_DEBUG
 #  include <stdio.h>
@@ -102,9 +102,4 @@ void sbtree_foreach(sbtree_t *tree, void *args, void *(*operation)(sbtree_t *, c
 
 } // End of namespace Sci
 
-#endif /* !_SBTREE_H_ */
-
-
-
-
-
+#endif // SCI_GFX_GFX_SBTREE_H

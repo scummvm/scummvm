@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SFX_PCM_H_
-#define _SFX_PCM_H_
+#ifndef SCI_SFX_SFX_PCM_H
+#define SCI_SFX_SFX_PCM_H
 
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/sfx_timer.h"
@@ -180,4 +180,4 @@ int sfx_pcm_available();
 
 } // End of namespace Sci
 
-#endif /* !defined(_SFX_PCM_H_) */
+#endif // SCI_SFX_SFX_PCM_H

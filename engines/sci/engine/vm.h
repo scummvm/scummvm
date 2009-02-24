@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_VM_H
-#define _SCI_VM_H
+#ifndef SCI_ENGINE_VM_H
+#define SCI_ENGINE_VM_H
 
 /* VM and kernel declarations */
 
@@ -800,4 +800,4 @@ object_t *obj_get(EngineState *s, reg_t offset);
 
 } // End of namespace Sci
 
-#endif /* !_SCI_VM_H */
+#endif // SCI_ENGINE_VM_H

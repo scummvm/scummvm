@@ -25,8 +25,8 @@
 
 /* Configuration options for per-resource customisations */
 
-#ifndef _GFX_RES_OPTIONS_H_
-#define _GFX_RES_OPTIONS_H_
+#ifndef SCI_GFX_GFX_RES_OPTIONS_H
+#define SCI_GFX_GFX_RES_OPTIONS_H
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_resmgr.h"
@@ -106,4 +106,4 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm);
 
 } // End of namespace Sci
 
-#endif /* !_GFX_RES_OPTIONS_H_ */
+#endif // SCI_GFX_GFX_RES_OPTIONS_H

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_VOCABULARY_H
-#define SCI_VOCABULARY_H
+#ifndef SCI_INCLUDE_VOCABULARY_H
+#define SCI_INCLUDE_VOCABULARY_H
 
 #include "sci/include/versions.h"
 #include "sci/include/sciresource.h"
@@ -395,4 +395,4 @@ void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_INCLUDE_VOCABULARY_H

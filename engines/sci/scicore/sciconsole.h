@@ -29,8 +29,8 @@
 ** possible exception of the mouse pointer).
 */
 
-#ifndef _SCI_CONSOLE_H_
-#define _SCI_CONSOLE_H_
+#ifndef SCI_SCICORE_SCICONSOLE_H
+#define SCI_SCICORE_SCICONSOLE_H
 
 #include "common/scummsys.h"
 
@@ -227,4 +227,4 @@ void close_console_file();
 
 } // End of namespace Sci
 
-#endif /* _SCI_CONSOLE_H_ */
+#endif // SCI_SCICORE_SCICONSOLE_H

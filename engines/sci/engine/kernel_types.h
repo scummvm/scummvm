@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _FREESCI_KERNEL_TYPES_H_
-#define _FREESCI_KERNEL_TYPES_H_
+#ifndef SCI_ENGINE_KERNEL_TYPES_H
+#define SCI_ENGINE_KERNEL_TYPES_H
 
 #include "sci/include/vm_types.h"
 
@@ -91,4 +91,4 @@ const char *kernel_argtype_description(int type);
 
 } // End of namespace Sci
 
-#endif // ! _FREESCI_KERNEL_TYPES_H_
+#endif // SCI_ENGIENE_KERNEL_TYPES_H

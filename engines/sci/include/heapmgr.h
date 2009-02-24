@@ -25,8 +25,8 @@
 
 /* Heap-like managed structure */
 
-#ifndef _FREESCI_HEAPMGR_H_
-#define _FREESCI_HEAPMGR_H_
+#ifndef SCI_INCLUDE_HEAPMGR_H
+#define SCI_INCLUDE_HEAPMGR_H
 
 #include "sci/tools.h"
 #include "sci/sci_memory.h"
@@ -110,4 +110,4 @@ int	alloc_##ENTRY##_entry(ENTRY##_table_t *table) {										\
 
 } // End of namespace Sci
 
-#endif /* !_FREESCI_HEAPMGR_H_ */
+#endif // SCI_INCLUDE_HEAPMGR_H

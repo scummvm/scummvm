@@ -40,8 +40,8 @@
  **/
 
 
-#ifndef _SCI_MEMORY_H
-#define _SCI_MEMORY_H
+#ifndef SCI_SCI_MEMORY_H
+#define SCI_SCI_MEMORY_H
 
 #include "common/scummsys.h"
 
@@ -138,4 +138,4 @@ extern void *sci_refcount_memdup(void *data, size_t len);
 
 } // End of namespace Sci
 
-#endif	/* _SCI_MEMORY_H */
+#endif	// SCI_SCI_MEMORY_H

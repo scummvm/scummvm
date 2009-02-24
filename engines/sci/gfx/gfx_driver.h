@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_GFX_DRIVER_H_
-#define _SCI_GFX_DRIVER_H_
+#ifndef SCI_GFX_GFX_DRIVER_H
+#define SCI_GFX_GFX_DRIVER_H
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/include/uinput.h"
@@ -319,4 +319,4 @@ struct gfx_driver_t { /* Graphics driver */
 
 } // End of namespace Sci
 
-#endif // !_SCI_GFX_DRIVER_H_
+#endif // SCI_GFX_GFX_DRIVER_H

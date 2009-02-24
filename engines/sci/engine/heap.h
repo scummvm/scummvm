@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_HEAP_H
-#define _SCI_HEAP_H
+#ifndef SCI_ENGINE_HEAP_H
+#define SCI_ENGINE_HEAP_H
 
 #include "sci/tools.h"
 
@@ -112,4 +112,4 @@ void heap_dump_all(heap_t *h);
 
 } // End of namespace Sci
 
-#endif // !_SCI_HEAP_H
+#endif // SCI_ENGINE_HEAP_H

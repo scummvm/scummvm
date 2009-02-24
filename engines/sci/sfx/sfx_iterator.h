@@ -25,8 +25,8 @@
 
 /* Song iterator declarations */
 
-#ifndef _SCI_SFX_ITERATOR_H_
-#define _SCI_SFX_ITERATOR_H_
+#ifndef SCI_SFX_SFX_ITERATOR_H
+#define SCI_SFX_SFX_ITERATOR_H
 
 #include "sci/sfx/sfx_pcm.h"
 
@@ -345,4 +345,4 @@ int sfx_play_iterator_pcm(song_iterator_t *it, unsigned long handle);
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_SFX_SFX_ITERATOR_H

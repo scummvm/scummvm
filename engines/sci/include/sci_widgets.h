@@ -25,8 +25,8 @@
 
 /* SCI-specific widget handling */
 
-#ifndef _SCI_WIDGETS_H_
-#define _SCI_WIDGETS_H_
+#ifndef SCI_INCLUDE_SCI_WIDGETS_H
+#define SCI_INCLUDE_SCI_WIDGETS_H
 
 #include "sci/include/engine.h"
 
@@ -202,5 +202,4 @@ sciw_select_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selec
 
 } // End of namespace Sci
 
-#endif /* _!SCI_WIDGETS_H_ */
-
+#endif // SCI_INCLUDE_SCI_WIDGETS_H

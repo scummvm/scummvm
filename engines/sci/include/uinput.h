@@ -25,8 +25,8 @@
 
 /* unified input header file */
 
-#ifndef _SCI_UINPUT_H
-#define _SCI_UINPUT_H
+#ifndef SCI_INCLUDE_UINPUT_H
+#define SCI_INCLUDE_UINPUT_H
 
 
 namespace Sci {
@@ -124,4 +124,4 @@ struct sci_event_t {
 
 } // End of namespace Sci
 
-#endif /* _SCI_UINPUT_H */
+#endif // SCI_INCLUDE_UINPUT_H

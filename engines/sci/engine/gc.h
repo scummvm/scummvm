@@ -24,8 +24,8 @@
  */
 
 
-#ifndef GC_H_
-#define GC_H_
+#ifndef SCI_ENGINE_GC_H
+#define SCI_ENGINE_GC_H
 
 #include "common/hashmap.h"
 #include "sci/include/vm_types.h"
@@ -61,4 +61,4 @@ void run_gc(EngineState *s);
 
 } // End of namespace Sci
 
-#endif // !defined(GC_H_)
+#endif // SCI_ENGINE_GC_H

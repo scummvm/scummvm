@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCI_ENGINE_H
-#define _SCI_ENGINE_H
+#ifndef SCI_INCLUDE_ENGINE_H
+#define SCI_INCLUDE_ENGINE_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -307,4 +307,4 @@ static inline reg_t not_register(EngineState *s, reg_t r) {
 
 } // End of namespace Sci
 
-#endif // !_SCI_ENGINE_H
+#endif // SCI_INCLUDE_ENGINE_H

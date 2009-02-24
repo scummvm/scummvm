@@ -25,8 +25,8 @@
 
 // SCI constants and definitions
 
-#ifndef _SCI_GRAPHICS_H_
-#define _SCI_GRAPHICS_H_
+#ifndef SCI_ENGIEN_SCI_GRAPHICS_H
+#define SCI_ENGINE_SCI_GRAPHICS_H
 
 namespace Sci {
 
@@ -42,4 +42,4 @@ namespace Sci {
 
 } // End of namespace Sci
 
-#endif // !_SCI_GRAPHICS_H_
+#endif // SCI_ENGINE_SCI_GRAPHICS_H

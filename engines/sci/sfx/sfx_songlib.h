@@ -25,8 +25,8 @@
 
 /* Song library */
 
-#ifndef _SCI_SFX_SONGLIB_H_
-#define _SCI_SFX_SONGLIB_H_
+#ifndef SCI_SFX_SFX_SONGLIB_H
+#define SCI_SFX_SFX_SONGLIB_H
 
 #include "common/scummsys.h"
 
@@ -187,4 +187,4 @@ void song_lib_set_restore_behavior(songlib_t songlib, song_handle_t handle,
 
 } // End of namespace Sci
 
-#endif /* !_SCI_SOUND_SERVER_H_ */
+#endif // SCI_SSFX_SFX_SONGLIB_H

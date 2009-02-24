@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef SCI_INCLUDE_SCRIPT_H
+#define SCI_INCLUDE_SCRIPT_H
 
 #include "sci/include/sciresource.h"
 
@@ -221,4 +221,4 @@ void script_free_breakpoints(EngineState *s);
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_INCLUDE_SCRIPT_H
