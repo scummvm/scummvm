@@ -365,6 +365,8 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 			case Common::KEYCODE_SCROLLOCK:
 				input.buckybits |= SCI_EVM_SCRLOCK;
 				break;
+			default:
+				break;
 			}
 		}
 
