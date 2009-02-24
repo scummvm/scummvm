@@ -644,9 +644,9 @@ void PathWalker_BR::doWalk(State &s) {
 	}
 
 	if (s._fieldC || !s._walkPath.empty()) {
-		Common::Point p;
-		s._a->getFoot(p);
-		checkTrap(p);
+		Common::Point p2;
+		s._a->getFoot(p2);
+		checkTrap(p2);
 		debugC(3, kDebugWalk, "PathWalker_BR::doWalk, case 1");
 		return;
 	}
