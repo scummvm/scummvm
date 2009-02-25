@@ -497,7 +497,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #endif
 
 	g_system->getTimeAndDate(loc_time);
-	start_time = g_system->getMillis();
+	start_time = g_system->getMillis() - s->game_start_time;
 
 	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
 		if (argc) { // Get seconds since last am/pm switch

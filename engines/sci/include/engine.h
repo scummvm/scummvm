@@ -174,6 +174,7 @@ struct EngineState {
 	int pics_nr;
 	drawn_pic_t *pics;
 
+	uint32 game_start_time; /* The time at which the interpreter was started */
 	uint32 last_wait_time; /* The last time the game invoked Wait() */
 
 	byte version_lock_flag; /* Set to 1 to disable any autodetection mechanisms */
