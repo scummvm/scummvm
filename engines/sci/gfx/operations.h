@@ -112,16 +112,6 @@ struct gfx_state_t {
 	gfx_pixmap_t *control_map; /* back buffer control map (only exists unscaled in the first place) */
 
 
-	int mouse_pointer_visible; /* Whether the pointer is drawn right now */
-	Common::Point old_pointer_draw_pos; /* Mouse pointer draw coordinates */
-	rect_t pointer_bg_zone; /* old-pointer-draw-pos relative zone inside the pointer
-				** pixmap that was drawn  */
-
-	int mouse_pointer_in_hw; /* Current pointer is being handled in hardware */
-
-	gfx_pixmap_t *mouse_pointer; /* Only set when drawing the mouse manually */
-	gfx_pixmap_t *mouse_pointer_bg; /* Background under the pointer */
-
 	int tag_mode; /* Set to 1 after a new pic is drawn and the resource manager
 		      ** has tagged all resources. Reset after the next front buffer
 		      ** update is done, when all resources that are still tagged are

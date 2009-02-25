@@ -73,9 +73,6 @@ if (!state->driver) { \
 // How to determine whether colors have to be allocated
 #define PALETTE_MODE state->driver->mode->palette
 
-#define DRAW_POINTER { int __x = _gfxop_draw_pointer(state); if (__x) { GFXERROR("Drawing the mouse pointer failed!\n"); return __x;} }
-#define REMOVE_POINTER { int __x = _gfxop_remove_pointer(state); if (__x) { GFXERROR("Removing the mouse pointer failed!\n"); return __x;} }
-
 //#define GFXOP_DEBUG_DIRTY
 
 // Internal operations
@@ -291,92 +288,12 @@ static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int prior
 	return GFX_OK;
 }
 
-static int _gfxop_remove_pointer(gfx_state_t *state) {
-	if (state->mouse_pointer_visible && !state->mouse_pointer_in_hw && state->mouse_pointer_bg) {
-		int retval;
-
-		if (state->mouse_pointer_visible == POINTER_VISIBLE_BUT_CLIPPED) {
-			state->mouse_pointer_visible = 0;
-			state->pointer_pos.x = state->driver->pointer_x / state->driver->mode->xfact;
-			state->pointer_pos.y = state->driver->pointer_y / state->driver->mode->yfact;
-			return GFX_OK;
-		}
-
-		state->mouse_pointer_visible = 0;
-
-		retval = state->driver->draw_pixmap(state->driver, state->mouse_pointer_bg, GFX_NO_PRIORITY,
-		                                    gfx_rect(0, 0, state->mouse_pointer_bg->xl, state->mouse_pointer_bg->yl),
-		                                    state->pointer_bg_zone, GFX_BUFFER_BACK);
-
-		state->pointer_pos.x = state->driver->pointer_x / state->driver->mode->xfact;
-		state->pointer_pos.y = state->driver->pointer_y / state->driver->mode->yfact;
-
-		return retval;
-
-	} else {
-		state->pointer_pos.x = state->driver->pointer_x / state->driver->mode->xfact;
-		state->pointer_pos.y = state->driver->pointer_y / state->driver->mode->yfact;
-		return GFX_OK;
-	}
-}
-
-static int _gfxop_get_pointer_bounds(gfx_state_t *state, rect_t *rect) {
-	// returns 1 if there are no pointer bounds, 0 otherwise
-	gfx_pixmap_t *ppxm = state->mouse_pointer;
-
-	if (!ppxm)
-		return 1;
-
-	rect->x = state->driver->pointer_x - ppxm->xoffset * (state->driver->mode->xfact);
-	rect->y = state->driver->pointer_y - ppxm->yoffset * (state->driver->mode->yfact);
-	rect->xl = ppxm->xl;
-	rect->yl = ppxm->yl;
-
-	return (_gfxop_clip(rect, gfx_rect(0, 0, 320 * state->driver->mode->xfact, 200 * state->driver->mode->yfact)));
+static void _gfxop_full_pointer_refresh(gfx_state_t *state) {
+	state->pointer_pos.x = state->driver->pointer_x / state->driver->mode->xfact;
+	state->pointer_pos.y = state->driver->pointer_y / state->driver->mode->yfact;
 }
 
 static int _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffer_t buffer);
-
-static int _gfxop_draw_pointer(gfx_state_t *state) {
-	if (state->mouse_pointer_visible || !state->mouse_pointer || state->mouse_pointer_in_hw)
-		return GFX_OK;
-	else {
-		int retval;
-		gfx_pixmap_t *ppxm = state->mouse_pointer;
-		int xfact, yfact;
-		int x = state->driver->pointer_x - ppxm->xoffset * (xfact = state->driver->mode->xfact);
-		int y = state->driver->pointer_y - ppxm->yoffset * (yfact = state->driver->mode->yfact);
-		int error;
-
-		state->mouse_pointer_visible = 1;
-
-		state->old_pointer_draw_pos.x = x;
-		state->old_pointer_draw_pos.y = y;
-
-		// FIXME: we are leaking the mouse_pointer_bg, but freeing it causes weirdness in jones
-		// we should reuse the buffer instead of malloc/free for better performance
-
-		retval = _gfxop_grab_pixmap(state, &(state->mouse_pointer_bg), x, y, ppxm->xl, ppxm->yl, 0, &(state->pointer_bg_zone));
-
-		if (retval == GFX_ERROR) {
-			state->pointer_bg_zone = gfx_rect(0, 0, 320, 200);
-			state->mouse_pointer_visible = POINTER_VISIBLE_BUT_CLIPPED;
-			return GFX_OK;
-		}
-
-		if (retval)
-			return retval;
-
-		error = _gfxop_draw_pixmap(state->driver, ppxm, -1, -1, gfx_rect(0, 0, ppxm->xl, ppxm->yl),
-		                           gfx_rect(x, y, ppxm->xl, ppxm->yl), gfx_rect(0, 0, xfact * 320 , yfact * 200),
-		                           0, state->control_map, state->priority_map);
-
-		if (error)
-			return error;
-
-		return GFX_OK;
-	}
-}
 
 gfx_pixmap_t *_gfxr_get_cel(gfx_state_t *state, int nr, int *loop, int *cel, int palette) {
 	gfxr_view_t *view = gfxr_get_view(state->resstate, nr, loop, cel, palette);
@@ -541,15 +458,11 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 	state->fullscreen_override = NULL; // No magical override
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 
-	state->mouse_pointer = state->mouse_pointer_bg = NULL;
-	state->mouse_pointer_visible = 0;
-
 	init_aux_pixmap(&(state->control_map));
 	init_aux_pixmap(&(state->priority_map));
 	init_aux_pixmap(&(state->static_priority_map));
 
 	state->options = options;
-	state->mouse_pointer_in_hw = 0;
 	state->disable_dirty = 0;
 	state->events.clear();
 
@@ -560,9 +473,6 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 	state->tag_mode = 0;
 
 	state->dirty_rects = NULL;
-
-	state->old_pointer_draw_pos.x = -1;
-	state->old_pointer_draw_pos.y = -1;
 
 	return GFX_OK;
 }
@@ -618,11 +528,6 @@ int gfxop_exit(gfx_state_t *state) {
 	if (state->static_priority_map) {
 		gfx_free_pixmap(state->driver, state->static_priority_map);
 		state->static_priority_map = NULL;
-	}
-
-	if (state->mouse_pointer_bg) {
-		gfx_free_pixmap(state->driver, state->mouse_pointer_bg);
-		state->mouse_pointer_bg = NULL;
 	}
 
 	state->driver->exit(state->driver);
@@ -978,7 +883,7 @@ static int _gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Com
 	int skipone = (start.x ^ end.y) & 1; // Used for simulated line stippling
 
 	BASIC_CHECKS(GFX_FATAL);
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 
 	// First, make sure that the line is normalized
 	if (start.y > end.y) {
@@ -1046,7 +951,7 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 	Common::Point upper_left, upper_right, lower_left, lower_right;
 
 	BASIC_CHECKS(GFX_FATAL);
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 
 	xfact = state->driver->mode->xfact;
 	yfact = state->driver->mode->yfact;
@@ -1106,7 +1011,7 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	rect_t new_box;
 
 	BASIC_CHECKS(GFX_FATAL);
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 
 	if (PALETTE_MODE || !(state->driver->capabilities & GFX_CAPABILITY_SHADING))
 		shade_type = GFX_BOX_SHADE_FLAT;
@@ -1225,7 +1130,7 @@ extern int sci0_palette;
 
 int gfxop_clear_box(gfx_state_t *state, rect_t box) {
 	BASIC_CHECKS(GFX_FATAL);
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 	_gfxop_add_dirty(state, box);
 	DDIRTY(stderr, "[]  clearing box %d %d %d %d\n", GFX_PRINT_RECT(box));
 	if (box.x == 29 && box.y == 77 && (sci0_palette == 1)) {
@@ -1277,7 +1182,6 @@ int gfxop_update(gfx_state_t *state) {
 	int retval;
 
 	BASIC_CHECKS(GFX_FATAL);
-	DRAW_POINTER;
 
 	retval = _gfxop_clear_dirty_rec(state, state->dirty_rects);
 
@@ -1306,7 +1210,6 @@ int gfxop_update(gfx_state_t *state) {
 
 int gfxop_update_box(gfx_state_t *state, rect_t box) {
 	BASIC_CHECKS(GFX_FATAL);
-	DRAW_POINTER;
 
 	if (state->disable_dirty)
 		_gfxop_update_box(state, box);
@@ -1334,33 +1237,6 @@ int gfxop_disable_dirty_frames(gfx_state_t *state) {
 
 // Pointer and IO ops
 
-#define GFXOP_FULL_POINTER_REFRESH if (_gfxop_full_pointer_refresh(state)) { GFXERROR("Failed to do full pointer refresh!\n"); return GFX_ERROR; }
-
-static int _gfxop_full_pointer_refresh(gfx_state_t *state) {
-	rect_t pointer_bounds;
-	rect_t old_pointer_bounds	= {0, 0, 0, 0};
-	int new_x = state->driver->pointer_x;
-	int new_y = state->driver->pointer_y;
-
-	if (new_x != state->old_pointer_draw_pos.x || new_y != state->old_pointer_draw_pos.y) {
-		Common::Point pp_new = Common::Point(new_x / state->driver->mode->xfact, new_y / state->driver->mode->yfact);
-		if (!_gfxop_get_pointer_bounds(state, &pointer_bounds)) {
-			memcpy(&old_pointer_bounds, &(state->pointer_bg_zone), sizeof(rect_t));
-			REMOVE_POINTER;
-			state->pointer_pos = pp_new;
-
-			DRAW_POINTER;
-			if (_gfxop_buffer_propagate_box(state, pointer_bounds, GFX_BUFFER_FRONT)) return 1;
-			if (_gfxop_buffer_propagate_box(state, old_pointer_bounds, GFX_BUFFER_FRONT)) return 1;
-
-			state->old_pointer_draw_pos = Common::Point(new_x, new_y);
-		} else
-			state->pointer_pos = pp_new;
-	}
-
-	return 0;
-}
-
 int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 	BASIC_CHECKS(GFX_FATAL);
 
@@ -1386,44 +1262,9 @@ int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 }
 
 int _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
-	rect_t old_pointer_bounds = {0, 0, 0, 0};
-	rect_t pointer_bounds = {0, 0, 0, 0};
-	int draw_old;
-	int draw_new = 0;
-
 	BASIC_CHECKS(GFX_FATAL);
 
-	draw_old = state->mouse_pointer != NULL;
-
-	draw_new = 0;
 	state->driver->set_pointer(state->driver, pxm);
-	state->mouse_pointer_in_hw = 1;
-
-	if (!state->mouse_pointer_in_hw)
-		draw_old = state->mouse_pointer != NULL;
-
-	if (draw_old) {
-		_gfxop_get_pointer_bounds(state, &old_pointer_bounds);
-		REMOVE_POINTER;
-	}
-
-	if (draw_new) {
-		state->mouse_pointer = pxm;
-		DRAW_POINTER;
-		_gfxop_get_pointer_bounds(state, &pointer_bounds);
-	}
-
-	if (draw_new && state->mouse_pointer)
-		_gfxop_buffer_propagate_box(state, pointer_bounds, GFX_BUFFER_FRONT);
-
-	if (draw_old)
-		_gfxop_buffer_propagate_box(state, old_pointer_bounds, GFX_BUFFER_FRONT);
-
-	if (state->mouse_pointer == NULL)
-		state->mouse_pointer_visible = 0;
-	else if (!state->mouse_pointer_visible)
-		state->mouse_pointer_visible = 1;
-	// else don't touch it, as it might be VISIBLE_BUT_CLIPPED!
 
 	return GFX_OK;
 }
@@ -1484,7 +1325,7 @@ int gfxop_set_pointer_position(gfx_state_t *state, Common::Point pos) {
 	state->driver->pointer_x = pos.x * state->driver->mode->xfact;
 	state->driver->pointer_y = pos.y * state->driver->mode->yfact;
 
-	GFXOP_FULL_POINTER_REFRESH;
+	_gfxop_full_pointer_refresh(state);
 	return 0;
 }
 
@@ -1622,9 +1463,7 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 	sci_event_t event = { 0, 0, 0, 0 };
 
 	BASIC_CHECKS(error_event);
-	if (_gfxop_remove_pointer(state)) {
-		GFXERROR("Failed to remove pointer before processing event!\n");
-	}
+	_gfxop_full_pointer_refresh(state);
 
 	// Update the screen here, since it's called very often
 	g_system->updateScreen();
@@ -1651,10 +1490,7 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 		}
 	}
 
-	if (_gfxop_full_pointer_refresh(state)) {
-		GFXERROR("Failed to update the mouse pointer!\n");
-		return error_event;
-	}
+	_gfxop_full_pointer_refresh(state);
 
 	if (event.type == SCI_EVT_KEYBOARD) {
 		// Do we still have to translate the key?
@@ -2038,7 +1874,7 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 	rect_t pos;
 	int i;
 	BASIC_CHECKS(GFX_FATAL);
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 
 	if (!handle) {
 		GFXERROR("Attempt to draw text with NULL handle!\n");
@@ -2125,10 +1961,7 @@ gfx_pixmap_t *gfxop_grab_pixmap(gfx_state_t *state, rect_t area) {
 	gfx_pixmap_t *pixmap = NULL;
 	rect_t resultzone; // Ignored for this application
 	BASIC_CHECKS(NULL);
-	if (_gfxop_remove_pointer(state)) {
-		GFXERROR("Could not remove pointer!\n");
-		return NULL;
-	}
+	_gfxop_full_pointer_refresh(state);
 
 	_gfxop_scale_rect(&area, state->driver->mode);
 	if (_gfxop_grab_pixmap(state, &pixmap, area.x, area.y, area.xl, area.yl, 0, &resultzone))
@@ -2148,7 +1981,7 @@ int gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common
 		return GFX_ERROR;
 	}
 
-	REMOVE_POINTER;
+	_gfxop_full_pointer_refresh(state);
 
 	target = gfx_rect(pos.x, pos.y, zone.xl, zone.yl);
 
