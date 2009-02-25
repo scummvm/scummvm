@@ -65,7 +65,7 @@ struct gfx_text_handle_t {
 ** All operations perform clipping relative to state->clip_zone.
 */
 
-typedef enum {
+enum gfx_box_shade_t {
 	GFX_BOX_SHADE_FLAT,
 	GFX_BOX_SHADE_RIGHT,
 	GFX_BOX_SHADE_LEFT,
@@ -80,7 +80,7 @@ typedef enum {
 	GFX_BOX_SHADE_RIGHT_UP,
 	GFX_BOX_SHADE_LEFT_UP
 #endif
-} gfx_box_shade_t;
+};
 
 
 struct gfx_dirty_rect_t {
@@ -131,9 +131,6 @@ struct gfx_state_t {
 	gfxr_pic_t *pic, *pic_unscaled; /* The background picture and its unscaled equivalent */
 
 	gfx_dirty_rect_t *dirty_rects; /* Dirty rectangles */
-
-	void *internal_state; /* Internal interpreter information */
-
 };
 
 
