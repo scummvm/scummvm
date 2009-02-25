@@ -4729,7 +4729,7 @@ int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const c
 #line 773 "engines/sci/engine/savegame.cfsml"
 		int _cfsml_eof = 0, _cfsml_error;
 #line 777 "engines/sci/engine/savegame.cfsml"
-		const char *_cfsml_inp = token;
+		const char *_cfsml_inp = lastval;
 		{
 #line 788 "engines/sci/engine/savegame.cfsml"
 			_cfsml_error = _cfsml_read_bool(fh, (&sci11), _cfsml_inp, &(*line), &_cfsml_eof);

@@ -717,7 +717,7 @@ int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const c
 	char *token;
 	int assignment;
 	bool sci11;
-	%CFSMLREAD bool (&sci11) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
+	%CFSMLREAD bool (&sci11) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 	*foo = new SegManager(sci11);
 	token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 	%CFSMLREAD SegManager (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
