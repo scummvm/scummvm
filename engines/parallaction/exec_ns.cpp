@@ -309,7 +309,7 @@ void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 
 		inst = _ctxt.ip;
 		_ctxt.inst = inst;
-		_ctxt.ip++;
+		++_ctxt.ip;
 
 		debugC(9, kDebugExec, "inst [%02i] %s\n", (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
 
@@ -330,7 +330,7 @@ void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator 
 		return;
 	}
 
-	for (ProgramList::iterator it = first; it != last; it++) {
+	for (ProgramList::iterator it = first; it != last; ++it) {
 
 		AnimationPtr a = (*it)->_anim;
 
@@ -359,7 +359,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 	_suspend = false;
 	_running = true;
 
-	for ( ; first != last; first++) {
+	for ( ; first != last; ++first) {
 		if (_vm->shouldQuit())
 			break;
 

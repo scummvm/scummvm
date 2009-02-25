@@ -844,7 +844,7 @@ bool BackgroundInfo::hasMask() {
 void BackgroundInfo::clearMaskData() {
 	// free mask data
 	MaskPatches::iterator it = _maskPatches.begin();
-	for ( ; it != _maskPatches.end(); it++) {
+	for ( ; it != _maskPatches.end(); ++it) {
 		delete *it;
 	}
 	_maskPatches.clear();
@@ -905,7 +905,7 @@ bool BackgroundInfo::hasPath() {
 void BackgroundInfo::clearPathData() {
 	// free mask data
 	PathPatches::iterator it = _pathPatches.begin();
-	for ( ; it != _pathPatches.end(); it++) {
+	for ( ; it != _pathPatches.end(); ++it) {
 		delete *it;
 	}
 	_pathPatches.clear();

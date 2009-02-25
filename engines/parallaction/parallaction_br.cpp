@@ -308,7 +308,7 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 	// this loads animation scripts
 	AnimationList::iterator it = _location._animations.begin();
-	for ( ; it != _location._animations.end(); it++) {
+	for ( ; it != _location._animations.end(); ++it) {
 		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}

@@ -429,7 +429,7 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 
 	PointList::iterator b = z1->u.path->_lists[id].begin();
 	PointList::iterator e = z1->u.path->_lists[id].end();
-	for ( ; b != e; b++) {
+	for ( ; b != e; ++b) {
 		s._walkPath.push_front(*b);
 	}
 	s._walkPath.push_back(dest);

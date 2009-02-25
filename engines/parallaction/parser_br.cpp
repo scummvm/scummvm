@@ -1258,7 +1258,7 @@ void LocationParser_br::parse(Script *script) {
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 
 	ZoneList::iterator it = _vm->_location._zones.begin();
-	for ( ; it != _vm->_location._zones.end(); it++) {
+	for ( ; it != _vm->_location._zones.end(); ++it) {
 		bool visible = ((*it)->_flags & kFlagsRemove) == 0;
 		if (visible)
 			_vm->showZone((*it), visible);

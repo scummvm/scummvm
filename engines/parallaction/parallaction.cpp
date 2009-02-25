@@ -205,14 +205,14 @@ void Parallaction::resumeJobs() {
 
 AnimationPtr Location::findAnimation(const char *name) {
 
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); ++it)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
 	return nullAnimationPtr;
 }
 
 void Location::freeAnimations() {
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); ++it) {
 		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
 	}
 	_animations.clear();
@@ -492,7 +492,7 @@ void Parallaction::updateZones() {
 	debugC(9, kDebugExec, "Parallaction::updateZones()\n");
 
 	// go through all animations and mark/unmark each of them for display
-	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
+	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ++ait) {
 		AnimationPtr anim = *ait;
 		if ((anim->_flags & kFlagsRemove) != 0)	{
 			// marks the animation as invisible for this frame
@@ -505,7 +505,7 @@ void Parallaction::updateZones() {
 	}
 
 	// examine the list of get zones to update
-	for (ZoneList::iterator zit = _zonesToUpdate.begin(); zit != _zonesToUpdate.end(); zit++) {
+	for (ZoneList::iterator zit = _zonesToUpdate.begin(); zit != _zonesToUpdate.end(); ++zit) {
 		ZonePtr z = *zit;
 		if (ACTIONTYPE(z) == kZoneGet) {
 			GfxObj *obj = z->u.get->gfxobj;
@@ -762,7 +762,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	uint16 _di = y;
 	uint16 _si = x;
 
-	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); it++) {
+	for (ZoneList::iterator it = _location._zones.begin(); it != _location._zones.end(); ++it) {
 		if (checkLinkedAnimBox(*it, type, x, y)) {
 			return *it;
 		}
@@ -774,7 +774,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 	int16 _a, _b, _c, _d;
 	bool _ef;
-	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ait++) {
+	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ++ait) {
 
 		AnimationPtr a = *ait;
 
@@ -795,7 +795,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 
 ZonePtr Location::findZone(const char *name) {
-	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); ++it) {
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 	}
 	return findAnimation(name);
