@@ -34,6 +34,8 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/include/uinput.h"
 
+#include "common/list.h"
+
 namespace Sci {
 
 #define GFXOP_NO_POINTER -1
@@ -87,11 +89,6 @@ struct gfx_dirty_rect_t {
 };
 
 
-struct gfx_input_event_t {
-	sci_event_t event;
-	gfx_input_event_t *next;
-};
-
 struct gfx_state_t {
 	int version; /* Interpreter version */
 
@@ -135,7 +132,7 @@ struct gfx_state_t {
 	int pic_nr; /* Number of the current pic */
 	int palette_nr; /* Palette number of the current pic */
 
-	gfx_input_event_t *events;
+	Common::List<sci_event_t> events;
 
 	gfx_pixmap_t *fullscreen_override; /* An optional override picture which must have unscaled
 					   ** full-screen size, which overrides all other visibility, and

@@ -551,7 +551,7 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 	state->options = options;
 	state->mouse_pointer_in_hw = 0;
 	state->disable_dirty = 0;
-	state->events = NULL;
+	state->events.clear();
 
 	state->pic = state->pic_unscaled = NULL;
 
@@ -1368,15 +1368,18 @@ int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
 	while (true) {
-		GFXOP_FULL_POINTER_REFRESH;
+		// let backend process events and update the screen
+		gfxop_get_event(state, SCI_EVT_PEEK);
+		g_system->updateScreen();
 		time = g_system->getMillis();
-		if (time >= wakeup_time)
+		if (time + 10 < wakeup_time) {
+			g_system->delayMillis(10);
+		} else {
+			if (time < wakeup_time)
+				g_system->delayMillis(wakeup_time - time);
 			break;
-		// FIXME: Busy waiting like this is usually not a good idea if it is for
-		// more than a few milliseconds. One should invoke OSystem::pollEvent during longer
-		// waits, else the mouse cursor might not be updated properly, and the system
-		// will seem sluggish to the user.
-		g_system->delayMillis(wakeup_time - time);
+		}
+
 	}
 
 	return GFX_OK;
@@ -1616,37 +1619,32 @@ static int _gfxop_numlockify(int c) {
 
 sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
-	sci_event_t event = { 0, 0, 0, 0 };;
-	gfx_input_event_t **seekerp = &(state->events);
+	sci_event_t event = { 0, 0, 0, 0 };
 
 	BASIC_CHECKS(error_event);
 	if (_gfxop_remove_pointer(state)) {
 		GFXERROR("Failed to remove pointer before processing event!\n");
 	}
 
-	while (*seekerp && !((*seekerp)->event.type & mask))
-		seekerp = &((*seekerp)->next);
+	// Get all queued events from graphics driver
+	do {
+		event = state->driver->get_event(state->driver);
+		if (event.type)
+			state->events.push_back(event);
+	} while (event.type);
 
-	if (*seekerp) {
-		gfx_input_event_t *goner = *seekerp;
-		event = goner->event;
-		*seekerp = goner->next;
-		free(goner);
-	} else {
-		event.type = 0;
+	// Search for matching event in queue
+	Common::List<sci_event_t>::iterator iter = state->events.begin();
+	while (iter != state->events.end() && !((*iter).type & mask))
+		++iter;
 
-		if (!(mask & SCI_EVT_NONBLOCK)) {
-			do {
-				if (event.type) {
-					*seekerp = (gfx_input_event_t *)sci_malloc(sizeof(gfx_input_event_t));
-					(*seekerp)->next = NULL;
+	if (iter != state->events.end()) {
+		// Event found
+		event = *iter;
 
-					(*seekerp)->event = event;
-					seekerp = &((*seekerp)->next);
-				}
-				event = state->driver->get_event(state->driver);
-
-			} while (event.type && !(event.type & mask));
+		// If not peeking at the queue, remove the event
+		if (!(mask & SCI_EVT_PEEK)) {
+			state->events.erase(iter);
 		}
 	}
 
