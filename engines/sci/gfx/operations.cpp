@@ -1324,6 +1324,7 @@ int gfxop_set_pointer_position(gfx_state_t *state, Common::Point pos) {
 
 	state->driver->pointer_x = pos.x * state->driver->mode->xfact;
 	state->driver->pointer_y = pos.y * state->driver->mode->yfact;
+	g_system->warpMouse(state->driver->pointer_x, state->driver->pointer_y);
 
 	_gfxop_full_pointer_refresh(state);
 	return 0;
