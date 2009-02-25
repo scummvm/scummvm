@@ -43,7 +43,7 @@ const char *Parallaction_br::_partNames[] = {
 	"PART4"
 };
 
-Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc),
+Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
 	_locationParser(0), _programParser(0) {
 }
 
@@ -52,25 +52,21 @@ Common::Error Parallaction_br::init() {
 	_screenWidth = 640;
 	_screenHeight = 400;
 
-	if (getGameType() == GType_BRA) {
-		if (getPlatform() == Common::kPlatformPC) {
-			if (getFeatures() & GF_DEMO) {
-				_disk = new DosDemoDisk_br(this);
-			} else {
-				_disk = new DosDisk_br(this);
-			}
-			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-			_soundMan = new DummySoundMan(this);
+	if (getPlatform() == Common::kPlatformPC) {
+		if (getFeatures() & GF_DEMO) {
+			_disk = new DosDemoDisk_br(this);
 		} else {
-			_disk = new AmigaDisk_br(this);
-			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-			_soundMan = new AmigaSoundMan(this);
+			_disk = new DosDisk_br(this);
 		}
-
-		_disk->init();
+		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+		_soundMan = new DummySoundMan(this);
 	} else {
-		error("unknown game type");
+		_disk = new AmigaDisk_br(this);
+		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+		_soundMan = new AmigaSoundMan(this);
 	}
+
+	_disk->init();
 
 
 	initResources();

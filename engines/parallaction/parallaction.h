@@ -475,7 +475,7 @@ private:
 
 #define NUM_ZONES	100
 
-class Parallaction_br : public Parallaction_ns {
+class Parallaction_br : public Parallaction {
 
 public:
 	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc);

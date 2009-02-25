@@ -309,6 +309,58 @@ DECLARE_COMMAND_OPCODE(offsave) {
 	warning("Parallaction_br::cmdOp_offsave not yet implemented");
 }
 
+DECLARE_INSTRUCTION_OPCODE(invalid) {
+	error("Can't execute invalid opcode %i", (*_ctxt.inst)->_index);
+}
+
+DECLARE_COMMAND_OPCODE(clear) {
+	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
+		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags &= ~_ctxt.cmd->u._flags;
+	} else {
+		_vm->clearLocationFlags(_ctxt.cmd->u._flags);
+	}
+}
+
+DECLARE_COMMAND_OPCODE(speak) {
+	if (ACTIONTYPE(_ctxt.cmd->u._zone) == kZoneSpeak) {
+		_vm->enterDialogueMode(_ctxt.cmd->u._zone);
+	} else {
+		_vm->_activeZone = _ctxt.cmd->u._zone;
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(get) {
+	_ctxt.cmd->u._zone->_flags &= ~kFlagsFixed;
+	_vm->runZone(_ctxt.cmd->u._zone);
+}
+
+DECLARE_COMMAND_OPCODE(toggle) {
+	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
+		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags ^= _ctxt.cmd->u._flags;
+	} else {
+		_vm->toggleLocationFlags(_ctxt.cmd->u._flags);
+	}
+}
+
+DECLARE_COMMAND_OPCODE(quit) {
+	_vm->quitGame();
+}
+
+DECLARE_COMMAND_OPCODE(invalid) {
+	error("Can't execute invalid command '%i'", _ctxt.cmd->_id);
+}
+
+DECLARE_COMMAND_OPCODE(set) {
+	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
+		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags |= _ctxt.cmd->u._flags;
+	} else {
+		_vm->setLocationFlags(_ctxt.cmd->u._flags);
+	}
+}
 
 
 
@@ -445,6 +497,40 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 	warning("Parallaction_br::instOp_stop not yet implemented");
 }
 
+DECLARE_INSTRUCTION_OPCODE(loop) {
+	InstructionPtr inst = *_ctxt.inst;
+
+	_ctxt.program->_loopCounter = inst->_opB.getValue();
+	_ctxt.program->_loopStart = _ctxt.ip;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(endloop) {
+	if (--_ctxt.program->_loopCounter > 0) {
+		_ctxt.ip = _ctxt.program->_loopStart;
+	}
+}
+
+DECLARE_INSTRUCTION_OPCODE(show) {
+	_ctxt.suspend = true;
+}
+
+DECLARE_INSTRUCTION_OPCODE(call) {
+	_vm->callFunction((*_ctxt.inst)->_immediate, 0);
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(endscript) {
+	if ((_ctxt.anim->_flags & kFlagsLooping) == 0) {
+		_ctxt.anim->_flags &= ~kFlagsActing;
+		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
+		_ctxt.program->_status = kProgramDone;
+	}
+
+	_ctxt.ip = _ctxt.program->_instructions.begin();
+	_ctxt.suspend = true;
+}
+
 
 void CommandExec_br::init() {
 	Common::Array<const Opcode*> *table = 0;
@@ -494,7 +580,7 @@ void CommandExec_br::init() {
 	COMMAND_OPCODE(offsave);
 }
 
-CommandExec_br::CommandExec_br(Parallaction_br* vm) : CommandExec_ns(vm), _vm(vm) {
+CommandExec_br::CommandExec_br(Parallaction_br* vm) : CommandExec(vm), _vm(vm) {
 
 }
 
@@ -541,7 +627,7 @@ void ProgramExec_br::init() {
 	INSTRUCTION_OPCODE(endscript);
 }
 
-ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : ProgramExec_ns(vm), _vm(vm) {
+ProgramExec_br::ProgramExec_br(Parallaction_br *vm) : _vm(vm) {
 	_instructionNames = _instructionNamesRes_br;
 }
 
