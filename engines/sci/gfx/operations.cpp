@@ -1626,6 +1626,9 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 		GFXERROR("Failed to remove pointer before processing event!\n");
 	}
 
+	// Update the screen here, since it's called very often
+	g_system->updateScreen();
+
 	// Get all queued events from graphics driver
 	do {
 		event = state->driver->get_event(state->driver);

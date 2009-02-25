@@ -38,8 +38,6 @@ struct _scummvm_driver_state {
 	byte *visual[2];
 	uint8 *pointer_data;
 	int xsize, ysize;
-	//int buckystate;
-	bool update_mouse;
 };
 
 #define S ((struct _scummvm_driver_state *)(drv->state))
@@ -293,8 +291,6 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer) {
 		g_system->showMouse(true);
 	}
 
-	// Pointer pixmap or mouse position has changed
-	S->update_mouse = true;
 	return GFX_OK;
 }
 
@@ -325,27 +321,13 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 
 	// Don't generate events for mouse movement
 	while (found && ev.type == Common::EVENT_MOUSEMOVE) {
+		drv->pointer_x = ev.mouse.x;
+		drv->pointer_y = ev.mouse.y;
 		found = em->pollEvent(ev);
-		p = ev.mouse;
-		drv->pointer_x = p.x;
-		drv->pointer_y = p.y;
-		S->update_mouse = true;
-	}
-
-	// Update the screen here, since it's called very often
-	if (S->update_mouse)
-		g_system->warpMouse(drv->pointer_x, drv->pointer_y);
-	if (S->update_mouse) {
-		g_system->updateScreen();
-		S->update_mouse = false;
 	}
 
 	if (found && !ev.synthetic && ev.type != Common::EVENT_MOUSEMOVE) {
-		int modifiers;
-		if (ev.type == Common::EVENT_KEYDOWN)
-			modifiers = ev.kbd.flags;
-		else
-			modifiers = em->getModifierState();
+		int modifiers = em->getModifierState();
 
 		input.buckybits =
 		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
