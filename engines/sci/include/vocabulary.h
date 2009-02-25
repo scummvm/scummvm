@@ -26,10 +26,13 @@
 #ifndef SCI_INCLUDE_VOCABULARY_H
 #define SCI_INCLUDE_VOCABULARY_H
 
+#include "common/str.h"
+
 #include "sci/include/versions.h"
-#include "sci/include/sciresource.h"
 
 namespace Sci {
+
+struct ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
 /*#define SCI_SIMPLE_SAID_CODE */ /* Whether the simplified Said() matching should be used */

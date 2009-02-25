@@ -26,9 +26,12 @@
 #ifndef SCI_INCLUDE_SCRIPT_H
 #define SCI_INCLUDE_SCRIPT_H
 
-#include "sci/include/sciresource.h"
+#include "common/str.h"
 
 namespace Sci {
+
+struct EngineState;
+struct ResourceManager;
 
 /*#define SCRIPT_DEBUG */
 
