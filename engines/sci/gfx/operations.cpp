@@ -29,7 +29,6 @@
 #include "sci/gfx/operations.h"
 
 #include "common/system.h"
-#include "common/keyboard.h"
 
 namespace Sci {
 
@@ -1375,7 +1374,7 @@ int _gfxop_shiftify(int c) {
 			return shifted_numbers[c-'0'];
 
 		switch (c) {
-		case Common::KEYCODE_TAB:
+		case SCI_K_TAB:
 			return SCI_K_SHIFT_TAB;
 		case ']':
 			return '}';
@@ -1432,27 +1431,27 @@ int _gfxop_shiftify(int c) {
 
 static int _gfxop_numlockify(int c) {
 	switch (c) {
-	case Common::KEYCODE_DELETE:
+	case SCI_K_DELETE:
 		return '.';
-	case Common::KEYCODE_INSERT:
+	case SCI_K_INSERT:
 		return '0';
-	case Common::KEYCODE_END:
+	case SCI_K_END:
 		return '1';
-	case Common::KEYCODE_DOWN:
+	case SCI_K_DOWN:
 		return '2';
-	case Common::KEYCODE_PAGEDOWN:
+	case SCI_K_PGDOWN:
 		return '3';
-	case Common::KEYCODE_LEFT:
+	case SCI_K_LEFT:
 		return '4';
 	case SCI_K_CENTER:
 		return '5';
-	case Common::KEYCODE_RIGHT:
+	case SCI_K_RIGHT:
 		return '6';
-	case Common::KEYCODE_HOME:
+	case SCI_K_HOME:
 		return '7';
-	case Common::KEYCODE_UP:
+	case SCI_K_UP:
 		return '8';
-	case Common::KEYCODE_PAGEUP:
+	case SCI_K_PGUP:
 		return '9';
 	default:
 		return c; // Unchanged

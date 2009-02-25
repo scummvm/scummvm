@@ -27,8 +27,6 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/engine/kernel.h"
 
-#include "common/keyboard.h"
-
 namespace Sci {
 
 int stop_on_event;
@@ -153,32 +151,32 @@ reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (GET_SEL32V(obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
 		int mover = -1;
 		switch (GET_SEL32V(obj, message)) {
-		case Common::KEYCODE_HOME:
+		case SCI_K_HOME:
 			mover = 8;
 			break;
-		case Common::KEYCODE_UP:
+		case SCI_K_UP:
 			mover = 1;
 			break;
-		case Common::KEYCODE_PAGEUP:
+		case SCI_K_PGUP:
 			mover = 2;
 			break;
-		case Common::KEYCODE_LEFT:
+		case SCI_K_LEFT:
 			mover = 7;
 			break;
 		case SCI_K_CENTER:
 		case 76:
 			mover = 0;
 			break;
-		case Common::KEYCODE_RIGHT:
+		case SCI_K_RIGHT:
 			mover = 3;
 			break;
-		case Common::KEYCODE_END:
+		case SCI_K_END:
 			mover = 6;
 			break;
-		case Common::KEYCODE_DOWN:
+		case SCI_K_DOWN:
 			mover = 5;
 			break;
-		case Common::KEYCODE_PAGEDOWN:
+		case SCI_K_PGDOWN:
 			mover = 4;
 			break;
 		default:

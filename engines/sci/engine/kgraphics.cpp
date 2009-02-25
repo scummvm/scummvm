@@ -24,7 +24,6 @@
  */
 
 #include "common/system.h"
-#include "common/keyboard.h"
 
 #include "sci/include/sciresource.h"
 #include "sci/include/engine.h"
@@ -1450,7 +1449,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				} else if (key < 31) {
 					PUT_SEL32V(event, claimed, 1);
 					switch (key) {
-					case Common::KEYCODE_BACKSPACE:
+					case SCI_K_BACKSPACE:
 						_K_EDIT_BACKSPACE;
 						break;
 					default:
@@ -1458,21 +1457,21 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					}
 				} else if (key & 0xff00) {
 					switch (key) {
-					case Common::KEYCODE_HOME:
+					case SCI_K_HOME:
 						cursor = 0;
 						break;
-					case Common::KEYCODE_END:
+					case SCI_K_END:
 						cursor = textlen;
 						break;
-					case Common::KEYCODE_RIGHT:
+					case SCI_K_RIGHT:
 						if (cursor + 1 <= textlen)
 							++cursor;
 						break;
-					case Common::KEYCODE_LEFT:
+					case SCI_K_LEFT:
 						if (cursor > 0)
 							--cursor;
 						break;
-					case Common::KEYCODE_DELETE:
+					case SCI_K_DELETE:
 						_K_EDIT_DELETE;
 						break;
 					}
