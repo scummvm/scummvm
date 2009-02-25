@@ -37,11 +37,3 @@
 - (void)handleKeyPress:(unichar)c;
 
 @end
-
-@interface TextInputHandler : UITextView {
-	SoftKeyboard* softKeyboard;
-}
-
-- (id)initWithKeyboard:(SoftKeyboard*)keyboard;
-
-@end
