@@ -145,7 +145,7 @@ void LocationName::bind(const char *s) {
 }
 
 Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0) {
+	_locationParser(0), _programParser(0), _builder(0), _walker(0) {
 }
 
 Common::Error Parallaction_ns::init() {
