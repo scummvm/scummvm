@@ -59,33 +59,13 @@ static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point star
 	dy = abs(dy);
 
 	if (dx > dy) {
-		if (finalx < x) {
-			if (finaly < y) { // llu == left-left-up
-				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, -PIXELWIDTH, -1);
-			} else {         /* lld */
-				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, -PIXELWIDTH, 1);
-			}
-		} else { // x1 >= x
-			if (finaly < y) { // rru
-				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, PIXELWIDTH, -1);
-			} else {         // rrd
-				LINEMACRO(x, y, dx, dy, x, y, finalx, dx, PIXELWIDTH, 1);
-			}
-		}
+		int sign1 = (finalx < x) ? -1 : 1;
+		int sign2 = (finaly < y) ? -1 : 1;
+		LINEMACRO(x, y, dx, dy, x, y, finalx, dx, sign1 * PIXELWIDTH, sign2);
 	} else { // dx <= dy
-		if (finaly < y) {
-			if (finalx < x) { // luu
-				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, -1, -PIXELWIDTH);
-			} else {         /* ruu */
-				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, -1, PIXELWIDTH);
-			}
-		} else { // y1 >= y
-			if (finalx < x) { // ldd
-				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, 1, -PIXELWIDTH);
-			} else {         // rdd
-				LINEMACRO(x, y, dy, dx, y, x, finaly, dy, 1, PIXELWIDTH);
-			}
-		}
+		int sign1 = (finaly < y) ? -1 : 1;
+		int sign2 = (finalx < x) ? -1 : 1;
+		LINEMACRO(x, y, dy, dx, y, x, finaly, dy, sign1, sign2 * PIXELWIDTH);
 	}
 }
 
