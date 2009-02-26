@@ -157,7 +157,7 @@ struct Location {
 	uint16			_followerStartFrame;
 
 protected:
-	void freeAnimations();
+	void freeAnimations(bool removeAll);
 	void freeZones(bool removeAll);
 
 public:

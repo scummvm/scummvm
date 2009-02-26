@@ -213,11 +213,17 @@ AnimationPtr Location::findAnimation(const char *name) {
 	return AnimationPtr();
 }
 
-void Location::freeAnimations() {
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); ++it) {
-		(*it)->_commands.clear();	// See comment for freeZones(), about circular references.
+void Location::freeAnimations(bool removeAll) {
+	AnimationList::iterator it = _animations.begin();
+	while (it != _animations.end()) {
+		AnimationPtr a = *it;
+		if (!removeAll && ((a->_flags & kFlagsSelfuse) || (ACTIONTYPE(a) == kZoneMerge))) {
+			++it;
+		} else {
+			a->_commands.clear();	// See comment for freeZones(), about circular references.
+			it = _animations.erase(it);
+		}
 	}
-	_animations.clear();
 }
 
 
@@ -266,7 +272,7 @@ void Location::cleanup(bool removeAll) {
 	_endComment.clear();
 
 	freeZones(removeAll);
-	freeAnimations();
+	freeAnimations(removeAll);
 
 	_programs.clear();
 	_commands.clear();

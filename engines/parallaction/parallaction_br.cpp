@@ -194,15 +194,12 @@ void Parallaction_br::freeCharacter() {
 }
 
 void Parallaction_br::freeLocation(bool removeAll) {
-
 	// free open location stuff
 	clearSubtitles();
 	_subtitle[0] = _subtitle[1] = -1;
 
 	_gfx->freeLocationObjects();
 
-	// TODO: avoid removing needed animations from 'common.slf'
-	// when cleaning up!!!
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);
 	_location._animations.push_front(_char._ani);
