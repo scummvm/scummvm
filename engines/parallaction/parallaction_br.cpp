@@ -27,6 +27,7 @@
 #include "common/util.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
@@ -77,9 +78,7 @@ Common::Error Parallaction_br::init() {
 	_programParser->init();
 
 	_cmdExec = new CommandExec_br(this);
-	_cmdExec->init();
 	_programExec = new ProgramExec_br(this);
-	_programExec->init();
 
 	_walker = new PathWalker_BR;
 

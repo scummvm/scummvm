@@ -33,6 +33,7 @@
 #include "sound/mixer.h"
 
 
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"

@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
@@ -181,9 +182,7 @@ Common::Error Parallaction_ns::init() {
 	_programParser->init();
 
 	_cmdExec = new CommandExec_ns(this);
-	_cmdExec->init();
 	_programExec = new ProgramExec_ns(this);
-	_programExec->init();
 
 	_builder = new PathBuilder_NS(&_char);
 	_walker = new PathWalker_NS(&_char);

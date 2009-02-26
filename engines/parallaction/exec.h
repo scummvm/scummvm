@@ -33,64 +33,91 @@
 
 namespace Parallaction {
 
-typedef Common::Functor0<void> Opcode;
-typedef Common::Array<const Opcode*>	OpcodeSet;
-
-#define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
-#define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
-
 class Parallaction_ns;
 class Parallaction_br;
 
-class CommandExec {
+/* NOTE: CommandExec and ProgramExec perform similar tasks on different data.
+   CommandExec executes commands found in location scripts, while ProgramExec
+   runs animation programs.
+
+   The main difference is how suspension is handled. CommandExec is coded with
+   the assumption that there may be at most one suspended list of commands at any
+   moment, and thus stores the suspended context itself. It also offers a
+   runSuspended() routine that resumes execution on request.
+   ProgramExec instead stores the suspension information in the programs themselves.
+   Programs are in fact meant to be run (almost) regularly on each frame .
+ */
+
+struct CommandContext {
+	CommandPtr _cmd;
+	ZonePtr	_z;
+
+	// TODO: add a way to invoke CommandExec::suspend() from the context. With that
+	// in place, opcodes dependency on CommandExec would be zero, and they could
+	// be moved into a Game object, together with the non-infrastructural code now
+	// in Parallaction_XX
+};
+typedef Common::Functor1<CommandContext&, void> CommandOpcode;
+typedef Common::Array<const CommandOpcode*>	CommandOpcodeSet;
+#define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op(CommandContext &)
+
+struct ProgramContext {
+	AnimationPtr	_anim;
+	ProgramPtr		_program;
+	InstructionList::iterator _inst;
+	InstructionList::iterator _ip;
+	uint16		_modCounter;
+	bool		_suspend;
+};
+typedef Common::Functor1<ProgramContext&, void> ProgramOpcode;
+typedef Common::Array<const ProgramOpcode*>	ProgramOpcodeSet;
+#define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op(ProgramContext &)
+
+
+template <class OpcodeSet>
+class Exec {
 protected:
-	Parallaction *_vm;
-
-	struct ParallactionStruct1 {
-		CommandPtr cmd;
-		ZonePtr	z;
-	} _ctxt;
-
-	OpcodeSet	_opcodes;
-
-	struct SuspendedContext {
-		bool valid;
-		CommandList::iterator first;
-		CommandList::iterator last;
-		ZonePtr	zone;
-	} _suspendedCtxt;
-
-	ZonePtr	_execZone;
-	void runList(CommandList::iterator first, CommandList::iterator last);
-	void createSuspendList(CommandList::iterator first, CommandList::iterator last);
-	void cleanSuspendedList();
-
-	bool _running;
-	bool _suspend;
-
+	OpcodeSet _opcodes;
+	typedef typename OpcodeSet::iterator OpIt;
 public:
-	virtual void init() = 0;
-	virtual void run(CommandList &list, ZonePtr z = nullZonePtr);
-	void runSuspended();
-	void suspend();
-
-	CommandExec(Parallaction *vm) : _vm(vm) {
-		_suspendedCtxt.valid = false;
-		_suspend = false;
-		_running = false;
-	}
-	virtual ~CommandExec() {
-		for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	virtual ~Exec() {
+		for (OpIt i = _opcodes.begin(); i != _opcodes.end(); ++i)
 			delete *i;
 		_opcodes.clear();
 	}
 };
 
-class CommandExec_ns : public CommandExec {
+class CommandExec : public Exec<CommandOpcodeSet> {
+protected:
+	Parallaction *_vm;
 
+	CommandContext _ctxt;
+	ZonePtr	_execZone;
+	bool _running;
+	bool _suspend;
+
+	struct SuspendedContext {
+		bool _valid;
+		CommandList::iterator _first;
+		CommandList::iterator _last;
+		ZonePtr	_zone;
+	} _suspendedCtxt;
+
+	void runList(CommandList::iterator first, CommandList::iterator last);
+	void createSuspendList(CommandList::iterator first, CommandList::iterator last);
+	void cleanSuspendedList();
+public:
+	CommandExec(Parallaction *vm);
+
+	void run(CommandList &list, ZonePtr z = nullZonePtr);
+	void runSuspended();
+	void suspend();
+};
+
+class CommandExec_ns : public CommandExec {
+protected:
 	Parallaction_ns	*_vm;
 
-protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(clear);
@@ -108,16 +135,11 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
-
 public:
-	void init();
-
 	CommandExec_ns(Parallaction_ns* vm);
-	~CommandExec_ns();
 };
 
 class CommandExec_br : public CommandExec {
-
 protected:
 	Parallaction_br	*_vm;
 
@@ -128,7 +150,6 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(get);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(toggle);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
-
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
@@ -164,49 +185,29 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
-
 public:
-	void		init();
-
 	CommandExec_br(Parallaction_br* vm);
-	~CommandExec_br();
 };
 
-class ProgramExec {
-protected:
-	struct ParallactionStruct2 {
-		AnimationPtr	anim;
-		ProgramPtr		program;
-		InstructionList::iterator inst;
-		InstructionList::iterator ip;
-		uint16		modCounter;
-		bool		suspend;
-	} _ctxt;
 
+
+
+class ProgramExec : public Exec<ProgramOpcodeSet> {
+protected:
+	ProgramContext _ctxt;
+	uint16	_modCounter;
 	const char **_instructionNames;
 
-	OpcodeSet	_opcodes;
-
-	uint16	_modCounter;
 	void runScript(ProgramPtr script, AnimationPtr a);
-
 public:
-	virtual void init() = 0;
-	virtual void runScripts(ProgramList::iterator first, ProgramList::iterator last);
-	ProgramExec() : _modCounter(0) {
-	}
-	virtual ~ProgramExec() {
-		for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
-			delete *i;
-		_opcodes.clear();
-	}
+	void runScripts(ProgramList::iterator first, ProgramList::iterator last);
+	ProgramExec();
 };
 
 class ProgramExec_ns : public ProgramExec {
-
+protected:
 	Parallaction_ns *_vm;
 
-protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
@@ -222,19 +223,14 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-
 public:
-	void init();
-
 	ProgramExec_ns(Parallaction_ns *vm);
-	~ProgramExec_ns();
 };
 
 class ProgramExec_br : public ProgramExec {
-
+protected:
 	Parallaction_br *_vm;
 
-protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
@@ -262,11 +258,8 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
-
 public:
-	void init();
 	ProgramExec_br(Parallaction_br *vm);
-	~ProgramExec_br();
 };
 
 } // namespace Parallaction

@@ -23,6 +23,7 @@
  *
  */
 
+#include "parallaction/exec.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/walk.h"
 

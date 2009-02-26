@@ -53,19 +53,21 @@ namespace Parallaction {
 
 #define SetOpcodeTable(x) table = &x;
 
-typedef Common::Functor0Mem<void, CommandExec_ns> OpcodeV1;
-#define COMMAND_OPCODE(op) table->push_back(new OpcodeV1(this, &CommandExec_ns::cmdOp_##op))
-#define DECLARE_COMMAND_OPCODE(op) void CommandExec_ns::cmdOp_##op()
 
-typedef Common::Functor0Mem<void, ProgramExec_ns> OpcodeV2;
+
+typedef Common::Functor1Mem<CommandContext&, void, CommandExec_ns> OpcodeV1;
+#define COMMAND_OPCODE(op) table->push_back(new OpcodeV1(this, &CommandExec_ns::cmdOp_##op))
+#define DECLARE_COMMAND_OPCODE(op) void CommandExec_ns::cmdOp_##op(CommandContext& ctxt)
+
+typedef Common::Functor1Mem<ProgramContext&, void, ProgramExec_ns> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) table->push_back(new OpcodeV2(this, &ProgramExec_ns::instOp_##op))
-#define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op()
+#define DECLARE_INSTRUCTION_OPCODE(op) void ProgramExec_ns::instOp_##op(ProgramContext& ctxt)
 
 extern const char *_instructionNamesRes_ns[];
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	InstructionPtr inst = *_ctxt.inst;
+	InstructionPtr inst = *ctxt._inst;
 
 	inst->_a->_flags |= kFlagsActive;
 	inst->_a->_flags &= ~kFlagsRemove;
@@ -73,31 +75,31 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	(*_ctxt.inst)->_a->_flags |= kFlagsRemove;
+	(*ctxt._inst)->_a->_flags |= kFlagsRemove;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	InstructionPtr inst = *_ctxt.inst;
+	InstructionPtr inst = *ctxt._inst;
 
-	_ctxt.program->_loopCounter = inst->_opB.getValue();
-	_ctxt.program->_loopStart = _ctxt.ip;
+	ctxt._program->_loopCounter = inst->_opB.getValue();
+	ctxt._program->_loopStart = ctxt._ip;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
-	if (--_ctxt.program->_loopCounter > 0) {
-		_ctxt.ip = _ctxt.program->_loopStart;
+	if (--ctxt._program->_loopCounter > 0) {
+		ctxt._ip = ctxt._program->_loopStart;
 	}
 }
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	InstructionPtr inst = *_ctxt.inst;
+	InstructionPtr inst = *ctxt._inst;
 	int16 _si = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
 		int16 _bx = (_si > 0 ? _si : -_si);
-		if (_ctxt.modCounter % _bx != 0) return;
+		if (ctxt._modCounter % _bx != 0) return;
 
 		_si = (_si > 0 ?  1 : -1);
 	}
@@ -116,13 +118,13 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	InstructionPtr inst = *_ctxt.inst;
+	InstructionPtr inst = *ctxt._inst;
 	inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(put) {
-	InstructionPtr inst = *_ctxt.inst;
+	InstructionPtr inst = *ctxt._inst;
 	Common::Rect r;
 	inst->_a->getFrameRect(r);
 
@@ -139,38 +141,38 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(show) {
-	_ctxt.suspend = true;
+	ctxt._suspend = true;
 }
 
 DECLARE_INSTRUCTION_OPCODE(invalid) {
-	error("Can't execute invalid opcode %i", (*_ctxt.inst)->_index);
+	error("Can't execute invalid opcode %i", (*ctxt._inst)->_index);
 }
 
 DECLARE_INSTRUCTION_OPCODE(call) {
-	_vm->callFunction((*_ctxt.inst)->_immediate, 0);
+	_vm->callFunction((*ctxt._inst)->_immediate, 0);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
 	if (_engineFlags & kEngineWalking) {
-		_ctxt.ip--;
-		_ctxt.suspend = true;
+		ctxt._ip--;
+		ctxt._suspend = true;
 	}
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(start) {
-	(*_ctxt.inst)->_a->_flags |= (kFlagsActing | kFlagsActive);
+	(*ctxt._inst)->_a->_flags |= (kFlagsActing | kFlagsActive);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(sound) {
-	_vm->_activeZone = (*_ctxt.inst)->_z;
+	_vm->_activeZone = (*ctxt._inst)->_z;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(move) {
-	InstructionPtr inst = (*_ctxt.inst);
+	InstructionPtr inst = (*ctxt._inst);
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
@@ -179,104 +181,104 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_ctxt.anim->_flags & kFlagsLooping) == 0) {
-		_ctxt.anim->_flags &= ~kFlagsActing;
-		_vm->_cmdExec->run(_ctxt.anim->_commands, _ctxt.anim);
-		_ctxt.program->_status = kProgramDone;
+	if ((ctxt._anim->_flags & kFlagsLooping) == 0) {
+		ctxt._anim->_flags &= ~kFlagsActing;
+		_vm->_cmdExec->run(ctxt._anim->_commands, ctxt._anim);
+		ctxt._program->_status = kProgramDone;
 	}
 
-	_ctxt.ip = _ctxt.program->_instructions.begin();
-	_ctxt.suspend = true;
+	ctxt._ip = ctxt._program->_instructions.begin();
+	ctxt._suspend = true;
 }
 
 
 
 
 DECLARE_COMMAND_OPCODE(invalid) {
-	error("Can't execute invalid command '%i'", _ctxt.cmd->_id);
+	error("Can't execute invalid command '%i'", ctxt._cmd->_id);
 }
 
 DECLARE_COMMAND_OPCODE(set) {
-	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
-		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags |= _ctxt.cmd->u._flags;
+	if (ctxt._cmd->u._flags & kFlagsGlobal) {
+		ctxt._cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags |= ctxt._cmd->u._flags;
 	} else {
-		_vm->setLocationFlags(_ctxt.cmd->u._flags);
+		_vm->setLocationFlags(ctxt._cmd->u._flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(clear) {
-	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
-		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags &= ~_ctxt.cmd->u._flags;
+	if (ctxt._cmd->u._flags & kFlagsGlobal) {
+		ctxt._cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags &= ~ctxt._cmd->u._flags;
 	} else {
-		_vm->clearLocationFlags(_ctxt.cmd->u._flags);
+		_vm->clearLocationFlags(ctxt._cmd->u._flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(start) {
-	_ctxt.cmd->u._zone->_flags |= kFlagsActing;
+	ctxt._cmd->u._zone->_flags |= kFlagsActing;
 }
 
 
 DECLARE_COMMAND_OPCODE(speak) {
-	if (ACTIONTYPE(_ctxt.cmd->u._zone) == kZoneSpeak) {
-		_vm->enterDialogueMode(_ctxt.cmd->u._zone);
+	if (ACTIONTYPE(ctxt._cmd->u._zone) == kZoneSpeak) {
+		_vm->enterDialogueMode(ctxt._cmd->u._zone);
 	} else {
-		_vm->_activeZone = _ctxt.cmd->u._zone;
+		_vm->_activeZone = ctxt._cmd->u._zone;
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(get) {
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsFixed;
-	_vm->runZone(_ctxt.cmd->u._zone);
+	ctxt._cmd->u._zone->_flags &= ~kFlagsFixed;
+	_vm->runZone(ctxt._cmd->u._zone);
 }
 
 
 DECLARE_COMMAND_OPCODE(location) {
-	_vm->scheduleLocationSwitch(_ctxt.cmd->u._string);
+	_vm->scheduleLocationSwitch(ctxt._cmd->u._string);
 }
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	_vm->updateDoor(_ctxt.cmd->u._zone, false);
+	_vm->updateDoor(ctxt._cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	_vm->updateDoor(_ctxt.cmd->u._zone, true);
+	_vm->updateDoor(ctxt._cmd->u._zone, true);
 }
 
 DECLARE_COMMAND_OPCODE(on) {
-	_vm->showZone(_ctxt.cmd->u._zone, true);
+	_vm->showZone(ctxt._cmd->u._zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	_vm->showZone(_ctxt.cmd->u._zone, false);
+	_vm->showZone(ctxt._cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	_vm->callFunction(_ctxt.cmd->u._callable, &_ctxt.z);
+	_vm->callFunction(ctxt._cmd->u._callable, &ctxt._z);
 }
 
 
 DECLARE_COMMAND_OPCODE(toggle) {
-	if (_ctxt.cmd->u._flags & kFlagsGlobal) {
-		_ctxt.cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags ^= _ctxt.cmd->u._flags;
+	if (ctxt._cmd->u._flags & kFlagsGlobal) {
+		ctxt._cmd->u._flags &= ~kFlagsGlobal;
+		_globalFlags ^= ctxt._cmd->u._flags;
 	} else {
-		_vm->toggleLocationFlags(_ctxt.cmd->u._flags);
+		_vm->toggleLocationFlags(ctxt._cmd->u._flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(drop){
-	_vm->dropItem( _ctxt.cmd->u._object );
+	_vm->dropItem( ctxt._cmd->u._object );
 }
 
 
@@ -286,181 +288,16 @@ DECLARE_COMMAND_OPCODE(quit) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	_vm->scheduleWalk(_ctxt.cmd->u._move.x, _ctxt.cmd->u._move.y, false);
+	_vm->scheduleWalk(ctxt._cmd->u._move.x, ctxt._cmd->u._move.y, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(stop) {
-	_ctxt.cmd->u._zone->_flags &= ~kFlagsActing;
-}
-
-
-void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
-	debugC(9, kDebugExec, "runScript(Animation = %s)", a->_name);
-
-	_ctxt.ip = script->_ip;
-	_ctxt.anim = a;
-	_ctxt.program = script;
-	_ctxt.suspend = false;
-	_ctxt.modCounter = _modCounter;
-
-	InstructionList::iterator inst;
-	for ( ; (a->_flags & kFlagsActing) ; ) {
-
-		inst = _ctxt.ip;
-		_ctxt.inst = inst;
-		++_ctxt.ip;
-
-		debugC(9, kDebugExec, "inst [%02i] %s\n", (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
-
-		script->_status = kProgramRunning;
-
-		(*_opcodes[(*inst)->_index])();
-
-		if (_ctxt.suspend)
-			break;
-
-	}
-	script->_ip = _ctxt.ip;
-
-}
-
-void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator last) {
-	if (_engineFlags & kEnginePauseJobs) {
-		return;
-	}
-
-	for (ProgramList::iterator it = first; it != last; ++it) {
-
-		AnimationPtr a = (*it)->_anim;
-
-		if (a->_flags & kFlagsCharacter)
-			a->resetZ();
-
-		if ((a->_flags & kFlagsActing) == 0)
-			continue;
-
-		runScript(*it, a);
-
-		if (a->_flags & kFlagsCharacter)
-			a->resetZ();
-	}
-
-	_modCounter++;
-
-	return;
-}
-
-void CommandExec::runList(CommandList::iterator first, CommandList::iterator last) {
-
-	uint32 useFlags = 0;
-	bool useLocalFlags;
-
-	_suspend = false;
-	_running = true;
-
-	for ( ; first != last; ++first) {
-		if (_vm->shouldQuit())
-			break;
-
-		CommandPtr cmd = *first;
-
-		if (cmd->_flagsOn & kFlagsGlobal) {
-			useFlags = _globalFlags | kFlagsGlobal;
-			useLocalFlags = false;
-		} else {
-			useFlags = _vm->getLocationFlags();
-			useLocalFlags = true;
-		}
-
-		bool onMatch = (cmd->_flagsOn & useFlags) == cmd->_flagsOn;
-		bool offMatch = (cmd->_flagsOff & ~useFlags) == cmd->_flagsOff;
-
-		debugC(3, kDebugExec, "runCommands[%i] (on: %x, off: %x), (%s = %x)", cmd->_id,  cmd->_flagsOn, cmd->_flagsOff,
-			useLocalFlags ? "LOCALFLAGS" : "GLOBALFLAGS", useFlags);
-
-		if (!onMatch || !offMatch) continue;
-
-		_ctxt.z = _execZone;
-		_ctxt.cmd = cmd;
-
-		(*_opcodes[cmd->_id])();
-
-		if (_suspend) {
-			createSuspendList(++first, last);
-			return;
-		}
-	}
-
-	_running = false;
-
-}
-
-void CommandExec::run(CommandList& list, ZonePtr z) {
-	if (list.size() == 0) {
-		debugC(3, kDebugExec, "runCommands: nothing to do");
-		return;
-	}
-
-	_execZone = z;
-
-	debugC(3, kDebugExec, "runCommands starting");
-	runList(list.begin(), list.end());
-	debugC(3, kDebugExec, "runCommands completed");
-}
-
-void CommandExec::createSuspendList(CommandList::iterator first, CommandList::iterator last) {
-	if (first == last) {
-		return;
-	}
-
-	debugC(3, kDebugExec, "CommandExec::createSuspendList()");
-
-	_suspendedCtxt.valid = true;
-	_suspendedCtxt.first = first;
-	_suspendedCtxt.last = last;
-	_suspendedCtxt.zone = _execZone;
-}
-
-void CommandExec::cleanSuspendedList() {
-	debugC(3, kDebugExec, "CommandExec::cleanSuspended()");
-
-	_suspendedCtxt.valid = false;
-	_suspendedCtxt.first = _suspendedCtxt.last;
-	_suspendedCtxt.zone = nullZonePtr;
-}
-
-void CommandExec::suspend() {
-	if (!_running)
-		return;
-
-	_suspend = true;
-}
-
-void CommandExec::runSuspended() {
-	if (_engineFlags & kEngineWalking) {
-		return;
-	}
-
-	if (_suspendedCtxt.valid) {
-		debugC(3, kDebugExec, "CommandExec::runSuspended()");
-
-		_execZone = _suspendedCtxt.zone;
-		runList(_suspendedCtxt.first, _suspendedCtxt.last);
-		cleanSuspendedList();
-	}
+	ctxt._cmd->u._zone->_flags &= ~kFlagsActing;
 }
 
 CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {
-
-}
-
-CommandExec_ns::~CommandExec_ns() {
-
-}
-
-void CommandExec_ns::init() {
-	Common::Array<const Opcode*> *table = 0;
+	CommandOpcodeSet *table = 0;
 
 	SetOpcodeTable(_opcodes);
 	COMMAND_OPCODE(invalid);
@@ -482,9 +319,10 @@ void CommandExec_ns::init() {
 	COMMAND_OPCODE(stop);
 }
 
-void ProgramExec_ns::init() {
+ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
+	_instructionNames = _instructionNamesRes_ns;
 
-	Common::Array<const Opcode*> *table = 0;
+	ProgramOpcodeSet *table = 0;
 
 	SetOpcodeTable(_opcodes);
 	INSTRUCTION_OPCODE(invalid);
@@ -507,14 +345,6 @@ void ProgramExec_ns::init() {
 	INSTRUCTION_OPCODE(sound);
 	INSTRUCTION_OPCODE(move);
 	INSTRUCTION_OPCODE(endscript);
-
-}
-
-ProgramExec_ns::ProgramExec_ns(Parallaction_ns *vm) : _vm(vm) {
-	_instructionNames = _instructionNamesRes_ns;
-}
-
-ProgramExec_ns::~ProgramExec_ns() {
 }
 
 }	// namespace Parallaction

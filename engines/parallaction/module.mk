@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	dialogue.o \
 	disk_br.o \
 	disk_ns.o \
+	exec.o \
 	exec_br.o \
 	exec_ns.o \
 	font.o \

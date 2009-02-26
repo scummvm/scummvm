@@ -34,7 +34,6 @@
 
 #include "engines/engine.h"
 
-#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
@@ -124,6 +123,8 @@ class MenuInputHelper;
 class PathBuilder_NS;
 class PathWalker_NS;
 class PathWalker_BR;
+class CommandExec;
+class ProgramExec;
 
 
 struct Location {

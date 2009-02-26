@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"

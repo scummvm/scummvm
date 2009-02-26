@@ -30,6 +30,8 @@
 
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
+
+#include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/saveload.h"
