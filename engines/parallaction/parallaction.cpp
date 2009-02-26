@@ -167,7 +167,7 @@ void Parallaction::updateView() {
 		scrollX = _gfx->getScrollPos();
 
 		Common::Point foot;
-		_char.getFoot(foot);
+		_char._ani->getFoot(foot);
 
 		foot.x -= scrollX;
 		//foot.y -= ...
@@ -829,42 +829,10 @@ void Location::freeZones(bool removeAll) {
 }
 
 
-enum {
-	WALK_LEFT = 0,
-	WALK_RIGHT = 1,
-	WALK_DOWN = 2,
-	WALK_UP = 3
-};
-
-struct WalkFrames {
-	int16 stillFrame[4];
-	int16 firstWalkFrame[4];
-	int16 numWalkFrames[4];
-	int16 frameRepeat[4];
-};
-
-WalkFrames _char20WalkFrames = {
-	{  0,  7, 14, 17 },
-	{  1,  8, 15, 18 },
-	{  6,  6,  2,  2 },
-	{  2,  2,  4,  4 }
-};
-
-WalkFrames _char24WalkFrames = {
-	{  0,  9, 18, 21 },
-	{  1, 10, 19, 22 },
-	{  8,  8,  2,  2 },
-	{  2,  2,  4,  4 }
-};
-
-
 
 Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
-
-	_direction = WALK_DOWN;
-	_step = 0;
 
 	_ani->setX(150);
 	_ani->setY(100);
@@ -873,26 +841,6 @@ Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
 	_ani->_flags = kFlagsActive | kFlagsNoName | kFlagsCharacter;
 	_ani->_type = kZoneYou;
 	strncpy(_ani->_name, "yourself", ZONENAME_LENGTH);
-}
-
-Character::~Character() {
-
-}
-
-void Character::getFoot(Common::Point &foot) {
-	Common::Rect rect;
-	_ani->gfxobj->getRect(_ani->getF(), rect);
-
-	foot.x = _ani->getX() + (rect.left + rect.width() / 2);
-	foot.y = _ani->getY() + (rect.top + rect.height());
-}
-
-void Character::setFoot(const Common::Point &foot) {
-	Common::Rect rect;
-	_ani->gfxobj->getRect(_ani->getF(), rect);
-
-	_ani->setX(foot.x - (rect.left + rect.width() / 2));
-	_ani->setY(foot.y - (rect.top + rect.height()));
 }
 
 
@@ -914,27 +862,6 @@ const char *Character::getFullName() const {
 
 bool Character::dummy() const {
 	return _name.dummy();
-}
-
-void Character::updateDirection(const Common::Point& pos, const Common::Point& to) {
-
-	Common::Point dist(to.x - pos.x, to.y - pos.y);
-	WalkFrames *frames = (_ani->getFrameNum() == 20) ? &_char20WalkFrames : &_char24WalkFrames;
-
-	_step++;
-
-	if (dist.x == 0 && dist.y == 0) {
-		_ani->setF(frames->stillFrame[_direction]);
-		return;
-	}
-
-	if (dist.x < 0)
-		dist.x = -dist.x;
-	if (dist.y < 0)
-		dist.y = -dist.y;
-
-	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
-	_ani->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
 

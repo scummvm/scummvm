@@ -120,7 +120,6 @@ class SoundMan;
 class Input;
 class DialogueManager;
 class MenuInputHelper;
-class PathBuilder_NS;
 class PathWalker_NS;
 class PathWalker_BR;
 class CommandExec;
@@ -199,22 +198,14 @@ public:
 struct Character {
 	Parallaction	*_vm;
 
-
 	AnimationPtr	_ani;
 	GfxObj			*_head;
 	GfxObj			*_talk;
-	PointList		_walkPath;
 
 	Character(Parallaction *vm);
-	~Character();
-
-	void getFoot(Common::Point &foot);
-	void setFoot(const Common::Point &foot);
 
 protected:
 	CharacterName	_name;
-
-	int16		_direction, _step;
 
 public:
 	void setName(const char *name);
@@ -222,9 +213,6 @@ public:
 	const char *getBaseName() const;
 	const char *getFullName() const;
 	bool dummy() const;
-
-	void updateDirection(const Common::Point& pos, const Common::Point& to);
-
 };
 
 
@@ -435,7 +423,6 @@ private:
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
 
-	PathBuilder_NS		*_builder;
 	PathWalker_NS		*_walker;
 
 	// common callables

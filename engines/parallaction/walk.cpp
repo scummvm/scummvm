@@ -31,9 +31,38 @@ namespace Parallaction {
 
 #define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->_path->getValue((x), (y))
 
+enum {
+	WALK_LEFT = 0,
+	WALK_RIGHT = 1,
+	WALK_DOWN = 2,
+	WALK_UP = 3
+};
+
+struct WalkFrames {
+	int16 stillFrame[4];
+	int16 firstWalkFrame[4];
+	int16 numWalkFrames[4];
+	int16 frameRepeat[4];
+};
+
+WalkFrames _char20WalkFrames_NS = {
+	{  0,  7, 14, 17 },
+	{  1,  8, 15, 18 },
+	{  6,  6,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
+WalkFrames _char24WalkFrames_NS = {
+	{  0,  9, 18, 21 },
+	{  1, 10, 19, 22 },
+	{  8,  8,  2,  2 },
+	{  2,  2,  4,  4 }
+};
+
+
 // adjusts position towards nearest walkable point
 //
-void PathBuilder_NS::correctPathPoint(Common::Point &to) {
+void PathWalker_NS::correctPathPoint(Common::Point &to) {
 
 	if (IS_PATH_CLEAR(to.x, to.y)) return;
 
@@ -84,7 +113,7 @@ void PathBuilder_NS::correctPathPoint(Common::Point &to) {
 
 }
 
-uint32 PathBuilder_NS::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
+uint32 PathWalker_NS::buildSubPath(const Common::Point& pos, const Common::Point& stop) {
 
 	uint32 v28 = 0;
 	uint32 v2C = 0;
@@ -132,10 +161,12 @@ uint32 PathBuilder_NS::buildSubPath(const Common::Point& pos, const Common::Poin
 //
 //	x, y: mouse click (foot) coordinates
 //
-void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
+void PathWalker_NS::buildPath(AnimationPtr a, uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
 
-	_ch->_walkPath.clear();
+    _a = a;
+
+	_walkPath.clear();
 
 	Common::Point to(x, y);
 	correctPathPoint(to);
@@ -148,26 +179,26 @@ void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 	if (v38 == 1) {
 		// destination directly reachable
 		debugC(1, kDebugWalk, "direct move to (%i, %i)", to.x, to.y);
-		_ch->_walkPath.push_back(v48);
+		_walkPath.push_back(v48);
 		return;
 	}
 
 	// path is obstructed: look for alternative
-	_ch->_walkPath.push_back(v48);
+	_walkPath.push_back(v48);
 	Common::Point pos;
-	_ch->getFoot(pos);
+	_a->getFoot(pos);
 
 	uint32 v34 = buildSubPath(pos, v48);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
-		_ch->_walkPath.clear();
-		_ch->_walkPath.push_back(v44);
+		_walkPath.clear();
+		_walkPath.push_back(v44);
 		return;
 	}
-	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
+	_walkPath.insert(_walkPath.begin(), _subPath.begin(), _subPath.end());
 
-	buildSubPath(pos, *_ch->_walkPath.begin());
-	_ch->_walkPath.insert(_ch->_walkPath.begin(), _subPath.begin(), _subPath.end());
+	buildSubPath(pos, *_walkPath.begin());
+	_walkPath.insert(_walkPath.begin(), _subPath.begin(), _subPath.end());
 
 	return;
 }
@@ -180,14 +211,14 @@ void PathBuilder_NS::buildPath(uint16 x, uint16 y) {
 //	1 : Point reachable in a straight line
 //	other values: square distance to target (point not reachable in a straight line)
 //
-uint16 PathBuilder_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
+uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 	Common::Point arg(to);
 
 	Common::Point v4;
 
 	Common::Point foot;
-	_ch->getFoot(foot);
+	_a->getFoot(foot);
 
 	Common::Point v8(foot);
 
@@ -286,10 +317,10 @@ void PathWalker_NS::finalizeWalk() {
 	_engineFlags &= ~kEngineWalking;
 
 	Common::Point foot;
-	_ch->getFoot(foot);
+	_a->getFoot(foot);
 	checkDoor(foot);
 
-	_ch->_walkPath.clear();
+	_walkPath.clear();
 }
 
 void PathWalker_NS::walk() {
@@ -298,20 +329,20 @@ void PathWalker_NS::walk() {
 	}
 
 	Common::Point curPos;
-	_ch->getFoot(curPos);
+	_a->getFoot(curPos);
 
 	// update target, if previous was reached
-	PointList::iterator it = _ch->_walkPath.begin();
-	if (it != _ch->_walkPath.end()) {
+	PointList::iterator it = _walkPath.begin();
+	if (it != _walkPath.end()) {
 		if (*it == curPos) {
 			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it).x, (*it).y);
-			it = _ch->_walkPath.erase(it);
+			it = _walkPath.erase(it);
 		}
 	}
 
 	// advance character towards the target
 	Common::Point targetPos;
-	if (it == _ch->_walkPath.end()) {
+	if (it == _walkPath.end()) {
 		debugC(1, kDebugWalk, "walk reached last node");
 		finalizeWalk();
 		targetPos = curPos;
@@ -321,7 +352,7 @@ void PathWalker_NS::walk() {
 
 		Common::Point newPos(curPos);
 		clipMove(newPos, targetPos);
-		_ch->setFoot(newPos);
+		_a->setFoot(newPos);
 
 		if (newPos == curPos) {
 			debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
@@ -336,12 +367,32 @@ void PathWalker_NS::walk() {
 	// from curPos to newPos is prone to abrutply change in direction, thus making the
 	// code select 'too different' frames when walking diagonally against obstacles,
 	// and yielding an annoying shaking effect in the character.
-	_ch->updateDirection(curPos, targetPos);
+	updateDirection(curPos, targetPos);
+}
+
+void PathWalker_NS::updateDirection(const Common::Point& pos, const Common::Point& to) {
+
+	Common::Point dist(to.x - pos.x, to.y - pos.y);
+	WalkFrames *frames = (_a->getFrameNum() == 20) ? &_char20WalkFrames_NS : &_char24WalkFrames_NS;
+
+	_step++;
+
+	if (dist.x == 0 && dist.y == 0) {
+		_a->setF(frames->stillFrame[_direction]);
+		return;
+	}
+
+	if (dist.x < 0)
+		dist.x = -dist.x;
+	if (dist.y < 0)
+		dist.y = -dist.y;
+
+	_direction = (dist.x > dist.y) ? ((to.x > pos.x) ? WALK_LEFT : WALK_RIGHT) : ((to.y > pos.y) ? WALK_DOWN : WALK_UP);
+	_a->setF(frames->firstWalkFrame[_direction] + (_step / frames->frameRepeat[_direction]) % frames->numWalkFrames[_direction]);
 }
 
 
-
-PathBuilder_NS::PathBuilder_NS(Character *ch) : PathBuilder(ch) {
+PathWalker_NS::PathWalker_NS() : _direction(WALK_DOWN), _step(0) {
 }
 
 

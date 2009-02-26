@@ -146,7 +146,7 @@ void LocationName::bind(const char *s) {
 }
 
 Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0), _builder(0), _walker(0) {
+	_locationParser(0), _programParser(0), _walker(0) {
 }
 
 Common::Error Parallaction_ns::init() {
@@ -184,8 +184,7 @@ Common::Error Parallaction_ns::init() {
 	_cmdExec = new CommandExec_ns(this);
 	_programExec = new ProgramExec_ns(this);
 
-	_builder = new PathBuilder_NS(&_char);
-	_walker = new PathWalker_NS(&_char);
+	_walker = new PathWalker_NS;
 
 	_sarcophagusDeltaX = 0;
 	_movingSarcophagus = false;
@@ -215,7 +214,6 @@ Parallaction_ns::~Parallaction_ns() {
 
 	_location._animations.remove(_char._ani);
 
-	delete _builder;
 	delete _walker;
 }
 
@@ -503,7 +501,7 @@ void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 		return;
 	}
 
-	_builder->buildPath(x, y);
+	_walker->buildPath(a, x, y);
 	_engineFlags |= kEngineWalking;
 }
 

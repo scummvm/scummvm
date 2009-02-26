@@ -36,51 +36,28 @@ namespace Parallaction {
 
 struct Character;
 
-class PathBuilder {
 
-protected:
-	Character *_ch;
+class PathWalker_NS {
+    AnimationPtr _a;
+	PointList	_walkPath;
+	int16		_direction, _step;
 
-public:
-	PathBuilder(Character *ch) : _ch(ch) { }
-	virtual ~PathBuilder() { }
-
-	virtual void buildPath(uint16 x, uint16 y) = 0;
-};
-
-class PathWalker {
-protected:
-	Character	*_ch;
-public:
-	PathWalker(Character *ch) : _ch(ch) { }
-	virtual ~PathWalker() { }
-	virtual void walk() = 0;
-};
-
-
-
-class PathBuilder_NS : public PathBuilder {
-
+    // builder routines
 	PointList	_subPath;
-
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);
 	uint16 walkFunc1(const Common::Point &to, Common::Point& node);
 
-public:
-	PathBuilder_NS(Character *ch);
-	void buildPath(uint16 x, uint16 y);
-};
-
-class PathWalker_NS : public PathWalker {
-
-
+    // walker routines
 	void finalizeWalk();
 	void clipMove(Common::Point& pos, const Common::Point& to);
 	void checkDoor(const Common::Point &foot);
+    void updateDirection(const Common::Point& pos, const Common::Point& to);
 
 public:
-	PathWalker_NS(Character *ch) : PathWalker(ch) { }
+	PathWalker_NS();
+
+    void buildPath(AnimationPtr a, uint16 x, uint16 y);
 	void walk();
 };
 
