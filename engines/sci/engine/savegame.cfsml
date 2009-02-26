@@ -428,14 +428,14 @@ RECORD script_t "script_t" {
 	int marked_as_deleted;
 }
 
-RECORD sys_string_t "sys_string_t" {
+RECORD SystemString "SystemString" {
 	string name;
 	int max_size;
 	string value;
 }
 
-RECORD sys_strings_t "sys_strings_t" {
-	sys_string_t strings[STATIC SYS_STRINGS_MAX];
+RECORD SystemStrings "SystemStrings" {
+	SystemString strings[STATIC SYS_STRINGS_MAX];
 }
 
 RECORD dynmem_t "dynmem_t" {
@@ -624,7 +624,7 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
 		%CFSMLWRITE local_variables_t &foo->data.locals INTO fh;
 	break;
 	case MEM_OBJ_SYS_STRINGS:
-		%CFSMLWRITE sys_strings_t &foo->data.sys_strings INTO fh;
+		%CFSMLWRITE SystemStrings &foo->data.sys_strings INTO fh;
 	break;
 	case MEM_OBJ_STACK:
 		%CFSMLWRITE int &foo->data.stack.nr INTO fh;
@@ -664,7 +664,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 		%CFSMLREAD local_variables_t &foo->data.locals FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_SYS_STRINGS:
-		%CFSMLREAD sys_strings_t &foo->data.sys_strings FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD SystemStrings &foo->data.sys_strings FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_LISTS:
 		%CFSMLREAD list_table_t &foo->data.lists FROM fh ERRVAR *hiteof LINECOUNTER *line;
@@ -1104,8 +1104,25 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->save_dir_edit_offset = 0;
 	retval->sys_strings_segment = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = &(((mem_obj_t *)(GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
-	sys_strings_restore(retval->sys_strings, s->sys_strings);
 
+	// Restore system strings
+	SystemString *str;
+
+	// First, pad memory
+	for (int i = 0; i < SYS_STRINGS_MAX; i++) {
+		str = &retval->sys_strings->strings[i];
+		char *data = str->value;
+		if (data) {
+			str->value = (char *)sci_malloc(str->max_size + 1);
+			strcpy(str->value, data);
+			free(data);
+		}
+	}
+
+	str = &retval->sys_strings->strings[SYS_STRING_SAVEDIR];
+	strncpy(str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
+	str->value[str->max_size] = 0; // Make sure to terminate
+	
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
 	retval->game_start_time = g_system->getMillis() - retval->game_time * 1000;

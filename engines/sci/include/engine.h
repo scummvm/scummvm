@@ -226,7 +226,7 @@ struct EngineState {
 
 	/* System strings */
 	seg_id_t sys_strings_segment;
-	sys_strings_t *sys_strings;
+	SystemStrings *sys_strings;
 
 	/* Parser data: */
 	word_t **parser_words;

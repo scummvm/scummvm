@@ -300,8 +300,7 @@ public:
 	// Allocates a system string table
 	// Returns   : (dstack_t *): The physical stack
 	//             (seg_id_t) segid: Segment ID of the stack
-	// See also sys_string_acquire();
-	sys_strings_t *allocateSysStrings(seg_id_t *segid);
+	SystemStrings *allocateSysStrings(seg_id_t *segid);
 
 
 	// 6, 7. Lists and Nodes

@@ -32,11 +32,28 @@
 #include "sci/include/vm_types.h"	// for reg_t
 #include "sci/include/heapmgr.h"
 
-#include "sci/engine/sys_strings.h"
-
 namespace Sci {
 
 struct IntMapper;
+
+enum {
+	SYS_STRINGS_MAX = 4,
+
+	SYS_STRING_SAVEDIR = 0,
+	SYS_STRING_PARSER_BASE = 1,
+
+	MAX_PARSER_BASE = 64
+};
+
+struct SystemString {
+	char *name;
+	int max_size;
+	char *value;
+};
+
+struct SystemStrings {
+	SystemString strings[SYS_STRINGS_MAX];
+};
 
 #define VM_STACK_SIZE 0x1000
 /* Number of bytes to be allocated for the stack */
@@ -277,7 +294,7 @@ struct mem_obj_t {
 		clone_table_t clones;
 		local_variables_t locals;
 		dstack_t stack;
-		sys_strings_t sys_strings;
+		SystemStrings sys_strings;
 		list_table_t lists;
 		node_table_t nodes;
 		hunk_table_t hunks;

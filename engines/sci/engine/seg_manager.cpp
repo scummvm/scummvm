@@ -232,6 +232,7 @@ int SegManager::initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr) 
 int SegManager::deallocate(int seg, bool recursive) {
 	mem_obj_t *mobj;
 	VERIFY(check(seg), "invalid seg id");
+	int i;
 
 	mobj = heap[seg];
 	id_seg_map->removeKey(mobj->segmgr_id);
@@ -255,8 +256,19 @@ int SegManager::deallocate(int seg, bool recursive) {
 			free(mobj->data.dynmem.buf);
 		mobj->data.dynmem.buf = NULL;
 		break;
-	case MEM_OBJ_SYS_STRINGS:
-		sys_string_free_all(&(mobj->data.sys_strings));
+	case MEM_OBJ_SYS_STRINGS: 
+		for (i = 0; i < SYS_STRINGS_MAX; i++) {
+			SystemString *str = &mobj->data.sys_strings.strings[i];
+			if (str->name) {
+				free(str->name);
+				str->name = NULL;
+
+				free(str->value);
+				str->value = NULL;
+
+				str->max_size = 0;
+			}
+		}
 		break;
 	case MEM_OBJ_STACK:
 		free(mobj->data.stack.entries);
@@ -1193,11 +1205,11 @@ dstack_t *SegManager::allocateStack(int size, seg_id_t *segid) {
 	return retval;
 }
 
-sys_strings_t *SegManager::allocateSysStrings(seg_id_t *segid) {
+SystemStrings *SegManager::allocateSysStrings(seg_id_t *segid) {
 	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
-	sys_strings_t *retval = &(memobj->data.sys_strings);
+	SystemStrings *retval = &(memobj->data.sys_strings);
 
-	memset(retval, 0, sizeof(sys_string_t)*SYS_STRINGS_MAX);
+	memset(retval, 0, sizeof(SystemString)*SYS_STRINGS_MAX);
 
 	return retval;
 }

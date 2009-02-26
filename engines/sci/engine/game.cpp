@@ -633,7 +633,11 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	s->sys_strings = s->seg_manager->allocateSysStrings(&s->sys_strings_segment);
 	// Allocate static buffer for savegame and CWD directories
-	sys_string_acquire(s->sys_strings, SYS_STRING_SAVEDIR, "savedir", MAX_SAVE_DIR_SIZE);
+	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
+	str->name = strdup("savedir");
+	str->max_size = MAX_SAVE_DIR_SIZE;
+	str->value = (char*)sci_malloc(MAX_SAVE_DIR_SIZE + 1);
+	str->value[0] = 0; // Set to empty string
 
 	s->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 	s->save_dir_edit_offset = 0;
@@ -677,7 +681,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 }
 
 void script_set_gamestate_save_dir(EngineState *s, const char *path) {
-	sys_string_set(s->sys_strings, SYS_STRING_SAVEDIR, path);
+	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
+	strncpy(str->value, path, str->max_size);
+	str->value[str->max_size] = 0; // Make sure to terminate
 }
 
 void script_free_vm_memory(EngineState *s) {
@@ -759,7 +765,12 @@ int game_init(EngineState *s) {
 	s->status_bar_foreground = 0;
 	s->status_bar_background = s->resmgr->sci_version >= SCI_VERSION_01_VGA ? 255 : 15;
 
-	sys_string_acquire(s->sys_strings, SYS_STRING_PARSER_BASE, "parser-base", MAX_PARSER_BASE);
+	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
+	str->name = strdup("parser-base");
+	str->max_size = MAX_PARSER_BASE;
+	str->value = (char*)sci_malloc(MAX_PARSER_BASE + 1);
+	str->value[0] = 0; // Set to empty string
+
 	s->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	s->game_start_time = g_system->getMillis();

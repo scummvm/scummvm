@@ -414,7 +414,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 	break;
 
 	case MEM_OBJ_SYS_STRINGS: {
-		sys_strings_t *strings = &(mobj->data.sys_strings);
+		SystemStrings *strings = &(mobj->data.sys_strings);
 		int i;
 
 		sciprintf("system string table\n");
