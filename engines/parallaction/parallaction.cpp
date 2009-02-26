@@ -210,7 +210,7 @@ AnimationPtr Location::findAnimation(const char *name) {
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); ++it)
 		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
-	return nullAnimationPtr;
+	return AnimationPtr();
 }
 
 void Location::freeAnimations() {
@@ -589,7 +589,7 @@ void Parallaction::exitCommentMode() {
 	_gfx->setHalfbriteMode(false);
 
 	_cmdExec->run(_commentZone->_commands, _commentZone);
-	_commentZone = nullZonePtr;
+	_commentZone.reset();
 }
 
 void Parallaction::runCommentFrame() {
@@ -792,7 +792,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		}
 	}
 
-	return nullZonePtr;
+	return ZonePtr();
 }
 
 

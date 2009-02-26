@@ -164,7 +164,7 @@ void Parallaction_br::runPendingZones() {
 
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
-		_activeZone = nullZonePtr;
+		_activeZone.reset();
 		if (ACTIONTYPE(z) == kZoneSpeak) {
 			enterDialogueMode(z);
 		} else {
@@ -174,7 +174,7 @@ void Parallaction_br::runPendingZones() {
 
 	if (_activeZone2) {
 		z = _activeZone2;	// speak Zone or sound
-		_activeZone2 = nullZonePtr;
+		_activeZone2.reset();
 		if (ACTIONTYPE(z) == kZoneSpeak) {
 			enterDialogueMode(z);
 		} else {

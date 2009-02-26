@@ -44,15 +44,12 @@ struct Program;
 
 typedef Common::SharedPtr<Zone> ZonePtr;
 typedef Common::List<ZonePtr> ZoneList;
-extern ZonePtr nullZonePtr;
 
 typedef Common::SharedPtr<Animation> AnimationPtr;
 typedef Common::List<AnimationPtr> AnimationList;
-extern AnimationPtr nullAnimationPtr;
 
 typedef Common::SharedPtr<Instruction> InstructionPtr;
 typedef Common::List<InstructionPtr> InstructionList;
-extern InstructionPtr nullInstructionPtr;
 
 typedef Common::List<Common::Point> PointList;
 

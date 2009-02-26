@@ -30,10 +30,6 @@
 namespace Parallaction {
 
 
-ZonePtr nullZonePtr;
-AnimationPtr nullAnimationPtr;
-InstructionPtr nullInstructionPtr;
-
 Command::Command() {
 	_id = 0;
 	_flagsOn = 0;

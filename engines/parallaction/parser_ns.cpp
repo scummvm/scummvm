@@ -332,7 +332,7 @@ void ProgramParser_ns::parse(Script *script, ProgramPtr program) {
 	_script = script;
 	_program = program;
 
-	ctxt.openIf = nullInstructionPtr;
+	ctxt.openIf = InstructionPtr();
 	ctxt.end = false;
 	ctxt.locals = program->_locals;
 

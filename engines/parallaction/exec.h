@@ -109,7 +109,7 @@ protected:
 public:
 	CommandExec(Parallaction *vm);
 
-	void run(CommandList &list, ZonePtr z = nullZonePtr);
+	void run(CommandList &list, ZonePtr z = ZonePtr());
 	void runSuspended();
 	void suspend();
 };

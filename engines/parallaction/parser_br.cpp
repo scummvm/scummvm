@@ -1041,7 +1041,7 @@ DECLARE_INSTRUCTION_PARSER(endif)  {
 		error("unexpected 'endif'");
 
 //	ctxt.openIf->_endif = ctxt.inst;
-	ctxt.openIf = nullInstructionPtr;
+	ctxt.openIf = InstructionPtr();
 	ctxt.inst->_index = _parser->_lookup;
 }
 

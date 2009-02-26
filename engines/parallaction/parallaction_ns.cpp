@@ -280,7 +280,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 void Parallaction_ns::runPendingZones() {
 	if (_activeZone) {
 		ZonePtr z = _activeZone;	// speak Zone or sound
-		_activeZone = nullZonePtr;
+		_activeZone.reset();
 		runZone(z);
 	}
 }
@@ -299,7 +299,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	_input->stopHovering();
 	_gfx->freeLabels();
 
-	_zoneTrap = nullZonePtr;
+	_zoneTrap.reset();
 
 	_input->setArrowCursor();
 

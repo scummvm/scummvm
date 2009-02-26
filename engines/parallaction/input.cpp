@@ -69,7 +69,7 @@ Input::Input(Parallaction *vm) : _vm(vm) {
 	_activeItem._index = 0;
 	_activeItem._id = 0;
 	_mouseButtons = 0;
-	_delayedActionZone = nullZonePtr;
+	_delayedActionZone.reset();
 
 	initCursors();
 }
@@ -256,7 +256,7 @@ void Input::trackMouse(ZonePtr z) {
 }
 
 void Input::stopHovering() {
-	_hoverZone = nullZonePtr;
+	_hoverZone.reset();
 	_vm->_gfx->hideFloatingLabel();
 }
 
@@ -283,7 +283,7 @@ bool Input::translateGameInput() {
 		// if walking is over, then take programmed action
 		takeAction(_delayedActionZone);
 		_hasDelayedAction = false;
-		_delayedActionZone = nullZonePtr;
+		_delayedActionZone.reset();
 		return true;
 	}
 

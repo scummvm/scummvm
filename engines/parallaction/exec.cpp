@@ -164,7 +164,7 @@ void CommandExec::cleanSuspendedList() {
 
 	_suspendedCtxt._valid = false;
 	_suspendedCtxt._first = _suspendedCtxt._last;
-	_suspendedCtxt._zone = nullZonePtr;
+	_suspendedCtxt._zone.reset();
 }
 
 void CommandExec::suspend() {

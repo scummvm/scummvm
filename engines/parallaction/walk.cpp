@@ -290,7 +290,7 @@ void PathWalker_NS::checkDoor(const Common::Point &foot) {
 			_vm->_location._startPosition = z->u.door->_startPos;
 			_vm->_location._startFrame = z->u.door->_startFrame;
 			_vm->scheduleLocationSwitch(z->u.door->_location);
-			_vm->_zoneTrap = nullZonePtr;
+			_vm->_zoneTrap.reset();
 		} else {
 			_vm->_cmdExec->run(z->_commands, z);
 		}
@@ -307,7 +307,7 @@ void PathWalker_NS::checkDoor(const Common::Point &foot) {
 		_vm->setLocationFlags(kFlagsExit);
 		_vm->_cmdExec->run(_vm->_zoneTrap->_commands, _vm->_zoneTrap);
 		_vm->clearLocationFlags(kFlagsExit);
-		_vm->_zoneTrap = nullZonePtr;
+		_vm->_zoneTrap.reset();
 	}
 
 }

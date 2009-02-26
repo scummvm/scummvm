@@ -194,7 +194,7 @@ DialogueManager::~DialogueManager() {
 	if (isNpc) {
 		delete _questioner;
 	}
-	_z = nullZonePtr;
+	_z.reset();
 }
 
 
