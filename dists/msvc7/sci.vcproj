@@ -211,12 +211,6 @@
 				RelativePath="..\..\engines\sci\engine\seg_manager.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\sys_strings.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\sys_strings.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\vm.cpp">
 			</File>
 			<File
