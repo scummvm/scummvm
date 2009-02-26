@@ -86,13 +86,14 @@ Parallaction::~Parallaction() {
 	delete _programExec;
 	delete _saveLoad;
 
+	cleanupGui();
+
 	_gfx->freeCharacterObjects();
 	_gfx->freeLocationObjects();
 	delete _balloonMan;
+	_balloonMan = 0;
 
 	destroyInventory();
-
-	cleanupGui();
 
 	delete _localFlagNames;
 	delete _gfx;

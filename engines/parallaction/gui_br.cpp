@@ -159,11 +159,11 @@ class MainMenuInputState_BR : public MenuInputState {
 	int _selection;
 
 	void cleanup() {
-		_vm->_system->showMouse(false);
-		_vm->_gfx->freeDialogueObjects();
+        _vm->_gfx->freeDialogueObjects();
 
 		for (int i = 0; i < _availItems; i++) {
 			delete _lines[i];
+            _lines[i] = 0;
 		}
 	}
 
@@ -185,13 +185,19 @@ class MainMenuInputState_BR : public MenuInputState {
 
 public:
 	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
+	    memset(_lines, 0, sizeof(_lines));
 	}
+
+    ~MainMenuInputState_BR() {
+        cleanup();
+    }
 
 	virtual MenuInputState* run() {
 
 		int event = _vm->_input->getLastButtonEvent();
 		if ((event == kMouseLeftUp) && _selection >= 0) {
-			cleanup();
+            _vm->_system->showMouse(false);
+            cleanup();
 			performChoice(_options[_selection]);
 			return 0;
 		}

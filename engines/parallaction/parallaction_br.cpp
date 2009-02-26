@@ -100,8 +100,12 @@ Parallaction_br::~Parallaction_br() {
 	freeFonts();
 	freeCharacter();
 
+	delete _objects;
+
 	delete _locationParser;
 	delete _programParser;
+
+	_location._animations.remove(_char._ani);
 
 	delete _walker;
 }
@@ -141,15 +145,15 @@ Common::Error Parallaction_br::go() {
 }
 
 
-
 void Parallaction_br::freeFonts() {
 	delete _menuFont;
-	delete _dialogueFont;
-
 	_menuFont  = 0;
+
+	delete _dialogueFont;
 	_dialogueFont = 0;
+
+	// no need to delete _labelFont, since it is using the same buffer as _menuFont
 	_labelFont = 0;
-	_introFont = 0;
 }
 
 

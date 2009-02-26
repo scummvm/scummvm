@@ -753,6 +753,8 @@ BalloonManager_br::~BalloonManager_br() {
 }
 
 void Parallaction::setupBalloonManager() {
+    _balloonMan = 0;
+
 	if (getGameType() == GType_Nippon) {
 		_balloonMan = new BalloonManager_ns(_gfx, _dialogueFont);
 	} else
