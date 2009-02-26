@@ -295,10 +295,6 @@ gfx_pixmap_color_t *get_pic_color(EngineState *s, int color);
 ** Returns   : (gfx_pixmap_color_t *) The requested color.
 */
 
-void other_libs_exit();
-/* Called directly before FreeSCI ends to allow libraries to clean up
-*/
-
 static inline reg_t not_register(EngineState *s, reg_t r) {
 	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
 		return make_reg(0, !r.offset);
