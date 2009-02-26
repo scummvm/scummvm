@@ -27,45 +27,38 @@ namespace Sci {
 
 #define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
                   linearend, nonlinearstart, linearmod, nonlinearmod) \
-	x = (startx); y = (starty); \
 	incrNE = ((deltalinear) > 0) ? (deltalinear) : -(deltalinear); \
 	incrNE <<= 1; \
 	deltanonlinear <<= 1; \
 	incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
 	d = nonlinearstart - 1;  \
 	while (linearvar != (linearend)) { \
-		memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH); \
+		memcpy(buffer + linewidth * (starty) + (startx), &color, PIXELWIDTH); \
 		linearvar += linearmod; \
 		if ((d += incrE) < 0) { \
 			d += incrNE; \
 			nonlinearvar += nonlinearmod; \
 		}; \
 	}; \
-	memcpy(buffer + linewidth * y + x, &color, PIXELWIDTH);
+	memcpy(buffer + linewidth * (starty) + (startx), &color, PIXELWIDTH);
 
 
 static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
-	int dx, dy, incrE, incrNE, d, finalx, finaly;
-	int x = start.x;
-	int y = start.y;
-	dx = end.x - start.x;
-	dy = end.y - start.y;
-	finalx = end.x;
-	finaly = end.y;
+	int incrE, incrNE, d;
+	int dx = ABS(end.x - start.x);
+	int dy = ABS(end.y - start.y);
 #ifdef SCUMM_BIG_ENDIAN
 	color = SWAP_BYTES_32(color);
 #endif
-	dx = abs(dx);
-	dy = abs(dy);
 
 	if (dx > dy) {
-		int sign1 = (finalx < x) ? -1 : 1;
-		int sign2 = (finaly < y) ? -1 : 1;
-		LINEMACRO(x, y, dx, dy, x, y, finalx, dx, sign1 * PIXELWIDTH, sign2);
+		int sign1 = (end.x < start.x) ? -1 : 1;
+		int sign2 = (end.y < start.y) ? -1 : 1;
+		LINEMACRO(start.x, start.y, dx, dy, start.x, start.y, end.x, dx, sign1 * PIXELWIDTH, sign2);
 	} else { // dx <= dy
-		int sign1 = (finaly < y) ? -1 : 1;
-		int sign2 = (finalx < x) ? -1 : 1;
-		LINEMACRO(x, y, dy, dx, y, x, finaly, dy, sign1, sign2 * PIXELWIDTH);
+		int sign1 = (end.y < start.y) ? -1 : 1;
+		int sign2 = (end.x < start.x) ? -1 : 1;
+		LINEMACRO(start.x, start.y, dy, dx, start.y, start.x, end.y, dy, sign1, sign2 * PIXELWIDTH);
 	}
 }
 
