@@ -233,6 +233,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*26*/	DEFUN("SetSynonyms", kSetSynonyms, "o"),
 	/*27*/	DEFUN("HaveMouse", kHaveMouse, ""),
 	/*28*/	DEFUN("SetCursor", kSetCursor, "i*"),
+	// FIXME: The number 0x28 occurs twice :-)
 	/*28*/	DEFUN("MoveCursor", kMoveCursor, "ii*"),
 	/*29*/	DEFUN("FOpen", kFOpen, "ri"),
 	/*2a*/	DEFUN("FPuts", kFPuts, "ir"),
@@ -275,6 +276,7 @@ sci_kernel_function_t kfunct_mappers[] = {
 	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
 	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),
 	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
+	// FIXME: The number 0x51 occurs twice :-)
 	/*51*/	DEFUN("CantBeHere", kCanBeHere, "ol*"),
 	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
 	/*53*/	DEFUN("InitBresen", kInitBresen, "oi*"),
