@@ -667,8 +667,7 @@ void OSystem_SDL::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	if (_numDirtyRects > 0) {
-
+	if (_numDirtyRects > 0 || _mouseNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
@@ -744,7 +743,6 @@ void OSystem_SDL::internUpdateScreen() {
 
 	_numDirtyRects = 0;
 	_forceFull = false;
-	_mouseNeedsRedraw = false;
 }
 
 bool OSystem_SDL::saveScreenshot(const char *filename) {
@@ -1315,7 +1313,6 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	if (w == 0 || h == 0)
 		return;
 
-	_mouseNeedsRedraw = true;
 	_mouseCurState.hotX = hotspot_x;
 	_mouseCurState.hotY = hotspot_y;
 
@@ -1360,6 +1357,8 @@ void OSystem_SDL::blitCursor() {
 
 	if (!_mouseOrigSurface || !_mouseData)
 		return;
+
+	_mouseNeedsRedraw = true;
 
 	w = _mouseCurState.w;
 	h = _mouseCurState.h;
@@ -1531,9 +1530,8 @@ void OSystem_SDL::undrawMouse() {
 
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// This is intended to prevent undrawing offscreen mouse
-	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight)) {
+	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
 		return;
-	}
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
 		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
