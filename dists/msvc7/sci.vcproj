@@ -226,6 +226,9 @@
 		<Filter
 			Name="gfx">
 			<File
+				RelativePath="..\..\engines\sci\gfx\crossblit.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\font.cpp">
 			</File>
 			<File
@@ -272,6 +275,9 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_widgets.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\line.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\menubar.cpp">

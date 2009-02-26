@@ -207,6 +207,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\exec.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\exec.h"
 			>
 		</File>
