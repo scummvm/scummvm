@@ -379,12 +379,16 @@ void file_open(EngineState *s, char *filename, int mode) {
 		return;
 	}
 
-	uint retval = 1; // Ignore _fileHandles[0]
+	uint retval = 0;
 	while ((retval < s->_fileHandles.size()) && s->_fileHandles[retval]._file)
 		retval++;
 
-	if (retval == s->_fileHandles.size()) { // Hit size limit => Allocate more space
-		s->_fileHandles.resize(s->_fileHandles.size() + 1);
+	// Ignore _fileHandles[0]
+	if (retval < 1)
+		retval = 1;
+
+	if (retval >= s->_fileHandles.size()) { // Hit size limit => Allocate more space
+		s->_fileHandles.resize(retval + 1);
 	}
 
 	s->_fileHandles[retval]._file = file;

@@ -528,8 +528,6 @@ EngineState::EngineState() {
 
 	kernel_opt_flags = 0;
 
-	_fileHandles.resize(5);
-
 	dirseeker = 0;
 
 	execution_stack = 0;
