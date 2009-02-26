@@ -1473,7 +1473,7 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 		event = state->driver->get_event(state->driver);
 		if (event.type)
 			state->events.push_back(event);
-	} while (event.type);
+	} while (event.type != SCI_EVT_NONE);
 
 	// Search for matching event in queue
 	Common::List<sci_event_t>::iterator iter = state->events.begin();
@@ -1488,6 +1488,11 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 		if (!(mask & SCI_EVT_PEEK)) {
 			state->events.erase(iter);
 		}
+	} else {
+		// No event found: we must return a SCI_EVT_NONE event.
+
+		// Because event.type is SCI_EVT_NONE already here,
+		// there is no need to change it.
 	}
 
 	_gfxop_full_pointer_refresh(state);
