@@ -35,7 +35,7 @@
 
 namespace Sci {
 
-typedef enum {
+enum gfx_resource_type_t {
 	GFX_RESOURCE_TYPE_VIEW = 0,
 	GFX_RESOURCE_TYPE_PIC,
 	GFX_RESOURCE_TYPE_FONT,
@@ -44,7 +44,7 @@ typedef enum {
 	/* FIXME: Add PAL resource */
 
 	GFX_RESOURCE_TYPES_NR /* Number of resource types that are to be supported */
-} gfx_resource_type_t;
+};
 
 #define GFX_RESOURCE_TYPE_0 GFX_RESOURCE_TYPE_VIEW
 

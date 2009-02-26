@@ -43,11 +43,11 @@ namespace Sci {
 
 typedef unsigned long song_handle_t;
 
-typedef enum {
+enum RESTORE_BEHAVIOR {
 	RESTORE_BEHAVIOR_CONTINUE, /* restart a song when restored from
 				     a saved game */
 	RESTORE_BEHAVIOR_RESTART /* continue it from where it was */
-} RESTORE_BEHAVIOR;
+};
 
 struct song_t {
 	song_handle_t handle;

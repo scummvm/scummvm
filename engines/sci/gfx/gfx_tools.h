@@ -34,11 +34,11 @@
 
 namespace Sci {
 
-typedef enum {
+enum gfx_xlate_filter_t {
 	GFX_XLATE_FILTER_NONE,
 	GFX_XLATE_FILTER_LINEAR,
 	GFX_XLATE_FILTER_TRILINEAR
-} gfx_xlate_filter_t;
+};
 
 
 extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this value as threshold

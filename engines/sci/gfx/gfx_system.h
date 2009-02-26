@@ -332,60 +332,60 @@ enum gfx_return_value_t {
 };
 
 
-typedef enum {/* Map masks */
+enum gfx_map_mask_t {/* Map masks */
 	GFX_MASK_NONE = 0,
 	GFX_MASK_VISUAL = 1,
 	GFX_MASK_PRIORITY = 2,
 	GFX_MASK_CONTROL = 4
-} gfx_map_mask_t;
+};
 
 /* 'no priority' mode */
 #define GFX_NO_PRIORITY -1
 
 /* Text alignment values */
 
-typedef enum {
+enum gfx_alignment_t {
 	ALIGN_RIGHT = -1,
 	ALIGN_TOP = -1,
 	ALIGN_CENTER = 1,
 	ALIGN_LEFT = 0,
 	ALIGN_BOTTOM = 0
-} gfx_alignment_t;
+};
 
 
-typedef enum {
+enum gfx_line_mode_t {
 	GFX_LINE_MODE_CORRECT, /* Scaled separately */
 	GFX_LINE_MODE_FAST,    /* Scaled by (xfact+yfact)/2 */
 	GFX_LINE_MODE_FINE    /* Always drawn at width 1 */
-} gfx_line_mode_t;
+};
 
-typedef enum {
+enum gfx_brush_mode_t {
 	GFX_BRUSH_MODE_SCALED, /* Just scale the brush pixels */
 	GFX_BRUSH_MODE_ELLIPSES, /* Replace pixels with ellipses */
 	GFX_BRUSH_MODE_RANDOM_ELLIPSES, /* Replace pixels with ellipses moved and re-scaled randomly */
 	GFX_BRUSH_MODE_MORERANDOM /* Distribute randomly */
-} gfx_brush_mode_t;
+};
 
 
-typedef enum {
+enum gfx_line_style_t {
 	GFX_LINE_STYLE_NORMAL,
 	GFX_LINE_STYLE_STIPPLED
-} gfx_line_style_t;
+};
 
 
-typedef enum {
+enum gfx_rectangle_fill_t {
 	GFX_SHADE_FLAT, /* Don't shade */
 	GFX_SHADE_VERTICALLY, /* Shade vertically */
 	GFX_SHADE_HORIZONTALLY /* Shade horizontally */
-} gfx_rectangle_fill_t;
+};
 
 
-typedef enum {
+enum gfx_color_mode_t {
 	GFX_COLOR_MODE_AUTO = 0, /* Auto-detect- handled by the gfxop library */
 	GFX_COLOR_MODE_INDEX = 1, /* Index mode */
 	GFX_COLOR_MODE_HIGH = 2, /* High color mode (15bpp or 16 bpp) */
 	GFX_COLOR_MODE_TRUE = 4 /* True color mode (24 bpp padded to 32 bpp) */
-} gfx_color_mode_t;
+};
 
 } // End of namespace Sci
 

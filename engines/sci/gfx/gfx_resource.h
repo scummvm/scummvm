@@ -123,9 +123,9 @@ struct gfxr_view_t {
 };
 
 
-typedef enum {
+enum gfxr_font_scale_filter_t {
 	GFXR_FONT_SCALE_FILTER_NONE
-} gfxr_font_scale_filter_t;
+};
 
 
 struct text_fragment_t {
