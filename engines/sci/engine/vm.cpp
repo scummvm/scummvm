@@ -2023,6 +2023,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 		s->execution_stack_pos_changed = 0;
 		run_vm(s, (successor || restoring) ? 1 : 0);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
+			successor = NULL;
 			free(s->execution_stack);
 			s->execution_stack = NULL;
 			s->execution_stack_pos = -1;
