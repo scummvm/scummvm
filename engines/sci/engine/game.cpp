@@ -799,17 +799,21 @@ int game_init(EngineState *s) {
 
 	s->menubar = menubar_new(); // Create menu bar
 
+	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
+		game_init_sound(s, 0);
+
 	return 0;
 }
 
 int game_exit(EngineState *s) {
-	if (s->execution_stack) {
+	if (s->execution_stack)
 		free(s->execution_stack);
-	}
 
-	sfx_exit(&s->sound);
-	// Reinit because some other code depends on having a valid state
-	game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
+	if (!s->successor) {
+		sfx_exit(&s->sound);
+		// Reinit because some other code depends on having a valid state
+		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
+	}
 
 	delete s->seg_manager;
 
