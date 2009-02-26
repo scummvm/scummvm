@@ -42,13 +42,7 @@ struct _scummvm_driver_state {
 
 #define S ((struct _scummvm_driver_state *)(drv->state))
 
-enum modifierKeysStates {
-	capslockState = 0,
-	numlockState = 1,
-	scrollockState = 2
-};
-
-bool modifierStates[3];
+int _modifierStates;
 
 static int
 scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
@@ -89,12 +83,7 @@ scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 }
 
 static int scummvm_init(gfx_driver_t *drv) {
-	// FIXME: This is wrong. The initial states of capslock etc are not known initially
-	//
-	// The best solution likely would be to add code to the EventManager class
-	// for tracking which keys are pressed and which are not...
-	modifierStates[capslockState] = modifierStates[numlockState] = modifierStates[scrollockState] = false;
-
+	_modifierStates = 0;
 	return scummvm_init_specific(drv, 1, 1, GFX_COLOR_MODE_INDEX);
 }
 
@@ -343,43 +332,39 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 	if (found && !ev.synthetic && ev.type != Common::EVENT_MOUSEMOVE) {
 		int modifiers = em->getModifierState();
 
-		input.buckybits =
-		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
-		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
-		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0) |
-			(modifierStates[capslockState] ? SCI_EVM_CAPSLOCK : 0) |
-			(modifierStates[numlockState] ? SCI_EVM_NUMLOCK : 0) |
-			(modifierStates[scrollockState] ? SCI_EVM_SCRLOCK : 0);
-
 		// We add the modifier key status to buckybits
 		// SDL sends a keydown event if a modifier key is turned on and a keyup event if it's off
+		//
+ 	 	// FIXME: This code is semi-bogus. It only records the modifier key being *pressed*.
+ 	 	// It does not track correctly whether capslock etc. is active. To do that, we
+ 	 	// would have to record the fact that the modifier was pressed in global var,
+ 	 	// and also watch for Common::EVENT_KEYUP events.
+ 	 	// But this is still not quite good enough, because not all events might
+ 	 	// pass through here (e.g. the GUI might be running with its own event loop).
+ 	 	//
+ 	 	// The best solution likely would be to add code to the EventManager class
+ 	 	// for tracking which keys are pressed and which are not...
 		if (ev.type == Common::EVENT_KEYDOWN || ev.type == Common::EVENT_KEYUP) {
  			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_CAPSLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					input.buckybits |= SCI_EVM_CAPSLOCK;
-					modifierStates[capslockState] = true;
+					_modifierStates |= SCI_EVM_CAPSLOCK;
 				} else {
-					input.buckybits &= ~SCI_EVM_CAPSLOCK;
-					modifierStates[capslockState] = false;
+					_modifierStates &= ~SCI_EVM_CAPSLOCK;
 				}
 				break;
 			case Common::KEYCODE_NUMLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					input.buckybits |= SCI_EVM_NUMLOCK;
-					modifierStates[numlockState] = true;
+					_modifierStates |= SCI_EVM_NUMLOCK;
 				} else {
-					input.buckybits &= ~SCI_EVM_NUMLOCK;
-					modifierStates[numlockState] = false;
+					_modifierStates &= ~SCI_EVM_NUMLOCK;
 				}
 				break;
 			case Common::KEYCODE_SCROLLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					input.buckybits |= SCI_EVM_SCRLOCK;
-					modifierStates[scrollockState] = true;
+					_modifierStates |= SCI_EVM_SCRLOCK;
 				} else {
-					input.buckybits &= ~SCI_EVM_SCRLOCK;
-					modifierStates[scrollockState] = false;
+					_modifierStates &= ~SCI_EVM_SCRLOCK;
 				}
 				break;
 			default:
@@ -387,6 +372,12 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 			}
 		}
 		//TODO: SCI_EVM_INSERT
+
+		input.buckybits =
+		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
+		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
+		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0) |
+			_modifierStates;
 
 		switch (ev.type) {
 			// Keyboard events
@@ -452,23 +443,23 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 					break;
 				// Keypad keys
 				case Common::KEYCODE_KP8:	// up
-					if (!modifierStates[numlockState])
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
 						input.data = SCI_K_UP;
 					break;
 				case Common::KEYCODE_KP2:	// down
-					if (!modifierStates[numlockState])
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
 						input.data = SCI_K_DOWN;
 					break;
 				case Common::KEYCODE_KP6:	// right
-					if (!modifierStates[numlockState])
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
 						input.data = SCI_K_RIGHT;
 					break;
 				case Common::KEYCODE_KP4:	// left
-					if (!modifierStates[numlockState])
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
 						input.data = SCI_K_LEFT;
 					break;
 				case Common::KEYCODE_KP5:	// center
-					if (!modifierStates[numlockState])
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
 						input.data = SCI_K_CENTER;
 					break;
 				default:
