@@ -48,7 +48,7 @@ struct gfxw_snapshot_t {
 	rect_t area;
 };
 
-typedef enum {
+enum gfxw_widget_type_t {
 	GFXW_, /* Base widget */
 
 	GFXW_BOX,
@@ -69,7 +69,7 @@ typedef enum {
 	GFXW_VISUAL,
 	GFXW_PORT
 
-} gfxw_widget_type_t;
+};
 
 
 #define GFXW_MAGIC_VALID 0xC001
@@ -88,44 +88,39 @@ typedef int gfxw_op(gfxw_widget_t *);
 typedef int gfxw_op_int(gfxw_widget_t *, int);
 typedef int gfxw_bin_op(gfxw_widget_t *, gfxw_widget_t *);
 
-#define WIDGET_COMMON \
-	int magic; /* Extra check after typecasting */ \
-	int serial; /* Serial number */ \
-	int flags; /* Widget flags */ \
-	gfxw_widget_type_t type; \
-	rect_t bounds; /* Boundaries */ \
-	gfxw_widget_t *next; /* Next widget in widget list */ \
-	int ID; /* Unique ID or GFXW_NO_ID */ \
-	int subID; /* A 'sub-ID', or GFXW_NO_ID */ \
-	gfxw_container_t *parent; /* The parent widget, or NULL if not owned */ \
-	gfxw_visual_t *visual; /* The owner visual */ \
-	int widget_priority; /* Drawing priority, or -1 */ \
-	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */ \
-	gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */ \
-	gfxw_op *tag; /* Tag the specified widget */ \
-	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */ \
-	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */ \
-	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */ \
-	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */ \
-	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */ \
-	gfxw_visual_op *set_visual /* Sets the visual the widget belongs to */
-
 struct gfxw_widget_t {
-	WIDGET_COMMON;
+	int magic; /* Extra check after typecasting */
+	int serial; /* Serial number */
+	int flags; /* Widget flags */
+	gfxw_widget_type_t type;
+	rect_t bounds; /* Boundaries */
+	gfxw_widget_t *next; /* Next widget in widget list */
+	int ID; /* Unique ID or GFXW_NO_ID */
+	int subID; /* A 'sub-ID', or GFXW_NO_ID */
+	gfxw_container_t *parent; /* The parent widget, or NULL if not owned */
+	gfxw_visual_t *visual; /* The owner visual */
+	int widget_priority; /* Drawing priority, or -1 */
+	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */
+	gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */
+	gfxw_op *tag; /* Tag the specified widget */
+	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
+	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */
+	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */
+	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */
+	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
+	gfxw_visual_op *set_visual; /* Sets the visual the widget belongs to */
 };
 
 
 #define GFXW_IS_BOX(widget) ((widget)->type == GFXW_BOX)
-struct gfxw_box_t {
-	WIDGET_COMMON;
+struct gfxw_box_t : public gfxw_widget_t {
 	gfx_color_t color1, color2;
 	gfx_box_shade_t shade_type;
 };
 
 
 #define GFXW_IS_PRIMITIVE(widget) ((widget)->type == GFXW_RECT || (widget)->type == GFXW_LINE || (widget->type == GFXW_INVERSE_LINE))
-struct gfxw_primitive_t {
-	WIDGET_COMMON;
+struct gfxw_primitive_t : public gfxw_widget_t {
 	gfx_color_t color;
 	gfx_line_mode_t line_mode;
 	gfx_line_style_t line_style;
@@ -133,23 +128,18 @@ struct gfxw_primitive_t {
 
 
 
-#define VIEW_COMMON \
-	WIDGET_COMMON; \
-	Common::Point pos; /* Implies the value of 'bounds' in WIDGET_COMMON */ \
-	gfx_color_t color; \
-	int view, loop, cel; \
-	int palette
-
 #define GFXW_IS_VIEW(widget) ((widget)->type == GFXW_VIEW || (widget)->type == GFXW_STATIC_VIEW \
 			      || (widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
-struct gfxw_view_t {
-	VIEW_COMMON;
+struct gfxw_view_t  : public gfxw_widget_t {
+	Common::Point pos; /* Implies the value of 'bounds' in gfxw_widget_t */
+	gfx_color_t color;
+	int view, loop, cel;
+	int palette;
 };
 
 #define GFXW_IS_DYN_VIEW(widget) ((widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
-struct gfxw_dyn_view_t {
-	VIEW_COMMON;
-	/* fixme: This code is specific to SCI */
+struct gfxw_dyn_view_t : public gfxw_view_t {
+	/* FIXME: This code is specific to SCI */
 	rect_t draw_bounds; /* The correct position to draw to */
 	void *under_bitsp, *signalp;
 	int under_bits, signal;
@@ -161,8 +151,7 @@ struct gfxw_dyn_view_t {
 
 
 #define GFXW_IS_TEXT(widget) ((widget)->type == GFXW_TEXT)
-struct gfxw_text_t {
-	WIDGET_COMMON;
+struct gfxw_text_t : public gfxw_widget_t {
 	int font_nr;
 	int lines_nr, lineheight, lastline_width;
 	char *text;
@@ -180,21 +169,17 @@ typedef int gfxw_unary_container_op(gfxw_container_t *);
 typedef int gfxw_container_op(gfxw_container_t *, gfxw_widget_t *);
 typedef int gfxw_rect_op(gfxw_container_t *, rect_t, int);
 
-#define WIDGET_CONTAINER \
-	WIDGET_COMMON; \
-	rect_t zone; /* The writeable zone (absolute) for contained objects */ \
-	gfx_dirty_rect_t *dirty; /* List of dirty rectangles */ \
-	gfxw_widget_t *contents; \
-	gfxw_widget_t **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */ \
-	gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */ \
-	gfxw_unary_container_op *free_contents; /* Free all contained widgets */ \
-	gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */ \
-	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */ \
-	gfxw_container_op *add  /* Append widget to an appropriate position (for view and control lists) */
 
-
-struct gfxw_container_t {
-	WIDGET_CONTAINER;
+struct gfxw_container_t : public gfxw_widget_t {
+	rect_t zone; /* The writeable zone (absolute) for contained objects */
+	gfx_dirty_rect_t *dirty; /* List of dirty rectangles */
+	gfxw_widget_t *contents;
+	gfxw_widget_t **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
+	gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */
+	gfxw_unary_container_op *free_contents; /* Free all contained widgets */
+	gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */
+	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */
+	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
 };
 
 
@@ -206,8 +191,7 @@ struct gfxw_container_t {
 typedef gfxw_container_t gfxw_list_t;
 
 #define GFXW_IS_VISUAL(widget) ((widget)->type == GFXW_VISUAL)
-struct gfxw_visual_t {
-	WIDGET_CONTAINER;
+struct gfxw_visual_t : public gfxw_container_t {
 	gfxw_port_t **port_refs; /* References to ports */
 	int port_refs_nr;
 	int font_nr; /* Default font */
@@ -215,9 +199,7 @@ struct gfxw_visual_t {
 };
 
 #define GFXW_IS_PORT(widget) ((widget)->type == GFXW_PORT)
-struct gfxw_port_t {
-	WIDGET_CONTAINER;
-
+struct gfxw_port_t : public gfxw_container_t {
 	gfxw_list_t *decorations; /* optional window decorations- drawn before the contents */
 	gfxw_widget_t *port_bg; /* Port background widget or NULL */
 	gfx_color_t color, bgcolor;
@@ -230,9 +212,6 @@ struct gfxw_port_t {
 	const char *title_text;
 	byte gray_text; /* Whether text is 'grayed out' (dithered) */
 };
-
-#undef WIDGET_COMMON
-#undef WIDGET_CONTAINER
 
 } // End of namespace Sci
 
