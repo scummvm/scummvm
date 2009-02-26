@@ -338,7 +338,7 @@ void Parallaction::runGameFrame(int event) {
 		return;
 
 	if (_engineFlags & kEngineChangeLocation) {
-		changeLocation(_location._name);
+		changeLocation();
 	}
 
 	_programExec->runScripts(_location._programs.begin(), _location._programs.end());
@@ -954,7 +954,7 @@ void Parallaction::beep() {
 
 void Parallaction::scheduleLocationSwitch(const char *location) {
 	debugC(9, kDebugExec, "scheduleLocationSwitch(%s)\n", location);
-	strcpy(_location._name, location);
+	_newLocationName = location;
 	_engineFlags |= kEngineChangeLocation;
 }
 

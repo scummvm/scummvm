@@ -224,14 +224,20 @@ void Parallaction_br::cleanupGame() {
 }
 
 
-void Parallaction_br::changeLocation(char *location) {
+void Parallaction_br::changeLocation() {
+    if (_newLocationName.empty()) {
+        return;
+    }
+
+    char location[200];
+    strcpy(location, _newLocationName.c_str());
+
 	char *partStr = strrchr(location, '.');
 	if (partStr) {
 		cleanupGame();
 
 		int n = partStr - location;
-		strncpy(_location._name, location, n);
-		_location._name[n] = '\0';
+		location[n] = '\0';
 
 		_part = atoi(++partStr);
 		if (getFeatures() & GF_DEMO) {
@@ -260,6 +266,7 @@ void Parallaction_br::changeLocation(char *location) {
 
 	freeLocation(false);
 	// load new location
+	strcpy(_location._name, location);
 	parseLocation(location);
 
 	if (_location._startPosition.x != -1000) {
@@ -293,6 +300,7 @@ void Parallaction_br::changeLocation(char *location) {
 	_cmdExec->run(_location._aCommands);
 
 	_engineFlags &= ~kEngineChangeLocation;
+	_newLocationName.clear();
 }
 
 // FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.

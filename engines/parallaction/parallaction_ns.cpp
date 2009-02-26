@@ -288,7 +288,15 @@ void Parallaction_ns::runPendingZones() {
 //	changeLocation handles transitions between locations, and is able to display slides
 //	between one and the other.
 //
-void Parallaction_ns::changeLocation(char *location) {
+void Parallaction_ns::changeLocation() {
+    if (_newLocationName.empty()) {
+        return;
+    }
+
+    char location[200];
+    strcpy(location, _newLocationName.c_str());
+    strcpy(_location._name, _newLocationName.c_str());
+
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
 	MouseTriState oldMouseState = _input->getMouseState();
@@ -368,6 +376,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 	debugC(1, kDebugExec, "changeLocation() done");
+	_newLocationName.clear();
 }
 
 

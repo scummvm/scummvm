@@ -291,6 +291,7 @@ public:
 	char			_characterName1[50];	// only used in changeCharacter
 	ZonePtr			_zoneTrap;
 	ZonePtr			_commentZone;
+	Common::String  _newLocationName;
 
 protected:
 	void	runGame();
@@ -352,7 +353,7 @@ public:
 	void 		closeInventory();
 
 	virtual void parseLocation(const char* name) = 0;
-	virtual void changeLocation(char *location) = 0;
+	virtual void changeLocation() = 0;
 	virtual void changeCharacter(const char *name) = 0;
 	virtual	void callFunction(uint index, void* parm) = 0;
 	virtual void runPendingZones() = 0;
@@ -376,7 +377,7 @@ public:
 
 public:
 	virtual void parseLocation(const char *filename);
-	virtual void changeLocation(char *location);
+	virtual void changeLocation();
 	virtual void changeCharacter(const char *name);
 	virtual void callFunction(uint index, void* parm);
 	virtual void runPendingZones();
@@ -474,7 +475,7 @@ public:
 
 public:
 	virtual void parseLocation(const char* name);
-	virtual void changeLocation(char *location);
+	virtual void changeLocation();
 	virtual void changeCharacter(const char *name);
 	virtual	void callFunction(uint index, void* parm);
 	virtual void runPendingZones();
