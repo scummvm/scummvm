@@ -23,40 +23,20 @@
  *
  */
 
-/* This file isn't used directly; rather, it's included by a different file. */
-/* Note that memcpy() is assumed to be an inlineable built-in. If it isn't,
-** performance will suck... badly.
-*/
+#include "common/scummsys.h"
+
+namespace Sci {
+
 /* Config parameters:
 ** FUNCTION_NAME: Name of the blitter function
 ** USE_PRIORITY: Whether to care about the priority buffer
 ** BYTESPP: Bytes per pixel
 */
-
-#include "common/scummsys.h"
-
-/* set optimisations for Win32: */
-/* g on: enable global optimizations */
-/* t on: use fast code */
-/* y on: suppress creation of frame pointers on stack */
-/* s off: disable minimize size code */
-#ifdef WIN32
-#	include <memory.h>
-#	ifndef SATISFY_PURIFY
-#		pragma optimize( "s", off )
-#		pragma optimize( "gty", on )
-#		pragma intrinsic( memcpy, memset )
-#	endif
-#endif
-
-namespace Sci {
-
-static void FUNCTION_NAME(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
+template <int BYTESPP, bool USE_PRIORITY, bool REVERSE_ALPHA>
+void _gfx_crossblit(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
 	int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
-	unsigned int alpha_test_mask, unsigned int alpha_min
-#ifdef USE_PRIORITY
-	, byte *priority_buffer, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority
-#endif /* USE_PRIORITY */
+	unsigned int alpha_test_mask, unsigned int alpha_min,
+	byte *priority_buffer, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority
 	) {
 	int x, y;
 	int alpha_end = xl * bytes_per_alpha_pixel;
@@ -64,47 +44,33 @@ static void FUNCTION_NAME(byte *dest, byte *src, int bytes_per_dest_line, int by
 	for (y = 0; y < yl; y++) {
 		int pixel_offset = 0;
 		int alpha_offset = 0;
-#ifdef USE_PRIORITY
 		int priority_offset = 0;
-#endif /* USE_PRIORITY */
 
 		for (x = 0; x < alpha_end; x += bytes_per_alpha_pixel) {
-			if ((alpha_test_mask & alpha[x])
-#ifdef REVERSE_ALPHA
-			        >=
-#else
-			        <
-#endif
-			        alpha_min)
-#ifdef USE_PRIORITY
-				if (priority_buffer[priority_offset] <= priority) {
-					priority_buffer[priority_offset] = priority;
-#endif /* USE_PRIORITY */
+			if (((alpha_test_mask & alpha[x]) < alpha_min) ^ REVERSE_ALPHA) {
+
+				if (USE_PRIORITY) {
+					if (priority_buffer[priority_offset] <= priority) {
+						priority_buffer[priority_offset] = priority;
+						memcpy(dest + pixel_offset, src + pixel_offset, BYTESPP);
+					}
+				} else {
 					memcpy(dest + pixel_offset, src + pixel_offset, BYTESPP);
-#ifdef USE_PRIORITY
 				}
-#endif /* USE_PRIORITY */
+			}
 
 			pixel_offset += BYTESPP;
 			alpha_offset += bytes_per_alpha_pixel;
-#ifdef USE_PRIORITY
-			priority_offset += bytes_per_priority_pixel;
-#endif /* USE_PRIORITY */
+			if (USE_PRIORITY)
+				priority_offset += bytes_per_priority_pixel;
 		}
 
 		dest += bytes_per_dest_line;
 		src += bytes_per_src_line;
 		alpha += bytes_per_alpha_line;
-#ifdef USE_PRIORITY
-		priority_buffer += bytes_per_priority_line;
-#endif /* USE_PRIORITY */
+		if (USE_PRIORITY)
+			priority_buffer += bytes_per_priority_line;
 	}
 }
 
 } // End of namespace Sci
-
-/* reset to original optimisations for Win32: */
-/* (does not reset intrinsics) */
-#ifdef WIN32
-#  pragma optimize( "", on )
-#endif

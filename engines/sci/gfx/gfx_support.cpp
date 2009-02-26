@@ -30,6 +30,7 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/line.h"
+#include "sci/gfx/crossblit.h"
 
 namespace Sci {
 
@@ -84,153 +85,32 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
 	gfx_draw_box_buffer(pxm->index_data, pxm->index_xl, box, color);
 }
 
-} // End of namespace Sci
-
-// Import various crossblit functions
-#undef USE_PRIORITY
-#undef FUNCTION_NAME
-#undef BYTESPP
-
-# define FUNCTION_NAME _gfx_crossblit_8
-# define BYTESPP 1
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_16
-# define BYTESPP 2
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_24
-# define BYTESPP 3
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_32
-# define BYTESPP 4
-# include "gfx_crossblit.cpp"
-
-#define USE_PRIORITY
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_8_P
-# define BYTESPP 1
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_16_P
-# define BYTESPP 2
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_24_P
-# define BYTESPP 3
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_32_P
-# define BYTESPP 4
-# include "gfx_crossblit.cpp"
-
-#undef USE_PRIORITY
-#undef FUNCTION_NAME
-#undef BYTESPP
-
-// Reverse alpha versions
-#undef USE_PRIORITY
-#undef FUNCTION_NAME
-#undef BYTESPP
-#undef REVERSE_ALPHA
-
-#define REVERSE_ALPHA
-# define FUNCTION_NAME _gfx_crossblit_8_RA
-# define BYTESPP 1
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_16_RA
-# define BYTESPP 2
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_24_RA
-# define BYTESPP 3
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_32_RA
-# define BYTESPP 4
-# include "gfx_crossblit.cpp"
-
-#define USE_PRIORITY
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_8_P_RA
-# define BYTESPP 1
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_16_P_RA
-# define BYTESPP 2
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_24_P_RA
-# define BYTESPP 3
-# include "gfx_crossblit.cpp"
-
-# undef FUNCTION_NAME
-# undef BYTESPP
-# define FUNCTION_NAME _gfx_crossblit_32_P_RA
-# define BYTESPP 4
-# include "gfx_crossblit.cpp"
-
-#undef USE_PRIORITY
-#undef FUNCTION_NAME
-#undef BYTESPP
-#undef REVERSE_ALPHA
-
-namespace Sci {
-
-static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int) = { NULL,
-	_gfx_crossblit_8,
-	_gfx_crossblit_16,
-	_gfx_crossblit_24,
-	_gfx_crossblit_32
+static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
+	_gfx_crossblit<1, false, false>,
+	_gfx_crossblit<2, false, false>,
+	_gfx_crossblit<3, false, false>,
+	_gfx_crossblit<4, false, false>
 };
 
 static void (*crossblit_fns_P[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit_8_P,
-	_gfx_crossblit_16_P,
-	_gfx_crossblit_24_P,
-	_gfx_crossblit_32_P
+	_gfx_crossblit<1, true, false>,
+	_gfx_crossblit<2, true, false>,
+	_gfx_crossblit<3, true, false>,
+	_gfx_crossblit<4, true, false>
 };
 
-static void (*crossblit_fns_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int) = { NULL,
-	_gfx_crossblit_8_RA,
-	_gfx_crossblit_16_RA,
-	_gfx_crossblit_24_RA,
-	_gfx_crossblit_32_RA
+static void (*crossblit_fns_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
+	_gfx_crossblit<1, false, true>,
+	_gfx_crossblit<2, false, true>,
+	_gfx_crossblit<3, false, true>,
+	_gfx_crossblit<4, false, true>
 };
 
 static void (*crossblit_fns_P_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit_8_P_RA,
-	_gfx_crossblit_16_P_RA,
-	_gfx_crossblit_24_P_RA,
-	_gfx_crossblit_32_P_RA
+	_gfx_crossblit<1, true, true>,
+	_gfx_crossblit<2, true, true>,
+	_gfx_crossblit<3, true, true>,
+	_gfx_crossblit<4, true, true>
 };
 
 void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp) {
@@ -361,7 +241,8 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 			if (priority == GFX_NO_PRIORITY) {
 				if (bpp > 0 && bpp < 5)
 					((revalpha) ? crossblit_fns_RA : crossblit_fns)[bpp](dest, src, dest_line_width, pxm->xl * bpp,
-					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min);
+					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
+					        0, 0, 0, 0);
 				else {
 					GFXERROR("Invalid mode->bytespp: %d\n", mode->bytespp);
 					return GFX_ERROR;
@@ -369,8 +250,8 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 			} else { // priority
 				if (bpp > 0 && bpp < 5)
 					((revalpha) ? crossblit_fns_P_RA : crossblit_fns_P)[bpp](dest, src, dest_line_width, pxm->xl * bpp,
-					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel,
-					        alpha_mask, alpha_min, priority_pos, priority_line_width, priority_skip, priority);
+					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
+					        priority_pos, priority_line_width, priority_skip, priority);
 				else {
 					GFXERROR("Invalid mode->bytespp: %d\n", mode->bytespp);
 					return GFX_ERROR;
