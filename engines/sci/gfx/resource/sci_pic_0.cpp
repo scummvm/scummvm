@@ -1647,9 +1647,9 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				p0printf("Embedded view @%d\n", pos);
 
 				// Set up mode structure for resizing the view
+				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
 				mode = gfx_new_mode(pic->visual_map->index_xl / 320,
-				           pic->visual_map->index_yl / 200, 1, // 1bpp, which handles masks and the rest for us
-				           0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
+				           pic->visual_map->index_yl / 200, format, 16, 0);
 
 				GET_ABS_COORDS(posx, posy);
 				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
@@ -1779,9 +1779,9 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	gfx_mode_t *mode;
 	gfx_pixmap_t *view = NULL;
 	// Set up mode structure for resizing the view
+	Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
 	mode = gfx_new_mode(pic->visual_map->index_xl / 320, pic->visual_map->index_yl / 200,
-	           1, // 1bpp, which handles masks and the rest for us
-	           0, 0, 0, 0, 0, 0, 0, 0, 16, 0);
+	           format, 16, 0);
 
 	pic->visual_map->colors = gfxr_read_pal11(-1, &(pic->visual_map->colors_nr), resource + palette_data_ptr, 1284);
 

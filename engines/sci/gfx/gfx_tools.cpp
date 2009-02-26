@@ -44,22 +44,26 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 		box->yl = maxy - box->y + 1;
 }
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
-	unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
-	int blue_shift, int alpha_shift, int palette, int flags) {
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, int palette, int flags) {
 	gfx_mode_t *mode = (gfx_mode_t *)sci_malloc(sizeof(gfx_mode_t));
 
 	mode->xfact = xfact;
 	mode->yfact = yfact;
-	mode->bytespp = bytespp;
-	mode->red_mask = red_mask;
-	mode->green_mask = green_mask;
-	mode->blue_mask = blue_mask;
-	mode->alpha_mask = alpha_mask;
-	mode->red_shift = red_shift;
-	mode->green_shift = green_shift;
-	mode->blue_shift = blue_shift;
-	mode->alpha_shift = alpha_shift;
+	mode->bytespp = format.bytesPerPixel;
+	
+	// FIXME: I am not sure whether the following assignments are quite right.
+	// The only code using these are the built-in scalers of the SCI engine.
+	// And those are pretty weird, so I am not sure I interpreted them correctly.
+	// They also seem somewhat inefficient and and should probably just be
+	// replaced resp. rewritten from scratch.
+	mode->red_mask = format.ARGBToColor(0, 0xFF, 0, 0);
+	mode->green_mask = format.ARGBToColor(0, 0, 0xFF, 0);
+	mode->blue_mask = format.ARGBToColor(0, 0, 0, 0xFF);
+	mode->alpha_mask = format.ARGBToColor(0xFF, 0, 0, 0);
+	mode->red_shift = format.rLoss;
+	mode->green_shift = format.gLoss;
+	mode->blue_shift = format.bLoss;
+	mode->alpha_shift = format.aLoss;
 	mode->flags = flags;
 
 	if (palette) {

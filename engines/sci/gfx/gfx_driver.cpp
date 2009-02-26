@@ -44,8 +44,7 @@ struct _scummvm_driver_state {
 
 int _modifierStates;
 
-static int
-scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
+static int scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 	int i;
 
 	if (!drv->state) // = S
@@ -77,7 +76,8 @@ scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 		memset(S->visual[i], 0, S->xsize * S->ysize);
 	}
 
-	drv->mode = gfx_new_mode(xfact, yfact, bytespp, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0);
+	Graphics::PixelFormat format = { bytespp, 0, 0, 0, 0, 0, 0, 0, 0 };
+	drv->mode = gfx_new_mode(xfact, yfact, format, 256, 0);
 
 	return GFX_OK;
 }

@@ -29,6 +29,8 @@
 #ifndef SCI_GFX_GFX_TOOLS_H
 #define SCI_GFX_GFX_TOOLS_H
 
+#include "graphics/pixelformat.h"
+
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
 
@@ -45,20 +47,10 @@ extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this va
 					  ** for distinguishing between transparent and opaque
 					  ** wrt alpha values */
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, int bytespp, unsigned int red_mask, unsigned int green_mask,
-	unsigned int blue_mask, unsigned int alpha_mask, int red_shift, int green_shift,
-	int blue_shift, int alpha_shift, int palette, int flags);
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, int palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters
 ** Parameters: (int x int) xfact x yfact: Horizontal and vertical scaling factors
-**             (int) bytespp: Bytes per pixel
-**             (unsigned int) red_mask: Red bit mask
-**             (unsigned int) green_mask: Green bit mask
-**             (unsigned int) blue_mask: Blue bit mask
-**             (unsigned int) Alpha_mask: Alpha bit mask, or 0 if the alpha channel is not supported
-**             (int) red_shift: Red shift value
-**             (int) green_shift: Green shift value
-**             (int) blue_shift: Blue shift value
-**             (int) alpha_shift: Alpha shift value
+**             (Graphics::PixelFormat) format: pixel format description
 **             (int) palette: Number of palette colors, 0 if we're not in palette mode
 **             (int) flags: GFX_MODE_FLAG_* values ORred together, or just 0
 ** Returns   : (gfx_mode_t *) A newly allocated gfx_mode_t structure
