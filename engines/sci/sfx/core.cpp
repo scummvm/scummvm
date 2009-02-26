@@ -50,7 +50,7 @@ static sfx_timer_t *timer = NULL;
 extern sfx_timer_t sfx_timer_scummvm;
 extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
 
-Common::Mutex* callbackMutex;
+Common::Mutex* callbackMutex = NULL;
 
 int sfx_pcm_available() {
 	return (pcm_device != NULL);
@@ -343,9 +343,6 @@ static void _update(sfx_state_t *self) {
 		_update_single_song(self);
 }
 
-
-static int _sfx_timer_active = 0; /* Timer toggle */
-
 int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
@@ -362,15 +359,16 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 }
 
 static void _sfx_timer_callback(void *data) {
-	if (_sfx_timer_active) {
-		Common::StackLock lock(*callbackMutex);
+	Common::StackLock lock(*callbackMutex);
+
+	if (timer) {
 		/* First run the player, to give it a chance to fill
 		** the audio buffer  */
 
 		if (player)
 			player->maintenance();
 
-		assert(_sfx_timer_active);
+		assert(timer);
 
 		if (mixer)
 			mixer->process(mixer);
@@ -378,7 +376,11 @@ static void _sfx_timer_callback(void *data) {
 }
 
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
-	callbackMutex = new Common::Mutex();
+	if (!callbackMutex)
+		callbackMutex = new Common::Mutex();
+
+	Common::StackLock lock(*callbackMutex);
+
 	song_lib_init(&self->songlib);
 	self->song = NULL;
 	self->flags = flags;
@@ -465,13 +467,11 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		sciprintf("[SFX] No song player found\n");
 	else
 		sciprintf("[SFX] Using song player '%s', v%s\n", player->name, player->version);
-
-	_sfx_timer_active = 1;
 }
 
 void sfx_exit(sfx_state_t *self) {
 	callbackMutex->lock();
-	_sfx_timer_active = 0;
+
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
 #endif
@@ -482,6 +482,8 @@ void sfx_exit(sfx_state_t *self) {
 
 	if (timer && timer->exit())
 		warning("[SFX] Timer reported error on exit");
+
+	timer = NULL;
 
 	/* WARNING: The mixer may hold feeds from the
 	** player, so we must stop the mixer BEFORE
@@ -497,7 +499,7 @@ void sfx_exit(sfx_state_t *self) {
 
 	callbackMutex->unlock();
 	delete callbackMutex;
-	callbackMutex = 0;
+	callbackMutex = NULL;
 }
 
 void sfx_suspend(sfx_state_t *self, int suspend) {
