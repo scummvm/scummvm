@@ -56,14 +56,21 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 	// And those are pretty weird, so I am not sure I interpreted them correctly.
 	// They also seem somewhat inefficient and and should probably just be
 	// replaced resp. rewritten from scratch.
-	mode->red_mask = format.ARGBToColor(0, 0xFF, 0, 0);
-	mode->green_mask = format.ARGBToColor(0, 0, 0xFF, 0);
-	mode->blue_mask = format.ARGBToColor(0, 0, 0, 0xFF);
-	mode->alpha_mask = format.ARGBToColor(0xFF, 0, 0, 0);
-	mode->red_shift = format.rLoss;
-	mode->green_shift = format.gLoss;
-	mode->blue_shift = format.bLoss;
-	mode->alpha_shift = format.aLoss;
+	if (format.bytesPerPixel > 1) {
+		mode->red_mask = format.ARGBToColor(0, 0xFF, 0, 0);
+		mode->green_mask = format.ARGBToColor(0, 0, 0xFF, 0);
+		mode->blue_mask = format.ARGBToColor(0, 0, 0, 0xFF);
+		mode->alpha_mask = format.ARGBToColor(0xFF, 0, 0, 0);
+		mode->red_shift = format.rLoss;
+		mode->green_shift = format.gLoss;
+		mode->blue_shift = format.bLoss;
+		mode->alpha_shift = format.aLoss;
+	} else {
+		mode->red_mask = mode->green_mask = mode->blue_mask = 0;
+		mode->alpha_mask = 0;
+		mode->red_shift = mode->green_shift = mode->blue_shift = 0;
+		mode->alpha_shift = 0;
+	}
 	mode->flags = flags;
 
 	if (palette) {
