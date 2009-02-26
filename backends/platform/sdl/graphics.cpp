@@ -743,6 +743,7 @@ void OSystem_SDL::internUpdateScreen() {
 
 	_numDirtyRects = 0;
 	_forceFull = false;
+	_mouseNeedsRedraw = false;
 }
 
 bool OSystem_SDL::saveScreenshot(const char *filename) {
