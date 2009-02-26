@@ -29,12 +29,14 @@
 #include "sci/include/engine.h"
 #include "sci/gfx/sci_widgets.h"
 #include "sci/gfx/gfx_widgets.h"
-#include "sci/engine/sci_graphics.h"
 #include "sci/engine/kernel.h"
 
 namespace Sci {
 
 #undef DEBUG_LSRECT
+
+// This is the real width of a text with a specified width of 0
+#define MAX_TEXT_WIDTH_MAGIC_VALUE 192
 
 // Graph subfunctions
 #define K_GRAPH_GET_COLORS_NR 2
@@ -486,9 +488,9 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	port->widfree(GFXW(port));
 }
 
-static int activated_icon_bar;
-static int port_origin_x;
-static int port_origin_y;
+static int activated_icon_bar = 0;
+static int port_origin_x = 0;
+static int port_origin_y = 0;
 
 reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	rect_t area;
@@ -730,11 +732,7 @@ reg_t kDirLoop(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define GASEOUS_VIEW_MASK_ACTIVE (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 #define GASEOUS_VIEW_MASK_PASSIVE (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 
-abs_rect_t set_base(EngineState *s, reg_t object);
-
-inline abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip);
-
-static inline abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority);
+static abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority);
 
 static int collides_with(EngineState *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc, reg_t *argv) {
 	int other_signal = GET_SEL32V(other_obj, signal);
@@ -1171,7 +1169,7 @@ reg_t kBaseSetter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 } // kBaseSetter
 
-static inline abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority) {
+static abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority) {
 	int pri_top;
 
 	if (priority == -1)
@@ -1189,7 +1187,7 @@ static inline abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, i
 	return retval;
 }
 
-inline abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
+static abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
 	int xbase, ybase, xend, yend, xsize, ysize;
 	int xmod = 0, ymod = 0;
 	abs_rect_t retval = {0, 0, 0, 0};
@@ -1218,7 +1216,7 @@ inline abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int l
 	return retval;
 }
 
-inline abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
+abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
 	int x, y, z;
 	int view, loop, cel;
 	abs_rect_t retval;
@@ -1266,7 +1264,7 @@ reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	_k_set_now_seen(s, object);
 
 	return s->r_acc;
-} // kSetNowSeen
+}
 
 reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
@@ -2367,17 +2365,6 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-static inline void add_to_chrono(EngineState *s, gfxw_widget_t *widget) {
-	gfxw_port_t *chrono_port;
-	gfxw_list_t *tw;
-
-	chrono_port = gfxw_get_chrono_port(s->visual, &tw, 0);
-	tw->add(GFXWC(tw), widget);
-
-	if (!chrono_port->parent)
-		ADD_TO_CURRENT_PORT(chrono_port);
-}
-
 reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
@@ -2404,11 +2391,7 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	new_view = gfxw_new_view(s->gfx_state, Common::Point(x, y), view, loop, cel, 0, priority, -1,
 	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
-#if 0
-	add_to_chrono(s, GFXW(new_view));
-#else
 	ADD_TO_CURRENT_PICTURE_PORT(GFXW(new_view));
-#endif
 	FULL_REDRAW();
 
 	return s->r_acc;

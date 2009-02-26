@@ -29,7 +29,7 @@
 
 namespace Sci {
 
-int stop_on_event;
+int stop_on_event = 0;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
@@ -85,7 +85,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		quit_vm();
 		break;
 
-	case SCI_EVT_KEYBOARD: {
+	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			sciprintf("Debug mode activated\n");
 			script_debug_flag = 1; // Enter debug mode
@@ -106,8 +106,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// character
 			PUT_SEL32V(obj, modifiers, e.buckybits&modifier_mask);
 		}
-	}
-	break;
+		break;
 
 	case SCI_EVT_MOUSE_RELEASE:
 	case SCI_EVT_MOUSE_PRESS: {
@@ -129,12 +128,11 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			PUT_SEL32V(obj, modifiers, (e.buckybits | extra_bits)&modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
+		break;
 	}
-	break;
 
-	default: {
+	default:
 		s->r_acc = NULL_REG; // Unknown or no event
-	}
 	}
 
 	if ((s->r_acc.offset) && (stop_on_event)) {
@@ -187,7 +185,8 @@ reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			PUT_SEL32V(obj, type, SCI_EVT_JOYSTICK);
 			PUT_SEL32V(obj, message, mover);
 			return make_reg(0, 1);
-		} else return NULL_REG;
+		} else
+			return NULL_REG;
 	}
 
 	return s->r_acc;
