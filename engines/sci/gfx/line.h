@@ -43,7 +43,8 @@ namespace Sci {
 	memcpy(buffer + linewidth * (starty) + (startx), &color, PIXELWIDTH);
 
 
-static inline void DRAWLINE_FUNC(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
+template <int PIXELWIDTH>
+void _gfx_draw_line_buffer(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
 	int incrE, incrNE, d;
 	int dx = ABS(end.x - start.x);
 	int dy = ABS(end.y - start.y);

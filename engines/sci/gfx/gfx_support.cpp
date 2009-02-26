@@ -29,30 +29,7 @@
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_tools.h"
-
-#define DRAWLINE_FUNC _gfx_draw_line_buffer_1
-#define PIXELWIDTH 1
-#include "gfx_line.cpp"
-#undef PIXELWIDTH
-#undef DRAWLINE_FUNC
-
-#define DRAWLINE_FUNC _gfx_draw_line_buffer_2
-#define PIXELWIDTH 2
-#include "gfx_line.cpp"
-#undef PIXELWIDTH
-#undef DRAWLINE_FUNC
-
-#define DRAWLINE_FUNC _gfx_draw_line_buffer_3
-#define PIXELWIDTH 3
-#include "gfx_line.cpp"
-#undef PIXELWIDTH
-#undef DRAWLINE_FUNC
-
-#define DRAWLINE_FUNC _gfx_draw_line_buffer_4
-#define PIXELWIDTH 4
-#include "gfx_line.cpp"
-#undef PIXELWIDTH
-#undef DRAWLINE_FUNC
+#include "sci/gfx/line.h"
 
 namespace Sci {
 
@@ -62,19 +39,19 @@ inline void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, Co
 	switch (pixelwidth) {
 
 	case 1:
-		_gfx_draw_line_buffer_1(buffer, linewidth, start, end, color);
+		_gfx_draw_line_buffer<1>(buffer, linewidth, start, end, color);
 		return;
 
 	case 2:
-		_gfx_draw_line_buffer_2(buffer, linewidth, start, end, color);
+		_gfx_draw_line_buffer<2>(buffer, linewidth, start, end, color);
 		return;
 
 	case 3:
-		_gfx_draw_line_buffer_3(buffer, linewidth, start, end, color);
+		_gfx_draw_line_buffer<3>(buffer, linewidth, start, end, color);
 		return;
 
 	case 4:
-		_gfx_draw_line_buffer_4(buffer, linewidth, start, end, color);
+		_gfx_draw_line_buffer<4>(buffer, linewidth, start, end, color);
 		return;
 
 	default:
