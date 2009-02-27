@@ -480,6 +480,8 @@ void sfx_exit(sfx_state_t *self) {
 
 	song_lib_free(self->songlib);
 
+	// FIXME: We need a pcm_device->exit() function to release the
+	// mixer channel allocated for pcm_device in ScummVM's mixer.
 	pcm_device = NULL;
 
 
