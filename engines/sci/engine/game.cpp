@@ -663,8 +663,7 @@ int game_init(EngineState *s) {
 }
 
 int game_exit(EngineState *s) {
-	if (s->execution_stack)
-		free(s->execution_stack);
+	free(s->execution_stack);
 
 	if (!s->successor) {
 		sfx_exit(&s->sound);
@@ -674,19 +673,15 @@ int game_exit(EngineState *s) {
 
 	delete s->seg_manager;
 
-	if (s->synonyms_nr) {
-		free(s->synonyms);
-		s->synonyms = NULL;
-		s->synonyms_nr = 0;
-	}
+	free(s->synonyms);
+	s->synonyms = NULL;
+	s->synonyms_nr = 0;
 
 	sciprintf("Freeing miscellaneous data...\n");
 
 	// TODO Free parser segment here
-	if (send_calls_allocated) {
-		free(send_calls);
-		send_calls_allocated = 0;
-	}
+	free(send_calls);
+	send_calls_allocated = 0;
 
 	// TODO Free scripts here
 
