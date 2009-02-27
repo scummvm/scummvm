@@ -50,8 +50,6 @@ static sfx_timer_t *timer = NULL;
 extern sfx_timer_t sfx_timer_scummvm;
 extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
 
-Common::Mutex* callbackMutex = NULL;
-
 int sfx_pcm_available() {
 	return (pcm_device != NULL);
 }
@@ -358,8 +356,6 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 }
 
 static void _sfx_timer_callback(void *data) {
-	Common::StackLock lock(*callbackMutex);
-
 	if (timer) {
 		/* First run the player, to give it a chance to fill
 		** the audio buffer  */
@@ -375,11 +371,6 @@ static void _sfx_timer_callback(void *data) {
 }
 
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
-	if (!callbackMutex)
-		callbackMutex = new Common::Mutex();
-
-	Common::StackLock lock(*callbackMutex);
-
 	song_lib_init(&self->songlib);
 	self->song = NULL;
 	self->flags = flags;
@@ -401,33 +392,6 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Initialising: flags=%x\n", flags);
 #endif
-
-	/*------------------*/
-	/* Initialise timer */
-	/*------------------*/
-
-	if (pcm_device || player->maintenance) {
-		timer = &sfx_timer_scummvm;
-
-		if (!timer) {
-			fprintf(stderr, "[SFX] " __FILE__": Could not find timing mechanism\n");
-			fprintf(stderr, "[SFX] Disabled sound support\n");
-			pcm_device = NULL;
-			player = NULL;
-			mixer = NULL;
-			return;
-		}
-
-		if (timer->init(_sfx_timer_callback, NULL)) {
-			warning("[SFX] " __FILE__": Timer failed to initialize");
-			warning("[SFX] Disabled sound support");
-			timer = NULL;
-			pcm_device = NULL;
-			player = NULL;
-			mixer = NULL;
-			return;
-		}
-	} /* With no PCM device and no player, we don't need a timer */
 
 	/*----------------*/
 	/* Initialise PCM */
@@ -466,10 +430,49 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		sciprintf("[SFX] No song player found\n");
 	else
 		sciprintf("[SFX] Using song player '%s', v%s\n", player->name, player->version);
+
+	/*------------------*/
+	/* Initialise timer */
+	/*------------------*/
+
+	// We initialise the timer last, so there is no possibility of the
+	// timer callback being triggered while the pcm_device or player are
+	// still being initialized.
+
+	if (pcm_device || (player && player->maintenance)) {
+		timer = &sfx_timer_scummvm;
+
+		if (!timer) {
+			fprintf(stderr, "[SFX] " __FILE__": Could not find timing mechanism\n");
+			fprintf(stderr, "[SFX] Disabled sound support\n");
+			pcm_device = NULL;
+			player = NULL;
+			mixer = NULL;
+			return;
+		}
+
+		if (timer->init(_sfx_timer_callback, NULL)) {
+			warning("[SFX] " __FILE__": Timer failed to initialize");
+			warning("[SFX] Disabled sound support");
+			timer = NULL;
+			pcm_device = NULL;
+			player = NULL;
+			mixer = NULL;
+			return;
+		}
+	} /* With no PCM device and no player, we don't need a timer */
+
 }
 
 void sfx_exit(sfx_state_t *self) {
-	callbackMutex->lock();
+	if (timer && timer->exit())
+		warning("[SFX] Timer reported error on exit");
+
+	// The timer API guarantees no more callbacks are running or will be
+	// run from this point onward, so we can now safely exit the mixer and
+	// player.
+
+	timer = NULL;
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
@@ -479,10 +482,6 @@ void sfx_exit(sfx_state_t *self) {
 
 	pcm_device = NULL;
 
-	if (timer && timer->exit())
-		warning("[SFX] Timer reported error on exit");
-
-	timer = NULL;
 
 	/* WARNING: The mixer may hold feeds from the
 	** player, so we must stop the mixer BEFORE
@@ -495,10 +494,6 @@ void sfx_exit(sfx_state_t *self) {
 	if (player)
 		/* See above: This must happen AFTER stopping the mixer */
 		player->exit();
-
-	callbackMutex->unlock();
-	delete callbackMutex;
-	callbackMutex = NULL;
 }
 
 void sfx_suspend(sfx_state_t *self, int suspend) {

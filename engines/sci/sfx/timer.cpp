@@ -63,6 +63,7 @@ int scummvm_timer_start(void (*func)(void *), void *data) {
 }
 
 int scummvm_timer_stop() {
+	::g_engine->getTimerManager()->removeTimerProc(&scummvm_timer_update_internal);
 	scummvm_timer_callback = NULL;
 	return SFX_OK;
 }
