@@ -24,7 +24,7 @@
  */
 
 #include "sci/engine/seg_manager.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
 
 namespace Sci {

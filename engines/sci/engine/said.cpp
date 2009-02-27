@@ -131,7 +131,7 @@
  *
  */
 
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 

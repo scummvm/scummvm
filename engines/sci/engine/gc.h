@@ -29,7 +29,7 @@
 
 #include "common/hashmap.h"
 #include "sci/engine/vm_types.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/engine/kernel.h"
 

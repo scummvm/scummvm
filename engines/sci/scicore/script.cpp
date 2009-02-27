@@ -24,7 +24,7 @@
  */
 
 #include "sci/scicore/resource.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "common/util.h"
 
 namespace Sci {

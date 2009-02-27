@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sci/scicore/resource.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/sfx/seq/instrument-map.h"
 
 namespace Sci {

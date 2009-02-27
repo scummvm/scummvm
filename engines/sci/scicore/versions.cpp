@@ -29,7 +29,7 @@
 #include "common/config-manager.h"
 
 #include "sci/scicore/versions.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/tools.h"
 
 namespace Sci {

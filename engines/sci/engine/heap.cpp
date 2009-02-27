@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 #include "sci/engine/heap.h"
 

@@ -27,7 +27,7 @@
 
 #include "sci/scicore/vocabulary.h"
 #include "sci/scicore/resource.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
 namespace Sci {

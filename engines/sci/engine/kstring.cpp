@@ -26,7 +26,7 @@
 /* String and parser handling */
 
 #include "sci/scicore/resource.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 

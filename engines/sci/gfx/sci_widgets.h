@@ -28,7 +28,7 @@
 #ifndef SCI_INCLUDE_SCI_WIDGETS_H
 #define SCI_INCLUDE_SCI_WIDGETS_H
 
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 

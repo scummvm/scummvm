@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 #include "sci/engine/kdebug.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 

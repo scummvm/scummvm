@@ -32,7 +32,7 @@
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel.h"
 #include "sci/scicore/resource.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/gfx/operations.h"
 #include "sci/engine/kernel_types.h"
 

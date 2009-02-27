@@ -26,7 +26,7 @@
 // Script debugger functionality. Absolutely not threadsafe.
 
 #include "sci/sci.h"
-#include "sci/include/engine.h"
+#include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kdebug.h"
 #include "sci/engine/kernel_types.h"
