@@ -5109,7 +5109,13 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gfx_state = s->gfx_state;
 
 	SavegameMetadata *meta = new SavegameMetadata;
-	memset(meta, 0, sizeof(SavegameMetadata));
+
+	if (read_eof) {
+		// TODO: It would be nice to automate this:
+		meta->savegame_name = NULL;
+		meta->game_version = NULL;
+		return false;
+	}
 
 // Auto-generated CFSML data reader code
 #line 762 "engines/sci/engine/savegame.cfsml"
@@ -5143,7 +5149,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1051 "engines/sci/engine/savegame.cfsml"
+#line 1057 "engines/sci/engine/savegame.cfsml"
+
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
 		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
@@ -5198,7 +5205,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1074 "engines/sci/engine/savegame.cfsml"
+#line 1081 "engines/sci/engine/savegame.cfsml"
 
 	sfx_exit(&s->sound);
 	_gamestate_unfrob(retval);
@@ -5336,10 +5343,14 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1180 "engines/sci/engine/savegame.cfsml"
+#line 1187 "engines/sci/engine/savegame.cfsml"
 
-	if (read_eof)
+	if (read_eof) {
+		// TODO: It would be nice to automate this:
+		meta->savegame_name = NULL;
+		meta->game_version = NULL;
 		return false;
+	}
 
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {

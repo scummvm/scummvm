@@ -1045,9 +1045,16 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gfx_state = s->gfx_state;
 
 	SavegameMetadata *meta = new SavegameMetadata;
-	memset(meta, 0, sizeof(SavegameMetadata));
 
-	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM fh ERRVAR read_eof;
+	if (read_eof) {
+		// TODO: It would be nice to automate this:
+		meta->savegame_name = NULL;
+		meta->game_version = NULL;
+		return false;
+	}
+
+%CFSMLREAD-ATOMIC SavegameMetadata meta FROM fh ERRVAR read_eof;
+
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
 		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
@@ -1178,8 +1185,12 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 
 	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM stream ERRVAR read_eof;
 
-	if (read_eof)
+	if (read_eof) {
+		// TODO: It would be nice to automate this:
+		meta->savegame_name = NULL;
+		meta->game_version = NULL;
 		return false;
+	}
 
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
