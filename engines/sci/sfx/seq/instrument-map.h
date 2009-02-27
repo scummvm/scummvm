@@ -75,21 +75,18 @@ struct sfx_instrument_map_t {
 	byte *initialisation_block; /* Initial MIDI commands to set up the device */
 };
 
-sfx_instrument_map_t *
-sfx_instrument_map_new(int velocity_maps_nr);
+sfx_instrument_map_t *sfx_instrument_map_new(int velocity_maps_nr);
 /* Constructs a new default-initialised velocity map
 ** Parameters: (int) velocity_maps_nr: Number of velocity maps to allocate
 ** Returns   : (sfx_instrument_map *) an initialised instrument map
 */
 
-void
-sfx_instrument_map_free(sfx_instrument_map_t *map);
+void sfx_instrument_map_free(sfx_instrument_map_t *map);
 /* Deallocates an instrument map
 ** Parameters: (sfx_instrument_map *) map: The map to deallocate, or NULL for a no-op
 */
 
-sfx_instrument_map_t *
-sfx_instrument_map_load_sci(byte *data, size_t length);
+sfx_instrument_map_t *sfx_instrument_map_load_sci(byte *data, size_t length);
 /* Allocate and initialise an instrument map from SCI data
 ** Parameters: (byte *) Pointer to the data to initialise from
 **             (size_t) Number of bytes to expect within
@@ -98,8 +95,7 @@ sfx_instrument_map_load_sci(byte *data, size_t length);
 ** If `data' is null, the function will return NULL quietly.
 */
 
-sfx_instrument_map_t *
-sfx_instrument_map_mt32_to_gm(byte *data, size_t size);
+sfx_instrument_map_t *sfx_instrument_map_mt32_to_gm(byte *data, size_t size);
 /* Allocate and initialise an instrument map from MT-32 patch data
 ** Parameters: (byte *) Pointer to the MT-32 patch data to initialise from
 **             (size_t) Number of bytes to expect within
@@ -107,8 +103,7 @@ sfx_instrument_map_mt32_to_gm(byte *data, size_t size);
 ** If `data' is null or invalid, the function will return a default MT-32 to GM map.
 */
 
-int
-sfx_instrument_map_detect(byte *data, size_t size);
+int sfx_instrument_map_detect(byte *data, size_t size);
 /* Detects the type of patch data
 ** Parameters: (byte *) Pointer to the patch data
 **             (size_t) Number of bytes to expect within
@@ -116,8 +111,7 @@ sfx_instrument_map_detect(byte *data, size_t size);
 **	       or SFX_MAP_UNKNOWN for unknown.
 */
 
-midi_writer_t *
-sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map);
+midi_writer_t *sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *map);
 /* Wrap a midi_writer_t into an instrument map
 ** Parameters: (midi_writer_t *) writer: The writer to wrap
 **             (sfx_instrument_map_t *) map: The map to apply to all commands going into the writer, or NULL

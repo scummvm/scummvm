@@ -352,12 +352,11 @@ static inline void mix_swap_buffers(sfx_pcm_mixer_t *self) { /* Swap buffers */
 	P->writebuf = tmp;
 }
 
-static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames)
+static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 /* Computes the number of frames we ought to write. It tries to minimise the number,
 ** in order to reduce latency. */
 /* It sets 'skip_frames' to the number of frames to assume lost by latency, effectively
 ** skipping them.  */
-{
 	int free_frames;
 	int played_frames = 0; /* since the last call */
 	uint32 msecs;
@@ -922,6 +921,6 @@ sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear = {
 	NULL
 };
 
-sfx_pcm_mixer_t* getMixer() { return &sfx_pcm_mixer_soft_linear; }
+sfx_pcm_mixer_t *getMixer() { return &sfx_pcm_mixer_soft_linear; }
 
 } // End of namespace Sci

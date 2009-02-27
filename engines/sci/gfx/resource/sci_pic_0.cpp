@@ -137,8 +137,7 @@ void gfxr_init_static_palette() {
 }
 
 
-gfxr_pic_t *
-gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
+gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 	gfxr_pic_t *pic = (gfxr_pic_t*)sci_malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
@@ -335,8 +334,7 @@ static void _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask) {
 #endif
 
 
-static inline void
-_gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
+static inline void _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
 	int i;
 	for (i = 0; i < width; i++)
 		pic->aux_map[i+pos] |= FRESH_PAINT;

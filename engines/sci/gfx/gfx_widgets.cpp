@@ -128,7 +128,7 @@ static int _gfxwop_print_empty(gfxw_widget_t *widget, int indentation) {
 	return 0;
 }
 
-gfxw_widget_t * _gfxw_new_widget(int size, gfxw_widget_type_t type) {
+gfxw_widget_t *_gfxw_new_widget(int size, gfxw_widget_type_t type) {
 	gfxw_widget_t *widget = (gfxw_widget_t*)sci_malloc(size);
 #ifdef SATISFY_PURIFY
 	memset(widget, 0, size);
@@ -2039,7 +2039,7 @@ gfxw_dyn_view_t *gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
 
 // Chrono-Ports (tm)
 
-gfxw_port_t * gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
+gfxw_port_t *gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
 	gfxw_port_t *result = NULL;
 	gfx_color_t transparent = {{0, 0, 0, 0}, 0, 0, 0, 0};
 	int id = 0;

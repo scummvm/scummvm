@@ -230,15 +230,13 @@ sample_feed_t sample_feeds[FEEDS_NR] = {
 #endif
 };
 
-void
-feed_destroy(sfx_pcm_feed_t *self) {
+void feed_destroy(sfx_pcm_feed_t *self) {
 	int_struct *s = (int_struct *) self->internal;
 	s->i = 0; /* reset */
 }
 
 
-int
-feed_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
+int feed_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 	int_struct *s = (int_struct *) self->internal;
 	int sample_size = self->sample_size;
 	sample_feed_t *data = &(sample_feeds[self->debug_nr]);
@@ -292,8 +290,7 @@ extern FILE *con_file;
 #define DELAY	usleep((rand() / (RAND_MAX / 250L)))
 
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	int dev_nr;
 
 	mix = sfx_pcm_find_mixer(NULL);

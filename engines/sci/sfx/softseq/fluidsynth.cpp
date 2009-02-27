@@ -50,18 +50,15 @@ static int rpn[16];
 
 /* MIDI writer */
 
-static int
-fluidsynth_midi_init(struct _midi_writer *self) {
+static int fluidsynth_midi_init(struct _midi_writer *self) {
 	return SFX_OK;
 }
 
-static int
-fluidsynth_midi_set_option(struct _midi_writer *self, char *name, char *value) {
+static int fluidsynth_midi_set_option(struct _midi_writer *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
-static int
-fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
+static int fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
 	if (buf[0] == 0xf0)
 		sciprintf("FluidSynth: Skipping sysex message.\n");
 	else if (len == 2) {
@@ -124,16 +121,13 @@ fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
 	return SFX_OK;
 }
 
-static void
-fluidsynth_midi_delay(struct _midi_writer *self, int ticks) {
+static void fluidsynth_midi_delay(struct _midi_writer *self, int ticks) {
 }
 
-static void
-fluidsynth_midi_reset_timer(struct _midi_writer *self) {
+static void fluidsynth_midi_reset_timer(struct _midi_writer *self) {
 }
 
-static void
-fluidsynth_midi_close(struct _midi_writer *self) {
+static void fluidsynth_midi_close(struct _midi_writer *self) {
 }
 
 static midi_writer_t midi_writer_fluidsynth = {
@@ -149,13 +143,11 @@ static midi_writer_t midi_writer_fluidsynth = {
 
 /* Software sequencer */
 
-static void
-fluidsynth_poll(sfx_softseq_t *self, byte *dest, int count) {
+static void fluidsynth_poll(sfx_softseq_t *self, byte *dest, int count) {
 	fluid_synth_write_s16(synth, count, dest, 0, 2, dest + 2, 0, 2);
 }
 
-static int
-fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
+static int fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
 	byte *data2_ptr, int data2_length) {
 	int sfont_id;
 	double min, max;
@@ -198,31 +190,26 @@ fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
 	return SFX_OK;
 }
 
-static void
-fluidsynth_exit(sfx_softseq_t *self) {
+static void fluidsynth_exit(sfx_softseq_t *self) {
 	delete_fluid_synth(synth);
 	delete_fluid_settings(settings);
 }
 
-static void
-fluidsynth_allstop(sfx_softseq_t *self) {
+static void fluidsynth_allstop(sfx_softseq_t *self) {
 	if (gmseq->allstop)
 		gmseq->allstop();
 }
 
-static void
-fluidsynth_volume(sfx_softseq_t *self, int volume) {
+static void fluidsynth_volume(sfx_softseq_t *self, int volume) {
 	if (gmseq->volume)
 		gmseq->volume(volume);
 }
 
-static int
-fluidsynth_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+static int fluidsynth_set_option(sfx_softseq_t *self, const char *name, const char *value) {
 	return SFX_ERROR;
 }
 
-static void
-fluidsynth_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
+static void fluidsynth_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
 	gmseq->event(cmd, argc, argv);
 }
 

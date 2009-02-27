@@ -32,8 +32,7 @@ namespace Sci {
 
 static midi_writer_t *writer = NULL;
 
-static int
-midi_gm_open(int patch_len, byte *data, int patch2_len, byte *data2, void *device) {
+static int midi_gm_open(int patch_len, byte *data, int patch2_len, byte *data2, void *device) {
 	sfx_instrument_map_t *instrument_map = sfx_instrument_map_load_sci(data, patch_len);
 
 	if (!instrument_map) {
@@ -52,13 +51,11 @@ midi_gm_open(int patch_len, byte *data, int patch2_len, byte *data2, void *devic
 	return SFX_OK;
 }
 
-static int
-midi_gm_close(void) {
+static int midi_gm_close(void) {
 	return SFX_OK;
 }
 
-static int
-midi_gm_event(byte command, int argc, byte *argv) {
+static int midi_gm_event(byte command, int argc, byte *argv) {
 	byte data[4];
 
 	assert(argc < 4);
@@ -70,15 +67,13 @@ midi_gm_event(byte command, int argc, byte *argv) {
 	return SFX_OK;
 }
 
-static int
-midi_gm_delay(int ticks) {
+static int midi_gm_delay(int ticks) {
 	writer->delay(writer, ticks);
 
 	return SFX_OK;
 }
 
-static int
-midi_gm_reset_timer(uint32 ts) {
+static int midi_gm_reset_timer(uint32 ts) {
 	writer->reset_timer(writer);
 
 	return SFX_OK;
@@ -86,8 +81,7 @@ midi_gm_reset_timer(uint32 ts) {
 
 #define MIDI_MASTER_VOLUME_LEN 8
 
-static int
-midi_gm_volume(uint8 volume) {
+static int midi_gm_volume(uint8 volume) {
 	byte data[MIDI_MASTER_VOLUME_LEN] = {
 		0xf0,
 		0x7f,
@@ -106,8 +100,7 @@ midi_gm_volume(uint8 volume) {
 	return SFX_OK;
 }
 
-static int
-midi_gm_allstop(void) {
+static int midi_gm_allstop(void) {
 	byte data[3] = { 0xb0,
 	                 0x78, /* all sound off */
 	                 0
@@ -125,8 +118,7 @@ midi_gm_allstop(void) {
 	return SFX_OK;
 }
 
-static int
-midi_gm_reverb(int reverb) {
+static int midi_gm_reverb(int reverb) {
 	byte data[3] = { 0xb0,
 	                 91, /* set reverb */
 	                 reverb
@@ -145,8 +137,7 @@ midi_gm_reverb(int reverb) {
 	return SFX_OK;
 }
 
-static int
-midi_gm_set_option(char *x, char *y) {
+static int midi_gm_set_option(char *x, char *y) {
 	return SFX_ERROR;
 }
 

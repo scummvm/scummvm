@@ -1917,10 +1917,10 @@ static int c_gfx_propagate_rect(EngineState *s) {
 }
 
 #define GETRECT(ll, rr, tt, bb) \
-ll = GET_SELECTOR(pos, ll); \
-rr = GET_SELECTOR(pos, rr); \
-tt = GET_SELECTOR(pos, tt); \
-bb = GET_SELECTOR(pos, bb);
+	ll = GET_SELECTOR(pos, ll); \
+	rr = GET_SELECTOR(pos, rr); \
+	tt = GET_SELECTOR(pos, tt); \
+	bb = GET_SELECTOR(pos, bb);
 
 #if 0
 // Unreferenced - removed
@@ -2207,7 +2207,8 @@ static int c_resource_id(EngineState *s) {
 }
 
 static int c_listclones(EngineState *s) {
-/*	int i, j = 0;
+#if 0
+	int i, j = 0;
 
 	sciprintf("Listing all logged clones:\n");
 
@@ -2218,7 +2219,8 @@ static int c_listclones(EngineState *s) {
 		}
 	}
 
-	sciprintf("Total of %d clones.\n", j);*/
+	sciprintf("Total of %d clones.\n", j);
+#endif
 	sciprintf("This function is temporarily disabled.\n");
 
 	return 0;
@@ -2445,10 +2447,10 @@ int c_simsoundcue(EngineState *s) {
 	}
 
 #define GETRECT(ll, rr, tt, bb) \
-ll = GET_SELECTOR(pos, ll); \
-rr = GET_SELECTOR(pos, rr); \
-tt = GET_SELECTOR(pos, tt); \
-bb = GET_SELECTOR(pos, bb);
+	ll = GET_SELECTOR(pos, ll); \
+	rr = GET_SELECTOR(pos, rr); \
+	tt = GET_SELECTOR(pos, tt); \
+	bb = GET_SELECTOR(pos, bb);
 
 #if 0
 #ifdef __GNUC__

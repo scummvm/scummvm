@@ -93,10 +93,10 @@ enum ResourceType {
 #define RESSOURCE_ADDRESSING_EXTENDED 128
 #define RESSOURCE_ADDRESSING_MASK 128
 
-extern const char* sci_error_types[];
-extern const char* sci_version_types[];
-extern const char* sci_resource_types[];
-extern const char* sci_resource_type_suffixes[]; /* Suffixes for SCI1 patch files */
+extern const char *sci_error_types[];
+extern const char *sci_version_types[];
+extern const char *sci_resource_types[];
+extern const char *sci_resource_type_suffixes[]; /* Suffixes for SCI1 patch files */
 extern const int sci_max_resource_nr[]; /* Highest possible resource numbers */
 
 

@@ -37,8 +37,7 @@ using namespace Sci;
 
 int errors = 0;
 
-void
-error(char *fmt, ...) {
+void error(char *fmt, ...) {
 	va_list ap;
 
 	fprintf(stderr, "[ERROR] ");
@@ -61,8 +60,7 @@ struct simple_it_struct {
 	int cues_nr;
 }  simple_iterator;
 
-int
-simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
+int simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
 	struct simple_it_struct *self = (struct simple_it_struct *) _self;
 
 	if (self->lifetime_remaining == -1) {
@@ -106,23 +104,19 @@ simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
 	}
 }
 
-sfx_pcm_feed_t *
-simple_it_pcm_feed(song_iterator_t *_self) {
+sfx_pcm_feed_t *simple_it_pcm_feed(song_iterator_t *_self) {
 	error("No PCM feed!\n");
 	return NULL;
 }
 
-void
-simple_it_init(song_iterator_t *_self) {
+void simple_it_init(song_iterator_t *_self) {
 }
 
-song_iterator_t *
-simple_it_handle_message(song_iterator_t *_self, song_iterator_message_t msg) {
+song_iterator_t *simple_it_handle_message(song_iterator_t *_self, song_iterator_message_t msg) {
 	return NULL;
 }
 
-void
-simple_it_cleanup(song_iterator_t *_self) {
+void simple_it_cleanup(song_iterator_t *_self) {
 }
 
 /* Initialises the simple iterator.
@@ -131,8 +125,7 @@ simple_it_cleanup(song_iterator_t *_self) {
 **             (int) cues_nr:  Number of cues in ``cues''
 ** The first cue is emitted after cues[0] ticks, and it is 1.  After cues[1] additional ticks
 ** the next cue is emitted, and so on. */
-song_iterator_t *
-setup_simple_iterator(int delay, char *cues, int cues_nr) {
+song_iterator_t *setup_simple_iterator(int delay, char *cues, int cues_nr) {
 	simple_iterator.lifetime_remaining = delay;
 	simple_iterator.cues = cues;
 	simple_iterator.cue_counter = 0;
@@ -161,8 +154,7 @@ setup_simple_iterator(int delay, char *cues, int cues_nr) {
 #define ASSERT_RESULT(n) ASSERT(result == n)
 #define ASSERT_CUE(n) ASSERT_NEXT(SI_ABSOLUTE_CUE); ASSERT_RESULT(n)
 
-void
-test_simple_it() {
+void test_simple_it() {
 	song_iterator_t *it;
 	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
 	unsigned char data[4];
@@ -193,8 +185,7 @@ test_simple_it() {
 	puts("[TEST] Test OK.");
 }
 
-void
-test_fastforward() {
+void test_fastforward() {
 	song_iterator_t *it;
 	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
 	song_iterator_t *ff_it;
@@ -297,8 +288,7 @@ static unsigned char simple_song[SIMPLE_SONG_SIZE] = {
 	ASSERT(data[1] == arg0);	\
 	ASSERT(data[2] == arg1);
 
-void
-test_iterator_sci0() {
+void test_iterator_sci0() {
 	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
@@ -322,8 +312,7 @@ test_iterator_sci0() {
 
 
 
-void
-test_iterator_sci0_loop() {
+void test_iterator_sci0_loop() {
 	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
@@ -379,8 +368,7 @@ unsigned char loop_song[LOOP_SONG_SIZE] = {
 };
 
 
-void
-test_iterator_sci0_mark_loop() {
+void test_iterator_sci0_mark_loop() {
 	song_iterator_t *it = songit_new(loop_song, LOOP_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
@@ -424,8 +412,7 @@ test_iterator_sci0_mark_loop() {
 
 
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	test_simple_it();
 	test_fastforward();
 	test_iterator_sci0();

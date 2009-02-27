@@ -39,7 +39,7 @@ namespace Sci {
 #undef SCI_REQUIRE_RESOURCE_FILES
 //#define SCI_VERBOSE_RESMGR 1
 
-const char* sci_version_types[] = {
+const char *sci_version_types[] = {
 	"SCI version undetermined (Autodetect failed / not run)",
 	"SCI version 0.xxx",
 	"SCI version 0.xxx w/ 1.000 compression",
@@ -53,7 +53,7 @@ const char* sci_version_types[] = {
 
 const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 8192, 8192, 65536};
 
-const char* sci_error_types[] = {
+const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
 	"Resource is empty (size 0)",
@@ -67,7 +67,7 @@ const char* sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-const char* sci_resource_types[] = {"view", "pic", "script", "text", "sound",
+const char *sci_resource_types[] = {"view", "pic", "script", "text", "sound",
                                     "memory", "vocab", "font", "cursor",
                                     "patch", "bitmap", "palette", "cdaudio",
                                     "audio", "sync", "message", "map", "heap"

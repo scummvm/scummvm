@@ -45,8 +45,7 @@
 
 namespace Sci {
 
-int
-sci0_palette;
+int sci0_palette;
 
 gfx_pixmap_color_t gfx_sci0_image_colors[1][16];
 
@@ -55,8 +54,7 @@ gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *col
 	return NULL;
 }
 
-int
-sciprintf(const char *fmt, ...) {
+int sciprintf(const char *fmt, ...) {
 	va_list argp;
 	va_start(argp, fmt);
 	vprintf(fmt, argp);
@@ -65,8 +63,7 @@ sciprintf(const char *fmt, ...) {
 }
 
 
-void *
-memdup(void *mem, size_t size) {
+void *memdup(void *mem, size_t size) {
 	void *r = malloc(size);
 	if (r)
 		memcpy(r, mem, size);
@@ -77,8 +74,7 @@ memdup(void *mem, size_t size) {
 #  include "../scicore/sci_memory.c"
 #endif
 
-void
-sci_gettime(long *seconds, long *useconds) {
+void sci_gettime(long *seconds, long *useconds) {
 	struct timeval tv;
 
 #ifdef WIN32
@@ -131,8 +127,7 @@ static struct {
 	{GFX_CAPABILITY_KEYTRANSLATE, "built-in keyboard translation"}
 };
 
-int
-init_driver(gfx_driver_t *drv) {
+int init_driver(gfx_driver_t *drv) {
 	int i;
 
 	state->driver = drv;
@@ -177,21 +172,18 @@ int test_views[TEST_VIEWS_NR] = {0};
 int test_fonts[TEST_FONTS_NR] = {0};
 int test_cursors[TEST_CURSORS_NR] = {0, 1};
 
-int
-gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_options_t *options, void *internal, int palette) {
+int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_options_t *options, void *internal, int palette) {
 	return 0;
 }
 
 
-int *
-arrdup(int *src, int count) {
+int *arrdup(int *src, int count) {
 	int *retval = sci_malloc(sizeof(int) * count);
 	memcpy(retval, src, sizeof(int) * count);
 	return retval;
 }
 
-int *
-gfxr_interpreter_get_resources(gfx_resstate_t *resstate, gfx_resource_type_t type,
+int *gfxr_interpreter_get_resources(gfx_resstate_t *resstate, gfx_resource_type_t type,
 	int version, int *entries_nr, void *internal) {
 	switch (type) {
 
@@ -254,8 +246,7 @@ gfx_pixmap_color_t pic_colors[PIC_COLORS_NR] = {
 	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0x00, 0xff}
 };
 
-gfxr_pic_t *
-gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal) {
+gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal) {
 	gfxr_pic_t *pic = sci_malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
@@ -284,8 +275,7 @@ gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal)
 
 
 
-void
-gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
+void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 	memset(pic->visual_map->index_data, 0x00, 320 * 200);
 	memset(pic->priority_map->index_data, 0, 320 * pic->mode->xfact * 200 * pic->mode->yfact);
 	memset(pic->control_map->index_data, 0, GFXR_AUX_MAP_SIZE);
@@ -293,8 +283,7 @@ gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 }
 
 
-int
-gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
+int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
 	int flags, int default_palette, int nr, void *internal) {
 	gfxr_pic_t *pic = scaled_pic;
 	int i, x, y, pos;
@@ -367,8 +356,7 @@ gfx_pixmap_color_t view_colors[VIEW_COLORS_NR] = {
 	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0xff, 0x00}
 };
 
-gfxr_view_t *
-gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
+gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
 	gfxr_view_t *view;
 	gfxr_loop_t *loop;
 	int i;
@@ -434,8 +422,7 @@ gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int pal
 
 extern byte builtin_font[];
 
-gfx_bitmap_font_t *
-gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
+gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
 	gfx_bitmap_font_t *font;
 	int i;
 	if (nr < 0 || nr > TEST_FONTS_NR)
@@ -463,8 +450,7 @@ gfx_pixmap_color_t _cursor_colors[3] = {
 	{GFX_COLOR_INDEX_UNMAPPED, 0x80, 0x80, 0x80}
 };
 
-gfx_pixmap_t *
-gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
+gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 	gfx_pixmap_t *cursor;
 	int xl, yl, x, y;
 
@@ -535,20 +521,17 @@ gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 	return cursor;
 }
 
-gfx_pixmap_color_t *
-gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr) {
+gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr) {
 	return NULL;
 }
 
-int
-gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
+int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal) {
 	return multicolored_pointers;
 }
 
 gfx_color_t red, green, blue, dblue, white, white8, white16, white24, black, transparent;
 
-void
-init_colors() {
+void init_colors() {
 	gfxop_set_color(state, &red,         0xff, 0x00, 0x00, 0x00, -1, -1);
 	gfxop_set_color(state, &green,       0x00, 0xff, 0x00, 0x00, -1, -1);
 	gfxop_set_color(state, &blue,        0x00, 0x00, 0xff, 0x00, -1, -1);
@@ -569,8 +552,7 @@ init_colors() {
 #define MESSAGE4(foo,a,b,c,d) { char buf[1024]; sprintf(buf,foo,a,b,c,d); if (message(buf)) { fprintf(stderr,"Message '%s' could not be print!\n", buf); return;}}
 
 
-int
-waitkey(void) {
+int waitkey(void) {
 	int count = 100000;
 	sci_event_t event;
 
@@ -585,8 +567,7 @@ waitkey(void) {
 	return 1;
 }
 
-int
-wait_specific_key(int key) {
+int wait_specific_key(int key) {
 	int count = 20000;
 	sci_event_t event;
 
@@ -603,8 +584,7 @@ wait_specific_key(int key) {
 }
 
 
-int
-message(char *msg) {
+int message(char *msg) {
 	gfx_text_handle_t *handle;
 	rect_t text_rect = gfx_rect(0, 150, 320, 50);
 
@@ -623,32 +603,27 @@ message(char *msg) {
 	return 0;
 }
 
-void
-update(void) {
+void update(void) {
 	/*	gfxop_update_box(state, gfx_rect(0, 0, 320, 150)); */
 	gfxop_update(state);
 }
 
-void
-explicit_clear_buffer(void) {
+void explicit_clear_buffer(void) {
 	gfxop_clear_box(state, gfx_rect(0, 0, 320, 150));
 	gfxop_update(state);
 }
 
-void
-clear_buffer(void) {
+void clear_buffer(void) {
 	gfxop_disable_dirty_frames(state);
 	gfxop_clear_box(state, gfx_rect(0, 0, 320, 150));
 	gfxop_enable_dirty_frames(state);
 }
 
-void
-clear(void) {
+void clear(void) {
 	gfxop_fill_box(state, gfx_rect(0, 0, 320, 150), black);
 }
 
-void
-identify_event(sci_event_t event) {
+void identify_event(sci_event_t event) {
 	switch (event.type) {
 
 	case SCI_EVT_NONE:
@@ -686,8 +661,7 @@ identify_event(sci_event_t event) {
 }
 
 
-int
-test_a(void) {
+int test_a(void) {
 	if (message("-- Test A --\nText display and basic input\nPlease press 'space' within 20 seconds"))
 		return 1;
 
@@ -725,8 +699,7 @@ int test_b_lines[LINES_NR][4]  = {
 	{170, 90, 20, 10}
 };
 
-void
-test_b(void) {
+void test_b(void) {
 	int i;
 
 	MESSAGE("-- Test B --\nLines");
@@ -776,8 +749,7 @@ test_b(void) {
 }
 
 
-void
-test_c(void) {
+void test_c(void) {
 	int i;
 	clear();
 	update();
@@ -831,8 +803,7 @@ test_c(void) {
 }
 
 
-void
-test_d(void) {
+void test_d(void) {
 	rect_t line;
 	int pressed = 0;
 	sci_event_t event;
@@ -904,8 +875,7 @@ test_d(void) {
 }
 
 
-void
-test_e(void) {
+void test_e(void) {
 	int x;
 
 	gfxop_set_pointer_cursor(state, 1);
@@ -980,8 +950,7 @@ test_e(void) {
 	waitkey();
 }
 
-void
-test_wrap(int width, char *text) {
+void test_wrap(int width, char *text) {
 	rect_t rect = gfx_rect(0, 0, width, 120);
 	gfx_text_handle_t *handle = gfxop_new_text(state, 0,
 	                            text,
@@ -993,8 +962,7 @@ test_wrap(int width, char *text) {
 	gfxop_free_text(state, handle);
 }
 
-void
-test_f(void) {
+void test_f(void) {
 	int i;
 	int x, y;
 	gfx_text_handle_t *handle;
@@ -1047,8 +1015,7 @@ test_f(void) {
 	waitkey();
 }
 
-void
-do_tests(char *conf) {
+void do_tests(char *conf) {
 	init_colors();
 
 
@@ -1072,14 +1039,12 @@ do_tests(char *conf) {
 		test_f();
 }
 
-int
-c_quit(void *S) {
+int c_quit(void *S) {
 	exit(0);
 	return 0; /* hahaha */
 }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	gfx_driver_t *drv = NULL;
 	char c;
 

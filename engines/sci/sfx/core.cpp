@@ -159,8 +159,7 @@ static int is_playing(sfx_state_t *self, song_t *song) {
 	return 0;
 }
 
-static void
-_sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
+static void _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
 	switch (status) {
 
 	case SOUND_STATUS_STOPPED:

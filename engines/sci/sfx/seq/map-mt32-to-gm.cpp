@@ -32,8 +32,7 @@ namespace Sci {
 
 #define DEBUG_MT32_TO_GM
 
-static const char
-*GM_Instrument_Names[] = {
+static const char *GM_Instrument_Names[] = {
 	/*000*/  "Acoustic Grand Piano",
 	/*001*/  "Bright Acoustic Piano",
 	/*002*/  "Electric Grand Piano",
@@ -165,8 +164,7 @@ static const char
 };
 
 /* The GM Percussion map is downwards compatible to the MT32 map, which is used in SCI */
-static const char
-*GM_Percussion_Names[] = {
+static const char *GM_Percussion_Names[] = {
 	/*00*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -398,8 +396,7 @@ static struct {
 	/*29*/  {"OpenHiHat2", SFX_MAPPED_TO_RHYTHM, 43}
 };
 
-static int8
-MT32_PresetRhythmKeymap[] = {
+static int8 MT32_PresetRhythmKeymap[] = {
 	SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED,
 	SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED,
 	SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED, SFX_UNMAPPED,
@@ -560,8 +557,7 @@ static struct {
 	{0, 0, 0}
 };
 
-static int8
-lookup_instrument(const char *iname) {
+static int8 lookup_instrument(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
@@ -572,8 +568,7 @@ lookup_instrument(const char *iname) {
 	return SFX_UNMAPPED;
 }
 
-static int8
-lookup_rhythm_key(const char *iname) {
+static int8 lookup_rhythm_key(const char *iname) {
 	int i = 0;
 
 	while (MT32_MemoryTimbreMaps[i].name) {
@@ -584,8 +579,7 @@ lookup_rhythm_key(const char *iname) {
 	return SFX_UNMAPPED;
 }
 
-static void
-print_map(int sci, int ins, int rhythm, int mt32) {
+static void print_map(int sci, int ins, int rhythm, int mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	if (ins == SFX_UNMAPPED || (ins == SFX_MAPPED_TO_RHYTHM && rhythm == SFX_UNMAPPED)) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s' (%i)\n",
@@ -606,8 +600,7 @@ print_map(int sci, int ins, int rhythm, int mt32) {
 #endif
 }
 
-static void
-print_map_mem(int sci, int ins, int rhythm, char *mt32) {
+static void print_map_mem(int sci, int ins, int rhythm, char *mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	char name[11];
 
@@ -631,8 +624,7 @@ print_map_mem(int sci, int ins, int rhythm, char *mt32) {
 #endif
 }
 
-static void
-print_map_rhythm(int sci, int ins, int rhythm, int mt32) {
+static void print_map_rhythm(int sci, int ins, int rhythm, int mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	if (ins == SFX_UNMAPPED || (ins == SFX_MAPPED_TO_RHYTHM && rhythm == SFX_UNMAPPED)) {
 		sciprintf("[MT32-to-GM] No mapping available for [%i] `%s' [R] (%i)\n",
@@ -653,8 +645,7 @@ print_map_rhythm(int sci, int ins, int rhythm, int mt32) {
 #endif
 }
 
-static void
-print_map_rhythm_mem(int sci, int rhythm, char *mt32) {
+static void print_map_rhythm_mem(int sci, int rhythm, char *mt32) {
 #ifdef DEBUG_MT32_TO_GM
 	char name[11];
 
@@ -672,8 +663,7 @@ print_map_rhythm_mem(int sci, int rhythm, char *mt32) {
 #endif
 }
 
-sfx_instrument_map_t *
-sfx_instrument_map_mt32_to_gm(byte *data, size_t size) {
+sfx_instrument_map_t *sfx_instrument_map_mt32_to_gm(byte *data, size_t size) {
 	int memtimbres, patches;
 	uint8 group, number, keyshift, finetune, bender_range;
 	uint8 *patchpointer;

@@ -1062,8 +1062,7 @@ static int _sci1_process_next_command(sci1_song_iterator_t *self,
 	return retval;
 }
 
-static song_iterator_t *
-			_sci1_handle_message(sci1_song_iterator_t *self,
+static song_iterator_t *_sci1_handle_message(sci1_song_iterator_t *self,
 			                     song_iterator_message_t msg) {
 	if (msg.recipient == _SIMSG_BASE) { /* May extend this in the future */
 		switch (msg.type) {

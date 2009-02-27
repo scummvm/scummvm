@@ -61,8 +61,7 @@ static struct MidiNode *midi_node = NULL;
 			return SFX_ERROR;			\
 	}
 
-static int
-camd_init(midi_writer_t *self) {
+static int camd_init(midi_writer_t *self) {
 	sciprintf("[SFX] Initialising CAMD raw MIDI backend, v%s\n", SCI_CAMD_MIDI_VERSION);
 
 	CamdBase = IExec->OpenLibrary("camd.library", 36L);
@@ -86,15 +85,13 @@ camd_init(midi_writer_t *self) {
 	return SFX_OK;
 }
 
-static int
-camd_set_option(midi_writer_t *self, char *name, char *value) {
+static int camd_set_option(midi_writer_t *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 #define MAX_MIDI_LEN 3
 
-static int
-camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
+static int camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	if (len == 0)
 		return SFX_OK;
 
@@ -123,16 +120,13 @@ camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	return SFX_OK;
 }
 
-static void
-camd_delay(midi_writer_t *self, int ticks) {
+static void camd_delay(midi_writer_t *self, int ticks) {
 }
 
-static void
-camd_reset_timer(midi_writer_t *self) {
+static void camd_reset_timer(midi_writer_t *self) {
 }
 
-static void
-camd_close(midi_writer_t *self) {
+static void camd_close(midi_writer_t *self) {
 #ifdef NO_OP
 	return;
 #endif

@@ -36,7 +36,7 @@ namespace Sci {
 int con_passthrough = 0;
 FILE *con_file = NULL;
 
-static void(*_con_string_callback)(char*) = NULL;
+static void (*_con_string_callback)(char*) = NULL;
 static void (*_con_pixmap_callback)(gfx_pixmap_t *) = NULL;
 
 int sciprintf(const char *fmt, ...) {

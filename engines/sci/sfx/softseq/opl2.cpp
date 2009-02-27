@@ -170,8 +170,7 @@ static inline int opl_write(int a, int v) {
 }
 
 /*
-static inline uint8 opl_read (int a)
-{
+static inline uint8 opl_read (int a) {
 	OPLWrite (ym3812_L, 0x388, a);
 	return OPLRead (ym3812_L, 0x389);
 }

@@ -55,8 +55,7 @@ static int play_it_done = 0;
 static int play_writeahead = 0;
 static int play_moredelay = 0;
 
-static void
-play_song(song_iterator_t *it, uint32 *wakeup_time, int writeahead_time) {
+static void play_song(song_iterator_t *it, uint32 *wakeup_time, int writeahead_time) {
 	unsigned char buf[8];
 	int result;
 
@@ -106,13 +105,11 @@ play_song(song_iterator_t *it, uint32 *wakeup_time, int writeahead_time) {
 		}
 }
 
-static void
-rt_tell_synth(int buf_nr, byte *buf) {
+static void rt_tell_synth(int buf_nr, byte *buf) {
 	seq->event(buf[0], buf_nr - 1, buf + 1);
 }
 
-static void
-rt_timer_callback(void) {
+static void rt_timer_callback(void) {
 	if (play_it && !play_it_done) {
 		if (!play_moredelay) {
 			int delta = delta_time(play_last_time, g_system->getMillis());
@@ -131,8 +128,7 @@ rt_timer_callback(void) {
 	}
 }
 
-static resource_t *
-find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
+static resource_t *find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
 	resource_t *res = NULL;
 
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
@@ -148,13 +144,11 @@ find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
 
 /* API implementation */
 
-static int
-rt_set_option(char *name, char *value) {
+static int rt_set_option(char *name, char *value) {
 	return SFX_ERROR;
 }
 
-static int
-rt_init(ResourceManager *resmgr, int expected_latency) {
+static int rt_init(ResourceManager *resmgr, int expected_latency) {
 	resource_t *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
 
@@ -194,8 +188,7 @@ rt_init(ResourceManager *resmgr, int expected_latency) {
 	return SFX_OK;
 }
 
-static int
-rt_add_iterator(song_iterator_t *it, uint32 start_time) {
+static int rt_add_iterator(song_iterator_t *it, uint32 start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -210,14 +203,12 @@ rt_add_iterator(song_iterator_t *it, uint32 start_time) {
 	return SFX_OK;
 }
 
-static int
-rt_fade_out(void) {
+static int rt_fade_out(void) {
 	fprintf(stderr, __FILE__": Attempt to fade out- not implemented yet\n");
 	return SFX_ERROR;
 }
 
-static int
-rt_stop(void) {
+static int rt_stop(void) {
 	song_iterator_t *it = play_it;
 
 	play_it = NULL;
@@ -230,8 +221,7 @@ rt_stop(void) {
 	return SFX_OK;
 }
 
-static int
-rt_send_iterator_message(song_iterator_message_t msg) {
+static int rt_send_iterator_message(song_iterator_message_t msg) {
 	if (!play_it)
 		return SFX_ERROR;
 
@@ -239,8 +229,7 @@ rt_send_iterator_message(song_iterator_message_t msg) {
 	return SFX_OK;
 }
 
-static int
-rt_pause(void) {
+static int rt_pause(void) {
 	play_pause_started = g_system->getMillis();
 	/* Also, indicate that we haven't modified the time counter
 	** yet  */
@@ -254,14 +243,12 @@ rt_pause(void) {
 		return seq->allstop();
 }
 
-static int
-rt_resume(void) {
+static int rt_resume(void) {
 	play_paused = 0;
 	return SFX_OK;
 }
 
-static int
-rt_exit(void) {
+static int rt_exit(void) {
 	int retval = SFX_OK;
 
 	if (seq->close()) {

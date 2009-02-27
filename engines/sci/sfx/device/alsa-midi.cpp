@@ -43,8 +43,7 @@ static int subport_nr = 0;
 
 static const char *seq_name = "default";
 
-static void
-_set_tempo(void) {
+static void _set_tempo(void) {
 	int resolution = 60;
 	int tempo = 1;
 	snd_seq_queue_tempo_t *queue_tempo;
@@ -72,8 +71,7 @@ _set_tempo(void) {
 }
 
 
-static int
-am_subscribe_to_ports(void) {
+static int am_subscribe_to_ports(void) {
 	if ((port_out = snd_seq_connect_to(seq, port_out, port_nr, subport_nr)) < 0) {
 		fprintf(stderr, "[SFX] Could not connect to ALSA sequencer port: %s\n", snd_strerror(port_out));
 		return SFX_ERROR;
@@ -82,8 +80,7 @@ am_subscribe_to_ports(void) {
 }
 
 
-static int
-aminit(midi_writer_t *self) {
+static int aminit(midi_writer_t *self) {
 	int err;
 
 	snd_midi_event_new(4096, &parser);
@@ -124,14 +121,12 @@ aminit(midi_writer_t *self) {
 	return SFX_OK;
 }
 
-static int
-amsetopt(midi_writer_t *self, char *name, char *value) {
+static int amsetopt(midi_writer_t *self, char *name, char *value) {
 	return SFX_ERROR;
 }
 
 
-static int
-amwrite(midi_writer_t *self, unsigned char *buf, int len) {
+static int amwrite(midi_writer_t *self, unsigned char *buf, int len) {
 	snd_seq_event_t evt;
 
 #if 0
@@ -170,13 +165,11 @@ amwrite(midi_writer_t *self, unsigned char *buf, int len) {
 	return SFX_OK;
 }
 
-static void
-amdelay(midi_writer_t *self, int ticks) {
+static void amdelay(midi_writer_t *self, int ticks) {
 	delta += ticks;
 }
 
-static void
-amreset_timer(midi_writer_t *self) {
+static void amreset_timer(midi_writer_t *self) {
 	snd_seq_drain_output(seq);
 	snd_seq_stop_queue(seq, queue, NULL);
 
@@ -198,8 +191,7 @@ amreset_timer(midi_writer_t *self) {
 	snd_seq_start_queue(seq, queue, NULL);
 }
 
-static void
-amclose(midi_writer_t *self) {
+static void amclose(midi_writer_t *self) {
 	snd_midi_event_free(parser);
 	parser = NULL;
 }

@@ -143,8 +143,7 @@ int adlib_kill_one_note(int chn) {
 	return oldest;
 }
 
-static void
-adlib_start_note(int chn, int note, int velocity) {
+static void adlib_start_note(int chn, int note, int velocity) {
 	int free;
 	struct timeval now;
 
@@ -174,8 +173,7 @@ adlib_start_note(int chn, int note, int velocity) {
 	SEQ_DUMPBUF();
 }
 
-static int
-midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
+static int midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
 	byte *data2_ptr, void *seq) {
 	int nrdevs, i, n;
 	struct synth_info info;
@@ -237,15 +235,13 @@ midi_adlib_open(int data_length, byte *data_ptr, int data2_length,
 }
 
 
-static int
-midi_adlib_close(void) {
+static int midi_adlib_close(void) {
 	SEQ_DUMPBUF();
 	return close(seqfd);
 }
 
 
-static int
-midi_adlib_allstop(void) {
+static int midi_adlib_allstop(void) {
 	int i;
 	for (i = 0; i < ADLIB_VOICES ; i++) {
 		if (oper_chn[i] == 255)
@@ -257,14 +253,12 @@ midi_adlib_allstop(void) {
 	return 0;
 }
 
-static int
-midi_adlib_reverb(int param) {
+static int midi_adlib_reverb(int param) {
 	printf("reverb NYI %04x \n", param);
 	return 0;
 }
 
-static inline int
-midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
+static inline int midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
 	uint8 channel, oper;
 
 	channel = command & 0x0f;
@@ -297,8 +291,7 @@ midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
 	return 0;
 }
 
-static inline int
-midi_adlib_event2(uint8 command, uint8 param) {
+static inline int midi_adlib_event2(uint8 command, uint8 param) {
 	uint8 channel;
 	uint8 oper;
 
@@ -320,22 +313,19 @@ midi_adlib_event2(uint8 command, uint8 param) {
 	return 0;
 }
 
-static int
-midi_adlib_event(byte command, int argc, byte *argv) {
+static int midi_adlib_event(byte command, int argc, byte *argv) {
 	if (argc > 1)
 		return midi_adlib_event1(command, argv[0], argv[1]);
 	else
 		return midi_adlib_event2(command, argv[0]);
 }
 
-static int
-midi_adlib_delay(int ticks) {
+static int midi_adlib_delay(int ticks) {
 	SEQ_DELTA_TIME(ticks);
 	return SFX_OK;
 }
 
-static int
-midi_adlib_set_option(char *name, char *value) {
+static int midi_adlib_set_option(char *name, char *value) {
 	return SFX_ERROR; /* No options are supported at this time */
 }
 

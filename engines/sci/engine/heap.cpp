@@ -55,8 +55,8 @@ static unsigned int get_next(heap_t *h, int block_pos) {
 }
 
 // Allocates a new heap
-heap_t* heap_new() {
-	heap_t* h;
+heap_t *heap_new() {
+	heap_t *h;
 
 	if ((h = (heap_t*)sci_malloc(sizeof(heap_t))) == 0)
 		return 0;
@@ -248,7 +248,7 @@ void heap_dump_all(heap_t *h) {
 	}
 }
 
-/*
+#if 0
 int main(int argc, char **argv) {
 	heap_t *h = heap_new();
 	int a, b, c, d, e;
@@ -281,6 +281,6 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
-*/
+#endif
 
 } // End of namespace Sci
