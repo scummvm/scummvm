@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_INCLUDE_SCIRESOURCE_H
-#define SCI_INCLUDE_SCIRESOURCE_H
+#ifndef SCI_SCICORE_RESOURCE_H
+#define SCI_SCICORE_RESOURCE_H
 
 #include "common/str.h"
 
@@ -420,4 +420,4 @@ void _scir_add_altsource(resource_t *res, ResourceSource *source, unsigned int f
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_SCIRESOURCE_H
+#endif // SCI_SCICORE_RESOURCE_H

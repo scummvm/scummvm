@@ -25,9 +25,9 @@
 
 #include "common/debug.h"
 
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 #include "sci/include/engine.h"
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 #include "sci/engine/intmap.h"
 #include "sci/engine/kdebug.h"
 #include "sci/engine/kernel.h"

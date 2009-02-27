@@ -27,8 +27,8 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/versions.h"
+#include "sci/scicore/resource.h"
+#include "sci/scicore/versions.h"
 
 namespace Sci {
 

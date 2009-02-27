@@ -31,8 +31,8 @@
 
 #include "sci/tools.h"
 #include "sci/sci_memory.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/vocabulary.h"
+#include "sci/scicore/resource.h"
+#include "sci/scicore/vocabulary.h"
 
 namespace Sci {
 

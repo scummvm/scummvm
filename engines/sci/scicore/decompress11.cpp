@@ -28,7 +28,7 @@
 #include "common/stream.h"
 
 #include "sci/sci_memory.h"
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 
 namespace Sci {
 

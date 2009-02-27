@@ -26,7 +26,7 @@
 #ifndef SCI_ENGINE_KERNEL_TYPES_H
 #define SCI_ENGINE_KERNEL_TYPES_H
 
-#include "sci/include/vm_types.h"
+#include "sci/engine/vm_types.h"
 
 namespace Sci {
 

@@ -30,7 +30,7 @@
 #include "common/debug.h"
 
 #include "sci/engine/kdebug.h"
-#include "sci/include/uinput.h"
+#include "sci/uinput.h"
 #include "sci/scicore/sciconsole.h" /* sciprintf() */
 
 namespace Sci {

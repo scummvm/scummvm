@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_INCLUDE_VM_TYPES_H
-#define SCI_INCLUDE_VM_TYPES_H
+#ifndef SCI_ENGINE_VM_TYPES_H
+#define SCI_ENGINE_VM_TYPES_H
 
 #include "common/scummsys.h"
 
@@ -61,4 +61,4 @@ extern reg_t NULL_REG;
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_VM_TYPES_H
+#endif // SCI_ENGINE_VM_TYPES_H

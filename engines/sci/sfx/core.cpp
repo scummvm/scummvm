@@ -30,7 +30,7 @@
 #include "sci/sfx/sfx_iterator_internal.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/sfx/mixer.h"
-#include "sci/include/sci_midi.h"
+#include "sci/sfx/sci_midi.h"
 
 #include "common/mutex.h"
 #include "common/system.h"

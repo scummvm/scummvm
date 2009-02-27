@@ -28,7 +28,7 @@
 #define SCI_ENGINE_GC_H
 
 #include "common/hashmap.h"
-#include "sci/include/vm_types.h"
+#include "sci/engine/vm_types.h"
 #include "sci/include/engine.h"
 
 namespace Sci {

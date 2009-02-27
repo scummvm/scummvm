@@ -25,18 +25,18 @@
 
 // Script debugger functionality. Absolutely not threadsafe.
 
-#include "sci/engine/gc.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/engine.h"
-#include "sci/scicore/sciconsole.h"
-#include "sci/engine/kdebug.h"
-#include "sci/include/vocabulary.h"
-#include "sci/engine/kernel.h"
-#include "sci/engine/kernel_types.h"
-#include "sci/include/sci_midi.h"
-#include "sci/gfx/sci_widgets.h"
 #include "sci/sci.h"
+#include "sci/include/engine.h"
+#include "sci/engine/gc.h"
+#include "sci/engine/kdebug.h"
+#include "sci/engine/kernel_types.h"
+#include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_widgets.h"
+#include "sci/gfx/sci_widgets.h"
+#include "sci/scicore/resource.h"
+#include "sci/scicore/sciconsole.h"
+#include "sci/scicore/vocabulary.h"
+#include "sci/sfx/sci_midi.h"
 
 #include "common/util.h"
 #include "common/savefile.h"

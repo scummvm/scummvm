@@ -26,7 +26,7 @@
 // The interpreter-specific part of the resource manager, for SCI
 
 #include "sci/sci_memory.h"
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_options.h"

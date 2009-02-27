@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 #include "sci/include/engine.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/kernel.h"

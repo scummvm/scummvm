@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef SCI_INCLUDE_VOCABULARY_H
-#define SCI_INCLUDE_VOCABULARY_H
+#ifndef SCI_SCICORE_VOCABULARY_H
+#define SCI_SCICORE_VOCABULARY_H
 
 #include "common/str.h"
 
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 
 namespace Sci {
 
@@ -188,7 +188,6 @@ struct parse_tree_node_t {
 	} content;
 
 };
-
 
 
 
@@ -396,4 +395,4 @@ void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_VOCABULARY_H
+#endif // SCI_SCICORE_VOCABULARY_H

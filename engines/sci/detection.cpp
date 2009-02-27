@@ -28,7 +28,7 @@
 
 #include "sci/sci.h"
 #include "sci/exereader.h"
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 
 namespace Sci {
 

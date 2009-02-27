@@ -28,9 +28,9 @@
 
 /* VM and kernel declarations */
 
-#include "sci/include/versions.h"	// for sci_version_t
-#include "sci/include/vm_types.h"	// for reg_t
-#include "sci/include/heapmgr.h"
+#include "sci/scicore/versions.h"	// for sci_version_t
+#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/heapmgr.h"
 
 namespace Sci {
 

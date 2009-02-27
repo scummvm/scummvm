@@ -26,7 +26,7 @@
 #include "common/archive.h"
 #include "common/file.h"
 
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 #include "sci/sci_memory.h"
 
 namespace Sci {

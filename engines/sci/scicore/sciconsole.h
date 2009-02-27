@@ -36,7 +36,7 @@
 
 #include "sci/sci_memory.h"
 #include "sci/tools.h"
-#include "sci/include/vm_types.h"
+#include "sci/engine/vm_types.h"
 
 #define SCI_CONSOLE
 #include "sci/gfx/operations.h"

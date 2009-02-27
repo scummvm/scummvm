@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 #include "sci/include/engine.h"
 #include "sci/tools.h"
 

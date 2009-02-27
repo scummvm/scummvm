@@ -27,7 +27,7 @@
 #define SCI_SFX_SFX_ITERATOR_INTERNAL
 
 #include "sci/sfx/sfx_iterator.h"
-#include "sci/include/sci_midi.h"
+#include "sci/sfx/sci_midi.h"
 
 namespace Sci {
 

@@ -30,7 +30,7 @@
 
 #include "sci/sfx/sfx_engine.h"
 #include "sci/sfx/sfx_iterator.h"
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 
 #include "common/scummsys.h"
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_INCLUDE_SCRIPT_H
-#define SCI_INCLUDE_SCRIPT_H
+#ifndef SCI_ENGINE_SCRIPT_H
+#define SCI_ENGINE_SCRIPT_H
 
 #include "common/str.h"
 
@@ -221,4 +221,4 @@ void script_free_breakpoints(EngineState *s);
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_SCRIPT_H
+#endif // SCI_ENGINE_SCRIPT_H

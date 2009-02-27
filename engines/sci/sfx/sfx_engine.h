@@ -30,7 +30,7 @@
 #include "sci/sfx/sfx_core.h"
 #include "sci/sfx/sfx_songlib.h"
 #include "sci/sfx/sfx_iterator.h"
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 
 namespace Sci {
 

@@ -34,11 +34,11 @@ namespace Common {
 	class WriteStream;
 }
 
-#include "sci/include/vocabulary.h"
-#include "sci/include/sciresource.h"
-#include "sci/include/script.h"
+#include "sci/scicore/vocabulary.h"
+#include "sci/scicore/resource.h"
+#include "sci/engine/script.h"
 #include "sci/scicore/sciconsole.h"
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/sfx/sfx_engine.h"

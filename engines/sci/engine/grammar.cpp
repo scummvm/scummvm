@@ -29,7 +29,7 @@
 */
 
 #include "sci/tools.h"
-#include "sci/include/vocabulary.h"
+#include "sci/scicore/vocabulary.h"
 #include "sci/scicore/sciconsole.h"
 
 namespace Sci {

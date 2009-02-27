@@ -32,7 +32,7 @@
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_options.h"
 #include "sci/gfx/gfx_system.h"
-#include "sci/include/uinput.h"
+#include "sci/uinput.h"
 
 #include "common/list.h"
 

@@ -25,7 +25,8 @@
 
 // Main vocabulary support functions and word lookup
 
-#include "sci/include/sciresource.h"
+#include "sci/scicore/vocabulary.h"
+#include "sci/scicore/resource.h"
 #include "sci/include/engine.h"
 #include "sci/engine/kernel.h"
 

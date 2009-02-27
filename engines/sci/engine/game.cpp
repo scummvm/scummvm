@@ -26,9 +26,9 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "sci/include/sciresource.h"
+#include "sci/scicore/resource.h"
 #include "sci/include/engine.h"
-#include "sci/include/versions.h"
+#include "sci/scicore/versions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/gfx/gfx_widgets.h"
