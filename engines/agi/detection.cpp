@@ -192,6 +192,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
+	
+	// Black Cauldron (PC) 2.10 [AGI 3.002.097]
+	GAME3("bc", "2.10", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
 
 // TODO
 // These aren't supposed to work now as they require unsupported agi engine 2.01
