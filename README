@@ -147,9 +147,9 @@ game, to ensure the issue is not already known:
 
   http://www.scummvm.org/compatibility_stable.php
 
-Also do not report bugs on games that are not listed as being completable
-in the 'Supported Games' section, or compatibility list. We -know- those
-games have bugs.
+Please do not report bugs on games that are not listed as being
+completeable in the 'Supported Games' section, or compatibility list. We
+-know- those games have bugs.
 
 Please include the following information:
         - ScummVM version (PLEASE test the latest SVN/Daily build)
@@ -462,7 +462,7 @@ of ScummVM compiled with both libVorbis and zlib support.
 
 The cutscenes should be placed in the main game data directory. Note
 that currently this requires either copying the game to hard disk or
-burning customised versions of the game CDs.
+burning customized versions of the game CDs.
 
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, which are the ones you are probably most likely to
@@ -661,7 +661,7 @@ is simpler and more straightforward than moving around using the menu.
 
 3.17) Winnie the Pooh notes:
 ----- ----------------------
-It is possible to import saved games from the original intepreter of the
+It is possible to import saved games from the original interpreter of the
 game in ScummVM.
 
 There is extensive mouse support for the game under ScummVM, even though
@@ -725,12 +725,12 @@ site, please see the section on reporting bugs.
     - PlayStation 1 version isn't supported
 
   Elvira - Mistress of the Dark
-    - No music in the AtariST version
+    - No music in the Atari ST version
 
   Elvira II - The Jaws of Cerberus
-    - No music in the AtariST version
+    - No music in the Atari ST version
     - No sound effects in the PC version
-    - Palette issues in the AtariST version
+    - Palette issues in the Atari ST version
 
   Inherit the Earth: Quest for the Orb
     - Amiga versions aren't supported
