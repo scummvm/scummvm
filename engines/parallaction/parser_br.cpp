@@ -786,6 +786,7 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 			obj->frame = 0;
 			obj->x = z->getX();
 			obj->y = z->getY();
+			obj->_prog = _zoneProg;
 			data->gfxobj = obj;
 		}
 

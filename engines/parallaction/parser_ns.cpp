@@ -290,7 +290,13 @@ DECLARE_ANIM_PARSER(endanimation)  {
 void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 	debugC(5, kDebugParser, "parseAnimation(name: %s)", name);
 
+	if (_vm->_location.findAnimation(name)) {
+		_script->skip("endanimation");
+		return;
+	}
+
 	AnimationPtr a(new Animation);
+	_zoneProg++;
 
 	strncpy(a->_name, name, ZONENAME_LENGTH);
 	a->_flags |= kFlagsIsAnimation;
@@ -328,7 +334,6 @@ void ProgramParser_ns::parseInstruction() {
 }
 
 void ProgramParser_ns::parse(Script *script, ProgramPtr program) {
-
 	_script = script;
 	_program = program;
 
@@ -1088,7 +1093,7 @@ DECLARE_LOCATION_PARSER(music)  {
 }
 
 void LocationParser_ns::parse(Script *script) {
-
+	_zoneProg = 0;
 	_numForwardedCommands = 0;
 
 	ctxt.end = false;
@@ -1360,6 +1365,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	}
 
 	ZonePtr z(new Zone);
+	_zoneProg++;
 
 	strncpy(z->_name, name, ZONENAME_LENGTH);
 
@@ -1389,6 +1395,7 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 			obj->frame = 0;
 			obj->x = z->getX();
 			obj->y = z->getY();
+			obj->_prog = _zoneProg;
 			_vm->_gfx->showGfxObj(obj, visible);
 
 			data->gfxobj = obj;

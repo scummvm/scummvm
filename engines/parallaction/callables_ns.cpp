@@ -244,8 +244,6 @@ void Parallaction_ns::stopMovingSarcophagus() {
 	_moveSarcGetZone->translate(_sarcophagusDeltaX, -_sarcophagusDeltaX / 20);
 	_moveSarcExaZone->translate(_sarcophagusDeltaX, -_sarcophagusDeltaX / 20);
 
-	_zonesToUpdate.push_back(_moveSarcGetZone);
-
 	// check if the puzzle has been completed, by verifying the position of
 	// the sarcophagi
 	if (_moveSarcGetZones[0]->getX() == 35 &&

@@ -338,6 +338,8 @@ void Parallaction::runGameFrame(int event) {
 		_input->setArrowCursor();
 	}
 
+	_gfx->beginFrame();
+
 	runPendingZones();
 
 	if (shouldQuit())
@@ -494,6 +496,29 @@ void Parallaction::drawAnimation(AnimationPtr anim) {
 	obj->z = anim->getZ();
 	obj->layer = layer;
 	obj->scale = scale;
+	_gfx->addObjectToScene(obj);
+}
+
+void Parallaction::drawZone(ZonePtr zone) {
+	if (!zone) {
+		return;
+	}
+
+	GfxObj *obj = 0;
+	if (ACTIONTYPE(zone) == kZoneGet) {
+		obj = zone->u.get->gfxobj;
+	} else
+	if (ACTIONTYPE(zone) == kZoneDoor) {
+		obj = zone->u.door->gfxobj;
+	}
+
+	if (!obj) {
+		return;
+	}
+
+	obj->x = zone->getX();
+	obj->y = zone->getY();
+	_gfx->addObjectToScene(obj);
 }
 
 void Parallaction::updateZones() {
@@ -512,16 +537,10 @@ void Parallaction::updateZones() {
 		}
 	}
 
-	// examine the list of get zones to update
-	for (ZoneList::iterator zit = _zonesToUpdate.begin(); zit != _zonesToUpdate.end(); ++zit) {
-		ZonePtr z = *zit;
-		if (ACTIONTYPE(z) == kZoneGet) {
-			GfxObj *obj = z->u.get->gfxobj;
-			obj->x = z->getX();
-			obj->y = z->getY();
-		}
+	// go through all zones and mark/unmark each of them for display
+	for (ZoneList::iterator zit = _location._zones.begin(); zit != _location._zones.end(); ++zit) {
+		drawZone(*zit);
 	}
-	_zonesToUpdate.clear();
 
 	debugC(9, kDebugExec, "Parallaction::updateZones done()\n");
 }

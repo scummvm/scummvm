@@ -372,6 +372,10 @@ void Gfx::setScrollPos(int scrollX) {
 	_scrollPos = CLIP(scrollX, _minScroll, _maxScroll);
 }
 
+void Gfx::beginFrame() {
+	resetSceneDrawList();
+}
+
 void Gfx::updateScreen() {
 
 	// the scene is calculated in game coordinates, so no translation
@@ -713,6 +717,8 @@ Gfx::Gfx(Parallaction* vm) :
 		_disk->loadSlide(paletteInfo, "pointer");
 		_backupPal.clone(paletteInfo.palette);
 	}
+
+	resetSceneDrawList();
 
 	return;
 }

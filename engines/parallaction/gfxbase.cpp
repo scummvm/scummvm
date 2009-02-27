@@ -33,7 +33,7 @@
 namespace Parallaction {
 
 GfxObj::GfxObj(uint objType, Frames *frames, const char* name) :
-	_frames(frames), _keep(true), x(0), y(0), z(0), _flags(kGfxObjNormal),
+	_frames(frames), _keep(true), x(0), y(0), z(0), _flags(0),
 	type(objType), frame(0), layer(3), scale(100), _hasMask(false), _hasPath(false)  {
 
 	if (name) {
@@ -88,6 +88,27 @@ void GfxObj::clearFlags(uint32 flags) {
 	_flags &= ~flags;
 }
 
+void Gfx::addObjectToScene(GfxObj *obj) {
+	if (!obj) {
+		return;
+	}
+
+	if (!obj->isVisible()) {
+		return;
+	}
+
+	if (SCENE_DRAWLIST_SIZE == _sceneObjects.size()) {
+		warning("number of objects in the current scene is larger than the fixed drawlist size");
+	}
+
+	_sceneObjects.push_back(obj);
+}
+
+void Gfx::resetSceneDrawList() {
+	_sceneObjects.clear();
+	_sceneObjects.reserve(SCENE_DRAWLIST_SIZE);
+}
+
 GfxObj* Gfx::loadAnim(const char *name) {
 	Frames* frames = _disk->loadFrames(name);
 	assert(frames);
@@ -98,15 +119,11 @@ GfxObj* Gfx::loadAnim(const char *name) {
 	// animation Z is not set here, but controlled by game scripts and user interaction.
 	// it is always >=0 and <screen height
 	obj->transparentKey = 0;
-	_sceneObjects.push_back(obj);
 	return obj;
 }
 
 GfxObj* Gfx::loadCharacterAnim(const char *name) {
-	GfxObj *obj = loadAnim(name);
-	obj->setFlags(kGfxObjCharacter);
-	obj->clearFlags(kGfxObjNormal);
-	return obj;
+	return loadAnim(name);
 }
 
 GfxObj* Gfx::loadGet(const char *name) {
@@ -116,7 +133,6 @@ GfxObj* Gfx::loadGet(const char *name) {
 	obj->z = kGfxObjGetZ;	// this preset Z value ensures that get zones are drawn after doors but before animations
 	obj->type = kGfxObjTypeGet;
 	obj->transparentKey = 0;
-	_sceneObjects.push_back(obj);
 	return obj;
 }
 
@@ -129,31 +145,17 @@ GfxObj* Gfx::loadDoor(const char *name) {
 
 	obj->z = kGfxObjDoorZ;	// this preset Z value ensures that doors are drawn first
 	obj->transparentKey = 0;
-	_sceneObjects.push_back(obj);
 	return obj;
 }
 
-void Gfx::clearGfxObjects(uint filter) {
-
-	for (uint i = 0; i < _sceneObjects.size() ; ) {
-		if ((_sceneObjects[i]->_flags & filter) != 0) {
-			_sceneObjects.remove_at(i);
-		} else {
-			i++;
-		}
-	}
-
-}
 
 void Gfx::freeLocationObjects() {
 	freeDialogueObjects();
-	clearGfxObjects(kGfxObjNormal);
 	freeLabels();
 }
 
 void Gfx::freeCharacterObjects() {
 	freeDialogueObjects();
-	clearGfxObjects(kGfxObjCharacter);
 }
 
 void BackgroundInfo::loadGfxObjMask(const char *name, GfxObj *obj) {
@@ -202,7 +204,7 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 
 
 bool compareZ(const GfxObj* a1, const GfxObj* a2) {
-	return a1->z < a2->z;
+	return (a1->z == a2->z) ? (a1->_prog < a2->_prog) : (a1->z < a2->z);
 }
 
 void Gfx::sortScene() {

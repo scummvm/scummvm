@@ -273,9 +273,6 @@ class Disk;
 enum {
 	kGfxObjVisible = 1,
 
-	kGfxObjNormal = 2,
-	kGfxObjCharacter = 4,
-
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
 	kGfxObjTypeAnim = 2,
@@ -299,6 +296,7 @@ public:
 	int16 x, y;
 
 	int32 z;
+	uint32 _prog;	// this value is used when sorting, in case that comparing z is not enough to tell which object goes on front
 
 	uint32 _flags;
 
@@ -419,26 +417,28 @@ public:
 
 
 typedef Common::Array<GfxObj*> GfxObjArray;
-
+#define SCENE_DRAWLIST_SIZE 100
 
 class Gfx {
 
 protected:
 	Parallaction*		_vm;
+	void resetSceneDrawList();
 
 public:
 	Disk *_disk;
 
+	void beginFrame();
+	void addObjectToScene(GfxObj *obj);
 	GfxObjArray _sceneObjects;
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
 	GfxObj* loadCharacterAnim(const char *name);
+	void sortScene();
 	void freeCharacterObjects();
 	void freeLocationObjects();
 	void showGfxObj(GfxObj* obj, bool visible);
-	void clearGfxObjects(uint filter);
-	void sortScene();
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 

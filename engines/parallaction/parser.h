@@ -106,6 +106,7 @@ protected:
 
 	Table		*_zoneTypeNames;
 	Table		*_zoneFlagNames;
+	uint		_zoneProg;
 
 	// location parser
 	OpcodeSet	_locationParsers;
