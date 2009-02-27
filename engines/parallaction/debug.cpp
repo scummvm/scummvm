@@ -188,19 +188,22 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 
 	const char *objType[] = { "DOOR", "GET", "ANIM" };
 
-	DebugPrintf("+--------------------+-----+-----+-----+-------+-----+--------+--------+\n"
-				"| name               |  x  |  y  |  z  | layer |  f  |  type  |  visi  |\n"
-				"+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
+	DebugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n"
+				"| name               |  x  |  y  |  w  |  h  |  z  | layer |  f  |  type  |\n"
+				"+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n");
 
 	GfxObjArray::iterator b = _vm->_gfx->_sceneObjects.begin();
 	GfxObjArray::iterator e = _vm->_gfx->_sceneObjects.end();
+	Common::Rect r;
 
 	for ( ; b != e; b++) {
 		GfxObj *obj = *b;
-		DebugPrintf("|%-20s|%5i|%5i|%5i|%7i|%5i|%8s|%8x|\n", obj->getName(), obj->x, obj->y, obj->z, obj->layer, obj->frame, objType[obj->type], obj->isVisible() );
+		obj->getRect(obj->frame, r);
+		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%5i|%7i|%5i|%8s|\n", obj->getName(), r.left, r.top, r.width(), r.height(),
+			obj->z, obj->layer, obj->frame, objType[obj->type]);
 	}
 
-	DebugPrintf("+--------------------+-----+-----+-----+-------+-----+--------+--------+\n");
+	DebugPrintf("+--------------------+-----+-----+-----+-----+-----+-------+-----+--------+\n");
 
 	return true;
 }
