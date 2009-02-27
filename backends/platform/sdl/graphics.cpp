@@ -1275,6 +1275,7 @@ bool OSystem_SDL::showMouse(bool visible) {
 
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
+	_mouseNeedsRedraw = true;
 
 	return last;
 }
