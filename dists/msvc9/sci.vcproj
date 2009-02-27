@@ -203,6 +203,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\heapmgr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\intmap.cpp"
 				>
 			</File>
@@ -291,7 +295,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\sci_graphics.h"
+				RelativePath="..\..\engines\sci\engine\script.h"
 				>
 			</File>
 			<File
@@ -311,11 +315,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\state.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\state.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\vm.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\engine\vm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\vm_types.h"
 				>
 			</File>
 		</Filter>
@@ -638,46 +654,6 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="include"
-			>
-			<File
-				RelativePath="..\..\engines\sci\include\engine.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\heapmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sci_midi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\sciresource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\script.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\uinput.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\versions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\vm_types.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\include\vocabulary.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\engines\sci\console.cpp"
