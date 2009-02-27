@@ -199,8 +199,12 @@ void ResMan::flush(void) {
 
 void *ResMan::fetchRes(uint32 id) {
 	MemHandle *memHandle = resHandle(id);
+	if (!memHandle) {
+		warning("fetchRes:: resource %d out of bounds", id);
+		return NULL;
+	}
 	if (!memHandle->data)
-		error("fetchRes:: resource %d is not open!", id);
+		error("fetchRes:: resource %d is not open", id);
 	return memHandle->data;
 }
 
@@ -216,8 +220,10 @@ void ResMan::dumpRes(uint32 id) {
 	if (outf.open(outn)) {
 		resOpen(id);
 		MemHandle *memHandle = resHandle(id);
-		outf.write(memHandle->data, memHandle->size);
-		outf.close();
+		if (memHandle) {
+			outf.write(memHandle->data, memHandle->size);
+			outf.close();
+		}
 		resClose(id);
 	}
 }
@@ -244,11 +250,14 @@ void *ResMan::cptResOpen(uint32 id) {
 #else
 	openCptResourceLittleEndian(id);
 #endif
-	return resHandle(id)->data;
+	MemHandle *handle = resHandle(id);
+	return handle != NULL ? handle->data : NULL;
 }
 
 void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	MemHandle *memHandle = resHandle(id);
+	if (!memHandle)
+		return;
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
 		uint32 size = resLength(id);
 		_memMan->alloc(memHandle, size);
@@ -270,6 +279,8 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 
 void ResMan::resClose(uint32 id) {
 	MemHandle *handle = resHandle(id);
+	if (!handle)
+		return;
 	if (!handle->refCount) {
 		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);
 	} else {
@@ -313,7 +324,6 @@ Common::File *ResMan::resFile(uint32 id) {
 		else
 			sprintf(fileName, "%s.CLU", _prj.clu[(id >> 24)-1].label);
 		cluster->file->open(fileName);
-
 		if (!cluster->file->isOpen()) {
 			char msg[512];
 			sprintf(msg, "Couldn't open game cluster file '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
@@ -340,6 +350,12 @@ MemHandle *ResMan::resHandle(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
+	// There is a know case of reading beyond array boundaries when trying to use
+	// portuguese subtitles (cluster file 2, group 6) with a version that do not
+	// contain subtitles for this languages (i.e. has only 6 languages and not 7).
+	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
+		return NULL;	
+	
 	return &(_prj.clu[cluster].grp[group].resHandle[id & 0xFFFF]);
 }
 
@@ -349,6 +365,9 @@ uint32 ResMan::resLength(uint32 id) {
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
 
+	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
+		return 0;
+
 	return _prj.clu[cluster].grp[group].length[id & 0xFFFF];
 }
 
@@ -357,6 +376,9 @@ uint32 ResMan::resOffset(uint32 id) {
 		id = _srIdList[id & 0xFFFF];
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
+	
+	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
+		return 0;
 
 	return _prj.clu[cluster].grp[group].offset[id & 0xFFFF];
 }
@@ -368,11 +390,14 @@ void ResMan::openCptResourceBigEndian(uint32 id) {
 		// If the resource are not in memory anymore, and therefore will be read
 		// from disk, they will need to be byte swaped.
 		MemHandle *memHandle = resHandle(id);
-		needByteSwap = (memHandle->cond == MEM_FREED);
+		if (memHandle)
+			needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
 	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
+		if (!handle)
+			return;
 		uint32 totSize = handle->size;
 		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 		totSize -= sizeof(Header);
@@ -393,11 +418,14 @@ void ResMan::openCptResourceLittleEndian(uint32 id) {
 		// If the resource are not in memory anymore, and therefore will be read
 		// from disk, they will need to be byte swaped.
 		MemHandle *memHandle = resHandle(id);
-		needByteSwap = (memHandle->cond == MEM_FREED);
+		if (memHandle)
+			needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
 	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
+		if (!handle)
+			return;
 		uint32 totSize = handle->size;
 		uint32 *data = (uint32*)((uint8*)handle->data + sizeof(Header));
 		totSize -= sizeof(Header);
@@ -418,11 +446,14 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 		// If the resource are not in memory anymore, and therefore will be read
 		// from disk, they will need to be byte swaped.
 		MemHandle *memHandle = resHandle(id);
-		needByteSwap = (memHandle->cond == MEM_FREED);
+		if (memHandle)
+			needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
 	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
+		if (!handle)
+			return;
 		// uint32 totSize = handle->size;
 		Header *head = (Header*)handle->data;
 		head->comp_length = FROM_LE_32(head->comp_length);
@@ -447,11 +478,14 @@ void ResMan::openScriptResourceLittleEndian(uint32 id) {
 		// If the resource are not in memory anymore, and therefore will be read
 		// from disk, they will need to be byte swaped.
 		MemHandle *memHandle = resHandle(id);
-		needByteSwap = (memHandle->cond == MEM_FREED);
+		if (memHandle)
+			needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
 	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
+		if (!handle)
+			return;
 		// uint32 totSize = handle->size;
 		Header *head = (Header*)handle->data;
 		head->comp_length = FROM_BE_32(head->comp_length);

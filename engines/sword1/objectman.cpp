@@ -101,7 +101,10 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 
 char *ObjectMan::lockText(uint32 textId) {
 	uint8 lang = SwordEngine::_systemVars.language;
-	char *addr = (char*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]) + sizeof(Header);
+	char *addr = (char*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]);
+	if (addr == 0)
+		return _missingSubTitleStr;
+	addr += sizeof(Header);
 	if ((textId & ITM_ID) >= _resMan->readUint32(addr)) {
 		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
 		textId = 0; // get first line instead
