@@ -48,7 +48,22 @@ namespace Sci {
 struct menubar_t;
 struct kfunct_sig_pair_t;	// from kernel.h
 
-class DirSeeker;
+class DirSeeker {
+protected:
+	EngineState *_vm;
+	reg_t _outbuffer;
+	Common::StringList _savefiles;
+	Common::StringList::const_iterator _iter;
+
+public:
+	DirSeeker(EngineState *s) : _vm(s) {
+		_outbuffer = NULL_REG;
+		_iter = _savefiles.begin();
+	}
+	
+	void firstFile(const char *mask, reg_t buffer);
+	void nextFile();
+};
 
 #define FREESCI_CURRENT_SAVEGAME_VERSION 8
 #define FREESCI_MINIMUM_SAVEGAME_VERSION 8
@@ -81,15 +96,16 @@ struct SavegameMetadata {
 
 class FileHandle {
 public:
-	FILE *_file;
+	Common::String _name;
+	Common::SeekableReadStream *_in;
+	Common::WriteStream *_out;
 	
-	FileHandle() : _file(0) {
-	}
+public:
+	FileHandle();
+	~FileHandle();
 	
-	~FileHandle() {
-		if (_file)
-			fclose(_file);
-	}
+	void close();
+	bool isOpen() const;
 };
 
 struct EngineState {
@@ -187,7 +203,7 @@ struct EngineState {
 
 	Common::Array<FileHandle> _fileHandles; /* Array of file handles. Dynamically increased if required. */
 
-	DirSeeker *dirseeker;
+	DirSeeker _dirseeker;
 
 	/* VM Information */
 

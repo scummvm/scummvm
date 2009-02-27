@@ -38,322 +38,130 @@
 #include "sci/include/engine.h"
 #include "sci/engine/kernel.h"
 
-#include <errno.h>
-#include <sys/stat.h>		// for S_IREAD/S_IWRITE
-
-#define SCI_INVALID_FD -1
-#define IS_VALID_FD(a) ((a) != SCI_INVALID_FD) /* Tests validity of a file descriptor */
-
-// FIXME: rework sci_dir_t to use common/fs.h and remove these includes
-#include <sys/types.h>
-#ifndef _MSC_VER
-#include <dirent.h>
-#else
-#include <io.h>
-#endif
-
-// FIXME: For chdir() etc.
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-
-#ifdef WIN32
-#  define FO_BINARY "b"
-#else
-#  define FO_BINARY ""
-#endif
-
-#ifdef UNIX
-#include <fnmatch.h>
-#include <sys/stat.h>
-#endif
-
-
 namespace Sci {
 
 
-struct sci_dir_t {
-#ifdef WIN32
-	long search;
-	struct _finddata_t fileinfo;
-#else
-	DIR *dir;
-	char *mask_copy;
-#endif
-}; /* used by sci_find_first and friends */
+/*
+ * Note on how file I/O is implemented: In ScummVM, one can not create/write
+ * arbitrary data files, simply because many of our target platforms do not
+ * support this. The only files on can create are savestates. But SCI has an
+ * opcode to create and write to seemingly 'arbitrary' files.
+ * To implement that opcode, we combine the SaveFileManager with regular file
+ * code, similarly to how the SCUMM HE engine does it.
+ *
+ * To handle opening a file called "foobar", what we do is this: First, we
+ * create an 'augmented file name', by prepending the game target and a dash,
+ * so if we running game target sq1vga, the name becomes "sq1vga-foobar". 
+ * Next, we check if such a file is known to the SaveFileManager. If so, we
+ * we use that for reading/writing, delete it, whatever.
+ *
+ * If no such file is present but we were only asked to *read* the file,
+ * we fallback to looking for a regular file called "foobar", and open that
+ * for reading only.
+ * 
+ * There are some caveats to this: First off, SCI apparently has no way
+ * to signal that a file is supposed to be opened for reading only. For now,
+ * we hackishly just assume that this is what _K_FILE_MODE_OPEN_OR_FAIL is for.
+ *
+ * Secondly, at least in theory, a file could be opened for both reading and
+ * writing. We currently do not support this. If it turns out that we *have*
+ * to support it, we could do it as follows: Initially open the file for
+ * reading. If a write is attempted, store the file offset, close the file,
+ * if necessary create a mirror clone (i.e., clone it into a suitably named
+ * savefile), then open the file (resp. its clone for writing) and seek to the
+ * correct position. If later a read is attempted, we again close and re-open.
+ *
+ * However, before putting any effort into implementing such an error-prone
+ * scheme, we are well advised to first determine whether any game needs this
+ * at all, and for what. Based on that, we can maybe come up with a better waybill
+ * to provide this functionality.
+ */
+ 
+ 
 
-void sci_init_dir(sci_dir_t *dirent);
-/* Initializes an sci directory search structure
-** Parameters: (sci_dir_t *) dirent: The entity to initialize
-** Returns   : (void)
-** The entity is initialized to "empty" values, meaning that it can be
-** used in subsequent sci_find_first/sci_find_next constructs. In no
-** event should this function be used upon a structure which has been
-** subjected to any of the other dirent calls.
-*/
-
-char *sci_find_first(sci_dir_t *dirent, const char *mask);
-/* Finds the first file matching the specified file mask
-** Parameters: (sci_dir_t *) dirent: Pointer to an unused dirent structure
-**             (const char *) mask: File mask to apply
-** Returns   : (char *) Name of the first matching file found, or NULL
-*/
-
-char *sci_find_next(sci_dir_t *dirent);
-/* Finds the next file specified by an sci_dir initialized by sci_find_first()
-** Parameters: (sci_dir_t *) dirent: Pointer to SCI dir entity
-** Returns   : (char *) Name of the next matching file, or NULL
-*/
-
-void sci_finish_find(sci_dir_t *dirent);
-/* Completes an 'sci_find_first/next' procedure
-** Parameters: (sci_dir_t *) dirent: Pointer to the dirent used
-** Returns   : (void)
-** In the operation sequences
-**   sci_init_dir(x); sci_finish_find(x);
-** and
-**   sci_finish_find(x); sci_finish_find(x);
-** the second operation is guaranteed to be a no-op.
-*/
-
-FILE *sci_fopen(const char *fname, const char *mode);
-/* Opens a FILE* case-insensitively
-** Parameters: (const char *) fname: Name of the file to open
-**             (const char *) mode: Mode to open it with
-** Returns   : (FILE *) A valid file handle, or NULL on failure
-** Always refers to the cwd, cannot address subdirectories
-*/
-
-int sci_file_size(const char *fname);
-/* Returns the filesize of a file
-** Parameters: (const char *) fname: Name of file to get filesize of
-** Returns   : (int) filesize of the file, -1 on error
-*/
-
-
-#if defined(WIN32)
-void sci_init_dir(sci_dir_t *dir) {
-	dir->search = -1;
+FileHandle::FileHandle() : _in(0), _out(0) {
 }
 
-char *sci_find_first(sci_dir_t *dir, const char *mask) {
-	dir->search = _findfirst(mask, &(dir->fileinfo));
-
-	if (dir->search != -1) {
-		if (dir->fileinfo.name == NULL) {
-			return NULL;
-		}
-
-		if (strcmp(dir->fileinfo.name, ".") == 0 ||
-		        strcmp(dir->fileinfo.name, "..") == 0) {
-			if (sci_find_next(dir) == NULL) {
-				return NULL;
-			}
-		}
-
-		return dir->fileinfo.name;
-	} else {
-		switch (errno) {
-		case ENOENT: {
-#ifdef _DEBUG
-			printf("_findfirst errno = ENOENT: no match\n");
-
-			if (mask)
-				printf(" in: %s\n", mask);
-			else
-				printf(" - searching in undefined directory\n");
-#endif
-			break;
-		}
-		case EINVAL: {
-			printf("_findfirst errno = EINVAL: invalid filename\n");
-			break;
-		}
-		default:
-			printf("_findfirst errno = unknown (%d)", errno);
-		}
-	}
-
-	return NULL;
+FileHandle::~FileHandle() {
+	close();
 }
 
-char *sci_find_next(sci_dir_t *dir) {
-	if (dir->search == -1)
-		return NULL;
-
-	if (_findnext(dir->search, &(dir->fileinfo)) < 0) {
-		_findclose(dir->search);
-		dir->search = -1;
-		return NULL;
-	}
-
-	if (strcmp(dir->fileinfo.name, ".") == 0 ||
-	        strcmp(dir->fileinfo.name, "..") == 0) {
-		if (sci_find_next(dir) == NULL) {
-			return NULL;
-		}
-	}
-
-	return dir->fileinfo.name;
+void FileHandle::close() {
+	delete _in;
+	delete _out;
+	_in = 0;
+	_out = 0;
+	_name.clear();
 }
 
-void sci_finish_find(sci_dir_t *dir) {
-	if (dir->search != -1) {
-		_findclose(dir->search);
-		dir->search = -1;
-	}
-}
-
-#else
-
-void sci_init_dir(sci_dir_t *dir) {
-	dir->dir = NULL;
-	dir->mask_copy = NULL;
-}
-
-char *sci_find_first(sci_dir_t *dir, const char *mask) {
-	if (dir->dir)
-		closedir(dir->dir);
-
-	if (!(dir->dir = opendir("."))) {
-		sciprintf("%s, L%d: opendir(\".\") failed!\n", __FILE__, __LINE__);
-		return NULL;
-	}
-
-	dir->mask_copy = sci_strdup(mask);
-
-	return sci_find_next(dir);
-}
-
-#ifndef FNM_CASEFOLD
-#define FNM_CASEFOLD 0
-#warning "File searches will not be case-insensitive!"
-#endif
-
-char *sci_find_next(sci_dir_t *dir) {
-	struct dirent *match;
-
-	while ((match = readdir(dir->dir))) {
-		if (match->d_name[0] == '.')
-			continue;
-
-		if (!fnmatch(dir->mask_copy, match->d_name, FNM_CASEFOLD))
-			return match->d_name;
-	}
-
-	sci_finish_find(dir);
-
-	return NULL;
-}
-
-void sci_finish_find(sci_dir_t *dir) {
-	if (dir->dir) {
-		closedir(dir->dir);
-		dir->dir = NULL;
-		free(dir->mask_copy);
-		dir->mask_copy = NULL;
-	}
-}
-
-#endif
-
-
-/* Returns the case-sensitive filename of a file.
-** Expects *dir to be uninitialized and the caller to free it afterwards.
-** Parameters: (const char *) fname: Name of file to get case-sensitive.
-**             (sci_dir_t *) dir: Directory to find file within.
-** Returns   : (char *) Case-sensitive filename of the file.
-*/
-Common::String _fcaseseek(const char *fname) {
-	// Expects *dir to be uninitialized and the caller to
-	// free it afterwards  */
-
-	// Look up the file, ignoring case
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, fname);
-
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String name = (*x)->getName();
-		if (name.equalsIgnoreCase(fname))
-			return name;
-	}
-
-	return Common::String();
-}
-
-FILE *sci_fopen(const char *fname, const char *mode) {
-	Common::String name = _fcaseseek(fname);
-	FILE *file = NULL;
-
-	if (!name.empty())
-		file = fopen(name.c_str(), mode);
-	else if (strchr(mode, 'w'))
-		file = fopen(fname, mode);
-
-	return file;
-}
-
-int sci_file_size(const char *fname) {
-	struct stat fn_stat;
-
-	if (stat(fname, &fn_stat))
-		return -1;
-
-	return fn_stat.st_size;
+bool FileHandle::isOpen() const {
+	return _in || _out;
 }
 
 
 
 static int _savegame_indices_nr = -1; // means 'uninitialized'
 
-static struct _savegame_index_struct {
+struct SavegameDesc {
 	int id;
 	int date;
 	int time;
-} _savegame_indices[MAX_SAVEGAME_NR];
+};
 
-// This assumes modern stream implementations. It may break on DOS.
+static SavegameDesc _savegame_indices[MAX_SAVEGAME_NR];
 
 
-/* Attempts to mirror a file by copying it from the resource firectory
-** to the working directory. Returns NULL if the file didn't exist.
-** Otherwise, the new file is then opened for reading or writing.
-*/
-static FILE *f_open_mirrored(EngineState *s, char *fname) {
-	debug(3, "f_open_mirrored(%s)", fname);
+enum {
+	_K_FILE_MODE_OPEN_OR_CREATE = 0,
+	_K_FILE_MODE_OPEN_OR_FAIL = 1,
+	_K_FILE_MODE_CREATE = 2
+};
 
-#if 0
-	Common::File file;
-	if (!file.open(fname))
-		return NULL;
 
-	int fsize = file.size();
-	if (fsize > 0) {
-		buf = (char *)sci_malloc(fsize);
-		file.read(buf, fsize);
+
+void file_open(EngineState *s, const char *filename, int mode) {
+	const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(filename);
+	Common::SeekableReadStream *inFile = 0;
+	Common::WriteStream *outFile = 0;
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+		// Try to open file, abort if not possible
+		inFile = saveFileMan->openForLoading(wrappedName.c_str());
+		// If no matching savestate exists: fall back to reading from a regular file
+		if (!inFile)
+			inFile = SearchMan.createReadStreamForMember(filename);
+		if (!inFile)
+			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", filename);
+	} else if (mode == _K_FILE_MODE_CREATE) {
+		// Create the file, destroying any content it might have had
+		outFile = saveFileMan->openForSaving(wrappedName.c_str());
+		if (!outFile)
+			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", filename);
+	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
+		// Try to open file, create it if it doesn't exist
+
+		// FIXME: I am disabling this for now, as it's not quite clear what
+		// should happen if the given file already exists... open it for appending?
+		// Or (more likely), open it for reading *and* writing? We may have to
+		// clone the file for that, etc., see also the long comment at the start
+		// of this file.
+		// We really need some examples on how this is used.
+		error("file_open(_K_FILE_MODE_OPEN_OR_CREATE) File creation currently not supported");
+	} else {
+		error("file_open: unsupported mode %d", mode);
 	}
 
-	file.close();
+	if (!inFile && !outFile) { // Failed
+		debug(3, "file_open() failed");
+		s->r_acc = make_reg(0, 0xffff);
+		return;
+	}
 
-	copy the file to a savegame -> only makes sense to perform this change
-	if we at the same time change the code for loading files to look among the
-	savestates, and also change *all* file writing code to write to savestates,
-	as it should
 
-	Also, we may have to change the filename when creating a matchin savegame,
-	e.g. prefix it with the target name
-#endif
-
-	// FIXME: for now we just pretend this has failed
-	return 0;
-}
-
-#define _K_FILE_MODE_OPEN_OR_CREATE 0
-#define _K_FILE_MODE_OPEN_OR_FAIL 1
-#define _K_FILE_MODE_CREATE 2
-
-void file_open(EngineState *s, char *filename, int mode) {
-	FILE *file = NULL;
+#if 0
+	// FIXME: The old FreeSCI code for opening a file. Left as a reference, as apparently
+	// the implementation below used to work well enough.
 
 	SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
 	if ((mode == _K_FILE_MODE_OPEN_OR_FAIL) || (mode == _K_FILE_MODE_OPEN_OR_CREATE)) {
@@ -378,57 +186,55 @@ void file_open(EngineState *s, char *filename, int mode) {
 		s->r_acc = make_reg(0, 0xffff);
 		return;
 	}
+#endif
 
-	uint retval = 0;
-	while ((retval < s->_fileHandles.size()) && s->_fileHandles[retval]._file)
-		retval++;
+	// Find a free file handle
+	uint handle = 1; // Ignore _fileHandles[0]
+	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
+		handle++;
 
-	// Ignore _fileHandles[0]
-	if (retval < 1)
-		retval = 1;
-
-	if (retval >= s->_fileHandles.size()) { // Hit size limit => Allocate more space
-		s->_fileHandles.resize(retval + 1);
+	if (handle == s->_fileHandles.size()) { // Hit size limit => Allocate more space
+		s->_fileHandles.resize(s->_fileHandles.size() + 1);
 	}
 
-	s->_fileHandles[retval]._file = file;
+	s->_fileHandles[handle]._in = inFile;
+	s->_fileHandles[handle]._out = outFile;
+	s->_fileHandles[handle]._name = filename;
 
-	s->r_acc = make_reg(0, retval);
+	s->r_acc = make_reg(0, handle);
+	
+	debug(3, " -> opened file '%s' with handle %d", filename, handle);
 }
 
 reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
 	int mode = UKPV(1);
 
+	debug(3, "kFOpen(%s,0x%x)", name, mode);
 	file_open(s, name, mode);
-	debug(3, "kFOpen(%s,0x%x) -> %d", name, mode, s->r_acc.offset);
 	return s->r_acc;
 }
 
-static FILE *getFileFromHandle(EngineState *s, uint handle) {
+static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 	if (handle == 0) {
-		SCIkwarn(SCIkERROR, "Attempt to use file handle 0\n");
+		error("Attempt to use file handle 0");
 		return 0;
 	}
 
-	if ((handle >= s->_fileHandles.size()) || (s->_fileHandles[handle]._file == NULL)) {
-		SCIkwarn(SCIkERROR, "Attempt to use invalid/unused file handle %d\n", handle);
+	if ((handle >= s->_fileHandles.size()) || !s->_fileHandles[handle].isOpen()) {
+		error("Attempt to use invalid/unused file handle %d", handle);
 		return 0;
 	}
 
-	return s->_fileHandles[handle]._file;
+	return &s->_fileHandles[handle];
 }
 
 void file_close(EngineState *s, int handle) {
 	SCIkdebug(SCIkFILE, "Closing file %d\n", handle);
 
-	FILE *f = getFileFromHandle(s, handle);
-	if (!f)
-		return;
-
-	fclose(f);
-
-	s->_fileHandles[handle]._file = NULL;
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		f->close();
 }
 
 reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -437,38 +243,41 @@ reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void fputs_wrapper(EngineState *s, int handle, int size, char *data) {
-	SCIkdebug(SCIkFILE, "FPuts'ing \"%s\" to handle %d\n", data, handle);
-
-	FILE *f = getFileFromHandle(s, handle);
-	if (f)
-		fwrite(data, 1, size, f);
-}
-
 void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
 	SCIkdebug(SCIkFILE, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
 
-	FILE *f = getFileFromHandle(s, handle);
-	if (f)
-		fwrite(data, 1, length, f);
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (!f)
+		return;
+
+	if (!f->_out) {
+		error("fgets_wrapper: Trying to write to file '%s' opened for reading", f->_name.c_str());
+		return;
+	}
+
+	f->_out->write(data, length);
 }
 
 reg_t kFPuts(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int handle = UKPV(0);
 	char *data = kernel_dereference_char_pointer(s, argv[1], 0);
 
-	fputs_wrapper(s, handle, strlen(data), data);
+	fwrite_wrapper(s, handle, data, strlen(data));
 	return s->r_acc;
 }
 
 static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	SCIkdebug(SCIkFILE, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
 
-	FILE *f = getFileFromHandle(s, handle);
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return;
 
-	fgets(dest, maxsize, f);
+	if (!f->_in) {
+		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
+		return;
+	}
+	f->_in->readLine_NEW(dest, maxsize);
 
 	SCIkdebug(SCIkFILE, "FGets'ed \"%s\"\n", dest);
 }
@@ -476,22 +285,30 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 static void fread_wrapper(EngineState *s, char *dest, int bytes, int handle) {
 	SCIkdebug(SCIkFILE, "fread()'ing %d bytes from handle %d\n", bytes, handle);
 
-	FILE *f = getFileFromHandle(s, handle);
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return;
 
-	s->r_acc = make_reg(0, fread(dest, 1, bytes, f));
+	if (!f->_in) {
+		error("fread_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
+		return;
+	}
+
+	s->r_acc = make_reg(0, f->_in->read(dest, bytes));
 }
 
 static void fseek_wrapper(EngineState *s, int handle, int offset, int whence) {
-	FILE *f = getFileFromHandle(s, handle);
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return;
 
-	s->r_acc = make_reg(0, fseek(f, offset, whence));
-}
+	if (!f->_in) {
+		error("fseek_wrapper: Trying to seek in file '%s' opened for writing", f->_name.c_str());
+		return;
+	}
 
-#define TEST_DIR_OR_QUIT(dir) if (!dir) { return NULL_REG; }
+	s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+}
 
 reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *dest = kernel_dereference_char_pointer(s, argv[0], 0);
@@ -503,15 +320,17 @@ reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-/* kGetCWD(address):
-** Writes the cwd to the supplied address and returns the address in acc.
-*/
+/**
+ * Writes the cwd to the supplied address and returns the address in acc.
+ */
 reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *targetaddr = kernel_dereference_char_pointer(s, argv[0], 0);
 
-	getcwd(targetaddr, MAX_SAVE_DIR_SIZE - 1);
+	// We do not let the scripts see the file system, instead pretending
+	// we are always in the same directory.
+	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
+	strcpy(targetaddr, "/");
 
-	targetaddr[MAX_SAVE_DIR_SIZE - 1] = 0; // Terminate
 	debug(3, "kGetCWD() -> %s", targetaddr);
 
 	return argv[0];
@@ -526,12 +345,14 @@ void delete_savegame(EngineState *s, int savedir_nr) {
 	saveFileMan->removeSavefile(filename.c_str());
 }
 
-#define K_DEVICE_INFO_GET_DEVICE 0
-#define K_DEVICE_INFO_GET_CURRENT_DEVICE 1
-#define K_DEVICE_INFO_PATHS_EQUAL 2
-#define K_DEVICE_INFO_IS_FLOPPY 3
-#define K_DEVICE_INFO_GET_SAVECAT_NAME 7
-#define K_DEVICE_INFO_GET_SAVEFILE_NAME 8
+enum {
+	K_DEVICE_INFO_GET_DEVICE = 0,
+	K_DEVICE_INFO_GET_CURRENT_DEVICE = 1,
+	K_DEVICE_INFO_PATHS_EQUAL = 2,
+	K_DEVICE_INFO_IS_FLOPPY = 3,
+	K_DEVICE_INFO_GET_SAVECAT_NAME = 7,
+	K_DEVICE_INFO_GET_SAVEFILE_NAME = 8
+};
 
 reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int mode = UKPV(0);
@@ -614,8 +435,8 @@ reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 static int _savegame_index_struct_compare(const void *a, const void *b) {
-	struct _savegame_index_struct *A = (struct _savegame_index_struct *)a;
-	struct _savegame_index_struct *B = (struct _savegame_index_struct *)b;
+	SavegameDesc *A = (SavegameDesc *)a;
+	SavegameDesc *B = (SavegameDesc *)b;
 
 	if (B->date != A->date)
 		return B->date - A->date;
@@ -649,7 +470,7 @@ static void update_savegame_indices() {
 		}
 	}
 
-	qsort(_savegame_indices, _savegame_indices_nr, sizeof(struct _savegame_index_struct), _savegame_index_struct_compare);
+	qsort(_savegame_indices, _savegame_indices_nr, sizeof(SavegameDesc), _savegame_index_struct_compare);
 }
 
 reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -855,93 +676,72 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *pathname = kernel_dereference_char_pointer(s, argv[0], 0);
-	char cpath[MAXPATHLEN + 1];
-	getcwd(cpath, MAXPATHLEN + 1);
+	const char *path = kernel_dereference_char_pointer(s, argv[0], 0);
 
+	// FIXME: For now, we only accept the (fake) root dir "/" as a valid path.
+	s->r_acc = make_reg(0, 0 == strcmp(path, "/"));
 
-	s->r_acc = make_reg(0, !chdir(pathname)); // Try to go there. If it works, return 1, 0 otherwise.
-	chdir(cpath);
-
-	debug(3, "kValidPath(%s) -> %d", pathname, s->r_acc.offset);
+	debug(3, "kValidPath(%s) -> %d", path, s->r_acc.offset);
 
 	return s->r_acc;
 }
 
-#define K_FILEIO_OPEN		0
-#define K_FILEIO_CLOSE		1
-#define K_FILEIO_READ_RAW	2
-#define K_FILEIO_WRITE_RAW	3
-#define K_FILEIO_UNLINK		4
-#define K_FILEIO_READ_STRING	5
-#define K_FILEIO_WRITE_STRING	6
-#define K_FILEIO_SEEK		7
-#define K_FILEIO_FIND_FIRST	8
-#define K_FILEIO_FIND_NEXT	9
-#define K_FILEIO_STAT		10
-
-
-class DirSeeker {
-protected:
-	EngineState *_vm;
-	reg_t _outbuffer;
-	sci_dir_t _dir;
-
-	const char *write_filename_to_mem(const char *string);
-
-public:
-	DirSeeker(EngineState *s) : _vm(s) {
-		_outbuffer = NULL_REG;
-		sci_init_dir(&_dir);
-	}
-	
-	void first_file(const char *dir, char *mask, reg_t buffer);
-	void next_file();
+enum {
+	K_FILEIO_OPEN			= 0,
+	K_FILEIO_CLOSE			= 1,
+	K_FILEIO_READ_RAW		= 2,
+	K_FILEIO_WRITE_RAW		= 3,
+	K_FILEIO_UNLINK			= 4,
+	K_FILEIO_READ_STRING	= 5,
+	K_FILEIO_WRITE_STRING	= 6,
+	K_FILEIO_SEEK			= 7,
+	K_FILEIO_FIND_FIRST		= 8,
+	K_FILEIO_FIND_NEXT		= 9,
+	K_FILEIO_FILE_EXISTS	= 10
 };
 
 
-const char *DirSeeker::write_filename_to_mem(const char *string) {
-	char *mem = kernel_dereference_char_pointer(_vm, _outbuffer, 0);
-
-	if (string) {
-		memset(mem, 0, 13);
-		strncpy(mem, string, 12);
-	}
-
-	return string;
-}
-
-void DirSeeker::next_file() {
-	if (write_filename_to_mem(sci_find_next(&_dir)))
-		_vm->r_acc = _outbuffer;
-	else
-		_vm->r_acc = NULL_REG;
-}
-
-void DirSeeker::first_file(const char *dir, char *mask, reg_t buffer) {
-	if (!buffer.segment) {
-		sciprintf("Warning: first_file(state,\"%s\",\"%s\", 0) invoked!\n", dir, mask);
-		_vm->r_acc = NULL_REG;
-		return;
-	}
-
-	if (strcmp(dir, ".")) {
-		sciprintf("%s L%d: Non-local first_file: Not implemented yet\n", __FILE__, __LINE__);
-		_vm->r_acc = NULL_REG;
-		return;
-	}
-
-	// Get rid of the old find structure
-	if (_outbuffer.segment)
-		sci_finish_find(&_dir);
+void DirSeeker::firstFile(const char *mask, reg_t buffer) {
 	
+	// Verify that we are given a valid buffer
+	if (!buffer.segment) {
+		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask);
+		_vm->r_acc = NULL_REG;
+		return;
+	}
 	_outbuffer = buffer;
 
-	if (write_filename_to_mem(sci_find_first(&_dir, mask)))
-		_vm->r_acc = _outbuffer;
-	else
-		_vm->r_acc = NULL_REG;
+	// Obtain a list of all savefiles matching the given mask
+	// TODO: Modify the mask, e.g. by prefixing "TARGET-".
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	_savefiles = saveFileMan->listSavefiles(mask);
+
+	// Reset the list iterator and write the first match to the output buffer, if any.
+	_iter = _savefiles.begin();
+	nextFile();
 }
+
+void DirSeeker::nextFile() {
+	if (_iter == _savefiles.end()) {
+		_vm->r_acc = NULL_REG;
+		return;
+	}
+
+	char *mem = kernel_dereference_char_pointer(_vm, _outbuffer, 0);
+	memset(mem, 0, 13);
+
+	// TODO: Transform the string back into a format usable by the SCI scripts. 
+	// I.e., strip any TARGET- prefix.
+	const char *string = _iter->c_str();
+	assert(string);
+	strncpy(mem, string, 12);
+
+	// Return the result and advance the list iterator :)
+	_vm->r_acc = _outbuffer;
+	++_iter;
+}
+
+
 
 reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int func_nr = UKPV(0);
@@ -952,7 +752,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int mode = UKPV(2);
 
 		file_open(s, name, mode);
-		debug(3, "K_FILEIO_OPEN(%s,0x%x) -> %d", name, mode, s->r_acc.offset);
+		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name, mode);
 		break;
 	}
 	case K_FILEIO_CLOSE : {
@@ -984,7 +784,11 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
 		debug(3, "K_FILEIO_UNLINK(%s)", name);
 
-		unlink(name);
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
+		saveFileMan->removeSavefile(wrappedName.c_str());
+		// TODO/FIXME: Should we return something (like, a bool indicating
+		// whether deleting the save succeeded or failed)?
 		break;
 	}
 	case K_FILEIO_READ_STRING : {
@@ -1002,8 +806,12 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		char *buf = kernel_dereference_char_pointer(s, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
+		// FIXME: What is the difference between K_FILEIO_WRITE_STRING and
+		// K_FILEIO_WRITE_RAW? Normally, I would expect the difference to
+		// be that the former doesn't receive a 'size' parameter. But here
+		// it does. Are we missing something?
 		if (buf)
-			fputs_wrapper(s, handle, size, buf);
+			fwrite_wrapper(s, handle, buf, size);
 		break;
 	}
 	case K_FILEIO_SEEK : {
@@ -1025,23 +833,27 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (strcmp(mask, "*.*") == 0)
 			strcpy(mask, "*"); // For UNIX
 #endif
-		if (!s->dirseeker)
-			s->dirseeker = new DirSeeker(s);
-		assert(s->dirseeker);
-		s->dirseeker->first_file(".", mask, buf);
+		s->_dirseeker.firstFile(mask, buf);
 
 		break;
 	}
 	case K_FILEIO_FIND_NEXT : {
-		assert(s->dirseeker);
 		debug(3, "K_FILEIO_FIND_NEXT()");
-		s->dirseeker->next_file();
+		s->_dirseeker.nextFile();
 		break;
 	}
-	case K_FILEIO_STAT : {
+	case K_FILEIO_FILE_EXISTS : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
-		s->r_acc = make_reg(0, sci_file_size(name) >= 0);
-		debug(3, "K_FILEIO_STAT(%s) -> %d", name, s->r_acc.offset);
+		// TODO: Transform the name given by the scripts to us, e.g. by
+		// prepending TARGET-
+		// TODO: We may have to also check for a regular file with the
+		// given name, using File::exists(). Really depends on *how*
+		// scripts use this opcode. Need more test data...
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		bool exists = !saveFileMan->listSavefiles(name).empty();
+
+		s->r_acc = make_reg(0, exists);
+		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name, s->r_acc.offset);
 		break;
 	}
 	default :

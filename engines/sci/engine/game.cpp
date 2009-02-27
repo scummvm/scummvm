@@ -440,7 +440,7 @@ static int create_class_table_sci0(EngineState *s) {
 	return 0;
 }
 
-EngineState::EngineState() {
+EngineState::EngineState() : _dirseeker(this) {
 	savegame_version = 0;
 
 	widget_serial_counter = 0;
@@ -526,9 +526,9 @@ EngineState::EngineState() {
 	max_version = 0;
 	min_version = 0;
 
-	kernel_opt_flags = 0;
+	_fileHandles.resize(5);
 
-	dirseeker = 0;
+	kernel_opt_flags = 0;
 
 	execution_stack = 0;
 	execution_stack_size = 0;
@@ -664,8 +664,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	s->dirseeker = 0; // Used by FileIO for FIND_FIRST, FIND_NEXT
-
 	if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE &&
 	        s->version < SCI_VERSION(1, 001, 000))
 		s->seg_manager->setExportWidth(1);
@@ -695,6 +693,7 @@ void script_free_vm_memory(EngineState *s) {
 
 	// Close all opened file handles
 	s->_fileHandles.clear();
+	s->_fileHandles.resize(5);
 }
 
 extern void free_kfunct_tables(EngineState *s);

@@ -1059,7 +1059,7 @@ int c_save_game(EngineState *s) {
 	if (!omit_check) {
 		int result = 0;
 		for (uint i = 0; i < s->_fileHandles.size(); i++)
-			if (s->_fileHandles[i]._file)
+			if (s->_fileHandles[i].isOpen())
 				result++;
 
 		if (result) {

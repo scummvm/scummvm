@@ -339,4 +339,19 @@ Common::String SciEngine::getSavegameName(int nr) const {
 	return _targetName + extension;
 }
 
+Common::String SciEngine::getSavegamePattern() const {
+	return _targetName + ".???";
+}
+
+Common::String SciEngine::wrapFilename(const Common::String &name) const {
+	return _targetName + "-" + name;
+}
+
+Common::String SciEngine::unwrapFilename(const Common::String &name) const {
+	Common::String prefix = name + "-";
+	if (name.hasPrefix(prefix.c_str()))
+		return Common::String(name.c_str() + prefix.size());
+	return name;
+}
+
 } // End of namespace Sci

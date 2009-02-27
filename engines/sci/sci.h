@@ -88,7 +88,16 @@ public:
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
 	ResourceManager *getResMgr() { return _resmgr; }
+
 	Common::String getSavegameName(int nr) const;
+	Common::String getSavegamePattern() const;
+
+	/** Prepend 'TARGET-' to the given filename. */
+	Common::String wrapFilename(const Common::String &name) const;
+
+	/** Remove the 'TARGET-' prefix of the given filename, if present. */
+	Common::String unwrapFilename(const Common::String &name) const;
+
 
 private:
 	const SciGameDescription *_gameDescription;
