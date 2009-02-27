@@ -267,7 +267,7 @@ DECLARE_HEAPENTRY(hunk)
 
 struct dynmem_t {
 	int size;
-	const char *description;
+	char *description;
 	byte *buf;
 }; /* Free-style memory */
 

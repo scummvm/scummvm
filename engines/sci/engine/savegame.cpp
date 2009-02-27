@@ -4791,9 +4791,9 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 
 	SavegameMetadata *meta = new SavegameMetadata;
 	meta->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
-	meta->savegame_name = savename;
+	meta->savegame_name = sci_strdup(savename);
 	meta->version = s->version;
-	meta->game_version = s->game_version;
+	meta->game_version = sci_strdup(s->game_version);
 	meta->savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta->savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 	fprintf(stderr, "date/time: %d %d\n", meta->savegame_date, meta->savegame_time);

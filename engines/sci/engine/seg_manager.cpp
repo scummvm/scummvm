@@ -252,8 +252,9 @@ int SegManager::deallocate(int seg, bool recursive) {
 		break;
 
 	case MEM_OBJ_DYNMEM:
-		if (mobj->data.dynmem.buf)
-			free(mobj->data.dynmem.buf);
+		free(mobj->data.dynmem.description);
+		mobj->data.dynmem.description = NULL;
+		free(mobj->data.dynmem.buf);
 		mobj->data.dynmem.buf = NULL;
 		break;
 	case MEM_OBJ_SYS_STRINGS: 
@@ -1398,7 +1399,7 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 	else
 		mobj->data.dynmem.buf = (byte*) sci_malloc(size);
 
-	mobj->data.dynmem.description = descr;
+	mobj->data.dynmem.description = sci_strdup(descr);
 
 	return (unsigned char *)(mobj->data.dynmem.buf);
 }
