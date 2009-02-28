@@ -93,8 +93,7 @@ void DefaultTimerManager::handler() {
 		_head->next = slot->next;
 
 		// Update the fire time and reinsert the TimerSlot into the priority
-		// queue. Has to be done before the timer callback is invoked, in case
-		// the callback wants to remove itself.
+		// queue.
 		assert(slot->interval > 0);
 		slot->nextFireTime += (slot->interval / 1000);
 		slot->nextFireTimeMicro += (slot->interval % 1000);
