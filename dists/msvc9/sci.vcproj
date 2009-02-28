@@ -195,14 +195,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\heap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\heap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\heapmgr.h"
 				>
 			</File>
@@ -559,15 +551,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\mixer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\mixer.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\pcm-iterator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\pcm_device.cpp"
 				>
 			</File>
 			<File
@@ -586,23 +578,11 @@
 				RelativePath="..\..\engines\sci\sfx\time.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\timer.cpp"
-				>
-			</File>
 			<Filter
 				Name="device"
 				>
 				<File
 					RelativePath="..\..\engines\sci\sfx\device\devices.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="mixer"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\mixer\soft.cpp"
 					>
 				</File>
 			</Filter>

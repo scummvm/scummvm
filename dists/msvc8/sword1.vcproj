@@ -318,6 +318,14 @@
 			RelativePath="..\..\engines\sword1\text.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\engines\sword1\vag.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sword1\vag.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
