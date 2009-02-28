@@ -121,7 +121,10 @@ static int mix_init(sfx_pcm_mixer_t *self) {
 	P->conf.stereo = SFX_PCM_STEREO_LR;
 	P->conf.format = SFX_PCM_FORMAT_S16_NATIVE;
 	P->_framesize = SFX_PCM_FRAME_SIZE(P->conf);
-	
+
+	P->feeds_nr = 0;
+	P->feeds_allocd = 0;
+	P->feeds = 0;
 	
 	int flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO;
 #ifdef SCUMM_LITTLE_ENDIAN
