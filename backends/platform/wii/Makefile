@@ -246,6 +246,7 @@ endif
 	$(CP) $(srcdir)/COPYRIGHT dist/scummvm/
 	$(CP) $(srcdir)/NEWS dist/scummvm/
 	$(CP) $(srcdir)/README dist/scummvm/
+	$(CP) $(srcdir)/dists/pred.dic dist/scummvm/
 	$(CP) $(DIST_FILES_THEMES) dist/scummvm/
 ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) dist/scummvm/
