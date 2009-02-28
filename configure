@@ -31,7 +31,7 @@ SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 
 # use environment vars if set
-CXXFLAGS="$CXXFLAGS $CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $CPPFLAGS -mfpmath=387"
 
 # Backslashes into forward slashes:
 # The following OS/2 specific code is performed to deal with handling of backslashes by ksh.
