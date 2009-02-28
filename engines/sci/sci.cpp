@@ -214,7 +214,7 @@ Common::Error SciEngine::go() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	script_adjust_opcode_formats(_resmgr->sci_version);
+	script_adjust_opcode_formats(_resmgr->_sciVersion);
 
 #if 0
 	printf("Mapping instruments to General Midi\n");
@@ -247,7 +247,7 @@ Common::Error SciEngine::go() {
 
 	gfx_state_t gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
-	gfx_state.version = _resmgr->sci_version;
+	gfx_state.version = _resmgr->_sciVersion;
 	gamestate->gfx_state = &gfx_state;
 
 	// Default config:

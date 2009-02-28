@@ -846,7 +846,7 @@ static int clone_entry_used(CloneTable *table, int n) {
 }
 
 static void load_script(EngineState *s, SegmentId seg) {
-	resource_t *script, *heap = NULL;
+	Resource *script, *heap = NULL;
 	Script *scr = &(s->seg_manager->heap[seg]->data.script);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
@@ -1007,7 +1007,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 
 static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
-	int it_type = s->resmgr->sci_version >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
+	int it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
 	if (s->sound.songlib.lib)
 		seeker = *(s->sound.songlib.lib);

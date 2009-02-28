@@ -162,7 +162,7 @@ public:
 
 class ResourceManager {
 public:
-	int sci_version; /* SCI resource version to use */
+	int _sciVersion; /* SCI resource version to use */
 	/**
 	 * Creates a new FreeSCI resource manager.
 	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT

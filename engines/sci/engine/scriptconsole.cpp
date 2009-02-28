@@ -840,7 +840,7 @@ static int c_list(EngineState *s) {
 				if (res == -1)
 					sciprintf("Unknown resource type: '%s'\n", cmd_params[0].str);
 				else {
-					for (i = 0; i < sci_max_resource_nr[s->resmgr->sci_version]; i++)
+					for (i = 0; i < sci_max_resource_nr[s->resmgr->_sciVersion]; i++)
 						if (s->resmgr->testResource(res, i))
 							sciprintf("%s.%03d\n", sci_resource_types[res], i);
 				}

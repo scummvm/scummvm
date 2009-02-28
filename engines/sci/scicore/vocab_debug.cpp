@@ -367,7 +367,7 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 }
 
 char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
-	switch (resmgr->sci_version) {
+	switch (resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
 	case SCI_VERSION_01_VGA:

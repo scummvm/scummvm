@@ -47,7 +47,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 	sciprintf("Initializing vocabulary\n");
 
-	if ((s->resmgr->sci_version < SCI_VERSION_01_VGA) && (s->parser_words = vocab_get_words(s->resmgr, &(s->parser_words_nr)))) {
+	if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && (s->parser_words = vocab_get_words(s->resmgr, &(s->parser_words_nr)))) {
 		s->parser_suffices = vocab_get_suffices(s->resmgr, &(s->parser_suffices_nr));
 		if ((s->parser_branches = vocab_get_branches(s->resmgr, &(s->parser_branches_nr))))
 			// Now build a GNF grammar out of this
@@ -124,7 +124,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent;
 	sciprintf("Initializing graphics\n");
 
-	if (s->resmgr->sci_version <= SCI_VERSION_01) {
+	if (s->resmgr->_sciVersion <= SCI_VERSION_01) {
 		int i;
 
 		for (i = 0; i < 16; i++) {
@@ -185,7 +185,7 @@ int _reset_graphics_input(EngineState *s) {
 	font_nr = -1;
 	do {
 		resource = s->resmgr->testResource(sci_font, ++font_nr);
-	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->sci_version]));
+	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
 
 	if (!resource) {
 		sciprintf("No text font was found.\n");
@@ -198,7 +198,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	if (s->resmgr->sci_version >= SCI_VERSION_01_VGA) {
+	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
 		// This bit sets the foreground and background colors in VGA SCI games
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
@@ -267,7 +267,7 @@ static void _free_graphics_input(EngineState *s) {
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
-	if (s->resmgr->sci_version >= SCI_VERSION_01)
+	if (s->resmgr->_sciVersion >= SCI_VERSION_01)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
@@ -611,7 +611,7 @@ int game_init(EngineState *s) {
 	s->successor = NULL; // No successor
 	s->status_bar_text = NULL; // Status bar is blank
 	s->status_bar_foreground = 0;
-	s->status_bar_background = s->resmgr->sci_version >= SCI_VERSION_01_VGA ? 255 : 15;
+	s->status_bar_background = s->resmgr->_sciVersion >= SCI_VERSION_01_VGA ? 255 : 15;
 
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");

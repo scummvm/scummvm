@@ -736,7 +736,7 @@ int script_map_kernel(EngineState *s) {
 	int mapped = 0;
 	int ignored = 0;
 	int functions_nr = s->kernel_names_nr;
-	int max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->sci_version];
+	int max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->_sciVersion];
 
 	if (functions_nr < max_functions_nr) {
 		warning("SCI version believed to have %d kernel"

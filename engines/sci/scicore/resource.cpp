@@ -225,12 +225,12 @@ void ResourceManager::loadResource(Resource *res, bool protect) {
 
 	// First try lower-case name
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY) {
-		if (!patch_sprintfers[sci_version]) {
-			error("Resource manager's SCI version (%d) has no patch file name printers", sci_version);
+		if (!patch_sprintfers[_sciVersion]) {
+			error("Resource manager's SCI version (%d) has no patch file name printers", _sciVersion);
 		}
 
 		// Get patch file name
-		patch_sprintfers[sci_version](filename, res);
+		patch_sprintfers[_sciVersion](filename, res);
 
 		// FIXME: Instead of using SearchMan, maybe we should only search
 		// a single dir specified by this RESSOURCE_TYPE_DIRECTORY ResourceSource?
@@ -249,12 +249,12 @@ void ResourceManager::loadResource(Resource *res, bool protect) {
 
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
 		loadFromPatchFile(file, res, filename);
-	else if (!decompressors[sci_version]) {
+	else if (!decompressors[_sciVersion]) {
 		// Check whether we support this at all
-		error("Resource manager's SCI version (%d) is invalid", sci_version);
+		error("Resource manager's SCI version (%d) is invalid", _sciVersion);
 	} else {
 		int error = // Decompress from regular resource file
-		    decompressors[sci_version](res, file, sci_version);
+		    decompressors[_sciVersion](res, file, _sciVersion);
 
 		if (error) {
 			sciprintf("Error %d occured while reading %s.%03d from resource file: %s\n",
@@ -287,7 +287,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 	Resource *res;
 	int i;
 
-	mgr->sci_version = SCI_VERSION_AUTODETECT;
+	mgr->_sciVersion = SCI_VERSION_AUTODETECT;
 
 	for (i = 0; i < 1000; i++) {
 		res = mgr->testResource(sci_view, i);
@@ -308,8 +308,8 @@ int sci_test_view_type(ResourceManager *mgr) {
 		file.close();
 
 		if (compression == 3) {
-			mgr->sci_version = SCI_VERSION_01_VGA;
-			return mgr->sci_version;
+			mgr->_sciVersion = SCI_VERSION_01_VGA;
+			return mgr->_sciVersion;
 		}
 	}
 
@@ -333,12 +333,12 @@ int sci_test_view_type(ResourceManager *mgr) {
 		file.close();
 
 		if (compression == 3) {
-			mgr->sci_version = SCI_VERSION_01_VGA;
-			return mgr->sci_version;
+			mgr->_sciVersion = SCI_VERSION_01_VGA;
+			return mgr->_sciVersion;
 		}
 	}
 
-	return mgr->sci_version;
+	return mgr->_sciVersion;
 }
 
 int ResourceManager::addAppropriateSources() {
@@ -364,15 +364,15 @@ int ResourceManager::addAppropriateSources() {
 }
 
 int ResourceManager::scanNewSources(int *detected_version, ResourceSource *source) {
-	int preset_version = sci_version;
+	int preset_version = _sciVersion;
 	int resource_error = 0;
-	int dummy = sci_version;
+	int dummy = _sciVersion;
 	//Resource **concat_ptr = &(mgr->_resources[mgr->_resourcesNr - 1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
 
-	*detected_version = sci_version;
+	*detected_version = _sciVersion;
 	if (source->next)
 		scanNewSources(detected_version, source->next);
 
@@ -380,7 +380,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 		source->scanned = true;
 		switch (source->source_type) {
 		case RESSOURCE_TYPE_DIRECTORY:
-			if (sci_version <= SCI_VERSION_01)
+			if (_sciVersion <= SCI_VERSION_01)
 				readResourcePatchesSCI0(source);
 			else
 				readResourcePatchesSCI1(source);
@@ -426,7 +426,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 				}
 			}
 
-			sci_version = *detected_version;
+			_sciVersion = *detected_version;
 			break;
 		default:
 			break;
@@ -455,7 +455,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	_resources = NULL;
 	_resourcesNr = 0;
 	_sources = NULL;
-	sci_version = version;
+	_sciVersion = version;
 
 	lru_first = NULL;
 	lru_last = NULL;
@@ -517,11 +517,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		case SCI_VERSION_1: {
 			Resource *res = testResource(sci_script, 0);
 
-			sci_version = version = SCI_VERSION_1_EARLY;
+			_sciVersion = version = SCI_VERSION_1_EARLY;
 			loadResource(res, true);
 
 			if (res->status == SCI_STATUS_NOMALLOC)
-				sci_version = version = SCI_VERSION_1_LATE;
+				_sciVersion = version = SCI_VERSION_1_LATE;
 			break;
 		}
 		case SCI_VERSION_1_1:
@@ -536,7 +536,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
 	}
 
-	sci_version = version;
+	_sciVersion = version;
 }
 
 void ResourceManager::freeAltSources(resource_altsource_t *dynressrc) {
@@ -546,10 +546,10 @@ void ResourceManager::freeAltSources(resource_altsource_t *dynressrc) {
 	}
 }
 
-void ResourceManager::freeResources(Resource *resources, int _resourcesNr) {
+void ResourceManager::freeResources(Resource *resources, int resourcesNr) {
 	int i;
 
-	for (i = 0; i < _resourcesNr; i++) {
+	for (i = 0; i < resourcesNr; i++) {
 		Resource *res = resources + i;
 
 		// FIXME: alt_sources->next may point to an invalid memory location
@@ -658,8 +658,8 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 Resource *ResourceManager::findResource(int type, int number, int lock) {
 	Resource *retval;
 
-	if (number >= sci_max_resource_nr[sci_version]) {
-		int modded_number = number % sci_max_resource_nr[sci_version];
+	if (number >= sci_max_resource_nr[_sciVersion]) {
+		int modded_number = number % sci_max_resource_nr[_sciVersion];
 		sciprintf("[resmgr] Requested invalid resource %s.%d, mapped to %s.%d\n",
 		          sci_resource_types[type], number, sci_resource_types[type], modded_number);
 		number = modded_number;
