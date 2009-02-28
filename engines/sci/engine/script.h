@@ -31,7 +31,7 @@
 namespace Sci {
 
 struct EngineState;
-struct ResourceManager;
+class ResourceManager;
 
 /*#define SCRIPT_DEBUG */
 

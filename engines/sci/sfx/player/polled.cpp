@@ -176,11 +176,11 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	}
 
 	if (seq->patch_nr != SFX_SEQ_PATCHFILE_NONE) {
-		res = scir_find_resource(resmgr, sci_patch, seq->patch_nr, 0);
+		res = resmgr->findResource(sci_patch, seq->patch_nr, 0);
 	}
 
 	if (seq->patch2_nr != SFX_SEQ_PATCHFILE_NONE) {
-		res2 = scir_find_resource(resmgr, sci_patch, seq->patch2_nr, 0);
+		res2 = resmgr->findResource(sci_patch, seq->patch2_nr, 0);
 	}
 
 	if (seq->init(seq,

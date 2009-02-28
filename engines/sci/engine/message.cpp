@@ -161,7 +161,7 @@ int message_state_load_res(MessageState *state, int module) {
 		return 1;
 
 	state->module = module;
-	state->current_res = scir_find_resource(state->resmgr, sci_message, module, 0);
+	state->current_res = state->resmgr->findResource(sci_message, module, 0);
 
 	if (state->current_res == NULL || state->current_res->data == NULL) {
 		sciprintf("Message subsystem: Failed to load %d.MSG\n", module);
@@ -186,7 +186,7 @@ static MessageHandler fixed_handler = {
 };
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
-	//resource_t *tester = scir_find_resource(resmgr, sci_message, 0, 0);
+	//resource_t *tester = resmgr->findResource(sci_message, 0, 0);
 	//int version;
 
 	//if (tester == NULL)

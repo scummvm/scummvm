@@ -48,7 +48,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	else {
 		int textlen;
 		int _index = index;
-		textres = scir_find_resource(s->resmgr, sci_text, address.offset, 0);
+		textres = s->resmgr->findResource(sci_text, address.offset, 0);
 
 		if (!textres) {
 			SCIkwarn(SCIkERROR, "text.%03d not found\n", address);
@@ -709,7 +709,7 @@ reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	resource_t *textres = scir_find_resource(s->resmgr, sci_text, UKPV(0), 0);
+	resource_t *textres = s->resmgr->findResource(sci_text, UKPV(0), 0);
 	char *seeker;
 	int counter = UKPV(1);
 

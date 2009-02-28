@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-struct ResourceManager;
+class ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
 /*#define SCI_SIMPLE_SAID_CODE */ /* Whether the simplified Said() matching should be used */

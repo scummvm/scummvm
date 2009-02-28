@@ -152,8 +152,8 @@ MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 }
 
 void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
-	resource_t *script = scir_find_resource(s->resmgr, sci_script, script_nr, 0);
-	resource_t *heap = scir_find_resource(s->resmgr, sci_heap, script_nr, 0);
+	resource_t *script = s->resmgr->findResource(sci_script, script_nr, 0);
+	resource_t *heap = s->resmgr->findResource(sci_heap, script_nr, 0);
 
 	mem->data.script.script_size = script->size;
 	mem->data.script.heap_size = 0; // Set later

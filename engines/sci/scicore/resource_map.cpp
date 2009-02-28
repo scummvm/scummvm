@@ -88,7 +88,7 @@ namespace Sci {
 		| (((bytes)[3]) << 9) \
 		| (((bytes)[2]) << 1))
 
-static int detect_odd_sci01(Common::File &file) {
+int ResourceManager::detectOddSCI01(Common::File &file) {
 	byte buf[6];
 	int files_ok = 1;
 	int fsize, resource_nr, read_ok;
@@ -119,15 +119,14 @@ static int detect_odd_sci01(Common::File &file) {
 	return files_ok;
 }
 
-static int sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
-	byte *buf, resource_t *res, int sci_version) {
+int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, resource_t *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
 	res->type = SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
 	res->status = SCI_STATUS_NOMALLOC;
 
 	if (sci_version == SCI_VERSION_01_VGA_ODD) {
-		res->source = scir_get_volume(mgr, map, SCI01V_RESFILE_GET_FILE(buf + 2));
+		res->source = getVolume(map, SCI01V_RESFILE_GET_FILE(buf + 2));
 		res->file_offset = SCI01V_RESFILE_GET_OFFSET(buf + 2);
 
 #if 0
@@ -135,7 +134,7 @@ static int sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
 			return 1;
 #endif
 	} else {
-		res->source = scir_get_volume(mgr, map, SCI0_RESFILE_GET_FILE(buf + 2));
+		res->source = getVolume(map, SCI0_RESFILE_GET_FILE(buf + 2));
 		res->file_offset = SCI0_RESFILE_GET_OFFSET(buf + 2);
 
 #if 0
@@ -157,7 +156,7 @@ static int sci_res_read_entry(ResourceManager *mgr, ResourceSource *map,
 	return 0;
 }
 
-inline int sci1_res_type(int ofs, int *types, int lastrt) {
+int ResourceManager::resTypeSCI1(int ofs, int *types, int lastrt) {
 	int i, last = -1;
 
 	for (i = 0; i <= sci1_last_resource;i++)
@@ -170,7 +169,7 @@ inline int sci1_res_type(int ofs, int *types, int lastrt) {
 	return lastrt;
 }
 
-int sci1_parse_header(Common::ReadStream &stream, int *types, int *lastrt) {
+int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, int *lastrt) {
 	unsigned char rtype;
 	unsigned char offset[2];
 	int read_ok;
@@ -198,7 +197,7 @@ int sci1_parse_header(Common::ReadStream &stream, int *types, int *lastrt) {
 
 
 
-int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) {
 	int fsize;
 	Common::File file;
 	resource_t *resources;
@@ -237,7 +236,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 
 	file.seek(0, SEEK_SET);
 
-	switch (detect_odd_sci01(file)) {
+	switch (detectOddSCI01(file)) {
 	case 0 : // Odd SCI01
 		if (*sci_version == SCI_VERSION_AUTODETECT)
 			*sci_version = SCI_VERSION_01_VGA_ODD;
@@ -279,7 +278,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 			int addto = resource_index;
 			int i;
 
-			if (sci_res_read_entry(mgr, map, buf, resources + resource_index, *sci_version)) {
+			if (resReadEntry(map, buf, resources + resource_index, *sci_version)) {
 				free(resources);
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
@@ -290,7 +289,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 					fresh = 0;
 				}
 
-			_scir_add_altsource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
+			addAltSource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
 
 			if (fresh)
 				++resource_index;
@@ -308,12 +307,12 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 
 	if (!resource_index) {
 		sciprintf("resource.map was empty!\n");
-		_scir_free_resources(resources, resource_nr);
+		freeResources(resources, resource_nr);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
 	if (max_resfile_nr > 999) {
-		_scir_free_resources(resources, resource_nr);
+		freeResources(resources, resource_nr);
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	} else {
 #if 0
@@ -333,15 +332,15 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 	if (resource_index < resource_nr)
 		resources = (resource_t *)sci_realloc(resources, sizeof(resource_t) * resource_index);
 
-	*resource_p = resources;
-	*resource_nr_p = resource_index;
+	_resources = resources;
+	_resourcesNr = resource_index;
 
 	return 0;
 }
 
 #define TEST fprintf(stderr, "OK in line %d\n", __LINE__);
 
-static int sci10_or_11(int *types) {
+int ResourceManager::isSCI10or11(int *types) {
 	int this_restype = 0;
 	int next_restype = 1;
 
@@ -372,8 +371,7 @@ static int sci10_or_11(int *types) {
 	return SCI_VERSION_AUTODETECT;
 }
 
-int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSource *vol,
-	resource_t **resource_p, int *resource_nr_p, int *sci_version) {
+int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version) {
 	int fsize;
 	Common::File file;
 	resource_t *resources, *resource_start;
@@ -392,11 +390,11 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 
 	memset(types, 0, sizeof(int) * (sci1_last_resource + 1));
 
-	if (!(sci1_parse_header(file, types, &lastrt))) {
+	if (!(parseHeaderSCI1(file, types, &lastrt))) {
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 
-	entry_size_selector = sci10_or_11(types);
+	entry_size_selector = isSCI10or11(types);
 	if (*sci_version == SCI_VERSION_AUTODETECT)
 		*sci_version = entry_size_selector;
 
@@ -414,8 +412,8 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 	}
 
 	resource_nr = (fsize - types[0]) / entrysize;
-	resource_start = resources = (resource_t*)sci_realloc(mgr->_resources, (mgr->_resourcesNr + resource_nr) * sizeof(resource_t));
-	resources += mgr->_resourcesNr;
+	resource_start = resources = (resource_t*)sci_realloc(_resources, (_resourcesNr + resource_nr) * sizeof(resource_t));
+	resources += _resourcesNr;
 
 	i = 0;
 	while (types[i] == 0)
@@ -443,12 +441,12 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 		}
 
 		res = &(resources[resource_index]);
-		res->type = sci1_res_type(ofs, types, lastrt);
+		res->type = resTypeSCI1(ofs, types, lastrt);
 		res->number = SCI1_RESFILE_GET_NUMBER(buf);
 		res->status = SCI_STATUS_NOMALLOC;
 
 		if (entry_size_selector < SCI_VERSION_1_1) {
-			res->source = scir_get_volume(mgr, map, SCI1_RESFILE_GET_FILE(buf));
+			res->source = getVolume(map, SCI1_RESFILE_GET_FILE(buf));
 			res->file_offset = SCI1_RESFILE_GET_OFFSET(buf);
 		} else {
 			res->source = vol;
@@ -470,7 +468,7 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 		        res->file, res->file_offset, addto);
 #endif
 
-		_scir_add_altsource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
+		addAltSource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
 
 		if (fresh)
 			++resource_index;
@@ -480,8 +478,8 @@ int sci1_read_resource_map(ResourceManager *mgr, ResourceSource *map, ResourceSo
 
 	free(types);
 
-	*resource_p = resource_start;
-	*resource_nr_p += resource_index;
+	_resources = resource_start;
+	_resourcesNr += resource_index;
 	return 0;
 
 }

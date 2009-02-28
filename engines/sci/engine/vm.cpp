@@ -1595,13 +1595,13 @@ void script_detect_versions(EngineState *s) {
 	int c;
 	resource_t *script = {0};
 
-	if (scir_find_resource(s->resmgr, sci_heap, 0, 0)) {
+	if (s->resmgr->findResource(sci_heap, 0, 0)) {
 		version_require_later_than(s, SCI_VERSION(1, 001, 000));
 		return;
 	}
 
 	for (c = 0; c < 1000; c++) {
-		if ((script = scir_find_resource(s->resmgr, sci_script, c, 0))) {
+		if ((script = s->resmgr->findResource(sci_script, c, 0))) {
 
 			int id = getInt16(script->data);
 
@@ -1679,9 +1679,9 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 
 	*was_new = 1;
 
-	*script = scir_find_resource(s->resmgr, sci_script, script_nr, 0);
+	*script = s->resmgr->findResource(sci_script, script_nr, 0);
 	if (s->version >= SCI_VERSION(1, 001, 000))
-		*heap = scir_find_resource(s->resmgr, sci_heap, script_nr, 0);
+		*heap = s->resmgr->findResource(sci_heap, script_nr, 0);
 
 	if (!*script || (s->version >= SCI_VERSION(1, 001, 000) && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);

@@ -71,7 +71,7 @@ void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal) {
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
 	int flags, int default_palette, int nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
-	resource_t *res = scir_find_resource(resmgr, sci_pic, nr, 0);
+	resource_t *res = resmgr->findResource(sci_pic, nr, 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
 
@@ -149,7 +149,7 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
 
 gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette) {
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
-	resource_t *res = scir_find_resource(resmgr, sci_view, nr, 0);
+	resource_t *res = resmgr->findResource(sci_view, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 	gfxr_view_t *result = 0;
 
@@ -188,7 +188,7 @@ gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *inte
 
 gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *)state->misc_payload;
-	resource_t *res = scir_find_resource(resmgr, sci_font, nr, 0);
+	resource_t *res = resmgr->findResource(sci_font, nr, 0);
 	if (!res || !res->data)
 		return NULL;
 
@@ -197,7 +197,7 @@ gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void
 
 gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal) {
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
-	resource_t *res = scir_find_resource(resmgr, sci_cursor, nr, 0);
+	resource_t *res = resmgr->findResource(sci_cursor, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
 
 	if (!res || !res->data)
@@ -247,7 +247,7 @@ int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t t
 	resources = (int *)sci_malloc(sizeof(int) * top);
 
 	for (i = 0; i < top; i++)
-		if (scir_test_resource(resmgr, restype, i))
+		if (resmgr->testResource(restype, i))
 			resources[count++] = i;
 
 	*entries_nr = count;
@@ -270,7 +270,7 @@ gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int vers
 	if (version < SCI_VERSION_01_VGA)
 		return NULL;
 
-	res = scir_find_resource(resmgr, sci_palette, nr, 0);
+	res = resmgr->findResource(sci_palette, nr, 0);
 	if (!res || !res->data)
 		return NULL;
 

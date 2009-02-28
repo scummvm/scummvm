@@ -841,7 +841,7 @@ static int c_list(EngineState *s) {
 					sciprintf("Unknown resource type: '%s'\n", cmd_params[0].str);
 				else {
 					for (i = 0; i < sci_max_resource_nr[s->resmgr->sci_version]; i++)
-						if (scir_test_resource(s->resmgr, res, i))
+						if (s->resmgr->testResource(res, i))
 							sciprintf("%s.%03d\n", sci_resource_types[res], i);
 				}
 			}
@@ -913,7 +913,7 @@ static int c_size(EngineState *s) {
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
-		resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
+		resource_t *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
 		if (resource) {
 			sciprintf("Size: %d\n", resource->size);
 		} else
@@ -929,7 +929,7 @@ static int c_dump(EngineState *s) {
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
-		resource_t *resource = scir_find_resource(s->resmgr, res, cmd_params[1].val, 0);
+		resource_t *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
 		if (resource)
 			sci_hexdump(resource->data, resource->size, 0);
 		else
@@ -975,7 +975,7 @@ static int c_hexgrep(EngineState *s) {
 	}
 
 	for (; resnr <= resmax; resnr++)
-		if ((script = scir_find_resource(s->resmgr, restype, resnr, 0))) {
+		if ((script = s->resmgr->findResource(restype, resnr, 0))) {
 			unsigned int seeker = 0, seekerold = 0;
 			int comppos = 0;
 			int output_script_name = 0;

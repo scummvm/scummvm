@@ -40,8 +40,8 @@ void sci1_sprintf_patch_file_name(char *string, resource_t *res) {
 }
 
 // version-agnostic patch application
-static void process_patch(ResourceSource *source,
-	Common::ArchiveMember &member, int restype, int resnumber, resource_t **resource_p, int *resource_nr_p) {
+void ResourceManager::process_patch(ResourceSource *source,
+	Common::ArchiveMember &member, int restype, int resnumber) {
 	Common::File file;
 
 	if (restype == sci_invalid_resource)
@@ -52,7 +52,7 @@ static void process_patch(ResourceSource *source,
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 	else {
 		uint8 filehdr[2];
-		resource_t *newrsc = _scir_find_resource_unsorted(*resource_p, *resource_nr_p, restype, resnumber);
+		resource_t *newrsc = findResourceUnsorted(_resources, _resourcesNr, restype, resnumber);
 		int fsize = file.size();
 		if (fsize < 3) {
 			printf("File too small\n");
@@ -76,9 +76,9 @@ static void process_patch(ResourceSource *source,
 			// Prepare destination, if neccessary
 			if (!newrsc) {
 				// Completely new resource!
-				++(*resource_nr_p);
-				*resource_p = (resource_t *)sci_realloc(*resource_p, *resource_nr_p * sizeof(resource_t));
-				newrsc = (*resource_p - 1) + *resource_nr_p;
+				_resourcesNr++;
+				_resources = (resource_t *)sci_realloc(_resources, _resourcesNr * sizeof(resource_t));
+				newrsc = (_resources - 1) + _resourcesNr;
 				newrsc->alt_sources = NULL;
 			}
 
@@ -90,16 +90,14 @@ static void process_patch(ResourceSource *source,
 			newrsc->type = restype;
 			newrsc->source = source;
 			newrsc->file_offset = 2 + patch_data_offset;
-
-			_scir_add_altsource(newrsc, source, 2);
-
+			addAltSource(newrsc, source, 2);
 			printf("OK\n");
 		}
 	}
 }
 
 
-int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
+int ResourceManager::readResourcePatchesSCI0(ResourceSource *source) {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.???");
 
@@ -130,13 +128,13 @@ int sci0_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 			}
 		}
 
-		process_patch(source, **x, restype, resnumber, resource_p, resource_nr_p);
+		process_patch(source, **x, restype, resnumber);
 	}
 
 	return 0;
 }
 
-int sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, int *resource_nr_p) {
+int ResourceManager::readResourcePatchesSCI1(ResourceSource *source) {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.*");
 
@@ -169,7 +167,7 @@ int sci1_read_resource_patches(ResourceSource *source, resource_t **resource_p, 
 				restype = sci_invalid_resource;
 		}
 
-		process_patch(source, **x, restype, resnumber, resource_p, resource_nr_p);
+		process_patch(source, **x, restype, resnumber);
 	}
 
 	return 0;

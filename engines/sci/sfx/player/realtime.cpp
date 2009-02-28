@@ -132,7 +132,7 @@ static resource_t *find_patch(ResourceManager *resmgr, const char *seq_name, int
 	resource_t *res = NULL;
 
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
-		res = scir_find_resource(resmgr, sci_patch, patchfile, 0);
+		res = resmgr->findResource(sci_patch, patchfile, 0);
 		if (!res) {
 			fprintf(stderr, "[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
 			        patchfile, seq_name);

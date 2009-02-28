@@ -133,11 +133,11 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (state) {
 	case 1 :
-		scir_find_resource(s->resmgr, restype, resnr, 1);
+		s->resmgr->findResource(restype, resnr, 1);
 		break;
 	case 0 :
-		which = scir_find_resource(s->resmgr, restype, resnr, 0);
-		scir_unlock_resource(s->resmgr, which, resnr, restype);
+		which = s->resmgr->findResource(restype, resnr, 0);
+		s->resmgr->unlockResource(which, resnr, restype);
 		break;
 	}
 	return s->r_acc;
