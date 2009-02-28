@@ -82,6 +82,8 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 		return 0;
 
 	Common::FSNode file = savePath.getChild(filename);
+	if (!file.exists())
+		return 0;
 
 	// Open the file for reading
 	Common::SeekableReadStream *sf = file.createReadStream();
