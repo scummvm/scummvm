@@ -664,7 +664,7 @@ void Screen::renderParallax(uint8 *data) {
 			uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX/* * 2*/;
 			uint8 pix;
 			for (uint16 idx = 0; (idx < SCREEN_WIDTH) && (idx < paraSizeX); idx++) // make sure we don't write outside screen
-				if (pix = *(src + idx)) //If data is 0x00, don't write (transparency)
+				if ((pix = *(src + idx))) //If data is 0x00, don't write (transparency)
 					*(dest + idx) = pix;
 		}
 	else
