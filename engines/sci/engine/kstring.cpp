@@ -41,7 +41,7 @@ namespace Sci {
 /* Returns the string the script intended to address */
 char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	char *seeker;
-	resource_t *textres;
+	Resource *textres;
 
 	if (address.segment)
 		return (char *)kernel_dereference_bulk_pointer(s, address, 0);
@@ -709,7 +709,7 @@ reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	resource_t *textres = s->resmgr->findResource(sci_text, UKPV(0), 0);
+	Resource *textres = s->resmgr->findResource(sci_text, UKPV(0), 0);
 	char *seeker;
 	int counter = UKPV(1);
 

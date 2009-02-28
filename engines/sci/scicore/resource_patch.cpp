@@ -31,11 +31,11 @@
 
 namespace Sci {
 
-void sci0_sprintf_patch_file_name(char *string, resource_t *res) {
+void sci0_sprintf_patch_file_name(char *string, Resource *res) {
 	sprintf(string, "%s.%03i", sci_resource_types[res->type], res->number);
 }
 
-void sci1_sprintf_patch_file_name(char *string, resource_t *res) {
+void sci1_sprintf_patch_file_name(char *string, Resource *res) {
 	sprintf(string, "%d.%s", res->number, sci_resource_type_suffixes[res->type]);
 }
 
@@ -52,7 +52,7 @@ void ResourceManager::process_patch(ResourceSource *source,
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 	else {
 		uint8 filehdr[2];
-		resource_t *newrsc = findResourceUnsorted(_resources, _resourcesNr, restype, resnumber);
+		Resource *newrsc = findResourceUnsorted(_resources, _resourcesNr, restype, resnumber);
 		int fsize = file.size();
 		if (fsize < 3) {
 			printf("File too small\n");
@@ -77,7 +77,7 @@ void ResourceManager::process_patch(ResourceSource *source,
 			if (!newrsc) {
 				// Completely new resource!
 				_resourcesNr++;
-				_resources = (resource_t *)sci_realloc(_resources, _resourcesNr * sizeof(resource_t));
+				_resources = (Resource *)sci_realloc(_resources, _resourcesNr * sizeof(Resource));
 				newrsc = (_resources - 1) + _resourcesNr;
 				newrsc->alt_sources = NULL;
 			}

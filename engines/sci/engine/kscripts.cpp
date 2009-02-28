@@ -129,7 +129,7 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int resnr = UKPV(1);
 	int state = argc > 2 ? UKPV(2) : 1;
 
-	resource_t *which;
+	Resource *which;
 
 	switch (state) {
 	case 1 :

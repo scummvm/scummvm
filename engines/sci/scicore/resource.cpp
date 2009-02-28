@@ -81,8 +81,8 @@ const char *sci_resource_type_suffixes[] = {"v56", "p56", "scr", "tex", "snd",
 
 int resourcecmp(const void *first, const void *second);
 
-typedef int decomp_funct(resource_t *result, Common::ReadStream &stream, int sci_version);
-typedef void patch_sprintf_funct(char *string, resource_t *res);
+typedef int decomp_funct(Resource *result, Common::ReadStream &stream, int sci_version);
+typedef void patch_sprintf_funct(char *string, Resource *res);
 
 static decomp_funct *decompressors[] = {
 	NULL,
@@ -110,21 +110,21 @@ static patch_sprintf_funct *patch_sprintfers[] = {
 
 
 int resourcecmp(const void *first, const void *second) {
-	if (((resource_t *)first)->type ==
-	        ((resource_t *)second)->type)
-		return (((resource_t *)first)->number <
-		        ((resource_t *)second)->number) ? -1 :
-		       !(((resource_t *)first)->number ==
-		         ((resource_t *)second)->number);
+	if (((Resource *)first)->type ==
+	        ((Resource *)second)->type)
+		return (((Resource *)first)->number <
+		        ((Resource *)second)->number) ? -1 :
+		       !(((Resource *)first)->number ==
+		         ((Resource *)second)->number);
 	else
-		return (((resource_t *)first)->type <
-		        ((resource_t *)second)->type) ? -1 : 1;
+		return (((Resource *)first)->type <
+		        ((Resource *)second)->type) ? -1 : 1;
 }
 
 
 //-- Resmgr helper functions --
 
-void ResourceManager::addAltSource(resource_t *res, ResourceSource *source, unsigned int file_offset) {
+void ResourceManager::addAltSource(Resource *res, ResourceSource *source, unsigned int file_offset) {
 	resource_altsource_t *rsrc = (resource_altsource_t *)sci_malloc(sizeof(resource_altsource_t));
 
 	rsrc->next = res->alt_sources;
@@ -133,7 +133,7 @@ void ResourceManager::addAltSource(resource_t *res, ResourceSource *source, unsi
 	res->alt_sources = rsrc;
 }
 
-resource_t *ResourceManager::findResourceUnsorted(resource_t *res, int res_nr, int type, int number) {
+Resource *ResourceManager::findResourceUnsorted(Resource *res, int res_nr, int type, int number) {
 	int i;
 	for (i = 0; i < res_nr; i++)
 		if (res[i].number == number && res[i].type == type)
@@ -203,7 +203,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 // Resource manager constructors and operations
 
-void ResourceManager::loadFromPatchFile(Common::File &file, resource_t *res, char *filename) {
+void ResourceManager::loadFromPatchFile(Common::File &file, Resource *res, char *filename) {
 	unsigned int really_read;
 
 	res->data = (unsigned char *)sci_malloc(res->size);
@@ -216,12 +216,12 @@ void ResourceManager::loadFromPatchFile(Common::File &file, resource_t *res, cha
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
-void ResourceManager::loadResource(resource_t *res, bool protect) {
+void ResourceManager::loadResource(Resource *res, bool protect) {
 	char filename[MAXPATHLEN];
 	Common::File file;
-	resource_t backup;
+	Resource backup;
 
-	memcpy(&backup, res, sizeof(resource_t));
+	memcpy(&backup, res, sizeof(Resource));
 
 	// First try lower-case name
 	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY) {
@@ -261,7 +261,7 @@ void ResourceManager::loadResource(resource_t *res, bool protect) {
 			          error, sci_resource_types[res->type], res->number, sci_error_types[error]);
 
 			if (protect)
-				memcpy(res, &backup, sizeof(resource_t));
+				memcpy(res, &backup, sizeof(Resource));
 
 			res->data = NULL;
 			res->status = SCI_STATUS_NOMALLOC;
@@ -271,11 +271,11 @@ void ResourceManager::loadResource(resource_t *res, bool protect) {
 
 }
 
-resource_t *ResourceManager::testResource(int type, int number) {
-	resource_t binseeker;
+Resource *ResourceManager::testResource(int type, int number) {
+	Resource binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
-	return (resource_t *)bsearch(&binseeker, _resources, _resourcesNr, sizeof(resource_t), resourcecmp);
+	return (Resource *)bsearch(&binseeker, _resources, _resourcesNr, sizeof(Resource), resourcecmp);
 }
 
 int sci0_get_compression_method(Common::ReadStream &stream);
@@ -284,7 +284,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 	Common::File file;
 	char filename[MAXPATHLEN];
 	int compression;
-	resource_t *res;
+	Resource *res;
 	int i;
 
 	mgr->sci_version = SCI_VERSION_AUTODETECT;
@@ -367,7 +367,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 	int preset_version = sci_version;
 	int resource_error = 0;
 	int dummy = sci_version;
-	//resource_t **concat_ptr = &(mgr->_resources[mgr->_resourcesNr - 1].next);
+	//Resource **concat_ptr = &(mgr->_resources[mgr->_resourcesNr - 1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
@@ -404,7 +404,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
 					// Initialize empty resource manager
 					mgr->_resourcesNr = 0;
-					mgr->_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
+					mgr->_resources = 0; // FIXME: Was = (Resource*)sci_malloc(1);
 					resource_error = 0;
 				}
 #endif
@@ -421,7 +421,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
 					// Initialize empty resource manager
 					_resourcesNr = 0;
-					_resources = 0; // FIXME: Was = (resource_t*)sci_malloc(1);
+					_resources = 0; // FIXME: Was = (Resource*)sci_malloc(1);
 					resource_error = 0;
 				}
 			}
@@ -431,7 +431,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 		default:
 			break;
 		}
-		qsort(_resources, _resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
+		qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
 	}
 	return resource_error;
 }
@@ -474,7 +474,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 //		return NULL;
 	}
 
-	qsort(_resources, _resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
+	qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
 
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (resmap_version) {
@@ -515,7 +515,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			sciprintf("Resmgr: Detected Jones/CD or similar\n");
 			break;
 		case SCI_VERSION_1: {
-			resource_t *res = testResource(sci_script, 0);
+			Resource *res = testResource(sci_script, 0);
 
 			sci_version = version = SCI_VERSION_1_EARLY;
 			loadResource(res, true);
@@ -533,7 +533,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		}
 
 	if (!resource_error) {
-		qsort(_resources, _resourcesNr, sizeof(resource_t), resourcecmp); // Sort resources
+		qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
 	}
 
 	sci_version = version;
@@ -546,11 +546,11 @@ void ResourceManager::freeAltSources(resource_altsource_t *dynressrc) {
 	}
 }
 
-void ResourceManager::freeResources(resource_t *resources, int _resourcesNr) {
+void ResourceManager::freeResources(Resource *resources, int _resourcesNr) {
 	int i;
 
 	for (i = 0; i < _resourcesNr; i++) {
-		resource_t *res = resources + i;
+		Resource *res = resources + i;
 
 		// FIXME: alt_sources->next may point to an invalid memory location
 		freeAltSources(res->alt_sources);
@@ -568,13 +568,13 @@ ResourceManager::~ResourceManager() {
 	_resources = NULL;
 }
 
-void ResourceManager::unalloc(resource_t *res) {
+void ResourceManager::unalloc(Resource *res) {
 	free(res->data);
 	res->data = NULL;
 	res->status = SCI_STATUS_NOMALLOC;
 }
 
-void ResourceManager::removeFromLRU(resource_t *res) {
+void ResourceManager::removeFromLRU(Resource *res) {
 	if (res->status != SCI_STATUS_ENQUEUED) {
 		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
 		return;
@@ -594,7 +594,7 @@ void ResourceManager::removeFromLRU(resource_t *res) {
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
-void ResourceManager::addToLRU(resource_t *res) {
+void ResourceManager::addToLRU(Resource *res) {
 	if (res->status != SCI_STATUS_ALLOCATED) {
 		sciprintf("Resmgr: Oops: trying to enqueue resource with state %d\n", res->status);
 		return;
@@ -622,7 +622,7 @@ void ResourceManager::addToLRU(resource_t *res) {
 void ResourceManager::printLRU() {
 	int mem = 0;
 	int entries = 0;
-	resource_t *res = lru_first;
+	Resource *res = lru_first;
 
 	while (res) {
 		fprintf(stderr, "\t%s.%03d: %d bytes\n",
@@ -639,7 +639,7 @@ void ResourceManager::printLRU() {
 
 void ResourceManager::freeOldResources(int last_invulnerable) {
 	while (_maxMemory < _memoryLRU && (!last_invulnerable || lru_first != lru_last)) {
-		resource_t *goner = lru_last;
+		Resource *goner = lru_last;
 		if (!goner) {
 			fprintf(stderr, "Internal error: mgr->lru_last is NULL!\n");
 			fprintf(stderr, "LRU-mem= %d\n", _memoryLRU);
@@ -655,8 +655,8 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 	}
 }
 
-resource_t *ResourceManager::findResource(int type, int number, int lock) {
-	resource_t *retval;
+Resource *ResourceManager::findResource(int type, int number, int lock) {
+	Resource *retval;
 
 	if (number >= sci_max_resource_nr[sci_version]) {
 		int modded_number = number % sci_max_resource_nr[sci_version];
@@ -702,7 +702,7 @@ resource_t *ResourceManager::findResource(int type, int number, int lock) {
 	}
 }
 
-void ResourceManager::unlockResource(resource_t *res, int resnum, int restype) {
+void ResourceManager::unlockResource(Resource *res, int resnum, int restype) {
 	if (!res) {
 		if (restype >= ARRAYSIZE(sci_resource_types))
 			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);

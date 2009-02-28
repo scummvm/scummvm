@@ -245,7 +245,7 @@ static void sci01_song_header_dump(byte *data, int size) {
 #undef SONGDATA
 
 int c_sfx_01_header(EngineState *s) {
-	resource_t *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
 
 	if (!song) {
 		sciprintf("Doesn't exist\n");
@@ -258,7 +258,7 @@ int c_sfx_01_header(EngineState *s) {
 }
 
 int c_sfx_01_track(EngineState *s) {
-	resource_t *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
 
 	int offset = cmd_params[1].val;
 
@@ -2406,7 +2406,7 @@ int c_simkey(EngineState *s) {
 }
 
 static int c_is_sample(EngineState *s) {
-	resource_t *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
 	song_iterator_t *songit;
 	sfx_pcm_feed_t *data;
 

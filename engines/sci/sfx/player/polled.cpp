@@ -159,7 +159,7 @@ static int pp_set_option(char *name, char *value) {
 }
 
 static int pp_init(ResourceManager *resmgr, int expected_latency) {
-	resource_t *res = NULL, *res2 = NULL;
+	Resource *res = NULL, *res2 = NULL;
 
 	if (!mixer)
 		return SFX_ERROR;

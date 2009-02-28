@@ -186,7 +186,7 @@ static MessageHandler fixed_handler = {
 };
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
-	//resource_t *tester = resmgr->findResource(sci_message, 0, 0);
+	//Resource *tester = resmgr->findResource(sci_message, 0, 0);
 	//int version;
 
 	//if (tester == NULL)

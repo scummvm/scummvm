@@ -490,7 +490,7 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	return outbuffer;
 }
 
-int decompress01(resource_t *result, Common::ReadStream &stream, int sci_version) {
+int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;

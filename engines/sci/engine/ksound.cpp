@@ -93,7 +93,7 @@ namespace Sci {
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
-	resource_t *song = s->resmgr->findResource(sci_sound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(sci_sound, song_nr, 0);
 	int flags = GET_SEL32V(obj, flags);
 
 	if (priority == -1) {
@@ -110,7 +110,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 }
 
 song_iterator_t *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id) {
-	resource_t *song = s->resmgr->findResource(sci_sound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(sci_sound, song_nr, 0);
 
 	if (!song)
 		return NULL;

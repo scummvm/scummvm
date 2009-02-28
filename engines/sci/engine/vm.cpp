@@ -1593,7 +1593,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 // Detects SCI versions by their different script header
 void script_detect_versions(EngineState *s) {
 	int c;
-	resource_t *script = {0};
+	Resource *script = {0};
 
 	if (s->resmgr->findResource(sci_heap, 0, 0)) {
 		version_require_later_than(s, SCI_VERSION(1, 001, 000));
@@ -1670,7 +1670,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, reg))
 
-int script_instantiate_common(EngineState *s, int script_nr, resource_t **script, resource_t **heap, int *was_new) {
+int script_instantiate_common(EngineState *s, int script_nr, Resource **script, Resource **heap, int *was_new) {
 	int seg;
 	int seg_id;
 	int marked_for_deletion;
@@ -1740,7 +1740,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	int seg_id;
 	int relocation = -1;
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
-	resource_t *script;
+	Resource *script;
 	int was_new;
 
 	seg_id = script_instantiate_common(s, script_nr, &script, NULL, &was_new);
@@ -1888,7 +1888,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 }
 
 int script_instantiate_sci11(EngineState *s, int script_nr) {
-	resource_t *script, *heap;
+	Resource *script, *heap;
 	int seg_id;
 	int heap_start;
 	reg_t reg;

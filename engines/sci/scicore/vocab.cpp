@@ -72,7 +72,7 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
 
-	resource_t *resource;
+	Resource *resource;
 
 	// First try to load the SCI0 vocab resource.
 	resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
@@ -179,7 +179,7 @@ static inline unsigned int inverse_16(unsigned int foo) {
 suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	int counter = 0;
 	suffix_t **suffices;
-	resource_t *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
+	Resource *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
 	unsigned int seeker = 1;
 
 	if (!resource) {
@@ -241,7 +241,7 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches) {
 }
 
 parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
-	resource_t *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
+	Resource *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
 	parse_tree_branch_t *retval;
 	int i;
 

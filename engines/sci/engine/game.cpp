@@ -119,7 +119,7 @@ static void _sci1_alloc_system_colors(EngineState *s) {
 }
 
 int _reset_graphics_input(EngineState *s) {
-	resource_t *resource;
+	Resource *resource;
 	int font_nr;
 	gfx_color_t transparent;
 	sciprintf("Initializing graphics\n");
@@ -279,7 +279,7 @@ int game_init_sound(EngineState *s, int sound_flags) {
 
 /* Maps a class ID to the script the corresponding class is contained in
    Returns the script number suggested by vocab.996, or -1 if there's none */
-static int suggested_script(resource_t *res, unsigned int classId) {
+static int suggested_script(Resource *res, unsigned int classId) {
 	int offset;
 
 	if (!res || classId >= res->size >> 2)
@@ -307,7 +307,7 @@ int create_class_table_sci11(EngineState *s) {
 	char *seeker_ptr;
 	int classnr;
 
-	resource_t *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
 
 	if (!vocab996)
 		s->classtable_size = 20;
@@ -317,7 +317,7 @@ int create_class_table_sci11(EngineState *s) {
 	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		resource_t *heap = s->resmgr->findResource(sci_heap, scriptnr, 0);
+		Resource *heap = s->resmgr->findResource(sci_heap, scriptnr, 0);
 
 		if (heap) {
 			int global_vars = getUInt16(heap->data + 2);
@@ -362,7 +362,7 @@ static int create_class_table_sci0(EngineState *s) {
 	int classnr;
 	int magic_offset; // For strange scripts in older SCI versions
 
-	resource_t *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
 
 	if (!vocab996)
 		s->classtable_size = 20;
@@ -373,7 +373,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		int objtype = 0;
-		resource_t *script = s->resmgr->findResource(sci_script, scriptnr, 0);
+		Resource *script = s->resmgr->findResource(sci_script, scriptnr, 0);
 
 		if (script) {
 			if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)

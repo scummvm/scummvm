@@ -234,7 +234,7 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 	return compressionMethod;
 }
 
-int decompress0(resource_t *result, Common::ReadStream &stream, int sci_version) {
+int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;

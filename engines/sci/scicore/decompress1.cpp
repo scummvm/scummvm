@@ -267,7 +267,7 @@ int decrypt4(uint8* dest, uint8* src, int length, int complength) {
 void decryptinit3();
 int decrypt3(uint8* dest, uint8* src, int length, int complength);
 
-int decompress1(resource_t *result, Common::ReadStream &stream, int sci_version) {
+int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;

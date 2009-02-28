@@ -64,7 +64,7 @@ struct MessageState {
 	int initialized;
 	MessageHandler *handler;
 	ResourceManager *resmgr;
-	resource_t *current_res;
+	Resource *current_res;
 	int module;
 	int record_count;
 	byte *index_records;

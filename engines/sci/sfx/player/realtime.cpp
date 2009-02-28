@@ -128,8 +128,8 @@ static void rt_timer_callback(void) {
 	}
 }
 
-static resource_t *find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
-	resource_t *res = NULL;
+static Resource *find_patch(ResourceManager *resmgr, const char *seq_name, int patchfile) {
+	Resource *res = NULL;
 
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
 		res = resmgr->findResource(sci_patch, patchfile, 0);
@@ -149,7 +149,7 @@ static int rt_set_option(char *name, char *value) {
 }
 
 static int rt_init(ResourceManager *resmgr, int expected_latency) {
-	resource_t *res = NULL, *res2 = NULL;
+	Resource *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
 
 	seq = sfx_find_sequencer(NULL);

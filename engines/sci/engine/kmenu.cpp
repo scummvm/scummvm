@@ -203,7 +203,7 @@ void about_freesci(EngineState *s) {
 	int page;
 	gfxw_port_t *port;
 	int bodyfont, titlefont;
-	resource_t *bodyfont_res = NULL;
+	Resource *bodyfont_res = NULL;
 	int i;
 
 	titlefont = s->titlebar_port->font_nr;

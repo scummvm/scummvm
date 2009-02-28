@@ -913,7 +913,7 @@ static int c_size(EngineState *s) {
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
-		resource_t *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
+		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
 		if (resource) {
 			sciprintf("Size: %d\n", resource->size);
 		} else
@@ -929,7 +929,7 @@ static int c_dump(EngineState *s) {
 	if (res == -1)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
-		resource_t *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
+		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
 		if (resource)
 			sci_hexdump(resource->data, resource->size, 0);
 		else
@@ -942,7 +942,7 @@ static int c_dump(EngineState *s) {
 static int c_hexgrep(EngineState *s) {
 	int i, seeklen, resnr, restype, resmax;
 	unsigned char *seekstr = NULL;
-	resource_t *script = NULL;
+	Resource *script = NULL;
 	char *dot = strchr(cmd_params[0].str, '.');
 
 	if (NULL == s) {

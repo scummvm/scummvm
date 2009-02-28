@@ -4942,7 +4942,7 @@ static int clone_entry_used(CloneTable *table, int n) {
 }
 
 static void load_script(EngineState *s, SegmentId seg) {
-	resource_t *script, *heap = NULL;
+	Resource *script, *heap = NULL;
 	Script *scr = &(s->seg_manager->heap[seg]->data.script);
 
 	scr->buf = (byte *)malloc(scr->buf_size);

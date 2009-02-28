@@ -119,7 +119,7 @@ int ResourceManager::detectOddSCI01(Common::File &file) {
 	return files_ok;
 }
 
-int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, resource_t *res, int sci_version) {
+int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
 	res->type = SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
@@ -200,7 +200,7 @@ int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, int
 int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) {
 	int fsize;
 	Common::File file;
-	resource_t *resources;
+	Resource *resources;
 	int resource_nr;
 	int resource_index = 0;
 	int resources_total_read = 0;
@@ -257,7 +257,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 
 	resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
 
-	resources = (resource_t *)sci_calloc(resource_nr, sizeof(resource_t));
+	resources = (Resource *)sci_calloc(resource_nr, sizeof(Resource));
 	// Sets valid default values for most entries
 
 	do {
@@ -330,7 +330,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 	}
 
 	if (resource_index < resource_nr)
-		resources = (resource_t *)sci_realloc(resources, sizeof(resource_t) * resource_index);
+		resources = (Resource *)sci_realloc(resources, sizeof(Resource) * resource_index);
 
 	_resources = resources;
 	_resourcesNr = resource_index;
@@ -374,7 +374,7 @@ int ResourceManager::isSCI10or11(int *types) {
 int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version) {
 	int fsize;
 	Common::File file;
-	resource_t *resources, *resource_start;
+	Resource *resources, *resource_start;
 	int resource_nr;
 	int resource_index = 0;
 	int ofs, header_size;
@@ -412,7 +412,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	}
 
 	resource_nr = (fsize - types[0]) / entrysize;
-	resource_start = resources = (resource_t*)sci_realloc(_resources, (_resourcesNr + resource_nr) * sizeof(resource_t));
+	resource_start = resources = (Resource*)sci_realloc(_resources, (_resourcesNr + resource_nr) * sizeof(Resource));
+	memset(resource_start + sizeof(Resource) * _resourcesNr, 0, resource_nr * sizeof(Resource));
 	resources += _resourcesNr;
 
 	i = 0;
@@ -425,7 +426,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	for (i = 0; i < resource_nr; i++) {
 		int read_ok = file.read(&buf, entrysize);
 		int j;
-		resource_t *res;
+		Resource *res;
 		int addto = resource_index;
 		int fresh = 1;
 
@@ -487,7 +488,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 #ifdef TEST_RESOURCE_MAP
 int main(int argc, char **argv) {
 	int resource_nr;
-	resource_t *resources;
+	Resource *resources;
 	int notok = sci0_read_resource_map(".", &resources, &resource_nr);
 
 	if (notok) {
@@ -501,7 +502,7 @@ int main(int argc, char **argv) {
 		printf("Found %d resources:\n", resource_nr);
 
 		for (i = 0; i < resource_nr; i++) {
-			resource_t *res = resources + i;
+			Resource *res = resources + i;
 
 			printf("#%04d:\tRESOURCE.%03d:%8d\t%s.%03d\n", i, res->file, res->file_offset,
 					sci_resource_types[res->type], res->number);

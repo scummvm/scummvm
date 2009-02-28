@@ -155,7 +155,7 @@ int getInt(unsigned char* d) {
 }
 
 int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
-	resource_t* r;
+	Resource* r;
 	int *c;
 	unsigned int i;
 
@@ -172,7 +172,7 @@ int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 }
 
 int vocabulary_get_class_count(ResourceManager *resmgr) {
-	resource_t* r;
+	Resource* r;
 
 	if ((r = resmgr->findResource(sci_vocab, 996, 0)) == 0)
 		return 0;
@@ -183,7 +183,7 @@ int vocabulary_get_class_count(ResourceManager *resmgr) {
 bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames) {
 	int count;
 
-	resource_t *r = resmgr->findResource(sci_vocab, 997, 0);
+	Resource *r = resmgr->findResource(sci_vocab, 997, 0);
 
 	if (!r) // No such resource?
 		return false;
@@ -218,7 +218,7 @@ int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char 
 opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 	opcode* o;
 	int count, i = 0;
-	resource_t* r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_OPCODES, 0);
+	Resource* r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_OPCODES, 0);
 
 	// if the resource couldn't be loaded, leave
 	if (r == NULL) {
@@ -263,7 +263,7 @@ void vocabulary_free_opcodes(opcode *opcodes) {
 }
 
 // Alternative kernel func names retriever. Required for KQ1/SCI (at least).
-static char **_vocabulary_get_knames0alt(int *names, resource_t *r) {
+static char **_vocabulary_get_knames0alt(int *names, Resource *r) {
 	unsigned int mallocsize = 32;
 	char **retval = (char **)sci_malloc(sizeof(char *) * mallocsize);
 	unsigned int i = 0, index = 0;
@@ -295,7 +295,7 @@ static char **_vocabulary_get_knames0alt(int *names, resource_t *r) {
 static char **vocabulary_get_knames0(ResourceManager *resmgr, int* names) {
 	char** t;
 	int count, i, index = 2, empty_to_add = 1;
-	resource_t *r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
+	Resource *r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
 
 	if (!r) { // No kernel name table found? Fall back to default table
 		t = (char **)sci_malloc((SCI0_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
@@ -345,7 +345,7 @@ static char **vocabulary_get_knames0(ResourceManager *resmgr, int* names) {
 static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	char **t = NULL;
 	unsigned int size = 64, used = 0, pos = 0;
-	resource_t *r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
+	Resource *r = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_KNAMES, 0);
 
 	while (pos < r->size) {
 		int len;
