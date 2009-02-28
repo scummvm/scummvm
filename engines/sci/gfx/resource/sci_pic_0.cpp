@@ -1644,10 +1644,12 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				p0printf("Embedded view @%d\n", pos);
 
+#if 0
 				// Set up mode structure for resizing the view
 				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
 				mode = gfx_new_mode(pic->visual_map->index_xl / 320,
 				           pic->visual_map->index_yl / 200, format, 16, 0);
+#endif
 
 				GET_ABS_COORDS(posx, posy);
 				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
@@ -1689,7 +1691,12 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (view->index_yl + sci_titlebar_size > 200)
 					sci_titlebar_size = 0;
 
+#if 0
+				// FIXME: This doesn't just scale the image, but also
+				// tries to fit the colours into the palette in 'mode',
+				// breaking colours in e.g., KQ5 floppy.
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
+#endif
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
 					view_transparentize(view, pic->visual_map->index_data, posx, sci_titlebar_size + posy,
@@ -1699,7 +1706,9 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				                      view->index_data, pic->visual_map->index_xl, view->index_xl,
 				                      view->index_xl, view->index_yl, 1);
 
+#if 0
 				gfx_free_mode(mode);
+#endif
 				gfx_free_pixmap(NULL, view);
 			}
 			goto end_op_loop;
@@ -1776,10 +1785,12 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int sci_titlebar_size = style->pic_port_bounds.y;
 	gfx_mode_t *mode;
 	gfx_pixmap_t *view = NULL;
+#if 0
 	// Set up mode structure for resizing the view
 	Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
 	mode = gfx_new_mode(pic->visual_map->index_xl / 320, pic->visual_map->index_yl / 200,
 	           format, 16, 0);
+#endif
 
 	pic->visual_map->colors = gfxr_read_pal11(-1, &(pic->visual_map->colors_nr), resource + palette_data_ptr, 1284);
 
@@ -1790,7 +1801,9 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		view->colors = pic->visual_map->colors;
 		view->colors_nr = pic->visual_map->colors_nr;
 
+#if 0
 		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
+#endif
 
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
 			view_transparentize(view, pic->visual_map->index_data, 0, 0, view->index_xl, view->index_yl);
