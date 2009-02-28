@@ -34,6 +34,7 @@ namespace Sword1 {
 #define MAX_TEXT_OBS 3
 
 #define BORDER_COL	200
+#define BORDER_COL_PSX 199
 #define LETTER_COL	193
 #define NO_COL		0	// sprite background - 0 for transparency
 

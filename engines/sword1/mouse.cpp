@@ -37,6 +37,7 @@
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 #include "sword1/menu.h"
+#include "sword1/sword1.h"
 
 namespace Sword1 {
 
@@ -201,13 +202,30 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	if (ptrId) {
 		MousePtr *lugg = NULL;
 		MousePtr *ptr = (MousePtr*)_resMan->openFetchRes(ptrId);
-		uint16 resSizeX = _resMan->getLEUint16(ptr->sizeX);
-		uint16 resSizeY = _resMan->getLEUint16(ptr->sizeY);
 		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
+		uint16 ptrSizeX = _resMan->getLEUint16(ptr->sizeX);
+		uint16 ptrSizeY = _resMan->getLEUint16(ptr->sizeY);
+		uint16 luggSizeX;
+		uint16 luggSizeY;
+		uint16 resSizeX;
+		uint16 resSizeY;
+
+		if (SwordEngine::isPsx()) //PSX pointers are half height	
+			ptrSizeY *= 2;
+
 		if (luggageId) {
 			lugg = (MousePtr*)_resMan->openFetchRes(luggageId);
-			resSizeX = MAX(resSizeX, (uint16)((resSizeX / 2) + _resMan->getLEUint16(lugg->sizeX)));
-			resSizeY = MAX(resSizeY, (uint16)((resSizeY / 2) + _resMan->getLEUint16(lugg->sizeY)));
+			luggSizeX = _resMan->getLEUint16(lugg->sizeX);
+			luggSizeY = _resMan->getLEUint16(lugg->sizeY);
+
+			if (SwordEngine::isPsx())
+				luggSizeY *= 2;
+
+			resSizeX = MAX(ptrSizeX, (uint16)((ptrSizeX / 2) + luggSizeX));
+			resSizeY = MAX(ptrSizeY, (uint16)((ptrSizeY / 2) + luggSizeY));
+		} else {
+			resSizeX = ptrSizeX;
+			resSizeY = ptrSizeY;
 		}
 		_currentPtr = (MousePtr*)malloc(sizeof(MousePtr) + resSizeX * resSizeY * noFrames);
 		_currentPtr->hotSpotX = _resMan->getLEUint16(ptr->hotSpotX);
@@ -218,31 +236,48 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
 		memset(ptrData, 255, resSizeX * resSizeY * noFrames);
 		if (luggageId) {
-			uint8 *dstData = ptrData + resSizeX - _resMan->getLEUint16(lugg->sizeX);
+			uint8 *dstData = ptrData + resSizeX - luggSizeX;
 			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
 				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
-				dstData += (resSizeY - _resMan->getLEUint16(lugg->sizeY)) * resSizeX;
-				for (uint32 cnty = 0; cnty < _resMan->getLEUint16(lugg->sizeY); cnty++) {
-					for (uint32 cntx = 0; cntx < _resMan->getLEUint16(lugg->sizeX); cntx++)
+				dstData += (resSizeY - luggSizeY) * resSizeX;
+				for (uint32 cnty = 0; cnty < (SwordEngine::isPsx() ? luggSizeY / 2 : luggSizeY); cnty++) {
+					for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
 						if (luggSrc[cntx])
 							dstData[cntx] = luggSrc[cntx];
+					
+					if(SwordEngine::isPsx()) {
+						dstData += resSizeX;
+						for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
+							if (luggSrc[cntx])
+								dstData[cntx] = luggSrc[cntx];
+					}
+
 					dstData += resSizeX;
-					luggSrc += _resMan->getLEUint16(lugg->sizeX);
+					luggSrc += luggSizeX;
 				}
 			}
 			_resMan->resClose(luggageId);
 		}
+		
 		uint8 *dstData = ptrData;
 		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
 		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
-			for (uint32 cnty = 0; cnty < _resMan->getLEUint16(ptr->sizeY); cnty++) {
-				for (uint32 cntx = 0; cntx < _resMan->getLEUint16(ptr->sizeX); cntx++)
+			for (uint32 cnty = 0; cnty < (SwordEngine::isPsx() ? ptrSizeY / 2 : ptrSizeY); cnty++) {
+				for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
 					if (srcData[cntx])
 						dstData[cntx] = srcData[cntx];
-				srcData += _resMan->getLEUint16(ptr->sizeX);
+
+				if(SwordEngine::isPsx()) {		
+					dstData +=resSizeX;
+					for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
+						if (srcData[cntx])
+							dstData[cntx] = srcData[cntx];
+				}
+
+				srcData += ptrSizeX;
 				dstData += resSizeX;
 			}
-			dstData += (resSizeY - _resMan->getLEUint16(ptr->sizeY)) * resSizeX;
+			dstData += (resSizeY - ptrSizeY) * resSizeX;
 		}
 		_resMan->resClose(ptrId);
 	}

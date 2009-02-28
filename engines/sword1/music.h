@@ -47,6 +47,7 @@ public:
 	MusicHandle() : _fading(0), _audioSource(NULL) {}
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 	bool play(const char *filename, bool loop);
+	bool playPSX(uint16 id, bool loop);
 	void stop();
 	void fadeUp();
 	void fadeDown();

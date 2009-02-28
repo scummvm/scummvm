@@ -29,7 +29,10 @@
 #include "common/util.h"
 #include "common/system.h"
 
+#include "sword1/sword1.h"
 #include "sword1/music.h"
+#include "sword1/vag.h"
+
 #include "sound/aiff.h"
 #include "sound/flac.h"
 #include "sound/mixer.h"
@@ -252,6 +255,35 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	return true;
 }
 
+bool MusicHandle::playPSX(uint16 id, bool loop) {
+	stop();
+
+	if (!_file.isOpen())
+		if (!_file.open("tunes.dat"))
+			return false;
+		
+	Common::File tableFile;
+	if (!tableFile.open("tunes.tab"))
+		return false;
+
+	tableFile.seek((id - 1) * 8, SEEK_SET);
+	uint32 offset = tableFile.readUint32LE() * 0x800;
+	uint32 size = tableFile.readUint32LE();
+
+	tableFile.close();
+
+	if (size != 0xffffffff) {
+		_file.seek(offset, SEEK_SET);
+		_audioSource = new VagStream(_file.readStream(size), loop);
+		fadeUp();
+	} else {
+		_audioSource = NULL;
+		return false;
+	}
+	
+	return true;
+}
+
 void MusicHandle::fadeDown() {
 	if (streaming()) {
 		if (_fading < 0)
@@ -276,8 +308,7 @@ bool MusicHandle::endOfData() const {
 	return !streaming();
 }
 
-// is we don't have an audiosource, return some dummy values.
-// shouldn't happen anyways.
+// if we don't have an audiosource, return some dummy values.
 bool MusicHandle::streaming(void) const {
 	return (_audioSource) ? (!_audioSource->endOfStream()) : false;
 }
@@ -411,7 +442,13 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		/* The handle will load the music file now. It can take a while, so unlock
 		   the mutex before, to have the soundthread playing normally.
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
-		if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
+		if (SwordEngine::isPsx()) { ;
+			if (_handles[newStream].playPSX(tuneId, loopFlag != 0)) {
+				_mutex.lock();
+				_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
+				_mutex.unlock();
+			}
+		} else if (_handles[newStream].play(_tuneList[tuneId], loopFlag != 0)) {
 			_mutex.lock();
 			_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 			_mutex.unlock();

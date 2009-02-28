@@ -96,6 +96,8 @@ public:
 	void fnFlash(uint8 color);
 	void fnBorder(uint8 color);
 
+	static void decompressHIF(uint8 *src, uint8 *dest);
+
 #ifdef BACKEND_8BIT
 	void plotYUV(byte *lut, int width, int height, byte *const *dat);
 #endif
@@ -116,6 +118,11 @@ private:
 	void processImage(uint32 id);
 	void spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *sprWidth, uint16 *sprHeight, uint16 *incr);
 	void drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
+	void drawPsxHalfShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
+	void drawPsxFullShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
+	uint8* psxBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres);
+	uint8* psxShrinkedBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres);
+	uint8* psxParallaxToIndexed(uint8* psxParallax);
 	void decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest);
 	void decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest);
 	void decompressTony(uint8 *src, uint32 compSize, uint8 *dest);
@@ -159,4 +166,6 @@ private:
 } // End of namespace Sword1
 
 #endif //BSSCREEN_H
+
+
 

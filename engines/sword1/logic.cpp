@@ -112,6 +112,10 @@ void Logic::newScreen(uint32 screen) {
 			fnFullSetFrame(cpt, SAND_25, IMPPLSCDT, IMPPLS, 0, 0, 0, 0); // impression filled with plaster
 	}
 
+	// work around, at screen 69 in psx version TOP menu gets stuck at disabled, fix it at next screen (71)
+	if( (screen == 71) && (SwordEngine::isPsx()))
+		_scriptVars[TOP_MENU_DISABLED] = 0;
+
 	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
 		fnAddHuman(NULL, 0, 0, 0, 0, 0, 0, 0);
 		if (_scriptVars[GEORGE_WALKING]) { // except that if George was walking when we saveed the game

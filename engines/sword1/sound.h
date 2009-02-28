@@ -69,7 +69,8 @@ enum CowMode {
 	CowFlac,
 	CowVorbis,
 	CowMp3,
-	CowDemo
+	CowDemo,
+	CowPSX
 };
 
 class Sound {

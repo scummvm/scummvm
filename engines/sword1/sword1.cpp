@@ -84,14 +84,16 @@ Common::Error SwordEngine::init() {
 
 	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
-		_systemVars.isMac = true;
+		_systemVars.platform = Common::kPlatformMacintosh;
+	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx"))
+		_systemVars.platform = Common::kPlatformPSX;
 	else
-		_systemVars.isMac = false;
+		_systemVars.platform = Common::kPlatformWindows;
 
 	checkCdFiles();
 
 	debug(5, "Starting resource manager");
-	_resMan = new ResMan("swordres.rif", _systemVars.isMac);
+	_resMan = new ResMan("swordres.rif", _systemVars.platform == Common::kPlatformMacintosh);
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
@@ -308,12 +310,34 @@ const CdFile SwordEngine::_macCdFileList[] = {
 #endif
 };
 
+const CdFile SwordEngine::_psxCdFileList[] = { // PSX edition has only one cd
+	{ "paris2.clu", FLAG_CD1 },
+	{ "ireland.clu", FLAG_CD1 },
+	{ "paris3.clu", FLAG_CD1 },
+	{ "paris4.clu", FLAG_CD1 },
+	{ "scotland.clu", FLAG_CD1 },
+	{ "spain.clu", FLAG_CD1 },
+	{ "syria.clu", FLAG_CD1 },
+	{ "train.clu", FLAG_CD1 },
+	{ "train.plx", FLAG_CD1 },
+	{ "compacts.clu", FLAG_CD1 | FLAG_IMMED },
+	{ "general.clu", FLAG_CD1 | FLAG_IMMED },
+	{ "maps.clu", FLAG_CD1 },
+	{ "paris1.clu", FLAG_CD1 },
+	{ "scripts.clu", FLAG_CD1 | FLAG_IMMED },
+	{ "swordres.rif", FLAG_CD1 | FLAG_IMMED },
+	{ "text.clu", FLAG_CD1 },
+	{ "speech.dat", FLAG_SPEECH1 },
+	{ "speech.tab", FLAG_SPEECH1 },
+	{ "speech.inf", FLAG_SPEECH1 },
+	{ "speech.lis", FLAG_SPEECH1 }
+};
 
 void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 	char msg[1024];
 	int missCnt = 0, missNum = 0;
 
-	if (_systemVars.isMac) {
+	if (SwordEngine::isMac()) {
 		for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 			if (!fileExists[i]) {
 				missCnt++;
@@ -335,6 +359,27 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 					pos += sprintf(pos, "\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
+	} else if (SwordEngine::isPsx()) {
+		for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
+			if (!fileExists[i]) {
+				missCnt++;
+				missNum = i;
+			}
+		assert(missCnt > 0); // this function shouldn't get called if there's nothing missing.
+		warning("%d files missing", missCnt);
+		int msgId = (type == TYPE_IMMED) ? 0 : 2;
+		if (missCnt == 1) {
+			sprintf(msg, errorMsgs[msgId], _psxCdFileList[missNum].name, 1);
+			warning("%s", msg);
+		} else {
+			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			warning("%s", msg);
+			for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
+				if (!fileExists[i]) {
+					warning("\"%s\"", _macCdFileList[i].name);
+					pos += sprintf(pos, "\"%s\"\n", _macCdFileList[i].name);
+				}
+		} 
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 			if (!fileExists[i]) {
@@ -374,7 +419,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 	_systemVars.playSpeech = true;
 
 	// check all files and look out if we can find a file that wouldn't exist if this was the demo version
-	if (_systemVars.isMac) {
+	if (SwordEngine::isMac()) {
 		for (int fcnt = 0; fcnt < ARRAYSIZE(_macCdFileList); fcnt++) {
 			if (Common::File::exists(_macCdFileList[fcnt].name)) {
 				fileExists[fcnt] = true;
@@ -385,6 +430,18 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 					cd2FilesFound = true;
 			} else {
 				flagsToBool(missingTypes, _macCdFileList[fcnt].flags);
+				fileExists[fcnt] = false;
+			}
+		}
+	} else if (SwordEngine::isPsx()) {
+		for (int fcnt = 0; fcnt < ARRAYSIZE(_psxCdFileList); fcnt++) {
+			if (Common::File::exists(_psxCdFileList[fcnt].name)) {
+				fileExists[fcnt] = true;
+				flagsToBool(foundTypes, _psxCdFileList[fcnt].flags);
+				isFullVersion = true;
+				cd2FilesFound = true;
+			} else {
+				flagsToBool(missingTypes, _psxCdFileList[fcnt].flags);
 				fileExists[fcnt] = false;
 			}
 		}
@@ -422,12 +479,20 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 		somethingMissing |= missingTypes[i];
 	if (somethingMissing) { // okay, there *are* files missing
 		// first, update the fileExists[] array depending on our changed missingTypes
-		if (_systemVars.isMac) {
+		if (SwordEngine::isMac()) {
 			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_macCdFileList); fileCnt++)
 				if (!fileExists[fileCnt]) {
 					fileExists[fileCnt] = true;
 					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
 						if (missingTypes[flagCnt] && ((_macCdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
+							fileExists[fileCnt] = false; // this is one of the files we were looking for
+				}
+		} else if (SwordEngine::isPsx()) {
+			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_psxCdFileList); fileCnt++)
+				if (!fileExists[fileCnt]) {
+					fileExists[fileCnt] = true;
+					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
+						if (missingTypes[flagCnt] && ((_psxCdFileList[fileCnt].flags & (1 << flagCnt)) != 0))
 							fileExists[fileCnt] = false; // this is one of the files we were looking for
 				}
 		} else {

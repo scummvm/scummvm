@@ -34,6 +34,7 @@
 #include "sword1/resman.h"
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
+#include "sword1/vag.h"
 
 #include "sound/flac.h"
 #include "sound/mp3.h"
@@ -160,22 +161,29 @@ void Sound::playSample(QueueElement *elem) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
 			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||
 				(_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
-
+						
 					uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
 					uint8 volR = (_fxList[elem->id].roomVolList[cnt].rightVol * 10 * _sfxVolR) / 255;
 					int8 pan = (volR - volL) / 2;
 					uint8 volume = (volR + volL) / 2;
-					uint32 size = READ_LE_UINT32(sampleData + 0x28);
-					uint8 flags;
-					if (READ_LE_UINT16(sampleData + 0x22) == 16)
-						flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
-					else
-						flags = Audio::Mixer::FLAG_UNSIGNED;
-					if (READ_LE_UINT16(sampleData + 0x16) == 2)
-						flags |= Audio::Mixer::FLAG_STEREO;
-					if (_fxList[elem->id].type == FX_LOOP)
-						flags |= Audio::Mixer::FLAG_LOOP;
-					_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
+						
+					if (SwordEngine::isPsx()) { ;
+						uint32 size = READ_LE_UINT32(sampleData);
+						Audio::AudioStream *audStream = new VagStream(new Common::MemoryReadStream(sampleData + 4, size-4), _fxList[elem->id].type == FX_LOOP);
+						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan, false, false, false);
+					} else {
+						uint32 size = READ_LE_UINT32(sampleData + 0x28);
+						uint8 flags;
+						if (READ_LE_UINT16(sampleData + 0x22) == 16)
+							flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+						else
+							flags = Audio::Mixer::FLAG_UNSIGNED;
+						if (READ_LE_UINT16(sampleData + 0x16) == 2)
+							flags |= Audio::Mixer::FLAG_STEREO;
+						if (_fxList[elem->id].type == FX_LOOP)
+							flags |= Audio::Mixer::FLAG_LOOP;
+						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
+					}
 			}
 		} else
 			break;
@@ -187,11 +195,69 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		warning("Sound::startSpeech: COW file isn't open");
 		return false;
 	}
+	
+	uint32 locIndex = 0xFFFFFFFF;
+	uint32 sampleSize = 0;
+	uint32 index = 0;
 
-	uint32 locIndex = _cowHeader[roomNo] >> 2;
-	uint32 sampleSize = _cowHeader[locIndex + (localNo * 2)];
-	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
+	if (_cowMode == CowPSX) {
+		Common::File file;
+		uint16 i;
+		
+		if (!file.open("speech.lis")) {
+			warning ("Could not open speech.lis");
+			return false;
+		}
+
+		for (i = 0; !file.eos() && !file.err(); i++) 
+			if (file.readUint16LE() == roomNo) {
+				locIndex = i;
+				break;
+			}
+		file.close();
+		
+		if (locIndex == 0xFFFFFFFF) {
+			warning ("Could not find room %d in speech.lis", roomNo);
+			return false;
+		}
+		
+		if (!file.open("speech.inf")) {
+			warning ("Could not open speech.inf");
+			return false;
+		}
+	
+		file.seek(locIndex * 4 + 2); // 4 bytes per room, skip first 2 bytes
+		
+		uint16 numLines = file.readUint16LE();
+		uint16 roomOffset = file.readUint16LE(); 
+
+		file.seek(0x112 + roomOffset * 2); // The offset is in terms of uint16's, so multiply by 2. Skip the 0x112 byte header too.
+		
+		locIndex = 0xFFFFFFFF;
+		
+		for (i = 0; i < numLines; i++)
+			if (file.readUint16LE() == localNo) {
+				locIndex = i;
+				break;
+			}
+				
+		if (locIndex == 0xFFFFFFFF) {
+			warning ("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
+			return false;
+		}
+		
+		file.close();
+
+		index = _cowHeader[(roomOffset + locIndex) * 2];
+		sampleSize = _cowHeader[(roomOffset + locIndex) * 2 + 1];
+	} else {
+		locIndex = _cowHeader[roomNo] >> 2;
+		sampleSize = _cowHeader[locIndex + (localNo * 2)];
+		index = _cowHeader[locIndex + (localNo * 2) - 1];
+	}
+	
 	debug(6, "startSpeech(%d, %d): locIndex %d, sampleSize %d, index %d", roomNo, localNo, locIndex, sampleSize, index);
+	
 	if (sampleSize) {
 		uint8 speechVol = (_speechVolR + _speechVolL) / 2;
 		int8 speechPan = (_speechVolR - _speechVolL) / 2;
@@ -200,6 +266,14 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
 				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {
+			_cowFile.seek(index * 2048);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, new VagStream(_cowFile.readStream(sampleSize)), SOUND_SPEECH_ID, speechVol, speechPan);
+			// with compressed audio, we can't calculate the wave volume.
+			// so default to talking.
+			for (int cnt = 0; cnt < 480; cnt++)
+				_waveVolume[cnt] = true;
+			_waveVolPos = 0;
 		}
 #ifdef USE_FLAC
 		else if (_cowMode == CowFlac) {
@@ -419,21 +493,47 @@ void Sound::initCowSystem(void) {
 		debug(1, "Using uncompressed Speech Cluster");
 		_cowMode = CowWave;
 	}
+	
+	if (SwordEngine::isPsx()) {
+		// There's only one file on the PSX, so set it to the current disc.
+		_currentCowFile = SwordEngine::_systemVars.currentCD;
+		if (!_cowFile.isOpen()) {
+			if (!_cowFile.open("speech.dat"))
+				error ("Could not open speech.dat");
+			_cowMode = CowPSX;
+		}
+	}
+	
 	if (!_cowFile.isOpen())
 		_cowFile.open("speech.clu");
+		
 	if (!_cowFile.isOpen()) {
 		_cowFile.open("cows.mad");
 		if (_cowFile.isOpen())
 			_cowMode = CowDemo;
 	}
+	
 	if (_cowFile.isOpen()) {
-		_cowHeaderSize = _cowFile.readUint32LE();
-		_cowHeader = (uint32*)malloc(_cowHeaderSize);
-		if (_cowHeaderSize & 3)
-			error("Unexpected cow header size %d", _cowHeaderSize);
-		for (uint32 cnt = 0; cnt < (_cowHeaderSize / 4) - 1; cnt++)
-			_cowHeader[cnt] = _cowFile.readUint32LE();
-		_currentCowFile = SwordEngine::_systemVars.currentCD;
+		if (SwordEngine::isPsx()) {
+			// Get data from the external table file
+			Common::File tableFile;
+			if (!tableFile.open("speech.tab"))
+				error ("Could not open speech.tab");
+			_cowHeaderSize = tableFile.size();
+			_cowHeader = (uint32 *)malloc(_cowHeaderSize);
+			if (_cowHeaderSize & 3)
+				error("Unexpected cow header size %d", _cowHeaderSize);
+			for (uint32 cnt = 0; cnt < _cowHeaderSize / 4; cnt++)
+				_cowHeader[cnt] = tableFile.readUint32LE();
+		} else {
+			_cowHeaderSize = _cowFile.readUint32LE();
+			_cowHeader = (uint32*)malloc(_cowHeaderSize);
+			if (_cowHeaderSize & 3)
+				error("Unexpected cow header size %d", _cowHeaderSize);
+			for (uint32 cnt = 0; cnt < (_cowHeaderSize / 4) - 1; cnt++)
+				_cowHeader[cnt] = _cowFile.readUint32LE();
+			_currentCowFile = SwordEngine::_systemVars.currentCD;
+		}
 	} else
 		warning("Sound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 }

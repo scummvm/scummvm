@@ -66,7 +66,7 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
-	bool    isMac;
+	Common::Platform platform;
 };
 
 class SwordEngine : public Engine {
@@ -79,6 +79,9 @@ public:
 	uint32 _features;
 
 	bool mouseIsActive();
+	
+	static bool isMac() { return _systemVars.platform == Common::kPlatformMacintosh; }
+	static bool isPsx() { return _systemVars.platform == Common::kPlatformPSX; }
 
 protected:
 	// Engine APIs
@@ -119,6 +122,7 @@ private:
 	static const uint8  _cdList[TOTAL_SECTIONS];
 	static const CdFile	_pcCdFileList[];
 	static const CdFile	_macCdFileList[];
+	static const CdFile _psxCdFileList[];
 };
 
 } // End of namespace Sword1

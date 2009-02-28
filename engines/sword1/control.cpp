@@ -45,6 +45,7 @@
 #include "sword1/sword1.h"
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
+#include "sword1/screen.h"
 
 namespace Sword1 {
 
@@ -120,10 +121,11 @@ ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 f
 	_resMan->resOpen(_resId);
 	FrameHeader *tmp = _resMan->fetchFrame(_resMan->fetchRes(_resId), 0);
 	_width = _resMan->getUint16(tmp->width);
+	_width = (_width > SCREEN_WIDTH) ? SCREEN_WIDTH : _width;
 	_height = _resMan->getUint16(tmp->height);
 	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
-		_x = (640 - _width) / 2;
-		_y = (480 - _height) / 2;
+		_x = (((640 - _width) / 2) < 0)? 0 : ((640 - _width) / 2) ;
+		_y = (((480 - _height) / 2) < 0)? 0 : ((480 - _height) / 2);
 	}
 	_dstBuf = screenBuf + _y * SCREEN_WIDTH + _x;
 	_system = system;
@@ -141,13 +143,78 @@ void ControlButton::draw(void) {
 	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
 	uint8 *src = (uint8*)fHead + sizeof(FrameHeader);
 	uint8 *dst = _dstBuf;
-	for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
-		for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
-			if (src[cntx])
-				dst[cntx] = src[cntx];
-		dst += SCREEN_WIDTH;
-		src += _resMan->readUint16(&fHead->width);
-	}
+
+	if (SwordEngine::isPsx() && _resId) {
+		uint8 *HIFbuf = (uint8*)malloc(_resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
+		memset(HIFbuf, 0, _resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
+		Screen::decompressHIF(src, HIFbuf);
+		src = HIFbuf;
+	
+		if (_resMan->readUint16(&fHead->width) < 300)
+			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
+				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
+					if (src[cntx])
+						dst[cntx] = src[cntx];
+				
+				dst += SCREEN_WIDTH; 
+				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
+					if (src[cntx])
+						dst[cntx] = src[cntx];
+
+				dst += SCREEN_WIDTH;
+				src += _resMan->readUint16(&fHead->width);
+			}
+		else if (_resId == SR_DEATHPANEL) { //Hardcoded goodness for death panel psx version
+			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height)/2; cnt++) {
+				//Stretched panel is bigger than 640px, check we don't draw outside screen
+				for (uint16 cntx = 0; (cntx < (_resMan->readUint16(&fHead->width))/3) && (cntx < (SCREEN_WIDTH-3) ); cntx++)
+					if (src[cntx]) {
+						dst[cntx * 3] = src[cntx];
+						dst[cntx * 3 + 1] = src[cntx];
+						dst[cntx * 3 + 2] = src[cntx];
+					}
+				dst+= SCREEN_WIDTH;
+
+				for (uint16 cntx = 0; cntx < (_resMan->readUint16(&fHead->width))/3; cntx++)
+					if (src[cntx]) {
+						dst[cntx * 3] = src[cntx];
+						dst[cntx * 3 + 1] = src[cntx];
+						dst[cntx * 3 + 2] = src[cntx];
+					}
+				dst += SCREEN_WIDTH;
+				src += _resMan->readUint16(&fHead->width)/3;
+			}
+		} else { //NASTY HACK, save slots needs to be multiplied my 4 in height... need a better way to identify these images
+			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
+				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
+					if (src[cntx]) {
+						dst[cntx * 2] = src[cntx];
+						dst[cntx * 2 + 1] = src[cntx];
+					}
+				
+				dst += SCREEN_WIDTH; 
+				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
+					if (src[cntx]) {
+						dst[cntx * 2] = src[cntx];
+						dst[cntx * 2 + 1] = src[cntx];
+					}
+			
+				dst += SCREEN_WIDTH;
+				src += _resMan->readUint16(&fHead->width)/2;
+			}
+		}
+
+		free(HIFbuf);
+	} else
+		for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
+			for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
+				if (src[cntx])
+					dst[cntx] = src[cntx];
+
+			dst += SCREEN_WIDTH;
+			src += _resMan->readUint16(&fHead->width);
+		}
+	
 	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
 }
 
@@ -940,17 +1007,37 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 
 		FrameHeader *chSpr = _resMan->fetchFrame(font, *str - 32);
 		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
+		uint8 *HIFbuf = NULL;
+
+		if (SwordEngine::isPsx()) { //Text fonts are compressed in psx version
+			HIFbuf = (uint8 *)malloc(_resMan->getUint16(chSpr->height) * _resMan->getUint16(chSpr->width));
+			memset(HIFbuf, 0, _resMan->getUint16(chSpr->height) * _resMan->getUint16(chSpr->width));
+			Screen::decompressHIF(sprData, HIFbuf);
+			sprData = HIFbuf;
+		}
+		
 		for (uint16 cnty = 0; cnty < _resMan->getUint16(chSpr->height); cnty++) {
 			for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++) {
 				if (sprData[cntx])
 					dst[cntx] = sprData[cntx];
 			}
+			
+			if(SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
+				dst += SCREEN_WIDTH; 
+				for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++)
+					if (sprData[cntx])
+						dst[cntx] = sprData[cntx];
+			}
+
 			sprData += _resMan->getUint16(chSpr->width);
 			dst += SCREEN_WIDTH;
 		}
 		destX += _resMan->getUint16(chSpr->width) - 3;
 		str++;
+		
+		free(HIFbuf);
 	}
+	
 	_system->copyRectToScreen(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
 }
 
@@ -963,14 +1050,34 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
 		uint8 *destMem = _screenBuf + destY * SCREEN_WIDTH + destX;
 		uint8 *srcMem = (uint8*)frHead + sizeof(FrameHeader);
-		for (uint16 cnty = 0; cnty < _resMan->getUint16(frHead->height); cnty++) {
+		uint16 barHeight = _resMan->getUint16(frHead->height);
+		uint8 *psxVolBuf = NULL;
+
+		if (SwordEngine::isPsx()) {
+			psxVolBuf = (uint8 *)malloc(_resMan->getUint16(frHead->height) / 2 * _resMan->getUint16(frHead->width));
+			memset(psxVolBuf, 0, _resMan->getUint16(frHead->height) / 2 * _resMan->getUint16(frHead->width));
+			Screen::decompressHIF(srcMem, psxVolBuf);
+			srcMem = psxVolBuf;
+			barHeight /= 2;
+		}
+
+		for (uint16 cnty = 0; cnty < barHeight; cnty++) {
 			memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
+			
+			if(SwordEngine::isPsx()) { //linedoubling
+				destMem += SCREEN_WIDTH;
+				memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
+			}
+
 			srcMem += _resMan->getUint16(frHead->width);
 			destMem += SCREEN_WIDTH;
 		}
+		
 		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, _resMan->getUint16(frHead->width), _resMan->getUint16(frHead->height));
 		_resMan->resClose(SR_VLIGHT);
 		destX += 32;
+
+		free(psxVolBuf);
 	}
 }
 
