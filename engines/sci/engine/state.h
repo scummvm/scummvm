@@ -86,11 +86,9 @@ struct drawn_pic_t {
 
 // Savegame metadata
 struct SavegameMetadata {
-	SavegameMetadata() : savegame_name(0), game_version(0) { }
-	~SavegameMetadata() { free(savegame_name); free(game_version); }
-	char *savegame_name;
+	Common::String savegame_name;
 	int savegame_version;
-	char *game_version;
+	Common::String game_version;
 	sci_version_t version;
 	int savegame_date;
 	int savegame_time;

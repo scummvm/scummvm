@@ -536,19 +536,15 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				continue;
 			}
 
-			char namebuf[SCI_MAX_SAVENAME_LENGTH]; // Save game name buffer
-			strncpy(namebuf, meta.savegame_name, SCI_MAX_SAVENAME_LENGTH);
-			namebuf[SCI_MAX_SAVENAME_LENGTH-1] = 0;
-
-			if (strlen(namebuf) > 0) {
-				if (namebuf[strlen(namebuf) - 1] == '\n')
-					namebuf[strlen(namebuf) - 1] = 0; // Remove trailing newline
+			if (!meta.savegame_name.empty()) {
+				if (meta.savegame_name.lastChar() == '\n')
+					meta.savegame_name.deleteLastChar();
 
 				*nameoffsets = s->r_acc; // Store savegame ID
 				++s->r_acc.offset; // Increase number of files found
 
 				nameoffsets++; // Make sure the next ID string address is written to the next pointer
-				strncpy(nametarget, namebuf, SCI_MAX_SAVENAME_LENGTH); // Copy identifier string
+				strncpy(nametarget, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH); // Copy identifier string
 				*(nametarget + SCI_MAX_SAVENAME_LENGTH - 1) = 0; // Make sure it's terminated
 				nametarget += SCI_MAX_SAVENAME_LENGTH; // Increase name offset pointer accordingly
 				nametarget_base.offset += SCI_MAX_SAVENAME_LENGTH;

@@ -190,6 +190,9 @@ int read_PTN(Common::SeekableReadStream *fh, parse_tree_node_t *foo, const char 
 	} else return 1; // failure to parse anything
 }
 
+void write_CommonString(Common::WriteStream *fh, Common::String const *string);
+int read_CommonString(Common::SeekableReadStream *fh, Common::String *string, const char *lastval, int *line, int *hiteof);
+
 void write_menubar_tp(Common::WriteStream *fh, const menubar_t * const *foo);
 int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
 
@@ -227,6 +230,7 @@ RECORD synonym_t "synonym_t" {
 
 TYPE bool "bool" LIKE int;
 TYPE byte "byte" LIKE int;
+TYPE Common::String ""Common::String" USING write_CommonString read_CommonString;
 TYPE seg_id_t "seg_id_t" LIKE int;
 TYPE sci_version_t "sci_version_t" USING write_sci_version read_sci_version;
 TYPE menubar_tp "menubar_t *" USING write_menubar_tp read_menubar_tp;
@@ -309,9 +313,9 @@ RECORD sfx_state_t "sfx_state_t" {
 }
 
 RECORD SavegameMetadata "SavegameMetadata" {
-	string savegame_name;
+	Common::String savegame_name;
 	int savegame_version;
-	string game_version;
+	Common::String game_version;
 	sci_version_t version;
 	int savegame_date;
 	int savegame_time;
@@ -707,6 +711,23 @@ int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char 
 	return 0;
 }
 
+void write_CommonString(Common::WriteStream *fh, Common::String const *string)
+{
+	const char *t = string->c_str();
+	%CFSMLWRITE string (&t) INTO fh;
+}
+
+int read_CommonString(Common::SeekableReadStream *fh, Common::String *string, const char *lastval, int *line, int *hiteof)
+{
+	char *t;
+	// Do an atomic read to prevent t from being freed if we hit an eof later
+	%CFSMLREAD-ATOMIC string (&t) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
+	if (*hiteof) return *hiteof;
+	*string = t;
+	free(t);
+	return 0;
+}
+
 void write_SegManagerPtr(Common::WriteStream *fh, const SegManager * const *foo) {
 	%CFSMLWRITE bool &((*foo)->isSci1_1) INTO fh;
 	%CFSMLWRITE SegManager *foo INTO fh;
@@ -733,14 +754,13 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	tm curTime;
 	g_system->getTimeAndDate(curTime);
 
-	SavegameMetadata *meta = new SavegameMetadata;
-	meta->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
-	meta->savegame_name = sci_strdup(savename);
-	meta->version = s->version;
-	meta->game_version = sci_strdup(s->game_version);
-	meta->savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta->savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-	fprintf(stderr, "date/time: %d %d\n", meta->savegame_date, meta->savegame_time);
+	SavegameMetadata meta;
+	meta.savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
+	meta.savegame_name = savename;
+	meta.version = s->version;
+	meta.game_version = s->game_version;
+	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
 	_global_save_state = s;
 	s->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
@@ -765,10 +785,8 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	// Calculate the time spent with this game
 	s->game_time = (g_system->getMillis() - s->game_start_time) / 1000;
 
-	%CFSMLWRITE SavegameMetadata meta INTO fh;
+	%CFSMLWRITE SavegameMetadata (&meta) INTO fh;
 	%CFSMLWRITE EngineState s INTO fh;
-
-	delete meta;
 
 	_gamestate_unfrob(s);
 
@@ -1042,29 +1060,22 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	_global_save_state = retval;
 	retval->gfx_state = s->gfx_state;
 
-	SavegameMetadata *meta = new SavegameMetadata;
+	SavegameMetadata meta;
 
-	if (read_eof) {
-		// TODO: It would be nice to automate this:
-		meta->savegame_name = NULL;
-		meta->game_version = NULL;
+%CFSMLREAD-ATOMIC SavegameMetadata (&meta) FROM fh ERRVAR read_eof;
+
+	if (read_eof)
 		return false;
-	}
 
-%CFSMLREAD-ATOMIC SavegameMetadata meta FROM fh ERRVAR read_eof;
-
-	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
-		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
+	if ((meta.savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
+		if (meta.savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
 			sciprintf("Old savegame version detected- can't load\n");
 		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
+			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta.savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
 
-		delete meta;
 		return NULL;
 	}
-
-	delete meta;
 
 	// Backwards compatibility settings
 	retval->dyn_views = NULL;
@@ -1183,12 +1194,8 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 
 	%CFSMLREAD-ATOMIC SavegameMetadata meta FROM stream ERRVAR read_eof;
 
-	if (read_eof) {
-		// TODO: It would be nice to automate this:
-		meta->savegame_name = NULL;
-		meta->game_version = NULL;
+	if (read_eof)
 		return false;
-	}
 
 	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
