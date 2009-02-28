@@ -55,6 +55,10 @@ namespace Sci {
 #define SAMPLE_RATE 22050
 #define CHANNELS SFX_PCM_MONO
 #define STEREO 0
+#elif defined (__WII__)
+#define SAMPLE_RATE 48000
+#define CHANNELS SFX_PCM_STEREO_LR
+#define STEREO 1
 #else
 #define SAMPLE_RATE 44100
 #define CHANNELS SFX_PCM_STEREO_LR
