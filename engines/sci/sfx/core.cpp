@@ -26,14 +26,13 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include "sci/tools.h"
-#include "sci/sfx/sfx_timer.h"
 #include "sci/sfx/sfx_iterator_internal.h"
 #include "sci/sfx/sfx_player.h"
 #include "sci/sfx/mixer.h"
 #include "sci/sfx/sci_midi.h"
 
-#include "common/mutex.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 namespace Sci {
 
@@ -46,8 +45,6 @@ int sciprintf(char *msg, ...);
 static sfx_player_t *player = NULL;
 sfx_pcm_mixer_t *mixer = NULL;
 static sfx_pcm_device_t *pcm_device = NULL;
-static sfx_timer_t *timer = NULL;
-extern sfx_timer_t sfx_timer_scummvm;
 extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
 
 int sfx_pcm_available() {
@@ -355,19 +352,19 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 	return 0;
 }
 
+#define FREQ 60
+#define DELAY (1000000 / FREQ)
+
+
 static void _sfx_timer_callback(void *data) {
-	if (timer) {
-		/* First run the player, to give it a chance to fill
-		** the audio buffer  */
+	/* First run the player, to give it a chance to fill
+	** the audio buffer  */
 
-		if (player)
-			player->maintenance();
+	if (player)
+		player->maintenance();
 
-		assert(timer);
-
-		if (mixer)
-			mixer->process(mixer);
-	}
+	if (mixer)
+		mixer->process(mixer);
 }
 
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
@@ -421,7 +418,7 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	if (!resmgr) {
 		sciprintf("[SFX] Warning: No resource manager present, cannot initialise player\n");
 		player = NULL;
-	} else if (player->init(resmgr, timer ? timer->delay_ms : 0)) {
+	} else if (player->init(resmgr, DELAY / 1000)) {
 		sciprintf("[SFX] Song player '%s' reported error, disabled\n", player->name);
 		player = NULL;
 	}
@@ -440,21 +437,9 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	// still being initialized.
 
 	if (pcm_device || (player && player->maintenance)) {
-		timer = &sfx_timer_scummvm;
-
-		if (!timer) {
-			fprintf(stderr, "[SFX] " __FILE__": Could not find timing mechanism\n");
-			fprintf(stderr, "[SFX] Disabled sound support\n");
-			pcm_device = NULL;
-			player = NULL;
-			mixer = NULL;
-			return;
-		}
-
-		if (timer->init(_sfx_timer_callback, NULL)) {
+		if (!g_system->getTimerManager()->installTimerProc(&_sfx_timer_callback, DELAY, NULL)) {
 			warning("[SFX] " __FILE__": Timer failed to initialize");
 			warning("[SFX] Disabled sound support");
-			timer = NULL;
 			pcm_device = NULL;
 			player = NULL;
 			mixer = NULL;
@@ -465,14 +450,11 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 }
 
 void sfx_exit(sfx_state_t *self) {
-	if (timer && timer->exit())
-		warning("[SFX] Timer reported error on exit");
+	g_system->getTimerManager()->removeTimerProc(&_sfx_timer_callback);
 
 	// The timer API guarantees no more callbacks are running or will be
 	// run from this point onward, so we can now safely exit the mixer and
 	// player.
-
-	timer = NULL;
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");

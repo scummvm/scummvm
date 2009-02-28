@@ -27,7 +27,6 @@
 #define SCI_SFX_SFX_PCM_H
 
 #include "sci/sfx/sfx_core.h"
-#include "sci/sfx/sfx_timer.h"
 #include "sci/sfx/sfx_time.h"
 
 namespace Sci {
