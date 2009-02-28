@@ -676,7 +676,7 @@ static int _w_gfxwop_view_print(gfxw_widget_t *widget, const char *name, int ind
 	gfxw_view_t *view = (gfxw_view_t *)widget;
 	_gfxw_print_widget(widget, indentation);
 
-	sciprintf(name);
+	sciprintf("%s", name);
 	sciprintf("(%d/%d/%d)@(%d,%d)[p:%d,c:%d]", view->view, view->loop, view->cel, view->pos.x, view->pos.y,
 	          (view->color.mask & GFX_MASK_PRIORITY) ? view->color.priority : -1,
 	          (view->color.mask & GFX_MASK_CONTROL) ? view->color.control : -1);
@@ -767,7 +767,7 @@ static int _gfxwop_some_view_print(gfxw_widget_t *widget, int indentation, const
 
 	_gfxw_print_widget(widget, indentation);
 
-	sciprintf(type_string);
+	sciprintf("%s", type_string);
 	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%p]", view->force_precedence, view->z,
 	          view->sequence, view->view, view->loop, view->cel, view->pos.x, view->pos.y,
 	          (view->color.mask & GFX_MASK_PRIORITY) ? view->color.priority : -1,
@@ -1388,7 +1388,7 @@ static int _gfxwop_sorted_list_draw(gfxw_widget_t *list, Common::Point pos) {
 
 static inline int _w_gfxwop_list_print(gfxw_widget_t *list, const char *name, int indentation) {
 	_gfxw_print_widget(list, indentation);
-	sciprintf(name);
+	sciprintf("%s", name);
 
 	return _w_gfxwop_container_print(list, indentation);
 }

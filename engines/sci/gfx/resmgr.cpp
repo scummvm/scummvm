@@ -161,7 +161,10 @@ void *gfxr_sbtree_free_tagged_func(sbtree_t *tree, const int key, const void *va
 				resource->lock_sequence_nr = 0;
 			else
 				(resource->lock_sequence_nr)--;
-			return (void *) value;
+			// FIXME: const_cast does not sound like a good idea,
+			// maybe we should just make the value parameter
+			// non const instead?
+			return const_cast<void *>(value);
 		}
 	} else
 		return NULL;
