@@ -1640,7 +1640,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				int nodraw = 0;
 
 				gfx_pixmap_t *view;
-				gfx_mode_t *mode;
+				//gfx_mode_t *mode;
 
 				p0printf("Embedded view @%d\n", pos);
 
@@ -1783,7 +1783,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int palette_data_ptr = getUInt16(resource + 28);
 	int bitmap_data_ptr = getUInt16(resource + 32);
 	int sci_titlebar_size = style->pic_port_bounds.y;
-	gfx_mode_t *mode;
+	//gfx_mode_t *mode;
 	gfx_pixmap_t *view = NULL;
 #if 0
 	// Set up mode structure for resizing the view
