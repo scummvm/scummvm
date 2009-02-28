@@ -87,8 +87,11 @@ const char *_debug_get_input_default() {
 	printf("> ");
 	fgets(newinpbuf, 254, stdin);
 
-	if (strlen(newinpbuf) != 0)
+	size_t l = strlen(newinpbuf);
+	if (l > 0 && newinpbuf[0] != '\n') {
+		if (newinpbuf[l-1] == '\n') newinpbuf[l-1] = 0;
 		memcpy(inputbuf, newinpbuf, 256);
+	}
 
 	return inputbuf;
 }
