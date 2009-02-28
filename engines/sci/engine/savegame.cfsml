@@ -106,7 +106,7 @@ static EngineState *_global_save_state;
 #define FILE_VERSION _global_save_state->savegame_version
 
 
-void write_reg_t(Common::WriteStream *fh, reg_t *foo) {
+void write_reg_t(Common::WriteStream *fh, reg_t const *foo) {
 	WSprintf(fh, PREG, PRINT_REG(*foo));
 }
 
@@ -122,7 +122,7 @@ int read_reg_t(Common::SeekableReadStream *fh, reg_t *foo, const char *lastval, 
 	return 0;
 }
 
-void write_sci_version(Common::WriteStream *fh, sci_version_t *foo) {
+void write_sci_version(Common::WriteStream *fh, sci_version_t const *foo) {
 	WSprintf(fh, "%d.%03d.%03d", SCI_VERSION_MAJOR(*foo), SCI_VERSION_MINOR(*foo), SCI_VERSION_PATCHLEVEL(*foo));
 }
 
@@ -130,7 +130,7 @@ int read_sci_version(Common::SeekableReadStream *fh, sci_version_t *foo, const c
 	return version_parse(lastval, foo);
 }
 
-void write_PTN(Common::WriteStream *fh, parse_tree_node_t *foo) {
+void write_PTN(Common::WriteStream *fh, parse_tree_node_t const *foo) {
 	if (foo->type == PARSE_TREE_NODE_LEAF)
 		WSprintf(fh, "L%d", foo->content.value);
 	else
@@ -190,25 +190,24 @@ int read_PTN(Common::SeekableReadStream *fh, parse_tree_node_t *foo, const char 
 	} else return 1; // failure to parse anything
 }
 
-
-void write_menubar_tp(Common::WriteStream *fh, menubar_t **foo);
+void write_menubar_tp(Common::WriteStream *fh, const menubar_t * const *foo);
 int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo);
+void write_mem_obj_tp(Common::WriteStream *fh, const mem_obj_t * const *foo);
 int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_songlib_t(Common::WriteStream *fh, songlib_t *foo);
+void write_songlib_t(Common::WriteStream *fh, songlib_t const *foo);
 int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
 
 int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_IntMapperPtr(Common::WriteStream *fh, IntMapper **foo);
+void write_IntMapperPtr(Common::WriteStream *fh, const IntMapper * const *foo);
 int read_IntMapperPtr(Common::SeekableReadStream *fh, IntMapper **foo, const char *lastval, int *line, int *hiteof);
 
-void write_IntMapperNodePtr(Common::WriteStream *fh, IntMapper::Node **foo);
+void write_IntMapperNodePtr(Common::WriteStream *fh, const IntMapper::Node * const *foo);
 int read_IntMapperNodePtr(Common::SeekableReadStream *fh, IntMapper::Node **foo, const char *lastval, int *line, int *hiteof);
 
-void write_SegManagerPtr(Common::WriteStream *fh, SegManager **foo);
+void write_SegManagerPtr(Common::WriteStream *fh, const SegManager * const *foo);
 int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const char *lastval, int *line, int *hiteof);
 
 typedef mem_obj_t *mem_obj_ptr;
@@ -446,7 +445,7 @@ RECORD dynmem_t "dynmem_t" {
 
 %END CFSML
 
-void write_songlib_t(Common::WriteStream *fh, songlib_t *songlib) {
+void write_songlib_t(Common::WriteStream *fh, songlib_t const *songlib) {
 	song_t *seeker = *(songlib->lib);
 	int songcount = song_lib_count(*songlib);
 
@@ -489,7 +488,7 @@ int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *songlib, const cha
 	return 0;
 }
 
-void write_song_tp(Common::WriteStream *fh, song_t **foo) {
+void write_song_tp(Common::WriteStream *fh, const song_t * const *foo) {
 	%CFSMLWRITE song_t *foo INTO fh;
 }
 
@@ -507,7 +506,7 @@ int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastv
 	return 0;
 }
 
-void write_IntMapperPtr(Common::WriteStream *fh, IntMapper **foo) {
+void write_IntMapperPtr(Common::WriteStream *fh, const IntMapper * const *foo) {
 	%CFSMLWRITE IntMapper *foo INTO fh;
 }
 
@@ -518,7 +517,7 @@ int read_IntMapperPtr(Common::SeekableReadStream *fh, IntMapper **foo, const cha
 	return 0;
 }
 
-void write_IntMapperNodePtr(Common::WriteStream *fh, IntMapper::Node **foo) {
+void write_IntMapperNodePtr(Common::WriteStream *fh, const IntMapper::Node * const *foo) {
 	if (!(*foo)) {
 		WSprintf(fh, "\\null");
 	} else {
@@ -565,7 +564,7 @@ int read_IntMapperNodePtr(Common::SeekableReadStream *fh, IntMapper::Node **foo,
 	return 0;
 }
 
-void write_menubar_tp(Common::WriteStream *fh, menubar_t **foo) {
+void write_menubar_tp(Common::WriteStream *fh, const menubar_t * const *foo) {
 	if (*foo) {
 		%CFSMLWRITE menubar_t (*foo) INTO fh;
 	} else { // Nothing to write
@@ -610,7 +609,7 @@ int mem_obj_string_to_enum(const char *str) {
 	return -1;
 }
 
-void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t *foo) {
+void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t const *foo) {
 	WSprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);
 	%CFSMLWRITE int &foo->segmgr_id INTO fh;
 	switch (foo->type) {
@@ -689,7 +688,7 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 	return *hiteof;
 }
 
-void write_mem_obj_tp(Common::WriteStream *fh, mem_obj_t **foo) {
+void write_mem_obj_tp(Common::WriteStream *fh, const mem_obj_t * const *foo) {
 	if (*foo) {
 		%CFSMLWRITE mem_obj_t (*foo) INTO fh;
 	} else { // Nothing to write
@@ -708,7 +707,7 @@ int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char 
 	return 0;
 }
 
-void write_SegManagerPtr(Common::WriteStream *fh, SegManager **foo) {
+void write_SegManagerPtr(Common::WriteStream *fh, const SegManager * const *foo) {
 	%CFSMLWRITE bool &((*foo)->isSci1_1) INTO fh;
 	%CFSMLWRITE SegManager *foo INTO fh;
 }
@@ -723,7 +722,6 @@ int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const c
 	%CFSMLREAD SegManager (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
 	return 0;
 }
-
 
 // This function is called to undo some strange stuff done in preparation
 // to writing a gamestate to disk

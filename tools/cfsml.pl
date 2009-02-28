@@ -375,12 +375,13 @@ sub create_declaration
   {
     $typename = $type;
     $ctype = $types{$type}->{'ctype'};
+    $constpctype = $types{$type}->{'constpctype'};
 
     if (not $types{$type}->{'external'}) {
       $types{$type}{'writer'} = "_cfsml_write_" . $typename;
       $types{$type}{'reader'} = "_cfsml_read_" . $typename;
       write_line_pp(__LINE__, 0);
-      print "static void $types{$type}{'writer'}(Common::WriteStream *fh, $ctype* save_struc);\n";
+      print "static void $types{$type}{'writer'}(Common::WriteStream *fh, $constpctype save_struc);\n";
       print "static int $types{$type}{'reader'}(Common::SeekableReadStream *fh, $ctype* save_struc, const char *lastval, int *line, int *hiteof);\n\n";
     };
 
@@ -390,9 +391,10 @@ sub create_writer
   {
     $typename = $type;
     $ctype = $types{$type}{'ctype'};
+    $constpctype = $types{$type}->{'constpctype'};
 
     write_line_pp(__LINE__, 0);
-    print "static void\n_cfsml_write_$typename(Common::WriteStream *fh, $ctype* save_struc)\n{\n";
+    print "static void\n_cfsml_write_$typename(Common::WriteStream *fh, $constpctype save_struc)\n{\n";
 
     if ($types{$type}{'type'} eq $type_integer) {
       print "	WSprintf(fh, \"%li\", (long)*save_struc);\n";
@@ -460,7 +462,7 @@ sub create_writer
     } else { # Normal record entry
 
       print "	$types{$n->{'type'}}{'writer'}";
-      print "(fh, ($types{$n->{'type'}}{'ctype'}*) &(save_struc->$n->{'name'}));\n";
+      print "(fh, ($types{$n->{'type'}}{'constpctype'}) &(save_struc->$n->{'name'}));\n";
 
     }
 
@@ -720,11 +722,13 @@ sub create_reader
 	  'int' => {
 		    'type' => $type_integer,
 		    'ctype' => "int",
+		    'constpctype' => "int const *",
 		   },
 
 	  'string' => {
 		       'type' => $type_string,
 		       'ctype' => "char *",
+		       'constpctype' => "const char * const *",
 		      },
 	 );
 
@@ -995,6 +999,11 @@ while (<STDIN>) {
 	  my $newtype = $tokens[1];
 
 	  $types{$newtype}->{'ctype'} = $tokens[2];
+	  if ($tokens[2] =~ /\*\$/) {
+	    $types{$newtype}->{'ctype'} = "const " . $tokens[2] . " const *";
+	  } else {
+	    $types{$newtype}->{'constpctype'} = $tokens[2] . " const *";
+	  }
 
 	  if ($tokens_nr == 5) { # must be ...LIKE...
 
@@ -1043,6 +1052,7 @@ while (<STDIN>) {
 	  } elsif ($tokens_nr == 3) {
 		  $types{$struct}{'ctype'} = $struct;
 	  }
+	  $types{$struct}{'constpctype'} = $struct . " const *";
 
 	  if (($tokens_nr > $extoffset + 1) && ($extoffset + 1 <= $tokens_nr)) {
 	      if ($tokens[$extoffset] ne "EXTENDS") {
