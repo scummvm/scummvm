@@ -658,7 +658,7 @@ void run_vm(EngineState *s, int restoring) {
 			scr = script_locate_by_segment(s, xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
-				warning("Running on non-existant script in segment %x!\n", xs->addr.pc.segment);
+				warning("Running on non-existant script in segment %x!", xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = 2;
@@ -1978,7 +1978,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	reg.segment = s->seg_manager->segGet(script_nr);
 
 	if (!s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID) || reg.segment <= 0) {   // Is it already loaded?
-		//sciprintf("Warning: unloading script 0x%x requested although not loaded\n", script_nr);
+		//warning("unloading script 0x%x requested although not loaded", script_nr);
 		// This is perfectly valid SCI behaviour
 		return;
 	}

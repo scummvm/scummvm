@@ -76,7 +76,7 @@ int version_parse(const char *vn, sci_version_t *result) {
 	int patchlevel = strtol(vn + 6, &endptr[2], 10);
 
 	if (endptr[0] != vn + 1 || endptr[1] != vn + 5 || *endptr[2] != '\0') {
-		sciprintf("Warning: Failed to parse version string '%s'\n", vn);
+		warning("Failed to parse version string '%s'", vn);
 		return 1;
 	}
 

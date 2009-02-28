@@ -82,14 +82,14 @@ static void _common_init(base_song_iterator_t *self) {
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
 	if (offset > self->size) { \
-		fprintf(stderr, SIPFX "Reached end of song without terminator (%x/%x) at %d!\n", offset, self->size, __LINE__); \
+		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->size, __LINE__); \
 		return SI_FINISHED; \
 	}
 
 #define CHECK_FOR_END(offset_augment) \
 	if ((channel->offset + (offset_augment)) > channel->end) { \
 		channel->state = SI_STATE_FINISHED; \
-		fprintf(stderr, SIPFX "Reached end of track %d without terminator (%x+%x/%x) at %d!\n", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
+		warning(SIPFX "Reached end of track %d without terminator (%x+%x/%x) at %d!", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -380,7 +380,7 @@ static int _sci_midi_process_state(base_song_iterator_t *self, unsigned char *bu
 	}
 
 	case SI_STATE_UNINITIALISED:
-		fprintf(stderr, SIPFX "Attempt to read command from uninitialized iterator!\n");
+		warning(SIPFX "Attempt to read command from uninitialized iterator!");
 		self->init((song_iterator_t *) self);
 		return self->next((song_iterator_t *) self, buf, result);
 
@@ -436,8 +436,7 @@ static int _sci_midi_process_state(base_song_iterator_t *self, unsigned char *bu
 	}
 
 	default:
-		fprintf(stderr, SIPFX "Invalid iterator state %d!\n",
-		        channel->state);
+		warning(SIPFX "Invalid iterator state %d!", channel->state);
 		BREAKPOINT();
 		return SI_FINISHED;
 	}
@@ -486,8 +485,7 @@ static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
 		                    self->size - offset);
 
 		if (!fc) {
-			fprintf(stderr, SIPFX "Warning: Playing unterminated"
-			        " song!\n");
+			warning(SIPFX "Playing unterminated song!");
 			return 1;
 		}
 
@@ -500,9 +498,8 @@ static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	}
 
 	if (!found_it) {
-		fprintf(stderr, SIPFX
-		        "Warning: Song indicates presence of PCM, but"
-		        " none found (finally at offset %04x)\n", offset);
+		warning(SIPFX "Song indicates presence of PCM, but"
+		        " none found (finally at offset %04x)", offset);
 
 		return 1;
 	}
@@ -519,9 +516,8 @@ static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	if (offset + SCI0_PCM_DATA_OFFSET + size != self->size) {
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->size;
 
-		fprintf(stderr, SIPFX
-		        "Warning: PCM advertizes %d bytes of data, but %d"
-		        " bytes are trailing in the resource!\n",
+		warning(SIPFX "PCM advertizes %d bytes of data, but %d"
+		        " bytes are trailing in the resource!",
 		        size, self->size - (offset + SCI0_PCM_DATA_OFFSET));
 
 		if (d > 0)
@@ -1189,8 +1185,7 @@ static song_iterator_t *_sci1_handle_message(sci1_song_iterator_t *self,
 		}
 
 		default:
-			fprintf(stderr, SIPFX "Unsupported command %d to"
-			        " SCI1 iterator", msg.type);
+			warning(SIPFX "Unsupported command %d to SCI1 iterator", msg.type);
 		}
 		return (song_iterator_t *) self;
 	}
@@ -1802,8 +1797,7 @@ song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, so
 	int i;
 
 	if (!data || size < 22) {
-		warning(SIPFX "Attempt to instantiate song iterator for null"
-		        " song data");
+		warning(SIPFX "Attempt to instantiate song iterator for null song data");
 		return NULL;
 	}
 
@@ -1853,7 +1847,7 @@ song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, so
 	default:
 		/**-- Invalid/unsupported sound resources --**/
 		warning(SIPFX "Attempt to instantiate invalid/unknown"
-		        " song iterator type %d\n", type);
+		        " song iterator type %d", type);
 		return NULL;
 	}
 	it->ID = id;

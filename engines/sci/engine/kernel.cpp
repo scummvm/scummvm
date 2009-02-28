@@ -578,7 +578,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (dest && src)
 			memcpy(dest, src, size);
 		else {
-			warning("Warning: Could not execute kMemory:memcpy of %d bytes:", size);
+			warning("Could not execute kMemory:memcpy of %d bytes:", size);
 			if (!dest) {
 				warning("  dest ptr ("PREG") invalid/memory region too small", PRINT_REG(argv[1]));
 			}
@@ -643,13 +643,11 @@ reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *problem = (const char*)(s->kfunct_table[funct_nr].orig_name ? "unmapped" : "NOP");
 
-	warning("Warning: Kernel function 0x%02x invoked: %s", funct_nr, problem);
+	warning("Kernel function 0x%02x invoked: %s", funct_nr, problem);
 
 	if (s->kfunct_table[funct_nr].orig_name && strcmp(s->kfunct_table[funct_nr].orig_name, SCRIPT_UNKNOWN_FUNCTION_STRING)) {
-		sciprintf(" (but its name is known to be %s)", s->kfunct_table[funct_nr].orig_name);
+		warning(" (but its name is known to be %s)", s->kfunct_table[funct_nr].orig_name);
 	}
-
-	sciprintf("\n");
 
 	return NULL_REG;
 }
@@ -741,8 +739,8 @@ int script_map_kernel(EngineState *s) {
 	int max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->sci_version];
 
 	if (functions_nr < max_functions_nr) {
-		sciprintf("Warning: SCI version believed to have %d kernel"
-		          " functions, but only %d reported-- filling up remaining %d\n",
+		warning("SCI version believed to have %d kernel"
+		        " functions, but only %d reported-- filling up remaining %d",
 		          max_functions_nr, functions_nr, max_functions_nr - functions_nr);
 
 		functions_nr = max_functions_nr;
@@ -765,10 +763,10 @@ int script_map_kernel(EngineState *s) {
 
 		if (found == -1) {
 			if (sought_name) {
-				sciprintf("Warning: Kernel function %s[%x] unmapped\n", s->kernel_names[functnr], functnr);
+				warning("Kernel function %s[%x] unmapped", s->kernel_names[functnr], functnr);
 				s->kfunct_table[functnr].fun = kNOP;
 			} else {
-				sciprintf("Warning: Flagging kernel function %x as unknown\n", functnr);
+				warning("Flagging kernel function %x as unknown", functnr);
 				s->kfunct_table[functnr].fun = k_Unknown;
 			}
 

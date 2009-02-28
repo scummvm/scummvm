@@ -148,10 +148,10 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 	CALLC(length_param = getbits(reader, 8));
 
 	if (mode == DCL_ASCII_MODE) {
-		warning("DCL-INFLATE: Warning: Decompressing ASCII mode (untested)");
+		warning("DCL-INFLATE: Decompressing ASCII mode (untested)");
 		//DEBUG_DCL_INFLATE = 1;
 	} else if (mode) {
-		fprintf(stderr, "DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
+		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
 		return 1;
 	}
 
@@ -170,7 +170,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 
 
 	if (length_param < 3 || length_param > 6)
-		fprintf(stderr, "Warning: Unexpected length_param value %d (expected in [3,6])\n", length_param);
+		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
 	while (write_pos < length) {
 		CALLC(value = getbits(reader, 1));

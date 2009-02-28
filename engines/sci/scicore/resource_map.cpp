@@ -27,6 +27,7 @@
 #include "sci/scicore/resource.h"
 #include "sci/tools.h"
 
+#include "common/util.h"
 #include "common/file.h"
 
 namespace Sci {
@@ -295,7 +296,7 @@ int sci0_read_resource_map(ResourceManager *mgr, ResourceSource *map, resource_t
 				++resource_index;
 
 			if (++resources_total_read >= resource_nr) {
-				sciprintf("Warning: After %d entries, resource.map is not terminated", resource_index);
+				warning("After %d entries, resource.map is not terminated", resource_index);
 				next_entry = 0;
 			}
 
