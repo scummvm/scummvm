@@ -240,7 +240,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
 				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
 				dstData += (resSizeY - luggSizeY) * resSizeX;
-				for (uint32 cnty = 0; cnty < (SwordEngine::isPsx() ? luggSizeY / 2 : luggSizeY); cnty++) {
+				for (uint32 cnty = 0; cnty < (uint32)(SwordEngine::isPsx() ? luggSizeY / 2 : luggSizeY); cnty++) {
 					for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
 						if (luggSrc[cntx])
 							dstData[cntx] = luggSrc[cntx];
@@ -262,7 +262,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		uint8 *dstData = ptrData;
 		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
 		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
-			for (uint32 cnty = 0; cnty < (SwordEngine::isPsx() ? ptrSizeY / 2 : ptrSizeY); cnty++) {
+			for (uint32 cnty = 0; cnty < (uint32)(SwordEngine::isPsx() ? ptrSizeY / 2 : ptrSizeY); cnty++) {
 				for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
 					if (srcData[cntx])
 						dstData[cntx] = srcData[cntx];
