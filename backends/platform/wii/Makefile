@@ -69,6 +69,7 @@ USE_FLAC = 1
 srcdir = ../../..
 VPATH = $(srcdir)
 HAVE_GCC3 = 1
+DEPDIR = .deps
 
 DISTPATH = $(srcdir)/dists/wii
 
@@ -190,7 +191,7 @@ upload: $(TARGET).dol
 ifeq ($(GAMECUBE),1)
 	$(DEVKITPPC)/bin/geckoupload $(TARGET).dol
 else
-	$(DEVKITPPC)/bin/wiiload $(TARGET).dol
+	$(DEVKITPPC)/bin/wiiload $(TARGET).dol -d3
 endif
 
 gdb:
@@ -211,6 +212,7 @@ endif
 	$(CP) $(DISTPATH)/READMII dist/scummvm/
 	$(CP) $(srcdir)/AUTHORS dist/scummvm/
 	$(CP) $(srcdir)/COPYING dist/scummvm/
+	$(CP) $(srcdir)/COPYING.LGPL dist/scummvm/
 	$(CP) $(srcdir)/COPYRIGHT dist/scummvm/
 	$(CP) $(srcdir)/NEWS dist/scummvm/
 	$(CP) $(srcdir)/README dist/scummvm/
