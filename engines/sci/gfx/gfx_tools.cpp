@@ -292,6 +292,8 @@ int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 
 			if (dr == 0 && dg == 0 && db == 0) {
 				color->global_index = i;
+				if (pal->colors[i].lockers != GFX_COLOR_SYSTEM)
+					pal->colors[i].lockers++;
 				return GFX_OK;
 			}
 
@@ -316,6 +318,8 @@ int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
 	}
 
 	color->global_index = bestcolor;
+	if (pal->colors[bestcolor].lockers != GFX_COLOR_SYSTEM)
+		pal->colors[bestcolor].lockers++;
 
 	//GFXWARN("Out of palette colors- doing approximated mapping");
 	return GFX_OK;
