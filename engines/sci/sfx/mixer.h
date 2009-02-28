@@ -45,23 +45,6 @@ struct twochannel_data {
 	int left, right;
 };
 
-struct sfx_pcm_feed_state_t {
-	sfx_pcm_feed_t *feed;
-
-	/* The following fields are for use by the mixer only and must not be
-	** touched by pcm_feed code.  */
-	byte *buf; /* dynamically allocated buffer for this feed, used in some circumstances. */
-	int buf_size; /* Number of frames that fit into the buffer */
-	sfx_pcm_urat_t spd; /* source frames per destination frames */
-	sfx_pcm_urat_t scount; /* Frame counter, backed up in between calls */
-	int frame_bufstart; /* Left-over frames at the beginning of the buffer */
-	int mode; /* Whether the feed is alive or pending destruction */
-
-	int pending_review; /* Timestamp needs to be checked for this stream */
-	twochannel_data ch_old, ch_new; /* Intermediate results of output computation */
-};
-
-
 struct sfx_pcm_mixer_t {
 	/* Mixers are the heart of all matters PCM. They take PCM data from subscribed feeds,
 	** mix it (hence the name) and ask the pcm device they are attached to to play the
@@ -104,10 +87,6 @@ struct sfx_pcm_mixer_t {
 	**            depends on the time that has passed since the last call to process(), if
 	**            any.
 	*/
-
-	int feeds_nr;
-	int feeds_allocd;
-	sfx_pcm_feed_state_t *feeds;
 
 	void *private_bits;
 };

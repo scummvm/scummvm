@@ -56,6 +56,22 @@ static int diagnosed_too_slow = 0;
 #define ACQUIRE_LOCK() P->_mixerLock.lock()
 #define RELEASE_LOCK() P->_mixerLock.unlock()
 
+struct sfx_pcm_feed_state_t {
+	sfx_pcm_feed_t *feed;
+
+	/* The following fields are for use by the mixer only and must not be
+	** touched by pcm_feed code.  */
+	byte *buf; /* dynamically allocated buffer for this feed, used in some circumstances. */
+	int buf_size; /* Number of frames that fit into the buffer */
+	sfx_pcm_urat_t spd; /* source frames per destination frames */
+	sfx_pcm_urat_t scount; /* Frame counter, backed up in between calls */
+	int frame_bufstart; /* Left-over frames at the beginning of the buffer */
+	int mode; /* Whether the feed is alive or pending destruction */
+
+	int pending_review; /* Timestamp needs to be checked for this stream */
+	twochannel_data ch_old, ch_new; /* Intermediate results of output computation */
+};
+
 struct mixer_private {
 	Common::Mutex _mixerLock;
 	byte *outbuf; /* Output buffer to write to the PCM device next time */
@@ -80,6 +96,10 @@ struct mixer_private {
 	int _framesize;
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
+
+	int feeds_nr;
+	int feeds_allocd;
+	sfx_pcm_feed_state_t *feeds;
 };
 
 #define P ((struct mixer_private *)(self->private_bits))
@@ -143,18 +163,18 @@ static sfx_pcm_urat_t urat(unsigned int nom, unsigned int denom) {
 static void mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 	sfx_pcm_feed_state_t *fs;
 	ACQUIRE_LOCK();
-	if (!self->feeds) {
-		self->feeds_allocd = 2;
-		self->feeds = (sfx_pcm_feed_state_t*)sci_malloc(sizeof(sfx_pcm_feed_state_t)
-		              * self->feeds_allocd);
-	} else if (self->feeds_allocd == self->feeds_nr) {
-		self->feeds_allocd += 2;
-		self->feeds = (sfx_pcm_feed_state_t*)sci_realloc(self->feeds,
+	if (!P->feeds) {
+		P->feeds_allocd = 2;
+		P->feeds = (sfx_pcm_feed_state_t*)sci_malloc(sizeof(sfx_pcm_feed_state_t)
+		              * P->feeds_allocd);
+	} else if (P->feeds_allocd == P->feeds_nr) {
+		P->feeds_allocd += 2;
+		P->feeds = (sfx_pcm_feed_state_t*)sci_realloc(P->feeds,
 		              sizeof(sfx_pcm_feed_state_t)
-		              * self->feeds_allocd);
+		              * P->feeds_allocd);
 	}
 
-	fs = self->feeds + self->feeds_nr++;
+	fs = P->feeds + P->feeds_nr++;
 	fs->feed = feed;
 
 	feed->frame_size = SFX_PCM_FRAME_SIZE(feed->conf);
@@ -210,8 +230,8 @@ static void _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 #ifdef DEBUG
 	sciprintf("[soft-mixer] Unsubscribing %s-%x\n", feed->debug_name, feed->debug_nr);
 #endif
-	for (i = 0; i < self->feeds_nr; i++) {
-		sfx_pcm_feed_state_t *fs = self->feeds + i;
+	for (i = 0; i < P->feeds_nr; i++) {
+		sfx_pcm_feed_state_t *fs = P->feeds + i;
 
 		if (fs->feed == feed) {
 			feed->destroy(feed);
@@ -219,32 +239,32 @@ static void _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 			if (fs->buf)
 				free(fs->buf);
 
-			self->feeds_nr--;
+			P->feeds_nr--;
 
 			/* Copy topmost into deleted so that we don't have any holes */
-			if (i != self->feeds_nr)
-				self->feeds[i] = self->feeds[self->feeds_nr];
+			if (i != P->feeds_nr)
+				P->feeds[i] = P->feeds[P->feeds_nr];
 
-			if (self->feeds_allocd > 8 && self->feeds_allocd > (self->feeds_nr << 1)) {
+			if (P->feeds_allocd > 8 && P->feeds_allocd > (P->feeds_nr << 1)) {
 				/* Limit memory waste */
-				self->feeds_allocd >>= 1;
-				self->feeds
-				= (sfx_pcm_feed_state_t*)sci_realloc(self->feeds,
+				P->feeds_allocd >>= 1;
+				P->feeds
+				= (sfx_pcm_feed_state_t*)sci_realloc(P->feeds,
 				                                     sizeof(sfx_pcm_feed_state_t)
-				                                     * self->feeds_allocd);
+				                                     * P->feeds_allocd);
 			}
 
-			for (i = 0; i < self->feeds_nr; i++)
+			for (i = 0; i < P->feeds_nr; i++)
 				fprintf(stderr, "  Feed #%d: %s-%x\n",
-				        i, self->feeds[i].feed->debug_name,
-				        self->feeds[i].feed->debug_nr);
+				        i, P->feeds[i].feed->debug_name,
+				        P->feeds[i].feed->debug_nr);
 
 			return;
 		}
 	}
 
 	fprintf(stderr, "[sfx-mixer] Assertion failed: Deleting invalid feed %p out of %d\n",
-	        (void *)feed, self->feeds_nr);
+	        (void *)feed, P->feeds_nr);
 
 	BREAKPOINT();
 }
@@ -254,8 +274,8 @@ static void mix_exit(sfx_pcm_mixer_t *self) {
 	P->_audioStream = 0;
 
 	ACQUIRE_LOCK();
-	while (self->feeds_nr)
-		_mix_unsubscribe(self, self->feeds[0].feed);
+	while (P->feeds_nr)
+		_mix_unsubscribe(self, P->feeds[0].feed);
 	RELEASE_LOCK();
 
 	free(P->outbuf);
@@ -533,7 +553,7 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 									 int len, sfx_timestamp_t *ts, sfx_timestamp_t base_ts) {
 /* if add_result is non-zero, P->outbuf should be added to rather than overwritten. */
 /* base_ts is the timestamp for the first frame */
-	sfx_pcm_feed_state_t *fs = self->feeds + add_result;
+	sfx_pcm_feed_state_t *fs = P->feeds + add_result;
 	sfx_pcm_feed_t *f = fs->feed;
 	sfx_pcm_config_t conf = f->conf;
 	int use_16 = conf.format & SFX_PCM_FORMAT_16;
@@ -586,7 +606,7 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 			newmode = f->get_timestamp(f, ts);
 		ACQUIRE_LOCK();
 
-		fs = self->feeds + add_result;
+		fs = P->feeds + add_result;
 		/* Reset in case of status update */
 
 		switch (newmode) {
@@ -636,7 +656,7 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 		            - fs->frame_bufstart);
 
 	ACQUIRE_LOCK();
-	fs = self->feeds + add_result;
+	fs = P->feeds + add_result;
 
 	frames_read += fs->frame_bufstart;
 	frames_left = frames_read;
@@ -836,10 +856,10 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 		}
 
 #if (DEBUG >= 1)
-		if (self->feeds_nr)
-			sciprintf("[soft-mixer] Mixing %d output frames on %d input feeds\n", buflen, self->feeds_nr);
+		if (P->feeds_nr)
+			sciprintf("[soft-mixer] Mixing %d output frames on %d input feeds\n", buflen, P->feeds_nr);
 #endif
-		if (self->feeds_nr && !P->paused) {
+		if (P->feeds_nr && !P->paused) {
 			/* Below, we read out all feeds in case we have to skip frames first, then get the
 			** most current sound. 'fake_buflen' is either the actual buflen (for the last iteration)
 			** or a fraction of the buf length to discard.  */
@@ -856,7 +876,7 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 					frames_skip = -1; /* Mark us as being completely done */
 				}
 
-				for (src_i = 0; src_i < self->feeds_nr; src_i++) {
+				for (src_i = 0; src_i < P->feeds_nr; src_i++) {
 					mix_compute_input_linear(self, src_i,
 					                         fake_buflen, &timestamp,
 					                         start_timestamp);
@@ -878,9 +898,9 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 					}
 				}
 				/* Destroy all feeds we finished */
-				for (src_i = 0; src_i < self->feeds_nr; src_i++)
-					if (self->feeds[src_i].mode == SFX_PCM_FEED_MODE_DEAD)
-						_mix_unsubscribe(self, self->feeds[src_i].feed);
+				for (src_i = 0; src_i < P->feeds_nr; src_i++)
+					if (P->feeds[src_i].mode == SFX_PCM_FEED_MODE_DEAD)
+						_mix_unsubscribe(self, P->feeds[src_i].feed);
 			} while (frames_skip >= 0);
 
 		} else { /* Zero it out */
@@ -889,12 +909,12 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 		}
 
 #if (DEBUG >= 1)
-		if (self->feeds_nr)
+		if (P->feeds_nr)
 			sciprintf("[soft-mixer] Done mixing for this session, the result will be our next output buffer\n");
 #endif
 
 #if (DEBUG >= 3)
-		if (self->feeds_nr) {
+		if (P->feeds_nr) {
 			int i;
 			sciprintf("[soft-mixer] Intermediate representation:\n");
 			for (i = 0; i < buflen; i++)
@@ -945,9 +965,6 @@ sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear = {
 	mix_resume,
 	mix_process_linear,
 
-	0,
-	0,
-	NULL,
 	NULL
 };
 
