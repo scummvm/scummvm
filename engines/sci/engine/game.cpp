@@ -142,7 +142,7 @@ int _reset_graphics_input(EngineState *s) {
 			file.close();
 			_sci1_alloc_system_colors(s);
 		} else {
-			resource = s->resmgr->findResource(sci_palette, 999, 1);
+			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
 			if (resource) {
 				if (s->version < SCI_VERSION(1, 001, 000))
 					s->gfx_state->resstate->static_palette = gfxr_read_pal1(999, &s->gfx_state->resstate->static_palette_entries,
@@ -151,7 +151,7 @@ int _reset_graphics_input(EngineState *s) {
 					s->gfx_state->resstate->static_palette = gfxr_read_pal11(999, &s->gfx_state->resstate->static_palette_entries,
 																			resource->data, resource->size);
 				_sci1_alloc_system_colors(s);
-				s->resmgr->unlockResource(resource, sci_palette, 999);
+				s->resmgr->unlockResource(resource, 999, kResourceTypePalette);
 			} else {
 				sciprintf("Couldn't find the default palette!\n");
 			}
@@ -184,7 +184,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	font_nr = -1;
 	do {
-		resource = s->resmgr->testResource(sci_font, ++font_nr);
+		resource = s->resmgr->testResource(kResourceTypeFont, ++font_nr);
 	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
 
 	if (!resource) {
@@ -295,7 +295,7 @@ int test_cursor_style(EngineState *s) {
 	int ok = 0;
 
 	do {
-		ok |= s->resmgr->testResource(sci_cursor, resource_nr++) != NULL;
+		ok |= s->resmgr->testResource(kResourceTypeCursor, resource_nr++) != NULL;
 	} while (resource_nr < 1000 && !ok);
 
 	return ok;
@@ -307,7 +307,7 @@ int create_class_table_sci11(EngineState *s) {
 	char *seeker_ptr;
 	int classnr;
 
-	Resource *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
 
 	if (!vocab996)
 		s->classtable_size = 20;
@@ -317,7 +317,7 @@ int create_class_table_sci11(EngineState *s) {
 	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		Resource *heap = s->resmgr->findResource(sci_heap, scriptnr, 0);
+		Resource *heap = s->resmgr->findResource(kResourceTypeHeap, scriptnr, 0);
 
 		if (heap) {
 			int global_vars = getUInt16(heap->data + 2);
@@ -362,7 +362,7 @@ static int create_class_table_sci0(EngineState *s) {
 	int classnr;
 	int magic_offset; // For strange scripts in older SCI versions
 
-	Resource *vocab996 = s->resmgr->findResource(sci_vocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
 
 	if (!vocab996)
 		s->classtable_size = 20;
@@ -373,7 +373,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		int objtype = 0;
-		Resource *script = s->resmgr->findResource(sci_script, scriptnr, 0);
+		Resource *script = s->resmgr->findResource(kResourceTypeScript, scriptnr, 0);
 
 		if (script) {
 			if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
@@ -435,7 +435,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 		}
 	}
-	s->resmgr->unlockResource(vocab996, sci_vocab, 996);
+	s->resmgr->unlockResource(vocab996, 996, kResourceTypeVocab);
 	vocab996 = NULL;
 	return 0;
 }

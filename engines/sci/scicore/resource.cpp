@@ -65,19 +65,28 @@ const char *sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-const char *sci_resource_types[] = {"view", "pic", "script", "text", "sound",
-                                    "memory", "vocab", "font", "cursor",
-                                    "patch", "bitmap", "palette", "cdaudio",
-                                    "audio", "sync", "message", "map", "heap"
-                                   };
 // These are the 18 resource types supported by SCI1
+const char *resourceTypeNames[] = {
+	"view", "pic", "script", "text", "sound",
+	"memory", "vocab", "font", "cursor",
+	"patch", "bitmap", "palette", "cdaudio",
+	"audio", "sync", "message", "map", "heap"
+};
 
-const char *sci_resource_type_suffixes[] = {"v56", "p56", "scr", "tex", "snd",
-        "   ", "voc", "fon", "cur", "pat",
-        "bit", "pal", "cda", "aud", "syn",
-        "msg", "map", "hep"
-                                           };
+const char *resourceTypeSuffixes[] = {
+	"v56", "p56", "scr", "tex", "snd",
+	"   ", "voc", "fon", "cur", "pat",
+	"bit", "pal", "cda", "aud", "syn",
+	"msg", "map", "hep"
+};
 
+const char *getResourceTypeName(ResourceType restype) {
+	return resourceTypeNames[restype];
+}
+
+const char *getResourceTypeSuffix(ResourceType restype) {
+	return resourceTypeSuffixes[restype];
+}
 
 int resourcecmp(const void *first, const void *second);
 
@@ -133,7 +142,7 @@ void ResourceManager::addAltSource(Resource *res, ResourceSource *source, unsign
 	res->alt_sources = rsrc;
 }
 
-Resource *ResourceManager::findResourceUnsorted(Resource *res, int res_nr, int type, int number) {
+Resource *ResourceManager::findResourceUnsorted(Resource *res, int res_nr, ResourceType type, int number) {
 	int i;
 	for (i = 0; i < res_nr; i++)
 		if (res[i].number == number && res[i].type == type)
@@ -258,7 +267,7 @@ void ResourceManager::loadResource(Resource *res, bool protect) {
 
 		if (error) {
 			sciprintf("Error %d occured while reading %s.%03d from resource file: %s\n",
-			          error, sci_resource_types[res->type], res->number, sci_error_types[error]);
+			          error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
 
 			if (protect)
 				memcpy(res, &backup, sizeof(Resource));
@@ -271,7 +280,7 @@ void ResourceManager::loadResource(Resource *res, bool protect) {
 
 }
 
-Resource *ResourceManager::testResource(int type, int number) {
+Resource *ResourceManager::testResource(ResourceType type, int number) {
 	Resource binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
@@ -290,7 +299,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 	mgr->_sciVersion = SCI_VERSION_AUTODETECT;
 
 	for (i = 0; i < 1000; i++) {
-		res = mgr->testResource(sci_view, i);
+		res = mgr->testResource(kResourceTypeView, i);
 
 		if (!res)
 			continue;
@@ -315,7 +324,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 
 	// Try the same thing with pics
 	for (i = 0; i < 1000; i++) {
-		res = mgr->testResource(sci_pic, i);
+		res = mgr->testResource(kResourceTypePic, i);
 
 		if (!res)
 			continue;
@@ -479,7 +488,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (resmap_version) {
 		case SCI_VERSION_0:
-			if (testResource(sci_vocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
+			if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
 				version = sci_test_view_type(this);
 				if (version == SCI_VERSION_01_VGA) {
 					sciprintf("Resmgr: Detected KQ5 or similar\n");
@@ -487,12 +496,12 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 					sciprintf("Resmgr: Detected SCI0\n");
 					version = SCI_VERSION_0;
 				}
-			} else if (testResource(sci_vocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
+			} else if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
 				version = sci_test_view_type(this);
 				if (version == SCI_VERSION_01_VGA) {
 					sciprintf("Resmgr: Detected KQ5 or similar\n");
 				} else {
-					if (testResource(sci_vocab, 912)) {
+					if (testResource(kResourceTypeVocab, 912)) {
 						sciprintf("Resmgr: Running KQ1 or similar, using SCI0 resource encoding\n");
 						version = SCI_VERSION_0;
 					} else {
@@ -515,7 +524,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			sciprintf("Resmgr: Detected Jones/CD or similar\n");
 			break;
 		case SCI_VERSION_1: {
-			Resource *res = testResource(sci_script, 0);
+			Resource *res = testResource(kResourceTypeScript, 0);
 
 			_sciVersion = version = SCI_VERSION_1_EARLY;
 			loadResource(res, true);
@@ -611,7 +620,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	_memoryLRU += res->size;
 #if (SCI_VERBOSE_RESMGR > 1)
 	fprintf(stderr, "Adding %s.%03d (%d bytes) to lru control: %d bytes total\n",
-	        sci_resource_types[res->type], res->number, res->size,
+	        getResourceTypeName(res->type), res->number, res->size,
 	        mgr->_memoryLRU);
 
 #endif
@@ -626,7 +635,7 @@ void ResourceManager::printLRU() {
 
 	while (res) {
 		fprintf(stderr, "\t%s.%03d: %d bytes\n",
-		        sci_resource_types[res->type], res->number,
+		        getResourceTypeName(res->type), res->number,
 		        res->size);
 		mem += res->size;
 		++entries;
@@ -650,18 +659,18 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 		removeFromLRU(goner);
 		unalloc(goner);
 #ifdef SCI_VERBOSE_RESMGR
-		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", sci_resource_types[goner->type], goner->number, goner->size);
+		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
 }
 
-Resource *ResourceManager::findResource(int type, int number, int lock) {
+Resource *ResourceManager::findResource(ResourceType type, int number, int lock) {
 	Resource *retval;
 
 	if (number >= sci_max_resource_nr[_sciVersion]) {
 		int modded_number = number % sci_max_resource_nr[_sciVersion];
 		sciprintf("[resmgr] Requested invalid resource %s.%d, mapped to %s.%d\n",
-		          sci_resource_types[type], number, sci_resource_types[type], modded_number);
+		          getResourceTypeName(type), number, getResourceTypeName(type), modded_number);
 		number = modded_number;
 	}
 
@@ -697,23 +706,23 @@ Resource *ResourceManager::findResource(int type, int number, int lock) {
 	if (retval->data)
 		return retval;
 	else {
-		sciprintf("Resmgr: Failed to read %s.%03d\n", sci_resource_types[retval->type], retval->number);
+		sciprintf("Resmgr: Failed to read %s.%03d\n", getResourceTypeName(retval->type), retval->number);
 		return NULL;
 	}
 }
 
-void ResourceManager::unlockResource(Resource *res, int resnum, int restype) {
+void ResourceManager::unlockResource(Resource *res, int resnum, ResourceType restype) {
 	if (!res) {
-		if (restype >= ARRAYSIZE(sci_resource_types))
+		if (restype == kResourceTypeInvalid)
 			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);
 		else
-			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d!\n", sci_resource_types[restype], resnum);
+			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d!\n", getResourceTypeName(restype), resnum);
 		return;
 	}
 
 	if (res->status != SCI_STATUS_LOCKED) {
 		sciprintf("Resmgr: Warning: Attempt to unlock unlocked resource %s.%03d\n",
-		          sci_resource_types[res->type], res->number);
+		          getResourceTypeName(res->type), res->number);
 		return;
 	}
 

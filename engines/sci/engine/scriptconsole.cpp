@@ -677,13 +677,13 @@ int con_hook_int(int *pointer, const char *name, const char *description) {
 
 // Console commands and support functions
 
-static int get_resource_number(char *resid) {
+static ResourceType parseResourceType(char *resid) {
 	// Gets the resource number of a resource string, or returns -1
-	int i, res = -1;
+	ResourceType res = kResourceTypeInvalid;
 
-	for (i = 0; i < sci_invalid_resource; i++)
-		if (strcmp(sci_resource_types[i], resid) == 0)
-			res = i;
+	for (int i = 0; i < kResourceTypeInvalid; i++)
+		if (strcmp(getResourceTypeName((ResourceType)i), resid) == 0)
+			res = (ResourceType)i;
 
 	return res;
 }
@@ -833,16 +833,16 @@ static int c_list(EngineState *s) {
 			else if (!strcmp("words", cmd_params[0].str))
 				return c_list_words(s);
 			else if (strcmp("restypes", cmd_params[0].str) == 0) {
-				for (i = 0; i < sci_invalid_resource; i++)
-					sciprintf("%s\n", sci_resource_types[i]);
+				for (i = 0; i < kResourceTypeInvalid; i++)
+					sciprintf("%s\n", getResourceTypeName((ResourceType)i));
 			} else {
-				int res = get_resource_number(cmd_params[0].str);
-				if (res == -1)
+				ResourceType res = parseResourceType(cmd_params[0].str);
+				if (res == kResourceTypeInvalid)
 					sciprintf("Unknown resource type: '%s'\n", cmd_params[0].str);
 				else {
 					for (i = 0; i < sci_max_resource_nr[s->resmgr->_sciVersion]; i++)
 						if (s->resmgr->testResource(res, i))
-							sciprintf("%s.%03d\n", sci_resource_types[res], i);
+							sciprintf("%s.%03d\n", getResourceTypeName((ResourceType)res), i);
 				}
 			}
 		}
@@ -909,8 +909,8 @@ static int c_print(EngineState *s) {
 }
 
 static int c_size(EngineState *s) {
-	int res = get_resource_number(cmd_params[0].str);
-	if (res == -1)
+	ResourceType res = parseResourceType(cmd_params[0].str);
+	if (res == kResourceTypeInvalid)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
 		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
@@ -924,9 +924,9 @@ static int c_size(EngineState *s) {
 }
 
 static int c_dump(EngineState *s) {
-	int res = get_resource_number(cmd_params[0].str);
+	ResourceType res = parseResourceType(cmd_params[0].str);
 
-	if (res == -1)
+	if (res == kResourceTypeInvalid)
 		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
 	else {
 		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
@@ -940,10 +940,11 @@ static int c_dump(EngineState *s) {
 }
 
 static int c_hexgrep(EngineState *s) {
-	int i, seeklen, resnr, restype, resmax;
+	int i, seeklen, resnr, resmax;
 	unsigned char *seekstr = NULL;
 	Resource *script = NULL;
 	char *dot = strchr(cmd_params[0].str, '.');
+	ResourceType restype;
 
 	if (NULL == s) {
 		fprintf(stderr, "console.c: c_hexgrep(): NULL passed for s\r\n");
@@ -968,7 +969,8 @@ static int c_hexgrep(EngineState *s) {
 		resmax = 999;
 	}
 
-	if ((restype = get_resource_number(cmd_params[0].str)) == -1) {
+	restype = parseResourceType(cmd_params[0].str);
+	if (restype == kResourceTypeInvalid) {
 		sciprintf("Unknown resource type \"%s\"\n", cmd_params[0].str);
 		free(seekstr);
 		return 1;
@@ -992,7 +994,7 @@ static int c_hexgrep(EngineState *s) {
 						seeker = seekerold + 1;
 
 						if (!output_script_name) {
-							sciprintf("\nIn %s.%03d:\n", sci_resource_types[restype], resnr);
+							sciprintf("\nIn %s.%03d:\n", getResourceTypeName((ResourceType)restype), resnr);
 							output_script_name = 1;
 						}
 						sciprintf("   0x%04x\n", seekerold);

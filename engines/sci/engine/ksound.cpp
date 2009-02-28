@@ -93,7 +93,7 @@ namespace Sci {
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
-	Resource *song = s->resmgr->findResource(sci_sound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
 	int flags = GET_SEL32V(obj, flags);
 
 	if (priority == -1) {
@@ -110,7 +110,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 }
 
 song_iterator_t *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id) {
-	Resource *song = s->resmgr->findResource(sci_sound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
 
 	if (!song)
 		return NULL;
@@ -486,7 +486,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (obj.segment && (s->resmgr->testResource(sci_sound, number))) {
+		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
 			sciprintf("Initializing song number %d\n", number);
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
 			                                build_iterator(s, number,
@@ -802,7 +802,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
-			if (!s->resmgr->testResource(sci_sound, number)) {
+			if (!s->resmgr->testResource(kResourceTypeSound, number)) {
 				sciprintf("Could not open song number %d\n", number);
 				return NULL_REG;
 			}
@@ -839,7 +839,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			sfx_remove_song(&s->sound, handle);
 		}
 
-		if (obj.segment && (s->resmgr->testResource(sci_sound, number))) {
+		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
 			sciprintf("Initializing song number %d\n", number);
 			SCRIPT_ASSERT_ZERO(sfx_add_song(&s->sound,
 			                                build_iterator(s, number,

@@ -121,7 +121,7 @@ int ResourceManager::detectOddSCI01(Common::File &file) {
 
 int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version) {
 	res->id = buf[0] | (buf[1] << 8);
-	res->type = SCI0_RESID_GET_TYPE(buf);
+	res->type = (ResourceType)SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
 	res->status = SCI_STATUS_NOMALLOC;
 
@@ -156,20 +156,20 @@ int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res,
 	return 0;
 }
 
-int ResourceManager::resTypeSCI1(int ofs, int *types, int lastrt) {
-	int i, last = -1;
+ResourceType ResourceManager::resTypeSCI1(int ofs, int *types, ResourceType lastrt) {
+	ResourceType last = kResourceTypeInvalid;
 
-	for (i = 0; i <= sci1_last_resource;i++)
+	for (int i = 0; i <= sci1_last_resource; i++)
 		if (types[i]) {
 			if (types[i] > ofs)
 				return last;
-			last = i;
+			last = (ResourceType)i;
 		}
 
 	return lastrt;
 }
 
-int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, int *lastrt) {
+int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, ResourceType *lastrt) {
 	unsigned char rtype;
 	unsigned char offset[2];
 	int read_ok;
@@ -184,7 +184,7 @@ int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, int
 			read_ok = 0;
 		if (rtype != 0xff) {
 			types[rtype&0x7f] = (offset[1] << 8) | (offset[0]);
-			*lastrt = rtype & 0x7f;
+			*lastrt = (ResourceType)(rtype & 0x7f);
 		}
 		size += 3;
 	} while (read_ok && (rtype != 0xFF));
@@ -344,7 +344,7 @@ int ResourceManager::isSCI10or11(int *types) {
 	int this_restype = 0;
 	int next_restype = 1;
 
-	while (next_restype <= sci_heap) {
+	while (next_restype <= kResourceTypeHeap) {
 		int could_be_10 = 0;
 		int could_be_11 = 0;
 
@@ -381,7 +381,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	int *types = (int *)sci_malloc(sizeof(int) * (sci1_last_resource + 1));
 	int i;
 	byte buf[SCI1_RESMAP_ENTRIES_SIZE];
-	int lastrt;
+	ResourceType lastrt;
 	int entrysize;
 	int entry_size_selector;
 

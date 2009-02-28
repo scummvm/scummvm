@@ -329,7 +329,7 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringList &selectorNames) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
-	Resource *script = resmgr->findResource(sci_script, res_no, 0);
+	Resource *script = resmgr->findResource(kResourceTypeScript, res_no, 0);
 	word_t **words;
 	int word_count;
 

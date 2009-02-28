@@ -210,7 +210,7 @@ void about_freesci(EngineState *s) {
 
 	i = 999;
 	while (!bodyfont_res && (i > -1))
-		bodyfont_res = s->resmgr->testResource(sci_font, i--);
+		bodyfont_res = s->resmgr->testResource(kResourceTypeFont, i--);
 
 	if (i == -1) {
 		sciprintf("Sorry, couldn't find a font...\n");

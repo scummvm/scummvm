@@ -49,9 +49,10 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
 
-	result->type = result->id & 0x7f;
-	if ((result->type > sci_invalid_resource))
+	uint16 type = result->id & 0x7f;
+	if (type > kResourceTypeInvalid)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
+	result->type = (ResourceType)type;
 
 	result->number = stream.readUint16LE();
 	compressedLength = stream.readUint16LE();
@@ -91,7 +92,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%%"
 	        " ratio\n",
-	        result->number, sci_resource_type_suffixes[result->type],
+	        result->number, getResourceTypeSuffix(result->type),
 	        compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
@@ -130,7 +131,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	case 3:
 	case 4: // NYI
 		fprintf(stderr, "Resource %d.%s: Warning: compression type #%d not yet implemented\n",
-		        result->number, sci_resource_type_suffixes[result->type], compressionMethod);
+		        result->number, getResourceTypeSuffix(result->type), compressionMethod);
 		free(result->data);
 		result->data = NULL;
 		result->status = SCI_STATUS_NOMALLOC;
@@ -138,7 +139,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 
 	default:
 		fprintf(stderr, "Resource %d.%s: Compression method SCI1/%hi not "
-		        "supported!\n", result->number, sci_resource_type_suffixes[result->type],
+		        "supported!\n", result->number, getResourceTypeSuffix(result->type),
 		        compressionMethod);
 		free(result->data);
 		result->data = NULL; // So that we know that it didn't work

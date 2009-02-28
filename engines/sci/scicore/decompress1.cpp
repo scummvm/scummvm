@@ -278,22 +278,26 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 			return SCI_ERROR_IO_ERROR;
 
 		result->number = result->id & 0x07ff;
-		result->type = result->id >> 11;
+		uint16 type = result->id >> 11;
 
-		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_EARLY]) || (result->type > sci_invalid_resource))
+		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_EARLY]) || (type > kResourceTypeInvalid))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
+
+		result->type = (ResourceType)type;
 	} else {
 		result->id = stream.readByte();
 		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
 
-		result->type = result->id & 0x7f;
+		uint16 type = result->id & 0x7f;
 		result->number = stream.readUint16LE();
 		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
 
-		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (result->type > sci_invalid_resource))
+		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (type > kResourceTypeInvalid))
 			return SCI_ERROR_DECOMPRESSION_INSANE;
+
+		result->type = (ResourceType)type;
 	}
 
 	compressedLength = stream.readUint16LE();
@@ -399,7 +403,7 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 
 	default:
 		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
-		        "supported!\n", sci_resource_types[result->type], result->number,
+		        "supported!\n", getResourceTypeName(result->type), result->number,
 		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work

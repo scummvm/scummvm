@@ -248,7 +248,7 @@ static void sci01_song_header_dump(byte *data, int size) {
 #undef SONGDATA
 
 int c_sfx_01_header(EngineState *s) {
-	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
 
 	if (!song) {
 		sciprintf("Doesn't exist\n");
@@ -261,7 +261,7 @@ int c_sfx_01_header(EngineState *s) {
 }
 
 int c_sfx_01_track(EngineState *s) {
-	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
 
 	int offset = cmd_params[1].val;
 
@@ -2204,7 +2204,7 @@ static int c_send(EngineState *s) {
 static int c_resource_id(EngineState *s) {
 	int id = cmd_params[0].val;
 
-	sciprintf("%s.%d (0x%x)\n", sci_resource_types[id >> 11], id &0x7ff, id & 0x7ff);
+	sciprintf("%s.%d (0x%x)\n", getResourceTypeName((ResourceType)(id >> 11)), id & 0x7ff, id & 0x7ff);
 
 	return 0;
 }
@@ -2409,7 +2409,7 @@ int c_simkey(EngineState *s) {
 }
 
 static int c_is_sample(EngineState *s) {
-	Resource *song = s->resmgr->findResource(sci_sound, cmd_params[0].val, 0);
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
 	song_iterator_t *songit;
 	sfx_pcm_feed_t *data;
 

@@ -118,7 +118,8 @@ reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	int resnr = KP_UINT(argv[1]);
 
-	if (restype == sci_memory) // Request to dynamically allocate hunk memory for later use
+	// Request to dynamically allocate hunk memory for later use
+	if (restype == kResourceTypeMemory)
 		return kalloc(s, "kLoad()", resnr);
 
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
@@ -133,11 +134,11 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (state) {
 	case 1 :
-		s->resmgr->findResource(restype, resnr, 1);
+		s->resmgr->findResource((ResourceType)restype, resnr, 1);
 		break;
 	case 0 :
-		which = s->resmgr->findResource(restype, resnr, 0);
-		s->resmgr->unlockResource(which, resnr, restype);
+		which = s->resmgr->findResource((ResourceType)restype, resnr, 0);
+		s->resmgr->unlockResource(which, resnr, (ResourceType)restype);
 		break;
 	}
 	return s->r_acc;
@@ -148,7 +149,7 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int restype = KP_UINT(argv[0]);
 	reg_t resnr = argv[1];
 
-	if (restype == sci_memory)
+	if (restype == kResourceTypeMemory)
 		kfree(s, resnr);
 
 	return s->r_acc;

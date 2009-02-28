@@ -97,30 +97,48 @@ enum ResSourceType {
 
 extern const char *sci_error_types[];
 extern const char *sci_version_types[];
-extern const char *sci_resource_types[];
-extern const char *sci_resource_type_suffixes[]; /* Suffixes for SCI1 patch files */
 extern const int sci_max_resource_nr[]; /* Highest possible resource numbers */
 
 
-enum ResourceTypes {
-	sci_view = 0, sci_pic, sci_script, sci_text,
-	sci_sound, sci_memory, sci_vocab, sci_font,
-	sci_cursor, sci_patch, sci_bitmap, sci_palette,
-	sci_cdaudio, sci_audio, sci_sync, sci_message,
-	sci_map, sci_heap, sci_invalid_resource
+enum ResourceType {
+	kResourceTypeView = 0,
+	kResourceTypePic,
+	kResourceTypeScript,
+	kResourceTypeText,
+	kResourceTypeSound,
+	kResourceTypeMemory,
+	kResourceTypeVocab,
+	kResourceTypeFont,
+	kResourceTypeCursor,
+	kResourceTypePatch,
+	kResourceTypeBitmap,
+	kResourceTypePalette,
+	kResourceTypeCdAudio,
+	kResourceTypeAudio,
+	kResourceTypeSync,
+	kResourceTypeMessage,
+	kResourceTypeMap,
+	kResourceTypeHeap,
+	kResourceTypeInvalid
 };
 
-#define sci0_last_resource sci_patch
-#define sci1_last_resource sci_heap
+const char *getResourceTypeName(ResourceType restype);
+// Suffixes for SCI1 patch files
+const char *getResourceTypeSuffix(ResourceType restype);
+
+#define sci0_last_resource kResourceTypePatch
+#define sci1_last_resource kResourceTypeHeap
 /* Used for autodetection */
 
 
+#if 0
 struct resource_index_struct {
 	unsigned short resource_id;
 	unsigned int resource_location;
 }; /* resource type as stored in the resource.map file */
 
 typedef struct resource_index_struct resource_index_t;
+#endif
 
 struct ResourceSource {
 	ResSourceType source_type;
@@ -147,7 +165,7 @@ public:
 // to let the rest of the engine compile without changes
 	unsigned char *data;
 	unsigned short number;
-	unsigned short type;
+	ResourceType type;
 	uint16 id; /* contains number and type */
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
@@ -163,6 +181,7 @@ public:
 class ResourceManager {
 public:
 	int _sciVersion; /* SCI resource version to use */
+
 	/**
 	 * Creates a new FreeSCI resource manager.
 	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
@@ -180,7 +199,9 @@ public:
 	** Returns: A pointer to the added source structure, or NULL if an error occurred.
 	*/
 	ResourceSource *addPatchDir(const char *path);
+
 	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
+
 	//! Add a volume to the resource manager's list of sources.
 	/** @param map		The map associated with this volume
 	 *	@param filename	The name of the volume to add
@@ -190,17 +211,20 @@ public:
 	 */
 	ResourceSource *addVolume(ResourceSource *map, const char *filename,
 		int number, int extended_addressing);
+
 	//! Add an external (i.e. separate file) map resource to the resource manager's list of sources.
 	/**	@param file_name	 The name of the volume to add
 	 *	@return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const char *file_name);
+
 	//! Scans newly registered resource sources for resources, earliest addition first.
 	/** @param detected_version: Pointer to the detected version number,
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
 	int scanNewSources(int *detected_version, ResourceSource *source);
+
 	//! Looks up a resource's data
 	/**	@param type: The resource type to look for
 	 *	@param number: The resource number to search
@@ -209,16 +233,18 @@ public:
 	 *	@note Locked resources are guaranteed not to have their contents freed until
 	 *		they are unlocked explicitly (by unlockResource).
 	 */
-	Resource *findResource(int type, int number, int lock);
+	Resource *findResource(ResourceType type, int number, int lock);
+
 	/* Unlocks a previously locked resource
 	**             (Resource *) res: The resource to free
-	**             (int) type: Type of the resource to check (for error checking)
 	**             (int) number: Number of the resource to check (ditto)
+	**             (ResourceType) type: Type of the resource to check (for error checking)
 	** Returns   : (void)
 	*/
-	void unlockResource(Resource *res, int restype, int resnum);
+	void unlockResource(Resource *res, int restype, ResourceType resnum);
+
 	/* Tests whether a resource exists
-	**             (int) type: Type of the resource to check
+	**             (ResourceType) type: Type of the resource to check
 	**             (int) number: Number of the resource to check
 	** Returns   : (Resource *) non-NULL if the resource exists, NULL otherwise
 	** This function may often be much faster than finding the resource
@@ -227,7 +253,7 @@ public:
 	** it should be used with care, as it may be unallocated.
 	** Use scir_find_resource() if you want to use the data contained in the resource.
 	*/
-	Resource *testResource(int type, int number);
+	Resource *testResource(ResourceType type, int number);
 
 protected:
 	int _maxMemory; /* Config option: Maximum total byte number allocated */
@@ -239,24 +265,25 @@ protected:
 	Resource *lru_first, *lru_last;	// Pointers to the first and last LRU queue entries
 										// LRU queue: lru_first points to the most recent entry
 
-
 	/* Frees a block of resources and associated data
 	** Parameters: (Resource *) resources: The resources to free
 	**             (int) _resourcesNr: Number of resources in the block
 	** Returns   : (void)
 	*/
 	void freeResources(Resource *resources, int _resourcesNr);
+
 	/* Finds a resource matching type.number in an unsorted Resource block
 	** To be used during initial resource loading, when the resource list
 	** may not have been sorted yet.
 	** Parameters: (Resource *) res: Pointer to the block to search in
 	**             (int) res_nr: Number of Resource structs allocated and defined
 	**                           in the block pointed to by res
-	**             (int) type: Type of the resource to look for
+	**             (ResourceType) type: Type of the resource to look for
 	**             (int) number: Number of the resource to look for
 	** Returns   : (Resource) The matching resource entry, or NULL if not found
 	*/
-	Resource *findResourceUnsorted(Resource *res, int res_nr, int type, int number);
+	Resource *findResourceUnsorted(Resource *res, int res_nr, ResourceType type, int number);
+
 	/* Adds an alternative source to a resource
 	** Parameters: (Resource *) res: The resource to add to
 	**             (ResourceSource *) source: The source of the resource
@@ -264,8 +291,9 @@ protected:
 	**                            is stored at
 	** Returns   : (void)
 	*/
-	int addAppropriateSources();
 	void addAltSource(Resource *res, ResourceSource *source, unsigned int file_offset);
+
+	int addAppropriateSources();
 	void freeResourceSources(ResourceSource *rss);
 	void freeAltSources(resource_altsource_t *dynressrc);
 
@@ -282,17 +310,19 @@ protected:
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
 	int readResourceMapSCI0(ResourceSource *map, int *sci_version);
+
 	/* Reads the SCI1 resource.map file from a local directory
 	** Parameters: (char *) path: (unused)
 	**             (int) sci_version: SCI resource version
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
 	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version);
+
 	int isSCI10or11(int *types);
 	int detectOddSCI01(Common::File &file);
 	int resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version);
-	int resTypeSCI1(int ofs, int *types, int lastrt);
-	int parseHeaderSCI1(Common::ReadStream &stream, int *types, int *lastrt);
+	ResourceType resTypeSCI1(int ofs, int *types, ResourceType lastrt);
+	int parseHeaderSCI1(Common::ReadStream &stream, int *types, ResourceType *lastrt);
 
 	/**--- Patch management functions ---*/
 
@@ -319,8 +349,9 @@ protected:
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
 	int readResourcePatchesSCI1(ResourceSource *source);
-	void process_patch(ResourceSource *source, Common::ArchiveMember &member, int restype,
-		int resnumber);
+
+	void process_patch(ResourceSource *source, Common::ArchiveMember &member,
+		ResourceType restype, int resnumber);
 
 	void printLRU();
 	void addToLRU(Resource *res);
@@ -372,7 +403,6 @@ protected:
 	**               encountered.
 	*/
 
-
 	int decompress11(Resource *result, Common::ReadStream &stream, int sci_version);
 	/* Decrypts resource data and stores the result for SCI1.1-style compression.
 	** Parameters : result: The Resource the decompressed data is stored in.
@@ -381,7 +411,6 @@ protected:
 	** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
 	**               encountered.
 	*/
-
 
 	int decrypt2(uint8* dest, uint8* src, int length, int complength);
 	/* Huffman token decryptor - defined in decompress0.c and used in decompress01.c

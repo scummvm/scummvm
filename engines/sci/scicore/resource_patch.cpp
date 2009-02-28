@@ -32,19 +32,19 @@
 namespace Sci {
 
 void sci0_sprintf_patch_file_name(char *string, Resource *res) {
-	sprintf(string, "%s.%03i", sci_resource_types[res->type], res->number);
+	sprintf(string, "%s.%03i", getResourceTypeName(res->type), res->number);
 }
 
 void sci1_sprintf_patch_file_name(char *string, Resource *res) {
-	sprintf(string, "%d.%s", res->number, sci_resource_type_suffixes[res->type]);
+	sprintf(string, "%d.%s", res->number, getResourceTypeSuffix(res->type));
 }
 
 // version-agnostic patch application
 void ResourceManager::process_patch(ResourceSource *source,
-	Common::ArchiveMember &member, int restype, int resnumber) {
+	Common::ArchiveMember &member, ResourceType restype, int resnumber) {
 	Common::File file;
 
-	if (restype == sci_invalid_resource)
+	if (restype == kResourceTypeInvalid)
 		return;
 
 	printf("Patching \"%s\": ", member.getName().c_str());
@@ -103,28 +103,26 @@ int ResourceManager::readResourcePatchesSCI0(ResourceSource *source) {
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
-		int restype = sci_invalid_resource;
+		ResourceType restype = kResourceTypeInvalid;
 		int resnumber = -1;
-		int i;
 		unsigned int resname_len;
 		char *endptr;
 
-		for (i = sci_view; i < sci_invalid_resource; i++)
-			if (scumm_strnicmp(sci_resource_types[i], name.c_str(), strlen(sci_resource_types[i])) == 0)
-				restype = i;
+		for (int i = kResourceTypeView; i < kResourceTypeInvalid; i++)
+			if (scumm_strnicmp(getResourceTypeName((ResourceType)i), name.c_str(), strlen(getResourceTypeName((ResourceType)i))) == 0)
+				restype = (ResourceType)i;
 
-		if (restype != sci_invalid_resource) {
-
-			resname_len = strlen(sci_resource_types[restype]);
+		if (restype != kResourceTypeInvalid) {
+			resname_len = strlen(getResourceTypeName(restype));
 			if (name[resname_len] != '.')
-				restype = sci_invalid_resource;
+				restype = kResourceTypeInvalid;
 			else {
 				resnumber = strtol(name.c_str() + 1 + resname_len, &endptr, 10); // Get resource number
 				if ((*endptr != '\0') || (resname_len + 1 == name.size()))
-					restype = sci_invalid_resource;
+					restype = kResourceTypeInvalid;
 
 				if ((resnumber < 0) || (resnumber > 1000))
-					restype = sci_invalid_resource;
+					restype = kResourceTypeInvalid;
 			}
 		}
 
@@ -140,31 +138,30 @@ int ResourceManager::readResourcePatchesSCI1(ResourceSource *source) {
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
-		int restype = sci_invalid_resource;
+		ResourceType restype = kResourceTypeInvalid;
 		int resnumber = -1;
-		int i;
 		char *endptr;
 		const char *dot = strchr(name.c_str(), '.');
 
-		for (i = sci_view; i < sci_invalid_resource; i++) {
+		for (int i = kResourceTypeView; i < kResourceTypeInvalid; i++) {
 			if (dot != NULL) {
-				if (scumm_strnicmp(sci_resource_type_suffixes[i], dot + 1, 3) == 0) {
-					restype = i;
+				if (scumm_strnicmp(getResourceTypeSuffix((ResourceType)i), dot + 1, 3) == 0) {
+					restype = (ResourceType)i;
 				}
 			}
 		}
 
-		if (restype != sci_invalid_resource) {
+		if (restype != kResourceTypeInvalid) {
 			resnumber = strtol(name.c_str(), &endptr, 10); // Get resource number
 
 			if (endptr != dot)
-				restype = sci_invalid_resource;
+				restype = kResourceTypeInvalid;
 
 			if (*(dot + 4) != '\0')
-				restype = sci_invalid_resource;
+				restype = kResourceTypeInvalid;
 
 			if ((resnumber < 0) || (resnumber > 8192))
-				restype = sci_invalid_resource;
+				restype = kResourceTypeInvalid;
 		}
 
 		process_patch(source, **x, restype, resnumber);

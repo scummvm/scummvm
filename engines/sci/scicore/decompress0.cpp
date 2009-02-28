@@ -244,10 +244,12 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 		return SCI_ERROR_IO_ERROR;
 
 	result->number = result->id & 0x07ff;
-	result->type = result->id >> 11;
+	uint8 type = result->id >> 11;
 
-	if ((result->number > sci_max_resource_nr[sci_version]) || (result->type > sci_invalid_resource))
+	if ((result->number > sci_max_resource_nr[sci_version]) || (type > kResourceTypeInvalid))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
+
+	result->type = (ResourceType)type;
 
 	compressedLength = stream.readUint16LE();
 	result->size = stream.readUint16LE();
@@ -280,7 +282,7 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 	fprintf(stderr, "Resource %s.%03hi encrypted with method %hi at %.2f%%"
 	        " ratio\n",
-	        sci_resource_types[result->type], result->number, compressionMethod,
+	        getResourceTypeName(result->type), result->number, compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
 	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
@@ -324,7 +326,7 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 
 	default:
 		fprintf(stderr, "Resource %s.%03hi: Compression method %hi not "
-		        "supported!\n", sci_resource_types[result->type], result->number,
+		        "supported!\n", getResourceTypeName(result->type), result->number,
 		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work

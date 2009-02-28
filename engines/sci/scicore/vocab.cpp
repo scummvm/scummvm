@@ -75,12 +75,12 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 	Resource *resource;
 
 	// First try to load the SCI0 vocab resource.
-	resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
 	vocab_version = 0;
 
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
-		resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
 		vocab_version = 1;
 	}
 
@@ -179,7 +179,7 @@ static inline unsigned int inverse_16(unsigned int foo) {
 suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	int counter = 0;
 	suffix_t **suffices;
-	Resource *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
+	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
 	unsigned int seeker = 1;
 
 	if (!resource) {
@@ -226,8 +226,8 @@ suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 void vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr) {
 	int i;
 
-	resmgr->unlockResource(resmgr->findResource(sci_vocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
-	                     VOCAB_RESOURCE_SUFFIX_VOCAB, sci_vocab);
+	resmgr->unlockResource(resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
+	                     VOCAB_RESOURCE_SUFFIX_VOCAB, kResourceTypeVocab);
 
 	for (i = 0; i < suffices_nr; i++)
 		free(suffices[i]);
@@ -241,7 +241,7 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches) {
 }
 
 parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
-	Resource *resource = resmgr->findResource(sci_vocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
+	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
 	parse_tree_branch_t *retval;
 	int i;
 
