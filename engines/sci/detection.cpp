@@ -348,7 +348,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 168)
+		SCI_VERSION(1, 000, 510)
 	},
 
 	// Conquests of the Longbow - English DOS Demo
@@ -1977,7 +1977,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 5 - English DOS
 	{{"sq5", "", {
-		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c983", 6473},
+		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c9834", 6473},
 		{"resource.000", 0, "f4a48705764544d7cc64a7bb22a610df", 6025184},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
