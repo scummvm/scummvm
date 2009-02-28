@@ -166,19 +166,80 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 	return true;
 }
 
+Common::String Debugger::decodeZoneFlags(uint32 flags) {
+	const char *descs[33] = {
+		"none",     // 0
+		"closed",   // 1
+		"active",   // 2
+		"remove",   // 4
+		"acting",   // 8
+		"locked",   // 0x10
+		"fixed",    // 0x20
+		"noname",   // 0x40
+		"nomasked", // 0x80
+		"looping",  // 0x100
+		"added",    // 0x200
+		"character",// 0x400
+		"nowalk",   // 0x800
+		"yourself", // 0x1000
+		"scaled",   // 0x2000
+		"selfuse",  // 0x4000
+		"0x8000",   // 0x8000
+		"0x10000",
+		"0x20000",
+		"0x40000",
+		"0x80000",
+		"0x100000",
+		"0x200000",
+		"0x400000",
+		"0x800000",
+		"isanimation",  // 0x1000000
+		"animlinked",    // 0x2000000
+		"0x4000000",
+		"0x8000000",
+		"0x10000000",
+		"0x20000000",
+		"0x40000000",
+		"0x80000000"
+	};
+
+	uint32 mask = 1;
+	const char *matches[32];
+	uint numMatches = 0;
+	for (uint32 i = 1; i < 32; i++, mask<<=1) {
+		if (flags & mask) {
+			matches[numMatches] = descs[i];
+			numMatches++;
+		}
+	}
+	if (numMatches == 0) {
+		matches[0] = descs[0];
+		numMatches = 1;
+	}
+
+	Common::String s(matches[0]);
+	for (uint32 j = 1; j < numMatches; j++) {
+		s += '+';
+		s += matches[j];
+	}
+	return s;
+}
+
 bool Debugger::Cmd_Animations(int argc, const char **argv) {
 
 	AnimationList::iterator b = _vm->_location._animations.begin();
 	AnimationList::iterator e = _vm->_location._animations.end();
+	Common::String flags;
 
-	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
-				"| name               | x | y | z | f |  type  |  flag  | \n"
-				"+--------------------+---+---+---+---+--------+--------+\n");
+	DebugPrintf("+--------------------+----+----+----+---+--------+----------------------------------------+\n"
+				"| name               | x  | y  | z  | f |  type  |                 flags                  | \n"
+				"+--------------------+----+----+----+---+--------+----------------------------------------+\n");
 	for ( ; b != e; b++) {
 		AnimationPtr a = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, a->_flags );
+		flags = decodeZoneFlags(a->_flags);
+		DebugPrintf("|%-20s|%4i|%4i|%4i|%3i|%8x|%-40s|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, flags.c_str() );
 	}
-	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
+	DebugPrintf("+--------------------+---+---+---+---+--------+----------------------------------------+\n");
 
 
 	return true;
