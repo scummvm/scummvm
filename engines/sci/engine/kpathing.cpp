@@ -351,8 +351,8 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 }
 
 static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
-	list_t *list;
-	node_t *node;
+	List *list;
+	Node *node;
 
 	draw_point(s, start, 1);
 	draw_point(s, end, 0);
@@ -396,8 +396,8 @@ static void print_polygon(EngineState *s, reg_t polygon) {
 }
 
 static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
-	list_t *list;
-	node_t *node;
+	List *list;
+	Node *node;
 
 	sciprintf("Start point: (%i, %i)\n", start.x, start.y);
 	sciprintf("End point: (%i, %i)\n", end.x, end.y);
@@ -1224,8 +1224,8 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	// Convert all polygons
 	if (poly_list.segment) {
-		list_t *list = LOOKUP_LIST(poly_list);
-		node_t *node = LOOKUP_NODE(list->first);
+		List *list = LOOKUP_LIST(poly_list);
+		Node *node = LOOKUP_NODE(list->first);
 
 		while (node) {
 			polygon = convert_polygon(s, node->value);

@@ -37,7 +37,6 @@
 #include "sci/gfx/menubar.h"
 #include "sci/sfx/sfx_engine.h"
 #include "sci/engine/state.h"
-#include "sci/engine/heap.h"
 #include "sci/engine/intmap.h"
 
 #ifdef _WIN32
@@ -196,8 +195,8 @@ int read_CommonString(Common::SeekableReadStream *fh, Common::String *string, co
 void write_menubar_tp(Common::WriteStream *fh, const menubar_t * const *foo);
 int read_menubar_tp(Common::SeekableReadStream *fh, menubar_t **foo, const char *lastval, int *line, int *hiteof);
 
-void write_mem_obj_tp(Common::WriteStream *fh, const mem_obj_t * const *foo);
-int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof);
+void write_MemObjPtr(Common::WriteStream *fh, const MemObject * const *foo);
+int read_MemObjPtr(Common::SeekableReadStream *fh, MemObject **foo, const char *lastval, int *line, int *hiteof);
 
 void write_songlib_t(Common::WriteStream *fh, songlib_t const *foo);
 int read_songlib_t(Common::SeekableReadStream *fh, songlib_t *foo, const char *lastval, int *line, int *hiteof);
@@ -213,7 +212,7 @@ int read_IntMapperNodePtr(Common::SeekableReadStream *fh, IntMapper::Node **foo,
 void write_SegManagerPtr(Common::WriteStream *fh, const SegManager * const *foo);
 int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const char *lastval, int *line, int *hiteof);
 
-typedef mem_obj_t *mem_obj_ptr;
+typedef MemObject *mem_obj_ptr;
 
 // Unused types
 /*
@@ -231,11 +230,11 @@ RECORD synonym_t "synonym_t" {
 TYPE bool "bool" LIKE int;
 TYPE byte "byte" LIKE int;
 TYPE Common::String ""Common::String" USING write_CommonString read_CommonString;
-TYPE seg_id_t "seg_id_t" LIKE int;
+TYPE SegmentId "SegmentId" LIKE int;
 TYPE sci_version_t "sci_version_t" USING write_sci_version read_sci_version;
 TYPE menubar_tp "menubar_t *" USING write_menubar_tp read_menubar_tp;
-TYPE mem_obj_t "mem_obj_t" USING write_mem_obj_t read_mem_obj_t;
-TYPE mem_obj_ptr "mem_obj_t *" USING write_mem_obj_tp read_mem_obj_tp;
+TYPE MemObject "MemObject" USING write_MemObject read_MemObject;
+TYPE mem_obj_ptr "MemObject *" USING write_MemObjPtr read_MemObjPtr;
 TYPE reg_t "reg_t" USING write_reg_t read_reg_t;
 TYPE size_t "size_t" LIKE int;
 TYPE IntMapperPtr "IntMapper *" USING write_IntMapperPtr read_IntMapperPtr;
@@ -298,12 +297,12 @@ RECORD SegManager "SegManager" {
 	int exports_wide;
 	int gc_mark_bits;
 	size_t mem_allocated;
-	seg_id_t clones_seg_id;
-	seg_id_t lists_seg_id;
-	seg_id_t nodes_seg_id;
+	SegmentId Clones_seg_id;
+	SegmentId Lists_seg_id;
+	SegmentId Nodes_seg_id;
 }
 
-RECORD class_t "class_t" {
+RECORD Class "Class" {
 	int script;
 	reg_t reg;
 }
@@ -331,17 +330,17 @@ RECORD EngineState "EngineState" {
 	int status_bar_background;
 	SegManagerPtr seg_manager;
 	int classtable_size;
-	class_t classtable[DYNAMIC classtable_size];
+	Class classtable[DYNAMIC classtable_size];
 	sfx_state_t sound;
 }
 
-RECORD local_variables_t "local_variables_t" {
+RECORD LocalVariables "LocalVariables" {
 	int script_id;
 	int nr;
 	reg_t locals[DYNAMIC nr];
 }
 
-RECORD object_t "object_t" {
+RECORD Object "Object" {
 	int flags;
 	reg_t pos;
 	int variables_nr;
@@ -350,7 +349,7 @@ RECORD object_t "object_t" {
 	reg_t variables[DYNAMIC variables_nr];
 }
 
-RECORD clone_t "clone_t" {
+RECORD Clone "Clone" {
 	int flags;
 	reg_t pos;
 	int variables_nr;
@@ -359,58 +358,58 @@ RECORD clone_t "clone_t" {
 	reg_t variables[DYNAMIC variables_nr];
 }
 
-RECORD list_t "list_t" {
+RECORD List "List" {
 	reg_t first;
 	reg_t last;
 }
 
-RECORD node_t "node_t" {
+RECORD Node "Node" {
 	reg_t pred;
 	reg_t succ;
 	reg_t key;
 	reg_t value;
 }
 
-RECORD clone_entry_t "clone_entry_t" {
+RECORD CloneEntry "CloneEntry" {
 	int next_free;
-	clone_t entry;
+	Clone entry;
 }
 
-RECORD clone_table_t "clone_table_t" {
+RECORD CloneTable "CloneTable" {
 	int entries_nr;
 	int first_free;
 	int entries_used;
 	int max_entry;
-	clone_entry_t table[DYNAMIC entries_nr];
+	CloneEntry table[DYNAMIC entries_nr];
 }
 
-RECORD list_entry_t "list_entry_t" {
+RECORD ListEntry "ListEntry" {
 	int next_free;
-	list_t entry;
+	List entry;
 }
 
-RECORD list_table_t "list_table_t" {
+RECORD ListTable "ListTable" {
 	int entries_nr;
 	int first_free;
 	int entries_used;
 	int max_entry;
-	list_entry_t table[DYNAMIC entries_nr];
+	ListEntry table[DYNAMIC entries_nr];
 }
 
-RECORD node_entry_t "node_entry_t" {
+RECORD NodeEntry "NodeEntry" {
 	int next_free;
-	node_t entry;
+	Node entry;
 }
 
-RECORD node_table_t "node_table_t" {
+RECORD NodeTable "NodeTable" {
 	int entries_nr;
 	int first_free;
 	int entries_used;
 	int max_entry;
-	node_entry_t table[DYNAMIC entries_nr];
+	NodeEntry table[DYNAMIC entries_nr];
 }
 
-RECORD script_t "script_t" {
+RECORD Script "Script" {
 	int nr;
 
 	size_t buf_size;
@@ -423,7 +422,7 @@ RECORD script_t "script_t" {
 	int lockers;
 	int objects_allocated;
 	int objects_nr;
-	object_t objects[DYNAMIC objects_allocated];
+	Object objects[DYNAMIC objects_allocated];
 
 	int locals_offset;
 	int locals_segment;
@@ -441,7 +440,7 @@ RECORD SystemStrings "SystemStrings" {
 	SystemString strings[STATIC SYS_STRINGS_MAX];
 }
 
-RECORD dynmem_t "dynmem_t" {
+RECORD DynMem "DynMem" {
 	int size;
 	string description;
 	byte buf[DYNAMIC size];
@@ -613,18 +612,18 @@ int mem_obj_string_to_enum(const char *str) {
 	return -1;
 }
 
-void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t const *foo) {
+void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "%s\n", mem_obj_string_names[foo->type].name);
 	%CFSMLWRITE int &foo->segmgr_id INTO fh;
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
-		%CFSMLWRITE script_t &foo->data.script INTO fh;
+		%CFSMLWRITE Script &foo->data.script INTO fh;
 	break;
 	case MEM_OBJ_CLONES:
-		%CFSMLWRITE clone_table_t &foo->data.clones INTO fh;
+		%CFSMLWRITE CloneTable &foo->data.clones INTO fh;
 	break;
 	case MEM_OBJ_LOCALS:
-		%CFSMLWRITE local_variables_t &foo->data.locals INTO fh;
+		%CFSMLWRITE LocalVariables &foo->data.locals INTO fh;
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 		%CFSMLWRITE SystemStrings &foo->data.sys_strings INTO fh;
@@ -635,55 +634,55 @@ void write_mem_obj_t(Common::WriteStream *fh, mem_obj_t const *foo) {
 	case MEM_OBJ_HUNK:
 		break;
 	case MEM_OBJ_LISTS:
-		%CFSMLWRITE list_table_t &foo->data.lists INTO fh;
+		%CFSMLWRITE ListTable &foo->data.lists INTO fh;
 	break;
 	case MEM_OBJ_NODES:
-		%CFSMLWRITE node_table_t &foo->data.nodes INTO fh;
+		%CFSMLWRITE NodeTable &foo->data.nodes INTO fh;
 	break;
 	case MEM_OBJ_DYNMEM:
-		%CFSMLWRITE dynmem_t  &foo->data.dynmem INTO fh;
+		%CFSMLWRITE DynMem  &foo->data.dynmem INTO fh;
 	break;
 	default:
 	break;
 	}
 }
 
-int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *lastval, int *line, int *hiteof) {
+int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *lastval, int *line, int *hiteof) {
 	foo->type = (memObjType)mem_obj_string_to_enum(lastval);
 	if (foo->type < 0) {
-		sciprintf("Unknown mem_obj_t type %s on line %d\n", lastval, *line);
+		sciprintf("Unknown MemObject type %s on line %d\n", lastval, *line);
 		return 1;
 	}
 
 	%CFSMLREAD int &foo->segmgr_id FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
-		%CFSMLREAD script_t &foo->data.script FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD Script &foo->data.script FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_CLONES:
-		%CFSMLREAD clone_table_t &foo->data.clones FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD CloneTable &foo->data.clones FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_LOCALS:
-		%CFSMLREAD local_variables_t &foo->data.locals FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD LocalVariables &foo->data.locals FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_SYS_STRINGS:
 		%CFSMLREAD SystemStrings &foo->data.sys_strings FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_LISTS:
-		%CFSMLREAD list_table_t &foo->data.lists FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD ListTable &foo->data.lists FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_NODES:
-		%CFSMLREAD node_table_t &foo->data.nodes FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD NodeTable &foo->data.nodes FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	case MEM_OBJ_STACK:
 		%CFSMLREAD int &foo->data.stack.nr FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
 	break;
 	case MEM_OBJ_HUNK:
-		init_hunk_table(&foo->data.hunks);
+		init_Hunk_table(&foo->data.hunks);
 		break;
 	case MEM_OBJ_DYNMEM:
-		%CFSMLREAD dynmem_t  &foo->data.dynmem FROM fh ERRVAR *hiteof LINECOUNTER *line;
+		%CFSMLREAD DynMem  &foo->data.dynmem FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
 	default:
 		break;
@@ -692,20 +691,20 @@ int read_mem_obj_t(Common::SeekableReadStream *fh, mem_obj_t *foo, const char *l
 	return *hiteof;
 }
 
-void write_mem_obj_tp(Common::WriteStream *fh, const mem_obj_t * const *foo) {
+void write_MemObjPtr(Common::WriteStream *fh, const MemObject * const *foo) {
 	if (*foo) {
-		%CFSMLWRITE mem_obj_t (*foo) INTO fh;
+		%CFSMLWRITE MemObject (*foo) INTO fh;
 	} else { // Nothing to write
 		WSprintf(fh, "\\null\\");
 	}
 }
 
-int read_mem_obj_tp(Common::SeekableReadStream *fh, mem_obj_t **foo, const char *lastval, int *line, int *hiteof) {
+int read_MemObjPtr(Common::SeekableReadStream *fh, MemObject **foo, const char *lastval, int *line, int *hiteof) {
 	if (lastval[0] == '\\') {
 		*foo = NULL; // No menu bar
 	} else {
-		*foo = (mem_obj_t *)sci_malloc(sizeof(mem_obj_t));
-		%CFSMLREAD mem_obj_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
+		*foo = (MemObject *)sci_malloc(sizeof(MemObject));
+		%CFSMLREAD MemObject (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN lastval LINECOUNTER *line;
 		return *hiteof;
 	}
 	return 0;
@@ -793,7 +792,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-static seg_id_t find_unique_seg_by_type(SegManager *self, int type) {
+static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 	int i;
 
 	for (i = 0; i < self->heap_size; i++)
@@ -822,7 +821,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 }
 
 static void reconstruct_stack(EngineState *retval) {
-	seg_id_t stack_seg = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_STACK);
+	SegmentId stack_seg = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_STACK);
 	dstack_t *stack = &(retval->seg_manager->heap[stack_seg]->data.stack);
 
 	retval->stack_segment = stack_seg;
@@ -830,10 +829,10 @@ static void reconstruct_stack(EngineState *retval) {
 	retval->stack_top = retval->stack_base + VM_STACK_SIZE;
 }
 
-static int clone_entry_used(clone_table_t *table, int n) {
+static int clone_entry_used(CloneTable *table, int n) {
 	int backup;
 	int seeker = table->first_free;
-	clone_entry_t *entries = table->table;
+	CloneEntry *entries = table->table;
 
 	if (seeker == HEAPENTRY_INVALID) return 1;
 
@@ -846,9 +845,9 @@ static int clone_entry_used(clone_table_t *table, int n) {
 	return 1;
 }
 
-static void load_script(EngineState *s, seg_id_t seg) {
+static void load_script(EngineState *s, SegmentId seg) {
 	resource_t *script, *heap = NULL;
-	script_t *scr = &(s->seg_manager->heap[seg]->data.script);
+	Script *scr = &(s->seg_manager->heap[seg]->data.script);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
 
@@ -869,14 +868,14 @@ static void load_script(EngineState *s, seg_id_t seg) {
 
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	int i;
-	mem_obj_t *mobj;
+	MemObject *mobj;
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
 			mobj = self->heap[i];
 			switch (mobj->type)  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
-				script_t *scr = &mobj->data.script;
+				Script *scr = &mobj->data.script;
 
 				load_script(s, i);
 				scr->locals_block = scr->locals_segment == 0 ? NULL : &s->seg_manager->heap[scr->locals_segment]->data.locals;
@@ -908,7 +907,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			switch (mobj->type)  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
-				script_t *scr = &mobj->data.script;
+				Script *scr = &mobj->data.script;
 
 				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
@@ -921,7 +920,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						scr->objects[j].base_vars = prop_area;
 					} else {
 						int funct_area = getUInt16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
-						object_t *base_obj;
+						Object *base_obj;
 
 						base_obj = obj_get(s, scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
 
@@ -948,7 +947,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 void reconstruct_clones(EngineState *s, SegManager *self) {
 	int i;
-	mem_obj_t *mobj;
+	MemObject *mobj;
 
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
@@ -956,7 +955,7 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 			switch (mobj->type) {
 			case MEM_OBJ_CLONES: {
 				int j;
-				clone_entry_t *seeker = mobj->data.clones.table;
+				CloneEntry *seeker = mobj->data.clones.table;
 
 				sciprintf("Free list: ");
 				for (j = mobj->data.clones.first_free; j != HEAPENTRY_INVALID; j = mobj->data.clones.table[j].next_free) {
@@ -972,7 +971,7 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 				sciprintf("\n");
 
 				for (j = 0; j < mobj->data.clones.max_entry; j++) {
-					object_t *base_obj;
+					Object *base_obj;
 
 					if (!clone_entry_used(&mobj->data.clones, j)) {
 						seeker++;
@@ -1119,7 +1118,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 	retval->save_dir_edit_offset = 0;
 	retval->sys_strings_segment = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_SYS_STRINGS);
-	retval->sys_strings = &(((mem_obj_t *)(GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
+	retval->sys_strings = &(((MemObject *)(GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
 
 	// Restore system strings
 	SystemString *str;

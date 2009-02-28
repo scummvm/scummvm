@@ -40,37 +40,37 @@ namespace Sci {
 #define ENTRY_IS_VALID(t, i) ((i == 0 || i > 0) && (i) < (t)->max_entry && (t)->table[(i)].next_free == (i))
 
 #define DECLARE_HEAPENTRY(ENTRY)						\
-typedef struct {								\
+struct ENTRY##Entry {								\
 	int next_free; /* Only used for free entries */				\
-	ENTRY##_t entry;							\
-} ENTRY##_entry_t;								\
+	ENTRY entry;								\
+};										\
 										\
-typedef struct {								\
+struct ENTRY##Table {								\
 	int entries_nr; /* Number of entries allocated */			\
 	int first_free; /* Beginning of a singly linked list for entries */	\
 	int entries_used; /* Statistical information */				\
 	int max_entry; /* Highest entry used */					\
-	ENTRY##_entry_t *table;							\
-} ENTRY##_table_t;								\
+	ENTRY##Entry *table;							\
+};										\
 										\
-void init_##ENTRY##_table(ENTRY##_table_t *table);					\
-int	alloc_##ENTRY##_entry(ENTRY##_table_t *table);					\
-void free_##ENTRY##_entry(ENTRY##_table_t *table, int index);
+void init_##ENTRY##_table(ENTRY##Table *table);					\
+int alloc_##ENTRY##_entry(ENTRY##Table *table);					\
+void free_##ENTRY##_entry(ENTRY##Table *table, int index);
 
 
 
 #define DEFINE_HEAPENTRY_WITH_CLEANUP(ENTRY, INITIAL, INCREMENT, CLEANUP_FN)	\
-void init_##ENTRY##_table(ENTRY##_table_t *table) {										\
+void init_##ENTRY##_table(ENTRY##Table *table) {				\
 	table->entries_nr = INITIAL;						\
 	table->max_entry = 0;							\
 	table->entries_used = 0;						\
 	table->first_free = HEAPENTRY_INVALID;					\
-	table->table = (ENTRY##_entry_t *)sci_malloc(sizeof(ENTRY##_entry_t) * INITIAL);\
-	memset(table->table, 0, sizeof(ENTRY##_entry_t) * INITIAL);		\
+	table->table = (ENTRY##Entry *)sci_malloc(sizeof(ENTRY##Entry) * INITIAL);\
+	memset(table->table, 0, sizeof(ENTRY##Entry) * INITIAL);		\
 }										\
 										\
-void free_##ENTRY##_entry(ENTRY##_table_t *table, int index) {										\
-	ENTRY##_entry_t *e = table->table + index;				\
+void free_##ENTRY##_entry(ENTRY##Table *table, int index) {			\
+	ENTRY##Entry *e = table->table + index;					\
 										\
 	if (index < 0 || index >= table->max_entry) {				\
 		fprintf(stderr, "heapmgr: Attempt to release"			\
@@ -84,7 +84,7 @@ void free_##ENTRY##_entry(ENTRY##_table_t *table, int index) {										\
 	table->entries_used--;							\
 }										\
 										\
-int	alloc_##ENTRY##_entry(ENTRY##_table_t *table) {										\
+int	alloc_##ENTRY##_entry(ENTRY##Table *table) {				\
 	table->entries_used++;							\
 	if (table->first_free != HEAPENTRY_INVALID) {				\
 		int oldff = table->first_free;					\
@@ -96,11 +96,11 @@ int	alloc_##ENTRY##_entry(ENTRY##_table_t *table) {										\
 		if (table->max_entry == table->entries_nr) {			\
 			table->entries_nr += INCREMENT;				\
 										\
-			table->table = (ENTRY##_entry_t*)sci_realloc(table->table,\
-						   sizeof(ENTRY##_entry_t) * table->entries_nr);	\
-			memset(&table->table[table->entries_nr-INCREMENT], 0, INCREMENT*sizeof(ENTRY##_entry_t));		\
+			table->table = (ENTRY##Entry *)sci_realloc(table->table,\
+						   sizeof(ENTRY##Entry) * table->entries_nr);\
+			memset(&table->table[table->entries_nr-INCREMENT], 0, INCREMENT * sizeof(ENTRY##Entry));\
 		}								\
-		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */			\
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
 		return table->max_entry++;					\
 	}									\
 }

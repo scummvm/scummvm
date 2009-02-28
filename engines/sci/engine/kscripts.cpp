@@ -30,16 +30,16 @@
 
 namespace Sci {
 
-reg_t read_selector(EngineState *s, reg_t object, selector_t selector_id, const char *file, int line) {
+reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *file, int line) {
 	reg_t *address;
 
-	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
+	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
 	else
 		return *address;
 }
 
-void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line) {
+void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
 	reg_t *address;
 
 	if ((selector_id < 0) || (selector_id > (int)s->_selectorNames.size())) {
@@ -48,7 +48,7 @@ void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t 
 		return;
 	}
 
-	if (lookup_selector(s, object, selector_id, &address, NULL) != SELECTOR_VARIABLE)
+	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
 		warning("Selector '%s' of object at "PREG" could not be"
 		         " written to (%s L%d)", s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 	else
@@ -56,29 +56,30 @@ void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t 
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-	stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...) {
+	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
 	int framesize = 2 + 1 * argc;
 	reg_t address;
 	int slc_type;
-	stack_ptr_t stackframe = k_argp + k_argc;
+	StackPtr stackframe = k_argp + k_argc;
 
-	exec_stack_t *xstack; // Execution stack
+	// Execution stack
+	ExecStack *xstack;
 
 	stackframe[0] = make_reg(0, selector_id);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
-	if (slc_type == SELECTOR_NONE) {
+	if (slc_type == kSelectorNone) {
 		SCIkwarn(SCIkERROR, "Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
 		         s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
 		return 1;
 	}
-	if (slc_type == SELECTOR_VARIABLE) // Swallow silently
+	if (slc_type == kSelectorVariable) // Swallow silently
 		return 0;
 
 	va_start(argp, argc);
@@ -155,9 +156,9 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	object_t *parent_obj = obj_get(s, parent_addr);
+	Object *parent_obj = obj_get(s, parent_addr);
 	reg_t clone_addr;
-	clone_t *clone_obj; // same as object_t*
+	Clone *clone_obj; // same as Object*
 	int varblock_size;
 
 	if (!parent_obj) {
@@ -167,14 +168,14 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	SCIkdebug(SCIkMEM, "Attempting to clone from "PREG"\n", PRINT_REG(parent_addr));
 
-	clone_obj = s->seg_manager->alloc_clone(&clone_addr);
+	clone_obj = s->seg_manager->alloc_Clone(&clone_addr);
 
 	if (!clone_obj) {
 		SCIkwarn(SCIkERROR, "Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
-	memcpy(clone_obj, parent_obj, sizeof(clone_t));
+	memcpy(clone_obj, parent_obj, sizeof(Clone));
 	clone_obj->flags = 0;
 	varblock_size = parent_obj->variables_nr * sizeof(reg_t);
 	clone_obj->variables = (reg_t*)sci_malloc(varblock_size);
@@ -195,7 +196,7 @@ extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
-	clone_t *victim_obj = obj_get(s, victim_addr);
+	Clone *victim_obj = obj_get(s, victim_addr);
 	uint16 underBits;
 
 	if (!victim_obj) {
@@ -235,8 +236,8 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int script = KP_UINT(argv[0]);
 	int index = KP_UINT(KP_ALT(1, NULL_REG));
 
-	seg_id_t scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
-	script_t *scr;
+	SegmentId scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
+	Script *scr;
 
 	if (argv[0].segment)
 		return argv[0];
@@ -279,7 +280,7 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 int is_heap_object(EngineState *s, reg_t pos) {
-	object_t *obj = obj_get(s, pos);
+	Object *obj = obj_get(s, pos);
 	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->seg_manager->scriptIsMarkedAsDeleted(pos.segment)));
 }
 
@@ -294,7 +295,7 @@ reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = KP_UINT(argv[1]);
 
-	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s, obj, selector, NULL, NULL) != SELECTOR_NONE);
+	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

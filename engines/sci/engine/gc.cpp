@@ -153,7 +153,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Init: Value Stack
 	// We do this one by hand since the stack doesn't know the current execution stack
 	{
-		exec_stack_t *xs = s->execution_stack + s->execution_stack_pos;
+		ExecStack *xs = s->execution_stack + s->execution_stack_pos;
 		reg_t *pos;
 
 		for (pos = s->stack_base; pos < xs->sp; pos++)
@@ -165,7 +165,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 	// Init: Execution Stack
 	for (i = 0; i <= s->execution_stack_pos; i++) {
-		exec_stack_t *es = s->execution_stack + i;
+		ExecStack *es = s->execution_stack + i;
 
 		if (es->type != EXEC_STACK_TYPE_KERNEL) {
 			worklist_push(&worklist, nonnormal_map, es->objp);
@@ -182,7 +182,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	for (i = 1; i < sm->heap_size; i++)
 		if (interfaces[i]
 		        && interfaces[i]->getType() == MEM_OBJ_SCRIPT) {
-			script_t *script = &(interfaces[i]->getMobj()->data.script);
+			Script *script = &(interfaces[i]->getMobj()->data.script);
 
 			if (script->lockers) { // Explicitly loaded?
 				int obj_nr;
@@ -192,7 +192,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 				// All objects (may be classes, may be indirectly reachable)
 				for (obj_nr = 0; obj_nr < script->objects_nr; obj_nr++) {
-					object_t *obj = script->objects + obj_nr;
+					Object *obj = script->objects + obj_nr;
 					worklist_push(&worklist, nonnormal_map, obj->pos);
 				}
 			}

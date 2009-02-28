@@ -35,8 +35,8 @@
 
 namespace Sci {
 
-struct node_t;	// from vm.h
-struct list_t;	// from vm.h
+struct Node;	// from vm.h
+struct List;	// from vm.h
 
 extern int _kdebug_cheap_event_hack;
 extern int _kdebug_cheap_soundcue_hack;
@@ -86,10 +86,10 @@ struct abs_rect_t {
 */
 
 
-reg_t read_selector(EngineState *s,  reg_t object, selector_t selector_id, const char *fname, int line);
-void write_selector(EngineState *s, reg_t object, selector_t selector_id, reg_t value, const char *fname, int line);
+reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *fname, int line);
+void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line);
 int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
-	stack_ptr_t k_argp, int k_argc, const char *fname, int line, int argc, ...);
+	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
 
 /******************** Text functionality ********************/
@@ -132,7 +132,7 @@ bool is_object(EngineState *s, reg_t obj);
 /* Checks whether a heap address contains an object
 ** Parameters: (EngineState *) s: The current state
 **             (reg_t) obj: The address to check
-** Returns   : (int) 1 if it is an object, 0 otherwise
+** Returns   : (bool) true if it is an object, false otherwise
 */
 
 /******************** Kernel function parameter macros ********************/
@@ -243,23 +243,23 @@ void process_sound_events(EngineState *s); /* Get all sound events, apply their 
 #define LOOKUP_NODE(addr) lookup_node(s, (addr), __FILE__, __LINE__)
 #define LOOKUP_LIST(addr) lookup_list(s, addr, __FILE__, __LINE__)
 
-node_t *lookup_node(EngineState *s, reg_t addr, const char *file, int line);
+Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line);
 /* Resolves an address into a list node
 ** Parameters: (EngineState *) s: The state to operate on
 **             (reg_t) addr: The address to resolve
 **             (const char *) file: The file the function was called from
 **             (int) line: The line number the function was called from
-** Returns   : (node_t *) The list node referenced, or NULL on error
+** Returns   : (Node *) The list node referenced, or NULL on error
 */
 
 
-list_t *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
+List *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
 /* Resolves a list pointer to a list
 ** Parameters: (EngineState *) s: The state to operate on
 **             (reg_t) addr: The address to resolve
 **             (const char *) file: The file the function was called from
 **             (int) line: The line number the function was called from
-** Returns   : (list_t *) The list referenced, or NULL on error
+** Returns   : (List *) The list referenced, or NULL on error
 */
 
 
@@ -320,13 +320,13 @@ struct kfunct_sig_pair_t {
 #define KF_NONE -1 /* No mapping, but name is known */
 #define KF_TERMINATOR -42 /* terminates kfunct_mappers */
 
-struct sci_kernel_function_t {
+struct SciKernelFunction {
 	int type; /* KF_* */
 	const char *name;
 	kfunct_sig_pair_t sig_pair;
 };
 
-extern sci_kernel_function_t kfunct_mappers[];
+extern SciKernelFunction kfunct_mappers[];
 
 } // End of namespace Sci
 

@@ -78,7 +78,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 /**********/
 
 #ifdef SCI_SIMPLE_SAID_CODE
-int vocab_match_simple(EngineState *s, heap_ptr addr) {
+int vocab_match_simple(EngineState *s, HeapPtr addr) {
 	int nextitem;
 	int listpos = 0;
 
@@ -182,8 +182,8 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	list_t *list;
-	node_t *node;
+	List *list;
+	Node *node;
 	int script;
 	int synpos = 0;
 
@@ -733,7 +733,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #define DUMMY_MESSAGE "No MESSAGE support in FreeSCI yet"
 
-static message_state_t state;
+static MessageState state;
 
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.initialized)
@@ -742,7 +742,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case 0 : {
 		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
-		message_tuple_t tuple;
+		MessageTuple tuple;
 		int module = UKPV(1);
 
 		tuple.noun = UKPV(2);
@@ -772,7 +772,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	}
 	case 2 : {
-		message_tuple_t tuple;
+		MessageTuple tuple;
 		int module = UKPV(1);
 		tuple.noun = UKPV(2);
 		tuple.verb = UKPV(3);

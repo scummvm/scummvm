@@ -69,7 +69,7 @@ public:
 
 	// 1. Scripts
 
-	void freeScript(mem_obj_t* mem);
+	void freeScript(MemObject* mem);
 
 	// Allocate a script into the segment manager
 	// Parameters: (int) script_nr: number of the script to load
@@ -77,7 +77,7 @@ public:
 	//			      script data
 	// Returns   : (int) 0 on failure, 1 on success
 	//	       (int) *seg_id: The segment ID of the newly allocated segment, on success
-	mem_obj_t *allocateScript(EngineState *s, int script_nr, int* seg_id);
+	MemObject *allocateScript(EngineState *s, int script_nr, int* seg_id);
 
 	// The script must then be initialised; see section (1b.), below.
 
@@ -164,10 +164,10 @@ public:
 	// i.e. loading and linking.
 
 	// Initializes a script's local variable block
-	// Parameters: (seg_id_t) seg: Segment containing the script to initialize
+	// Parameters: (SegmentId) seg: Segment containing the script to initialize
 	//             (int) nr: Number of local variables to allocate
 	// All variables are initialized to zero.
-	void scriptInitialiseLocalsZero(seg_id_t seg, int nr);
+	void scriptInitialiseLocalsZero(SegmentId seg, int nr);
 
 	// Initializes a script's local variable block according to a prototype
 	// Parameters: (reg_t) location: Location to initialize from
@@ -175,11 +175,11 @@ public:
 
 	// Initializes an object within the segment manager
 	// Parameters: (reg_t) obj_pos: Location (segment, offset) of the object
-	// Returns   : (object_t *) A newly created object_t describing the object
+	// Returns   : (Object *) A newly created Object describing the object
 	// obj_pos must point to the beginning of the script/class block (as opposed
 	// to what the VM considers to be the object location)
-	// The corresponding object_t is stored within the relevant script.
-	object_t *scriptObjInit(EngineState *s, reg_t obj_pos);
+	// The corresponding Object is stored within the relevant script.
+	Object *scriptObjInit(EngineState *s, reg_t obj_pos);
 
 	// Informs the segment manager that a code block must be relocated
 	// Parameters: (reg_t) location: Start of block to relocate
@@ -191,16 +191,16 @@ public:
 
 	// Processes a relocation block witin a script
 	// Parameters: (reg_t) obj_pos: Location (segment, offset) of the block
-	// Returns   : (object_t *) Location of the relocation block
+	// Returns   : (Object *) Location of the relocation block
 	// This function is idempotent, but it must only be called after all
 	// objects have been instantiated, or a run-time error will occur.
 	void scriptRelocate(reg_t block);
 
 	// Deallocates all unused but allocated entries for objects
-	// Parameters: (seg_id_t) segid: segment of the script to prune in this way
+	// Parameters: (SegmentId) segid: segment of the script to prune in this way
 	// These entries are created during script instantiation; deallocating them
 	// frees up some additional memory.
-	void scriptFreeUnusedObjects(seg_id_t segid);
+	void scriptFreeUnusedObjects(SegmentId segid);
 
 	// Sets the script-relative offset of the exports table
 	// Parameters: (int) offset: The script-relative exports table offset
@@ -242,22 +242,22 @@ public:
 	void unmarkScriptDeleted(int script_nr);
 
 	// Determines whether the script referenced by the indicated segment is marked as being deleted.
-	// Parameters: (seg_id_t) Segment ID of the script to investigate
+	// Parameters: (SegmentId) Segment ID of the script to investigate
 	// Returns   : (int) 1 iff seg points to a script and the segment is deleted, 0 otherwise
 	// Will return 0 when applied to an invalid or non-script seg.
-	int scriptIsMarkedAsDeleted(seg_id_t seg);
+	int scriptIsMarkedAsDeleted(SegmentId seg);
 
 
 	// 2. Clones
 
 	// Allocate a fresh clone
-	// Returns : (clone_t*): Reference to the memory allocated for the clone
+	// Returns : (Clone*): Reference to the memory allocated for the clone
 	//           (reg_t) *addr: The offset of the freshly allocated clone
-	clone_t *alloc_clone(reg_t *addr);
+	Clone *alloc_Clone(reg_t *addr);
 
-	// Deallocates a clone
-	// Parameters: (reg_t) addr: Offset of the clone scheduled for termination
-	void free_clone(reg_t addr);
+	// Deallocates a Clone
+	// Parameters: (reg_t) addr: Offset of the Clone scheduled for termination
+	void free_Clone(reg_t addr);
 
 
 	// 3. Objects (static, from Scripts, and dynmic, from Clones)
@@ -291,16 +291,17 @@ public:
 	// Allocates a data stack
 	// Parameters: (int) size: Number of stack entries to reserve
 	// Returns   : (dstack_t *): The physical stack
-	//             (seg_id_t) segid: Segment ID of the stack
-	dstack_t *allocateStack(int size, seg_id_t *segid);
+	//             (SegmentId) segid: Segment ID of the stack
+	dstack_t *allocateStack(int size, SegmentId *segid);
 
 
 	// 5. System Strings
 
 	// Allocates a system string table
 	// Returns   : (dstack_t *): The physical stack
-	//             (seg_id_t) segid: Segment ID of the stack
-	SystemStrings *allocateSysStrings(seg_id_t *segid);
+	//             (SegmentId) segid: Segment ID of the stack
+	// See also sys_string_acquire();
+	SystemStrings *allocateSysStrings(SegmentId *segid);
 
 
 	// 6, 7. Lists and Nodes
@@ -308,20 +309,20 @@ public:
 	// Allocate a fresh list
 	// Returns : (listY_t*): Reference to the memory allocated for the list
 	//           (reg_t) *addr: The offset of the freshly allocated list
-	list_t *alloc_list(reg_t *addr);
+	List *alloc_List(reg_t *addr);
 
 	// Deallocates a list
 	// Parameters: (reg_t) addr: Offset of the list scheduled for termination
-	void free_list(reg_t addr);
+	void free_List(reg_t addr);
 
 	// Allocate a fresh node
 	// Returns : (node_t*): Reference to the memory allocated for the node
 	//           (reg_t) *addr: The offset of the freshly allocated node
-	node_t *alloc_node(reg_t *addr);
+	Node *alloc_Node(reg_t *addr);
 
 	// Deallocates a list node
 	// Parameters: (reg_t) addr: Offset of the node scheduled for termination
-	void free_node(reg_t addr);
+	void free_Node(reg_t addr);
 
 
 	// 8. Hunk Memory
@@ -330,9 +331,9 @@ public:
 	// Parameters: (int) size: Number of bytes to allocate for the hunk entry
 	//             (const char *) hunk_type: A descriptive string for the hunk entry,
 	//				for debugging purposes
-	// Returns   : (hunk_t*): Reference to the memory allocated for the hunk piece
+	// Returns   : (Hunk *): Reference to the memory allocated for the hunk piece
 	//             (reg_t) *addr: The offset of the freshly allocated hunk entry
-	hunk_t *alloc_hunk_entry(const char *hunk_type, int size, reg_t *addr);
+	Hunk *alloc_hunk_entry(const char *hunk_type, int size, reg_t *addr);
 
 	// Deallocates a hunk entry
 	// Parameters: (reg_t) addr: Offset of the hunk entry to delete
@@ -367,7 +368,7 @@ public:
 	// Returns   : A fresh segment ID for the segment in question
 	// Reserved segments are never used by the segment manager.  They can be used to tag special-purpose addresses.
 	// Segment 0 is implicitly reserved for numbers.
-	//seg_id_t sm_allocate_reserved_segment(char *name);
+	//SegmentId sm_allocate_reserved_segment(char *name);
 
 
 	// Generic Operations on Segments and Addresses
@@ -382,21 +383,21 @@ public:
 	// Segment Interface
 
 	// Retrieves the segment interface to the specified segment
-	// Parameters: (seg_id_t) segid: ID of the segment to look up
+	// Parameters: (SegmentId) segid: ID of the segment to look up
 	// Returns   : (SegInterface *): An interface to the specified segment ID, or NULL on error
 	// The returned interface must be deleted after use
-	SegInterface *getSegInterface(seg_id_t segid);
+	SegInterface *getSegInterface(SegmentId segid);
 
 
 	void heapRelocate(EngineState *s, reg_t block);
 	void scriptRelocateExportsSci11(int seg);
 	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
 	int scriptMarkedDeleted(int script_nr);
-	int initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr);
+	int initialiseScript(MemObject *mem, EngineState *s, int script_nr);
 
 public: // TODO: make private
 	IntMapper *id_seg_map; // id - script id; seg - index of heap
-	mem_obj_t **heap;
+	MemObject **heap;
 	int heap_size;		// size of the heap
 	int reserved_id;
 	int exports_wide;
@@ -408,28 +409,28 @@ public: // TODO: make private
 	// memory is tagged as
 	size_t mem_allocated; // Total amount of memory allocated
 
-	seg_id_t clones_seg_id; // ID of the (a) clones segment
-	seg_id_t lists_seg_id; // ID of the (a) list segment
-	seg_id_t nodes_seg_id; // ID of the (a) node segment
-	seg_id_t hunks_seg_id; // ID of the (a) hunk segment
+	SegmentId Clones_seg_id; // ID of the (a) clones segment
+	SegmentId Lists_seg_id; // ID of the (a) list segment
+	SegmentId Nodes_seg_id; // ID of the (a) node segment
+	SegmentId Hunks_seg_id; // ID of the (a) hunk segment
 
 private:
-	mem_obj_t *allocNonscriptSegment(memObjType type, seg_id_t *segid);
-	local_variables_t *allocLocalsSegment(script_t *scr, int count);
-	mem_obj_t *memObjAllocate(seg_id_t segid, int hash_id, memObjType type);
+	MemObject *allocNonscriptSegment(memObjType type, SegmentId *segid);
+	LocalVariables *allocLocalsSegment(Script *scr, int count);
+	MemObject *memObjAllocate(SegmentId segid, int hash_id, memObjType type);
 	int deallocate(int seg, bool recursive);
 
-	hunk_t *alloc_hunk(reg_t *);
-	void free_hunk(reg_t addr);
+	Hunk *alloc_Hunk(reg_t *);
+	void free_Hunk(reg_t addr);
 
-	inline int relocateLocal(script_t *scr, seg_id_t segment, int location);
-	inline int relocateBlock(reg_t *block, int block_location, int block_items, seg_id_t segment, int location);
-	inline int relocateObject(object_t *obj, seg_id_t segment, int location);
+	inline int relocateLocal(Script *scr, SegmentId segment, int location);
+	inline int relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location);
+	inline int relocateObject(Object *obj, SegmentId segment, int location);
 
 	inline int findFreeId(int *id);
-	static void setScriptSize(mem_obj_t *mem, EngineState *s, int script_nr);
-	object_t *scriptObjInit0(EngineState *s, reg_t obj_pos);
-	object_t *scriptObjInit11(EngineState *s, reg_t obj_pos);
+	static void setScriptSize(MemObject *mem, EngineState *s, int script_nr);
+	Object *scriptObjInit0(EngineState *s, reg_t obj_pos);
+	Object *scriptObjInit11(EngineState *s, reg_t obj_pos);
 
 	/* Check segment validity
 	** Parameters: (int) seg: The segment to validate
@@ -451,7 +452,7 @@ private:
 
 class SegInterface {
 protected:
-	SegInterface(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId);
+	SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId);
 
 public:
 	// Deallocates the segment interface
@@ -481,15 +482,15 @@ public:
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr));
 
 	// Get the memory object
-	mem_obj_t *getMobj() { return _mobj; }
+	MemObject *getMobj() { return _mobj; }
 
 	// Get the segment type
 	memObjType getType() { return _typeId; }
 
 protected:
 	SegManager *_segmgr;
-	mem_obj_t *_mobj;
-	seg_id_t _segId;
+	MemObject *_mobj;
+	SegmentId _segId;
 
 private:
 	memObjType _typeId; // Segment type

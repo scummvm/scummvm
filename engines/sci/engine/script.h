@@ -37,11 +37,14 @@ struct ResourceManager;
 
 #define SCI_SCRIPTS_NR 1000
 
+#if 0
+// Unreferenced
 struct script_opcode {
 	unsigned opcode;
 	int arg1, arg2, arg3;
 	int pos, size;
 };
+#endif
 
 
 enum script_object_types {

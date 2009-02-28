@@ -61,11 +61,11 @@ reg_t _debug_seek_reg = NULL_REG;  // Used for special seeks(2)
 #define _DEBUG_SEEK_GLOBAL 6 // Step forward until one specified global variable is modified
 
 static reg_t *p_pc;
-static stack_ptr_t *p_sp;
-static stack_ptr_t *p_pp;
+static StackPtr *p_sp;
+static StackPtr *p_pp;
 static reg_t *p_objp;
 static int *p_restadjust;
-static seg_id_t *p_var_segs;
+static SegmentId *p_var_segs;
 static reg_t **p_vars;
 static reg_t **p_var_base;
 static int *p_var_max; // May be NULL even in valid state!
@@ -279,7 +279,7 @@ int c_segtable(EngineState *s) {
 
 	sciprintf("  ---- segment table ----\n");
 	for (i = 0; i < s->seg_manager->heap_size; i++) {
-		mem_obj_t *mobj = s->seg_manager->heap[i];
+		MemObject *mobj = s->seg_manager->heap[i];
 		if (mobj && mobj->type) {
 			sciprintf(" [%04x] ", i);
 
@@ -333,20 +333,20 @@ int c_segtable(EngineState *s) {
 	return 0;
 }
 
-static void print_obj_head(EngineState *s, object_t *obj) {
+static void print_obj_head(EngineState *s, Object *obj) {
 	sciprintf(PREG" %s : %3d vars, %3d methods\n", PRINT_REG(obj->pos), obj_get_name(s, obj->pos),
 				obj->variables_nr, obj->methods_nr);
 }
 
-static void print_list(EngineState *s, list_t *l) {
+static void print_list(EngineState *s, List *l) {
 	reg_t pos = l->first;
 	reg_t my_prev = NULL_REG;
 
 	sciprintf("\t<\n");
 
 	while (!IS_NULL_REG(pos)) {
-		node_t *node;
-		mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
+		Node *node;
+		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!mobj || !ENTRY_IS_VALID(&(mobj->data.nodes), pos.offset)) {
 			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
@@ -372,12 +372,12 @@ static void print_list(EngineState *s, list_t *l) {
 	sciprintf("\t>\n");
 }
 
-static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
+static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	switch (mobj->type) {
 
 	case MEM_OBJ_SCRIPT: {
 		int i;
-		script_t *scr = &(mobj->data.script);
+		Script *scr = &(mobj->data.script);
 		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
 		if (scr->export_table)
 			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
@@ -400,7 +400,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 	break;
 
 	case MEM_OBJ_LOCALS: {
-		local_variables_t *locals = &(mobj->data.locals);
+		LocalVariables *locals = &(mobj->data.locals);
 		sciprintf("locals for script.%03d\n", locals->script_id);
 		sciprintf("  %d (0x%x) locals\n", locals->nr, locals->nr);
 	}
@@ -426,7 +426,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 
 	case MEM_OBJ_CLONES: {
 		int i = 0;
-		clone_table_t *ct = &(mobj->data.clones);
+		CloneTable *ct = &(mobj->data.clones);
 
 		sciprintf("clones\n");
 
@@ -440,7 +440,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 
 	case MEM_OBJ_LISTS: {
 		int i = 0;
-		list_table_t *lt = &(mobj->data.lists);
+		ListTable *lt = &(mobj->data.lists);
 
 		sciprintf("lists\n");
 		for (i = 0; i < lt->max_entry; i++)
@@ -458,7 +458,7 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 
 	case MEM_OBJ_HUNK: {
 		int i;
-		hunk_table_t *ht = &(mobj->data.hunks);
+		HunkTable *ht = &(mobj->data.hunks);
 
 		sciprintf("hunk  (total %d)\n", mobj->data.hunks.entries_used);
 		for (i = 0; i < ht->max_entry; i++)
@@ -483,11 +483,11 @@ static void _c_single_seg_info(EngineState *s, mem_obj_t *mobj) {
 }
 
 static int show_node(EngineState *s, reg_t addr) {
-	mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
+	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
-		list_table_t *lt = &(mobj->data.lists);
-		list_t *list;
+		ListTable *lt = &(mobj->data.lists);
+		List *list;
 
 		if (!ENTRY_IS_VALID(lt, addr.offset)) {
 			sciprintf("Address does not contain a list\n");
@@ -498,8 +498,8 @@ static int show_node(EngineState *s, reg_t addr) {
 
 		sciprintf(PREG" : first x last = ("PREG", "PREG")\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
-		node_table_t *nt;
-		node_t *node;
+		NodeTable *nt;
+		Node *node;
 		mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
 
 		if (!mobj) {
@@ -566,7 +566,7 @@ static int c_vr(EngineState *s) {
 			break;
 
 		case KSIG_LIST: {
-			list_t *l = LOOKUP_LIST(reg);
+			List *l = LOOKUP_LIST(reg);
 
 			sciprintf("list\n");
 
@@ -675,7 +675,7 @@ int c_seginfo(EngineState *s) {
 }
 
 int c_debuginfo(EngineState *s) {
-	exec_stack_t *eframe = NULL;
+	ExecStack *eframe = NULL;
 
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -1149,7 +1149,7 @@ int c_restart_game(EngineState *s) {
 
 int c_stack(EngineState *s) {
 	int i;
-	exec_stack_t *xs;
+	ExecStack *xs;
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -1181,7 +1181,7 @@ const char *selector_name(EngineState *s, int selector) {
 }
 
 int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
-	object_t *obj = obj_get(s, objp);
+	Object *obj = obj_get(s, objp);
 	byte *selectoroffset;
 	int selectors;
 
@@ -1213,8 +1213,8 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-	mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
-	script_t *script_entity = NULL;
+	MemObject *memobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
+	Script *script_entity = NULL;
 	byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
@@ -1426,15 +1426,15 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				sciprintf("  %s::%s[", name, (selector > s->_selectorNames.size()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
-				case SELECTOR_METHOD:
+				case kSelectorMethod:
 					sciprintf("FUNCT");
 					argc += restmod;
 					restmod = 0;
 					break;
-				case SELECTOR_VARIABLE:
+				case kSelectorVariable:
 					sciprintf("VAR");
 					break;
-				case SELECTOR_NONE:
+				case kSelectorNone:
 					sciprintf("INVALID");
 					break;
 				}
@@ -1540,7 +1540,7 @@ static int c_backtrace(EngineState *s) {
 
 	sciprintf("Call stack (current base: 0x%x):\n", s->execution_stack_base);
 	for (i = 0; i <= s->execution_stack_pos; i++) {
-		exec_stack_t *call = &(s->execution_stack[i]);
+		ExecStack *call = &(s->execution_stack[i]);
 		const char *objname = obj_get_name(s, call->sendp);
 		int paramc, totalparamc;
 
@@ -1929,7 +1929,7 @@ static int c_gfx_draw_viewobj(EngineState *s) {
 #warning "Re-implement con:gfx_draw_viewobj"
 #endif
 #if 0
-	heap_ptr pos = (heap_ptr)(cmd_params[0].val);
+	HeapPtr pos = (HeapPtr)(cmd_params[0].val);
 	int is_view;
 	int x, y, priority;
 	int nsLeft, nsRight, nsBottom, nsTop;
@@ -1951,10 +1951,10 @@ static int c_gfx_draw_viewobj(EngineState *s) {
 	}
 
 
-	is_view = (lookup_selector(s, pos, s->selector_map.x, NULL) == SELECTOR_VARIABLE) &&
-	    (lookup_selector(s, pos, s->selector_map.brLeft, NULL) == SELECTOR_VARIABLE) &&
-	    (lookup_selector(s, pos, s->selector_map.signal, NULL) == SELECTOR_VARIABLE) &&
-	    (lookup_selector(s, pos, s->selector_map.nsTop, NULL) == SELECTOR_VARIABLE);
+	is_view = (lookup_selector(s, pos, s->selector_map.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->selector_map.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->selector_map.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->selector_map.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		sciprintf("Not a dynamic View object.\n");
@@ -2051,7 +2051,7 @@ static int c_disasm_addr(EngineState *s) {
 }
 
 static int c_disasm(EngineState *s) {
-	object_t *obj = obj_get(s, cmd_params[0].reg);
+	Object *obj = obj_get(s, cmd_params[0].reg);
 	int selector_id = script_find_selector(s, cmd_params[1].str);
 	reg_t addr;
 
@@ -2065,7 +2065,7 @@ static int c_disasm(EngineState *s) {
 		return 1;
 	}
 
-	if (lookup_selector(s, cmd_params[0].reg, selector_id, NULL, &addr) != SELECTOR_METHOD) {
+	if (lookup_selector(s, cmd_params[0].reg, selector_id, NULL, &addr) != kSelectorMethod) {
 		sciprintf("Not a method.");
 		return 1;
 	}
@@ -2148,11 +2148,11 @@ static int c_set_acc(EngineState *s) {
 static int c_send(EngineState *s) {
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
-	stack_ptr_t stackframe = s->execution_stack->sp;
+	StackPtr stackframe = s->execution_stack->sp;
 	int selector_id;
-	unsigned int i, selector_type;
-	exec_stack_t *xstack;
-	object_t *o;
+	unsigned int i;
+	ExecStack *xstack;
+	Object *o;
 	reg_t *vptr;
 	reg_t fptr;
 
@@ -2169,9 +2169,9 @@ static int c_send(EngineState *s) {
 		return 1;
 	}
 
-	selector_type = lookup_selector(s, object, selector_id, &vptr, &fptr);
+	SelectorType selector_type = lookup_selector(s, object, selector_id, &vptr, &fptr);
 
-	if (selector_type == SELECTOR_NONE) {
+	if (selector_type == kSelectorNone) {
 		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
 		return 1;
 	}
@@ -2185,7 +2185,7 @@ static int c_send(EngineState *s) {
 	xstack = add_exec_stack_entry(s, fptr, s->execution_stack->sp + cmd_paramlength, object, cmd_paramlength - 2,
 									s->execution_stack->sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
-	xstack->type = selector_type == SELECTOR_VARIABLE ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
+	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 
 	// Now commit the actual function:
 	xstack = send_selector(s, object, object, stackframe, cmd_paramlength - 2, stackframe);
@@ -2456,7 +2456,7 @@ int c_simsoundcue(EngineState *s) {
 #ifdef __GNUC__
 #warning "Re-implement viewobjinfo"
 #endif
-static void viewobjinfo(EngineState *s, heap_ptr pos) {
+static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	char *signals[16] = {
 		"stop_update",
 		"updated",
@@ -2485,7 +2485,7 @@ static void viewobjinfo(EngineState *s, heap_ptr pos) {
 	int have_rects = 0;
 	abs_rect_t nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s, pos, s->selector_map.nsBottom, NULL) == SELECTOR_VARIABLE) {
+	if (lookup_selector(s, pos, s->selector_map.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -2532,8 +2532,8 @@ static void viewobjinfo(EngineState *s, heap_ptr pos) {
 #undef GETRECT
 
 int objinfo(EngineState *s, reg_t pos) {
-	object_t *obj = obj_get(s, pos);
-	object_t *var_container = obj;
+	Object *obj = obj_get(s, pos);
+	Object *var_container = obj;
 	int i;
 
 	sciprintf("["PREG"]: ", PRINT_REG(pos));
@@ -2587,17 +2587,17 @@ int c_shownode(EngineState *s) {
 
 // Breakpoint commands
 
-static breakpoint_t *bp_alloc(EngineState *s) {
-	breakpoint_t *bp;
+static Breakpoint *bp_alloc(EngineState *s) {
+	Breakpoint *bp;
 
 	if (s->bp_list) {
 		bp = s->bp_list;
 		while (bp->next)
 			bp = bp->next;
-		bp->next = (breakpoint_t *)sci_malloc(sizeof(breakpoint_t));
+		bp->next = (Breakpoint *)sci_malloc(sizeof(Breakpoint));
 		bp = bp->next;
 	} else {
-		s->bp_list = (breakpoint_t *)sci_malloc(sizeof(breakpoint_t));
+		s->bp_list = (Breakpoint *)sci_malloc(sizeof(Breakpoint));
 		bp = s->bp_list;
 	}
 
@@ -2607,7 +2607,7 @@ static breakpoint_t *bp_alloc(EngineState *s) {
 }
 
 int c_bpx(EngineState *s) {
-	breakpoint_t *bp;
+	Breakpoint *bp;
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
@@ -2624,7 +2624,7 @@ int c_bpx(EngineState *s) {
 }
 
 int c_bpe(EngineState *s) {
-	breakpoint_t *bp;
+	Breakpoint *bp;
 
 	bp = bp_alloc(s);
 
@@ -2636,7 +2636,7 @@ int c_bpe(EngineState *s) {
 }
 
 int c_bplist(EngineState *s) {
-	breakpoint_t *bp;
+	Breakpoint *bp;
 	int i = 0;
 	int bpdata;
 
@@ -2661,7 +2661,7 @@ int c_bplist(EngineState *s) {
 }
 
 int c_bpdel(EngineState *s) {
-	breakpoint_t *bp, *bp_next, *bp_prev;
+	Breakpoint *bp, *bp_next, *bp_prev;
 	int i = 0, found = 0;
 	int type;
 
@@ -2861,8 +2861,8 @@ static int c_gc_list_reachable(EngineState *s) {
 	return 0;
 }
 
-void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp, int *restadjust,
-	seg_id_t *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
+void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
+	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
@@ -2891,10 +2891,10 @@ void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, r
 	}
 
 	if (_debug_seeking && !bp) { // Are we looking for something special?
-		mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
+		MemObject *memobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (memobj) {
-			script_t *scr = &(memobj->data.script);
+			Script *scr = &(memobj->data.script);
 			byte *code_buf = scr->buf;
 			int code_buf_size = scr->buf_size;
 			int opcode = pc->offset >= code_buf_size ? 0 : code_buf[pc->offset];

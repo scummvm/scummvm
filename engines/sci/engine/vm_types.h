@@ -30,7 +30,8 @@
 
 namespace Sci {
 
-typedef int seg_id_t; /* Segment ID type */
+// Segment ID type
+typedef int SegmentId;
 
 struct reg_t {
 	uint16 segment;
@@ -40,8 +41,10 @@ struct reg_t {
 #define PREG "%04x:%04x"
 #define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset
 
-typedef reg_t *stack_ptr_t; /* Stack pointer type */
-typedef int selector_t; /* Selector ID */
+// Stack pointer type
+typedef reg_t *StackPtr;
+// Selector ID
+typedef int Selector;
 #define NULL_SELECTOR -1
 
 #define PSTK "ST:%04x"

@@ -208,7 +208,7 @@ void con_init() {
 	}
 }
 
-static inline int clone_is_used(clone_table_t *t, int idx) {
+static inline int clone_is_used(CloneTable *t, int idx) {
 	return ENTRY_IS_VALID(t, idx);
 }
 
@@ -306,7 +306,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 
 		// Now all values are available; iterate over all objects.
 		for (i = 0; i < s->seg_manager->heap_size; i++) {
-			mem_obj_t *mobj = s->seg_manager->heap[i];
+			MemObject *mobj = s->seg_manager->heap[i];
 			int idx = 0;
 			int max_index = 0;
 
@@ -319,7 +319,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 
 			while (idx < max_index) {
 				int valid = 1;
-				object_t *obj = NULL;
+				Object *obj = NULL;
 				reg_t objpos;
 				objpos.offset = 0;
 				objpos.segment = i;

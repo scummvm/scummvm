@@ -37,7 +37,7 @@
 namespace Sci {
 
 // Structures and data from vm.c:
-extern calls_struct_t *send_calls;
+extern CallsStruct *send_calls;
 extern int send_calls_allocated;
 extern int bp_flag;
 
@@ -314,7 +314,7 @@ int create_class_table_sci11(EngineState *s) {
 	else
 		s->classtable_size = vocab996->size >> 2;
 
-	s->classtable = (class_t*)sci_calloc(sizeof(class_t), s->classtable_size);
+	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		resource_t *heap = scir_find_resource(s->resmgr, sci_heap, scriptnr, 0);
@@ -335,9 +335,9 @@ int create_class_table_sci11(EngineState *s) {
 							return 1;
 						}
 
-						s->classtable = (class_t*)sci_realloc(s->classtable, sizeof(class_t) * (classnr + 1));
+						s->classtable = (Class*)sci_realloc(s->classtable, sizeof(Class) * (classnr + 1));
 						// Clear after resize
-						memset(&(s->classtable[s->classtable_size]), 0, sizeof(class_t) * (1 + classnr - s->classtable_size));
+						memset(&(s->classtable[s->classtable_size]), 0, sizeof(Class) * (1 + classnr - s->classtable_size));
 
 						s->classtable_size = classnr + 1; // Adjust maximum number of entries
 					}
@@ -369,7 +369,7 @@ static int create_class_table_sci0(EngineState *s) {
 	else
 		s->classtable_size = vocab996->size >> 2;
 
-	s->classtable = (class_t*)sci_calloc(sizeof(class_t), s->classtable_size);
+	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		int objtype = 0;
@@ -409,9 +409,9 @@ static int create_class_table_sci0(EngineState *s) {
 							return 1;
 						}
 
-						s->classtable = (class_t*)sci_realloc(s->classtable, sizeof(class_t) * (classnr + 1));
+						s->classtable = (Class*)sci_realloc(s->classtable, sizeof(Class) * (classnr + 1));
 						// Clear after resize
-						memset(&(s->classtable[s->classtable_size]), 0, sizeof(class_t) * (1 + classnr - s->classtable_size));
+						memset(&(s->classtable[s->classtable_size]), 0, sizeof(Class) * (1 + classnr - s->classtable_size));
 
 						s->classtable_size = classnr + 1; // Adjust maximum number of entries
 					}
@@ -559,7 +559,7 @@ void script_free_engine(EngineState *s) {
 }
 
 void script_free_breakpoints(EngineState *s) {
-	breakpoint_t *bp, *bp_next;
+	Breakpoint *bp, *bp_next;
 
 	// Free breakpoint list
 	bp = s->bp_list;
@@ -602,7 +602,7 @@ int game_init(EngineState *s) {
 
 	if (!send_calls_allocated) {
 		send_calls_allocated = 16;
-		send_calls = (calls_struct_t*)sci_calloc(sizeof(calls_struct_t), send_calls_allocated);
+		send_calls = (CallsStruct*)sci_calloc(sizeof(CallsStruct), send_calls_allocated);
 	}
 
 	if (s->gfx_state && _reset_graphics_input(s))

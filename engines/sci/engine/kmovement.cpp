@@ -255,7 +255,7 @@ static void bresenham_autodetect(EngineState *s) {
 	reg_t motion_class;
 
 	if (!parse_reg_t(s, "?Motion", &motion_class)) {
-		object_t *obj = obj_get(s, motion_class);
+		Object *obj = obj_get(s, motion_class);
 		reg_t fptr;
 		byte *buf;
 
@@ -265,7 +265,7 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != SELECTOR_METHOD) {
+		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;

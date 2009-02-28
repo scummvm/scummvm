@@ -30,26 +30,26 @@
 
 namespace Sci {
 
-struct message_tuple_t {
+struct MessageTuple {
 	int noun;
 	int verb;
 	int cond;
 	int seq;
 };
 
-struct index_record_cursor_t {
+struct IndexRecordCursor {
 	byte *index_record;
 	int index;
 	byte *resource_beginning;
 };
 
 typedef int index_record_size_t();
-typedef void parse_index_record_t(index_record_cursor_t *index_record, message_tuple_t *t);
-typedef int get_talker_t(index_record_cursor_t *cursor);
-typedef void get_text_t(index_record_cursor_t *cursor, char *buffer, int buffer_size);
+typedef void parse_index_record_t(IndexRecordCursor *index_record, MessageTuple *t);
+typedef int get_talker_t(IndexRecordCursor *cursor);
+typedef void get_text_t(IndexRecordCursor *cursor, char *buffer, int buffer_size);
 typedef int index_record_count_t(byte *header);
 
-struct message_handler_t {
+struct MessageHandler {
 	int version_id;
 	parse_index_record_t *parse;
 	get_talker_t *get_talker;
@@ -60,24 +60,24 @@ struct message_handler_t {
 	int index_record_size;
 };
 
-struct message_state_t {
+struct MessageState {
 	int initialized;
-	message_handler_t *handler;
+	MessageHandler *handler;
 	ResourceManager *resmgr;
 	resource_t *current_res;
 	int module;
 	int record_count;
 	byte *index_records;
-	index_record_cursor_t engine_cursor;
+	IndexRecordCursor engine_cursor;
 };
 
-int message_get_specific(message_state_t *state, message_tuple_t *t);
-int message_get_next(message_state_t *state);
-int message_get_talker(message_state_t *state);
-int message_get_length(message_state_t *state);
-int message_get_text(message_state_t *state, char *buffer, int length);
-int message_state_load_res(message_state_t *state, int module);
-void message_state_initialize(ResourceManager *resmgr, message_state_t *state);
+int message_get_specific(MessageState *state, MessageTuple *t);
+int message_get_next(MessageState *state);
+int message_get_talker(MessageState *state);
+int message_get_length(MessageState *state);
+int message_get_text(MessageState *state, char *buffer, int length);
+int message_state_load_res(MessageState *state, int module);
+void message_state_initialize(ResourceManager *resmgr, MessageState *state);
 
 } // End of namespace Sci
 

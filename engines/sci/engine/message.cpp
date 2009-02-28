@@ -30,7 +30,7 @@ namespace Sci {
 
 #if 0
 // Unreferenced - removed
-static int get_talker_trivial(index_record_cursor_t *cursor) {
+static int get_talker_trivial(IndexRecordCursor *cursor) {
 	return -1;
 }
 #endif
@@ -39,7 +39,7 @@ static int get_talker_trivial(index_record_cursor_t *cursor) {
 
 #if 0
 // Unreferenced - removed
-static void index_record_parse_2101(index_record_cursor_t *cursor, message_tuple_t *t) {
+static void index_record_parse_2101(IndexRecordCursor *cursor, MessageTuple *t) {
 	int noun = *(cursor->index_record + 0);
 	int verb = *(cursor->index_record + 1);
 
@@ -51,7 +51,7 @@ static void index_record_parse_2101(index_record_cursor_t *cursor, message_tuple
 
 #if 0
 // Unreferenced - removed
-static void index_record_get_text_2101(index_record_cursor_t *cursor, char *buffer, int buffer_size) {
+static void index_record_get_text_2101(IndexRecordCursor *cursor, char *buffer, int buffer_size) {
 	int offset = getUInt16(cursor->index_record + 2);
 	char *stringptr = (char *)cursor->resource_beginning + offset;
 
@@ -68,7 +68,7 @@ static int header_get_index_record_count_2101(byte *header) {
 
 // Version 3.411 and later code ahead
 
-static void index_record_parse_3411(index_record_cursor_t *cursor, message_tuple_t *t) {
+static void index_record_parse_3411(IndexRecordCursor *cursor, MessageTuple *t) {
 	int noun = *(cursor->index_record + 0);
 	int verb = *(cursor->index_record + 1);
 	int cond = *(cursor->index_record + 2);
@@ -80,11 +80,11 @@ static void index_record_parse_3411(index_record_cursor_t *cursor, message_tuple
 	t->seq = seq;
 }
 
-static int index_record_get_talker_3411(index_record_cursor_t *cursor) {
+static int index_record_get_talker_3411(IndexRecordCursor *cursor) {
 	return *(cursor->index_record + 4);
 }
 
-static void index_record_get_text_3411(index_record_cursor_t *cursor, char *buffer, int buffer_size) {
+static void index_record_get_text_3411(IndexRecordCursor *cursor, char *buffer, int buffer_size) {
 	int offset = getUInt16(cursor->index_record + 5);
 	char *stringptr = (char *)cursor->resource_beginning + offset;
 
@@ -97,17 +97,17 @@ static int header_get_index_record_count_3411(byte *header) {
 
 // Generic code from here on
 
-static int four_tuple_match(message_tuple_t *t1, message_tuple_t *t2) {
+static int four_tuple_match(MessageTuple *t1, MessageTuple *t2) {
 	return t1->noun == t2->noun && t1->verb == t2->verb && t1->cond == t2->cond && t1->seq == t2->seq;
 }
 
-static void index_record_cursor_initialize(message_state_t *state, index_record_cursor_t *cursor) {
+static void index_record_cursor_initialize(MessageState *state, IndexRecordCursor *cursor) {
 	cursor->resource_beginning = state->current_res->data;
 	cursor->index_record = state->index_records;
 	cursor->index = 1;
 }
 
-static int index_record_next(message_state_t *state, index_record_cursor_t *cursor) {
+static int index_record_next(MessageState *state, IndexRecordCursor *cursor) {
 	if (cursor->index == state->record_count)
 		return 0;
 	cursor->index_record += state->handler->index_record_size;
@@ -115,8 +115,8 @@ static int index_record_next(message_state_t *state, index_record_cursor_t *curs
 	return 1;
 }
 
-static int index_record_find(message_state_t *state, message_tuple_t *t, index_record_cursor_t *cursor) {
-	message_tuple_t looking_at;
+static int index_record_find(MessageState *state, MessageTuple *t, IndexRecordCursor *cursor) {
+	MessageTuple looking_at;
 	int found = 0;
 
 	index_record_cursor_initialize(state, cursor);
@@ -132,31 +132,31 @@ static int index_record_find(message_state_t *state, message_tuple_t *t, index_r
 	return found;
 }
 
-int message_get_specific(message_state_t *state, message_tuple_t *t) {
+int message_get_specific(MessageState *state, MessageTuple *t) {
 	return index_record_find(state, t, &state->engine_cursor);
 }
 
-int message_get_next(message_state_t *state) {
+int message_get_next(MessageState *state) {
 	return index_record_next(state, &state->engine_cursor);
 }
 
-int message_get_talker(message_state_t *state) {
+int message_get_talker(MessageState *state) {
 	return state->handler->get_talker(&state->engine_cursor);
 }
 
-int message_get_text(message_state_t *state, char *buffer, int length) {
+int message_get_text(MessageState *state, char *buffer, int length) {
 	state->handler->get_text(&state->engine_cursor, buffer, length);
 	return strlen(buffer);
 }
 
-int message_get_length(message_state_t *state) {
+int message_get_length(MessageState *state) {
 	char buffer[500];
 
 	state->handler->get_text(&state->engine_cursor, buffer, sizeof(buffer));
 	return strlen(buffer);
 }
 
-int message_state_load_res(message_state_t *state, int module) {
+int message_state_load_res(MessageState *state, int module) {
 	if (state->module == module)
 		return 1;
 
@@ -175,7 +175,7 @@ int message_state_load_res(message_state_t *state, int module) {
 	return 1;
 }
 
-static message_handler_t fixed_handler = {
+static MessageHandler fixed_handler = {
 	3411,
 	index_record_parse_3411,
 	index_record_get_talker_3411,
@@ -185,7 +185,7 @@ static message_handler_t fixed_handler = {
 	11
 };
 
-void message_state_initialize(ResourceManager *resmgr, message_state_t *state) {
+void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
 	//resource_t *tester = scir_find_resource(resmgr, sci_message, 0, 0);
 	//int version;
 

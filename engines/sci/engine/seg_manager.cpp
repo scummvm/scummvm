@@ -69,7 +69,7 @@ inline int SegManager::findFreeId(int *id) {
 	return retval;
 }
 
-mem_obj_t *SegManager::allocNonscriptSegment(memObjType type, seg_id_t *segid) {
+MemObject *SegManager::allocNonscriptSegment(memObjType type, SegmentId *segid) {
 	// Allocates a non-script segment
 	int id;
 
@@ -89,12 +89,12 @@ SegManager::SegManager(bool sci1_1) {
 	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
 
 	heap_size = DEFAULT_SCRIPTS;
-	heap = (mem_obj_t **)sci_calloc(heap_size, sizeof(mem_obj_t *));
+	heap = (MemObject **)sci_calloc(heap_size, sizeof(MemObject *));
 
-	clones_seg_id = 0;
-	lists_seg_id = 0;
-	nodes_seg_id = 0;
-	hunks_seg_id = 0;
+	Clones_seg_id = 0;
+	Lists_seg_id = 0;
+	Nodes_seg_id = 0;
+	Hunks_seg_id = 0;
 
 	exports_wide = 0;
 	isSci1_1 = sci1_1;
@@ -129,10 +129,10 @@ SegManager::~SegManager() {
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-mem_obj_t *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
+MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
 	int seg;
 	bool was_added;
-	mem_obj_t* mem;
+	MemObject* mem;
 
 	seg = id_seg_map->checkKey(script_nr, true, &was_added);
 	if (!was_added) {
@@ -140,7 +140,7 @@ mem_obj_t *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 		return heap[*seg_id];
 	}
 
-	// allocate the mem_obj_t
+	// allocate the MemObject
 	mem = memObjAllocate(seg, script_nr, MEM_OBJ_SCRIPT);
 	if (!mem) {
 		sciprintf("%s, %d, Not enough memory, ", __FILE__, __LINE__);
@@ -151,7 +151,7 @@ mem_obj_t *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 	return mem;
 }
 
-void SegManager::setScriptSize(mem_obj_t *mem, EngineState *s, int script_nr) {
+void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
 	resource_t *script = scir_find_resource(s->resmgr, sci_script, script_nr, 0);
 	resource_t *heap = scir_find_resource(s->resmgr, sci_heap, script_nr, 0);
 
@@ -187,9 +187,9 @@ void SegManager::setScriptSize(mem_obj_t *mem, EngineState *s, int script_nr) {
 	}
 }
 
-int SegManager::initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr) {
+int SegManager::initialiseScript(MemObject *mem, EngineState *s, int script_nr) {
 	// allocate the script.buf
-	script_t *scr;
+	Script *scr;
 
 	setScriptSize(mem, s, script_nr);
 	mem->data.script.buf = (byte*) sci_malloc(mem->data.script.buf_size);
@@ -230,7 +230,7 @@ int SegManager::initialiseScript(mem_obj_t *mem, EngineState *s, int script_nr) 
 }
 
 int SegManager::deallocate(int seg, bool recursive) {
-	mem_obj_t *mobj;
+	MemObject *mobj;
 	VERIFY(check(seg), "invalid seg id");
 	int i;
 
@@ -311,7 +311,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 }
 
 int SegManager::scriptMarkedDeleted(int script_nr) {
-	script_t *scr;
+	Script *scr;
 	int seg = segGet(script_nr);
 	VERIFY(check(seg), "invalid seg id");
 
@@ -320,7 +320,7 @@ int SegManager::scriptMarkedDeleted(int script_nr) {
 }
 
 void SegManager::markScriptDeleted(int script_nr) {
-	script_t *scr;
+	Script *scr;
 	int seg = segGet(script_nr);
 	VERIFY(check(seg), "invalid seg id");
 
@@ -329,7 +329,7 @@ void SegManager::markScriptDeleted(int script_nr) {
 }
 
 void SegManager::unmarkScriptDeleted(int script_nr) {
-	script_t *scr;
+	Script *scr;
 	int seg = segGet(script_nr);
 	VERIFY(check(seg), "invalid seg id");
 
@@ -337,8 +337,8 @@ void SegManager::unmarkScriptDeleted(int script_nr) {
 	scr->marked_as_deleted = 0;
 }
 
-int SegManager::scriptIsMarkedAsDeleted(seg_id_t seg) {
-	script_t *scr;
+int SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
+	Script *scr;
 
 	if (!check(seg))
 		return 0;
@@ -360,8 +360,8 @@ int SegManager::deallocateScript(int script_nr) {
 	return 1;
 }
 
-mem_obj_t *SegManager::memObjAllocate(seg_id_t segid, int hash_id, memObjType type) {
-	mem_obj_t *mem = (mem_obj_t *)sci_calloc(sizeof(mem_obj_t), 1);
+MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType type) {
+	MemObject *mem = (MemObject *)sci_calloc(sizeof(MemObject), 1);
 	if (!mem) {
 		sciprintf("SegManager: invalid mem_obj ");
 		return NULL;
@@ -376,15 +376,15 @@ mem_obj_t *SegManager::memObjAllocate(seg_id_t segid, int hash_id, memObjType ty
 			return NULL;
 		}
 		heap_size *= 2;
-		temp = sci_realloc((void *)heap, heap_size * sizeof(mem_obj_t *));
+		temp = sci_realloc((void *)heap, heap_size * sizeof(MemObject *));
 		if (!temp) {
 			sciprintf("SegManager: Not enough memory space for script size");
 			return NULL;
 		}
-		heap = (mem_obj_t **)temp;
+		heap = (MemObject **)temp;
 
 		// Clear pointers
-		memset(heap + oldhs, 0, sizeof(mem_obj_t *) * (heap_size - oldhs));
+		memset(heap + oldhs, 0, sizeof(MemObject *) * (heap_size - oldhs));
 	}
 
 	mem->segmgr_id = hash_id;
@@ -396,14 +396,14 @@ mem_obj_t *SegManager::memObjAllocate(seg_id_t segid, int hash_id, memObjType ty
 }
 
 /* No longer in use?
-void SegManager::sm_object_init(object_t *object) {
+void SegManager::sm_object_init(Object *object) {
 	if (!object)
 		return;
 	object->variables_nr = 0;
 	object->variables = NULL;
 };*/
 
-void SegManager::freeScript(mem_obj_t *mem) {
+void SegManager::freeScript(MemObject *mem) {
 	if (!mem)
 		return;
 	if (mem->data.script.buf) {
@@ -415,7 +415,7 @@ void SegManager::freeScript(mem_obj_t *mem) {
 		int i;
 
 		for (i = 0; i < mem->data.script.objects_nr; i++) {
-			object_t* object = &mem->data.script.objects[i];
+			Object* object = &mem->data.script.objects[i];
 			if (object->variables) {
 				free(object->variables);
 				object->variables = NULL;
@@ -435,7 +435,7 @@ void SegManager::freeScript(mem_obj_t *mem) {
 #if 0
 // Unreferenced - removed
 static void SegManager::sm_mset(int offset, int c, size_t n, int id, int flag) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	GET_SEGID();
 	mem_obj = heap[id];
 	switch (mem_obj->type) {
@@ -457,7 +457,7 @@ static void SegManager::sm_mset(int offset, int c, size_t n, int id, int flag) {
 #if 0
 // Unreferenced - removed
 static void SegManager::sm_mcpy_in_in(int dst, const int src, size_t n, int id, int flag) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	GET_SEGID();
 	mem_obj = heap[id];
 	switch (mem_obj->type) {
@@ -477,7 +477,7 @@ static void SegManager::sm_mcpy_in_in(int dst, const int src, size_t n, int id, 
 #endif
 
 void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	GET_SEGID();
 	mem_obj = heap[id];
 	switch (mem_obj->type) {
@@ -498,7 +498,7 @@ void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag)
 #if 0
 // Unreferenced - removed
 static void SegManager::sm_mcpy_out_in(void *dst, const int src, size_t n, int id, int flag) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	GET_SEGID();
 	mem_obj = heap[id];
 	switch (mem_obj->type) {
@@ -518,7 +518,7 @@ static void SegManager::sm_mcpy_out_in(void *dst, const int src, size_t n, int i
 #endif
 
 int16 SegManager::getHeap(reg_t reg) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	memObjType mem_type;
 
 	VERIFY(check(reg.segment), "Invalid seg id");
@@ -542,7 +542,7 @@ int16 SegManager::getHeap(reg_t reg) {
 #if 0
 // Unreferenced - removed
 void SegManager::sm_put_heap(reg_t reg, int16 value) {
-	mem_obj_t *mem_obj;
+	MemObject *mem_obj;
 	memObjType mem_type;
 
 	VERIFY(check(reg.segment), "Invalid seg id");
@@ -624,7 +624,7 @@ void SegManager::setLockers(int lockers, int id, idFlag flag) {
 }
 
 void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
-	script_t *scr = &(heap[id]->data.script);
+	Script *scr = &(heap[id]->data.script);
 
 	GET_SEGID();
 	if (offset) {
@@ -703,7 +703,7 @@ static int SegManager::sm_get_heappos(int id, int flag) {
 #if 0
 // Unreferenced - removed
 static void SegManager::sm_set_variables(reg_t reg, int obj_index, reg_t variable_reg, int variable_index) {
-	script_t *script;
+	Script *script;
 	VERIFY(check(reg.segment), "invalid seg id");
 	VERIFY(heap[reg.segment], "invalid mem");
 
@@ -717,7 +717,7 @@ static void SegManager::sm_set_variables(reg_t reg, int obj_index, reg_t variabl
 }
 #endif
 
-inline int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, seg_id_t segment, int location) {
+inline int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
 	int rel = location - block_location;
 	int index;
 
@@ -740,20 +740,20 @@ inline int SegManager::relocateBlock(reg_t *block, int block_location, int block
 	return 1;
 }
 
-inline int SegManager::relocateLocal(script_t *scr, seg_id_t segment, int location) {
+inline int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
 	if (scr->locals_block)
 		return relocateBlock(scr->locals_block->locals, scr->locals_offset, scr->locals_block->nr, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
 
-inline int SegManager::relocateObject(object_t *obj, seg_id_t segment, int location) {
+inline int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
 	return relocateBlock(obj->variables, obj->pos.offset, obj->variables_nr, segment, location);
 }
 
 void SegManager::scriptAddCodeBlock(reg_t location) {
-	mem_obj_t *mobj = heap[location.segment];
-	script_t *scr;
+	MemObject *mobj = heap[location.segment];
+	Script *scr;
 	int index;
 
 	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to add a code block to non-script\n");
@@ -762,7 +762,7 @@ void SegManager::scriptAddCodeBlock(reg_t location) {
 
 	if (++scr->code_blocks_nr > scr->code_blocks_allocated) {
 		scr->code_blocks_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->code = (code_block_t *)sci_realloc(scr->code, scr->code_blocks_allocated * sizeof(code_block_t));
+		scr->code = (CodeBlock *)sci_realloc(scr->code, scr->code_blocks_allocated * sizeof(CodeBlock));
 	}
 
 	index = scr->code_blocks_nr - 1;
@@ -771,8 +771,8 @@ void SegManager::scriptAddCodeBlock(reg_t location) {
 }
 
 void SegManager::scriptRelocate(reg_t block) {
-	mem_obj_t *mobj = heap[block.segment];
-	script_t *scr;
+	MemObject *mobj = heap[block.segment];
+	Script *scr;
 	int count;
 	int i;
 
@@ -823,8 +823,8 @@ void SegManager::scriptRelocate(reg_t block) {
 }
 
 void SegManager::heapRelocate(EngineState *s, reg_t block) {
-	mem_obj_t *mobj = heap[block.segment];
-	script_t *scr;
+	MemObject *mobj = heap[block.segment];
+	Script *scr;
 	int count;
 	int i;
 
@@ -871,10 +871,10 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 
 reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
 
-object_t *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
-	mem_obj_t *mobj = heap[obj_pos.segment];
-	script_t *scr;
-	object_t *obj;
+Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
+	MemObject *mobj = heap[obj_pos.segment];
+	Script *scr;
+	Object *obj;
 	int id;
 	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
@@ -887,11 +887,11 @@ object_t *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 
 	if (!scr->objects) {
 		scr->objects_allocated = DEFAULT_OBJECTS;
-		scr->objects = (object_t *)sci_malloc(sizeof(object_t) * scr->objects_allocated);
+		scr->objects = (Object *)sci_malloc(sizeof(Object) * scr->objects_allocated);
 	}
 	if (scr->objects_nr == scr->objects_allocated) {
 		scr->objects_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->objects = (object_t *)sci_realloc(scr->objects, sizeof(object_t) * scr->objects_allocated);
+		scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_allocated);
 	}
 
 	temp = make_reg(obj_pos.segment, base);
@@ -939,10 +939,10 @@ object_t *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 	return obj;
 }
 
-object_t *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
-	mem_obj_t *mobj = heap[obj_pos.segment];
-	script_t *scr;
-	object_t *obj;
+Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
+	MemObject *mobj = heap[obj_pos.segment];
+	Script *scr;
+	Object *obj;
 	int id;
 	int base = obj_pos.offset;
 
@@ -954,11 +954,11 @@ object_t *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 	if (!scr->objects) {
 		scr->objects_allocated = DEFAULT_OBJECTS;
-		scr->objects = (object_t *)sci_malloc(sizeof(object_t) * scr->objects_allocated);
+		scr->objects = (Object *)sci_malloc(sizeof(Object) * scr->objects_allocated);
 	}
 	if (scr->objects_nr == scr->objects_allocated) {
 		scr->objects_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->objects = (object_t *)sci_realloc(scr->objects, sizeof(object_t) * scr->objects_allocated);
+		scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_allocated);
 	}
 
 	id = scr->obj_indices->checkKey(obj_pos.offset, true);
@@ -1006,21 +1006,21 @@ object_t *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 	return obj;
 }
 
-object_t *SegManager::scriptObjInit(EngineState *s, reg_t obj_pos) {
+Object *SegManager::scriptObjInit(EngineState *s, reg_t obj_pos) {
 	if (!isSci1_1)
 		return scriptObjInit0(s, obj_pos);
 	else
 		return scriptObjInit11(s, obj_pos);
 }
 
-local_variables_t *SegManager::allocLocalsSegment(script_t *scr, int count) {
+LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 	if (!count) { // No locals
 		scr->locals_segment = 0;
 		scr->locals_block = NULL;
 		return NULL;
 	} else {
-		mem_obj_t *mobj;
-		local_variables_t *locals;
+		MemObject *mobj;
+		LocalVariables *locals;
 
 		if (scr->locals_segment) {
 			mobj = heap[scr->locals_segment];
@@ -1039,9 +1039,9 @@ local_variables_t *SegManager::allocLocalsSegment(script_t *scr, int count) {
 	}
 }
 
-void SegManager::scriptInitialiseLocalsZero(seg_id_t seg, int count) {
-	mem_obj_t *mobj = heap[seg];
-	script_t *scr;
+void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
+	MemObject *mobj = heap[seg];
+	Script *scr;
 
 	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
 
@@ -1053,10 +1053,10 @@ void SegManager::scriptInitialiseLocalsZero(seg_id_t seg, int count) {
 }
 
 void SegManager::scriptInitialiseLocals(reg_t location) {
-	mem_obj_t *mobj = heap[location.segment];
+	MemObject *mobj = heap[location.segment];
 	unsigned int count;
-	script_t *scr;
-	local_variables_t *locals;
+	Script *scr;
+	LocalVariables *locals;
 
 	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
 
@@ -1088,8 +1088,8 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 }
 
 void SegManager::scriptRelocateExportsSci11(int seg) {
-	mem_obj_t *mobj = heap[seg];
-	script_t *scr;
+	MemObject *mobj = heap[seg];
+	Script *scr;
 	int i;
 	int location;
 
@@ -1111,8 +1111,8 @@ void SegManager::scriptRelocateExportsSci11(int seg) {
 }
 
 void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
-	mem_obj_t *mobj = heap[seg];
-	script_t *scr;
+	MemObject *mobj = heap[seg];
+	Script *scr;
 	byte *seeker;
 
 	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
@@ -1142,7 +1142,7 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 	seeker = scr->heap_start + 4 + getUInt16(scr->heap_start + 2) * 2;
 	while (getUInt16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg;
-		object_t *obj;
+		Object *obj;
 
 		reg.segment = seg;
 		reg.offset = seeker - scr->buf;
@@ -1164,16 +1164,16 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 	}
 }
 
-void SegManager::scriptFreeUnusedObjects(seg_id_t seg) {
-	mem_obj_t *mobj = heap[seg];
-	script_t *scr;
+void SegManager::scriptFreeUnusedObjects(SegmentId seg) {
+	MemObject *mobj = heap[seg];
+	Script *scr;
 
 	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to free unused objects in non-script\n");
 
 	scr = &(mobj->data.script);
 	if (scr->objects_allocated > scr->objects_nr) {
 		if (scr->objects_nr)
-			scr->objects = (object_t*)sci_realloc(scr->objects, sizeof(object_t) * scr->objects_nr);
+			scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_nr);
 		else {
 			if (scr->objects_allocated)
 				free(scr->objects);
@@ -1196,8 +1196,8 @@ static inline char *SegManager::dynprintf(char *msg, ...) {
 }
 */
 
-dstack_t *SegManager::allocateStack(int size, seg_id_t *segid) {
-	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
+dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
+	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
 	dstack_t *retval = &(memobj->data.stack);
 
 	retval->entries = (reg_t*)sci_calloc(size, sizeof(reg_t));
@@ -1206,8 +1206,8 @@ dstack_t *SegManager::allocateStack(int size, seg_id_t *segid) {
 	return retval;
 }
 
-SystemStrings *SegManager::allocateSysStrings(seg_id_t *segid) {
-	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
+SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
+	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
 	SystemStrings *retval = &(memobj->data.sys_strings);
 
 	memset(retval, 0, sizeof(SystemString)*SYS_STRINGS_MAX);
@@ -1217,9 +1217,9 @@ SystemStrings *SegManager::allocateSysStrings(seg_id_t *segid) {
 
 #if 0
 // Unreferenced - removed
-seg_id_t SegManager::sm_allocate_reserved_segment(char *src_name) {
-	seg_id_t segid;
-	mem_obj_t *memobj = allocNonscriptSegment(MEM_OBJ_RESERVED, &segid);
+SegmentId SegManager::sm_allocate_reserved_segment(char *src_name) {
+	SegmentId segid;
+	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_RESERVED, &segid);
 	char *name = sci_strdup(src_name);
 
 	memobj->data.reserved = name;
@@ -1229,7 +1229,7 @@ seg_id_t SegManager::sm_allocate_reserved_segment(char *src_name) {
 #endif
 
 uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
-	script_t* script;
+	Script* script;
 	uint16 offset;
 	VERIFY(check(seg), "invalid seg id");
 	VERIFY(heap[seg]->type == MEM_OBJ_SCRIPT, "Can only validate exports on scripts");
@@ -1249,11 +1249,11 @@ uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 }
 
 void SegManager::free_hunk_entry(reg_t addr) {
-	free_hunk(addr);
+	free_Hunk(addr);
 }
 
-hunk_t *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
-	hunk_t *h = alloc_hunk(reg);
+Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
+	Hunk *h = alloc_Hunk(reg);
 
 	if (!h)
 		return NULL;
@@ -1265,25 +1265,25 @@ hunk_t *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg
 	return h;
 }
 
-void _clone_cleanup(clone_t *clone) {
+void _clone_cleanup(Clone *clone) {
 	if (clone->variables)
 		free(clone->variables); // Free the dynamically allocated memory part
 }
 
-void _hunk_cleanup(hunk_t *hunk) {
+void _hunk_cleanup(Hunk *hunk) {
 	if (hunk->mem)
 		free(hunk->mem);
 }
 
-DEFINE_HEAPENTRY(list, 8, 4)
-DEFINE_HEAPENTRY(node, 32, 16)
-DEFINE_HEAPENTRY_WITH_CLEANUP(clone, 16, 4, _clone_cleanup)
-DEFINE_HEAPENTRY_WITH_CLEANUP(hunk, 4, 4, _hunk_cleanup)
+DEFINE_HEAPENTRY(List, 8, 4)
+DEFINE_HEAPENTRY(Node, 32, 16)
+DEFINE_HEAPENTRY_WITH_CLEANUP(Clone, 16, 4, _clone_cleanup)
+DEFINE_HEAPENTRY_WITH_CLEANUP(Hunk, 4, 4, _hunk_cleanup)
 
 #define DEFINE_ALLOC_DEALLOC(TYPE, SEGTYPE, PLURAL) \
-TYPE##_t *SegManager::alloc_##TYPE(reg_t *addr) {											 \
-	mem_obj_t *mobj;									  \
-	TYPE##_table_t *table;									  \
+TYPE *SegManager::alloc_##TYPE(reg_t *addr) {											 \
+	MemObject *mobj;									  \
+	TYPE##Table *table;									  \
 	int offset;										  \
 												  \
 	if (!TYPE##s_seg_id) {								  \
@@ -1300,7 +1300,7 @@ TYPE##_t *SegManager::alloc_##TYPE(reg_t *addr) {											 \
 }												  \
 												  \
 void	SegManager::free_##TYPE(reg_t addr) {					  \
-	mem_obj_t *mobj = GET_SEGMENT(*this, addr.segment, SEGTYPE);				  \
+	MemObject *mobj = GET_SEGMENT(*this, addr.segment, SEGTYPE);				  \
 												  \
 	if (!mobj) {										  \
 		sciprintf("Attempt to free " #TYPE " from address "PREG": Invalid segment type\n", PRINT_REG(addr));							  \
@@ -1310,13 +1310,13 @@ void	SegManager::free_##TYPE(reg_t addr) {					  \
 	Sci::free_##TYPE##_entry(&(mobj->data.PLURAL), addr.offset);					  \
 }
 
-DEFINE_ALLOC_DEALLOC(clone, MEM_OBJ_CLONES, clones)
-DEFINE_ALLOC_DEALLOC(list, MEM_OBJ_LISTS, lists)
-DEFINE_ALLOC_DEALLOC(node, MEM_OBJ_NODES, nodes)
-DEFINE_ALLOC_DEALLOC(hunk, MEM_OBJ_HUNK, hunks)
+DEFINE_ALLOC_DEALLOC(Clone, MEM_OBJ_CLONES, clones)
+DEFINE_ALLOC_DEALLOC(List, MEM_OBJ_LISTS, lists)
+DEFINE_ALLOC_DEALLOC(Node, MEM_OBJ_NODES, nodes)
+DEFINE_ALLOC_DEALLOC(Hunk, MEM_OBJ_HUNK, hunks)
 
 byte *SegManager::dereference(reg_t pointer, int *size) {
-	mem_obj_t *mobj;
+	MemObject *mobj;
 	byte *base = NULL;
 	int count;
 
@@ -1388,8 +1388,8 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 }
 
 unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
-	seg_id_t seg;
-	mem_obj_t *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
+	SegmentId seg;
+	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
 
 	mobj->data.dynmem.size = size;
@@ -1405,7 +1405,7 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 }
 
 const char *SegManager::getDescription(reg_t addr) {
-	mem_obj_t *mobj = heap[addr.segment];
+	MemObject *mobj = heap[addr.segment];
 
 	if (addr.segment >= heap_size)
 		return "";
@@ -1437,9 +1437,9 @@ void SegManager::dbgPrint(const char* msg, void *i) {
 
 
 // ------------------- Segment interface ------------------
-SegInterface::SegInterface(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId) :
+SegInterface::SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId) :
 	_segmgr(segmgr), _mobj(mobj), _segId(segId), _typeId(typeId) {
-	VERIFY(_mobj->type == _typeId, "Invalid mem_obj_t type");
+	VERIFY(_mobj->type == _typeId, "Invalid MemObject type");
 }
 
 reg_t SegInterface::findCanonicAddress(reg_t addr) {
@@ -1459,7 +1459,7 @@ void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void 
 //-------------------- base --------------------
 class SegInterfaceBase : public SegInterface {
 protected:
-	SegInterfaceBase(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId, memObjType typeId) :
+	SegInterfaceBase(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId) :
 		SegInterface(segmgr, mobj, segId, typeId) {}
 public:
 	reg_t findCanonicAddress(reg_t addr);
@@ -1479,14 +1479,14 @@ void SegInterfaceBase::listAllDeallocatable(void *param, void (*note)(void *para
 //-------------------- script --------------------
 class SegInterfaceScript : public SegInterfaceBase {
 public:
-	SegInterfaceScript(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceScript(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_SCRIPT) {}
 	void freeAtAddress(reg_t addr);
 	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
 };
 
 void SegInterfaceScript::freeAtAddress(reg_t addr) {
-	script_t *script = &(_mobj->data.script);
+	Script *script = &(_mobj->data.script);
 	/*
 		sciprintf("[GC] Freeing script "PREG"\n", PRINT_REG(addr));
 		if (script->locals_segment)
@@ -1498,12 +1498,12 @@ void SegInterfaceScript::freeAtAddress(reg_t addr) {
 }
 
 void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
-	script_t *script = &(_mobj->data.script);
+	Script *script = &(_mobj->data.script);
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
 		if (idx >= 0 && idx < script->objects_nr) {
-			object_t *obj = script->objects + idx;
+			Object *obj = script->objects + idx;
 			int i;
 
 			// Note all local variables, if we have a local variable environment
@@ -1523,7 +1523,7 @@ void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 
 
 #define LIST_ALL_DEALLOCATABLE(kind, kind_field) \
-	kind##_table_t * table = &(_mobj->data.kind_field);		\
+	kind##Table * table = &(_mobj->data.kind_field);		\
 	int i;								\
 									\
 	for (i = 0; i < table->max_entry; i++)				\
@@ -1534,7 +1534,7 @@ void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 //-------------------- clones --------------------
 class SegInterfaceClones : public SegInterface {
 public:
-	SegInterfaceClones(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceClones(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_CLONES) {}
 	void freeAtAddress(reg_t addr);
 	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
@@ -1542,12 +1542,12 @@ public:
 };
 
 void SegInterfaceClones::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
-	LIST_ALL_DEALLOCATABLE(clone, clones);
+	LIST_ALL_DEALLOCATABLE(Clone, clones);
 }
 
 void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
-	clone_table_t *clone_table = &(_mobj->data.clones);
-	clone_t *clone;
+	CloneTable *clone_table = &(_mobj->data.clones);
+	Clone *clone;
 	int i;
 
 	assert(addr.segment == _segId);
@@ -1570,7 +1570,7 @@ void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 }
 
 void SegInterfaceClones::freeAtAddress(reg_t addr) {
-	object_t *victim_obj;
+	Object *victim_obj;
 
 	assert(addr.segment == _segId);
 
@@ -1590,14 +1590,14 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	_segmgr->free_clone(addr);
+	_segmgr->free_Clone(addr);
 }
 
 
 //-------------------- locals --------------------
 class SegInterfaceLocals : public SegInterface {
 public:
-	SegInterfaceLocals(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceLocals(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
 	reg_t findCanonicAddress(reg_t addr);
 	void freeAtAddress(reg_t addr);
@@ -1605,9 +1605,9 @@ public:
 };
 
 reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
-	local_variables_t *locals = &(_mobj->data.locals);
+	LocalVariables *locals = &(_mobj->data.locals);
 	// Reference the owning script
-	seg_id_t owner_seg = _segmgr->segGet(locals->script_id);
+	SegmentId owner_seg = _segmgr->segGet(locals->script_id);
 
 	assert(owner_seg >= 0);
 
@@ -1620,7 +1620,7 @@ void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	local_variables_t *locals = &(_mobj->data.locals);
+	LocalVariables *locals = &(_mobj->data.locals);
 	int i;
 
 	assert(addr.segment == _segId);
@@ -1633,7 +1633,7 @@ void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 //-------------------- stack --------------------
 class SegInterfaceStack : public SegInterface {
 public:
-	SegInterfaceStack(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceStack(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_STACK) {}
 	reg_t findCanonicAddress(reg_t addr);
 	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
@@ -1656,7 +1656,7 @@ void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, vo
 //-------------------- system strings --------------------
 class SegInterfaceSysStrings : public SegInterface {
 public:
-	SegInterfaceSysStrings(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceSysStrings(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_SYS_STRINGS) {}
 };
 
@@ -1664,7 +1664,7 @@ public:
 //-------------------- lists --------------------
 class SegInterfaceLists : public SegInterface {
 public:
-	SegInterfaceLists(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceLists(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LISTS) {}
 	void freeAtAddress(reg_t addr);
 	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
@@ -1672,16 +1672,16 @@ public:
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
-	_segmgr->free_list(sub_addr);
+	_segmgr->free_List(sub_addr);
 }
 
 void SegInterfaceLists::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
-	LIST_ALL_DEALLOCATABLE(list, lists);
+	LIST_ALL_DEALLOCATABLE(List, lists);
 }
 
 void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	list_table_t *table = &(_mobj->data.lists);
-	list_t *list = &(table->table[addr.offset].entry);
+	ListTable *table = &(_mobj->data.lists);
+	List *list = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
 		fprintf(stderr, "Invalid list referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
@@ -1698,7 +1698,7 @@ void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, vo
 //-------------------- nodes --------------------
 class SegInterfaceNodes : public SegInterface {
 public:
-	SegInterfaceNodes(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceNodes(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_NODES) {}
 	void freeAtAddress(reg_t addr);
 	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
@@ -1706,16 +1706,16 @@ public:
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
-	_segmgr->free_node(sub_addr);
+	_segmgr->free_Node(sub_addr);
 }
 
 void SegInterfaceNodes::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
-	LIST_ALL_DEALLOCATABLE(node, nodes);
+	LIST_ALL_DEALLOCATABLE(Node, nodes);
 }
 
 void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
-	node_table_t *table = &(_mobj->data.nodes);
-	node_t *node = &(table->table[addr.offset].entry);
+	NodeTable *table = &(_mobj->data.nodes);
+	Node *node = &(table->table[addr.offset].entry);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
 		fprintf(stderr, "Invalid node referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
@@ -1734,7 +1734,7 @@ void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, vo
 //-------------------- hunk --------------------
 class SegInterfaceHunk : public SegInterface {
 public:
-	SegInterfaceHunk(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceHunk(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_HUNK) {}
 	void freeAtAddress(reg_t addr);
 	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
@@ -1746,14 +1746,14 @@ void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceHunk::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
-	LIST_ALL_DEALLOCATABLE(hunk, hunks);
+	LIST_ALL_DEALLOCATABLE(Hunk, hunks);
 }
 
 
 //-------------------- dynamic memory --------------------
 class SegInterfaceDynMem : public SegInterfaceBase {
 public:
-	SegInterfaceDynMem(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceDynMem(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_DYNMEM) {}
 	void freeAtAddress(reg_t addr);
 };
@@ -1767,17 +1767,17 @@ void SegInterfaceDynMem::freeAtAddress(reg_t sub_addr) {
 //-------------------- reserved --------------------
 class SegInterfaceReserved : public SegInterface {
 public:
-	SegInterfaceReserved(SegManager *segmgr, mem_obj_t *mobj, seg_id_t segId) :
+	SegInterfaceReserved(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_RESERVED) {}
 };
 
 
-SegInterface *SegManager::getSegInterface(seg_id_t segid) {
+SegInterface *SegManager::getSegInterface(SegmentId segid) {
 	if (!check(segid))
 		return NULL; // Invalid segment
 
 	SegInterface *retval = NULL;
-	mem_obj_t *mobj = heap[segid];
+	MemObject *mobj = heap[segid];
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
 		retval = new SegInterfaceScript(this, mobj, segid);

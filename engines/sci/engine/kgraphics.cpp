@@ -445,7 +445,7 @@ void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
 	sciprintf("_k_redraw_box(): Unimplemented!\n");
 #if 0
 	int i;
-	view_object_t *list = s->dyn_views;
+	ViewObject *list = s->dyn_views;
 
 	sciprintf("Reanimating views\n", s->dyn_views_nr);
 
@@ -777,7 +777,7 @@ static int collides_with(EngineState *s, abs_rect_t area, reg_t other_obj, int u
 reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
-	list_t *cliplist = NULL;
+	List *cliplist = NULL;
 	gfxw_port_t *port = s->picture_port;
 	uint16 signal;
 	int retval;
@@ -838,7 +838,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 		cliplist = LOOKUP_LIST(cliplist_ref);
 
 	if (cliplist) {
-		node_t *node = LOOKUP_NODE(cliplist->first);
+		Node *node = LOOKUP_NODE(cliplist->first);
 
 		retval = 0; // Assume that we Can'tBeHere...
 
@@ -984,7 +984,7 @@ reg_t kOnControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
 }
 
-void _k_view_list_free_backgrounds(EngineState *s, view_object_t *list, int list_nr);
+void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
 
 int sci01_priority_table_flags = 0;
 
@@ -1149,7 +1149,7 @@ abs_rect_t set_base(EngineState *s, reg_t object) {
 void _k_base_setter(EngineState *s, reg_t object) {
 	abs_rect_t absrect = set_base(s, object);
 
-	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != SELECTOR_VARIABLE)
+	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	if (s->version <= SCI_VERSION_LTU_BASE_OB1)
@@ -1248,7 +1248,7 @@ abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
 static void _k_set_now_seen(EngineState *s, reg_t object) {
 	abs_rect_t absrect = get_nsrect(s, object, 0);
 
-	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != SELECTOR_VARIABLE) {
+	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1703,7 +1703,7 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_FREESCI_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_FREESCI_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == SELECTOR_VARIABLE;
+			int has_nsrect = lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1761,7 +1761,7 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 
 static int _k_animate_ran = 0;
 
-int _k_view_list_dispose_loop(EngineState *s, list_t *list, gfxw_dyn_view_t *widget, int funct_nr, int argc, reg_t *argv) {
+int _k_view_list_dispose_loop(EngineState *s, List *list, gfxw_dyn_view_t *widget, int funct_nr, int argc, reg_t *argv) {
 // disposes all list members flagged for disposal; funct_nr is the invoking kfunction
 // returns non-zero IFF views were dropped
 	int signal;
@@ -1899,14 +1899,14 @@ static gfxw_dyn_view_t *_k_make_dynview_obj(EngineState *s, reg_t obj, int optio
 		PUT_SEL32V(obj, cel, cel);
 	}
 
-	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL) != SELECTOR_VARIABLE) {
+	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp = NULL;
 		under_bits = NULL_REG;
 		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no underBits\n", PRINT_REG(obj));
 	} else
 		under_bits = *((reg_t *)under_bitsp);
 
-	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL) != SELECTOR_VARIABLE) {
+	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp = NULL;
 		signal = 0;
 		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no signal selector\n", PRINT_REG(obj));
@@ -1929,12 +1929,12 @@ static gfxw_dyn_view_t *_k_make_dynview_obj(EngineState *s, reg_t obj, int optio
 	}
 }
 
-static void _k_make_view_list(EngineState *s, gfxw_list_t **widget_list, list_t *list, int options, int funct_nr, int argc, reg_t *argv) {
+static void _k_make_view_list(EngineState *s, gfxw_list_t **widget_list, List *list, int options, int funct_nr, int argc, reg_t *argv) {
 /* Creates a view_list from a node list in heap space. Returns the list, stores the
 ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
 ** argc, argv, funct_nr should be the same as in the calling kernel function.
 */
-	node_t *node;
+	Node *node;
 	int sequence_nr = 0;
 	gfxw_dyn_view_t *widget;
 
@@ -1995,7 +1995,7 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 	while (view) {
 		reg_t obj = make_reg(view->ID, view->subID);
 		int priority, _priority;
-		int has_nsrect = (view->ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == SELECTOR_VARIABLE;
+		int has_nsrect = (view->ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);
@@ -2276,7 +2276,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			ADD_TO_CURRENT_PICTURE_PORT(gfxw_picviewize_dynview((gfxw_dyn_view_t *) widget));
 		}
 	} else {
-		list_t *list;
+		List *list;
 
 		if (!list_ref.segment) {
 			warning("Attempt to AddToPic single non-list: "PREG"", PRINT_REG(list_ref));
@@ -2923,7 +2923,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Animations are supposed to take a maximum of s->animation_delay milliseconds.
 	reg_t cast_list_ref = KP_ALT(0, NULL_REG);
 	int cycle = (KP_ALT(1, NULL_REG)).offset;
-	list_t *cast_list = NULL;
+	List *cast_list = NULL;
 	int open_animation = 0;
 
 	process_sound_events(s); // Take care of incoming events (kAnimate is called semi-regularly)

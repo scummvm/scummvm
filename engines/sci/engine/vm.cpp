@@ -56,7 +56,7 @@ extern int _debug_seeking;
 extern int _weak_validations;
 
 
-calls_struct_t *send_calls = NULL;
+CallsStruct *send_calls = NULL;
 int send_calls_allocated = 0;
 int bp_flag = 0;
 static reg_t _dummy_register;
@@ -65,7 +65,7 @@ static reg_t _dummy_register;
 
 #ifndef DISABLE_VALIDATIONS
 
-static inline reg_t &validate_property(object_t *obj, int index) {
+static inline reg_t &validate_property(Object *obj, int index) {
 	if (!obj) {
 		if (sci_debug_flags & 4)
 			sciprintf("[VM] Sending to disposed object!\n");
@@ -85,7 +85,7 @@ static inline reg_t &validate_property(object_t *obj, int index) {
 	return obj->variables[index];
 }
 
-static inline stack_ptr_t validate_stack_addr(EngineState *s, stack_ptr_t sp) {
+static inline StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
@@ -200,7 +200,7 @@ int script_error(EngineState *s, const char *file, int line, const char *reason)
 #define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
 
 reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
-	class_t *the_class = s->classtable + classnr;
+	Class *the_class = s->classtable + classnr;
 
 	if (NULL == s) {
 		sciprintf("vm.c: get_class_address(): NULL passed for \"s\"\n");
@@ -252,7 +252,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define OBJ_SUPERCLASS(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SUPERCLASS_OFFSET))
 // Returns an object's superclass
 
-inline exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, stack_ptr_t sp, reg_t calling_obj, uint16 argc, stack_ptr_t argp) {
+inline ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg;
 	uint16 temp;
 
@@ -273,7 +273,7 @@ inline exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfun
 
 	// Check if a breakpoint is set on this method
 	if (s->have_bp & BREAK_EXPORT) {
-		breakpoint_t *bp;
+		Breakpoint *bp;
 		uint32 bpaddress;
 
 		bpaddress = (script << 16 | pubfunct);
@@ -311,7 +311,7 @@ static void _exec_varselectors(EngineState *s) {
 		}
 }
 
-exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stack_ptr_t sp, int framesize, stack_ptr_t argp) {
+ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 // send_obj and work_obj are equal for anything but 'super'
 // Returns a pointer to the TOS exec_stack element
 #ifdef VM_DEBUG_SEND
@@ -322,15 +322,15 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 	int selector;
 	int argc;
 	int origin = s->execution_stack_pos; // Origin: Used for debugging
-	exec_stack_t *retval = s->execution_stack + s->execution_stack_pos;
+	ExecStack *retval = s->execution_stack + s->execution_stack_pos;
 	int print_send_action = 0;
-	// We return a pointer to the new active exec_stack_t
+	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
 	int send_calls_nr = -1;
 
 	if (NULL == s) {
-		sciprintf("vm.c: exec_stack_t(): NULL passed for \"s\"\n");
+		sciprintf("vm.c: ExecStack(): NULL passed for \"s\"\n");
 		return NULL;
 	}
 
@@ -345,7 +345,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 
 		// Check if a breakpoint is set on this method
 		if (s->have_bp & BREAK_SELECTOR) {
-			breakpoint_t *bp;
+			Breakpoint *bp;
 			char method_name [256];
 
 			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_selectorNames[selector].c_str());
@@ -372,17 +372,17 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 
 		if (++send_calls_nr == (send_calls_allocated - 1)) {
 			send_calls_allocated *= 2;
-			send_calls = (calls_struct_t *)sci_realloc(send_calls, sizeof(calls_struct_t) * send_calls_allocated);
+			send_calls = (CallsStruct *)sci_realloc(send_calls, sizeof(CallsStruct) * send_calls_allocated);
 		}
 
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
-		case SELECTOR_NONE:
+		case kSelectorNone:
 			sciprintf("Send to invalid selector 0x%x of object at "PREG"\n", 0xffff & selector, PRINT_REG(send_obj));
 			script_error_flag = script_debug_flag = 1;
 			--send_calls_nr;
 			break;
 
-		case SELECTOR_VARIABLE:
+		case kSelectorVariable:
 
 #ifdef VM_DEBUG_SEND
 			sciprintf("Varselector: ");
@@ -428,7 +428,7 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 			}
 			break;
 
-		case SELECTOR_METHOD:
+		case kSelectorMethod:
 
 #ifdef VM_DEBUG_SEND
 			sciprintf("Funcselector(");
@@ -475,8 +475,8 @@ exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, stac
 	return retval;
 }
 
-exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, stack_ptr_t argp, selector_t selector, reg_t *address, int origin) {
-	exec_stack_t *xstack = add_exec_stack_entry(s, NULL_REG, address, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, reg_t *address, int origin) {
+	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, address, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -485,17 +485,17 @@ exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, s
 	return xstack;
 }
 
-exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
-								   stack_ptr_t argp, selector_t selector, reg_t sendp, int origin, seg_id_t locals_segment) {
+ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
+								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId locals_segment) {
 	// Returns new TOS element for the execution stack
 	// locals_segment may be -1 if derived from the called object
-	exec_stack_t *xstack = NULL;
+	ExecStack *xstack = NULL;
 
 	if (!s->execution_stack)
-		s->execution_stack = (exec_stack_t *)sci_malloc(sizeof(exec_stack_t) * (s->execution_stack_size = 16));
+		s->execution_stack = (ExecStack *)sci_malloc(sizeof(ExecStack) * (s->execution_stack_size = 16));
 
 	if (++(s->execution_stack_pos) == s->execution_stack_size) // Out of stack space?
-		s->execution_stack = (exec_stack_t*)sci_realloc(s->execution_stack, sizeof(exec_stack_t) * (s->execution_stack_size += 8));
+		s->execution_stack = (ExecStack*)sci_realloc(s->execution_stack, sizeof(ExecStack) * (s->execution_stack_size += 8));
 
 	//sciprintf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->execution_stack_size, origin, s->execution_stack);
 
@@ -534,8 +534,8 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 	error("Could not recover, exitting...\n");
 }
 
-static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
-	mem_obj_t *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
+static inline Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
+	MemObject *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 	if (memobj)
 		return &(memobj->data.script);
 
@@ -543,7 +543,7 @@ static inline script_t *script_locate_by_segment(EngineState *s, seg_id_t seg) {
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	mem_obj_t *mobj = GET_SEGMENT_ANY(*s->seg_manager, base.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, base.segment);
 
 	if (!mobj) {
 		script_debug_flag = script_error_flag = 1;
@@ -583,7 +583,7 @@ static byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 void run_vm(EngineState *s, int restoring) {
 	reg_t *variables[4]; // global, local, temp, param, as immediate pointers
 	reg_t *variables_base[4]; // Used for referencing VM ops
-	seg_id_t variables_seg[4]; // Same as above, contains segment IDs
+	SegmentId variables_seg[4]; // Same as above, contains segment IDs
 #ifndef DISABLE_VALIDATIONS
 	int variables_max[4]; // Max. values for all variables
 	unsigned int code_buf_size = 0 ; // (Avoid spurious warning)
@@ -591,16 +591,16 @@ void run_vm(EngineState *s, int restoring) {
 	int temp;
 	int16 aux_acc; // Auxiliary 16 bit accumulator
 	reg_t r_temp; // Temporary register
-	stack_ptr_t s_temp; // Temporary stack pointer
+	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
 	int restadjust = s->r_amp_rest;
 	// &rest adjusts the parameter count by this value
 	// Current execution data:
-	exec_stack_t *xs = s->execution_stack + s->execution_stack_pos;
-	exec_stack_t *xs_new = NULL;
-	object_t *obj = obj_get(s, xs->objp);
-	script_t *local_script = script_locate_by_segment(s, xs->local_segment);
+	ExecStack *xs = s->execution_stack + s->execution_stack_pos;
+	ExecStack *xs_new = NULL;
+	Object *obj = obj_get(s, xs->objp);
+	Script *local_script = script_locate_by_segment(s, xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
 	// Used to detect the stack bottom, for "physical" returns
 	byte *code_buf = NULL; // (Avoid spurious warning)
@@ -643,7 +643,7 @@ void run_vm(EngineState *s, int restoring) {
 	while (1) {
 		byte opcode;
 		int old_pc_offset;
-		stack_ptr_t old_sp = xs->sp;
+		StackPtr old_sp = xs->sp;
 		byte opnumber;
 		int var_type; // See description below
 		int var_number;
@@ -651,7 +651,7 @@ void run_vm(EngineState *s, int restoring) {
 		old_pc_offset = xs->addr.pc.offset;
 
 		if (s->execution_stack_pos_changed) {
-			script_t *scr;
+			Script *scr;
 			xs = s->execution_stack + s->execution_stack_pos;
 			s->execution_stack_pos_changed = 0;
 
@@ -995,7 +995,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x20: { // call
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + restadjust;
-			stack_ptr_t call_base = xs->sp - argc;
+			StackPtr call_base = xs->sp - argc;
 
 			xs->sp[1].offset += restadjust;
 			xs_new = add_exec_stack_entry(s, make_reg(xs->addr.pc.segment, xs->addr.pc.offset + opparams[0]),
@@ -1074,9 +1074,9 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x24: // ret
 			do {
-				stack_ptr_t old_sp2 = xs->sp;
-				stack_ptr_t old_fp = xs->fp;
-				exec_stack_t *old_xs = s->execution_stack + s->execution_stack_pos;
+				StackPtr old_sp2 = xs->sp;
+				StackPtr old_fp = xs->fp;
+				ExecStack *old_xs = s->execution_stack + s->execution_stack_pos;
 
 				if (s->execution_stack_pos == s->execution_stack_base) { // Have we reached the base?
 					s->execution_stack_base = old_execution_stack_base; // Restore stack base
@@ -1476,7 +1476,7 @@ void run_vm(EngineState *s, int restoring) {
 	}
 }
 
-static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selector_t slc) {
+static inline int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 
@@ -1509,7 +1509,7 @@ static inline int _obj_locate_varselector(EngineState *s, object_t *obj, selecto
 	}
 }
 
-static inline int _class_locate_funcselector(EngineState *s, object_t *obj, selector_t slc) {
+static inline int _class_locate_funcselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj is a class and explicitly defines slc as a funcselector
 	// Does NOT say anything about obj's superclasses, i.e. failure may be
 	// returned even if one of the superclasses defines the funcselector.
@@ -1523,7 +1523,7 @@ static inline int _class_locate_funcselector(EngineState *s, object_t *obj, sele
 	return -1; // Failed
 }
 
-static inline int _lookup_selector_function(EngineState *s, int seg_id, object_t *obj, selector_t selector_id, reg_t *fptr) {
+static inline SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
 	int index;
 
 	// "recursive" lookup
@@ -1539,19 +1539,19 @@ static inline int _lookup_selector_function(EngineState *s, int seg_id, object_t
 					*fptr = make_reg(obj->pos.segment, getUInt16((byte *)(obj->base_method + index * 2 + 2)));
 			}
 
-			return SELECTOR_METHOD;
+			return kSelectorMethod;
 		} else {
 			seg_id = obj->variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
 			obj = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
 		}
 	}
 
-	return SELECTOR_NONE;
+	return kSelectorNone;
 }
 
-int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, reg_t **vptr, reg_t *fptr) {
-	object_t *obj = obj_get(s, obj_location);
-	object_t *species;
+SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector selector_id, reg_t **vptr, reg_t *fptr) {
+	Object *obj = obj_get(s, obj_location);
+	Object *species;
 	int index;
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
@@ -1562,7 +1562,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 	if (!obj) {
 		CORE_ERROR("SLC-LU", "Attempt to send to non-object or invalid script");
 		sciprintf("Address was "PREG"\n", PRINT_REG(obj_location));
-		return SELECTOR_NONE;
+		return kSelectorNone;
 	}
 
 	if (IS_CLASS(obj))
@@ -1575,7 +1575,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 		CORE_ERROR("SLC-LU", "Error while looking up Species class");
 		sciprintf("Original address was "PREG"\n", PRINT_REG(obj_location));
 		sciprintf("Species address was "PREG"\n", PRINT_REG(obj->variables[SCRIPT_SPECIES_SELECTOR]));
-		return SELECTOR_NONE;
+		return kSelectorNone;
 	}
 
 	index = _obj_locate_varselector(s, obj, selector_id);
@@ -1584,7 +1584,7 @@ int lookup_selector(EngineState *s, reg_t obj_location, selector_t selector_id, 
 		// Found it as a variable
 		if (vptr)
 			*vptr = obj->variables + index;
-		return SELECTOR_VARIABLE;
+		return kSelectorVariable;
 	}
 
 	return _lookup_selector_function(s, obj_location.segment, obj, selector_id, fptr);
@@ -1613,8 +1613,8 @@ void script_detect_versions(EngineState *s) {
 	}
 }
 
-seg_id_t script_get_segment(EngineState *s, int script_nr, int load) {
-	seg_id_t segment;
+SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
+	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
 		script_instantiate(s, script_nr);
@@ -1631,9 +1631,9 @@ seg_id_t script_get_segment(EngineState *s, int script_nr, int load) {
 }
 
 reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
-	seg_id_t seg = script_get_segment(s, script_nr, SCRIPT_GET_DONT_LOAD);
-	mem_obj_t *memobj;
-	script_t *script = NULL;
+	SegmentId seg = script_get_segment(s, script_nr, SCRIPT_GET_DONT_LOAD);
+	MemObject *memobj;
+	Script *script = NULL;
 
 #ifndef DISABLE_VALIDATIONS
 	if (!seg) {
@@ -1674,7 +1674,7 @@ int script_instantiate_common(EngineState *s, int script_nr, resource_t **script
 	int seg;
 	int seg_id;
 	int marked_for_deletion;
-	mem_obj_t *mem;
+	MemObject *mem;
 	reg_t reg;
 
 	*was_new = 1;
@@ -1853,8 +1853,8 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			break;
 		case sci_obj_object:
 		case sci_obj_class: { // object or class?
-			object_t *obj = s->seg_manager->scriptObjInit(s, addr);
-			object_t *base_obj;
+			Object *obj = s->seg_manager->scriptObjInit(s, addr);
+			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
 			obj->variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->variables[SCRIPT_SPECIES_SELECTOR].offset);
@@ -1929,7 +1929,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 		return script_instantiate_sci0(s, script_nr);
 }
 
-void script_uninstantiate_sci0(EngineState *s, int script_nr, seg_id_t seg) {
+void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
 	int objtype, objlength;
 
@@ -2011,7 +2011,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	return;
 }
 
-static void _init_stack_base_with_selector(EngineState *s, selector_t selector) {
+static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 	s->stack_base[0] = make_reg(0, (uint16)selector);
 	s->stack_base[1] = NULL_REG;
 }
@@ -2051,7 +2051,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 
 				if (!send_calls_allocated) {
 					send_calls_allocated = 16;
-					send_calls = (calls_struct_t *)sci_calloc(sizeof(calls_struct_t), 16);
+					send_calls = (CallsStruct *)sci_calloc(sizeof(CallsStruct), 16);
 				}
 
 				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
@@ -2124,9 +2124,9 @@ int game_restore(EngineState **_s, char *game_name) {
 }
 #endif
 
-object_t *obj_get(EngineState *s, reg_t offset) {
-	mem_obj_t *memobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);
-	object_t *obj = NULL;
+Object *obj_get(EngineState *s, reg_t offset) {
+	MemObject *memobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);
+	Object *obj = NULL;
 	int idx;
 
 	if (memobj != NULL) {
@@ -2146,7 +2146,7 @@ object_t *obj_get(EngineState *s, reg_t offset) {
 }
 
 const char *obj_get_name(EngineState *s, reg_t pos) {
-	object_t *obj = obj_get(s, pos);
+	Object *obj = obj_get(s, pos);
 
 	if (!obj)
 		return "<no such object>";

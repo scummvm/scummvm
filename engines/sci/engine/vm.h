@@ -118,13 +118,14 @@ struct SystemStrings {
 
 #define CALL_SP_CARRY NULL /* Stack pointer value: Use predecessor's value */
 
+// Types of selectors as returned by lookup_selector() below
+enum SelectorType {
+	kSelectorNone = 0,
+	kSelectorVariable,
+	kSelectorMethod
+};
 
-#define SELECTOR_NONE 0
-#define SELECTOR_VARIABLE 1
-#define SELECTOR_METHOD 2
-/* Types of selectors as returned by grep_selector() below */
-
-struct class_t {
+struct Class {
 	int script; /* number of the script the class is in, -1 for non-existing */
 	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
 };
@@ -135,19 +136,19 @@ struct class_t {
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
 
 /* This struct is used to buffer the list of send calls in send_selector() */
-struct calls_struct_t {
+struct CallsStruct {
 	union {
 		reg_t func;
 		reg_t *var;
 	} address;
-	stack_ptr_t argp;
+	StackPtr argp;
 	int argc;
-	selector_t selector;
-	stack_ptr_t sp; /* Stack pointer */
-	int type; /* Same as exec_stack_t.type */
+	Selector selector;
+	StackPtr sp; /* Stack pointer */
+	int type; /* Same as ExecStack.type */
 };
 
-struct local_variables_t {
+struct LocalVariables {
 	int script_id; /* Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
@@ -155,7 +156,7 @@ struct local_variables_t {
 
 #define OBJECT_FLAG_FREED (0x1 << 0)	/* Clone has been marked as 'freed' */
 
-struct object_t {
+struct Object {
 	int flags;
 	reg_t pos; /* Object offset within its script; for clones, this is their base */
 	int variables_nr;
@@ -168,7 +169,7 @@ struct object_t {
 	reg_t *variables;
 };
 
-struct code_block_t {
+struct CodeBlock {
 	reg_t pos;
 	int size;
 };
@@ -195,7 +196,7 @@ struct code_block_t {
 
 
 
-struct script_t {
+struct Script {
 	int nr; /* Script number */
 	byte* buf; /* Static data buffer, or NULL if not used */
 	size_t buf_size;
@@ -212,7 +213,7 @@ struct script_t {
 	int synonyms_nr; /* Number of entries in the synonyms block */
 	int lockers; /* Number of classes and objects that require this script */
 
-	object_t *objects; /* Table for objects, contains property variables */
+	Object *objects; /* Table for objects, contains property variables */
 	/* Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
 	** see VM_OBJECT_[GS]ET_INDEX()  */
 	int objects_nr; /* Number of objects and classes */
@@ -220,9 +221,9 @@ struct script_t {
 
 	int locals_offset;
 	int locals_segment; /* The local variable segment */
-	local_variables_t *locals_block;
+	LocalVariables *locals_block;
 
-	code_block_t *code;
+	CodeBlock *code;
 	int code_blocks_nr;
 	int code_blocks_allocated;
 	int relocated;
@@ -237,39 +238,40 @@ struct dstack_t {
 #define CLONE_USED -1
 #define CLONE_NONE -1
 
-typedef object_t clone_t;
+typedef Object Clone;
 
-struct node_t {
+struct Node {
 	reg_t pred, succ; /* Predecessor, successor */
 	reg_t key;
 	reg_t value;
 }; /* List nodes */
 
-struct list_t {
+struct List {
 	reg_t first;
 	reg_t last;
 };
 
-struct hunk_t {
+struct Hunk {
 	void *mem;
 	unsigned int size;
 	const char *type;
 };
 
-/* clone_table_t */
-DECLARE_HEAPENTRY(clone)
-/* node_table_t */
-DECLARE_HEAPENTRY(node)
-/* list_table_t */
-DECLARE_HEAPENTRY(list) /* list entries */
-/* hunk_table_t */
-DECLARE_HEAPENTRY(hunk)
+/* CloneTable */
+DECLARE_HEAPENTRY(Clone)
+/* NodeTable */
+DECLARE_HEAPENTRY(Node)
+/* ListTable */
+DECLARE_HEAPENTRY(List) /* list entries */
+/* HunkTable */
+DECLARE_HEAPENTRY(Hunk)
 
-struct dynmem_t {
+// Free-style memory
+struct DynMem {
 	int size;
 	char *description;
 	byte *buf;
-}; /* Free-style memory */
+};
 
 enum memObjType {
 	MEM_OBJ_INVALID = 0,
@@ -286,19 +288,19 @@ enum memObjType {
 	MEM_OBJ_MAX = MEM_OBJ_RESERVED // For sanity checking
 };
 
-struct mem_obj_t {
+struct MemObject {
 	memObjType type;
 	int segmgr_id; /* Internal value used by the seg_manager's hash map */
 	union {
-		script_t script;
-		clone_table_t clones;
-		local_variables_t locals;
+		Script script;
+		CloneTable clones;
+		LocalVariables locals;
 		dstack_t stack;
 		SystemStrings sys_strings;
-		list_table_t lists;
-		node_table_t nodes;
-		hunk_table_t hunks;
-		dynmem_t dynmem;
+		ListTable lists;
+		NodeTable nodes;
+		HunkTable hunks;
+		DynMem dynmem;
 		char *reserved;
 	} data;
 };
@@ -306,80 +308,80 @@ struct mem_obj_t {
 
 
 struct selector_map_t {
-	selector_t init; /* Init function */
-	selector_t play; /* Play function (first function to be called) */
-	selector_t replay; /* Replay function */
-	selector_t x, y, z; /* Coordinates */
-	selector_t priority;
-	selector_t view, loop, cel; /* Description of a specific image */
-	selector_t brLeft, brRight, brTop, brBottom; /* Bounding Rectangle */
-	selector_t xStep, yStep; /* BR adjustments */
-	selector_t nsLeft, nsRight, nsTop, nsBottom; /* View boundaries ('now seen') */
-	selector_t text, font; /* Used by controls */
-	selector_t type, state; /* Used by contols as well */
-	selector_t doit; /* Called (!) by the Animate() system call */
-	selector_t signal; /* Used by Animate() to control a view's behaviour */
-	selector_t underBits; /* Used by the graphics subroutines to store backupped BG pic data */
+	Selector init; /* Init function */
+	Selector play; /* Play function (first function to be called) */
+	Selector replay; /* Replay function */
+	Selector x, y, z; /* Coordinates */
+	Selector priority;
+	Selector view, loop, cel; /* Description of a specific image */
+	Selector brLeft, brRight, brTop, brBottom; /* Bounding Rectangle */
+	Selector xStep, yStep; /* BR adjustments */
+	Selector nsLeft, nsRight, nsTop, nsBottom; /* View boundaries ('now seen') */
+	Selector text, font; /* Used by controls */
+	Selector type, state; /* Used by contols as well */
+	Selector doit; /* Called (!) by the Animate() system call */
+	Selector signal; /* Used by Animate() to control a view's behaviour */
+	Selector underBits; /* Used by the graphics subroutines to store backupped BG pic data */
 
 	/* The following selectors are used by the Bresenham syscalls: */
-	selector_t canBeHere; /* Funcselector: Checks for movement validity */
-	selector_t client; /* The object that wants to be moved */
-	selector_t cycler; /* The cycler of the client */
-	selector_t dx, dy; /* Deltas */
-	selector_t edgeHit;
-	selector_t b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /* Various Bresenham vars */
-	selector_t completed;
+	Selector canBeHere; /* Funcselector: Checks for movement validity */
+	Selector client; /* The object that wants to be moved */
+	Selector cycler; /* The cycler of the client */
+	Selector dx, dy; /* Deltas */
+	Selector edgeHit;
+	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /* Various Bresenham vars */
+	Selector completed;
 
-	selector_t illegalBits; /* Used by CanBeHere */
-	selector_t dispose;
+	Selector illegalBits; /* Used by CanBeHere */
+	Selector dispose;
 
-	selector_t prevSignal; /* Used by DoSound */
+	Selector prevSignal; /* Used by DoSound */
 
-	selector_t message, modifiers; /* Used by GetEvent */
+	Selector message, modifiers; /* Used by GetEvent */
 
-	selector_t owner, handle;
-	selector_t cue;
-	selector_t number;
+	Selector owner, handle;
+	Selector cue;
+	Selector number;
 
-	selector_t max, cursor; /* Used by EditControl */
-	selector_t mode; /* Used by text controls (-> DrawControl()) */
+	Selector max, cursor; /* Used by EditControl */
+	Selector mode; /* Used by text controls (-> DrawControl()) */
 
-	selector_t wordFail, syntaxFail, semanticFail; /* Used by Parse() */
+	Selector wordFail, syntaxFail, semanticFail; /* Used by Parse() */
 
-	selector_t claimed; /* Used generally by the event mechanism */
+	Selector claimed; /* Used generally by the event mechanism */
 
-	selector_t elements; /* Used by SetSynonyms() */
+	Selector elements; /* Used by SetSynonyms() */
 
-	selector_t lsTop, lsBottom, lsRight, lsLeft; /* Used by Animate() subfunctions and scroll list controls */
+	Selector lsTop, lsBottom, lsRight, lsLeft; /* Used by Animate() subfunctions and scroll list controls */
 
-	selector_t baseSetter; /* Alternative baseSetter */
+	Selector baseSetter; /* Alternative baseSetter */
 
-	selector_t who, distance; /* Used for 'chasing' movers */
+	Selector who, distance; /* Used for 'chasing' movers */
 
-	selector_t looper, mover, isBlocked, heading; /* Used in DoAvoider */
+	Selector looper, mover, isBlocked, heading; /* Used in DoAvoider */
 
-	selector_t caller, moveDone, moveSpeed; /* Used for DoBresen */
+	Selector caller, moveDone, moveSpeed; /* Used for DoBresen */
 
-	selector_t delete_; /* Called by Animate() to dispose a view object */
+	Selector delete_; /* Called by Animate() to dispose a view object */
 
-	selector_t vol;
-	selector_t pri;
+	Selector vol;
+	Selector pri;
 
-	selector_t min;	/* SMPTE time format */
-	selector_t sec;
-	selector_t frame;
+	Selector min;	/* SMPTE time format */
+	Selector sec;
+	Selector frame;
 
-	selector_t dataInc;
-	selector_t size;
-	selector_t palette;
-	selector_t cantBeHere;
-	selector_t nodePtr;
-	selector_t flags;
+	Selector dataInc;
+	Selector size;
+	Selector palette;
+	Selector cantBeHere;
+	Selector nodePtr;
+	Selector flags;
 
-	selector_t points; /* Used by AvoidPath() */
+	Selector points; /* Used by AvoidPath() */
 }; /* Contains selector IDs for a few selected selectors */
 
-struct view_object_t {
+struct ViewObject {
 	reg_t obj;
 	reg_t *signalp;    /* Used only indirectly */
 	reg_t *underBitsp; /* The same goes for the handle storage */
@@ -402,35 +404,35 @@ struct view_object_t {
 #define EXEC_STACK_TYPE_KERNEL 1
 #define EXEC_STACK_TYPE_VARSELECTOR 2
 
-struct exec_stack_t {
+struct ExecStack {
 	reg_t objp;
 	reg_t sendp; /* Pointer to the object containing the invoked method */
 	union {
 		reg_t *varp; /* Variable pointer for read/write access */
 		reg_t pc; /* Not accurate for the TOS element */
 	} addr;
-	stack_ptr_t fp; /* Frame pointer */
-	stack_ptr_t sp; /* Stack pointer */
+	StackPtr fp; /* Frame pointer */
+	StackPtr sp; /* Stack pointer */
 	int argc;
 
 	/* former variables[4]: [all other values are derived] */
-	stack_ptr_t variables_argp; /* Argument pointer */
-	seg_id_t local_segment; /* local variables etc. */
+	StackPtr variables_argp; /* Argument pointer */
+	SegmentId local_segment; /* local variables etc. */
 
-	selector_t selector; /* The selector which was used to call or -1 if not applicable */
+	Selector selector; // The selector which was used to call or -1 if not applicable
 	int origin;   /* The stack frame position the call was made from, or -1 if it
 		      ** was the initial call.  */
 	byte type; /* EXEC_STACK_TYPE* */
 
 };
 
-struct breakpoint_t {
+struct Breakpoint {
 	int type;
 	union {
 		uint32 address;  /* Breakpoints on exports */
 		char *name; /* Breakpoints on selector names */
 	} data;
-	breakpoint_t *next;
+	Breakpoint *next;
 };
 
 #define BREAK_SELECTOR 1
@@ -480,70 +482,70 @@ extern kernel_function* kfuncs[];
 extern int max_instance;
 
 /*inline*/
-exec_stack_t *execute_method(EngineState *s, uint16 script, uint16 pubfunct, stack_ptr_t sp, reg_t calling_obj,
-	uint16 argc, stack_ptr_t argp);
+ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj,
+	uint16 argc, StackPtr argp);
 /* Executes function pubfunct of the specified script.
 ** Parameters: (EngineState *) s: The state which is to be executed with
 **             (uint16) script: The script which is called
 **             (uint16) pubfunct: The exported script function which is to be called
-**             (stack_ptr_t) sp: Stack pointer position
+**             (StackPtr) sp: Stack pointer position
 **             (reg_t) calling_obj: The heap address of the object which executed the call
 **             (uint16) argc: Number of arguments supplied
-**             (stack_ptr_t) argp: Pointer to the first supplied argument
-** Returns   : (exec_stack_t *): A pointer to the new exec stack TOS entry
+**             (StackPtr) argp: Pointer to the first supplied argument
+** Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
 */
 
 
-exec_stack_t *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
-	stack_ptr_t sp, int framesize, stack_ptr_t argp);
+ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
+	StackPtr sp, int framesize, StackPtr argp);
 /* Executes a "send" or related operation to a selector
 ** Parameters: (EngineState *) s: The EngineState to operate on
 **             (reg_t) send_obj: Heap address of the object to send to
 **             (reg_t) work_obj: Heap address of the object initiating the send
-**             (stack_ptr_t) sp: Stack pointer position
+**             (StackPtr) sp: Stack pointer position
 **             (int) framesize: Size of the send as determined by the "send" operation
-**             (stack_ptr_t) argp: Pointer to the beginning of the heap block containing the
+**             (StackPtr) argp: Pointer to the beginning of the heap block containing the
 **                              data to be send. This area is a succession of one or more
 **                              sequences of [selector_number][argument_counter] and then
 **                              "argument_counter" word entries with the parameter values.
-** Returns   : (exec_stack_t *): A pointer to the new execution stack TOS entry
+** Returns   : (ExecStack *): A pointer to the new execution stack TOS entry
 */
 
 
 #define SCI_XS_CALLEE_LOCALS -1
 
-exec_stack_t *add_exec_stack_entry(EngineState *s, reg_t pc, stack_ptr_t sp, reg_t objp, int argc,
-	stack_ptr_t argp, selector_t selector, reg_t sendp, int origin, seg_id_t local_segment);
+ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
+	StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId local_segment);
 /* Adds an entry to the top of the execution stack
 ** Parameters: (EngineState *) s: The state with which to execute
 **             (reg_t) pc: The initial program counter
-**             (stack_ptr_t) sp: The initial stack pointer
+**             (StackPtr) sp: The initial stack pointer
 **             (reg_t) objp: Pointer to the beginning of the current object
 **             (int) argc: Number of parameters to call with
-**             (stack_ptr_t) argp: Heap pointer to the first parameter
-**             (selector_t) selector: The selector by which it was called or
-**			 NULL_SELECTOR if n.a. For debugging.
+**             (StackPtr) argp: Heap pointer to the first parameter
+**             (Selector) selector: The selector by which it was called or
+**			  NULL_SELECTOR if n.a. For debugging.
 **             (reg_t) sendp: Pointer to the object which the message was sent to.
 **                       Equal to objp for anything but super.
 **             (int) origin: Number of the execution stack element this entry was created by
 **                       (usually the current TOS number, except for multiple sends).
-**             (seg_id_t) local_segment: The segment to use for local variables,
+**             (SegmentId) local_segment: The segment to use for local variables,
 **                        or SCI_XS_CALLEE_LOCALS to use obj's segment.
-** Returns   : (exec_stack_t *): A pointer to the new exec stack TOS entry
+** Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
 */
 
 
-exec_stack_t *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, stack_ptr_t argp,
-	selector_t selector, reg_t *address, int origin);
+ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp,
+	Selector selector, reg_t *address, int origin);
 /* Adds one varselector access to the execution stack
 ** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) objp: Pointer to the object owning the selector
 **             (int) argc: 1 for writing, 0 for reading
-**             (stack_ptr_t) argp: Pointer to the address of the data to write -2
+**             (StackPtr) argp: Pointer to the address of the data to write -2
 **             (int) selector: Selector name
 **             (reg_t *) address: Heap address of the selector
 **             (int) origin: Stack frame which the access originated from
-** Returns   : (exec_stack_t *): Pointer to the new exec-TOS element
+** Returns   : (ExecStack *): Pointer to the new exec-TOS element
 ** This function is called from send_selector only.
 */
 
@@ -565,17 +567,17 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file);
 */
 
 
-void script_debug(EngineState *s, reg_t *pc, stack_ptr_t *sp, stack_ptr_t *pp, reg_t *objp,
-	int *restadjust, seg_id_t *segids, reg_t **variables, reg_t **variables_base,
+void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp,
+	int *restadjust, SegmentId *segids, reg_t **variables, reg_t **variables_base,
 	int *variables_nr, int bp);
 /* Debugger functionality
 ** Parameters: (EngineState *) s: The state at which debugging should take place
 **             (reg_t *) pc: Pointer to the program counter
-**             (stack_ptr_t *) sp: Pointer to the stack pointer
-**             (stack_ptr_t *) pp: Pointer to the frame pointer
+**             (StackPtr *) sp: Pointer to the stack pointer
+**             (StackPtr *) pp: Pointer to the frame pointer
 **             (reg_t *) objp: Pointer to the object base pointer
 **             (int *) restadjust: Pointer to the &rest adjustment value
-**	       (seg_id_t *) segids: four-element array containing segment IDs for locals etc.
+**	       (SegmentId *) segids: four-element array containing segment IDs for locals etc.
 **	       (reg_t **) variables: four-element array referencing registers for globals etc.
 **	       (reg_t **) variables_base: four-element array referencing
 **                                        register bases for temps etc.
@@ -612,14 +614,14 @@ void script_free_vm_memory(EngineState *s);
 */
 
 
-int lookup_selector(EngineState *s, reg_t obj, selector_t selectorid, reg_t **vptr, reg_t *fptr);
+SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, reg_t **vptr, reg_t *fptr);
 /* Looks up a selector and returns its type and value
 ** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) obj: Address of the object to look the selector up in
-**             (selector_t) selectorid: The selector to look up
-** Returns   : (int) SELECTOR_NONE if the selector was not found in the object or its superclasses.
-**                   SELECTOR_VARIABLE if the selector represents an object-relative variable
-**                   SELECTOR_METHOD if the selector represents a method
+**             (Selector) selectorid: The selector to look up
+** Returns   : (SelectorType) kSelectorNone if the selector was not found in the object or its superclasses.
+**                            kSelectorVariable if the selector represents an object-relative variable
+**                            kSelectorMethod if the selector represents a method
 **             (reg_t *) *vptr: A pointer to the storage space associated with the selector, if
 **                              it is a variable
 **             (reg_t) *fptr: A reference to the function described by that selector, if it is
@@ -633,7 +635,7 @@ int lookup_selector(EngineState *s, reg_t obj, selector_t selectorid, reg_t **vp
 #define SCRIPT_GET_LOAD 1 /* Load, if neccessary */
 #define SCRIPT_GET_LOCK 3 /* Load, if neccessary, and lock */
 
-seg_id_t script_get_segment(EngineState *s, int script_id, int load);
+SegmentId script_get_segment(EngineState *s, int script_id, int load);
 /* Determines the segment occupied by a certain script
 ** Parameters: (EngineState *) s: The state to operate on
 **             (int) script_id: The script in question
@@ -807,11 +809,11 @@ const char *obj_get_name(EngineState *s, reg_t pos);
 ** may it be modified).
 */
 
-object_t *obj_get(EngineState *s, reg_t offset);
+Object *obj_get(EngineState *s, reg_t offset);
 /* Retreives an object from the specified location
 ** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) offset: The object's offset
-** Returns   : (object_t *) The object in question, or NULL if there is none
+** Returns   : (Object *) The object in question, or NULL if there is none
 */
 
 } // End of namespace Sci

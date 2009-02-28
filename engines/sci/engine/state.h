@@ -207,7 +207,7 @@ struct EngineState {
 
 	/* VM Information */
 
-	exec_stack_t *execution_stack; /* The execution stack */
+	ExecStack *execution_stack; /* The execution stack */
 	int execution_stack_size;      /* Number of stack frames allocated */
 	int execution_stack_pos;       /* Position on the execution stack */
 	int execution_stack_base;      /* When called from kernel functions, the vm
@@ -223,25 +223,25 @@ struct EngineState {
 	unsigned int r_amp_rest; /* &rest register (only used for save games) */
 	reg_t r_prev; /* previous comparison result */
 
-	seg_id_t stack_segment; /* Heap area for the stack to use */
-	stack_ptr_t stack_base; /* Pointer to the least stack element */
-	stack_ptr_t stack_top; /* First invalid stack element */
+	SegmentId stack_segment; /* Heap area for the stack to use */
+	StackPtr stack_base; /* Pointer to the least stack element */
+	StackPtr stack_top; /* First invalid stack element */
 
-	seg_id_t parser_segment;  /* A heap area used by the parser for error reporting */
+	SegmentId parser_segment;  /* A heap area used by the parser for error reporting */
 	reg_t parser_base; /* Base address for the parser error reporting mechanism */
 	reg_t parser_event; /* The event passed to Parse() and later used by Said() */
-	seg_id_t script_000_segment;
-	script_t *script_000;  /* script 000, e.g. for globals */
+	SegmentId script_000_segment;
+	Script *script_000;  /* script 000, e.g. for globals */
 
 	int parser_lastmatch_word; /* Position of the input word the parser last matched on, or SAID_NO_MATCH */
 
 	/* Debugger data: */
-	breakpoint_t *bp_list;   /* List of breakpoints */
+	Breakpoint *bp_list;   /* List of breakpoints */
 	int have_bp;  /* Bit mask specifying which types of breakpoints are used in bp_list */
 	unsigned int debug_mode; /* Contains flags for the various debug modes */
 
 	/* System strings */
-	seg_id_t sys_strings_segment;
+	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;
 
 	/* Parser data: */
@@ -262,7 +262,7 @@ struct EngineState {
 	reg_t game_obj; /* Pointer to the game object */
 
 	int classtable_size; /* Number of classes in the table- for debugging */
-	class_t *classtable; /* Table of all classes */
+	Class *classtable; /* Table of all classes */
 
 	SegManager *seg_manager;
 	int gc_countdown; /* Number of kernel calls until next gc */

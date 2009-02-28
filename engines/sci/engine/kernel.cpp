@@ -191,7 +191,7 @@ static int sci_max_allowed_unknown_kernel_functions[] = {
 #define DEFUN(nm, cname, sig) {KF_NEW, nm, {cname, sig, NULL}}
 #define NOFUN(nm) {KF_NONE, nm, {NULL, NULL, NULL}}
 
-sci_kernel_function_t kfunct_mappers[] = {
+SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
 	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),
 	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
@@ -379,8 +379,8 @@ int has_kernel_function(EngineState *s, const char *kname) {
 
 // Returns a pointer to the memory indicated by the specified handle
 byte *kmem(EngineState *s, reg_t handle) {
-	mem_obj_t *mobj = GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
-	hunk_table_t *ht = &(mobj->data.hunks);
+	MemObject *mobj = GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
+	HunkTable *ht = &(mobj->data.hunks);
 
 	if (!mobj || !ENTRY_IS_VALID(ht, handle.offset)) {
 		SCIkwarn(SCIkERROR, "Error: kmem() with invalid handle\n");
@@ -808,7 +808,7 @@ void free_kfunct_tables(EngineState *s) {
 }
 
 int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
-	mem_obj_t *mobj;
+	MemObject *mobj;
 
 	if (!reg.segment) {
 		if (!reg.offset)
