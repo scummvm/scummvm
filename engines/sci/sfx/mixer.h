@@ -70,10 +70,9 @@ struct sfx_pcm_mixer_t {
 	const char *name;
 	const char *version;
 
-	int (*init)(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device);
+	int (*init)(sfx_pcm_mixer_t *self);
 	/* Initialises the mixer
 	** Parameters: (sfx_pcm_mixer_t *) self: Self reference
-	**             (sfx_pcm_device_t *) device: An _already initialised_ PCM output driver
 	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise
 	*/
 
@@ -109,7 +108,6 @@ struct sfx_pcm_mixer_t {
 	int feeds_nr;
 	int feeds_allocd;
 	sfx_pcm_feed_state_t *feeds;
-	sfx_pcm_device_t *dev;
 
 	void *private_bits;
 };

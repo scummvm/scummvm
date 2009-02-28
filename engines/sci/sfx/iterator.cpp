@@ -676,7 +676,7 @@ static void _sci0_cleanup(sci0_song_iterator_t *self) {
 
 #define SCI01_INVALID_DEVICE 0xff
 
-/* First index determines whether DSP output is supported */
+/* Second index determines whether PCM output is supported */
 static int sci0_to_sci1_device_map[][2] = {
 	{0x06, 0x0c}, /* MT-32 */
 	{0xff, 0xff}, /* YM FB-01 */

@@ -44,11 +44,10 @@ int sciprintf(char *msg, ...);
 
 static sfx_player_t *player = NULL;
 sfx_pcm_mixer_t *mixer = NULL;
-static sfx_pcm_device_t *pcm_device = NULL;
-extern sfx_pcm_device_t sfx_pcm_driver_scummvm;
+
 
 int sfx_pcm_available() {
-	return (pcm_device != NULL);
+	return (mixer != NULL);
 }
 
 void sfx_reset_player() {
@@ -375,14 +374,12 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
 		mixer = NULL;
-		pcm_device = NULL;
 		player = NULL;
 		sciprintf("[SFX] Sound disabled.\n");
 		return;
 	}
 
 	mixer = getMixer();
-	pcm_device = &sfx_pcm_driver_scummvm;
 	player = sfx_find_player(NULL);
 
 
@@ -390,25 +387,13 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	fprintf(stderr, "[sfx-core] Initialising: flags=%x\n", flags);
 #endif
 
-	/*----------------*/
-	/* Initialise PCM */
-	/*----------------*/
+	/*------------------*/
+	/* Initialise mixer */
+	/*------------------*/
 
-	if (!pcm_device) {
-		sciprintf("[SFX] No PCM device found, disabling PCM support\n");
+	if (mixer->init(mixer)) {
+		sciprintf("[SFX] Failed to initialise PCM mixer; disabling PCM support\n");
 		mixer = NULL;
-	} else {
-		if (pcm_device->init(pcm_device)) {
-			sciprintf("[SFX] Failed to open PCM device, disabling PCM support\n");
-			mixer = NULL;
-			pcm_device = NULL;
-		} else {
-			if (mixer->init(mixer, pcm_device)) {
-				sciprintf("[SFX] Failed to initialise PCM mixer; disabling PCM support\n");
-				mixer = NULL;
-				pcm_device = NULL;
-			}
-		}
 	}
 
 	/*-------------------*/
@@ -433,14 +418,13 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	/*------------------*/
 
 	// We initialise the timer last, so there is no possibility of the
-	// timer callback being triggered while the pcm_device or player are
+	// timer callback being triggered while the mixer or player are
 	// still being initialized.
 
-	if (pcm_device || (player && player->maintenance)) {
+	if (mixer || (player && player->maintenance)) {
 		if (!g_system->getTimerManager()->installTimerProc(&_sfx_timer_callback, DELAY, NULL)) {
 			warning("[SFX] " __FILE__": Timer failed to initialize");
 			warning("[SFX] Disabled sound support");
-			pcm_device = NULL;
 			player = NULL;
 			mixer = NULL;
 			return;
@@ -461,11 +445,6 @@ void sfx_exit(sfx_state_t *self) {
 #endif
 
 	song_lib_free(self->songlib);
-
-	// FIXME: We need a pcm_device->exit() function to release the
-	// mixer channel allocated for pcm_device in ScummVM's mixer.
-	pcm_device = NULL;
-
 
 	/* WARNING: The mixer may hold feeds from the
 	** player, so we must stop the mixer BEFORE

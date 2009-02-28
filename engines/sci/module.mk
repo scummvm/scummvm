@@ -67,12 +67,11 @@ MODULE_OBJS = \
 	sfx/adlib.o \
 	sfx/core.o \
 	sfx/iterator.o \
-	sfx/pcm_device.o \
+	sfx/mixer.o \
 	sfx/pcm-iterator.o \
 	sfx/songlib.o \
 	sfx/time.o \
 	sfx/device/devices.o \
-	sfx/mixer/soft.o \
 	sfx/player/players.o \
 	sfx/player/polled.o \
 	sfx/player/realtime.o \

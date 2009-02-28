@@ -69,60 +69,6 @@ struct sfx_pcm_config_t {
 	unsigned int format; /* Sample format (SFX_PCM_FORMAT_*) */
 };
 
-struct sfx_pcm_device_t {
-	/* SFX devices are PCM players, i.e. output drivers for digitalised audio (sequences of audio samples).
-	** Implementors are (in general) allowed to export specifics of these devices and let the mixer handle
-	** endianness/signedness/bit size/mono-vs-stereo conversions.
-	*/
-
-	int (*init)(sfx_pcm_device_t *self);
-	/* Initializes the device
-	** Parameters: (sfx_pcm_device_t *) self: Self reference
-	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be
-	**                   opened
-	** This should attempt to open the highest quality output allowed by any options
-	** specified beforehand.
-	*/
-
-	int (*output)(sfx_pcm_device_t *self, byte *buf,
-	              int count, sfx_timestamp_t *timestamp);
-	/* Writes output to the device
-	** Parameters: (sfx_pcm_device_t *) self: Self reference
-	**             (byte *) buf: The buffer to write
-	**             (int) count: Number of /frames/ that should be written
-	**             (sfx_timestamp_t *) timestamp: Optional point in time
-	**                                     for which the PCM data is scheduled
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on error
-	** The size of the buffer allocated as 'buf' equals buf_size.
-	** 'buf' is guaranteed not to be modified in between calls to 'output()'.
-	** 'timestamp' is guaranteed to be used only in sequential order, but not
-	** guaranteed to be used in all cases. It is guaranteed to be compaible with
-	** the sample rate used by the device itself (i.e., the sfx_time.h functionality
-	** is applicable)
-	*/
-
-	sfx_timestamp_t
-	(*get_output_timestamp)(sfx_pcm_device_t *self);
-	/* Determines the timestamp for 'output'
-	** Parameters: (sfx_pcm_device_t *) self: Self reference
-	** Returns   : (sfx_timestamp_t) A timestamp (with the device's conf.rate)
-	**                               describing the point in time at which
-	**                               the next frame passed to 'output'
-	**                               will be played
-	** This function is OPTIONAL and may be NULL, but it is recommended
-	** that pcm device implementers attempt to really implement it.
-	*/
-
-	/* The following must be set after initialisation */
-	sfx_pcm_config_t conf;
-	int buf_size; /* Output buffer size, i.e. the number of frames (!)
-		      ** that can be queued by this driver before calling
-		      ** output() will block or fail, drained according
-		      ** to conf.rate  */
-
-};
-
-
 #define PCM_FEED_TIMESTAMP 0	/* New timestamp available */
 #define PCM_FEED_IDLE 1		/* No sound ATM, but new timestamp may be available later */
 #define PCM_FEED_EMPTY 2	/* Feed is finished, can be destroyed */

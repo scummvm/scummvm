@@ -30,6 +30,9 @@
 #include "sci/sfx/mixer.h"
 #include "sci/sci_memory.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
 namespace Sci {
 
 /* Max. number of milliseconds in difference allowed between independent audio streams */
@@ -72,20 +75,41 @@ struct mixer_private {
 
 	/* Pause data */
 	int paused;
+
+	sfx_pcm_config_t conf;
+	int _framesize;
+	Audio::AppendableAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
 };
 
 #define P ((struct mixer_private *)(self->private_bits))
 
+enum {
+	BUF_SIZE = 2048 << 1
+};
 
-static int mix_init(sfx_pcm_mixer_t *self, sfx_pcm_device_t *device) {
-	self->dev = device;
+static int mix_init(sfx_pcm_mixer_t *self) {
 	self->private_bits = new mixer_private();
 	P->outbuf = P->writebuf = NULL;
 	P->lastbuf_len = 0;
-	P->compbuf_l = (int32*)sci_malloc(sizeof(int32) * device->buf_size);
-	P->compbuf_r = (int32*)sci_malloc(sizeof(int32) * device->buf_size);
+	P->compbuf_l = (int32*)sci_malloc(sizeof(int32) * BUF_SIZE);
+	P->compbuf_r = (int32*)sci_malloc(sizeof(int32) * BUF_SIZE);
 	P->played_this_second = 0;
 	P->paused = 0;
+	
+	P->conf.rate = g_system->getMixer()->getOutputRate();
+	P->conf.stereo = SFX_PCM_STEREO_LR;
+	P->conf.format = SFX_PCM_FORMAT_S16_NATIVE;
+	P->_framesize = SFX_PCM_FRAME_SIZE(P->conf);
+	
+	
+	int flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+#endif
+
+	P->_audioStream = Audio::makeAppendableAudioStream(P->conf.rate, flags);
+	g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, &P->_soundHandle, P->_audioStream);
 
 	return SFX_OK;
 }
@@ -135,19 +159,19 @@ static void mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 
 	feed->frame_size = SFX_PCM_FRAME_SIZE(feed->conf);
 
-	/*	fs->buf_size = (self->dev->buf_size
+	/*	fs->buf_size = (BUF_SIZE
 			  * (feed->conf.rate
-			     + self->dev->conf.rate - 1))
-		/ self->dev->conf.rate;
+			     + P->conf.rate - 1))
+		/ P->conf.rate;
 	*/
 	/* For the sake of people without 64 bit CPUs: */
 	fs->buf_size = 2 + /* Additional safety */
-	               (self->dev->buf_size *
-	                (1 + (feed->conf.rate / self->dev->conf.rate)));
+	               (BUF_SIZE *
+	                (1 + (feed->conf.rate / P->conf.rate)));
 	fprintf(stderr, " ---> %d/%d/%d/%d = %d\n",
-	        self->dev->buf_size,
+	        BUF_SIZE,
 	        feed->conf.rate,
-	        self->dev->conf.rate,
+	        P->conf.rate,
 	        feed->frame_size,
 	        fs->buf_size);
 
@@ -159,7 +183,7 @@ static void mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 			fs->buf[i] = 0xa5;
 	}
 	fs->scount = urat(0, 1);
-	fs->spd = urat(feed->conf.rate, self->dev->conf.rate);
+	fs->spd = urat(feed->conf.rate, P->conf.rate);
 	fs->scount.den = fs->spd.den;
 	fs->ch_old.left = 0;
 	fs->ch_old.right = 0;
@@ -226,6 +250,9 @@ static void _mix_unsubscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 }
 
 static void mix_exit(sfx_pcm_mixer_t *self) {
+	g_system->getMixer()->stopHandle(P->_soundHandle);
+	P->_audioStream = 0;
+
 	ACQUIRE_LOCK();
 	while (self->feeds_nr)
 		_mix_unsubscribe(self, self->feeds[0].feed);
@@ -254,7 +281,7 @@ static void mix_exit(sfx_pcm_mixer_t *self) {
 
 static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 	int frame_i;
-	sfx_pcm_config_t conf = self->dev->conf;
+	const sfx_pcm_config_t conf = P->conf;
 	int use_16 = conf.format & SFX_PCM_FORMAT_16;
 	int bias = conf.format & ~SFX_PCM_FORMAT_LMASK;
 	byte *lchan, *rchan = NULL;
@@ -266,7 +293,7 @@ static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 
 
 	if (!P->writebuf)
-		P->writebuf = (byte*)sci_malloc(self->dev->buf_size * frame_size + 4);
+		P->writebuf = (byte*)sci_malloc(BUF_SIZE * frame_size + 4);
 
 	if (conf.stereo) {
 		if (conf.stereo == SFX_PCM_STEREO_RL) {
@@ -374,28 +401,28 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 		P->played_this_second = 0;
 		*skip_frames = 0;
 
-		return self->dev->buf_size;
+		return BUF_SIZE;
 	}
 
 	/*	fprintf(stderr, "[%d:%d]S%d ", secs, usecs, P->skew);*/
 
 	msecs -= P->skew;
 
-	frame_pos = (msecs % 1000) * self->dev->conf.rate / 1000;
+	frame_pos = (msecs % 1000) * P->conf.rate / 1000;
 
 	played_frames = frame_pos - P->played_this_second
-	                + ((msecs / 1000 - P->lsec) * self->dev->conf.rate);
+	                + ((msecs / 1000 - P->lsec) * P->conf.rate);
 	/*
 	fprintf(stderr, "%d:%d - %d:%d  => %d\n", secs, frame_pos,
 		P->lsec, P->played_this_second, played_frames);
 	*/
 
-	if (played_frames > self->dev->buf_size)
-		played_frames = self->dev->buf_size;
+	if (played_frames > BUF_SIZE)
+		played_frames = BUF_SIZE;
 
 	/*
 	fprintf(stderr, "Between %d:? offset=%d and %d:%d offset=%d: Played %d at %d\n", P->lsec, P->played_this_second,
-	secs, usecs, frame_pos, played_frames, self->dev->conf.rate);
+	secs, usecs, frame_pos, played_frames, P->conf.rate);
 	*/
 
 
@@ -404,16 +431,16 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 
 	free_frames = played_frames;
 
-	if (free_frames > self->dev->buf_size) {
+	if (free_frames > BUF_SIZE) {
 		if (!diagnosed_too_slow) {
 			sciprintf("[sfx-mixer] Your timer is too slow for your PCM output device (%d/%d), free=%d.\n"
 			          "[sfx-mixer] You might want to try changing the device, timer, or mixer, if possible.\n",
-			          played_frames, self->dev->buf_size, free_frames);
+			          played_frames, BUF_SIZE, free_frames);
 		}
 		diagnosed_too_slow = 1;
 
-		*skip_frames = free_frames - self->dev->buf_size;
-		free_frames = self->dev->buf_size;
+		*skip_frames = free_frames - BUF_SIZE;
+		free_frames = BUF_SIZE;
 	} else
 		*skip_frames = 0;
 
@@ -423,14 +450,14 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 
 	/*	/\* Disabled, broken *\/ */
 	/*	if (0 && P->delta_observations > MIN_DELTA_OBSERVATIONS) { /\* Start improving after a while *\/ */
-	/*		int diff = self->dev->conf.rate - P->max_delta; */
+	/*		int diff = P->conf.rate - P->max_delta; */
 
 	/*		/\* log-approximate P->max_delta over time *\/ */
 	/*		recommended_frames = P->max_delta + */
 	/*			((diff * MIN_DELTA_OBSERVATIONS) / P->delta_observations); */
 	/* /\* WTF? *\/ */
 	/*	} else */
-	/*		recommended_frames = self->dev->buf_size; /\* Initially, keep the buffer full *\/ */
+	/*		recommended_frames = BUF_SIZE; /\* Initially, keep the buffer full *\/ */
 
 #if (DEBUG >= 1)
 	sciprintf("[soft-mixer] played since last time: %d, free: %d\n",
@@ -443,15 +470,15 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 		result_frames = 0;
 
 	P->played_this_second += result_frames;
-	while (P->played_this_second >= self->dev->conf.rate) {
+	while (P->played_this_second >= P->conf.rate) {
 		/* Won't normally happen more than once */
-		P->played_this_second -= self->dev->conf.rate;
+		P->played_this_second -= P->conf.rate;
 		P->lsec++;
 	}
 
-	if (result_frames > self->dev->buf_size) {
+	if (result_frames > BUF_SIZE) {
 		fprintf(stderr, "[soft-mixer] Internal assertion failed: frames-to-write %d > %d\n",
-		        result_frames, self->dev->buf_size);
+		        result_frames, BUF_SIZE);
 	}
 	return result_frames;
 }
@@ -781,27 +808,31 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 		min_timestamp.msecs = 0;
 		sfx_timestamp_t timestamp;
 
-		if (self->dev->get_output_timestamp)
-			start_timestamp = self->dev->get_output_timestamp(self->dev);
-		else
-			start_timestamp = sfx_new_timestamp(g_system->getMillis(), self->dev->conf.rate);
+//		if (self->dev->get_output_timestamp)
+//			start_timestamp = self->dev->get_output_timestamp(self->dev);
+//		else
+			start_timestamp = sfx_new_timestamp(g_system->getMillis(), P->conf.rate);
 
 		if ((P->outbuf) && (P->lastbuf_len)) {
 			sfx_timestamp_t ts;
 			int rv;
 
 			if (P->have_outbuf_timestamp) {
-				ts = sfx_timestamp_renormalise(P->outbuf_timestamp, self->dev->conf.rate);
+				ts = sfx_timestamp_renormalise(P->outbuf_timestamp, P->conf.rate);
 			}
 
-			rv = self->dev->output(self->dev, P->outbuf,
-			                       P->lastbuf_len,
-			                       (P->have_outbuf_timestamp) ? &ts : NULL);
-
-			if (rv == SFX_ERROR) {
+			const int totalBufSize = P->lastbuf_len * P->_framesize;
+			byte *buf = new byte[totalBufSize];
+			if (!buf) {
 				RELEASE_LOCK();
 				return rv; /* error */
 			}
+			memcpy(buf, P->outbuf, totalBufSize);
+			P->_audioStream->queueBuffer(buf, totalBufSize);
+			// TODO: We currently ignore the timestamp:
+			//    (P->have_outbuf_timestamp) ? &ts : NULL
+			// Re-add support for that? Maybe by enhancing the ScummVM mixer (i.e.,
+			// expanding the getTotalPlayTime() audiostream API to "proper" timestamps?)
 		}
 
 #if (DEBUG >= 1)
@@ -814,8 +845,8 @@ static int mix_process_linear(sfx_pcm_mixer_t *self) {
 			** or a fraction of the buf length to discard.  */
 			do {
 				if (frames_skip) {
-					if (frames_skip > self->dev->buf_size)
-						fake_buflen = self->dev->buf_size;
+					if (frames_skip > BUF_SIZE)
+						fake_buflen = BUF_SIZE;
 					else
 						fake_buflen = frames_skip;
 
@@ -916,7 +947,6 @@ sfx_pcm_mixer_t sfx_pcm_mixer_soft_linear = {
 
 	0,
 	0,
-	NULL,
 	NULL,
 	NULL
 };
