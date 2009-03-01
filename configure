@@ -538,20 +538,6 @@ get_subengines_build_string() {
 }
 
 # Engine specific build strings
-get_sword1_build_string() {
-	if test $2 != no ; then
-		if test "$_mpeg2" = yes ; then
-			echo "(w/ mpeg2 cutscenes)"
-		else
-			echo "(without mpeg2 cutscenes)"
-		fi
-	fi
-}
-
-get_sword2_build_string() {
-	get_sword1_build_string $1 $2
-}
-
 get_scumm_build_string() {
 	if test `get_engine_build $1` != no ; then
 		if test $2 != no ; then
