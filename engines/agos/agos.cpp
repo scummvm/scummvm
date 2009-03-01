@@ -876,6 +876,10 @@ void AGOSEngine::setupGame() {
 			_videoWindows[i] = initialVideoWindows_Common[i];
 		}
 	}
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		_videoWindows[9] = 75;
+	}
 }
 
 AGOSEngine::~AGOSEngine() {
