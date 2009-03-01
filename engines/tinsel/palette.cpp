@@ -486,9 +486,9 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 
 	for (uint i = 0; i < FROM_LE_32(pPal->numColours); i++) {
 		// get the RGB colour model values
-		uint8 red   = GetRValue(pPal->palRGB[i]);
-		uint8 green = GetGValue(pPal->palRGB[i]);
-		uint8 blue  = GetBValue(pPal->palRGB[i]);
+		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
+		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
+		uint8 blue  = TINSEL_GetBValue(pPal->palRGB[i]);
 
 		// calculate the Value field of the HSV colour model
 		unsigned val = (red > green) ? red : green;
@@ -514,9 +514,9 @@ void CreateGhostPalette(SCNHANDLE hPalette) {
 
 	for (i = 0; i < (int)FROM_LE_32(pPal->numColours); i++) {
 		// get the RGB colour model values
-		uint8 red   = GetRValue(pPal->palRGB[i]);
-		uint8 green = GetGValue(pPal->palRGB[i]);
-		uint8 blue  = GetBValue(pPal->palRGB[i]);
+		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
+		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
+		uint8 blue  = TINSEL_GetBValue(pPal->palRGB[i]);
 
 		// calculate the Value field of the HSV colour model
 		unsigned val = (red > green) ? red : green;
@@ -545,12 +545,12 @@ static COLORREF DimColour(COLORREF colour, int factor) {
 		return 0;
 	} else {
 		// apply multiplier to RGB components
-		red   = GetRValue(colour) * factor / 10;
-		green = GetGValue(colour) * factor / 10;
-		blue  = GetBValue(colour) * factor / 10;
+		red   = TINSEL_GetRValue(colour) * factor / 10;
+		green = TINSEL_GetGValue(colour) * factor / 10;
+		blue  = TINSEL_GetBValue(colour) * factor / 10;
 
 		// return new colour
-		return RGB(red, green, blue);
+		return TINSEL_RGB(red, green, blue);
 	}
 }
 

@@ -3528,7 +3528,7 @@ static void TalkAttr(int r1, int g1, int b1, bool escOn, int myEscape) {
 	if (g1 > MAX_INTENSITY)	g1 = MAX_INTENSITY;	// } within limits
 	if (b1 > MAX_INTENSITY)	b1 = MAX_INTENSITY;	// }
 
-	SetTextPal(RGB(r1, g1, b1));
+	SetTextPal(TINSEL_RGB(r1, g1, b1));
 }
 
 /**

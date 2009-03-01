@@ -1283,9 +1283,9 @@ void storeActorAttr(int ano, int r1, int g1, int b1) {
 	if (b1 > MAX_INTENSITY)	b1 = MAX_INTENSITY;	// }
 
 	if (ano == -1)
-		defaultColour = RGB(r1, g1, b1);
+		defaultColour = TINSEL_RGB(r1, g1, b1);
 	else
-		actorInfo[ano - 1].textColour = RGB(r1, g1, b1);
+		actorInfo[ano - 1].textColour = TINSEL_RGB(r1, g1, b1);
 }
 
 /**

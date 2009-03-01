@@ -439,7 +439,7 @@ static void MoviePalette(int paletteOffset) {
 	r = bigBuffer + paletteOffset;
 
 	for (i = 0; i < 256; i++, r += 3) 	{
-		moviePal[i] = RGB(*r, *(r + 1), *(r + 2));
+		moviePal[i] = TINSEL_RGB(*r, *(r + 1), *(r + 2));
 	}
 
 	UpdateDACqueue(1, 255, &moviePal[1]);
@@ -610,7 +610,7 @@ static int MovieCommand(char cmd, int commandOffset) {
 			PTALK_CMD pCmd;
 
 			pCmd = (PTALK_CMD)(bigBuffer + commandOffset);
-			talkColour = RGB(pCmd->r, pCmd->g, pCmd->b);
+			talkColour = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 
 			MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
 					(int16)READ_LE_UINT16(&pCmd->x),

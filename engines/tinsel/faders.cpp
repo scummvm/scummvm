@@ -52,12 +52,12 @@ struct FADE {
  */
 static COLORREF ScaleColour(COLORREF colour, uint32 colourMult)	{
 	// apply multiplier to RGB components
-	uint32 red   = ((GetRValue(colour) * colourMult) << 8) >> 24;
-	uint32 green = ((GetGValue(colour) * colourMult) << 8) >> 24;
-	uint32 blue  = ((GetBValue(colour) * colourMult) << 8) >> 24;
+	uint32 red   = ((TINSEL_GetRValue(colour) * colourMult) << 8) >> 24;
+	uint32 green = ((TINSEL_GetGValue(colour) * colourMult) << 8) >> 24;
+	uint32 blue  = ((TINSEL_GetBValue(colour) * colourMult) << 8) >> 24;
 
 	// return new colour
-	return RGB(red, green, blue);
+	return TINSEL_RGB(red, green, blue);
 }
 
 /**
