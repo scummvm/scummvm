@@ -29,7 +29,6 @@
 namespace Cruise {
 
 struct gfxModuleDataStruct {
-	int field_1;
 	int useTandy;
 	int useEGA;
 	int useVGA;
@@ -53,7 +52,7 @@ void gfxModuleData_setPalColor(int idx, int r, int g, int b);
 void gfxModuleData_field_90(void);
 void gfxModuleData_gfxWaitVSync(void);
 void gfxModuleData_flip(void);
-void gfxModuleData_field_64(char *sourceBuffer, int width, int height, char *dest, int x, int y, int color);
+void gfxCopyRect(const byte *sourceBuffer, int width, int height, byte *dest, int x, int y, int colour);
 void gfxModuleData_gfxCopyScreen(char *sourcePtr, char *destPtr);
 void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr);
 void convertGfxFromMode5(uint8 *sourcePtr, int width, int height, uint8 *destPtr);
@@ -63,6 +62,7 @@ void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8* pOutput);
 void gfxModuleData_setPal256(uint8 * ptr);
 void flip(void);
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
+void resetBitmap(uint8 *dataPtr, int32 dataSize);
 
 } // End of namespace Cruise
 

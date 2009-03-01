@@ -28,6 +28,7 @@
 #include "common/util.h"
 
 #include "cruise/cruise_main.h"
+#include "cruise/mouse.h"
 #include "cruise/staticres.h"
 
 namespace Cruise {
@@ -200,15 +201,13 @@ void flipGen(void *var, int32 length) {
 	}
 }
 
-void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr,
-                int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
-                int32 stringRenderBufferSize, int32 width, int32 charWidth) {
+void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int yOffset,
+                int32 height, int32 param4, int32 stringRenderBufferSize, int32 width, int32 charWidth) {
 	int i;
 	int j;
 	const uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
 
-	outBufferPtr += heightOff * width * 2;	// param2 = height , param6 = width
-	outBufferPtr += drawPosPixel_X;	// param1 = drawPosPixel_X
+	outBufferPtr += yOffset * width * 2 + xOffset;
 
 	for (i = 0; i < height; i++) {	// y++
 		uint16 bitSet1 = READ_BE_UINT16(fontPtr_Data);
@@ -218,7 +217,7 @@ void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr,
 		fontPtr_Data2 += sizeof(uint16);
 
 		for (j = 0; j < charWidth; j++) {
-			*outBufferPtr = ((bitSet1 >> 15) & 1) | ((bitSet2 >>14) & 2);
+			*outBufferPtr = ((bitSet1 >> 15) & 1) | ((bitSet2 >> 14) & 2);
 			outBufferPtr++;
 
 			bitSet1 <<= 1;
@@ -279,188 +278,17 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 	return counter;
 }
 
-void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 color,
-                int32 inRightBorder_X) {
-	const FontInfo *fontPtr;
-	const FontEntry *fontPtr_Desc;
-	const uint8 *fontPtr_Data;
-	int16 wordSpacingWidth;	// var1
-	int16 wordSpacingHeight;	// var2
-	int32 rightBorder_X;	// param2
-	int32 lineHeight;	// fontProc1result
-	int32 numLines;
-	int32 stringHeight;
-	int32 stringFinished;
-	int32 stringWidth;	// var_1C
-	int32 stringRenderBufferSize;
-	int32 useDynamicBuffer;
-	uint8 *currentStrRenderBuffer;
-	// int32 var_8;                                                         // don't need that on
-	int32 heightOffset;	// var_12
-	int32 renderBufferSize;	// var_1E
-	int needFlip;
+void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 fontColour, int32 rightBorder_X) {
 
-	if (!buffer || !string)
-		return;
+	// Get the rendered text to display
+	gfxEntryStruct *s = renderText(rightBorder_X, string);
 
-	if (fontFileIndex != -1) {
-		fontPtr = (const FontInfo *)filesDatabase[fontFileIndex].subData.ptr;
+	// Draw the message
+	drawMessage(s, x, y, rightBorder_X - x, fontColour, buffer);
 
-		if (!fontPtr) {
-			fontPtr = (const FontInfo *)_systemFNT;
-		}
-	} else {
-		fontPtr = (const FontInfo *)_systemFNT;
-	}
-
-	if (!fontPtr) {
-		return;
-	}
-
-	fontPtr_Desc = (const FontEntry *)((const uint8 *)fontPtr + sizeof(FontInfo));
-	fontPtr_Data = (const uint8 *)fontPtr + FROM_LE_32(fontPtr->offset);
-
-	lineHeight = getLineHeight(FROM_LE_16(fontPtr->numChars), fontPtr_Desc);
-
-	wordSpacingWidth = FROM_LE_16(fontPtr->hSpacing);
-	wordSpacingHeight = FROM_LE_16(fontPtr->vSpacing);
-
-	if (inRightBorder_X > 310) {
-		rightBorder_X = 310;
-	} else {
-		rightBorder_X = inRightBorder_X;
-	}
-	if (x + rightBorder_X > 319) {
-		x = 319 - rightBorder_X;
-	}
-	if (y < 0) {
-		y = 0;
-	}
-	if (x < 0) {
-		x = 0;
-	}
-	numLines = getTextLineCount(rightBorder_X, wordSpacingWidth, fontPtr_Desc, string);	// ok
-
-	if (!numLines) {
-		return;
-	}
-	stringHeight = ((wordSpacingHeight + lineHeight + 2) * numLines) + 1;
-
-	if (y + stringHeight > 199) {
-		y = 200 - stringHeight;
-	}
-	stringFinished = 0;
-	stringWidth = (rightBorder_X / 16) + 2;
-	stringRenderBufferSize = stringWidth * stringHeight * 4;
-	inRightBorder_X = rightBorder_X;
-
-	if (stringRenderBufferSize > 0x2000) {
-		currentStrRenderBuffer =
-		    (uint8 *) mallocAndZero(stringRenderBufferSize);
-
-		if (!currentStrRenderBuffer) {
-			return;
-		}
-		useDynamicBuffer = 1;
-	} else {
-		currentStrRenderBuffer = (uint8 *) workBuffer;
-		useDynamicBuffer = 0;
-	}
-
-	resetRaster(currentStrRenderBuffer, stringRenderBufferSize);
-
-	// var_8        = 0;
-	heightOffset = 0;
-	renderBufferSize = stringRenderBufferSize;
-
-	do {
-		int spacesCount = 0;	// si
-		char character = *(string);
-		short int strPixelLength;	// var_16;
-		const char *ptrStringEnd;	// var_4        //ok
-		int drawPosPixel_X;	// di
-
-		while (character == ' ') {
-			spacesCount++;
-			character = *(string + spacesCount);
-		}
-
-		string += spacesCount;
-		ptrStringEnd = string + prepareWordRender(inRightBorder_X, wordSpacingWidth, &strPixelLength, fontPtr_Desc, string);	//ok
-
-		if (inRightBorder_X > strPixelLength) {
-			drawPosPixel_X =
-			    (inRightBorder_X - strPixelLength) / 2;
-		} else {
-			drawPosPixel_X = 0;
-		}
-		// drawPosPixel_X = var_8;
-
-		do {
-			character = *(string++);
-
-			short int data = fontCharacterTable[(int)character];
-
-			if (character) {
-				if (character == ' ' || character == 0x7D) {
-					drawPosPixel_X += wordSpacingWidth + 5;
-				} else {
-					if (data) {
-						const FontEntry &fe = fontPtr_Desc[data];
-
-						renderWord((const uint8 *)fontPtr_Data + FROM_LE_32(fe.offset),
-						           currentStrRenderBuffer,
-						           drawPosPixel_X,
-								   FROM_LE_16(fe.height2) - FROM_LE_16(fe.charHeight) +
-						           lineHeight + heightOffset,
-								   FROM_LE_16(fe.charHeight),
-								   FROM_LE_16(fe.v1),
-						           renderBufferSize / 2,
-						           stringWidth * 2,
-								   FROM_LE_16(fe.charWidth));
-
-						drawPosPixel_X +=
-						    wordSpacingWidth + FROM_LE_16(fe.charWidth);
-					}
-				}
-			} else {
-				stringFinished = 1;
-			}
-
-			if (ptrStringEnd <= string) {
-				break;
-			}
-
-		} while (!stringFinished);
-
-		// var_8  = 0;
-		heightOffset = wordSpacingHeight + lineHeight;
-
-	} while (!stringFinished);
-
-	needFlip = 0;
-
-	if (buffer == gfxModuleData.pPage00) {
-		if (gfxModuleData.field_1 != 0) {
-			needFlip = 1;
-			gfxModuleData_field_90();
-		}
-
-		gfxModuleData_gfxWaitVSync();
-	}
-
-	gfxModuleData_field_64((char *)currentStrRenderBuffer, stringWidth,
-	                       stringHeight, (char *)buffer, x, y, 0);
-	gfxModuleData_field_64((char *)currentStrRenderBuffer, stringWidth,
-	                       stringHeight, (char *)buffer, x, y, color);
-
-	if (needFlip) {
-		gfxModuleData_flip();
-	}
-
-	if (useDynamicBuffer) {
-		free(currentStrRenderBuffer);
-	}
+	// Free the data
+	delete s->imagePtr;
+	delete s;
 }
 
 // calculates all necessary datas and renders text
@@ -531,7 +359,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 
 	currentStrRenderBuffer =
 	    (uint8 *) mallocAndZero(stringRenderBufferSize);
-	resetRaster(currentStrRenderBuffer, stringRenderBufferSize);
+	resetBitmap(currentStrRenderBuffer, stringRenderBufferSize);
 
 	generatedGfxEntry = (gfxEntryStruct *) malloc(sizeof(gfxEntryStruct));
 	generatedGfxEntry->imagePtr = currentStrRenderBuffer;

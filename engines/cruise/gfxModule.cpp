@@ -42,7 +42,6 @@ int palDirtyMin = 256;
 int palDirtyMax = -1;
 
 gfxModuleDataStruct gfxModuleData = {
-	0,			// field_1
 	0,			// use Tandy
 	0,			// use EGA
 	1,			// use VGA
@@ -193,25 +192,26 @@ void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8* pOutput) {
 	*(pOutput++) = B;
 }
 
-void gfxModuleData_field_90(void) {
-}
-
 void gfxModuleData_gfxWaitVSync(void) {
 }
 
 void gfxModuleData_flip(void) {
 }
 
-void gfxModuleData_field_64(char *sourceBuffer, int width, int height, char *dest, int x, int y, int color) {
-	int i;
-	int j;
+void gfxCopyRect(const byte *sourceBuffer, int width, int height, byte *dest, int x, int y, int colour) {
+	int xp, yp;
 
-	x = 0;
-	y = 0;
+	for (yp = 0; yp < height; ++yp) {
+		const uint8 *srcP = &sourceBuffer[yp * width];
+		uint8 *destP = &dest[(y + yp) * 320 + x];
 
-	for (i = 0; i < height; i++) {
-		for (j = 0; j < width; j++) {
-			dest[(y + i) * 320 / 4 + x + j] = sourceBuffer[i * width + j];
+		for (xp = 0; xp < width; ++xp, ++srcP, ++destP) {
+			uint8 v = *srcP;
+			int xDest = x + xp;
+			int yDest = y + yp;
+
+			if ((v != 0) && (xDest >= 0) && (yDest >= 0) && (xDest < 320) && (yDest < 200))
+				*destP = (v == 1) ? 0 : colour;
 		}
 	}
 }
@@ -270,5 +270,11 @@ void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour) {
 		Common::set_to(p, p + (x2 - x1), colour);
 	}
 }
+
+void resetBitmap(uint8 *dataPtr, int32 dataSize) {
+	memset(dataPtr, 0, dataSize);
+}
+
+
 
 } // End of namespace Cruise
