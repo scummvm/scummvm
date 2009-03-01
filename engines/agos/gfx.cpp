@@ -938,6 +938,9 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		state->palette = state->surf_addr[0] & 0xF0;
 
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && yoffs > 133)
+		state->palette = 208;
+
 	if (_backFlag == 1) {
 		drawBackGroundImage(state);
 	} else {
