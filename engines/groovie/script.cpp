@@ -74,7 +74,7 @@ Script::Script(GroovieEngine *vm) :
 	if (midiDriver == MD_ADLIB) {
 		// MIDI through AdLib
 		setVariable(0x100, 0);
-	} else 	if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+	} else if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
 		setVariable(0x100, 2);
 	} else {
@@ -482,7 +482,7 @@ void Script::o_videofromref() {			// 0x09
 
 	case 0x400D:	// floating objects in music room
 	case 0x5060:	// a sound from gamwav?
-	case 0x5098: 	// a sound from gamwav?
+	case 0x5098:	// a sound from gamwav?
 	case 0x2402:	// House becomes book in intro?
 	case 0x1426:	// Turn to face front in hall: played after intro
 	case 0x206D:	// Cards on table puzzle (bedroom)
@@ -655,14 +655,14 @@ void Script::o_hotspot_center() {
 }
 
 void Script::o_hotspot_current() {
-       uint16 address = readScript16bits();
+	uint16 address = readScript16bits();
 
-       debugScript(5, true, "HOTSPOT-CURRENT @0x%04X", address);
+	debugScript(5, true, "HOTSPOT-CURRENT @0x%04X", address);
 
-       // The original interpreter doesn't check the position, so accept the
-       // whole screen
-       Common::Rect rect(0, 0, 640, 480);
-       hotspot(rect, address, 0);
+	// The original interpreter doesn't check the position, so accept the
+	// whole screen
+	Common::Rect rect(0, 0, 640, 480);
+	hotspot(rect, address, 0);
 }
 
 void Script::o_inputloopend() {

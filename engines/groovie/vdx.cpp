@@ -29,7 +29,7 @@
 
 #include "sound/mixer.h"
 
-#define TILE_SIZE 4 		// Size of each tile on the image: only ever seen 4 so far
+#define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479
 
 namespace Groovie {
@@ -68,16 +68,16 @@ uint16 VDXPlayer::loadInternal() {
 	// - 7
 	// - 8 Just show the first frame
 	// - 9 Start a palette fade in
-	_flagZero = 		((_flags & (1 << 0)) != 0);
-	_flagOne = 		((_flags & (1 << 1)) != 0);
-	_flag2Byte = 		(_flags & (1 << 2)) ? 0xFF : 0x00;
-	_flagThree = 		((_flags & (1 << 3)) != 0);
-	_flagFour = 		((_flags & (1 << 4)) != 0);
-	_flagFive = 		((_flags & (1 << 5)) != 0);
-	_flagSix = 		((_flags & (1 << 6)) != 0);
-	_flagSeven =	 	((_flags & (1 << 7)) != 0);
-	_flagEight =	 	((_flags & (1 << 8)) != 0);
-	_flagNine = 		((_flags & (1 << 9)) != 0);
+	_flagZero =		((_flags & (1 << 0)) != 0);
+	_flagOne =		((_flags & (1 << 1)) != 0);
+	_flag2Byte =	(_flags & (1 << 2)) ? 0xFF : 0x00;
+	_flagThree =	((_flags & (1 << 3)) != 0);
+	_flagFour =		((_flags & (1 << 4)) != 0);
+	_flagFive =		((_flags & (1 << 5)) != 0);
+	_flagSix =		((_flags & (1 << 6)) != 0);
+	_flagSeven =	((_flags & (1 << 7)) != 0);
+	_flagEight =	((_flags & (1 << 8)) != 0);
+	_flagNine =		((_flags & (1 << 9)) != 0);
 
 	if (_flagOnePrev && !_flagOne && !_flagEight) {
 		_flagSeven = true;
@@ -86,11 +86,11 @@ uint16 VDXPlayer::loadInternal() {
 	// Save _flagOne for the next video
 	_flagOnePrev = _flagOne;
 
-	//_flagTransparent = 	_flagOne;
-	_flagFirstFrame = 	_flagEight;
-	//_flagSkipPalette = 	_flagSeven;
-	_flagSkipPalette = 	false;
-	//_flagSkipStill = 	_flagFive || _flagSeven;
+	//_flagTransparent =	_flagOne;
+	_flagFirstFrame =	_flagEight;
+	//_flagSkipPalette =	_flagSeven;
+	_flagSkipPalette =	false;
+	//_flagSkipStill =	_flagFive || _flagSeven;
 	//_flagUpdateStill =	_flagNine || _flagSix;
 
 	// Begin reading the file
