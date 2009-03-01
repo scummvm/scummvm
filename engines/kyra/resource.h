@@ -228,6 +228,12 @@ enum kKyraResources {
 	//lolCharDefsUnk,
 	lolCharDefsAkshel,
 	lolExpRequirements,
+	lolMonsterModifiers,
+	lolMonsterLevelOffsets,
+	lolMonsterDirFlags,
+	lolMonsterScaleY,
+	lolMonsterScaleX,
+	lolMonsterScaleWH,
 	lolInventoryDesc,
 
 	lolLevelShpList,

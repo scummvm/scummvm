@@ -63,6 +63,7 @@ MODULE_OBJS := \
 	sound.o \
 	sound_lok.o \
 	sprites.o \
+	sprites_lol.o \
 	staticres.o \
 	text.o \
 	text_lok.o \

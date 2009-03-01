@@ -16,6 +16,12 @@ const ExtractEntry lolCDFile2[] = {
 	//{ lolCharDefsUnk, 0x0002B508, 0x0002B51A },
 	{ lolCharDefsAkshel, 0x0002B51A, 0x0002B52C },
 	{ lolExpRequirements, 0x0002B830, 0x0002B85C },
+	{ lolMonsterModifiers, 0x0002B85C, 0x0002B874 },
+	{ lolMonsterLevelOffsets, 0x00031FDF, 0x00031FFF },
+	{ lolMonsterDirFlags, 0x00031FFF, 0x0003200F },
+	{ lolMonsterScaleY, 0x00031BC0, 0x00031BDE },
+	{ lolMonsterScaleX, 0x00031BDE, 0x00031BFE },
+	{ lolMonsterScaleWH, 0x000285C0, 0x00028638 },
 	{ lolInventoryDesc, 0x00032706, 0x0003271C },
 
 	{ lolLevelShpList, 0x00032826, 0x000328A5 },

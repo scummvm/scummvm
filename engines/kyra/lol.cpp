@@ -89,7 +89,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _iceShapes = _fireballShapes = 0;
 	_levelShpList = _levelDatList = 0;
 	_monsterShapes = _monsterPalettes = 0;
-	_buf4 = 0;
+	_monsterShapesEx = 0;
 	_gameShapeMap = 0;
 	memset(_monsterUnk, 0, 3);
 
@@ -111,7 +111,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
 	_unkFlag = 0;
-	_scriptBoolSkipExec = _sceneUpdateRequired = false;
+	_suspendScript = _sceneUpdateRequired = false;
 	_scriptDirection = 0;
 	_currentDirection = 0;
 	_currentBlock = 0;
@@ -259,10 +259,10 @@ LoLEngine::~LoLEngine() {
 			delete[]  _monsterPalettes[i];
 		delete[] _monsterPalettes;
 	}
-	if (_buf4) {
-		for (int i = 0; i < 384; i++)
-			delete[]  _buf4[i];
-		delete[] _buf4;
+	if (_monsterShapesEx) {
+		for (int i = 0; i < 576; i++)
+			delete[]  _monsterShapesEx[i];
+		delete[] _monsterShapesEx;
 	}
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
@@ -417,8 +417,8 @@ Common::Error LoLEngine::init() {
 	_monsterPalettes = new uint8*[48];
 	memset(_monsterPalettes, 0, 48 * sizeof(uint8*));
 
-	_buf4 = new uint8*[384];
-	memset(_buf4, 0, 384 * sizeof(uint8*));
+	_monsterShapesEx = new uint8*[576];
+	memset(_monsterShapesEx, 0, 576 * sizeof(uint8*));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_levelFlagUnk = 0;
@@ -1501,6 +1501,25 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 	return 1;
 }
 
+void LoLEngine::cmzS7(int a, int block) {
+	if (!(_unkGameFlag & 1))
+		return;
+
+	// TODO
+}
+
+void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
+	uint16 *c = &monster->assignedItems;	
+	while (*c)
+		c = &_itemsInPlay[*c].next;
+	*c = item;
+	_itemsInPlay[item].next = 0;
+}
+
+const uint16 *LoLEngine::getCharacterOrMonsterStats(int id) {
+	return (id & 0x8000) ? (const uint16*)_monsters[id & 0x7fff].properties->pos : _characters[id].defaultModifiers;
+}
+
 void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
 	uint32 endTime = _system->getMillis() + millis;
 	while (endTime > _system->getMillis()) {
@@ -1512,11 +1531,6 @@ void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
 
 void LoLEngine::runLoopSub4(int a) {
 	cmzS7(a, _currentBlock);
-}
-
-void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs) {
-	x = (block & 0x1f) << 8 | xOffs;
-	y = ((block & 0xffe0) << 3) | yOffs;
 }
 
 bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {

@@ -35,8 +35,8 @@ void LoLEngine::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "LoLEngine::setupTimers()");
 	
 	_timer->addTimer(0, TimerV2(timerProcessOpenDoor), 15, true);	
-	_timer->addTimer(0x10, TimerV2(timerSub2), 6, true);
-	_timer->addTimer(0x11, TimerV2(timerSub2), 6, true);
+	_timer->addTimer(0x10, TimerV2(timerProcessMonsters), 6, true);
+	_timer->addTimer(0x11, TimerV2(timerProcessMonsters), 6, true);
 	_timer->setNextRun(0x11, 3);
 	_timer->addTimer(3, TimerV2(timerSub3), 15, true);
 	_timer->addTimer(4, TimerV2(timerSub4), 1, true);
@@ -58,8 +58,12 @@ void LoLEngine::timerProcessOpenDoor(int timerNum) {
 
 }
 
-void LoLEngine::timerSub2(int timerNum) {
+void LoLEngine::timerProcessMonsters(int timerNum) {
+	//if (!_updateMonsters)
+	//	return;
 
+	for (int i = timerNum & 0x0f; i < 30; i += 2)
+		updateMonster(&_monsters[i]);
 }
 
 void LoLEngine::timerSub3(int timerNum) {

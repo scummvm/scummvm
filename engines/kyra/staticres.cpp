@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 39
+#define RESFILE_VERSION 40
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -387,6 +387,12 @@ bool StaticResource::init() {
 		//{ lolCharDefsUnk, lolRawDataBe16, "CHUNK.DEF" },
 		{ lolCharDefsAkshel, lolRawDataBe16, "CHAKSHEL.DEF" },
 		{ lolExpRequirements, lolRawDataBe32, "EXPERIENCE.DEF" },
+		{ lolMonsterModifiers, lolRawDataBe16, "MONSTMOD.DEF" },
+		{ lolMonsterLevelOffsets, kRawData, "MONSTLVL.DEF" },
+		{ lolMonsterDirFlags, kRawData, "MONSTDIR.DEF" },
+		{ lolMonsterScaleY, kRawData, "MONSTZY.DEF" },
+		{ lolMonsterScaleX, kRawData, "MONSTZX.DEF" },
+		{ lolMonsterScaleWH, lolRawDataBe16, "MONSTSCL.DEF" },
 		{ lolInventoryDesc, lolRawDataBe16, "INVDESC.DEF" },
 
 		{ lolLevelShpList, kStringList, "SHPFILES.TXT" },
@@ -1731,6 +1737,12 @@ void LoLEngine::initStaticResource() {
 	_charDefsKieran = _staticres->loadRawDataBe16(lolCharDefsKieran, _charDefsKieranSize);
 	_charDefsAkshel = _staticres->loadRawDataBe16(lolCharDefsAkshel, _charDefsAkshelSize);
 	_expRequirements = (const int32*)_staticres->loadRawDataBe32(lolExpRequirements, _expRequirementsSize);
+	_monsterModifiers = _staticres->loadRawDataBe16(lolMonsterModifiers, _monsterModifiersSize);
+	_monsterLevelOffs = (const int8*)_staticres->loadRawData(lolMonsterLevelOffsets, _monsterLevelOffsSize);
+	_monsterDirFlags = _staticres->loadRawData(lolMonsterDirFlags, _monsterDirFlagsSize);
+	_monsterScaleX = (const int8*)_staticres->loadRawData(lolMonsterScaleX, _monsterScaleXSize);
+	_monsterScaleY = (const int8*)_staticres->loadRawData(lolMonsterScaleY, _monsterScaleYSize);
+	_monsterScaleWH = _staticres->loadRawDataBe16(lolMonsterScaleWH, _monsterScaleWHSize);
 	_inventorySlotDesc = _staticres->loadRawDataBe16(lolInventoryDesc, _inventorySlotDescSize);
 	_levelShpList = _staticres->loadStrings(lolLevelShpList, _levelShpListSize);
 	_levelDatList = _staticres->loadStrings(lolLevelDatList, _levelDatListSize);
@@ -1847,8 +1859,8 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedInventorySlot),
 		cb(clickedInventoryScroll),
 		cb(clickedInventoryScroll),
-		cb(clickedScenePressSwitch),
-		cb(clickedScenePressSwitch),
+		cb(clickedWall),
+		cb(clickedWall),
 		cb(clickedScene),
 		cb(clickedUpArrow),
 		cb(clickedDownArrow),

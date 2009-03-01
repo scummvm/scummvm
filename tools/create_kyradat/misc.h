@@ -499,6 +499,12 @@ const int lolCDFile2Need[] = {
 	//lolCharDefsUnk,
 	lolCharDefsAkshel,
 	lolExpRequirements,
+	lolMonsterModifiers,
+	lolMonsterLevelOffsets,
+	lolMonsterDirFlags,
+	lolMonsterScaleY,
+	lolMonsterScaleX,
+	lolMonsterScaleWH,
 	lolInventoryDesc,
 
 	lolLevelShpList,

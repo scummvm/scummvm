@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 39,
+	kKyraDatVersion = 40,
 	kIndexSize = 12
 };
 
@@ -284,6 +284,12 @@ const ExtractFilename extractFilenames[] = {
 	//{ lolCharDefsUnk, lolTypeRaw16, "CHUNK.DEF" },
 	{ lolCharDefsAkshel, lolTypeRaw16, "CHAKSHEL.DEF" },
 	{ lolExpRequirements, lolTypeRaw32, "EXPERIENCE.DEF" },
+	{ lolMonsterModifiers, lolTypeRaw16, "MONSTMOD.DEF" },
+	{ lolMonsterLevelOffsets, kTypeRawData, "MONSTLVL.DEF" },
+	{ lolMonsterDirFlags, kTypeRawData, "MONSTDIR.DEF" },
+	{ lolMonsterScaleY, kTypeRawData, "MONSTZY.DEF" },
+	{ lolMonsterScaleX, kTypeRawData, "MONSTZX.DEF" },
+	{ lolMonsterScaleWH, lolTypeRaw16, "MONSTSCL.DEF" },
 	{ lolInventoryDesc, lolTypeRaw16, "INVDESC.DEF" },
 	{ lolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
 	{ lolLevelDatList, kTypeStringList, "DATFILES.TXT" },

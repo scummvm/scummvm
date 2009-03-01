@@ -32,7 +32,8 @@
 
 namespace Kyra {
 
-void LoLEngine::runInitScript(const char *filename, int func) {
+void LoLEngine::runInitScript(const char *filename, int optionalFunc) {
+	_suspendScript = true;	
 	EMCData scriptData;
 	EMCState scriptState;
 	memset(&scriptData, 0, sizeof(EMCData));
@@ -43,14 +44,15 @@ void LoLEngine::runInitScript(const char *filename, int func) {
 	while (_emc->isValid(&scriptState))
 		_emc->run(&scriptState);
 
-	if (func) {
+	if (optionalFunc) {
 		_emc->init(&scriptState, &scriptData);
-		_emc->start(&scriptState, func);
+		_emc->start(&scriptState, optionalFunc);
 		while (_emc->isValid(&scriptState))
 			_emc->run(&scriptState);
 	}
 
 	_emc->unload(&scriptData);
+	_suspendScript = false;
 }
 
 void LoLEngine::runInfScript(const char *filename) {
@@ -66,7 +68,7 @@ void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, 
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
-	if (!_scriptBoolSkipExec) {
+	if (!_suspendScript) {
 		_emc->init(&scriptState, &_scriptData);
 		_emc->start(&scriptState, block);
 
@@ -78,14 +80,18 @@ void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, 
 		scriptState.regs[5] = block;
 		scriptState.regs[6] = _scriptDirection;
 
-		while (_emc->isValid(&scriptState))
-			_emc->run(&scriptState);
+		if (_emc->isValid(&scriptState)) {
+			if (*(scriptState.ip - 1) & sub) {
+				while (_emc->isValid(&scriptState))
+					_emc->run(&scriptState);
+			}
+		}
 	}
 
-	checkScriptUnk(block);
+	checkSceneUpdateNeed(block);
 }
 
-bool LoLEngine::checkScriptUnk(int func) {
+bool LoLEngine::checkSceneUpdateNeed(int func) {
 	if (_sceneUpdateRequired)
 		return true;
 
@@ -116,7 +122,7 @@ int LoLEngine::olol_setGameFlag(EMCState *script) {
 
 int LoLEngine::olol_testGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_testGameFlag(%p) (%d)", (const void *)script, stackPos(0));
-	if (!stackPos(0))
+	if (stackPos(0) < 0)
 		return 0;
 
 	if (_gameFlags[stackPos(0) >> 4] & (1 << (stackPos(0) & 0x0f)))
@@ -454,6 +460,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 3:
+		setHandItem(b);
 		break;
 
 	case 4:
@@ -488,7 +495,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 
 	case 10:
 		_sceneDefaultUpdate = b & 0xff;
-		//TODO
+		gui_toggleButtonDisplayMode(0, 0);
 		break;
 
 	case 11:
@@ -519,6 +526,56 @@ int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_initMonster(EMCState *script) {
+	uint16 x = 0;
+	uint16 y = 0;
+	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
+	uint16 w = _monsterProperties[stackPos(4)].maxWidth;
+	
+	if (checkBlockBeforeMonsterPlacement(x, y, w, 7, 7))
+		return -1;
+	
+	for (uint8 i = 0; i < 30; i++) {
+		MonsterInPlay *l = &_monsters[i];
+		if (l->might || l->mode == 13)
+			continue;
+
+		memset(l, 0, sizeof(MonsterInPlay));
+		l->id = i;
+		l->x = x;
+		l->y = y;
+		l->facing = stackPos(3);
+		l->type = stackPos(4);
+		l->properties = &_monsterProperties[l->type];
+		l->field_17 = l->facing << 1;
+		l->might = (l->properties->might * _monsterModifiers[((_unkGameFlag & 0x30) >> 4)]) >> 8;
+
+		if (_currentLevel == 12 && l->type == 2)
+			l->might = (l->might * (_rnd.getRandomNumberRng(1, 128) + 192)) >> 8;
+
+		l->field_25 = l->properties->unk6[0];
+		l->field_27 = _rnd.getRandomNumberRng(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
+		l->unk4 = 2;
+		l->flags = stackPos(5);
+		l->assignedItems = 0;
+
+		setMonsterMode(l, stackPos(6));
+		placeMonster(l, l->x, l->y);
+
+		l->itemPosX = l->x;
+		l->itemPosY = l->y;
+		l->field10 = l->field_17;
+
+		for (int ii = 0; ii < 4; ii++)
+			l->field_2A[ii] = stackPos(7 + ii);
+
+		checkSceneUpdateNeed(l->blockPropertyIndex);		
+		return i;
+	}
+
+	return -1;
+}
+
 int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterProperties(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
@@ -529,12 +586,12 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
 
 	MonsterProperty *l = &_monsterProperties[stackPos(0)];
-	l->id = stackPos(1) & 0xff;
+	l->shapeIndex = stackPos(1) & 0xff;
 
 	int shpWidthMax = 0;
 
 	for (int i = 0; i < 16; i++) {
-		uint8 m = _monsterShapes[(l->id << 4) + i][3];
+		uint8 m = _monsterShapes[(l->shapeIndex << 4) + i][3];
 		if (m > shpWidthMax)
 			shpWidthMax = m;
 	}
@@ -556,18 +613,18 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		l->unk3[i] = (stackPos(17 + i) << 8) / 100;
 	}
 
-	l->pos = &l->unk[0];
+	l->pos = &l->field2[0];
 	l->itemProtection = stackPos(25);
 	l->might = stackPos(26);
 	l->b = 1;
-	l->unk5[0] = stackPos(27);
-	l->unk5[1] = stackPos(28);
+	l->flags = stackPos(27);
+	l->unk5 = stackPos(28);
 	// FIXME???
-	l->unk5[1] = stackPos(29);
+	l->unk5 = stackPos(29);
 	//
 
 	for (int i = 0; i < 5; i++)
-		l->unk6[2 + i] = stackPos(30 + i);
+		l->unk6[i] = stackPos(30 + i);
 
 	for (int i = 0; i < 2; i++) {
 		l->unk7[i] = stackPos(35 + i);
@@ -575,12 +632,23 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	}
 
 	for (int i = 0; i < 3; i++)
-		l->unk8[2 + i] = stackPos(39 + i);
+		l->unk8[i] = stackPos(39 + i);
 
 	return 1;
 }
 
 int LoLEngine::olol_68(EMCState *script) {
+
+	MonsterInPlay *m = &_monsters[stackPos(0)];
+	
+	if (m->mode == 1 || m->mode == 2) {
+		calcCoordinates(m->itemPosX, m->itemPosY, stackPos(1), stackPos(2), stackPos(3));
+		m->field10 = stackPos(4);
+
+		if (m->x != m->itemPosX || m->y != m->itemPosY)
+			cmzS2(m, cmzS1(m->x, m->y, m->itemPosX, m->itemPosY));
+	}
+
 	return 1;
 }
 
@@ -632,7 +700,11 @@ int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_85(EMCState *script) {
+int LoLEngine::olol_giveItemToMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveItemToMonster(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(0) == -1)
+		return 0;
+	giveItemToMonster(&_monsters[stackPos(0)], stackPos(1));
 	return 1;
 }
 
@@ -643,6 +715,12 @@ int LoLEngine::olol_loadLangFile(EMCState *script) {
 	if (_levelLangFile)
 		delete[] _levelLangFile;
 	_levelLangFile = _res->fileData(filename, 0);
+	return 1;
+}
+
+int LoLEngine::olol_playSoundEffect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0), 255);
 	return 1;
 }
 
@@ -674,6 +752,17 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	return old;
 }
 
+int LoLEngine::olol_printMessage(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	int snd = stackPos(2);
+	_txt->printMessage(stackPos(0), getLangString(stackPos(1)), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+
+	if (snd)
+		snd_playSoundEffect(snd, 255);
+
+	return 1;
+}
+
 int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueTalkText(%p) (%d)", (const void *)script, stackPos(0));
 	int track = stackPos(0);
@@ -686,11 +775,11 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_checkDialogueState(EMCState *script) {
+int LoLEngine::olol_checkForMonsterMode1(EMCState *script) {
 	for (int i = 0; i < 30; i++) {
 		if (stackPos(0) != _monsters[i].type && stackPos(0) != -1)
 			continue;
-		return (_monsters[i].field_14 == 1) ? 0 : 1;
+		return (_monsters[i].mode == 1) ? 0 : 1;
 	}
 	return 1;
 }
@@ -895,7 +984,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x38
-	OpcodeUnImpl();
+	Opcode(olol_initMonster);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -938,9 +1027,9 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x54
 	OpcodeUnImpl();
-	Opcode(olol_85);
+	Opcode(olol_giveItemToMonster);
 	Opcode(olol_loadLangFile);
-	OpcodeUnImpl();
+	Opcode(olol_playSoundEffect);
 
 	// 0x58
 	OpcodeUnImpl();
@@ -976,7 +1065,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_printMessage);
 
 	// 0x70
 	OpcodeUnImpl();
@@ -994,7 +1083,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_playDialogueTalkText);
-	Opcode(olol_checkDialogueState);
+	Opcode(olol_checkForMonsterMode1);
 
 	// 0x7C
 	Opcode(olol_setNextFunc);

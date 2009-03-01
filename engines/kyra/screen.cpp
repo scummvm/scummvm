@@ -1151,6 +1151,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	_dsTable = 0;
 	_dsTableLoopCount = 0;
 	_dsTable2 = 0;
+	_dsTable5 = 0;
 	_dsDrawLayer = 0;
 
 	uint8 *table3 = 0;
@@ -1195,7 +1196,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if ((flags & 0x2000) && _vm->gameFlags().gameID != GI_KYRA1)
-		va_arg(args, int);
+		_dsTable5 = va_arg(args,  uint8*);
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
 		&Screen::drawShapeMarginNoScaleUpwind,
@@ -1248,6 +1249,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
 		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0,
+		&Screen::drawShapePlotType37,		// used by LoL (monsters)
+		0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 
@@ -1806,6 +1811,20 @@ void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 
 	_drawShapeVar4 = t;
 	*dst = cmd;
+}
+
+void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
+	cmd = _dsTable2[cmd];
+	
+	if (cmd == 255) {
+		cmd = _dsTable5[*dst];
+	} else {
+		for (int i = 0; i < _dsTableLoopCount; ++i)
+			cmd = _dsTable[cmd];
+	}
+
+	if (cmd)
+		*dst = cmd;
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {

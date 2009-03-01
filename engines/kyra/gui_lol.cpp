@@ -1304,7 +1304,7 @@ int LoLEngine::clickedInventoryScroll(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedScenePressSwitch(Button *button) {
+int LoLEngine::clickedWall(Button *button) {
 	int block = calcNewBlockPosition(_currentBlock, _currentDirection);
 	int dir = _currentDirection ^ 2;
 	uint8 type = _wllBuffer3[_levelBlockProperties[block].walls[dir]];
@@ -1312,23 +1312,27 @@ int LoLEngine::clickedScenePressSwitch(Button *button) {
 	int res = 0;
 	switch (type) {
 		case 1:
-			res = clickedDecoration(block, dir);
+			res = clickedWallShape(block, dir);
 			break;
 
 		case 2:
+			res = clicked2(block, dir);
 			break;
 
 		case 3:
+			res = clicked3(block, dir);
 			break;
 
 		case 4:
+			res = clickedWallOnlyScript(block);
 			break;
 
 		case 5:
-			res = switchOpenDoor(block, dir);
+			res = clickedDoorSwitch(block, dir);
 			break;
 
 		case 6:
+			res = clicked6(block, dir);
 			break;
 
 		default:

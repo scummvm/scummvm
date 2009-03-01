@@ -96,7 +96,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			if (t)
 				break;
 			else
-				ii = _itemsInPlay[ii - 1].itemIndexUnk;
+				ii = _itemsInPlay[ii - 1].next;
 		}
 
 		if (t) {
@@ -109,22 +109,22 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 	if (cnt) {
 		slot = r;
 		if (testUnkItemFlags(r)) {
-			if (_itemsInPlay[r].itemIndexUnk)
-				_itemsInPlay[_itemsInPlay[r].itemIndexUnk].level = _itemsInPlay[r].level;
+			if (_itemsInPlay[r].next)
+				_itemsInPlay[_itemsInPlay[r].next].level = _itemsInPlay[r].level;
 			deleteItem(r);
 			slot = r;
 		} else {
-			int ii = _itemsInPlay[slot].itemIndexUnk;
+			int ii = _itemsInPlay[slot].next;
 			while (ii) {
 				if (testUnkItemFlags(ii)) {
-					_itemsInPlay[slot].itemIndexUnk = _itemsInPlay[ii].itemIndexUnk;
+					_itemsInPlay[slot].next = _itemsInPlay[ii].next;
 					deleteItem(ii);
 					slot = ii;
 					break;
 				} else {
 					slot = ii;
 				}
-				ii = _itemsInPlay[slot].itemIndexUnk;
+				ii = _itemsInPlay[slot].next;
 			}
 		}
 	}
@@ -154,11 +154,11 @@ void LoLEngine::deleteItem(int itemIndex) {
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
 }
 
-MonsterInPlay *LoLEngine::findItem(uint16 index) {
+ItemInPlay *LoLEngine::findItem(uint16 index) {
 	if (index & 0x8000)
-		return &_monsters[index & 0x7fff];
+		return (ItemInPlay *)&_monsters[index & 0x7fff];
 	else
-		return (MonsterInPlay *)&_itemsInPlay[index];
+		return &_itemsInPlay[index];
 }
 
 void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg4) {
@@ -225,7 +225,7 @@ void LoLEngine::clickSceneSub1() {
 				ItemInPlay *item = &_itemsInPlay[s];
 
 				if (item->shpCurFrame_flg & 0x4000) {
-					if (clickSceneSub1Sub1(item->x, item->y, _partyPosX, _partyPosY) > 319)
+					if (checkMonsterSpace(item->x, item->y, _partyPosX, _partyPosY) > 319)
 						break;
 
 					int w =	sceneItemWidth[s & 7] << 1;
@@ -236,7 +236,7 @@ void LoLEngine::clickSceneSub1() {
 					uint8 shpIx = _itemProperties[item->itemPropertyIndex].shpIndex;
 					uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[shpIx] : _itemShapes[_gameShapeMap[shpIx]];					
 
-					drawSceneItem(shp, 0, item->x, item->y, w, h, 0, t, 0);
+					drawItemOrMonster(shp, 0, item->x, item->y, w, h, 0, t, 0);
 				}
 
 				s = item->unk2;
@@ -246,8 +246,16 @@ void LoLEngine::clickSceneSub1() {
 	}
 }
 
-int LoLEngine::clickSceneSub1Sub1(int itemX, int itemY, int partyX, int partyY) {
-	return 1;
+int LoLEngine::checkMonsterSpace(int itemX, int itemY, int partyX, int partyY) {
+	int a = itemX - partyX;
+	if (a < 0)
+		a = -a;
+
+	int b = itemY - partyY;
+	if (b < 0)
+		b = -b;
+
+	return a + b;
 }
 
 int LoLEngine::checkSceneForItems(LevelBlockProperty *block, int pos) {
