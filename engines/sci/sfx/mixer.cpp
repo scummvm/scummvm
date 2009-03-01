@@ -190,7 +190,8 @@ PCMFeedState::PCMFeedState(sfx_pcm_feed_t *f) : feed(f) {
 }
 
 PCMFeedState::~PCMFeedState() {
-	feed->destroy(feed);
+	if (feed)
+		feed->destroy(feed);
 	free(buf);
 }
 
@@ -230,6 +231,12 @@ static void mix_subscribe(sfx_pcm_mixer_t *self, sfx_pcm_feed_t *feed) {
 #endif
 
 	P->_feeds.push_back(fs);
+
+	// HACK: the copy of fs made in P->_feeds is a shallow copy,
+	// so we need to prevent fs.buf and fs.feed from being destroyed when
+	// fs goes out of scope
+	fs.buf = 0;
+	fs.feed = 0;
 
 	RELEASE_LOCK();
 }
