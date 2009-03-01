@@ -379,7 +379,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			_sayLineText->setX(640 / 2);
 			_sayLineText->setY(0);
 		} else {
-			_sayLineText->setX(_winX1);
+			_sayLineText->setX((_winX1 + _winX2) / 2);
 			_sayLineText->setY(_winY1);
 		}
 	}
