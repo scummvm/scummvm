@@ -68,7 +68,7 @@ GroovieEngine::~GroovieEngine() {
 	delete _graphicsMan;
 }
 
-Common::Error GroovieEngine::init() {
+Common::Error GroovieEngine::run() {
 	// Initialize the graphics
 	initGraphics(640, 480, true);
 
@@ -156,13 +156,8 @@ Common::Error GroovieEngine::init() {
 		_script.directGameLoad(slot);
 	}
 
-	return Common::kNoError;
-}
-
-Common::Error GroovieEngine::go() {
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
-
 	checkCD();
 
 	// Game timer counter
