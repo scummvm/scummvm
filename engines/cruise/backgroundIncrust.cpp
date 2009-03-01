@@ -36,9 +36,7 @@ void resetBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 
 // blit background to another one
 void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2, int16 scale, char *destBuffer, char *dataPtr) {
-	if (*dataPtr == 0) {
-		ASSERT(0);
-	}
+	assert(*dataPtr != 0);
 
 	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
@@ -53,7 +51,7 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 	pIncrust->ptr = (uint8*)malloc(width * height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			pIncrust->ptr[i*width+j] = pBackground[(i+Y)*320+j+X];
+			pIncrust->ptr[i * width + j] = pBackground[(i+Y) * 320 + j + X];
 		}
 	}
 }
@@ -75,7 +73,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			pBackground[(i+Y)*320+j+X] = pIncrust->ptr[i*width+j];
+			pBackground[(i+Y)* 320 + j + X] = pIncrust->ptr[i * width + j];
 		}
 	}
 }
@@ -102,10 +100,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 
 	backgroundPtr = backgroundPtrtable[backgroundIdx];
 
-	if (!backgroundPtr) {
-		ASSERT(0);
-		return NULL;
-	}
+	assert(backgroundPtr != NULL);
 
 	currentHead = pHead;
 	currentHead2 = currentHead->next;
@@ -225,9 +220,8 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 	while (pCurrent) {
 		backgroundIncrustStruct *pNext = pCurrent->next;
 
-		if (pCurrent->ptr) {
+		if (pCurrent->ptr)
 			free(pCurrent->ptr);
-		}
 
 		free(pCurrent);
 
@@ -316,7 +310,6 @@ void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx)
 
 		pl = pl2->next;
 	}
-
 }
 
 } // End of namespace Cruise
