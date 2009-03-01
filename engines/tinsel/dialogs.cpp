@@ -3899,6 +3899,7 @@ void OpenMenu(CONFTYPE menuType) {
 		break;
 
 	case SAVE_MENU:
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);	// Show VK when saving a game
 		if (!TinselV2)
 			SetCursorScreenXY(262, 91);
 		SetMenuGlobals(&ciSave);
@@ -4060,6 +4061,7 @@ void KillInventory(void) {
 		if (ino == INV_CONV)
 			_vm->_pcmMusic->unDim(false);
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);	// Hide VK after save dialog closes
 }
 
 void CloseInventory(void) {
