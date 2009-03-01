@@ -61,8 +61,7 @@ class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-	Common::Error init();
-	Common::Error go();
+	Common::Error run();
 //	void shutdown();
 
 public:

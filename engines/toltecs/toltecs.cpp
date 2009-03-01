@@ -79,15 +79,6 @@ ToltecsEngine::~ToltecsEngine() {
 	delete _rnd;
 }
 
-Common::Error ToltecsEngine::init() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(true);
-	_system->initSize(640, 400);
-	_system->endGFXTransaction();
-	return Common::kNoError;
-}
-
 void ToltecsEngine::syncSoundSettings() {
 	/*
 	_music->setVolume(ConfMan.getInt("music_volume"));
@@ -98,7 +89,12 @@ void ToltecsEngine::syncSoundSettings() {
 	*/
 }
 
-Common::Error ToltecsEngine::go() {
+Common::Error ToltecsEngine::run() {
+	// Initialize backend
+	_system->beginGFXTransaction();
+	initCommonGFX(true);
+	_system->initSize(640, 400);
+	_system->endGFXTransaction();
 
 	_isSaveAllowed = true;
 
