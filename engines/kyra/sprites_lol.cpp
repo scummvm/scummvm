@@ -499,6 +499,7 @@ void LoLEngine::drawMonster(uint16 id) {
 	if (curFrm == -1) {
 		////////////
 		// TODO
+		curFrm=curFrm;
 
 	} else {
 		int d = m->flags & 7;
@@ -933,8 +934,6 @@ void LoLEngine::moveMonster(MonsterInPlay *monster) {
 void LoLEngine::shiftMonster(MonsterInPlay *monster) {
 	if (monster->properties->flags & 0x400)
 		return;
-
-
 
 }
 

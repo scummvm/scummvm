@@ -434,7 +434,7 @@ private:
 	int clickedInventorySlot(Button *button);
 	int clickedInventoryScroll(Button *button);
 	int clickedWall(Button *button);
-	int clickedScene(Button *button);
+	int clickedSequenceWindow(Button *button);
 	int clickedScroll(Button *button);
 	int clickedUnk23(Button *button);
 	int clickedUnk24(Button *button);
@@ -468,7 +468,7 @@ private:
 
 	// text
 	bool characterSays(int track, int charId, bool redraw);
-	int playCharacterScriptChat(int charId, int y, int unk1, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+	int playCharacterScriptChat(int charId, int y, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 
 	TextDisplayer_LoL *_txt;
 
@@ -490,6 +490,7 @@ private:
 	uint16 _unkEMC46[16];
 
 	// emc opcode
+	int olol_drawScene(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
 	int olol_testGameFlag(EMCState *script);
 	int olol_loadLevelGraphics(EMCState *script);
@@ -551,6 +552,11 @@ private:
 	int tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param);
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
+
+	int tlol_initDialogueSequence(const TIM *tim, const uint16 *param);
+	int tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param);
+	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
+	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);
 
 	Common::Array<const TIMOpcode*> _timIngameOpcodes;
 

@@ -131,7 +131,7 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 	}
 }
 
-void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	_colour1prot = false;
 	int oldDim = _screen->curDimIndex();
 
@@ -213,7 +213,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 	_vm->_fadeText = false;
 }
 
-void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	char *dst = _dialogueBuffer;
 
 	for (char *s = str; *s;) {

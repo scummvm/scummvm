@@ -1342,7 +1342,7 @@ int LoLEngine::clickedWall(Button *button) {
 	return res;
 }
 
-int LoLEngine::clickedScene(Button *button) {
+int LoLEngine::clickedSequenceWindow(Button *button) {
 	return 1;
 }
 

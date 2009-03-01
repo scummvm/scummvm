@@ -1861,7 +1861,7 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedInventoryScroll),
 		cb(clickedWall),
 		cb(clickedWall),
-		cb(clickedScene),
+		cb(clickedSequenceWindow),
 		cb(clickedUpArrow),
 		cb(clickedDownArrow),
 		cb(clickedLeftArrow),

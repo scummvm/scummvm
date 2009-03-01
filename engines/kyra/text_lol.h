@@ -44,7 +44,7 @@ public:
 	void setupField(bool mode);
 	void expandField();
 
-	void printDialogueText(int dim, char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, char *str, ...);
 	
 	int16 _scriptParameter;
@@ -54,7 +54,7 @@ private:
 	char parseCommand();
 	void readNextPara();
 	void printLine(char *str);
-	void preprocessString(char *str, EMCState *script, int16 *paramList, int16 paramIndex);
+	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	
 	//typedef void (LoLEngine::*DialogueAnimCallback)(const char *str, uint16 lineWidth, uint8 col1, uint8 col2);
 	//DialogueAnimCallback _dlgAnimCallback;

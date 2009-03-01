@@ -1428,7 +1428,7 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 	return r ? textEnabled() : 1;
 }
 
-int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, int16 *paramList, int16 paramIndex) {
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
 	

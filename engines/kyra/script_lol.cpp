@@ -110,6 +110,12 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 	return false;
 }
 
+int LoLEngine::olol_drawScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawScene(%p) (%d)", (const void *)script, stackPos(0));
+	drawScene(stackPos(0));
+	return 1;
+}
+
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1))
@@ -883,6 +889,75 @@ int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
+int LoLEngine::tlol_initDialogueSequence(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initDialogueSequence(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	this->initDialogueSequence(param[0]);
+	return 1;
+}
+
+int LoLEngine::tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreSceneAfterDialogueSequence(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	restoreSceneAfterDialogueSequence(param[0]);
+	return 1;
+}
+
+int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	uint8 *tmp = 0;
+
+	switch (param[0]) {
+		case 0:
+			_screen->fadeClearSceneWindow(10);
+			break;
+
+		case 1:
+			tmp = _screen->getPalette(3);
+			memcpy(tmp + 0x180, _screen->_currentPalette + 0x180, 0x180);
+			_screen->loadSpecialColours(tmp);
+			_screen->fadePalette(tmp, 10);
+			_screen->_fadeFlag = 0;
+			break;
+
+		case 2:
+			_screen->fadeToBlack(10);
+			break;
+
+		case 3:
+			tmp = _screen->getPalette(3);
+			_screen->loadSpecialColours(tmp);
+			_screen->fadePalette(tmp, 10);
+			_screen->_fadeFlag = 0;
+			break;
+
+		case 4:
+			if (_screen->_fadeFlag != 2)
+				_screen->fadeClearSceneWindow(10);
+			gui_drawPlayField();
+			_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+			_screen->_fadeFlag = 0;
+			break;
+
+		case 5:
+			tmp = _screen->getPalette(3);
+			_screen->loadSpecialColours(tmp);
+			_screen->fadePalette(_screen->getPalette(1), 10);
+			_screen->_fadeFlag = 0;
+			break;
+
+		default:
+			break;
+	}
+
+	return 1;
+}
+
+int LoLEngine::tlol_playDialogueTalkText(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playDialogueTalkText(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	if (!snd_playCharacterSpeech(param[0], 0, 0) || textEnabled())
+		_txt->printDialogueText(4, getLangString(param[0]), 0, param, 1);
+	return 1;
+}
+
 #pragma mark -
 
 typedef Common::Functor1Mem<EMCState*, int, LoLEngine> OpcodeV2;
@@ -902,7 +977,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x00
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_drawScene);
 	Opcode(o1_getRand);
 
 	// 0x04
@@ -1205,14 +1280,14 @@ void LoLEngine::setupOpcodeTable() {
 	SetTimOpcodeTable(_timIngameOpcodes);
 
 	// 0x00
-	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_initDialogueSequence);
+	OpcodeTim(tlol_restoreSceneAfterDialogueSequence);
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
 
 	// 0x04
 	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_fadeClearWindow);
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
 
@@ -1224,7 +1299,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x0C
 	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_playDialogueTalkText);
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
 
