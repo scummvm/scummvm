@@ -1550,7 +1550,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 
 #pragma mark -
 
-void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, int page, int sfx, int sFrame, int flags) {
+void KyraEngine_HoF::loadInvWsa(const char *filename, int run_, int delayTime, int page, int sfx, int sFrame, int flags) {
 	int wsaFlags = 1;
 	if (flags)
 		wsaFlags |= 2;
@@ -1583,7 +1583,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run, int delayTime, in
 	_invWsa.running = true;
 	_invWsa.timer = _system->getMillis();
 
-	if (run) {
+	if (run_) {
 		while (_invWsa.running && !skipFlag() && !shouldQuit()) {
 			update();
 			_system->delayMillis(10);

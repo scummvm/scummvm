@@ -669,8 +669,7 @@ public:
 	ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_vCUPhe();
 
-	Common::Error init();
-	Common::Error go();
+	virtual Common::Error run();
 
 	void parseEvents();
 

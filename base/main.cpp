@@ -188,16 +188,8 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
-	// Init the engine (this might change the screen parameters)
-	// TODO: We should specify what return values
-	Common::Error result = engine->init();
-
-	// Run the game engine if the initialization was successful.
-	if (result == Common::kNoError) {
-		result = engine->go();
-	} else {
-		// TODO: Set an error flag, notify user about the problem
-	}
+	// Run the engine
+	Common::Error result = engine->run();
 
 	// Inform backend that the engine finished
 	system.engineDone();

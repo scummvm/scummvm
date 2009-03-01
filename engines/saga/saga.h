@@ -445,6 +445,13 @@ public:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
+	virtual Common::Error run() {
+		Common::Error err;
+		err = init();
+		if (err != Common::kNoError)
+			return err;
+		return go();
+	}
 	bool hasFeature(EngineFeature f) const;
 	void syncSoundSettings();
 	void pauseEngineIntern(bool pause);

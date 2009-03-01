@@ -824,13 +824,9 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 	delete _cupPlayer;
 }
 
-Common::Error ScummEngine_vCUPhe::init() {
+Common::Error ScummEngine_vCUPhe::run() {
 	initGraphics(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight, true);
 
-	return Common::kNoError;
-}
-
-Common::Error ScummEngine_vCUPhe::go() {
 	if (_cupPlayer->open(_filenamePattern.pattern)) {
 		_cupPlayer->play();
 		_cupPlayer->close();
