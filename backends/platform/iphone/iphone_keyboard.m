@@ -25,15 +25,35 @@
 
 #import "iphone_keyboard.h"
 
+@interface UITextInputTraits
+- (void)setAutocorrectionType:(int)type;
+- (void)setAutocapitalizationType:(int)type;
+- (void)setEnablesReturnKeyAutomatically:(BOOL)val;
+@end
+
+@interface TextInputHandler : UITextView {
+	SoftKeyboard* softKeyboard;
+}
+
+- (id)initWithKeyboard:(SoftKeyboard*)keyboard;
+
+@end
+
+
 @implementation TextInputHandler
 
 - (id)initWithKeyboard:(SoftKeyboard*)keyboard; {
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	softKeyboard = keyboard;
+	
+	[[self textInputTraits] setAutocorrectionType:1];
+	[[self textInputTraits] setAutocapitalizationType:0];
+	[[self textInputTraits] setEnablesReturnKeyAutomatically:NO];
+	
 	return self;
 }
 
-- (BOOL)webView:(id)fp8 shouldDeleteDOMRange:(id)fp12 {
+- (void) keyboardInputShouldDelete:(id)input {
 	[softKeyboard handleKeyPress:0x08];
 }
 
@@ -43,9 +63,12 @@
 
 	if ([character length] != 1) {
 		[NSException raise:@"Unsupported" format:@"Unhandled multi-char insert!"];
-		return false;
+		return NO;
 	}
+
 	[softKeyboard handleKeyPress:[character characterAtIndex:0]];
+	
+	return NO;
 }
 
 @end
