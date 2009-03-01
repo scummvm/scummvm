@@ -43,6 +43,10 @@ enum CursorType {
 };
 
 void changeCursor(CursorType eType);
+bool isMouseOn();
+void mouseOff();
+void mouseOn();
+
 extern CursorType currentCursor;
 
 } // End of namespace Cruise

@@ -26,6 +26,8 @@
 #ifndef CRUISE_STATICRES_H
 #define CRUISE_STATICRES_H
 
+#include "common/scummsys.h"
+
 namespace Cruise {
 
 extern int actor_move[][13];
@@ -37,6 +39,15 @@ extern int actor_stat[][13];
 extern int actor_invstat[][13];
 
 extern short int fontCharacterTable[256];
+
+// Mouse cursor data
+extern const byte mouseCursorNormal[];
+extern const byte mouseCursorDisk[];
+extern const byte mouseCursorCross[];
+extern const byte mouseCursorNoMouse[];
+extern const byte mouseCursorWalk[];
+extern const byte mouseCursorExit[];
+extern const byte mouseCursorMagnifyingGlass[];
 
 } // End of namespace Cruise
 
