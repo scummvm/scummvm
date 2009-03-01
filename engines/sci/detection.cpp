@@ -139,7 +139,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510) // got 1.005.000 by executable scan
 	},
 
 	// Castle of Dr. Brain - German Amiga (from www.back2roots.org)
@@ -152,7 +152,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510) // got 1.005.001 by executable scan
 	},
 
 	// Castle of Dr. Brain - English DOS Demo
@@ -231,7 +231,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 685)
+		SCI_VERSION(0, 000, 685) // got 1.002.031 by executable scan
 	},
 
 	// Codename: Iceman - English DOS
@@ -275,7 +275,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 685)
+		SCI_VERSION(0, 000, 685) // got 1.002.030 by executable scan
 	},
 
 	// Conquests of Camelot - English DOS
@@ -304,7 +304,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510) // got 1.005.001 by executable scan
 	},
 
 	{{"longbow", "", {
@@ -540,7 +540,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 1 - English Amiga (from www.back2roots.org)
 	{{"hoyle1", "", {
 		{"resource.map", 0, "2a72b1aba65fa6e339370eb86d8601d1", 5166},
@@ -549,11 +549,10 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 519)	// FIXME: some versions are v. 0.000.530
+		SCI_VERSION(0, 000, 519) // FIXME: some have 0.000.530, others x.yyy.zzz
 	},
 #endif
 
-#if 0
 	// Hoyle 2 - English Amiga (from www.back2roots.org)
 	{{"hoyle2", "", {
 		{"resource.map", 0, "62ed48d20c580e5a98f102f7cd93706a", 1356},
@@ -561,11 +560,10 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 572)
+		SCI_VERSION(0, 000, 685) // got 1.002.032 by executable scan
 	},
-#endif
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 3 - English Amiga (from www.back2roots.org)
 	{{"hoyle3", "", {
 		{"resource.map", 0, "f1f158e428398cb87fc41fb4aa8c2119", 2088},
@@ -574,7 +572,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(1, 000, 510) // got 1.005.000 by executable scan
 	},
 #endif
 
@@ -614,7 +612,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_01,
-		SCI_VERSION(0, 001, 10)
+		SCI_VERSION(0, 001, 10) // got 1.003.007 by executable scan
 	},
 
 	// King's Quest 1 SCI Remake - English DOS
@@ -640,7 +638,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 502)
+		SCI_VERSION(0, 000, 685) // got 1.002.032 by executable scan
 	},
 
 	// King's Quest 4 - English DOS
@@ -686,7 +684,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 784)
+		SCI_VERSION(1, 000, 784) // got 1.004.018 by executable scan
 	},
 
 	// King's Quest 5 - English DOS
@@ -798,7 +796,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 2)
 	},
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Laura Bow - English Amiga (from www.back2roots.org)
 	{{"laurabow", "", {
 		{"resource.map", 0, "731ab85e138f8cef1a7f4d1f36dfd375", 7422},
@@ -811,7 +809,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 631)	// FIXME: some versions are v. 0.000.685
+		SCI_VERSION(0, 000, 685) // got 1.002.030 by executable scan
 	},
 #endif
 
@@ -934,7 +932,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
 	{{"lsl1sci", "VGA Remake", {
 		{"resource.map", 0, "7d115a9e27dc8ac71e8d5ef33d589bd5", 3366},
@@ -945,9 +942,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
-#endif
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	{{"lsl1sci", "VGA Remake", {
@@ -1008,7 +1004,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 572)
+		SCI_VERSION(0, 000, 572) // x.yyy.zzz (by executable scan)
 	},
 
 	// Larry 2 - English DOS
@@ -1026,7 +1022,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 409)
 	},
 
-#if 0
 	// Larry 3 - English Amiga (from www.back2roots.org)
 	{{"lsl3", "", {
 		{"resource.map", 0, "4a6da6322ce189431b5ffbac992bad3a", 5328},
@@ -1039,9 +1034,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 572)
+		SCI_VERSION(0, 000, 685) // got 1.002.032 by executable scan
 	},
-#endif
 
 	// Larry 3 - English DOS
 	{{"lsl3", "", {
@@ -1084,7 +1078,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Larry 5 - English Amiga (from www.back2roots.org)
 	{{"lsl5", "", {
 		{"resource.map", 0, "e36052ae0c8b14d6f074bcb0aee50a38", 6096},
@@ -1098,7 +1092,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 784) // got 1.004.023 by executable scan
 	},
 #endif
 
@@ -1315,7 +1309,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_01,
-		SCI_VERSION(0, 001, 10)
+		SCI_VERSION(0, 001, 10) // got 1.003.009 by executable scan
 	},
 
 #if 0
@@ -1394,7 +1388,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 29)
 	},
 
-#if 0
 	// Police Quest 2 - English Amiga (from www.back2roots.org)
 	{{"pq2", "", {
 		{"resource.map", 0, "499de78ae72b7ce219f944c5e7ef0c5b", 3426},
@@ -1405,9 +1398,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 395)	// FIXME: some versions are v. 0.000.409/0.000.490
+		SCI_VERSION(0, 000, 685) // exe seems packed, this is a guess
 	},
-#endif
 
 	// Police Quest 2 - English DOS
 	{{"pq2", "", {
@@ -1433,7 +1425,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 395)
 	},
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Police Quest 3 - English Amiga (from www.back2roots.org)
 	{{"pq3", "", {
 		{"resource.map", 0, "29923fe1ef1f0909b57255d61c558e68", 5742},
@@ -1445,7 +1437,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
 #endif
 
@@ -1504,7 +1496,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 000, 000)
 	},
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Quest for Glory 1 - English Amiga (from www.back2roots.org)
 	{{"qfg1", "", {
 		{"resource.map", 0, "e65034832f0c9df1dc22128227b782d0", 6066},
@@ -1517,7 +1509,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 629)
+		SCI_VERSION(0, 000, 685) // got 1.002.020 by executable scan
 	},
 #endif
 
@@ -1555,7 +1547,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 29)
 	},
 
-#if 0
+#if 0 // TODO: unknown if these files are corrupt
 	// Quest for Glory 2 - English Amiga (from www.back2roots.org)
 	{{"qfg2", "", {
 		{"resource.map", 0, "365ea1033ba26d227ec4007be88c59cc", 7596},
@@ -1570,9 +1562,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(0, 001, 010) // got 1.003.004 by executable scan
 	},
-
 #endif
 
 	// Quest for Glory 2 - English (from FRG)
@@ -1745,7 +1736,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	{{"sq1sci", "VGA Remake", {
 		{"resource.map", 0, "106484b372af1d4cbf866472cc2813dc", 6396},
@@ -1758,9 +1748,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510) // TODO: best bet, exe seems packed
 	},
-#endif
 
 	// Space Quest 1 VGA Remake - English DOS
 	{{"sq1sci", "VGA Remake", {
@@ -1803,7 +1792,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	{{"sq3", "", {
 		{"resource.map", 0, "bad41385acde6d677a8d55a7b20437e3", 5868},
@@ -1814,9 +1802,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
+		SCI_VERSION(0, 000, 685) // TODO: best bet, exe seems packed
 	},
-#endif
 
 	// Space Quest 3 - English DOS
 	{{"sq3", "", {
@@ -1847,7 +1834,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
 	},
 #endif
-
+#if 0
 	// Space Quest 4 - English Amiga
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
@@ -1863,6 +1850,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 744)
 	},
+#endif
 
 	// Space Quest 4 - German Amiga (from www.back2roots.org)
 	{{"sq4", "", {
@@ -1877,7 +1865,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 744)
+		SCI_VERSION(1, 000, 744) // TODO: best bet, exe seems packed
 	},
 
 	// Space Quest 4 - English DOS CD
