@@ -697,7 +697,6 @@ echo_n "Running on x86... "
 case $_host_cpu in
 	i386|i486|i586|i686|x86_64)
 		_have_x86=yes
-		CXXFLAGS="$CXXFLAGS -mfpmath=387"
 		;;
 	*)
 		_have_x86=no
