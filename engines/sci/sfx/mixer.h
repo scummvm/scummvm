@@ -56,14 +56,6 @@ struct sfx_pcm_mixer_t {
 	**             (sfx_pcm_feed_t *) feed: The feed to subscribe to
 	*/
 
-	void (*pause)(sfx_pcm_mixer_t *self);
-	/* Pauses the processing of input and output
-	*/
-
-	void (*resume)(sfx_pcm_mixer_t *self);
-	/* Resumes the processing of input and output after a pause
-	*/
-
 	int (*process)(sfx_pcm_mixer_t *self);
 	/* Processes all feeds, mixes their results, and passes everything to the output device
 	** Returns  : (int) SFX_OK on success, SFX_ERROR otherwise (output device error or
