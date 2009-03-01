@@ -30,21 +30,6 @@
 
 namespace Sci {
 
-#define SFX_PCM_FEED_MODE_ALIVE 0
-#define SFX_PCM_FEED_MODE_DEAD 1
-
-/** Finitary unsigned rational numbers */
-struct sfx_pcm_urat_t {
-	int nom, den;
-	int val;
-
-	/* Total value: val + nom/den, where (nom < den) guaranteed. */
-};
-
-struct twochannel_data {
-	int left, right;
-};
-
 struct sfx_pcm_mixer_t {
 	/* Mixers are the heart of all matters PCM. They take PCM data from subscribed feeds,
 	** mix it (hence the name) and ask the pcm device they are attached to to play the

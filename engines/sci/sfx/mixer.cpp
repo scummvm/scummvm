@@ -56,6 +56,23 @@ static int diagnosed_too_slow = 0;
 #define ACQUIRE_LOCK() P->_mixerLock.lock()
 #define RELEASE_LOCK() P->_mixerLock.unlock()
 
+#define SFX_PCM_FEED_MODE_ALIVE 0
+#define SFX_PCM_FEED_MODE_DEAD 1
+
+
+
+/** Finitary unsigned rational numbers */
+struct sfx_pcm_urat_t {
+	int nom, den;
+	int val;
+
+	/* Total value: val + nom/den, where (nom < den) guaranteed. */
+};
+
+struct twochannel_data {
+	int left, right;
+};
+
 struct sfx_pcm_feed_state_t {
 	sfx_pcm_feed_t *feed;
 
