@@ -551,7 +551,7 @@ protected:
 	void loadCharSizeDta();
 	void loadPanel();
 	void loadBudSpr(int startOffset);
-	void loadCTable01(int firstObjNum, int firstSpriteNum, int &lastSpriteNum);
+	int loadCTable01(int index, int firstSpriteNum);
 	void loadCTable02(int fl);
 	void loadLoc();
 	void loadObj();

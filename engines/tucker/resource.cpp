@@ -335,8 +335,7 @@ void TuckerEngine::loadPanel() {
 }
 
 void TuckerEngine::loadBudSpr(int startOffset) {
-	int endOffset;
-	loadCTable01(0, startOffset, endOffset);
+	int endOffset = loadCTable01(0, startOffset);
 	loadCTable02(0);
 	int frame = 0;
 	int spriteOffset = 0;
@@ -367,12 +366,12 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 	}
 }
 
-void TuckerEngine::loadCTable01(int locationNum, int firstSpriteNum, int &lastSpriteNum) {
+int TuckerEngine::loadCTable01(int index, int firstSpriteNum) {
 	loadFile("ctable01.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
-	lastSpriteNum = firstSpriteNum;
+	int lastSpriteNum = firstSpriteNum;
 	int count = 0;
-	if (t.findIndex(_locationNum)) {
+	if (t.findIndex(index)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			const int x = t.getNextInteger();
 			if (x < 0) {
@@ -398,6 +397,7 @@ void TuckerEngine::loadCTable01(int locationNum, int firstSpriteNum, int &lastSp
 		}
 	}
 	_ctable01Table_sprite[count] = -1;
+	return lastSpriteNum;
 }
 
 void TuckerEngine::loadCTable02(int fl) {
@@ -593,21 +593,19 @@ void TuckerEngine::loadData3() {
 			LocationAnimation *d = &_locationAnimationsTable[_locationAnimationsCount++];
 			d->graphicNum = num;
 			const int seqNum = t.getNextInteger();
-			int i = 0;
-			int j = 1;
 			if (seqNum > 0) {
-				while (j < seqNum) {
-					while (_staticData3Table[i] != 999) {
-						++i;
+				int anim = 0;
+				for (int i = 1; i < seqNum; ++i) {
+					while (_staticData3Table[anim] != 999) {
+						++anim;
 					}
-					++i;
-					++j;
+					++anim;
 				}
-				d->animCurrentCounter = d->animInitCounter = i;
-				while (_staticData3Table[i + 1] != 999) {
-					++i;
+				d->animCurrentCounter = d->animInitCounter = anim;
+				while (_staticData3Table[anim + 1] != 999) {
+					++anim;
 				}
-				d->animLastCounter = i;
+				d->animLastCounter = anim;
 			} else {
 				d->animLastCounter = 0;
 			}
