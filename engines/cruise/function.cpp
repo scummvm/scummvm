@@ -1012,6 +1012,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 	if (!pNewElement)
 		return NULL;
 
+	memset(pNewElement, 0, sizeof(actorStruct));
 	pNewElement->next = pPrevious->next;
 	pPrevious->next = pNewElement;
 
