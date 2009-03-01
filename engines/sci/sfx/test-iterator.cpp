@@ -51,17 +51,16 @@ void error(char *fmt, ...) {
 
 /* The simple iterator will finish after a fixed amount of time.  Before that,
 ** it emits (absolute) cues in ascending order.  */
-struct simple_it_struct {
-	INHERITS_SONG_ITERATOR;
+struct simple_iterator : public song_iterator_t {
 	int lifetime_remaining;
 	char *cues;
 	int cue_counter;
 	int cue_progress;
 	int cues_nr;
-}  simple_iterator;
+};
 
 int simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
-	struct simple_it_struct *self = (struct simple_it_struct *) _self;
+	simple_iterator *self = (simple_iterator *)_self;
 
 	if (self->lifetime_remaining == -1) {
 		error("Song iterator called post mortem");

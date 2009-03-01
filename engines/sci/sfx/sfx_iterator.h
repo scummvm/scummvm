@@ -106,21 +106,6 @@ struct song_iterator_message_t {
 	} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
 };
 
-#define INHERITS_SONG_ITERATOR \
-	songit_id_t ID;										  \
-	uint16 channel_mask;									  \
-	fade_params_t fade;                                                                       \
-	unsigned int flags;									  \
-	int priority;                                                                             \
-	int (*next) (song_iterator_t *self, unsigned char *buf, int *buf_size);			  \
-	sfx_pcm_feed_t * (*get_pcm_feed) (song_iterator_t *s);					  \
-	song_iterator_t * (* handle_message)(song_iterator_t *self, song_iterator_message_t msg); \
-	void (*init) (song_iterator_t *self);						  \
-	void (*cleanup) (song_iterator_t *self);						  \
-	int (*get_timepos) (song_iterator_t *self);                                         \
-	listener_t death_listeners[SONGIT_MAX_LISTENERS];					  \
-	int death_listeners_nr									  \
-
 #define SONGIT_MAX_LISTENERS 2
 
 struct song_iterator_t {

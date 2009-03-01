@@ -75,33 +75,27 @@ struct song_iterator_channel_t {
 	byte last_cmd;	/* Last operation executed, for running status */
 };
 
-#define INHERITS_BASE_SONG_ITERATOR								\
-	INHERITS_SONG_ITERATOR; /* aka "extends song iterator" */				\
-												\
-	int polyphony[MIDI_CHANNELS]; /* # of simultaneous notes on each */			\
-	int importance[MIDI_CHANNELS]; /* priority rating for each channel, 0 means unrated. */			\
-												\
-												\
-	int ccc; /* Cumulative cue counter, for those who need it */				\
-	unsigned char resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */	\
-	int device_id; /* ID of the device we generating events for */				\
-	int active_channels; /* Number of active channels */					\
-	unsigned int size; /* Song size */							\
-	unsigned char *data;									\
-												\
-	int loops; /* Number of loops remaining */						\
-	int recover_delay
+struct base_song_iterator_t : public song_iterator_t {
+	int polyphony[MIDI_CHANNELS]; /* # of simultaneous notes on each */
+	int importance[MIDI_CHANNELS]; /* priority rating for each channel, 0 means unrated. */
 
-struct base_song_iterator_t {
-	INHERITS_BASE_SONG_ITERATOR;
+
+	int ccc; /* Cumulative cue counter, for those who need it */
+	unsigned char resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
+	int device_id; /* ID of the device we generating events for */
+	int active_channels; /* Number of active channels */
+	unsigned int size; /* Song size */
+	unsigned char *data;
+
+	int loops; /* Number of loops remaining */
+	int recover_delay;
 };
 
 /********************************/
 /*--------- SCI 0 --------------*/
 /********************************/
 
-struct sci0_song_iterator_t {
-	INHERITS_BASE_SONG_ITERATOR;
+struct sci0_song_iterator_t : public base_song_iterator_t {
 	song_iterator_channel_t channel;
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
 };
@@ -122,8 +116,7 @@ struct sci1_sample_t {
 	sci1_sample_t *next;
 };
 
-struct sci1_song_iterator_t {
-	INHERITS_BASE_SONG_ITERATOR;
+struct sci1_song_iterator_t : public base_song_iterator_t {
 	song_iterator_channel_t channels[MIDI_CHANNELS];
 
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
@@ -163,8 +156,7 @@ int is_cleanup_iterator(song_iterator_t *it);
 /*--------- Fast Forward ---------*/
 /**********************************/
 
-struct fast_forward_song_iterator_t {
-	INHERITS_SONG_ITERATOR;
+struct fast_forward_song_iterator_t : public song_iterator_t {
 	song_iterator_t *delegate;
 	int delta; /* Remaining time */
 };
@@ -197,9 +189,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 #define TEE_MORPH_NONE 0 /* Not waiting to self-morph */
 #define TEE_MORPH_READY 1 /* Ready to self-morph */
 
-struct tee_song_iterator_t {
-	INHERITS_SONG_ITERATOR;
-
+struct tee_song_iterator_t : public song_iterator_t {
 	int status;
 
 	int may_destroy; /* May destroy song iterators */
