@@ -687,6 +687,40 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.018 by executable scan
 	},
 
+	// King's Quest 5 - German Amiga (from http://www.whdownload.com/)
+	{{"kq5", "", {
+		{"resource.map", 0, "bfbffd923cd64b24498e54f797aa6e41", 8250},
+		{"resource.000", 0, "79479b5e4e5b0085d8eea1c7ff0f9f5a", 306893},
+		{"resource.001", 0, "7840aadc82977c7b4f504a7e4a12829f", 720376},
+		{"resource.002", 0, "d547167d4204170b44de8e1d63506215", 792586},
+		{"resource.003", 0, "9cbb0712816097cbc9d0c1f987717c7f", 646446},
+		{"resource.004", 0, "319712573661bd122390cdfbafb000fd", 831842},
+		{"resource.005", 0, "5aa3d59968b569cd509dde00d4eb8751", 754201},
+		{"resource.006", 0, "56546b20db11a4836f900efa6d3a3e74", 672099},
+		{"resource.007", 0, "56546b20db11a4836f900efa6d3a3e74", 794194},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+	},
+
+	// King's Quest 5 - Italian Amiga (from http://www.whdownload.com/)
+	{{"kq5", "", {
+		{"resource.map", 0, "12e2f80c0269932411716dad06d2b229", 8250},
+		{"resource.000", 0, "c598ff615a61bc0e418761283409f128", 305879},
+		{"resource.001", 0, "17e63cfe78632fe07222e13a26dc0fb2", 720023},
+		{"resource.002", 0, "abb340a53e4873a7c3bacfb16c0b779d", 792432},
+		{"resource.003", 0, "aced8ce0be07eef77c0e7cff8cc4e476", 646088},
+		{"resource.004", 0, "13fc1f1679f7f226ba52ffffe2e65f38", 831805},
+		{"resource.005", 0, "de3c5c09e350fded36ca354998c2194d", 754784},
+		{"resource.006", 0, "11cb750f5f816445ad0f4b9f50a4f59a", 672527},
+		{"resource.007", 0, "11cb750f5f816445ad0f4b9f50a4f59a", 794259},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformAmiga, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+	},
+
 	// King's Quest 5 - English DOS
 	{{"kq5", "", {
 		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
@@ -796,8 +830,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 2)
 	},
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Laura Bow - English Amiga (from www.back2roots.org)
+	// Laura Bow - English Amiga (from http://www.whdownload.com/)
 	{{"laurabow", "", {
 		{"resource.map", 0, "731ab85e138f8cef1a7f4d1f36dfd375", 7422},
 		{"resource.000", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 126317},
@@ -811,7 +844,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685) // got 1.002.030 by executable scan
 	},
-#endif
 
 #if 0
 	// Laura Bow - English DOS (from "The Roberta Williams Anthology"/1996)
@@ -1078,8 +1110,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Larry 5 - English Amiga (from www.back2roots.org)
+	// Larry 5 - English Amiga (from http://www.whdownload.com/)
 	{{"lsl5", "", {
 		{"resource.map", 0, "e36052ae0c8b14d6f074bcb0aee50a38", 6096},
 		{"resource.000", 0, "d8b58ce10de52aa16f8b2006838c4fcc", 310510},
@@ -1094,7 +1125,23 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 784) // got 1.004.023 by executable scan
 	},
-#endif
+
+	// Larry 5 - German Amiga (from http://www.whdownload.com/)
+	{{"lsl5", "", {
+		{"resource.map", 0, "863326c2eb5160f0b0960e159e8bf954", 6372},
+		{"resource.000", 0, "5113d03db08e3da77a5b61294001331b", 357525},
+		{"resource.001", 0, "59eba83ad465b08d763b44f86afa86f6", 837566},
+		{"resource.002", 0, "59eba83ad465b08d763b44f86afa86f6", 622229},
+		{"resource.003", 0, "59eba83ad465b08d763b44f86afa86f6", 383690},
+		{"resource.004", 0, "59eba83ad465b08d763b44f86afa86f6", 654296},
+		{"resource.005", 0, "59eba83ad465b08d763b44f86afa86f6", 664717},
+		{"resource.006", 0, "bafc64e3144f115dc58c6aee02de98fb", 754966},
+		{"resource.007", 0, "59eba83ad465b08d763b44f86afa86f6", 683135},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+	},
 
 	// Larry 5 - English DOS demo (from FRG)
 	{{"lsl5", "Demo", {
@@ -1425,8 +1472,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 395)
 	},
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Police Quest 3 - English Amiga (from www.back2roots.org)
+	// Police Quest 3 - English Amiga (from http://www.whdownload.com/)
 	{{"pq3", "", {
 		{"resource.map", 0, "29923fe1ef1f0909b57255d61c558e68", 5742},
 		{"resource.000", 0, "4908e4f4977e8e19c90c29b36a741ffe", 298541},
@@ -1439,7 +1485,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
-#endif
+
+	// Police Quest 3 - German Amiga (from http://www.whdownload.com/)
+	{{"pq3", "", {
+		{"resource.map", 0, "357304811fc2bbaa3443fc62d677fe06", 6282},
+		{"resource.000", 0, "49879e6ce7c19151ffa6af1a09763dc7", 324273},
+		{"resource.001", 0, "015e6119badb391ab5f4b36abedb5d4a", 718814},
+		{"resource.002", 0, "1ee419ba252fbed47fbce8399f56f8ad", 674823},
+		{"resource.003", 0, "87361c17fd863b58f98828de68770279", 682288},
+		{"resource.004", 0, "6258d5dd85898d8e218eb8113ebc9059", 722738},
+		{"resource.005", 0, "6258d5dd85898d8e218eb8113ebc9059", 704485},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+	},
 
 	// Police Quest 3 - English DOS
 	{{"pq3", "", {
@@ -1496,22 +1556,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 000, 000)
 	},
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Quest for Glory 1 - English Amiga (from www.back2roots.org)
+	// Quest for Glory 1 - English Amiga (from http://www.whdownload.com/)
 	{{"qfg1", "", {
 		{"resource.map", 0, "e65034832f0c9df1dc22128227b782d0", 6066},
 		{"resource.000", 0, "1c0255dea2d3cd71eee9f2db201eee3f", 111987},
 		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 143570},
 		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 553201},
-		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
-		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
+		{"resource.003", 0, "16cd4414c37ae3bb6d6da33dce8e25e8", 654096},
+		{"resource.004", 0, "16cd4414c37ae3bb6d6da33dce8e25e8", 689124},
 		{"resource.005", 0, "5f3386ef2f2b1254e4a066f5d9027324", 609529},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685) // got 1.002.020 by executable scan
 	},
-#endif
 
 	// Quest for Glory 1 - English DOS
 	{{"qfg1", "", {
@@ -1547,8 +1605,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 29)
 	},
 
-#if 0 // TODO: unknown if these files are corrupt
-	// Quest for Glory 2 - English Amiga (from www.back2roots.org)
+	// Quest for Glory 2 - English Amiga (from http://www.whdownload.com/)
 	{{"qfg2", "", {
 		{"resource.map", 0, "365ea1033ba26d227ec4007be88c59cc", 7596},
 		{"resource.000", 0, "810245be50fde5a67e3ea95e876e3e64", 233341},
@@ -1562,9 +1619,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 001, 010) // got 1.003.004 by executable scan
+		SCI_VERSION(0, 001, 10) // got 1.003.004 by executable scan
 	},
-#endif
 
 	// Quest for Glory 2 - English (from FRG)
 	{{"qfg2", "", {
@@ -1805,6 +1861,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685) // TODO: best bet, exe seems packed
 	},
 
+	// Space Quest 3 - German Amiga (from http://www.whdownload.com/)
+	{{"sq3", "", {
+		{"resource.map", 0, "44f53185fdf3f44f946e9cac3ca6588b", 6348},
+		{"resource.001", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 238664},
+		{"resource.002", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 642014},
+		{"resource.003", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 712374},
+		{"resource.004", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 545053},
+		{"resource.005", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 687507},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 784) // got 1.004.006 by executable scan
+	},
+
 	// Space Quest 3 - English DOS
 	{{"sq3", "", {
 		{"resource.map", 0, "55e91aeef1705bce2a9b79172682f36d", 5730},
@@ -1834,8 +1904,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 453)	// FIXME: some versions are v. 0.000.685/0.000.999
 	},
 #endif
-#if 0
-	// Space Quest 4 - English Amiga
+
+	// Space Quest 4 - English Amiga (from http://www.whdownload.com/)
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
 		{"resource.000", 0, "19671ac620a0a4720a1937c20c2e24a1", 323309},
@@ -1848,9 +1918,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 744)
+		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
-#endif
 
 	// Space Quest 4 - German Amiga (from www.back2roots.org)
 	{{"sq4", "", {
