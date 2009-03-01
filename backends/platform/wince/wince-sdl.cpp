@@ -1757,8 +1757,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 }
 
 Graphics::Surface *OSystem_WINCE3::lockScreen() {
-	// FIXME: Fingolfin asks: Why is undrawMouse() needed here?
-	// Please document this.
+	// Make sure mouse pointer is not painted over the playfield at the time of locking
 	undrawMouse();
 	return OSystem_SDL::lockScreen();
 }
@@ -1931,7 +1930,7 @@ void OSystem_WINCE3::setMousePos(int x, int y) {
 
 
 void OSystem_WINCE3::internDrawMouse() {
-	if (_mouseDrawn || !_mouseVisible || !_mouseData)
+	if (!_mouseNeedsRedraw || !_mouseVisible || !_mouseData)
 		return;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
@@ -2016,15 +2015,15 @@ void OSystem_WINCE3::internDrawMouse() {
 	SDL_UnlockSurface(_overlayVisible ? _overlayscreen : _screen);
 
 	// Finally, set the flag to indicate the mouse has been drawn
-	_mouseDrawn = true;
+	_mouseNeedsRedraw = false;
 }
 
 void OSystem_WINCE3::undrawMouse() {
 	assert (_transactionMode == kTransactionNone);
 
-	if (!_mouseDrawn)
+	if (_mouseNeedsRedraw)
 		return;
-	_mouseDrawn = false;
+	_mouseNeedsRedraw = true;
 
 	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
 	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
@@ -2166,9 +2165,6 @@ void OSystem_WINCE3::hideOverlay() {
 }
 
 void OSystem_WINCE3::drawMouse() {
-	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-	// needs fixing, or remove it!
-	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
 		internDrawMouse();
 }
