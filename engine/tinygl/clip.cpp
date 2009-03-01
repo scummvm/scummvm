@@ -35,10 +35,9 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	}
   
 	// texture
-
 	if (c->texture_2d_enabled) {
-		v->zp.s = (int)((double)v->tex_coord.X * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
-		v->zp.t = (int)((double)v->tex_coord.Y * (ZB_POINT_T_MAX - ZB_POINT_T_MIN) + ZB_POINT_T_MIN);
+		v->zp.s = (int)(v->tex_coord.X * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
+		v->zp.t = (int)(v->tex_coord.Y * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) + ZB_POINT_S_MIN);
 	}
 }
 

@@ -367,7 +367,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 					for (int _a = 0; _a < 8; _a++) {
 						zz = z >> ZB_POINT_Z_FRAC_BITS;
 						if ((ZCMP(zz, pz[_a])) && (ZCMP(z, pz_2[_a]))) {
-							char *ptr = (char *)(texture) + (((((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)) >> 1) * 3);
+							unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
+							unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
+							char *ptr = (char *)(texture) + (((ttt | sss) >> 1) * 3);
 							PIXEL pixel = *(PIXEL *)ptr;
 							char alpha = *(ptr + 2);
 							if (alpha == '\xff') {
@@ -415,7 +417,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 					{
 						zz = z >> ZB_POINT_Z_FRAC_BITS;
 						if ((ZCMP(zz, pz[0])) && (ZCMP(z, pz_2[0]))) {
-							char *ptr = (char *)(texture) + (((((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)) >> 1) * 3);
+							unsigned ttt = (t & 0x003FC000) >> (9 - PSZSH);
+							unsigned sss = (s & 0x003FC000) >> (17 - PSZSH);
+							char *ptr = (char *)(texture) + (((ttt | sss) >> 1) * 3);
 							PIXEL pixel = *(PIXEL *)ptr;
 							char alpha = *(ptr + 2);
 							if (alpha == '\xff') {
