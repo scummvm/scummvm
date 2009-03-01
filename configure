@@ -62,7 +62,7 @@ _flac=auto
 _mad=auto
 _alsa=auto
 _zlib=auto
-_mpeg2=auto
+_mpeg2=no
 _fluidsynth=auto
 _mt32emu=yes
 # default option behaviour yes/no
@@ -630,7 +630,7 @@ Optional Libraries:
   --disable-zlib           disable zlib (compression) support [autodetect]
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
-  --disable-mpeg2          disable mpeg2 codec for cutscenes [autodetect]
+  --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
 
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
@@ -679,7 +679,7 @@ for ac_option in $@; do
 	--disable-zlib)           _zlib=no        ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
-	--disable-mpeg2)          _mpeg2=no       ;;
+	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
