@@ -595,13 +595,6 @@ void AGOSEngine::vc10_draw() {
 		flags = vcReadNextWord();
 	}
 
-	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
-		if (((image >= 11 && image <= 16) || (image >= 195 && image <= 198)) &&
-			_zoneNumber == 1) {
-			y += 75;
-		}
-	}
-
 	drawImage_init(image, palette, x, y, flags);
 }
 
