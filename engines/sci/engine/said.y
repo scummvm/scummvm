@@ -177,7 +177,7 @@ cwordset :	wordset
 wordset :	 word
 			{ $$ = $1; }
 		| YY_PARENO expr YY_PARENC
-			{ $$ = $2; }
+			{ $$ = said_aug_branch(0x141, 0x14c, $2, SAID_BRANCH_NULL); }
 		| wordset YY_COMMA wordset
 			{ $$ = said_attach_branch($1, $3); }
 		| wordset YY_BRACKETSO_LT wordrefset YY_BRACKETSC

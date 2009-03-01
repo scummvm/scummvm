@@ -1568,7 +1568,7 @@ yyreduce:
 
   case 19:
 #line 180 "said.y"
-    { (yyval) = (yyvsp[(2) - (3)]); ;}
+    { (yyval) = said_aug_branch(0x141, 0x14c, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 20:
