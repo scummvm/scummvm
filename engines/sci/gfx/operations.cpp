@@ -1002,6 +1002,24 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 
 #define COLOR_MIX(type, dist) ((color1.type * dist) + (color2.type * (1.0 - dist)))
 
+int _gfxop_matchColor(gfx_state_t *state, byte r, byte g, byte b) {
+	int i, delta, bestindex = -1, bestdelta = 200000;
+
+	for (i = 0; i < state->static_palette_entries; i++) {
+		int dr = abs(state->static_palette[i].r - r);
+		int dg = abs(state->static_palette[i].g - g);
+		int db = abs(state->static_palette[i].b - b);
+
+		delta = dr * dr + dg * dg + db * db;
+
+		if (delta < bestdelta) {
+			bestdelta = delta;
+			bestindex = i;
+		}
+	}
+	return bestindex;
+}
+
 int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	gfx_driver_t *drv = state->driver;
 	int reverse = 0; // switch color1 and color2
@@ -1072,9 +1090,12 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 		mod_offset = (float)(1.0 - (mod_offset + mod_breadth));
 	// Reverse offset if we have to interpret colors inversely
 
-	if (shade_type == GFX_BOX_SHADE_FLAT)
+	if (shade_type == GFX_BOX_SHADE_FLAT) {
+		if (color1.visual.global_index == -1)
+			color1.visual.global_index = _gfxop_matchColor(state, color1.visual.r, color1.visual.g,
+				color1.visual.b);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
-	else {
+	} else {
 		if (PALETTE_MODE) {
 			GFXWARN("Attempting to draw shaded box in palette mode!\n");
 			return GFX_ERROR;
@@ -1920,6 +1941,13 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		gfx_pixmap_t *pxm = handle->text_pixmaps[i];
 
 		if (!pxm->data) {
+			// Matching pixmap's colors to current system palette if needed
+			for (int i = 0; i < pxm->colors_nr; i++) {
+				if (pxm->colors[i].global_index == -1)
+					pxm->colors[i].global_index = _gfxop_matchColor(state, pxm->colors[i].r, pxm->colors[i].g,
+					pxm->colors[i].b);
+			}
+
 			gfx_xlate_pixmap(pxm, state->driver->mode, state->options->text_xlate_filter);
 			gfxr_endianness_adjust(pxm, state->driver->mode); // FIXME: resmgr layer!
 		}
@@ -1952,7 +1980,6 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		pos.yl = pxm->yl;
 
 		_gfxop_add_dirty(state, pos);
-
 		_gfxop_draw_pixmap(state->driver, pxm, handle->priority, handle->control,
 		                   gfx_rect(0, 0, pxm->xl, pxm->yl), pos, state->clip_zone, 0, state->control_map, state->priority_map);
 

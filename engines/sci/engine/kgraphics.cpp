@@ -1287,7 +1287,6 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				bestindex = i;
 			}
 		}
-
 		// Don't warn about inexact mappings -- it's actually the
 		// rule rather than the exception
 		return make_reg(0, bestindex);
