@@ -1408,8 +1408,12 @@ void iphone_main(int argc, char *argv[]) {
 	system("mkdir " SCUMMVM_ROOT_PATH);
 	system("mkdir " SCUMMVM_SAVE_PATH);
 
+#ifdef IPHONE_OFFICIAL
+	chdir( iPhone_getDocumentsDir() );
+#else
 	chdir("/var/mobile/");
-
+#endif
+	
 	g_system = OSystem_IPHONE_create();
 	assert(g_system);
 
