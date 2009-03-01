@@ -158,8 +158,8 @@ typedef Common::SharedPtr<Command> CommandPtr;
 typedef Common::List<CommandPtr> CommandList;
 
 
-#define NUM_QUESTIONS		20
-#define NUM_ANSWERS			10
+#define NUM_QUESTIONS		40
+#define NUM_ANSWERS			20
 
 struct Answer {
 	Common::String	_text;
@@ -514,6 +514,13 @@ public:
 	bool hitFrameRect(int x, int y) const;
 	void getFrameRect(Common::Rect &r) const;
 	int16 getBottom() const;
+
+	// HACK: this routine is only used to download initialisation
+	// parameter to a script used when moving sarcophagi around in
+	// the museum. It bypasses all the consistency checks that
+	// can be performed by the individual setters. See the comment
+	// in startMovingSarcophagus() in callables_ns.cpp
+	void forceXYZF(int16 x, int16 y, int16 z, int16 f);
 
 	// getters/setters used by scripts
 	int16 getX() 			{ return _left; }

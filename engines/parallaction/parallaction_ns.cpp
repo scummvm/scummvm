@@ -35,6 +35,8 @@
 
 namespace Parallaction {
 
+#define INITIAL_FREE_SARCOPHAGUS_SLOT_X	200
+
 
 class LocationName {
 
@@ -182,9 +184,9 @@ Common::Error Parallaction_ns::init() {
 	_programExec = new ProgramExec_ns(this);
 	_programExec->init();
 
-	_introSarcData1 = 0;
-	_introSarcData2 = 1;
-	_introSarcData3 = 200;
+	_sarcophagusDeltaX = 0;
+	_movingSarcophagus = false;
+	_freeSarcophagusSlotX = INITIAL_FREE_SARCOPHAGUS_SLOT_X;
 
 	num_foglie = 0;
 
@@ -479,8 +481,8 @@ void Parallaction_ns::cleanupGame() {
 	freeLocation(true);
 
 	_score = 0;
-	_introSarcData3 = 200;
-	_introSarcData2 = 1;
+	_freeSarcophagusSlotX = INITIAL_FREE_SARCOPHAGUS_SLOT_X;
+	_movingSarcophagus = false;
 }
 
 } // namespace Parallaction

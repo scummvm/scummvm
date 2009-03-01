@@ -105,6 +105,12 @@ void Animation::setF(int16 value) {
 	_frame = CLIP(value, min, max);
 }
 
+void Animation::forceXYZF(int16 x, int16 y, int16 z, int16 f) {
+	_left = x;
+	_top = y;
+	_z = z;
+	_frame = f;
+}
 
 #define NUM_LOCALS	10
 char	_localNames[NUM_LOCALS][10];
