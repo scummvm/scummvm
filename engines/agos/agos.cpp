@@ -1003,7 +1003,8 @@ Common::Error AGOSEngine::go() {
 			delay(0);
 	}
 
-	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga &&
+		(getFeatures() & GF_DEMO)) {
 		playMusic(0, 0);
 	}
 

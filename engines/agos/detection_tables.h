@@ -174,6 +174,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
+	// Elvira 1 - English DOS Floppy Demo
+	{
+		{
+			"elvira1",
+			"Demo",
+
+			{
+	{ "demo",		GAME_BASEFILE,	"54b43b6ab38964bd7fd17e9f1b41cc64", 2308},
+	{ "icon.dat",		GAME_ICONFILE,	"55d8dd70c54340397ca518665274a477", 576},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", 368},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_DEMO
+	},
+
 	// Elvira 1 - English DOS Floppy
 	{
 		{
