@@ -842,6 +842,25 @@ void AGOSEngine::vc21_endRepeat() {
 	}
 }
 
+static const uint8 iconPalette[64] = {
+	0x00, 0x00, 0x00,
+	0x77, 0x77, 0x55,
+	0x55, 0x00, 0x00,
+	0x77, 0x00, 0x00,
+	0x22, 0x00, 0x00,
+	0x00, 0x11, 0x00,
+	0x11, 0x22, 0x11,
+	0x22, 0x33, 0x22,
+	0x44, 0x55, 0x44,
+	0x33, 0x44, 0x00,
+	0x11, 0x33, 0x00,
+	0x00, 0x11, 0x44,
+	0x77, 0x44, 0x00,
+	0x66, 0x22, 0x00,
+	0x00, 0x22, 0x66,
+	0x77, 0x55, 0x00,
+};
+
 void AGOSEngine::vc22_setPaletteOld() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
@@ -879,6 +898,20 @@ void AGOSEngine::vc22_setPaletteOld() {
 		}
 	}
 
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		// Custom palette used for icon area
+		palptr = &_displayPalette[13 * 64];
+		for (uint8 c = 0; c < 16; c++) {
+			palptr[0] = iconPalette[c * 3 + 0] * 2;
+			palptr[1] = iconPalette[c * 3 + 1] * 2;
+			palptr[2] = iconPalette[c * 3 + 2] * 2;
+			palptr[3] = 0;
+
+			palptr += 4;
+		};
+	}
+
+	palptr = _displayPalette;
 	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 	src = offs + b * 32;
 
