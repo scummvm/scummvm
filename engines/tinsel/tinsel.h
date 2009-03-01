@@ -124,6 +124,9 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV1 (TinselVersion == TINSEL_V1)
 #define TinselV2 (TinselVersion == TINSEL_V2)
 
+// Global reference to the TinselEngine object
+extern TinselEngine *_vm;
+
 class TinselEngine : public Engine {
 	int _gameId;
 	Common::KeyState _keyPressed;
@@ -197,17 +200,14 @@ public:
 
 	Common::Point getMousePosition() const { return _mousePos; }
 	void setMousePosition(const Common::Point &pt) {
-		int ySize = (g_system->getHeight() - _screenSurface.h) / 2;
-		g_system->warpMouse(pt.x, pt.y + ySize);
+		int yOffset = TinselV2 ? (g_system->getHeight() - _screenSurface.h) / 2 : 0;
+		g_system->warpMouse(pt.x, pt.y + yOffset);
 		_mousePos = pt;
 	}
 	void divertKeyInput(KEYFPTR fptr) { _keyHandler = fptr; }
 	int getRandomNumber(int maxNumber) { return _random.getRandomNumber(maxNumber); }
 	uint8 getKeyDirection() const { return _dosPlayerDir; }
 };
-
-// Global reference to the TinselEngine object
-extern TinselEngine *_vm;
 
 // Externally available methods
 void CuttingScene(bool bCutting);

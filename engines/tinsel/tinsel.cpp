@@ -1099,9 +1099,9 @@ bool TinselEngine::pollEvent() {
 		{
 			// This fragment takes care of Tinsel 2 when it's been compiled with
 			// blank areas at the top and bottom of thes creen
-			int ySize = (g_system->getHeight() - _vm->screen().h) / 2;
-			if ((event.mouse.y >= ySize) && (event.mouse.y < (g_system->getHeight() - ySize)))
-				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySize);
+			int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
+			if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
+				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);
 		}
 		break;
 

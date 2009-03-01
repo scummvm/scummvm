@@ -501,7 +501,7 @@ void ClearScreen() {
  * Updates the screen surface within the following rectangle
  */
 void UpdateScreenRect(const Common::Rect &pClip) {
-	int yOffset = (g_system->getHeight() - SCREEN_HEIGHT) / 2;
+	int yOffset = TinselV2 ? (g_system->getHeight() - SCREEN_HEIGHT) / 2 : 0;
 	byte *pSrc = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
 	g_system->copyRectToScreen(pSrc, _vm->screen().pitch, pClip.left, pClip.top + yOffset,
 		pClip.width(), pClip.height());
