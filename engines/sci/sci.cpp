@@ -170,7 +170,7 @@ SciEngine::~SciEngine() {
 	delete _console;
 }
 
-Common::Error SciEngine::init() {
+Common::Error SciEngine::run() {
 	initGraphics(320, 200, false);
 
 	// Create debugger console. It requires GFX to be initialized
@@ -178,11 +178,6 @@ Common::Error SciEngine::init() {
 
 	// Additional setup.
 	printf("SciEngine::init\n");
-	return Common::kNoError;
-}
-
-Common::Error SciEngine::go() {
-	// Your main even loop should be (invoked from) here.
 
 	/* bool end = false;
 	Common::EventManager *em = _system->getEventManager();

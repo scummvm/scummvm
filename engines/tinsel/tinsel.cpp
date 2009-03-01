@@ -916,7 +916,24 @@ TinselEngine::~TinselEngine() {
 	delete _scheduler;
 }
 
-Common::Error TinselEngine::init() {
+void TinselEngine::syncSoundSettings() {
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
+	char filename[256];
+	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
+	return filename;
+}
+
+Common::Error TinselEngine::run() {
 	// Initialize backend
 	if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE
@@ -971,29 +988,6 @@ Common::Error TinselEngine::init() {
 	// Actors, globals and inventory icons
 	LoadBasicChunks();
 
-	return Common::kNoError;
-}
-
-void TinselEngine::syncSoundSettings() {
-	// Sync the engine with the config manager
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
-	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
-}
-
-Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
-	char filename[256];
-	snprintf(filename, 256, "%s.%03d", getTargetName().c_str(), saveNum);
-	return filename;
-}
-
-Common::Error TinselEngine::go() {
-	uint32 timerVal = 0;
-
 	// Continuous game processes
 	CreateConstProcesses();
 
@@ -1013,7 +1007,7 @@ Common::Error TinselEngine::go() {
 	}
 
 	// Foreground loop
-
+	uint32 timerVal = 0;
 	while (!shouldQuit()) {
 		assert(_console);
 		if (_console->isAttached())

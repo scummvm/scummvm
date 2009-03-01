@@ -88,13 +88,6 @@ IgorEngine::~IgorEngine() {
 	delete _midiPlayer;
 }
 
-Common::Error IgorEngine::init() {
-	initGraphics(320, 200, false);
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	return Common::kNoError;
-}
-
 void IgorEngine::restart() {
 	_screenVGAVOffset = 0;
 
@@ -166,7 +159,10 @@ void IgorEngine::restart() {
 	_gameTicks = 0;
 }
 
-Common::Error IgorEngine::go() {
+Common::Error IgorEngine::run() {
+	initGraphics(320, 200, false);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+
 	restart();
 	setupDefaultPalette();
 	_currentPart = ConfMan.getInt("boot_param");

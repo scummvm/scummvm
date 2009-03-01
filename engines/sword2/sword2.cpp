@@ -361,7 +361,7 @@ void Sword2Engine::setupPersistentResources() {
 	_resman->openResource(CUR_PLAYER_ID);
 }
 
-Common::Error Sword2Engine::init() {
+Common::Error Sword2Engine::run() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
@@ -445,10 +445,6 @@ Common::Error Sword2Engine::init() {
 
 	_screen->initialiseRenderCycle();
 
-	return Common::kNoError;
-}
-
-Common::Error Sword2Engine::go() {
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();

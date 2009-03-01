@@ -276,15 +276,7 @@ static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
 class DrasculaEngine : public ::Engine {
 protected:
 	// Engine APIs
-	Common::Error init();
-	Common::Error go();
-	virtual Common::Error run() {
-		Common::Error err;
-		err = init();
-		if (err != Common::kNoError)
-			return err;
-		return go();
-	}
+	virtual Common::Error run();
 
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);

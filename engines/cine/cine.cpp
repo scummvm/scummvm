@@ -74,7 +74,7 @@ CineEngine::~CineEngine() {
 	Common::clearAllDebugChannels();
 }
 
-Common::Error CineEngine::init() {
+Common::Error CineEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
@@ -88,10 +88,6 @@ Common::Error CineEngine::init() {
 
 	initialize();
 
-	return Common::kNoError;
-}
-
-Common::Error CineEngine::go() {
 	CursorMan.showMouse(true);
 	mainLoop(1);
 

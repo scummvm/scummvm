@@ -110,12 +110,6 @@ GobEngine::~GobEngine() {
 	delete[] _startTot0;
 }
 
-Common::Error GobEngine::go() {
-	_init->initGame(0);
-
-	return Common::kNoError;
-}
-
 const char *GobEngine::getLangDesc(int16 language) const {
 	if ((language < 0) || (language > 10))
 		language = 2;
@@ -177,7 +171,7 @@ bool GobEngine::hasAdlib() const {
 	return (_features & kFeaturesAdlib) != 0;
 }
 
-Common::Error GobEngine::init() {
+Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
 		return Common::kUnknownError;
@@ -254,6 +248,8 @@ Common::Error GobEngine::init() {
 		break;
 	}
 	_global->_languageWanted = _global->_language;
+
+	_init->initGame(0);
 
 	return Common::kNoError;
 }

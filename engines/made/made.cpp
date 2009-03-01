@@ -135,13 +135,6 @@ MadeEngine::~MadeEngine() {
 	delete _music;
 }
 
-Common::Error MadeEngine::init() {
-	// Initialize backend
-	initGraphics(320, 200, false);
-
-	return Common::kNoError;
-}
-
 void MadeEngine::syncSoundSettings() {
 	_music->setVolume(ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("sfx_volume"));
@@ -247,7 +240,10 @@ void MadeEngine::handleEvents() {
 
 }
 
-Common::Error MadeEngine::go() {
+Common::Error MadeEngine::run() {
+
+	// Initialize backend
+	initGraphics(320, 200, false);
 
 	resetAllTimers();
 

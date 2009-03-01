@@ -141,7 +141,7 @@ M4Engine::~M4Engine() {
 	delete _resourceManager;
 }
 
-Common::Error M4Engine::init() {
+Common::Error M4Engine::run() {
 	// Initialize backend
 	if (isM4())
 		initGraphics(640, 480, true);
@@ -194,7 +194,10 @@ Common::Error M4Engine::init() {
 	_random = new Common::RandomSource();
 	g_system->getEventManager()->registerRandomSource(*_random, "m4");
 
-	return Common::kNoError;
+	if (isM4())
+		return goM4();
+	else
+		return goMADS();
 }
 
 void M4Engine::eventHandler() {
@@ -267,13 +270,6 @@ void M4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool calledF
 
 	_viewManager->addView(view);
 	_viewManager->moveToFront(view);
-}
-
-Common::Error M4Engine::go() {
-	if (isM4())
-		return goM4();
-	else
-		return goMADS();
 }
 
 Common::Error M4Engine::goMADS() {

@@ -41,12 +41,6 @@ TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 fl
 TuckerEngine::~TuckerEngine() {
 }
 
-Common::Error TuckerEngine::init() {
-	initGraphics(kScreenWidth, kScreenHeight, false);
-	syncSoundSettings();
-	return Common::kNoError;
-}
-
 bool TuckerEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
@@ -58,7 +52,10 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-Common::Error TuckerEngine::go() {
+Common::Error TuckerEngine::run() {
+	initGraphics(kScreenWidth, kScreenHeight, false);
+	syncSoundSettings();
+
 	handleIntroSequence();
 	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();

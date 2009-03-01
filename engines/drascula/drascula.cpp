@@ -54,9 +54,42 @@ static const GameSettings drasculaSettings[] = {
 
 DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
-	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_charMap = 0;
+	_itemLocations = 0;
+	_polX = 0;
+	_polY = 0;
+	_verbBarX = 0;
+	_x1d_menu = 0;
+	_y1d_menu = 0;
+	_frameX = 0;
+	_candleX = 0;
+	_candleY = 0;
+	_pianistX = 0;
+	_drunkX = 0;
+	_roomPreUpdates = 0;
+	_roomUpdates = 0;
+	_roomActions = 0;
+	_text = 0;
+	_textd = 0;
+	_textb = 0;
+	_textbj = 0;
+	_texte = 0;
+	_texti = 0;
+	_textl = 0;
+	_textp = 0;
+	_textt = 0;
+	_textvb = 0;
+	_textsys = 0;
+	_texthis = 0;
+	_textverbs = 0;
+	_textmisc = 0;
+	_textd1 = 0;
+
+	_color = 0;
+	blinking = 0;
+	leftMouseButton = 0;
+	rightMouseButton = 0;
+	*textName = 0;
 
 	_rnd = new Common::RandomSource();
 	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
@@ -106,7 +139,7 @@ DrasculaEngine::~DrasculaEngine() {
 	freeTexts(_textd1);
 }
 
-Common::Error DrasculaEngine::init() {
+Common::Error DrasculaEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
@@ -131,53 +164,16 @@ Common::Error DrasculaEngine::init() {
 		_lang = kEnglish;
 	}
 
-	_charMap = 0;
-	_itemLocations = 0;
-	_polX = 0;
-	_polY = 0;
-	_verbBarX = 0;
-	_x1d_menu = 0;
-	_y1d_menu = 0;
-	_frameX = 0;
-	_candleX = 0;
-	_candleY = 0;
-	_pianistX = 0;
-	_drunkX = 0;
-	_roomPreUpdates = 0;
-	_roomUpdates = 0;
-	_roomActions = 0;
-	_text = 0;
-	_textd = 0;
-	_textb = 0;
-	_textbj = 0;
-	_texte = 0;
-	_texti = 0;
-	_textl = 0;
-	_textp = 0;
-	_textt = 0;
-	_textvb = 0;
-	_textsys = 0;
-	_texthis = 0;
-	_textverbs = 0;
-	_textmisc = 0;
-	_textd1 = 0;
-
-	_color = 0;
-	blinking = 0;
-	leftMouseButton = 0;
-	rightMouseButton = 0;
-	*textName = 0;
-
 	if (!loadDrasculaDat())
 		return Common::kUnknownError;
 
 	setupRoomsTable();
 	loadArchives();
 
-	return Common::kNoError;
-}
+	// Setup mixer
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-Common::Error DrasculaEngine::go() {
 	currentChapter = 1; // values from 1 to 6 will start each part of game
 	loadedDifferentChapter = 0;
 

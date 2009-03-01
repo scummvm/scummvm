@@ -147,7 +147,7 @@ SagaEngine::~SagaEngine() {
 	delete _resource;
 }
 
-Common::Error SagaEngine::init() {
+Common::Error SagaEngine::run() {
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("talkspeed", "255");
 	ConfMan.registerDefault("subtitles", "true");
@@ -279,10 +279,6 @@ Common::Error SagaEngine::init() {
 		_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 #endif
 
-	return Common::kNoError;
-}
-
-Common::Error SagaEngine::go() {
 	int msec = 0;
 
 	_previousTicks = _system->getMillis();

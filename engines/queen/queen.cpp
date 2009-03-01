@@ -444,35 +444,7 @@ GUI::Debugger *QueenEngine::getDebugger() {
 	return _debugger;
 }
 
-Common::Error QueenEngine::go() {
-	_logic->start();
-	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
-		loadGameState(ConfMan.getInt("save_slot"));
-	}
-	_lastSaveTime = _lastUpdateTime = _system->getMillis();
-
-	while (!shouldQuit()) {
-		if (_logic->newRoom() > 0) {
-			_logic->update();
-			_logic->oldRoom(_logic->currentRoom());
-			_logic->currentRoom(_logic->newRoom());
-			_logic->changeRoom();
-			_display->fullscreen(false);
-			if (_logic->currentRoom() == _logic->newRoom()) {
-				_logic->newRoom(0);
-			}
-		} else if (_logic->joeWalk() == JWM_EXECUTE) {
-			_logic->joeWalk(JWM_NORMAL);
-			_command->executeCurrentAction();
-		} else {
-			_logic->joeWalk(JWM_NORMAL);
-			update(true);
-		}
-	}
-	return Common::kNoError;
-}
-
-Common::Error QueenEngine::init() {
+Common::Error QueenEngine::run() {
 	initGraphics(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, false);
 
 	_resource = new Resource();
@@ -500,6 +472,31 @@ Common::Error QueenEngine::init() {
 
 	registerDefaultSettings();
 	readOptionSettings();
+
+	_logic->start();
+	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
+	_lastSaveTime = _lastUpdateTime = _system->getMillis();
+
+	while (!shouldQuit()) {
+		if (_logic->newRoom() > 0) {
+			_logic->update();
+			_logic->oldRoom(_logic->currentRoom());
+			_logic->currentRoom(_logic->newRoom());
+			_logic->changeRoom();
+			_display->fullscreen(false);
+			if (_logic->currentRoom() == _logic->newRoom()) {
+				_logic->newRoom(0);
+			}
+		} else if (_logic->joeWalk() == JWM_EXECUTE) {
+			_logic->joeWalk(JWM_NORMAL);
+			_command->executeCurrentAction();
+		} else {
+			_logic->joeWalk(JWM_NORMAL);
+			update(true);
+		}
+	}
 
 	return Common::kNoError;
 }

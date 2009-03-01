@@ -80,15 +80,7 @@ class MadeEngine : public ::Engine {
 protected:
 
 	// Engine APIs
-	Common::Error init();
-	Common::Error go();
-	virtual Common::Error run() {
-		Common::Error err;
-		err = init();
-		if (err != Common::kNoError)
-			return err;
-		return go();
-	}
+	virtual Common::Error run();
 
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);

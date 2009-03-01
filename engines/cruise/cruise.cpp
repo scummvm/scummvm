@@ -71,7 +71,7 @@ CruiseEngine::~CruiseEngine() {
 	freeSystem();
 }
 
-Common::Error CruiseEngine::init() {
+Common::Error CruiseEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
@@ -80,10 +80,6 @@ Common::Error CruiseEngine::init() {
 
 	initialize();
 
-	return Common::kNoError;
-}
-
-Common::Error CruiseEngine::go() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 

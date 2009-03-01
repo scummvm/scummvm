@@ -76,17 +76,9 @@ public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
 	~SciEngine();
 
-	Common::Error init();
-	Common::Error go();
-	virtual Common::Error run() {
-		Common::Error err;
-		err = init();
-		if (err != Common::kNoError)
-			return err;
-		return go();
-	}
-
-	GUI::Debugger *getDebugger() { return _console; }
+	// Engine APIs
+	virtual Common::Error run();
+	virtual GUI::Debugger *getDebugger() { return _console; }
 
 	const char* getGameID() const;
 	int getResourceVersion() const;
