@@ -318,16 +318,9 @@ static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 	if (!P->writebuf)
 		P->writebuf = (byte*)sci_malloc(BUF_SIZE * frame_size + 4);
 
-	if (conf.stereo) {
-		if (conf.stereo == SFX_PCM_STEREO_RL) {
-			lchan = P->writebuf + ((use_16) ? 2 : 1);
-			rchan = P->writebuf;
-		} else {
-			lchan = P->writebuf;
-			rchan = P->writebuf + ((use_16) ? 2 : 1);
-		}
-	} else
-		lchan = P->writebuf;
+	lchan = P->writebuf;
+	if (conf.stereo)
+		rchan = P->writebuf + ((use_16) ? 2 : 1);
 
 
 	for (frame_i = 0; frame_i < outplen; frame_i++) {
@@ -347,17 +340,8 @@ static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 			right += bias;
 
 			if (use_16) {
-				if (SFX_PCM_FORMAT_LE == (conf.format & SFX_PCM_FORMAT_ENDIANNESS)) {
-					lchan[0] = left & 0xff;
-					lchan[1] = (left >> 8) & 0xff;
-					rchan[0] = right & 0xff;
-					rchan[1] = (right >> 8) & 0xff;
-				} else {
-					lchan[1] = left & 0xff;
-					lchan[0] = (left >> 8) & 0xff;
-					rchan[1] = right & 0xff;
-					rchan[0] = (right >> 8) & 0xff;
-				}
+				*(int16 *)lchan = left;
+				*(int16 *)rchan = right;
 
 				lchan += 4;
 				rchan += 4;
@@ -379,13 +363,7 @@ static inline void mix_compute_output(sfx_pcm_mixer_t *self, int outplen) {
 			left += bias;
 
 			if (use_16) {
-				if (SFX_PCM_FORMAT_LE == (conf.format & SFX_PCM_FORMAT_ENDIANNESS)) {
-					lchan[0] = left & 0xff;
-					lchan[1] = (left >> 8) & 0xff;
-				} else {
-					lchan[1] = left & 0xff;
-					lchan[0] = (left >> 8) & 0xff;
-				}
+				*(int16 *)lchan = left;
 
 				lchan += 2;
 			} else {
@@ -510,33 +488,13 @@ static inline int mix_compute_buf_len(sfx_pcm_mixer_t *self, int *skip_frames) {
 
 #define READ_NEW_VALUES() \
 		if (frames_left > 0) {						\
-			if (bias) { /* unsigned data */					\
-				if (!use_16) {						\
-					c_new.left = (*lsrc) << 8;			\
-					c_new.right = (*rsrc) << 8;			\
-				} else {						\
-					if (conf.format & SFX_PCM_FORMAT_LE) {		\
-						c_new.left = lsrc[0] | lsrc[1] << 8;	\
-						c_new.right = rsrc[0] | rsrc[1] << 8;	\
-					} else {					\
-						c_new.left = lsrc[1] | lsrc[0] << 8;	\
-						c_new.right = rsrc[1] | rsrc[0] << 8;	\
-					}						\
-				}							\
-			} else { /* signed data */							\
-				if (!use_16) {								\
-					c_new.left = (*((signed char *)lsrc)) << 8;			\
-					c_new.right = (*((signed char *)rsrc)) << 8;			\
-				} else {								\
-					if (conf.format & SFX_PCM_FORMAT_LE) {				\
-						c_new.left = lsrc[0] | ((signed char *)lsrc)[1] << 8;	\
-						c_new.right = rsrc[0] | ((signed char *)rsrc)[1] << 8;	\
-					} else {							\
-						c_new.left = lsrc[1] | ((signed char *)lsrc)[0] << 8;	\
-						c_new.right = rsrc[1] | ((signed char *)rsrc)[0] << 8;	\
-					}								\
-				}									\
-			}										\
+			if (!use_16) {						\
+				c_new.left = (*lsrc) << 8;			\
+				c_new.right = (*rsrc) << 8;			\
+			} else {								\
+				c_new.left = *((int16 *)lsrc);	\
+				c_new.right = *((int16 *)rsrc);	\
+			}									\
 										\
 			c_new.left -= bias;					\
 			c_new.right -= bias;					\
@@ -688,8 +646,6 @@ static void mix_compute_input_linear(sfx_pcm_mixer_t *self, int add_result,
 
 	if (conf.stereo == SFX_PCM_STEREO_LR)
 		rsrc += (use_16) ? 2 : 1;
-	else if (conf.stereo == SFX_PCM_STEREO_RL)
-		lsrc += (use_16) ? 2 : 1;
 	/* Otherwise, we let both point to the same place */
 
 #if (DEBUG >= 2)

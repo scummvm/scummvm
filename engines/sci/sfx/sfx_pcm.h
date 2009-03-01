@@ -37,28 +37,13 @@ namespace Sci {
 
 /* The following are used internally by the mixer */
 #define SFX_PCM_FORMAT_LMASK 0x7
-#define SFX_PCM_FORMAT_BE 0
-#define SFX_PCM_FORMAT_LE 1
-#define SFX_PCM_FORMAT_ENDIANNESS 1
 #define SFX_PCM_FORMAT_8  0
 #define SFX_PCM_FORMAT_16 2
 
 
 /* Pick one of these formats (including the _NATIVE) ones for your PCM feed */
 #define SFX_PCM_FORMAT_U8     (0x0080 | SFX_PCM_FORMAT_8)			/* Unsigned (bias 128) 8 bit format */
-#define SFX_PCM_FORMAT_S8     (0x0000 | SFX_PCM_FORMAT_8)			/* Signed 8 bit format */
-#define SFX_PCM_FORMAT_U16_LE (0x8000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_LE)	/* Unsigned (bias 32768) 16 bit LE format */
-#define SFX_PCM_FORMAT_S16_LE (0x0000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_LE)	/* Signed 16 bit format, little endian */
-#define SFX_PCM_FORMAT_U16_BE (0x8000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_BE)	/* Unsigned (bias 32768) 16 bit BE format */
-#define SFX_PCM_FORMAT_S16_BE (0x0000 | SFX_PCM_FORMAT_16 | SFX_PCM_FORMAT_BE)	/* Signed 16 bit format, big endian */
-
-#ifdef SCUMM_BIG_ENDIAN
-#  define SFX_PCM_FORMAT_U16_NATIVE SFX_PCM_FORMAT_U16_BE
-#  define SFX_PCM_FORMAT_S16_NATIVE SFX_PCM_FORMAT_S16_BE
-#else
-#  define SFX_PCM_FORMAT_U16_NATIVE SFX_PCM_FORMAT_U16_LE
-#  define SFX_PCM_FORMAT_S16_NATIVE SFX_PCM_FORMAT_S16_LE
-#endif
+#define SFX_PCM_FORMAT_S16_NATIVE (0x0000 | SFX_PCM_FORMAT_16)
 
 #define SFX_PCM_FRAME_SIZE(conf) ((conf).stereo? 2 : 1) * (((conf).format & SFX_PCM_FORMAT_16)? 2 : 1)
 
