@@ -313,6 +313,7 @@ protected:
 	void 	enterCommentMode(ZonePtr z);
 	void 	exitCommentMode();
 	void	updateView();
+	void 	drawAnimations();
 	void 	drawAnimation(AnimationPtr anim);
 	void	updateZones();
 	void	doLocationEnterTransition();
