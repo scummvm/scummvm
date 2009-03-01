@@ -41,7 +41,7 @@ protected:
 	Common::String _path;
 	bool _isDirectory;
 	bool _isValid;
-	bool _isPseudoRoot;
+	bool _isPseudoRoot;	// TODO: get rid of this
 
 public:
 	/**
@@ -50,7 +50,7 @@ public:
 	PalmOSFilesystemNode();
 
 	/**
-	 * Creates a POSIXFilesystemNode for a given path.
+	 * Creates a PalmOSFilesystemNode for a given path.
 	 *
 	 * @param path Common::String with the path the new node should point to.
 	 */
@@ -73,7 +73,7 @@ public:
 
 private:
 	/**
-	 * Adds a single WindowsFilesystemNode to a given list.
+	 * Adds a single PalmOSFilesystemNode to a given list.
 	 * This method is used by getChildren() to populate the directory entries list.
 	 *
 	 * @param list List to put the file entry node in.
@@ -117,6 +117,8 @@ PalmOSFilesystemNode::PalmOSFilesystemNode() {
 }
 
 PalmOSFilesystemNode::PalmOSFilesystemNode(const Common::String &p) {
+	assert(p.size() > 0);
+
 	_path = p;
 	_displayName = lastPathComponent(_path, '/');
 
@@ -136,10 +138,13 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const Common::String &p) {
 		_isValid = true;
 		_isDirectory = (attr & vfsFileAttrDirectory);
 	}
+
 	_isPseudoRoot = false;
 }
 
 AbstractFSNode *PalmOSFilesystemNode::getChild(const Common::String &n) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
 
 	Common::String newPath(_path);
@@ -147,22 +152,12 @@ AbstractFSNode *PalmOSFilesystemNode::getChild(const Common::String &n) const {
 		newPath += '/';
 	newPath += n;
 
-	FileRef handle;
-	UInt32 attr;
-	Err error = VFSFileOpen(gVars->VFS.volRefNum, newPath.c_str(), vfsModeRead, &handle);
-	if (error)
-		return 0;
-
-	error = VFSFileGetAttributes(handle, &attr);
-	VFSFileClose(handle);
-
-	if (error || !(attr & vfsFileAttrDirectory))
-		return 0;
-
 	return new PalmOSFilesystemNode(newPath);
 }
 
 bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
+	assert(_isDirectory);
+
 	//TODO: honor the hidden flag
 
 	Err error;
@@ -173,20 +168,18 @@ bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 	desc.nameP = nameP;
 	desc.nameBufLen = 256;
-	error = VFSFileOpen(gVars->VFS.volRefNum, _path.c_str(), vfsModeRead, &handle);
 
+	error = VFSFileOpen(gVars->VFS.volRefNum, _path.c_str(), vfsModeRead, &handle);
 	if (error)
 		return false;
 
 	while (dirIterator != expIteratorStop) {
 		error = VFSDirEntryEnumerate(handle, &dirIterator, &desc);
-		if (!error) {
+		if (!error)
 			addFile(myList, mode, _path.c_str(), &desc);
-		}
 	}
 
 	VFSFileClose(handle);
-
 	return true;
 }
 
