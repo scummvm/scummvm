@@ -687,7 +687,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.018 by executable scan
 	},
 
-	// King's Quest 5 - German Amiga (from http://www.whdownload.com/)
+	// King's Quest 5 - German Amiga
 	{{"kq5", "", {
 		{"resource.map", 0, "bfbffd923cd64b24498e54f797aa6e41", 8250},
 		{"resource.000", 0, "79479b5e4e5b0085d8eea1c7ff0f9f5a", 306893},
@@ -704,7 +704,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
 
-	// King's Quest 5 - Italian Amiga (from http://www.whdownload.com/)
+	// King's Quest 5 - Italian Amiga
 	{{"kq5", "", {
 		{"resource.map", 0, "12e2f80c0269932411716dad06d2b229", 8250},
 		{"resource.000", 0, "c598ff615a61bc0e418761283409f128", 305879},
@@ -830,7 +830,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 2)
 	},
 
-	// Laura Bow - English Amiga (from http://www.whdownload.com/)
+	// Laura Bow - English Amiga
 	{{"laurabow", "", {
 		{"resource.map", 0, "731ab85e138f8cef1a7f4d1f36dfd375", 7422},
 		{"resource.000", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 126317},
@@ -1110,7 +1110,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-	// Larry 5 - English Amiga (from http://www.whdownload.com/)
+	// Larry 5 - English Amiga
 	{{"lsl5", "", {
 		{"resource.map", 0, "e36052ae0c8b14d6f074bcb0aee50a38", 6096},
 		{"resource.000", 0, "d8b58ce10de52aa16f8b2006838c4fcc", 310510},
@@ -1126,7 +1126,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.023 by executable scan
 	},
 
-	// Larry 5 - German Amiga (from http://www.whdownload.com/)
+	// Larry 5 - German Amiga
 	{{"lsl5", "", {
 		{"resource.map", 0, "863326c2eb5160f0b0960e159e8bf954", 6372},
 		{"resource.000", 0, "5113d03db08e3da77a5b61294001331b", 357525},
@@ -1472,7 +1472,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 395)
 	},
 
-	// Police Quest 3 - English Amiga (from http://www.whdownload.com/)
+	// Police Quest 3 - English Amiga
 	{{"pq3", "", {
 		{"resource.map", 0, "29923fe1ef1f0909b57255d61c558e68", 5742},
 		{"resource.000", 0, "4908e4f4977e8e19c90c29b36a741ffe", 298541},
@@ -1486,7 +1486,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
 	},
 
-	// Police Quest 3 - German Amiga (from http://www.whdownload.com/)
+	// Police Quest 3 - German Amiga
 	{{"pq3", "", {
 		{"resource.map", 0, "357304811fc2bbaa3443fc62d677fe06", 6282},
 		{"resource.000", 0, "49879e6ce7c19151ffa6af1a09763dc7", 324273},
@@ -1556,7 +1556,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 000, 000)
 	},
 
-	// Quest for Glory 1 - English Amiga (from http://www.whdownload.com/)
+	// Quest for Glory 1 - English Amiga
 	{{"qfg1", "", {
 		{"resource.map", 0, "e65034832f0c9df1dc22128227b782d0", 6066},
 		{"resource.000", 0, "1c0255dea2d3cd71eee9f2db201eee3f", 111987},
@@ -1605,7 +1605,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 29)
 	},
 
-	// Quest for Glory 2 - English Amiga (from http://www.whdownload.com/)
+	// Quest for Glory 2 - English Amiga
 	{{"qfg2", "", {
 		{"resource.map", 0, "365ea1033ba26d227ec4007be88c59cc", 7596},
 		{"resource.000", 0, "810245be50fde5a67e3ea95e876e3e64", 233341},
@@ -1861,7 +1861,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685) // TODO: best bet, exe seems packed
 	},
 
-	// Space Quest 3 - German Amiga (from http://www.whdownload.com/)
+	// Space Quest 3 - German Amiga
 	{{"sq3", "", {
 		{"resource.map", 0, "44f53185fdf3f44f946e9cac3ca6588b", 6348},
 		{"resource.001", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 238664},
@@ -1905,7 +1905,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-	// Space Quest 4 - English Amiga (from http://www.whdownload.com/)
+	// Space Quest 4 - English Amiga
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
 		{"resource.000", 0, "19671ac620a0a4720a1937c20c2e24a1", 323309},
