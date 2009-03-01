@@ -112,13 +112,13 @@ inline void debugC(uint32 engine_level, const char *s, ...) {}
 
 
 /**
- * Print a debug message to the text console (stderr).
+ * Print a debug message to the text console (stdout).
  * Automatically appends a newline.
  */
 void debug(const char *s, ...) GCC_PRINTF(1, 2);
 
 /**
- * Print a debug message to the text console (stderr), but only if
+ * Print a debug message to the text console (stdout), but only if
  * the specified level does not exceed the value of gDebugLevel.
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
@@ -126,7 +126,7 @@ void debug(const char *s, ...) GCC_PRINTF(1, 2);
 void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
- * Print a debug message to the text console (stderr), but only if
+ * Print a debug message to the text console (stdout), but only if
  * the specified level does not exceed the value of gDebugLevel.
  * As a rule of thumb, the more important the message, the lower the level.
  * Does not append a newline.
@@ -134,7 +134,7 @@ void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
 void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
- * Print a debug message to the text console (stderr), but only if
+ * Print a debug message to the text console (stdout), but only if
  * the specified level does not exceed the value of gDebugLevel OR
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
@@ -145,7 +145,7 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
 
 /**
- * Print a debug message to the text console (stderr), but only if
+ * Print a debug message to the text console (stdout), but only if
  * the specified special debug level is active.
  * Automatically appends a newline.
  *
