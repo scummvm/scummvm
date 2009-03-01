@@ -1002,13 +1002,13 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 
 #define COLOR_MIX(type, dist) ((color1.type * dist) + (color2.type * (1.0 - dist)))
 
-int _gfxop_matchColor(gfx_state_t *state, byte r, byte g, byte b) {
+int _gfxop_matchColor(gfx_state_t *state, const gfx_pixmap_color_t &color) {
 	int i, delta, bestindex = -1, bestdelta = 200000;
 
 	for (i = 0; i < state->static_palette_entries; i++) {
-		int dr = abs(state->static_palette[i].r - r);
-		int dg = abs(state->static_palette[i].g - g);
-		int db = abs(state->static_palette[i].b - b);
+		int dr = abs(state->static_palette[i].r - color.r);
+		int dg = abs(state->static_palette[i].g - color.g);
+		int db = abs(state->static_palette[i].b - color.b);
 
 		delta = dr * dr + dg * dg + db * db;
 
@@ -1092,8 +1092,7 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
 		if (color1.visual.global_index == -1)
-			color1.visual.global_index = _gfxop_matchColor(state, color1.visual.r, color1.visual.g,
-				color1.visual.b);
+			color1.visual.global_index = _gfxop_matchColor(state, color1.visual);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
 	} else {
 		if (PALETTE_MODE) {
@@ -1942,10 +1941,9 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 
 		if (!pxm->data) {
 			// Matching pixmap's colors to current system palette if needed
-			for (int i = 0; i < pxm->colors_nr; i++) {
-				if (pxm->colors[i].global_index == -1)
-					pxm->colors[i].global_index = _gfxop_matchColor(state, pxm->colors[i].r, pxm->colors[i].g,
-					pxm->colors[i].b);
+			for (int j = 0; j < pxm->colors_nr; j++) {
+				if (pxm->colors[j].global_index == -1)
+					pxm->colors[j].global_index = _gfxop_matchColor(state, pxm->colors[j]);
 			}
 
 			gfx_xlate_pixmap(pxm, state->driver->mode, state->options->text_xlate_filter);
