@@ -105,6 +105,7 @@ inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
 inline void debugC(int level, uint32 engine_level, const char *s, ...) {}
+inline void debugC(uint32 engine_level, const char *s, ...) {}
 
 
 #else
@@ -141,7 +142,16 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
  *
  * @see enableDebugChannel
  */
-void debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
+void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
+
+/**
+ * Print a debug message to the text console (stderr), but only if
+ * the specified special debug level is active.
+ * Automatically appends a newline.
+ *
+ * @see enableDebugChannel
+ */
+void debugC(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
 
 #endif

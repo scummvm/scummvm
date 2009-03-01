@@ -214,12 +214,25 @@ void debugN(int level, const char *s, ...) {
 	va_end(va);
 }
 
-void debugC(int level, uint32 engine_level, const char *s, ...) {
+void debugC(int level, uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
 	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
 	if (gDebugLevel != 11)
-		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
+		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & debugChannels))
+			return;
+
+	va_start(va, s);
+	debugHelper(s, va);
+	va_end(va);
+}
+
+void debugC(uint32 debugChannels, const char *s, ...) {
+	va_list va;
+
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel != 11)
+		if (!(Common::gDebugLevelsEnabled & debugChannels))
 			return;
 
 	va_start(va, s);
