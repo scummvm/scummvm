@@ -119,7 +119,7 @@ void registerDefaults() {
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 127);
 	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("voice_volume", 127);
 
 	// Game specific
 	ConfMan.registerDefault("path", ".");
@@ -296,7 +296,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_OPTION('s', "sfx-volume")
 			END_OPTION
 
-			DO_OPTION('r', "speech-volume")
+			DO_OPTION('r', "voice-volume")
 			END_OPTION
 
 			DO_LONG_OPTION("transcript")
