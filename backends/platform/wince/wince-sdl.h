@@ -209,6 +209,8 @@ private:
 
 	bool _usesEmulatedMouse;	// emulated mousemove ever been used in this session
 
+	bool _canBeAspectScaled;	// game screen size allows for aspect scaling
+
 	int _scaleFactorXm;		// scaler X *
 	int _scaleFactorXd;		// scaler X /
 	int _scaleFactorYm;		// scaler Y *

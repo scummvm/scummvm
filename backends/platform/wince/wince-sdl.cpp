@@ -478,7 +478,7 @@ Common::WriteStream *OSystem_WINCE3::createConfigWriteStream() {
 
 
 OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
-	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
+	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false), _canBeAspectScaled(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
 	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false), _noDoubleTapRMB(false),
@@ -1097,8 +1097,11 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 		ConfMan.flushToDisk();
 	}
 
-	if (w == 320 && h == 200 && !_hasSmartphoneResolution)
+	_canBeAspectScaled = false;
+	if (w == 320 && h == 200 && !_hasSmartphoneResolution) {
+		_canBeAspectScaled = true;
 		h = 240; // use the extra 40 pixels height for the toolbar
+	}
 
 	if (h == 400)	// touche engine fixup
 		h += 80;
@@ -1166,8 +1169,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_modeFlags = 0;
 			}
 		} else if ( _orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
-			Common::String gameid(ConfMan.get("gameid"));	// consider removing this check and start honoring the _videoMode.aspectRatio flag
-			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && !(strncmp(gameid.c_str(), "zak", 3) == 0)) {
+			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && _canBeAspectScaled) {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 6;
