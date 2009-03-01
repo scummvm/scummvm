@@ -1,6 +1,6 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 0.12.0
+Release version: 0.13.0
 ------------------------------------------------------------------------
 
 New in this version
