@@ -35,7 +35,7 @@
 #include "sci/sci_memory.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
-#include "sci/sfx/sfx_engine.h"
+#include "sci/sfx/core.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
 
