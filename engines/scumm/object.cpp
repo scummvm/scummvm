@@ -589,9 +589,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
 		return;
 
-	ptr = getOBIMFromObjectData(od);
-	ptr = getObjectImage(ptr, getState(od.obj_nr));
+	// For objects without image in Apple II & Commodore 64 versions of Maniac Mansion
+	if (_game.version == 0 && od.OBIMoffset == 0)
+		return;
 
+	ptr = getObjectImage(getOBIMFromObjectData(od), getState(od.obj_nr));
 	if (!ptr)
 		return;
 
@@ -1220,10 +1222,6 @@ byte *ScummEngine::getOBCDFromObject(int obj) {
 
 const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 	const byte *ptr;
-
-	// For objects without image in C64 version of Maniac Mansion
-	if (_game.version == 0 && od.OBIMoffset == 0)
-		return NULL;
 
 	if (od.fl_object_index) {
 		ptr = getResourceAddress(rtFlObject, od.fl_object_index);
