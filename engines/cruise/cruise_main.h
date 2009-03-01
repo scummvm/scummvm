@@ -109,7 +109,6 @@ int getProcParam(int overlayIdx, int param2, const char * name);
 void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);
 uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
 void removeExtention(const char *name, char *buffer);
-void resetRaster(uint8 * rasterPtr, int32 rasterSize);
 void resetPtr2(scriptInstanceStruct * ptr);
 void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);

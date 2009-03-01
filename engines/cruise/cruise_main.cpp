@@ -43,10 +43,6 @@ void drawBlackSolidBoxSmall() {
 	drawSolidBox(64, 100, 256, 117, 0);
 }
 
-void resetRaster(uint8 *rasterPtr, int32 rasterSize) {
-	memset(rasterPtr, 0, rasterSize);
-}
-
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
 	changeCursor(CURSOR_DISK);
 
@@ -1267,7 +1263,6 @@ void closeAllMenu(void) {
 }
 
 int processInput(void) {
-	static bool pausedButtonDown = false;
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1312,7 +1307,9 @@ int processInput(void) {
 	if (keyboardCode == Common::KEYCODE_p) {
 		keyboardCode = Common::KEYCODE_INVALID;
 		_vm->pauseEngine(true);
+		mouseOff();
 
+		bool pausedButtonDown = false;
 		while (!_vm->shouldQuit()) {
 			getMouseStatus(&main10, &mouseX, &button, &mouseY);
 
@@ -1331,8 +1328,8 @@ int processInput(void) {
 			return 1;
 
 		keyboardCode = Common::KEYCODE_INVALID;
-		pausedButtonDown = false;
 		_vm->pauseEngine(false);
+		mouseOn();
 		return 0;
 	}
 

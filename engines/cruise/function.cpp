@@ -666,7 +666,7 @@ int16 Op_RemoveCell(void) {
 	return 0;
 }
 
-int16 fontFileIndex;
+int16 fontFileIndex = -1;
 
 int16 Op_SetFont(void) {
 	fontFileIndex = popVar();
