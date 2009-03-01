@@ -472,6 +472,7 @@ void TuckerEngine::mainLoop() {
 					_mainSpritesBaseOffset = 1;
 				}
 			}
+			_fullRedrawCounter = 2;
 		} else {
 			_currentGfxBackground = _quadBackgroundGfxBuf;
 		}
