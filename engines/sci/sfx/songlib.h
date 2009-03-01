@@ -30,7 +30,7 @@
 
 #include "common/scummsys.h"
 
-#include "sci/sfx/sfx_iterator.h"
+#include "sci/sfx/iterator.h"
 
 namespace Sci {
 

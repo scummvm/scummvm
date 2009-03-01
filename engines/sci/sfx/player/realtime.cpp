@@ -28,7 +28,7 @@
 ** enough, I guess.  */
 
 #include "sci/tools.h"
-#include "sci/sfx/sfx_player.h"
+#include "sci/sfx/player.h"
 #include "sci/sfx/sequencer.h"
 
 #include "common/system.h"

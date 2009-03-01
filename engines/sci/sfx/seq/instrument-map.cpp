@@ -27,7 +27,7 @@
 #include "sci/sfx/sci_midi.h"
 #include "sci/sci_memory.h"
 #include "sci/sfx/seq/instrument-map.h"
-#include "sci/sfx/sfx_engine.h"
+#include "sci/sfx/core.h"
 
 namespace Sci {
 

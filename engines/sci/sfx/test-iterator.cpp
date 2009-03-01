@@ -23,8 +23,8 @@
  *
  */
 
-#include <sfx_iterator.h>
-#include "sfx_iterator_internal.h"
+#include "iterator.h"
+#include "iterator_internal.h"
 #include <stdarg.h>
 #include <stdio.h>
 

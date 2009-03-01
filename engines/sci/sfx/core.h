@@ -27,12 +27,15 @@
 #ifndef SCI_SFX_SFX_ENGINE_H
 #define SCI_SFX_SFX_ENGINE_H
 
-#include "sci/sfx/sfx_core.h"
-#include "sci/sfx/sfx_songlib.h"
-#include "sci/sfx/sfx_iterator.h"
+#include "sci/sfx/sfx.h"
+#include "sci/sfx/songlib.h"
+//#include "sci/sfx/iterator.h"
 #include "sci/scicore/resource.h"
 
 namespace Sci {
+
+struct song_iterator_t;
+
 
 #define SOUND_TICK 1000 / 60
 /* Approximately 17 milliseconds */

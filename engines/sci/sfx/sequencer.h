@@ -29,7 +29,7 @@
 
 #include "common/scummsys.h"
 
-#include "sci/sfx/sfx_core.h"
+#include "sci/sfx/sfx.h"
 #include "sci/sfx/device.h"
 
 namespace Sci {

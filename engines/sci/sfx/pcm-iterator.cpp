@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/sfx/sfx_iterator.h"
+#include "sci/sfx/iterator.h"
 #include "sci/tools.h" /* for BREAKPOINT */
 #include "sci/sci_memory.h"
 

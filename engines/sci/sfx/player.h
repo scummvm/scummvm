@@ -28,8 +28,8 @@
 #ifndef SCI_SFX_SFX_PLAYER_H
 #define SCI_SFX_SFX_PLAYER_H
 
-#include "sci/sfx/sfx_engine.h"
-#include "sci/sfx/sfx_iterator.h"
+#include "sci/sfx/core.h"
+#include "sci/sfx/iterator.h"
 #include "sci/scicore/resource.h"
 
 #include "common/scummsys.h"

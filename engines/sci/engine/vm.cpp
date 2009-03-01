@@ -34,7 +34,7 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/gc.h"
-#include "sci/sfx/sfx_player.h"
+#include "sci/sfx/player.h"
 
 namespace Sci {
 

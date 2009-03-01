@@ -41,7 +41,7 @@ namespace Common {
 #include "sci/scicore/versions.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_state_internal.h"
-#include "sci/sfx/sfx_engine.h"
+#include "sci/sfx/core.h"
 
 namespace Sci {
 
