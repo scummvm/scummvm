@@ -574,12 +574,22 @@ Readme file for more information on this.
 
 The control scheme is awkward (Pocket PCs)
 ------------------------------------------
+
 Map and use the 'Free Look' action. Since normal pointer operation is to
 enter a left click at each tap position, the free look mode enables
 'hovering' the mouse on an object, then right clicking either by using the
 double tap method or by pressing the 'Right Click' action. Also, a left click
 can be entered while in free look mode, by clicking a second time near the
 current pointer's location. Note that two taps equal a left click.
+
+---------------
+-- Discworld --
+---------------
+
+By default, the double tap to right click action is disabled in this game
+as this interferes with the game's controls. This setting can be overridden
+(see 'no_doubletap_rightclick' parameter above).
+
 
 ------------------------------------------------------------------------
 Support

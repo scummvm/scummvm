@@ -122,11 +122,12 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
 	bool is_tucker = (gameid == "tucker");
 	bool is_groovie = (gameid == "groovie");
+	bool is_tinsel = (gameid == "tinsel");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
-	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob ||
+	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel ||
 			is_samnmax || is_cine || is_touche || is_parallaction || is_drascula)
 		_right_click_needed = true;
 
@@ -149,13 +150,16 @@ void CEActionsSmartphone::initInstanceGame() {
 	} else if (is_parallaction) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setKey('s', SDLK_s);
+	} else if (is_tinsel) {
+		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
+		_key_action[SMARTPHONE_ACTION_SAVE].setKey(Common::ASCII_F1, SDLK_F1);
 	} else {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker || is_groovie)
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(VK_ESCAPE);
 	else

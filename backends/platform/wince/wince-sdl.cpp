@@ -1083,6 +1083,11 @@ void OSystem_WINCE3::update_game_settings() {
 
 	if (ConfMan.hasKey("no_doubletap_rightclick"))
 		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
+	else if (gameid == "tinsel") {
+		_noDoubleTapRMB = true;
+		ConfMan.setBool("no_doubletap_rightclick", true);
+		ConfMan.flushToDisk();
+	}
 
 	compute_sample_rate();
 }
