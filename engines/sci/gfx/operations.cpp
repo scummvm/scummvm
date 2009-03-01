@@ -1002,24 +1002,6 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 
 #define COLOR_MIX(type, dist) ((color1.type * dist) + (color2.type * (1.0 - dist)))
 
-int _gfxop_matchColor(gfx_state_t *state, const gfx_pixmap_color_t &color) {
-	int i, delta, bestindex = -1, bestdelta = 200000;
-
-	for (i = 0; i < state->static_palette_entries; i++) {
-		int dr = abs(state->static_palette[i].r - color.r);
-		int dg = abs(state->static_palette[i].g - color.g);
-		int db = abs(state->static_palette[i].b - color.b);
-
-		delta = dr * dr + dg * dg + db * db;
-
-		if (delta < bestdelta) {
-			bestdelta = delta;
-			bestindex = i;
-		}
-	}
-	return bestindex;
-}
-
 int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	gfx_driver_t *drv = state->driver;
 	int reverse = 0; // switch color1 and color2
@@ -1091,8 +1073,7 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	// Reverse offset if we have to interpret colors inversely
 
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
-		if (color1.visual.global_index == -1)
-			color1.visual.global_index = _gfxop_matchColor(state, color1.visual);
+		gfxop_set_color(state, &color1, color1.visual.r, color1.visual.g, color1.visual.b, 0, 0, 0);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
 	} else {
 		if (PALETTE_MODE) {
@@ -1941,9 +1922,11 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 
 		if (!pxm->data) {
 			// Matching pixmap's colors to current system palette if needed
+			gfx_color_t matched;
 			for (int j = 0; j < pxm->colors_nr; j++) {
-				if (pxm->colors[j].global_index == -1)
-					pxm->colors[j].global_index = _gfxop_matchColor(state, pxm->colors[j]);
+				gfxop_set_color(state, &matched, pxm->colors[j].r, pxm->colors[j].g, pxm->colors[j].b,
+					0, 0, 0);
+				pxm->colors[j].global_index = matched.visual.global_index;
 			}
 
 			gfx_xlate_pixmap(pxm, state->driver->mode, state->options->text_xlate_filter);
