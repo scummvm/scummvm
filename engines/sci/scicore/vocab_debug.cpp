@@ -32,6 +32,7 @@ namespace Sci {
 // Default kernel name table
 #define SCI0_KNAMES_WELL_DEFINED 0x6e
 #define SCI0_KNAMES_DEFAULT_ENTRIES_NR 0x72
+#define SCI1_KNAMES_DEFAULT_ENTRIES_NR 0x7E
 
 const char *sci0_default_knames[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x00*/ "Load",
@@ -148,6 +149,135 @@ const char *sci0_default_knames[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x6f*/ "CosDiv",
 	/*0x70*/ "Graph",
 	/*0x71*/ SCRIPT_UNKNOWN_FUNCTION_STRING
+};
+
+const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
+	"Load",
+	"UnLoad",
+	"ScriptID",
+	"DisposeScript",
+	"Clone",
+	"DisposeClone",
+	"IsObject",
+	"RespondsTo",
+	"DrawPic",
+	"Show",
+	"PicNotValid",
+	"Animate",
+	"SetNowSeen",
+	"NumLoops",
+	"NumCels",
+	"CelWide",
+	"CelHigh",
+	"DrawCel",
+	"AddToPic",
+	"NewWindow",
+	"GetPort",
+	"SetPort",
+	"DisposeWindow",
+	"DrawControl",
+	"HiliteControl",
+	"EditControl",
+	"TextSize",
+	"Display",
+	"GetEvent",
+	"GlobalToLocal",
+	"LocalToGlobal",
+	"MapKeyToDir",
+	"DrawMenuBar",
+	"MenuSelect",
+	"AddMenu",
+	"DrawStatus",
+	"Parse",
+	"Said",
+	"SetSynonyms",
+	"HaveMouse",
+	"SetCursor",
+	"SaveGame",
+	"RestoreGame",
+	"RestartGame",
+	"GameIsRestarting",
+	"DoSound",
+	"NewList",
+	"DisposeList",
+	"NewNode",
+	"FirstNode",
+	"LastNode",
+	"EmptyList",
+	"NextNode",
+	"PrevNode",
+	"NodeValue",
+	"AddAfter",
+	"AddToFront",
+	"AddToEnd",
+	"FindKey",
+	"DeleteKey",
+	"Random",
+	"Abs",
+	"Sqrt",
+	"GetAngle",
+	"GetDistance",
+	"Wait",
+	"GetTime",
+	"StrEnd",
+	"StrCat",
+	"StrCmp",
+	"StrLen",
+	"StrCpy",
+	"Format",
+	"GetFarText",
+	"ReadNumber",
+	"BaseSetter",
+	"DirLoop",
+	"CanBeHere",
+	"OnControl",
+	"InitBresen",
+	"DoBresen",
+	"DoAvoider",
+	"SetJump",
+	"SetDebug",
+	"InspectObj",
+	"ShowSends",
+	"ShowObjs",
+	"ShowFree",
+	"MemoryInfo",
+	"StackUsage",
+	"Profiler",
+	"GetMenu",
+	"SetMenu",
+	"GetSaveFiles",
+	"GetCWD",
+	"CheckFreeSpace",
+	"ValidPath",
+	"CoordPri",
+	"StrAt",
+	"DeviceInfo",
+	"GetSaveDir",
+	"CheckSaveGame",
+	"ShakeScreen",
+	"FlushResources",
+	"SinMult",
+	"CosMult",
+	"SinDiv",
+	"CosDiv",
+	"Graph",
+	"Joystick",
+	"ShiftScreen",
+	"Palette",
+	"MemorySegment",
+	"Intersections",
+	"Memory",
+	"ListOps",
+	"FileIO",
+	"DoAudio",
+	"DoSync",
+	"AvoidPath",
+	"Sort",
+	"ATan",
+	"Lock",         
+	"StrSplit",       
+	"GetMessage",
+	SCRIPT_UNKNOWN_FUNCTION_STRING
 };
 
 int getInt(unsigned char* d) {
@@ -346,7 +476,17 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	char **t = NULL;
 	unsigned int size = 64, used = 0, pos = 0;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+	if(r == NULL) {// failed to open vocab.999 (happens with SCI1 demos)
+		t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
+		*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
 
+		for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
+			t[i] = sci_strdup(sci1_default_knames[i]);
+
+		t[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = NULL; // Terminate list
+
+		return t;
+	}
 	while (pos < r->size) {
 		int len;
 		if ((used == size - 1) || (!t)) {
@@ -365,6 +505,38 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 
 	return t;
 }
+//
+static char **vocabulary_get_knames11(ResourceManager *resmgr, int *count) {
+/*
+ 999.voc format for SCI1.1 games:
+	[b] # of kernel functions
+	[w] unknown
+	[offset to function name info]
+		...
+    {[w name-len][function name]}
+		...
+*/
+	char **t = NULL;
+	unsigned int size = 64, pos = 3;
+	int len;
+	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
+		return 0; // FIXME: should return a default table for this engine 
+	byte nCnt = *r->data, i;
+	t = (char **)sci_malloc(nCnt * sizeof(char*) + 1);
+	
+	for (i = 0; i < nCnt; i++) {
+		int off = READ_LE_UINT16(r->data + 2 * i + 2);
+		len = READ_LE_UINT16(r->data + off);
+		t[i] = (char *)sci_malloc(len + 1);
+		memcpy(t[i], (char *)r->data + off + 2, len);
+		t[i][len] = 0;
+	}
+	*count = nCnt;
+	t[nCnt] = NULL;
+
+	return t;
+}
 
 char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
 	switch (resmgr->_sciVersion) {
@@ -375,9 +547,10 @@ char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
 		return vocabulary_get_knames0(resmgr, count);
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
+		return vocabulary_get_knames1(resmgr, count);
 	case SCI_VERSION_1_1:
 	case SCI_VERSION_32:
-		return vocabulary_get_knames1(resmgr, count);
+		return vocabulary_get_knames11(resmgr, count);
 	default:
 		return 0;
 	}
