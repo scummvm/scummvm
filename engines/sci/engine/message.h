@@ -43,7 +43,7 @@ struct IndexRecordCursor {
 	byte *resource_beginning;
 };
 
-typedef int index_record_size_t();
+//typedef int index_record_size_t();
 typedef void parse_index_record_t(IndexRecordCursor *index_record, MessageTuple *t);
 typedef int get_talker_t(IndexRecordCursor *cursor);
 typedef void get_text_t(IndexRecordCursor *cursor, char *buffer, int buffer_size);
@@ -60,23 +60,26 @@ struct MessageHandler {
 	int index_record_size;
 };
 
-struct MessageState {
+class MessageState {
+public:
+	int getSpecific(MessageTuple *t);
+	int getNext();
+	int getTalker();
+	int getLength();
+	int getText(char *buffer, int length);
+	int loadRes(int module);
+
+public: // TODO: hide the internals
 	int initialized;
 	MessageHandler *handler;
 	ResourceManager *resmgr;
 	Resource *current_res;
-	int module;
+	int _module;
 	int record_count;
 	byte *index_records;
 	IndexRecordCursor engine_cursor;
 };
 
-int message_get_specific(MessageState *state, MessageTuple *t);
-int message_get_next(MessageState *state);
-int message_get_talker(MessageState *state);
-int message_get_length(MessageState *state);
-int message_get_text(MessageState *state, char *buffer, int length);
-int message_state_load_res(MessageState *state, int module);
 void message_state_initialize(ResourceManager *resmgr, MessageState *state);
 
 } // End of namespace Sci

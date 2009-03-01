@@ -750,10 +750,11 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		tuple.cond = UKPV(4);
 		tuple.seq = UKPV(5);
 
-		if (message_state_load_res(&state, module) && message_get_specific(&state, &tuple)) {
+		if (state.loadRes(module) && state.getSpecific(&tuple)) {
 			if (buffer)
-				message_get_text(&state, buffer, 100);
-			return make_reg(0, message_get_talker(&state)); /* Talker id */
+				state.getText(buffer, 100);
+			// Talker id
+			return make_reg(0, state.getTalker());
 		} else {
 			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
 			return NULL_REG;
@@ -762,10 +763,11 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 1 : {
 		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
 
-		if (message_get_next(&state)) {
+		if (state.getNext()) {
 			if (buffer)
-				message_get_text(&state, buffer, 100);
-			return make_reg(0, message_get_talker(&state)); /* Talker id */
+				state.getText(buffer, 100);
+			// Talker id
+			return make_reg(0, state.getTalker());
 		} else {
 			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
 			return NULL_REG;
@@ -779,8 +781,8 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		tuple.cond = UKPV(4);
 		tuple.seq = UKPV(5);
 
-		if (message_state_load_res(&state, module) && message_get_specific(&state, &tuple))
-			return make_reg(0, message_get_length(&state) + 1);
+		if (state.loadRes(module) && state.getSpecific(&tuple))
+			return make_reg(0, state.getLength() + 1);
 		else return NULL_REG;
 	}
 	}

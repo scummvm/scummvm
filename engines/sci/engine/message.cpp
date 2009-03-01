@@ -132,46 +132,46 @@ static int index_record_find(MessageState *state, MessageTuple *t, IndexRecordCu
 	return found;
 }
 
-int message_get_specific(MessageState *state, MessageTuple *t) {
-	return index_record_find(state, t, &state->engine_cursor);
+int MessageState::getSpecific(MessageTuple *t) {
+	return index_record_find(this, t, &engine_cursor);
 }
 
-int message_get_next(MessageState *state) {
-	return index_record_next(state, &state->engine_cursor);
+int MessageState::getNext() {
+	return index_record_next(this, &engine_cursor);
 }
 
-int message_get_talker(MessageState *state) {
-	return state->handler->get_talker(&state->engine_cursor);
+int MessageState::getTalker() {
+	return handler->get_talker(&engine_cursor);
 }
 
-int message_get_text(MessageState *state, char *buffer, int length) {
-	state->handler->get_text(&state->engine_cursor, buffer, length);
+int MessageState::getText(char *buffer, int length) {
+	handler->get_text(&engine_cursor, buffer, length);
 	return strlen(buffer);
 }
 
-int message_get_length(MessageState *state) {
+int MessageState::getLength() {
 	char buffer[500];
 
-	state->handler->get_text(&state->engine_cursor, buffer, sizeof(buffer));
+	handler->get_text(&engine_cursor, buffer, sizeof(buffer));
 	return strlen(buffer);
 }
 
-int message_state_load_res(MessageState *state, int module) {
-	if (state->module == module)
+int MessageState::loadRes(int module) {
+	if (_module == module)
 		return 1;
 
-	state->module = module;
-	state->current_res = state->resmgr->findResource(kResourceTypeMessage, module, 0);
+	_module = module;
+	current_res = resmgr->findResource(kResourceTypeMessage, module, 0);
 
-	if (state->current_res == NULL || state->current_res->data == NULL) {
+	if (current_res == NULL || current_res->data == NULL) {
 		sciprintf("Message subsystem: Failed to load %d.MSG\n", module);
 		return 0;
 	}
 
-	state->record_count = state->handler->index_record_count(state->current_res->data);
-	state->index_records = state->current_res->data + state->handler->header_size;
+	record_count = handler->index_record_count(current_res->data);
+	index_records = current_res->data + handler->header_size;
 
-	index_record_cursor_initialize(state, &state->engine_cursor);
+	index_record_cursor_initialize(this, &engine_cursor);
 	return 1;
 }
 
@@ -195,7 +195,7 @@ void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
 	//version = getUInt16(tester->data);
 
 	state->initialized = 1;
-	state->module = -1;
+	state->_module = -1;
 	state->resmgr = resmgr;
 	state->current_res = NULL;
 	state->record_count = 0;
