@@ -193,15 +193,20 @@ void Engine::checkCD() {
 	// if it's running from CD.
 
 #ifdef USE_VORBIS
-	if (Common::File::exists("track1.ogg"))
+	if (Common::File::exists("track1.ogg") ||
+	    Common::File::exists("track01.ogg"))
 		return;
 #endif
 #ifdef USE_FLAC
-	if (Common::File::exists("track1.fla") || Common::File::exists("track1.flac"))
+	if (Common::File::exists("track1.fla") ||
+            Common::File::exists("track1.flac") ||
+	    Common::File::exists("track01.fla") ||
+	    Common::File::exists("track01.flac"))
 		return;
 #endif
 #ifdef USE_MAD
-	if (Common::File::exists("track1.mp3"))
+	if (Common::File::exists("track1.mp3") ||
+	    Common::File::exists("track01.mp3"))
 		return;
 #endif
 
