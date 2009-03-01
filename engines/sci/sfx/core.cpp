@@ -33,6 +33,7 @@
 
 #include "common/system.h"
 #include "common/timer.h"
+#include "sound/mixer.h"
 
 namespace Sci {
 
@@ -43,11 +44,10 @@ int sciprintf(char *msg, ...);
 #endif
 
 static sfx_player_t *player = NULL;
-sfx_pcm_mixer_t *mixer = NULL;
 
 
 int sfx_pcm_available() {
-	return (mixer != NULL);
+	return g_system->getMixer()->isReady();
 }
 
 void sfx_reset_player() {
@@ -340,11 +340,11 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
 #endif
-	if (mixer) {
+	if (g_system->getMixer()->isReady()) {
 		sfx_pcm_feed_t *newfeed = it->get_pcm_feed(it);
 		if (newfeed) {
 			newfeed->debug_nr = (int) handle;
-			mixer->subscribe(mixer, newfeed);
+			mixer_subscribe(newfeed);
 			return 1;
 		}
 	}
@@ -362,8 +362,7 @@ static void _sfx_timer_callback(void *data) {
 	if (player)
 		player->maintenance();
 
-	if (mixer)
-		mixer->process(mixer);
+	mixer_process();
 }
 
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
@@ -373,28 +372,17 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	self->debug = 0; /* Disable all debugging by default */
 
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
-		mixer = NULL;
 		player = NULL;
 		sciprintf("[SFX] Sound disabled.\n");
 		return;
 	}
 
-	mixer = getMixer();
 	player = sfx_find_player(NULL);
 
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Initialising: flags=%x\n", flags);
 #endif
-
-	/*------------------*/
-	/* Initialise mixer */
-	/*------------------*/
-
-	if (mixer->init(mixer)) {
-		sciprintf("[SFX] Failed to initialise PCM mixer; disabling PCM support\n");
-		mixer = NULL;
-	}
 
 	/*-------------------*/
 	/* Initialise player */
@@ -421,12 +409,11 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	// timer callback being triggered while the mixer or player are
 	// still being initialized.
 
-	if (mixer || (player && player->maintenance)) {
+	if (g_system->getMixer()->isReady() || (player && player->maintenance)) {
 		if (!g_system->getTimerManager()->installTimerProc(&_sfx_timer_callback, DELAY, NULL)) {
 			warning("[SFX] " __FILE__": Timer failed to initialize");
 			warning("[SFX] Disabled sound support");
 			player = NULL;
-			mixer = NULL;
 			return;
 		}
 	} /* With no PCM device and no player, we don't need a timer */
@@ -446,16 +433,12 @@ void sfx_exit(sfx_state_t *self) {
 
 	song_lib_free(self->songlib);
 
-	/* WARNING: The mixer may hold feeds from the
-	** player, so we must stop the mixer BEFORE
-	** stopping the player. */
-	if (mixer) {
-		mixer->exit(mixer);
-		mixer = NULL;
-	}
+	// WARNING: The mixer may hold feeds from the player, so we must
+	// stop the mixer BEFORE stopping the player.
+	g_system->getMixer()->stopAll();
 
 	if (player)
-		/* See above: This must happen AFTER stopping the mixer */
+		// See above: This must happen AFTER stopping the mixer
 		player->exit();
 }
 

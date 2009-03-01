@@ -161,9 +161,6 @@ static int pp_set_option(char *name, char *value) {
 static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	Resource *res = NULL, *res2 = NULL;
 
-	if (!mixer)
-		return SFX_ERROR;
-
 	/* FIXME Temporary hack to detect Amiga games. */
 	if (!Common::File::exists("bank.001"))
 		seq = sfx_find_softseq(NULL);
@@ -196,7 +193,7 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	pcmfeed.conf = seq->pcm_conf;
 
 	seq->set_volume(seq, volume);
-	mixer->subscribe(mixer, &pcmfeed);
+	mixer_subscribe(&pcmfeed);
 
 	sfx_player_polled.polyphony = seq->polyphony;
 	return SFX_OK;
