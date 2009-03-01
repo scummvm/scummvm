@@ -32,8 +32,6 @@
 
 namespace Sci {
 
-void decryptinit3();
-int decrypt3(uint8* dest, uint8* src, int length, int complength);
 int decrypt4(uint8* dest, uint8* src, int length, int complength);
 
 int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) {
@@ -48,6 +46,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	uint16 type = result->id & 0x7f;
 	if (type > kResourceTypeInvalid)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
+
 	result->type = (ResourceType)type;
 
 	result->number = stream.readUint16LE();
@@ -72,8 +71,8 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (uint8*)sci_malloc(compressedLength);
-	result->data = (unsigned char*)sci_malloc(result->size);
+	buffer = (uint8 *)sci_malloc(compressedLength);
+	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
@@ -135,7 +134,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 		        result->number, getResourceTypeSuffix(result->type),
 		        compressionMethod);
 		free(result->data);
-		result->data = NULL; // So that we know that it didn't work
+		result->data = 0; // So that we know that it didn't work
 		result->status = SCI_STATUS_NOMALLOC;
 		free(buffer);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;

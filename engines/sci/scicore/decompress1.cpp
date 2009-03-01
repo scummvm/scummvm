@@ -261,6 +261,7 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;
+	uint16 type;
 
 	if (sci_version == SCI_VERSION_1_EARLY) {
 		result->id = stream.readUint16LE();
@@ -268,10 +269,7 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 			return SCI_ERROR_IO_ERROR;
 
 		result->number = result->id & 0x07ff;
-		uint16 type = result->id >> 11;
-
-		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_EARLY]) || (type > kResourceTypeInvalid))
-			return SCI_ERROR_DECOMPRESSION_INSANE;
+		type = result->id >> 11;
 
 		result->type = (ResourceType)type;
 	} else {
@@ -279,16 +277,16 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
 
-		uint16 type = result->id & 0x7f;
+		type = result->id & 0x7f;
 		result->number = stream.readUint16LE();
 		if (stream.err())
 			return SCI_ERROR_IO_ERROR;
 
-		if ((result->number >= sci_max_resource_nr[SCI_VERSION_1_LATE]) || (type > kResourceTypeInvalid))
-			return SCI_ERROR_DECOMPRESSION_INSANE;
-
 		result->type = (ResourceType)type;
 	}
+
+	if ((result->number > sci_max_resource_nr[sci_version]) || (type > kResourceTypeInvalid))
+		return SCI_ERROR_DECOMPRESSION_INSANE;
 
 	compressedLength = stream.readUint16LE();
 	result->size = stream.readUint16LE();

@@ -269,7 +269,7 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 		return SCI_ERROR_EMPTY_OBJECT;
 	}
 
-	buffer = (uint8*)sci_malloc(compressedLength);
+	buffer = (uint8 *)sci_malloc(compressedLength);
 	result->data = (unsigned char *)sci_malloc(result->size);
 
 	if (stream.read(buffer, compressedLength) != compressedLength) {
