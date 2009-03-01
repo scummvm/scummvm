@@ -102,7 +102,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 				if (token > 0xff) {
 					if (token >= tokenctr) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						fprintf(stderr, "decrypt1: Bad token %x!\n", token);
+						warning("decrypt1: Bad token %x", token);
 #endif
 						// Well this is really bad
 						// May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE
@@ -111,7 +111,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 						if (destctr + tokenlastlength > length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 							// For me this seems a normal situation, It's necessary to handle it
-							printf("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)!\n",
+							warning("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
 							       length, destctr, tokenlastlength);
 #endif
 							i = 0;
@@ -128,7 +128,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 					tokenlastlength = 1;
 					if (destctr >= length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						printf("decrypt1: Try to write single byte beyond end of array!\n");
+						warning("decrypt1: Try to write single byte beyond end of array");
 #endif
 					} else
 						dest[destctr++] = (byte)token;
@@ -280,12 +280,11 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	fprintf(stderr, "Resource %s.%03hi encrypted with method %hi at %.2f%%"
-	        " ratio\n",
+	debug("Resource %s.%03hi encrypted with method %hi at %.2f%% ratio",
 	        getResourceTypeName(result->type), result->number, compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
-	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	debug("  compressedLength = 0x%hx, actualLength=0x%hx",
 	        compressedLength, result->size);
 #endif
 
@@ -325,8 +324,8 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 		break;
 
 	default:
-		fprintf(stderr, "Resource %s.%03hi: Compression method %hi not "
-		        "supported!\n", getResourceTypeName(result->type), result->number,
+		warning("Resource %s.%03hi: Compression method %hi not supported",
+		        getResourceTypeName(result->type), result->number,
 		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work

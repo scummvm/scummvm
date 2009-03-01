@@ -25,9 +25,11 @@
 
 // Reads data from a resource file and stores the result in memory
 
+#include "common/debug.h"
 #include "common/stream.h"
 #include "common/util.h"
 
+#include "sci/sci.h"
 #include "sci/sci_memory.h"
 #include "sci/scicore/resource.h"
 
@@ -73,7 +75,7 @@ static inline int getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		warning("read out-of-bounds with bytepos %d + morebytes %d >= length %d",
 		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
@@ -90,15 +92,13 @@ static inline int getbits_msb_first(struct bit_read_struct *inp, int bits) {
 	return result;
 }
 
-static int DEBUG_DCL_INFLATE = 0; // FIXME: Make this a define eventually
-
 static inline int getbits(struct bit_read_struct *inp, int bits) {
 	int morebytes = (bits + inp->bitpos - 1) >> 3;
 	int result = 0;
 	int i;
 
 	if (inp->bytepos + morebytes >= inp->length) {
-		fprintf(stderr, "read out-of-bounds with bytepos %d + morebytes %d >= length %d\n",
+		warning("read out-of-bounds with bytepos %d + morebytes %d >= length %d",
 		        inp->bytepos, morebytes, inp->length);
 		return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 	}
@@ -112,8 +112,7 @@ static inline int getbits(struct bit_read_struct *inp, int bits) {
 	inp->bitpos += bits - (morebytes << 3);
 	inp->bytepos += morebytes;
 
-	if (DEBUG_DCL_INFLATE)
-		fprintf(stderr, "(%d:%04x)", bits, result);
+	debugC(kDebugLevelDclInflate, "(%d:%04x)", bits, result);
 
 	return result;
 }
@@ -124,15 +123,13 @@ static int huffman_lookup(struct bit_read_struct *inp, int *tree) {
 
 	while (!(tree[pos] & HUFFMAN_LEAF)) {
 		CALLC(bit = getbits(inp, 1));
-		if (DEBUG_DCL_INFLATE)
-			fprintf(stderr, "[%d]:%d->", pos, bit);
+		debugC(kDebugLevelDclInflate, "[%d]:%d->", pos, bit);
 		if (bit)
 			pos = tree[pos] & ~(~0 << BRANCH_SHIFT);
 		else
 			pos = tree[pos] >> BRANCH_SHIFT;
 	}
-	if (DEBUG_DCL_INFLATE)
-		fprintf(stderr, "=%02x\n", tree[pos] & 0xffff);
+	debugC(kDebugLevelDclInflate, "=%02x\n", tree[pos] & 0xffff);
 	return tree[pos] & 0xffff;
 }
 
@@ -149,23 +146,20 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 
 	if (mode == DCL_ASCII_MODE) {
 		warning("DCL-INFLATE: Decompressing ASCII mode (untested)");
-		//DEBUG_DCL_INFLATE = 1;
 	} else if (mode) {
 		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
 		return 1;
 	}
 
-	if (DEBUG_DCL_INFLATE) {
-		int i;
-
-		for (i = 0; i < reader->length; i++) {
-			fprintf(stderr, "%02x ", reader->data[i]);
+	if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
+		for (int i = 0; i < reader->length; i++) {
+			debugC(kDebugLevelDclInflate, "%02x ", reader->data[i]);
 			if (!((i + 1) & 0x1f))
-				fprintf(stderr, "\n");
+				debugC(kDebugLevelDclInflate, "\n");
 		}
 
 
-		fprintf(stderr, "\n---\n");
+		debugC(kDebugLevelDclInflate, "\n---\n");
 	}
 
 
@@ -188,8 +182,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 				val_length += length_bonus;
 			}
 
-			if (DEBUG_DCL_INFLATE)
-				fprintf(stderr, " | ");
+			debugC(kDebugLevelDclInflate, " | ");
 
 			CALLC(value = huffman_lookup(reader, distance_tree));
 
@@ -206,16 +199,15 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 			}
 			++val_distance;
 
-			if (DEBUG_DCL_INFLATE)
-				fprintf(stderr, "\nCOPY(%d from %d)\n", val_length, val_distance);
+			debugC(kDebugLevelDclInflate, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
 			if (val_length + write_pos > length) {
-				fprintf(stderr, "DCL-INFLATE Error: Write out of bounds while copying %d bytes\n", val_length);
+				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
 				return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
 			}
 
 			if (write_pos < val_distance) {
-				fprintf(stderr, "DCL-INFLATE Error: Attempt to copy from before beginning of input stream\n");
+				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream");
 				return -SCI_ERROR_DECOMPRESSION_INSANE;
 			}
 
@@ -224,11 +216,10 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 
 				memcpy(dest + write_pos, dest + write_pos - val_distance, copy_length);
 
-				if (DEBUG_DCL_INFLATE) {
-					int i;
-					for (i = 0; i < copy_length; i++)
-						fprintf(stderr, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
-					fprintf(stderr, "\n");
+				if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
+					for (int i = 0; i < copy_length; i++)
+						debugC(kDebugLevelDclInflate, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
+					debugC(kDebugLevelDclInflate, "\n");
 				}
 
 				val_length -= copy_length;
@@ -245,8 +236,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 
 			dest[write_pos++] = value;
 
-			if (DEBUG_DCL_INFLATE)
-				fprintf(stderr, "\33[32;31m%02x \33[37;37m", value);
+			debugC(kDebugLevelDclInflate, "\33[32;31m%02x \33[37;37m", value);
 		}
 	}
 
@@ -328,14 +318,13 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	fprintf(stderr, "Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%%"
-	        " ratio\n",
+	debug("Resource %i.%s encrypted with method SCI1%c/%hi at %.2f%% ratio",
 	        result->number, sci_resource_type_suffixes[result->type],
 	        early ? 'e' : 'l',
 	        compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
-	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	debug("  compressedLength = 0x%hx, actualLength=0x%hx",
 	        compressedLength, result->size);
 #endif
 
@@ -402,8 +391,8 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 		break;
 
 	default:
-		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
-		        "supported!\n", getResourceTypeName(result->type), result->number,
+		warning("Resource %s.%03hi: Compression method SCI1/%hi not supported",
+		        getResourceTypeName(result->type), result->number,
 		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work

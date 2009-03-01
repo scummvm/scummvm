@@ -52,7 +52,8 @@ enum kDebugLevels {
 	kDebugLevelFile       = 1 << 13,
 	kDebugLevelTime       = 1 << 14,
 	kDebugLevelRoom       = 1 << 15,
-	kDebugLevelAvoidPath  = 1 << 16
+	kDebugLevelAvoidPath  = 1 << 16,
+	kDebugLevelDclInflate = 1 << 17
 };
 
 struct GameFlags {

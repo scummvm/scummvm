@@ -32,8 +32,6 @@
 
 namespace Sci {
 
-#define DDEBUG if (0) printf
-
 void decryptinit3();
 int decrypt3(uint8* dest, uint8* src, int length, int complength);
 int decrypt4(uint8* dest, uint8* src, int length, int complength);
@@ -42,8 +40,6 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;
-
-	DDEBUG("d1");
 
 	result->id = stream.readByte();
 	if (stream.err())
@@ -90,17 +86,14 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	}
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	fprintf(stderr, "Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%%"
-	        " ratio\n",
+	debug("Resource %i.%s encrypted with method SCI1.1/%hi at %.2f%% ratio",
 	        result->number, getResourceTypeSuffix(result->type),
 	        compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
-	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	debug("  compressedLength = 0x%hx, actualLength=0x%hx",
 	        compressedLength, result->size);
 #endif
-
-	DDEBUG("/%d[%d]", compressionMethod, result->size);
 
 	switch (compressionMethod) {
 	case 0: // no compression
@@ -130,7 +123,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 
 	case 3:
 	case 4: // NYI
-		fprintf(stderr, "Resource %d.%s: Warning: compression type #%d not yet implemented\n",
+		warning("Resource %d.%s: Warning: compression type #%d not yet implemented",
 		        result->number, getResourceTypeSuffix(result->type), compressionMethod);
 		free(result->data);
 		result->data = NULL;
@@ -138,8 +131,8 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 		break;
 
 	default:
-		fprintf(stderr, "Resource %d.%s: Compression method SCI1/%hi not "
-		        "supported!\n", result->number, getResourceTypeSuffix(result->type),
+		warning("Resource %d.%s: Compression method SCI1/%hi not  supported",
+		        result->number, getResourceTypeSuffix(result->type),
 		        compressionMethod);
 		free(result->data);
 		result->data = NULL; // So that we know that it didn't work

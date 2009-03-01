@@ -427,7 +427,7 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	for (l = 0;l < loopheaders;l++) {
 		if (lh_mask & lb) { // The loop is _not_ present
 			if (lh_last == -1) {
-				fprintf(stderr, "Error: While reordering view: Loop not present, but can't re-use last loop!\n");
+				warning("While reordering view: Loop not present, but can't re-use last loop");
 				lh_last = 0;
 			}
 			WRITE_LE_UINT16(lh_ptr, lh_last);
@@ -461,7 +461,7 @@ byte *view_reorder(byte *inbuffer, int dsize) {
 	}
 
 	if (celindex < cel_total) {
-		fprintf(stderr, "View decompression generated too few (%d / %d) headers!\n", celindex, cel_total);
+		warning("View decompression generated too few (%d / %d) headers", celindex, cel_total);
 		return NULL;
 	}
 
@@ -539,12 +539,11 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 
 
 #ifdef _SCI_DECOMPRESS_DEBUG
-	fprintf(stderr, "Resource %s.%03hi encrypted with method SCI01/%hi at %.2f%%"
-	        " ratio\n",
+	debug("Resource %s.%03hi encrypted with method SCI01/%hi at %.2f%% ratio",
 	        sci_resource_types[result->type], result->number, compressionMethod,
 	        (result->size == 0) ? -1.0 :
 	        (100.0 * compressedLength / result->size));
-	fprintf(stderr, "  compressedLength = 0x%hx, actualLength=0x%hx\n",
+	debug("  compressedLength = 0x%hx, actualLength=0x%hx",
 	        compressedLength, result->size);
 #endif
 
@@ -612,8 +611,8 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 		break;
 
 	default:
-		fprintf(stderr, "Resource %s.%03hi: Compression method SCI1/%hi not "
-		        "supported!\n", getResourceTypeName(result->type), result->number,
+		warning("Resource %s.%03hi: Compression method SCI1/%hi not supported",
+		        getResourceTypeName(result->type), result->number,
 		        compressionMethod);
 		free(result->data);
 		result->data = 0; // So that we know that it didn't work
