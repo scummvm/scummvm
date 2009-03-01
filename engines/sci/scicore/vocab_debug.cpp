@@ -517,7 +517,7 @@ static char **vocabulary_get_knames11(ResourceManager *resmgr, int *count) {
 		...
 */
 	char **t = NULL;
-	unsigned int size = 64, pos = 3;
+	//unsigned int size = 64, pos = 3;
 	int len;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
 	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
