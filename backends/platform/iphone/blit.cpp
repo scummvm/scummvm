@@ -33,8 +33,8 @@ void blitLandscapeScreenRect16bpp(uint16 *dst, uint16 *src, int width, int heigh
 			*(dst++) = *src;
 			src += screenWidth;
 		}
-		dst -= screenHeight + height - 0;
-		src += 1 - (height - 0) * screenWidth;
+		dst -= screenHeight + height;
+		src += 1 - height * screenWidth;
 	}
 }
 
@@ -45,7 +45,7 @@ void blitLandscapeScreenRect8bpp(uint16 *dst, byte *src, int width, int height, 
 			*(dst++) = palette[*src];
 			src += screenWidth;
 		}
-		dst -= screenHeight + height - 0;
-		src += 1 - (height - 0) * screenWidth;
+		dst -= screenHeight + height;
+		src += 1 - height * screenWidth;
 	}	
 }
