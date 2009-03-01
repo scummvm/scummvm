@@ -524,6 +524,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sprites_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\staticres.cpp"
 			>
 		</File>
