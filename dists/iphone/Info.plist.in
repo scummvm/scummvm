@@ -24,5 +24,7 @@
 	<string>svn</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.png</string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 </dict>
 </plist>
