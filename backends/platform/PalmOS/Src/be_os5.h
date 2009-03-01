@@ -101,7 +101,7 @@ extern SoundExType _soundEx;
 
 class OSystem_PalmOS5 : public OSystem_PalmBase {
 protected:
-	int16 _nativePal[256], _mousePal[256];
+	uint16 _nativePal[256], _mousePal[256];
 
 private:
 	uint16 _scaleTableX[512];
@@ -114,7 +114,7 @@ private:
 
 	OverlayColor *_overlayP;
 	WinHandle _overlayH, _workScreenH;
-	int16 *_workScreenP;
+	uint16 *_workScreenP;
 
 	Boolean _isSwitchable, _wasRotated;
 
@@ -160,6 +160,7 @@ protected:
 
 	void calc_rect(Boolean fullscreen);
 	void get_coordinates(EventPtr ev, Coord &x, Coord &y);
+	void clear_screen();
 
 public:
 	OSystem_PalmOS5();
@@ -169,7 +170,6 @@ public:
 	void setFeatureState(Feature f, bool enable);
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	void clearScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 

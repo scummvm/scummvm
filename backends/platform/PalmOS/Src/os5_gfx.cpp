@@ -67,7 +67,7 @@ void OSystem_PalmOS5::load_gfx_mode() {
 
 	UInt32 depth = 16;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
-	clearScreen();
+	clear_screen();
 
 	if (OPTIONS_TST(kOptModeRotatable)) {
 		_sysOldOrientation = __68K(SysGetOrientation());
@@ -77,8 +77,8 @@ void OSystem_PalmOS5::load_gfx_mode() {
 		__68K(PINSetInputTriggerState(pinInputTriggerDisabled));
 	}
 
-	gVars->indicator.on = Graphics::RGBToColor<ColorMasks<565> >(0,255,0);
-	gVars->indicator.off = Graphics::RGBToColor<ColorMasks<565> >(0,0,0);
+	gVars->indicator.on = Graphics::RGBToColor<Graphics::ColorMasks<565> >(0,255,0);
+	gVars->indicator.off = Graphics::RGBToColor<Graphics::ColorMasks<565> >(0,0,0);
 
 	_overlayH =  alloc_screen(_screenWidth, _screenHeight);
 	_overlayP = (OverlayColor *)(BmpGetBits(WinGetBitmap(_overlayH)));
@@ -153,11 +153,11 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	}
 
 	_workScreenH = alloc_screen(_screenDest.w, _screenDest.h);
-	_workScreenP = (int16 *)(BmpGetBits(WinGetBitmap(_workScreenH)));
+	_workScreenP = (uint16 *)(BmpGetBits(WinGetBitmap(_workScreenH)));
 	MemSet(_workScreenP, _screenDest.w * _screenDest.h * 2, 0);
 
 	_mode = mode;
-	clearScreen();
+	clear_screen();
 }
 
 void OSystem_PalmOS5::unload_gfx_mode() {
@@ -178,7 +178,7 @@ void OSystem_PalmOS5::unload_gfx_mode() {
 
 	UInt32 depth = 8;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
-	clearScreen();
+	clear_screen();
 
 	if (OPTIONS_TST(kOptModeRotatable)) {
 		__68K(PINSetInputTriggerState(_sysOldTriggerState));
@@ -251,7 +251,7 @@ void OSystem_PalmOS5::int_updateScreen() {
 	undraw_mouse();
 }
 
-void OSystem_PalmOS5::clearScreen() {
+void OSystem_PalmOS5::clear_screen() {
 	RGBColorType rgb = { 0,0,0,0 };
 	WinSetDrawWindow(WinGetDisplayWindow());
 	WinSetBackColorRGB(&rgb, 0);

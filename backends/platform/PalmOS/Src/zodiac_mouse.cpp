@@ -67,9 +67,9 @@ void OSystem_PalmZodiac::draw_mouse() {
 	int ww;
 
 	if (_overlayVisible) {
-		int16 *bak = (int16 *)_mouseBackupP;
-		int16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
-		int16 *dst;
+		uint16 *bak = (uint16 *)_mouseBackupP;
+		uint16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+		uint16 *dst;
 
 		TwGfxLockSurface(_overlayP, (void **)&dst);
 		dst += y * _screenWidth + x;

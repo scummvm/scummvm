@@ -29,13 +29,13 @@ void OSystem_PalmOS5::render_1x(RectangleType &r, PointType &p) {
 	Coord o = 0;
 
 	if (_overlayVisible) {
-		int16 *src = _overlayP;
-		int16 *dst =  _workScreenP;
+		uint16 *src = _overlayP;
+		uint16 *dst =  _workScreenP;
 		MemMove(dst, src, _screenWidth * _screenHeight * 2);
 
 	} else {
 		byte *src = _offScreenP;
-		int16 *dst =  _workScreenP;
+		uint16 *dst =  _workScreenP;
 		int cnt = _screenWidth * _screenHeight;
 		o = _current_shake_pos;
 
@@ -51,11 +51,11 @@ void OSystem_PalmOS5::render_1x(RectangleType &r, PointType &p) {
 
 void OSystem_PalmOS5::render_landscapeAny(RectangleType &r, PointType &p) {
 	Coord x, y, o = 0;
-	int16 *dst =  _workScreenP;
+	uint16 *dst =  _workScreenP;
 
 	if (_overlayVisible) {
 		for (y = 0; y < _screenDest.h; y++) {
-			int16 *src = _overlayP + *(_scaleTableY + y);
+			uint16 *src = _overlayP + *(_scaleTableY + y);
 			for (x = 0; x < _screenDest.w; x++) {
 				*dst++ = *(src + *(_scaleTableX + x));
 			}
@@ -79,10 +79,10 @@ void OSystem_PalmOS5::render_landscapeAny(RectangleType &r, PointType &p) {
 
 void OSystem_PalmOS5::render_landscape15x(RectangleType &r, PointType &p) {
 	Coord x, y, o = 0;
-	int16 *dst =  _workScreenP;
+	uint16 *dst =  _workScreenP;
 
 	if (_overlayVisible) {
-		int16 *src = _overlayP;
+		uint16 *src = _overlayP;
 
 		for (y = 0; y < 100; y++) {
 			// draw 2 lines

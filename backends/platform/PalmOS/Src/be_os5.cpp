@@ -108,7 +108,7 @@ void OSystem_PalmOS5::setFeatureState(Feature f, bool enable) {
 				//calc_rect(true);
 				hotswap_gfx_mode(_mode);
 //				TwGfxSetClip(_palmScreenP, &_dstRect);
-				clearScreen();
+				clear_screen();
 			}
 			break;
 	}

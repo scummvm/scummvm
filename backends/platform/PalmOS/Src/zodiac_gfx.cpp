@@ -71,8 +71,8 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 	PINSetInputTriggerState(pinInputTriggerDisabled);
 
-	gVars->indicator.on = Graphics::RGBToColor<ColorMasks<565> >(0,255,0);
-	gVars->indicator.off = Graphics::RGBToColor<ColorMasks<565> >(0,0,0);
+	gVars->indicator.on = Graphics::RGBToColor<Graphics::ColorMasks<565> >(0,255,0);
+	gVars->indicator.off = Graphics::RGBToColor<Graphics::ColorMasks<565> >(0,0,0);
 
 	_screenH = WinGetDisplayWindow();
 	_screenP = (byte *)BmpGetBits(WinGetBitmap(_screenH));
@@ -167,7 +167,7 @@ void OSystem_PalmZodiac::hotswap_gfx_mode(int mode) {
 	_mode = mode;
 	_srcPos.x = _screenOffset.x;
 	_srcPos.y = _screenOffset.y;
-	clearScreen();
+	clear_screen();
 //	updateScreen();
 }
 
@@ -188,7 +188,7 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 
 	UInt32 depth = 8;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
-	clearScreen();
+	clear_screen();
 
 	MemPtrFree(_offScreenP);
 

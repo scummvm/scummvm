@@ -150,12 +150,6 @@ void OSystem_PalmBase::updateScreen() {
 
 }
 
-void OSystem_PalmBase::clearScreen() {
-	WinSetDrawWindow(WinGetDisplayWindow());
-	WinSetBackColor(Graphics::RGBToColor<ColorMasks<565> >(0,0,0));
-	WinEraseWindow();
-}
-
 void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {
 //return;
 

@@ -25,6 +25,8 @@
 
 #include "be_os5.h"
 #include "common/config-manager.h"
+#include "sound/mixer_intern.h"
+
 
 #ifdef PALMOS_ARM
 #	ifdef COMPILE_ZODIAC
@@ -63,7 +65,8 @@ void OSystem_PalmOS5::sound_handler() {
 			if (!_soundEx.dataP)
 				_soundEx.dataP = MemPtrNew(_soundEx.size);
 
-			((SoundProc)_sound.proc)(_sound.param, (byte *)_soundEx.dataP, _soundEx.size);
+			_mixerMgr->mixCallback((byte *)_soundEx.dataP, _soundEx.size);
+//			((SoundProc)_sound.proc)(_sound.param, (byte *)_soundEx.dataP, _soundEx.size);
 			_soundEx.set = true;
 		}
 	}// TODO : no Sound API case
@@ -128,6 +131,10 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 		}
 	}
 	// if not true some scenes (indy3 256,...) may freeze (ESC to skip)
+
+	_mixerMgr->setOutputRate(_samplesPerSec);
+	_mixerMgr->setReady(true);
+
 	return true;
 }
 

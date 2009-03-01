@@ -28,9 +28,10 @@
 #include "common/config-manager.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "sound/mixer.h"
+#include "backends/fs/palmos/palmos-fs-factory.h"
+#include "sound/mixer_intern.h"
 
-#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved"
+#define DEFAULT_SAVE_PATH "/PALM/Programs/ScummVM/Saved/"
 
 
 OSystem_PalmBase::OSystem_PalmBase() {
@@ -109,8 +110,9 @@ void OSystem_PalmBase::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixerMgr == 0) {
-		_mixerMgr = new Audio::Mixer();
-		setSoundCallback(Audio::Mixer::mixCallback, _mixerMgr);
+		_mixerMgr = new Audio::MixerImpl(this);
+		setSoundCallback(0, _mixerMgr);
+//		setSoundCallback(Audio::Mixer::mixCallback, _mixerMgr);
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
@@ -178,6 +180,11 @@ Audio::Mixer *OSystem_PalmBase::getMixer() {
 Common::TimerManager *OSystem_PalmBase::getTimerManager() {
 	return _timerMgr;
 }
+
+FilesystemFactory *OSystem_PalmBase::getFilesystemFactory() {
+	return &PalmOSFilesystemFactory::instance();
+}
+
 
 #define PALMOS_CONFIG_FILE "/PALM/Programs/ScummVM/scummvm.ini"
 

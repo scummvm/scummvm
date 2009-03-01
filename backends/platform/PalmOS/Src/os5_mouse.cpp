@@ -81,9 +81,9 @@ void OSystem_PalmOS5::draw_mouse() {
 	int ww;
 
 	if (_overlayVisible) {
-		int16 *bak = (int16 *)_mouseBackupP;
-		int16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
-		int16 *dst = _overlayP + y * _screenWidth + x;
+		uint16 *bak = (uint16 *)_mouseBackupP;
+		uint16 *pal = _cursorPaletteDisabled ? _nativePal : _mousePal;
+		uint16 *dst = _overlayP + y * _screenWidth + x;
 
 		do {
 			ww = w;
@@ -133,8 +133,8 @@ void OSystem_PalmOS5::undraw_mouse() {
 
 	// no need to do clipping here, since draw_mouse() did that already
 	if (_overlayVisible) {
-		int16 *dst = _overlayP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
-		int16 *bak = (int16 *)_mouseBackupP;
+		uint16 *dst = _overlayP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		uint16 *bak = (uint16 *)_mouseBackupP;
 
 		do {
 			MemMove(dst, bak, _mouseOldState.w * 2);

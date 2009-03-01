@@ -32,11 +32,13 @@
 #include "globals.h"
 
 #include "backends/base-backend.h"
+#include "common/scummsys.h"
 #include "common/events.h"
 #include "graphics/surface.h"
+#include "graphics/colormasks.h"
 
 namespace Audio {
-	class Mixer;
+	class MixerImpl;
 }
 
 namespace Common {
@@ -73,7 +75,8 @@ enum {
 #define computeMsecs(x) ((SysTicksPerSecond() * x) / 1000)
 
 
-typedef void (*SoundProc)(void *param, byte *buf, int len);
+//typedef void (*SoundProc)(void *param, byte *buf, int len);
+typedef void (*SoundProc)(byte *buf, uint len);
 typedef int (*TimerProc)(int interval);
 
 typedef struct {
@@ -121,6 +124,7 @@ protected:
 	OSystem_PalmBase();
 
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
+	virtual void clear_screen() = 0;
 
 	struct MousePos {
 		int16 x,y,w,h;
@@ -130,7 +134,7 @@ protected:
 	SoundType _sound;
 
 	Common::SaveFileManager *_saveMgr;
-	Audio::Mixer *_mixerMgr;
+	Audio::MixerImpl *_mixerMgr;
 	Common::TimerManager *_timerMgr;
 
 	RGBColorType _currentPalette[256];
@@ -215,7 +219,6 @@ public:
 	void setShakePos(int shakeOffset);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual void updateScreen();
-	virtual void clearScreen();
 
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
@@ -226,6 +229,9 @@ public:
 	virtual void clearOverlay() = 0;
 	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	int16 getOverlayWidth() { return getWidth(); }
+	int16 getOverlayHeight() { return getHeight(); }
 
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num);
@@ -252,6 +258,7 @@ public:
 
 	Common::SaveFileManager *getSavefileManager();
 	Common::TimerManager *getTimerManager();
+	FilesystemFactory *getFilesystemFactory();
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();

@@ -46,7 +46,7 @@ void OSystem_PalmOS5::clearOverlay() {
 		return;
 
 	byte *src = _offScreenP;
-	int16 *dst =  _overlayP;
+	uint16 *dst =  _overlayP;
 	int cnt = _screenWidth * _screenHeight;
 	do {
 		*dst++ = _nativePal[*src++];

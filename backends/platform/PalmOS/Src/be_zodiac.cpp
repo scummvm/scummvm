@@ -67,7 +67,7 @@ void OSystem_PalmZodiac::setFeatureState(Feature f, bool enable) {
 				_ratio.adjustAspect = (_ratio.adjustAspect + 1) % 3;
 				calc_rect(true);
 				TwGfxSetClip(_palmScreenP, &_dstRect);
-				clearScreen();
+				clear_screen();
 			}
 			break;
 	}
