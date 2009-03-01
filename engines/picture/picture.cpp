@@ -81,15 +81,6 @@ PictureEngine::~PictureEngine() {
 	delete _rnd;
 }
 
-Common::Error PictureEngine::init() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(true);
-	_system->initSize(640, 400);
-	_system->endGFXTransaction();
-	return Common::kNoError;
-}
-
 void PictureEngine::syncSoundSettings() {
 	/*
 	_music->setVolume(ConfMan.getInt("music_volume"));
@@ -100,7 +91,12 @@ void PictureEngine::syncSoundSettings() {
 	*/
 }
 
-Common::Error PictureEngine::go() {
+Common::Error PictureEngine::run() {
+	// Initialize backend
+	_system->beginGFXTransaction();
+	initCommonGFX(true);
+	_system->initSize(640, 400);
+	_system->endGFXTransaction();
 
 	_isSaveAllowed = true;
 
