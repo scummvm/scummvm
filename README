@@ -455,6 +455,9 @@ quality is equal to the original games due to the use of lossless
 compression. Viewing these cutscenes requires a version of ScummVM
 compiled with both FLAC and zlib support.
 
+The PlayStation version's videos are not yet supported and therefore
+the DXA cutscenes are also needed.
+
 For systems that are too slow to handle the decoding of FLAC audio, the
 audio for these cutscenes is also provided separately as OGG Vorbis
 audio. Viewing these cutscenes with OGG Vorbis audio requires a version
@@ -472,14 +475,18 @@ find in stores now.
 3.7.1) Broken Sword 1:
 ------ ---------------
 For this game, you will need all of the files from the clusters
-directories on both CDs. You will also need the speech.clu files from
-the speech directories, but since they are not identical you will need
-to rename them speech1.clu and speech2.clu for CD 1 and 2 respectively.
+directories on both CDs. For the Windows and Macintosh versions, you
+will also need the speech.clu files from the speech directories, but
+since they are not identical you will need to rename them speech1.clu
+and speech2.clu for CD 1 and 2 respectively. The PlayStation version
+requires the speech.tab, speech.dat, speech.lis, and speech.inf.
 
-In addition, you will need a music subdirectory with all of the files
-from the music subdirectories on both CDs. Some of these files appear on
-both CDs, but in these cases they are either identical or, in one case,
-so nearly identical that it makes little difference.
+In addition, the Windows and Macintosh versions require a music
+subdirectory with all of the files from the music subdirectories on
+both CDs. Some of these files appear on both CDs, but in these cases
+they are either identical or, in one case, so nearly identical that it
+makes little difference. The PlayStation version requires tunes.dat and
+tunes.tab.
 
 ScummVM does not support the original cutscene files, so there is no
 need to copy them.
@@ -717,9 +724,6 @@ site, please see the section on reporting bugs.
     - Floppy demos aren't supported
     - Not a bug: CD version is missing speech for some dialogs, this is
       normal.
-
-  Broken Sword 1:
-    - PlayStation 1 version isn't supported
 
   Broken Sword 2:
     - PlayStation 1 version isn't supported
