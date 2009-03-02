@@ -861,7 +861,7 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 			tileXpos = 0;
 		} 
 		
-		for (byte tileLine=0; tileLine<16; tileLine++) { // Copy data to destination buffer
+		for (byte tileLine = 0; tileLine < 16; tileLine++) { // Copy data to destination buffer
 			memcpy(fullres_buffer + tileLine * bakXres * 2 + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16); 
 			memcpy(fullres_buffer + tileLine * bakXres * 2 + bakXres + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16);
 		}
@@ -881,11 +881,9 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 	uint32 tileYpos = 0; //tile position in a virtual xresInTiles * yresInTiles grid
 	uint32 tileXpos = 0;
 	uint32 dataBegin = READ_LE_UINT32(psxBackground + 4);
-	uint32 realWidth = xresInTiles * 16;
 
 	uint8 *decomp_tile = (uint8 *)malloc(16 * 16); //Tiles are always 16 * 16
-	uint8 *halfres_buffer = (uint8*) malloc(totTiles * 16 * 16); //This buffer will contain the half vertical res image
-	memset(halfres_buffer, 0, totTiles * 16 * 16);
+	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * (yresInTiles + 1) * 32);
 
 	bool isCompressed = (READ_LE_UINT32(psxBackground) == MKID_BE('COMP'));
 
@@ -906,35 +904,29 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 			tileXpos = 0;
 		} 
 	
-		for (byte tileLine = 0; tileLine < 16; tileLine++)
-			memcpy(halfres_buffer + (tileLine * realWidth) + (tileXpos * 16) + (tileYpos * realWidth * 16), decomp_tile + (tileLine * 16), 16); //Copy data to destination buffer
+		for (byte tileLine = 0; tileLine < 16; tileLine++) {
+			uint8 *dest = fullres_buffer + tileLine * bakXres * 2 + tileXpos * 32 + tileYpos * bakXres * 16 * 2;
+			for (byte tileColumn = 0; tileColumn < 16; tileColumn++) {
+				uint8 pixData = *(decomp_tile + tileColumn + tileLine * 16);
+				*(dest + tileColumn * 2) = pixData;
+				*(dest + tileColumn * 2 + 1) = pixData;
+			}
+			dest += bakXres;
+			for (byte tileColumn = 0; tileColumn < 16; tileColumn++) {
+				uint8 pixData = *(decomp_tile + tileColumn + tileLine * 16);
+				*(dest + tileColumn * 2) = pixData;
+				*(dest + tileColumn * 2 + 1) = pixData;
+			}
 
+		}
 		tileXpos++;
 	}
-
-	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * (yresInTiles + 1) * 32);
-	memset(fullres_buffer, 0x00, bakXres * (yresInTiles + 1) * 32);
-
-	for (uint32 currentLine = 0; currentLine < ((yresInTiles - 1) * 16); currentLine++) {
-		for (uint32 cntx = 0; cntx < realWidth; cntx++) {
-			fullres_buffer[currentLine * 2 * bakXres + cntx * 2] = halfres_buffer[currentLine * realWidth + cntx];
-			fullres_buffer[currentLine * 2 * bakXres + cntx * 2 + 1] = halfres_buffer[currentLine * realWidth + cntx];
-		}
-		for (uint32 cntx = 0; cntx < realWidth; cntx++) {
-			fullres_buffer[(currentLine * 2 + 1) * bakXres + cntx * 2] = halfres_buffer[currentLine * realWidth + cntx];
-			fullres_buffer[(currentLine * 2 + 1) * bakXres + cntx * 2 + 1] = halfres_buffer[currentLine * realWidth + cntx];
-		}
-	}
-	free(halfres_buffer);
 
 	//Calculate number of remaining tiles
 	uint32 remainingTiles = (dataBegin - (currentTile * 4 + 4)) / 4;
 
-	// Last line of tiles is FULL WIDTH!
+	// Last line of tiles is full width!
 	uint32 tileHeight = (remainingTiles == xresInTiles * 2) ? 16 : 8;
-
-	halfres_buffer = (uint8 *)malloc(bakXres * 16 * 2);
-	memset(halfres_buffer, 0, bakXres * 16 * 2);
 
 	tileXpos = 0;
 	for (; currentTile < totTiles + remainingTiles; currentTile++) {
@@ -945,21 +937,15 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 		else
 			memcpy(decomp_tile, psxBackground + tileOffset - 4, 256);
 
-		for (byte tileLine = 0; tileLine < tileHeight; tileLine++)
-			memcpy(halfres_buffer + tileLine * bakXres * 2 + tileXpos * 16, decomp_tile + tileLine * 16, 16);
-
+		for (byte tileLine = 0; tileLine < tileHeight; tileLine++) { // Write the decoded tiles into last lines of background
+			memcpy(fullres_buffer + tileXpos * 16 + (tileLine + (yresInTiles - 1) * 16) * bakXres * 2, decomp_tile + tileLine * 16, 16); 
+			memcpy(fullres_buffer + tileXpos * 16 + (tileLine + (yresInTiles - 1) * 16) * bakXres * 2 + bakXres, decomp_tile + tileLine * 16, 16);
+		}
 		tileXpos++;
 	}
 
 	free(decomp_tile);
 
-	for (uint32 currentLine = 0; currentLine < tileHeight; currentLine++) { 
-		memcpy(fullres_buffer + (currentLine + (yresInTiles - 1) * 16) * bakXres * 2, halfres_buffer + currentLine * bakXres * 2, bakXres * 2);
-		memcpy(fullres_buffer + (currentLine + (yresInTiles - 1) * 16) * bakXres * 2 + bakXres, halfres_buffer + currentLine * bakXres * 2, bakXres * 2);
-	}
-
-	free(halfres_buffer);
-	
 	return fullres_buffer;
 }
 
