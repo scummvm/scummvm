@@ -49,15 +49,14 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 
 	retval->xoffset = mirrored ? xhot : -xhot;
 	retval->yoffset = -yhot;
+	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 
 	if (view) {
 		retval->colors = view->colors;
 		retval->colors_nr = view->colors_nr;
-		retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 	} else {
 		retval->colors = gfx_sci0_image_colors[sci0_palette];
 		retval->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
-		retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 	}
 
 	if (xl <= 0 || yl <= 0) {
