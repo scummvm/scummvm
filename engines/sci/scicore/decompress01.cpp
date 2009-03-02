@@ -548,66 +548,33 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 	        compressedLength, result->size);
 #endif
 
+	bool overflow = false;
+
 	switch (compressionMethod) {
 	case 0: // no compression
-		if (result->size != compressedLength) {
-			free(result->data);
-			result->data = NULL;
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		memcpy(result->data, buffer, compressedLength);
-		result->status = SCI_STATUS_ALLOCATED;
+		if (result->size != compressedLength)
+			overflow = true;
+		else
+			memcpy(result->data, buffer, compressedLength);
 		break;
 
 	case 1: // Some huffman encoding
-		if (decrypt2(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->status = SCI_STATUS_ALLOCATED;
+		if (decrypt2(result->data, buffer, result->size, compressedLength))
+			overflow = true;
 		break;
 
-	case 2: // ???
-		decryptinit3();
-		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->status = SCI_STATUS_ALLOCATED;
-		break;
-
+	case 2:
 	case 3:
-		decryptinit3();
-		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->data = view_reorder(result->data, result->size);
-		result->status = SCI_STATUS_ALLOCATED;
-		break;
-
 	case 4:
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
+			overflow = true;
+		} else {
+			if (compressionMethod == 3)
+				result->data = view_reorder(result->data, result->size);
+			if (compressionMethod == 4)
+				result->data = pic_reorder(result->data, result->size);
 		}
-		result->data = pic_reorder(result->data, result->size);
-		result->status = SCI_STATUS_ALLOCATED;
 		break;
 
 	default:
@@ -621,8 +588,16 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-	free(buffer);
+	if (overflow) {
+		free(result->data);
+		result->data = 0; // So that we know that it didn't work
+		result->status = SCI_STATUS_NOMALLOC;
+		free(buffer);
+		return SCI_ERROR_DECOMPRESSION_OVERFLOW;
+	}
 
+	result->status = SCI_STATUS_ALLOCATED;
+	free(buffer);
 	return 0;
 }
 
