@@ -198,6 +198,8 @@ void Parallaction_br::freeLocation(bool removeAll) {
 	clearSubtitles();
 	_subtitle[0] = _subtitle[1] = -1;
 
+	_localFlagNames->clear();
+
 	_gfx->freeLocationObjects();
 
 	_location._animations.remove(_char._ani);
