@@ -288,39 +288,24 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 	        compressedLength, result->size);
 #endif
 
+	bool overflow = false;
+
 	switch (compressionMethod) {
 	case 0: // no compression
-		if (result->size != compressedLength) {
-			free(result->data);
-			result->data = NULL;
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		memcpy(result->data, buffer, compressedLength);
-		result->status = SCI_STATUS_ALLOCATED;
+		if (result->size != compressedLength)
+			overflow = true;
+		else
+			memcpy(result->data, buffer, compressedLength);
 		break;
 
 	case 1: // LZW compression
-		if (decrypt1(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->status = SCI_STATUS_ALLOCATED;
+		if (decrypt1(result->data, buffer, result->size, compressedLength))
+			overflow = true;
 		break;
 
 	case 2: // Some sort of Huffman encoding
-		if (decrypt2(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->status = SCI_STATUS_ALLOCATED;
+		if (decrypt2(result->data, buffer, result->size, compressedLength))
+			overflow = true;
 		break;
 
 	default:
@@ -334,8 +319,16 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-	free(buffer);
+	if (overflow) {
+		free(result->data);
+		result->data = 0; // So that we know that it didn't work
+		result->status = SCI_STATUS_NOMALLOC;
+		free(buffer);
+		return SCI_ERROR_DECOMPRESSION_OVERFLOW;
+	}
 
+	result->status = SCI_STATUS_ALLOCATED;
+	free(buffer);
 	return 0;
 }
 
