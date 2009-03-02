@@ -120,8 +120,8 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'Browser' overlays = 'screen' inset = '16' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+	<dialog name = 'Browser' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 0, 4'>
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'
 			/>
