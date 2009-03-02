@@ -1117,7 +1117,9 @@ void Control::saveGameToFile(uint8 slot) {
 
 	outf->writeUint32BE(saveDate);
 	outf->writeUint16BE(saveTime);
-	// TODO: played time
+
+	uint32 currentTime = _system->getMillis() / 1000;
+	outf->writeUint32BE(currentTime - SwordEngine::_systemVars.engineStartTime);
 
 	_objMan->saveLiveList(liveBuf);
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
@@ -1165,7 +1167,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	inf->skip(40);		// skip description
 	uint8 saveVersion = inf->readByte();
 
-	if (saveVersion != SAVEGAME_VERSION) {
+	if (saveVersion > SAVEGAME_VERSION) {
 		warning("Different save game version");
 		return false;
 	}
@@ -1183,7 +1185,13 @@ bool Control::restoreGameFromFile(uint8 slot) {
 
 	inf->readUint32BE();	// save date
 	inf->readUint16BE();	// save time
-	// TODO: played time
+
+	if (saveVersion < 2) { // Before version 2 we didn't had play time feature
+		SwordEngine::_systemVars.engineStartTime = 	_system->getMillis() / 1000; // Start counting
+	} else {
+		uint32 currentTime = _system->getMillis() / 1000;
+		SwordEngine::_systemVars.engineStartTime = currentTime - inf->readUint32BE(); // Engine start time
+	}
 
 	_restoreBuf = (uint8*)malloc(
 		TOTAL_SECTIONS * 2 +
@@ -1281,7 +1289,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 
 	newSave->writeUint32BE(saveDate);
 	newSave->writeUint16BE(saveTime);
-	// TODO: played time
+	newSave->writeUint32BE(0); // We don't have playtime info when converting, so we start from 0.
 
 	newSave->write(saveData, dataSize);
 

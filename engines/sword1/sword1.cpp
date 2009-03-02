@@ -546,6 +546,7 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 
 Common::Error SwordEngine::go() {
 	_control->checkForOldSaveGames();
+	SwordEngine::_systemVars.engineStartTime = _system->getMillis() / 1000;
 
 	uint16 startPos = ConfMan.getInt("boot_param");
 	_control->readSavegameDescriptions();

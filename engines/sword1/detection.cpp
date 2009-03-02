@@ -102,7 +102,8 @@ bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
@@ -244,13 +245,15 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 	char fileName[12];
 	snprintf(fileName, 12, "sword1.%03d", slot);
 	char name[40];
+	uint32 playTime;
+	byte versionSave;
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (in) {
 		in->skip(4);		// header
 		in->read(name, sizeof(name));
-		in->skip(1);		// version
+		in->read(&versionSave, 1);		// version
 
 		SaveStateDescriptor desc(slot, name);
 
@@ -271,6 +274,8 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		uint32 saveDate = in->readUint32BE();
 		uint16 saveTime = in->readUint16BE();
+		if (versionSave > 1) // Previous versions did not have playtime data
+			playTime = in->readUint32BE();
 
 		int day = (saveDate >> 24) & 0xFF;
 		int month = (saveDate >> 16) & 0xFF;
@@ -283,7 +288,14 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		desc.setSaveTime(hour, minutes);
 
-		// TODO: played time
+		if (versionSave > 1) {
+			minutes = playTime / 60;
+			hour = minutes / 60;
+			minutes %= 60;
+			desc.setPlayTime(hour, minutes);
+		} else { //We have no playtime data
+			desc.setPlayTime(0, 0);
+		}
 
 		delete in;
 

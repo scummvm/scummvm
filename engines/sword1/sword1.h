@@ -66,6 +66,7 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
+	uint32	engineStartTime;    // Used for playtime 
 	Common::Platform platform;
 };
 
@@ -75,7 +76,7 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
-
+	
 	uint32 _features;
 
 	bool mouseIsActive();
@@ -96,6 +97,7 @@ protected:
 	}
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
+
 	// FIXME: Loading a game through the GMM crashes the game
 #if 0
 	Common::Error loadGameState(int slot);
