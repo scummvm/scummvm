@@ -422,13 +422,15 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 
 DECLARE_INSTRUCTION_OPCODE(put) {
-	warning("Parallaction_br::instOp_put not yet implemented");
+	// NOTE: there is not a single occurrence of PUT in the scripts
+	warning("PUT instruction is not implemented!");
 }
 
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
-	warning("Parallaction_br::instOp_wait not yet implemented");
+	// NOTE: there is not a single occurrence of WAIT in the scripts
+	warning("WAIT instruction is not implemented!");
 }
 
 
@@ -464,7 +466,9 @@ DECLARE_INSTRUCTION_OPCODE(mask) {
 
 
 DECLARE_INSTRUCTION_OPCODE(print) {
-	warning("Parallaction_br::instOp_print not yet implemented");
+	// NOTE: there is not a single occurrence of PRINT in the scripts
+	// I suppose it was used for debugging
+	warning("PRINT instruction is not implemented!");
 }
 
 DECLARE_INSTRUCTION_OPCODE(text) {
