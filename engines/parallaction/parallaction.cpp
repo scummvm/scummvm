@@ -60,7 +60,7 @@ uint32		_globalFlags = 0;
 
 
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _char(this) {
+	Engine(syst), _gameDescription(gameDesc), _char(this), _location(getGameType()) {
 
 	_vm = this;
 	Common::addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
@@ -213,20 +213,6 @@ AnimationPtr Location::findAnimation(const char *name) {
 	return AnimationPtr();
 }
 
-void Location::freeAnimations(bool removeAll) {
-	AnimationList::iterator it = _animations.begin();
-	while (it != _animations.end()) {
-		AnimationPtr a = *it;
-		if (!removeAll && ((a->_flags & kFlagsSelfuse) || (ACTIONTYPE(a) == kZoneMerge))) {
-			++it;
-		} else {
-			a->_commands.clear();	// See comment for freeZones(), about circular references.
-			it = _animations.erase(it);
-		}
-	}
-}
-
-
 
 void Parallaction::allocateLocationSlot(const char *name) {
 	// WORKAROUND: the original code erroneously incremented
@@ -259,7 +245,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 }
 
 
-Location::Location() {
+Location::Location(int gameType) : _gameType(gameType) {
 	cleanup(true);
 }
 
@@ -272,7 +258,6 @@ void Location::cleanup(bool removeAll) {
 	_endComment.clear();
 
 	freeZones(removeAll);
-	freeAnimations(removeAll);
 
 	_programs.clear();
 	_commands.clear();
@@ -828,29 +813,52 @@ ZonePtr Location::findZone(const char *name) {
 	return findAnimation(name);
 }
 
+bool Location::keepZone_ns(ZonePtr z) {
+	return (z->getY() == -1) || (z->getX() == -2);
+}
+
+bool Location::keepAnimation_ns(AnimationPtr a) {
+	return false;
+}
+
+bool Location::keepZone_br(ZonePtr z) {
+	return (z->_flags & kFlagsSelfuse) || (ACTIONTYPE(z) == kZoneMerge);
+}
+
+bool Location::keepAnimation_br(AnimationPtr a) {
+	return keepZone_br(a);
+}
+
+
+template <class T>
+void Location::freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter) {
+	typedef typename Common::List<T>::iterator iterator;
+	iterator it = list.begin();
+	while (it != list.end()) {
+		T z = *it;
+		if (!removeAll && filter(this, z)) {
+			++it;
+		} else {
+			z->_commands.clear();
+			it = list.erase(it);
+		}
+	}
+}
 
 void Location::freeZones(bool removeAll) {
 	debugC(2, kDebugExec, "freeZones: removeAll = %i", removeAll);
 
-	ZoneList::iterator it = _zones.begin();
+	switch (_gameType) {
+	case GType_Nippon:
+		freeList(_zones, removeAll, Common::mem_fun(&Location::keepZone_ns));
+		freeList(_animations, removeAll, Common::mem_fun(&Location::keepAnimation_ns));
+		break;
 
-	while ( it != _zones.end() ) {
-
-		// NOTE : this condition has been relaxed compared to the original, to allow the engine
-		// to retain special - needed - zones that were lost across location switches.
-		ZonePtr z = *it;
-		if (((z->getY() == -1) || (z->getX() == -2)) && (!removeAll)) {
-			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
-			it++;
-		} else {
-			(*it)->_commands.clear();	// Since commands may reference zones, and both commands and zones are kept stored into
-										// SharedPtr's, we need to kill commands explicitly to destroy any potential circular
-										// reference.
-			it = _zones.erase(it);
-		}
+	case GType_BRA:
+		freeList(_zones, removeAll, Common::mem_fun(&Location::keepZone_br));
+		freeList(_animations, removeAll, Common::mem_fun(&Location::keepAnimation_br));
+		break;
 	}
-
-	return;
 }
 
 

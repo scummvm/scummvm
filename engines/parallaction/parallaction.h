@@ -156,12 +156,21 @@ struct Location {
 	Common::Point	_followerStartPosition;
 	uint16			_followerStartFrame;
 
+
 protected:
-	void freeAnimations(bool removeAll);
+	int			_gameType;
 	void freeZones(bool removeAll);
 
+	bool keepZone_br(ZonePtr z);
+	bool keepZone_ns(ZonePtr z);
+	bool keepAnimation_ns(AnimationPtr a);
+	bool keepAnimation_br(AnimationPtr a);
+
+	template <class T>
+	void freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter);
+
 public:
-	Location();
+	Location(int gameType);
 	~Location();
 
 	AnimationPtr findAnimation(const char *name);
