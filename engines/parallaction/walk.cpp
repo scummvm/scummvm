@@ -422,6 +422,7 @@ void PathWalker_BR::setCharacterPath(AnimationPtr a, uint16 x, uint16 y) {
 	_character._a = a;
 	_character._first = true;
 	_character._fieldC = 1;
+	_character._walkDelay = 0;
 	buildPath(_character, x, y);
 	_character._active = true;
 }
@@ -585,19 +586,16 @@ void PathWalker_BR::doWalk(State &s) {
 
 	debugC(3, kDebugWalk, "PathWalker_BR::doWalk(%s)", s._a->_name);
 
-#if 0
-	// TODO: support delays in walking. This requires extending Input::walkIo().
-	if (ch._walkDelay > 0) {
-		ch._walkDelay--;
-		if (ch._walkDelay == 0 && _ch._ani->_scriptName) {
+	if (s._walkDelay > 0) {
+		s._walkDelay--;
+		if (s._walkDelay == 0 && s._a->_scriptName) {
 			// stop script and reset
-			_ch._ani->_flags &= ~kFlagsActing;
-			Script *script = findScript(_ch._ani->_scriptName);
-			script->_nextCommand = script->firstCommand;
+			s._a->_flags &= ~kFlagsActing;
+//			_vm->_programExec->resetProgram(s._a->_scriptName);
 		}
 		return;
 	}
-#endif
+
 
 	if (s._fieldC == 0) {
 		s._walkPath.erase(s._walkPath.begin());
