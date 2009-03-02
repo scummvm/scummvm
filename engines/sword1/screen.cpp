@@ -833,7 +833,7 @@ void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 	}
 }
 
-uint8* Screen::psxBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres) {
+uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint32 bakYres) {
 	uint32 xresInTiles = bakXres / 16;
 	uint32 yresInTiles = ((bakYres / 2) % 16) ? (bakYres / 32) + 1 : (bakYres / 32);
 	uint32 totTiles = xresInTiles * yresInTiles;
@@ -884,7 +884,7 @@ uint8* Screen::psxBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint
 }
 
 // needed because some psx backgrounds are half width and half height
-uint8* Screen::psxShrinkedBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres) {
+uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint32 bakYres) {
 	uint32 xresInTiles = (bakXres / 2) % 16 ? (bakXres / 32) + 1 : (bakXres / 32);
 	uint32 yresInTiles =  (bakYres / 2) % 16 ? (bakYres / 32) + 1 : (bakYres / 32);
 	uint32 totTiles = xresInTiles * yresInTiles;
@@ -943,7 +943,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8* psxBackground, uint32 bakXr
 	// Last line of tiles is FULL WIDTH!
 	uint32 tileHeight = (remainingTiles == xresInTiles * 2) ? 16 : 8;
 
-	halfres_buffer = (uint8*) malloc(bakXres * 16 * 2);
+	halfres_buffer = (uint8 *)malloc(bakXres * 16 * 2);
 	memset(halfres_buffer, 0, bakXres * 16 * 2);
 
 	tileXpos = 0;

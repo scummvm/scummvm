@@ -116,8 +116,8 @@ private:
 	void drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
 	void drawPsxHalfShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
 	void drawPsxFullShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch);
-	uint8* psxBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres);
-	uint8* psxShrinkedBackgroundToIndexed(uint8* psxBackground, uint32 bakXres, uint32 bakYres);
+	uint8* psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint32 bakYres);
+	uint8* psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint32 bakYres);
 	void fetchPsxParallaxSize(uint8 *psxParallax, uint16 *paraSizeX, uint16 *paraSizeY);
 	void drawPsxParallax(uint8 *psxParallax, uint16 paraScrlX, uint16 scrnScrlX, uint16 scrnWidth);
 	void decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest);
