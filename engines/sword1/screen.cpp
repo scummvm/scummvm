@@ -618,15 +618,12 @@ void Screen::renderParallax(uint8 *data) {
 	uint16 scrnScrlX, scrnScrlY;
 	uint16 scrnWidth, scrnHeight;
 	uint16 paraSizeX, paraSizeY;
-	uint8 *psxPlx = NULL;
 	ParallaxHeader *header = NULL;
 	uint32 *lineIndexes = NULL;
 
-	if (SwordEngine::isPsx()) { //Parallax headers are different in PSX version
-		psxPlx = psxParallaxToIndexed(data);
-		paraSizeX = READ_LE_UINT16(psxPlx);
-		paraSizeY = READ_LE_UINT16(psxPlx+2);
-	} else {
+	if (SwordEngine::isPsx()) //Parallax headers are different in PSX version
+		fetchPsxParallaxSize(data, &paraSizeX, &paraSizeY);
+	else {
 		header = (ParallaxHeader*)data;
 		lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 		paraSizeX = _resMan->getUint16(header->sizeX);
@@ -655,14 +652,7 @@ void Screen::renderParallax(uint8 *data) {
 		paraScrlY = 0;
 
 	if(SwordEngine::isPsx())
-		for (uint16 cnty = 0; (cnty < SCREEN_DEPTH) && (cnty < paraSizeY); cnty++) {
-			uint8 *src = psxPlx + 4 + paraScrlY * paraSizeX + cnty * paraSizeX + paraScrlX;
-			uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX/* * 2*/;
-			uint8 pix;
-			for (uint16 idx = 0; (idx < SCREEN_WIDTH) && (idx < paraSizeX); idx++) // make sure we don't write outside screen
-				if ((pix = *(src + idx))) //If data is 0x00, don't write (transparency)
-					*(dest + idx) = pix;
-		}
+		drawPsxParallax(data, paraScrlX, scrnScrlX, scrnWidth);
 	else
 		for (uint16 cnty = 0; cnty < scrnHeight; cnty++) {
 			uint8 *src = data + _resMan->readUint32(lineIndexes + cnty + paraScrlY);
@@ -708,9 +698,6 @@ void Screen::renderParallax(uint8 *data) {
 				}
 			}
 		}
-
-	if (psxPlx)
-		free(psxPlx);
 }
 
 void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
@@ -986,46 +973,82 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8* psxBackground, uint32 bakXr
 	return fullres_buffer;
 }
 
-uint8* Screen::psxParallaxToIndexed(uint8* psxParallax) {
+void Screen::fetchPsxParallaxSize(uint8 *psxParallax, uint16 *paraSizeX, uint16 *paraSizeY) {
 	uint16 xresInTiles = READ_LE_UINT16(psxParallax + 10);
 	uint16 yresInTiles = READ_LE_UINT16(psxParallax + 12);
-	uint16 totTiles = READ_LE_UINT16(psxParallax + 14);
-	uint32 plxXres = xresInTiles * 16;
-	uint32 plxYres = yresInTiles * 16;
 
-	uint8 *plxPos = psxParallax + 16;
-	uint8 *plxOff = psxParallax + 16 + totTiles * 2;
-	uint8 *plxData = psxParallax + 16 + totTiles * 2 + totTiles * 4;
+	*paraSizeX = xresInTiles * 16;
+	*paraSizeY = yresInTiles * 32; // Vertical resolution needs to be doubled
+}
 
-	uint8 *decomp_tile = (uint8 *)malloc(16 * 16); // Tiles are always 16 * 16
-	uint8 *halfres_buffer = (uint8 *)malloc(4 + yresInTiles * xresInTiles * 16 * 16); //This buffer will contain the half vertical res image
-	memset(halfres_buffer, 0, 4 + yresInTiles * xresInTiles * 16 * 16); //Clean the buffer
+void Screen::drawPsxParallax(uint8 *psxParallax, uint16 paraScrlX, uint16 scrnScrlX, uint16 scrnWidth) {
+	uint16 totTiles = READ_LE_UINT16(psxParallax + 14); // Total tiles
+
+	uint16 skipRow = paraScrlX / 16; // Rows of tiles we have to skip
+	uint8  leftPixelSkip = paraScrlX % 16; // Pixel columns we have to skip while drawing the first row
+
+	uint8 *plxPos = psxParallax + 16; // Pointer to tile position header section
+	uint8 *plxOff = psxParallax + 16 + totTiles * 2; // Pointer to tile relative offsets section
+	uint8 *plxData = psxParallax + 16 + totTiles * 2 + totTiles * 4; //Pointer to beginning of tiles data section
+
+	uint8 *tile_buffer = (uint8 *)malloc(16 * 16); // Buffer for 16x16 pix tile
+
+	/* For parallax rendering we should check both horizontal and vertical scrolling,
+	 * but in PSX edition of the game, the only vertical scrolling parallax is disabled.
+	 * So, in this function i'll only check for horizontal scrolling.
+	 */
 
 	for (uint16 currentTile = 0; currentTile < totTiles - 1; currentTile++) {
-		uint32 tileOffset = READ_LE_UINT32(plxOff + 4 * currentTile);
-		uint8 tileXpos = *(plxPos + 2 * currentTile); //Fetch tile position in grid
-		uint8 tileYpos = *(plxPos + 2 * currentTile + 1);
-		decompressHIF(plxData + tileOffset, decomp_tile); //Decompress the tile into decomp_tile
-
-		for (byte tileLine = 0; tileLine < 16; tileLine++)
-			memcpy(halfres_buffer + tileLine * plxXres + tileXpos * 16 + tileYpos * plxXres * 16, decomp_tile + tileLine * 16, 16); //Copy data to destination buffer
-	}
+		uint8 tileXpos = *(plxPos + 2 * currentTile); // Fetch tile X and Y position in the grid
+		uint8 tileYpos = *(plxPos + 2 * currentTile + 1) * 2;
+		int32 tileBegin = (tileXpos * 16) - paraScrlX;
+		tileBegin = (tileBegin < 0) ? 0 : tileBegin;
+		uint16 currentLine = (tileYpos * 16); //Current line of the image we are drawing upon, used to avoid going out of screen
 	
-	free(decomp_tile);
+		if (tileXpos >= skipRow) { // Tiles not needed in the screen buffer are not uncompressed
+			uint32 tileOffset = READ_LE_UINT32(plxOff + 4 * currentTile);
+			uint16 rightScreenLimit = _scrnSizeX - scrnScrlX; // Do not write over and beyond this limit, lest we get memory corruption	
+			uint8 *dest = _screenBuf + (tileYpos * 16 * _scrnSizeX) + tileBegin + scrnScrlX;
+			uint8 *src = tile_buffer;
 
-	uint8 *dest_buffer = (uint8*) malloc (plxXres * plxYres * 2 + 4);
-	WRITE_LE_UINT16(dest_buffer, plxXres);      //Insert resolution information
-	WRITE_LE_UINT16(dest_buffer + 2, plxYres*2);
+			decompressHIF(plxData + tileOffset, tile_buffer); // Decompress the tile
 
-	//Let's linedouble the image (to keep correct aspect ratio)
-	for (uint32 currentLine = 0; currentLine < plxYres; currentLine++) {
-		memcpy(dest_buffer + 4 + currentLine * plxXres * 2, halfres_buffer + currentLine * plxXres, plxXres); // destination_line is 2*original_line
-		memcpy(dest_buffer + 4 + currentLine * plxXres * 2 + plxXres, halfres_buffer + currentLine * plxXres, plxXres); // destination_line+1
+			if (tileXpos != skipRow) { // This tile will surely be drawn fully in the buffer
+				for (byte tileLine = 0; (tileLine < 16) && (currentLine < SCREEN_DEPTH); tileLine++) { // Check that we are not going outside the bottom screen part
+					for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++) 
+						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
+					dest += _scrnSizeX; 
+					currentLine++;
+
+					if (currentLine < SCREEN_DEPTH) {
+						for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++) 
+							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
+						dest += _scrnSizeX; 
+						currentLine++;
+					}
+					src += 16; // get to next line of decoded tile
+				}
+			} else { // This tile may be drawn only partially
+				src += leftPixelSkip; //Skip hidden pixels
+				for (byte tileLine = 0; (tileLine < 16) && (currentLine < SCREEN_DEPTH); tileLine++) {
+					for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++) 
+						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
+					dest += _scrnSizeX; 
+					currentLine++;
+
+					if (currentLine < SCREEN_DEPTH) {
+						for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++) 
+							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
+						dest += _scrnSizeX; 
+						currentLine++;
+					}
+					src += 16;
+				}
+			}
+		}
 	}
-	
-	free(halfres_buffer);
 
-	return dest_buffer;
+	free(tile_buffer);
 }
 
 void Screen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
