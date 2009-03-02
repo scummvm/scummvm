@@ -28,15 +28,21 @@
 
 namespace Cruise {
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry, int param2) {
+enum AnimPathIds {
+	ANIM_WAIT	= -1,
+	ANIM_FINISH = -2,
+	ANIM_STATIC = -3
+};
+
+bool isAnimFinished(int overlayIdx, int idx, actorStruct *pStartEntry, int objType) {
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
-		        (pCurrentEntry->idx == param1 || param1 == -1) &&
-		        (pCurrentEntry->type == param2 || param2 == -1)) {
-			if (pCurrentEntry->pathId != -2) {
-				return 0;
+		        (pCurrentEntry->idx == idx || idx == -1) &&
+		        (pCurrentEntry->type == objType || objType == ANIM_WAIT)) {
+			if (pCurrentEntry->pathId != ANIM_FINISH) {
+				return false;
 			}
 		}
 
@@ -732,23 +738,23 @@ void processAnimation(void) {
 				if (!animationStart) {
 					aniX = currentActor->x_dest;
 					aniY = currentActor->y_dest;
-
 					currentActor->x_dest = -1;
 					currentActor->y_dest = -1;
 
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, 
+					aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
-				if (currentActor->pathId == -1) {
+				if (currentActor->pathId == ANIM_WAIT) {
 					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
 						currentActor->phase = ANIM_PHASE_STATIC_END;
 						currentActor->nextDirection = currentActor->endDirection;
 						currentActor->endDirection = -1;
 						currentActor->counter = 0;
 					} else {
-						currentActor->pathId = -2;
+						currentActor->pathId = ANIM_FINISH;
 						currentActor->flag = 0;
 						currentActor->endDirection = -1;
 						currentActor->phase = ANIM_PHASE_WAIT;
@@ -765,7 +771,7 @@ void processAnimation(void) {
 					currentActor->x_dest = -1;
 					currentActor->y_dest = -1;
 
-					if (currentActor->pathId == -1) {
+					if (currentActor->pathId == ANIM_WAIT) {
 						if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
 							currentActor->phase = ANIM_PHASE_STATIC_END;
 							currentActor->nextDirection = currentActor->endDirection;
@@ -787,13 +793,15 @@ void processAnimation(void) {
 
 			if ((currentActor->pathId >= 0) || (currentActor->phase == ANIM_PHASE_STATIC_END)) {
 				switch (currentActor->phase) {
+				// In-place (on the spot) animationos
 				case ANIM_PHASE_STATIC_END:
-				case ANIM_PHASE_STATIC: {
+				case ANIM_PHASE_STATIC: 
+				{
 					if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
 						affiche_chemin(currentActor->pathId, returnVar2);
 
 						if (returnVar2[0] == -1) {
-							currentActor->pathId = -2;
+							currentActor->pathId = ANIM_FINISH;
 							currentActor->flag = 0;
 							currentActor->endDirection = -1;
 							currentActor->phase = ANIM_PHASE_WAIT;
@@ -824,207 +832,92 @@ void processAnimation(void) {
 							inc = -1;
 
 						if (inc > 0)
-							newA =
-							    actor_stat
-							    [currentActor->
-							     startDirection]
-							    [currentActor->
-							     counter++];
+							newA = actor_stat[currentActor->startDirection][currentActor->counter++];
 						else
-							newA =
-							    actor_invstat
-							    [currentActor->
-							     startDirection]
-							    [currentActor->
-							     counter++];
+							newA = actor_invstat[currentActor->startDirection][currentActor->counter++];
 
 						if (newA == 0) {
-							currentActor->
-							startDirection
-							=
-							    currentActor->
-							    startDirection
-							    + inc;
+							currentActor->startDirection = currentActor->startDirection + inc;
 
 							if (currentActor->startDirection > 3)
-								currentActor->
-								startDirection
-								=
-								    0;
+								currentActor->startDirection = 0;
 
 							if (currentActor->startDirection < 0)
-								currentActor->
-								startDirection
-								=
-								    3;
+								currentActor-> startDirection = 3;
 
-							currentActor->
-							counter =
-							    0;
+							currentActor->counter = 0;
 
 							if (currentActor->startDirection == currentActor->nextDirection) {
 								if (currentActor->phase == ANIM_PHASE_STATIC)
-									currentActor->
-									phase
-									=
-									    ANIM_PHASE_MOVE;
+									currentActor->phase = ANIM_PHASE_MOVE;
 								else
-									currentActor->
-									phase
-									=
-									    ANIM_PHASE_END;
+									currentActor->phase = ANIM_PHASE_END;
 							} else {
-								newA =
-								    actor_stat
-								    [currentActor->
-								     startDirection]
-								    [currentActor->
-								     counter++];
+								newA = actor_stat[currentActor->startDirection][currentActor->counter++];
 
-								if (inc
-								        ==
-								        -1)
+								if (inc == -1)
 									newA = -newA;
 
-								set_anim
-								(currentActor->
-								 overlayNumber,
-								 currentActor->
-								 idx,
-								 currentActor->
-								 start,
-								 params.
-								 X,
-								 params.
-								 Y,
-								 newA,
-								 currentActor->
-								 poly);
+								set_anim(currentActor->overlayNumber, currentActor->idx,
+									currentActor->start, params.X, params.Y, newA, currentActor->poly);
 								break;
 							}
 						} else {
-							set_anim
-							(currentActor->
-							 overlayNumber,
-							 currentActor->
-							 idx,
-							 currentActor->
-							 start,
-							 params.X,
-							 params.Y,
-							 newA,
-							 currentActor->
-							 poly);
+							set_anim(currentActor->overlayNumber,currentActor->idx, currentActor->start,
+								params.X, params.Y, newA, currentActor->poly);
 							break;
 						}
 					}
 					break;
 				}
+
+				// Walk animations
 				case ANIM_PHASE_MOVE: {
 					if (currentActor->counter >= 1) {
-						affiche_chemin
-						(currentActor->
-						 pathId,
-						 returnVar2);
-						if (returnVar2[0] ==
-						        -1) {
+						affiche_chemin(currentActor->pathId, returnVar2);
+
+						if (returnVar2[0] == -1) {
 							if ((currentActor->endDirection == -1) || (currentActor->endDirection == currentActor->nextDirection)) {
-								currentActor->
-								phase
-								=
-								    ANIM_PHASE_END;
+								currentActor->phase = ANIM_PHASE_END;
 							} else {
-								currentActor->
-								phase
-								=
-								    ANIM_PHASE_STATIC_END;
-								currentActor->
-								nextDirection
-								=
-								    currentActor->
-								    endDirection;
+								currentActor->phase = ANIM_PHASE_STATIC_END;
+								currentActor->nextDirection = currentActor->endDirection;
 							}
-							currentActor->
-							counter =
-							    0;
+							currentActor->counter = 0;
 							break;
 						} else {
-							currentActor->
-							x =
-							    returnVar2
-							    [0];
-							currentActor->
-							y =
-							    returnVar2
-							    [1];
-							currentActor->
-							nextDirection
-							=
-							    returnVar2
-							    [2];
-							currentActor->
-							poly =
-							    returnVar2
-							    [4];
-
-							/*
-							 * if (pl->next_dir!=pl->start_dir)
-							 * {
-							 * pl->phase=PHASE_STATIC;
-							 * pl->cnt=0;
-							 * break;
-							 * }
-							 */
+							currentActor->x = returnVar2[0];
+							currentActor->y = returnVar2[1];
+							currentActor->nextDirection = returnVar2[2];
+							currentActor->poly = returnVar2[4];
 						}
 					}
 
-					if (currentActor->phase ==
-					        ANIM_PHASE_MOVE) {
+					if (currentActor->phase == ANIM_PHASE_MOVE) {
 						int newA;
 
-						currentActor->
-						startDirection =
-						    currentActor->
-						    nextDirection;
+						currentActor->startDirection = currentActor->nextDirection;
 
-						newA =
-						    actor_move
-						    [currentActor->
-						     startDirection]
-						    [currentActor->
-						     counter++];
+						newA = actor_move[currentActor->startDirection][currentActor->counter++];
 						if (!newA) {
-							currentActor->
-							counter =
-							    0;
-							newA =
-							    actor_move
-							    [currentActor->
-							     startDirection]
-							    [currentActor->
-							     counter++];
+							currentActor->counter = 0;
+							newA = actor_move[currentActor->startDirection][currentActor->counter++];
 						}
-						set_anim(currentActor->
-						         overlayNumber,
-						         currentActor->idx,
-						         currentActor->
-						         start,
-						         currentActor->x,
-						         currentActor->y,
-						         newA,
-						         currentActor->
-						         poly);
+						set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
+							currentActor->x, currentActor->y, newA, currentActor->poly);
 						break;
 					}
 
 					break;
 				}
-				case ANIM_PHASE_END: {
+				case ANIM_PHASE_END:
+				{
 					int newA = actor_end[currentActor->startDirection][0];
 
-					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start, currentActor->x, currentActor->y, newA, currentActor->poly);
+					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
+						currentActor->x, currentActor->y, newA, currentActor->poly);
 
-					currentActor->pathId = -2;
+					currentActor->pathId = ANIM_FINISH;
 					currentActor->phase = ANIM_PHASE_WAIT;
 					currentActor->flag = 0;
 					currentActor->endDirection = -1;

@@ -745,7 +745,7 @@ int16 Op_EndAnim(void) {
 	if (!overlay)
 		overlay = currentScriptPtr->overlayNumber;
 
-	return mainProc13(overlay, param2, &actorHead, param1);
+	return isAnimFinished(overlay, param2, &actorHead, param1);
 }
 
 int16 Op_Protect(void) {

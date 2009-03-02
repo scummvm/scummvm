@@ -144,12 +144,13 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	var_2 = si;
 
 	pNewElement = (cellStruct *) malloc(sizeof(cellStruct));
+	memset(pNewElement, 0, sizeof(cellStruct));
 
 	pNewElement->next = pObject->next;
 	pObject->next = pNewElement;
 
 	pNewElement->idx = messageIdx;
-	pNewElement->type = 5;
+	pNewElement->type = OBJ_TYPE_MSG;
 	pNewElement->backgroundPlane = backgroundPlane;
 	pNewElement->overlay = overlayIdx;
 	pNewElement->x = x;

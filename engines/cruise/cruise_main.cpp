@@ -1702,8 +1702,7 @@ void mainLoop(void) {
 	main21 = 0;
 	main22 = 0;
 	userWait = 0;
-	autoTrack = 0;
-	autoTrack = 0;
+	autoTrack = false;
 
 	initAllData();
 
@@ -1830,7 +1829,7 @@ void mainLoop(void) {
 
 				// wait for character to finish auto track
 				if (autoTrack) {
-					if (mainProc13(narratorOvl, narratorIdx, &actorHead, 0)) {
+					if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, 0)) {
 						if (autoMsg != -1) {
 							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
 
@@ -1841,7 +1840,7 @@ void mainLoop(void) {
 						}
 
 						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
-						autoTrack = 0;
+						autoTrack = false;
 						enableUser = 1;
 					} else {
 						userEnabled = false;

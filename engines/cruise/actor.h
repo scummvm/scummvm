@@ -61,7 +61,7 @@ struct actorStruct {
 	int16 freeze;
 };
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct * pStartEntry, int param2);
+bool isAnimFinished(int overlayIdx, int idx, actorStruct *pStartEntry, int objType);
 actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int type);
 void processAnimation(void);
 void getPixel(int x, int y);
