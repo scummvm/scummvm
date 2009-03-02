@@ -127,13 +127,11 @@ DECLARE_COMMAND_OPCODE(location) {
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	warning("Parallaction_br::cmdOp_open command not yet implemented");
 	_vm->updateDoor(ctxt._cmd->u._zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	warning("Parallaction_br::cmdOp_close not yet implemented");
 	_vm->updateDoor(ctxt._cmd->u._zone, true);
 }
 
@@ -203,7 +201,9 @@ DECLARE_COMMAND_OPCODE(add) {
 
 
 DECLARE_COMMAND_OPCODE(leave) {
-	warning("Parallaction_br::cmdOp_leave not yet implemented");
+	ZonePtr z = ctxt._cmd->u._zone;
+	_vm->dropItem(z->u.get->_icon);
+	_vm->showZone(z, true);
 }
 
 
