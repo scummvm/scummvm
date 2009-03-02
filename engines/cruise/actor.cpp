@@ -40,7 +40,7 @@ bool isAnimFinished(int overlayIdx, int idx, actorStruct *pStartEntry, int objTy
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
 		        (pCurrentEntry->idx == idx || idx == -1) &&
-		        (pCurrentEntry->type == objType || objType == ANIM_WAIT)) {
+		        (pCurrentEntry->type == objType || objType == -1)) {
 			if (pCurrentEntry->pathId != ANIM_FINISH) {
 				return false;
 			}
@@ -730,10 +730,11 @@ void processAnimation(void) {
 	while (currentActor) {
 		nextActor = currentActor->next;
 
-		if (!currentActor->freeze && ((currentActor->type == 0)	|| (currentActor->type == 1))) {
+		if (!currentActor->freeze && ((currentActor->type == ATP_MOUSE) || (currentActor->type == 1))) {
 			getMultipleObjectParam(currentActor->overlayNumber, currentActor->idx, &params);
 
-			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
+			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1
+					&& currentActor->y_dest != -1)) && (currentActor->type == ATP_MOUSE)) {
 				// mouse animation
 				if (!animationStart) {
 					aniX = currentActor->x_dest;
@@ -868,7 +869,6 @@ void processAnimation(void) {
 							break;
 						}
 					}
-					break;
 				}
 
 				// Walk animations
@@ -907,8 +907,6 @@ void processAnimation(void) {
 							currentActor->x, currentActor->y, newA, currentActor->poly);
 						break;
 					}
-
-					break;
 				}
 				case ANIM_PHASE_END:
 				{

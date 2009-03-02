@@ -36,6 +36,11 @@ enum animPhase {
 	ANIM_PHASE_END = 4
 };
 
+enum ATP {
+	ATP_MOUSE = 0,
+	ATP_TRACK = 1
+};
+
 struct actorStruct {
 	struct actorStruct *next;
 	struct actorStruct *prev;
