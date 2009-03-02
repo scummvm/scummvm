@@ -496,6 +496,7 @@ public:
 	void clearSubtitles();
 
 	void testCounterCondition(const Common::String &name, int op, int value);
+	void restoreOrSaveZoneFlags(ZonePtr z, bool restore);
 
 public:
 	bool	counterExists(const Common::String &name);

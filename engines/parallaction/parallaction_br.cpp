@@ -87,6 +87,8 @@ Common::Error Parallaction_br::init() {
 	_subtitle[0] = -1;
 	_subtitle[1] = -1;
 
+	memset(_zoneFlags, 0, sizeof(_zoneFlags));
+
 	_countersNames = 0;
 
 	_saveLoad = new SaveLoad_br(this, _saveFileMan);
@@ -450,6 +452,14 @@ void Parallaction_br::setFollower(const Common::String &name) {
 	} else {
 		_followerName = name;
 		_follower = _location.findAnimation(name.c_str());
+	}
+}
+
+void Parallaction_br::restoreOrSaveZoneFlags(ZonePtr z, bool restore) {
+	if (restore) {
+		z->_flags = _zoneFlags[z->_locationIndex][z->_index];
+	} else {
+		_zoneFlags[z->_locationIndex][z->_index] = z->_flags;
 	}
 }
 

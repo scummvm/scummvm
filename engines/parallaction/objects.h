@@ -233,6 +233,11 @@ struct DoorData {
 	DoorData() {
 		_location = NULL;
 		_startFrame = 0;
+		_startPos.x = -1000;
+		_startPos.y = -1000;
+		_startFrame2 = 0;
+		_startPos2.x = -1000;
+		_startPos2.y = -1000;
 		gfxobj = NULL;
 	}
 };
@@ -316,6 +321,7 @@ public:
 
 	// BRA specific
 	uint			_index;
+	uint			_locationIndex;
 	char			*_linkedName;
 	AnimationPtr	_linkedAnim;
 

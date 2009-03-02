@@ -308,6 +308,7 @@ protected:
 	virtual void	parseZoneTypeBlock(ZonePtr z);
 	void			parsePathData(ZonePtr z);
 	void 			parseGetData(ZonePtr z);
+	void 			parseDoorData(ZonePtr z);
 	void 			parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();
 

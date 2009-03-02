@@ -343,37 +343,35 @@ DECLARE_LOCATION_PARSER(location)  {
 	_vm->_disk->loadScenery(*ctxt.info, _tokens[1], 0, 0);
 }
 
-
-
 DECLARE_LOCATION_PARSER(zone)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(zone) ");
 
+	ctxt.z.reset();
 	parseZone(_vm->_location._zones, _tokens[1]);
-
-	ctxt.z->_index = ctxt.numZones++;
-
-	if (_vm->getLocationFlags() & kFlagsVisited) {
-		ctxt.z->_flags = _vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.z->_index];
-	} else {
-		_vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.z->_index] = ctxt.z->_flags;
+	if (!ctxt.z) {
+		return;
 	}
 
+	ctxt.z->_index = ctxt.numZones++;
+	ctxt.z->_locationIndex = _vm->_currentLocationIndex;
+
+	_vm->restoreOrSaveZoneFlags(ctxt.z, _vm->getLocationFlags() & kFlagsVisited);
 }
 
 
 DECLARE_LOCATION_PARSER(animation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(animation) ");
 
+	ctxt.a.reset();
 	parseAnimation(_vm->_location._animations, _tokens[1]);
-
-	ctxt.a->_index = ctxt.numZones++;
-
-	if (_vm->getLocationFlags() & kFlagsVisited) {
-		ctxt.a->_flags = _vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.a->_index];
-	} else {
-		_vm->_zoneFlags[_vm->_currentLocationIndex][ctxt.a->_index] = ctxt.a->_flags;
+	if (!ctxt.a) {
+		return;
 	}
 
+	ctxt.a->_index = ctxt.numZones++;
+	ctxt.a->_locationIndex = _vm->_currentLocationIndex;
+
+	_vm->restoreOrSaveZoneFlags(ctxt.a, _vm->getLocationFlags() & kFlagsVisited);
 }
 
 
@@ -806,6 +804,55 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.get = data;
+}
+
+void LocationParser_br::parseDoorData(ZonePtr z) {
+
+	DoorData *data = new DoorData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "slidetext")) {
+			strcpy(_vm->_location._slideText[0], _tokens[1]);
+//				printf("%s\t", _slideText[0]);
+			strcpy(_vm->_location._slideText[1], _tokens[2]);
+		}
+
+		if (!scumm_stricmp(_tokens[0], "location")) {
+			data->_location = strdup(_tokens[1]);
+		}
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+//				printf("file: '%s'", _tokens[0]);
+
+			uint16 frame = (z->_flags & kFlagsClosed ? 0 : 1);
+
+			GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
+			obj->frame = frame;
+			obj->x = z->getX();
+			obj->y = z->getY();
+			_vm->_gfx->showGfxObj(obj, true);
+
+			data->gfxobj = obj;
+		}
+
+		if (!scumm_stricmp(_tokens[0],	"startpos")) {
+			data->_startPos.x = atoi(_tokens[1]);
+			data->_startPos.y = atoi(_tokens[2]);
+			data->_startFrame = atoi(_tokens[3]);
+		}
+
+		if (!scumm_stricmp(_tokens[0],	"startpos2")) {
+			data->_startPos2.x = atoi(_tokens[1]);
+			data->_startPos2.y = atoi(_tokens[2]);
+			data->_startFrame2 = atoi(_tokens[3]);
+		}
+
+		_script->readLineToken(true);
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+
+	z->u.door = data;
+
 }
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
