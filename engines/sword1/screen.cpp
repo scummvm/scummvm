@@ -842,7 +842,7 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 	uint32 tag = READ_LE_UINT32(psxBackground);
 
 	uint8 *decomp_tile = (uint8 *)malloc(16 * 16); //Tiles are always 16 * 16
-	uint8 *halfres_buffer = (uint8 *)malloc(totTiles * 16 * 16); //This buffer will contain the half vertical res image
+	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * yresInTiles * 32);
 
 	bool isCompressed = (tag == 0x434F4D50);
 
@@ -861,24 +861,14 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 			tileXpos = 0;
 		} 
 		
-		for (byte tileLine=0; tileLine<16; tileLine++)
-			memcpy(halfres_buffer + tileLine * bakXres + tileXpos * 16 + tileYpos * bakXres * 16, decomp_tile + tileLine * 16, 16); //Copy data to destination buffer
-		
+		for (byte tileLine=0; tileLine<16; tileLine++) { // Copy data to destination buffer
+			memcpy(fullres_buffer + tileLine * bakXres * 2 + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16); 
+			memcpy(fullres_buffer + tileLine * bakXres * 2 + bakXres + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16);
+		}
 		tileXpos++;
 	}
 
 	free(decomp_tile);
-
-	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * yresInTiles * 32);
-	memset(fullres_buffer, 0x00, bakXres * yresInTiles * 32);
-
-	//Let's linedouble the image (to keep correct aspect ratio)
-	for (uint32 currentLine = 0; currentLine < (bakYres/2); currentLine++) {
-		memcpy(fullres_buffer + currentLine * bakXres * 2, halfres_buffer + currentLine * bakXres, bakXres);        // destination_line is 2*original_line
-		memcpy(fullres_buffer + currentLine * bakXres * 2 + bakXres, halfres_buffer + currentLine * bakXres, bakXres); // destination_line+1
-	}
-	
-	free(halfres_buffer);
 
 	return fullres_buffer;
 }
