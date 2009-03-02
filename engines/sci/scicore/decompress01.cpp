@@ -559,7 +559,7 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 		break;
 
 	case 1: // Some huffman encoding
-		if (decrypt2(result->data, buffer, result->size, compressedLength))
+		if (unpackHuffman(result->data, buffer, result->size, compressedLength))
 			overflow = true;
 		break;
 

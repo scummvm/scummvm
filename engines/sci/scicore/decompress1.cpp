@@ -137,7 +137,7 @@ static int huffman_lookup(struct bit_read_struct *inp, int *tree) {
 
 #define DCL_ASCII_MODE 1
 
-static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
+static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
 	int mode, length_param, value, val_length, val_distance;
 	int write_pos = 0;
 
@@ -243,7 +243,7 @@ static int decrypt4_hdyn(byte *dest, int length, struct bit_read_struct *reader)
 	return 0;
 }
 
-int decrypt4(uint8* dest, uint8* src, int length, int complength) {
+int unpackDCL(uint8* dest, uint8* src, int length, int complength) {
 	struct bit_read_struct reader;
 
 	reader.length = complength;
@@ -251,7 +251,7 @@ int decrypt4(uint8* dest, uint8* src, int length, int complength) {
 	reader.bytepos = 0;
 	reader.data = src;
 
-	return -decrypt4_hdyn(dest, length, &reader);
+	return -unpackDCL_hdyn(dest, length, &reader);
 }
 
 void decryptinit3();
@@ -340,7 +340,7 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 		break;
 
 	case 1: // LZW
-		if (decrypt2(result->data, buffer, result->size, compressedLength)) {
+		if (unpackHuffman(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
 			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;
@@ -351,30 +351,7 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 		break;
 
 	case 2: // ???
-		decryptinit3();
-		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->status = SCI_STATUS_ALLOCATED;
-		break;
-
 	case 3:
-		decryptinit3();
-		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
-			free(result->data);
-			result->data = 0; // So that we know that it didn't work
-			result->status = SCI_STATUS_NOMALLOC;
-			free(buffer);
-			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
-		}
-		result->data = view_reorder(result->data, result->size);
-		result->status = SCI_STATUS_ALLOCATED;
-		break;
-
 	case 4:
 		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
@@ -384,7 +361,11 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 			free(buffer);
 			return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 		}
-		result->data = pic_reorder(result->data, result->size);
+
+		if (compressionMethod == 3)
+			result->data = view_reorder(result->data, result->size);
+		if (compressionMethod == 4)
+			result->data = pic_reorder(result->data, result->size);
 		result->status = SCI_STATUS_ALLOCATED;
 		break;
 

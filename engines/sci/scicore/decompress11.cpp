@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-int decrypt4(uint8* dest, uint8* src, int length, int complength);
+int unpackDCL(uint8* dest, uint8* src, int length, int complength);
 
 int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
@@ -110,7 +110,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	case 18:
 	case 19:
 	case 20:
-		if (decrypt4(result->data, buffer, result->size, compressedLength)) {
+		if (unpackDCL(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
 			result->data = 0; // So that we know that it didn't work
 			result->status = SCI_STATUS_NOMALLOC;

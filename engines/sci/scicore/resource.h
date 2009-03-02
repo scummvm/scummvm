@@ -412,11 +412,11 @@ protected:
 	**               encountered.
 	*/
 
-	int decrypt2(uint8* dest, uint8* src, int length, int complength);
+	int unpackHuffman(uint8* dest, uint8* src, int length, int complength);
 	/* Huffman token decryptor - defined in decompress0.c and used in decompress01.c
 	*/
 
-	int decrypt4(uint8* dest, uint8* src, int length, int complength);
+	int unpackDCL(uint8* dest, uint8* src, int length, int complength);
 	/* DCL inflate- implemented in decompress1.c
 	*/
 

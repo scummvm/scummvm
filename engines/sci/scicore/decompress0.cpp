@@ -38,7 +38,7 @@ namespace Sci {
 //#define _SCI_DECOMPRESS_DEBUG
 
 // 9-12 bit LZW encoding
-int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
+int unpackLZW(uint8 *dest, uint8 *src, int length, int complength) {
 	// Doesn't do length checking yet
 	/* Theory: Considering the input as a bit stream, we get a series of
 	** 9 bit elements in the beginning. Every one of them is a 'token'
@@ -102,7 +102,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 				if (token > 0xff) {
 					if (token >= tokenctr) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						warning("decrypt1: Bad token %x", token);
+						warning("unpackLZW: Bad token %x", token);
 #endif
 						// Well this is really bad
 						// May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE
@@ -111,7 +111,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 						if (destctr + tokenlastlength > length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 							// For me this seems a normal situation, It's necessary to handle it
-							warning("decrypt1: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
+							warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
 							       length, destctr, tokenlastlength);
 #endif
 							i = 0;
@@ -128,7 +128,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 					tokenlastlength = 1;
 					if (destctr >= length) {
 #ifdef _SCI_DECOMPRESS_DEBUG
-						warning("decrypt1: Try to write single byte beyond end of array");
+						warning("unpackLZW: Try to write single byte beyond end of array");
 #endif
 					} else
 						dest[destctr++] = (byte)token;
@@ -160,7 +160,7 @@ int decrypt1(uint8 *dest, uint8 *src, int length, int complength) {
 /* modifications.                                                          */
 /***************************************************************************/
 
-// decrypt2 helper function
+// unpackHuffman helper function
 int16 getc2(uint8 *node, uint8 *src, uint16 *bytectr, uint16 *bitctr, int complength) {
 	uint16 next;
 
@@ -195,7 +195,7 @@ int16 getc2(uint8 *node, uint8 *src, uint16 *bytectr, uint16 *bitctr, int comple
 }
 
 // Huffman token decryptor
-int decrypt2(uint8* dest, uint8* src, int length, int complength) {
+int unpackHuffman(uint8* dest, uint8* src, int length, int complength) {
 	// no complength checking atm */
 	uint8 numnodes, terminator;
 	uint8 *nodes;
@@ -299,12 +299,12 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 		break;
 
 	case 1: // LZW compression
-		if (decrypt1(result->data, buffer, result->size, compressedLength))
+		if (unpackLZW(result->data, buffer, result->size, compressedLength))
 			overflow = true;
 		break;
 
 	case 2: // Some sort of Huffman encoding
-		if (decrypt2(result->data, buffer, result->size, compressedLength))
+		if (unpackHuffman(result->data, buffer, result->size, compressedLength))
 			overflow = true;
 		break;
 
