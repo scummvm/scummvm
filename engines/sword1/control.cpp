@@ -164,7 +164,7 @@ void ControlButton::draw(void) {
 				dst += SCREEN_WIDTH;
 				src += _resMan->readUint16(&fHead->width);
 			}
-		else if (_resId == SR_DEATHPANEL) { //Hardcoded goodness for death panel psx version
+		else if (_resId == SR_DEATHPANEL) { // Check for death panel psx version (which is 1/3 of original width)
 			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height)/2; cnt++) {
 				//Stretched panel is bigger than 640px, check we don't draw outside screen
 				for (uint16 cntx = 0; (cntx < (_resMan->readUint16(&fHead->width))/3) && (cntx < (SCREEN_WIDTH-3) ); cntx++)
@@ -184,7 +184,7 @@ void ControlButton::draw(void) {
 				dst += SCREEN_WIDTH;
 				src += _resMan->readUint16(&fHead->width)/3;
 			}
-		} else { //NASTY HACK, save slots needs to be multiplied my 4 in height... need a better way to identify these images
+		} else { //save slots needs to be multiplied by 2 in height
 			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
 				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
 					if (src[cntx]) {
