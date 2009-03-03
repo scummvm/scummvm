@@ -38,12 +38,13 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;
+	uint16 type;
 
 	result->id = stream.readByte();
 	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
 
-	uint16 type = result->id & 0x7f;
+	type = result->id & 0x7f;
 	if (type > kResourceTypeInvalid)
 		return SCI_ERROR_DECOMPRESSION_INSANE;
 
@@ -55,10 +56,6 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	compressionMethod = stream.readUint16LE();
 	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
-
-	//if ((result->size < 0) || (compressedLength < 0))
-	//	return SCI_ERROR_DECOMPRESSION_INSANE;
-	// This return will never happen in SCI0 or SCI1 (does it have any use?)
 
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;

@@ -137,23 +137,29 @@ static int huffman_lookup(struct bit_read_struct *inp, int *tree) {
 
 #define DCL_ASCII_MODE 1
 
-static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader) {
+int unpackDCL(uint8* dest, uint8* src, int length, int complength) {
 	int mode, length_param, value, val_length, val_distance;
 	int write_pos = 0;
+	struct bit_read_struct reader;
 
-	CALLC(mode = getbits(reader, 8));
-	CALLC(length_param = getbits(reader, 8));
+	reader.length = complength;
+	reader.bitpos = 0;
+	reader.bytepos = 0;
+	reader.data = src;
+
+	CALLC(mode = getbits(&reader, 8));
+	CALLC(length_param = getbits(&reader, 8));
 
 	if (mode == DCL_ASCII_MODE) {
 		warning("DCL-INFLATE: Decompressing ASCII mode (untested)");
 	} else if (mode) {
 		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
-		return 1;
+		return -1;
 	}
 
 	if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
-		for (int i = 0; i < reader->length; i++) {
-			debugC(kDebugLevelDclInflate, "%02x ", reader->data[i]);
+		for (int i = 0; i < reader.length; i++) {
+			debugC(kDebugLevelDclInflate, "%02x ", reader.data[i]);
 			if (!((i + 1) & 0x1f))
 				debugC(kDebugLevelDclInflate, "\n");
 		}
@@ -167,10 +173,10 @@ static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader
 		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
 	while (write_pos < length) {
-		CALLC(value = getbits(reader, 1));
+		CALLC(value = getbits(&reader, 1));
 
 		if (value) { // (length,distance) pair
-			CALLC(value = huffman_lookup(reader, length_tree));
+			CALLC(value = huffman_lookup(&reader, length_tree));
 
 			if (value < 8)
 				val_length = value + 2;
@@ -178,23 +184,23 @@ static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader
 				int length_bonus;
 
 				val_length = (1 << (value - 7)) + 8;
-				CALLC(length_bonus = getbits(reader, value - 7));
+				CALLC(length_bonus = getbits(&reader, value - 7));
 				val_length += length_bonus;
 			}
 
 			debugC(kDebugLevelDclInflate, " | ");
 
-			CALLC(value = huffman_lookup(reader, distance_tree));
+			CALLC(value = huffman_lookup(&reader, distance_tree));
 
 			if (val_length == 2) {
 				val_distance = value << 2;
 
-				CALLC(value = getbits(reader, 2));
+				CALLC(value = getbits(&reader, 2));
 				val_distance |= value;
 			} else {
 				val_distance = value << length_param;
 
-				CALLC(value = getbits(reader, length_param));
+				CALLC(value = getbits(&reader, length_param));
 				val_distance |= value;
 			}
 			++val_distance;
@@ -203,12 +209,12 @@ static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader
 
 			if (val_length + write_pos > length) {
 				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
-				return -SCI_ERROR_DECOMPRESSION_OVERFLOW;
+				return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 			}
 
 			if (write_pos < val_distance) {
 				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream");
-				return -SCI_ERROR_DECOMPRESSION_INSANE;
+				return SCI_ERROR_DECOMPRESSION_INSANE;
 			}
 
 			while (val_length) {
@@ -229,9 +235,9 @@ static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader
 
 		} else { // Copy byte verbatim
 			if (mode == DCL_ASCII_MODE) {
-				CALLC(value = huffman_lookup(reader, ascii_tree));
+				CALLC(value = huffman_lookup(&reader, ascii_tree));
 			} else {
-				CALLC(value = getbits(reader, 8));
+				CALLC(value = getbits(&reader, 8));
 			}
 
 			dest[write_pos++] = value;
@@ -241,17 +247,6 @@ static int unpackDCL_hdyn(byte *dest, int length, struct bit_read_struct *reader
 	}
 
 	return 0;
-}
-
-int unpackDCL(uint8* dest, uint8* src, int length, int complength) {
-	struct bit_read_struct reader;
-
-	reader.length = complength;
-	reader.bitpos = 0;
-	reader.bytepos = 0;
-	reader.data = src;
-
-	return -unpackDCL_hdyn(dest, length, &reader);
 }
 
 void decryptinit3();
