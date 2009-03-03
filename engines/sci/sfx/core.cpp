@@ -266,7 +266,7 @@ static void _update_multi_song(sfx_state_t *self) {
 
 	for (newseeker = newsong; newseeker;
 	        newseeker = newseeker->next_playing) {
-		if (!newseeker->it)
+		if (!newseeker || !newseeker->it)
 			return; /* Restore in progress and not ready for this yet */
 	}
 
