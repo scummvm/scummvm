@@ -115,7 +115,7 @@ struct MonsterProperty {
 	uint16 unk5;
 	uint16 unk6[5];
 	uint8 unk7[4];
-	uint8 unk8[3];
+	uint8 sounds[3];
 };
 
 struct MonsterInPlay {
@@ -126,9 +126,9 @@ struct MonsterInPlay {
 	uint16 x;
 	uint16 y;
 	int8 level;
-	uint16 itemPosX;
-	uint16 itemPosY;
-	uint8 field10;
+	uint16 destX;
+	uint16 destY;
+	uint8 destDirection;
 	uint8 anon8;
 	uint8 anonh;
 	uint8 anon9;
@@ -136,7 +136,7 @@ struct MonsterInPlay {
 	uint8 mode;
 	uint8 field_15;
 	uint8 id;
-	uint8 field_17;
+	uint8 direction;
 	uint8 facing;
 	uint16 flags;
 	uint8 field_1B;
@@ -162,7 +162,7 @@ struct ItemInPlay {
 	int8 level;
 	uint16 itemPropertyIndex;
 	uint16 shpCurFrame_flg;
-	uint8 field10;
+	uint8 destDirection;
 	uint8 anon8;
 	uint8 anonh;
 	uint8 anon9;
@@ -241,11 +241,7 @@ private:
 	// main loop
 	void runLoop();
 	void update();
-
-	int setUnkFlags(int unk);
-	int removeUnkFlags(int unk);
-
-	int _intFlag3;
+	void updateEnvironmentalSfx(int soundId);
 
 	// mouse
 	void setMouseCursorToIcon(int icon);
@@ -325,6 +321,7 @@ private:
 	int snd_characterSpeaking();
 	void snd_stopSpeech(bool setFlag);
 	void snd_playSoundEffect(int track, int volume);
+	void snd_processEnvironmentalSoundEffect(int soundId, int block);
 	void snd_loadSoundFile(int track);
 	int snd_playTrack(int track);
 	int snd_stopMusic();
@@ -336,6 +333,9 @@ private:
 	int _lastMusicTrack;
 	int _curMusicFileIndex;
 	char _curMusicFileExt;
+	int _environmentSfx;
+	int _environmentSfxVol;
+	int _environmentSfxDistThreshold;
 
 	int _curTlkFile;
 	int _speechFlag;
@@ -517,7 +517,7 @@ private:
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_initMonster(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
-	int olol_68(EMCState *script);
+	int olol_moveMonster(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
@@ -538,7 +538,7 @@ private:
 	int olol_setDoorState(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
 	int olol_resetPortraitsArea(EMCState *script);
-	int olol_setUnkFlags(EMCState *script);
+	int olol_enableSysTimer(EMCState *script);
 
 	// tim scripts
 	TIM *_activeTim[10];
@@ -907,17 +907,16 @@ private:
 	int placeMonstersUnk(int block);
 	void setMonsterMode(MonsterInPlay *monster, int a);
 	void placeMonster(MonsterInPlay *monster, uint16 x, uint16 y);
-	int cmzS1(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void cmzS2(MonsterInPlay *monster, int a);
+	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	void setMonsterDirection(MonsterInPlay *monster, int dir);
 	void cmzS3(MonsterInPlay *monster);
 	void removeItemOrMonsterFromBlock(uint16 *blockItemIndex, int id);
 	void assignItemOrMonsterToBlock(uint16 *blockItemIndex, int id);
-	void cmzS7(int a, int block);
-	void giveItemToMonster(MonsterInPlay *monster, uint16 a);
-	int checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int p1, int p2);
+	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
+	int checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
-	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int p1, int p2);
-	bool checkBlockOccupiedByParty(int x, int y, int p1);
+	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag);
+	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
 	void drawMonstersAndItems(int block);	
 	void drawMonster(uint16 id);
@@ -932,7 +931,12 @@ private:
 	
 	void updateMonster(MonsterInPlay *monster);
 	void moveMonster(MonsterInPlay *monster);
-	void shiftMonster(MonsterInPlay *monster);
+	void walkMonster(MonsterInPlay *monster);
+	int walkMonsterCalcNextStep(MonsterInPlay *monster);
+	int getMonsterDistance(uint16 block1, uint16 block2);
+	int walkMonster_s3(uint16 monsterBlock, int unk1, int unk2, uint16 curBlock);
+	int walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk);
+	void walkMonsterGetNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 unk);
 
 	MonsterInPlay *_monsters;
 	MonsterProperty *_monsterProperties;
@@ -940,6 +944,10 @@ private:
 	uint8 **_monsterPalettes;
 	uint8 **_monsterShapesEx;
 	uint8 _monsterUnk[3];
+	uint16 _monsterCurBlock;
+	int _monsterUnkDir;
+	int _monsterCountUnk;
+	int _monsterShiftAlt;
 
 	const uint16 *_monsterModifiers;
 	int _monsterModifiersSize;
@@ -956,7 +964,8 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
-	void runLoopSub4(int a);
+	void enableSysTimer(int sysTimer);
+	void disableSysTimer(int sysTimer);
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;

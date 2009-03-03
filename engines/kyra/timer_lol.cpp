@@ -37,7 +37,7 @@ void LoLEngine::setupTimers() {
 	_timer->addTimer(0, TimerV2(timerProcessOpenDoor), 15, true);	
 	_timer->addTimer(0x10, TimerV2(timerProcessMonsters), 6, true);
 	_timer->addTimer(0x11, TimerV2(timerProcessMonsters), 6, true);
-	_timer->setNextRun(0x11, 3);
+	_timer->setNextRun(0x11, _system->getMillis() + 3 * _tickLength);
 	_timer->addTimer(3, TimerV2(timerSub3), 15, true);
 	_timer->addTimer(4, TimerV2(timerSub4), 1, true);
 	_timer->addTimer(0x50, TimerV2(timerSub5), 0, false);

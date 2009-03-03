@@ -33,6 +33,7 @@
 #include "sound/voc.h"
 #include "sound/audiostream.h"
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "base/version.h"
 
@@ -147,6 +148,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsters = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
+	_monsterUnkDir = _monsterCountUnk = _monsterShiftAlt = 0;
+	_monsterCurBlock = 0;
 	//_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
 
 	_dscUnk1 = 0;
@@ -174,12 +177,12 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_curMusicTheme = -1;
 	_curMusicFileExt = 0;
 	_curMusicFileIndex = -1;
+	_environmentSfx = _environmentSfxVol = _environmentSfxDistThreshold = 0;
 
 	_sceneDrawVar1 = _sceneDrawVar2 = _sceneDrawVar3 = _wllProcessFlag = 0;
 	_partyPosX = _partyPosY = 0;
 	_shpDmX = _shpDmY = _dmScaleW = _dmScaleH = 0;
 
-	_intFlag3 = 3;
 	_floatingMouseArrowControl = 0;
 
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
@@ -334,6 +337,8 @@ Common::Error LoLEngine::init() {
 
 	KyraEngine_v1::init();
 	initStaticResource();
+
+	_environmentSfxDistThreshold = (MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB) == MD_ADLIB || ConfMan.getBool("multi_midi")) ? 15 : 3;
 
 	_gui = new GUI_LoL(this);
 	assert(_gui);
@@ -506,7 +511,7 @@ Common::Error LoLEngine::go() {
 	if (!shouldQuit() && (processSelection == 0 || processSelection == 3)) {
 		_screen->_fadeFlag = 3;
 		_sceneUpdateRequired = true;
-		setUnkFlags(1);
+		enableSysTimer(1);
 		runLoop();
 	}
 
@@ -746,28 +751,18 @@ void LoLEngine::startupNew() {
 	_screen->showMouse();
 }
 
-int LoLEngine::setUnkFlags(int unk) {
-	if (unk < 1 || unk > 14)
-		return 0;
-
-	int r = (_intFlag3 & (2 << unk)) ? 1 : 0;
-	_intFlag3 |= (2 << unk);
-
-	return r;
+void LoLEngine::enableSysTimer(int sysTimer) {
+	if (sysTimer == 2)
+		_timer->pause(false);
 }
 
-int LoLEngine::removeUnkFlags(int unk) {
-	if (unk < 1 || unk > 14)
-		return 0;
-
-	int r = (_intFlag3 & (2 << unk)) ? 1 : 0;
-	_intFlag3 &= ~(2 << unk);
-
-	return r;
+void LoLEngine::disableSysTimer(int sysTimer) {
+	if (sysTimer == 2)
+		_timer->pause(true);
 }
 
 void LoLEngine::runLoop() {
-	setUnkFlags(2);
+	enableSysTimer(2);
 
 	bool _runFlag = true;
 	_unkFlag |= 0x800;
@@ -788,7 +783,7 @@ void LoLEngine::runLoop() {
 		if (_sceneUpdateRequired)
 			gui_drawScene(0);
 		else
-			runLoopSub4(0);
+			updateEnvironmentalSfx(0);
 
 		/*if (_partyDeathFlag != -1) {
 			checkForPartyDeath(_partyDeathFlag);
@@ -1179,7 +1174,7 @@ void LoLEngine::resetPortraitsArea() {
 	if (!textEnabled() || (!(_hideControls & 2)))
 		timerUpdatePortraitAnimations(1);
 
-	removeUnkFlags(2);		
+	disableSysTimer(2);		
 }
 
 void LoLEngine::fadeText() {
@@ -1331,6 +1326,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		volume = -volIndex;
 
 	// volume TODO
+	volume = 254 - volume;
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1) {
@@ -1340,8 +1336,6 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)
 			track = track < _ingameGMSoundIndexSize ? _ingameGMSoundIndex[track] - 1: -1;
-		//else if (_sound->getSfxType() == Sound::kAdlib)
-		//	track = track < _ingameADLSoundIndexSize ? _ingameADLSoundIndex[track] - 1: -1;
 
 		if (track == 168)
 			track = 167;
@@ -1349,6 +1343,45 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		if (track != -1)
 			KyraEngine_v1::snd_playSoundEffect(track, volume);
 	}
+}
+
+void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
+	if (!(_unkGameFlag & 1))
+		return;
+
+	if (_environmentSfx)
+		snd_playSoundEffect(_environmentSfx, _environmentSfxVol);
+
+	int dist = 0;
+	if (block) {
+		dist = getMonsterDistance(_currentBlock, block);
+		if (dist > _environmentSfxDistThreshold) {
+			_environmentSfx = 0;
+			return;
+		}
+	}
+
+	_environmentSfx = soundId;
+	_environmentSfxVol = (15 - ((block || dist < 2) ? dist : 0)) << 4;
+
+	if (block != _currentBlock) {
+		static const int8 blockShiftTable[] = { -32, -31, 1, 33, 32, 31, -1, -33 };
+		uint16 cbl = _currentBlock;
+		
+		for (int i = 3; i > 0; i--) {
+			int dir = calcMonsterDirection(cbl & 0x1f, cbl >> 5, block & 0x1f, block >> 5);
+			cbl += blockShiftTable[dir];
+			if (cbl != block) {
+				if (testWallFlag(cbl, 0, 1))
+					_environmentSfxVol >>= 1;
+			}
+		}
+	}
+
+	if (!soundId || _sceneUpdateRequired)
+		return;
+
+	snd_processEnvironmentalSoundEffect(0, 0);
 }
 
 void LoLEngine::snd_loadSoundFile(int track) {
@@ -1501,13 +1534,6 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 	return 1;
 }
 
-void LoLEngine::cmzS7(int a, int block) {
-	if (!(_unkGameFlag & 1))
-		return;
-
-	// TODO
-}
-
 void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
 	uint16 *c = &monster->assignedItems;	
 	while (*c)
@@ -1529,8 +1555,8 @@ void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
 	}
 }
 
-void LoLEngine::runLoopSub4(int a) {
-	cmzS7(a, _currentBlock);
+void LoLEngine::updateEnvironmentalSfx(int soundId) {
+	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }
 
 bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {

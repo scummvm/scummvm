@@ -1066,7 +1066,7 @@ void LoLEngine::drawScene(int pageNum) {
 		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 	}
 
-	runLoopSub4(0);
+	updateEnvironmentalSfx(0);
 	gui_drawCompass();
 
 	_sceneUpdateRequired = false;

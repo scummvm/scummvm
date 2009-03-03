@@ -489,9 +489,9 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		if (b == 1) {
 			if (!textEnabled() || (!(_hideControls & 2)))
 				timerUpdatePortraitAnimations(1);
-			removeUnkFlags(2);
+			disableSysTimer(2);
 		} else {
-			setUnkFlags(2);
+			enableSysTimer(2);
 		}
 		break;
 
@@ -553,7 +553,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->facing = stackPos(3);
 		l->type = stackPos(4);
 		l->properties = &_monsterProperties[l->type];
-		l->field_17 = l->facing << 1;
+		l->direction = l->facing << 1;
 		l->might = (l->properties->might * _monsterModifiers[((_unkGameFlag & 0x30) >> 4)]) >> 8;
 
 		if (_currentLevel == 12 && l->type == 2)
@@ -568,9 +568,9 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		setMonsterMode(l, stackPos(6));
 		placeMonster(l, l->x, l->y);
 
-		l->itemPosX = l->x;
-		l->itemPosY = l->y;
-		l->field10 = l->field_17;
+		l->destX = l->x;
+		l->destY = l->y;
+		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
 			l->field_2A[ii] = stackPos(7 + ii);
@@ -638,21 +638,21 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	}
 
 	for (int i = 0; i < 3; i++)
-		l->unk8[i] = stackPos(39 + i);
+		l->sounds[i] = stackPos(39 + i);
 
 	return 1;
 }
 
-int LoLEngine::olol_68(EMCState *script) {
-
+int LoLEngine::olol_moveMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	MonsterInPlay *m = &_monsters[stackPos(0)];
 	
 	if (m->mode == 1 || m->mode == 2) {
-		calcCoordinates(m->itemPosX, m->itemPosY, stackPos(1), stackPos(2), stackPos(3));
-		m->field10 = stackPos(4);
+		calcCoordinates(m->destX, m->destY, stackPos(1), stackPos(2), stackPos(3));
+		m->destDirection = stackPos(4) << 1;
 
-		if (m->x != m->itemPosX || m->y != m->itemPosY)
-			cmzS2(m, cmzS1(m->x, m->y, m->itemPosX, m->itemPosY));
+		if (m->x != m->destX || m->y != m->destY)
+			setMonsterDirection(m, calcMonsterDirection(m->x, m->y, m->destX, m->destY));
 	}
 
 	return 1;
@@ -810,10 +810,11 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	if (!c || i > 250)
 		return 0;
 
-	if (_ingameSoundIndex[i] == 0xffff)
+	uint16 t = READ_LE_UINT16(&_ingameSoundIndex[i << 1]);
+	if (t == 0xffff)
 		return 0;
 
-	strcpy(_ingameSoundList[_ingameSoundIndex[i]], c);
+	strcpy(_ingameSoundList[t], c);
 
 	return 0;
 }
@@ -823,9 +824,9 @@ int LoLEngine::olol_resetPortraitsArea(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_setUnkFlags(EMCState *script) {
+int LoLEngine::olol_enableSysTimer(EMCState *script) {
 	_hideInventory = 0;
-	setUnkFlags(2);
+	enableSysTimer(2);
 	return 1;
 }
 
@@ -891,7 +892,7 @@ int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_initDialogueSequence(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initDialogueSequence(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	this->initDialogueSequence(param[0]);
+	initDialogueSequence(param[0]);
 	return 1;
 }
 
@@ -1077,7 +1078,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x44
-	Opcode(olol_68);
+	Opcode(olol_moveMonster);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1206,7 +1207,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_resetPortraitsArea);
-	Opcode(olol_setUnkFlags);
+	Opcode(olol_enableSysTimer);
 
 	// 0x9C
 	OpcodeUnImpl();

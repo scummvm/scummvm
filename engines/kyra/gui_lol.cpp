@@ -1084,7 +1084,7 @@ int LoLEngine::clickedScreen(Button *button) {
 }
 
 int LoLEngine::clickedPortraitLeft(Button *button) {
-	removeUnkFlags(2);
+	disableSysTimer(2);
 
 	if (!_weaponsDisabled) {
 		_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _pageBuffer2);
@@ -1184,7 +1184,7 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 
 	_lastCharInventory = -1;
 	updateSceneWindow();
-	setUnkFlags(2);
+	enableSysTimer(2);
 	
 	return 1;
 }
