@@ -200,13 +200,9 @@ int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, Res
 int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) {
 	int fsize;
 	Common::File file;
-	Resource *resources;
-	int resource_nr;
-	int resource_index = 0;
+	Resource *res, res1;
 	int resources_total_read = 0;
-	int next_entry;
-	int max_resfile_nr = 0;
-
+	bool bAdded = false;
 	byte buf[SCI0_RESMAP_ENTRIES_SIZE];
 
 	if (!file.open(map->location_name))
@@ -255,86 +251,43 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
-
-	resources = (Resource *)sci_calloc(resource_nr, sizeof(Resource));
-	// Sets valid default values for most entries
+	int resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
 
 	do {
 		int read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
-		next_entry = 1;
 
-		if (read_ok < 0) {
+		if (read_ok != SCI0_RESMAP_ENTRIES_SIZE) {
 			sciprintf("Error while reading %s: ", map->location_name.c_str());
 			perror("");
-			next_entry = 0;
-		} else if (read_ok != SCI0_RESMAP_ENTRIES_SIZE) {
-			next_entry = 0;
-		} else if (buf[5] == 0xff) // Most significant offset byte
-			next_entry = 0;
+			break;
+		}
+		if(buf[5] == 0xff)
+			break;
 
-		if (next_entry) {
-			int fresh = 1;
-			int addto = resource_index;
-			int i;
-
-			if (resReadEntry(map, buf, resources + resource_index, *sci_version)) {
-				free(resources);
-				return SCI_ERROR_RESMAP_NOT_FOUND;
-			}
-
-			for (i = 0; i < resource_index; i++)
-				if (resources[resource_index].id == resources[i].id) {
-					addto = i;
-					fresh = 0;
-				}
-
-			addAltSource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
-
-			if (fresh)
-				++resource_index;
-
-			if (++resources_total_read >= resource_nr) {
-				warning("After %d entries, resource.map is not terminated", resource_index);
-				next_entry = 0;
-			}
-
+		if (resReadEntry(map, buf, &res1, *sci_version))
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+		uint32 resId = RESOURCE_HASH(res1.type, res1.number);
+		// adding a new resource
+		if (_resMap.contains(resId) == false) {
+			res = new Resource;
+			res->id = res1.id;
+			res->file_offset = res1.file_offset;
+			res->number = res1.number;
+			res->type = res1.type;
+			res->source = res1.source;
+			_resMap.setVal(resId, res);
+			bAdded = true;
 		}
 
-	} while (next_entry);
+		if (++resources_total_read >= resource_nr) {
+			warning("After %d entries, resource.map is not terminated", resources_total_read);
+			break;
+		}
+	} while (!file.eos());
+	if (!bAdded)
+		return SCI_ERROR_RESMAP_NOT_FOUND;
 
 	file.close();
-
-	if (!resource_index) {
-		sciprintf("resource.map was empty!\n");
-		freeResources(resources, resource_nr);
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-	}
-
-	if (max_resfile_nr > 999) {
-		freeResources(resources, resource_nr);
-		return SCI_ERROR_INVALID_RESMAP_ENTRY;
-	} else {
-#if 0
-		// Check disabled, Mac SQ3 thinks it has resource.004 but doesn't need it -- CR
-		// Check whether the highest resfile used exists
-		char filename_buf[14];
-		sprintf(filename_buf, "resource.%03d", max_resfile_nr);
-
-		if (!file.open(filename_buf) {
-			_scir_free_resources(resources, resource_nr);
-			sciprintf("'%s' requested by resource.map, but not found\n", filename_buf);
-			return SCI_ERROR_INVALID_RESMAP_ENTRY;
-		}
-#endif
-	}
-
-	if (resource_index < resource_nr)
-		resources = (Resource *)sci_realloc(resources, sizeof(Resource) * resource_index);
-
-	_resources = resources;
-	_resourcesNr = resource_index;
-
 	return 0;
 }
 
@@ -374,7 +327,6 @@ int ResourceManager::isSCI10or11(int *types) {
 int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version) {
 	int fsize;
 	Common::File file;
-	Resource *resources, *resource_start;
 	int resource_nr;
 	int resource_index = 0;
 	int ofs, header_size;
@@ -412,10 +364,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	}
 
 	resource_nr = (fsize - types[0]) / entrysize;
-	resource_start = resources = (Resource*)sci_realloc(_resources, (_resourcesNr + resource_nr) * sizeof(Resource));
-	memset(resource_start + sizeof(Resource) * _resourcesNr, 0, resource_nr * sizeof(Resource));
-	resources += _resourcesNr;
-
 	i = 0;
 	while (types[i] == 0)
 		i++;
@@ -424,94 +372,38 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	file.seek(ofs, SEEK_SET);
 
 	for (i = 0; i < resource_nr; i++) {
-		int read_ok = file.read(&buf, entrysize);
-		int j;
 		Resource *res;
-		int addto = resource_index;
-		int fresh = 1;
+		int number;
+		ResourceType type;
+		uint32 resId;
 
-		if (read_ok < entrysize) {
-#if 0
-			if (!file.eof()) {
-				sciprintf("Error while reading %s: ", map->location_name.c_str());
-				perror("");
-			} else
-				read_ok = 1;
-			break;
-#endif
+		file.read(&buf, entrysize);
+		type = resTypeSCI1(ofs, types, lastrt);
+		number = SCI1_RESFILE_GET_NUMBER(buf);
+		resId = RESOURCE_HASH(type, number);
+		// adding new resource only if it does not exist
+		if (_resMap.contains(resId) == false) {
+			res = new Resource;
+			_resMap.setVal(resId, res);
+			res->type = type;
+			res->number = number;
+			res->id = res->number | (res->type << 16);
+		// only 1st source would be used when loading resource
+			if (entry_size_selector < SCI_VERSION_1_1) {
+				res->source = getVolume(map, SCI1_RESFILE_GET_FILE(buf));
+				res->file_offset = SCI1_RESFILE_GET_OFFSET(buf);
+			} else {
+				res->source = vol;
+				res->file_offset = SCI11_RESFILE_GET_OFFSET(buf);
+			};
 		}
-
-		res = &(resources[resource_index]);
-		res->type = resTypeSCI1(ofs, types, lastrt);
-		res->number = SCI1_RESFILE_GET_NUMBER(buf);
-		res->status = SCI_STATUS_NOMALLOC;
-
-		if (entry_size_selector < SCI_VERSION_1_1) {
-			res->source = getVolume(map, SCI1_RESFILE_GET_FILE(buf));
-			res->file_offset = SCI1_RESFILE_GET_OFFSET(buf);
-		} else {
-			res->source = vol;
-			res->file_offset = SCI11_RESFILE_GET_OFFSET(buf);
-		};
-
-		res->id = res->number | (res->type << 16);
-
-		for (j = 0; i < resource_index; i++)
-			if (resources[resource_index].id == resources[i].id) {
-				addto = i;
-				fresh = 0;
-			}
-
-#if 0
-		fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x ==> %d\n",
-		        res->id, res->number,
-		        sci_resource_type_suffixes[res->type],
-		        res->file, res->file_offset, addto);
-#endif
-
-		addAltSource(resources + addto, resources[resource_index].source, resources[resource_index].file_offset);
-
-		if (fresh)
-			++resource_index;
 
 		ofs += entrysize;
 	}
 
 	free(types);
 
-	_resources = resource_start;
-	_resourcesNr += resource_index;
-	return 0;
-
-}
-
-#ifdef TEST_RESOURCE_MAP
-int main(int argc, char **argv) {
-	int resource_nr;
-	Resource *resources;
-	int notok = sci0_read_resource_map(".", &resources, &resource_nr);
-
-	if (notok) {
-		fprintf(stderr, "Failed: Error code %d\n", notok);
-		return 1;
-	}
-
-	if (resources) {
-		int i;
-
-		printf("Found %d resources:\n", resource_nr);
-
-		for (i = 0; i < resource_nr; i++) {
-			Resource *res = resources + i;
-
-			printf("#%04d:\tRESOURCE.%03d:%8d\t%s.%03d\n", i, res->file, res->file_offset,
-					sci_resource_types[res->type], res->number);
-		}
-	} else
-		fprintf(stderr, "Found no resources.\n");
-
 	return 0;
 }
-#endif
 
 } // End of namespace Sci

@@ -51,14 +51,15 @@ void ResourceManager::process_patch(ResourceSource *source,
 	if (!file.open(member.createReadStream(), member.getName()))
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 	else {
-		uint8 filehdr[2];
-		Resource *newrsc = findResourceUnsorted(_resources, _resourcesNr, restype, resnumber);
+		byte filehdr[2];
 		int fsize = file.size();
 		if (fsize < 3) {
 			printf("File too small\n");
 			return;
 		}
-
+		
+		uint32 resId = RESOURCE_HASH(restype, resnumber);
+		Resource *newrsc;
 		int patch_data_offset;
 
 		file.read(filehdr, 2);
@@ -74,23 +75,20 @@ void ResourceManager::process_patch(ResourceSource *source,
 			fsize -= patch_data_offset;
 
 			// Prepare destination, if neccessary
-			if (!newrsc) {
-				// Completely new resource!
-				_resourcesNr++;
-				_resources = (Resource *)sci_realloc(_resources, _resourcesNr * sizeof(Resource));
-				newrsc = (_resources - 1) + _resourcesNr;
-				newrsc->alt_sources = NULL;
-			}
+			if (_resMap.contains(resId) == false) {
+				newrsc = new Resource;
+				_resMap.setVal(resId, newrsc);
+			} else 
+				newrsc = _resMap.getVal(resId);
 
 			// Overwrite everything, because we're patching
 			newrsc->size = fsize - 2;
-			newrsc->id = restype << 11 | resnumber;
+			newrsc->id = resId;
 			newrsc->number = resnumber;
 			newrsc->status = SCI_STATUS_NOMALLOC;
 			newrsc->type = restype;
 			newrsc->source = source;
 			newrsc->file_offset = 2 + patch_data_offset;
-			addAltSource(newrsc, source, 2);
 			printf("OK\n");
 		}
 	}

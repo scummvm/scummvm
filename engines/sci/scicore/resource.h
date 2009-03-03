@@ -84,16 +84,18 @@ namespace Sci {
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
 
 enum ResSourceType {
-	RESSOURCE_TYPE_DIRECTORY = 0,
-	RESSOURCE_TYPE_VOLUME = 2,
-	RESSOURCE_TYPE_EXTERNAL_MAP = 3,
-	RESSOURCE_TYPE_INTERNAL_MAP = 4,
-	RESSOURCE_TYPE_MASK = 127
+	kSourceDirectory = 0,
+	kSourceVolume = 2,
+	kSourceExtMap = 3,
+	kSourceIntMap = 4,
+	kSourceMask = 127
 };
 
 #define RESSOURCE_ADDRESSING_BASIC 0
 #define RESSOURCE_ADDRESSING_EXTENDED 128
 #define RESSOURCE_ADDRESSING_MASK 128
+
+#define RESOURCE_HASH(type, number) (uint32)((type<<16) | number) 
 
 extern const char *sci_error_types[];
 extern const char *sci_version_types[];
@@ -150,31 +152,28 @@ struct ResourceSource {
 	ResourceSource *next;
 };
 
-struct resource_altsource_t {
-	ResourceSource *source;
-	unsigned int file_offset;
-	resource_altsource_t *next;
-};
-
-
-/** Struct for storing resources in memory */
+/** Class for storing resources in memory */
 class Resource {
 
 public:
+	Resource::Resource();
+	Resource::~Resource();
+	void unalloc();
+
 // NOTE : Currently all member data has the same name and public visibility
 // to let the rest of the engine compile without changes
-	unsigned char *data;
-	unsigned short number;
+public:
+	byte *data;
+	uint16 number;
 	ResourceType type;
 	uint16 id; /* contains number and type */
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
-	unsigned char status;
+	byte status;
 	unsigned short lockers; /* Number of places where this resource was locked */
 	Resource *next; /* Position marker for the LRU queue */
 	Resource *prev;
 	ResourceSource *source;
-	resource_altsource_t *alt_sources; /* SLL of alternative resource data sources */
 };
 
 
@@ -257,50 +256,21 @@ public:
 
 protected:
 	int _maxMemory; /* Config option: Maximum total byte number allocated */
-	int _resourcesNr;
+	//int _resourcesNr;
 	ResourceSource *_sources;
-	Resource *_resources;
+	//Resource *_resources;
 	int _memoryLocked;	// Amount of resource bytes in locked memory
 	int _memoryLRU;		// Amount of resource bytes under LRU control
 	Resource *lru_first, *lru_last;	// Pointers to the first and last LRU queue entries
 										// LRU queue: lru_first points to the most recent entry
-
-	/* Frees a block of resources and associated data
-	** Parameters: (Resource *) resources: The resources to free
-	**             (int) _resourcesNr: Number of resources in the block
-	** Returns   : (void)
-	*/
-	void freeResources(Resource *resources, int _resourcesNr);
-
-	/* Finds a resource matching type.number in an unsorted Resource block
-	** To be used during initial resource loading, when the resource list
-	** may not have been sorted yet.
-	** Parameters: (Resource *) res: Pointer to the block to search in
-	**             (int) res_nr: Number of Resource structs allocated and defined
-	**                           in the block pointed to by res
-	**             (ResourceType) type: Type of the resource to look for
-	**             (int) number: Number of the resource to look for
-	** Returns   : (Resource) The matching resource entry, or NULL if not found
-	*/
-	Resource *findResourceUnsorted(Resource *res, int res_nr, ResourceType type, int number);
-
-	/* Adds an alternative source to a resource
-	** Parameters: (Resource *) res: The resource to add to
-	**             (ResourceSource *) source: The source of the resource
-	**             (unsigned int) file_offset: Offset in the file the resource
-	**                            is stored at
-	** Returns   : (void)
-	*/
-	void addAltSource(Resource *res, ResourceSource *source, unsigned int file_offset);
+	Common::HashMap<uint32, Resource *> _resMap;
 
 	int addAppropriateSources();
 	void freeResourceSources(ResourceSource *rss);
-	void freeAltSources(resource_altsource_t *dynressrc);
 
 	void loadResource(Resource *res, bool protect);
-	void loadFromPatchFile(Common::File &file, Resource *res, char *filename);
+	bool loadFromPatchFile(Resource *res);
 	void freeOldResources(int last_invulnerable);
-	void unalloc(Resource *res);
 
 	/**--- Resource map decoding functions ---*/
 
@@ -326,28 +296,16 @@ protected:
 
 	/**--- Patch management functions ---*/
 
-	/* Reads SCI0 patch files from a local directory
-	** Parameters: (char *) path: (unused)
-	**             (Resource **) resources: Pointer to a pointer
-	**                                        that will be set to the
-	**                                        location of the resources
-	**                                        (in one large chunk)
-	**             (int *) resource_nr_p: Pointer to an int the number of resources
-	**                                    read is stored in
-	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
-	*/
+	//! Reads SCI0 patch files from a local directory
+	/** @paramParameters: ResourceSource *source
+	  * @return   : (int) 0 on success, an SCI_ERROR_* code otherwise
+	  */
 	int readResourcePatchesSCI0(ResourceSource *source);
 
-	/* Reads SCI1 patch files from a local directory
-	** Parameters: (char *) path: (unused)
-	**             (Resource **) resources: Pointer to a pointer
-	**                                        that will be set to the
-	**                                        location of the resources
-	**                                        (in one large chunk)
-	**             (int *) resource_nr_p: Pointer to an int the number of resources
-	**                                    read is stored in
-	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
-	*/
+	//! Reads SCI1 patch files from a local directory
+	/** @paramParameters: ResourceSource *source
+	  * @return   : (int) 0 on success, an SCI_ERROR_* code otherwise
+	  */
 	int readResourcePatchesSCI1(ResourceSource *source);
 
 	void process_patch(ResourceSource *source, Common::ArchiveMember &member,

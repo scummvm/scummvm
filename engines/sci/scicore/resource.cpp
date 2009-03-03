@@ -26,6 +26,7 @@
 // Resource library
 
 #include "common/util.h"
+#include "common/debug.h"
 
 #include "sci/tools.h"
 #include "sci/sci_memory.h"
@@ -88,8 +89,6 @@ const char *getResourceTypeSuffix(ResourceType restype) {
 	return resourceTypeSuffixes[restype];
 }
 
-int resourcecmp(const void *first, const void *second);
-
 typedef int decomp_funct(Resource *result, Common::ReadStream &stream, int sci_version);
 typedef void patch_sprintf_funct(char *string, Resource *res);
 
@@ -117,38 +116,31 @@ static patch_sprintf_funct *patch_sprintfers[] = {
 	&sci1_sprintf_patch_file_name
 };
 
-
-int resourcecmp(const void *first, const void *second) {
-	if (((Resource *)first)->type ==
-	        ((Resource *)second)->type)
-		return (((Resource *)first)->number <
-		        ((Resource *)second)->number) ? -1 :
-		       !(((Resource *)first)->number ==
-		         ((Resource *)second)->number);
-	else
-		return (((Resource *)first)->type <
-		        ((Resource *)second)->type) ? -1 : 1;
+//-- Resource main functions --
+Resource::Resource() {
+	data = NULL;
+	number = 0;
+	type = kResourceTypeInvalid;
+	id = 0;
+	size = 0;
+	file_offset = 0;
+	status = SCI_STATUS_NOMALLOC;
+	lockers = 0;
+	next = prev = NULL;
+	source = NULL;
 }
 
+Resource::~Resource() {
+	delete[] data;
+}
+
+void Resource::unalloc() {
+	delete[] data;
+	data = NULL;
+	status = SCI_STATUS_NOMALLOC;
+}
 
 //-- Resmgr helper functions --
-
-void ResourceManager::addAltSource(Resource *res, ResourceSource *source, unsigned int file_offset) {
-	resource_altsource_t *rsrc = (resource_altsource_t *)sci_malloc(sizeof(resource_altsource_t));
-
-	rsrc->next = res->alt_sources;
-	rsrc->source = source;
-	rsrc->file_offset = file_offset;
-	res->alt_sources = rsrc;
-}
-
-Resource *ResourceManager::findResourceUnsorted(Resource *res, int res_nr, ResourceType type, int number) {
-	int i;
-	for (i = 0; i < res_nr; i++)
-		if (res[i].number == number && res[i].type == type)
-			return res + i;
-	return NULL;
-}
 
 // Resource source list management
 
@@ -159,7 +151,7 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 	newsrc->next = _sources;
 	_sources = newsrc;
 
-	newsrc->source_type = RESSOURCE_TYPE_EXTERNAL_MAP;
+	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
@@ -174,7 +166,7 @@ ResourceSource *ResourceManager::addVolume(ResourceSource *map, const char *file
 	newsrc->next = _sources;
 	_sources = newsrc;
 
-	newsrc->source_type = RESSOURCE_TYPE_VOLUME;
+	newsrc->source_type = kSourceVolume;
 	newsrc->scanned = false;
 	newsrc->location_name = filename;
 	newsrc->volume_number = number;
@@ -190,7 +182,7 @@ ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 	newsrc->next = _sources;
 	_sources = newsrc;
 
-	newsrc->source_type = RESSOURCE_TYPE_DIRECTORY;
+	newsrc->source_type = kSourceDirectory;
 	newsrc->scanned = false;
 	newsrc->location_name = dirname;
 
@@ -201,7 +193,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 	ResourceSource *seeker = _sources;
 
 	while (seeker) {
-		if (seeker->source_type == RESSOURCE_TYPE_VOLUME && seeker->associated_map == map &&
+		if (seeker->source_type == kSourceVolume && seeker->associated_map == map &&
 		        seeker->volume_number == volume_nr)
 			return seeker;
 		seeker = seeker->next;
@@ -212,79 +204,77 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 // Resource manager constructors and operations
 
-void ResourceManager::loadFromPatchFile(Common::File &file, Resource *res, char *filename) {
-	unsigned int really_read;
+bool ResourceManager::loadFromPatchFile(Resource *res) {
+	Common::File file;
+	char filename[MAXPATHLEN];
+	if (!patch_sprintfers[_sciVersion]) {
+		error("Resource manager's SCI version (%d) has no patch file name printers", _sciVersion);
+	}
+	// TODO: use only dir specified by res->source->location_dir_name
+	patch_sprintfers[_sciVersion](filename, res);
+	if (file.open(filename) == false) {
+		warning("Failed to open patch file %s", filename);
+		res->unalloc();
+		return false;
+	}
+	res->data = new byte[res->size];
 
-	res->data = (unsigned char *)sci_malloc(res->size);
-	really_read = file.read(res->data, res->size);
-
-	if (really_read < res->size) {
-		error("Read %d bytes from %s but expected %d!", really_read, filename, res->size);
+	if (res->data == NULL) {
+		error("Can't allocate %d bytes needed for loading %s!", res->size, filename);
 	}
 
+	file.seek(res->file_offset, SEEK_SET);
+	unsigned int really_read = file.read(res->data, res->size);
+	if (really_read != res->size) {
+		error("Read %d bytes from %s but expected %d!", really_read, filename, res->size);
+	}
 	res->status = SCI_STATUS_ALLOCATED;
+	return true;
 }
 
 void ResourceManager::loadResource(Resource *res, bool protect) {
+	// TODO: check if protect is needed at all
 	char filename[MAXPATHLEN];
 	Common::File file;
 	Resource backup;
 
 	memcpy(&backup, res, sizeof(Resource));
 
-	// First try lower-case name
-	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY) {
-		if (!patch_sprintfers[_sciVersion]) {
-			error("Resource manager's SCI version (%d) has no patch file name printers", _sciVersion);
-		}
-
-		// Get patch file name
-		patch_sprintfers[_sciVersion](filename, res);
-
-		// FIXME: Instead of using SearchMan, maybe we should only search
-		// a single dir specified by this RESSOURCE_TYPE_DIRECTORY ResourceSource?
-	} else
-		strcpy(filename, res->source->location_name.c_str());
+	if (res->source->source_type == kSourceDirectory && loadFromPatchFile(res))
+		return;
+	// Either loading from volume or patch loading failed
+	strcpy(filename, res->source->location_name.c_str());
 
 	if (!file.open(filename)) {
 		warning("Failed to open %s", filename);
-		res->data = NULL;
-		res->status = SCI_STATUS_NOMALLOC;
-		res->size = 0;
+		res->unalloc();
 		return;
 	}
-
 	file.seek(res->file_offset, SEEK_SET);
 
-	if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
-		loadFromPatchFile(file, res, filename);
-	else if (!decompressors[_sciVersion]) {
-		// Check whether we support this at all
+	// Check whether we support this at all
+	if (decompressors[_sciVersion] == NULL)
 		error("Resource manager's SCI version (%d) is invalid", _sciVersion);
-	} else {
-		int error = // Decompress from regular resource file
-		    decompressors[_sciVersion](res, file, _sciVersion);
+	// Decompress from regular resource file
+	int error = decompressors[_sciVersion](res, file, _sciVersion);
 
-		if (error) {
-			sciprintf("Error %d occured while reading %s.%03d from resource file: %s\n",
-			          error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
+	if (error) {
+		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
+			error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
 
-			if (protect)
-				memcpy(res, &backup, sizeof(Resource));
-
-			res->data = NULL;
-			res->status = SCI_STATUS_NOMALLOC;
-			res->size = 0;
-		}
+		if (protect)
+			memcpy(res, &backup, sizeof(Resource));
+		res->unalloc();
 	}
-
 }
 
 Resource *ResourceManager::testResource(ResourceType type, int number) {
 	Resource binseeker;
 	binseeker.type = type;
 	binseeker.number = number;
-	return (Resource *)bsearch(&binseeker, _resources, _resourcesNr, sizeof(Resource), resourcecmp);
+	if (_resMap.contains(RESOURCE_HASH(type, number)))
+		return _resMap.getVal(RESOURCE_HASH(type, number));
+	return NULL;
 }
 
 int sci0_get_compression_method(Common::ReadStream &stream);
@@ -304,7 +294,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 		if (!res)
 			continue;
 
-		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
+		if (res->source->source_type == kSourceDirectory)
 			continue;
 
 		strcpy(filename, res->source->location_name.c_str());
@@ -329,7 +319,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 		if (!res)
 			continue;
 
-		if (res->source->source_type == RESSOURCE_TYPE_DIRECTORY)
+		if (res->source->source_type == kSourceDirectory)
 			continue;
 
 		strcpy(filename, res->source->location_name.c_str());
@@ -373,10 +363,12 @@ int ResourceManager::addAppropriateSources() {
 }
 
 int ResourceManager::scanNewSources(int *detected_version, ResourceSource *source) {
+	if (!source)
+		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+
 	int preset_version = _sciVersion;
 	int resource_error = 0;
 	int dummy = _sciVersion;
-	//Resource **concat_ptr = &(mgr->_resources[mgr->_resourcesNr - 1].next);
 
 	if (detected_version == NULL)
 		detected_version = &dummy;
@@ -388,13 +380,13 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 	if (!source->scanned) {
 		source->scanned = true;
 		switch (source->source_type) {
-		case RESSOURCE_TYPE_DIRECTORY:
+		case kSourceDirectory:
 			if (_sciVersion <= SCI_VERSION_01)
 				readResourcePatchesSCI0(source);
 			else
 				readResourcePatchesSCI1(source);
 			break;
-		case RESSOURCE_TYPE_EXTERNAL_MAP:
+		case kSourceExtMap:
 			if (preset_version <= SCI_VERSION_01_VGA_ODD /* || preset_version == SCI_VERSION_AUTODETECT -- subsumed by the above line */) {
 				resource_error = readResourceMapSCI0(source, detected_version);
 #if 0
@@ -429,8 +421,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 
 				if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
 					// Initialize empty resource manager
-					_resourcesNr = 0;
-					_resources = 0; // FIXME: Was = (Resource*)sci_malloc(1);
+					_resMap.clear();
 					resource_error = 0;
 				}
 			}
@@ -440,7 +431,6 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 		default:
 			break;
 		}
-		qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
 	}
 	return resource_error;
 }
@@ -461,8 +451,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 
-	_resources = NULL;
-	_resourcesNr = 0;
+	_resMap.clear();
 	_sources = NULL;
 	_sciVersion = version;
 
@@ -472,56 +461,43 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	addAppropriateSources();
 	scanNewSources(&resmap_version, _sources);
 
-	if (!_resources || !_resourcesNr) {
-		if (_resources) {
-			free(_resources);
-			_resources = NULL;
-		}
-		sciprintf("Resmgr: Could not retrieve a resource list!\n");
-		freeResourceSources(_sources);
-		error("FIXME: Move this code to an init() method so that we can perform error handling");
-//		return NULL;
-	}
-
-	qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
-
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (resmap_version) {
 		case SCI_VERSION_0:
 			if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
 				version = sci_test_view_type(this);
 				if (version == SCI_VERSION_01_VGA) {
-					sciprintf("Resmgr: Detected KQ5 or similar\n");
+					debug("Resmgr: Detected KQ5 or similar\n");
 				} else {
-					sciprintf("Resmgr: Detected SCI0\n");
+					debug("Resmgr: Detected SCI0\n");
 					version = SCI_VERSION_0;
 				}
 			} else if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
 				version = sci_test_view_type(this);
 				if (version == SCI_VERSION_01_VGA) {
-					sciprintf("Resmgr: Detected KQ5 or similar\n");
+					debug("Resmgr: Detected KQ5 or similar\n");
 				} else {
 					if (testResource(kResourceTypeVocab, 912)) {
-						sciprintf("Resmgr: Running KQ1 or similar, using SCI0 resource encoding\n");
+						debug("Resmgr: Running KQ1 or similar, using SCI0 resource encoding\n");
 						version = SCI_VERSION_0;
 					} else {
 						version = SCI_VERSION_01;
-						sciprintf("Resmgr: Detected SCI01\n");
+						debug("Resmgr: Detected SCI01\n");
 					}
 				}
 			} else {
 				version = sci_test_view_type(this);
 				if (version == SCI_VERSION_01_VGA) {
-					sciprintf("Resmgr: Detected KQ5 or similar\n");
+					debug("Resmgr: Detected KQ5 or similar\n");
 				} else {
-					sciprintf("Resmgr: Warning: Could not find vocabulary; assuming SCI0 w/o parser\n");
+					debug("Resmgr: Warning: Could not find vocabulary; assuming SCI0 w/o parser\n");
 					version = SCI_VERSION_0;
 				}
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
 			version = resmap_version;
-			sciprintf("Resmgr: Detected Jones/CD or similar\n");
+			debug("Resmgr: Detected Jones/CD or similar\n");
 			break;
 		case SCI_VERSION_1: {
 			Resource *res = testResource(kResourceTypeScript, 0);
@@ -529,58 +505,34 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			_sciVersion = version = SCI_VERSION_1_EARLY;
 			loadResource(res, true);
 
-			if (res->status == SCI_STATUS_NOMALLOC)
+			if (res->status == SCI_STATUS_NOMALLOC) {
 				_sciVersion = version = SCI_VERSION_1_LATE;
+				debug("Resmgr: Detected SCI1 Late"); 
+			} else
+				debug("Resmgr: Detected SCI1 Early"); 
 			break;
 		}
 		case SCI_VERSION_1_1:
 			// No need to handle SCI 1.1 here - it was done in resource_map.cpp
 			version = SCI_VERSION_1_1;
+			debug("Resmgr: Detected SCI1.1"); 
 			break;
 		default:
-			sciprintf("Resmgr: Warning: While autodetecting: Couldn't determine SCI version");
+			debug("Resmgr: Warning: While autodetecting: Couldn't determine SCI version");
 		}
-
-	if (!resource_error) {
-		qsort(_resources, _resourcesNr, sizeof(Resource), resourcecmp); // Sort resources
-	}
 
 	_sciVersion = version;
 }
 
-void ResourceManager::freeAltSources(resource_altsource_t *dynressrc) {
-	if (dynressrc) {
-		freeAltSources(dynressrc->next);
-		free(dynressrc);
-	}
-}
-
-void ResourceManager::freeResources(Resource *resources, int resourcesNr) {
-	int i;
-
-	for (i = 0; i < resourcesNr; i++) {
-		Resource *res = resources + i;
-
-		// FIXME: alt_sources->next may point to an invalid memory location
-		freeAltSources(res->alt_sources);
-
-		if (res->status != SCI_STATUS_NOMALLOC)
-			free(res->data);
-	}
-
-	free(resources);
-}
-
 ResourceManager::~ResourceManager() {
-	freeResources(_resources, _resourcesNr);
+	// freeing resources
+	Common::HashMap<uint32, Resource *>::iterator itr = _resMap.begin();
+	while (itr != _resMap.end()) {
+		delete itr->_value;
+		itr ++;
+	}
 	freeResourceSources(_sources);
-	_resources = NULL;
-}
-
-void ResourceManager::unalloc(Resource *res) {
-	free(res->data);
-	res->data = NULL;
-	res->status = SCI_STATUS_NOMALLOC;
+	_resMap.empty();
 }
 
 void ResourceManager::removeFromLRU(Resource *res) {
@@ -657,7 +609,7 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 		}
 
 		removeFromLRU(goner);
-		unalloc(goner);
+		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMGR
 		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
