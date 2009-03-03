@@ -108,7 +108,9 @@ bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 GameList SwordMetaEngine::getSupportedGames() const {
@@ -313,15 +315,18 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 namespace Sword1 {
 
-// FIXME: Loading a game through the GMM crashes the game
-#if 0
 Common::Error SwordEngine::loadGameState(int slot) {
 	_systemVars.forceRestart = false;
 	_systemVars.controlPanelMode = CP_NORMAL;
 	_control->restoreGameFromFile(slot);
 	reinitialize();
 	_control->doRestore();
+	reinitRes();	
 	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool SwordEngine::canLoadGameStateCurrently() {
+	return mouseIsActive();
 }
 
 Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
@@ -330,13 +335,8 @@ Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;	// TODO: return success/failure
 }
 
-bool SwordEngine::canLoadGameStateCurrently() {
-	return mouseIsActive();
-}
-
 bool SwordEngine::canSaveGameStateCurrently() {
 	return mouseIsActive();
 }
-#endif
 
 } // End of namespace Sword1

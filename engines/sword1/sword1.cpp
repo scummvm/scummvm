@@ -149,6 +149,7 @@ Common::Error SwordEngine::init() {
 }
 
 void SwordEngine::reinitialize(void) {
+	_sound->quitScreen();
 	_resMan->flush(); // free everything that's currently alloced and opened. (*evil*)
 
 	_logic->initialize();     // now reinitialize these objects as they (may) have locked
@@ -727,6 +728,16 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 
 bool SwordEngine::mouseIsActive() {
 	return Logic::_scriptVars[MOUSE_STATUS] & 1;
+}
+
+// The following function is needed to restore proper status after GMM load game
+void SwordEngine::reinitRes(void) {
+	_screen->newScreen(Logic::_scriptVars[NEW_SCREEN]);
+	_logic->newScreen(Logic::_scriptVars[NEW_SCREEN]);
+	_sound->newScreen(Logic::_scriptVars[NEW_SCREEN]);
+	Logic::_scriptVars[SCREEN] = Logic::_scriptVars[NEW_SCREEN];
+	_screen->fullRefresh();
+	_screen->draw();
 }
 
 } // End of namespace Sword1

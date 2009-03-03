@@ -76,7 +76,7 @@ public:
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
 	void reinitialize(void);
-	
+
 	uint32 _features;
 
 	bool mouseIsActive();
@@ -98,13 +98,10 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 
-	// FIXME: Loading a game through the GMM crashes the game
-#if 0
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();
+	Common::Error saveGameState(int slot, const char *desc);
 	bool canSaveGameStateCurrently();
-#endif
 
 private:
 	void delay(int32 amount);
@@ -113,6 +110,9 @@ private:
 	void checkCd(void);
 	void showFileErrorMsg(uint8 type, bool *fileExists);
 	void flagsToBool(bool *dest, uint8 flags);
+
+	void reinitRes(void); //Reinits the resources after a GMM load
+
 	uint8 mainLoop(void);
 
 	Common::Point _mouseCoord;
