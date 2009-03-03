@@ -732,6 +732,7 @@ bool SwordEngine::mouseIsActive() {
 
 // The following function is needed to restore proper status after GMM load game
 void SwordEngine::reinitRes(void) {
+	checkCd(); // Reset currentCD var to correct value
 	_screen->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 	_logic->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 	_sound->newScreen(Logic::_scriptVars[NEW_SCREEN]);
