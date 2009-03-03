@@ -70,6 +70,7 @@ void renderWord(uint8 *fontPtr_Data, uint8 *outBufferPtr,
 gfxEntryStruct *renderText(int inRightBorder_X, const char *string);
 void drawString(int32 x, int32 y, const char *string, uint8 * buffer, uint8 fontColour,
                 int32 inRightBorder_X);
+void freeGfx(gfxEntryStruct *pGfx);
 
 } // End of namespace Cruise
 

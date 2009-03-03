@@ -273,14 +273,6 @@ int playerMenu(int menuX, int menuY) {
 	return 0;
 }
 
-void freeGfx(gfxEntryStruct *pGfx) {
-	if (pGfx->imagePtr) {
-		free(pGfx->imagePtr);
-	}
-
-	free(pGfx);
-}
-
 void freeMenu(menuStruct *pMenu) {
 	menuElementStruct *pElement = pMenu->ptrNextElement;
 

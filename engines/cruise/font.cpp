@@ -445,4 +445,13 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 	return generatedGfxEntry;
 }
 
+void freeGfx(gfxEntryStruct *pGfx) {
+	if (pGfx->imagePtr) {
+		free(pGfx->imagePtr);
+	}
+
+	free(pGfx);
+}
+
+
 } // End of namespace Cruise

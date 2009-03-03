@@ -577,7 +577,9 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	}
 }
 
-//computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY);
+/**
+ * Computes a path for an actor to walk between a given source and destination position
+ */
 int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
@@ -721,6 +723,9 @@ void set_anim(int ovl, int obj, int start, int x, int y, int mat, int state) {
 	setObjectPosition(ovl, obj, 5, state);
 }
 
+/**
+ * Handles the processing of any active actors to allow for handling movement
+ */
 void processAnimation(void) {
 	objectParamsQuery params;
 	int16 returnVar2[5];
@@ -793,11 +798,16 @@ void processAnimation(void) {
 			animationStart = false;
 
 			if ((currentActor->pathId >= 0) || (currentActor->phase == ANIM_PHASE_STATIC_END)) {
+
+				// Main switch statement for handling various phases of movement
+				// IMPORTANT: This switch relies on falling through cases in certain circumstances
+				// , so 'break' statements should *not* be used at the end of case areas
 				switch (currentActor->phase) {
-				// In-place (on the spot) animationos
 				case ANIM_PHASE_STATIC_END:
 				case ANIM_PHASE_STATIC: 
 				{
+					// In-place (on the spot) animationos
+
 					if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
 						affiche_chemin(currentActor->pathId, returnVar2);
 
@@ -871,8 +881,10 @@ void processAnimation(void) {
 					}
 				}
 
-				// Walk animations
-				case ANIM_PHASE_MOVE: {
+				case ANIM_PHASE_MOVE:
+				{
+					// Walk animations
+
 					if (currentActor->counter >= 1) {
 						affiche_chemin(currentActor->pathId, returnVar2);
 
@@ -908,8 +920,11 @@ void processAnimation(void) {
 						break;
 					}
 				}
+
 				case ANIM_PHASE_END:
 				{
+					// End of walk animation
+
 					int newA = actor_end[currentActor->startDirection][0];
 
 					set_anim(currentActor->overlayNumber, currentActor->idx, currentActor->start,
@@ -928,6 +943,7 @@ void processAnimation(void) {
 				}
 			}
 		}
+
 		currentActor = nextActor;
 	}
 }
