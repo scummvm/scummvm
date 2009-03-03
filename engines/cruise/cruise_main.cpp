@@ -1262,6 +1262,22 @@ void closeAllMenu(void) {
 	linkedRelation = NULL;
 }
 
+bool checkInput(int16 *buttonPtr) {
+	int16 handle, button;
+	Common::Point pt;
+
+	getMouseStatus(&handle, &pt.x, &button, &pt.y);
+
+	if (!button)
+		buttonDown = 0;
+	else if (!buttonDown && button) {
+		*buttonPtr = button;
+		buttonDown = 1;
+	}
+
+	return false;
+}
+
 int processInput(void) {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
@@ -1796,13 +1812,8 @@ void mainLoop(void) {
 				}
 
 				if (userWait) {
-					int16 mouseButton;
-					int16 mouseX;
-					int16 mouseY;
-
-					do {
-						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-					} while (mouseButton);
+					int16 mouseButton = 0;
+					checkInput(&mouseButton);
 
 					while (!mouseButton) {
 						manageScripts(&relHead);
@@ -1813,13 +1824,12 @@ void mainLoop(void) {
 
 						processAnimation();
 
+						flip();
+
 						// not exactly this
 						manageEvents();
 
-						int16 mouseVar;
-						getMouseStatus(&mouseVar, &mouseX, &mouseButton, &mouseY);
-
-						flip();
+						checkInput(&mouseButton);
 					}
 
 					changeScriptParamInList(-1, -1, &procHead, 9999, 0);
