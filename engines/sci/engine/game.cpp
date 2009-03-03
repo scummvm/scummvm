@@ -121,7 +121,7 @@ static void _sci1_alloc_system_colors(EngineState *s) {
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
-	gfx_color_t transparent;
+	gfx_color_t transparent = { { -1, 0, 0, 0 }, 0, -1, -1, 0 };
 	sciprintf("Initializing graphics\n");
 
 	if (s->resmgr->_sciVersion <= SCI_VERSION_01) {
@@ -157,7 +157,6 @@ int _reset_graphics_input(EngineState *s) {
 			}
 		}
 	}
-	transparent.mask = 0;
 
 	gfxop_fill_box(s->gfx_state, gfx_rect(0, 0, 320, 200), s->ega_colors[0]); // Fill screen black
 	gfxop_update(s->gfx_state);

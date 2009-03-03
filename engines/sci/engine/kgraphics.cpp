@@ -3081,11 +3081,11 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t textp = argv[0];
 	int index = UKPV_OR_ALT(1, 0);
 	int temp;
-	int save_under = 0;
-	gfx_color_t transparent = { { 0, 0, 0, 0 }, 0, 0, 0, 0 };
+	bool save_under = false;
+	gfx_color_t transparent = { { -1, 0, 0, 0 }, 0, -1, -1, 0 };
 	char *text;
 	gfxw_port_t *port = (s->port) ? s->port : s->picture_port;
-	int update_immediately = 1;
+	bool update_immediately = true;
 
 	gfx_color_t color0, *color1, bg_color;
 	gfx_alignment_t halign = ALIGN_LEFT;
@@ -3096,6 +3096,11 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	color0 = port->color;
 	bg_color = port->bgcolor;
+	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
+	// SCI0 case should be checked 
+	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
+		color0.visual = bg_color.visual = *get_pic_color(s, 0);
+	}
 
 	if (textp.segment) {
 		argpt = 1;
@@ -3184,7 +3189,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_DISPLAY_SAVE_UNDER:
 
-			save_under = 1;
+			save_under = true;
 			SCIkdebug(SCIkGRAPHICS, "Display: set_save_under()\n");
 			break;
 
@@ -3192,13 +3197,13 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			SCIkdebug(SCIkGRAPHICS, "Display: restore_under(%04x)\n", UKPV(argpt));
 			graph_restore_box(s, argv[argpt++]);
-			update_immediately = 1;
+			update_immediately = true;
 			argpt++;
 			return s->r_acc;
 
 		case K_DONT_UPDATE_IMMEDIATELY:
 
-			update_immediately = 0;
+			update_immediately = false;
 			SCIkdebug(SCIkGRAPHICS, "Display: set_dont_update()\n");
 			argpt++;
 			break;

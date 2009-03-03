@@ -662,6 +662,16 @@ int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b,
 	return GFX_OK;
 }
 
+// Wrapper for gfxop_set_color
+int gfxop_set_color(gfx_state_t *state, gfx_color_t *colorOut, gfx_color_t &colorIn) {
+	if (colorIn.mask & GFX_MASK_VISUAL)
+		return gfxop_set_color(state, colorOut, colorIn.visual.r, colorIn.visual.g, colorIn.visual.b, 
+			colorIn.alpha, colorIn.priority, colorIn.control);
+	else
+		return gfxop_set_color(state, colorOut, -1, -1, -1, colorIn.alpha, 
+			colorIn.priority, colorIn.control);
+}
+
 int gfxop_set_system_color(gfx_state_t *state, gfx_color_t *color) {
 	gfx_palette_color_t *palette_colors;
 	BASIC_CHECKS(GFX_FATAL);
@@ -937,7 +947,9 @@ int gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
 		end.x += xfact >> 1;
 		end.y += yfact >> 1;
 	}
-
+	
+	if (color.visual.global_index == GFX_COLOR_INDEX_UNMAPPED)
+		gfxop_set_color(state, &color, color);
 	return _gfxop_draw_line_clipped(state, start, end, color, line_mode, line_style);
 }
 
@@ -1073,7 +1085,8 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	// Reverse offset if we have to interpret colors inversely
 
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
-		gfxop_set_color(state, &color1, color1.visual.r, color1.visual.g, color1.visual.b, 0, 0, 0);
+		if (color1.visual.global_index == GFX_COLOR_INDEX_UNMAPPED)
+			gfxop_set_color(state, &color1, color1);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
 	} else {
 		if (PALETTE_MODE) {
@@ -1766,33 +1779,22 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text, int
 	return GFX_OK;
 }
 
-#define COL_XLATE(des,src) \
-	des = src.visual; /* The new gfx_color_t structure makes things a lot easier :-) */ /* \
-	if (gfxop_set_color(state, &src, \
-		src.visual.r, \
-		src.visual.g, \
-		src.visual.b, \
-		src.alpha, \
-		src.priority, \
-		src.control)) \
-	{ \
-	GFXERROR("Unable to set up colors"); \
-	return NULL; \
-	}
-*/
-
 gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, int maxwidth, gfx_alignment_t halign,
 								  gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color, int flags) {
 	gfx_text_handle_t *handle;
 	gfx_bitmap_font_t *font;
-	int i;
-	gfx_pixmap_color_t pxm_col1, pxm_col2, pxm_colbg;
+	int i, error = 0;
 	BASIC_CHECKS(NULL);
 
-	COL_XLATE(pxm_col1, color1);
-	COL_XLATE(pxm_col2, color2);
-	COL_XLATE(pxm_colbg, bg_color);
-
+	// mapping text colors to palette
+	error |= gfxop_set_color(state, &color1, color1);
+	error |= gfxop_set_color(state, &color2, color2);
+	error |= gfxop_set_color(state, &bg_color, bg_color);
+	if (error) {
+		GFXERROR("Unable to set up colors");
+		return NULL; 
+	}
+		
 	font = gfxr_get_font(state->resstate, font_nr, 0);
 
 	if (!font) {
@@ -1830,9 +1832,9 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 		int chars_nr = handle->lines[i].length;
 
 		handle->text_pixmaps[i] = gfxr_draw_font(font, handle->lines[i].offset, chars_nr,
-		                          (color1.mask & GFX_MASK_VISUAL) ? &pxm_col1 : NULL,
-		                          (color2.mask & GFX_MASK_VISUAL) ? &pxm_col2 : NULL,
-		                          (bg_color.mask & GFX_MASK_VISUAL) ? &pxm_colbg : NULL);
+		                          (color1.mask & GFX_MASK_VISUAL) ? &color1.visual : NULL,
+		                          (color2.mask & GFX_MASK_VISUAL) ? &color2.visual : NULL,
+		                          (bg_color.mask & GFX_MASK_VISUAL) ? &bg_color.visual : NULL);
 
 		if (!handle->text_pixmaps[i]) {
 			int j;
@@ -1921,14 +1923,6 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		gfx_pixmap_t *pxm = handle->text_pixmaps[i];
 
 		if (!pxm->data) {
-			// Matching pixmap's colors to current system palette if needed
-			gfx_color_t matched;
-			for (int j = 0; j < pxm->colors_nr; j++) {
-				gfxop_set_color(state, &matched, pxm->colors[j].r, pxm->colors[j].g, pxm->colors[j].b,
-					0, 0, 0);
-				pxm->colors[j].global_index = matched.visual.global_index;
-			}
-
 			gfx_xlate_pixmap(pxm, state->driver->mode, state->options->text_xlate_filter);
 			gfxr_endianness_adjust(pxm, state->driver->mode); // FIXME: resmgr layer!
 		}
