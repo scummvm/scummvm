@@ -33,11 +33,12 @@ enum IrxFlags {
 	SYSTEM = 1,
 	USB = 2,
 	HDD = 3,
-	TYPEMASK = 3,
+	NET = 4,
+	TYPEMASK = 7,
 
-	OPTIONAL = 4,
-	DEPENDANCY = 8,
-	NOT_HOST = 16
+	OPTIONAL = 8,
+	DEPENDANCY = 16,
+	NOT_HOST = 32
 };
 
 enum IrxPurpose {
@@ -46,7 +47,8 @@ enum IrxPurpose {
 	USB_DRIVER,
 	MOUSE_DRIVER,
 	KBD_DRIVER,
-	MASS_DRIVER
+	MASS_DRIVER,
+	NET_DRIVER
 };
 
 enum IrxLocation {
@@ -54,12 +56,14 @@ enum IrxLocation {
 	IRX_FILE
 };
 
+/*
 enum BootDevice {
 	HOST = 0,
 	CDROM,
-	OTHER,
-	UNKNOWN
+	MASS,
+	OTHER
 };
+*/
 
 struct IrxFile {
 	const char *name;
@@ -80,7 +84,6 @@ struct IrxReference {
 	int errorCode;
 };
 
-BootDevice detectBootPath(const char *elfPath, char *bootPath);
 int loadIrxModules(int device, const char *irxPath, IrxReference **modules);
 
 #endif // __IRXBOOT_H__

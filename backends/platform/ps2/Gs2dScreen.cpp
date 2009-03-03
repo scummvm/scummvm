@@ -47,7 +47,7 @@ enum Buffers {
 #define ANIM_STACK_SIZE (1024 * 32)
 
 #define DEFAULT_PAL_X		175
-#define DEFAULT_PAL_Y		60
+#define DEFAULT_PAL_Y		72 // 60
 #define DEFAULT_NTSC_X		165
 #define DEFAULT_NTSC_Y		45
 #define ORG_X 256
@@ -141,18 +141,31 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	clearOverlay();
 
 	if (tvMode == TV_DONT_CARE) {
+#if 1
+	char romver[8];
+	int fd = fioOpen("rom0:ROMVER", O_RDONLY);
+	fioRead(fd, &romver, 8);
+	fioClose(fd);
+
+	if (romver[4] == 'E')
+		_videoMode = TV_PAL;
+	else
+		_videoMode = TV_NTSC;
+#else
 		if (PAL_NTSC_FLAG == 'E')
 			_videoMode = TV_PAL;
 		else
 			_videoMode = TV_NTSC;
+#endif
 	} else
 		_videoMode = tvMode;
 
+	// _videoMode = TV_NTSC;
 	printf("Setting up %s mode\n", (_videoMode == TV_PAL) ? "PAL" : "NTSC");
-
-    // set screen size, 640x544 for pal, 640x448 for ntsc
+	
+    // set screen size, 640x512 for pal, 640x448 for ntsc
 	_tvWidth = 640;
-	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448);
+	_tvHeight = ((_videoMode == TV_PAL) ? 512 /*544*/ : 448);
 	kFullScreen[0].z = kFullScreen[1].z = 0;
 	kFullScreen[0].x = ORIGIN_X;
 	kFullScreen[0].y = ORIGIN_Y;
@@ -175,7 +188,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
 	_texPtrs[TEXT]    = 0;						  // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]	  = 128 * 256 * 4;
+	_texPtrs[MOUSE]	  = 128 * 256 * 4;			  
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
@@ -224,7 +237,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	updateScreen();
 
 	createAnimTextures();
-
+	
 	// create anim thread
 	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
@@ -535,6 +548,16 @@ void Gs2dScreen::clearPrintfOverlay(void) {
 
 void Gs2dScreen::copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h) {
 	WaitSema(g_DmacSema);
+
+	// warning("_overlayBuf [dst] = %x", _overlayBuf);
+	// warning("buf [src] = %x", buf);
+
+	// warning("pitch=%d _width=%d - x=%d y=%d w=%d h=%d",
+	//	pitch, _width, x, y, w, h);
+
+	if (x >= 65535) x=0;
+	if (y >= 65535) y=0;
+
 	_overlayChanged = true;
 	uint16 *dest = _overlayBuf + y * _width + x;
 	for (uint32 cnt = 0; cnt < h; cnt++) {
@@ -636,7 +659,7 @@ void Gs2dScreen::animThread(void) {
 		do {
 			WaitSema(g_AnimSema);
 		} while ((!_systemQuit) && (!g_RunAnim));
-
+		
 		if (_systemQuit)
 			break;
 
@@ -761,7 +784,7 @@ const uint32 Gs2dScreen::_binaryClut[16] __attribute__((aligned(64))) = {
 	GS_RGBA(   0,    0,    0, 0x20), // scrPrintf: semitransparent
 	GS_RGBA(0xC0, 0xC0, 0xC0,    0), // scrPrintf: red
 	GS_RGBA(0x16, 0x16, 0xF0,    0), // scrPrintf: blue
-
+	
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), // unused
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),

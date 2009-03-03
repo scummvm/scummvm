@@ -18,57 +18,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef __RAWSAVEFILE_H__
-#define __RAWSAVEFILE_H__
-
-#include "common/scummsys.h"
-
-class McAccess;
-
-class RawReadFile {
+class PS2Icon {
 public:
-	RawReadFile(McAccess *mcAccess);
-	virtual ~RawReadFile();
+	PS2Icon() {};
+	
+	~PS2Icon() {};
 
-	bool bufOpen(const char *path);
-	int bufRead(void *dest, int size);
-	int bufTell(void) const;
-	int bufSeek(int ofs, int whence);
-	int bufSize(void) const;
-	bool bufEof(void) const;
-	void bufClearErr(void);
-protected:
-	McAccess *_mcAccess;
-	int _size;
-	uint8 *_buf;
-	int _pos;
-	bool _eof;
+	uint16 decompressData(uint16 **data);
+	void setup(mcIcon *icon);
 };
-
-class RawWriteFile {
-public:
-	RawWriteFile(McAccess *mcAccess);
-	virtual ~RawWriteFile();
-
-	bool bufOpen(const char *path);
-	void bufWrite(const void *buf, int len);
-	int bufTell(void) const;
-
-	bool bufFlush(void);
-	void removeFile();
-protected:
-	char _filename[128];
-
-	McAccess *_mcAccess;
-	uint8 *_buf;
-	int _size, _pos;
-	int _handle;
-};
-
-#endif // __RAWSAVEFILE_H__
-

@@ -8,35 +8,56 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/tags/release-0-13-0/backends/fs/ps2/ps2-fs-factory.cpp $
- * $Id: ps2-fs-factory.cpp 34716 2008-10-02 16:58:59Z fingolfin $
  */
 
-#if defined(__PLAYSTATION2__)
+// #define __USE_LIBMC__
 #include "backends/fs/ps2/ps2-fs-factory.h"
-#include "backends/fs/ps2/ps2-fs.cpp"
 
-DECLARE_SINGLETON(Ps2FilesystemFactory);
+enum PS2Device {
+	CD_DEV = 0,
+	HD_DEV,
+	USB_DEV,
+	HOST_DEV,
+	MC_DEV,
+	ERR_DEV = -1
+};
 
-AbstractFSNode *Ps2FilesystemFactory::makeRootFileNode() const {
-	return new Ps2FilesystemNode();
-}
-
-AbstractFSNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() const {
-	return new Ps2FilesystemNode();
-}
-
-AbstractFSNode *Ps2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	return new Ps2FilesystemNode(path, true);
-}
+inline PS2Device _getDev(const char *s) {
+#if 0
+	if (s==NULL || strlen(s) < 3)
+		return -1;
 #endif
+
+	if (s[0] == 'c')
+		return CD_DEV;
+	else if (s[0] == 'p')
+		return HD_DEV;
+	else if (strncmp(s, "ma", 2) == 0)
+		return USB_DEV;
+	else if (s[0] == 'h')
+		return HOST_DEV;
+	else if (strncmp(s, "mc", 2) == 0)
+		return MC_DEV;
+	else
+		return ERR_DEV; // -1;
+}
+
+inline PS2Device _getDev(Common::String& cs) {
+	const char *s = cs.c_str();
+	return _getDev(s);
+}
+
+inline PS2Device _getDev(Common::FSNode& n) {
+	const char *s = n.getPath().c_str();
+	return _getDev(s);
+}

@@ -58,6 +58,17 @@ int AsyncFio::open(const char *name, int ioMode) {
 	return res;
 }
 
+int AsyncFio::open(const char *name, int ioMode, int mode) {
+	WaitSema(_ioSema);
+	checkSync();
+	int res;
+	fileXioOpen(name, ioMode, mode);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	// dbg_printf("FIO: open ext(%s, %d, %d) => %d", name, ioMode, mode, res);
+    return res;
+}
+
 void AsyncFio::close(int handle) {
 	WaitSema(_ioSema);
 	checkSync();
@@ -92,6 +103,15 @@ void AsyncFio::write(int fd, const void *src, unsigned int len) {
 	assert(fd < MAX_HANDLES);
 	_runningOp = _ioSlots + fd;
 	fileXioWrite(fd, (unsigned char*)src, len);
+	SignalSema(_ioSema);
+}
+
+void AsyncFio::remove(const char *path) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioRemove(path);
+	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
 }
 
@@ -147,6 +167,16 @@ void AsyncFio::dclose(int fd) {
 	if (res != 0)
 		sioprintf("ERROR: fileXioDclose failed, EC %d\n", res);
 	SignalSema(_ioSema);
+}
+
+int AsyncFio::chdir(const char *name) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioChdir(name);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
 }
 
 int AsyncFio::mount(const char *mountpoint, const char *mountstring, int flag) {
