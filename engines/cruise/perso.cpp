@@ -168,7 +168,7 @@ int cor_droite(int x1, int y1, int x2, int y2, point* outputTable) {
 	return numOutput;
 }
 
-void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
+void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droite0,
                       int16 *inc_chemin, point* cor_joueur,
                       int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
                       int16 *dir_perso, int16 *inc_jo0, int16 num) {
@@ -190,15 +190,15 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 					x2 = solution0[i][0];
 					y2 = solution0[i][1];
 					if ((x1 == x2) && (y1 == y2)) {
-						resx_y[0] = -1;
-						resx_y[1] = -1;
+						resx_y.x = -1;
+						resx_y.y = -1;
 						freePerso(num);
 
 						return;
 					}
 
 					*inc_droite0 = cor_droite(x1, y1, x2, y2, cor_joueur);
-					*dir_perso = resx_y[2] = direction(x1, y1, x2, y2, *inc_jo1, *inc_jo2);
+					*dir_perso = resx_y.direction = direction(x1, y1, x2, y2, *inc_jo1, *inc_jo2);
 					*inc_jo0 = inc_jo;
 					u = 1;
 				} else
@@ -207,8 +207,8 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 			} while (solution0[i][0] != -1 && !u);
 		}
 		if (!u) {
-			resx_y[0] = -1;
-			resx_y[1] = -1;
+			resx_y.x = -1;
+			resx_y.y = -1;
 			freePerso(num);
 
 			return;
@@ -216,33 +216,33 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 		*inc_chemin = i;
 	}
 
-	resx_y[0] = cor_joueur[*inc_droite].x;
-	resx_y[1] = cor_joueur[*inc_droite].y;
-	resx_y[2] = *dir_perso;
-	resx_y[3] = computeZoom(resx_y[1]);
+	resx_y.x = cor_joueur[*inc_droite].x;
+	resx_y.y = cor_joueur[*inc_droite].y;
+	resx_y.direction = *dir_perso;
+	resx_y.zoom = computeZoom(resx_y.y);
 
-	getPixel(resx_y[0], resx_y[1]);
-	resx_y[4] = computedVar14;
+	getPixel(resx_y.x, resx_y.y);
+	resx_y.poly = computedVar14;
 
-	u = subOp23(resx_y[3], inc_jo);
+	u = subOp23(resx_y.zoom, inc_jo);
 	if (!u)
 		u = 1;
 	*inc_droite += u;
 
 	if ((*inc_droite) >= (*inc_droite0)) {
 		*inc_droite = 0;
-		resx_y[0] = solution0[*inc_chemin][0];
-		resx_y[1] = solution0[*inc_chemin][1];
+		resx_y.x = solution0[*inc_chemin][0];
+		resx_y.y = solution0[*inc_chemin][1];
 	}
 
 }
 
-void affiche_chemin(int16 persoIdx, int16 *returnVar) {
+void affiche_chemin(int16 persoIdx, MovementEntry &data) {
 	persoStruct *pPerso = persoTable[persoIdx];
 
 	ASSERT(pPerso);
 
-	processActorWalk(returnVar, &pPerso->inc_droite, &pPerso->inc_droite0,
+	processActorWalk(data, &pPerso->inc_droite, &pPerso->inc_droite0,
 	                 &pPerso->inc_chemin, pPerso->coordinates, pPerso->solution,
 	                 &pPerso->inc_jo1, &pPerso->inc_jo2, &pPerso->dir_perso,
 	                 &pPerso->inc_jo0, persoIdx);

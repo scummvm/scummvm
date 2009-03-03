@@ -1829,7 +1829,7 @@ void mainLoop(void) {
 
 				// wait for character to finish auto track
 				if (autoTrack) {
-					if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, 0)) {
+					if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, ATP_MOUSE)) {
 						if (autoMsg != -1) {
 							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
 

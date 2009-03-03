@@ -580,13 +580,13 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 /**
  * Computes a path for an actor to walk between a given source and destination position
  */
-int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
+int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
 
 	if (!polyStruct) {
-		pSolution[0] = -1;
-		pSolution[1] = -1;
+		solution.x = -1;
+		solution.y = -1;
 
 		return -1;
 	}
@@ -608,8 +608,8 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		}
 
 		if (i == NUM_PERSONS) {
-			pSolution[0] = -1;
-			pSolution[1] = -1;
+			solution.x = -1;
+			solution.y = -1;
 
 			return -1;
 		}
@@ -623,11 +623,11 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 
 		*(ptr++) = x;
 		*(ptr++) = y;
-		*(ptr++) = pSolution[0] = destX;
-		*(ptr++) = pSolution[1] = destY;
+		*(ptr++) = solution.x = destX;
+		*(ptr++) = solution.y = destY;
 		*(ptr++) = -1;
 
-		pSolution[4] = computedVar14;
+		solution.poly = computedVar14;
 
 		perso->inc_droite = 0;
 		perso->inc_chemin = 0;
@@ -640,8 +640,8 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 	flag_aff_chemin = 0;
 
 	if (x == destX && y == destY) {
-		pSolution[0] = -1;
-		pSolution[1] = -1;
+		solution.x = -1;
+		solution.y = -1;
 
 		return (-1);
 	}
@@ -650,14 +650,14 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 
 	getPixel(x, y);
 
-	pSolution[4] = computedVar14;
+	solution.poly = computedVar14;
 
 	x_mouse = x;
 	y_mouse = y;
 
 	if (!flag_obstacle || (point_select = point_proche(ctp_routeCoords)) == -1) {
-		pSolution[0] = -1;
-		pSolution[1] = -1;
+		solution.x = -1;
+		solution.y = -1;
 
 		return (-1);
 	}
@@ -673,8 +673,8 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		num++;
 
 	if (num == NUM_PERSONS) {
-		pSolution[0] = -1;
-		pSolution[1] = -1;
+		solution.x = -1;
+		solution.y = -1;
 		return (-1);
 	}
 
@@ -690,16 +690,16 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		valide_noeud(select_noeud, point_select, &nclick_noeud, perso->solution);
 
 	if ((!flag_aff_chemin) || ((table_ptselect[0][0] == table_ptselect[1][0]) && (table_ptselect[0][1] == table_ptselect[1][1]))) {
-		pSolution[0] = -1;
-		pSolution[1] = -1;
+		solution.x = -1;
+		solution.y = -1;
 		freePerso(num);
 
 		return (-1);
 	}
 
-	pSolution[0] = table_ptselect[1][0];
-	pSolution[1] = table_ptselect[1][1];
-	pSolution[4] = computedVar14;
+	solution.x = table_ptselect[1][0];
+	solution.y = table_ptselect[1][1];
+	solution.poly = computedVar14;
 	perso->inc_chemin = 0;
 	perso->inc_droite = 0;
 
@@ -728,7 +728,7 @@ void set_anim(int ovl, int obj, int start, int x, int y, int mat, int state) {
  */
 void processAnimation(void) {
 	objectParamsQuery params;
-	int16 returnVar2[5];
+	MovementEntry moveInfo;
 	actorStruct *currentActor = actorHead.next;
 	actorStruct *nextActor;
 
@@ -750,7 +750,7 @@ void processAnimation(void) {
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, 
+				currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y, 
 					aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == ANIM_WAIT) {
@@ -772,7 +772,7 @@ void processAnimation(void) {
 			} else
 				if ((currentActor->type == 1) && (currentActor->x_dest != -1) && (currentActor->y_dest != -1)) {
 					// track animation
-					currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+					currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y, currentActor->x_dest, currentActor->y_dest, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 					currentActor->x_dest = -1;
 					currentActor->y_dest = -1;
@@ -809,9 +809,9 @@ void processAnimation(void) {
 					// In-place (on the spot) animationos
 
 					if ((currentActor->counter == -1) && (currentActor->phase == ANIM_PHASE_STATIC)) {
-						affiche_chemin(currentActor->pathId, returnVar2);
+						affiche_chemin(currentActor->pathId, moveInfo);
 
-						if (returnVar2[0] == -1) {
+						if (moveInfo.x == -1) {
 							currentActor->pathId = ANIM_FINISH;
 							currentActor->flag = 0;
 							currentActor->endDirection = -1;
@@ -819,10 +819,10 @@ void processAnimation(void) {
 							break;
 						}
 
-						currentActor->x = returnVar2[0];
-						currentActor->y = returnVar2[1];
-						currentActor->nextDirection = returnVar2[2];
-						currentActor->poly = returnVar2[4];
+						currentActor->x = moveInfo.x;
+						currentActor->y = moveInfo.y;
+						currentActor->nextDirection = moveInfo.direction;
+						currentActor->poly = moveInfo.poly;
 						currentActor->counter = 0;
 
 						if (currentActor->startDirection == currentActor->nextDirection)
@@ -886,9 +886,9 @@ void processAnimation(void) {
 					// Walk animations
 
 					if (currentActor->counter >= 1) {
-						affiche_chemin(currentActor->pathId, returnVar2);
+						affiche_chemin(currentActor->pathId, moveInfo);
 
-						if (returnVar2[0] == -1) {
+						if (moveInfo.x == -1) {
 							if ((currentActor->endDirection == -1) || (currentActor->endDirection == currentActor->nextDirection)) {
 								currentActor->phase = ANIM_PHASE_END;
 							} else {
@@ -898,10 +898,10 @@ void processAnimation(void) {
 							currentActor->counter = 0;
 							break;
 						} else {
-							currentActor->x = returnVar2[0];
-							currentActor->y = returnVar2[1];
-							currentActor->nextDirection = returnVar2[2];
-							currentActor->poly = returnVar2[4];
+							currentActor->x = moveInfo.x;
+							currentActor->y = moveInfo.y;
+							currentActor->nextDirection = moveInfo.direction;
+							currentActor->poly = moveInfo.poly;
 						}
 					}
 

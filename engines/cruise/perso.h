@@ -50,13 +50,21 @@ struct persoStruct {
 	int16 inc_jo0;		// 2
 };
 
+struct MovementEntry {
+	int16 x;
+	int16 y;
+	int16 direction;
+	int16 zoom;
+	int16 poly;
+};
+
 extern persoStruct *persoTable[NUM_PERSONS];
 extern int16 computedVar14;
 
 int cor_droite(int x1, int y1, int x2, int y2, point* outputTable);
 void freePerso(int persoIdx);
 void freeCTP(void);
-void affiche_chemin(int16 persoIdx, int16 * returnVar);
+void affiche_chemin(int16 persoIdx, MovementEntry &data);
 int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2);
 
 } // End of namespace Cruise
