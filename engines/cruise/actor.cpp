@@ -580,13 +580,13 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 /**
  * Computes a path for an actor to walk between a given source and destination position
  */
-int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
+int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
 
 	if (!polyStruct) {
-		solution.x = -1;
-		solution.y = -1;
+		moveInfo.x = -1;
+		moveInfo.y = -1;
 
 		return -1;
 	}
@@ -608,8 +608,8 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 		}
 
 		if (i == NUM_PERSONS) {
-			solution.x = -1;
-			solution.y = -1;
+			moveInfo.x = -1;
+			moveInfo.y = -1;
 
 			return -1;
 		}
@@ -623,11 +623,11 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 
 		*(ptr++) = x;
 		*(ptr++) = y;
-		*(ptr++) = solution.x = destX;
-		*(ptr++) = solution.y = destY;
+		*(ptr++) = moveInfo.x = destX;
+		*(ptr++) = moveInfo.y = destY;
 		*(ptr++) = -1;
 
-		solution.poly = computedVar14;
+		moveInfo.poly = computedVar14;
 
 		perso->inc_droite = 0;
 		perso->inc_chemin = 0;
@@ -640,8 +640,8 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 	flag_aff_chemin = 0;
 
 	if (x == destX && y == destY) {
-		solution.x = -1;
-		solution.y = -1;
+		moveInfo.x = -1;
+		moveInfo.y = -1;
 
 		return (-1);
 	}
@@ -650,14 +650,14 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 
 	getPixel(x, y);
 
-	solution.poly = computedVar14;
+	moveInfo.poly = computedVar14;
 
 	x_mouse = x;
 	y_mouse = y;
 
 	if (!flag_obstacle || (point_select = point_proche(ctp_routeCoords)) == -1) {
-		solution.x = -1;
-		solution.y = -1;
+		moveInfo.x = -1;
+		moveInfo.y = -1;
 
 		return (-1);
 	}
@@ -673,8 +673,8 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 		num++;
 
 	if (num == NUM_PERSONS) {
-		solution.x = -1;
-		solution.y = -1;
+		moveInfo.x = -1;
+		moveInfo.y = -1;
 		return (-1);
 	}
 
@@ -690,16 +690,16 @@ int16 computePathfinding(MovementEntry &solution, int16 x, int16 y, int16 destX,
 		valide_noeud(select_noeud, point_select, &nclick_noeud, perso->solution);
 
 	if ((!flag_aff_chemin) || ((table_ptselect[0][0] == table_ptselect[1][0]) && (table_ptselect[0][1] == table_ptselect[1][1]))) {
-		solution.x = -1;
-		solution.y = -1;
+		moveInfo.x = -1;
+		moveInfo.y = -1;
 		freePerso(num);
 
 		return (-1);
 	}
 
-	solution.x = table_ptselect[1][0];
-	solution.y = table_ptselect[1][1];
-	solution.poly = computedVar14;
+	moveInfo.x = table_ptselect[1][0];
+	moveInfo.y = table_ptselect[1][1];
+	moveInfo.poly = computedVar14;
 	perso->inc_chemin = 0;
 	perso->inc_droite = 0;
 
