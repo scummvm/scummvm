@@ -103,7 +103,7 @@ int simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
 	}
 }
 
-sfx_pcm_feed_t *simple_it_pcm_feed(song_iterator_t *_self) {
+Audio::AudioStream *simple_it_pcm_feed(song_iterator_t *_self) {
 	error("No PCM feed!\n");
 	return NULL;
 }

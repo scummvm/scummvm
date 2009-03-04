@@ -52,7 +52,7 @@ static void pp_tell_synth(int buf_nr, byte *buf) {
 }
 
 
-class PCMFeedAudioStream : public Audio::AudioStream {
+class PolledPlayerAudioStream : public Audio::AudioStream {
 protected:
 	enum FeedMode {
 		FEED_MODE_ALIVE,
@@ -67,30 +67,28 @@ protected:
 	/* Blank gap in frames. */
 	int _gap;
 
-	/* Feed. */
-	sfx_pcm_feed_t *_feed;
+	/* Audio format. */
+	sfx_pcm_config_t _conf;
 
 	/* Timestamp of next frame requested by stream driver. */
 	Audio::Timestamp _time;
 
 public:
-	PCMFeedAudioStream(sfx_pcm_feed_t *feed)
-		: _feed(feed),
-		  _time(g_system->getMillis(), feed->conf.rate) {
+	PolledPlayerAudioStream(sfx_pcm_config_t conf)
+		: _conf(conf),
+		  _time(g_system->getMillis(), conf.rate) {
 
-		_feed->frame_size = (_feed->conf.stereo ? 2 : 1) * ((_feed->conf.format & SFX_PCM_FORMAT_16) ? 2 : 1);
 		_mode = FEED_MODE_ALIVE;
 		_gap = 0;
 	}
 
-	~PCMFeedAudioStream() {
-		_feed->destroy(_feed);
+	~PolledPlayerAudioStream() {
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 
-	virtual bool isStereo() const { return _feed->conf.stereo; }
-	virtual int getRate() const { return _feed->conf.rate; }
+	virtual bool isStereo() const { return _conf.stereo; }
+	virtual int getRate() const { return _conf.rate; }
 
 	virtual bool endOfData() const { return _mode == FEED_MODE_DEAD; }
 
@@ -98,47 +96,39 @@ protected:
 	void queryTimestamp();
 };
 
-void PCMFeedAudioStream::queryTimestamp() {
-	if (_feed->get_timestamp) {
-		Audio::Timestamp stamp;
-		int val = _feed->get_timestamp(_feed, stamp);
 
-		switch (val) {
-		case PCM_FEED_TIMESTAMP:
+void PolledPlayerAudioStream::queryTimestamp() {
+	Audio::Timestamp stamp;
+	
+	if (!new_song) {
+		_mode = FEED_MODE_IDLE;
+	} else {
+		// Otherwise, we have a timestamp:
+		stamp = new_timestamp;
+		new_song = 0;
+
+		_gap = stamp.frameDiff(_time);
+		if (_gap >= 0)
+			_mode = FEED_MODE_ALIVE;
+		else {
+			// FIXME: I don't quite understand what FEED_MODE_RESTART is for.
+			// The original DC mixer seemed to just stop and restart the stream.
+			// But why? To catch up with lagging sound?
+			//
+			// Walter says the following:
+			// "The FEED_MODE_RESTART might be there to re-sync after a debugger
+			//  session where time passes for the mixer but not for the engine.
+			//  I may have added this as a workaround for not being able to come
+			//  up with a convenient way to implement mixer->pause() and mixer->resume()
+			//  on DC."
+			// That makes some sense.
+			_mode = FEED_MODE_RESTART;
+			_time = Audio::Timestamp(g_system->getMillis(), _conf.rate);
 			_gap = stamp.frameDiff(_time);
 
-			if (_gap >= 0)
-				_mode = FEED_MODE_ALIVE;
-			else {
-				// FIXME: I don't quite understand what FEED_MODE_RESTART is for.
-				// The original DC mixer seemed to just stop and restart the stream.
-				// But why? To catch up with lagging sound?
-				//
-				// Walter says the following:
-				// "The FEED_MODE_RESTART might be there to re-sync after a debugger
-				//  session where time passes for the mixer but not for the engine.
-				//  I may have added this as a workaround for not being able to come
-				//  up with a convenient way to implement mixer->pause() and mixer->resume()
-				//  on DC."
-				// That makes some sense.
-				_mode = FEED_MODE_RESTART;
-				_time = Audio::Timestamp(g_system->getMillis(), _feed->conf.rate);
-				_gap = stamp.frameDiff(_time);
-
-				if (_gap < 0)
-					_gap = 0;
-			}
-			break;
-		case PCM_FEED_IDLE:
-			_mode = FEED_MODE_IDLE;
-			break;
-		case PCM_FEED_EMPTY:
-			_mode = FEED_MODE_DEAD;
-			_gap = 0;
+			if (_gap < 0)
+				_gap = 0;
 		}
-	} else {
-		_mode = FEED_MODE_DEAD;
-		_gap = 0;
 	}
 }
 
@@ -149,19 +139,21 @@ static void U8_to_S16(byte *buf, int samples) {
 	}
 }
 
-int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+static int ppf_poll(int frame_size, byte *dest, int size);
+
+int PolledPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	// FIXME: If ScummVM's mixer supported timestamps, then it would pass them
 	// as a parameter to this function. But currently, it doesn't. Therefore, we
 	// create a fake timestamp based on the current time. For comparison, a real
 	// timestamp could be adjusted for pauses in sound processing. And it would
 	// be synced for all audio streams.
-	Audio::Timestamp timestamp(g_system->getMillis(), _feed->conf.rate);
+	Audio::Timestamp timestamp(g_system->getMillis(), _conf.rate);
 
 	int channels, frames_req;
 	int frames_recv = 0;
 
 	_time = timestamp;
-	channels = _feed->conf.stereo == SFX_PCM_MONO ? 1 : 2;
+	channels = _conf.stereo == SFX_PCM_MONO ? 1 : 2;
 	frames_req = numSamples / channels;
 
 	while (frames_req != frames_recv) {
@@ -190,9 +182,9 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			frames_recv += frames;
 			_time = _time.addFrames(frames);
 		} else {
-			int frames = _feed->poll(_feed, buf_pos, frames_left);
+			int frames = ppf_poll(channels * ((_conf.format & SFX_PCM_FORMAT_16) ? 2 : 1), buf_pos, frames_left);
 
-			if (_feed->conf.format == SFX_PCM_FORMAT_U8)
+			if (_conf.format == SFX_PCM_FORMAT_U8)
 				U8_to_S16(buf_pos, frames * channels);
 
 			frames_recv += frames;
@@ -209,7 +201,7 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 /*----------------------*/
 /* Mixer implementation */
 /*----------------------*/
-int ppf_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
+static int ppf_poll(int frame_size, byte *dest, int size) {
 	int written = 0;
 	byte buf[4];
 	int buf_nr;
@@ -262,40 +254,14 @@ int ppf_poll(sfx_pcm_feed_t *self, byte *dest, int size) {
 
 		time_counter -= do_play * TIME_INC;
 
-		seq->poll(seq, dest + written * self->frame_size, do_play);
+		seq->poll(seq, dest + written * frame_size, do_play);
 		written += do_play;
 	}
 
 	return size; /* Apparently, we wrote all that was requested */
 }
 
-void ppf_destroy(sfx_pcm_feed_t *self) {
-	/* no-op */
-}
-
-int ppf_get_timestamp(sfx_pcm_feed_t *self, Audio::Timestamp &timestamp) {
-	if (!new_song)
-		return PCM_FEED_IDLE;
-
-	/* Otherwise, we have a timestamp: */
-
-	timestamp = new_timestamp;
-	new_song = 0;
-	return PCM_FEED_TIMESTAMP;
-}
-
 extern sfx_player_t sfx_player_polled;
-
-static sfx_pcm_feed_t pcmfeed = {
-	ppf_poll,
-	ppf_destroy,
-	ppf_get_timestamp,
-	NULL,
-	{0, 0, 0},
-	"polled-player-feed",
-	0,
-	0 /* filled in by the mixer */
-};
 
 /*=======================*/
 /* Player implementation */
@@ -346,11 +312,9 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 		return SFX_ERROR;
 	}
 
-	pcmfeed.conf = seq->pcm_conf;
-
 	seq->set_volume(seq, volume);
 
-	PCMFeedAudioStream *newStream = new PCMFeedAudioStream(&pcmfeed);
+	PolledPlayerAudioStream *newStream = new PolledPlayerAudioStream(seq->pcm_conf);
 	// FIXME: Is this sound type appropriate?
 	g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newStream);
 

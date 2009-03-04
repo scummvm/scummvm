@@ -344,7 +344,6 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 	if (g_system->getMixer()->isReady()) {
 		Audio::AudioStream *newfeed = it->get_pcm_feed(it);
 		if (newfeed) {
-//			newfeed->debug_nr = (int) handle;
 			g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
 			return 1;
 		}
