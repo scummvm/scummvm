@@ -38,9 +38,10 @@
 #include "sci/engine/vm_types.h"
 
 #define SCI_CONSOLE
-#include "sci/gfx/operations.h"
 
 namespace Sci {
+
+struct gfx_pixmap_t;
 
 /** If this flag is set, we echo all sciprintf() stuff to the text console. */
 extern int con_passthrough;
