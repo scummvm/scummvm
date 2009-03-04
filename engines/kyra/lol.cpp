@@ -433,6 +433,7 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Error LoLEngine::go() {
+#ifdef ENABLE_LOL
 	setupPrologueData(true);
 
 	if (!saveFileLoadable(0))
@@ -519,7 +520,7 @@ Common::Error LoLEngine::go() {
 	_tim = 0;
 
 	// TODO: outro
-
+#endif
 	return Common::kNoError;
 }
 
