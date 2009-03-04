@@ -128,3 +128,5 @@ LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 library avkon.lib bafl.lib
+
+CAPABILITY LocalServices ReadUserData
