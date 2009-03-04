@@ -57,6 +57,10 @@ DEFINES += -DENABLE_KYRA=$(ENABLE_KYRA)
 MODULES += engines/kyra
 endif
 
+ifdef ENABLE_LOL
+DEFINES += -DENABLE_LOL
+endif
+
 ifdef ENABLE_LURE
 DEFINES += -DENABLE_LURE=$(ENABLE_LURE)
 MODULES += engines/lure

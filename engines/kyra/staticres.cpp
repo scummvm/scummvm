@@ -27,19 +27,22 @@
 #include "common/md5.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
-#include "kyra/lol.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_lok.h"
-#include "kyra/screen_lol.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 #include "kyra/gui_lok.h"
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
+
+#ifdef ENABLE_LOL
+#include "kyra/lol.h"
+#include "kyra/screen_lol.h"
+#endif // ENABLE_LOL
 
 namespace Kyra {
 
@@ -221,10 +224,12 @@ bool StaticResource::init() {
 		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
 		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
 
+#ifdef ENABLE_LOL
 		{ lolCharData, proc(loadCharData), proc(freeCharData) },
 		{ lolSpellData, proc(loadSpellData), proc(freeSpellData) },
 		{ lolCompassData, proc(loadCompassData), proc(freeCompassData) },
 		{ lolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+#endif // ENABLE_LOL
 
 		{ 0, 0, 0 }
 	};
@@ -359,6 +364,7 @@ bool StaticResource::init() {
 		{ 0, 0, 0 }
 	};
 
+#ifdef ENABLE_LOL
 	static const FilenameTable lolStaticRes[] = {
 		// Demo Sequence Player
 		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
@@ -404,6 +410,7 @@ bool StaticResource::init() {
 
 		{ 0, 0, 0 }
 	};
+#endif // ENABLE_LOL
 
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
@@ -414,11 +421,13 @@ bool StaticResource::init() {
 	} else if (_vm->game() == GI_KYRA3) {
 		_builtIn = 0;
 		_filenameTable = kyra3StaticRes;
+#ifdef ENABLE_LOL
 	} else if (_vm->game() == GI_LOL) {
 		if (!_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 			return true;
 		_builtIn = 0;
 		_filenameTable = lolStaticRes;
+#endif // ENABLE_LOL
 	} else {
 		error("StaticResource: Unknown game ID");
 	}
@@ -465,6 +474,7 @@ const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries
 	return (const ItemAnimData_v2*)getData(id, k2ShpAnimDataV2, entries);
 }
 
+#ifdef ENABLE_LOL
 const LoLCharacter *StaticResource::loadCharData(int id, int &entries) {
 	return (const LoLCharacter*)getData(id, lolCharData, entries);
 }
@@ -480,6 +490,7 @@ const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
 	return (const uint16*)getData(id, lolRawDataBe16, entries);
 }
+#endif // ENABLE_LOL
 
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
@@ -909,6 +920,7 @@ bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int 
 	return true;
 }
 
+#ifdef ENABLE_LOL
 bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 	Common::SeekableReadStream *file = getFile(filename);
 
@@ -1046,6 +1058,7 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 	
 	return true;
 }
+#endif // ENABLE_LOL
 
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
@@ -1115,6 +1128,7 @@ void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
 	size = 0;
 }
 
+#ifdef ENABLE_LOL
 void StaticResource::freeCharData(void *&ptr, int &size) {
 	LoLCharacter *d = (LoLCharacter *)ptr;
 	delete[] d;
@@ -1142,6 +1156,7 @@ void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
 	ptr = 0;
 	size = 0;
 }
+#endif // ENABLE_LOL
 
 void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	uint8 **data = (uint8**)ptr;
@@ -1601,6 +1616,7 @@ void KyraEngine_HoF::initStaticResource() {
 		&KyraEngine_HoF::seq_demoDig, 0
 	};
 
+#ifdef ENABLE_LOL
 	static const SeqProc lolDemoSequenceCallbacks[] = {
 		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
 		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
@@ -1609,9 +1625,18 @@ void KyraEngine_HoF::initStaticResource() {
 	};
 
 	static const SeqProc lolDemoNestedSequenceCallbacks[] = { 0	};
+#endif // ENABLE_LOL
 
-	_callbackS = _flags.gameID == GI_LOL ? lolDemoSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
-	_callbackN = _flags.gameID == GI_LOL ? lolDemoNestedSequenceCallbacks : ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
+	_callbackS =
+#ifdef ENABLE_LOL
+		_flags.gameID == GI_LOL ? lolDemoSequenceCallbacks :
+#endif // ENABLE_LOL
+		((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+	_callbackN =
+#ifdef ENABLE_LOL
+		_flags.gameID == GI_LOL ? lolDemoNestedSequenceCallbacks :
+#endif // ENABLE_LOL
+		((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {
@@ -1626,6 +1651,7 @@ void KyraEngine_MR::initStaticResource() {
 	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
 }
 
+#ifdef ENABLE_LOL
 void LoLEngine::initStaticResource() {
 	_charDefaults = _staticres->loadCharData(lolCharacterDefs, _charDefaultsSize);	
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(lolIngameSfxIndex, _ingameSoundIndexSize);
@@ -1668,6 +1694,7 @@ void LoLEngine::initStaticResource() {
 	}
 	_staticres->unloadId(lolIngameSfxFiles);
 }
+#endif // ENABLE_LOL
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
@@ -2622,6 +2649,7 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 
 // lands of lore static res
 
+#ifdef ENABLE_LOL
 const ScreenDim Screen_LoL::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },	// Taken from Intro
 	{ 0x08, 0x48, 0x18, 0x38, 0xFE, 0x01, 0x00, 0x00 },
@@ -2732,6 +2760,7 @@ const uint8 LoLEngine::_charInfoFrameTable[] = {
 	0xB, 0xA, 0x9, 0x8, 0x7, 0x0, 0x0, 0x7,
 	0x8, 0x9, 0xA, 0xB, 0xA, 0x9, 0x8, 0x7
 };
+#endif // ENABLE_LOL
 
 } // End of namespace Kyra
 

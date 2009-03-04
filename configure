@@ -94,7 +94,8 @@ add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes
 add_engine igor "Igor: Objective Uikokahonia" no
-add_engine kyra "Legend of Kyrandia" yes
+add_engine kyra "Legend of Kyrandia" yes "lol"
+add_engine lol "Lands of Lore" no
 add_engine lure "Lure of the Temptress" yes
 add_engine m4 "M4/MADS" no
 add_engine made "MADE" no

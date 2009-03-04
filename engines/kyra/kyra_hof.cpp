@@ -283,9 +283,11 @@ Common::Error KyraEngine_HoF::go() {
 			seq_showStarcraftLogo();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
+#ifdef ENABLE_LOL
 			if (_flags.gameID == GI_LOL)
 				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);
 			else
+#endif // ENABLE_LOL
 				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
 			_menuChoice = 4;
 		} else {

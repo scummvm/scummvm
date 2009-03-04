@@ -12,18 +12,15 @@ MODULE_OBJS := \
 	gui_v2.o \
 	gui_hof.o \
 	gui_mr.o \
-	gui_lol.o \
 	items_lok.o \
 	items_v2.o \
 	items_hof.o \
 	items_mr.o \
-	items_lol.o \
 	kyra_v1.o \
 	kyra_lok.o \
 	kyra_v2.o \
 	kyra_hof.o \
 	kyra_mr.o \
-	lol.o \
 	resource.o \
 	resource_intern.o \
 	saveload.o \
@@ -35,10 +32,8 @@ MODULE_OBJS := \
 	scene_v2.o \
 	scene_hof.o \
 	scene_mr.o \
-	scene_lol.o \
 	screen.o \
 	screen_lok.o \
-	screen_lol.o \
 	screen_v2.o \
 	screen_hof.o \
 	screen_mr.o \
@@ -47,7 +42,6 @@ MODULE_OBJS := \
 	script_v2.o \
 	script_hof.o \
 	script_mr.o \
-	script_lol.o \
 	script.o \
 	script_tim.o \
 	seqplayer.o \
@@ -74,6 +68,16 @@ MODULE_OBJS := \
 	util.o \
 	vqa.o \
 	wsamovie.o
+
+ifdef ENABLE_LOL
+MODULE_OBJS += \
+	gui_lol.o \
+	items_lol.o \
+	lol.o \
+	scene_lol.o \
+	screen_lol.o \
+	script_lol.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_KYRA), DYNAMIC_PLUGIN)

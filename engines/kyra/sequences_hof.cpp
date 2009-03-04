@@ -1796,6 +1796,7 @@ int KyraEngine_HoF::seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	return frm;
 }
 
+#ifdef ENABLE_LOL
 int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	uint8 *tmpPal = _screen->getPalette(2);
 
@@ -1971,6 +1972,7 @@ int KyraEngine_HoF::seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 	return 0;
 }
+#endif // ENABLE_LOL
 
 uint32 KyraEngine_HoF::seq_activeTextsTimeLeft() {
 	uint32 res = 0;

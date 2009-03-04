@@ -39,7 +39,10 @@
 
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
+
+#ifdef ENABLE_LOL
 #include "kyra/lol.h"
+#endif // ENABLE_LOL
 
 namespace Kyra {
 
@@ -211,6 +214,7 @@ enum kKyraResources {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
+#ifdef ENABLE_LOL
 	lolCharacterDefs,
 	lolIngameSfxFiles,
 	lolIngameSfxIndex,
@@ -244,6 +248,7 @@ enum kKyraResources {
 	lolDscDoorY,
 	lolDscOvlIndex,
 	lolDscBlockIndex,
+#endif // ENABLE_LOL
 
 	kMaxResIDs
 };
@@ -271,10 +276,12 @@ public:
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
+#ifdef ENABLE_LOL
 	const LoLCharacter *loadCharData(int id, int &entries);
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
 	const uint16 *loadRawDataBe16(int id, int &entries);
+#endif // ENABLE_LOL
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -306,10 +313,12 @@ private:
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
+#ifdef ENABLE_LOL
 	bool loadCharData(const char *filename, void *&ptr, int &size);
 	bool loadSpellData(const char *filename, void *&ptr, int &size);
 	bool loadCompassData(const char *filename, void *&ptr, int &size);
-	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);	
+	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
+#endif // ENABLE_LOL
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -319,10 +328,12 @@ private:
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
+#ifdef ENABLE_LOL
 	void freeCharData(void *&ptr, int &size);
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
 	void freeRawDataBe16(void *&ptr, int &size);
+#endif // ENABLE_LOL
 
 	const char *getFilename(const char *name);
 	Common::SeekableReadStream *getFile(const char *name);

@@ -26,7 +26,10 @@
 #include "kyra/kyra_lok.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
+
+#ifdef ENABLE_LOL
 #include "kyra/lol.h"
+#endif // ENABLE_LOL
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
@@ -844,7 +847,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
 
-#if 0
+#ifdef ENABLE_LOL
 	// Lands of Lore CD
 	{
 		{
@@ -1020,7 +1023,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_DEMO_FLAGS
 	},
-#endif
+#endif // ENABLE_LOL
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
 };
@@ -1029,9 +1032,9 @@ const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
-#if 0
+#ifdef ENABLE_LOL
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
-#endif
+#endif // ENABLE_LOL
 	{ 0, 0 }
 };
 
@@ -1123,9 +1126,11 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	case Kyra::GI_KYRA3:
 		*engine = new Kyra::KyraEngine_MR(syst, flags);
 		break;
+#ifdef ENABLE_LOL
 	case Kyra::GI_LOL:
 		*engine = new Kyra::LoLEngine(syst, flags);
 		break;
+#endif // ENABLE_LOL
 	default:
 		res = false;
 		warning("Kyra engine: unknown gameID");
