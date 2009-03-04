@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/gui_lol.h"
@@ -1734,4 +1736,6 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

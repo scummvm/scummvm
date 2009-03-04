@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
@@ -570,4 +572,6 @@ int LoLEngine::selectionCharAccept() {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

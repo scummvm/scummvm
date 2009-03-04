@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 
@@ -1051,4 +1053,6 @@ void LoLEngine::walkMonsterGetNextStepCoords(int16 srcX, int16 srcY, int &newX, 
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

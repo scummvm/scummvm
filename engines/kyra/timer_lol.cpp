@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/timer.h"
@@ -115,3 +117,6 @@ void LoLEngine::timerFadeMessageText(int timerNum) {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
+

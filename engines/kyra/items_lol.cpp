@@ -23,6 +23,7 @@
  *
  */
 
+#ifdef ENABLE_LOL
 
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
@@ -268,4 +269,5 @@ void LoLEngine::foundItemSub(int item, int block) {
 
 } // end of namespace Kyra
 
+#endif // ENABLE_LOL
 

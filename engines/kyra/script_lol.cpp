@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/timer.h"
@@ -1309,4 +1311,6 @@ void LoLEngine::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 
