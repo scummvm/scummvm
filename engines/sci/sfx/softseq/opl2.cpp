@@ -51,6 +51,7 @@
 
 namespace Sci {
 
+// FIXME: Instead of hardcoding SAMPLE_RATE we should call Mixer::getOutputRate()
 #ifdef __DC__
 #define SAMPLE_RATE 22050
 #define CHANNELS SFX_PCM_MONO
