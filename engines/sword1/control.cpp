@@ -300,6 +300,7 @@ static int volToBalance(int volL, int volR) {
 }
 
 uint8 Control::runPanel(void) {
+	_panelShown = true;
 	_mouseDown = false;
 	_restoreBuf = NULL;
 	_keyPressed.reset();
@@ -415,6 +416,7 @@ uint8 Control::runPanel(void) {
 	free(_screenBuf);
 	_mouse->controlPanel(false);
 	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
+	_panelShown = false;
 	return retVal;
 }
 
@@ -824,6 +826,10 @@ void Control::readSavegameDescriptions(void) {
 	_saveFiles = _numSaves = _saveNames.size();
 }
 
+bool Control::isPanelShown(void) {
+	return _panelShown;
+}
+
 int Control::displayMessage(const char *altButton, const char *message, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
@@ -1098,15 +1104,12 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->write(_saveNames[slot].c_str(), 40);
 	outf->writeByte(SAVEGAME_VERSION);
 
-	// FIXME: at this point, we can't save a thumbnail of the game screen, as the save menu is shown
-#if 0
-	outf->writeByte(HAS_THUMBNAIL);
-
-	// Thumbnail
-	Graphics::saveThumbnail(*outf);
-#else
-	outf->writeByte(NO_THUMBNAIL);
-#endif
+	if (!isPanelShown()) {
+		outf->writeByte(HAS_THUMBNAIL);
+		// Thumbnail
+		Graphics::saveThumbnail(*outf); 
+	} else // at this point we can't save a thumbnail of the game screen, as the save menu is shown
+		outf->writeByte(NO_THUMBNAIL);
 
 	// Date / time
 	tm curTime;

@@ -95,7 +95,8 @@ public:
 	void readSavegameDescriptions(void);
 	void saveGameToFile(uint8 slot);
 	bool restoreGameFromFile(uint8 slot);
-	void checkForOldSaveGames();
+	void checkForOldSaveGames(void);
+	bool isPanelShown(void);
 
 	void setSaveDescription(int slot, const char *desc) {
 		_saveNames[slot] = desc;
@@ -116,6 +117,7 @@ private:
 	Common::String _oldName;
 	uint8 _cursorTick;
 	bool _cursorVisible;
+	bool _panelShown;
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);
