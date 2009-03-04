@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	engine/message.o \
 	engine/said.o \
 	engine/savegame.o \
+	engine/script.o \
 	engine/scriptconsole.o \
 	engine/scriptdebug.o \
 	engine/seg_manager.o \
@@ -60,7 +61,6 @@ MODULE_OBJS = \
 	scicore/resource.o \
 	scicore/resource_map.o \
 	scicore/resource_patch.o \
-	scicore/script.o \
 	scicore/versions.o \
 	scicore/vocab.o \
 	scicore/vocab_debug.o \
