@@ -32,21 +32,56 @@ typedef signed long   int64;
 #include <stdio.h>
 #include "common/scummsys.h"
 
+
+#define CACHE_SIZE (2048 * 32)
+#define MAX_READ_STEP (2048 * 16)
+#define MAX_CACHED_FILES 6
+#define CACHE_READ_THRESHOLD (16 * 2048)
+#define CACHE_FILL_MIN (2048 * 24)
+#define READ_ALIGN 64   // align all reads to the size of an EE cache line
+#define READ_ALIGN_MASK (READ_ALIGN - 1)
+
+
 class Ps2File {
 public:
-	Ps2File(int64 cacheId);
+	Ps2File(void);
 	virtual ~Ps2File(void);
-	virtual bool open(const char *name) = 0;
-	virtual uint32 read(void *dest, uint32 len) = 0;
-	virtual uint32 write(const void *src, uint32 len) = 0;
-	virtual uint32 tell(void) = 0;
-	virtual uint32 size(void) = 0;
-	virtual int seek(int32 offset, int origin) = 0;
-	virtual bool eof(void) = 0;
-	int64 _cacheId;
-private:
-};
+	virtual bool open(const char *name, int mode);
+	virtual uint32 read(void *dest, uint32 len);
+	virtual uint32 write(const void *src, uint32 len);
+	virtual int32 tell(void);
+	virtual int32 size(void);
+	virtual int seek(int32 offset, int origin);
+	virtual bool eof(void);
+	virtual bool getErr(void);
+	virtual void setErr(bool);
 
+	
+private:
+	void cacheReadAhead(void);
+	void cacheReadSync(void);
+
+	int _fd;
+	uint32 _fileSize;
+	uint32 _filePos;
+	uint32 _cacheSize;
+	uint32 _cachePos;
+
+	// uint8 cache[2048];
+	uint8 *_cache;
+
+	int _eof;
+	int _sema;
+
+
+	uint8 *_cacheBuf;
+	bool _cacheOpRunning;
+	uint32 _physFilePos;
+	uint32 _bytesInCache, _cacheOfs;
+
+	uint32 _readBytesBlock;
+	bool _stream;
+};
 
 FILE *ps2_fopen(const char *fname, const char *mode);
 int ps2_fclose(FILE *stream);
@@ -63,6 +98,9 @@ size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream);
 int ps2_fputc(int c, FILE *stream);
 int ps2_fputs(const char *s, FILE *stream);
 int ps2_fprintf(FILE *pOut, const char *zFormat, ...);
+
+int ps2_ferror(FILE *stream);
+void ps2_clearerr(FILE *stream);
 
 #endif // __PS2FILE_IO__
 

@@ -36,54 +36,31 @@
 #include "eecodyvdfs.h"
 #include "common/config-manager.h"
 #include "backends/platform/ps2/ps2debug.h"
-#include "backends/platform/ps2/savefile.h"
 #include "backends/platform/ps2/systemps2.h"
 
-#define CACHE_SIZE (2048 * 32)
-#define MAX_READ_STEP (2048 * 16)
-#define MAX_CACHED_FILES 6
-#define CACHE_READ_THRESHOLD (16 * 2048)
-#define CACHE_FILL_MIN (2048 * 24)
-#define READ_ALIGN 64	// align all reads to the size of an EE cache line
-#define READ_ALIGN_MASK (READ_ALIGN - 1)
+#define __PS2_FILE_SEMA__ 1
+// #define __PS2_FILE_DEBUG 1
+// #define __PS2_CACHE_DEBUG__ 1
+
+#define PS2_CACHE_MAX (128 * 1024)
+#define PS2_CACHE_CHK (16 * 1024)
 
 extern OSystem_PS2 *g_systemPs2;
 
+uint32 _rseek;
+
 AsyncFio fio;
 
-Ps2File::Ps2File(int64 cacheId) {
-	_cacheId = cacheId;
-}
-
-Ps2File::~Ps2File(void) {
-}
-
-class Ps2ReadFile : public Ps2File {
-public:
-	Ps2ReadFile(int64 cacheId, bool stream);
-	virtual ~Ps2ReadFile(void);
-	virtual bool open(const char *name);
-	virtual uint32 read(void *dest, uint32 len);
-	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
-	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
-private:
-	void cacheReadAhead(void);
-	void cacheReadSync(void);
-	int _fd, _sema;
-	uint8 *_cacheBuf;
-	bool _cacheOpRunning;
-	uint32 _filePos, _physFilePos, _cachePos;
-	uint32 _fileSize, _bytesInCache, _cacheOfs;
-
-	uint32 _readBytesBlock;
-	bool _stream;
-};
-
-Ps2ReadFile::Ps2ReadFile(int64 cacheId, bool stream) : Ps2File(cacheId) {
+Ps2File::Ps2File(void) {
 	_fd = -1;
+	_fileSize = 0;
+	_filePos = 0;
+	_cacheSize = 0;
+	_cachePos = 0;
+	_eof = false;
+
+	// _cache = (uint8 *)malloc(PS2_CACHE_MAX);
+
 	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE);
 
 	_cacheOpRunning = 0;
@@ -91,58 +68,102 @@ Ps2ReadFile::Ps2ReadFile(int64 cacheId, bool stream) : Ps2File(cacheId) {
 	_fileSize = _bytesInCache = _cacheOfs = 0;
 	_cacheOpRunning = false;
 	_readBytesBlock = 0;
-	_stream = stream;
+	_stream = true;
 
+#ifdef __PS2_FILE_SEMA__
 	ee_sema_t newSema;
 	newSema.init_count = 1;
 	newSema.max_count = 1;
 	_sema = CreateSema(&newSema);
 	assert(_sema >= 0);
+#endif
 }
 
-Ps2ReadFile::~Ps2ReadFile(void) {
-	if (_cacheOpRunning)
-		cacheReadSync();
-	free(_cacheBuf);
-	if (_fd >= 0)
+Ps2File::~Ps2File(void) {
+	if (_fd >= 0) {
 		fio.close(_fd);
+		uint32 r = fio.sync(_fd);
+		printf("close [%d] - sync'd = %d\n", _fd, r);
+	}
+
+	// free(_cache);
+	free(_cacheBuf);
+
+#ifdef __PS2_FILE_SEMA__
 	DeleteSema(_sema);
+#endif
 }
 
-bool Ps2ReadFile::open(const char *name) {
+bool Ps2File::open(const char *name, int mode) {
 	assert(_fd < 0);
-	_fd = fio.open(name, O_RDONLY);
+
+	_fd = fio.open(name, mode);
+
+	printf("open %s [%d]\n", name, _fd);
+
 	if (_fd >= 0) {
 		_fileSize = fio.seek(_fd, 0, SEEK_END);
-		fio.seek(_fd, 0, SEEK_SET);
+		if (mode == O_RDONLY)
+		// if (!(mode & O_APPEND))
+			fio.seek(_fd, 0, SEEK_SET);
+
+		printf("  _fileSize = %d\n", _fileSize);
+		printf("  _filePos = %d\n", _filePos);
+
 		return true;
 	} else
 		return false;
 }
 
-uint32 Ps2ReadFile::tell(void) {
+int32 Ps2File::tell(void) {
+#ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
-	uint32 res = _filePos;
+#endif
+	int32 res = _filePos;
+#ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
+#endif
 	return res;
 }
 
-uint32 Ps2ReadFile::size(void) {
+int32 Ps2File::size(void) {
+#ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
-	uint32 res = _fileSize;
+#endif
+	int32 res = _fileSize;
+#ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
+#endif
 	return res;
 }
 
-bool Ps2ReadFile::eof(void) {
+bool Ps2File::eof(void) {
+#ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
-	bool res = (_filePos == _fileSize);
+#endif
+	bool res = _eof; // (_filePos == _fileSize);
+	// bool res = (_filePos >= _fileSize);
+#ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
+
+	// printf(" EOF [%d] : %d of %d  -> %d\n", _fd, _filePos, _fileSize, res);
+#endif
 	return res;
 }
 
-int Ps2ReadFile::seek(int32 offset, int origin) {
+bool Ps2File::getErr(void) {
+	return _eof;
+}
+
+void Ps2File::setErr(bool err) {
+	_eof = err;
+}
+
+int Ps2File::seek(int32 offset, int origin) {
+#ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
+#endif
+	_rseek = 0;
 	int seekDest;
 	int res = -1;
 	switch (origin) {
@@ -160,14 +181,27 @@ int Ps2ReadFile::seek(int32 offset, int origin) {
 			break;
 	}
 	if ((seekDest >= 0) && (seekDest <= (int)_fileSize)) {
+		// _rseek = fio.sync(_fd);
 		_filePos = seekDest;
+		// fio.seek(_fd, _filePos, SEEK_SET);
+		// fio.sync(_fd);
+		// _cacheSize = 0;
+		_eof = false;
 		res = 0;
 	}
+	else _eof = true;
+
+	// printf("seek [%d]  %d  %d\n", _fd, offset, origin);
+	// printf("  res = %d\n", res);
+
+#ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
+#endif
+
 	return res;
 }
 
-void Ps2ReadFile::cacheReadAhead(void) {
+void Ps2File::cacheReadAhead(void) {
 	if (_cacheOpRunning) {
 		// there's already some cache read running
 		if (fio.poll(_fd)) // did it finish?
@@ -191,7 +225,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 			_cachePos = cachePosEnd = _filePos & ~READ_ALIGN_MASK;
 			assert(_filePos == _physFilePos);
 		} else {
-            uint32 cacheDiff = _filePos - _cachePos;
+            		uint32 cacheDiff = _filePos - _cachePos;
 			assert(_bytesInCache >= cacheDiff);
 			cacheDiff &= ~READ_ALIGN_MASK;
 			_bytesInCache -= cacheDiff;
@@ -201,7 +235,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 
 		if (_physFilePos != cachePosEnd) {
 			sioprintf("unexpected _physFilePos %d cache %d %d\n", _physFilePos, _cacheOfs, _bytesInCache);
-			assert(!(cachePosEnd & READ_ALIGN_MASK));
+			// assert(!(cachePosEnd & READ_ALIGN_MASK)); // romeo
 			_physFilePos = fio.seek(_fd, cachePosEnd, SEEK_SET);
 			if (_physFilePos != cachePosEnd) {
 				sioprintf("cache seek error: seek to %d instead of %d, fs = %d\n", _physFilePos, cachePosEnd, _fileSize);
@@ -223,7 +257,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 	}
 }
 
-void Ps2ReadFile::cacheReadSync(void) {
+void Ps2File::cacheReadSync(void) {
 	if (_cacheOpRunning) {
 		int res = fio.sync(_fd);
 		assert(res >= 0);
@@ -233,8 +267,30 @@ void Ps2ReadFile::cacheReadSync(void) {
 	}
 }
 
-uint32 Ps2ReadFile::read(void *dest, uint32 len) {
+uint32 Ps2File::read(void *dest, uint32 len) {	
+	// uint32 r=0, d=0, ds=0, sz=0;
+#ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
+#endif
+
+#ifdef __PS2_FILE_DEBUG__
+	printf("read (1) : _filePos = %d\n", _filePos);
+	printf("read (1) : _cachePos = %d\n", _cachePos);
+#endif
+
+	if (_filePos >= _fileSize) {
+		_eof = true;
+#ifdef __PS2_FILE_SEMA__
+    SignalSema(_sema);
+#endif
+		return 0;
+	}
+
+	if ((_filePos+len) > _fileSize) {
+		len = _fileSize-_filePos;
+		_eof = true;
+	}
+
 	uint8 *destBuf = (uint8*)dest;
 	if ((_filePos < _cachePos) || (_filePos + len > _cachePos + _bytesInCache))
 		cacheReadSync(); // we have to read from CD, sync cache.
@@ -287,195 +343,60 @@ uint32 Ps2ReadFile::read(void *dest, uint32 len) {
 	return destBuf - (uint8*)dest;
 }
 
-uint32 Ps2ReadFile::write(const void *src, uint32 len) {
-	sioprintf("write request on Ps2ReadFile!\n");
-	SleepThread();
+uint32 Ps2File::write(const void *src, uint32 len) {
+	uint32 w;
+#ifdef __PS2_FILE_SEMA__
+	WaitSema(_sema);
+#endif
+	_cacheSize = 0;
+
+	w = fio.sync(_fd);
+	assert(w==0);
+
+	fio.seek(_fd, _filePos, SEEK_SET);
+	fio.write(_fd, src, len);
+
+	w = fio.sync(_fd);
+
+#ifdef __PS2_FILE_SEMA__
+	SignalSema(_sema);
+#endif
+
+	if (w) {
+		_filePos += w;
+		if (w < len)
+			_eof = true;
+		return w;
+	}
+
 	return 0;
 }
 
-struct TocNode {
-	char name[64];
-	TocNode *next, *sub;
-	bool isDir;
-	uint8 nameLen;
-};
-
-class TocManager {
-public:
-	TocManager(void);
-	~TocManager(void);
-	void readEntries(const char *root);
-    int64 fileExists(const char *name);
-	bool haveEntries(void);
-private:
-	void readDir(const char *path, TocNode **node, int level);
-	TocNode *_rootNode;
-	char _root[256];
-	uint8 _rootLen;
-};
-
-static TocManager tocManager;
-
-struct FioHandleCache {
-	Ps2File *file;
-	FioHandleCache *next, *prev;
-};
-
-static FioHandleCache *cacheListStart = NULL;
-static FioHandleCache *cacheListEnd = NULL;
-static int cacheListLen = 0;
-static int openFileCount = 0;
-static int cacheListSema = -1;
-
-static bool checkedPath = false;
-
-Ps2File *findInCache(int64 id);
-
 FILE *ps2_fopen(const char *fname, const char *mode) {
-	if (cacheListSema == -1) {
-		ee_sema_t newSema;
-		newSema.init_count = 1;
-		newSema.max_count = 1;
-		cacheListSema = CreateSema(&newSema);
-		assert(cacheListSema >= 0);
-	}
+	Ps2File *file = new Ps2File();
+	int _mode = O_RDONLY;
 
-	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
-		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
+	printf("fopen(%s, %s)\n", fname, mode);
+
+	if (mode[0] == 'r' && mode [1] == 'w')
+		_mode = O_RDWR;
+	else if (mode[0] == 'w')
+		_mode = O_WRONLY | O_CREAT;
+	else if (mode[0] == 'a')
+		_mode = O_RDWR | O_CREAT | O_APPEND;
+
+	if (file->open(fname, _mode))
+		return (FILE *)file;
+	else
 		return NULL;
-	}
-	bool rdOnly = (mode[0] == 'r');
-
-	if (strnicmp(fname, "mc0:", 4) == 0) {
-		// File access to the memory card (for scummvm.ini) has to go through the savefilemanager
-		Ps2File *file;
-		if (rdOnly)
-			file = new Ps2McReadFile((Ps2SaveFileManager *)g_systemPs2->getSavefileManager());
-		else
-			file = new Ps2McWriteFile((Ps2SaveFileManager *)g_systemPs2->getSavefileManager());
-		if (file->open(fname + 4)) // + 4 to skip "mc0:"
-			return (FILE *)file;
-
-		delete file;
-		return NULL;
-	} else {
-		// Regular access to one of the devices
-
-		printf("ps2_fopen = %s\n", fname); // romeo : temp
-
-		if (!rdOnly)
-			return NULL; // we only provide readaccess for cd,dvd,hdd,usb
-
-		if (!checkedPath && g_engine) {
-			// are we playing from cd/dvd?
-			const char *gameDataPath = ConfMan.get("path").c_str();
-			printf("Read TOC dir: %s\n", gameDataPath);
-			if (strncmp(gameDataPath, "cdfs:", 5) != 0)
-				driveStop(); // no, we aren't. stop the drive. it's noisy.
-			// now cache the dir tree
-			tocManager.readEntries(gameDataPath);
-			checkedPath = true;
-		}
-
-		int64 cacheId = -1;
-		if (tocManager.haveEntries())
-			cacheId = tocManager.fileExists(fname);
-
-		if (cacheId != 0) {
-			Ps2File *file = findInCache(cacheId);
-			if (file) {
-				printf("  findInCache(%x)\n", cacheId); // romeo : temp
-				return (FILE*)file;
-			}
-
-			bool isAudioFile = strstr(fname, ".bun") || strstr(fname, ".BUN") || strstr(fname, ".Bun");
-			file = new Ps2ReadFile(cacheId, isAudioFile);
-
-			if (file->open(fname)) {
-				openFileCount++;
-				printf("  new cacheID = %x\n", cacheId); // romeo : temp
-				return (FILE*)file;
-			} else
-				delete file;
-		}
-		return NULL;
-	}
-}
-
-void checkCacheListLen(void) {
-	while ((cacheListLen > MAX_CACHED_FILES) || ((openFileCount > 13) && cacheListLen)) {
-		assert(cacheListEnd && cacheListStart);
-		delete cacheListEnd->file;
-		if (cacheListEnd->prev) {
-			cacheListEnd->prev->next = NULL;
-			FioHandleCache *temp = cacheListEnd;
-			cacheListEnd = cacheListEnd->prev;
-			delete temp;
-		} else {
-			assert(cacheListEnd == cacheListStart);
-			assert(cacheListLen == 1);
-			delete cacheListEnd;
-			cacheListEnd = cacheListStart = NULL;
-		}
-		cacheListLen--;
-		openFileCount--;
-	}
 }
 
 int ps2_fclose(FILE *stream) {
 	Ps2File *file = (Ps2File*)stream;
-	if (file->_cacheId > 0) { // this is a file on the CD, could be smart to cache it
-		FioHandleCache *newHandle = new FioHandleCache;
-		newHandle->file = file;
-		file->seek(0, SEEK_SET);
 
-		WaitSema(cacheListSema);
-		if (!cacheListEnd) {
-			assert(!cacheListStart);
-			newHandle->prev = newHandle->next = NULL;
-			cacheListEnd = cacheListStart = newHandle;
-		} else {
-			assert(cacheListStart);
-			newHandle->prev = NULL;
-			newHandle->next = cacheListStart;
-			cacheListStart->prev = newHandle;
-			cacheListStart = newHandle;
-		}
-		cacheListLen++;
-		checkCacheListLen();
-		SignalSema(cacheListSema);
-	} else {
-		openFileCount--;
-		delete file;
-	}
-    return 0;
-}
+	delete file;
 
-Ps2File *findInCache(int64 id) {
-	if (id <= 0)
-		return NULL;
-	WaitSema(cacheListSema);
-	FioHandleCache *node = cacheListStart;
-	while (node) {
-		if (node->file->_cacheId == id) {
-			if (node == cacheListStart)
-				cacheListStart = node->next;
-			if (node == cacheListEnd)
-				cacheListEnd = node->prev;
-			if (node->prev)
-				node->prev->next = node->next;
-			if (node->next)
-				node->next->prev = node->prev;
-			Ps2File *ret = node->file;
-			delete node;
-			cacheListLen--;
-			SignalSema(cacheListSema);
-			return ret;
-		} else
-			node = node->next;
-	}
-	SignalSema(cacheListSema);
-	return NULL;
+	return 0;
 }
 
 int ps2_fseek(FILE *stream, long offset, int origin) {
@@ -503,40 +424,6 @@ int ps2_fgetc(FILE *stream) {
 		return EOF;
 }
 
-char *ps2_fgets(char *buf, int n, FILE *stream) {
-	char *retVal = buf;
-	while (n--) {
-		if (n == 0)
-			*buf = '\0';
-		else {
-			char c = ps2_fgetc(stream);
-			if (c == EOF)
-				return NULL;
-			if ((c == '\r') || (c == '\n')) {
-				*buf++ = '\0';
-                return retVal;
-			}
-			*buf++ = c;
-		}
-	}
-	return retVal;
-}
-
-int ps2_fprintf(FILE *pOut, const char *zFormat, ...) {
-	va_list ap;
-	char resStr[2048];
-
-	va_start(ap,zFormat);
-	int res = vsnprintf(resStr, 2048, zFormat, ap);
-	va_end(ap);
-	if ((pOut == stderr) || (pOut == stdout)) {
-		printf("%s", resStr);
-		sioprintf("%s", resStr);
-	} else
-		res = ps2_fwrite(resStr, 1, res, pOut);
-	return res;
-}
-
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
 	return ((Ps2File*)stream)->write(buf, r * n) / r;
@@ -557,137 +444,36 @@ int ps2_fputs(const char *s, FILE *stream) {
 		return EOF;
 }
 
+int ps2_fprintf(FILE *pOut, const char *zFormat, ...) {
+	va_list ap;
+	char resStr[2048];
+
+	va_start(ap,zFormat);
+	int res = vsnprintf(resStr, 2048, zFormat, ap);
+	va_end(ap);
+	if ((pOut == stderr) || (pOut == stdout)) {
+		printf("%s", resStr);
+		sioprintf("%s", resStr);
+	} else
+		res = ps2_fwrite(resStr, 1, res, pOut);
+
+	return res;
+}
+
 int ps2_fflush(FILE *stream) {
-	printf("fflush not implemented\n");
+	// printf("fflush not implemented\n");
 	return 0;
 }
 
-TocManager::TocManager(void) {
-	_rootNode = NULL;
+int ps2_ferror(FILE *stream) {
+	int err = ((Ps2File*)stream)->getErr();
+
+	if (err)
+		printf("ferror -> %d\n", err);
+
+	return err;
 }
 
-TocManager::~TocManager(void) {
+void ps2_clearerr(FILE *stream) {
+	((Ps2File*)stream)->setErr(false);
 }
-
-bool TocManager::haveEntries(void) {
-	return _rootNode != NULL;
-}
-
-void TocManager::readEntries(const char *root) {
-    _rootLen = strlen(root);
-	strcpy(_root, root);
-	while (_root[_rootLen - 1] == '/') {
-		_rootLen--;
-		_root[_rootLen] = '\0';
-	}
-	char readPath[256];
-	sprintf(readPath, "%s/", _root);
-	printf("readDir: %s    (root: %s )\n", readPath, root);
-	readDir(readPath, &_rootNode, 0);
-}
-
-void TocManager::readDir(const char *path, TocNode **node, int level) {
-	if (level <= 2) { // we don't scan deeper than that
-		iox_dirent_t dirent;
-		int fd = fio.dopen(path);
-		TocNode *eNode = NULL; // = *node; // entry node
-		bool first = true;
-
-		printf("path=%s - level=%d fd=%d\n", path, level, fd); // romeo : temp
-		if (fd >= 0) {
-			while (fio.dread(fd, &dirent) > 0) {
-				if (dirent.name[0] != '.') { // skip '.' & '..' - romeo : check
-				                             // --- do we have them on PS2?
-					*node = new TocNode;
-					if (first) {
-						eNode = *node;
-						first = false;
-					}
-					(*node)->sub = (*node)->next = NULL;
-					(*node)->nameLen = strlen(dirent.name);
-					memcpy((*node)->name, dirent.name, (*node)->nameLen + 1);
-
-					if (dirent.stat.mode & FIO_S_IFDIR) {
-						(*node)->isDir = true;
-						printf("dirent.name = %s [DIR]\n", dirent.name);
-					}
-					else {
-						(*node)->isDir = false;
-						printf("dirent.name = %s\n", dirent.name);
-					}
-
-					node = &((*node)->next);
-				}
-			}
-
-			fio.dclose(fd);
-		}
-
-		TocNode *iNode = eNode;
-		char nextPath[256];
-
-		while (iNode) {
-			if (iNode->isDir == true) {
-				sprintf(nextPath, "%s%s/", path, iNode->name);
-				readDir(nextPath, &(iNode->sub), level + 1);
-			}
-			iNode = iNode->next;
-		}
-
-	}
-
-	/*
-		** Wizard of Oz' trick (to get all games running from USB on PS2):
-
-		1. Make a list of files / dirs in level #0 (dclose before continuing)
-
-		2. Go through the dirs : dopen / dread them / mark dirs / dclose
-
-		   It's a safe recursion, cause it recurses on 'isDir' nodes
-		   after dclosing the higher hierarchy
-	*/
-}
-
-int64 TocManager::fileExists(const char *name) {
-	if (((name[_rootLen] != '/') && (name[_rootLen] != '\0')) || (strnicmp(name, _root, _rootLen) != 0)) {
-		for (int i = 0; i < 8; i++)
-			if (name[i] == ':')	// we don't know the content of other drives,
-				return -1;		// assume file exists
-			else if ((name[i] == '/') || (name[i] == '\\'))
-				return 0;		// does not exists (this is probably ScummVM trying the 'current directory'.)
-		return 0;
-	}
-
-	uint8 nameLen = strlen(name);
-
-	name += _rootLen + 1;
-	nameLen -= _rootLen + 1;
-
-	TocNode *node = _rootNode;
-	int64 retId = 1;
-	while (node) {
-		if (((name[node->nameLen] == '/') || (name[node->nameLen] == '\0')) && (strnicmp(name, node->name, node->nameLen) == 0)) {
-			name += node->nameLen;
-			nameLen -= node->nameLen;
-			if (node->isDir) {
-				if (nameLen) {
-					name++;	// skip '/'
-					nameLen--;
-					node = node->sub;
-					retId <<= 10;
-				} else
-					return 0; // can't open a directory with fopen()
-			} else {
-				if (nameLen == 0)
-					return retId; // ok, found
-				else
-					return 0; // here's a file, but there's something left in the path
-			}
-		} else {
-			node = node->next;
-			retId++;
-		}
-	}
-	return 0; // does not exist
-}
-

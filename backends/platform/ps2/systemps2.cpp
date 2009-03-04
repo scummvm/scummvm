@@ -52,12 +52,19 @@
 #include "backends/platform/ps2/asyncfio.h"
 #include "eecodyvdfs.h"
 #include "graphics/surface.h"
+#include "graphics/scaler.h"
 #include "graphics/font.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 #include "common/events.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/fs/ps2/ps2-fs-factory.h"
+
+#include "backends/saves/default/default-saves.h"
+#include "common/config-manager.h"
+
+#include "icon.h"
+#include "ps2temp.h"
 
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
@@ -76,11 +83,15 @@ volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2;
 
+int gBitFormat = 1555;
+
 #define FOREVER 2147483647
 
 namespace Graphics {
 	extern const NewFont g_sysfont;
 };
+
+PS2Device detectBootPath(const char *elfPath, char *bootPath);
 
 extern AsyncFio fio;
 
@@ -159,7 +170,7 @@ void gluePowerOffCallback(void *system) {
 
 void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 
-	_usbMassLoaded = _useMouse = _useKbd = _useHdd = false;
+	_usbMassLoaded = _useMouse = _useKbd = _useHdd = _useNet = false;
 
 	int res = 0, rv = 0;
 	for (int i = 0; i < numModules; i++) {
@@ -189,13 +200,16 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 						case HDD_DRIVER:
 							_useHdd = true;
 							break;
+						case NET_DRIVER:
+							_useNet = true;
+							break;
 						default:
 							break;
 					}
 				}
 			} else
 				sioprintf("Module \"%s\" wasn't found: %d\n", modules[i].path, modules[i].errorCode);
-
+			
 			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
 				if (!(modules[i].fileRef->flags & OPTIONAL)) {
 					if (modules[i].errorCode < 0)
@@ -206,7 +220,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 					quit();
 				}
 			}
-
+			
 			if (modules[i].buffer)
 				free(modules[i].buffer);
 		} else {
@@ -234,13 +248,13 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 
 	_screen->wantAnim(true);
 
-	char irxPath[256];
-	_bootDevice = detectBootPath(elfPath, irxPath);
+	_bootPath = (char *)malloc(128);
+	_bootDevice = detectBootPath(elfPath, _bootPath);
 
 	IrxReference *modules;
-	int numModules = loadIrxModules(_bootDevice, irxPath, &modules);
+	int numModules = loadIrxModules(_bootDevice, _bootPath, &modules);
 
-	if (_bootDevice != HOST) {
+	if (_bootDevice != HOST_DEV) {
 		sioprintf("Resetting IOP.\n");
 		cdvdInit(CDVD_EXIT);
 		cdvdExit();
@@ -255,6 +269,14 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		SifLoadFileInit();
 		cdvdInit(CDVD_INIT_WAIT);
 	}
+	else {
+		// romeo : HOST : pre-load
+
+		// TODO: avoid re-loading USB_MASS.IRX -> it will jam mass:
+
+		// TODO: ps2link 1.46 will stall on "poweroff" init / cb
+	}
+
 	startIrxModules(numModules, modules);
 
 	int res;
@@ -277,15 +299,11 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0))
 			_useHdd = false;
 
-		dbg_printf("romeo : hddCheckPresent done : %d\n", _useHdd);
+		//hddPreparePoweroff();
+		poweroffInit();
 
-		hddPreparePoweroff();
-		//poweroffInit();
-		dbg_printf("romeo : hddPreparePoweroff done\n");
-
-		hddSetUserPoweroffCallback(gluePowerOffCallback, this);
-		//poweroffSetCallback(gluePowerOffCallback, this);
-		dbg_printf("romeo : hddSetUserPoweroffCallback done\n");
+		//hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+		poweroffSetCallback(gluePowerOffCallback, this);
 	}
 
 	fileXioSetBlockMode(FXIO_NOWAIT);
@@ -296,7 +314,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	readRtcTime();
 
 	if (_useHdd) {
-		printf("romeo : trying to mount...\n");
+		// TODO : make partition path configurable
 		if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
 			printf("Successfully mounted!\n");
 		else
@@ -320,13 +338,16 @@ void OSystem_PS2::init(void) {
 	sioprintf("Initializing ps2Input\n");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
+	prepMC();
+	makeConfigPath();
+
 	_screen->wantAnim(false);
 	_screen->clearScreen();
-
-	// OSystem::initBackend(); // romeo
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
+	free(_bootPath);
+	free(_configFile);
 }
 
 void OSystem_PS2::initTimer(void) {
@@ -457,20 +478,36 @@ void OSystem_PS2::soundThread(void) {
 	ExitThread();
 }
 
+bool OSystem_PS2::mcPresent(void) {
+	int fd = fio.dopen("mc0:");
+
+	if (fd > 0) {
+		fio.dclose(fd);
+		return true;
+	}
+
+	return false;
+}
+
 bool OSystem_PS2::hddPresent(void) {
 	return _useHdd;
 }
 
 bool OSystem_PS2::usbMassPresent(void) {
-
 	if (_usbMassLoaded) {
-		int testFd = fio.dopen("mass:/");
-		if (testFd >= 0)
-			fio.dclose(testFd);
-		if (testFd != -ENODEV)
+		int fd = fio.dopen("mass:");
+
+		if (fd > 0) {
+			fio.dclose(fd);
 			return true;
+		}
 	}
+
 	return false;
+}
+
+bool OSystem_PS2::netPresent(void) {
+	return _useNet;
 }
 
 void OSystem_PS2::initSize(uint width, uint height) {
@@ -668,7 +705,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 		while ((*lnEnd) && (*lnEnd != '\n'))
 			lnEnd++;
 		*lnEnd = '\0';
-
+		
 		Common::String str(lnSta);
 		int width = Graphics::g_sysfont.getStringWidth(str);
 		if (width > maxWidth)
@@ -698,7 +735,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 
 void OSystem_PS2::powerOffCallback(void) {
 	sioprintf("powerOffCallback\n");
-	_saveManager->quit();
+	// _saveManager->quit(); // romeo
 	if (_useHdd) {
 		sioprintf("umount\n");
 		fio.umount("pfs0:");
@@ -710,12 +747,12 @@ void OSystem_PS2::powerOffCallback(void) {
 }
 
 void OSystem_PS2::quit(void) {
-	sioprintf("OSystem_PS2::quit called\n");
-	if (_bootDevice == HOST) {
-		sioprintf("OSystem_PS2::quit (HOST)\n");
+	printf("OSystem_PS2::quit called\n");
+	if (_bootDevice == HOST_DEV) {
+		printf("OSystem_PS2::quit (HOST)\n");
 		SleepThread();
 	} else {
-		sioprintf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
+		printf("OSystem_PS2::quit (bootdev=%d)\n", _bootDevice);
 		if (_useHdd) {
 			driveStandby();
 			fio.umount("pfs0:");
@@ -724,26 +761,26 @@ void OSystem_PS2::quit(void) {
 		_screen->wantAnim(false);
 		_systemQuit = true;
 		ee_thread_t statSound, statTimer;
-		sioprintf("Waiting for timer and sound thread to end\n");
+		printf("Waiting for timer and sound thread to end\n");
 		do {	// wait until both threads called ExitThread()
 			ReferThreadStatus(_timerTid, &statTimer);
 			ReferThreadStatus(_soundTid, &statSound);
 		} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
-		sioprintf("Done\n");
+		printf("Done\n");
 		DeleteThread(_timerTid);
 		DeleteThread(_soundTid);
 		free(_timerStack);
 		free(_soundStack);
-		sioprintf("Stopping timer\n");
+		printf("Stopping timer\n");
 		DisableIntc(INT_TIMER0);
 		RemoveIntcHandler(INT_TIMER0, _intrId);
 
-		_saveManager->quit();
+		// _saveManager->quit(); // romeo
 		_screen->quit();
 
 		padEnd(); // stop pad library
 		cdvdInit(CDVD_EXIT);
-		sioprintf("resetting iop\n");
+		printf("resetting iop\n");
 		SifIopReset(NULL, 0);
 		SifExitRpc();
 		while (!SifIopSync());
@@ -752,41 +789,168 @@ void OSystem_PS2::quit(void) {
 		SifExitRpc();
 		FlushCache(0);
 		SifLoadFileExit();
-		sioprintf("Restarting ScummVM\n");
-		LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
+
+		// TODO : let user choose from reboot and forking an ELF on exit
+
+		// reboot (default)
+		#if 1
+
+		LoadExecPS2("", 0, NULL);
+
+		// LoadExecPS2("rom0:OSDSYS",0,NULL);
+
+		// ("rom0:OSDSYS", NULL)
+		// ("", 0, NULL);
+
+		/* back to PS2 Browser */
+/*		
+		__asm__ __volatile__(
+			"   li $3, 0x04;"
+			"   syscall;"
+			"   nop;"
+        );
+*/
+	
+/*
+		SifIopReset("rom0:UNDL ", 0);
+		while (!SifIopSync()) ; 
+		// SifIopReboot(...);
+*/
+		#else
+		// reset + load ELF from CD
+		printf("Restarting ScummVM\n");
+		LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL);
+		#endif
 	}
-}
-
-void OSystem_PS2::makeConfigPath(char *dest) {
-	// FIXME: Maybe merge this method into createConfigReadStream/createConfigWriteStream ?
-	FILE *handle;
-	strcpy(dest, "cdfs:/ScummVM.ini");
-	handle = ps2_fopen(dest, "r");
-	if (usbMassPresent() && !handle) {
-		strcpy(dest, "mass:/ScummVM.ini");
-		handle = ps2_fopen(dest, "r");
-	}
-	if (handle)
-		ps2_fclose(handle);
-	else
-		strcpy(dest, "mc0:ScummVM/scummvm.ini");
-}
-
-Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
-	char configFile[MAXPATHLEN];
-	makeConfigPath(configFile);
-	Common::FSNode file(configFile);
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
-	char configFile[MAXPATHLEN];
-	makeConfigPath(configFile);
-	Common::FSNode file(configFile);
-	return file.createWriteStream();
 }
 
 bool OSystem_PS2::runningFromHost(void) {
-	return (_bootDevice == HOST);
+	return (_bootDevice == HOST_DEV);
 }
 
+bool OSystem_PS2::prepMC() {
+	FILE *f;
+	bool prep = false;
+
+	if (!mcPresent())
+		return prep;
+
+	printf("prepMC 0\n");
+	// Common::String str("mc0:ScummVM/")
+	// Common::FSNode scumDir(str);
+	Common::FSNode scumDir("mc0:ScummVM/");
+
+	printf("prepMC 00\n");
+
+	if (!scumDir.exists()) {
+		uint16 *data, size;
+
+		PS2Icon _ico;
+		mcIcon icon;
+
+		printf("prepMC I\n");
+
+		size = _ico.decompressData(&data);
+
+		printf("prepMC II\n");
+
+		_ico.setup(&icon);
+
+#ifdef __USE_LIBMC__
+		int res;
+		mcInit(MC_TYPE_MC);
+		mcSync(0, NULL, NULL);
+		mcMkDir(0,0,"ScummVM");
+		mcSync(0, NULL, &res);
+		// TODO : icon
+#else
+		fio.mkdir("mc0:ScummVM");
+		f = ps2_fopen("mc0:ScummVM/scummvm.icn", "w");
+
+		printf("f = %p\n", f);
+
+		ps2_fwrite(data, size, 2, f);
+		ps2_fclose(f);
+
+		f = ps2_fopen("mc0:ScummVM/icon.sys", "w");
+
+		printf("f = %p\n", f);
+
+		ps2_fwrite(&icon, sizeof(icon), 1, f);
+		ps2_fclose(f);
+#endif
+		free(data);
+
+		printf("prepMC II\n");
+
+		prep = true;
+	}
+
+	return prep;
+}
+
+void OSystem_PS2::makeConfigPath() {
+    FILE *src, *dst;
+	char path[128], *buf;
+	int32 size;
+
+	// Common::FSNode scumIni("mc0:ScummVM/ScummVM.ini"); // gcc bug !
+
+	switch (_bootDevice) {
+	case CD_DEV:
+	{
+		Common::FSNode scumIni("mc0:ScummVM/ScummVM.ini");
+		if (!scumIni.exists()) {
+
+			src = ps2_fopen("cdfs:ScummVM.ini", "r");
+			if (src) {
+				size = ((Ps2File *)src)->size();
+				buf = (char *)malloc(size);
+				ps2_fread(buf, size, 1, src);
+				ps2_fclose(src);
+
+				dst = ps2_fopen("mc0:ScummVM/ScummVM.ini", "w");
+				if (dst) {
+					ps2_fwrite(buf, size, 1, dst);
+					ps2_fclose(dst);
+					sprintf(path, "mc0:ScummVM/ScummVM.ini");
+				}
+				else {
+					sprintf(path, "cdfs:ScummVM.ini");
+				}
+
+				free(buf);
+			}
+		}
+	}
+	break;
+
+	case MC_DEV:
+		sprintf(path, "mc0:ScummVM/ScummVM.ini");
+	break;
+
+	case HD_DEV:
+	case USB_DEV:
+	case HOST_DEV:
+		sprintf(path, "%sScummVM.ini", _bootPath);
+	break;
+	}
+
+	src = ps2_fopen(path, "r");
+	if (!src)
+		sprintf(path, "mc0:ScummVM/ScummVM.ini");
+	else
+		ps2_fclose(src);
+		
+	_configFile = strdup(path);
+}
+
+Common::SeekableReadStream *OSystem_PS2::openConfigFileForReading() {
+	Common::FSNode file(_configFile);
+	return file.openForReading();
+}
+    
+Common::WriteStream *OSystem_PS2::openConfigFileForWriting() {
+	Common::FSNode file(_configFile);
+	return file.openForWriting();
+}

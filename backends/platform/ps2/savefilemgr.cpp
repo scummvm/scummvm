@@ -23,550 +23,258 @@
  *
  */
 
-#include <tamtypes.h>
-#include <kernel.h>
-#include <sifrpc.h>
-#include <loadfile.h>
-#include <fileio.h>
-#include <malloc.h>
-#include <ucl/ucl.h>
-#include <libmc.h>
-#include "backends/platform/ps2/savefile.h"
-#include "backends/platform/ps2/Gs2dScreen.h"
-#include "backends/platform/ps2/systemps2.h"
-#include "backends/fs/abstract-fs.h"
-#include "backends/platform/ps2/ps2debug.h"
+#include "common/config-manager.h"
+#include "backends/saves/compressed/compressed-saves.h"
 
-#include "common/scummsys.h"
+#ifdef __USE_LIBMC__
+	#include <libmc.h>
+#endif
 
-#include "backends/platform/ps2/savefilemgr.h"
-#include "backends/platform/ps2/savefile.h"
+#include "asyncfio.h"
+#include "savefilemgr.h"
+#include "Gs2dScreen.h"
+#include "ps2temp.h"
 
-extern void *_gp;
-
-#define PORT 0
-#define SLOT 0
-// port 0, slot 0: memory card in first slot.
-
-McAccess::McAccess(int port, int slot) {
-	_port = port;
-	_slot = slot;
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	_sema = CreateSema(&newSema);
-
-	assert(mcInit(MC_TYPE_MC) >= 0);
-}
-
-McAccess::~McAccess(void) {
-	DeleteSema(_sema);
-}
-
-int McAccess::open(const char *name, int mode) {
-	int res;
-	WaitSema(_sema);
-	mcOpen(_port, _slot, name, mode);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::close(int fd) {
-	int res;
-	WaitSema(_sema);
-	mcClose(fd);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::size(int fd) {
-	int res, size;
-	WaitSema(_sema);
-	mcSeek(fd, 0, SEEK_END);
-	mcSync(0, NULL, &size);
-	mcSeek(fd, 0, SEEK_SET);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	assert(res == 0);
-	return size;
-}
-
-int McAccess::read(int fd, void *buf, int size) {
-	int res;
-	WaitSema(_sema);
-	mcRead(fd, buf, size);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::write(int fd, const void *buf, int size) {
-	int res;
-	WaitSema(_sema);
-	mcWrite(fd, buf, size);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::mkDir(const char *name) {
-	int res;
-	WaitSema(_sema);
-	mcMkDir(_port, _slot, name);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::remove(const char *name) {
-	int res;
-	WaitSema(_sema);
-	mcDelete(_port, _slot, name);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::getDir(const char *name, unsigned int mode, int max, void *dest) {
-	int res;
-	WaitSema(_sema);
-	mcGetDir(_port, _slot, name, mode, max, (mcTable*)dest);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-int McAccess::getInfo(int *type, int *free, int *format) {
-	int res;
-	WaitSema(_sema);
-	mcGetInfo(_port, _slot, type, free, format);
-	mcSync(0, NULL, &res);
-	SignalSema(_sema);
-	return res;
-}
-
-#define MAX_MC_ENTRIES	16
-
-void runSaveThread(Ps2SaveFileManager *param);
+extern AsyncFio fio;
 
 Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) {
-	_system = system;
+	// _system = system;
 	_screen = screen;
-	_mc = new McAccess(PORT, SLOT);
-
-	_mcDirList = (mcTable*)memalign(64, MAX_MC_ENTRIES * sizeof(mcTable));
-	_mcDirName[0] = '\0';
-	_mcCheckTime = 0;
-	_mcNeedsUpdate = true;
-
-	for (int mcCheckCount = 0; mcCheckCount < 3; mcCheckCount++) {
-		/* retry mcGetInfo 3 times. It slows down startup without mc considerably,
-		   but cheap 3rd party memory cards apparently fail to get detected once in a while */
-
-		int mcType, mcFree, mcFormat;
-		int res = _mc->getInfo(&mcType, &mcFree, &mcFormat);
-
-		if ((res == 0) || (res == -1)) { // mc okay
-			_mcPresent = true;
-			printf("MC okay, result = %d. Type %d, Free %d, Format %d\n", res, mcType, mcFree, mcFormat);
-			checkMainDirectory();
-			break;
-		} else {
-			_mcPresent = false;
-			printf("MC failed, not present or not formatted, code %d\n", res);
-		}
-	}
-
-	// create save thread
-	ee_sema_t newSema;
-	newSema.init_count = 0;
-	newSema.max_count = 1;
-	_autoSaveSignal = CreateSema(&newSema);
-	_autoSaveBuf = NULL;
-	_autoSaveSize = 0;
-	_systemQuit = false;
-
-	ee_thread_t saveThread, thisThread;
-	ReferThreadStatus(GetThreadId(), &thisThread);
-
-	saveThread.initial_priority = thisThread.current_priority + 1;
-	saveThread.stack_size = 8 * 1024;
-	_autoSaveStack = malloc(saveThread.stack_size);
-	saveThread.stack  = _autoSaveStack;
-	saveThread.func   = (void *)runSaveThread;
-	saveThread.gp_reg = &_gp;
-
-	_autoSaveTid = CreateThread(&saveThread);
-	assert(_autoSaveTid >= 0);
-	StartThread(_autoSaveTid, this);
 }
 
-Ps2SaveFileManager::~Ps2SaveFileManager(void) {
+Ps2SaveFileManager::~Ps2SaveFileManager() {
+
 }
 
-void Ps2SaveFileManager::checkMainDirectory(void) {
-	// verify that the main directory (scummvm config + icon) exists
-	int ret, fd;
-	_mcNeedsUpdate = true;
-	ret = _mc->getDir("/ScummVM/*", 0, MAX_MC_ENTRIES, _mcDirList);
-	printf("/ScummVM/* res = %d\n", ret);
-	if (ret <= 0) { // assume directory doesn't exist
-		printf("Dir doesn't exist\n");
-		ret = _mc->mkDir("/ScummVM");
-		if (ret >= 0) {
-			fd = _mc->open("/ScummVM/scummvm.icn", O_WRONLY | O_CREAT);
-			if (fd >= 0) {
-				uint16 icoSize;
-				uint16 *icoBuf = decompressIconData(&icoSize);
-				ret = _mc->write(fd, icoBuf, icoSize * 2);
-				_mc->close(fd);
-				free(icoBuf);
 
-				printf(".icn written\n");
-				setupIcon("/ScummVM/icon.sys", "scummvm.icn", "ScummVM", "Configuration");
-			} else
-				printf("Can't create icon file: %d\n", fd);
-		} else
-			printf("can't create scummvm directory: %d\n", ret);
+bool Ps2SaveFileManager::mcCheck(const char *path) {
+	// Common::FSNode dir(Common::String(path), 1); // FIXED in gcc 3.4.x
+	const Common::String str(path);
+	Common::FSNode dir(str);
+
+	// int res;
+
+	printf("mcCheck\n");
+
+	if (!dir.exists()) {
+		printf("! exist -> create : ");
+#ifdef __USE_LIBMC__
+		printf("%s\n", path+4);
+		// WaitSema(_sema);
+		mcSync(0, NULL, NULL);
+		mcMkDir(0 /*port*/, 0 /*slot*/,	path+4);
+		mcSync(0, NULL, &res);
+		printf("sync : %d\n", res);
+		// SignalSema(_sema);
+#else
+		printf("%s\n", path);
+		fio.mkdir(path);
+#endif
 	}
+
+	// TODO: res;
+	return true;
 }
 
-void Ps2SaveFileManager::splitPath(const char *fileName, char *dir, char *name) {
-	strcpy(dir, fileName);
-	char *ext = strchr(dir, '.');
-	if (ext) {
-		*ext = '\0';
-		ext++;
-	}
-	if (ext && *ext)
-		sprintf(name, "%s.ucl", ext);
-	else
-		strcpy(name, "save.ucl");
-}
-
-bool Ps2SaveFileManager::mcReadyForDir(const char *dir) {
-	if (_mcNeedsUpdate || ((_system->getMillis() - _mcCheckTime) > 2000) || !_mcPresent) {
-		// check if memory card was exchanged/removed in the meantime
-		int mcType, mcFree, mcFormat, mcResult;
-		mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
-		if (mcResult != 0) { // memory card was exchanged
-			_mcNeedsUpdate = true;
-			if (mcResult == -1) { // yes, it was exchanged
-				checkMainDirectory(); // make sure ScummVM dir and icon are there
-			} else { // no memorycard in slot or not formatted or something like that
-				_mcPresent = false;
-				printf("MC not found, error code %d\n", mcResult);
-				return false;
-			}
-		}
-		_mcPresent = true;
-		_mcCheckTime = _system->getMillis();
-	}
-	if (_mcNeedsUpdate || strcmp(_mcDirName, dir)) {
-		strcpy(_mcDirName, dir);
-		char dirStr[256];
-		sprintf(dirStr, "/ScummVM-%s/*", dir);
-		_mcEntries = _mc->getDir(dirStr, 0, MAX_MC_ENTRIES, _mcDirList);
-		_mcNeedsUpdate = false;
-	}
-	return (_mcEntries >= 0);
+void Ps2SaveFileManager::mcSplit(char *full, char *game, char *ext) {
+	// TODO
 }
 
 Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
-	_screen->wantAnim(true);
+	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
+	Common::SeekableReadStream *sf;
 
-	char dir[256], name[256];
-	splitPath(filename, dir, name);
-	printf("openForLoading: \"%s\" => \"%s\" + \"%s\"\n", filename, dir, name);
-	if (mcReadyForDir(dir)) {
-		printf("Ready\n");
-		bool fileExists = false;
-		for (int i = 0; i < _mcEntries; i++)
-			if (strcmp(name, (char*)_mcDirList[i].name) == 0)
-				fileExists = true;
-		if (fileExists) {
-			printf("Found!\n");
-			char fullName[256];
-			sprintf(fullName, "/ScummVM-%s/%s", dir, name);
-			UclInSaveFile *file = new UclInSaveFile(fullName, _screen, _mc);
-			if (file) {
-				if (!file->ioFailed())
-					return file;
-				else {
-					printf("IoFailed\n");
-					delete file;
-				}
-			}
-		} else
-			printf("file %s (%s) doesn't exist\n", filename, name);
+	if (!savePath.exists() || !savePath.isDirectory())
+		return NULL;
+
+	// _screen->wantAnim(true);
+
+	if (_getDev(savePath) == MC_DEV) {
+	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
+		char *game=0, *ext=0, path[32], temp[32];
+
+		// FIXME : hack for indy4 iq-points
+		if (strcmp(filename, "iq-points") == 0) {
+			mcCheck("mc0:ScummVM/indy4");
+			sprintf(path, "mc0:ScummVM/indy4/iq-points");
+		}
+		// FIXME : hack for bs1 saved games
+		else if (strcmp(filename, "SAVEGAME.INF") == 0) {
+			mcCheck("mc0:ScummVM/sword1");
+			sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
+		}
+		else {
+			printf("MC : filename = %s\n", filename);
+			strcpy(temp, filename);
+
+			// mcSplit(temp, game, ext);
+			game = strdup(strtok(temp, "."));
+			ext = strdup(strtok(NULL, "*"));
+			sprintf(path, "mc0:ScummVM/%s", game); // per game path
+
+			// mcCheck(path); // needed on load ?
+			sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
+		}
+
+        free(game);
+        free(ext);
+
+		Common::FSNode file(path);
+
+		if(!file.exists())
+			return NULL;
+
+		sf = file.openForReading();
+
+	} else {
+		Common::FSNode file = savePath.getChild(filename);
+
+		if(!file.exists())
+			return NULL;
+
+		sf = file.openForReading();
 	}
-	_screen->wantAnim(false);
-	return NULL;
+
+	// _screen->wantAnim(false);
+
+	return wrapInSaveFile(sf);
 }
 
 Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
-	int res;
-	char dir[256], name[256];
+	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
+	Common::WriteStream *sf;
+
+	printf("openForSaving : %s\n", filename);
+
+	if (!savePath.exists() || !savePath.isDirectory())
+		return NULL;
 
 	_screen->wantAnim(true);
-	splitPath(filename, dir, name);
 
-	if (!mcReadyForDir(dir)) {
-		if (_mcPresent) { // directory doesn't seem to exist yet
-			char fullPath[256];
-			sprintf(fullPath, "/ScummVM-%s", dir);
-			res = _mc->mkDir(fullPath);
+	if (_getDev(savePath) == MC_DEV) {
+	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
+		char *game=0, *ext=0, path[32], temp[32];
 
-			char icoSysDest[256], saveDesc[256];
-			sprintf(icoSysDest, "%s/icon.sys", fullPath);
-			strcpy(saveDesc, dir);
-			if ((saveDesc[0] >= 'a') && (saveDesc[0] <= 'z'))
-				saveDesc[0] += 'A' - 'a';
-			setupIcon(icoSysDest, "../ScummVM/scummvm.icn", saveDesc, "Savegames");
+		// FIXME : hack for indy4 iq-points
+		if (strcmp(filename, "iq-points") == 0) {
+			mcCheck("mc0:ScummVM/indy4");
+			sprintf(path, "mc0:ScummVM/indy4/iq-points");
 		}
-	}
+		// FIXME : hack for bs1 saved games
+        else if (strcmp(filename, "SAVEGAME.INF") == 0) {
+            mcCheck("mc0:ScummVM/sword1");
+            sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
+        }
+		else {
+			strcpy(temp, filename);
 
-	if (_mcPresent) {
-		char fullPath[256];
-		sprintf(fullPath, "/ScummVM-%s/%s", dir, name);
-		if (strstr(filename, ".s00") || strstr(filename, ".ASD") || strstr(filename, ".asd")) {
-			// this is an autosave
-			AutoSaveFile *file = new AutoSaveFile(this, fullPath);
-			return file;
-		} else {
-			UclOutSaveFile *file = new UclOutSaveFile(fullPath, _system, _screen, _mc);
-			if (!file->ioFailed()) {
-				// we're creating a file, mc will have to be updated next time
-				_mcNeedsUpdate = true;
-				return file;
-			} else {
-				printf("UCL out create failed!\n");
-				delete file;
-			}
+			// mcSplit(temp, game, ext);
+			game = strdup(strtok(temp, "."));
+			ext = strdup(strtok(NULL, "*"));
+			sprintf(path, "mc0:ScummVM/%s", game); // per game path
+			mcCheck(path);
+			sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
 		}
-	}
 
-	_screen->wantAnim(false);
-	return NULL;
-}
-
-void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
-	_screen->wantAnim(true);
-
-	int mcType, mcFree, mcFormat, mcResult;
-	mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
-
-	memset(marks, false, num * sizeof(bool));
-
-	if ((mcResult == 0) || (mcResult == -1)) {
-		// there's a memory card in the slot.
-		if (mcResult == -1)
-			_mcNeedsUpdate = true;
-
-		mcTable *mcEntries = (mcTable*)memalign(64, sizeof(mcTable) * MAX_MC_ENTRIES);
-
-		char dirStr[256], ext[256], mcSearchStr[256];
-		strcpy(dirStr, prefix);
-		char *pos = strchr(dirStr, '.');
-		if (pos) {
-			strcpy(ext, pos + 1);
-			*pos = '\0';
-		} else
-			ext[0] = '\0';
-		sprintf(mcSearchStr, "/ScummVM-%s/%s*", dirStr, ext);
-
-		int numEntries = _mc->getDir(mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
-
-		int searchLen = strlen(ext);
-		for (int i = 0; i < numEntries; i++)
-			if ((((char*)mcEntries[i].name)[0] != '.') && stricmp((char*)mcEntries[i].name, "icon.sys")) {
-				char *stopCh;
-				int destNum = (int)strtoul((char*)mcEntries[i].name + searchLen, &stopCh, 10);
-				if ((!stopCh) || strcmp(stopCh, ".ucl"))
-					printf("unexpected end %s in name %s, search %s\n", stopCh, (char*)mcEntries[i].name, prefix);
-				if (destNum < num)
-					marks[destNum] = true;
-			}
-		free(mcEntries);
-	}
-	_screen->wantAnim(false);
-}
-
-Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
-	_screen->wantAnim(true);
-	Common::StringList results;
-	int mcType, mcFree, mcFormat, mcResult;
-
-	printf("listSavefiles -> regex=%s\n", regex);
-
-	mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
-
-	if ((mcResult == 0) || (mcResult == -1)) {
-		// there's a memory card in the slot.
-		if (mcResult == -1)
-			_mcNeedsUpdate = true;
-
-		mcTable *mcEntries = (mcTable*)memalign(64, sizeof(mcTable) * MAX_MC_ENTRIES);
-
-		char temp[256], mcSearchStr[256], *dir, *ext;
-		strcpy(temp, regex);
-		dir = strdup(strtok(temp, "."));
-		ext = strdup(strtok(NULL, "*"));
-
-		printf("dir = %s - ext = %s\n", dir, ext);
-
-		sprintf(mcSearchStr, "/ScummVM-%s/%s*", dir, ext);
-
-		int numEntries = _mc->getDir(mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
-		char *name;
-        for (int i = 0; i < numEntries; i++) {
-			name = (char*)mcEntries[i].name;
-
-            if ((name[0] != '.') && stricmp(name, "icon.sys")) {
-				printf(" name = %s\n", (char*)mcEntries[i].name);
-				if (Common::matchString(name, "s*.ucl")) {
-					sprintf(temp, "%s.%s%c%c", dir, ext, name[1], name[2]);
-					results.push_back(temp);
-					printf("  -> match [%s] ;-)\n", temp);
-				}
-				else {
-					results.push_back(name); // ;-)
-					printf("  -> no match :-(\n");
-				}
-			}
-		}
-		free(mcEntries);
-		free(dir);
+		Common::FSNode file(path);
+		sf = file.openForWriting();
+		free(game);
 		free(ext);
-    }
+	} else {
+		Common::FSNode file = savePath.getChild(filename);
+		sf = file.openForWriting();
+	}
 
-    _screen->wantAnim(false);
-
-	return results;
+	_screen->wantAnim(false);
+	return wrapOutSaveFile(sf);
 }
 
 bool Ps2SaveFileManager::removeSavefile(const char *filename) {
+	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
+	Common::FSNode file;
 
-	char dir[64], name[64], fullPath[128];
-
-	splitPath(filename, dir, name);
-	sprintf(fullPath, "/ScummVM-%s/%s", dir, name);
-
-	int res = _mc->remove(fullPath);
-	return (res == 0);
-}
-
-const char *Ps2SaveFileManager::getSavePath(void) const {
-	return "mc0:";
-}
-
-bool Ps2SaveFileManager::setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2) {
-	mcIcon icon_sys;
-	memset(&icon_sys, 0, sizeof(mcIcon));
-	memcpy(icon_sys.head, "PS2D", 4);
-	char title[256];
-	if (!stricmp("SAVEGAME", descr1)) { // these are broken sword 1 savegames
-		sprintf(title, "BSword1\n%s", descr2);
-		icon_sys.nlOffset = 8;
-	} else {
-		sprintf(title, "%s\n%s", descr1, descr2);
-		icon_sys.nlOffset = strlen(descr1) + 1;
-	}
-	strcpy_sjis((short*)&(icon_sys.title), title);
-	icon_sys.trans = 0x10;
-	memcpy(icon_sys.bgCol, _bgcolor, sizeof(_bgcolor));
-	memcpy(icon_sys.lightDir, _lightdir, sizeof(_lightdir));
-	memcpy(icon_sys.lightCol, _lightcol, sizeof(_lightcol));
-	memcpy(icon_sys.lightAmbient, _ambient, sizeof(_ambient));
-	strcpy((char*)icon_sys.view, ico);
-	strcpy((char*)icon_sys.copy, ico);
-	strcpy((char*)icon_sys.del, ico);
-
-	int fd, res;
-	fd = _mc->open(dest, O_WRONLY | O_CREAT);
-	if (fd >= 0) {
-		res = _mc->write(fd, &icon_sys, sizeof(icon_sys));
-		_mc->close(fd);
-        return (res == sizeof(icon_sys));
-	} else
+	if (!savePath.exists() || !savePath.isDirectory())
 		return false;
-}
 
-uint16 *Ps2SaveFileManager::decompressIconData(uint16 *size) {
-	uint16 inPos = 1;
-	uint16 *rleData = (uint16*)_rleIcoData;
-	uint16 resSize = rleData[0];
-	uint16 *resData = (uint16*)malloc(resSize * sizeof(uint16));
-	uint16 outPos = 0;
-	while (outPos < resSize) {
-		uint16 len = rleData[inPos++];
-		while (len--)
-			resData[outPos++] = 0x7FFF;
-		len = rleData[inPos++];
-		while (len--)
-			resData[outPos++] = rleData[inPos++];
+	if (_getDev(savePath) == MC_DEV) {
+	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
+		char *game=0, *ext=0, path[32], temp[32];
+		strcpy(temp, filename);
+
+		// mcSplit(temp, game, ext);
+		game = strdup(strtok(temp, "."));
+		ext = strdup(strtok(NULL, "*"));
+		sprintf(path, "mc0:ScummVM/%s", game); // per game path
+		mcCheck(path);
+		sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
+		file = Common::FSNode(path);
+		free(game);
+		free(ext);
+	} else {
+		file = savePath.getChild(filename);
 	}
-	*size = resSize;
-	assert(outPos == resSize);
-	return resData;
+
+	if (!file.exists() || file.isDirectory())
+		return false;
+
+	fio.remove(file.getPath().c_str());
+
+	return true;
 }
 
-void runSaveThread(Ps2SaveFileManager *param) {
-	param->saveThread();
-}
+Common::StringList Ps2SaveFileManager::listSavefiles(const char *pattern) {
+	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
+	Common::String _dir;
+	Common::String search;
+	bool _mc = (_getDev(savePath) == MC_DEV);
+ 		// (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0);
+	char *game=0, path[32], temp[32];
 
-void Ps2SaveFileManager::writeSaveNonblocking(char *name, void *buf, uint32 size) {
-	if (buf && size && !_systemQuit) {
-		strcpy(_autoSaveName, name);
-		assert(!_autoSaveBuf);
-		_autoSaveBuf = (uint8*)malloc(size);
-		memcpy(_autoSaveBuf, buf, size);
-		_autoSaveSize = size;
-		SignalSema(_autoSaveSignal);
+	if (!savePath.exists() || !savePath.isDirectory())
+		return Common::StringList();
+
+	printf("listSavefiles = %s\n", pattern);
+
+	if (_mc) {
+		strcpy(temp, pattern);
+
+		// mcSplit(temp, game, ext);
+		game = strdup(strtok(temp, "."));
+		sprintf(path, "mc0:ScummVM/%s", game); // per game path
+		mcCheck(path);
+
+		sprintf(path, "mc0:ScummVM/%s/", game);
+		_dir = Common::String(path);
+		search = Common::String("*.sav");
 	}
-}
+	else {
+		_dir = Common::String(savePath.getPath());
+		search = Common::String(pattern);
+	}
 
-void Ps2SaveFileManager::saveThread(void) {
-	while (!_systemQuit) {
-		WaitSema(_autoSaveSignal);
-		if (_autoSaveBuf && _autoSaveSize) {
-			UclOutSaveFile *outSave = new UclOutSaveFile(_autoSaveName, _system, _screen, _mc);
-			if (!outSave->ioFailed()) {
-				outSave->write(_autoSaveBuf, _autoSaveSize);
-				outSave->flush();
+	Common::FSDirectory dir(_dir);
+	Common::ArchiveMemberList savefiles;
+	Common::StringList results;
+
+	printf("dir = %s --- reg = %s\n", _dir.c_str(), search.c_str());
+
+	if (dir.listMatchingMembers(savefiles, search) > 0) {
+		for (Common::ArchiveMemberList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
+			if (_mc) { // convert them back in ScummVM names
+				strncpy(temp, (*file)->getName().c_str(), 3);
+				temp[3] = '\0';
+				sprintf(path, "%s.%s", game, temp);
+				results.push_back(path);
+				printf(" --> found = %s -> %s\n", (*file)->getName().c_str(), path);
 			}
-			if (outSave->ioFailed())
-				_system->msgPrintf(5000, "Writing autosave to %s failed", _autoSaveName);
-			delete outSave;
-			free(_autoSaveBuf);
-			_autoSaveBuf = NULL;
-			_autoSaveSize = 0;
-			_mcNeedsUpdate = true; // we've created a file, mc will have to be updated
-			_screen->wantAnim(false);
+			else {
+				results.push_back((*file)->getName());
+				printf(" --> found = %s\n", (*file)->getName().c_str());
+			}
 		}
 	}
-	ExitThread();
+
+	free(game);
+
+	return results;
 }
-
-void Ps2SaveFileManager::quit(void) {
-	_systemQuit = true;
-	ee_thread_t statSave, statThis;
-	ReferThreadStatus(GetThreadId(), &statThis);
-	ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
-
-	do {	// wait until thread called ExitThread()
-		SignalSema(_autoSaveSignal);
-		ReferThreadStatus(_autoSaveTid, &statSave);
-	} while (statSave.status != 0x10);
-
-	DeleteThread(_autoSaveTid);
-    free(_autoSaveStack);
-}
-
-McAccess *Ps2SaveFileManager::getMcAccess(void) {
-	return _mc;
-}
-
-

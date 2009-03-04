@@ -23,36 +23,40 @@
  *
  */
 
-#include "backends/platform/ps2/savefilemgr.h"
-#include "backends/platform/ps2/Gs2dScreen.h"
-#include "backends/platform/ps2/GsDefs.h"
+#include "Gs2dScreen.h"
+#include "GsDefs.h"
 
-const iconIVECTOR Ps2SaveFileManager::_bgcolor[4] = {
+#include <libmc.h>
+#include "icon.h"
+
+const char _info[] = "ScummVM\nFolder";
+
+const iconIVECTOR _bgcolor[4] = {
 	{  68,  23, 116,  0 }, // top left
 	{ 255, 255, 255,  0 }, // top right
 	{ 255, 255, 255,  0 }, // bottom left
 	{  68,  23, 116,  0 }, // bottom right
 };
 
-const iconFVECTOR Ps2SaveFileManager::_lightdir[3] = {
+const iconFVECTOR _lightdir[3] = {
 	{ 0.5, 0.5, 0.5, 0.0 },
 	{ 0.0,-0.4,-0.1, 0.0 },
 	{-0.5,-0.5, 0.5, 0.0 },
 };
 
-const iconFVECTOR Ps2SaveFileManager::_lightcol[3] = {
+const iconFVECTOR _lightcol[3] = {
 	{ 0.3, 0.3, 0.3, 0.00 },
 	{ 0.4, 0.4, 0.4, 0.00 },
 	{ 0.5, 0.5, 0.5, 0.00 },
 };
 
-const iconFVECTOR Ps2SaveFileManager::_ambient = { 0.50, 0.50, 0.50, 0.00 };
+const iconFVECTOR _ambient = { 0.50, 0.50, 0.50, 0.00 };
 
-//  Source File: stdico2.rle
+// Source File: stdico2.rle
 // Orig. Offset: 0 / 0x00000000
-//       Length: 14018 / 0x000036C2 (bytes)
+// Length: 14018 / 0x000036C2 (bytes)
 
-const uint8 Ps2SaveFileManager::_rleIcoData[14018] = {
+const uint8 _rleIcoData[14018] = {
     0xCC, 0x41, 0x00, 0x00, 0xCC, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x80, 0x3F, 0x24, 0x00, 0x00, 0x00, 0x00, 0xDC, 0x00, 0xF7, 0x00, 0xFE,
     0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x00, 0x04, 0x00, 0x00, 0x00, 0x0E, 0x7F, 0x7F,
@@ -932,4 +936,40 @@ const uint8 Ps2SaveFileManager::_rleIcoData[14018] = {
     0x00, 0x00
 };
 
+uint16 PS2Icon::decompressData(uint16 **data) {
+	uint16 inPos = 1;
+	uint16 *rleData = (uint16*)_rleIcoData;
+	uint16 resSize = rleData[0];
+	uint16 *resData = (uint16*)malloc(resSize * sizeof(uint16));
+	uint16 outPos = 0;
 
+	while (outPos < resSize) {
+	uint16 len = rleData[inPos++];
+	while (len--)
+		resData[outPos++] = 0x7FFF;
+	len = rleData[inPos++];
+	while (len--)
+		resData[outPos++] = rleData[inPos++];
+	}
+	assert(outPos == resSize);
+
+	*data = resData;
+	return resSize;
+}
+
+void PS2Icon::setup(mcIcon *icon) {
+	char title[256];
+	memset(icon, 0, sizeof(mcIcon));
+	memcpy(icon->head, "PS2D", 4);
+	icon->nlOffset = strlen(_info) + 1;
+	strcpy(title, _info);
+	strcpy_sjis((short*)&(icon->title), title);
+	icon->trans = 0x10;
+	memcpy(icon->bgCol, _bgcolor, sizeof(_bgcolor));
+	memcpy(icon->lightDir, _lightdir, sizeof(_lightdir));
+	memcpy(icon->lightCol, _lightcol, sizeof(_lightcol));
+	memcpy(icon->lightAmbient, _ambient, sizeof(_ambient));
+	strcpy((char*)icon->view, "scummvm.icn");
+	strcpy((char*)icon->copy, "scummvm.icn");
+	strcpy((char*)icon->del, "scummvm.icn");
+}

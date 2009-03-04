@@ -26,9 +26,10 @@
 #ifndef SYSTEMPS2_H
 #define SYSTEMPS2_H
 
-#include "backends/base-backend.h"
+#include "common/system.h"
 
 class DefaultTimerManager;
+class DefaultSaveFileManager;
 
 class Gs2dScreen;
 class Ps2Input;
@@ -52,7 +53,7 @@ namespace Audio {
 	class MixerImpl;
 };
 
-class OSystem_PS2 : public BaseBackend {
+class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
@@ -76,8 +77,6 @@ public:
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight()  { return getHeight(); }
-	virtual int16 getOverlayWidth()   { return getWidth(); }
 
 	virtual bool showMouse(bool visible);
 
@@ -109,10 +108,10 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual Common::SeekableReadStream *openConfigFileForReading();
+	virtual Common::WriteStream *openConfigFileForWriting();
 
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<555>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
@@ -122,13 +121,19 @@ public:
 	void timerThread(void);
 	void soundThread(void);
 	void msgPrintf(int millis, char *format, ...);
-	void makeConfigPath(char *dest);
+	void makeConfigPath(void);
+	bool prepMC();
 
 	void powerOffCallback(void);
+
+	bool mcPresent(void);
 	bool hddPresent(void);
 	bool usbMassPresent(void);
+	bool netPresent(void);
 
 	bool runningFromHost(void);
+	int getBootDevice() { return _bootDevice; }
+
 private:
 	void startIrxModules(int numModules, IrxReference *modules);
 
@@ -141,9 +146,10 @@ private:
 
 
 	bool _mouseVisible;
-	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded;
+	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
 
 	Ps2SaveFileManager *_saveManager;
+	// DefaultSaveFileManager *_saveManager;
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;
@@ -161,6 +167,8 @@ private:
 	static const GraphicsMode _graphicsMode;
 
 	int			_bootDevice;
+	char		*_bootPath;
+	char		*_configFile;
 };
 
 #endif // SYSTEMPS2_H

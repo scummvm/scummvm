@@ -26,7 +26,7 @@
 #ifndef __PS2DEBUG_H__
 #define __PS2DEBUG_H__
 
-#define dbg_printf sioprintf
+#define dbg_printf printf
 
 void sioprintf(const char *zFormat, ...);
 
