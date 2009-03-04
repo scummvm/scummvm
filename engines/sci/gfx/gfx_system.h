@@ -85,7 +85,7 @@ struct gfx_mode_t {
 	int xfact, yfact; /* Horizontal and vertical scaling factors */
 	int bytespp; /* Bytes per pixel */
 
-	unsigned int flags; /* GFX_MODE_FLAG_* Flags- see above */
+	uint32 flags; /* GFX_MODE_FLAG_* Flags- see above */
 
 
 	gfx_palette_t *palette; /* Palette or NULL to indicate non-palette mode.
@@ -93,7 +93,7 @@ struct gfx_mode_t {
 				** for bytespp=1.  */
 
 	/* Color masks */
-	unsigned int red_mask, green_mask, blue_mask, alpha_mask;
+	uint32 red_mask, green_mask, blue_mask, alpha_mask;
 	short red_shift, green_shift, blue_shift, alpha_shift;
 
 	/* Each of the mask/shift pairs describe where the corresponding color
@@ -121,13 +121,14 @@ struct  gfx_pixmap_color_t{
 struct gfx_color_t {
 	gfx_pixmap_color_t visual;
 	uint8 alpha; /* transparency = (1-opacity) */
-	signed char priority, control;
+	int8 priority, control;
 	byte mask; /* see mask values below */
 };
 
 
+// TODO: Replace rect_t by Common::Rect
 /** Rectangle description */
-struct rect_t{
+struct rect_t {
 	int x, y;
 	int xl, yl; /* width, height: (x,y,xl,yl)=(5,5,1,1) occupies 1 pixel */
 };
@@ -257,7 +258,7 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 				    ** allowed for background pictures (which do
 				    ** not use transparency)
 				    */
-	unsigned int flags;
+	uint32 flags;
 
 	/*** Hot spot ***/
 	int xoffset, yoffset; /* x and y coordinates of the 'hot spot' (unscaled) */
@@ -340,7 +341,9 @@ enum gfx_map_mask_t {/* Map masks */
 };
 
 /* 'no priority' mode */
-#define GFX_NO_PRIORITY -1
+enum {
+	GFX_NO_PRIORITY = -1
+};
 
 /* Text alignment values */
 
