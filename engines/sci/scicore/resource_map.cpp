@@ -328,7 +328,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	int fsize;
 	Common::File file;
 	int resource_nr;
-	int resource_index = 0;
 	int ofs, header_size;
 	int *types = (int *)sci_malloc(sizeof(int) * (sci1_last_resource + 1));
 	int i;

@@ -443,7 +443,6 @@ void ResourceManager::freeResourceSources(ResourceSource *rss) {
 }
 
 ResourceManager::ResourceManager(int version, int maxMemory) {
-	int resource_error = 0;
 	int resmap_version = version;
 
 	_maxMemory = maxMemory;

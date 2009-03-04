@@ -156,8 +156,8 @@ struct ResourceSource {
 class Resource {
 
 public:
-	Resource::Resource();
-	Resource::~Resource();
+	Resource();
+	~Resource();
 	void unalloc();
 
 // NOTE : Currently all member data has the same name and public visibility
