@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	shorten.o \
+	timestamp.o \
 	voc.o \
 	vorbis.o \
 	wave.o \

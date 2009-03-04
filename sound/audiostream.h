@@ -59,6 +59,9 @@ public:
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 
+	/** Sample rate of the stream. */
+	virtual int getRate() const = 0;
+
 	/**
 	 * End of data reached? If this returns true, it means that at this
 	 * time there is no data available in the stream. However there may be
@@ -77,9 +80,6 @@ public:
 	 * By default this maps to endOfData()
 	 */
 	virtual bool endOfStream() const { return endOfData(); }
-
-	/** Sample rate of the stream. */
-	virtual int getRate() const = 0;
 
 	/**
 	 * Tries to load a file by trying all available formats.

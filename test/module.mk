@@ -5,8 +5,8 @@
 #
 ######################################################################
 
-TESTS        := test/common/*.h
-TEST_LIBS    := common/libcommon.a
+TESTS        := test/common/*.h test/sound/*.h
+TEST_LIBS    := common/libcommon.a sound/libsound.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter
