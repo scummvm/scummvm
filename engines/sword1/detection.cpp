@@ -326,7 +326,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 }
 
 bool SwordEngine::canLoadGameStateCurrently() {
-	return mouseIsActive();
+	return (mouseIsActive() && !_control->isPanelShown()); // Disable GMM loading when game panel is shown
 }
 
 Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
@@ -336,7 +336,7 @@ Common::Error SwordEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool SwordEngine::canSaveGameStateCurrently() {
-	return mouseIsActive();
+	return (mouseIsActive() && !_control->isPanelShown());
 }
 
 } // End of namespace Sword1
