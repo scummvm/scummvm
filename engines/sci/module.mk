@@ -68,7 +68,6 @@ MODULE_OBJS = \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/mixer.o \
-	sfx/pcm-iterator.o \
 	sfx/songlib.o \
 	sfx/device/devices.o \
 	sfx/player/players.o \

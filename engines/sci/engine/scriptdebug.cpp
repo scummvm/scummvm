@@ -41,6 +41,8 @@
 #include "common/util.h"
 #include "common/savefile.h"
 
+#include "sound/audiostream.h"
+
 namespace Sci {
 
 extern int debug_sleeptime_factor;
@@ -2411,7 +2413,7 @@ int c_simkey(EngineState *s) {
 static int c_is_sample(EngineState *s) {
 	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
 	song_iterator_t *songit;
-	sfx_pcm_feed_t *data;
+	Audio::AudioStream *data;
 
 	if (!song) {
 		sciprintf("Not a sound resource.\n");
@@ -2426,9 +2428,11 @@ static int c_is_sample(EngineState *s) {
 	}
 
 	if ((data = songit->get_pcm_feed(songit))) {
+/*
 		sciprintf("\nIs sample (encoding %dHz/%s/%04x).\n", data->conf.rate, (data->conf.stereo) ?
 		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
-		data->destroy(data);
+*/
+		delete data;
 	} else
 		sciprintf("Valid song, but not a sample.\n");
 

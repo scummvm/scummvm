@@ -208,17 +208,6 @@ struct tee_song_iterator_t : public song_iterator_t {
 	} children[2];
 };
 
-
-sfx_pcm_feed_t *sfx_iterator_make_feed(byte *base_data, int offset,
-	int size, sfx_pcm_config_t conf);
-/* Generates a feed for a song iterator
-** Parameters: (byte *) base_data: A refcounted memory chunk containing
-**                                 (among other things) PCM data
-**             (int) offset; Offset into base_data
-**             (int) size: Number of bytes to consider
-**             (pcm_data_internal_t) conf: PCM encoding
-*/
-
 } // End of namespace Sci
 
 #endif // SCI_SFX_SFX_ITERATOR_INTERNAL

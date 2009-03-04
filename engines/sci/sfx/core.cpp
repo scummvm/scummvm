@@ -33,6 +33,8 @@
 
 #include "common/system.h"
 #include "common/timer.h"
+
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Sci {
@@ -341,10 +343,10 @@ int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
 #endif
 	if (g_system->getMixer()->isReady()) {
-		sfx_pcm_feed_t *newfeed = it->get_pcm_feed(it);
+		Audio::AudioStream *newfeed = it->get_pcm_feed(it);
 		if (newfeed) {
-			newfeed->debug_nr = (int) handle;
-			mixer_subscribe(newfeed);
+//			newfeed->debug_nr = (int) handle;
+			g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
 			return 1;
 		}
 	}

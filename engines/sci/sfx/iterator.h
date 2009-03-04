@@ -30,6 +30,10 @@
 
 #include "sci/sfx/sfx_pcm.h"
 
+namespace Audio {
+	class AudioStream;
+}
+
 namespace Sci {
 
 #define SI_FINISHED -1 /* Song finished playing */
@@ -135,10 +139,10 @@ struct song_iterator_t {
 	** PCM, but this must be done before any subsequent calls to next().
 	*/
 
-	sfx_pcm_feed_t * (*get_pcm_feed)(song_iterator_t *self);
+	Audio::AudioStream * (*get_pcm_feed)(song_iterator_t *self);
 	/* Checks for the presence of a pcm sample
 	** Parameters: (song_iterator_t *) self
-	** Returns   : (sfx_pcm_feed_t *) NULL if no PCM data was found, a
+	** Returns   : (Audio::AudioStream *) NULL if no PCM data was found, a
 	**				  PCM feed otherwise
 	*/
 

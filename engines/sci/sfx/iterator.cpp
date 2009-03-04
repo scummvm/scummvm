@@ -31,6 +31,9 @@
 #include "sci/tools.h"
 #include "sci/sci_memory.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
 namespace Sci {
 
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
@@ -530,20 +533,39 @@ static int _sci0_get_pcm_data(sci0_song_iterator_t *self,
 	return 0;
 }
 
-static sfx_pcm_feed_t *_sci0_check_pcm(sci0_song_iterator_t *self) {
-	sfx_pcm_config_t format;
+static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t conf) {
+	printf("Playing PCM data of size %d, rate %d\n", size, conf.rate);
+	
+	// Duplicate the data
+	byte *sound = (byte *)malloc(size);
+	memcpy(sound, data + SCI0_PCM_DATA_OFFSET, size);
+
+	// Convert stream format flags
+	int flags = Audio::Mixer::FLAG_AUTOFREE;
+	if (conf.format == SFX_PCM_FORMAT_U8)
+		flags |= Audio::Mixer::FLAG_UNSIGNED;
+	else if (conf.format == SFX_PCM_FORMAT_S16_NATIVE) {
+		flags |= Audio::Mixer::FLAG_16BITS;
+#ifndef SCUMM_BIG_ENDIAN
+		flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+#endif
+	}
+	if (conf.stereo)
+		flags |= Audio::Mixer::FLAG_STEREO;
+
+	return Audio::makeLinearInputStream(sound, size, conf.rate, flags, 0, 0);
+}
+
+static Audio::AudioStream *_sci0_check_pcm(sci0_song_iterator_t *self) {
+	sfx_pcm_config_t conf;
 	int offset;
 	unsigned int size;
-	if (_sci0_get_pcm_data(self, &format, &offset, &size))
+	if (_sci0_get_pcm_data(self, &conf, &offset, &size))
 		return NULL;
 
-	self->channel.state
-	= SI_STATE_FINISHED; /* Don't play both PCM and music */
+	self->channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
 
-	return sfx_iterator_make_feed(self->data,
-	                              offset + SCI0_PCM_DATA_OFFSET,
-	                              size,
-	                              format);
+	return makeStream(self->data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
 }
 
 static song_iterator_t *_sci0_handle_message(sci0_song_iterator_t *self, song_iterator_message_t msg) {
@@ -945,15 +967,12 @@ static inline int _sci1_command_index(sci1_song_iterator_t *self) {
 }
 
 
-static sfx_pcm_feed_t *_sci1_get_pcm(sci1_song_iterator_t *self) {
+static Audio::AudioStream *_sci1_get_pcm(sci1_song_iterator_t *self) {
 	if (self->next_sample
 	        && self->next_sample->delta <= 0) {
 		sci1_sample_t *sample = self->next_sample;
-		sfx_pcm_feed_t *feed
-		= sfx_iterator_make_feed(self->data,
-		                         sample->data - self->data,
-		                         sample->size,
-		                         sample->format);
+
+		Audio::AudioStream *feed = makeStream(sample->data, sample->size, sample->format);
 
 		self->next_sample = self->next_sample->next;
 
@@ -995,9 +1014,8 @@ static int _sci1_process_next_command(sci1_song_iterator_t *self,
 
 			if (self->next_sample->announced) {
 				/* Already announced; let's discard it */
-				sfx_pcm_feed_t *feed
-				= _sci1_get_pcm(self);
-				feed->destroy(feed);
+				Audio::AudioStream *feed = _sci1_get_pcm(self);
+				delete feed;
 			} else {
 				int delay = self->next_sample->delta;
 
@@ -1310,7 +1328,7 @@ static int _ff_read_next_command(fast_forward_song_iterator_t *self,
 	}
 }
 
-static sfx_pcm_feed_t *_ff_check_pcm(fast_forward_song_iterator_t *self) {
+static Audio::AudioStream *_ff_check_pcm(fast_forward_song_iterator_t *self) {
 	return self->delegate->get_pcm_feed(self->delegate);
 }
 
@@ -1382,7 +1400,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *capsit, int delta) {
 
 	it->next = (int(*)(song_iterator_t *, unsigned char *, int *))
 	           _ff_read_next_command;
-	it->get_pcm_feed = (sfx_pcm_feed_t * (*)(song_iterator_t *))
+	it->get_pcm_feed = (Audio::AudioStream * (*)(song_iterator_t *))
 	                   _ff_check_pcm;
 	it->handle_message = (song_iterator_t * (*)(song_iterator_t *,
 	                      song_iterator_message_t))
@@ -1534,7 +1552,7 @@ static int _tee_read_next_command(tee_song_iterator_t *it, unsigned char *buf,
 	return it->children[retid].retval;
 }
 
-static sfx_pcm_feed_t *_tee_check_pcm(tee_song_iterator_t *it) {
+static Audio::AudioStream *_tee_check_pcm(tee_song_iterator_t *it) {
 	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
 	int i;
 
@@ -1712,7 +1730,7 @@ song_iterator_t *songit_new_tee(song_iterator_t *left, song_iterator_t *right, i
 	it->next = (int(*)(song_iterator_t *, unsigned char *, int *))
 	           _tee_read_next_command;
 
-	it->get_pcm_feed = (sfx_pcm_feed_t * (*)(song_iterator_t *))
+	it->get_pcm_feed = (Audio::AudioStream * (*)(song_iterator_t *))
 	                   _tee_check_pcm;
 
 	it->handle_message = (song_iterator_t * (*)(song_iterator_t *,
@@ -1814,7 +1832,7 @@ song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, so
 
 		it->next = (int(*)(song_iterator_t *, unsigned char *, int *))
 		           _sci0_read_next_command;
-		it->get_pcm_feed = (sfx_pcm_feed_t * (*)(song_iterator_t *))
+		it->get_pcm_feed = (Audio::AudioStream * (*)(song_iterator_t *))
 		                   _sci0_check_pcm;
 		it->handle_message = (song_iterator_t * (*)(song_iterator_t *, song_iterator_message_t))
 		                     _sci0_handle_message;
@@ -1835,7 +1853,7 @@ song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, so
 
 		it->next = (int(*)(song_iterator_t *, unsigned char *, int *))
 		           _sci1_read_next_command;
-		it->get_pcm_feed = (sfx_pcm_feed_t * (*)(song_iterator_t *))
+		it->get_pcm_feed = (Audio::AudioStream * (*)(song_iterator_t *))
 		                   _sci1_get_pcm;
 		it->handle_message = (song_iterator_t * (*)(song_iterator_t *, song_iterator_message_t))
 		                     _sci1_handle_message;
