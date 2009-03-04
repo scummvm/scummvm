@@ -37,7 +37,7 @@ static song_iterator_t *play_it;
 static int play_paused = 0;
 static sfx_softseq_t *seq;
 static int volume = 100;
-static sfx_timestamp_t new_timestamp;
+static Audio::Timestamp new_timestamp;
 static int new_song = 0;
 
 /* The time counter is used to determine how close to the end of a tick we are.
@@ -117,13 +117,13 @@ void ppf_destroy(sfx_pcm_feed_t *self) {
 	/* no-op */
 }
 
-int ppf_get_timestamp(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp) {
+int ppf_get_timestamp(sfx_pcm_feed_t *self, Audio::Timestamp &timestamp) {
 	if (!new_song)
 		return PCM_FEED_IDLE;
 
 	/* Otherwise, we have a timestamp: */
 
-	*timestamp = new_timestamp;
+	timestamp = new_timestamp;
 	new_song = 0;
 	return PCM_FEED_TIMESTAMP;
 }
@@ -215,7 +215,7 @@ static int pp_add_iterator(song_iterator_t *it, uint32 start_time) {
 	/* The check must happen HERE, and not at the beginning of the
 	   function, to avoid a race condition with the mixer. */
 	if (old == NULL) {
-		new_timestamp = sfx_new_timestamp(start_time, seq->pcm_conf.rate);
+		new_timestamp = Audio::Timestamp(start_time, seq->pcm_conf.rate);
 		/* ASAP otherwise */
 		time_counter = 0;
 		new_song = 1;

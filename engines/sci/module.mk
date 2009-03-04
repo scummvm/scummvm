@@ -70,7 +70,6 @@ MODULE_OBJS = \
 	sfx/mixer.o \
 	sfx/pcm-iterator.o \
 	sfx/songlib.o \
-	sfx/time.o \
 	sfx/device/devices.o \
 	sfx/player/players.o \
 	sfx/player/polled.o \

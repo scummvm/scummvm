@@ -52,14 +52,16 @@ protected:
 	sfx_pcm_feed_t *_feed;
 
 	/* Timestamp of next frame requested by stream driver. */
-	sfx_timestamp_t _time;
+	Audio::Timestamp _time;
 
 public:
-	PCMFeedAudioStream(sfx_pcm_feed_t *feed) : _feed(feed) {
+	PCMFeedAudioStream(sfx_pcm_feed_t *feed)
+		: _feed(feed),
+		  _time(g_system->getMillis(), feed->conf.rate) {
+
 		_feed->frame_size = (_feed->conf.stereo ? 2 : 1) * ((_feed->conf.format & SFX_PCM_FORMAT_16) ? 2 : 1);
 		_mode = FEED_MODE_ALIVE;
 		_gap = 0;
-		_time = sfx_new_timestamp(g_system->getMillis(), _feed->conf.rate);
 	}
 
 	~PCMFeedAudioStream() {
@@ -79,12 +81,12 @@ protected:
 
 void PCMFeedAudioStream::queryTimestamp() {
 	if (_feed->get_timestamp) {
-		sfx_timestamp_t stamp;
-		int val = _feed->get_timestamp(_feed, &stamp);
+		Audio::Timestamp stamp;
+		int val = _feed->get_timestamp(_feed, stamp);
 
 		switch (val) {
 		case PCM_FEED_TIMESTAMP:
-			_gap = sfx_timestamp_frame_diff(stamp, _time);
+			_gap = stamp.frameDiff(_time);
 
 			if (_gap >= 0)
 				_mode = FEED_MODE_ALIVE;
@@ -101,8 +103,8 @@ void PCMFeedAudioStream::queryTimestamp() {
 				//  on DC."
 				// That makes some sense.
 				_mode = FEED_MODE_RESTART;
-				_time = sfx_new_timestamp(g_system->getMillis(), _feed->conf.rate);
-				_gap = sfx_timestamp_frame_diff(stamp, _time);
+				_time = Audio::Timestamp(g_system->getMillis(), _feed->conf.rate);
+				_gap = stamp.frameDiff(_time);
 
 				if (_gap < 0)
 					_gap = 0;
@@ -134,7 +136,7 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	// create a fake timestamp based on the current time. For comparison, a real
 	// timestamp could be adjusted for pauses in sound processing. And it would
 	// be synced for all audio streams.
-	sfx_timestamp_t timestamp = sfx_new_timestamp(g_system->getMillis(), _feed->conf.rate);
+	Audio::Timestamp timestamp(g_system->getMillis(), _feed->conf.rate);
 
 	int channels, frames_req;
 	int frames_recv = 0;
@@ -153,7 +155,7 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_mode == FEED_MODE_IDLE || _mode == FEED_MODE_DEAD) {
 			memset(buf_pos, 0, frames_left * channels * 2);
 
-			_time = sfx_timestamp_add(_time, frames_left);
+			_time = _time.addFrames(frames_left);
 			break;
 		}
 
@@ -167,7 +169,7 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 			_gap -= frames;
 			frames_recv += frames;
-			_time = sfx_timestamp_add(_time, frames);
+			_time = _time.addFrames(frames);
 		} else {
 			int frames = _feed->poll(_feed, buf_pos, frames_left);
 
@@ -175,7 +177,7 @@ int PCMFeedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 				U8_to_S16(buf_pos, frames * channels);
 
 			frames_recv += frames;
-			_time = sfx_timestamp_add(_time, frames);
+			_time = _time.addFrames(frames);
 
 			if (frames < frames_left)
 				queryTimestamp();

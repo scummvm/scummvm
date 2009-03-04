@@ -27,7 +27,7 @@
 #define SCI_SFX_SFX_PCM_H
 
 #include "sci/sfx/sfx.h"
-#include "sci/sfx/sfx_time.h"
+#include "sound/timestamp.h"
 
 namespace Sci {
 
@@ -80,10 +80,9 @@ struct sfx_pcm_feed_t {
 	** free(self) should be part of this function, if applicable.
 	*/
 
-	int
-	(*get_timestamp)(sfx_pcm_feed_t *self, sfx_timestamp_t *timestamp);
+	int (*get_timestamp)(sfx_pcm_feed_t *self, Audio::Timestamp &timestamp);
 	/* Determines the timestamp of the next frame-to-read
-	** Returns   : (sfx_timestamp_t) timestamp: The timestamp of the next frame
+	** Returns   : (Timestamp &) timestamp: The timestamp of the next frame
 	**             (int) PCM_FEED_*
 	** This function is OPTIONAL and may be NULL
 	*/
