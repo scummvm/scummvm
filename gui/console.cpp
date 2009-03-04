@@ -663,6 +663,7 @@ void ConsoleDialog::scrollToCurrent() {
 	} else if (line > _scrollLine) {
 		_scrollLine = line;
 		updateScrollBuffer();
+		draw();
 	}
 }
 
