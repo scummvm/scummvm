@@ -57,7 +57,6 @@ protected:
 	enum FeedMode {
 		FEED_MODE_ALIVE,
 		FEED_MODE_IDLE,
-		FEED_MODE_DEAD,
 		FEED_MODE_RESTART
 	};
 
@@ -90,7 +89,7 @@ public:
 	virtual bool isStereo() const { return _conf.stereo; }
 	virtual int getRate() const { return _conf.rate; }
 
-	virtual bool endOfData() const { return _mode == FEED_MODE_DEAD; }
+	virtual bool endOfData() const { return false; }
 
 protected:
 	void queryTimestamp();
@@ -121,7 +120,9 @@ void PolledPlayerAudioStream::queryTimestamp() {
 			//  I may have added this as a workaround for not being able to come
 			//  up with a convenient way to implement mixer->pause() and mixer->resume()
 			//  on DC."
-			// That makes some sense.
+			// That makes some sense. However, maybe it is sufficient to just
+			// go to FEED_MODE_ALIVE ? With the current code, the player will
+			// permanently get stuck in FEED_MODE_RESTART if we ever get here...
 			_mode = FEED_MODE_RESTART;
 			_time = Audio::Timestamp(g_system->getMillis(), _conf.rate);
 			_gap = stamp.frameDiff(_time);
@@ -163,7 +164,7 @@ int PolledPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_mode == FEED_MODE_IDLE)
 			queryTimestamp();
 
-		if (_mode == FEED_MODE_IDLE || _mode == FEED_MODE_DEAD) {
+		if (_mode == FEED_MODE_IDLE) {
 			memset(buf_pos, 0, frames_left * channels * 2);
 
 			_time = _time.addFrames(frames_left);
