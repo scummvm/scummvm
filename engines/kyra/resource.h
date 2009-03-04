@@ -39,7 +39,10 @@
 
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_hof.h"
+
+#ifdef ENABLE_LOL
 #include "kyra/lol.h"
+#endif // ENABLE_LOL
 
 namespace Kyra {
 
@@ -211,71 +214,73 @@ enum kKyraResources {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
-	lolCharacterDefs,
-	lolIngameSfxFiles,
-	lolIngameSfxIndex,
-	lolMusicTrackMap,
-	lolIngameGMSfxIndex,
-	lolIngameMT32SfxIndex,
-	//lolIngameADLSfxIndex,
-	lolSpellProperties,
-	lolGameShapeMap,
-	lolCharInvIndex,
-	lolCharInvDefs,
-	lolCharDefsMan,
-	lolCharDefsWoman,
-	lolCharDefsKieran,
-	//lolCharDefsUnk,
-	lolCharDefsAkshel,
-	lolExpRequirements,
-	lolMonsterModifiers,
-	lolMonsterLevelOffsets,
-	lolMonsterDirFlags,
-	lolMonsterScaleY,
-	lolMonsterScaleX,
-	lolMonsterScaleWH,
-	lolInventoryDesc,
+#ifdef ENABLE_LOL
+	kLolCharacterDefs,
+	kLolIngameSfxFiles,
+	kLolIngameSfxIndex,
+	kLolMusicTrackMap,
+	kLolIngameGMSfxIndex,
+	kLolIngameMT32SfxIndex,
+	//kLolIngameADLSfxIndex,
+	kLolSpellProperties,
+	kLolGameShapeMap,
+	kLolCharInvIndex,
+	kLolCharInvDefs,
+	kLolCharDefsMan,
+	kLolCharDefsWoman,
+	kLolCharDefsKieran,
+	//kLolCharDefsUnk,
+	kLolCharDefsAkshel,
+	kLolExpRequirements,
+	kLolMonsterModifiers,
+	kLolMonsterLevelOffsets,
+	kLolMonsterDirFlags,
+	kLolMonsterScaleY,
+	kLolMonsterScaleX,
+	kLolMonsterScaleWH,
+	kLolInventoryDesc,
 
-	lolLevelShpList,
-	lolLevelDatList,
-	lolCompassDefs,
+	kLolLevelShpList,
+	kLolLevelDatList,
+	kLolCompassDefs,
 
-	lolDscUnk1,
-	lolDscShapeIndex,
-	lolDscOvlMap,
-	lolDscScaleWidthData,
-	lolDscScaleHeightData,
-	lolDscX,
-	lolDscY,
-	lolDscTileIndex,
-	lolDscUnk2,
-	lolDscDoorShapeIndex,
-	lolDscDimData1,
-	lolDscDimData2,
-	lolDscBlockMap,
-	lolDscDimMap,
-	lolDscDoor1,
-	lolDscDoorScale,
-	lolDscDoor4,
-	lolDscDoorX,
-	lolDscDoorY,
-	lolDscOvlIndex,
-	lolDscBlockIndex,
+	kLolDscUnk1,
+	kLolDscShapeIndex,
+	kLolDscOvlMap,
+	kLolDscScaleWidthData,
+	kLolDscScaleHeightData,
+	kLolDscX,
+	kLolDscY,
+	kLolDscTileIndex,
+	kLolDscUnk2,
+	kLolDscDoorShapeIndex,
+	kLolDscDimData1,
+	kLolDscDimData2,
+	kLolDscBlockMap,
+	kLolDscDimMap,
+	kLolDscDoor1,
+	kLolDscDoorScale,
+	kLolDscDoor4,
+	kLolDscDoorX,
+	kLolDscDoorY,
+	kLolDscOvlIndex,
+	kLolDscBlockIndex,
 
-	lolScrollXTop,
-	lolScrollYTop,
-	lolScrollXBottom,
-	lolScrollYBottom,
+	kLolScrollXTop,
+	kLolScrollYTop,
+	kLolScrollXBottom,
+	kLolScrollYBottom,
 
-	lolButtonDefs,
-	lolButtonList1,
-	lolButtonList2,
-	lolButtonList3,
-	lolButtonList4,
-	lolButtonList5,
-	lolButtonList6,
-	lolButtonList7,
-	lolButtonList8,
+	kLolButtonDefs,
+	kLolButtonList1,
+	kLolButtonList2,
+	kLolButtonList3,
+	kLolButtonList4,
+	kLolButtonList5,
+	kLolButtonList6,
+	kLolButtonList7,
+	kLolButtonList8,
+#endif // ENABLE_LOL
 
 	kMaxResIDs
 };
@@ -303,12 +308,14 @@ public:
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
+#ifdef ENABLE_LOL
 	const LoLCharacter *loadCharData(int id, int &entries);
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
 	const uint16 *loadRawDataBe16(int id, int &entries);
 	const uint32 *loadRawDataBe32(int id, int &entries);
 	const ButtonDef *loadButtonDefs(int id, int &entries);
+#endif // ENABLE_LOL
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -340,12 +347,14 @@ private:
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
+#ifdef ENABLE_LOL
 	bool loadCharData(const char *filename, void *&ptr, int &size);
 	bool loadSpellData(const char *filename, void *&ptr, int &size);
 	bool loadCompassData(const char *filename, void *&ptr, int &size);
 	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
 	bool loadRawDataBe32(const char *filename, void *&ptr, int &size);
 	bool loadButtonDefs(const char *filename, void *&ptr, int &size);
+#endif // ENABLE_LOL
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
@@ -355,12 +364,14 @@ private:
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
+#ifdef ENABLE_LOL
 	void freeCharData(void *&ptr, int &size);
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
 	void freeRawDataBe16(void *&ptr, int &size);
 	void freeRawDataBe32(void *&ptr, int &size);
 	void freeButtonDefs(void *&ptr, int &size);
+#endif // ENABLE_LOL
 
 	const char *getFilename(const char *name);
 	Common::SeekableReadStream *getFile(const char *name);
@@ -377,12 +388,12 @@ private:
 		k2ShpAnimDataV1,
 		k2ShpAnimDataV2,
 
-		lolCharData,
-		lolSpellData,
-		lolCompassData,
-		lolRawDataBe16,
-		lolRawDataBe32,
-		lolButtonData
+		kLolCharData,
+		kLolSpellData,
+		kLolCompassData,
+		kLolRawDataBe16,
+		kLolRawDataBe32,
+		kLolButtonData
 	};
 
 	struct BuiltinRes {

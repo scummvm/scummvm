@@ -187,6 +187,7 @@ protected:
 #undef cmd_return
 };
 
+#ifdef ENABLE_LOL
 class LoLEngine;
 class Screen_LoL;
 class TIMInterpreter_LoL : public TIMInterpreter {
@@ -235,6 +236,7 @@ private:
 	int cmd_processDialogue(const uint16 *param);
 	int cmd_dialogueBox(const uint16 *param);
 };
+#endif // ENABLE_LOL
 
 } // end of namespace Kyra
 

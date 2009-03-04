@@ -97,6 +97,7 @@ enum kNestedSequencesDemo {
 	kSequenceDemoDig
 };
 
+#ifdef ENABLE_LOL
 enum kSequencesLolDemo {
 	kSequenceLolDemoScene1 = 0,
 	kSequenceLolDemoText1,
@@ -110,6 +111,7 @@ enum kSequencesLolDemo {
 	kSequenceLolDemoText5,
 	kSequenceLolDemoScene6
 };
+#endif // ENABLE_LOL
 
 class WSAMovie_v2;
 class KyraEngine_HoF;
@@ -256,6 +258,7 @@ protected:
 	int seq_demoBail(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 
+#ifdef ENABLE_LOL
 	int seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_lolDemoScene2(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm);
@@ -263,6 +266,7 @@ protected:
 	int seq_lolDemoScene5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_lolDemoText5(WSAMovie_v2 *wsaObj, int x, int y, int frm);
 	int seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm);
+#endif // ENABLE_LOL
 
 	void seq_sequenceCommand(int command);
 	void seq_loadNestedSequence(int wsaNum, int seqNum);

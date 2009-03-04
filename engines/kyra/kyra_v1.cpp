@@ -161,7 +161,11 @@ Common::Error KyraEngine_v1::init() {
 		// but the static resource loader and the sequence player will
 		// need correct IDs.
 		if (_res->exists("scene1.cps"))
+#ifdef ENABLE_LOL
 			_flags.gameID = GI_LOL;
+#else
+			error("Lands of Lore demo is not supported in this build.");
+#endif // !ENABLE_LOL
 	}
 
 	_staticres = new StaticResource(this);

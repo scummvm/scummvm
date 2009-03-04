@@ -28,8 +28,11 @@
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 #include "kyra/wsamovie.h"
+
+#ifdef ENABLE_LOL
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
+#endif // ENABLE_LOL
 
 #include "common/endian.h"
 
@@ -706,6 +709,9 @@ int TIMInterpreter::cmd_stopAllFuncs(const uint16 *param) {
 	return -1;
 }
 
+// TODO: Consider moving to another file
+
+#ifdef ENABLE_LOL
 // LOL version of the TIM interpreter
 
 TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system) :
@@ -1097,6 +1103,7 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 
 	return -3;
 }
+#endif // ENABLE_LOL
 
 } // end of namespace Kyra
 
