@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/screen_lol.h"
 #include "kyra/lol.h"
 
@@ -317,4 +319,6 @@ uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

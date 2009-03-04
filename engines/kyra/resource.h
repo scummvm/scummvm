@@ -38,11 +38,8 @@
 #include "common/archive.h"
 
 #include "kyra/kyra_v1.h"
-#include "kyra/kyra_hof.h"
-
-#ifdef ENABLE_LOL
 #include "kyra/lol.h"
-#endif // ENABLE_LOL
+#include "kyra/kyra_hof.h"
 
 namespace Kyra {
 

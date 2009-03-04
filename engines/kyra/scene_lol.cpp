@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
@@ -1383,4 +1385,6 @@ void LoLEngine::drawScriptShapes(int pageNum) {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
@@ -464,4 +466,6 @@ int LoLEngine::o2_assignCustomSfx(EMCState *script) {
 
 } // end of namespace Kyra
 
+
+#endif // ENABLE_LOL
 

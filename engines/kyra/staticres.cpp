@@ -27,22 +27,19 @@
 #include "common/md5.h"
 #include "kyra/kyra_v1.h"
 #include "kyra/kyra_lok.h"
+#include "kyra/lol.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_hof.h"
 #include "kyra/kyra_mr.h"
 #include "kyra/screen.h"
 #include "kyra/screen_lok.h"
+#include "kyra/screen_lol.h"
 #include "kyra/screen_hof.h"
 #include "kyra/screen_mr.h"
 #include "kyra/resource.h"
 #include "kyra/gui_lok.h"
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
-
-#ifdef ENABLE_LOL
-#include "kyra/lol.h"
-#include "kyra/screen_lol.h"
-#endif // ENABLE_LOL
 
 namespace Kyra {
 

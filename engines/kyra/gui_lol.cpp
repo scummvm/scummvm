@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 
@@ -360,4 +362,6 @@ void LoLEngine::gui_drawCompass() {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 

@@ -23,6 +23,7 @@
  *
  */
 
+#ifdef ENABLE_LOL
 
 #include "kyra/lol.h"
 
@@ -183,4 +184,5 @@ void LoLEngine::runItemScript(int reg1, int slot, int reg0, int reg3, int reg4) 
 
 } // end of namespace Kyra
 
+#endif // ENABLE_LOL
 
