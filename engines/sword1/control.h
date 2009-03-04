@@ -45,8 +45,6 @@ class Sound;
 
 #define SAVEGAME_HEADER MKID_BE('BS_1')
 #define SAVEGAME_VERSION 2 
-#define HAS_THUMBNAIL 1
-#define NO_THUMBNAIL 0
 
 #define MAX_BUTTONS 16
 

@@ -262,8 +262,10 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
 
-		bool hasThumbnail = in->readByte();
-		if (hasThumbnail) {
+		if (versionSave < 2) // These older version of the savegames used a flag to signal presence of thumbnail
+			in->skip(1);
+		
+		if (Graphics::checkThumbnailHeader(*in)) {
 			Graphics::Surface *thumbnail = new Graphics::Surface();
 			assert(thumbnail);
 			if (!Graphics::loadThumbnail(*in, *thumbnail)) {

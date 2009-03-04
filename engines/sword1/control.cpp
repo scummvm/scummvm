@@ -1104,12 +1104,8 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->write(_saveNames[slot].c_str(), 40);
 	outf->writeByte(SAVEGAME_VERSION);
 
-	if (!isPanelShown()) {
-		outf->writeByte(HAS_THUMBNAIL);
-		// Thumbnail
+	if (!isPanelShown()) // Generate a thumbnail only if we are outside of game menu
 		Graphics::saveThumbnail(*outf); 
-	} else // at this point we can't save a thumbnail of the game screen, as the save menu is shown
-		outf->writeByte(NO_THUMBNAIL);
 
 	// Date / time
 	tm curTime;
@@ -1175,16 +1171,11 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		return false;
 	}
 
-	bool hasThumbnail = inf->readByte();
+	if (saveVersion < 2) // These older version of the savegames used a flag to signal presence of thumbnail
+		inf->skip(1);
 
-	if (hasThumbnail) {
-		// We don't need the thumbnail here, so just read it and discard it
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		Graphics::loadThumbnail(*inf, *thumbnail);
-		delete thumbnail;
-		thumbnail = 0;
-	}
+	if (Graphics::checkThumbnailHeader(*inf))
+		Graphics::skipThumbnailHeader(*inf);
 
 	inf->readUint32BE();	// save date
 	inf->readUint16BE();	// save time
@@ -1281,7 +1272,6 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	newSave->writeUint32LE(SAVEGAME_HEADER);
 	newSave->write(desc, 40);
 	newSave->writeByte(SAVEGAME_VERSION);
-	newSave->writeByte(NO_THUMBNAIL);
 
 	// Date / time
 	tm curTime;
