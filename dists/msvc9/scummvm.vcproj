@@ -638,6 +638,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\timestamp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\timestamp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\voc.cpp"
 				>
 			</File>

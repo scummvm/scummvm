@@ -510,10 +510,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\script.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\versions.cpp"
 				>
 			</File>
@@ -550,18 +546,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\mixer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\mixer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\pcm-iterator.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\sfx\sequencer.h"
 				>
 			</File>
@@ -571,10 +555,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\songlib.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\time.cpp"
 				>
 			</File>
 			<Filter
@@ -668,6 +648,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\sci_memory.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\engine\script.cpp"
 			>
 		</File>
 		<File
