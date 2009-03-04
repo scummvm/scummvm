@@ -2466,7 +2466,7 @@ int said(EngineState *s, byte *spec, int verbose) {
 int main (int argc, char *argv) {
 	byte block[] = {0x01, 0x00, 0xf8, 0xf5, 0x02, 0x01, 0xf6, 0xf2, 0x02, 0x01, 0xf2, 0x01, 0x03, 0xff};
 	EngineState s;
-	con_passthrough = 1;
+	con_passthrough = true;
 
 	s.parser_valid = 1;
 	said(&s, block);

@@ -34,7 +34,6 @@
 
 #include "common/scummsys.h"
 
-#include "sci/sci_memory.h"
 #include "sci/tools.h"
 #include "sci/engine/vm_types.h"
 
@@ -43,13 +42,8 @@
 
 namespace Sci {
 
+/** If this flag is set, we echo all sciprintf() stuff to the text console. */
 extern int con_passthrough;
-/* Echo all sciprintf() stuff to the text console */
-extern FILE *con_file;
-/* Echo all sciprintf() output to a text file. Note: clients of freesci.dll
-** should use open_console_file and close_console_file, rather than refer
-** directly to the con_file variable.
-*/
 
 union cmd_param_t {
 	int32 val;
@@ -57,14 +51,14 @@ union cmd_param_t {
 	reg_t reg;
 };
 
+/** The number of parameters passed to a function called from the parser */
 extern unsigned int cmd_paramlength;
-/* The number of parameters passed to a function called from the parser */
 
+/** The parameters passed to a function called by the parser */
 extern cmd_param_t *cmd_params;
-/* The parameters passed to a function called by the parser */
 
+/** The game state as used by some of the console commands */
 extern struct EngineState *con_gamestate;
-/* The game state as used by some of the console commands */
 
 
 /*** FUNCTION DEFINITIONS ***/
@@ -139,21 +133,6 @@ int con_hook_command(int command(EngineState *s), const char *name, const char *
 ** as no element beyond strlen(cmd_params[x].str)+1 is accessed.
 */
 
-cmd_param_t con_getopt(char *opt);
-/* Retreives the specified optional parameter
-** -- for use within console functions only --
-** Parameters: (char *) opt: The optional parameter to retrieve
-** Returns   : (cmd_param_t) The corresponding parameter
-** Should only be used if con_hasopt() reports its presence.
-*/
-
-int con_hasopt(char *opt);
-/* Checks whether an optional parameter was specified
-** -- for use within console functions only --
-** Parameters: (char *) opt: The optional parameter to check for
-** Returns   : (int) non-zero iff the parameter was specified
-*/
-
 int con_can_handle_pixmaps();
 /* Determines whether the console supports pixmap inserts
 ** Returns   : (int) non-zero iff pixmap inserts are supported
@@ -187,43 +166,7 @@ int con_hook_int(int *pointer, const char *name, const char *description);
 */
 
 
-void con_gfx_init();
-/* Initializes the gfx console
-*/
-
-void con_gfx_show(gfx_state_t *state);
-/* Enters on-screen console mode
-** Parameters: (gfx_state_t *state): The graphics state to use for interaction
-** Returns   : (void)
-*/
-
-char *con_gfx_read(gfx_state_t *state);
-/* Reads a single line from the on-screen console, if it is open
-** Parameters: (gfx_state_t *state): The graphics state to use for interaction
-** Returns   : (char *) The input, in a static buffer
-*/
-
-void con_gfx_hide(gfx_state_t *stae);
-/* Closes the on-screen console
-** Parameters: (gfx_state_t *state): The graphics state to use for interaction
-** Returns   : (void)
-*/
-
-
 int sci_hexdump(byte *data, int length, int offsetplus);
-
-void open_console_file(char *filename);
-/* Opens the file to which the console output is echoed. If a file was opened
-** before, closes it.
-** Parameters: filename - name of the file
-** Returns   : (void)
-*/
-
-void close_console_file();
-/* Closes the console output file.
-** Parameters: (void)
-** Returns   : (void)
-*/
 
 } // End of namespace Sci
 

@@ -3258,23 +3258,11 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	while (_debugstate_valid) {
 		int skipfirst = 0;
 		const char *commandstring;
-#ifdef WANT_CONSOLE
-		char *input;
-#endif
 
 		// Suspend music playing
 		sfx_suspend(&s->sound, 1);
 
-#ifdef WANT_CONSOLE
-		if (!have_windowed) {
-			con_gfx_show(s->gfx_state);
-			input = con_gfx_read(s->gfx_state);
-			con_gfx_hide(s->gfx_state);
-			commandstring = input;
-			sciprintf("> %s\n", commandstring);
-		} else
-#endif
-			commandstring = _debug_get_input();
+		commandstring = _debug_get_input();
 
 		// Check if a specific destination has been given
 		if (commandstring && (commandstring[0] == '.' || commandstring[0] == ':'))

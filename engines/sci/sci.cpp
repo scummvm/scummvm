@@ -51,9 +51,6 @@ int c_die(EngineState *s) {
 }
 
 static void init_console() {
-#ifdef WANT_CONSOLE
-	con_gfx_init();
-#endif
 	con_hook_command(&c_quit, "quit", "", "console: Quits gracefully");
 	con_hook_command(&c_die, "die", "", "console: Quits ungracefully");
 
@@ -76,7 +73,7 @@ static void init_console() {
 	con_hook_int(&sci01_priority_table_flags, "sci01_priority_table_flags",
 	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
 
-	con_passthrough = 1; // enables all sciprintf data to be sent to stdout
+	con_passthrough = true; // enables all sciprintf data to be sent to stdout
 }
 
 static int init_gamestate(EngineState *gamestate, sci_version_t version) {
@@ -297,8 +294,6 @@ Common::Error SciEngine::run() {
 	delete gamestate;
 
 	delete _resmgr;
-
-	close_console_file();
 
 	gfxop_exit(&gfx_state);
 

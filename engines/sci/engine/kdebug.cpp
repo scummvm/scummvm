@@ -33,15 +33,6 @@ namespace Sci {
 int script_debug_flag = 0; // Defaulting to running mode
 int sci_debug_flags = 0; // Special flags
 
-// Functions for internal macro use
-void _SCIkvprintf(FILE *file, const char *format, va_list args);
-
-void _SCIkvprintf(FILE *file, const char *format, va_list args) {
-	vfprintf(file, format, args);
-	if (con_file) vfprintf(con_file, format, args);
-}
-
-
 void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char *format, ...) {
 	va_list args;
 
@@ -51,11 +42,12 @@ void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char 
 		fprintf(stderr, "Warning: ");
 
 	va_start(args, format);
-	_SCIkvprintf(stderr, format, args);
+	vfprintf(stderr, format, args);
 	va_end(args);
 	fflush(NULL);
 
-	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS) script_debug_flag = 1;
+	if (sci_debug_flags & _DEBUG_FLAG_BREAK_ON_WARNINGS)
+		script_debug_flag = 1;
 }
 
 void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char *format, ...) {
@@ -64,7 +56,7 @@ void _SCIkdebug(EngineState *s, const char *file, int line, int area, const char
 	if (s->debug_mode & (1 << area)) {
 		fprintf(stdout, " kernel: (%s L%d): ", file, line);
 		va_start(args, format);
-		_SCIkvprintf(stdout, format, args);
+		vfprintf(stdout, format, args);
 		va_end(args);
 		fflush(NULL);
 	}

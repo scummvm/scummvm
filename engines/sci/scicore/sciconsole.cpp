@@ -33,8 +33,7 @@ namespace Sci {
 
 #ifdef SCI_CONSOLE
 
-int con_passthrough = 0;
-FILE *con_file = NULL;
+int con_passthrough = false;
 
 static void (*_con_string_callback)(char*) = NULL;
 static void (*_con_pixmap_callback)(gfx_pixmap_t *) = NULL;
@@ -68,8 +67,6 @@ int sciprintf(const char *fmt, ...) {
 
 	if (con_passthrough)
 		printf("%s", buf);
-	if (con_file)
-		fprintf(con_file, "%s", buf);
 
 	if (_con_string_callback)
 		_con_string_callback(buf);
@@ -97,30 +94,6 @@ int con_insert_pixmap(gfx_pixmap_t *pixmap) {
 	else
 		return 1;
 	return 0;
-}
-
-void open_console_file(char *filename) {
-	if (con_file != NULL)
-		fclose(con_file);
-
-	if (NULL == filename) {
-		fprintf(stderr, "console.c: open_console_file(): NULL passed for parameter filename\r\n");
-	}
-#ifdef WIN32
-	con_file = fopen(filename, "wt");
-#else
-	con_file = fopen(filename, "w");
-#endif
-
-	if (NULL == con_file)
-		fprintf(stderr, "console.c: open_console_file(): Could not open output file %s\n", filename);
-}
-
-void close_console_file() {
-	if (con_file != NULL) {
-		fclose(con_file);
-		con_file = NULL;
-	}
 }
 
 #endif // SCI_CONSOLE
