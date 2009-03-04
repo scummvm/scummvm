@@ -361,8 +361,6 @@ static void _sfx_timer_callback(void *data) {
 
 	if (player)
 		player->maintenance();
-
-	mixer_process();
 }
 
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {

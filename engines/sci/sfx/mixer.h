@@ -36,16 +36,6 @@ namespace Sci {
  */
 void mixer_subscribe(sfx_pcm_feed_t *feed);
 
-/**
- * Processes all feeds, mixes their results, and passes everything to the output device.
- * Returns  : (int) SFX_OK on success, SFX_ERROR otherwise (output device error or
- *                  internal assertion failure)
- * Effects  : All feeds are poll()ed, and the device is asked to output(). Buffer size
- *            depends on the time that has passed since the last call to process(), if
- *            any.
- */
-int mixer_process();
-
 } // End of namespace Sci
 
 #endif // SCI_SFX_MIXER_H

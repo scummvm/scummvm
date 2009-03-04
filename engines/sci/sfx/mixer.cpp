@@ -56,7 +56,7 @@ protected:
 
 public:
 	PCMFeedAudioStream(sfx_pcm_feed_t *feed) : _feed(feed) {
-		_feed->frame_size = SFX_PCM_FRAME_SIZE(_feed->conf);
+		_feed->frame_size = (_feed->conf.stereo ? 2 : 1) * ((_feed->conf.format & SFX_PCM_FORMAT_16) ? 2 : 1);
 		_mode = FEED_MODE_ALIVE;
 		_gap = 0;
 		_time = sfx_new_timestamp(g_system->getMillis(), _feed->conf.rate);
@@ -92,6 +92,14 @@ void PCMFeedAudioStream::queryTimestamp() {
 				// FIXME: I don't quite understand what FEED_MODE_RESTART is for.
 				// The original DC mixer seemed to just stop and restart the stream.
 				// But why? To catch up with lagging sound?
+				//
+				// Walter says the following:
+				// "The FEED_MODE_RESTART might be there to re-sync after a debugger
+				//  session where time passes for the mixer but not for the engine.
+				//  I may have added this as a workaround for not being able to come
+				//  up with a convenient way to implement mixer->pause() and mixer->resume()
+				//  on DC."
+				// That makes some sense.
 				_mode = FEED_MODE_RESTART;
 				_time = sfx_new_timestamp(g_system->getMillis(), _feed->conf.rate);
 				_gap = sfx_timestamp_frame_diff(stamp, _time);
@@ -189,37 +197,6 @@ void mixer_subscribe(sfx_pcm_feed_t *feed) {
 
 	debug(2, "[soft-mixer] Subscribed %s-%x (%d Hz, %d/%x)",
 	          feed->debug_name, feed->debug_nr, feed->conf.rate, feed->conf.stereo, feed->conf.format);
-}
-
-
-int mixer_process() {
-	// TODO
-/*
-	feed_state_t *state, *state_next;
-
-	TAILQ_FOREACH(state, &feeds, entry) {
-		snd_stream_poll(handle);
-	}
-
-	state = TAILQ_FIRST(&feeds);
-	while (state) {
-		state_next = TAILQ_NEXT(state, entry);
-		if (_mode == FEED_MODE_DEAD) {
-			snd_stream_stop(handle);
-			snd_stream_destroy(handle);
-			feed->destroy(feed);
-			TAILQ_REMOVE(&feeds, state, entry);
-		}
-		else if (_mode == FEED_MODE_RESTART) {
-			snd_stream_stop(handle);
-			snd_stream_start(handle, feed->conf.rate,
-					 feed->conf.stereo != SFX_PCM_MONO);
-			_mode = FEED_MODE_ALIVE;
-		}
-		state = state_next;
-	}
-*/
-	return SFX_OK;
 }
 
 } // End of namespace Sci

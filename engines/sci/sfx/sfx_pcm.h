@@ -33,10 +33,8 @@ namespace Sci {
 
 #define SFX_PCM_MONO 0
 #define SFX_PCM_STEREO_LR 1 /* left sample, then right sample */
-#define SFX_PCM_STEREO_RL 2 /* right sample, then left sample */
 
 /* The following are used internally by the mixer */
-#define SFX_PCM_FORMAT_LMASK 0x7
 #define SFX_PCM_FORMAT_8  0
 #define SFX_PCM_FORMAT_16 2
 
@@ -44,8 +42,6 @@ namespace Sci {
 /* Pick one of these formats (including the _NATIVE) ones for your PCM feed */
 #define SFX_PCM_FORMAT_U8     (0x0080 | SFX_PCM_FORMAT_8)			/* Unsigned (bias 128) 8 bit format */
 #define SFX_PCM_FORMAT_S16_NATIVE (0x0000 | SFX_PCM_FORMAT_16)
-
-#define SFX_PCM_FRAME_SIZE(conf) ((conf).stereo? 2 : 1) * (((conf).format & SFX_PCM_FORMAT_16)? 2 : 1)
 
 
 struct sfx_pcm_config_t {
