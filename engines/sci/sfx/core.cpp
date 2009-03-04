@@ -28,7 +28,6 @@
 #include "sci/tools.h"
 #include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/player.h"
-#include "sci/sfx/mixer.h"
 #include "sci/sfx/sci_midi.h"
 
 #include "common/system.h"
