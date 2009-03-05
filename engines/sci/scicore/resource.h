@@ -85,6 +85,7 @@ namespace Sci {
 
 enum ResSourceType {
 	kSourceDirectory = 0,
+	kSourcePatch = 1,
 	kSourceVolume = 2,
 	kSourceExtMap = 3,
 	kSourceIntMap = 4,
@@ -172,8 +173,6 @@ public:
 	unsigned int file_offset; /* Offset in file */
 	byte status;
 	unsigned short lockers; /* Number of places where this resource was locked */
-	Resource *next; /* Position marker for the LRU queue */
-	Resource *prev;
 	ResourceSource *source;
 };
 
@@ -257,19 +256,16 @@ public:
 
 protected:
 	int _maxMemory; /* Config option: Maximum total byte number allocated */
-	//int _resourcesNr;
 	ResourceSource *_sources;
-	//Resource *_resources;
 	int _memoryLocked;	// Amount of resource bytes in locked memory
 	int _memoryLRU;		// Amount of resource bytes under LRU control
-	Resource *lru_first, *lru_last;	// Pointers to the first and last LRU queue entries
-										// LRU queue: lru_first points to the most recent entry
+	Common::List<Resource *> _LRU; // Last Resource Used list
 	Common::HashMap<uint32, Resource *> _resMap;
 
 	int addAppropriateSources();
 	void freeResourceSources(ResourceSource *rss);
 
-	void loadResource(Resource *res, bool protect);
+	void loadResource(Resource *res);
 	bool loadFromPatchFile(Resource *res);
 	void freeOldResources(int last_invulnerable);
 

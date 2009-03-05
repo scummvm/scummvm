@@ -32,14 +32,6 @@
 
 namespace Sci {
 
-void sci0_sprintf_patch_file_name(char *string, Resource *res) {
-	sprintf(string, "%s.%03i", getResourceTypeName(res->type), res->number);
-}
-
-void sci1_sprintf_patch_file_name(char *string, Resource *res) {
-	sprintf(string, "%d.%s", res->number, getResourceTypeSuffix(res->type));
-}
-
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source,
 	const char *filename, ResourceType restype, int resnumber) {
@@ -100,6 +92,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	Common::ArchiveMemberList files;
 	int number;
 	const char *szResType;
+	ResourceSource *psrcPatch;
 
 	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
 		files.clear();
@@ -125,7 +118,10 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 					number = atoi(name.c_str() + resname_len + 1);
 				}
 			}
-			processPatch(source, name.c_str(), (ResourceType)i, number);
+			psrcPatch = new ResourceSource;
+			psrcPatch->source_type = kSourcePatch;
+			psrcPatch->location_name = name;
+			processPatch(psrcPatch, name.c_str(), (ResourceType)i, number);
 		}
 	}
 }

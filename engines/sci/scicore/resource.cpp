@@ -104,18 +104,6 @@ static decomp_funct *decompressors[] = {
 	NULL
 };
 
-static patch_sprintf_funct *patch_sprintfers[] = {
-	NULL,
-	&sci0_sprintf_patch_file_name,
-	&sci0_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name,
-	&sci1_sprintf_patch_file_name
-};
-
 //-- Resource main functions --
 Resource::Resource() {
 	data = NULL;
@@ -126,12 +114,13 @@ Resource::Resource() {
 	file_offset = 0;
 	status = SCI_STATUS_NOMALLOC;
 	lockers = 0;
-	next = prev = NULL;
 	source = NULL;
 }
 
 Resource::~Resource() {
 	delete[] data;
+	if(source && source->source_type == kSourcePatch)
+		delete source;
 }
 
 void Resource::unalloc() {
@@ -206,12 +195,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 bool ResourceManager::loadFromPatchFile(Resource *res) {
 	Common::File file;
-	char filename[MAXPATHLEN];
-	if (!patch_sprintfers[_sciVersion]) {
-		error("Resource manager's SCI version (%d) has no patch file name printers", _sciVersion);
-	}
-	// TODO: use only dir specified by res->source->location_dir_name
-	patch_sprintfers[_sciVersion](filename, res);
+	const char *filename=res->source->location_name.c_str();
 	if (file.open(filename) == false) {
 		warning("Failed to open patch file %s", filename);
 		res->unalloc();
@@ -232,15 +216,11 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return true;
 }
 
-void ResourceManager::loadResource(Resource *res, bool protect) {
-	// TODO: check if protect is needed at all
+void ResourceManager::loadResource(Resource *res) {
 	char filename[MAXPATHLEN];
 	Common::File file;
-	Resource backup;
 
-	memcpy(&backup, res, sizeof(Resource));
-
-	if (res->source->source_type == kSourceDirectory && loadFromPatchFile(res))
+	if (res->source->source_type == kSourcePatch && loadFromPatchFile(res))
 		return;
 	// Either loading from volume or patch loading failed
 	strcpy(filename, res->source->location_name.c_str());
@@ -261,17 +241,11 @@ void ResourceManager::loadResource(Resource *res, bool protect) {
 	if (error) {
 		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
 			error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
-
-		if (protect)
-			memcpy(res, &backup, sizeof(Resource));
 		res->unalloc();
 	}
 }
 
 Resource *ResourceManager::testResource(ResourceType type, int number) {
-	Resource binseeker;
-	binseeker.type = type;
-	binseeker.number = number;
 	if (_resMap.contains(RESOURCE_HASH(type, number)))
 		return _resMap.getVal(RESOURCE_HASH(type, number));
 	return NULL;
@@ -446,13 +420,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 
 	_memoryLocked = 0;
 	_memoryLRU = 0;
+	_LRU.clear();
 
 	_resMap.clear();
 	_sources = NULL;
 	_sciVersion = version;
-
-	lru_first = NULL;
-	lru_last = NULL;
 
 	addAppropriateSources();
 	scanNewSources(&resmap_version, _sources);
@@ -499,7 +471,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			Resource *res = testResource(kResourceTypeScript, 0);
 
 			_sciVersion = version = SCI_VERSION_1_EARLY;
-			loadResource(res, true);
+			loadResource(res);
 
 			if (res->status == SCI_STATUS_NOMALLOC) {
 				_sciVersion = version = SCI_VERSION_1_LATE;
@@ -536,74 +508,54 @@ void ResourceManager::removeFromLRU(Resource *res) {
 		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
 		return;
 	}
-
-	if (res->next)
-		res->next->prev = res->prev;
-	if (res->prev)
-		res->prev->next = res->next;
-	if (lru_first == res)
-		lru_first = res->next;
-	if (lru_last == res)
-		lru_last = res->prev;
-
+	_LRU.remove(res);
 	_memoryLRU -= res->size;
-
 	res->status = SCI_STATUS_ALLOCATED;
 }
 
 void ResourceManager::addToLRU(Resource *res) {
 	if (res->status != SCI_STATUS_ALLOCATED) {
-		sciprintf("Resmgr: Oops: trying to enqueue resource with state %d\n", res->status);
+		warning("Resmgr: Oops: trying to enqueue resource with state %d", res->status);
 		return;
 	}
-
-	res->prev = NULL;
-	res->next = lru_first;
-	lru_first = res;
-	if (!lru_last)
-		lru_last = res;
-	if (res->next)
-		res->next->prev = res;
-
+	_LRU.push_front(res);
 	_memoryLRU += res->size;
 #if (SCI_VERBOSE_RESMGR > 1)
-	fprintf(stderr, "Adding %s.%03d (%d bytes) to lru control: %d bytes total\n",
+	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	        getResourceTypeName(res->type), res->number, res->size,
 	        mgr->_memoryLRU);
 
 #endif
-
 	res->status = SCI_STATUS_ENQUEUED;
 }
 
 void ResourceManager::printLRU() {
 	int mem = 0;
 	int entries = 0;
-	Resource *res = lru_first;
+	Common::List<Resource *>::iterator it = _LRU.begin();
+	Resource *res;
 
-	while (res) {
-		fprintf(stderr, "\t%s.%03d: %d bytes\n",
-		        getResourceTypeName(res->type), res->number,
-		        res->size);
+	while (it != _LRU.end()) {
+		res = *it;
+		debug("\t%s.%03d: %d bytes", getResourceTypeName(res->type),
+			res->number, res->size);
 		mem += res->size;
-		++entries;
-		res = res->next;
+		entries ++;
+		it ++;
 	}
 
-	fprintf(stderr, "Total: %d entries, %d bytes (mgr says %d)\n",
-	        entries, mem, _memoryLRU);
+	debug("Total: %d entries, %d bytes (mgr says %d)", entries, mem, _memoryLRU);
 }
 
 void ResourceManager::freeOldResources(int last_invulnerable) {
-	while (_maxMemory < _memoryLRU && (!last_invulnerable || lru_first != lru_last)) {
-		Resource *goner = lru_last;
+	while (_maxMemory < _memoryLRU && (!last_invulnerable || !_LRU.empty())) {
+		Resource *goner = *_LRU.reverse_begin();
 		if (!goner) {
-			fprintf(stderr, "Internal error: mgr->lru_last is NULL!\n");
-			fprintf(stderr, "LRU-mem= %d\n", _memoryLRU);
-			fprintf(stderr, "lru_first = %p\n", (void *)lru_first);
+			debug("Internal error: mgr->lru_last is NULL!");
+			debug("LRU-mem= %d", _memoryLRU);
+			debug("lru_first = %p", (void *)*_LRU.begin());
 			printLRU();
 		}
-
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMGR
@@ -628,7 +580,7 @@ Resource *ResourceManager::findResource(ResourceType type, int number, int lock)
 		return NULL;
 
 	if (!retval->status)
-		loadResource(retval, false);
+		loadResource(retval);
 
 	else if (retval->status == SCI_STATUS_ENQUEUED)
 		removeFromLRU(retval);
