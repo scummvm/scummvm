@@ -387,7 +387,7 @@ public:
 		return "MADS/M4 engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Riddle of Master Lu & Orion Burger (C) Sanctuary Woods";
 	}
 

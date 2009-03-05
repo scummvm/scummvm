@@ -149,7 +149,7 @@ public:
 ;
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Inherit the Earth (C) Wyrmkeep Entertainment";
 	}
 

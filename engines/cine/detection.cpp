@@ -530,7 +530,7 @@ public:
 		return "Cinematique evo 1 engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Future Wars & Operation Stealth (C) Delphine Software";
 	}
 

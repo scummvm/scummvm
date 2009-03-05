@@ -127,7 +127,7 @@ public:
 		return "Tucker Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Bud Tucker in Double Trouble (C) Merit Studios";
 	}
 

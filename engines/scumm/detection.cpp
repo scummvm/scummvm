@@ -681,7 +681,7 @@ using namespace Scumm;
 class ScummMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const;
-	virtual const char *getCopyright() const;
+	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
@@ -976,7 +976,7 @@ const char *ScummMetaEngine::getName() const {
 		"]";
 }
 
-const char *ScummMetaEngine::getCopyright() const {
+const char *ScummMetaEngine::getOriginalCopyright() const {
 	return "LucasArts SCUMM Games (C) LucasArts\n"
 	       "Humongous SCUMM Games (C) Humongous";
 }

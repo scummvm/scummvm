@@ -835,7 +835,7 @@ public:
 	virtual const char *getName() const {
 		return "AGI preAGI + v2 + v3 Engine";
 	}
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
 

@@ -107,7 +107,7 @@ public:
 		return "AGOS";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "AGOS (C) Adventure Soft";
 	}
 

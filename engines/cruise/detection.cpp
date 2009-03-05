@@ -173,7 +173,7 @@ public:
 		return "Cinematique evo 2 engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Cruise for a Corpse (C) Delphine Software";
 	}
 

@@ -56,7 +56,7 @@ static const PlainGameDescriptor queenGameDescriptor = {
 class QueenMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const;
-	virtual const char *getCopyright() const;
+	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
@@ -72,7 +72,7 @@ const char *QueenMetaEngine::getName() const {
 	return "Flight of the Amazon Queen";
 }
 
-const char *QueenMetaEngine::getCopyright() const {
+const char *QueenMetaEngine::getOriginalCopyright() const {
 	return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
 }
 

@@ -64,7 +64,7 @@ static const SkyVersion skyVersions[] = {
 class SkyMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const;
-	virtual const char *getCopyright() const;
+	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
@@ -82,7 +82,7 @@ const char *SkyMetaEngine::getName() const {
 	return "Beneath a Steel Sky";
 }
 
-const char *SkyMetaEngine::getCopyright() const {
+const char *SkyMetaEngine::getOriginalCopyright() const {
 	return "Beneath a Steel Sky (C) Revolution";
 }
 

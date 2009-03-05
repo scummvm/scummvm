@@ -133,7 +133,7 @@ public:
 		return "Touche Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
 	}
 

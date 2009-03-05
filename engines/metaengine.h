@@ -51,8 +51,8 @@ class MetaEngine : public PluginObject {
 public:
 	virtual ~MetaEngine() {}
 
-	/** Returns some copyright information about the engine. */
-	virtual const char *getCopyright() const = 0;
+	/** Returns some copyright information about the original engine. */
+	virtual const char *getOriginalCopyright() const = 0;
 
 	/** Returns a list of games supported by this engine. */
 	virtual GameList getSupportedGames() const = 0;

@@ -1065,7 +1065,7 @@ public:
 		return "Legend of Kyrandia Engine";
 	}
 
-	const char *getCopyright() const {
+	const char *getOriginalCopyright() const {
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 

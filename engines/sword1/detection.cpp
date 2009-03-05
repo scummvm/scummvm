@@ -79,7 +79,7 @@ public:
 	virtual const char *getName() const {
 		return "Broken Sword";
 	}
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Broken Sword Games (C) Revolution";
 	}
 

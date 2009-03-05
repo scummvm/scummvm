@@ -240,7 +240,7 @@ public:
 		return "Parallaction engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}
 

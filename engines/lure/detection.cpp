@@ -182,7 +182,7 @@ public:
 		return "Lure of the Temptress Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Lure of the Temptress (C) Revolution";
 	}
 

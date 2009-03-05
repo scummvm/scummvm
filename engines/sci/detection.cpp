@@ -2264,7 +2264,7 @@ public:
 		return "SCI Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 

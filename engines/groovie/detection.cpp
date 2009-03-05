@@ -191,7 +191,7 @@ public:
 		return "Groovie Engine";
 	}
 
-	const char *getCopyright() const {
+	const char *getOriginalCopyright() const {
 		return "Groovie Engine (C) 1990-1996 Trilobyte";
 	}
 

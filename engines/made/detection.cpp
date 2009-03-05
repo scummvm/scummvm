@@ -360,7 +360,7 @@ public:
 		return "MADE Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "MADE Engine (C) Activision";
 	}
 

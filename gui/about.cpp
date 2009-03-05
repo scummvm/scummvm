@@ -138,7 +138,7 @@ AboutDialog::AboutDialog()
 	  addLine(str.c_str());
 
 	  str = "C2";
-	  str += (**iter)->getCopyright();
+	  str += (**iter)->getOriginalCopyright();
 	  addLine(str.c_str());
 
 	  //addLine("");

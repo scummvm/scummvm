@@ -112,7 +112,7 @@ public:
 		return "Igor: Objective Uikokahonia";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Igor: Objective Uikokahonia (C) Pendulo Studios";
 	}
 
