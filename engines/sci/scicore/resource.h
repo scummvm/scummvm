@@ -146,7 +146,6 @@ struct ResourceSource {
 	ResSourceType source_type;
 	bool scanned;
 	Common::String location_name;	// FIXME: Replace by FSNode ?
-	Common::String location_dir_name;	// FIXME: Get rid of this again, only a temporary HACK!
 	int volume_number;
 	ResourceSource *associated_map;
 	ResourceSource *next;
