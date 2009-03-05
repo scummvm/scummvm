@@ -120,7 +120,7 @@ int ResourceManager::detectOddSCI01(Common::File &file) {
 }
 
 int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version) {
-	res->id = buf[0] | (buf[1] << 8);
+	res->id = READ_LE_UINT16(buf);//buf[0] | (buf[1] << 8);
 	res->type = (ResourceType)SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
 	res->status = SCI_STATUS_NOMALLOC;

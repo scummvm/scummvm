@@ -166,7 +166,9 @@ public:
 	byte *data;
 	uint16 number;
 	ResourceType type;
-	uint16 id; /* contains number and type */
+	uint16 id;	// contains number and type. 
+				// TODO: maybe use uint32 and set id = RESOURCE_HASH()
+				// for all SCI versions
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
 	byte status;
@@ -275,15 +277,11 @@ protected:
 	/**--- Resource map decoding functions ---*/
 
 	/* Reads the SCI0 resource.map file from a local directory
-	** Parameters: (char *) path: (unused)
-	**             (int) sci_version: SCI resource version
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
 	int readResourceMapSCI0(ResourceSource *map, int *sci_version);
 
 	/* Reads the SCI1 resource.map file from a local directory
-	** Parameters: (char *) path: (unused)
-	**             (int) sci_version: SCI resource version
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
 	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version);
@@ -296,20 +294,11 @@ protected:
 
 	/**--- Patch management functions ---*/
 
-	//! Reads SCI0 patch files from a local directory
-	/** @paramParameters: ResourceSource *source
-	  * @return   : (int) 0 on success, an SCI_ERROR_* code otherwise
-	  */
-	int readResourcePatchesSCI0(ResourceSource *source);
-
 	//! Reads SCI1 patch files from a local directory
 	/** @paramParameters: ResourceSource *source
-	  * @return   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	  */
-	int readResourcePatchesSCI1(ResourceSource *source);
-
-	void process_patch(ResourceSource *source, Common::ArchiveMember &member,
-		ResourceType restype, int resnumber);
+	void readResourcePatches(ResourceSource *source);
+	void processPatch(ResourceSource *source, const char *filename, ResourceType restype, int resnumber);
 
 	void printLRU();
 	void addToLRU(Resource *res);

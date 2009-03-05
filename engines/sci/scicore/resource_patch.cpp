@@ -25,6 +25,7 @@
 
 #include "common/archive.h"
 #include "common/file.h"
+#include "common/debug.h"
 
 #include "sci/scicore/resource.h"
 #include "sci/sci_memory.h"
@@ -40,132 +41,93 @@ void sci1_sprintf_patch_file_name(char *string, Resource *res) {
 }
 
 // version-agnostic patch application
-void ResourceManager::process_patch(ResourceSource *source,
-	Common::ArchiveMember &member, ResourceType restype, int resnumber) {
+void ResourceManager::processPatch(ResourceSource *source,
+	const char *filename, ResourceType restype, int resnumber) {
 	Common::File file;
+	Resource *newrsc;
+	uint32 resId = RESOURCE_HASH(restype, resnumber);
+	byte patchtype, patch_data_offset;
+	int fsize;
 
-	if (restype == kResourceTypeInvalid)
+	if (resnumber == -1)
 		return;
-
-	printf("Patching \"%s\": ", member.getName().c_str());
-	if (!file.open(member.createReadStream(), member.getName()))
+	if (!file.open(filename)) {
 		perror("""__FILE__"": (""__LINE__""): failed to open");
-	else {
-		byte filehdr[2];
-		int fsize = file.size();
-		if (fsize < 3) {
-			printf("File too small\n");
-			return;
-		}
-		
-		uint32 resId = RESOURCE_HASH(restype, resnumber);
-		Resource *newrsc;
-		int patch_data_offset;
-
-		file.read(filehdr, 2);
-
-		patch_data_offset = filehdr[1];
-
-		if ((filehdr[0] & 0x7f) != restype) {
-			printf("Failed; resource type mismatch\n");
-		} else if (patch_data_offset + 2 >= fsize) {
-			printf("Failed; patch starting at offset %d can't be in file of size %d\n", filehdr[1] + 2, fsize);
-		} else {
-			// Adjust for file offset
-			fsize -= patch_data_offset;
-
-			// Prepare destination, if neccessary
-			if (_resMap.contains(resId) == false) {
-				newrsc = new Resource;
-				_resMap.setVal(resId, newrsc);
-			} else 
-				newrsc = _resMap.getVal(resId);
-
-			// Overwrite everything, because we're patching
-			newrsc->size = fsize - 2;
-			newrsc->id = resId;
-			newrsc->number = resnumber;
-			newrsc->status = SCI_STATUS_NOMALLOC;
-			newrsc->type = restype;
-			newrsc->source = source;
-			newrsc->file_offset = 2 + patch_data_offset;
-			printf("OK\n");
-		}
+		return;
 	}
+	fsize = file.size();
+	if (fsize < 3) {
+		debug("Patching %s failed - file too small", filename);
+		return;
+	}
+	
+	patchtype = file.readByte() & 0x7F;
+	patch_data_offset = file.readByte();
+
+	if (patchtype != restype) {
+		debug("Patching %s failed - resource type mismatch", filename);
+		return;
+	}
+	if (patch_data_offset + 2 >= fsize) {
+		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
+			filename, patch_data_offset + 2, fsize);
+		return;
+	}
+	// Prepare destination, if neccessary
+	if (_resMap.contains(resId) == false) {
+		newrsc = new Resource;
+		_resMap.setVal(resId, newrsc);
+	} else 
+		newrsc = _resMap.getVal(resId);
+	// Overwrite everything, because we're patching
+	newrsc->id = resId;
+	newrsc->number = resnumber;
+	newrsc->status = SCI_STATUS_NOMALLOC;
+	newrsc->type = restype;
+	newrsc->source = source;
+	newrsc->size = fsize - patch_data_offset - 2;
+	newrsc->file_offset = 2 + patch_data_offset;
+	debug("Patching %s - OK", filename);
 }
 
 
-int ResourceManager::readResourcePatchesSCI0(ResourceSource *source) {
+void ResourceManager::readResourcePatches(ResourceSource *source) {
+// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
+// this function tries to read patch file with any supported naming scheme,
+// regardless of _sciVersion value
+
+	Common::String mask, name;
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, "*.???");
+	int number;
+	const char *szResType;
 
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String name = (*x)->getName();
-		ResourceType restype = kResourceTypeInvalid;
-		int resnumber = -1;
-		unsigned int resname_len;
-		char *endptr;
-
-		for (int i = kResourceTypeView; i < kResourceTypeInvalid; i++)
-			if (scumm_strnicmp(getResourceTypeName((ResourceType)i), name.c_str(), strlen(getResourceTypeName((ResourceType)i))) == 0)
-				restype = (ResourceType)i;
-
-		if (restype != kResourceTypeInvalid) {
-			resname_len = strlen(getResourceTypeName(restype));
-			if (name[resname_len] != '.')
-				restype = kResourceTypeInvalid;
-			else {
-				resnumber = strtol(name.c_str() + 1 + resname_len, &endptr, 10); // Get resource number
-				if ((*endptr != '\0') || (resname_len + 1 == name.size()))
-					restype = kResourceTypeInvalid;
-
-				if ((resnumber < 0) || (resnumber > 1000))
-					restype = kResourceTypeInvalid;
-			}
-		}
-
-		process_patch(source, **x, restype, resnumber);
-	}
-
-	return 0;
-}
-
-int ResourceManager::readResourcePatchesSCI1(ResourceSource *source) {
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, "*.*");
-
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String name = (*x)->getName();
-		ResourceType restype = kResourceTypeInvalid;
-		int resnumber = -1;
-		char *endptr;
-		const char *dot = strchr(name.c_str(), '.');
-
-		for (int i = kResourceTypeView; i < kResourceTypeInvalid; i++) {
-			if (dot != NULL) {
-				if (scumm_strnicmp(getResourceTypeSuffix((ResourceType)i), dot + 1, 3) == 0) {
-					restype = (ResourceType)i;
+	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
+		files.clear();
+		szResType = getResourceTypeName((ResourceType)i);
+		// SCI0 naming - type.nnn
+		mask = szResType;
+		mask += ".???";
+		SearchMan.listMatchingMembers(files, mask);
+		// SCI1 and later naming - nnn.typ
+		mask = "*.";
+		mask += getResourceTypeSuffix((ResourceType)i);
+		SearchMan.listMatchingMembers(files, mask);
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
+			number = -1;
+			name = (*x)->getName();
+			if (isdigit(name[0])) {
+				// SCI1 scheme
+				number = atoi(name.c_str());
+			} else {
+				// SCI0 scheme
+				int resname_len = strlen(szResType);
+				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0) {
+					number = atoi(name.c_str() + resname_len + 1);
 				}
 			}
+			processPatch(source, name.c_str(), (ResourceType)i, number);
 		}
-
-		if (restype != kResourceTypeInvalid) {
-			resnumber = strtol(name.c_str(), &endptr, 10); // Get resource number
-
-			if (endptr != dot)
-				restype = kResourceTypeInvalid;
-
-			if (*(dot + 4) != '\0')
-				restype = kResourceTypeInvalid;
-
-			if ((resnumber < 0) || (resnumber > 8192))
-				restype = kResourceTypeInvalid;
-		}
-
-		process_patch(source, **x, restype, resnumber);
 	}
-
-	return 0;
 }
 
 } // End of namespace Sci

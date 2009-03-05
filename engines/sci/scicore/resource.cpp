@@ -381,10 +381,7 @@ int ResourceManager::scanNewSources(int *detected_version, ResourceSource *sourc
 		source->scanned = true;
 		switch (source->source_type) {
 		case kSourceDirectory:
-			if (_sciVersion <= SCI_VERSION_01)
-				readResourcePatchesSCI0(source);
-			else
-				readResourcePatchesSCI1(source);
+			readResourcePatches(source);
 			break;
 		case kSourceExtMap:
 			if (preset_version <= SCI_VERSION_01_VGA_ODD /* || preset_version == SCI_VERSION_AUTODETECT -- subsumed by the above line */) {
