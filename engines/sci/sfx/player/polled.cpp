@@ -282,6 +282,9 @@ static int pp_set_option(char *name, char *value) {
 }
 
 static int pp_init(ResourceManager *resmgr, int expected_latency) {
+	if (!g_system->getMixer()->isReady())
+		return SFX_ERROR;
+
 	Resource *res = NULL, *res2 = NULL;
 
 	/* FIXME Temporary hack to detect Amiga games. */
