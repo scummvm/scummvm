@@ -1979,7 +1979,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
-		stream->seek(-offset - 1, SEEK_END);
+		stream->seek(offset + 1, SEEK_END);
 	else
 		stream->seek(offset);
 

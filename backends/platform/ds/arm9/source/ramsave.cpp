@@ -205,7 +205,7 @@ bool DSSaveFile::seek(int32 pos, int whence) {
 			break;
 		}
 		case SEEK_END: {
-			ptr = save.size - pos;
+			ptr = save.size + pos;
 			break;
 		}
 	}

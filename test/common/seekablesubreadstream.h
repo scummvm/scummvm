@@ -58,13 +58,13 @@ class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite {
 		b = ssrs.readByte();
 		TS_ASSERT( ssrs.eos() );
 
-		ssrs.seek(3, SEEK_END);
+		ssrs.seek(-3, SEEK_END);
 		TS_ASSERT( !ssrs.eos() );
 		TS_ASSERT_EQUALS( ssrs.pos(), 5 );
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS( b, 6 );
 
-		ssrs.seek(8, SEEK_END);
+		ssrs.seek(-8, SEEK_END);
 		TS_ASSERT_EQUALS( ssrs.pos(), 0 );
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS( b, 1 );

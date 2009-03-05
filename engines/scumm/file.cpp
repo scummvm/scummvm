@@ -142,7 +142,7 @@ bool ScummFile::seek(int32 offs, int whence) {
 		// Constrain the seek to the subfile
 		switch (whence) {
 		case SEEK_END:
-			offs = _subFileStart + _subFileLen - offs;
+			offs = _subFileStart + _subFileLen + offs;
 			break;
 		case SEEK_SET:
 			offs += _subFileStart;

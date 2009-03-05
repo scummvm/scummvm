@@ -661,7 +661,7 @@ public:
 			return;
 		}
 
-		stream.seek(4, SEEK_END);
+		stream.seek(-4, SEEK_END);
 		uint32 decrlen = stream.readUint32BE() >> 8;
 		byte *dest = (byte*)malloc(decrlen);
 
