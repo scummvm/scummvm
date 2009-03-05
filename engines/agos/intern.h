@@ -201,12 +201,14 @@ struct GameSpecificSettings {
 };
 
 enum BoxFlags {
-	kBFTextBox        = 0x1,
+	kBFToggleBox      = 0x1, // Elvira 1/2
+	kBFTextBox        = 0x1, // Others
 	kBFBoxSelected    = 0x2,
-	kBFNoTouchName    = 0x4,
+	kBFInvertSelect   = 0x4, // Elvira 1/2
+	kBFNoTouchName    = 0x4, // Others
 	kBFInvertTouch    = 0x8,
-	kBFDragBox        = 0x10, // Simon 1/2
 	kBFHyperBox       = 0x10, // Feeble Files
+	kBFDragBox        = 0x10, // Others
 	kBFBoxInUse       = 0x20,
 	kBFBoxDead        = 0x40,
 	kBFBoxItem        = 0x80

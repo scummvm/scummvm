@@ -685,6 +685,91 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
 	uint16 priority = 0;
+
+	best_ha = NULL;
+
+	do {
+		if (ha->flags & kBFBoxInUse) {
+			if (!(ha->flags & kBFBoxDead)) {
+				if (x >= ha->x && y >= ha->y &&
+						x - ha->x < ha->width && y - ha->y < ha->height && priority <= ha->priority) {
+					priority = ha->priority;
+					best_ha = ha;
+				} else {
+					if (ha->flags & kBFBoxSelected) {
+						hitarea_leave(ha , true);
+						ha->flags &= ~kBFBoxSelected;
+					}
+				}
+			} else {
+				ha->flags &= ~kBFBoxSelected;
+			}
+		}
+	} while (ha++, --count);
+
+	_currentBoxNum = 0;
+	_currentBox = best_ha;
+
+	if (best_ha == NULL)
+		return;
+
+	_currentBoxNum = best_ha->id;
+
+	if (mode != 0) {
+		if (mode == 3) {
+			if (best_ha->verb & 0x4000) {
+				if (getGameType() == GType_ELVIRA1 && _variableArray[500] == 0) {
+					_variableArray[500] = best_ha->verb & 0xBFFF;
+				}
+
+				if (_clickOnly != 0 && best_ha->id < 8) {
+					uint id = best_ha->id;
+					if (id >= 4)
+						id -= 4;
+
+					invertBox(findBox(id), 0, 0, 0, 0);
+					_clickOnly = 0;
+					return;
+				}
+			}
+
+			if (best_ha->flags & kBFDragBox)
+				_lastClickRem = best_ha;
+		} else {
+			_lastHitArea = best_ha;
+		}
+	}
+
+	if (_clickOnly != 0)
+		return;
+ 
+	if (best_ha->flags & kBFInvertTouch) {
+		if (!(best_ha->flags & kBFBoxSelected)) {
+			hitarea_leave(best_ha, false);
+			best_ha->flags |= kBFBoxSelected;
+ 		}
+	} else {
+		if (mode == 0)
+			return;
+ 
+		if (!(best_ha->flags & kBFInvertSelect))
+			return;
+
+		if (best_ha->flags & kBFToggleBox) {
+			hitarea_leave(best_ha, false);
+			best_ha->flags ^= kBFInvertSelect;
+		} else if (!(best_ha->flags & kBFBoxSelected)) {
+			hitarea_leave(best_ha, false);
+			best_ha->flags |= kBFBoxSelected;
+		}
+ 	}
+}
+
+void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
+	HitArea *best_ha;
+	HitArea *ha = _hitAreas;
+	uint count = ARRAYSIZE(_hitAreas);
+	uint16 priority = 0;
 	uint16 x_ = x;
 	uint16 y_ = y;
 
@@ -734,24 +819,6 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (mode != 0) {
 		if (mode == 3) {
-			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-				if (best_ha->verb & 0x4000) {
-					if (getGameType() == GType_ELVIRA1 && _variableArray[500] == 0) {
-						_variableArray[500] = best_ha->verb & 0xBFFF;
-					}
-
-					if (_clickOnly != 0 && best_ha->id < 8) {
-						uint id = best_ha->id;
-						if (id >= 4)
-							id -= 4;
-
-						invertBox(findBox(id), 0, 0, 0, 0);
-						_clickOnly = 0;
-						return;
-					}
-				}
-			}
-
 			if (best_ha->flags & kBFDragBox) {
 				_lastClickRem = best_ha;
 			}

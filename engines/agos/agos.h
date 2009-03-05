@@ -798,7 +798,7 @@ protected:
 	void waitWindow(WindowBlock *window);
 
 	HitArea *findBox(uint hitarea_id);
-	void boxController(uint x, uint y, uint mode);
+	virtual void boxController(uint x, uint y, uint mode);
 	void handleVerbClicked(uint verb);
 	virtual void clearName();
 	void displayName(HitArea * ha);
@@ -1297,6 +1297,7 @@ public:
 	void oe1_animate();
 	void oe1_stopAnimate();
 	void oe1_menu();
+	void oe1_addBox();
 	void oe1_enableInput();
 	void oe1_setTime();
 	void oe1_ifTime();
@@ -1461,6 +1462,8 @@ protected:
 	const OpcodeEntryWaxworks *_opcodesWaxworks;
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+
+	virtual void boxController(uint x, uint y, uint mode);
 
 	virtual void addArrows(WindowBlock *window, uint8 num);
 	virtual void removeArrows(WindowBlock *window, uint num);

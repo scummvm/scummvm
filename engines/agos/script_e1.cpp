@@ -327,7 +327,7 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 		OPCODE(o_closeWindow),
 		OPCODE(oe1_menu),
 		OPCODE(o_invalid),
-		OPCODE(o_addBox),
+		OPCODE(oe1_addBox),
 		/* 236 */
 		OPCODE(o_delBox),
 		OPCODE(o_enableBox),
@@ -753,6 +753,40 @@ void AGOSEngine_Elvira1::oe1_menu() {
 	uint b = getVarOrWord();
 	uint a = getVarOrWord();
 	drawMenuStrip(a, b);
+}
+
+void AGOSEngine_Elvira1::oe1_addBox() {
+	// 235: add item box
+	uint flags = 0;
+	uint id = getVarOrWord();
+	uint params = id / 1000;
+	uint x, y, w, h, verb;
+	Item *item;
+
+	id = id % 1000;
+
+	if (params & 1)
+		flags |= kBFInvertTouch;
+	if (params & 2)
+		flags |= kBFInvertSelect;
+	if (params & 4)
+		flags |= kBFBoxItem;
+	if (params & 8)
+		flags |= kBFToggleBox;
+	if (params & 16)
+		flags |= kBFDragBox;
+
+	x = getVarOrWord();
+	y = getVarOrWord();
+	w = getVarOrWord();
+	h = getVarOrWord();
+	item = getNextItemPtrStrange();
+	verb = getVarOrWord();
+	if (x >= 1000) {
+		verb += 0x4000;
+		x -= 1000;
+	}
+	defineBox(id, x, y, w, h, flags, verb, item);
 }
 
 void AGOSEngine_Elvira1::oe1_bitClear() {
