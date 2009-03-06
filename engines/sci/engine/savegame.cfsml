@@ -1026,9 +1026,9 @@ static void reconstruct_sounds(EngineState *s) {
 			ff = (SongIterator *)new_fast_forward_iterator(base, seeker->restore_time);
 		ff->init(ff);
 
-		msg = songit_make_message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
+		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
 		songit_handle_message(&ff, msg);
-		msg = songit_make_message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
+		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
 		songit_handle_message(&ff, msg);
 
 		oldstatus = seeker->status;

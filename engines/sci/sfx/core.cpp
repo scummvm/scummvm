@@ -124,7 +124,7 @@ static void _dump_songs(sfx_state_t *self) {
 
 	if (player) {
 		fprintf(stderr, "Audio iterator:\n");
-		player->iterator_message(songit_make_message(0, SIMSG_PRINT(1)));
+		player->iterator_message(SongIteratorMessage(0, SIMSG_PRINT(1)));
 	}
 #endif
 }
@@ -306,7 +306,7 @@ static void _update_multi_song(sfx_state_t *self) {
 			}
 			if (player && oldseeker->it)
 				player->iterator_message
-				(songit_make_message(oldseeker->it->ID, SIMSG_STOP));
+				(SongIteratorMessage(oldseeker->it->ID, SIMSG_STOP));
 			oldseeker->next_playing = NULL; /* Clear this pointer; we don't need the tag anymore */
 		}
 
@@ -566,7 +566,7 @@ int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_
 	_dump_songs(self);
 
 	if (player)
-		player->iterator_message(songit_make_message(handle, SIMSG_STOP));
+		player->iterator_message(SongIteratorMessage(handle, SIMSG_STOP));
 
 	if (song) {
 		_sfx_set_song_status(self, song, SOUND_STATUS_STOPPED);
@@ -663,8 +663,7 @@ void sfx_song_renice(sfx_state_t *self, song_handle_t handle, int priority) {
 
 void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	song_t *song = song_lib_find(self->songlib, handle);
-	SongIteratorMessage msg
-	= songit_make_message(handle, SIMSG_SET_LOOPS(loops));
+	SongIteratorMessage msg = SongIteratorMessage(handle, SIMSG_SET_LOOPS(loops));
 	ASSERT_SONG(song);
 
 #ifdef DEBUG_SONG_API
@@ -672,7 +671,7 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	        handle, loops);
 #endif
 	songit_handle_message(&(song->it), msg);
-	song->loops = ((BaseSongIterator *) song->it)->loops;
+	song->loops = ((BaseSongIterator *)song->it)->loops;
 
 	if (player/* && player->send_iterator_message*/)
 		/* FIXME: The above should be optional! */
@@ -682,7 +681,7 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 void sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold) {
 	song_t *song = song_lib_find(self->songlib, handle);
 	SongIteratorMessage msg
-	= songit_make_message(handle, SIMSG_SET_HOLD(hold));
+	= SongIteratorMessage(handle, SIMSG_SET_HOLD(hold));
 	ASSERT_SONG(song);
 
 	song->hold = hold;

@@ -59,19 +59,25 @@ struct fade_params_t {
 
 /* Helper defs for messages */
 /* Base messages */
-#define _SIMSG_BASE 0 /* Any base decoder */
-#define _SIMSG_BASEMSG_SET_LOOPS 0 /* Set loops */
-#define _SIMSG_BASEMSG_CLONE 1 /* Clone object and data. Must provide the
-** (possibly negative) number of ticks that have
-** passed since the last delay time started being
-** used  */
-#define _SIMSG_BASEMSG_SET_PLAYMASK 2 /* Set the current playmask for filtering */
-#define _SIMSG_BASEMSG_SET_RHYTHM 3 /* Activate/deactivate rhythm channel */
-#define _SIMSG_BASEMSG_ACK_MORPH 4 /* Acknowledge self-morph */
-#define _SIMSG_BASEMSG_STOP 5 /* Stop iterator */
-#define _SIMSG_BASEMSG_PRINT 6 /* Print self to stderr, after printing param1 tabs */
-#define _SIMSG_BASEMSG_SET_HOLD 7 /* Set value of hold parameter to expect */
-#define _SIMSG_BASEMSG_SET_FADE 8 /* Set fade parameters */
+enum {
+	_SIMSG_BASE = 0, /* Any base decoder */
+	_SIMSG_BASEMSG_SET_LOOPS = 0, /* Set loops */
+
+	/**
+	 * Clone object and data. Must provide the (possibly negative)
+	 * number of ticks that have passed since the last delay time
+	 * started being used.
+	 */
+	_SIMSG_BASEMSG_CLONE = 1,
+
+	_SIMSG_BASEMSG_SET_PLAYMASK = 2, /* Set the current playmask for filtering */
+	_SIMSG_BASEMSG_SET_RHYTHM = 3, /* Activate/deactivate rhythm channel */
+	_SIMSG_BASEMSG_ACK_MORPH = 4, /* Acknowledge self-morph */
+	_SIMSG_BASEMSG_STOP = 5, /* Stop iterator */
+	_SIMSG_BASEMSG_PRINT = 6, /* Print self to stderr, after printing param1 tabs */
+	_SIMSG_BASEMSG_SET_HOLD = 7, /* Set value of hold parameter to expect */
+	_SIMSG_BASEMSG_SET_FADE = 8 /* Set fade parameters */
+};
 
 /* "Plastic" (discardable) wrapper messages */
 #define _SIMSG_PLASTICWRAP 1 /* Any base decoder */
@@ -89,8 +95,8 @@ struct fade_params_t {
 /*#define SIMSG_SET_FADE(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_FADE,(x),0*/
 
 /* Message transmission macro: Takes song reference, message reference */
-#define SIMSG_SEND(o, m) songit_handle_message(&(o), songit_make_message((o)->ID, m))
-#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), songit_make_ptr_message((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
+#define SIMSG_SEND(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, m))
+#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
 
 /* Event listener interface */
 struct listener_t {
@@ -102,12 +108,41 @@ typedef unsigned long songit_id_t;
 
 struct SongIteratorMessage {
 	songit_id_t ID;
-	unsigned int recipient; /* Type of iterator supposed to receive this */
-	unsigned int type;
+	uint recipient; /* Type of iterator supposed to receive this */
+	uint type;
 	union {
-		unsigned int i;
-		void * p;
+		uint i;
+		void *p;
 	} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
+
+
+	SongIteratorMessage();
+
+	/**
+	 * Create a song iterator message.
+	 *
+	 * @param id: song ID the message is targeted to
+	 * @param recipient_class: Message recipient class
+	 * @param type	message type
+	 * @param a1	first message argument
+	 * @param a2	second message argument
+	 *
+	 * @note You should only use this with the SIMSG_* macros
+	 */
+	SongIteratorMessage(songit_id_t id, int recipient_class, int type, int a1, int a2);
+	
+	/**
+	 * Create a song iterator message, wherein the first parameter is a pointer.
+	 *
+	 * @param id: song ID the message is targeted to
+	 * @param recipient_class: Message recipient class
+	 * @param type	message type
+	 * @param a1	first message argument
+	 * @param a2	second message argument
+	 *
+	 * @note You should only use this with the SIMSG_* macros
+	 */
+	SongIteratorMessage(songit_id_t id, int recipient_class, int type, void *a1, int a2);
 };
 
 #define SONGIT_MAX_LISTENERS 2
@@ -117,7 +152,7 @@ public:
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
 	fade_params_t fade;
-	unsigned int flags;
+	uint flags;
 	int priority;
 
 	/* Death listeners */
@@ -269,10 +304,10 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask);
 **                   or the number of loops remaining for SI_LOOP.
 */
 
-SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id);
+SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t id);
 /* Constructs a new song iterator object
 ** Parameters: (byte *) data: The song data to iterate over
-**             (unsigned int) size: Number of bytes in the song
+**             (uint) size: Number of bytes in the song
 **             (int) type: One of the SCI_SONG_ITERATOR_TYPEs
 **             (songit_id_t) id: An ID for addressing the song iterator
 ** Returns   : (SongIterator *) A newly allocated but uninitialized song
@@ -295,25 +330,6 @@ void songit_free(SongIterator *it);
 ** Returns   : (void)
 */
 
-SongIteratorMessage songit_make_message(songit_id_t id,
-	int recipient_class, int type, int a1, int a2);
-/* Create a song iterator message
-** Parameters: (songit_id_t) id: song ID the message is targetted to
-**             (int) recipient_class: Message recipient class
-**             (int) type: Message type
-**             (int x int) a1, a2: Arguments
-** You should only use this with the SIMSG_* macros
-*/
-
-SongIteratorMessage songit_make_ptr_message(songit_id_t id,
-	int recipient_class, int type, void * a1, int a2);
-/* Create a song iterator message, wherein the first parameter is a pointer
-** Parameters: (songit_id_t) id: song ID the message is targetted to
-**             (int) recipient_class: Message recipient class
-**             (int) type: Message type
-**             (void* x int) a1, a2: Arguments
-** You should only use this with the SIMSG_* macros
-*/
 
 int songit_handle_message(SongIterator **it_reg, SongIteratorMessage msg);
 /* Handles a message to the song iterator

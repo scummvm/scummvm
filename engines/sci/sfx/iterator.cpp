@@ -121,7 +121,7 @@ static int _sci0_read_next_command(Sci0SongIterator *self,
 
 
 static int _sci0_get_pcm_data(Sci0SongIterator *self,
-	sfx_pcm_config_t *format, int *xoffset, unsigned int *xsize);
+	sfx_pcm_config_t *format, int *xoffset, uint *xsize);
 
 #define PARSE_FLAG_LOOPS_UNLIMITED (1 << 0) /* Unlimited # of loops? */
 #define PARSE_FLAG_PARAMETRIC_CUE (1 << 1) /* Assume that cues take an additional "cue value" argument */
@@ -371,7 +371,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, unsigned char *buf, i
 	case SI_STATE_PCM_MAGIC_DELTA: {
 		sfx_pcm_config_t format;
 		int offset;
-		unsigned int size;
+		uint size;
 		int delay;
 		if (_sci0_get_pcm_data((Sci0SongIterator *) self, &format, &offset, &size))
 			return SI_FINISHED; /* 'tis broken */
@@ -470,12 +470,12 @@ static inline int _sci0_header_magic_p(unsigned char *data, int offset, int size
 
 
 static int _sci0_get_pcm_data(Sci0SongIterator *self,
-	sfx_pcm_config_t *format, int *xoffset, unsigned int *xsize) {
+	sfx_pcm_config_t *format, int *xoffset, uint *xsize) {
 	int tries = 2;
 	int found_it = 0;
 	unsigned char *pcm_data;
 	int size;
-	unsigned int offset = SCI0_MIDI_OFFSET;
+	uint offset = SCI0_MIDI_OFFSET;
 
 	if (self->data[0] != 2)
 		return 1;
@@ -559,7 +559,7 @@ static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t con
 Audio::AudioStream *Sci0SongIterator::get_pcm_feed() {
 	sfx_pcm_config_t conf;
 	int offset;
-	unsigned int size;
+	uint size;
 	if (_sci0_get_pcm_data(this, &conf, &offset, &size))
 		return NULL;
 
@@ -716,7 +716,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 	int begin;
 	int end;
 
-	CHECK_FOR_END_ABSOLUTE((unsigned int)offset + 10);
+	CHECK_FOR_END_ABSOLUTE((uint)offset + 10);
 	if (self->data[offset + 1] != 0)
 		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
 		          self->data[offset + 1]);
@@ -726,7 +726,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 	begin = getInt16(self->data + offset + 6);
 	end = getInt16(self->data + offset + 8);
 
-	CHECK_FOR_END_ABSOLUTE((unsigned int)(offset + 10 + length));
+	CHECK_FOR_END_ABSOLUTE((uint)(offset + 10 + length));
 
 	sample = new Sci1Sample();
 	sample->delta = begin;
@@ -759,7 +759,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 static int _sci1_song_init(Sci1SongIterator *self) {
 	Sci1Sample *seeker;
 	int last_time;
-	unsigned int offset = 0;
+	uint offset = 0;
 	self->channels_nr = 0;
 	self->next_sample = 0;
 //	self->device_id = 0x0c;
@@ -791,7 +791,7 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 	offset++;
 
 	while (SONGDATA(0) != 0xff) { /* End of list? */
-		unsigned int track_offset;
+		uint track_offset;
 		int end;
 		offset += 2;
 
@@ -1283,7 +1283,7 @@ static int _cleanup_iterator_next(SongIterator *self, unsigned char *buf, int *r
 
 class CleanupSongIterator : public SongIterator {
 public:
-	CleanupSongIterator(unsigned int channels) {
+	CleanupSongIterator(uint channels) {
 		channel_mask = channels;
 		ID = 17;
 		flags = 0;
@@ -1299,7 +1299,7 @@ public:
 	Audio::AudioStream *get_pcm_feed() { return NULL; }
 };
 
-SongIterator *new_cleanup_iterator(unsigned int channels) {
+SongIterator *new_cleanup_iterator(uint channels) {
 	CleanupSongIterator *it = new CleanupSongIterator(channels);
 	return it;
 }
@@ -1802,7 +1802,7 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
 	return retval;
 }
 
-SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id) {
+SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t id) {
 	BaseSongIterator *it;
 	int i;
 
@@ -1882,26 +1882,26 @@ void songit_free(SongIterator *it) {
 	}
 }
 
-SongIteratorMessage songit_make_message(songit_id_t id, int recipient, int type, int a1, int a2) {
-	SongIteratorMessage rv;
-	rv.ID = id;
-	rv.recipient = recipient;
-	rv.type = type;
-	rv.args[0].i = a1;
-	rv.args[1].i = a2;
-
-	return rv;
+SongIteratorMessage::SongIteratorMessage() {
+	ID = 0;
+	recipient = 0;
+	type = 0;
 }
 
-SongIteratorMessage songit_make_ptr_message(songit_id_t id, int recipient, int type, void * a1, int a2) {
-	SongIteratorMessage rv;
-	rv.ID = id;
-	rv.recipient = recipient;
-	rv.type = type;
-	rv.args[0].p = a1;
-	rv.args[1].i = a2;
+SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, int a1, int a2) {
+	ID = id;
+	recipient = r;
+	type = t;
+	args[0].i = a1;
+	args[1].i = a2;
+}
 
-	return rv;
+SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, void *a1, int a2) {
+	ID = id;
+	recipient = r;
+	type = t;
+	args[0].p = a1;
+	args[1].i = a2;
 }
 
 int songit_handle_message(SongIterator **it_reg_p, SongIteratorMessage msg) {
