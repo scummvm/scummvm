@@ -102,6 +102,8 @@ public:
 	int _delayRemaining; /* Number of ticks that haven't been polled yet */
 
 public:
+	Sci0SongIterator();
+
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
@@ -142,6 +144,8 @@ public:
 	int hold;
 
 public:
+	Sci1SongIterator();
+
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
@@ -219,8 +223,6 @@ class TeeSongIterator : public SongIterator {
 public:
 	int _status;
 
-	int may_destroy; /* May destroy song iterators */
-
 	int morph_deferred; /* One of TEE_MORPH_* above */
 
 	struct {
@@ -235,6 +237,8 @@ public:
 	} _children[2];
 
 public:
+	~TeeSongIterator();
+
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);

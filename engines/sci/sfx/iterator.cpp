@@ -1392,19 +1392,27 @@ static void song_iterator_add_death_listener(SongIterator *it, TeeSongIterator *
 	error("FATAL: Too many death listeners for song iterator");
 }
 
+static void song_iterator_remove_death_listener(SongIterator *it, TeeSongIterator *client) {
+	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i) {
+		if (it->_deathListeners[i] == client) {
+			it->_deathListeners[i] = 0;
+			return;
+		}
+	}
+}
+
 
 #if 0
 // Unreferenced - removed
 static void _tee_free(TeeSongIterator *it) {
 	int i;
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if (it->_children[i].it && it->may_destroy)
+		if (it->_children[i].it)
 			songit_free(it->_children[i].it);
 }
 #endif
 
-static void songit_tee_death_notification(TeeSongIterator *self,
-	SongIterator *corpse) {
+static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *corpse) {
 	if (corpse == self->_children[TEE_LEFT].it) {
 		self->_status &= ~TEE_LEFT_ACTIVE;
 		self->_children[TEE_LEFT].it = NULL;
@@ -1413,6 +1421,17 @@ static void songit_tee_death_notification(TeeSongIterator *self,
 		self->_children[TEE_RIGHT].it = NULL;
 	} else {
 		BREAKPOINT();
+	}
+}
+
+TeeSongIterator::~TeeSongIterator() {
+	// When we die, remove any listeners from our children
+	if (_children[TEE_LEFT].it) {
+		song_iterator_remove_death_listener(_children[TEE_LEFT].it, this);
+	}
+
+	if (_children[TEE_RIGHT].it) {
+		song_iterator_remove_death_listener(_children[TEE_RIGHT].it, this);
 	}
 }
 
@@ -1599,14 +1618,12 @@ SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
 				songit_free(this);
 				return NULL;
 			} else if (!(_status & TEE_LEFT_ACTIVE)) {
-				if (may_destroy)
-					songit_free(_children[TEE_LEFT].it);
+				songit_free(_children[TEE_LEFT].it);
 				old_it = _children[TEE_RIGHT].it;
 				delete this;
 				return old_it;
 			} else if (!(_status & TEE_RIGHT_ACTIVE)) {
-				if (may_destroy)
-					songit_free(_children[TEE_RIGHT].it);
+				songit_free(_children[TEE_RIGHT].it);
 				old_it = _children[TEE_LEFT].it;
 				delete this;
 				return old_it;
@@ -1635,7 +1652,7 @@ void TeeSongIterator::init() {
 	_children[TEE_RIGHT].it->init();
 }
 
-SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_destroy) {
+SongIterator *songit_new_tee(SongIterator *left, SongIterator *right) {
 	int i;
 	int firstfree = 1; /* First free channel */
 	int incomplete_map = 0;
@@ -1643,7 +1660,6 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_de
 
 	it->morph_deferred = TEE_MORPH_NONE;
 	it->_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
-	it->may_destroy = may_destroy;
 
 	it->_children[TEE_LEFT].it = left;
 	it->_children[TEE_RIGHT].it = right;
@@ -1693,20 +1709,8 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_de
 #endif
 
 
-// FIXME: Clearly, this whole death listener business is super-buggy. The code does it the wrong way:
-// instead of making the children inform their parent about their death, the parent tells the
-// children that it died. UGH! With the new code, which performs type checking, this is now
-// dead obvious, but apparently it slipped through for some time. But e.g. SCI1 (SCI version)
-// crashes when I exit it because of this.
-// The obvious solution is to reverse the order of the arguments. But then it crashes even
-// quicker, because the whole death listener handling is just wrong, wrong, wrong :).
-// E.g. if object A installs a death listener in object B, and A dies before B, then the death
-// listener is still registered and so might later be invoked with A as parameter, even though
-// A is already dead...
-//
-// For now, I preserve this clearly *WRONG* old code, to avoid any regressions. This is only temporary...
-	song_iterator_add_death_listener(it, (TeeSongIterator *)left);
-	song_iterator_add_death_listener(it, (TeeSongIterator *)right);
+	song_iterator_add_death_listener(left, it);
+	song_iterator_add_death_listener(right, it);
 
 	return it;
 }
@@ -1777,9 +1781,21 @@ SongIterator::SongIterator() {
 }
 
 SongIterator::~SongIterator() {
+	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i)
+		if (_deathListeners[i])
+			songit_tee_death_notification(_deathListeners[i], this);
 }
 
-SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t id) {
+Sci0SongIterator::Sci0SongIterator() {
+	channel_mask = 0xffff;	// Allocate all channels by default
+	channel.state = SI_STATE_UNINITIALISED;
+}
+
+Sci1SongIterator::Sci1SongIterator() {
+	channel_mask = 0; // Defer channel allocation
+}
+
+SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 	BaseSongIterator *it;
 	int i;
 
@@ -1790,26 +1806,20 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 
 
 	switch (type) {
-
 	case SCI_SONG_ITERATOR_TYPE_SCI0:
 		/**-- Playing SCI0 sound resources --**/
 		it = new Sci0SongIterator();
-		it->channel_mask = 0xffff; /* Allocate all channels by default */
 
 		for (i = 0; i < MIDI_CHANNELS; i++)
 			it->polyphony[i] = data[1 + (i << 1)];
-
-		((Sci0SongIterator *)it)->channel.state = SI_STATE_UNINITIALISED;
 		break;
 
 	case SCI_SONG_ITERATOR_TYPE_SCI1:
 		/**-- SCI01 or later sound resource --**/
 		it = new Sci1SongIterator();
-		it->channel_mask = 0; /* Defer channel allocation */
 
 		for (i = 0; i < MIDI_CHANNELS; i++)
 			it->polyphony[i] = 0; /* Unknown */
-
 		break;
 
 	default:
@@ -1831,15 +1841,6 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 void songit_free(SongIterator *it) {
 	if (it) {
 		it->cleanup();
-
-		// FIXME: The death notification should be sent from the destructor,
-		// so that all listening song iterators are notified. However, this
-		// will cause stuff to crash, because right now the whole death listener
-		// is a total mess; a balance of annoying bugs that cancel each other,
-		// most of the time at least... ;)
-		for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i)
-			if (it->_deathListeners[i])
-				songit_tee_death_notification(it->_deathListeners[i], it);
 
 		delete it;
 	}
@@ -1894,7 +1895,7 @@ SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2) {
 		return it1;
 
 	/* Both are non-NULL: */
-	return songit_new_tee(it1, it2, 1); /* 'may destroy' */
+	return songit_new_tee(it1, it2); /* 'may destroy' */
 }
 
 } // End of namespace Sci

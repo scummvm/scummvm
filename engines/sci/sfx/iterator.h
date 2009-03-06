@@ -278,12 +278,10 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 **             iterator, or NULL if 'type' was invalid or unsupported
 */
 
-SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_destroy);
+SongIterator *songit_new_tee(SongIterator *left, SongIterator *right);
 /* Combines two iterators, returns the next event available from either
 ** Parameters: (SongIterator *) left: One of the iterators
 **             (SongIterator *) right: The other iterator
-**             (int) may_destroy: Whether completed song iterators may be
-**                                destroyed
 ** Returns   : (SongIterator *) A combined iterator, as suggested above
 */
 
