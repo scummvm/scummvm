@@ -501,6 +501,7 @@ private:
 	int olol_loadLevelGraphics(EMCState *script);
 	int olol_loadCmzFile(EMCState *script);
 	int olol_loadMonsterShapes(EMCState *script);
+	int olol_deleteHandItem(EMCState *script);
 	int olol_allocItemPropertiesBuffer(EMCState *script);
 	int olol_setItemProperty(EMCState *script);
 	int olol_makeItem(EMCState *script);
@@ -560,9 +561,14 @@ private:
 
 	int tlol_initDialogueSequence(const TIM *tim, const uint16 *param);
 	int tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param);
+	int tlol_giveItem(const TIM *tim, const uint16 *param);
+	int tlol_setPartyPosition(const TIM *tim, const uint16 *param);
 	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
 	int tlol_update(const TIM *tim, const uint16 *param);
+	int tlol_loadSoundFile(const TIM *tim, const uint16 *param);
+	int tlol_playMusicTrack(const TIM *tim, const uint16 *param);	
 	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);
+	int tlol_playSoundEffect(const TIM *tim, const uint16 *param);
 
 	Common::Array<const TIMOpcode*> _timIngameOpcodes;
 
@@ -883,6 +889,7 @@ private:
 	// items
 	void giveCredits(int credits, int redraw);
 	int makeItem(int itemIndex, int curFrame, int flags);
+	bool addItemToInventory(int itemIndex);
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
 	ItemInPlay *findItem(uint16 index);

@@ -139,6 +139,34 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 	return slot;
 }
 
+bool LoLEngine::addItemToInventory(int itemIndex) {
+	int pos = 0;
+	int i = 0;
+
+	for (; i < 48; i++) {
+		pos = _inventoryCurItem + i;
+		if (pos > 47)
+			pos -= 48;
+
+		if (!_inventory[pos])
+			break;
+	}
+
+	if (i == 48)
+		return false;
+
+	while ((_inventoryCurItem > pos) || ((_inventoryCurItem + 9) <= pos)) {
+		if (++_inventoryCurItem > 47)
+			_inventoryCurItem -= 48;
+		gui_drawInventory();
+	}
+
+	_inventory[pos] = itemIndex;
+	gui_drawInventory();
+
+	return true;
+}
+
 bool LoLEngine::testUnkItemFlags(int itemIndex) {
 	if (!(_itemsInPlay[itemIndex].shpCurFrame_flg & 0x4000))
 		return false;

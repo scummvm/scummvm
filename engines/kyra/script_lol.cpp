@@ -157,6 +157,14 @@ int LoLEngine::olol_loadMonsterShapes(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_deleteHandItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_deleteHandItem(%p) ()", (const void *)script);
+	int r = _itemInHand;
+	deleteItem(_itemInHand);
+	setHandItem(0);
+	return r;
+}
+
 int LoLEngine::olol_allocItemPropertiesBuffer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_allocItemPropertiesBuffer(%p) (%d)", (const void *)script, stackPos(0));
 	delete[] _itemProperties;
@@ -902,6 +910,28 @@ int LoLEngine::tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint
 	return 1;
 }
 
+int LoLEngine::tlol_giveItem(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_giveItem(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	int item = makeItem(param[0], param[1], param[2]);
+	if (addItemToInventory(item))
+		return 1;
+
+	deleteItem(item);
+	return 0;
+}
+
+int LoLEngine::tlol_setPartyPosition(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setPartyPosition(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	if (param[0] == 1) {
+		_currentDirection = param[1];
+	} else if (param[0] == 0) {
+		_currentBlock = param[1];
+		calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
+	}
+
+	return 1;
+}
+
 int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
 	uint8 *tmp = 0;
@@ -958,10 +988,28 @@ int LoLEngine::tlol_update(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
+int LoLEngine::tlol_loadSoundFile(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadSoundFile(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	snd_loadSoundFile(param[0]);
+	return 1;
+}
+
+int LoLEngine::tlol_playMusicTrack(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playMusicTrack(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	snd_playTrack(param[0]);
+	return 1;
+}
+
 int LoLEngine::tlol_playDialogueTalkText(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playDialogueTalkText(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
 	if (!snd_playCharacterSpeech(param[0], 0, 0) || textEnabled())
 		_txt->printDialogueText(4, getLangString(param[0]), 0, param, 1);
+	return 1;
+}
+
+int LoLEngine::tlol_playSoundEffect(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	snd_playSoundEffect(param[0], -1);
 	return 1;
 }
 
@@ -1000,7 +1048,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_loadMonsterShapes);
 
 	// 0x0C
-	OpcodeUnImpl();
+	Opcode(olol_deleteHandItem);
 	Opcode(olol_allocItemPropertiesBuffer);
 	Opcode(olol_setItemProperty);
 	Opcode(olol_makeItem);
@@ -1290,10 +1338,10 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTim(tlol_initDialogueSequence);
 	OpcodeTim(tlol_restoreSceneAfterDialogueSequence);
 	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_giveItem);
 
 	// 0x04
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_setPartyPosition);
 	OpcodeTim(tlol_fadeClearWindow);
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
@@ -1302,12 +1350,12 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTimUnImpl();
 	OpcodeTim(tlol_update);
 	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_loadSoundFile);
 
 	// 0x0C
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_playMusicTrack);
 	OpcodeTim(tlol_playDialogueTalkText);
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_playSoundEffect);
 	OpcodeTimUnImpl();
 
 	// 0x10
