@@ -2436,7 +2436,7 @@ static int c_is_sample(EngineState *s) {
 	} else
 		sciprintf("Valid song, but not a sample.\n");
 
-	songit_free(songit);
+	delete songit;
 
 	return 0;
 }

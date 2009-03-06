@@ -208,13 +208,6 @@ public:
 	virtual void init() {}
 
 	/**
-	 * Frees any content of the iterator structure.
-	 * Does not physically free(self) yet. May be NULL if nothing needs to be done.
-	 * Must not recurse on its delegate.
-	 */
-	virtual void cleanup() {}
-
-	/**
 	 * Gets the song position to store in a savegame.
 	 */
 	virtual int getTimepos() = 0;
@@ -283,13 +276,6 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right);
 ** Parameters: (SongIterator *) left: One of the iterators
 **             (SongIterator *) right: The other iterator
 ** Returns   : (SongIterator *) A combined iterator, as suggested above
-*/
-
-
-void songit_free(SongIterator *it);
-/* Frees a song iterator and the song it wraps
-** Parameters: (SongIterator *) it: The song iterator to free
-** Returns   : (void)
 */
 
 

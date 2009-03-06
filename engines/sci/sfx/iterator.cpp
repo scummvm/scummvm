@@ -64,6 +64,15 @@ static unsigned char *sci_memchr(void *_data, int c, int n) {
 		return NULL;
 }
 
+BaseSongIterator::~BaseSongIterator() {
+#ifdef DEBUG_VERBOSE
+	fprintf(stderr, "** FREEING it %p: data at %p\n", this, data);
+#endif
+	if (data)
+		sci_refcount_decref(data);
+	data = NULL;
+}
+
 /************************************/
 /*-- SCI0 iterator implementation --*/
 /************************************/
@@ -651,6 +660,11 @@ static void _base_init_channel(SongIteratorChannel *channel, int id, int offset,
 	channel->saw_notes = 0;
 }
 
+Sci0SongIterator::Sci0SongIterator() {
+	channel_mask = 0xffff;	// Allocate all channels by default
+	channel.state = SI_STATE_UNINITIALISED;
+}
+
 void Sci0SongIterator::init() {
 	fade.action = FADE_ACTION_NONE;
 	resetflag = 0;
@@ -667,15 +681,6 @@ void Sci0SongIterator::init() {
 		channel.state = SI_STATE_PCM;
 }
 
-
-void Sci0SongIterator::cleanup() {
-#ifdef DEBUG_VERBOSE
-	fprintf(stderr, "** FREEING it %p: data at %p\n", this, data);
-#endif
-	if (data)
-		sci_refcount_decref(data);
-	data = NULL;
-}
 
 /***************************/
 /*-- SCI1 song iterators --*/
@@ -1190,6 +1195,10 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 	return NULL;
 }
 
+Sci1SongIterator::Sci1SongIterator() {
+	channel_mask = 0; // Defer channel allocation
+}
+
 void Sci1SongIterator::init() {
 	fade.action = FADE_ACTION_NONE;
 	resetflag = 0;
@@ -1208,20 +1217,13 @@ void Sci1SongIterator::init() {
 	memset(importance, 0, sizeof(importance));
 }
 
-void Sci1SongIterator::cleanup() {
+Sci1SongIterator::~Sci1SongIterator() {
 	Sci1Sample *sample_seeker = _nextSample;
 	while (sample_seeker) {
 		Sci1Sample *old_sample = sample_seeker;
 		sample_seeker = sample_seeker->next;
 		delete old_sample;
 	}
-
-#ifdef DEBUG_VERBOSE
-	fprintf(stderr, "** FREEING it %p: data at %p\n", this, data);
-#endif
-	if (data)
-		sci_refcount_decref(data);
-	data = NULL;
 }
 
 int Sci1SongIterator::getTimepos() {
@@ -1407,8 +1409,7 @@ static void song_iterator_remove_death_listener(SongIterator *it, TeeSongIterato
 static void _tee_free(TeeSongIterator *it) {
 	int i;
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if (it->_children[i].it)
-			songit_free(it->_children[i].it);
+		delete it->_children[i].it;
 }
 #endif
 
@@ -1615,15 +1616,15 @@ SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
 
 		case _SIMSG_PLASTICWRAP_ACK_MORPH:
 			if (!(_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
-				songit_free(this);
+				delete this;
 				return NULL;
 			} else if (!(_status & TEE_LEFT_ACTIVE)) {
-				songit_free(_children[TEE_LEFT].it);
+				delete _children[TEE_LEFT].it;
 				old_it = _children[TEE_RIGHT].it;
 				delete this;
 				return old_it;
 			} else if (!(_status & TEE_RIGHT_ACTIVE)) {
-				songit_free(_children[TEE_RIGHT].it);
+				delete _children[TEE_RIGHT].it;
 				old_it = _children[TEE_LEFT].it;
 				delete this;
 				return old_it;
@@ -1746,7 +1747,7 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
 			int channel_mask = (*it)->channel_mask;
 
 			if (mask & IT_READER_MAY_FREE)
-				songit_free(*it);
+				delete *it;
 			*it = new_cleanup_iterator(channel_mask);
 			retval = -9999; /* Continue */
 		}
@@ -1764,7 +1765,7 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
 
 	if (retval == SI_FINISHED
 	        && (mask & IT_READER_MAY_FREE)) {
-		songit_free(*it);
+		delete *it;
 		*it = NULL;
 	}
 
@@ -1784,15 +1785,6 @@ SongIterator::~SongIterator() {
 	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i)
 		if (_deathListeners[i])
 			songit_tee_death_notification(_deathListeners[i], this);
-}
-
-Sci0SongIterator::Sci0SongIterator() {
-	channel_mask = 0xffff;	// Allocate all channels by default
-	channel.state = SI_STATE_UNINITIALISED;
-}
-
-Sci1SongIterator::Sci1SongIterator() {
-	channel_mask = 0; // Defer channel allocation
 }
 
 SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
@@ -1836,14 +1828,6 @@ SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 	it->init();
 
 	return it;
-}
-
-void songit_free(SongIterator *it) {
-	if (it) {
-		it->cleanup();
-
-		delete it;
-	}
 }
 
 SongIteratorMessage::SongIteratorMessage() {

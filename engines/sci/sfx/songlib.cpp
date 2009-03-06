@@ -81,7 +81,7 @@ static void _songfree_chain(song_t *song) {
 	/* Recursively free a chain of songs */
 	if (song) {
 		_songfree_chain(song->next);
-		songit_free(song->it);
+		delete song->it;
 		song->it = NULL;
 		free(song);
 	}
@@ -155,7 +155,7 @@ int song_lib_remove(songlib_t songlib, song_handle_t handle) {
 
 	retval = goner->status;
 
-	songit_free(goner->it);
+	delete goner->it;
 	free(goner);
 
 	return retval;

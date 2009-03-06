@@ -220,7 +220,7 @@ static int ppf_poll(int frame_size, byte *dest, int size) {
 				break;
 
 			case SI_FINISHED:
-				songit_free(play_it);
+				delete play_it;
 				play_it = NULL;
 				return written; /* We're done... */
 
@@ -351,8 +351,7 @@ static int pp_stop() {
 
 	play_it = NULL;
 	warning("[play] Now stopping it %p", (void *)it);
-	if (it)
-		songit_free(it);
+	delete it;
 
 	seq->allstop(seq);
 
@@ -392,7 +391,7 @@ static int pp_resume() {
 
 static int pp_exit() {
 	seq->exit(seq);
-	songit_free(play_it);
+	delete play_it;
 	play_it = NULL;
 
 	return SFX_OK;

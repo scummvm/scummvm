@@ -576,7 +576,7 @@ int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_
 		        || song->status == SOUND_STATUS_SUSPENDED) {
 			warning("Unexpected (error): Song %ld still playing/suspended (%d)",
 			        handle, song->status);
-			songit_free(it);
+			delete it;
 			return -1;
 		} else
 			song_lib_remove(self->songlib, handle); /* No duplicates */

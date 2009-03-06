@@ -90,6 +90,9 @@ public:
 
 	int loops; /* Number of loops remaining */
 	int recover_delay;
+
+public:
+	~BaseSongIterator();
 };
 
 /********************************/
@@ -108,7 +111,6 @@ public:
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	void init();
-	void cleanup();
 	int getTimepos();
 };
 
@@ -145,12 +147,12 @@ public:
 
 public:
 	Sci1SongIterator();
+	~Sci1SongIterator();
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	void init();
-	void cleanup();
 	int getTimepos();
 };
 

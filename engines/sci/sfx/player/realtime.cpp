@@ -213,8 +213,7 @@ static int rt_stop(void) {
 
 	play_it = NULL;
 
-	if (it)
-		songit_free(it);
+	delete it;
 	if (seq && seq->allstop)
 		seq->allstop();
 
