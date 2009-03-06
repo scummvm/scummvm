@@ -68,7 +68,7 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
 my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
-
+my @sections_kyra = ("", "ENABLE_LOL"); # special sections for engine KYRA
 
 # files excluded from build, case insensitive, will be matched in filename string only
 my @excludes_snd = ( 
@@ -114,7 +114,7 @@ ParseModule("_agos",	"agos",		\@section_empty);
 ParseModule("_sky",	"sky",		\@section_empty);
 ParseModule("_gob",	"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@sections_saga);
-ParseModule("_kyra",	"kyra",		\@section_empty);
+ParseModule("_kyra",	"kyra",		\@sections_kyra);
 ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
 ParseModule("_lure",	"lure",		\@section_empty);
