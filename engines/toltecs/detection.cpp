@@ -123,7 +123,7 @@ public:
 		return "Toltecs Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	virtual const char *getOriginalCopyright() const {
 		return "Toltecs Engine (C) 1996";
 	}
 
