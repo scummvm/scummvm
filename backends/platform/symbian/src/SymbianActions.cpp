@@ -53,17 +53,19 @@ const Common::String actionNames[] = {
 	"Fast mode",
 	"Quit",
 	"Debugger",
-	"Global menu"
+	"Global menu",
+	"Virtual keyboard",
+	"Key mapper"
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0, 0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0, 0, 0, 0};
 #elif defined (S60)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0, '1'};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0, '1', '2', '3'};
 #elif defined (S90)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0 ,0};
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, '1'};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, '1', 0 ,0};
 #endif
 
 // creator function according to Factory Pattern
@@ -123,6 +125,14 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 	// Skip
 	_action_enabled[ACTION_SKIP] = true;
 	_key_action[ACTION_SKIP].setKey(SDLK_ESCAPE);
+
+	// Enable keymappings
+	_action_enabled[ACTION_KEYMAPPER] = true;
+	_key_action[ACTION_KEYMAPPER].setKey(Common::ASCII_F8, Common::KEYCODE_F8);
+
+	// Enable VKB
+	_action_enabled[ACTION_VKB] = true;
+	_key_action[ACTION_VKB].setKey(Common::ASCII_F7, Common::KEYCODE_F7);
 }
 
 void SymbianActions::initInstanceGame() {
@@ -217,6 +227,7 @@ void SymbianActions::initInstanceGame() {
 	// Enable global menu
 	_action_enabled[ACTION_MAINMENU] = true;
 	_key_action[ACTION_MAINMENU].setKey(Common::ASCII_F5, Common::KEYCODE_F5, KMOD_CTRL);
+
 }
 
 

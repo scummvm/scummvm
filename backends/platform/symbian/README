@@ -13,13 +13,19 @@ Mark Martinec <mark.martinec@ijs.si>, April 1999, June 2000
 Copyright © 1999,2000,2001,2002 Mark Martinec. All rights reserved. 
 under these conditions:
 "Terms and conditions ...
-
 This program is free software; it is dual licensed, the terms of the "Frontier Artistic License" or 
 the "GNU General Public License" can be chosen at your discretion. 
 The chosen license then applies solely and in its entirety. 
 Both licenses come with this Kit."
 
-
+Using fnmatch.c/h by
+/*
+ * Copyright (c) 1989, 1993, 1994
+ *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Guido van Rossum.
+ */
 
 About ScummVM
 --------------

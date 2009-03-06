@@ -35,6 +35,7 @@
 #include <e32std.h>
 #include <math.h>
 
+#include "fnmatch.h"
 #define DISABLE_COMMAND_LINE
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
@@ -127,6 +128,7 @@
 #define USE_ARM_COSTUME_ASM
 #define USE_ARM_SOUND_ASM
 #endif
+#define ENABLE_KEYMAPPER
 
 // Symbian bsearch implementation is flawed
 void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));

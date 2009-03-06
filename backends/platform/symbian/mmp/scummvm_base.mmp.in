@@ -110,7 +110,12 @@ SOURCE	   engines\engine.cpp
 SOURCE	   engines\dialogs.cpp
 SOURCE	   engines\game.cpp
 SOURCE 	   engines\advanceddetector.cpp
+// backend specific includes
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
-// backend specific includes
+SOURCE     backends\platform\symbian\src\fnmatch.c
+SOURCE     backends\keymapper\action.cpp
+SOURCE     backends\keymapper\keymap.cpp
+SOURCE     backends\keymapper\keymapper.cpp
+SOURCE     backends\keymapper\remap-dialog.cpp
 
