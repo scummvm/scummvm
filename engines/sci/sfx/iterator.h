@@ -98,12 +98,6 @@ enum {
 #define SIMSG_SEND(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, m))
 #define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
 
-/* Event listener interface */
-struct listener_t {
-	void (*notify)(void *self, void *notifier);
-	void *self;
-};
-
 typedef unsigned long songit_id_t;
 
 struct SongIteratorMessage {
@@ -147,6 +141,8 @@ struct SongIteratorMessage {
 
 #define SONGIT_MAX_LISTENERS 2
 
+class TeeSongIterator;
+
 class SongIterator {
 public:
 	songit_id_t ID;
@@ -157,22 +153,14 @@ public:
 
 	/* Death listeners */
 	/* These are not reset during initialisation */
-	listener_t death_listeners[SONGIT_MAX_LISTENERS];
-	int death_listeners_nr;
+	TeeSongIterator *_deathListeners[SONGIT_MAX_LISTENERS];
 
 	/* See songit_* for the constructor and non-virtual member functions */
 
 
 public:
-	SongIterator() {
-		ID = 0;
-		channel_mask = 0;
-		fade.action = FADE_ACTION_NONE;
-		flags = 0;
-		priority = 0;
-		death_listeners_nr = 0;
-	}
-	virtual ~SongIterator() {}
+	SongIterator();
+	virtual ~SongIterator();
 
 	/**
 	 * Reads the next MIDI operation _or_ delta time.
@@ -238,27 +226,6 @@ public:
 #define SONGIT_FLAG_CLONE	(1 << 0)	/* This flag is set for clones, which are exclusively used in song players.
 ** Thus, this flag distinguishes song iterators in the main thread from those
 ** in the song-player thread. */
-
-void song_iterator_add_death_listener(SongIterator *it,
-	void *client, void (*notify)(void *self, void *notifier));
-/* Adds a death listener to a song iterator
-** Parameters: (SongIterator *) it: The iterator to add to
-**             (void *) client: The object wanting to be notified
-**             (void* x void* -> void) notify: The notification function
-**                                     to invoke
-** Effects:    Fatally terminates the program if no listener slots are
-**	       available
-** Death listeners are NOT cloned.
-*/
-
-void song_iterator_remove_death_listener(SongIterator *it, void *client);
-/* Removes a death listener from a song iterator
-** Parameters: (SongIterator *) it: The iterator to modify
-**             (void *) client: The object no longer wanting to be notified
-** Effects:    Fatally terminates the program if the listener was not
-**	       found
-** Death listeners are NOT cloned.
-*/
 
 /********************************/
 /*-- Song iterator operations --*/

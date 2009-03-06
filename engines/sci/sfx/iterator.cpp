@@ -1246,7 +1246,6 @@ public:
 		channel_mask = channels;
 		ID = 17;
 		flags = 0;
-		death_listeners_nr = 0;
 	}
 	
 	int nextCommand(byte *buf, int *result);
@@ -1381,6 +1380,41 @@ SongIterator *new_fast_forward_iterator(SongIterator *capsit, int delta) {
 /********************/
 /*-- Tee iterator --*/
 /********************/
+
+
+static void song_iterator_add_death_listener(SongIterator *it, TeeSongIterator *client) {
+	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i) {
+		if (it->_deathListeners[i] == 0) {
+			it->_deathListeners[i] = client;
+			return;
+		}
+	}
+	error("FATAL: Too many death listeners for song iterator");
+}
+
+
+#if 0
+// Unreferenced - removed
+static void _tee_free(TeeSongIterator *it) {
+	int i;
+	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
+		if (it->_children[i].it && it->may_destroy)
+			songit_free(it->_children[i].it);
+}
+#endif
+
+static void songit_tee_death_notification(TeeSongIterator *self,
+	SongIterator *corpse) {
+	if (corpse == self->_children[TEE_LEFT].it) {
+		self->_status &= ~TEE_LEFT_ACTIVE;
+		self->_children[TEE_LEFT].it = NULL;
+	} else if (corpse == self->_children[TEE_RIGHT].it) {
+		self->_status &= ~TEE_RIGHT_ACTIVE;
+		self->_children[TEE_RIGHT].it = NULL;
+	} else {
+		BREAKPOINT();
+	}
+}
 
 
 int TeeSongIterator::nextCommand(byte *buf, int *result) {
@@ -1601,30 +1635,6 @@ void TeeSongIterator::init() {
 	_children[TEE_RIGHT].it->init();
 }
 
-#if 0
-// Unreferenced - removed
-static void _tee_free(TeeSongIterator *it) {
-	int i;
-	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if (it->_children[i].it && it->may_destroy)
-			songit_free(it->_children[i].it);
-}
-#endif
-
-static void songit_tee_death_notification(TeeSongIterator *self,
-	SongIterator *corpse) {
-	if (corpse == self->_children[TEE_LEFT].it) {
-		self->_status &= ~TEE_LEFT_ACTIVE;
-		self->_children[TEE_LEFT].it = NULL;
-	} else if (corpse == self->_children[TEE_RIGHT].it) {
-		self->_status &= ~TEE_RIGHT_ACTIVE;
-		self->_children[TEE_RIGHT].it = NULL;
-	} else {
-		BREAKPOINT();
-	}
-}
-
-
 SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_destroy) {
 	int i;
 	int firstfree = 1; /* First free channel */
@@ -1683,12 +1693,20 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_de
 #endif
 
 
-	song_iterator_add_death_listener(it,
-	                                 left, (void (*)(void *, void*))
-	                                 songit_tee_death_notification);
-	song_iterator_add_death_listener(it,
-	                                 right, (void (*)(void *, void*))
-	                                 songit_tee_death_notification);
+// FIXME: Clearly, this whole death listener business is super-buggy. The code does it the wrong way:
+// instead of making the children inform their parent about their death, the parent tells the
+// children that it died. UGH! With the new code, which performs type checking, this is now
+// dead obvious, but apparently it slipped through for some time. But e.g. SCI1 (SCI version)
+// crashes when I exit it because of this.
+// The obvious solution is to reverse the order of the arguments. But then it crashes even
+// quicker, because the whole death listener handling is just wrong, wrong, wrong :).
+// E.g. if object A installs a death listener in object B, and A dies before B, then the death
+// listener is still registered and so might later be invoked with A as parameter, even though
+// A is already dead...
+//
+// For now, I preserve this clearly *WRONG* old code, to avoid any regressions. This is only temporary...
+	song_iterator_add_death_listener(it, (TeeSongIterator *)left);
+	song_iterator_add_death_listener(it, (TeeSongIterator *)right);
 
 	return it;
 }
@@ -1749,6 +1767,18 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
 	return retval;
 }
 
+SongIterator::SongIterator() {
+	ID = 0;
+	channel_mask = 0;
+	fade.action = FADE_ACTION_NONE;
+	flags = 0;
+	priority = 0;
+	memset(_deathListeners, 0, sizeof(_deathListeners));
+}
+
+SongIterator::~SongIterator() {
+}
+
 SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t id) {
 	BaseSongIterator *it;
 	int i;
@@ -1790,8 +1820,6 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 	}
 	it->ID = id;
 
-	it->death_listeners_nr = 0;
-
 	it->data = (unsigned char*)sci_refcount_memdup(data, size);
 	it->_size = size;
 
@@ -1802,12 +1830,16 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 
 void songit_free(SongIterator *it) {
 	if (it) {
-		int i;
-
 		it->cleanup();
 
-		for (i = 0; i < it->death_listeners_nr; i++)
-			it->death_listeners[i].notify(it->death_listeners[i].self, it);
+		// FIXME: The death notification should be sent from the destructor,
+		// so that all listening song iterators are notified. However, this
+		// will cause stuff to crash, because right now the whole death listener
+		// is a total mess; a balance of annoying bugs that cancel each other,
+		// most of the time at least... ;)
+		for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i)
+			if (it->_deathListeners[i])
+				songit_tee_death_notification(it->_deathListeners[i], it);
 
 		delete it;
 	}
@@ -1850,41 +1882,10 @@ int songit_handle_message(SongIterator **it_reg_p, SongIteratorMessage msg) {
 
 SongIterator *songit_clone(SongIterator *it, int delta) {
 	SIMSG_SEND(it, SIMSG_CLONE(delta));
-	it->death_listeners_nr = 0;
+	memset(it->_deathListeners, 0, sizeof(it->_deathListeners));
 	it->flags |= SONGIT_FLAG_CLONE;
 	return it;
 }
-
-void song_iterator_add_death_listener(SongIterator *it,
-	void *client, void (*notify)(void *self, void *notifier)) {
-	if (it->death_listeners_nr >= SONGIT_MAX_LISTENERS) {
-		error("FATAL: Too many death listeners for song iterator");
-	}
-
-	it->death_listeners[it->death_listeners_nr].notify = notify;
-	it->death_listeners[it->death_listeners_nr].self = client;
-
-	it->death_listeners_nr++;
-}
-
-void song_iterator_remove_death_listener(SongIterator *it, void *client) {
-	int i;
-	for (i = 0; i < it->death_listeners_nr; i++) {
-		if (it->death_listeners[i].self == client) {
-			--it->death_listeners_nr;
-
-			/* Overwrite, if this wasn't the last one */
-			if (i + 1  < it->death_listeners_nr)
-				it->death_listeners[i]
-				= it->death_listeners[it->death_listeners_nr];
-
-			return;
-		}
-	}
-
-	error("FATAL: Could not remove death listener from song iterator\n");
-}
-
 
 SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2) {
 	if (it1 == NULL)
