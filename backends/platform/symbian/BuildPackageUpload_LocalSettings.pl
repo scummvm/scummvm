@@ -32,6 +32,7 @@
 		scumm_7_8
 		he
 		ihnm
+		lol
 	);
 
 	%UseableFeatures = (
