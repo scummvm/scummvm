@@ -244,7 +244,7 @@ static void _update_single_song(sfx_state_t *self) {
 		_thaw_time(self); /* Recover song delay time */
 
 		if (newsong && player) {
-			song_iterator_t *clonesong
+			SongIterator *clonesong
 			= songit_clone(newsong->it, newsong->delay);
 
 			player->add_iterator(clonesong, newsong->wakeup_time);
@@ -337,7 +337,7 @@ static void _update(sfx_state_t *self) {
 		_update_single_song(self);
 }
 
-int sfx_play_iterator_pcm(song_iterator_t *it, song_handle_t handle) {
+int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
 #endif
@@ -548,7 +548,7 @@ int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
 /*  Song basics  */
 /*****************/
 
-int sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t handle, int number) {
+int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_t handle, int number) {
 	song_t *song = song_lib_find(self->songlib, handle);
 
 #ifdef DEBUG_SONG_API
@@ -663,7 +663,7 @@ void sfx_song_renice(sfx_state_t *self, song_handle_t handle, int priority) {
 
 void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	song_t *song = song_lib_find(self->songlib, handle);
-	song_iterator_message_t msg
+	SongIteratorMessage msg
 	= songit_make_message(handle, SIMSG_SET_LOOPS(loops));
 	ASSERT_SONG(song);
 
@@ -672,7 +672,7 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	        handle, loops);
 #endif
 	songit_handle_message(&(song->it), msg);
-	song->loops = ((base_song_iterator_t *) song->it)->loops;
+	song->loops = ((BaseSongIterator *) song->it)->loops;
 
 	if (player/* && player->send_iterator_message*/)
 		/* FIXME: The above should be optional! */
@@ -681,7 +681,7 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 
 void sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold) {
 	song_t *song = song_lib_find(self->songlib, handle);
-	song_iterator_message_t msg
+	SongIteratorMessage msg
 	= songit_make_message(handle, SIMSG_SET_HOLD(hold));
 	ASSERT_SONG(song);
 

@@ -31,7 +31,7 @@ namespace Sci {
 
 #define debug_stream stderr
 
-song_t *song_new(song_handle_t handle, song_iterator_t *it, int priority) {
+song_t *song_new(song_handle_t handle, SongIterator *it, int priority) {
 	song_t *retval;
 	retval = (song_t*) sci_malloc(sizeof(song_t));
 

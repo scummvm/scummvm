@@ -4095,7 +4095,7 @@ void write_song_tp(Common::WriteStream *fh, const song_t * const *foo) {
 #line 496 "engines/sci/engine/savegame.cfsml"
 }
 
-song_iterator_t *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id);
+SongIterator *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id);
 
 int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastval, int *line, int *hiteof) {
 	char *token;
@@ -5099,7 +5099,7 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 
 int _reset_graphics_input(EngineState *s);
 
-song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
+SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 
 static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
@@ -5113,13 +5113,13 @@ static void reconstruct_sounds(EngineState *s) {
 	}
 
 	while (seeker) {
-		song_iterator_t *base, *ff;
+		SongIterator *base, *ff;
 		int oldstatus;
-		song_iterator_message_t msg;
+		SongIteratorMessage msg;
 
 		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
 		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
-			ff = (song_iterator_t *)new_fast_forward_iterator(base, seeker->restore_time);
+			ff = (SongIterator *)new_fast_forward_iterator(base, seeker->restore_time);
 		ff->init(ff);
 
 		msg = songit_make_message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));

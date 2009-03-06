@@ -100,7 +100,7 @@ struct listener_t {
 
 typedef unsigned long songit_id_t;
 
-struct song_iterator_message_t {
+struct SongIteratorMessage {
 	songit_id_t ID;
 	unsigned int recipient; /* Type of iterator supposed to receive this */
 	unsigned int type;
@@ -112,7 +112,7 @@ struct song_iterator_message_t {
 
 #define SONGIT_MAX_LISTENERS 2
 
-struct song_iterator_t {
+struct SongIterator {
 
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
@@ -120,10 +120,8 @@ struct song_iterator_t {
 	unsigned int flags;
 	int priority;
 
-	int (*next)(song_iterator_t *self,
-	            unsigned char *buf, int *result);
 	/* Reads the next MIDI operation _or_ delta time
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	**             (byte *) buf: The buffer to write to (needs to be able to
 	**                           store at least 4 bytes)
 	** Returns   : (int) zero if a MIDI operation was written, SI_FINISHED
@@ -138,21 +136,21 @@ struct song_iterator_t {
 	**   If SI_PCM is returned, get_pcm() may be used to retrieve the associated
 	** PCM, but this must be done before any subsequent calls to next().
 	*/
+	int (*next)(SongIterator *self,
+	            unsigned char *buf, int *result);
 
-	Audio::AudioStream * (*get_pcm_feed)(song_iterator_t *self);
 	/* Checks for the presence of a pcm sample
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	** Returns   : (Audio::AudioStream *) NULL if no PCM data was found, a
 	**				  PCM feed otherwise
 	*/
+	Audio::AudioStream * (*get_pcm_feed)(SongIterator *self);
 
 
-	song_iterator_t *
-				(* handle_message)(song_iterator_t *self, song_iterator_message_t msg);
 	/* Handles a message to the song iterator
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	**             (song_iterator_messag_t) msg: The message to handle
-	** Returns   : (song_iterator_t *) NULL if the message was not understood,
+	** Returns   : (SongIterator *) NULL if the message was not understood,
 	**             self if the message could be handled, or a new song iterator
 	**             if the current iterator had to be morphed (but the message could
 	**             still be handled)
@@ -161,25 +159,27 @@ struct song_iterator_t {
 	** takes care of that and makes sure that its delegate received the message (and
 	** was morphed) before self.
 	*/
+	SongIterator *
+				(* handle_message)(SongIterator *self, SongIteratorMessage msg);
 
 
-	void (*init)(song_iterator_t *self);
 	/* Resets/initializes the sound iterator
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	** Returns   : (void)
 	*/
+	void (*init)(SongIterator *self);
 
-	void (*cleanup)(song_iterator_t *self);
 	/* Frees any content of the iterator structure
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	** Does not physically free(self) yet. May be NULL if nothing needs to be done.
 	** Must not recurse on its delegate.
 	*/
+	void (*cleanup)(SongIterator *self);
 
-	int (*get_timepos)(song_iterator_t *self);
 	/* Gets the song position to store in a savegame
-	** Parameters: (song_iterator_t *) self
+	** Parameters: (SongIterator *) self
 	*/
+	int (*get_timepos)(SongIterator *self);
 
 	/* Death listeners */
 	/* These are not reset during initialisation */
@@ -196,10 +196,10 @@ struct song_iterator_t {
 ** Thus, this flag distinguishes song iterators in the main thread from those
 ** in the song-player thread. */
 
-void song_iterator_add_death_listener(song_iterator_t *it,
+void song_iterator_add_death_listener(SongIterator *it,
 	void *client, void (*notify)(void *self, void *notifier));
 /* Adds a death listener to a song iterator
-** Parameters: (song_iterator_t *) it: The iterator to add to
+** Parameters: (SongIterator *) it: The iterator to add to
 **             (void *) client: The object wanting to be notified
 **             (void* x void* -> void) notify: The notification function
 **                                     to invoke
@@ -208,9 +208,9 @@ void song_iterator_add_death_listener(song_iterator_t *it,
 ** Death listeners are NOT cloned.
 */
 
-void song_iterator_remove_death_listener(song_iterator_t *it, void *client);
+void song_iterator_remove_death_listener(SongIterator *it, void *client);
 /* Removes a death listener from a song iterator
-** Parameters: (song_iterator_t *) it: The iterator to modify
+** Parameters: (SongIterator *) it: The iterator to modify
 **             (void *) client: The object no longer wanting to be notified
 ** Effects:    Fatally terminates the program if the listener was not
 **	       found
@@ -240,9 +240,9 @@ void song_iterator_remove_death_listener(song_iterator_t *it, void *client);
 			    | IT_READER_MASK_CUE	\
 			    | IT_READER_MASK_PCM )
 
-int songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask);
+int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask);
 /* Convenience wrapper around it->next
-** Parameters: (song_iterator_t **it) Reference to the iterator to access
+** Parameters: (SongIterator **it) Reference to the iterator to access
 **             (byte *) buf: The buffer to write to (needs to be able to
 **                           store at least 4 bytes)
 **             (int) mask: IT_READER_MASK options specifying the events to
@@ -258,33 +258,33 @@ int songit_next(song_iterator_t **it, unsigned char *buf, int *result, int mask)
 **                   or the number of loops remaining for SI_LOOP.
 */
 
-song_iterator_t *songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id);
+SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songit_id_t id);
 /* Constructs a new song iterator object
 ** Parameters: (byte *) data: The song data to iterate over
 **             (unsigned int) size: Number of bytes in the song
 **             (int) type: One of the SCI_SONG_ITERATOR_TYPEs
 **             (songit_id_t) id: An ID for addressing the song iterator
-** Returns   : (song_iterator_t *) A newly allocated but uninitialized song
+** Returns   : (SongIterator *) A newly allocated but uninitialized song
 **             iterator, or NULL if 'type' was invalid or unsupported
 */
 
-song_iterator_t *songit_new_tee(song_iterator_t *left, song_iterator_t *right, int may_destroy);
+SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_destroy);
 /* Combines two iterators, returns the next event available from either
-** Parameters: (song_iterator_t *) left: One of the iterators
-**             (song_iterator_t *) right: The other iterator
+** Parameters: (SongIterator *) left: One of the iterators
+**             (SongIterator *) right: The other iterator
 **             (int) may_destroy: Whether completed song iterators may be
 **                                destroyed
-** Returns   : (song_iterator_t *) A combined iterator, as suggested above
+** Returns   : (SongIterator *) A combined iterator, as suggested above
 */
 
 
-void songit_free(song_iterator_t *it);
+void songit_free(SongIterator *it);
 /* Frees a song iterator and the song it wraps
-** Parameters: (song_iterator_t *) it: The song iterator to free
+** Parameters: (SongIterator *) it: The song iterator to free
 ** Returns   : (void)
 */
 
-song_iterator_message_t songit_make_message(songit_id_t id,
+SongIteratorMessage songit_make_message(songit_id_t id,
 	int recipient_class, int type, int a1, int a2);
 /* Create a song iterator message
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
@@ -294,7 +294,7 @@ song_iterator_message_t songit_make_message(songit_id_t id,
 ** You should only use this with the SIMSG_* macros
 */
 
-song_iterator_message_t songit_make_ptr_message(songit_id_t id,
+SongIteratorMessage songit_make_ptr_message(songit_id_t id,
 	int recipient_class, int type, void * a1, int a2);
 /* Create a song iterator message, wherein the first parameter is a pointer
 ** Parameters: (songit_id_t) id: song ID the message is targetted to
@@ -304,29 +304,29 @@ song_iterator_message_t songit_make_ptr_message(songit_id_t id,
 ** You should only use this with the SIMSG_* macros
 */
 
-int songit_handle_message(song_iterator_t **it_reg, song_iterator_message_t msg);
+int songit_handle_message(SongIterator **it_reg, SongIteratorMessage msg);
 /* Handles a message to the song iterator
-** Parameters: (song_iterator_t **): A reference to the variable storing the song iterator
+** Parameters: (SongIterator **): A reference to the variable storing the song iterator
 ** Returns   : (int) Non-zero if the message was understood
 ** The song iterator may polymorph as result of msg, so a writeable reference is required.
 */
 
 
-song_iterator_t *songit_clone(song_iterator_t *it, int delta);
+SongIterator *songit_clone(SongIterator *it, int delta);
 /* Clones a song iterator
-** Parameters: (song_iterator_t *) it: The iterator to clone
+** Parameters: (SongIterator *) it: The iterator to clone
 **             (int) delta: Number of ticks that still need to elapse until
 **                          the next item should be read from the song iterator
-** Returns   : (song_iterator_t *) A shallow clone of 'it'.
+** Returns   : (SongIterator *) A shallow clone of 'it'.
 ** This performs a clone on the bottom-most part (containing the actual song data) _only_.
 ** The justification for requiring 'delta' to be passed in here is that this
 ** is typically maintained outside of the song iterator.
 */
 
 
-int sfx_play_iterator_pcm(song_iterator_t *it, unsigned long handle);
+int sfx_play_iterator_pcm(SongIterator *it, unsigned long handle);
 /* Plays a song iterator that found a PCM through a PCM device, if possible
-** Parameters: (song_iterator_t *) it: The iterator to play
+** Parameters: (SongIterator *) it: The iterator to play
 **             (song_handle_t) handle: Debug handle
 ** Returns   : (int) 0 if the effect will not be played, nonzero if it will
 ** This assumes that the last call to 'it->next()' returned SI_PCM.

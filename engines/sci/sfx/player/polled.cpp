@@ -35,7 +35,7 @@
 
 namespace Sci {
 
-static song_iterator_t *play_it;
+static SongIterator *play_it;
 static int play_paused = 0;
 static sfx_softseq_t *seq;
 static int volume = 100;
@@ -326,8 +326,8 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	return SFX_OK;
 }
 
-static int pp_add_iterator(song_iterator_t *it, uint32 start_time) {
-	song_iterator_t *old = play_it;
+static int pp_add_iterator(SongIterator *it, uint32 start_time) {
+	SongIterator *old = play_it;
 
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(seq->playmask));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(seq->play_rhythm));
@@ -357,7 +357,7 @@ static int pp_fade_out() {
 }
 
 static int pp_stop() {
-	song_iterator_t *it = play_it;
+	SongIterator *it = play_it;
 
 	play_it = NULL;
 	warning("[play] Now stopping it %p", (void *)it);
@@ -369,7 +369,7 @@ static int pp_stop() {
 	return SFX_OK;
 }
 
-static int pp_send_iterator_message(song_iterator_message_t msg) {
+static int pp_send_iterator_message(SongIteratorMessage msg) {
 	if (!play_it)
 		return SFX_ERROR;
 

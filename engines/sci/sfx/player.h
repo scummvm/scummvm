@@ -57,7 +57,7 @@ struct sfx_player_t {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*add_iterator)(song_iterator_t *it, uint32 start_time);
+	int (*add_iterator)(SongIterator *it, uint32 start_time);
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
 	**             (uint32) start_time: The time to assume as the
@@ -79,9 +79,9 @@ struct sfx_player_t {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*iterator_message)(song_iterator_message_t msg);
+	int (*iterator_message)(SongIteratorMessage msg);
 	/* Transmits a song iterator message to the active song
-	** Parameters: (song_iterator_message_t) msg: The message to transmit
+	** Parameters: (SongIteratorMessage) msg: The message to transmit
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	** OPTIONAL -- may be NULL
 	** If this method is not present, sending messages will stop
@@ -141,7 +141,7 @@ void sfx_reset_player();
 ** Returns: Nothing.
  */
 
-song_iterator_t *sfx_iterator_combine(song_iterator_t *it1, song_iterator_t *it2);
+SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2);
 /* Combines two song iterators into one
 ** Parameters: (sfx_iterator_t *) it1: One of the two iterators, or NULL
 **             (sfx_iterator_t *) it2: The other iterator, or NULL

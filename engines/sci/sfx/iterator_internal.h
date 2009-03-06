@@ -50,7 +50,7 @@ namespace Sci {
 #define SIPFX __FILE__" : "
 
 
-struct song_iterator_channel_t {
+struct SongIteratorChannel {
 	int state;	/* SI_STATE_* */
 	int offset;     /* Offset into the data chunk */
 	int end;	/* Last allowed byte in track */
@@ -75,7 +75,7 @@ struct song_iterator_channel_t {
 	byte last_cmd;	/* Last operation executed, for running status */
 };
 
-struct base_song_iterator_t : public song_iterator_t {
+struct BaseSongIterator : public SongIterator {
 	int polyphony[MIDI_CHANNELS]; /* # of simultaneous notes on each */
 	int importance[MIDI_CHANNELS]; /* priority rating for each channel, 0 means unrated. */
 
@@ -95,8 +95,8 @@ struct base_song_iterator_t : public song_iterator_t {
 /*--------- SCI 0 --------------*/
 /********************************/
 
-struct sci0_song_iterator_t : public base_song_iterator_t {
-	song_iterator_channel_t channel;
+struct Sci0SongIterator : public BaseSongIterator {
+	SongIteratorChannel channel;
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
 };
 
@@ -106,25 +106,25 @@ struct sci0_song_iterator_t : public base_song_iterator_t {
 /********************************/
 
 
-struct sci1_sample_t {
+struct Sci1Sample {
 	int delta; /* Time left-- initially, this is 'Sample point 1'.
 		   ** After initialisation, it is 'sample point 1 minus the sample point of the previous sample'  */
 	int size;
 	int announced; /* Announced for download (SI_PCM) */
 	sfx_pcm_config_t format;
 	byte *data;
-	sci1_sample_t *next;
+	Sci1Sample *next;
 };
 
-struct sci1_song_iterator_t : public base_song_iterator_t {
-	song_iterator_channel_t channels[MIDI_CHANNELS];
+struct Sci1SongIterator : public BaseSongIterator {
+	SongIteratorChannel channels[MIDI_CHANNELS];
 
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
 	** channel_offset[i] points to a delta time object. */
 
 	int initialised; /* Whether the MIDI channel setup has been initialised */
 	int channels_nr; /* Number of channels actually used */
-	sci1_sample_t *next_sample;
+	Sci1Sample *next_sample;
 	int channels_looped; /* Number of channels that are ready to loop */
 
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
@@ -138,15 +138,15 @@ struct sci1_song_iterator_t : public base_song_iterator_t {
 /*********************************/
 
 
-song_iterator_t *new_cleanup_iterator(unsigned int channels);
+SongIterator *new_cleanup_iterator(unsigned int channels);
 /* Creates a new song iterator with the purpose of sending notes-off channel commands
 ** Parameters: (unsigned int) channels: Channel mask to send these commands for
 ** Returns   : A song iterator with the aforementioned purpose
 */
 
-int is_cleanup_iterator(song_iterator_t *it);
+int is_cleanup_iterator(SongIterator *it);
 /* Determines whether a given song iterator is a cleanup song iterator
-** Parameters: (song_iterator_t *) it: The iterator to check
+** Parameters: (SongIterator *) it: The iterator to check
 ** Returns   : (int) 1 iff 'it' is a cleanup song iterator
 ** No deep recursion/delegation is considered.
 */
@@ -156,17 +156,17 @@ int is_cleanup_iterator(song_iterator_t *it);
 /*--------- Fast Forward ---------*/
 /**********************************/
 
-struct fast_forward_song_iterator_t : public song_iterator_t {
-	song_iterator_t *delegate;
+struct FastForwardSongIterator : public SongIterator {
+	SongIterator *delegate;
 	int delta; /* Remaining time */
 };
 
 
-song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
+SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 /* Creates a new song iterator which fast-forwards
-** Parameters: (song_iterator_t *) it: The iterator to wrap
+** Parameters: (SongIterator *) it: The iterator to wrap
 **             (int) delta: The number of ticks to skip
-** Returns   : (song_iterator_t) A newly created song iterator
+** Returns   : (SongIterator) A newly created song iterator
 **                               which skips all delta times
 **                               until 'delta' has been used up
 */
@@ -189,7 +189,7 @@ song_iterator_t *new_fast_forward_iterator(song_iterator_t *it, int delta);
 #define TEE_MORPH_NONE 0 /* Not waiting to self-morph */
 #define TEE_MORPH_READY 1 /* Ready to self-morph */
 
-struct tee_song_iterator_t : public song_iterator_t {
+struct TeeSongIterator : public SongIterator {
 	int status;
 
 	int may_destroy; /* May destroy song iterators */
@@ -197,7 +197,7 @@ struct tee_song_iterator_t : public song_iterator_t {
 	int morph_deferred; /* One of TEE_MORPH_* above */
 
 	struct {
-		song_iterator_t *it;
+		SongIterator *it;
 		byte buf[MAX_BUF_SIZE];
 		int result;
 		int retval;

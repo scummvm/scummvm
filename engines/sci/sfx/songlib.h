@@ -62,7 +62,7 @@ struct song_t {
 	int loops;
 	int hold;
 
-	song_iterator_t *it;
+	SongIterator *it;
 	long delay; /* Delay before accessing the iterator, in microseconds */
 
 	uint32 wakeup_time; /* Used by the sound core:
@@ -86,10 +86,10 @@ struct songlib_t {
 /* Song library commands: */
 /**************************/
 
-song_t *song_new(song_handle_t handle, song_iterator_t *it, int priority);
+song_t *song_new(song_handle_t handle, SongIterator *it, int priority);
 /* Initializes a new song
 ** Parameters: (song_handle_t) handle: The sound handle
-**             (song_iterator_t *) it: The song
+**             (SongIterator *) it: The song
 **             (int) priority: The song's priority
 ** Returns   : (song_t *) A freshly allocated song
 ** Other values are set to predefined defaults.

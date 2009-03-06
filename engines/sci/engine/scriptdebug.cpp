@@ -2412,7 +2412,7 @@ int c_simkey(EngineState *s) {
 
 static int c_is_sample(EngineState *s) {
 	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
-	song_iterator_t *songit;
+	SongIterator *songit;
 	Audio::AudioStream *data;
 
 	if (!song) {

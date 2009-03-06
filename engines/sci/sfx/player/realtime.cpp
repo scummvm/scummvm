@@ -45,7 +45,7 @@ static inline int delta_time(const uint32 comp, const uint32 base) {
 	return long(comp) - long(base);
 }
 
-static song_iterator_t *play_it = NULL;
+static SongIterator *play_it = NULL;
 static uint32 play_last_time;
 static uint32 play_pause_started; /* Beginning of the last pause */
 static uint32 play_pause_counter; /* Last point in time to mark a
@@ -55,7 +55,7 @@ static int play_it_done = 0;
 static int play_writeahead = 0;
 static int play_moredelay = 0;
 
-static void play_song(song_iterator_t *it, uint32 *wakeup_time, int writeahead_time) {
+static void play_song(SongIterator *it, uint32 *wakeup_time, int writeahead_time) {
 	unsigned char buf[8];
 	int result;
 
@@ -188,7 +188,7 @@ static int rt_init(ResourceManager *resmgr, int expected_latency) {
 	return SFX_OK;
 }
 
-static int rt_add_iterator(song_iterator_t *it, uint32 start_time) {
+static int rt_add_iterator(SongIterator *it, uint32 start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -209,7 +209,7 @@ static int rt_fade_out(void) {
 }
 
 static int rt_stop(void) {
-	song_iterator_t *it = play_it;
+	SongIterator *it = play_it;
 
 	play_it = NULL;
 
@@ -221,7 +221,7 @@ static int rt_stop(void) {
 	return SFX_OK;
 }
 
-static int rt_send_iterator_message(song_iterator_message_t msg) {
+static int rt_send_iterator_message(SongIteratorMessage msg) {
 	if (!play_it)
 		return SFX_ERROR;
 

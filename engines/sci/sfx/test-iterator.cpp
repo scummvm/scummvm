@@ -51,7 +51,7 @@ void error(char *fmt, ...) {
 
 /* The simple iterator will finish after a fixed amount of time.  Before that,
 ** it emits (absolute) cues in ascending order.  */
-struct simple_iterator : public song_iterator_t {
+struct simple_iterator : public SongIterator {
 	int lifetime_remaining;
 	char *cues;
 	int cue_counter;
@@ -59,7 +59,7 @@ struct simple_iterator : public song_iterator_t {
 	int cues_nr;
 };
 
-int simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
+int simple_it_next(SongIterator *_self, unsigned char *buf, int *result) {
 	simple_iterator *self = (simple_iterator *)_self;
 
 	if (self->lifetime_remaining == -1) {
@@ -103,19 +103,19 @@ int simple_it_next(song_iterator_t *_self, unsigned char *buf, int *result) {
 	}
 }
 
-Audio::AudioStream *simple_it_pcm_feed(song_iterator_t *_self) {
+Audio::AudioStream *simple_it_pcm_feed(SongIterator *_self) {
 	error("No PCM feed!\n");
 	return NULL;
 }
 
-void simple_it_init(song_iterator_t *_self) {
+void simple_it_init(SongIterator *_self) {
 }
 
-song_iterator_t *simple_it_handle_message(song_iterator_t *_self, song_iterator_message_t msg) {
+SongIterator *simple_it_handle_message(SongIterator *_self, SongIteratorMessage msg) {
 	return NULL;
 }
 
-void simple_it_cleanup(song_iterator_t *_self) {
+void simple_it_cleanup(SongIterator *_self) {
 }
 
 /* Initialises the simple iterator.
@@ -124,7 +124,7 @@ void simple_it_cleanup(song_iterator_t *_self) {
 **             (int) cues_nr:  Number of cues in ``cues''
 ** The first cue is emitted after cues[0] ticks, and it is 1.  After cues[1] additional ticks
 ** the next cue is emitted, and so on. */
-song_iterator_t *setup_simple_iterator(int delay, char *cues, int cues_nr) {
+SongIterator *setup_simple_iterator(int delay, char *cues, int cues_nr) {
 	simple_iterator.lifetime_remaining = delay;
 	simple_iterator.cues = cues;
 	simple_iterator.cue_counter = 0;
@@ -144,7 +144,7 @@ song_iterator_t *setup_simple_iterator(int delay, char *cues, int cues_nr) {
 	simple_iterator.get_pcm_feed = simple_it_pcm_feed;
 	simple_iterator.next = simple_it_next;
 
-	return (song_iterator_t *) &simple_iterator;
+	return (SongIterator *) &simple_iterator;
 }
 
 #define ASSERT_SIT ASSERT(it == simple_it)
@@ -154,8 +154,8 @@ song_iterator_t *setup_simple_iterator(int delay, char *cues, int cues_nr) {
 #define ASSERT_CUE(n) ASSERT_NEXT(SI_ABSOLUTE_CUE); ASSERT_RESULT(n)
 
 void test_simple_it() {
-	song_iterator_t *it;
-	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
+	SongIterator *it;
+	SongIterator *simple_it = (SongIterator *) & simple_iterator;
 	unsigned char data[4];
 	int result;
 	puts("[TEST] simple iterator (test artifact)");
@@ -185,9 +185,9 @@ void test_simple_it() {
 }
 
 void test_fastforward() {
-	song_iterator_t *it;
-	song_iterator_t *simple_it = (song_iterator_t *) & simple_iterator;
-	song_iterator_t *ff_it;
+	SongIterator *it;
+	SongIterator *simple_it = (SongIterator *) & simple_iterator;
+	SongIterator *ff_it;
 	unsigned char data[4];
 	int result;
 	puts("[TEST] fast-forward iterator");
@@ -288,7 +288,7 @@ static unsigned char simple_song[SIMPLE_SONG_SIZE] = {
 	ASSERT(data[2] == arg1);
 
 void test_iterator_sci0() {
-	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+	SongIterator *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */
@@ -312,7 +312,7 @@ void test_iterator_sci0() {
 
 
 void test_iterator_sci0_loop() {
-	song_iterator_t *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+	SongIterator *it = songit_new(simple_song, SIMPLE_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */
@@ -368,7 +368,7 @@ unsigned char loop_song[LOOP_SONG_SIZE] = {
 
 
 void test_iterator_sci0_mark_loop() {
-	song_iterator_t *it = songit_new(loop_song, LOOP_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
+	SongIterator *it = songit_new(loop_song, LOOP_SONG_SIZE, SCI_SONG_ITERATOR_TYPE_SCI0, 0l);
 	unsigned char data[4];
 	int result;
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(0x0001)); /* Initialise song, enabling channel 0 */

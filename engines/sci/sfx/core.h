@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-struct song_iterator_t;
+struct SongIterator;
 
 
 #define SOUND_TICK 1000 / 60
@@ -51,7 +51,7 @@ struct song_iterator_t;
 ** song completions */
 
 struct sfx_state_t {
-	song_iterator_t *it; /* The song iterator at the heart of things */
+	SongIterator *it; /* The song iterator at the heart of things */
 	unsigned int flags; /* SFX_STATE_FLAG_* */
 	songlib_t songlib; /* Song library */
 	song_t *song; /* Active song, or start of active song chain */
@@ -112,9 +112,9 @@ void sfx_all_stop(sfx_state_t *self);
 /*  Song basics  */
 /*****************/
 
-int sfx_add_song(sfx_state_t *self, song_iterator_t *it, int priority, song_handle_t handle, int resnum);
+int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_t handle, int resnum);
 /* Adds a song to the internal sound library
-** Parameters: (song_iterator_t *) it: The iterator describing the song
+** Parameters: (SongIterator *) it: The iterator describing the song
 **             (int) priority: Initial song priority (higher <-> more important)
 **             (song_handle_t) handle: The handle to associate with the song
 ** Returns   : (int) 0 on success, nonzero on error
