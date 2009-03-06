@@ -149,15 +149,14 @@ int PolledPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	// timestamp could be adjusted for pauses in sound processing. And it would
 	// be synced for all audio streams.
 	Audio::Timestamp timestamp(g_system->getMillis(), _conf.rate);
+	_time = timestamp;
 
-	int channels, frames_req;
+	const int channels = _conf.stereo == SFX_PCM_MONO ? 1 : 2;
+	const int frames_req = numSamples / channels;
 	int frames_recv = 0;
 
-	_time = timestamp;
-	channels = _conf.stereo == SFX_PCM_MONO ? 1 : 2;
-	frames_req = numSamples / channels;
-
 	while (frames_req != frames_recv) {
+		int frames = 0;
 		int frames_left = frames_req - frames_recv;
 		byte *buf_pos = ((byte *)buffer) + frames_recv * channels * 2;
 
@@ -165,35 +164,26 @@ int PolledPlayerAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			queryTimestamp();
 
 		if (_mode == FEED_MODE_IDLE) {
-			memset(buf_pos, 0, frames_left * channels * 2);
-
-			_time = _time.addFrames(frames_left);
-			break;
-		}
-
-		if (_gap) {
-			int frames = _gap;
-
-			if (frames > frames_left)
-				frames = frames_left;
-
+			frames = frames_left;
 			memset(buf_pos, 0, frames * channels * 2);
 
+		} else if (_gap) {
+			frames = MIN(_gap, frames_left);
 			_gap -= frames;
-			frames_recv += frames;
-			_time = _time.addFrames(frames);
+			memset(buf_pos, 0, frames * channels * 2);
+
 		} else {
-			int frames = ppf_poll(channels * ((_conf.format & SFX_PCM_FORMAT_16) ? 2 : 1), buf_pos, frames_left);
+			frames = ppf_poll(channels * ((_conf.format & SFX_PCM_FORMAT_16) ? 2 : 1), buf_pos, frames_left);
 
 			if (_conf.format == SFX_PCM_FORMAT_U8)
 				U8_to_S16(buf_pos, frames * channels);
 
-			frames_recv += frames;
-			_time = _time.addFrames(frames);
-
 			if (frames < frames_left)
-				queryTimestamp();
+				_mode = FEED_MODE_IDLE;
 		}
+
+		frames_recv += frames;
+		_time = _time.addFrames(frames);
 	}
 
 	return numSamples;
