@@ -540,8 +540,8 @@ void Screen::sortSprites(void) {
 					Compact *spriteComp = _skyCompact->fetchCpt(drawListData[0]);
 					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
 						(spriteComp->screen == Logic::_scriptVariables[SCREEN])) { // on current screen
-							dataFileHeader *spriteData =
-								(dataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
+							DataFileHeader *spriteData =
+								(DataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
 							if (!spriteData) {
 								debug(9,"Missing file %d", spriteComp->frame >> 6);
 								spriteComp->status = 0;
@@ -630,12 +630,12 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		sprCompact->status = 0;
 		return;
 	}
-	dataFileHeader *sprDataFile = (dataFileHeader *)spriteInfo;
+	DataFileHeader *sprDataFile = (DataFileHeader *)spriteInfo;
 	_sprWidth = sprDataFile->s_width;
 	_sprHeight = sprDataFile->s_height;
 	_maskX1 = _maskX2 = 0;
 	uint8 *spriteData = spriteInfo + (sprCompact->frame & 0x3F) * sprDataFile->s_sp_size;
-	spriteData += sizeof(dataFileHeader);
+	spriteData += sizeof(DataFileHeader);
 	int32 spriteY = sprCompact->ycood + sprDataFile->s_offset_y - TOP_LEFT_Y;
 	if (spriteY < 0) {
 		spriteY = -spriteY;

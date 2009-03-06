@@ -1029,7 +1029,6 @@ Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 }
 
 Sound::~Sound(void) {
-
 	_mixer->stopAll();
 	if (_soundData)
 		free(_soundData);
@@ -1038,9 +1037,9 @@ Sound::~Sound(void) {
 void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle) {
 	byte flags = 0;
 	flags |= Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
-	size -= sizeof(struct dataFileHeader);
+	size -= sizeof(DataFileHeader);
 	byte *buffer = (byte *)malloc(size);
-	memcpy(buffer, sound+sizeof(struct dataFileHeader), size);
+	memcpy(buffer, sound+sizeof(DataFileHeader), size);
 
 	_mixer->stopID(id);
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, 11025, flags, id);
@@ -1226,9 +1225,9 @@ bool Sound::startSpeech(uint16 textNum) {
 		return false;
 	}
 
-	uint32 speechSize = ((dataFileHeader *)speechData)->s_tot_size - sizeof(dataFileHeader);
+	uint32 speechSize = ((DataFileHeader *)speechData)->s_tot_size - sizeof(DataFileHeader);
 	uint8 *playBuffer = (uint8 *)malloc(speechSize);
-	memcpy(playBuffer, speechData + sizeof(dataFileHeader), speechSize);
+	memcpy(playBuffer, speechData + sizeof(DataFileHeader), speechSize);
 
 	free(speechData);
 

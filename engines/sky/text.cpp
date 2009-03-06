@@ -87,7 +87,7 @@ Text::~Text(void) {
 }
 
 void Text::fnSetFont(uint32 fontNr) {
-	struct charSet *newCharSet;
+	charSet *newCharSet;
 
 	switch (fontNr) {
 	case 0:
@@ -112,7 +112,7 @@ void Text::fnSetFont(uint32 fontNr) {
 void Text::fnTextModule(uint32 textInfoId, uint32 textNo) {
 	fnSetFont(1);
 	uint16* msgData = (uint16 *)_skyCompact->fetchCpt(textInfoId);
-	lowTextManager_t textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
+	DisplayedText textId = lowTextManager(textNo, msgData[1], msgData[2], 209, false);
 	Logic::_scriptVariables[RESULT] = textId.compactNum;
 	Compact *textCompact = _skyCompact->fetchCpt(textId.compactNum);
 	textCompact->xcood = msgData[3];
@@ -183,7 +183,7 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 	Compact *ptrComp = _skyCompact->fetchCpt(pointedId);
-	lowTextManager_t text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
+	DisplayedText text = lowTextManager(ptrComp->cursorText, TEXT_MOUSE_WIDTH, L_CURSOR, 242, false);
 	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
 	if (Logic::_scriptVariables[MENU]) {
 		_mouseOfsY = TOP_LEFT_Y - 2;
@@ -234,13 +234,13 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
 	}
 }
 
-displayText_t Text::displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 	//Render text into buffer *dest
 	getText(textNum);
 	return displayText(_textBuffer, dest, centre, pixelWidth, color);
 }
 
-displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 	//Render text pointed to by *textPtr in buffer *dest
 	uint32 centerTable[10];
 	uint16 lineWidth = 0;
@@ -278,7 +278,6 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
 
 		if (pixelWidth <= lineWidth) {
-
 			if (*(lastSpace-1) == 10)
 				error("line width exceeded!");
 
@@ -300,25 +299,25 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 		error("Maximum no. of lines exceeded!");
 
 	uint32 dtLineSize = pixelWidth * _charHeight;
-	uint32 numBytes = (dtLineSize * numLines) + sizeof(struct dataFileHeader) + 4;
+	uint32 numBytes = (dtLineSize * numLines) + sizeof(DataFileHeader) + 4;
 
 	if (!dest)
 		dest = (uint8*)malloc(numBytes);
 
 	// clear text sprite buffer
-	memset(dest + sizeof(struct dataFileHeader), 0, numBytes - sizeof(struct dataFileHeader));
+	memset(dest + sizeof(DataFileHeader), 0, numBytes - sizeof(DataFileHeader));
 
 	//make the header
-	((struct dataFileHeader *)dest)->s_width = pixelWidth;
-	((struct dataFileHeader *)dest)->s_height = (uint16)(_charHeight * numLines);
-	((struct dataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * _charHeight * numLines);
-	((struct dataFileHeader *)dest)->s_offset_x = 0;
-	((struct dataFileHeader *)dest)->s_offset_y = 0;
+	((DataFileHeader *)dest)->s_width = pixelWidth;
+	((DataFileHeader *)dest)->s_height = (uint16)(_charHeight * numLines);
+	((DataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * _charHeight * numLines);
+	((DataFileHeader *)dest)->s_offset_x = 0;
+	((DataFileHeader *)dest)->s_offset_y = 0;
 
 	//reset position
 	curPos = textPtr;
 
-	uint8 *curDest = dest +  sizeof(struct dataFileHeader); //point to where pixels start
+	uint8 *curDest = dest +  sizeof(DataFileHeader); //point to where pixels start
 	byte *prevDest = curDest;
 	uint32 *centerTblPtr = centerTable;
 
@@ -339,7 +338,7 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 
 	} while (textChar >= 10);
 
-	struct displayText_t ret;
+	DisplayedText ret;
 	ret.textData = dest;
 	ret.textWidth = dtLastWidth;
 	return ret;
@@ -354,7 +353,6 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 	byte *curPos = startPos;
 
 	for (int i = 0; i < _charHeight; i++) {
-
 		byte *prevPos = curPos;
 
 		data = READ_BE_UINT16(charSpritePtr);
@@ -383,9 +381,9 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 	dest = startPos + charWidth + _dtCharSpacing * 2 - 1;
 }
 
-lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
+DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
 	getText(textNum);
-	struct displayText_t textInfo = displayText(_textBuffer, NULL, centre, width, color);
+	DisplayedText textInfo = displayText(_textBuffer, NULL, centre, width, color);
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);
@@ -405,17 +403,13 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
 	cpt->screen = (uint16) Logic::_scriptVariables[SCREEN];
 
-	struct lowTextManager_t ret;
-	ret.textData = textInfo.textData;
-	ret.textWidth = textInfo.textWidth;
-	ret.compactNum = (uint16)compactNum;
-
-	return ret;
+	textInfo.compactNum = (uint16)compactNum;
+	return textInfo;
 }
 
 void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
-	dataFileHeader *header = (dataFileHeader *)sprData;
-	sprData += sizeof(dataFileHeader);
+	DataFileHeader *header = (DataFileHeader *)sprData;
+	sprData += sizeof(DataFileHeader);
 	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
 		if (sprData[cnt] >= 241)
 			sprData[cnt] = newCol;

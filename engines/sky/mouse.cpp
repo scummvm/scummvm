@@ -206,11 +206,11 @@ void Mouse::spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY) {
 	_currentCursor = frameNum;
 
 	byte *newCursor = _miceData;
-	newCursor += ((struct dataFileHeader *)_miceData)->s_sp_size * frameNum;
-	newCursor += sizeof(struct dataFileHeader);
+	newCursor += ((DataFileHeader *)_miceData)->s_sp_size * frameNum;
+	newCursor += sizeof(DataFileHeader);
 
-	uint16 mouseWidth = ((struct dataFileHeader *)_miceData)->s_width;
-	uint16 mouseHeight = ((struct dataFileHeader *)_miceData)->s_height;
+	uint16 mouseWidth = ((DataFileHeader *)_miceData)->s_width;
+	uint16 mouseHeight = ((DataFileHeader *)_miceData)->s_height;
 
 	CursorMan.replaceCursor(newCursor, mouseWidth, mouseHeight, mouseX, mouseY, 0);
 	if (frameNum == MOUSE_BLANK)
@@ -321,12 +321,12 @@ void Mouse::fnOpenCloseHand(bool open) {
 	if (open)
 		cursor++;
 
-	uint32 size = ((dataFileHeader*)_objectMouseData)->s_sp_size;
+	uint32 size = ((DataFileHeader*)_objectMouseData)->s_sp_size;
 	uint8 *srcData;
 	uint8 *destData;
 
-	srcData = (uint8 *)_objectMouseData + size * cursor + sizeof(dataFileHeader);
-	destData = (uint8 *)_miceData + sizeof(dataFileHeader);
+	srcData = (uint8 *)_objectMouseData + size * cursor + sizeof(DataFileHeader);
+	destData = (uint8 *)_miceData + sizeof(DataFileHeader);
 	memcpy(destData, srcData, size);
 	spriteMouse(0, 5, 5);
 }

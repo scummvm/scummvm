@@ -46,7 +46,7 @@ class MusicBase;
 class Sound;
 class SkyCompact;
 struct Compact;
-struct dataFileHeader;
+struct DataFileHeader;
 struct MegaSet;
 
 #define MAX_SAVE_GAMES 999
@@ -138,13 +138,13 @@ class ConResource {
 public:
 	ConResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
 	virtual ~ConResource(void) {}
-	void setSprite(void *pSpData) { _spriteData = (dataFileHeader*)pSpData; }
+	void setSprite(void *pSpData) { _spriteData = (DataFileHeader*)pSpData; }
 	void setText(uint32 pText) { if (pText) _text = pText + 0x7000; else _text = 0; }
 	void setXY(uint16 x, uint16 y) { _x = x; _y = y; }
 	bool isMouseOver(uint32 mouseX, uint32 mouseY);
 	virtual void drawToScreen(bool doMask);
 
-	dataFileHeader *_spriteData;
+	DataFileHeader *_spriteData;
 	uint32 _numSprites, _curSprite;
 	uint16 _x, _y;
 	uint32 _text;
@@ -174,7 +174,7 @@ public:
 	void drawToScreen(void);
 private:
 	TextResource *_statusText;
-	dataFileHeader *_textData;
+	DataFileHeader *_textData;
 	Text *_skyText;
 	OSystem *_system;
 	uint8 *_screenBuf;
@@ -222,8 +222,8 @@ private:
 	void drawCross(uint16 x, uint16 y);
 
 	uint16 saveRestorePanel(bool allowSave);
-	void setUpGameSprites(const Common::StringList &saveGameNames, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
-	void showSprites(dataFileHeader **nameSprites, bool allowSave);
+	void setUpGameSprites(const Common::StringList &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
+	void showSprites(DataFileHeader **nameSprites, bool allowSave);
 	void handleKeyPress(Common::KeyState kbd, Common::String &textBuf);
 
 	uint32 prepareSaveData(uint8 *destBuf);
@@ -271,7 +271,7 @@ private:
 
 	ConResource *createResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, int16 pX, int16 pY, uint32 pText, uint8 pOnClick, uint8 panelType);
 
-	dataFileHeader *_textSprite;
+	DataFileHeader *_textSprite;
 	TextResource *_text;
 
 	ConResource *_controlPanel, *_exitButton, *_slide, *_slide2, *_slode;

@@ -41,7 +41,7 @@ class Disk;
 class SkyEngine;
 class SkyCompact;
 struct Compact;
-struct dataFileHeader;
+struct DataFileHeader;
 
 #define SCROLL_JUMP		16
 #define VGA_COLOURS		256
@@ -54,7 +54,7 @@ struct dataFileHeader;
 typedef struct {
 	uint16 yCood;
 	Compact *compact;
-	dataFileHeader *sprite;
+	DataFileHeader *sprite;
 } StSortList;
 
 class Screen {

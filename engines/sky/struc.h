@@ -28,20 +28,15 @@
 
 namespace Sky {
 
-struct lowTextManager_t {
+struct DisplayedText {
 	byte *textData;
 	uint32 textWidth;
 	uint16 compactNum;
 };
 
-struct displayText_t {
-	byte *textData;
-	uint32 textWidth;
-};
-
 #include "common/pack-start.h"	// START STRUCT PACKING
 
-struct dataFileHeader {
+struct DataFileHeader {
 	uint16 flag; // bit 0: set for colour data, clear for not
 	// bit 1: set for compressed, clear for uncompressed
 	// bit 2: set for 32 colours, clear for 16 colours

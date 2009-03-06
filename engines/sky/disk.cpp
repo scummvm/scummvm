@@ -120,7 +120,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	cflag = (uint8)((fileFlags >> 23) & 0x1);
 	//if cflag == 0 then file is compressed, 1 == uncompressed
 
-	dataFileHeader *fileHeader = (dataFileHeader*)fileDest;
+	DataFileHeader *fileHeader = (DataFileHeader*)fileDest;
 
 	if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
 		debug(2, "File is RNC compressed.");
@@ -131,7 +131,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		uint8 *uncompDest = (uint8 *)malloc(decompSize);
 
 		int32 unpackLen;
-		void *output, *input = fileDest + sizeof(dataFileHeader);
+		void *output, *input = fileDest + sizeof(DataFileHeader);
 
 		if ((fileFlags >> 22) & 0x1) { //do we include the header?
 			// don't return the file's header
@@ -139,17 +139,17 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 		} else {
 #ifdef SCUMM_BIG_ENDIAN
-			// Convert dataFileHeader to BE (it only consists of 16 bit words)
+			// Convert DataFileHeader to BE (it only consists of 16 bit words)
 			uint16 *headPtr = (uint16 *)fileDest;
-			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
+			for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 #endif
 
-			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
-			output = uncompDest + sizeof(dataFileHeader);
+			memcpy(uncompDest, fileDest, sizeof(DataFileHeader));
+			output = uncompDest + sizeof(DataFileHeader);
 			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 			if (unpackLen)
-				unpackLen += sizeof(dataFileHeader);
+				unpackLen += sizeof(DataFileHeader);
 		}
 
 		debug(3, "UnpackM1 returned: %d", unpackLen);
@@ -169,7 +169,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 #ifdef SCUMM_BIG_ENDIAN
 		if (!cflag) {
 			uint16 *headPtr = (uint16 *)fileDest;
-			for (uint i = 0; i < sizeof(struct dataFileHeader) / 2; i++)
+			for (uint i = 0; i < sizeof(DataFileHeader) / 2; i++)
 				*(headPtr + i) = READ_LE_UINT16(headPtr + i);
 		}
 #endif

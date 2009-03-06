@@ -732,7 +732,7 @@ bool Intro::nextPart(uint16 *&data) {
 		// HACK: Fill the header with silence. We should
 		// probably use _skySound instead of calling playRaw()
 		// directly, but this will have to do for now.
-		memset(vData, 127, sizeof(struct dataFileHeader));
+		memset(vData, 127, sizeof(DataFileHeader));
 		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_voice, vData, _skyDisk->_lastLoadedFileSize, 11025,
 				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, SOUND_VOICE);
 		return true;
@@ -821,8 +821,8 @@ bool Intro::commandFlirt(uint16 *&data) {
 				_skyText->displayText(*data++, _textBuf, true, INTRO_TEXT_WIDTH, 255);
 				break;
 			case IC_SHOW_TEXT:
-				((dataFileHeader*)_textBuf)->s_x = *data++;
-				((dataFileHeader*)_textBuf)->s_y = *data++;
+				((DataFileHeader*)_textBuf)->s_x = *data++;
+				((DataFileHeader*)_textBuf)->s_y = *data++;
 				showTextBuf();
 				break;
 			case IC_REMOVE_TEXT:
@@ -849,14 +849,14 @@ bool Intro::commandFlirt(uint16 *&data) {
 }
 
 void Intro::showTextBuf(void) {
-	uint16 x = ((dataFileHeader*)_textBuf)->s_x;
-	uint16 y = ((dataFileHeader*)_textBuf)->s_y;
-	uint16 width = ((dataFileHeader*)_textBuf)->s_width;
-	uint16 height = ((dataFileHeader*)_textBuf)->s_height;
+	uint16 x = ((DataFileHeader*)_textBuf)->s_x;
+	uint16 y = ((DataFileHeader*)_textBuf)->s_y;
+	uint16 width = ((DataFileHeader*)_textBuf)->s_width;
+	uint16 height = ((DataFileHeader*)_textBuf)->s_height;
 	uint8 *screenBuf = _skyScreen->giveCurrent() + y * GAME_SCREEN_WIDTH + x;
-	memcpy(_saveBuf, _textBuf, sizeof(dataFileHeader));
-	uint8 *saveBuf = _saveBuf + sizeof(dataFileHeader);
-	uint8 *textBuf = _textBuf + sizeof(dataFileHeader);
+	memcpy(_saveBuf, _textBuf, sizeof(DataFileHeader));
+	uint8 *saveBuf = _saveBuf + sizeof(DataFileHeader);
+	uint8 *textBuf = _textBuf + sizeof(DataFileHeader);
 	for (uint16 cnty = 0; cnty < height; cnty++) {
 		memcpy(saveBuf, screenBuf, width);
 		for (uint16 cntx = 0; cntx < width; cntx++)
@@ -871,18 +871,18 @@ void Intro::showTextBuf(void) {
 }
 
 void Intro::restoreScreen(void) {
-	uint16 x = ((dataFileHeader*)_saveBuf)->s_x;
-	uint16 y = ((dataFileHeader*)_saveBuf)->s_y;
-	uint16 width = ((dataFileHeader*)_saveBuf)->s_width;
-	uint16 height = ((dataFileHeader*)_saveBuf)->s_height;
+	uint16 x = ((DataFileHeader*)_saveBuf)->s_x;
+	uint16 y = ((DataFileHeader*)_saveBuf)->s_y;
+	uint16 width = ((DataFileHeader*)_saveBuf)->s_width;
+	uint16 height = ((DataFileHeader*)_saveBuf)->s_height;
 	uint8 *screenBuf = _skyScreen->giveCurrent() + y * GAME_SCREEN_WIDTH + x;
-	uint8 *saveBuf = _saveBuf + sizeof(dataFileHeader);
+	uint8 *saveBuf = _saveBuf + sizeof(DataFileHeader);
 	for (uint16 cnt = 0; cnt < height; cnt++) {
 		memcpy(screenBuf, saveBuf, width);
 		screenBuf += GAME_SCREEN_WIDTH;
 		saveBuf += width;
 	}
-	_system->copyRectToScreen(_saveBuf + sizeof(dataFileHeader), width, x, y, width, height);
+	_system->copyRectToScreen(_saveBuf + sizeof(DataFileHeader), width, x, y, width, height);
 }
 
 bool Intro::escDelay(uint32 msecs) {

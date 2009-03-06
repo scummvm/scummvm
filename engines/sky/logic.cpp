@@ -1766,18 +1766,18 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	while (*p) {
 		uint32 textNum = *p++;
 
-		struct lowTextManager_t lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
+		DisplayedText lowText = _skyText->lowTextManager(textNum, GAME_SCREEN_WIDTH, 0, 241, 0);
 
 		uint8 *data = lowText.textData;
 
 		// stipple the text
 
-		uint32 size = ((dataFileHeader *)data)->s_height * ((dataFileHeader *)data)->s_width;
+		uint32 size = ((DataFileHeader *)data)->s_height * ((DataFileHeader *)data)->s_width;
 		uint32 index = 0;
-		uint32 width = ((dataFileHeader *)data)->s_width;
-		uint32 height = ((dataFileHeader *)data)->s_height;
+		uint32 width = ((DataFileHeader *)data)->s_width;
+		uint32 height = ((DataFileHeader *)data)->s_height;
 
-		data += sizeof(dataFileHeader);
+		data += sizeof(DataFileHeader);
 
 		while (index < size) {
 			if (index % width <= 1)
@@ -2179,7 +2179,6 @@ bool Logic::fnPersonHere(uint32 id, uint32 room, uint32 c) {
 }
 
 bool Logic::fnToggleMouse(uint32 a, uint32 b, uint32 c) {
-
 	_skyCompact->fetchCpt(a)->status ^= ST_MOUSE;
 	return true;
 }
@@ -2319,7 +2318,6 @@ bool Logic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 }
 
 bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
-
 	if (SkyEngine::isDemo() && (sectionNo > 2))
 		_skyControl->showGameQuitMsg();
 
@@ -2378,8 +2376,7 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
-
-	lowTextManager_t creditText = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText creditText = _skyText->lowTextManager(a, 240, 0, 248, true);
 	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
@@ -2391,8 +2388,7 @@ bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
-
-	struct lowTextManager_t textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
+	DisplayedText textInfo = _skyText->lowTextManager(a, 240, 0, 248, true);
 	Compact *textCpt = _skyCompact->fetchCpt(textInfo.compactNum);
 	textCpt->xcood = 168;
 	textCpt->ycood = (uint16)c;
@@ -2414,7 +2410,6 @@ bool Logic::fnLookAt(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction) {
-
 	uint16 cnt;
 	if (buttonAction & 0x8000)
 		for (cnt = LINC_DIGIT_0; cnt <= LINC_DIGIT_9; cnt++)
@@ -2423,7 +2418,7 @@ bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction)
 	if (buttonAction < 10)
 		_scriptVariables[LINC_DIGIT_0 + buttonAction] = textNo;
 
-	lowTextManager_t text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
+	DisplayedText text = _skyText->lowTextManager(textNo, 220, 0, 215, false);
 
 	Compact *textCpt = _skyCompact->fetchCpt(text.compactNum);
 
@@ -2511,7 +2506,6 @@ bool Logic::fnPrintf(uint32 a, uint32 b, uint32 c) {
 }
 
 void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 base) {
-
 	animNum += target->megaSet / NEXT_MEGA_SET;
 	animNum &= 0xFF;
 
@@ -2543,7 +2537,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
 		// form the text sprite, if player wants subtitles or
 		// if we couldn't find the speech file
-		struct lowTextManager_t textInfo;
+		DisplayedText textInfo;
 		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColour, true);
 		Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
 		target->spTextId = textInfo.compactNum;	//So we know what text to kill
@@ -2556,8 +2550,8 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			//create the x coordinate for the speech text
 			//we need the talkers sprite information
 			byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
-			uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
-			uint16 width = (((struct dataFileHeader *)targetGfx)->s_width >> 1);
+			uint16 xPos = target->xcood + ((DataFileHeader *)targetGfx)->s_offset_x;
+			uint16 width = (((DataFileHeader *)targetGfx)->s_width >> 1);
 
 			xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
 
@@ -2571,7 +2565,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			}
 
 			textCompact->xcood = xPos;
-			uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
+			uint16 yPos = target->ycood + ((DataFileHeader *)targetGfx)->s_offset_y - 6 - ((DataFileHeader *)textGfx)->s_height;
 
 			if (yPos < TOP_LEFT_Y)
 				yPos = TOP_LEFT_Y;
