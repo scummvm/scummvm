@@ -4023,7 +4023,7 @@ void write_songlib_t(Common::WriteStream *fh, songlib_t const *songlib) {
 	WSprintf(fh, "list = \n");
 	WSprintf(fh, "[\n");
 	while (seeker) {
-		seeker->restore_time = seeker->it->get_timepos(seeker->it);
+		seeker->restore_time = seeker->it->getTimepos();
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
 	_cfsml_write_song_t(fh, seeker);
@@ -5120,7 +5120,7 @@ static void reconstruct_sounds(EngineState *s) {
 		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
 		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = (SongIterator *)new_fast_forward_iterator(base, seeker->restore_time);
-		ff->init(ff);
+		ff->init();
 
 		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
 		songit_handle_message(&ff, msg);

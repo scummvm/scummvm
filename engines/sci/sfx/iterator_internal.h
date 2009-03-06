@@ -75,14 +75,15 @@ struct SongIteratorChannel {
 	byte last_cmd;	/* Last operation executed, for running status */
 };
 
-struct BaseSongIterator : public SongIterator {
+class BaseSongIterator : public SongIterator {
+public:
 	int polyphony[MIDI_CHANNELS]; /* # of simultaneous notes on each */
 	int importance[MIDI_CHANNELS]; /* priority rating for each channel, 0 means unrated. */
 
 
 	int ccc; /* Cumulative cue counter, for those who need it */
 	unsigned char resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
-	int device_id; /* ID of the device we generating events for */
+	int _deviceId; /* ID of the device we generating events for */
 	int active_channels; /* Number of active channels */
 	unsigned int _size; /* Song size */
 	unsigned char *data;
@@ -98,10 +99,15 @@ struct BaseSongIterator : public SongIterator {
 class Sci0SongIterator : public BaseSongIterator {
 public:
 	SongIteratorChannel channel;
-	int delay_remaining; /* Number of ticks that haven't been polled yet */
+	int _delayRemaining; /* Number of ticks that haven't been polled yet */
 
 public:
-	Audio::AudioStream *get_pcm_feed();
+	int nextCommand(byte *buf, int *result);
+	Audio::AudioStream *getAudioStream();
+	SongIterator *handleMessage(SongIteratorMessage msg);
+	void init();
+	void cleanup();
+	int getTimepos();
 };
 
 
@@ -122,21 +128,26 @@ struct Sci1Sample {
 
 class Sci1SongIterator : public BaseSongIterator {
 public:
-	SongIteratorChannel channels[MIDI_CHANNELS];
+	SongIteratorChannel _channels[MIDI_CHANNELS];
 
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
 	** channel_offset[i] points to a delta time object. */
 
-	int initialised; /* Whether the MIDI channel setup has been initialised */
-	int channels_nr; /* Number of channels actually used */
-	Sci1Sample *next_sample;
-	int channels_looped; /* Number of channels that are ready to loop */
+	int _initialised; /* Whether the MIDI channel setup has been initialised */
+	int _numChannels; /* Number of channels actually used */
+	Sci1Sample *_nextSample;
+	int _numLoopedChannels; /* Number of channels that are ready to loop */
 
-	int delay_remaining; /* Number of ticks that haven't been polled yet */
+	int _delayRemaining; /* Number of ticks that haven't been polled yet */
 	int hold;
 
 public:
-	Audio::AudioStream *get_pcm_feed();
+	int nextCommand(byte *buf, int *result);
+	Audio::AudioStream *getAudioStream();
+	SongIterator *handleMessage(SongIteratorMessage msg);
+	void init();
+	void cleanup();
+	int getTimepos();
 };
 
 #define PLAYMASK_NONE 0x0
@@ -170,7 +181,10 @@ public:
 	int delta; /* Remaining time */
 
 public:
-	Audio::AudioStream *get_pcm_feed();
+	int nextCommand(byte *buf, int *result);
+	Audio::AudioStream *getAudioStream();
+	SongIterator *handleMessage(SongIteratorMessage msg);
+	int getTimepos();
 };
 
 
@@ -218,10 +232,14 @@ public:
 		byte channel_remap[MIDI_CHANNELS];
 		/* Remapping for channels */
 
-	} children[2];
+	} _children[2];
 
 public:
-	Audio::AudioStream *get_pcm_feed();
+	int nextCommand(byte *buf, int *result);
+	Audio::AudioStream *getAudioStream();
+	SongIterator *handleMessage(SongIteratorMessage msg);
+	void init();
+	int getTimepos() { return 0; }
 };
 
 } // End of namespace Sci

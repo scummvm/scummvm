@@ -159,7 +159,7 @@ static void _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
 
 	case SOUND_STATUS_STOPPED:
 		/* Reset */
-		song->it->init(song->it);
+		song->it->init();
 		break;
 
 	case SOUND_STATUS_SUSPENDED:
@@ -342,7 +342,7 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
 #endif
 	if (g_system->getMixer()->isReady()) {
-		Audio::AudioStream *newfeed = it->get_pcm_feed();
+		Audio::AudioStream *newfeed = it->getAudioStream();
 		if (newfeed) {
 			g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
 			return 1;
@@ -559,7 +559,7 @@ int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_
 		return -1;
 	}
 
-	it->init(it);
+	it->init();
 
 	/* If we're already playing this, stop it */
 	/* Tell player to shut up */

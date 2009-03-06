@@ -174,65 +174,62 @@ public:
 	}
 	virtual ~SongIterator() {}
 
-	/* Reads the next MIDI operation _or_ delta time
-	** Parameters: (SongIterator *) self
-	**             (byte *) buf: The buffer to write to (needs to be able to
-	**                           store at least 4 bytes)
-	** Returns   : (int) zero if a MIDI operation was written, SI_FINISHED
-	**                   if the song has finished playing, SI_LOOP if looping
-	**                   (after updating the loop variable), SI_CUE if we found
-	**                   a cue, SI_PCM if a PCM was found, or the number of ticks
-	**                   to wait before this function should be called next.
-	**             (int) *result: Number of bytes written to the buffer
-	**                   (equals the number of bytes that need to be passed
-	**                   to the lower layers) for 0, the cue value for SI_CUE,
-	**                   or the number of loops remaining for SI_LOOP.
-	**   If SI_PCM is returned, get_pcm() may be used to retrieve the associated
-	** PCM, but this must be done before any subsequent calls to next().
-	*/
-	int (*next)(SongIterator *self,
-	            unsigned char *buf, int *result);
+	/**
+	 * Reads the next MIDI operation _or_ delta time.
+	 * Parameters: (SongIterator *) self
+	 *             (byte *) buf: The buffer to write to (needs to be able to
+	 *                           store at least 4 bytes)
+	 * Returns   : (int) zero if a MIDI operation was written, SI_FINISHED
+	 *                   if the song has finished playing, SI_LOOP if looping
+	 *                   (after updating the loop variable), SI_CUE if we found
+	 *                   a cue, SI_PCM if a PCM was found, or the number of ticks
+	 *                   to wait before this function should be called next.
+	 *             (int) *result: Number of bytes written to the buffer
+	 *                   (equals the number of bytes that need to be passed
+	 *                   to the lower layers) for 0, the cue value for SI_CUE,
+	 *                   or the number of loops remaining for SI_LOOP.
+	 *   If SI_PCM is returned, get_pcm() may be used to retrieve the associated
+	 * PCM, but this must be done before any subsequent calls to next().
+	 */
+	virtual int nextCommand(byte *buf, int *result) = 0;
 
 	/**
 	 Checks for the presence of a pcm sample.
 	 * @return NULL if no PCM data was found, an AudioStream otherwise.
 	 */
-	virtual Audio::AudioStream *get_pcm_feed() = 0;
+	virtual Audio::AudioStream *getAudioStream() = 0;
 
+	/**
+	 * Handles a message to the song iterator.
+	 * Parameters: (SongIterator *) self
+	 *             (song_iterator_messag_t) msg: The message to handle
+	 * Returns   : (SongIterator *) NULL if the message was not understood,
+	 *             self if the message could be handled, or a new song iterator
+	 *             if the current iterator had to be morphed (but the message could
+	 *             still be handled)
+	 * This function is not supposed to be called directly; use
+	 * songit_handle_message() instead. It should not recurse, since songit_handle_message()
+	 * takes care of that and makes sure that its delegate received the message (and
+	 * was morphed) before self.
+	 */
+	virtual SongIterator *handleMessage(SongIteratorMessage msg) = 0;
 
-	/* Handles a message to the song iterator
-	** Parameters: (SongIterator *) self
-	**             (song_iterator_messag_t) msg: The message to handle
-	** Returns   : (SongIterator *) NULL if the message was not understood,
-	**             self if the message could be handled, or a new song iterator
-	**             if the current iterator had to be morphed (but the message could
-	**             still be handled)
-	** This function is not supposed to be called directly; use
-	** songit_handle_message() instead. It should not recurse, since songit_handle_message()
-	** takes care of that and makes sure that its delegate received the message (and
-	** was morphed) before self.
-	*/
-	SongIterator *
-				(* handle_message)(SongIterator *self, SongIteratorMessage msg);
+	/**
+	 * Resets/initializes the sound iterator.
+	 */
+	virtual void init() {}
 
+	/**
+	 * Frees any content of the iterator structure.
+	 * Does not physically free(self) yet. May be NULL if nothing needs to be done.
+	 * Must not recurse on its delegate.
+	 */
+	virtual void cleanup() {}
 
-	/* Resets/initializes the sound iterator
-	** Parameters: (SongIterator *) self
-	** Returns   : (void)
-	*/
-	void (*init)(SongIterator *self);
-
-	/* Frees any content of the iterator structure
-	** Parameters: (SongIterator *) self
-	** Does not physically free(self) yet. May be NULL if nothing needs to be done.
-	** Must not recurse on its delegate.
-	*/
-	void (*cleanup)(SongIterator *self);
-
-	/* Gets the song position to store in a savegame
-	** Parameters: (SongIterator *) self
-	*/
-	int (*get_timepos)(SongIterator *self);
+	/**
+	 * Gets the song position to store in a savegame.
+	 */
+	virtual int getTimepos() = 0;
 
 };
 

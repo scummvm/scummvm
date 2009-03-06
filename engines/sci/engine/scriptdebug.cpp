@@ -2427,7 +2427,7 @@ static int c_is_sample(EngineState *s) {
 		return 1;
 	}
 
-	if ((data = songit->get_pcm_feed())) {
+	if ((data = songit->getAudioStream())) {
 /*
 		sciprintf("\nIs sample (encoding %dHz/%s/%04x).\n", data->conf.rate, (data->conf.stereo) ?
 		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
