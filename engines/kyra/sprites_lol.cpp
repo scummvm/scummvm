@@ -312,7 +312,7 @@ int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, 
 	int xOffs = 0;
 	int yOffs = 0;
 	int flag = 0;
-	
+
 	int r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y), x, y, monsterWidth, testFlag, wallFlag);
 	if (r)
 		return r;
@@ -416,7 +416,7 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 		return r;
 	else if (_characters[id].skillLevels[1] <= 7)
 		return (r- (r >> 2));
-	
+
 	return (r- (r >> 1));
 }
 
@@ -438,7 +438,7 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 	uint16 b = _levelBlockProperties[block].itemMonsterIndex;
 	while (b & 0x8000) {
 		MonsterInPlay *monster = &_monsters[b & 0x7fff];
-		
+
 		if (monster->mode < 13) {
 			int r = checkMonsterSpace(x, y, monster->x, monster->y);
 			if ((monsterWidth + monster->properties->maxWidth) > r)
@@ -460,7 +460,7 @@ bool LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
 
 void LoLEngine::drawMonstersAndItems(int block) {
 	LevelBlockProperty *l = _curBlockCaps[block];
-	uint16 s = l->itemMonsterIndex;		
+	uint16 s = l->itemMonsterIndex;
 	ItemInPlay *i = findItem(s);
 
 	if (l->direction != _currentDirection) {
@@ -491,7 +491,7 @@ void LoLEngine::drawMonstersAndItems(int block) {
 }
 
 void LoLEngine::drawMonster(uint16 id) {
-	MonsterInPlay *m = &_monsters[id];	
+	MonsterInPlay *m = &_monsters[id];
 	int16 flg = _monsterDirFlags[(_currentDirection << 2) + m->facing];
 	int curFrm = getMonsterCurFrame(m, flg & 0xffef);
 
@@ -505,12 +505,12 @@ void LoLEngine::drawMonster(uint16 id) {
 		bool flip = m->properties->flags & 0x200 ? true : false;
 		flg &= 0x10;
 		uint8 *shp = _monsterShapes[(m->properties->shapeIndex << 4) + curFrm];
-		
+
 		if (m->properties->flags & 0x800)
 			flg |= 0x20;
 
 		uint8 *ovl1 = d ? _monsterPalettes[(m->properties->shapeIndex << 4) + (curFrm & 0x0f)] + (shp[10] * (d - 1)) : 0;
-		uint8 *ovl2 = drawItemOrMonster(shp, ovl1, m->x + _monsterLevelOffs[m->level << 1], m->y + _monsterLevelOffs[(m->level << 1) + 1], 0, 0, flg | 1, -1, flip);
+		uint8 *ovl2 = drawItemOrMonster(shp, ovl1, m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], 0, 0, flg | 1, -1, flip);
 
 		for (int i = 0; i <	4; i++) {
 			int v = m->field_2A[i] - 1;
@@ -536,9 +536,9 @@ void LoLEngine::drawMonster(uint16 id) {
 		int dH = _screen->getShapeScaledHeight(shp, _dmScaleH) >> 1;
 
 		int a = (m->mode == 13) ? (m->field_15 << 1) : (m->properties->might / (m->field_1B & 0x7fff));
-		
+
 		shp = _gameShapes[6];
-		
+
 		int cF = m->properties->flags & 0xc000;
 		if (cF == 0x4000)
 			cF = 63;
@@ -550,7 +550,7 @@ void LoLEngine::drawMonster(uint16 id) {
 			cF = 0;
 
 		uint8 *tbl = new uint8[256];
-		if (cF) {			
+		if (cF) {
 			for (int i = 0; i < 256; i++) {
 				tbl[i] = i;
 				if (i < 2 || i > 7)
@@ -772,7 +772,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		r = 7 - ((r / 3) - 1);
 		r = CLIP(r, 0, 7);
 		ovl = _screen->getLevelOverlay(r);
-	} else {		
+	} else {
 		memset (tmpOvl + 1, tblValue, 15);
 		table = tmpOvl;
 		ovl = _screen->getLevelOverlay(7);
@@ -829,7 +829,7 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int16 &x2, int16 &y2, 
 
 	if (flip)
 		y2 = ((120 - y2) >> 1) + _screen->getShapeScaledHeight(shape, _dmScaleH);
-	else 
+	else
 		y2 -= (_screen->getShapeScaledHeight(shape, _dmScaleH) >> 1);
 
 	return l;
@@ -868,8 +868,12 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 	if ((s & 1) && (monster->flags & 0x10))
 		setMonsterMode(monster, 7);
 
-	////
-	// TODO
+	if ((monster->mode != 11) && (monster->mode != 14)) {
+		if (!(_rnd.getRandomNumberRng(1, 100) & 3)) {
+			monster->shiftStep = (++monster->shiftStep) & 0x0f;
+			checkSceneUpdateNeed(monster->blockPropertyIndex);
+		}
+	}
 
 	switch (monster->mode) {
 		case 0:
@@ -923,7 +927,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 void LoLEngine::moveMonster(MonsterInPlay *monster) {
 	static const int8 turnPos[] = { 0, 2, 6, 6, 0, 2, 4, 4, 2, 2, 4, 6, 0, 0, 4, 6, 0 };
 	if (monster->x != monster->destX || monster->y != monster->destY) {
-		walkMonster(monster);		
+		walkMonster(monster);
 	} else if (monster->direction != monster->destDirection) {
 		int i = (monster->facing << 2) + (monster->destDirection >> 1);
 		setMonsterDirection(monster, turnPos[i]);
@@ -935,7 +939,7 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 		return;
 
 	int s = walkMonsterCalcNextStep(monster);
-	
+
 	if (s == -1) {
 		if (walkMonsterCheckDest(monster->x, monster->y, monster, 4) != 1)
 			return;
@@ -951,7 +955,7 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 						return;
 				}
 			}
-		}		
+		}
 	}
 
 	int fx = 0;
@@ -973,7 +977,7 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 	const int8 *tbl = _monsterShiftAlt ? walkMonsterTable2 : walkMonsterTable1;
 
 	int sx = monster->x;
-	int sy = monster->y;	
+	int sy = monster->y;
 	int s = monster->direction;
 	int d = calcMonsterDirection(monster->x, monster->y, monster->destX, monster->destY);
 
@@ -1002,10 +1006,10 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 			continue;
 
 		uint8 w = _levelBlockProperties[_monsterCurBlock].walls[(s >> 1) ^ 2];
-		
+
 		if (_wllWallFlags[w] & 0x20) {
 			if (_wllBuffer3[w] == 5)
-				openDoorSub2(_monsterCurBlock, 1);
+				openCloseDoor(_monsterCurBlock, 1);
 		}
 
 		if (_wllWallFlags[w] & 8)
@@ -1017,9 +1021,9 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 
 int LoLEngine::getMonsterDistance(uint16 block1, uint16 block2) {
 	int8 b1x = block1 & 0x1f;
-	int8 b1y = (block1 >> 8) & 0x1f;
+	int8 b1y = block1 >> 5;
 	int8 b2x = block2 & 0x1f;
-	int8 b2y = (block2 >> 8) & 0x1f;
+	int8 b2y = block2 >> 5;
 
 	uint8 dy = ABS(b2y - b1y);
 	uint8 dx = ABS(b2x - b1x);
@@ -1030,8 +1034,36 @@ int LoLEngine::getMonsterDistance(uint16 block1, uint16 block2) {
 	return (dx << 1) + dy;
 }
 
-int LoLEngine::walkMonster_s3(uint16 monsterBlock, int unk1, int unk2, uint16 curBlock) {
-	return 0;
+int LoLEngine::walkMonster_s3(uint16 monsterBlock, int direction, int distance, uint16 curBlock) {
+	int mdist = getMonsterDistance(curBlock, monsterBlock);
+
+	if (mdist > distance)
+		return 5;
+
+	int dir = calcMonsterDirection(monsterBlock & 0x1f, monsterBlock >> 5, curBlock & 0x1f, curBlock >> 5);
+	if ((dir & 1) || ((dir << 1) != direction))
+		return 5;
+
+	if (((monsterBlock & 0x1f) != (curBlock & 0x1f)) || ((monsterBlock & 0xffe0) != (curBlock & 0xffe0)))
+		return 5;
+
+	if (distance < 0)
+		return 5;
+
+	for (int i = 0; i < distance; i++) {
+		int p = calcNewBlockPosition(monsterBlock, direction);
+
+		if (p == curBlock)
+			return direction;
+
+		if (_wllWallFlags[_levelBlockProperties[p].walls[direction ^ 2]] & 2)
+			return 5;
+
+		if (_levelBlockProperties[p].itemMonsterIndex & 0x8000)
+			return 5;
+	}
+
+	return 5;
 }
 
 int LoLEngine::walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk) {

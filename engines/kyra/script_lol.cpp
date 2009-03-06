@@ -35,7 +35,7 @@
 namespace Kyra {
 
 void LoLEngine::runInitScript(const char *filename, int optionalFunc) {
-	_suspendScript = true;	
+	_suspendScript = true;
 	EMCData scriptData;
 	EMCState scriptState;
 	memset(&scriptData, 0, sizeof(EMCData));
@@ -449,7 +449,6 @@ int LoLEngine::olol_setUnkArrayVal(EMCState *script) {
 
 int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	//uint16 a = stackPos(1);
 	uint16 b = stackPos(2);
 
 	switch (stackPos(0)) {
@@ -539,10 +538,10 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
 	uint16 w = _monsterProperties[stackPos(4)].maxWidth;
-	
+
 	if (checkBlockBeforeMonsterPlacement(x, y, w, 7, 7))
 		return -1;
-	
+
 	for (uint8 i = 0; i < 30; i++) {
 		MonsterInPlay *l = &_monsters[i];
 		if (l->might || l->mode == 13)
@@ -577,7 +576,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		for (int ii = 0; ii < 4; ii++)
 			l->field_2A[ii] = stackPos(7 + ii);
 
-		checkSceneUpdateNeed(l->blockPropertyIndex);		
+		checkSceneUpdateNeed(l->blockPropertyIndex);
 		return i;
 	}
 
@@ -648,11 +647,10 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 int LoLEngine::olol_moveMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	MonsterInPlay *m = &_monsters[stackPos(0)];
-	
+
 	if (m->mode == 1 || m->mode == 2) {
 		calcCoordinates(m->destX, m->destY, stackPos(1), stackPos(2), stackPos(3));
 		m->destDirection = stackPos(4) << 1;
-
 		if (m->x != m->destX || m->y != m->destY)
 			setMonsterDirection(m, calcMonsterDirection(m->x, m->y, m->destX, m->destY));
 	}
@@ -951,6 +949,12 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 			break;
 	}
 
+	return 1;
+}
+
+int LoLEngine::tlol_update(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_update(%p, %p)", (const void*)tim, (const void*)param);
+	update();
 	return 1;
 }
 
@@ -1296,7 +1300,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x08
 	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_update);
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
 

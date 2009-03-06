@@ -230,7 +230,7 @@ enum kKyraResources {
 	kLolCharDefsAkshel,
 	kLolExpRequirements,
 	kLolMonsterModifiers,
-	kLolMonsterLevelOffsets,
+	kLolMonsterShiftOffsets,
 	kLolMonsterDirFlags,
 	kLolMonsterScaleY,
 	kLolMonsterScaleX,

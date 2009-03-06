@@ -189,6 +189,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
+	memset(&_openDoorState, 0, sizeof(OpenDoorState) * 3);
 
 	_pageBuffer1 = _pageBuffer2 = 0;
 
@@ -212,8 +213,8 @@ LoLEngine::~LoLEngine() {
 	delete _gui;
 	_gui = 0;
 	delete _tim;
-	_tim = 0;	
-	delete _txt;	
+	_tim = 0;
+	delete _txt;
 	_txt = 0;
 
 	delete[] _itemsInPlay;
@@ -359,7 +360,7 @@ Common::Error LoLEngine::init() {
 	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
 
 	_characters = new LoLCharacter[4];
-	memset(_characters, 0, sizeof(LoLCharacter) * 3);
+	memset(_characters, 0, sizeof(LoLCharacter) * 4);
 
 	if (!_sound->init())
 		error("Couldn't init sound");
@@ -752,16 +753,6 @@ void LoLEngine::startupNew() {
 	_screen->showMouse();
 }
 
-void LoLEngine::enableSysTimer(int sysTimer) {
-	if (sysTimer == 2)
-		_timer->pause(false);
-}
-
-void LoLEngine::disableSysTimer(int sysTimer) {
-	if (sysTimer == 2)
-		_timer->pause(true);
-}
-
 void LoLEngine::runLoop() {
 	enableSysTimer(2);
 
@@ -790,7 +781,7 @@ void LoLEngine::runLoop() {
 			checkForPartyDeath(_partyDeathFlag);
 			_partyDeathFlag = -1;
 		}*/
-		
+
 		delay(_tickLength);
 	}
 }
@@ -1168,6 +1159,7 @@ void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 	}
 
 	_hideInventory = 0;
+	enableSysTimer(2);
 }
 
 void LoLEngine::resetPortraitsArea() {
@@ -1175,7 +1167,7 @@ void LoLEngine::resetPortraitsArea() {
 	if (!textEnabled() || (!(_hideControls & 2)))
 		timerUpdatePortraitAnimations(1);
 
-	disableSysTimer(2);		
+	disableSysTimer(2);
 }
 
 void LoLEngine::fadeText() {
@@ -1368,7 +1360,7 @@ void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 	if (block != _currentBlock) {
 		static const int8 blockShiftTable[] = { -32, -31, 1, 33, 32, 31, -1, -33 };
 		uint16 cbl = _currentBlock;
-		
+
 		for (int i = 3; i > 0; i--) {
 			int dir = calcMonsterDirection(cbl & 0x1f, cbl >> 5, block & 0x1f, block >> 5);
 			cbl += blockShiftTable[dir];
@@ -1447,7 +1439,7 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 			charId = 0;
 		}
 	}
-	
+
 	bool r = snd_playCharacterSpeech(track, charId, 0);
 
 	if (r && redraw) {
@@ -1465,7 +1457,7 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
-	
+
 	if ((charId == -1) || (!(charId & 0x70)))
 		charId = ch = (charId == 1) ? (_selectedCharacter ? _characters[_selectedCharacter].id : 0) : charId;
 	else
@@ -1502,7 +1494,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 		_updatePortraitSpeechAnimDuration = strlen(str) >> 1;
 		_updateCharV3 = unk1;
 	}
-	
+
 	if (script)
 		snd_playCharacterSpeech(script->stack[script->sp + 2], ch, 0);
 	else if (paramList)
@@ -1519,7 +1511,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 			_txt->printDialogueText(4, str, script, paramList, paramIndex);
 			_screen->modifyScreenDim(4, 11, 123, 28, 47);
 
-		} else if (mode == 2) {			
+		} else if (mode == 2) {
 			_screen->setScreenDim(4);
 			_screen->clearDim(4);
 			_screen->modifyScreenDim(4, 9, 133, 30, 60);
@@ -1536,7 +1528,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 }
 
 void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
-	uint16 *c = &monster->assignedItems;	
+	uint16 *c = &monster->assignedItems;
 	while (*c)
 		c = &_itemsInPlay[*c].next;
 	*c = item;
@@ -1567,7 +1559,7 @@ bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
 		return true;
 	} else if (_spellProperties[spellNum + 1].unkArr[spellLevel] >= _characters[charNum].hitPointsCur) {
 		_txt->printMessage(2, getLangString(0x4179), _characters[charNum].name);
-		return true;		
+		return true;
 	}
 
 	return false;

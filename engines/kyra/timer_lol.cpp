@@ -35,8 +35,8 @@ namespace Kyra {
 
 void LoLEngine::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "LoLEngine::setupTimers()");
-	
-	_timer->addTimer(0, TimerV2(timerProcessOpenDoor), 15, true);	
+
+	_timer->addTimer(0, TimerV2(timerProcessDoors), 15, true);
 	_timer->addTimer(0x10, TimerV2(timerProcessMonsters), 6, true);
 	_timer->addTimer(0x11, TimerV2(timerProcessMonsters), 6, true);
 	_timer->setNextRun(0x11, _system->getMillis() + 3 * _tickLength);
@@ -56,13 +56,56 @@ void LoLEngine::enableTimer(int id) {
 	_timer->setNextRun(id, _system->getMillis() + _timer->getDelay(id) * _tickLength);
 }
 
-void LoLEngine::timerProcessOpenDoor(int timerNum) {
+void LoLEngine::enableSysTimer(int sysTimer) {
+	if (sysTimer != 2)
+		return;
 
+	for (int i = 0; i < _numClock2Timers; i++)
+		_timer->pauseSingleTimer(_clock2Timers[i], false);
+}
+
+void LoLEngine::disableSysTimer(int sysTimer) {
+	if (sysTimer != 2)
+		return;
+
+	for (int i = 0; i < _numClock2Timers; i++)
+		_timer->pauseSingleTimer(_clock2Timers[i], true);
+}
+
+void LoLEngine::timerProcessDoors(int timerNum) {
+	for (int i = 0; i < 3; i++) {
+		uint16 b = _openDoorState[i].block;
+		if (!b)
+			continue;
+
+		int v = _openDoorState[i].state;
+		int c = _openDoorState[i].field_2;
+
+		_levelBlockProperties[b].walls[c] += v;
+		_levelBlockProperties[b].walls[c ^ 2] += v;
+
+		int snd = 31;
+
+		int flg = _wllWallFlags[_levelBlockProperties[b].walls[c]];
+		if (flg & 0x20)
+			snd = 33;
+		else if (v == -1)
+			snd = 32;
+
+		if (!(_updateFlags & 1)) {
+			snd_processEnvironmentalSoundEffect(snd, b);
+			if (!checkSceneUpdateNeed(b))
+				updateEnvironmentalSfx(0);
+		}
+
+		if (flg & 0x30)
+			_openDoorState[i].block = 0;
+	}
 }
 
 void LoLEngine::timerProcessMonsters(int timerNum) {
-	//if (!_updateMonsters)
-	//	return;
+//	if (!_updateMonsters)
+//		return;
 
 	for (int i = timerNum & 0x0f; i < 30; i += 2)
 		updateMonster(&_monsters[i]);

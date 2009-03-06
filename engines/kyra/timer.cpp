@@ -108,6 +108,7 @@ void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabl
 	newTimer.enabled = enabled ? 1 : 0;
 	newTimer.lastUpdate = newTimer.nextRun = 0;
 	newTimer.func = func;
+	newTimer.pauseStartTime = 0;
 
 	_timers.push_back(newTimer);
 }
@@ -215,6 +216,28 @@ uint32 TimerManager::getNextRun(uint8 id) const {
 
 	warning("TimerManager::getNextRun: No timer %d", id);
 	return 0xFFFFFFFF;
+}
+
+void TimerManager::pauseSingleTimer(uint8 id, bool p) {
+	debugC(9, kDebugLevelTimer, "TimerManager::pauseSingleTimer(%d, %d)", id, (int) p);
+	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
+	
+	if (timer == _timers.end()) {
+		warning("TimerManager::pauseSingleTimer: No timer %d", id);
+		return;
+	}
+	
+	if (p) {
+		timer->pauseStartTime = _system->getMillis();
+		timer->enabled = 0;
+	} else if (timer->pauseStartTime) {
+		int32 elapsedTime = _system->getMillis() - timer->pauseStartTime;
+		timer->enabled = 1;
+		timer->lastUpdate += elapsedTime;
+		timer->nextRun += elapsedTime;
+		resync();
+		timer->pauseStartTime = 0;
+	}	
 }
 
 bool TimerManager::isEnabled(uint8 id) const {

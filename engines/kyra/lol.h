@@ -127,7 +127,7 @@ struct MonsterInPlay {
 	uint16 blockPropertyIndex;
 	uint16 x;
 	uint16 y;
-	int8 level;
+	int8 shiftStep;
 	uint16 destX;
 	uint16 destY;
 	uint8 destDirection;
@@ -306,7 +306,7 @@ private:
 	void setupTimers();
 	void enableTimer(int id);
 
-	void timerProcessOpenDoor(int timerNum);
+	void timerProcessDoors(int timerNum);
 	void timerProcessMonsters(int timerNum);
 	void timerSub3(int timerNum);
 	void timerSub4(int timerNum);
@@ -315,6 +315,9 @@ private:
 	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
 	void timerFadeMessageText(int timerNum);
+
+	static const uint8 _clock2Timers[];
+	static const uint8 _numClock2Timers;
 
 	// sound
 	void loadTalkFile(int index);
@@ -530,12 +533,12 @@ private:
 	int olol_loadLangFile(EMCState *script);
 	int olol_playSoundEffect(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
-	int olol_playCharacterScriptChat(EMCState *script);	
+	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
-	int olol_checkForMonsterMode1(EMCState *script);	
+	int olol_checkForMonsterMode1(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_setDoorState(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
@@ -558,6 +561,7 @@ private:
 	int tlol_initDialogueSequence(const TIM *tim, const uint16 *param);
 	int tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param);
 	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
+	int tlol_update(const TIM *tim, const uint16 *param);
 	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);
 
 	Common::Array<const TIMOpcode*> _timIngameOpcodes;
@@ -720,11 +724,10 @@ private:
 	int clickedWallOnlyScript(uint16 block);
 	int clickedDoorSwitch(uint16 block, uint16 direction);
 	int clicked6(uint16 block, uint16 direction);
-	
+
 	bool clickedShape(int shapeIndex);
-	void openDoorSub1(uint16 block, int unk);
-	void openDoorSub2(uint16 block, int unk);
-	int _emcDoorState;
+	void processDoorSwitch(uint16 block, int unk);
+	void openCloseDoor(uint16 block, int openClose);
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -736,6 +739,15 @@ private:
 
 	int smoothScrollDrawSpecialShape(int pageNum);
 	void setLF2(int block);
+
+	struct OpenDoorState {
+		uint16 block;
+		int8 field_2;
+		int8 state;
+	};
+
+	OpenDoorState _openDoorState[3];
+	int _emcDoorState;
 
 	uint8 *_scrollSceneBuffer;
 	uint32 _smoothScrollTimer;
@@ -920,7 +932,7 @@ private:
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
-	void drawMonstersAndItems(int block);	
+	void drawMonstersAndItems(int block);
 	void drawMonster(uint16 id);
 	int getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags);
 	void recalcItemMonsterPositions(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag);
@@ -930,13 +942,13 @@ private:
 	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
 	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int w, int h, int flags, int tblValue, bool flip);
 	int calcDrawingLayerParameters(int srcX, int srcY, int16 &x2, int16 &y2, int16 &w, int16 &h, uint8 *shape, int flip);
-	
+
 	void updateMonster(MonsterInPlay *monster);
 	void moveMonster(MonsterInPlay *monster);
 	void walkMonster(MonsterInPlay *monster);
 	int walkMonsterCalcNextStep(MonsterInPlay *monster);
 	int getMonsterDistance(uint16 block1, uint16 block2);
-	int walkMonster_s3(uint16 monsterBlock, int unk1, int unk2, uint16 curBlock);
+	int walkMonster_s3(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
 	int walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk);
 	void walkMonsterGetNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 unk);
 
@@ -953,8 +965,8 @@ private:
 
 	const uint16 *_monsterModifiers;
 	int _monsterModifiersSize;
-	const int8 *_monsterLevelOffs;
-	int _monsterLevelOffsSize;
+	const int8 *_monsterShiftOffs;
+	int _monsterShiftOffsSize;
 	const uint8 *_monsterDirFlags;
 	int _monsterDirFlagsSize;
 	const int8 *_monsterScaleX;

@@ -391,7 +391,7 @@ bool StaticResource::init() {
 		{ kLolCharDefsAkshel, kLolRawDataBe16, "CHAKSHEL.DEF" },
 		{ kLolExpRequirements, kLolRawDataBe32, "EXPERIENCE.DEF" },
 		{ kLolMonsterModifiers, kLolRawDataBe16, "MONSTMOD.DEF" },
-		{ kLolMonsterLevelOffsets, kRawData, "MONSTLVL.DEF" },
+		{ kLolMonsterShiftOffsets, kRawData, "MONSTLVL.DEF" },
 		{ kLolMonsterDirFlags, kRawData, "MONSTDIR.DEF" },
 		{ kLolMonsterScaleY, kRawData, "MONSTZY.DEF" },
 		{ kLolMonsterScaleX, kRawData, "MONSTZX.DEF" },
@@ -1762,7 +1762,7 @@ void LoLEngine::initStaticResource() {
 	_charDefsAkshel = _staticres->loadRawDataBe16(kLolCharDefsAkshel, _charDefsAkshelSize);
 	_expRequirements = (const int32*)_staticres->loadRawDataBe32(kLolExpRequirements, _expRequirementsSize);
 	_monsterModifiers = _staticres->loadRawDataBe16(kLolMonsterModifiers, _monsterModifiersSize);
-	_monsterLevelOffs = (const int8*)_staticres->loadRawData(kLolMonsterLevelOffsets, _monsterLevelOffsSize);
+	_monsterShiftOffs = (const int8*)_staticres->loadRawData(kLolMonsterShiftOffsets, _monsterShiftOffsSize);
 	_monsterDirFlags = _staticres->loadRawData(kLolMonsterDirFlags, _monsterDirFlagsSize);
 	_monsterScaleX = (const int8*)_staticres->loadRawData(kLolMonsterScaleX, _monsterScaleXSize);
 	_monsterScaleY = (const int8*)_staticres->loadRawData(kLolMonsterScaleY, _monsterScaleYSize);
@@ -2987,6 +2987,13 @@ const uint8 LoLEngine::_charInfoFrameTable[] = {
 	0xB, 0xA, 0x9, 0x8, 0x7, 0x0, 0x0, 0x7,
 	0x8, 0x9, 0xA, 0xB, 0xA, 0x9, 0x8, 0x7
 };
+
+const uint8 LoLEngine::_clock2Timers[] = {
+	0x00, 0x10, 0x11, 0x03, 0x04, 0x50,
+	0x51, 0x52, 0x08, 0x09, 0x0A
+};
+
+const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);
 
 #endif // ENABLE_LOL
 

@@ -719,7 +719,7 @@ int LoLEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 
 	if (!_emcDoorState) {
 		delay(15 * _tickLength);
-		openDoorSub1(block, 0);
+		processDoorSwitch(block, 0);
 	}
 
 	return 1;
@@ -753,12 +753,76 @@ bool LoLEngine::clickedShape(int shapeIndex) {
 	return false;
 }
 
-void LoLEngine::openDoorSub1(uint16 block, int unk) {
+void LoLEngine::processDoorSwitch(uint16 block, int unk) {
+	if ((block == _currentBlock) || (_levelBlockProperties[block].itemMonsterIndex & 0x8000))
+		return;
 
+	int s = 0;
+	if (!unk) {
+		for (int i = 0; i < 3; i++) {
+			if (_openDoorState[i].block != block)
+				continue;
+			s = -_openDoorState[i].state;
+			break;
+		}
+	}
+
+	if (s == 0)
+		s = (_wllWallFlags[_levelBlockProperties[block].walls[_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8 ? 0 : 1]] & 1) ? 1 : -1;
+
+	openCloseDoor(block, s);
 }
 
-void LoLEngine::openDoorSub2(uint16 block, int unk) {
+void LoLEngine::openCloseDoor(uint16 block, int openClose) {
+	int s1 = -1;
+	int s2 = -1;
 
+	int c = (_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
+	int v = _levelBlockProperties[block].walls[c];
+	int flg = (openClose == 1) ? 0x10 : (openClose == -1 ? 0x20 : 0);
+
+	if (_wllWallFlags[v] & flg)
+		return;
+
+	for (int i = 0; i < 3; i++) {
+		if (_openDoorState[i].block == block) {
+			s1 = i;
+			break;
+		} else if (_openDoorState[i].block == 0 && s2 == -1) {
+			s2 = i;
+		}
+	}
+
+	if (s1 != -1 || s2 != -1) {
+		if (s1 == -1)
+			s1 = s2;
+
+		_openDoorState[s1].block = block;
+		_openDoorState[s1].state = openClose;
+		_openDoorState[s1].field_2 = c;
+
+		flg = (-openClose == 1) ? 0x10 : (-openClose == -1 ? 0x20 : 0);
+		
+		if (_wllWallFlags[v] & flg) {
+			_levelBlockProperties[block].walls[c] += openClose;
+			_levelBlockProperties[block].walls[c ^ 2] += openClose;
+
+			int snd = (openClose == -1) ? 32 : 31;
+
+			snd_processEnvironmentalSoundEffect(snd, block);
+			if (!checkSceneUpdateNeed(block))
+				updateEnvironmentalSfx(0);
+		}
+
+		enableTimer(0);
+
+	} else {
+		while (!(flg & _wllWallFlags[v]))
+			v += openClose;
+		
+		_levelBlockProperties[block].walls[c] = _levelBlockProperties[block].walls[c ^ 2] = v;
+		checkSceneUpdateNeed(block);
+	}
 }
 
 void LoLEngine::movePartySmoothScrollBlocked(int speed) {

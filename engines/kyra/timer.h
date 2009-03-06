@@ -45,6 +45,8 @@ struct TimerEntry {
 	uint32 nextRun;
 
 	TimerFunc *func;
+
+	uint32 pauseStartTime;
 };
 
 class TimerManager {
@@ -70,12 +72,15 @@ public:
 	void setNextRun(uint8 id, uint32 nextRun);
 	uint32 getNextRun(uint8 id) const;
 
+	void pauseSingleTimer(uint8 id, bool p);
+
 	bool isEnabled(uint8 id) const;
 	void enable(uint8 id);
 	void disable(uint8 id);
 
 	void loadDataFromFile(Common::SeekableReadStream &file, int version);
 	void saveDataToFile(Common::WriteStream &file) const;
+
 private:
 	void resync();
 
