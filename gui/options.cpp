@@ -756,7 +756,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::open() {
 	OptionsDialog::open();
 
-#if !( defined(__DC__) || defined(__GP32__) || defined(__PLAYSTATION2__) )
+#if !( defined(__DC__) || defined(__GP32__) )
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
