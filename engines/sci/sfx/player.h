@@ -35,7 +35,7 @@
 
 namespace Sci {
 
-struct SongIterator;
+class SongIterator;
 struct SongIteratorMessage;
 
 typedef void tell_synth_func(int buf_nr, byte *buf);
