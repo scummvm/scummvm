@@ -30,6 +30,8 @@
 #include "sci/tools.h"
 #include "sci/sfx/player.h"
 #include "sci/sfx/sequencer.h"
+#include "sci/sfx/iterator.h"
+#include "sci/sfx/core.h"
 
 #include "common/system.h"
 
@@ -220,7 +222,7 @@ static int rt_stop(void) {
 	return SFX_OK;
 }
 
-static int rt_send_iterator_message(SongIteratorMessage msg) {
+static int rt_send_iterator_message(const SongIteratorMessage &msg) {
 	if (!play_it)
 		return SFX_ERROR;
 

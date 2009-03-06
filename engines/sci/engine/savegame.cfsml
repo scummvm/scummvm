@@ -36,6 +36,7 @@
 #include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
 #include "sci/sfx/core.h"
+#include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
 

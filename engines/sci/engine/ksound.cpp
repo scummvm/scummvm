@@ -25,6 +25,7 @@
 
 #include "sci/engine/state.h"
 #include "sci/sfx/player.h"
+#include "sci/sfx/iterator.h"
 #include "sci/engine/kernel.h"
 
 namespace Sci {

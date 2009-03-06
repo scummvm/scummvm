@@ -36,6 +36,7 @@
 #include "sci/scicore/resource.h"
 #include "sci/scicore/sciconsole.h"
 #include "sci/scicore/vocabulary.h"
+#include "sci/sfx/iterator.h"
 #include "sci/sfx/sci_midi.h"
 
 #include "common/util.h"

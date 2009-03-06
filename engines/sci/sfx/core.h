@@ -29,13 +29,12 @@
 
 #include "sci/sfx/sfx.h"
 #include "sci/sfx/songlib.h"
-//#include "sci/sfx/iterator.h"
 #include "sci/scicore/resource.h"
 
 namespace Sci {
 
 class SongIterator;
-
+struct fade_params_t;
 
 #define SOUND_TICK 1000 / 60
 /* Approximately 17 milliseconds */

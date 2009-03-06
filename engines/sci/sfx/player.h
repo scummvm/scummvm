@@ -28,13 +28,15 @@
 #ifndef SCI_SFX_SFX_PLAYER_H
 #define SCI_SFX_SFX_PLAYER_H
 
-#include "sci/sfx/core.h"
-#include "sci/sfx/iterator.h"
+//#include "sci/sfx/core.h"
 #include "sci/scicore/resource.h"
 
 #include "common/scummsys.h"
 
 namespace Sci {
+
+struct SongIterator;
+struct SongIteratorMessage;
 
 typedef void tell_synth_func(int buf_nr, byte *buf);
 
@@ -79,7 +81,7 @@ struct sfx_player_t {
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
 	*/
 
-	int (*iterator_message)(SongIteratorMessage msg);
+	int (*iterator_message)(const SongIteratorMessage &msg);
 	/* Transmits a song iterator message to the active song
 	** Parameters: (SongIteratorMessage) msg: The message to transmit
 	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure

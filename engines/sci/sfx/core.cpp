@@ -26,6 +26,7 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include "sci/tools.h"
+#include "sci/sfx/core.h"
 #include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/player.h"
 #include "sci/sfx/sci_midi.h"
@@ -230,8 +231,7 @@ static void _update_single_song(sfx_state_t *self) {
 			if (!self->song)
 				sciprintf(" New song:");
 			else
-				sciprintf(" pausing %08lx, now playing",
-				          self->song->handle);
+				sciprintf(" pausing %08lx, now playing", self->song->handle);
 
 			if (newsong)
 				sciprintf(" %08lx\n", newsong->handle);

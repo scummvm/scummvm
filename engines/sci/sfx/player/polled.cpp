@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "sci/sfx/player.h"
 #include "sci/sfx/softseq.h"
+#include "sci/sfx/iterator.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -358,7 +359,7 @@ static int pp_stop() {
 	return SFX_OK;
 }
 
-static int pp_send_iterator_message(SongIteratorMessage msg) {
+static int pp_send_iterator_message(const SongIteratorMessage &msg) {
 	if (!play_it)
 		return SFX_ERROR;
 

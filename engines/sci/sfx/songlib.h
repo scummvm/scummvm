@@ -30,9 +30,9 @@
 
 #include "common/scummsys.h"
 
-#include "sci/sfx/iterator.h"
-
 namespace Sci {
+
+class SongIterator;
 
 #define SOUND_STATUS_STOPPED   0
 #define SOUND_STATUS_PLAYING   1
