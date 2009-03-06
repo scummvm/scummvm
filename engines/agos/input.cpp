@@ -547,7 +547,7 @@ bool AGOSEngine::processSpecialKeys() {
 			}
 		}
 		break;
-	case Common::KEYCODE_p:
+	case Common::KEYCODE_PAUSE:
 		pause();
 		break;
 	case Common::KEYCODE_t:
@@ -597,26 +597,6 @@ bool AGOSEngine::processSpecialKeys() {
 		if (getGameType() == GType_SIMON2) {
 			_sound->ambientPause(_ambientPaused ^= 1);
 		}
-		break;
-	case Common::KEYCODE_r:
-		if (_debugMode)
-			_dumpScripts ^= 1;
-		break;
-	case Common::KEYCODE_o:
-		if (_debugMode)
-			_dumpOpcodes ^= 1;
-		break;
-	case Common::KEYCODE_a:
-		if (_debugMode)
-			_dumpVgaScripts ^= 1;
-		break;
-	case Common::KEYCODE_g:
-		if (_debugMode)
-			_dumpVgaOpcodes ^= 1;
-		break;
-	case Common::KEYCODE_d:
-		if (_debugMode)
-			_dumpImages ^=1;
 		break;
 	default:
 		break;
