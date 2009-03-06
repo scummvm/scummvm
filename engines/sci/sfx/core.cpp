@@ -342,7 +342,7 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 	fprintf(stderr, "[sfx-core] Playing PCM: %08lx\n", handle);
 #endif
 	if (g_system->getMixer()->isReady()) {
-		Audio::AudioStream *newfeed = it->get_pcm_feed(it);
+		Audio::AudioStream *newfeed = it->get_pcm_feed();
 		if (newfeed) {
 			g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
 			return 1;

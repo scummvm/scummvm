@@ -84,8 +84,8 @@ static void _common_init(BaseSongIterator *self) {
 #define SCI0_PCM_DATA_OFFSET 0x2c
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
-	if (offset > self->size) { \
-		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->size, __LINE__); \
+	if (offset > self->_size) { \
+		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->_size, __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -394,7 +394,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, unsigned char *buf, i
 		int offset;
 		int ticks = _parse_ticks(self->data + channel->offset,
 		                         &offset,
-		                         self->size - channel->offset);
+		                         self->_size - channel->offset);
 
 		channel->offset += offset;
 		channel->delay += ticks;
@@ -481,11 +481,11 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		return 1;
 	/* No such luck */
 
-	while ((tries--) && (offset < self->size) && (!found_it)) {
+	while ((tries--) && (offset < self->_size) && (!found_it)) {
 		/* Search through the garbage manually */
 		unsigned char *fc = sci_memchr(self->data + offset,
 		                    SCI0_END_OF_SONG,
-		                    self->size - offset);
+		                    self->_size - offset);
 
 		if (!fc) {
 			warning(SIPFX "Playing unterminated song!");
@@ -496,7 +496,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		offset = fc - self->data + 1;
 
 
-		if (_sci0_header_magic_p(self->data, offset, self->size))
+		if (_sci0_header_magic_p(self->data, offset, self->_size))
 			found_it = 1;
 	}
 
@@ -516,12 +516,12 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	format->stereo = SFX_PCM_MONO;
 	format->rate = getUInt16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
 
-	if (offset + SCI0_PCM_DATA_OFFSET + size != self->size) {
-		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->size;
+	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_size) {
+		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_size;
 
 		warning(SIPFX "PCM advertizes %d bytes of data, but %d"
 		        " bytes are trailing in the resource!",
-		        size, self->size - (offset + SCI0_PCM_DATA_OFFSET));
+		        size, self->_size - (offset + SCI0_PCM_DATA_OFFSET));
 
 		if (d > 0)
 			size -= d; /* Fix this */
@@ -556,16 +556,16 @@ static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t con
 	return Audio::makeLinearInputStream(sound, size, conf.rate, flags, 0, 0);
 }
 
-static Audio::AudioStream *_sci0_check_pcm(Sci0SongIterator *self) {
+Audio::AudioStream *Sci0SongIterator::get_pcm_feed() {
 	sfx_pcm_config_t conf;
 	int offset;
 	unsigned int size;
-	if (_sci0_get_pcm_data(self, &conf, &offset, &size))
+	if (_sci0_get_pcm_data(this, &conf, &offset, &size))
 		return NULL;
 
-	self->channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
+	channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
 
-	return makeStream(self->data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
+	return makeStream(data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
 }
 
 static SongIterator *_sci0_handle_message(Sci0SongIterator *self, SongIteratorMessage msg) {
@@ -575,7 +575,7 @@ static SongIterator *_sci0_handle_message(Sci0SongIterator *self, SongIteratorMe
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg.args[0].i, self->ID);
 			fprintf(stderr, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
-			        self->device_id, self->active_channels, self->size,
+			        self->device_id, self->active_channels, self->_size,
 			        self->loops);
 			break;
 
@@ -669,7 +669,7 @@ static void _sci0_init(Sci0SongIterator *self) {
 
 	self->ccc = 0; /* Reset cumulative cue counter */
 	self->active_channels = 1;
-	_base_init_channel(&(self->channel), 0, SCI0_MIDI_OFFSET, self->size);
+	_base_init_channel(&(self->channel), 0, SCI0_MIDI_OFFSET, self->_size);
 	_reset_synth_channels((BaseSongIterator *) self,
 	                      &(self->channel));
 	self->delay_remaining = 0;
@@ -735,7 +735,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "[SAMPLE] %x/%x/%x/%x l=%x\n",
-	        offset + 10, begin, end, self->size, length);
+	        offset + 10, begin, end, self->_size, length);
 #endif
 
 	sample->format.format = SFX_PCM_FORMAT_U8;
@@ -967,14 +967,13 @@ static inline int _sci1_command_index(Sci1SongIterator *self) {
 }
 
 
-static Audio::AudioStream *_sci1_get_pcm(Sci1SongIterator *self) {
-	if (self->next_sample
-	        && self->next_sample->delta <= 0) {
-		Sci1Sample *sample = self->next_sample;
+Audio::AudioStream *Sci1SongIterator::get_pcm_feed() {
+	if (next_sample && next_sample->delta <= 0) {
+		Sci1Sample *sample = next_sample;
 
 		Audio::AudioStream *feed = makeStream(sample->data, sample->size, sample->format);
 
-		self->next_sample = self->next_sample->next;
+		next_sample = next_sample->next;
 
 		delete sample;
 
@@ -1014,7 +1013,7 @@ static int _sci1_process_next_command(Sci1SongIterator *self,
 
 			if (self->next_sample->announced) {
 				/* Already announced; let's discard it */
-				Audio::AudioStream *feed = _sci1_get_pcm(self);
+				Audio::AudioStream *feed = self->get_pcm_feed();
 				delete feed;
 			} else {
 				int delay = self->next_sample->delta;
@@ -1291,12 +1290,13 @@ public:
 		death_listeners_nr = 0;
 	
 		cleanup = NULL;
-		get_pcm_feed = NULL;
 		init = _cleanup_iterator_init;
 		handle_message = _cleanup_iterator_handle_message;
 		get_timepos = NULL;
 		next = _cleanup_iterator_next;
 	}
+	
+	Audio::AudioStream *get_pcm_feed() { return NULL; }
 };
 
 SongIterator *new_cleanup_iterator(unsigned int channels) {
@@ -1332,8 +1332,8 @@ static int _ff_read_next_command(FastForwardSongIterator *self,
 	}
 }
 
-static Audio::AudioStream *_ff_check_pcm(FastForwardSongIterator *self) {
-	return self->delegate->get_pcm_feed(self->delegate);
+Audio::AudioStream *FastForwardSongIterator::get_pcm_feed() {
+	return delegate->get_pcm_feed();
 }
 
 static SongIterator *_ff_handle_message(FastForwardSongIterator *self,
@@ -1395,16 +1395,12 @@ SongIterator *new_fast_forward_iterator(SongIterator *capsit, int delta) {
 		delete it;
 		return NULL;
 	}
-	it->ID = 0;
 
 	it->delegate = capsit;
 	it->delta = delta;
-	it->death_listeners_nr = 0;
 
 	it->next = (int(*)(SongIterator *, unsigned char *, int *))
 	           _ff_read_next_command;
-	it->get_pcm_feed = (Audio::AudioStream * (*)(SongIterator *))
-	                   _ff_check_pcm;
 	it->handle_message = (SongIterator * (*)(SongIterator *,
 	                      SongIteratorMessage))
 	                     _ff_handle_message;
@@ -1433,26 +1429,26 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 	int retid;
 
 #ifdef DEBUG_TEE_ITERATOR
-	fprintf(stderr, "[Tee] %02x\n", it->status);
+	fprintf(stderr, "[Tee] %02x\n", it->_status);
 #endif
 
-	if (!(it->status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE)))
+	if (!(it->_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE)))
 		/* None is active? */
 		return SI_FINISHED;
 
 	if (it->morph_deferred == TEE_MORPH_READY)
 		return SI_MORPH;
 
-	if ((it->status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))
+	if ((it->_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))
 	        != (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE)) {
 		/* Not all are is active? */
 		int which = 0;
 #ifdef DEBUG_TEE_ITERATOR
 		fprintf(stderr, "\tRequesting transformation...\n");
 #endif
-		if (it->status & TEE_LEFT_ACTIVE)
+		if (it->_status & TEE_LEFT_ACTIVE)
 			which = TEE_LEFT;
-		else if (it->status & TEE_RIGHT_ACTIVE)
+		else if (it->_status & TEE_RIGHT_ACTIVE)
 			which = TEE_RIGHT;
 		memcpy(buf, it->children[which].buf, MAX_BUF_SIZE);
 		*result = it->children[which].result;
@@ -1462,14 +1458,14 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 
 	/* First, check for unreported PCMs */
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if ((it->status & (ready_masks[i] | pcm_masks[i]))
+		if ((it->_status & (ready_masks[i] | pcm_masks[i]))
 		        == (ready_masks[i] | pcm_masks[i])) {
-			it->status &= ~ready_masks[i];
+			it->_status &= ~ready_masks[i];
 			return SI_PCM;
 		}
 
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if (!(it->status & ready_masks[i])) {
+		if (!(it->_status & ready_masks[i])) {
 
 			/* Buffers aren't ready yet */
 			it->children[i].retval =
@@ -1480,7 +1476,7 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 			                | IT_READER_MAY_FREE
 			                | IT_READER_MAY_CLEAN);
 
-			it->status |= ready_masks[i];
+			it->_status |= ready_masks[i];
 #ifdef DEBUG_TEE_ITERATOR
 			fprintf(stderr, "\t Must check %d: %d\n", i,
 			        it->children[i].retval);
@@ -1490,15 +1486,15 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 			        it->children[i].retval == SI_RELATIVE_CUE)
 				return it->children[i].retval;
 			if (it->children[i].retval == SI_FINISHED) {
-				it->status &= ~active_masks[i];
+				it->_status &= ~active_masks[i];
 				/* Recurse to complete */
 #ifdef DEBUG_TEE_ITERATOR
-				fprintf(stderr, "\t Child %d signalled completion, recursing w/ status %02x\n", i, it->status);
+				fprintf(stderr, "\t Child %d signalled completion, recursing w/ status %02x\n", i, it->_status);
 #endif
 				return _tee_read_next_command(it, buf, result);
 			} else if (it->children[i].retval == SI_PCM) {
-				it->status |= pcm_masks[i];
-				it->status &= ~ready_masks[i];
+				it->_status |= pcm_masks[i];
+				it->_status &= ~ready_masks[i];
 				return SI_PCM;
 			}
 		}
@@ -1540,7 +1536,7 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 		        == it->children[retid].retval)
 			/* If both children wait the same amount of time,
 			** we have to re-fetch commands from both  */
-			it->status &= ~ready_masks[1-retid];
+			it->_status &= ~ready_masks[1-retid];
 		else
 			/* If they don't, we can/must re-use the other
 			** child's delay time  */
@@ -1548,26 +1544,25 @@ static int _tee_read_next_command(TeeSongIterator *it, unsigned char *buf,
 			-= it->children[retid].retval;
 	}
 
-	it->status &= ~ready_masks[retid];
+	it->_status &= ~ready_masks[retid];
 	memcpy(buf, it->children[retid].buf, MAX_BUF_SIZE);
 	*result = it->children[retid].result;
 
 	return it->children[retid].retval;
 }
 
-static Audio::AudioStream *_tee_check_pcm(TeeSongIterator *it) {
+Audio::AudioStream *TeeSongIterator::get_pcm_feed() {
 	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
 	int i;
 
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		if (it->status & pcm_masks[i]) {
+		if (_status & pcm_masks[i]) {
 
-			it->status &= ~pcm_masks[i];
-			return it->children[i].it->
-			       get_pcm_feed(it->children[i].it);
+			_status &= ~pcm_masks[i];
+			return children[i].it->get_pcm_feed();
 		}
 
-	return NULL; /* No iterator */
+	return NULL; // No iterator
 }
 
 static SongIterator *_tee_handle_message(TeeSongIterator *self, SongIteratorMessage msg) {
@@ -1605,16 +1600,16 @@ static SongIterator *_tee_handle_message(TeeSongIterator *self, SongIteratorMess
 		switch (msg.type) {
 
 		case _SIMSG_PLASTICWRAP_ACK_MORPH:
-			if (!(self->status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
+			if (!(self->_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
 				songit_free((SongIterator *) self);
 				return NULL;
-			} else if (!(self->status & TEE_LEFT_ACTIVE)) {
+			} else if (!(self->_status & TEE_LEFT_ACTIVE)) {
 				if (self->may_destroy)
 					songit_free(self->children[TEE_LEFT].it);
 				old_it = self->children[TEE_RIGHT].it;
 				delete self;
 				return old_it;
-			} else if (!(self->status & TEE_RIGHT_ACTIVE)) {
+			} else if (!(self->_status & TEE_RIGHT_ACTIVE)) {
 				if (self->may_destroy)
 					songit_free(self->children[TEE_RIGHT].it);
 				old_it = self->children[TEE_LEFT].it;
@@ -1640,7 +1635,7 @@ static SongIterator *_tee_handle_message(TeeSongIterator *self, SongIteratorMess
 }
 
 static void _tee_init(TeeSongIterator *it) {
-	it->status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
+	it->_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
 	it->children[TEE_LEFT].it->init(it->children[TEE_LEFT].it);
 	it->children[TEE_RIGHT].it->init(it->children[TEE_RIGHT].it);
 }
@@ -1658,10 +1653,10 @@ static void _tee_free(TeeSongIterator *it) {
 static void songit_tee_death_notification(TeeSongIterator *self,
 	SongIterator *corpse) {
 	if (corpse == self->children[TEE_LEFT].it) {
-		self->status &= ~TEE_LEFT_ACTIVE;
+		self->_status &= ~TEE_LEFT_ACTIVE;
 		self->children[TEE_LEFT].it = NULL;
 	} else if (corpse == self->children[TEE_RIGHT].it) {
-		self->status &= ~TEE_RIGHT_ACTIVE;
+		self->_status &= ~TEE_RIGHT_ACTIVE;
 		self->children[TEE_RIGHT].it = NULL;
 	} else {
 		BREAKPOINT();
@@ -1675,15 +1670,12 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_de
 	int incomplete_map = 0;
 	TeeSongIterator *it = new TeeSongIterator();
 
-	it->ID = 0;
-
 	it->morph_deferred = TEE_MORPH_NONE;
-	it->status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
+	it->_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
 	it->may_destroy = may_destroy;
 
 	it->children[TEE_LEFT].it = left;
 	it->children[TEE_RIGHT].it = right;
-	it->death_listeners_nr = 0;
 
 	/* By default, don't remap */
 	for (i = 0; i < 16; i++)
@@ -1732,9 +1724,6 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right, int may_de
 
 	it->next = (int(*)(SongIterator *, unsigned char *, int *))
 	           _tee_read_next_command;
-
-	it->get_pcm_feed = (Audio::AudioStream * (*)(SongIterator *))
-	                   _tee_check_pcm;
 
 	it->handle_message = (SongIterator * (*)(SongIterator *,
 	                      SongIteratorMessage))
@@ -1835,8 +1824,6 @@ SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songi
 
 		it->next = (int(*)(SongIterator *, unsigned char *, int *))
 		           _sci0_read_next_command;
-		it->get_pcm_feed = (Audio::AudioStream * (*)(SongIterator *))
-		                   _sci0_check_pcm;
 		it->handle_message = (SongIterator * (*)(SongIterator *, SongIteratorMessage))
 		                     _sci0_handle_message;
 		it->init = (void(*)(SongIterator *))_sci0_init;
@@ -1856,8 +1843,6 @@ SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songi
 
 		it->next = (int(*)(SongIterator *, unsigned char *, int *))
 		           _sci1_read_next_command;
-		it->get_pcm_feed = (Audio::AudioStream * (*)(SongIterator *))
-		                   _sci1_get_pcm;
 		it->handle_message = (SongIterator * (*)(SongIterator *, SongIteratorMessage))
 		                     _sci1_handle_message;
 		it->init = (void(*)(SongIterator *))_sci1_init;
@@ -1876,7 +1861,7 @@ SongIterator *songit_new(unsigned char *data, unsigned int size, int type, songi
 	it->death_listeners_nr = 0;
 
 	it->data = (unsigned char*)sci_refcount_memdup(data, size);
-	it->size = size;
+	it->_size = size;
 
 	it->init((SongIterator *) it);
 

@@ -112,13 +112,32 @@ struct SongIteratorMessage {
 
 #define SONGIT_MAX_LISTENERS 2
 
-struct SongIterator {
-
+class SongIterator {
+public:
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
 	fade_params_t fade;
 	unsigned int flags;
 	int priority;
+
+	/* Death listeners */
+	/* These are not reset during initialisation */
+	listener_t death_listeners[SONGIT_MAX_LISTENERS];
+	int death_listeners_nr;
+
+	/* See songit_* for the constructor and non-virtual member functions */
+
+
+public:
+	SongIterator() {
+		ID = 0;
+		channel_mask = 0;
+		fade.action = FADE_ACTION_NONE;
+		flags = 0;
+		priority = 0;
+		death_listeners_nr = 0;
+	}
+	virtual ~SongIterator() {}
 
 	/* Reads the next MIDI operation _or_ delta time
 	** Parameters: (SongIterator *) self
@@ -139,12 +158,11 @@ struct SongIterator {
 	int (*next)(SongIterator *self,
 	            unsigned char *buf, int *result);
 
-	/* Checks for the presence of a pcm sample
-	** Parameters: (SongIterator *) self
-	** Returns   : (Audio::AudioStream *) NULL if no PCM data was found, a
-	**				  PCM feed otherwise
-	*/
-	Audio::AudioStream * (*get_pcm_feed)(SongIterator *self);
+	/**
+	 Checks for the presence of a pcm sample.
+	 * @return NULL if no PCM data was found, an AudioStream otherwise.
+	 */
+	virtual Audio::AudioStream *get_pcm_feed() = 0;
 
 
 	/* Handles a message to the song iterator
@@ -180,13 +198,6 @@ struct SongIterator {
 	** Parameters: (SongIterator *) self
 	*/
 	int (*get_timepos)(SongIterator *self);
-
-	/* Death listeners */
-	/* These are not reset during initialisation */
-	listener_t death_listeners[SONGIT_MAX_LISTENERS];
-	int death_listeners_nr;
-
-	/* See songit_* for the constructor and non-virtual member functions */
 
 };
 

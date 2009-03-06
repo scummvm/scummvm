@@ -84,7 +84,7 @@ struct BaseSongIterator : public SongIterator {
 	unsigned char resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
 	int device_id; /* ID of the device we generating events for */
 	int active_channels; /* Number of active channels */
-	unsigned int size; /* Song size */
+	unsigned int _size; /* Song size */
 	unsigned char *data;
 
 	int loops; /* Number of loops remaining */
@@ -95,9 +95,13 @@ struct BaseSongIterator : public SongIterator {
 /*--------- SCI 0 --------------*/
 /********************************/
 
-struct Sci0SongIterator : public BaseSongIterator {
+class Sci0SongIterator : public BaseSongIterator {
+public:
 	SongIteratorChannel channel;
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
+
+public:
+	Audio::AudioStream *get_pcm_feed();
 };
 
 
@@ -116,7 +120,8 @@ struct Sci1Sample {
 	Sci1Sample *next;
 };
 
-struct Sci1SongIterator : public BaseSongIterator {
+class Sci1SongIterator : public BaseSongIterator {
+public:
 	SongIteratorChannel channels[MIDI_CHANNELS];
 
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
@@ -129,6 +134,9 @@ struct Sci1SongIterator : public BaseSongIterator {
 
 	int delay_remaining; /* Number of ticks that haven't been polled yet */
 	int hold;
+
+public:
+	Audio::AudioStream *get_pcm_feed();
 };
 
 #define PLAYMASK_NONE 0x0
@@ -156,9 +164,13 @@ int is_cleanup_iterator(SongIterator *it);
 /*--------- Fast Forward ---------*/
 /**********************************/
 
-struct FastForwardSongIterator : public SongIterator {
+class FastForwardSongIterator : public SongIterator {
+public:
 	SongIterator *delegate;
 	int delta; /* Remaining time */
+
+public:
+	Audio::AudioStream *get_pcm_feed();
 };
 
 
@@ -189,8 +201,9 @@ SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 #define TEE_MORPH_NONE 0 /* Not waiting to self-morph */
 #define TEE_MORPH_READY 1 /* Ready to self-morph */
 
-struct TeeSongIterator : public SongIterator {
-	int status;
+class TeeSongIterator : public SongIterator {
+public:
+	int _status;
 
 	int may_destroy; /* May destroy song iterators */
 
@@ -206,6 +219,9 @@ struct TeeSongIterator : public SongIterator {
 		/* Remapping for channels */
 
 	} children[2];
+
+public:
+	Audio::AudioStream *get_pcm_feed();
 };
 
 } // End of namespace Sci
