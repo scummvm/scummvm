@@ -52,17 +52,20 @@ const Common::String actionNames[] = {
 	"Pause",
 	"Fast mode",
 	"Quit",
-	"Debugger"
+	"Debugger",
+	"Global menu",
+	"Virtual keyboard",
+	"Key mapper"
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0, 0, 0, 0};
 #elif defined (S60)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0, '0', 0, 0};
 #elif defined (S90)
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, 0, 0, SDLK_MENU, SDLK_ESCAPE, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0 ,0};
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_MENU, SDLK_ESCAPE, 0, 0, 0, 0, 0, 0, 0, 0, '1', 0 ,0};
 #endif
 
 // creator function according to Factory Pattern
@@ -122,6 +125,14 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 	// Skip
 	_action_enabled[ACTION_SKIP] = true;
 	_key_action[ACTION_SKIP].setKey(SDLK_ESCAPE);
+
+	// Enable keymappings
+	_action_enabled[ACTION_KEYMAPPER] = true;
+	_key_action[ACTION_KEYMAPPER].setKey(Common::ASCII_F8, Common::KEYCODE_F8);
+
+	// Enable VKB
+	_action_enabled[ACTION_VKB] = true;
+	_key_action[ACTION_VKB].setKey(Common::ASCII_F7, Common::KEYCODE_F7);
 }
 
 void SymbianActions::initInstanceGame() {
@@ -145,12 +156,18 @@ void SymbianActions::initInstanceGame() {
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
 	bool is_tucker = (gameid == "tucker");
 	bool is_groovie = (gameid == "groovie");
+	bool is_cruise = (gameid == "cruise");
 
 	Actions::initInstanceGame();
 
 	// Initialize keys for different actions
 	// Pause
-	_key_action[ACTION_PAUSE].setKey(' ');
+	if(is_cruise) {
+		_key_action[ACTION_PAUSE].setKey('P');
+	} 
+	else {
+		_key_action[ACTION_PAUSE].setKey(' ');
+	}
 	_action_enabled[ACTION_PAUSE] = true;
 
 
@@ -164,7 +181,7 @@ void SymbianActions::initInstanceGame() {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F1, Common::KEYCODE_F1); // F1 key for FOTAQ
 		} else if (is_sky) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5);
-		} else if (is_cine || is_drascula) {
+		} else if (is_cine || is_drascula || is_cruise) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, Common::KEYCODE_F10); // F10
 		} else if (is_agi) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, Common::KEYCODE_ESCAPE);
@@ -213,7 +230,9 @@ void SymbianActions::initInstanceGame() {
 	_action_enabled[ACTION_DEBUGGER] = true;
 	_key_action[ACTION_DEBUGGER].setKey('d', Common::KEYCODE_d, KMOD_CTRL);
 
-
+	// Enable global menu
+	_action_enabled[ACTION_MAINMENU] = true;
+	_key_action[ACTION_MAINMENU].setKey(Common::ASCII_F5, Common::KEYCODE_F5, KMOD_CTRL);
 
 }
 

@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise igor made m4 tinsel tucker sword1 sword2
+		cruise igor tinsel tucker sword1 sword2
 	);
 	
 	@WorkingEngines_1st = qw(
@@ -26,8 +26,8 @@
 	@BrokenEngines = qw(				
 	);
 
-	@EnablableEngines1 = (@WorkingEngines_1st, @TestingEngines);
-	@EnablableEngines = (@WorkingEngines_2nd, @TestingEngines);
+	#@EnablableEngines1 = (@WorkingEngines_1st, @TestingEngines);
+	@EnablableEngines = (@WorkingEngines, @TestingEngines);
 
 	@EnablableSubEngines = qw(
 		scumm_7_8
@@ -262,8 +262,8 @@
 	{
 		# the first one includes all SDKs & release-ready engines
 	
-		$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines_1st @EnablableSubEngines";
-		$VariationSets{'ALL'}{'all2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
+		$VariationSets{'ALL'}{'all'} = "$DefaultFeatures @WorkingEngines @EnablableSubEngines";
+		#$VariationSets{'ALL'}{'all2nd'} = "$DefaultFeatures @WorkingEngines_2nd @EnablableSubEngines";
 		# now one for each ready-for-release engine
 		if (0)
 		{
