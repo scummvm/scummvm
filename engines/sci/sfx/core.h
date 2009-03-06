@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-struct SongIterator;
+class SongIterator;
 
 
 #define SOUND_TICK 1000 / 60
