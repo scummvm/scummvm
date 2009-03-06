@@ -111,8 +111,8 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFSNode *getParent() const;
 
-	virtual Common::SeekableReadStream *openForReading();
-	virtual Common::WriteStream *openForWriting();
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 
 	int getDev() { return 0; };
 };
@@ -503,11 +503,11 @@ char *Ps2FilesystemNode::getDeviceDescription() const {
 		return "WTF ???";
 }
 
-Common::SeekableReadStream *Ps2FilesystemNode::openForReading() {
+Common::SeekableReadStream *Ps2FilesystemNode::createReadStream() {
 	Common::SeekableReadStream *ss = StdioStream::makeFromPath(getPath().c_str(), false);
 	return ss;
 }
 
-Common::WriteStream *Ps2FilesystemNode::openForWriting() {
+Common::WriteStream *Ps2FilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
