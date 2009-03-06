@@ -327,6 +327,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
 	_scummTimerManager = new DefaultTimerManager();
+	_scummEventManager = new DefaultEventManager();
 	_scummMixer = new Audio::MixerImpl(this);
 	_scummMixer->setOutputRate(44100);
 	_scummMixer->setReady(true);
@@ -574,6 +575,10 @@ Common::TimerManager *OSystem_PS2::getTimerManager() {
 	return _scummTimerManager;
 }
 
+Common::EventManager *OSystem_PS2::getEventManager() {
+	return _scummEventManager;
+}
+
 Audio::Mixer *OSystem_PS2::getMixer() {
 	return _scummMixer;
 }
@@ -643,11 +648,24 @@ void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	_screen->copyOverlayRect((uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
+Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {
+	return _screen->getOverlayFormat();
+}
+
+
+int16 OSystem_PS2::getOverlayWidth(void) {
+	return _screen->getOverlayWidth();
+}
+
+int16 OSystem_PS2::getOverlayHeight(void) {
+	return _screen->getOverlayHeight();
+}
+
 Graphics::Surface *OSystem_PS2::lockScreen() {
 	return _screen->lockScreen();
 }
 
-void OSystem_PS2::unlockScreen() {
+void OSystem_PS2::unlockScreen(void) {
 	_screen->unlockScreen();
 }
 
@@ -945,12 +963,12 @@ void OSystem_PS2::makeConfigPath() {
 	_configFile = strdup(path);
 }
 
-Common::SeekableReadStream *OSystem_PS2::openConfigFileForReading() {
+Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
 	Common::FSNode file(_configFile);
-	return file.openForReading();
+	return file.createReadStream();
 }
     
-Common::WriteStream *OSystem_PS2::openConfigFileForWriting() {
+Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
 	Common::FSNode file(_configFile);
-	return file.openForWriting();
+	return file.createWriteStream();
 }

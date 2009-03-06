@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engin
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -148,24 +148,24 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	fioClose(fd);
 
 	if (romver[4] == 'E')
-		_videoMode = TV_PAL;
+		_tvMode = TV_PAL;
 	else
-		_videoMode = TV_NTSC;
+		_tvMode = TV_NTSC;
 #else
 		if (PAL_NTSC_FLAG == 'E')
-			_videoMode = TV_PAL;
+			_tvMode = TV_PAL;
 		else
-			_videoMode = TV_NTSC;
+			_tvMode = TV_NTSC;
 #endif
 	} else
-		_videoMode = tvMode;
+		_tvMode = tvMode;
 
-	// _videoMode = TV_NTSC;
-	printf("Setting up %s mode\n", (_videoMode == TV_PAL) ? "PAL" : "NTSC");
+	// _tvMode = TV_NTSC;
+	printf("Setting up %s mode\n", (_tvMode == TV_PAL) ? "PAL" : "NTSC");
 	
     // set screen size, 640x512 for pal, 640x448 for ntsc
 	_tvWidth = 640;
-	_tvHeight = ((_videoMode == TV_PAL) ? 512 /*544*/ : 448);
+	_tvHeight = ((_tvMode == TV_PAL) ? 512 /*544*/ : 448);
 	kFullScreen[0].z = kFullScreen[1].z = 0;
 	kFullScreen[0].x = ORIGIN_X;
 	kFullScreen[0].y = ORIGIN_Y;
@@ -199,6 +199,18 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_mTraCol = 255;
 	_shakePos = 0;
 
+	_overlayFormat.bytesPerPixel = 2;
+
+	_overlayFormat.rLoss = 3;
+    _overlayFormat.gLoss = 3;
+    _overlayFormat.bLoss = 3;
+    _overlayFormat.aLoss = 7;
+
+    _overlayFormat.rShift = 0;
+    _overlayFormat.gShift = 5;
+    _overlayFormat.bShift = 10;
+    _overlayFormat.aShift = 15;
+
 	// setup hardware now.
 	GS_CSR = CSR_RESET; // Reset GS
 	asm ("sync.p");
@@ -207,7 +219,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	uint16 dispPosX, dispPosY;
 
-	if (_videoMode == TV_PAL) {
+	if (_tvMode == TV_PAL) {
 		SetGsCrt(GS_INTERLACED, 3, 0);
 		dispPosX = DEFAULT_PAL_X;
 		dispPosY = DEFAULT_PAL_Y;
@@ -524,6 +536,18 @@ void Gs2dScreen::hideOverlay(void) {
 	_showOverlay = false;
 }
 
+Graphics::PixelFormat Gs2dScreen::getOverlayFormat(void) {
+	return _overlayFormat;
+}
+
+int16 Gs2dScreen::getOverlayWidth(void) {
+	return _videoMode.overlayWidth;
+}
+
+int16 Gs2dScreen::getOverlayHeight(void) {
+	return _videoMode.overlayHeight;
+}
+
 void Gs2dScreen::setShakePos(int shake) {
 	_shakePos = (shake * _mouseScaleY) >> 8;
 	_blitCoords[0].y = SCALE(_shakePos) + ORIGIN_Y;
@@ -622,7 +646,7 @@ void Gs2dScreen::setMouseXy(int16 x, int16 y) {
 }
 
 uint8 Gs2dScreen::tvMode(void) {
-	return _videoMode;
+	return _tvMode;
 }
 
 uint16 Gs2dScreen::getWidth(void) {
@@ -647,7 +671,7 @@ void Gs2dScreen::animThread(void) {
 	g_RunAnim = false;
 	float yPos   = 0.0;
 	uint8 texSta = 0;
-	float scrlSpeed = (_videoMode == TV_PAL) ? (_tvHeight / (SCRL_TIME * 50.0)) : (_tvHeight / (SCRL_TIME * 60.0));
+	float scrlSpeed = (_tvMode == TV_PAL) ? (_tvHeight / (SCRL_TIME * 50.0)) : (_tvHeight / (SCRL_TIME * 60.0));
 	uint8 texMax = (_tvHeight / LINE_SPACE) + (ORG_Y / LINE_SPACE);
 	TexVertex texNodes[4] = {
 		{ SCALE(1),   SCALE(1) }, { SCALE(1),   SCALE(14) },

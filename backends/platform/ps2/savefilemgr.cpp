@@ -24,7 +24,9 @@
  */
 
 #include "common/config-manager.h"
-#include "backends/saves/compressed/compressed-saves.h"
+#include "common/zlib.h"
+
+// #include "backends/saves/compressed/compressed-saves.h"
 
 #ifdef __USE_LIBMC__
 	#include <libmc.h>
@@ -124,7 +126,7 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 		if(!file.exists())
 			return NULL;
 
-		sf = file.openForReading();
+		sf = file.createReadStream();
 
 	} else {
 		Common::FSNode file = savePath.getChild(filename);
@@ -132,12 +134,12 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 		if(!file.exists())
 			return NULL;
 
-		sf = file.openForReading();
+		sf = file.createReadStream();
 	}
 
 	// _screen->wantAnim(false);
 
-	return wrapInSaveFile(sf);
+	return Common::wrapCompressedReadStream(sf);
 }
 
 Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
@@ -177,16 +179,16 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 		}
 
 		Common::FSNode file(path);
-		sf = file.openForWriting();
+		sf = file.createWriteStream();
 		free(game);
 		free(ext);
 	} else {
 		Common::FSNode file = savePath.getChild(filename);
-		sf = file.openForWriting();
+		sf = file.createWriteStream();
 	}
 
 	_screen->wantAnim(false);
-	return wrapOutSaveFile(sf);
+	return Common::wrapCompressedWriteStream(sf);
 }
 
 bool Ps2SaveFileManager::removeSavefile(const char *filename) {

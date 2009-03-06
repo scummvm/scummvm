@@ -27,8 +27,11 @@
 #define __GS2DSCREEN_H__
 
 #include "sysdefs.h"
+#include "backends/base-backend.h"
+
 #include "backends/platform/ps2/DmaPipe.h"
 #include "graphics/surface.h"
+
 
 enum TVMode {
 	TV_DONT_CARE = 0,
@@ -73,6 +76,10 @@ public:
 	void clearOverlay(void);
 	void showOverlay(void);
 	void hideOverlay(void);
+	Graphics::PixelFormat getOverlayFormat(void);
+	int16 getOverlayWidth(void); 
+	int16 getOverlayHeight(void);
+
 	//- mouse routines
 	void setMouseOverlay(const uint8 *buf, uint16 width, uint16 height, uint16 hotSpotX, uint16 hotSpotY, uint8 transpCol);
 	void showMouse(bool show);
@@ -83,12 +90,13 @@ public:
 	void wantAnim(bool runIt);
 
 	void quit(void);
+
 private:
 	void uploadToVram(void);
 	void createAnimTextures(void);
 
 	DmaPipe *_dmaPipe;
-	uint8 _videoMode;
+	uint8 _tvMode;
 	uint16 _tvWidth, _tvHeight;
 	GsVertex _blitCoords[2];
 	TexVertex _texCoords[2];
@@ -99,6 +107,24 @@ private:
 	uint32 _texPtrs[4];     //
 
 	Graphics::Surface _framebuffer;
+
+	/* TODO : check if we do need this */
+    struct VideoState {
+        bool setup;
+
+        bool fullscreen;
+        bool aspectRatio;
+
+        int mode;
+        int scaleFactor;
+
+        int screenWidth, screenHeight;
+        int overlayWidth, overlayHeight;
+    };
+
+	VideoState _videoMode;
+	/* */
+
 	uint16 _width, _height, _pitch;
 	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;
 	uint32 _mouseScaleX, _mouseScaleY;
@@ -110,6 +136,7 @@ private:
 	uint16 *_overlayBuf;
 	uint8 *_screenBuf;
 	uint32 *_clut;
+	Graphics::PixelFormat _overlayFormat;
 
 	int _screenSema;
 	int _vblankStartId, _vblankEndId, _dmacId, _animTid;

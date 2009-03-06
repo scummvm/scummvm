@@ -29,6 +29,7 @@
 #include "common/system.h"
 
 class DefaultTimerManager;
+class DefaultEventManager;
 class DefaultSaveFileManager;
 
 class Gs2dScreen;
@@ -71,13 +72,19 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();
+	/* TODO : check */
+	virtual void fillScreen(unsigned int i) { printf("fillScreen %d\n", i); };
+	virtual void displayMessageOnOSD(const char *msg) { printf("displayMessageOnOSD: %s\n", msg); };
+	/* */
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-
+	virtual int16 getOverlayWidth(void);
+	virtual int16 getOverlayHeight(void);
+	
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -86,6 +93,7 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual Common::TimerManager *getTimerManager();
+	virtual Common::EventManager *getEventManager();
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual Audio::Mixer *getMixer();
@@ -108,10 +116,10 @@ public:
 
 	virtual void quit();
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
@@ -142,8 +150,8 @@ private:
 	void readRtcTime(void);
 
 	DefaultTimerManager *_scummTimerManager;
+	DefaultEventManager *_scummEventManager;
 	Audio::MixerImpl *_scummMixer;
-
 
 	bool _mouseVisible;
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
