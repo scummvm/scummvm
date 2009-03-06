@@ -51,7 +51,8 @@ static int16 curtoken, endtoken;
 
 uint32 gbits(int numbits,  uint8 * data, int dlen);
 
-void decryptinit3() {
+int decrypt3(uint8 *dest, uint8 *src, int length, int complength) {
+	// Init
 	int i;
 
 	lastchar = lastbits = s_bitstring = stakptr = 0;
@@ -65,9 +66,9 @@ void decryptinit3() {
 		tokens[i].next = 0;
 		tokens[i].data = 0;
 	}
-}
 
-int decrypt3(uint8 *dest, uint8 *src, int length, int complength) {
+	// Start decrypting
+
 	static int16 token;
 	while (length != 0) {
 		switch (decryptstart) {
@@ -514,10 +515,6 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
 
-	//if ((result->size < 0) || (compressedLength < 0))
-	//	return SCI_ERROR_DECOMPRESSION_INSANE;
-	// This return will never happen in SCI0 or SCI1 (does it have any use?)
-
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
 
@@ -566,7 +563,6 @@ int decompress01(Resource *result, Common::ReadStream &stream, int sci_version) 
 	case 2:
 	case 3:
 	case 4:
-		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			overflow = true;
 		} else {

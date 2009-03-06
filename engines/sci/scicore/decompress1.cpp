@@ -249,7 +249,6 @@ int unpackDCL(uint8* dest, uint8* src, int length, int complength) {
 	return 0;
 }
 
-void decryptinit3();
 int decrypt3(uint8* dest, uint8* src, int length, int complength);
 
 int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
@@ -349,7 +348,6 @@ int decompress1(Resource *result, Common::ReadStream &stream, int sci_version) {
 	case 2: // ???
 	case 3:
 	case 4:
-		decryptinit3();
 		if (decrypt3(result->data, buffer, result->size, compressedLength)) {
 			free(result->data);
 			result->data = 0; // So that we know that it didn't work

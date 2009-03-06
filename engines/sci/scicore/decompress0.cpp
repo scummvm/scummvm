@@ -238,18 +238,19 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 	uint16 compressedLength;
 	uint16 compressionMethod;
 	uint8 *buffer;
+	uint8 type;
 
 	result->id = stream.readUint16LE();
 	if (stream.err())
 		return SCI_ERROR_IO_ERROR;
 
 	result->number = result->id & 0x07ff;
-	uint8 type = result->id >> 11;
+	type = result->id >> 11;
+
+	result->type = (ResourceType)type;
 
 	if ((result->number > sci_max_resource_nr[sci_version]) || (type > kResourceTypeInvalid))
 		return SCI_ERROR_DECOMPRESSION_INSANE;
-
-	result->type = (ResourceType)type;
 
 	compressedLength = stream.readUint16LE();
 	result->size = stream.readUint16LE();
@@ -259,7 +260,6 @@ int decompress0(Resource *result, Common::ReadStream &stream, int sci_version) {
 
 	if (result->size > SCI_MAX_RESOURCE_SIZE)
 		return SCI_ERROR_RESOURCE_TOO_BIG;
-	// With SCI0, this simply cannot happen.
 
 	if (compressedLength > 4)
 		compressedLength -= 4;
