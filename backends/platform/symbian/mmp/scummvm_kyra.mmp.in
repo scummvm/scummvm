@@ -49,6 +49,12 @@ SOURCEPATH ..\..\..\..\engines\kyra
 
 //STOP_AUTO_OBJECTS_KYRA_//
 
+//START_AUTO_OBJECTS_KYRA_ENABLE_LOL//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_KYRA_ENABLE_LOL//
+
 // *** Include paths
 
 USERINCLUDE     ..\..\..\..\engines
