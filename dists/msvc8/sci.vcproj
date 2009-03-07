@@ -441,10 +441,6 @@
 				Name="resource"
 				>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\sci_cursor_0.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\gfx\resource\sci_font.cpp"
 					>
 				</File>
@@ -491,14 +487,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\resource_map.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\resource_patch.cpp"
 				>
 			</File>
 			<File
