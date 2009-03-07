@@ -5100,8 +5100,6 @@ void reconstruct_clones(EngineState *s, SegManager *self) {
 
 int _reset_graphics_input(EngineState *s);
 
-SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
-
 static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
 	int it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
@@ -5120,7 +5118,7 @@ static void reconstruct_sounds(EngineState *s) {
 
 		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
 		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
-			ff = (SongIterator *)new_fast_forward_iterator(base, seeker->restore_time);
+			ff = new_fast_forward_iterator(base, seeker->restore_time);
 		ff->init();
 
 		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
@@ -5190,7 +5188,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1066 "engines/sci/engine/savegame.cfsml"
+#line 1064 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;
@@ -5246,7 +5244,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1090 "engines/sci/engine/savegame.cfsml"
+#line 1088 "engines/sci/engine/savegame.cfsml"
 
 	sfx_exit(&s->sound);
 	_gamestate_unfrob(retval);
@@ -5384,7 +5382,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 		}
 	}
 // End of auto-generated CFSML data reader code
-#line 1196 "engines/sci/engine/savegame.cfsml"
+#line 1194 "engines/sci/engine/savegame.cfsml"
 
 	if (read_eof)
 		return false;

@@ -163,6 +163,11 @@ public:
 	virtual ~SongIterator();
 
 	/**
+	 * Resets/initializes the sound iterator.
+	 */
+	virtual void init() {}
+
+	/**
 	 * Reads the next MIDI operation _or_ delta time.
 	 * Parameters: (SongIterator *) self
 	 *             (byte *) buf: The buffer to write to (needs to be able to
@@ -201,11 +206,6 @@ public:
 	 * was morphed) before self.
 	 */
 	virtual SongIterator *handleMessage(SongIteratorMessage msg) = 0;
-
-	/**
-	 * Resets/initializes the sound iterator.
-	 */
-	virtual void init() {}
 
 	/**
 	 * Gets the song position to store in a savegame.
@@ -306,6 +306,18 @@ int sfx_play_iterator_pcm(SongIterator *it, unsigned long handle);
 ** Returns   : (int) 0 if the effect will not be played, nonzero if it will
 ** This assumes that the last call to 'it->next()' returned SI_PCM.
 */
+
+
+SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
+/* Creates a new song iterator which fast-forwards
+** Parameters: (SongIterator *) it: The iterator to wrap
+**             (int) delta: The number of ticks to skip
+** Returns   : (SongIterator) A newly created song iterator
+**                               which skips all delta times
+**                               until 'delta' has been used up
+*/
+
+
 
 } // End of namespace Sci
 

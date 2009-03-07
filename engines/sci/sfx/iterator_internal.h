@@ -73,6 +73,9 @@ struct SongIteratorChannel {
 
 	int saw_notes;  /* Bitmask of channels we have currently played notes on */
 	byte last_cmd;	/* Last operation executed, for running status */
+
+public:
+	void resetSynthChannels();
 };
 
 class BaseSongIterator : public SongIterator {
@@ -82,16 +85,17 @@ public:
 
 
 	int ccc; /* Cumulative cue counter, for those who need it */
-	unsigned char resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
+	byte resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
 	int _deviceId; /* ID of the device we generating events for */
 	int active_channels; /* Number of active channels */
-	unsigned int _size; /* Song size */
-	unsigned char *data;
+	uint _size; /* Song size */
+	byte *_data;
 
 	int loops; /* Number of loops remaining */
 	int recover_delay;
 
 public:
+	BaseSongIterator(byte *data, uint size, songit_id_t id);
 	~BaseSongIterator();
 };
 
@@ -102,10 +106,9 @@ public:
 class Sci0SongIterator : public BaseSongIterator {
 public:
 	SongIteratorChannel channel;
-	int _delayRemaining; /* Number of ticks that haven't been polled yet */
 
 public:
-	Sci0SongIterator();
+	Sci0SongIterator(byte *data, uint size, songit_id_t id);
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
@@ -121,12 +124,15 @@ public:
 
 
 struct Sci1Sample {
-	int delta; /* Time left-- initially, this is 'Sample point 1'.
-		   ** After initialisation, it is 'sample point 1 minus the sample point of the previous sample'  */
+	/* Time left-- initially, this is 'Sample point 1'.
+	 * After initialisation, it is 'sample point 1 minus the sample
+	 * point of the previous sample'
+	 */
+	int delta;
 	int size;
-	int announced; /* Announced for download (SI_PCM) */
+	bool announced; /* Announced for download (SI_PCM) */
 	sfx_pcm_config_t format;
-	byte *data;
+	byte *_data;
 	Sci1Sample *next;
 };
 
@@ -137,16 +143,16 @@ public:
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
 	** channel_offset[i] points to a delta time object. */
 
-	int _initialised; /* Whether the MIDI channel setup has been initialised */
+	bool _initialised; /* Whether the MIDI channel setup has been initialised */
 	int _numChannels; /* Number of channels actually used */
 	Sci1Sample *_nextSample;
 	int _numLoopedChannels; /* Number of channels that are ready to loop */
 
 	int _delayRemaining; /* Number of ticks that haven't been polled yet */
-	int hold;
+	int _hold;
 
 public:
-	Sci1SongIterator();
+	Sci1SongIterator(byte *data, uint size, songit_id_t id);
 	~Sci1SongIterator();
 
 	int nextCommand(byte *buf, int *result);
@@ -158,35 +164,19 @@ public:
 
 #define PLAYMASK_NONE 0x0
 
-/*********************************/
-/*---------- Cleanup ------------*/
-/*********************************/
-
-
-SongIterator *new_cleanup_iterator(unsigned int channels);
-/* Creates a new song iterator with the purpose of sending notes-off channel commands
-** Parameters: (unsigned int) channels: Channel mask to send these commands for
-** Returns   : A song iterator with the aforementioned purpose
-*/
-
-int is_cleanup_iterator(SongIterator *it);
-/* Determines whether a given song iterator is a cleanup song iterator
-** Parameters: (SongIterator *) it: The iterator to check
-** Returns   : (int) 1 iff 'it' is a cleanup song iterator
-** No deep recursion/delegation is considered.
-*/
-
-
 /**********************************/
 /*--------- Fast Forward ---------*/
 /**********************************/
 
 class FastForwardSongIterator : public SongIterator {
-public:
-	SongIterator *delegate;
-	int delta; /* Remaining time */
+protected:
+	SongIterator *_delegate;
+	int _delta; /**< Remaining time */
 
 public:
+	FastForwardSongIterator() {}	// FIXME: Temp hack
+	FastForwardSongIterator(SongIterator *capsit, int delta);
+
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
@@ -194,32 +184,25 @@ public:
 };
 
 
-SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
-/* Creates a new song iterator which fast-forwards
-** Parameters: (SongIterator *) it: The iterator to wrap
-**             (int) delta: The number of ticks to skip
-** Returns   : (SongIterator) A newly created song iterator
-**                               which skips all delta times
-**                               until 'delta' has been used up
-*/
-
 /**********************************/
-/*--------- Fast Forward ---------*/
+/*--------- Tee iterator ---------*/
 /**********************************/
 
-#define MAX_BUF_SIZE 4
+enum {
+	MAX_BUF_SIZE = 4,
+	
+	TEE_LEFT = 0,
+	TEE_RIGHT = 1,
+	TEE_LEFT_ACTIVE  = (1<<0),
+	TEE_RIGHT_ACTIVE = (1<<1),
+	TEE_LEFT_READY  = (1<<2), /**< left result is ready */
+	TEE_RIGHT_READY = (1<<3), /**< right result is ready */
+	TEE_LEFT_PCM = (1<<4),
+	TEE_RIGHT_PCM = (1<<5),
 
-#define TEE_LEFT 0
-#define TEE_RIGHT 1
-#define TEE_LEFT_ACTIVE  (1<<0)
-#define TEE_RIGHT_ACTIVE (1<<1)
-#define TEE_LEFT_READY  (1<<2) /* left result is ready */
-#define TEE_RIGHT_READY (1<<3) /* right result is ready */
-#define TEE_LEFT_PCM (1<<4)
-#define TEE_RIGHT_PCM (1<<5)
-
-#define TEE_MORPH_NONE 0 /* Not waiting to self-morph */
-#define TEE_MORPH_READY 1 /* Ready to self-morph */
+	TEE_MORPH_NONE = 0, /**< Not waiting to self-morph */
+	TEE_MORPH_READY = 1 /**< Ready to self-morph */
+};
 
 class TeeSongIterator : public SongIterator {
 public:

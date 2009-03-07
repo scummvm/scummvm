@@ -43,17 +43,15 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 /*#define DEBUG_DECODING*/
 /*#define DEBUG_VERBOSE*/
 
-void print_tabs_id(int nr, songit_id_t id) {
+static void print_tabs_id(int nr, songit_id_t id) {
 	while (nr-- > 0)
 		fprintf(stderr, "\t");
 
 	fprintf(stderr, "[%08lx] ", id);
 }
 
-static unsigned char *sci_memchr(void *_data, int c, int n) {
-	unsigned char *data = (unsigned char *) _data;
-
-	while (n && !(*data == c)) {
+static byte *sci_memchr(byte *data, int c, int n) {
+	while (n && *data != c) {
 		++data;
 		--n;
 	}
@@ -64,13 +62,20 @@ static unsigned char *sci_memchr(void *_data, int c, int n) {
 		return NULL;
 }
 
+BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id) {
+	ID = id;
+
+	_data = (byte *)sci_refcount_memdup(data, size);
+	_size = size;
+}
+
 BaseSongIterator::~BaseSongIterator() {
 #ifdef DEBUG_VERBOSE
-	fprintf(stderr, "** FREEING it %p: data at %p\n", this, data);
+	fprintf(stderr, "** FREEING it %p: data at %p\n", this, _data);
 #endif
-	if (data)
-		sci_refcount_decref(data);
-	data = NULL;
+	if (_data)
+		sci_refcount_decref(_data);
+	_data = NULL;
 }
 
 /************************************/
@@ -98,7 +103,7 @@ BaseSongIterator::~BaseSongIterator() {
 	}
 
 
-static inline int _parse_ticks(byte *data, int *offset_p, int size) {
+static int _parse_ticks(byte *data, int *offset_p, int size) {
 	int ticks = 0;
 	int tempticks;
 	int offset = 0;
@@ -117,20 +122,19 @@ static inline int _parse_ticks(byte *data, int *offset_p, int size) {
 }
 
 
-static int _sci0_get_pcm_data(Sci0SongIterator *self,
-	sfx_pcm_config_t *format, int *xoffset, uint *xsize);
+static int _sci0_get_pcm_data(Sci0SongIterator *self, sfx_pcm_config_t *format, int *xoffset, uint *xsize);
+
 
 #define PARSE_FLAG_LOOPS_UNLIMITED (1 << 0) /* Unlimited # of loops? */
 #define PARSE_FLAG_PARAMETRIC_CUE (1 << 1) /* Assume that cues take an additional "cue value" argument */
 /* This implements a difference between SCI0 and SCI1 cues. */
 
-void _reset_synth_channels(BaseSongIterator *self, SongIteratorChannel *channel) {
-	int i;
+void SongIteratorChannel::resetSynthChannels() {
 	byte buf[5];
 	tell_synth_func *tell = sfx_get_player_tell_func();
 
-	for (i = 0; i < MIDI_CHANNELS; i++) {
-		if (channel->saw_notes & (1 << i)) {
+	for (int i = 0; i < MIDI_CHANNELS; i++) {
+		if (saw_notes & (1 << i)) {
 			buf[0] = 0xe0 | i; /* Pitch bend */
 			buf[1] = 0x80; /* Wheel center */
 			buf[2] = 0x40;
@@ -141,16 +145,16 @@ void _reset_synth_channels(BaseSongIterator *self, SongIteratorChannel *channel)
 	}
 }
 
-static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
+static int _parse_sci_midi_command(BaseSongIterator *self, byte *buf,
 	int *result, SongIteratorChannel *channel, int flags) {
-	unsigned char cmd;
+	byte cmd;
 	int paramsleft;
 	int midi_op;
 	int midi_channel;
 
 	channel->state = SI_STATE_DELTA_TIME;
 
-	cmd = self->data[channel->offset++];
+	cmd = self->_data[channel->offset++];
 
 	if (!(cmd & 0x80)) {
 		/* 'Running status' mode */
@@ -173,12 +177,12 @@ static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
 		fprintf(stderr, "[IT]: off=%x, cmd=%02x, takes %d args ",
 		        channel->offset - 1, cmd, paramsleft);
 		fprintf(stderr, "[%02x %02x <%02x> %02x %02x %02x]\n",
-		        self->data[channel->offset-3],
-		        self->data[channel->offset-2],
-		        self->data[channel->offset-1],
-		        self->data[channel->offset],
-		        self->data[channel->offset+1],
-		        self->data[channel->offset+2]);
+		        self->_data[channel->offset-3],
+		        self->_data[channel->offset-2],
+		        self->_data[channel->offset-1],
+		        self->_data[channel->offset],
+		        self->_data[channel->offset+1],
+		        self->_data[channel->offset+2]);
 	}
 #endif
 
@@ -186,7 +190,7 @@ static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
 
 
 	CHECK_FOR_END(paramsleft);
-	memcpy(buf + 1, self->data + channel->offset, paramsleft);
+	memcpy(buf + 1, self->_data + channel->offset, paramsleft);
 	*result = 1 + paramsleft;
 
 	channel->offset += paramsleft;
@@ -209,7 +213,7 @@ static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
 
 	if (cmd == SCI_MIDI_EOT) {
 		/* End of track? */
-		_reset_synth_channels(self, channel);
+		channel->resetSynthChannels();
 		/*		fprintf(stderr, "eot; loops = %d, notesplayed=%d\n", self->loops, channel->notes_played);*/
 		if (self->loops > 1 /* && channel->notes_played*/) {
 			/* If allowed, decrement the number of loops */
@@ -305,9 +309,9 @@ static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
 
 		case SCI_MIDI_HOLD: {
 			// Safe cast: This controller is only used in SCI1
-			Sci1SongIterator *self1 = (Sci1SongIterator *) self;
+			Sci1SongIterator *self1 = (Sci1SongIterator *)self;
 
-			if (buf[2] == self1->hold) {
+			if (buf[2] == self1->_hold) {
 				channel->offset = channel->initial_offset;
 				channel->notes_played = 0;
 				channel->state = SI_STATE_COMMAND;
@@ -349,15 +353,15 @@ static int _parse_sci_midi_command(BaseSongIterator *self, unsigned char *buf,
 	}
 }
 
-static int _sci_midi_process_state(BaseSongIterator *self, unsigned char *buf, int *result,
+static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *result,
 	SongIteratorChannel *channel, int flags) {
 	CHECK_FOR_END(0);
 
 	switch (channel->state) {
 
 	case SI_STATE_PCM: {
-		if (*(self->data + channel->offset) == 0
-		        && *(self->data + channel->offset + 1) == SCI_MIDI_EOT)
+		if (*(self->_data + channel->offset) == 0
+		        && *(self->_data + channel->offset + 1) == SCI_MIDI_EOT)
 			/* Fake one extra tick to trick the interpreter into not killing the song iterator right away */
 			channel->state = SI_STATE_PCM_MAGIC_DELTA;
 		else
@@ -389,7 +393,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, unsigned char *buf, i
 
 	case SI_STATE_DELTA_TIME: {
 		int offset;
-		int ticks = _parse_ticks(self->data + channel->offset,
+		int ticks = _parse_ticks(self->_data + channel->offset,
 		                         &offset,
 		                         self->_size - channel->offset);
 
@@ -442,24 +446,23 @@ static int _sci_midi_process_state(BaseSongIterator *self, unsigned char *buf, i
 	}
 }
 
-static inline int _sci_midi_process(BaseSongIterator *self, unsigned char *buf, int *result,
+static int _sci_midi_process(BaseSongIterator *self, byte *buf, int *result,
 	SongIteratorChannel *channel, int flags) {
 	return _sci_midi_process_state(self, buf, result,
 	                               channel,
 	                               flags);
 }
 
-int Sci0SongIterator::nextCommand(unsigned char *buf, int *result) {
+int Sci0SongIterator::nextCommand(byte *buf, int *result) {
 	return _sci_midi_process(this, buf, result,
 	                         &channel,
 	                         PARSE_FLAG_PARAMETRIC_CUE);
 }
 
-static inline int _sci0_header_magic_p(unsigned char *data, int offset, int size) {
+static int _sci0_header_magic_p(byte *data, int offset, int size) {
 	if (offset + 0x10 > size)
 		return 0;
-	return
-	    (data[offset] == 0x1a)
+	return (data[offset] == 0x1a)
 	    && (data[offset + 1] == 0x00)
 	    && (data[offset + 2] == 0x01)
 	    && (data[offset + 3] == 0x00);
@@ -470,17 +473,17 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	sfx_pcm_config_t *format, int *xoffset, uint *xsize) {
 	int tries = 2;
 	int found_it = 0;
-	unsigned char *pcm_data;
+	byte *pcm_data;
 	int size;
 	uint offset = SCI0_MIDI_OFFSET;
 
-	if (self->data[0] != 2)
+	if (self->_data[0] != 2)
 		return 1;
 	/* No such luck */
 
 	while ((tries--) && (offset < self->_size) && (!found_it)) {
 		/* Search through the garbage manually */
-		unsigned char *fc = sci_memchr(self->data + offset,
+		byte *fc = sci_memchr(self->_data + offset,
 		                    SCI0_END_OF_SONG,
 		                    self->_size - offset);
 
@@ -490,10 +493,10 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		}
 
 		/* add one to move it past the END_OF_SONG marker */
-		offset = fc - self->data + 1;
+		offset = fc - self->_data + 1;
 
 
-		if (_sci0_header_magic_p(self->data, offset, self->_size))
+		if (_sci0_header_magic_p(self->_data, offset, self->_size))
 			found_it = 1;
 	}
 
@@ -504,7 +507,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		return 1;
 	}
 
-	pcm_data = self->data + offset;
+	pcm_data = self->_data + offset;
 
 	size = getUInt16(pcm_data + SCI0_PCM_SIZE_OFFSET);
 
@@ -562,7 +565,7 @@ Audio::AudioStream *Sci0SongIterator::getAudioStream() {
 
 	channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
 
-	return makeStream(data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
+	return makeStream(_data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
 }
 
 SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
@@ -580,12 +583,10 @@ SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
 			break;
 
 		case _SIMSG_BASEMSG_CLONE: {
-			// FIXME: Implement cloning for C++ objects properly
-			BaseSongIterator *mem = new Sci0SongIterator();
-			memcpy(mem, this, sizeof(Sci0SongIterator));
-			sci_refcount_incref(mem->data);
+			BaseSongIterator *mem = new Sci0SongIterator(*this);
+			sci_refcount_incref(mem->_data);
 #ifdef DEBUG_VERBOSE
-			fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, this, mem->data);
+			fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, this, mem->_data);
 #endif
 			return mem; /* Assume caller has another copy of this */
 		}
@@ -606,7 +607,7 @@ SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
 			channel.playmask &= ~(1 << MIDI_RHYTHM_CHANNEL);
 
 			for (i = 0; i < MIDI_CHANNELS; i++)
-				if (data[2 + (i << 1)] & _deviceId
+				if (_data[2 + (i << 1)] & _deviceId
 				        && i != MIDI_RHYTHM_CHANNEL)
 					channel.playmask |= (1 << i);
 		}
@@ -640,8 +641,7 @@ int Sci0SongIterator::getTimepos() {
 	return channel.total_timepos;
 }
 
-static void _base_init_channel(SongIteratorChannel *channel, int id, int offset,
-	int end) {
+static void _base_init_channel(SongIteratorChannel *channel, int id, int offset, int end) {
 	channel->playmask = PLAYMASK_NONE; /* Disable all channels */
 	channel->id = id;
 	channel->notes_played = 0;
@@ -660,9 +660,15 @@ static void _base_init_channel(SongIteratorChannel *channel, int id, int offset,
 	channel->saw_notes = 0;
 }
 
-Sci0SongIterator::Sci0SongIterator() {
+Sci0SongIterator::Sci0SongIterator(byte *data, uint size, songit_id_t id)
+ : BaseSongIterator(data, size, id) {
 	channel_mask = 0xffff;	// Allocate all channels by default
 	channel.state = SI_STATE_UNINITIALISED;
+
+	for (int i = 0; i < MIDI_CHANNELS; i++)
+		polyphony[i] = data[1 + (i << 1)];
+
+	init();
 }
 
 void Sci0SongIterator::init() {
@@ -674,10 +680,9 @@ void Sci0SongIterator::init() {
 	ccc = 0; /* Reset cumulative cue counter */
 	active_channels = 1;
 	_base_init_channel(&channel, 0, SCI0_MIDI_OFFSET, _size);
-	_reset_synth_channels(this, &channel);
-	_delayRemaining = 0;
+	channel.resetSynthChannels();
 
-	if (data[0] == 2) /* Do we have an embedded PCM? */
+	if (_data[0] == 2) /* Do we have an embedded PCM? */
 		channel.state = SI_STATE_PCM;
 }
 
@@ -689,7 +694,7 @@ void Sci0SongIterator::init() {
 #define SCI01_INVALID_DEVICE 0xff
 
 /* Second index determines whether PCM output is supported */
-static int sci0_to_sci1_device_map[][2] = {
+static const int sci0_to_sci1_device_map[][2] = {
 	{0x06, 0x0c}, /* MT-32 */
 	{0xff, 0xff}, /* YM FB-01 */
 	{0x00, 0x00}, /* CMS/Game Blaster-- we assume OPL/2 here... */
@@ -700,8 +705,8 @@ static int sci0_to_sci1_device_map[][2] = {
 	{0xff, 0xff},
 }; /* Maps bit number to device ID */
 
-#define SONGDATA(x) self->data[offset + (x)]
-#define SCI1_CHANDATA(off) self->data[channel->offset + (off)]
+#define SONGDATA(x) self->_data[offset + (x)]
+#define SCI1_CHANDATA(off) self->_data[channel->offset + (off)]
 
 static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 	Sci1Sample *sample, **seekerp;
@@ -711,21 +716,21 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 	int end;
 
 	CHECK_FOR_END_ABSOLUTE((uint)offset + 10);
-	if (self->data[offset + 1] != 0)
+	if (self->_data[offset + 1] != 0)
 		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
-		          self->data[offset + 1]);
+		          self->_data[offset + 1]);
 
-	rate = getInt16(self->data + offset + 2);
-	length = getUInt16(self->data + offset + 4);
-	begin = getInt16(self->data + offset + 6);
-	end = getInt16(self->data + offset + 8);
+	rate = getInt16(self->_data + offset + 2);
+	length = getUInt16(self->_data + offset + 4);
+	begin = getInt16(self->_data + offset + 6);
+	end = getInt16(self->_data + offset + 8);
 
 	CHECK_FOR_END_ABSOLUTE((uint)(offset + 10 + length));
 
 	sample = new Sci1Sample();
 	sample->delta = begin;
 	sample->size = length;
-	sample->data = self->data + offset + 10;
+	sample->_data = self->_data + offset + 10;
 
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "[SAMPLE] %x/%x/%x/%x l=%x\n",
@@ -736,7 +741,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 	sample->format.stereo = SFX_PCM_MONO;
 	sample->format.rate = rate;
 
-	sample->announced = 0;
+	sample->announced = false;
 
 	/* Perform insertion sort */
 	seekerp = &(self->_nextSample);
@@ -791,12 +796,12 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 
 		CHECK_FOR_END_ABSOLUTE(offset + 4);
 
-		track_offset = getUInt16(self->data + offset);
-		end = getUInt16(self->data + offset + 2);
+		track_offset = getUInt16(self->_data + offset);
+		end = getUInt16(self->_data + offset + 2);
 
 		CHECK_FOR_END_ABSOLUTE(track_offset - 1);
 
-		if (self->data[track_offset] == 0xfe) {
+		if (self->_data[track_offset] == 0xfe) {
 			if (_sci1_sample_init(self, track_offset))
 				return 1; /* Error */
 		} else {
@@ -806,21 +811,20 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 				          MIDI_CHANNELS);
 				break; /* Scan for remaining samples */
 			} else {
-				int channel_nr
-				= self->data[track_offset] & 0xf;
+				int channel_nr = self->_data[track_offset] & 0xf;
 				SongIteratorChannel *channel =
 				    &(self->_channels[self->_numChannels++]);
 
-				if (self->data[track_offset] & 0xf0)
+				if (self->_data[track_offset] & 0xf0)
 					printf("Channel %d has mapping bits %02x\n",
-					       channel_nr, self->data[track_offset] & 0xf0);
+					       channel_nr, self->_data[track_offset] & 0xf0);
 
 				_base_init_channel(channel,
 				                   channel_nr,
 				                   /* Skip over header bytes: */
 				                   track_offset + 2,
 				                   track_offset + end);
-				_reset_synth_channels(self, channel);
+				channel->resetSynthChannels();
 
 				self->polyphony[self->_numChannels - 1]
 				= SCI1_CHANDATA(-1);
@@ -858,7 +862,7 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 
 #undef SONGDATA
 
-static inline int _sci1_get_smallest_delta(Sci1SongIterator *self) {
+static int _sci1_get_smallest_delta(Sci1SongIterator *self) {
 	int i, d = -1;
 	for (i = 0; i < self->_numChannels; i++)
 		if (self->_channels[i].state == SI_STATE_COMMAND
@@ -871,7 +875,7 @@ static inline int _sci1_get_smallest_delta(Sci1SongIterator *self) {
 		return d;
 }
 
-static inline void _sci1_update_delta(Sci1SongIterator *self, int delta) {
+static void _sci1_update_delta(Sci1SongIterator *self, int delta) {
 	int i;
 
 	if (self->_nextSample)
@@ -882,7 +886,7 @@ static inline void _sci1_update_delta(Sci1SongIterator *self, int delta) {
 			self->_channels[i].delay -= delta;
 }
 
-static inline int _sci1_no_delta_time(Sci1SongIterator *self) { /* Checks that none of the channels is waiting for its delta to be read */
+static int _sci1_no_delta_time(Sci1SongIterator *self) { /* Checks that none of the channels is waiting for its delta to be read */
 	int i;
 
 	for (i = 0; i < self->_numChannels; i++)
@@ -912,7 +916,7 @@ static void _sci1_dump_state(Sci1SongIterator *self) {
 			else
 				sciprintf(" ");
 
-			sciprintf("%02x", self->data[self->_channels[i].offset + j]);
+			sciprintf("%02x", self->_data[self->_channels[i].offset + j]);
 
 			if (j == 0)
 				sciprintf("<");
@@ -932,7 +936,7 @@ static void _sci1_dump_state(Sci1SongIterator *self) {
 #define COMMAND_INDEX_NONE -1
 #define COMMAND_INDEX_PCM -2
 
-static inline int _sci1_command_index(Sci1SongIterator *self) {
+static int _sci1_command_index(Sci1SongIterator *self) {
 	/* Determine the channel # of the next active event, or -1 */
 	int i;
 	int base_delay = 0x7ffffff;
@@ -964,7 +968,7 @@ Audio::AudioStream *Sci1SongIterator::getAudioStream() {
 	if (_nextSample && _nextSample->delta <= 0) {
 		Sci1Sample *sample = _nextSample;
 
-		Audio::AudioStream *feed = makeStream(sample->data, sample->size, sample->format);
+		Audio::AudioStream *feed = makeStream(sample->_data, sample->size, sample->format);
 
 		_nextSample = _nextSample->next;
 
@@ -982,7 +986,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 	if (!_initialised) {
 		sciprintf("[iterator-1] DEBUG: Initialising for %d\n",
 		          _deviceId);
-		_initialised = 1;
+		_initialised = true;
 		if (_sci1_song_init(this))
 			return SI_FINISHED;
 	}
@@ -1015,7 +1019,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 					return delay;
 				}
 				/* otherwise we're touching a PCM */
-				_nextSample->announced = 1;
+				_nextSample->announced = true;
 				return SI_PCM;
 			}
 		} else { /* Not a PCM */
@@ -1083,22 +1087,19 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 		break;
 
 		case _SIMSG_BASEMSG_CLONE: {
-			// FIXME: Implement cloning for C++ objects properly
-			Sci1SongIterator *mem = new Sci1SongIterator();
+			Sci1SongIterator *mem = new Sci1SongIterator(*this);
 			Sci1Sample **samplep;
 			int delta = msg.args[0].i; /* Delay until next step */
 
-			memcpy(mem, this, sizeof(Sci1SongIterator));	// FIXME
 			samplep = &(mem->_nextSample);
 
-			sci_refcount_incref(mem->data);
+			sci_refcount_incref(mem->_data);
 
 			mem->_delayRemaining += delta;
 
 			/* Clone chain of samples */
 			while (*samplep) {
-				Sci1Sample *newsample = new Sci1Sample;
-				memcpy(newsample, *samplep, sizeof(Sci1Sample));
+				Sci1Sample *newsample = new Sci1Sample(**samplep);
 				*samplep = newsample;
 				samplep = &(newsample->next);
 			}
@@ -1157,7 +1158,7 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 						return new_fast_forward_iterator(this, toffset);
 				} else {
 					_sci1_song_init(this);
-					_initialised = 1;
+					_initialised = true;
 				}
 
 				break;
@@ -1172,7 +1173,7 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 			break;
 
 		case _SIMSG_BASEMSG_SET_HOLD:
-			hold = msg.args[0].i;
+			_hold = msg.args[0].i;
 			break;
 		case _SIMSG_BASEMSG_SET_RHYTHM:
 			/* Ignore */
@@ -1195,8 +1196,14 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 	return NULL;
 }
 
-Sci1SongIterator::Sci1SongIterator() {
+Sci1SongIterator::Sci1SongIterator(byte *data, uint size, songit_id_t id)
+ : BaseSongIterator(data, size, id) {
 	channel_mask = 0; // Defer channel allocation
+
+	for (int i = 0; i < MIDI_CHANNELS; i++)
+		polyphony[i] = 0; // Unknown
+
+	init();
 }
 
 void Sci1SongIterator::init() {
@@ -1209,10 +1216,10 @@ void Sci1SongIterator::init() {
 	_deviceId = 0x00; // Default to Sound Blaster/Adlib for purposes of cue computation
 	_nextSample = NULL;
 	_numChannels = 0;
-	_initialised = 0;
+	_initialised = false;
 	_delayRemaining = 0;
 	loops = 0;
-	hold = 0;
+	_hold = 0;
 	memset(polyphony, 0, sizeof(polyphony));
 	memset(importance, 0, sizeof(importance));
 }
@@ -1237,11 +1244,9 @@ int Sci1SongIterator::getTimepos() {
 	return max;
 }
 
-/*****************************/
-/*-- Cleanup song iterator --*/
-/*****************************/
-
-
+/**
+ * A song iterator with the purpose of sending notes-off channel commands.
+ */
 class CleanupSongIterator : public SongIterator {
 public:
 	CleanupSongIterator(uint channels) {
@@ -1249,7 +1254,8 @@ public:
 		ID = 17;
 		flags = 0;
 	}
-	
+
+	SongIterator *makeClone() { return 0; }
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream() { return NULL; }
 	SongIterator *handleMessage(SongIteratorMessage msg);
@@ -1280,31 +1286,24 @@ int CleanupSongIterator::nextCommand(byte *buf, int *result) {
 		return SI_FINISHED;
 }
 
-SongIterator *new_cleanup_iterator(uint channels) {
-	CleanupSongIterator *it = new CleanupSongIterator(channels);
-	return it;
-}
-
 /**********************************/
 /*-- Fast-forward song iterator --*/
 /**********************************/
 
 int FastForwardSongIterator::nextCommand(byte *buf, int *result) {
-	int rv;
-
-	if (delta <= 0)
+	if (_delta <= 0)
 		return SI_MORPH; /* Did our duty */
 
 	while (1) {
-		rv = delegate->nextCommand(buf, result);
+		int rv = _delegate->nextCommand(buf, result);
 
 		if (rv > 0) {
 			/* Subtract from the delta we want to wait */
-			delta -= rv;
+			_delta -= rv;
 
 			/* Done */
-			if (delta < 0)
-				return -delta;
+			if (_delta < 0)
+				return -_delta;
 		}
 
 		if (rv <= 0)
@@ -1313,7 +1312,7 @@ int FastForwardSongIterator::nextCommand(byte *buf, int *result) {
 }
 
 Audio::AudioStream *FastForwardSongIterator::getAudioStream() {
-	return delegate->getAudioStream();
+	return _delegate->getAudioStream();
 }
 
 SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
@@ -1321,8 +1320,8 @@ SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
 		switch (msg.type) {
 
 		case _SIMSG_PLASTICWRAP_ACK_MORPH:
-			if (delta <= 0) {
-				SongIterator *it = delegate;
+			if (_delta <= 0) {
+				SongIterator *it = _delegate;
 				delete this;
 				return it;
 			}
@@ -1335,10 +1334,8 @@ SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
 		switch (msg.type) {
 
 		case _SIMSG_BASEMSG_CLONE: {
-			// FIXME: Implement cloning for C++ objects properly
-			FastForwardSongIterator *clone = new FastForwardSongIterator();
-			memcpy(clone, this, sizeof(FastForwardSongIterator));
-			songit_handle_message(&clone->delegate, msg);
+			FastForwardSongIterator *clone = new FastForwardSongIterator(*this);
+			songit_handle_message(&clone->_delegate, msg);
 			return clone;
 		}
 
@@ -1346,35 +1343,34 @@ SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
 			print_tabs_id(msg.args[0].i, ID);
 			fprintf(stderr, "PLASTICWRAP:\n");
 			msg.args[0].i++;
-			songit_handle_message(&delegate, msg);
+			songit_handle_message(&_delegate, msg);
 			break;
 
 		default:
-			songit_handle_message(&delegate, msg);
+			songit_handle_message(&_delegate, msg);
 		}
 	} else
-		songit_handle_message(&delegate, msg);
+		songit_handle_message(&_delegate, msg);
 
 	return NULL;
 }
 
 
 int FastForwardSongIterator::getTimepos() {
-	return delegate->getTimepos();
+	return _delegate->getTimepos();
+}
+
+FastForwardSongIterator::FastForwardSongIterator(SongIterator *capsit, int delta) 
+	: _delegate(capsit), _delta(delta) {
+	
+	channel_mask = capsit->channel_mask;
 }
 
 SongIterator *new_fast_forward_iterator(SongIterator *capsit, int delta) {
-	if (capsit == NULL) {
+	if (capsit == NULL)
 		return NULL;
-	}
 
 	FastForwardSongIterator *it = new FastForwardSongIterator();
-
-	it->delegate = capsit;
-	it->delta = delta;
-	it->channel_mask = capsit->channel_mask;
-
-
 	return it;
 }
 
@@ -1402,16 +1398,6 @@ static void song_iterator_remove_death_listener(SongIterator *it, TeeSongIterato
 		}
 	}
 }
-
-
-#if 0
-// Unreferenced - removed
-static void _tee_free(TeeSongIterator *it) {
-	int i;
-	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
-		delete it->_children[i].it;
-}
-#endif
 
 static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *corpse) {
 	if (corpse == self->_children[TEE_LEFT].it) {
@@ -1591,9 +1577,7 @@ SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
 			break; /* And continue with our children */
 
 		case _SIMSG_BASEMSG_CLONE: {
-			// FIXME: Implement cloning for C++ objects properly
-			TeeSongIterator *newit = new TeeSongIterator();
-			memcpy(newit, this, sizeof(TeeSongIterator));
+			TeeSongIterator *newit = new TeeSongIterator(*this);
 
 			if (newit->_children[TEE_LEFT].it)
 				newit->_children[TEE_LEFT].it =
@@ -1721,7 +1705,7 @@ SongIterator *songit_new_tee(SongIterator *left, SongIterator *right) {
 /*-- General purpose functionality --*/
 /*************************************/
 
-int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
+int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 	int retval;
 
 	if (!*it)
@@ -1748,7 +1732,7 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask) {
 
 			if (mask & IT_READER_MAY_FREE)
 				delete *it;
-			*it = new_cleanup_iterator(channel_mask);
+			*it = new CleanupSongIterator(channel_mask);
 			retval = -9999; /* Continue */
 		}
 	} while (!(  /* Until one of the following holds */
@@ -1789,7 +1773,6 @@ SongIterator::~SongIterator() {
 
 SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 	BaseSongIterator *it;
-	int i;
 
 	if (!data || size < 22) {
 		warning(SIPFX "Attempt to instantiate song iterator for null song data");
@@ -1799,33 +1782,18 @@ SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 
 	switch (type) {
 	case SCI_SONG_ITERATOR_TYPE_SCI0:
-		/**-- Playing SCI0 sound resources --**/
-		it = new Sci0SongIterator();
-
-		for (i = 0; i < MIDI_CHANNELS; i++)
-			it->polyphony[i] = data[1 + (i << 1)];
+		it = new Sci0SongIterator(data, size, id);
 		break;
 
 	case SCI_SONG_ITERATOR_TYPE_SCI1:
-		/**-- SCI01 or later sound resource --**/
-		it = new Sci1SongIterator();
-
-		for (i = 0; i < MIDI_CHANNELS; i++)
-			it->polyphony[i] = 0; /* Unknown */
+		it = new Sci1SongIterator(data, size, id);
 		break;
 
 	default:
 		/**-- Invalid/unsupported sound resources --**/
-		warning(SIPFX "Attempt to instantiate invalid/unknown"
-		        " song iterator type %d", type);
+		warning(SIPFX "Attempt to instantiate invalid/unknown song iterator type %d", type);
 		return NULL;
 	}
-	it->ID = id;
-
-	it->data = (unsigned char*)sci_refcount_memdup(data, size);
-	it->_size = size;
-
-	it->init();
 
 	return it;
 }
