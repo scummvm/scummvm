@@ -155,7 +155,7 @@ SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel) {
 	else
 		d = D_UP;
 
-	for (int i = 0; i < scrEntries; i++) 	{
+	for (int i = 0; i < scrEntries; i++)	{
 		if (SCIdata[i].actor == ano && SCIdata[i].scale == scale1 && SCIdata[i].direction == d) {
 			if (SCIdata[i].reels[reel] == TF_NONE)
 				return 0;

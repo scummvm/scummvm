@@ -93,7 +93,7 @@ void PlayfieldGetPos(		// Returns the xy position of the specified playfield in 
 	int *pXpos,		// returns current x position
 	int *pYpos);		// returns current y position
 
-int PlayfieldGetCentreX( 	// Returns the xy position of the specified playfield in the current background
+int PlayfieldGetCentreX(	// Returns the xy position of the specified playfield in the current background
 	int which);		// which playfield
 
 OBJECT *GetPlayfieldList(	// Returns the display list for the specified playfield

@@ -1055,7 +1055,7 @@ void TuckerEngine::updateCursor() {
 			} else {
 				moveUpInventoryObjects();
 			}
- 		} else {
+		} else {
 			if (_selectedObjectType == 3) {
 				setActionForInventoryObject();
 			} else if (_actionVerb != 0) {

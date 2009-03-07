@@ -747,7 +747,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		if (!(best_ha->flags & kBFBoxSelected)) {
 			hitarea_leave(best_ha, false);
 			best_ha->flags |= kBFBoxSelected;
- 		}
+		}
 	} else {
 		if (mode == 0)
 			return;
@@ -762,7 +762,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 			hitarea_leave(best_ha, false);
 			best_ha->flags |= kBFBoxSelected;
 		}
- 	}
+	}
 }
 
 void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {

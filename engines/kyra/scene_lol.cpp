@@ -652,7 +652,7 @@ uint16 LoLEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
 }
 
 uint16 LoLEngine::calcBlockIndex(uint16 x, uint16 y) {
- 	return ((y & 0xff00) >> 3) | (x >> 8);
+	return ((y & 0xff00) >> 3) | (x >> 8);
 }
 
 void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs) {

@@ -129,7 +129,7 @@ void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result);
 #define CONV_END	2	//
 
 #define CONTROL_OFF	0	// control()
-#define CONTROL_ON	1	// 	parameter
+#define CONTROL_ON	1	//	parameter
 #define CONTROL_OFFV	2	//
 #define CONTROL_OFFV2	3	//
 #define CONTROL_STARTOFF 4	//

@@ -161,7 +161,7 @@ void ScreenEffects::flash(int flashCount, byte *palette, int colorCount) {
 		_screen->setRGBPalette(_fxPalette, 0, colorCount);
 		_screen->updateScreenAndWait(20);
 		_screen->setRGBPalette(palette, 0, colorCount);
-  		_screen->updateScreenAndWait(20);
+ 		_screen->updateScreenAndWait(20);
 	}
 }
 
@@ -309,7 +309,7 @@ void ScreenEffects::vfx01(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, x, 312);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -318,7 +318,7 @@ void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, 312 - x, 312);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -327,7 +327,7 @@ void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, y, 190);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -336,7 +336,7 @@ void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, 190 - y, 190);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx05(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -346,7 +346,7 @@ void ScreenEffects::vfx05(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, y, 90);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx06(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -356,7 +356,7 @@ void ScreenEffects::vfx06(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, x, 152);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -366,7 +366,7 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, 152 - x, 152);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 // "Screen slide in" right to left
@@ -443,7 +443,7 @@ void ScreenEffects::vfx14(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, i, 27);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx15(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -454,7 +454,7 @@ void ScreenEffects::vfx15(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, i, 27);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 void ScreenEffects::vfx16(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -465,7 +465,7 @@ void ScreenEffects::vfx16(Graphics::Surface *surface, byte *palette, byte *newPa
 		setBlendedPalette(palette, newPalette, colorCount, i, 27);
 		_screen->updateScreenAndWait(25);
 	}
- 	setPalette(palette);
+	setPalette(palette);
 }
 
 // Palette fadeout/fadein

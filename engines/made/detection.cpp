@@ -275,7 +275,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		0,
 		GF_FLOPPY,
 		1,
- 	},
+	},
 
 	{
 		// Leather Goddesses of Phobos 2

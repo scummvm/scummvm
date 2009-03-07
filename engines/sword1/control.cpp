@@ -1181,7 +1181,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	inf->readUint16BE();	// save time
 
 	if (saveVersion < 2) { // Before version 2 we didn't had play time feature
-		SwordEngine::_systemVars.engineStartTime = 	_system->getMillis() / 1000; // Start counting
+		SwordEngine::_systemVars.engineStartTime =	_system->getMillis() / 1000; // Start counting
 	} else {
 		uint32 currentTime = _system->getMillis() / 1000;
 		SwordEngine::_systemVars.engineStartTime = currentTime - inf->readUint32BE(); // Engine start time

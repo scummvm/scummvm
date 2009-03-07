@@ -671,7 +671,7 @@ void RestoreGlobalProcess(INT_CONTEXT *pic) {
  */
 void KillGlobalProcesses(void) {
 
-	for (uint32 i = 0; i < numGlobalProcess; ++i) 	{
+	for (uint32 i = 0; i < numGlobalProcess; ++i)	{
 		g_scheduler->killMatchingProcess(PID_GPROCESS + i, -1);
 	}
 }
@@ -692,7 +692,7 @@ bool GlobalProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWai
 	uint32	i;		// Loop counter
 	_ctx->pProc = NULL;
 
-	for (i = 0; i < numGlobalProcess; ++i) 	{
+	for (i = 0; i < numGlobalProcess; ++i)	{
 		if (pGlobalProcess[i].processId == procID) {
 			assert(pGlobalProcess[i].hProcessCode);		// Must have some code to run
 

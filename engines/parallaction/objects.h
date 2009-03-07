@@ -346,10 +346,10 @@ public:
 
 
 	// getters/setters
-	virtual int16 getX() 			{ return _left; }
+	virtual int16 getX()			{ return _left; }
 	virtual void  setX(int16 value) { _left = value; }
 
-	virtual int16 getY() 			{ return _top; }
+	virtual int16 getY()			{ return _top; }
 	virtual void  setY(int16 value) { _top = value; }
 };
 
@@ -533,16 +533,16 @@ public:
 	void forceXYZF(int16 x, int16 y, int16 z, int16 f);
 
 	// getters/setters used by scripts
-	int16 getX() 			{ return _left; }
+	int16 getX()			{ return _left; }
 	void  setX(int16 value) { _left = value; }
 
-	int16 getY() 			{ return _top; }
+	int16 getY()			{ return _top; }
 	void  setY(int16 value) { _top = value; }
 
-	int16 getZ() 			{ return _z; }
+	int16 getZ()			{ return _z; }
 	void  setZ(int16 value) { _z = value; }
 
-	int16 getF() 			{ return _frame; }
+	int16 getF()			{ return _frame; }
 	void  setF(int16 value);
 
 	void getFoot(Common::Point &foot);

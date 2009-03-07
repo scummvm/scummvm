@@ -726,7 +726,7 @@ static void SetNextDest(PMOVER pMover) {
 			GotThere(pMover);
 			return;
 		} else {
- 			assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5001
+			assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5001
 			SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 		}
 	}
@@ -775,7 +775,7 @@ static void SetNextDest(PMOVER pMover) {
 		// Fall through for LEAVING
 
 	case LEAVING:
- 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5002
+		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5002
 		SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 		targetX = pMover->ItargetX;	// Desired position
 		targetY = pMover->ItargetY;
@@ -807,7 +807,7 @@ static void SetNextDest(PMOVER pMover) {
 			} else {
 				// Last node - we're off
 				pMover->npstatus = LEAVING;
-		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5003
+				assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5003
 				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 				targetX = pMover->ItargetX;	// Desired position
 				targetY = pMover->ItargetY;
@@ -840,7 +840,7 @@ static void SetNextDest(PMOVER pMover) {
 			} else {
 				// Last node - we're off
 				pMover->npstatus = LEAVING;
-		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5004
+				assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5004
 				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 				targetX = pMover->ItargetX;	// Desired position
 				targetY = pMover->ItargetY;
@@ -1396,7 +1396,7 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		}
 	}
 
- 	assert(pMover->bIgPath || InPolygon(targetX, targetY, PATH) != NOPOLY); // Error 5005
+	assert(pMover->bIgPath || InPolygon(targetX, targetY, PATH) != NOPOLY); // Error 5005
 	SetMoverUltDest(pMover, targetX, targetY);
 	SetMoverIntDest(pMover, targetX, targetY);
 
@@ -1454,7 +1454,7 @@ static void NotMoving(PMOVER pActor, int x, int y) {
 	if (pActor->ItargetX != -1 || pActor->ItargetY != -1) {
 		SetNextDest(pActor);
 	} else if (pActor->UtargetX != -1 || pActor->UtargetY != -1) {
- 		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5006
+		assert(pActor->bIgPath || InPolygon(pActor->UtargetX, pActor->UtargetY, PATH) != NOPOLY); // Error 5006
 		SetMoverIntDest(pActor, pActor->UtargetX, pActor->UtargetY);
 		SetNextDest(pActor);
 	}
@@ -1516,7 +1516,7 @@ static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
 		if (lastnode == firstnode) {
 			pMover->hFnpath = NOPOLY;
 			pMover->npstatus = NOT_IN;
-	 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5007
+			assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5007
 			SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 			SetNextDest(pMover);
 		} else {
@@ -1526,7 +1526,7 @@ static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
 			pMover->hFnpath = hPath;
 			pMover->line = firstnode ? firstnode - 1 : firstnode;
 			if (pMover->line == pMover->Tline && hPath == pMover->hUpath) {
-		 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5008
+				assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5008
 				SetMoverIntDest(pMover, pMover->UtargetX, pMover->UtargetY);
 				SetMoverDest(pMover, pMover->UtargetX, pMover->UtargetY);
 			} else {
@@ -1547,7 +1547,7 @@ static void EnteringNewPath(PMOVER pMover, HPOLYGON hPath, int x, int y) {
 	} else {
 		pMover->hFnpath = NOPOLY;
 		pMover->npstatus = NOT_IN;
- 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5009
+		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5009
 
 		// Added 26/01/95
 		if (IsPolyCorner(hPath, pMover->ItargetX, pMover->ItargetY))
@@ -1735,7 +1735,7 @@ void DoMoveActor(PMOVER pActor) {
 	MoveActor(pActor);
 
 	if ((pActor->targetX != -1 || pActor->targetY != -1)
-	&&  (wasx == pActor->objX && wasy == pActor->objY)) 	{
+	&&  (wasx == pActor->objX && wasy == pActor->objY))	{
 		for (i=0; i < NUMBER; i++) {
 			MoveActor(pActor);
 			if (wasx != pActor->objX || wasy != pActor->objY)

@@ -93,7 +93,7 @@ static int systemVars[SV_TOPVALID] = {
 		0,		// SYS_MaximumYoffset
 
 		0,		// SYS_DefaultFxDimFactor
-		0, 		// SYS_SceneFxDimFactor
+		0,		// SYS_SceneFxDimFactor
 
 		0x606060,	// SYS_HighlightRGB
 		WIN_PC,		// SYS_Platform,

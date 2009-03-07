@@ -304,9 +304,9 @@ bool Input::translateGameInput() {
 	}
 
 	trackMouse(z);
- 	if (!z) {
- 		return true;
- 	}
+	if (!z) {
+		return true;
+	}
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (ACTIONTYPE(z) == kZoneCommand))) {
 

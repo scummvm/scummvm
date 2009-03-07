@@ -97,8 +97,8 @@ bool bOldAudio;
 #define BIT0		0x01
 
 #define CD_XSCR		0x04	// Screen has a scroll offset
-#define CD_CMAP 	0x08	// Colour map is included
-#define CD_CMND 	0x10	// Command is included
+#define CD_CMAP	0x08	// Colour map is included
+#define CD_CMND	0x10	// Command is included
 #define CD_AUDIO	0x20	// Audio data is included
 #define CD_EXTEND	0x40	// Extended modes "A"-"z"
 #define CD_PRINT	0x80	// goes in conjunction with CD_CMD
@@ -264,7 +264,7 @@ static void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
 			firstLoop = false;
 		}
 
- 		// Is lo nibble '00xx'?
+		// Is lo nibble '00xx'?
 		if ((eax & 0xC) == 0) {
 			for (;;) {
 //@_rDN_Lp_1:
@@ -438,7 +438,7 @@ static void MoviePalette(int paletteOffset) {
 
 	r = bigBuffer + paletteOffset;
 
-	for (i = 0; i < 256; i++, r += 3) 	{
+	for (i = 0; i < 256; i++, r += 3)	{
 		moviePal[i] = TINSEL_RGB(*r, *(r + 1), *(r + 2));
 	}
 

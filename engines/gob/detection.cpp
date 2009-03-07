@@ -974,8 +974,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
- 	{ // Supplied by kizkoool in bugreport #2089734
- 		{
+	{ // Supplied by kizkoool in bugreport #2089734
+		{
 			"bargon",
 			"",
 			AD_ENTRY1s("intro.stk", "00f6b4e2ee26e5c40b488e2df5adcf03", 3975580),

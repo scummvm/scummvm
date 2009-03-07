@@ -72,7 +72,7 @@ class NSArchive : public Common::Archive {
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 	uint32			_numFiles;
 
-	uint32 			lookup(const char *name) const;
+	uint32			lookup(const char *name) const;
 
 public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
@@ -90,27 +90,27 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 		error("NSArchive: invalid stream passed to constructor");
 	}
 
- 	bool isSmallArchive = false;
+	bool isSmallArchive = false;
 	if (platform == Common::kPlatformAmiga) {
 		if (features & GF_DEMO) {
- 			isSmallArchive = stream->size() == SIZEOF_SMALL_ARCHIVE;
+			isSmallArchive = stream->size() == SIZEOF_SMALL_ARCHIVE;
 		} else if (features & GF_LANG_MULT) {
- 			isSmallArchive = (stream->readUint32BE() != MKID_BE('NDOS'));
- 		}
- 	}
+			isSmallArchive = (stream->readUint32BE() != MKID_BE('NDOS'));
+		}
+	}
 
- 	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
+	_numFiles = (isSmallArchive) ? SMALL_ARCHIVE_FILES_NUM : NORMAL_ARCHIVE_FILES_NUM;
 
 	_stream->seek(ARCHIVE_FILENAMES_OFS);
 	_stream->read(_archiveDir, _numFiles*32);
 
 	_stream->seek((isSmallArchive) ? SMALL_ARCHIVE_SIZES_OFS : NORMAL_ARCHIVE_SIZES_OFS);
 
- 	uint32 dataOffset = (isSmallArchive) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
- 	for (uint16 i = 0; i < _numFiles; i++) {
- 		_archiveOffsets[i] = dataOffset;
+	uint32 dataOffset = (isSmallArchive) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
+	for (uint16 i = 0; i < _numFiles; i++) {
+		_archiveOffsets[i] = dataOffset;
 		_archiveLenghts[i] = _stream->readUint32BE();
- 		dataOffset += _archiveLenghts[i];
+		dataOffset += _archiveLenghts[i];
 	}
 
 }
@@ -121,9 +121,9 @@ NSArchive::~NSArchive() {
 
 uint32 NSArchive::lookup(const char *name) const {
 	uint32 i = 0;
- 	for ( ; i < _numFiles; i++) {
+	for ( ; i < _numFiles; i++) {
 		if (!scumm_stricmp(_archiveDir[i], name)) break;
- 	}
+	}
 	return i;
 }
 

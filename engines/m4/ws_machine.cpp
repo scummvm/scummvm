@@ -34,16 +34,16 @@ bool (Machine::*machineCommandsTable[])(Instruction &instruction) = {
 	&Machine::m1_jump,
 	&Machine::m1_terminate,
 	&Machine::m1_startSequence,
- 	&Machine::m1_pauseSequence,
- 	&Machine::m1_resumeSequence,
- 	&Machine::m1_storeValue,
- 	&Machine::m1_sendMessage,
- 	&Machine::m1_broadcastMessage,
- 	&Machine::m1_replyMessage,
- 	&Machine::m1_sendSystemMessage,
- 	&Machine::m1_createMachine,
- 	&Machine::m1_createMachineEx,
- 	&Machine::m1_clearVars
+	&Machine::m1_pauseSequence,
+	&Machine::m1_resumeSequence,
+	&Machine::m1_storeValue,
+	&Machine::m1_sendMessage,
+	&Machine::m1_broadcastMessage,
+	&Machine::m1_replyMessage,
+	&Machine::m1_sendSystemMessage,
+	&Machine::m1_createMachine,
+	&Machine::m1_createMachineEx,
+	&Machine::m1_clearVars
 };
 
 void (Machine::*machineConditionalsTable[])(Instruction &instruction) = {

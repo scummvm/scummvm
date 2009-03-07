@@ -230,7 +230,7 @@ void FreeMasterInterpretContext(void) {
 	INT_CONTEXT *pic;
 	int	i;
 
-	for (i = 0, pic = icList; i < NUM_INTERPRET; i++, pic++) 	{
+	for (i = 0, pic = icList; i < NUM_INTERPRET; i++, pic++)	{
 		if ((pic->GSort == GS_MASTER) || (pic->GSort == GS_GPROCESS)) {
 			memset(pic, 0, sizeof(INT_CONTEXT));
 			pic->GSort = GS_NONE;
@@ -762,7 +762,7 @@ void CheckOutWaiters(void) {
 	int i, j;
 
 	// Check all waited for have someone waiting
-	for (i = 0; i < NUM_INTERPRET; i++) 	{
+	for (i = 0; i < NUM_INTERPRET; i++)	{
 		// If someone is supposedly waiting for this one
 		if ((icList + i)->GSort != GS_NONE && (icList + i)->waitNumber2) {
 			// Someone really must be waiting for this one

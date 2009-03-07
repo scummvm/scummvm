@@ -556,7 +556,7 @@ void ScriptInterpreter::callKernelFunction(uint32 index) {
 
 	int args = (this->*(_kernelFunctions[index].proc))();
 	// Now remove values from the stack if the function used any
- 	if (args > 4)
+	if (args > 4)
 		_stackPtr -= args - 4;
 
 	printf("-------------\n");

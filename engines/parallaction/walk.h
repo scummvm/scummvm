@@ -69,7 +69,7 @@ class PathWalker_BR {
 		AnimationPtr	_a;
 		int				_walkDelay;
 		int				_fieldC;
-		Common::Point 	_startFoot;
+		Common::Point	_startFoot;
 		bool			_first;
 		int				_step;
 		int				_dirFrame;

@@ -100,7 +100,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 			char buf[50];
 			sprintf(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 			GUI::MessageDialog dialog(buf, "OK");
- 	 		dialog.runModal();
+			dialog.runModal();
 
 			error(CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 		}

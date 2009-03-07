@@ -2186,10 +2186,10 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	_vm->_gfx->setPixelColor(x, ye, cornerColor);
 	_vm->_gfx->setPixelColor(xe, y, cornerColor);
 	_vm->_gfx->setPixelColor(xe, ye, cornerColor);
- 	_vm->_gfx->hLine(x + 1, y, x + w - 2, frameColor);
- 	_vm->_gfx->hLine(x + 1, ye, x + w - 2, frameColor);
- 	_vm->_gfx->vLine(x, y + 1, y + h - 2, frameColor);
- 	_vm->_gfx->vLine(xe, y + 1, y + h - 2, frameColor);
+	_vm->_gfx->hLine(x + 1, y, x + w - 2, frameColor);
+	_vm->_gfx->hLine(x + 1, ye, x + w - 2, frameColor);
+	_vm->_gfx->vLine(x, y + 1, y + h - 2, frameColor);
+	_vm->_gfx->vLine(xe, y + 1, y + h - 2, frameColor);
 
 	x++;
 	y++;

@@ -585,9 +585,9 @@ void ScriptInterpreter::cmd_send() {
 	_stack.push(_codeIp - _codeBase);
 	_stack.push(_runningScriptObjectIndex);
 	_stack.push(kScriptStackLimit - _localStackPos);
- 	_localStackPos = _stack.getStackPos();
+	_localStackPos = _stack.getStackPos();
 
- 	int16 propertyId = _stack.peek(_localStackPos + argc + 2);
+	int16 propertyId = _stack.peek(_localStackPos + argc + 2);
 	int16 objectIndex = _stack.peek(_localStackPos + argc + 4);
 
 	debug(4, "objectIndex = %d (%04X); propertyId = %d(%04X)", objectIndex, objectIndex, propertyId, propertyId);
@@ -708,25 +708,25 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 				switch (*sig) {
 				case 'b':
 					valueType = 0;
-	 				value = *code++;
+					value = *code++;
 					break;
 				case 'B':
-	 				valueType = 1;
-	 				value = *code++;
+					valueType = 1;
+					value = *code++;
 					break;
 				case 'w':
 					valueType = 0;
-	 				value = READ_LE_UINT16(code);
-	 				code += 2;
+					value = READ_LE_UINT16(code);
+					code += 2;
 					break;
 				case 'W':
-	 				valueType = 1;
-	 				value = READ_LE_UINT16(code);
-	 				code += 2;
+					valueType = 1;
+					value = READ_LE_UINT16(code);
+					code += 2;
 					break;
 				case 'E':
-	 				valueType = 2;
-	 				value = *code++;
+					valueType = 2;
+					value = *code++;
 					break;
 				}
 				switch (valueType) {
@@ -742,7 +742,7 @@ void ScriptInterpreter::dumpScript(int16 objectIndex, int *opcodeStats, int *ext
 						externStats[value]++;
 					} else {
 						snprintf(tempStr, 32, "invalid: %d", value);
-	 				}
+					}
 					break;
 				}
 				codeLine += tempStr;

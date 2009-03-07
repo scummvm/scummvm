@@ -474,7 +474,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
 
 	char *cptr = (char *)FindChunk(MASTER_SCNHANDLE, CHUNK_TIME_STAMPS);
 
-	switch (which) 	{
+	switch (which)	{
 	case VER_GLITTER:
 		memcpy(buffer, cptr, length);
 		break;
@@ -1977,7 +1977,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 			if (_ctx->bSample) {
 				// Wait for sample to end whether or not
 				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (_ctx->pText == NULL || speedText == DEFTEXTSPEED) 				{
+					if (_ctx->pText == NULL || speedText == DEFTEXTSPEED)				{
 						// No text or speed modification - just depends on sample
 						break;
 					} else {

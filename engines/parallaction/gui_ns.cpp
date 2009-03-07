@@ -397,7 +397,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	}
 
 	byte	_points[3];
-	bool 	_fail;
+	bool	_fail;
 	const uint16 (*_keys)[PASSWORD_LEN];
 	Graphics::Surface _block;
 	Graphics::Surface _emptySlots;

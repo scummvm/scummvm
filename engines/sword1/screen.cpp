@@ -385,7 +385,7 @@ void Screen::draw(void) {
 	} else if (!(SwordEngine::isPsx())) {
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
 	} else { //We are using PSX version
-		uint8 *indxScreen; 		
+		uint8 *indxScreen;		
 		if(_currentScreen == 45 || _currentScreen == 55 ||
 		   _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) // Width shrinked backgrounds
 			indxScreen = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);

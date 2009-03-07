@@ -141,7 +141,7 @@ const int enhancedAudioSCNVersion[] = {
 	  84,  85,  86, 3124,  88,  89,  90,  88,   2,   2,	// 121-130
 	   2,   2,   2,    2,   2,   2,   2,   2,   2,   2,	// 131-140
 	3141,  91,  92,   93,  94,  94,  95,  96,  52,   4,	// 141-150
-	  97,  98,  99,   99                              	// 151-154
+	  97,  98,  99,   99                             	// 151-154
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
@@ -252,7 +252,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		// Store the length
 		//dwLastSeqLen = dwSeqLen;
 	} else {
-	  	// dwFileOffset == dwLastMidiIndex
+	 	// dwFileOffset == dwLastMidiIndex
 		_vm->_midiMusic->stop();
 		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 	}
@@ -301,7 +301,7 @@ int GetMidiVolume() {
 void SetMidiVolume(int vol)	{
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 
-	if (vol == 0 && volMusic == 0) 	{
+	if (vol == 0 && volMusic == 0)	{
 		// Nothing to do
 	} else if (vol == 0 && volMusic != 0) {
 		// Stop current midi sequence

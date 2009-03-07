@@ -48,7 +48,7 @@ enum MouseTriState {
 };
 
 class Input {
-	int 		updateGameInput();
+	int		updateGameInput();
 
 	bool		_hasKeyPressEvent;
 	Common::KeyState _keyPressed;
@@ -61,8 +61,8 @@ class Input {
 	void		translateInput();
 	bool		translateGameInput();
 	bool		updateInventoryInput();
-	void 		takeAction(ZonePtr z);
-	void 		walkTo(const Common::Point &dest);
+	void		takeAction(ZonePtr z);
+	void		walkTo(const Common::Point &dest);
 
 	Parallaction	*_vm;
 
@@ -72,7 +72,7 @@ class Input {
 	ZonePtr			_hoverZone;
 
 	void	enterInventoryMode();
-	void 	exitInventoryMode();
+	void	exitInventoryMode();
 
 	int		_gameType;
 
@@ -112,11 +112,11 @@ public:
 	InventoryItem	_activeItem;
 
 	void	readInput();
-	int 	updateInput();
+	int	updateInput();
 	void	trackMouse(ZonePtr z);
 	void	waitForButtonEvent(uint32 buttonEventMask, int32 timeout = -1);
 	uint32	getLastButtonEvent() { return _mouseButtons; }
-	bool  	getLastKeyDown(uint16 &ascii);
+	bool 	getLastKeyDown(uint16 &ascii);
 
 	void stopHovering();
 

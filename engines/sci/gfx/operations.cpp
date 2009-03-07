@@ -1496,17 +1496,17 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 		// We add the modifier key status to buckybits
 		// SDL sends a keydown event if a modifier key is turned on and a keyup event if it's off
 		//
- 	 	// FIXME: This code is semi-bogus. It only records the modifier key being *pressed*.
- 	 	// It does not track correctly whether capslock etc. is active. To do that, we
- 	 	// would have to record the fact that the modifier was pressed in global var,
- 	 	// and also watch for Common::EVENT_KEYUP events.
- 	 	// But this is still not quite good enough, because not all events might
- 	 	// pass through here (e.g. the GUI might be running with its own event loop).
- 	 	//
- 	 	// The best solution likely would be to add code to the EventManager class
- 	 	// for tracking which keys are pressed and which are not...
+		// FIXME: This code is semi-bogus. It only records the modifier key being *pressed*.
+		// It does not track correctly whether capslock etc. is active. To do that, we
+		// would have to record the fact that the modifier was pressed in global var,
+		// and also watch for Common::EVENT_KEYUP events.
+		// But this is still not quite good enough, because not all events might
+		// pass through here (e.g. the GUI might be running with its own event loop).
+		//
+		// The best solution likely would be to add code to the EventManager class
+		// for tracking which keys are pressed and which are not...
 		if (ev.type == Common::EVENT_KEYDOWN || ev.type == Common::EVENT_KEYUP) {
- 			switch (ev.kbd.keycode) {
+			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_CAPSLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
 					_modifierStates |= SCI_EVM_CAPSLOCK;

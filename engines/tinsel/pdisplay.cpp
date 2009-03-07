@@ -270,7 +270,7 @@ void DisablePointing(CORO_PARAM) {
 
 	bPointingActive = false;
 
-	for (_ctx->i = 0; _ctx->i < MAX_POLY; _ctx->i++) 	{
+	for (_ctx->i = 0; _ctx->i < MAX_POLY; _ctx->i++)	{
 		_ctx->hPoly = GetPolyHandle(_ctx->i);
 
 		if (_ctx->hPoly != NOPOLY && PolyType(_ctx->hPoly) == TAG && PolyIsPointedTo(_ctx->hPoly)) {

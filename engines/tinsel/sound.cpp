@@ -325,7 +325,7 @@ int8 SoundManager::getPan(int x) {
  * @param id			Identifier of sample to be checked
  */
 bool SoundManager::sampleExists(int id) {
-	if (_vm->_mixer->isReady()) 	{
+	if (_vm->_mixer->isReady())	{
 		// make sure id is in range
 		if (id > 0 && id < _sampleIndexLen) {
 			// check for a sample index
@@ -406,7 +406,7 @@ void SoundManager::openSampleFiles(void) {
 		return;
 
 	// open sample index file in binary mode
-	if (f.open(_vm->getSampleIndex(sampleLanguage))) 	{
+	if (f.open(_vm->getSampleIndex(sampleLanguage)))	{
 		// get length of index file
 		f.seek(0, SEEK_END);		// move to end of file
 		_sampleIndexLen = f.pos();	// get file pointer
@@ -445,7 +445,7 @@ void SoundManager::openSampleFiles(void) {
 		char buf[50];
 		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
 		GUI::MessageDialog dialog(buf, "OK");
- 	 	dialog.runModal();
+		dialog.runModal();
 
 		error(CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
 	}
@@ -455,7 +455,7 @@ void SoundManager::openSampleFiles(void) {
 		char buf[50];
 		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
 		GUI::MessageDialog dialog(buf, "OK");
- 	 	dialog.runModal();
+		dialog.runModal();
 
 		error(CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
 	}

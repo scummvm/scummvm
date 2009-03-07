@@ -3584,7 +3584,7 @@ void SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
 	bMoveOnUnHide = true;
 
 	// Get the Actor Tag's or Tagged Actor's label for the conversation window title
-	if (hPoly != NOPOLY) 	{
+	if (hPoly != NOPOLY)	{
 		int x, y;
 		GetTagTag(hPoly, &InvD[INV_CONV].hInvTitle, &x, &y);
 	} else {

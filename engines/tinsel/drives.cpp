@@ -115,7 +115,7 @@ bool GotoCD(void) {
 
 	currentCD = nextCD;
 
-/*	if (bNoCD) 	{
+/*	if (bNoCD)	{
 		strcpy(cdDirectory, hdDirectory);
 		cdLastBit[3] = currentCD;
 		strcat(cdDirectory, cdLastBit);

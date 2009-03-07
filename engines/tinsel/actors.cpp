@@ -95,7 +95,7 @@ struct ACTORINFO {
 
 	const FREEL	*presReel;	// the present reel
 	int			presRnum;	// the present reel number
-	SCNHANDLE 	presFilm;	// the film that reel belongs to
+	SCNHANDLE	presFilm;	// the film that reel belongs to
 	OBJECT		*presObj;	// reference for position information
 	int			presPlayX, presPlayY;
 
@@ -108,9 +108,9 @@ struct ACTORINFO {
 
 	COLORREF	textColour;	// Text colour
 
-	SCNHANDLE 	playFilm;	// revert to this after talks
-	SCNHANDLE 	talkFilm;	// this be deleted in the future!
-	SCNHANDLE 	latestFilm;	// the last film ordered
+	SCNHANDLE	playFilm;	// revert to this after talks
+	SCNHANDLE	talkFilm;	// this be deleted in the future!
+	SCNHANDLE	latestFilm;	// the last film ordered
 	bool		bTalking;
 
 	int			steps;
@@ -162,7 +162,7 @@ static Z_POSITIONS zPositions[NUM_ZPOSITIONS];
  * @param num			Chunk Id
  */
 void RegisterActors(int num) {
-	if (actorInfo == NULL) 	{
+	if (actorInfo == NULL)	{
 		// Store the total number of actors in the game
 		NumActors = num;
 

@@ -45,7 +45,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
 	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
-	DCmd_Register("programs", 	WRAP_METHOD(Debugger, Cmd_Programs));
+	DCmd_Register("programs",	WRAP_METHOD(Debugger, Cmd_Programs));
 
 }
 

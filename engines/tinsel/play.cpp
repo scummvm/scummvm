@@ -50,7 +50,7 @@ struct PPINIT {
 	int16	y;			// } - set to (-1, -1) if none.
 	int16	z;			// normally 0, set if from restore
 	int16	speed;		// Film speed
-	int16 	actorid;	// Set if called from an actor code block
+	int16	actorid;	// Set if called from an actor code block
 	uint8	splay;		// Set if called from splay()
 	uint8	bTop;		// Set if called from topplay()
 	uint8	bRestore;
@@ -996,7 +996,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.bTop = bTop;
 	ppi.sf = sfact;
 	ppi.escOn = escOn;
- 	ppi.myescEvent = myescEvent;
+	ppi.myescEvent = myescEvent;
 
 	// Start display process for each reel in the film
 	for (int i = FROM_LE_32(pFilm->numreels) - 1; i >= 0; i--) {

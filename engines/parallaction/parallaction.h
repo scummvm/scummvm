@@ -293,10 +293,10 @@ public:
 	Table				*_localFlagNames;
 	CommandExec			*_cmdExec;
 	ProgramExec			*_programExec;
-	Inventory 			*_inventory;
-	BalloonManager 		*_balloonMan;
+	Inventory			*_inventory;
+	BalloonManager		*_balloonMan;
 	DialogueManager		*_dialogueMan;
-	InventoryRenderer 	*_inventoryRenderer;
+	InventoryRenderer	*_inventoryRenderer;
 
 	// game data
 	Character		_char;
@@ -313,31 +313,31 @@ public:
 
 protected:
 	void	runGame();
-	void 	runGameFrame(int event);
-	void 	runGuiFrame();
-	void 	cleanupGui();
-	void 	runDialogueFrame();
-	void 	exitDialogueMode();
-	void 	runCommentFrame();
-	void 	enterCommentMode(ZonePtr z);
-	void 	exitCommentMode();
+	void	runGameFrame(int event);
+	void	runGuiFrame();
+	void	cleanupGui();
+	void	runDialogueFrame();
+	void	exitDialogueMode();
+	void	runCommentFrame();
+	void	enterCommentMode(ZonePtr z);
+	void	exitCommentMode();
 	void	updateView();
-	void 	drawAnimation(AnimationPtr anim);
-	void 	drawZone(ZonePtr zone);
+	void	drawAnimation(AnimationPtr anim);
+	void	drawZone(ZonePtr zone);
 	void	updateZones();
 	void	doLocationEnterTransition();
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
 	void	showLocationComment(const Common::String &text, bool end);
-	void 	setupBalloonManager();
+	void	setupBalloonManager();
 
 public:
 	void	beep();
 	void	pauseJobs();
 	void	resumeJobs();
-	uint 	getInternLanguage();
-	void 	setInternLanguage(uint id);
-	void 	enterDialogueMode(ZonePtr z);
+	uint	getInternLanguage();
+	void	setInternLanguage(uint id);
+	void	enterDialogueMode(ZonePtr z);
 	void	scheduleLocationSwitch(const char *location);
 	void	showSlide(const char *name, int x = 0, int y = 0);
 
@@ -346,28 +346,28 @@ public:
 	void		clearLocationFlags(uint32 flags);
 	void		toggleLocationFlags(uint32 flags);
 	uint32		getLocationFlags();
-	bool 		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
-	bool 		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
-	bool 		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	void		runZone(ZonePtr z);
 	bool		pickupItem(ZonePtr z);
-	void 		updateDoor(ZonePtr z, bool close);
-	void 		showZone(ZonePtr z, bool visible);
+	void		updateDoor(ZonePtr z, bool close);
+	void		showZone(ZonePtr z, bool visible);
 	void		setBackground(const char *background, const char *mask, const char *path);
-	void 		highlightInventoryItem(ItemPosition pos);
-	int16 		getHoverInventoryItem(int16 x, int16 y);
-	int 		addInventoryItem(ItemName item);
-	int 		addInventoryItem(ItemName item, uint32 value);
-	void 		dropItem(uint16 v);
-	bool 		isItemInInventory(int32 v);
-	const 		InventoryItem* getInventoryItem(int16 pos);
-	int16 		getInventoryItemIndex(int16 pos);
-	void 		initInventory();
-	void 		destroyInventory();
-	void 		cleanInventory(bool keepVerbs = true);
-	void 		openInventory();
-	void 		closeInventory();
+	void		highlightInventoryItem(ItemPosition pos);
+	int16		getHoverInventoryItem(int16 x, int16 y);
+	int		addInventoryItem(ItemName item);
+	int		addInventoryItem(ItemName item, uint32 value);
+	void		dropItem(uint16 v);
+	bool		isItemInInventory(int32 v);
+	const		InventoryItem* getInventoryItem(int16 pos);
+	int16		getInventoryItemIndex(int16 pos);
+	void		initInventory();
+	void		destroyInventory();
+	void		cleanInventory(bool keepVerbs = true);
+	void		openInventory();
+	void		closeInventory();
 
 	virtual void parseLocation(const char* name) = 0;
 	virtual void changeLocation() = 0;
@@ -404,7 +404,7 @@ public:
 
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
-	void 	switchBackground(const char* background, const char* mask);
+	void	switchBackground(const char* background, const char* mask);
 
 private:
 	bool				_inTestResult;
@@ -412,17 +412,17 @@ private:
 	ProgramParser_ns	*_programParser;
 
 private:
-	void 	initFonts();
-	void 	freeFonts();
-	void 	initResources();
+	void	initFonts();
+	void	freeFonts();
+	void	initResources();
 	void	startGui();
 	void	startCreditSequence();
 	void	startEndPartSequence();
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	freeLocation(bool removeAll);
-	void 	freeCharacter();
-	void 	startMovingSarcophagus(ZonePtr sarc);
-	void 	stopMovingSarcophagus();
+	void	freeCharacter();
+	void	startMovingSarcophagus(ZonePtr sarc);
+	void	stopMovingSarcophagus();
 
 
 	//  callables data
@@ -539,9 +539,9 @@ private:
 	void	initFonts();
 	void	freeFonts();
 	void	freeLocation(bool removeAll);
-	void 	loadProgram(AnimationPtr a, const char *filename);
-	void 	startGui(bool showSplash);
-	void 	freeCharacter();
+	void	loadProgram(AnimationPtr a, const char *filename);
+	void	startGui(bool showSplash);
+	void	freeCharacter();
 
 	typedef void (Parallaction_br::*Callable)(void*);
 	const Callable *_callables;

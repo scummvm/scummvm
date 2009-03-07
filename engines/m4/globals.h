@@ -79,12 +79,12 @@ enum WoodScriptGlobals {
 	kGlobTemp32		= 38
 };
 
-const uint32 SERIES_FORWARD 				=  0;
-const uint32 SERIES_PINGPONG	 			=  1;
-const uint32 SERIES_BACKWARD 				=  2;
-const uint32 SERIES_RANDOM 					=  4;
-const uint32 SERIES_NO_TOSS 				=  8;
-const uint32 SERIES_STICK		 			= 16;
+const uint32 SERIES_FORWARD				=  0;
+const uint32 SERIES_PINGPONG				=  1;
+const uint32 SERIES_BACKWARD				=  2;
+const uint32 SERIES_RANDOM					=  4;
+const uint32 SERIES_NO_TOSS				=  8;
+const uint32 SERIES_STICK					= 16;
 const uint32 SERIES_LOOP_TRIGGER			= 32;
 const uint32 SERIES_LOAD_PALETTE			= 64;
 const uint32 SERIES_HORZ_FLIP				=128;

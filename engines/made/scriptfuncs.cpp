@@ -190,7 +190,7 @@ int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
 		_vm->_mixer->stopHandle(_audioStreamHandle);
 		_vm->_autoStopSound = false;
 	}
- 	_vm->_screen->clearScreen();
+	_vm->_screen->clearScreen();
 	return 0;
 }
 

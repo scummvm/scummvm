@@ -272,8 +272,8 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 		DXAPlayerWithSound *dxaDecoder = new DXAPlayerWithSound(snd, bgSoundHandle);
 		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
 #else
- 	 	GUI::MessageDialog dialog("DXA cutscenes found but ScummVM has been built without zlib support", "OK");
- 	 	dialog.runModal();
+		GUI::MessageDialog dialog("DXA cutscenes found but ScummVM has been built without zlib support", "OK");
+		dialog.runModal();
 		return NULL;
 #endif
 	}
@@ -282,14 +282,14 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 	snprintf(filename, sizeof(filename), "%s.mp2", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
- 	 	GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
- 	 	dialog.runModal();
+		GUI::MessageDialog dialog("MPEG2 cutscenes are no longer supported", "OK");
+		dialog.runModal();
 		return NULL;
 	}
 
 	sprintf(buf, "Cutscene '%s' not found", sequenceList[id]);
- 	GUI::MessageDialog dialog(buf, "OK");
- 	dialog.runModal();
+	GUI::MessageDialog dialog(buf, "OK");
+	dialog.runModal();
 
 	return NULL;
 }

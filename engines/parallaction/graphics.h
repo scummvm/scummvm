@@ -131,7 +131,7 @@ struct Cnv : public Frames {
 	uint16	_height;	//
 	byte**	field_8;	// unused
 	byte*	_data;
-	bool 	_freeData;
+	bool	_freeData;
 
 public:
 	Cnv() {
@@ -343,12 +343,12 @@ public:
 struct BackgroundInfo {
 protected:
 	typedef Common::Array<MaskBuffer*> MaskPatches;
-	MaskPatches 	_maskPatches;
+	MaskPatches	_maskPatches;
 	MaskBuffer		_maskBackup;
 	void clearMaskData();
 
 	typedef Common::Array<PathBuffer*> PathPatches;
-	PathPatches 	_pathPatches;
+	PathPatches	_pathPatches;
 	PathBuffer		_pathBackup;
 	void clearPathData();
 
@@ -363,7 +363,7 @@ public:
 
 	Palette				palette;
 
-	int 				layers[4];
+	int				layers[4];
 	PaletteFxRange		ranges[6];
 
 
@@ -505,12 +505,12 @@ protected:
 
 	Graphics::Surface	*lockScreen();
 	void				unlockScreen();
-	void 				updateScreenIntern();
+	void				updateScreenIntern();
 
 	bool				_doubleBuffering;
 	int					_gameType;
 	Graphics::Surface	_backBuffer;
-	void 				copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	void				copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
 	int					_scrollPos;
 	int					_minScroll, _maxScroll;
@@ -526,7 +526,7 @@ protected:
 	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
 	bool				_overlayMode;
 	void				drawOverlay(Graphics::Surface &surf);
-	void 				drawInventory();
+	void				drawInventory();
 
 	void drawList(Graphics::Surface &surface, GfxObjArray &list);
 	void updateFloatingLabel();

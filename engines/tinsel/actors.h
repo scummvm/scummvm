@@ -147,7 +147,7 @@ struct SAVED_ACTOR {
 	short		zFactor;
 	bool		bAlive;
 	bool		bHidden;
-	SCNHANDLE 	presFilm;	//!< the film that reel belongs to
+	SCNHANDLE	presFilm;	//!< the film that reel belongs to
 	short		presRnum;	//!< the present reel number
 	short		presPlayX, presPlayY;
 };

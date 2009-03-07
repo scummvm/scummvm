@@ -761,7 +761,7 @@ void T1MoverProcess(CORO_PARAM, const void *param) {
 
 	while (1) {
 		if (pActor->bSpecReel) {
- 			if (!pActor->bHidden)
+			if (!pActor->bHidden)
 #ifdef DEBUG
 			assert(StepAnimScript(&pActor->actorAnim) != ScriptFinished); // Actor reel has finished!
 #else

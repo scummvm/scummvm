@@ -190,8 +190,8 @@ protected:
 	Dialogue	*parseDialogue();
 	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
 	virtual Answer *parseAnswer();
-	void 		parseAnswerFlags(Answer *answer);
-	void 		parseAnswerBody(Answer *answer);
+	void		parseAnswerFlags(Answer *answer);
+	void		parseAnswerBody(Answer *answer);
 	Question	*parseQuestion();
 
 	void		parseZone(ZoneList &list, char *name);
@@ -200,9 +200,9 @@ protected:
 	void		parseAnimation(AnimationList &list, char *name);
 	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
-	void 		parseCommandFlag(CommandPtr cmd, const char *flag, Table *table, bool checkTrap);
-	void 		saveCommandForward(const char *name, CommandPtr cmd);
-	void 		resolveCommandForwards();
+	void		parseCommandFlag(CommandPtr cmd, const char *flag, Table *table, bool checkTrap);
+	void		saveCommandForward(const char *name, CommandPtr cmd);
+	void		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
 
@@ -307,9 +307,9 @@ protected:
 
 	virtual void	parseZoneTypeBlock(ZonePtr z);
 	void			parsePathData(ZonePtr z);
-	void 			parseGetData(ZonePtr z);
-	void 			parseDoorData(ZonePtr z);
-	void 			parseAnswerCounter(Answer *answer);
+	void			parseGetData(ZonePtr z);
+	void			parseDoorData(ZonePtr z);
+	void			parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();
 
 public:

@@ -32,7 +32,7 @@
 namespace M4 {
 
 InventoryObject burger_inventory [] = {
-	// name 					scene	icon
+	// name					scene	icon
 	//--------------------		-----	-----
 	{ "empty jug",				303,	14 },
 	{ "distilled juice",		999,	15 },
@@ -41,7 +41,7 @@ InventoryObject burger_inventory [] = {
 	{ "broken mouse trap",		999,	18 },
 	{ "mouse trap",				999,	19 },
 	{ "kindling",				999,	20 },
-	{ "burning kindling", 		999,	21 },
+	{ "burning kindling",		999,	21 },
 	{ "lights",					508,	22 },
 	{ "lights on",				508,	23 },
 	{ "bottle",					999,	24 },

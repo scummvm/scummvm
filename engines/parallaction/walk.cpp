@@ -520,7 +520,7 @@ void PathWalker_BR::finalizeWalk(State &s) {
 	// TODO: Input::walkTo must be extended to support destination frame in addition to coordinates
 	if (_engineFlags & FINAL_WALK_FRAME) {	// this flag is set in readInput()
 		_engineFlags &= ~FINAL_WALK_FRAME;
-		_ch._a->_frame = _moveToF; 	// from readInput()...
+		_ch._a->_frame = _moveToF;	// from readInput()...
 	} else {
 		_ch._a->_frame = _dirFrame;	// from walk()
 	}

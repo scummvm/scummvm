@@ -303,7 +303,7 @@ void HideCursorTrails(void) {
 
 	bTempNoTrailers = true;
 
-	for (i = 0; i < numTrails; i++) 	{
+	for (i = 0; i < numTrails; i++)	{
 		if (ntrailData[i].trailObj != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), ntrailData[i].trailObj);
 			ntrailData[i].trailObj = NULL;
@@ -512,7 +512,7 @@ static void InitCurPos(void) {
 	DoCursorMove();
 	MultiHideObject(McurObj);
 
- 	IterationSize = ITERATION_BASE;
+	IterationSize = ITERATION_BASE;
 }
 
 /**
@@ -646,7 +646,7 @@ void DropCursor(void) {
 	bWhoa = true;		// Suspend cursor processes
 
 	for (int i = 0; i < numTrails; i++) {
-		if (ntrailData[i].trailObj != NULL) 		{
+		if (ntrailData[i].trailObj != NULL)		{
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), ntrailData[i].trailObj);
 			ntrailData[i].trailObj = NULL;
 		}

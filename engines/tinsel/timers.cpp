@@ -41,7 +41,7 @@ namespace Tinsel {
 #define MAX_TIMERS 16
 
 struct TIMER {
-	int 	tno;		/**< Timer number */
+	int	tno;		/**< Timer number */
 	int		ticks;		/**< Tick count */
 	int		secs;		/**< Second count */
 	int		delta;		/**< Increment/decrement value */
