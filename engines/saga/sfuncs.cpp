@@ -1570,9 +1570,9 @@ void Script::sfStub(const char *name, ScriptThread *thread, int nArgs) {
 
 	for (int i = 0; i < nArgs; i++) {
 		snprintf(buf1, 100, "%d", thread->pop());
-		strncat(buf, buf1, 256);
+		strncat(buf, buf1, sizeof(buf) - strlen(buf) - 1);
 		if (i + 1 < nArgs)
-			strncat(buf, ", ", 256);
+			strncat(buf, ", ", sizeof(buf) - strlen(buf) - 1);
 	}
 
 	debug(0, "%s)", buf);

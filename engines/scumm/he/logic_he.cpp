@@ -86,9 +86,9 @@ int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 
 	for (int i = 1; i < numArgs; i++) {
 		snprintf(tmp, 32, ", %d", args[i]);
-		strncat(str, tmp, 256);
+		strncat(str, tmp, sizeof(str) - strlen(str) - 1);
 	}
-	strncat(str, "])", 256);
+	strncat(str, "])", sizeof(str) - strlen(str) - 1);
 
 	debug(0, "%s", str);
 #else
