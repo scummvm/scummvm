@@ -42,24 +42,6 @@ int vocab_version;
 				    VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB : \
 				    VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB
 
-const char *class_names[] = {"",		// These strange names were taken from an SCI01 interpreter
-                             "",
-                             "conj",	// conjunction
-                             "ass",		// ?
-                             "pos",		// preposition ?
-                             "art",		// article
-                             "adj",		// adjective
-                             "pron",	// pronoun
-                             "noun",	// noun
-                             "auxv",	// auxillary verb
-                             "adv",		// adverb
-                             "verb",	// verb
-                             "",
-                             "",
-                             "",
-                             ""
-                            };
-
 int _vocab_cmp_words(const void *word1, const void *word2) {
 	return scumm_stricmp((*((word_t **) word1))->word, (*((word_t **)word2))->word);
 }
@@ -355,22 +337,6 @@ result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int w
 	free(retval);
 
 	return NULL;
-}
-
-int vocab_get_said_spec_length(byte *addr) {
-	int result = 0;
-
-	while (*addr != 0xff) {
-		if (*addr < 0xf0) {
-			result += 2;
-			addr += 2;
-		} else {
-			result += 1;
-			addr += 1;
-		}
-	}
-
-	return result + 1;
 }
 
 void vocab_decypher_said_block(EngineState *s, byte *addr) {
