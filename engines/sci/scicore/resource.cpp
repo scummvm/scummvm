@@ -662,6 +662,7 @@ int ResourceManager::detectMapVersion() {
 int ResourceManager::detectVolVersion() {
 	Common::File file;
 	ResourceSource *rsrc = _sources;
+	uint32 pos;
 	// looking for a volume among sources
 	while (rsrc) {
 		if (rsrc->source_type == kSourceVolume) {
@@ -674,54 +675,101 @@ int ResourceManager::detectVolVersion() {
 		warning("Failed to open volume file");	
 		return SCI_VERSION_AUTODETECT;
 	}
-	// SCI0 volume format:  {wResId wPacked+4 wUnpacked bCompression bUnknown} = 8 bytes
-	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked bCompression bUnknown} = 9 bytes
+	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
+	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
+	// SCI1.1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
+	// SCI32 volume format :  {bResType wResNumber dwPacked+4 dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
-	uint16 resId, wPacked, wUnpacked;
-	byte bCompression;
+	uint16 resId, wCompression;
+	uint32 dwPacked, dwUnpacked;
 	bool bFailed = false;
 	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
 		resId = file.readUint16LE();
-		wPacked = file.readUint16LE();
-		wUnpacked = file.readUint16LE();
-		bCompression = file.readByte();
+		dwPacked = file.readUint16LE();
+		dwUnpacked = file.readUint16LE();
+		wCompression = file.readUint16LE();
 		if(file.eos())
 			break;
-		if ((bCompression > 4) || (bCompression == 0 && wPacked != wUnpacked + 4) 
-			|| (wUnpacked < wPacked - 4)) {
+		if ((wCompression > 4) || (wCompression == 0 && dwPacked != dwUnpacked + 4) 
+			|| (dwUnpacked < dwPacked - 4)) {
 			bFailed = true;
 			break;
 		}
-		file.seek(wPacked - 3, SEEK_CUR);
+		file.seek(dwPacked - 4, SEEK_CUR);
 	}
 	if (!bFailed)
 		return SCI_VERSION_0;
-	// Check for SCI1/SCI1.1 format
+	//
+	// Check for SCI1 format
 	bFailed = false;
-	uint32 pos;
 	file.seek(0, SEEK_SET);
 	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
 		pos = file.pos();
 		file.seek(1, SEEK_CUR); 
 		resId = file.readUint16LE();
-		wPacked = file.readUint16LE();
-		wUnpacked = file.readUint16LE();
-		bCompression = file.readByte();
+		dwPacked = file.readUint16LE();
+		dwUnpacked = file.readUint16LE();
+		wCompression = file.readUint16LE();
 		if(file.eos())
 			break;
-		if ((bCompression > 20) || (bCompression == 0 && wPacked != wUnpacked + 4) 
-			|| (wUnpacked < wPacked - 4)) {
+		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked + 4) 
+			|| (dwUnpacked < dwPacked - 4)) {
 			bFailed = true;
 			break;
 		}
-		file.seek(wPacked - 3, SEEK_CUR);
+		file.seek(dwPacked - 4, SEEK_CUR);
 	}
 	if (!bFailed)
 		return SCI_VERSION_1;
+	//
+	// Check for SCI1.1 format
+	bFailed = false;
+	file.seek(0, SEEK_SET);
+	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+		pos = file.pos();
+		file.seek(1, SEEK_CUR); 
+		resId = file.readUint16LE();
+		dwPacked = file.readUint16LE();
+		dwUnpacked = file.readUint16LE();
+		wCompression = file.readUint16LE();
+		if(file.eos())
+			break;
+		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked) 
+			|| (dwUnpacked < dwPacked)) {
+			bFailed = true;
+			break;
+		}
+		file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
+	}
+	if (!bFailed)
+		return SCI_VERSION_1_1;
+	//
+	// Check for SCI32 v2 format (Gabriel Knight 1 CD)
+	bFailed = false;
+	file.seek(0, SEEK_SET);
+	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+		pos = file.pos();
+		file.seek(1, SEEK_CUR); 
+		resId = file.readUint16LE();
+		dwPacked = file.readUint32LE();
+		dwUnpacked = file.readUint32LE();
+		wCompression = file.readUint16LE();
+		if(file.eos())
+			break;
+		if ((wCompression != 0 && wCompression != 32) 
+			|| (wCompression == 0 && dwPacked != dwUnpacked) 
+			|| (dwUnpacked < dwPacked)) {
+			bFailed = true;
+			break;
+		}
+		file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
+	}
+	if (!bFailed)
+		return SCI_VERSION_32;
 
-	// TODO: check for more differences between SCI1/SCI1.1/SCI32 resource format
-	return SCI_VERSION_1_1;
+	// Failed to detect volume version
+	return SCI_VERSION_AUTODETECT;
 }
 
 // version-agnostic patch application
@@ -907,7 +955,10 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 				res->number = number;
 				res->id = res->number | (res->type << 16);
 				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : vol;
-				res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1; 
+				if (_mapVersion < SCI_VERSION_32)
+					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
+				else
+					res->file_offset = off; // in SCI32 it's a plain offset
 			}
 		}
 	}
