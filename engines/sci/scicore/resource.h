@@ -94,6 +94,9 @@ enum ResSourceType {
 #define RESSOURCE_ADDRESSING_MASK 128
 
 #define RESOURCE_HASH(type, number) (uint32)((type<<16) | number) 
+#define SCI0_RESMAP_ENTRIES_SIZE 6
+#define SCI1_RESMAP_ENTRIES_SIZE 6
+#define SCI11_RESMAP_ENTRIES_SIZE 5
 
 extern const char *sci_error_types[];
 extern const char *sci_version_types[];

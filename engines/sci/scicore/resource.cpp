@@ -36,6 +36,7 @@
 namespace Sci {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
+
 //#define SCI_VERBOSE_RESMGR 1
 
 const char *sci_version_types[] = {
@@ -721,6 +722,196 @@ int ResourceManager::detectVolVersion() {
 
 	// TODO: check for more differences between SCI1/SCI1.1/SCI32 resource format
 	return SCI_VERSION_1_1;
+}
+
+// version-agnostic patch application
+void ResourceManager::processPatch(ResourceSource *source,
+	const char *filename, ResourceType restype, int resnumber) {
+	Common::File file;
+	Resource *newrsc;
+	uint32 resId = RESOURCE_HASH(restype, resnumber);
+	byte patchtype, patch_data_offset;
+	int fsize;
+
+	if (resnumber == -1)
+		return;
+	if (!file.open(filename)) {
+		perror("""__FILE__"": (""__LINE__""): failed to open");
+		return;
+	}
+	fsize = file.size();
+	if (fsize < 3) {
+		debug("Patching %s failed - file too small", filename);
+		return;
+	}
+	
+	patchtype = file.readByte() & 0x7F;
+	patch_data_offset = file.readByte();
+
+	if (patchtype != restype) {
+		debug("Patching %s failed - resource type mismatch", filename);
+		return;
+	}
+	if (patch_data_offset + 2 >= fsize) {
+		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
+			filename, patch_data_offset + 2, fsize);
+		return;
+	}
+	// Prepare destination, if neccessary
+	if (_resMap.contains(resId) == false) {
+		newrsc = new Resource;
+		_resMap.setVal(resId, newrsc);
+	} else 
+		newrsc = _resMap.getVal(resId);
+	// Overwrite everything, because we're patching
+	newrsc->id = resId;
+	newrsc->number = resnumber;
+	newrsc->status = SCI_STATUS_NOMALLOC;
+	newrsc->type = restype;
+	newrsc->source = source;
+	newrsc->size = fsize - patch_data_offset - 2;
+	newrsc->file_offset = 2 + patch_data_offset;
+	debug("Patching %s - OK", filename);
+}
+
+
+void ResourceManager::readResourcePatches(ResourceSource *source) {
+// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
+// this function tries to read patch file with any supported naming scheme,
+// regardless of _sciVersion value
+
+	Common::String mask, name;
+	Common::ArchiveMemberList files;
+	int number;
+	const char *szResType;
+	ResourceSource *psrcPatch;
+
+	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
+		files.clear();
+		szResType = getResourceTypeName((ResourceType)i);
+		// SCI0 naming - type.nnn
+		mask = szResType;
+		mask += ".???";
+		SearchMan.listMatchingMembers(files, mask);
+		// SCI1 and later naming - nnn.typ
+		mask = "*.";
+		mask += getResourceTypeSuffix((ResourceType)i);
+		SearchMan.listMatchingMembers(files, mask);
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
+			number = -1;
+			name = (*x)->getName();
+			if (isdigit(name[0])) {
+				// SCI1 scheme
+				number = atoi(name.c_str());
+			} else {
+				// SCI0 scheme
+				int resname_len = strlen(szResType);
+				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0) {
+					number = atoi(name.c_str() + resname_len + 1);
+				}
+			}
+			psrcPatch = new ResourceSource;
+			psrcPatch->source_type = kSourcePatch;
+			psrcPatch->location_name = name;
+			processPatch(psrcPatch, name.c_str(), (ResourceType)i, number);
+		}
+	}
+}
+
+int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
+	Common::File file;
+	Resource *res;
+	ResourceType type;
+	uint16 number, id;
+	uint32 offset;
+
+	if (!file.open(map->location_name))
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+
+	file.seek(0, SEEK_SET);
+
+	byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0: 0xFC;
+	byte bShift = _mapVersion == SCI_VERSION_01_VGA_ODD ? 28 : 26;
+
+	do {
+		id = file.readUint16LE();
+		offset = file.readUint32LE();
+
+		if (file.ioFailed()) {
+			warning("Error while reading %s: ", map->location_name.c_str());
+			perror("");
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+		}
+		if(offset == 0xFFFFFFFF)
+			break;
+
+		type = (ResourceType)(id >> 11);
+		number = id & 0x7FF;
+		uint32 resId = RESOURCE_HASH(type, number);
+		// adding a new resource
+		if (_resMap.contains(resId) == false) {
+			res = new Resource;
+			res->id = id;
+			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
+			res->number = number;
+			res->type = type;
+			res->source = getVolume(map, offset >> bShift);
+			_resMap.setVal(resId, res);
+		}
+	} while (!file.eos());
+	return 0;
+}
+
+int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol) {
+	Common::File file;
+	Resource *res;
+	if (!file.open(map->location_name))
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+
+	resource_index_t resMap[kResourceTypeInvalid];
+	memset(resMap, 0, sizeof(resource_index_t) * kResourceTypeInvalid);
+	byte type = 0, prevtype = 0;
+	byte nEntrySize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
+	uint32 resId;
+
+	// Read resource type and offsets to resource offsets block from .MAP file
+	// The last entry has type=0xFF (0x1F) and offset equals to map file length
+	do {
+		type = file.readByte() & 0x1F;
+		resMap[type].wOffset = file.readUint16LE();
+		resMap[prevtype].wSize = (resMap[type].wOffset
+				- resMap[prevtype].wOffset) / nEntrySize;
+		prevtype = type;
+	} while (type != 0x1F); // the last entry is FF
+
+	// reading each type's offsets
+	uint32 off = 0;
+	for (type = 0; type < kResourceTypeInvalid; type++) {
+		if (resMap[type].wOffset == 0) // this resource does not exist in map
+			continue;
+		file.seek(resMap[type].wOffset);
+		for (int i = 0; i < resMap[type].wSize; i++) {
+			uint16 number = file.readUint16LE();
+			file.read(&off, nEntrySize - 2);
+			if (file.ioFailed()) {
+				warning("Error while reading %s: ", map->location_name.c_str());
+				perror("");
+				return SCI_ERROR_RESMAP_NOT_FOUND;
+			}
+			resId = RESOURCE_HASH(type, number);
+			// adding new resource only if it does not exist
+			if (_resMap.contains(resId) == false) {
+				res = new Resource;
+				_resMap.setVal(resId, res);
+				res->type = (ResourceType)type;
+				res->number = number;
+				res->id = res->number | (res->type << 16);
+				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : vol;
+				res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1; 
+			}
+		}
+	}
+	return 0;
 }
 
 } // End of namespace Sci
