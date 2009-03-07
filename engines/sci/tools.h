@@ -31,14 +31,6 @@
 
 namespace Sci {
 
-/**** FUNCTION DECLARATIONS ****/
-
-#define getInt16	(int16)READ_LE_UINT16
-#define getUInt16	READ_LE_UINT16
-#define putInt16	WRITE_LE_UINT16
-
-/* --- */
-
 int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 #define gfxprintf sciprintf
 /* Prints a string to the console stack

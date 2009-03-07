@@ -40,13 +40,13 @@ namespace Sci {
 #define POLY_POINT_SIZE 4
 
 static void POLY_GET_POINT(byte *p, int i, Common::Point &pt) {
-	pt.x = getInt16((p) + (i) * POLY_POINT_SIZE);
-	pt.y = getInt16((p) + (i) * POLY_POINT_SIZE + 2);
+	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);
+	pt.y = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2);
 }
 
 static void POLY_SET_POINT(byte *p, int i, const Common::Point &pt) {
-	putInt16((p) + (i) * POLY_POINT_SIZE, pt.x);
-	putInt16((p) + (i) * POLY_POINT_SIZE + 2, pt.y);
+	WRITE_LE_UINT16((p) + (i) * POLY_POINT_SIZE, pt.x);
+	WRITE_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2, pt.y);
 }
 
 static void POLY_GET_POINT_REG_T(reg_t *p, int i, Common::Point &pt) {

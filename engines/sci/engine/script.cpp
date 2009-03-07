@@ -238,9 +238,9 @@ int sci_hexdump(byte *data, int length, int offsetplus) {
 
 static void script_dump_object(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
 	int selectors, overloads, selectorsize;
-	int species = getInt16((unsigned char *) data + 8 + seeker);
-	int superclass = getInt16((unsigned char *) data + 10 + seeker);
-	int namepos = getInt16((unsigned char *) data + 14 + seeker);
+	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
 	int i = 0;
 
 	sciprintf("Object\n");
@@ -251,29 +251,29 @@ static void script_dump_object(char *data, int seeker, int objsize, const Common
 	sciprintf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
 	sciprintf("Superclass: %x\n", superclass);
 	sciprintf("Species: %x\n", species);
-	sciprintf("-info-:%x\n", getInt16((unsigned char *) data + 12 + seeker) & 0xffff);
+	sciprintf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
 
-	sciprintf("Function area offset: %x\n", getInt16((unsigned char *) data + seeker + 4));
-	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = getInt16((unsigned char *) data + seeker + 6)));
+	sciprintf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *) data + seeker + 4));
+	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *) data + seeker + 6)));
 
 	seeker += 8;
 
 	while (selectors--) {
-		sciprintf("  [#%03x] = 0x%x\n", i++, getInt16((unsigned char *)data + seeker) & 0xffff);
+		sciprintf("  [#%03x] = 0x%x\n", i++, (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
 	}
 
-	sciprintf("Overridden functions: %x\n", selectors = overloads = getInt16((unsigned char *)data + seeker));
+	sciprintf("Overridden functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
 	if (overloads < 100)
 		while (overloads--) {
-			int selector = getInt16((unsigned char *) data + (seeker));
+			int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker));
 
 			sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>");
-			sciprintf("%04x\n", getInt16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
+			sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
 
 			seeker += 2;
 		}
@@ -281,9 +281,9 @@ static void script_dump_object(char *data, int seeker, int objsize, const Common
 
 static void script_dump_class(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
 	int selectors, overloads, selectorsize;
-	int species = getInt16((unsigned char *) data + 8 + seeker);
-	int superclass = getInt16((unsigned char *) data + 10 + seeker);
-	int namepos = getInt16((unsigned char *) data + 14 + seeker);
+	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
 
 	sciprintf("Class\n");
 
@@ -292,35 +292,35 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 	sciprintf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
 	sciprintf("Superclass: %x\n", superclass);
 	sciprintf("Species: %x\n", species);
-	sciprintf("-info-:%x\n", getInt16((unsigned char *)data + 12 + seeker) & 0xffff);
+	sciprintf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
 
-	sciprintf("Function area offset: %x\n", getInt16((unsigned char *)data + seeker + 4));
-	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = getInt16((unsigned char *)data + seeker + 6)));
+	sciprintf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + 4));
+	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *)data + seeker + 6)));
 
 	seeker += 8;
 	selectorsize <<= 1;
 
 	while (selectors--) {
-		int selector = getInt16((unsigned char *) data + (seeker) + selectorsize);
+		int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker) + selectorsize);
 
 		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>",
-		          getInt16((unsigned char *)data + seeker) & 0xffff);
+		          (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
 	}
 
 	seeker += selectorsize;
 
-	sciprintf("Overloaded functions: %x\n", selectors = overloads = getInt16((unsigned char *)data + seeker));
+	sciprintf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
 	while (overloads--) {
-		int selector = getInt16((unsigned char *)data + (seeker));
+		int selector = (int16)READ_LE_UINT16((unsigned char *)data + (seeker));
 		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, selectorNames.size());
 		sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ?
 		          selectorNames[selector].c_str() : "<?>");
-		sciprintf("%04x\n", getInt16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
+		sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
 
 		seeker += 2;
 	}
@@ -341,7 +341,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 	words = vocab_get_words(resmgr, &word_count);
 
 	while (_seeker < script->size) {
-		int objtype = getInt16(script->data + _seeker);
+		int objtype = (int16)READ_LE_UINT16(script->data + _seeker);
 		int objsize;
 		unsigned int seeker = _seeker + 4;
 
@@ -355,7 +355,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 
 		sciprintf("\n");
 
-		objsize = getInt16(script->data + _seeker + 2);
+		objsize = (int16)READ_LE_UINT16(script->data + _seeker + 2);
 
 		sciprintf("Obj type #%x, size 0x%x: ", objtype, objsize);
 

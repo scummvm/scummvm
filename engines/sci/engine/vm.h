@@ -131,7 +131,7 @@ struct Class {
 };
 
 #define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->checkKey(reg.offset, false))
-#define RAW_IS_OBJECT(datablock) (getUInt16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
+#define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
 
@@ -176,21 +176,21 @@ struct CodeBlock {
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
 	(s->version < SCI_VERSION(1,001,000) ? \
-	 getUInt16(obj->base_obj + obj->variables_nr * 2 + i*2) : \
+	 READ_LE_UINT16(obj->base_obj + obj->variables_nr * 2 + i*2) : \
 	 *(obj->base_vars + i))
 #define VM_OBJECT_READ_PROPERTY(obj, i) (obj->variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
 	(s->version < SCI_VERSION(1,001,000) ? \
-	 getUInt16((byte *) (obj->base_method + i)) : \
-	 getUInt16((byte *) (obj->base_method + i*2 + 1)))
+	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
+	 READ_LE_UINT16((byte *) (obj->base_method + i*2 + 1)))
 #define VM_OBJECT_READ_FUNCTION(obj, i) \
 	(s->version < SCI_VERSION(1,001,000) ? \
 	 make_reg(obj->pos.segment, \
-		 getUInt16((byte *) (obj->base_method \
+		 READ_LE_UINT16((byte *) (obj->base_method \
 				 + obj->methods_nr + 1 \
 				 + i))) : \
 	 make_reg(obj->pos.segment, \
-		 getUInt16((byte *) (obj->base_method \
+		 READ_LE_UINT16((byte *) (obj->base_method \
 				 + i * 2 + 2))))
 
 

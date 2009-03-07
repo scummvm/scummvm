@@ -163,8 +163,8 @@ void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
 		return;
 	}
 	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
-		mem->data.script.buf_size = script->size + getUInt16(script->data) * 2;
-		//locals_size = getUInt16(script->data) * 2;
+		mem->data.script.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
+		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (s->version < SCI_VERSION(1, 001, 000)) {
 		mem->data.script.buf_size = script->size;
 	} else {
@@ -629,7 +629,7 @@ void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
 	GET_SEGID();
 	if (offset) {
 		scr->export_table = (uint16 *)(scr->buf + offset + 2);
-		scr->exports_nr = getUInt16((byte *)(scr->export_table - 1));
+		scr->exports_nr = READ_LE_UINT16((byte *)(scr->export_table - 1));
 	} else {
 		scr->export_table = NULL;
 		scr->exports_nr = 0;
@@ -767,7 +767,7 @@ void SegManager::scriptAddCodeBlock(reg_t location) {
 
 	index = scr->code_blocks_nr - 1;
 	scr->code[index].pos = location;
-	scr->code[index].size = getUInt16(scr->buf + location.offset - 2);
+	scr->code[index].size = READ_LE_UINT16(scr->buf + location.offset - 2);
 }
 
 void SegManager::scriptRelocate(reg_t block) {
@@ -780,13 +780,13 @@ void SegManager::scriptRelocate(reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < (uint16)scr->buf_size && getUInt16(scr->buf + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->buf_size && READ_LE_UINT16(scr->buf + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
-	count = getUInt16(scr->buf + block.offset);
+	count = READ_LE_UINT16(scr->buf + block.offset);
 
 	for (i = 0; i <= count; i++) {
-		int pos = getUInt16(scr->buf + block.offset + 2 + (i * 2));
+		int pos = READ_LE_UINT16(scr->buf + block.offset + 2 + (i * 2));
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
@@ -832,16 +832,16 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 
 	scr = &(mobj->data.script);
 
-	VERIFY(block.offset < (uint16)scr->heap_size && getUInt16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->heap_size && READ_LE_UINT16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
 	if (scr->relocated)
 		return;
 	scr->relocated = 1;
-	count = getUInt16(scr->heap_start + block.offset);
+	count = READ_LE_UINT16(scr->heap_start + block.offset);
 
 	for (i = 0; i < count; i++) {
-		int pos = getUInt16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
+		int pos = READ_LE_UINT16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
 
 		if (!relocateLocal(scr, block.segment, pos)) {
 			int k, done = 0;
@@ -904,7 +904,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 
 	{
 		byte *data = (byte *)(scr->buf + base);
-		int funct_area = getUInt16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
+		int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
 		int variables_nr;
 		int functions_nr;
 		int is_class;
@@ -915,9 +915,9 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 
 		VERIFY(base + funct_area < scr->buf_size, "Function area pointer references beyond end of script");
 
-		variables_nr = getUInt16(data + SCRIPT_SELECTORCTR_OFFSET);
-		functions_nr = getUInt16(data + funct_area - 2);
-		is_class = getUInt16(data + SCRIPT_INFO_OFFSET) & SCRIPT_INFO_CLASS;
+		variables_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
+		functions_nr = READ_LE_UINT16(data + funct_area - 2);
+		is_class = READ_LE_UINT16(data + SCRIPT_INFO_OFFSET) & SCRIPT_INFO_CLASS;
 
 		VERIFY(base + funct_area + functions_nr * 2
 		       // add again for classes, since those also store selectors
@@ -933,7 +933,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 		obj->base_vars = NULL;
 
 		for (i = 0; i < variables_nr; i++)
-			obj->variables[i] = make_reg(0, getUInt16(data + (i * 2)));
+			obj->variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 
 	return obj;
@@ -970,8 +970,8 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 	{
 		byte *data = (byte *)(scr->buf + base);
-		uint16 *funct_area = (uint16 *)(scr->buf + getUInt16(data + 6));
-		uint16 *prop_area = (uint16 *)(scr->buf + getUInt16(data + 4));
+		uint16 *funct_area = (uint16 *)(scr->buf + READ_LE_UINT16(data + 6));
+		uint16 *prop_area = (uint16 *)(scr->buf + READ_LE_UINT16(data + 4));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
@@ -982,9 +982,9 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 		VERIFY((byte *) funct_area < scr->buf + scr->buf_size, "Function area pointer references beyond end of script");
 
-		variables_nr = getUInt16(data + 2);
+		variables_nr = READ_LE_UINT16(data + 2);
 		functions_nr = *funct_area;
-		is_class = getUInt16(data + 14) & SCRIPT_INFO_CLASS;
+		is_class = READ_LE_UINT16(data + 14) & SCRIPT_INFO_CLASS;
 
 		obj->base_method = funct_area;
 		obj->base_vars = prop_area;
@@ -1000,7 +1000,7 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 		obj->base_obj = data;
 
 		for (i = 0; i < variables_nr; i++)
-			obj->variables[i] = make_reg(0, getUInt16(data + (i * 2)));
+			obj->variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 
 	return obj;
@@ -1065,9 +1065,9 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
 	if (isSci1_1)
-		count = getUInt16(scr->buf + location.offset - 2);
+		count = READ_LE_UINT16(scr->buf + location.offset - 2);
 	else
-		count = (getUInt16(scr->buf + location.offset - 2) - 4) >> 1;
+		count = (READ_LE_UINT16(scr->buf + location.offset - 2) - 4) >> 1;
 	// half block size
 
 	scr->locals_offset = location.offset;
@@ -1083,7 +1083,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 		byte *base = (byte *)(scr->buf + location.offset);
 
 		for (i = 0; i < count; i++)
-			locals->locals[i].offset = getUInt16(base + i * 2);
+			locals->locals[i].offset = READ_LE_UINT16(base + i * 2);
 	}
 }
 
@@ -1100,9 +1100,9 @@ void SegManager::scriptRelocateExportsSci11(int seg) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		location = getUInt16((byte *)(scr->export_table + i));
-		if (getUInt16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-			putInt16((byte *)(scr->export_table + i), location + scr->heap_start - scr->buf);
+		location = READ_LE_UINT16((byte *)(scr->export_table + i));
+		if (READ_LE_UINT16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+			WRITE_LE_UINT16((byte *)(scr->export_table + i), location + scr->heap_start - scr->buf);
 		} else {
 			// Otherwise it's probably a function export,
 			// and we don't need to do anything.
@@ -1118,12 +1118,12 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
 
 	scr = &(mobj->data.script);
-	seeker = scr->heap_start + 4 + getUInt16(scr->heap_start + 2) * 2;
+	seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
 
-	while (getUInt16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (getUInt16(seeker + 14) & SCRIPT_INFO_CLASS) {
+	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
 			int classpos = seeker - scr->buf;
-			int species = getUInt16(seeker + 10);
+			int species = READ_LE_UINT16(seeker + 10);
 
 			if (species < 0 || species >= s->classtable_size) {
 				sciprintf("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
@@ -1136,11 +1136,11 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 			s->classtable[species].reg.segment = seg;
 			s->classtable[species].reg.offset = classpos;
 		}
-		seeker += getUInt16(seeker + 2) * 2;
+		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
 
-	seeker = scr->heap_start + 4 + getUInt16(scr->heap_start + 2) * 2;
-	while (getUInt16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+	seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
+	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg;
 		Object *obj;
 
@@ -1160,7 +1160,7 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 		// Copy base from species class, as we need its selector IDs
 		obj->variables[6] = INST_LOOKUP_CLASS(obj->variables[6].offset);
 
-		seeker += getUInt16(seeker + 2) * 2;
+		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
 }
 
@@ -1242,7 +1242,7 @@ uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 
 	if (exports_wide)
 		pubfunct *= 2;
-	offset = getUInt16((byte *)(script->export_table + pubfunct));
+	offset = READ_LE_UINT16((byte *)(script->export_table + pubfunct));
 	VERIFY(offset < script->buf_size, "invalid export function pointer");
 
 	return offset;

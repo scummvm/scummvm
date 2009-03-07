@@ -27,15 +27,15 @@
 
 namespace Sci {
 
-int sci_ffs(int _mask) {
-	int retval = 0;
-
-	if (!_mask)
+int sci_ffs(int bits) {
+	if (!bits)
 		return 0;
-	retval++;
-	while (!(_mask & 1)) {
+
+	int retval = 1;
+
+	while (!(bits & 1)) {
 		retval++;
-		_mask >>= 1;
+		bits >>= 1;
 	}
 
 	return retval;

@@ -229,8 +229,8 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					 * Lars */
 				} else
 					for (i = 0; i < synonyms_nr; i++) {
-						s->synonyms[synpos].replaceant = getInt16(synonyms + i * 4);
-						s->synonyms[synpos].replacement = getInt16(synonyms + i * 4 + 2);
+						s->synonyms[synpos].replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
+						s->synonyms[synpos].replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
 
 						synpos++;
 					}

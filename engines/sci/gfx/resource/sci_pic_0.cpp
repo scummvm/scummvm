@@ -1735,8 +1735,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 			case PIC_SCI1_OPX_PRIORITY_TABLE_EQDIST: {
-				int first = getInt16(resource + pos);
-				int last = getInt16(resource + pos + 2);
+				int first = (int16)READ_LE_UINT16(resource + pos);
+				int last = (int16)READ_LE_UINT16(resource + pos + 2);
 				int nr;
 				int *pri_table;
 
@@ -1778,10 +1778,10 @@ end_op_loop: {}
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
 					 gfxr_pic0_params_t *style, int resid, gfx_pixmap_color_t *static_pal, int static_pal_nr) {
-	int has_bitmap = getUInt16(resource + 4);
-	int vector_data_ptr = getUInt16(resource + 16);
-	int palette_data_ptr = getUInt16(resource + 28);
-	int bitmap_data_ptr = getUInt16(resource + 32);
+	int has_bitmap = READ_LE_UINT16(resource + 4);
+	int vector_data_ptr = READ_LE_UINT16(resource + 16);
+	int palette_data_ptr = READ_LE_UINT16(resource + 28);
+	int bitmap_data_ptr = READ_LE_UINT16(resource + 32);
 	int sci_titlebar_size = style->pic_port_bounds.y;
 	//gfx_mode_t *mode;
 	gfx_pixmap_t *view = NULL;

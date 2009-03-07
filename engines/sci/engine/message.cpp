@@ -52,7 +52,7 @@ static void index_record_parse_2101(IndexRecordCursor *cursor, MessageTuple *t) 
 #if 0
 // Unreferenced - removed
 static void index_record_get_text_2101(IndexRecordCursor *cursor, char *buffer, int buffer_size) {
-	int offset = getUInt16(cursor->index_record + 2);
+	int offset = READ_LE_UINT16(cursor->index_record + 2);
 	char *stringptr = (char *)cursor->resource_beginning + offset;
 
 	strncpy(buffer, stringptr, buffer_size);
@@ -62,7 +62,7 @@ static void index_record_get_text_2101(IndexRecordCursor *cursor, char *buffer, 
 #if 0
 // Unreferenced - removed
 static int header_get_index_record_count_2101(byte *header) {
-	return getUInt16(header + 4);
+	return READ_LE_UINT16(header + 4);
 }
 #endif
 
@@ -85,14 +85,14 @@ static int index_record_get_talker_3411(IndexRecordCursor *cursor) {
 }
 
 static void index_record_get_text_3411(IndexRecordCursor *cursor, char *buffer, int buffer_size) {
-	int offset = getUInt16(cursor->index_record + 5);
+	int offset = READ_LE_UINT16(cursor->index_record + 5);
 	char *stringptr = (char *)cursor->resource_beginning + offset;
 
 	strncpy(buffer, stringptr, buffer_size);
 }
 
 static int header_get_index_record_count_3411(byte *header) {
-	return getUInt16(header + 8);
+	return READ_LE_UINT16(header + 8);
 }
 
 // Generic code from here on
@@ -192,7 +192,7 @@ void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
 	//if (tester == NULL)
 	//	return;
 
-	//version = getUInt16(tester->data);
+	//version = READ_LE_UINT16(tester->data);
 
 	state->initialized = 1;
 	state->_module = -1;

@@ -191,10 +191,10 @@ suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 
 		suffices[counter]->alt_suffix_length = alt_len;
 		suffices[counter]->word_suffix_length = word_len;
-		suffices[counter]->class_mask = inverse_16(getInt16(resource->data + seeker)); // Inverse endianness
+		suffices[counter]->class_mask = inverse_16((int16)READ_LE_UINT16(resource->data + seeker)); // Inverse endianness
 
 		seeker += word_len + 4;
-		suffices[counter]->result_class = inverse_16(getInt16(resource->data + seeker));
+		suffices[counter]->result_class = inverse_16((int16)READ_LE_UINT16(resource->data + seeker));
 		seeker += 3; // Next entry
 
 		++counter;
@@ -246,10 +246,10 @@ parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_
 
 		byte *base = resource->data + i * 20;
 
-		retval[i].id = getInt16(base);
+		retval[i].id = (int16)READ_LE_UINT16(base);
 
 		for (k = 0; k < 9; k++)
-			retval[i].data[k] = getUInt16(base + 2 + 2 * k);
+			retval[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
 
 		retval[i].data[9] = 0; // Always terminate
 	}

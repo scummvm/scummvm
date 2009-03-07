@@ -4904,13 +4904,13 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 	buf += magic_pos_adder;
 	do {
-		int seeker_type = getUInt16(buf);
+		int seeker_type = READ_LE_UINT16(buf);
 		int seeker_size;
 
 		if (seeker_type == 0) break;
 		if (seeker_type == type) return buf;
 
-		seeker_size = getUInt16(buf + 2);
+		seeker_size = READ_LE_UINT16(buf + 2);
 		buf += seeker_size;
 	} while(1);
 
@@ -5010,13 +5010,13 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
 
 					if (self->isSci1_1) {
-						uint16 *funct_area = (uint16 *) (scr->buf + getUInt16( data + 6 ));
-						uint16 *prop_area = (uint16 *) (scr->buf + getUInt16( data + 4 ));
+						uint16 *funct_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 6 ));
+						uint16 *prop_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 4 ));
 
 						scr->objects[j].base_method = funct_area;
 						scr->objects[j].base_vars = prop_area;
 					} else {
-						int funct_area = getUInt16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
+						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
 						base_obj = obj_get(s, scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]);

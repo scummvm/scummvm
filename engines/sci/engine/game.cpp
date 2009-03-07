@@ -286,7 +286,7 @@ static int suggested_script(Resource *res, unsigned int classId) {
 
 	offset = 2 + (classId << 2);
 
-	return getInt16(res->data + offset);
+	return (int16)READ_LE_UINT16(res->data + offset);
 }
 
 int test_cursor_style(EngineState *s) {
@@ -319,14 +319,14 @@ int create_class_table_sci11(EngineState *s) {
 		Resource *heap = s->resmgr->findResource(kResourceTypeHeap, scriptnr, 0);
 
 		if (heap) {
-			int global_vars = getUInt16(heap->data + 2);
+			int global_vars = READ_LE_UINT16(heap->data + 2);
 
 			seeker_ptr = (char*)heap->data + 4 + global_vars * 2;
 			seeker_offset = 4 + global_vars * 2;
 
-			while (getUInt16((byte*)seeker_ptr) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-				if (getUInt16((byte*)seeker_ptr + 14) & SCRIPT_INFO_CLASS) {
-					classnr = getUInt16((byte*)seeker_ptr + 10);
+			while (READ_LE_UINT16((byte*)seeker_ptr) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+				if (READ_LE_UINT16((byte*)seeker_ptr + 14) & SCRIPT_INFO_CLASS) {
+					classnr = READ_LE_UINT16((byte*)seeker_ptr + 10);
 					if (classnr >= s->classtable_size) {
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
 							fprintf(stderr, "Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
@@ -346,8 +346,8 @@ int create_class_table_sci11(EngineState *s) {
 					s->classtable[classnr].script = scriptnr;
 				}
 
-				seeker_ptr += getUInt16((byte*)seeker_ptr + 2) * 2;
-				seeker_offset += getUInt16((byte*)seeker_ptr + 2) * 2;
+				seeker_ptr += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
+				seeker_offset += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
 			}
 		}
 	}
@@ -383,10 +383,10 @@ static int create_class_table_sci0(EngineState *s) {
 			do {
 				while (seeker < script->size)	{
 					unsigned int lastseeker = seeker;
-					objtype = getInt16(script->data + seeker);
+					objtype = (int16)READ_LE_UINT16(script->data + seeker);
 					if (objtype == sci_obj_class || objtype == sci_obj_terminator)
 						break;
-					seeker += getInt16(script->data + seeker + 2);
+					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
 					if (seeker <= lastseeker) {
 						sciprintf("Warning: Script version is invalid.\n");
 						free(s->classtable);
@@ -399,7 +399,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 					seeker -= SCRIPT_OBJECT_MAGIC_OFFSET; // Adjust position; script home is base +8 bytes
 
-					classnr = getInt16(script->data + seeker + 4 + SCRIPT_SPECIES_OFFSET);
+					classnr = (int16)READ_LE_UINT16(script->data + seeker + 4 + SCRIPT_SPECIES_OFFSET);
 					if (classnr >= s->classtable_size) {
 
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
@@ -427,7 +427,7 @@ static int create_class_table_sci0(EngineState *s) {
 					}
 
 					seeker += SCRIPT_OBJECT_MAGIC_OFFSET; // Re-adjust position
-					seeker += getInt16(script->data + seeker + 2); // Move to next
+					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2); // Move to next
 				}
 
 			} while (objtype != sci_obj_terminator && seeker <= script->size);

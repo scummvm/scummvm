@@ -598,7 +598,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (s->seg_manager->heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
-			return make_reg(0, getInt16(ref));
+			return make_reg(0, (int16)READ_LE_UINT16(ref));
 		break;
 	}
 	case K_MEMORY_POKE : {
@@ -615,7 +615,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (argv[2].segment) {
 				SCIkdebug(SCIkERROR, "Attempt to poke memory reference "PREG" to "PREG"!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
-				putInt16(ref, argv[2].offset); // ???
+				WRITE_LE_UINT16(ref, argv[2].offset); // ???
 			}
 		}
 		return s->r_acc;

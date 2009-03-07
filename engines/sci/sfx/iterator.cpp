@@ -720,10 +720,10 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
 		          self->_data[offset + 1]);
 
-	rate = getInt16(self->_data + offset + 2);
+	rate = (int16)READ_LE_UINT16(self->_data + offset + 2);
 	length = READ_LE_UINT16(self->_data + offset + 4);
-	begin = getInt16(self->_data + offset + 6);
-	end = getInt16(self->_data + offset + 8);
+	begin = (int16)READ_LE_UINT16(self->_data + offset + 6);
+	end = (int16)READ_LE_UINT16(self->_data + offset + 8);
 
 	CHECK_FOR_END_ABSOLUTE((uint)(offset + 10 + length));
 

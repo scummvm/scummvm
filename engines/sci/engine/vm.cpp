@@ -239,10 +239,10 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 
 // Getting instruction parameters
 #define GET_OP_BYTE() ((uint8)code_buf[(xs->addr.pc.offset)++])
-#define GET_OP_WORD() (getUInt16(code_buf + ((xs->addr.pc.offset) += 2) - 2))
+#define GET_OP_WORD() (READ_LE_UINT16(code_buf + ((xs->addr.pc.offset) += 2) - 2))
 #define GET_OP_FLEX() ((opcode & 1)? GET_OP_BYTE() : GET_OP_WORD())
 #define GET_OP_SIGNED_BYTE() ((int8)(code_buf[(xs->addr.pc.offset)++]))
-#define GET_OP_SIGNED_WORD() ((getInt16(code_buf + ((xs->addr.pc.offset) += 2) - 2)))
+#define GET_OP_SIGNED_WORD() (((int16)READ_LE_UINT16(code_buf + ((xs->addr.pc.offset) += 2) - 2)))
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
 #define SEG_GET_HEAP(s, reg) s->seg_manager->getHeap(reg)
@@ -1489,7 +1489,7 @@ static inline int _obj_locate_varselector(EngineState *s, Object *obj, Selector 
 		obj->base_vars = (uint16 *) buf;
 
 		for (i = 0; i < varnum; i++)
-			if (getUInt16(buf + (i << 1)) == slc) // Found it?
+			if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
 				return i; // report success
 
 		return -1; // Failed
@@ -1502,7 +1502,7 @@ static inline int _obj_locate_varselector(EngineState *s, Object *obj, Selector 
 			buf = ((byte *) obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR])->base_vars);
 
 		for (i = 0; i < varnum; i++)
-			if (getUInt16(buf + (i << 1)) == slc) // Found it?
+			if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
 				return i; // report success
 
 		return -1; // Failed
@@ -1534,9 +1534,9 @@ static inline SelectorType _lookup_selector_function(EngineState *s, int seg_id,
 		if (index >= 0) {
 			if (fptr) {
 				if (s->version < SCI_VERSION(1, 001, 000))
-					*fptr = make_reg(obj->pos.segment, getUInt16((byte *)(obj->base_method + index + obj->methods_nr + 1)));
+					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index + obj->methods_nr + 1)));
 				else
-					*fptr = make_reg(obj->pos.segment, getUInt16((byte *)(obj->base_method + index * 2 + 2)));
+					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index * 2 + 2)));
 			}
 
 			return kSelectorMethod;
@@ -1603,7 +1603,7 @@ void script_detect_versions(EngineState *s) {
 	for (c = 0; c < 1000; c++) {
 		if ((script = s->resmgr->findResource(kResourceTypeScript, c, 0))) {
 
-			int id = getInt16(script->data);
+			int id = (int16)READ_LE_UINT16(script->data);
 
 			if (id > 15) {
 				version_require_earlier_than(s, SCI_VERSION_FTU_NEW_SCRIPT_HEADER);
@@ -1654,7 +1654,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	        && export_index < script->exports_nr
 	        && export_index >= 0)
 #endif
-		return make_reg(seg, getUInt16((byte *)(script->export_table + export_index)));
+		return make_reg(seg, READ_LE_UINT16((byte *)(script->export_table + export_index)));
 #ifndef DISABLE_VALIDATIONS
 	else {
 		CORE_ERROR("EXPORTS", "Export invalid or script missing ");
@@ -1753,7 +1753,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
 		//
-		int locals_nr = getUInt16(script->data);
+		int locals_nr = READ_LE_UINT16(script->data);
 
 		// Old script block
 		// There won't be a localvar block in this case
@@ -1906,7 +1906,7 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	s->seg_manager->mcpyInOut(0, script->data, script->size, seg_id, SEG_ID);
 	s->seg_manager->mcpyInOut(heap_start, heap->data, heap->size, seg_id, SEG_ID);
 
-	if (getUInt16(script->data + 6) > 0)
+	if (READ_LE_UINT16(script->data + 6) > 0)
 		s->seg_manager->setExportTableOffset(6, seg_id, SEG_ID);
 
 	reg.segment = seg_id;
@@ -1916,7 +1916,7 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	s->seg_manager->scriptRelocateExportsSci11(seg_id);
 	s->seg_manager->scriptInitialiseObjectsSci11(s, seg_id);
 
-	reg.offset = getUInt16(heap->data);
+	reg.offset = READ_LE_UINT16(heap->data);
 	s->seg_manager->heapRelocate(s, reg);
 
 	return seg_id;

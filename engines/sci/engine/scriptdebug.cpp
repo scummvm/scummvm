@@ -226,7 +226,7 @@ static void sci01_song_header_dump(byte *data, int size) {
 
 			offset += 2;
 
-			track_offset = getUInt16(data + offset);
+			track_offset = READ_LE_UINT16(data + offset);
 			header1 = data[track_offset];
 			header2 = data[track_offset+1];
 			track_offset += 2;
@@ -234,7 +234,7 @@ static void sci01_song_header_dump(byte *data, int size) {
 			if (track_offset < smallest_start)
 				smallest_start = track_offset;
 
-			end = getUInt16(data + offset + 2);
+			end = READ_LE_UINT16(data + offset + 2);
 			sciprintf("  - %04x -- %04x", track_offset, track_offset + end);
 
 			if (track_offset == 0xfe)
@@ -1214,7 +1214,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 		return -1;
 	}
 
-	return getUInt16(selectoroffset + prop_ofs);
+	return READ_LE_UINT16(selectoroffset + prop_ofs);
 }
 
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
@@ -1951,7 +1951,7 @@ static int c_gfx_draw_viewobj(EngineState *s) {
 		return 1;
 	}
 
-	if ((getInt16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
+	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
 		sciprintf("Not an object.\n");
 		return 0;
 	}
@@ -2908,7 +2908,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			int opcode = pc->offset >= code_buf_size ? 0 : code_buf[pc->offset];
 			int op = opcode >> 1;
 			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : getInt16(code_buf + pc->offset + 1));
+			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
 
 			switch (_debug_seeking) {
 			case _DEBUG_SEEK_SPECIAL_CALLK:

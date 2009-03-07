@@ -45,7 +45,7 @@ gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int 
 	int entry_size = 0;
 	gfx_pixmap_color_t *retval;
 	byte *pal_data = resource + 37;
-	int _colors_nr = *colors_nr = getUInt16(resource + 29);
+	int _colors_nr = *colors_nr = READ_LE_UINT16(resource + 29);
 	int i;
 
 	switch (format) {
