@@ -160,6 +160,11 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		}
 	}
 
+	// FIXME: In the forest maze on Zombie Island, the scripts will often
+	// try to play song 451, which doesn't exist. We could easily substitute
+	// another for it here, but which one? There are roughly 250 musical
+	// cues to choose from.
+
 	uint32 pos = fh->idxTab[id * 3 + 0];
 	uint32 len = fh->idxTab[id * 3 + 1];
 	uint32 enc_len = fh->idxTab[id * 3 + 2];
