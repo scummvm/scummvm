@@ -916,8 +916,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
-	resource_index_t resMap[kResourceTypeInvalid];
-	memset(resMap, 0, sizeof(resource_index_t) * kResourceTypeInvalid);
+	resource_index_t resMap[32];
+	memset(resMap, 0, sizeof(resource_index_t) * 32);
 	byte type = 0, prevtype = 0;
 	byte nEntrySize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
 	uint32 resId;
@@ -934,7 +934,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 
 	// reading each type's offsets
 	uint32 off = 0;
-	for (type = 0; type < kResourceTypeInvalid; type++) {
+	for (type = 0; type < 32; type++) {
 		if (resMap[type].wOffset == 0) // this resource does not exist in map
 			continue;
 		file.seek(resMap[type].wOffset);
