@@ -35,6 +35,7 @@
 #include "sci/sci_memory.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
+#include "sci/gfx/gfx_state_internal.h"	// required for gfxw_port_t, gfxw_container_t
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"

@@ -40,13 +40,20 @@ namespace Common {
 #include "sci/scicore/sciconsole.h"
 #include "sci/scicore/versions.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/gfx/gfx_state_internal.h"
+#include "sci/gfx/gfx_system.h"
 #include "sci/sfx/core.h"
 
 namespace Sci {
 
 struct menubar_t;
 struct kfunct_sig_pair_t;	// from kernel.h
+
+struct gfx_state_t;
+struct gfxw_port_t;
+struct gfxw_visual_t;
+struct gfxw_container_t;	
+typedef gfxw_container_t gfxw_list_t;
+
 
 class DirSeeker {
 protected:

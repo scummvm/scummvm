@@ -28,9 +28,26 @@
 #ifndef SCI_GFX_GFX_WIDGETS_H
 #define SCI_GFX_GFX_WIDGETS_H
 
-#include "sci/gfx/gfx_state_internal.h"
+#include "common/rect.h"
+
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/operations.h"
 
 namespace Sci {
+
+struct gfx_state_t;
+struct gfxw_box_t;
+struct gfxw_dyn_view_t;
+struct gfxw_container_t;
+typedef gfxw_container_t gfxw_list_t;
+struct gfxw_port_t;
+struct gfxw_primitive_t;
+struct gfxw_snapshot_t;
+struct gfxw_text_t;
+struct gfxw_view_t;
+struct gfxw_visual_t;
+struct gfxw_widget_t;
+
 
 /* Enable the next line to keep a list of pointers to all widgets, with up to the specified amount
 ** of members (/SLOW/) */

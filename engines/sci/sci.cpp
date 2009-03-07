@@ -33,6 +33,10 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/gfx_tools.h"
+#include "sci/gfx/operations.h"
+
 namespace Sci {
 
 extern gfx_driver_t gfx_driver_scummvm;
