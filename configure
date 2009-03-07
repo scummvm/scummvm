@@ -98,7 +98,7 @@ add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
 add_engine lure "Lure of the Temptress" yes
 add_engine m4 "M4/MADS" no
-add_engine made "MADE" no
+add_engine made "MADE" yes
 add_engine parallaction "Parallaction" yes
 add_engine queen "Flight of the Amazon Queen" yes
 add_engine saga "SAGA" yes "ihnm saga2"
