@@ -35,6 +35,17 @@
 
 namespace Sci {
 
+#define CURSOR_RESOURCE_SIZE 68
+#define CURSOR_SIZE 16
+
+#define GFX_CURSOR_TRANSPARENT 255
+
+gfx_pixmap_color_t gfx_sci01_cursor_colors[3] = {
+	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0x00, 0x00},
+	{GFX_COLOR_INDEX_UNMAPPED, 0xff, 0xff, 0xff},
+	{GFX_COLOR_INDEX_UNMAPPED, 0xaa, 0xaa, 0xaa}
+};
+
 int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_options_t *options, void *internal, int palette) {
 	switch (type) {
 	case GFX_RESOURCE_TYPE_VIEW:
@@ -199,6 +210,10 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 	ResourceManager *resmgr = (ResourceManager *) state->misc_payload;
 	Resource *res = resmgr->findResource(kResourceTypeCursor, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
+	int colors[4] = {0, 1, GFX_CURSOR_TRANSPARENT, 1};
+	int line;
+	byte *data;
+	gfx_pixmap_t *retval;
 
 	if (!res || !res->data)
 		return NULL;
@@ -208,10 +223,44 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 		return NULL;
 	}
 
-	if (state->version == SCI_VERSION_0)
-		return gfxr_draw_cursor0(resid, res->data, res->size);
+	if (state->version != SCI_VERSION_0)
+		colors[3] = 2;
+
+	if (res->size != CURSOR_RESOURCE_SIZE) {
+		GFXERROR("Expected resource size of %d, but found %d\n", CURSOR_RESOURCE_SIZE, res->size);
+		return NULL;
+	}
+
+	byte *resource = res->data;
+
+	retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(CURSOR_SIZE, CURSOR_SIZE, resid, 0, 0));
+	retval->colors = gfx_sci01_cursor_colors;
+	retval->colors_nr = (state->version != SCI_VERSION_0) ? 3 : 2;
+	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
+	retval->color_key = GFX_CURSOR_TRANSPARENT;
+
+	if (state->version != SCI_VERSION_0) {
+		retval->xoffset = get_int_16(resource);
+		retval->yoffset = get_int_16(resource + 2);
+	} else if (resource[3]) // center
+		retval->xoffset = retval->yoffset = CURSOR_SIZE / 2;
 	else
-		return gfxr_draw_cursor01(resid, res->data, res->size);
+		retval->xoffset = retval->yoffset = 0;
+
+	resource += 4;
+
+	data = retval->index_data;
+	for (line = 0; line < 16; line++) {
+		int mask_a = get_int_16(resource + (line << 1));
+		int mask_b = get_int_16(resource + 32 + (line << 1));
+		int i;
+
+		for (i = 0; i < 16; i++) {
+			int color_code = ((mask_a << i) & 0x8000) | (((mask_b << i) >> 1) & 0x4000);
+			*data++ = colors[color_code >> 14];
+		}
+	}
+	return retval;
 }
 
 int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type, int version, int *entries_nr, void *internal) {

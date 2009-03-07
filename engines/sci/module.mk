@@ -46,7 +46,6 @@ MODULE_OBJS = \
 	gfx/resmgr.o \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \
-	gfx/resource/sci_cursor_0.o \
 	gfx/resource/sci_font.o \
 	gfx/resource/sci_pal_1.o \
 	gfx/resource/sci_pic_0.o \
