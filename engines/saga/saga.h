@@ -99,17 +99,18 @@ enum GameIds {
 };
 
 enum GameFileTypes {
-	GAME_RESOURCEFILE = 1 << 0,
-	GAME_SCRIPTFILE   = 1 << 1,
-	GAME_SOUNDFILE    = 1 << 2,
-	GAME_VOICEFILE    = 1 << 3,
-	GAME_DEMOFILE     = 1 << 4,
-	GAME_MUSICFILE    = 1 << 5,
-	GAME_MUSICFILE_GM = 1 << 6,
-	GAME_MUSICFILE_FM = 1 << 7,
-	GAME_PATCHFILE    = 1 << 8,
-	GAME_MACBINARY    = 1 << 9,
-	GAME_SWAPENDIAN   = 1 << 10
+	GAME_IMAGEFILE    = 1 << 0,
+	GAME_RESOURCEFILE = 1 << 1,
+	GAME_SCRIPTFILE   = 1 << 2,
+	GAME_SOUNDFILE    = 1 << 3,
+	GAME_VOICEFILE    = 1 << 4,
+	GAME_DEMOFILE     = 1 << 5,
+	GAME_MUSICFILE    = 1 << 6,
+	GAME_MUSICFILE_GM = 1 << 7,
+	GAME_MUSICFILE_FM = 1 << 8,
+	GAME_PATCHFILE    = 1 << 9,
+	GAME_MACBINARY    = 1 << 10,
+	GAME_SWAPENDIAN   = 1 << 11
 };
 
 enum GameFeatures {
