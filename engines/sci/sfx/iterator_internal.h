@@ -29,6 +29,8 @@
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/sci_midi.h"
 
+#include "common/list.h"
+
 namespace Sci {
 
 /* States */
@@ -133,7 +135,6 @@ struct Sci1Sample {
 	bool announced; /* Announced for download (SI_PCM) */
 	sfx_pcm_config_t format;
 	byte *_data;
-	Sci1Sample *next;
 };
 
 class Sci1SongIterator : public BaseSongIterator {
@@ -145,7 +146,7 @@ public:
 
 	bool _initialised; /* Whether the MIDI channel setup has been initialised */
 	int _numChannels; /* Number of channels actually used */
-	Sci1Sample *_nextSample;
+	Common::List<Sci1Sample> _samples;
 	int _numLoopedChannels; /* Number of channels that are ready to loop */
 
 	int _delayRemaining; /* Number of ticks that haven't been polled yet */

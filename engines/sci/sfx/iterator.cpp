@@ -509,12 +509,12 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 
 	pcm_data = self->_data + offset;
 
-	size = getUInt16(pcm_data + SCI0_PCM_SIZE_OFFSET);
+	size = READ_LE_UINT16(pcm_data + SCI0_PCM_SIZE_OFFSET);
 
 	/* Two of the format parameters are fixed by design: */
 	format->format = SFX_PCM_FORMAT_U8;
 	format->stereo = SFX_PCM_MONO;
-	format->rate = getUInt16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
+	format->rate = READ_LE_UINT16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
 
 	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_size) {
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_size;
@@ -709,7 +709,7 @@ static const int sci0_to_sci1_device_map[][2] = {
 #define SCI1_CHANDATA(off) self->_data[channel->offset + (off)]
 
 static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
-	Sci1Sample *sample, **seekerp;
+	Sci1Sample sample;
 	int rate;
 	int length;
 	int begin;
@@ -721,46 +721,41 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 		          self->_data[offset + 1]);
 
 	rate = getInt16(self->_data + offset + 2);
-	length = getUInt16(self->_data + offset + 4);
+	length = READ_LE_UINT16(self->_data + offset + 4);
 	begin = getInt16(self->_data + offset + 6);
 	end = getInt16(self->_data + offset + 8);
 
 	CHECK_FOR_END_ABSOLUTE((uint)(offset + 10 + length));
 
-	sample = new Sci1Sample();
-	sample->delta = begin;
-	sample->size = length;
-	sample->_data = self->_data + offset + 10;
+	sample.delta = begin;
+	sample.size = length;
+	sample._data = self->_data + offset + 10;
 
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "[SAMPLE] %x/%x/%x/%x l=%x\n",
 	        offset + 10, begin, end, self->_size, length);
 #endif
 
-	sample->format.format = SFX_PCM_FORMAT_U8;
-	sample->format.stereo = SFX_PCM_MONO;
-	sample->format.rate = rate;
+	sample.format.format = SFX_PCM_FORMAT_U8;
+	sample.format.stereo = SFX_PCM_MONO;
+	sample.format.rate = rate;
 
-	sample->announced = false;
+	sample.announced = false;
 
 	/* Perform insertion sort */
-	seekerp = &(self->_nextSample);
-
-	while (*seekerp && (*seekerp)->delta < begin)
-		seekerp = &((*seekerp)->next);
-
-	sample->next = *seekerp;
-	*seekerp = sample;
+	Common::List<Sci1Sample>::iterator seeker = self->_samples.begin();
+	while (seeker != self->_samples.end() && seeker->delta < begin)
+		++seeker;
+	self->_samples.insert(seeker, sample);
 
 	return 0; /* Everything's fine */
 }
 
 static int _sci1_song_init(Sci1SongIterator *self) {
-	Sci1Sample *seeker;
 	int last_time;
 	uint offset = 0;
 	self->_numChannels = 0;
-	self->_nextSample = 0;
+	self->_samples.clear();
 //	self->_deviceId = 0x0c;
 
 	if (SONGDATA(0) == 0xf0) {
@@ -796,8 +791,8 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 
 		CHECK_FOR_END_ABSOLUTE(offset + 4);
 
-		track_offset = getUInt16(self->_data + offset);
-		end = getUInt16(self->_data + offset + 2);
+		track_offset = READ_LE_UINT16(self->_data + offset);
+		end = READ_LE_UINT16(self->_data + offset + 2);
 
 		CHECK_FOR_END_ABSOLUTE(track_offset - 1);
 
@@ -842,19 +837,18 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 		CHECK_FOR_END_ABSOLUTE(offset);
 	}
 
-	/* Now ensure that sapmle deltas are relative to the previous sample */
-	seeker = self->_nextSample;
+	/* Now ensure that samüle deltas are relative to the previous sample */
 	last_time = 0;
 	self->active_channels = self->_numChannels;
 	self->_numLoopedChannels = 0;
 
-	while (seeker) {
+	for (Common::List<Sci1Sample>::iterator seeker = self->_samples.begin();
+			seeker != self->_samples.end(); ++seeker) {
 		int prev_last_time = last_time;
 		sciprintf("[iterator-1] Detected sample: %d Hz, %d bytes at time %d\n",
 		          seeker->format.rate, seeker->size, seeker->delta);
 		last_time = seeker->delta;
 		seeker->delta -= prev_last_time;
-		seeker = seeker->next;
 	}
 
 	return 0; /* Success */
@@ -869,8 +863,8 @@ static int _sci1_get_smallest_delta(Sci1SongIterator *self) {
 		        && (d == -1 || self->_channels[i].delay < d))
 			d = self->_channels[i].delay;
 
-	if (self->_nextSample && self->_nextSample->delta < d)
-		return self->_nextSample->delta;
+	if (!self->_samples.empty() && self->_samples.begin()->delta < d)
+		return self->_samples.begin()->delta;
 	else
 		return d;
 }
@@ -878,8 +872,8 @@ static int _sci1_get_smallest_delta(Sci1SongIterator *self) {
 static void _sci1_update_delta(Sci1SongIterator *self, int delta) {
 	int i;
 
-	if (self->_nextSample)
-		self->_nextSample->delta -= delta;
+	if (!self->_samples.empty())
+		self->_samples.begin()->delta -= delta;
 
 	for (i = 0; i < self->_numChannels; i++)
 		if (self->_channels[i].state == SI_STATE_COMMAND)
@@ -925,9 +919,9 @@ static void _sci1_dump_state(Sci1SongIterator *self) {
 		}
 		sciprintf("\n");
 	}
-	if (self->_nextSample) {
+	if (!self->_samples.empty()) {
 		sciprintf("\t[sample %d]\n",
-		          self->_nextSample->delta);
+		          self->_samples.begin()->delta);
 	}
 	sciprintf("------------------------------------------\n");
 }
@@ -957,7 +951,7 @@ static int _sci1_command_index(Sci1SongIterator *self) {
 			}
 		}
 
-	if (self->_nextSample && base_delay >= self->_nextSample->delta)
+	if (!self->_samples.empty() && base_delay >= self->_samples.begin()->delta)
 		return COMMAND_INDEX_PCM;
 
 	return best_chan;
@@ -965,14 +959,10 @@ static int _sci1_command_index(Sci1SongIterator *self) {
 
 
 Audio::AudioStream *Sci1SongIterator::getAudioStream() {
-	if (_nextSample && _nextSample->delta <= 0) {
-		Sci1Sample *sample = _nextSample;
-
+	Common::List<Sci1Sample>::iterator sample = _samples.begin();
+	if (sample != _samples.end() && sample->delta <= 0) {
 		Audio::AudioStream *feed = makeStream(sample->_data, sample->size, sample->format);
-
-		_nextSample = _nextSample->next;
-
-		delete sample;
+		_samples.erase(sample);
 
 		return feed;
 	} else
@@ -1007,19 +997,19 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 
 		if (chan == COMMAND_INDEX_PCM) {
 
-			if (_nextSample->announced) {
+			if (_samples.begin()->announced) {
 				/* Already announced; let's discard it */
 				Audio::AudioStream *feed = getAudioStream();
 				delete feed;
 			} else {
-				int delay = _nextSample->delta;
+				int delay = _samples.begin()->delta;
 
 				if (delay) {
 					_sci1_update_delta(this, delay);
 					return delay;
 				}
 				/* otherwise we're touching a PCM */
-				_nextSample->announced = true;
+				_samples.begin()->announced = true;
 				return SI_PCM;
 			}
 		} else { /* Not a PCM */
@@ -1088,21 +1078,10 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 
 		case _SIMSG_BASEMSG_CLONE: {
 			Sci1SongIterator *mem = new Sci1SongIterator(*this);
-			Sci1Sample **samplep;
 			int delta = msg.args[0].i; /* Delay until next step */
 
-			samplep = &(mem->_nextSample);
-
 			sci_refcount_incref(mem->_data);
-
 			mem->_delayRemaining += delta;
-
-			/* Clone chain of samples */
-			while (*samplep) {
-				Sci1Sample *newsample = new Sci1Sample(**samplep);
-				*samplep = newsample;
-				samplep = &(newsample->next);
-			}
 
 			return mem; /* Assume caller has another copy of this */
 		}
@@ -1214,7 +1193,6 @@ void Sci1SongIterator::init() {
 
 	ccc = 127;
 	_deviceId = 0x00; // Default to Sound Blaster/Adlib for purposes of cue computation
-	_nextSample = NULL;
 	_numChannels = 0;
 	_initialised = false;
 	_delayRemaining = 0;
@@ -1225,12 +1203,6 @@ void Sci1SongIterator::init() {
 }
 
 Sci1SongIterator::~Sci1SongIterator() {
-	Sci1Sample *sample_seeker = _nextSample;
-	while (sample_seeker) {
-		Sci1Sample *old_sample = sample_seeker;
-		sample_seeker = sample_seeker->next;
-		delete old_sample;
-	}
 }
 
 int Sci1SongIterator::getTimepos() {
