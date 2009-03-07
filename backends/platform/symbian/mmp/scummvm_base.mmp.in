@@ -113,7 +113,6 @@ SOURCE 	   engines\advanceddetector.cpp
 // backend specific includes
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
-SOURCE     backends\platform\symbian\src\fnmatch.c
 SOURCE     backends\keymapper\action.cpp
 SOURCE     backends\keymapper\keymap.cpp
 SOURCE     backends\keymapper\keymapper.cpp

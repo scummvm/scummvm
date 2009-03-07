@@ -200,7 +200,7 @@ sub CheckForModuleMK
 			# there is nothing we need in #ifndef sections: so ignore these for now
 			
 			# found a section? reset 
-			if ($line =~ /^ifdef (.*)/)
+			if ($line =~ /^ifdef (.*)/) 
 			{
 				$sec = $1;
 				$isenable = 1;

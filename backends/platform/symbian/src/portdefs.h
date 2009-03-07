@@ -35,7 +35,6 @@
 #include <e32std.h>
 #include <math.h>
 
-#include "fnmatch.h"
 #define DISABLE_COMMAND_LINE
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
