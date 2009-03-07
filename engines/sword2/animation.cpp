@@ -31,6 +31,7 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
+#include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
@@ -348,9 +349,14 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *s
 		return NULL;
 	}
 
-	sprintf(buf, "Cutscene '%s' not found", name);
- 	GUI::MessageDialog dialog(buf, "OK");
- 	dialog.runModal();
+	// The demo tries to play some cutscenes that aren't there, so make
+	// those warnings more discreet.
+	if (!vm->_logic->readVar(DEMO)) {
+		sprintf(buf, "Cutscene '%s' not found", name);
+	 	GUI::MessageDialog dialog(buf, "OK");
+	 	dialog.runModal();
+	} else
+		warning("Cutscene '%s' not found", name);
 
 	return NULL;
 }
