@@ -45,9 +45,6 @@ namespace Sci {
 #define SCI_STATUS_ENQUEUED 2 /* In the LRU queue */
 #define SCI_STATUS_LOCKED 3 /* Allocated and in use */
 
-#define SCI_RES_FILE_NR_PATCH -1 /* Resource was read from a patch file rather than from a resource */
-
-
 /*** INITIALIZATION RESULT TYPES ***/
 #define SCI_ERROR_IO_ERROR 1
 #define SCI_ERROR_EMPTY_OBJECT 2
@@ -180,6 +177,8 @@ public:
 class ResourceManager {
 public:
 	int _sciVersion; /* SCI resource version to use */
+	int _mapVersion; // RESOURCE.MAP version
+	int _volVersion; // RESOURCE.0xx version
 
 	/**
 	 * Creates a new FreeSCI resource manager.
@@ -222,7 +221,7 @@ public:
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
-	int scanNewSources(int *detected_version, ResourceSource *source);
+	int scanNewSources(ResourceSource *source);
 
 	//! Looks up a resource's data
 	/**	@param type: The resource type to look for
@@ -270,20 +269,20 @@ protected:
 	void freeOldResources(int last_invulnerable);
 
 	/**--- Resource map decoding functions ---*/
+	int detectMapVersion();
+	int detectVolVersion();
 
 	/* Reads the SCI0 resource.map file from a local directory
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
-	int readResourceMapSCI0(ResourceSource *map, int *sci_version);
+	int readResourceMapSCI0(ResourceSource *map);
 
 	/* Reads the SCI1 resource.map file from a local directory
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
-	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version);
+	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol);
 
-	int isSCI10or11(int *types);
-	int detectOddSCI01(Common::File &file);
-	int resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version);
+	int resReadEntry(ResourceSource *map, byte *buf, Resource *res);
 	ResourceType resTypeSCI1(int ofs, int *types, ResourceType lastrt);
 	int parseHeaderSCI1(Common::ReadStream &stream, int *types, ResourceType *lastrt);
 

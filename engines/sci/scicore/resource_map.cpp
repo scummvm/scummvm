@@ -88,44 +88,13 @@ namespace Sci {
 		| (((bytes)[3]) << 9) \
 		| (((bytes)[2]) << 1))
 
-int ResourceManager::detectOddSCI01(Common::File &file) {
-	byte buf[6];
-	int files_ok = 1;
-	int fsize, resource_nr, read_ok;
-	char filename[14];
-
-	fsize = file.size();
-	if (fsize < 0) {
-		perror("Error occured while trying to get filesize of resource.map");
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-	}
-
-	resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
-
-	while (resource_nr-- > 1) {
-		read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
-
-		if (read_ok) {
-			sprintf(filename, "resource.%03i", SCI0_RESFILE_GET_FILE(buf + 2));
-			if (!Common::File::exists(filename)) {
-				files_ok = 0;
-				break;
-			}
-		}
-	}
-
-	file.seek(0, SEEK_SET);
-
-	return files_ok;
-}
-
-int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res, int sci_version) {
-	res->id = READ_LE_UINT16(buf);//buf[0] | (buf[1] << 8);
+int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res) {
+	res->id = READ_LE_UINT16(buf);
 	res->type = (ResourceType)SCI0_RESID_GET_TYPE(buf);
 	res->number = SCI0_RESID_GET_NUMBER(buf);
 	res->status = SCI_STATUS_NOMALLOC;
 
-	if (sci_version == SCI_VERSION_01_VGA_ODD) {
+	if (_mapVersion == SCI_VERSION_01_VGA_ODD) {
 		res->source = getVolume(map, SCI01V_RESFILE_GET_FILE(buf + 2));
 		res->file_offset = SCI01V_RESFILE_GET_OFFSET(buf + 2);
 
@@ -195,9 +164,7 @@ int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, Res
 	return size;
 }
 
-
-
-int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) {
+int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	int fsize;
 	Common::File file;
 	Resource *res, res1;
@@ -208,43 +175,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
-	file.read(&buf, 4);
-
-	/* Theory: An SCI1 map file begins with an index that allows us to seek quickly
-	   to a particular resource type. The entries are three bytes long; one byte
-	   resource type, two bytes start position and so on.
-	   The below code therefore tests for three things:
-
-	   Is the first resource type 'view'?
-	   Do those entries start at an offset that is an exact multiple of the
-	   index entry size?
-	   Is the second resource type 'pic'?
-
-	   This requires that a given game has both views and pics,
-	   a safe assumption usually, except in message.map and room-specific
-	   (audio) map files, neither of which SCI0 has.
-
-	   */
-
-	if ((buf[0] == 0x80) && (buf[1] % 3 == 0) && (buf[3] == 0x81)) {
-		return SCI_ERROR_INVALID_RESMAP_ENTRY;
-	}
-
 	file.seek(0, SEEK_SET);
-
-	switch (detectOddSCI01(file)) {
-	case 0 : // Odd SCI01
-		if (*sci_version == SCI_VERSION_AUTODETECT)
-			*sci_version = SCI_VERSION_01_VGA_ODD;
-		break;
-	case 1 : // SCI0 or normal SCI01
-		if (*sci_version == SCI_VERSION_AUTODETECT)
-			*sci_version = SCI_VERSION_0;
-		break;
-	default : // Neither, or error occurred
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-	}
-
 	fsize = file.size();
 	if (fsize < 0) {
 		perror("Error occured while trying to get filesize of resource.map");
@@ -264,7 +195,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 		if(buf[5] == 0xff)
 			break;
 
-		if (resReadEntry(map, buf, &res1, *sci_version))
+		if (resReadEntry(map, buf, &res1))
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		uint32 resId = RESOURCE_HASH(res1.type, res1.number);
 		// adding a new resource
@@ -291,40 +222,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map, int *sci_version) 
 	return 0;
 }
 
-#define TEST fprintf(stderr, "OK in line %d\n", __LINE__);
-
-int ResourceManager::isSCI10or11(int *types) {
-	int this_restype = 0;
-	int next_restype = 1;
-
-	while (next_restype <= kResourceTypeHeap) {
-		int could_be_10 = 0;
-		int could_be_11 = 0;
-
-		while (types[this_restype] == 0) {
-			this_restype++;
-			next_restype++;
-		}
-
-		while (types[next_restype] == 0)
-			next_restype++;
-
-		could_be_10 = ((types[next_restype] - types[this_restype]) % SCI1_RESMAP_ENTRIES_SIZE) == 0;
-		could_be_11 = ((types[next_restype] - types[this_restype]) % SCI11_RESMAP_ENTRIES_SIZE) == 0;
-
-		if (could_be_10 && !could_be_11)
-			return SCI_VERSION_1;
-		if (could_be_11 && !could_be_10)
-			return SCI_VERSION_1_1;
-
-		this_restype++;
-		next_restype++;
-	}
-
-	return SCI_VERSION_AUTODETECT;
-}
-
-int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol, int *sci_version) {
+int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol) {
 	int fsize;
 	Common::File file;
 	int resource_nr;
@@ -334,7 +232,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	byte buf[SCI1_RESMAP_ENTRIES_SIZE];
 	ResourceType lastrt;
 	int entrysize;
-	int entry_size_selector;
 
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
@@ -345,16 +242,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 
-	entry_size_selector = isSCI10or11(types);
-	if (*sci_version == SCI_VERSION_AUTODETECT)
-		*sci_version = entry_size_selector;
-
-	if (*sci_version == SCI_VERSION_AUTODETECT) { // That didn't help
-		sciprintf("Unable to detect resource map version\n");
-		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
-	}
-
-	entrysize = entry_size_selector == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
+	entrysize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
 
 	fsize = file.size();
 	if (fsize < 0) {
@@ -388,7 +276,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 			res->number = number;
 			res->id = res->number | (res->type << 16);
 		// only 1st source would be used when loading resource
-			if (entry_size_selector < SCI_VERSION_1_1) {
+			if (_mapVersion < SCI_VERSION_1_1) {
 				res->source = getVolume(map, SCI1_RESFILE_GET_FILE(buf));
 				res->file_offset = SCI1_RESFILE_GET_OFFSET(buf);
 			} else {
