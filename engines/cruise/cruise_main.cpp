@@ -1700,8 +1700,8 @@ void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16
 	*pMouseButton = currentMouseButton;
 }
 
-void mainLoop(void) {
-	int frames = 0;		/* Number of frames displayed */
+
+void CruiseEngine::mainLoop(void) {
 	//int32 t_start,t_left;
 	//uint32 t_end;
 	//int32 q=0;                     /* Dummy */
@@ -1722,201 +1722,176 @@ void mainLoop(void) {
 
 	initAllData();
 
-	{
-		int playerDontAskQuit = 1;
-		int quitValue2 = 1;
-		int quitValue = 0;
+	int playerDontAskQuit = 1;
+	int quitValue2 = 1;
+	int quitValue = 0;
 
-		do {
-			frames++;
+	do {
+		// Handle frame delay
+		uint32 currentTick = g_system->getMillis();
+
+		if (!bFastMode) {
+			// Delay for the specified amount of time, but still respond to events
+			while (currentTick < lastTick + GAME_FRAME_DELAY) {
+				g_system->delayMillis(10);
+				currentTick = g_system->getMillis();
+
+				manageEvents();
+
+				if (_vm->getDebugger()->isAttached())
+					_vm->getDebugger()->onFrame();
+			}
+		} else {
+			manageEvents();
+
+			if (currentTick >= (lastTickDebug + 10)) {
+				lastTickDebug = currentTick;
+
+				if (_vm->getDebugger()->isAttached())
+					_vm->getDebugger()->onFrame();
+			}
+		}
+
+		lastTick = g_system->getMillis();
+
+		// Handle the next frame
+
+//		frames++;
 //      t_start=Osystem_GetTicks();
 
 //      readKeyboard();
-			playerDontAskQuit = processInput();
+		playerDontAskQuit = processInput();
 
-			if (enableUser) {
-				userEnabled = 1;
-				enableUser = 0;
+		if (enableUser) {
+			userEnabled = 1;
+			enableUser = 0;
+		}
+
+		manageScripts(&relHead);
+		manageScripts(&procHead);
+
+		removeFinishedScripts(&relHead);
+		removeFinishedScripts(&procHead);
+
+		processAnimation();
+
+		if (remdo) {
+			// ASSERT(0);
+			/*    main3 = 0;
+			 * var24 = 0;
+			 * var23 = 0;
+			 *
+			 * freeStuff2(); */
+		}
+
+		if (cmdLine[0]) {
+			ASSERT(0);
+			/*        redrawStrings(0,&cmdLine,8);
+
+			        waitForPlayerInput();
+
+			        cmdLine = 0; */
+		}
+
+		if (displayOn) {
+			if (doFade)
+				PCFadeFlag = 0;
+
+			/*if (!PCFadeFlag)*/
+			{
+				mainDraw(0);
+				flipScreen();
 			}
 
-			manageScripts(&relHead);
-			manageScripts(&procHead);
+			if (userEnabled && !userWait && !autoTrack) {
+				if (currentActiveMenu == -1) {
+					int16 mouseX;
+					int16 mouseY;
+					int16 mouseButton;
 
-			removeFinishedScripts(&relHead);
-			removeFinishedScripts(&procHead);
+					static int16 oldMouseX = -1;
+					static int16 oldMouseY = -1;
 
-			processAnimation();
+					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 
-			if (remdo) {
-				// ASSERT(0);
-				/*    main3 = 0;
-				 * var24 = 0;
-				 * var23 = 0;
-				 *
-				 * freeStuff2(); */
-			}
+					if (mouseX != oldMouseX && mouseY != oldMouseY) {
+						int objectType;
+						int newCursor1;
+						int newCursor2;
 
-			if (cmdLine[0]) {
-				ASSERT(0);
-				/*        redrawStrings(0,&cmdLine,8);
+						oldMouseX = mouseX;
+						oldMouseY = mouseY;
 
-				        waitForPlayerInput();
+						objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
 
-				        cmdLine = 0; */
-			}
-
-			if (displayOn) {
-				if (doFade)
-					PCFadeFlag = 0;
-
-				/*if (!PCFadeFlag)*/
-				{
-					mainDraw(0);
-					flipScreen();
-				}
-
-				if (userEnabled && !userWait && !autoTrack) {
-					if (currentActiveMenu == -1) {
-						int16 mouseX;
-						int16 mouseY;
-						int16 mouseButton;
-
-						static int16 oldMouseX = -1;
-						static int16 oldMouseY = -1;
-
-						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-
-						if (mouseX != oldMouseX && mouseY != oldMouseY) {
-							int objectType;
-							int newCursor1;
-							int newCursor2;
-
-							oldMouseX = mouseX;
-							oldMouseY = mouseY;
-
-							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
-
-							if (objectType == 9) {
-								changeCursor(CURSOR_EXIT);
-							} else if (objectType != -1) {
-								changeCursor(CURSOR_MAGNIFYING_GLASS);
-							} else {
-								changeCursor(CURSOR_WALK);
-							}
+						if (objectType == 9) {
+							changeCursor(CURSOR_EXIT);
+						} else if (objectType != -1) {
+							changeCursor(CURSOR_MAGNIFYING_GLASS);
+						} else {
+							changeCursor(CURSOR_WALK);
 						}
-					} else {
-						changeCursor(CURSOR_NORMAL);
 					}
 				} else {
 					changeCursor(CURSOR_NORMAL);
 				}
-
-				if (userWait) {
-					int16 mouseButton = 0;
-					checkInput(&mouseButton);
-
-					while (!mouseButton) {
-						manageScripts(&relHead);
-						manageScripts(&procHead);
-
-						removeFinishedScripts(&relHead);
-						removeFinishedScripts(&procHead);
-
-						processAnimation();
-
-						flip();
-
-						// not exactly this
-						manageEvents();
-
-						checkInput(&mouseButton);
-					}
-
-					changeScriptParamInList(-1, -1, &procHead, 9999, 0);
-					changeScriptParamInList(-1, -1, &relHead, 9999, 0);
-					userWait = 0;
-				}
-
-				// wait for character to finish auto track
-				if (autoTrack) {
-					if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, ATP_MOUSE)) {
-						if (autoMsg != -1) {
-							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
-
-							char* pText = getText(autoMsg, autoOvl);
-
-							if (strlen(pText))
-								userWait = 1;
-						}
-
-						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
-						autoTrack = false;
-						enableUser = 1;
-					} else {
-						userEnabled = false;
-					}
-				} else if (autoMsg != -1) {
-					removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen);
-					autoMsg = -1;
-				}
+			} else {
+				changeCursor(CURSOR_NORMAL);
 			}
-			// t_end = t_start+SPEED;
-//      t_left=t_start-Osystem_GetTicks()+SPEED;
-#ifndef FASTDEBUG
-			/*    if (t_left>0)
-			 * if (t_left>SLEEP_MIN)
-			 * Osystem_Delay(t_left-SLEEP_GRAN);
-			 * while (Osystem_GetTicks()<t_end){q++;}; */
-#endif
-			manageEvents();
 
-		} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
-	}
+			if (userWait) {
+				int16 mouseButton = 0;
+				checkInput(&mouseButton);
 
-}
+				while (!mouseButton) {
+					manageScripts(&relHead);
+					manageScripts(&procHead);
 
-int oldmain(int argc, char *argv[]) {
-	printf("Cruise for a corpse recode\n");
+					removeFinishedScripts(&relHead);
+					removeFinishedScripts(&procHead);
 
-//  OSystemInit();
-//  osystem = new OSystem;
+					processAnimation();
 
-	printf("Osystem Initialized\n");
+					flip();
 
-	printf("Initializing engine...\n");
+					// not exactly this
+					manageEvents();
 
-	PCFadeFlag = 0;
+					checkInput(&mouseButton);
+				}
 
-	//lowLevelInit();
+				changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+				changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+				userWait = 0;
+			}
 
-	// arg parser stuff
+			// wait for character to finish auto track
+			if (autoTrack) {
+				if (isAnimFinished(narratorOvl, narratorIdx, &actorHead, ATP_MOUSE)) {
+					if (autoMsg != -1) {
+						freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
 
-	workBuffer = (uint8 *) mallocAndZero(8192);
+						char* pText = getText(autoMsg, autoOvl);
 
-	/*volVar1 = 0;
-	 * fileData1 = 0; */
+						if (strlen(pText))
+							userWait = 1;
+					}
 
-	/*PAL_fileHandle = -1; */
+					changeScriptParamInList(-1, -1, &relHead, 9998, 0);
+					autoTrack = false;
+					enableUser = 1;
+				} else {
+					userEnabled = false;
+				}
+			} else if (autoMsg != -1) {
+				removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen);
+				autoMsg = -1;
+			}
+		}
 
-	// video init stuff
+		manageEvents();
 
-	initSystem();
-
-	// another bit of video init
-
-	if (!readVolCnf()) {
-		printf("Fatal: unable to load vol.cnf !\n");
-		return (-1);
-	}
-
-	printf("Entering main loop...\n");
-	mainLoop();
-
-	//freeStuff();
-
-	//freePtr(workBuffer);
-
-	return (0);
+	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
 }
 
 void *mallocAndZero(int32 size) {

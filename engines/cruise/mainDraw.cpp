@@ -1181,12 +1181,12 @@ void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int wi
 	}
 }
 
-void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, int objY2, int objX2, char *output, char *data2) {
+void drawSprite(int objX1, int height, cellStruct *currentObjPtr, uint8 *data1, int objY2, int objX2, uint8 *output, uint8 *data2) {
 	int x = 0;
 	int y = 0;
 
 	cellStruct* plWork = currentObjPtr;
-	int workBufferSize = var_6 * (objX1 / 8);
+	int workBufferSize = height * (objX1 / 8);
 
 	unsigned char* workBuf = (unsigned char*)malloc(workBufferSize);
 	memcpy(workBuf, data2, workBufferSize);
@@ -1204,10 +1204,10 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 			int maskFrame = params.fileIdx;
 
 			if (filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_BGMK && filesDatabase[maskFrame].subData.ptrMask) {
-				drawMask(workBuf, objX1 / 8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width / 8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+				drawMask(workBuf, objX1 / 8, height, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width / 8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
 			} else
 				if (filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_SPRITE && filesDatabase[maskFrame].subData.ptrMask) {
-					drawMask(workBuf, objX1 / 8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width / 8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+					drawMask(workBuf, objX1 / 8, height, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width / 8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
 				}
 
 		}
@@ -1215,7 +1215,7 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 		plWork = plWork->next;
 	}
 
-	for (y = 0; y < var_6; y++) {
+	for (y = 0; y < height; y++) {
 		for (x = 0; x < (objX1); x++) {
 			uint8 color = (data1[0]);
 			data1++;
@@ -1440,7 +1440,7 @@ void mainDraw(int16 param) {
 					spriteHeight = filesDatabase[objZ2].height;	// height
 
 					if (filesDatabase[objZ2].subData.ptr) {
-						drawSprite(objX1, spriteHeight, currentObjPtr, (char *)filesDatabase[objZ2].subData.ptr, objY2, objX2, (char *)gfxModuleData.pPage10, (char *)filesDatabase[objZ2].subData.ptrMask);
+						drawSprite(objX1, spriteHeight, currentObjPtr, filesDatabase[objZ2].subData.ptr, objY2, objX2, gfxModuleData.pPage10, filesDatabase[objZ2].subData.ptrMask);
 					}
 				}
 			}

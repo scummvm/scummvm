@@ -83,7 +83,11 @@ Common::Error CruiseEngine::run() {
 	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
-	Cruise::mainLoop();
+
+	lastTick = 0;
+	lastTickDebug = 0;
+
+	mainLoop();
 
 	return Common::kNoError;
 }

@@ -222,10 +222,6 @@ void gfxModuleData_flipScreen(void) {
 	flip();
 }
 
-extern bool bFastMode;
-
-static uint32 lastTick = 0, lastTickDebug = 0;
-
 void flip() {
 	int i;
 	byte paletteRGBA[256 * 4];
@@ -244,24 +240,6 @@ void flip() {
 
 	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
 	g_system->updateScreen();
-
-	uint32 currentTick = g_system->getMillis();
-
-	if (currentTick >= (lastTickDebug + 10)) {
-		lastTickDebug = currentTick;
-
-		if (_vm->getDebugger()->isAttached())
-			_vm->getDebugger()->onFrame();
-	}
-
-	if (!bFastMode) {
-		uint32 speed = 50;
-		if (lastTick + speed > currentTick) {
-			g_system->delayMillis(lastTick + speed - currentTick);
-		}
-	}
-
-	lastTick = g_system->getMillis();
 }
 
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour) {

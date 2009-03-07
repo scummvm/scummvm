@@ -147,7 +147,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
 		}
 
-		drawSprite(width, height, NULL, (char *)filesDatabase[params.fileIdx].subData.ptr, newElement->Y, newElement->X, (char *)backgroundPtr, (char *)filesDatabase[params.fileIdx].subData.ptrMask);
+		drawSprite(width, height, NULL, filesDatabase[params.fileIdx].subData.ptr, newElement->Y, newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
 	} else {			// poly
 		if (saveBuffer == 1) {
 			int newX;
@@ -202,7 +202,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 				int width = filesDatabase[frame].width;
 				int height = filesDatabase[frame].height;
 
-				drawSprite(width, height, NULL, (char *)filesDatabase[frame].subData.ptr, pl->Y, pl->X, (char*)backgroundPtrtable[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptrMask);
+				drawSprite(width, height, NULL, filesDatabase[frame].subData.ptr, pl->Y, pl->X, backgroundPtrtable[pl->backgroundIdx], filesDatabase[frame].subData.ptrMask);
 			} else {			// poly
 				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundPtrtable[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
 			}
