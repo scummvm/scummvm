@@ -32,264 +32,103 @@
 
 namespace Sci {
 
-#define RESOURCE_MAP_FILENAME "resource.map"
-
 #define SCI0_RESMAP_ENTRIES_SIZE 6
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
-// Resource type encoding
-#define SCI0_B1_RESTYPE_MASK  0xf8
-#define SCI0_B1_RESTYPE_SHIFT 3
-#define SCI0_B3_RESFILE_MASK  0xfc
-#define SCI0_B3_RESFILE_SHIFT 2
-#define SCI01V_B3_RESFILE_MASK  0xf0
-#define SCI01V_B3_RESFILE_SHIFT 4
-
-#define SCI0_RESID_GET_TYPE(bytes) \
-	(((bytes)[1] & SCI0_B1_RESTYPE_MASK) >> SCI0_B1_RESTYPE_SHIFT)
-#define SCI0_RESID_GET_NUMBER(bytes) \
-	((((bytes)[1] & ~SCI0_B1_RESTYPE_MASK) << 8) | ((bytes)[0]))
-
-#define SCI0_RESFILE_GET_FILE(bytes) \
-	(((bytes)[3] & SCI0_B3_RESFILE_MASK) >> SCI0_B3_RESFILE_SHIFT)
-#define SCI0_RESFILE_GET_OFFSET(bytes) \
-	((((bytes)[3] & ~SCI0_B3_RESFILE_MASK) << 24) \
-		| (((bytes)[2]) << 16) \
-		| (((bytes)[1]) << 8) \
-		| (((bytes)[0]) << 0))
-
-#define SCI01V_RESFILE_GET_FILE(bytes) \
-	(((bytes)[3] & SCI01V_B3_RESFILE_MASK) >> SCI01V_B3_RESFILE_SHIFT)
-#define SCI01V_RESFILE_GET_OFFSET(bytes) \
-	((((bytes)[3] & ~SCI01V_B3_RESFILE_MASK) << 24) \
-	| (((bytes)[2]) << 16) \
-	| (((bytes)[1]) << 8) \
-	| (((bytes)[0]) << 0))
-
-#define SCI1_B5_RESFILE_MASK 0xf0
-#define SCI1_B5_RESFILE_SHIFT 4
-
-#define SCI1_RESFILE_GET_FILE(bytes) \
-	(((bytes)[5] & SCI1_B5_RESFILE_MASK) >> SCI1_B5_RESFILE_SHIFT)
-
-#define SCI1_RESFILE_GET_OFFSET(bytes) \
-	((((bytes)[5] & ~SCI1_B5_RESFILE_MASK) << 24) \
-		| (((bytes)[4]) << 16) \
-		| (((bytes)[3]) << 8) \
-		| (((bytes)[2]) << 0))
-
-#define SCI1_RESFILE_GET_NUMBER(bytes) \
-	((((bytes)[1]) << 8) \
-		| (((bytes)[0]) << 0))
-
-#define SCI11_RESFILE_GET_OFFSET(bytes) \
-	((((bytes)[4]) << 17) \
-		| (((bytes)[3]) << 9) \
-		| (((bytes)[2]) << 1))
-
-int ResourceManager::resReadEntry(ResourceSource *map, byte *buf, Resource *res) {
-	res->id = READ_LE_UINT16(buf);
-	res->type = (ResourceType)SCI0_RESID_GET_TYPE(buf);
-	res->number = SCI0_RESID_GET_NUMBER(buf);
-	res->status = SCI_STATUS_NOMALLOC;
-
-	if (_mapVersion == SCI_VERSION_01_VGA_ODD) {
-		res->source = getVolume(map, SCI01V_RESFILE_GET_FILE(buf + 2));
-		res->file_offset = SCI01V_RESFILE_GET_OFFSET(buf + 2);
-
-#if 0
-		if (res->type < 0 || res->type > sci1_last_resource)
-			return 1;
-#endif
-	} else {
-		res->source = getVolume(map, SCI0_RESFILE_GET_FILE(buf + 2));
-		res->file_offset = SCI0_RESFILE_GET_OFFSET(buf + 2);
-
-#if 0
-		if (res->type < 0 || res->type > sci0_last_resource)
-			return 1;
-#endif
-	}
-
-#if 0
-	fprintf(stderr, "Read [%04x] %6d.%s\tresource.%03d, %08x\n",
-	        res->id, res->number,
-	        sci_resource_type_suffixes[res->type],
-	        res->file, res->file_offset);
-#endif
-
-	if (res->source == NULL)
-		return 1;
-
-	return 0;
-}
-
-ResourceType ResourceManager::resTypeSCI1(int ofs, int *types, ResourceType lastrt) {
-	ResourceType last = kResourceTypeInvalid;
-
-	for (int i = 0; i <= sci1_last_resource; i++)
-		if (types[i]) {
-			if (types[i] > ofs)
-				return last;
-			last = (ResourceType)i;
-		}
-
-	return lastrt;
-}
-
-int ResourceManager::parseHeaderSCI1(Common::ReadStream &stream, int *types, ResourceType *lastrt) {
-	unsigned char rtype;
-	unsigned char offset[2];
-	int read_ok;
-	int size = 0;
-
-	do {
-		read_ok = stream.read(&rtype, 1);
-		if (!read_ok)
-			break;
-		read_ok = stream.read(&offset, 2);
-		if (read_ok < 2)
-			read_ok = 0;
-		if (rtype != 0xff) {
-			types[rtype&0x7f] = (offset[1] << 8) | (offset[0]);
-			*lastrt = (ResourceType)(rtype & 0x7f);
-		}
-		size += 3;
-	} while (read_ok && (rtype != 0xFF));
-
-	if (!read_ok)
-		return 0;
-
-	return size;
-}
-
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
-	int fsize;
 	Common::File file;
-	Resource *res, res1;
-	int resources_total_read = 0;
-	bool bAdded = false;
-	byte buf[SCI0_RESMAP_ENTRIES_SIZE];
+	Resource *res;
+	ResourceType type;
+	uint16 number, id;
+	uint32 offset;
 
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
 	file.seek(0, SEEK_SET);
-	fsize = file.size();
-	if (fsize < 0) {
-		perror("Error occured while trying to get filesize of resource.map");
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-	}
 
-	int resource_nr = fsize / SCI0_RESMAP_ENTRIES_SIZE;
+	byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0: 0xFC;
+	byte bShift = _mapVersion == SCI_VERSION_01_VGA_ODD ? 28 : 26;
 
 	do {
-		int read_ok = file.read(&buf, SCI0_RESMAP_ENTRIES_SIZE);
+		id = file.readUint16LE();
+		offset = file.readUint32LE();
 
-		if (read_ok != SCI0_RESMAP_ENTRIES_SIZE) {
-			sciprintf("Error while reading %s: ", map->location_name.c_str());
+		if (file.ioFailed()) {
+			warning("Error while reading %s: ", map->location_name.c_str());
 			perror("");
-			break;
+			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
-		if(buf[5] == 0xff)
+		if(offset == 0xFFFFFFFF)
 			break;
 
-		if (resReadEntry(map, buf, &res1))
-			return SCI_ERROR_RESMAP_NOT_FOUND;
-		uint32 resId = RESOURCE_HASH(res1.type, res1.number);
+		type = (ResourceType)(id >> 11);
+		number = id & 0x7FF;
+		uint32 resId = RESOURCE_HASH(type, number);
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
 			res = new Resource;
-			res->id = res1.id;
-			res->file_offset = res1.file_offset;
-			res->number = res1.number;
-			res->type = res1.type;
-			res->source = res1.source;
+			res->id = id;
+			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
+			res->number = number;
+			res->type = type;
+			res->source = getVolume(map, offset >> bShift);
 			_resMap.setVal(resId, res);
-			bAdded = true;
-		}
-
-		if (++resources_total_read >= resource_nr) {
-			warning("After %d entries, resource.map is not terminated", resources_total_read);
-			break;
 		}
 	} while (!file.eos());
-	if (!bAdded)
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-
-	file.close();
 	return 0;
 }
 
 int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol) {
-	int fsize;
 	Common::File file;
-	int resource_nr;
-	int ofs, header_size;
-	int *types = (int *)sci_malloc(sizeof(int) * (sci1_last_resource + 1));
-	int i;
-	byte buf[SCI1_RESMAP_ENTRIES_SIZE];
-	ResourceType lastrt;
-	int entrysize;
-
+	Resource *res;
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
-	memset(types, 0, sizeof(int) * (sci1_last_resource + 1));
+	resource_index_t resMap[kResourceTypeInvalid];
+	memset(resMap, 0, sizeof(resource_index_t) * kResourceTypeInvalid);
+	byte type = 0, prevtype = 0;
+	byte nEntrySize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
+	uint32 resId;
 
-	if (!(parseHeaderSCI1(file, types, &lastrt))) {
-		return SCI_ERROR_INVALID_RESMAP_ENTRY;
-	}
+	// Read resource type and offsets to resource offsets block from .MAP file
+	// The last entry has type=0xFF (0x1F) and offset equals to map file length
+	do {
+		type = file.readByte() & 0x1F;
+		resMap[type].wOffset = file.readUint16LE();
+		resMap[prevtype].wSize = (resMap[type].wOffset
+				- resMap[prevtype].wOffset) / nEntrySize;
+		prevtype = type;
+	} while (type != 0x1F); // the last entry is FF
 
-	entrysize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
-
-	fsize = file.size();
-	if (fsize < 0) {
-		perror("Error occured while trying to get filesize of resource.map");
-		return SCI_ERROR_RESMAP_NOT_FOUND;
-	}
-
-	resource_nr = (fsize - types[0]) / entrysize;
-	i = 0;
-	while (types[i] == 0)
-		i++;
-	header_size = ofs = types[i];
-
-	file.seek(ofs, SEEK_SET);
-
-	for (i = 0; i < resource_nr; i++) {
-		Resource *res;
-		int number;
-		ResourceType type;
-		uint32 resId;
-
-		file.read(&buf, entrysize);
-		type = resTypeSCI1(ofs, types, lastrt);
-		number = SCI1_RESFILE_GET_NUMBER(buf);
-		resId = RESOURCE_HASH(type, number);
-		// adding new resource only if it does not exist
-		if (_resMap.contains(resId) == false) {
-			res = new Resource;
-			_resMap.setVal(resId, res);
-			res->type = type;
-			res->number = number;
-			res->id = res->number | (res->type << 16);
-		// only 1st source would be used when loading resource
-			if (_mapVersion < SCI_VERSION_1_1) {
-				res->source = getVolume(map, SCI1_RESFILE_GET_FILE(buf));
-				res->file_offset = SCI1_RESFILE_GET_OFFSET(buf);
-			} else {
-				res->source = vol;
-				res->file_offset = SCI11_RESFILE_GET_OFFSET(buf);
-			};
+	// reading each type's offsets
+	uint32 off = 0;
+	for (type = 0; type < kResourceTypeInvalid; type++) {
+		if (resMap[type].wOffset == 0) // this resource does not exist in map
+			continue;
+		file.seek(resMap[type].wOffset);
+		for (int i = 0; i < resMap[type].wSize; i++) {
+			uint16 number = file.readUint16LE();
+			file.read(&off, nEntrySize - 2);
+			if (file.ioFailed()) {
+				warning("Error while reading %s: ", map->location_name.c_str());
+				perror("");
+				return SCI_ERROR_RESMAP_NOT_FOUND;
+			}
+			resId = RESOURCE_HASH(type, number);
+			// adding new resource only if it does not exist
+			if (_resMap.contains(resId) == false) {
+				res = new Resource;
+				_resMap.setVal(resId, res);
+				res->type = (ResourceType)type;
+				res->number = number;
+				res->id = res->number | (res->type << 16);
+				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : vol;
+				res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1; 
+			}
 		}
-
-		ofs += entrysize;
 	}
-
-	free(types);
-
 	return 0;
 }
 

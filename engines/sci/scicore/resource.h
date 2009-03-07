@@ -131,14 +131,11 @@ const char *getResourceTypeSuffix(ResourceType restype);
 /* Used for autodetection */
 
 
-#if 0
-struct resource_index_struct {
-	unsigned short resource_id;
-	unsigned int resource_location;
-}; /* resource type as stored in the resource.map file */
 
-typedef struct resource_index_struct resource_index_t;
-#endif
+struct resource_index_t {
+	uint16 wOffset;
+	uint16 wSize;
+}; /* resource type as stored in the resource.map file */
 
 struct ResourceSource {
 	ResSourceType source_type;
@@ -282,10 +279,6 @@ protected:
 	*/
 	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol);
 
-	int resReadEntry(ResourceSource *map, byte *buf, Resource *res);
-	ResourceType resTypeSCI1(int ofs, int *types, ResourceType lastrt);
-	int parseHeaderSCI1(Common::ReadStream &stream, int *types, ResourceType *lastrt);
-
 	/**--- Patch management functions ---*/
 
 	//! Reads SCI1 patch files from a local directory
@@ -298,23 +291,6 @@ protected:
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 };
-
-
-	/* Prints the name of a matching patch to a string buffer
-	** Parameters: (char *) string: The buffer to print to
-	**             (Resource *) res: Resource containing the number and type of the
-	**                                 resource whose name is to be print
-	** Returns   : (void)
-	*/
-	void sci0_sprintf_patch_file_name(char *string, Resource *res);
-
-	/* Prints the name of a matching patch to a string buffer
-	** Parameters: (char *) string: The buffer to print to
-	**             (Resource *) res: Resource containing the number and type of the
-	**                                 resource whose name is to be print
-	** Returns   : (void)
-	*/
-	void sci1_sprintf_patch_file_name(char *string, Resource *res);
 
 	/**--- Decompression functions ---**/
 	int decompress0(Resource *result, Common::ReadStream &stream, int sci_version);
