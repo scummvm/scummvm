@@ -159,7 +159,7 @@ sfx_instrument_map_t *sfx_instrument_map_load_sci(byte *data, size_t size) {
 	map = sfx_instrument_map_new(PATCH_INSTRUMENT_MAPS_NR);
 
 	/* Set up MIDI intialisation data */
-	map->initialisation_block_size = getInt16(data + PATCH_INIT_DATA_SIZE_LE);
+	map->initialisation_block_size = (int16)READ_LE_UINT16(data + PATCH_INIT_DATA_SIZE_LE);
 	if (map->initialisation_block_size) {
 		if (size < PATCH_MIN_SIZE + map->initialisation_block_size) {
 			fprintf(stderr, "[instrument-map] Instrument map too small for initialisation block:  %d of %d\n", (int) size, PATCH_MIN_SIZE);
