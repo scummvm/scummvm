@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "graphics/primitives.h"
 
+#include "sci/sci.h"
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_tools.h"
 
@@ -384,6 +385,21 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 		case Common::EVENT_KEYDOWN:
 			input.data = ev.kbd.keycode;
 			input.character = ev.kbd.ascii;
+
+			// Debug console
+			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {
+
+				((Sci::SciEngine*)g_engine)->_console->attach();
+				((Sci::SciEngine*)g_engine)->_console->onFrame();
+
+				// Clear keyboard event
+				input.type = SCI_EVT_NONE;
+				input.character = 0;
+				input.data = 0;
+				input.buckybits = 0;
+
+				return input;
+			}
 
 			if (!(input.data & 0xFF00)) {
 				// Directly accept most common keys without conversion

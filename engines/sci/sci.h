@@ -98,10 +98,10 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
+	Console *_console;
 
 private:
 	const SciGameDescription *_gameDescription;
-	Console *_console;
 	ResourceManager *_resmgr;
 };
 
