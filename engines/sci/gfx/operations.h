@@ -122,7 +122,7 @@ struct gfx_state_t {
 	int pic_nr; /* Number of the current pic */
 	int palette_nr; /* Palette number of the current pic */
 
-	Common::List<sci_event_t> events;
+	Common::List<sci_event_t> _events;
 
 	gfx_pixmap_t *fullscreen_override; /* An optional override picture which must have unscaled
 					   ** full-screen size, which overrides all other visibility, and

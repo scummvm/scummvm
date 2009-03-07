@@ -36,7 +36,8 @@ namespace Sci {
 
 int gfx_crossblit_alpha_threshold = 128;
 
-inline void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, Common::Point start, Common::Point end, unsigned int color) {
+static void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
+			Common::Point start, Common::Point end, unsigned int color) {
 	switch (pixelwidth) {
 
 	case 1:

@@ -29,6 +29,7 @@
 #include "sci/gfx/operations.h"
 
 #include "common/system.h"
+#include "common/events.h"
 
 namespace Sci {
 
@@ -463,7 +464,7 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 
 	state->options = options;
 	state->disable_dirty = 0;
-	state->events.clear();
+	state->_events.clear();
 
 	state->pic = state->pic_unscaled = NULL;
 
@@ -1472,6 +1473,203 @@ static int _gfxop_numlockify(int c) {
 	}
 }
 
+static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
+	static int _modifierStates = 0;	// FIXME: EVIL HACK
+	sci_event_t input = { SCI_EVT_NONE, 0, 0, 0 };
+
+	Common::EventManager *em = g_system->getEventManager();
+	Common::Event ev;
+
+	bool found = em->pollEvent(ev);
+	Common::Point p = ev.mouse;
+
+	// Don't generate events for mouse movement
+	while (found && ev.type == Common::EVENT_MOUSEMOVE) {
+		drv->pointer_x = ev.mouse.x;
+		drv->pointer_y = ev.mouse.y;
+		found = em->pollEvent(ev);
+	}
+
+	if (found && !ev.synthetic && ev.type != Common::EVENT_MOUSEMOVE) {
+		int modifiers = em->getModifierState();
+
+		// We add the modifier key status to buckybits
+		// SDL sends a keydown event if a modifier key is turned on and a keyup event if it's off
+		//
+ 	 	// FIXME: This code is semi-bogus. It only records the modifier key being *pressed*.
+ 	 	// It does not track correctly whether capslock etc. is active. To do that, we
+ 	 	// would have to record the fact that the modifier was pressed in global var,
+ 	 	// and also watch for Common::EVENT_KEYUP events.
+ 	 	// But this is still not quite good enough, because not all events might
+ 	 	// pass through here (e.g. the GUI might be running with its own event loop).
+ 	 	//
+ 	 	// The best solution likely would be to add code to the EventManager class
+ 	 	// for tracking which keys are pressed and which are not...
+		if (ev.type == Common::EVENT_KEYDOWN || ev.type == Common::EVENT_KEYUP) {
+ 			switch (ev.kbd.keycode) {
+			case Common::KEYCODE_CAPSLOCK:
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					_modifierStates |= SCI_EVM_CAPSLOCK;
+				} else {
+					_modifierStates &= ~SCI_EVM_CAPSLOCK;
+				}
+				break;
+			case Common::KEYCODE_NUMLOCK:
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					_modifierStates |= SCI_EVM_NUMLOCK;
+				} else {
+					_modifierStates &= ~SCI_EVM_NUMLOCK;
+				}
+				break;
+			case Common::KEYCODE_SCROLLOCK:
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					_modifierStates |= SCI_EVM_SCRLOCK;
+				} else {
+					_modifierStates &= ~SCI_EVM_SCRLOCK;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		//TODO: SCI_EVM_INSERT
+
+		input.buckybits =
+		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
+		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
+		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0) |
+			_modifierStates;
+
+		switch (ev.type) {
+			// Keyboard events
+		case Common::EVENT_KEYDOWN:
+			input.data = ev.kbd.keycode;
+			input.character = ev.kbd.ascii;
+
+			if (!(input.data & 0xFF00)) {
+				// Directly accept most common keys without conversion
+				input.type = SCI_EVT_KEYBOARD;
+				if (input.data == Common::KEYCODE_TAB) {
+					// Tab
+					input.type = SCI_EVT_KEYBOARD;
+					input.data = SCI_K_TAB;
+					if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
+						input.character = SCI_K_SHIFT_TAB;
+					else
+						input.character = SCI_K_TAB;
+				}
+			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
+				// F1-F10
+				input.type = SCI_EVT_KEYBOARD;
+				// SCI_K_F1 == 59 << 8
+				// SCI_K_SHIFT_F1 == 84 << 8
+				input.data = SCI_K_F1 + ((input.data - Common::KEYCODE_F1)<<8);
+				if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
+					input.character = input.data + SCI_K_SHIFT_F1 - SCI_K_F1;
+				else
+					input.character = input.data;
+			} else {
+				// Special keys that need conversion
+				input.type = SCI_EVT_KEYBOARD;
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_UP:
+					input.data = SCI_K_UP;
+					break;
+				case Common::KEYCODE_DOWN:
+					input.data = SCI_K_DOWN;
+					break;
+				case Common::KEYCODE_RIGHT:
+					input.data = SCI_K_RIGHT;
+					break;
+				case Common::KEYCODE_LEFT:
+					input.data = SCI_K_LEFT;
+					break;
+				case Common::KEYCODE_INSERT:
+					input.data = SCI_K_INSERT;
+					break;
+				case Common::KEYCODE_HOME:
+					input.data = SCI_K_HOME;
+					break;
+				case Common::KEYCODE_END:
+					input.data = SCI_K_END;
+					break;
+				case Common::KEYCODE_PAGEUP:
+					input.data = SCI_K_PGUP;
+					break;
+				case Common::KEYCODE_PAGEDOWN:
+					input.data = SCI_K_PGDOWN;
+					break;
+				case Common::KEYCODE_DELETE:
+					input.data = SCI_K_DELETE;
+					break;
+				// Keypad keys
+				case Common::KEYCODE_KP8:	// up
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
+						input.data = SCI_K_UP;
+					break;
+				case Common::KEYCODE_KP2:	// down
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
+						input.data = SCI_K_DOWN;
+					break;
+				case Common::KEYCODE_KP6:	// right
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
+						input.data = SCI_K_RIGHT;
+					break;
+				case Common::KEYCODE_KP4:	// left
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
+						input.data = SCI_K_LEFT;
+					break;
+				case Common::KEYCODE_KP5:	// center
+					if (!(_modifierStates & SCI_EVM_NUMLOCK))
+						input.data = SCI_K_CENTER;
+					break;
+				default:
+					input.type = SCI_EVT_NONE;
+					break;
+				}
+				input.character = input.data;
+			}
+			break;
+
+			// Mouse events
+		case Common::EVENT_LBUTTONDOWN:
+			input.type = SCI_EVT_MOUSE_PRESS;
+			input.data = 1;
+			drv->pointer_x = p.x;
+			drv->pointer_y = p.y;
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			input.type = SCI_EVT_MOUSE_PRESS;
+			input.data = 2;
+			drv->pointer_x = p.x;
+			drv->pointer_y = p.y;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			input.type = SCI_EVT_MOUSE_RELEASE;
+			input.data = 1;
+			drv->pointer_x = p.x;
+			drv->pointer_y = p.y;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			input.type = SCI_EVT_MOUSE_RELEASE;
+			input.data = 2;
+			drv->pointer_x = p.x;
+			drv->pointer_y = p.y;
+			break;
+
+			// Misc events
+		case Common::EVENT_QUIT:
+			input.type = SCI_EVT_QUIT;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return input;
+}
+
 sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sci_event_t event = { 0, 0, 0, 0 };
@@ -1484,23 +1682,23 @@ sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask) {
 
 	// Get all queued events from graphics driver
 	do {
-		event = state->driver->get_event(state->driver);
-		if (event.type)
-			state->events.push_back(event);
+		event = scummvm_get_event(state->driver);
+		if (event.type != SCI_EVT_NONE)
+			state->_events.push_back(event);
 	} while (event.type != SCI_EVT_NONE);
 
 	// Search for matching event in queue
-	Common::List<sci_event_t>::iterator iter = state->events.begin();
-	while (iter != state->events.end() && !((*iter).type & mask))
+	Common::List<sci_event_t>::iterator iter = state->_events.begin();
+	while (iter != state->_events.end() && !((*iter).type & mask))
 		++iter;
 
-	if (iter != state->events.end()) {
+	if (iter != state->_events.end()) {
 		// Event found
 		event = *iter;
 
 		// If not peeking at the queue, remove the event
 		if (!(mask & SCI_EVT_PEEK)) {
-			state->events.erase(iter);
+			state->_events.erase(iter);
 		}
 	} else {
 		// No event found: we must return a SCI_EVT_NONE event.

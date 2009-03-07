@@ -294,15 +294,6 @@ struct gfx_driver_t { /* Graphics driver */
 	*/
 
 
-	/*** Event management ***/
-
-	sci_event_t (*get_event)(gfx_driver_t *drv);
-	/* Returns the next event in the event queue for this driver
-	** Parameters: (gfx_driver_t *) drv: The driver to query
-	** Returns   : (sci_event_t) The oldest event still in the driver's event
-	**                           queue, or the null event if there is none.
-	*/
-
 	void *state; /* Reserved for internal use */
 
 };
