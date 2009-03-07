@@ -256,9 +256,10 @@ bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
 
 int16 AGOSEngine::matchSaveGame(const char *name, uint16 max) {
 	Common::InSaveFile *in;
-	char dst[8];
+	char dst[10];
 	uint16 slot;
 
+	memset(dst, 0, sizeof(dst));
 	for (slot = 0; slot < max; slot++) {
 		if ((in = _saveFileMan->openForLoading(genSaveName(slot)))) {
 			in->read(dst, 8);
