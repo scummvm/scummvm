@@ -59,8 +59,6 @@ MODULE_OBJS = \
 	scicore/decompress1.o \
 	scicore/decompress11.o \
 	scicore/resource.o \
-	scicore/resource_map.o \
-	scicore/resource_patch.o \
 	scicore/versions.o \
 	scicore/vocab.o \
 	scicore/vocab_debug.o \
