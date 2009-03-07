@@ -32,7 +32,6 @@
 namespace Sci {
 
 int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
-#define gfxprintf sciprintf
 /* Prints a string to the console stack
 ** Parameters: fmt: a printf-style format string
 **             ...: Additional parameters as defined in fmt
