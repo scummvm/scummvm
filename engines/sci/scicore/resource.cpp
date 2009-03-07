@@ -380,18 +380,23 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
-
 	_resMap.clear();
 	_sources = NULL;
 	_sciVersion = version;
 
 	addAppropriateSources();
-	_mapVersion = detectMapVersion();
-	debug("Detected resource map:%d %s", _mapVersion, sci_version_types[_mapVersion]);
-	_volVersion = detectVolVersion();
-	debug("Detected volume :%d %s", _volVersion, sci_version_types[_volVersion]);
-	scanNewSources(_sources);
 
+	if (version != SCI_VERSION_AUTODETECT) {
+		_mapVersion = version;
+		_volVersion = version;
+	} else {
+		_mapVersion = detectMapVersion();
+		_volVersion = detectVolVersion();
+	}
+	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
+	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
+
+	scanNewSources(_sources);
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
