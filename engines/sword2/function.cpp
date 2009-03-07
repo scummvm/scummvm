@@ -2141,7 +2141,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	_moviePlayer = makeMoviePlayer(filename, _vm, _vm->_mixer, _vm->_system);
 
-	if (_moviePlayer->load(filename)) {
+	if (_moviePlayer && _moviePlayer->load(filename)) {
 		_moviePlayer->play(_sequenceTextList, _sequenceTextLines, _smackerLeadIn, _smackerLeadOut);
 	}
 
