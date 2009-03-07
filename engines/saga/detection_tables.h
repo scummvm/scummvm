@@ -565,7 +565,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Floppy",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8905102},
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8905108},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
 	{ NULL, 0, NULL, 0}
 			},
