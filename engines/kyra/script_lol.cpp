@@ -455,8 +455,46 @@ int LoLEngine::olol_setUnkArrayVal(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_getGlobalVar(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getGlobalVar(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+
+	switch (stackPos(0)) {
+	case 0:
+		return _currentBlock;
+	case 1:
+		return _currentDirection;
+	case 2:
+		return _currentLevel;
+	case 3:
+		return _itemInHand;
+	case 4:
+		return _brightness;
+	case 5:
+		return _credits;
+	case 6:
+		return _unkWordArraySize8[stackPos(1)];
+	case 8:
+		return _updateFlags;
+	case 9:
+		return _lampStatusUnk;
+	case 10:
+		return _sceneDefaultUpdate;
+	case 11:
+		return _unkBt1;
+	case 12:
+		return _unkBt2;
+	case 13:
+		return _speechFlag;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalVar(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	uint16 a = stackPos(1);
 	uint16 b = stackPos(2);
 
 	switch (stackPos(0)) {
@@ -487,7 +525,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 6:
-		//TODO
+		_unkWordArraySize8[a] = b;
 		break;
 
 	case 7:
@@ -514,11 +552,11 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 11:
-		//TODO
+		_unkBt1 = a & 0xff;
 		break;
 
 	case 12:
-		//TODO
+		_unkBt2 = a & 0xff;
 		break;
 
 	default:
@@ -714,6 +752,11 @@ int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_getItemInHand(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getItemInHand(%p))", (const void *)script);
+	return _itemInHand;
+}
+
 int LoLEngine::olol_giveItemToMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveItemToMonster(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(0) == -1)
@@ -754,6 +797,13 @@ int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 int LoLEngine::olol_loadSoundFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
 	snd_loadSoundFile(stackPos(0));
+	return 1;
+}
+
+int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopCharacterSpeech(%p)", (const void *)script);
+	snd_stopSpeech(1);
+	updatePortraits();
 	return 1;
 }
 
@@ -1099,7 +1149,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(olol_getUnkArrayVal);
 	Opcode(olol_setUnkArrayVal);
-	OpcodeUnImpl();
+	Opcode(olol_getGlobalVar);
 
 	// 0x30
 	Opcode(olol_setGlobalVar);
@@ -1153,7 +1203,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_releaseTimScript);
 	Opcode(olol_initDialogueSequence);
 	Opcode(olol_restoreSceneAfterDialogueSequence);
-	OpcodeUnImpl();
+	Opcode(olol_getItemInHand);
 
 	// 0x54
 	OpcodeUnImpl();
@@ -1188,7 +1238,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x68
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_stopCharacterSpeech);
 	Opcode(olol_setPaletteBrightness);
 
 	// 0x6C

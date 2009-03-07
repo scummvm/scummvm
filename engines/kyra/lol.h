@@ -305,6 +305,8 @@ private:
 	// timers
 	void setupTimers();
 	void enableTimer(int id);
+	void enableSysTimer(int sysTimer);
+	void disableSysTimer(int sysTimer);
 
 	void timerProcessDoors(int timerNum);
 	void timerProcessMonsters(int timerNum);
@@ -518,6 +520,7 @@ private:
 	int olol_clearDialogueField(EMCState *script);
 	int olol_getUnkArrayVal(EMCState *script);
 	int olol_setUnkArrayVal(EMCState *script);
+	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
@@ -530,12 +533,14 @@ private:
 	int olol_releaseTimScript(EMCState *script);
 	int olol_initDialogueSequence(EMCState *script);
 	int olol_restoreSceneAfterDialogueSequence(EMCState *script);
+	int olol_getItemInHand(EMCState *script);
 	int olol_giveItemToMonster(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
 	int olol_playSoundEffect(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
+	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
@@ -985,8 +990,10 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
-	void enableSysTimer(int sysTimer);
-	void disableSysTimer(int sysTimer);
+
+	uint8 _unkBt1;
+	uint8 _unkBt2;
+	uint16 _unkWordArraySize8[8];
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;

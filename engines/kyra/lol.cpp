@@ -194,7 +194,9 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_pageBuffer1 = _pageBuffer2 = 0;
 
 	memset(_charStatsTemp, 0, 5 * sizeof(int));
-
+	
+	_unkBt1 = _unkBt2 = 0;
+	
 	_buttonData = 0;
 	_activeButtons = 0;
 	_preserveEvents = false;
@@ -741,7 +743,7 @@ void LoLEngine::startupNew() {
 	_availableSpells[0] = 0;
 	setupScreenDims();
 
-	//memset(_unkWordArraySize8, 0x100, 8);
+	memset(_unkWordArraySize8, 0x100, 8);
 
 	static int selectIds[] = { -9, -1, -8, -5 };
 	addCharacter(selectIds[_charSelection]);
