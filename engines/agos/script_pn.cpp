@@ -388,17 +388,22 @@ void AGOSEngine_PN::opn_opcode31() {
 
 void AGOSEngine_PN::opn_opcode32() {
 	char bf[60];
-	int a;
+	int a, slot;
 
 	if ((a = varval()) > 2) {
 		setScriptReturn(true);
 		return;
 	}
 
+	uint16 curSlot = countSaveGames();
 	switch (a) {
 		case 0:
 			getFilename();
-			strcpy(bf, genSaveName(countSaveGames()));
+			slot = matchSaveGame(_saveFile, curSlot);
+			if (slot != -1)
+				strcpy(bf, genSaveName(slot));
+			else
+				strcpy(bf, genSaveName(curSlot));
 			break;
 		case 1:
 			strcpy(bf, "test.sav");
