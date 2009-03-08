@@ -1493,7 +1493,7 @@ void AGOSEngine_PN::getResponse(uint16 charNum, uint16 objNum, uint16 &msgNum1, 
 }
 
 char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
-	char *origPtr, *strPtr2, *strPtr1 = msg;
+	char *origPtr, *strPtr1 = msg;
 	uint8 count;
 
 	getObjectName(strPtr1, num);
@@ -1512,7 +1512,7 @@ char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
 	}
 
 	origPtr = strPtr1;
-	while (strPtr1[0] != 13)
+	while (*strPtr1 != 13)
 		strPtr1++;
 
 	strPtr1[0] = 32;
@@ -1522,27 +1522,22 @@ char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
 	if (_videoLockOut & 0x10) {
 		strPtr1 = origPtr;
 		count = 6;
-		while (strPtr1[0] != 0) {
-			if (strPtr1[0] == 32) {
+		while (*strPtr1) {
+			if (*strPtr1 == 32) {
 				count = 6;
 			} else {
 				count--;
 				if (count == 0) {
 					char *tmpPtr = strPtr1;
-					strPtr2 = strPtr1;
+					char *strPtr2 = strPtr1;
 
-					while (strPtr2[0] != 0 && strPtr2[0] != 32) 
+					while (*strPtr2 != 0 && *strPtr2 != 32) 
 						strPtr2++;
 
-					while (strPtr2[0] != 0) {
-						strPtr1[0] = strPtr2[0];
-						strPtr2++;
-						strPtr1++;
+					while (*strPtr2) {
+						*strPtr1++ = *strPtr2++;
 					}
-
-					strPtr1[0] = strPtr2[0];
-					strPtr2++;
-					strPtr1++;
+					*strPtr1++ = *strPtr2++;
 
 					strPtr1 = tmpPtr;
 					count = 6;
