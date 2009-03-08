@@ -74,6 +74,7 @@ int decompress11(Resource *result, Common::ReadStream &stream, int sci_version) 
 	if (stream.read(buffer, compressedLength) != compressedLength) {
 		free(result->data);
 		free(buffer);
+		result->data = 0;
 		return SCI_ERROR_IO_ERROR;
 	};
 
