@@ -79,6 +79,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			{
 	{ "night.dbm",		GAME_BASEFILE,	"712c445d8e938956403a759978eab01b", -1},
 	{ "night.txt",		GAME_TEXTFILE,	"52630ad100f473a2cdc7c699536d6730", -1},
+	{ "test.prg",		GAME_ICONFILE,	"0f316bbd7341a98c8d5f27d16fe50524", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,

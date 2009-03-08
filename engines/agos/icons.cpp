@@ -56,6 +56,14 @@ void AGOSEngine::loadIconFile() {
 
 		decrunchFile(srcBuf, _iconFilePtr, srcSize);
 		free(srcBuf);
+	} else if (getGameType() == GType_PN && getPlatform() == Common::kPlatformAtariST) {
+		// The icon data is hard coded in the program file.
+		_iconFilePtr = (byte *)malloc(15038);
+		if (_iconFilePtr == NULL)
+			error("Out of icon memory");
+
+		in.seek(48414);
+		in.read(_iconFilePtr, 15038);
 	} else {
 		_iconFilePtr = (byte *)malloc(srcSize);
 		if (_iconFilePtr == NULL)
