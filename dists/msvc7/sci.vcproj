@@ -232,6 +232,9 @@
 				RelativePath="..\..\engines\sci\gfx\font.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\font.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_driver.cpp">
 			</File>
 			<File
@@ -355,10 +358,10 @@
 				RelativePath="..\..\engines\sci\scicore\versions.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp">
+				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp">
+				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp">
 			</File>
 		</Filter>
 		<Filter
