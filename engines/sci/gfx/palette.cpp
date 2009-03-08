@@ -38,8 +38,7 @@ Palette::Palette(unsigned int s) {
 	_refcount = 1;
 }
 
-Palette::Palette(gfx_pixmap_color_t* colors, unsigned int s)
-{
+Palette::Palette(gfx_pixmap_color_t *colors, unsigned int s) {
 	_size = s;
 	_colors = new PaletteEntry[s];
 	_parent = 0;
@@ -58,7 +57,7 @@ Palette::~Palette() {
 	_colors = 0;
 }
 
-Palette* Palette::getref() {
+Palette *Palette::getref() {
 	_refcount++;
 	return this;
 }
@@ -72,7 +71,9 @@ void Palette::free() {
 }
 
 void Palette::resize(unsigned int s) {
-	if (s == _size) return;
+	if (s == _size)
+		return;
+
 	assert(!_parent);
 	assert(_refcount == 1);
 	assert(s >= _size);
@@ -94,7 +95,9 @@ void Palette::unmerge() {
 
 	int count = 0;
 	for (unsigned int i = 0; i < _size; ++i) {
-		if (_colors[i].refcount == PALENTRY_FREE) continue;
+		if (_colors[i].refcount == PALENTRY_FREE)
+			continue;
+
 		int pi = _colors[i].parent_index;
 		assert(pi >= 0);
 		assert(pi < (int)_parent->_size);
@@ -141,7 +144,7 @@ void Palette::setColor(unsigned int index, byte r, byte g, byte b) {
 	_dirty = true;
 }
 
-void Palette::makeSystemColor(unsigned int index, const PaletteEntry& color) {
+void Palette::makeSystemColor(unsigned int index, const PaletteEntry &color) {
 	assert(index < _size);
 	PaletteEntry& entry = _colors[index];
 	entry.r = color.r;
@@ -232,7 +235,8 @@ void Palette::mergeInto(Palette *parent) {
 
 	for (unsigned int i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
-		if (entry.refcount == PALENTRY_FREE) continue;
+		if (entry.refcount == PALENTRY_FREE)
+			continue;
 
 		unsigned int pi = _parent->findNearbyColor(entry.r, entry.g, entry.b);
 #ifdef DEBUG_MERGE
@@ -251,7 +255,7 @@ void Palette::mergeInto(Palette *parent) {
 #endif
 }
 
-Palette* Palette::copy() {
+Palette *Palette::copy() {
 	assert(!_parent);
 	Palette* p = new Palette(_size);
 	p->name = "copy of " + name;

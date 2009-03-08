@@ -59,27 +59,27 @@ struct gfx_pixmap_color_t;
 class Palette {
 public:
 	explicit Palette(unsigned int size);
-	Palette(gfx_pixmap_color_t* colors, unsigned int size);
+	Palette(gfx_pixmap_color_t *colors, unsigned int size);
 	~Palette();
 
-	Palette* getref();
+	Palette *getref();
 	void free();
-	Palette* copy();
+	Palette *copy();
 
 	void resize(unsigned int size);
 	void setColor(unsigned int index, byte r, byte g, byte b);
-	void makeSystemColor(unsigned int index, const PaletteEntry& color);
-	const PaletteEntry& getColor(unsigned int index) const {
+	void makeSystemColor(unsigned int index, const PaletteEntry &color);
+	const PaletteEntry &getColor(unsigned int index) const {
 		assert(index < _size);
 		return _colors[index];
 	}
-	const PaletteEntry& operator[](unsigned int index) const {
+	const PaletteEntry &operator[](unsigned int index) const {
 		return getColor(index);
 	}
 	unsigned int size() const { return _size; }
 	bool isDirty() const { return _dirty; }
 	bool isShared() const { return _refcount > 1; }
-	Palette* getParent() { return _parent; }
+	Palette *getParent() { return _parent; }
 
 	void markClean() { _dirty = false; }
 
@@ -98,8 +98,6 @@ private:
 	bool _dirty; // Palette has changed
 	int _refcount; // Number of pixmaps (or other objects) using this palette
 };
-
-
 
 
 } // End of namespace Sci
