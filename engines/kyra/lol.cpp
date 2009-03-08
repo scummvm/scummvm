@@ -196,6 +196,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_charStatsTemp, 0, 5 * sizeof(int));
 	
 	_unkBt1 = _unkBt2 = 0;
+	_dialogueField = false;
 	
 	_buttonData = 0;
 	_activeButtons = 0;
@@ -1096,7 +1097,7 @@ void LoLEngine::setupScreenDims() {
 	}
 }
 
-void LoLEngine::initDialogueSequence(int controlMode) {
+void LoLEngine::initAnimatedDialogue(int controlMode) {
 	resetPortraitsArea();
 	gui_prepareForSequence(112, 0, 176, 120, controlMode);
 
@@ -1140,7 +1141,7 @@ void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int buttonFla
 	}
 }
 
-void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
+void LoLEngine::restoreAfterAnimatedDialogue(int redraw) {
 	gui_enableControls();
 	_txt->setupField(false);
 	_updateFlags &= 0xffdf;
@@ -1162,6 +1163,35 @@ void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 
 	_hideInventory = 0;
 	enableSysTimer(2);
+}
+
+void LoLEngine::initNonAnimatedDialogue(int controlMode, int pageNum) {
+	
+	_dialogueField = true;
+	
+}
+
+void LoLEngine::restoreAfterNonAnimatedDialogue(int controlMode) {
+	if (!_dialogueField)
+		return;
+
+	updatePortraits();
+	_hideControls = controlMode;
+	calcCharPortraitXpos();
+
+	if (_hideControls) {
+		_screen->modifyScreenDim(4, 11, 124, 28, 45);
+		_screen->modifyScreenDim(5, 85, 123, 233, 54);
+		_updateFlags &= 0xfffd;
+	} else {
+		const ScreenDim *d = _screen->getScreenDim(5);
+		_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
+		_screen->clearDim(4);
+		_screen->setScreenDim(4);
+		_txt->setupField(false);
+	}
+
+	_dialogueField = false;
 }
 
 void LoLEngine::resetPortraitsArea() {

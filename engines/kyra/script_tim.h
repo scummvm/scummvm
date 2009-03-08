@@ -115,6 +115,9 @@ public:
 	void displayText(uint16 textId, int16 flags);
 	void setupTextPalette(uint index, int fadePalette);
 
+	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
+	virtual uint16 processDialogue() { return 1; }
+
 	int _drawPage2;
 
 	int _palDelayInc, _palDiff, _palDelayAcc;
@@ -139,7 +142,6 @@ protected:
 
 	virtual void update() {}
 	virtual void checkSpeechProgress() {}
-	virtual uint16 processDialogue() { return 1; }
 
 	char _audioFilename[32];
 
@@ -195,6 +197,9 @@ friend class LoLEngine;
 public:
 	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
 	Animation *initAnimStruct(int index, const char *filename, int x, int y, int copyPara, int, uint16 wsaFlags);
+
+	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
+	uint16 processDialogue();
 		
 private:
 	KyraEngine_v1 *vm();
@@ -202,12 +207,10 @@ private:
 
 	void update();
 	void checkSpeechProgress();
-	uint16 processDialogue();
 	
 	char *getTableString(int id);
 	void advanceToOpcode(int opcode);
 
-	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);	
 	void drawDialogueButtons();
 
 	LoLEngine *_vm;

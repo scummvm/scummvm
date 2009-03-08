@@ -529,19 +529,22 @@ private:
 	int olol_initMonster(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
 	int olol_moveMonster(EMCState *script);
+	int olol_dialogueBox(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
-	int olol_initDialogueSequence(EMCState *script);
-	int olol_restoreSceneAfterDialogueSequence(EMCState *script);
+	int olol_initAnimatedDialogue(EMCState *script);
+	int olol_restoreAfterAnimatedDialogue(EMCState *script);
 	int olol_getItemInHand(EMCState *script);
 	int olol_giveItemToMonster(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
 	int olol_playSoundEffect(EMCState *script);
+	int olol_processDialogue(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
 	int olol_getWallFlags(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
+	int olol_update(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
@@ -550,6 +553,8 @@ private:
 	int olol_checkForMonsterMode1(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_setDoorState(EMCState *script);
+	int olol_initNonAnimatedDialogue(EMCState *script);
+	int olol_restoreAfterNonAnimatedDialogue(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
 	int olol_resetPortraitsArea(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
@@ -567,8 +572,8 @@ private:
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
 
-	int tlol_initDialogueSequence(const TIM *tim, const uint16 *param);
-	int tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param);
+	int tlol_initAnimatedDialogue(const TIM *tim, const uint16 *param);
+	int tlol_restoreAfterAnimatedDialogue(const TIM *tim, const uint16 *param);
 	int tlol_giveItem(const TIM *tim, const uint16 *param);
 	int tlol_setPartyPosition(const TIM *tim, const uint16 *param);
 	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
@@ -596,8 +601,10 @@ private:
 
 	// graphics
 	void setupScreenDims();
-	void initDialogueSequence(int controlMode);
-	void restoreSceneAfterDialogueSequence(int redraw);
+	void initAnimatedDialogue(int controlMode);
+	void restoreAfterAnimatedDialogue(int redraw);
+	void initNonAnimatedDialogue(int controlMode, int pageNum);
+	void restoreAfterNonAnimatedDialogue(int controlMode);
 	void resetPortraitsArea();
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
@@ -605,6 +612,7 @@ private:
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void updateWsaAnimations();
 
+	bool _dialogueField;
 	uint8 **_itemIconShapes;
 	int _numItemIconShapes;
 	uint8 **_itemShapes;

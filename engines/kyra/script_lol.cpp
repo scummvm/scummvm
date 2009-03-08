@@ -716,6 +716,13 @@ int LoLEngine::olol_moveMonster(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_dialogueBox(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_dialogueBox(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+
+	_tim->drawDialogueBox(stackPos(0), getLangString(stackPos(1)), getLangString(stackPos(2)), getLangString(stackPos(3)));
+	return 1;
+}
+
 int LoLEngine::olol_setScriptTimer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setScriptTimer(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint8 id = 0x50 + stackPos(0);
@@ -728,7 +735,7 @@ int LoLEngine::olol_setScriptTimer(EMCState *script) {
 		_timer->disable(id);
 	}
 
-	return true;
+	return 1;
 }
 
 int LoLEngine::olol_loadTimScript(EMCState *script) {
@@ -752,15 +759,15 @@ int LoLEngine::olol_releaseTimScript(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_initDialogueSequence(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initDialogueSequence(%p) (%d)", (const void *)script, stackPos(0));
-	initDialogueSequence(stackPos(0));
+int LoLEngine::olol_initAnimatedDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	initAnimatedDialogue(stackPos(0));
 	return 1;
 }
 
-int LoLEngine::olol_restoreSceneAfterDialogueSequence(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreSceneAfterDialogueSequence(%p) (%d)", (const void *)script, stackPos(0));
-	restoreSceneAfterDialogueSequence(stackPos(0));
+int LoLEngine::olol_restoreAfterAnimatedDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	restoreAfterAnimatedDialogue(stackPos(0));
 	return 1;
 }
 
@@ -793,6 +800,11 @@ int LoLEngine::olol_playSoundEffect(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_processDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processDialogue(%p)", (const void *)script);
+	return _tim->processDialogue();
+}
+
 int LoLEngine::olol_stopTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopTimScript(%p) (%d)", (const void *)script, stackPos(0));
 	_tim->stopAllFuncs(_activeTim[stackPos(0)]);
@@ -809,6 +821,12 @@ int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	snd_stopSpeech(1);
 	updatePortraits();
 	return playCharacterScriptChat(stackPos(0), stackPos(1), 1, getLangString(stackPos(2)), script, 0, 3);
+}
+
+int LoLEngine::olol_update(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_update(%p)", (const void *)script);
+	update();
+	return 1;
 }
 
 int LoLEngine::olol_loadSoundFile(EMCState *script) {
@@ -875,6 +893,18 @@ int LoLEngine::olol_setDoorState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d)", (const void *)script, stackPos(0));
 	_emcDoorState = stackPos(0);
 	return _emcDoorState;
+}
+
+int LoLEngine::olol_initNonAnimatedDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initNonAnimatedDialogue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	initNonAnimatedDialogue(stackPos(0), stackPos(1));
+	return 1;
+}
+
+int LoLEngine::olol_restoreAfterNonAnimatedDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterNonAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	restoreAfterNonAnimatedDialogue(stackPos(0));
+	return 1;
 }
 
 int LoLEngine::olol_assignCustomSfx(EMCState *script) {
@@ -965,15 +995,15 @@ int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
-int LoLEngine::tlol_initDialogueSequence(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initDialogueSequence(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	initDialogueSequence(param[0]);
+int LoLEngine::tlol_initAnimatedDialogue(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initAnimatedDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	initAnimatedDialogue(param[0]);
 	return 1;
 }
 
-int LoLEngine::tlol_restoreSceneAfterDialogueSequence(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreSceneAfterDialogueSequence(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	restoreSceneAfterDialogueSequence(param[0]);
+int LoLEngine::tlol_restoreAfterAnimatedDialogue(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreAfterAnimatedDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	restoreAfterAnimatedDialogue(param[0]);
 	return 1;
 }
 
@@ -1200,7 +1230,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x44
 	Opcode(olol_moveMonster);
-	OpcodeUnImpl();
+	Opcode(olol_dialogueBox);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1218,8 +1248,8 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x50
 	Opcode(olol_releaseTimScript);
-	Opcode(olol_initDialogueSequence);
-	Opcode(olol_restoreSceneAfterDialogueSequence);
+	Opcode(olol_initAnimatedDialogue);
+	Opcode(olol_restoreAfterAnimatedDialogue);
 	Opcode(olol_getItemInHand);
 
 	// 0x54
@@ -1229,7 +1259,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_playSoundEffect);
 
 	// 0x58
-	OpcodeUnImpl();
+	Opcode(olol_processDialogue);
 	Opcode(olol_stopTimScript);
 	Opcode(olol_getWallFlags);
 	OpcodeUnImpl();
@@ -1238,7 +1268,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_playCharacterScriptChat);
-	OpcodeUnImpl();
+	Opcode(olol_update);
 
 	// 0x60
 	OpcodeUnImpl();
@@ -1307,8 +1337,8 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x8C
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_initNonAnimatedDialogue);
+	Opcode(olol_restoreAfterNonAnimatedDialogue);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1402,8 +1432,8 @@ void LoLEngine::setupOpcodeTable() {
 	SetTimOpcodeTable(_timIngameOpcodes);
 
 	// 0x00
-	OpcodeTim(tlol_initDialogueSequence);
-	OpcodeTim(tlol_restoreSceneAfterDialogueSequence);
+	OpcodeTim(tlol_initAnimatedDialogue);
+	OpcodeTim(tlol_restoreAfterAnimatedDialogue);
 	OpcodeTimUnImpl();
 	OpcodeTim(tlol_giveItem);
 

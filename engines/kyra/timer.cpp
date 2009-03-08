@@ -228,10 +228,10 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 	
 	if (p) {
 		timer->pauseStartTime = _system->getMillis();
-		timer->enabled ^= 2;
+		timer->enabled |= 2;
 	} else if (timer->pauseStartTime) {
 		int32 elapsedTime = _system->getMillis() - timer->pauseStartTime;
-		timer->enabled ^= 2;
+		timer->enabled &= (~2);
 		timer->lastUpdate += elapsedTime;
 		timer->nextRun += elapsedTime;
 		resync();
@@ -265,7 +265,7 @@ void TimerManager::disable(uint8 id) {
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
-		timer->enabled &= 2;
+		timer->enabled &= (~1);
 	else
 		warning("TimerManager::disable: No timer %d", id);
 }
