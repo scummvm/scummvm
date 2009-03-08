@@ -154,10 +154,6 @@ const char *vocab_get_any_group_word(int group, word_t **words, int words_nr) {
 	return "{invalid}";
 }
 
-static inline unsigned int inverse_16(unsigned int foo) {
-	return (((foo & 0xff) << 8) | ((foo & 0xff00) >> 8));
-}
-
 suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 	int counter = 0;
 	suffix_t **suffices;
@@ -191,10 +187,10 @@ suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
 
 		suffices[counter]->alt_suffix_length = alt_len;
 		suffices[counter]->word_suffix_length = word_len;
-		suffices[counter]->class_mask = inverse_16((int16)READ_LE_UINT16(resource->data + seeker)); // Inverse endianness
+		suffices[counter]->class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
 
 		seeker += word_len + 4;
-		suffices[counter]->result_class = inverse_16((int16)READ_LE_UINT16(resource->data + seeker));
+		suffices[counter]->result_class = (int16)READ_BE_UINT16(resource->data + seeker);
 		seeker += 3; // Next entry
 
 		++counter;

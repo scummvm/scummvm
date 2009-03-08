@@ -77,8 +77,8 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 		return NULL;
 	}
 
-	font->chars_nr = chars_nr = get_int_16(resource + FONT_MAXCHAR_OFFSET);
-	font->line_height = max_height = get_int_16(resource + FONT_HEIGHT_OFFSET);
+	font->chars_nr = chars_nr = READ_LE_UINT16(resource + FONT_MAXCHAR_OFFSET);
+	font->line_height = max_height = READ_LE_UINT16(resource + FONT_HEIGHT_OFFSET);
 
 	if (chars_nr < 0 || chars_nr > 256 || max_height < 0) {
 		if (chars_nr < 0 || chars_nr > 256)
@@ -99,7 +99,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	font->widths = (int*)sci_malloc(sizeof(int) * chars_nr);
 
 	for (i = 0; i < chars_nr; i++) {
-		int offset = get_int_16(resource + (i << 1) + 6);
+		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
 
 		if (offset >= size) {
 			GFXERROR("Font %04x: Error: Character 0x%02x is at offset 0x%04x (beyond 0x%04x)\n", id, i, offset, size);
@@ -128,7 +128,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	font->data = (byte *)sci_calloc(font->char_size, chars_nr);
 
 	for (i = 0; i < chars_nr; i++) {
-		int offset = get_int_16(resource + (i << 1) + 6);
+		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
 
 		if (calc_char(font->data + (font->char_size * i), font->row_size, max_height, resource + offset, size - offset)) {
 			GFXERROR("Problem occured in font %04x, char %d/%d\n", id, i, chars_nr);

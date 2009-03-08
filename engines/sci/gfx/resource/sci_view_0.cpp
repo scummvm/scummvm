@@ -33,8 +33,8 @@
 namespace Sci {
 
 gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored) {
-	int xl = get_int_16(resource);
-	int yl = get_int_16(resource + 2);
+	int xl = READ_LE_UINT16(resource);
+	int yl = READ_LE_UINT16(resource + 2);
 	int xhot = ((signed char *)resource)[4];
 	int yhot = ((signed char *)resource)[5];
 	int color_key = resource[6];
@@ -122,7 +122,7 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 
 static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored) {
 	int i;
-	int cels_nr = get_int_16(resource + offset);
+	int cels_nr = READ_LE_UINT16(resource + offset);
 
 	if (READ_LE_UINT16(resource + offset + 2)) {
 		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
@@ -170,7 +170,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	gfxr_view_t *view;
 	int mirror_bitpos = 1;
 	int mirror_bytepos = V0_MIRROR_LIST_OFFSET;
-	int palette_ofs = get_int_16(resource + 6);
+	int palette_ofs = READ_LE_UINT16(resource + 6);
 
 	if (size < V0_FIRST_LOOP_OFFSET + 8) {
 		GFXERROR("Attempt to draw empty view %04x\n", id);

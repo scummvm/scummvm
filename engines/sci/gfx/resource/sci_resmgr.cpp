@@ -241,8 +241,8 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 	retval->color_key = GFX_CURSOR_TRANSPARENT;
 
 	if (state->version != SCI_VERSION_0) {
-		retval->xoffset = get_int_16(resource);
-		retval->yoffset = get_int_16(resource + 2);
+		retval->xoffset = READ_LE_UINT16(resource);
+		retval->yoffset = READ_LE_UINT16(resource + 2);
 	} else if (resource[3]) // center
 		retval->xoffset = retval->yoffset = CURSOR_SIZE / 2;
 	else
@@ -252,8 +252,8 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 
 	data = retval->index_data;
 	for (line = 0; line < 16; line++) {
-		int mask_a = get_int_16(resource + (line << 1));
-		int mask_b = get_int_16(resource + 32 + (line << 1));
+		int mask_a = READ_LE_UINT16(resource + (line << 1));
+		int mask_b = READ_LE_UINT16(resource + 32 + (line << 1));
 		int i;
 
 		for (i = 0; i < 16; i++) {

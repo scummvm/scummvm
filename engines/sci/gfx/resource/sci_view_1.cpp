@@ -230,8 +230,8 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 }
 
 gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game) {
-	int xl = get_int_16(resource);
-	int yl = get_int_16(resource + 2);
+	int xl = READ_LE_UINT16(resource);
+	int yl = READ_LE_UINT16(resource + 2);
 	int xhot = (int8) resource[4];
 	int yhot = (uint8) resource[5];
 	int pos = 8;
@@ -274,7 +274,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 
 static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resource, int offset, int size, gfxr_view_t *view, int amiga_game) {
 	int i;
-	int cels_nr = get_int_16(resource + offset);
+	int cels_nr = READ_LE_UINT16(resource + offset);
 
 	if (READ_LE_UINT16(resource + offset + 2)) {
 		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
