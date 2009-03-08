@@ -1119,8 +1119,8 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 				hitBox5(ha);
 			else if (ha->flags & kOBFRoomBox)
 				hitBox6(ha);
-		} else if (_videoLockOut & 10) {
-			hitBox8(ha);
+			else if (_videoLockOut & 10)
+				hitBox8(ha);
 		}
 	} else {
 		_hitCalled = 0;
@@ -1229,12 +1229,12 @@ void AGOSEngine_PN::hitBox7(HitArea *ha) {
 }
 
 void AGOSEngine_PN::hitBox8(HitArea *ha) {
-	char *msgPtr;
+	char *msgPtr, *tmpPtr;
 
 	if (_intputCounter || _mouseString)
 		return;
 
-	if (ha == 0 || _dragStore == ha)
+	if (_dragStore == ha)
 		return;
 
 	uint16 num = ha->msg1 & ~0x8000;
@@ -1246,16 +1246,8 @@ void AGOSEngine_PN::hitBox8(HitArea *ha) {
 	_mouseString1 = _inMessage;
 
 	msgPtr = getMessage(_objectName1, _dragStore->msg1);
-
-	char *tmpPtr = _placeMessage;
-	while (*msgPtr != 0) {
-		if (*msgPtr != 13)
-			*tmpPtr++ = *msgPtr;
-		msgPtr++;
-	}
-	*tmpPtr = 0;
-
-	sprintf(_placeMessage, "put %s", _placeMessage);
+	*(tmpPtr = strchr(msgPtr, 13)) = 0;
+	sprintf(_placeMessage, "put %s", msgPtr);
 	_mouseString = _placeMessage;
 }
 
