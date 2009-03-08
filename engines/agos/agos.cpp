@@ -291,7 +291,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_initMouse = 0;
 	_leftButtonDown = 0;
-	_mouseDown = 0;
 	_rightButtonDown = 0;
 	_clickOnly = 0;
 	_oneClick = 0;

@@ -217,4 +217,22 @@ void AGOSEngine::vc74_clearMark() {
 	_marks &= ~(1 << vcReadNextWord());
 }
 
+void AGOSEngine_Simon2::clearVideoWindow(uint16 num, uint16 color) {
+	const uint16 *vlut = &_videoWindows[num * 4];
+
+	uint16 xoffs = vlut[0] * 16;
+	uint16 yoffs = vlut[1];
+	uint16 dstWidth = _videoWindows[18] * 16;
+	byte *dst = _window4BackScn + xoffs + yoffs * dstWidth;
+
+	setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
+
+	for (uint h = 0; h < vlut[3]; h++) {
+		memset(dst, color, vlut[2] * 16);
+		dst += dstWidth;
+	}
+
+	_window4Flag = 1;
+}
+
 } // End of namespace AGOS

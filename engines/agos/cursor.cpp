@@ -497,7 +497,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 		} else {
 			_hitCalled = 1;
 		}
-		_mouseDown = 0;
+		_dragCount = 0;
 	}
 
 	if (_rightClick == true) {
@@ -510,9 +510,9 @@ void AGOSEngine_PN::handleMouseMoved() {
 		_needHitAreaRecalc++;
 
 	if (_leftButton != 0) {
-		if (_mouseDown <= 20) {
-			_mouseDown++;
-			if (_mouseDown > 20) {
+		if (_dragCount <= 20) {
+			_dragCount++;
+			if (_dragCount > 20) {
 				if (_videoLockOut & 0x10) {
 					if (_oneClick == 0)
 						_hitCalled = 3;

@@ -177,27 +177,6 @@ void AGOSEngine::runVgaScript() {
 	}
 }
 
-bool AGOSEngine_PN::ifObjectHere(uint16 a) {
-	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return _variableArray[39] == getptr(_quickptr[11] + a * _quickshort[4] + 2);
-}
-
-bool AGOSEngine_PN::ifObjectAt(uint16 a, uint16 b) {
-	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return b == getptr(_quickptr[11] + a * _quickshort[4] + 2);
-}
-
-bool AGOSEngine_PN::ifObjectState(uint16 a, int16 b) {
-	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return b == getptr(_quickptr[0] + a * _quickshort[0] + 2);
-}
-
 bool AGOSEngine::ifObjectHere(uint16 a) {
 	Item *item;
 
@@ -1245,38 +1224,6 @@ void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 		memset(dst, color, vlut[2] * 16);
 		dst += _screenWidth;
 	}
-}
-
-void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
-	const uint16 *vlut = &_videoWindows[num * 4];
-	uint16 xoffs = vlut[0] * 16;
-	uint16 yoffs = vlut[1];
-
-	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + xoffs + yoffs * screen->pitch;
-	for (uint h = 0; h < vlut[3]; h++) {
-		memset(dst, color, vlut[2] * 16);
-		dst += screen->pitch;
-	}
-	 _system->unlockScreen();
-}
-
-void AGOSEngine_Simon2::clearVideoWindow(uint16 num, uint16 color) {
-	const uint16 *vlut = &_videoWindows[num * 4];
-
-	uint16 xoffs = vlut[0] * 16;
-	uint16 yoffs = vlut[1];
-	uint16 dstWidth = _videoWindows[18] * 16;
-	byte *dst = _window4BackScn + xoffs + yoffs * dstWidth;
-
-	setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
-
-	for (uint h = 0; h < vlut[3]; h++) {
-		memset(dst, color, vlut[2] * 16);
-		dst += dstWidth;
-	}
-
-	_window4Flag = 1;
 }
 
 void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {

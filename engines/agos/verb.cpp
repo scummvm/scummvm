@@ -1112,7 +1112,7 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 		_dragFlag = 0;
 		_hitCalled = 0;
 		_oneClick = 0;
-		_mouseDown = 0;
+		_dragCount = 0;
 		_needHitAreaRecalc++;
 		if (ha != 0) {
 			if (ha->flags & kOBFInventoryBox)
