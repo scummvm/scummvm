@@ -2324,6 +2324,79 @@ static const char *const puzzlepack_opcodeNameTable[256] = {
 	"BBBB|SET_COLOR",
 };
 
+const char *const pn_videoOpcodeNameTable[] = {
+	/* 0 */
+	"x|RET",
+	"ddd|FADEOUT",
+	"d|CALL",
+	"ddddd|NEW_SPRITE",
+	/* 4 */
+	"ddd|FADEIN",
+	"vdj|IF_EQUAL",
+	"dj|IF_OBJECT_HERE",
+	"dj|IF_OBJECT_NOT_HERE",
+	/* 8 */
+	"ddj|IF_OBJECT_IS_AT",
+	"ddj|IF_OBJECT_STATE_IS",
+	"dddd|DRAW",
+	"d|ON_STOP",
+	/* 12 */
+	"|TEST_STOP",
+	"d|DELAY",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
+	/* 16 */
+	"|SYNC",
+	"d|WAIT_SYNC",
+	"d|WAIT_END",
+	"i|JUMP_REL",
+	/* 20 */
+	"|CHAIN_TO",
+	"dd|SET_REPEAT",
+	"i|END_REPEAT",
+	"d|SET_PALETTE",
+	/* 24 */
+	"d|SET_PRIORITY",
+	"diid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
+	"ddddd|SET_WINDOW",
+	/* 28 */
+	"|RESET",
+	"dddd|PLAY_SOUND",
+	"|STOP_ALL_SOUNDS",
+	"d|SET_FRAME_RATE",
+	/* 32 */
+	"d|SET_WINDOW",
+	"|SAVE_SCREEN",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
+	/* 36 */
+	"|PAUSE",
+	"d|VC_37",
+	"dd|CLEAR_WINDOW",
+	"d|SET_VOLUME",
+	/* 40 */
+	"dd|SET_WINDOW_IMAGE",
+	"dd|POKE_PALETTE",
+	"|VC_42",
+	"|VC_43",
+	/* 44 */
+	"d|ENABLE_BOX",
+	"d|DISABLE_BOX",
+	"d|MAX_BOX",
+	"dd|VC_47",
+	/* 48 */
+	"dd|SPEC_EFFECT",
+	"|VC_49",
+	"ddddddddd|SET_BOX",
+	"v|IF_VAR_NOT_ZERO",
+	/* 52 */
+	"vd|SET_VAR",
+	"vd|ADD_VAR",
+	"vd|SUB_VAR",
+	"|SCAN_FLAGS",
+};
+
 const char *const elvira1_videoOpcodeNameTable[] = {
 	/* 0 */
 	"x|RET",

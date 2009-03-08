@@ -498,6 +498,7 @@ begin_credits("Credits");
 
 	  begin_section("AGOS");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Travis Howell", "Kirben", "");
 	  end_section();
 

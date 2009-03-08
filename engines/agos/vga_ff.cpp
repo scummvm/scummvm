@@ -205,7 +205,7 @@ void AGOSEngine::vc83_playSoundLoop() {
 	int16 vol = vcReadNextWord();
 	int16 pan = vcReadNextWord();
 
-	loadSound(sound, pan, vol, 3);
+	loadSound(sound, pan, vol, Sound::TYPE_SFX5);
 }
 
 void AGOSEngine::vc84_stopSoundLoop() {

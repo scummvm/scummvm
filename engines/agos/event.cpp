@@ -185,14 +185,13 @@ void AGOSEngine::restartAnimation() {
 	if (!(_lockWord & 0x10))
 		return;
 
-	_window4Flag = 2;
-
-	setMoveRect(0, 0, 224, 127);
-	displayScreen();
+	if (getGameType() != GType_PN) {
+		_window4Flag = 2;
+		setMoveRect(0, 0, 224, 127);
+		displayScreen();
+	}
 
 	_lockWord &= ~0x10;
-
-	// Check picture queue
 }
 
 void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16 curSprite, uint16 curZoneNum) {
@@ -520,6 +519,9 @@ void AGOSEngine::delay(uint amount) {
 					setBitFlag(92, false);
 				_rightButtonDown++;
 				break;
+			case Common::EVENT_RBUTTONUP:
+				_rightClick = true;
+				break;
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
@@ -604,6 +606,45 @@ void AGOSEngine_Feeble::timerProc() {
 			}
 		}
 		handleMouseMoved();
+		displayScreen();
+		_displayScreen = false;
+	}
+
+	_lockWord &= ~2;
+}
+
+void AGOSEngine_PN::timerProc() {
+	if (_lockWord & 0x80E9 || _lockWord & 2)
+		return;
+
+	_syncCount++;
+
+	_lockWord |= 2;
+
+	_sound->handleSound();
+	handleMouseMoved();
+	handleKeyboard();
+
+	if (!(_lockWord & 0x10)) {
+		if (_sampleWait) {
+			_vgaCurSpriteId = 0xFFFF;
+			vc15_sync();
+			_sampleWait = false;
+		}
+		if (_sampleEnd) {
+			_vgaCurSpriteId = 0xFFFE;
+			vc15_sync();
+			_sampleEnd = false;
+		}
+
+		processVgaEvents();
+		processVgaEvents();
+		_cepeFlag ^= 1;
+		if (!_cepeFlag)
+			processVgaEvents();
+	}
+
+	if (_displayScreen) {
 		displayScreen();
 		_displayScreen = false;
 	}

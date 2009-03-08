@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	midi.o \
 	midiparser_s1d.o \
 	oracle.o \
+	pn.o \
 	res.o \
 	res_ami.o \
 	res_snd.o \
@@ -28,6 +29,7 @@ MODULE_OBJS := \
 	script.o \
 	script_e1.o \
 	script_e2.o \
+	script_pn.o \
 	script_ww.o \
 	script_s1.o \
 	script_s2.o \
@@ -39,6 +41,7 @@ MODULE_OBJS := \
 	verb.o \
 	vga.o \
 	vga_e2.o \
+	vga_pn.o \
 	vga_ww.o \
 	vga_s1.o \
 	vga_s2.o \

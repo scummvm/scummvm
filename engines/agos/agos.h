@@ -31,12 +31,16 @@
 #include "common/array.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
+#include "common/stack.h"
 #include "common/util.h"
 
 #include "agos/animation.h"
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
+
+// TODO: Replace with more portable code
+#include <setjmp.h>
 
 namespace AGOS {
 
@@ -72,6 +76,9 @@ struct HitArea {
 	Item *itemPtr;
 	uint16 verb;
 	uint16 priority;
+
+	// Personal Nightmare specific
+	uint16 msg1, msg2;
 	HitArea() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -127,6 +134,7 @@ struct AnimTable {
 };
 
 enum SIMONGameType {
+	GType_PN = 0,
 	GType_ELVIRA1 = 1,
 	GType_ELVIRA2 = 2,
 	GType_WW = 3,
@@ -167,7 +175,7 @@ class AGOSEngine : public Engine {
 
 	// Engine APIs
 	Common::Error init();
-	Common::Error go();
+	virtual Common::Error go();
 	virtual Common::Error run() {
 		Common::Error err;
 		err = init();
@@ -282,6 +290,7 @@ protected:
 	uint32 _lastVgaTick;
 
 	uint16 _marks;
+	bool _scanFlag;
 
 	bool _scriptVar2;
 	bool _runScriptReturn1;
@@ -346,7 +355,7 @@ protected:
 	int16 _scriptAdj1, _scriptAdj2;
 
 	uint16 _curWindow;
-	WindowBlock *_textWindow;
+	WindowBlock *_inputWindow, *_textWindow;
 
 	Item *_subjectItem, *_objectItem;
 	Item *_currentPlayer;
@@ -387,6 +396,7 @@ protected:
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 
+	bool _initMouse;
 	Common::Point _mouse;
 	Common::Point _mouseOld;
 
@@ -401,8 +411,10 @@ protected:
 
 	byte _leftButtonDown;
 	byte _leftButton, _leftButtonCount, _leftButtonOld;
+	byte _mouseDown;
 	byte _rightButtonDown;
-	bool _clickOnly, _leftClick, _oneClick;
+	bool _clickOnly, _oneClick;
+	bool _leftClick, _rightClick;
 	bool _noRightClick;
 
 	Item *_dummyItem1;
@@ -429,11 +441,11 @@ protected:
 	uint16 _soundFileId;
 	int16 _lastMusicPlayed;
 	int16 _nextMusicToPlay;
-
 	bool _showPreposition;
 	bool _showMessageFlag;
 
 	bool _newDirtyClip;
+	bool _wiped;
 	uint16 _copyScnFlag, _vgaSpriteChanged;
 
 	byte *_block, *_blockEnd;
@@ -443,7 +455,6 @@ protected:
 
 	byte *_curVgaFile1;
 	byte *_curVgaFile2;
-	byte *_curSfxFile;
 
 	uint16 _syncCount;
 
@@ -503,10 +514,12 @@ protected:
 	byte _stringReturnBuffer[2][180];
 
 	HitArea _hitAreas[250];
+	HitArea *_hitAreaList;
 
 	AnimTable _screenAnim1[90];
 	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[200];
+	VgaSleepStruct _onStopTable[60];
 	VgaSleepStruct _waitEndTable[60];
 	VgaSleepStruct _waitSyncTable[60];
 
@@ -585,6 +598,10 @@ public:
 	AGOSEngine(OSystem *syst);
 	virtual ~AGOSEngine();
 
+	byte *_curSfxFile;
+	uint32 _curSfxFileSize;
+	uint16 _sampleEnd, _sampleWait;
+
 protected:
 	virtual uint16 to16Wrapper(uint value);
 	virtual uint16 readUint16Wrapper(const void *src);
@@ -598,16 +615,16 @@ protected:
 	void readGamePcText(Common::SeekableReadStream *in);
 	virtual void readItemChildren(Common::SeekableReadStream *in, Item *item, uint tmp);
 	void readItemFromGamePc(Common::SeekableReadStream *in, Item *item);
-	void loadGamePcFile();
+	virtual void loadGamePcFile();
 	void readGamePcFile(Common::SeekableReadStream *in);
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
+	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
-	void loadSound(uint sound);
-	void loadSound(uint sound, int pan, int vol, uint type);
+	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
+	void loadSound(uint16 sound, uint16 freq, uint16 flags);
 	void loadVoice(uint speechId);
 
 	void loadSoundFile(const char *filename);
-
 
 	int getUserFlag(Item *item, int a);
 	int getUserFlag1(Item *item, int a);
@@ -638,6 +655,7 @@ protected:
 
 	/* used in debugger */
 	void dumpAllSubroutines();
+	void dumpAllVgaFiles();
 	void dumpSubroutines();
 	void dumpSubroutine(Subroutine *sub);
 	void dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub);
@@ -707,6 +725,8 @@ protected:
 	bool isBoxDead(uint hitarea);
 	void undefineBox(uint hitarea);
 	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *itemPtr);
+	void defineBox(uint16 id, uint16 x, uint16 y, uint16 width, uint16 height, uint16 msg1, uint16 msg2, uint16 flags);
+
 	HitArea *findEmptyHitArea();
 
 	virtual void resetVerbs();
@@ -749,6 +769,7 @@ protected:
 	virtual int weightOf(Item *x);
 	void xPlace(Item *x, Item *y);
 
+	void restoreMenu();
 	void drawMenuStrip(uint windowNum, uint menuNum);
 	void lightMenuStrip(int a);
 	void unlightMenuStrip();
@@ -826,7 +847,7 @@ protected:
 	void loadIconFile();
 	void loadMenuFile();
 
-	bool processSpecialKeys();
+	virtual bool processSpecialKeys();
 	void hitarea_stuff_helper();
 
 	void permitInput();
@@ -835,12 +856,13 @@ protected:
 	void justifyStart();
 	void justifyOutPut(byte chr);
 
-	void loadZone(uint16 zoneNum);
+	void loadZone(uint16 zoneNum, bool useError = true);
 
 	void animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, int16 x, int16 y, uint16 palette, bool vgaScript = false);
 	void setImage(uint16 vgaSpriteId, bool vgaScript = false);
-	void setWindowImage(uint16 mode, uint16 vgaSpriteId);
-	void setWindowImageEx(uint16 mode, uint16 vgaSpriteId);
+	void setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCase = false);
+	virtual void setWindowImageEx(uint16 mode, uint16 vgaSpriteId);
+	void drawEdging();
 
 	void skipSpeech();
 
@@ -907,6 +929,17 @@ public:
 	void vc40_scrollRight();
 	void vc41_scrollLeft();
 	void vc42_delayIfNotEQ();
+
+	// Video Script Opcodes, Personal Nightmare
+	void vc11_onStop();
+	void vc36_pause();
+	void vc39_volume();
+	void vc44_enableBox();
+	void vc45_disableBox();
+	void vc46_maxBox();
+	void vc48_specialEffect();
+	void vc50_setBox();
+	void vc55_scanFlag();
 
 	// Video Script Opcodes, Elvira 1
 	void vc17_waitEnd();
@@ -1121,11 +1154,12 @@ protected:
 	void clearVideoBackGround(uint16 windowNum, uint16 color);
 
 	void setPaletteSlot(uint16 srcOffs, uint8 dstOffs);
+	void checkOnStopTable();
 	void checkWaitEndTable();
 
-	bool ifObjectHere(uint16 val);
-	bool ifObjectAt(uint16 a, uint16 b);
-	bool ifObjectState(uint16 a, int16 b);
+	virtual bool ifObjectHere(uint16 val);
+	virtual bool ifObjectAt(uint16 a, uint16 b);
+	virtual bool ifObjectState(uint16 a, int16 b);
 
 	bool isVgaQueueEmpty();
 	void haltAnimation();
@@ -1152,7 +1186,7 @@ protected:
 	void colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h);
 
 	void restoreWindow(WindowBlock *window);
-	void restoreBlock(uint16 h, uint16 w, uint16 y, uint16 x);
+	void restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h);
 
 	byte *getBackBuf();
 	byte *getBackGround();
@@ -1162,7 +1196,7 @@ protected:
 
 	bool decrunchFile(byte *src, byte *dst, uint32 size);
 	void loadVGABeardFile(uint16 id);
-	void loadVGAVideoFile(uint16 id, uint8 type);
+	void loadVGAVideoFile(uint16 id, uint8 type, bool useError = true);
 	bool loadVGASoundFile(uint16 id, uint8 type);
 
 	void openGameFile();
@@ -1247,6 +1281,253 @@ protected:
 	virtual char *genSaveName(int slot);
 };
 
+class AGOSEngine_PN : public AGOSEngine {
+	struct stackframe {
+		struct stackframe *nextframe;
+		int16 flag[6];
+		int16 param[8];
+		int16 classnum;
+		uint8 *linpos;
+		uint8 *lbase;
+		int16 ll;
+		int16 linenum;
+		int16 process;
+		jmp_buf *savearea;
+		stackframe() { memset(this, 0, sizeof(*this)); }
+	};
+
+
+	virtual Common::Error go();
+	void demoSeq();
+	void introSeq();
+	void setupBoxes();
+public:
+	AGOSEngine_PN(OSystem *system);
+	~AGOSEngine_PN();
+
+	virtual void setupGame();
+	virtual void setupOpcodes();
+	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
+
+	virtual void executeOpcode(int opcode);
+
+	int actCallD(int n);
+
+	void opn_opcode00();
+	void opn_opcode01();
+	void opn_opcode02();
+	void opn_opcode03();
+	void opn_opcode04();
+	void opn_opcode05();
+	void opn_opcode06();
+	void opn_opcode07();
+	void opn_opcode08();
+	void opn_opcode09();
+	void opn_opcode10();
+	void opn_opcode11();
+	void opn_opcode12();
+	void opn_opcode13();
+	void opn_opcode14();
+	void opn_opcode15();
+	void opn_opcode16();
+	void opn_opcode17();
+	void opn_opcode18();
+	void opn_opcode19();
+	void opn_opcode20();
+	void opn_opcode21();
+	void opn_opcode22();
+	void opn_opcode23();
+	void opn_opcode24();
+	void opn_opcode25();
+	void opn_opcode26();
+	void opn_opcode27();
+	void opn_opcode28();
+	void opn_opcode29();
+	void opn_opcode30();
+	void opn_opcode31();
+	void opn_opcode32();
+	void opn_opcode33();
+	void opn_opcode34();
+	void opn_opcode35();
+	void opn_opcode36();
+	void opn_opcode37();
+	void opn_opcode38();
+	void opn_opcode39();
+	void opn_opcode40();
+	void opn_opcode41();
+	void opn_opcode42();
+	void opn_opcode43();
+	void opn_opcode44();
+	void opn_opcode45();
+	void opn_opcode46();
+	void opn_opcode47();
+	void opn_opcode48();
+	void opn_opcode49();
+	void opn_opcode50();
+	void opn_opcode51();
+	void opn_opcode52();
+	void opn_opcode53();
+	void opn_opcode54();
+	void opn_opcode55();
+	void opn_opcode56();
+	void opn_opcode57();
+	void opn_opcode62();
+	void opn_opcode63();
+
+	// Video Script Opcodes, Personal Nightmare
+	void vc36_pause();
+
+	stackframe *_stackbase;
+
+	byte *_dataBase, *_textBase;
+	uint32 _dataBaseSize, _textBaseSize;
+
+	HitArea _invHitAreas[45];
+
+        char _buffer[80];
+	char _inputline[61];
+	char _saveFile[20];
+	char _sb[80];
+	uint8 _wordcp[7];
+
+	const char *_mouseString, *_mouseString1;
+	char _objectName1[15], _objectName2[15];
+	char _inMessage[20];
+	char _placeMessage[15];
+	uint8 _inputReady;
+	uint8 _inputting;
+	uint16 _intputCounter, _inputMax;
+	uint16 _mousePrintFG;
+	HitArea *_dragStore;
+	uint8 _hitCalled;
+
+	uint32 _quickptr[16];
+	uint16 _quickshort[12];
+
+	bool _noScanFlag;
+	char _keyboardBuffer[61];
+
+	uint16 _objects;
+	int16 _objectCountS;
+
+        int16 _bp;
+	int _xofs;
+	int16 _havinit;
+	uint16 _seed;
+
+	char *_curwrdptr;
+	char *_inpp;
+	int _fnst;
+	int _procnum;
+	int _linct;
+	int _linembr;
+	uint8 *_linebase;
+	uint8 *_workptr;
+	jmp_buf *_cjmpbuff;
+	jmp_buf _loadfail;
+
+	uint16 getptr(uint32 pos);
+	uint32 getlong(uint32 pos);
+
+	virtual void loadGamePcFile();
+
+	int bitextract(uint32 ptr, int offs);
+	int doaction();
+	int doline(int needsave);
+	int setposition(int process, int line);
+	int varval();
+
+	char *getMessage(char *msg, uint16 num);
+	void getResponse(uint16 charNum, uint16 objNum, uint16 &msgNum1, uint16 &msgNum2);
+	void getObjectName(char *v, uint16 x);
+
+	void processor();
+	void setbitf(uint32 ptr, int offs, int val);
+	void setqptrs();
+	void writeval(uint8 *ptr, int val);
+
+	void addstack(int type);
+	void dumpstack();
+	void junkstack();
+	void popstack(int type);
+	void funccpy(int *store);
+	void funcentry(int *storestore, int procn);
+
+	int findentry();
+	int findset();
+	int gvwrd(uint8 *wptr, int mask);
+	int samewrd(uint8 *w1, uint8 *w2, int ln);
+	int wrdmatch(uint8 *word1, int mask1, uint8 *word2, int mask2);
+
+	bool testContainer(uint16 a);
+	bool testObvious(uint16 a);
+	bool testSeen(uint16 a);
+
+	bool ifObjectInInv(uint16 a);
+	int inventoryOn(int val);
+	int inventoryOff();
+	void mouseHit();
+	void execMouseHit(HitArea *ha);
+	void hitBox1(HitArea *ha);
+	void hitBox2(HitArea *ha);
+	void hitBox3(HitArea *ha);
+	void hitBox4(HitArea *ha);
+	void hitBox5(HitArea *ha);
+	void hitBox6(HitArea *ha);
+	void hitBox7(HitArea *ha);
+	void hitBox8(HitArea *ha);
+	void hitBox9(HitArea *ha);
+	void hitBox11(HitArea *ha);
+
+	void drawIconHitBar();
+	void iconPage();
+	void printIcon(HitArea *ha, uint8 i, uint8 r);
+
+	bool badload(int8 errorNum);
+	int loadfl(char *name);
+	int savfl(char *name);
+	void getFilename();
+	void sysftodb();
+	void dbtosysf();
+
+	uint32 ftext(uint32 base, int n);
+	char *unctok(char *c, int n);
+	void uncomstr(char *c, uint32 x);
+	void patok(int n);
+	void pcf(uint8 ch);
+	void pcl(const char *s);
+	void pmesd(int n);
+	void plocd(int n, int m);
+	void pobjd(int n, int m);
+	void ptext(uint32 tptr);
+
+	virtual void clearVideoWindow(uint16 windowNum, uint16 color);
+	virtual void setWindowImageEx(uint16 mode, uint16 vga_res);
+
+	virtual bool ifObjectHere(uint16 val);
+	virtual bool ifObjectAt(uint16 a, uint16 b);
+	virtual bool ifObjectState(uint16 a, int16 b);
+
+	virtual void boxController(uint x, uint y, uint mode);
+	virtual void timerProc();
+
+	void addChar(uint8 chr);
+	void clearInputLine();
+	void handleKeyboard();
+	virtual void handleMouseMoved();
+	void interact(char *buffer, uint8 size);
+
+	virtual bool processSpecialKeys();
+protected:
+	typedef void (AGOSEngine_PN::*OpcodeProcPN) ();
+	struct OpcodeEntryPN {
+		OpcodeProcPN proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryPN *_opcodesPN;
+};
+
 class AGOSEngine_Elvira1 : public AGOSEngine {
 public:
 	AGOSEngine_Elvira1(OSystem *system);
@@ -1322,6 +1603,10 @@ protected:
 	};
 
 	const OpcodeEntryElvira1 *_opcodesElvira1;
+
+	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
+
+	virtual char *genSaveName(int slot);
 };
 
 class AGOSEngine_Elvira2 : public AGOSEngine_Elvira1 {

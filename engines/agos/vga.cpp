@@ -133,6 +133,7 @@ void AGOSEngine::setupVgaOpcodes() {
 	memset(_vga_opcode_table, 0, sizeof(_vga_opcode_table));
 
 	switch (getGameType()) {
+	case GType_PN:
 	case GType_ELVIRA1:
 	case GType_ELVIRA2:
 	case GType_WW:
@@ -174,6 +175,27 @@ void AGOSEngine::runVgaScript() {
 
 		(this->*_vga_opcode_table[opcode]) ();
 	}
+}
+
+bool AGOSEngine_PN::ifObjectHere(uint16 a) {
+	if (getFeatures() & GF_DEMO)
+		return 0;
+	else
+		return _variableArray[39] == getptr(_quickptr[11] + a * _quickshort[4] + 2);
+}
+
+bool AGOSEngine_PN::ifObjectAt(uint16 a, uint16 b) {
+	if (getFeatures() & GF_DEMO)
+		return 0;
+	else
+		return b == getptr(_quickptr[11] + a * _quickshort[4] + 2);
+}
+
+bool AGOSEngine_PN::ifObjectState(uint16 a, int16 b) {
+	if (getFeatures() & GF_DEMO)
+		return 0;
+	else
+		return b == getptr(_quickptr[0] + a * _quickshort[0] + 2);
 }
 
 bool AGOSEngine::ifObjectHere(uint16 a) {
@@ -256,7 +278,7 @@ void AGOSEngine::setBitFlag(uint bit, bool value) {
 }
 
 int AGOSEngine::vcReadVarOrWord() {
-	if (getGameType() == GType_ELVIRA1) {
+	if (getGameType() == GType_PN || getGameType() == GType_ELVIRA1) {
 		return vcReadNextWord();
 	} else {
 		int16 var = vcReadNextWord();
@@ -288,6 +310,17 @@ void AGOSEngine::vcWriteVar(uint var, int16 value) {
 }
 
 void AGOSEngine::vcSkipNextInstruction() {
+
+	static const byte opcodeParamLenPN[] = {
+		0, 6,  2, 10, 6, 4, 2, 2,
+		4, 4,  8,  2, 0, 2, 2, 2,
+		0, 2,  2,  2, 0, 4, 2, 2,
+		2, 8,  0, 10, 0, 8, 0, 2,
+		2, 0,  0,  0, 0, 2, 4, 2,
+		4, 4,  0,  0, 2, 2, 2, 4,
+		4, 0, 18,  2, 4, 4, 4, 0,
+		4
+	};
 
 	static const byte opcodeParamLenElvira1[] = {
 		0, 6,  2, 10, 6, 4, 2, 2,
@@ -362,9 +395,12 @@ void AGOSEngine::vcSkipNextInstruction() {
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenWW[opcode];
-	} else {
+	} else if (getGameType() == GType_ELVIRA1) {
 		opcode = vcReadNextWord();
 		_vcPtr += opcodeParamLenElvira1[opcode];
+	} else {
+		opcode = vcReadNextWord();
+		_vcPtr += opcodeParamLenPN[opcode];
 	}
 
 	if (_dumpVgaOpcodes)
@@ -411,7 +447,7 @@ void AGOSEngine::vc3_loadSprite() {
 		vgaSpriteId = vcReadNextWord();
 	} else {
 		vgaSpriteId = vcReadNextWord();
-		zoneNum = vgaSpriteId / 100;
+		zoneNum = (getGameType() == GType_PN) ? 0 : vgaSpriteId / 100;
 	}
 
 	x = vcReadNextWord();
@@ -444,8 +480,9 @@ void AGOSEngine::vc5_ifEqual() {
 }
 
 void AGOSEngine::vc6_ifObjectHere() {
-	if (!ifObjectHere(vcReadNextWord()))
+	if (!ifObjectHere(vcReadNextWord())) {
 		vcSkipNextInstruction();
+	}
 }
 
 void AGOSEngine::vc7_ifObjectNotHere() {
@@ -610,7 +647,7 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 	if (state.image < 0)
 		state.image = vcReadVar(-state.image);
 
-	state.palette = palette * 16;
+	state.palette = (getGameType() == GType_PN) ? 0 : palette * 16;
 	state.paletteMod = 0;
 
 	state.x = x - _scrollX;
@@ -645,7 +682,11 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 	state.y_skip = 0;				/* rows to skip   = bl */
 
 	if (getFeatures() & GF_PLANAR) {
-		state.srcPtr = convertImage(&state, ((flags & 0x80) != 0));
+		if (getGameType() == GType_PN) {
+			state.srcPtr = convertImage(&state, ((state.flags & (kDFCompressed | kDFCompressedFlip)) != 0));
+		}
+		else
+			state.srcPtr = convertImage(&state, ((flags & 0x80) != 0));
 
 		// converted planar clip is already uncompressed
 		if (state.flags & kDFCompressedFlip) {
@@ -691,6 +732,36 @@ void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, u
 	drawImage(&state);
 }
 
+void AGOSEngine::checkOnStopTable() {
+	VgaSleepStruct *vfs = _onStopTable, *vfs_tmp;
+	while (vfs->ident != 0) {
+		if (vfs->ident == _vgaCurSpriteId) {
+			VgaSprite *vsp = findCurSprite();
+			animate(vsp->windowNum, vsp->zoneNum, vfs->id, vsp->x, vsp->y, vsp->palette, true);
+			vfs_tmp = vfs;
+			do {
+				memcpy(vfs_tmp, vfs_tmp + 1, sizeof(VgaSleepStruct));
+				vfs_tmp++;
+			} while (vfs_tmp->ident != 0);
+		} else {
+			vfs++;
+		}
+	}
+}
+
+void AGOSEngine::vc11_onStop() {
+	uint16 id = vcReadNextWord();
+
+	VgaSleepStruct *vfs = _onStopTable;
+	while (vfs->ident)
+		vfs++;
+
+	vfs->ident = _vgaCurSpriteId;
+	vfs->codePtr = _vcPtr;
+	vfs->id = id;
+	vfs->zoneNum = _vgaCurZoneNum;
+}
+
 void AGOSEngine::vc12_delay() {
 	uint16 num;
 
@@ -728,7 +799,13 @@ void AGOSEngine::vc14_addToSpriteY() {
 
 void AGOSEngine::vc15_sync() {
 	VgaSleepStruct *vfs = _waitSyncTable, *vfs_tmp;
-	uint16 id = vcReadNextWord();
+	uint16 id;
+
+	if (getGameType() == GType_PN)
+		id = _vgaCurSpriteId;
+	else
+		id = vcReadNextWord();
+
 	while (vfs->ident != 0) {
 		if (vfs->ident == id) {
 			addVgaEvent(_vgaBaseDelay, ANIMATE_EVENT, vfs->codePtr, vfs->id, vfs->zoneNum);
@@ -779,12 +856,13 @@ void AGOSEngine::checkWaitEndTable() {
 
 void AGOSEngine::vc17_waitEnd() {
 	uint16 id = vcReadNextWord();
+	uint16 zoneNum = (getGameType() == GType_PN) ? 0 : id / 100;
 
 	VgaSleepStruct *vfs = _waitEndTable;
 	while (vfs->ident)
 		vfs++;
 
-	if (isSpriteLoaded(id, id / 100)) {
+	if (isSpriteLoaded(id, zoneNum)) {
 		vfs->ident = id;
 		vfs->codePtr = _vcPtr;
 		vfs->id = _vgaCurSpriteId;
@@ -867,12 +945,21 @@ void AGOSEngine::vc22_setPaletteOld() {
 
 	b = vcReadNextWord();
 
+	// PC version of Personal Nightmare uses standard EGA palette
+	if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC)
+		return;
+
 	num = 16;
 
 	palptr = _displayPalette;
 	_bottomPalette = 1;
 
-	if (getGameType() == GType_ELVIRA1) {
+	if (getGameType() == GType_PN) {
+		if (b > 128) {
+			b-= 128;
+			palptr = _displayPalette + 64;
+		}
+	} else if (getGameType() == GType_ELVIRA1) {
 		if (b >= 1000) {
 			b -= 1000;
 			_bottomPalette = 0;
@@ -990,6 +1077,7 @@ void AGOSEngine::vc24_setSpriteXY() {
 
 void AGOSEngine::vc25_halt_sprite() {
 	checkWaitEndTable();
+	checkOnStopTable();
 
 	VgaSprite *vsp = findCurSprite();
 	while (vsp->id != 0) {
@@ -1046,6 +1134,12 @@ void AGOSEngine::vc27_resetSprite() {
 		vfs++;
 	}
 
+	vfs = _onStopTable;
+	while (vfs->ident) {
+		vfs->ident = 0;
+		vfs++;
+	}
+
 	vte = _vgaTimerList;
 	while (vte->delay) {
 		// Skip the animateSprites event in earlier games
@@ -1082,13 +1176,12 @@ void AGOSEngine::vc27_resetSprite() {
 
 void AGOSEngine::vc28_playSFX() {
 	uint16 sound = vcReadNextWord();
-	uint16 channels = vcReadNextWord();
-	uint16 frequency = vcReadNextWord();
+	uint16 chans = vcReadNextWord();
+	uint16 freq = vcReadNextWord();
 	uint16 flags = vcReadNextWord();
+	debug(0, "vc28_playSFX: (sound %d, channels %d, frequency %d, flags %d)", sound, chans, freq, flags);
 
-	loadSound(sound);
-
-	debug(0, "vc28_playSFX: (%d, %d, %d, %d)", sound, channels, frequency, flags);
+	loadSound(sound, freq, flags);
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
@@ -1154,8 +1247,23 @@ void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 	}
 }
 
+void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
+	const uint16 *vlut = &_videoWindows[num * 4];
+	uint16 xoffs = vlut[0] * 16;
+	uint16 yoffs = vlut[1];
+
+	Graphics::Surface *screen = _system->lockScreen();
+	byte *dst = (byte *)screen->pixels + xoffs + yoffs * screen->pitch;
+	for (uint h = 0; h < vlut[3]; h++) {
+		memset(dst, color, vlut[2] * 16);
+		dst += screen->pitch;
+	}
+	 _system->unlockScreen();
+}
+
 void AGOSEngine_Simon2::clearVideoWindow(uint16 num, uint16 color) {
 	const uint16 *vlut = &_videoWindows[num * 4];
+
 	uint16 xoffs = vlut[0] * 16;
 	uint16 yoffs = vlut[1];
 	uint16 dstWidth = _videoWindows[18] * 16;
@@ -1242,6 +1350,10 @@ void AGOSEngine::vc36_setWindowImage() {
 void AGOSEngine::vc37_pokePalette() {
 	uint16 offs = vcReadNextWord();
 	uint16 color = vcReadNextWord();
+
+	// PC version of Personal Nightmare uses standard EGA palette
+	if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC)
+		return;
 
 	byte *palptr = _displayPalette + offs * 4;
 	palptr[0] = ((color & 0xf00) >> 8) * 32;

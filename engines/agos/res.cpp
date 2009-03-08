@@ -27,6 +27,7 @@
 
 
 #include "common/file.h"
+#include "common/util.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -147,6 +148,46 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 	_stringTabNum = stringTableNum;
 
 	return itemArrayInited;
+}
+
+void AGOSEngine_PN::loadGamePcFile() {
+	Common::File in;
+
+	if (getFileName(GAME_BASEFILE) != NULL) {
+		// Read dataBase
+		in.open(getFileName(GAME_BASEFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load database file '%s'", getFileName(GAME_BASEFILE));
+		}
+
+		_dataBaseSize = in.size();
+		_dataBase = (byte *)malloc(_dataBaseSize);
+		if (_dataBase == NULL)
+			error("loadGamePcFile: Out of memory for dataBase");
+		in.read(_dataBase, _dataBaseSize);
+		in.close();
+
+		if (_dataBase[31] != 0)
+			error("Later version of system requested");
+	}
+
+	if (getFileName(GAME_TEXTFILE) != NULL) {
+		// Read textBase
+		in.open(getFileName(GAME_TEXTFILE));
+		if (in.isOpen() == false) {
+			error("loadGamePcFile: Can't load textbase file '%s'", getFileName(GAME_TEXTFILE));
+		}
+
+		_textBaseSize = in.size();
+		_textBase = (byte *)malloc(_textBaseSize);
+		if (_textBase == NULL)
+			error("loadGamePcFile: Out of memory for textBase");
+		in.read(_textBase, _textBaseSize);
+		in.close();
+
+		if (_textBase[getlong(30L)] != 128)
+			error("Unknown compression format");
+	}
 }
 
 void AGOSEngine::loadGamePcFile() {
@@ -646,6 +687,96 @@ bool AGOSEngine::decrunchFile(byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_LITERAL
 #undef SD_TYPE_MATCH
 
+static bool getBit(Common::Stack<uint32> &dataList, uint32 &srcVal) {
+	bool result = srcVal & 1;
+	srcVal >>= 1;
+	if (srcVal == 0) {
+		srcVal = dataList.pop();
+
+		result = srcVal & 1;
+		srcVal = (srcVal >> 1) | 0x80000000L;
+	}
+
+	return result;
+}
+
+static uint32 copyBits(Common::Stack<uint32> &dataList, uint32 &srcVal, int numBits) {
+	uint32 destVal = 0;
+	
+	for (int i = 0; i < numBits; ++i) {
+		bool f = getBit(dataList, srcVal);
+		destVal = (destVal << 1) | (f ? 1 : 0);
+	}
+
+	return destVal;
+}
+
+static void transferLoop(uint8 *dataOut, int &outIndex, uint32 destVal, int max) {
+	assert(outIndex > max - 1);
+	byte *pDest = dataOut + outIndex;
+
+	 for (int i = 0; (i <= max) && (outIndex > 0) ; ++i) {
+		pDest = dataOut + --outIndex;
+		*pDest = pDest[destVal];
+	 }
+}
+
+void AGOSEngine::decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize) {
+	// Set up the output data area
+	dataOutSize = dataList.pop();
+	dataOut = new uint8[dataOutSize];
+	int outIndex = dataOutSize;
+
+	// Decompression routine
+	uint32 srcVal = dataList.pop();
+	uint32 destVal;
+
+	while (outIndex > 0) {
+		uint32 numBits = 0;
+		int count = 0;
+
+		if (getBit(dataList, srcVal)) {
+			destVal = copyBits(dataList, srcVal, 2);
+
+			if (destVal < 2) {
+				count = destVal + 2;
+				destVal = copyBits(dataList, srcVal, destVal + 9);
+				transferLoop(dataOut, outIndex, destVal, count);
+				continue;
+			} else if (destVal != 3) {
+				count = copyBits(dataList, srcVal, 8);
+				destVal = copyBits(dataList, srcVal, 8);
+				transferLoop(dataOut, outIndex, destVal, count);
+				continue;
+			} else {
+				numBits = 8;
+				count = 8;
+			}
+		} else if (getBit(dataList, srcVal)) {
+			destVal = copyBits(dataList, srcVal, 8);
+			transferLoop(dataOut, outIndex, destVal, 1);
+			continue;
+		} else {
+			numBits = 3;
+			count = 0;
+		}
+
+		destVal = copyBits(dataList, srcVal, numBits);
+		count += destVal;
+
+		// Loop through extracting specified number of bytes
+		for (int i = 0; i <= count; ++i) {
+			// Shift 8 bits from the source to the destination
+			for (int bitCtr = 0; bitCtr < 8; ++bitCtr) {
+				bool flag = getBit(dataList, srcVal);
+				destVal = (destVal << 1) | (flag ? 1 : 0);
+			}
+
+			dataOut[--outIndex] = destVal & 0xff;
+		}
+	}
+}
+
 void AGOSEngine::loadVGABeardFile(uint16 id) {
 	uint32 offs, size;
 
@@ -690,7 +821,7 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 	}
 }
 
-void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
+void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 	File in;
 	char filename[15];
 	byte *dst;
@@ -729,12 +860,16 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
 					sprintf(filename, "%c%d.out", 48 + id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 				sprintf(filename, "%.2d%d.pkd", id, type);
+			} else if (getGameType() == GType_PN) {
+				sprintf(filename, "%c%d.in", id + 48, type);
 			} else {
 				sprintf(filename, "%.3d%d.pkd", id, type);
 			}
 		} else {
 			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 				sprintf(filename, "%.2d%d.VGA", id, type);
+			} else if (getGameType() == GType_PN) {
+				sprintf(filename, "%c%d.out", id + 48, type);
 			} else {
 				sprintf(filename, "%.3d%d.VGA", id, type);
 			}
@@ -742,19 +877,42 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type) {
 
 		in.open(filename);
 		if (in.isOpen() == false) {
-			error("loadVGAVideoFile: Can't load %s", filename);
+			if (useError)
+				error("loadVGAVideoFile: Can't load %s", filename);
+
+			_block = _blockEnd = NULL;
+			return;
 		}
 
 		dstSize = srcSize = in.size();
-		if (getFeatures() & GF_CRUNCHED) {
-			byte *srcBuffer = (byte *)malloc(srcSize);
-			if (in.read(srcBuffer, srcSize) != srcSize)
+		if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC && id == 17 && type == 2) {
+			// The A2.out file isn't compressed in PC version of Personal Nightmare
+			dst = allocBlock(dstSize + extraBuffer);
+			if (in.read(dst, dstSize) != dstSize)
 				error("loadVGAVideoFile: Read failed");
+		} else if (getFeatures() & GF_CRUNCHED) {
+			if (getGameType() == GType_PN) {
+				Common::Stack<uint32> data;
+				byte *dataOut = 0;
+				int dataOutSize = 0;
 
-			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-			dst = allocBlock (dstSize + extraBuffer);
-			decrunchFile(srcBuffer, dst, srcSize);
-			free(srcBuffer);
+				for (uint i = 0; i < srcSize / 4; ++i)
+					data.push(in.readUint32BE());
+
+				decompressPN(data, dataOut, dataOutSize);
+				dst = allocBlock (dataOutSize + extraBuffer);
+				memcpy(dst, dataOut, dataOutSize);
+				delete[] dataOut;
+			} else {
+				byte *srcBuffer = (byte *)malloc(srcSize);
+				if (in.read(srcBuffer, srcSize) != srcSize)
+					error("loadVGAVideoFile: Read failed");
+
+				dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+				dst = allocBlock (dstSize + extraBuffer);
+				decrunchFile(srcBuffer, dst, srcSize);
+				free(srcBuffer);
+			}
 		} else {
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in.read(dst, dstSize) != dstSize)

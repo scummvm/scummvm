@@ -231,8 +231,10 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 			strn = str = simon1_videoOpcodeNameTable[opcode];
 		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			strn = str = ww_videoOpcodeNameTable[opcode];
-		} else {
+		} else if (getGameType() == GType_ELVIRA1) {
 			strn = str = elvira1_videoOpcodeNameTable[opcode];
+		} else {
+			strn = str = pn_videoOpcodeNameTable[opcode];
 		}
 
 		if (strn == NULL) {
@@ -293,6 +295,24 @@ void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
 					(unsigned int)(ptr - _vgaBufferPointers[res].vgaFile1), res, id);
 	dumpVideoScript(ptr, false);
 	printf("; end\n");
+}
+
+void AGOSEngine::dumpAllVgaFiles() {
+	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
+	uint8 end = (getGameType() == GType_PN) ? 26 : 450;
+
+	for (int f = start; f < end; f++) {
+		uint16 zoneNum = (getGameType() == GType_PN) ? 0 : f;
+		loadZone(f, false);
+
+		VgaPointersEntry *vpe = &_vgaBufferPointers[zoneNum];
+		if (vpe->vgaFile1 != NULL) {
+			_curVgaFile1 = vpe->vgaFile1;
+			dumpVgaFile(_curVgaFile1);
+		}
+	}
+
+	error("Complete");
 }
 
 void AGOSEngine_Feeble::dumpVgaFile(const byte *vga) {

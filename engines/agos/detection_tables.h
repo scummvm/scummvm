@@ -26,6 +26,93 @@
 namespace AGOS {
 
 static const AGOSGameDescription gameDescriptions[] = {
+	// Personal Nightmare 1.1 - English Amiga
+	{
+		{
+			"pn",
+			"Floppy",
+
+			{
+	{ "icon.tmp",		GAME_ICONFILE,	"cd94091218ac2c46918fd3c0cbd81d5e", -1},
+	{ "night.dbm",		GAME_BASEFILE,	"712c445d8e938956403a759978eab01b", -1},
+	{ "night.txt",		GAME_TEXTFILE,	"52630ad100f473a2cdc7c699536d6730", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+
+		GType_PN,
+		GID_PN,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+	// Personal Nightmare - English Atari ST Floppy Demo
+	{
+		{
+			"pn",
+			"Demo",
+
+			{
+	{ "01.IN",		0,	"23a4c8c4c9ac460fee7281080b5274e3", 756},
+	{ "02.IN",		0,	"31be87808826538f0c0caebd5fedd48f", 73100},
+	{ "03.IN",		0,	"0e125f3df4e4b800936ebdcc8dc96060", 101664},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+			ADGF_DEMO
+		},
+
+		GType_PN,
+		GID_PN,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR | GF_DEMO
+	},
+
+	// Personal Nightmare 1.1 - English AtariST Floppy
+	{
+		{
+			"pn",
+			"Floppy",
+
+			{
+	{ "night.dbm",		GAME_BASEFILE,	"712c445d8e938956403a759978eab01b", -1},
+	{ "night.txt",		GAME_TEXTFILE,	"52630ad100f473a2cdc7c699536d6730", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS
+		},
+
+		GType_PN,
+		GID_PN,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+	// Personal Nightmare 1.1c - English DOS Floppy
+	{
+		{
+			"pn",
+			"Floppy",
+
+			{
+	{ "icon.out",		GAME_ICONFILE,	"40d8347c3154bfa8b642d6860a4b9481", -1},
+	{ "night.dbm",		GAME_BASEFILE,	"177311ae059243f6a2740e950585d786", -1},
+	{ "night.txt",		GAME_TEXTFILE,	"861fc1fa0864eef585f5865dee52e325", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+
+		GType_PN,
+		GID_PN,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
 	// Elvira 1 - English Amiga Floppy Demo
 	{
 		{

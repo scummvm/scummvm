@@ -928,6 +928,12 @@ void AGOSEngine::drawImage(VC10_state *state) {
 
 			_window4Flag = 1;
 		}
+	} else {
+		state->surf_addr = (byte *)screen->pixels;
+		state->surf_pitch = _screenWidth;
+
+		xoffs = (vlut[0] * 2 + state->x) * 8;
+		yoffs = vlut[1] + state->y;
 	}
 
 	state->surf_addr += xoffs + yoffs * state->surf_pitch;
@@ -1057,7 +1063,7 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 	vsp->y = y;
 	vsp->x = x;
 	vsp->image = 0;
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+	if (getGameType() == GType_PN || getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		vsp->palette = 0;
 	else
 		vsp->palette = palette;
@@ -1168,7 +1174,7 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 	uint16 count;
 	const byte *vc_ptr_org;
 
-	zoneNum = vgaSpriteId / 100;
+	zoneNum = (getGameType() == GType_PN) ? 0 : vgaSpriteId / 100;
 
 	for (;;) {
 		vpe = &_vgaBufferPointers[zoneNum];
@@ -1185,6 +1191,7 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 			_noOverWrite = 0xFFFF;
 		} else {
 			_curSfxFile = vpe->sfxFile;
+			_curSfxFileSize = vpe->sfxFileEnd - vpe->sfxFile;
 			_zoneNumber = zoneNum;
 
 			if (vpe->vgaFile1 != NULL)
@@ -1234,8 +1241,17 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 		}
 		assert(READ_BE_UINT16(&((ImageHeader_WW *) b)->id) == vgaSpriteId);
 
-		if (!vgaScript)
-			clearVideoWindow(_windowNum, READ_BE_UINT16(&((ImageHeader_WW *) b)->color));
+		if (!vgaScript) {
+			uint16 color = READ_BE_UINT16(&((ImageHeader_WW *) b)->color);
+			if (getGameType() == GType_PN) {
+				if (color & 0x80)
+					_wiped = true;
+				else if (_wiped == true)
+					restoreMenu();
+				color &= 0xFF7F;
+			}
+			clearVideoWindow(_windowNum, color);
+		}
 	}
 
 	if (_dumpVgaScripts) {
@@ -1260,6 +1276,14 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 
 	runVgaScript();
 	_vcPtr = vc_ptr_org;
+}
+
+void AGOSEngine_PN::setWindowImageEx(uint16 mode, uint16 vga_res) {
+	if (!_initMouse) {
+		_initMouse = 1;
+		vc33_setMouseOn();
+	}
+	setWindowImage(mode, vga_res);
 }
 
 void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
@@ -1299,7 +1323,7 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	}
 }
 
-void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
+void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCase) {
 	uint16 updateWindow;
 
 	_windowNum = updateWindow = mode;
@@ -1307,7 +1331,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		vc27_resetSprite();
-	} else {
+	} else if (!specialCase) {
 		VgaTimerEntry *vte = _vgaTimerList;
 		while (vte->type != ANIMATE_INT)
 			vte++;
@@ -1331,7 +1355,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 		}
 	}
 
-	setImage(vgaSpriteId);
+	setImage(vgaSpriteId, specialCase);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillBackGroundFromBack();
@@ -1423,6 +1447,9 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 				src = _window4BackScn;
 				srcWidth = _videoWindows[18] * 16;
 			}
+		} else {
+			src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
+			srcWidth = _screenWidth;
 		}
 
 		_boxStarHeight = height;
@@ -1433,7 +1460,14 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 			src += srcWidth;
 		}
 
-		if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette) {
+		if (getGameType() == GType_PN && !_wiped && !specialCase) {
+			uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+			dst = (byte *)screen->pixels + 48;
+			memset(dst, color, 224);
+
+			dst = (byte *)screen->pixels + 132 * _screenWidth + 48;
+			memset(dst, color, 224);
+		} else if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette) {
 			dst = (byte *)screen->pixels + 133 * _screenWidth;
 			int size = 67 * _screenWidth;
 
@@ -1447,6 +1481,28 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId) {
 	}
 
 	_lockWord &= ~0x20;
+}
+
+// Personal Nightmare specific
+void AGOSEngine::drawEdging() {
+	byte *dst;
+	uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+
+	Graphics::Surface *screen = _system->lockScreen();
+
+	dst = (byte *)screen->pixels + 136 * _screenWidth;
+	uint8 len = 52;
+
+	while (len--) {
+		dst[0] = color;
+		dst[319] = color;
+		dst += _screenWidth;
+	}
+
+	dst = (byte *)screen->pixels + 187 * _screenWidth;
+	memset(dst, color, _screenWidth);
+
+	_system->unlockScreen();
 }
 
 } // End of namespace AGOS

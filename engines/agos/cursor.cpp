@@ -474,6 +474,71 @@ get_out:
 	_litBoxFlag = 0;
 }
 
+void AGOSEngine_PN::handleMouseMoved() {
+	if (_mouseHideCount) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	CursorMan.showMouse(true);
+	_mouse = _eventMan->getMousePos();
+
+	if (_leftClick == true) {
+		_leftClick = false;
+		if (_dragFlag != 0) {
+			_hitCalled = 4;
+		} else if (_lockWord & 0x10) {
+			if (_oneClick != 0) {
+				_hitCalled = 2;
+				_oneClick = 0;
+			} else {
+				_oneClick++;
+			}
+		} else {
+			_hitCalled = 1;
+		}
+		_mouseDown = 0;
+	}
+
+	if (_rightClick == true) {
+		_rightClick = false;
+		if (_hitCalled == 0)
+			_hitCalled = 5;
+	}
+
+	if (_mouse != _mouseOld)
+		_needHitAreaRecalc++;
+
+	if (_leftButton != 0) {
+		if (_mouseDown <= 20) {
+			_mouseDown++;
+			if (_mouseDown > 20) {
+				if (_lockWord & 0x10) {
+					if (_oneClick == 0)
+						_hitCalled = 3;
+				} else {
+					_hitCalled = 3;
+				}
+			}
+		}
+	} else if ((_lockWord & 0x10) && _oneClick != 0) {
+		_oneClick++;
+		if (_oneClick < 10) {
+			_hitCalled = 1;
+			_oneClick = 0;
+		}
+	}
+
+	if (!_wiped)
+		boxController(_mouse.x, _mouse.y, 0);
+
+	_mouseOld = _mouse;
+	drawMousePointer();
+
+	_needHitAreaRecalc = 0;
+	_litBoxFlag = 0;
+}
+
 void AGOSEngine::handleMouseMoved() {
 	uint x;
 
@@ -721,8 +786,15 @@ void AGOSEngine::drawMousePointer() {
 	} else {
 		const uint16 *src;
 		int i, j;
+		uint8 color;
 
-		const uint8 color = (getGameType() == GType_ELVIRA1) ? 15: 65;
+		if (getGameType() == GType_PN) {
+			color = (getPlatform() == Common::kPlatformPC) ? 15 : 14;
+		} else if (getGameType() == GType_ELVIRA1) {
+			color = 15;
+		} else {
+			color = 65;
+		}
 		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
 		if (getGameType() == GType_WW) {

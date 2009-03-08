@@ -214,6 +214,22 @@ enum BoxFlags {
 	kBFBoxItem        = 0x80
 };
 
+enum OldBoxFlags_PN {
+	kOBFObject         = 0x1,
+	kOBFExit           = 0x2,
+	kOBFDraggable      = 0x4,
+	kOBFUseEmptyLine   = 0x8,
+	kOBFBoxDisabled    = 0x10,
+	kOBFInventoryBox   = 0x20,
+	kOBFRoomBox        = 0x40,
+	kOBFMoreBox        = 0x80,
+	kOBFNoShowName     = 0x100,
+	kOBFUseMessageList = 0x400,
+	// ScummVM specific
+	kOBFBoxSelected    = 0x800,
+	kOBFInvertTouch    = 0x1000
+};
+
 enum SubObjectFlags {
 	kOFText           = 0x1,
 	kOFSize           = 0x2,
@@ -251,11 +267,13 @@ enum GameFileTypes {
 	GAME_TBLFILE  = 1 << 7,
 	GAME_XTBLFILE = 1 << 8,
 	GAME_RESTFILE = 1 << 9,
+	GAME_TEXTFILE = 1 << 10,
 
-	GAME_GFXIDXFILE = 1 << 10
+	GAME_GFXIDXFILE = 1 << 11
 };
 
 enum GameIds {
+	GID_PN,
 	GID_ELVIRA1,
 	GID_ELVIRA2,
 	GID_WAXWORKS,

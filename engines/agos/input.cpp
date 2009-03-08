@@ -606,6 +606,129 @@ bool AGOSEngine::processSpecialKeys() {
 	return verbCode;
 }
 
+// Personal Nightmare specific
+void AGOSEngine_PN::clearInputLine() {
+	_inputting = 0;
+	_inputReady = 0;
+	clearWindow(_windowArray[2]);
+}
+
+void AGOSEngine_PN::handleKeyboard() {
+	if (!_inputReady)
+		return;
+
+	if (_hitCalled != 0) {
+		mouseHit();
+	}
+
+	int16 chr = -1;
+	if (_mouseString) {
+		const char *strPtr = _mouseString;
+		while (*strPtr != 0 && *strPtr != 13)
+			addChar(*strPtr++);
+		_mouseString = 0;
+
+		chr = *strPtr;
+		if (chr == 13) {
+			addChar(13);
+		}
+	}
+	if (_mouseString1 && chr != 13) {
+		const char *strPtr = _mouseString1;
+		while (*strPtr != 13)
+			addChar(*strPtr++);
+		_mouseString1 = 0;
+
+		chr = *strPtr;
+		if (chr == 13) {
+			addChar(13);
+		}
+	}
+	if (chr == -1) {
+		chr = _keyPressed.ascii;
+		if (chr == 8 || chr == 13) {
+			addChar(chr);
+		} else if (!(_lockWord & 0x10)) {
+			if (chr >= 32)
+				addChar(chr);
+		}
+	}
+
+	if (chr == 13) {
+		_mouseString = 0;
+		_mouseString1 = 0;
+		_mousePrintFG = 0;
+		_inputReady = 0;	
+	}
+
+	_keyPressed.reset();
+}
+
+void AGOSEngine_PN::interact(char *buffer, uint8 size) {
+	if (!_inputting) {
+		memset(_keyboardBuffer, 0, sizeof(_keyboardBuffer));
+		_intputCounter = 0;
+		_inputMax = size;
+		_inputWindow = _windowArray[_curWindow];
+		windowPutChar(_inputWindow, 128);
+		_inputting = 1;
+		_inputReady = 1;
+	}
+	
+	while (!shouldQuit() && _inputReady) {
+		if (!_noScanFlag && _scanFlag) {
+			buffer[0] = 1;
+			buffer[1] = 0;
+			_scanFlag = 0;
+			break;
+		}
+		delay(1);
+	}
+
+	if (!_inputReady) {
+		memcpy(buffer, _keyboardBuffer, size);
+		_inputting = 0;
+	}
+}
+
+void AGOSEngine_PN::addChar(uint8 chr) {
+	if (chr == 13) {
+		_keyboardBuffer[_intputCounter++] = chr;
+		userGameBackSpace(_inputWindow, 8);
+		windowPutChar(_inputWindow, 13);
+	} else if (chr == 8 && _intputCounter) {
+		userGameBackSpace(_inputWindow, 8);
+		userGameBackSpace(_inputWindow, 8);
+		windowPutChar(_inputWindow, 128);
+
+		_keyboardBuffer[--_intputCounter] = 0;
+	} else if (chr >= 32 && _intputCounter < _inputMax) {
+		_keyboardBuffer[_intputCounter++] = chr;
+
+		userGameBackSpace(_inputWindow, 8);
+		windowPutChar(_inputWindow, chr);
+		windowPutChar(_inputWindow, 128);
+	}
+}
+
+bool AGOSEngine_PN::processSpecialKeys() {
+	if (shouldQuit())
+		_exitCutscene = true;		
+
+	switch (_keyPressed.keycode) {
+	case Common::KEYCODE_ESCAPE:
+		_exitCutscene = true;
+		break;
+	case Common::KEYCODE_PAUSE:
+		pause();
+		break;
+	default:
+		break;
+	}
+
+	_keyPressed.reset();
+	return false;
+}
+
+
 } // End of namespace AGOS
-
-

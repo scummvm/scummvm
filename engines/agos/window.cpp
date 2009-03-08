@@ -71,10 +71,12 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	// Characters are 6 pixels
 	if (getGameType() == GType_ELVIRA2)
 		window->textMaxLength = (window->width * 8 - 4) / 6;
+	else if (getGameType() == GType_PN)
+		window->textMaxLength = window->width * 8 / 6 + 1;
 	else
 		window->textMaxLength = window->width * 8 / 6;
 
-	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
+	if (getGameType() == GType_PN || getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearWindow(window);
 
 	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && window->fillColor == 225)
@@ -202,9 +204,9 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 			_restoreWindow6 = 0;
 		}
 
-		restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
+		restoreBlock(window->x * 8, window->y, (window->x + window->width) * 8, window->y + window->height * 8);
 	} else if (getGameType() == GType_SIMON1) {
-		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
+		restoreBlock(window->x * 8, window->y, (window->x + window->width) * 8, window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0));
 	} else {
 		uint16 x = window->x;
 		uint16 w = window->width;
@@ -220,13 +222,13 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 			}
 		}
 
-		restoreBlock(window->y + window->height * 8, (x + w) * 8, window->y, x * 8);
+		restoreBlock(x * 8, window->y, (x + w) * 8, window->y + window->height * 8);
 	}
 
 	_lockWord &= ~0x8000;
 }
 
-void AGOSEngine::restoreBlock(uint16 h, uint16 w, uint16 y, uint16 x) {
+void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	byte *dst, *src;
 	uint i;
 
@@ -266,7 +268,7 @@ void AGOSEngine::setTextColor(uint color) {
 }
 
 void AGOSEngine::sendWindow(uint a) {
-	if (_textWindow != _windowArray[0]) {
+	if (getGameType() == GType_PN || _textWindow != _windowArray[0]) {
 		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			if (!(_textWindow->flags & 1)) {
 				haltAnimation();

@@ -182,6 +182,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lastVgaTick = 0;
 
 	_marks = 0;
+	_scanFlag = false;
 
 	_scriptVar2 = 0;
 	_runScriptReturn1 = 0;
@@ -288,11 +289,14 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
 
+	_initMouse = 0;
 	_leftButtonDown = 0;
+	_mouseDown = 0;
 	_rightButtonDown = 0;
 	_clickOnly = 0;
-	_leftClick = 0;
 	_oneClick = 0;
+	_leftClick = 0;
+	_rightClick = 0;
 	_noRightClick = false;
 
 	_leftButton = 0;
@@ -321,11 +325,14 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_soundFileId = 0;
 	_lastMusicPlayed = 0;
 	_nextMusicToPlay = 0;
+	_sampleEnd = 0;
+	_sampleWait = 0;
 
 	_showPreposition = 0;
 	_showMessageFlag = 0;
 
 	_newDirtyClip = false;
+	_wiped = false;
 	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 
@@ -341,6 +348,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_curVgaFile1 = 0;
 	_curVgaFile2 = 0;
 	_curSfxFile = 0;
+	_curSfxFileSize = 0;
 
 	_syncCount = 0;
 
@@ -683,6 +691,14 @@ static const uint16 initialVideoWindows_Common[20] = {
 	 3, 3, 14, 127,
 };
 
+static const uint16 initialVideoWindows_PN[20] = {
+	 3, 0, 14, 136,
+	 0, 0,  3, 136,
+	17, 0,  3, 136,
+	 0, 0, 20, 200,
+	 3, 2, 14, 129,
+};
+
 void AGOSEngine_PuzzlePack::setupGame() {
 	gss = &puzzlepack_settings;
 	_numVideoOpcodes = 85;
@@ -836,6 +852,18 @@ void AGOSEngine_Elvira1::setupGame() {
 	AGOSEngine::setupGame();
 }
 
+void AGOSEngine_PN::setupGame() {
+	gss = &simon1_settings;
+	_numVideoOpcodes = 57;
+	_vgaMemSize = 1000000;
+	_frameCount = 4;
+	_vgaBaseDelay = 1;
+	_vgaPeriod = 50;
+	_numVars = 256;
+
+	AGOSEngine::setupGame();
+}
+
 void AGOSEngine::setupGame() {
 	allocItemHeap();
 	allocTablesHeap();
@@ -870,6 +898,8 @@ void AGOSEngine::setupGame() {
 	for (int i = 0; i < 20; i++) {
 		if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			_videoWindows[i] = initialVideoWindows_Simon[i];
+		} else if (getGameType() == GType_PN) {
+			_videoWindows[i] = initialVideoWindows_PN[i];
 		} else {
 			_videoWindows[i] = initialVideoWindows_Common[i];
 		}
@@ -965,7 +995,7 @@ void AGOSEngine::pause() {
 
 	while (_pause && !shouldQuit()) {
 		delay(1);
-		if (_keyPressed.keycode == Common::KEYCODE_p)
+		if (_keyPressed.keycode == Common::KEYCODE_PAUSE)
 			pauseEngine(false);
 	}
 }
@@ -1036,7 +1066,6 @@ Common::Error AGOSEngine::go() {
 uint32 AGOSEngine::getTime() const {
 	return _system->getMillis() / 1000;
 }
-
 
 void AGOSEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));

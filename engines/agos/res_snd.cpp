@@ -364,6 +364,8 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 			sprintf(filename, "%c%d.out", 48 + id, type);
 		} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
 			sprintf(filename, "%.2d%d.out", id, type);
+		} else if (getGameType() == GType_PN) {
+			sprintf(filename, "%c%d.in", id + 48, type);
 		} else {
 			sprintf(filename, "%.3d%d.out", id, type);
 		}
@@ -375,6 +377,8 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 			sprintf(filename, "%.2d.SND", elvira1_soundTable[id]);
 		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 			sprintf(filename, "%.2d%d.VGA", id, type);
+		} else if (getGameType() == GType_PN) {
+			sprintf(filename, "%c%d.out", id + 48, type);
 		} else {
 			sprintf(filename, "%.3d%d.VGA", id, type);
 		}
@@ -386,7 +390,19 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	}
 
 	dstSize = srcSize = in.size();
-	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
+	if (getGameType() == GType_PN) {
+		Common::Stack<uint32> data;
+		byte *dataOut = 0;
+		int dataOutSize = 0;
+
+		for (uint i = 0; i < srcSize / 4; ++i)
+			data.push(in.readUint32BE());
+
+		decompressPN(data, dataOut, dataOutSize);
+		dst = allocBlock (dataOutSize);
+		memcpy(dst, dataOut, dataOutSize);
+		delete[] dataOut;
+	} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
 		byte *srcBuffer = (byte *)malloc(srcSize);
 		if (in.read(srcBuffer, srcSize) != srcSize)
 			error("loadVGASoundFile: Read failed");
@@ -457,39 +473,7 @@ void AGOSEngine::loadSoundFile(const char* filename) {
 	_sound->playSfxData(dst, 0, 0, 0);
 }
 
-void AGOSEngine::loadSound(uint sound) {
-	byte *dst;
-	uint32 offs, size;
-
-	if (_curSfxFile == NULL)
-		return;
-
-	dst = _curSfxFile;
-	if (getGameType() == GType_WW) {
-		uint tmp = sound;
-		while (tmp--)
-			dst += READ_LE_UINT16(dst) + 4;
-
-		size = READ_LE_UINT16(dst);
-		offs = 4;
-	} else if (getGameType() == GType_ELVIRA2) {
-		while (READ_BE_UINT32(dst + 4) != sound)
-			dst += 12;
-
-		size = READ_BE_UINT32(dst);
-		offs = READ_BE_UINT32(dst + 8);
-	} else {
-		while (READ_BE_UINT16(dst + 6) != sound)
-			dst += 12;
-
-		size = READ_BE_UINT16(dst + 2);
-		offs = READ_BE_UINT32(dst + 8);
-	}
-
-	_sound->playRawData(dst + offs, sound, size);
-}
-
-void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
+void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 	byte *dst;
 
 	if (getGameId() == GID_DIMP) {
@@ -532,12 +516,67 @@ void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
 		dst = _curSfxFile + READ_LE_UINT32(_curSfxFile + sound * 4);
 	}
 
-	if (type == 3)
-		_sound->playSfx5Data(dst, sound, pan, vol);
-	else if (type == 2)
+	if (type == Sound::TYPE_AMBIENT)
 		_sound->playAmbientData(dst, sound, pan, vol);
-	else
+	else if (type == Sound::TYPE_SFX)
 		_sound->playSfxData(dst, sound, pan, vol);
+	else if (type == Sound::TYPE_SFX5)
+		_sound->playSfx5Data(dst, sound, pan, vol);
+}
+
+void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
+	byte *dst;
+	uint32 offs, size = 0;
+
+	if (_curSfxFile == NULL)
+		return;
+
+	dst = _curSfxFile;
+	if (getGameType() == GType_WW) {
+		uint tmp = sound;
+		while (tmp--) {
+			dst += READ_LE_UINT16(dst) + 4;
+			size += READ_LE_UINT16(dst) + 4;
+
+			if (size > _curSfxFileSize)
+				error("loadSound: Reading beyond EOF");
+		}
+
+		size = READ_LE_UINT16(dst);
+		offs = 4;
+	} else if (getGameType() == GType_ELVIRA2) {
+		while (READ_BE_UINT32(dst + 4) != sound) {
+			dst += 12;
+			size += 12;
+
+			if (size > _curSfxFileSize)
+				error("loadSound: Reading beyond EOF");
+		}
+
+		size = READ_BE_UINT32(dst);
+		offs = READ_BE_UINT32(dst + 8);
+	} else {
+		while (READ_BE_UINT16(dst + 6) != sound) {
+			dst += 12;
+			size += 12;
+
+			if (size > _curSfxFileSize)
+				error("loadSound: Reading beyond EOF");
+
+		}
+
+		size = READ_BE_UINT16(dst + 2);
+		offs = READ_BE_UINT32(dst + 8);
+	}
+
+	// TODO: Handle other sound flags and frequency
+	if (flags == 2 && _sound->isSfxActive()) {
+		_sound->queueSound(dst + offs, sound, size, 8000);
+	} else {
+		if (flags == 0)
+			_sound->stopSfx();
+		_sound->playRawData(dst + offs, sound, size, 8000);
+	}
 }
 
 void AGOSEngine::loadVoice(uint speechId) {

@@ -26,6 +26,7 @@
 #ifndef AGOS_SOUND_H
 #define AGOS_SOUND_H
 
+#include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "agos/intern.h"
 #include "common/str.h"
@@ -60,11 +61,22 @@ private:
 
 	bool _hasEffectsFile;
 	bool _hasVoiceFile;
-	uint _ambientPlaying;
+	uint16 _ambientPlaying;
 
+	// Personal Nightmare specfic
+	byte *_soundQueuePtr;
+	uint16 _soundQueueNum;
+	uint32 _soundQueueSize;
+	uint16 _soundQueueFreq;
 public:
 	Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
+
+	enum TypeFlags {
+		TYPE_AMBIENT = 1 << 0,
+		TYPE_SFX     = 1 << 1,
+		TYPE_SFX5    = 1 << 2
+	};
 
 	void loadVoiceFile(const GameSpecificSettings *gss);
 	void loadSfxFile(const GameSpecificSettings *gss);
@@ -77,8 +89,12 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
+	// Personal Nightmare specfic
+	void handleSound();
+	void queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq);
+
 	// Elvira 1/2 and Waxworks specific
-	void playRawData(byte *soundData, uint sound, uint size);
+	void playRawData(byte *soundData, uint sound, uint size, uint freq);
 
 	// Feeble Files specific
 	void playAmbientData(byte *soundData, uint sound, uint pan, uint vol);
@@ -89,8 +105,10 @@ public:
 	void switchVoiceFile(const GameSpecificSettings *gss, uint disc);
 
 	bool hasVoice() const;
+	bool isSfxActive() const;
 	bool isVoiceActive() const;
 	void stopAllSfx();
+	void stopSfx();
 	void stopSfx5();
 	void stopVoice();
 	void stopAll();

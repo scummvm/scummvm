@@ -389,6 +389,11 @@ Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixe
 
 	_ambientPlaying = 0;
 
+	_soundQueuePtr = 0;
+	_soundQueueNum = 0;
+	_soundQueueSize = 0;
+	_soundQueueFreq = 0;
+
 	if (_vm->getFeatures() & GF_TALKIE) {
 		loadVoiceFile(gss);
 
@@ -649,6 +654,10 @@ bool Sound::hasVoice() const {
 	return _hasVoiceFile;
 }
 
+bool Sound::isSfxActive() const {
+	return _mixer->isSoundHandleActive(_effectsHandle);
+}
+
 bool Sound::isVoiceActive() const {
 	return _mixer->isSoundHandleActive(_voiceHandle);
 }
@@ -658,6 +667,10 @@ void Sound::stopAllSfx() {
 	_mixer->stopHandle(_effectsHandle);
 	_mixer->stopHandle(_sfx5Handle);
 	_ambientPlaying = 0;
+}
+
+void Sound::stopSfx() {
+	_mixer->stopHandle(_effectsHandle);
 }
 
 void Sound::stopVoice() {
@@ -686,8 +699,33 @@ void Sound::ambientPause(bool b) {
 	}
 }
 
+// Personal Nightmare specific
+void Sound::handleSound() {
+	if (_soundQueuePtr && !isSfxActive()) {
+		playRawData(_soundQueuePtr, _soundQueueNum, _soundQueueSize, _soundQueueFreq);
+
+		_vm->_sampleWait = 1;
+		_vm->_sampleEnd = 1;
+		_soundQueuePtr = 0;
+		_soundQueueNum = 0;
+		_soundQueueSize = 0;
+		_soundQueueFreq = 0;
+	}
+}
+
+void Sound::queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq) {
+	if (_effectsPaused)
+		return;
+
+	// Only a single sound can be queued
+	_soundQueuePtr = ptr;
+	_soundQueueNum = sound;
+	_soundQueueSize = size;
+	_soundQueueFreq = freq;
+}
+
 // Elvira 1/2 and Waxworks specific
-void Sound::playRawData(byte *soundData, uint sound, uint size) {
+void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	if (_effectsPaused)
 		return;
 
@@ -695,9 +733,9 @@ void Sound::playRawData(byte *soundData, uint sound, uint size) {
 	memcpy(buffer, soundData, size);
 
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, freq, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
 	else
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, 8000, Audio::Mixer::FLAG_AUTOFREE);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, freq, Audio::Mixer::FLAG_AUTOFREE);
 }
 
 // Feeble Files specific

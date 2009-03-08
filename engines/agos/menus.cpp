@@ -53,6 +53,27 @@ void AGOSEngine::loadMenuFile() {
 	in.close();
 }
 
+// Personal Nightmare specific
+void AGOSEngine::restoreMenu() {
+	_wiped = 0;
+
+	_lockWord |= 0x80;
+
+	clearVideoWindow(3, 0);
+
+	uint16 oldWindowNum = _windowNum;
+
+	setWindowImage(1, 1);
+	setWindowImage(2, 2);
+
+	drawEdging();
+
+	_windowNum = oldWindowNum;
+
+	_lockWord |= 0x20;
+	_lockWord &= ~0x80;
+}
+
 // Elvira 1 specific
 void AGOSEngine::drawMenuStrip(uint windowNum, uint menuNum) {
 	WindowBlock *window = _windowArray[windowNum % 8];

@@ -574,9 +574,7 @@ void AGOSEngine_Elvira2::oe2_ifExitLocked() {
 void AGOSEngine_Elvira2::oe2_playEffect() {
 	// 174: play sound
 	uint soundId = getVarOrWord();
-	loadSound(soundId);
-
-	debug(0, "oe2_playEffect: stub (%d)", soundId);
+	loadSound(soundId, 0, 0);
 }
 
 void AGOSEngine_Elvira2::oe2_getDollar2() {
@@ -636,7 +634,7 @@ void AGOSEngine_Elvira2::oe2_printMonsterDamage() {
 void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	// 179: item unk1 unk2 is
 	Item *item = getNextItemPtr();
-	int16 a = getNextWord(), b = getNextWord();
+	int16 a = getNextWord(), n = getNextWord();
 
 	if (getGameType() == GType_ELVIRA2) {
 		// WORKAROUND bug #1745996: A NULL item can occur when
@@ -647,7 +645,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 		}
 	}
 
-	setScriptCondition(item->adjective == a && item->noun == b);
+	setScriptCondition(item->adjective == a && item->noun == n);
 }
 
 void AGOSEngine_Elvira2::oe2_b2Set() {

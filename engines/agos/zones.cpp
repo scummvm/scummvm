@@ -63,29 +63,34 @@ static const uint8 zoneTable[160] = {
 	2,  2,  2,  2,  2,  0,  0,  0,  0,  0,
 };
 
-void AGOSEngine::loadZone(uint16 zoneNum) {
+void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 	VgaPointersEntry *vpe;
 
 	CHECK_BOUNDS(zoneNum, _vgaBufferPointers);
 
-	vpe = _vgaBufferPointers + zoneNum;
-	if (vpe->vgaFile1 != NULL)
-		return;
+	if (getGameType() == GType_PN) {
+		// Only a single zone is used in Personal Nightmare
+		vpe = _vgaBufferPointers;
+		vc27_resetSprite();
+	} else {
+		vpe = _vgaBufferPointers + zoneNum;
+		if (vpe->vgaFile1 != NULL)
+			return;
+	}
 
-	// Loading order is important
-	// due to resource managment
+	// Loading order is important due to resource managment
 
 	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW &&
 		zoneTable[zoneNum] == 3) {
 		uint8 num = (zoneNum >= 85) ? 94 : 18;
-		loadVGAVideoFile(num, 2);
+		loadVGAVideoFile(num, 2, useError);
 	} else {
-		loadVGAVideoFile(zoneNum, 2);
+		loadVGAVideoFile(zoneNum, 2, useError);
 	}
 	vpe->vgaFile2 = _block;
 	vpe->vgaFile2End = _blockEnd;
 
-	loadVGAVideoFile(zoneNum, 1);
+	loadVGAVideoFile(zoneNum, 1, useError);
 	vpe->vgaFile1 = _block;
 	vpe->vgaFile1End = _blockEnd;
 

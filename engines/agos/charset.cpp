@@ -610,13 +610,21 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 	window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 	window->textLength = 0;
 
-	if (window->textRow == window->height) {
-		if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
-			getGameType() == GType_WW) {
+	if (getGameType() == GType_PN) {
+		window->textRow++;
+		if (window->textRow == window->height) {
 			windowScroll(window);
+			window->textRow--;
 		}
 	} else {
-		window->textRow++;
+		if (window->textRow == window->height) {
+			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
+				getGameType() == GType_WW) {
+				windowScroll(window);
+			}
+		} else {
+			window->textRow++;
+		}
 	}
 }
 

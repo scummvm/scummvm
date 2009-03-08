@@ -125,9 +125,18 @@ char *AGOSEngine_Elvira2::genSaveName(int slot) {
 	return buf;
 }
 
-char *AGOSEngine::genSaveName(int slot) {
+char *AGOSEngine_Elvira1::genSaveName(int slot) {
 	static char buf[20];
 	sprintf(buf, "elvira1.%.3d", slot);
+	return buf;
+}
+
+char *AGOSEngine::genSaveName(int slot) {
+	static char buf[20];
+	if (getPlatform() == Common::kPlatformPC)
+		sprintf(buf, "pn-pc.%.3d", slot);
+	else
+		sprintf(buf, "pn.%.3d", slot);
 	return buf;
 }
 
@@ -1542,6 +1551,127 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	_lockWord &= ~0x100;
 
 	return result;
+}
+
+// Personal Nightmare specific
+bool AGOSEngine_PN::badload(int8 errorNum) {
+	if (errorNum == -2)
+		return 0;
+	/* Load error recovery routine */
+	while (_stackbase != NULL) {
+		/* Clear any stack */
+		dumpstack();
+	}
+	/* Restart from process 1 */
+	longjmp(_loadfail, 1);
+	return 1;
+}
+
+void AGOSEngine_PN::getFilename() {
+	_noScanFlag = 1;
+	clearInputLine();
+
+	memset(_saveFile, 0, sizeof(_saveFile));
+	while (!shouldQuit() && !strlen(_saveFile)) {
+		const char *msg = "File name : ";
+	        pcf((unsigned char)'\n');
+		while (*msg)
+			pcf((unsigned char)*msg++);
+
+		interact(_saveFile, 8);
+		pcf((unsigned char)'\n');
+		_noScanFlag = 0;
+	}
+}
+
+int AGOSEngine_PN::loadfl(char *name) {
+	Common::InSaveFile *f;
+	haltAnimation();
+
+	f = _saveFileMan->openForLoading(name);
+	if (f == NULL) {
+		restartAnimation();
+		return -2;
+	}
+	f->read(_saveFile, 8);
+
+	if (f->readByte() != 41) {
+		restartAnimation();
+		delete f;
+		return -2;
+	}
+	if (f->readByte() != 33) {
+		restartAnimation();
+		delete f;
+		return -2;
+	}
+	// TODO: Make endian safe
+	if (!f->read(_dataBase + _quickptr[2], (int)(_quickptr[6] - _quickptr[2]))) {
+		restartAnimation();
+		delete f;
+		return -1;
+	}
+		delete f;
+	restartAnimation();
+	dbtosysf();
+	return 0;
+}
+
+int AGOSEngine_PN::savfl(char *name) {
+	Common::OutSaveFile *f;
+	sysftodb();
+	haltAnimation();
+
+	f = _saveFileMan->openForSaving(name);
+	if (f == NULL) {
+		restartAnimation();
+
+		const char *msg = "Couldn't save. ";
+	        pcf((unsigned char)'\n');
+		while (*msg)
+			pcf((unsigned char)*msg++);
+
+		return 0;
+	}
+	f->write(_saveFile, 8);
+
+	f->writeByte(41);
+	f->writeByte(33);
+	// TODO: Make endian safe
+	if (!f->write(_dataBase + _quickptr[2], (int)(_quickptr[6] - _quickptr[2]))) {
+		delete f;
+		restartAnimation();
+		error("Couldn't save ");
+		return 0;
+	}
+	f->finalize();
+	delete f;
+
+	restartAnimation();
+	return 1;
+}
+
+void AGOSEngine_PN::sysftodb() {
+	uint32 pos = _quickptr[2];
+	int ct = 0;
+
+	while (ct < (getptr(49L) / 2)) {
+		_dataBase[pos] = (uint8)(_variableArray[ct] % 256);
+		_dataBase[pos + 1] = (uint8)(_variableArray[ct] / 256);
+		pos+=2;
+		ct++;
+	}
+}
+
+void AGOSEngine_PN::dbtosysf() {
+	uint32 pos = _quickptr[2];
+	int ct = 0;
+
+	while (ct < (getptr(49L) / 2)) {
+		_variableArray[ct] = _dataBase[pos] + 256 * _dataBase[pos + 1];
+		pos += 2;
+		ct++;
+	}
 }
 
 } // End of namespace AGOS

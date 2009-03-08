@@ -183,9 +183,9 @@ void AGOSEngine::vc52_playSound() {
 		int16 vol = vcReadNextWord();
 
 		if (ambient)
-			loadSound(sound, pan, vol, 2);
+			loadSound(sound, pan, vol, Sound::TYPE_AMBIENT);
 		else
-			loadSound(sound, pan, vol, 1);
+			loadSound(sound, pan, vol, Sound::TYPE_SFX);
 	} else if (getGameType() == GType_SIMON2) {
 		if (ambient)
 			_sound->playAmbient(sound);
@@ -196,7 +196,7 @@ void AGOSEngine::vc52_playSound() {
 	} else if (getGameId() == GID_SIMON1DOS) {
 		playSting(sound);
 	} else {
-		loadSound(sound);
+		loadSound(sound, 0, 0);
 	}
 }
 
