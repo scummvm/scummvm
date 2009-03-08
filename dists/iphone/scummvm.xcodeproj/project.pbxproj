@@ -840,7 +840,7 @@
 		DFC831620F48AF19005EF03C /* decompress11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8309E0F48AF19005EF03C /* decompress11.cpp */; };
 		DFC831710F48AF19005EF03C /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830B00F48AF19005EF03C /* resource.cpp */; };
 		DFC8317B0F48AF19005EF03C /* versions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830BA0F48AF19005EF03C /* versions.cpp */; };
-		DFC8317C0F48AF19005EF03C /* vocab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830BB0F48AF19005EF03C /* vocab.cpp */; };
+		DFC8317C0F48AF19005EF03C /* vocabulary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830BB0F48AF19005EF03C /* vocabulary.cpp */; };
 		DFC8317D0F48AF19005EF03C /* vocab_debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830BC0F48AF19005EF03C /* vocab_debug.cpp */; };
 		DFC8317E0F48AF19005EF03C /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830BE0F48AF19005EF03C /* adlib.cpp */; };
 		DFC8317F0F48AF19005EF03C /* core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC830C00F48AF19005EF03C /* core.cpp */; };
@@ -2366,7 +2366,7 @@
 		DFC8309E0F48AF19005EF03C /* decompress11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompress11.cpp; sourceTree = "<group>"; };
 		DFC830B00F48AF19005EF03C /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource.cpp; sourceTree = "<group>"; };
 		DFC830BA0F48AF19005EF03C /* versions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = versions.cpp; sourceTree = "<group>"; };
-		DFC830BB0F48AF19005EF03C /* vocab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vocab.cpp; sourceTree = "<group>"; };
+		DFC830BB0F48AF19005EF03C /* vocabulary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vocabulary.cpp; sourceTree = "<group>"; };
 		DFC830BC0F48AF19005EF03C /* vocab_debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vocab_debug.cpp; sourceTree = "<group>"; };
 		DFC830BE0F48AF19005EF03C /* adlib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = adlib.cpp; sourceTree = "<group>"; };
 		DFC830BF0F48AF19005EF03C /* adlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adlib.h; sourceTree = "<group>"; };
@@ -4329,7 +4329,7 @@
 				DFC8309E0F48AF19005EF03C /* decompress11.cpp */,
 				DFC830B00F48AF19005EF03C /* resource.cpp */,
 				DFC830BA0F48AF19005EF03C /* versions.cpp */,
-				DFC830BB0F48AF19005EF03C /* vocab.cpp */,
+				DFC830BB0F48AF19005EF03C /* vocabulary.cpp */,
 				DFC830BC0F48AF19005EF03C /* vocab_debug.cpp */,
 			);
 			path = scicore;
@@ -5828,7 +5828,7 @@
 				DFC831620F48AF19005EF03C /* decompress11.cpp in Sources */,
 				DFC831710F48AF19005EF03C /* resource.cpp in Sources */,
 				DFC8317B0F48AF19005EF03C /* versions.cpp in Sources */,
-				DFC8317C0F48AF19005EF03C /* vocab.cpp in Sources */,
+				DFC8317C0F48AF19005EF03C /* vocabulary.cpp in Sources */,
 				DFC8317D0F48AF19005EF03C /* vocab_debug.cpp in Sources */,
 				DFC8317E0F48AF19005EF03C /* adlib.cpp in Sources */,
 				DFC8317F0F48AF19005EF03C /* core.cpp in Sources */,

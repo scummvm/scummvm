@@ -369,7 +369,7 @@
 				RelativePath="..\..\engines\sci\scicore\versions.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocab.cpp">
+				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp">

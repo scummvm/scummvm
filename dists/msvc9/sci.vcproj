@@ -503,7 +503,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\vocab.cpp"
+				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp"
 				>
 			</File>
 			<File

@@ -59,7 +59,7 @@ MODULE_OBJS = \
 	scicore/decompress11.o \
 	scicore/resource.o \
 	scicore/versions.o \
-	scicore/vocab.o \
+	scicore/vocabulary.o \
 	scicore/vocab_debug.o \
 	sfx/adlib.o \
 	sfx/core.o \
