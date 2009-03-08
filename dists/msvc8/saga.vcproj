@@ -255,15 +255,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\introproc_fta2.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\introproc_ihnm.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\introproc_ite.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\saga\introproc_saga2.cpp"
 			>
 		</File>
 		<File
