@@ -1227,7 +1227,6 @@ public:
 		flags = 0;
 	}
 
-	SongIterator *makeClone() { return 0; }
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream() { return NULL; }
 	SongIterator *handleMessage(SongIteratorMessage msg);
@@ -1342,7 +1341,7 @@ SongIterator *new_fast_forward_iterator(SongIterator *capsit, int delta) {
 	if (capsit == NULL)
 		return NULL;
 
-	FastForwardSongIterator *it = new FastForwardSongIterator();
+	FastForwardSongIterator *it = new FastForwardSongIterator(capsit, delta);
 	return it;
 }
 

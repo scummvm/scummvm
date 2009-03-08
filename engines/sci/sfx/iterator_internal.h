@@ -175,7 +175,6 @@ protected:
 	int _delta; /**< Remaining time */
 
 public:
-	FastForwardSongIterator() {}	// FIXME: Temp hack
 	FastForwardSongIterator(SongIterator *capsit, int delta);
 
 	int nextCommand(byte *buf, int *result);
