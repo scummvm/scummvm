@@ -297,7 +297,7 @@ void Scene::startScene() {
 #endif
 #ifdef ENABLE_SAGA2
 	case GID_DINO:
-		// TODO
+		DinoStartProc();
 		break;
 	case GID_FTA2:
 		FTA2StartProc();

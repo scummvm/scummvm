@@ -422,6 +422,7 @@ class Scene {
 	int ITEStartProc();
 	int IHNMStartProc();
 	int IHNMCreditsProc();
+	int DinoStartProc();
 	int FTA2StartProc();
 	int FTA2EndProc(FTA2Endings whichEnding);
 

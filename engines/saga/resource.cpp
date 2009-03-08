@@ -251,6 +251,10 @@ bool Resource::createContexts() {
 	SoundFileInfo sfxFilesFTA2[] = {
 		{	"ftasound.hrs",		false	}
 	};
+
+	SoundFileInfo sfxFilesDino[] = {
+		{	"dinosnd.hrs",		false	},
+	};
 #endif
 
 	if (!soundFileInArray) {
@@ -270,9 +274,8 @@ bool Resource::createContexts() {
 #endif
 #ifdef ENABLE_SAGA2
 			case GID_DINO:
-				// TODO
-				curSoundfiles = NULL;
-				maxFile = 0;
+				curSoundfiles = sfxFilesDino;
+				maxFile = 1;
 				break;
 			case GID_FTA2:
 				curSoundfiles = sfxFilesFTA2;
@@ -343,11 +346,13 @@ bool Resource::createContexts() {
 			break;
 #endif
 #ifdef ENABLE_SAGA2
+		/*
 		case GID_DINO:
 			// TODO
 			curSoundfiles = NULL;
 			maxFile = 0;
 			break;
+		*/
 		case GID_FTA2:
 			curSoundfiles = voiceFilesFTA2;
 			maxFile = 1;
@@ -447,7 +452,7 @@ bool Resource::createContexts() {
 		// For ITE, add the digital music file and sfx file information here
 		if (_vm->getGameId() == GID_ITE && digitalMusic && i == _contextsCount - 1) {
 			context->fileName = musicFileName;
-			context->fileType = GAME_MUSICFILE;
+			context->fileType = GAME_DIGITALMUSICFILE;
 			context->isCompressed = compressedMusic;
 		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;

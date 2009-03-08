@@ -107,6 +107,12 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("patch"));
 
+	// Dinotopia
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("smack"));
+
+	// FTA2
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
+
 	_displayClip.left = _displayClip.top = 0;
 	syst->getEventManager()->registerRandomSource(_rnd, "saga");
 }

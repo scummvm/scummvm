@@ -43,7 +43,7 @@ endif
 
 ifdef ENABLE_SAGA2
 MODULE_OBJS += \
-	introproc_fta2.o \
+	introproc_saga2.o \
 	resource_hrs.o
 endif
 

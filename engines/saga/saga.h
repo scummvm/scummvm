@@ -99,18 +99,22 @@ enum GameIds {
 };
 
 enum GameFileTypes {
-	GAME_IMAGEFILE    = 1 << 0,
-	GAME_RESOURCEFILE = 1 << 1,
-	GAME_SCRIPTFILE   = 1 << 2,
-	GAME_SOUNDFILE    = 1 << 3,
-	GAME_VOICEFILE    = 1 << 4,
-	GAME_DEMOFILE     = 1 << 5,
-	GAME_MUSICFILE    = 1 << 6,
-	GAME_MUSICFILE_GM = 1 << 7,
-	GAME_MUSICFILE_FM = 1 << 8,
-	GAME_PATCHFILE    = 1 << 9,
-	GAME_MACBINARY    = 1 << 10,
-	GAME_SWAPENDIAN   = 1 << 11
+	// Common
+	GAME_RESOURCEFILE     = 1 << 0,    // Game resources
+	GAME_SCRIPTFILE       = 1 << 1,    // Game scripts
+	GAME_SOUNDFILE        = 1 << 2,    // SFX (also contains voices and MIDI music in SAGA 2 games)
+	GAME_VOICEFILE        = 1 << 3,    // Voices (also contains SFX in the ITE floppy version)
+	// ITE specific
+	GAME_DIGITALMUSICFILE = 1 << 4,    // ITE digital music, added by Wyrmkeep 
+	GAME_MACBINARY        = 1 << 5,    // ITE Mac CD Guild
+	GAME_DEMOFILE         = 1 << 6,    // Early ITE demo
+	GAME_SWAPENDIAN       = 1 << 7,    // Used to identify the BE voice file in the ITE combined version
+	// IHNM specific
+	GAME_MUSICFILE_FM     = 1 << 8,    // IHNM
+	GAME_MUSICFILE_GM     = 1 << 9,    // IHNM, ITE Mac CD Guild
+	GAME_PATCHFILE        = 1 << 10,   // IHNM patch file (patch.re_/patch.res)
+	// SAGA 2 (Dinotopia, FTA2)
+	GAME_IMAGEFILE        = 1 << 11
 };
 
 enum GameFeatures {

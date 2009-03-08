@@ -351,7 +351,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm),
 	xmidiParser = MidiParser::createParser_XMIDI();
 	smfParser = MidiParser::createParser_SMF();
 
-	_digitalMusicContext = _vm->_resource->getContext(GAME_MUSICFILE);
+	_digitalMusicContext = _vm->_resource->getContext(GAME_DIGITALMUSICFILE);
 
 	_songTableLen = 0;
 	_songTable = 0;

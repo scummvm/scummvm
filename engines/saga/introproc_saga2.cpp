@@ -25,7 +25,7 @@
 
 #ifdef ENABLE_SAGA2
 
-// "Faery Tale Adventure II: Halls of the Dead" Intro sequence scene procedures
+// "Dinotopia" and "Faery Tale Adventure II: Halls of the Dead" Intro sequence scene procedures
 
 #include "saga/saga.h"
 #include "saga/scene.h"
@@ -42,6 +42,29 @@
 namespace Saga {
 
 Common::List<Common::Event> stopEvents;
+
+int Scene::DinoStartProc() {
+	_vm->_gfx->showCursor(false);
+
+	Common::Event stopEvent;
+	stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvents.push_back(stopEvent);
+
+	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
+	if (smkDecoder->loadFile("testvid.smk"))
+		player->playVideo(&stopEvents);        // Play introduction
+	smkDecoder->closeFile();
+	delete player;
+	delete smkDecoder;
+
+	// HACK: Forcibly quit here
+	_vm->quitGame();
+
+	return SUCCESS;
+}
 
 int Scene::FTA2StartProc() {
 	_vm->_gfx->showCursor(false);
