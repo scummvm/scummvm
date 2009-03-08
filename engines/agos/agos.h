@@ -1455,7 +1455,6 @@ public:
 	int findentry();
 	int findset();
 	int gvwrd(uint8 *wptr, int mask);
-	int samewrd(uint8 *w1, uint8 *w2, int ln);
 	int wrdmatch(uint8 *word1, int mask1, uint8 *word2, int mask2);
 
 	bool testContainer(uint16 a);

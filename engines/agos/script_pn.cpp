@@ -984,21 +984,6 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 
 
 // FIXME/TODO: Isn't this just scumm_strnicmp ?
-int AGOSEngine_PN::samewrd(uint8 *w1, uint8 *w2, int ln) {
-	int ct = 0;
-
-	while (ct < ln) {
-		if (toupper(*w1) > toupper(*w2))
-			return 1;
-		if (toupper(*w1) < toupper(*w2))
-			return -1;
-		ct++;
-		w1++;
-		w2++;
-	}
-	return 0;
-}
-
 int AGOSEngine_PN::setposition(int process, int line) {
 	uint8 *ourptr;
 	int np;
@@ -1034,7 +1019,7 @@ int AGOSEngine_PN::wrdmatch(uint8 *word1, int mask1, uint8 *word2, int mask2) {
 
 	sv = *word1;
 	*word1 &= 127;
-	if (samewrd(word1, word2, _dataBase[57])) {
+	if (scumm_strnicmp((const char *)word1, (const char *)word2, _dataBase[57])) {
 		*word1 = sv;
 		return 0;
 	}
