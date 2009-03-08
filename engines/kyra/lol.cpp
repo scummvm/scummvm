@@ -189,7 +189,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	memset(_activeTim, 0, 10 * sizeof(TIM*));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
-	memset(&_openDoorState, 0, sizeof(OpenDoorState) * 3);
+	memset(_openDoorState, 0, sizeof(_openDoorState));
 
 	_pageBuffer1 = _pageBuffer2 = 0;
 
