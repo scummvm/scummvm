@@ -572,7 +572,7 @@ void AGOSEngine::handleMouseMoved() {
 		if (_dragMode != 0) {
 			_dragEnd = 1;
 		} else {
-			_oneClick = true;
+			_oneClick = 1;
 		}
 		_dragCount = 0;
 	}
@@ -604,8 +604,8 @@ void AGOSEngine::handleMouseMoved() {
 	}
 
 	x = 0;
-	if (_oneClick == true) {
-		_oneClick = false;
+	if (_oneClick > 0) {
+		_oneClick = 0;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
