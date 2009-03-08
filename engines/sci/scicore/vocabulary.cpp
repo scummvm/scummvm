@@ -42,6 +42,27 @@ int vocab_version;
 				    VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB : \
 				    VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB
 
+
+/*
+// These strange names were taken from an SCI01 interpreter
+const char *class_names[] = {"",
+                             "",
+                             "conj",   // conjunction
+                             "ass",    // ?
+                             "pos",    // preposition ?
+                             "art",    // article
+                             "adj",    // adjective
+                             "pron",   // pronoun
+                             "noun",   // noun
+                             "auxv",   // auxillary verb
+                             "adv",    // adverb
+                             "verb",   // verb
+                             "",
+                             "",
+                             "",
+                             ""
+                            };
+*/
 int _vocab_cmp_words(const void *word1, const void *word2) {
 	return scumm_stricmp((*((word_t **) word1))->word, (*((word_t **)word2))->word);
 }
