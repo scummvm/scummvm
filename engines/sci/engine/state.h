@@ -254,8 +254,7 @@ struct EngineState {
 	/* Parser data: */
 	word_t **parser_words;
 	int parser_words_nr;
-	suffix_t **parser_suffices;
-	int parser_suffices_nr;
+	SuffixList _parserSuffixes;
 	parse_tree_branch_t *parser_branches;
 	parse_rule_list_t *parser_rules; /* GNF rules used in the parser algorithm */
 	int parser_branches_nr;

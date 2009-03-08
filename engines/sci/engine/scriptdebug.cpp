@@ -791,7 +791,7 @@ int c_sim_parse(EngineState *s) {
 			if (openb)
 				*openb = 0; // remove them and the rest
 
-			result = vocab_lookup_word(token, strlen(token), s->parser_words, s->parser_words_nr, s->parser_suffices, s->parser_suffices_nr);
+			result = vocab_lookup_word(token, strlen(token), s->parser_words, s->parser_words_nr, s->_parserSuffixes);
 
 			if (result) {
 				s->parser_nodes[i].type = 0;
@@ -1026,7 +1026,7 @@ int c_parse(EngineState *s) {
 	string = cmd_params[0].str;
 	sciprintf("Parsing '%s'\n", string);
 	words = vocab_tokenize_string(string, &words_nr, s->parser_words, s->parser_words_nr,
-	                              s->parser_suffices, s->parser_suffices_nr, &error);
+	                              s->_parserSuffixes, &error);
 	if (words) {
 		int i, syntax_fail = 0;
 

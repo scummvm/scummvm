@@ -27,6 +27,7 @@
 #define SCI_SCICORE_VOCABULARY_H
 
 #include "common/str.h"
+#include "common/list.h"
 
 #include "sci/scicore/versions.h"
 
@@ -149,6 +150,8 @@ struct suffix_t {
 
 };
 
+typedef Common::List<suffix_t> SuffixList;
+
 
 struct result_word_t {
 
@@ -239,8 +242,7 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter);
 */
 
 
-void
-vocab_free_words(word_t **words, int words_nr);
+void vocab_free_words(word_t **words, int words_nr);
 /* Frees memory allocated by vocab_get_words
 ** Parameters: (word_t **) words: The words to free
 **             (int) words_nr: Number of words in the structure
@@ -248,19 +250,17 @@ vocab_free_words(word_t **words, int words_nr);
 */
 
 
-suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr);
-/* Gets all suffixes from the suffix vocabulary
+bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
+/* Loads all suffixes from the suffix vocabulary.
 ** Parameters: (ResourceManager*) resmgr: Resource manager the resources are
 **                               read from
-**             (int *) suffices_nr: The variable to store the number of suffices in
-** Returns   : (suffix_t **): A list of suffixes
+** Returns   : true on success, false on failure
 */
 
-void vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr);
-/* Frees suffices_nr suffices
+void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
+/* Frees all suffixes in the given list.
 ** Parameters: (ResourceManager *) resmgr: The resource manager to free from
-**             (suffix_t **) suffices: The suffixes to free
-**             (int) suffices_nr: Number of entrie sin suffices
+**             (SuffixList) suffixes: The suffixes to free
 ** Returns   : (void)
 */
 
@@ -280,28 +280,26 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches);
 */
 
 result_word_t *vocab_lookup_word(char *word, int word_len,
-	word_t **words, int words_nr, suffix_t **suffices, int suffices_nr);
+	word_t **words, int words_nr, const SuffixList &suffixes);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
 **             (int) word_len: Length of the word to look up
 **             (word_t **) words: List of words
 **             (int) words_nr: Number of elements in 'words'
-**             (suffix_t **) suffices: List of suffices
-**             (int) suffices_nr: Number of entries in 'suffices'
+**             (SuffixList) suffixes: List of suffixes
 ** Returns   : (result_word_t *) A malloc'd result_word_t, or NULL if the word
 ** could not be found.
 */
 
 
 result_word_t *vocab_tokenize_string(char *sentence, int *result_nr,
-	word_t **words, int words_nr, suffix_t **suffices, int suffices_nr, char **error);
+	word_t **words, int words_nr, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
 **             (int *) result_nr: The variable to store the resulting number of words in
 **             (word_t **) words: The words to scan for
 **             (int) words_nr: Number of words to scan for
-**             (suffix_t **) suffices: suffixes to scan for
-**             (int) suffices_nr: Number of suffices to scan for
+**             (SuffixList) suffixes: suffixes to scan for
 **             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
 ** Returns   : (word_t *): A list of word_ts containing the result, or NULL.
 ** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;

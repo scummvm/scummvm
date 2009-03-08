@@ -154,63 +154,46 @@ const char *vocab_get_any_group_word(int group, word_t **words, int words_nr) {
 	return "{invalid}";
 }
 
-suffix_t **vocab_get_suffices(ResourceManager *resmgr, int *suffices_nr) {
-	int counter = 0;
-	suffix_t **suffices;
+bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
 	unsigned int seeker = 1;
 
 	if (!resource) {
-		fprintf(stderr, "Could not find suffix vocabulary!\n");
-		return NULL; // Not critical
+		warning("Could not find suffix vocabulary");
+		return false; // Not critical
 	}
-
-	suffices = (suffix_t**)sci_malloc(sizeof(suffix_t *));
 
 	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
-		char *alt_suffix = (char *) resource->data + seeker;
-		int alt_len = strlen(alt_suffix);
-		char *word_suffix;
-		int word_len;
+		suffix_t suffix;
 
-		suffices = (suffix_t**)sci_realloc(suffices, sizeof(suffix_t *) * (counter + 1));
+		suffix.alt_suffix = (char *)resource->data + seeker;
+		suffix.alt_suffix_length = strlen(suffix.alt_suffix);
+		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
-		seeker += alt_len + 1; // Hit end of string
-		word_suffix = (char *)resource->data + seeker + 3; // Beginning of next string +1 (ignore '*')
-		word_len = strlen(word_suffix);
+		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
+		seeker += 2;
 
-		suffices[counter] = (suffix_t *)sci_malloc(sizeof(suffix_t));
-		// allocate enough memory to store the strings
+		// Beginning of next string - skip leading '*'
+		seeker++;
 
-		suffices[counter]->word_suffix = word_suffix;
-		suffices[counter]->alt_suffix = alt_suffix;
+		suffix.word_suffix = (char *)resource->data + seeker;
+		suffix.word_suffix_length = strlen(suffix.word_suffix);
+		seeker += suffix.word_suffix_length + 1;
 
-		suffices[counter]->alt_suffix_length = alt_len;
-		suffices[counter]->word_suffix_length = word_len;
-		suffices[counter]->class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
-
-		seeker += word_len + 4;
-		suffices[counter]->result_class = (int16)READ_BE_UINT16(resource->data + seeker);
+		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
 		seeker += 3; // Next entry
 
-		++counter;
+		suffixes.push_back(suffix);
 	}
 
-	*suffices_nr = counter;
-
-	return suffices;
+	return true;
 }
 
-void vocab_free_suffices(ResourceManager *resmgr, suffix_t **suffices, int suffices_nr) {
-	int i;
-
+void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	resmgr->unlockResource(resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
 	                     VOCAB_RESOURCE_SUFFIX_VOCAB, kResourceTypeVocab);
 
-	for (i = 0; i < suffices_nr; i++)
-		free(suffices[i]);
-
-	free(suffices);
+	suffixes.clear();
 }
 
 void vocab_free_branches(parse_tree_branch_t *parser_branches) {
@@ -258,13 +241,13 @@ parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_
 
 
 result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int words_nr,
-	suffix_t **suffices, int suffices_nr) {
+	const SuffixList &suffixes) {
 	word_t *tempword = (word_t*)sci_malloc(sizeof(word_t) + word_len + 256);
-	// 256: For suffices. Should suffice.
+	// 256: For suffixes. Should suffice.
 	word_t **dict_word;
 	result_word_t *retval;
 	char *tester;
-	int i, word_len_tmp;
+	int word_len_tmp;
 
 	strncpy(&(tempword->word[0]), word, word_len);
 	tempword->word[word_len] = 0;
@@ -286,24 +269,24 @@ result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int w
 		return retval;
 	}
 
-	// Now try all suffices
-	for (i = 0; i < suffices_nr; i++)
-		if (suffices[i]->alt_suffix_length <= word_len) {
+	// Now try all suffixes
+	for (SuffixList::const_iterator suffix = suffixes.begin(); suffix != suffixes.end(); ++suffix)
+		if (suffix->alt_suffix_length <= word_len) {
 
-			int suff_index = word_len - suffices[i]->alt_suffix_length;
+			int suff_index = word_len - suffix->alt_suffix_length;
 			// Offset of the start of the suffix
 
-			if (scumm_strnicmp(suffices[i]->alt_suffix, word + suff_index, suffices[i]->alt_suffix_length) == 0) { // Suffix matched!
+			if (scumm_strnicmp(suffix->alt_suffix, word + suff_index, suffix->alt_suffix_length) == 0) { // Suffix matched!
 				strncpy(&(tempword->word[0]), word, word_len);
 				tempword->word[suff_index] = 0; // Terminate word at suffix start position...
-				strncat(&(tempword->word[0]), suffices[i]->word_suffix, suffices[i]->word_suffix_length); // ...and append "correct" suffix
+				strncat(&(tempword->word[0]), suffix->word_suffix, suffix->word_suffix_length); // ...and append "correct" suffix
 
 				dict_word = (word_t**)bsearch(&tempword, words, words_nr, sizeof(word_t *), _vocab_cmp_words);
 
-				if ((dict_word) && ((*dict_word)->w_class & suffices[i]->class_mask)) { // Found it?
+				if ((dict_word) && ((*dict_word)->w_class & suffix->class_mask)) { // Found it?
 					free(tempword);
 
-					retval->w_class = suffices[i]->result_class; // Use suffix class
+					retval->w_class = suffix->result_class; // Use suffix class
 					retval->group = (*dict_word)->group;
 
 					return retval;
@@ -482,7 +465,7 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 #endif
 
 result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **words, int words_nr,
-	suffix_t **suffices, int suffices_nr, char **error) {
+	const SuffixList &suffixes, char **error) {
 	char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;
@@ -508,7 +491,7 @@ result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **wo
 			if (wordlen) { // Finished a word?
 
 				lookup_result =
-				    vocab_lookup_word(lastword, wordlen, words, words_nr, suffices, suffices_nr);
+				    vocab_lookup_word(lastword, wordlen, words, words_nr, suffixes);
 				// Look it up
 
 				if (!lookup_result) { // Not found?

@@ -49,7 +49,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 	sciprintf("Initializing vocabulary\n");
 
 	if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && (s->parser_words = vocab_get_words(s->resmgr, &(s->parser_words_nr)))) {
-		s->parser_suffices = vocab_get_suffices(s->resmgr, &(s->parser_suffices_nr));
+		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
 		if ((s->parser_branches = vocab_get_branches(s->resmgr, &(s->parser_branches_nr))))
 			// Now build a GNF grammar out of this
 			s->parser_rules = vocab_build_gnf(s->parser_branches, s->parser_branches_nr);
@@ -78,7 +78,7 @@ static void _free_vocabulary(EngineState *s) {
 
 	if (s->parser_words) {
 		vocab_free_words(s->parser_words, s->parser_words_nr);
-		vocab_free_suffices(s->resmgr, s->parser_suffices, s->parser_suffices_nr);
+		vocab_free_suffixes(s->resmgr, s->_parserSuffixes);
 		vocab_free_branches(s->parser_branches);
 		vocab_free_rule_list(s->parser_rules);
 	}

@@ -707,31 +707,27 @@ static int c_list_words(EngineState *s) {
 	return 0;
 }
 
-int c_list_suffices(EngineState *s) {
-	suffix_t **suffices;
-	int suffices_nr;
-	int i;
+int c_list_suffixes(EngineState *s) {
+	SuffixList suffixes;
 	char word_buf[256], alt_buf[256];
 
-	suffices = vocab_get_suffices(s->resmgr, &suffices_nr);
-
-	if (!suffices) {
+	if (!vocab_get_suffixes(s->resmgr, suffixes)) {
 		sciprintf("No suffix vocabulary.\n");
 		return 1;
 	}
 
-	for (i = 0; i < suffices_nr; i++) {
-		suffix_t *suf = suffices[i];
-
+	int i = 0;
+	for (SuffixList::const_iterator suf = suffixes.begin(); suf != suffixes.end(); ++suf) {
 		strncpy(word_buf, suf->word_suffix, suf->word_suffix_length);
 		word_buf[suf->word_suffix_length] = 0;
 		strncpy(alt_buf, suf->alt_suffix, suf->alt_suffix_length);
 		alt_buf[suf->alt_suffix_length] = 0;
 
 		sciprintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n", i, suf->class_mask, word_buf, alt_buf, suf->result_class);
+		++i;
 	}
 
-	vocab_free_suffices(s->resmgr, suffices, suffices_nr);
+	vocab_free_suffixes(s->resmgr, suffixes);
 
 	return 0;
 }
@@ -829,7 +825,7 @@ static int c_list(EngineState *s) {
 				return c_kernelnames(s);
 			else if (!strcmp("suffixes", cmd_params[0].str) || !strcmp("suffices", cmd_params[0].str) || !strcmp("sufficos", cmd_params[0].str))
 				// sufficos: Accusative Plural of 'suffix'
-				return c_list_suffices(s);
+				return c_list_suffixes(s);
 			else if (!strcmp("words", cmd_params[0].str))
 				return c_list_words(s);
 			else if (strcmp("restypes", cmd_params[0].str) == 0) {
