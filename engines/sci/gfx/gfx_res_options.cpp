@@ -115,29 +115,22 @@ static inline gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int
 }
 
 void apply_assign(gfx_res_assign_t *conf, gfx_pixmap_t *pxm) {
-	// Has a dynamically allocated palette? Must clean up
-	if (!(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE)) {
-		if (pxm->colors)
-			free(pxm->colors);
-		pxm->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	}
+	if (pxm->palette)
+		pxm->palette->free();
 
-	pxm->colors_nr = conf->assign.palette.colors_nr;
-	pxm->colors = conf->assign.palette.colors;
+	pxm->palette = new Palette(conf->assign.palette.colors, conf->assign.palette.colors_nr);
+	pxm->palette->name = "res";
 }
 
 void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
-	gfx_pixmap_color_t *pal = pxm->colors;
-	int i, pal_size = pxm->colors_nr;
+	Palette *pal = pxm->palette;
+	int i, pal_size = pal ? pal->size() : 0;
 
 	// Does not have a dynamically allocated palette? Must dup current one
-	if (pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE) {
-		int size = sizeof(gfx_pixmap_color_t) * pal_size;
-		pxm->colors = (gfx_pixmap_color_t*)sci_malloc(size);
-		memcpy(pxm->colors, pal, size);
-		pal = pxm->colors;
-		pxm->flags &= ~GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-		// Flag for later deallocation
+	if (pal && pal->isShared()) {
+		pal = pxm->palette->copy();
+		pxm->palette->free();
+		pxm->palette = pal;
 	}
 
 	switch (mod->type) {
@@ -147,14 +140,17 @@ void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 			int v;
 
 #define UPDATE_COL(nm, idx)                        \
-		v = pal[i].nm;             \
+		v = nm;             \
 		v *= mod->mod.factor[idx]; \
 		v >>= 4;                   \
-		pal[i].nm = (v > 255)? 255 : v;
+		nm = (v > 255)? 255 : v;
 
-			UPDATE_COL(r, 0);
-			UPDATE_COL(g, 1);
-			UPDATE_COL(b, 2);
+			PaletteEntry c = pal->getColor(i);
+			UPDATE_COL(c.r, 0);
+			UPDATE_COL(c.g, 1);
+			UPDATE_COL(c.b, 2);
+			pal->setColor(i, c.r, c.g, c.b);
+			
 #undef UPDATE_COL
 		}
 		break;

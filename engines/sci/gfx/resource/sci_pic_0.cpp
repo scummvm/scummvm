@@ -99,9 +99,9 @@ gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLO
 #undef C3
 #undef C4
 
-gfx_pixmap_color_t gfx_sci0_pic_colors[GFX_SCI0_PIC_COLORS_NR]; // Initialized during initialization
-
-static int _gfxr_pic0_colors_initialized = 0;
+Palette* gfx_sci0_pic_colors = 0; // Initialized during initialization
+Palette* gfx_sci0_image_pal[SCI0_MAX_PALETTE+1];
+Palette* embedded_view_pal = 0;
 
 #define SCI1_PALETTE_SIZE 1284
 
@@ -121,18 +121,28 @@ gfx_pixmap_color_t embedded_view_colors[16] = {
 };
 
 void gfxr_init_static_palette() {
-	if (!_gfxr_pic0_colors_initialized) {
+	if (!gfx_sci0_pic_colors) {
+		gfx_sci0_pic_colors = new Palette(256);
+		gfx_sci0_pic_colors->name = "gfx_sci0_pic_colors";
 		for (int i = 0; i < 256; i++) {
-			gfx_sci0_pic_colors[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
-			gfx_sci0_pic_colors[i].r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
-			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].r);
-			gfx_sci0_pic_colors[i].g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
-			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].g);
-			gfx_sci0_pic_colors[i].b = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].b,
-			                                    gfx_sci0_image_colors[sci0_palette][i >> 4].b);
+			byte r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
+			                  gfx_sci0_image_colors[sci0_palette][i >> 4].r);
+			byte g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
+			                  gfx_sci0_image_colors[sci0_palette][i >> 4].g);
+			byte b = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].b,
+			                  gfx_sci0_image_colors[sci0_palette][i >> 4].b);
+			gfx_sci0_pic_colors->setColor(i,r,g,b);
 		}
 		//warning("Uncomment me after fixing sci0_palette changes to reset me");
 		//_gfxr_pic0_colors_initialized = 1;
+
+		for (int i = 0; i <= SCI0_MAX_PALETTE; ++i) {
+			gfx_sci0_image_pal[i] = new Palette(gfx_sci0_image_colors[i], GFX_SCI0_IMAGE_COLORS_NR);
+			gfx_sci0_image_pal[i]->name = "gfx_sci0_image_pal[i]";
+		}
+
+		embedded_view_pal = new Palette(embedded_view_colors, 16);
+		embedded_view_pal->name = "embedded_view_pal";
 	}
 }
 
@@ -150,28 +160,26 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 
 	pic->visual_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320 * mode->xfact,
 	                  200 * mode->yfact, ID, 0, 0));
-	pic->visual_map->colors = gfx_sci0_pic_colors;
-	pic->visual_map->colors_nr = GFX_SCI0_PIC_COLORS_NR;
-	pic->visual_map->color_key = GFX_PIXMAP_COLOR_KEY_NONE;
-
-	pic->visual_map->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	pic->priority_map->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	pic->control_map->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	if (mode->xfact > 1 || mode->yfact > 1) {
-		pic->visual_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
-		pic->priority_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
-	}
-
-	pic->priority_map->colors = gfx_sci0_image_colors[sci0_palette];
-	pic->priority_map->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
-	pic->control_map->colors = gfx_sci0_image_colors[sci0_palette];
-	pic->control_map->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
 
 	// Initialize colors
 	if (!sci1) {
 		pic->ID = ID;
 		gfxr_init_static_palette();
 	}
+
+	pic->visual_map->palette = gfx_sci0_pic_colors->getref();
+	pic->visual_map->color_key = GFX_PIXMAP_COLOR_KEY_NONE;
+
+	pic->visual_map->flags = 0;
+	pic->priority_map->flags = 0;
+	pic->control_map->flags = 0;
+	if (mode->xfact > 1 || mode->yfact > 1) {
+		pic->visual_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
+		pic->priority_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
+	}
+
+	pic->priority_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
+	pic->control_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 
 	pic->undithered_buffer_size = pic->visual_map->index_xl * pic->visual_map->index_yl;
 	pic->undithered_buffer = NULL;
@@ -1257,14 +1265,18 @@ void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src) {
 
 }
 
-static void view_transparentize(gfx_pixmap_t *view, byte *pic_index_data, int posx, int posy, int width, int height) {
+static void view_transparentize(gfx_pixmap_t *view, gfx_pixmap_t *background, int posx, int posy, int width, int height) {
 	int i, j;
+	byte *pic_index_data = background->index_data;
+
+	// FIXME: this assumes view and background have the same palette...
+	// We may want to do a reverse mapping or similar to make it general,
+	// but this (hopefully...) suffices for the current uses of this function.
 
 	for (i = 0;i < width;i++)
 		for (j = 0;j < height;j++) {
 			if (view->index_data[j*width+i] == view->color_key) {
-				view->index_data[j*width+i] =
-				    pic_index_data[(j+posy)*width+i+posx];
+				view->index_data[j*width+i] = pic_index_data[(j+posy)*width+i+posx];
 			}
 		}
 }
@@ -1274,7 +1286,7 @@ extern gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byt
 extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
-					 gfxr_pic0_params_t *style, int resid, int sci1, gfx_pixmap_color_t *static_pal, int static_pal_nr) {
+					 gfxr_pic0_params_t *style, int resid, int sci1, Palette *static_pal) {
 	const int default_palette_table[GFXR_PIC0_PALETTE_SIZE] = {
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
 		0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
@@ -1610,8 +1622,9 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 			case PIC_SCI1_OPX_SET_PALETTE:
 				p0printf("Set palette @%d\n", pos);
-				pic->visual_map->flags &= ~GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-				pic->visual_map->colors = gfxr_read_pal1(resid, &pic->visual_map->colors_nr,
+				if (pic->visual_map->palette)
+					pic->visual_map->palette->free();
+				pic->visual_map->palette = gfxr_read_pal1(resid,
 				                          resource + pos, SCI1_PALETTE_SIZE);
 				pos += SCI1_PALETTE_SIZE;
 				goto end_op_loop;
@@ -1640,16 +1653,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				int nodraw = 0;
 
 				gfx_pixmap_t *view;
-				//gfx_mode_t *mode;
 
 				p0printf("Embedded view @%d\n", pos);
-
-#if 0
-				// Set up mode structure for resizing the view
-				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
-				mode = gfx_new_mode(pic->visual_map->index_xl / 320,
-				           pic->visual_map->index_yl / 200, format, 16, 0);
-#endif
 
 				GET_ABS_COORDS(posx, posy);
 				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
@@ -1658,7 +1663,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (!sci1 && !nodraw)
 					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, 0);
 				else
-					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, bytesize, NULL, static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR);
+					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR));
 				pos += bytesize;
 				if (nodraw)
 					continue;
@@ -1667,7 +1672,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				// we can only safely replace the palette if it's static
 				// *if it's not for some reason, we should die
 
-				if (!(view->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE) && !sci1) {
+				if (view->palette && view->palette->isShared() && !sci1) {
 					sciprintf("gfx_draw_pic0(): can't set a non-static palette for an embedded view!\n");
 				}
 
@@ -1675,40 +1680,36 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				// nibble of the color index to the high nibble.
 
 				if (sci1) {
-					if (static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR) {
+					if (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR) {
 						// Assume Amiga game
-						pic->visual_map->colors = static_pal;
-						pic->visual_map->colors_nr = static_pal_nr;
-						pic->visual_map->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
+						pic->visual_map->palette = static_pal->getref();
 					}
-					view->colors = pic->visual_map->colors;
-					view->colors_nr = pic->visual_map->colors_nr;
+					if (view->palette) view->palette->free();
+					view->palette = pic->visual_map->palette->copy();
 				} else
-					view->colors = embedded_view_colors;
+					view->palette = embedded_view_pal->getref();
 
 				// Hack to prevent overflowing the visual map buffer.
 				// Yes, this does happen otherwise.
 				if (view->index_yl + sci_titlebar_size > 200)
 					sci_titlebar_size = 0;
 
-#if 0
-				// FIXME: This doesn't just scale the image, but also
-				// tries to fit the colours into the palette in 'mode',
-				// breaking colours in e.g., KQ5 floppy.
+				// Set up mode structure for resizing the view
+				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1byte/p, which handles masks and the rest for us
+				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_xl / 320,
+				           pic->visual_map->index_yl / 200, format, view->palette, 0);
+
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
-#endif
+				gfx_free_mode(mode);
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-					view_transparentize(view, pic->visual_map->index_data, posx, sci_titlebar_size + posy,
+					view_transparentize(view, pic->visual_map, posx, sci_titlebar_size + posy,
 					                    view->index_xl, view->index_yl);
 
 				_gfx_crossblit_simple(pic->visual_map->index_data + (sci_titlebar_size * 320) + posy * 320 + posx,
 				                      view->index_data, pic->visual_map->index_xl, view->index_xl,
 				                      view->index_xl, view->index_yl, 1);
 
-#if 0
-				gfx_free_mode(mode);
-#endif
 				gfx_free_pixmap(NULL, view);
 			}
 			goto end_op_loop;
@@ -1777,36 +1778,32 @@ end_op_loop: {}
 }
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
-					 gfxr_pic0_params_t *style, int resid, gfx_pixmap_color_t *static_pal, int static_pal_nr) {
+					 gfxr_pic0_params_t *style, int resid, Palette *static_pal) {
 	int has_bitmap = READ_LE_UINT16(resource + 4);
 	int vector_data_ptr = READ_LE_UINT16(resource + 16);
 	int palette_data_ptr = READ_LE_UINT16(resource + 28);
 	int bitmap_data_ptr = READ_LE_UINT16(resource + 32);
 	int sci_titlebar_size = style->pic_port_bounds.y;
-	//gfx_mode_t *mode;
 	gfx_pixmap_t *view = NULL;
-#if 0
-	// Set up mode structure for resizing the view
-	Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1bpp, which handles masks and the rest for us
-	mode = gfx_new_mode(pic->visual_map->index_xl / 320, pic->visual_map->index_yl / 200,
-	           format, 16, 0);
-#endif
 
-	pic->visual_map->colors = gfxr_read_pal11(-1, &(pic->visual_map->colors_nr), resource + palette_data_ptr, 1284);
+	if (pic->visual_map->palette) pic->visual_map->palette->free();
+	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
 
 	if (has_bitmap)
 		view = gfxr_draw_cel11(-1, 0, 0, 0, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL);
 
 	if (view) {
-		view->colors = pic->visual_map->colors;
-		view->colors_nr = pic->visual_map->colors_nr;
+		view->palette = pic->visual_map->palette->getref();
 
-#if 0
+		// Set up mode structure for resizing the view
+		Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1 byte/p, which handles masks and the rest for us
+		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_xl / 320, pic->visual_map->index_yl / 200, format, view->palette, 0);
+
 		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
-#endif
+		gfx_free_mode(mode);
 
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-			view_transparentize(view, pic->visual_map->index_data, 0, 0, view->index_xl, view->index_yl);
+			view_transparentize(view, pic->visual_map, 0, 0, view->index_xl, view->index_yl);
 
 		// Hack to prevent overflowing the visual map buffer.
 		// Yes, this does happen otherwise.
@@ -1823,8 +1820,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		GFXWARN("No view was contained in SCI1.1 pic resource");
 	}
 
-	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1,
-	                static_pal, static_pal_nr);
+	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1, static_pal);
 }
 
 void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
@@ -1841,8 +1837,7 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 		return; // Nothing to do
 
 	if (dmode == GFXR_DITHER_MODE_D16) { // Limit to 16 colors
-		pic->visual_map->colors = gfx_sci0_image_colors[sci0_palette];
-		pic->visual_map->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
+		pic->visual_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 	}
 
 	for (y = 0; y < yl; y++) {

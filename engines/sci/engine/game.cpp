@@ -101,28 +101,14 @@ static int _init_graphics_input(EngineState *s) {
 }
 
 static void _sci1_alloc_system_colors(EngineState *s) {
-	gfx_color_t white;
-	gfx_color_t black;
-
-	white.visual.global_index = 255;
-	white.visual.r = white.visual.g = white.visual.b = 255;
-	white.alpha = 0;
-	white.priority = white.control = 0;
-	white.mask = GFX_MASK_VISUAL;
-	gfxop_set_system_color(s->gfx_state, &white);
-
-	black.visual.global_index = 0;
-	black.visual.r = black.visual.g = black.visual.b = 0;
-	black.alpha = 0;
-	black.priority = black.control = 0;
-	black.mask = GFX_MASK_VISUAL;
-	gfxop_set_system_color(s->gfx_state, &black);
+	gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
+	gfxop_set_system_color(s->gfx_state, 0, &black);
 }
 
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
-	gfx_color_t transparent = { { -1, 0, 0, 0 }, 0, -1, -1, 0 };
+	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	sciprintf("Initializing graphics\n");
 
 	if (s->resmgr->_sciVersion <= SCI_VERSION_01) {
@@ -133,24 +119,28 @@ int _reset_graphics_input(EngineState *s) {
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {
 				return 1;
 			}
-			gfxop_set_system_color(s->gfx_state, &(s->ega_colors[i]));
+			gfxop_set_system_color(s->gfx_state, i, &(s->ega_colors[i]));
 		}
 	} else {
 		// Check for Amiga palette file.
 		Common::File file;
 		if (file.open("spal")) {
-			s->gfx_state->resstate->static_palette = gfxr_read_pal1_amiga(&s->gfx_state->resstate->static_palette_entries, file);
+			if (s->gfx_state->resstate->static_palette)
+				s->gfx_state->resstate->static_palette->free();
+			s->gfx_state->resstate->static_palette = gfxr_read_pal1_amiga(file);
+			s->gfx_state->resstate->static_palette->name = "static palette";
 			file.close();
 			_sci1_alloc_system_colors(s);
 		} else {
 			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
 			if (resource) {
+				if (s->gfx_state->resstate->static_palette)
+					s->gfx_state->resstate->static_palette->free();
 				if (s->version < SCI_VERSION(1, 001, 000))
-					s->gfx_state->resstate->static_palette = gfxr_read_pal1(999, &s->gfx_state->resstate->static_palette_entries,
-																			resource->data, resource->size);
+					s->gfx_state->resstate->static_palette = gfxr_read_pal1(999, resource->data, resource->size);
 				else
-					s->gfx_state->resstate->static_palette = gfxr_read_pal11(999, &s->gfx_state->resstate->static_palette_entries,
-																			resource->data, resource->size);
+					s->gfx_state->resstate->static_palette = gfxr_read_pal11(999, resource->data, resource->size);
+				s->gfx_state->resstate->static_palette->name = "static palette";
 				_sci1_alloc_system_colors(s);
 				s->resmgr->unlockResource(resource, 999, kResourceTypePalette);
 			} else {

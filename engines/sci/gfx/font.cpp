@@ -192,8 +192,7 @@ static inline void render_char(byte *dest, byte *src, int width, int line_width,
 	}
 }
 
-gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters,
-	gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg) {
+gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters, PaletteEntry *fg0, PaletteEntry *fg1, PaletteEntry *bg) {
 	unsigned char *text = (unsigned char *)stext;
 	int height = font->height;
 	int width = 0;
@@ -201,7 +200,7 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 	int fore_0, fore_1, back;
 	int i;
 	int hack = 0;
-	gfx_pixmap_color_t dummy = {0, 0, 0, 0};
+	PaletteEntry dummy(0,0,0); // black
 	byte *offset;
 
 	for (i = 0; i < characters; i++) {
@@ -217,35 +216,32 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 
 	pxm = gfx_pixmap_alloc_index_data(gfx_new_pixmap(width, height, GFX_RESID_NONE, 0, 0));
 
-	pxm->colors_nr = !!fg0 + !!fg1 + !!bg;
-	if (pxm->colors_nr == 0) {
+	int colors_nr = !!fg0 + !!fg1 + !!bg;
+	if (colors_nr == 0) {
 		GFXWARN("Pixmap would have zero colors, resetting!\n");
-		pxm->colors_nr = 3;
+		colors_nr = 3;
 		hack = 1;
 		fg0 = fg1 = bg = &dummy;
 	}
-	pxm->colors = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * pxm->colors_nr);
-#ifdef SATISFY_PURIFY
-	memset(pxm->colors, 0, sizeof(gfx_pixmap_color_t) * pxm->colors_nr);
-#endif
-	pxm->flags |= GFX_PIXMAP_FLAG_PALETTE_ALLOCATED | GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE;
+	pxm->palette = new Palette(colors_nr);
+	pxm->palette->name = "font";
 
 	i = 0;
 
 	if (fg0 || hack) {
-		memcpy(pxm->colors + i, fg0, sizeof(gfx_pixmap_color_t));
+		pxm->palette->setColor(i, fg0->r, fg0->g, fg0->b);
 		fore_0 = i++;
 	} else
 		fore_0 = pxm->color_key;
 
 	if (fg1 || hack) {
-		memcpy(pxm->colors + i, fg1, sizeof(gfx_pixmap_color_t));
+		pxm->palette->setColor(i, fg1->r, fg1->g, fg1->b);
 		fore_1 = i++;
 	} else
 		fore_1 = pxm->color_key;
 
 	if (bg || hack) {
-		memcpy(pxm->colors + i, bg, sizeof(gfx_pixmap_color_t));
+		pxm->palette->setColor(i, bg->r, bg->g, bg->b);
 		back = i++;
 	} else
 		back = pxm->color_key;

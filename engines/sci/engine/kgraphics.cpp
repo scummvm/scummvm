@@ -264,24 +264,26 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 #define KERNEL_COLOR_PALETTE s->gfx_state->pic->visual_map->colors
 #define KERNEL_COLORS_NR s->gfx_state->pic->visual_map->colors_nr
 #else
-#define KERNEL_COLOR_PALETTE s->gfx_state->resstate->static_palette
-#define KERNEL_COLORS_NR s->gfx_state->resstate->static_palette_entries
+#define KERNEL_COLOR_PALETTE (s->gfx_state->resstate->static_palette)
+#define KERNEL_COLORS_NR (s->gfx_state->resstate->static_palette ? s->gfx_state->resstate->static_palette->size() : 0)
 #endif
 
-static gfx_pixmap_color_t white = {GFX_COLOR_INDEX_UNMAPPED, 255, 255, 255};
+//static gfx_pixmap_color_t white = {GFX_COLOR_INDEX_UNMAPPED, 255, 255, 255};
 
-gfx_pixmap_color_t *get_pic_color(EngineState *s, int color) {
+//PaletteEntry white(255, 255, 255);
+
+PaletteEntry get_pic_color(EngineState *s, int color) {
 	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
-		return &(s->ega_colors[color].visual);
+		return s->ega_colors[color].visual;
 
 	if (color == 255)
-		return &white;
-	else if (color < KERNEL_COLORS_NR)
-		return &(KERNEL_COLOR_PALETTE[color]);
+		return PaletteEntry(255,255,255);
+	else if (color < (int)KERNEL_COLORS_NR)
+		return KERNEL_COLOR_PALETTE->getColor(color);
 	else {
 		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, KERNEL_COLORS_NR);
 		BREAKPOINT();
-		return NULL;
+		return PaletteEntry(0,0,0); 
 	}
 }
 
@@ -293,7 +295,7 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
 		                (color == -1) ? 255 : 0, priority, control);
 	} else {
-		retval.visual = *(get_pic_color(s, color));
+		retval.visual = get_pic_color(s, color);
 		retval.alpha = 0;
 		retval.priority = priority;
 		retval.control = control;
@@ -1276,10 +1278,10 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		int i, delta, bestindex = -1, bestdelta = 200000;
 
-		for (i = 0; i < KERNEL_COLORS_NR; i++) {
-			int dr = abs(KERNEL_COLOR_PALETTE[i].r - r);
-			int dg = abs(KERNEL_COLOR_PALETTE[i].g - g);
-			int db = abs(KERNEL_COLOR_PALETTE[i].b - b);
+		for (i = 0; i < (int)KERNEL_COLORS_NR; i++) {
+			int dr = abs(KERNEL_COLOR_PALETTE->getColor(i).r - r);
+			int dg = abs(KERNEL_COLOR_PALETTE->getColor(i).g - g);
+			int db = abs(KERNEL_COLOR_PALETTE->getColor(i).b - b);
 
 			delta = dr * dr + dg * dg + db * db;
 
@@ -2464,9 +2466,9 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (SKPV_OR_ALT(8 + argextra, 255) >= 0) {
 		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
-			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8 + argextra, 15)));
+			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 15));
 		else
-			bgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255)));
+			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255));
 		bgcolor.mask = GFX_MASK_VISUAL;
 	}
 
@@ -2475,13 +2477,14 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bgcolor.alpha = 0;
 	SCIkdebug(SCIkGRAPHICS, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
 
-	fgcolor.visual = *(get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0)));
+	fgcolor.visual = get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0));
 	fgcolor.mask = GFX_MASK_VISUAL;
 	fgcolor.alpha = 0;
-	black.visual = *(get_pic_color(s, 0));
+	black.visual = get_pic_color(s, 0);
 	black.mask = GFX_MASK_VISUAL;
 	black.alpha = 0;
-	lWhite.visual = *(get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255)), lWhite.mask = GFX_MASK_VISUAL;
+	lWhite.visual = get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255);
+	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr, fgcolor, bgcolor,
@@ -3083,7 +3086,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV_OR_ALT(1, 0);
 	int temp;
 	bool save_under = false;
-	gfx_color_t transparent = { { -1, 0, 0, 0 }, 0, -1, -1, 0 };
+	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	char *text;
 	gfxw_port_t *port = (s->port) ? s->port : s->picture_port;
 	bool update_immediately = true;
@@ -3100,7 +3103,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked 
 	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
-		color0.visual = bg_color.visual = *get_pic_color(s, 0);
+		color0.visual = bg_color.visual = get_pic_color(s, 0);
 	}
 
 	if (textp.segment) {
@@ -3140,7 +3143,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				color0 = (s->ega_colors[temp]);
 			else
 				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp < 256) {
-					color0.visual = *(get_pic_color(s, temp));
+					color0.visual = get_pic_color(s, temp);
 					color0.mask = GFX_MASK_VISUAL;
 				} else
 					if (temp == -1)
@@ -3157,7 +3160,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				bg_color = s->ega_colors[temp];
 			else
 				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp <= 256) {
-					bg_color.visual = *get_pic_color(s, temp);
+					bg_color.visual = get_pic_color(s, temp);
 					bg_color.mask = GFX_MASK_VISUAL;
 				} else
 					if (temp == -1)

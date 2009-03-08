@@ -68,9 +68,9 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int fgcolor = SKPV_OR_ALT(1, s->status_bar_foreground);
 	int bgcolor = SKPV_OR_ALT(2, s->status_bar_background);
 
-	s->titlebar_port->color.visual = *(get_pic_color(s, fgcolor));
+	s->titlebar_port->color.visual = get_pic_color(s, fgcolor);
 	s->titlebar_port->color.mask = GFX_MASK_VISUAL;
-	s->titlebar_port->bgcolor.visual = *(get_pic_color(s, bgcolor));
+	s->titlebar_port->bgcolor.visual = get_pic_color(s, bgcolor);
 	s->titlebar_port->bgcolor.mask = GFX_MASK_VISUAL;
 
 	s->status_bar_foreground = fgcolor;

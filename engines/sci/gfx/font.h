@@ -109,7 +109,7 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 */
 
 gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
-	gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg);
+	PaletteEntry *fg0, PaletteEntry *fg1, PaletteEntry *bg);
 /* Draws text in a specific font to a pixmap
 ** Parameters: (gfx_bitmap_font_t *) font: The font to use for drawing
 **             (char *) text: The start of the text to draw

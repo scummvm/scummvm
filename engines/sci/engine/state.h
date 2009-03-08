@@ -310,7 +310,7 @@ bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata*
 /* Read the header from a savegame
 */
 
-gfx_pixmap_color_t *get_pic_color(EngineState *s, int color);
+PaletteEntry get_pic_color(EngineState *s, int color);
 /* Retrieves the gfx_pixmap_color_t associated with a game color index
 ** Parameters: (EngineState *) s: The game state
 **             (int) color: The color to look up

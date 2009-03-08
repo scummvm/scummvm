@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	gfx/gfx_widgets.o \
 	gfx/menubar.o \
 	gfx/operations.o \
+	gfx/palette.o \
 	gfx/resmgr.o \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \

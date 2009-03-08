@@ -83,8 +83,7 @@ struct gfx_resstate_t {
 	int version; /* Interpreter version */
 	gfx_options_t *options;
 	gfx_driver_t *driver;
-	gfx_pixmap_color_t *static_palette;
-	int static_palette_entries;
+	Palette *static_palette;
 	int lock_counter; /* Global lock counter; increased for each new resource allocated.
 			  ** The newly allocated resource will then be assigned the new value
 			  ** of the lock_counter, as will any resources referenced afterwards.
@@ -309,7 +308,7 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 ** Returns   : (gfx_pixmap_t *) The cursor pixmap, or NULL on error
 */
 
-gfx_pixmap_color_t *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal);
+Palette *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal);
 /* Retreives the static palette from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
@@ -318,7 +317,7 @@ gfx_pixmap_color_t *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, i
 **             if a static palette must be used, NULL otherwise
 */
 
-gfx_pixmap_color_t *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr);
+Palette *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr);
 /* Retreives the static palette from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use

@@ -867,10 +867,7 @@ gfxw_dyn_view_t *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z,
 	widget->color.priority = priority;
 	widget->color.control = control;
 	widget->color.alpha = 0;
-	widget->color.visual.global_index = 0;
-	widget->color.visual.r = 0;
-	widget->color.visual.g = 0;
-	widget->color.visual.b = 0;
+	widget->color.visual = PaletteEntry(0,0,0); // FIXME: black!
 	widget->view = view;
 	widget->loop = loop;
 	widget->cel = cel;
@@ -2042,7 +2039,7 @@ gfxw_dyn_view_t *gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
 
 gfxw_port_t *gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
 	gfxw_port_t *result = NULL;
-	gfx_color_t transparent = {{-1, 0, 0, 01}, 0, -1, -1, 0};
+	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0};
 	int id = 0;
 
 	if (!(flags & GFXW_CHRONO_NON_TOPMOST)) {

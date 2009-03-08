@@ -66,15 +66,16 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_xl * xfact * pxm->index_yl * yfact);
 
 	// Calculate all colors
-	for (i = 0; i < pxm->colors_nr; i++) {
+	for (i = 0; i < pxm->colors_nr(); i++) {
 		int col;
 
+		const PaletteEntry& color = pxm->palette->getColor(i);
 		if (PALETTE_MODE)
-			col = pxm->colors[i].global_index;
+			col = color.parent_index;
 		else {
-			col = mode->red_mask & ((EXTEND_COLOR(pxm->colors[i].r)) >> mode->red_shift);
-			col |= mode->green_mask & ((EXTEND_COLOR(pxm->colors[i].g)) >> mode->green_shift);
-			col |= mode->blue_mask & ((EXTEND_COLOR(pxm->colors[i].b)) >> mode->blue_shift);
+			col = mode->red_mask & ((EXTEND_COLOR(color.r)) >> mode->red_shift);
+			col |= mode->green_mask & ((EXTEND_COLOR(color.g)) >> mode->green_shift);
+			col |= mode->blue_mask & ((EXTEND_COLOR(color.b)) >> mode->blue_shift);
 			col |= alpha_ormask;
 		}
 		result_colors[i] = col;
@@ -247,9 +248,10 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 				rec[2] = other[2] - ctexel[2]; \
 				rec[3] = 0xffff - ctexel[3]; \
 			} else { \
-				rec[0] = (EXTEND_COLOR(pxm->colors[nr].r) >> 16) - ctexel[0]; \
-				rec[1] = (EXTEND_COLOR(pxm->colors[nr].g) >> 16) - ctexel[1]; \
-				rec[2] = (EXTEND_COLOR(pxm->colors[nr].b) >> 16) - ctexel[2]; \
+				const PaletteEntry& e = (*pxm->palette)[nr]; \
+				rec[0] = (EXTEND_COLOR(e.r) >> 16) - ctexel[0]; \
+				rec[1] = (EXTEND_COLOR(e.g) >> 16) - ctexel[1]; \
+				rec[2] = (EXTEND_COLOR(e.b) >> 16) - ctexel[2]; \
 				rec[3] = 0 - ctexel[3]; \
 			}
 
@@ -326,9 +328,10 @@ static inline void gfx_apply_delta(unsigned int *color, int *delta, int factor) 
 				rec[2] = 0; \
 				rec[3] = 0xffffff; \
 			} else { \
-				rec[0] = (EXTEND_COLOR(pxm->colors[nr].r) >> 8); \
-				rec[1] = (EXTEND_COLOR(pxm->colors[nr].g) >> 8); \
-				rec[2] = (EXTEND_COLOR(pxm->colors[nr].b) >> 8); \
+				const PaletteEntry& e = (*pxm->palette)[nr]; \
+				rec[0] = (EXTEND_COLOR(e.r) >> 8); \
+				rec[1] = (EXTEND_COLOR(e.g) >> 8); \
+				rec[2] = (EXTEND_COLOR(e.b) >> 8); \
 				rec[3] = 0; \
 			}
 

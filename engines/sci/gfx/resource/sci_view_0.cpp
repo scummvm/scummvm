@@ -49,14 +49,11 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 
 	retval->xoffset = mirrored ? xhot : -xhot;
 	retval->yoffset = -yhot;
-	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 
 	if (view) {
-		retval->colors = view->colors;
-		retval->colors_nr = view->colors_nr;
+		retval->palette = view->palette->getref();
 	} else {
-		retval->colors = gfx_sci0_image_colors[sci0_palette];
-		retval->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
+		retval->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 	}
 
 	if (xl <= 0 || yl <= 0) {
@@ -183,9 +180,8 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	view->loops_nr = resource[V0_LOOPS_NR_OFFSET];
 
 	// Set palette
-	view->colors_nr = GFX_SCI0_IMAGE_COLORS_NR;
-	view->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	view->colors = gfx_sci0_image_colors[sci0_palette];
+	view->flags = 0;
+	view->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 
 	if ((palette_ofs) && (palette >= 0)) {
 		byte *paldata = resource + palette_ofs + (palette * GFX_SCI0_IMAGE_COLORS_NR);

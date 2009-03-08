@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "sci/sci_memory.h"
 #include "sci/tools.h"
+#include "sci/gfx/palette.h"
 
 namespace Sci {
 
@@ -50,26 +51,6 @@ namespace Sci {
 
 #define GFX_COLOR_SYSTEM -1
 
-
-/** Palette color description */
-struct gfx_palette_color_t {
-
-	int lockers; /* Number of pixmaps holding a lock on that color.
-		     ** 0 means that the color is unused, -1 means that it is
-		     ** "system allocated" and may not be freed.  */
-	byte r, g, b; /* Red, green, blue; intensity varies from 0 (min) to 255 (max) */
-
-};
-
-/** Palette description for color index modes */
-struct gfx_palette_t{
-
-	int max_colors_nr; /* Maximum number of allocated colors */
-	gfx_palette_color_t *colors; /* Actual colors, malloc()d as a block */
-};
-
-
-
 #define GFX_MODE_IS_UNSCALED(mode) (((mode)->xfact == 1) && ((mode)->yfact == 1))
 
 /* Reverse-endian: Target display has non-native endianness
@@ -88,9 +69,8 @@ struct gfx_mode_t {
 	uint32 flags; /* GFX_MODE_FLAG_* Flags- see above */
 
 
-	gfx_palette_t *palette; /* Palette or NULL to indicate non-palette mode.
-				** Palette (color-index) mode is only supported
-				** for bytespp=1.  */
+	Palette *palette; // Palette or NULL to indicate non-palette mode.
+	                  // Palette mode is only supported for bytespp = 1
 
 	/* Color masks */
 	uint32 red_mask, green_mask, blue_mask, alpha_mask;
@@ -119,7 +99,7 @@ struct  gfx_pixmap_color_t{
 
 /** Full color */
 struct gfx_color_t {
-	gfx_pixmap_color_t visual;
+	PaletteEntry visual;
 	uint8 alpha; /* transparency = (1-opacity) */
 	int8 priority, control;
 	byte mask; /* see mask values below */
@@ -232,11 +212,7 @@ static inline rect_t gfx_rect_translate(rect_t rect, Common::Point offset) {
 #define GFX_PIC_COLORS 256
 
 #define GFX_PIXMAP_FLAG_SCALED_INDEX      (1<<0) /* Index data is scaled already */
-#define GFX_PIXMAP_FLAG_EXTERNAL_PALETTE  (1<<1) /* The colors pointer points to an external palette */
 #define GFX_PIXMAP_FLAG_INSTALLED         (1<<2) /* Pixmap has been registered */
-#define GFX_PIXMAP_FLAG_PALETTE_ALLOCATED (1<<3) /* Palette has been allocated */
-#define GFX_PIXMAP_FLAG_PALETTE_SET       (1<<4) /* Palette has been propagated to the driver */
-#define GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE (1<<5) /* Used by text, which uses preallocated colors */
 #define GFX_PIXMAP_FLAG_PALETTIZED	  (1<<6) /* Indicates a palettized view */
 
 #define GFX_PIXMAP_COLOR_KEY_NONE -1 /* No transpacency colour key */
@@ -249,8 +225,9 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 
 
 	/*** Color map ***/
-	int colors_nr;
-	gfx_pixmap_color_t *colors; /* colors_nr color entries, or NULL if the
+	Palette *palette;
+	int colors_nr() const { return palette ? palette->size() : 0; }
+				    /* color entries, or NULL if the
 				    ** default palette is to be used.
 				    ** A maximum of 255 colors is allowed; color
 				    ** index 0xff is reserved for transparency.
@@ -293,10 +270,6 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 /***********************/
 /*** Constant values ***/
 /***********************/
-
-/* Default palettes */
-extern gfx_pixmap_color_t gfx_sci0_image_colors[][16];
-extern gfx_pixmap_color_t gfx_sci0_pic_colors[256];
 
 /* Return values */
 enum gfx_return_value_t {

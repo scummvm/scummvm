@@ -39,13 +39,13 @@ namespace Sci {
 #define SCI_PAL_FORMAT_VARIABLE_FLAGS 0
 #define SCI_PAL_FORMAT_CONSTANT_FLAGS 1
 
-gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int size) {
+Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 	int start_color = resource[25];
 	int format = resource[32];
 	int entry_size = 0;
-	gfx_pixmap_color_t *retval;
+	Palette *retval;
 	byte *pal_data = resource + 37;
-	int _colors_nr = *colors_nr = READ_LE_UINT16(resource + 29);
+	int _colors_nr = READ_LE_UINT16(resource + 29);
 	int i;
 
 	switch (format) {
@@ -57,28 +57,21 @@ gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int 
 		break;
 	}
 
-	retval = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
-	memset(retval, 0, sizeof(gfx_pixmap_color_t) * (_colors_nr + start_color));
+	retval = new Palette(_colors_nr + start_color);
+	char buf[100];
+	sprintf(buf, "read_pal11 (id %d)", id);
+	retval->name = buf;
 
 	for (i = 0; i < start_color; i ++) {
-		retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
-		retval[i].r = 0;
-		retval[i].g = 0;
-		retval[i].b = 0;
+		retval->setColor(i, 0, 0, 0);
 	}
 	for (i = start_color; i < start_color + _colors_nr; i ++) {
 		switch (format) {
 		case SCI_PAL_FORMAT_CONSTANT_FLAGS:
-			retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
-			retval[i].r = pal_data[0];
-			retval[i].g = pal_data[1];
-			retval[i].b = pal_data[2];
+			retval->setColor(i, pal_data[0], pal_data[1], pal_data[2]);
 			break;
 		case SCI_PAL_FORMAT_VARIABLE_FLAGS:
-			retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
-			retval[i].r = pal_data[1];
-			retval[i].g = pal_data[2];
-			retval[i].b = pal_data[3];
+			retval->setColor(i, pal_data[1], pal_data[2], pal_data[3]);
 			break;
 		}
 		pal_data += entry_size;
@@ -87,11 +80,10 @@ gfx_pixmap_color_t *gfxr_read_pal11(int id, int *colors_nr, byte *resource, int 
 	return retval;
 }
 
-gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int size) {
+Palette *gfxr_read_pal1(int id, byte *resource, int size) {
 	int counter = 0;
 	int pos;
 	unsigned int colors[MAX_COLORS] = {0};
-	gfx_pixmap_color_t *retval;
 
 	if (size < PALETTE_START + 4) {
 		GFXERROR("Palette resource too small in %04x\n", id);
@@ -118,26 +110,22 @@ gfx_pixmap_color_t *gfxr_read_pal1(int id, int *colors_nr, byte *resource, int s
 		return NULL;
 	}
 
-	retval = (gfx_pixmap_color_t*)sci_malloc(sizeof(gfx_pixmap_color_t) * counter);
+	Palette *retval = new Palette(counter);
+	char buf[100];
+	sprintf(buf, "read_pal1 (id %d)", id);
+	retval->name = buf;
 
-	*colors_nr = counter;
 	for (pos = 0; pos < counter; pos++) {
 		unsigned int color = colors[pos];
-
-		retval[pos].global_index = GFX_COLOR_INDEX_UNMAPPED;
-		retval[pos].r = (color >> 8) & 0xff;
-		retval[pos].g = (color >> 16) & 0xff;
-		retval[pos].b = (color >> 24) & 0xff;
+		retval->setColor(pos, (color >> 8) & 0xff, (color >> 16) & 0xff, (color >> 24) & 0xff);
 	}
 
 	return retval;
 }
 
-gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, Common::File &file) {
+Palette *gfxr_read_pal1_amiga(Common::File &file) {
 	int i;
-	gfx_pixmap_color_t *retval;
-
-	retval = (gfx_pixmap_color_t *)sci_malloc(sizeof(gfx_pixmap_color_t) * 32);
+	Palette *retval = new Palette(32);
 
 	for (i = 0; i < 32; i++) {
 		int b1, b2;
@@ -150,13 +138,8 @@ gfx_pixmap_color_t *gfxr_read_pal1_amiga(int *colors_nr, Common::File &file) {
 			return NULL;
 		}
 
-		retval[i].global_index = GFX_COLOR_INDEX_UNMAPPED;
-		retval[i].r = (b1 & 0xf) * 0x11;
-		retval[i].g = ((b2 & 0xf0) >> 4) * 0x11;
-		retval[i].b = (b2 & 0xf) * 0x11;
+		retval->setColor(i, (b1 & 0xf) * 0x11, ((b2 & 0xf0) >> 4) * 0x11, (b2 & 0xf) * 0x11);
 	}
-
-	*colors_nr = 32;
 
 	return retval;
 }

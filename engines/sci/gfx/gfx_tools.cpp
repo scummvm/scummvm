@@ -44,7 +44,7 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 		box->yl = maxy - box->y + 1;
 }
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, int palette, int flags) {
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags) {
 	gfx_mode_t *mode = (gfx_mode_t *)sci_malloc(sizeof(gfx_mode_t));
 
 	mode->xfact = xfact;
@@ -72,22 +72,14 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 		mode->alpha_shift = 0;
 	}
 	mode->flags = flags;
-
-	if (palette) {
-		mode->palette = (gfx_palette_t *)sci_malloc(sizeof(gfx_palette_t));
-		mode->palette->max_colors_nr = palette;
-		mode->palette->colors = (gfx_palette_color_t *)sci_calloc(sizeof(gfx_palette_color_t), palette); // Initialize with empty entries
-	} else
-		mode->palette = NULL;
+	mode->palette = palette;
 
 	return mode;
 }
 
 void gfx_free_mode(gfx_mode_t *mode) {
-	if (mode->palette) {
-		free(mode->palette->colors);
-		free(mode->palette);
-	}
+	if (mode->palette)
+		mode->palette->free();
 	free(mode);
 }
 
@@ -118,7 +110,7 @@ gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 	gfx_pixmap_t *clone = (gfx_pixmap_t *)sci_malloc(sizeof(gfx_pixmap_t));
 	*clone = *pxm;
 	clone->index_data = NULL;
-	clone->colors = NULL;
+	clone->palette = NULL;
 	clone->data = NULL;
 	gfx_pixmap_alloc_data(clone, mode);
 
@@ -137,7 +129,7 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	pxm->alpha_map = NULL;
 	pxm->data = NULL;
 	pxm->internal.info = NULL;
-	pxm->colors = NULL;
+	pxm->palette = NULL;
 	pxm->internal.handle = 0;
 
 	pxm->index_xl = xl;
@@ -158,35 +150,15 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 
 void gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (driver) {
-		if (driver->mode->palette && pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED
-		        && !(pxm->flags & GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE) && !(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE)) {
-			int i;
-			int error = 0;
-
-			GFXDEBUG("UNALLOCATING %d\n", pxm->colors_nr);
-			for (i = 0; i < pxm->colors_nr; i++)
-				if (gfx_free_color(driver->mode->palette, pxm->colors + i))
-					error++;
-
-			if (error) {
-				GFXWARN("%d errors occured while freeing %d colors of pixmap with ID %06x/%d/%d\n",
-				        error, pxm->colors_nr, pxm->ID, pxm->loop, pxm->cel);
-			}
+		if (driver->mode->palette) {
+			if (pxm->palette)
+				pxm->palette->free();
 		}
 	}
 
-	if (pxm->index_data)
-		free(pxm->index_data);
-
-	if (pxm->alpha_map)
-		free(pxm->alpha_map);
-
-	if (pxm->data)
-		free(pxm->data);
-
-	if (pxm->colors && !(pxm->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE))
-		free(pxm->colors);
-
+	free(pxm->index_data);
+	free(pxm->alpha_map);
+	free(pxm->data);
 	free(pxm);
 }
 
@@ -254,105 +226,6 @@ gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 	pixmap->data = NULL;
 
 	return pixmap;
-}
-
-int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
-	int i;
-	int dr, dg, db;
-	int bestdelta = 1 + ((0x100 * 0x100) * 3);
-	int bestcolor = -1;
-	int firstfree = -1;
-
-	if (pal == NULL)
-		return GFX_OK;
-
-	if (pal->max_colors_nr <= 0) {
-		GFXERROR("Palette has zero or less color entries!\n");
-		return GFX_ERROR;
-	}
-
-
-	if (color->global_index != GFX_COLOR_INDEX_UNMAPPED) {
-#if 0
-		GFXDEBUG("Attempt to allocate color twice: index 0x%d (%02x/%02x/%02x)!\n",
-		         color->global_index, color->r, color->g, color->b);
-#endif
-		return GFX_OK;
-	}
-
-	for (i = 0; i < pal->max_colors_nr; i++) {
-		gfx_palette_color_t *pal_color = pal->colors + i;
-
-		if (pal_color->lockers) {
-			int delta;
-
-			dr = abs(pal_color->r - color->r);
-			dg = abs(pal_color->g - color->g);
-			db = abs(pal_color->b - color->b);
-
-			if (dr == 0 && dg == 0 && db == 0) {
-				color->global_index = i;
-				if (pal->colors[i].lockers != GFX_COLOR_SYSTEM)
-					pal->colors[i].lockers++;
-				return GFX_OK;
-			}
-
-			delta = (dr * dr) + (dg * dg) + (db * db);
-			if (delta < bestdelta) {
-				bestdelta = delta;
-				bestcolor = i;
-			}
-		} else
-			if (firstfree == -1)
-				firstfree = i;
-	}
-
-	if (firstfree != -1) {
-		pal->colors[firstfree].r = color->r;
-		pal->colors[firstfree].g = color->g;
-		pal->colors[firstfree].b = color->b;
-		pal->colors[firstfree].lockers = 1;
-		color->global_index = firstfree;
-
-		return 42; // positive value to indicate that this color still needs to be set
-	}
-
-	color->global_index = bestcolor;
-	if (pal->colors[bestcolor].lockers != GFX_COLOR_SYSTEM)
-		pal->colors[bestcolor].lockers++;
-
-	//GFXWARN("Out of palette colors- doing approximated mapping");
-	return GFX_OK;
-}
-
-int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color) {
-	gfx_palette_color_t *palette_color = pal->colors + color->global_index;
-
-	if (!pal)
-		return GFX_OK;
-
-	if (color->global_index == GFX_COLOR_INDEX_UNMAPPED) {
-		GFXWARN("Attempt to free unmapped color %02x/%02x/%02x!\n", color->r, color->g, color->b);
-		BREAKPOINT();
-		return GFX_ERROR;
-	}
-
-	if (color->global_index >= pal->max_colors_nr) {
-		GFXERROR("Attempt to free invalid color index %d (%02x/%02x/%02x)\n", color->global_index, color->r, color->g, color->b);
-		return GFX_ERROR;
-	}
-
-	if (!palette_color->lockers) {
-		GFXERROR("Attempt to free unused color index %d (%02x/%02x/%02x)\n", color->global_index, color->r, color->g, color->b);
-		return GFX_ERROR;
-	}
-
-	if (palette_color->lockers != GFX_COLOR_SYSTEM)
-		--(palette_color->lockers);
-
-	color->global_index = GFX_COLOR_INDEX_UNMAPPED;
-
-	return GFX_OK;
 }
 
 gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {

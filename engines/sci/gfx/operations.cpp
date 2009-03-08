@@ -96,29 +96,6 @@ static void _gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
 	point->y *= yfact;
 }
 
-static void _gfxop_alloc_colors(gfx_state_t *state, gfx_pixmap_color_t *colors, int colors_nr) {
-	int i;
-
-	if (!PALETTE_MODE)
-		return;
-
-	for (i = 0; i < colors_nr; i++)
-		gfx_alloc_color(state->driver->mode->palette, colors + i);
-}
-
-#if 0
-// Unreferenced - removed
-static void _gfxop_free_colors(gfx_state_t *state, gfx_pixmap_color_t *colors, int colors_nr) {
-	int i;
-
-	if (!PALETTE_MODE)
-		return;
-
-	for (i = 0; i < colors_nr; i++)
-		gfx_free_color(state->driver->mode->palette, colors + i);
-}
-#endif
-
 int _gfxop_clip(rect_t *rect, rect_t clipzone) {
 // Returns 1 if nothing is left */
 #if 0
@@ -225,25 +202,22 @@ DRAW_LOOP(map->index_data[offset] < color) // Draw only lower priority
 #undef DRAW_LOOP
 
 static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
-	int error;
+	if (!driver->mode->palette) return GFX_OK;
+	if (!pxm->palette) return GFX_OK;
+	
+	assert(pxm->palette->getParent() == driver->mode->palette);
 
-	if (driver->mode->palette && (!(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_SET))) {
-		int i;
+	if (!driver->mode->palette->isDirty()) return GFX_OK;
 
-		for (i = 0; i < pxm->colors_nr; i++) {
-			if ((error = driver->set_palette(driver, pxm->colors[i].global_index, pxm->colors[i].r,
-			                                 pxm->colors[i].g, pxm->colors[i].b))) {
-
-				GFXWARN("driver->set_palette(%d, %02x/%02x/%02x) failed!\n",
-				        pxm->colors[i].global_index, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
-
-				if (error == GFX_FATAL)
-					return GFX_FATAL;
-			}
-		}
-
-		pxm->flags |= GFX_PIXMAP_FLAG_PALETTE_SET;
+	// TODO: We probably want to only update the colours used by this pixmap
+	// here. This will require updating the 'dirty' system.
+	for (unsigned int i = 0; i < driver->mode->palette->size(); ++i) {
+		const PaletteEntry& c = (*driver->mode->palette)[i];
+		driver->set_palette(driver, i, c.r, c.g, c.b);
 	}
+
+	driver->install_palette(driver, driver->mode->palette);
+	driver->mode->palette->markClean();
 	return GFX_OK;
 }
 
@@ -438,12 +412,13 @@ static int _gfxop_clear_dirty_rec(gfx_state_t *state, gfx_dirty_rect_t *rect) {
 
 static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	*pixmap = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320, 200, GFX_RESID_NONE, 0, 0));
-	(*pixmap)->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
-	(*pixmap)->colors_nr = DEFAULT_COLORS_NR;
-	(*pixmap)->colors = default_colors;
+	//  FIXME: don't duplicate this palette for every aux_pixmap
+	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
 static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *misc_payload) {
+	gfxr_init_static_palette();
+
 	state->options = options;
 
 	if (!((state->resstate = gfxr_new_resource_manager(state->version, state->options, state->driver, misc_payload)))) {
@@ -451,9 +426,8 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 		return GFX_FATAL;
 	}
 
-	if ((state->static_palette = gfxr_interpreter_get_static_palette(state->resstate, state->version,
-	                                                &(state->static_palette_entries), misc_payload)))
-		_gfxop_alloc_colors(state, state->static_palette, state->static_palette_entries);
+	int size;
+	state->static_palette = gfxr_interpreter_get_static_palette(state->resstate, state->version, &size, misc_payload);
 
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -622,8 +596,6 @@ int gfxop_set_clip_zone(gfx_state_t *state, rect_t zone) {
 }
 
 int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b, int a, int priority, int control) {
-	gfx_pixmap_color_t pixmap_color = {0, 0, 0, 0};
-	int error_code;
 	int mask = ((r >= 0 && g >= 0 && b >= 0) ? GFX_MASK_VISUAL : 0) | ((priority >= 0) ? GFX_MASK_PRIORITY : 0)
 	           | ((control >= 0) ? GFX_MASK_CONTROL : 0);
 
@@ -644,20 +616,7 @@ int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b,
 		color->alpha = a;
 
 		if (PALETTE_MODE) {
-			pixmap_color.r = r;
-			pixmap_color.g = g;
-			pixmap_color.b = b;
-			pixmap_color.global_index = GFX_COLOR_INDEX_UNMAPPED;
-			if ((error_code = gfx_alloc_color(state->driver->mode->palette, &pixmap_color))) {
-				if (error_code < 0) {
-					GFXWARN("Could not get color entry for %02x/%02x/%02x\n", r, g, b);
-					return error_code;
-				} else if ((error_code = state->driver->set_palette(state->driver, pixmap_color.global_index, (byte) r, (byte) g, (byte) b))) {
-					GFXWARN("Graphics driver failed to set color index %d to (%02x/%02x/%02x)\n", pixmap_color.global_index, r, g, b);
-					return error_code;
-				}
-			}
-			color->visual.global_index = pixmap_color.global_index;
+			color->visual.parent_index = state->driver->mode->palette->findNearbyColor(r,g,b,true);
 		}
 	}
 
@@ -674,51 +633,26 @@ int gfxop_set_color(gfx_state_t *state, gfx_color_t *colorOut, gfx_color_t &colo
 			colorIn.priority, colorIn.control);
 }
 
-int gfxop_set_system_color(gfx_state_t *state, gfx_color_t *color) {
-	gfx_palette_color_t *palette_colors;
+int gfxop_set_system_color(gfx_state_t *state, unsigned int index, gfx_color_t *color) {
 	BASIC_CHECKS(GFX_FATAL);
 
 	if (!PALETTE_MODE)
 		return GFX_OK;
 
-	if (color->visual.global_index < 0 || color->visual.global_index >= state->driver->mode->palette->max_colors_nr) {
-		GFXERROR("Attempt to set invalid color index %02x as system color\n", color->visual.global_index);
+	if (index >= state->driver->mode->palette->size()) {
+		GFXERROR("Attempt to set invalid color index %02x as system color\n", color->visual.parent_index);
 		return GFX_ERROR;
 	}
 
-	palette_colors = state->driver->mode->palette->colors;
-	palette_colors[color->visual.global_index].lockers = GFX_COLOR_SYSTEM;
+	state->driver->mode->palette->makeSystemColor(index, color->visual);
 
 	return GFX_OK;
 }
 
 int gfxop_free_color(gfx_state_t *state, gfx_color_t *color) {
-	gfx_palette_color_t *palette_color = 0;
-	gfx_pixmap_color_t pixmap_color	= {0, 0, 0, 0};
-	int error_code;
-	BASIC_CHECKS(GFX_FATAL);
-
-	if (!PALETTE_MODE)
-		return GFX_OK;
-
-	if (color->visual.global_index < 0 || color->visual.global_index >= state->driver->mode->palette->max_colors_nr) {
-		GFXERROR("Attempt to free invalid color index %02x\n", color->visual.global_index);
-		return GFX_ERROR;
-	}
-
-	pixmap_color.global_index = color->visual.global_index;
-	palette_color = state->driver->mode->palette->colors + pixmap_color.global_index;
-	pixmap_color.r = palette_color->r;
-	pixmap_color.g = palette_color->g;
-	pixmap_color.b = palette_color->b;
-
-	if ((error_code = gfx_free_color(state->driver->mode->palette, &pixmap_color))) {
-		GFXWARN("Failed to free color with color index %02x\n", color->visual.global_index);
-		return error_code;
-	}
-
-	return GFX_OK;
+	// FIXME: implement. (And call in the appropriate places!)
 }
+
 
 // Generic drawing operations
 
@@ -950,7 +884,7 @@ int gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
 		end.y += yfact >> 1;
 	}
 	
-	if (color.visual.global_index == GFX_COLOR_INDEX_UNMAPPED)
+	if (color.visual.parent_index == GFX_COLOR_INDEX_UNMAPPED)
 		gfxop_set_color(state, &color, color);
 	return _gfxop_draw_line_clipped(state, start, end, color, line_mode, line_style);
 }
@@ -1089,7 +1023,7 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
 		color1.priority = 0;
 		color1.control = 0;
-		if (color1.visual.global_index == GFX_COLOR_INDEX_UNMAPPED)
+		if (color1.visual.parent_index == GFX_COLOR_INDEX_UNMAPPED)
 			gfxop_set_color(state, &color1, color1);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
 	} else {
@@ -1098,8 +1032,10 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 			return GFX_ERROR;
 		}
 
-		gfx_color_t draw_color1 = {{0, 0, 0, 0}, 0, 0, 0, 0};
-		gfx_color_t draw_color2 = {{0, 0, 0, 0}, 0, 0, 0, 0};
+		gfx_color_t draw_color1; // CHECKME
+		gfx_color_t draw_color2;
+		gfxop_set_color(state, &draw_color1, 0, 0, 0, 0, 0, 0);
+		gfxop_set_color(state, &draw_color2, 0, 0, 0, 0, 0, 0);
 
 		draw_color1.mask = draw_color2.mask = color1.mask;
 		draw_color1.priority = draw_color2.priority = color1.priority;
@@ -1253,7 +1189,6 @@ int gfxop_disable_dirty_frames(gfx_state_t *state) {
 
 
 // Pointer and IO ops
-
 int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 	BASIC_CHECKS(GFX_FATAL);
 
@@ -2174,8 +2109,6 @@ gfx_pixmap_t *gfxop_grab_pixmap(gfx_state_t *state, rect_t area) {
 	_gfxop_scale_rect(&area, state->driver->mode);
 	if (_gfxop_grab_pixmap(state, &pixmap, area.x, area.y, area.xl, area.yl, 0, &resultzone))
 		return NULL; // area CUT the visual screen had a null or negative size
-
-	pixmap->flags |= GFX_PIXMAP_FLAG_PALETTE_SET | GFX_PIXMAP_FLAG_DONT_UNALLOCATE_PALETTE;
 
 	return pixmap;
 }

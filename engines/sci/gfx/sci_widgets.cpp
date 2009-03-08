@@ -135,7 +135,8 @@ gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t 
 	gfx_state_t *state = s->gfx_state;
 	int shadow_offset = 2;
 	rect_t frame;
-	gfx_color_t black	= {{0, 0, 0, 0}, 0, 0, 0, 0};
+	gfx_color_t black;
+	gfxop_set_color(state, &black, 0, 0, 0, 0, 0, 0);
 	gfxw_port_t *win;
 	gfxw_list_t *decorations;
 //	int xextra = !(flags & WINDOW_FLAG_NOFRAME) ? 1 : 0;
@@ -596,7 +597,7 @@ gfxw_widget_t *_make_menu_entry(menu_item_t *item, int offset, int width, gfxw_p
 	rect_t area = gfx_rect(MENU_BOX_LEFT_PADDING, 0, width - MENU_BOX_LEFT_PADDING, 10);
 	rect_t list_area = gfx_rect(port->zone.x, area.y + offset + port->zone.y, width, area.yl);
 	gfxw_list_t *list = (gfxw_list_t *) gfxw_set_id(GFXW(gfxw_new_list(list_area, 0)), ID, GFXW_NO_ID);
-	gfx_color_t xcolor = {{0, 0, 0, 0}, 0, 0, 0, 0};
+	gfx_color_t xcolor = { PaletteEntry(), 0, 0, 0, 0};
 
 	color = un_prioritize(color);
 	bgcolor = un_prioritize(bgcolor);

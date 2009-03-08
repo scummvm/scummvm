@@ -244,12 +244,8 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	retval->xoffset = (mirrored) ? xhot : -xhot;
 	retval->yoffset = -yhot;
 
-	if (view) {
-		retval->colors = view->colors;
-		retval->colors_nr = view->colors_nr;
-	}
-
-	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
+	if (view)
+		retval->palette = view->palette->getref();
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(NULL, retval);
@@ -316,8 +312,7 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 #define V1_MAGICS_NR 5
 //static byte view_magics[V1_MAGICS_NR] = {0x80, 0x00, 0x00, 0x00, 0x00};
 
-gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_t *static_pal,
-	int static_pal_nr) {
+gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal) {
 	int i;
 	int palette_offset;
 	gfxr_view_t *view;
@@ -358,22 +353,18 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, gfx_pixmap_color_
 			free(view);
 			return NULL;
 		}
-		if (!(view->colors = gfxr_read_pal1(id, &(view->colors_nr),
-		                                    resource + palette_offset, size - palette_offset))) {
+		if (!(view->palette = gfxr_read_pal1(id, resource + palette_offset, size - palette_offset))) {
 			GFXERROR("view %04x: Palette reading failed. Aborting...\n", id);
 			free(view);
 			return NULL;
 		}
-	} else if (static_pal_nr == GFX_SCI1_AMIGA_COLORS_NR) {
+	} else if (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR) {
 		// Assume we're running an amiga game.
 		amiga_game = 1;
-		view->colors = static_pal;
-		view->colors_nr = static_pal_nr;
-		view->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
+		view->palette = static_pal->getref();
 	} else {
 		GFXWARN("view %04x: Doesn't have a palette. Can FreeSCI handle this?\n", view->ID);
-		view->colors = NULL;
-		view->colors_nr = 0;
+		view->palette = NULL;
 	}
 
 	view->loops = (gfxr_loop_t*)sci_malloc(sizeof(gfxr_loop_t) * view->loops_nr);
@@ -434,12 +425,8 @@ gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *res
 	retval->xoffset = (mirrored) ? xdisplace : -xdisplace;
 	retval->yoffset = -ydisplace;
 
-	if (view) {
-		retval->colors = view->colors;
-		retval->colors_nr = view->colors_nr;
-	}
-
-	retval->flags |= GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
+	if (view)
+		retval->palette = view->palette->getref();
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(NULL, retval);
@@ -494,7 +481,7 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
 
 	// There is no indication of size here, but this is certainly large enough
-	view->colors = gfxr_read_pal11(id, &view->colors_nr, resource + palette_offset, 1284);
+	view->palette = gfxr_read_pal11(id, resource + palette_offset, 1284);
 
 	seeker = resource + header_size;
 	for (i = 0; i < view->loops_nr; i++) {

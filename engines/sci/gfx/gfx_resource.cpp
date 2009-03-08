@@ -55,8 +55,8 @@ static void gfxr_free_loop(gfx_driver_t *driver, gfxr_loop_t *loop) {
 void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view) {
 	int i;
 
-	if (view->colors && !(view->flags & GFX_PIXMAP_FLAG_EXTERNAL_PALETTE))
-		free(view->colors);
+	if (view->palette)
+		view->palette->free();
 
 	if (view->loops) {
 		for (i = 0; i < view->loops_nr; i++)
@@ -352,21 +352,9 @@ static inline void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *p
 void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter) {
 	int was_allocated = 0;
 
-	if (mode->palette && !(pxm->flags & GFX_PIXMAP_FLAG_PALETTE_ALLOCATED)) {
-		int i;
-
-		for (i = 0; i < pxm->colors_nr; i++) {
-			if (gfx_alloc_color(mode->palette, pxm->colors + i) < 0) {
-				GFXWARN("Failed to allocate color %d/%d in pixmap (color %02x/%02x/%02x)!\n",
-				        i, pxm->colors_nr, pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b);
-				pxm->colors[i].global_index = 0;
-			}
-			/*
-			GFXDEBUG("alloc(%02x/%02x/%02x) -> %d\n", pxm->colors[i].r, pxm->colors[i].g, pxm->colors[i].b, pxm->colors[i].global_index);
-			*/
-		}
-
-		pxm->flags |= GFX_PIXMAP_FLAG_PALETTE_ALLOCATED;
+	if (mode->palette) {
+		if (pxm->palette && pxm->palette != mode->palette)
+			pxm->palette->mergeInto(mode->palette);
 	}
 
 
@@ -376,7 +364,7 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 		// Assume that memory, if allocated already, will be sufficient
 
 		// Allocate alpha map
-		if (!mode->alpha_mask && pxm->colors_nr < GFX_PIC_COLORS)
+		if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
 			pxm->alpha_map = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_xl * pxm->index_yl + 1);
 	} else
 		was_allocated = 1;
@@ -398,7 +386,7 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 		GFXERROR("Attempt to filter pixmap %04x in invalid mode #%d\n", pxm->ID, filter);
 
 		if (!was_allocated) {
-			if (!mode->alpha_mask && pxm->colors_nr < GFX_PIC_COLORS)
+			if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
 				free(pxm->alpha_map);
 			free(pxm->data);
 		}

@@ -47,7 +47,7 @@ extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this va
 					  ** for distinguishing between transparent and opaque
 					  ** wrt alpha values */
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, int palette, int flags);
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters
 ** Parameters: (int x int) xfact x yfact: Horizontal and vertical scaling factors
 **             (Graphics::PixelFormat) format: pixel format description
@@ -191,7 +191,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 ** linear access.
 */
 
-int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
+//int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 /* Allocates a color entry for the specified pixmap color
 ** Parameters: (gfx_palette_t *) pal: The palette structure the color should be allocated in
 **             (gfx_pixmap_color_t *) color: The color to allocate
@@ -200,7 +200,7 @@ int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 **                   palette.
 */
 
-int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
+//int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
 /* Frees the color entry allocated for the specified pixmap color
 ** Parameters: (gfx_palette_t *) pal: The palette structure the color was previously allocated in
 **             (gfx_pixmap_color_t *) color: The color to free

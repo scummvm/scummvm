@@ -38,6 +38,7 @@ struct _scummvm_driver_state {
 	byte *visual[2];
 	uint8 *pointer_data;
 	int xsize, ysize;
+	uint8 *palette_data;
 };
 
 #define S ((struct _scummvm_driver_state *)(drv->state))
@@ -75,7 +76,12 @@ static int scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int by
 	}
 
 	Graphics::PixelFormat format = { bytespp, 0, 0, 0, 0, 0, 0, 0, 0 };
-	drv->mode = gfx_new_mode(xfact, yfact, format, 256, 0);
+	drv->mode = gfx_new_mode(xfact, yfact, format, new Palette(256), 0);
+	drv->mode->palette->name = "global";
+
+	S->palette_data = new uint8[4*256];
+	for (i = 0; i < 4*256; ++i)
+		S->palette_data[i] = 0;
 
 	return GFX_OK;
 }
@@ -100,6 +106,9 @@ static void scummvm_exit(gfx_driver_t *drv) {
 		delete[] S->pointer_data;
 		S->pointer_data = NULL;
 
+		delete[] S->palette_data;
+		S->palette_data = NULL;
+
 		delete S;
 	}
 }
@@ -115,7 +124,7 @@ static void drawProc(int x, int y, int c, void *data) {
 
 static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Point end,
 	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
-	uint32 scolor = color.visual.global_index;
+	uint32 scolor = color.visual.parent_index;
 	int xfact = (line_mode == GFX_LINE_MODE_FINE)? 1: drv->mode->xfact;
 	int yfact = (line_mode == GFX_LINE_MODE_FINE)? 1: drv->mode->yfact;
 	int xsize = S->xsize;
@@ -148,7 +157,7 @@ static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t 
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.yl; i++) {
-			memset(S->visual[0] + i * S->xsize + rect.x, color1.visual.global_index, rect.xl);
+			memset(S->visual[0] + i * S->xsize + rect.x, color1.visual.parent_index, rect.xl);
 		}
 	}
 
@@ -267,7 +276,7 @@ static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 		for (int xc = 0; xc < pointer->index_xl; xc++) {
 			uint8 color = *src;
 			if (color != 255)
-				color = pointer->colors[color].global_index;
+				color = pointer->palette->getColor(color).parent_index;
 			for (int scalectr = 0; scalectr < drv->mode->xfact; scalectr++) {
 				*pos++ = color;
 			}
@@ -302,9 +311,16 @@ static int scummvm_set_palette(gfx_driver_t *drv, int index, byte red, byte gree
 		return GFX_ERROR;
 	}
 
-	byte color[] = {red, green, blue, 255};
-	g_system->setPalette(color, index, 1);
+	S->palette_data[4*index+0] = red;
+	S->palette_data[4*index+1] = green;
+	S->palette_data[4*index+2] = blue;
+	S->palette_data[4*index+3] = 255;
 
+	return GFX_OK;
+}
+
+static int scummvm_install_palette(gfx_driver_t *drv, Palette* palette) {
+	g_system->setPalette(S->palette_data, 0, palette->size());
 	return GFX_OK;
 }
 
@@ -326,6 +342,7 @@ gfx_driver_t gfx_driver_scummvm = {
 	scummvm_set_static_buffer,
 	scummvm_set_pointer,
 	scummvm_set_palette,
+	scummvm_install_palette,
 	NULL
 };
 

@@ -102,8 +102,7 @@ struct gfx_state_t {
 	rect_t clip_zone; /* The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
 	gfx_driver_t *driver;
-	gfx_pixmap_color_t *static_palette; /* Null for dynamic palettes */
-	int static_palette_entries;
+	Palette *static_palette; /* Null for dynamic palettes */
 
 	int visible_map;
 
@@ -335,9 +334,10 @@ int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b,
 ** free that color.
 */
 
-int gfxop_set_system_color(gfx_state_t *state, gfx_color_t *color);
+int gfxop_set_system_color(gfx_state_t *state, unsigned int index, gfx_color_t *color);
 /* Designates a color as a 'system color'
 ** Parameters: (gfx_state_t *) state: The affected state
+**             (unsigned int) index: The index for the new system color
 **             (gfx_color_t *) color: The color to designate as a system color
 ** Returns   : (int) GFX_OK or GFX_ERROR if state is invalid
 ** System colors are permanent colors that cannot be deallocated. As such, they must be used

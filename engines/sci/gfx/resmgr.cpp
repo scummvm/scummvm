@@ -58,6 +58,7 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 	state->options = options;
 	state->driver = driver;
 	state->misc_payload = misc_payload;
+	state->static_palette = 0;
 
 	state->tag_lock_counter = state->lock_counter = 0;
 	for (ii = 0; ii < GFX_RESOURCE_TYPES_NR; ii++) {

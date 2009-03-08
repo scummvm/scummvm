@@ -293,10 +293,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	gfxw_list_t *decorations = s->picture_port->decorations;
 	gfxw_primitive_t *line;
 
-	col.visual.global_index = GFX_COLOR_INDEX_UNMAPPED;
-	col.visual.r = poly_colors[type][0];
-	col.visual.g = poly_colors[type][1];
-	col.visual.b = poly_colors[type][2];
+	col.visual = PaletteEntry(poly_colors[type][0], poly_colors[type][1], poly_colors[type][2]);
 	col.alpha = 0;
 	col.priority = -1;
 	col.control = 0;
@@ -318,10 +315,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	gfxw_list_t *decorations = s->picture_port->decorations;
 	gfxw_box_t *box;
 
-	col.visual.global_index = GFX_COLOR_INDEX_UNMAPPED;
-	col.visual.r = point_colors[start][0];
-	col.visual.g = point_colors[start][1];
-	col.visual.b = point_colors[start][2];
+	col.visual = PaletteEntry(point_colors[start][0], point_colors[start][1], point_colors[start][2]);
 	col.alpha = 0;
 	col.priority = -1;
 	col.control = 0;
