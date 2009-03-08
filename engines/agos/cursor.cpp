@@ -523,7 +523,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 		}
 	} else if ((_videoLockOut & 0x10) && _oneClick != 0) {
 		_oneClick++;
-		if (_oneClick < 10) {
+		if (_oneClick > 10) {
 			_hitCalled = 1;
 			_oneClick = 0;
 		}

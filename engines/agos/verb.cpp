@@ -1255,7 +1255,7 @@ void AGOSEngine_PN::hitBox8(HitArea *ha) {
 	}
 	*tmpPtr = 0;
 
-	sprintf(_placeMessage, " in %s", _placeMessage);
+	sprintf(_placeMessage, "put %s", _placeMessage);
 	_mouseString = _placeMessage;
 }
 
