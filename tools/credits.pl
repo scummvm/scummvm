@@ -578,6 +578,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("SCI");
+		  add_person("Greg Frieger", "_FRG_", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
@@ -588,7 +589,6 @@ begin_credits("Credits");
 
 	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Greg Frieger", "", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Max Horn", "Fingolfin", "");
