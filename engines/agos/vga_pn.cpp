@@ -90,23 +90,23 @@ void AGOSEngine_PN::setupVideoOpcodes(VgaOpcodeProc *op) {
 
 bool AGOSEngine_PN::ifObjectHere(uint16 a) {
 	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return _variableArray[39] == getptr(_quickptr[11] + a * _quickshort[4] + 2);
+		return false;
+
+	return _variableArray[39] == getptr(_quickptr[11] + a * _quickshort[4] + 2);
 }
 
 bool AGOSEngine_PN::ifObjectAt(uint16 a, uint16 b) {
 	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return b == getptr(_quickptr[11] + a * _quickshort[4] + 2);
+		return false;
+
+	return b == getptr(_quickptr[11] + a * _quickshort[4] + 2);
 }
 
 bool AGOSEngine_PN::ifObjectState(uint16 a, int16 b) {
 	if (getFeatures() & GF_DEMO)
-		return 0;
-	else
-		return b == getptr(_quickptr[0] + a * _quickshort[0] + 2);
+		return false;
+
+	return b == getptr(_quickptr[0] + a * _quickshort[0] + 2);
 }
 
 void AGOSEngine::vc36_pause() {

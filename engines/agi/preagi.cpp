@@ -30,8 +30,6 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "graphics/cursorman.h"
-
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 

@@ -711,10 +711,9 @@ int AGOSEngine_PN::inventoryOff() {
 // -----------------------------------------------------------------------
 
 
-static int bitvalue[8] = {128, 64, 32, 16, 8, 4, 2, 1};
-
 int AGOSEngine_PN::bitextract(uint32 ptr, int offs) {
-	return ((bitvalue[offs % 8] & _dataBase[ptr + offs / 8]) != 0);
+	const byte mask = 0x80 >> (offs % 8);
+	return ((mask & _dataBase[ptr + offs / 8]) != 0);
 }
 
 uint16 AGOSEngine_PN::getptr(uint32 pos) {
@@ -823,9 +822,11 @@ void AGOSEngine_PN::writeval(uint8 *ptr, int val) {
 
 void AGOSEngine_PN::setbitf(uint32 ptr, int offs, int val) {
 	ptr += offs / 8;
-	_dataBase[ptr] &= (255 - bitvalue[offs % 8]);
+	const byte mask = 0x80 >> (offs % 8);
 	if (val != 0)
-		_dataBase[ptr] |= bitvalue[offs % 8];
+		_dataBase[ptr] |= mask;
+	else
+		_dataBase[ptr] &= ~mask;
 }
 
 int AGOSEngine_PN::actCallD(int n) {
@@ -970,7 +971,7 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 	int val, code, q = _dataBase[57];
 	uint8 *vocbase = _dataBase + getlong(15);
 	while (*vocbase != 255) {
-		if (*vocbase < 128) {
+		if (*vocbase < 0x80) {
 			val = vocbase[q] + 256 * vocbase[q + 1];
 			code = vocbase[q + 2];
 		}
@@ -981,6 +982,8 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 	return -1;
 }
 
+
+// FIXME/TODO: Isn't this just scumm_strnicmp ?
 int AGOSEngine_PN::samewrd(uint8 *w1, uint8 *w2, int ln) {
 	int ct = 0;
 
