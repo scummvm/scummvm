@@ -187,7 +187,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_floatingMouseArrowControl = 0;
 
-	memset(_activeTim, 0, sizeof(TIM));
+	memset(_activeTim, 0, sizeof(_activeTim));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
 
