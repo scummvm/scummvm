@@ -84,7 +84,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_itemsInPlay = 0;
 	_itemProperties = 0;
 	_itemInHand = 0;
-	memset(_inventory, 0, 48 * sizeof(uint16));
+	memset(_inventory, 0, sizeof(_inventory));
 	_inventoryCurItem = 0;
 	_hideControls = 0;
 	_lastCharInventory = -1;
@@ -118,7 +118,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_scriptDirection = 0;
 	_currentDirection = 0;
 	_currentBlock = 0;
-	memset(_currentBlockPropertyIndex, 0, 18 * sizeof(uint16));
+	memset(_currentBlockPropertyIndex, 0, sizeof(_currentBlockPropertyIndex));
 
 	_scrollSceneBuffer = 0;
 	_smoothScrollModeNormal = 1;
@@ -141,7 +141,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_scriptAssignedLevelShape = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
-	memset (_doorShapes, 0, 2 * sizeof(uint8*));
+	memset(_doorShapes, 0, sizeof(_doorShapes));
 
 	_lampOilStatus = _brightness = _lampStatusUnk = 0;
 	_lampStatusSuspended = false;
@@ -187,13 +187,13 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_floatingMouseArrowControl = 0;
 
-	memset(_activeTim, 0, 10 * sizeof(TIM*));
+	memset(_activeTim, 0, sizeof(TIM));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
 
 	_pageBuffer1 = _pageBuffer2 = 0;
 
-	memset(_charStatsTemp, 0, 5 * sizeof(int));
+	memset(_charStatsTemp, 0, sizeof(_charStatsTemp));
 	
 	_unkBt1 = _unkBt2 = 0;
 	_dialogueField = false;
@@ -358,7 +358,8 @@ Common::Error LoLEngine::init() {
 	memset(_pageBuffer1, 0, 0xfa00);
 	_pageBuffer2 = new uint8[0xfa00];
 	memset(_pageBuffer2, 0, 0xfa00);
-
+ 
+	// FIXME: Why do we allocate a 401 entry array, if only 400 entries are used?
 	_itemsInPlay = new ItemInPlay[401];
 	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
 
