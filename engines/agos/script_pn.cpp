@@ -379,11 +379,15 @@ void AGOSEngine_PN::opn_opcode31() {
 			break;
 	}
 
-	a = loadfl(bf);
-	if (a)
-		setScriptReturn(badload(a));
-	else
-		setScriptReturn(true);
+	if (slot == -1) {
+		setScriptReturn(false);
+	} else {
+		a = loadfl(bf);
+		if (a)
+			setScriptReturn(badload(a));
+		else
+			setScriptReturn(true);
+	}
 }
 
 void AGOSEngine_PN::opn_opcode32() {
