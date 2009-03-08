@@ -122,8 +122,6 @@ void TimerManager::update() {
 	_nextRun += 99999;
 
 	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		if (pos->enabled == 1)
-
 		if (pos->enabled == 1 && pos->countdown >= 0) {
 			if (pos->nextRun <= _system->getMillis()) {
 				if (pos->func && pos->func->isValid()) {
