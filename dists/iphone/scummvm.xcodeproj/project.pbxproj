@@ -31,8 +31,6 @@
 		DF093E7B0F63CB26002D821E /* lure.dat in Resources */ = {isa = PBXBuildFile; fileRef = DFE47C820D81F86900B6D1FB /* lure.dat */; };
 		DF093E7C0F63CB26002D821E /* queen.tbl in Resources */ = {isa = PBXBuildFile; fileRef = DFE47C830D81F86900B6D1FB /* queen.tbl */; };
 		DF093E7D0F63CB26002D821E /* sky.cpt in Resources */ = {isa = PBXBuildFile; fileRef = DFE47C850D81F86900B6D1FB /* sky.cpt */; };
-		DF093E7E0F63CB26002D821E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = DF2FFD290F48717F0006E566 /* Default.png */; };
-		DF093E7F0F63CB26002D821E /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = DF2FFD2A0F48717F0006E566 /* icon.png */; };
 		DF093E810F63CB26002D821E /* commandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C10D81F4BA00B6D1FB /* commandLine.cpp */; };
 		DF093E820F63CB26002D821E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470C70D81F4BA00B6D1FB /* main.cpp */; };
 		DF093E830F63CB26002D821E /* plugins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470CA0D81F4BA00B6D1FB /* plugins.cpp */; };
@@ -966,6 +964,7 @@
 		DF0944700F63FCCB002D821E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF09446E0F63FCCB002D821E /* IOKit.framework */; };
 		DF0944780F63FD10002D821E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF0944770F63FD10002D821E /* Cocoa.framework */; };
 		DF0944800F63FD67002D821E /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF09447F0F63FD67002D821E /* AudioUnit.framework */; };
+		DF0944B10F6430ED002D821E /* scummvm.icns in Resources */ = {isa = PBXBuildFile; fileRef = DF0944B00F6430ED002D821E /* scummvm.icns */; };
 		DF2FFB930F485D890006E566 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
 		DF2FFBAF0F485D950006E566 /* dxa_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB9B0F485D950006E566 /* dxa_player.cpp */; };
 		DF2FFBB10F485D950006E566 /* flic_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB9E0F485D950006E566 /* flic_player.cpp */; };
@@ -1950,7 +1949,6 @@
 		DF093E5D0F63CAD4002D821E /* script_pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_pn.cpp; sourceTree = "<group>"; };
 		DF093E5E0F63CAD4002D821E /* vga_pn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vga_pn.cpp; sourceTree = "<group>"; };
 		DF09422A0F63CB26002D821E /* ScummVM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScummVM.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF09422C0F63CB26002D821E /* Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info copy.plist"; sourceTree = "<group>"; };
 		DF0942350F63CB9A002D821E /* events.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = events.cpp; sourceTree = "<group>"; };
 		DF0942370F63CB9A002D821E /* graphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graphics.cpp; sourceTree = "<group>"; };
 		DF0942390F63CB9A002D821E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -1966,6 +1964,7 @@
 		DF09446E0F63FCCB002D821E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		DF0944770F63FD10002D821E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DF09447F0F63FD67002D821E /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		DF0944B00F6430ED002D821E /* scummvm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = scummvm.icns; path = ../../icons/scummvm.icns; sourceTree = SOURCE_ROOT; };
 		DF2FFB900F485D890006E566 /* dither.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dither.cpp; sourceTree = "<group>"; };
 		DF2FFB910F485D890006E566 /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither.h; sourceTree = "<group>"; };
 		DF2FFB920F485D890006E566 /* pixelformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixelformat.h; sourceTree = "<group>"; };
@@ -3684,6 +3683,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DF0944B00F6430ED002D821E /* scummvm.icns */,
 				DFF4DFFC0F4B449F00C50BC7 /* Info.plist.in */,
 				DF2FFD290F48717F0006E566 /* Default.png */,
 				DF2FFD2A0F48717F0006E566 /* icon.png */,
@@ -3693,7 +3693,6 @@
 				DFE47C830D81F86900B6D1FB /* queen.tbl */,
 				DFE47C850D81F86900B6D1FB /* sky.cpt */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				DF09422C0F63CB26002D821E /* Info copy.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -5972,8 +5971,7 @@
 				DF093E7B0F63CB26002D821E /* lure.dat in Resources */,
 				DF093E7C0F63CB26002D821E /* queen.tbl in Resources */,
 				DF093E7D0F63CB26002D821E /* sky.cpt in Resources */,
-				DF093E7E0F63CB26002D821E /* Default.png in Resources */,
-				DF093E7F0F63CB26002D821E /* icon.png in Resources */,
+				DF0944B10F6430ED002D821E /* scummvm.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
