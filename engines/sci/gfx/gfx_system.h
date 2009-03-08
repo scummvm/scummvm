@@ -289,30 +289,6 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 };
 
 
-struct gfx_bitmap_font_t { /* gfx_bitmap_font_t: Bitmap font information */
-	int ID; /* Unique resource ID */
-
-	int chars_nr; /* Numer of available characters */
-
-	int *widths; /* chars_nr character widths, in pixels */
-
-	int row_size; /* Byte size of each pixel row. For unscaled fonts, this is
-		      ** always 1, 2, or 4. Otherwise, it's a multiple of 4.
-		      */
-
-	int line_height; /* Height of each text line (usually identical to height) */
-	int height; /* Height for all characters, in pixel rows */
-	int char_size; /* Amount of memory occupied by one character in data */
-
-	byte *data; /* Font data, consisting of 'chars_nr' entries of 'height' rows
-		    ** of 'row_size' bytes. For each character ch, its first byte
-		    ** (the topmost row) is located at (data + (charsize * ch)), and
-		    ** its pixel width is widths[ch], provided that (ch < chars_nr).
-		    */
-
-};
-
-
 
 /***********************/
 /*** Constant values ***/

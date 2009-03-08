@@ -49,9 +49,6 @@ struct gfx_options_t {
 
 	int buffer_pics_nr; /* Number of unused pics to buffer */
 
-	int correct_rendering; /* Whether to render slow, but correct (rather than
-				** fast and almost correct) */
-
 	/* SCI0 pic resource options */
 	int pic0_unscaled; /* Don't draw scaled SCI0 pics */
 
@@ -65,7 +62,6 @@ struct gfx_options_t {
 	gfx_xlate_filter_t view_xlate_filter;
 	gfx_xlate_filter_t pic_xlate_filter; /* Only relevant if (pic0_unscaled) */
 	gfx_xlate_filter_t text_xlate_filter;
-	gfxr_font_scale_filter_t fixed_font_xlate_filter; /* Scale filter for systems that provide font support which isn't scaled */
 
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
 

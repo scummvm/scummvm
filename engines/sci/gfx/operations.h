@@ -38,6 +38,8 @@
 
 namespace Sci {
 
+struct text_fragment_t;
+
 #define GFXOP_NO_POINTER -1
 
 /* Threshold in color index mode to differentiate between visible and non-visible stuff.

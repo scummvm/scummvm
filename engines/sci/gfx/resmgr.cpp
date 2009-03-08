@@ -34,6 +34,7 @@
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_state_internal.h"
+#include "sci/gfx/font.h"
 
 #include "common/system.h"
 

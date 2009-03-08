@@ -27,6 +27,7 @@
 
 #include "sci/sci_memory.h"
 #include "sci/gfx/operations.h"
+#include "sci/gfx/font.h"
 
 #include "common/system.h"
 #include "common/events.h"

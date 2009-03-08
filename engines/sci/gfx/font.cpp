@@ -27,114 +27,25 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
+#include "sci/gfx/font.h"
 
 namespace Sci {
 
 int font_counter = 0;
 
 void gfxr_free_font(gfx_bitmap_font_t *font) {
-	if (font->widths)
-		free(font->widths);
-
-	if (font->data)
-		free(font->data);
+	free(font->widths);
+	free(font->data);
 
 	--font_counter;
 
 	free(font);
 }
 
-void scale_char(byte *dest, byte *src, int width, int height, int newwidth, int xfact, int yfact) {
-	int x, y;
-
-	for (y = 0; y < height; y++) {
-		int yc;
-		byte *bdest = dest;
-		byte *bsrc = src;
-
-		for (x = 0; x < width; x++) {
-			int xbitc;
-			int bits = 0;
-			int value = 0;
-
-			for (xbitc = 128; xbitc; xbitc >>= 1) {
-				int xc;
-
-				for (xc = 0; xc < xfact; xc++) {
-					if (*bsrc & xbitc)
-						value |= 1;
-					value <<= 1;
-
-					if (++bits == 8) {
-						*bdest++ = value;
-						bits = value = 0;
-					}
-				}
-			}
-			bsrc++;
-		}
-
-		src += width;
-		for (yc = 1; yc < yfact; yc++) {
-			memcpy(dest + newwidth, dest, newwidth);
-			dest += newwidth;
-		}
-		dest += newwidth;
-	}
-}
-
-gfx_bitmap_font_t *gfxr_scale_font_unfiltered(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode) {
-	gfx_bitmap_font_t *font = (gfx_bitmap_font_t *)sci_malloc(sizeof(gfx_bitmap_font_t));
-	int height = orig_font->height * mode->yfact;
-	int width = 0;
-	int byte_width;
-	int i;
-
-	font->chars_nr = orig_font->chars_nr;
-	for (i = 0; i < font->chars_nr; i++)
-		if (orig_font->widths[i] > width)
-			width = orig_font->widths[i];
-
-	width *= mode->xfact;
-	byte_width = (width + 7) >> 3;
-	if (byte_width == 3)
-		byte_width = 4;
-	if (byte_width > 4)
-		byte_width = (byte_width + 3) & ~3;
-
-	font->row_size = byte_width;
-	font->height = height;
-	font->line_height = orig_font->line_height * mode->yfact;
-
-	font->widths = (int*)sci_malloc(sizeof(int) * orig_font->chars_nr);
-	font->char_size = byte_width * height;
-	font->data = (byte*)sci_malloc(font->chars_nr * font->char_size);
-
-	for (i = 0; i < font->chars_nr; i++) {
-		font->widths[i] = orig_font->widths[i] * mode->xfact;
-		scale_char(font->data + font->char_size * i, orig_font->data + orig_font->char_size * i,
-		           orig_font->row_size, orig_font->height, font->row_size, mode->xfact, mode->yfact);
-	}
-
-	return font;
-}
-
-gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *orig_font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter) {
-	GFXWARN("This function hasn't been tested yet!\n");
-
-	switch (filter) {
-
-	case GFXR_FONT_SCALE_FILTER_NONE:
-		return gfxr_scale_font_unfiltered(orig_font, mode);
-
-	default:
-		GFXERROR("Invalid font filter mode %d!\n", filter);
-		return NULL;
-	}
-}
-
-text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text, int *width, int *height,
+text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width,
+	const char *text, int *width, int *height,
 	int *lines, int *line_height_p, int *last_offset_p, int flags) {
+
 	int est_char_width = font->widths[(font->chars_nr > 'M')? 'M' : font->chars_nr - 1];
 	// 'M' is typically among the widest chars
 	int fragments_nr;

@@ -123,16 +123,6 @@ struct gfxr_view_t {
 };
 
 
-enum gfxr_font_scale_filter_t {
-	GFXR_FONT_SCALE_FILTER_NONE
-};
-
-
-struct text_fragment_t {
-	const char *offset;
-	int length;
-};
-
 /* unscaled color index mode: Used in addition to a scaled mode
 ** to render the pic resource twice. See gfxr_remove_artifacts_pic0().
 */
@@ -167,77 +157,6 @@ void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view);
 */
 
 
-/*******************/
-/* Font operations */
-/*******************/
-/* SCI0, SCI01 and SCI1 all use the same font format. */
-
-/* SQ3 uses a somewhat different scheme for calculating text sizes: it counts
-** whitespace while calculating the text size.  */
-#define GFXR_FONT_FLAG_COUNT_WHITESPACE (1<<0)
-/* Don't give newline characters special semantics */
-#define GFXR_FONT_FLAG_NO_NEWLINES (1<<1)
-/* Interpret CR LF sequences as a single newline, rather than two of them */
-#define GFXR_FONT_FLAG_EAT_TRAILING_LF (1<<2)
-
-
-gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size);
-/* Geneartes a bitmap font data structure from a resource
-** Parameters: (int) id: Resource ID of the resulting font
-**             (byte *) resource: Pointer to the resource data
-**             (int) size: Size of the resource block
-** Returns   : (gfx_bitmap_font_t *) The resulting font structure, or
-**                                   NULL on error
-*/
-
-void gfxr_free_font(gfx_bitmap_font_t *font);
-/* Frees a previously allocated font structure
-** Parameters: (gfx_bitmap_font_t *) font: The font to free
-** Returns   : (void)
-*/
-
-gfx_bitmap_font_t *gfxr_scale_font(gfx_bitmap_font_t *font, gfx_mode_t *mode, gfxr_font_scale_filter_t filter);
-/* Scales a font resource
-** Parameters: (gfx_bitmap_font_t *) font: The font to scale
-**             (gfx_mode_t *) mode: The graphics mode to scale it for
-**             (gfxr_font_scale_filter_t) filter: A filter to use
-** Returns   : (gfx_bitmap_font_t *) A scaled font, or NULL on error
-*/
-
-text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
-	int *width, int *height, int *lines, int *line_height, int *last_offset, int flags);
-/* Calculates the size that would be occupied by drawing a specified text
-** Parameters: (gfx_bitmap_font_t *) font: The font to calculate with
-**             (int) max_width: Maximum pixel width allowed for the output
-**             (const char *) text: The text to calculate for
-**             (int) flags: Any text formatting flags
-** Returns   : (text_fragment *) a newly allocated array of text_fragments,
-**                               containing the start and size of each string
-**                               segment
-**             (int) *width: The resulting width
-**             (int) *height: The resulting height
-**             (int) *lines: Number of lines used
-**             (int) *line_height: Pixel height of a single line of text
-**             (int) *last_offset: Pixel offset after the last drawn line
-** This function assumes 320x200 mode.
-*/
-
-gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *text, int characters,
-	gfx_pixmap_color_t *fg0, gfx_pixmap_color_t *fg1, gfx_pixmap_color_t *bg);
-/* Draws text in a specific font to a pixmap
-** Parameters: (gfx_bitmap_font_t *) font: The font to use for drawing
-**             (char *) text: The start of the text to draw
-**             (int) characters: The number of characters to draw
-**             (gfx_pixmap_color_t *) fg0: The first foreground color
-**             (gfx_pixmap_color_t *) fg1: The second foreground color
-**             (gfx_pixmap_color_t *) bg: The background color
-** Returns   : (gfx_pixmap_t *) The result pixmap, or NULL on error
-** The results are written to the pixmap's index buffer. Contents of the
-** foreground and background fields are copied into a newly allocated font
-** structure, so that the pixmap may be translated directly.
-** If any of the colors is null, it will be assumed to be transparent.
-** In color index mode, the specified colors have to be preallocated.
-*/
 
 
 /*********************/

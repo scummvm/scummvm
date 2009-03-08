@@ -35,6 +35,8 @@
 
 namespace Sci {
 
+struct gfx_bitmap_font_t;
+
 enum gfx_resource_type_t {
 	GFX_RESOURCE_TYPE_VIEW = 0,
 	GFX_RESOURCE_TYPE_PIC,

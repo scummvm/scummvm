@@ -47,9 +47,6 @@ int _vocab_cmp_words(const void *word1, const void *word2) {
 }
 
 word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
-	int counter = 0;
-	unsigned int seeker;
-	word_t **words;
 
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
@@ -71,6 +68,7 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 		return NULL; // NOT critical: SCI1 games and some demos don't have one!
 	}
 
+	unsigned int seeker;
 	if (vocab_version == 1)
 		seeker = 255 * 2; // vocab.900 starts with 255 16-bit pointers which we don't use
 	else
@@ -82,6 +80,8 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 		// Now this ought to be critical, but it'll just cause parse() and said() not to work
 	}
 
+	int counter = 0;
+	word_t **words;
 	words = (word_t **)sci_malloc(sizeof(word_t *));
 
 	while (seeker < resource->size) {

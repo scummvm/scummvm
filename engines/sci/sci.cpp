@@ -251,7 +251,6 @@ Common::Error SciEngine::run() {
 	gfx_options_t gfx_options;
 	gfx_options.workarounds = 0;
 	gfx_options.buffer_pics_nr = 0;
-	gfx_options.correct_rendering = 1;
 	gfx_options.pic0_unscaled = 1;
 	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_D256;
 	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;

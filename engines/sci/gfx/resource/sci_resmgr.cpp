@@ -30,6 +30,7 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_options.h"
+#include "sci/gfx/font.h"
 
 #include "common/util.h"
 
