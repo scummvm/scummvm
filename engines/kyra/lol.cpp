@@ -150,7 +150,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsters = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
-	_monsterUnkDir = _monsterCountUnk = _monsterShiftAlt = 0;
+	_monsterLastWalkDirection = _monsterCountUnk = _monsterShiftAlt = 0;
 	_monsterCurBlock = 0;
 	//_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
 
@@ -413,7 +413,7 @@ Common::Error LoLEngine::init() {
 	_tmpData136 = new uint8[136];
 	memset(_tmpData136, 0, 136);
 
-	memset(_gameFlags, 0, 15 * sizeof(uint16));
+	memset(_gameFlags, 0, 16 * sizeof(uint16));
 	memset(_unkEMC46, 0, 16 * sizeof(uint16));
 
 	_levelFileData = 0;
@@ -568,7 +568,7 @@ void LoLEngine::loadItemIconShapes() {
 }
 
 void LoLEngine::setMouseCursorToIcon(int icon) {
-	_screen->_drawGuiFlag |= 0x200;
+	_gameFlags[15] |= 0x200;
 	int i = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].shpIndex;
 	if (i == icon)
 		return;
@@ -576,7 +576,7 @@ void LoLEngine::setMouseCursorToIcon(int icon) {
 }
 
 void LoLEngine::setMouseCursorToItemInHand() {
-	_screen->_drawGuiFlag &= 0xFDFF;
+	_gameFlags[15] &= 0xFDFF;
 	int o = (_itemInHand == 0) ? 0 : 10;
 	_screen->setMouseCursor(o, o, getItemIconShapePtr(_itemInHand));
 }
@@ -794,10 +794,10 @@ void LoLEngine::update() {
 	if (_updateCharNum != -1 && _system->getMillis() > _updatePortraitNext)
 		updatePortraitSpeechAnim();
 
-	if (_screen->_drawGuiFlag & 0x800 || !(_updateFlags & 4))
+	if (_gameFlags[15] & 0x800 || !(_updateFlags & 4))
 		updateLampStatus();
 
-	if (_screen->_drawGuiFlag & 0x4000 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassUnk))
+	if (_gameFlags[15] & 0x4000 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassUnk))
 		updateCompass();
 
 	snd_characterSpeaking();
@@ -1156,7 +1156,7 @@ void LoLEngine::restoreSceneAfterDialogueSequence(int redraw) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
 		_screen->_fadeFlag = 0;
 	}
 
@@ -1187,6 +1187,28 @@ void LoLEngine::fadeText() {
 	_timer->disable(11);
 
 	_fadeText = false;
+}
+
+void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
+	generateBrightnessPalette(palette, _screen->getPalette(1), brightness, modifier);
+	_screen->fadePalette(_screen->getPalette(1), 5, 0);
+	_screen->_fadeFlag = 0;
+}
+
+void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
+	memcpy(dst, src, 0x300);
+	_screen->loadSpecialColours(dst);
+	brightness = (8 - brightness) << 5;
+	if (modifier >= 0 && modifier < 8 && _gameFlags[15] & 0x800) {
+		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
+		if (brightness < 0)
+			brightness = 0;
+	}
+	
+	for (int i = 0; i < 384; i++) {
+		uint16 c = (dst[i] * brightness) >> 8;
+		dst[i] = c & 0xff;
+	}
 }
 
 void LoLEngine::updateWsaAnimations() {

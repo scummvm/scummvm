@@ -122,9 +122,9 @@ void TimerManager::update() {
 	_nextRun += 99999;
 
 	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		if (pos->enabled)
+		if (pos->enabled == 1)
 
-		if (pos->enabled && pos->countdown >= 0) {
+		if (pos->enabled == 1 && pos->countdown >= 0) {
 			if (pos->nextRun <= _system->getMillis()) {
 				if (pos->func && pos->func->isValid()) {
 					(*pos->func)(pos->id);
@@ -138,7 +138,6 @@ void TimerManager::update() {
 			_nextRun = MIN(_nextRun, pos->nextRun);
 		}
 	}
-
 }
 
 void TimerManager::resync() {
@@ -229,10 +228,10 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 	
 	if (p) {
 		timer->pauseStartTime = _system->getMillis();
-		timer->enabled = 0;
+		timer->enabled ^= 2;
 	} else if (timer->pauseStartTime) {
 		int32 elapsedTime = _system->getMillis() - timer->pauseStartTime;
-		timer->enabled = 1;
+		timer->enabled ^= 2;
 		timer->lastUpdate += elapsedTime;
 		timer->nextRun += elapsedTime;
 		resync();
@@ -256,7 +255,7 @@ void TimerManager::enable(uint8 id) {
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
-		timer->enabled = 1;
+		timer->enabled |= 1;
 	else
 		warning("TimerManager::enable: No timer %d", id);
 }
@@ -266,7 +265,7 @@ void TimerManager::disable(uint8 id) {
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
-		timer->enabled = 0;
+		timer->enabled &= 2;
 	else
 		warning("TimerManager::disable: No timer %d", id);
 }

@@ -306,7 +306,7 @@ void LoLEngine::assignItemOrMonsterToBlock(uint16 *blockItemIndex, int id) {
 }
 
 int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag) {
-	_monsterUnkDir = 0;
+	_monsterLastWalkDirection = 0;
 	int x2 = 0;
 	int y2 = 0;
 	int xOffs = 0;
@@ -324,7 +324,7 @@ int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, 
 	if (x & 0x80) {
 		if (((x & 0xff) + monsterWidth) & 0xff00) {
 			xOffs = 1;
-			_monsterUnkDir = 2;
+			_monsterLastWalkDirection = 2;
 			x2 = x + monsterWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, monsterWidth, testFlag, wallFlag);
@@ -340,7 +340,7 @@ int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, 
 	} else {
 		if (((x & 0xff) - monsterWidth) & 0xff00) {
 			xOffs = -1;
-			_monsterUnkDir = 6;
+			_monsterLastWalkDirection = 6;
 			x2 = x - monsterWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, monsterWidth, testFlag, wallFlag);
@@ -358,7 +358,7 @@ int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, 
 	if (y & 0x80) {
 		if (((y & 0xff) + monsterWidth) & 0xff00) {
 			yOffs = 1;
-			_monsterUnkDir = 4;
+			_monsterLastWalkDirection = 4;
 			y2 = y + monsterWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, monsterWidth, testFlag, wallFlag);
@@ -374,7 +374,7 @@ int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, 
 	} else {
 		if (((y & 0xff) - monsterWidth) & 0xff00) {
 			yOffs = -1;
-			_monsterUnkDir = 0;
+			_monsterLastWalkDirection = 0;
 			y2 = y - monsterWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, monsterWidth, testFlag, wallFlag);
@@ -944,8 +944,8 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 		if (walkMonsterCheckDest(monster->x, monster->y, monster, 4) != 1)
 			return;
 
-		_monsterUnkDir ^= 4;
-		setMonsterDirection(monster, _monsterUnkDir);
+		_monsterLastWalkDirection ^= 4;
+		setMonsterDirection(monster, _monsterLastWalkDirection);
 	} else {
 		setMonsterDirection(monster, s);
 		if (monster->field_25) {
@@ -961,7 +961,7 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 	int fx = 0;
 	int fy = 0;
 
-	walkMonsterGetNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _monsterUnkDir : s);
+	walkMonsterGetNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _monsterLastWalkDirection : s);
 	placeMonster(monster, fx, fy);
 }
 

@@ -118,6 +118,12 @@ int LoLEngine::olol_drawScene(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_delay(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_delay(%p) (%d)", (const void *)script, stackPos(0));
+	delay(stackPos(0) * _tickLength);
+	return 1;
+}
+
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1))
@@ -566,6 +572,12 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerDoorSwitch(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	processDoorSwitch(stackPos(0)/*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
+	return 1;
+}
+
 int LoLEngine::olol_mapShapeToBlock(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
 	return assignLevelShapes(stackPos(0));
@@ -787,6 +799,11 @@ int LoLEngine::olol_stopTimScript(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_getWallFlags(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getWallFlags(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return _wllWallFlags[_levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3]];
+}
+
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	snd_stopSpeech(1);
@@ -812,7 +829,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		_screen->setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampOilStatus);
+		setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampOilStatus);
 	return old;
 }
 
@@ -1014,7 +1031,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 			if (_screen->_fadeFlag != 2)
 				_screen->fadeClearSceneWindow(10);
 			gui_drawPlayField();
-			_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
 			_screen->_fadeFlag = 0;
 			break;
 
@@ -1088,7 +1105,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x04
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_delay);
 	Opcode(olol_setGameFlag);
 
 	// 0x08
@@ -1153,7 +1170,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x30
 	Opcode(olol_setGlobalVar);
-	OpcodeUnImpl();
+	Opcode(olol_triggerDoorSwitch);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1214,7 +1231,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x58
 	OpcodeUnImpl();
 	Opcode(olol_stopTimScript);
-	OpcodeUnImpl();
+	Opcode(olol_getWallFlags);
 	OpcodeUnImpl();
 
 	// 0x5C

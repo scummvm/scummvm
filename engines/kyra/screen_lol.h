@@ -64,8 +64,6 @@ public:
 
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
-	void setPaletteBrightness(uint8 *palDst, int brightness, int modifier);
-	void generateBrightnessPalette(uint8 *palSrc, uint8 *palDst, int brightness, int modifier);
 	void loadSpecialColours(uint8 *destPalette);
 	void copyColour(int dstColourIndex, int srcColourIndex);
 	bool fadeColour(int dstColourIndex, int srcColourIndex, uint32 elapsedTime, uint32 targetTime);
@@ -80,7 +78,6 @@ public:
 	uint8 *_paletteOverlay2;
 	uint8 *_grayOverlay;
 	int _fadeFlag;
-	int _drawGuiFlag;
 	int _dimLineCount;
 
 private:

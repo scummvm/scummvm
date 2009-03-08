@@ -94,7 +94,7 @@ void LoLEngine::loadLevel(int index) {
 
 	gui_drawPlayField();
 
-	_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
 	setMouseCursorToItemInHand();
 
 	snd_playTrack(_curMusicTheme);
@@ -440,7 +440,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		_screen->getLevelOverlay(7)[i] = i & 0xff;
 
 	_loadSuppFilesFlag = 0;
-	_screen->generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampOilStatus);
+	generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampOilStatus);
 
 	char tname[13];
 	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
@@ -522,14 +522,14 @@ bool LoLEngine::testWallInvisibility(int block, int direction) {
 }
 
 void LoLEngine::resetLampStatus() {
-	_screen->_drawGuiFlag |= 0x400;
+	_gameFlags[15] |= 0x400;
 	_lampOilStatus = 255;
 	updateLampStatus();
 }
 
 void LoLEngine::setLampMode(bool lampOn) {
-	_screen->_drawGuiFlag &= 0xFBFF;
-	if (!(_screen->_drawGuiFlag & 0x800) || !lampOn)
+	_gameFlags[15] &= 0xFBFF;
+	if (!(_gameFlags[15] & 0x800) || !lampOn)
 		return;
 
 	_screen->drawShape(0, _gameShapes[43], 291, 56, 0, 0);
@@ -540,20 +540,20 @@ void LoLEngine::updateLampStatus() {
 	uint8 newLampOilStatus = 0;
 	uint8 tmp2 = 0;
 
-	if ((_updateFlags & 4) || !(_screen->_drawGuiFlag & 0x800))
+	if ((_updateFlags & 4) || !(_gameFlags[15] & 0x800))
 		return;
 
 	if (!_brightness || !_lampStatusUnk) {
 		newLampOilStatus = 8;
 		if (newLampOilStatus != _lampOilStatus && _screen->_fadeFlag == 0)
-			_screen->setPaletteBrightness(_screen->_currentPalette, _lampOilStatus, newLampOilStatus);
+			setPaletteBrightness(_screen->_currentPalette, _lampOilStatus, newLampOilStatus);
 	} else {
 		tmp2 = (_lampStatusUnk < 100) ? _lampStatusUnk : 100;
 		newLampOilStatus = (3 - (tmp2 - 1) / 25) << 1;
 
 		if (_lampOilStatus == 255) {
 			if (_screen->_fadeFlag == 0)
-					_screen->setPaletteBrightness(_screen->_currentPalette, _brightness, newLampOilStatus);
+					setPaletteBrightness(_screen->_currentPalette, _brightness, newLampOilStatus);
 			_lampStatusTimer = _system->getMillis() + (10 + _rnd.getRandomNumberRng(1, 30)) * _tickLength;
 		} else {
 			if ((_lampOilStatus & 0xfe) == (newLampOilStatus & 0xfe)) {
@@ -565,7 +565,7 @@ void LoLEngine::updateLampStatus() {
 				}
 			} else {
 				if (_screen->_fadeFlag == 0)
-					_screen->setPaletteBrightness(_screen->_currentPalette, _lampOilStatus, newLampOilStatus);
+					setPaletteBrightness(_screen->_currentPalette, _lampOilStatus, newLampOilStatus);
 			}
 		}
 	}
@@ -1104,7 +1104,7 @@ int LoLEngine::smoothScrollDrawSpecialShape(int pageNum) {
 }
 
 void LoLEngine::setLF2(int block) {
-	if (!(_screen->_drawGuiFlag & 0x1000))
+	if (!(_gameFlags[15] & 0x1000))
 		return;
 	_levelBlockProperties[block].flags |= 7;
 	// TODO

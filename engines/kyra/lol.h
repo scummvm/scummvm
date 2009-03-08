@@ -493,11 +493,12 @@ private:
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
 	int16 _currentBlockPropertyIndex[18];
-	uint16 _gameFlags[15];
+	uint16 _gameFlags[16];
 	uint16 _unkEMC46[16];
 
 	// emc opcode
 	int olol_drawScene(EMCState *script);
+	int olol_delay(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
 	int olol_testGameFlag(EMCState *script);
 	int olol_loadLevelGraphics(EMCState *script);
@@ -522,6 +523,7 @@ private:
 	int olol_setUnkArrayVal(EMCState *script);
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
+	int olol_triggerDoorSwitch(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_initMonster(EMCState *script);
@@ -538,6 +540,7 @@ private:
 	int olol_loadLangFile(EMCState *script);
 	int olol_playSoundEffect(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
+	int olol_getWallFlags(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
@@ -598,6 +601,8 @@ private:
 	void resetPortraitsArea();
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
+	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
+	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void updateWsaAnimations();
 
 	uint8 **_itemIconShapes;
@@ -971,7 +976,7 @@ private:
 	uint8 **_monsterShapesEx;
 	uint8 _monsterUnk[3];
 	uint16 _monsterCurBlock;
-	int _monsterUnkDir;
+	int _monsterLastWalkDirection;
 	int _monsterCountUnk;
 	int _monsterShiftAlt;
 

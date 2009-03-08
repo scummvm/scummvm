@@ -34,26 +34,26 @@ namespace Kyra {
 void LoLEngine::gui_drawPlayField() {
 	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, 0);
 
-	if (_screen->_drawGuiFlag & 0x4000) {
+	if (_gameFlags[15] & 0x4000) {
 		// copy compass shape
 		static const int cx[] = { 112, 152, 224 };
 		_screen->copyRegion(cx[_lang], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
 		_compassDirection = -1;
 	}
 
-	if (_screen->_drawGuiFlag & 0x1000)
+	if (_gameFlags[15] & 0x1000)
 		// draw automap book
 		_screen->drawShape(2, _gameShapes[78], 289, 32, 0, 0);
 
 	int cp = _screen->setCurPage(2);
 
-	if (_screen->_drawGuiFlag & 0x2000) {
+	if (_gameFlags[15] & 0x2000) {
 		gui_drawScroll();
 	} else {
 		_selectedSpell = 0;
 	}
 
-	if (_screen->_drawGuiFlag & 0x800)
+	if (_gameFlags[15] & 0x800)
 		resetLampStatus();
 
 	gui_drawScene(2);
@@ -537,7 +537,7 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 }
 
 void LoLEngine::gui_drawCompass() {
-	if (!(_screen->_drawGuiFlag & 0x4000))
+	if (!(_gameFlags[15] & 0x4000))
 		return;
 
 	if (_compassDirection == -1) {
@@ -595,7 +595,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
 	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
 
-	if (shapeIndex == 78 && !(_screen->_drawGuiFlag & 0x1000))
+	if (shapeIndex == 78 && !(_gameFlags[15] & 0x1000))
 		return;
 
 	if (_hideControls && _hideInventory)
@@ -808,7 +808,7 @@ void LoLEngine::gui_enableDefaultPlayfieldButtons() {
 	gui_initCharacterControlButtons(29, 0);
 	gui_initCharacterControlButtons(25, 33);
 
-	if (_screen->_drawGuiFlag & 0x2000)
+	if (_gameFlags[15] & 0x2000)
 		gui_initMagicScrollButtons();
 }
 

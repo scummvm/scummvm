@@ -150,7 +150,7 @@ void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
 }
 
 void LoLEngine::timerUpdateLampState(int timerNum) {
-	if ((_screen->_drawGuiFlag & 0x800) && (_screen->_drawGuiFlag & 0x400) && _lampStatusUnk)
+	if ((_gameFlags[15] & 0x800) && (_gameFlags[15] & 0x400) && _lampStatusUnk)
 		_lampStatusUnk--;
 }
 

@@ -220,7 +220,7 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 
 	int mouseOffs = 0;
 
-	if (itemIndex && !(_screen->_drawGuiFlag & 0x200)) {
+	if (itemIndex && !(_gameFlags[15] & 0x200)) {
 		mouseOffs = 10;
 		if (!_hideControls || textEnabled())
 			_txt->printMessage(0, getLangString(0x403E), getLangString(_itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].nameStringId));

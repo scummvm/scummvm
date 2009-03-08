@@ -45,7 +45,6 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 		_levelOverlays[i] = new uint8[256];
 	
 	_fadeFlag = 2;
-	_drawGuiFlag = 0;
 	_curDimIndex = 0;
 	_dimLineCount = 0;
 }
@@ -533,28 +532,6 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 	Screen::fadeToBlack(delay, upFunc);
 	_fadeFlag = 2;
-}
-
-void Screen_LoL::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
-	generateBrightnessPalette(palette, getPalette(1), brightness, modifier);
-	fadePalette(getPalette(1), 5, 0);
-	_fadeFlag = 0;
-}
-
-void Screen_LoL::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
-	memcpy(dst, src, 0x300);
-	loadSpecialColours(dst);
-	brightness = (8 - brightness) << 5;
-	if (modifier >= 0 && modifier < 8 && _drawGuiFlag & 0x800) {
-		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
-		if (brightness < 0)
-			brightness = 0;
-	}
-	
-	for (int i = 0; i < 384; i++) {
-		uint16 c = (dst[i] * brightness) >> 8;
-		dst[i] = c & 0xff;
-	}
 }
 
 void Screen_LoL::loadSpecialColours(uint8 *destPalette) {
