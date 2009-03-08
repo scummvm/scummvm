@@ -789,11 +789,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"dino",
 			"",
 			{
-	{"dino.hrs",     GAME_RESOURCEFILE,					"7cf3665887a4a18e2fff6938a954c050", 66018},
+	{"dinodata.hrs", GAME_RESOURCEFILE,				    "45aa7026d441dd69957385c25d2fd33e", 2698},
+	{"dino.hrs",     GAME_OBJRESOURCEFILE,				"7cf3665887a4a18e2fff6938a954c050", 66018},
 	{"scripts.hrs",	 GAME_SCRIPTFILE,					"d405841a249a365cf92fc65dd52fb953", 164181},
 	{"dinosnd.hrs",  GAME_SOUNDFILE | GAME_VOICEFILE,	"dcf4ade416614b8a64f99dacfd3bd071", 199163997},
 	{"dinoimag.hrs", GAME_IMAGEFILE,					"d24d80676f7afcfaca0b61c95056044f", 42342931},
-	// TODO: dinodata.hrs
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -818,11 +818,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"fta2",
 			"",
 			{
-	{"fta.hrs",	     GAME_RESOURCEFILE,					"c34a5ee5f1a14a87712a35c4a209a033", 213376},
+	{"ftadata.hrs",	 GAME_RESOURCEFILE,					"6dc3cbed8df2ddd9f060a7dba4d33ef8", 15042},
+	{"fta.hrs",	     GAME_OBJRESOURCEFILE,				"c34a5ee5f1a14a87712a35c4a209a033", 213376},
 	{"scripts.hrs",	 GAME_SCRIPTFILE,					"95f33928f6c4f02ee04d2ec5c3314c30", 1041948},
 	{"ftasound.hrs", GAME_SOUNDFILE,					"ce930cb38922e6a03461f55d51b4e165", 12403350},
 	{"ftaimage.hrs", GAME_IMAGEFILE,					"09bb003733b20f924e2e373d2ddcd394", 21127397},
-	// TODO: ftadata.hrs
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,

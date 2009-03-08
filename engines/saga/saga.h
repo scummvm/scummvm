@@ -114,7 +114,8 @@ enum GameFileTypes {
 	GAME_MUSICFILE_GM     = 1 << 9,    // IHNM, ITE Mac CD Guild
 	GAME_PATCHFILE        = 1 << 10,   // IHNM patch file (patch.re_/patch.res)
 	// SAGA 2 (Dinotopia, FTA2)
-	GAME_IMAGEFILE        = 1 << 11
+	GAME_IMAGEFILE        = 1 << 11,   // Game images
+	GAME_OBJRESOURCEFILE  = 1 << 12    // Game object data
 };
 
 enum GameFeatures {
