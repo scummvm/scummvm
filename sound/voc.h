@@ -23,6 +23,18 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - agos
+ *  - drascula
+ *  - igor
+ *  - kyra
+ *  - made
+ *  - saga
+ *  - scumm
+ *  - touche
+ */
+
 #ifndef SOUND_VOC_H
 #define SOUND_VOC_H
 

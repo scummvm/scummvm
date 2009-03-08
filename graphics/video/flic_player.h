@@ -23,6 +23,11 @@
  *
  */
 
+/**
+ * Video decoder used in engines:
+ *  - tucker
+ */
+
 #ifndef GRAPHICS_VIDEO_FLICPLAYER_H
 #define GRAPHICS_VIDEO_FLICPLAYER_H
 

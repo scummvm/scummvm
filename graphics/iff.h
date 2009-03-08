@@ -22,6 +22,11 @@
  * $Id$
  */
 
+/**
+ * Bitmap decoder used in engines:
+ *  - parallaction
+ *  - saga
+ */
 
 #ifndef GRAPHICS_IFF_H
 #define GRAPHICS_IFF_H

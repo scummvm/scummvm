@@ -23,6 +23,14 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - agos
+ *  - saga
+ *  - scumm
+ *  - tinsel
+ */
+
 #ifndef SOUND_ADPCM_H
 #define SOUND_ADPCM_H
 

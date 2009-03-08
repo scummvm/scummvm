@@ -23,6 +23,15 @@
  *
  */
 
+/**
+ * Video decoder used in engines:
+ *  - agos
+ *  - saga
+ *  - scumm (he)
+ *  - sword1
+ *  - sword2
+ */
+
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
 // http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup

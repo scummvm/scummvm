@@ -23,6 +23,12 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - agos
+ *  - parallaction
+ */
+
 #ifndef SOUND_MODS_PROTRACKER_H
 #define SOUND_MODS_PROTRACKER_H
 

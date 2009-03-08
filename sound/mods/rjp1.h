@@ -23,6 +23,11 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - queen
+ */
+
 #ifndef SOUND_MODS_RJP1_H
 #define SOUND_MODS_RJP1_H
 

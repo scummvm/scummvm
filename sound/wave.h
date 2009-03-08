@@ -23,6 +23,17 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - agos
+ *  - gob
+ *  - saga
+ *  - scumm
+ *  - sword1
+ *  - sword2
+ *  - tucker
+ */
+
 #ifndef SOUND_WAVE_H
 #define SOUND_WAVE_H
 

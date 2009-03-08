@@ -23,6 +23,20 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - agos
+ *  - kyra
+ *  - m4
+ *  - queen
+ *  - saga
+ *  - scumm
+ *  - sword1
+ *  - sword2
+ *  - touche
+ *  - tucker
+ */
+
 #ifndef SOUND_VORBIS_H
 #define SOUND_VORBIS_H
 

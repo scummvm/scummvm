@@ -23,6 +23,11 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - parallaction
+ */
+
 #ifndef SOUND_IFF_H
 #define SOUND_IFF_H
 

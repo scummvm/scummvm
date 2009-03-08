@@ -23,6 +23,13 @@
  *
  */
 
+/**
+ * Video decoder used in engines:
+ *  - agos
+ *  - sword1
+ *  - sword2
+ */
+
 #ifndef GRAPHICS_VIDEO_DXA_PLAYER_H
 #define GRAPHICS_VIDEO_DXA_PLAYER_H
 

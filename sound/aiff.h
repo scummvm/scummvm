@@ -23,6 +23,12 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - saga
+ *  - sword1
+ */
+
 #ifndef SOUND_AIFF_H
 #define SOUND_AIFF_H
 

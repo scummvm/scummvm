@@ -23,6 +23,11 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - gob
+ */
+
 #ifndef SOUND_MODS_INFOGRAMES_H
 #define SOUND_MODS_INFOGRAMES_H
 

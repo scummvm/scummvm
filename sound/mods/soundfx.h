@@ -21,6 +21,11 @@
  *
  */
 
+/**
+ * Sound decoder used in engines:
+ *  - cine
+ */
+
 #ifndef SOUND_MODS_SOUNDFX_H
 #define SOUND_MODS_SOUNDFX_H
 
