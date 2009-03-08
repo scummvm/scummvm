@@ -220,7 +220,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 		}
 
 		if (opcode >= _numVideoOpcodes) {
-			error("Invalid opcode %x", opcode);
+			error("dumpVideoScript: Opcode %d out of range (%d)", opcode, _numVideoOpcodes);
 		}
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
@@ -238,7 +238,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 		}
 
 		if (strn == NULL) {
-			error("dumpVideoScript: INVALID OPCODE %d", opcode);
+			error("dumpVideoScript: Invalid Opcode %d", opcode);
 		}
 
 		while (*strn != '|')
@@ -278,7 +278,7 @@ void AGOSEngine::dumpVideoScript(const byte *src, bool singeOpcode) {
 				src += 2;
 				break;
 			default:
-				error("Invalid fmt string '%c' in decompile VGA", *str);
+				error("dumpVideoScript: Invalid fmt string '%c' in decompile VGA", *str);
 			}
 		}
 

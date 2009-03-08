@@ -1876,7 +1876,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (_noOracleScroll)
 		return;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 
@@ -1984,7 +1984,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 } // End of namespace AGOS

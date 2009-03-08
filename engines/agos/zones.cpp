@@ -146,7 +146,7 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 void AGOSEngine::checkRunningAnims() {
 	VgaSprite *vsp;
 	if (getGameType() != GType_FF && getGameType() != GType_PP &&
-		(_lockWord & 0x20)) {
+		(_videoLockOut & 0x20)) {
 		return;
 	}
 

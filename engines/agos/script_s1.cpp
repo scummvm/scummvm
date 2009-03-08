@@ -300,9 +300,9 @@ void AGOSEngine_Simon1::os1_animate() {
 		_lastVgaWaitFor = 0;
 	}
 
-	_lockWord |= 0x40;
+	_videoLockOut |= 0x40;
 	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);
-	_lockWord &= ~0x40;
+	_videoLockOut &= ~0x40;
 }
 
 void AGOSEngine_Simon1::os1_pauseGame() {
@@ -529,9 +529,9 @@ void AGOSEngine_Simon1::os1_loadBeard() {
 	// 182: load beard
 	if (_beardLoaded == false) {
 		_beardLoaded = true;
-		_lockWord |= 0x8000;
+		_videoLockOut |= 0x8000;
 		loadVGABeardFile(328);
-		_lockWord &= ~0x8000;
+		_videoLockOut &= ~0x8000;
 	}
 }
 
@@ -539,9 +539,9 @@ void AGOSEngine_Simon1::os1_unloadBeard() {
 	// 183: unload beard
 	if (_beardLoaded == true) {
 		_beardLoaded = false;
-		_lockWord |= 0x8000;
+		_videoLockOut |= 0x8000;
 		loadVGABeardFile(23);
-		_lockWord &= ~0x8000;
+		_videoLockOut &= ~0x8000;
 	}
 }
 
@@ -591,9 +591,9 @@ void AGOSEngine_Simon1::os1_specialFade() {
 }
 
 void AGOSEngine::scriptMouseOff() {
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 	vc34_setMouseOff();
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 } // End of namespace AGOS

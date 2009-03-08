@@ -495,7 +495,7 @@ void AGOSEngine::o_comment() {
 
 void AGOSEngine::o_haltAnimation() {
 	// 88: stop animation
-	_lockWord |= 0x10;
+	_videoLockOut |= 0x10;
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		VgaTimerEntry *vte = _vgaTimerList;
@@ -512,7 +512,7 @@ void AGOSEngine::o_haltAnimation() {
 
 void AGOSEngine::o_restartAnimation() {
 	// 89: restart animation
-	_lockWord &= ~0x10;
+	_videoLockOut &= ~0x10;
 }
 
 void AGOSEngine::o_getParent() {
@@ -570,7 +570,7 @@ void AGOSEngine::o_loadZone() {
 	// 97: load zone
 	uint vga_res = getVarOrWord();
 
-	_lockWord |= 0x80;
+	_videoLockOut |= 0x80;
 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
 		getGameType() == GType_WW) {
@@ -586,14 +586,14 @@ void AGOSEngine::o_loadZone() {
 		_vgaSpriteChanged = 0;
 	}
 
-	_lockWord &= ~0x80;
+	_videoLockOut &= ~0x80;
 }
 
 void AGOSEngine::o_killAnimate() {
 	// 100: kill animations
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 	vc27_resetSprite();
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::o_defWindow() {
@@ -1044,18 +1044,18 @@ void AGOSEngine::synchChain(Item *i) {
 
 void AGOSEngine::sendSync(uint a) {
 	uint16 id = to16Wrapper(a);
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 	_vcPtr = (byte *)&id;
 	vc15_sync();
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::stopAnimate(uint16 a) {
 	uint16 b = to16Wrapper(a);
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 	_vcPtr = (byte *)&b;
 	vc60_stopAnimation();
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::waitForSync(uint a) {

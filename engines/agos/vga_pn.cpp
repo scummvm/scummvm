@@ -93,7 +93,7 @@ void AGOSEngine::vc36_pause() {
 	bool oldWiped = _wiped;
 	_wiped = 0;
 
-	_lockWord |= 8;
+	_videoLockOut |= 8;
 
 	windowPutChar(_windowArray[2], 13);
 
@@ -112,7 +112,7 @@ void AGOSEngine::vc36_pause() {
 	windowPutChar(_windowArray[2], 128);
 	_wiped = oldWiped;
 
-	_lockWord &= ~8;
+	_videoLockOut &= ~8;
 }
 
 void AGOSEngine::vc39_volume() {

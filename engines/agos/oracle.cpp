@@ -501,7 +501,7 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 	byte *dst;
 	uint x, y, h, w;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	x = window->x + window->textColumn;
 	y = window->y + window->textRow;
@@ -516,7 +516,7 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 		dst += _screenWidth;
 	}
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 } // End of namespace AGOS

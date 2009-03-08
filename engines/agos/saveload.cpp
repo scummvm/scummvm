@@ -1019,7 +1019,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i;
 
-	_lockWord |= 0x100;
+	_videoLockOut |= 0x100;
 
 	if (restartMode) {
 		// Load restart state
@@ -1031,7 +1031,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 	}
 
 	if (f == NULL) {
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1043,7 +1043,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 
 	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
 		delete f;
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1106,7 +1106,7 @@ bool AGOSEngine::loadGame(const char *filename, bool restartMode) {
 
 	_noParentNotify = false;
 
-	_lockWord &= ~0x100;
+	_videoLockOut &= ~0x100;
 
 	return true;
 }
@@ -1118,11 +1118,11 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	uint32 curTime = getTime();
 	uint32 gsc = _gameStoppedClock;
 
-	_lockWord |= 0x100;
+	_videoLockOut |= 0x100;
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1185,7 +1185,7 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 	bool result = !f->err();
 
 	delete f;
-	_lockWord &= ~0x100;
+	_videoLockOut &= ~0x100;
 
 	return result;
 }
@@ -1195,7 +1195,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
 
-	_lockWord |= 0x100;
+	_videoLockOut |= 0x100;
 
 	if (restartMode) {
 		// Load restart state
@@ -1207,7 +1207,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	}
 
 	if (f == NULL) {
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1225,7 +1225,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	if (f->readUint32BE() != 0xFFFFFFFF || num != _itemArrayInited - 1) {
 		delete f;
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1381,7 +1381,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	_noParentNotify = false;
 
-	_lockWord &= ~0x100;
+	_videoLockOut &= ~0x100;
 
 	return true;
 }
@@ -1393,11 +1393,11 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	uint32 curTime = getTime();
 	uint32 gsc = _gameStoppedClock;
 
-	_lockWord |= 0x100;
+	_videoLockOut |= 0x100;
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		_lockWord &= ~0x100;
+		_videoLockOut &= ~0x100;
 		return false;
 	}
 
@@ -1548,7 +1548,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	bool result = !f->err();
 
 	delete f;
-	_lockWord &= ~0x100;
+	_videoLockOut &= ~0x100;
 
 	return result;
 }

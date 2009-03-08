@@ -964,7 +964,7 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;
 	int w, h, i;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	src = (byte *)screen->pixels + ha->y * _dxSurfacePitch + ha->x;
@@ -1024,7 +1024,7 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 // Personal Nightmare specific
@@ -1119,7 +1119,7 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 				hitBox5(ha);
 			else if (ha->flags & kOBFRoomBox)
 				hitBox6(ha);
-		} else if (_lockWord & 10) {
+		} else if (_videoLockOut & 10) {
 			hitBox8(ha);
 		}
 	} else {
@@ -1163,7 +1163,7 @@ void AGOSEngine_PN::hitBox4(HitArea *ha) {
 		return;
 
 	uint16 num = ha->msg1 & ~0x8000;
-	if ((_lockWord & 0x10) && !(ha->flags & (kOBFInventoryBox | kOBFRoomBox)) &&
+	if ((_videoLockOut & 0x10) && !(ha->flags & (kOBFInventoryBox | kOBFRoomBox)) &&
 		!testContainer(num)) {
 		return;
 	}

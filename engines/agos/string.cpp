@@ -1519,7 +1519,7 @@ char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
 	strPtr1[1] = 13;
 	strPtr1[2] = 0;
 
-	if (_lockWord & 0x10) {
+	if (_videoLockOut & 0x10) {
 		strPtr1 = origPtr;
 		count = 6;
 		while (strPtr1[0] != 0) {

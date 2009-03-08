@@ -307,7 +307,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_dummyItem2 = new Item();
 	_dummyItem3 = new Item();
 
-	_lockWord = 0;
+	_videoLockOut = 0;
 	_scrollUpHitArea = 0;
 	_scrollDownHitArea = 0;
 

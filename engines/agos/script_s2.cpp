@@ -316,9 +316,9 @@ void AGOSEngine_Simon2::os2_animate() {
 	int16 y = getVarOrWord();
 	uint16 palette = (getVarOrWord() & 15);
 
-	_lockWord |= 0x40;
+	_videoLockOut |= 0x40;
 	animate(windowNum, zoneNum, vgaSpriteId, x, y, palette);
-	_lockWord &= ~0x40;
+	_videoLockOut &= ~0x40;
 }
 
 void AGOSEngine_Simon2::os2_stopAnimate() {
@@ -475,10 +475,10 @@ void AGOSEngine::stopAnimateSimon2(uint16 a, uint16 b) {
 	items[0] = to16Wrapper(a);
 	items[1] = to16Wrapper(b);
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 	_vcPtr = (byte *)&items;
 	vc60_stopAnimation();
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::waitForMark(uint i) {

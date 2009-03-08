@@ -126,7 +126,7 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 	byte *dst;
 	uint16 h, w;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	dst = getBackGround() + _dxSurfacePitch * window->y + window->x;
 
@@ -138,7 +138,7 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 		dst += _screenWidth;
 	}
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::colorWindow(WindowBlock *window) {
@@ -168,7 +168,7 @@ void AGOSEngine::colorWindow(WindowBlock *window) {
 }
 
 void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h) {
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	byte *dst = (byte *)screen->pixels + y * _screenWidth + x;
@@ -184,7 +184,7 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::resetWindow(WindowBlock *window) {
@@ -194,7 +194,7 @@ void AGOSEngine::resetWindow(WindowBlock *window) {
 }
 
 void AGOSEngine::restoreWindow(WindowBlock *window) {
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
@@ -225,7 +225,7 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 		restoreBlock(x * 8, window->y, (x + w) * 8, window->y + window->height * 8);
 	}
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {

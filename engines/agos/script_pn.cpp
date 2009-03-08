@@ -127,7 +127,7 @@ void AGOSEngine_PN::executeOpcode(int opcode) {
 #define readfromline() (_linct-- ? (int)*_workptr++ : readoverr())
 
 int readoverr() {
-	error("Internal Error - Line Over-run");
+	error("readfromline: Internal Error - Line Over-run");
 }
 
 // -----------------------------------------------------------------------
@@ -626,9 +626,9 @@ void AGOSEngine_PN::opn_opcode57() {
 	int16 y = varval();
 	uint16 palette = varval();
 
-	_lockWord |= 0x40;
+	_videoLockOut |= 0x40;
 	animate(windowNum, 0, vgaSpriteId, x, y, palette);
-	_lockWord &= ~0x40;
+	_videoLockOut &= ~0x40;
 
 	setScriptReturn(true);
 }
@@ -636,7 +636,7 @@ void AGOSEngine_PN::opn_opcode57() {
 void AGOSEngine_PN::opn_opcode62() {
 	int32 zoneNum = varval();
 
-	_lockWord |= 0x80;
+	_videoLockOut |= 0x80;
 
 	vc29_stopAllSounds();
 
@@ -650,7 +650,7 @@ void AGOSEngine_PN::opn_opcode62() {
 	_copyScnFlag = 0;
 	_vgaSpriteChanged = 0;
 
-	_lockWord &= ~0x80;
+	_videoLockOut &= ~0x80;
 
 	setScriptReturn(true);
 }
@@ -662,7 +662,7 @@ void AGOSEngine_PN::opn_opcode63() {
 			setScriptReturn(inventoryOn(varval()));
 			break;
 		case 64:
-			setScriptReturn((_lockWord & 0x10) != 0);
+			setScriptReturn((_videoLockOut & 0x10) != 0);
 			break;
 		case 63:
 			setScriptReturn(inventoryOff());
@@ -674,10 +674,10 @@ void AGOSEngine_PN::opn_opcode63() {
 
 int AGOSEngine_PN::inventoryOn(int val) {
 	writeVariable(210, val);
-	if (_lockWord & 0x10) {
+	if (_videoLockOut & 0x10) {
 		iconPage();
 	} else {
-		_lockWord |= 0x10;
+		_videoLockOut |= 0x10;
 		_hitAreaList = _invHitAreas;
 
 		_windowArray[2]->textColor = 0;
@@ -694,13 +694,13 @@ int AGOSEngine_PN::inventoryOn(int val) {
 }
 
 int AGOSEngine_PN::inventoryOff() {
-	if (_lockWord & 0x10) {
+	if (_videoLockOut & 0x10) {
 		_windowArray[2]->textColor = 15;
 
 		restoreBlock(48, 2, 272, 130);
 
 		_hitAreaList = _hitAreas;
-		_lockWord &= ~0x10;
+		_videoLockOut &= ~0x10;
 		_vgaSpriteChanged++;
 	}
 	return 1;
@@ -765,7 +765,7 @@ int AGOSEngine_PN::varval() {
 			b = varval();
 			return(bitextract((int32)_quickptr[4] + b * _quickshort[3], varval()));
 		default:
-			error("VARVAL : Illegal code encountered");
+			error("VARVAL : Illegal code %d encountered", a);
 	}
 }
 
@@ -776,14 +776,14 @@ void AGOSEngine_PN::writeval(uint8 *ptr, int val) {
 	_linct = 255;
 
 	if ((a = readfromline()) < 247) 
-		error("Write to constant");
+		error("writeval: Write to constant (%d)", a);
 
 	switch (a) {
 		case 249:
-			error("Write to constant");
+			error("writeval: Write to constant (%d)", a);
 			break;
 		case 250:
-			error("Write to constant");
+			error("writeval: Write to constant (%d)", a);
 			break;
 		case 251:
 			_variableArray[varval()] = val;
@@ -815,7 +815,7 @@ void AGOSEngine_PN::writeval(uint8 *ptr, int val) {
 			setbitf((uint32)_quickptr[4] + b * _quickshort[3], varval(), val);
 			break;
 		default:
-			error("WRITEVAL : undefined evaluation");
+			error("WRITEVAL : undefined evaluation %d", a);
 	}
 	_linct = lsav;
 	_workptr = savpt;
@@ -861,7 +861,7 @@ int AGOSEngine_PN::doline(int needsave) {
 
 	mybuf = (jmp_buf *)malloc(sizeof(jmp_buf));
 	if (mybuf == NULL)
-		error("Out of memory - stack overflow");
+		error("doline: Out of memory - stack overflow");
 
 	if ((x = setjmp(*mybuf)) > 0) {
 		dumpstack();
@@ -1049,7 +1049,7 @@ void AGOSEngine_PN::addstack(int type) {
 
 	a = (struct stackframe *)malloc(sizeof(struct stackframe));
 	if (a == NULL)
-		error("Out of memory - stack overflow");
+		error("addstack: Out of memory - stack overflow");
 
 	a->nextframe = _stackbase;
 	_stackbase = a;
@@ -1072,7 +1072,7 @@ void AGOSEngine_PN::dumpstack() {
 	struct stackframe *a;
 
 	if (_stackbase == NULL)
-		error("Stack underflow or unknown longjmp");
+		error("dumpstack: Stack underflow or unknown longjmp");
 
 	a = _stackbase->nextframe; 
 	free((char *)_stackbase);
@@ -1083,7 +1083,7 @@ void AGOSEngine_PN::junkstack() {
 	struct stackframe *a;
 
 	if (_stackbase == NULL)
-		error("Stack underflow or unknown longjmp");
+		error("junkstack: Stack underflow or unknown longjmp");
 
 	a = _stackbase->nextframe; 
 	if (_stackbase->classnum == -1)
@@ -1099,7 +1099,7 @@ void AGOSEngine_PN::popstack(int type) {
 		junkstack();
 
 	if (_stackbase == NULL)
-		error("Stack underflow or unknown longjmp");
+		error("popstack: Stack underflow or unknown longjmp");
 
 	_linct = _stackbase->ll;
 	_linebase = _stackbase->lbase;

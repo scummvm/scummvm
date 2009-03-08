@@ -734,7 +734,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		drawBackGroundImage(state);
 	} else if (state->flags & kDFMasked) {
 		drawMaskedImage(state);
-	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
+	} else if (((_videoLockOut & 0x20) && state->palette == 0) || state->palette == 0xC0) {
 		draw32ColorImage(state);
 	} else {
 		drawVertImage(state);
@@ -1306,8 +1306,8 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 
 	}
 
-	if (_lockWord & 0x10)
-		error("setWindowImageEx: _lockWord & 0x10");
+	if (_videoLockOut & 0x10)
+		error("setWindowImageEx: _videoLockOut & 0x10");
 
 	if (getGameType() != GType_PP && getGameType() != GType_FF) {
 		if (getGameType() == GType_WW && (mode == 6 || mode == 8 || mode == 9)) {
@@ -1327,7 +1327,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 	uint16 updateWindow;
 
 	_windowNum = updateWindow = mode;
-	_lockWord |= 0x20;
+	_videoLockOut |= 0x20;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		vc27_resetSprite();
@@ -1366,7 +1366,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 
 		if (_window3Flag == 1) {
 			clearVideoBackGround(3, 0);
-			_lockWord &= ~0x20;
+			_videoLockOut &= ~0x20;
 			return;
 		}
 
@@ -1393,7 +1393,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 				srcWidth = _screenWidth;
 			} else {
 				_system->unlockScreen();
-				_lockWord &= ~0x20;
+				_videoLockOut &= ~0x20;
 				return;
 			}
 		} else if (getGameType() == GType_SIMON1) {
@@ -1408,7 +1408,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 				srcWidth = _screenWidth;
 			} else {
 				_system->unlockScreen();
-				_lockWord &= ~0x20;
+				_videoLockOut &= ~0x20;
 				return;
 			}
 		} else if (getGameType() == GType_WW) {
@@ -1420,7 +1420,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 				srcWidth = _screenWidth;
 			} else {
 				_system->unlockScreen();
-				_lockWord &= ~0x20;
+				_videoLockOut &= ~0x20;
 				return;
 			}
 		} else if (getGameType() == GType_ELVIRA2) {
@@ -1432,7 +1432,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 				srcWidth = _screenWidth;
 			} else {
 				_system->unlockScreen();
-				_lockWord &= ~0x20;
+				_videoLockOut &= ~0x20;
 				return;
 			}
 		} else if (getGameType() == GType_ELVIRA1) {
@@ -1480,7 +1480,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 		_system->unlockScreen();
 	}
 
-	_lockWord &= ~0x20;
+	_videoLockOut &= ~0x20;
 }
 
 // Personal Nightmare specific

@@ -738,9 +738,9 @@ void AGOSEngine_Elvira1::oe1_animate() {
 	int16 y = getVarOrWord();
 	uint16 palette = getVarOrWord();
 
-	_lockWord |= 0x40;
+	_videoLockOut |= 0x40;
 	animate(windowNum, vgaSpriteId / 100, vgaSpriteId, x, y, palette);
-	_lockWord &= ~0x40;
+	_videoLockOut &= ~0x40;
 }
 
 void AGOSEngine_Elvira1::oe1_stopAnimate() {

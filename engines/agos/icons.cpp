@@ -196,7 +196,7 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels;
@@ -215,14 +215,14 @@ void AGOSEngine_Simon2::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels;
@@ -243,14 +243,14 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels;
@@ -271,14 +271,14 @@ void AGOSEngine_Waxworks::drawIcon(WindowBlock *window, uint icon, uint x, uint 
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels;
@@ -299,14 +299,14 @@ void AGOSEngine_Elvira2::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels;
@@ -326,14 +326,14 @@ void AGOSEngine_Elvira1::drawIcon(WindowBlock *window, uint icon, uint x, uint y
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 	dst = (byte *)screen->pixels + y * _dxSurfacePitch + x * 8;
@@ -363,7 +363,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 
 	_system->unlockScreen();
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Feeble::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
@@ -764,7 +764,7 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window, uint8 num) {
 	ha->window = window;
 	ha->verb = 1;
 
-	_lockWord |= 0x8;
+	_videoLockOut |= 0x8;
 
 	VgaPointersEntry *vpe = &_vgaBufferPointers[1];
 	byte *curVgaFile2Orig = _curVgaFile2;
@@ -778,7 +778,7 @@ void AGOSEngine_Simon1::addArrows(WindowBlock *window, uint8 num) {
 	_curVgaFile2 = curVgaFile2Orig;
 	_windowNum = windowNumOrig;
 
-	_lockWord &= ~0x8;
+	_videoLockOut &= ~0x8;
 }
 
 void AGOSEngine_Waxworks::addArrows(WindowBlock *window, uint8 num) {

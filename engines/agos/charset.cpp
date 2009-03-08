@@ -629,7 +629,7 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 }
 
 void AGOSEngine::windowScroll(WindowBlock *window) {
-	_lockWord |= 0x8000;
+	_videoLockOut |= 0x8000;
 
 	if (window->height != 1) {
 		Graphics::Surface *screen = _system->lockScreen();
@@ -654,7 +654,7 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 
 	colorBlock(window, window->x * 8, (window->height - 1) * 8 + window->y, window->width * 8, 8);
 
-	_lockWord &= ~0x8000;
+	_videoLockOut &= ~0x8000;
 }
 } // End of namespace AGOS
 

@@ -421,7 +421,7 @@ protected:
 	Item *_dummyItem2;
 	Item *_dummyItem3;
 
-	volatile uint16 _lockWord;
+	volatile uint16 _videoLockOut;
 	uint16 _scrollUpHitArea;
 	uint16 _scrollDownHitArea;
 

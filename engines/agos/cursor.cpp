@@ -487,7 +487,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 		_leftClick = false;
 		if (_dragFlag != 0) {
 			_hitCalled = 4;
-		} else if (_lockWord & 0x10) {
+		} else if (_videoLockOut & 0x10) {
 			if (_oneClick != 0) {
 				_hitCalled = 2;
 				_oneClick = 0;
@@ -513,7 +513,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 		if (_mouseDown <= 20) {
 			_mouseDown++;
 			if (_mouseDown > 20) {
-				if (_lockWord & 0x10) {
+				if (_videoLockOut & 0x10) {
 					if (_oneClick == 0)
 						_hitCalled = 3;
 				} else {
@@ -521,7 +521,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 				}
 			}
 		}
-	} else if ((_lockWord & 0x10) && _oneClick != 0) {
+	} else if ((_videoLockOut & 0x10) && _oneClick != 0) {
 		_oneClick++;
 		if (_oneClick < 10) {
 			_hitCalled = 1;
@@ -628,12 +628,12 @@ void AGOSEngine::mouseOff() {
 }
 
 void AGOSEngine::mouseOn() {
-	_lockWord |= 1;
+	_videoLockOut |= 1;
 
 	if (_mouseHideCount != 0)
 		_mouseHideCount--;
 
-	_lockWord &= ~1;
+	_videoLockOut &= ~1;
 }
 
 void AGOSEngine_PuzzlePack::initMouse() {

@@ -171,7 +171,7 @@ void AGOSEngine::runVgaScript() {
 			return;
 
 		if (opcode >= _numVideoOpcodes || !_vga_opcode_table[opcode])
-			error("Invalid VGA opcode '%d' encountered", opcode);
+			error("runVgaScript: Invalid VGA opcode '%d' encountered", opcode);
 
 		(this->*_vga_opcode_table[opcode]) ();
 	}
@@ -1103,7 +1103,7 @@ void AGOSEngine::vc27_resetSprite() {
 	VgaSleepStruct *vfs;
 	VgaTimerEntry *vte, *vte2;
 
-	_lockWord |= 8;
+	_videoLockOut |= 8;
 
 	_lastVgaWaitFor = 0;
 
@@ -1157,7 +1157,7 @@ void AGOSEngine::vc27_resetSprite() {
 		}
 	}
 
-	if (_lockWord & 0x20) {
+	if (_videoLockOut & 0x20) {
 		AnimTable *animTable = _screenAnim1;
 		while (animTable->srcPtr) {
 			animTable->srcPtr = 0;
@@ -1171,7 +1171,7 @@ void AGOSEngine::vc27_resetSprite() {
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		setBitFlag(42, true);
 
-	_lockWord &= ~8;
+	_videoLockOut &= ~8;
 }
 
 void AGOSEngine::vc28_playSFX() {
@@ -1361,7 +1361,7 @@ void AGOSEngine::vc37_pokePalette() {
 	palptr[2] = ((color & 0x00f) >> 0) * 32;
 	palptr[3] = 0;
 
-	if (!(_lockWord & 0x20)) {
+	if (!(_videoLockOut & 0x20)) {
 		_paletteFlag = 1;
 		_displayScreen++;
 	}

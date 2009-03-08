@@ -648,7 +648,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		chr = _keyPressed.ascii;
 		if (chr == 8 || chr == 13) {
 			addChar(chr);
-		} else if (!(_lockWord & 0x10)) {
+		} else if (!(_videoLockOut & 0x10)) {
 			if (chr >= 32)
 				addChar(chr);
 		}

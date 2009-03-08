@@ -57,7 +57,7 @@ void AGOSEngine::loadMenuFile() {
 void AGOSEngine::restoreMenu() {
 	_wiped = 0;
 
-	_lockWord |= 0x80;
+	_videoLockOut |= 0x80;
 
 	clearVideoWindow(3, 0);
 
@@ -70,8 +70,8 @@ void AGOSEngine::restoreMenu() {
 
 	_windowNum = oldWindowNum;
 
-	_lockWord |= 0x20;
-	_lockWord &= ~0x80;
+	_videoLockOut |= 0x20;
+	_videoLockOut &= ~0x80;
 }
 
 // Elvira 1 specific

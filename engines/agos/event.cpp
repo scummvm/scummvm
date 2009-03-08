@@ -170,10 +170,10 @@ bool AGOSEngine::isVgaQueueEmpty() {
 }
 
 void AGOSEngine::haltAnimation() {
-	if (_lockWord & 0x10)
+	if (_videoLockOut & 0x10)
 		return;
 
-	_lockWord |= 0x10;
+	_videoLockOut |= 0x10;
 
 	if (_displayScreen) {
 		displayScreen();
@@ -182,7 +182,7 @@ void AGOSEngine::haltAnimation() {
 }
 
 void AGOSEngine::restartAnimation() {
-	if (!(_lockWord & 0x10))
+	if (!(_videoLockOut & 0x10))
 		return;
 
 	if (getGameType() != GType_PN) {
@@ -191,13 +191,13 @@ void AGOSEngine::restartAnimation() {
 		displayScreen();
 	}
 
-	_lockWord &= ~0x10;
+	_videoLockOut &= ~0x10;
 }
 
 void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16 curSprite, uint16 curZoneNum) {
 	VgaTimerEntry *vte;
 
-	_lockWord |= 1;
+	_videoLockOut |= 1;
 
 	for (vte = _vgaTimerList; vte->delay; vte++) {
 	}
@@ -208,11 +208,11 @@ void AGOSEngine::addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16
 	vte->zoneNum = curZoneNum;
 	vte->type = type;
 
-	_lockWord &= ~1;
+	_videoLockOut &= ~1;
 }
 
 void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
-	_lockWord |= 1;
+	_videoLockOut |= 1;
 
 	if (vte + 1 <= _nextVgaTimerToProcess) {
 		_nextVgaTimerToProcess--;
@@ -223,7 +223,7 @@ void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 		vte++;
 	} while (vte->delay);
 
-	_lockWord &= ~1;
+	_videoLockOut &= ~1;
 }
 
 void AGOSEngine::processVgaEvents() {
@@ -561,14 +561,14 @@ void AGOSEngine::timerCallback() {
 }
 
 void AGOSEngine_Feeble::timerProc() {
-	if (_lockWord & 0x80E9 || _lockWord & 2)
+	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
 		return;
 
 	_syncCount++;
 
-	_lockWord |= 2;
+	_videoLockOut |= 2;
 
-	if (!(_lockWord & 0x10)) {
+	if (!(_videoLockOut & 0x10)) {
 		_syncFlag2 ^= 1;
 		if (!_syncFlag2) {
 			processVgaEvents();
@@ -577,7 +577,7 @@ void AGOSEngine_Feeble::timerProc() {
 			if (getGameType() == GType_FF && getBitFlag(99)) {
 				processVgaEvents();
 			} else if (_scrollCount == 0) {
-				_lockWord &= ~2;
+				_videoLockOut &= ~2;
 				return;
 			}
 		}
@@ -610,22 +610,22 @@ void AGOSEngine_Feeble::timerProc() {
 		_displayScreen = false;
 	}
 
-	_lockWord &= ~2;
+	_videoLockOut &= ~2;
 }
 
 void AGOSEngine_PN::timerProc() {
-	if (_lockWord & 0x80E9 || _lockWord & 2)
+	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
 		return;
 
 	_syncCount++;
 
-	_lockWord |= 2;
+	_videoLockOut |= 2;
 
 	_sound->handleSound();
 	handleMouseMoved();
 	handleKeyboard();
 
-	if (!(_lockWord & 0x10)) {
+	if (!(_videoLockOut & 0x10)) {
 		if (_sampleWait) {
 			_vgaCurSpriteId = 0xFFFF;
 			vc15_sync();
@@ -649,20 +649,20 @@ void AGOSEngine_PN::timerProc() {
 		_displayScreen = false;
 	}
 
-	_lockWord &= ~2;
+	_videoLockOut &= ~2;
 }
 
 void AGOSEngine::timerProc() {
-	if (_lockWord & 0x80E9 || _lockWord & 2)
+	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
 		return;
 
 	_syncCount++;
 
-	_lockWord |= 2;
+	_videoLockOut |= 2;
 
 	handleMouseMoved();
 
-	if (!(_lockWord & 0x10)) {
+	if (!(_videoLockOut & 0x10)) {
 		processVgaEvents();
 		processVgaEvents();
 		_cepeFlag ^= 1;
@@ -675,7 +675,7 @@ void AGOSEngine::timerProc() {
 		_displayScreen = false;
 	}
 
-	_lockWord &= ~2;
+	_videoLockOut &= ~2;
 }
 
 void AGOSEngine_PuzzlePack::dimpIdle() {
