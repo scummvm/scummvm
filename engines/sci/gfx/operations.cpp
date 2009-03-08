@@ -1087,6 +1087,8 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	// Reverse offset if we have to interpret colors inversely
 
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
+		color1.priority = 0;
+		color1.control = 0;
 		if (color1.visual.global_index == GFX_COLOR_INDEX_UNMAPPED)
 			gfxop_set_color(state, &color1, color1);
 		return drv->draw_filled_rect(drv, new_box, color1, color1, GFX_SHADE_FLAT);
