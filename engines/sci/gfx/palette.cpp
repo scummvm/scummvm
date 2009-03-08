@@ -100,7 +100,9 @@ void Palette::unmerge() {
 		assert(pi < (int)_parent->_size);
 		assert(_parent->_colors[pi].refcount != 0);
 		assert(_parent->_colors[pi].refcount != PALENTRY_FREE);
+#ifdef DEBUG_MERGE
 		int old = _parent->_colors[pi].refcount;
+#endif
 		if (_parent->_colors[pi].refcount != PALENTRY_LOCKED)
 			_parent->_colors[pi].refcount--;
 		if (_parent->_colors[pi].refcount == 0) {
