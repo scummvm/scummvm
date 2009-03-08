@@ -55,12 +55,9 @@ private:
 	void readNextPara();
 	void printLine(char *str);
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	
-	//typedef void (LoLEngine::*DialogueAnimCallback)(const char *str, uint16 lineWidth, uint8 col1, uint8 col2);
-	//DialogueAnimCallback _dlgAnimCallback;
-	//void portraitAnimation1(const char *str);
-	void portraitAnimation2();
-	
+	void textPageBreak();	
+
+	void clearCurDim();
 
 	char *_stringParameters[15];
 	char *_buffer;
@@ -71,7 +68,6 @@ private:
 	char _ctrl[3];
 
 	char _scriptParaString[11];
-	uint32 _stringLength;
 
 	uint16 _lineWidth;
 	uint32 _numChars;

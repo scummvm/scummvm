@@ -327,6 +327,7 @@ private:
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
 	int snd_characterSpeaking();
 	void snd_stopSpeech(bool setFlag);
+	uint32 snd_getElapsedSpeechTime();
 	void snd_playSoundEffect(int track, int volume);
 	void snd_processEnvironmentalSoundEffect(int soundId, int block);
 	void snd_loadSoundFile(int track);
@@ -336,6 +337,7 @@ private:
 	int _lastSpeechId;
 	int _lastSpeaker;
 	char _activeVoiceFile[13];
+	uint32 _activeVoiceFileTotalTime;
 	int _lastSfxTrack;
 	int _lastMusicTrack;
 	int _curMusicFileIndex;
@@ -494,7 +496,7 @@ private:
 	bool _sceneUpdateRequired;
 	int16 _currentBlockPropertyIndex[18];
 	uint16 _gameFlags[16];
-	uint16 _unkEMC46[16];
+	uint16 _globalScriptVars[16];
 
 	// emc opcode
 	int olol_drawScene(EMCState *script);
@@ -519,8 +521,8 @@ private:
 	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
 	int olol_clearDialogueField(EMCState *script);
-	int olol_getUnkArrayVal(EMCState *script);
-	int olol_setUnkArrayVal(EMCState *script);
+	int olol_getGlobalScriptVar(EMCState *script);
+	int olol_setGlobalScriptVar(EMCState *script);
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);

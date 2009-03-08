@@ -92,11 +92,6 @@ void Screen_LoL::clearDim(int dim) {
 	fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, tmp->unkA);
 }
 
-void Screen_LoL::clearCurDim() {
-	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _curDim->unkA);
-	_dimLineCount = 0;
-}
-
 void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {
 	debugC(9, kDebugLevelScreen, "Screen_LoL::fprintString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
 	if (!format)

@@ -115,21 +115,22 @@ int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 	return audioStream->getTotalPlayTime();
 }
 
-void Sound::voicePlayFromList(Common::List<const char*> fileList) {
+uint32 Sound::voicePlayFromList(Common::List<const char*> fileList) {
 	int h = 0;
 	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return;
+		return 0;
 
 	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
 	
 	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
 		Common::SeekableReadStream *file = _vm->resource()->createReadStream(*i);
 
-		// TODO: Maybe output an warning like "file not found"?
-		if (!file)
+		if (!file) {
+			warning("Couldn't load voice file: %s", *i);
 			continue;
+		}
 
 		int size, rate;
 		uint8 *data = Audio::loadVOCFromStream(*file, size, rate);
@@ -151,6 +152,7 @@ void Sound::voicePlayFromList(Common::List<const char*> fileList) {
 	
 	_soundChannels[h].file = *fileList.begin();
 	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, out);
+	return out->getTotalPlayTime();
 }
 
 void Sound::voiceStop(const char *file) {

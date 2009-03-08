@@ -190,7 +190,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_activeTim, 0, sizeof(_activeTim));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
-
+	
+	_activeVoiceFileTotalTime = 0;
 	_pageBuffer1 = _pageBuffer2 = 0;
 
 	memset(_charStatsTemp, 0, sizeof(_charStatsTemp));
@@ -359,8 +360,7 @@ Common::Error LoLEngine::init() {
 	_pageBuffer2 = new uint8[0xfa00];
 	memset(_pageBuffer2, 0, 0xfa00);
  
-	// FIXME: Why do we allocate a 401 entry array, if only 400 entries are used?
-	_itemsInPlay = new ItemInPlay[401];
+	_itemsInPlay = new ItemInPlay[400];
 	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
 
 	_characters = new LoLCharacter[4];
@@ -416,7 +416,7 @@ Common::Error LoLEngine::init() {
 	memset(_tmpData136, 0, 136);
 
 	memset(_gameFlags, 0, 16 * sizeof(uint16));
-	memset(_unkEMC46, 0, 16 * sizeof(uint16));
+	memset(_globalScriptVars, 0, 16 * sizeof(uint16));
 
 	_levelFileData = 0;
 	_lvlShpFileHandle = 0;
@@ -1167,9 +1167,44 @@ void LoLEngine::restoreAfterAnimatedDialogue(int redraw) {
 }
 
 void LoLEngine::initNonAnimatedDialogue(int controlMode, int pageNum) {
+	if (controlMode) {
+		_timer->disable(11);
+		_fadeText = false;
+		int cp = _screen->setCurPage(pageNum);
+
+		_screen->fillRect(0, 128, 319, 199, 1);
+		gui_drawBox(0, 129, 320, 71, 136, 251, -1);
+		gui_drawBox(1, 130, 318, 69, 136, 251, 252);
+
+		_screen->modifyScreenDim(5, 8, 131, 304, 66);
+		_screen->modifyScreenDim(4, 1, 133, 38, 60);
+		_screen->clearDim(4);
+
+		_updateFlags |= 2;
+		_hideControls = controlMode;
+		calcCharPortraitXpos();
+
+		if (!textEnabled() && (!(controlMode & 2))) {
+			int nc = countActiveCharacters();
+			for (int i = 0; i < nc; i++) {
+				_portraitSpeechAnimMode = 2;
+				_updateCharNum = i;
+				_screen->drawShape(0, _gameShapes[88], _activeCharsXpos[_updateCharNum] + 8, 142, 0, 0);
+				updatePortraits();
+			}
+		}
+
+		_screen->setCurPage(cp);
+
+	} else {
+		_txt->setupField(true);
+		_txt->expandField();
+		setupScreenDims();
+		_screen->clearDim(4);
+	}
 	
-	_dialogueField = true;
-	
+	_hideControls = controlMode;
+	_dialogueField = true;	
 }
 
 void LoLEngine::restoreAfterNonAnimatedDialogue(int controlMode) {
@@ -1327,7 +1362,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	};
 
 	strcpy(_activeVoiceFile, *playList.begin());
-	_sound->voicePlayFromList(playList);
+	_activeVoiceFileTotalTime = _sound->voicePlayFromList(playList);
 
 	for (Common::List<const char*>::iterator i = playList.begin(); i != playList.end(); i++)
 		delete []*i;
@@ -1343,6 +1378,7 @@ int LoLEngine::snd_characterSpeaking() {
 		return 2;
 
 	_lastSpeechId = _lastSpeaker = -1;
+	_activeVoiceFileTotalTime = 0;
 
 	return 1;
 }
@@ -1353,9 +1389,14 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 
 	//_dlgTimer = 0;
 	_sound->voiceStop(_activeVoiceFile);
+	_activeVoiceFileTotalTime = 0;
 
 	if (setFlag)
 		_tim->_abortFlag = 1;
+}
+
+uint32 LoLEngine::snd_getElapsedSpeechTime() {
+	return _sound->voicePlayedTime(_activeVoiceFile);
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {

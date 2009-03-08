@@ -31,7 +31,7 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
-	_scriptParameter(0), _stringLength(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true),
+	_scriptParameter(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true),
 	_printFlag(false), _lineWidth(0), _numChars(0), _numCharsPrinted(0), _posX(0), _posY(0), _colour1(0), _colour2(0) {
 	
 	memset(_stringParameters, 0, 15 * sizeof(char*));
@@ -184,10 +184,10 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 
 	if (_vm->_updateFlags & 2) {
 		_screen->setScreenDim(4);
-		_screen->clearCurDim();		
+		clearCurDim();		
 	} else {
 		_screen->setScreenDim(3);
-		_screen->clearCurDim();
+		clearCurDim();
 		_screen->copyColour(192, col);
 		_vm->enableTimer(11);
 	}
@@ -360,10 +360,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 		switch (c - 1) {
 			case 0:
 				printLine(_currentLine);
-				//if (!_dlgAnimCallback)
-				//	break;
-
-				portraitAnimation2();
+				textPageBreak();
 				_numCharsPrinted = 0;
 				break;
 
@@ -478,10 +475,8 @@ void TextDisplayer_LoL::printLine(char *str) {
 	while (_posY >= lines) {
 		if (lines <= _screen->_dimLineCount && _animFlag) {
 			_screen->_dimLineCount = 0;
-			//if (_dlgAnimCallback) {
-				portraitAnimation2();
-				_numCharsPrinted = 0;
-			//}
+			textPageBreak();
+			_numCharsPrinted = 0;
 		}
 		
 		int h1 = ((sd->h / fh) - 1) * fh;
@@ -490,9 +485,9 @@ void TextDisplayer_LoL::printLine(char *str) {
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _colour2);
-
-		_posY--;
+		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _colour2);	
+		if (_posY)
+			_posY--;
 	}
 
 	int x1 = (sd->sx << 3) + _posX;
@@ -567,12 +562,122 @@ void TextDisplayer_LoL::printLine(char *str) {
 	printLine(str);
 }
 
-/*void TextDisplayer_LoL::portraitAnimation1(const char *str, uint16 lineWidth, uint8 col1, uint8 col2, uint16 numCharsPrinted) {
-	
-}*/
+void TextDisplayer_LoL::textPageBreak() {
+	int cp = _screen->setCurPage(0);
+	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
 
-void TextDisplayer_LoL::portraitAnimation2() {
-	// TODO
+	_vm->_timer->pauseSingleTimer(11, true);
+
+	_vm->_fadeText = false;
+	int updateCharV3 = 0;
+	int updatePortraitSpeechAnimDuration = 0;
+
+	if (_vm->_updateCharNum != -1)  {
+		updateCharV3 = _vm->_updateCharV3;
+		_vm->_updateCharV3 = 0;
+		updatePortraitSpeechAnimDuration = _vm->_updatePortraitSpeechAnimDuration;
+		if (_vm->_updatePortraitSpeechAnimDuration > 36)
+			_vm->_updatePortraitSpeechAnimDuration = 36;
+	}
+
+	uint32 speechPartTime = 0;
+	if (_vm->_speechFlag && _vm->_activeVoiceFileTotalTime && _numChars)
+		speechPartTime = _vm->_system->getMillis() + ((_numCharsPrinted * _vm->_activeVoiceFileTotalTime) / _numChars);
+
+	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
+
+	int x = ((dim->sx + dim->w) << 3) - 77;
+	int y = 0;
+
+	if (_vm->_hideInventory && (_vm->_updateFlags & 2)) {
+		if (_vm->_hideControls || !(_vm->_updateFlags & 2)) {
+			y = dim->sy + dim->h - 5;
+		} else {
+			x += 6;
+			y = dim->sy + dim->h - 2;
+		}		
+	} else {
+		y = dim->sy + dim->h - 10;
+	}
+
+	_vm->gui_drawBox(x, y, 74, 9, 136, 251, -1);
+	char *txt = _vm->getLangString(0x4073);
+	_vm->_screen->printText(txt, x + 37 - (_vm->_screen->getTextWidth(txt) >> 1), y + 2, 144, 0);
+
+	_vm->removeInputTop();
+
+	bool loop = true;
+	bool target = false;
+
+	do {
+		int inputFlag = _vm->checkInput(0, false) & 0xFF;
+		_vm->removeInputTop();
+
+		while (!inputFlag) {
+			_vm->update();
+		
+			if (_vm->_speechFlag) {
+				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_characterSpeaking() != 2)) && speechPartTime) {
+					loop = false;
+					inputFlag = 43;
+					break;
+				}
+			}
+
+			inputFlag = _vm->checkInput(0, false) & 0xFF;
+			_vm->removeInputTop();
+		}
+
+		_vm->gui_notifyButtonListChanged();
+
+		switch (inputFlag) {
+			case 43:
+			case 61:
+				loop = false;
+				break;
+
+			case 199:
+			case 201:
+				if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + 74, y + 9))
+					target = true;
+				break;
+
+			case 200:
+			case 202:
+				if (target)
+					loop = false;
+				break;
+
+			default:
+				break;
+		}
+	} while (loop);
+
+	_screen->fillRect(x, y, x + 74, y + 9, _colour2);
+	clearCurDim();
+
+	_vm->_timer->pauseSingleTimer(11, false);
+
+	if (_vm->_updateCharNum != -1) {
+		_vm->_updateCharV3 = updateCharV3;
+		if (updatePortraitSpeechAnimDuration > 36)
+			updatePortraitSpeechAnimDuration -= 36;
+		else
+			updatePortraitSpeechAnimDuration >>= 1;
+
+		_vm->_updatePortraitSpeechAnimDuration = updatePortraitSpeechAnimDuration;
+	}
+
+	_screen->setFont(cf);
+	_screen->setCurPage(cp);
+	_vm->removeInputTop();
+}
+
+void TextDisplayer_LoL::clearCurDim() {
+	const ScreenDim *tmp = _screen->getScreenDim(_screen->curDimIndex());
+	_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _colour2);
+	_screen->_dimLineCount = 0;
+	_posX = _posY = 0;	
 }
 
 } // end of namespace Kyra

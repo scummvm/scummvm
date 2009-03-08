@@ -203,7 +203,7 @@ public:
 	 *
 	 * @param fileList:	files to be played
 	 */
-	virtual void voicePlayFromList(Common::List<const char*> fileList);
+	virtual uint32 voicePlayFromList(Common::List<const char*> fileList);
 
 	/**
 	 * Checks if a voice is being played.

@@ -452,12 +452,16 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_getUnkArrayVal(EMCState *script) {
-	return _unkEMC46[stackPos(0)];
+int LoLEngine::olol_getGlobalScriptVar(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getGlobalScriptVar(%p) (%d)", (const void *)script, stackPos(0));
+	assert(stackPos(0) < 16);
+	return _globalScriptVars[stackPos(0)];
 }
 
-int LoLEngine::olol_setUnkArrayVal(EMCState *script) {
-	_unkEMC46[stackPos(0)] = stackPos(1);
+int LoLEngine::olol_setGlobalScriptVar(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalScriptVar(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	assert(stackPos(0) < 16);
+	_globalScriptVars[stackPos(0)] = stackPos(1);
 	return 1;
 }
 
@@ -1194,8 +1198,8 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x2C
 	OpcodeUnImpl();
-	Opcode(olol_getUnkArrayVal);
-	Opcode(olol_setUnkArrayVal);
+	Opcode(olol_getGlobalScriptVar);
+	Opcode(olol_setGlobalScriptVar);
 	Opcode(olol_getGlobalVar);
 
 	// 0x30
