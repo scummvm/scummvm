@@ -651,6 +651,7 @@ int gfxop_set_system_color(gfx_state_t *state, unsigned int index, gfx_color_t *
 
 int gfxop_free_color(gfx_state_t *state, gfx_color_t *color) {
 	// FIXME: implement. (And call in the appropriate places!)
+	return GFX_OK;
 }
 
 
