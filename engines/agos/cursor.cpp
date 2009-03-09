@@ -360,15 +360,15 @@ void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	_mouse = _eventMan->getMousePos();
 
 	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
+	if (_lastHitArea3 == 0 && _leftButtonDown) {
 		_verbHitArea = 300;
-		_leftButtonDown = 0;
+		_leftButtonDown = false;
 		x = 1;
 	}
 
-	if (_rightButtonDown != 0) {
+	if (_rightButtonDown) {
 		_verbHitArea = (getGameId() == GID_DIMP) ? 301 : 300;
-		_rightButtonDown = 0;
+		_rightButtonDown = false;
 		x = 1;
 	}
 
@@ -419,7 +419,7 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 		}
 
 		if (_rightButtonDown) {
-			_rightButtonDown = 0;
+			_rightButtonDown = false;
 			setVerb(NULL);
 		}
 	} else if (getGameType() == GType_SIMON2) {
@@ -453,8 +453,8 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 	_leftButtonOld = _leftButton;
 
 	x = 0;
-	if (_lastHitArea3 == 0 && _leftButtonDown != 0) {
-		_leftButtonDown = 0;
+	if (_lastHitArea3 == 0 && _leftButtonDown) {
+		_leftButtonDown = false;
 		x = 1;
 	} else {
 		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)

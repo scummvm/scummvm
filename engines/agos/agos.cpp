@@ -290,8 +290,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_pendingDeleteTimeEvent = 0;
 
 	_initMouse = 0;
-	_leftButtonDown = 0;
-	_rightButtonDown = 0;
+	_leftButtonDown = false;
+	_rightButtonDown = false;
 	_clickOnly = 0;
 	_oneClick = 0;
 	_leftClick = 0;

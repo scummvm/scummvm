@@ -1213,7 +1213,7 @@ void AGOSEngine::vc33_setMouseOn() {
 void AGOSEngine::vc34_setMouseOff() {
 	mouseOff();
 	_mouseHideCount = 200;
-	_leftButtonDown = 0;
+	_leftButtonDown = false;
 }
 
 void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {

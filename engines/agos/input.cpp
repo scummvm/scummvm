@@ -126,7 +126,7 @@ void AGOSEngine::setup_cond_c_helper() {
 	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = 0;
-		_leftButtonDown = 0;
+		_leftButtonDown = false;
 
 		do {
 			if (_exitCutscene && getBitFlag(9)) {
@@ -172,7 +172,7 @@ void AGOSEngine::waitForInput() {
 	HitArea *ha;
 	uint id;
 
-	_leftButtonDown = 0;
+	_leftButtonDown = false;
 	_lastHitArea = 0;
 	//_lastClickRem = 0;
 	_verbHitArea = 0;

@@ -503,7 +503,7 @@ void AGOSEngine::delay(uint amount) {
 			case Common::EVENT_LBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(89, true);
-				_leftButtonDown++;
+				_leftButtonDown = true;
 				_leftButton = 1;
 				break;
 			case Common::EVENT_LBUTTONUP:
@@ -517,7 +517,7 @@ void AGOSEngine::delay(uint amount) {
 			case Common::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
 					setBitFlag(92, false);
-				_rightButtonDown++;
+				_rightButtonDown = true;
 				break;
 			case Common::EVENT_RBUTTONUP:
 				_rightClick = true;

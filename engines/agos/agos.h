@@ -409,7 +409,7 @@ protected:
 	uint16 _mouseHideCount;
 	bool _mouseToggle;
 
-	byte _leftButtonDown, _rightButtonDown;
+	bool _leftButtonDown, _rightButtonDown;
 	byte _leftButton, _leftButtonCount, _leftButtonOld;
 	byte _oneClick;
 	bool _clickOnly;
