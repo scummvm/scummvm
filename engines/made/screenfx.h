@@ -40,11 +40,12 @@ namespace Made {
 class ScreenEffects {
 public:
 	ScreenEffects(Screen *screen);
+	~ScreenEffects();
 	void run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void flash(int count, byte *palette, int colorCount);
 private:
 	Screen *_screen;
-	byte _fxPalette[768];
+	byte *_fxPalette;
 	static const byte vfxOffsTable[64];
 	static const byte vfxOffsIndexTable[8];
 	const byte *vfxOffsTablePtr;

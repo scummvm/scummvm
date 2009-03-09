@@ -32,6 +32,10 @@ namespace Made {
 
 Screen::Screen(MadeEngine *vm) : _vm(vm) {
 
+	_screenPalette = new byte[256 * 4];
+	_palette = new byte[768];
+	_newPalette = new byte[768];
+
 	_backgroundScreen = new Graphics::Surface();
 	_backgroundScreen->create(320, 200, 1);
 
@@ -90,6 +94,11 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 }
 
 Screen::~Screen() {
+
+	delete[] _screenPalette;
+	delete[] _palette;
+	delete[] _newPalette;
+
 	delete _backgroundScreen;
 	delete _workScreen;
 	if (_vm->getGameID() != GID_RTZ)

@@ -51,8 +51,15 @@ ScreenEffects::ScreenEffects(Screen *screen) : _screen(screen) {
 	vfxY1 = 0;
 	vfxWidth = 0;
 	vfxHeight = 0;
+	
+	_fxPalette = new byte[768];
+	
 }
 
+ScreenEffects::~ScreenEffects() {
+	delete[] _fxPalette;
+}
+ 
 void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 
 	// TODO: Put effect functions into an array
