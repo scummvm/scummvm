@@ -1575,11 +1575,13 @@ SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
 				return NULL;
 			} else if (!(_status & TEE_LEFT_ACTIVE)) {
 				delete _children[TEE_LEFT].it;
+				_children[TEE_LEFT].it = 0;
 				old_it = _children[TEE_RIGHT].it;
 				delete this;
 				return old_it;
 			} else if (!(_status & TEE_RIGHT_ACTIVE)) {
 				delete _children[TEE_RIGHT].it;
+				_children[TEE_RIGHT].it = 0;
 				old_it = _children[TEE_LEFT].it;
 				delete this;
 				return old_it;
