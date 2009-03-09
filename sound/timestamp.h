@@ -34,7 +34,7 @@ namespace Audio {
  * Timestamps allow measuring times with a sub-millisecond granularity,
  * and without rounding losses. This is achieved by measuring frames
  * instead of milliseconds: Specify an initial time in milliseconds
- * plus framerate (in Hertz, so frames per second).
+ * plus framerate (in frames per second).
  */
 class Timestamp {
 protected:

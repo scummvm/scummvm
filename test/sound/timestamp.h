@@ -5,10 +5,10 @@
 class TimestampTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_diff_add(void) {
-		Audio::Timestamp a(10000, 1000);
-		Audio::Timestamp b(10001, 1000);
-		Audio::Timestamp c(10002, 1000);
+	void test_diff_add() {
+		const Audio::Timestamp a(10000, 1000);
+		const Audio::Timestamp b(10001, 1000);
+		const Audio::Timestamp c(10002, 1000);
 	
 		TS_ASSERT_EQUALS(a.frameDiff(b), -1);
 		TS_ASSERT_EQUALS(b.frameDiff(a), 1);
@@ -23,7 +23,32 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(c.frameDiff(a), 2);
 	}
 
-	void test_more_add_diff(void) {
+	void test_ticks() {
+		const Audio::Timestamp a(1234, 60);
+		const Audio::Timestamp b(5678, 60);
+
+		TS_ASSERT_EQUALS(a.msecs(), 1234);
+		TS_ASSERT_EQUALS(b.msecs(), 5678);
+
+		TS_ASSERT_EQUALS(a.msecsDiff(b), 1234 - 5678);
+		TS_ASSERT_EQUALS(b.msecsDiff(a), 5678 - 1234);
+
+		TS_ASSERT_EQUALS(a.frameDiff(b), (1234 - 5678) * 60 / 1000);
+		TS_ASSERT_EQUALS(b.frameDiff(a), (5678 - 1234) * 60 / 1000);
+
+		TS_ASSERT_EQUALS(a.addFrames(1).msecs(), 1234 + 1000 * 1/60);
+		TS_ASSERT_EQUALS(a.addFrames(59).msecs(), 1234 + 1000 * 59/60);
+		TS_ASSERT_EQUALS(a.addFrames(60).msecs(), 1234 + 1000 * 60/60);
+
+		// As soon as we go back even by only one frame, the msec value
+		// has to drop by at least one.
+		TS_ASSERT_EQUALS(a.addFrames(-1).msecs(), 1234 - 1000 * 1/60 - 1);
+		TS_ASSERT_EQUALS(a.addFrames(-59).msecs(), 1234 - 1000 * 59/60 - 1);
+		TS_ASSERT_EQUALS(a.addFrames(-60).msecs(), 1234 - 1000 * 60/60);
+	}
+
+
+	void test_more_add_diff() {
 		const Audio::Timestamp c(10002, 1000);
 
 		for (int i = -10000; i < 10000; i++) {
