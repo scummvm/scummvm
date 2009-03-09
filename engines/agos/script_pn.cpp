@@ -480,7 +480,7 @@ void AGOSEngine_PN::opn_opcode36() {
 void AGOSEngine_PN::opn_opcode37() {
 	_curwrdptr = NULL;
 
-	_inputReady = 1;
+	_inputReady = true;
 	interact(_inputline, 49);
 
 	if ((_inpp = strchr(_inputline,'\n')) != NULL)

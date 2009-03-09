@@ -609,8 +609,8 @@ bool AGOSEngine::processSpecialKeys() {
 #ifdef ENABLE_PN
 // Personal Nightmare specific
 void AGOSEngine_PN::clearInputLine() {
-	_inputting = 0;
-	_inputReady = 0;
+	_inputting = false;
+	_inputReady = false;
 	clearWindow(_windowArray[2]);
 }
 
@@ -659,7 +659,7 @@ void AGOSEngine_PN::handleKeyboard() {
 		_mouseString = 0;
 		_mouseString1 = 0;
 		_mousePrintFG = 0;
-		_inputReady = 0;	
+		_inputReady = false;
 	}
 
 	_keyPressed.reset();
@@ -672,8 +672,8 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 		_inputMax = size;
 		_inputWindow = _windowArray[_curWindow];
 		windowPutChar(_inputWindow, 128);
-		_inputting = 1;
-		_inputReady = 1;
+		_inputting = true;
+		_inputReady = true;
 	}
 	
 	while (!shouldQuit() && _inputReady) {
@@ -688,7 +688,7 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 
 	if (!_inputReady) {
 		memcpy(buffer, _keyboardBuffer, size);
-		_inputting = 0;
+		_inputting = false;
 	}
 }
 

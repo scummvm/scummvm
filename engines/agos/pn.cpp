@@ -51,8 +51,8 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system)
 
 	_dragStore = 0;
 	_hitCalled = 0;
-	_inputReady = 0;
-	_inputting = 0;
+	_inputReady = false;
+	_inputting = false;
 	_intputCounter = 0;
 	_inputMax = 0;
 	_mousePrintFG = 0;

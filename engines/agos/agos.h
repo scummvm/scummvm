@@ -1374,9 +1374,6 @@ public:
 	void opn_opcode62();
 	void opn_opcode63();
 
-	// Video Script Opcodes, Personal Nightmare
-	void vc36_pause();
-
 	stackframe *_stackbase;
 
 	byte *_dataBase, *_textBase;
@@ -1394,10 +1391,10 @@ public:
 	char _objectName1[15], _objectName2[15];
 	char _inMessage[20];
 	char _placeMessage[15];
-	uint8 _inputReady;
-	uint8 _inputting;
+	bool _inputReady;
+	bool _inputting;
 	uint16 _intputCounter, _inputMax;
-	uint16 _mousePrintFG;
+	uint16 _mousePrintFG; // NOTE: Currently not used
 	HitArea *_dragStore;
 	uint8 _hitCalled;
 
@@ -1411,7 +1408,7 @@ public:
 	int16 _objectCountS;
 
         int16 _bp;
-	int _xofs;
+	int16 _xofs;
 	int16 _havinit;
 	uint16 _seed;
 
