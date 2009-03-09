@@ -123,7 +123,8 @@ uint32 Sound::voicePlayFromList(Common::List<const char*> fileList) {
 		return 0;
 
 	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
-	
+	uint32 totalPlayTime = 0;
+
 	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
 		Common::SeekableReadStream *file = _vm->resource()->createReadStream(*i);
 
@@ -146,13 +147,15 @@ uint32 Sound::voicePlayFromList(Common::List<const char*> fileList) {
 		free(data);
 
 		out->queueBuffer(vocBuffer, size);
+		totalPlayTime += size;
 	}
-
+	
+	totalPlayTime = (totalPlayTime * 1000) / 22050;
 	out->finish();
 	
 	_soundChannels[h].file = *fileList.begin();
 	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, out);
-	return out->getTotalPlayTime();
+	return totalPlayTime;
 }
 
 void Sound::voiceStop(const char *file) {

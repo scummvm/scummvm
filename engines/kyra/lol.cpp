@@ -415,8 +415,8 @@ Common::Error LoLEngine::init() {
 	_tmpData136 = new uint8[136];
 	memset(_tmpData136, 0, 136);
 
-	memset(_gameFlags, 0, 16 * sizeof(uint16));
-	memset(_globalScriptVars, 0, 16 * sizeof(uint16));
+	memset(_gameFlags, 0, sizeof(_gameFlags));
+	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
 
 	_levelFileData = 0;
 	_lvlShpFileHandle = 0;

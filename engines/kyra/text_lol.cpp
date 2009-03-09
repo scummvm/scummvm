@@ -32,7 +32,7 @@ namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
 	_scriptParameter(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true),
-	_printFlag(false), _lineWidth(0), _numChars(0), _numCharsPrinted(0), _posX(0), _posY(0), _colour1(0), _colour2(0) {
+	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0), _posX(0), _posY(0), _colour1(0), _colour2(0) {
 	
 	memset(_stringParameters, 0, 15 * sizeof(char*));
 	_buffer = new char[600];
@@ -161,6 +161,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 
 	preprocessString(str, script, paramList, paramIndex);
+	_numCharsTotal = strlen(_dialogueBuffer);
 	displayText(_dialogueBuffer);
 
 	_screen->setScreenDim(oldDim);
@@ -316,7 +317,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 	_printFlag = false;
 	
 	_lineWidth = 0;
-	_numChars = 0;
+	_numCharsLeft = 0;
 	_numCharsPrinted = 0;
 
 	_tempString1 = str;
@@ -411,8 +412,8 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 			default:
 				_lineWidth += _screen->getCharWidth(c);
-				_currentLine[_numChars++] = c;
-				_currentLine[_numChars] = 0;
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft] = 0;
 
 				if ((_posX + _lineWidth) > (sd->w << 3))
 					printLine(_currentLine);
@@ -425,7 +426,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 	va_end(args);
 
-	if (_numChars)
+	if (_numCharsLeft)
 		printLine(_currentLine);
 }
 
@@ -468,7 +469,7 @@ void TextDisplayer_LoL::readNextPara() {
 
 void TextDisplayer_LoL::printLine(char *str) {
 	const ScreenDim *sd = _screen->_curDim;
-	
+
 	int fh = (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
 	
@@ -494,7 +495,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 	int y = sd->sy + fh * _posY;
 	int w = sd->w << 3;
 	int lw = _lineWidth;
-	int s = _numChars;
+	int s = _numCharsLeft;
 	char c = 0;
 
 	if ((lw + _posX) > w) {
@@ -549,10 +550,10 @@ void TextDisplayer_LoL::printLine(char *str) {
 		s++;
 
 	strcpy(str, &str[s]);
-	_numChars = strlen(str);
+	_numCharsLeft = strlen(str);
 	_lineWidth = _screen->getTextWidth(str);
 
-	if (!_numChars && _posX < (sd->w << 3))
+	if (!_numCharsLeft && _posX < (sd->w << 3))
 		return;
 
 	_posX = 0;
@@ -581,8 +582,8 @@ void TextDisplayer_LoL::textPageBreak() {
 	}
 
 	uint32 speechPartTime = 0;
-	if (_vm->_speechFlag && _vm->_activeVoiceFileTotalTime && _numChars)
-		speechPartTime = _vm->_system->getMillis() + ((_numCharsPrinted * _vm->_activeVoiceFileTotalTime) / _numChars);
+	if (_vm->_speechFlag && _vm->_activeVoiceFileTotalTime && _numCharsTotal)
+		speechPartTime = _vm->_system->getMillis() + ((_numCharsPrinted * _vm->_activeVoiceFileTotalTime) / _numCharsTotal);
 
 	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
 

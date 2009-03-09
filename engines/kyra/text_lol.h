@@ -70,7 +70,8 @@ private:
 	char _scriptParaString[11];
 
 	uint16 _lineWidth;
-	uint32 _numChars;
+	uint32 _numCharsTotal;
+	uint32 _numCharsLeft;
 	uint32 _numCharsPrinted;
 	
 	const char *_animString;
