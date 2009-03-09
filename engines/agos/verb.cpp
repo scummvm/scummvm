@@ -238,7 +238,7 @@ void AGOSEngine::clearName() {
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
 		return;
 
-	if (_nameLocked == 1 || _lastNameOn == 0)
+	if (_nameLocked || !_lastNameOn)
 		return;
 
 	resetNameWindow();
@@ -734,13 +734,13 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 					_variableArray[500] = best_ha->verb & 0xBFFF;
 				}
 
-				if (_clickOnly != 0 && best_ha->id < 8) {
+				if (_clickOnly && best_ha->id < 8) {
 					uint id = best_ha->id;
 					if (id >= 4)
 						id -= 4;
 
 					invertBox(findBox(id), 0, 0, 0, 0);
-					_clickOnly = 0;
+					_clickOnly = false;
 					return;
 				}
 			}
@@ -752,7 +752,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		}
 	}
 
-	if (_clickOnly != 0)
+	if (_clickOnly)
 		return;
  
 	if (best_ha->flags & kBFInvertTouch) {
@@ -858,7 +858,7 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 		}
 	}
 
-	if (getGameType() != GType_WW || _nameLocked == 0) {
+	if (getGameType() != GType_WW || !_nameLocked) {
 		if (best_ha->flags & kBFNoTouchName) {
 			clearName();
 		} else if (best_ha != _lastNameOn) {
@@ -1104,13 +1104,13 @@ void AGOSEngine_PN::execMouseHit(HitArea *ha) {
 		else
 			hitBox1(ha);
 	} else if (_hitCalled == 3) {
-		if ((ha->flags & kOBFDraggable) && _dragFlag == 0) {
-			_dragFlag = 1;
+		if ((ha->flags & kOBFDraggable) && !_dragFlag) {
+			_dragFlag = true;
 			_dragStore = ha;
 			_needHitAreaRecalc++;
 		}
 	} else if (_hitCalled == 4) {
-		_dragFlag = 0;
+		_dragFlag = false;
 		_hitCalled = 0;
 		_oneClick = 0;
 		_dragCount = 0;

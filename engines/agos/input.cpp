@@ -117,7 +117,7 @@ void AGOSEngine::setup_cond_c_helper() {
 
 	_lastHitArea = 0;
 	_hitAreaObjectItem = NULL;
-	_nameLocked = 0;
+	_nameLocked = false;
 
 	last = _lastNameOn;
 	clearName();
@@ -178,8 +178,8 @@ void AGOSEngine::waitForInput() {
 	_verbHitArea = 0;
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
-	_clickOnly = 0;
-	_nameLocked = 0;
+	_clickOnly = false;
+	_nameLocked = false;
 
 	if (getGameType() == GType_WW) {
 		_mouseCursor = 0;
@@ -192,7 +192,7 @@ void AGOSEngine::waitForInput() {
 	while (!shouldQuit()) {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
-		_dragAccept = 1;
+		_dragAccept = true;
 
 		while (!shouldQuit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
@@ -206,7 +206,7 @@ void AGOSEngine::waitForInput() {
 			if (_lastHitArea3 == (HitArea *) -1) {
 				_lastHitArea = NULL;
 				_lastHitArea3 = NULL;
-				_dragAccept = 1;
+				_dragAccept = true;
 			} else {
 				if (_lastHitArea3 || _dragMode)
 					break;
@@ -219,10 +219,10 @@ void AGOSEngine::waitForInput() {
 			ha = _lastClickRem;
 
 			if (ha == 0 || ha->itemPtr == NULL || !(ha->flags & kBFDragBox)) {
-				_dragFlag = 0;
-				_dragMode = 0;
+				_dragFlag = false;
+				_dragMode = false;
 				_dragCount = 0;
-				_dragEnd = 0;
+				_dragEnd = false;
 				continue;
 			}
 
@@ -234,18 +234,18 @@ void AGOSEngine::waitForInput() {
 				hitarea_stuff_helper();
 				delay(100);
 
-				if (_dragFlag == 0) {
-					_dragFlag = 0;
-					_dragMode = 0;
+				if (!_dragFlag) {
+					_dragFlag = false;
+					_dragMode = false;
 					_dragCount = 0;
-					_dragEnd = 0;
+					_dragEnd = false;
 				}
 			} while (!_dragEnd);
 
-			_dragFlag = 0;
-			_dragMode = 0;
+			_dragFlag = false;
+			_dragMode = false;
 			_dragCount = 0;
-			_dragEnd = 0;
+			_dragEnd = false;
 
 			boxController(_mouse.x, _mouse.y, 1);
 
@@ -304,9 +304,9 @@ void AGOSEngine::waitForInput() {
 				) {
 				_hitAreaSubjectItem = ha->itemPtr;
 				id = setVerbText(ha);
-				_nameLocked = 0;
+				_nameLocked = false;
 				displayName(ha);
-				_nameLocked = 1;
+				_nameLocked = true;
 
 				if (_verbHitArea) {
 					break;
@@ -353,9 +353,9 @@ out_of_here:
 	else if (getGameType() == GType_ELVIRA1)
 		unlightMenuStrip();
 
-	_nameLocked = 0;
+	_nameLocked = false;
 	_needHitAreaRecalc++;
-	_dragAccept = 0;
+	_dragAccept = false;
 
 	if (getGameType() == GType_WW && _mouseCursor < 3)
 		_mouseCursor = 0;

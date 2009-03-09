@@ -376,7 +376,7 @@ protected:
 	bool _dragAccept;
 	bool _dragEnd;
 	bool _dragFlag;
-	uint8 _dragMode;
+	bool _dragMode;
 	uint8 _dragCount;
 	HitArea *_lastClickRem;
 

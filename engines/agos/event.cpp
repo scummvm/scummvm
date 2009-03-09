@@ -129,7 +129,7 @@ void AGOSEngine::killAllTimers() {
 		next = cur->next;
 		delTimeEvent(cur);
 	}
-	_clickOnly = 0;
+	_clickOnly = false;
 }
 
 bool AGOSEngine::kickoffTimeEvents() {

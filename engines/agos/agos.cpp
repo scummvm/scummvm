@@ -269,7 +269,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_dragAccept = false;
 	_dragEnd = false;
 	_dragFlag = false;
-	_dragMode = 0;
+	_dragMode = false;
 	_dragCount = 0;
 	_lastClickRem = 0;
 
@@ -292,7 +292,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_initMouse = 0;
 	_leftButtonDown = false;
 	_rightButtonDown = false;
-	_clickOnly = 0;
+	_clickOnly = false;
 	_oneClick = 0;
 	_leftClick = 0;
 	_rightClick = 0;

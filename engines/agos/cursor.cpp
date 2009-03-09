@@ -486,7 +486,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 
 	if (_leftClick == true) {
 		_leftClick = false;
-		if (_dragFlag != 0) {
+		if (_dragFlag) {
 			_hitCalled = 4;
 		} else if (_videoLockOut & 0x10) {
 			if (_oneClick != 0) {
@@ -571,8 +571,8 @@ void AGOSEngine::handleMouseMoved() {
 
 	if (_leftClick == true) {
 		_leftClick = false;
-		if (_dragMode != 0) {
-			_dragEnd = 1;
+		if (_dragMode) {
+			_dragEnd = true;
 		} else {
 			_oneClick = 1;
 		}
@@ -588,7 +588,7 @@ void AGOSEngine::handleMouseMoved() {
 	}
 	_leftButtonOld = _leftButton;
 
-	if (_dragMode != 0 || _lastHitArea3 != 0) {
+	if (_dragMode || _lastHitArea3) {
 		x = 0;
 		if (_needHitAreaRecalc == 0)
 			goto get_out;
@@ -596,11 +596,11 @@ void AGOSEngine::handleMouseMoved() {
 			goto boxstuff;
 	}
 
-	if (_leftButton != 0 && _dragAccept != 0 && _lastClickRem != NULL) {
+	if (_leftButton != 0 && _dragAccept && _lastClickRem != NULL) {
 		_dragCount++;
 		if (_dragCount == 20) {
-			_dragMode = 1;
-			_dragFlag = 1;
+			_dragMode = true;
+			_dragFlag = true;
 			_needHitAreaRecalc++;
 		}
 	}
@@ -847,7 +847,7 @@ void AGOSEngine::drawMousePointer() {
 			}
 		}
 
-		if (_dragFlag != 0)
+		if (_dragFlag)
 			src = _common_handInfo;
 
 		for (i = 0; i < 16; i++) {

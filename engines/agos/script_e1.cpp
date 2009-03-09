@@ -824,15 +824,15 @@ void AGOSEngine_Elvira1::oe1_enableInput() {
 	_hitAreaSubjectItem = 0;
 	_hitAreaObjectItem = 0;
 
-	_dragFlag = 0;
-	_dragAccept = 0;
+	_dragFlag = false;
+	_dragAccept = false;
 	_dragCount = 0;
-	_dragMode = 0;
+	_dragMode = false;
 
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
 
-	_clickOnly = 1;
+	_clickOnly = true;
 }
 
 void AGOSEngine_Elvira1::oe1_setTime() {
