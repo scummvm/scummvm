@@ -358,7 +358,10 @@
 	#define SCUMMVM_DONT_DEFINE_TYPES
 
 	#define STRINGBUFLEN 256
-	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+
+	#ifndef DISABLE_TEXT_CONSOLE
+		#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+	#endif
 
 #elif defined(__WII__)
 
