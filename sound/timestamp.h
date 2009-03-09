@@ -28,9 +28,14 @@
 
 #include "common/scummsys.h"
 
-
 namespace Audio {
 
+/**
+ * Timestamps allow measuring times with a sub-millisecond granularity,
+ * and without rounding losses. This is achieved by measuring frames
+ * instead of milliseconds: Specify an initial time in milliseconds
+ * plus framerate (in Hertz, so frames per second).
+ */
 class Timestamp {
 protected:
 	uint32 _msecs;
@@ -40,6 +45,12 @@ protected:
 
 public:
 	Timestamp();
+	
+	/**
+	 * Set up a timestamp with a given time and framerate.
+	 * @param msecs		staring time in milliseconds
+	 * @param frameRate	number of frames per second
+	 */
 	Timestamp(uint32 msecs, int frameRate);
 	
 	/** Adds a number of frames to a timestamp. */
