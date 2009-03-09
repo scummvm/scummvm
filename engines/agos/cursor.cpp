@@ -474,6 +474,7 @@ get_out:
 	_litBoxFlag = 0;
 }
 
+#ifdef ENABLE_PN
 void AGOSEngine_PN::handleMouseMoved() {
 	if (_mouseHideCount) {
 		CursorMan.showMouse(false);
@@ -538,6 +539,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 	_needHitAreaRecalc = 0;
 	_litBoxFlag = 0;
 }
+#endif
 
 void AGOSEngine::handleMouseMoved() {
 	uint x;

@@ -851,6 +851,7 @@ void AGOSEngine_Elvira1::setupGame() {
 	AGOSEngine::setupGame();
 }
 
+#ifdef ENABLE_PN
 void AGOSEngine_PN::setupGame() {
 	gss = &simon1_settings;
 	_numVideoOpcodes = 57;
@@ -862,6 +863,7 @@ void AGOSEngine_PN::setupGame() {
 
 	AGOSEngine::setupGame();
 }
+#endif
 
 void AGOSEngine::setupGame() {
 	allocItemHeap();

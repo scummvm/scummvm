@@ -1039,6 +1039,7 @@ static const byte hitBarData[12 * 7] = {
 	0x3C, 0x89, 0xC3, 0x00, 0x88, 0x88, 0x18, 0x03, 0x86, 0x23, 0x0C, 0x00
 };
 
+#ifdef ENABLE_PN
 // Personal Nightmare specific
 void AGOSEngine_PN::drawIconHitBar() {
 	Graphics::Surface *screen = _system->lockScreen();
@@ -1118,5 +1119,6 @@ void AGOSEngine_PN::printIcon(HitArea *ha, uint8 i, uint8 r) {
 		}
 	}
 }
+#endif
 
 } // End of namespace AGOS

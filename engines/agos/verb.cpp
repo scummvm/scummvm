@@ -1027,6 +1027,7 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	_videoLockOut &= ~0x8000;
 }
 
+#ifdef ENABLE_PN
 // Personal Nightmare specific
 void AGOSEngine_PN::boxController(uint x, uint y, uint mode) {
 	HitArea *best_ha;
@@ -1277,5 +1278,6 @@ void AGOSEngine_PN::hitBox11(HitArea *ha) {
 	_mouseString = messageList[ha->msg1];
 	_mousePrintFG++;
 }
+#endif
 
 } // End of namespace AGOS

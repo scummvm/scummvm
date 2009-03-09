@@ -133,9 +133,11 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	bool res = true;
 
 	switch (gd->gameType) {
+#ifdef ENABLE_PN
 	case AGOS::GType_PN:
 		*engine = new AGOS::AGOSEngine_PN(syst);
 		break;
+#endif
 	case AGOS::GType_ELVIRA1:
 		*engine = new AGOS::AGOSEngine_Elvira1(syst);
 		break;

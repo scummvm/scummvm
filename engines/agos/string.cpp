@@ -910,8 +910,8 @@ void AGOSEngine_Waxworks::printBox() {
 	changeWindow(0);
 }
 
+#ifdef ENABLE_PN
 // Personal Nightmare specific
-
 uint32 AGOSEngine_PN::ftext(uint32 base, int n) {
 	uint32 b = base;
 	int ct = n;
@@ -1549,5 +1549,6 @@ char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
 
 	return origPtr;
 }
+#endif
 
 } // End of namespace AGOS

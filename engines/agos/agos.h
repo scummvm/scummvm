@@ -1280,6 +1280,7 @@ protected:
 	virtual char *genSaveName(int slot);
 };
 
+#ifdef ENABLE_PN
 class AGOSEngine_PN : public AGOSEngine {
 	struct stackframe {
 		struct stackframe *nextframe;
@@ -1525,6 +1526,7 @@ protected:
 
 	const OpcodeEntryPN *_opcodesPN;
 };
+#endif
 
 class AGOSEngine_Elvira1 : public AGOSEngine {
 public:

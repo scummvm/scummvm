@@ -23,6 +23,7 @@
  *
  */
 
+#ifdef ENABLE_PN
 
 #include "agos/agos.h"
 #include "agos/vga.h"
@@ -1105,3 +1106,5 @@ void AGOSEngine_PN::popstack(int type) {
 }
 
 } // End of namespace AGOS
+
+#endif

@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_PN
+
 #include "common/config-manager.h"
 
 #include "agos/intern.h"
@@ -291,3 +293,5 @@ void AGOSEngine_PN::setqptrs() {
 }
 
 } // End of namespace AGOS
+
+#endif

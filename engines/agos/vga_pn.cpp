@@ -23,8 +23,7 @@
  *
  */
 
-// Video script opcodes for Simon1/Simon2
-
+#ifdef ENABLE_PN
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -221,3 +220,5 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 }
 
 } // End of namespace AGOS
+
+#endif
