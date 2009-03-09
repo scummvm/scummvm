@@ -723,6 +723,7 @@ uint16 AGOSEngine_PN::getptr(uint32 pos) {
 }
 
 uint32 AGOSEngine_PN::getlong(uint32 pos) {
+	// Only actually reads 24bit though
 	if (pos > _dataBaseSize)
 		error("getlong: Read beyond EOF (%d)", pos);
 	return (uint32)READ_LE_UINT24(_dataBase + pos);
