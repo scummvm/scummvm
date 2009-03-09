@@ -390,7 +390,7 @@ bool MoviePlayerDXA::processFrame() {
 
 
 MoviePlayerSMK::MoviePlayerSMK(AGOSEngine *vm, const char *name)
-	: MoviePlayer(vm), SMKPlayer(vm->_mixer) {
+	: MoviePlayer(vm), SmackerDecoder(vm->_mixer) {
 	debug(0, "Creating SMK cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));

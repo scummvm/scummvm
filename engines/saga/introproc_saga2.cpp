@@ -52,10 +52,10 @@ int Scene::DinoStartProc() {
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	stopEvents.push_back(stopEvent);
 
-	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile("testvid.smk"))
-		player->playVideo(&stopEvents);        // Play introduction
+		player->playVideo(stopEvents);        // Play introduction
 	smkDecoder->closeFile();
 	delete player;
 	delete smkDecoder;
@@ -75,13 +75,13 @@ int Scene::FTA2StartProc() {
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	stopEvents.push_back(stopEvent);
 
-	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile("trimark.smk"))
-		player->playVideo(&stopEvents);      // Show Ignite logo
+		player->playVideo(stopEvents);      // Show Ignite logo
 	smkDecoder->closeFile();
 	if (smkDecoder->loadFile("intro.smk"))
-		player->playVideo(&stopEvents);        // Play introduction
+		player->playVideo(stopEvents);        // Play introduction
 	smkDecoder->closeFile();
 	delete player;
 	delete smkDecoder;
@@ -125,10 +125,10 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 	stopEvents.push_back(stopEvent);
 
 	// Play ending
-	Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(_vm->_mixer);
+	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile(videoName)) {
-		player->playVideo(&stopEvents);
+		player->playVideo(stopEvents);
 		smkDecoder->closeFile();
 	}
 	delete player;

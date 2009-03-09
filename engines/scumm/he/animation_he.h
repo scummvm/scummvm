@@ -36,7 +36,7 @@ namespace Scumm {
 
 class ScummEngine_v90he;
 
-class MoviePlayer : public Graphics::SMKPlayer {
+class MoviePlayer : public Graphics::SmackerDecoder {
 	ScummEngine_v90he *_vm;
 
 	Audio::Mixer *_mixer;

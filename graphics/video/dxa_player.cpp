@@ -37,7 +37,7 @@
 
 namespace Graphics {
 
-DXAPlayer::DXAPlayer() {
+DXADecoder::DXADecoder() {
 	_fileStream = 0;
 
 	_frameBuffer1 = 0;
@@ -63,11 +63,11 @@ DXAPlayer::DXAPlayer() {
 	_scaleMode = S_NONE;
 }
 
-DXAPlayer::~DXAPlayer() {
+DXADecoder::~DXADecoder() {
 	closeFile();
 }
 
-bool DXAPlayer::loadFile(const char *fileName) {
+bool DXADecoder::loadFile(const char *fileName) {
 	uint32 tag;
 	int32 frameRate;
 
@@ -118,7 +118,7 @@ bool DXAPlayer::loadFile(const char *fileName) {
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
 	memset(_frameBuffer2, 0, _frameSize);
 	if (!_frameBuffer1 || !_frameBuffer2)
-		error("DXAPlayer: Error allocating frame buffers (size %u)", _frameSize);
+		error("DXADecoder: Error allocating frame buffers (size %u)", _frameSize);
 
 	_scaledBuffer = 0;
 	if (_scaleMode != S_NONE) {
@@ -160,7 +160,7 @@ bool DXAPlayer::loadFile(const char *fileName) {
 	return true;
 }
 
-void DXAPlayer::closeFile() {
+void DXADecoder::closeFile() {
 	if (!_fileStream)
 		return;
 
@@ -177,7 +177,7 @@ void DXAPlayer::closeFile() {
 	_decompBuffer = 0;
 }
 
-void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
+void DXADecoder::decodeZlib(byte *data, int size, int totalSize) {
 #ifdef USE_ZLIB
 	unsigned long dstLen = totalSize;
 	Common::uncompress(data, &dstLen, _inBuffer, size);
@@ -187,7 +187,7 @@ void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
 #define BLOCKW 4
 #define BLOCKH 4
 
-void DXAPlayer::decode12(int size) {
+void DXADecoder::decode12(int size) {
 #ifdef USE_ZLIB
 	if (_decompBuffer == NULL) {
 		_decompBuffer = (byte *)malloc(_decompBufferSize);
@@ -287,7 +287,7 @@ void DXAPlayer::decode12(int size) {
 #endif
 }
 
-void DXAPlayer::decode13(int size) {
+void DXADecoder::decode13(int size) {
 #ifdef USE_ZLIB
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 
@@ -475,7 +475,7 @@ void DXAPlayer::decode13(int size) {
 #endif
 }
 
-bool DXAPlayer::decodeNextFrame() {
+bool DXADecoder::decodeNextFrame() {
 	uint32 tag;
 
 	if (_videoInfo.currentFrame == 0)

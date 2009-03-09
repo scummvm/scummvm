@@ -33,7 +33,7 @@
 namespace Scumm {
 
 MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
-	: SMKPlayer(mixer), _vm(vm), _mixer(mixer) {
+	: SmackerDecoder(mixer), _vm(vm), _mixer(mixer) {
 
 	_flags = 0;
 	_wizResNum = 0;

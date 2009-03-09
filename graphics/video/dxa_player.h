@@ -37,10 +37,10 @@
 
 namespace Graphics {
 
-class DXAPlayer : public VideoDecoder {
+class DXADecoder : public VideoDecoder {
 public:
-	DXAPlayer();
-	virtual ~DXAPlayer();
+	DXADecoder();
+	virtual ~DXADecoder();
 
 	/**
 	 * Load a DXA encoded video file

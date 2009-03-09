@@ -56,10 +56,10 @@ public:
 	}
 };
 
-class DXAPlayerWithSound : public Graphics::DXAPlayer {
+class DXADecoderWithSound : public Graphics::DXADecoder {
 public:
-	DXAPlayerWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
-	~DXAPlayerWithSound() {}
+	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
+	~DXADecoderWithSound() {}
 
 	int32 getAudioLag();
 private:

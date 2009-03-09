@@ -168,7 +168,7 @@ void MoviePlayer::play(void) {
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	stopEvents.push_back(stopEvent);
 
-	terminated = !playVideo(&stopEvents);
+	terminated = !playVideo(stopEvents);
 
 	if (terminated)
 		_snd->stopHandle(*_bgSoundHandle);
@@ -229,11 +229,11 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 	}
 }
 
-DXAPlayerWithSound::DXAPlayerWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
+DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
 	: _mixer(mixer), _bgSoundHandle(bgSoundHandle)  {
 }
 
-int32 DXAPlayerWithSound::getAudioLag() {
+int32 DXADecoderWithSound::getAudioLag() {
 	if (!_fileStream)
 		return 0;
 
@@ -261,7 +261,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 	snprintf(filename, sizeof(filename), "%s.smk", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-		Graphics::SMKPlayer *smkDecoder = new Graphics::SMKPlayer(snd);
+		Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(snd);
 		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 
@@ -269,7 +269,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 
 	if (Common::File::exists(filename)) {
 #ifdef USE_ZLIB
-		DXAPlayerWithSound *dxaDecoder = new DXAPlayerWithSound(snd, bgSoundHandle);
+		DXADecoderWithSound *dxaDecoder = new DXADecoderWithSound(snd, bgSoundHandle);
 		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
 #else
 		GUI::MessageDialog dialog("DXA cutscenes found but ScummVM has been built without zlib support", "OK");

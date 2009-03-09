@@ -103,7 +103,7 @@ public:
 	/**
 	 * Close a video file
 	 */
-	virtual void closeFile()=0;
+	virtual void closeFile() = 0;
 
 	/**
 	 * Returns if a video file is loaded or not
@@ -178,7 +178,7 @@ public:
 	 *
 	 * Returns true if the video was played to the end, false if skipped
 	 */
-	bool playVideo(Common::List<Common::Event> *stopEvents);
+	bool playVideo(Common::List<Common::Event> &stopEvents);
 
 protected:
 	/**
@@ -190,7 +190,7 @@ protected:
 	bool _skipVideo;
 	VideoDecoder* _decoder;
 
-	void processVideoEvents(Common::List<Common::Event> *stopEvents);
+	void processVideoEvents(Common::List<Common::Event> &stopEvents);
 };
 
 } // End of namespace Graphics

@@ -316,21 +316,21 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 	return v;
 }
 
-SMKPlayer::SMKPlayer(Audio::Mixer *mixer)
+SmackerDecoder::SmackerDecoder(Audio::Mixer *mixer)
 	: _audioStarted(false), _audioStream(0), _mixer(mixer) {
 }
 
-SMKPlayer::~SMKPlayer() {
+SmackerDecoder::~SmackerDecoder() {
 	closeFile();
 }
 
-int SMKPlayer::getHeight() {
+int SmackerDecoder::getHeight() {
 	if (!_fileStream)
 		return 0;
 	return (_header.flags ? 2 : 1) * _videoInfo.height;
 }
 
-int32 SMKPlayer::getAudioLag() {
+int32 SmackerDecoder::getAudioLag() {
 	if (!_fileStream)
 		return 0;
 
@@ -351,7 +351,7 @@ int32 SMKPlayer::getAudioLag() {
 	return videoTime - audioTime;
 }
 
-bool SMKPlayer::loadFile(const char *fileName) {
+bool SmackerDecoder::loadFile(const char *fileName) {
 	int32 frameRate;
 
 	closeFile();
@@ -476,7 +476,7 @@ bool SMKPlayer::loadFile(const char *fileName) {
 	return true;
 }
 
-void SMKPlayer::closeFile() {
+void SmackerDecoder::closeFile() {
 	if (!_fileStream)
 		return;
 
@@ -500,7 +500,7 @@ void SMKPlayer::closeFile() {
 	free(_palette);
 }
 
-bool SMKPlayer::decodeNextFrame() {
+bool SmackerDecoder::decodeNextFrame() {
 	uint i;
 	uint32 chunkSize = 0;
 	uint32 dataSizeUnpacked = 0;
@@ -722,7 +722,7 @@ bool SMKPlayer::decodeNextFrame() {
 	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
 }
 
-void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
+void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		uint32 unpackedSize, int streamNum) {
 
 	BitStream audioBS(buffer, bufferSize);
@@ -802,7 +802,7 @@ void SMKPlayer::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 	// unpackedBuffer will be deleted by AppendableAudioStream
 }
 
-void SMKPlayer::unpackPalette() {
+void SmackerDecoder::unpackPalette() {
 	uint startPos = _fileStream->pos();
 	uint32 len = 4 * _fileStream->readByte();
 

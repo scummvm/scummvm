@@ -61,9 +61,9 @@ public:
 
 	virtual bool load() = 0;
 	virtual void play();
-	virtual void playVideo() {};
-	virtual void nextFrame() {};
-	virtual void stopVideo() {};
+	virtual void playVideo() = 0;
+	virtual void nextFrame() = 0;
+	virtual void stopVideo() = 0;
 
 private:
 	virtual void handleNextFrame();
@@ -71,7 +71,7 @@ private:
 	virtual void startSound() {};
 };
 
-class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXAPlayer {
+class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXADecoder {
 	static const char *_sequenceList[90];
 	uint8 _sequenceNum;
 public:
@@ -90,7 +90,7 @@ private:
 	void startSound();
 };
 
-class MoviePlayerSMK : public MoviePlayer, ::Graphics::SMKPlayer {
+class MoviePlayerSMK : public MoviePlayer, ::Graphics::SmackerDecoder {
 public:
 	MoviePlayerSMK(AGOSEngine *vm, const char *name);
 

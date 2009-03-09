@@ -55,6 +55,8 @@ struct FrameTypeChunkHeader {
 	uint16 heightOverride;
 };
 
+// TOD: rewrite this based on VideoDecoder & VideoPlayer (this may
+// require improvements to these two classes).
 class FlicPlayer {
 public:
 	FlicPlayer();

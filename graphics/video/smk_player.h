@@ -53,10 +53,10 @@ class BigHuffmanTree;
 /**
  * Implementation of a Smacker v2/v4 video decoder
  */
-class SMKPlayer : public Graphics::VideoDecoder {
+class SmackerDecoder : public Graphics::VideoDecoder {
 public:
-	SMKPlayer(Audio::Mixer *mixer);
-	virtual ~SMKPlayer();
+	SmackerDecoder(Audio::Mixer *mixer);
+	virtual ~SmackerDecoder();
 
 	int getHeight();
 	int32 getAudioLag();
