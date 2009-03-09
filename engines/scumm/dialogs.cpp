@@ -651,7 +651,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 void HelpDialog::reflowLayout() {
 	ScummDialog::reflowLayout();
 
-	int lineHeight = g_gui.getFontHeight();
+	// The -3 makes the text on the help screen fit in 320x200 mode
+	// using the built-in theme.
+	int lineHeight = g_gui.getFontHeight() - 3;
 	int16 x, y;
 	uint16 w, h;
 
