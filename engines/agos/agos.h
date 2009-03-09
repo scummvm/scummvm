@@ -329,13 +329,6 @@ protected:
 	const byte *_scrollImage;
 	byte _boxStarHeight;
 
-	bool _boxCR;
-	char _boxBuffer[310];
-	char *_boxBufferPtr;
-	int _boxLineCount;
-	int _lineCounts[6];
-	char *_linePtrs[6];
-
 	SubroutineLine *_classLine;
 	int16 _classMask, _classMode1, _classMode2;
 	Item *_findNextPtr;
@@ -391,7 +384,7 @@ protected:
 
 	uint32 _lastMinute; // Used in processSpecialKeys()
 	uint32 _lastTime;
-	uint32 _clockStopped, _gameStoppedClock, _gameTime;
+	uint32 _clockStopped, _gameStoppedClock;
 	uint32 _timeStore;
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
@@ -462,7 +455,6 @@ protected:
 	uint16 _zoneNumber;
 	uint16 _vgaWaitFor, _lastVgaWaitFor;
 	uint16 _vgaCurSpriteId, _vgaCurZoneNum;
-	uint16 _vgaCurSpritePriority;
 
 	int16 _baseY;
 	float _scale;
@@ -581,8 +573,6 @@ protected:
 
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
-
-	bool _oopsValid;
 
 	byte *_backGroundBuf;
 	byte *_backBuf;
@@ -1743,6 +1733,13 @@ protected:
 
 	const OpcodeEntryWaxworks *_opcodesWaxworks;
 
+	bool _boxCR;
+	char _boxBuffer[310];
+	char *_boxBufferPtr;
+	int _boxLineCount;
+	int _lineCounts[6];
+	char *_linePtrs[6];
+
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
 	virtual void boxController(uint x, uint y, uint mode);
@@ -1930,6 +1927,8 @@ protected:
 
 	const OpcodeEntryFeeble *_opcodesFeeble;
 
+	uint16 _vgaCurSpritePriority;
+
 	virtual uint16 to16Wrapper(uint value);
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
@@ -2040,7 +2039,9 @@ protected:
 
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
+	bool _oopsValid;
 	int16 _iconToggleCount, _voiceCount;
+	uint32 _gameTime;
 	uint32 _lastTickCount, _thisTickCount;
 	uint32 _startSecondCount, _tSecondCount;
 

@@ -219,7 +219,6 @@ void AGOSEngine::animateSprites() {
 		_curSfxFile = vpe->sfxFile;
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
-		_vgaCurSpritePriority = vsp->priority;
 
 		saveBackGround(vsp);
 

@@ -64,9 +64,11 @@ static const GameSpecificSettings puzzlepack_settings = {
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	: AGOSEngine_Feeble(system) {
 
+	_oopsValid = false;
 	_iconToggleCount = 0;
 	_voiceCount = 0;
 
+	_gameTime = 0;
 	_lastTickCount = 0;
 	_thisTickCount = 0;
 	_startSecondCount = 0;
@@ -75,6 +77,8 @@ AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 
 AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
 	: AGOSEngine_Simon2(system) {
+
+	_vgaCurSpritePriority = 0;
 }
 
 AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
@@ -87,6 +91,19 @@ AGOSEngine_Simon1::AGOSEngine_Simon1(OSystem *system)
 
 AGOSEngine_Waxworks::AGOSEngine_Waxworks(OSystem *system)
 	: AGOSEngine_Elvira2(system) {
+
+	_boxCR = false;
+	_boxLineCount = 0;
+	memset(_boxBuffer, 0, sizeof(_boxBuffer));
+	_boxBufferPtr = _boxBuffer;
+
+	_linePtrs[0] = 0;
+	_linePtrs[1] = 0;
+	_linePtrs[2] = 0;
+	_linePtrs[3] = 0;
+	_linePtrs[4] = 0;
+	_linePtrs[5] = 0;
+	memset(_lineCounts, 0, sizeof(_lineCounts));
 }
 
 AGOSEngine_Elvira2::AGOSEngine_Elvira2(OSystem *system)
@@ -99,6 +116,7 @@ AGOSEngine_Elvira1::AGOSEngine_Elvira1(OSystem *system)
 
 AGOSEngine::AGOSEngine(OSystem *syst)
 	: Engine(syst) {
+
 	_vcPtr = 0;
 	_vcGetOutOfCode = 0;
 	_gameOffsetsPtr = 0;
@@ -282,7 +300,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_clockStopped = 0;
 	_gameStoppedClock = 0;
-	_gameTime = 0;
 	_lastTime = 0;
 	_lastMinute = 0;
 
@@ -360,7 +377,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaCurZoneNum = 0;
 	_vgaCurSpriteId = 0;
-	_vgaCurSpritePriority = 0;
 
 	_baseY = 0;
 	_scale = 0;
@@ -394,19 +410,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_currentRoom = 0;
 	_superRoomNumber = 0;
 	_wallOn = 0;
-
-	_boxCR = false;
-	_boxLineCount = 0;
-	memset(_boxBuffer, 0, sizeof(_boxBuffer));
-	_boxBufferPtr = _boxBuffer;
-
-	_linePtrs[0] = 0;
-	_linePtrs[1] = 0;
-	_linePtrs[2] = 0;
-	_linePtrs[3] = 0;
-	_linePtrs[4] = 0;
-	_linePtrs[5] = 0;
-	memset(_lineCounts, 0, sizeof(_lineCounts));
 
 	memset(_objectArray, 0, sizeof(_objectArray));
 	memset(_itemStore, 0, sizeof(_itemStore));
@@ -490,8 +493,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_saveDialogFlag = false;
 	_saveOrLoad = false;
 	_saveLoadEdit = false;
-
-	_oopsValid = false;
 
 	_hyperLink = 0;
 	_interactY = 0;
