@@ -34,6 +34,11 @@
 namespace Scumm {
 
 int ScummHelp::numPages(byte gameId) {
+#ifdef __DS__
+	// The DS custom help screens are 3 pages long.
+	return 3;
+#endif
+
 	switch (gameId) {
 	case GID_MANIAC:
 	case GID_ZAK:
