@@ -985,7 +985,6 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 }
 
 
-// FIXME/TODO: Isn't this just scumm_strnicmp ?
 int AGOSEngine_PN::setposition(int process, int line) {
 	uint8 *ourptr;
 	int np;
