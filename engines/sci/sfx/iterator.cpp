@@ -558,7 +558,7 @@ static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t con
 	
 	// Duplicate the data
 	byte *sound = (byte *)malloc(size);
-	memcpy(sound, data + SCI0_PCM_DATA_OFFSET, size);
+	memcpy(sound, data, size);
 
 	// Convert stream format flags
 	int flags = Audio::Mixer::FLAG_AUTOFREE;
