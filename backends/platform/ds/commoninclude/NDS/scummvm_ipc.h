@@ -33,6 +33,18 @@
 //////////////////////////////////////////////////////////////////////
 
 
+
+
+//---------------------------------------------------------------------------------
+typedef struct sTransferSound {
+//---------------------------------------------------------------------------------
+  TransferSoundData data[16];
+  u8 count;
+  u8 PADDING[3];
+} TransferSound, * pTransferSound;
+
+
+
 typedef struct _adpcmBuffer {
 	u8* buffer[8];
 	bool filled[8];

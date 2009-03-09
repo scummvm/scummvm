@@ -67,6 +67,7 @@
 #include <nds.h>
 #include <nds/registers_alt.h>
 #include <nds/arm9/exceptions.h>
+#include <nds/arm9/console.h>
 
 //#include <ARM9/console.h> //basic print funcionality
 
@@ -94,8 +95,11 @@
 #include "profiler/cyg-profile.h"
 #endif
 #include "backends/fs/ds/ds-fs.h"
+#include "engine.h"
 
+extern "C" void OurIntrMain(void);
 extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
+
 extern const char __itcm_start[];
 static const char *registerNames[] =
 	{	"r0","r1","r2","r3","r4","r5","r6","r7",
@@ -114,6 +118,7 @@ extern "C" void* __wrap_malloc(size_t size) {
 	}
 }
 */
+
 
 namespace DS {
 
@@ -558,22 +563,18 @@ void displayMode8Bit() {
 #endif
 	u16 buffer[32 * 32];
 
+	initGame();
+
 	setKeyboardEnable(false);
 
 	if (!displayModeIs8Bit) {
 		for (int r = 0; r < 32 * 32; r++) {
 			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r];
 		}
-	}
-
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
-	consolePrintSet(0, 23);
-
-	if (!displayModeIs8Bit) {
+	} else {
 		for (int r = 0; r < 32 * 32; r++) {
-			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
+			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
 		}
-//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
 	}
 
 	displayModeIs8Bit = true;
@@ -623,16 +624,42 @@ void displayMode8Bit() {
 	SUB_BG3_CR = BG_BMP8_512x256;
 
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
-    SUB_BG3_XDY = 0;
-    SUB_BG3_YDX = 0;
-    SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);
+    	SUB_BG3_XDY = 0;
+    	SUB_BG3_YDX = 0;
+	SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);
 
+
+
+	if (consoleEnable)
+	{
+		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
+
+		// Move the cursor to the bottom of the screen using ANSI escape code
+		consolePrintf("\033[23;0f");
+	}
+//	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
+//	consoleSetWindow(NULL, 0, 0, 32, 24);
+//	consolePrintSet(0, 23);
+/*	while (1) {
+		printf("Hello world");
+	}*/
+
+
+	for (int r = 0; r < 32 * 32; r++) {
+		((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
+//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
+	}
+
+	// ConsoleInit destroys the hardware palette :-(
+	OSystem_DS::instance()->restoreHardwarePalette();
+	
+//	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	// Do text stuff
 	// console chars at 1C000 (7), map at 1D000 (74)
 
-	BG0_CR = BG_MAP_BASE(2) | BG_TILE_BASE(0);
-	BG0_Y0 = 0;
+//	BG0_CR = BG_MAP_BASE(2) | BG_TILE_BASE(0);
+//	BG0_Y0 = 0;
 
 	// Restore palette entry used by text in the front-end
 //	PALETTE_SUB[255] = savedPalEntry255;
@@ -640,7 +667,6 @@ void displayMode8Bit() {
 
 
 
-	initGame();
 
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
@@ -817,9 +843,11 @@ void displayMode16Bit() {
 
 	releaseAllKeys();
 
-	if (displayModeIs8Bit) {
-//		static int test = 0;
-//		consolePrintf("saving buffer... %d\n", test++);
+	if (!displayModeIs8Bit) {
+		for (int r = 0; r < 32 * 32; r++) {
+			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r];
+		}
+	} else {
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {
 			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
@@ -842,24 +870,24 @@ void displayMode16Bit() {
 
 	memset(BG_GFX, 0, 512 * 256 * 2);
 
-	savedPalEntry255 = PALETTE_SUB[255];
-	PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
+	savedPalEntry255 = BG_PALETTE_SUB[255];
+	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	// Do text stuff
 	SUB_BG0_CR = BG_MAP_BASE(4) | BG_TILE_BASE(0);
 	SUB_BG0_Y0 = 0;
 
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(4), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false);
+//	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(4), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 
-	if (displayModeIs8Bit) {
-		//dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK_SUB(0), buffer, 32 * 32 * 2);
-		for (int r = 0; r < 32 * 32; r++) {
-			((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r] = buffer[r];
-		}
+	for (int r = 0; r < 32 * 32; r++) {
+		((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r] = buffer[r];
 	}
 
-	consolePrintSet(0, 23);
-	consolePrintf("\n");
+	consoleSetWindow(NULL, 0, 0, 32, 24);
+//	consolePrintSet(0, 23);
+//	consolePrintf("Hello world!\n\n");
+//	consolePrintf("\n");
 
 	// Show keyboard
 	SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(12);
@@ -869,14 +897,19 @@ void displayMode16Bit() {
 
 	displayModeIs8Bit = false;
 
+	// ConsoleInit destroys the hardware palette :-(
+	OSystem_DS::instance()->restoreHardwarePalette();
+
 	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
-    BG3_XDY = 0;
-    BG3_YDX = 0;
-    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+	BG3_XDY = 0;
+	BG3_YDX = 0;	
+	BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
+
+	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 }
 
@@ -1484,6 +1517,7 @@ void addEventsToQueue() {
 
 			if ((!getIndyFightState()) && (getKeysDown() & KEY_Y)) {
 				consoleEnable = !consoleEnable;
+				consolePrintf("Console enable: %d\n", consoleEnable);
 				if (displayModeIs8Bit) {
 					displayMode8Bit();
 				} else {
@@ -1550,10 +1584,28 @@ void addEventsToQueue() {
 
 			}
 
-			if ((getKeysDown() & KEY_SELECT)) {
-				//scaledMode = !scaledMode;
-				//scY = 4;
-				showOptionsDialog();
+
+			static int selectHoldCount = 0;			
+			static const int SELECT_HOLD_TIME = 60;
+
+			if ((getKeysHeld() & KEY_SELECT)) {
+				selectHoldCount++;
+
+				if (selectHoldCount == SELECT_HOLD_TIME) {
+					// Hold select down for one second - show GMM
+					g_engine->openMainMenuDialog();
+				}
+			} else {
+				selectHoldCount = 0;
+			}
+
+			
+	
+			if (getKeysReleased() & KEY_SELECT) {
+				if (selectHoldCount < SELECT_HOLD_TIME) {
+					// Just pressed select - show DS options screen
+					showOptionsDialog();
+				}
 			}
 
 
@@ -1668,6 +1720,7 @@ void addEventsToQueue() {
 
 
 		if ((getKeysChanged() & KEY_START)) {
+			event.kbd.flags = 0;
 			event.type = getKeyEvent(KEY_START);
 			if (currentGame->control == CONT_FUTURE_WARS) {
 				event.kbd.keycode = Common::KEYCODE_F10;
@@ -1684,7 +1737,6 @@ void addEventsToQueue() {
 				event.kbd.ascii = Common::ASCII_F5;
 //				consolePrintf("!!!!!F5!!!!!");
 			}
-			event.kbd.flags = 0;
 			system->addEvent(event);
 		}
 
@@ -1794,6 +1846,13 @@ void soundBufferEmptyHandler() {
 //		bufferFirstHalf = true;
 	}
 
+// TIMER0
+	if ((callback) && (callbackTimer > 0)) {
+		callbackTimer--;
+	}
+	currentTimeMillis++;
+// TIMER0 end
+	
 	soundHiPart = !soundHiPart;
 }
 
@@ -1893,16 +1952,22 @@ void VBlankHandler(void) {
 //  }
 
 	//consolePrintf("X:%d Y:%d\n", getPenX(), getPenY());
-
-	static bool firstTime = true;
+/*
+	if ((callback) && (callbackTimer > 0)) {
+		callbackTimer--;
+	}
+	currentTimeMillis++;
+*/
+/*	static int firstTime = 1;
 
 	// This is to ensure that the ARM7 vblank handler runs before this one.
 	// Fixes the problem with the MMD when the screens swap over on load.
-	if (firstTime) {
-		firstTime = false;
+	if (firstTime > 0) {
+		REG_IF = IRQ_VBLANK;
+		firstTime--;
 		return;
 	}
-
+*/
 
 	IPC->tweak = tweak;
 	soundUpdate();
@@ -2179,7 +2244,7 @@ void VBlankHandler(void) {
 	updateOAM();
 
 	//PALETTE[0] = RGB15(0, 0, 0);
-	REG_IF = IRQ_VBLANK;
+	//REG_IF = IRQ_VBLANK;
 }
 
 int getMillis() {
@@ -2195,12 +2260,16 @@ void setTimerCallback(OSystem_DS::TimerProc proc, int interval) {
 }
 
 void timerTickHandler() {
-	REG_IF = IRQ_TIMER0;
+//	REG_IF = IRQ_TIMER0;
 	if ((callback) && (callbackTimer > 0)) {
 		callbackTimer--;
 	}
 	currentTimeMillis++;
 }
+
+
+
+
 
 void setTalkPos(int x, int y) {
 //	if (gameID != Scumm::GID_SAMNMAX) {
@@ -2252,7 +2321,7 @@ void initHardware() {
 
 	penInit();
 
-	powerON(POWER_ALL);
+	powerOn(POWER_ALL);
 /*	vramSetBankA(VRAM_A_MAIN_BG);
 	vramSetBankB(VRAM_B_MAIN_BG);
 	vramSetBankC(VRAM_C_SUB_BG); */
@@ -2271,17 +2340,17 @@ void initHardware() {
 
 
 	for (int r = 0; r < 255; r++) {
-		PALETTE[r] = 0;
+		BG_PALETTE[r] = 0;
 	}
 
-	PALETTE[255] = RGB15(0,31,0);
+	BG_PALETTE[255] = RGB15(0,31,0);
 
 
 	for (int r = 0; r < 255; r++) {
-		PALETTE_SUB[r] = 0;
+		BG_PALETTE_SUB[r] = 0;
 	}
 
-	PALETTE_SUB[255] = RGB15(0,31,0);
+	BG_PALETTE_SUB[255] = RGB15(0,31,0);
 
 	// Allocate save buffer for game screen
 //	savedBuffer = new u8[320 * 200];
@@ -2309,7 +2378,7 @@ void initHardware() {
 	//BG0_CR = BG_MAP_BASE(0) | BG_TILE_BASE(1);
 //	BG0_Y0 = 48;
 
-	PALETTE[255] = RGB15(31,31,31);//by default font will be rendered with color 255
+	BG_PALETTE[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	//consoleInit() is a lot more flexible but this gets you up and running quick
 //	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
@@ -2317,14 +2386,14 @@ void initHardware() {
 
 	//irqs are nice
 	irqInit();
-//	irqInitHandler();
+	irqInitHandler(OurIntrMain);
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqSet(IRQ_TIMER0, timerTickHandler);
 	irqSet(IRQ_TIMER2, soundBufferEmptyHandler);
 
 	irqEnable(IRQ_VBLANK);
 	irqEnable(IRQ_TIMER0);
-	irqEnable(IRQ_TIMER2);
+//	irqEnable(IRQ_TIMER2);
 
 #ifdef USE_PROFILER
 	irqSet(IRQ_HBLANK, hBlankHandler);
@@ -2344,7 +2413,7 @@ void initHardware() {
 	consolePrintf("done\n");
 	#endif
 
-	PALETTE[255] = RGB15(0,0,31);
+	BG_PALETTE[255] = RGB15(0,0,31);
 
 	initSprites();
 
@@ -2697,17 +2766,15 @@ gameListType* getCurrentGame() {
 ///////////////////
 
 #define FAST_RAM_SIZE (24000)
-
 u8* fastRamPointer;
 u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
 void* fastRamAlloc(int size) {
-//	return malloc(size);
 	void* result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
 		consolePrintf("FastRam (ITCM) allocation failed!\n");
-		return NULL;
+		return malloc(size);
 	}
 	return result;
 }
@@ -2854,7 +2921,7 @@ void powerOff() {
 void dsExceptionHandler() {
 	consolePrintf("Blue screen of death");
 	setExceptionHandler(NULL);
-
+	while(1);
 
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
@@ -2890,10 +2957,10 @@ void dsExceptionHandler() {
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
-//	u32 *stack = (u32 *)exceptionRegisters[13];
-//	for ( i=0; i<10; i++ ) {
-//		consolePrintf( "\x1b[%d;2H%08X: %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
-//	}
+	u32 *stack = (u32 *)exceptionRegisters[13];
+	for ( i=0; i<10; i++ ) {
+		consolePrintf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
+	}
 
 	memoryReport();
 
@@ -2993,7 +3060,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.13.0 SVN ");
+	consolePrintf("Version 0.13.1 beta1 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

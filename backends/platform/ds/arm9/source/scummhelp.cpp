@@ -48,8 +48,8 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 		ADD_BIND("A", "Switch screens");
 		ADD_BIND("Y", "Show/hide debug console");
 		ADD_BIND("X", "Show/hide keyboard");
-		ADD_BIND("L + Pad/Pen", "Scroll current touch screen view");
-		ADD_BIND("L + B/A", "Zoom in/out");
+		ADD_BIND("L+Pad/Pen", "Scroll current touch screen view");
+		ADD_BIND("L+B/A", "Zoom in/out");
 		break;
 	}
 
@@ -65,13 +65,13 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 		ADD_BIND("Pad Up", "Show/hide keyboard");
 		ADD_BIND("Pad Left", "Show/hide debug console");
 		ADD_BIND("Pad Right", "Swap screens");
-		ADD_BIND("R + Pad/Pen", "Scroll current touch screen view");
-		ADD_BIND("R+down/right", "Zoom in/out");
+		ADD_BIND("R+Pad/Pen", "Scroll current touch screen view");
+		ADD_BIND("R+dwn/rgt", "Zoom in/out");
 		break;
 	}
 
 	case 3: {
-		title = "Indiana Jones Fighting controls:";
+		title = "Indiana Jones Fight controls:";
 		ADD_BIND("Pad Left", "Move left");
 		ADD_BIND("Pad Right", "Move right");
 		ADD_BIND("Pad Up", "High guard");
@@ -80,9 +80,6 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 		ADD_BIND("X", "Punch high");
 		ADD_BIND("A", "Punch middle");
 		ADD_BIND("B", "Punch low");
-
-		ADD_BIND("L+R", "Hold during bootup to clear SRAM");
-		ADD_BIND("", "(flash cart only)");
 		break;
 	}
 	}

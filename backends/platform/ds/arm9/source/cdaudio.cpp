@@ -25,7 +25,6 @@
 #include "common/config-manager.h"
 #include "dsmain.h"
 #include "NDS/scummvm_ipc.h"
-#include "console2.h"
 
 #define WAV_FORMAT_IMA_ADPCM 0x14
 #define BUFFER_SIZE 8192

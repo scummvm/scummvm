@@ -27,7 +27,6 @@
 #include "common/fs.h"
 #include "zipreader.h"
 #include "ramsave.h"
-#include "scummconsole.h"
 #include "fat/gba_nds_fat.h"
 #include "backends/fs/abstract-fs.h"
 

@@ -154,7 +154,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 
-//		if (r != 255)
+		//if (r != 255)
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
@@ -170,6 +170,19 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 	//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 
 		colors += 4;
+	}
+}
+
+void OSystem_DS::restoreHardwarePalette()
+{
+	// Set the hardware palette up based on the stored palette
+
+	for (int r = 0; r < 255; r++) {
+		BG_PALETTE[r] = _palette[r];
+
+		if (!DS::getKeyboardEnable()) {
+			BG_PALETTE_SUB[r] = _palette[r];
+		}
 	}
 }
 
@@ -213,13 +226,14 @@ bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
 	return true;
 }
 
-void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
+void OSystem_DS::grabPalette(unsigned char *colours, uint start, uint num) {
 //	consolePrintf("Grabpalette");
 
 	for (unsigned int r = start; r < start + num; r++) {
-		*colors++ = (BG_PALETTE[r] & 0x001F) << 3;
-		*colors++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
-		*colors++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
+		*colours++ = (BG_PALETTE[r] & 0x001F) << 3;
+		*colours++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
+		*colours++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
+		colours++;
 	}
 }
 
@@ -248,11 +262,20 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 		stride = DS::get8BitBackBufferStride();
 	}
 
+
 	if (((pitch & 1) != 0) || ((w & 1) != 0) || (((int) (buf) & 1) != 0)) {
 
 		// Something is misaligned, so we have to use the slow but sure method
 
 		int by = 0;
+
+		if (DS::getKeyboardEnable()) {
+			// When they keyboard is on screen, we don't update the subscreen because
+			// the keyboard image uses the same VRAM addresses.  In order to do this,
+			// I'm going to update the main screen twice.  This avoids putting a compare
+			// in the loop and slowing down the common case.
+			bgSub = bg;
+		}
 
 		for (int dy = y; dy < y + h; dy++) {
 			u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
@@ -390,13 +413,24 @@ void OSystem_DS::hideOverlay () {
 	DS::displayMode8Bit();
 }
 
-void OSystem_DS::clearOverlay () {
+void OSystem_DS::clearOverlay() {
 	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay (OverlayColor *buf, int pitch) {
-//	consolePrintf("grabovl\n");
+void OSystem_DS::grabOverlay(OverlayColor* buf, int pitch) {
+//	consolePrintf("grabovl\n")
+	u16* start = DS::get16BitBackBuffer();
+
+	for (int y = 0; y < 200; y++) {
+		u16* src = start + (y * 320);
+		u16* dest = ((u16 *) (buf)) + (y * pitch);
+				
+		for (int x = 0; x < 320; x++) {
+			*dest++ =  *src++;
+		}
+	}
+	
 }
 
 void OSystem_DS::copyRectToOverlay (const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
