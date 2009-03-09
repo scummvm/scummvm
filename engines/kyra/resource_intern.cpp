@@ -37,7 +37,7 @@ namespace Kyra {
 
 PlainArchive::PlainArchive(Common::SharedPtr<Common::ArchiveMember> file, const FileInputList &files)
 	: _file(file), _files() {
-	for (FileInputList::iterator i = files.begin(); i != files.end(); ++i) {
+	for (FileInputList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Entry entry;
 
 		entry.offset = i->offset;
@@ -85,14 +85,15 @@ Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common
 
 CachedArchive::CachedArchive(const FileInputList &files)
 	: _files() {
-	for (FileInputList::iterator i = files.begin(); i != files.end(); ++i) {
+	for (FileInputList::const_iterator i = files.begin(); i != files.end(); ++i) {
 		Entry entry;
 
 		entry.data = i->data;
 		entry.size = i->size;
 
-		i->name.toLowercase();
-		_files[i->name] = entry;
+		Common::String name = i->name;
+		name.toLowercase();
+		_files[name] = entry;
 	}
 }
 

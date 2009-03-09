@@ -507,7 +507,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	// No parameters given: Print out a list of all channels and their status
 	if (argc <= 1) {
 		DebugPrintf("Available debug channels: ");
-		for (Common::DebugChannelList::iterator i = lvls.begin(); i != lvls.end(); ++i) {
+		for (Common::DebugChannelList::const_iterator i = lvls.begin(); i != lvls.end(); ++i) {
 			DebugPrintf("%c%s - %s (%s)\n", i->enabled ? '+' : ' ',
 					i->name.c_str(), i->description.c_str(),
 					i->enabled ? "enabled" : "disabled");

@@ -1107,7 +1107,7 @@ void ThemeEngine::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
-	Common::List<Common::Rect>::const_iterator i, j;
+	Common::List<Common::Rect>::iterator i, j;
 	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
 		for (j = i; j != _dirtyScreen.end(); ++j)
 			if (j != i && i->contains(*j))
@@ -1411,7 +1411,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	Common::List<ThemeDescriptor> output;
 
 	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
-		if (find_if(output.begin(), output.end(), TDComparator(i->id)) == output.end())
+		if (Common::find_if(output.begin(), output.end(), TDComparator(i->id)) == output.end())
 			output.push_back(*i);
 	}
 

@@ -67,8 +67,17 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 
 
 
-SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) const {
+SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
 	ArchiveNodeList::iterator it = _list.begin();
+	for ( ; it != _list.end(); ++it) {
+		if (it->_name == name)
+			break;
+	}
+	return it;
+}
+
+SearchSet::ArchiveNodeList::const_iterator SearchSet::find(const String &name) const {
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
 		if (it->_name == name)
 			break;
@@ -203,7 +212,7 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) con
 	if (name.empty())
 		return 0;
 
-	ArchiveNodeList::iterator it = _list.begin();
+	ArchiveNodeList::const_iterator it = _list.begin();
 	for ( ; it != _list.end(); ++it) {
 		SeekableReadStream *stream = it->_arc->createReadStreamForMember(name);
 		if (stream)

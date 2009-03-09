@@ -26,6 +26,7 @@
 #ifndef M4_VIEWMGR_H
 #define M4_VIEWMGR_H
 
+#include "common/algorithm.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/events.h"
@@ -172,7 +173,7 @@ public:
 
 	Common::List<View *> views() const { return _views; }
 	bool contains(View *key) const {
-		return find(_views.begin(), _views.end(), key) != _views.end();
+		return Common::find(_views.begin(), _views.end(), key) != _views.end();
 	}
 	bool contains(int screenType) { return getView(screenType) != NULL; }
 	View *getView(int screenType);

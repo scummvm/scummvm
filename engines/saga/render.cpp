@@ -220,7 +220,7 @@ void Render::addDirtyRect(Common::Rect rect) {
 	if (x2 > x1 && y2 > y1) {
 		Common::Rect rectClipped(x1, y1, x2, y2);
 		// Check if the new rectangle is contained within another in the list
-		Common::List<Common::Rect>::const_iterator it;
+		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			if (it->contains(rectClipped))
 				return;

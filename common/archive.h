@@ -144,7 +144,8 @@ class SearchSet : public Archive {
 	typedef List<Node> ArchiveNodeList;
 	ArchiveNodeList _list;
 
-	ArchiveNodeList::iterator find(const String &name) const;
+	ArchiveNodeList::iterator find(const String &name);
+	ArchiveNodeList::const_iterator find(const String &name) const;
 
 	// Add an archive keeping the list sorted by ascending priorities.
 	void insert(const Node& node);
