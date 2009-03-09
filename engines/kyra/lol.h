@@ -312,7 +312,7 @@ private:
 	void timerProcessMonsters(int timerNum);
 	void timerSub3(int timerNum);
 	void timerSub4(int timerNum);
-	void timerSub5(int timerNum);
+	void timerUpdateSceneAnims(int timerNum);
 	void timerSub6(int timerNum);
 	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
@@ -526,6 +526,7 @@ private:
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);
+	int olol_updateSceneAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_initMonster(EMCState *script);
@@ -729,6 +730,7 @@ private:
 	void drawDecorations(int index);
 	void drawIceShapes(int index, int iceShapeIndex);
 	void drawScriptShapes(int pageNum);
+	void updateSceneAnimations(int block, int wall, int val);
 	void updateSceneWindow();
 
 	void setSequenceGui(int x, int y, int w, int h, int enableFlags);

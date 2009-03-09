@@ -1138,6 +1138,23 @@ void LoLEngine::drawScene(int pageNum) {
 	_sceneUpdateRequired = false;
 }
 
+void LoLEngine::updateSceneAnimations(int block, int wall, int val) {
+	if (wall == -1) {
+		for (int i = 0; i < 4; i++)
+			_levelBlockProperties[block].walls[i] = val;
+		if (_wllBuffer4[val] == 17) {
+			_levelBlockProperties[block].flags &= 0xef;
+			_levelBlockProperties[block].flags |= 0x20;
+		} else {
+			_levelBlockProperties[block].flags &= 0xdf;
+		}		
+	} else {
+		_levelBlockProperties[block].walls[wall] = val;
+	}
+
+	checkSceneUpdateNeed(block);
+}
+
 void LoLEngine::updateSceneWindow() {
 	_screen->hideMouse();
 	_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, _sceneDrawPage2, Screen::CR_NO_P_CHECK);

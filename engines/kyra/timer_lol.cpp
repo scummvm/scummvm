@@ -42,9 +42,9 @@ void LoLEngine::setupTimers() {
 	_timer->setNextRun(0x11, _system->getMillis() + 3 * _tickLength);
 	_timer->addTimer(3, TimerV2(timerSub3), 15, true);
 	_timer->addTimer(4, TimerV2(timerSub4), 1, true);
-	_timer->addTimer(0x50, TimerV2(timerSub5), 0, false);
-	_timer->addTimer(0x51, TimerV2(timerSub5), 0, false);
-	_timer->addTimer(0x52, TimerV2(timerSub5), 0, false);
+	_timer->addTimer(0x50, TimerV2(timerUpdateSceneAnims), 0, false);
+	_timer->addTimer(0x51, TimerV2(timerUpdateSceneAnims), 0, false);
+	_timer->addTimer(0x52, TimerV2(timerUpdateSceneAnims), 0, false);
 	_timer->addTimer(8, TimerV2(timerSub6), 1200, true);
 	_timer->addTimer(9, TimerV2(timerUpdatePortraitAnimations), 10, true);
 	_timer->addTimer(10, TimerV2(timerUpdateLampState), 360, true);
@@ -119,7 +119,7 @@ void LoLEngine::timerSub4(int timerNum) {
 
 }
 
-void LoLEngine::timerSub5(int timerNum) {
+void LoLEngine::timerUpdateSceneAnims(int timerNum) {
 	runLevelScript(0x401 + (timerNum & 0x0f), -1);
 }
 
