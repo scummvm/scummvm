@@ -277,11 +277,11 @@ void LoLEngine::gui_changeCharacterStats(int charNum) {
 void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {	
 	static const uint8 slotShapes[] = { 0x30, 0x34, 0x30, 0x34, 0x2E, 0x2F, 0x32, 0x33, 0x31, 0x35, 0x35 };
 
-	const int8 *coords = &_charInvDefs[_charInvIndex[_characters[_selectedCharacter].raceClassSex] * 22 + itemIndex * 2];
-	int8 x = *coords++;
-	int8 y = *coords;
+	const uint8 *coords = &_charInvDefs[_charInvIndex[_characters[_selectedCharacter].raceClassSex] * 22 + itemIndex * 2];
+	uint8 x = *coords++;
+	uint8 y = *coords;
 
-	if (y == -1)
+	if (y == 0xff)
 		return;
 
 	if (!_screen->_curPage)
@@ -290,6 +290,11 @@ void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
 	int i = _characters[_selectedCharacter].items[itemIndex];
 	int shapeNum = i ? ((itemIndex < 9) ? 4 : 5) : slotShapes[itemIndex];
 	_screen->drawShape(_screen->_curPage, _gameShapes[shapeNum], x, y, 0, 0);
+
+	if (itemIndex > 8) {
+		x -= 5;
+		y -= 5;
+	}
 
 	if (i)
 		_screen->drawShape(_screen->_curPage, getItemIconShapePtr(i), x + 1, y + 1, 0, 0);
@@ -859,10 +864,10 @@ void LoLEngine::gui_initCharacterControlButtons(int index, int xOffs) {
 }
 
 void LoLEngine::gui_initCharInventorySpecialButtons(int charNum) {
-	const int8 *s = &_charInvDefs[_charInvIndex[_characters[charNum].raceClassSex] * 22];
+	const uint8 *s = &_charInvDefs[_charInvIndex[_characters[charNum].raceClassSex] * 22];
 
 	for (int i = 0; i < 11; i++) {
-		if (*s != -1)
+		if (*s != 0xff)
 			gui_initButton(33 + i, s[0], s[1], i);
 		s += 2;
 	}	

@@ -1755,7 +1755,7 @@ void LoLEngine::initStaticResource() {
 	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, _spellPropertiesSize);
 	_gameShapeMap = (const int8*)_staticres->loadRawData(kLolGameShapeMap, _gameShapeMapSize);
 	_charInvIndex = _staticres->loadRawData(kLolCharInvIndex, _charInvIndexSize);
-	_charInvDefs = (const int8*)_staticres->loadRawData(kLolCharInvDefs, _charInvDefsSize);
+	_charInvDefs = _staticres->loadRawData(kLolCharInvDefs, _charInvDefsSize);
 	_charDefsMan = _staticres->loadRawDataBe16(kLolCharDefsMan, _charDefsManSize);
 	_charDefsWoman = _staticres->loadRawDataBe16(kLolCharDefsWoman, _charDefsWomanSize);
 	_charDefsKieran = _staticres->loadRawDataBe16(kLolCharDefsKieran, _charDefsKieranSize);

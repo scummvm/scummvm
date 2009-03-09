@@ -693,7 +693,7 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	l->pos = &l->field2[0];
 	l->itemProtection = stackPos(25);
 	l->might = stackPos(26);
-	l->b = 1;
+	l->waitTicks = 1;
 	l->flags = stackPos(27);
 	l->unk5 = stackPos(28);
 	// FIXME???

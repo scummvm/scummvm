@@ -112,7 +112,7 @@ struct MonsterProperty {
 	uint16 unk3[8];
 	uint16 itemProtection;
 	uint16 might;
-	uint8 b;
+	uint8 waitTicks;
 	uint16 flags;
 	uint16 unk5;
 	uint16 unk6[5];
@@ -144,7 +144,7 @@ struct MonsterInPlay {
 	uint8 field_1B;
 	uint8 field_1C;
 	int16 might;
-	uint8 field_1F;
+	uint8 tick;
 	uint8 type;
 	MonsterProperty *properties;
 	uint8 field_25;
@@ -312,7 +312,7 @@ private:
 	void timerProcessMonsters(int timerNum);
 	void timerSub3(int timerNum);
 	void timerSub4(int timerNum);
-	void timerUpdateSceneAnims(int timerNum);
+	void timerRunSceneAnimScript(int timerNum);
 	void timerSub6(int timerNum);
 	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
@@ -327,7 +327,6 @@ private:
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
 	int snd_characterSpeaking();
 	void snd_stopSpeech(bool setFlag);
-	uint32 snd_getElapsedSpeechTime();
 	void snd_playSoundEffect(int track, int volume);
 	void snd_processEnvironmentalSoundEffect(int soundId, int block);
 	void snd_loadSoundFile(int track);
@@ -936,7 +935,7 @@ private:
 
 	const uint8 *_charInvIndex;
 	int _charInvIndexSize;
-	const int8 *_charInvDefs;
+	const uint8 *_charInvDefs;
 	int _charInvDefsSize;
 
 	EMCData _itemScript;

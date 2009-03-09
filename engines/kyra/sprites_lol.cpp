@@ -836,17 +836,15 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int16 &x2, int16 &y2, 
 }
 
 void LoLEngine::updateMonster(MonsterInPlay *monster) {
-	static const uint8 monsterState[] = { 1, 0, 1, 3, 3, 0, 0, 3, 4, 1, 0, 0, 4, 0, 0 };
+	static const uint8 flags[] = { 1, 0, 1, 3, 3, 0, 0, 3, 4, 1, 0, 0, 4, 0, 0 };
 	if (monster->mode > 14)
 		return;
 
-	int s = monsterState[monster->mode];
-	int a = monster->field_1F++;
-
-	if ((a < monster->properties->b) && (s & 4))
+	int f = flags[monster->mode];
+	if ((monster->tick++ < monster->properties->waitTicks) && (!(f & 4)))
 		return;
 
-	monster->field_1F = 0;
+	monster->tick = 0;
 
 	if (monster->properties->flags & 0x40) {
 		monster->might += _rnd.getRandomNumberRng(1, 8);
@@ -859,13 +857,13 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 		monster->destY = _partyPosY;
 	}
 
-	if (s & 2) {
+	if (f & 2) {
 
 		/////
 		// TODO
 	}
 
-	if ((s & 1) && (monster->flags & 0x10))
+	if ((f & 1) && (monster->flags & 0x10))
 		setMonsterMode(monster, 7);
 
 	if ((monster->mode != 11) && (monster->mode != 14)) {

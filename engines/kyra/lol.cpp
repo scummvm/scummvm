@@ -1395,10 +1395,6 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 		_tim->_abortFlag = 1;
 }
 
-uint32 LoLEngine::snd_getElapsedSpeechTime() {
-	return _sound->voicePlayedTime(_activeVoiceFile);
-}
-
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "LoLEngine::snd_playSoundEffect(%d, %d)", track, volume);
 
