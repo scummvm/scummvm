@@ -195,7 +195,7 @@ static parse_rule_t *_vbuild_rule(parse_tree_branch_t *branch) {
 	return rule;
 }
 
-static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, result_word_t *input) {
+static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input) {
 	int dep;
 
 	if (!rule->specials_nr)
@@ -203,15 +203,15 @@ static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, result_word_t *input) {
 
 	dep = rule->data[rule->first_special];
 
-	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input->w_class)) ||
-			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input->group))) {
+	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input.w_class)) ||
+			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input.group))) {
 		parse_rule_t *retval = (parse_rule_t*)sci_malloc(sizeof(int) * (4 + rule->length));
 		++_allocd_rules;
 		retval->id = rule->id;
 		retval->specials_nr = rule->specials_nr - 1;
 		retval->length = rule->length;
 		memcpy(retval->data, rule->data, sizeof(int) * retval->length);
-		retval->data[rule->first_special] = TOKEN_STUFFING_WORD | input->group;
+		retval->data[rule->first_special] = TOKEN_STUFFING_WORD | input.group;
 		retval->first_special = 0;
 
 		if (retval->specials_nr) { // find first special, if it exists
@@ -417,9 +417,9 @@ void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr) {
 	vocab_free_rule_list(tlist);
 }
 
-int vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
 	parse_tree_branch_t *branch0, parse_rule_list_t *rules) {
-	return vocab_gnf_parse(nodes, words, words_nr, branch0, rules, 0);
+	return vocab_gnf_parse(nodes, words, branch0, rules, 0);
 }
 
 static int
@@ -478,7 +478,7 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 			else
 				writepos = _vbpt_append(nodes, pos, writepos, token & 0xffff);
 		} else {
-			sciprintf("\nError in parser (grammar.c, _vbpt_write_subexpression()): Rule data broken in rule ");
+			sciprintf("\nError in parser (grammar.cpp, _vbpt_write_subexpression()): Rule data broken in rule ");
 			vocab_print_rule(rule);
 			sciprintf(", at token position %d\n", *pos);
 			return rulepos;
@@ -488,14 +488,16 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 	return rulepos;
 }
 
-int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose) {
 	// Get the start rules:
 	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(tlist, branch0->data[1]);
 	parse_rule_list_t *results = NULL;
-	int word;
+	int word = 0;
+	const int words_nr = words.size();
+	ResultWordList::const_iterator word_iter = words.begin();
 
-	for (word = 0; word < words_nr; word++) {
+	for (word_iter = words.begin(); word_iter != words.end(); ++word_iter, ++word) {
 		parse_rule_list_t *new_work = NULL;
 		parse_rule_list_t *reduced_rules = NULL;
 		parse_rule_list_t *seeker, *subseeker;
@@ -506,7 +508,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr
 		seeker = work;
 		while (seeker) {
 			if (seeker->rule->specials_nr <= (words_nr - word))
-				reduced_rules = _vocab_add_rule(reduced_rules, _vsatisfy_rule(seeker->rule, words + word));
+				reduced_rules = _vocab_add_rule(reduced_rules, _vsatisfy_rule(seeker->rule, *word_iter));
 
 			seeker = seeker->next;
 		}

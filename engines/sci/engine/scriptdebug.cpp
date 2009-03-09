@@ -786,17 +786,16 @@ int c_sim_parse(EngineState *s) {
 
 		if (!flag) {
 			char *openb = strchr(token, '['); // look for opening braces
-			result_word_t *result;
+			ResultWord result;
 
 			if (openb)
 				*openb = 0; // remove them and the rest
 
 			result = vocab_lookup_word(token, strlen(token), s->parser_words, s->parser_words_nr, s->_parserSuffixes);
 
-			if (result) {
+			if (result.w_class != -1) {
 				s->parser_nodes[i].type = 0;
-				s->parser_nodes[i].content.value = result->group;
-				free(result);
+				s->parser_nodes[i].content.value = result.group;
 			} else { // group name was specified directly?
 				int val = strtol(token, NULL, 0);
 				if (val) {
@@ -1008,13 +1007,10 @@ int c_set_parse_nodes(EngineState *s) {
 	return 0;
 }
 
-int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
-					parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 // parses with a GNF rule set
 
 int c_parse(EngineState *s) {
-	result_word_t *words;
-	int words_nr;
+	ResultWordList words;
 	char *error;
 	char *string;
 
@@ -1025,22 +1021,20 @@ int c_parse(EngineState *s) {
 
 	string = cmd_params[0].str;
 	sciprintf("Parsing '%s'\n", string);
-	words = vocab_tokenize_string(string, &words_nr, s->parser_words, s->parser_words_nr,
+	words = vocab_tokenize_string(string, s->parser_words, s->parser_words_nr,
 	                              s->_parserSuffixes, &error);
-	if (words) {
-		int i, syntax_fail = 0;
+	if (!words.empty()) {
+		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, words_nr, s->synonyms, s->synonyms_nr);
+		vocab_synonymize_tokens(words, s->synonyms, s->synonyms_nr);
 
 		sciprintf("Parsed to the following blocks:\n");
 
-		for (i = 0; i < words_nr; i++)
-			sciprintf("   Type[%04x] Group[%04x]\n", words[i].w_class, words[i].group);
+		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
+			sciprintf("   Type[%04x] Group[%04x]\n", i->w_class, i->group);
 
-		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, words_nr, s->parser_branches, s->parser_rules, 1))
+		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, s->parser_branches, s->parser_rules, 1))
 			syntax_fail = 1; // Building a tree failed
-
-		free(words);
 
 		if (syntax_fail)
 			sciprintf("Building a tree failed.\n");

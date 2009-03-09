@@ -65,15 +65,17 @@ struct opcode {
 #define VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB 902
 #define VOCAB_RESOURCE_SCI1_CHAR_TRANSFORMS 913
 
-#define VOCAB_CLASS_PREPOSITION 0x01
-#define VOCAB_CLASS_ARTICLE 0x02
-#define VOCAB_CLASS_ADJECTIVE 0x04
-#define VOCAB_CLASS_PRONOUN 0x08
-#define VOCAB_CLASS_NOUN 0x10
-#define VOCAB_CLASS_INDICATIVE_VERB 0x20
-#define VOCAB_CLASS_ADVERB 0x40
-#define VOCAB_CLASS_IMPERATIVE_VERB 0x80
-#define VOCAB_CLASS_NUMBER 0x001
+enum {
+	VOCAB_CLASS_PREPOSITION = 0x01,
+	VOCAB_CLASS_ARTICLE = 0x02,
+	VOCAB_CLASS_ADJECTIVE = 0x04,
+	VOCAB_CLASS_PRONOUN = 0x08,
+	VOCAB_CLASS_NOUN = 0x10,
+	VOCAB_CLASS_INDICATIVE_VERB = 0x20,
+	VOCAB_CLASS_ADVERB = 0x40,
+	VOCAB_CLASS_IMPERATIVE_VERB = 0x80,
+	VOCAB_CLASS_NUMBER = 0x001
+};
 
 extern const char *class_names[]; /* Vocabulary class names */
 
@@ -112,12 +114,17 @@ extern const char *class_names[]; /* Vocabulary class names */
 
 #define SAID_LONG(x) ((x) << 8)
 
-struct word_t {
+struct ResultWord {
+	int w_class; /* Word class */
+	int group; /* Word group */
+};
 
+typedef Common::List<ResultWord> ResultWordList;
+
+struct word_t {
 	int w_class; /* Word class */
 	int group; /* Word group */
 	char word[1]; /* The actual word */
-
 };
 
 
@@ -151,14 +158,6 @@ struct suffix_t {
 };
 
 typedef Common::List<suffix_t> SuffixList;
-
-
-struct result_word_t {
-
-	int w_class; /* Word class */
-	int group; /* Word group */
-
-};
 
 
 struct synonym_t {
@@ -279,7 +278,7 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches);
 ** Returns   : (null)
 */
 
-result_word_t *vocab_lookup_word(char *word, int word_len,
+ResultWord vocab_lookup_word(char *word, int word_len,
 	word_t **words, int words_nr, const SuffixList &suffixes);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
@@ -287,16 +286,14 @@ result_word_t *vocab_lookup_word(char *word, int word_len,
 **             (word_t **) words: List of words
 **             (int) words_nr: Number of elements in 'words'
 **             (SuffixList) suffixes: List of suffixes
-** Returns   : (result_word_t *) A malloc'd result_word_t, or NULL if the word
-** could not be found.
+** Returns   : (const ResultWordList &) A list containing 1 or 0 words
 */
 
 
-result_word_t *vocab_tokenize_string(char *sentence, int *result_nr,
+ResultWordList vocab_tokenize_string(char *sentence,
 	word_t **words, int words_nr, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
-**             (int *) result_nr: The variable to store the resulting number of words in
 **             (word_t **) words: The words to scan for
 **             (int) words_nr: Number of words to scan for
 **             (SuffixList) suffixes: suffixes to scan for
@@ -328,13 +325,12 @@ void vocab_free_rule_list(parse_rule_list_t *rule_list);
 */
 
 
-int vocab_build_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
 	parse_tree_branch_t *branch0, parse_rule_list_t *rules);
 /* Builds a parse tree from a list of words
 ** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
 **                                          at least VOCAB_TREE_NODES entries)
-**             (result_word_t *) words: The words to build the tree from
-**             (int) words_nr: The number of words
+**             (const ResultWordList &) words: The words to build the tree from
 **             (parse_tree_branch_t *) branche0: The zeroeth original branch of the
 **                                     original CNF parser grammar
 **             (parse_rule_list *) rules: The GNF ruleset to parse with
@@ -378,15 +374,14 @@ void vocab_decypher_said_block(EngineState *s, byte *pos);
 */
 
 
-void vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms, int synonyms_nr);
+void vocab_synonymize_tokens(ResultWordList &words, synonym_t *synonyms, int synonyms_nr);
 /* Synonymizes a token list
-** Parameters: (result_wort_t *) words: The word list to synonymize
-**             (int) words_nr: Number of word_ts in the list
+** Parameters: (ResultWordList &) words: The word list to synonymize
 **             (synonym_t *) synonyms: Synonym list
 **             (int) synonyms_nr: Number of synonyms in the list
 */
 
-int vocab_gnf_parse(parse_tree_node_t *nodes, result_word_t *words, int words_nr,
+int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
 
 void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);

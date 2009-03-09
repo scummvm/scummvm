@@ -254,9 +254,8 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t stringpos = argv[0];
 	char *string = kernel_dereference_char_pointer(s, stringpos, 0);
-	int words_nr;
 	char *error;
-	result_word_t *words;
+	ResultWordList words;
 	reg_t event = argv[1];
 
 	s->parser_event = event;
@@ -268,38 +267,34 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	words = vocab_tokenize_string(string, &words_nr,
+	words = vocab_tokenize_string(string,
 	                              s->parser_words, s->parser_words_nr,
 	                              s->_parserSuffixes,
 	                              &error);
 	s->parser_valid = 0; /* not valid */
 
-	if (words) {
+	if (!words.empty()) {
 
 		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, words_nr, s->synonyms, s->synonyms_nr);
+		vocab_synonymize_tokens(words, s->synonyms, s->synonyms_nr);
 
 		s->r_acc = make_reg(0, 1);
 
 		if (s->debug_mode & (1 << SCIkPARSER_NR)) {
-			int i;
-
 			SCIkdebug(SCIkPARSER, "Parsed to the following blocks:\n", 0);
 
-			for (i = 0; i < words_nr; i++)
-				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", words[i].w_class, words[i].group);
+			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
+				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", i->w_class, i->group);
 		}
 
-		if (vocab_build_parse_tree(&(s->parser_nodes[0]), words, words_nr, s->parser_branches,
+		if (vocab_build_parse_tree(&(s->parser_nodes[0]), words, s->parser_branches,
 		                           s->parser_rules))
 			syntax_fail = 1; /* Building a tree failed */
 
 #ifdef SCI_SIMPLE_SAID_CODE
-		vocab_build_simple_parse_tree(&(s->parser_nodes[0]), words, words_nr);
+		vocab_build_simple_parse_tree(&(s->parser_nodes[0]), words);
 #endif /* SCI_SIMPLE_SAID_CODE */
-
-		free(words);
 
 		if (syntax_fail) {
 

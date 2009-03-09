@@ -113,7 +113,7 @@ int script_find_selector(EngineState *s, const char *selectorname) {
 			return pos;
 	}
 
-	warning("Could not map '%s' to any selector!", selectorname);
+	warning("Could not map '%s' to any selector", selectorname);
 
 	return -1;
 }

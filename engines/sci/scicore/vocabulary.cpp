@@ -261,12 +261,11 @@ parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_
 }
 
 
-result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int words_nr,
+ResultWord vocab_lookup_word(char *word, int word_len, word_t **words, int words_nr,
 	const SuffixList &suffixes) {
 	word_t *tempword = (word_t*)sci_malloc(sizeof(word_t) + word_len + 256);
 	// 256: For suffixes. Should suffice.
 	word_t **dict_word;
-	result_word_t *retval;
 	char *tester;
 	int word_len_tmp;
 
@@ -277,17 +276,14 @@ result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int w
 	while ((tester = strchr(tempword->word, '-')))
 		memmove(tester, tester + 1, (tempword->word + word_len_tmp--) - tester);
 
-	retval = (result_word_t *)sci_malloc(sizeof(result_word_t));
-
 	dict_word = (word_t **)bsearch(&tempword, words, words_nr, sizeof(word_t *), _vocab_cmp_words);
 
 	if (dict_word) {
 		free(tempword);
 
-		retval->w_class = (*dict_word)->w_class;
-		retval->group = (*dict_word)->group;
+		ResultWord tmp = { (*dict_word)->w_class, (*dict_word)->group };
 
-		return retval;
+		return tmp;
 	}
 
 	// Now try all suffixes
@@ -307,10 +303,10 @@ result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int w
 				if ((dict_word) && ((*dict_word)->w_class & suffix->class_mask)) { // Found it?
 					free(tempword);
 
-					retval->w_class = suffix->result_class; // Use suffix class
-					retval->group = (*dict_word)->group;
+					// Use suffix class
+					ResultWord tmp = { suffix->result_class, (*dict_word)->group };
 
-					return retval;
+					return tmp;
 				}
 			}
 		}
@@ -324,19 +320,15 @@ result_word_t *vocab_lookup_word(char *word, int word_len, word_t **words, int w
 	while ((tester = strchr(tempword->word, '-')))
 		memmove(tester, tester + 1, (tempword->word + word_len--) - tester);
 
+	ResultWord retval = { -1, -1 };
 	if ((strtol(&(tempword->word[0]), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
-		free(tempword);
-
-		retval->group = VOCAB_MAGIC_NUMBER_GROUP;
-		retval->w_class = VOCAB_CLASS_NUMBER;
-
-		return(retval);
+		ResultWord tmp = { VOCAB_CLASS_NUMBER, VOCAB_MAGIC_NUMBER_GROUP };
+		retval = tmp;
 	}
 
 	free(tempword);
-	free(retval);
 
-	return NULL;
+	return retval;
 }
 
 void vocab_decypher_said_block(EngineState *s, byte *addr) {
@@ -392,7 +384,7 @@ void vocab_decypher_said_block(EngineState *s, byte *addr) {
 
 #ifdef SCI_SIMPLE_SAID_CODE
 
-static short _related_words[][2] = { // 0 is backwards, 1 is forward
+static const short _related_words[][2] = { // 0 is backwards, 1 is forward
 	{0x800, 0x180}, // preposition
 	{0x000, 0x180}, // article
 	{0x000, 0x180}, // adjective
@@ -408,8 +400,8 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 	int i, length, pos = 0;
 
 	for (i = 0; i < words_nr; ++i) {
-		if (words[i].classID != VOCAB_CLASS_ANYWORD) {
-			nodes[pos].type = words[i].classID;
+		if (words[i].w_class != VOCAB_CLASS_ANYWORD) {
+			nodes[pos].type = words[i].w_class;
 			nodes[pos].content.value = words[i].group;
 			pos += 2; // Link information is filled in below
 		}
@@ -485,18 +477,14 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 }
 #endif
 
-result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **words, int words_nr,
+ResultWordList vocab_tokenize_string(char *sentence, word_t **words, int words_nr,
 	const SuffixList &suffixes, char **error) {
 	char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;
 	int wordlen = 0;
-	result_word_t *retval = (result_word_t*)sci_malloc(sizeof(result_word_t));
-	// malloc'd size is always one result_word_t too big
+	ResultWordList retval;
 
-	result_word_t *lookup_result;
-
-	*result_nr = 0;
 	*error = NULL;
 
 	do {
@@ -511,24 +499,19 @@ result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **wo
 		else {
 			if (wordlen) { // Finished a word?
 
-				lookup_result =
+				ResultWord lookup_result =
 				    vocab_lookup_word(lastword, wordlen, words, words_nr, suffixes);
 				// Look it up
 
-				if (!lookup_result) { // Not found?
+				if (lookup_result.w_class == -1) { // Not found?
 					*error = (char *)sci_calloc(wordlen + 1, 1);
 					strncpy(*error, lastword, wordlen); // Set the offending word
-					free(retval);
-					return NULL; // And return with error
+					retval.clear();
+					return retval; // And return with error
 				}
 
-				memcpy(retval + *result_nr, lookup_result, sizeof(result_word_t));
 				// Copy into list
-				++(*result_nr); // Increase number of resulting words
-				free(lookup_result);
-
-				retval = (result_word_t*)sci_realloc(retval, sizeof(result_word_t) * (*result_nr + 1));
-
+				retval.push_back(lookup_result);
 			}
 
 			lastword = sentence + pos_in_sentence;
@@ -536,11 +519,6 @@ result_word_t *vocab_tokenize_string(char *sentence, int *result_nr, word_t **wo
 		}
 
 	} while (c); // Until terminator is hit
-
-	if (*result_nr == 0) {
-		free(retval);
-		return NULL;
-	}
 
 	return retval;
 }
@@ -621,16 +599,16 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes) {
 	sciprintf("))\n");
 }
 
-void vocab_synonymize_tokens(result_word_t *words, int words_nr, synonym_t *synonyms, int synonyms_nr) {
-	int i, sync;
+void vocab_synonymize_tokens(ResultWordList &words, synonym_t *synonyms, int synonyms_nr) {
+	int sync;
 
 	if (!synonyms || !synonyms_nr)
 		return; // No synonyms: Nothing to check
 
-	for (i = 0; i < words_nr; i++)
+	for (ResultWordList::iterator i = words.begin(); i != words.end(); ++i)
 		for (sync = 0; sync < synonyms_nr; sync++)
-			if (words[i].group == synonyms[sync].replaceant)
-				words[i].group = synonyms[sync].replacement;
+			if (i->group == synonyms[sync].replaceant)
+				i->group = synonyms[sync].replacement;
 }
 
 } // End of namespace Sci
