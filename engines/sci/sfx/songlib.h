@@ -29,6 +29,7 @@
 #define SCI_SFX_SFX_SONGLIB_H
 
 #include "common/scummsys.h"
+#include "sound/timestamp.h"
 
 namespace Sci {
 
@@ -63,11 +64,9 @@ struct song_t {
 	int hold;
 
 	SongIterator *it;
-	long delay; /* Delay before accessing the iterator, in microseconds */
+	int _delay; /* Delay before accessing the iterator, in ticks */
 
-	uint32 wakeup_time; /* Used by the sound core:
-			      ** Playing -> time at which 'delay' has elapsed
-			      ** Suspended/Waiting -> stopping time */
+	Audio::Timestamp _wakeupTime; /**< Timestamp indicating the next MIDI event */
 
 	song_t *next; /* Next song or NULL if this is the last one */
 	song_t *next_playing; /* Next playing song; used by the

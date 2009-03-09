@@ -43,7 +43,8 @@ song_t *song_new(song_handle_t handle, SongIterator *it, int priority) {
 	retval->handle = handle;
 	retval->priority = priority;
 	retval->next = NULL;
-	retval->delay = 0;
+	retval->_delay = 0;
+	retval->_wakeupTime = Audio::Timestamp();
 	retval->it = it;
 	retval->status = SOUND_STATUS_STOPPED;
 	retval->next_playing = NULL;

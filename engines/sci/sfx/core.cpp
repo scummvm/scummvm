@@ -73,14 +73,13 @@ int sfx_get_player_polyphony() {
 
 static void _freeze_time(sfx_state_t *self) {
 	/* Freezes the top song delay time */
-	uint32 ctime = g_system->getMillis();
+	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
 	song_t *song = self->song;
 
 	while (song) {
-		if (ctime > song->wakeup_time)
-			song->delay = 0;
-		else
-			song->delay = song->wakeup_time - ctime;
+		song->_delay = song->_wakeupTime.frameDiff(ctime);
+		if (song->_delay < 0)
+			song->_delay = 0;
 
 		song = song->next_playing;
 	}
@@ -132,11 +131,11 @@ static void _dump_songs(sfx_state_t *self) {
 
 static void _thaw_time(sfx_state_t *self) {
 	/* inverse of _freeze_time() */
-	uint32 ctime = g_system->getMillis();
+	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
 	song_t *song = self->song;
 
 	while (song) {
-		song->wakeup_time = ctime + song->delay;
+		song->_wakeupTime = ctime.addFrames(song->_delay);
 
 		song = song->next_playing;
 	}
@@ -156,21 +155,21 @@ static int is_playing(sfx_state_t *self, song_t *song) {
 }
 
 static void _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
+	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
+
 	switch (status) {
 
 	case SOUND_STATUS_STOPPED:
-		/* Reset */
+		// Reset
 		song->it->init();
 		break;
 
 	case SOUND_STATUS_SUSPENDED:
 	case SOUND_STATUS_WAITING:
 		if (song->status == SOUND_STATUS_PLAYING) {
-			/* Update delay, set wakeup_time */
-			uint32 time = g_system->getMillis();
-
-			song->delay -= long(time) - long(song->wakeup_time);
-			song->wakeup_time = time;
+			// Update delay, set wakeup_time
+			song->_delay += song->_wakeupTime.frameDiff(ctime);
+			song->_wakeupTime = ctime;
 		}
 		if (status == SOUND_STATUS_SUSPENDED)
 			break;
@@ -178,9 +177,10 @@ static void _sfx_set_song_status(sfx_state_t *self, song_t *song, int status) {
 		/* otherwise... */
 
 	case SOUND_STATUS_PLAYING:
-		if (song->status == SOUND_STATUS_STOPPED)
-			/* Starting anew */
-			song->wakeup_time = g_system->getMillis();
+		if (song->status == SOUND_STATUS_STOPPED) {
+			// Starting anew
+			song->_wakeupTime = ctime;
+		}
 
 		if (is_playing(self, song))
 			status = SOUND_STATUS_PLAYING;
@@ -244,10 +244,9 @@ static void _update_single_song(sfx_state_t *self) {
 		_thaw_time(self); /* Recover song delay time */
 
 		if (newsong && player) {
-			SongIterator *clonesong
-			= songit_clone(newsong->it, newsong->delay);
+			SongIterator *clonesong = songit_clone(newsong->it, newsong->_delay);
 
-			player->add_iterator(clonesong, newsong->wakeup_time);
+			player->add_iterator(clonesong, newsong->_wakeupTime.msecs());
 		}
 	}
 }
@@ -310,15 +309,13 @@ static void _update_multi_song(sfx_state_t *self) {
 			oldseeker->next_playing = NULL; /* Clear this pointer; we don't need the tag anymore */
 		}
 
-	for (newseeker = newsong; newseeker;
-	        newseeker = newseeker->next_playing) {
+	for (newseeker = newsong; newseeker; newseeker = newseeker->next_playing) {
 		if (newseeker->status != SOUND_STATUS_PLAYING && player) {
 			if (self->debug & SFX_DEBUG_SONGS)
 				sciprintf("[SFX] Adding song %lx\n", newseeker->it->ID);
 
-			player->add_iterator(songit_clone(newseeker->it,
-			                                  newseeker->delay),
-			                     g_system->getMillis());
+			SongIterator *clonesong = songit_clone(newseeker->it, newseeker->_delay);
+			player->add_iterator(clonesong, g_system->getMillis());
 		}
 		_sfx_set_song_status(self, newseeker,
 		                     SOUND_STATUS_PLAYING);
@@ -351,8 +348,7 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 	return 0;
 }
 
-#define FREQ 60
-#define DELAY (1000000 / FREQ)
+#define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
 
 static void _sfx_timer_callback(void *data) {
@@ -483,7 +479,7 @@ int sfx_poll(sfx_state_t *self, song_handle_t *handle, int *cue) {
 }
 
 int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
-	uint32 ctime = g_system->getMillis();
+	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
 	song_t *song = self->song;
 
 	while (song && song->handle != handle)
@@ -497,13 +493,11 @@ int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
 	}
 
 	while (1) {
-		unsigned char buf[8];
-		int result;
-
-		if (song->wakeup_time > ctime)
+		if (song->_wakeupTime.frameDiff(ctime) > 0)
 			return 0; /* Patience, young hacker! */
 
-		result = songit_next(&(song->it), buf, cue, IT_READER_MASK_ALL);
+		unsigned char buf[8];
+		int result = songit_next(&(song->it), buf, cue, IT_READER_MASK_ALL);
 
 		switch (result) {
 
@@ -532,7 +526,7 @@ int sfx_poll_specific(sfx_state_t *self, song_handle_t handle, int *cue) {
 
 		default:
 			if (result > 0)
-				song->wakeup_time += result * SOUND_TICK;
+				song->_wakeupTime = song->_wakeupTime.addFrames(result);
 
 			/* Delay */
 			break;
@@ -587,7 +581,7 @@ int sfx_add_song(sfx_state_t *self, SongIterator *it, int priority, song_handle_
 	song->resource_num = number;
 	song->hold = 0;
 	song->loops = 0;
-	song->wakeup_time = g_system->getMillis(); /* No need to delay */
+	song->_wakeupTime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
 	song_lib_add(self->songlib, song);
 	self->song = NULL; /* As above */
 	_update(self);

@@ -100,7 +100,7 @@ static void play_song(SongIterator *it, uint32 *wakeup_time, int writeahead_time
 
 			default:
 				play_moredelay = delay - 1;
-				*wakeup_time += delay * SOUND_TICK;
+				*wakeup_time += delay * 1000 / SFX_TICKS_PER_SEC;
 				if (seq->delay)
 					seq->delay(delay);
 			}

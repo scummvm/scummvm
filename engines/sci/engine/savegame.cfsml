@@ -505,7 +505,7 @@ int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastv
 	*foo = (song_t*) malloc(sizeof(song_t));
 	token = _cfsml_get_identifier(fh, line, hiteof, &assignment);
 	%CFSMLREAD song_t (*foo) FROM fh ERRVAR *hiteof FIRSTTOKEN token LINECOUNTER *line;
-	(*foo)->delay = 0;
+	(*foo)->_delay = 0;
 	(*foo)->it = NULL;
 	(*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
 	return 0;

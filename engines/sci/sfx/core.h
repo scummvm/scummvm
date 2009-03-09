@@ -36,8 +36,7 @@ namespace Sci {
 class SongIterator;
 struct fade_params_t;
 
-#define SOUND_TICK 1000 / 60
-/* Approximately 17 milliseconds */
+#define SFX_TICKS_PER_SEC 60 /* MIDI ticks per second */
 
 
 #define SFX_STATE_FLAG_MULTIPLAY (1 << 0) /* More than one song playable

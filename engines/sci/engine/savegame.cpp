@@ -4129,7 +4129,7 @@ int read_song_tp(Common::SeekableReadStream *fh, song_t **foo, const char *lastv
 	}
 // End of auto-generated CFSML data reader code
 #line 508 "engines/sci/engine/savegame.cfsml"
-	(*foo)->delay = 0;
+	(*foo)->_delay = 0;
 	(*foo)->it = NULL;
 	(*foo)->next_playing = (*foo)->next_stopping = (*foo)->next = NULL;
 	return 0;
