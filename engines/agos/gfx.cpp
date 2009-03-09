@@ -1049,8 +1049,10 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 	byte *p, *pp;
 	uint count;
 
-	if (isSpriteLoaded(vgaSpriteId, zoneNum))
-		return;
+	if (getGameType() != GType_PN && getGameType() != GType_ELVIRA1) {
+		if (isSpriteLoaded(vgaSpriteId, zoneNum))
+			return;
+	}
 
 	vsp = _vgaSprites;
 	while (vsp->id != 0)
@@ -1339,6 +1341,14 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 			vte++;
 
 		vte->delay = 2;
+	}
+
+	if (getGameType() == GType_PN) {
+		AnimTable *animTable = _screenAnim1;
+		while (animTable->srcPtr) {
+			animTable->srcPtr = 0;
+			animTable++;
+		}
 	}
 
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
