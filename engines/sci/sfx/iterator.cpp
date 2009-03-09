@@ -69,6 +69,26 @@ BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id) {
 	_size = size;
 }
 
+BaseSongIterator::BaseSongIterator(const BaseSongIterator& bsi) : SongIterator(bsi) {
+	memcpy(polyphony, bsi.polyphony, sizeof(polyphony));
+	memcpy(importance, bsi.importance, sizeof(importance));
+	ccc = bsi.ccc;
+	resetflag = bsi.resetflag;
+	_deviceId = bsi._deviceId;
+	active_channels = bsi.active_channels;
+	_size = bsi._size;
+	_data = bsi._data;
+	loops = bsi.loops;
+	recover_delay = bsi.recover_delay;
+
+	if (_data) {
+#ifdef DEBUG_VERBOSE
+		fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, this, mem->_data);
+#endif
+		sci_refcount_incref(_data);
+	}
+}
+
 BaseSongIterator::~BaseSongIterator() {
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "** FREEING it %p: data at %p\n", this, _data);
@@ -584,10 +604,6 @@ SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
 
 		case _SIMSG_BASEMSG_CLONE: {
 			BaseSongIterator *mem = new Sci0SongIterator(*this);
-			sci_refcount_incref(mem->_data);
-#ifdef DEBUG_VERBOSE
-			fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, this, mem->_data);
-#endif
 			return mem; /* Assume caller has another copy of this */
 		}
 
@@ -1080,7 +1096,6 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 			Sci1SongIterator *mem = new Sci1SongIterator(*this);
 			int delta = msg.args[0].i; /* Delay until next step */
 
-			sci_refcount_incref(mem->_data);
 			mem->_delayRemaining += delta;
 
 			return mem; /* Assume caller has another copy of this */

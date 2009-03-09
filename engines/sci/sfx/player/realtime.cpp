@@ -121,7 +121,8 @@ static void rt_timer_callback(void) {
 			} else if (delta > 15) {
 				play_writeahead -= 3; /* Adjust downwards */
 			}
-		} else --play_moredelay;
+		} else
+			--play_moredelay;
 
 		if (play_writeahead < seq->min_write_ahead_ms)
 			play_writeahead = seq->min_write_ahead_ms;

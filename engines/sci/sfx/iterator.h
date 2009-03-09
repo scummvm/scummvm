@@ -212,6 +212,10 @@ public:
 	 */
 	virtual int getTimepos() = 0;
 
+
+private:
+	// Make the assignment operator unreachable, just in case...
+	SongIterator& operator=(const SongIterator&);
 };
 
 

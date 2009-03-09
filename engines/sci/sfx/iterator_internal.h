@@ -98,6 +98,10 @@ public:
 
 public:
 	BaseSongIterator(byte *data, uint size, songit_id_t id);
+
+	// Copy constructor taking care of memory handling
+	BaseSongIterator(const BaseSongIterator&);
+
 	~BaseSongIterator();
 };
 
