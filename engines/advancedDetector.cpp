@@ -371,6 +371,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 	ADGameDescList matched;
 	int maxFilesMatched = 0;
+	bool gotAnyMatchesWithAllFiles = false;
 
 	// MD5 based matching
 	uint i;
@@ -388,12 +389,15 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 		if ((params.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->extra != extra)
 			continue;
 
+		bool allFilesPresent = true;
+
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
 
 			if (!filesSizeMD5.contains(tstr)) {
 				fileMissing = true;
+				allFilesPresent = false;
 				break;
 			}
 
@@ -411,6 +415,19 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 			debug(3, "Matched file: %s", tstr.c_str());
 		}
+
+		// We found at least one entry with all required files present.
+		// That means that we got new variant of the game.
+		//
+		// Wihtout this check we would have errorneous checksum display
+		// where only located files will be enlisted.
+		//
+		// Potentially this could rule out variants where some particular file
+		// is really missing, but the developers should better know about such
+		// cases.
+		if (allFilesPresent)
+			gotAnyMatchesWithAllFiles = true;
+
 		if (!fileMissing) {
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
@@ -446,7 +463,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 	// We didn't find a match
 	if (matched.empty()) {
-		if (!filesSizeMD5.empty()) {
+		if (!filesSizeMD5.empty() && gotAnyMatchesWithAllFiles) {
 			reportUnknown(parent, filesSizeMD5);
 		}
 
