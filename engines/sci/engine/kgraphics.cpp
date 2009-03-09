@@ -2470,22 +2470,31 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		else
 			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255));
 		bgcolor.mask = GFX_MASK_VISUAL;
+	} else {
+		bgcolor.visual = PaletteEntry(0,0,0);
 	}
 
 	bgcolor.priority = priority;
 	bgcolor.mask |= priority >= 0 ? GFX_MASK_PRIORITY : 0;
 	bgcolor.alpha = 0;
+	bgcolor.control = -1;
 	SCIkdebug(SCIkGRAPHICS, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
 
 	fgcolor.visual = get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0));
 	fgcolor.mask = GFX_MASK_VISUAL;
+	fgcolor.control = -1;
+	fgcolor.priority = -1;
 	fgcolor.alpha = 0;
 	black.visual = get_pic_color(s, 0);
 	black.mask = GFX_MASK_VISUAL;
 	black.alpha = 0;
+	black.control = -1;
+	black.priority = -1;
 	lWhite.visual = get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255);
 	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
+	lWhite.priority = -1;
+	lWhite.control = -1;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr, fgcolor, bgcolor,
 							s->titlebar_port->font_nr, lWhite, black, argv[4 + argextra].segment ?
