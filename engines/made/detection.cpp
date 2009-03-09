@@ -278,12 +278,63 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Leather Goddesses of Phobos 2
+		// Leather Goddesses of Phobos 2 (English)
 		{
 			"lgop2",
 			"",
 			AD_ENTRY1("lgop2.dat", "8137996db200ff67e8f172ff106f2e48"),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		GID_LGOP2,
+		0,
+		GF_FLOPPY,
+		2,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (German)
+		// Supplied by windlepoons (bug tracker #2675695)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "a0ffea6a3b7e39bd861edd00c397641c", 299466),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		GID_LGOP2,
+		0,
+		GF_FLOPPY,
+		2,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (French)
+		// Supplied by goodoldgeorg (bug tracker #2675759)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "f9e974087af7cf4b7ec2d8dc45d01e0c", 295366),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		GID_LGOP2,
+		0,
+		GF_FLOPPY,
+		2,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (Spanish)
+		// Supplied by goodoldgeorg (bug tracker #2675759)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "96eb95b4d75b9a3da0b0d67e3b4a787d", 288984),
+			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
 		},
