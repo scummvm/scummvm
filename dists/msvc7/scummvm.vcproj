@@ -232,6 +232,9 @@
 				RelativePath="..\..\common\list.h">
 			</File>
 			<File
+				RelativePath="..\..\common\list_intern.h">
+			</File>
+			<File
 				RelativePath="..\..\common\md5.cpp">
 			</File>
 			<File
