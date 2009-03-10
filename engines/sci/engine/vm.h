@@ -48,7 +48,7 @@ enum {
 struct SystemString {
 	char *name;
 	int max_size;
-	char *value;
+	reg_t *value;
 };
 
 struct SystemStrings {
@@ -284,7 +284,8 @@ enum memObjType {
 	MEM_OBJ_NODES = 7,
 	MEM_OBJ_HUNK = 8,
 	MEM_OBJ_DYNMEM = 9,
-	MEM_OBJ_RESERVED = 10,
+	MEM_OBJ_STRING_FRAG = 10,
+	MEM_OBJ_RESERVED = 11,
 	MEM_OBJ_MAX = MEM_OBJ_RESERVED // For sanity checking
 };
 

@@ -87,7 +87,8 @@ char inputbuf[256] = "";
 
 const char *_debug_get_input_default() {
 	char newinpbuf[256];
-
+	char *newline;
+	
 	printf("> ");
 	fgets(newinpbuf, 254, stdin);
 
@@ -327,6 +328,10 @@ int c_segtable(EngineState *s) {
 				sciprintf("M  dynmem: %d bytes", mobj->data.dynmem.size);
 				break;
 
+			case MEM_OBJ_STRING_FRAG:
+				sciprintf("F  string fragments");
+				break;
+
 			default:
 				sciprintf("I  Invalid (type = %x)", mobj->type);
 				break;
@@ -424,10 +429,12 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		SystemStrings *strings = &(mobj->data.sys_strings);
 		int i;
 
-		sciprintf("system string table\n");
+		sciprintf("system string table - viewing currently disabled\n");
+#if 0
 		for (i = 0; i < SYS_STRINGS_MAX; i++)
 			if (strings->strings[i].name)
 				sciprintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
+#endif
 	}
 	break;
 
@@ -482,6 +489,11 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		sci_hexdump(mobj->data.dynmem.buf, mobj->data.dynmem.size, 0);
 	}
 	break;
+
+	case MEM_OBJ_STRING_FRAG: {
+		sciprintf("string frags\n");
+		break;
+	}
 
 	default :
 		sciprintf("Invalid type %d\n", mobj->type);

@@ -1215,6 +1215,14 @@ SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 	return retval;
 }
 
+SegmentId SegManager::allocateStringFrags() {
+	SegmentId segid;
+	
+	allocNonscriptSegment(MEM_OBJ_STRING_FRAG, &segid);
+
+	return segid;
+}
+
 #if 0
 // Unreferenced - removed
 SegmentId SegManager::sm_allocate_reserved_segment(char *src_name) {
@@ -1660,6 +1668,13 @@ public:
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_SYS_STRINGS) {}
 };
 
+//-------------------- string frags --------------------
+class SegInterfaceStringFrag : public SegInterface {
+public:
+	SegInterfaceStringFrag(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
+		SegInterface(segmgr, mobj, segId, MEM_OBJ_STRING_FRAG) {}
+};
+
 
 //-------------------- lists --------------------
 class SegInterfaceLists : public SegInterface {
@@ -1805,6 +1820,9 @@ SegInterface *SegManager::getSegInterface(SegmentId segid) {
 		break;
 	case MEM_OBJ_DYNMEM:
 		retval = new SegInterfaceDynMem(this, mobj, segid);
+		break;
+	case MEM_OBJ_STRING_FRAG:
+		retval = new SegInterfaceStringFrag(this, mobj, segid);
 		break;
 	case MEM_OBJ_RESERVED:
 		retval = new SegInterfaceReserved(this, mobj, segid);

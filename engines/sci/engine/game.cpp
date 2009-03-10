@@ -471,12 +471,16 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->script_000 = &(s->seg_manager->heap[s->script_000_segment]->data.script);
 
 	s->sys_strings = s->seg_manager->allocateSysStrings(&s->sys_strings_segment);
+	s->string_frag_segment = s->seg_manager->allocateStringFrags();
+
 	// Allocate static buffer for savegame and CWD directories
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
 	str->name = strdup("savedir");
 	str->max_size = MAX_SAVE_DIR_SIZE;
-	str->value = (char*)sci_malloc(MAX_SAVE_DIR_SIZE + 1);
-	str->value[0] = 0; // Set to empty string
+	str->value = (reg_t*)sci_malloc(sizeof(reg_t)*MAX_SAVE_DIR_SIZE);
+	str->value->segment = s->string_frag_segment; // Set to empty string
+	str->value->offset = 0; 
+
 
 	s->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 	s->save_dir_edit_offset = 0;
@@ -519,8 +523,18 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
-	strncpy(str->value, path, str->max_size);
-	str->value[str->max_size] = 0; // Make sure to terminate
+	
+	strncpy((char *)str->value, path, str->max_size);
+	str->value[str->max_size].segment = s->string_frag_segment; // Make sure to terminate
+	str->value[str->max_size].offset &= 0xff00; // Make sure to terminate
+}
+
+void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
+
+void script_set_gamestate_save_dir(EngineState *s, reg_t path) {
+	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
+	reg_t *srcbuf = kernel_dereference_reg_pointer(s, path, 1);
+	internal_stringfrag_strncpy(s, str->value, srcbuf, MAX_SAVE_DIR_SIZE);
 }
 
 void script_free_vm_memory(EngineState *s) {
@@ -606,8 +620,9 @@ int game_init(EngineState *s) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");
 	str->max_size = MAX_PARSER_BASE;
-	str->value = (char*)sci_malloc(MAX_PARSER_BASE + 1);
-	str->value[0] = 0; // Set to empty string
+	str->value = (reg_t*)sci_malloc(MAX_PARSER_BASE + 1);
+	str->value[0].segment = s->string_frag_segment; // Set to empty string
+	str->value[0].offset = 0; // Set to empty string
 
 	s->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 

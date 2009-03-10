@@ -304,6 +304,14 @@ public:
 	SystemStrings *allocateSysStrings(SegmentId *segid);
 
 
+	// 5. System Strings
+
+	// Allocates a string fragments segment
+	// Returns   : (SegmentId): Segment ID to use for string fragments
+	// See also stringfrag.h
+	SegmentId allocateStringFrags();
+
+
 	// 6, 7. Lists and Nodes
 
 	// Allocate a fresh list

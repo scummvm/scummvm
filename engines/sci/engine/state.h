@@ -251,6 +251,8 @@ struct EngineState {
 	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;
 
+	SegmentId string_frag_segment;
+
 	/* Parser data: */
 	word_t **parser_words;
 	int parser_words_nr;

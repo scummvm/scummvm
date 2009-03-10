@@ -32,6 +32,7 @@ MODULE_OBJS = \
 	engine/scriptconsole.o \
 	engine/scriptdebug.o \
 	engine/seg_manager.o \
+	engine/stringfrag.o \
 	engine/state.o \
 	engine/vm.o \
 	gfx/font.o \

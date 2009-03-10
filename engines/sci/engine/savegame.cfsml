@@ -601,7 +601,9 @@ static struct {
 	{MEM_OBJ_LISTS,"LISTS"},
 	{MEM_OBJ_NODES,"NODES"},
 	{MEM_OBJ_HUNK,"HUNK"},
-	{MEM_OBJ_DYNMEM,"DYNMEM"}};
+	{MEM_OBJ_DYNMEM,"DYNMEM"},
+	{MEM_OBJ_STRING_FRAG,"STRING_FRAGS"},
+};
 
 int mem_obj_string_to_enum(const char *str) {
 	int i;
@@ -634,6 +636,8 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 		%CFSMLWRITE int &foo->data.stack.nr INTO fh;
 	break;
 	case MEM_OBJ_HUNK:
+		break;
+	case MEM_OBJ_STRING_FRAG:
 		break;
 	case MEM_OBJ_LISTS:
 		%CFSMLWRITE ListTable &foo->data.lists INTO fh;
@@ -683,6 +687,8 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	case MEM_OBJ_HUNK:
 		init_Hunk_table(&foo->data.hunks);
 		break;
+        case MEM_OBJ_STRING_FRAG:
+                break;
 	case MEM_OBJ_DYNMEM:
 		%CFSMLREAD DynMem  &foo->data.dynmem FROM fh ERRVAR *hiteof LINECOUNTER *line;
 	break;
@@ -1039,6 +1045,8 @@ static void reconstruct_sounds(EngineState *s) {
 	}
 }
 
+void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
+
 EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	int read_eof = 0;
 	EngineState *retval;
@@ -1126,17 +1134,18 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// First, pad memory
 	for (int i = 0; i < SYS_STRINGS_MAX; i++) {
 		str = &retval->sys_strings->strings[i];
-		char *data = str->value;
+		char *data = (char *) str->value;
 		if (data) {
-			str->value = (char *)sci_malloc(str->max_size + 1);
-			strcpy(str->value, data);
+			str->value = (reg_t *)sci_malloc(str->max_size + 1);
+			strcpy((char *)str->value, data);
 			free(data);
 		}
 	}
 
 	str = &retval->sys_strings->strings[SYS_STRING_SAVEDIR];
-	strncpy(str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
-	str->value[str->max_size] = 0; // Make sure to terminate
+	internal_stringfrag_strncpy(s, str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
+	str->value[str->max_size].segment = s->string_frag_segment; // Make sure to terminate
+	str->value[str->max_size].offset &= 0xff00; // Make sure to terminate
 	
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();

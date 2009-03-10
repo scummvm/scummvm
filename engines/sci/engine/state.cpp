@@ -137,6 +137,8 @@ EngineState::EngineState() : _dirseeker(this) {
 	script_000_segment = 0;
 	script_000 = 0;
 
+	string_frag_segment = 0;
+
 	parser_lastmatch_word = 0;
 	bp_list = 0;
 	have_bp = 0;
