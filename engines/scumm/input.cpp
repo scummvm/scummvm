@@ -487,9 +487,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		abortCutscene();
 
 		// VAR_CUTSCENEEXIT_KEY doesn't exist in SCUMM0
-		if (VAR_CUTSCENEEXIT_KEY != 0xFF) {
+		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
-		}
 	} else if (snapScrollKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_r &&
 		lastKeyHit.flags == Common::KBD_CTRL) {
 		_snapScroll ^= 1;

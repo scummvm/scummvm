@@ -105,11 +105,12 @@ void ScummEngine::moveCamera() {
 	int pos = camera._cur.x;
 	int t;
 	Actor *a = NULL;
+	const bool snapToX = (_snapScroll || (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X)));
 
 	camera._cur.x &= 0xFFF8;
 
 	if (VAR_CAMERA_MIN_X != 0xFF && camera._cur.x < VAR(VAR_CAMERA_MIN_X)) {
-		if (_snapScroll)
+		if (snapToX)
 			camera._cur.x = (short) VAR(VAR_CAMERA_MIN_X);
 		else
 			camera._cur.x += 8;
@@ -118,7 +119,7 @@ void ScummEngine::moveCamera() {
 	}
 
 	if (VAR_CAMERA_MAX_X != 0xFF && camera._cur.x > VAR(VAR_CAMERA_MAX_X)) {
-		if (_snapScroll)
+		if (snapToX)
 			camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
 		else
 			camera._cur.x -= 8;
@@ -133,7 +134,7 @@ void ScummEngine::moveCamera() {
 		t = actorx / 8 - _screenStartStrip;
 
 		if (t < camera._leftTrigger || t > camera._rightTrigger) {
-			if (_snapScroll) {
+			if (snapToX) {
 				if (t > 40-5)
 					camera._dest.x = actorx + 80;
 				if (t < 5)
@@ -154,7 +155,7 @@ void ScummEngine::moveCamera() {
 	if (VAR_CAMERA_MAX_X != 0xFF && camera._dest.x > VAR(VAR_CAMERA_MAX_X))
 		camera._dest.x = (short) VAR(VAR_CAMERA_MAX_X);
 
-	if (_snapScroll) {
+	if (snapToX) {
 		camera._cur.x = camera._dest.x;
 	} else {
 		if (camera._cur.x < camera._dest.x)
