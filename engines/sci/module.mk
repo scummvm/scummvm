@@ -83,10 +83,10 @@ MODULE_OBJS = \
 	sfx/softseq/softsequencers.o
 
 # Generate savegame.cpp
-$(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml $(srcdir)/tools/cfsml.pl
-	cat $< | perl $(srcdir)/tools/cfsml.pl -f engines/sci/engine/savegame.cfsml > $@
+$(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml $(srcdir)/tools/sci/cfsml.pl
+	cat $< | perl $(srcdir)/tools/sci/cfsml.pl -f engines/sci/engine/savegame.cfsml > $@
 
-engines/sci/engine/savegame.cpp: engines/sci/engine/savegame.cpp \
+engines/sci/engine/savegame.cpp: \
   common/stream.h common/scummsys.h config.h common/system.h \
   common/noncopyable.h common/rect.h common/util.h common/str.h \
   common/array.h common/algorithm.h common/debug.h common/list.h \
