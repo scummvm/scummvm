@@ -628,7 +628,7 @@ void ROQPlayer::paint8(byte i, int destx, int desty) {
 
 void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
 	offx *= _offScale / _scale;
-	offy *= _offScale / _scale;
+	offy *= _scale;
 
 	// Get the beginning of the first line
 	byte *dst = (byte *)_currBuf->getBasePtr(destx, desty);
