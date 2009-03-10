@@ -55,10 +55,7 @@ MODULE_OBJS = \
 	gfx/resource/res_pic.o \
 	gfx/resource/res_view0.o \
 	gfx/resource/res_view1.o \
-	scicore/decompress0.o \
-	scicore/decompress01.o \
-	scicore/decompress1.o \
-	scicore/decompress11.o \
+	scicore/decompressor.o \
 	scicore/resource.o \
 	scicore/sciconsole.o \
 	scicore/versions.o \

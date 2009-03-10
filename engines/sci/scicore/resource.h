@@ -30,6 +30,8 @@
 #include "common/file.h"
 #include "common/archive.h"
 
+#include "sci/scicore/decompressor.h"
+
 namespace Common {
 	class ReadStream;
 }
@@ -40,10 +42,12 @@ namespace Sci {
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 
 /*** RESOURCE STATUS TYPES ***/
-#define SCI_STATUS_NOMALLOC 0
-#define SCI_STATUS_ALLOCATED 1
-#define SCI_STATUS_ENQUEUED 2 /* In the LRU queue */
-#define SCI_STATUS_LOCKED 3 /* Allocated and in use */
+enum ResourceStatus {
+	kResStatusNoMalloc=0,
+	kResStatusAllocated,
+	kResStatusEnqueued, /* In the LRU queue */
+	kResStatusLocked /* Allocated and in use */
+};
 
 /*** INITIALIZATION RESULT TYPES ***/
 #define SCI_ERROR_IO_ERROR 1
@@ -163,12 +167,12 @@ public:
 	byte *data;
 	uint16 number;
 	ResourceType type;
-	uint16 id;	// contains number and type. 
+	uint32 id;	// contains number and type. 
 				// TODO: maybe use uint32 and set id = RESOURCE_HASH()
 				// for all SCI versions
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
-	byte status;
+	ResourceStatus status;
 	unsigned short lockers; /* Number of places where this resource was locked */
 	ResourceSource *source;
 };
@@ -267,6 +271,8 @@ protected:
 	void loadResource(Resource *res);
 	bool loadFromPatchFile(Resource *res);
 	void freeOldResources(int last_invulnerable);
+	int decompress(Resource *res, Common::File *file);
+	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
 
 	/**--- Resource map decoding functions ---*/
 	int detectMapVersion();
@@ -294,57 +300,6 @@ protected:
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 };
-
-	/**--- Decompression functions ---**/
-	int decompress0(Resource *result, Common::ReadStream &stream, int sci_version);
-	/* Decrypts resource data and stores the result for SCI0-style compression.
-	** Parameters : result: The Resource the decompressed data is stored in.
-	**              stream: Stream of the resource file
-	**              sci_version : Actual SCI resource version
-	** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
-	**               encountered.
-	*/
-
-	int decompress01(Resource *result, Common::ReadStream &stream, int sci_version);
-	/* Decrypts resource data and stores the result for SCI01-style compression.
-	** Parameters : result: The Resource the decompressed data is stored in.
-	**              stream: Stream of the resource file
-	**              sci_version : Actual SCI resource version
-	** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
-	**               encountered.
-	*/
-
-	int decompress1(Resource *result, Common::ReadStream &stream, int sci_version);
-	/* Decrypts resource data and stores the result for SCI1.1-style compression.
-	** Parameters : result: The Resource the decompressed data is stored in.
-	**              sci_version : Actual SCI resource version
-	**              stream: Stream of the resource file
-	** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
-	**               encountered.
-	*/
-
-	int decompress11(Resource *result, Common::ReadStream &stream, int sci_version);
-	/* Decrypts resource data and stores the result for SCI1.1-style compression.
-	** Parameters : result: The Resource the decompressed data is stored in.
-	**              sci_version : Actual SCI resource version
-	**              stream: Stream of the resource file
-	** Returns    : (int) 0 on success, one of SCI_ERROR_* if a problem was
-	**               encountered.
-	*/
-
-	int unpackHuffman(uint8* dest, uint8* src, int length, int complength);
-	/* Huffman token decryptor - defined in decompress0.c and used in decompress01.c
-	*/
-
-	int unpackDCL(uint8* dest, uint8* src, int length, int complength);
-	/* DCL inflate- implemented in decompress1.c
-	*/
-
-	byte *view_reorder(byte *inbuffer, int dsize);
-	/* SCI1 style view compression */
-
-	byte *pic_reorder(byte *inbuffer, int dsize);
-	/* SCI1 style pic compression */
 
 } // End of namespace Sci
 

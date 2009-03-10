@@ -32,6 +32,7 @@
 #include "sci/sci_memory.h"
 #include "sci/scicore/resource.h"
 #include "sci/scicore/vocabulary.h"
+#include "sci/scicore/decompressor.h"
 
 namespace Sci {
 
@@ -93,18 +94,6 @@ const char *getResourceTypeSuffix(ResourceType restype) {
 typedef int decomp_funct(Resource *result, Common::ReadStream &stream, int sci_version);
 typedef void patch_sprintf_funct(char *string, Resource *res);
 
-static decomp_funct *decompressors[] = {
-	NULL,
-	&decompress0,
-	&decompress01,
-	&decompress01,
-	&decompress01,
-	&decompress1,
-	&decompress1,
-	&decompress11,
-	NULL
-};
-
 //-- Resource main functions --
 Resource::Resource() {
 	data = NULL;
@@ -113,7 +102,7 @@ Resource::Resource() {
 	id = 0;
 	size = 0;
 	file_offset = 0;
-	status = SCI_STATUS_NOMALLOC;
+	status = kResStatusNoMalloc;
 	lockers = 0;
 	source = NULL;
 }
@@ -127,7 +116,7 @@ Resource::~Resource() {
 void Resource::unalloc() {
 	delete[] data;
 	data = NULL;
-	status = SCI_STATUS_NOMALLOC;
+	status = kResStatusNoMalloc;
 }
 
 //-- Resmgr helper functions --
@@ -213,7 +202,7 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	if (really_read != res->size) {
 		error("Read %d bytes from %s but expected %d!", really_read, filename, res->size);
 	}
-	res->status = SCI_STATUS_ALLOCATED;
+	res->status = kResStatusAllocated;
 	return true;
 }
 
@@ -233,17 +222,13 @@ void ResourceManager::loadResource(Resource *res) {
 	}
 	file.seek(res->file_offset, SEEK_SET);
 
-	// Check whether we support this at all
-	if (decompressors[_sciVersion] == NULL)
-		error("Resource manager's SCI version (%d) is invalid", _sciVersion);
-	// Decompress from regular resource file
-	int error = decompressors[_sciVersion](res, file, _sciVersion);
-
+	int error = decompress(res, &file);
 	if (error) {
 		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
 			error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
 		res->unalloc();
 	}
+
 }
 
 Resource *ResourceManager::testResource(ResourceType type, int number) {
@@ -252,7 +237,18 @@ Resource *ResourceManager::testResource(ResourceType type, int number) {
 	return NULL;
 }
 
-int sci0_get_compression_method(Common::ReadStream &stream);
+int sci0_get_compression_method(Common::ReadStream &stream) {
+	uint16 compressionMethod;
+
+	stream.readUint16LE();
+	stream.readUint16LE();
+	stream.readUint16LE();
+	compressionMethod = stream.readUint16LE();
+	if (stream.err())
+		return SCI_ERROR_IO_ERROR;
+
+	return compressionMethod;
+}
 
 int sci_test_view_type(ResourceManager *mgr) {
 	Common::File file;
@@ -421,7 +417,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			_sciVersion = version = SCI_VERSION_1_EARLY;
 			loadResource(res);
 
-			if (res->status == SCI_STATUS_NOMALLOC)
+			if (res->status == kResStatusNoMalloc)
 				version = SCI_VERSION_1_LATE;
 			break;
 		}
@@ -469,17 +465,17 @@ ResourceManager::~ResourceManager() {
 }
 
 void ResourceManager::removeFromLRU(Resource *res) {
-	if (res->status != SCI_STATUS_ENQUEUED) {
+	if (res->status != kResStatusEnqueued) {
 		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
 		return;
 	}
 	_LRU.remove(res);
 	_memoryLRU -= res->size;
-	res->status = SCI_STATUS_ALLOCATED;
+	res->status = kResStatusAllocated;
 }
 
 void ResourceManager::addToLRU(Resource *res) {
-	if (res->status != SCI_STATUS_ALLOCATED) {
+	if (res->status != kResStatusAllocated) {
 		warning("Resmgr: Oops: trying to enqueue resource with state %d", res->status);
 		return;
 	}
@@ -491,7 +487,7 @@ void ResourceManager::addToLRU(Resource *res) {
 	        mgr->_memoryLRU);
 
 #endif
-	res->status = SCI_STATUS_ENQUEUED;
+	res->status = kResStatusEnqueued;
 }
 
 void ResourceManager::printLRU() {
@@ -547,26 +543,26 @@ Resource *ResourceManager::findResource(ResourceType type, int number, int lock)
 	if (!retval->status)
 		loadResource(retval);
 
-	else if (retval->status == SCI_STATUS_ENQUEUED)
+	else if (retval->status == kResStatusEnqueued)
 		removeFromLRU(retval);
 	// Unless an error occured, the resource is now either
 	// locked or allocated, but never queued or freed.
 
 	if (lock) {
-		if (retval->status == SCI_STATUS_ALLOCATED) {
-			retval->status = SCI_STATUS_LOCKED;
+		if (retval->status == kResStatusAllocated) {
+			retval->status = kResStatusLocked;
 			retval->lockers = 0;
 			_memoryLocked += retval->size;
 		}
 
 		++retval->lockers;
 
-	} else if (retval->status != SCI_STATUS_LOCKED) { // Don't lock it
-		if (retval->status == SCI_STATUS_ALLOCATED)
+	} else if (retval->status != kResStatusLocked) { // Don't lock it
+		if (retval->status == kResStatusAllocated)
 			addToLRU(retval);
 	}
 
-	freeOldResources(retval->status == SCI_STATUS_ALLOCATED);
+	freeOldResources(retval->status == kResStatusAllocated);
 
 	if (retval->data)
 		return retval;
@@ -585,14 +581,14 @@ void ResourceManager::unlockResource(Resource *res, int resnum, ResourceType res
 		return;
 	}
 
-	if (res->status != SCI_STATUS_LOCKED) {
+	if (res->status != kResStatusLocked) {
 		sciprintf("Resmgr: Warning: Attempt to unlock unlocked resource %s.%03d\n",
 		          getResourceTypeName(res->type), res->number);
 		return;
 	}
 
 	if (!--res->lockers) { // No more lockers?
-		res->status = SCI_STATUS_ALLOCATED;
+		res->status = kResStatusAllocated;
 		_memoryLocked -= res->size;
 		addToLRU(res);
 	}
@@ -677,8 +673,8 @@ int ResourceManager::detectVolVersion() {
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
-	// SCI1.1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
-	// SCI32 volume format :  {bResType wResNumber dwPacked+4 dwUnpacked wCompression} = 13 bytes
+	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
+	// SCI32 volume format :  {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
 	uint16 resId, wCompression;
@@ -814,7 +810,7 @@ void ResourceManager::processPatch(ResourceSource *source,
 	// Overwrite everything, because we're patching
 	newrsc->id = resId;
 	newrsc->number = resnumber;
-	newrsc->status = SCI_STATUS_NOMALLOC;
+	newrsc->status = kResStatusNoMalloc;
 	newrsc->type = restype;
 	newrsc->source = source;
 	newrsc->size = fsize - patch_data_offset - 2;
@@ -899,7 +895,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
 			res = new Resource;
-			res->id = id;
+			res->id = resId;//id;
 			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
 			res->number = number;
 			res->type = type;
@@ -953,7 +949,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 				_resMap.setVal(resId, res);
 				res->type = (ResourceType)type;
 				res->number = number;
-				res->id = res->number | (res->type << 16);
+				res->id = resId;//res->number | (res->type << 16);
 				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : vol;
 				if (_mapVersion < SCI_VERSION_32)
 					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
@@ -963,6 +959,151 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 		}
 	}
 	return 0;
+}
+
+int ResourceManager::readResourceInfo(Resource *res, Common::File *file, 
+		uint32&szPacked, ResourceCompression &compression) {
+	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
+	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
+	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
+	// SCI32 volume format :  {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
+	uint16 w, number, szUnpacked;
+	uint32 wCompression;
+	ResourceType type;
+
+	switch (_volVersion) {
+	case SCI_VERSION_0:
+		w = file->readUint16LE();
+		type = (ResourceType)(w >> 11);
+		number = w & 0x7FF;
+		szPacked = file->readUint16LE() - 4;
+		szUnpacked = file->readUint16LE();
+		wCompression = file->readUint16LE();
+		break;
+	case SCI_VERSION_1:
+		type = (ResourceType)file->readByte();
+		number = file->readUint16LE();
+		szPacked = file->readUint16LE() - 4;
+		szUnpacked = file->readUint16LE();
+		wCompression = file->readUint16LE();
+		break;
+	case SCI_VERSION_1_1:
+		type = (ResourceType)file->readByte();
+		number = file->readUint16LE();
+		szPacked = file->readUint16LE();
+		szUnpacked = file->readUint16LE();
+		wCompression = file->readUint16LE();
+		break;
+	case SCI_VERSION_32:
+		type = (ResourceType)file->readByte();
+		number = file->readUint16LE();
+		szPacked = file->readUint32LE();
+		szUnpacked = file->readUint32LE();
+		wCompression = file->readUint16LE();
+		break;
+	default:
+		return SCI_ERROR_INVALID_RESMAP_ENTRY;
+	}
+	// check if there were errors while reading
+	if (file->ioFailed())
+		return SCI_ERROR_IO_ERROR;
+	res->id = RESOURCE_HASH(type, number);
+	res->type = type;
+	res->number = number;
+	res->size = szUnpacked;
+	// checking compression method
+	if (wCompression == 0)
+		compression = kCompNone;
+	switch (_sciVersion) {
+		case SCI_VERSION_0:
+			if (wCompression == 1)
+				compression = kCompLZW;
+			else if (wCompression == 2)
+				compression = kCompHuffman;
+			break;
+		case SCI_VERSION_01:
+		case SCI_VERSION_01_VGA:
+		case SCI_VERSION_01_VGA_ODD:
+		case SCI_VERSION_1_EARLY:
+		case SCI_VERSION_1_LATE:
+			if (wCompression == 1)
+				compression = kCompHuffman;
+			else if (wCompression == 2)
+				compression = kComp3;
+			else if (wCompression == 3)
+				compression = kComp3View;
+			else if (wCompression == 4)
+				compression = kComp3Pic;
+			break;
+		case SCI_VERSION_1_1:
+			if (wCompression >= 18 && wCompression <= 20)
+				compression = kCompDCL;
+			break;
+		case SCI_VERSION_32:
+			if (wCompression == 32)
+				compression = kCompSTACpack;
+			break;
+		default:
+			compression = kCompUnknown;
+	}
+
+	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
+}
+
+int ResourceManager::decompress(Resource *res, Common::File *file) {
+	int error;
+	uint32 szPacked = 0;
+	Common::MemoryWriteStream *pDest = NULL;
+	ResourceCompression compression = kCompUnknown;
+
+	// fill resource info
+	error = readResourceInfo(res, file, szPacked, compression);
+	if (error)
+		return error;
+	// getting a decompressor
+	Decompressor *dec = NULL;
+	switch (compression) {
+	case kCompNone:
+		dec = new Decompressor;
+		break;
+	case kCompLZW:
+		dec = new DecompressorLZW;
+		break;
+	case kCompHuffman:
+		dec = new DecompressorHuffman;
+		break;
+	case kComp3:
+	case kComp3View:
+	case kComp3Pic:
+		dec = new DecompressorComp3(compression);
+		break;
+	case kCompDCL:
+		dec = new DecompressorDCL;
+		break;
+	default:
+		warning("Resource %s #%d: Compression method %d not supported",
+		        getResourceTypeName(res->type), res->number, compression);
+		break;
+	}
+	
+	if (dec) {
+		res->data = new byte[res->size];
+		pDest = new Common::MemoryWriteStream(res->data , res->size);
+		error = dec->unpack(file, pDest, szPacked, res->size);
+	} else 
+		error = SCI_ERROR_UNKNOWN_COMPRESSION;
+	
+	if (!error)
+		res->status = kResStatusAllocated;
+	else {
+		delete res->data;
+		res->data = 0;
+		res->status = kResStatusNoMalloc;
+	}
+	delete dec;
+	delete pDest;
+
+	return error;
 }
 
 } // End of namespace Sci
