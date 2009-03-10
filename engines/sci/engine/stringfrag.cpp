@@ -208,6 +208,8 @@ namespace Sci {
 			return buffer[pos].offset >> 8;
 		case 1 :
 			return buffer[pos].offset & 0xff;
+		default:
+			return 0; // FIXME: Is it safe to return "0" here?
 		}
 	}
 
@@ -301,7 +303,7 @@ namespace Sci {
 
 	static void internal_stringfrag_delete_char(EngineState *s, reg_t *buffer, int p)
 	{
-		reg_t *save = buffer + p;
+		//reg_t *save = buffer + p;
 		reg_t *seeker = buffer + p;
 		int restore_nul_offset;
 		int restore_nul_pos;
