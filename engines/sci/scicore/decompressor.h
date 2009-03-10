@@ -47,7 +47,7 @@ enum ResourceCompression {
 class Decompressor {
 public:
 	Decompressor(){}
-	~Decompressor(){}
+	virtual ~Decompressor(){}
 
 	//! get a number of bits from _src stream
 	/** @param n - number of bits to get
@@ -177,3 +177,4 @@ protected:
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_DECOMPRESSOR_H
+
