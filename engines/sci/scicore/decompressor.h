@@ -133,7 +133,7 @@ protected:
 	struct tokenlist {
 		byte data;
 		uint16 next;
-		} _tokens[0x1004];
+	} _tokens[0x1004];
 	byte _stak[0x1014];
 	byte _lastchar;
 	uint16 _stakptr;

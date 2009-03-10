@@ -47,7 +47,7 @@ int Decompressor::unpack(Common::ReadStream *src, Common::WriteStream *dest, uin
 	return _src->ioFailed() || _dest->ioFailed() ? 1 : 0;
 }
 
-void Decompressor::init(Common::ReadStream*src, Common::WriteStream*dest, uint32 nPacked,
+void Decompressor::init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 		uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
@@ -132,7 +132,7 @@ int16 DecompressorHuffman::getc2() {
 //-------------------------------
 // LZW-like Decompressor
 //-------------------------------
-void DecompressorComp3::init(Common::ReadStream*src, Common::WriteStream*dest, uint32 nPacked, uint32 nUnpacked) {
+void DecompressorComp3::init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked) {
 	Decompressor::init(src, dest, nPacked, nUnpacked);
 	
 	_lastchar = _lastbits = _stakptr = 0;
@@ -323,7 +323,7 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 		pos ++;
 		size ++;
 		
-		switch (nextbyte&0xC0) {
+		switch (nextbyte & 0xC0) {
 		case 0x40 :
 		case 0x00 :
 			pos += nextbyte;
@@ -331,7 +331,7 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 		case 0xC0 :
 			break;
 		case 0x80 :
-			pos ++;
+			pos++;
 			break;
 		}
 	}
@@ -351,11 +351,11 @@ void DecompressorComp3::pic_reorder(byte *inbuffer, byte *outbuffer, int dsize) 
 	
 	writer = outbuffer;
 
-	*(writer++) = PIC_OP_OPX;
-	*(writer++) = PIC_OPX_SET_PALETTE;
+	*writer++ = PIC_OP_OPX;
+	*writer++ = PIC_OPX_SET_PALETTE;
 
 	for (i = 0; i < 256; i++) /* Palette translation map */
-		*(writer++) = i;
+		*writer++ = i;
 
 	WRITE_LE_UINT16(writer, 0); /* Palette stamp */
 	writer += 2;
@@ -393,18 +393,18 @@ void DecompressorComp3::pic_reorder(byte *inbuffer, byte *outbuffer, int dsize) 
 	seeker += cdata_size;
 	
 	writer = outbuffer + view_start;
-	*(writer++) = PIC_OP_OPX;
-	*(writer++) = PIC_OPX_EMBEDDED_VIEW;
-	*(writer++) = 0;
-	*(writer++) = 0;
-	*(writer++) = 0;
+	*writer++ = PIC_OP_OPX;
+	*writer++ = PIC_OPX_EMBEDDED_VIEW;
+	*writer++ = 0;
+	*writer++ = 0;
+	*writer++ = 0;
 	WRITE_LE_UINT16(writer, view_size + 8);
 	writer += 2;
 
 	memcpy(writer, viewdata, sizeof(viewdata));
 	writer += sizeof(viewdata);
 
-	*(writer++) = 0;
+	*writer++ = 0;
 	
 	decode_rle(&seeker, &cdata, writer, view_size);
 	
@@ -465,8 +465,8 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	for (c = 0; c < cel_total; c++)
 		cc_lengths[c] = READ_LE_UINT16(cellengths+2*c);
 	
-	*(writer++) = loopheaders;
-	*(writer++) = VIEW_HEADER_COLORS_8BIT;
+	*writer++ = loopheaders;
+	*writer++ = VIEW_HEADER_COLORS_8BIT;
 	WRITE_LE_UINT16(writer, lh_mask);
 	writer += 2;
 	WRITE_LE_UINT16(writer, unknown);
@@ -537,12 +537,12 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	for (c = 0; c < cel_total; c++)
 		decode_rle(&rle_ptr, &pix_ptr, cc_pos[c]+8, cc_lengths[c]);
 
-	*(writer++) = 'P';
-	*(writer++) = 'A';
-	*(writer++) = 'L';
+	*writer++ = 'P';
+	*writer++ = 'A';
+	*writer++ = 'L';
 	
 	for (c = 0; c < 256; c++)
-		*(writer++) = c;
+		*writer++ = c;
 
 	seeker -= 4; /* The missing four. Don't ask why. */
 	memcpy(writer, seeker, 4*256+4);
