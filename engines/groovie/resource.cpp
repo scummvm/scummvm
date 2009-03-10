@@ -30,7 +30,7 @@ namespace Groovie {
 
 // ResMan
 
-Common::SeekableReadStream *ResMan::open(uint16 fileRef) {
+Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	// Get the information about the resource
 	ResInfo resInfo;
 	if (!getResInfo(fileRef, resInfo)) {
@@ -126,7 +126,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	return (_lastGjd << 10) | (resNum - 1);
 }
 
-bool ResMan_t7g::getResInfo(uint16 fileRef, ResInfo &resInfo) {
+bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	// Calculate the GJD and the resource number
 	resInfo.gjd = fileRef >> 10;
 	uint16 resNum = fileRef & 0x3FF;
@@ -202,7 +202,7 @@ uint16 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 	return 0;
 }
 
-bool ResMan_v2::getResInfo(uint16 fileRef, ResInfo &resInfo) {
+bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	// Open the RL file
 	Common::File rlFile;
 	if (!rlFile.open("dir.rl")) {

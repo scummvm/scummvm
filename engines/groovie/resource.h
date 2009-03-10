@@ -38,12 +38,12 @@ class ResMan {
 public:
 	virtual ~ResMan() {};
 
-	Common::SeekableReadStream *open(uint16 fileRef);
+	Common::SeekableReadStream *open(uint32 fileRef);
 	virtual uint16 getRef(Common::String name, Common::String scriptname = "") = 0;
 
 protected:
 	Common::Array<Common::String> _gjds;
-	virtual bool getResInfo(uint16 fileRef, ResInfo &resInfo) = 0;
+	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 
 	uint16 _lastGjd;
 };
@@ -54,7 +54,7 @@ public:
 	~ResMan_t7g() {};
 
 	uint16 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint16 fileRef, ResInfo &resInfo);
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 };
 
 class ResMan_v2 : public ResMan {
@@ -63,7 +63,7 @@ public:
 	~ResMan_v2() {};
 
 	uint16 getRef(Common::String name, Common::String scriptname);
-	bool getResInfo(uint16 fileRef, ResInfo &resInfo);
+	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
 };
 
 } // End of Groovie namespace

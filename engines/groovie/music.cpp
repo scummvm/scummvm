@@ -92,7 +92,7 @@ MusicPlayer::~MusicPlayer() {
 	clearTimbres();
 }
 
-void MusicPlayer::playSong(uint16 fileref) {
+void MusicPlayer::playSong(uint32 fileref) {
 	Common::StackLock lock(_mutex);
 
 	_fadingEndVolume = 100;
@@ -101,7 +101,7 @@ void MusicPlayer::playSong(uint16 fileref) {
 	play(fileref, false);
 }
 
-void MusicPlayer::setBackgroundSong(uint16 fileref) {
+void MusicPlayer::setBackgroundSong(uint32 fileref) {
 	Common::StackLock lock(_mutex);
 
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Changing the background song: %04X", fileref);
@@ -233,7 +233,7 @@ void MusicPlayer::updateChanVolume(byte channel) {
 	_driver->send(b | (val << 16));
 }
 
-bool MusicPlayer::play(uint16 fileref, bool loop) {
+bool MusicPlayer::play(uint32 fileref, bool loop) {
 	// Unload the previous song
 	unload();
 
@@ -245,7 +245,7 @@ bool MusicPlayer::play(uint16 fileref, bool loop) {
 	return load(fileref);
 }
 
-bool MusicPlayer::load(uint16 fileref) {
+bool MusicPlayer::load(uint32 fileref) {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
 	// Open the song resource

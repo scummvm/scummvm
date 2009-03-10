@@ -38,8 +38,8 @@ class MusicPlayer : public MidiDriver {
 public:
 	MusicPlayer(GroovieEngine *vm, const Common::String &gtlName);
 	~MusicPlayer();
-	void playSong(uint16 fileref);
-	void setBackgroundSong(uint16 fileref);
+	void playSong(uint32 fileref);
+	void setBackgroundSong(uint32 fileref);
 	void playCD(uint8 track);
 	void startBackground();
 
@@ -102,13 +102,13 @@ private:
 	uint8 _musicType;
 	bool _isPlaying;
 
-	uint16 _backgroundFileRef;
+	uint32 _backgroundFileRef;
 	uint8 _prevCDtrack;
 
 	static void onTimer(void *data);
 
-	bool play(uint16 fileref, bool loop);
-	bool load(uint16 fileref);
+	bool play(uint32 fileref, bool loop);
+	bool load(uint32 fileref);
 	void unload();
 };
 

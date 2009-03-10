@@ -97,6 +97,8 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_hotspotRightAction = 0;
 	_hotspotLeftAction = 0;
 	_hotspotSlot = (uint16)-1;
+
+	_oldInstruction = (uint16)-1;
 }
 
 Script::~Script() {
@@ -207,7 +209,13 @@ void Script::step() {
 	// Show the opcode debug string
 	sprintf(debugstring, "op 0x%02X: ", opcode);
 	_debugString += debugstring;
-	debugScript(1, false, _debugString.c_str());
+
+	// Only output if we're not re-doing the previous instruction
+	if (_currentInstruction != _oldInstruction) {
+		debugScript(1, false, _debugString.c_str());
+
+		_oldInstruction = _currentInstruction;
+	}
 
 	// Detect invalid opcodes
 	if (opcode >= NUM_OPCODES) {
@@ -512,7 +520,7 @@ void Script::o_videofromref() {			// 0x09
 	}
 }
 
-bool Script::playvideofromref(uint16 fileref) {
+bool Script::playvideofromref(uint32 fileref) {
 	// It isn't the current video, open it
 	if (fileref != _videoRef) {
 
@@ -1525,6 +1533,63 @@ void Script::o_stub59() {
 	debugScript(1, true, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
+void Script::o2_playsong(){
+	uint32 fileref = readScript32bits();
+	debugScript(1, true, "PlaySong(0x%08X): Play xmidi file", fileref);
+	_vm->_musicPlayer->playSong(fileref);
+
+}
+
+void Script::o2_setbackgroundsong(){
+	uint32 fileref = readScript32bits();
+	debugScript(1, true, "SetBackgroundSong(0x%08X)", fileref);
+	_vm->_musicPlayer->setBackgroundSong(fileref);
+}
+
+void Script::o2_videofromref(){
+	uint32 fileref = readScript32bits();
+
+	// Show the debug information just when starting the playback
+	if (fileref != _videoRef) {
+		debugScript(1, true, "VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
+		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X via 0x09", fileref);
+	}
+	// Play the video
+	if (!playvideofromref(fileref)) {
+		// Move _currentInstruction back
+		_currentInstruction -= 5;
+	}
+}
+
+void Script::o2_vdxtransition(){
+	uint32 fileref = readScript32bits();
+
+	// Show the debug information just when starting the playback
+	if (fileref != _videoRef) {
+		debugScript(1, true, "VDX transition fileref = 0x%08X", fileref);
+		debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X with transition", fileref);
+	}
+
+	// Set bit 1
+	_bitflags |= 1 << 1;
+
+	// Set bit 2 if _firstbit
+	if (_firstbit) {
+		_bitflags |= 1 << 2;
+	}
+
+	// Play the video
+	if (!playvideofromref(fileref)) {
+		// Move _currentInstruction back
+		_currentInstruction -= 5;
+	}
+}
+
+void Script::o2_stub52(){
+	uint8 arg = readScript8bits();
+	debugScript(1, true, "STUB52 (0x%02X)", arg);
+}
+
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_nop, // 0x00
 	&Script::o_nop,
@@ -1622,16 +1687,16 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 };
 
 Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
-	&Script::o_nop, // 0x00
+	&Script::o_invalid, // 0x00
 	&Script::o_nop,
-	&Script::o_playsong,
+	&Script::o2_playsong,
 	&Script::o_bf9on,
 	&Script::o_palfadeout, // 0x04
 	&Script::o_bf8on,
 	&Script::o_bf6on,
 	&Script::o_bf7on,
-	&Script::o_setbackgroundsong, // 0x08
-	&Script::o_videofromref,
+	&Script::o2_setbackgroundsong, // 0x08
+	&Script::o2_videofromref,
 	&Script::o_bf5on,
 	&Script::o_inputloopstart,
 	&Script::o_keyboardaction, // 0x0C
@@ -1650,7 +1715,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_sleep,
 	&Script::o_strcmpnejmp,
 	&Script::o_xor_obfuscate,
-	&Script::o_vdxtransition, // 0x1C
+	&Script::o2_vdxtransition, // 0x1C
 	&Script::o_swap,
 	&Script::o_nop8,
 	&Script::o_inc,
@@ -1704,7 +1769,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_nop16,
 	&Script::o_nop16, // 0x50
 	&Script::o_nop16,
-	&Script::o_invalid,
+	&Script::o2_stub52,
 	&Script::o_hotspot_outrect,
 	&Script::o_nop, // 0x54
 	&Script::o_nop16,
