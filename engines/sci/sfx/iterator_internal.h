@@ -118,7 +118,7 @@ public:
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
-	SongIterator *handleMessage(SongIteratorMessage msg);
+	SongIterator *handleMessage(Message msg);
 	void init();
 	int getTimepos();
 	SongIterator *clone(int delta);
@@ -163,7 +163,7 @@ public:
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
-	SongIterator *handleMessage(SongIteratorMessage msg);
+	SongIterator *handleMessage(Message msg);
 	void init();
 	int getTimepos();
 	SongIterator *clone(int delta);
@@ -185,7 +185,7 @@ public:
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
-	SongIterator *handleMessage(SongIteratorMessage msg);
+	SongIterator *handleMessage(Message msg);
 	int getTimepos();
 	SongIterator *clone(int delta);
 };
@@ -237,7 +237,7 @@ public:
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream();
-	SongIterator *handleMessage(SongIteratorMessage msg);
+	SongIterator *handleMessage(Message msg);
 	void init();
 	int getTimepos() { return 0; }
 	SongIterator *clone(int delta);

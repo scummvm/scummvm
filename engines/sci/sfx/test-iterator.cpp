@@ -111,7 +111,7 @@ Audio::AudioStream *simple_it_pcm_feed(SongIterator *_self) {
 void simple_it_init(SongIterator *_self) {
 }
 
-SongIterator *simple_it_handle_message(SongIterator *_self, SongIteratorMessage msg) {
+SongIterator *simple_it_handle_message(SongIterator *_self, SongIterator::Message msg) {
 	return NULL;
 }
 

@@ -223,7 +223,7 @@ static int rt_stop(void) {
 	return SFX_OK;
 }
 
-static int rt_send_iterator_message(const SongIteratorMessage &msg) {
+static int rt_send_iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
 		return SFX_ERROR;
 

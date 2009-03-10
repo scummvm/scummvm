@@ -5115,16 +5115,16 @@ static void reconstruct_sounds(EngineState *s) {
 	while (seeker) {
 		SongIterator *base, *ff;
 		int oldstatus;
-		SongIteratorMessage msg;
+		SongIterator::Message msg;
 
 		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
 		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = new_fast_forward_iterator(base, seeker->restore_time);
 		ff->init();
 
-		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
+		msg = SongIterator::Message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
 		songit_handle_message(&ff, msg);
-		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
+		msg = SongIterator::Message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
 		songit_handle_message(&ff, msg);
 
 		oldstatus = seeker->status;

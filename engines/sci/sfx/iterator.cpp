@@ -588,7 +588,7 @@ Audio::AudioStream *Sci0SongIterator::getAudioStream() {
 	return makeStream(_data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
 }
 
-SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
+SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 	if (msg.recipient == _SIMSG_BASE) {
 		switch (msg.type) {
 
@@ -1075,7 +1075,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 	return retval;
 }
 
-SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
+SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 	if (msg.recipient == _SIMSG_BASE) { /* May extend this in the future */
 		switch (msg.type) {
 
@@ -1241,12 +1241,12 @@ public:
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream() { return NULL; }
-	SongIterator *handleMessage(SongIteratorMessage msg);
+	SongIterator *handleMessage(Message msg);
 	int getTimepos() { return 0; }
 	SongIterator *clone(int delta) { return new CleanupSongIterator(*this); }
 };
 
-SongIterator *CleanupSongIterator::handleMessage(SongIteratorMessage msg) {
+SongIterator *CleanupSongIterator::handleMessage(Message msg) {
 	if (msg.recipient == _SIMSG_BASEMSG_PRINT && msg.type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg.args[0].i, ID);
 		fprintf(stderr, "CLEANUP\n");
@@ -1299,36 +1299,28 @@ Audio::AudioStream *FastForwardSongIterator::getAudioStream() {
 	return _delegate->getAudioStream();
 }
 
-SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
-	if (msg.recipient == _SIMSG_PLASTICWRAP)
-		switch (msg.type) {
+SongIterator *FastForwardSongIterator::handleMessage(Message msg) {
+	if (msg.recipient == _SIMSG_PLASTICWRAP) {
+		assert(msg.type == _SIMSG_PLASTICWRAP_ACK_MORPH);
 
-		case _SIMSG_PLASTICWRAP_ACK_MORPH:
-			if (_delta <= 0) {
-				SongIterator *it = _delegate;
-				delete this;
-				return it;
-			}
-			break;
-
-		default:
-			BREAKPOINT();
+		if (_delta <= 0) {
+			SongIterator *it = _delegate;
+			delete this;
+			return it;
 		}
-	else if (msg.recipient == _SIMSG_BASE) {
-		switch (msg.type) {
 
-		case _SIMSG_BASEMSG_PRINT:
-			print_tabs_id(msg.args[0].i, ID);
-			fprintf(stderr, "PLASTICWRAP:\n");
-			msg.args[0].i++;
-			songit_handle_message(&_delegate, msg);
-			break;
+		warning("[ff-iterator] Morphing without need");
+		return this;
+	}
 
-		default:
-			songit_handle_message(&_delegate, msg);
-		}
-	} else
-		songit_handle_message(&_delegate, msg);
+	if (msg.recipient == _SIMSG_BASE && msg.type == _SIMSG_BASEMSG_PRINT) {
+		print_tabs_id(msg.args[0].i, ID);
+		fprintf(stderr, "FASTFORWARD:\n");
+		msg.args[0].i++;
+	}
+
+	// And continue with the delegate
+	songit_handle_message(&_delegate, msg);
 
 	return NULL;
 }
@@ -1600,7 +1592,6 @@ Audio::AudioStream *TeeSongIterator::getAudioStream() {
 
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)
 		if (_status & pcm_masks[i]) {
-
 			_status &= ~pcm_masks[i];
 			return _children[i].it->getAudioStream();
 		}
@@ -1608,52 +1599,39 @@ Audio::AudioStream *TeeSongIterator::getAudioStream() {
 	return NULL; // No iterator
 }
 
-SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
-	if (msg.recipient == _SIMSG_BASE) {
-		switch (msg.type) {
-
-		case _SIMSG_BASEMSG_PRINT:
-			print_tabs_id(msg.args[0].i, ID);
-			fprintf(stderr, "TEE:\n");
-			msg.args[0].i++;
-			break; /* And continue with our children */
-
-		default:
-			break;
-		}
-	}
-
+SongIterator *TeeSongIterator::handleMessage(Message msg) {
 	if (msg.recipient == _SIMSG_PLASTICWRAP) {
+		assert(msg.type == _SIMSG_PLASTICWRAP_ACK_MORPH);
+
 		SongIterator *old_it;
-		switch (msg.type) {
-
-		case _SIMSG_PLASTICWRAP_ACK_MORPH:
-			if (!(_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
-				delete this;
-				return NULL;
-			} else if (!(_status & TEE_LEFT_ACTIVE)) {
-				delete _children[TEE_LEFT].it;
-				_children[TEE_LEFT].it = 0;
-				old_it = _children[TEE_RIGHT].it;
-				delete this;
-				return old_it;
-			} else if (!(_status & TEE_RIGHT_ACTIVE)) {
-				delete _children[TEE_RIGHT].it;
-				_children[TEE_RIGHT].it = 0;
-				old_it = _children[TEE_LEFT].it;
-				delete this;
-				return old_it;
-			} else {
-				sciprintf("[tee-iterator] WARNING:"
-				          " Morphing without need\n");
-				return this;
-			}
-
-		default:
-			BREAKPOINT();
+		if (!(_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
+			delete this;
+			return NULL;
+		} else if (!(_status & TEE_LEFT_ACTIVE)) {
+			delete _children[TEE_LEFT].it;
+			_children[TEE_LEFT].it = 0;
+			old_it = _children[TEE_RIGHT].it;
+			delete this;
+			return old_it;
+		} else if (!(_status & TEE_RIGHT_ACTIVE)) {
+			delete _children[TEE_RIGHT].it;
+			_children[TEE_RIGHT].it = 0;
+			old_it = _children[TEE_LEFT].it;
+			delete this;
+			return old_it;
 		}
+
+		warning("[tee-iterator] Morphing without need");
+		return this;
 	}
 
+	if (msg.recipient == _SIMSG_BASE && msg.type == _SIMSG_BASEMSG_PRINT) {
+		print_tabs_id(msg.args[0].i, ID);
+		fprintf(stderr, "TEE:\n");
+		msg.args[0].i++;
+	}
+
+	// And continue with the children
 	if (_children[TEE_LEFT].it)
 		songit_handle_message(&(_children[TEE_LEFT].it), msg);
 	if (_children[TEE_RIGHT].it)
@@ -1785,13 +1763,13 @@ SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 	return it;
 }
 
-SongIteratorMessage::SongIteratorMessage() {
+SongIterator::Message::Message() {
 	ID = 0;
 	recipient = 0;
 	type = 0;
 }
 
-SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, int a1, int a2) {
+SongIterator::Message::Message(songit_id_t id, int r, int t, int a1, int a2) {
 	ID = id;
 	recipient = r;
 	type = t;
@@ -1799,7 +1777,7 @@ SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, int a1, i
 	args[1].i = a2;
 }
 
-SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, void *a1, int a2) {
+SongIterator::Message::Message(songit_id_t id, int r, int t, void *a1, int a2) {
 	ID = id;
 	recipient = r;
 	type = t;
@@ -1807,7 +1785,7 @@ SongIteratorMessage::SongIteratorMessage(songit_id_t id, int r, int t, void *a1,
 	args[1].i = a2;
 }
 
-int songit_handle_message(SongIterator **it_reg_p, SongIteratorMessage msg) {
+int songit_handle_message(SongIterator **it_reg_p, SongIterator::Message msg) {
 	SongIterator *it = *it_reg_p;
 	SongIterator *newit;
 

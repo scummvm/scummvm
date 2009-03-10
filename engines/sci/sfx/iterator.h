@@ -91,55 +91,56 @@ enum {
 /*#define SIMSG_SET_FADE(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_FADE,(x),0*/
 
 /* Message transmission macro: Takes song reference, message reference */
-#define SIMSG_SEND(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, m))
-#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIteratorMessage((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
+#define SIMSG_SEND(o, m) songit_handle_message(&(o), SongIterator::Message((o)->ID, m))
+#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIterator::Message((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
 
 typedef unsigned long songit_id_t;
 
-struct SongIteratorMessage {
-	songit_id_t ID;
-	uint recipient; /* Type of iterator supposed to receive this */
-	uint type;
-	union {
-		uint i;
-		void *p;
-	} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
-
-
-	SongIteratorMessage();
-
-	/**
-	 * Create a song iterator message.
-	 *
-	 * @param id: song ID the message is targeted to
-	 * @param recipient_class: Message recipient class
-	 * @param type	message type
-	 * @param a1	first message argument
-	 * @param a2	second message argument
-	 *
-	 * @note You should only use this with the SIMSG_* macros
-	 */
-	SongIteratorMessage(songit_id_t id, int recipient_class, int type, int a1, int a2);
-	
-	/**
-	 * Create a song iterator message, wherein the first parameter is a pointer.
-	 *
-	 * @param id: song ID the message is targeted to
-	 * @param recipient_class: Message recipient class
-	 * @param type	message type
-	 * @param a1	first message argument
-	 * @param a2	second message argument
-	 *
-	 * @note You should only use this with the SIMSG_* macros
-	 */
-	SongIteratorMessage(songit_id_t id, int recipient_class, int type, void *a1, int a2);
-};
 
 #define SONGIT_MAX_LISTENERS 2
 
 class TeeSongIterator;
 
 class SongIterator {
+public:
+	struct Message {
+		songit_id_t ID;
+		uint recipient; /* Type of iterator supposed to receive this */
+		uint type;
+		union {
+			uint i;
+			void *p;
+		} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
+
+		Message();
+
+		/**
+		 * Create a song iterator message.
+		 *
+		 * @param id: song ID the message is targeted to
+		 * @param recipient_class: Message recipient class
+		 * @param type	message type
+		 * @param a1	first message argument
+		 * @param a2	second message argument
+		 *
+		 * @note You should only use this with the SIMSG_* macros
+		 */
+		Message(songit_id_t id, int recipient_class, int type, int a1, int a2);
+
+		/**
+		 * Create a song iterator message, wherein the first parameter is a pointer.
+		 *
+		 * @param id: song ID the message is targeted to
+		 * @param recipient_class: Message recipient class
+		 * @param type	message type
+		 * @param a1	first message argument
+		 * @param a2	second message argument
+		 *
+		 * @note You should only use this with the SIMSG_* macros
+		 */
+		Message(songit_id_t id, int recipient_class, int type, void *a1, int a2);
+	};
+
 public:
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
@@ -165,20 +166,22 @@ public:
 
 	/**
 	 * Reads the next MIDI operation _or_ delta time.
-	 * Parameters: (SongIterator *) self
-	 *             (byte *) buf: The buffer to write to (needs to be able to
-	 *                           store at least 4 bytes)
-	 * Returns   : (int) zero if a MIDI operation was written, SI_FINISHED
+	 * @param buf		The buffer to write to (needs to be able to store at least 4 bytes)
+	 * @param result	Number of bytes written to the buffer
+	 *                   (equals the number of bytes that need to be passed
+	 *                   to the lower layers) for 0, the cue value for SI_CUE,
+	 *                   or the number of loops remaining for SI_LOOP.
+	 * @return zero if a MIDI operation was written, SI_FINISHED
 	 *                   if the song has finished playing, SI_LOOP if looping
 	 *                   (after updating the loop variable), SI_CUE if we found
 	 *                   a cue, SI_PCM if a PCM was found, or the number of ticks
 	 *                   to wait before this function should be called next.
-	 *             (int) *result: Number of bytes written to the buffer
-	 *                   (equals the number of bytes that need to be passed
-	 *                   to the lower layers) for 0, the cue value for SI_CUE,
-	 *                   or the number of loops remaining for SI_LOOP.
-	 *   If SI_PCM is returned, get_pcm() may be used to retrieve the associated
+	 *
+	 * @note	If SI_PCM is returned, get_pcm() may be used to retrieve the associated
 	 * PCM, but this must be done before any subsequent calls to next().
+	 *
+	 * @todo	The actual buffer size should either be specified or passed in, so that
+	 *			we can detect buffer overruns.
 	 */
 	virtual int nextCommand(byte *buf, int *result) = 0;
 
@@ -201,7 +204,7 @@ public:
 	 * takes care of that and makes sure that its delegate received the message (and
 	 * was morphed) before self.
 	 */
-	virtual SongIterator *handleMessage(SongIteratorMessage msg) = 0;
+	virtual SongIterator *handleMessage(Message msg) = 0;
 
 	/**
 	 * Gets the song position to store in a savegame.
@@ -274,7 +277,7 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 */
 
 
-int songit_handle_message(SongIterator **it_reg, SongIteratorMessage msg);
+int songit_handle_message(SongIterator **it_reg, SongIterator::Message msg);
 /* Handles a message to the song iterator
 ** Parameters: (SongIterator **): A reference to the variable storing the song iterator
 ** Returns   : (int) Non-zero if the message was understood

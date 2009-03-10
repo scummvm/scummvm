@@ -359,7 +359,7 @@ static int pp_stop() {
 	return SFX_OK;
 }
 
-static int pp_send_iterator_message(const SongIteratorMessage &msg) {
+static int pp_send_iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
 		return SFX_ERROR;
 
