@@ -29,7 +29,7 @@
 // Forward declare Graphics::PixelFormat so we don't have to include its header here
 namespace Graphics {
 	struct PixelFormat;
-};
+}
 
 namespace Cine {
 
