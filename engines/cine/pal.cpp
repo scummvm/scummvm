@@ -147,9 +147,8 @@ uint16 transformColor(uint16 baseColor, int r, int g, int b) {
 void transformPaletteRange(uint16 *dstPal, uint16 *srcPal, int startColor, int stopColor, int r, int g, int b) {
 	assert(srcPal && dstPal);
 
-	for (int i = startColor; i <= stopColor; i++) {
+	for (int i = startColor; i <= stopColor; i++)
 		dstPal[i] = transformColor(srcPal[i], r, g, b);
-	}
 }
 
 void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopColor, int r, int g, int b) {
@@ -163,12 +162,11 @@ void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopC
 }
 
 // a.k.a. palRotate
-Palette& Palette::rotateRight(byte firstIndex, byte lastIndex) {
+Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
 	const Color lastColor = _colors[lastIndex];
 
-	for (int i = lastIndex; i > firstIndex; i--) {
+	for (int i = lastIndex; i > firstIndex; i--)
 		_colors[i] = _colors[i - 1];
-	}
 
 	_colors[firstIndex] = lastColor;
 	return *this;
@@ -179,12 +177,11 @@ uint Palette::colorCount() const {
 }
 
 // a.k.a. transformPaletteRange
-Palette& Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
+Palette &Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
 	assert(firstIndex < colorCount() && lastIndex < colorCount());
 
-	for (uint i = firstIndex; i <= lastIndex; i++) {
+	for (uint i = firstIndex; i <= lastIndex; i++)
 		saturatedAddColor(i, r, g, b);
-	}
 	return *this;
 }
 
@@ -198,17 +195,17 @@ void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
 	_colors[index].b = CLIP<int>(_colors[index].b + b, 0, _bMax);
 }
 
-Palette& Palette::loadCineLowPal(const byte *colors, const uint colorCount) {
+Palette &Palette::loadCineLowPal(const byte *colors, const uint numColors) {
 	static const Graphics::PixelFormat format = {2, 5, 5, 5, 8, 8, 4, 0, 0};
-	return load(colors, format, colorCount);
+	return load(colors, format, numColors);
 }
 
-Palette& Palette::loadCineHighPal(const byte *colors, const uint colorCount) {
+Palette &Palette::loadCineHighPal(const byte *colors, const uint numColors) {
 	static const Graphics::PixelFormat format = {3, 0, 0, 0, 8, 0, 8, 16, 0};
-	return load(colors, format, colorCount);
+	return load(colors, format, numColors);
 }
 
-Palette& Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint colorCount) {
+Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint numColors) {
 	assert(format.aLoss == 8); // No alpha	
 	assert(format.rShift % 8 == ((format.rShift + (8 - format.rLoss - 1)) % 8)); // R must be inside one byte
 	assert(format.gShift % 8 == ((format.gShift + (8 - format.gLoss - 1)) % 8)); // G must be inside one byte
@@ -223,10 +220,9 @@ Palette& Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	_bMax = (1 << _bBits) - 1;
 
 	_colors.clear();
-	_colors.resize(colorCount);
+	_colors.resize(numColors);
 	
-	for (uint i = 0; i < colorCount; i++)
-	{
+	for (uint i = 0; i < numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
 		_colors[i].r = (colors[i * format.bytesPerPixel + (format.rShift / 8)] >> (format.rShift % 8)) & _rMax;
 		_colors[i].g = (colors[i * format.bytesPerPixel + (format.gShift / 8)] >> (format.gShift % 8)) & _gMax;

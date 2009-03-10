@@ -57,11 +57,11 @@ void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopC
 // TODO: Test
 class Palette {
 public:
-	Palette& loadCineLowPal(const byte *colors, const uint colorCount = 16);
-	Palette& loadCineHighPal(const byte *colors, const uint colorCount = 256);
-	Palette& load(const byte *colors, const Graphics::PixelFormat format, const uint colorCount);
-	Palette& rotateRight(byte firstIndex, byte lastIndex);
-	Palette& saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
+	Palette &loadCineLowPal(const byte *colors, const uint numColors = 16);
+	Palette &loadCineHighPal(const byte *colors, const uint numColors = 256);
+	Palette &load(const byte *colors, const Graphics::PixelFormat format, const uint numColors);
+	Palette &rotateRight(byte firstIndex, byte lastIndex);
+	Palette &saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
 	uint colorCount() const;
 
 private:
