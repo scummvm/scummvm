@@ -517,6 +517,7 @@ public:
 
 protected:
 	Dialog *_pauseDialog;
+	Dialog *_messageDialog;
 	Dialog *_versionDialog;
 	Dialog *_scummMenuDialog;
 
@@ -524,6 +525,7 @@ protected:
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
+	void messageDialog(const char *message);
 	void versionDialog();
 	void scummMenuDialog();
 
@@ -976,6 +978,7 @@ protected:
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
 	bool _doEffect;
 
+	bool _snapScroll;
 public:
 	bool isLightOn() const;
 

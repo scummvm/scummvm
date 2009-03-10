@@ -451,6 +451,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
 	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
+	bool snapScrollKeyEnabled = (_game.version <= 2 || VAR_CAMERA_FAST_X != 0xFF);
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -485,10 +486,21 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.flags == 0)) {
 		abortCutscene();
 
-		// FIXME: Is the following line really necessary?
-		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
+		// VAR_CUTSCENEEXIT_KEY doesn't exist in SCUMM0
+		if (VAR_CUTSCENEEXIT_KEY != 0xFF) {
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
+		}
+	} else if (snapScrollKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_r &&
+		lastKeyHit.flags == Common::KBD_CTRL) {
+		_snapScroll ^= 1;
+		if (_snapScroll) {
+			messageDialog((const char *)"Snap scroll on");
+		} else {
+			messageDialog((const char *)"Snap scroll off");
+		}	
 
+		if (VAR_CAMERA_FAST_X != 0xFF)
+			VAR(VAR_CAMERA_FAST_X) = _snapScroll;
 	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
 		int vol = ConfMan.getInt("music_volume") / 16;
 		if (lastKeyHit.ascii == ']' && vol < 16)

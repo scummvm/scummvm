@@ -108,7 +108,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
+	  _messageDialog(0), _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
@@ -250,6 +250,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect = 0;
 
 	_doEffect = false;
+	_snapScroll = false;
 	_currentLights = 0;
 	_shakeEnabled = false;
 	_shakeFrame = 0;
@@ -559,6 +560,7 @@ ScummEngine::~ScummEngine() {
 
 	delete _2byteFontPtr;
 	delete _charset;
+	delete _messageDialog;
 	delete _pauseDialog;
 	delete _scummMenuDialog;
 	delete _versionDialog;
@@ -2305,6 +2307,12 @@ int ScummEngine_v7::runDialog(Dialog &dialog) {
 	return result;
 }
 #endif
+
+void ScummEngine::messageDialog(const char *message) {
+	if (!_messageDialog)
+		_messageDialog = new InfoDialog(this, message);
+	runDialog(*_messageDialog);
+}
 
 void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
