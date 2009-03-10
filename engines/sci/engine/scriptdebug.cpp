@@ -87,7 +87,6 @@ char inputbuf[256] = "";
 
 const char *_debug_get_input_default() {
 	char newinpbuf[256];
-	char *newline;
 	
 	printf("> ");
 	fgets(newinpbuf, 254, stdin);
@@ -426,12 +425,11 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	break;
 
 	case MEM_OBJ_SYS_STRINGS: {
-		SystemStrings *strings = &(mobj->data.sys_strings);
-		int i;
-
 		sciprintf("system string table - viewing currently disabled\n");
 #if 0
-		for (i = 0; i < SYS_STRINGS_MAX; i++)
+		SystemStrings *strings = &(mobj->data.sys_strings);
+
+		for (int i = 0; i < SYS_STRINGS_MAX; i++)
 			if (strings->strings[i].name)
 				sciprintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
 #endif
