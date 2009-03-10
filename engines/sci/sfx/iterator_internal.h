@@ -121,6 +121,7 @@ public:
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	void init();
 	int getTimepos();
+	SongIterator *clone(int delta);
 };
 
 
@@ -165,6 +166,7 @@ public:
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	void init();
 	int getTimepos();
+	SongIterator *clone(int delta);
 };
 
 #define PLAYMASK_NONE 0x0
@@ -185,6 +187,7 @@ public:
 	Audio::AudioStream *getAudioStream();
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	int getTimepos();
+	SongIterator *clone(int delta);
 };
 
 
@@ -208,6 +211,9 @@ enum {
 	TEE_MORPH_READY = 1 /**< Ready to self-morph */
 };
 
+/**
+ * This iterator combines two iterators, returns the next event available from either.
+ */
 class TeeSongIterator : public SongIterator {
 public:
 	int _status;
@@ -226,6 +232,7 @@ public:
 	} _children[2];
 
 public:
+	TeeSongIterator(SongIterator *left, SongIterator *right);
 	~TeeSongIterator();
 
 	int nextCommand(byte *buf, int *result);
@@ -233,6 +240,7 @@ public:
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	void init();
 	int getTimepos() { return 0; }
+	SongIterator *clone(int delta);
 };
 
 } // End of namespace Sci

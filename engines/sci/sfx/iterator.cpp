@@ -602,11 +602,6 @@ SongIterator *Sci0SongIterator::handleMessage(SongIteratorMessage msg) {
 			loops = msg.args[0].i;
 			break;
 
-		case _SIMSG_BASEMSG_CLONE: {
-			BaseSongIterator *mem = new Sci0SongIterator(*this);
-			return mem; /* Assume caller has another copy of this */
-		}
-
 		case _SIMSG_BASEMSG_STOP: {
 			songit_id_t sought_id = msg.ID;
 
@@ -700,6 +695,11 @@ void Sci0SongIterator::init() {
 
 	if (_data[0] == 2) /* Do we have an embedded PCM? */
 		channel.state = SI_STATE_PCM;
+}
+
+SongIterator *Sci0SongIterator::clone(int delta) {
+	Sci0SongIterator *newit = new Sci0SongIterator(*this);
+	return newit;
 }
 
 
@@ -1092,15 +1092,6 @@ SongIterator *Sci1SongIterator::handleMessage(SongIteratorMessage msg) {
 		}
 		break;
 
-		case _SIMSG_BASEMSG_CLONE: {
-			Sci1SongIterator *mem = new Sci1SongIterator(*this);
-			int delta = msg.args[0].i; /* Delay until next step */
-
-			mem->_delayRemaining += delta;
-
-			return mem; /* Assume caller has another copy of this */
-		}
-
 		case _SIMSG_BASEMSG_STOP: {
 			songit_id_t sought_id = msg.ID;
 			int i;
@@ -1220,6 +1211,13 @@ void Sci1SongIterator::init() {
 Sci1SongIterator::~Sci1SongIterator() {
 }
 
+
+SongIterator *Sci1SongIterator::clone(int delta) {
+	Sci1SongIterator *newit = new Sci1SongIterator(*this);
+	newit->_delayRemaining = delta;
+	return newit;
+}
+
 int Sci1SongIterator::getTimepos() {
 	int max = 0;
 	int i;
@@ -1239,13 +1237,13 @@ public:
 	CleanupSongIterator(uint channels) {
 		channel_mask = channels;
 		ID = 17;
-		flags = 0;
 	}
 
 	int nextCommand(byte *buf, int *result);
 	Audio::AudioStream *getAudioStream() { return NULL; }
 	SongIterator *handleMessage(SongIteratorMessage msg);
 	int getTimepos() { return 0; }
+	SongIterator *clone(int delta) { return new CleanupSongIterator(*this); }
 };
 
 SongIterator *CleanupSongIterator::handleMessage(SongIteratorMessage msg) {
@@ -1319,12 +1317,6 @@ SongIterator *FastForwardSongIterator::handleMessage(SongIteratorMessage msg) {
 	else if (msg.recipient == _SIMSG_BASE) {
 		switch (msg.type) {
 
-		case _SIMSG_BASEMSG_CLONE: {
-			FastForwardSongIterator *clone = new FastForwardSongIterator(*this);
-			songit_handle_message(&clone->_delegate, msg);
-			return clone;
-		}
-
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg.args[0].i, ID);
 			fprintf(stderr, "PLASTICWRAP:\n");
@@ -1350,6 +1342,12 @@ FastForwardSongIterator::FastForwardSongIterator(SongIterator *capsit, int delta
 	: _delegate(capsit), _delta(delta) {
 	
 	channel_mask = capsit->channel_mask;
+}
+
+SongIterator *FastForwardSongIterator::clone(int delta) {
+	FastForwardSongIterator *newit = new FastForwardSongIterator(*this);
+	newit->_delegate = _delegate->clone(delta);
+	return newit;
 }
 
 SongIterator *new_fast_forward_iterator(SongIterator *capsit, int delta) {
@@ -1395,6 +1393,64 @@ static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *c
 	} else {
 		BREAKPOINT();
 	}
+}
+
+TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
+	int i;
+	int firstfree = 1; /* First free channel */
+	int incomplete_map = 0;
+
+	morph_deferred = TEE_MORPH_NONE;
+	_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
+
+	_children[TEE_LEFT].it = left;
+	_children[TEE_RIGHT].it = right;
+
+	// By default, don't remap
+	for (i = 0; i < 16; i++) {
+		_children[TEE_LEFT].channel_remap[i] = i;
+		_children[TEE_RIGHT].channel_remap[i] = i;
+	}
+
+	/* Default to lhs channels */
+	channel_mask = left->channel_mask;
+	for (i = 0; i < 16; i++)
+		if (channel_mask & (1 << i) & right->channel_mask
+		        && (i != MIDI_RHYTHM_CHANNEL) /* Share rhythm */) { /*conflict*/
+			while ((firstfree == MIDI_RHYTHM_CHANNEL)
+			        /* Either if it's the rhythm channel or if it's taken */
+			        || (firstfree < MIDI_CHANNELS
+			            && ((1 << firstfree) & channel_mask)))
+				++firstfree;
+
+			if (firstfree == MIDI_CHANNELS) {
+				incomplete_map = 1;
+				warning("[songit-tee <%08lx,%08lx>] Could not remap right channel #%d: Out of channels",
+				        left->ID, right->ID, i);
+			} else {
+				_children[TEE_RIGHT].channel_remap[i] = firstfree;
+
+				channel_mask |= (1 << firstfree);
+			}
+		}
+#ifdef DEBUG_TEE_ITERATOR
+	if (incomplete_map) {
+		int c;
+		fprintf(stderr, "[songit-tee <%08lx,%08lx>] Channels:"
+		        " %04x <- %04x | %04x\n",
+		        left->ID, right->ID,
+		        channel_mask,
+		        left->channel_mask, right->channel_mask);
+		for (c = 0 ; c < 2; c++)
+			for (i = 0 ; i < 16; i++)
+				fprintf(stderr, "  map [%d][%d] -> %d\n",
+				        c, i, _children[c].channel_remap[i]);
+	}
+#endif
+
+
+	song_iterator_add_death_listener(left, this);
+	song_iterator_add_death_listener(right, this);
 }
 
 TeeSongIterator::~TeeSongIterator() {
@@ -1562,19 +1618,6 @@ SongIterator *TeeSongIterator::handleMessage(SongIteratorMessage msg) {
 			msg.args[0].i++;
 			break; /* And continue with our children */
 
-		case _SIMSG_BASEMSG_CLONE: {
-			TeeSongIterator *newit = new TeeSongIterator(*this);
-
-			if (newit->_children[TEE_LEFT].it)
-				newit->_children[TEE_LEFT].it =
-				    songit_clone(newit->_children[TEE_LEFT].it, msg.args[0].i);
-			if (newit->_children[TEE_RIGHT].it)
-				newit->_children[TEE_RIGHT].it =
-				    songit_clone(newit->_children[TEE_RIGHT].it, msg.args[0].i);
-
-			return newit;
-		}
-
 		default:
 			break;
 		}
@@ -1625,67 +1668,15 @@ void TeeSongIterator::init() {
 	_children[TEE_RIGHT].it->init();
 }
 
-SongIterator *songit_new_tee(SongIterator *left, SongIterator *right) {
-	int i;
-	int firstfree = 1; /* First free channel */
-	int incomplete_map = 0;
-	TeeSongIterator *it = new TeeSongIterator();
+SongIterator *TeeSongIterator::clone(int delta) {
+	TeeSongIterator *newit = new TeeSongIterator(*this);
 
-	it->morph_deferred = TEE_MORPH_NONE;
-	it->_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
+	if (_children[TEE_LEFT].it)
+		newit->_children[TEE_LEFT].it = _children[TEE_LEFT].it->clone(delta);
+	if (_children[TEE_RIGHT].it)
+		newit->_children[TEE_RIGHT].it = _children[TEE_RIGHT].it->clone(delta);
 
-	it->_children[TEE_LEFT].it = left;
-	it->_children[TEE_RIGHT].it = right;
-
-	/* By default, don't remap */
-	for (i = 0; i < 16; i++)
-		it->_children[TEE_LEFT].channel_remap[i]
-		= it->_children[TEE_RIGHT].channel_remap[i] = i;
-
-	/* Default to lhs channels */
-	it->channel_mask = left->channel_mask;
-	for (i = 0; i < 16; i++)
-		if (it->channel_mask & (1 << i) & right->channel_mask
-		        && (i != MIDI_RHYTHM_CHANNEL) /* Share rhythm */) { /*conflict*/
-			while ((firstfree == MIDI_RHYTHM_CHANNEL)
-			        /* Either if it's the rhythm channel or if it's taken */
-			        || (firstfree < MIDI_CHANNELS
-			            && ((1 << firstfree) & it->channel_mask)))
-				++firstfree;
-
-			if (firstfree == MIDI_CHANNELS) {
-				incomplete_map = 1;
-				fprintf(stderr, "[songit-tee <%08lx,%08lx>] "
-				        "Could not remap right channel #%d:"
-				        " Out of channels\n",
-				        left->ID, right->ID, i);
-			} else {
-				it->_children[TEE_RIGHT].channel_remap[i]
-				= firstfree;
-
-				it->channel_mask |= (1 << firstfree);
-			}
-		}
-#ifdef DEBUG_TEE_ITERATOR
-	if (incomplete_map) {
-		int c;
-		fprintf(stderr, "[songit-tee <%08lx,%08lx>] Channels:"
-		        " %04x <- %04x | %04x\n",
-		        left->ID, right->ID,
-		        it->channel_mask,
-		        left->channel_mask, right->channel_mask);
-		for (c = 0 ; c < 2; c++)
-			for (i = 0 ; i < 16; i++)
-				fprintf(stderr, "  map [%d][%d] -> %d\n",
-				        c, i, it->_children[c].channel_remap[i]);
-	}
-#endif
-
-
-	song_iterator_add_death_listener(left, it);
-	song_iterator_add_death_listener(right, it);
-
-	return it;
+	return newit;
 }
 
 
@@ -1748,10 +1739,18 @@ SongIterator::SongIterator() {
 	ID = 0;
 	channel_mask = 0;
 	fade.action = FADE_ACTION_NONE;
-	flags = 0;
 	priority = 0;
 	memset(_deathListeners, 0, sizeof(_deathListeners));
 }
+
+SongIterator::SongIterator(const SongIterator &si) {
+	ID = si.ID;
+	channel_mask = si.channel_mask;
+	fade = si.fade;
+	priority = si.priority;
+	memset(_deathListeners, 0, sizeof(_deathListeners));
+}
+
 
 SongIterator::~SongIterator() {
 	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i)
@@ -1821,13 +1820,6 @@ int songit_handle_message(SongIterator **it_reg_p, SongIteratorMessage msg) {
 	return 1;
 }
 
-SongIterator *songit_clone(SongIterator *it, int delta) {
-	SIMSG_SEND(it, SIMSG_CLONE(delta));
-	memset(it->_deathListeners, 0, sizeof(it->_deathListeners));
-	it->flags |= SONGIT_FLAG_CLONE;
-	return it;
-}
-
 SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2) {
 	if (it1 == NULL)
 		return it2;
@@ -1835,7 +1827,7 @@ SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2) {
 		return it1;
 
 	/* Both are non-NULL: */
-	return songit_new_tee(it1, it2); /* 'may destroy' */
+	return new TeeSongIterator(it1, it2);
 }
 
 } // End of namespace Sci

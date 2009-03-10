@@ -244,7 +244,7 @@ static void _update_single_song(sfx_state_t *self) {
 		_thaw_time(self); /* Recover song delay time */
 
 		if (newsong && player) {
-			SongIterator *clonesong = songit_clone(newsong->it, newsong->_delay);
+			SongIterator *clonesong = newsong->it->clone(newsong->_delay);
 
 			player->add_iterator(clonesong, newsong->_wakeupTime.msecs());
 		}
@@ -314,7 +314,7 @@ static void _update_multi_song(sfx_state_t *self) {
 			if (self->debug & SFX_DEBUG_SONGS)
 				sciprintf("[SFX] Adding song %lx\n", newseeker->it->ID);
 
-			SongIterator *clonesong = songit_clone(newseeker->it, newseeker->_delay);
+			SongIterator *clonesong = newseeker->it->clone(newseeker->_delay);
 			player->add_iterator(clonesong, g_system->getMillis());
 		}
 		_sfx_set_song_status(self, newseeker,

@@ -58,36 +58,32 @@ struct fade_params_t {
 #define SONG_ITERATOR_MESSAGE_ARGUMENTS_NR 2
 
 /* Helper defs for messages */
+enum {
+	_SIMSG_BASE, /* Any base decoder */
+	_SIMSG_PLASTICWRAP  /* Any "Plastic" (discardable) wrapper decoder */
+};
+
 /* Base messages */
 enum {
-	_SIMSG_BASE = 0, /* Any base decoder */
-	_SIMSG_BASEMSG_SET_LOOPS = 0, /* Set loops */
-
-	/**
-	 * Clone object and data. Must provide the (possibly negative)
-	 * number of ticks that have passed since the last delay time
-	 * started being used.
-	 */
-	_SIMSG_BASEMSG_CLONE = 1,
-
-	_SIMSG_BASEMSG_SET_PLAYMASK = 2, /* Set the current playmask for filtering */
-	_SIMSG_BASEMSG_SET_RHYTHM = 3, /* Activate/deactivate rhythm channel */
-	_SIMSG_BASEMSG_ACK_MORPH = 4, /* Acknowledge self-morph */
-	_SIMSG_BASEMSG_STOP = 5, /* Stop iterator */
-	_SIMSG_BASEMSG_PRINT = 6, /* Print self to stderr, after printing param1 tabs */
-	_SIMSG_BASEMSG_SET_HOLD = 7, /* Set value of hold parameter to expect */
-	_SIMSG_BASEMSG_SET_FADE = 8 /* Set fade parameters */
+	_SIMSG_BASEMSG_SET_LOOPS, /* Set loops */
+	_SIMSG_BASEMSG_SET_PLAYMASK, /* Set the current playmask for filtering */
+	_SIMSG_BASEMSG_SET_RHYTHM, /* Activate/deactivate rhythm channel */
+	_SIMSG_BASEMSG_ACK_MORPH, /* Acknowledge self-morph */
+	_SIMSG_BASEMSG_STOP, /* Stop iterator */
+	_SIMSG_BASEMSG_PRINT, /* Print self to stderr, after printing param1 tabs */
+	_SIMSG_BASEMSG_SET_HOLD, /* Set value of hold parameter to expect */
+	_SIMSG_BASEMSG_SET_FADE /* Set fade parameters */
 };
 
 /* "Plastic" (discardable) wrapper messages */
-#define _SIMSG_PLASTICWRAP 1 /* Any base decoder */
-#define _SIMSG_PLASTICWRAP_ACK_MORPH 4 /* Acknowledge self-morph */
+enum {
+	_SIMSG_PLASTICWRAP_ACK_MORPH = _SIMSG_BASEMSG_ACK_MORPH /* Acknowledge self-morph */
+};
 
 /* Messages */
 #define SIMSG_SET_LOOPS(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_LOOPS,(x),0
 #define SIMSG_SET_PLAYMASK(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_PLAYMASK,(x),0
 #define SIMSG_SET_RHYTHM(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_RHYTHM,(x),0
-#define SIMSG_CLONE(x) _SIMSG_BASE,_SIMSG_BASEMSG_CLONE,(x),0
 #define SIMSG_ACK_MORPH _SIMSG_PLASTICWRAP,_SIMSG_PLASTICWRAP_ACK_MORPH,0,0
 #define SIMSG_STOP _SIMSG_BASE,_SIMSG_BASEMSG_STOP,0,0
 #define SIMSG_PRINT(indentation) _SIMSG_BASE,_SIMSG_BASEMSG_PRINT,(indentation),0
@@ -148,7 +144,6 @@ public:
 	songit_id_t ID;
 	uint16 channel_mask; /* Bitmask of all channels this iterator will use */
 	fade_params_t fade;
-	uint flags;
 	int priority;
 
 	/* Death listeners */
@@ -160,6 +155,7 @@ public:
 
 public:
 	SongIterator();
+	SongIterator(const SongIterator &);
 	virtual ~SongIterator();
 
 	/**
@@ -194,13 +190,13 @@ public:
 
 	/**
 	 * Handles a message to the song iterator.
-	 * Parameters: (SongIterator *) self
-	 *             (song_iterator_messag_t) msg: The message to handle
-	 * Returns   : (SongIterator *) NULL if the message was not understood,
-	 *             self if the message could be handled, or a new song iterator
+	 * @param msg	the message to handle
+	 * @return NULL if the message was not understood,
+	 *             this if the message could be handled, or a new song iterator
 	 *             if the current iterator had to be morphed (but the message could
 	 *             still be handled)
-	 * This function is not supposed to be called directly; use
+	 *
+	 * @note This function is not supposed to be called directly; use
 	 * songit_handle_message() instead. It should not recurse, since songit_handle_message()
 	 * takes care of that and makes sure that its delegate received the message (and
 	 * was morphed) before self.
@@ -212,17 +208,19 @@ public:
 	 */
 	virtual int getTimepos() = 0;
 
+	/**
+	 * Clone this song iterator.
+	 * @param delta		number of ticks that still need to elapse until the
+	 * 					next item should be read from the song iterator
+	 */
+	virtual SongIterator *clone(int delta) = 0;
+
 
 private:
 	// Make the assignment operator unreachable, just in case...
 	SongIterator& operator=(const SongIterator&);
 };
 
-
-/* Song iterator flags */
-#define SONGIT_FLAG_CLONE	(1 << 0)	/* This flag is set for clones, which are exclusively used in song players.
-** Thus, this flag distinguishes song iterators in the main thread from those
-** in the song-player thread. */
 
 /********************************/
 /*-- Song iterator operations --*/
@@ -275,31 +273,12 @@ SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t i
 **             iterator, or NULL if 'type' was invalid or unsupported
 */
 
-SongIterator *songit_new_tee(SongIterator *left, SongIterator *right);
-/* Combines two iterators, returns the next event available from either
-** Parameters: (SongIterator *) left: One of the iterators
-**             (SongIterator *) right: The other iterator
-** Returns   : (SongIterator *) A combined iterator, as suggested above
-*/
-
 
 int songit_handle_message(SongIterator **it_reg, SongIteratorMessage msg);
 /* Handles a message to the song iterator
 ** Parameters: (SongIterator **): A reference to the variable storing the song iterator
 ** Returns   : (int) Non-zero if the message was understood
 ** The song iterator may polymorph as result of msg, so a writeable reference is required.
-*/
-
-
-SongIterator *songit_clone(SongIterator *it, int delta);
-/* Clones a song iterator
-** Parameters: (SongIterator *) it: The iterator to clone
-**             (int) delta: Number of ticks that still need to elapse until
-**                          the next item should be read from the song iterator
-** Returns   : (SongIterator *) A shallow clone of 'it'.
-** This performs a clone on the bottom-most part (containing the actual song data) _only_.
-** The justification for requiring 'delta' to be passed in here is that this
-** is typically maintained outside of the song iterator.
 */
 
 
