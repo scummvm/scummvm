@@ -240,6 +240,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_sound = pSound;
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
+	_panelShown = false;
 }
 
 void Control::askForCd(void) {
