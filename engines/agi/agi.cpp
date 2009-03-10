@@ -811,6 +811,8 @@ Common::Error AgiEngine::go() {
 }
 
 void AgiEngine::syncSoundSettings() {
+	// FIXME/TODO: Please explain why we are using "music_volume" for all
+	// three different entries here.
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSFX = ConfMan.getInt("music_volume");
 	int soundVolumeSpeech = ConfMan.getInt("music_volume");
