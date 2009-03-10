@@ -152,7 +152,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lastMouseRegion = 0;
 	_monsterLastWalkDirection = _monsterCountUnk = _monsterShiftAlt = 0;
 	_monsterCurBlock = 0;
-	//_preSeq_X1 = _preSeq_Y1 = _preSeq_X2 = _preSeq_Y2 = 0;
+	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 
 	_dscUnk1 = 0;
 	_dscShapeIndex = 0;
@@ -805,6 +805,7 @@ void LoLEngine::update() {
 	snd_characterSpeaking();
 	fadeText();
 
+	updateInput();
 	_screen->updateScreen();
 }
 
@@ -1126,10 +1127,10 @@ void LoLEngine::toggleSelectedCharacterFrame(bool mode) {
 void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int buttonFlags) {
 	setSequenceGui(x, y, w, h, buttonFlags);
 
-	/*_preSeq_X1 = x;
-	_preSeq_Y1 = y;
-	_preSeq_X2 = x + w;
-	_preSeq_Y2 = y + h;*/
+	_seqWindowX1 = x;
+	_seqWindowY1 = y;
+	_seqWindowX2 = x + w;
+	_seqWindowY2 = y + h;
 
 	int mouseOffs = _itemInHand ? 10 : 0;
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(_itemInHand));

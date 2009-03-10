@@ -1350,6 +1350,9 @@ int LoLEngine::clickedWall(Button *button) {
 }
 
 int LoLEngine::clickedSequenceWindow(Button *button) {
+	runLevelScript(calcNewBlockPosition(_currentBlock, _currentDirection), 0x40);
+	if (!_seqTrigger || !posWithinRect(_mouseX, _mouseY, _seqWindowX1, _seqWindowY1, _seqWindowX2, _seqWindowY2))
+		_seqTrigger = 0;
 	return 1;
 }
 

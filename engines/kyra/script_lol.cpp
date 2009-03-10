@@ -439,6 +439,11 @@ int LoLEngine::olol_setMusicTrack(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_checkRectForMousePointer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkRectForMousePointer(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	return posWithinRect(_mouseX, _mouseY, stackPos(0), stackPos(1), stackPos(2), stackPos(3)) ? 1 : 0;
+}
+
 int LoLEngine::olol_clearDialogueField(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%d)", (const void *)script, stackPos(0));
 	if (_hideControls && (!textEnabled()))
@@ -449,6 +454,14 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 	_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
 	_screen->clearDim(4);
 
+	return 1;
+}
+
+int LoLEngine::olol_loadBitmap(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
+	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3));
+	if (stackPos(1) != 2)
+		_screen->copyPage(3, stackPos(1));
 	return 1;
 }
 
@@ -603,7 +616,16 @@ int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_copyRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_copyRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)",
+		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	_screen->copyRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), Screen::CR_NO_P_CHECK);
+	return 1;
+}
+
 int LoLEngine::olol_initMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initMonster(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
+		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10));
 	uint16 x = 0;
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
@@ -651,6 +673,12 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 	}
 
 	return -1;
+}
+
+int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeClearSceneWindow(%p)", (const void *)script);
+	_screen->fadeClearSceneWindow(10);
+	return 1;
 }
 
 int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
@@ -841,10 +869,40 @@ int LoLEngine::olol_update(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_drawExitButton(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawExitButton(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	
+	static const uint8 printPara[] = { 0x90, 0x78, 0x0C, 0x9F, 0x80, 0x1E };
+
+	int cp = _screen->setCurPage(0);
+	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+	int x = printPara[3 * stackPos(0)] << 1;
+	int y = printPara[3 * stackPos(0) + 1];
+	int offs = printPara[3 * stackPos(0) + 2];
+
+	char *str = getLangString(0x4033);
+	int w = _screen->getTextWidth(str);
+	
+	gui_drawBox(x - offs - w, y - 9, w + offs, 9, 136, 251, 252);
+	_screen->printText(str, x - (offs >> 1) - w, y - 7, 144, 0);
+
+	if (stackPos(1))
+		_screen->drawGridBox(x - offs - w + 1, y - 8, w + offs - 2, 7, 1);
+
+	_screen->setFont(cf);
+	_screen->setCurPage(cp);	
+	return 1;
+}
+
 int LoLEngine::olol_loadSoundFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
 	snd_loadSoundFile(stackPos(0));
 	return 1;
+}
+
+int LoLEngine::olol_playMusicTrack(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playMusicTrack(%p) (%d)", (const void *)script, stackPos(0));
+	return snd_playTrack(stackPos(0));
 }
 
 int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
@@ -905,6 +963,15 @@ int LoLEngine::olol_setDoorState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d)", (const void *)script, stackPos(0));
 	_emcDoorState = stackPos(0);
 	return _emcDoorState;
+}
+
+int LoLEngine::olol_processButtonClick(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processButtonClick(%p) (%d)", (const void *)script, stackPos(0));
+	int n = _tim->getNumberOfDialogueButtons();
+	_activeTim[stackPos(0)]->procFunc = 0;
+	_activeTim[stackPos(0)]->procParam = n ? n : 1;
+	_tim->setDialogueParameters(0, -1);
+	return 1;
 }
 
 int LoLEngine::olol_initNonAnimatedDialogue(EMCState *script) {
@@ -1188,7 +1255,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x20
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_checkRectForMousePointer);
 	Opcode(olol_clearDialogueField);
 	OpcodeUnImpl();
 
@@ -1200,7 +1267,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x28
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_loadBitmap);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1220,11 +1287,11 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_updateSceneAnimations);
 	Opcode(olol_mapShapeToBlock);
 	Opcode(olol_resetBlockShapeAssignment);
-	OpcodeUnImpl();
+	Opcode(olol_copyRegion);
 
 	// 0x38
 	Opcode(olol_initMonster);
-	OpcodeUnImpl();
+	Opcode(olol_fadeClearSceneWindow);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1285,11 +1352,11 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x60
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_drawExitButton);
 	Opcode(olol_loadSoundFile);
 
 	// 0x64
-	OpcodeUnImpl();
+	Opcode(olol_playMusicTrack);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1340,7 +1407,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_setDoorState);
-	OpcodeUnImpl();
+	Opcode(olol_processButtonClick);
 
 	// 0x88
 	OpcodeUnImpl();

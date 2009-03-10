@@ -519,7 +519,9 @@ private:
 	int olol_freeAnimStruct(EMCState *script);
 	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
+	int olol_checkRectForMousePointer(EMCState *script);
 	int olol_clearDialogueField(EMCState *script);
+	int olol_loadBitmap(EMCState *script);
 	int olol_getGlobalScriptVar(EMCState *script);
 	int olol_setGlobalScriptVar(EMCState *script);
 	int olol_getGlobalVar(EMCState *script);
@@ -528,7 +530,9 @@ private:
 	int olol_updateSceneAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
+	int olol_copyRegion(EMCState *script);
 	int olol_initMonster(EMCState *script);
+	int olol_fadeClearSceneWindow(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
 	int olol_moveMonster(EMCState *script);
 	int olol_dialogueBox(EMCState *script);
@@ -547,7 +551,9 @@ private:
 	int olol_getWallFlags(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_update(EMCState *script);
+	int olol_drawExitButton(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
+	int olol_playMusicTrack(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
@@ -555,6 +561,7 @@ private:
 	int olol_checkForMonsterMode1(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_setDoorState(EMCState *script);
+	int olol_processButtonClick(EMCState *script);
 	int olol_initNonAnimatedDialogue(EMCState *script);
 	int olol_restoreAfterNonAnimatedDialogue(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
@@ -850,7 +857,7 @@ private:
 	int16 _dmScaleH;
 
 	int _lastMouseRegion;
-	//int _preSeq_X1, _preSeq_Y1,	_preSeq_X2, _preSeq_Y2;
+	int _seqWindowX1, _seqWindowY1,	_seqWindowX2, _seqWindowY2, _seqTrigger;
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;

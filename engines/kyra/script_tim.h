@@ -118,6 +118,9 @@ public:
 	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
 	virtual uint16 processDialogue() { return 1; }
 
+	void setDialogueParameters(int clickedButton, int dlgFunc) { _currentTim->clickedButton = clickedButton; _currentTim->dlgFunc = dlgFunc; }
+	virtual int getNumberOfDialogueButtons() { return 0; }
+
 	int _drawPage2;
 
 	int _palDelayInc, _palDiff, _palDelayAcc;
@@ -200,6 +203,8 @@ public:
 
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
 	uint16 processDialogue();
+
+	int getNumberOfDialogueButtons() { return _dialogueNumButtons; }
 		
 private:
 	KyraEngine_v1 *vm();

@@ -1163,6 +1163,10 @@ void LoLEngine::updateSceneWindow() {
 
 void LoLEngine::setSequenceGui(int x, int y, int w, int h, int enableFlags) {
 	gui_enableSequenceButtons(x, y, w, h, enableFlags);
+	_seqWindowX1 = x;
+	_seqWindowY1 = y;
+	_seqWindowX2 = x + w;
+	_seqWindowY2 = y + h;
 	int offs = _itemInHand ? 10 : 0;
 	_screen->setMouseCursor(offs, offs, getItemIconShapePtr(_itemInHand));
 	setLampMode(0);
@@ -1171,6 +1175,7 @@ void LoLEngine::setSequenceGui(int x, int y, int w, int h, int enableFlags) {
 
 void LoLEngine::restoreDefaultGui() {
 	gui_enableDefaultPlayfieldButtons();
+	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 	if (_lampStatusSuspended)
 		resetLampStatus();
 	_lampStatusSuspended = false;
