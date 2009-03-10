@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7,10"
+	Version="7.10"
 	Name="sci"
 	ProjectGUID="{53F17B2B-0412-4EC3-A999-ED0537BB5223}"
 	Keyword="Win32Proj">
@@ -357,16 +357,10 @@
 		<Filter
 			Name="scicore">
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress0.cpp">
+				RelativePath="..\..\engines\sci\scicore\decompressor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\decompress01.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\decompress1.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\decompress11.cpp">
+				RelativePath="..\..\engines\sci\scicore\decompressor.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\resource.cpp">
