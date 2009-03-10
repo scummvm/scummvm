@@ -48,11 +48,11 @@ MODULE_OBJS = \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \
 	gfx/resource/sci_font.o \
-	gfx/resource/sci_pal_1.o \
-	gfx/resource/sci_pic_0.o \
-	gfx/resource/sci_resmgr.o \
-	gfx/resource/sci_view_0.o \
-	gfx/resource/sci_view_1.o \
+	gfx/resource/res_pal.o \
+	gfx/resource/res_pic.o \
+	gfx/resource/res_manager.o \
+	gfx/resource/res_view0.o \
+	gfx/resource/res_view1.o \
 	scicore/sciconsole.o \
 	scicore/decompress0.o \
 	scicore/decompress01.o \

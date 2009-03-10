@@ -1140,8 +1140,7 @@ static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, i
 #define AUXBUF_FILL_HELPER _gfxr_auxbuf_fill_any_recursive
 #define AUXBUF_FILL _gfxr_auxbuf_fill_any
 #define DRAW_SCALED
-# include "sci_picfill_aux.cpp"
-# include "sci_picfill.cpp"
+# include "picfill.cpp"
 #undef DRAW_SCALED
 #undef AUXBUF_FILL
 #undef AUXBUF_FILL_HELPER
@@ -1159,8 +1158,7 @@ namespace Sci {
 #define FILL_FUNCTION_RECURSIVE _gfxr_fill_1_recursive
 #define AUXBUF_FILL_HELPER _gfxr_auxbuf_fill_1_recursive
 #define AUXBUF_FILL _gfxr_auxbuf_fill_1
-# include "sci_picfill_aux.cpp"
-# include "sci_picfill.cpp"
+# include "picfill.cpp"
 #undef AUXBUF_FILL
 #undef AUXBUF_FILL_HELPER
 #undef FILL_FUNCTION_RECURSIVE
