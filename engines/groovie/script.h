@@ -34,13 +34,18 @@
 
 namespace Groovie {
 
+enum EngineVersion {
+	kGroovieT7G,
+	kGroovieV2
+};
+
 class GroovieEngine;
 
 class Script {
 	friend class Debugger;
 
 public:
-	Script(GroovieEngine *vm);
+	Script(GroovieEngine *vm, EngineVersion version);
 	~Script();
 
 	void setDebugger(Debugger *debugger);
@@ -132,7 +137,9 @@ private:
 
 	// Opcodes
 	typedef void (Script::*OpcodeFunc)();
-	static OpcodeFunc _opcodes[];
+	OpcodeFunc *_opcodes;
+	static OpcodeFunc _opcodesT7G[];
+	static OpcodeFunc _opcodesV2[];
 
 	void o_invalid();
 

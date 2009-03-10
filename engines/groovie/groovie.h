@@ -41,7 +41,7 @@ namespace Groovie {
 
 class MusicPlayer;
 
-enum kDebugLevels {
+enum DebugLevels {
 	kGroovieDebugAll = 1 << 0,
 	kGroovieDebugVideo = 1 << 1,
 	kGroovieDebugResource = 1 << 2,
@@ -56,15 +56,10 @@ enum kDebugLevels {
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
-enum kEngineVersion {
-	kGroovieT7G,
-	kGroovieV2
-};
-
 struct GroovieGameDescription {
 	ADGameDescription desc;
 
-	kEngineVersion version; // Version of the engine
+	EngineVersion version; // Version of the engine
 	int indexEntry; // The index of the entry in disk.1 for V2 games
 };
 

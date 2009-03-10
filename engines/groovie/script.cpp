@@ -56,10 +56,20 @@ void debugScript(int level, bool nl, const char *s, ...) {
 		debugN(level, "%s", buf);
 }
 
-Script::Script(GroovieEngine *vm) :
+Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0),
 	_debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(0), _font(NULL) {
+	// Initialize the opcode set depending on the engine version
+	switch (version) {
+	case kGroovieT7G:
+		_opcodes = _opcodesT7G;
+		break;
+	case kGroovieV2:
+		_opcodes = _opcodesV2;
+		break;
+	}
+
 	// Initialize the random source
 	_vm->_system->getEventManager()->registerRandomSource(_random, "GroovieScripts");
 
@@ -1515,7 +1525,7 @@ void Script::o_stub59() {
 	debugScript(1, true, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
-Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
+Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_nop, // 0x00
 	&Script::o_nop,
 	&Script::o_playsong,
@@ -1608,6 +1618,99 @@ Script::OpcodeFunc Script::_opcodes[NUM_OPCODES] = {
 	&Script::o_invalid,		// completely unimplemented, plays vdx in some way
 	//&Script::o_nop, // 0x58
 	&Script::o_invalid, // 0x58	// like above, but plays from string not ref
+	&Script::o_stub59
+};
+
+Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
+	&Script::o_nop, // 0x00
+	&Script::o_nop,
+	&Script::o_playsong,
+	&Script::o_bf9on,
+	&Script::o_palfadeout, // 0x04
+	&Script::o_bf8on,
+	&Script::o_bf6on,
+	&Script::o_bf7on,
+	&Script::o_setbackgroundsong, // 0x08
+	&Script::o_videofromref,
+	&Script::o_bf5on,
+	&Script::o_inputloopstart,
+	&Script::o_keyboardaction, // 0x0C
+	&Script::o_hotspot_rect,
+	&Script::o_hotspot_left,
+	&Script::o_hotspot_right,
+	&Script::o_hotspot_center, // 0x10
+	&Script::o_hotspot_center,
+	&Script::o_hotspot_current,
+	&Script::o_inputloopend,
+	&Script::o_random, // 0x14
+	&Script::o_jmp,
+	&Script::o_loadstring,
+	&Script::o_ret,
+	&Script::o_call, // 0x18
+	&Script::o_sleep,
+	&Script::o_strcmpnejmp,
+	&Script::o_xor_obfuscate,
+	&Script::o_vdxtransition, // 0x1C
+	&Script::o_swap,
+	&Script::o_nop8,
+	&Script::o_inc,
+	&Script::o_dec, // 0x20
+	&Script::o_strcmpnejmp_var,
+	&Script::o_copybgtofg,
+	&Script::o_strcmpeqjmp,
+	&Script::o_mov, // 0x24
+	&Script::o_add,
+	&Script::o_videofromstring1,
+	&Script::o_videofromstring2,
+	&Script::o_nop16, // 0x28
+	&Script::o_stopmidi,
+	&Script::o_endscript,
+	&Script::o_nop,
+	&Script::o_sethotspottop, // 0x2C
+	&Script::o_sethotspotbottom,
+	&Script::o_loadgame,
+	&Script::o_savegame,
+	&Script::o_hotspotbottom_4, // 0x30
+	&Script::o_midivolume,
+	&Script::o_jne,
+	&Script::o_loadstringvar,
+	&Script::o_chargreatjmp, // 0x34
+	&Script::o_bf7off,
+	&Script::o_charlessjmp,
+	&Script::o_copyrecttobg,
+	&Script::o_restorestkpnt, // 0x38
+	&Script::o_obscureswap,
+	&Script::o_printstring,
+	&Script::o_hotspot_slot,
+	&Script::o_checkvalidsaves, // 0x3C
+	&Script::o_resetvars,
+	&Script::o_mod,
+	&Script::o_loadscript,
+	&Script::o_setvideoorigin, // 0x40
+	&Script::o_sub,
+	&Script::o_cellmove,
+	&Script::o_returnscript,
+	&Script::o_sethotspotright, // 0x44
+	&Script::o_sethotspotleft,
+	&Script::o_nop,
+	&Script::o_nop,
+	&Script::o_nop8, // 0x48
+	&Script::o_nop,
+	&Script::o_nop16,
+	&Script::o_nop8,
+	&Script::o_getcd, // 0x4C
+	&Script::o_playcd,
+	&Script::o_nop16,
+	&Script::o_nop16,
+	&Script::o_nop16, // 0x50
+	&Script::o_nop16,
+	&Script::o_invalid,
+	&Script::o_hotspot_outrect,
+	&Script::o_nop, // 0x54
+	&Script::o_nop16,
+	&Script::o_stub56,
+	&Script::o_invalid,
+	&Script::o_invalid, // 0x58
 	&Script::o_stub59
 };
 
