@@ -264,6 +264,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 				free(str->name);
 				str->name = NULL;
 
+				// FIXME: this corrupts the heap for some reason
 				free(str->value);
 				str->value = NULL;
 
