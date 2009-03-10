@@ -298,6 +298,8 @@ int SegManager::deallocate(int seg, bool recursive) {
 	case MEM_OBJ_RESERVED:
 		free(mobj->data.reserved);
 		break;
+	case MEM_OBJ_STRING_FRAG:
+		break;
 	default:
 		fprintf(stderr, "Deallocating segment type %d not supported!\n",
 		        mobj->type);
