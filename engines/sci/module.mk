@@ -86,6 +86,31 @@ MODULE_OBJS = \
 $(srcdir)/engines/sci/engine/savegame.cpp: $(srcdir)/engines/sci/engine/savegame.cfsml $(srcdir)/tools/cfsml.pl
 	cat $< | perl $(srcdir)/tools/cfsml.pl -f engines/sci/engine/savegame.cfsml > $@
 
+engines/sci/engine/savegame.cpp: engines/sci/engine/savegame.cpp \
+  common/stream.h common/scummsys.h config.h common/system.h \
+  common/noncopyable.h common/rect.h common/util.h common/str.h \
+  common/array.h common/algorithm.h common/debug.h common/list.h \
+  common/list_intern.h graphics/pixelformat.h engines/sci/sci_memory.h \
+  engines/sci/gfx/operations.h engines/sci/gfx/gfx_resmgr.h \
+  engines/sci/gfx/gfx_resource.h engines/sci/gfx/gfx_system.h \
+  engines/sci/tools.h common/endian.h engines/sci/gfx/palette.h \
+  engines/sci/gfx/gfx_driver.h engines/sci/uinput.h \
+  engines/sci/gfx/sbtree.h engines/sci/gfx/gfx_tools.h \
+  engines/sci/gfx/gfx_options.h engines/sci/gfx/gfx_res_options.h \
+  engines/sci/gfx/menubar.h engines/sci/engine/vm_types.h \
+  engines/sci/gfx/gfx_widgets.h engines/sci/gfx/gfx_state_internal.h \
+  engines/sci/sfx/core.h engines/sci/sfx/sfx.h engines/sci/sfx/songlib.h \
+  sound/timestamp.h engines/sci/scicore/resource.h common/file.h \
+  common/archive.h common/hash-str.h common/hashmap.h common/func.h \
+  common/memorypool.h common/ptr.h common/singleton.h \
+  engines/sci/sfx/iterator.h engines/sci/sfx/sfx_pcm.h \
+  engines/sci/engine/state.h engines/sci/scicore/vocabulary.h \
+  engines/sci/scicore/versions.h engines/sci/engine/script.h \
+  engines/sci/scicore/sciconsole.h engines/sci/engine/seg_manager.h \
+  engines/sci/engine/vm.h engines/sci/engine/heapmgr.h \
+  engines/sci/engine/intmap.h
+
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_SCI), DYNAMIC_PLUGIN)
 PLUGIN := 1
