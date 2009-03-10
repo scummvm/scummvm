@@ -243,7 +243,6 @@ TYPE IntMapperPtr "IntMapper *" USING write_IntMapperPtr read_IntMapperPtr;
 TYPE IntMapperNodePtr "IntMapper::Node *" USING write_IntMapperNodePtr read_IntMapperNodePtr;
 TYPE songlib_t "songlib_t" USING write_songlib_t read_songlib_t;
 TYPE song_tp "song_t *" USING write_song_tp read_song_tp;
-TYPE SongIterator "SongIterator" USING write_song_iterator_t read_song_iterator_t;
 TYPE song_handle_t "song_handle_t" LIKE int;
 TYPE SegManagerPtr "SegManager *" USING write_SegManagerPtr read_SegManagerPtr;
 
@@ -1025,16 +1024,16 @@ static void reconstruct_sounds(EngineState *s) {
 	while (seeker) {
 		SongIterator *base, *ff;
 		int oldstatus;
-		SongIteratorMessage msg;
+		SongIterator::Message msg;
 
 		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
 		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = new_fast_forward_iterator(base, seeker->restore_time);
 		ff->init();
 
-		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
+		msg = SongIterator::Message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
 		songit_handle_message(&ff, msg);
-		msg = SongIteratorMessage(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
+		msg = SongIterator::Message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
 		songit_handle_message(&ff, msg);
 
 		oldstatus = seeker->status;
