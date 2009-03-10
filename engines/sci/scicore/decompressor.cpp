@@ -62,7 +62,7 @@ void Decompressor::fetchBits() {
 	while (_nBits <= 24) {
 		_dwBits |= ((uint32)_src->readByte()) << (24-_nBits);
 		_nBits += 8;
-		_dwRead ++;
+		_dwRead++;
 	}
 }
 
@@ -284,7 +284,7 @@ void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbu
 	while (pos < size) {
 		nextbyte = *(rd++);
 		*(ob++) = nextbyte;
-		pos ++;
+		pos++;
 		switch (nextbyte&0xC0) {
 		case 0x40 :
 		case 0x00 :
@@ -298,7 +298,7 @@ void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbu
 		case 0x80 :
 			nextbyte = *(pd++);
 			*(ob++) = nextbyte;
-			pos ++;
+			pos++;
 			break;
 		}
 	}
@@ -320,8 +320,8 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 	
 	while (pos < dsize) {
 		nextbyte = *(rledata++);
-		pos ++;
-		size ++;
+		pos++;
+		size++;
 		
 		switch (nextbyte & 0xC0) {
 		case 0x40 :
