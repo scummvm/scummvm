@@ -81,18 +81,17 @@ enum {
 };
 
 /* Messages */
-#define SIMSG_SET_LOOPS(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_LOOPS,(x),0
-#define SIMSG_SET_PLAYMASK(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_PLAYMASK,(x),0
-#define SIMSG_SET_RHYTHM(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_RHYTHM,(x),0
-#define SIMSG_ACK_MORPH _SIMSG_PLASTICWRAP,_SIMSG_PLASTICWRAP_ACK_MORPH,0,0
-#define SIMSG_STOP _SIMSG_BASE,_SIMSG_BASEMSG_STOP,0,0
-#define SIMSG_PRINT(indentation) _SIMSG_BASE,_SIMSG_BASEMSG_PRINT,(indentation),0
-#define SIMSG_SET_HOLD(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_HOLD,(x),0
-/*#define SIMSG_SET_FADE(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_FADE,(x),0*/
+#define SIMSG_SET_LOOPS(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_LOOPS,(x)
+#define SIMSG_SET_PLAYMASK(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_PLAYMASK,(x)
+#define SIMSG_SET_RHYTHM(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_RHYTHM,(x)
+#define SIMSG_ACK_MORPH _SIMSG_PLASTICWRAP,_SIMSG_PLASTICWRAP_ACK_MORPH,0
+#define SIMSG_STOP _SIMSG_BASE,_SIMSG_BASEMSG_STOP,0
+#define SIMSG_PRINT(indentation) _SIMSG_BASE,_SIMSG_BASEMSG_PRINT,(indentation)
+#define SIMSG_SET_HOLD(x) _SIMSG_BASE,_SIMSG_BASEMSG_SET_HOLD,(x)
 
 /* Message transmission macro: Takes song reference, message reference */
 #define SIMSG_SEND(o, m) songit_handle_message(&(o), SongIterator::Message((o)->ID, m))
-#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIterator::Message((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m, 0))
+#define SIMSG_SEND_FADE(o, m) songit_handle_message(&(o), SongIterator::Message((o)->ID, _SIMSG_BASE, _SIMSG_BASEMSG_SET_FADE, m))
 
 typedef unsigned long songit_id_t;
 
@@ -105,14 +104,14 @@ class SongIterator {
 public:
 	struct Message {
 		songit_id_t ID;
-		uint recipient; /* Type of iterator supposed to receive this */
-		uint type;
+		uint _class; /* Type of iterator supposed to receive this */
+		uint _type;
 		union {
 			uint i;
 			void *p;
-		} args[SONG_ITERATOR_MESSAGE_ARGUMENTS_NR];
+		} _arg;
 
-		Message();
+		Message() : ID(0), _class(0xFFFF), _type(0xFFFF) {}
 
 		/**
 		 * Create a song iterator message.
@@ -120,12 +119,14 @@ public:
 		 * @param id: song ID the message is targeted to
 		 * @param recipient_class: Message recipient class
 		 * @param type	message type
-		 * @param a1	first message argument
-		 * @param a2	second message argument
+		 * @param a		argument
 		 *
 		 * @note You should only use this with the SIMSG_* macros
 		 */
-		Message(songit_id_t id, int recipient_class, int type, int a1, int a2);
+		Message(songit_id_t id, int recipient_class, int type, int a)
+			: ID(id), _class(recipient_class), _type(type) {
+			_arg.i = a;
+		}
 
 		/**
 		 * Create a song iterator message, wherein the first parameter is a pointer.
@@ -133,12 +134,14 @@ public:
 		 * @param id: song ID the message is targeted to
 		 * @param recipient_class: Message recipient class
 		 * @param type	message type
-		 * @param a1	first message argument
-		 * @param a2	second message argument
+		 * @param a		argument
 		 *
 		 * @note You should only use this with the SIMSG_* macros
 		 */
-		Message(songit_id_t id, int recipient_class, int type, void *a1, int a2);
+		Message(songit_id_t id, int recipient_class, int type, void *a)
+			: ID(id), _class(recipient_class), _type(type) {
+			_arg.p = a;
+		}
 	};
 
 public:

@@ -589,17 +589,17 @@ Audio::AudioStream *Sci0SongIterator::getAudioStream() {
 }
 
 SongIterator *Sci0SongIterator::handleMessage(Message msg) {
-	if (msg.recipient == _SIMSG_BASE) {
-		switch (msg.type) {
+	if (msg._class == _SIMSG_BASE) {
+		switch (msg._type) {
 
 		case _SIMSG_BASEMSG_PRINT:
-			print_tabs_id(msg.args[0].i, ID);
+			print_tabs_id(msg._arg.i, ID);
 			fprintf(stderr, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
 			        _deviceId, active_channels, _size, loops);
 			break;
 
 		case _SIMSG_BASEMSG_SET_LOOPS:
-			loops = msg.args[0].i;
+			loops = msg._arg.i;
 			break;
 
 		case _SIMSG_BASEMSG_STOP: {
@@ -612,7 +612,7 @@ SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 
 		case _SIMSG_BASEMSG_SET_PLAYMASK: {
 			int i;
-			_deviceId = msg.args[0].i;
+			_deviceId = msg._arg.i;
 
 			/* Set all but the rhytm channel mask bits */
 			channel.playmask &= ~(1 << MIDI_RHYTHM_CHANNEL);
@@ -626,12 +626,12 @@ SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 
 		case _SIMSG_BASEMSG_SET_RHYTHM:
 			channel.playmask &= ~(1 << MIDI_RHYTHM_CHANNEL);
-			if (msg.args[0].i)
+			if (msg._arg.i)
 				channel.playmask |= (1 << MIDI_RHYTHM_CHANNEL);
 			break;
 
 		case _SIMSG_BASEMSG_SET_FADE: {
-			fade_params_t *fp = (fade_params_t *) msg.args[0].p;
+			fade_params_t *fp = (fade_params_t *) msg._arg.p;
 			fade.action = fp->action;
 			fade.final_volume = fp->final_volume;
 			fade.ticks_per_step = fp->ticks_per_step;
@@ -1076,8 +1076,8 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 }
 
 SongIterator *Sci1SongIterator::handleMessage(Message msg) {
-	if (msg.recipient == _SIMSG_BASE) { /* May extend this in the future */
-		switch (msg.type) {
+	if (msg._class == _SIMSG_BASE) { /* May extend this in the future */
+		switch (msg._type) {
 
 		case _SIMSG_BASEMSG_PRINT: {
 			int playmask = 0;
@@ -1086,7 +1086,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 			for (i = 0; i < _numChannels; i++)
 				playmask |= _channels[i].playmask;
 
-			print_tabs_id(msg.args[0].i, ID);
+			print_tabs_id(msg._arg.i, ID);
 			fprintf(stderr, "SCI1: chan-nr=%d, playmask=%04x\n",
 			        _numChannels, playmask);
 		}
@@ -1111,13 +1111,13 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 
 				_deviceId
 				= sci0_to_sci1_device_map
-				  [sci_ffs(msg.args[0].i & 0xff) - 1]
+				  [sci_ffs(msg._arg.i & 0xff) - 1]
 				  [sfx_pcm_available()]
 				  ;
 
 				if (_deviceId == 0xff) {
 					sciprintf("[iterator-1] Warning: Device %d(%d) not supported",
-					          msg.args[0].i & 0xff, sfx_pcm_available());
+					          msg._arg.i & 0xff, sfx_pcm_available());
 				}
 				if (_initialised) {
 					int i;
@@ -1152,20 +1152,20 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 
 		case _SIMSG_BASEMSG_SET_LOOPS:
 			if (msg.ID == ID)
-				loops = (msg.args[0].i > 32767) ? 99 : 0;
+				loops = (msg._arg.i > 32767) ? 99 : 0;
 			/* 99 is arbitrary, but we can't use '1' because of
 			** the way we're testing in the decoding section.  */
 			break;
 
 		case _SIMSG_BASEMSG_SET_HOLD:
-			_hold = msg.args[0].i;
+			_hold = msg._arg.i;
 			break;
 		case _SIMSG_BASEMSG_SET_RHYTHM:
 			/* Ignore */
 			break;
 
 		case _SIMSG_BASEMSG_SET_FADE: {
-			fade_params_t *fp = (fade_params_t *) msg.args[0].p;
+			fade_params_t *fp = (fade_params_t *) msg._arg.p;
 			fade.action = fp->action;
 			fade.final_volume = fp->final_volume;
 			fade.ticks_per_step = fp->ticks_per_step;
@@ -1174,7 +1174,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 		}
 
 		default:
-			warning(SIPFX "Unsupported command %d to SCI1 iterator", msg.type);
+			warning(SIPFX "Unsupported command %d to SCI1 iterator", msg._type);
 		}
 		return this;
 	}
@@ -1247,8 +1247,8 @@ public:
 };
 
 SongIterator *CleanupSongIterator::handleMessage(Message msg) {
-	if (msg.recipient == _SIMSG_BASEMSG_PRINT && msg.type == _SIMSG_BASEMSG_PRINT) {
-		print_tabs_id(msg.args[0].i, ID);
+	if (msg._class == _SIMSG_BASEMSG_PRINT && msg._type == _SIMSG_BASEMSG_PRINT) {
+		print_tabs_id(msg._arg.i, ID);
 		fprintf(stderr, "CLEANUP\n");
 	}
 
@@ -1300,8 +1300,8 @@ Audio::AudioStream *FastForwardSongIterator::getAudioStream() {
 }
 
 SongIterator *FastForwardSongIterator::handleMessage(Message msg) {
-	if (msg.recipient == _SIMSG_PLASTICWRAP) {
-		assert(msg.type == _SIMSG_PLASTICWRAP_ACK_MORPH);
+	if (msg._class == _SIMSG_PLASTICWRAP) {
+		assert(msg._type == _SIMSG_PLASTICWRAP_ACK_MORPH);
 
 		if (_delta <= 0) {
 			SongIterator *it = _delegate;
@@ -1313,10 +1313,10 @@ SongIterator *FastForwardSongIterator::handleMessage(Message msg) {
 		return this;
 	}
 
-	if (msg.recipient == _SIMSG_BASE && msg.type == _SIMSG_BASEMSG_PRINT) {
-		print_tabs_id(msg.args[0].i, ID);
+	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
+		print_tabs_id(msg._arg.i, ID);
 		fprintf(stderr, "FASTFORWARD:\n");
-		msg.args[0].i++;
+		msg._arg.i++;
 	}
 
 	// And continue with the delegate
@@ -1600,8 +1600,8 @@ Audio::AudioStream *TeeSongIterator::getAudioStream() {
 }
 
 SongIterator *TeeSongIterator::handleMessage(Message msg) {
-	if (msg.recipient == _SIMSG_PLASTICWRAP) {
-		assert(msg.type == _SIMSG_PLASTICWRAP_ACK_MORPH);
+	if (msg._class == _SIMSG_PLASTICWRAP) {
+		assert(msg._type == _SIMSG_PLASTICWRAP_ACK_MORPH);
 
 		SongIterator *old_it;
 		if (!(_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))) {
@@ -1625,10 +1625,10 @@ SongIterator *TeeSongIterator::handleMessage(Message msg) {
 		return this;
 	}
 
-	if (msg.recipient == _SIMSG_BASE && msg.type == _SIMSG_BASEMSG_PRINT) {
-		print_tabs_id(msg.args[0].i, ID);
+	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
+		print_tabs_id(msg._arg.i, ID);
 		fprintf(stderr, "TEE:\n");
-		msg.args[0].i++;
+		msg._arg.i++;
 	}
 
 	// And continue with the children
@@ -1674,7 +1674,8 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				BREAKPOINT();
-			} else fprintf(stderr, "SI_MORPH successful\n");
+			} else
+				fprintf(stderr, "SI_MORPH successful\n");
 		}
 
 		if (retval == SI_FINISHED)
@@ -1704,8 +1705,7 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 	             || (retval == SI_FINISHED)
 	         ));
 
-	if (retval == SI_FINISHED
-	        && (mask & IT_READER_MAY_FREE)) {
+	if (retval == SI_FINISHED && (mask & IT_READER_MAY_FREE)) {
 		delete *it;
 		*it = NULL;
 	}
@@ -1761,28 +1761,6 @@ SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 	}
 
 	return it;
-}
-
-SongIterator::Message::Message() {
-	ID = 0;
-	recipient = 0;
-	type = 0;
-}
-
-SongIterator::Message::Message(songit_id_t id, int r, int t, int a1, int a2) {
-	ID = id;
-	recipient = r;
-	type = t;
-	args[0].i = a1;
-	args[1].i = a2;
-}
-
-SongIterator::Message::Message(songit_id_t id, int r, int t, void *a1, int a2) {
-	ID = id;
-	recipient = r;
-	type = t;
-	args[0].p = a1;
-	args[1].i = a2;
 }
 
 int songit_handle_message(SongIterator **it_reg_p, SongIterator::Message msg) {
