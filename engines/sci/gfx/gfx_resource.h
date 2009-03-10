@@ -242,6 +242,16 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette);
 ** Returns   : (gfxr_view_t *) The resulting view
 */
 
+gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01);
+/* Calculates n SCI cursor
+** Parameters: (int) id: The cursor's resource ID
+**             (byte *) resource: Pointer to the resource data
+**             (int) size: Resource size
+**             (bool) isSci01: Set to true to load a SCI1 cursor
+** Returns   : (gfx_pixmap_t *) A newly allocated pixmap containing an index
+**                               color representation of the cursor
+*/
+
 /*********************/
 /*  SCI1 operations  */
 /*********************/

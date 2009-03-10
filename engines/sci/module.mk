@@ -47,10 +47,11 @@ MODULE_OBJS = \
 	gfx/resmgr.o \
 	gfx/sbtree.o \
 	gfx/sci_widgets.o \
+	gfx/resource/sci_cursor.o \
 	gfx/resource/sci_font.o \
-	gfx/resource/res_pal.o \
-	gfx/resource/res_pic.o \
 	gfx/resource/res_manager.o \
+	gfx/resource/res_pal.o \
+	gfx/resource/res_pic.o \	
 	gfx/resource/res_view0.o \
 	gfx/resource/res_view1.o \
 	scicore/sciconsole.o \
