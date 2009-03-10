@@ -36,6 +36,103 @@
 
 namespace Sci {
 
+/****************************************/
+/* Refcounting garbage collected memory */
+/****************************************/
+
+#define REFCOUNT_OVERHEAD (sizeof(uint32) * 3)
+#define REFCOUNT_MAGIC_LIVE_1 0xebdc1741
+#define REFCOUNT_MAGIC_LIVE_2 0x17015ac9
+#define REFCOUNT_MAGIC_DEAD_1 0x11dead11
+#define REFCOUNT_MAGIC_DEAD_2 0x22dead22
+
+#define REFCOUNT_CHECK(p) ((((uint32 *)(p))[-3] == REFCOUNT_MAGIC_LIVE_2) && (((uint32 *)(p))[-1] == REFCOUNT_MAGIC_LIVE_1))
+
+#define REFCOUNT(p) (((uint32 *)p)[-2])
+
+#undef TRACE_REFCOUNT
+
+/* Allocates "garbage" memory
+** Parameters: (size_t) length: Number of bytes to allocate
+** Returns   : (void *) The allocated memory
+** Memory allocated in this fashion will be marked as holding one reference.
+** It cannot be freed with 'free()', only by using sci_refcount_decref().
+*/
+static void *sci_refcount_alloc(size_t length) {
+	uint32 *data = (uint32 *)sci_malloc(REFCOUNT_OVERHEAD + length);
+#ifdef TRACE_REFCOUNT
+	fprintf(stderr, "[] REF: Real-alloc at %p\n", data);
+#endif
+	data += 3;
+
+	data[-1] = REFCOUNT_MAGIC_LIVE_1;
+	data[-3] = REFCOUNT_MAGIC_LIVE_2;
+	REFCOUNT(data) = 1;
+#ifdef TRACE_REFCOUNT
+	fprintf(stderr, "[] REF: Alloc'd %p (ref=%d) OK=%d\n", data, REFCOUNT(data),
+	        REFCOUNT_CHECK(data));
+#endif
+	return data;
+}
+
+/* Adds another reference to refcounted memory
+** Parameters: (void *) data: The data to add a reference to
+** Returns   : (void *) data
+*/
+static void *sci_refcount_incref(void *data) {
+	if (!REFCOUNT_CHECK(data)) {
+		BREAKPOINT();
+	} else
+		REFCOUNT(data)++;
+
+#ifdef TRACE_REFCOUNT
+	fprintf(stderr, "[] REF: Inc'ing %p (now ref=%d)\n", data, REFCOUNT(data));
+#endif
+	return data;
+}
+
+/* Decrements the reference count for refcounted memory
+** Parameters: (void *) data: The data to add a reference to
+** Returns   : (void *) data
+** If the refcount reaches zero, the memory will be deallocated
+*/
+static void sci_refcount_decref(void *data) {
+#ifdef TRACE_REFCOUNT
+	fprintf(stderr, "[] REF: Dec'ing %p (prev ref=%d) OK=%d\n", data, REFCOUNT(data),
+	        REFCOUNT_CHECK(data));
+#endif
+	if (!REFCOUNT_CHECK(data)) {
+		BREAKPOINT();
+	} else if (--REFCOUNT(data) == 0) {
+		uint32 *fdata = (uint32 *)data;
+
+		fdata[-1] = REFCOUNT_MAGIC_DEAD_1;
+		fdata[-3] = REFCOUNT_MAGIC_DEAD_2;
+
+#ifdef TRACE_REFCOUNT
+		fprintf(stderr, "[] REF: Freeing (%p)...\n", fdata - 3);
+#endif
+		free(fdata - 3);
+#ifdef TRACE_REFCOUNT
+		fprintf(stderr, "[] REF: Done.\n");
+#endif
+	}
+}
+
+/* Duplicates non-refcounted memory into a refcounted block
+** Parameters: (void *) data: The memory to copy from
+**             (size_t) len: The number of bytes to copy/allocate
+** Returns   : (void *) Newly allocated refcounted memory
+** The number of references accounted for will be one.
+*/
+static void *sci_refcount_memdup(void *data, size_t len) {
+	void *dest = sci_refcount_alloc(len);
+	memcpy(dest, data, len);
+	return dest;
+}
+
+
+
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
                                     2, 2, 2, 2, 1, 1, 2, 0
                                    };

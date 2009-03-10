@@ -24,20 +24,7 @@
  */
 
 
-/** This header file defines a portable library for allocating memory safely
- ** throughout FreeSCI.
- ** Implementations of basic functions found here are in this file and
- ** $(SRCDIR)/src/scicore/sci_memory.c
- *
- **************
- *
- * Sets behaviour if memory allocation call fails.
- * UNCHECKED_MALLOCS:  use C library routine without checks
- * (nothing defined):  check mallocs and exit immediately on fail (recommended)
- *
- ** -- Alex Angas
- **
- **/
+// This header file defines a portable library for allocating memory safely.
 
 
 #ifndef SCI_SCI_MEMORY_H
@@ -97,43 +84,6 @@ extern char *sci_strndup(const char *src, size_t length);
 ** Returns   : (char *) The resulting copy, allocated with sci_malloc().
 ** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
-*/
-
-/****************************************/
-/* Refcounting garbage collected memory */
-/****************************************/
-
-/* Refcounting memory calls are a little slower than the others,
-** and using it improperly may cause memory leaks. It conserves
-** memory, though.  */
-
-extern void *sci_refcount_alloc(size_t length);
-/* Allocates "garbage" memory
-** Parameters: (size_t) length: Number of bytes to allocate
-** Returns   : (void *) The allocated memory
-** Memory allocated in this fashion will be marked as holding one reference.
-** It cannot be freed with 'free()', only by using sci_refcount_decref().
-*/
-
-extern void *sci_refcount_incref(void *data);
-/* Adds another reference to refcounted memory
-** Parameters: (void *) data: The data to add a reference to
-** Returns   : (void *) data
-*/
-
-extern void sci_refcount_decref(void *data);
-/* Decrements the reference count for refcounted memory
-** Parameters: (void *) data: The data to add a reference to
-** Returns   : (void *) data
-** If the refcount reaches zero, the memory will be deallocated
-*/
-
-extern void *sci_refcount_memdup(void *data, size_t len);
-/* Duplicates non-refcounted memory into a refcounted block
-** Parameters: (void *) data: The memory to copy from
-**             (size_t) len: The number of bytes to copy/allocate
-** Returns   : (void *) Newly allocated refcounted memory
-** The number of references accounted for will be one.
 */
 
 } // End of namespace Sci
