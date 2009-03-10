@@ -493,9 +493,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		lastKeyHit.flags == Common::KBD_CTRL) {
 		_snapScroll ^= 1;
 		if (_snapScroll) {
-			messageDialog((const char *)"Snap scroll on");
+			messageDialog("Snap scroll on");
 		} else {
-			messageDialog((const char *)"Snap scroll off");
+			messageDialog("Snap scroll off");
 		}	
 
 		if (VAR_CAMERA_FAST_X != 0xFF)

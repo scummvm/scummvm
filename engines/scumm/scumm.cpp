@@ -2311,6 +2311,7 @@ int ScummEngine_v7::runDialog(Dialog &dialog) {
 void ScummEngine::messageDialog(const char *message) {
 	if (!_messageDialog)
 		_messageDialog = new InfoDialog(this, message);
+	((InfoDialog *)_messageDialog)->setInfoText(message);
 	runDialog(*_messageDialog);
 }
 
