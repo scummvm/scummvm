@@ -26,6 +26,11 @@
 #ifndef CINE_PAL_H
 #define CINE_PAL_H
 
+// Forward declare Graphics::PixelFormat so we don't have to include its header here
+namespace Graphics {
+	struct PixelFormat;
+};
+
 namespace Cine {
 
 struct PalEntry {
@@ -47,42 +52,30 @@ void transformPaletteRange(uint16 *srcPal, uint16 *dstPal, int startColor, int s
 void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopColor, int r, int g, int b);
 
 // This class might be used for handling Cine-engine's palettes in the future. WIP!
-// All colors are represented internally as 32-bit RGBA, but
-// 9-bit color palettes with 16 colors can be loaded and converted on-the-fly.
-// TODO: Add palette saving in the peculiar but used 9-bit color format.
-// TODO: Make use of this class.
+// TODO: Document
+// TODO: Make use of
+// TODO: Test
 class Palette {
 public:
-	Palette& load24BitColors(byte *colors, uint colorCount = 256);
-	Palette& load9BitColors(uint16 *colors, uint colorCount = 16);
+	Palette& loadCineLowPal(const byte *colors, const uint colorCount = 16);
+	Palette& loadCineHighPal(const byte *colors, const uint colorCount = 256);
+	Palette& load(const byte *colors, const Graphics::PixelFormat format, const uint colorCount);
 	Palette& rotateRight(byte firstIndex, byte lastIndex);
-	Palette& saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);
-	uint getColorCount() const;
+	Palette& saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
+	uint colorCount() const;
 
 private:
-	static const byte
-		R_INDEX = 0,
-		G_INDEX = 1,
-		B_INDEX = 2,
-		A_INDEX = 3;
-
-	static const uint
-		COMPONENTS_PER_COLOR = 4,
-		BITS_PER_COMPONENT = 8,
-		COMPONENT_MASK = ((1 << BITS_PER_COMPONENT) - 1),
-		COMPONENT_MAX = COMPONENT_MASK,
-		COMPONENT_MUL = COMPONENT_MAX / 7;
-
-	typedef uint32 PackedColor;
-
-	byte& getComponent(byte colorIndex, byte componentIndex);
-	void setComponent(byte colorIndex, byte componentIndex, byte value);
-	PackedColor getColor(byte colorIndex);
-	void setColor(byte colorIndex, PackedColor color);
 	void saturatedAddColor(byte index, signed r, signed g, signed b);
-	void setColorCount(uint colorCount);
 
-	Common::Array<byte> _colors;
+private:
+	struct Color {
+		uint8 r, g, b;
+	};
+
+	uint _rBits, _gBits, _bBits;
+	uint _rMax, _gMax, _bMax;
+
+	Common::Array<Color> _colors;
 };
 
 } // End of namespace Cine

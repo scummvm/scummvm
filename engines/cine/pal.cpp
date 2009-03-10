@@ -25,6 +25,7 @@
 
 #include "cine/cine.h"
 #include "cine/various.h"
+#include "graphics/pixelformat.h"
 
 namespace Cine {
 
@@ -161,47 +162,26 @@ void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopC
 	}
 }
 
-byte& Palette::getComponent(byte colorIndex, byte componentIndex) {
-	assert(colorIndex < getColorCount() && componentIndex < COMPONENTS_PER_COLOR);
-	return _colors[colorIndex * COMPONENTS_PER_COLOR + componentIndex];
-}
-
-void Palette::setComponent(byte colorIndex, byte componentIndex, byte value) {
-	getComponent(colorIndex, componentIndex) = value;
-}
-
-Palette::PackedColor Palette::getColor(byte colorIndex) {
-	return (getComponent(colorIndex, R_INDEX) << (R_INDEX * BITS_PER_COMPONENT)) |
-		   (getComponent(colorIndex, G_INDEX) << (G_INDEX * BITS_PER_COMPONENT)) |
-		   (getComponent(colorIndex, B_INDEX) << (B_INDEX * BITS_PER_COMPONENT)) |
-		   (getComponent(colorIndex, A_INDEX) << (A_INDEX * BITS_PER_COMPONENT));
-}
-
-void Palette::setColor(byte colorIndex, PackedColor color) {
-	setComponent(colorIndex, R_INDEX, (color >> (R_INDEX * BITS_PER_COMPONENT)) & COMPONENT_MASK);
-	setComponent(colorIndex, G_INDEX, (color >> (G_INDEX * BITS_PER_COMPONENT)) & COMPONENT_MASK);
-	setComponent(colorIndex, B_INDEX, (color >> (B_INDEX * BITS_PER_COMPONENT)) & COMPONENT_MASK);
-	setComponent(colorIndex, A_INDEX, (color >> (A_INDEX * BITS_PER_COMPONENT)) & COMPONENT_MASK);
-}
-
 // a.k.a. palRotate
 Palette& Palette::rotateRight(byte firstIndex, byte lastIndex) {
-	PackedColor lastColor = getColor(lastIndex);
+	const Color lastColor = _colors[lastIndex];
 
 	for (int i = lastIndex; i > firstIndex; i--) {
-		setColor(i, getColor(i - 1));
+		_colors[i] = _colors[i - 1];
 	}
 
-	setColor(firstIndex, lastColor);
+	_colors[firstIndex] = lastColor;
 	return *this;
 }
 
-uint Palette::getColorCount() const {
-	return _colors.size() / COMPONENTS_PER_COLOR;
+uint Palette::colorCount() const {
+	return _colors.size();
 }
 
 // a.k.a. transformPaletteRange
 Palette& Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
+	assert(firstIndex < colorCount() && lastIndex < colorCount());
+
 	for (uint i = firstIndex; i <= lastIndex; i++) {
 		saturatedAddColor(i, r, g, b);
 	}
@@ -213,39 +193,47 @@ Palette& Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, s
 // e.g. r = 7 sets the resulting color's red component to maximum
 // e.g. r = -7 sets the resulting color's red component to minimum (i.e. zero)
 void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
-	byte newR = CLIP<int>(getComponent(index, R_INDEX) + r * COMPONENT_MUL, 0, COMPONENT_MAX);
-	byte newG = CLIP<int>(getComponent(index, G_INDEX) + g * COMPONENT_MUL, 0, COMPONENT_MAX);
-	byte newB = CLIP<int>(getComponent(index, B_INDEX) + b * COMPONENT_MUL, 0, COMPONENT_MAX);
-
-	setComponent(index, R_INDEX, newR);
-	setComponent(index, G_INDEX, newG);
-	setComponent(index, B_INDEX, newB);
+	_colors[index].r = CLIP<int>(_colors[index].r + r, 0, _rMax);
+	_colors[index].g = CLIP<int>(_colors[index].g + g, 0, _gMax);
+	_colors[index].b = CLIP<int>(_colors[index].b + b, 0, _bMax);
 }
 
-Palette& Palette::load9BitColors(uint16 *colors, uint colorCount) {
-	setColorCount(colorCount);
-	for (uint i = 0; i < colorCount; i++) {
-		setComponent(i, R_INDEX, ((colors[i] >> 8) & 7) * COMPONENT_MUL);
-		setComponent(i, G_INDEX, ((colors[i] >> 4) & 7) * COMPONENT_MUL);
-		setComponent(i, B_INDEX, ((colors[i] >> 0) & 7) * COMPONENT_MUL);
-		setComponent(i, A_INDEX, 0);
+Palette& Palette::loadCineLowPal(const byte *colors, const uint colorCount) {
+	static const Graphics::PixelFormat format = {2, 5, 5, 5, 8, 8, 4, 0, 0};
+	return load(colors, format, colorCount);
+}
+
+Palette& Palette::loadCineHighPal(const byte *colors, const uint colorCount) {
+	static const Graphics::PixelFormat format = {3, 0, 0, 0, 8, 0, 8, 16, 0};
+	return load(colors, format, colorCount);
+}
+
+Palette& Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint colorCount) {
+	assert(format.aLoss == 8); // No alpha	
+	assert(format.rShift % 8 == ((format.rShift + (8 - format.rLoss - 1)) % 8)); // R must be inside one byte
+	assert(format.gShift % 8 == ((format.gShift + (8 - format.gLoss - 1)) % 8)); // G must be inside one byte
+	assert(format.bShift % 8 == ((format.bShift + (8 - format.bLoss - 1)) % 8)); // B must be inside one byte
+
+	_rBits = (8 - format.rLoss);
+	_gBits = (8 - format.gLoss);
+	_bBits = (8 - format.bLoss);
+
+	_rMax = (1 << _rBits) - 1;
+	_gMax = (1 << _gBits) - 1;
+	_bMax = (1 << _bBits) - 1;
+
+	_colors.clear();
+	_colors.resize(colorCount);
+	
+	for (uint i = 0; i < colorCount; i++)
+	{
+		// _rMax, _gMax, _bMax are also used as masks here
+		_colors[i].r = (colors[i * format.bytesPerPixel + (format.rShift / 8)] >> (format.rShift % 8)) & _rMax;
+		_colors[i].g = (colors[i * format.bytesPerPixel + (format.gShift / 8)] >> (format.gShift % 8)) & _gMax;
+		_colors[i].b = (colors[i * format.bytesPerPixel + (format.bShift / 8)] >> (format.bShift % 8)) & _bMax;
 	}
-	return *this;
-}
 
-Palette& Palette::load24BitColors(byte *colors, uint colorCount) {
-	setColorCount(colorCount);
-	for (uint i = 0; i < colorCount; i++) {
-		setComponent(i, R_INDEX, colors[i * 3 + 0]);
-		setComponent(i, G_INDEX, colors[i * 3 + 1]);
-		setComponent(i, B_INDEX, colors[i * 3 + 2]);
-		setComponent(i, A_INDEX, 0);
-	}
 	return *this;
-}
-
-void Palette::setColorCount(uint colorCount) {
-	_colors.resize(colorCount * COMPONENTS_PER_COLOR);
 }
 
 } // End of namespace Cine
