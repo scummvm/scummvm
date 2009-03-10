@@ -45,7 +45,7 @@ namespace ListInternal {
 		Node(const T &x) : _data(x) {}
 	};
 
-	template<typename T> class ConstIterator;
+	template<typename T> struct ConstIterator;
 
 	template<typename T>
 	struct Iterator {
