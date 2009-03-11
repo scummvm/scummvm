@@ -80,7 +80,7 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 
 	_currentShadowArray = NULL;
 
-	GLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
+	GLfloat ambientSource[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	glPolygonOffset(-6.0, -6.0);
