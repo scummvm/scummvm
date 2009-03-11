@@ -990,14 +990,14 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		wCompression = file->readUint16LE();
 		break;
 	case SCI_VERSION_1:
-		type = (ResourceType)file->readByte();
+		type = (ResourceType)(file->readByte() & 0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE() - 4;
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
 	case SCI_VERSION_1_1:
-		type = (ResourceType)file->readByte();
+		type = (ResourceType)(file->readByte() & 0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE();
 		szUnpacked = file->readUint16LE();

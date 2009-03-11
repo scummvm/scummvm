@@ -77,6 +77,7 @@ protected:
 	//! put byte to _dest stream
 	/** @param b - byte to put
 	  */
+	virtual byte getByte();
 	virtual void putByte(byte b);
 	virtual void fetchBits();
 	int copyBytes(Common::ReadStream *src, Common::WriteStream *dest, uint32 nSize);
@@ -156,13 +157,14 @@ protected:
 //----------------------------------------------
 class DecompressorLZW : public Decompressor {
 public:
-//	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 	           uint32 nUnpacked);
 
 protected:
-	int doUnpack(byte *src, byte *dest, int length, int complength);
+	int unpackLZW(byte *dest);
 
+	void fetchBits();
+	uint32 getBits(int n);
 };
 
 //----------------------------------------------
@@ -171,15 +173,16 @@ protected:
 //----------------------------------------------
 class DecompressorDCL : public Decompressor {
 public:
-//	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 	           uint32 nUnpacked);
 
 protected:
-	int unpackDCL(byte *src, byte *dest, int length, int complength);
-	int getbits(struct bit_read_struct *inp, int bits);
-	int huffman_lookup(struct bit_read_struct *inp, int *tree);
+	int unpackDCL(byte *dest);
+	int huffman_lookup(int *tree);
 
+	void fetchBits();
+	bool getBit();
+	uint32 getBits(int n);
 };
 
 } // End of namespace Sci

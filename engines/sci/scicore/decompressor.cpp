@@ -31,6 +31,7 @@
 #include "sci/scicore/decompressor.h"
 #include "sci/sci.h"
 
+#define _SCI_DECOMPRESS_DEBUG
 namespace Sci {
 
 int Decompressor::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
@@ -88,6 +89,10 @@ uint32 Decompressor::getBits(int n) {
 	return ret;
 }
 
+byte Decompressor::getByte() {
+		return getBits(8);
+}
+
 void Decompressor::putByte(byte b) {
 	_dest->writeByte(b);
 	_dwWrote++;
@@ -122,7 +127,7 @@ int16 DecompressorHuffman::getc2() {
 		if (getBit()) {
 			next = node[1] & 0x0F; // use lower 4 bits
 			if (next == 0)
-				return getBits(8) | 0x100;
+				return getByte() | 0x100;
 		} else
 			next = node[1] >> 4; // use higher 4 bits
 		node += next << 1;
@@ -285,10 +290,10 @@ void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbu
 	byte *pd = *pixeldata;
 
 	while (pos < size) {
-		nextbyte = *(rd++);
-		*(ob++) = nextbyte;
+		nextbyte = *rd++;
+		*ob++ = nextbyte;
 		pos++;
-		switch (nextbyte&0xC0) {
+		switch (nextbyte & 0xC0) {
 		case 0x40 :
 		case 0x00 :
 			memcpy(ob, pd, nextbyte);
@@ -299,8 +304,8 @@ void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbu
 		case 0xC0 :
 			break;
 		case 0x80 :
-			nextbyte = *(pd++);
-			*(ob++) = nextbyte;
+			nextbyte = *pd++;
+			*ob++ = nextbyte;
 			pos++;
 			break;
 		}
@@ -425,8 +430,8 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	/* Parse the main header */
 	cellengths = inbuffer + READ_LE_UINT16(seeker) + 2;
 	seeker += 2;
-	loopheaders = *(seeker++);
-	lh_present = *(seeker++);
+	loopheaders = *seeker++;
+	lh_present = *seeker++;
 	lh_mask = READ_LE_UINT16(seeker);
 	seeker += 2;
 	unknown = READ_LE_UINT16(seeker);
@@ -534,62 +539,51 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 int DecompressorLZW::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
                             uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
-	byte *buffin = new byte[nPacked];
 	byte *buffout = new byte[nUnpacked];
-	src->read(buffin, nPacked);
-
-	doUnpack(buffin, buffout, nUnpacked, nPacked);
-
+	int error = unpackLZW(buffout);
 	dest->write(buffout, nUnpacked);
-	delete[] buffin;
 	delete[] buffout;
-	return 0;
+	return error;
 }
 
-int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength) {
+void DecompressorLZW::fetchBits() {
+	while (_nBits <= 24) {
+		_dwBits |= ((uint32)_src->readByte()) << (_nBits);
+		_nBits += 8;
+		_dwRead++;
+	}
+}
+
+uint32 DecompressorLZW::getBits(int n) {
+	if (_nBits < n)
+		fetchBits();
+	uint32 ret = (_dwBits & ~((~0) << n));
+	_dwBits >>= n;
+	_nBits -= n;
+	return ret;
+}
+int DecompressorLZW::unpackLZW(byte *dest) {
 	uint16 bitlen = 9; // no. of bits to read (max. 12)
-	uint16 bitmask = 0x01ff;
-	uint16 bitctr = 0; // current bit position
-	uint16 bytectr = 0; // current byte position
 	uint16 token; // The last received value
 	uint16 maxtoken = 0x200; // The biggest token
-
 	uint16 tokenlist[4096]; // pointers to dest[]
 	uint16 tokenlengthlist[4096]; // char length of each token
 	uint16 tokenctr = 0x102; // no. of registered tokens (starts here)
-
 	uint16 tokenlastlength = 0;
+	uint32 destctr = 0;
 
-	uint16 destctr = 0;
-
-	while (bytectr < complength) {
-
-		uint32 tokenmaker = src[bytectr++] >> bitctr;
-		if (bytectr < complength)
-			tokenmaker |= (src[bytectr] << (8 - bitctr));
-		if (bytectr + 1 < complength)
-			tokenmaker |= (src[bytectr+1] << (16 - bitctr));
-
-		token = tokenmaker & bitmask;
-
-		bitctr += bitlen - 8;
-
-		while (bitctr >= 8) {
-			bitctr -= 8;
-			bytectr++;
-		}
+	while (_dwRead < _szPacked || _nBits) {
+		token = getBits(bitlen);
 
 		if (token == 0x101)
 			return 0; // terminator
 		if (token == 0x100) { // reset command
 			maxtoken = 0x200;
 			bitlen = 9;
-			bitmask = 0x01ff;
 			tokenctr = 0x0102;
 		} else {
 			{
 				int i;
-
 				if (token > 0xff) {
 					if (token >= tokenctr) {
 #ifdef _SCI_DECOMPRESS_DEBUG
@@ -599,14 +593,14 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 						// May be it should throw something like SCI_ERROR_DECOMPRESSION_INSANE
 					} else {
 						tokenlastlength = tokenlengthlist[token] + 1;
-						if (destctr + tokenlastlength > length) {
+						if (destctr + tokenlastlength > _szUnpacked) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 							// For me this seems a normal situation, It's necessary to handle it
 							warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
-							        length, destctr, tokenlastlength);
+							        _szUnpacked, destctr, tokenlastlength);
 #endif
 							i = 0;
-							for (; destctr < length; destctr++) {
+							for (; destctr < _szUnpacked; destctr++) {
 								dest[destctr++] = dest [tokenlist[token] + i];
 								i++;
 							}
@@ -617,7 +611,7 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 					}
 				} else {
 					tokenlastlength = 1;
-					if (destctr >= length) {
+					if (destctr >= _szUnpacked) {
 #ifdef _SCI_DECOMPRESS_DEBUG
 						warning("unpackLZW: Try to write single byte beyond end of array");
 #endif
@@ -630,8 +624,6 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 			if (tokenctr == maxtoken) {
 				if (bitlen < 12) {
 					bitlen++;
-					bitmask <<= 1;
-					bitmask |= 1;
 					maxtoken <<= 1;
 				} else
 					continue; // no further tokens allowed
@@ -641,7 +633,6 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 			tokenlengthlist[tokenctr++] = tokenlastlength;
 		}
 	}
-
 	return 0;
 }
 
@@ -649,18 +640,9 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 // DCL decompressor for SCI1.1
 //----------------------------------------------
 #define HUFFMAN_LEAF 0x40000000
-
-struct bit_read_struct {
-	int length;
-	int bitpos;
-	int bytepos;
-	byte *data;
-};
-
 #define BRANCH_SHIFT 12
 #define BRANCH_NODE(pos, left, right)  ((left << BRANCH_SHIFT) | (right)),
 #define LEAF_NODE(pos, value)  ((value) | HUFFMAN_LEAF),
-
 
 static int length_tree[] = {
 #include "treedef.1"
@@ -677,80 +659,66 @@ static int ascii_tree[] = {
 	0 // We need something witout a comma at the end
 };
 
-#define CALLC(x) { if ((x) == -SCI_ERROR_DECOMPRESSION_OVERFLOW) return -SCI_ERROR_DECOMPRESSION_OVERFLOW; }
-
 int DecompressorDCL::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
                             uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
-	byte *buffin = new byte[nPacked];
+
 	byte *buffout = new byte[nUnpacked];
-	src->read(buffin, nPacked);
-
-	unpackDCL(buffin, buffout, nUnpacked, nPacked);
-
+	int error = unpackDCL(buffout);
 	dest->write(buffout, nUnpacked);
-	delete[] buffin;
 	delete[] buffout;
-	return 0;
+	return error;
 }
 
-int DecompressorDCL::getbits(struct bit_read_struct *inp, int bits) {
-	int morebytes = (bits + inp->bitpos - 1) >> 3;
-	int result = 0;
-	int i;
-
-	if (inp->bytepos + morebytes >= inp->length) {
-		warning("read out-of-bounds with bytepos %d + morebytes %d >= length %d",
-		        inp->bytepos, morebytes, inp->length);
-		return -7;
+void DecompressorDCL::fetchBits() {
+	while (_nBits <= 24) {
+		_dwBits |= ((uint32)_src->readByte()) << _nBits;
+		_nBits += 8;
+		_dwRead++;
 	}
-
-	for (i = 0; i <= morebytes; i++)
-		result |= (inp->data[inp->bytepos + i]) << (i << 3);
-
-	result >>= inp->bitpos;
-	result &= ~((~0) << bits);
-
-	inp->bitpos += bits - (morebytes << 3);
-	inp->bytepos += morebytes;
-
-	debugC(kDebugLevelDclInflate, "(%d:%04x)", bits, result);
-
-	return result;
 }
 
-int DecompressorDCL::huffman_lookup(struct bit_read_struct *inp, int *tree) {
+bool DecompressorDCL::getBit() {
+	// fetching more bits to _dwBits buffer
+	if (_nBits == 0) 
+		fetchBits();
+	bool b = _dwBits & 0x1;
+	_dwBits >>= 1;
+	_nBits--;
+	return b;
+}
+
+uint32 DecompressorDCL::getBits(int n) {
+	// fetching more data to buffer if needed
+	if (_nBits < n)
+		fetchBits();
+	uint32 ret = (_dwBits & ~((~0) << n));
+	_dwBits >>= n;
+	_nBits -= n;
+	return ret;
+}
+
+int DecompressorDCL::huffman_lookup(int *tree) {
 	int pos = 0;
 	int bit;
 
 	while (!(tree[pos] & HUFFMAN_LEAF)) {
-		CALLC(bit = getbits(inp, 1));
+		bit = getBit();
 		debugC(kDebugLevelDclInflate, "[%d]:%d->", pos, bit);
-		if (bit)
-			pos = tree[pos] & ~(~0 << BRANCH_SHIFT);
-		else
-			pos = tree[pos] >> BRANCH_SHIFT;
+		pos = bit ? tree[pos] & 0xFFF : tree[pos] >> BRANCH_SHIFT;
 	}
 	debugC(kDebugLevelDclInflate, "=%02x\n", tree[pos] & 0xffff);
-	return tree[pos] & 0xffff;
+	return tree[pos] & 0xFFFF;
 }
-
-#define VALUE_M(i) ((i == 0)? 7 : (VALUE_M(i - 1) + 2**i));
 
 #define DCL_ASCII_MODE 1
 
-int DecompressorDCL::unpackDCL(uint8* src, uint8* dest, int length, int complength) {
-	int mode, length_param, value, val_length, val_distance;
-	int write_pos = 0;
-	struct bit_read_struct reader;
+int DecompressorDCL::unpackDCL(byte* dest) {
+	int mode, length_param, value;
+	uint32 write_pos = 0, val_distance, val_length;
 
-	reader.length = complength;
-	reader.bitpos = 0;
-	reader.bytepos = 0;
-	reader.data = src;
-
-	CALLC(mode = getbits(&reader, 8));
-	CALLC(length_param = getbits(&reader, 8));
+	mode = getByte();
+	length_param = getByte();
 
 	if (mode == DCL_ASCII_MODE) {
 		warning("DCL-INFLATE: Decompressing ASCII mode (untested)");
@@ -759,57 +727,31 @@ int DecompressorDCL::unpackDCL(uint8* src, uint8* dest, int length, int compleng
 		return -1;
 	}
 
-	if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
-		for (int i = 0; i < reader.length; i++) {
-			debugC(kDebugLevelDclInflate, "%02x ", reader.data[i]);
-			if (!((i + 1) & 0x1f))
-				debugC(kDebugLevelDclInflate, "\n");
-		}
-
-
-		debugC(kDebugLevelDclInflate, "\n---\n");
-	}
-
-
 	if (length_param < 3 || length_param > 6)
 		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
-	while (write_pos < length) {
-		CALLC(value = getbits(&reader, 1));
-
-		if (value) { // (length,distance) pair
-			CALLC(value = huffman_lookup(&reader, length_tree));
+	while (write_pos < _szUnpacked) {
+		if (getBit()) { // (length,distance) pair
+			value = huffman_lookup(length_tree);
 
 			if (value < 8)
 				val_length = value + 2;
-			else {
-				int length_bonus;
-
-				val_length = (1 << (value - 7)) + 8;
-				CALLC(length_bonus = getbits(&reader, value - 7));
-				val_length += length_bonus;
-			}
+			else
+				val_length = 8 + (1 << (value - 7)) + getBits(value - 7);
 
 			debugC(kDebugLevelDclInflate, " | ");
 
-			CALLC(value = huffman_lookup(&reader, distance_tree));
+			value = huffman_lookup(distance_tree);
 
-			if (val_length == 2) {
-				val_distance = value << 2;
-
-				CALLC(value = getbits(&reader, 2));
-				val_distance |= value;
-			} else {
-				val_distance = value << length_param;
-
-				CALLC(value = getbits(&reader, length_param));
-				val_distance |= value;
-			}
-			++val_distance;
+			if (val_length == 2)
+				val_distance = (value << 2) | getBits(2);
+			else
+				val_distance = (value << length_param) | getBits(length_param);
+			val_distance ++;
 
 			debugC(kDebugLevelDclInflate, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
-			if (val_length + write_pos > length) {
+			if (val_length + write_pos > _szUnpacked) {
 				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
 				return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 			}
@@ -820,12 +762,12 @@ int DecompressorDCL::unpackDCL(uint8* src, uint8* dest, int length, int compleng
 			}
 
 			while (val_length) {
-				int copy_length = (val_length > val_distance) ? val_distance : val_length;
-
+				uint32 copy_length = (val_length > val_distance) ? val_distance : val_length;
+				assert(val_distance >= copy_length);
 				memcpy(dest + write_pos, dest + write_pos - val_distance, copy_length);
 
 				if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
-					for (int i = 0; i < copy_length; i++)
+					for (uint32 i = 0; i < copy_length; i++)
 						debugC(kDebugLevelDclInflate, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
 					debugC(kDebugLevelDclInflate, "\n");
 				}
@@ -836,14 +778,8 @@ int DecompressorDCL::unpackDCL(uint8* src, uint8* dest, int length, int compleng
 			}
 
 		} else { // Copy byte verbatim
-			if (mode == DCL_ASCII_MODE) {
-				CALLC(value = huffman_lookup(&reader, ascii_tree));
-			} else {
-				CALLC(value = getbits(&reader, 8));
-			}
-
+			value = (mode == DCL_ASCII_MODE) ? huffman_lookup(ascii_tree) : getByte();
 			dest[write_pos++] = value;
-
 			debugC(kDebugLevelDclInflate, "\33[32;31m%02x \33[37;37m", value);
 		}
 	}
