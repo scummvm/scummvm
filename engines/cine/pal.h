@@ -26,10 +26,7 @@
 #ifndef CINE_PAL_H
 #define CINE_PAL_H
 
-// Forward declare Graphics::PixelFormat so we don't have to include its header here
-namespace Graphics {
-	struct PixelFormat;
-}
+#include "graphics/pixelformat.h"
 
 namespace Cine {
 
@@ -63,11 +60,14 @@ public:
 
 	byte *saveCineLowPal(byte *colors, const uint numBytes) const;
 	byte *saveCineHighPal(byte *colors, const uint numBytes) const;
+	byte *saveOrigFormat(byte *colors, const uint numBytes) const;
+	byte *saveSystemFormat(byte *colors, const uint numBytes) const;
 	byte *save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const;
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
 	uint colorCount() const;
+	Graphics::PixelFormat colorFormat() const;
 
 private:
 	void saturatedAddColor(byte index, signed r, signed g, signed b);
@@ -77,6 +77,7 @@ private:
 		uint8 r, g, b;
 	};
 
+	Graphics::PixelFormat _format;
 	uint _rBits, _gBits, _bBits;
 	uint _rMax, _gMax, _bMax;
 

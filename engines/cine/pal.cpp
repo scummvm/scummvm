@@ -25,12 +25,13 @@
 
 #include "cine/cine.h"
 #include "cine/various.h"
-#include "graphics/pixelformat.h"
+#include "cine/pal.h"
 
 namespace Cine {
 
 static const Graphics::PixelFormat kLowPalFormat  = {2, 5, 5, 5, 8, 8, 4,  0, 0};
 static const Graphics::PixelFormat kHighPalFormat = {3, 0, 0, 0, 8, 0, 8, 16, 0};
+static const Graphics::PixelFormat kSystemPalFormat = {4, 0, 0, 0, 8, 0, 8, 16, 0};
 
 Common::Array<PalEntry> palArray;
 static byte paletteBuffer1[16];
@@ -179,6 +180,10 @@ uint Palette::colorCount() const {
 	return _colors.size();
 }
 
+Graphics::PixelFormat Palette::colorFormat() const {
+	return _format;
+}
+
 // a.k.a. transformPaletteRange
 Palette &Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
 	assert(firstIndex < colorCount() && lastIndex < colorCount());
@@ -211,6 +216,8 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
+
+	_format = format;
 
 	_rBits = (8 - format.rLoss);
 	_gBits = (8 - format.gLoss);
@@ -260,6 +267,16 @@ byte *Palette::saveCineLowPal(byte *colors, const uint numBytes) const
 byte *Palette::saveCineHighPal(byte *colors, const uint numBytes) const
 {
 	return save(colors, numBytes, kHighPalFormat);
+}
+
+byte *Palette::saveOrigFormat(byte *colors, const uint numBytes) const
+{
+	return save(colors, numBytes, colorFormat());
+}
+
+byte *Palette::saveSystemFormat(byte *colors, const uint numBytes) const
+{
+	return save(colors, numBytes, kSystemPalFormat);
 }
 
 } // End of namespace Cine
