@@ -42,8 +42,11 @@ inline Node *inline_lookup_node(EngineState *s, reg_t addr, const char *file, in
 
 	mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
 	if (!mobj) {
-		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
-		script_debug_flag = script_error_flag = 1;
+		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
+		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
+		//sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
+		//script_debug_flag = script_error_flag = 1;
+		SCIkwarn(SCIkERROR, "%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		return NULL;
 	}
 
