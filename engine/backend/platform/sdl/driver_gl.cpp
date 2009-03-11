@@ -35,9 +35,10 @@
 DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	char GLDriver[1024];
 
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -52,12 +53,20 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	_screenBPP = screenBPP;
 	_isFullscreen = fullscreen;
 	int flag;
+	SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &flag);
+	warning("INFO: GL RED bits: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &flag);
+	warning("INFO: GL GREEN bits: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &flag);
+	warning("INFO: GL BLUE bits: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &flag);
+	warning("INFO: GL APLHA bits: %d", flag);
 	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &flag);
-	warning("GL Z buffer depth bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &flag);
-	warning("GL Stencil buffer bits: %d", flag);
+	warning("INFO: GL Z buffer depth bits: %d", flag);
 	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &flag);
-	warning("GL Double Buffer: %d", flag);
+	warning("INFO: GL Double Buffer: %d", flag);
+	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &flag);
+	warning("INFO: GL Stencil buffer bits: %d", flag);
 
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	SDL_WM_SetCaption(GLDriver, "Residual");
