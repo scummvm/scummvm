@@ -70,6 +70,7 @@ public:
 	Graphics::PixelFormat colorFormat() const;
 
 private:
+	void setColorFormat(const Graphics::PixelFormat format);
 	void saturatedAddColor(byte index, signed r, signed g, signed b);
 
 private:

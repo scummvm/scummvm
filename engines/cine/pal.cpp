@@ -184,6 +184,18 @@ Graphics::PixelFormat Palette::colorFormat() const {
 	return _format;
 }
 
+void Palette::setColorFormat(const Graphics::PixelFormat format) {
+	_format = format;
+
+	_rBits = (8 - format.rLoss);
+	_gBits = (8 - format.gLoss);
+	_bBits = (8 - format.bLoss);
+
+	_rMax = (1 << _rBits) - 1;
+	_gMax = (1 << _gBits) - 1;
+	_bMax = (1 << _bBits) - 1;
+}
+
 // a.k.a. transformPaletteRange
 Palette &Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
 	assert(firstIndex < colorCount() && lastIndex < colorCount());
@@ -218,15 +230,7 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
-	_format = format;
-
-	_rBits = (8 - format.rLoss);
-	_gBits = (8 - format.gLoss);
-	_bBits = (8 - format.bLoss);
-
-	_rMax = (1 << _rBits) - 1;
-	_gMax = (1 << _gBits) - 1;
-	_bMax = (1 << _bBits) - 1;
+	setColorFormat(format);
 
 	_colors.clear();
 	_colors.resize(numColors);
