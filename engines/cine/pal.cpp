@@ -190,6 +190,7 @@ Palette &Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, s
 
 	for (uint i = firstIndex; i <= lastIndex; i++)
 		saturatedAddColor(i, r, g, b);
+
 	return *this;
 }
 
@@ -240,8 +241,7 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	return *this;
 }
 
-byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const
-{
+byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const {
 	assert(numBytes <= format.bytesPerPixel * colorCount()); // Make sure there's enough output space
 
 	// Clear the part of the output palette we're going to be writing to with all black
@@ -259,23 +259,19 @@ byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelForm
 	return colors;
 }
 
-byte *Palette::saveCineLowPal(byte *colors, const uint numBytes) const
-{
+byte *Palette::saveCineLowPal(byte *colors, const uint numBytes) const {
 	return save(colors, numBytes, kLowPalFormat);
 }
 
-byte *Palette::saveCineHighPal(byte *colors, const uint numBytes) const
-{
+byte *Palette::saveCineHighPal(byte *colors, const uint numBytes) const {
 	return save(colors, numBytes, kHighPalFormat);
 }
 
-byte *Palette::saveOrigFormat(byte *colors, const uint numBytes) const
-{
+byte *Palette::saveOrigFormat(byte *colors, const uint numBytes) const {
 	return save(colors, numBytes, colorFormat());
 }
 
-byte *Palette::saveSystemFormat(byte *colors, const uint numBytes) const
-{
+byte *Palette::saveSystemFormat(byte *colors, const uint numBytes) const {
 	return save(colors, numBytes, kSystemPalFormat);
 }
 
