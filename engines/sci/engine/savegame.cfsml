@@ -101,12 +101,6 @@ char* SRSgets(char* s, int size, Common::SeekableReadStream* str) {
 }
 
 
-
-static EngineState *_global_save_state;
-// Needed for some graphical stuff.
-#define FILE_VERSION _global_save_state->savegame_version
-
-
 void write_reg_t(Common::WriteStream *fh, reg_t const *foo) {
 	WSprintf(fh, PREG, PRINT_REG(*foo));
 }
@@ -768,7 +762,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
-	_global_save_state = s;
 	s->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
 	s->dyn_views_list_serial = (s->dyn_views)? s->dyn_views->serial : -2;
 	s->drop_views_list_serial = (s->drop_views)? s->drop_views->serial : -2;
@@ -1063,7 +1056,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval = new EngineState();
 
 	retval->savegame_version = -1;
-	_global_save_state = retval;
 	retval->gfx_state = s->gfx_state;
 
 	SavegameMetadata meta;
