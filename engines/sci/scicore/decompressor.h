@@ -124,7 +124,7 @@ protected:
 	enum {
 		PIC_OPX_EMBEDDED_VIEW = 1,
 		PIC_OPX_SET_PALETTE = 2,
-		PIC_OP_OPX = 0xfe,
+		PIC_OP_OPX = 0xfe
 	};
 	// actual unpacking procedure
 	int doUnpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
