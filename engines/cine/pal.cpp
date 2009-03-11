@@ -207,9 +207,9 @@ Palette &Palette::loadCineHighPal(const byte *colors, const uint numColors) {
 
 Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint numColors) {
 	assert(format.aLoss == 8); // No alpha	
-	assert(format.rShift % 8 == ((format.rShift + (8 - format.rLoss - 1)) % 8)); // R must be inside one byte
-	assert(format.gShift % 8 == ((format.gShift + (8 - format.gLoss - 1)) % 8)); // G must be inside one byte
-	assert(format.bShift % 8 == ((format.bShift + (8 - format.bLoss - 1)) % 8)); // B must be inside one byte
+	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
+	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
+	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
 	_rBits = (8 - format.rLoss);
 	_gBits = (8 - format.gLoss);
