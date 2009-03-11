@@ -387,7 +387,7 @@ void ListWidget::drawWidget() {
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
 			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, _leftPadding);
+									buffer, _state, Graphics::kTextAlignLeft, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
@@ -397,21 +397,13 @@ void ListWidget::drawWidget() {
 			buffer = _editString;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2),
+									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);
 		} else {
-			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
-			if (_selectedItem != pos) {
-				width = g_gui.getStringWidth(buffer) + pad;
-				if (width > _w - r.left)
-					width = _w - r.left - _hlRightPadding - scrollbarW;
-			} else
-				width = _w - r.left - _hlRightPadding - scrollbarW;
-			if (width > maxWidth)
-				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, pad);
+			width = _w - r.left - scrollbarW;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2),
+									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);			
 		}
 
 		_textWidth[i] = width;
