@@ -246,7 +246,7 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 }
 
 byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const {
-	assert(numBytes <= format.bytesPerPixel * colorCount()); // Make sure there's enough output space
+	assert(format.bytesPerPixel * colorCount() <= numBytes); // Make sure there's enough output space
 
 	// Clear the part of the output palette we're going to be writing to with all black
 	memset(colors, 0, format.bytesPerPixel * colorCount());
