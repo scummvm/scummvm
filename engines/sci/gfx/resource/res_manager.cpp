@@ -142,18 +142,17 @@ void gfxr_palettize_view(gfxr_view_t *view, Palette *source) {
 
 gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
 
-gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, int palette) {
-	ResourceManager *resmgr = state->resManager;
-	Resource *res = resmgr->findResource(kResourceTypeView, nr, 0);
+gfxr_view_t *gfxr_interpreter_get_view(ResourceManager* resourceManager, int nr, int palette, Palette* staticPalette, int version) {
+	Resource *res = resourceManager->findResource(kResourceTypeView, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 	gfxr_view_t *result = 0;
 
 	if (!res || !res->data)
 		return NULL;
 
-	if (state->version < SCI_VERSION_01) palette = -1;
+	if (version < SCI_VERSION_01) palette = -1;
 
-	switch (state->version) {
+	switch (version) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
 		result = gfxr_draw_view0(resid, res->data, res->size, palette);
@@ -162,7 +161,7 @@ gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, int palett
 	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-		result = gfxr_draw_view1(resid, res->data, res->size, state->static_palette);
+		result = gfxr_draw_view1(resid, res->data, res->size, staticPalette);
 		break;
 	case SCI_VERSION_1_1:
 	case SCI_VERSION_32:
@@ -170,12 +169,12 @@ gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, int palett
 		break;
 	}
 
-	if (state->version >= SCI_VERSION_01_VGA) {
+	if (version >= SCI_VERSION_01_VGA) {
 		if (!result->palette) {
-			result->palette = new Palette(state->static_palette->size());
+			result->palette = new Palette(staticPalette->size());
 			result->palette->name = "interpreter_get_view";
 		}
-		gfxr_palettize_view(result, state->static_palette);
+		gfxr_palettize_view(result, staticPalette);
 	}
 	return result;
 }

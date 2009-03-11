@@ -459,7 +459,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	res = (gfx_resource_t *) sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		view = gfxr_interpreter_get_view(state, nr, palette);
+		view = gfxr_interpreter_get_view(state->resManager, nr, palette, state->static_palette, state->version);
 
 		if (!view)
 			return NULL;
