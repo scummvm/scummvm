@@ -139,7 +139,7 @@ struct gfx_state_t {
 /* Fundamental operations */
 /**************************/
 
-int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, void *misc_info);
+int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager);
 /* Initializes a graphics mode suggested by the graphics driver
 ** Parameters: (gfx_state_ t *) state: The state to initialize in that mode
 **             (gfx_options_t *) options: Rendering options
@@ -149,7 +149,7 @@ int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, void *misc_in
 */
 
 int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
-	gfx_options_t *options, void *misc_info);
+	gfx_options_t *options, ResourceManager *resManager);
 /* Initializes a custom graphics mode
 ** Parameters: (gfx_state_t *) state: The state to initialize
 **             (int x int) xfact, yfact: Horizontal and vertical scale factors

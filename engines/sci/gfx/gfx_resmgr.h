@@ -32,6 +32,7 @@
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/sbtree.h"
+#include "sci/scicore/resource.h"
 
 namespace Sci {
 
@@ -91,13 +92,13 @@ struct gfx_resstate_t {
 	int tag_lock_counter; /* lock counter value at tag time */
 
 	sbtree_t *resource_trees[GFX_RESOURCE_TYPES_NR];
-	void *misc_payload;
+	ResourceManager *resManager;
 };
 
 
 
 gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
-	gfx_driver_t *driver, void *misc_payload);
+	gfx_driver_t *driver, ResourceManager *resManager);
 /* Allocates and initializes a new resource manager
 ** Parameters: (int) version: Interpreter version
 **             (gfx_options_t *): Pointer to all relevant drawing options
@@ -219,12 +220,11 @@ gfx_pixmap_color_t *gfxr_get_palette(gfx_resstate_t *state, int nr);
 
 
 int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
-	gfx_options_t *options, void *internal, int palette);
+	gfx_options_t *options, int palette);
 /* Calculates a unique hash value for the specified options/type setup
 ** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
 **             (int) version: The interpreter type and version
 **             (gfx_options_t *) options: The options to hashify
-**             (void *) internal: Internal information provided by the interpreter
 **	       (int) palette: The palette to use (FIXME: should this be here?)
 ** Returns   : (int) A hash over the values of the options entries, covering entries iff
 **                   they are relevant for the specified type
@@ -236,42 +236,38 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 ** (Yes, this isn't really a "hash" in the traditional sense...)
 */
 
-int *gfxr_interpreter_get_resources(gfx_resstate_t *state, gfx_resource_type_t type,
-	int version, int *entries_nr, void *internal);
+int *gfxr_interpreter_get_resources(ResourceManager *resourceManager, gfx_resource_type_t type,
+	int version, int *entries_nr);
 /* Retreives all resources of a specified type that are available from the interpreter
 ** Parameters: (gfx_resstate_t *) state: The relevant resource state
 **             (gfx_respirce_type_t) type: The resource type to query
 **             (int) version: The interpreter type and version
 **             (int *) entries_nr: The variable the number of entries will eventually be stored in
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (int *) An array of resource numbers
 ** Unsupported/non-existing resources should return NULL here; this is equivalent to supported
 ** resources of which zero are available.
 ** The returned structure (if non-zero) must be freed by the querying code (the resource manager).
 */
 
-gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal);
+gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID);
 /* Initializes a pic
 ** Parameters: (int) version: Interpreter version to use
 **             (gfx_mode_t *) mode: The graphics mode the pic will be using
 **             (int) ID: The ID to assign to the gfxr_pic_t structure
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (gfxr_pic_t *) A newly allocated pic
 ** This function is typically called befode gfxr_interpreter_clear_pic().
-** Must remember to initialize 'internal' to NULL or a malloc()'d area.
 */
 
-void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic, void *internal);
+void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic);
 /* Clears a previously allocated pic
 ** Parameters: (int) version: Interpreter version
 **             (gfxr_pic_t *) pic: The pic to clear
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns  :  (void)
 ** This function is called in preparation for the pic to be drawn with gfxr_interpreter_calculate_pic.
 */
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
-	int flags, int default_palette, int nr, void *internal);
+	int flags, int default_palette, int nr);
 /* Instructs the interpreter-specific code to calculate a picture
 ** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
 **             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
@@ -280,56 +276,51 @@ int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic
 **             (int) flags: Pic drawing flags (interpreter dependant)
 **             (int) default_palette: The default palette to use for pic drawing (interpreter dependant)
 **             (int) nr: pic resource number
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
 */
 
-gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *internal, int palette);
+gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, int palette);
 /* Instructs the interpreter-specific code to calculate a view
 ** Parameters: (gfx_resstate_t *) state: The resource manager state
 **             (int) nr: The view resource number
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (gfx_view_t *) The appropriate view, or NULL on error
 */
 
-gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void *internal);
+gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager *resourceManager, int nr);
 /* Instructs the interpreter-specific code to calculate a font
 ** Parameters: (gfx_resstate_t *) state: The resource manager state
 **             (int) nr: The font resource number
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (gfx_font_t *) The newly calculated font, or NULL on error
 */
 
-gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *internal);
+gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager *resourceManager, int nr, int version);
 /* Instructs the interpreter-specific code to calculate a cursor
 ** Paramaters: (gfx_resstate_t *) state: The resource manager state
 **             (int nr): The cursor resource number
-**             (void *) internal: Internal information provided by the interpreter
+**             (int version): The SCI version used
 ** Returns   : (gfx_pixmap_t *) The cursor pixmap, or NULL on error
 */
 
-Palette *gfxr_interpreter_get_static_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal);
-/* Retreives the static palette from the interpreter-specific code
+Palette *gfxr_interpreter_get_static_palette(ResourceManager *resourceManager, int version, int *colors_nr);
+/* Retreives the static palette (palette 999) from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
 **             if a static palette must be used, NULL otherwise
 */
 
-Palette *gfxr_interpreter_get_palette(gfx_resstate_t *state, int version, int *colors_nr, void *internal, int nr);
+Palette *gfxr_interpreter_get_palette(ResourceManager *resourceManager, int version, int *colors_nr, int nr);
 /* Retreives the static palette from the interpreter-specific code
 ** Parameters: (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
-**             (void *) internal: Internal information provided by the interpreter
+**             (int) nr: The palette to read
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
 **             if a static palette must be used, NULL otherwise
 */
 
-int gfxr_interpreter_needs_multicolored_pointers(int version, void *internal);
+int gfxr_interpreter_needs_multicolored_pointers(int version);
 /* Determines whether support for pointers with more than two colors is required
 ** Parameters: (int) version: Interpreter version to test for
-**             (void *) internal: Internal information provided by the interpreter
 ** Returns   : (int) 0 if no support for multi-colored pointers is required, non-0
 **                   otherwise
 */

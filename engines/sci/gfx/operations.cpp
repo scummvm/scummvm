@@ -417,18 +417,18 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *misc_payload) {
+static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager) {
 	gfxr_init_static_palette();
 
 	state->options = options;
 
-	if (!((state->resstate = gfxr_new_resource_manager(state->version, state->options, state->driver, misc_payload)))) {
+	if (!((state->resstate = gfxr_new_resource_manager(state->version, state->options, state->driver, resManager)))) {
 		GFXERROR("Failed to initialize resource manager!\n");
 		return GFX_FATAL;
 	}
 
 	int size;
-	state->static_palette = gfxr_interpreter_get_static_palette(state->resstate, state->version, &size, misc_payload);
+	state->static_palette = gfxr_interpreter_get_static_palette(state->resstate->resManager, state->version, &size);
 
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -453,16 +453,16 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, void *
 	return GFX_OK;
 }
 
-int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, void *misc_info) {
+int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager) {
 	BASIC_CHECKS(GFX_FATAL);
 	if (state->driver->init(state->driver))
 		return GFX_FATAL;
 
-	return _gfxop_init_common(state, options, misc_info);
+	return _gfxop_init_common(state, options, resManager);
 }
 
 int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
-	gfx_options_t *options, void *misc_info) {
+	gfx_options_t *options, ResourceManager *resManager) {
 	int color_depth = bpp ? bpp : 1;
 	int initialized = 0;
 
@@ -478,7 +478,7 @@ int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
 	if (!initialized)
 		return GFX_FATAL;
 
-	return _gfxop_init_common(state, options, misc_info);
+	return _gfxop_init_common(state, options, resManager);
 }
 
 int gfxop_set_parameter(gfx_state_t *state, char *attribute, char *value) {

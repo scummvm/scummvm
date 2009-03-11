@@ -50,14 +50,14 @@ struct param_struct {
 	gfx_driver_t *driver;
 };
 
-gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, gfx_driver_t *driver, void *misc_payload) {
+gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) {
 	gfx_resstate_t *state = (gfx_resstate_t *)sci_malloc(sizeof(gfx_resstate_t));
 	int ii;
 
 	state->version = version;
 	state->options = options;
 	state->driver = driver;
-	state->misc_payload = misc_payload;
+	state->resManager = resManager;
 	state->static_palette = 0;
 
 	state->tag_lock_counter = state->lock_counter = 0;
@@ -65,7 +65,7 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 		gfx_resource_type_t i = (gfx_resource_type_t) ii;
 		sbtree_t *tree;
 		int entries_nr;
-		int *resources = gfxr_interpreter_get_resources(state, i, version, &entries_nr, misc_payload);
+		int *resources = gfxr_interpreter_get_resources(state->resManager, i, version, &entries_nr);
 
 		if (!resources)
 			state->resource_trees[i] = NULL;
@@ -259,7 +259,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_PIC;
 	sbtree_t *tree = state->resource_trees[restype];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, state->misc_payload, 0);
+	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 	int must_post_process_pic = 0;
 	int need_unscaled = (state->driver->mode->xfact != 1 || state->driver->mode->yfact != 1);
 
@@ -276,32 +276,31 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 
 		if (state->options->pic0_unscaled) {
 			need_unscaled = 0;
-			pic = gfxr_interpreter_init_pic(state->version, &mode_1x1_color_index, GFXR_RES_ID(restype, nr), state->misc_payload);
+			pic = gfxr_interpreter_init_pic(state->version, &mode_1x1_color_index, GFXR_RES_ID(restype, nr));
 		} else
-			pic = gfxr_interpreter_init_pic(state->version, state->driver->mode, GFXR_RES_ID(restype, nr), state->misc_payload);
+			pic = gfxr_interpreter_init_pic(state->version, state->driver->mode, GFXR_RES_ID(restype, nr));
 
 		if (!pic) {
 			GFXERROR("Failed to allocate scaled pic!\n");
 			return NULL;
 		}
 
-		gfxr_interpreter_clear_pic(state->version, pic, state->misc_payload);
+		gfxr_interpreter_clear_pic(state->version, pic);
 
 		if (need_unscaled) {
-			unscaled_pic = gfxr_interpreter_init_pic(state->version, &mode_1x1_color_index, GFXR_RES_ID(restype, nr),
-													state->misc_payload);
+			unscaled_pic = gfxr_interpreter_init_pic(state->version, &mode_1x1_color_index, GFXR_RES_ID(restype, nr));
 			if (!unscaled_pic) {
 				GFXERROR("Failed to allocate unscaled pic!\n");
 				return NULL;
 			}
-			gfxr_interpreter_clear_pic(state->version, unscaled_pic, state->misc_payload);
+			gfxr_interpreter_clear_pic(state->version, unscaled_pic);
 		}
 #ifdef TIME_PICDRAWING
 		{
 			uint32 start_msec, end_msec;
 			start_msec = g_system->getMillis();
 #endif
-			if (gfxr_interpreter_calculate_pic(state, pic, unscaled_pic, flags, default_palette, nr, state->misc_payload)) {
+			if (gfxr_interpreter_calculate_pic(state, pic, unscaled_pic, flags, default_palette, nr)) {
 				gfxr_free_pic(state->driver, pic);
 				if (unscaled_pic)
 					gfxr_free_pic(state->driver, unscaled_pic);
@@ -399,7 +398,7 @@ gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int m
 	sbtree_t *tree = state->resource_trees[restype];
 	gfxr_pic_t *pic = NULL;
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, state->misc_payload, 0);
+	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 	int need_unscaled = !(state->options->pic0_unscaled) && (state->driver->mode->xfact != 1 || state->driver->mode->yfact != 1);
 
 	if (!tree) {
@@ -427,7 +426,7 @@ gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int m
 		res->lock_sequence_nr = state->options->buffer_pics_nr;
 
 		gfxr_interpreter_calculate_pic(state, res->scaled_data.pic, need_unscaled ? res->unscaled_data.pic : NULL,
-		                               flags | DRAWPIC01_FLAG_OVERLAID_PIC, default_palette, new_nr, state->misc_payload);
+		                               flags | DRAWPIC01_FLAG_OVERLAID_PIC, default_palette, new_nr);
 	}
 
 	res->mode = MODE_INVALID; // Invalidate
@@ -449,7 +448,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_VIEW;
 	sbtree_t *tree = state->resource_trees[restype];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, state->misc_payload, palette);
+	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, palette);
 	gfxr_view_t *view = NULL;
 	gfxr_loop_t *loop_data = NULL;
 	gfx_pixmap_t *cel_data = NULL;
@@ -460,7 +459,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	res = (gfx_resource_t *) sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		view = gfxr_interpreter_get_view(state, nr, state->misc_payload, palette);
+		view = gfxr_interpreter_get_view(state, nr, palette);
 
 		if (!view)
 			return NULL;
@@ -536,7 +535,7 @@ gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled) {
 
 	tree = state->resource_trees[restype];
 
-	hash = gfxr_interpreter_options_hash(restype, state->version, state->options, state->misc_payload, 0);
+	hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 
 	if (!tree)
 		return NULL;
@@ -544,7 +543,7 @@ gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled) {
 	res = (gfx_resource_t *)sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		gfx_bitmap_font_t *font = gfxr_interpreter_get_font(state, nr, state->misc_payload);
+		gfx_bitmap_font_t *font = gfxr_interpreter_get_font(state->resManager, nr);
 
 		if (!font)
 			return NULL;
@@ -576,7 +575,7 @@ gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_CURSOR;
 	sbtree_t *tree = state->resource_trees[restype];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, state->misc_payload, 0);
+	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 
 	if (!tree)
 		return NULL;
@@ -584,7 +583,7 @@ gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 	res = (gfx_resource_t *)sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		gfx_pixmap_t *cursor = gfxr_interpreter_get_cursor(state, nr, state->misc_payload);
+		gfx_pixmap_t *cursor = gfxr_interpreter_get_cursor(state->resManager, nr, state->version);
 
 		if (!cursor)
 			return NULL;
