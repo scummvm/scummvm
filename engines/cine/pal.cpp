@@ -29,6 +29,9 @@
 
 namespace Cine {
 
+static const Graphics::PixelFormat kLowPalFormat  = {2, 5, 5, 5, 8, 8, 4,  0, 0};
+static const Graphics::PixelFormat kHighPalFormat = {3, 0, 0, 0, 8, 0, 8, 16, 0};
+
 Common::Array<PalEntry> palArray;
 static byte paletteBuffer1[16];
 static byte paletteBuffer2[16];
@@ -196,13 +199,11 @@ void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
 }
 
 Palette &Palette::loadCineLowPal(const byte *colors, const uint numColors) {
-	static const Graphics::PixelFormat format = {2, 5, 5, 5, 8, 8, 4, 0, 0};
-	return load(colors, format, numColors);
+	return load(colors, kLowPalFormat, numColors);
 }
 
 Palette &Palette::loadCineHighPal(const byte *colors, const uint numColors) {
-	static const Graphics::PixelFormat format = {3, 0, 0, 0, 8, 0, 8, 16, 0};
-	return load(colors, format, numColors);
+	return load(colors, kHighPalFormat, numColors);
 }
 
 Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint numColors) {
@@ -230,6 +231,35 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	}
 
 	return *this;
+}
+
+byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const
+{
+	assert(numBytes <= format.bytesPerPixel * colorCount()); // Make sure there's enough output space
+
+	// Clear the part of the output palette we're going to be writing to with all black
+	memset(colors, 0, format.bytesPerPixel * colorCount());
+
+	// Save the palette to the output in the specified format
+	for (uint i = 0; i < colorCount(); i++) {
+		// _rMax, _gMax, _bMax are also used as masks here
+		colors[i * format.bytesPerPixel + (format.rShift / 8)] |= ((_colors[i].r & _rMax) << (format.rShift % 8));
+		colors[i * format.bytesPerPixel + (format.gShift / 8)] |= ((_colors[i].g & _gMax) << (format.gShift % 8));
+		colors[i * format.bytesPerPixel + (format.bShift / 8)] |= ((_colors[i].b & _bMax) << (format.bShift % 8));
+	}
+
+	// Return the pointer to the output palette
+	return colors;
+}
+
+byte *Palette::saveCineLowPal(byte *colors, const uint numBytes) const
+{
+	return save(colors, numBytes, kLowPalFormat);
+}
+
+byte *Palette::saveCineHighPal(byte *colors, const uint numBytes) const
+{
+	return save(colors, numBytes, kHighPalFormat);
 }
 
 } // End of namespace Cine

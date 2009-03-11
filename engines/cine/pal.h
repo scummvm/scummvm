@@ -60,6 +60,11 @@ public:
 	Palette &loadCineLowPal(const byte *colors, const uint numColors = 16);
 	Palette &loadCineHighPal(const byte *colors, const uint numColors = 256);
 	Palette &load(const byte *colors, const Graphics::PixelFormat format, const uint numColors);
+
+	byte *saveCineLowPal(byte *colors, const uint numBytes) const;
+	byte *saveCineHighPal(byte *colors, const uint numBytes) const;
+	byte *save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const;
+
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
 	uint colorCount() const;
