@@ -355,7 +355,9 @@ int ResourceManager::addAppropriateSources() {
 		addVolume(map, name.c_str(), number, 0);
 	}
 	addPatchDir("");
-	// TODO: add RESOURCE.AUD and RESOURCE.SFX for SCI1.1 games 
+	// TODO: add RESOURCE.AUD and RESOURCE.SFX for SCI1.1 games
+	if (Common::File::exists("MESSAGE.MAP"))
+		addVolume(addExternalMap("MESSAGE.MAP"), "RESOURCE.MSG",0 ,0);
 	return 1;
 }
 
@@ -812,8 +814,7 @@ int ResourceManager::detectVolVersion() {
 }
 
 // version-agnostic patch application
-void ResourceManager::processPatch(ResourceSource *source,
-                                   const char *filename, ResourceType restype, int resnumber) {
+void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, int resnumber) {
 	Common::File file;
 	Resource *newrsc;
 	uint32 resId = RESOURCE_HASH(restype, resnumber);
@@ -822,13 +823,13 @@ void ResourceManager::processPatch(ResourceSource *source,
 
 	if (resnumber == -1)
 		return;
-	if (!file.open(filename)) {
+	if (!file.open(source->location_name)) {
 		perror("""__FILE__"": (""__LINE__""): failed to open");
 		return;
 	}
 	fsize = file.size();
 	if (fsize < 3) {
-		debug("Patching %s failed - file too small", filename);
+		debug("Patching %s failed - file too small", source->location_name.c_str());
 		return;
 	}
 
@@ -836,12 +837,12 @@ void ResourceManager::processPatch(ResourceSource *source,
 	patch_data_offset = file.readByte();
 
 	if (patchtype != restype) {
-		debug("Patching %s failed - resource type mismatch", filename);
+		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 		return;
 	}
 	if (patch_data_offset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-		      filename, patch_data_offset + 2, fsize);
+		      source->location_name.c_str(), patch_data_offset + 2, fsize);
 		return;
 	}
 	// Prepare destination, if neccessary
@@ -858,7 +859,7 @@ void ResourceManager::processPatch(ResourceSource *source,
 	newrsc->source = source;
 	newrsc->size = fsize - patch_data_offset - 2;
 	newrsc->file_offset = 2 + patch_data_offset;
-	debug("Patching %s - OK", filename);
+	debug("Patching %s - OK", source->location_name.c_str());
 }
 
 
@@ -872,6 +873,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	int number;
 	const char *szResType;
 	ResourceSource *psrcPatch;
+	bool bAdd;
 
 	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
 		files.clear();
@@ -885,22 +887,28 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		mask += getResourceTypeSuffix((ResourceType)i);
 		SearchMan.listMatchingMembers(files, mask);
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
-			number = -1;
+			bAdd = false;
 			name = (*x)->getName();
+			// SCI1 scheme
 			if (isdigit(name[0])) {
-				// SCI1 scheme
 				number = atoi(name.c_str());
+				bAdd = true;
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
-				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0) {
+				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0 
+					&& !isalpha(name[resname_len + 1])) {
 					number = atoi(name.c_str() + resname_len + 1);
+					bAdd = true;
 				}
 			}
-			psrcPatch = new ResourceSource;
-			psrcPatch->source_type = kSourcePatch;
-			psrcPatch->location_name = name;
-			processPatch(psrcPatch, name.c_str(), (ResourceType)i, number);
+
+			if (bAdd) {
+				psrcPatch = new ResourceSource;
+				psrcPatch->source_type = kSourcePatch;
+				psrcPatch->location_name = name;
+				processPatch(psrcPatch, (ResourceType)i, number);
+			}
 		}
 	}
 }

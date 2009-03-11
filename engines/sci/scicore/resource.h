@@ -292,7 +292,7 @@ protected:
 	/** @paramParameters: ResourceSource *source
 	  */
 	void readResourcePatches(ResourceSource *source);
-	void processPatch(ResourceSource *source, const char *filename, ResourceType restype, int resnumber);
+	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
 
 	void printLRU();
 	void addToLRU(Resource *res);
