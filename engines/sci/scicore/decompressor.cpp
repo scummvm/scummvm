@@ -35,18 +35,20 @@ namespace Sci {
 
 int Decompressor::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 			uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
-	byte buff[1024];
-	uint32 chunk;
-	while (_szPacked && !_src->ioFailed() && !_dest->ioFailed()) {
-		chunk = MIN<uint32>(1024, _szPacked);
-		_src->read(buff, chunk);
-		_dest->write(buff, chunk);
-		_szPacked -= chunk;
-	}
-	return _src->ioFailed() || _dest->ioFailed() ? 1 : 0;
+	return copyBytes(src, dest, nPacked);
 }
 
+int Decompressor::copyBytes(Common::ReadStream *src, Common::WriteStream *dest, uint32 nSize) {
+	byte buff[1024];
+	uint32 chunk;
+	while (nSize && !src->ioFailed() && !dest->ioFailed()) {
+		chunk = MIN<uint32>(1024, nSize);
+		src->read(buff, chunk);
+		dest->write(buff, chunk);
+		nSize -= chunk;
+	}
+	return src->ioFailed() || dest->ioFailed() ? 1 : 0;
+}
 void Decompressor::init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 		uint32 nUnpacked) {
 	_src = src;
@@ -147,6 +149,7 @@ int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest
 	byte *buffer = NULL;
 	byte *buffer2 = NULL;
 	Common::MemoryWriteStream *pBuff = NULL;
+	Common::MemoryReadStream *pBuffIn = NULL;
 
 	switch (_compression) {
 	case kComp3: // Comp3 compression
@@ -155,16 +158,21 @@ int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest
 	case kComp3View:	
 	case kComp3Pic:	
 		buffer = new byte[nUnpacked];
-		buffer2 = new byte[nUnpacked];
 		pBuff = new Common::MemoryWriteStream(buffer, nUnpacked);
 		doUnpack(src, pBuff, nPacked, nUnpacked);
-		if (_compression == kComp3View)
+		if (_compression == kComp3View) {
+			buffer2 = new byte[nUnpacked];
 			view_reorder(buffer, buffer2);
-		else
-			pic_reorder(buffer, buffer2, nUnpacked);
-		dest->write(buffer2, nUnpacked);
+			dest->write(buffer2, nUnpacked);
+		}
+		else {
+			pBuffIn = new Common::MemoryReadStream(buffer, nUnpacked);
+			reorderPic(pBuffIn, dest, nUnpacked);
+		}
 		delete[] buffer2;
 		delete[] buffer;
+		delete pBuff;
+		delete pBuffIn;
 	break;
 	}
 	return 0;
@@ -243,36 +251,32 @@ int DecompressorComp3::doUnpack(Common::ReadStream *src, Common::WriteStream *de
 	return _dwWrote ? 0 : 1;
 }
 
-enum {
-	PIC_OP_SET_COLOR = 0xf0,
-	PIC_OP_DISABLE_VISUAL = 0xf1,
-	PIC_OP_SET_PRIORITY = 0xf2,
-	PIC_OP_DISABLE_PRIORITY = 0xf3,
-	PIC_OP_SHORT_PATTERNS = 0xf4,
-	PIC_OP_MEDIUM_LINES = 0xf5,
-	PIC_OP_LONG_LINES = 0xf6,
-	PIC_OP_SHORT_LINES = 0xf7,
-	PIC_OP_FILL = 0xf8,
-	PIC_OP_SET_PATTERN = 0xf9,
-	PIC_OP_ABSOLUTE_PATTERN = 0xfa,
-	PIC_OP_SET_CONTROL = 0xfb,
-	PIC_OP_DISABLE_CONTROL = 0xfc,
-	PIC_OP_MEDIUM_PATTERNS = 0xfd,
-	PIC_OP_OPX = 0xfe,
-	PIC_OP_TERMINATE = 0xff
-};
-
-enum {
-	PIC_OPX_SET_PALETTE_ENTRIES = 0,
-	PIC_OPX_EMBEDDED_VIEW = 1,
-	PIC_OPX_SET_PALETTE = 2,
-	PIC_OPX_PRIORITY_TABLE_EQDIST = 3,
-	PIC_OPX_PRIORITY_TABLE_EXPLICIT = 4
-};
-
 #define PAL_SIZE 1284
-#define CEL_HEADER_SIZE 7
 #define EXTRA_MAGIC_SIZE 15
+#define VIEW_HEADER_COLORS_8BIT 0x80
+
+void DecompressorComp3::decodeRLE(Common::ReadStream *src, Common::WriteStream *dest, byte *pixeldata, uint16 size) {
+	int pos = 0;
+	byte nextbyte;
+	while (pos < size) {
+		nextbyte = src->readByte();
+		dest->writeByte(nextbyte);
+		pos ++;
+		switch (nextbyte & 0xC0) {
+		case 0x40 :
+		case 0x00 :
+			dest->write(pixeldata, nextbyte);
+			pixeldata += nextbyte;
+			pos += nextbyte;
+			break;
+		case 0xC0 :
+			break;
+		case 0x80 :
+			dest->writeByte(*pixeldata++);
+			break;
+		}
+	}
+}
 
 void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size) {
 	int pos = 0;
@@ -339,79 +343,52 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 	return size;
 }
 
-void DecompressorComp3::pic_reorder(byte *inbuffer, byte *outbuffer, int dsize) {
-	int view_size;
-	int view_start;
-	int cdata_size;
-	int i;
-	byte *seeker = inbuffer;
-	byte *writer;
-	char viewdata[CEL_HEADER_SIZE];
-	byte *cdata, *cdata_start;
+void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream *dest, int dsize) {
+	int view_size, view_start, cdata_size;
+	byte viewdata[7];
+	byte *cdata = NULL;
+	byte *extra = NULL;
 	
-	writer = outbuffer;
+	// Setting palette
+	dest->writeByte(PIC_OP_OPX);
+	dest->writeByte(PIC_OPX_SET_PALETTE);
 
-	*writer++ = PIC_OP_OPX;
-	*writer++ = PIC_OPX_SET_PALETTE;
+	for (int i = 0; i < 256; i++) // Palette translation map
+		dest->writeByte(i);
+	dest->writeUint32LE(0);  //Palette timestamp
 
-	for (i = 0; i < 256; i++) /* Palette translation map */
-		*writer++ = i;
-
-	WRITE_LE_UINT16(writer, 0); /* Palette stamp */
-	writer += 2;
-	WRITE_LE_UINT16(writer, 0);
-	writer += 2;
-
-	view_size = READ_LE_UINT16(seeker);
-	seeker += 2;
-	view_start = READ_LE_UINT16(seeker);
-	seeker += 2;
-	cdata_size = READ_LE_UINT16(seeker);
-	seeker += 2;
-
-	memcpy(viewdata, seeker, sizeof(viewdata));
-	seeker += sizeof(viewdata);
-	
-	memcpy(writer, seeker, 4*256); /* Palette */
-	seeker += 4*256;
-	writer += 4*256;
-
-	if (view_start != PAL_SIZE + 2) { /* +2 for the opcode */
-		memcpy(writer, seeker, view_start-PAL_SIZE-2);
-		seeker += view_start - PAL_SIZE - 2;
-		writer += view_start - PAL_SIZE - 2;
+	view_size = src->readUint16LE();
+	view_start = src->readUint16LE();
+	cdata_size = src->readUint16LE();
+	src->read(viewdata, sizeof(viewdata));
+	// Copy palette colors
+	copyBytes(src, dest, 1024); 
+	// copy drawing opcodes
+	if (view_start != PAL_SIZE + 2)
+		copyBytes(src, dest, view_start - PAL_SIZE - 2);
+	// storing extra opcodes to be pasted after the cel
+	if (dsize != view_start + EXTRA_MAGIC_SIZE + view_size) {
+		extra = new byte[dsize - view_size - view_start - EXTRA_MAGIC_SIZE];
+		src->read(extra, dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
 	}
-
-	if (dsize != view_start+EXTRA_MAGIC_SIZE+view_size) {
-		memcpy(outbuffer+view_size+view_start+EXTRA_MAGIC_SIZE, seeker, 
-		       dsize-view_size-view_start-EXTRA_MAGIC_SIZE);
-		seeker += dsize-view_size-view_start-EXTRA_MAGIC_SIZE;
-	}
-
-	cdata_start = cdata = (byte *)malloc(cdata_size);
-	memcpy(cdata, seeker, cdata_size);
-	seeker += cdata_size;
-	
-	writer = outbuffer + view_start;
-	*writer++ = PIC_OP_OPX;
-	*writer++ = PIC_OPX_EMBEDDED_VIEW;
-	*writer++ = 0;
-	*writer++ = 0;
-	*writer++ = 0;
-	WRITE_LE_UINT16(writer, view_size + 8);
-	writer += 2;
-
-	memcpy(writer, viewdata, sizeof(viewdata));
-	writer += sizeof(viewdata);
-
-	*writer++ = 0;
-	
-	decode_rle(&seeker, &cdata, writer, view_size);
-	
-	free(cdata_start);
+	// Writing picture cel opcode and header 
+	dest->writeByte(PIC_OP_OPX);
+	dest->writeByte(PIC_OPX_EMBEDDED_VIEW);
+	dest->writeByte(0);
+	dest->writeUint16LE(0);
+	dest->writeUint16LE(view_size + 8);
+	dest->write(viewdata, sizeof(viewdata));
+	dest->writeByte(0);
+	// Unpacking RLE cel data
+	cdata = new byte[cdata_size];
+	src->read(cdata, cdata_size);
+	decodeRLE(src, dest, cdata, view_size);
+	// writing stored extra opcodes 
+	if (extra)
+		dest->write(extra, dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
+	delete[] extra;
+	delete[] cdata;
 }
-
-#define VIEW_HEADER_COLORS_8BIT 0x80
 
 void DecompressorComp3::build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max) {
 	for (int c = 0; c < max; c++) {

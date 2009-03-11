@@ -79,6 +79,7 @@ protected:
 	  */
 	virtual void putByte(byte b);
 	virtual void fetchBits();
+	int copyBytes(Common::ReadStream *src, Common::WriteStream *dest, uint32 nSize);
 
 	uint32 _dwBits;
 	byte _nBits;
@@ -120,20 +121,27 @@ public:
 			uint32 nUnpacked);
 
 protected:
+	enum {
+		PIC_OPX_EMBEDDED_VIEW = 1,
+		PIC_OPX_SET_PALETTE = 2,
+		PIC_OP_OPX = 0xfe,
+	};
 	// actual unpacking procedure
 	int doUnpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
 			uint32 nUnpacked);
 	// functions to post-process view and pic resources 
+	void decodeRLE(Common::ReadStream *src, Common::WriteStream *dest, byte *pixeldata, uint16 size);
+	void reorderPic(Common::ReadStream *src, Common::WriteStream *dest, int dsize);
+	// 	
 	void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
 	int rle_size(byte *rledata, int dsize);
-	void pic_reorder(byte *inbuffer, byte *outbuffer, int dsize);
 	void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
 	void view_reorder(byte *inbuffer, byte *outbuffer);
-
+	// decompressor data
 	struct tokenlist {
 		byte data;
 		uint16 next;
-	} _tokens[0x1004];
+		} _tokens[0x1004];
 	byte _stak[0x1014];
 	byte _lastchar;
 	uint16 _stakptr;
