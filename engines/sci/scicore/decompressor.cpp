@@ -90,7 +90,7 @@ uint32 Decompressor::getBits(int n) {
 }
 
 byte Decompressor::getByte() {
-		return getBits(8);
+	return getBits(8);
 }
 
 void Decompressor::putByte(byte b) {
@@ -267,15 +267,15 @@ void DecompressorComp3::decodeRLE(Common::ReadStream *src, Common::WriteStream *
 		dest->writeByte(nextbyte);
 		pos ++;
 		switch (nextbyte & 0xC0) {
-		case 0x40 :
-		case 0x00 :
+		case 0x40:
+		case 0x00:
 			dest->write(pixeldata, nextbyte);
 			pixeldata += nextbyte;
 			pos += nextbyte;
 			break;
-		case 0xC0 :
+		case 0xC0:
 			break;
-		case 0x80 :
+		case 0x80:
 			dest->writeByte(*pixeldata++);
 			break;
 		}
@@ -294,16 +294,16 @@ void DecompressorComp3::decode_rle(byte **rledata, byte **pixeldata, byte *outbu
 		*ob++ = nextbyte;
 		pos++;
 		switch (nextbyte & 0xC0) {
-		case 0x40 :
-		case 0x00 :
+		case 0x40:
+		case 0x00:
 			memcpy(ob, pd, nextbyte);
 			pd += nextbyte;
 			ob += nextbyte;
 			pos += nextbyte;
 			break;
-		case 0xC0 :
+		case 0xC0:
 			break;
-		case 0x80 :
+		case 0x80:
 			nextbyte = *pd++;
 			*ob++ = nextbyte;
 			pos++;
@@ -332,13 +332,13 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 		size++;
 
 		switch (nextbyte & 0xC0) {
-		case 0x40 :
-		case 0x00 :
+		case 0x40:
+		case 0x00:
 			pos += nextbyte;
 			break;
-		case 0xC0 :
+		case 0xC0:
 			break;
-		case 0x80 :
+		case 0x80:
 			pos++;
 			break;
 		}
