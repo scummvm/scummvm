@@ -525,8 +525,8 @@ void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
 	
 	strncpy((char *)str->value, path, str->max_size);
-	str->value[str->max_size].segment = s->string_frag_segment; // Make sure to terminate
-	str->value[str->max_size].offset &= 0xff00; // Make sure to terminate
+	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
+	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
 }
 
 void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
