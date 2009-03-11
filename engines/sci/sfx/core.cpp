@@ -264,6 +264,9 @@ static void _update_multi_song(sfx_state_t *self) {
 	/*	_dump_playing_list(self, "before");*/
 	_freeze_time(self); /* Store song delay time */
 
+	if (!newsong)
+		return;
+
 	for (newseeker = newsong; newseeker;
 	        newseeker = newseeker->next_playing) {
 		if (!newseeker || !newseeker->it)
