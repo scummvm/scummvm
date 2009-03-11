@@ -109,7 +109,7 @@ Resource::Resource() {
 
 Resource::~Resource() {
 	delete[] data;
-	if(source && source->source_type == kSourcePatch)
+	if (source && source->source_type == kSourcePatch)
 		delete source;
 }
 
@@ -185,7 +185,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 bool ResourceManager::loadFromPatchFile(Resource *res) {
 	Common::File file;
-	const char *filename=res->source->location_name.c_str();
+	const char *filename = res->source->location_name.c_str();
 	if (file.open(filename) == false) {
 		warning("Failed to open patch file %s", filename);
 		res->unalloc();
@@ -225,7 +225,7 @@ void ResourceManager::loadResource(Resource *res) {
 	int error = decompress(res, &file);
 	if (error) {
 		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
-			error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
+		        error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
 		res->unalloc();
 	}
 
@@ -345,7 +345,7 @@ int ResourceManager::scanNewSources(ResourceSource *source) {
 		case kSourceExtMap:
 			if (_mapVersion < SCI_VERSION_1)
 				resource_error = readResourceMapSCI0(source);
-			else 
+			else
 				resource_error = readResourceMapSCI1(source, getVolume(source, 0));
 			if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
 				// FIXME: Try reading w/o resource.map
@@ -409,7 +409,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
-			version = _mapVersion; 
+			version = _mapVersion;
 			break;
 		case SCI_VERSION_1: {
 			Resource *res = testResource(kResourceTypeScript, 0);
@@ -433,23 +433,32 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	// temporary version printout - should be reworked later
 	switch (_sciVersion) {
 	case SCI_VERSION_0:
-		debug("Resmgr: Detected SCI0"); break;
+		debug("Resmgr: Detected SCI0");
+		break;
 	case SCI_VERSION_01:
-		debug("Resmgr: Detected SCI01"); break;
+		debug("Resmgr: Detected SCI01");
+		break;
 	case SCI_VERSION_01_VGA:
-		debug("Resmgr: Detected SCI01VGA - KQ5 or similar"); break;
+		debug("Resmgr: Detected SCI01VGA - KQ5 or similar");
+		break;
 	case SCI_VERSION_01_VGA_ODD:
-		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar"); break;
+		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");
+		break;
 	case SCI_VERSION_1_EARLY:
-		debug("Resmgr: Detected SCI1 Early"); break;
+		debug("Resmgr: Detected SCI1 Early");
+		break;
 	case SCI_VERSION_1_LATE:
-		debug("Resmgr: Detected SCI1 Late"); break;
+		debug("Resmgr: Detected SCI1 Late");
+		break;
 	case SCI_VERSION_1_1:
-		debug("Resmgr: Detected SCI1.1"); break;
+		debug("Resmgr: Detected SCI1.1");
+		break;
 	case SCI_VERSION_32:
-		debug("Resmgr: Couldn't determine SCI version"); break;
+		debug("Resmgr: Couldn't determine SCI version");
+		break;
 	default:
-		debug("Resmgr: Couldn't determine SCI version"); break;
+		debug("Resmgr: Couldn't determine SCI version");
+		break;
 	}
 }
 
@@ -483,8 +492,8 @@ void ResourceManager::addToLRU(Resource *res) {
 	_memoryLRU += res->size;
 #if (SCI_VERBOSE_RESMGR > 1)
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
-	        getResourceTypeName(res->type), res->number, res->size,
-	        mgr->_memoryLRU);
+	      getResourceTypeName(res->type), res->number, res->size,
+	      mgr->_memoryLRU);
 
 #endif
 	res->status = kResStatusEnqueued;
@@ -499,7 +508,7 @@ void ResourceManager::printLRU() {
 	while (it != _LRU.end()) {
 		res = *it;
 		debug("\t%s.%03d: %d bytes", getResourceTypeName(res->type),
-			res->number, res->size);
+		      res->number, res->size);
 		mem += res->size;
 		entries ++;
 		it ++;
@@ -609,7 +618,7 @@ int ResourceManager::detectMapVersion() {
 		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open resource map file");	
+		warning("Failed to open resource map file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// detection
@@ -625,7 +634,7 @@ int ResourceManager::detectMapVersion() {
 		}
 		return SCI_VERSION_0;
 	}
-	// SCI1E/L and some SCI1.1 maps have last directory entry set to 0xFF 
+	// SCI1E/L and some SCI1.1 maps have last directory entry set to 0xFF
 	// and offset set to filesize
 	// SCI1 have 6-bytes entries, while SCI1.1 have 5-byte entries
 	file.seek(1, SEEK_SET);
@@ -668,7 +677,7 @@ int ResourceManager::detectVolVersion() {
 		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open volume file");	
+		warning("Failed to open volume file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
@@ -680,15 +689,15 @@ int ResourceManager::detectVolVersion() {
 	uint16 resId, wCompression;
 	uint32 dwPacked, dwUnpacked;
 	bool bFailed = false;
-	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
 		resId = file.readUint16LE();
 		dwPacked = file.readUint16LE();
 		dwUnpacked = file.readUint16LE();
 		wCompression = file.readUint16LE();
-		if(file.eos())
+		if (file.eos())
 			break;
-		if ((wCompression > 4) || (wCompression == 0 && dwPacked != dwUnpacked + 4) 
-			|| (dwUnpacked < dwPacked - 4)) {
+		if ((wCompression > 4) || (wCompression == 0 && dwPacked != dwUnpacked + 4)
+		        || (dwUnpacked < dwPacked - 4)) {
 			bFailed = true;
 			break;
 		}
@@ -700,17 +709,17 @@ int ResourceManager::detectVolVersion() {
 	// Check for SCI1 format
 	bFailed = false;
 	file.seek(0, SEEK_SET);
-	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
 		pos = file.pos();
-		file.seek(1, SEEK_CUR); 
+		file.seek(1, SEEK_CUR);
 		resId = file.readUint16LE();
 		dwPacked = file.readUint16LE();
 		dwUnpacked = file.readUint16LE();
 		wCompression = file.readUint16LE();
-		if(file.eos())
+		if (file.eos())
 			break;
-		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked + 4) 
-			|| (dwUnpacked < dwPacked - 4)) {
+		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked + 4)
+		        || (dwUnpacked < dwPacked - 4)) {
 			bFailed = true;
 			break;
 		}
@@ -722,17 +731,17 @@ int ResourceManager::detectVolVersion() {
 	// Check for SCI1.1 format
 	bFailed = false;
 	file.seek(0, SEEK_SET);
-	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
 		pos = file.pos();
-		file.seek(1, SEEK_CUR); 
+		file.seek(1, SEEK_CUR);
 		resId = file.readUint16LE();
 		dwPacked = file.readUint16LE();
 		dwUnpacked = file.readUint16LE();
 		wCompression = file.readUint16LE();
-		if(file.eos())
+		if (file.eos())
 			break;
-		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked) 
-			|| (dwUnpacked < dwPacked)) {
+		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked)
+		        || (dwUnpacked < dwPacked)) {
 			bFailed = true;
 			break;
 		}
@@ -744,18 +753,18 @@ int ResourceManager::detectVolVersion() {
 	// Check for SCI32 v2 format (Gabriel Knight 1 CD)
 	bFailed = false;
 	file.seek(0, SEEK_SET);
-	while(!file.eos() && !bFailed && file.pos() < 0x100000) {
+	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
 		pos = file.pos();
-		file.seek(1, SEEK_CUR); 
+		file.seek(1, SEEK_CUR);
 		resId = file.readUint16LE();
 		dwPacked = file.readUint32LE();
 		dwUnpacked = file.readUint32LE();
 		wCompression = file.readUint16LE();
-		if(file.eos())
+		if (file.eos())
 			break;
-		if ((wCompression != 0 && wCompression != 32) 
-			|| (wCompression == 0 && dwPacked != dwUnpacked) 
-			|| (dwUnpacked < dwPacked)) {
+		if ((wCompression != 0 && wCompression != 32)
+		        || (wCompression == 0 && dwPacked != dwUnpacked)
+		        || (dwUnpacked < dwPacked)) {
 			bFailed = true;
 			break;
 		}
@@ -770,7 +779,7 @@ int ResourceManager::detectVolVersion() {
 
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source,
-	const char *filename, ResourceType restype, int resnumber) {
+                                   const char *filename, ResourceType restype, int resnumber) {
 	Common::File file;
 	Resource *newrsc;
 	uint32 resId = RESOURCE_HASH(restype, resnumber);
@@ -788,7 +797,7 @@ void ResourceManager::processPatch(ResourceSource *source,
 		debug("Patching %s failed - file too small", filename);
 		return;
 	}
-	
+
 	patchtype = file.readByte() & 0x7F;
 	patch_data_offset = file.readByte();
 
@@ -798,14 +807,14 @@ void ResourceManager::processPatch(ResourceSource *source,
 	}
 	if (patch_data_offset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-			filename, patch_data_offset + 2, fsize);
+		      filename, patch_data_offset + 2, fsize);
 		return;
 	}
 	// Prepare destination, if neccessary
 	if (_resMap.contains(resId) == false) {
 		newrsc = new Resource;
 		_resMap.setVal(resId, newrsc);
-	} else 
+	} else
 		newrsc = _resMap.getVal(resId);
 	// Overwrite everything, because we're patching
 	newrsc->id = resId;
@@ -874,7 +883,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 	file.seek(0, SEEK_SET);
 
-	byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0: 0xFC;
+	byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0 : 0xFC;
 	byte bShift = _mapVersion == SCI_VERSION_01_VGA_ODD ? 28 : 26;
 
 	do {
@@ -886,7 +895,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			perror("");
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
-		if(offset == 0xFFFFFFFF)
+		if (offset == 0xFFFFFFFF)
 			break;
 
 		type = (ResourceType)(id >> 11);
@@ -924,7 +933,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 		type = file.readByte() & 0x1F;
 		resMap[type].wOffset = file.readUint16LE();
 		resMap[prevtype].wSize = (resMap[type].wOffset
-				- resMap[prevtype].wOffset) / nEntrySize;
+		                          - resMap[prevtype].wOffset) / nEntrySize;
 		prevtype = type;
 	} while (type != 0x1F); // the last entry is FF
 
@@ -961,8 +970,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 	return 0;
 }
 
-int ResourceManager::readResourceInfo(Resource *res, Common::File *file, 
-		uint32&szPacked, ResourceCompression &compression) {
+int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
+                                      uint32&szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
@@ -1015,36 +1024,36 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	if (wCompression == 0)
 		compression = kCompNone;
 	switch (_sciVersion) {
-		case SCI_VERSION_0:
-			if (wCompression == 1)
-				compression = kCompLZW;
-			else if (wCompression == 2)
-				compression = kCompHuffman;
-			break;
-		case SCI_VERSION_01:
-		case SCI_VERSION_01_VGA:
-		case SCI_VERSION_01_VGA_ODD:
-		case SCI_VERSION_1_EARLY:
-		case SCI_VERSION_1_LATE:
-			if (wCompression == 1)
-				compression = kCompHuffman;
-			else if (wCompression == 2)
-				compression = kComp3;
-			else if (wCompression == 3)
-				compression = kComp3View;
-			else if (wCompression == 4)
-				compression = kComp3Pic;
-			break;
-		case SCI_VERSION_1_1:
-			if (wCompression >= 18 && wCompression <= 20)
-				compression = kCompDCL;
-			break;
-		case SCI_VERSION_32:
-			if (wCompression == 32)
-				compression = kCompSTACpack;
-			break;
-		default:
-			compression = kCompUnknown;
+	case SCI_VERSION_0:
+		if (wCompression == 1)
+			compression = kCompLZW;
+		else if (wCompression == 2)
+			compression = kCompHuffman;
+		break;
+	case SCI_VERSION_01:
+	case SCI_VERSION_01_VGA:
+	case SCI_VERSION_01_VGA_ODD:
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+		if (wCompression == 1)
+			compression = kCompHuffman;
+		else if (wCompression == 2)
+			compression = kComp3;
+		else if (wCompression == 3)
+			compression = kComp3View;
+		else if (wCompression == 4)
+			compression = kComp3Pic;
+		break;
+	case SCI_VERSION_1_1:
+		if (wCompression >= 18 && wCompression <= 20)
+			compression = kCompDCL;
+		break;
+	case SCI_VERSION_32:
+		if (wCompression == 32)
+			compression = kCompSTACpack;
+		break;
+	default:
+		compression = kCompUnknown;
 	}
 
 	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
@@ -1085,14 +1094,14 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 		        getResourceTypeName(res->type), res->number, compression);
 		break;
 	}
-	
+
 	if (dec) {
 		res->data = new byte[res->size];
 		pDest = new Common::MemoryWriteStream(res->data , res->size);
 		error = dec->unpack(file, pDest, szPacked, res->size);
-	} else 
+	} else
 		error = SCI_ERROR_UNKNOWN_COMPRESSION;
-	
+
 	if (!error)
 		res->status = kResStatusAllocated;
 	else {

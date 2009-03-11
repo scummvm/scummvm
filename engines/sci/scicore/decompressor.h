@@ -34,7 +34,7 @@ enum ResourceCompression {
 	kCompNone = 0,
 	kCompLZW,
 	kCompHuffman,
-	kComp3,			// LZW-like compression used in SCI01 and SCI1 
+	kComp3,			// LZW-like compression used in SCI01 and SCI1
 	kComp3View,		// Comp3 + view Post-processing
 	kComp3Pic,		// Comp3 + pic Post-processing
 	kCompDCL,
@@ -42,19 +42,19 @@ enum ResourceCompression {
 };
 //----------------------------------------------
 // Base class for decompressors
-// Simply copies nPacked bytes from src to dest 
+// Simply copies nPacked bytes from src to dest
 //----------------------------------------------
 class Decompressor {
 public:
-	Decompressor(){}
-	virtual ~Decompressor(){}
+	Decompressor() {}
+	virtual ~Decompressor() {}
 
 	//! get a number of bits from _src stream
 	/** @param n - number of bits to get
 		@return (uint32) n-bits number
 	  */
 	virtual int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
+	                   uint32 nUnpacked);
 
 protected:
 	//! Initialize decompressor
@@ -65,7 +65,7 @@ protected:
 		@return (int) 0 on success, non-zero on error
 	  */
 	virtual void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);	//! get one bit from _src stream
+	                  uint32 nUnpacked);	//! get one bit from _src stream
 	/** @return (bool) bit;
 	  */
 	virtual bool getBit();
@@ -99,7 +99,7 @@ protected:
 class DecompressorHuffman : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
+	           uint32 nUnpacked);
 
 protected:
 	int16 getc2();
@@ -118,7 +118,7 @@ public:
 	}
 	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
+	           uint32 nUnpacked);
 
 protected:
 	enum {
@@ -128,11 +128,11 @@ protected:
 	};
 	// actual unpacking procedure
 	int doUnpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
-	// functions to post-process view and pic resources 
+	             uint32 nUnpacked);
+	// functions to post-process view and pic resources
 	void decodeRLE(Common::ReadStream *src, Common::WriteStream *dest, byte *pixeldata, uint16 size);
 	void reorderPic(Common::ReadStream *src, Common::WriteStream *dest, int dsize);
-	// 	
+	//
 	void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
 	int rle_size(byte *rledata, int dsize);
 	void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
@@ -141,7 +141,7 @@ protected:
 	struct tokenlist {
 		byte data;
 		uint16 next;
-		} _tokens[0x1004];
+	} _tokens[0x1004];
 	byte _stak[0x1014];
 	byte _lastchar;
 	uint16 _stakptr;
@@ -158,7 +158,7 @@ class DecompressorLZW : public Decompressor {
 public:
 //	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
+	           uint32 nUnpacked);
 
 protected:
 	int doUnpack(byte *src, byte *dest, int length, int complength);
@@ -173,7 +173,7 @@ class DecompressorDCL : public Decompressor {
 public:
 //	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
 	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked);
+	           uint32 nUnpacked);
 
 protected:
 	int unpackDCL(byte *src, byte *dest, int length, int complength);

@@ -34,7 +34,7 @@
 namespace Sci {
 
 int Decompressor::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked) {
+                         uint32 nUnpacked) {
 	return copyBytes(src, dest, nPacked);
 }
 
@@ -50,7 +50,7 @@ int Decompressor::copyBytes(Common::ReadStream *src, Common::WriteStream *dest, 
 	return src->ioFailed() || dest->ioFailed() ? 1 : 0;
 }
 void Decompressor::init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-		uint32 nUnpacked) {
+                        uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
 	_szPacked = nPacked;
@@ -62,7 +62,7 @@ void Decompressor::init(Common::ReadStream *src, Common::WriteStream *dest, uint
 
 void Decompressor::fetchBits() {
 	while (_nBits <= 24) {
-		_dwBits |= ((uint32)_src->readByte()) << (24-_nBits);
+		_dwBits |= ((uint32)_src->readByte()) << (24 - _nBits);
 		_nBits += 8;
 		_dwRead++;
 	}
@@ -70,7 +70,7 @@ void Decompressor::fetchBits() {
 
 bool Decompressor::getBit() {
 	// fetching more bits to _dwBits buffer
-	if (_nBits == 0) 
+	if (_nBits == 0)
 		fetchBits();
 	bool b = _dwBits & 0x80000000;
 	_dwBits <<= 1;
@@ -80,9 +80,9 @@ bool Decompressor::getBit() {
 
 uint32 Decompressor::getBits(int n) {
 	// fetching more data to buffer if needed
-	if(_nBits < n)
+	if (_nBits < n)
 		fetchBits();
-	uint32 ret = _dwBits >> (32-n);
+	uint32 ret = _dwBits >> (32 - n);
 	_dwBits <<= n;
 	_nBits -= n;
 	return ret;
@@ -96,7 +96,7 @@ void Decompressor::putByte(byte b) {
 //  Huffman decompressor
 //-------------------------------
 int DecompressorHuffman::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked) {
+                                uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	byte numnodes;
@@ -110,7 +110,7 @@ int DecompressorHuffman::unpack(Common::ReadStream *src, Common::WriteStream *de
 
 	while ((c = getc2()) != terminator && (c >= 0) && (_szUnpacked-- > 0))
 		putByte(c);
-	
+
 	free(_nodes);
 	return _dwWrote ? 0 : 1;
 }
@@ -121,7 +121,7 @@ int16 DecompressorHuffman::getc2() {
 	while (node[1]) {
 		if (getBit()) {
 			next = node[1] & 0x0F; // use lower 4 bits
-			if (next == 0) 
+			if (next == 0)
 				return getBits(8) | 0x100;
 		} else
 			next = node[1] >> 4; // use higher 4 bits
@@ -136,7 +136,7 @@ int16 DecompressorHuffman::getc2() {
 //-------------------------------
 void DecompressorComp3::init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked) {
 	Decompressor::init(src, dest, nPacked, nUnpacked);
-	
+
 	_lastchar = _lastbits = _stakptr = 0;
 	_numbits = 9;
 	_curtoken = 0x102;
@@ -145,7 +145,7 @@ void DecompressorComp3::init(Common::ReadStream *src, Common::WriteStream *dest,
 }
 
 int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked) {
+                              uint32 nUnpacked) {
 	byte *buffer = NULL;
 	byte *buffer2 = NULL;
 	Common::MemoryWriteStream *pBuff = NULL;
@@ -155,8 +155,8 @@ int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest
 	case kComp3: // Comp3 compression
 		return doUnpack(src, dest, nPacked, nUnpacked);
 		break;
-	case kComp3View:	
-	case kComp3Pic:	
+	case kComp3View:
+	case kComp3Pic:
 		buffer = new byte[nUnpacked];
 		pBuff = new Common::MemoryWriteStream(buffer, nUnpacked);
 		doUnpack(src, pBuff, nPacked, nUnpacked);
@@ -164,8 +164,7 @@ int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest
 			buffer2 = new byte[nUnpacked];
 			view_reorder(buffer, buffer2);
 			dest->write(buffer2, nUnpacked);
-		}
-		else {
+		} else {
 			pBuffIn = new Common::MemoryReadStream(buffer, nUnpacked);
 			reorderPic(pBuffIn, dest, nUnpacked);
 		}
@@ -173,13 +172,13 @@ int DecompressorComp3::unpack(Common::ReadStream *src, Common::WriteStream *dest
 		delete[] buffer;
 		delete pBuff;
 		delete pBuffIn;
-	break;
+		break;
 	}
 	return 0;
 }
 
 int DecompressorComp3::doUnpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-			uint32 nUnpacked) {
+                                uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	byte decryptstart = 0;
@@ -227,7 +226,7 @@ int DecompressorComp3::doUnpack(Common::ReadStream *src, Common::WriteStream *de
 			}
 			_lastchar = _stak[_stakptr++] = token & 0xff;
 			// put stack in buffer
-			while (_stakptr > 0) { 
+			while (_stakptr > 0) {
 				putByte(_stak[--_stakptr]);
 				if (--_szUnpacked == 0) {
 					bExit = true;
@@ -235,7 +234,7 @@ int DecompressorComp3::doUnpack(Common::ReadStream *src, Common::WriteStream *de
 				}
 			}
 			// put token into record
-			if (_curtoken <= _endtoken) { 
+			if (_curtoken <= _endtoken) {
 				_tokens[_curtoken].data = _lastchar;
 				_tokens[_curtoken].next = _lastbits;
 				_curtoken++;
@@ -321,12 +320,12 @@ int DecompressorComp3::rle_size(byte *rledata, int dsize) {
 	int pos = 0;
 	char nextbyte;
 	int size = 0;
-	
+
 	while (pos < dsize) {
 		nextbyte = *(rledata++);
 		pos++;
 		size++;
-		
+
 		switch (nextbyte & 0xC0) {
 		case 0x40 :
 		case 0x00 :
@@ -348,7 +347,7 @@ void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream 
 	byte viewdata[7];
 	byte *cdata = NULL;
 	byte *extra = NULL;
-	
+
 	// Setting palette
 	dest->writeByte(PIC_OP_OPX);
 	dest->writeByte(PIC_OPX_SET_PALETTE);
@@ -362,7 +361,7 @@ void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream 
 	cdata_size = src->readUint16LE();
 	src->read(viewdata, sizeof(viewdata));
 	// Copy palette colors
-	copyBytes(src, dest, 1024); 
+	copyBytes(src, dest, 1024);
 	// copy drawing opcodes
 	if (view_start != PAL_SIZE + 2)
 		copyBytes(src, dest, view_start - PAL_SIZE - 2);
@@ -371,7 +370,7 @@ void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream 
 		extra = new byte[dsize - view_size - view_start - EXTRA_MAGIC_SIZE];
 		src->read(extra, dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
 	}
-	// Writing picture cel opcode and header 
+	// Writing picture cel opcode and header
 	dest->writeByte(PIC_OP_OPX);
 	dest->writeByte(PIC_OPX_EMBEDDED_VIEW);
 	dest->writeByte(0);
@@ -383,7 +382,7 @@ void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream 
 	cdata = new byte[cdata_size];
 	src->read(cdata, cdata_size);
 	decodeRLE(src, dest, cdata, view_size);
-	// writing stored extra opcodes 
+	// writing stored extra opcodes
 	if (extra)
 		dest->write(extra, dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
 	delete[] extra;
@@ -393,7 +392,8 @@ void DecompressorComp3::reorderPic(Common::ReadStream *src, Common::WriteStream 
 void DecompressorComp3::build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max) {
 	for (int c = 0; c < max; c++) {
 		memcpy(*writer, *seeker, 6);
-		*seeker += 6; *writer += 6;
+		*seeker += 6;
+		*writer += 6;
 		int w = *((*seeker)++);
 		WRITE_LE_UINT16(*writer, w); /* Zero extension */
 		*writer += 2;
@@ -415,15 +415,15 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	char celcounts[100];
 	byte *writer = outbuffer;
 	byte *lh_ptr;
-	byte *rle_ptr,*pix_ptr;
+	byte *rle_ptr, *pix_ptr;
 	int l, lb, c, celindex, lh_last = -1;
 	int chptr;
 	int w;
 	int *cc_lengths;
 	byte **cc_pos;
-	
+
 	/* Parse the main header */
-	cellengths = inbuffer+READ_LE_UINT16(seeker)+2;
+	cellengths = inbuffer + READ_LE_UINT16(seeker) + 2;
 	seeker += 2;
 	loopheaders = *(seeker++);
 	lh_present = *(seeker++);
@@ -436,12 +436,12 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	cel_total = READ_LE_UINT16(seeker);
 	seeker += 2;
 
-	cc_pos = (byte **) malloc(sizeof(byte *)*cel_total);
-	cc_lengths = (int *) malloc(sizeof(int)*cel_total);
-	
+	cc_pos = (byte **) malloc(sizeof(byte *) * cel_total);
+	cc_lengths = (int *) malloc(sizeof(int) * cel_total);
+
 	for (c = 0; c < cel_total; c++)
-		cc_lengths[c] = READ_LE_UINT16(cellengths+2*c);
-	
+		cc_lengths[c] = READ_LE_UINT16(cellengths + 2 * c);
+
 	*writer++ = loopheaders;
 	*writer++ = VIEW_HEADER_COLORS_8BIT;
 	WRITE_LE_UINT16(writer, lh_mask);
@@ -452,19 +452,19 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 	writer += 2;
 
 	lh_ptr = writer;
-	writer += 2*loopheaders; /* Make room for the loop offset table */
+	writer += 2 * loopheaders; /* Make room for the loop offset table */
 
 	pix_ptr = writer;
-	
+
 	memcpy(celcounts, seeker, lh_present);
 	seeker += lh_present;
 
 	lb = 1;
 	celindex = 0;
 
-	rle_ptr = pix_ptr = cellengths + (2*cel_total);
+	rle_ptr = pix_ptr = cellengths + (2 * cel_total);
 	w = 0;
-	
+
 	for (l = 0; l < loopheaders; l++) {
 		if (lh_mask & lb) { /* The loop is _not_ present */
 			if (lh_last == -1) {
@@ -474,7 +474,7 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 			WRITE_LE_UINT16(lh_ptr, lh_last);
 			lh_ptr += 2;
 		} else {
-			lh_last = writer-outbuffer;
+			lh_last = writer - outbuffer;
 			WRITE_LE_UINT16(lh_ptr, lh_last);
 			lh_ptr += 2;
 			WRITE_LE_UINT16(writer, celcounts[w]);
@@ -483,47 +483,47 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 			writer += 2;
 
 			/* Now, build the cel offset table */
-			chptr = (writer - outbuffer) + (2*celcounts[w]);
+			chptr = (writer - outbuffer) + (2 * celcounts[w]);
 
 			for (c = 0; c < celcounts[w]; c++) {
 				WRITE_LE_UINT16(writer, chptr);
 				writer += 2;
 				cc_pos[celindex+c] = outbuffer + chptr;
-				chptr += 8 + READ_LE_UINT16(cellengths+2*(celindex+c));
+				chptr += 8 + READ_LE_UINT16(cellengths + 2 * (celindex + c));
 			}
 
 			build_cel_headers(&seeker, &writer, celindex, cc_lengths, celcounts[w]);
-			
+
 			celindex += celcounts[w];
 			w++;
 		}
 
-		lb = lb << 1;	
-	}	
+		lb = lb << 1;
+	}
 
 	if (celindex < cel_total) {
 		warning("View decompression generated too few (%d / %d) headers", celindex, cel_total);
 		return;
 	}
-	
+
 	/* Figure out where the pixel data begins. */
 	for (c = 0; c < cel_total; c++)
 		pix_ptr += rle_size(pix_ptr, cc_lengths[c]);
 
-	rle_ptr = cellengths + (2*cel_total);
+	rle_ptr = cellengths + (2 * cel_total);
 	for (c = 0; c < cel_total; c++)
-		decode_rle(&rle_ptr, &pix_ptr, cc_pos[c]+8, cc_lengths[c]);
+		decode_rle(&rle_ptr, &pix_ptr, cc_pos[c] + 8, cc_lengths[c]);
 
 	*writer++ = 'P';
 	*writer++ = 'A';
 	*writer++ = 'L';
-	
+
 	for (c = 0; c < 256; c++)
 		*writer++ = c;
 
 	seeker -= 4; /* The missing four. Don't ask why. */
-	memcpy(writer, seeker, 4*256+4);
-	
+	memcpy(writer, seeker, 4*256 + 4);
+
 	free(cc_pos);
 	free(cc_lengths);
 }
@@ -532,14 +532,14 @@ void DecompressorComp3::view_reorder(byte *inbuffer, byte *outbuffer) {
 // LZW 9-12 bits decompressor for SCI0
 //----------------------------------------------
 int DecompressorLZW::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	uint32 nUnpacked) {
+                            uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 	byte *buffin = new byte[nPacked];
 	byte *buffout = new byte[nUnpacked];
 	src->read(buffin, nPacked);
-	
+
 	doUnpack(buffin, buffout, nUnpacked, nPacked);
-	
+
 	dest->write(buffout, nUnpacked);
 	delete[] buffin;
 	delete[] buffout;
@@ -603,7 +603,7 @@ int DecompressorLZW::doUnpack(byte *src, byte *dest, int length, int complength)
 #ifdef _SCI_DECOMPRESS_DEBUG
 							// For me this seems a normal situation, It's necessary to handle it
 							warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
-							       length, destctr, tokenlastlength);
+							        length, destctr, tokenlastlength);
 #endif
 							i = 0;
 							for (; destctr < length; destctr++) {
@@ -680,14 +680,14 @@ static int ascii_tree[] = {
 #define CALLC(x) { if ((x) == -SCI_ERROR_DECOMPRESSION_OVERFLOW) return -SCI_ERROR_DECOMPRESSION_OVERFLOW; }
 
 int DecompressorDCL::unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	uint32 nUnpacked) {
+                            uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 	byte *buffin = new byte[nPacked];
 	byte *buffout = new byte[nUnpacked];
 	src->read(buffin, nPacked);
-	
+
 	unpackDCL(buffin, buffout, nUnpacked, nPacked);
-	
+
 	dest->write(buffout, nUnpacked);
 	delete[] buffin;
 	delete[] buffout;

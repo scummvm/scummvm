@@ -33,7 +33,7 @@
 #include "sci/scicore/decompressor.h"
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Sci {
@@ -43,7 +43,7 @@ namespace Sci {
 
 /*** RESOURCE STATUS TYPES ***/
 enum ResourceStatus {
-	kResStatusNoMalloc=0,
+	kResStatusNoMalloc = 0,
 	kResStatusAllocated,
 	kResStatusEnqueued, /* In the LRU queue */
 	kResStatusLocked /* Allocated and in use */
@@ -97,7 +97,7 @@ enum ResSourceType {
 #define RESSOURCE_ADDRESSING_EXTENDED 128
 #define RESSOURCE_ADDRESSING_MASK 128
 
-#define RESOURCE_HASH(type, number) (uint32)((type<<16) | number) 
+#define RESOURCE_HASH(type, number) (uint32)((type<<16) | number)
 #define SCI0_RESMAP_ENTRIES_SIZE 6
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
@@ -167,9 +167,9 @@ public:
 	byte *data;
 	uint16 number;
 	ResourceType type;
-	uint32 id;	// contains number and type. 
-				// TODO: maybe use uint32 and set id = RESOURCE_HASH()
-				// for all SCI versions
+	uint32 id;	// contains number and type.
+	// TODO: maybe use uint32 and set id = RESOURCE_HASH()
+	// for all SCI versions
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
 	ResourceStatus status;
@@ -212,7 +212,7 @@ public:
 	 *	@return A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addVolume(ResourceSource *map, const char *filename,
-		int number, int extended_addressing);
+	                          int number, int extended_addressing);
 
 	//! Add an external (i.e. separate file) map resource to the resource manager's list of sources.
 	/**	@param file_name	 The name of the volume to add
