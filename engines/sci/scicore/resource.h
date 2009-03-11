@@ -84,6 +84,8 @@ enum ResourceStatus {
 
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
 
+#define MAX_OPENED_VOLUMES 5 // Max number of simultaneously opened volumes
+
 enum ResSourceType {
 	kSourceDirectory = 0,
 	kSourcePatch = 1,
@@ -138,11 +140,11 @@ const char *getResourceTypeSuffix(ResourceType restype);
 /* Used for autodetection */
 
 
-
+// resource type for SCI1 resource.map file
 struct resource_index_t {
 	uint16 wOffset;
 	uint16 wSize;
-}; /* resource type as stored in the resource.map file */
+}; 
 
 struct ResourceSource {
 	ResSourceType source_type;
@@ -155,7 +157,6 @@ struct ResourceSource {
 
 /** Class for storing resources in memory */
 class Resource {
-
 public:
 	Resource();
 	~Resource();
@@ -168,8 +169,6 @@ public:
 	uint16 number;
 	ResourceType type;
 	uint32 id;	// contains number and type.
-	// TODO: maybe use uint32 and set id = RESOURCE_HASH()
-	// for all SCI versions
 	unsigned int size;
 	unsigned int file_offset; /* Offset in file */
 	ResourceStatus status;
@@ -196,36 +195,6 @@ public:
 	 */
 	ResourceManager(int version, int maxMemory);
 	~ResourceManager();
-
-	/* Add a path to the resource manager's list of sources.
-	** Returns: A pointer to the added source structure, or NULL if an error occurred.
-	*/
-	ResourceSource *addPatchDir(const char *path);
-
-	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
-
-	//! Add a volume to the resource manager's list of sources.
-	/** @param map		The map associated with this volume
-	 *	@param filename	The name of the volume to add
-	 *	@param extended_addressing	1 if this volume uses extended addressing,
-	 *                                        0 otherwise.
-	 *	@return A pointer to the added source structure, or NULL if an error occurred.
-	 */
-	ResourceSource *addVolume(ResourceSource *map, const char *filename,
-	                          int number, int extended_addressing);
-
-	//! Add an external (i.e. separate file) map resource to the resource manager's list of sources.
-	/**	@param file_name	 The name of the volume to add
-	 *	@return		A pointer to the added source structure, or NULL if an error occurred.
-	 */
-	ResourceSource *addExternalMap(const char *file_name);
-
-	//! Scans newly registered resource sources for resources, earliest addition first.
-	/** @param detected_version: Pointer to the detected version number,
-	 *					 used during startup. May be NULL.
-	 * @return One of SCI_ERROR_*.
-	 */
-	int scanNewSources(ResourceSource *source);
 
 	//! Looks up a resource's data
 	/**	@param type: The resource type to look for
@@ -258,16 +227,45 @@ public:
 	Resource *testResource(ResourceType type, int number);
 
 protected:
-	int _maxMemory; /* Config option: Maximum total byte number allocated */
+	int _maxMemory; // Config option: Maximum total byte number allocated
 	ResourceSource *_sources;
 	int _memoryLocked;	// Amount of resource bytes in locked memory
 	int _memoryLRU;		// Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; // Last Resource Used list
 	Common::HashMap<uint32, Resource *> _resMap;
+	Common::List<Common::File *> _volumeFiles; // list of opened volume files
 
+	/* Add a path to the resource manager's list of sources.
+	** Returns: A pointer to the added source structure, or NULL if an error occurred.
+	*/
+	ResourceSource *addPatchDir(const char *path);
+
+	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
+
+	//! Add a volume to the resource manager's list of sources.
+	/** @param map		The map associated with this volume
+	 *	@param filename	The name of the volume to add
+	 *	@param extended_addressing	1 if this volume uses extended addressing,
+	 *                                        0 otherwise.
+	 *	@return A pointer to the added source structure, or NULL if an error occurred.
+	 */
+	ResourceSource *addVolume(ResourceSource *map, const char *filename,
+	                          int number, int extended_addressing);
+	//! Add an external (i.e. separate file) map resource to the resource manager's list of sources.
+	/**	@param file_name	 The name of the volume to add
+	 *	@return		A pointer to the added source structure, or NULL if an error occurred.
+	 */
+	ResourceSource *addExternalMap(const char *file_name);
+	//! Scans newly registered resource sources for resources, earliest addition first.
+	/** @param detected_version: Pointer to the detected version number,
+	 *					 used during startup. May be NULL.
+	 * @return One of SCI_ERROR_*.
+	 */
+	int scanNewSources(ResourceSource *source);
 	int addAppropriateSources();
 	void freeResourceSources(ResourceSource *rss);
 
+	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
 	bool loadFromPatchFile(Resource *res);
 	void freeOldResources(int last_invulnerable);
@@ -290,7 +288,7 @@ protected:
 
 	/**--- Patch management functions ---*/
 
-	//! Reads SCI1 patch files from a local directory
+	//! Reads patch files from a local directory
 	/** @paramParameters: ResourceSource *source
 	  */
 	void readResourcePatches(ResourceSource *source);

@@ -206,23 +206,53 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return true;
 }
 
+Common::File *ResourceManager::getVolumeFile(const char *filename) {
+	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
+	Common::File *file;
+
+	// check if file is already opened
+	while (it != _volumeFiles.end()) {
+		file = *it;
+		if (scumm_stricmp(file->getName(), filename) == 0) {
+			// move file to top
+			if (it != _volumeFiles.begin()) {
+				_volumeFiles.erase(it);
+				_volumeFiles.push_front(file);
+			}
+			return file;
+		}
+		it ++;
+	}
+	// adding a new file
+	file = new Common::File;
+	if (file->open(filename)) {
+		if (_volumeFiles.size() == MAX_OPENED_VOLUMES) {
+			it = --_volumeFiles.end();
+			delete *it;
+			_volumeFiles.erase(it);
+		}
+		_volumeFiles.push_front(file);
+		return file;
+	}
+	// failed
+	delete file;
+	return NULL;
+}
+
 void ResourceManager::loadResource(Resource *res) {
-	char filename[MAXPATHLEN];
-	Common::File file;
+	Common::File *file;
 
 	if (res->source->source_type == kSourcePatch && loadFromPatchFile(res))
 		return;
 	// Either loading from volume or patch loading failed
-	strcpy(filename, res->source->location_name.c_str());
-
-	if (!file.open(filename)) {
-		warning("Failed to open %s", filename);
+	file = getVolumeFile(res->source->location_name.c_str());
+	if (!file) {
+		warning("Failed to open %s", res->source->location_name.c_str());
 		res->unalloc();
 		return;
 	}
-	file.seek(res->file_offset, SEEK_SET);
-
-	int error = decompress(res, &file);
+	file->seek(res->file_offset, SEEK_SET);
+	int error = decompress(res, file);
 	if (error) {
 		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
 		        error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
@@ -324,7 +354,8 @@ int ResourceManager::addAppropriateSources() {
 
 		addVolume(map, name.c_str(), number, 0);
 	}
-	addPatchDir("");	// FIXME: used to pass the 'current' instead of ""
+	addPatchDir("");
+	// TODO: add RESOURCE.AUD and RESOURCE.SFX for SCI1.1 games 
 	return 1;
 }
 
@@ -471,6 +502,12 @@ ResourceManager::~ResourceManager() {
 	}
 	freeResourceSources(_sources);
 	_resMap.empty();
+
+	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
+	while (it != _volumeFiles.end()) {
+		delete *it;
+		it ++;
+	}
 }
 
 void ResourceManager::removeFromLRU(Resource *res) {
@@ -549,9 +586,8 @@ Resource *ResourceManager::findResource(ResourceType type, int number, int lock)
 	if (!retval)
 		return NULL;
 
-	if (!retval->status)
+	if (retval->status == kResStatusNoMalloc)
 		loadResource(retval);
-
 	else if (retval->status == kResStatusEnqueued)
 		removeFromLRU(retval);
 	// Unless an error occured, the resource is now either
@@ -563,9 +599,7 @@ Resource *ResourceManager::findResource(ResourceType type, int number, int lock)
 			retval->lockers = 0;
 			_memoryLocked += retval->size;
 		}
-
-		++retval->lockers;
-
+		retval->lockers++;
 	} else if (retval->status != kResStatusLocked) { // Don't lock it
 		if (retval->status == kResStatusAllocated)
 			addToLRU(retval);
