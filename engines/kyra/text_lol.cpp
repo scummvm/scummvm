@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/timer.h"
@@ -682,3 +684,6 @@ void TextDisplayer_LoL::clearCurDim() {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
+

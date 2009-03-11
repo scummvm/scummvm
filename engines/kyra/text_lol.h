@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #ifndef KYRA_TEXT_LOL_H
 #define KYRA_TEXT_LOL_H
 
@@ -95,4 +97,6 @@ private:
 } // end of namespace Kyra
 
 #endif
+
+#endif // ENABLE_LOL
 
