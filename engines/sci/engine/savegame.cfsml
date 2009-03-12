@@ -125,66 +125,6 @@ int read_sci_version(Common::SeekableReadStream *fh, sci_version_t *foo, const c
 	return version_parse(lastval, foo);
 }
 
-void write_PTN(Common::WriteStream *fh, parse_tree_node_t const *foo) {
-	if (foo->type == PARSE_TREE_NODE_LEAF)
-		WSprintf(fh, "L%d", foo->content.value);
-	else
-		WSprintf(fh, "B(%d,%d)", foo->content.branches[0], foo->content.branches[1]);
-}
-
-int read_PTN(Common::SeekableReadStream *fh, parse_tree_node_t *foo, const char *lastval, int *line, int *hiteof) {
-	if (lastval[0] == 'L') {
-		const char *c = lastval + 1;
-		char *strend;
-
-		while (*c && isspace(*c))
-			++c;
-
-		if (!*c)
-			return 1;
-
-		foo->content.value = strtol(c, &strend, 0);
-
-		return (strend == c); // Error if nothing could be read
-
-		return 0;
-	} else if (lastval[0] == 'B') {
-		const char *c = lastval + 1;
-		char *strend;
-
-		while (*c && isspace(*c))
-			++c;
-		if (*c++ != '(') return 1;
-		while (*c && isspace(*c))
-			++c;
-
-		foo->content.branches[0] = strtol(c, &strend, 0);
-		if (strend == c)
-			return 1;
-		c = strend;
-
-		while (*c && isspace(*c))
-			++c;
-		if (*c++ != ',')
-			return 1;
-
-		while (*c && isspace(*c))
-			++c;
-
-		foo->content.branches[1] = strtol(c, &strend, 0);
-		if (strend == c)
-			return 1;
-		c = strend;
-
-		while (*c && isspace(*c))
-			++c;
-		if (*c++ != ')')
-			return 1;
-
-		return 0;
-	} else return 1; // failure to parse anything
-}
-
 void write_CommonString(Common::WriteStream *fh, Common::String const *string);
 int read_CommonString(Common::SeekableReadStream *fh, Common::String *string, const char *lastval, int *line, int *hiteof);
 
