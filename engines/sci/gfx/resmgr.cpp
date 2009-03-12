@@ -65,7 +65,7 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 		gfx_resource_type_t i = (gfx_resource_type_t) ii;
 		sbtree_t *tree;
 		int entries_nr;
-		int *resources = gfxr_interpreter_get_resources(state->resManager, i, version, &entries_nr);
+		int *resources = gfxr_interpreter_get_resources(*(state->resManager), i, version, &entries_nr);
 
 		if (!resources)
 			state->resource_trees[i] = NULL;
@@ -459,7 +459,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	res = (gfx_resource_t *) sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		view = gfxr_interpreter_get_view(state->resManager, nr, palette, state->static_palette, state->version);
+		view = gfxr_interpreter_get_view(*(state->resManager), nr, palette, state->static_palette, state->version);
 
 		if (!view)
 			return NULL;
@@ -527,7 +527,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	return view;
 }
 
-gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled) {
+gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_t *state, int nr, int scaled) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_FONT;
 	sbtree_t *tree = NULL;
 	gfx_resource_t *res = NULL;
@@ -543,7 +543,7 @@ gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled) {
 	res = (gfx_resource_t *)sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		gfx_bitmap_font_t *font = gfxr_interpreter_get_font(state->resManager, nr);
+		gfx_bitmap_font_t *font = gfxr_interpreter_get_font(resourceManager, nr);
 
 		if (!font)
 			return NULL;
@@ -583,7 +583,7 @@ gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 	res = (gfx_resource_t *)sbtree_get(tree, nr);
 
 	if (!res || res->mode != hash) {
-		gfx_pixmap_t *cursor = gfxr_interpreter_get_cursor(state->resManager, nr, state->version);
+		gfx_pixmap_t *cursor = gfxr_interpreter_get_cursor(*(state->resManager), nr, state->version);
 
 		if (!cursor)
 			return NULL;

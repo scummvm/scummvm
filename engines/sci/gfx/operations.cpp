@@ -205,7 +205,7 @@ DRAW_LOOP(map->index_data[offset] < color) // Draw only lower priority
 static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (!driver->mode->palette) return GFX_OK;
 	if (!pxm->palette) return GFX_OK;
-	
+
 	assert(pxm->palette->getParent() == driver->mode->palette);
 
 	if (!driver->mode->palette->isDirty()) return GFX_OK;
@@ -428,7 +428,7 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, Resour
 	}
 
 	int size;
-	state->static_palette = gfxr_interpreter_get_static_palette(state->resstate->resManager, state->version, &size);
+	state->static_palette = gfxr_interpreter_get_static_palette(*(state->resstate->resManager), state->version, &size);
 
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -627,10 +627,10 @@ int gfxop_set_color(gfx_state_t *state, gfx_color_t *color, int r, int g, int b,
 // Wrapper for gfxop_set_color
 int gfxop_set_color(gfx_state_t *state, gfx_color_t *colorOut, gfx_color_t &colorIn) {
 	if (colorIn.mask & GFX_MASK_VISUAL)
-		return gfxop_set_color(state, colorOut, colorIn.visual.r, colorIn.visual.g, colorIn.visual.b, 
+		return gfxop_set_color(state, colorOut, colorIn.visual.r, colorIn.visual.g, colorIn.visual.b,
 			colorIn.alpha, colorIn.priority, colorIn.control);
 	else
-		return gfxop_set_color(state, colorOut, -1, -1, -1, colorIn.alpha, 
+		return gfxop_set_color(state, colorOut, -1, -1, -1, colorIn.alpha,
 			colorIn.priority, colorIn.control);
 }
 
@@ -885,7 +885,7 @@ int gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
 		end.x += xfact >> 1;
 		end.y += yfact >> 1;
 	}
-	
+
 	if (color.visual.parent_index == GFX_COLOR_INDEX_UNMAPPED)
 		gfxop_set_color(state, &color, color);
 	return _gfxop_draw_line_clipped(state, start, end, color, line_mode, line_style);
@@ -1892,11 +1892,13 @@ int gfxop_add_to_pic(gfx_state_t *state, int nr, int flags, int default_palette)
 
 // Text operations
 
+// FIXME: only the resstate member of state is used -- inline the reference by:
+// replacing gfx_state_t* state parameter with gfx_resstate_t* gfxResourceState and adjust callers accordingly
 int gfxop_get_font_height(gfx_state_t *state, int font_nr) {
 	gfx_bitmap_font_t *font;
 	BASIC_CHECKS(GFX_FATAL);
 
-	font = gfxr_get_font(state->resstate, font_nr, 0);
+	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
 	if (!font)
 		return GFX_ERROR;
 
@@ -1910,7 +1912,7 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text, int
 
 	BASIC_CHECKS(GFX_FATAL);
 
-	font = gfxr_get_font(state->resstate, font_nr, 0);
+	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
 
 	if (!font) {
 		GFXERROR("Attempt to calculate text size with invalid font #%d\n", font_nr);
@@ -1945,10 +1947,10 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 	error |= gfxop_set_color(state, &bg_color, bg_color);
 	if (error) {
 		GFXERROR("Unable to set up colors");
-		return NULL; 
+		return NULL;
 	}
-		
-	font = gfxr_get_font(state->resstate, font_nr, 0);
+
+	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
 
 	if (!font) {
 		GFXERROR("Attempt to draw text with invalid font #%d\n", font_nr);

@@ -71,8 +71,8 @@ void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic) {
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
 	int flags, int default_palette, int nr) {
-	ResourceManager *resmgr = state->resManager;
-	Resource *res = resmgr->findResource(kResourceTypePic, nr, 0);
+	ResourceManager& resourceManager = *(state->resManager);
+	Resource *res = resourceManager.findResource(kResourceTypePic, nr, 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
 
@@ -142,8 +142,8 @@ void gfxr_palettize_view(gfxr_view_t *view, Palette *source) {
 
 gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
 
-gfxr_view_t *gfxr_interpreter_get_view(ResourceManager* resourceManager, int nr, int palette, Palette* staticPalette, int version) {
-	Resource *res = resourceManager->findResource(kResourceTypeView, nr, 0);
+gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr, int palette, Palette* staticPalette, int version) {
+	Resource *res = resourceManager.findResource(kResourceTypeView, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 	gfxr_view_t *result = 0;
 
@@ -179,17 +179,16 @@ gfxr_view_t *gfxr_interpreter_get_view(ResourceManager* resourceManager, int nr,
 	return result;
 }
 
-gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager* resourceManager, int nr) {
-	Resource *res = resourceManager->findResource(kResourceTypeFont, nr, 0);
-
+gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager& resourceManager, int nr) {
+	Resource *res = resourceManager.findResource(kResourceTypeFont, nr, 0);
 	if (!res || !res->data)
 		return NULL;
 
 	return gfxr_read_font(res->id, res->data, res->size);
 }
 
-gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager* resourceManager, int nr, int version) {
-	Resource *res = resourceManager->findResource(kResourceTypeCursor, nr, 0);
+gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager& resourceManager, int nr, int version) {
+	Resource *res = resourceManager.findResource(kResourceTypeCursor, nr, 0);
 	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
 
 	if (!res || !res->data)
@@ -203,7 +202,7 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager* resourceManager, int 
 	return gfxr_draw_cursor(resid, res->data, res->size, version != SCI_VERSION_0);
 }
 
-int *gfxr_interpreter_get_resources(ResourceManager* resourceManager, gfx_resource_type_t type, int version, int *entries_nr) {
+int *gfxr_interpreter_get_resources(ResourceManager& resourceManager, gfx_resource_type_t type, int version, int *entries_nr) {
 	ResourceType restype;
 	int *resources;
 	int count = 0;
@@ -235,7 +234,7 @@ int *gfxr_interpreter_get_resources(ResourceManager* resourceManager, gfx_resour
 	resources = (int *)sci_malloc(sizeof(int) * top);
 
 	for (i = 0; i < top; i++)
-		if (resourceManager->testResource(restype, i))
+		if (resourceManager.testResource(restype, i))
 			resources[count++] = i;
 
 	*entries_nr = count;
@@ -243,7 +242,7 @@ int *gfxr_interpreter_get_resources(ResourceManager* resourceManager, gfx_resour
 	return resources;
 }
 
-Palette *gfxr_interpreter_get_static_palette(ResourceManager *resourceManager, int version, int *colors_nr) {
+Palette *gfxr_interpreter_get_static_palette(ResourceManager& resourceManager, int version, int *colors_nr) {
 	if (version >= SCI_VERSION_01_VGA)
 		return gfxr_interpreter_get_palette(resourceManager, version, colors_nr, 999);
 
@@ -251,13 +250,13 @@ Palette *gfxr_interpreter_get_static_palette(ResourceManager *resourceManager, i
 	return gfx_sci0_pic_colors->getref();
 }
 
-Palette *gfxr_interpreter_get_palette(ResourceManager *resourceManager, int version, int *colors_nr, int nr) {
+Palette *gfxr_interpreter_get_palette(ResourceManager& resourceManager, int version, int *colors_nr, int nr) {
 	Resource *res;
 
 	if (version < SCI_VERSION_01_VGA)
 		return NULL;
 
-	res = resourceManager->findResource(kResourceTypePalette, nr, 0);
+	res = resourceManager.findResource(kResourceTypePalette, nr, 0);
 	if (!res || !res->data)
 		return NULL;
 

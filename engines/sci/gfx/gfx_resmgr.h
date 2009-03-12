@@ -37,6 +37,7 @@
 namespace Sci {
 
 struct gfx_bitmap_font_t;
+class ResourceManager;
 
 enum gfx_resource_type_t {
 	GFX_RESOURCE_TYPE_VIEW = 0,
@@ -191,9 +192,10 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 ** loop and cel numbers have to be interpreted as 'maximum' or 'minimum' by the interpreter)
 */
 
-gfx_bitmap_font_t *gfxr_get_font(gfx_resstate_t *state, int nr, int scaled);
+gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_t *state, int nr, int scaled);
 /* Retreives a font
-** Parameters: (gfx_resstate_t *) state: The relevant resource state
+** Parameters: (ResourceManager&) resourceManager: supplies the resource repository capability
+** 			   (gfx_resstate_t *) state: The relevant resource state
 **             (int) nr: The font number
 **             (int) scaled: Whether the font should be font-scaled
 ** Returns   : (gfx_font_t *) The appropriate font, or NULL on error
@@ -236,7 +238,7 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 ** (Yes, this isn't really a "hash" in the traditional sense...)
 */
 
-int *gfxr_interpreter_get_resources(ResourceManager *resourceManager, gfx_resource_type_t type,
+int *gfxr_interpreter_get_resources(ResourceManager& resourceManager, gfx_resource_type_t type,
 	int version, int *entries_nr);
 /* Retreives all resources of a specified type that are available from the interpreter
 ** Parameters: (gfx_resstate_t *) state: The relevant resource state
@@ -279,9 +281,9 @@ int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic
 ** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
 */
 
-gfxr_view_t *gfxr_interpreter_get_view(ResourceManager* resourceManager, int nr, int palette, Palette* staticPalette, int version);
+gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr, int palette, Palette* staticPalette, int version);
 /* Instructs the interpreter-specific code to calculate a view
-** Parameters: (ResourceManager *) resourceManager: The resource manager
+** Parameters: (ResourceManager& ) resourceManager: The resource manager
 **             (int) nr: The view resource number
 **             (int) palette: The palette number to use
 **             (Palette*) staticPalette: The static palette to use in VGA games
@@ -289,33 +291,33 @@ gfxr_view_t *gfxr_interpreter_get_view(ResourceManager* resourceManager, int nr,
 ** Returns   : (gfx_view_t *) The appropriate view, or NULL on error
 */
 
-gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager *resourceManager, int nr);
+gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager& resourceManager, int nr);
 /* Instructs the interpreter-specific code to calculate a font
-** Parameters: (ResourceManager *) resourceManager: The resource manager
+** Parameters: (ResourceManager& ) resourceManager: The resource manager
 **             (int) nr: The font resource number
 ** Returns   : (gfx_font_t *) The newly calculated font, or NULL on error
 */
 
-gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager *resourceManager, int nr, int version);
+gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager& resourceManager, int nr, int version);
 /* Instructs the interpreter-specific code to calculate a cursor
-** Parameters: (ResourceManager *) state: The resource manager
+** Parameters: (ResourceManager& ) state: The resource manager
 **             (int nr): The cursor resource number
 **             (int version): The SCI version used
 ** Returns   : (gfx_pixmap_t *) The cursor pixmap, or NULL on error
 */
 
-Palette *gfxr_interpreter_get_static_palette(ResourceManager *resourceManager, int version, int *colors_nr);
+Palette *gfxr_interpreter_get_static_palette(ResourceManager& resourceManager, int version, int *colors_nr);
 /* Retreives the static palette (palette 999) from the interpreter-specific code
-** Parameters: (ResourceManager *) state: The resource manager
+** Parameters: (ResourceManager& ) state: The resource manager
 **             (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
 ** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
 **             if a static palette must be used, NULL otherwise
 */
 
-Palette *gfxr_interpreter_get_palette(ResourceManager *resourceManager, int version, int *colors_nr, int nr);
+Palette *gfxr_interpreter_get_palette(ResourceManager& resourceManager, int version, int *colors_nr, int nr);
 /* Retreives the static palette from the interpreter-specific code
-** Parameters: (ResourceManager *) state: The resource manager
+** Parameters: (ResourceManager& ) state: The resource manager
 **             (int) version: Interpreter version to use
 **             (int *) colors_nr: Number of colors to use
 **             (int) nr: The palette to read
