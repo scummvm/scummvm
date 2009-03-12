@@ -497,8 +497,8 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
-	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 80	-	-	GoodOldGeorg
 	51305e929e330e24a75a0351c8f9975e	-1	us	All	HE 99	Updated	-	Kirben
+	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
