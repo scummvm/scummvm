@@ -605,6 +605,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Hoyle 1 - English DOS (supplied by wibble92 in bug report #2644547)
+	{{"hoyle1", "", {
+		{"resource.map", 0, "9de9aa6d23569b3c8bf798503cf1216a", 7818},
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 162783},
+		{"resource.002", 0, "e0dd44069a62a463fd124974b915f10d", 342309},
+		{"resource.003", 0, "e0dd44069a62a463fd124974b915f10d", 328912},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 530)
+	},
+
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 1 - English Amiga (from www.back2roots.org)
 	{{"hoyle1", "", {
@@ -1222,6 +1234,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Larry 3 - French DOS (provided by richiefs in bug report #2670691)
+	{{"lsl3", "", {
+		{"resource.map", 0, "13541234d440c7988a13582468b0e4be", 6480},
+		{"resource.001", 0, "65f1bdaa20f6d0470e9d969f22473873", 457402},
+		{"resource.002", 0, "65f1bdaa20f6d0470e9d969f22473873", 671614},
+		{"resource.003", 0, "65f1bdaa20f6d0470e9d969f22473873", 586921},
+		{"resource.004", 0, "65f1bdaa20f6d0470e9d969f22473873", 690826},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 001, 123)  // got S.old.123 by executable scan
+	},
+
 	// Larry 5 - English Amiga
 	{{"lsl5", "", {
 		{"resource.map", 0, "e36052ae0c8b14d6f074bcb0aee50a38", 6096},
@@ -1282,7 +1307,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 510)
 	},
 
-#if 0
 	// Larry 5 - German DOS (from Tobis87)
 	{{"lsl5", "", {
 		{"resource.map", 0, "c97297aa76d4dd2ed144c7b7769e2caf", 6867},
@@ -1297,23 +1321,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510)	// placed the English version here
 	},
-#endif
 
-#if 0
-	// Larry 5 - Italian DOS Floppy (from glorifindel)
+	// Larry 5 - French DOS (provided by richiefs in bug report #2670691)
 	{{"lsl5", "", {
-		{"resource.map", 0, "a99776df795127f387cb35dae872d4e4", 5919},
-		{"resource.000", 0, "a8989a5a89e7d4f702b26b378c7a357a", 7001981},
-		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
+		{"resource.map", 0, "499898e652dc41b51e368ae41acce41f", 7023},
+		{"resource.000", 0, "4c00c14b8181ad47076a51d86097d97e", 958096},
+		{"resource.001", 0, "245c44f8ccd796732e61857e67b30079", 1196765},
+		{"resource.002", 0, "e86aeb27711f4a673e06ec32cfc84125", 948898},
+		{"resource.003", 0, "74edc89d8c1cb346ca346081b927e4c6", 1006608},
+		{"resource.004", 0, "999f407c9f38f937d4b8c4230ff5bb38", 971293},
+		{"resource.005", 0, "0cc8d35a744031c772ca7cd21ae95273", 920524},
+		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 946540},
+		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 958842},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 510)
+		SCI_VERSION(1, 000, 510)	// got 1.ls5.019 by executable scan
 	},
-#endif
 
-#if 0
 	// Larry 5 - Spanish DOS
 	{{"lsl5", "", {
 		{"resource.map", 0, "b6f7da7bf24e5a6b2946032cec3ea59c", 6861},
@@ -1326,6 +1353,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1015136},
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 987222},
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 510)
+	},
+
+#if 0
+	// Larry 5 - Italian DOS Floppy (from glorifindel)
+	{{"lsl5", "", {
+		{"resource.map", 0, "a99776df795127f387cb35dae872d4e4", 5919},
+		{"resource.000", 0, "a8989a5a89e7d4f702b26b378c7a357a", 7001981},
+		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
@@ -1362,17 +1400,45 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 002)
 	},
 
-#if 0
-	// Larry 6 - German DOS (from Tobis87)
+	// Larry 6 - German DOS CD - LORES (provided by richiefs in bug report #2670691)
+	{{"lsl6", "", {
+		{"resource.map", 0, "bafe85f32738854135991d4324ad147e", 7268},
+		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5773160},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 001, 115)
+	},
+
+	// Larry 6 - German DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	{{"lsl6", "", {
 		{"resource.map", 0, "badfdf446ffed569a310d2c63a249421", 8896},
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18534274},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 002)
 	},
-#endif
+
+	// Larry 6 - French DOS CD - LORES (provided by richiefs in bug report #2670691)
+	{{"lsl6", "", {
+		{"resource.map", 0, "97797ea775baaf18a1907d357d3c0ea6", 7268},
+		{"resource.000", 0, "f6cbc6da7b90ea135883e0759848ca2c", 5776092},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 001, 115)
+	},
+
+	// Larry 6 - French DOS CD - HIRES (provided by richiefs in bug report #2670691)
+	{{"lsl6", "", {
+		{"resource.map", 0, "d184e9aa4f2d4b5670ddb3669db82cda", 8896},
+		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18538987},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 100, 002)
+	},
 
 #if 0
 	// Larry 6 - Spanish DOS
@@ -1405,6 +1471,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+	},
+#endif
+
+#if 0
+	// Larry 7 - French DOS (provided by richiefs in bug report #2670691)
+	{{"lsl7", "", {
+		{"resmap.000", 0, "4407849fd52fe3efb0c30fba60cd5cd4", 8206},
+		{"ressci.000", 0, "dc37c3055fffbefb494ff22b145d377b", 66964472},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(3, 000, 000)	// FIXME: add version here
 	},
 #endif
 
