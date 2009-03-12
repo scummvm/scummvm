@@ -1903,13 +1903,13 @@ static int yylex(void) {
 	return retval;
 }
 
-static inline int said_next_node() {
+static int said_next_node() {
 	return ((said_tree_pos == 0) || (said_tree_pos >= VOCAB_TREE_NODES)) ? said_tree_pos = 0 : said_tree_pos++;
 }
 
 #define SAID_NEXT_NODE said_next_node()
 
-static inline int said_leaf_node(tree_t pos, int value) {
+static int said_leaf_node(tree_t pos, int value) {
 	said_tree[pos].type = PARSE_TREE_NODE_LEAF;
 
 	if (value != VALUE_IGNORE)
@@ -1918,7 +1918,7 @@ static inline int said_leaf_node(tree_t pos, int value) {
 	return pos;
 }
 
-static inline int said_branch_node(tree_t pos, int left, int right) {
+static int said_branch_node(tree_t pos, int left, int right) {
 	said_tree[pos].type = PARSE_TREE_NODE_BRANCH;
 
 	if (left != VALUE_IGNORE)
@@ -2180,7 +2180,7 @@ static void aug_find_words(parse_tree_node_t *tree, int startpos, int *base_word
 }
 
 
-static inline int aug_contains_word(int *list, int length, int word) {
+static int aug_contains_word(int *list, int length, int word) {
 	int i;
 
 	if (word == ANYWORD)

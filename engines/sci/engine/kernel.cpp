@@ -922,7 +922,7 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static inline void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
+static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
 	int maxsize;
 	void *retval = s->seg_manager->dereference(pointer, &maxsize);
 

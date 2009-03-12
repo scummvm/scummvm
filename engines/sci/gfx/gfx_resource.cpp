@@ -250,7 +250,7 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 
 namespace Sci {
 
-static inline void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	switch (mode->bytespp) {
 
 	case 1:
@@ -283,7 +283,7 @@ static inline void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *
 	}
 }
 
-static inline void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+static void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	if (mode->palette || !scale) { // fall back to unfiltered
 		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
 		return;
@@ -317,7 +317,7 @@ static inline void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm,
 
 }
 
-static inline void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+static void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	if (mode->palette || !scale) { // fall back to unfiltered
 		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
 		return;

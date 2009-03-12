@@ -101,7 +101,7 @@ const char *_debug_get_input_default() {
 	return inputbuf;
 }
 
-static inline int _parse_ticks(byte *data, int *offset_p, int size) {
+static int _parse_ticks(byte *data, int *offset_p, int size) {
 	int ticks = 0;
 	int tempticks;
 	int offset = 0;

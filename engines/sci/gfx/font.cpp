@@ -164,7 +164,7 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 	return fragments;
 }
 
-static inline void render_char(byte *dest, byte *src, int width, int line_width, int lines, int bytes_per_src_line, int fg0, int fg1, int bg) {
+static void render_char(byte *dest, byte *src, int width, int line_width, int lines, int bytes_per_src_line, int fg0, int fg1, int bg) {
 	int x, y;
 
 	for (y = 0; y < lines; y++) {

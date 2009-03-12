@@ -237,7 +237,7 @@ void vocab_free_rule_list(parse_rule_list_t *list) {
 	}
 }
 
-static inline int _rules_equal_p(parse_rule_t *r1, parse_rule_t *r2) {
+static int _rules_equal_p(parse_rule_t *r1, parse_rule_t *r2) {
 	if ((r1->id != r2->id) || (r1->length != r2->length) || (r1->first_special != r2->first_special))
 		return 0;
 

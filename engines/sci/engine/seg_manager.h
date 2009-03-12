@@ -431,11 +431,11 @@ private:
 	Hunk *alloc_Hunk(reg_t *);
 	void free_Hunk(reg_t addr);
 
-	inline int relocateLocal(Script *scr, SegmentId segment, int location);
-	inline int relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location);
-	inline int relocateObject(Object *obj, SegmentId segment, int location);
+	int relocateLocal(Script *scr, SegmentId segment, int location);
+	int relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location);
+	int relocateObject(Object *obj, SegmentId segment, int location);
 
-	inline int findFreeId(int *id);
+	int findFreeId(int *id);
 	static void setScriptSize(MemObject *mem, EngineState *s, int script_nr);
 	Object *scriptObjInit0(EngineState *s, reg_t obj_pos);
 	Object *scriptObjInit11(EngineState *s, reg_t obj_pos);

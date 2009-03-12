@@ -157,25 +157,25 @@ void adlibemu_init_lists() {
 
 /* more shamelessly lifted from xmp and adplug.  And altered.  :) */
 
-static inline int opl_write_L(int a, int v) {
+static int opl_write_L(int a, int v) {
 	adlib_reg_L[a] = v;
 	OPLWrite(ym3812_L, 0x388, a);
 	return OPLWrite(ym3812_L, 0x389, v);
 }
 
-static inline int opl_write_R(int a, int v) {
+static int opl_write_R(int a, int v) {
 	adlib_reg_R[a] = v;
 	OPLWrite(ym3812_R, 0x388, a);
 	return OPLWrite(ym3812_R, 0x389, v);
 }
 
-static inline int opl_write(int a, int v) {
+static int opl_write(int a, int v) {
 	opl_write_L(a, v);
 	return opl_write_R(a, v);
 }
 
 /*
-static inline uint8 opl_read (int a) {
+static uint8 opl_read (int a) {
 	OPLWrite (ym3812_L, 0x388, a);
 	return OPLRead (ym3812_L, 0x389);
 }

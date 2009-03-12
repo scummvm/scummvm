@@ -258,7 +258,7 @@ gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t 
 
 //*** Controls ***
 
-static inline rect_t _move_and_extend_rect(rect_t rect, Common::Point point, int yplus) {
+static rect_t _move_and_extend_rect(rect_t rect, Common::Point point, int yplus) {
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl + 1, rect.yl + yplus);
 }
 
@@ -586,7 +586,7 @@ gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *m
 
 #define MAGIC_ID_OFFSET 0x2000
 
-static inline gfx_color_t un_prioritize(gfx_color_t col) {
+static gfx_color_t un_prioritize(gfx_color_t col) {
 	col.priority = -1;
 	col.mask &= ~GFX_MASK_PRIORITY;
 

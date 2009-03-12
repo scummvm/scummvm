@@ -82,9 +82,8 @@ static void _gfxw_debug_remove_widget(gfxw_widget_t *widget) {
 #endif
 
 
-static inline void indent(int indentation) {
-	int i;
-	for (i = 0; i < indentation; i++)
+static void indent(int indentation) {
+	for (int i = 0; i < indentation; i++)
 		sciprintf("    ");
 }
 
@@ -161,7 +160,7 @@ gfxw_widget_t *_gfxw_new_widget(int size, gfxw_widget_type_t type) {
 	return widget;
 }
 
-static inline int verify_widget(gfxw_widget_t *widget) {
+static int verify_widget(gfxw_widget_t *widget) {
 	if (!widget) {
 		GFXERROR("Attempt to use NULL widget\n");
 #ifdef GFXW_DEBUG_WIDGETS
@@ -246,7 +245,7 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, gfxw_widget_t *widget) {
 		return 1; \
 	}
 
-static inline int _color_equals(gfx_color_t a, gfx_color_t b) {
+static int _color_equals(gfx_color_t a, gfx_color_t b) {
 	if (a.mask != b.mask)
 		return 0;
 
@@ -281,7 +280,7 @@ static int _gfxwop_basic_should_replace(gfxw_widget_t *widget, gfxw_widget_t *ot
 	return 0;
 }
 
-static inline void _gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag, gfxw_op_int *print,
+static void _gfxw_set_ops(gfxw_widget_t *widget, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag, gfxw_op_int *print,
 	gfxw_bin_op *compare_to, gfxw_bin_op *equals, gfxw_bin_op *superarea_of) {
 	widget->draw = draw;
 	widget->widfree = free;
@@ -374,18 +373,18 @@ static int _gfxwop_basic_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *othe
 
 //*** Boxes ***
 
-static inline rect_t _move_rect(rect_t rect, Common::Point point) {
+static rect_t _move_rect(rect_t rect, Common::Point point) {
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl, rect.yl);
 }
 
-static inline void _split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
+static void _split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
 	p1->x = rect.x;
 	p1->y = rect.y;
 	p2->x = rect.x + rect.xl;
 	p2->y = rect.y + rect.yl;
 }
 
-static inline Common::Point _move_point(rect_t rect, Common::Point point) {
+static Common::Point _move_point(rect_t rect, Common::Point point) {
 	return Common::Point(rect.x + point.x, rect.y + point.y);
 }
 
@@ -446,7 +445,7 @@ void _gfxw_set_ops_BOX(gfxw_widget_t *widget) {
 	              _gfxwop_basic_compare_to, _gfxwop_box_equals, _gfxwop_box_superarea_of);
 }
 
-static inline int _gfxw_color_get_priority(gfx_color_t color) {
+static int _gfxw_color_get_priority(gfx_color_t color) {
 	return (color.mask & GFX_MASK_PRIORITY) ? color.priority : -1;
 }
 
@@ -469,7 +468,7 @@ gfxw_box_t *gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gf
 	return widget;
 }
 
-static inline gfxw_primitive_t *_gfxw_new_primitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
+static gfxw_primitive_t *_gfxw_new_primitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
 													gfx_line_style_t style, gfxw_widget_type_t type) {
 	gfxw_primitive_t *widget = (gfxw_primitive_t *)_gfxw_new_widget(sizeof(gfxw_primitive_t), type);
 
@@ -1044,7 +1043,7 @@ static int _gfxwop_container_add_dirty_rel(gfxw_container_t *cont, rect_t rect, 
 	return cont->add_dirty_abs(cont, _move_rect(rect, Common::Point(cont->zone.x, cont->zone.y)), propagate);
 }
 
-static inline void _gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag,
+static void _gfxw_set_container_ops(gfxw_container_t *container, gfxw_point_op *draw, gfxw_op *free, gfxw_op *tag,
 	gfxw_op_int *print, gfxw_bin_op *compare_to, gfxw_bin_op *equals,
 	gfxw_bin_op *superarea_of, gfxw_visual_op *set_visual,
 	gfxw_unary_container_op *free_tagged, gfxw_unary_container_op *free_contents,
@@ -1123,7 +1122,7 @@ static void recursively_free_dirty_rects(gfx_dirty_rect_t *dirty) {
 
 int ti = 0;
 
-static inline int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds, rect_t dirty) {
+static int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds, rect_t dirty) {
 	bounds.x += port_zone.x;
 	bounds.y += port_zone.y;
 
@@ -1384,7 +1383,7 @@ static int _gfxwop_sorted_list_draw(gfxw_widget_t *list, Common::Point pos) {
 	return 0;
 }
 
-static inline int _w_gfxwop_list_print(gfxw_widget_t *list, const char *name, int indentation) {
+static int _w_gfxwop_list_print(gfxw_widget_t *list, const char *name, int indentation) {
 	_gfxw_print_widget(list, indentation);
 	sciprintf("%s", name);
 

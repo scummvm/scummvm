@@ -54,7 +54,7 @@ namespace Sci {
 
 #define INVALID_SCRIPT_ID -1
 
-inline int SegManager::findFreeId(int *id) {
+int SegManager::findFreeId(int *id) {
 	bool was_added = false;
 	int retval = 0;
 
@@ -719,7 +719,7 @@ static void SegManager::sm_set_variables(reg_t reg, int obj_index, reg_t variabl
 }
 #endif
 
-inline int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
+int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
 	int rel = location - block_location;
 	int index;
 
@@ -742,14 +742,14 @@ inline int SegManager::relocateBlock(reg_t *block, int block_location, int block
 	return 1;
 }
 
-inline int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
+int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
 	if (scr->locals_block)
 		return relocateBlock(scr->locals_block->locals, scr->locals_offset, scr->locals_block->nr, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
 
-inline int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
+int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
 	return relocateBlock(obj->variables, obj->pos.offset, obj->variables_nr, segment, location);
 }
 
@@ -1186,7 +1186,7 @@ void SegManager::scriptFreeUnusedObjects(SegmentId seg) {
 }
 
 /*
-static inline char *SegManager::dynprintf(char *msg, ...) {
+static char *SegManager::dynprintf(char *msg, ...) {
 	va_list argp;
 	char *buf = (char *)sci_malloc(strlen(msg) + 100);
 

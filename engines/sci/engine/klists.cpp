@@ -28,12 +28,7 @@
 
 namespace Sci {
 
-#ifdef LOOKUP_NODE
-#  undef LOOKUP_NODE
-#  define LOOKUP_NODE(addr) inline_lookup_node(s, (addr), __FILE__, __LINE__)
-#endif
-
-inline Node *inline_lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
+Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 	MemObject *mobj;
 	NodeTable *nt;
 
@@ -61,13 +56,9 @@ inline Node *inline_lookup_node(EngineState *s, reg_t addr, const char *file, in
 	return &(nt->table[addr.offset].entry);
 }
 
-Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
-	return inline_lookup_node(s, addr, file, line);
-}
-
 #define LOOKUP_NULL_LIST(addr) _lookup_list(s, addr, __FILE__, __LINE__, 1)
 
-inline List *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int may_be_null) {
+List *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int may_be_null) {
 	MemObject *mobj;
 	ListTable *lt;
 
@@ -104,7 +95,7 @@ List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
 
 #else
 
-static inline int sane_nodep(EngineState *s, reg_t addr) {
+static int sane_nodep(EngineState *s, reg_t addr) {
 	int have_prev = 0;
 	reg_t prev = addr;
 
@@ -196,7 +187,7 @@ reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-inline reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
+reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
 	Node *n = s->seg_manager->alloc_Node(&nodebase);
 
@@ -253,7 +244,7 @@ reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, ((l) ? IS_NULL_REG(l->first) : 0));
 }
 
-inline void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
+void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = LOOKUP_LIST(listbase);
 	Node *new_n = LOOKUP_NODE(nodebase);
 
@@ -276,7 +267,7 @@ inline void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	l->first = nodebase;
 }
 
-inline void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
+void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = LOOKUP_LIST(listbase);
 	Node *new_n = LOOKUP_NODE(nodebase);
 

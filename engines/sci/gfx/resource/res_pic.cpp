@@ -342,13 +342,13 @@ static void _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask) {
 #endif
 
 
-static inline void _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
-	int i;
-	for (i = 0; i < width; i++)
+#if 0
+// Unreferenced - removed
+static void _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
+	for (int i = 0; i < width; i++)
 		pic->aux_map[i+pos] |= FRESH_PAINT;
 }
 
-#if 0
 // Unreferenced - removed
 static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *max_y) {
 	// Tries to spread by approximating the first derivation of the border function.
@@ -626,7 +626,7 @@ static void _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int
 	}
 }
 
-static inline void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int plot,
+static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int offset, int plot,
 	int color, gfx_brush_mode_t brush_mode, int randseed) {
 	// yoffset 63680, offset 320, plot 1, color 34, brush_mode 0, randseed 432)*/
 	// Auxplot: Used by plot_aux_pattern to plot to visual and priority
@@ -910,7 +910,7 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 	}
 }
 
-static inline void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int priority, int drawenable) {
+static void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color, int priority, int drawenable) {
 	Common::Point start;
 	Common::Point end;
 
@@ -1065,7 +1065,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 		} \
 	}
 
-static inline int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
+static int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
 	int y_200, int color, int drawenable, int *x, int *y) {
 	// returns -1 on failure, 0 on success
 	int linewidth = pic->mode->xfact * 320;
@@ -1194,7 +1194,7 @@ namespace Sci {
 	x = oldx + *((signed char *) resource + pos++);
 
 
-inline static void check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r, byte u, byte d) {
+static void check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r, byte u, byte d) {
 	if (*dest == legalcolor) {
 		if (*srcp == legalcolor)
 			return;

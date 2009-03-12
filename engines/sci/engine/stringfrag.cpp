@@ -166,7 +166,7 @@ void stringfrag_append_char(EngineState *s, reg_t pos, unsigned char c) {
 	internal_stringfrag_append_char(s, buffer, c);
 }
 
-inline void stringfrag_setchar(reg_t *buffer, int pos, int offset, unsigned char c) {
+void stringfrag_setchar(reg_t *buffer, int pos, int offset, unsigned char c) {
 	switch (offset) {
 	case 0 :
 		buffer[pos].offset = (buffer[pos].offset & 0x00ff) | (c << 8);
@@ -177,7 +177,7 @@ inline void stringfrag_setchar(reg_t *buffer, int pos, int offset, unsigned char
 	}
 }
 
-inline unsigned char stringfrag_getchar(reg_t *buffer, int pos, int offset) {
+unsigned char stringfrag_getchar(reg_t *buffer, int pos, int offset) {
 	switch (offset) {
 	case 0 :
 		return buffer[pos].offset >> 8;

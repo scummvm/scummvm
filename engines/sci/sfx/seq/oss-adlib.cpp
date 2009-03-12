@@ -258,7 +258,7 @@ static int midi_adlib_reverb(int param) {
 	return 0;
 }
 
-static inline int midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
+static int midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
 	uint8 channel, oper;
 
 	channel = command & 0x0f;
@@ -291,7 +291,7 @@ static inline int midi_adlib_event1(uint8 command, uint8 note, uint8 velocity) {
 	return 0;
 }
 
-static inline int midi_adlib_event2(uint8 command, uint8 param) {
+static int midi_adlib_event2(uint8 command, uint8 param) {
 	uint8 channel;
 	uint8 oper;
 

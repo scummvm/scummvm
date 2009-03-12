@@ -147,7 +147,7 @@ static int freq_table[12] = { /* A4 is 440Hz, halftone map is x |-> ** 2^(x/12) 
 	53159
 };
 
-static inline int get_freq(int note) {
+static int get_freq(int note) {
 	int halftone_delta = note - BASE_NOTE;
 	int oct_diff = ((halftone_delta + BASE_OCTAVE * 12) / 12) - BASE_OCTAVE;
 	int halftone_index = (halftone_delta + (12 * 100)) % 12 ;

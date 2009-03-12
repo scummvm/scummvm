@@ -401,11 +401,6 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static inline void _ascertain_port_contents(gfxw_port_t *port) {
-	if (!port->contents)
-		port->contents = (gfxw_widget_t *) gfxw_new_list(port->bounds, 0);
-}
-
 reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int old_map = s->pic_visible_map;
 
@@ -1672,7 +1667,7 @@ static void draw_rect_to_control_map(EngineState *s, abs_rect_t abs_zone) {
 	ADD_TO_CURRENT_PICTURE_PORT(box);
 }
 
-static inline void draw_obj_to_control_map(EngineState *s, gfxw_dyn_view_t *view) {
+static void draw_obj_to_control_map(EngineState *s, gfxw_dyn_view_t *view) {
 	reg_t obj = make_reg(view->ID, view->subID);
 
 	if (!is_object(s, obj))

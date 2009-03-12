@@ -294,7 +294,7 @@ gfx_pixmap_t *_gfxr_get_cel(gfx_state_t *state, int nr, int *loop, int *cel, int
 
 //** Dirty rectangle operations **
 
-static inline int _gfxop_update_box(gfx_state_t *state, rect_t box) {
+static int _gfxop_update_box(gfx_state_t *state, rect_t box) {
 	int retval;
 	_gfxop_scale_rect(&box, state->driver->mode);
 
@@ -373,7 +373,7 @@ static void _gfxop_add_dirty(gfx_state_t *state, rect_t box) {
 	state->dirty_rects = gfxdr_add_dirty(state->dirty_rects, box, state->options->dirty_frames);
 }
 
-static inline void _gfxop_add_dirty_x(gfx_state_t *state, rect_t box) {
+static void _gfxop_add_dirty_x(gfx_state_t *state, rect_t box) {
 	// Extends the box size by one before adding (used for lines)
 	if (box.xl < 0)
 		box.xl--;

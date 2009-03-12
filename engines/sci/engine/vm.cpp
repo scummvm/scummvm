@@ -65,7 +65,7 @@ static reg_t _dummy_register;
 
 #ifndef DISABLE_VALIDATIONS
 
-static inline reg_t &validate_property(Object *obj, int index) {
+static reg_t &validate_property(Object *obj, int index) {
 	if (!obj) {
 		if (sci_debug_flags & 4)
 			sciprintf("[VM] Sending to disposed object!\n");
@@ -85,7 +85,7 @@ static inline reg_t &validate_property(Object *obj, int index) {
 	return obj->variables[index];
 }
 
-static inline StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
+static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
@@ -95,7 +95,7 @@ static inline StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	return 0;
 }
 
-static inline int validate_arithmetic(reg_t reg) {
+static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (!_weak_validations)
 			script_debug_flag = script_error_flag = 1;
@@ -107,7 +107,7 @@ static inline int validate_arithmetic(reg_t reg) {
 	return reg.offset;
 }
 
-static inline int signed_validate_arithmetic(reg_t reg) {
+static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (!_weak_validations)
 			script_debug_flag = script_error_flag = 1;
@@ -122,7 +122,7 @@ static inline int signed_validate_arithmetic(reg_t reg) {
 		return reg.offset;
 }
 
-static inline int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
+static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
@@ -154,14 +154,14 @@ static inline int validate_variable(reg_t *r, reg_t *stack_base, int type, int m
 	return 0;
 }
 
-static inline reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
+static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
 	if (!validate_variable(r, stack_base, type, max, index, line))
 		return r[index];
 	else
 		return default_value;
 }
 
-static inline void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value) {
+static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value) {
 	if (!validate_variable(r, stack_base, type, max, index, line))
 		r[index] = value;
 }
@@ -252,7 +252,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define OBJ_SUPERCLASS(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SUPERCLASS_OFFSET))
 // Returns an object's superclass
 
-inline ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
+ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg;
 	uint16 temp;
 
@@ -534,7 +534,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 	error("Could not recover, exitting...\n");
 }
 
-static inline Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
+static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
 	MemObject *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 	if (memobj)
 		return &(memobj->data.script);
@@ -571,7 +571,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	}
 }
 
-static inline void gc_countdown(EngineState *s) {
+static void gc_countdown(EngineState *s) {
 	if (s->gc_countdown-- <= 0) {
 		s->gc_countdown = script_gc_interval;
 		run_gc(s);
@@ -1476,7 +1476,7 @@ void run_vm(EngineState *s, int restoring) {
 	}
 }
 
-static inline int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
+static int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 
@@ -1509,7 +1509,7 @@ static inline int _obj_locate_varselector(EngineState *s, Object *obj, Selector 
 	}
 }
 
-static inline int _class_locate_funcselector(EngineState *s, Object *obj, Selector slc) {
+static int _class_locate_funcselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj is a class and explicitly defines slc as a funcselector
 	// Does NOT say anything about obj's superclasses, i.e. failure may be
 	// returned even if one of the superclasses defines the funcselector.
@@ -1523,7 +1523,7 @@ static inline int _class_locate_funcselector(EngineState *s, Object *obj, Select
 	return -1; // Failed
 }
 
-static inline SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
+static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
 	int index;
 
 	// "recursive" lookup

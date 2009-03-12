@@ -31,10 +31,8 @@ namespace Sci {
 
 //#define DEBUG
 
-static inline int matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
-	int i;
-
-	for (i = 0; i < nr; i++)
+static int matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
+	for (int i = 0; i < nr; i++)
 		if (patterns[i].min <= val
 		        && patterns[i].max >= val)
 			return 1;
@@ -49,7 +47,7 @@ static void print_pattern(gfx_res_pattern_t *pat) {
 }
 #endif
 
-static inline int resource_matches_patternlists(gfx_res_conf_t *conf, int type, int nr, int loop, int cel) {
+static int resource_matches_patternlists(gfx_res_conf_t *conf, int type, int nr, int loop, int cel) {
 	int loc;
 #ifdef DEBUG
 	int i;
@@ -99,7 +97,7 @@ static inline int resource_matches_patternlists(gfx_res_conf_t *conf, int type, 
 	return matches_patternlist(conf->patterns + loc, conf->cels_nr, cel);
 }
 
-static inline gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, int loop, int cel) {
+static gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, int loop, int cel) {
 	while (conflist) {
 		if (resource_matches_patternlists(conflist, type, nr, loop, cel)) {
 #ifdef DEBUG

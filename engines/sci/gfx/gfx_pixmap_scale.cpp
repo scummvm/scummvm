@@ -288,7 +288,7 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 
 #ifndef GFX_GET_PIXEL_DELTA
 #define GFX_GET_PIXEL_DELTA
-static inline void gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned int *pixel0, unsigned int *pixel1) {
+static void gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned int *pixel0, unsigned int *pixel1) {
 	int j;
 	int transp0 = pixel0[3] == 0xffffff;
 	int transp1 = pixel1[3] == 0xffffff;
@@ -313,7 +313,7 @@ static inline void gfx_get_pixel_delta(unsigned int *color, int *delta, unsigned
 }
 
 
-static inline void gfx_apply_delta(unsigned int *color, int *delta, int factor) {
+static void gfx_apply_delta(unsigned int *color, int *delta, int factor) {
 	int i;
 
 	for (i = 0; i < 4; i++)
