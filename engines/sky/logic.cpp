@@ -1209,7 +1209,6 @@ void Logic::initScriptVariables() {
 }
 
 uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
-
 	Compact *tmpComp = _compact;
 	_compact = scriptComp;
 	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16));
