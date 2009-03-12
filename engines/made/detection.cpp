@@ -83,7 +83,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Patch #1953654 submitted by spookypeanut
 		{
 			"rtz",
-			"CD",
+			"V1.0, 9/15/93, installed, CD",
 			AD_ENTRY1("rtzcd.dat", "e95c38ded389e39cfbf87a8cb250b12e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -100,7 +100,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Patch #1953654 submitted by spookypeanut
 		{
 			"rtz",
-			"CD",
+			"V1.0, 9/15/93, CD",
 			AD_ENTRY1("rtzcd.red", "cd8b62ece4677c438688c1de3f5379b9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -116,8 +116,8 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Return to Zork - English CD version 1.1 12/7/93 (installed)
 		{
 			"rtz",
-			"CD",
-			AD_ENTRY1("rtzcd.dat", "a1db8c97a78dae10f91d356f16ad07b8"),
+			"V1.1, 12/7/93, installed, CD",
+			AD_ENTRY1s("rtzcd.dat", "a1db8c97a78dae10f91d356f16ad07b8", 536064),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -132,8 +132,8 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Return to Zork - English CD version 1.1 12/7/93
 		{
 			"rtz",
-			"CD",
-			AD_ENTRY1("rtzcd.red", "c4e2430e6b6c6ff1562a80fb4a9df24c"),
+			"V1.1, 12/7/93, CD",
+			AD_ENTRY1s("rtzcd.red", "c4e2430e6b6c6ff1562a80fb4a9df24c", 276177),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -149,7 +149,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Supplied by Dark-Star in the ScummVM forums
 		{
 			"rtz",
-			"CD",
+			"V1.2, 9/29/94, installed, CD",
 			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -165,8 +165,8 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Return to Zork - English CD version 1.2 9/29/94
 		{
 			"rtz",
-			"CD",
-			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
+			"V1.2, 9/29/94, CD",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 276584),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -179,12 +179,11 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - German CD version 1.2 9/29/94 (installed)
-		// (same as the English 1.2 version)
 		// Supplied by Dark-Star in the ScummVM forums
 		{
 			"rtz",
-			"CD",
-			AD_ENTRY1("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a"),
+			"V1.2, 9/29/94, installed, CD",
+			AD_ENTRY1s("rtzcd.dat", "9d740378da2d16e83d0d0efff01bf83a", 525824),
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -197,12 +196,11 @@ static const MadeGameDescription gameDescriptions[] = {
 
 	{
 		// Return to Zork - German CD version 1.2 4/18/95
-		// (same as the English 1.2 version)
 		// Supplied by Dark-Star in the ScummVM forums
 		{
 			"rtz",
-			"CD",
-			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
+			"V1.2, 4/18/95, CD",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 355442),
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -213,30 +211,13 @@ static const MadeGameDescription gameDescriptions[] = {
 		3,
 	},
 
-	{
- 		// Return to Zork - Italian CD version 1.2 3/31/95
-		// Patch #2685032 submitted by goodoldgeorg
- 		{
- 			"rtz",
- 			"CD",
- 			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
- 			Common::IT_ITA,
- 			Common::kPlatformPC,
- 			ADGF_NO_FLAGS
- 		},
- 		GID_RTZ,
- 		0,
- 		GF_CD_COMPRESSED,
- 		3,
- 	},
- 
  	{
  		// Return to Zork - Italian CD version 1.2 3/31/95 (installed)
 		// Patch #2685032 submitted by goodoldgeorg
  		{
  			"rtz",
- 			"CD",
- 			AD_ENTRY1("rtzcd.dat", "5b86035aed0277f96e3d173542b5364a"),
+ 			"V1.2, 3/31/95, installed, CD",
+ 			AD_ENTRY1s("rtzcd.dat", "5b86035aed0277f96e3d173542b5364a", 523776),
  			Common::IT_ITA,
  			Common::kPlatformPC,
  			ADGF_NO_FLAGS
@@ -246,15 +227,15 @@ static const MadeGameDescription gameDescriptions[] = {
  		GF_CD,
  		3,
  	},
- 
- 	{
- 		// Return to Zork - French CD version 1.2 5/13/95
+
+	{
+ 		// Return to Zork - Italian CD version 1.2 3/31/95
 		// Patch #2685032 submitted by goodoldgeorg
  		{
  			"rtz",
- 			"CD",
- 			AD_ENTRY1("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2"),
- 			Common::FR_FRA,
+ 			"V1.2, 3/31/95, CD",
+ 			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354971),
+ 			Common::IT_ITA,
  			Common::kPlatformPC,
  			ADGF_NO_FLAGS
  		},
@@ -269,8 +250,8 @@ static const MadeGameDescription gameDescriptions[] = {
 		// Patch #2685032 submitted by goodoldgeorg
  		{
  			"rtz",
- 			"CD",
- 			AD_ENTRY1("rtzcd.dat", "bde8251a8e34e87c54e3f93147d56c9e"),
+ 			"V1.2, 5/13/95, installed, CD",
+ 			AD_ENTRY1s("rtzcd.dat", "bde8251a8e34e87c54e3f93147d56c9e", 523776),
  			Common::FR_FRA,
  			Common::kPlatformPC,
  			ADGF_NO_FLAGS
@@ -278,6 +259,23 @@ static const MadeGameDescription gameDescriptions[] = {
  		GID_RTZ,
  		0,
  		GF_CD,
+ 		3,
+ 	},
+
+ 	{
+ 		// Return to Zork - French CD version 1.2 5/13/95
+		// Patch #2685032 submitted by goodoldgeorg
+ 		{
+ 			"rtz",
+ 			"V1.2, 3/31/95, CD",
+ 			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354614),
+ 			Common::FR_FRA,
+ 			Common::kPlatformPC,
+ 			ADGF_NO_FLAGS
+ 		},
+ 		GID_RTZ,
+ 		0,
+ 		GF_CD_COMPRESSED,
  		3,
  	},
 
