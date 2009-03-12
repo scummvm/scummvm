@@ -165,6 +165,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 5)
 	},
+	
+	// Castle of Dr. Brain - English DOS
+	{{"castlebrain", "", {
+		{"resource.map", 0, "1302ceb141d44b05a42723791b2d84c6", 2739},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 346731},
+		{"resource.001", 0, "d2f5a1be74ed963fa849a76892be5290", 794832},
+		{"resource.002", 0, "c0c29c51af66d65cb53f49e785a2d978", 1280907},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 510)
+	},
 
 #if 0
 	// Castle of Dr. Brain - Spanish DOS
@@ -291,6 +303,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685)
 	},
 
+	// Conquests of Camelot - English DOS
+        {{"camelot", "", {
+                {"resource.map", 0, "86bffb2a393b7a5d8de45e735091f037", 9504},
+                {"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 212461},
+                {"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 317865},
+                {"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 359145},
+                {"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 345180},
+                {"resource.005", 0, "8e1a3a8c588007404b532b8dfacc1460", 345734},
+                {"resource.006", 0, "8e1a3a8c588007404b532b8dfacc1460", 332446},
+                {"resource.007", 0, "8e1a3a8c588007404b532b8dfacc1460", 358182},
+                {NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+                {},
+                SCI_VERSION_AUTODETECT,
+                SCI_VERSION(0, 000, 685)
+        },
+
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
 	{{"longbow", "", {
 		{"resource.map", 0, "6204f3d00c0f6c0f5f95a29a4190f2f9", 6048},
@@ -397,6 +425,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Eco Quest - English DOS Floppy
+	{{"ecoquest", "Floppy", {
+		{"resource.map", 0, "f77baec05fae76707205f5be6534a7f3", 4059},
+		{"resource.000", 0, "241b98d3903f6a5b872baa19b80aef3b", 858490},
+		{"resource.001", 0, "2fed7451bca81b0c891eed1a956f2263", 1212161},
+		{"resource.002", 0, "323b3b12f43d53f27d259beb225f0aa7", 1129316},
+		{"resource.003", 0, "83ac03e4bddb2c1ac2d36d2a587d0536", 1145616},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 510)
+	},
+
 	// Eco Quest 2 - English DOS Demo
 	{{"ecoquest2", "Demo", {
 		{"resource.map", 0, "607cfa0d8a03b7d348c06ee727e3d939", 1321},
@@ -407,6 +448,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 55)
 	},
 
+#if 0	
+	// Eco Quest 2 - English DOS Floppy
+	{{"ecoquest2", "Floppy", {
+		{"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
+		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 0, 000)		// FIXME: add version here
+	},
+#endif
+	
 #if 0
 	// Freddy Pharkas - German DOS (from Tobis87)
 	{{"freddypharkas", "", {
@@ -439,6 +492,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 132)
 	},
 
+#if 0
+	// Freddy Pharkas - English Floppy
+	{{"freddypharkas", "Floppy", {
+		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
+		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+	},
+#endif
+	
 #if 0
 	// Freddy Pharkas - Spanish DOS CD
 	{{"freddypharkas", "CD", {
@@ -668,6 +733,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 274)
+	},
+	
+	// King's Quest 4 - English DOS
+	{{"kq4sci", "", {
+		{"resource.map", 0, "381d9dcb69c626f0a60631dbfec1d13a", 9474},
+		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 191559},
+		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 333345},
+		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 358513},
+		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 326297},
+		{"resource.005", 0, "0c8566848a76eea19a6d6220914030a7", 325102},
+		{"resource.006", 0, "0c8566848a76eea19a6d6220914030a7", 337288},
+		{"resource.007", 0, "0c8566848a76eea19a6d6220914030a7", 343882},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 253)
 	},
 
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
@@ -1053,6 +1134,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 409)
 	},
+	
+	// Larry 2 - English DOS
+	{{"lsl2", "", {
+		{"resource.map", 0, "6bd43c92eaf561f64818116eed683fcf", 5598},
+		{"resource.001", 0, "96033f57accfca903750413fd09193c8", 140526},
+		{"resource.002", 0, "96033f57accfca903750413fd09193c8", 348672},
+		{"resource.003", 0, "96033f57accfca903750413fd09193c8", 236676},
+		{"resource.004", 0, "96033f57accfca903750413fd09193c8", 204867},
+		{"resource.005", 0, "96033f57accfca903750413fd09193c8", 274953},
+		{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 343)
+	},
 
 	// Larry 3 - English Amiga (from www.back2roots.org)
 	{{"lsl3", "", {
@@ -1076,6 +1172,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "f18441027154292836b973c655fa3175", 578024},
 		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506807},
 		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 572)
+	},
+	
+	// Larry 3 - English DOS
+	{{"lsl3", "", {
+		{"resource.map", 0, "0f429f5186f96d6c501838a1cb44bd43", 7452},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 141381},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 345171},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 329214},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 290173},
+		{"resource.005", 0, "f18441027154292836b973c655fa3175", 302946},
+		{"resource.006", 0, "f18441027154292836b973c655fa3175", 282465},
+		{"resource.007", 0, "f18441027154292836b973c655fa3175", 257174},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
@@ -1635,6 +1747,23 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 72)
 	},
+	
+	// Quest for Glory 2 - English
+	{{"qfg2", "", {
+		{"resource.map", 0, "be23af27e9557bf232efe213ac7f277c", 8166},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331973},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467505}, 
+		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
+		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
+		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
+		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
+		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 72)
+	},
 
 	// Quest for Glory 3 - English DOS demo (from FRG)
 	{{"qfg3", "Demo", {
@@ -2117,6 +2246,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 53)
 	},
+
 #if 0
 	// The Island of Dr. Brain - English DOS
 	{{"islandbrain", "", {
