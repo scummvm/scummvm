@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-class EngineState;
+struct EngineState;
 
 // Savegame metadata
 struct SavegameMetadata {
