@@ -40,6 +40,7 @@
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
+#include "sci/engine/savegame.h"
 
 #ifdef _WIN32
 #pragma warning( disable : 4101 )

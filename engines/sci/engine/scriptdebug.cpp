@@ -31,6 +31,7 @@
 #include "sci/engine/kdebug.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/sci_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for gfxw_container_t, gfxw_port_t, gfxw_visual_t

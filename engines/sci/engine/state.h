@@ -91,16 +91,6 @@ struct drawn_pic_t {
 	int palette;
 };
 
-// Savegame metadata
-struct SavegameMetadata {
-	Common::String savegame_name;
-	int savegame_version;
-	Common::String game_version;
-	sci_version_t version;
-	int savegame_date;
-	int savegame_time;
-};
-
 class FileHandle {
 public:
 	Common::String _name;
@@ -289,28 +279,6 @@ struct EngineState {
 
 	EngineState *successor; /* Successor of this state: Used for restoring */
 };
-
-
-#define STATE_T_DEFINED
-
-int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename);
-/* Saves a game state to the hard disk in a portable way
-** Parameters: (EngineState *) s: The state to save
-**             (WriteStream *) save: The stream to save to
-**             (char *) savename: The description of the savegame
-** Returns   : (int) 0 on success, 1 otherwise
-*/
-
-EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
-/* Restores a game state from a directory
-** Parameters: (EngineState *) s: An older state from the same game
-**             (char *) dirname: The subdirectory to restore from
-** Returns   : (EngineState *) NULL on failure, a pointer to a valid EngineState otherwise
-*/
-
-bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata* meta);
-/* Read the header from a savegame
-*/
 
 PaletteEntry get_pic_color(EngineState *s, int color);
 /* Retrieves the gfx_pixmap_color_t associated with a game color index
