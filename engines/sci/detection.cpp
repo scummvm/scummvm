@@ -1462,7 +1462,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(3, 000, 000)
 	},
 
-#if 0
 	// Larry 7 - German DOS (from Tobis87)
 	{{"lsl7", "", {
 		{"resmap.000", 0, "c11e6bfcfc2f2d05da47e5a7df3e9b1a", 8188},
@@ -1470,9 +1469,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
 #if 0
 	// Larry 7 - French DOS (provided by richiefs in bug report #2670691)
@@ -2503,9 +2501,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			foundRes000 = true;
 
 		// Check if it's a known executable name
+		// Note: "sier" matches "sier.exe", "sierw.exe" and "sierw5.exe"
 		if (filename.contains("scidhuv") || filename.contains("sciv") ||
 			filename.contains("sierra") || filename.contains("sciw") ||
-			filename.contains("prog")) {
+			filename.contains("prog") || filename.contains("sier")) {
 
 			// We already found a valid exe, no need to check this one.
 			if (!exeVersionString.empty())
