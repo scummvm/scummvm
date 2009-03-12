@@ -149,10 +149,7 @@ static bool syncSaveGameHeader(Serializer &s, SaveGameHeader &hdr) {
 	if (tmp < 0 || hdr.id != SAVEGAME_ID || hdr.ver > CURRENT_VER || hdr.size > 1024)
 		return false;
 	// Skip over any extra bytes
-	while (tmp-- > 0) {
-		byte b = 0;
-		s.syncAsByte(b);
-	}
+	s.skip(tmp);
 	return true;
 }
 

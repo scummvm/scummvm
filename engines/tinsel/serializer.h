@@ -61,11 +61,21 @@ public:
 
 	uint bytesSynced() const { return _bytesSynced; }
 
-	void syncBytes(byte *buf, uint16 size) {
+	void syncBytes(byte *buf, uint32 size) {
 		if (_loadStream)
 			_loadStream->read(buf, size);
 		else
 			_saveStream->write(buf, size);
+		_bytesSynced += size;
+	}
+
+	void skip(uint32 size) {
+		if (_loadStream)
+			_loadStream->skip(size);
+		else {
+			while (size--)
+				_saveStream->writeByte(0);
+		}
 		_bytesSynced += size;
 	}
 
