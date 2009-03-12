@@ -45,7 +45,7 @@ bool PmvPlayer::play(const char *filename) {
 		return false;
 	}
 
-	uint32 chunkType, chunkSize;
+	uint32 chunkType, chunkSize, prevChunkSize = 0;
 
 	readChunk(chunkType, chunkSize);	// "MOVE"
 	if (chunkType != MKID_BE('MOVE')) {
@@ -95,7 +95,7 @@ bool PmvPlayer::play(const char *filename) {
 	uint32 soundSize = 0;
 	uint32 soundChunkOfs = 0, palChunkOfs = 0;
 	uint32 palSize = 0;
-	byte *frameData, *audioData, *soundData, *palData, *imageData;
+	byte *frameData = 0, *audioData, *soundData, *palData, *imageData;
 	bool firstTime = true;
 
 	uint32 soundStartTime = 0, skipFrames = 0;
@@ -120,7 +120,16 @@ bool PmvPlayer::play(const char *filename) {
 		if (_fd->eos())
 			break;
 
-		frameData = new byte[chunkSize];
+		// Only reallocate the frame data buffer if its size has changed
+		if (prevChunkSize != chunkSize || !frameData) {
+			if (frameData)
+				delete[] frameData;
+
+			frameData = new byte[chunkSize];
+		}
+
+		prevChunkSize = chunkSize;
+
 		bytesRead = _fd->read(frameData, chunkSize);
 
 		if (bytesRead < chunkSize || _fd->eos())
@@ -182,8 +191,6 @@ bool PmvPlayer::play(const char *filename) {
 		handleEvents();
 		updateScreen();
 
-		delete[] frameData;
-
 		if (skipFrames == 0) {
 			int32 waitTime = (frameCount * frameDelay) -
 				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
@@ -200,6 +207,8 @@ bool PmvPlayer::play(const char *filename) {
 		frameCount++;
 
 	}
+
+	delete[] frameData;
 
 	_audioStream->finish();
 	_mixer->stopHandle(_audioStreamHandle);
