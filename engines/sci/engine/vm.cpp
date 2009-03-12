@@ -578,7 +578,7 @@ static void gc_countdown(EngineState *s) {
 	}
 }
 
-static byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
+static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 
 void run_vm(EngineState *s, int restoring) {
 	reg_t *variables[4]; // global, local, temp, param, as immediate pointers
@@ -603,7 +603,7 @@ void run_vm(EngineState *s, int restoring) {
 	Script *local_script = script_locate_by_segment(s, xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
 	// Used to detect the stack bottom, for "physical" returns
-	byte *code_buf = NULL; // (Avoid spurious warning)
+	const byte *code_buf = NULL; // (Avoid spurious warning)
 
 	if (!local_script) {
 		script_error(s, __FILE__, __LINE__, "Program Counter gone astray");

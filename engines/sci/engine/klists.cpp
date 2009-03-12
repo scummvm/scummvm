@@ -56,16 +56,8 @@ Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 	return &(nt->table[addr.offset].entry);
 }
 
-#define LOOKUP_NULL_LIST(addr) _lookup_list(s, addr, __FILE__, __LINE__, 1)
-
-List *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int may_be_null) {
-	MemObject *mobj;
-	ListTable *lt;
-
-	if (may_be_null && !addr.segment && !addr.offset)
-		return NULL;
-
-	mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
+List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
+	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));
@@ -73,7 +65,7 @@ List *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int m
 		return NULL;
 	}
 
-	lt = &(mobj->data.lists);
+	ListTable *lt = &(mobj->data.lists);
 
 	if (!ENTRY_IS_VALID(lt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));
@@ -82,10 +74,6 @@ List *_lookup_list(EngineState *s, reg_t addr, const char *file, int line, int m
 	}
 
 	return &(lt->table[addr.offset].entry);
-}
-
-List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
-	return _lookup_list(s, addr, file, line, 0);
 }
 
 #ifdef DISABLE_VALIDATIONS
@@ -212,7 +200,9 @@ reg_t kNewNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	List *l = LOOKUP_NULL_LIST(argv[0]);
+	if (IS_NULL_REG(argv[0]))
+		return NULL_REG;
+	List *l = LOOKUP_LIST(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
 		SCIkwarn(SCIkERROR, "List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
