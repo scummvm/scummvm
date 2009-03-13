@@ -414,7 +414,7 @@ static int is_print_str(char *str) {
 	if (len == 0) return 1;
 
 	while (*str) {
-		if (isprint(*str)) printable++;
+		if (isprint((*str & 0xFF))) printable++;
 		str++;
 	}
 
