@@ -376,6 +376,20 @@ get_engine_sub() {
 	echo $sub
 }
 
+# Enable *all* engines
+engine_enable_all() {
+	for engine in $_engines; do
+		eval _engine_${engine}_build=no
+	done
+}
+
+# Disable *all* engines
+engine_disable_all() {
+	for engine in $_engines; do
+		eval _engine_${engine}_build=no
+	done
+}
+
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
@@ -604,6 +618,8 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --enable-all-engines     enable all engines
+  --disable-all-engines    disable all engines
 $engines_help
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -780,6 +796,12 @@ for ac_option in $@; do
 		;;
 	--libdir=*)
 		_libdir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-all-engines)
+		engine_enable_all
+		;;
+	--disable-all-engines)
+		engine_disable_all
 		;;
 	--enable-*)
 		engine_enable `echo $ac_option | cut -d '-' -f 4-`
