@@ -379,7 +379,7 @@ get_engine_sub() {
 # Enable *all* engines
 engine_enable_all() {
 	for engine in $_engines; do
-		eval _engine_${engine}_build=no
+		eval _engine_${engine}_build=yes
 	done
 }
 
