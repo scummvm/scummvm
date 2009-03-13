@@ -277,6 +277,7 @@ void DecompressorComp3::decodeRLE(Common::ReadStream *src, Common::WriteStream *
 			break;
 		case 0x80:
 			dest->writeByte(*pixeldata++);
+			pos++;
 			break;
 		}
 	}
