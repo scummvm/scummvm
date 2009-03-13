@@ -414,6 +414,10 @@ static int is_print_str(char *str) {
 	if (len == 0) return 1;
 
 	while (*str) {
+		// We're ANDing the string with 0xFF to prevent a situation
+		// where MSVC could sometimes falsely parse the character as
+		// multibyte/Unicode, thereby overflowing an assertion inside
+		// isprint(). This occurs after the intro of LSL5, for example.
 		if (isprint((*str & 0xFF))) printable++;
 		str++;
 	}
