@@ -407,7 +407,7 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 /* Simple heuristic to work around array handling peculiarity in SQ4:
 It uses StrAt() to read the individual elements, so we must determine
 whether a string is really a string or an array. */
-static int is_print_str(char *str) {
+static int is_print_str(const char *str) {
 	int printable = 0;
 	int len = strlen(str);
 
@@ -419,7 +419,8 @@ static int is_print_str(char *str) {
 		// to an unsigned char. Values outside this range (in this
 		// case, negative values) yield unpredictable results. Refer to:
 		// http://msdn.microsoft.com/en-us/library/ewx8s4kw.aspx
-		if (isprint((unsigned char)*str)) printable++;
+		if (isprint((byte)*str))
+			printable++;
 		str++;
 	}
 
@@ -428,20 +429,18 @@ static int is_print_str(char *str) {
 
 
 reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	unsigned char *dest = (unsigned char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
+	byte *dest = (byte *)kernel_dereference_bulk_pointer(s, argv[0], 0);
 	reg_t *dest2;
 
 	if (!dest) {
-		warning("Attempt to StrAt at invalid pointer "PREG"",
-		          PRINT_REG(argv[0]));
+		warning("Attempt to StrAt at invalid pointer "PREG"", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
-	        (strcmp(s->seg_manager->getDescription(argv[0]),
-	                AVOIDPATH_DYNMEM_STRING) != 0)  &&
-	        ((strlen((const char*)dest) < 2) || (!is_print_str((char*)dest))))
+	        (strcmp(s->seg_manager->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0)  &&
+	        ((strlen((const char*)dest) < 2) || (!is_print_str((const char*)dest))))
 		/* SQ4 array handling detected */
 	{
 #ifndef SCUMM_BIG_ENDIAN
@@ -450,8 +449,9 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int odd = !(KP_UINT(argv[1]) & 1);
 #endif
 		dest2 = ((reg_t *) dest) + (KP_UINT(argv[1]) / 2);
-		dest = ((unsigned char *)(&dest2->offset)) + odd;
-	} else dest += KP_UINT(argv[1]);
+		dest = ((byte *)(&dest2->offset)) + odd;
+	} else
+		dest += KP_UINT(argv[1]);
 
 	s->r_acc = make_reg(0, *dest);
 
