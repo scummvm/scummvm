@@ -414,11 +414,12 @@ static int is_print_str(char *str) {
 	if (len == 0) return 1;
 
 	while (*str) {
-		// We're ANDing the string with 0xFF to prevent a situation
-		// where MSVC could sometimes falsely parse the character as
-		// multibyte/Unicode, thereby overflowing an assertion inside
-		// isprint(). This occurs after the intro of LSL5, for example.
-		if (isprint((*str & 0xFF))) printable++;
+		// The parameter passed to isprint() needs to be in the range
+		// 0 to 0xFF or EOF, according to MSDN, therefore we cast it
+		// to an unsigned char. Values outside this range (in this
+		// case, negative values) yield unpredictable results. Refer to:
+		// http://msdn.microsoft.com/en-us/library/ewx8s4kw.aspx
+		if (isprint((unsigned char)*str)) printable++;
 		str++;
 	}
 
