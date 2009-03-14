@@ -29,10 +29,6 @@
 
 namespace Cine {
 
-static const Graphics::PixelFormat kLowPalFormat  = {2, 5, 5, 5, 8, 8, 4,  0, 0};
-static const Graphics::PixelFormat kHighPalFormat = {3, 0, 0, 0, 8, 0, 8, 16, 0};
-static const Graphics::PixelFormat kSystemPalFormat = {4, 0, 0, 0, 8, 0, 8, 16, 0};
-
 Common::Array<PalEntry> palArray;
 static byte paletteBuffer1[16];
 static byte paletteBuffer2[16];
@@ -165,6 +161,13 @@ void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopC
 	}
 }
 
+byte shiftByteLeft(const byte value, const signed shiftLeft) {
+	if (shiftLeft >= 0)
+		return value << shiftLeft;
+	else // right shift with negative shiftLeft values
+		return value >> abs(shiftLeft);
+}
+
 // a.k.a. palRotate
 Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
 	const Color lastColor = _colors[lastIndex];
@@ -216,16 +219,9 @@ void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
 	_colors[index].b = CLIP<int>(_colors[index].b + b, 0, _bMax);
 }
 
-Palette &Palette::loadCineLowPal(const byte *colors, const uint numColors) {
-	return load(colors, kLowPalFormat, numColors);
-}
-
-Palette &Palette::loadCineHighPal(const byte *colors, const uint numColors) {
-	return load(colors, kHighPalFormat, numColors);
-}
-
-Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, const uint numColors) {
-	assert(format.aLoss == 8); // No alpha	
+Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors) {
+	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
+	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
@@ -237,46 +233,52 @@ Palette &Palette::load(const byte *colors, const Graphics::PixelFormat format, c
 	
 	for (uint i = 0; i < numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
-		_colors[i].r = (colors[i * format.bytesPerPixel + (format.rShift / 8)] >> (format.rShift % 8)) & _rMax;
-		_colors[i].g = (colors[i * format.bytesPerPixel + (format.gShift / 8)] >> (format.gShift % 8)) & _gMax;
-		_colors[i].b = (colors[i * format.bytesPerPixel + (format.bShift / 8)] >> (format.bShift % 8)) & _bMax;
+		_colors[i].r = (buf[i * format.bytesPerPixel + (format.rShift / 8)] >> (format.rShift % 8)) & _rMax;
+		_colors[i].g = (buf[i * format.bytesPerPixel + (format.gShift / 8)] >> (format.gShift % 8)) & _gMax;
+		_colors[i].b = (buf[i * format.bytesPerPixel + (format.bShift / 8)] >> (format.bShift % 8)) & _bMax;
 	}
 
 	return *this;
 }
 
-byte *Palette::save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const {
-	assert(format.bytesPerPixel * colorCount() <= numBytes); // Make sure there's enough output space
+byte *Palette::save(byte *buf, const uint size) const {
+	return save(buf, size, colorFormat(), colorCount());
+}
+
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format) const {
+	return save(buf, size, format, colorCount());
+}
+
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const byte firstIndex) const {
+	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
+	assert(format.aLoss == 8); // No alpha
+	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
+	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
+	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
 	// Clear the part of the output palette we're going to be writing to with all black
-	memset(colors, 0, format.bytesPerPixel * colorCount());
+	memset(buf, 0, format.bytesPerPixel * numColors);
+
+	// Calculate how much bit shifting the color components need (for positioning them correctly)
+	const signed rShiftLeft = (colorFormat().rLoss - (signed) format.rLoss) + (format.rShift % 8);
+	const signed gShiftLeft = (colorFormat().gLoss - (signed) format.gLoss) + (format.gShift % 8);
+	const signed bShiftLeft = (colorFormat().bLoss - (signed) format.bLoss) + (format.bShift % 8);
+
+	// Calculate the byte masks for each color component (for masking away excess bits)
+	const byte rMask = ((1 << (8 - format.rLoss)) - 1) << (format.rShift % 8);
+	const byte gMask = ((1 << (8 - format.gLoss)) - 1) << (format.gShift % 8);
+	const byte bMask = ((1 << (8 - format.bLoss)) - 1) << (format.bShift % 8);
 
 	// Save the palette to the output in the specified format
-	for (uint i = 0; i < colorCount(); i++) {
+	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
-		colors[i * format.bytesPerPixel + (format.rShift / 8)] |= ((_colors[i].r & _rMax) << (format.rShift % 8));
-		colors[i * format.bytesPerPixel + (format.gShift / 8)] |= ((_colors[i].g & _gMax) << (format.gShift % 8));
-		colors[i * format.bytesPerPixel + (format.bShift / 8)] |= ((_colors[i].b & _bMax) << (format.bShift % 8));
+		buf[i * format.bytesPerPixel + (format.rShift / 8)] |= (shiftByteLeft(_colors[i].r, rShiftLeft) & rMask);
+		buf[i * format.bytesPerPixel + (format.gShift / 8)] |= (shiftByteLeft(_colors[i].g, gShiftLeft) & gMask);
+		buf[i * format.bytesPerPixel + (format.bShift / 8)] |= (shiftByteLeft(_colors[i].b, bShiftLeft) & bMask);
 	}
 
 	// Return the pointer to the output palette
-	return colors;
-}
-
-byte *Palette::saveCineLowPal(byte *colors, const uint numBytes) const {
-	return save(colors, numBytes, kLowPalFormat);
-}
-
-byte *Palette::saveCineHighPal(byte *colors, const uint numBytes) const {
-	return save(colors, numBytes, kHighPalFormat);
-}
-
-byte *Palette::saveOrigFormat(byte *colors, const uint numBytes) const {
-	return save(colors, numBytes, colorFormat());
-}
-
-byte *Palette::saveSystemFormat(byte *colors, const uint numBytes) const {
-	return save(colors, numBytes, kSystemPalFormat);
+	return buf;
 }
 
 } // End of namespace Cine

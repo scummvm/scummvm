@@ -30,6 +30,15 @@
 
 namespace Cine {
 
+/*! \brief Low resolution (9-bit) color format used in Cine's 16-color modes. */
+static const Graphics::PixelFormat kLowPalFormat  = {2, 5, 5, 5, 8, 8, 4,  0, 0};
+
+/*! \brief High resolution (24-bit) color format used in Cine's 256-color modes. */
+static const Graphics::PixelFormat kHighPalFormat = {3, 0, 0, 0, 8, 0, 8, 16, 0};
+
+/*! \brief The color format used by OSystem's setPalette-function. */
+static const Graphics::PixelFormat kSystemPalFormat = {4, 0, 0, 0, 8, 0, 8, 16, 0};
+
 struct PalEntry {
 	char name[10];
 	byte pal1[16];
@@ -54,19 +63,41 @@ void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopC
 // TODO: Test
 class Palette {
 public:
-	Palette &loadCineLowPal(const byte *colors, const uint numColors = 16);
-	Palette &loadCineHighPal(const byte *colors, const uint numColors = 256);
-	Palette &load(const byte *colors, const Graphics::PixelFormat format, const uint numColors);
+	/*! \brief Load palette from buffer with given color format and number of colors.
+	 * \param buf Input buffer
+	 * \param size Input buffer size in bytes
+	 * \param format Input color format
+	 * \param numColors Number of colors to load
+	 */
+	Palette &load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors);
 
-	byte *saveCineLowPal(byte *colors, const uint numBytes) const;
-	byte *saveCineHighPal(byte *colors, const uint numBytes) const;
-	byte *saveOrigFormat(byte *colors, const uint numBytes) const;
-	byte *saveSystemFormat(byte *colors, const uint numBytes) const;
-	byte *save(byte *colors, const uint numBytes, const Graphics::PixelFormat format) const;
+	/*! \brief Save the whole palette to buffer in original color format.
+	 * \param buf Output buffer
+	 * \param size Output buffer size in bytes
+	 */
+	byte *save(byte *buf, const uint size) const;
+
+	/*! \brief Save the whole palette to buffer with given color format.
+	 * \param buf Output buffer
+	 * \param size Output buffer size in bytes
+	 * \param format Output color format
+	 */
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format) const;
+
+	/*! \brief Save (partial) palette to buffer with given color format.
+	 * \param buf Output buffer
+	 * \param size Output buffer size in bytes
+	 * \param format Output color format
+	 * \param numColors Number of colors to save
+	 * \param firstIndex Starting color index (from which onwards to save the colors)
+	 */
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const byte firstIndex = 0) const;
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
 	uint colorCount() const;
+
+	/*! \brief The original color format in which this palette was loaded. */
 	Graphics::PixelFormat colorFormat() const;
 
 private:
