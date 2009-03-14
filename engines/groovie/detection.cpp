@@ -41,10 +41,6 @@ static const PlainGameDescriptor groovieGames[] = {
 	{"clandestiny", "Clandestiny"},
 	{"unclehenry", "Uncle Henry's Playhouse"},
 	{"tlc", "Tender Loving Care"},
-
-	// Extras
-	{"making11h", "The Making of The 11th Hour"},
-	{"clantrailer", "Clandestiny Trailer"},
 #endif
 
 	// Unknown
@@ -112,7 +108,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The Making of The 11th Hour DOS English
 	{
 		{
-			"making11h", "Making Of",
+			"11h", "Making Of",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS
 		},
@@ -122,7 +118,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// Clandestiny Trailer DOS English
 	{
 		{
-			"clantrailer", "Clandestiny Trailer",
+			"clandestiny", "Trailer",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS
 		},
