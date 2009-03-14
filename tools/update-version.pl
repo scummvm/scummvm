@@ -38,18 +38,6 @@ my @subs_files = qw(
 	backends/platform/psp/README.PSP
 	);
 
-# The following files also contain version data and should possible be modified
-# by this script, too. However, the relevant parts of these documentation files
-# talk about "Known issues", and I am not sure if we really should automatically
-# update these... in fact, it might be better to factor out that information and
-# put it into a single "ISSUES" or "KNOWN_ISSUES" file like other projects do...
-# * README
-# * doc/03_10.tex / doc/03_11.tex  (depends on which branch you look at <shudder>)
-
-# TODO: The following substituion table could easily be extended. In particular
-# one could add a function similar to autoconf's AC_SUBST:
-#    addSubst(FOO)
-# which would automagically add FOO => $FOO to the table
 my %subs = (
 	VER_MAJOR	=>	$VER_MAJOR,
 	VER_MINOR	=>	$VER_MINOR,
