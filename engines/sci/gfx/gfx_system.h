@@ -256,13 +256,6 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 			 */
 
 	int color_key;
-
-	/*** Data reserved for gfx_driver use ***/
-	struct pixmap_internal { /* Internal state management data for use by drivers */
-		int handle; /* initialized to 0 */
-		void *info; /* initialized to NULL */
-	} internal;
-
 };
 
 

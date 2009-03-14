@@ -128,9 +128,7 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 
 	pxm->alpha_map = NULL;
 	pxm->data = NULL;
-	pxm->internal.info = NULL;
 	pxm->palette = NULL;
-	pxm->internal.handle = 0;
 
 	pxm->index_xl = xl;
 	pxm->index_yl = yl;
