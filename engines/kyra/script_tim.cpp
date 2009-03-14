@@ -90,7 +90,9 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_commands = commandProcs ;
 	_commandsSize = ARRAYSIZE(commandProcs);
 
-	memset(&_animations, 0, sizeof(_animations));
+	_animations = new Animation[TIM::kWSASlots];
+	memset(_animations, 0, TIM::kWSASlots * sizeof(Animation));
+
 	_langData = 0;
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
@@ -104,6 +106,13 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 TIMInterpreter::~TIMInterpreter() {
 	delete[] _langData;
 	delete[] _textAreaBuffer;
+
+	for (int i = 0; i < TIM::kWSASlots; i++) {
+		delete _animations[i].wsa;
+		delete[] _animations[i].parts;
+	}
+
+	delete[] _animations;	
 }
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes) {
@@ -196,7 +205,6 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cnt++ > 0) {
 					if (_currentTim->procFunc != -1)
 						execCommand(28, &_currentTim->procParam);
-
 					update();
 				}
 
@@ -451,7 +459,6 @@ int TIMInterpreter::freeAnimStruct(int index) {
 
 	delete anim->wsa;
 	memset(anim, 0, sizeof(Animation));
-
 	return 1;
 }
 
@@ -539,8 +546,16 @@ int TIMInterpreter::cmd_uninitWSA(const uint16 *param) {
 		//XXX
 
 		delete anim.wsa;
+		bool hasParts = anim.parts ? true : false;
+		delete[] anim.parts;
+
 		memset(&anim, 0, sizeof(Animation));
 		memset(&slot, 0, sizeof(TIM::WSASlot));
+
+		if (hasParts) {
+			anim.parts = new AnimPart[TIM::kAnimParts];
+			memset(anim.parts, 0, TIM::kAnimParts * sizeof(AnimPart));
+		}
 	}
 
 	return 1;
@@ -698,7 +713,7 @@ int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_stopAllFuncs(const uint16 *param) {
-	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && vm()->shouldQuit()) {
+	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !vm()->shouldQuit()) {
 		update();
 		_currentTim->clickedButton = processDialogue();
 	}
@@ -768,6 +783,11 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 	_commandsSize = ARRAYSIZE(commandProcs);
 
 	_screen = engine->_screen;
+
+	for (int i = 0; i < TIM::kWSASlots; i++) {
+		_animations[i].parts = new AnimPart[TIM::kAnimParts];
+		memset(_animations[i].parts, 0, TIM::kAnimParts * sizeof(AnimPart));
+	}
 	
 	_drawPage2 = 0;
 
@@ -775,11 +795,14 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 	_dialogueButtonPosX = _dialogueButtonPosY = _dialogueNumButtons = _dialogueButtonXoffs = _dialogueHighlightedButton = 0;
 }
 
-TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int copyPara, int, uint16 wsaFlags) {
+TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int offscreenBuffer, uint16 wsaFlags) {
 	Animation *anim = &_animations[index];
 	anim->x = x;
 	anim->y = y;
+	anim->frameDelay = frameDelay;
 	anim->wsaCopyParams = wsaFlags;
+	anim->enable = 0;
+	anim->lastPart = -1;
 
 	uint16 wsaOpenFlags = 0;
 	if (wsaFlags & 0x10)
@@ -822,6 +845,21 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	return anim;
 }
 
+int TIMInterpreter_LoL::freeAnimStruct(int index) {
+	Animation *anim = &_animations[index];
+	if (!anim)
+		return 0;
+
+	delete anim->wsa;
+	delete[] anim->parts;
+	memset(anim, 0, sizeof(Animation));
+
+	anim->parts = new AnimPart[TIM::kAnimParts];
+	memset(anim->parts, 0, TIM::kAnimParts * sizeof(AnimPart));
+
+	return 1;
+}
+
 KyraEngine_v1 *TIMInterpreter_LoL::vm() {
 	return _vm;
 }
@@ -847,11 +885,12 @@ void TIMInterpreter_LoL::advanceToOpcode(int opcode) {
 }
 
 void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {
+	_screen->setScreenDim(5);
+
 	if (numStr == 1 && _vm->_speechFlag) {
-		_screen->setScreenDim(5);
+		_dialogueNumButtons = 0;
 		_dialogueButtonString[0] = _dialogueButtonString[1] = _dialogueButtonString[2] = 0;
 	} else {
-		_screen->setScreenDim(5);
 		_dialogueNumButtons = numStr;
 		_dialogueButtonString[0] = s1;
 		_dialogueButtonString[1] = s2;
@@ -874,6 +913,96 @@ void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char 
 
 	if (!_vm->shouldQuit())
 		_vm->removeInputTop();
+}
+
+void TIMInterpreter_LoL::setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame) {
+	AnimPart *a = &_animations[animIndex].parts[part];
+	a->firstFrame = firstFrame;
+	a->lastFrame = lastFrame;
+	a->cycles = cycles;
+	a->nextPart = nextPart;
+	a->partDelay = partDelay;
+	a->field_A = f;
+	a->sfxIndex = sfxIndex;
+	a->sfxFrame = sfxFrame;
+}
+
+void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
+	Animation *anim = &_animations[animIndex];
+	anim->curPart = part;
+	AnimPart *p = &anim->parts[part];
+	anim->enable = 1;
+	anim->nextFrame = _system->getMillis() + anim->frameDelay * _vm->_tickLength;
+	anim->curFrame = p->firstFrame;
+	anim->cyclesCompleted = 0;
+
+	anim->wsa->setX(anim->x);
+	anim->wsa->setY(anim->y);
+	anim->wsa->setDrawPage(0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
+}
+
+void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
+	Animation *anim = &_animations[animIndex];
+	anim->enable = 0;
+	anim->field_D = 0;
+	if (animIndex == 5) {
+		delete anim->wsa;
+		anim->wsa = 0;
+	}
+}
+
+void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
+	Animation *anim = &_animations[animIndex];
+	if (!anim->enable || anim->nextFrame >= _system->getMillis())
+		return;
+
+	AnimPart *p = &anim->parts[anim->curPart];
+	anim->nextFrame = 0;
+
+	int step = 0;
+	if (p->lastFrame >= p->firstFrame) {
+		step = 1;
+		anim->curFrame++;
+	} else {
+		step = -1;
+		anim->curFrame--;
+	}
+
+	if (anim->curFrame == (p->lastFrame + step)) {
+		anim->cyclesCompleted++;
+
+		if ((anim->cyclesCompleted > p->cycles) || anim->field_D) {
+			anim->lastPart = anim->curPart;
+
+			if ((p->nextPart == -1) || (anim->field_D && p->field_A)) {
+				anim->enable = 0;
+				anim->field_D = 0;
+				return;
+			}
+
+			anim->nextFrame += (p->partDelay * _vm->_tickLength);
+			anim->curPart = p->nextPart;
+
+			p = &anim->parts[anim->curPart];
+			anim->curFrame = p->firstFrame;
+			anim->cyclesCompleted = 0;
+
+		} else {
+			anim->curFrame = p->firstFrame;
+		}
+	}
+
+	if (p->sfxIndex != -1 && p->sfxFrame == anim->curFrame)
+		_vm->snd_playSoundEffect(p->sfxIndex, -1);
+
+	anim->nextFrame += (anim->frameDelay * _vm->_tickLength);
+
+	anim->wsa->setX(anim->x);
+	anim->wsa->setY(anim->y);
+	anim->wsa->setDrawPage(0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
+	anim->nextFrame += _system->getMillis();
 }
 
 void TIMInterpreter_LoL::drawDialogueButtons() {
@@ -996,6 +1125,16 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	return res;
 }
 
+void TIMInterpreter_LoL::resetDialogueState(TIM *tim) {
+	if (!tim)
+		return;
+
+	tim->procFunc = 0;
+	tim->procParam = _dialogueNumButtons ? _dialogueNumButtons : 1;
+	tim->clickedButton = 0;
+	tim->dlgFunc = -1;
+}
+
 void TIMInterpreter_LoL::update() {
 	_vm->update();
 }
@@ -1007,6 +1146,10 @@ void TIMInterpreter_LoL::checkSpeechProgress() {
 			_currentTim->dlgFunc = _currentFunc;
 			advanceToOpcode(21);
 			_currentTim->dlgFunc = -1;
+			_animations[5].field_D = 0;
+			_animations[5].enable = 0;
+			delete _animations[5].wsa;
+			_animations[5].wsa = 0;
 		}
 	}
 }
@@ -1064,8 +1207,8 @@ int TIMInterpreter_LoL::cmd_continueLoop(const uint16 *param) {
 
 int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
 	int res = processDialogue();
-	if (!res ||!_currentTim->procParam)
-		return 0;
+	if (!res || !_currentTim->procParam)
+		return res;
 
 	_vm->snd_stopSpeech(false);
 
@@ -1073,6 +1216,11 @@ int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
 	_currentTim->dlgFunc = _currentTim->procFunc;
 	_currentTim->procFunc = -1;
 	_currentTim->clickedButton = res;
+
+	_animations[5].field_D = 0;
+	_animations[5].enable = 0;
+	delete _animations[5].wsa;
+	_animations[5].wsa = 0;
 
 	if (_currentTim->procParam)
 		advanceToOpcode(21);	

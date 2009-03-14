@@ -31,10 +31,8 @@
 namespace Kyra {
 
 void LoLEngine::giveCredits(int credits, int redraw) {
-	static const uint8 stashSetupData[] = { 4, 4, 4, 4, 2, 2, 2, 3, 3, 0, 1, 1 };
-
 	if (redraw)
-		snd_playSoundEffect(0x65, 0xff);
+		snd_playSoundEffect(101, -1);
 
 	int t = credits / 30;
 	if (!t)
@@ -51,7 +49,7 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 
 			do {
 				if (_credits < 60) {
-					int d = stashSetupData[_credits % 12] - _credits / 12;
+					int d = _stashSetupData[_credits % 12] - _credits / 12;
 					if (d < 0)
 						d += 5;
 					_moneyColumnHeight[d]++;
@@ -60,6 +58,47 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 			} while (++cnt < t);
 		} else if (_credits >= 60) {
 			_credits += t;
+		}
+
+		if (redraw) {
+			gui_drawMoneyBox(6);
+			if (credits)
+				delay(_tickLength, 1);
+		}
+		credits -= t;
+	}
+}
+
+void LoLEngine::takeCredits(int credits, int redraw) {
+	if (redraw)
+		snd_playSoundEffect(101, -1);
+
+	if (credits > _credits)
+		credits = _credits;
+
+	int t = credits / 30;
+	if (!t)
+		t = 1;
+
+	int cnt = 0;
+
+	while (credits && _credits > 0) {
+		if (t > credits)
+			t = credits;
+
+		if (_credits - t < 60 && t >= 0) {
+			cnt = 0;
+
+			do {
+				if (--_credits < 60) {
+					int d = _stashSetupData[_credits % 12] - _credits / 12;
+					if (d < 0)
+						d += 5;
+					_moneyColumnHeight[d]--;
+				}
+			} while (++cnt < t);
+		} else if (_credits - t < 60) {
+			_credits -= t;
 		}
 
 		if (redraw) {

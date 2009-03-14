@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 40,
+	kKyraDatVersion = 41,
 	kIndexSize = 12
 };
 
@@ -294,6 +294,8 @@ const ExtractFilename extractFilenames[] = {
 	{ lolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
 	{ lolLevelDatList, kTypeStringList, "DATFILES.TXT" },
 	{ lolCompassDefs, k3TypeRaw16to8, "COMPASS.DEF" },
+	{ lolItemPrices, lolTypeRaw16, "ITEMCOST.DEF" },
+	{ lolStashSetup, kTypeRawData, "MONEYSTS.DEF" },
 
 	{ lolDscUnk1, kTypeRawData, "DSCSHPU1.DEF" },
 	{ lolDscShapeIndex1, kTypeRawData, "DSCSHPI1.DEF" },

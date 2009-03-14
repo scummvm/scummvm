@@ -204,6 +204,8 @@ enum kExtractID {
 	lolLevelShpList,
 	lolLevelDatList,
 	lolCompassDefs,
+	lolItemPrices,
+	lolStashSetup,
 
 	lolDscUnk1,
 	lolDscShapeIndex1,

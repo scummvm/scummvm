@@ -240,6 +240,8 @@ enum kKyraResources {
 	kLolLevelShpList,
 	kLolLevelDatList,
 	kLolCompassDefs,
+	kLolItemPrices,
+	kLolStashSetup,
 
 	kLolDscUnk1,
 	kLolDscShapeIndex,

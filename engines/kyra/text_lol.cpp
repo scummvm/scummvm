@@ -187,15 +187,16 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 
 	if (_vm->_updateFlags & 2) {
 		_screen->setScreenDim(4);
-		clearCurDim();		
+		clearCurDim();
+		_colour1 = col;
 	} else {
 		_screen->setScreenDim(3);
 		clearCurDim();
 		_screen->copyColour(192, col);
+		_colour1 = 192;
 		_vm->enableTimer(11);
 	}
-
-	_colour1 = 192;
+	
 	_colour1prot = true;
 
 	va_list args;
@@ -551,7 +552,11 @@ void TextDisplayer_LoL::printLine(char *str) {
 	if (str[s] == ' ')
 		s++;
 
-	strcpy(str, &str[s]);
+	uint32 len = strlen(&str[s]);
+	for (uint32 i = 0; i < len; i++)
+		str[i] = str[s + i];
+	str[len] = 0;
+
 	_numCharsLeft = strlen(str);
 	_lineWidth = _screen->getTextWidth(str);
 

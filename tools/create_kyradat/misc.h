@@ -510,6 +510,8 @@ const int lolCDFile2Need[] = {
 	lolLevelShpList,
 	lolLevelDatList,
 	lolCompassDefs,
+	lolItemPrices,
+	lolStashSetup,
 	lolDscUnk1,
 	lolDscShapeIndex1,
 	lolDscShapeIndex2,

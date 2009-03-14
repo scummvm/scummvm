@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 40
+#define RESFILE_VERSION 41
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -401,6 +401,8 @@ bool StaticResource::init() {
 		{ kLolLevelShpList, kStringList, "SHPFILES.TXT" },
 		{ kLolLevelDatList, kStringList, "DATFILES.TXT" },
 		{ kLolCompassDefs, kLolCompassData, "COMPASS.DEF" },
+		{ kLolItemPrices, kLolRawDataBe16, "ITEMCOST.DEF" },
+		{ kLolStashSetup, kRawData, "MONEYSTS.DEF" },
 
 		{ kLolDscUnk1, kRawData, "DSCSHPU1.DEF" },
 		{ kLolDscShapeIndex, kRawData, "DSCSHPI1.DEF" },
@@ -1771,6 +1773,8 @@ void LoLEngine::initStaticResource() {
 	_levelShpList = _staticres->loadStrings(kLolLevelShpList, _levelShpListSize);
 	_levelDatList = _staticres->loadStrings(kLolLevelDatList, _levelDatListSize);
 	_compassDefs = _staticres->loadCompassData(kLolCompassDefs, _compassDefsSize);
+	_itemCost = _staticres->loadRawDataBe16(kLolItemPrices, _itemCostSize);
+	_stashSetupData = _staticres->loadRawData(kLolStashSetup, _stashSetupDataSize);
 
 	_dscUnk1 = (const int8*)_staticres->loadRawData(kLolDscUnk1, _dscUnk1Size);
 	_dscShapeIndex = (const int8*)_staticres->loadRawData(kLolDscShapeIndex, _dscShapeIndexSize);

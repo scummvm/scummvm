@@ -344,6 +344,8 @@ private:
 	int _environmentSfx;
 	int _environmentSfxVol;
 	int _environmentSfxDistThreshold;
+	int _nextSpeechId;
+	int _nextSpeaker;
 
 	int _curTlkFile;
 	int _speechFlag;
@@ -476,7 +478,7 @@ private:
 
 	// text
 	bool characterSays(int track, int charId, bool redraw);
-	int playCharacterScriptChat(int charId, int y, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	int playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 
 	TextDisplayer_LoL *_txt;
 
@@ -516,12 +518,17 @@ private:
 	int olol_closeLevelShapeFile(EMCState *script);
 	int olol_loadDoorShapes(EMCState *script);
 	int olol_initAnimStruct(EMCState *script);
+	int olol_playAnimSequence(EMCState *script);
 	int olol_freeAnimStruct(EMCState *script);
 	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
 	int olol_checkRectForMousePointer(EMCState *script);
 	int olol_clearDialogueField(EMCState *script);
+	int olol_setupBackgroundAnimationPart(EMCState *script);
+	int olol_startBackgroundAnimation(EMCState *script);
+	int olol_fadePalette(EMCState *script);
 	int olol_loadBitmap(EMCState *script);
+	int olol_stopBackgroundAnimation(EMCState *script);
 	int olol_getGlobalScriptVar(EMCState *script);
 	int olol_setGlobalScriptVar(EMCState *script);
 	int olol_getGlobalVar(EMCState *script);
@@ -533,10 +540,14 @@ private:
 	int olol_copyRegion(EMCState *script);
 	int olol_initMonster(EMCState *script);
 	int olol_fadeClearSceneWindow(EMCState *script);
+	int olol_fadeSequencePalette(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
 	int olol_moveMonster(EMCState *script);
 	int olol_dialogueBox(EMCState *script);
+	int olol_giveTakeMoney(EMCState *script);
+	int olol_checkMoney(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
+	int olol_createHandItem(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
@@ -562,11 +573,15 @@ private:
 	int olol_setNextFunc(EMCState *script);
 	int olol_setDoorState(EMCState *script);
 	int olol_processButtonClick(EMCState *script);
+	int olol_savePage5(EMCState *script);
+	int olol_restorePage5(EMCState *script);
 	int olol_initNonAnimatedDialogue(EMCState *script);
 	int olol_restoreAfterNonAnimatedDialogue(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
 	int olol_resetPortraitsArea(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
+	int olol_queueSpeech(EMCState *script);
+	int olol_getItemPrice(EMCState *script);
 
 	// tim scripts
 	TIM *_activeTim[10];
@@ -586,11 +601,16 @@ private:
 	int tlol_giveItem(const TIM *tim, const uint16 *param);
 	int tlol_setPartyPosition(const TIM *tim, const uint16 *param);
 	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
+	int tlol_copyRegion(const TIM *tim, const uint16 *param);
+	int tlol_characterChat(const TIM *tim, const uint16 *param);
+	int tlol_drawScene(const TIM *tim, const uint16 *param);
 	int tlol_update(const TIM *tim, const uint16 *param);
 	int tlol_loadSoundFile(const TIM *tim, const uint16 *param);
 	int tlol_playMusicTrack(const TIM *tim, const uint16 *param);	
 	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);
 	int tlol_playSoundEffect(const TIM *tim, const uint16 *param);
+	int tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param);
+	int tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param);
 
 	Common::Array<const TIMOpcode*> _timIngameOpcodes;
 
@@ -619,7 +639,9 @@ private:
 	void fadeText();
 	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
-	void updateWsaAnimations();
+	void updateSequenceBackgroundAnimations();
+	void savePage5();
+	void restorePage5();
 
 	bool _dialogueField;
 	uint8 **_itemIconShapes;
@@ -639,6 +661,8 @@ private:
 	int _gameShapeMapSize;
 
 	uint8 *_characterFaceShapes[40][3];
+
+	bool _pageSavedFlag;
 
 	// characters
 	bool addCharacter(int id);
@@ -916,6 +940,7 @@ private:
 
 	// items
 	void giveCredits(int credits, int redraw);
+	void takeCredits(int credits, int redraw);
 	int makeItem(int itemIndex, int curFrame, int flags);
 	bool addItemToInventory(int itemIndex);
 	bool testUnkItemFlags(int itemIndex);
@@ -940,15 +965,18 @@ private:
 	int _hideControls;
 	int _lastCharInventory;
 
+	EMCData _itemScript;
+
 	const uint8 *_charInvIndex;
 	int _charInvIndexSize;
 	const uint8 *_charInvDefs;
 	int _charInvDefsSize;
-
-	EMCData _itemScript;
-
 	const uint16 *_inventorySlotDesc;
 	int _inventorySlotDescSize;
+	const uint16 *_itemCost;
+	int _itemCostSize;
+	const uint8 *_stashSetupData;
+	int _stashSetupDataSize;
 
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);

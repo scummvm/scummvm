@@ -64,7 +64,8 @@ struct TIM {
 	} func[kCountFuncs];
 
 	enum {
-		kWSASlots = 10
+		kWSASlots = 6,
+		kAnimParts = 10
 	};
 
 	struct WSASlot {
@@ -83,10 +84,30 @@ struct TIM {
 
 class TIMInterpreter {
 public:
+	struct AnimPart {
+		uint16 firstFrame;
+		uint16 lastFrame;
+		uint16 cycles;
+		int16 nextPart;
+		int16 partDelay;
+		uint16 field_A;
+		int16 sfxIndex;
+		uint16 sfxFrame;
+	};
+
 	struct Animation {
 		WSAMovie_v2 *wsa;
 		int16 x, y;
+		uint32 nextFrame;
+		uint8 enable;
+		uint8 field_D;
+		uint8 frameDelay;
+		int8 curPart;
+		uint8 curFrame;
+		uint8 cyclesCompleted;
 		uint16 wsaCopyParams;
+		int8 lastPart;
+		AnimPart *parts;
 	};
 
 	TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system);
@@ -96,7 +117,7 @@ public:
 	void unload(TIM *&tim) const;
 
 	virtual Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
-	int freeAnimStruct(int index);
+	virtual int freeAnimStruct(int index);
 
 	void setLangData(const char *filename);
 	void clearLangData() { delete[] _langData; _langData = 0; }
@@ -118,8 +139,12 @@ public:
 	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
 	virtual uint16 processDialogue() { return 1; }
 
-	void setDialogueParameters(int clickedButton, int dlgFunc) { _currentTim->clickedButton = clickedButton; _currentTim->dlgFunc = dlgFunc; }
-	virtual int getNumberOfDialogueButtons() { return 0; }
+	virtual void setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame) {}
+	virtual void startBackgroundAnimation(int animIndex, int part) {}	
+	virtual void stopBackgroundAnimation(int animIndex) {}
+	virtual void updateBackgroundAnimation(int animIndex) {}
+
+	virtual void resetDialogueState(TIM *tim) {}
 
 	int _drawPage2;
 
@@ -141,7 +166,7 @@ protected:
 
 	Common::String _vocFiles[120];
 
-	Animation _animations[TIM::kWSASlots];
+	Animation *_animations;
 
 	virtual void update() {}
 	virtual void checkSpeechProgress() {}
@@ -199,12 +224,19 @@ class TIMInterpreter_LoL : public TIMInterpreter {
 friend class LoLEngine;
 public:
 	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
-	Animation *initAnimStruct(int index, const char *filename, int x, int y, int copyPara, int, uint16 wsaFlags);
 
+	Animation *initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int offscreenBuffer, uint16 wsaCopyParams);
+	int freeAnimStruct(int index);
+	
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
 	uint16 processDialogue();
+	
+	void setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame);
+	void startBackgroundAnimation(int animIndex, int part);
+	void stopBackgroundAnimation(int animIndex);
+	void updateBackgroundAnimation(int animIndex);	
 
-	int getNumberOfDialogueButtons() { return _dialogueNumButtons; }
+	void resetDialogueState(TIM *tim);
 		
 private:
 	KyraEngine_v1 *vm();
@@ -212,7 +244,7 @@ private:
 
 	void update();
 	void checkSpeechProgress();
-	
+		
 	char *getTableString(int id);
 	void advanceToOpcode(int opcode);
 

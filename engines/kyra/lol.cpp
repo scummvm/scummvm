@@ -76,7 +76,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lastMusicTrack = -1;
 	_lastSfxTrack = -1;
 	_curTlkFile = -1;
-	_lastSpeaker = _lastSpeechId = -1;
+	_lastSpeaker = _lastSpeechId = _nextSpeechId = _nextSpeaker = -1;
 
 	memset(_moneyColumnHeight, 0, 5);
 	_credits = 0;
@@ -95,6 +95,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsterShapesEx = 0;
 	_gameShapeMap = 0;
 	memset(_monsterUnk, 0, 3);
+	_pageSavedFlag = false;
 
 	_ingameMT32SoundIndex = _ingameGMSoundIndex = /*_ingameADLSoundIndex =*/ 0;
 
@@ -791,7 +792,7 @@ void LoLEngine::runLoop() {
 }
 
 void LoLEngine::update() {
-	updateWsaAnimations();
+	updateSequenceBackgroundAnimations();
 
 	if (_updateCharNum != -1 && _system->getMillis() > _updatePortraitNext)
 		updatePortraitSpeechAnim();
@@ -1278,11 +1279,31 @@ void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness
 	}
 }
 
-void LoLEngine::updateWsaAnimations() {
+void LoLEngine::updateSequenceBackgroundAnimations() {
 	if (_updateFlags & 8)
 		return;
 
-	//TODO
+	for (int i = 0; i < 6; i++)
+		_tim->updateBackgroundAnimation(i);
+}
+
+void LoLEngine::savePage5() {
+	if (_pageSavedFlag)
+		return;
+
+	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, _pageBuffer2);
+	_pageSavedFlag = true;
+}
+
+void LoLEngine::restorePage5() {
+	if (!_pageSavedFlag)
+		return;
+	
+	for (int i = 0; i < 6; i++)
+		_tim->freeAnimStruct(i);
+
+	_screen->copyBlockToPage(5, 0, 0, 320, 200, _pageBuffer2);
+	_pageSavedFlag = false;
 }
 
 void LoLEngine::loadTalkFile(int index) {
@@ -1319,6 +1340,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 
 	_lastSpeechId = id;
 	_lastSpeaker = speaker;
+	_nextSpeechId = _nextSpeaker = -1;
 
 	Common::List<const char*> playList;
 
@@ -1326,6 +1348,8 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	char pattern2[5];
 	char file1[13];
 	char file2[13];
+	char file3[13];
+	file3[0] = 0;
 
 	snprintf(pattern2, sizeof(pattern2), "%02d", id & 0x4000 ? 0 : _curTlkFile);
 
@@ -1334,23 +1358,30 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	} else if (id < 1000) {
 		snprintf(pattern1, sizeof(pattern1), "%03d", id);
 	} else {
-		snprintf(pattern1, sizeof(pattern1), "@%04d", id - 1000);
+		snprintf(file3, sizeof(file3), "@%04d%c.%s", id - 1000, (char)speaker, pattern2);
+		if (_res->exists(file3)) {
+			char *f = new char[strlen(file3) + 1];
+			strcpy(f, file3);
+			playList.push_back(f);
+		}
 	}
 
-	for (char i = 0; ; i++) {
-		char symbol = '0' + i;
-		snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
-		snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
-		if (_res->exists(file1)) {
-			char *f = new char[strlen(file1) + 1];
-			strcpy(f, file1);
-			playList.push_back(f);
-		} else if (_res->exists(file2)) {
-			char *f = new char[strlen(file2) + 1];
-			strcpy(f, file2);
-			playList.push_back(f);
-		} else {
-			break;
+	if (!file3[0]) {
+		for (char i = 0; ; i++) {
+			char symbol = '0' + i;
+			snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
+			snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
+			if (_res->exists(file1)) {
+				char *f = new char[strlen(file1) + 1];
+				strcpy(f, file1);
+				playList.push_back(f);
+			} else if (_res->exists(file2)) {
+				char *f = new char[strlen(file2) + 1];
+				strcpy(f, file2);
+				playList.push_back(f);
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -1381,6 +1412,11 @@ int LoLEngine::snd_characterSpeaking() {
 	_lastSpeechId = _lastSpeaker = -1;
 	_activeVoiceFileTotalTime = 0;
 
+	if (_nextSpeechId != -1) {
+		if (snd_playCharacterSpeech(_nextSpeechId, _nextSpeaker, 0))
+			return 2;
+	}
+
 	return 1;
 }
 
@@ -1391,6 +1427,7 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 	//_dlgTimer = 0;
 	_sound->voiceStop(_activeVoiceFile);
 	_activeVoiceFileTotalTime = 0;
+	_nextSpeechId = _nextSpeaker = -1;
 
 	if (setFlag)
 		_tim->_abortFlag = 1;

@@ -27,6 +27,8 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolLevelShpList, 0x00032826, 0x000328A5 },
 	{ lolLevelDatList, 0x000328A5, 0x000329A4 },
 	{ lolCompassDefs, 0x000286C4, 0x000287C4 },
+	{ lolItemPrices, 0x0002F8C0, 0x0002F91C },
+	{ lolStashSetup, 0x000324A5, 0x000324B1 },
 
 	{ lolDscUnk1, 0x00032017, 0x0003203B },
 	{ lolDscShapeIndex1, 0x0003203B, 0x0003205F },

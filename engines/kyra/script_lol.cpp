@@ -421,6 +421,12 @@ int LoLEngine::olol_initAnimStruct(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_playAnimSequence(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAnimSequence(%p) (%s, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
+
+	return 1;
+}
+
 int LoLEngine::olol_freeAnimStruct(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_freeAnimStruct(%p) (%d)", (const void *)script, stackPos(0));
 	if (_tim->freeAnimStruct(stackPos(0)))
@@ -457,11 +463,36 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_setupBackgroundAnimationPart(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setupBackgroundAnimationPart(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	_tim->setupBackgroundAnimationPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	return 0;
+}
+
+int LoLEngine::olol_startBackgroundAnimation(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_startBackgroundAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_tim->startBackgroundAnimation(stackPos(0), stackPos(1));
+	return 1;
+}
+
+int LoLEngine::olol_fadePalette(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadePalette(%p)", (const void *)script);
+	_screen->fadePalette(_screen->getPalette(3), 10);
+	_screen->_fadeFlag = 0;
+	return 1;
+}
+
 int LoLEngine::olol_loadBitmap(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3));
 	if (stackPos(1) != 2)
 		_screen->copyPage(3, stackPos(1));
+	return 1;
+}
+
+int LoLEngine::olol_stopBackgroundAnimation(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopBackgroundAnimation(%p) (%d)", (const void *)script, stackPos(0));
+	_tim->stopBackgroundAnimation(stackPos(0));
 	return 1;
 }
 
@@ -681,6 +712,15 @@ int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeSequencePalette(%p)", (const void *)script);
+	memcpy(_screen->getPalette(3) + 0x180, _screen->_currentPalette + 0x180, 0x180);
+	_screen->loadSpecialColours(_screen->getPalette(3));
+	_screen->fadePalette(_screen->getPalette(3), 10);
+	_screen->_fadeFlag = 0;
+	return 1;
+}
+
 int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterProperties(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
@@ -763,6 +803,22 @@ int LoLEngine::olol_dialogueBox(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_giveTakeMoney(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveTakeMoney(%p) (%d)", (const void *)script, stackPos(0));
+	int c = stackPos(0);
+	if (c >= 0)
+		giveCredits(c, 1);
+	else
+		takeCredits(-c, 1);
+
+	return 1;
+}
+
+int LoLEngine::olol_checkMoney(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkMoney(%p) (%d)", (const void *)script, stackPos(0));
+	return (stackPos(0) > _credits) ? 0 : 1;
+}
+
 int LoLEngine::olol_setScriptTimer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setScriptTimer(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint8 id = 0x50 + stackPos(0);
@@ -775,6 +831,14 @@ int LoLEngine::olol_setScriptTimer(EMCState *script) {
 		_timer->disable(id);
 	}
 
+	return 1;
+}
+
+int LoLEngine::olol_createHandItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_createHandItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (_itemInHand)
+		return 0;
+	setHandItem(makeItem(stackPos(0), stackPos(1), stackPos(2)));
 	return 1;
 }
 
@@ -967,10 +1031,19 @@ int LoLEngine::olol_setDoorState(EMCState *script) {
 
 int LoLEngine::olol_processButtonClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processButtonClick(%p) (%d)", (const void *)script, stackPos(0));
-	int n = _tim->getNumberOfDialogueButtons();
-	_activeTim[stackPos(0)]->procFunc = 0;
-	_activeTim[stackPos(0)]->procParam = n ? n : 1;
-	_tim->setDialogueParameters(0, -1);
+	_tim->resetDialogueState(_activeTim[stackPos(0)]);
+	return 1;
+}
+
+int LoLEngine::olol_savePage5(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_savePage5(%p)", (const void *)script);
+	savePage5();
+	return 1;
+}
+
+int LoLEngine::olol_restorePage5(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restorePage5(%p)", (const void *)script);
+	restorePage5();
 	return 1;
 }
 
@@ -1014,6 +1087,34 @@ int LoLEngine::olol_enableSysTimer(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_queueSpeech(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_queueSpeech(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(0) && stackPos(1)) {
+		_nextSpeechId = stackPos(0) + 1000;
+		_nextSpeaker = stackPos(1);
+	}
+	return 1;
+}
+
+int LoLEngine::olol_getItemPrice(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getItemPrice(%p) (%d)", (const void *)script, stackPos(0));
+	int c = stackPos(0);
+	if (c < 0) {
+		c = -c;
+		if (c < 50)
+			return 50;
+		c = (c + 99) / 100;
+		return c * 100;
+
+	} else {
+		for (int i = 0; i < 46; i++) {
+			if (_itemCost[i] >= c)
+				return _itemCost[i];
+		}
+	}
+
+	return 0;
+}
 
 #pragma mark -
 
@@ -1158,6 +1259,26 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
+int LoLEngine::tlol_copyRegion(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_copyRegion(%p, %p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void*)tim, (const void*)param, param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7]);
+	_screen->copyRegion(param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7], Screen::CR_NO_P_CHECK);
+	return 1;
+}
+
+int LoLEngine::tlol_characterChat(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_characterChat(%p, %p) (%d, %d, %d)", (const void*)tim, (const void*)param, param[0], param[1], param[2]);
+	playCharacterScriptChat(param[0], param[1], 1, getLangString(param[2]), 0, param, 3);
+	return 1;
+}
+
+int LoLEngine::tlol_drawScene(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_drawScene(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	gui_drawScene(param[0]);
+	if (_sceneDrawPage2 != 2 && param[0] == 2)
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage2, 2, Screen::CR_NO_P_CHECK);
+	return 1;
+}
+
 int LoLEngine::tlol_update(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_update(%p, %p)", (const void*)tim, (const void*)param);
 	update();
@@ -1186,6 +1307,18 @@ int LoLEngine::tlol_playDialogueTalkText(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_playSoundEffect(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
 	snd_playSoundEffect(param[0], -1);
+	return 1;
+}
+
+int LoLEngine::tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_startBackgroundAnimation(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	_tim->startBackgroundAnimation(param[0], param[1]);
+	return 1;
+}
+
+int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	_tim->stopBackgroundAnimation(param[0]);
 	return 1;
 }
 
@@ -1244,7 +1377,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x18
 	Opcode(olol_loadDoorShapes);
 	Opcode(olol_initAnimStruct);
-	OpcodeUnImpl();
+	Opcode(olol_playAnimSequence);
 	Opcode(olol_freeAnimStruct);
 
 	// 0x1C
@@ -1257,18 +1390,18 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(olol_checkRectForMousePointer);
 	Opcode(olol_clearDialogueField);
-	OpcodeUnImpl();
+	Opcode(olol_setupBackgroundAnimationPart);
 
 	// 0x24
-	OpcodeUnImpl();
+	Opcode(olol_startBackgroundAnimation);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
 	// 0x28
-	OpcodeUnImpl();
+	Opcode(olol_fadePalette);
 	Opcode(olol_loadBitmap);
-	OpcodeUnImpl();
+	Opcode(olol_stopBackgroundAnimation);
 	OpcodeUnImpl();
 
 	// 0x2C
@@ -1292,7 +1425,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x38
 	Opcode(olol_initMonster);
 	Opcode(olol_fadeClearSceneWindow);
-	OpcodeUnImpl();
+	Opcode(olol_fadeSequencePalette);
 	OpcodeUnImpl();
 
 	// 0x3C
@@ -1310,12 +1443,12 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x44
 	Opcode(olol_moveMonster);
 	Opcode(olol_dialogueBox);
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_giveTakeMoney);
+	Opcode(olol_checkMoney);
 
 	// 0x48
 	Opcode(olol_setScriptTimer);
-	OpcodeUnImpl();
+	Opcode(olol_createHandItem);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1412,8 +1545,8 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x88
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_savePage5);
+	Opcode(olol_restorePage5);
 
 	// 0x8C
 	Opcode(olol_initNonAnimatedDialogue);
@@ -1488,8 +1621,8 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0xBC
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_queueSpeech);
+	Opcode(olol_getItemPrice);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1519,11 +1652,11 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x04
 	OpcodeTim(tlol_setPartyPosition);
 	OpcodeTim(tlol_fadeClearWindow);
-	OpcodeTimUnImpl();
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_copyRegion);
+	OpcodeTim(tlol_characterChat);
 
 	// 0x08
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_drawScene);
 	OpcodeTim(tlol_update);
 	OpcodeTimUnImpl();
 	OpcodeTim(tlol_loadSoundFile);
@@ -1532,10 +1665,10 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTim(tlol_playMusicTrack);
 	OpcodeTim(tlol_playDialogueTalkText);
 	OpcodeTim(tlol_playSoundEffect);
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_startBackgroundAnimation);
 
 	// 0x10
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_stopBackgroundAnimation);
 }
 
 } // end of namespace Kyra
