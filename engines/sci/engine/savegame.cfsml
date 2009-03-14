@@ -48,8 +48,6 @@
 
 namespace Sci {
 
-#define HUNK_TYPE_GFX_SNAPSHOT_STRING "g\n"
-
 /* Missing:
 ** - SFXdriver
 ** - File input/output state (this is likely not to happen)
@@ -685,12 +683,6 @@ int read_SegManagerPtr(Common::SeekableReadStream *fh, SegManager **foo, const c
 	return 0;
 }
 
-// This function is called to undo some strange stuff done in preparation
-// to writing a gamestate to disk
-void _gamestate_unfrob(EngineState *s) {
-}
-
-
 int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename) {
 	tm curTime;
 	g_system->getTimeAndDate(curTime);
@@ -727,8 +719,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 
 	%CFSMLWRITE SavegameMetadata (&meta) INTO fh;
 	%CFSMLWRITE EngineState s INTO fh;
-
-	_gamestate_unfrob(s);
 
 	return 0;
 }
@@ -1028,7 +1018,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	%CFSMLREAD-ATOMIC EngineState retval FROM fh ERRVAR read_eof;
 
 	sfx_exit(&s->sound);
-	_gamestate_unfrob(retval);
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
