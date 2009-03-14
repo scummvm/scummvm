@@ -371,7 +371,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	static const Common::Rect codeSelectBlocks[9];
 	static const Common::Rect codeTrueBlocks[9];
 
-	Parallaction *_vm;
+	Parallaction_ns *_vm;
 
 	int guiGetSelectedBlock(const Common::Point &p) {
 
@@ -424,7 +424,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 
 
 public:
-	SelectCharacterInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
+	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
 		_keys = (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 	}
@@ -541,7 +541,7 @@ public:
 	}
 
 	virtual void enter() {
-		_vm->_soundMan->stopMusic();
+		_vm->_soundManI->stopMusic();
 		_vm->showSlide("password");
 
 		_emptySlots.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
@@ -683,11 +683,11 @@ const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
 };
 
 class EndIntroInputState_NS : public MenuInputState {
-	Parallaction *_vm;
+	Parallaction_ns *_vm;
 	bool _isDemo;
 
 public:
-	EndIntroInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
+	EndIntroInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("endintro", helper), _vm(vm) {
 		_isDemo = (_vm->getFeatures() & GF_DEMO) != 0;
 	}
 
@@ -711,7 +711,7 @@ public:
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 
 		if (!_isDemo) {
-			_vm->_soundMan->stopMusic();
+			_vm->_soundManI->stopMusic();
 			int label = _vm->_gfx->createLabel(_vm->_menuFont, "CLICK MOUSE BUTTON TO START", 1);
 			_vm->_gfx->showLabel(label, CENTER_LABEL_HORIZONTAL, 80);
 		}

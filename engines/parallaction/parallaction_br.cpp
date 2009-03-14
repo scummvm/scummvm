@@ -53,6 +53,8 @@ Common::Error Parallaction_br::init() {
 	_screenWidth = 640;
 	_screenHeight = 400;
 
+	SoundManImpl* _soundManI = 0;
+
 	if (getPlatform() == Common::kPlatformPC) {
 		if (getFeatures() & GF_DEMO) {
 			_disk = new DosDemoDisk_br(this);
@@ -60,15 +62,15 @@ Common::Error Parallaction_br::init() {
 			_disk = new DosDisk_br(this);
 		}
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		_soundMan = new DummySoundMan(this);
+		_soundManI = new DummySoundMan();
 	} else {
 		_disk = new AmigaDisk_br(this);
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		_soundMan = new AmigaSoundMan(this);
+		_soundManI = new DummySoundMan();
 	}
 
 	_disk->init();
-
+	_soundMan = new SoundMan(_soundManI);
 
 	initResources();
 	initFonts();

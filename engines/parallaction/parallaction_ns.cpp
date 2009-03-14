@@ -168,11 +168,13 @@ Common::Error Parallaction_ns::init() {
 	if (getPlatform() == Common::kPlatformPC) {
 		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-		_soundMan = new DosSoundMan(this, driver);
-		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
+		_soundManI = new DosSoundMan_ns(this, driver);
+		_soundManI->setMusicVolume(ConfMan.getInt("music_volume"));
 	} else {
-		_soundMan = new AmigaSoundMan(this);
+		_soundManI = new AmigaSoundMan_ns(this);
 	}
+	
+	_soundMan = new SoundMan(_soundManI);
 
 	initResources();
 	initFonts();
@@ -302,7 +304,7 @@ void Parallaction_ns::changeLocation() {
 	MouseTriState oldMouseState = _input->getMouseState();
 	_input->setMouseState(MOUSE_DISABLED);
 
-	_soundMan->playLocationMusic(location);
+	_soundManI->playLocationMusic(location);
 
 	_input->stopHovering();
 	_gfx->freeLabels();
@@ -369,7 +371,7 @@ void Parallaction_ns::changeLocation() {
 	_cmdExec->run(_location._aCommands);
 
 	if (_location._hasSound)
-		_soundMan->playSfx(_location._soundFile, 0, true);
+		_soundManI->playSfx(_location._soundFile, 0, true);
 
 	if (!_intro) {
 		_input->setMouseState(oldMouseState);
@@ -428,7 +430,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 		_objects = _disk->loadObjects(_char.getBaseName());
 		_objectsNames = _disk->loadTable(_char.getBaseName());
 
-		_soundMan->playCharacterMusic(_char.getBaseName());
+		_soundManI->playCharacterMusic(_char.getBaseName());
 
 		// The original engine used to reload 'common' only on loadgames. We are reloading here since 'common'
 		// contains character specific stuff. This causes crashes like bug #1816899, because parseLocation tries
@@ -466,10 +468,10 @@ void Parallaction_ns::freeCharacter() {
 void Parallaction_ns::freeLocation(bool removeAll) {
 	debugC(2, kDebugExec, "freeLocation");
 
-	_soundMan->stopSfx(0);
-	_soundMan->stopSfx(1);
-	_soundMan->stopSfx(2);
-	_soundMan->stopSfx(3);
+	_soundManI->stopSfx(0);
+	_soundManI->stopSfx(1);
+	_soundManI->stopSfx(2);
+	_soundManI->stopSfx(3);
 
 	_localFlagNames->clear();
 
@@ -481,7 +483,7 @@ void Parallaction_ns::freeLocation(bool removeAll) {
 }
 
 void Parallaction_ns::cleanupGame() {
-	_soundMan->stopMusic();
+	_soundManI->stopMusic();
 
 	_inTestResult = false;
 	_engineFlags &= ~kEngineTransformedDonna;

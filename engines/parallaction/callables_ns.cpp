@@ -151,8 +151,8 @@ void Parallaction_ns::_c_play_boogie(void *parm) {
 		return;
 	flag = 0;
 
-	_soundMan->setMusicFile("boogie2");
-	_soundMan->playMusic();
+	_soundManI->setMusicFile("boogie2");
+	_soundManI->playMusic();
 
 	return;
 }
@@ -418,18 +418,18 @@ void Parallaction_ns::_c_testResult(void *parm) {
 }
 
 void Parallaction_ns::_c_offSound(void*) {
-	_soundMan->stopSfx(0);
-	_soundMan->stopSfx(1);
-	_soundMan->stopSfx(2);
-	_soundMan->stopSfx(3);
+	_soundManI->stopSfx(0);
+	_soundManI->stopSfx(1);
+	_soundManI->stopSfx(2);
+	_soundManI->stopSfx(3);
 }
 
 void Parallaction_ns::_c_startMusic(void*) {
-	_soundMan->playMusic();
+	_soundManI->playMusic();
 }
 
 void Parallaction_ns::_c_closeMusic(void*) {
-	_soundMan->stopMusic();
+	_soundManI->stopMusic();
 }
 
 /*
@@ -440,8 +440,8 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 	_rightHandAnim = _location.findAnimation("righthand");
 
 	if (getPlatform() == Common::kPlatformPC) {
-		_soundMan->setMusicFile("intro");
-		_soundMan->playMusic();
+		_soundManI->setMusicFile("intro");
+		_soundManI->playMusic();
 	}
 
 	_input->setMouseState(MOUSE_DISABLED);

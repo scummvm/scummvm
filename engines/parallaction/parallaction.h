@@ -116,7 +116,6 @@ extern const char	*_minidrkiName;
 
 class Debugger;
 class Gfx;
-class SoundMan;
 class Input;
 class DialogueManager;
 class MenuInputHelper;
@@ -124,6 +123,8 @@ class PathWalker_NS;
 class PathWalker_BR;
 class CommandExec;
 class ProgramExec;
+class SoundMan;
+class SoundMan_ns;
 
 
 struct Location {
@@ -273,11 +274,11 @@ public:
 	Gfx				*_gfx;
 	Disk			*_disk;
 	Input			*_input;
-	SoundMan		*_soundMan;
 	Debugger		*_debugger;
 	SaveLoad		*_saveLoad;
 	MenuInputHelper *_menuHelper;
 	Common::RandomSource _rnd;
+	SoundMan		*_soundMan;
 
 	// fonts
 	Font		*_labelFont;
@@ -391,6 +392,8 @@ public:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go();
+
+	SoundMan_ns*	_soundManI;
 
 public:
 	virtual void parseLocation(const char *filename);

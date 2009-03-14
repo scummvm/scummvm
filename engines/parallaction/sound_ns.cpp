@@ -235,17 +235,17 @@ void MidiPlayer::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-DosSoundMan::DosSoundMan(Parallaction *vm, MidiDriver *midiDriver) : SoundMan(vm), _musicData1(0) {
+DosSoundMan_ns::DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver) : SoundMan_ns(vm), _musicData1(0) {
 	_midiPlayer = new MidiPlayer(midiDriver);
 }
 
-DosSoundMan::~DosSoundMan() {
-	debugC(1, kDebugAudio, "DosSoundMan::playMusic()");
+DosSoundMan_ns::~DosSoundMan_ns() {
+	debugC(1, kDebugAudio, "DosSoundMan_ns_ns::playMusic()");
 
 	delete _midiPlayer;
 }
 
-bool DosSoundMan::isLocationSilent(const char *locationName) {
+bool DosSoundMan_ns::isLocationSilent(const char *locationName) {
 
 	// these are the prefixes for location names with no background midi music
 	const char *noMusicPrefix[] = { "museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", 0 };
@@ -260,8 +260,8 @@ bool DosSoundMan::isLocationSilent(const char *locationName) {
 	return false;
 }
 
-void DosSoundMan::playMusic() {
-	debugC(1, kDebugAudio, "DosSoundMan::playMusic()");
+void DosSoundMan_ns::playMusic() {
+	debugC(1, kDebugAudio, "DosSoundMan_ns_ns::playMusic()");
 
 	if (isLocationSilent(_vm->_location._name)) {
 		// just stop the music if this location is silent
@@ -274,16 +274,16 @@ void DosSoundMan::playMusic() {
 	_midiPlayer->setVolume(255);
 }
 
-void DosSoundMan::stopMusic() {
+void DosSoundMan_ns::stopMusic() {
 	_midiPlayer->stop();
 }
 
-void DosSoundMan::pause(bool p) {
-	SoundMan::pause(p);
+void DosSoundMan_ns::pause(bool p) {
+	SoundMan_ns::pause(p);
 	_midiPlayer->pause(p);
 }
 
-void DosSoundMan::playCharacterMusic(const char *character) {
+void DosSoundMan_ns::playCharacterMusic(const char *character) {
 	if (character == NULL) {
 		return;
 	}
@@ -304,14 +304,14 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 	if (!scumm_stricmp(name, _doughName)) {
 		setMusicFile("nuts");
 	} else {
-		warning("unknown character '%s' in DosSoundMan::playCharacterMusic", character);
+		warning("unknown character '%s' in DosSoundMan_ns_ns::playCharacterMusic", character);
 		return;
 	}
 
 	playMusic();
 }
 
-void DosSoundMan::playLocationMusic(const char *location) {
+void DosSoundMan_ns::playLocationMusic(const char *location) {
 	if (_musicData1 != 0) {
 		playCharacterMusic(_vm->_char.getBaseName());
 		_musicData1 = 0;
@@ -333,7 +333,7 @@ void DosSoundMan::playLocationMusic(const char *location) {
 	}
 }
 
-AmigaSoundMan::AmigaSoundMan(Parallaction *vm) : SoundMan(vm) {
+AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
 	_musicStream = 0;
 	_channels[0].data = 0;
 	_channels[0].dispose = false;
@@ -345,7 +345,7 @@ AmigaSoundMan::AmigaSoundMan(Parallaction *vm) : SoundMan(vm) {
 	_channels[3].dispose = false;
 }
 
-AmigaSoundMan::~AmigaSoundMan() {
+AmigaSoundMan_ns::~AmigaSoundMan_ns() {
 	stopMusic();
 	stopSfx(0);
 	stopSfx(1);
@@ -361,7 +361,7 @@ static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
 };
 
 
-void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
+void AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch) {
 	if (!scumm_stricmp("beep", filename)) {
 		ch->header.oneShotHiSamples = 0;
 		ch->header.repeatHiSamples = 0;
@@ -386,7 +386,7 @@ void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
 	delete stream;
 }
 
-void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
+void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping, int volume) {
 	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
 		return;
@@ -394,7 +394,7 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 
 	stopSfx(channel);
 
-	debugC(1, kDebugAudio, "AmigaSoundMan::playSfx(%s, %i)", filename, channel);
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
 	loadChannelData(filename, ch);
@@ -416,43 +416,40 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 		volume = ch->header.volume;
 	}
 
-	if (rate == -1) {
-		rate = ch->header.samplesPerSec;
-	}
-
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, rate, flags, -1, volume, 0, loopStart, loopEnd);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, 
+		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
 }
 
-void AmigaSoundMan::stopSfx(uint channel) {
+void AmigaSoundMan_ns::stopSfx(uint channel) {
 	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
 		return;
 	}
 
 	if (_channels[channel].dispose) {
-		debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
+		debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
 		_mixer->stopHandle(_channels[channel].handle);
 		free(_channels[channel].data);
 		_channels[channel].data = 0;
 	}
 }
 
-void AmigaSoundMan::playMusic() {
+void AmigaSoundMan_ns::playMusic() {
 	stopMusic();
 
-	debugC(1, kDebugAudio, "AmigaSoundMan::playMusic()");
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playMusic()");
 
 	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_musicStream = Audio::makeProtrackerStream(stream);
 	delete stream;
 
-	debugC(3, kDebugAudio, "AmigaSoundMan::playMusic(): created new music stream");
+	debugC(3, kDebugAudio, "AmigaSoundMan_ns::playMusic(): created new music stream");
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, false);
 }
 
-void AmigaSoundMan::stopMusic() {
-	debugC(1, kDebugAudio, "AmigaSoundMan::stopMusic()");
+void AmigaSoundMan_ns::stopMusic() {
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopMusic()");
 
 	if (_mixer->isSoundHandleActive(_musicHandle)) {
 		_mixer->stopHandle(_musicHandle);
@@ -461,24 +458,63 @@ void AmigaSoundMan::stopMusic() {
 	}
 }
 
-void AmigaSoundMan::playCharacterMusic(const char *character) {
+void AmigaSoundMan_ns::playCharacterMusic(const char *character) {
 }
 
-void AmigaSoundMan::playLocationMusic(const char *location) {
+void AmigaSoundMan_ns::playLocationMusic(const char *location) {
 }
 
 
-SoundMan::SoundMan(Parallaction *vm) : _vm(vm) {
+SoundMan_ns::SoundMan_ns(Parallaction_ns *vm) : _vm(vm) {
 	_mixer = _vm->_mixer;
 }
 
-void SoundMan::setMusicVolume(int value) {
+void SoundMan_ns::setMusicVolume(int value) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, value);
 }
 
-void SoundMan::setMusicFile(const char *filename) {
+void SoundMan_ns::setMusicFile(const char *filename) {
 	strcpy(_musicFile, filename);
 }
 
+void SoundMan_ns::execute(int command, SoundManCommandParameter parm) {
+	switch (command) {
+	case SC_PLAYMUSIC:
+		if (_musicType == MUSIC_CHARACTER) playCharacterMusic((const char*)parm);
+		else if (_musicType == MUSIC_LOCATION) playLocationMusic((const char*)parm);
+		else playMusic();
+		break;
+	case SC_STOPMUSIC:
+		stopMusic();
+		break;
+	case SC_SETMUSICTYPE:
+		_musicType = (int)parm;			
+		break;
+	case SC_SETMUSICFILE:
+		setMusicFile((const char*)parm);
+		break;
+	
+	case SC_PLAYSFX:
+		playSfx((const char*)parm, _sfxChannel, _sfxLooping, _sfxVolume);
+		break;	
+	case SC_STOPSFX:
+		stopSfx((int)parm);
+		break;
+	
+	case SC_SETSFXCHANNEL:
+		_sfxChannel = (uint)parm;
+		break;
+	case SC_SETSFXLOOPING:
+		_sfxLooping = (bool)parm;
+		break;
+	case SC_SETSFXVOLUME:
+		_sfxVolume = (int)parm;
+		break;
+	
+	case SC_PAUSE:
+		pause((bool)parm);
+		break;
+	}
+}
 
 } // namespace Parallaction

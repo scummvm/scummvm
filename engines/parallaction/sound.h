@@ -40,21 +40,69 @@ class MidiParser;
 
 namespace Parallaction {
 
-class Parallaction;
+class Parallaction_ns;
 class MidiPlayer;
 
+typedef void* SoundManCommandParameter;
+
+class SoundManImpl {
+public:
+	virtual void execute(int command, SoundManCommandParameter parm) = 0;
+	virtual ~SoundManImpl() { }
+};
+
 class SoundMan {
+	SoundManImpl *_impl;
+public:
+	SoundMan(SoundManImpl *impl) : _impl(impl) { }
+	virtual ~SoundMan() { delete _impl; }
+	void execute(int command, SoundManCommandParameter parm = 0) {
+		if (_impl) {
+			_impl->execute(command, parm);
+		}
+	}
+};
+
+enum {
+	// soundMan commands
+	SC_PLAYMUSIC,
+	SC_STOPMUSIC,
+	SC_SETMUSICTYPE,
+	SC_SETMUSICFILE,
+	SC_PLAYSFX,
+	SC_STOPSFX,
+	SC_SETSFXCHANNEL,
+	SC_SETSFXLOOPING,
+	SC_SETSFXVOLUME,
+	SC_SETSFXRATE,
+	SC_PAUSE
+};
+
+class SoundMan_ns : public SoundManImpl {
+public:
+	enum {
+		MUSIC_ANY,
+		MUSIC_CHARACTER,
+		MUSIC_LOCATION
+	};
 
 protected:
-	Parallaction	*_vm;
+	Parallaction_ns	*_vm;
 	Audio::Mixer	*_mixer;
 	char			_musicFile[PATH_LEN];
 
-public:
-	SoundMan(Parallaction *vm);
-	virtual ~SoundMan() {}
+	bool 	_sfxLooping;
+	int		_sfxVolume;
+	int		_sfxRate;
+	uint	_sfxChannel;
+	
+	int		_musicType;
 
-	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1, int rate = -1) { }
+public:
+	SoundMan_ns(Parallaction_ns *vm);
+	virtual ~SoundMan_ns() {}
+
+	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
 	virtual void stopSfx(uint channel) { }
 
 	void setMusicFile(const char *filename);
@@ -63,11 +111,12 @@ public:
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
 	virtual void pause(bool p) { }
+	virtual void execute(int command, SoundManCommandParameter parm = 0);
 
 	void setMusicVolume(int value);
 };
 
-class DosSoundMan : public SoundMan {
+class DosSoundMan_ns : public SoundMan_ns {
 
 	MidiPlayer	*_midiPlayer;
 	int			_musicData1;
@@ -75,8 +124,8 @@ class DosSoundMan : public SoundMan {
 	bool isLocationSilent(const char *locationName);
 
 public:
-	DosSoundMan(Parallaction *vm, MidiDriver *midiDriver);
-	~DosSoundMan();
+	DosSoundMan_ns(Parallaction_ns *vm, MidiDriver *midiDriver);
+	~DosSoundMan_ns();
 	void playMusic();
 	void stopMusic();
 
@@ -88,7 +137,7 @@ public:
 
 #define NUM_AMIGA_CHANNELS 4
 
-class AmigaSoundMan : public SoundMan {
+class AmigaSoundMan_ns : public SoundMan_ns {
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
@@ -105,32 +154,21 @@ class AmigaSoundMan : public SoundMan {
 	void loadChannelData(const char *filename, Channel *ch);
 
 public:
-	AmigaSoundMan(Parallaction *vm);
-	~AmigaSoundMan();
+	AmigaSoundMan_ns(Parallaction_ns *vm);
+	~AmigaSoundMan_ns();
 	void playMusic();
 	void stopMusic();
 
-	void playSfx(const char *filename, uint channel, bool looping, int volume, int rate);
+	void playSfx(const char *filename, uint channel, bool looping, int volume);
 	void stopSfx(uint channel);
 
 	void playCharacterMusic(const char *character);
 	void playLocationMusic(const char *location);
 };
 
-class DummySoundMan : public SoundMan {
-
-public:
-	DummySoundMan(Parallaction *vm) : SoundMan(vm) { }
-	~DummySoundMan()  { }
-	void playMusic()  { }
-	void stopMusic()  { }
-
-	void playSfx(const char *filename, uint channel, bool looping, int volume, int rate)  { }
-	void stopSfx(uint channel)  { }
-
-	void playCharacterMusic(const char *character)  { }
-	void playLocationMusic(const char *location)  { }
-
+class DummySoundMan : public SoundManImpl {
+public:	
+	void execute(int command, SoundManCommandParameter parm) { }
 };
 
 } // namespace Parallaction
