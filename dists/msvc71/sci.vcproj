@@ -207,6 +207,9 @@
 				RelativePath="..\..\engines\sci\engine\savegame.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\savegame.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\script.h">
 			</File>
 			<File

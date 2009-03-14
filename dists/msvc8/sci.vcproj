@@ -286,6 +286,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\savegame.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\script.h"
 				>
 			</File>
