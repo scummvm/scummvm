@@ -112,7 +112,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The Making of The 11th Hour DOS English
 	{
 		{
-			"making11h", "",
+			"making11h", "Making Of",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS
 		},
@@ -122,7 +122,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// Clandestiny Trailer DOS English
 	{
 		{
-			"clantrailer", "",
+			"clantrailer", "Clandestiny Trailer",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS
 		},
@@ -175,11 +175,11 @@ static const ADParams detectionParams = {
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
-	0,
+	"groovie",
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	kADFlagUseExtraAsHint
 };
 
 
