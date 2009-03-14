@@ -695,7 +695,7 @@ int ResourceManager::detectMapVersion() {
 	// offset set to filesize and 4 more bytes
 	file.seek(off - 7, SEEK_SET);
 	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
-		return SCI_VERSION_1_1; // TODO : check if there is a difference between these maps
+		return SCI_VERSION_32; // TODO : check if there is a difference between these maps
 
 	return SCI_VERSION_AUTODETECT;
 }
