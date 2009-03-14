@@ -1089,7 +1089,7 @@ DECLARE_LOCATION_PARSER(music)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(music) ");
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		_vm->_soundMan->execute(SC_SETMUSICFILE, (SoundManCommandParameter)_tokens[1]);
+		_vm->_soundMan->execute(SC_SETMUSICFILE, _tokens[1]);
 }
 
 void LocationParser_ns::parse(Script *script) {

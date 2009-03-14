@@ -142,7 +142,7 @@ Common::Error Parallaction::init() {
 
 void Parallaction::pauseEngineIntern(bool pause) {
 	if (_soundMan) {
-		_soundMan->execute(SC_PAUSE, (SoundManCommandParameter)pause);
+		_soundMan->execute(SC_PAUSE, pause);
 	}
 }
 
@@ -635,10 +635,10 @@ void Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneHear:
-		_soundMan->execute(SC_SETSFXCHANNEL, (SoundManCommandParameter)z->u.hear->_channel);
-		_soundMan->execute(SC_SETSFXLOOPING, (SoundManCommandParameter)((z->_flags & kFlagsLooping) == kFlagsLooping));
-		_soundMan->execute(SC_SETSFXVOLUME, (SoundManCommandParameter)60);
-		_soundMan->execute(SC_PLAYSFX, (SoundManCommandParameter)z->u.hear->_name);		
+		_soundMan->execute(SC_SETSFXCHANNEL, z->u.hear->_channel);
+		_soundMan->execute(SC_SETSFXLOOPING, ((z->_flags & kFlagsLooping) == kFlagsLooping));
+		_soundMan->execute(SC_SETSFXVOLUME, 60);
+		_soundMan->execute(SC_PLAYSFX, z->u.hear->_name);		
 		break;
 
 	case kZoneSpeak:
@@ -984,10 +984,10 @@ bool CharacterName::dummy() const {
 }
 
 void Parallaction::beep() {
-	_soundMan->execute(SC_SETSFXCHANNEL, (SoundManCommandParameter)3);	
-	_soundMan->execute(SC_SETSFXVOLUME, (SoundManCommandParameter)127);	
-	_soundMan->execute(SC_SETSFXLOOPING, (SoundManCommandParameter)false);	
-	_soundMan->execute(SC_PLAYSFX,  (SoundManCommandParameter)"beep");
+	_soundMan->execute(SC_SETSFXCHANNEL, 3);	
+	_soundMan->execute(SC_SETSFXVOLUME, 127);	
+	_soundMan->execute(SC_SETSFXLOOPING, 0);	
+	_soundMan->execute(SC_PLAYSFX, "beep");
 }
 
 void Parallaction::scheduleLocationSwitch(const char *location) {

@@ -477,42 +477,45 @@ void SoundMan_ns::setMusicFile(const char *filename) {
 	strcpy(_musicFile, filename);
 }
 
-void SoundMan_ns::execute(int command, SoundManCommandParameter parm) {
+void SoundMan_ns::execute(int command, const char *parm = 0) {
+	uint32 n = strtoul(parm, 0, 10);
+	bool b = (n == 1) ? true : false;
+	
 	switch (command) {
 	case SC_PLAYMUSIC:
-		if (_musicType == MUSIC_CHARACTER) playCharacterMusic((const char*)parm);
-		else if (_musicType == MUSIC_LOCATION) playLocationMusic((const char*)parm);
+		if (_musicType == MUSIC_CHARACTER) playCharacterMusic(parm);
+		else if (_musicType == MUSIC_LOCATION) playLocationMusic(parm);
 		else playMusic();
 		break;
 	case SC_STOPMUSIC:
 		stopMusic();
 		break;
 	case SC_SETMUSICTYPE:
-		_musicType = (int)parm;			
+		_musicType = n;			
 		break;
 	case SC_SETMUSICFILE:
-		setMusicFile((const char*)parm);
+		setMusicFile(parm);
 		break;
 	
 	case SC_PLAYSFX:
-		playSfx((const char*)parm, _sfxChannel, _sfxLooping, _sfxVolume);
+		playSfx(parm, _sfxChannel, _sfxLooping, _sfxVolume);
 		break;	
 	case SC_STOPSFX:
-		stopSfx((int)parm);
+		stopSfx(n);
 		break;
 	
 	case SC_SETSFXCHANNEL:
-		_sfxChannel = (uint)parm;
+		_sfxChannel = n;
 		break;
 	case SC_SETSFXLOOPING:
-		_sfxLooping = (bool)parm;
+		_sfxLooping = b;
 		break;
 	case SC_SETSFXVOLUME:
-		_sfxVolume = (int)parm;
+		_sfxVolume = n;
 		break;
 	
 	case SC_PAUSE:
-		pause((bool)parm);
+		pause(b);
 		break;
 	}
 }

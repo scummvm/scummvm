@@ -43,11 +43,9 @@ namespace Parallaction {
 class Parallaction_ns;
 class MidiPlayer;
 
-typedef void* SoundManCommandParameter;
-
 class SoundManImpl {
 public:
-	virtual void execute(int command, SoundManCommandParameter parm) = 0;
+	virtual void execute(int command, const char *parm = 0) = 0;
 	virtual ~SoundManImpl() { }
 };
 
@@ -56,7 +54,15 @@ class SoundMan {
 public:
 	SoundMan(SoundManImpl *impl) : _impl(impl) { }
 	virtual ~SoundMan() { delete _impl; }
-	void execute(int command, SoundManCommandParameter parm = 0) {
+	void execute(int command, bool parm) {
+		execute(command, parm ? "1" : "0");
+	}
+	void execute(int command, int32 parm) {
+		char n[12];
+		sprintf(n, "%i", parm);
+		execute(command, n);
+	}
+	void execute(int command, const char *parm = 0) {
 		if (_impl) {
 			_impl->execute(command, parm);
 		}
@@ -111,7 +117,7 @@ public:
 	virtual void playCharacterMusic(const char *character) = 0;
 	virtual void playLocationMusic(const char *location) = 0;
 	virtual void pause(bool p) { }
-	virtual void execute(int command, SoundManCommandParameter parm = 0);
+	virtual void execute(int command, const char *parm);
 
 	void setMusicVolume(int value);
 };
@@ -168,7 +174,7 @@ public:
 
 class DummySoundMan : public SoundManImpl {
 public:	
-	void execute(int command, SoundManCommandParameter parm) { }
+	void execute(int command, const char *parm) { }
 };
 
 } // namespace Parallaction
