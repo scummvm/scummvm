@@ -48,7 +48,7 @@ struct Frames;
 struct Cnv;
 struct Sprites;
 struct BackgroundInfo;
-struct GfxObj;
+class GfxObj;
 struct MaskBuffer;
 struct PathBuffer;
 
