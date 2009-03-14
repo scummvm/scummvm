@@ -320,11 +320,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\sound.cpp"
+			RelativePath="..\..\engines\parallaction\sound.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\sound.h"
+			RelativePath="..\..\engines\parallaction\sound_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\sound_ns.cpp"
 			>
 		</File>
 		<File
