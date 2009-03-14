@@ -1472,7 +1472,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(3, 000, 000)
 	},
 
-#if 0
 	// Larry 7 - French DOS (provided by richiefs in bug report #2670691)
 	{{"lsl7", "", {
 		{"resmap.000", 0, "4407849fd52fe3efb0c30fba60cd5cd4", 8206},
@@ -1480,9 +1479,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(3, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
 #if 0
 	// Larry 7 - Italian DOS CD (from glorifindel)
@@ -1507,6 +1505,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
+	{{"lsl7", "Demo", {
+		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
+		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 100, 002)
+	},
 
 #if 0
 	// Lighthouse - English DOS
@@ -1634,6 +1642,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 685) // exe seems packed, this is a guess
+	},
+
+	// Police Quest 2 - English DOS (provided by richiefs in bug report #2670691)
+	{{"pq2", "", {
+		{"resource.map", 0, "9cff78c4be9e6a4848b6e9377569e3d9", 5700},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 163291},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 329367},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 305819},
+		{"resource.004", 0, "77f02def3094af804fd2371db25b7100", 342149},
+		{"resource.005", 0, "77f02def3094af804fd2371db25b7100", 349899},
+		{"resource.006", 0, "77f02def3094af804fd2371db25b7100", 354991},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+	 	SCI_VERSION(0, 000, 395)
 	},
 
 	// Police Quest 2 - English DOS
@@ -2078,6 +2101,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 784) // got 1.004.006 by executable scan
+	},
+
+	// Space Quest 3 - English DOS (provided by richiefs in bug report #2670691)
+	{{"sq3", "", {
+		{"resource.map", 0, "fee82d211c3918a90ce3b476d3dbb245", 5484},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 485158},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720244},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688367},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 453)
 	},
 
 	// Space Quest 3 - English DOS
