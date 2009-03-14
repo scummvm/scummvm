@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=ScummVM
 Comment=Interpreter for several adventure games
 Comment[pl]=Interpreter graficznych gier przygodowych
@@ -9,8 +8,8 @@ Comment[de]=Interpreter für diverse Abenteuerspiele
 Comment[es]=Intérprete para varias aventuras gráficas
 Comment[ca]=Intèrpret per diverses aventures gràfiques
 Exec=scummvm
-Icon=scummvm.xpm
+Icon=scummvm
 Terminal=false
 Type=Application
-Categories=Application;Game;AdventureGame;
+Categories=Game;AdventureGame;
 StartupNotify=false
