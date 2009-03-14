@@ -500,6 +500,8 @@ private:
 	uint16 _globalScriptVars[16];
 
 	// emc opcode
+	int olol_setWallType(EMCState *script);
+	int olol_getWallType(EMCState *script);
 	int olol_drawScene(EMCState *script);
 	int olol_delay(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
@@ -534,7 +536,7 @@ private:
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);
-	int olol_updateSceneAnimations(EMCState *script);
+	int olol_updateBlockAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
 	int olol_copyRegion(EMCState *script);
@@ -760,7 +762,7 @@ private:
 	void drawDecorations(int index);
 	void drawIceShapes(int index, int iceShapeIndex);
 	void drawScriptShapes(int pageNum);
-	void updateSceneAnimations(int block, int wall, int val);
+	void setWallType(int block, int wall, int val);
 	void updateSceneWindow();
 
 	void setSequenceGui(int x, int y, int w, int h, int enableFlags);
@@ -796,7 +798,7 @@ private:
 	void movePartySmoothScrollTurnRight(int speed);
 
 	int smoothScrollDrawSpecialShape(int pageNum);
-	void setLF2(int block);
+	void updateAutoMap(int block);
 
 	struct OpenDoorState {
 		uint16 block;
@@ -981,7 +983,7 @@ private:
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
-	int placeMonstersUnk(int block);
+	int disableMonstersForBlock(int block);
 	void setMonsterMode(MonsterInPlay *monster, int a);
 	void placeMonster(MonsterInPlay *monster, uint16 x, uint16 y);
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);

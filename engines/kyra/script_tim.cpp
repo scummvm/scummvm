@@ -1125,7 +1125,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	return res;
 }
 
-void TIMInterpreter_LoL::resetDialogueState(TIM *tim) {
+void TIMInterpreter_LoL::forceDialogue(TIM *tim) {
 	if (!tim)
 		return;
 

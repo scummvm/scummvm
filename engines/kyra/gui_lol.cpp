@@ -1398,6 +1398,13 @@ int LoLEngine::clickedCompass(Button *button) {
 }
 
 int LoLEngine::clickedAutomap(Button *button) {
+	if (!(_gameFlags[15] & 0x1000))
+		return 0;
+
+	// displayAutopmap();
+
+	gui_drawPlayField();
+	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
 	return 1;
 }
 

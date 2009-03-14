@@ -144,7 +144,7 @@ public:
 	virtual void stopBackgroundAnimation(int animIndex) {}
 	virtual void updateBackgroundAnimation(int animIndex) {}
 
-	virtual void resetDialogueState(TIM *tim) {}
+	virtual void forceDialogue(TIM *tim) {}
 
 	int _drawPage2;
 
@@ -236,7 +236,7 @@ public:
 	void stopBackgroundAnimation(int animIndex);
 	void updateBackgroundAnimation(int animIndex);	
 
-	void resetDialogueState(TIM *tim);
+	void forceDialogue(TIM *tim);
 		
 private:
 	KyraEngine_v1 *vm();

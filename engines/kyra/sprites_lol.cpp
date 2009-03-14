@@ -135,7 +135,7 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 	}
 }
 
-int LoLEngine::placeMonstersUnk(int block) {
+int LoLEngine::disableMonstersForBlock(int block) {
 	int i = _levelBlockProperties[block].itemMonsterIndex;
 	int cnt = 0;
 	MonsterInPlay *t = 0;

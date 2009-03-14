@@ -112,6 +112,19 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 	return false;
 }
 
+int LoLEngine::olol_setWallType(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (_wllWallFlags[stackPos(2)] & 4)
+		disableMonstersForBlock(stackPos(0));
+	setWallType(stackPos(0), stackPos(1), stackPos(2));
+	return 1;
+}
+
+int LoLEngine::olol_getWallType(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getWallType(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return _levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3];
+}
+
 int LoLEngine::olol_drawScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawScene(%p) (%d)", (const void *)script, stackPos(0));
 	drawScene(stackPos(0));
@@ -555,7 +568,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	case 0:
 		_currentBlock = b;
 		calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
-		setLF2(_currentBlock);
+		updateAutoMap(_currentBlock);
 		break;
 
 	case 1:
@@ -626,11 +639,11 @@ int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_updateSceneAnimations(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateSceneAnimations(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int LoLEngine::olol_updateBlockAnimations(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateBlockAnimations(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int block = stackPos(0);
 	int wall = stackPos(1);
-	updateSceneAnimations(block, wall, _levelBlockProperties[block].walls[(wall == -1) ? 0 : wall] == stackPos(2) ? stackPos(3) : stackPos(2));
+	setWallType(block, wall, _levelBlockProperties[block].walls[(wall == -1) ? 0 : wall] == stackPos(2) ? stackPos(3) : stackPos(2));
 	return 0;
 }
 
@@ -1031,7 +1044,7 @@ int LoLEngine::olol_setDoorState(EMCState *script) {
 
 int LoLEngine::olol_processButtonClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processButtonClick(%p) (%d)", (const void *)script, stackPos(0));
-	_tim->resetDialogueState(_activeTim[stackPos(0)]);
+	_tim->forceDialogue(_activeTim[stackPos(0)]);
 	return 1;
 }
 
@@ -1339,8 +1352,8 @@ void LoLEngine::setupOpcodeTable() {
 
 	SetOpcodeTable(_opcodes);
 	// 0x00
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_setWallType);
+	Opcode(olol_getWallType);
 	Opcode(olol_drawScene);
 	Opcode(o1_getRand);
 
@@ -1417,7 +1430,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x34
-	Opcode(olol_updateSceneAnimations);
+	Opcode(olol_updateBlockAnimations);
 	Opcode(olol_mapShapeToBlock);
 	Opcode(olol_resetBlockShapeAssignment);
 	Opcode(olol_copyRegion);

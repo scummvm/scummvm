@@ -84,7 +84,7 @@ void LoLEngine::loadLevel(int index) {
 	runInfScript(filename);
 
 	addLevelItems();
-	placeMonstersUnk(_currentBlock);
+	disableMonstersForBlock(_currentBlock);
 
 	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay,32, 16, 0, 0, 128, true);
 
@@ -643,7 +643,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 		}		
 	}
 
-	setLF2(_currentBlock);
+	updateAutoMap(_currentBlock);
 }
 
 uint16 LoLEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
@@ -1103,7 +1103,7 @@ int LoLEngine::smoothScrollDrawSpecialShape(int pageNum) {
 	return 0;
 }
 
-void LoLEngine::setLF2(int block) {
+void LoLEngine::updateAutoMap(int block) {
 	if (!(_gameFlags[15] & 0x1000))
 		return;
 	_levelBlockProperties[block].flags |= 7;
@@ -1138,7 +1138,7 @@ void LoLEngine::drawScene(int pageNum) {
 	_sceneUpdateRequired = false;
 }
 
-void LoLEngine::updateSceneAnimations(int block, int wall, int val) {
+void LoLEngine::setWallType(int block, int wall, int val) {
 	if (wall == -1) {
 		for (int i = 0; i < 4; i++)
 			_levelBlockProperties[block].walls[i] = val;
