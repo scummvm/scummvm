@@ -32,8 +32,7 @@ AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 
 AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
-	getcwd(buf, MAXPATHLEN);
-	return new POSIXFilesystemNode(buf);
+	return getcwd(buf, MAXPATHLEN) ? new POSIXFilesystemNode(buf) : NULL;
 }
 
 AbstractFSNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
