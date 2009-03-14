@@ -8,7 +8,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -136,11 +136,11 @@ int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPac
 	_nodes = new byte [numnodes << 1];
 	_src->read(_nodes, numnodes << 1);
 
-	while ((c = getc2()) != terminator && (c >= 0) && (_szUnpacked-- > 0))
+	while ((c = getc2()) != terminator && (c >= 0) && !isFinished())
 		putByte(c);
 
 	delete[] _nodes;
-	return _dwWrote ? 0 : 1;
+	return _dwWrote == _szUnpacked ? 0 : 1;
 }
 
 int16 DecompressorHuffman::getc2() {
@@ -205,7 +205,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 	uint16 tokenlengthlist[4096]; // char length of each token
 	uint16 tokenlastlength = 0;
 
-	while (_dwRead < _szPacked || _nBits) {
+	while (!isFinished()) {
 		token = getBitsLSB(_numbits);
 
 		if (token == 0x101)
@@ -250,7 +250,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 		}
 	}
 
-	return 0;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
 }
 
 int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked,
@@ -269,7 +269,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 	uint16 token;
 	bool bExit = false;
 
-	while (_szUnpacked && !bExit) {
+	while (!isFinished() && !bExit) {
 		switch (decryptstart) {
 		case 0:
 			bitstring = getBitsMSB(_numbits);
@@ -278,7 +278,6 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 				continue;
 			}
 			putByte(bitstring);
-			_szUnpacked--;
 			lastbits = bitstring;
 			lastchar = (bitstring & 0xff);
 			decryptstart = 1;
@@ -311,7 +310,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 			// put stack in buffer
 			while (stakptr > 0) {
 				putByte(stak[--stakptr]);
-				if (--_szUnpacked == 0) {
+				if (_dwWrote == _szUnpacked) {
 					bExit = true;
 					continue;
 				}
@@ -330,7 +329,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 			break;
 		}
 	}
-	return _dwWrote ? 0 : 1;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
 }
 
 #define PAL_SIZE 1284
@@ -654,7 +653,7 @@ int DecompressorDCL::huffman_lookup(int *tree) {
 
 int DecompressorDCL::unpackDCL(byte* dest) {
 	int mode, length_param, value;
-	uint32 write_pos = 0, val_distance, val_length;
+	uint32 val_distance, val_length;
 
 	mode = getByteLSB();
 	length_param = getByteLSB();
@@ -669,7 +668,7 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 	if (length_param < 3 || length_param > 6)
 		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
-	while (write_pos < _szUnpacked) {
+	while (_dwWrote < _szUnpacked) {
 		if (getBitLSB()) { // (length,distance) pair
 			value = huffman_lookup(length_tree);
 
@@ -690,12 +689,12 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 
 			debugC(kDebugLevelDclInflate, "\nCOPY(%d from %d)\n", val_length, val_distance);
 
-			if (val_length + write_pos > _szUnpacked) {
+			if (val_length + _dwWrote > _szUnpacked) {
 				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
 				return SCI_ERROR_DECOMPRESSION_OVERFLOW;
 			}
 
-			if (write_pos < val_distance) {
+			if (_dwWrote < val_distance) {
 				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream");
 				return SCI_ERROR_DECOMPRESSION_INSANE;
 			}
@@ -703,37 +702,102 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 			while (val_length) {
 				uint32 copy_length = (val_length > val_distance) ? val_distance : val_length;
 				assert(val_distance >= copy_length);
-				memcpy(dest + write_pos, dest + write_pos - val_distance, copy_length);
+				uint32 pos = _dwWrote - val_distance;
+				for (uint32 i = 0; i < copy_length; i++)
+					putByte(dest[pos + i]);
 
 				if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
 					for (uint32 i = 0; i < copy_length; i++)
-						debugC(kDebugLevelDclInflate, "\33[32;31m%02x\33[37;37m ", dest[write_pos + i]);
+						debugC(kDebugLevelDclInflate, "\33[32;31m%02x\33[37;37m ", dest[pos + i]);
 					debugC(kDebugLevelDclInflate, "\n");
 				}
 
 				val_length -= copy_length;
 				val_distance += copy_length;
-				write_pos += copy_length;
 			}
 
 		} else { // Copy byte verbatim
 			value = (mode == DCL_ASCII_MODE) ? huffman_lookup(ascii_tree) : getByteLSB();
-			dest[write_pos++] = value;
+			putByte(value);
 			debugC(kDebugLevelDclInflate, "\33[32;31m%02x \33[37;37m", value);
 		}
 	}
 
-	return 0;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
 }
 
 //----------------------------------------------
-// STACpack decompressor for SCI32
+// STACpack/LZS decompressor for SCI32
+// Based on Andre Beck's code from http://micky.ibh.de/~beck/stuff/lzs4i4l/
 //----------------------------------------------
 int DecompressorLZS::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	// TODO : Implement LZS decompression 
-	// (from RFC1974 and http://micky.ibh.de/~beck/stuff/lzs4i4l/isdn_lzscomp.c)
-	warning("LZS decompression not yet implemented");
-	return SCI_ERROR_UNKNOWN_COMPRESSION;
+	init(src, dest, nPacked, nUnpacked);
+	return unpackLZS();
+}
+
+int DecompressorLZS::unpackLZS() {
+	uint16 offs = 0, clen;
+
+	while (!isFinished()) {
+		if (getBitMSB()) { // Compressed bytes follow 
+			if (getBitMSB()) { // Seven bit offset follows
+				offs = getBitsMSB(7);
+				if (!offs) // This is the end marker - a 7 bit offset of zero 
+					break;
+				if (!(clen = getCompLen())) {
+					warning("lzsDecomp: length mismatch");
+					return SCI_ERROR_DECOMPRESSION_INSANE;
+				}
+				copyComp(offs, clen);
+			} else { // Eleven bit offset follows 
+				offs = getBitsMSB(11);
+				if (!(clen = getCompLen())) {
+					warning("lzsDecomp: length mismatch");
+					return SCI_ERROR_DECOMPRESSION_INSANE;
+				}
+				copyComp(offs, clen);
+			}
+		} else // Literal byte follows
+			putByte(getByteMSB());
+	} // end of while ()
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
+}
+
+uint16 DecompressorLZS::getCompLen() {
+	int clen, nibble;
+	// The most probable cases are hardcoded
+	switch (getBitsMSB(2)) {
+	case 0:
+		return 2;
+	case 1:
+		return 3;
+	case 2:
+		return 4;
+	default:
+		switch (getBitsMSB(2)) {
+		case 0:
+			return 5;
+		case 1:
+			return 6;
+		case 2:
+			return 7;
+		default:
+		// Ok, no shortcuts anymore - just get nibbles and add up
+			clen = 8;
+			do {
+				nibble = getBitsMSB(4);
+				clen += nibble;
+			}while (nibble == 0xf);
+			return clen;
+		}
+	}
+}
+
+void DecompressorLZS::copyComp(int offs, int clen) {
+	int hpos = _dwWrote - offs;
+
+	while (clen--)
+		putByte(_dest[hpos++]);
 }
 
 } // End of namespace Sci

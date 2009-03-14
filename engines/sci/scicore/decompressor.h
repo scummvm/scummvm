@@ -77,12 +77,17 @@ protected:
 	byte getByteLSB();
 
 	void fetchBitsMSB();
-	void fetchBitsLSB();
+	void fetchBitsLSB(); 
 
 	//! put byte to _dest stream
 	/** @param b - byte to put
 	  */
 	virtual void putByte(byte b);
+	// Returns true if all expected data has been unpacked to _dest 
+	// and there is no more data in _src
+	bool isFinished() {
+		return (_dwWrote == _szUnpacked) && (_dwRead >= _szPacked);
+	}
 
 	uint32 _dwBits; // bits buffer
 	byte _nBits; // # of bits in buffer
@@ -165,7 +170,12 @@ protected:
 class DecompressorLZS : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+protected:
+	int unpackLZS();
+	uint16 getCompLen();
+	void copyComp(int offs, int clen);
 };
+
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_DECOMPRESSOR_H
