@@ -45,19 +45,31 @@ const int kScriptStackLimit = kScriptStackSize + 1;
 
 class ScriptStack {
 public:
-	ScriptStack();
-	~ScriptStack();
-	int16 top();
-	int16 pop();
-	void push(int16 value = 0);
-	void setTop(int16 value);
-	int16 peek(int16 index);
-	void poke(int16 index, int16 value);
-	void alloc(int16 count);
-	void free(int16 count);
-	int16 getStackPos() const { return _stackPos; }
-	void setStackPos(int16 stackPtr);
-	int16 *getStackPtr();
+	ScriptStack() {
+		for (int16 i = 0; i < kScriptStackSize; i++)
+			_stack[i] = 0;
+		_stackPos = kScriptStackSize;
+	}
+	~ScriptStack() {}
+	inline int16 top() { return _stack[_stackPos]; }
+	inline int16 pop() {
+		if (_stackPos == kScriptStackSize)
+			error("ScriptStack::pop() Stack underflow");
+		return _stack[_stackPos++];
+	}
+	inline void push(int16 value = 0) {
+		if (_stackPos == 0)
+			error("ScriptStack::push() Stack overflow");
+		_stack[--_stackPos] = value;
+	}
+	inline void setTop(int16 value) { _stack[_stackPos] = value; }
+	inline int16 peek(int16 index) { return _stack[index]; }
+	inline void poke(int16 index, int16 value) { _stack[index] = value; }
+	inline void alloc(int16 count) { _stackPos -= count; }
+	inline void free(int16 count) { _stackPos += count; }
+	inline int16 getStackPos() const { return _stackPos; }
+	inline void setStackPos(int16 stackPtr) { _stackPos = stackPtr; }
+	inline int16 *getStackPtr() { return &_stack[_stackPos]; }
 protected:
 	int16 _stack[kScriptStackSize];
 	int16 _stackPos;

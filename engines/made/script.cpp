@@ -34,61 +34,6 @@
 
 namespace Made {
 
-/* ScriptStack */
-
-ScriptStack::ScriptStack() {
-	for (int16 i = 0; i < kScriptStackSize; i++)
-		_stack[i] = 0;
-	_stackPos = kScriptStackSize;
-}
-
-ScriptStack::~ScriptStack() {
-}
-
-inline int16 ScriptStack::top() {
-	return _stack[_stackPos];
-}
-
-inline int16 ScriptStack::pop() {
-	if (_stackPos == kScriptStackSize)
-		error("ScriptStack::pop() Stack underflow");
-	return _stack[_stackPos++];
-}
-
-inline void ScriptStack::push(int16 value) {
-	if (_stackPos == 0)
-		error("ScriptStack::push() Stack overflow");
-	_stack[--_stackPos] = value;
-}
-
-inline void ScriptStack::setTop(int16 value) {
-	_stack[_stackPos] = value;
-}
-
-inline int16 ScriptStack::peek(int16 index) {
-	return _stack[index];
-}
-
-inline void ScriptStack::poke(int16 index, int16 value) {
-	_stack[index] = value;
-}
-
-inline void ScriptStack::alloc(int16 count) {
-	_stackPos -= count;
-}
-
-inline void ScriptStack::free(int16 count) {
-	_stackPos += count;
-}
-
-inline void ScriptStack::setStackPos(int16 stackPtr) {
-	_stackPos = stackPtr;
-}
-
-inline int16 *ScriptStack::getStackPtr() {
-	return &_stack[_stackPos];
-}
-
 /* ScriptInterpreter */
 
 ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
