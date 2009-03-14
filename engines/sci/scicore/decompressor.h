@@ -34,9 +34,9 @@ enum ResourceCompression {
 	kCompNone = 0,
 	kCompLZW,
 	kCompHuffman,
-	kComp3,			// LZW-like compression used in SCI01 and SCI1
-	kComp3View,		// Comp3 + view Post-processing
-	kComp3Pic,		// Comp3 + pic Post-processing
+	kCompLZW1,			// LZW-like compression used in SCI01 and SCI1
+	kCompLZW1View,		// Comp3 + view Post-processing
+	kCompLZW1Pic,		// Comp3 + pic Post-processing
 	kCompDCL,
 	kCompSTACpack	// ? Used in SCI32
 };
@@ -48,13 +48,7 @@ class Decompressor {
 public:
 	Decompressor() {}
 	virtual ~Decompressor() {}
-
-	//! get a number of bits from _src stream
-	/** @param n - number of bits to get
-		@return (uint32) n-bits number
-	  */
-	virtual int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	                   uint32 nUnpacked);
+	virtual int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
 	//! Initialize decompressor
@@ -64,34 +58,40 @@ protected:
 		@param nUnpacket - size of unpacked data
 		@return (int) 0 on success, non-zero on error
 	  */
-	virtual void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	                  uint32 nUnpacked);	//! get one bit from _src stream
+	virtual void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);	
+	//! get one bit from _src stream
 	/** @return (bool) bit;
 	  */
-	virtual bool getBit();
+	bool getBitMSB();
+	bool getBitLSB();
 	//! get a number of bits from _src stream
 	/** @param n - number of bits to get
 		@return (uint32) n-bits number
 	  */
-	virtual uint32 getBits(int n);
+	uint32 getBitsMSB(int n);
+	uint32 getBitsLSB(int n);
+	//! get one byte from _src stream
+	/** @return (byte) byte
+	  */
+	byte getByteMSB();
+	byte getByteLSB();
+
+	void fetchBitsMSB();
+	void fetchBitsLSB();
+
 	//! put byte to _dest stream
 	/** @param b - byte to put
 	  */
-	virtual byte getByte();
 	virtual void putByte(byte b);
-	virtual void fetchBits();
-	int copyBytes(Common::ReadStream *src, Common::WriteStream *dest, uint32 nSize);
 
-	uint32 _dwBits;
-	byte _nBits;
-
+	uint32 _dwBits; // bits buffer
+	byte _nBits; // # of bits in buffer
 	uint32 _szPacked;
 	uint32 _szUnpacked;
-	uint32 _dwRead;
+	uint32 _dwRead;	// # of bytes read from _src
 	uint32 _dwWrote;
-
 	Common::ReadStream *_src;
-	Common::WriteStream *_dest;
+	byte *_dest;
 };
 
 //----------------------------------------------
@@ -99,8 +99,7 @@ protected:
 //----------------------------------------------
 class DecompressorHuffman : public Decompressor {
 public:
-	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	           uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
 	int16 getc2();
@@ -112,14 +111,13 @@ protected:
 // LZW-like decompressor for SCI01/SCI1
 // TODO: Needs clean-up of post-processing fncs
 //----------------------------------------------
-class DecompressorComp3 : public Decompressor {
+class DecompressorLZW : public Decompressor {
 public:
-	DecompressorComp3(int nCompression) {
+	DecompressorLZW(int nCompression) {
 		_compression = nCompression;
 	}
-	void init(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked, uint32 nUnpacked);
-	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	           uint32 nUnpacked);
+	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
 	enum {
@@ -127,64 +125,47 @@ protected:
 		PIC_OPX_SET_PALETTE = 2,
 		PIC_OP_OPX = 0xfe
 	};
-	// actual unpacking procedure
-	int doUnpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	             uint32 nUnpacked);
+	// unpacking procedures
+	// TODO: unpackLZW and unpackLZW1 are similar and should be merged
+	int unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	int unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+
 	// functions to post-process view and pic resources
-	void decodeRLE(Common::ReadStream *src, Common::WriteStream *dest, byte *pixeldata, uint16 size);
-	void reorderPic(Common::ReadStream *src, Common::WriteStream *dest, int dsize);
-	//
-	void decode_rle(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
-	int rle_size(byte *rledata, int dsize);
-	void build_cel_headers(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
-	void view_reorder(byte *inbuffer, byte *outbuffer);
+	void reorderPic(byte *src, byte *dest, int dsize);
+	void reorderView(byte *src, byte *dest);
+	void decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
+	int getRLEsize(byte *rledata, int dsize);
+	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
+	
 	// decompressor data
 	struct tokenlist {
 		byte data;
 		uint16 next;
-	} _tokens[0x1004];
-	byte _stak[0x1014];
-	byte _lastchar;
-	uint16 _stakptr;
-	uint16 _numbits, _lastbits;
+	};
+	uint16 _numbits;
 	uint16 _curtoken, _endtoken;
 	int _compression;
 };
 
 //----------------------------------------------
-// LZW 9-12 bits decompressor for SCI0
-// TODO : Needs clean-up of doUnpack()
-//----------------------------------------------
-class DecompressorLZW : public Decompressor {
-public:
-	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	           uint32 nUnpacked);
-
-protected:
-	int unpackLZW(byte *dest);
-
-	void fetchBits();
-	uint32 getBits(int n);
-};
-
-//----------------------------------------------
 // DCL decompressor for SCI1.1
-// TODO : Needs clean-up of doUnpack()
 //----------------------------------------------
 class DecompressorDCL : public Decompressor {
 public:
-	int unpack(Common::ReadStream *src, Common::WriteStream *dest, uint32 nPacked,
-	           uint32 nUnpacked);
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
 	int unpackDCL(byte *dest);
 	int huffman_lookup(int *tree);
-
-	void fetchBits();
-	bool getBit();
-	uint32 getBits(int n);
 };
 
+//----------------------------------------------
+// STACpack decompressor for SCI32
+//----------------------------------------------
+class DecompressorLZS : public Decompressor {
+public:
+	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+};
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_DECOMPRESSOR_H

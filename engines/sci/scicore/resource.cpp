@@ -1046,7 +1046,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		wCompression = file->readUint16LE();
 		break;
 	case SCI_VERSION_32:
-		type = (ResourceType)file->readByte();
+		type = (ResourceType)(file->readByte() &0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint32LE();
 		szUnpacked = file->readUint32LE();
@@ -1063,36 +1063,29 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	res->number = number;
 	res->size = szUnpacked;
 	// checking compression method
-	if (wCompression == 0)
+	switch (wCompression) {
+	case 0:
 		compression = kCompNone;
-	switch (_sciVersion) {
-	case SCI_VERSION_0:
-		if (wCompression == 1)
-			compression = kCompLZW;
-		else if (wCompression == 2)
-			compression = kCompHuffman;
 		break;
-	case SCI_VERSION_01:
-	case SCI_VERSION_01_VGA:
-	case SCI_VERSION_01_VGA_ODD:
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
-		if (wCompression == 1)
-			compression = kCompHuffman;
-		else if (wCompression == 2)
-			compression = kComp3;
-		else if (wCompression == 3)
-			compression = kComp3View;
-		else if (wCompression == 4)
-			compression = kComp3Pic;
+	case 1:
+		compression = (_sciVersion == SCI_VERSION_0) ? kCompLZW : kCompHuffman; 
 		break;
-	case SCI_VERSION_1_1:
-		if (wCompression >= 18 && wCompression <= 20)
-			compression = kCompDCL;
+	case 2:
+		compression = (_sciVersion == SCI_VERSION_0) ? kCompHuffman : kCompLZW1; 
 		break;
-	case SCI_VERSION_32:
-		if (wCompression == 32)
-			compression = kCompSTACpack;
+	case 3:
+		compression = kCompLZW1View;
+		break;
+	case 4:
+		compression = kCompLZW1Pic;
+		break;
+	case 18:
+	case 19:
+	case 20:
+		compression = kCompDCL;
+		break;
+	case 32:
+		compression = kCompSTACpack;
 		break;
 	default:
 		compression = kCompUnknown;
@@ -1104,7 +1097,6 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 int ResourceManager::decompress(Resource *res, Common::File *file) {
 	int error;
 	uint32 szPacked = 0;
-	Common::MemoryWriteStream *pDest = NULL;
 	ResourceCompression compression = kCompUnknown;
 
 	// fill resource info
@@ -1117,43 +1109,34 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 	case kCompNone:
 		dec = new Decompressor;
 		break;
-	case kCompLZW:
-		dec = new DecompressorLZW;
-		break;
 	case kCompHuffman:
 		dec = new DecompressorHuffman;
 		break;
-	case kComp3:
-	case kComp3View:
-	case kComp3Pic:
-		dec = new DecompressorComp3(compression);
+	case kCompLZW:
+	case kCompLZW1:
+	case kCompLZW1View:
+	case kCompLZW1Pic:
+		dec = new DecompressorLZW(compression);
 		break;
 	case kCompDCL:
 		dec = new DecompressorDCL;
 		break;
+	case kCompSTACpack:
+		dec = new DecompressorLZS;
+		break;
 	default:
 		warning("Resource %s #%d: Compression method %d not supported",
 		        getResourceTypeName(res->type), res->number, compression);
-		break;
+		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-	if (dec) {
-		res->data = new byte[res->size];
-		pDest = new Common::MemoryWriteStream(res->data , res->size);
-		error = dec->unpack(file, pDest, szPacked, res->size);
-	} else
-		error = SCI_ERROR_UNKNOWN_COMPRESSION;
+	res->data = new byte[res->size];
+	res->status = kResStatusAllocated;
+	error = res->data ? dec->unpack(file, res->data, szPacked, res->size) : SCI_ERROR_RESOURCE_TOO_BIG;
+	if (error)
+		res->unalloc();
 
-	if (!error)
-		res->status = kResStatusAllocated;
-	else {
-		delete res->data;
-		res->data = 0;
-		res->status = kResStatusNoMalloc;
-	}
 	delete dec;
-	delete pDest;
-
 	return error;
 }
 
