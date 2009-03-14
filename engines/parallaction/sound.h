@@ -42,6 +42,9 @@ namespace Parallaction {
 
 class Parallaction_ns;
 class MidiPlayer;
+class Parallaction_br;
+class MidiPlayer_MSC;
+
 
 class SoundManImpl {
 public:
@@ -175,6 +178,32 @@ public:
 class DummySoundMan : public SoundManImpl {
 public:	
 	void execute(int command, const char *parm) { }
+};
+
+class SoundMan_br : public SoundManImpl {
+protected:
+	Common::String _musicFile;
+
+	virtual void playMusic() = 0;
+	virtual void stopMusic() = 0;
+	virtual void pause(bool p) = 0;
+
+public:
+	virtual void execute(int command, const char *parm);	
+	void setMusicFile(const char *parm);
+};
+
+class DosSoundMan_br : public SoundMan_br {
+
+	MidiPlayer_MSC	*_midiPlayer;
+
+public:
+	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
+	~DosSoundMan_br();
+	
+	void playMusic();
+	void stopMusic();
+	void pause(bool p);
 };
 
 } // namespace Parallaction

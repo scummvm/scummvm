@@ -395,7 +395,7 @@ Table* DosDisk_br::loadTable(const char* name) {
 
 Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadMusic");
-	return 0;
+	return openFile("msc/" + Common::String(name), ".msc");
 }
 
 

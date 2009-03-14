@@ -421,16 +421,13 @@ DECLARE_LOCATION_PARSER(endcomment)  {
 
 
 DECLARE_LOCATION_PARSER(sound)  {
-	debugC(7, kDebugParser, "LOCATION_PARSER(sound) ");
-
-//	_soundMan->loadSound(_tokens[1]);
+	warning("SOUND command unexpected when parsing location");
 }
 
 
 DECLARE_LOCATION_PARSER(music)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(music) ");
-
-//	_soundMan->loadMusic(_tokens[1]);
+	_vm->_soundMan->execute(SC_SETMUSICFILE, _tokens[1]);
 }
 
 DECLARE_LOCATION_PARSER(redundant)  {

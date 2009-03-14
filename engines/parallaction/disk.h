@@ -48,6 +48,9 @@ struct Frames;
 struct Cnv;
 struct Sprites;
 struct BackgroundInfo;
+struct GfxObj;
+struct MaskBuffer;
+struct PathBuffer;
 
 class Disk {
 

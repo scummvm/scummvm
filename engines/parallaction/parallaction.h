@@ -125,6 +125,7 @@ class CommandExec;
 class ProgramExec;
 class SoundMan;
 class SoundMan_ns;
+class SoundMan_br;
 
 
 struct Location {
@@ -533,7 +534,8 @@ public:
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
-
+	SoundMan_br				*_soundManI;
+	
 	int32		_counters[32];
 	Table		*_countersNames;
 

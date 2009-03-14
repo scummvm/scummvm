@@ -45,15 +45,13 @@ const char *Parallaction_br::_partNames[] = {
 };
 
 Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
-	_locationParser(0), _programParser(0) {
+	_locationParser(0), _programParser(0), _soundManI(0) {
 }
 
 Common::Error Parallaction_br::init() {
 
 	_screenWidth = 640;
 	_screenHeight = 400;
-
-	SoundManImpl* _soundManI = 0;
 
 	if (getPlatform() == Common::kPlatformPC) {
 		if (getFeatures() & GF_DEMO) {
@@ -62,11 +60,12 @@ Common::Error Parallaction_br::init() {
 			_disk = new DosDisk_br(this);
 		}
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		_soundManI = new DummySoundMan();
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		_soundManI = new DosSoundMan_br(this, driver);
 	} else {
 		_disk = new AmigaDisk_br(this);
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		_soundManI = new DummySoundMan();
 	}
 
 	_disk->init();
@@ -301,6 +300,10 @@ void Parallaction_br::changeLocation() {
 	doLocationEnterTransition();
 
 	_cmdExec->run(_location._aCommands);
+	
+	// NOTE: music should not started here! 
+	// TODO: implement the music commands which control music execution
+	_soundMan->execute(SC_PLAYMUSIC);
 
 	_engineFlags &= ~kEngineChangeLocation;
 	_newLocationName.clear();
