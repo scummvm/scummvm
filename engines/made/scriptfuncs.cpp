@@ -203,11 +203,12 @@ int16 ScriptFunctions::sfShowPage(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfPollEvent(int16 argc, int16 *argv) {
-
-	_vm->_system->updateScreen();
+	_vm->handleEvents();
+	_vm->_screen->updateScreenAndWait(10);
 
 	int16 eventNum = _vm->_eventNum;
 	_vm->_eventNum = 0;
+
 	return eventNum;
 }
 

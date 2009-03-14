@@ -358,9 +358,7 @@ void Screen::updateSprites() {
 	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
 	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
-
-	_vm->_system->updateScreen();
-
+	_vm->_screen->updateScreenAndWait(10);
 }
 
 void Screen::clearChannels() {
@@ -626,14 +624,13 @@ void Screen::show() {
 	_fx->run(_visualEffectNum, _workScreen, _palette, _newPalette, _paletteColorCount);
 	_visualEffectNum = 0;
 
-	_vm->_system->updateScreen();
-
 	if (!_paletteInitialized) {
 		memcpy(_newPalette, _palette, _paletteColorCount * 3);
 		_oldPaletteColorCount = _paletteColorCount;
 		_paletteInitialized = true;
 	}
 
+	updateScreenAndWait(10);
 }
 
 void Screen::flash(int flashCount) {
