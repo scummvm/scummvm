@@ -1835,8 +1835,8 @@ static int _gfxop_set_pic(gfx_state_t *state) {
 	return state->driver->set_static_buffer(state->driver, state->pic->visual_map, state->pic->priority_map);
 }
 
-void *gfxop_get_pic_metainfo(gfx_state_t *state) {
-	return (state->pic) ? state->pic->internal : NULL;
+int *gfxop_get_pic_metainfo(gfx_state_t *state) {
+	return (state->pic) ? state->pic->priorityTable : NULL;
 }
 
 int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette) {

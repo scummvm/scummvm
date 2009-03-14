@@ -526,10 +526,10 @@ int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette);
 ** See the resource manager tag functions for a full description.
 */
 
-void *gfxop_get_pic_metainfo(gfx_state_t *state);
+int *gfxop_get_pic_metainfo(gfx_state_t *state);
 /* Retreives all meta-information assigned to the current pic
 ** Parameters: (gfx_state_t *) state: The state affected
-** Returns   : (void *) NULL if the pic doesn't exist or has no meta-information,
+** Returns   : (int *) NULL if the pic doesn't exist or has no meta-information,
 **             the meta-info otherwise
 ** This meta-information is referred to as 'internal data' in the pic code
 */

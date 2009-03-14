@@ -183,7 +183,7 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 
 	pic->undithered_buffer_size = pic->visual_map->index_xl * pic->visual_map->index_yl;
 	pic->undithered_buffer = NULL;
-	pic->internal = NULL;
+	pic->priorityTable = NULL;
 
 	return pic;
 }
@@ -1717,13 +1717,13 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				int *pri_table;
 
 				p0printf("Explicit priority table @%d\n", pos);
-				if (!pic->internal) {
-					pic->internal = sci_malloc(16 * sizeof(int));
+				if (!pic->priorityTable) {
+					pic->priorityTable = (int*)sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", pic->internal);
+					GFXERROR("pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", pic->priorityTable);
 				}
 
-				pri_table = (int*)pic->internal;
+				pri_table = pic->priorityTable;
 
 				pri_table[0] = 0;
 				pri_table[15] = 190;
@@ -1739,13 +1739,13 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				int nr;
 				int *pri_table;
 
-				if (!pic->internal) {
-					pic->internal = sci_malloc(16 * sizeof(int));
+				if (!pic->priorityTable) {
+					pic->priorityTable = (int*)sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->internal is not NULL (%p); possible memory corruption", pic->internal);
+					GFXERROR("pic->priorityTable is not NULL (%p); possible memory corruption", pic->priorityTable);
 				}
 
-				pri_table = (int*)pic->internal;
+				pri_table = pic->priorityTable;
 
 				for (nr = 0; nr < 16; nr ++)
 					pri_table[nr] = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);

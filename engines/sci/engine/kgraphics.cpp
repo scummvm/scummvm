@@ -1048,7 +1048,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->port = s->picture_port;
 
-	s->pic_priority_table = (int*)gfxop_get_pic_metainfo(s->gfx_state);
+	s->pic_priority_table = gfxop_get_pic_metainfo(s->gfx_state);
 
 	if (sci01_priority_table_flags & 0x2) {
 		if (s->pic_priority_table) {

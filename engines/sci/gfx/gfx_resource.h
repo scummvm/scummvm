@@ -98,9 +98,7 @@ struct gfxr_pic_t {
 	void *undithered_buffer; /* copies visual_map->index_data before dithering */
 	int undithered_buffer_size;
 
-	void *internal; /* Interpreter information, or NULL. Will be freed
-			** automatically when the pic is freed!  */
-
+	int *priorityTable;
 };
 
 
