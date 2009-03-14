@@ -61,6 +61,10 @@ ScreenEffects::~ScreenEffects() {
 }
  
 void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
+	// Workaround: we set up the final palette beforehand, to reduce CPU usage during the screen effect.
+	// The visual difference is not noticeable, but CPU load is much much less (as palette updates are very expensive).
+	// The palette changes in the effects have been removed, where applicable, to reduce CPU load
+	setPalette(palette);
 
 	// TODO: Put effect functions into an array
 
@@ -274,47 +278,47 @@ void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPa
 void ScreenEffects::vfx01(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 0; x < 320; x += 8) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x, 0), surface->pitch, x, 0, 8, 200);
-		setBlendedPalette(palette, newPalette, colorCount, x, 312);
+		//setBlendedPalette(palette, newPalette, colorCount, x, 312);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 312; x >= 0; x -= 8) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x, 0), surface->pitch, x, 0, 8, 200);
-		setBlendedPalette(palette, newPalette, colorCount, 312 - x, 312);
+		//setBlendedPalette(palette, newPalette, colorCount, 312 - x, 312);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 0; y < 200; y += 10) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y), surface->pitch, 0, y, 320, 10);
-		setBlendedPalette(palette, newPalette, colorCount, y, 190);
+		//setBlendedPalette(palette, newPalette, colorCount, y, 190);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 190; y >= 0; y -= 10) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y), surface->pitch, 0, y, 320, 10);
-		setBlendedPalette(palette, newPalette, colorCount, 190 - y, 190);
+		//setBlendedPalette(palette, newPalette, colorCount, 190 - y, 190);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx05(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 0; y < 100; y += 10) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y + 100), surface->pitch, 0, y + 100, 320, 10);
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 90 - y), surface->pitch, 0, 90 - y, 320, 10);
-		setBlendedPalette(palette, newPalette, colorCount, y, 90);
+		//setBlendedPalette(palette, newPalette, colorCount, y, 90);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Curtain open" effect
@@ -322,10 +326,10 @@ void ScreenEffects::vfx06(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int x = 0; x < 160; x += 8) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x + 160, 0), surface->pitch, x + 160, 0, 8, 200);
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(152 - x, 0), surface->pitch, 152 - x, 0, 8, 200);
-		setBlendedPalette(palette, newPalette, colorCount, x, 152);
+		//setBlendedPalette(palette, newPalette, colorCount, x, 152);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Curtain close" effect
@@ -333,10 +337,10 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int x = 152; x >= 0; x -= 8) {
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x + 160, 0), surface->pitch, x + 160, 0, 8, 200);
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(152 - x, 0), surface->pitch, 152 - x, 0, 8, 200);
-		setBlendedPalette(palette, newPalette, colorCount, 152 - x, 152);
+		//setBlendedPalette(palette, newPalette, colorCount, 152 - x, 152);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen slide in" right to left
@@ -345,17 +349,18 @@ void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPa
 		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 0), surface->pitch, 320 - x, 0, x, 200);
 		_screen->updateScreenAndWait(25);
 	}
-
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Checkerboard" effect
 void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int i = 0; i < 8; i++) {
 		copyFxRect(surface, 0, 0, 320, 200);
-		for (int j = 0; j < 4; j++) {
-			setBlendedPalette(palette, newPalette, colorCount, i * 4 + j, 32);
-		}
+		// We set the final palette here, once
+		setBlendedPalette(palette, newPalette, colorCount, i * 4 + 3, 32);
+		// The original behavior follows - the end result is the same, though
+		//for (int j = 0; j < 4; j++)
+		//	setBlendedPalette(palette, newPalette, colorCount, i * 4 + j, 32);
 		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
@@ -365,40 +370,40 @@ void ScreenEffects::vfx09(Graphics::Surface *surface, byte *palette, byte *newPa
 void ScreenEffects::vfx10(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = -56; x < 312; x += 8) {
 		copyFxRect(surface, x, 0, x + 64, 200);
-		setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);
+		//setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen wipe in", right to left
 void ScreenEffects::vfx11(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 312; x > -56; x -= 8) {
 		copyFxRect(surface, x, 0, x + 64, 200);
-		setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);
+		//setBlendedPalette(palette, newPalette, colorCount, x + 56, 368);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen wipe in", top to bottom
 void ScreenEffects::vfx12(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = -70; y < 312; y += 10) {
 		copyFxRect(surface, 0, y, 320, y + 80);
-		setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);
+		//setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen wipe in", bottom to top
 void ScreenEffects::vfx13(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 312; y > -70; y -= 10) {
 		copyFxRect(surface, 0, y, 320, y + 80);
-		setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);
+		//setBlendedPalette(palette, newPalette, colorCount, y + 70, 260);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen open" effect
@@ -408,10 +413,10 @@ void ScreenEffects::vfx14(Graphics::Surface *surface, byte *palette, byte *newPa
 		copyFxRect(surface, 160 - x, 100 - y, 160 + x, 100 + y);
 		x += 8;
 		y += 5;
-		setBlendedPalette(palette, newPalette, colorCount, i, 27);
+		//setBlendedPalette(palette, newPalette, colorCount, i, 27);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx15(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -419,10 +424,10 @@ void ScreenEffects::vfx15(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int i = 0; i < 27; i++) {
 		copyFxRect(surface, 160 - x, 0, 160 + x, 200);
 		x += 8;
-		setBlendedPalette(palette, newPalette, colorCount, i, 27);
+		//setBlendedPalette(palette, newPalette, colorCount, i, 27);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 void ScreenEffects::vfx16(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
@@ -430,10 +435,10 @@ void ScreenEffects::vfx16(Graphics::Surface *surface, byte *palette, byte *newPa
 	for (int i = 0; i < 27; i++) {
 		copyFxRect(surface, 0, 100 - y, 320, 100 + y);
 		y += 5;
-		setBlendedPalette(palette, newPalette, colorCount, i, 27);
+		//setBlendedPalette(palette, newPalette, colorCount, i, 27);		// original behavior
 		_screen->updateScreenAndWait(25);
 	}
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // Palette fadeout/fadein
@@ -446,11 +451,16 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 
 	memcpy(tempPalette, palette, 768);
 
+	// We reduce the number of palette updates by the following factor (e.g. a factor of 5 would mean 5
+	// times less updates). This is done to reduce CPU load while performing the very expensive full
+	// screen palette changes. The original behavior is to set factor to 1.
+	int factor = 5;
+
 	// Fade out to black
 	memset(palette, 0, 768);
-	for (int i = 0; i < 50; i++) {
-		setBlendedPalette(palette, newPalette, colorCount, i, 50);
-		_screen->updateScreenAndWait(25);
+	for (int i = 0; i < 50 / factor; i++) {
+		setBlendedPalette(palette, newPalette, colorCount, i * factor, 50);
+		_screen->updateScreenAndWait(25 * factor);
 	}
 	_screen->setRGBPalette(palette, 0, colorCount);
 
@@ -460,9 +470,9 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 
 	// Fade from black to palette
 	memset(newPalette, 0, 768);
-	for (int i = 0; i < 50; i++) {
-		setBlendedPalette(palette, newPalette, colorCount, i, 50);
-		_screen->updateScreenAndWait(25);
+	for (int i = 0; i < 50 / factor; i++) {
+		setBlendedPalette(palette, newPalette, colorCount, i * factor, 50);
+		_screen->updateScreenAndWait(25 * factor);
 	}
 	_screen->setRGBPalette(palette, 0, colorCount);
 
@@ -477,7 +487,7 @@ void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPa
 		_screen->updateScreenAndWait(25);
 	}
 
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen slide in" top to bottom
@@ -487,7 +497,7 @@ void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPa
 		_screen->updateScreenAndWait(25);
 	}
 
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 // "Screen slide in" bottom to top
@@ -497,7 +507,7 @@ void ScreenEffects::vfx20(Graphics::Surface *surface, byte *palette, byte *newPa
 		_screen->updateScreenAndWait(25);
 	}
 
-	setPalette(palette);
+	//setPalette(palette);		// original behavior
 }
 
 } // End of namespace Made
