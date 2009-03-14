@@ -90,11 +90,11 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx05(surface, palette, newPalette, colorCount);
 		break;
 
-	case 6:
+	case 6:		// "Curtain open" effect
 		vfx06(surface, palette, newPalette, colorCount);
 		break;
 
-	case 7:
+	case 7:		// "Curtain close" effect
 		vfx07(surface, palette, newPalette, colorCount);
 		break;
 
@@ -263,37 +263,6 @@ void ScreenEffects::copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, i
 
 }
 
-void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2,
-							 int xd, int yd) {
-	if (xd == -1) xd = x1;
-	if (yd == -1) yd = y1;
-
-	_screen->copyRectToScreen((const byte*)surface->pixels, surface->pitch, xd, yd, surface->w, surface->h);
-}
-
-void ScreenEffects::reposition(int16 x1, int16 y1, int16 x2, int16 y2, int xd, int yd) {
-	Graphics::Surface *vgaScreen = _screen->lockScreen();
-	bool backwardFlag = (yd > y1) || ((yd == y1) && (xd > x1));
-
-	byte *source = (byte *)vgaScreen->getBasePtr(x1, y1);
-	byte *dest = (byte *)vgaScreen->getBasePtr(xd, yd);
-	if (yd > y1) {
-		source += 320 * (y2 - y1 - 1);
-		dest += 320 * (y2 - y1 - 1);
-	}
-
-	for (int y = 0; y < y2 - y1; y++) {
-		if (!backwardFlag)
-			memcpy(dest, source, x2 - x1);
-		else
-			Common::copy_backward(source, source + x2 - x1, dest + x2 - x1);
-
-		source += (yd > y1) ? -320 : 320;
-		dest += (yd > y1) ? -320 : 320;
-	}
-	_screen->unlockScreen();
-}
-
 // No effect
 void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	setPalette(palette);
@@ -304,7 +273,7 @@ void ScreenEffects::vfx00(Graphics::Surface *surface, byte *palette, byte *newPa
 
 void ScreenEffects::vfx01(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 0; x < 320; x += 8) {
-		copyRect(surface, x, 0, x + 8, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x, 0), surface->pitch, x, 0, 8, 200);
 		setBlendedPalette(palette, newPalette, colorCount, x, 312);
 		_screen->updateScreenAndWait(25);
 	}
@@ -313,7 +282,7 @@ void ScreenEffects::vfx01(Graphics::Surface *surface, byte *palette, byte *newPa
 
 void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 312; x >= 0; x -= 8) {
-		copyRect(surface, x, 0, x + 8, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x, 0), surface->pitch, x, 0, 8, 200);
 		setBlendedPalette(palette, newPalette, colorCount, 312 - x, 312);
 		_screen->updateScreenAndWait(25);
 	}
@@ -322,7 +291,7 @@ void ScreenEffects::vfx02(Graphics::Surface *surface, byte *palette, byte *newPa
 
 void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 0; y < 200; y += 10) {
-		copyRect(surface, 0, y, 320, y + 10);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y), surface->pitch, 0, y, 320, 10);
 		setBlendedPalette(palette, newPalette, colorCount, y, 190);
 		_screen->updateScreenAndWait(25);
 	}
@@ -331,7 +300,7 @@ void ScreenEffects::vfx03(Graphics::Surface *surface, byte *palette, byte *newPa
 
 void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 190; y >= 0; y -= 10) {
-		copyRect(surface, 0, y, 320, y + 10);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y), surface->pitch, 0, y, 320, 10);
 		setBlendedPalette(palette, newPalette, colorCount, 190 - y, 190);
 		_screen->updateScreenAndWait(25);
 	}
@@ -340,28 +309,30 @@ void ScreenEffects::vfx04(Graphics::Surface *surface, byte *palette, byte *newPa
 
 void ScreenEffects::vfx05(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 0; y < 100; y += 10) {
-		copyRect(surface, 0, y + 100, 320, y + 110);
-		copyRect(surface, 0, 90 - y, 320, 100 - y);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, y + 100), surface->pitch, 0, y + 100, 320, 10);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 90 - y), surface->pitch, 0, 90 - y, 320, 10);
 		setBlendedPalette(palette, newPalette, colorCount, y, 90);
 		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
 }
 
+// "Curtain open" effect
 void ScreenEffects::vfx06(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 0; x < 160; x += 8) {
-		copyRect(surface, x + 160, 0, x + 168, 200);
-		copyRect(surface, 152 - x, 0, 160 - x, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x + 160, 0), surface->pitch, x + 160, 0, 8, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(152 - x, 0), surface->pitch, 152 - x, 0, 8, 200);
 		setBlendedPalette(palette, newPalette, colorCount, x, 152);
 		_screen->updateScreenAndWait(25);
 	}
 	setPalette(palette);
 }
 
+// "Curtain close" effect
 void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 152; x >= 0; x -= 8) {
-		copyRect(surface, x + 160, 0, x + 168, 200);
-		copyRect(surface, 152 - x, 0, 160 - x, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(x + 160, 0), surface->pitch, x + 160, 0, 8, 200);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(152 - x, 0), surface->pitch, 152 - x, 0, 8, 200);
 		setBlendedPalette(palette, newPalette, colorCount, 152 - x, 152);
 		_screen->updateScreenAndWait(25);
 	}
@@ -371,9 +342,7 @@ void ScreenEffects::vfx07(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" right to left
 void ScreenEffects::vfx08(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 8; x <= 320; x += 8) {
-		if (x != 320)
-			reposition(8, 0, 328 - x, 200, 0, 0);
-		copyRect(surface, 0, 0, x, 200, 320 - x, 0);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 0), surface->pitch, 320 - x, 0, x, 200);
 		_screen->updateScreenAndWait(25);
 	}
 
@@ -504,9 +473,7 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" left to right
 void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int x = 8; x <= 320; x += 8) {
-		if (x != 320)
-			reposition(x, 0, 312, 200, x + 8, 0);
-		copyRect(surface, 320 - x, 0, 320, 200, 0, 0);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(320 - x, 0), surface->pitch, 0, 0, x, 200);
 		_screen->updateScreenAndWait(25);
 	}
 
@@ -516,9 +483,7 @@ void ScreenEffects::vfx18(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" top to bottom
 void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 4; y <= 200; y += 4) {
-		if (y != 200)
-			reposition(0, y, 320, 196, 0, y + 4);
-		copyRect(surface, 0, 200 - y, 320, 200, 0, 0);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 200 - y), surface->pitch, 0, 0, 320, y);
 		_screen->updateScreenAndWait(25);
 	}
 
@@ -528,9 +493,7 @@ void ScreenEffects::vfx19(Graphics::Surface *surface, byte *palette, byte *newPa
 // "Screen slide in" bottom to top
 void ScreenEffects::vfx20(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	for (int y = 4; y <= 200; y += 4) {
-		if (y != 200)
-			reposition(0, 4, 320, 200 - y, 0, 0);
-		copyRect(surface, 0, 0, 320, y, 0, 200 - y);
+		_screen->copyRectToScreen((const byte*)surface->getBasePtr(0, 0), surface->pitch, 0, 200 - y, 320, y);
 		_screen->updateScreenAndWait(25);
 	}
 
