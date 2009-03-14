@@ -143,7 +143,7 @@ protected:
 	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
 	
 	// decompressor data
-	struct tokenlist {
+	struct Tokenlist {
 		byte data;
 		uint16 next;
 	};

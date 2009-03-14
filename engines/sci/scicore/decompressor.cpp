@@ -260,7 +260,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 	byte stak[0x1014];
 	byte lastchar = 0;
 	uint16 stakptr = 0, lastbits = 0;
-	tokenlist tokens[0x1004];
+	Tokenlist tokens[0x1004];
 	memset(tokens, 0, sizeof(tokens));
 
 
