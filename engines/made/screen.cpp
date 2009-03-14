@@ -811,7 +811,6 @@ void Screen::updateScreenAndWait(int delay) {
 	uint32 startTime = _vm->_system->getMillis();
 	while (_vm->_system->getMillis() < startTime + delay) {
 		_vm->handleEvents();
-		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(5);
 	}
 }

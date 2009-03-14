@@ -159,7 +159,11 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		/* We sleep a little after 500 opcodes to reduce the CPU load.
 		*/
 		if (++opcodeSleepCounter > 500) {
-			_vm->_screen->updateScreenAndWait(5);
+			uint32 startTime = _vm->_system->getMillis();
+			while (_vm->_system->getMillis() < startTime + 5) {
+				_vm->handleEvents();
+				_vm->_system->delayMillis(5);
+			}
 			opcodeSleepCounter = 0;
 		}
 
