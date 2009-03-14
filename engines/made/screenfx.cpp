@@ -268,15 +268,7 @@ void ScreenEffects::copyRect(Graphics::Surface *surface, int16 x1, int16 y1, int
 	if (xd == -1) xd = x1;
 	if (yd == -1) yd = y1;
 
-	Graphics::Surface *vgaScreen = _screen->lockScreen();
-	byte *source = (byte*)surface->getBasePtr(x1, y1);
-	byte *dest = (byte*)vgaScreen->getBasePtr(xd, yd);
-	for (int y = 0; y < y2 - y1; y++) {
-		memcpy(dest, source, x2 - x1);
-		dest += 320;
-		source += 320;
-	}
-	_screen->unlockScreen();
+	_screen->copyRectToScreen((const byte*)surface->pixels, surface->pitch, xd, yd, surface->w, surface->h);
 }
 
 void ScreenEffects::reposition(int16 x1, int16 y1, int16 x2, int16 y2, int xd, int yd) {

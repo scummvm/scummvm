@@ -218,17 +218,14 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 }
 
-void Screen::loadRGBPalette(byte *palRGB, int count) {
+void Screen::setRGBPalette(byte *palRGB, int start, int count) {
 	for (int i = 0; i < count; i++) {
 		_screenPalette[i * 4 + 0] = palRGB[i * 3 + 0];
 		_screenPalette[i * 4 + 1] = palRGB[i * 3 + 1];
 		_screenPalette[i * 4 + 2] = palRGB[i * 3 + 2];
 		_screenPalette[i * 4 + 3] = 0;
 	}
-}
 
-void Screen::setRGBPalette(byte *palRGB, int start, int count) {
-	loadRGBPalette(palRGB, count);
 	_vm->_system->setPalette(_screenPalette, start, count);
 }
 
@@ -801,6 +798,10 @@ void Screen::unlockScreen() {
 
 void Screen::showWorkScreen() {
 	_vm->_system->copyRectToScreen((const byte*)_workScreen->pixels, _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+}
+
+void Screen::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+	_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
 }
 
 void Screen::updateScreenAndWait(int delay) {
