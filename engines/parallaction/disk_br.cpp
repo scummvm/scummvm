@@ -485,7 +485,7 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		if (stream) {
 			Graphics::PackBitsReadStream unpackedStream(*stream);
 			info._mask = new MaskBuffer;
-			info._path->bigEndian = false;
+			info._mask->bigEndian = false;
 			info._mask->create(info.width, info.height);
 			unpackedStream.read(info._mask->data, info._mask->size);
 			// TODO: there is another step to do after decompression...
