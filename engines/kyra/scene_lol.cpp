@@ -473,7 +473,7 @@ void LoLEngine::resetItems(int flag) {
 	}
 
 	if (flag)
-		memset(_throwItemState, 0, 136);
+		memset(_throwItemState, 0, 8 * sizeof(ThrownItem));
 }
 
 void LoLEngine::resetLvlBuffer() {

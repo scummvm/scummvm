@@ -1394,7 +1394,7 @@ int LoLEngine::clickedUnk24(Button *button) {
 }
 
 int LoLEngine::clickedSceneThrowItem(Button *button) {
-	//if (_updateFlags & 1)
+	if (_updateFlags & 1)
 		return 0;
 
 	uint16 block = calcNewBlockPosition(_currentBlock, _currentDirection);

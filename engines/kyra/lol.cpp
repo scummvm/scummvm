@@ -199,6 +199,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	
 	_unkBt1 = _unkBt2 = 0;
 	_dialogueField = false;
+
+	_rndSpecial = 0x12349876;
 	
 	_buttonData = 0;
 	_activeButtons = 0;
@@ -413,8 +415,8 @@ Common::Error LoLEngine::init() {
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
-	_throwItemState = new uint8[136];
-	memset(_throwItemState, 0, 136);
+	_throwItemState = new ThrownItem[8];
+	memset(_throwItemState, 0, 8 * sizeof(ThrownItem));
 
 	memset(_gameFlags, 0, sizeof(_gameFlags));
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
@@ -1676,6 +1678,32 @@ void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
 			update();
 		_system->delayMillis(4);
 	}
+}
+
+uint8 LoLEngine::getRandomNumberSpecial() {
+	uint8 a = _rndSpecial & 0xff;
+	uint8 b = (_rndSpecial >> 8) & 0xff;
+	uint8 c = (_rndSpecial >> 16) & 0xff;
+
+	a >>= 1;
+
+	uint as = a & 1;
+	uint bs = (b >> 7) ? 0 : 1;
+	uint cs = c >> 7;
+
+	a >>= 1;
+	c = (c << 1) | as;	
+	b = (b << 1) | cs;
+
+	a -= ((_rndSpecial & 0xff) - bs);	
+	as = a & 1;
+	a >>= 1;
+
+	a = ((_rndSpecial & 0xff) >> 1) | (as << 7);
+
+	_rndSpecial = (_rndSpecial & 0xff000000) | (c << 16) | (b << 8) | a;
+
+	return a ^ b;
 }
 
 void LoLEngine::updateEnvironmentalSfx(int soundId) {

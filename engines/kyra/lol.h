@@ -207,6 +207,22 @@ struct ButtonDef {
 	uint16 screenDim;
 };
 
+struct ThrownItem {
+	uint8 enable;
+	uint8 a;
+	uint16 c;
+	uint16 item;
+	uint16 x;
+	uint16 y;
+	uint8 b;
+	uint8 direction;
+	int8 field_C;
+	int8 field_D;
+	uint8 charNum;
+	uint8 flags;
+	uint8 field_10;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -883,8 +899,7 @@ private:
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;
-	uint8 *_throwItemState;
-
+	
 	const char *const * _levelDatList;
 	int _levelDatListSize;
 	const char *const * _levelShpList;
@@ -964,6 +979,8 @@ private:
 	int _inventoryCurItem;
 	int _hideControls;
 	int _lastCharInventory;
+
+	ThrownItem *_throwItemState;
 
 	EMCData _itemScript;
 
@@ -1045,6 +1062,7 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
+	uint8 getRandomNumberSpecial();
 
 	uint8 _unkBt1;
 	uint8 _unkBt2;
@@ -1052,6 +1070,7 @@ private:
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
+	uint32 _rndSpecial;
 
 	// spells
 	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);
