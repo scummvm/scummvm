@@ -143,13 +143,16 @@ bool ResLoaderPak::checkFilename(Common::String filename) const {
 }
 
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	uint32 filesize = stream.size();
-	uint32 offset = 0;
+	int32 filesize = stream.size();
+	if (filesize < 0)
+		return false;
+
+	int32 offset = 0;
 	bool switchEndian = false;
 	bool firstFile = true;
 
 	offset = stream.readUint32LE();
-	if (offset > filesize) {
+	if (offset > filesize || offset < 0) {
 		switchEndian = true;
 		offset = SWAP_BYTES_32(offset);
 	}
@@ -157,7 +160,7 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
-		if (offset < (uint32)stream.pos() || offset > filesize)
+		if (offset < stream.pos() || offset > filesize || offset < 0)
 			return false;
 
 		byte c = 0;
@@ -212,14 +215,16 @@ struct PlainArchiveListSearch {
 } // end of anonymous namespace
 
 Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> memberFile, Common::SeekableReadStream &stream) const {
-	uint32 filesize = stream.size();
+	int32 filesize = stream.size();
+	if (filesize < 0)
+		return 0;
 
-	uint32 startoffset = 0, endoffset = 0;
+	int32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
 	bool firstFile = true;
 
 	startoffset = stream.readUint32LE();
-	if (startoffset > filesize) {
+	if (startoffset > filesize || startoffset < 0) {
 		switchEndian = true;
 		startoffset = SWAP_BYTES_32(startoffset);
 	}
@@ -229,9 +234,9 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 	Common::String file;
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
-		if (startoffset < (uint32)stream.pos() || startoffset > filesize) {
+		if (startoffset < stream.pos() || startoffset > filesize || startoffset < 0) {
 			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
-			return false;
+			return 0;
 		}
 
 		file.clear();
@@ -242,14 +247,14 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 
 		if (stream.eos()) {
 			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
-			return false;
+			return 0;
 		}
 
 		// Quit now if we encounter an empty string
 		if (file.empty()) {
 			if (firstFile) {
 				warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
-				return false;
+				return 0;
 			} else {
 				break;
 			}
@@ -257,6 +262,11 @@ Common::Archive *ResLoaderPak::load(Common::SharedPtr<Common::ArchiveMember> mem
 
 		firstFile = false;
 		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
+
+		if (endoffset < 0) {
+			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
+			return 0;
+		}
 
 		if (!endoffset)
 			endoffset = filesize;
