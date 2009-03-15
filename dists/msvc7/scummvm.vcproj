@@ -459,6 +459,12 @@
 				RelativePath="..\..\sound\timestamp.h">
 			</File>
 			<File
+				RelativePath="..\..\sound\vag.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\vag.h">
+			</File>			
+			<File
 				RelativePath="..\..\sound\voc.cpp">
 			</File>
 			<File
