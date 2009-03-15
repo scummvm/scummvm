@@ -386,32 +386,50 @@ Frames* DosDisk_ns::loadFrames(const char* name) {
 	return loadCnv(name);
 }
 
-//
-//	slides (background images) are stored compressed by scanline in a rle fashion
-//
-//	the uncompressed data must then be unpacked to get:
-//	* color data [bits 0-5]
-//	* mask data [bits 6-7] (z buffer)
-//	* path data [bit 8] (walkable areas)
-//
-void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path) {
+/*
+	Background images are compressed using a RLE algorithm that resembles PackBits.
 
-	byte b;
-	uint32 i = 0;
+	The uncompressed data is then unpacked as following:
+	- color data [bits 0-5]
+	- mask data [bits 6-7] (z buffer)
+	- path data [bit 8] (walkable areas)
+*/
+void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path) {
+	byte storage[127];
+	uint32 storageLen = 0, len = 0;
+	uint32 j = 0;
 
 	while (1) {
-		b = stream->readByte();
+		// first extracts packbits variant data
+		do {
+			len = stream->readByte();
+			if (stream->eos())
+				return;
 
-		if (stream->eos())
-			break;
+			if (len == 128) {
+				storageLen = 0;
+			} else if (len <= 127) {
+				len++;
+				for (uint32 i = 0; i < len; i++) {
+					storage[i] = stream->readByte();
+				}
+				storageLen = len;
+			} else {
+				len = (256 - len) + 1;
+				byte v = stream->readByte();
+				memset(storage, v, len);
+				storageLen = len;
+			}
+		} while (storageLen == 0);
 
-		path[i/8] |= ((b & 0x80) >> 7) << (i & 7);
-		mask[i/4] |= ((b & 0x60) >> 5) << ((i & 3) << 1);
-		screen[i] = b & 0x1F;
-		i++;
+		// then unpacks the bits to the destination buffers
+		for (uint32 i = 0; i < storageLen; i++, j++) {
+			byte b = storage[i];
+			path[j/8] |= ((b & 0x80) >> 7) << (j & 7);
+			mask[j/4] |= ((b & 0x60) >> 5) << ((j & 3) << 1);
+			screen[j] = b & 0x1F;
+		}
 	}
-
-	return;
 }
 
 void DosDisk_ns::parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream) {
@@ -465,8 +483,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	info._path->create(info.width, info.height);
 	info._path->bigEndian = true;
 
-	Graphics::PackBitsReadStream pbstream(*stream);
-	unpackBackground(&pbstream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
+	unpackBackground(stream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
 
 	delete stream;
 }
