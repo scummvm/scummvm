@@ -80,7 +80,7 @@ private:
 	// Codebooks
 	uint16 _num2blocks;
 	uint16 _num4blocks;
-	byte _codebook2[256 * 6];
+	byte _codebook2[256 * 10];
 	byte _codebook4[256 * 4];
 
 	// Buffers
@@ -91,6 +91,7 @@ private:
 	byte _scale;
 	byte _offScale;
 	bool _dirty;
+	byte _alpha;
 
 #ifdef DITHER
 	// Dithering

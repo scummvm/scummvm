@@ -122,12 +122,16 @@ uint16 ROQPlayer::loadInternal() {
 	// Clear the dirty flag
 	_dirty = true;
 
+	// Reset the codebooks
+	_num2blocks = 0;
+	_num4blocks = 0;
+
 	if ((blockHeader.size == 0) && (blockHeader.param == 0)) {
 		// Set the offset scaling to 2
 		_offScale = 2;
 
 		// Hardcoded FPS
-		return 25;
+		return 30;
 	} else if (blockHeader.size == (uint32)-1) {
 		// Set the offset scaling to 1
 		_offScale = 1;
@@ -280,10 +284,13 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing info block");
 
 	// Verify the block header
-	if (blockHeader.type != 0x1001 || blockHeader.size != 8 || blockHeader.param != 0) {
+	if (blockHeader.type != 0x1001 || blockHeader.size != 8 || (blockHeader.param != 0 && blockHeader.param != 1)) {
 		warning("Groovie::ROQ: BlockInfo size=%d param=%d", blockHeader.size, blockHeader.param);
 		return false;
 	}
+
+	// Save the alpha channel size
+	_alpha = blockHeader.param;
 
 	// Read the information
 	uint16 width = _file->readUint16LE();
@@ -323,22 +330,30 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 bool ROQPlayer::processBlockQuadCodebook(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing quad codebook block");
 
-	// Get the number of 2x2 pixel blocks
-	_num2blocks = blockHeader.param >> 8;
-	if (_num2blocks == 0) {
-		_num2blocks = 256;
+	// Get the number of 2x2 pixel blocks to read
+	int newNum2blocks = blockHeader.param >> 8;
+	if (newNum2blocks == 0) {
+		newNum2blocks = 256;
 	}
+	if (newNum2blocks > _num2blocks)
+		_num2blocks = newNum2blocks;
 
 	// Get the number of 4x4 pixel blocks
 	_num4blocks = blockHeader.param & 0xFF;
-	if ((_num4blocks == 0) && (blockHeader.size > (uint32)_num2blocks * 6)) {
+	if ((_num4blocks == 0) && (blockHeader.size > (uint32)_num2blocks * (6 + _alpha * 4))) {
 		_num4blocks = 256;
 	}
 
 	// Read the 2x2 codebook
-	for (int i = 0; i < _num2blocks; i++) {
-		// Read the 4 Y components and the subsampled Cb and Cr
-		_file->read(&_codebook2[i * 6], 6);
+	for (int i = 0; i < newNum2blocks; i++) {
+		// Read the 4 Y components and their alpha channel
+		for (int j = 0; j < 4; j++) {
+			_codebook2[i * 10 + j * 2] = _file->readByte();
+			_codebook2[i * 10 + j * 2 + 1] = _alpha ? _file->readByte() : 255;
+		}
+
+		// Read the subsampled Cb and Cr
+		_file->read(&_codebook2[i * 10 + 8], 2);
 	}
 
 	// Read the 4x4 codebook
@@ -566,18 +581,22 @@ void ROQPlayer::paint2(byte i, int destx, int desty) {
 		error("Groovie::ROQ: Invalid 2x2 block %d (%d available)", i, _num2blocks);
 	}
 
-	byte *block = &_codebook2[i * 6];
-	byte u = block[4];
-	byte v = block[5];
+	byte *block = &_codebook2[i * 10];
+	byte u = block[8];
+	byte v = block[9];
 
 	byte *ptr = (byte *)_currBuf->getBasePtr(destx, desty);
 	for (int y = 0; y < 2; y++) {
 		for (int x = 0; x < 2; x++) {
-			*ptr = *block;
-			*(ptr + 1) = u;
-			*(ptr + 2) = v;
+			// Basic alpha test
+			// TODO: Blending
+			if (*(block + 1) > 128) {
+				*ptr = *block;
+				*(ptr + 1) = u;
+				*(ptr + 2) = v;
+			}
 			ptr += 3;
-			block++;
+			block += 2;
 		}
 		ptr += _currBuf->pitch - 6;
 	}
@@ -605,21 +624,25 @@ void ROQPlayer::paint8(byte i, int destx, int desty) {
 	byte *block4 = &_codebook4[i * 4];
 	for (int y4 = 0; y4 < 2; y4++) {
 		for (int x4 = 0; x4 < 2; x4++) {
-			byte *block2 = &_codebook2[(*block4) * 6];
-			byte u = block2[4];
-			byte v = block2[5];
+			byte *block2 = &_codebook2[(*block4) * 10];
+			byte u = block2[8];
+			byte v = block2[9];
 			block4++;
 			for (int y2 = 0; y2 < 2; y2++) {
 				for (int x2 = 0; x2 < 2; x2++) {
 					for (int repy = 0; repy < 2; repy++) {
 						for (int repx = 0; repx < 2; repx++) {
-							byte *ptr = (byte *)_currBuf->getBasePtr(destx + x4*4 + x2*2 + repx, desty + y4*4 + y2*2 + repy);
-							*ptr = *block2;
-							*(ptr + 1) = u;
-							*(ptr + 2) = v;
+							// Basic alpha test
+							// TODO: Blending
+							if (*(block2 + 1) > 128) {
+								byte *ptr = (byte *)_currBuf->getBasePtr(destx + x4*4 + x2*2 + repx, desty + y4*4 + y2*2 + repy);
+								*ptr = *block2;
+								*(ptr + 1) = u;
+								*(ptr + 2) = v;
+							}
 						}
 					}
-					block2++;
+					block2 += 2;
 				}
 			}
 		}
