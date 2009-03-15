@@ -457,7 +457,8 @@ Common::Error LoLEngine::go() {
 
 		_screen->setFont(Screen::FID_6_FNT);
 		// Original version: (260|193) "V CD1.02 D"
-		_screen->fprintString("SVM %s", 255, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		const int width = _screen->getTextWidth(gScummVMVersion);
+		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
 		_screen->setFont(Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
