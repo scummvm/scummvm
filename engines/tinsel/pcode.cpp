@@ -31,7 +31,7 @@
 #include "tinsel/dialogs.h"	// for inventory id's
 #include "tinsel/pcode.h"	// opcodes etc.
 #include "tinsel/scn.h"	// FindChunk()
-#include "tinsel/serializer.h"
+#include "common/serializer.h"
 #include "tinsel/timers.h"
 #include "tinsel/tinlib.h"	// Library routines
 #include "tinsel/tinsel.h"
@@ -356,7 +356,7 @@ void FreeGlobals(void) {
 /**
  * (Un)serialize the global data for save/restore game.
  */
-void syncGlobInfo(Serializer &s) {
+void syncGlobInfo(Common::Serializer &s) {
 	for (int i = 0; i < numGlobals; i++) {
 		s.syncAsSint32LE(pGlobals[i]);
 	}
@@ -365,7 +365,7 @@ void syncGlobInfo(Serializer &s) {
 /**
  * (Un)serialize an interpreter context for save/restore game.
  */
-void INT_CONTEXT::syncWithSerializer(Serializer &s) {
+void INT_CONTEXT::syncWithSerializer(Common::Serializer &s) {
 	if (s.isLoading()) {
 		// Null out the pointer fields
 		pProc = NULL;

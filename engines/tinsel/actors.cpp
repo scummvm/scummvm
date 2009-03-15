@@ -39,7 +39,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
-#include "tinsel/serializer.h"
+#include "common/serializer.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
@@ -1417,7 +1417,7 @@ void ActorsLife(int ano, bool bAlive) {
 }
 
 
-void syncAllActorsAlive(Serializer &s) {
+void syncAllActorsAlive(Common::Serializer &s) {
 	for (int i = 0; i < MAX_SAVED_ALIVES; i++) {
 		s.syncAsByte(actorInfo[i].bAlive);
 		s.syncAsByte(actorInfo[i].tagged);

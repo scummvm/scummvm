@@ -31,9 +31,11 @@
 #include "tinsel/dw.h"
 #include "tinsel/events.h"	// for PLR_EVENT, PLR_EVENT
 
-namespace Tinsel {
+namespace Common {
+	class Serializer;
+}
 
-class Serializer;
+namespace Tinsel {
 
 enum {
 	INV_OPEN	= -1,	// DW1 only
@@ -146,7 +148,7 @@ bool IsInInventory(int object, int invnum);
 
 void KillInventory(void);
 
-void syncInvInfo(Serializer &s);
+void syncInvInfo(Common::Serializer &s);
 
 int InvGetLimit(int invno);
 void InvSetLimit(int invno, int n);

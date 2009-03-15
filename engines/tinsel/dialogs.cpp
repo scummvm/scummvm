@@ -50,7 +50,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
-#include "tinsel/serializer.h"
+#include "common/serializer.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
 #include "tinsel/sysvar.h"
@@ -5475,7 +5475,7 @@ void SetObjectFilm(int object, SCNHANDLE hFilm) {
 /**
  * (Un)serialize the inventory data for save/restore game.
  */
-void syncInvInfo(Serializer &s) {
+void syncInvInfo(Common::Serializer &s) {
 	for (int i = 0; i < NUM_INV; i++) {
 		s.syncAsSint32LE(InvD[i].MinHicons);
 		s.syncAsSint32LE(InvD[i].MinVicons);

@@ -30,9 +30,11 @@
 #include "common/scummsys.h"
 #include "tinsel/dw.h"
 
-namespace Tinsel {
+namespace Common {
+	class Serializer;
+}
 
-class Serializer;
+namespace Tinsel {
 
 #define ONE_SECOND 24
 
@@ -40,7 +42,7 @@ uint32 DwGetCurrentTime(void);
 
 void RebootTimers(void);
 
-void syncTimerInfo(Serializer &s);
+void syncTimerInfo(Common::Serializer &s);
 
 void FettleTimers(void);
 

@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 
 #include "graphics/cursorman.h"
@@ -60,7 +61,6 @@
 #include "tinsel/polygons.h"
 #include "tinsel/savescn.h"
 #include "tinsel/scn.h"
-#include "tinsel/serializer.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
 #include "tinsel/sysvar.h"
@@ -614,7 +614,7 @@ void UnSuspendHook(void) {
 	bCuttingScene = false;
 }
 
-void syncSCdata(Serializer &s) {
+void syncSCdata(Common::Serializer &s) {
 	s.syncAsUint32LE(HookScene.scene);
 	s.syncAsSint32LE(HookScene.entry);
 	s.syncAsSint32LE(HookScene.trans);

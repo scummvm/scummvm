@@ -30,10 +30,13 @@
 #include "tinsel/events.h"	// for TINSEL_EVENT
 #include "tinsel/sched.h"	// for PROCESS
 
+namespace Common {
+	class Serializer;
+}
+
 namespace Tinsel {
 
 // forward declaration
-class Serializer;
 struct INV_OBJECT;
 
 enum RESUME_STATE {
@@ -79,7 +82,7 @@ struct INT_CONTEXT {
 	RESCODE resumeCode;
 	RESUME_STATE resumeState;
 
-	void syncWithSerializer(Serializer &s);
+	void syncWithSerializer(Common::Serializer &s);
 };
 typedef INT_CONTEXT *PINT_CONTEXT;
 

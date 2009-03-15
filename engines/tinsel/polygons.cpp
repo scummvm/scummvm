@@ -30,7 +30,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/rince.h"
 #include "tinsel/sched.h"
-#include "tinsel/serializer.h"
+#include "common/serializer.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
 
@@ -1198,7 +1198,7 @@ void RebootDeadTags(void) {
 /**
  * (Un)serialize the dead tag and exit data for save/restore game.
  */
-void syncPolyInfo(Serializer &s) {
+void syncPolyInfo(Common::Serializer &s) {
 	int i;
 
 	for (i = 0; i < MAX_SCENES; i++) {

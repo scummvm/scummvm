@@ -21,17 +21,15 @@
  * $URL$
  * $Id$
  *
- * Handles timers.
  */
 
-#ifndef TINSEL_SERIALIZER_H
-#define TINSEL_SERIALIZER_H
+#ifndef COMMON_SERIALIZER_H
+#define COMMON_SERIALIZER_H
 
-#include "common/scummsys.h"
-#include "common/savefile.h"
+#include "common/stream.h"
+#include "common/str.h"
 
-
-namespace Tinsel {
+namespace Common {
 
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
@@ -51,7 +49,7 @@ namespace Tinsel {
 // TODO: Inspired by the SCUMM engine -- move to common/ code and use in more engines?
 class Serializer {
 public:
-	Serializer(Common::SeekableReadStream *in, Common::OutSaveFile *out)
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out)
 		: _loadStream(in), _saveStream(out), _bytesSynced(0) {
 		assert(in || out);
 	}
@@ -69,14 +67,33 @@ public:
 		_bytesSynced += size;
 	}
 
+	/**
+	 * Sync a C-string, by treating it as a zero-terminated byte sequence.
+	 */
+	void syncString(Common::String &str) {
+		if (_loadStream) {
+			char c;
+			str.clear();
+			while ((c = _loadStream->readByte())) {
+				str += c;
+				_bytesSynced++;
+			}
+			_bytesSynced++;
+		} else {
+			_saveStream->writeString(str);
+			_saveStream->writeByte(0);
+			_bytesSynced += str.size() + 1;
+		}
+	}
+
 	void skip(uint32 size) {
+		_bytesSynced += size;
 		if (_loadStream)
 			_loadStream->skip(size);
 		else {
 			while (size--)
 				_saveStream->writeByte(0);
 		}
-		_bytesSynced += size;
 	}
 
 	SYNC_AS(Byte, byte, 1)
@@ -93,7 +110,7 @@ public:
 
 protected:
 	Common::SeekableReadStream *_loadStream;
-	Common::OutSaveFile *_saveStream;
+	Common::WriteStream *_saveStream;
 
 	uint _bytesSynced;
 };
@@ -132,10 +149,12 @@ public:
 class Serializable {
 public:
 	virtual ~Serializable() {}
-	virtual void saveLoadWithSerializer(Serializer *ser) = 0;
+
+	// Maybe rename this method to "syncWithSerializer" or "syncUsingSerializer" ?
+	virtual void saveLoadWithSerializer(Serializer &ser) = 0;
 };
 
 
-} // end of namespace Tinsel
+} // end of namespace Common
 
 #endif

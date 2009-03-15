@@ -154,6 +154,10 @@ public:
 		writeUint32BE((uint32)value);
 	}
 
+	/**
+	 * Write the given string to the stream.
+	 * This writes str.size() characters, but no terminating zero byte.
+	 */
 	void writeString(const String &str);
 };
 
