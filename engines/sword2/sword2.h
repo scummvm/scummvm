@@ -122,6 +122,9 @@ private:
 
 	StartUp _startList[MAX_starts];
 
+	// Original game platform (PC/PSX)
+	static Common::Platform _platform;
+
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -233,6 +236,9 @@ public:
 	// Convenience alias for OSystem::getMillis().
 	// This is a bit hackish, of course :-).
 	uint32 getMillis();
+
+	//Used to check wether we are running PSX version
+	static bool isPsx() { return _platform == Common::kPlatformPSX; }
 };
 
 } // End of namespace Sword2

@@ -54,6 +54,8 @@
 
 namespace Sword2 {
 
+Common::Platform Sword2Engine::_platform;
+
 struct GameSettings {
 	const char *gameid;
 	const char *description;
@@ -65,6 +67,7 @@ static const GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword 2: The Smoking Mirror", 0, "players.clu" },
 	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
+	{"sword2psx", "Broken Sword 2: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
 	{"sword2demo", "Broken Sword 2: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, 0, NULL}
 };
@@ -262,6 +265,12 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 		_features = GF_DEMO;
 	else
 		_features = 0;
+
+	// Check if we are running PC or PSX version.
+	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx"))
+		Sword2Engine::_platform = Common::kPlatformPSX;
+	else
+		Sword2Engine::_platform = Common::kPlatformPC;
 
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
