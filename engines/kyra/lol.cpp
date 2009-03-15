@@ -147,7 +147,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lampOilStatus = _brightness = _lampStatusUnk = 0;
 	_lampStatusSuspended = false;
 	_tempBuffer5120 = 0;
-	_tmpData136 = 0;
+	_throwItemState = 0;
 	_monsters = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
@@ -294,7 +294,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _lvlShapeBottom;
 	delete[] _lvlShapeLeftRight;
 	delete[] _tempBuffer5120;
-	delete[] _tmpData136;
+	delete[] _throwItemState;
 	delete[] _monsters;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
@@ -413,8 +413,8 @@ Common::Error LoLEngine::init() {
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
-	_tmpData136 = new uint8[136];
-	memset(_tmpData136, 0, 136);
+	_throwItemState = new uint8[136];
+	memset(_throwItemState, 0, 136);
 
 	memset(_gameFlags, 0, sizeof(_gameFlags));
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
@@ -1660,9 +1660,9 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
 	uint16 *c = &monster->assignedItems;
 	while (*c)
-		c = &_itemsInPlay[*c].next;
+		c = &_itemsInPlay[*c].nextAssignedObject;
 	*c = item;
-	_itemsInPlay[item].next = 0;
+	_itemsInPlay[item].nextAssignedObject = 0;
 }
 
 const uint16 *LoLEngine::getCharacterOrMonsterStats(int id) {

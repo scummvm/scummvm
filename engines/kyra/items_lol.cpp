@@ -136,7 +136,7 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 			if (t)
 				break;
 			else
-				ii = _itemsInPlay[ii - 1].next;
+				ii = _itemsInPlay[ii - 1].nextAssignedObject;
 		}
 
 		if (t) {
@@ -149,22 +149,22 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 	if (cnt) {
 		slot = r;
 		if (testUnkItemFlags(r)) {
-			if (_itemsInPlay[r].next)
-				_itemsInPlay[_itemsInPlay[r].next].level = _itemsInPlay[r].level;
+			if (_itemsInPlay[r].nextAssignedObject)
+				_itemsInPlay[_itemsInPlay[r].nextAssignedObject].level = _itemsInPlay[r].level;
 			deleteItem(r);
 			slot = r;
 		} else {
-			int ii = _itemsInPlay[slot].next;
+			int ii = _itemsInPlay[slot].nextAssignedObject;
 			while (ii) {
 				if (testUnkItemFlags(ii)) {
-					_itemsInPlay[slot].next = _itemsInPlay[ii].next;
+					_itemsInPlay[slot].nextAssignedObject = _itemsInPlay[ii].nextAssignedObject;
 					deleteItem(ii);
 					slot = ii;
 					break;
 				} else {
 					slot = ii;
 				}
-				ii = _itemsInPlay[slot].next;
+				ii = _itemsInPlay[slot].nextAssignedObject;
 			}
 		}
 	}
@@ -222,7 +222,7 @@ void LoLEngine::deleteItem(int itemIndex) {
 	_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x8000;
 }
 
-ItemInPlay *LoLEngine::findItem(uint16 index) {
+ItemInPlay *LoLEngine::findObject(uint16 index) {
 	if (index & 0x8000)
 		return (ItemInPlay *)&_monsters[index & 0x7fff];
 	else
@@ -269,52 +269,58 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(itemIndex));
 }
 
-void LoLEngine::clickSceneSub1() {
-	assignBlockCaps(_currentBlock, _currentDirection);
-	_screen->fillRect(112, 0, 287, 119, 0);
-
-	static const uint8 sceneItemWidth[] = { 0, 254, 1, 255, 2, 0, 1, 255 } ;
-	static const uint8 sceneClickTileIndex[] = { 13, 16};
-
-	int16 x1 = 0;
-	int16 x2 = 0;
-
-	for (int i = 0; i < 2; i++) {
-		uint8 tile = sceneClickTileIndex[i];
-		setLevelShapesDim(sceneClickTileIndex[i], x1, x2, 13);
-		uint16 s = _curBlockCaps[tile]->field_6;
-
-		int t = (i << 7) + 1;		
-		while (s) {
-			if (s & 0x8000) {
-				s &= 0x7fff;
-				s = _monsters[i].unk2;
-			} else {
-				ItemInPlay *item = &_itemsInPlay[s];
-
-				if (item->shpCurFrame_flg & 0x4000) {
-					if (checkMonsterSpace(item->x, item->y, _partyPosX, _partyPosY) > 319)
-						break;
-
-					int w =	sceneItemWidth[s & 7] << 1;
-					int h = sceneItemWidth[(s >> 1) & 7] + 5;
-					if (item->unk4 > 1)
-						h -= ((item->unk4 - 1) * 6);
-
-					uint8 shpIx = _itemProperties[item->itemPropertyIndex].shpIndex;
-					uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[shpIx] : _itemShapes[_gameShapeMap[shpIx]];					
-
-					drawItemOrMonster(shp, 0, item->x, item->y, w, h, 0, t, 0);
-				}
-
-				s = item->unk2;
-				t++;
-			}
-		}
+void LoLEngine::dropItem(int item, uint16 x, uint16 y, int a, int b) {
+	if (!a) {
+		x = (x & 0xffc0) | 0x40;
+		y = (y & 0xffc0) | 0x40;
 	}
+
+	uint16 block = calcBlockIndex(x, y);
+	_itemsInPlay[item].x = x;
+	_itemsInPlay[item].y = y;
+	_itemsInPlay[item].blockPropertyIndex = block;
+	_itemsInPlay[item].unk4 = a;
+
+	if (b)
+		_itemsInPlay[item].shpCurFrame_flg |= 0x4000;
+	else
+		_itemsInPlay[item].shpCurFrame_flg &= 0xbfff;
+
+	
+	assignItemToBlock(&_levelBlockProperties[block].assignedObjects, item);
+	reassignDrawObjects(_currentDirection, item, &_levelBlockProperties[block], false);
+	
+	if (b)
+		runLevelScriptCustom(block, 0x80, -1, item, 0, 0);
+
+	checkSceneUpdateNeed(block);
 }
 
-int LoLEngine::checkMonsterSpace(int itemX, int itemY, int partyX, int partyY) {
+bool LoLEngine::throwItem(int a, int item, int x, int y, int b, int direction, int c, int charNum, int d) {
+	return true;
+}
+
+void LoLEngine::pickupItem(int item, int block) {
+	removeAssignedItemFromBlock(&_levelBlockProperties[block].assignedObjects, item);
+	removeDrawObjectFromBlock(&_levelBlockProperties[block].drawObjects, item);
+	runLevelScriptCustom(block, 0x100, -1, item, 0, 0);
+	_itemsInPlay[item].blockPropertyIndex = 0;
+	_itemsInPlay[item].level = 0;
+}
+
+void LoLEngine::assignItemToBlock(uint16 *assignedBlockObjects, int id) {
+	while (*assignedBlockObjects & 0x8000) {
+		ItemInPlay *tmp = findObject(*assignedBlockObjects);
+		assignedBlockObjects = &tmp->nextAssignedObject;
+	}
+
+	ItemInPlay *newObject = findObject(id);
+	newObject->nextAssignedObject = *assignedBlockObjects;
+	newObject->level = -1;
+	*assignedBlockObjects = id;
+}
+
+int LoLEngine::checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY) {
 	int a = itemX - partyX;
 	if (a < 0)
 		a = -a;
@@ -326,12 +332,18 @@ int LoLEngine::checkMonsterSpace(int itemX, int itemY, int partyX, int partyY) {
 	return a + b;
 }
 
-int LoLEngine::checkSceneForItems(LevelBlockProperty *block, int pos) {
+int LoLEngine::checkSceneForItems(uint16 *blockDrawObjects, int colour) {
+	while (*blockDrawObjects) {
+		if (!(*blockDrawObjects & 0x8000)) {
+			if (!--colour)
+				return *blockDrawObjects;
+		}
+
+		ItemInPlay *i = findObject(*blockDrawObjects);
+		blockDrawObjects = &i->nextDrawObject;
+	}
+
 	return -1;
-}
-
-void LoLEngine::foundItemSub(int item, int block) {
-
 }
 
 } // end of namespace Kyra

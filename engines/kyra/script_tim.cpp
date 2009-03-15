@@ -1001,8 +1001,31 @@ void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
 	anim->wsa->setX(anim->x);
 	anim->wsa->setY(anim->y);
 	anim->wsa->setDrawPage(0);
-	anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0);
 	anim->nextFrame += _system->getMillis();
+}
+
+void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {
+	Animation *anim = &_animations[animIndex];
+	anim->wsa->setX(anim->x);
+	anim->wsa->setY(anim->y);
+	
+	int step = (lastFrame >= firstFrame) ? 1 : -1;
+	for (int i = firstFrame; i != (lastFrame + step) ; i += step) {
+		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
+		if (anim->wsaCopyParams & 0x4000) {
+			_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 2);
+			anim->wsa->setDrawPage(2);
+			anim->wsa->displayFrame(i - 1, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_trueLightTable1, _vm->_trueLightTable2);
+			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
+			_screen->updateScreen();
+		} else {
+			anim->wsa->setDrawPage(0);
+			anim->wsa->displayFrame(i - 1, 0);
+			_screen->updateScreen();
+		}
+		_vm->delay(next - _system->getMillis());
+	}
 }
 
 void TIMInterpreter_LoL::drawDialogueButtons() {

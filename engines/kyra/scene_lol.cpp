@@ -105,10 +105,10 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		moveItemToBlock(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].itemMonsterIndex, i);
+		moveItemToBlock(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].assignedObjects, i);
 
 		_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].direction = 5;
-		_itemsInPlay[i].unk2 = 0;
+		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
 
@@ -116,11 +116,11 @@ void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
 	ItemInPlay *tmp = 0;
 
 	while (*cmzItemIndex & 0x8000) {
-		tmp = findItem(*cmzItemIndex);
-		cmzItemIndex = &tmp->next;
+		tmp = findObject(*cmzItemIndex);
+		cmzItemIndex = &tmp->nextAssignedObject;
 	}
 
-	tmp = findItem(item);
+	tmp = findObject(item);
 	tmp->level = -1;
 
 	uint16 ix = *cmzItemIndex;
@@ -129,11 +129,11 @@ void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
 		return;
 
 	*cmzItemIndex = item;
-	cmzItemIndex = &tmp->next;
+	cmzItemIndex = &tmp->nextAssignedObject;
 
 	while (*cmzItemIndex) {
-		tmp = findItem(*cmzItemIndex);
-		cmzItemIndex = &tmp->next;
+		tmp = findObject(*cmzItemIndex);
+		cmzItemIndex = &tmp->nextAssignedObject;
 	}
 
 	*cmzItemIndex = ix;
@@ -455,13 +455,12 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].direction = 5;
-		uint16 id = _levelBlockProperties[i].itemMonsterIndex;
+		uint16 id = _levelBlockProperties[i].assignedObjects;
 		MonsterInPlay *r = 0;
 
 		while (id & 0x8000) {
-			r = (MonsterInPlay*)findItem(id);
-			assert(r);
-			id = r->next;
+			r = (MonsterInPlay*)findObject(id);
+			id = r->nextAssignedObject;
 		}
 
 		if (!id)
@@ -470,11 +469,11 @@ void LoLEngine::resetItems(int flag) {
 		ItemInPlay *it = &_itemsInPlay[id];
 		it->level = _currentLevel;
 		it->blockPropertyIndex = i;
-		r->next = 0;
+		r->nextAssignedObject = 0;
 	}
 
 	if (flag)
-		memset(_tmpData136, 0, 136);
+		memset(_throwItemState, 0, 136);
 }
 
 void LoLEngine::resetLvlBuffer() {
@@ -664,12 +663,12 @@ bool LoLEngine::checkBlockPassability(uint16 block, uint16 direction) {
 	if (testWallFlag(block, direction, 1))
 		return false;
 
-	uint16 d = _levelBlockProperties[block].itemMonsterIndex;
+	uint16 d = _levelBlockProperties[block].assignedObjects;
 
 	while (d) {
 		if (d & 0x8000)
 			return false;
-		d = findItem(d)->next;
+		d = findObject(d)->nextAssignedObject;
 	}
 
 	return true;
@@ -754,7 +753,7 @@ bool LoLEngine::clickedShape(int shapeIndex) {
 }
 
 void LoLEngine::processDoorSwitch(uint16 block, int unk) {
-	if ((block == _currentBlock) || (_levelBlockProperties[block].itemMonsterIndex & 0x8000))
+	if ((block == _currentBlock) || (_levelBlockProperties[block].assignedObjects & 0x8000))
 		return;
 
 	int s = 0;
@@ -1496,8 +1495,8 @@ void LoLEngine::drawSceneShapes() {
 
 		drawIceShapes(t, 0);
 
-		if (_curBlockCaps[t]->itemMonsterIndex && (w & 0x80))
-			drawMonstersAndItems(t);
+		if (_curBlockCaps[t]->assignedObjects && (w & 0x80))
+			drawBlockObjects(t);
 
 		drawIceShapes(t, 1);
 

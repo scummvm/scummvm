@@ -1196,22 +1196,47 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk16(Button *button) {
+int LoLEngine::clickedSceneDropItem(Button *button) {
+	static const uint8 offsX[] = { 0x40, 0xC0, 0x40, 0xC0 };
+	static const uint8 offsY[] = { 0x40, 0x40, 0xC0, 0xC0 };
+	static const uint8 dirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
+
+	if ((_updateFlags & 1) || !_itemInHand)
+		return 0;
+
+	uint16 block = _currentBlock;
+	if (button->data2Val2 > 1) {
+		block = calcNewBlockPosition(_currentBlock, _currentDirection);
+		int f = _wllWallFlags[_levelBlockProperties[block].walls[_currentDirection ^ 2]];
+		if (!(f & 0x80) || (f & 2))
+			return 1;
+	}
+
+	uint16 x = 0;
+	uint16 y = 0;
+	int i = dirIndex[(_currentDirection << 2) + button->data2Val2];
+	
+	calcCoordinates(x, y, block, offsX[i], offsY[i]);
+	dropItem(_itemInHand, x, y, 0, 1);
+	setHandItem(0);
+
 	return 1;
 }
 
 int LoLEngine::clickedScenePickupItem(Button *button) {
 	static const int8 checkX[] = { 0, 0, 1, 0, -1, -1, 1, 1, -1, 0, 2, 0, -2, -1, 1, 2, 2, 1, -1, -2, -2 };
 	static const int8 checkY[] = { 0, -1, 0, 1, 0, -1, -1, 1, 1, -2, 0, 2, 0, -2, -2, -1, 1, 2, 2, 1, -1 };
+	static const int len = ARRAYSIZE(checkX);
 
-	if (_updateFlags & 1)
+	if ((_updateFlags & 1) || _itemInHand)
 		return 0;
+
 	int cp = _screen->setCurPage(_sceneDrawPage1);
 
-	clickSceneSub1();
+	redrawSceneItem();
 
 	int p = 0;
-	for (int i = 0; i < 21; i++) {
+	for (int i = 0; i < len; i++) {
 		p = _screen->getPagePixel(_screen->_curPage, _mouseX + checkX[i], _mouseY + checkY[i]);
 		if (p)
 			break;
@@ -1224,10 +1249,10 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 
 	uint16 block = (p <= 128) ? calcNewBlockPosition(_currentBlock, _currentDirection) : _currentBlock;
 
-	int found = checkSceneForItems(&_levelBlockProperties[block], p &0x7f);
+	int found = checkSceneForItems(&_levelBlockProperties[block].drawObjects, p & 0x7f);
 
 	if (found != -1) {
-		foundItemSub(found, block);
+		pickupItem(found, block);
 		setHandItem(found);
 	}
 
@@ -1368,7 +1393,24 @@ int LoLEngine::clickedUnk24(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedSceneDropItem(Button *button) {
+int LoLEngine::clickedSceneThrowItem(Button *button) {
+	//if (_updateFlags & 1)
+		return 0;
+
+	uint16 block = calcNewBlockPosition(_currentBlock, _currentDirection);
+	if ((_wllWallFlags[_levelBlockProperties[block].walls[_currentDirection ^ 2]] & 2) || !_itemInHand)
+		return 0;
+
+	uint16 x = 0;
+	uint16 y = 0;
+	calcCoordinates(x, y, _currentBlock, 0x80, 0x80);
+
+	if (throwItem(0, _itemInHand, x, y, 12, _currentDirection << 1, 6, _selectedCharacter, 0x3f)) {
+		snd_playSoundEffect(18, -1);
+		setHandItem(0);
+	}
+
+	_sceneUpdateRequired = true;
 	return 1;
 }
 

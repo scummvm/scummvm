@@ -185,6 +185,7 @@ enum kExtractID {
 	//lolADLSfxIndex,
 	lolSpellProperties,
 	lolGameShapeMap,
+	lolSceneItemOffs,
 	lolCharInvIndex,
 	lolCharInvDefs,
 	lolCharDefsMan,

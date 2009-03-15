@@ -83,20 +83,16 @@ struct LoLCharacter {
 };
 
 struct SpellProperty {
-	uint16 field_0;
-	uint16 unkArr[4];
-	uint16 field_A;
-	uint16 field_C;
-	uint16 field_E;
 	uint16 spellNameCode;
 	uint16 mpRequired[4];
-	uint16 field_1A;
+	uint16 unkArr[8];
+	uint16 flags;
 };
 
 struct LevelBlockProperty {
 	uint8 walls[4];
-	uint16 itemMonsterIndex;
-	uint16 field_6;
+	uint16 assignedObjects;
+	uint16 drawObjects;
 	uint8 direction;
 	uint8 flags;
 };
@@ -121,8 +117,8 @@ struct MonsterProperty {
 };
 
 struct MonsterInPlay {
-	uint16 next;
-	uint16 unk2;
+	uint16 nextAssignedObject;
+	uint16 nextDrawObject;
 	uint8 unk4;
 	uint16 blockPropertyIndex;
 	uint16 x;
@@ -155,8 +151,8 @@ struct MonsterInPlay {
 };
 
 struct ItemInPlay {
-	uint16 next;
-	uint16 unk2;
+	uint16 nextAssignedObject;
+	uint16 nextDrawObject;
 	uint8 unk4;
 	uint16 blockPropertyIndex;
 	uint16 x;
@@ -439,7 +435,7 @@ private:
 	int clickedPortraitEtcRight(Button *button);
 	int clickedCharInventorySlot(Button *button);
 	int clickedExitCharInventory(Button *button);
-	int clickedUnk16(Button *button);
+	int clickedSceneDropItem(Button *button);
 	int clickedScenePickupItem(Button *button);
 	int clickedInventorySlot(Button *button);
 	int clickedInventoryScroll(Button *button);
@@ -448,7 +444,7 @@ private:
 	int clickedScroll(Button *button);
 	int clickedUnk23(Button *button);
 	int clickedUnk24(Button *button);
-	int clickedSceneDropItem(Button *button);
+	int clickedSceneThrowItem(Button *button);
 	int clickedOptions(Button *button);
 	int clickedRestParty(Button *button);
 	int clickedMoneyBox(Button *button);
@@ -520,7 +516,7 @@ private:
 	int olol_closeLevelShapeFile(EMCState *script);
 	int olol_loadDoorShapes(EMCState *script);
 	int olol_initAnimStruct(EMCState *script);
-	int olol_playAnimSequence(EMCState *script);
+	int olol_playAnimationPart(EMCState *script);
 	int olol_freeAnimStruct(EMCState *script);
 	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
@@ -877,17 +873,17 @@ private:
 	LevelShapeProperty *_levelFileData;
 
 	uint8 *_doorShapes[2];
-	int16 _shpDmX;
-	int16 _shpDmY;
-	int16 _dmScaleW;
-	int16 _dmScaleH;
+	int _shpDmX;
+	int _shpDmY;
+	uint16 _dmScaleW;
+	uint16 _dmScaleH;
 
 	int _lastMouseRegion;
 	int _seqWindowX1, _seqWindowY1,	_seqWindowX2, _seqWindowY2, _seqTrigger;
 	uint8 _unkGameFlag;
 
 	uint8 *_tempBuffer5120;
-	uint8 *_tmpData136;
+	uint8 *_throwItemState;
 
 	const char *const * _levelDatList;
 	int _levelDatListSize;
@@ -947,13 +943,15 @@ private:
 	bool addItemToInventory(int itemIndex);
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
-	ItemInPlay *findItem(uint16 index);
+	ItemInPlay *findObject(uint16 index);
 	void runItemScript(int charNum, int item, int reg0, int reg3, int reg4);
 	void setHandItem(uint16 itemIndex);
-	void clickSceneSub1();
-	int checkMonsterSpace(int itemX, int itemY, int partyX, int partyY);
-	int checkSceneForItems(LevelBlockProperty *block, int pos);
-	void foundItemSub(int item, int block);
+	void dropItem(int item, uint16 x, uint16 y, int a, int b);
+	bool throwItem(int a, int item, int x, int y, int b, int direction, int c, int charNum, int d);
+	void pickupItem(int item, int block);
+	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
+	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
+	int checkSceneForItems(uint16 *blockDrawObjects, int colour);
 
 	uint8 _moneyColumnHeight[5];
 	uint16 _credits;
@@ -979,6 +977,8 @@ private:
 	int _itemCostSize;
 	const uint8 *_stashSetupData;
 	int _stashSetupDataSize;
+	const int8 *_sceneItemOffs;
+	int _sceneItemOffsSize;
 
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
@@ -989,24 +989,26 @@ private:
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void setMonsterDirection(MonsterInPlay *monster, int dir);
 	void cmzS3(MonsterInPlay *monster);
-	void removeItemOrMonsterFromBlock(uint16 *blockItemIndex, int id);
-	void assignItemOrMonsterToBlock(uint16 *blockItemIndex, int id);
+	void removeAssignedItemFromBlock(uint16 *blockItemIndex, int id);
+	void removeDrawObjectFromBlock(uint16 *blockItemIndex, int id);
+	void assignMonsterToBlock(uint16 *assignedBlockObjects, int id);
 	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
 	int checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
-	void drawMonstersAndItems(int block);
+	void drawBlockObjects(int blockArrayIndex);
 	void drawMonster(uint16 id);
 	int getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags);
-	void recalcItemMonsterPositions(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag);
+	void reassignDrawObjects(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag);
+	void redrawSceneItem();
 	int calcItemMonsterPosition(ItemInPlay *i, uint16 direction);
 	void recalcSpritePosition(uint16 partyX, uint16 partyY, int &itemX, int &itemY, uint16 direction);
 	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
 	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
-	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int w, int h, int flags, int tblValue, bool flip);
-	int calcDrawingLayerParameters(int srcX, int srcY, int16 &x2, int16 &y2, int16 &w, int16 &h, uint8 *shape, int flip);
+	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int fineX, int fineY, int flags, int tblValue, bool flip);
+	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int flip);
 
 	void updateMonster(MonsterInPlay *monster);
 	void moveMonster(MonsterInPlay *monster);
@@ -1034,9 +1036,9 @@ private:
 	int _monsterShiftOffsSize;
 	const uint8 *_monsterDirFlags;
 	int _monsterDirFlagsSize;
-	const int8 *_monsterScaleX;
+	const uint8 *_monsterScaleX;
 	int _monsterScaleXSize;
-	const int8 *_monsterScaleY;
+	const uint8 *_monsterScaleY;
 	int _monsterScaleYSize;
 	const uint16 *_monsterScaleWH;
 	int _monsterScaleWHSize;

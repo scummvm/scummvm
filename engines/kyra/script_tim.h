@@ -143,6 +143,7 @@ public:
 	virtual void startBackgroundAnimation(int animIndex, int part) {}	
 	virtual void stopBackgroundAnimation(int animIndex) {}
 	virtual void updateBackgroundAnimation(int animIndex) {}
+	virtual void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {}
 
 	virtual void forceDialogue(TIM *tim) {}
 
@@ -230,13 +231,13 @@ public:
 	
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
 	uint16 processDialogue();
-	
+	void forceDialogue(TIM *tim);
+
 	void setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame);
 	void startBackgroundAnimation(int animIndex, int part);
 	void stopBackgroundAnimation(int animIndex);
-	void updateBackgroundAnimation(int animIndex);	
-
-	void forceDialogue(TIM *tim);
+	void updateBackgroundAnimation(int animIndex);
+	void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay);	
 		
 private:
 	KyraEngine_v1 *vm();

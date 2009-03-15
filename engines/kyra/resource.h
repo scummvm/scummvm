@@ -221,6 +221,7 @@ enum kKyraResources {
 	//kLolIngameADLSfxIndex,
 	kLolSpellProperties,
 	kLolGameShapeMap,
+	kLolSceneItemOffs,
 	kLolCharInvIndex,
 	kLolCharInvDefs,
 	kLolCharDefsMan,

@@ -434,9 +434,9 @@ int LoLEngine::olol_initAnimStruct(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::olol_playAnimSequence(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAnimSequence(%p) (%s, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
-
+int LoLEngine::olol_playAnimationPart(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAnimationPart(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_tim->playAnimationPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 1;
 }
 
@@ -1390,7 +1390,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x18
 	Opcode(olol_loadDoorShapes);
 	Opcode(olol_initAnimStruct);
-	Opcode(olol_playAnimSequence);
+	Opcode(olol_playAnimationPart);
 	Opcode(olol_freeAnimStruct);
 
 	// 0x1C

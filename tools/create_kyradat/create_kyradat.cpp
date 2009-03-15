@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 41,
+	kKyraDatVersion = 42,
 	kIndexSize = 12
 };
 
@@ -276,6 +276,7 @@ const ExtractFilename extractFilenames[] = {
 	//{ lolADLSfxIndex, kTypeRawData, "SFX_ADL.MAP" },
 	{ lolSpellProperties, kTypeRawData, "SPELLS.DEF" },
 	{ lolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
+	{ lolSceneItemOffs, kTypeRawData, "ITEMOFFS.DEF" },
 	{ lolCharInvIndex, k3TypeRaw16to8, "CHARINV.MAP" },
 	{ lolCharInvDefs, kTypeRawData, "CHARINV.DEF" },
 	{ lolCharDefsMan, lolTypeRaw16, "CHMAN.DEF" },

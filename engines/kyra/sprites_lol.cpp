@@ -136,13 +136,13 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 }
 
 int LoLEngine::disableMonstersForBlock(int block) {
-	int i = _levelBlockProperties[block].itemMonsterIndex;
+	int i = _levelBlockProperties[block].assignedObjects;
 	int cnt = 0;
 	MonsterInPlay *t = 0;
 
 	while (i) {
-		t = (MonsterInPlay *)findItem(i);
-		i = t->next;
+		t = (MonsterInPlay *)findObject(i);
+		i = t->nextAssignedObject;
 		if (!(i & 0x8000))
 			continue;
 
@@ -199,7 +199,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	bool cont = true;
 	int t = monster->blockPropertyIndex;
 	if (monster->blockPropertyIndex) {
-		removeItemOrMonsterFromBlock(&_levelBlockProperties[t].itemMonsterIndex, ((uint16)monster->id) | 0x8000);
+		removeAssignedItemFromBlock(&_levelBlockProperties[t].assignedObjects, ((uint16)monster->id) | 0x8000);
 		_levelBlockProperties[t].direction = 5;
 		checkSceneUpdateNeed(t);
 	} else {
@@ -217,7 +217,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	if (monster->blockPropertyIndex == 0)
 		return;
 
-	assignItemOrMonsterToBlock(&_levelBlockProperties[monster->blockPropertyIndex].itemMonsterIndex, ((uint16)monster->id) | 0x8000);
+	assignMonsterToBlock(&_levelBlockProperties[monster->blockPropertyIndex].assignedObjects, ((uint16)monster->id) | 0x8000);
 	_levelBlockProperties[monster->blockPropertyIndex].direction = 5;
 	checkSceneUpdateNeed(monster->blockPropertyIndex);
 
@@ -285,24 +285,42 @@ void LoLEngine::cmzS3(MonsterInPlay *l) {
 	// TODO
 }
 
-void LoLEngine::removeItemOrMonsterFromBlock(uint16 *blockItemIndex, int id) {
+void LoLEngine::removeAssignedItemFromBlock(uint16 *blockItemIndex, int id) {
+	ItemInPlay *i = 0;
+
 	while (*blockItemIndex) {
 		if (*blockItemIndex == id) {
-			ItemInPlay *t = findItem(id);
-			*blockItemIndex = t->next;
-			t->next = 0;
+			i = findObject(id);
+			*blockItemIndex = i->nextAssignedObject;
+			i->nextAssignedObject = 0;
 			return;
-		} else {
-			ItemInPlay *t = findItem(*blockItemIndex);
-			blockItemIndex = &t->next;
 		}
+		
+		i = findObject(*blockItemIndex);
+		blockItemIndex = &i->nextAssignedObject;
 	}
 }
 
-void LoLEngine::assignItemOrMonsterToBlock(uint16 *blockItemIndex, int id) {
-	ItemInPlay *t = findItem(id);
-	t->next = *blockItemIndex;
-	*blockItemIndex = id;
+void LoLEngine::removeDrawObjectFromBlock(uint16 *blockItemIndex, int id) {
+	ItemInPlay *i = 0;
+
+	while (*blockItemIndex) {
+		if (*blockItemIndex == id) {
+			i = findObject(id);
+			*blockItemIndex = i->nextDrawObject;
+			i->nextDrawObject = 0;			
+			return;
+		}
+
+		i = findObject(*blockItemIndex);
+		blockItemIndex = &i->nextDrawObject;
+	}
+}
+
+void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
+	ItemInPlay *t = findObject(id);
+	t->nextAssignedObject = *assignedBlockObjects;
+	*assignedBlockObjects = id;
 }
 
 int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag) {
@@ -435,17 +453,17 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 	if (!(testFlag & 2))
 		return 0;
 
-	uint16 b = _levelBlockProperties[block].itemMonsterIndex;
+	uint16 b = _levelBlockProperties[block].assignedObjects;
 	while (b & 0x8000) {
 		MonsterInPlay *monster = &_monsters[b & 0x7fff];
 
 		if (monster->mode < 13) {
-			int r = checkMonsterSpace(x, y, monster->x, monster->y);
+			int r = checkDrawObjectSpace(x, y, monster->x, monster->y);
 			if ((monsterWidth + monster->properties->maxWidth) > r)
 				return 2;
 		}
 
-		b = findItem(b)->next;
+		b = findObject(b)->nextAssignedObject;
 	}
 
 	return 0;
@@ -458,34 +476,56 @@ bool LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
 	return false;
 }
 
-void LoLEngine::drawMonstersAndItems(int block) {
-	LevelBlockProperty *l = _curBlockCaps[block];
-	uint16 s = l->itemMonsterIndex;
-	ItemInPlay *i = findItem(s);
+void LoLEngine::drawBlockObjects(int blockArrayIndex) {
+	LevelBlockProperty *l = _curBlockCaps[blockArrayIndex];
+	uint16 s = l->assignedObjects;
+	ItemInPlay *i = findObject(s);
 
 	if (l->direction != _currentDirection) {
-		l->field_6 = 0;
+		l->drawObjects = 0;
 		l->direction = _currentDirection;
 
 		while (s) {
-			i = findItem(s);
-			recalcItemMonsterPositions(_currentDirection, s, l, true);
-			i = findItem(s);
-			s = i->next;
+			reassignDrawObjects(_currentDirection, s, l, true);
+			i = findObject(s);
+			s = i->nextAssignedObject;
 		}
 	}
 
-	s = l->field_6;
+	s = l->drawObjects;
 	while (s) {
 		if (s & 0x8000) {
 			s &= 0x7fff;
-			if (block < 15)
+			if (blockArrayIndex < 15)
 				drawMonster(s);
-			s = _monsters[s].unk2;
+			s = _monsters[s].nextDrawObject;
 		} else {
-			//////////
-			// TODO
+			i = &_itemsInPlay[s];
+			int fx = _sceneItemOffs[s & 7] << 1;
+			int fy = _sceneItemOffs[(s >> 1) & 7] + 5;
 
+			if (i->unk4 > 2 || (i->unk4 == 2 && blockArrayIndex >= 15)) {
+				s = i->nextDrawObject;
+				continue;
+			}
+
+			uint8 *shp = 0;
+			int flg = 0;
+
+			if (i->unk4 >= 2)
+				fy -= ((i->unk4 - 1) * 6);
+
+			if ((_itemProperties[i->itemPropertyIndex].flags & 0x1000) && !(i->shpCurFrame_flg & 0xC000)) {
+				i = i;
+				////////////
+				// TODO
+			} else {
+				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] : 
+					_itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
+			}
+
+			drawItemOrMonster(shp, 0, i->x, i->y, fx, fy, flg, -1, false);
+			s = i->nextDrawObject;
 		}
 	}
 }
@@ -520,11 +560,6 @@ void LoLEngine::drawMonster(uint16 id) {
 			uint8 *shp2 = _monsterShapesEx[m->properties->shapeIndex * 192 + v * 48 + curFrm * 3];
 			if (!shp2)
 				continue;
-
-			//int dW = (READ_LE_UINT16(shp2 + 4) * _dmScaleW) >> 8;
-			//int dH = (READ_LE_UINT16(shp2 + 6) * _dmScaleH) >> 8;
-			//if (flg)
-			//	_screen->getShapeScaledWidth(shp2, _dmScaleW);
 
 			drawDoorOrMonsterShape(shp2, 0, _shpDmX, _shpDmY, flg | 1, ovl2);
 		}
@@ -615,33 +650,77 @@ int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 	return 0;
 }
 
-void LoLEngine::recalcItemMonsterPositions(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag) {
+void LoLEngine::reassignDrawObjects(uint16 direction, uint16 itemIndex, LevelBlockProperty *l, bool flag) {
 	if (l->direction != direction) {
 		l->direction = 5;
 		return;
 	}
 
-	ItemInPlay *i1 = findItem(itemIndex);
-	int r = calcItemMonsterPosition(i1, direction);
-	uint16 *b = &l->field_6;
-	ItemInPlay *i2 = 0;
+	ItemInPlay *newObject = findObject(itemIndex);
+	int r = calcItemMonsterPosition(newObject, direction);
+	uint16 *b = &l->drawObjects;
+	ItemInPlay *lastObject = 0;
 
 	while (*b) {
-		i2 = findItem(itemIndex);
+		lastObject = findObject(*b);
 
 		if (flag) {
-			if (calcItemMonsterPosition(i2, direction) >= r)
+			if (calcItemMonsterPosition(lastObject, direction) >= r)
 				break;
 		} else {
-			if (calcItemMonsterPosition(i2, direction) > r)
+			if (calcItemMonsterPosition(lastObject, direction) > r)
 				break;
 		}
 
-		b = &i2->unk2;
+		b = &lastObject->nextDrawObject;
 	}
 
-	i1->unk2 = *b;
+	newObject->nextDrawObject = *b;
 	*b = itemIndex;
+}
+
+void LoLEngine::redrawSceneItem() {
+	assignBlockCaps(_currentBlock, _currentDirection);
+	_screen->fillRect(112, 0, 287, 119, 0);
+
+	static const uint8 sceneClickTileIndex[] = { 13, 16};
+
+	int16 x1 = 0;
+	int16 x2 = 0;
+
+	for (int i = 0; i < 2; i++) {
+		uint8 tile = sceneClickTileIndex[i];
+		setLevelShapesDim(tile, x1, x2, 13);
+		uint16 s = _curBlockCaps[tile]->drawObjects;
+
+		int t = (i << 7) + 1;		
+		while (s) {
+			if (s & 0x8000) {
+				s &= 0x7fff;
+				s = _monsters[i].nextDrawObject;
+			} else {
+				ItemInPlay *item = &_itemsInPlay[s];
+
+				if (item->shpCurFrame_flg & 0x4000) {
+					if (checkDrawObjectSpace(item->x, item->y, _partyPosX, _partyPosY) < 320) {
+						int fx = _sceneItemOffs[s & 7] << 1;
+						int fy = _sceneItemOffs[(s >> 1) & 7] + 5;
+						if (item->unk4 > 1)
+							fy -= ((item->unk4 - 1) * 6);
+
+						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] : 
+							_itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
+
+						drawItemOrMonster(shp, 0, item->x, item->y, fx, fy, 0, t, 0);
+						_screen->updateScreen();
+					}
+				}
+
+				s = item->nextDrawObject;
+				t++;
+			}
+		}
+	}
 }
 
 int LoLEngine::calcItemMonsterPosition(ItemInPlay *i, uint16 direction) {
@@ -688,7 +767,8 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 	_shpDmY = _dscDoorMonsterY[t] + 120;
 
 	if (flags & 1) {
-		// TODO
+		//TODO
+		flags |=1;
 	}
 
 	int u = 0;
@@ -753,7 +833,7 @@ void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y,
 	}
 }
 
-uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, int w, int h, int flags, int tblValue, bool flip) {
+uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, int fineX, int fineY, int flags, int tblValue, bool flip) {
 	uint8 *ovl2 = 0;
 	uint8 *ovl = 0;
 	uint8 tmpOvl[16];
@@ -791,8 +871,8 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		flg |= 0x2000;
 	}
 
-	_shpDmX += ((_dmScaleW * w) >> 8);
-	_shpDmY += ((_dmScaleH * h) >> 8);
+	_shpDmX += ((_dmScaleW * fineX) >> 8);
+	_shpDmY += ((_dmScaleH * fineY) >> 8);
 
 	int dH = _screen->getShapeScaledHeight(shape, _dmScaleH) >> 1;
 
@@ -814,7 +894,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 	return ovl;
 }
 
-int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int16 &x2, int16 &y2, int16 &w, int16 &h, uint8 *shape, int flip) {
+int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int flip) {
 	recalcSpritePosition(_partyPosX, _partyPosY, x1, y1, _currentDirection);
 
 	if (y1 < 0) {
@@ -825,6 +905,7 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int16 &x2, int16 &y2, 
 	int l = y1 >> 5;
 	y2 = _monsterScaleY[l];
 	x2 = ((_monsterScaleX[l] * x1) >> 8) + 200;
+	assert (_shpDmY - 56 < 66);
 	w = h = _monsterScaleWH[_shpDmY - 56];
 
 	if (flip)
@@ -1057,7 +1138,7 @@ int LoLEngine::walkMonster_s3(uint16 monsterBlock, int direction, int distance, 
 		if (_wllWallFlags[_levelBlockProperties[p].walls[direction ^ 2]] & 2)
 			return 5;
 
-		if (_levelBlockProperties[p].itemMonsterIndex & 0x8000)
+		if (_levelBlockProperties[p].assignedObjects & 0x8000)
 			return 5;
 	}
 

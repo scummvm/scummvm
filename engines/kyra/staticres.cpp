@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 41
+#define RESFILE_VERSION 42
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -382,6 +382,7 @@ bool StaticResource::init() {
 		{ kLolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
 		{ kLolSpellProperties, kLolSpellData, "SPELLS.DEF" },
 		{ kLolGameShapeMap, kRawData, "GAMESHP.MAP" },
+		{ kLolSceneItemOffs, kRawData, "ITEMOFFS.DEF" },
 		{ kLolCharInvIndex, kRawData, "CHARINV.MAP" },
 		{ kLolCharInvDefs, kRawData, "CHARINV.DEF" },
 		{ kLolCharDefsMan, kLolRawDataBe16, "CHMAN.DEF" },
@@ -1037,16 +1038,12 @@ bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) 
 	for (int i = 0; i < size; i++) {
 		SpellProperty *t = &spellData[i];
 
-		t->field_0 = file->readUint16LE();
-		for (int ii = 0; ii < 4; ii++)
-			t->unkArr[ii] = file->readUint16LE();
-		t->field_A = file->readUint16LE();
-		t->field_C = file->readUint16LE();
-		t->field_E = file->readUint16LE();
 		t->spellNameCode = file->readUint16LE();
 		for (int ii = 0; ii < 4; ii++)
 			t->mpRequired[ii] = file->readUint16LE();
-		t->field_1A = file->readUint16LE();
+		for (int ii = 0; ii < 8; ii++)
+			t->unkArr[ii] = file->readUint16LE();
+		t->flags = file->readUint16LE();
 	};
 
 	ptr = spellData;
@@ -1756,6 +1753,7 @@ void LoLEngine::initStaticResource() {
 	//_ingameADLSoundIndex = _staticres->loadRawData(kLolIngameADLSfxIndex, _ingameADLSoundIndexSize);
 	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, _spellPropertiesSize);
 	_gameShapeMap = (const int8*)_staticres->loadRawData(kLolGameShapeMap, _gameShapeMapSize);
+	_sceneItemOffs = (const int8*)_staticres->loadRawData(kLolSceneItemOffs, _sceneItemOffsSize);
 	_charInvIndex = _staticres->loadRawData(kLolCharInvIndex, _charInvIndexSize);
 	_charInvDefs = _staticres->loadRawData(kLolCharInvDefs, _charInvDefsSize);
 	_charDefsMan = _staticres->loadRawDataBe16(kLolCharDefsMan, _charDefsManSize);
@@ -1766,8 +1764,8 @@ void LoLEngine::initStaticResource() {
 	_monsterModifiers = _staticres->loadRawDataBe16(kLolMonsterModifiers, _monsterModifiersSize);
 	_monsterShiftOffs = (const int8*)_staticres->loadRawData(kLolMonsterShiftOffsets, _monsterShiftOffsSize);
 	_monsterDirFlags = _staticres->loadRawData(kLolMonsterDirFlags, _monsterDirFlagsSize);
-	_monsterScaleX = (const int8*)_staticres->loadRawData(kLolMonsterScaleX, _monsterScaleXSize);
-	_monsterScaleY = (const int8*)_staticres->loadRawData(kLolMonsterScaleY, _monsterScaleYSize);
+	_monsterScaleX = _staticres->loadRawData(kLolMonsterScaleX, _monsterScaleXSize);
+	_monsterScaleY = _staticres->loadRawData(kLolMonsterScaleY, _monsterScaleYSize);
 	_monsterScaleWH = _staticres->loadRawDataBe16(kLolMonsterScaleWH, _monsterScaleWHSize);
 	_inventorySlotDesc = _staticres->loadRawDataBe16(kLolInventoryDesc, _inventorySlotDescSize);
 	_levelShpList = _staticres->loadStrings(kLolLevelShpList, _levelShpListSize);
@@ -1870,10 +1868,10 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedCharInventorySlot),
 		cb(clickedCharInventorySlot),
 		cb(clickedExitCharInventory),
-		cb(clickedUnk16),
-		cb(clickedUnk16),
-		cb(clickedUnk16),
-		cb(clickedUnk16),
+		cb(clickedSceneDropItem),
+		cb(clickedSceneDropItem),
+		cb(clickedSceneDropItem),
+		cb(clickedSceneDropItem),
 		cb(clickedScenePickupItem),
 		cb(clickedInventorySlot),
 		cb(clickedInventorySlot),
@@ -1911,8 +1909,8 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedUnk23),
 		cb(clickedUnk23),
 		cb(clickedUnk24),
-		cb(clickedSceneDropItem),
-		cb(clickedSceneDropItem),
+		cb(clickedSceneThrowItem),
+		cb(clickedSceneThrowItem),
 		cb(clickedOptions),
 		cb(clickedRestParty),
 		cb(clickedMoneyBox),
