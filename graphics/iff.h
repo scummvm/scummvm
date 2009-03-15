@@ -108,33 +108,22 @@ void decodePBM(Common::ReadStream &input, Surface &surface, byte *&colors);
 	by Apple. It is also used to encode ILBM and PBM
 	subtypes of IFF files, and some flavours of TIFF.
 
-	The following implementation uses a static storage
-	and is buffered, that means you can't destroy the
-	input stream before you are done with it.
+	As there is no compression across row boundaries
+	in the above formats, read() will extract a *new*
+	line on each call, discarding any alignment or
+	padding.
 */
 class PackBitsReadStream : public Common::ReadStream {
 
 protected:
 	Common::ReadStream *_input;
 
-	byte	_storage[257];
-	byte	*_wStoragePos;
-	byte	*_rStoragePos;
-
-	byte*	_out;
-	byte*	_outEnd;
-	int32	_fed;
-	int32	_unpacked;
-
-	void store(byte b);
-	void feed();
-	void unpack();
-
 public:
 	PackBitsReadStream(Common::ReadStream &input);
 	~PackBitsReadStream();
 
 	virtual bool eos() const;
+
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 

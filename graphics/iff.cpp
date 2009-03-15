@@ -124,14 +124,13 @@ void ILBMDecoder::readBODY(Common::IFFChunk& chunk) {
 		break;
 
 	case 1: {
-		uint32 scanWidth = _bitmapHeader.width >> 3;
+		uint32 scanWidth = (_bitmapHeader.width + 7) >> 3;
 		byte *scan = (byte*)malloc(scanWidth);
 		byte *out = (byte*)_surface->pixels;
 
 		PackBitsReadStream stream(chunk);
 
 		for (uint32 i = 0; i < _bitmapHeader.height; i++) {
-
 			for (uint32 j = 0; j < _bitmapHeader.depth; j++) {
 				stream.read(scan, scanWidth);
 				fillPlane(out, scan, scanWidth, j);
@@ -237,79 +236,49 @@ void PBMDecoder::readBODY(Common::IFFChunk& chunk) {
 
 
 
-
-PackBitsReadStream::PackBitsReadStream(Common::ReadStream &input) : _input(&input), _wStoragePos(_storage), _rStoragePos(_storage) {
+PackBitsReadStream::PackBitsReadStream(Common::ReadStream &input) : _input(&input) {
 }
 
 PackBitsReadStream::~PackBitsReadStream() {
 }
 
 bool PackBitsReadStream::eos() const {
-	//FIXME: eos definition needs to be changed in parallaction engine
-	// which is the only place where this class is used
-	return _input->eos() && (_rStoragePos == _wStoragePos);
+	return _input->eos();
 }
 
 uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
-	_out = (byte*)dataPtr;
-	_outEnd = _out + dataSize;
+	byte *out = (byte*)dataPtr;
+	uint32 left = dataSize;
 
-	feed();
-	unpack();
-	return _fed + _unpacked;
-}
+	uint32 lenR = 0, lenW = 0;
+	while (left > 0 && !_input->eos()) {
+		lenR = _input->readByte();
 
-void PackBitsReadStream::store(byte b) {
-	if (_out < _outEnd) {
-		*_out++ = b;
-		_unpacked++;
-		_wStoragePos = _storage;
-	} else {
-		assert(_wStoragePos < _storage + 257);
-		*_wStoragePos++ = b;
-	}
-
-	_rStoragePos = _storage;
-}
-
-void PackBitsReadStream::feed() {
-	_fed = 0;
-
-	int len = MIN(_wStoragePos - _rStoragePos, _outEnd - _out);
-	if (len == 0) return;
-
-	for (int i = 0; i < len; i++)
-		*_out++ = *_rStoragePos++;
-
-	_fed = len;
-}
-
-void PackBitsReadStream::unpack() {
-	byte byteRun;
-	byte idx;
-
-	uint32 i, j;
-	_unpacked = 0;
-
-	while (_out < _outEnd && !_input->eos()) {
-		byteRun = _input->readByte();
-		//FIXME: eos definition needs to be changed in parallaction engine
-		// which is the only place where this class is used
-		//if (_input->eos()) break;
-		if (byteRun <= 127) {
-			i = byteRun + 1;
-			for (j = 0; j < i; j++) {
-				idx = _input->readByte();
-				store(idx);
+		if (lenR == 128) {
+			// no-op
+			lenW = 0;
+		} else if (lenR <= 127) {
+			// literal run
+			lenR++;
+			lenW = MIN(lenR, left);
+			for (uint32 j = 0; j < lenW; j++) {
+				*out++ = _input->readByte();
 			}
-		} else if (byteRun != 128) {
-			i = (256 - byteRun) + 1;
-			idx = _input->readByte();
-			for (j = 0; j < i; j++) {
-				store(idx);
+			for ( ; lenR > lenW; lenR--) {
+				_input->readByte();
 			}
+		} else {  // len > 128
+			// expand run
+			lenW = MIN((256 - lenR) + 1, left);
+			byte val = _input->readByte();
+			memset(out, val, lenW);
+			out += lenW;
 		}
+
+		left -= lenW;
 	}
+
+	return dataSize - left;
 }
 
 
