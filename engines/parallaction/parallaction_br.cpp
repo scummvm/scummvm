@@ -261,7 +261,7 @@ void Parallaction_br::changeLocation() {
 		if (getPlatform() == Common::kPlatformPC) {
 			_objects = _disk->loadObjects("icone.ico");
 		} else {
-			_objects = _disk->loadObjects("icons.ico");
+			_objects = _disk->loadObjects("icons.ico", _part);
 		}
 
 		parseLocation("common.slf");

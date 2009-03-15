@@ -371,7 +371,7 @@ Font* DosDisk_ns::loadFont(const char* name) {
 }
 
 
-GfxObj* DosDisk_ns::loadObjects(const char *name) {
+GfxObj* DosDisk_ns::loadObjects(const char *name, uint8 part) {
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
 	return new GfxObj(0, loadExternalCnv(path), name);
@@ -1154,7 +1154,7 @@ GfxObj* AmigaDisk_ns::loadHead(const char* name) {
 }
 
 
-GfxObj* AmigaDisk_ns::loadObjects(const char *name) {
+GfxObj* AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadObjects");
 
 	char path[PATH_LEN];

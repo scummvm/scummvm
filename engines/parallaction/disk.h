@@ -66,7 +66,7 @@ public:
 	virtual Script* loadLocation(const char *name) = 0;
 	virtual Script* loadScript(const char* name) = 0;
 	virtual GfxObj* loadTalk(const char *name) = 0;
-	virtual GfxObj* loadObjects(const char *name) = 0;
+	virtual GfxObj* loadObjects(const char *name, uint8 part = 0) = 0;
 	virtual Frames* loadPointer(const char *name) = 0;
 	virtual GfxObj* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
@@ -130,7 +130,7 @@ public:
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
 	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name);
+	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Frames* loadPointer(const char *name);
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
@@ -166,7 +166,7 @@ public:
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
 	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name);
+	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Frames* loadPointer(const char *name);
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
@@ -222,7 +222,7 @@ public:
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
 	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name);
+	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Frames* loadPointer(const char *name);
 	GfxObj* loadHead(const char* name);
 	Font* loadFont(const char* name);
@@ -264,7 +264,7 @@ public:
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
-	GfxObj* loadObjects(const char *name);
+	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 	Common::String selectArchive(const Common::String& name);

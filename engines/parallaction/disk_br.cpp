@@ -249,7 +249,7 @@ Font* DosDisk_br::loadFont(const char* name) {
 }
 
 
-GfxObj* DosDisk_br::loadObjects(const char *name) {
+GfxObj* DosDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
 	Common::SeekableReadStream *stream = openFile(name);
 	GfxObj *obj = createInventoryObjects(*stream);
@@ -607,7 +607,11 @@ Common::ReadStream* AmigaDisk_br::loadSound(const char* name) {
 	return openFile("sfx/" + Common::String(name), ".sfx");
 }
 
-GfxObj* AmigaDisk_br::loadObjects(const char *name) {
+static const uint16 objectsMax[5] = {
+	5, 73, 71, 19, 48
+};
+
+GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
@@ -621,7 +625,24 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name) {
 	delete stream;
 	free(pal);
 
-	return new GfxObj(0, new SurfaceToFrames(surf));
+	uint16 max = objectsMax[part];
+	byte *data = new byte[max * 2601];
+
+	// Convert to the expected display format
+	for (int i = 0; i < max; i++) {
+		uint16 x = (i % 8) * 51;
+		uint16 y = (i / 8) * 51;
+
+		byte *src = (byte *)surf->getBasePtr(x, y);
+		byte *dst = data + i * 2601;
+		for (int h = 0; h < 51; h++) {
+			memcpy(dst, src, 51);
+			src += surf->w;
+			dst += 51;
+		}
+	}
+
+	return new GfxObj(0, new Cnv(max, 51, 51, data, true));
 }
 
 Common::String AmigaDisk_br::selectArchive(const Common::String& name) {
