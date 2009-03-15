@@ -554,34 +554,34 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 		%CFSMLWRITE Script &foo->data.script INTO fh;
-	break;
+		break;
 	case MEM_OBJ_CLONES:
 		%CFSMLWRITE CloneTable &foo->data.clones INTO fh;
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
 		%CFSMLWRITE LocalVariables &foo->data.locals INTO fh;
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
 		%CFSMLWRITE SystemStrings &foo->data.sys_strings INTO fh;
-	break;
+		break;
 	case MEM_OBJ_STACK:
 		%CFSMLWRITE int &foo->data.stack.nr INTO fh;
-	break;
+		break;
 	case MEM_OBJ_HUNK:
 		break;
 	case MEM_OBJ_STRING_FRAG:
 		break;
 	case MEM_OBJ_LISTS:
 		%CFSMLWRITE ListTable &foo->data.lists INTO fh;
-	break;
+		break;
 	case MEM_OBJ_NODES:
 		%CFSMLWRITE NodeTable &foo->data.nodes INTO fh;
-	break;
+		break;
 	case MEM_OBJ_DYNMEM:
 		%CFSMLWRITE DynMem  &foo->data.dynmem INTO fh;
-	break;
+		break;
 	default:
-	break;
+		break;
 	}
 }
 
@@ -596,34 +596,34 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	switch (foo->type) {
 	case MEM_OBJ_SCRIPT:
 		%CFSMLREAD Script &foo->data.script FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_CLONES:
 		%CFSMLREAD CloneTable &foo->data.clones FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
 		%CFSMLREAD LocalVariables &foo->data.locals FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
 		%CFSMLREAD SystemStrings &foo->data.sys_strings FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_LISTS:
 		%CFSMLREAD ListTable &foo->data.lists FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_NODES:
 		%CFSMLREAD NodeTable &foo->data.nodes FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	case MEM_OBJ_STACK:
 		%CFSMLREAD int &foo->data.stack.nr FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
-	break;
+		foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
+		break;
 	case MEM_OBJ_HUNK:
 		init_Hunk_table(&foo->data.hunks);
 		break;
-        case MEM_OBJ_STRING_FRAG:
-                break;
+	case MEM_OBJ_STRING_FRAG:
+		break;
 	case MEM_OBJ_DYNMEM:
 		%CFSMLREAD DynMem  &foo->data.dynmem FROM fh ERRVAR *hiteof LINECOUNTER *line;
-	break;
+		break;
 	default:
 		break;
 	}

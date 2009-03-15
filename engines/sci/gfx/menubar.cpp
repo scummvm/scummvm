@@ -53,10 +53,8 @@ void menubar_free(menubar_t *menubar) {
 		int j;
 
 		for (j = 0; j < menu->items_nr; j++) {
-			if (menu->items[j].keytext)
-				free(menu->items[j].keytext);
-			if (menu->items[j].text)
-				free(menu->items[j].text);
+			free(menu->items[j].keytext);
+			free(menu->items[j].text);
 		}
 
 		free(menu->items);
@@ -106,7 +104,8 @@ int _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *lef
 
 	if (right) {
 		gfxop_get_text_params(state, font, right, SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
-		total_left_size = MENU_BOX_CENTER_PADDING + (item->keytext_size = width);
+		item->keytext_size = width;
+		total_left_size = MENU_BOX_CENTER_PADDING + width;
 	}
 
 	item->enabled = 1;
@@ -323,8 +322,8 @@ int menubar_set_attribute(EngineState *s, int menu_nr, int item_nr, int attribut
 		break;
 
 	case MENU_ATTRIBUTE_KEY:
-		if (item->keytext)
-			free(item->keytext);
+		free(item->keytext);
+		item->keytext = 0;
 
 		if (value.segment) {
 

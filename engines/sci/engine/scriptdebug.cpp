@@ -542,7 +542,7 @@ static int show_node(EngineState *s, reg_t addr) {
 
 int objinfo(EngineState *s, reg_t pos);
 
-void song_lib_dump(songlib_t songlib, int line);
+void song_lib_dump(const songlib_t &songlib, int line);
 
 static int c_songlib_print(EngineState *s) {
 	song_lib_dump(s->sound.songlib, __LINE__);

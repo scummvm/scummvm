@@ -4252,7 +4252,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 557 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_CLONES:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4260,7 +4260,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 560 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4268,7 +4268,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 563 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4276,7 +4276,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 566 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_STACK:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4284,7 +4284,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 569 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_HUNK:
 		break;
 	case MEM_OBJ_STRING_FRAG:
@@ -4296,7 +4296,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 576 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_NODES:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4304,7 +4304,7 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 579 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_DYNMEM:
 #line 822 "engines/sci/engine/savegame.cfsml"
 // Auto-generated CFSML data writer code
@@ -4312,9 +4312,9 @@ void write_MemObject(Common::WriteStream *fh, MemObject const *foo) {
 	WSprintf(fh, "\n");
 // End of auto-generated CFSML data writer code
 #line 582 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	default:
-	break;
+		break;
 	}
 }
 
@@ -4381,7 +4381,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 599 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_CLONES:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4410,7 +4410,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 602 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LOCALS:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4439,7 +4439,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 605 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_SYS_STRINGS:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4468,7 +4468,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 608 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_LISTS:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4497,7 +4497,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 611 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_NODES:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4526,7 +4526,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 614 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	case MEM_OBJ_STACK:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4555,13 +4555,13 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 617 "engines/sci/engine/savegame.cfsml"
-	foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
-	break;
+		foo->data.stack.entries = (reg_t *)sci_calloc(foo->data.stack.nr, sizeof(reg_t));
+		break;
 	case MEM_OBJ_HUNK:
 		init_Hunk_table(&foo->data.hunks);
 		break;
-        case MEM_OBJ_STRING_FRAG:
-                break;
+	case MEM_OBJ_STRING_FRAG:
+		break;
 	case MEM_OBJ_DYNMEM:
 // Auto-generated CFSML data reader code
 #line 766 "engines/sci/engine/savegame.cfsml"
@@ -4590,7 +4590,7 @@ int read_MemObject(Common::SeekableReadStream *fh, MemObject *foo, const char *l
 	}
 // End of auto-generated CFSML data reader code
 #line 626 "engines/sci/engine/savegame.cfsml"
-	break;
+		break;
 	default:
 		break;
 	}

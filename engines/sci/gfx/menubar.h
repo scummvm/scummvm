@@ -88,7 +88,7 @@ struct EngineState;
 struct menu_item_t {
 	int type; /* Normal or hbar */
 	char *keytext; /* right-centered part of the text (the key) */
-	int keytext_size; /* Width of the right-centered text */
+	int keytext_size; // FIXME: Essentially unused
 
 	int flags;
 	byte said[MENU_SAID_SPEC_SIZE]; /* Said spec for this item */
