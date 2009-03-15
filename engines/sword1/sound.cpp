@@ -34,12 +34,12 @@
 #include "sword1/resman.h"
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
-#include "sword1/vag.h"
 
 #include "sound/flac.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
+#include "sound/vag.h"
 
 namespace Sword1 {
 
@@ -169,7 +169,7 @@ void Sound::playSample(QueueElement *elem) {
 						
 					if (SwordEngine::isPsx()) { ;
 						uint32 size = READ_LE_UINT32(sampleData);
-						Audio::AudioStream *audStream = new VagStream(new Common::MemoryReadStream(sampleData + 4, size-4), _fxList[elem->id].type == FX_LOOP);
+						Audio::AudioStream *audStream = new Audio::VagStream(new Common::MemoryReadStream(sampleData + 4, size-4), _fxList[elem->id].type == FX_LOOP);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan, false, false, false);
 					} else {
 						uint32 size = READ_LE_UINT32(sampleData + 0x28);
@@ -268,7 +268,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
 		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {
 			_cowFile.seek(index * 2048);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, new VagStream(_cowFile.readStream(sampleSize)), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, new Audio::VagStream(_cowFile.readStream(sampleSize)), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)

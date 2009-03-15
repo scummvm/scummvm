@@ -31,7 +31,6 @@
 
 #include "sword1/sword1.h"
 #include "sword1/music.h"
-#include "sword1/vag.h"
 
 #include "sound/aiff.h"
 #include "sound/flac.h"
@@ -39,6 +38,7 @@
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
+#include "sound/vag.h"
 
 #define SMP_BUFSIZE 8192
 
@@ -274,7 +274,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 
 	if (size != 0xffffffff) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = new VagStream(_file.readStream(size), loop);
+		_audioSource = new Audio::VagStream(_file.readStream(size), loop);
 		fadeUp();
 	} else {
 		_audioSource = NULL;

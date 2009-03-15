@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	null.o \
 	shorten.o \
 	timestamp.o \
+	vag.o \
 	voc.o \
 	vorbis.o \
 	wave.o \

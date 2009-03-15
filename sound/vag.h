@@ -22,14 +22,19 @@
  * $Id$
  *
  */
- 
-#ifndef SWORD1_VAG_H
-#define SWORD1_VAG_H
+
+/* Sound decoder used in engines:
+ * sword1 (PSX port of the game)
+ * sword2 (PSX port of the game)
+ */
+
+#ifndef SOUND_VAG_H
+#define SOUND_VAG_H
 
 #include "sound/audiostream.h"
 #include "common/stream.h"
  
-namespace Sword1 {
+namespace Audio {
 
 class VagStream : public Audio::AudioStream {
 public:
@@ -40,7 +45,6 @@ public:
 	bool endOfData() const { return _stream->pos() == _stream->size(); }
 	int getRate() const { return 11025; }
 	int readBuffer(int16 *buffer, const int numSamples);
-
 	void rewind();	
 
 private:

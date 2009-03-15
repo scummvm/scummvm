@@ -23,9 +23,9 @@
  *
  */
  
-#include "sword1/vag.h"
+#include "sound/vag.h"
 
-namespace Sword1 {
+namespace Audio {
 
 VagStream::VagStream(Common::SeekableReadStream *stream, bool loop) : _stream(stream) {
 	_samplesRemaining = 0;
