@@ -27,6 +27,7 @@
 #define SCI_ENGINE_INTMAP_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Sci {
 
@@ -50,8 +51,13 @@ enum {
  * All in all, this implementation is not very elegant, and wastes memory.
  * But it does the job. Any rewrite of this class would have to provide a
  * way to load the old savegames made using the current implementation.
+ *
+ * One approach to implement a replacement: Combine a Common::HashMap<int,int>
+ * with a bitfield which track which low-value integers are in use.
+ * That way, lookup just invokes the hashmap, and insertion (which requires
+ * finding an unmapped low-value integer) can still be implemented efficiently.
  */
-struct IntMapper {
+struct IntMapper : public Common::Serializable {
 
 	struct Node {
 		int key;
@@ -66,10 +72,16 @@ struct IntMapper {
 				     ** to base_value  */
 
 	void free_node_recursive(Node *node);
+protected:
+	void insert(int key, int idx);	// For loading only
 
 public:
 	IntMapper();
 	~IntMapper();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	void clear();
 
 	/**
 	 * Checks whether a key is in the map, adds it if neccessary.

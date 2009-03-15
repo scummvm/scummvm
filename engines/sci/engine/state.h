@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -105,9 +106,13 @@ public:
 	bool isOpen() const;
 };
 
-struct EngineState {
+struct EngineState : public Common::Serializable {
+public:
 	EngineState();
+	virtual ~EngineState();
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
+public:
 	int savegame_version;
 
 	int widget_serial_counter; /* Used for savegames */

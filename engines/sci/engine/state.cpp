@@ -178,4 +178,8 @@ EngineState::EngineState() : _dirseeker(this) {
 	successor = 0;
 }
 
+EngineState::~EngineState() {
+}
+
+
 } // End of namespace Sci

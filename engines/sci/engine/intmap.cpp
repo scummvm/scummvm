@@ -45,15 +45,20 @@ void IntMapper::free_node_recursive(Node *node) {
 
 
 IntMapper::~IntMapper() {
-	int i;
-
-	for (i = 0; i < DCS_INT_HASH_MAX; i++)
-		free_node_recursive(nodes[i]);
-
-	free_node_recursive(holes);
+	clear();
 
 	// Trigger problems for people who forget to loose the reference
 	base_value = -42000;
+}
+
+void IntMapper::clear() {
+	for (int i = 0; i < DCS_INT_HASH_MAX; i++) {
+		free_node_recursive(nodes[i]);
+		nodes[i] = 0;
+	}
+
+	free_node_recursive(holes);
+	holes = 0;
 }
 
 int IntMapper::checkKey(int key, bool add, bool *was_added) {
@@ -90,6 +95,51 @@ int IntMapper::checkKey(int key, bool add, bool *was_added) {
 
 	return (*node)->idx;
 }
+
+void IntMapper::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(base_value);
+	if (s.isLoading()) {
+		uint32 key, idx;
+		clear();
+		while (true) {
+			s.syncAsSint32LE(key);
+			if (key == 0xDEADBEEF)
+				break;
+			s.syncAsSint32LE(idx);
+			// Insert into the IntMapper
+			insert(key, idx);
+		}
+	} else {
+		// Just write out all mapped pairs
+		// We terminate by writing 4 times the value 0xFF
+		for (int i = 0; i < DCS_INT_HASH_MAX; ++i) {
+			Node *node = nodes[i];
+
+			while (node) {
+				s.syncAsSint32LE(node->key);
+				s.syncAsSint32LE(node->idx);
+				node = node->next;
+			}
+		}
+		uint32 tmp = 0xDEADBEEF;
+		s.syncAsSint32LE(tmp);
+	}
+}
+
+void IntMapper::insert(int key, int idx) {
+	Node **node = &(nodes[HASH(key)]);
+
+	while (*node && (key != (*node)->key))
+		node = &((*node)->next);
+
+	assert(0 == *node);	// Error out if the key was already present.
+
+	*node = (Node*)malloc(sizeof(Node));
+	(*node)->key = key;
+	(*node)->idx = idx;
+	(*node)->next = NULL;
+}
+
 
 int IntMapper::removeKey(int key) {
 	Node **node = &(nodes[HASH(key)]);
