@@ -472,7 +472,13 @@ void Input::initCursors() {
 			_mouseArrow = _donnaCursor;
 		} else {
 			// TODO: Where are the Amiga cursors?
-			_mouseArrow = 0;
+			Graphics::Surface *surf1 = new Graphics::Surface;
+			surf1->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			_comboArrow = new SurfaceToFrames(surf1);
+
+			Graphics::Surface *surf2 = new Graphics::Surface;
+			surf2->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			_mouseArrow = new SurfaceToFrames(surf2);
 		}
 		break;
 
