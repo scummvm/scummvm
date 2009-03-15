@@ -349,8 +349,12 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 			}
 
 			if (*s != transparentColor) {
-				byte v = _backgroundInfo->_mask->getValue(dp.x + col, dp.y + line);
-				if (z >= v) *d2 = *s;
+				if (_backgroundInfo->hasMask()) {
+					byte v = _backgroundInfo->_mask->getValue(dp.x + col, dp.y + line);
+					if (z >= v) *d2 = *s;
+				} else {
+					*d2 = *s;
+				}
 			}
 
 			s++;
@@ -395,8 +399,12 @@ void Gfx::bltMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface *s
 
 		for (uint16 j = 0; j < q.width(); j++) {
 			if (*s != transparentColor) {
-				byte v = _backgroundInfo->_mask->getValue(dp.x + j, dp.y + i);
-				if (z >= v) *d = *s;
+				if (_backgroundInfo->hasMask()) {
+					byte v = _backgroundInfo->_mask->getValue(dp.x + j, dp.y + i);
+					if (z >= v) *d = *s;
+				} else {
+					*d = *s;
+				}
 			}
 
 			s++;

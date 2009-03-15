@@ -481,14 +481,14 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 	}
 #if 0
 	if (mask) {
-		stream = tryOpenFile("msk/" + Common::String(path), ".msk");
+		stream = tryOpenFile("msk/" + Common::String(mask), ".msk");
 		if (stream) {
 			Graphics::PackBitsReadStream unpackedStream(*stream);
 			info._mask = new MaskBuffer;
+			info._path->bigEndian = false;
 			info._mask->create(info.width, info.height);
 			unpackedStream.read(info._mask->data, info._mask->size);
 			// TODO: there is another step to do after decompression...
-			loadMask(mask, *info._mask);
 			delete stream;
 		} else {
 			debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery: (%s) not found", mask);
