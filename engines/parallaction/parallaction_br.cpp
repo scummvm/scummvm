@@ -66,6 +66,7 @@ Common::Error Parallaction_br::init() {
 	} else {
 		_disk = new AmigaDisk_br(this);
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+		_soundManI = new AmigaSoundMan_br(this);
 	}
 
 	_disk->init();

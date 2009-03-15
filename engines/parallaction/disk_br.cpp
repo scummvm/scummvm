@@ -480,23 +480,18 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		delete stream;
 	}
 #if 0
-	if (mask && _mskDir.exists()) {
-		filepath = Common::String(mask) + ".msk";
-		node = _mskDir.getChild(filepath);
-		if (!node.exists()) {
-			filepath = Common::String(mask) + ".msk";
-			node = _commonMskDir.getChild(filepath);
-		}
-
-		if (node.exists()) {
-			stream.open(node);
-			stream.seek(0x30, SEEK_SET);
-			Graphics::PackBitsReadStream unpackedStream(stream);
-			info.mask.create(info.width, info.height);
-			unpackedStream.read(info.mask.data, info.mask.size);
+	if (mask) {
+		stream = tryOpenFile("msk/" + Common::String(path), ".msk");
+		if (stream) {
+			Graphics::PackBitsReadStream unpackedStream(*stream);
+			info._mask = new MaskBuffer;
+			info._mask->create(info.width, info.height);
+			unpackedStream.read(info._mask->data, info._mask->size);
 			// TODO: there is another step to do after decompression...
-			loadMask(info, stream);
-			stream.close();
+			loadMask(mask, *info._mask);
+			delete stream;
+		} else {
+			debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery: (%s) not found", mask);
 		}
 	}
 #endif
@@ -603,7 +598,7 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 
 Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadMusic");
-	return openFile("msc/" + Common::String(name), ".msc");
+	return tryOpenFile("msc/" + Common::String(name), ".msc");
 }
 
 

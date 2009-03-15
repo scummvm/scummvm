@@ -182,6 +182,8 @@ public:
 
 class SoundMan_br : public SoundManImpl {
 protected:
+	Audio::Mixer	*_mixer;
+
 	Common::String _musicFile;
 
 	virtual void playMusic() = 0;
@@ -201,6 +203,20 @@ public:
 	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
 	~DosSoundMan_br();
 	
+	void playMusic();
+	void stopMusic();
+	void pause(bool p);
+};
+
+class AmigaSoundMan_br : public SoundMan_br {
+
+	Audio::AudioStream *_musicStream;
+	Audio::SoundHandle	_musicHandle;
+
+public:
+	AmigaSoundMan_br(Parallaction_br *vm);
+	~AmigaSoundMan_br();
+
 	void playMusic();
 	void stopMusic();
 	void pause(bool p);

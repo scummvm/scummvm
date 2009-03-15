@@ -26,8 +26,11 @@
 #include "sound/mixer.h"
 #include "common/stream.h"
 #include "common/util.h"
+
+#include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/mods/protracker.h"
 
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"
@@ -414,6 +417,44 @@ void DosSoundMan_br::stopMusic() {
 
 void DosSoundMan_br::pause(bool p) {
 	_midiPlayer->pause(p);
+}
+
+AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm) {
+	_musicStream = 0;
+}
+
+AmigaSoundMan_br::~AmigaSoundMan_br() {
+}
+
+void AmigaSoundMan_br::playMusic() {
+	stopMusic();
+
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playMusic()");
+
+	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile.c_str());
+	if (!stream)
+		return;
+
+	_musicStream = Audio::makeProtrackerStream(stream);
+	delete stream;
+
+	debugC(3, kDebugAudio, "AmigaSoundMan_ns::playMusic(): created new music stream");
+
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, false);
+}
+
+void AmigaSoundMan_br::stopMusic() {
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopMusic()");
+
+	if (_mixer->isSoundHandleActive(_musicHandle)) {
+		_mixer->stopHandle(_musicHandle);
+		delete _musicStream;
+		_musicStream = 0;
+	}
+}
+
+void AmigaSoundMan_br::pause(bool p) {
+	_mixer->pauseHandle(_musicHandle, p);
 }
 
 void SoundMan_br::setMusicFile(const char *name) {
