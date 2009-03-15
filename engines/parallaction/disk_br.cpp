@@ -626,6 +626,9 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	free(pal);
 
 	uint16 max = objectsMax[part];
+	if (_vm->getFeatures() & GF_DEMO)
+		max = 72;
+
 	byte *data = new byte[max * 2601];
 
 	// Convert to the expected display format
