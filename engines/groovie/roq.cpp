@@ -152,7 +152,7 @@ void ROQPlayer::buildShowBuf() {
 
 	for (int line = 0; line < _showBuf.h; line++) {
 		byte *out = (byte *)_showBuf.getBasePtr(0, line);
-		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scale);
+		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _showBuf.w; x++) {
 #ifdef DITHER
 			*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
@@ -161,7 +161,7 @@ void ROQPlayer::buildShowBuf() {
 			*out = *in;
 #endif
 			out++;
-			if (!(x % _scale))
+			if (!(x % _scaleX))
 				in += _prevBuf->bytesPerPixel;
 		}
 #ifdef DITHER
@@ -305,7 +305,8 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	// If the size of the image has changed, resize the buffers
 	if ((width != _currBuf->w) || (height != _currBuf->h)) {
 		// Calculate the maximum scale that fits the screen
-		_scale = MIN(_syst->getWidth() / width, _syst->getHeight() / height);
+		_scaleX = MIN(_syst->getWidth() / width, 2);
+		_scaleY = MIN(_syst->getHeight() / height, 2);
 
 		// Free the previous surfaces
 		_currBuf->free();
@@ -315,12 +316,12 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Allocate new buffers
 		_currBuf->create(width, height, 3);
 		_prevBuf->create(width, height, 3);
-		_showBuf.create(width * _scale, height * _scale, 1);
+		_showBuf.create(width * _scaleX, height * _scaleY, 1);
 
 #ifdef DITHER
 		// Reset the dithering algorithm with the new width
 		delete _dither;
-		_dither = new Graphics::SierraLight(width * _scale, _paletteLookup);
+		_dither = new Graphics::SierraLight(width * _scaleX, _paletteLookup);
 #endif
 	}
 
@@ -650,8 +651,8 @@ void ROQPlayer::paint8(byte i, int destx, int desty) {
 }
 
 void ROQPlayer::copy(byte size, int destx, int desty, int offx, int offy) {
-	offx *= _offScale / _scale;
-	offy *= _scale;
+	offx *= _offScale / _scaleX;
+	offy *= _offScale / _scaleY;
 
 	// Get the beginning of the first line
 	byte *dst = (byte *)_currBuf->getBasePtr(destx, desty);

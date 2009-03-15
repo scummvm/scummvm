@@ -88,7 +88,7 @@ private:
 	Graphics::Surface *_prevBuf;
 	Graphics::Surface _showBuf;
 	void buildShowBuf();
-	byte _scale;
+	byte _scaleX, _scaleY;
 	byte _offScale;
 	bool _dirty;
 	byte _alpha;
