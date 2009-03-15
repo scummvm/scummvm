@@ -392,7 +392,7 @@ void MidiPlayer_MSC::timerCallback(void *p) {
 	player->updateTimer();
 }
 
-DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm, MidiDriver *driver) {
+DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm, MidiDriver *driver) : SoundMan_br(vm) {
 	_midiPlayer = new MidiPlayer_MSC(driver);
 	assert(_midiPlayer);
 }
@@ -419,7 +419,7 @@ void DosSoundMan_br::pause(bool p) {
 	_midiPlayer->pause(p);
 }
 
-AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm) {
+AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm)  {
 	_musicStream = 0;
 }
 
@@ -455,6 +455,10 @@ void AmigaSoundMan_br::stopMusic() {
 
 void AmigaSoundMan_br::pause(bool p) {
 	_mixer->pauseHandle(_musicHandle, p);
+}
+
+SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
+	_mixer = _vm->_mixer;
 }
 
 void SoundMan_br::setMusicFile(const char *name) {

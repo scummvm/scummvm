@@ -182,6 +182,7 @@ public:
 
 class SoundMan_br : public SoundManImpl {
 protected:
+	Parallaction_br	*_vm;
 	Audio::Mixer	*_mixer;
 
 	Common::String _musicFile;
@@ -191,6 +192,8 @@ protected:
 	virtual void pause(bool p) = 0;
 
 public:
+	SoundMan_br(Parallaction_br *vm);
+
 	virtual void execute(int command, const char *parm);	
 	void setMusicFile(const char *parm);
 };
