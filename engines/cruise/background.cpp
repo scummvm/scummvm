@@ -29,7 +29,7 @@ namespace Cruise {
 
 uint8 colorMode = 0;
 
-uint8 *backgroundPtrtable[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };	// wasn't initialized in original, but it's probably better
+uint8 *backgroundScreens[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };	// wasn't initialized in original, but it's probably better
 backgroundTableStruct backgroundTable[8];
 
 char hwPage[64000];
@@ -92,11 +92,11 @@ int loadBackground(const char *name, int idx) {
 
 	printf("Loading BG: %s\n", name);
 
-	if (!backgroundPtrtable[idx]) {
-		backgroundPtrtable[idx] = (uint8 *)mallocAndZero(320 * 200);
+	if (!backgroundScreens[idx]) {
+		backgroundScreens[idx] = (uint8 *)mallocAndZero(320 * 200);
 	}
 
-	if (!backgroundPtrtable[idx]) {
+	if (!backgroundScreens[idx]) {
 		backgroundTable[idx].name[0] = 0;
 		return (-2);
 	}
@@ -184,19 +184,19 @@ int loadBackground(const char *name, int idx) {
 		gfxModuleData_setPal256(palScreen[idx]);
 
 		// read image data
-		gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[idx]);
+		gfxModuleData_gfxClearFrameBuffer(backgroundScreens[idx]);
 
 		switch (mode) {
 		case 0:
 		case 4:
-			convertGfxFromMode4(ptr2, 320, 200, backgroundPtrtable[idx]);
+			convertGfxFromMode4(ptr2, 320, 200, backgroundScreens[idx]);
 			ptr2 += 32000;
 			break;
 		case 5:
-			convertGfxFromMode5(ptr2, 320, 200, backgroundPtrtable[idx]);
+			convertGfxFromMode5(ptr2, 320, 200, backgroundScreens[idx]);
 			break;
 		case 8:
-			memcpy(backgroundPtrtable[idx], ptr2, 320 * 200);
+			memcpy(backgroundScreens[idx], ptr2, 320 * 200);
 			ptr2 += 320 * 200;
 			break;
 		}

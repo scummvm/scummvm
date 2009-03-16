@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "cruise/cruise.h"
 
 namespace Cruise {
 
@@ -62,7 +63,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 	if (pIncrust->ptr == NULL)
 		return;
 
-	uint8* pBackground = backgroundPtrtable[pIncrust->backgroundIdx];
+	uint8* pBackground = backgroundScreens[pIncrust->backgroundIdx];
 	if (pBackground == NULL)
 		return;
 
@@ -90,15 +91,14 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 
 	ptr = filesDatabase[params.fileIdx].subData.ptr;
 
-	if (!ptr) {
+	// Don't process any further if not a sprite or polygon
+	if (!ptr) return NULL;
+	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) && 
+		(filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY)) {
 		return NULL;
 	}
 
-	if (filesDatabase[params.fileIdx].subData.resourceType != 4 && filesDatabase[params.fileIdx].subData.resourceType != 8) {
-		return NULL;
-	}
-
-	backgroundPtr = backgroundPtrtable[backgroundIdx];
+	backgroundPtr = backgroundScreens[backgroundIdx];
 
 	assert(backgroundPtr != NULL);
 
@@ -139,16 +139,18 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	newElement->ptr = NULL;
 	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
 
-	if (filesDatabase[params.fileIdx].subData.resourceType == 4) {	// sprite
+	if (filesDatabase[params.fileIdx].subData.resourceType == OBJ_TYPE_SPRITE) {
+		// sprite
 		int width = filesDatabase[params.fileIdx].width;
 		int height = filesDatabase[params.fileIdx].height;
-
 		if (saveBuffer == 1) {
 			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
 		}
 
-		drawSprite(width, height, NULL, filesDatabase[params.fileIdx].subData.ptr, newElement->Y, newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
-	} else {			// poly
+		drawSprite(width, height, NULL, filesDatabase[params.fileIdx].subData.ptr, newElement->Y,
+			newElement->X, backgroundPtr, filesDatabase[params.fileIdx].subData.ptrMask);
+	} else {
+		// poly
 		if (saveBuffer == 1) {
 			int newX;
 			int newY;
@@ -202,9 +204,9 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 				int width = filesDatabase[frame].width;
 				int height = filesDatabase[frame].height;
 
-				drawSprite(width, height, NULL, filesDatabase[frame].subData.ptr, pl->Y, pl->X, backgroundPtrtable[pl->backgroundIdx], filesDatabase[frame].subData.ptrMask);
+				drawSprite(width, height, NULL, filesDatabase[frame].subData.ptr, pl->Y, pl->X, backgroundScreens[pl->backgroundIdx], filesDatabase[frame].subData.ptrMask);
 			} else {			// poly
-				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundPtrtable[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
+				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundScreens[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
 			}
 		}
 

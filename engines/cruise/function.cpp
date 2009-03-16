@@ -828,7 +828,7 @@ int16 Op_SetActiveBackground(void) {
 	int newPlane = popVar();
 
 	if (newPlane >= 0 && newPlane < 8) {
-		if (backgroundPtrtable[newPlane]) {
+		if (backgroundScreens[newPlane]) {
 			masterScreen = newPlane;
 			switchPal = 1;
 		}
@@ -841,8 +841,8 @@ int16 Op_RemoveBackground(void) {
 	int backgroundIdx = popVar();
 
 	if (backgroundIdx > 0 && backgroundIdx < 8) {
-		if (backgroundPtrtable[backgroundIdx])
-			free(backgroundPtrtable[backgroundIdx]);
+		if (backgroundScreens[backgroundIdx])
+			free(backgroundScreens[backgroundIdx]);
 
 		if (masterScreen == backgroundIdx)
 			masterScreen = 0;

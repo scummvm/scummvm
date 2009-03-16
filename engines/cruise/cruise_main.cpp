@@ -374,7 +374,7 @@ void resetFileEntry(int32 entryNumber) {
 	filesDatabase[entryNumber].subData.ptrMask = NULL;
 	filesDatabase[entryNumber].widthInColumn = 0;
 	filesDatabase[entryNumber].width = 0;
-	filesDatabase[entryNumber].resType = 0;
+	filesDatabase[entryNumber].resType = OBJ_TYPE_LINE;
 	filesDatabase[entryNumber].height = 0;
 	filesDatabase[entryNumber].subData.index = -1;
 	filesDatabase[entryNumber].subData.resourceType = 0;
@@ -578,7 +578,9 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
+		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && 
+				(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || 
+				currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 
 			strcpy(objectName, pObjectName);
@@ -639,7 +641,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								offset += j;
 
 								if (offset >= 0) {
-									if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
+									if (filesDatabase[offset].resType == OBJ_TYPE_LINE && 
+											filesDatabase[offset].subData.ptr) {
 										dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 									}
 								}
@@ -675,7 +678,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								}
 							}
 						}
-					} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {
+					} else if (currentObject->type == OBJ_TYPE_VIRTUAL) {
 						int x = params.X + x2;
 						int y = params.Y + y2;
 						int width = params.fileIdx;

@@ -73,16 +73,18 @@ enum MouseButton {
 #define ASSERT_PTR assert
 #define ASSERT assert
 
-#define	OBJ_TYPE_LINE		  0
-#define	OBJ_TYPE_MASK		  1
-#define	OBJ_TYPE_BGMK		  2
-#define	OBJ_TYPE_VIRTUEL	  3
-#define	OBJ_TYPE_SPRITE		  4
-#define	OBJ_TYPE_MSG		  5
-#define	OBJ_TYPE_SOUND		  6
-#define	OBJ_TYPE_FONT		  7
-#define	OBJ_TYPE_POLY		  8
-#define	OBJ_TYPE_EXIT		  9
+enum ResType {
+	OBJ_TYPE_LINE = 0,
+	OBJ_TYPE_MASK = 1,
+	OBJ_TYPE_BGMASK = 2,
+	OBJ_TYPE_VIRTUAL = 3,
+	OBJ_TYPE_SPRITE = 4,
+	OBJ_TYPE_MESSAGE = 5,
+	OBJ_TYPE_SOUND = 6,
+	OBJ_TYPE_FONT = 7,
+	OBJ_TYPE_POLY = 8,
+	OBJ_TYPE_EXIT = 9
+};
 
 extern gfxEntryStruct* linkedMsgList;
 

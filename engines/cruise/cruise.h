@@ -40,7 +40,7 @@ enum CruiseGameType {
 	GType_CRUISE = 1
 };
 
-#define GAME_FRAME_DELAY 70
+#define GAME_FRAME_DELAY 40
 
 #define MAX_LANGUAGE_STRINGS 25
 
@@ -116,7 +116,6 @@ enum {
 	kCmpGT = (1 << 1),
 	kCmpLT = (1 << 2)
 };
-
 
 } // End of namespace Cruise
 

@@ -150,7 +150,7 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 	pObject->next = pNewElement;
 
 	pNewElement->idx = messageIdx;
-	pNewElement->type = OBJ_TYPE_MSG;
+	pNewElement->type = OBJ_TYPE_MESSAGE;
 	pNewElement->backgroundPlane = backgroundPlane;
 	pNewElement->overlay = overlayIdx;
 	pNewElement->x = x;

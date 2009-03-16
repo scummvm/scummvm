@@ -148,9 +148,9 @@ int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 
 	int maskSize = height * width;	// for sprites: width * height
 
-	if (resType == 4) {
+	if (resType == OBJ_TYPE_SPRITE) {
 		div = maskSize / 4;
-	} else if (resType == 5) {
+	} else if (resType == OBJ_TYPE_MESSAGE) {
 		width = (width * 8) / 5;
 	}
 
@@ -193,9 +193,9 @@ int createResFileEntry(int width, int height, int resType) {
 
 	size = width * height;	// for sprites: width * height
 
-	if (resType == 4) {
+	if (resType == OBJ_TYPE_SPRITE) {
 		div = size / 4;
-	} else if (resType == 5) {
+	} else if (resType == OBJ_TYPE_MESSAGE) {
 		width = (width * 8) / 5;
 	}
 
