@@ -31,8 +31,9 @@
 // or something like that.
 
 #include "sci/gfx/gfx_resource.h"
-#include "sci/gfx/sbtree.h"
 #include "sci/scicore/resource.h"
+
+#include "common/hashmap.h"
 
 namespace Sci {
 
@@ -81,6 +82,8 @@ struct gfx_resource_t {
 
 struct gfx_options_t;
 
+typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
+
 struct gfx_resstate_t {
 	int version; /* Interpreter version */
 	gfx_options_t *options;
@@ -92,7 +95,7 @@ struct gfx_resstate_t {
 			  */
 	int tag_lock_counter; /* lock counter value at tag time */
 
-	sbtree_t *resource_trees[GFX_RESOURCE_TYPES_NR];
+	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
 	ResourceManager *resManager;
 };
 
@@ -236,19 +239,6 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 ** resource manager code.
 ** Also, only the lower 20 bits are available to the interpreter.
 ** (Yes, this isn't really a "hash" in the traditional sense...)
-*/
-
-int *gfxr_interpreter_get_resources(ResourceManager& resourceManager, gfx_resource_type_t type,
-	int version, int *entries_nr);
-/* Retreives all resources of a specified type that are available from the interpreter
-** Parameters: (gfx_resstate_t *) state: The relevant resource state
-**             (gfx_respirce_type_t) type: The resource type to query
-**             (int) version: The interpreter version
-**             (int *) entries_nr: The variable the number of entries will eventually be stored in
-** Returns   : (int *) An array of resource numbers
-** Unsupported/non-existing resources should return NULL here; this is equivalent to supported
-** resources of which zero are available.
-** The returned structure (if non-zero) must be freed by the querying code (the resource manager).
 */
 
 gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID);

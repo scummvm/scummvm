@@ -202,46 +202,6 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager& resourceManager, int 
 	return gfxr_draw_cursor(resid, res->data, res->size, version != SCI_VERSION_0);
 }
 
-int *gfxr_interpreter_get_resources(ResourceManager& resourceManager, gfx_resource_type_t type, int version, int *entries_nr) {
-	ResourceType restype;
-	int *resources;
-	int count = 0;
-	int top = sci_max_resource_nr[version] + 1;
-	int i;
-	switch (type) {
-
-	case GFX_RESOURCE_TYPE_VIEW:
-		restype = kResourceTypeView;
-		break;
-
-	case GFX_RESOURCE_TYPE_PIC:
-		restype = kResourceTypePic;
-		break;
-
-	case GFX_RESOURCE_TYPE_CURSOR:
-		restype = kResourceTypeCursor;
-		break;
-
-	case GFX_RESOURCE_TYPE_FONT:
-		restype = kResourceTypeFont;
-		break;
-
-	default:
-		GFXDEBUG("Unsupported resource %d\n", type);
-		return NULL;
-	}
-
-	resources = (int *)sci_malloc(sizeof(int) * top);
-
-	for (i = 0; i < top; i++)
-		if (resourceManager.testResource(restype, i))
-			resources[count++] = i;
-
-	*entries_nr = count;
-
-	return resources;
-}
-
 Palette *gfxr_interpreter_get_static_palette(ResourceManager& resourceManager, int version, int *colors_nr) {
 	if (version >= SCI_VERSION_01_VGA)
 		return gfxr_interpreter_get_palette(resourceManager, version, colors_nr, 999);

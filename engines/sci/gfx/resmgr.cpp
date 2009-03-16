@@ -51,8 +51,7 @@ struct param_struct {
 };
 
 gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) {
-	gfx_resstate_t *state = (gfx_resstate_t *)sci_malloc(sizeof(gfx_resstate_t));
-	int ii;
+	gfx_resstate_t *state = new gfx_resstate_t();
 
 	state->version = version;
 	state->options = options;
@@ -61,23 +60,6 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 	state->static_palette = 0;
 
 	state->tag_lock_counter = state->lock_counter = 0;
-	for (ii = 0; ii < GFX_RESOURCE_TYPES_NR; ii++) {
-		gfx_resource_type_t i = (gfx_resource_type_t) ii;
-		sbtree_t *tree;
-		int entries_nr;
-		int *resources = gfxr_interpreter_get_resources(*(state->resManager), i, version, &entries_nr);
-
-		if (!resources)
-			state->resource_trees[i] = NULL;
-		else {
-			tree = sbtree_new(entries_nr, resources);
-			if (!tree) {
-				GFXWARN("Failed to allocate tree for %d entries of resource type %d!\n", entries_nr, i);
-			}
-			state->resource_trees[i] = tree;
-			free(resources);
-		}
-	}
 
 	return state;
 }
@@ -127,78 +109,18 @@ void gfxr_free_resource(gfx_driver_t *driver, gfx_resource_t *resource, int type
 	free(resource);
 }
 
-#undef FREECMD
-
-void *gfxr_sbtree_free_func(sbtree_t *tree, const int key, const void *value, void *args) {
-	struct param_struct *params = (struct param_struct *) args;
-	int type = params->args[0];
-	gfx_driver_t *driver = params->driver;
-
-	if (value)
-		gfxr_free_resource(driver, (gfx_resource_t *) value, type);
-
-	return NULL;
-}
-
-#define SBTREE_FREE_TAGGED_ARG_TYPE 0
-#define SBTREE_FREE_TAGGED_ARG_TAGVALUE 1
-#define SBTREE_FREE_TAGGED_ARG_ACTION 2
-
-#define ARG_ACTION_RESET 0
-#define ARG_ACTION_DECREMENT 1
-
-void *gfxr_sbtree_free_tagged_func(sbtree_t *tree, const int key, const void *value, void *args) {
-	struct param_struct *params = (struct param_struct *) args;
-	int type = params->args[SBTREE_FREE_TAGGED_ARG_TYPE];
-	int tag_value = params->args[SBTREE_FREE_TAGGED_ARG_TAGVALUE];
-	int action = params->args[SBTREE_FREE_TAGGED_ARG_ACTION];
-	gfx_driver_t *driver = params->driver;
-	gfx_resource_t *resource = (gfx_resource_t *) value;
-	if (resource) {
-		if (resource->lock_sequence_nr < tag_value) {
-			gfxr_free_resource(driver, (gfx_resource_t *) value, type);
-			return NULL;
-		} else {
-			if (action == ARG_ACTION_RESET)
-				resource->lock_sequence_nr = 0;
-			else
-				(resource->lock_sequence_nr)--;
-			// FIXME: const_cast does not sound like a good idea,
-			// maybe we should just make the value parameter
-			// non const instead?
-			return const_cast<void *>(value);
-		}
-	} else
-		return NULL;
-}
-
 void gfxr_free_all_resources(gfx_driver_t *driver, gfx_resstate_t *state) {
-	struct param_struct params;
-	int i;
-	sbtree_t *tree = NULL;
-
-	for (i = 0; i < GFX_RESOURCE_TYPES_NR; i++)
-		if ((tree = state->resource_trees[i])) {
-			params.args[0] = i;
-			params.driver = driver;
-			sbtree_foreach(tree, (void *) &params, gfxr_sbtree_free_func);
+	for (int type = 0; type < GFX_RESOURCE_TYPES_NR; ++type) {
+		for (IntResMap::iterator iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+			gfxr_free_resource(driver, iter->_value, type);
+			iter->_value = 0;
 		}
+	}
 }
 
 void gfxr_free_resource_manager(gfx_driver_t *driver, gfx_resstate_t *state) {
-	struct param_struct params;
-	int i;
-	sbtree_t *tree = NULL;
-
-	for (i = 0; i < GFX_RESOURCE_TYPES_NR; i++)
-		if ((tree = state->resource_trees[i])) {
-			params.args[0] = i;
-			params.driver = driver;
-			sbtree_foreach(tree, (void *)&params, gfxr_sbtree_free_func);
-			sbtree_free(tree);
-		}
-
-	free(state);
+	gfxr_free_all_resources(driver, state);
+	delete state;
 }
 
 void gfxr_tag_resources(gfx_resstate_t *state) {
@@ -207,22 +129,37 @@ void gfxr_tag_resources(gfx_resstate_t *state) {
 
 void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state) {
 	// Current heuristics: free tagged views and old pics
-	struct param_struct params;
 
-	if (state->resource_trees[GFX_RESOURCE_TYPE_VIEW]) {
-		params.args[SBTREE_FREE_TAGGED_ARG_TYPE] = GFX_RESOURCE_TYPE_VIEW;
-		params.args[SBTREE_FREE_TAGGED_ARG_TAGVALUE] = state->tag_lock_counter;
-		params.args[SBTREE_FREE_TAGGED_ARG_ACTION] = ARG_ACTION_RESET;
-		params.driver = driver;
-		sbtree_foreach(state->resource_trees[GFX_RESOURCE_TYPE_VIEW], (void *) &params, gfxr_sbtree_free_tagged_func);
+	IntResMap::iterator iter;
+	int type;
+	const int tmp = state->tag_lock_counter;
+
+	type = GFX_RESOURCE_TYPE_VIEW;
+	for (iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+		gfx_resource_t *resource = iter->_value;
+
+		if (resource) {
+			if (resource->lock_sequence_nr < tmp) {
+				gfxr_free_resource(driver, resource, type);
+				iter->_value = 0;
+			} else {
+				resource->lock_sequence_nr = 0;
+			}
+		}
 	}
 
-	if (state->resource_trees[GFX_RESOURCE_TYPE_PIC]) {
-		params.args[SBTREE_FREE_TAGGED_ARG_TYPE] = GFX_RESOURCE_TYPE_PIC;
-		params.args[SBTREE_FREE_TAGGED_ARG_TAGVALUE] = 0;
-		params.args[SBTREE_FREE_TAGGED_ARG_ACTION] = ARG_ACTION_DECREMENT;
-		params.driver = driver;
-		sbtree_foreach(state->resource_trees[GFX_RESOURCE_TYPE_PIC], (void *) &params, gfxr_sbtree_free_tagged_func);
+	type = GFX_RESOURCE_TYPE_PIC;
+	for (iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+		gfx_resource_t *resource = iter->_value;
+
+		if (resource) {
+			if (resource->lock_sequence_nr < 0) {
+				gfxr_free_resource(driver, resource, type);
+				iter->_value = 0;
+			} else {
+				resource->lock_sequence_nr--;
+			}
+		}
 	}
 
 	state->tag_lock_counter = 0;
@@ -257,18 +194,15 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int default_palette, int scaled) {
 	gfxr_pic_t *npic = NULL;
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_PIC;
-	sbtree_t *tree = state->resource_trees[restype];
+	IntResMap &resMap = state->_resourceMaps[restype];
 	gfx_resource_t *res = NULL;
 	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 	int must_post_process_pic = 0;
 	int need_unscaled = (state->driver->mode->xfact != 1 || state->driver->mode->yfact != 1);
 
-	if (!tree)
-		return NULL;
-
 	hash |= (flags << 20) | ((default_palette & 0x7) << 28);
 
-	res = (gfx_resource_t *) sbtree_get(tree, nr);
+	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
 		gfxr_pic_t *pic;
@@ -317,7 +251,7 @@ gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags, int
 			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
 			res->ID = GFXR_RES_ID(restype, nr);
 			res->lock_sequence_nr = state->options->buffer_pics_nr;
-			sbtree_set(tree, nr, (void *)res);
+			resMap[nr] = res;
 		} else {
 			gfxr_free_pic(state->driver, res->scaled_data.pic);
 			if (res->unscaled_data.pic)
@@ -395,23 +329,18 @@ static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode)
 gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
 							int old_default_palette, int default_palette, int scaled) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_PIC;
-	sbtree_t *tree = state->resource_trees[restype];
+	IntResMap &resMap = state->_resourceMaps[restype];
 	gfxr_pic_t *pic = NULL;
 	gfx_resource_t *res = NULL;
 	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 	int need_unscaled = !(state->options->pic0_unscaled) && (state->driver->mode->xfact != 1 || state->driver->mode->yfact != 1);
 
-	if (!tree) {
-		GFXERROR("No pics registered\n");
-		return NULL;
-	}
-
-	res = (gfx_resource_t *)sbtree_get(tree, old_nr);
+	res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
 	if (!res || (res->mode != MODE_INVALID && res->mode != hash)) {
 		gfxr_get_pic(state, old_nr, 0, flags, old_default_palette, scaled);
 
-		res = (gfx_resource_t *)sbtree_get(tree, old_nr);
+		res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
 		if (!res) {
 			GFXWARN("Attempt to add pic %d to non-existing pic %d\n", new_nr, old_nr);
@@ -446,17 +375,14 @@ gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int m
 
 gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_VIEW;
-	sbtree_t *tree = state->resource_trees[restype];
+	IntResMap &resMap = state->_resourceMaps[restype];
 	gfx_resource_t *res = NULL;
 	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, palette);
 	gfxr_view_t *view = NULL;
 	gfxr_loop_t *loop_data = NULL;
 	gfx_pixmap_t *cel_data = NULL;
 
-	if (!tree)
-		return NULL;
-
-	res = (gfx_resource_t *) sbtree_get(tree, nr);
+	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
 		view = gfxr_interpreter_get_view(*(state->resManager), nr, palette, state->static_palette, state->version);
@@ -470,7 +396,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 			res->ID = GFXR_RES_ID(restype, nr);
 			res->lock_sequence_nr = state->tag_lock_counter;
 			res->mode = hash;
-			sbtree_set(tree, nr, (void *)res);
+			resMap[nr] = res;
 		} else {
 			gfxr_free_view(state->driver, res->unscaled_data.view);
 		}
@@ -529,18 +455,13 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 
 gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_t *state, int nr, int scaled) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_FONT;
-	sbtree_t *tree = NULL;
+	IntResMap &resMap = state->_resourceMaps[restype];
 	gfx_resource_t *res = NULL;
 	int hash;
 
-	tree = state->resource_trees[restype];
-
 	hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 
-	if (!tree)
-		return NULL;
-
-	res = (gfx_resource_t *)sbtree_get(tree, nr);
+	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
 		gfx_bitmap_font_t *font = gfxr_interpreter_get_font(resourceManager, nr);
@@ -554,7 +475,7 @@ gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_
 			res->ID = GFXR_RES_ID(restype, nr);
 			res->lock_sequence_nr = state->tag_lock_counter;
 			res->mode = hash;
-			sbtree_set(tree, nr, (void *)res);
+			resMap[nr] = res;
 		} else {
 			gfxr_free_font(res->unscaled_data.font);
 		}
@@ -573,14 +494,11 @@ gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_
 
 gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_CURSOR;
-	sbtree_t *tree = state->resource_trees[restype];
+	IntResMap &resMap = state->_resourceMaps[restype];
 	gfx_resource_t *res = NULL;
 	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
 
-	if (!tree)
-		return NULL;
-
-	res = (gfx_resource_t *)sbtree_get(tree, nr);
+	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
 		gfx_pixmap_t *cursor = gfxr_interpreter_get_cursor(*(state->resManager), nr, state->version);
@@ -594,7 +512,7 @@ gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr) {
 			res->ID = GFXR_RES_ID(restype, nr);
 			res->lock_sequence_nr = state->tag_lock_counter;
 			res->mode = hash;
-			sbtree_set(tree, nr, (void *)res);
+			resMap[nr] = res;
 		} else {
 			gfx_free_pixmap(state->driver, res->unscaled_data.pointer);
 		}

@@ -183,32 +183,6 @@ int *arrdup(int *src, int count) {
 	return retval;
 }
 
-int *gfxr_interpreter_get_resources(gfx_resstate_t *resstate, gfx_resource_type_t type,
-	int version, int *entries_nr, void *internal) {
-	switch (type) {
-
-	case GFX_RESOURCE_TYPE_VIEW:
-		*entries_nr = TEST_VIEWS_NR;
-		return arrdup(test_views, TEST_VIEWS_NR);
-
-	case GFX_RESOURCE_TYPE_PIC:
-		*entries_nr = TEST_PICS_NR;
-		return arrdup(test_pics, TEST_PICS_NR);
-
-	case GFX_RESOURCE_TYPE_FONT:
-		*entries_nr = TEST_FONTS_NR;
-		return arrdup(test_fonts, TEST_FONTS_NR);
-
-	case GFX_RESOURCE_TYPE_CURSOR:
-		*entries_nr = TEST_CURSORS_NR;
-		return arrdup(test_cursors, TEST_CURSORS_NR);
-
-	default:
-		fprintf(stderr, "Attept to get resource list for invalid resource type %d\n", type);
-		return NULL;
-	}
-}
-
 #define PIC_COLORS_NR 32
 
 gfx_pixmap_color_t pic_colors[PIC_COLORS_NR] = {
