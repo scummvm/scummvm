@@ -869,7 +869,12 @@ enum StringIds {
 	// which matches the original Indy3 save/load code. See also the notes
 	// on Feature Request #1666521.
 	STRINGID_IQ_EPISODE = 7,
-	STRINGID_IQ_SERIES = 9
+	STRINGID_IQ_SERIES = 9,
+	// The string IDs of the first savegame name, used as an offset to determine
+	// the IDs of all savenames.
+	// Loom is the only game whose savenames start with a different ID.
+	STRINGID_SAVENAME1 = 10,
+	STRINGID_SAVENAME1_LOOM = 9
 };
 
 void ScummEngine_v5::o5_saveLoadVars() {
@@ -1235,26 +1240,43 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		result = 100;
 		break;
 	case 0x20: // drive
-		if (_game.id == GID_INDY3) {
-			// 0 = hard drive
-			// 1 = disk drive
-			result = 0;
+		if (_game.version <= 3) {
+			// 0 = ???
+			// [1,2] = disk drive [A:,B:]
+			// 3 = hard drive
+			result = 3;
 		} else {
 			// set current drive
 			result = 1;
 		}
 		break;
 	case 0x40: // load
-		if (loadState(slot, _saveTemporaryState))
+		if (loadState(slot, false))
 			result = 3; // sucess
 		else
 			result = 5; // failed to load
 		break;
 	case 0x80: // save
-		//if (saveState(slot, _saveTemporaryState))
-		//	result = 0; // sucess
-		//else
+		if (_game.version <= 3) {
+			char name[32];
+			if (_game.version <= 2) {
+				// use generic name
+				sprintf(name, "Game %c", 'A'+slot-1);
+			} else {
+				// use name entered by the user
+				char* ptr;
+				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
+				ptr = (char*)getStringAddress(slot + firstSlot - 1);
+				strncpy(name, ptr, sizeof(name));
+			}
+
+			if (((ScummEngine_v3 *)this)->savePreparedSavegame(slot, name))
+				result = 0;
+			else
+				result = 2;
+		} else {
 			result = 2; // failed to save
+		}
 		break;
 	case 0xC0: // test if save exists
 		{

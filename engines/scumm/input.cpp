@@ -410,6 +410,11 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
+	// On Alt-F5 prepare savegame for the original save/load dialog.
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+		prepareSavegame();
+	}
+
 	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
 		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
 			// Convert F-Keys for V1/V2 games (they start at 1)
@@ -424,8 +429,13 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
-	// 'i' brings up an IQ dialog in Indy3
-	if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3) {
+	// On Alt-F5 prepare savegame for the original save/load dialog.
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+		prepareSavegame();
+	}
+
+	// 'i' brings up an IQ dialog in Indy3 (disabled in save/load dialog for input)
+	if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3 && _currentRoom != 14) {
 		// SCUMM var 244 is the episode score
 		// and var 245 is the series score
 		char text[50];
@@ -496,7 +506,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			messageDialog("Snap scroll on");
 		} else {
 			messageDialog("Snap scroll off");
-		}	
+		}
 
 		if (VAR_CAMERA_FAST_X != 0xFF)
 			VAR(VAR_CAMERA_FAST_X) = _snapScroll;

@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -628,6 +629,7 @@ protected:
 	char _saveLoadFileName[32];
 	char _saveLoadName[32];
 
+	bool saveState(Common::OutSaveFile *out, bool writeHeader = true);
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
 	virtual void saveOrLoad(Serializer *s);

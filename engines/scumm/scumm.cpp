@@ -631,6 +631,12 @@ ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
+
+	_savePreparedSavegame = NULL;
+}
+
+ScummEngine_v3::~ScummEngine_v3() {
+	delete _savePreparedSavegame;
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
@@ -1426,7 +1432,7 @@ void ScummEngine_v0::resetScumm() {
 }
 
 void ScummEngine_v2::resetScumm() {
-	ScummEngine::resetScumm();
+	ScummEngine_v3::resetScumm();
 
 	if (_game.platform == Common::kPlatformNES) {
 		initNESMouseOver();
@@ -1440,6 +1446,13 @@ void ScummEngine_v2::resetScumm() {
 	}
 
 	_inventoryOffset = 0;
+}
+
+void ScummEngine_v3::resetScumm() {
+	ScummEngine_v4::resetScumm();
+
+	delete _savePreparedSavegame;
+	_savePreparedSavegame = NULL;
 }
 
 void ScummEngine_v4::resetScumm() {
