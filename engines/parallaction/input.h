@@ -77,6 +77,7 @@ class Input {
 	int		_gameType;
 
 	static byte _resMouseArrow_NS[256];
+	static byte _resMouseArrow_BR_Amiga[512];
 	Frames	*_mouseArrow;
 	Frames	*_comboArrow;
 	Frames	*_dinoCursor;

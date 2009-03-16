@@ -476,8 +476,10 @@ void Input::initCursors() {
 			surf1->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
 			_comboArrow = new SurfaceToFrames(surf1);
 
+			// TODO: scale mouse cursor (see staticres.cpp)
 			Graphics::Surface *surf2 = new Graphics::Surface;
-			surf2->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, 1);
+			surf2->create(32, 16, 1);
+			memcpy(surf2->pixels, _resMouseArrow_BR_Amiga, 32*16);
 			_mouseArrow = new SurfaceToFrames(surf2);
 		}
 		break;
@@ -500,9 +502,6 @@ void Input::setArrowCursor() {
 		break;
 
 	case GType_BRA: {
-		if (_vm->getPlatform() == Common::kPlatformAmiga)
-			return;
-
 		Common::Rect r;
 		_mouseArrow->getRect(0, r);
 		_vm->_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
