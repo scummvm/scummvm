@@ -171,11 +171,11 @@ byte shiftByteLeft(const byte value, const signed shiftLeft) {
 
 /*! \brief Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
 bool isBigEndian(const EndianType endianType) {
-	assert(endianType == NATIVE_ENDIAN || endianType == LITTLE_ENDIAN || endianType == BIG_ENDIAN);
+	assert(endianType == CINE_NATIVE_ENDIAN || endianType == CINE_LITTLE_ENDIAN || endianType == CINE_BIG_ENDIAN);
 
 	// Handle explicit little and big endian types here
-	if (endianType != NATIVE_ENDIAN) {
-		return (endianType == BIG_ENDIAN);
+	if (endianType != CINE_NATIVE_ENDIAN) {
+		return (endianType == CINE_BIG_ENDIAN);
 	}
 
 	// Handle native endian type here
@@ -212,7 +212,7 @@ uint Palette::colorCount() const {
 }
 
 const EndianType Palette::endianType() const {
-	return (_bigEndian ? BIG_ENDIAN : LITTLE_ENDIAN);
+	return (_bigEndian ? CINE_BIG_ENDIAN : CINE_LITTLE_ENDIAN);
 }
 
 Graphics::PixelFormat Palette::colorFormat() const {

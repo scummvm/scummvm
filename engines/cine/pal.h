@@ -41,11 +41,14 @@ static const Graphics::PixelFormat kSystemPalFormat = {4, 0, 0, 0, 8, 0, 8, 16, 
 
 /*! \brief Endian types. Used at least by Palette class's load and save functions.
  * TODO: Move somewhere more general as this is definitely not Cine-engine specific
+ *
+ * NOTE: It seems LITTLE_ENDIAN and/or BIG_ENDIAN were defined already on some platforms so
+ * therefore renamed the enumerations to something not clashing by giving them "CINE_"-prefixes.
  */
 enum EndianType {
-	NATIVE_ENDIAN,
-	LITTLE_ENDIAN,
-	BIG_ENDIAN
+	CINE_NATIVE_ENDIAN,
+	CINE_LITTLE_ENDIAN,
+	CINE_BIG_ENDIAN
 };
 
 struct PalEntry {
@@ -111,7 +114,7 @@ public:
 	uint colorCount() const;
 
 	/*! \brief The original endian type in which this palette was loaded.
-	 * \note This will always return either BIG_ENDIAN or LITTLE_ENDIAN (So no NATIVE_ENDIAN).
+	 * \note This will always return either CINE_BIG_ENDIAN or CINE_LITTLE_ENDIAN (So no CINE_NATIVE_ENDIAN).
 	 */
 	const EndianType endianType() const;
 
