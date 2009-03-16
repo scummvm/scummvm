@@ -170,12 +170,12 @@ byte shiftByteLeft(const byte value, const signed shiftLeft) {
 }
 
 /*! \brief Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
-bool isBigEndian(const EndianType endianType) {
-	assert(endianType == CINE_NATIVE_ENDIAN || endianType == CINE_LITTLE_ENDIAN || endianType == CINE_BIG_ENDIAN);
+bool isBigEndian(const EndianType endian) {
+	assert(endian == CINE_NATIVE_ENDIAN || endian == CINE_LITTLE_ENDIAN || endian == CINE_BIG_ENDIAN);
 
 	// Handle explicit little and big endian types here
-	if (endianType != CINE_NATIVE_ENDIAN) {
-		return (endianType == CINE_BIG_ENDIAN);
+	if (endian != CINE_NATIVE_ENDIAN) {
+		return (endian == CINE_BIG_ENDIAN);
 	}
 
 	// Handle native endian type here
@@ -211,7 +211,7 @@ uint Palette::colorCount() const {
 	return _colors.size();
 }
 
-const EndianType Palette::endianType() const {
+EndianType Palette::endianType() const {
 	return (_bigEndian ? CINE_BIG_ENDIAN : CINE_LITTLE_ENDIAN);
 }
 
@@ -231,8 +231,8 @@ void Palette::setColorFormat(const Graphics::PixelFormat format) {
 	_bMax = (1 << _bBits) - 1;
 }
 
-void Palette::setEndianType(const EndianType endianType) {
-	_bigEndian = isBigEndian(endianType);
+void Palette::setEndianType(const EndianType endian) {
+	_bigEndian = isBigEndian(endian);
 }
 
 // a.k.a. transformPaletteRange
@@ -259,22 +259,22 @@ Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, 
 	return result;
 }
 
-Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType) {
+Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian) {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
-	setEndianType(endianType);
+	setEndianType(endian);
 	setColorFormat(format);
 
 	_colors.clear();
 	_colors.resize(numColors);
 
-	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endianType));
-	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endianType));
-	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endian));
+	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endian));
+	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endian));
 	
 	for (uint i = 0; i < numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
@@ -286,15 +286,15 @@ Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFo
 	return *this;
 }
 
-byte *Palette::save(byte *buf, const uint size, const EndianType endianType) const {
-	return save(buf, size, colorFormat(), colorCount(), endianType);
+byte *Palette::save(byte *buf, const uint size, const EndianType endian) const {
+	return save(buf, size, colorFormat(), colorCount(), endian);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endianType) const {
-	return save(buf, size, format, colorCount(), endianType);
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endian) const {
+	return save(buf, size, format, colorCount(), endian);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType, const byte firstIndex) const {
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex) const {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
@@ -314,9 +314,9 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 	const byte gMask = ((1 << (8 - format.gLoss)) - 1) << (format.gShift % 8);
 	const byte bMask = ((1 << (8 - format.bLoss)) - 1) << (format.bShift % 8);
 
-	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endianType));
-	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endianType));
-	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endian));
+	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endian));
+	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endian));
 
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {

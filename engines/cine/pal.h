@@ -85,34 +85,34 @@ public:
 	 * \param size Input buffer size in bytes
 	 * \param format Input color format
 	 * \param numColors Number of colors to load
-	 * \param endianType The endianness of the colors in the input buffer
+	 * \param endian The endianness of the colors in the input buffer
 	 */
-	Palette &load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType);
+	Palette &load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian);
 
 	/*! \brief Save the whole palette to buffer in original color format using defined endianness.
 	 * \param buf Output buffer
 	 * \param size Output buffer size in bytes
-	 * \param endianType The endian type to use
+	 * \param endian The endian type to use
 	 */
-	byte *save(byte *buf, const uint size, const EndianType endianType) const;
+	byte *save(byte *buf, const uint size, const EndianType endian) const;
 
 	/*! \brief Save the whole palette to buffer in given color format using defined endianness.
 	 * \param buf Output buffer
 	 * \param size Output buffer size in bytes
 	 * \param format Output color format
-	 * \param endianType The endian type to use
+	 * \param endian The endian type to use
 	 */
-	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endianType) const;
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endian) const;
 
 	/*! \brief Save (partial) palette to buffer in given color format using defined endianness.
 	 * \param buf Output buffer
 	 * \param size Output buffer size in bytes
 	 * \param format Output color format
 	 * \param numColors Number of colors to save
-	 * \param endianType The endian type to use
+	 * \param endian The endian type to use
 	 * \param firstIndex Starting color index (from which onwards to save the colors)
 	 */
-	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType, const byte firstIndex = 0) const;
+	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex = 0) const;
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
@@ -121,14 +121,14 @@ public:
 	/*! \brief The original endian type in which this palette was loaded.
 	 * \note This will always return either CINE_BIG_ENDIAN or CINE_LITTLE_ENDIAN (So no CINE_NATIVE_ENDIAN).
 	 */
-	const EndianType endianType() const;
+	EndianType endianType() const;
 
 	/*! \brief The original color format in which this palette was loaded. */
 	Graphics::PixelFormat colorFormat() const;
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
-	void setEndianType(const EndianType endianType);
+	void setEndianType(const EndianType endian);
 	Cine::Palette::Color saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
 
 private:
