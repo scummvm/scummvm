@@ -500,6 +500,25 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStre
 }
 
 
+void AmigaDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
+	if (!name) {
+		return;
+	}
+
+	Common::SeekableReadStream *stream = openFile("msk/" + Common::String(name), ".msk");
+
+	byte *pal = 0;
+	Graphics::Surface* surf = new Graphics::Surface;
+	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
+	decoder.decode();
+	free(pal);
+
+	buffer.create(surf->w, surf->h);
+	memcpy(buffer.data, surf->pixels, buffer.size);
+	buffer.bigEndian = false;
+	delete stream;
+}
+
 void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery '%s', '%s' '%s'", name, mask, path);
 
@@ -510,35 +529,17 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		loadBackground(info, *stream);
 		delete stream;
 	}
-#if 0
 	if (mask) {
-		stream = tryOpenFile("msk/" + Common::String(mask), ".msk");
-		if (stream) {
-			Graphics::PackBitsReadStream unpackedStream(*stream);
-			info._mask = new MaskBuffer;
-			info._mask->bigEndian = false;
-			info._mask->create(info.width, info.height);
-			unpackedStream.read(info._mask->data, info._mask->size);
-			// TODO: there is another step to do after decompression...
-			delete stream;
-		} else {
-			debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery: (%s) not found", mask);
-		}
-	}
+#if 0
+		info._mask = new MaskBuffer;
+		loadMask(mask, *info._mask);
 #endif
+	}
+
 	if (path) {
-		stream = tryOpenFile("pth/" + Common::String(path), ".pth");
-		if (stream) {
-			// NOTE: info.width and info.height are only valid if the background graphics
-			// have already been loaded
-			info._path = new PathBuffer;
-			info._path->bigEndian = false;
-			info._path->create(info.width, info.height);
-			stream->read(info._path->data, info._path->size);
-			delete stream;
-		} else {
-			debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery: (%s) not found", path);
-		}
+		info._path = new PathBuffer;
+		info._path->create(info.width, info.height);
+		loadPath(path, *info._path);
 	}
 
 	return;
@@ -568,7 +569,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	free(pal);
 	delete stream;
 
-	return new GfxObj(0, new SurfaceToFrames(surf));
+	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
 Sprites* AmigaDisk_br::createSprites(Common::ReadStream &stream) {

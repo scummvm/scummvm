@@ -260,6 +260,7 @@ public:
 
 	virtual void init();
 
+	Common::String selectArchive(const Common::String& name);
 	GfxObj* loadTalk(const char *name);
 	Font* loadFont(const char* name);
 	GfxObj* loadStatic(const char* name);
@@ -269,8 +270,7 @@ public:
 	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
-	Common::String selectArchive(const Common::String& name);
-
+	void loadMask(const char *name, MaskBuffer &buffer);
 };
 
 } // namespace Parallaction
