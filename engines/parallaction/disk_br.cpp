@@ -602,10 +602,20 @@ Frames* AmigaDisk_br::loadFrames(const char* name) {
 
 GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
+
 	Common::SeekableReadStream *stream = openFile("talks/" + Common::String(name), ".tal");
-	GfxObj* obj = new GfxObj(0, createSprites(*stream));
+
+	// talk position is set to (0,0), because talks are always displayed at
+	// absolute coordinates, set in the dialogue manager. The original used
+	// to null out coordinates every time they were needed. We do it better!
+	Sprites *spr = createSprites(*stream);
+	for (int i = 0; i < spr->getNum(); i++) {
+		spr->_sprites[i].x = 0;
+		spr->_sprites[i].y = 0;
+	}
+
 	delete stream;
-	return obj;
+	return new GfxObj(0, spr, name);
 }
 
 Font* AmigaDisk_br::loadFont(const char* name) {
