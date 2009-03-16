@@ -119,7 +119,7 @@ class MainMenuInputState_BR : public MenuInputState {
 		if (_vm->getPlatform() == Common::kPlatformPC) {
 			_vm->_menuFont->setColor(0);
 		} else {
-			_vm->_menuFont->setColor(7);
+			_vm->_menuFont->setColor(23);
 		}
 		byte *dst = data + 5 + 2 * MENUITEM_WIDTH;
 		_vm->_menuFont->drawString(dst, MENUITEM_WIDTH, text);
@@ -150,8 +150,10 @@ class MainMenuInputState_BR : public MenuInputState {
 	#define NUM_MENULINES	7
 	GfxObj *_lines[NUM_MENULINES];
 
-	static const char *_menuStrings[NUM_MENULINES];
-	static const MenuOptions _options[NUM_MENULINES];
+	static const char *_menuStringsAmiga[NUM_MENULINES];
+	static const char *_menuStringsPC[NUM_MENULINES];
+	static const MenuOptions _optionsAmiga[NUM_MENULINES];
+	static const MenuOptions _optionsPC[NUM_MENULINES];
 
 	static const char *_firstLocation[];
 
@@ -198,7 +200,11 @@ public:
 		if ((event == kMouseLeftUp) && _selection >= 0) {
             _vm->_system->showMouse(false);
             cleanup();
-			performChoice(_options[_selection]);
+			if (_vm->getPlatform() == Common::kPlatformAmiga) {
+				performChoice(_optionsAmiga[_selection]);
+			} else {
+				performChoice(_optionsPC[_selection]);
+			}
 			return 0;
 		}
 
@@ -238,7 +244,11 @@ public:
 
 		// TODO: keep track of and destroy menu item frames/surfaces
 		for (i = 0; i < _availItems; i++) {
-			_lines[i] = new GfxObj(0, renderMenuItem(_menuStrings[i]), "MenuItem");
+			if (_vm->getPlatform() == Common::kPlatformAmiga) {
+				_lines[i] = new GfxObj(0, renderMenuItem(_menuStringsAmiga[i]), "MenuItem");
+			} else {
+				_lines[i] = new GfxObj(0, renderMenuItem(_menuStringsPC[i]), "MenuItem");
+			}
 			_vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
 		}
 		_selection = -1;
@@ -256,7 +266,27 @@ const char *MainMenuInputState_BR::_firstLocation[] = {
 	"treno.4"
 };
 
-const char *MainMenuInputState_BR::_menuStrings[NUM_MENULINES] = {
+const char *MainMenuInputState_BR::_menuStringsAmiga[NUM_MENULINES] = {
+	"See the introduction",
+	"Load a Saved Game",
+	"Exit to WorkBench",
+	"Start a new game",
+	"Start PART 2",
+	"Start PART 3",
+	"Start PART 4"
+};
+
+const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_optionsAmiga[NUM_MENULINES] = {
+	kMenuPart0,
+	kMenuLoadGame,
+	kMenuQuit,
+	kMenuPart1,
+	kMenuPart2,
+	kMenuPart3,
+	kMenuPart4
+};
+
+const char *MainMenuInputState_BR::_menuStringsPC[NUM_MENULINES] = {
 	"SEE INTRO",
 	"NEW GAME",
 	"SAVED GAME",
@@ -266,7 +296,7 @@ const char *MainMenuInputState_BR::_menuStrings[NUM_MENULINES] = {
 	"PART 4"
 };
 
-const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_options[NUM_MENULINES] = {
+const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_optionsPC[NUM_MENULINES] = {
 	kMenuPart0,
 	kMenuPart1,
 	kMenuLoadGame,
