@@ -25,6 +25,7 @@
 
 #include "cruise/cruise_main.h"
 
+#include "common/serializer.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -39,12 +40,12 @@ struct overlayRestoreTemporary {
 
 overlayRestoreTemporary ovlRestoreData[90];
 
-static void syncPalette(Serializer &s, uint8 *p) {
+static void syncPalette(Common::Serializer &s, uint8 *p) {
 	// This is different from the original, where palette entries are 2 bytes each
 	s.syncBytes(p, NBCOLORS * 3);
 }
 
-static void syncBasicInfo(Serializer &s) {
+static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(songLoaded);
 	s.syncAsSint16LE(songPlayed);
 	s.syncAsSint16LE(songLoop);
@@ -107,7 +108,7 @@ static void syncBasicInfo(Serializer &s) {
 	s.syncAsSint16LE(entrerMenuJoueur);
 }
 
-static void syncBackgroundTable(Serializer &s) {
+static void syncBackgroundTable(Common::Serializer &s) {
 	// restore backgroundTable
 	for (int i = 0; i < 8; i++) {
 		s.syncString(backgroundTable[i].name, 9);
@@ -115,14 +116,14 @@ static void syncBackgroundTable(Serializer &s) {
 	}
 }
 
-static void syncPalScreen(Serializer &s) {
+static void syncPalScreen(Common::Serializer &s) {
 	for (int i = 0; i < NBSCREENS; ++i) {
 		for (int j = 0; j < NBCOLORS; ++j)
 			s.syncAsUint16LE(palScreen[i][j]);
 	}
 }
 
-static void syncSoundList(Serializer &s) {
+static void syncSoundList(Common::Serializer &s) {
 	for (int i = 0; i < 4; ++i) {
 		SoundEntry &se = soundList[i];
 		s.syncAsSint16LE(se.frameNum);
@@ -131,7 +132,7 @@ static void syncSoundList(Serializer &s) {
 	}
 }
 
-static void syncFilesDatabase(Serializer &s) {
+static void syncFilesDatabase(Common::Serializer &s) {
 	uint8 dummyVal = 0;
 
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
@@ -173,7 +174,7 @@ static void syncFilesDatabase(Serializer &s) {
 	}
 }
 
-static void syncPreloadData(Serializer &s) {
+static void syncPreloadData(Common::Serializer &s) {
 	uint8 dummyByte = 0;
 	uint32 dummyLong = 0;
 
@@ -191,7 +192,7 @@ static void syncPreloadData(Serializer &s) {
 	}
 }
 
-static void syncOverlays1(Serializer &s) {
+static void syncOverlays1(Common::Serializer &s) {
 	uint8 dummyByte = 0;
 	uint32 dummyLong = 0;
 
@@ -211,7 +212,7 @@ static void syncOverlays1(Serializer &s) {
 	}
 }
 
-static void syncOverlays2(Serializer &s) {
+static void syncOverlays2(Common::Serializer &s) {
 
 	for (int i = 1; i < numOfLoadedOverlay; i++) {
 
@@ -274,7 +275,7 @@ static void syncOverlays2(Serializer &s) {
 	}
 }
 
-void syncScript(Serializer &s, scriptInstanceStruct *entry) {
+void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 	int numScripts = 0;
 	uint32 dummyLong = 0;
 	uint16 dummyWord = 0;
@@ -328,7 +329,7 @@ void syncScript(Serializer &s, scriptInstanceStruct *entry) {
 	}
 }
 
-static void syncCell(Serializer &s) {
+static void syncCell(Common::Serializer &s) {
 	int chunkCount = 0;
 	cellStruct *t, *p;
 	uint16 dummyWord = 0;
@@ -389,7 +390,7 @@ static void syncCell(Serializer &s) {
 	}
 }
 
-static void syncIncrust(Serializer &s) {
+static void syncIncrust(Common::Serializer &s) {
 	int numEntries = 0;
 	backgroundIncrustStruct *pl, *pl1;
 	uint8 dummyByte = 0;
@@ -471,7 +472,7 @@ static void syncIncrust(Serializer &s) {
 	}
 }
 
-static void syncActors(Serializer &s) {
+static void syncActors(Common::Serializer &s) {
 	int numEntries = 0;
 	actorStruct *ptr;
 	uint16 dummyLong = 0;
@@ -522,7 +523,7 @@ static void syncActors(Serializer &s) {
 	}
 }
 
-static void syncSongs(Serializer &s) {
+static void syncSongs(Common::Serializer &s) {
 	int size = 0;
 
 	if (songLoaded) {
@@ -538,7 +539,7 @@ static void syncSongs(Serializer &s) {
 	}
 }
 
-static void syncCT(Serializer &s) {
+static void syncCT(Common::Serializer &s) {
 	int v = (polyStruct) ? 1 : 0;
 	s.syncAsSint32LE(v);
 
@@ -573,7 +574,7 @@ static void syncCT(Serializer &s) {
 	}
 }
 
-static void DoSync(Serializer &s) {
+static void DoSync(Common::Serializer &s) {
 	syncBasicInfo(s);
 
 	syncPalette(s, newPal);
@@ -759,7 +760,7 @@ int saveSavegameData(int saveGameIdx) {
 	f->write(saveIdentBuffer, 6);
 
 	if (!f->ioFailed()) {
-		Serializer s(NULL, f);
+		Common::Serializer s(NULL, f);
 
 		DoSync(s);
 
@@ -801,7 +802,7 @@ int loadSavegameData(int saveGameIdx) {
 
 	initVars();
 
-	Serializer s(f, NULL);
+	Common::Serializer s(f, NULL);
 	DoSync(s);
 
 	delete f;
