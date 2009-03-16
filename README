@@ -53,7 +53,7 @@ Table of Contents:
  * 7.3 MT-32 emulation
  * 7.4 MIDI emulation
  * 7.5 Native MIDI support
- * 7.6 UNIX native and ALSA sequencer support
+ * 7.6 UNIX native, ALSA and dmedia sequencer support
  * 7.7 TiMidity++ MIDI server support
  * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
  * 7.9 Output sample rate
@@ -1535,6 +1535,28 @@ Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
 
 Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l'
 command as described earlier in this section.
+
+
+7.6.2) Playing sound with IRIX dmedia sequencer:                 [UNIX ONLY]
+---- ------------------------------------------
+If you are using IRIX,  driver with the sequencer support, you can 
+set the environment variable SCUMMVM_PORT or the config file parameter
+dmedia_port to your sequencer port. The default is to use the first port.
+
+To get a list of configured midi interfaces on your system, run startmidi
+without parameters. Exaple output:
+
+  2 MIDI interfaces configured:
+          Serial Port 2
+          Software Synth
+
+In this example, you can configure ScummVM to use the "Software Synth"
+instead of the default "Serial Port 2" by adding a line
+
+   dmedia_port=Software Synth
+
+to your configuration file in the section [scummvm], or setting 
+SCUMMVM_PORT=Software Synth in your environment.
 
 
 7.7) Using TiMidity++ MIDI server:

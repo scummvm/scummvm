@@ -31,6 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 #include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
@@ -71,15 +72,17 @@ MidiDriver_DMEDIA::MidiDriver_DMEDIA() {
 
 int MidiDriver_DMEDIA::open() {
 	int numinterfaces;
+	int i;
+	const char *var;
+	char *portName;
 
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
 
-	warning("dmedia init");
 	numinterfaces = mdInit();
 	if (numinterfaces <= 0) {
-		fprintf(stderr,"No MIDI interfaces configured.\n");
+		fprintf(stderr, "No MIDI interfaces configured.\n");
 		perror("Cannot initialize libmd for sound output");
 		return -1;
 	}
@@ -87,12 +90,18 @@ int MidiDriver_DMEDIA::open() {
 	if (getenv("SCUMMVM_MIDIPORT")) {
 		_deviceNum = atoi(getenv("SCUMMVM_MIDIPORT"));
 		_midiportName = mdGetName(_deviceNum);
-	}
-		else
-	{
-		_midiportName = mdGetName(0);
-		warning("SCUMMVM_MIDIPORT environment variable not set, using Port %s", _midiportName);
-		_deviceNum = 0;
+	} else {
+		var = ConfMan.get("dmedia_port").c_str();
+		if (strlen(var) > 0) {
+			for (i = 0; i < numinterfaces; i++) {
+				portName = mdGetName(i);
+				if (strcmp(var, portName) == 0) {
+					_deviceNum = i;
+					_midiportName = portName;
+				}
+			}
+
+		}
 	}
 
 	_midiPort = mdOpenOutPort(_midiportName);
@@ -152,7 +161,7 @@ void MidiDriver_DMEDIA::send(uint32 b) {
 	if (mdSend(_midiPort, &event, 1) != 1) {
 		warning("failed sending MIDI event (dump follows...)");
 		warning("MIDI Event (len=%u):", event.msglen);
-		for (int i=0; i<event.msglen; i++) warning("%02x ",(int)event.msg[i]);
+		for (int i = 0; i < event.msglen; i++) warning("%02x ", (int)event.msg[i]);
 	}
 }
 
@@ -171,7 +180,8 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 	event.msg[2] = 0;
 
 	if (mdSend(_midiPort, &event, 1) != 1) {
-		fprintf(stderr,"failed sending MIDI SYSEX event (dump follows...)\n");
+		fprintf(stderr, "failed sending MIDI SYSEX event (dump follows...)\n");
+		for (int i = 0; i < event.msglen; i++) warning("%02x ", (int)event.msg[i]);
 	}
 }
 
@@ -193,10 +203,24 @@ public:
 };
 
 MusicDevices DMediaMusicPlugin::getDevices() const {
+	int numinterfaces;
+	int i;
+	char *portName;
 	MusicDevices devices;
+
 	// TODO: Return a different music type depending on the configuration
-	// TODO: List the available devices
-	devices.push_back(MusicDevice(this, "", MT_GM));
+
+	numinterfaces = mdInit();
+	if (numinterfaces <= 0) {
+		fprintf(stderr, "No MIDI interfaces configured.\n");
+	}
+
+	for (i=0; i<numinterfaces; i++) {
+		portName = mdGetName(0);
+		fprintf(stderr, "device %i %s\n", i, portName);
+		devices.push_back(MusicDevice(this, portName, MT_GM));
+	}
+
 	return devices;
 }
 
