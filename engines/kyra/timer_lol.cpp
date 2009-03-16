@@ -41,7 +41,7 @@ void LoLEngine::setupTimers() {
 	_timer->addTimer(0x11, TimerV2(timerProcessMonsters), 6, true);
 	_timer->setNextRun(0x11, _system->getMillis() + 3 * _tickLength);
 	_timer->addTimer(3, TimerV2(timerSub3), 15, true);
-	_timer->addTimer(4, TimerV2(timerSub4), 1, true);
+	_timer->addTimer(4, TimerV2(timerProcessFlyingObjects), 1, true);
 	_timer->addTimer(0x50, TimerV2(timerRunSceneAnimScript), 0, false);
 	_timer->addTimer(0x51, TimerV2(timerRunSceneAnimScript), 0, false);
 	_timer->addTimer(0x52, TimerV2(timerRunSceneAnimScript), 0, false);
@@ -79,7 +79,7 @@ void LoLEngine::timerProcessDoors(int timerNum) {
 			continue;
 
 		int v = _openDoorState[i].state;
-		int c = _openDoorState[i].field_2;
+		int c = _openDoorState[i].wall;
 
 		_levelBlockProperties[b].walls[c] += v;
 		_levelBlockProperties[b].walls[c ^ 2] += v;
@@ -115,8 +115,12 @@ void LoLEngine::timerSub3(int timerNum) {
 
 }
 
-void LoLEngine::timerSub4(int timerNum) {
-
+void LoLEngine::timerProcessFlyingObjects(int timerNum) {
+	for (int i = 0; i < 8; i++) {
+		if (!_flyingItems[i].enable)
+			continue;
+		updateFlyingObjects(&_flyingItems[i]);
+	}
 }
 
 void LoLEngine::timerRunSceneAnimScript(int timerNum) {

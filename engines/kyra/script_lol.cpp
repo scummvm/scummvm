@@ -675,7 +675,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
 	uint16 w = _monsterProperties[stackPos(4)].maxWidth;
 
-	if (checkBlockBeforeMonsterPlacement(x, y, w, 7, 7))
+	if (checkBlockBeforeObjectPlacement(x, y, w, 7, 7))
 		return -1;
 
 	for (uint8 i = 0; i < 30; i++) {
@@ -698,7 +698,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 
 		l->field_25 = l->properties->unk6[0];
 		l->field_27 = _rnd.getRandomNumberRng(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
-		l->unk4 = 2;
+		l->flyingHeight = 2;
 		l->flags = stackPos(5);
 		l->assignedItems = 0;
 

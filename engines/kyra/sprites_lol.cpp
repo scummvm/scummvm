@@ -199,7 +199,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	bool cont = true;
 	int t = monster->blockPropertyIndex;
 	if (monster->blockPropertyIndex) {
-		removeAssignedItemFromBlock(&_levelBlockProperties[t].assignedObjects, ((uint16)monster->id) | 0x8000);
+		removeAssignedObjectFromBlock(&_levelBlockProperties[t], ((uint16)monster->id) | 0x8000);
 		_levelBlockProperties[t].direction = 5;
 		checkSceneUpdateNeed(t);
 	} else {
@@ -285,7 +285,8 @@ void LoLEngine::cmzS3(MonsterInPlay *l) {
 	// TODO
 }
 
-void LoLEngine::removeAssignedItemFromBlock(uint16 *blockItemIndex, int id) {
+void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
+	uint16 *blockItemIndex = &l->assignedObjects;
 	ItemInPlay *i = 0;
 
 	while (*blockItemIndex) {
@@ -301,7 +302,8 @@ void LoLEngine::removeAssignedItemFromBlock(uint16 *blockItemIndex, int id) {
 	}
 }
 
-void LoLEngine::removeDrawObjectFromBlock(uint16 *blockItemIndex, int id) {
+void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
+	uint16 *blockItemIndex = &l->drawObjects;
 	ItemInPlay *i = 0;
 
 	while (*blockItemIndex) {
@@ -323,7 +325,7 @@ void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
 	*assignedBlockObjects = id;
 }
 
-int LoLEngine::checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag) {
+int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag) {
 	_monsterLastWalkDirection = 0;
 	int x2 = 0;
 	int y2 = 0;
@@ -504,27 +506,67 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 			int fx = _sceneItemOffs[s & 7] << 1;
 			int fy = _sceneItemOffs[(s >> 1) & 7] + 5;
 
-			if (i->unk4 > 2 || (i->unk4 == 2 && blockArrayIndex >= 15)) {
+			if (i->flyingHeight >= 2 && blockArrayIndex >= 15) {
 				s = i->nextDrawObject;
 				continue;
 			}
 
 			uint8 *shp = 0;
-			int flg = 0;
+			uint16 flg = 0;
 
-			if (i->unk4 >= 2)
-				fy -= ((i->unk4 - 1) * 6);
+			if (i->flyingHeight >= 2)
+				fy -= ((i->flyingHeight - 1) * 6);
 
 			if ((_itemProperties[i->itemPropertyIndex].flags & 0x1000) && !(i->shpCurFrame_flg & 0xC000)) {
-				i = i;
-				////////////
-				// TODO
+				int shpIndex = _itemProperties[i->itemPropertyIndex].flags & 0x800 ? 7 : _itemProperties[i->itemPropertyIndex].shpIndex;
+				
+				int ii = 0;
+				for (; ii < 8; ii++) {
+					if (!_flyingItems[ii].enable)
+						continue;
+
+					if (_flyingItems[ii].item == s)
+						break;
+				}
+
+				if (_flyingItemShapes[shpIndex].flipFlags && ((i->x ^ i->y) & 0x20))
+					flg |= 0x20;
+
+				flg |= _flyingItemShapes[shpIndex].drawFlags;
+
+				if (ii != 8) {
+					switch (_currentDirection - (_flyingItems[ii].direction >> 1) + 3) {
+						case 1:
+						case 5:
+							shpIndex = _flyingItemShapes[shpIndex].shapeFront;
+							break;
+						case 3:
+							shpIndex = _flyingItemShapes[shpIndex].shapeBack;
+							break;
+						case 2:
+						case 6:
+							flg |= 0x10;
+						case 0:
+						case 4:
+							shpIndex = _flyingItemShapes[shpIndex].shapeLeft;
+							break;
+						default:
+							break;
+					}
+
+					shp = _thrownShapes[shpIndex];
+				}
+
+				if (shp)
+					fy += (shp[2] >> 2);			
+
 			} else {
 				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] : 
 					_itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
 			}
 
-			drawItemOrMonster(shp, 0, i->x, i->y, fx, fy, flg, -1, false);
+			if (shp)
+				drawItemOrMonster(shp, 0, i->x, i->y, fx, fy, flg, -1, false);
 			s = i->nextDrawObject;
 		}
 	}
@@ -705,8 +747,8 @@ void LoLEngine::redrawSceneItem() {
 					if (checkDrawObjectSpace(item->x, item->y, _partyPosX, _partyPosY) < 320) {
 						int fx = _sceneItemOffs[s & 7] << 1;
 						int fy = _sceneItemOffs[(s >> 1) & 7] + 5;
-						if (item->unk4 > 1)
-							fy -= ((item->unk4 - 1) * 6);
+						if (item->flyingHeight > 1)
+							fy -= ((item->flyingHeight - 1) * 6);
 
 						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] : 
 							_itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
@@ -732,7 +774,7 @@ int LoLEngine::calcItemMonsterPosition(ItemInPlay *i, uint16 direction) {
 	if (y < 0)
 		y = 0;
 
-	int res = (i->unk4 << 12);
+	int res = (i->flyingHeight << 12);
 	res |= (4095 - y);
 
 	return res;
@@ -1040,7 +1082,7 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 	int fx = 0;
 	int fy = 0;
 
-	walkMonsterGetNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _monsterLastWalkDirection : s);
+	getNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _monsterLastWalkDirection : s);
 	placeMonster(monster, fx, fy);
 }
 
@@ -1075,7 +1117,7 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 
 		int fx = 0;
 		int fy = 0;
-		walkMonsterGetNextStepCoords(sx, sy, fx, fy, s);
+		getNextStepCoords(sx, sy, fx, fy, s);
 		d = walkMonsterCheckDest(fx, fy, monster, 4);
 
 		if (!d)
@@ -1149,18 +1191,18 @@ int LoLEngine::walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int un
 	uint8 m = monster->mode;
 	monster->mode = 15;
 
-	int res = checkBlockBeforeMonsterPlacement(x, y, monster->properties->maxWidth, 7, monster->properties->flags & 0x1000 ? 32 : unk);
+	int res = checkBlockBeforeObjectPlacement(x, y, monster->properties->maxWidth, 7, monster->properties->flags & 0x1000 ? 32 : unk);
 
 	monster->mode = m;
 	return res;
 }
 
-void LoLEngine::walkMonsterGetNextStepCoords(int16 srcX, int16 srcY, int &newX, int &newY, uint16 unk) {
+void LoLEngine::getNextStepCoords(int16 srcX, int16 srcY, int &newX, int &newY, uint16 direction) {
 	static const int8 shiftTableX[] = { 0, 32, 32, 32, 0, -32, -32, -32 };
 	static const int8 shiftTableY[] = { -32, -32, 0, 32, 32, 32, 0, -32 };
 
-	newX = (srcX + shiftTableX[unk]) & 0x1fff;
-	newY = (srcY + shiftTableY[unk]) & 0x1fff;
+	newX = (srcX + shiftTableX[direction]) & 0x1fff;
+	newY = (srcY + shiftTableY[direction]) & 0x1fff;
 }
 
 } // end of namespace Kyra

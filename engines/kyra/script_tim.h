@@ -226,7 +226,7 @@ friend class LoLEngine;
 public:
 	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
 
-	Animation *initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int offscreenBuffer, uint16 wsaCopyParams);
+	Animation *initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
 	int freeAnimStruct(int index);
 	
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);

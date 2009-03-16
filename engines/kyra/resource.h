@@ -236,6 +236,7 @@ enum kKyraResources {
 	kLolMonsterScaleY,
 	kLolMonsterScaleX,
 	kLolMonsterScaleWH,
+	kLolFlyingObjectShp,
 	kLolInventoryDesc,
 
 	kLolLevelShpList,
@@ -312,6 +313,7 @@ public:
 	const LoLCharacter *loadCharData(int id, int &entries);
 	const SpellProperty *loadSpellData(int id, int &entries);
 	const CompassDef *loadCompassData(int id, int &entries);
+	const FlyingObjectShape *loadFlyingObjectData(int id, int &entries);
 	const uint16 *loadRawDataBe16(int id, int &entries);
 	const uint32 *loadRawDataBe32(int id, int &entries);
 	const ButtonDef *loadButtonDefs(int id, int &entries);
@@ -351,6 +353,7 @@ private:
 	bool loadCharData(const char *filename, void *&ptr, int &size);
 	bool loadSpellData(const char *filename, void *&ptr, int &size);
 	bool loadCompassData(const char *filename, void *&ptr, int &size);
+	bool loadFlyingObjectData(const char *filename, void *&ptr, int &size);
 	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
 	bool loadRawDataBe32(const char *filename, void *&ptr, int &size);
 	bool loadButtonDefs(const char *filename, void *&ptr, int &size);
@@ -368,6 +371,7 @@ private:
 	void freeCharData(void *&ptr, int &size);
 	void freeSpellData(void *&ptr, int &size);
 	void freeCompassData(void *&ptr, int &size);
+	void freeFlyingObjectData(void *&ptr, int &size);
 	void freeRawDataBe16(void *&ptr, int &size);
 	void freeRawDataBe32(void *&ptr, int &size);
 	void freeButtonDefs(void *&ptr, int &size);
@@ -391,6 +395,7 @@ private:
 		kLolCharData,
 		kLolSpellData,
 		kLolCompassData,
+		kLolFlightShpData,
 		kLolRawDataBe16,
 		kLolRawDataBe32,
 		kLolButtonData

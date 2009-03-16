@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 42
+#define RESFILE_VERSION 43
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -226,6 +226,7 @@ bool StaticResource::init() {
 		{ kLolCharData, proc(loadCharData), proc(freeCharData) },
 		{ kLolSpellData, proc(loadSpellData), proc(freeSpellData) },
 		{ kLolCompassData, proc(loadCompassData), proc(freeCompassData) },
+		{ kLolFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
 		{ kLolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
 		{ kLolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
 		{ kLolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
@@ -397,6 +398,7 @@ bool StaticResource::init() {
 		{ kLolMonsterScaleY, kRawData, "MONSTZY.DEF" },
 		{ kLolMonsterScaleX, kRawData, "MONSTZX.DEF" },
 		{ kLolMonsterScaleWH, kLolRawDataBe16, "MONSTSCL.DEF" },
+		{ kLolFlyingObjectShp, kLolFlightShpData, "THRWNSHP.DEF" },
 		{ kLolInventoryDesc, kLolRawDataBe16, "INVDESC.DEF" },
 
 		{ kLolLevelShpList, kStringList, "SHPFILES.TXT" },
@@ -519,6 +521,10 @@ const SpellProperty *StaticResource::loadSpellData(int id, int &entries) {
 
 const CompassDef *StaticResource::loadCompassData(int id, int &entries) {
 	return (const CompassDef*)getData(id, kLolCompassData, entries);
+}
+
+const FlyingObjectShape *StaticResource::loadFlyingObjectData(int id, int &entries) {
+	return (const FlyingObjectShape*)getData(id, kLolFlightShpData, entries);
 }
 
 const uint16 *StaticResource::loadRawDataBe16(int id, int &entries) {
@@ -1073,6 +1079,29 @@ bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size
 	return true;
 }
 
+bool StaticResource::loadFlyingObjectData(const char *filename, void *&ptr, int &size) {
+	Common::SeekableReadStream *file = getFile(filename);
+
+	if (!file)
+		return false;
+
+	size = file->size() / 5;
+	FlyingObjectShape *defs = new FlyingObjectShape[size];
+
+	for (int i = 0; i < size; i++) {
+		FlyingObjectShape *t = &defs[i];
+		t->shapeFront = file->readByte();
+		t->shapeBack = file->readByte();
+		t->shapeLeft = file->readByte();
+		t->drawFlags = file->readByte();
+		t->flipFlags = file->readByte();
+	};
+
+	ptr = defs;
+
+	return true;
+}
+
 bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size) {
 	Common::SeekableReadStream *file = getFile(filename);
 
@@ -1226,6 +1255,14 @@ void StaticResource::freeCompassData(void *&ptr, int &size) {
 	ptr = 0;
 	size = 0;
 }
+
+void StaticResource::freeFlyingObjectData(void *&ptr, int &size) {
+	FlyingObjectShape *d = (FlyingObjectShape *)ptr;
+	delete[] d;
+	ptr = 0;
+	size = 0;
+}
+
 
 void StaticResource::freeRawDataBe16(void *&ptr, int &size) {
 	uint16 *data = (uint16*)ptr;
@@ -1771,6 +1808,7 @@ void LoLEngine::initStaticResource() {
 	_levelShpList = _staticres->loadStrings(kLolLevelShpList, _levelShpListSize);
 	_levelDatList = _staticres->loadStrings(kLolLevelDatList, _levelDatListSize);
 	_compassDefs = _staticres->loadCompassData(kLolCompassDefs, _compassDefsSize);
+	_flyingItemShapes = _staticres->loadFlyingObjectData(kLolFlyingObjectShp, _flyingItemShapesSize);
 	_itemCost = _staticres->loadRawDataBe16(kLolItemPrices, _itemCostSize);
 	_stashSetupData = _staticres->loadRawData(kLolStashSetup, _stashSetupDataSize);
 

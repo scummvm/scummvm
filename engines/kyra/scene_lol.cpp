@@ -105,14 +105,14 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		moveItemToBlock(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].assignedObjects, i);
+		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].assignedObjects, i);
 
 		_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].direction = 5;
 		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
 
-void LoLEngine::moveItemToBlock(uint16 *cmzItemIndex, uint16 item) {
+void LoLEngine::assignBlockObject(uint16 *cmzItemIndex, uint16 item) {
 	ItemInPlay *tmp = 0;
 
 	while (*cmzItemIndex & 0x8000) {
@@ -473,7 +473,7 @@ void LoLEngine::resetItems(int flag) {
 	}
 
 	if (flag)
-		memset(_throwItemState, 0, 8 * sizeof(ThrownItem));
+		memset(_flyingItems, 0, 8 * sizeof(FlyingObject));
 }
 
 void LoLEngine::resetLvlBuffer() {
@@ -798,7 +798,7 @@ void LoLEngine::openCloseDoor(uint16 block, int openClose) {
 
 		_openDoorState[s1].block = block;
 		_openDoorState[s1].state = openClose;
-		_openDoorState[s1].field_2 = c;
+		_openDoorState[s1].wall = c;
 
 		flg = (-openClose == 1) ? 0x10 : (-openClose == -1 ? 0x20 : 0);
 		

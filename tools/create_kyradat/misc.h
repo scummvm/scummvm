@@ -506,6 +506,7 @@ const int lolCDFile2Need[] = {
 	lolMonsterScaleY,
 	lolMonsterScaleX,
 	lolMonsterScaleWH,
+	lolFlyingItemShp,
 	lolInventoryDesc,
 
 	lolLevelShpList,

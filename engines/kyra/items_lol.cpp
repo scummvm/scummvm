@@ -229,7 +229,7 @@ ItemInPlay *LoLEngine::findObject(uint16 index) {
 		return &_itemsInPlay[index];
 }
 
-void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg4) {
+void LoLEngine::runItemScript(int charNum, int item, int sub, int next, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
@@ -240,14 +240,18 @@ void LoLEngine::runItemScript(int charNum, int item, int reg0, int reg3, int reg
 	_emc->init(&scriptState, &_itemScript);
 	_emc->start(&scriptState, func);
 
-	scriptState.regs[0] = reg0;
+	scriptState.regs[0] = sub;
 	scriptState.regs[1] = charNum;
 	scriptState.regs[2] = item;
-	scriptState.regs[3] = reg3;
+	scriptState.regs[3] = next;
 	scriptState.regs[4] = reg4;
 
-	while (_emc->isValid(&scriptState))
-		_emc->run(&scriptState);
+	if (_emc->isValid(&scriptState)) {
+		if (*(scriptState.ip - 1) & sub) {
+			while (_emc->isValid(&scriptState))
+				_emc->run(&scriptState);
+		}
+	}
 }
 
 void LoLEngine::setHandItem(uint16 itemIndex) {
@@ -269,8 +273,8 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(itemIndex));
 }
 
-void LoLEngine::dropItem(int item, uint16 x, uint16 y, int a, int b) {
-	if (!a) {
+void LoLEngine::setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b) {
+	if (!flyingHeight) {
 		x = (x & 0xffc0) | 0x40;
 		y = (y & 0xffc0) | 0x40;
 	}
@@ -279,7 +283,7 @@ void LoLEngine::dropItem(int item, uint16 x, uint16 y, int a, int b) {
 	_itemsInPlay[item].x = x;
 	_itemsInPlay[item].y = y;
 	_itemsInPlay[item].blockPropertyIndex = block;
-	_itemsInPlay[item].unk4 = a;
+	_itemsInPlay[item].flyingHeight = flyingHeight;
 
 	if (b)
 		_itemsInPlay[item].shpCurFrame_flg |= 0x4000;
@@ -296,16 +300,184 @@ void LoLEngine::dropItem(int item, uint16 x, uint16 y, int a, int b) {
 	checkSceneUpdateNeed(block);
 }
 
-bool LoLEngine::throwItem(int a, int item, int x, int y, int b, int direction, int c, int charNum, int d) {
-	return true;
-}
-
 void LoLEngine::pickupItem(int item, int block) {
-	removeAssignedItemFromBlock(&_levelBlockProperties[block].assignedObjects, item);
-	removeDrawObjectFromBlock(&_levelBlockProperties[block].drawObjects, item);
+	removeAssignedObjectFromBlock(&_levelBlockProperties[block], item);
+	removeDrawObjectFromBlock(&_levelBlockProperties[block], item);
 	runLevelScriptCustom(block, 0x100, -1, item, 0, 0);
 	_itemsInPlay[item].blockPropertyIndex = 0;
 	_itemsInPlay[item].level = 0;
+}
+
+bool LoLEngine::throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c) {
+	int sp = checkDrawObjectSpace(_partyPosX, _partyPosX, x, y);
+	FlyingObject *t = _flyingItems;
+	int slot = -1;
+	int i = 0;
+
+	for (; i < 8; i++) {
+		if (!t->enable) {
+			sp = -1;
+			break;
+		}
+
+		int csp = checkDrawObjectSpace(_partyPosX, _partyPosX, t->x, t->y);
+		if (csp > sp){
+			sp = csp;
+			slot = i;
+		}
+		t++;
+	}
+
+	if (sp != -1 && slot != -1) {
+		i = slot;
+
+		t = &_flyingItems[i];
+		endObjectFlight(t, x, y, 8);
+	}
+
+	if (i == 8)
+		return false;
+
+	t->enable = 1;
+	t->a = a;
+	t->item = item;
+	t->x = x;
+	t->y = y;
+	t->flyingHeight = flyingHeight;
+	t->direction = direction;
+	t->distance = 255;
+	t->charNum = charNum;
+	t->flags = 7;
+	t->wallFlags = 2;
+	t->c = c;	
+
+	if (charNum != -1) {
+		if (charNum & 0x8000) {
+			t->flags &= 0xfd;
+		} else {
+			t->flags &= 0xfb;
+			increaseExperience(charNum, 1, 2);
+		}
+	}
+
+	updateObjectFlightPosition(t);
+
+	return true;
+}
+
+void LoLEngine::endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock) {
+	int cx = x;
+	int cy = y;
+	uint16 block = calcBlockIndex(t->x, t->y);
+	removeAssignedObjectFromBlock(&_levelBlockProperties[block], t->item);
+	removeDrawObjectFromBlock(&_levelBlockProperties[block], t->item);
+
+	if (objectOnNextBlock == 1) {
+		cx = t->x;
+		cy = t->y;
+	}
+
+	if (t->a == 0 || t->a == 1) {
+		objectFlightProcessHits(t, cx, cy, objectOnNextBlock);
+		t->x = (cx & 0xffc0) | 0x40;
+		t->y = (cy & 0xffc0) | 0x40;
+		t->flyingHeight = 0;
+		updateObjectFlightPosition(t);
+	}
+
+	t->enable = 0;
+}
+
+void LoLEngine::processObjectFlight(FlyingObject *t, int x, int y) {
+	int bl = calcBlockIndex(t->x, t->y);
+	LevelBlockProperty *l = &_levelBlockProperties[bl];
+	removeAssignedObjectFromBlock(l, t->item);
+	removeDrawObjectFromBlock(l, t->item);
+	t->x = x;
+	t->y = y;
+	updateObjectFlightPosition(t);
+	checkSceneUpdateNeed(bl);
+}
+
+void LoLEngine::updateObjectFlightPosition(FlyingObject *t) {
+	if (t->a == 0) {
+		setItemPosition(t->item, t->x, t->y, t->flyingHeight, (t->flyingHeight == 0) ? 1 : 0);
+	} else if (t->a == 1) {
+		if (t->flyingHeight == 0) {
+			deleteItem(t->item);
+			checkSceneUpdateNeed(calcBlockIndex(t->x, t->y));
+		} else {
+			setItemPosition(t->item, t->x, t->y, t->flyingHeight, 0);
+		}
+	}
+}
+
+void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock) {
+	int r = 0;
+
+	if (objectOnNextBlock == 1) {
+		runLevelScriptCustom(calcNewBlockPosition(_itemsInPlay[t->item].blockPropertyIndex, t->direction >> 1), 0x8000, -1, t->item, 0, 0);
+		return;
+
+	} else if (objectOnNextBlock == 2) {
+		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
+			int o = _levelBlockProperties[_itemsInPlay[t->item].blockPropertyIndex].assignedObjects;
+			
+			while (o & 0x8000) {
+				ItemInPlay *i = findObject(o);
+				o = i->nextAssignedObject;
+				runItemScript(t->charNum, t->item, 0x8000, o, 0);
+			}
+			
+			return;
+
+		} else {
+			r = flyingObjectHitMonsters(x, y);
+		}
+
+	} else if (objectOnNextBlock == 4) {
+		_unkDrawLevelBool = true;
+		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
+			for (int i = 0; i < 4; i++) {
+				if (_characters[i].flags & 1)
+					runItemScript(t->charNum, t->item, 0x8000, i, 0);
+			}
+			return;
+
+		} else {
+			r = flyingObjectHitParty(x, y);
+		}
+	}
+
+	runItemScript(t->charNum, t->item, 0x8000, r, 0);
+}
+
+uint16 LoLEngine::flyingObjectHitMonsters(int x, int y) {
+	////////////
+	// TODO
+	return 0;
+}
+
+uint16 LoLEngine::flyingObjectHitParty(int x, int y) {
+	////////////
+	// TODO
+	return 0;
+}
+
+void LoLEngine::updateFlyingObjects(FlyingObject *t) {
+	int x = 0;
+	int y = 0;
+	getNextStepCoords(t->x, t->y, x, y, t->direction);
+	int objectOnNextBlock = checkBlockBeforeObjectPlacement(x, y, _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 256 : 63,  t->flags, t->wallFlags);
+	if (objectOnNextBlock) {
+		endObjectFlight(t, x, y, objectOnNextBlock);
+	} else {
+		if (--t->distance) {
+			processObjectFlight(t, x, y);
+		} else {
+			endObjectFlight(t, x, y, 8);
+		}
+	}
 }
 
 void LoLEngine::assignItemToBlock(uint16 *assignedBlockObjects, int id) {

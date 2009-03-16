@@ -1217,7 +1217,7 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 	int i = dirIndex[(_currentDirection << 2) + button->data2Val2];
 	
 	calcCoordinates(x, y, block, offsX[i], offsY[i]);
-	dropItem(_itemInHand, x, y, 0, 1);
+	setItemPosition(_itemInHand, x, y, 0, 1);
 	setHandItem(0);
 
 	return 1;

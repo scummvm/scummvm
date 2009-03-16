@@ -22,7 +22,8 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolMonsterDirFlags, 0x00031FFF, 0x0003200F },
 	{ lolMonsterScaleY, 0x00031BC0, 0x00031BDE },
 	{ lolMonsterScaleX, 0x00031BDE, 0x00031BFE },
-	{ lolMonsterScaleWH, 0x000285C0, 0x00028644 },
+	{ lolMonsterScaleWH, 0x000285C0, 0x00028642 },
+	{ lolFlyingItemShp, 0x00028642, 0x000286C4 },
 	{ lolInventoryDesc, 0x00032706, 0x0003271C },
 
 	{ lolLevelShpList, 0x00032826, 0x000328A5 },

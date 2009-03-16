@@ -147,7 +147,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lampOilStatus = _brightness = _lampStatusUnk = 0;
 	_lampStatusSuspended = false;
 	_tempBuffer5120 = 0;
-	_throwItemState = 0;
+	_flyingItems = 0;
 	_monsters = 0;
 	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
@@ -296,7 +296,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _lvlShapeBottom;
 	delete[] _lvlShapeLeftRight;
 	delete[] _tempBuffer5120;
-	delete[] _throwItemState;
+	delete[] _flyingItems;
 	delete[] _monsters;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
@@ -415,8 +415,8 @@ Common::Error LoLEngine::init() {
 	_tempBuffer5120 = new uint8[5120];
 	memset(_tempBuffer5120, 0, 5120);
 
-	_throwItemState = new ThrownItem[8];
-	memset(_throwItemState, 0, 8 * sizeof(ThrownItem));
+	_flyingItems = new FlyingObject[8];
+	memset(_flyingItems, 0, 8 * sizeof(FlyingObject));
 
 	memset(_gameFlags, 0, sizeof(_gameFlags));
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
@@ -1091,6 +1091,58 @@ int LoLEngine::calculateProtection(int index) {
 	}
 
 	return c;
+}
+
+void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
+	if (charNum & 0x8000)
+		return;
+
+	if (_characters[charNum].flags & 8)
+		return;
+
+	_characters[charNum].experiencePts[skill] += points;
+
+	bool loop = true;
+	while (loop) {
+		if (_characters[charNum].experiencePts[skill] <= _expRequirements[_characters[charNum].skillLevels[skill]])
+			break;
+
+		_characters[charNum].skillLevels[skill]++;
+		_characters[charNum].flags |= (0x200 << skill);
+		int inc = 0;
+
+		switch (skill) {
+			case 0:
+				_txt->printMessage(0x8003, getLangString(0x4023), _characters[charNum].name);
+				inc = _rnd.getRandomNumberRng(4, 6);
+				_characters[charNum].hitPointsCur += inc;
+				_characters[charNum].hitPointsMax += inc;
+				break;
+
+			case 1:
+				_txt->printMessage(0x8003, getLangString(0x4025), _characters[charNum].name);
+				inc = _rnd.getRandomNumberRng(2, 6);
+				_characters[charNum].hitPointsCur += inc;
+				_characters[charNum].hitPointsMax += inc;
+				break;
+
+			case 2:
+				_txt->printMessage(0x8003, getLangString(0x4024), _characters[charNum].name);
+				inc = (_characters[charNum].defaultModifiers[6] * (_rnd.getRandomNumberRng(1, 8) + 17)) >> 8;
+				_characters[charNum].magicPointsCur += inc;
+				_characters[charNum].magicPointsMax += inc;			
+				inc = _rnd.getRandomNumberRng(1, 6);
+				_characters[charNum].hitPointsCur += inc;
+				_characters[charNum].hitPointsMax += inc;
+				break;
+
+			default:
+				break;
+		}
+
+		snd_playSoundEffect(118, -1);
+		gui_drawCharPortraitWithStats(charNum);
+	}
 }
 
 void LoLEngine::setupScreenDims() {

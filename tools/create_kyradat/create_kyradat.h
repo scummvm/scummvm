@@ -200,6 +200,7 @@ enum kExtractID {
 	lolMonsterScaleY,
 	lolMonsterScaleX,
 	lolMonsterScaleWH,
+	lolFlyingItemShp,
 	lolInventoryDesc,
 
 	lolLevelShpList,

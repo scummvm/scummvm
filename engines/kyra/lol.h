@@ -119,7 +119,7 @@ struct MonsterProperty {
 struct MonsterInPlay {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
-	uint8 unk4;
+	uint8 flyingHeight;
 	uint16 blockPropertyIndex;
 	uint16 x;
 	uint16 y;
@@ -153,7 +153,7 @@ struct MonsterInPlay {
 struct ItemInPlay {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
-	uint8 unk4;
+	uint8 flyingHeight;
 	uint16 blockPropertyIndex;
 	uint16 x;
 	uint16 y;
@@ -207,20 +207,34 @@ struct ButtonDef {
 	uint16 screenDim;
 };
 
-struct ThrownItem {
+struct OpenDoorState {
+	uint16 block;
+	int8 wall;
+	int8 state;
+};
+
+struct FlyingObject {
 	uint8 enable;
 	uint8 a;
-	uint16 c;
+	uint16 charNum;
 	uint16 item;
 	uint16 x;
 	uint16 y;
-	uint8 b;
+	uint8 flyingHeight;
 	uint8 direction;
-	int8 field_C;
+	uint8 distance;
 	int8 field_D;
-	uint8 charNum;
+	uint8 c;
 	uint8 flags;
-	uint8 field_10;
+	uint8 wallFlags;
+};
+
+struct FlyingObjectShape {
+	uint8 shapeFront;
+	uint8 shapeBack;
+	uint8 shapeLeft;
+	uint8 drawFlags;
+	uint8 flipFlags;
 };
 
 class LoLEngine : public KyraEngine_v1 {
@@ -323,7 +337,7 @@ private:
 	void timerProcessDoors(int timerNum);
 	void timerProcessMonsters(int timerNum);
 	void timerSub3(int timerNum);
-	void timerSub4(int timerNum);
+	void timerProcessFlyingObjects(int timerNum);
 	void timerRunSceneAnimScript(int timerNum);
 	void timerSub6(int timerNum);
 	void timerUpdatePortraitAnimations(int skipUpdate);
@@ -696,6 +710,8 @@ private:
 	int calculateCharacterStats(int charNum, int index);
 	int calculateProtection(int index);
 
+	void increaseExperience(int charNum, int skill, uint32 points);
+
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
 	int _updateFlags;
@@ -743,7 +759,7 @@ private:
 	void loadLevel(int index);
 	void addLevelItems();
 	void loadLevelWLL(int index, bool mapShapes);
-	void moveItemToBlock(uint16 *cmzItemIndex, uint16 item);
+	void assignBlockObject(uint16 *cmzItemIndex, uint16 item);
 	int assignLevelShapes(int index);
 	uint8 *getLevelShapes(int index);
 	void loadLevelCmzFile(int index);
@@ -811,12 +827,6 @@ private:
 
 	int smoothScrollDrawSpecialShape(int pageNum);
 	void updateAutoMap(int block);
-
-	struct OpenDoorState {
-		uint16 block;
-		int8 field_2;
-		int8 state;
-	};
 
 	OpenDoorState _openDoorState[3];
 	int _emcDoorState;
@@ -959,11 +969,20 @@ private:
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
 	ItemInPlay *findObject(uint16 index);
-	void runItemScript(int charNum, int item, int reg0, int reg3, int reg4);
+	void runItemScript(int charNum, int item, int sub, int next, int reg4);
 	void setHandItem(uint16 itemIndex);
-	void dropItem(int item, uint16 x, uint16 y, int a, int b);
-	bool throwItem(int a, int item, int x, int y, int b, int direction, int c, int charNum, int d);
+
+	void setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b);
 	void pickupItem(int item, int block);
+	bool throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c);
+	void endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock);
+	void processObjectFlight(FlyingObject *t, int x, int y);
+	void updateObjectFlightPosition(FlyingObject *t);
+	void objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock);
+	uint16 flyingObjectHitMonsters(int x, int y);
+	uint16 flyingObjectHitParty(int x, int y);
+	void updateFlyingObjects(FlyingObject *t);	
+
 	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
 	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
 	int checkSceneForItems(uint16 *blockDrawObjects, int colour);
@@ -980,7 +999,7 @@ private:
 	int _hideControls;
 	int _lastCharInventory;
 
-	ThrownItem *_throwItemState;
+	FlyingObject *_flyingItems;
 
 	EMCData _itemScript;
 
@@ -996,6 +1015,8 @@ private:
 	int _stashSetupDataSize;
 	const int8 *_sceneItemOffs;
 	int _sceneItemOffsSize;
+	const FlyingObjectShape *_flyingItemShapes;
+	int _flyingItemShapesSize;
 
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
@@ -1006,11 +1027,11 @@ private:
 	int calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 	void setMonsterDirection(MonsterInPlay *monster, int dir);
 	void cmzS3(MonsterInPlay *monster);
-	void removeAssignedItemFromBlock(uint16 *blockItemIndex, int id);
-	void removeDrawObjectFromBlock(uint16 *blockItemIndex, int id);
+	void removeAssignedObjectFromBlock(LevelBlockProperty *l, int id);
+	void removeDrawObjectFromBlock(LevelBlockProperty *l, int id);
 	void assignMonsterToBlock(uint16 *assignedBlockObjects, int id);
 	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
-	int checkBlockBeforeMonsterPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag);
+	int checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag);
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
@@ -1034,7 +1055,7 @@ private:
 	int getMonsterDistance(uint16 block1, uint16 block2);
 	int walkMonster_s3(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
 	int walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk);
-	void walkMonsterGetNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 unk);
+	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
 
 	MonsterInPlay *_monsters;
 	MonsterProperty *_monsterProperties;
