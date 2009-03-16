@@ -195,6 +195,59 @@ ScummVM Team
      Joachim Eberhard      - Numerous contributions to documentation
      Matthew Hoops         - Wiki editor
 
+  FreeSCI Contributors
+  --------------------
+     Anders Baden Nielsen  - PPC testing
+     Bas Zoetekouw         - Man pages, debian package management, CVS
+                             maintenance
+     Carl Muckenhoupt      - Sources to the SCI resource viewer tools that
+                             started it all
+     Chris Kehler          - Makefile enhancements
+     Christoph Reichenbach - UN*X code, VM/Graphics/Sound/other
+                             infrastructure
+     Christopher T. Lansdo - Original CVS maintainer, Alpha compatibility
+                             fixes
+     Claudio Matsuoka      - CVS snapshots, daily builds, BeOS and cygwin
+                             ports
+     Dark Minister         - SCI research (bytecode and parser)
+     Dmitry Jemerov        - Port to the Win32 platform, numerous bugfixes
+     Emmanuel Jeandel      - Bugfixes and bug reports
+     Francois-R Boyer      - MT-32 information and mapping code
+     George Reid           - FreeBSD package management
+     Hubert Maier          - AmigaOS 4 port
+     Hugues Valois         - Game selection menu
+     Johannes Manhave      - Document format translation
+     Jordi Vilalta         - Numerous code and website clean-up patches
+     Lars Skovlund         - Project maintenance, most documentation,
+                             bugfixes, SCI1 support
+     Magnus Reftel         - Heap implementation, Python class viewer,
+                             bugfixes
+     Matt Hargett          - Clean-ups, bugfixes, Hardcore QA, Win32
+     Max Horn              - SetJump implementation
+     Paul David Doherty    - Game version information
+     Petr Vyhnak           - The DCL-INFLATE algorithm, many Win32
+                             improvements
+     Rainer Canavan        - IRIX MIDI driver and bug fixes
+     Rainer De Temple      - SCI research
+     Ravi I.               - SCI0 sound resource specification
+     Ruediger Hanke        - Port to the MorphOS platform
+     Rune Orsval           - Configuration file editor
+     Rickard Lind          - MT32->GM MIDI mapping magic, sound research
+     Rink Springer         - Port to the DOS platform, several bug fixes
+     Robey Pointer         - Bug tracking system hosting
+     Sergey Lapin          - Port of Carl's type 2 decompression code
+     Solomon Peachy        - SDL ports and much of the sound subsystem
+     Vyacheslav Dikonov    - Config script improvements
+     Walter van Niftrik    - Ports to the Dreamcast and GP32 platforms
+     Xiaojun Chen         
+     Sean Terrell         
+
+     Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM
+     extension as a course project in his Advanced OS course
+
+     Special thanks to Bob Heitman and Corey Cole for their support of
+     FreeSCI
+
   Retired Team Members
   --------------------
      Tore Anderson         - Former Debian GNU/Linux maintainer
