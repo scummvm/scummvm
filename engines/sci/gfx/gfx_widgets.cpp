@@ -491,6 +491,12 @@ static int _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 
 	oprim = (gfxw_primitive_t *) other;
 
+	// FIXME: I'm not even sure why this happens...
+	if (wprim->bounds.height < 0 || oprim->bounds.height < 0) {
+		warning("_gfxwop_primitive_equals: height < 0");
+		return 0;
+	}
+
 	if (!toCommonRect(wprim->bounds).equals(toCommonRect(oprim->bounds)))
 		return 0;
 
@@ -1970,6 +1976,11 @@ int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widge
 	if (!GFXW_IS_CONTAINER(widget) && widget->parent) {
 		bounds.x += widget->parent->bounds.x;
 		bounds.y += widget->parent->bounds.y;
+		// FIXME: I'm not even sure why this happens...
+		if (bounds.height < 0) {
+			warning("gfxw_widget_matches_snapshot: height < 0");
+			return 0;
+		}
 	}
 
 	return ((widget->serial >= free_above_eq || widget->serial < free_below) && 
