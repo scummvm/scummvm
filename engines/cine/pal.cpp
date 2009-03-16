@@ -161,11 +161,39 @@ void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopC
 	}
 }
 
+/*! \brief Shift byte to the left by given amount (Handles negative shifting amounts too, otherwise this would be trivial). */
 byte shiftByteLeft(const byte value, const signed shiftLeft) {
 	if (shiftLeft >= 0)
 		return value << shiftLeft;
 	else // right shift with negative shiftLeft values
 		return value >> abs(shiftLeft);
+}
+
+/*! \brief Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
+bool isBigEndian(const EndianType endianType) {
+	assert(endianType == NATIVE_ENDIAN || endianType == LITTLE_ENDIAN || endianType == BIG_ENDIAN);
+
+	// Handle explicit little and big endian types here
+	if (endianType != NATIVE_ENDIAN) {
+		return (endianType == BIG_ENDIAN);
+	}
+
+	// Handle native endian type here
+#if defined(SCUMM_BIG_ENDIAN)
+	return true;
+#elif defined(SCUMM_LITTLE_ENDIAN)
+	return false;
+#else
+	#error No endianness defined
+#endif
+}
+
+/*! \brief Calculate byte position of given bit position in a multibyte variable using defined endianness. */
+int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
+	if (bigEndian)
+		return (numBytes - 1) - (bitPos / 8);
+	else // little endian
+		return bitPos / 8;
 }
 
 // a.k.a. palRotate
@@ -183,6 +211,10 @@ uint Palette::colorCount() const {
 	return _colors.size();
 }
 
+const EndianType Palette::endianType() const {
+	return (_bigEndian ? BIG_ENDIAN : LITTLE_ENDIAN);
+}
+
 Graphics::PixelFormat Palette::colorFormat() const {
 	return _format;
 }
@@ -197,6 +229,10 @@ void Palette::setColorFormat(const Graphics::PixelFormat format) {
 	_rMax = (1 << _rBits) - 1;
 	_gMax = (1 << _gBits) - 1;
 	_bMax = (1 << _bBits) - 1;
+}
+
+void Palette::setEndianType(const EndianType endianType) {
+	_bigEndian = isBigEndian(endianType);
 }
 
 // a.k.a. transformPaletteRange
@@ -219,37 +255,42 @@ void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
 	_colors[index].b = CLIP<int>(_colors[index].b + b, 0, _bMax);
 }
 
-Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors) {
+Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType) {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
+	setEndianType(endianType);
 	setColorFormat(format);
 
 	_colors.clear();
 	_colors.resize(numColors);
+
+	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endianType));
 	
 	for (uint i = 0; i < numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
-		_colors[i].r = (buf[i * format.bytesPerPixel + (format.rShift / 8)] >> (format.rShift % 8)) & _rMax;
-		_colors[i].g = (buf[i * format.bytesPerPixel + (format.gShift / 8)] >> (format.gShift % 8)) & _gMax;
-		_colors[i].b = (buf[i * format.bytesPerPixel + (format.bShift / 8)] >> (format.bShift % 8)) & _bMax;
+		_colors[i].r = (buf[i * format.bytesPerPixel + rBytePos] >> (format.rShift % 8)) & _rMax;
+		_colors[i].g = (buf[i * format.bytesPerPixel + gBytePos] >> (format.gShift % 8)) & _gMax;
+		_colors[i].b = (buf[i * format.bytesPerPixel + bBytePos] >> (format.bShift % 8)) & _bMax;
 	}
 
 	return *this;
 }
 
-byte *Palette::save(byte *buf, const uint size) const {
-	return save(buf, size, colorFormat(), colorCount());
+byte *Palette::save(byte *buf, const uint size, const EndianType endianType) const {
+	return save(buf, size, colorFormat(), colorCount(), endianType);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format) const {
-	return save(buf, size, format, colorCount());
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const EndianType endianType) const {
+	return save(buf, size, format, colorCount(), endianType);
 }
 
-byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const byte firstIndex) const {
+byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType, const byte firstIndex) const {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
 	assert(format.aLoss == 8); // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
@@ -269,12 +310,16 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 	const byte gMask = ((1 << (8 - format.gLoss)) - 1) << (format.gShift % 8);
 	const byte bMask = ((1 << (8 - format.bLoss)) - 1) << (format.bShift % 8);
 
+	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endianType));
+	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endianType));
+
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
 		// _rMax, _gMax, _bMax are also used as masks here
-		buf[i * format.bytesPerPixel + (format.rShift / 8)] |= (shiftByteLeft(_colors[i].r, rShiftLeft) & rMask);
-		buf[i * format.bytesPerPixel + (format.gShift / 8)] |= (shiftByteLeft(_colors[i].g, gShiftLeft) & gMask);
-		buf[i * format.bytesPerPixel + (format.bShift / 8)] |= (shiftByteLeft(_colors[i].b, bShiftLeft) & bMask);
+		buf[i * format.bytesPerPixel + rBytePos] |= (shiftByteLeft(_colors[i].r, rShiftLeft) & rMask);
+		buf[i * format.bytesPerPixel + gBytePos] |= (shiftByteLeft(_colors[i].g, gShiftLeft) & gMask);
+		buf[i * format.bytesPerPixel + bBytePos] |= (shiftByteLeft(_colors[i].b, bShiftLeft) & bMask);
 	}
 
 	// Return the pointer to the output palette
