@@ -113,7 +113,6 @@ struct rect_t {
 	int width, height; /* width, height: (x,y,width,height)=(5,5,1,1) occupies 1 pixel */
 };
 
-
 /* Generates a rect_t from index data
 ** Parameters: (int x int) x,y: Upper left point of the rectangle
 **             (int x int) width, height: Horizontal and vertical extension of the rectangle
@@ -130,6 +129,15 @@ static inline rect_t gfx_rect(int x, int y, int width, int height) {
 	return rect;
 }
 
+// Temporary helper functions to ease the transition from rect_t to Common::Rect
+static rect_t toSCIRect(Common::Rect in) {
+	return gfx_rect(in.left, in.top, in.width(), in.height());
+}
+
+static Common::Rect toCommonRect(rect_t in) {
+	return Common::Rect(in.x, in.y, in.x + in.width, in.y + in.height);
+}
+
 #define GFX_PRINT_RECT(rect) (rect).x, (rect).y, (rect).width, (rect).height
 
 #define OVERLAP(a, b, z, zl) (a.z >= b.z && a.z < (b.z + b.zl))
@@ -144,68 +152,8 @@ static inline int gfx_rects_overlap(rect_t a, rect_t b) {
 
 #undef OVERLAP
 
-#define MERGE_PARTIAL(z, zl) \
-if (a.z < b.z) SUBMERGE_PARTIAL(a, b, z, zl) \
-else SUBMERGE_PARTIAL(b, a, z, zl)
-
-#define SUBMERGE_PARTIAL(a, b, z, zl) \
-{ \
-	retval.z = a.z; \
-	retval.zl = a.zl; \
-	if (b.z + b.zl > a.z + a.zl) \
-		retval.zl = (b.z + b.zl - a.z); \
-}
-
-
-
-#define RECT(a) a.x, a.y, a.width, a.height
-
-/* Merges two rects
-** Parameters: (rect_t x rect_t) a,b: The two rects to merge
-** Returns   : (rect_t) The smallest rect containing both a and b
-*/
-static inline rect_t gfx_rects_merge(rect_t a, rect_t b) {
-	rect_t retval;
-	MERGE_PARTIAL(x, width);
-	MERGE_PARTIAL(y, height);
-	return retval;
-}
-#undef MERGE_PARTIAL
-#undef SUBMERGE_PARTIAL
-
-
-/* Subset predicate for rectangles
-** Parameters: (rect_t) a, b: The two rects to compare
-** Returns   : non-zero iff for each pixel p in a the following holds: p is in b.
-*/
-static inline int gfx_rect_subset(rect_t a, rect_t b) {
-	return ((a.x >= b.x) && (a.y >= b.y) && ((a.x + a.width) <= (b.x + b.width)) && ((a.y + a.height) <= (b.y + b.height)));
-}
-
-
-/* Equality predicate for rects
-** Parameters: (rect_t) a, b
-** Returns   : (int) gfx_rect_subset(a,b) AND gfx_rect_subset(b,a)
-*/
-static inline int gfx_rect_equals(rect_t a, rect_t b) {
-	return (a.x == b.x && a.width == b.width && a.y == b.y && a.height == b.height);
-}
-
-
 /* gfx_rect_fullscreen is declared in gfx/gfx_tools.c */
 extern rect_t gfx_rect_fullscreen;
-
-/* Translation operation for rects
-** Parameters: (rect_t) rect: The rect to translate
-**             (Common::Point) offset: The offset to translate it by
-** Returns   : (rect_t) The translated rect
-*/
-static inline rect_t gfx_rect_translate(rect_t rect, Common::Point offset) {
-	rect.x += offset.x;
-	rect.y += offset.y;
-
-	return rect;
-}
 
 #define GFX_RESID_NONE -1
 

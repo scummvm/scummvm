@@ -335,10 +335,13 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 	switch (strategy) {
 
 	case GFXOP_DIRTY_FRAMES_ONE:
-		if (base)
-			base->rect = gfx_rects_merge(box, base->rect);
-		else
+		if (base) {
+			Common::Rect tmp = toCommonRect(box);
+			tmp.extend(toCommonRect(base->rect));
+			base->rect = toSCIRect(tmp);
+		} else {
 			base = _rect_create(box);
+		}
 		break;
 
 	case GFXOP_DIRTY_FRAMES_CLUSTERS: {
@@ -347,7 +350,10 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 		while (*rectp) {
 			if (gfx_rects_overlap((*rectp)->rect, box)) {
 				gfx_dirty_rect_t *next = (*rectp)->next;
-				box = gfx_rects_merge((*rectp)->rect, box);
+				Common::Rect tmp = toCommonRect((*rectp)->rect);
+				tmp.extend(toCommonRect(box));
+				box = toSCIRect(tmp);
+
 				free(*rectp);
 				*rectp = next;
 			} else

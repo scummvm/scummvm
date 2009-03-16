@@ -411,7 +411,7 @@ static int _gfxwop_box_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other)
 	if (box->shade_type != GFX_BOX_SHADE_FLAT && box->color2.alpha)
 		return 0;
 
-	if (!gfx_rect_subset(other->bounds, box->bounds))
+	if (!toCommonRect(box->bounds).contains(toCommonRect(other->bounds)))
 		return 0;
 
 	return 1;
@@ -424,7 +424,7 @@ static int _gfxwop_box_equals(gfxw_widget_t *widget, gfxw_widget_t *other) {
 
 	obox = (gfxw_box_t *) other;
 
-	if (!gfx_rect_equals(wbox->bounds, obox->bounds))
+	if (!toCommonRect(wbox->bounds).equals(toCommonRect(obox->bounds)))
 		return 0;
 
 	if (!_color_equals(wbox->color1, obox->color1))
@@ -491,7 +491,7 @@ static int _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 
 	oprim = (gfxw_primitive_t *) other;
 
-	if (!gfx_rect_equals(wprim->bounds, oprim->bounds))
+	if (!toCommonRect(wprim->bounds).equals(toCommonRect(oprim->bounds)))
 		return 0;
 
 	if (!_color_equals(wprim->color, oprim->color))
@@ -1972,7 +1972,8 @@ int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widge
 		bounds.y += widget->parent->bounds.y;
 	}
 
-	return ((widget->serial >= free_above_eq || widget->serial < free_below) && gfx_rect_subset(bounds, snapshot->area));
+	return ((widget->serial >= free_above_eq || widget->serial < free_below) && 
+		toCommonRect(snapshot->area).contains(toCommonRect(bounds)));
 }
 
 #define MAGIC_FREE_NUMBER -42
@@ -2074,7 +2075,7 @@ static int gfxw_check_chrono_overlaps(gfxw_port_t *chrono, gfxw_widget_t *widget
 	gfxw_widget_t *seeker = GFXWC(chrono->contents)->contents;
 
 	while (seeker) {
-		if (gfx_rect_equals(seeker->bounds, widget->bounds)) {
+		if (toCommonRect(seeker->bounds).equals(toCommonRect(widget->bounds))) {
 			gfxw_annihilate(GFXW(seeker));
 			return 1;
 		}
@@ -2106,7 +2107,9 @@ static gfxw_widget_t *gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget
 		bounds = widget->bounds;
 		origin.x = seeker->parent->zone.x;
 		origin.y = seeker->parent->zone.y;
-		gfx_rect_translate(bounds, origin);
+		Common::Rect tmp = toCommonRect(bounds);
+		tmp.translate(origin.x, origin.y);
+		bounds = toSCIRect(tmp);
 
 		if (gfx_rects_overlap(bounds, seeker->bounds))
 			return seeker;
@@ -2134,7 +2137,10 @@ void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfx
 		gfxw_remove_widget_from_container(GFXWC(chrono->parent), GFXW(chrono));
 		gfxw_annihilate(GFXW(chrono));
 
-		gfx_rect_translate(tw->zone, origin);
+		Common::Rect tmp = toCommonRect(tw->zone);
+		tmp.translate(origin.x, origin.y);
+		tw->zone = toSCIRect(tmp);
+
 		target->add(GFXWC(target), GFXW(tw));
 	}
 }
