@@ -451,10 +451,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\tinsel\serializer.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\tinsel\sound.cpp"
 			>
 		</File>

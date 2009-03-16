@@ -291,6 +291,9 @@
 				RelativePath="..\..\common\scummsys.h">
 			</File>
 			<File
+				RelativePath="..\..\common\serializer.h">
+			</File>
+			<File
 				RelativePath="..\..\common\singleton.h">
 			</File>
 			<File
@@ -477,7 +480,7 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\vag.h">
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\sound\voc.cpp">
 			</File>

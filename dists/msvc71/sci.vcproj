@@ -324,12 +324,6 @@
 				RelativePath="..\..\engines\sci\gfx\resmgr.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\sbtree.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\sbtree.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\gfx\sci_widgets.cpp">
 			</File>
 			<File
