@@ -51,6 +51,11 @@ struct RoomDef {
 	uint32	parallax[2];
 };
 
+struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background at every screen update
+	uint8 *decodedBackground;
+	uint8 *extPlxCache; // If this screen requires an external parallax, save it here
+};
+
 #define SCRNGRID_X 16
 #define SCRNGRID_Y 8
 #define SHRINK_BUFFER_SIZE 50000
@@ -127,6 +132,8 @@ private:
 	int32 inRange(int32 a, int32 b, int32 c);
 	void fadePalette(void);
 
+	void flushPsxCache(void);
+
 	OSystem *_system;
 	ResMan *_resMan;
 	ObjectMan *_objMan;
@@ -144,7 +151,7 @@ private:
 	bool   _updatePalette;
 	uint16 _oldScrollX, _oldScrollY; // for drawing additional frames
 
-	uint8 *_extPlxCache; // Cache used for external PLX file in PSX version
+	PSXDataCache _psxCache; // Cache used for PSX backgrounds
 
 	uint32  _foreList[MAX_FORE];
 	uint32  _backList[MAX_BACK];

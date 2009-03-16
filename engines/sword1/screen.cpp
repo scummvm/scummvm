@@ -53,7 +53,8 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_fadingStep = 0;
 	_currentScreen = 0xFFFF;
 	_updatePalette = false;
-	_extPlxCache = NULL;
+	_psxCache.decodedBackground = NULL;
+	_psxCache.extPlxCache = NULL;
 }
 
 Screen::~Screen(void) {
@@ -317,10 +318,10 @@ void Screen::newScreen(uint32 screen) {
 		free(_screenBuf);
 	if (_screenGrid)
 		free(_screenGrid);
-	if (_extPlxCache) {
-		free(_extPlxCache);
-		_extPlxCache = NULL;
-	}
+
+	if (SwordEngine::isPsx())
+		flushPsxCache();
+
 	_screenBuf = (uint8*)malloc(_scrnSizeX * _scrnSizeY);
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
 	memset(_screenGrid, 0, _gridSizeX * _gridSizeY);
@@ -347,10 +348,8 @@ void Screen::newScreen(uint32 screen) {
 
 void Screen::quitScreen(void) {
 	uint8 cnt;
-	if (_extPlxCache) {
-		free(_extPlxCache);
-		_extPlxCache = NULL;
-	}
+	if (SwordEngine::isPsx()) 
+		flushPsxCache();
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++)
 		_resMan->resClose(_roomDefTable[_currentScreen].layers[cnt]);
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers - 1; cnt++)
@@ -394,14 +393,15 @@ void Screen::draw(void) {
 	} else if (!(SwordEngine::isPsx())) {
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
 	} else { //We are using PSX version
-		uint8 *indxScreen;		
 		if(_currentScreen == 45 || _currentScreen == 55 ||
-		   _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) // Width shrinked backgrounds
-			indxScreen = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
-		else
-			indxScreen = psxBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
-		memcpy(_screenBuf, indxScreen, _scrnSizeX * _scrnSizeY);
-		free(indxScreen);
+		   _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) { // Width shrinked backgrounds
+			if (!_psxCache.decodedBackground)	
+				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
+		} else {
+			if (!_psxCache.decodedBackground)
+				_psxCache.decodedBackground = psxBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
+		}
+		memcpy(_screenBuf, _psxCache.decodedBackground, _scrnSizeX * _scrnSizeY);
 	}
 
 	for (cnt = 0; cnt < _backLength; cnt++)
@@ -423,14 +423,14 @@ void Screen::draw(void) {
 	// PSX version has parallax layer for this room in an external file (TRAIN.PLX) 
 	if(SwordEngine::isPsx() && _currentScreen == 63) {
 		// FIXME: this should be handled in a cleaner way...
-		if (!_extPlxCache) {
+		if (!_psxCache.extPlxCache) {
 			Common::File parallax; 
 			parallax.open("TRAIN.PLX");
-			_extPlxCache = (uint8*) malloc(parallax.size());
-			parallax.read(_extPlxCache, parallax.size());
+			_psxCache.extPlxCache = (uint8*) malloc(parallax.size());
+			parallax.read(_psxCache.extPlxCache, parallax.size());
 			parallax.close();
 		}
-		renderParallax(_extPlxCache);
+		renderParallax(_psxCache.extPlxCache);
 	}
 
 	for (cnt = 0; cnt < _foreLength; cnt++)
@@ -1104,6 +1104,18 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 			byte_count++;
 			control_byte <<= 1; //Shifting left the control code one bit
 		}
+	}
+}
+
+void Screen::flushPsxCache(void) {
+	if (_psxCache.decodedBackground) {
+		free(_psxCache.decodedBackground);
+		_psxCache.decodedBackground = NULL;
+	}
+
+	if (_psxCache.extPlxCache) {
+		free(_psxCache.extPlxCache);
+		_psxCache.extPlxCache = NULL;
 	}
 }
 
