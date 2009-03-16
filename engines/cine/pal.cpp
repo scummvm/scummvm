@@ -236,23 +236,27 @@ void Palette::setEndianType(const EndianType endianType) {
 }
 
 // a.k.a. transformPaletteRange
-Palette &Palette::saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
+Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
 	assert(firstIndex < colorCount() && lastIndex < colorCount());
+	assert(firstIndex < output.colorCount() && lastIndex < output.colorCount());
+	assert(output.colorFormat() == colorFormat());
 
 	for (uint i = firstIndex; i <= lastIndex; i++)
-		saturatedAddColor(i, r, g, b);
+		output._colors[i] = saturatedAddColor(_colors[i], r, g, b);
 
-	return *this;
+	return output;
 }
 
 // a.k.a. transformColor
 // Parameter color components (i.e. r, g and b) are in range [-7, 7]
 // e.g. r = 7 sets the resulting color's red component to maximum
 // e.g. r = -7 sets the resulting color's red component to minimum (i.e. zero)
-void Palette::saturatedAddColor(byte index, signed r, signed g, signed b) {
-	_colors[index].r = CLIP<int>(_colors[index].r + r, 0, _rMax);
-	_colors[index].g = CLIP<int>(_colors[index].g + g, 0, _gMax);
-	_colors[index].b = CLIP<int>(_colors[index].b + b, 0, _bMax);
+Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const {
+	Cine::Palette::Color result;
+	result.r = CLIP<int>(baseColor.r + r, 0, _rMax);
+	result.g = CLIP<int>(baseColor.g + g, 0, _gMax);
+	result.b = CLIP<int>(baseColor.b + b, 0, _bMax);
+	return result;
 }
 
 Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType) {

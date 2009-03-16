@@ -74,6 +74,11 @@ void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopC
 // TODO: Make use of
 // TODO: Test
 class Palette {
+private:
+	struct Color {
+		uint8 r, g, b;
+	};
+
 public:
 	/*! \brief Load palette from buffer with given color format, endianness and number of colors.
 	 * \param buf Input buffer
@@ -110,7 +115,7 @@ public:
 	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endianType, const byte firstIndex = 0) const;
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
-	Palette &saturatedAddColor(byte firstIndex, byte lastIndex, signed r, signed g, signed b);	
+	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
 	uint colorCount() const;
 
 	/*! \brief The original endian type in which this palette was loaded.
@@ -124,13 +129,9 @@ public:
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
 	void setEndianType(const EndianType endianType);
-	void saturatedAddColor(byte index, signed r, signed g, signed b);
+	Cine::Palette::Color saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
 
 private:
-	struct Color {
-		uint8 r, g, b;
-	};
-
 	// The used source format, its endianness etc.
 	Graphics::PixelFormat _format;
 	uint _rBits, _gBits, _bBits;
