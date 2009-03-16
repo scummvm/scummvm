@@ -53,6 +53,7 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_fadingStep = 0;
 	_currentScreen = 0xFFFF;
 	_updatePalette = false;
+	_extPlxCache = NULL;
 }
 
 Screen::~Screen(void) {
@@ -316,6 +317,10 @@ void Screen::newScreen(uint32 screen) {
 		free(_screenBuf);
 	if (_screenGrid)
 		free(_screenGrid);
+	if (_extPlxCache) {
+		free(_extPlxCache);
+		_extPlxCache = NULL;
+	}
 	_screenBuf = (uint8*)malloc(_scrnSizeX * _scrnSizeY);
 	_screenGrid = (uint8*)malloc(_gridSizeX * _gridSizeY);
 	memset(_screenGrid, 0, _gridSizeX * _gridSizeY);
@@ -342,6 +347,10 @@ void Screen::newScreen(uint32 screen) {
 
 void Screen::quitScreen(void) {
 	uint8 cnt;
+	if (_extPlxCache) {
+		free(_extPlxCache);
+		_extPlxCache = NULL;
+	}
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++)
 		_resMan->resClose(_roomDefTable[_currentScreen].layers[cnt]);
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers - 1; cnt++)
@@ -413,14 +422,15 @@ void Screen::draw(void) {
 
 	// PSX version has parallax layer for this room in an external file (TRAIN.PLX) 
 	if(SwordEngine::isPsx() && _currentScreen == 63) {
-		Common::File parallax; 
-		uint8 *trainPLX = NULL; 
-		parallax.open("TRAIN.PLX");
-		trainPLX = (uint8*) malloc(parallax.size());
-		parallax.read(trainPLX, parallax.size());
-		parallax.close();
-		renderParallax(trainPLX);
-		free(trainPLX);
+		// FIXME: this should be handled in a cleaner way...
+		if (!_extPlxCache) {
+			Common::File parallax; 
+			parallax.open("TRAIN.PLX");
+			_extPlxCache = (uint8*) malloc(parallax.size());
+			parallax.read(_extPlxCache, parallax.size());
+			parallax.close();
+		}
+		renderParallax(_extPlxCache);
 	}
 
 	for (cnt = 0; cnt < _foreLength; cnt++)

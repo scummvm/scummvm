@@ -144,6 +144,8 @@ private:
 	bool   _updatePalette;
 	uint16 _oldScrollX, _oldScrollY; // for drawing additional frames
 
+	uint8 *_extPlxCache; // Cache used for external PLX file in PSX version
+
 	uint32  _foreList[MAX_FORE];
 	uint32  _backList[MAX_BACK];
 	SortSpr _sortList[MAX_SORT];
