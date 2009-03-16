@@ -166,20 +166,22 @@ void Parallaction::updateView() {
 	if (canScroll()) {
 		scrollX = _gfx->getScrollPos();
 
-		Common::Point foot;
-		_char._ani->getFoot(foot);
+		if (_char._ani->gfxobj) {
+			Common::Point foot;
+			_char._ani->getFoot(foot);
 
-		foot.x -= scrollX;
-		//foot.y -= ...
+			foot.x -= scrollX;
+			//foot.y -= ...
 
-		int min = SCROLL_BAND_WIDTH;
-		int max = _screenWidth - SCROLL_BAND_WIDTH;
+			int min = SCROLL_BAND_WIDTH;
+			int max = _screenWidth - SCROLL_BAND_WIDTH;
 
-		if (foot.x < min) {
-			scrollX -= (min - foot.x);
-		} else
-		if (foot.x > max) {
-			scrollX += (foot.x - max);
+			if (foot.x < min) {
+				scrollX -= (min - foot.x);
+			} else
+			if (foot.x > max) {
+				scrollX += (foot.x - max);
+			}
 		}
 	}
 	_gfx->setScrollPos(scrollX);
