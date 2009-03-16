@@ -2059,15 +2059,20 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 13:	// SO_SAVE_STRING
 		{
-			Common::OutSaveFile *file;
-			char filename[256], *s;
+			Common::String filename;
+			char chr;
 
 			a = getVarOrDirectByte(PARAM_1);
-			s = filename;
-			while ((*s++ = fetchScriptByte()))
-				;
+			while ((chr = fetchScriptByte()))
+				filename += chr;
 
-			file = _saveFileMan->openForSaving(filename);
+			if (filename.hasPrefix("iq-")) {
+				filename = _targetName + ".iq";
+			} else {
+				error("SO_SAVE_STRING: Unsupported filename %s\n", filename.c_str());
+			}
+
+			Common::OutSaveFile *file = _saveFileMan->openForSaving(filename.c_str());
 			if (file != NULL) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
@@ -2079,15 +2084,20 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 	case 14:	// SO_LOAD_STRING
 		{
-			Common::InSaveFile *file;
-			char filename[256], *s;
+			Common::String filename;
+			char chr;
 
 			a = getVarOrDirectByte(PARAM_1);
-			s = filename;
-			while ((*s++ = fetchScriptByte()))
-				;
+			while ((chr = fetchScriptByte()))
+				filename += chr;
 
-			file = _saveFileMan->openForLoading(filename);
+			if (filename.hasPrefix("iq-")) {
+				filename = _targetName + ".iq";
+			} else {
+				error("SO_SAVE_STRING: Unsupported filename %s\n", filename.c_str());
+			}
+
+			Common::InSaveFile *file = _saveFileMan->openForLoading(filename.c_str());
 			if (file != NULL) {
 				byte *ptr;
 				int len = 256, cnt = 0;
