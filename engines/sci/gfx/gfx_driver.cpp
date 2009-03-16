@@ -156,8 +156,8 @@ static int scummvm_draw_line(gfx_driver_t *drv, Common::Point start, Common::Poi
 static int scummvm_draw_filled_rect(gfx_driver_t *drv, rect_t rect, gfx_color_t color1, gfx_color_t color2,
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
-		for (int i = rect.y; i < rect.y + rect.yl; i++) {
-			memset(S->visual[0] + i * S->xsize + rect.x, color1.visual.parent_index, rect.xl);
+		for (int i = rect.y; i < rect.y + rect.height; i++) {
+			memset(S->visual[0] + i * S->xsize + rect.x, color1.visual.parent_index, rect.width);
 		}
 	}
 
@@ -173,13 +173,13 @@ static int scummvm_draw_pixmap(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priorit
 							   rect_t src, rect_t dest, gfx_buffer_t buffer) {
 	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 1 : 0;
 
-	if (dest.xl != src.xl || dest.yl != src.yl) {
-		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.xl, src.yl, dest.xl, dest.yl);
+	if (dest.width != src.width || dest.height != src.height) {
+		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.width, src.height, dest.width, dest.height);
 		return GFX_ERROR;
 	}
 
 	gfx_crossblit_pixmap(drv->mode, pxm, priority, src, dest, S->visual[bufnr], S->xsize,
-	                     S->priority[bufnr]->index_data, S->priority[bufnr]->index_xl, 1, 0);
+	                     S->priority[bufnr]->index_data, S->priority[bufnr]->index_width, 1, 0);
 
 	return GFX_OK;
 }
@@ -198,10 +198,10 @@ static int scummvm_grab_pixmap(gfx_driver_t *drv, rect_t src, gfx_pixmap_t *pxm,
 	switch (map) {
 
 	case GFX_MASK_VISUAL:
-		pxm->xl = src.xl;
-		pxm->yl = src.yl;
-		for (int i = 0; i < src.yl; i++) {
-			memcpy(pxm->data + i * src.xl, S->visual[0] + (i + src.y) * S->xsize + src.x, src.xl);
+		pxm->width = src.width;
+		pxm->height = src.height;
+		for (int i = 0; i < src.height; i++) {
+			memcpy(pxm->data + i * src.width, S->visual[0] + (i + src.y) * S->xsize + src.x, src.width);
 		}
 		break;
 
@@ -224,24 +224,24 @@ static int scummvm_update(gfx_driver_t *drv, rect_t src, Common::Point dest, gfx
 
 	/*
 	if (src.x != dest.x || src.y != dest.y) {
-		printf("Updating %d (%d,%d)(%dx%d) to (%d,%d) on %d\n", buffer, src.x, src.y, src.xl, src.yl, dest.x, dest.y, data_dest);
+		printf("Updating %d (%d,%d)(%dx%d) to (%d,%d) on %d\n", buffer, src.x, src.y, src.width, src.height, dest.x, dest.y, data_dest);
 	} else {
-		printf("Updating %d (%d,%d)(%dx%d) to %d\n", buffer, src.x, src.y, src.xl, src.yl, data_dest);
+		printf("Updating %d (%d,%d)(%dx%d) to %d\n", buffer, src.x, src.y, src.width, src.height, data_dest);
 	}
 	*/
 
 	switch (buffer) {
 	case GFX_BUFFER_BACK:
-		for (int i = 0; i < src.yl; i++) {
+		for (int i = 0; i < src.height; i++) {
 			memcpy(S->visual[0] + (dest.y + i) * S->xsize + dest.x,
-			       S->visual[1] + (src.y + i) * S->xsize + src.x, src.xl);
+			       S->visual[1] + (src.y + i) * S->xsize + src.x, src.width);
 		}
 
 		if ((src.x == dest.x) && (src.y == dest.y))
 			gfx_copy_pixmap_box_i(S->priority[0], S->priority[1], src);
 		break;
 	case GFX_BUFFER_FRONT:
-		g_system->copyRectToScreen(S->visual[0] + src.x + src.y * S->xsize, S->xsize, dest.x, dest.y, src.xl, src.yl);
+		g_system->copyRectToScreen(S->visual[0] + src.x + src.y * S->xsize, S->xsize, dest.x, dest.y, src.width, src.height);
 		g_system->updateScreen();
 		break;
 	default:
@@ -264,16 +264,16 @@ static int scummvm_set_static_buffer(gfx_driver_t *drv, gfx_pixmap_t *pic, gfx_p
 // Scale cursor and map its colors to the global palette
 static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 {
-	int linewidth = pointer->xl;
-	int lines = pointer->yl;
+	int linewidth = pointer->width;
+	int lines = pointer->height;
 	uint8 *data = new uint8[linewidth*lines];
 	uint8 *linebase = data, *pos;
 	uint8 *src = pointer->index_data;
 
-	for (int yc = 0; yc < pointer->index_yl; yc++) {
+	for (int yc = 0; yc < pointer->index_height; yc++) {
 		pos = linebase;
 
-		for (int xc = 0; xc < pointer->index_xl; xc++) {
+		for (int xc = 0; xc < pointer->index_width; xc++) {
 			uint8 color = *src;
 			if (color != 255)
 				color = pointer->palette->getColor(color).parent_index;
@@ -296,7 +296,7 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer) {
 	} else {
 		delete[] S->pointer_data;
 		S->pointer_data = create_cursor(drv, pointer, 1);
-		g_system->setMouseCursor(S->pointer_data, pointer->xl, pointer->yl, pointer->xoffset, pointer->yoffset);
+		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, pointer->xoffset, pointer->yoffset);
 		g_system->showMouse(true);
 	}
 

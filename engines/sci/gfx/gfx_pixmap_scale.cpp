@@ -43,7 +43,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	int xfact = (scale) ? mode->xfact : 1;
 	int yfact = (scale) ? mode->yfact : 1;
 	int widthc, heightc; // Width duplication counter
-	int line_width = xfact * pxm->index_xl;
+	int line_width = xfact * pxm->index_width;
 	int bytespp = mode->bytespp;
 	int x, y;
 	int i;
@@ -63,7 +63,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	assert(bytespp == COPY_BYTES);
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_xl * xfact * pxm->index_yl * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
 	// Calculate all colors
 	for (i = 0; i < pxm->colors_nr(); i++) {
@@ -85,11 +85,11 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 		result_colors[pxm->color_key] = alpha_color;
 
 	src = pxm->index_data; // Workaround for gcc 4.2.3 bug on EMT64
-	for (y = 0; y < pxm->index_yl; y++) {
+	for (y = 0; y < pxm->index_height; y++) {
 		byte *prev_dest = dest;
 		byte *prev_alpha_dest = alpha_dest;
 
-		for (x = 0; x < pxm->index_xl; x++) {
+		for (x = 0; x < pxm->index_width; x++) {
 			int isalpha;
 			SIZETYPE col = result_colors[isalpha = *src++] << (EXTRA_BYTE_OFFSET * 8);
 			isalpha = (isalpha == pxm->color_key) && using_alpha;
@@ -176,12 +176,12 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 					WRITE_XPART(X_CALC_INTENSITY_CENTER, 0); \
 				} \
 				/*-- right half --*/ \
-				MAKE_PIXEL((x + 1 == pxm->index_xl), othercolumn, ctexel, src[+1]); \
+				MAKE_PIXEL((x + 1 == pxm->index_width), othercolumn, ctexel, src[+1]); \
 				WRITE_XPART(X_CALC_INTENSITY_NORMAL, 1); \
 				if (DO_Y_STEP) \
 					line_valuator -= line_step; \
-				sublinepos += pxm->xl * bytespp; \
-				alpha_sublinepos += pxm->xl; \
+				sublinepos += pxm->width * bytespp; \
+				alpha_sublinepos += pxm->width; \
 			} \
 			if (DO_Y_STEP) \
 			        line_step = -line_step
@@ -224,13 +224,13 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	shifts[3] = mode->alpha_shift;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_xl * xfact * pxm->index_yl * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
-	for (y = 0; y < pxm->index_yl; y++) {
+	for (y = 0; y < pxm->index_height; y++) {
 		byte *linepos = dest;
 		byte *alpha_linepos = alpha_dest;
 
-		for (x = 0; x < pxm->index_xl; x++) {
+		for (x = 0; x < pxm->index_width; x++) {
 			int otherline[4]; // the above line or the line below
 			int ctexel[4]; // Current texel
 			int subx, suby;
@@ -258,7 +258,7 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 			MAKE_PIXEL(0, ctexel, zero, *src);
 
 			//-- Upper half --
-			MAKE_PIXEL((y == 0), otherline, ctexel, src[-pxm->index_xl]);
+			MAKE_PIXEL((y == 0), otherline, ctexel, src[-pxm->index_width]);
 			WRITE_YPART(1, Y_CALC_INTENSITY_NORMAL);
 
 			if (yfact & 1) {
@@ -267,7 +267,7 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 
 			//-- Lower half --
 			line_valuator -= line_step;
-			MAKE_PIXEL((y + 1 == pxm->index_yl), otherline, ctexel, src[pxm->index_xl]);
+			MAKE_PIXEL((y + 1 == pxm->index_height), otherline, ctexel, src[pxm->index_width]);
 			WRITE_YPART(1, Y_CALC_INTENSITY_NORMAL);
 
 			src++;
@@ -275,8 +275,8 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 			alpha_linepos += xfact;
 		}
 
-		dest += pxm->xl * yfact * bytespp;
-		alpha_dest += pxm->xl * yfact;
+		dest += pxm->width * yfact * bytespp;
+		alpha_dest += pxm->width * yfact;
 	}
 }
 
@@ -372,15 +372,15 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	shifts[2] = mode->blue_shift;
 	shifts[3] = mode->alpha_shift;
 
-	if (!(pxm->index_xl && pxm->index_yl))
+	if (!(pxm->index_width && pxm->index_height))
 		return;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte*)sci_malloc(pxm->index_xl * xfact * pxm->index_yl * yfact);
+		alpha_dest = pxm->alpha_map = (byte*)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
-	src -= pxm->index_xl + 1;
+	src -= pxm->index_width + 1;
 
-	for (y = 0; y <= pxm->index_yl; y++) {
+	for (y = 0; y <= pxm->index_height; y++) {
 		byte *y_dest_backup = dest;
 		byte *y_alpha_dest_backup = alpha_dest;
 		int y_valuator = (y > 0) ? 0 : 128;
@@ -389,7 +389,7 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 
 		if (y == 0)
 			yc_count = yfact >> 1;
-		else if (y == pxm->index_yl)
+		else if (y == pxm->index_height)
 			yc_count = (yfact + 1) >> 1;
 		else
 			yc_count = yfact;
@@ -397,7 +397,7 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 		if (yfact & 1)
 			y_valuator += line_step >> 1;
 
-		for (x = 0; x <= pxm->index_xl; x++) {
+		for (x = 0; x <= pxm->index_width; x++) {
 			byte *x_dest_backup = dest;
 			byte *x_alpha_dest_backup = alpha_dest;
 			int x_valuator = (x > 0) ? 0 : 128;
@@ -408,7 +408,7 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 
 			if (x == 0)
 				xc_count = xfact >> 1;
-			else if (x == pxm->index_xl)
+			else if (x == pxm->index_width)
 				xc_count = (xfact + 1) >> 1;
 			else
 				xc_count = xfact;
@@ -417,9 +417,9 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 				x_valuator += column_step >> 1;
 
 			MAKE_PIXEL_TRILINEAR((y && x), pixels[0], *src);
-			MAKE_PIXEL_TRILINEAR((y && (x < pxm->index_xl)), pixels[1], src[1]);
-			MAKE_PIXEL_TRILINEAR(((y < pxm->index_yl) && x), pixels[2], src[pxm->index_xl]);
-			MAKE_PIXEL_TRILINEAR(((y < pxm->index_yl) && (x < pxm->index_xl)), pixels[3], src[pxm->index_xl + 1]);
+			MAKE_PIXEL_TRILINEAR((y && (x < pxm->index_width)), pixels[1], src[1]);
+			MAKE_PIXEL_TRILINEAR(((y < pxm->index_width) && x), pixels[2], src[pxm->index_width]);
+			MAKE_PIXEL_TRILINEAR(((y < pxm->index_width) && (x < pxm->index_width)), pixels[3], src[pxm->index_width + 1]);
 
 			// Optimize Me
 
@@ -460,18 +460,18 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 				gfx_apply_delta(leftcolor, leftdelta, line_step);
 				gfx_apply_delta(rightcolor, rightdelta, line_step);
 
-				dest = yc_dest_backup + pxm->index_xl * xfact * COPY_BYTES;
-				alpha_dest = yc_alpha_dest_backup + pxm->index_xl * xfact;
+				dest = yc_dest_backup + pxm->index_width * xfact * COPY_BYTES;
+				alpha_dest = yc_alpha_dest_backup + pxm->index_width * xfact;
 			}
 
 			dest = x_dest_backup + xc_count * COPY_BYTES;
 			alpha_dest = x_alpha_dest_backup + xc_count;
 
-			if (x < pxm->index_xl)
+			if (x < pxm->index_width)
 				src++;
 		}
-		dest = y_dest_backup + pxm->index_xl * xfact * yc_count * COPY_BYTES;
-		alpha_dest = y_alpha_dest_backup + pxm->index_xl * xfact * yc_count;
+		dest = y_dest_backup + pxm->index_width * xfact * yc_count * COPY_BYTES;
+		alpha_dest = y_alpha_dest_backup + pxm->index_width * xfact * yc_count;
 	}
 }
 

@@ -248,13 +248,13 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 
 	offset = pxm->index_data;
 
-	memset(pxm->index_data, back, pxm->index_xl * pxm->index_yl);
+	memset(pxm->index_data, back, pxm->index_width * pxm->index_height);
 	for (i = 0; i < characters; i++) {
 		unsigned char ch = text[i];
 		width = font->widths[ch];
 
 		render_char(offset, font->data + (ch * font->char_size), width,
-		            pxm->index_xl, pxm->index_yl, font->row_size, fore_0, fore_1, back);
+		            pxm->index_width, pxm->index_height, font->row_size, fore_0, fore_1, back);
 
 		offset += width;
 	}

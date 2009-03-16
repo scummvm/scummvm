@@ -64,26 +64,26 @@ static void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
 }
 
 void gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start, Common::Point end, int color) {
-	gfx_draw_line_buffer(pxm->index_data, pxm->index_xl, 1, start, end, color);
+	gfx_draw_line_buffer(pxm->index_data, pxm->index_width, 1, start, end, color);
 }
 
 void gfx_draw_box_buffer(byte *buffer, int linewidth, rect_t zone, int color) {
 	byte *dest = buffer + zone.x + (linewidth * zone.y);
 	int i;
 
-	if (zone.xl <= 0 || zone.yl <= 0)
+	if (zone.width <= 0 || zone.height <= 0)
 		return;
 
-	for (i = 0; i < zone.yl; i++) {
-		memset(dest, color, zone.xl);
+	for (i = 0; i < zone.height; i++) {
+		memset(dest, color, zone.width);
 		dest += linewidth;
 	}
 }
 
 void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
-	gfx_clip_box_basic(&box, pxm->index_xl - 1, pxm->index_yl - 1);
+	gfx_clip_box_basic(&box, pxm->index_width - 1, pxm->index_height - 1);
 
-	gfx_draw_box_buffer(pxm->index_data, pxm->index_xl, box, color);
+	gfx_draw_box_buffer(pxm->index_data, pxm->index_width, box, color);
 }
 
 static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
@@ -135,17 +135,17 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 	unsigned int alpha_mask, alpha_min;
 	int bpp = mode->bytespp;
 	int bytes_per_alpha_pixel = pxm->alpha_map ? 1 : bpp;
-	int bytes_per_alpha_line =  bytes_per_alpha_pixel * pxm->xl;
-	int xl = pxm->xl, yl = pxm->yl;
+	int bytes_per_alpha_line =  bytes_per_alpha_pixel * pxm->width;
+	int xl = pxm->width, yl = pxm->height;
 	int xoffset = (dest_coords.x < 0) ? - dest_coords.x : 0;
 	int yoffset = (dest_coords.y < 0) ? - dest_coords.y : 0;
 	int revalpha = mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA;
 
-	if (src_coords.x + src_coords.xl > xl)
-		src_coords.xl = xl - src_coords.x;
+	if (src_coords.x + src_coords.width > xl)
+		src_coords.width = xl - src_coords.x;
 
-	if (src_coords.y + src_coords.yl > yl)
-		src_coords.yl = yl - src_coords.y;
+	if (src_coords.y + src_coords.height > yl)
+		src_coords.height = yl - src_coords.y;
 
 	// --???--
 	if (src_coords.y > yl)
@@ -190,15 +190,15 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 	if (yoffset += src_coords.y) {
 		dest_coords.y = 0;
-		src += yoffset * bpp * pxm->xl;
+		src += yoffset * bpp * pxm->width;
 		alpha += yoffset * bytes_per_alpha_line;
 	}
 
 	// Adjust length for clip box
-	if (xl > src_coords.xl)
-		xl = src_coords.xl;
-	if (yl > src_coords.yl)
-		yl = src_coords.yl;
+	if (xl > src_coords.width)
+		xl = src_coords.width;
+	if (yl > src_coords.height)
+		yl = src_coords.height;
 
 	// now calculate alpha
 	if (pxm->alpha_map)
@@ -236,12 +236,12 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 			alpha_min = 255 - alpha_min; // Since we use it for the reverse effect
 
 		if (!alpha_mask)
-			_gfx_crossblit_simple(dest, src, dest_line_width, pxm->xl * bpp, xl, yl, bpp);
+			_gfx_crossblit_simple(dest, src, dest_line_width, pxm->width * bpp, xl, yl, bpp);
 		else
 
 			if (priority == GFX_NO_PRIORITY) {
 				if (bpp > 0 && bpp < 5)
-					((revalpha) ? crossblit_fns_RA : crossblit_fns)[bpp](dest, src, dest_line_width, pxm->xl * bpp,
+					((revalpha) ? crossblit_fns_RA : crossblit_fns)[bpp](dest, src, dest_line_width, pxm->width * bpp,
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        0, 0, 0, 0);
 				else {
@@ -250,7 +250,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 				}
 			} else { // priority
 				if (bpp > 0 && bpp < 5)
-					((revalpha) ? crossblit_fns_P_RA : crossblit_fns_P)[bpp](dest, src, dest_line_width, pxm->xl * bpp,
+					((revalpha) ? crossblit_fns_P_RA : crossblit_fns_P)[bpp](dest, src, dest_line_width, pxm->width * bpp,
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        priority_pos, priority_line_width, priority_skip, priority);
 				else {

@@ -80,7 +80,7 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel);
 **             (int) cel: For cels: The pixmap's cel number
 ** Returns   : (gfx_pixmap_t *) The newly allocated pixmap
 ** The following fiels are initialized:
-** ID, loop, cel, index_xl, index_yl, xl, yl, data <- NULL,
+** ID, loop, cel, index_width, index_height, xl, yl, data <- NULL,
 ** alpha_map <- NULL, internal.handle <- 0, internal.info <- NULL, colors <- NULL,
 ** index_scaled <- 0
 */

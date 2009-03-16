@@ -85,8 +85,8 @@ static void _gfxop_scale_rect(rect_t *rect, gfx_mode_t *mode) {
 
 	rect->x *= xfact;
 	rect->y *= yfact;
-	rect->xl *= xfact;
-	rect->yl *= yfact;
+	rect->width *= xfact;
+	rect->height *= yfact;
 }
 
 static void _gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
@@ -100,35 +100,35 @@ static void _gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
 int _gfxop_clip(rect_t *rect, rect_t clipzone) {
 // Returns 1 if nothing is left */
 #if 0
-	printf("Clipping (%d, %d) size (%d, %d)  by (%d,%d)(%d,%d)\n", rect->x, rect->y, rect->xl, rect->yl,
-	       clipzone.x, clipzone.y, clipzone.xl, clipzone.yl);
+	printf("Clipping (%d, %d) size (%d, %d)  by (%d,%d)(%d,%d)\n", rect->x, rect->y, rect->width, rect->height,
+	       clipzone.x, clipzone.y, clipzone.width, clipzone.height);
 #endif
 
 	if (rect->x < clipzone.x) {
-		rect->xl -= (clipzone.x - rect->x);
+		rect->width -= (clipzone.x - rect->x);
 		rect->x = clipzone.x;
 	}
 
 	if (rect->y < clipzone.y) {
-		rect->yl -= (clipzone.y - rect->y);
+		rect->height -= (clipzone.y - rect->y);
 		rect->y = clipzone.y;
 	}
 
-	if (rect->x + rect->xl > clipzone.x + clipzone.xl)
-		rect->xl = (clipzone.x + clipzone.xl) - rect->x;
+	if (rect->x + rect->width > clipzone.x + clipzone.width)
+		rect->width = (clipzone.x + clipzone.width) - rect->x;
 
-	if (rect->y + rect->yl > clipzone.y + clipzone.yl)
-		rect->yl = (clipzone.y + clipzone.yl) - rect->y;
+	if (rect->y + rect->height > clipzone.y + clipzone.height)
+		rect->height = (clipzone.y + clipzone.height) - rect->y;
 
-	if (rect->xl < 0)
-		rect->xl = 0;
-	if (rect->yl < 0)
-		rect->yl = 0;
+	if (rect->width < 0)
+		rect->width = 0;
+	if (rect->height < 0)
+		rect->height = 0;
 
 #if 0
-	printf(" => (%d, %d) size (%d, %d)\n", rect->x, rect->y, rect->xl, rect->yl);
+	printf(" => (%d, %d) size (%d, %d)\n", rect->x, rect->y, rect->width, rect->height);
 #endif
-	return (rect->xl <= 0 || rect->yl <= 0);
+	return (rect->width <= 0 || rect->height <= 0);
 }
 
 static int _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, int y,
@@ -146,14 +146,14 @@ static int _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, in
 	if (!*pxmp)
 		*pxmp = gfx_new_pixmap(unscaled_xl, unscaled_yl, GFX_RESID_NONE, 0, 0);
 	else
-		if (xl * yl > (*pxmp)->xl * (*pxmp)->yl) {
+		if (xl * yl > (*pxmp)->width * (*pxmp)->height) {
 			gfx_pixmap_free_data(*pxmp);
 			(*pxmp)->data = NULL;
 		}
 
 	if (!(*pxmp)->data) {
-		(*pxmp)->index_xl = unscaled_xl + 1;
-		(*pxmp)->index_yl = unscaled_yl + 1;
+		(*pxmp)->index_width = unscaled_xl + 1;
+		(*pxmp)->index_height = unscaled_yl + 1;
 		gfx_pixmap_alloc_data(*pxmp, state->driver->mode);
 	}
 	return state->driver->grab_pixmap(state->driver, *zone, *pxmp, priority ? GFX_MASK_PRIORITY : GFX_MASK_VISUAL);
@@ -161,7 +161,7 @@ static int _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, in
 
 #define DRAW_LOOP(condition)										\
 {													\
-	rect_t drawrect = gfx_rect(pos.x, pos.y, pxm->index_xl, pxm->index_yl);				\
+	rect_t drawrect = gfx_rect(pos.x, pos.y, pxm->index_width, pxm->index_height);				\
 	int offset, base_offset;									\
 	int read_offset, base_read_offset;								\
 	int x,y;											\
@@ -175,10 +175,10 @@ static int _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, in
 		return;											\
 													\
 	offset = base_offset = drawrect.x + drawrect.y * 320;						\
-	read_offset = base_read_offset = (drawrect.x - pos.x) + ((drawrect.y - pos.y) * pxm->index_xl);	\
+	read_offset = base_read_offset = (drawrect.x - pos.x) + ((drawrect.y - pos.y) * pxm->index_width);	\
 													\
-	for (y = 0; y < drawrect.yl; y++) {								\
-		for (x = 0; x < drawrect.xl; x++)							\
+	for (y = 0; y < drawrect.height; y++) {								\
+		for (x = 0; x < drawrect.width; x++)							\
 			if (pxm->index_data[read_offset++] != pxm->color_key) {				\
 				if (condition)								\
 					map->index_data[offset++] = color;				\
@@ -188,7 +188,7 @@ static int _gfxop_grab_pixmap(gfx_state_t *state, gfx_pixmap_t **pxmp, int x, in
 					++offset;								\
 													\
 		offset = base_offset += 320;								\
-		read_offset = base_read_offset += pxm->index_xl;					\
+		read_offset = base_read_offset += pxm->index_width;					\
 	}												\
 }
 
@@ -225,7 +225,7 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int priority, int control,
 	rect_t src, rect_t dest, rect_t clip, int static_buf, gfx_pixmap_t *control_map, gfx_pixmap_t *priority_map) {
 	int error;
-	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.xl, dest.yl);
+	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.width, dest.height);
 
 	if (control >= 0 || priority >= 0) {
 		Common::Point original_pos = Common::Point(dest.x / driver->mode->xfact, dest.y / driver->mode->yfact);
@@ -244,15 +244,15 @@ static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int prior
 
 	src.x += clipped_dest.x - dest.x;
 	src.y += clipped_dest.y - dest.y;
-	src.xl = clipped_dest.xl;
-	src.yl = clipped_dest.yl;
+	src.width = clipped_dest.width;
+	src.height = clipped_dest.height;
 
 	error = _gfxop_install_pixmap(driver, pxm);
 	if (error)
 		return error;
 
 	DDIRTY(stderr, "\\-> Drawing to actual %d %d %d %d\n", clipped_dest.x / driver->mode->xfact,
-	       clipped_dest.y / driver->mode->yfact, clipped_dest.xl / driver->mode->xfact, clipped_dest.yl / driver->mode->yfact);
+	       clipped_dest.y / driver->mode->yfact, clipped_dest.width / driver->mode->xfact, clipped_dest.height / driver->mode->yfact);
 
 	error = driver->draw_pixmap(driver, pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 
@@ -299,7 +299,7 @@ static int _gfxop_update_box(gfx_state_t *state, rect_t box) {
 	_gfxop_scale_rect(&box, state->driver->mode);
 
 	if ((retval = _gfxop_buffer_propagate_box(state, box, GFX_BUFFER_FRONT))) {
-		GFXERROR("Error occured while propagating box (%d,%d,%d,%d) to front buffer\n", box.x, box.y, box.xl, box.yl);
+		GFXERROR("Error occured while propagating box (%d,%d,%d,%d) to front buffer\n", box.x, box.y, box.width, box.height);
 		return retval;
 	}
 	return GFX_OK;
@@ -316,14 +316,14 @@ static gfx_dirty_rect_t *_rect_create(rect_t box) {
 }
 
 gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strategy) {
-	if (box.xl < 0) {
-		box.x += box.xl;
-		box.xl = - box.xl;
+	if (box.width < 0) {
+		box.x += box.width;
+		box.width = - box.width;
 	}
 
-	if (box.yl < 0) {
-		box.y += box.yl;
-		box.yl = - box.yl;
+	if (box.height < 0) {
+		box.y += box.height;
+		box.height = - box.height;
 	}
 #ifdef GFXOP_DEBUG_DIRTY
 	fprintf(stderr, "Adding new dirty (%d %d %d %d)\n",
@@ -375,15 +375,15 @@ static void _gfxop_add_dirty(gfx_state_t *state, rect_t box) {
 
 static void _gfxop_add_dirty_x(gfx_state_t *state, rect_t box) {
 	// Extends the box size by one before adding (used for lines)
-	if (box.xl < 0)
-		box.xl--;
+	if (box.width < 0)
+		box.width--;
 	else
-		box.xl++;
+		box.width++;
 
-	if (box.yl < 0)
-		box.yl--;
+	if (box.height < 0)
+		box.height--;
 	else
-		box.yl++;
+		box.height++;
 
 	_gfxop_add_dirty(state, box);
 }
@@ -513,20 +513,20 @@ int gfxop_exit(gfx_state_t *state) {
 
 static int _gfxop_scan_one_bitmask(gfx_pixmap_t *pixmap, rect_t zone) {
 	int retval = 0;
-	int pixmap_xscale = pixmap->index_xl / 320;
-	int pixmap_yscale = pixmap->index_yl / 200;
-	int line_width = pixmap_yscale * pixmap->index_xl;
+	int pixmap_xscale = pixmap->index_width / 320;
+	int pixmap_yscale = pixmap->index_height / 200;
+	int line_width = pixmap_yscale * pixmap->index_width;
 	int startindex = (line_width * zone.y) + (zone.x * pixmap_xscale);
 
 	startindex += pixmap_xscale >> 1; // Center on X
-	startindex += (pixmap_yscale >> 1) * pixmap->index_xl; // Center on Y
+	startindex += (pixmap_yscale >> 1) * pixmap->index_width; // Center on Y
 
-	if (_gfxop_clip(&zone, gfx_rect(0, 0, pixmap->index_xl, pixmap->index_yl)))
+	if (_gfxop_clip(&zone, gfx_rect(0, 0, pixmap->index_width, pixmap->index_height)))
 		return 0;
 
-	while (zone.yl--) {
+	while (zone.height--) {
 		int i;
-		for (i = 0; i < (zone.xl * pixmap_xscale); i += pixmap_xscale)
+		for (i = 0; i < (zone.width * pixmap_xscale); i += pixmap_xscale)
 			retval |= (1 << ((pixmap->index_data[startindex + i]) & 0xf));
 
 		startindex += line_width;
@@ -541,8 +541,8 @@ int gfxop_scan_bitmask(gfx_state_t *state, rect_t area, gfx_map_mask_t map) {
 
 	_gfxop_clip(&area, gfx_rect(0, 10, 320, 200));
 
-	if (area.xl <= 0
-	        || area.yl <= 0)
+	if (area.width <= 0
+	        || area.height <= 0)
 		return 0;
 
 	if (map & GFX_MASK_VISUAL)
@@ -571,27 +571,27 @@ int gfxop_set_clip_zone(gfx_state_t *state, rect_t zone) {
 	yfact = state->driver->mode->yfact;
 
 	if (zone.x < MIN_X) {
-		zone.xl -= (zone.x - MIN_X);
+		zone.width -= (zone.x - MIN_X);
 		zone.x = MIN_X;
 	}
 
 	if (zone.y < MIN_Y) {
-		zone.yl -= (zone.y - MIN_Y);
+		zone.height -= (zone.y - MIN_Y);
 		zone.y = MIN_Y;
 	}
 
-	if (zone.x + zone.xl > MAX_X)
-		zone.xl = MAX_X + 1 - zone.x;
+	if (zone.x + zone.width > MAX_X)
+		zone.width = MAX_X + 1 - zone.x;
 
-	if (zone.y + zone.yl > MAX_Y)
-		zone.yl = MAX_Y + 1 - zone.y;
+	if (zone.y + zone.height > MAX_Y)
+		zone.height = MAX_Y + 1 - zone.y;
 
 	memcpy(&(state->clip_zone_unscaled), &zone, sizeof(rect_t));
 
 	state->clip_zone.x = state->clip_zone_unscaled.x * xfact;
 	state->clip_zone.y = state->clip_zone_unscaled.y * yfact;
-	state->clip_zone.xl = state->clip_zone_unscaled.xl * xfact;
-	state->clip_zone.yl = state->clip_zone_unscaled.yl * yfact;
+	state->clip_zone.width = state->clip_zone_unscaled.width * xfact;
+	state->clip_zone.height = state->clip_zone_unscaled.height * yfact;
 
 	return GFX_OK;
 }
@@ -687,42 +687,42 @@ static void clip_line_partial(float *start, float *end, float delta_val, float p
 static int line_clip(rect_t *line, rect_t clip, int xfact, int yfact) {
 	// returns 1 if nothing is left, or 0 if part of the line is in the clip window
 	// Compensate for line thickness (should match precisely)
-	clip.xl -= xfact;
-	clip.yl -= yfact;
+	clip.width -= xfact;
+	clip.height -= yfact;
 
-	if (!line->xl) { // vbar
-		if (line->x < clip.x || line->x >= (clip.x + clip.xl))
+	if (!line->width) { // vbar
+		if (line->x < clip.x || line->x >= (clip.x + clip.width))
 			return 1;
 
-		return line_check_bar(&(line->y), &(line->yl), clip.y, clip.yl);
+		return line_check_bar(&(line->y), &(line->height), clip.y, clip.height);
 
 	} else {
-		if (!line->yl) {// hbar
-			if (line->y < clip.y || line->y >= (clip.y + clip.yl))
+		if (!line->height) {// hbar
+			if (line->y < clip.y || line->y >= (clip.y + clip.height))
 				return 1;
 
-			return line_check_bar(&(line->x), &(line->xl), clip.x, clip.xl);
+			return line_check_bar(&(line->x), &(line->width), clip.x, clip.width);
 
 		} else { // "normal" line
 			float start = 0.0, end = 1.0;
-			float xv = (float)line->xl;
-			float yv = (float)line->yl;
+			float xv = (float)line->width;
+			float yv = (float)line->height;
 
-			if (line->xl < 0)
-				clip_line_partial(&start, &end, (float)(1.0 / xv), (float)line->x, (float)(clip.x + clip.xl), (float)clip.x);
+			if (line->width < 0)
+				clip_line_partial(&start, &end, (float)(1.0 / xv), (float)line->x, (float)(clip.x + clip.width), (float)clip.x);
 			else
-				clip_line_partial(&start, &end, (float)(1.0 / xv), (float)line->x, (float)clip.x, (float)(clip.x + clip.xl));
+				clip_line_partial(&start, &end, (float)(1.0 / xv), (float)line->x, (float)clip.x, (float)(clip.x + clip.width));
 
-			if (line->yl < 0)
-				clip_line_partial(&start, &end, (float)(1.0 / yv), (float)line->y, (float)(clip.y + clip.yl), (float)clip.y);
+			if (line->height < 0)
+				clip_line_partial(&start, &end, (float)(1.0 / yv), (float)line->y, (float)(clip.y + clip.height), (float)clip.y);
 			else
-				clip_line_partial(&start, &end, (float)(1.0 / yv), (float)line->y, (float)clip.y, (float)(clip.y + clip.yl));
+				clip_line_partial(&start, &end, (float)(1.0 / yv), (float)line->y, (float)clip.y, (float)(clip.y + clip.height));
 
 			line->x += (int)(xv * start);
 			line->y += (int)(yv * start);
 
-			line->xl = (int)(xv * (end - start));
-			line->yl = (int)(yv * (end - start));
+			line->width = (int)(xv * (end - start));
+			line->height = (int)(yv * (end - start));
 
 			return (start > 1.0 || end < 0.0);
 		}
@@ -738,8 +738,8 @@ static int point_clip(Common::Point *start, Common::Point *end, rect_t clip, int
 	start->x = line.x;
 	start->y = line.y;
 
-	end->x = line.x + line.xl;
-	end->y = line.y + line.yl;
+	end->x = line.x + line.width;
+	end->y = line.y + line.height;
 
 	return retval;
 }
@@ -841,8 +841,8 @@ static int _gfxop_draw_line_clipped(gfx_state_t *state, Common::Point start, Com
 
 	if (start.x < state->clip_zone.x
 	        || start.y < state->clip_zone.y
-	        || end.x >= (state->clip_zone.x + state->clip_zone.xl)
-	        || end.y >= (state->clip_zone.y + state->clip_zone.yl))
+	        || end.x >= (state->clip_zone.x + state->clip_zone.width)
+	        || end.y >= (state->clip_zone.y + state->clip_zone.height))
 		if (point_clip(&start, &end, state->clip_zone, state->driver->mode->xfact - 1, state->driver->mode->yfact - 1))
 			return GFX_OK; // Clipped off
 
@@ -907,23 +907,23 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 
 	if (line_mode == GFX_LINE_MODE_FINE) {
 		xunit = yunit = 1;
-		xl = 1 + (rect.xl - 1) * xfact;
-		yl = 1 + (rect.yl - 1) * yfact;
+		xl = 1 + (rect.width - 1) * xfact;
+		yl = 1 + (rect.height - 1) * yfact;
 		x = rect.x * xfact + (xfact - 1);
 		y = rect.y * yfact + (yfact - 1);
 	} else {
 		xunit = xfact;
 		yunit = yfact;
-		xl = rect.xl * xfact;
-		yl = rect.yl * yfact;
+		xl = rect.width * xfact;
+		yl = rect.height * yfact;
 		x = rect.x * xfact;
 		y = rect.y * yfact;
 	}
 
 	upper_left_u = Common::Point(rect.x, rect.y);
-	upper_right_u = Common::Point(rect.x + rect.xl, rect.y);
-	lower_left_u = Common::Point(rect.x, rect.y + rect.yl);
-	lower_right_u = Common::Point(rect.x + rect.xl, rect.y + rect.yl);
+	upper_right_u = Common::Point(rect.x + rect.width, rect.y);
+	lower_left_u = Common::Point(rect.x, rect.y + rect.height);
+	lower_right_u = Common::Point(rect.x + rect.width, rect.y + rect.height);
 
 	upper_left = Common::Point(x, y);
 	upper_right = Common::Point(x + xl, y);
@@ -942,7 +942,7 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 
 #undef PARTIAL_LINE
 	if (retval) {
-		GFXERROR("Failed to draw rectangle (%d,%d)+(%d,%d)\n", rect.x, rect.y, rect.xl, rect.yl);
+		GFXERROR("Failed to draw rectangle (%d,%d)+(%d,%d)\n", rect.x, rect.y, rect.width, rect.height);
 		return retval;
 	}
 
@@ -981,8 +981,8 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 	if (!(color1.mask & (GFX_MASK_VISUAL | GFX_MASK_PRIORITY)))
 		return GFX_OK;
 
-	if (box.xl <= 1 || box.yl <= 1) {
-		GFXDEBUG("Attempt to draw box with size %dx%d\n", box.xl, box.yl);
+	if (box.width <= 1 || box.height <= 1) {
+		GFXDEBUG("Attempt to draw box with size %dx%d\n", box.width, box.height);
 		return GFX_OK;
 	}
 
@@ -1000,16 +1000,16 @@ int gfxop_draw_box(gfx_state_t *state, rect_t box, gfx_color_t color1, gfx_color
 		reverse = 1;
 	case GFX_BOX_SHADE_RIGHT:
 		driver_shade_type = GFX_SHADE_HORIZONTALLY;
-		mod_offset = (float)(((new_box.x - box.x) * 1.0) / (box.xl * 1.0));
-		mod_breadth = (float)((new_box.xl * 1.0) / (box.xl * 1.0));
+		mod_offset = (float)(((new_box.x - box.x) * 1.0) / (box.width * 1.0));
+		mod_breadth = (float)((new_box.width * 1.0) / (box.width * 1.0));
 		break;
 
 	case GFX_BOX_SHADE_UP:
 		reverse = 1;
 	case GFX_BOX_SHADE_DOWN:
 		driver_shade_type = GFX_SHADE_VERTICALLY;
-		mod_offset = (float)(((new_box.y - box.y) * 1.0) / (box.yl * 1.0));
-		mod_breadth = (float)((new_box.yl * 1.0) / (box.yl * 1.0));
+		mod_offset = (float)(((new_box.y - box.y) * 1.0) / (box.height * 1.0));
+		mod_breadth = (float)((new_box.height * 1.0) / (box.height * 1.0));
 		break;
 
 	default:
@@ -1074,7 +1074,7 @@ static int _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffe
 		return GFX_OK;
 
 	if ((error = state->driver->update(state->driver, box, Common::Point(box.x, box.y), buffer))) {
-		GFXERROR("Error occured while updating region (%d,%d,%d,%d) in buffer %d\n", box.x, box.y, box.xl, box.yl, buffer);
+		GFXERROR("Error occured while updating region (%d,%d,%d,%d) in buffer %d\n", box.x, box.y, box.width, box.height, buffer);
 		return error;
 	}
 
@@ -1764,8 +1764,8 @@ int gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel, int 
 	}
 
 	pxm = view->loops[loop].cels[cel];
-	*width = pxm->index_xl;
-	*height = pxm->index_yl;
+	*width = pxm->index_width;
+	*height = pxm->index_height;
 	offset->x = pxm->xoffset;
 	offset->y = pxm->yoffset;
 
@@ -1793,10 +1793,10 @@ static int _gfxop_draw_cel_buffer(gfx_state_t *state, int nr, int loop, int cel,
 	pos.y *= state->driver->mode->yfact;
 
 	if (!static_buf)
-		_gfxop_add_dirty(state, gfx_rect(old_x, old_y, pxm->index_xl, pxm->index_yl));
+		_gfxop_add_dirty(state, gfx_rect(old_x, old_y, pxm->index_width, pxm->index_height));
 
-	return _gfxop_draw_pixmap(state->driver, pxm, priority, control, gfx_rect(0, 0, pxm->xl, pxm->yl),
-	                          gfx_rect(pos.x, pos.y, pxm->xl, pxm->yl), state->clip_zone, static_buf , state->control_map,
+	return _gfxop_draw_pixmap(state->driver, pxm, priority, control, gfx_rect(0, 0, pxm->width, pxm->height),
+	                          gfx_rect(pos.x, pos.y, pxm->width, pxm->height), state->clip_zone, static_buf , state->control_map,
 	                          static_buf ? state->static_priority_map : state->priority_map);
 }
 
@@ -2061,11 +2061,11 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		break;
 
 	case ALIGN_CENTER:
-		pos.y += (zone.yl - (line_height * handle->lines_nr)) >> 1;
+		pos.y += (zone.height - (line_height * handle->lines_nr)) >> 1;
 		break;
 
 	case ALIGN_BOTTOM:
-		pos.y += (zone.yl - (line_height * handle->lines_nr));
+		pos.y += (zone.height - (line_height * handle->lines_nr));
 		break;
 
 	default:
@@ -2094,11 +2094,11 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 			break;
 
 		case ALIGN_CENTER:
-			pos.x += (zone.xl - pxm->xl) >> 1;
+			pos.x += (zone.width - pxm->width) >> 1;
 			break;
 
 		case ALIGN_RIGHT:
-			pos.x += (zone.xl - pxm->xl);
+			pos.x += (zone.width - pxm->width);
 			break;
 
 		default:
@@ -2106,12 +2106,12 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 			return GFX_FATAL; // Internal error...
 		}
 
-		pos.xl = pxm->xl;
-		pos.yl = pxm->yl;
+		pos.width = pxm->width;
+		pos.height = pxm->height;
 
 		_gfxop_add_dirty(state, pos);
 		_gfxop_draw_pixmap(state->driver, pxm, handle->priority, handle->control,
-		                   gfx_rect(0, 0, pxm->xl, pxm->yl), pos, state->clip_zone, 0, state->control_map, state->priority_map);
+		                   gfx_rect(0, 0, pxm->width, pxm->height), pos, state->clip_zone, 0, state->control_map, state->priority_map);
 
 		pos.y += line_height;
 	}
@@ -2126,7 +2126,7 @@ gfx_pixmap_t *gfxop_grab_pixmap(gfx_state_t *state, rect_t area) {
 	_gfxop_full_pointer_refresh(state);
 
 	_gfxop_scale_rect(&area, state->driver->mode);
-	if (_gfxop_grab_pixmap(state, &pixmap, area.x, area.y, area.xl, area.yl, 0, &resultzone))
+	if (_gfxop_grab_pixmap(state, &pixmap, area.x, area.y, area.width, area.height, 0, &resultzone))
 		return NULL; // area CUT the visual screen had a null or negative size
 
 	return pixmap;
@@ -2143,7 +2143,7 @@ int gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common
 
 	_gfxop_full_pointer_refresh(state);
 
-	target = gfx_rect(pos.x, pos.y, zone.xl, zone.yl);
+	target = gfx_rect(pos.x, pos.y, zone.width, zone.height);
 
 	_gfxop_add_dirty(state, target);
 

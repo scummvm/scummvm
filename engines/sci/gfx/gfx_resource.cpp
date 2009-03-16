@@ -183,15 +183,15 @@ gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		break;
 
 	case 2:
-		pixmap_endianness_reverse_2(data, pixmap->xl * pixmap->yl);
+		pixmap_endianness_reverse_2(data, pixmap->width * pixmap->height);
 		break;
 
 	case 3:
-		pixmap_endianness_reverse_3_simple(data, pixmap->xl * pixmap->yl);
+		pixmap_endianness_reverse_3_simple(data, pixmap->width * pixmap->height);
 		break;
 
 	case 4:
-		pixmap_endianness_reverse_4(data, pixmap->xl * pixmap->yl);
+		pixmap_endianness_reverse_4(data, pixmap->width * pixmap->height);
 		break;
 
 	default:
@@ -275,11 +275,11 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 	}
 
 	if (pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
-		pxm->xl = pxm->index_xl;
-		pxm->yl = pxm->index_yl;
+		pxm->width = pxm->index_width;
+		pxm->height = pxm->index_height;
 	} else {
-		pxm->xl = pxm->index_xl * mode->xfact;
-		pxm->yl = pxm->index_yl * mode->yfact;
+		pxm->width = pxm->index_width * mode->xfact;
+		pxm->height = pxm->index_height * mode->yfact;
 	}
 }
 
@@ -289,8 +289,8 @@ static void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int sc
 		return;
 	}
 
-	pxm->xl = pxm->index_xl * mode->xfact;
-	pxm->yl = pxm->index_yl * mode->yfact;
+	pxm->width = pxm->index_width * mode->xfact;
+	pxm->height = pxm->index_height * mode->yfact;
 
 	switch (mode->bytespp) {
 
@@ -323,8 +323,8 @@ static void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int
 		return;
 	}
 
-	pxm->xl = pxm->index_xl * mode->xfact;
-	pxm->yl = pxm->index_yl * mode->yfact;
+	pxm->width = pxm->index_width * mode->xfact;
+	pxm->height = pxm->index_height * mode->yfact;
 
 	switch (mode->bytespp) {
 	case 1:
@@ -359,13 +359,13 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 
 
 	if (!pxm->data) {
-		pxm->data = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_xl * pxm->index_yl * mode->bytespp + 1);
+		pxm->data = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height * mode->bytespp + 1);
 		// +1: Eases coying on BE machines in 24 bpp packed mode
 		// Assume that memory, if allocated already, will be sufficient
 
 		// Allocate alpha map
 		if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
-			pxm->alpha_map = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_xl * pxm->index_yl + 1);
+			pxm->alpha_map = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
 	} else
 		was_allocated = 1;
 

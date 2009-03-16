@@ -385,10 +385,10 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		newpos.x = SKPV(0) + s->port->zone.x;
 		newpos.y = SKPV(1) + s->port->zone.y;
 
-		if (newpos.x > s->port->zone.x + s->port->zone.xl)
-			newpos.x = s->port->zone.x + s->port->zone.xl;
-		if (newpos.y > s->port->zone.y + s->port->zone.yl)
-			newpos.y = s->port->zone.y + s->port->zone.yl;
+		if (newpos.x > s->port->zone.x + s->port->zone.width)
+			newpos.x = s->port->zone.x + s->port->zone.width;
+		if (newpos.y > s->port->zone.y + s->port->zone.height)
+			newpos.y = s->port->zone.y + s->port->zone.height;
 
 		if (newpos.x < 0) newpos.x = 0;
 		if (newpos.y < 0) newpos.y = 0;
@@ -497,8 +497,8 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	area = gfx_rect(SKPV(2), SKPV(1) , SKPV(4), SKPV(3));
 
-	area.xl = area.xl - area.x; // Since the actual coordinates are absolute
-	area.yl = area.yl - area.y;
+	area.width = area.width - area.x; // Since the actual coordinates are absolute
+	area.height = area.height - area.y;
 
 	switch (SKPV(0)) {
 
@@ -525,8 +525,8 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		area.x += s->port->zone.x + port_origin_x;
 		area.y += s->port->zone.y + port_origin_y;
-		area.xl += -port_origin_x;
-		area.yl += -port_origin_y;
+		area.width += -port_origin_x;
+		area.height += -port_origin_y;
 
 		return(graph_save_box(s, area));
 		break;
@@ -880,12 +880,12 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	pxm = res->loops[loop].cels[cel];
-	if (x > pxm->index_xl)
-		x = pxm->index_xl - 1;
-	if (y > pxm->index_yl)
-		y = pxm->index_yl - 1;
+	if (x > pxm->index_width)
+		x = pxm->index_width - 1;
+	if (y > pxm->index_height)
+		y = pxm->index_height - 1;
 
-	return make_reg(0, pxm->index_data[y * pxm->index_xl + x] == pxm->color_key);
+	return make_reg(0, pxm->index_data[y * pxm->index_width + x] == pxm->color_key);
 }
 
 reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -3188,11 +3188,11 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_DISPLAY_WIDTH:
 
-			area.xl = UKPV(argpt++);
-			if (area.xl == 0)
-				area.xl = MAX_TEXT_WIDTH_MAGIC_VALUE;
+			area.width = UKPV(argpt++);
+			if (area.width == 0)
+				area.width = MAX_TEXT_WIDTH_MAGIC_VALUE;
 
-			SCIkdebug(SCIkGRAPHICS, "Display: set_width(%d)\n", area.xl);
+			SCIkdebug(SCIkGRAPHICS, "Display: set_width(%d)\n", area.width);
 			break;
 
 		case K_DISPLAY_SAVE_UNDER:
@@ -3224,14 +3224,14 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (s->version >= SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY) {
 		if (halign == ALIGN_LEFT)
-			GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.xl, &area.xl, &area.yl, 0, NULL, NULL, NULL));
+			GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL));
 
 		// Make the text fit on the screen
-		if (area.x + area.xl > 320)
-			area.x += 320 - area.x - area.xl; // Plus negative number = subtraction
+		if (area.x + area.width > 320)
+			area.x += 320 - area.x - area.width; // Plus negative number = subtraction
 
-		if (area.y + area.yl > 200) {
-			area.y += 200 - area.y - area.yl; // Plus negative number = subtraction
+		if (area.y + area.height > 200) {
+			area.y += 200 - area.y - area.height; // Plus negative number = subtraction
 		}
 	}
 
@@ -3257,7 +3257,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = graph_save_box(s, save_area);
 		text_handle->serial++; // This is evil!
 
-		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as "PREG"\n", save_area.x, save_area.y, save_area.xl, save_area.yl, s->r_acc);
+		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as "PREG"\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
 	}
 
 	SCIkdebug(SCIkGRAPHICS, "Display: Commiting text '%s'\n", text);

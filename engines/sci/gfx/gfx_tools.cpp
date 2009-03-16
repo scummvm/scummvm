@@ -37,11 +37,11 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 	if (box->y < 0)
 		box->y = 0;
 
-	if (box->x + box->xl > maxx)
-		box->xl = maxx - box->x + 1;
+	if (box->x + box->width > maxx)
+		box->width = maxx - box->x + 1;
 
-	if (box->y + box->yl > maxy)
-		box->yl = maxy - box->y + 1;
+	if (box->y + box->height > maxy)
+		box->height = maxy - box->y + 1;
 }
 
 gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags) {
@@ -87,22 +87,22 @@ void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
 	int width, height;
 	int offset;
 
-	if ((dest->index_xl != src->index_xl) || (dest->index_yl != src->index_yl))
+	if ((dest->index_width != src->index_width) || (dest->index_height != src->index_height))
 		return;
 
-	gfx_clip_box_basic(&box, dest->index_xl, dest->index_yl);
+	gfx_clip_box_basic(&box, dest->index_width, dest->index_height);
 
-	if (box.xl <= 0 || box.yl <= 0)
+	if (box.width <= 0 || box.height <= 0)
 		return;
 
-	height = box.yl;
-	width = box.xl;
+	height = box.height;
+	width = box.width;
 
-	offset = box.x + (box.y * dest->index_xl);
+	offset = box.x + (box.y * dest->index_width);
 
 	while (height--) {
 		memcpy(dest->index_data + offset, src->index_data + offset, width);
-		offset += dest->index_xl;
+		offset += dest->index_width;
 	}
 }
 
@@ -116,8 +116,8 @@ gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 
 	memcpy(clone->data, pxm->data, clone->data_size);
 	if (clone->alpha_map) {
-		clone->alpha_map = (byte *) sci_malloc(clone->xl * clone->yl);
-		memcpy(clone->alpha_map, pxm->alpha_map, clone->xl * clone->yl);
+		clone->alpha_map = (byte *) sci_malloc(clone->width * clone->height);
+		memcpy(clone->alpha_map, pxm->alpha_map, clone->width * clone->height);
 	}
 
 	return clone;
@@ -130,8 +130,8 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	pxm->data = NULL;
 	pxm->palette = NULL;
 
-	pxm->index_xl = xl;
-	pxm->index_yl = yl;
+	pxm->index_width = xl;
+	pxm->index_height = yl;
 
 	pxm->ID = resid;
 	pxm->loop = loop;
@@ -168,7 +168,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 		return pixmap;
 	}
 
-	size = pixmap->index_xl * pixmap->index_yl;
+	size = pixmap->index_width * pixmap->index_height;
 	if (!size)
 		size = 1;
 
@@ -199,14 +199,14 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	}
 
 	if (pixmap->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
-		pixmap->xl = pixmap->index_xl;
-		pixmap->yl = pixmap->index_yl;
+		pixmap->width = pixmap->index_width;
+		pixmap->height = pixmap->index_height;
 	} else {
-		pixmap->xl = pixmap->index_xl * mode->xfact;
-		pixmap->yl = pixmap->index_yl * mode->yfact;
+		pixmap->width = pixmap->index_width * mode->xfact;
+		pixmap->height = pixmap->index_height * mode->yfact;
 	}
 
-	size = pixmap->xl * pixmap->yl * mode->bytespp;
+	size = pixmap->width * pixmap->height * mode->bytespp;
 	if (!size)
 		size = 1;
 
@@ -251,8 +251,8 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 		return pixmap;
 	}
 
-	xl = pixmap->index_xl;
-	yl = pixmap->index_yl;
+	xl = pixmap->index_width;
+	yl = pixmap->index_height;
 	linewidth = xfact * xl;
 	initial_new_data = new_data = (byte *)sci_malloc(linewidth * yfact * yl);
 
@@ -281,8 +281,8 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 
 	pixmap->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
 
-	pixmap->index_xl = linewidth;
-	pixmap->index_yl *= yfact;
+	pixmap->index_width = linewidth;
+	pixmap->index_height *= yfact;
 
 	return pixmap;
 }

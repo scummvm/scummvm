@@ -181,7 +181,7 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 	pic->priority_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 	pic->control_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 
-	pic->undithered_buffer_size = pic->visual_map->index_xl * pic->visual_map->index_yl;
+	pic->undithered_buffer_size = pic->visual_map->index_width * pic->visual_map->index_height;
 	pic->undithered_buffer = NULL;
 	pic->priorityTable = NULL;
 
@@ -233,8 +233,8 @@ static void _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int 
 	unsigned char *buffer = pic->aux_map;
 	int linewidth = 320;
 
-	dx = line.xl;
-	dy = line.yl;
+	dx = line.width;
+	dy = line.height;
 	finalx = x + dx;
 	finaly = y + dy;
 
@@ -279,8 +279,8 @@ static void _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int
 	unsigned char *buffer = pic->aux_map;
 	int linewidth = 320;
 
-	dx = line.xl;
-	dy = line.yl;
+	dx = line.width;
+	dy = line.height;
 	finalx = x + dx;
 	finaly = y + dy;
 
@@ -391,7 +391,7 @@ static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *ma
 				int done = 0;
 				int found_interval = 0;
 
-				intervals[ivi][intervals_nr].xl = xl;
+				intervals[ivi][intervals_nr].width = xl;
 				intervals[ivi][intervals_nr].tag = 0;
 				intervals[ivi][intervals_nr++].xr = xr;
 
@@ -402,11 +402,11 @@ static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *ma
 
 				i = old_intervals_start_offset;
 				while (!done && i < old_intervals_nr) {
-					if (intervals[!ivi][i].xl > xr + 1)
+					if (intervals[!ivi][i].width > xr + 1)
 						done = 1;
 
 					else if (intervals[!ivi][i].xr < xl - 1) {
-						int o_xl = intervals[!ivi][i].xl;
+						int o_xl = intervals[!ivi][i].width;
 						int o_xr = intervals[!ivi][i].xr;
 						if (o_xr == o_xl && !intervals[!ivi][i].tag) { // thin bar
 							memcpy(intervals[ivi] + intervals_nr, intervals[ivi] + intervals_nr - 1, sizeof(struct interval_struct));
@@ -419,13 +419,13 @@ static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *ma
 						old_intervals_start_offset = i;
 					} else {
 						int k = i;
-						int old_xl = intervals[!ivi][i].xl;
+						int old_xl = intervals[!ivi][i].width;
 						int dwidth_l = abs(old_xl - xl);
 						int old_xr, dwidth_r;
 						int write_left_width, write_right_width;
 
 						intervals[!ivi][i].tag = 1;
-						while (k + 1 < old_intervals_nr && intervals[!ivi][k+1].xl <= xr) {
+						while (k + 1 < old_intervals_nr && intervals[!ivi][k+1].width <= xr) {
 							++k;
 							intervals[!ivi][i].tag = 1;
 						}
@@ -472,7 +472,7 @@ static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *ma
 		if (!fillmagc && intervals_nr) {
 			fprintf(stderr, "AI L#%03d:", y);
 			for (int j = 0; j < intervals_nr; j++)
-				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].xl, intervals[ivi][j].xr);
+				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].width, intervals[ivi][j].xr);
 			fprintf(stderr, "\n");
 		}
 #endif
@@ -861,8 +861,8 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 		// Rectangle
 		boundaries.x = scaled_x - xsize;
 		boundaries.y = scaled_y - ysize;
-		boundaries.xl = ((xsize + 1) << 1) + 1;
-		boundaries.yl = (ysize << 1) + 1;
+		boundaries.width = ((xsize + 1) << 1) + 1;
+		boundaries.height = (ysize << 1) + 1;
 
 		if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 0, pattern_nr, drawenable, color, priority,
@@ -919,7 +919,7 @@ static void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, in
 	end.x = ex;
 	end.y = ey;
 
-	if (ex >= pic->visual_map->index_xl || ey >= pic->visual_map->index_yl || x < 0 || y < 0) {
+	if (ex >= pic->visual_map->index_width || ey >= pic->visual_map->index_height || x < 0 || y < 0) {
 		fprintf(stderr, "While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
 		        start.x, start.y, end.x, end.y);
 		return;
@@ -944,8 +944,8 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 
 	line.x = x;
 	line.y = y;
-	line.xl = ex - x;
-	line.yl = ey - y;
+	line.width = ex - x;
+	line.height = ey - y;
 
 	if (x > 319 || y > 199 || x < 0 || y < 0 || ex > 319 || ey > 199 || ex < 0 || ey < 0) {
 		GFXWARN("While building pic: Attempt to draw line (%d,%d) to (%d,%d): cmd was %d\n", x, y, ex, ey, cmd);
@@ -957,7 +957,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 
 	if (drawenable & GFX_MASK_CONTROL) {
 		p0printf(" ctl:%x", control);
-		gfx_draw_line_pixmap_i(pic->control_map, Common::Point(x, y), Common::Point(x + line.xl, y + line.yl), control);
+		gfx_draw_line_pixmap_i(pic->control_map, Common::Point(x, y), Common::Point(x + line.width, y + line.height), control);
 	}
 
 	// Calculate everything that is changed to SOLID
@@ -999,8 +999,8 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 			rect_t drawrect;
 			drawrect.x = x;
 			drawrect.y = y;
-			drawrect.xl = scale_x;
-			drawrect.yl = scale_y;
+			drawrect.width = scale_x;
+			drawrect.height = scale_y;
 
 			if (drawenable & GFX_MASK_VISUAL)
 				gfx_draw_box_pixmap_i(pic->visual_map, drawrect, color);
@@ -1665,7 +1665,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				pos += bytesize;
 				if (nodraw)
 					continue;
-				p0printf("(%d, %d)-(%d, %d)\n", posx, posy, posx + view->index_xl, posy + view->index_yl);
+				p0printf("(%d, %d)-(%d, %d)\n", posx, posy, posx + view->index_width, posy + view->index_height);
 
 				// we can only safely replace the palette if it's static
 				// *if it's not for some reason, we should die
@@ -1689,24 +1689,24 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				// Hack to prevent overflowing the visual map buffer.
 				// Yes, this does happen otherwise.
-				if (view->index_yl + sci_titlebar_size > 200)
+				if (view->index_height + sci_titlebar_size > 200)
 					sci_titlebar_size = 0;
 
 				// Set up mode structure for resizing the view
 				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1byte/p, which handles masks and the rest for us
-				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_xl / 320,
-				           pic->visual_map->index_yl / 200, format, view->palette, 0);
+				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320,
+				           pic->visual_map->index_height / 200, format, view->palette, 0);
 
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
 				gfx_free_mode(mode);
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
 					view_transparentize(view, pic->visual_map, posx, sci_titlebar_size + posy,
-					                    view->index_xl, view->index_yl);
+					                    view->index_width, view->index_height);
 
 				_gfx_crossblit_simple(pic->visual_map->index_data + (sci_titlebar_size * 320) + posy * 320 + posx,
-				                      view->index_data, pic->visual_map->index_xl, view->index_xl,
-				                      view->index_xl, view->index_yl, 1);
+				                      view->index_data, pic->visual_map->index_width, view->index_width,
+				                      view->index_width, view->index_height, 1);
 
 				gfx_free_pixmap(NULL, view);
 			}
@@ -1795,24 +1795,24 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 		// Set up mode structure for resizing the view
 		Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1 byte/p, which handles masks and the rest for us
-		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_xl / 320, pic->visual_map->index_yl / 200, format, view->palette, 0);
+		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, pic->visual_map->index_height / 200, format, view->palette, 0);
 
 		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
 		gfx_free_mode(mode);
 
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-			view_transparentize(view, pic->visual_map, 0, 0, view->index_xl, view->index_yl);
+			view_transparentize(view, pic->visual_map, 0, 0, view->index_width, view->index_height);
 
 		// Hack to prevent overflowing the visual map buffer.
 		// Yes, this does happen otherwise.
-		if (view->index_yl + sci_titlebar_size > 200)
+		if (view->index_height + sci_titlebar_size > 200)
 			sci_titlebar_size = 0;
 
-		_gfx_crossblit_simple(pic->visual_map->index_data + sci_titlebar_size*view->index_xl,
+		_gfx_crossblit_simple(pic->visual_map->index_data + sci_titlebar_size*view->index_width,
 		                      view->index_data,
-		                      pic->visual_map->index_xl, view->index_xl,
-		                      view->index_xl,
-		                      view->index_yl,
+		                      pic->visual_map->index_width, view->index_width,
+		                      view->index_width,
+		                      view->index_height,
 		                      1);
 	} else {
 		GFXWARN("No view was contained in SCI1.1 pic resource");
@@ -1822,8 +1822,8 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 }
 
 void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
-	int xl = pic->visual_map->index_xl;
-	int yl = pic->visual_map->index_yl;
+	int xl = pic->visual_map->index_width;
+	int yl = pic->visual_map->index_height;
 	int xfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->xfact;
 	int yfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->yfact;
 	int xfrobc = 0, yfrobc = 0;

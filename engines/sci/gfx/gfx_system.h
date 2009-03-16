@@ -110,27 +110,27 @@ struct gfx_color_t {
 /** Rectangle description */
 struct rect_t {
 	int x, y;
-	int xl, yl; /* width, height: (x,y,xl,yl)=(5,5,1,1) occupies 1 pixel */
+	int width, height; /* width, height: (x,y,width,height)=(5,5,1,1) occupies 1 pixel */
 };
 
 
 /* Generates a rect_t from index data
 ** Parameters: (int x int) x,y: Upper left point of the rectangle
-**             (int x int) xl, yl: Horizontal and vertical extension of the rectangle
+**             (int x int) width, height: Horizontal and vertical extension of the rectangle
 ** Returns   : (rect_t) A rectangle matching the supplied parameters
 */
-static inline rect_t gfx_rect(int x, int y, int xl, int yl) {
+static inline rect_t gfx_rect(int x, int y, int width, int height) {
 	rect_t rect;
 
 	rect.x = x;
 	rect.y = y;
-	rect.xl = xl;
-	rect.yl = yl;
+	rect.width = width;
+	rect.height = height;
 
 	return rect;
 }
 
-#define GFX_PRINT_RECT(rect) (rect).x, (rect).y, (rect).xl, (rect).yl
+#define GFX_PRINT_RECT(rect) (rect).x, (rect).y, (rect).width, (rect).height
 
 #define OVERLAP(a, b, z, zl) (a.z >= b.z && a.z < (b.z + b.zl))
 
@@ -139,7 +139,7 @@ static inline rect_t gfx_rect(int x, int y, int xl, int yl) {
 ** Returns   : (int) 1 if they overlap, 0 otherwise
 */
 static inline int gfx_rects_overlap(rect_t a, rect_t b) {
-	return (OVERLAP(a, b, x, xl) || OVERLAP(b, a, x, xl)) && (OVERLAP(a, b, y, yl) || OVERLAP(b, a, y, yl));
+	return (OVERLAP(a, b, x, width) || OVERLAP(b, a, x, width)) && (OVERLAP(a, b, y, height) || OVERLAP(b, a, y, height));
 }
 
 #undef OVERLAP
@@ -158,7 +158,7 @@ else SUBMERGE_PARTIAL(b, a, z, zl)
 
 
 
-#define RECT(a) a.x, a.y, a.xl, a.yl
+#define RECT(a) a.x, a.y, a.width, a.height
 
 /* Merges two rects
 ** Parameters: (rect_t x rect_t) a,b: The two rects to merge
@@ -166,8 +166,8 @@ else SUBMERGE_PARTIAL(b, a, z, zl)
 */
 static inline rect_t gfx_rects_merge(rect_t a, rect_t b) {
 	rect_t retval;
-	MERGE_PARTIAL(x, xl);
-	MERGE_PARTIAL(y, yl);
+	MERGE_PARTIAL(x, width);
+	MERGE_PARTIAL(y, height);
 	return retval;
 }
 #undef MERGE_PARTIAL
@@ -179,7 +179,7 @@ static inline rect_t gfx_rects_merge(rect_t a, rect_t b) {
 ** Returns   : non-zero iff for each pixel p in a the following holds: p is in b.
 */
 static inline int gfx_rect_subset(rect_t a, rect_t b) {
-	return ((a.x >= b.x) && (a.y >= b.y) && ((a.x + a.xl) <= (b.x + b.xl)) && ((a.y + a.yl) <= (b.y + b.yl)));
+	return ((a.x >= b.x) && (a.y >= b.y) && ((a.x + a.width) <= (b.x + b.width)) && ((a.y + a.height) <= (b.y + b.height)));
 }
 
 
@@ -188,7 +188,7 @@ static inline int gfx_rect_subset(rect_t a, rect_t b) {
 ** Returns   : (int) gfx_rect_subset(a,b) AND gfx_rect_subset(b,a)
 */
 static inline int gfx_rect_equals(rect_t a, rect_t b) {
-	return (a.x == b.x && a.xl == b.xl && a.y == b.y && a.yl == b.yl);
+	return (a.x == b.x && a.width == b.width && a.y == b.y && a.height == b.height);
 }
 
 
@@ -241,13 +241,13 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 	int xoffset, yoffset; /* x and y coordinates of the 'hot spot' (unscaled) */
 
 	/*** Index data ***/
-	int index_xl, index_yl; /* width and height of the indexed original image */
+	int index_width, index_height; /* width and height of the indexed original image */
 	byte *index_data; /* Color-index data, or NULL if read from an
 			  ** external source
 			  */
 
 	/*** Drawable data ***/
-	int xl, yl; /* width and height of the actual image */
+	int width, height; /* width and height of the actual image */
 	int data_size; /* Amount of allocated memory */
 	byte *data; /* Drawable data, or NULL if not converted.  */
 

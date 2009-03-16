@@ -370,8 +370,8 @@ static int get_pic_id(gfx_resource_t *res) {
 
 static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 	int xmod = mode->xfact; // Step size horizontally
-	int ymod = pxm->index_xl * mode->yfact; // Vertical step size
-	int maxpos = pxm->index_xl * pxm->index_yl;
+	int ymod = pxm->index_width * mode->yfact; // Vertical step size
+	int maxpos = pxm->index_width * pxm->index_height;
 	int pos;
 	byte *dest = pxm->index_data;
 
@@ -381,14 +381,14 @@ static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode)
 	for (pos = 0; pos < maxpos; pos += ymod) {
 		int c;
 
-		for (c = 0; c < pxm->index_xl; c += xmod)
+		for (c = 0; c < pxm->index_width; c += xmod)
 			*dest++ = pxm->index_data[pos + c];
 			// No overwrite since line and offset readers move much faster (proof by in-duction, trivial
 			// and left to the reader)
 	}
 
-	pxm->index_xl /= mode->xfact;
-	pxm->index_yl /= mode->yfact;
+	pxm->index_width /= mode->xfact;
+	pxm->index_height /= mode->yfact;
 	pxm->flags &= ~GFX_PIXMAP_FLAG_SCALED_INDEX;
 }
 

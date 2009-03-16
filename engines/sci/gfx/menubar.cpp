@@ -443,7 +443,7 @@ int menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t 
 		if (menu->items_nr <= row)
 			return 1;
 
-		if ((s->gfx_state->pointer_pos.x < port->bounds.x) || (s->gfx_state->pointer_pos.x > port->bounds.x + port->bounds.xl))
+		if ((s->gfx_state->pointer_pos.x < port->bounds.x) || (s->gfx_state->pointer_pos.x > port->bounds.x + port->bounds.width))
 			return 1;
 
 		if (menubar_item_valid(s, *menu_nr, row))

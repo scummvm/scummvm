@@ -112,7 +112,7 @@ static void _gfxw_print_widget(gfxw_widget_t *widget, int indentation) {
 			sciprintf(" ");
 	}
 
-	sciprintf("[(%d,%d)(%dx%d)]", widget->bounds.x, widget->bounds.y, widget->bounds.xl, widget->bounds.yl);
+	sciprintf("[(%d,%d)(%dx%d)]", widget->bounds.x, widget->bounds.y, widget->bounds.width, widget->bounds.height);
 
 	for (i = 0; i < strlen(flags_list); i++)
 		if (widget->flags & (1 << i))
@@ -374,14 +374,14 @@ static int _gfxwop_basic_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *othe
 //*** Boxes ***
 
 static rect_t _move_rect(rect_t rect, Common::Point point) {
-	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.xl, rect.yl);
+	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.width, rect.height);
 }
 
 static void _split_rect(rect_t rect, Common::Point *p1, Common::Point *p2) {
 	p1->x = rect.x;
 	p1->y = rect.y;
-	p2->x = rect.x + rect.xl;
-	p2->y = rect.y + rect.yl;
+	p2->x = rect.x + rect.width;
+	p2->y = rect.y + rect.height;
 }
 
 static Common::Point _move_point(rect_t rect, Common::Point point) {
@@ -511,7 +511,7 @@ static int _gfxwop_rect_draw(gfxw_widget_t *widget, Common::Point pos) {
 	DRAW_ASSERT(widget, GFXW_RECT);
 
 	GFX_ASSERT(gfxop_draw_rectangle(rect->visual->gfx_state, gfx_rect(rect->bounds.x + pos.x, rect->bounds.y + pos.y,
-	                                         rect->bounds.xl - 1, rect->bounds.yl - 1), rect->color, rect->line_mode, rect->line_style));
+	                                         rect->bounds.width - 1, rect->bounds.height - 1), rect->color, rect->line_mode, rect->line_style));
 	return 0;
 }
 
@@ -529,8 +529,8 @@ void _gfxw_set_ops_RECT(gfxw_widget_t *prim) {
 
 gfxw_primitive_t *gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim = _gfxw_new_primitive(rect, color, line_mode, line_style, GFXW_RECT);
-	prim->bounds.xl++;
-	prim->bounds.yl++; // Since it is actually one pixel bigger in each direction
+	prim->bounds.width++;
+	prim->bounds.height++; // Since it is actually one pixel bigger in each direction
 
 	_gfxw_set_ops_RECT(GFXW(prim));
 
@@ -544,12 +544,12 @@ static int _gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
 	rect_t linepos = widget->bounds;
 	Common::Point p1, p2;
 
-	linepos.xl--;
-	linepos.yl--;
+	linepos.width--;
+	linepos.height--;
 
 	if (widget->type == GFXW_INVERSE_LINE) {
-		linepos.x += linepos.xl;
-		linepos.xl = -linepos.xl;
+		linepos.x += linepos.width;
+		linepos.width = -linepos.width;
 	} else {
 		DRAW_ASSERT(widget, GFXW_LINE);
 	}
@@ -581,21 +581,21 @@ gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_colo
 
 	byte inverse = 0;
 
-	if (line.xl < 0) {
-		line.x += line.xl;
-		line.y += line.yl;
-		line.xl = -line.xl;
-		line.yl = -line.yl;
+	if (line.width < 0) {
+		line.x += line.width;
+		line.y += line.height;
+		line.width = -line.width;
+		line.height = -line.height;
 	}
 
-	if (line.yl < 0) {
+	if (line.height < 0) {
 		inverse = 1;
-		line.x += line.xl;
-		line.xl = -line.xl;
+		line.x += line.width;
+		line.width = -line.width;
 	}
 
-	line.xl++;
-	line.yl++;
+	line.width++;
+	line.height++;
 
 	prim = _gfxw_new_primitive(line, color, line_mode, line_style, inverse ? GFXW_INVERSE_LINE : GFXW_LINE);
 
@@ -733,7 +733,7 @@ static int _gfxwop_dyn_view_draw(gfxw_widget_t *widget, Common::Point pos) {
 	  red.visual.g = red.visual.b = 0;
 	  red.mask = GFX_MASK_VISUAL;
 	  GFX_ASSERT(gfxop_draw_rectangle(view->visual->gfx_state,
-	  gfx_rect(view->bounds.x + pos.x, view->bounds.y + pos.y, view->bounds.xl - 1, view->bounds.yl - 1), red, 0, 0));
+	  gfx_rect(view->bounds.x + pos.x, view->bounds.y + pos.y, view->bounds.width - 1, view->bounds.height - 1), red, 0, 0));
 	*/
 
 	return 0;
@@ -925,7 +925,7 @@ static int _gfxwop_text_alloc_and_draw(gfxw_widget_t *widget, Common::Point pos)
 	gfxw_text_t *text = (gfxw_text_t *)widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
-	text->text_handle = gfxop_new_text(widget->visual->gfx_state, text->font_nr, text->text, text->bounds.xl,
+	text->text_handle = gfxop_new_text(widget->visual->gfx_state, text->font_nr, text->text, text->bounds.width,
 	                   text->halign, text->valign, text->color1, text->color2, text->bgcolor, text->text_flags);
 
 	text->draw = _gfxwop_text_draw;
@@ -1005,18 +1005,18 @@ gfxw_text_t *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char
 
 	strcpy(widget->text, text);
 
-	gfxop_get_text_params(state, font, text, area.xl, &(widget->width), &(widget->height), text_flags,
+	gfxop_get_text_params(state, font, text, area.width, &(widget->width), &(widget->height), text_flags,
 	                      &(widget->lines_nr), &(widget->lineheight), &(widget->lastline_width));
 
 	/* FIXME: Window is too big
-	area.x += _calc_needmove(halign, area.xl, widget->width);
-	area.y += _calc_needmove(valign, area.yl, widget->height);
+	area.x += _calc_needmove(halign, area.width, widget->width);
+	area.y += _calc_needmove(valign, area.height, widget->height);
 	*/
 
 	if (halign == ALIGN_LEFT)
-		area.xl = widget->width;
+		area.width = widget->width;
 	if (valign == ALIGN_TOP)
-		area.yl = widget->height;
+		area.height = widget->height;
 
 	widget->bounds = area;
 
@@ -1083,7 +1083,7 @@ static int _w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
 	}
 
 	sciprintf(" viszone=((%d,%d),(%dx%d))\n", container->zone.x, container->zone.y,
-	          container->zone.xl, container->zone.yl);
+	          container->zone.width, container->zone.height);
 
 	indent(indentation);
 	sciprintf("--dirty:\n");
@@ -1091,7 +1091,7 @@ static int _w_gfxwop_container_print(gfxw_widget_t *widget, int indentation) {
 	dirty = container->dirty;
 	while (dirty) {
 		indent(indentation + 1);
-		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->rect.x, dirty->rect.y, dirty->rect.xl, dirty->rect.yl);
+		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->rect.x, dirty->rect.y, dirty->rect.width, dirty->rect.height);
 		dirty = dirty->next;
 	}
 
@@ -1552,7 +1552,7 @@ static int _gfxwop_visual_draw(gfxw_widget_t *widget, Common::Point pos) {
 
 		if (err) {
 			GFXERROR("Error while clearing dirty rect (%d,%d,(%dx%d))\n", dirty->rect.x,
-			         dirty->rect.y, dirty->rect.xl, dirty->rect.yl);
+			         dirty->rect.y, dirty->rect.width, dirty->rect.height);
 			if (err == GFX_FATAL)
 				return err;
 		}
@@ -1768,8 +1768,8 @@ static int _gfxwop_port_add_dirty(gfxw_container_t *widget, rect_t dirty, int pr
 	_gfxwop_container_add_dirty(widget, dirty, propagate);
 
 	DDIRTY(stderr, "Added dirty to ID %d\n", widget->ID);
-	DDIRTY(stderr, "dirty= (%d,%d,%d,%d) bounds (%d,%d,%d,%d)\n", dirty.x, dirty.x, dirty.xl, dirty.yl,
-	       widget->bounds.x, widget->bounds.y, widget->bounds.xl, widget->bounds.yl);
+	DDIRTY(stderr, "dirty= (%d,%d,%d,%d) bounds (%d,%d,%d,%d)\n", dirty.x, dirty.x, dirty.width, dirty.height,
+	       widget->bounds.x, widget->bounds.y, widget->bounds.width, widget->bounds.height);
 #if 0
 	// FIXME: This is a worthwhile optimization
 	if (self->port_bg) {
@@ -1957,7 +1957,7 @@ gfxw_snapshot_t *gfxw_make_snapshot(gfxw_visual_t *visual, rect_t area) {
 
 	// Work around subset semantics in gfx_rect_subset.
 	// This fixes the help icon in LSL5. */
-	if (retval->area.xl == 320) retval->area.xl = 321;
+	if (retval->area.width == 320) retval->area.width = 321;
 
 	return retval;
 }
