@@ -86,6 +86,13 @@ public:
 		}
 	}
 
+	/**
+	 * Sync a fixed length C-string
+	 */
+	void syncString(char *buf, uint16 size) {
+		syncBytes((byte *)buf, size);
+	}
+
 	void skip(uint32 size) {
 		_bytesSynced += size;
 		if (_loadStream)
