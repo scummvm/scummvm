@@ -31,6 +31,7 @@
 
 namespace Parallaction {
 
+extern byte _braAmigaFramesDefaultPalette[];
 
 struct Sprite {
 	uint16	size;
@@ -440,6 +441,14 @@ void AmigaDisk_br::init() {
 		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
 }
 
+void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int move) {
+	uint size = surf.w * surf.h;
+	byte *data = (byte*)surf.pixels;
+	for (uint i = 0; i < size; i++, data++) {
+		*data += move;
+	}
+}
+
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream) {
 
 	byte *pal;
@@ -447,25 +456,47 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStre
 	Graphics::ILBMDecoder decoder(stream, info.bg, pal);
 	decoder.decode();
 
-	uint i;
+	int i;
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	byte *p = pal;
+	/* TODO: support loading of additional palette (*.ap files), for locations which
+	   have them. If an additional palette is present then it is used in place of
+	   _braAmigaFramesDefaultPalette.
+	*/
+	byte r,g,b;
+	byte *p = _braAmigaFramesDefaultPalette;
 	for (i = 0; i < 16; i++) {
-		byte r = *p >> 2;
+		r = *p >> 2;
 		p++;
-		byte g = *p >> 2;
+		g = *p >> 2;
 		p++;
-		byte b = *p >> 2;
+		b = *p >> 2;
 		p++;
 		info.palette.setEntry(i, r, g, b);
 	}
 
+	p = pal;
+	for (i = 16; i < 32; i++) {
+		r = *p >> 2;
+		p++;
+		g = *p >> 2;
+		p++;
+		b = *p >> 2;
+		p++;
+		info.palette.setEntry(i, r, g, b);
+	}
+
+#if 0
+	// The first entry in the palette is overwritten in the original, but I could not
+	// find any difference so far.
+	info.palette.setEntry(0, pal[0] >> 2, pal[1] >> 2, pal[2] >> 0);
+#endif
 	free(pal);
 
-	return;
+	// background data is drawn used the upper portion of the palette
+	adjustForPalette(info.bg, 16);
 }
 
 
@@ -528,9 +559,11 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 
 	byte *pal = 0;
 	Graphics::Surface* surf = new Graphics::Surface;
-
 	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
 	decoder.decode();
+
+	// static pictures are drawn used the upper half of the palette
+	adjustForPalette(*surf, 16);
 
 	free(pal);
 	delete stream;
