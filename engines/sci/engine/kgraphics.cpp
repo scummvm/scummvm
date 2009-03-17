@@ -816,7 +816,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
 
 		while (widget) {
-			if (widget->ID && (widget->signal & _K_VIEW_SIG_FLAG_FREESCI_STOPUPD)
+			if (widget->ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
 			        && ((widget->ID != obj.segment) || (widget->subID != obj.offset))
 			        && is_object(s, make_reg(widget->ID, widget->subID)))
 				if (collides_with(s, abs_zone, make_reg(widget->ID, widget->subID), 1, GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
@@ -1697,7 +1697,7 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 		 * this fixes a few problems, but doesn't match SSCI's logic.
 		 * The semantics of the private flag need to be verified before this can be uncommented.
 		 * Fixes bug #326 (CB1, ego falls down stairs)
-		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_FREESCI_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_FREESCI_PRIVATE) {
+		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
 			int has_nsrect = lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
@@ -2024,7 +2024,7 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 		// CR (from :Bob Heitman:) stopupdated views (like pic views) have
 		// their clipped nsRect drawn to the control map
 		if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
-			view->signal |= _K_VIEW_SIG_FLAG_FREESCI_STOPUPD;
+			view->signal |= _K_VIEW_SIG_FLAG_STOPUPD;
 			SCIkdebug(SCIkGRAPHICS, "Setting magic STOP_UPD for "PREG"\n", PRINT_REG(obj));
 		}
 
@@ -2063,7 +2063,7 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 
 		// Never happens
 /*		if (view->signal & 0) {
-			view->signal &= ~_K_VIEW_SIG_FLAG_FREESCI_STOPUPD;
+			view->signal &= ~_K_VIEW_SIG_FLAG_STOPUPD;
 			fprintf(stderr, "Unsetting magic StopUpd for view "PREG"\n", PRINT_REG(obj));
 		} */
 
@@ -2090,7 +2090,7 @@ static void _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *n
 			new_widget = (gfxw_dyn_view_t *) new_widget->next;
 
 		if (new_widget) {
-			int carry = old_widget->signal & _K_VIEW_SIG_FLAG_FREESCI_STOPUPD;
+			int carry = old_widget->signal & _K_VIEW_SIG_FLAG_STOPUPD;
 			// Transfer 'stopupd' flag
 
 			if ((new_widget->pos.x != old_widget->pos.x)

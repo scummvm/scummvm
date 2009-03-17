@@ -286,7 +286,7 @@ List *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
 #define _K_VIEW_SIG_FLAG_IGNORE_ACTOR   0x4000
 #define _K_VIEW_SIG_FLAG_DISPOSE_ME     0x8000
 
-#define _K_VIEW_SIG_FLAG_FREESCI_STOPUPD 0x20000000 /* View has been stop-updated */
+#define _K_VIEW_SIG_FLAG_STOPUPD 0x20000000 /* View has been stop-updated */
 
 
 /* Sound status */
@@ -306,8 +306,6 @@ List *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
 
 /* Generic description: */
 typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
-
-#define FREESCI_KFUNCT_GLUTTON 1
 
 struct kfunct_sig_pair_t {
 	kfunct *fun; /* The actual function */

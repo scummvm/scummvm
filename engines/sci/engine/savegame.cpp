@@ -477,14 +477,14 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	g_system->getTimeAndDate(curTime);
 
 	SavegameMetadata meta;
-	meta.savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
+	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
 	meta.savegame_name = savename;
 	meta.version = s->version;
 	meta.game_version = s->game_version;
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
-	s->savegame_version = FREESCI_CURRENT_SAVEGAME_VERSION;
+	s->savegame_version = CURRENT_SAVEGAME_VERSION;
 	s->dyn_views_list_serial = (s->dyn_views)? s->dyn_views->serial : -2;
 	s->drop_views_list_serial = (s->drop_views)? s->drop_views->serial : -2;
 	s->port_serial = (s->port)? s->port->serial : -2;
@@ -791,12 +791,12 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (fh->eos())
 		return false;
 
-	if ((meta.savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
-	    (meta.savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
-		if (meta.savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
+	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta.savegame_version < MINIMUM_SAVEGAME_VERSION)
 			sciprintf("Old savegame version detected- can't load\n");
 		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta.savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
+			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 
 		return NULL;
 	}
@@ -922,12 +922,12 @@ bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata 
 	if (stream->eos())
 		return false;
 
-	if ((meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->savegame_version > FREESCI_CURRENT_SAVEGAME_VERSION)) {
-		if (meta->savegame_version < FREESCI_MINIMUM_SAVEGAME_VERSION)
+	if ((meta->savegame_version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta->savegame_version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta->savegame_version < MINIMUM_SAVEGAME_VERSION)
 			sciprintf("Old savegame version detected- can't load\n");
 		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, FREESCI_CURRENT_SAVEGAME_VERSION);
+			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

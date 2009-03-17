@@ -73,8 +73,8 @@ public:
 	void nextFile();
 };
 
-#define FREESCI_CURRENT_SAVEGAME_VERSION 8
-#define FREESCI_MINIMUM_SAVEGAME_VERSION 8
+#define CURRENT_SAVEGAME_VERSION 8
+#define MINIMUM_SAVEGAME_VERSION 8
 
 #define MAX_GAMEDIR_SIZE 32 /* Used for subdirectory inside of "~/.freesci/" */
 #define MAX_SAVEGAME_NR 20 /* Maximum number of savegames */
