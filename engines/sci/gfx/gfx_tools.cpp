@@ -81,6 +81,7 @@ void gfx_free_mode(gfx_mode_t *mode) {
 	if (mode->palette)
 		mode->palette->free();
 	free(mode);
+	mode = NULL;
 }
 
 void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
@@ -146,13 +147,9 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	return pxm;
 }
 
-void gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
-	if (driver) {
-		if (driver->mode->palette) {
-			if (pxm->palette)
-				pxm->palette->free();
-		}
-	}
+void gfx_free_pixmap(gfx_pixmap_t *pxm) {
+	if (pxm->palette)
+		pxm->palette->free();
 
 	free(pxm->index_data);
 	free(pxm->alpha_map);

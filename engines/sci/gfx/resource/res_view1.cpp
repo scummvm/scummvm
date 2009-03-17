@@ -246,9 +246,11 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 
 	if (view)
 		retval->palette = view->palette->getref();
+	else
+		retval->palette = NULL;
 
 	if (xl <= 0 || yl <= 0) {
-		gfx_free_pixmap(NULL, retval);
+		gfx_free_pixmap(retval);
 		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
 		return NULL;
 	}
@@ -261,7 +263,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 		                                        pos, xl, yl, retval->color_key);
 
 	if (decompress_failed) {
-		gfx_free_pixmap(NULL, retval);
+		gfx_free_pixmap(retval);
 		return NULL;
 	}
 
@@ -381,7 +383,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 		if (error_token || gfxr_draw_loop1(view->loops + i, id, i, mirror_mask & (1 << i), resource, loop_offset, size, view, amiga_game)) {
 			// An error occured
 			view->loops_nr = i;
-			gfxr_free_view(NULL, view);
+			gfxr_free_view(view);
 			return NULL;
 		}
 	}
@@ -429,7 +431,7 @@ gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *res
 		retval->palette = view->palette->getref();
 
 	if (xl <= 0 || yl <= 0) {
-		gfx_free_pixmap(NULL, retval);
+		gfx_free_pixmap(retval);
 		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
 		return NULL;
 	}
@@ -438,7 +440,7 @@ gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *res
 	                                        runlength_offset, literal_offset, xl, yl, retval->color_key);
 
 	if (decompress_failed) {
-		gfx_free_pixmap(NULL, retval);
+		gfx_free_pixmap(retval);
 		return NULL;
 	}
 

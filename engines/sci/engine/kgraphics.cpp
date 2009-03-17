@@ -2350,7 +2350,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		        UKPV(3), UKPV(2));
 		// FIXME: Should really only invalidate all loaded pic resources here;
 		// this is overkill
-		gfxr_free_all_resources(s->gfx_state->driver, s->gfx_state->resstate);
+		gfxr_free_all_resources(s->gfx_state->resstate);
 
 		break;
 	}

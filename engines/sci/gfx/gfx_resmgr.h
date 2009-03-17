@@ -114,34 +114,22 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
 ** The options are considered to be read-only, as they belong to the overlying state object.
 */
 
-void gfxr_free_resource_manager(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_resource_manager(gfx_resstate_t *state);
 /* Frees a previously allocated resource manager, and all allocated resources.
-** Parameters: (gfx_driver_t *) driver: The graphics driver; used to free pixmaps that
-**                                      are installed in a driver-specific registry
-**             (gfx_resstate_t *) state: The state manager to free
+** Parameters: (gfx_resstate_t *) state: The state manager to free
 ** Return    : (void)
 */
 
-void gfxr_free_all_resources(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_all_resources(gfx_resstate_t *state);
 /* Frees all resources currently allocated
-** Parameter: (gfx_driver_t *) driver: The driver to free with
-**            (gfx_resstate_t *) state: The state to do this on
+** Parameter: (gfx_resstate_t *) state: The state to do this on
 ** Returns  : (void)
 ** This function is intended to be used primarily for debugging.
 */
 
-void gfxr_tag_resources(gfx_resstate_t *state);
-/* 'Tags' all resources for deletion
-** Paramters: (gfx_resstate_t *) state: The resource state to modify
-** Returns  : (void)
-** Tagged resources are untagged if they are referenced.
-*/
-
-void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
+void gfxr_free_tagged_resources(gfx_resstate_t *state);
 /* Frees all tagged resources.
-** Parameters: (gfx_driver_t *) driver: The graphics driver the pixmaps are potentially
-**                                      registered in
-**             (gfx_resstate_t *) state: The state to alter
+** Parameters: (gfx_resstate_t *) state: The state to alter
 ** Returns   : (void)
 ** Resources are tagged by calling gfx_tag_resources(), and untagged by calling the
 ** approprate dereferenciation function.
@@ -150,19 +138,64 @@ void gfxr_free_tagged_resources(gfx_driver_t *driver, gfx_resstate_t *state);
 */
 
 
-gfxr_pic_t *gfxr_get_pic(gfx_resstate_t *state, int nr, int maps, int flags,
-	int default_palette, int scaled);
-/* Retreives a displayable (translated) pic resource
-** Parameters: (gfx_resstate_t *) state: The resource state
-**             (int) nr: Number of the pic resource
-**             (int) maps: The maps to translate (ORred GFX_MASK_*)
-**             (int) flags: Interpreter-dependant pic flags
-**             (int) default_palette: The default palette to use for drawing (if applicable)
-**             (int) scaled: Whether to return the scaled maps, or the unscaled
-**                           ones (which may be identical) for some special operations.
-** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
-**                           neccessarily translated) data.
-*/
+class GfxResManager {
+public:
+	GfxResManager(gfx_resstate_t *state) : _state(state) {}
+	~GfxResManager() {}
+
+	/* 'Tags' all resources for deletion
+	** Paramters: (void)
+	** Returns  : (void)
+	** Tagged resources are untagged if they are referenced.
+	*/
+	void tagResources() { (_state->tag_lock_counter)++; }
+
+	/* Retreives an SCI0/SCI01 mouse cursor
+	** Parameters: (int) num: The cursor number
+	** Returns   : (gfx_font_t *) The approprate cursor as a pixmap, or NULL on error
+	*/
+	gfx_pixmap_t *getCursor(int num);
+
+
+	/* Retreives the static palette from the interpreter-specific code
+	** Parameters: (int *) colors_nr: Number of colors to use
+	**             (int) nr: The palette to read
+	** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
+	**             if a static palette must be used, NULL otherwise
+	*/
+	Palette *getPalette(int *colors_nr, int num = 999);
+
+
+	/* Retreives a font
+	** Parameters: (int) nr: The font number
+	**             (int) scaled: Whether the font should be font-scaled
+	** Returns   : (gfx_font_t *) The appropriate font, or NULL on error
+	*/
+	gfx_bitmap_font_t *getFont(int num, bool scaled = false);
+
+
+	/* Retreives a displayable (translated) pic resource
+	** Parameters: (int) nr: Number of the pic resource
+	**             (int) maps: The maps to translate (ORred GFX_MASK_*)
+	**             (int) flags: Interpreter-dependant pic flags
+	**             (int) default_palette: The default palette to use for drawing (if applicable)
+	**             (bool) scaled: Whether to return the scaled maps, or the unscaled
+	**                           ones (which may be identical) for some special operations.
+	** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
+	**                           neccessarily translated) data.
+	*/
+	gfxr_pic_t *getPic(int num, int maps, int flags, int default_palette, bool scaled = false);
+
+
+	/* Determines whether support for pointers with more than two colors is required
+	** Returns   : (bool) false if no support for multi-colored pointers is required, true
+	**                   otherwise
+	*/
+	bool multicoloredPointers() { return _state->version > SCI_VERSION_1; }
+
+private:
+	gfx_resstate_t *_state;
+};
 
 gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
 	int old_default_palette, int default_palette, int scaled);
@@ -195,30 +228,6 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 ** loop and cel numbers have to be interpreted as 'maximum' or 'minimum' by the interpreter)
 */
 
-gfx_bitmap_font_t *gfxr_get_font(ResourceManager& resourceManager, gfx_resstate_t *state, int nr, int scaled);
-/* Retreives a font
-** Parameters: (ResourceManager&) resourceManager: supplies the resource repository capability
-** 			   (gfx_resstate_t *) state: The relevant resource state
-**             (int) nr: The font number
-**             (int) scaled: Whether the font should be font-scaled
-** Returns   : (gfx_font_t *) The appropriate font, or NULL on error
-*/
-
-gfx_pixmap_t *gfxr_get_cursor(gfx_resstate_t *state, int nr);
-/* Retreives an SCI0/SCI01 mouse cursor
-** Parameters: (gfx_resstate_t *) state: The resource state
-**             (int) nr: The cursour number
-** Returns   : (gfx_font_t *) The approprate cursor as a pixmap, or NULL on error
-*/
-
-gfx_pixmap_color_t *gfxr_get_palette(gfx_resstate_t *state, int nr);
-/* Retreives a palette
-** Parameters: (gfx_resstate_t *) state: The resource state
-**             (int) nr: The cursour number
-** Returns   : (gfx_font_t *) The approprate cursor as a pixmap, or NULL on error
-*/
-
-
 /* =========================== */
 /* Interpreter-dependant stuff */
 /* =========================== */
@@ -239,23 +248,6 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
 ** resource manager code.
 ** Also, only the lower 20 bits are available to the interpreter.
 ** (Yes, this isn't really a "hash" in the traditional sense...)
-*/
-
-gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID);
-/* Initializes a pic
-** Parameters: (int) version: Interpreter version to use
-**             (gfx_mode_t *) mode: The graphics mode the pic will be using
-**             (int) ID: The ID to assign to the gfxr_pic_t structure
-** Returns   : (gfxr_pic_t *) A newly allocated pic
-** This function is typically called befode gfxr_interpreter_clear_pic().
-*/
-
-void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic);
-/* Clears a previously allocated pic
-** Parameters: (int) version: Interpreter version
-**             (gfxr_pic_t *) pic: The pic to clear
-** Returns  :  (void)
-** This function is called in preparation for the pic to be drawn with gfxr_interpreter_calculate_pic.
 */
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
@@ -279,47 +271,6 @@ gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr,
 **             (Palette*) staticPalette: The static palette to use in VGA games
 **             (int) version: The interpreter version
 ** Returns   : (gfx_view_t *) The appropriate view, or NULL on error
-*/
-
-gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager& resourceManager, int nr);
-/* Instructs the interpreter-specific code to calculate a font
-** Parameters: (ResourceManager& ) resourceManager: The resource manager
-**             (int) nr: The font resource number
-** Returns   : (gfx_font_t *) The newly calculated font, or NULL on error
-*/
-
-gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager& resourceManager, int nr, int version);
-/* Instructs the interpreter-specific code to calculate a cursor
-** Parameters: (ResourceManager& ) state: The resource manager
-**             (int nr): The cursor resource number
-**             (int version): The SCI version used
-** Returns   : (gfx_pixmap_t *) The cursor pixmap, or NULL on error
-*/
-
-Palette *gfxr_interpreter_get_static_palette(ResourceManager& resourceManager, int version, int *colors_nr);
-/* Retreives the static palette (palette 999) from the interpreter-specific code
-** Parameters: (ResourceManager& ) state: The resource manager
-**             (int) version: Interpreter version to use
-**             (int *) colors_nr: Number of colors to use
-** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
-**             if a static palette must be used, NULL otherwise
-*/
-
-Palette *gfxr_interpreter_get_palette(ResourceManager& resourceManager, int version, int *colors_nr, int nr);
-/* Retreives the static palette from the interpreter-specific code
-** Parameters: (ResourceManager& ) state: The resource manager
-**             (int) version: Interpreter version to use
-**             (int *) colors_nr: Number of colors to use
-**             (int) nr: The palette to read
-** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
-**             if a static palette must be used, NULL otherwise
-*/
-
-int gfxr_interpreter_needs_multicolored_pointers(int version);
-/* Determines whether support for pointers with more than two colors is required
-** Parameters: (int) version: Interpreter version to test for
-** Returns   : (int) 0 if no support for multi-colored pointers is required, non-0
-**                   otherwise
 */
 
 } // End of namespace Sci

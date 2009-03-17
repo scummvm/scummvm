@@ -49,8 +49,6 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_opt
 			       | (options->pic0_dither_pattern << 8) | (options->pic0_brush_mode << 4) | (options->pic0_line_mode);
 
 	case GFX_RESOURCE_TYPE_FONT:
-		return 0;
-
 	case GFX_RESOURCE_TYPE_CURSOR:
 		return 0;
 
@@ -59,14 +57,6 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_opt
 		GFXERROR("Invalid resource type: %d\n", type);
 		return -1;
 	}
-}
-
-gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID) {
-	return gfxr_init_pic(mode, ID, version >= SCI_VERSION_01_VGA);
-}
-
-void gfxr_interpreter_clear_pic(int version, gfxr_pic_t *pic) {
-	gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 }
 
 int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
@@ -152,22 +142,12 @@ gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr,
 
 	if (version < SCI_VERSION_01) palette = -1;
 
-	switch (version) {
-	case SCI_VERSION_0:
-	case SCI_VERSION_01:
+	if (version <= SCI_VERSION_01)
 		result = gfxr_draw_view0(resid, res->data, res->size, palette);
-		break;
-	case SCI_VERSION_01_VGA:
-	case SCI_VERSION_01_VGA_ODD:
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
+	else if (version >= SCI_VERSION_01_VGA && version <= SCI_VERSION_1_LATE)
 		result = gfxr_draw_view1(resid, res->data, res->size, staticPalette);
-		break;
-	case SCI_VERSION_1_1:
-	case SCI_VERSION_32:
+	else if (version >= SCI_VERSION_1_1)
 		result = gfxr_draw_view11(resid, res->data, res->size);
-		break;
-	}
 
 	if (version >= SCI_VERSION_01_VGA) {
 		if (!result->palette) {
@@ -177,68 +157,6 @@ gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr,
 		gfxr_palettize_view(result, staticPalette);
 	}
 	return result;
-}
-
-gfx_bitmap_font_t *gfxr_interpreter_get_font(ResourceManager& resourceManager, int nr) {
-	Resource *res = resourceManager.findResource(kResourceTypeFont, nr, 0);
-	if (!res || !res->data)
-		return NULL;
-
-	return gfxr_read_font(res->id, res->data, res->size);
-}
-
-gfx_pixmap_t *gfxr_interpreter_get_cursor(ResourceManager& resourceManager, int nr, int version) {
-	Resource *res = resourceManager.findResource(kResourceTypeCursor, nr, 0);
-	int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, nr);
-
-	if (!res || !res->data)
-		return NULL;
-
-	if (version >= SCI_VERSION_1_1) {
-		GFXWARN("Attempt to retrieve cursor in SCI1.1 or later\n");
-		return NULL;
-	}
-
-	return gfxr_draw_cursor(resid, res->data, res->size, version != SCI_VERSION_0);
-}
-
-Palette *gfxr_interpreter_get_static_palette(ResourceManager& resourceManager, int version, int *colors_nr) {
-	if (version >= SCI_VERSION_01_VGA)
-		return gfxr_interpreter_get_palette(resourceManager, version, colors_nr, 999);
-
-	*colors_nr = GFX_SCI0_PIC_COLORS_NR;
-	return gfx_sci0_pic_colors->getref();
-}
-
-Palette *gfxr_interpreter_get_palette(ResourceManager& resourceManager, int version, int *colors_nr, int nr) {
-	Resource *res;
-
-	if (version < SCI_VERSION_01_VGA)
-		return NULL;
-
-	res = resourceManager.findResource(kResourceTypePalette, nr, 0);
-	if (!res || !res->data)
-		return NULL;
-
-	switch (version) {
-	case SCI_VERSION_01_VGA :
-	case SCI_VERSION_01_VGA_ODD :
-	case SCI_VERSION_1_EARLY :
-	case SCI_VERSION_1_LATE :
-		return gfxr_read_pal1(res->id, res->data, res->size);
-	case SCI_VERSION_1_1 :
-	case SCI_VERSION_32 :
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
-		return NULL;
-
-	default:
-		BREAKPOINT();
-		return NULL;
-	}
-}
-
-int gfxr_interpreter_needs_multicolored_pointers(int version) {
-	return (version > SCI_VERSION_1);
 }
 
 } // End of namespace Sci

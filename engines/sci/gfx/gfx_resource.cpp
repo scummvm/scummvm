@@ -40,19 +40,19 @@ gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 };
 
 
-static void gfxr_free_loop(gfx_driver_t *driver, gfxr_loop_t *loop) {
+static void gfxr_free_loop(gfxr_loop_t *loop) {
 	int i;
 
 	if (loop->cels) {
 		for (i = 0; i < loop->cels_nr; i++)
 			if (loop->cels[i])
-				gfx_free_pixmap(driver, loop->cels[i]);
+				gfx_free_pixmap(loop->cels[i]);
 
 		free(loop->cels);
 	}
 }
 
-void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view) {
+void gfxr_free_view(gfxr_view_t *view) {
 	int i;
 
 	if (view->palette)
@@ -60,7 +60,7 @@ void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view) {
 
 	if (view->loops) {
 		for (i = 0; i < view->loops_nr; i++)
-			gfxr_free_loop(driver, view->loops + i);
+			gfxr_free_loop(view->loops + i);
 
 		free(view->loops);
 	}
@@ -393,10 +393,10 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 	}
 }
 
-void gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic) {
-	gfx_free_pixmap(driver, pic->visual_map);
-	gfx_free_pixmap(driver, pic->priority_map);
-	gfx_free_pixmap(driver, pic->control_map);
+void gfxr_free_pic(gfxr_pic_t *pic) {
+	gfx_free_pixmap(pic->visual_map);
+	gfx_free_pixmap(pic->priority_map);
+	gfx_free_pixmap(pic->control_map);
 	pic->visual_map = NULL;
 	pic->priority_map = NULL;
 	pic->control_map = NULL;

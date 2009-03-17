@@ -118,10 +118,9 @@ gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap);
 ** Returns   : (gfx_pixmap_t *) pixmap
 */
 
-void gfx_free_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm);
+void gfx_free_pixmap(gfx_pixmap_t *pxm);
 /* Frees all memory associated with a pixmap
-** Parameters: (gfx_driver_t *) driver: The driver the pixmap is to be removed from
-**             (gfx_pixmap_t *) pxm: The pixmap to free
+** Parameters: (gfx_pixmap_t *) pxm: The pixmap to free
 ** Returns   : (void)
 */
 

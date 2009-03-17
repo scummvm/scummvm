@@ -140,17 +140,15 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1);
 ** This function allocates memory for use by resource drawer functions.
 */
 
-void gfxr_free_pic(gfx_driver_t *driver, gfxr_pic_t *pic);
+void gfxr_free_pic(gfxr_pic_t *pic);
 /* Uninitializes a pic resource
-** Parameters: (gfx_driver_t *) driver: The driver the pic should be removed from
-**             (gfxr_pic_t *) pic: The pic to free
+** Parameters: (gfxr_pic_t *) pic: The pic to free
 ** Returns   : (void)
 */
 
-void gfxr_free_view(gfx_driver_t *driver, gfxr_view_t *view);
+void gfxr_free_view(gfxr_view_t *view);
 /* Frees all memory associated with a view
-** Paremeters: (gfx_driver_t *) driver: The driver the view should be removed from
-**             (gfxr_view_t *) view: The view to free
+** Paremeters: (gfxr_view_t *) view: The view to free
 ** Returns   : (void)
 */
 

@@ -94,7 +94,7 @@ static void scummvm_exit(gfx_driver_t *drv) {
 	int i;
 	if (S) {
 		for (i = 0; i < 2; i++) {
-			gfx_free_pixmap(drv, S->priority[i]);
+			gfx_free_pixmap(S->priority[i]);
 			S->priority[i] = NULL;
 		}
 

@@ -1699,6 +1699,9 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
 				gfx_free_mode(mode);
+				// When the mode is freed, the associated view 
+				// palette is freed too, so set it to NULL
+				view->palette = NULL;
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
 					view_transparentize(view, pic->visual_map, posx, sci_titlebar_size + posy,
@@ -1708,7 +1711,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				                      view->index_data, pic->visual_map->index_width, view->index_width,
 				                      view->index_width, view->index_height, 1);
 
-				gfx_free_pixmap(NULL, view);
+				gfx_free_pixmap(view);
+				view = NULL;
 			}
 			goto end_op_loop;
 

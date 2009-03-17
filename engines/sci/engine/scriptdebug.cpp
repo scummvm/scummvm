@@ -2011,7 +2011,7 @@ static int c_gfx_flush_resources(EngineState *s) {
 	gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
 	sciprintf("Flushing resources...\n");
 	s->visual->widfree(GFXW(s->visual));
-	gfxr_free_all_resources(s->gfx_state->driver, s->gfx_state->resstate);
+	gfxr_free_all_resources(s->gfx_state->resstate);
 	s->visual = NULL;
 
 	return 0;

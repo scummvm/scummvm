@@ -433,8 +433,17 @@ static int _gfxop_init_common(gfx_state_t *state, gfx_options_t *options, Resour
 		return GFX_FATAL;
 	}
 
-	int size;
-	state->static_palette = gfxr_interpreter_get_static_palette(*(state->resstate->resManager), state->version, &size);
+	state->static_palette = NULL;
+
+	if (state->version < SCI_VERSION_01_VGA) {
+		state->static_palette = gfx_sci0_pic_colors->getref();
+	} else if (state->version == SCI_VERSION_1_1 || state->version == SCI_VERSION_32) {
+		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+	} else {
+		Resource *res = state->resstate->resManager->findResource(kResourceTypePalette, 999, 0);
+		if (res && res->data)
+			state->static_palette = gfxr_read_pal1(res->id, res->data, res->size);
+	}
 
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -495,20 +504,20 @@ int gfxop_set_parameter(gfx_state_t *state, char *attribute, char *value) {
 
 int gfxop_exit(gfx_state_t *state) {
 	BASIC_CHECKS(GFX_ERROR);
-	gfxr_free_resource_manager(state->driver, state->resstate);
+	gfxr_free_resource_manager(state->resstate);
 
 	if (state->control_map) {
-		gfx_free_pixmap(state->driver, state->control_map);
+		gfx_free_pixmap(state->control_map);
 		state->control_map = NULL;
 	}
 
 	if (state->priority_map) {
-		gfx_free_pixmap(state->driver, state->priority_map);
+		gfx_free_pixmap(state->priority_map);
 		state->priority_map = NULL;
 	}
 
 	if (state->static_priority_map) {
-		gfx_free_pixmap(state->driver, state->static_priority_map);
+		gfx_free_pixmap(state->static_priority_map);
 		state->static_priority_map = NULL;
 	}
 
@@ -1162,7 +1171,7 @@ int gfxop_update(gfx_state_t *state) {
 
 	if (state->tag_mode) {
 		// This usually happens after a pic and all resources have been drawn
-		gfxr_free_tagged_resources(state->driver, state->resstate);
+		gfxr_free_tagged_resources(state->resstate);
 		state->tag_mode = 0;
 	}
 
@@ -1237,7 +1246,11 @@ int gfxop_set_pointer_cursor(gfx_state_t *state, int nr) {
 	if (nr == GFXOP_NO_POINTER)
 		new_pointer = NULL;
 	else {
-		new_pointer = gfxr_get_cursor(state->resstate, nr);
+		// FIXME: the initialization of the GFX resource manager should
+		// be pushed up, and it shouldn't occur here
+		GfxResManager *_gfx = new GfxResManager(state->resstate);
+		new_pointer = _gfx->getCursor(nr);
+		delete _gfx;
 
 		if (!new_pointer) {
 			GFXWARN("Attempt to set invalid pointer #%d\n", nr);
@@ -1848,16 +1861,24 @@ int *gfxop_get_pic_metainfo(gfx_state_t *state) {
 int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette) {
 	BASIC_CHECKS(GFX_FATAL);
 
-	gfxr_tag_resources(state->resstate);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	_gfx->tagResources();
 	state->tag_mode = 1;
 	state->palette_nr = default_palette;
+	state->pic = _gfx->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, true);
+	delete _gfx;
 
-	state->pic = gfxr_get_pic(state->resstate, nr, GFX_MASK_VISUAL, flags, default_palette, 1);
-
-	if (state->driver->mode->xfact == 1 && state->driver->mode->yfact == 1)
+	if (state->driver->mode->xfact == 1 && state->driver->mode->yfact == 1) {
 		state->pic_unscaled = state->pic;
-	else
-		state->pic_unscaled = gfxr_get_pic(state->resstate, nr, GFX_MASK_VISUAL, flags, default_palette, 0);
+	} else {
+		// FIXME: the initialization of the GFX resource manager should
+		// be pushed up, and it shouldn't occur here
+		GfxResManager *_gfx = new GfxResManager(state->resstate);
+		state->pic = _gfx->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
+		delete _gfx;
+	}
 
 	if (!state->pic || !state->pic_unscaled) {
 		GFXERROR("Could not retrieve background pic %d!\n", nr);
@@ -1904,7 +1925,12 @@ int gfxop_get_font_height(gfx_state_t *state, int font_nr) {
 	gfx_bitmap_font_t *font;
 	BASIC_CHECKS(GFX_FATAL);
 
-	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	font = _gfx->getFont(font_nr);
+	delete _gfx;
+
 	if (!font)
 		return GFX_ERROR;
 
@@ -1918,7 +1944,11 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text, int
 
 	BASIC_CHECKS(GFX_FATAL);
 
-	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	font = _gfx->getFont(font_nr);
+	delete _gfx;
 
 	if (!font) {
 		GFXERROR("Attempt to calculate text size with invalid font #%d\n", font_nr);
@@ -1956,7 +1986,11 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 		return NULL;
 	}
 
-	font = gfxr_get_font(*(state->resstate->resManager), state->resstate, font_nr, 0);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	font = _gfx->getFont(font_nr);
+	delete _gfx;
 
 	if (!font) {
 		GFXERROR("Attempt to draw text with invalid font #%d\n", font_nr);
@@ -2001,7 +2035,7 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 			int j;
 
 			for (j = 0; j < i; j++)
-				gfx_free_pixmap(state->driver, handle->text_pixmaps[j]);
+				gfx_free_pixmap(handle->text_pixmaps[j]);
 
 			free(handle->text_pixmaps);
 			free(handle->text);
@@ -2027,7 +2061,7 @@ int gfxop_free_text(gfx_state_t *state, gfx_text_handle_t *handle) {
 
 	if (handle->text_pixmaps) {
 		for (j = 0; j < handle->lines_nr; j++)
-			gfx_free_pixmap(state->driver, handle->text_pixmaps[j]);
+			gfx_free_pixmap(handle->text_pixmaps[j]);
 		free(handle->text_pixmaps);
 	}
 
@@ -2167,7 +2201,7 @@ int gfxop_draw_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm, rect_t zone, Common
 
 int gfxop_free_pixmap(gfx_state_t *state, gfx_pixmap_t *pxm) {
 	BASIC_CHECKS(GFX_ERROR);
-	gfx_free_pixmap(state->driver, pxm);
+	gfx_free_pixmap(pxm);
 	return GFX_OK;
 }
 

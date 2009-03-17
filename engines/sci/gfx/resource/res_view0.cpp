@@ -57,7 +57,7 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 	}
 
 	if (xl <= 0 || yl <= 0) {
-		gfx_free_pixmap(NULL, retval);
+		gfx_free_pixmap(retval);
 		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
 		return NULL;
 	}
@@ -218,7 +218,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 		if (error_token || gfxr_draw_loop0(view->loops + i, id, i, resource, loop_offset, size, view, mirrored)) {
 			// An error occured
 			view->loops_nr = i;
-			gfxr_free_view(NULL, view);
+			gfxr_free_view(view);
 			return NULL;
 		}
 	}
