@@ -502,11 +502,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		view = res->unscaled_data.view;
 	}
 
-	if (*loop < 0)
-		*loop = 0;
-	else
-		if (*loop >= view->loops_nr)
-			*loop = view->loops_nr - 1;
+	*loop = CLIP<int>(*loop, 0, view->loops_nr - 1);
 
 	if (*loop < 0) {
 		GFXWARN("View %d has no loops\n", nr);
@@ -519,12 +515,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		return NULL;
 	}
 
-	if (*cel < 0) {
-		sciprintf("Resetting cel! %d\n", *cel);
-		*cel = 0;
-	} else
-		if (*cel >= loop_data->cels_nr)
-			*cel = loop_data->cels_nr - 1;
+	*cel = CLIP<int>(*cel, 0, loop_data->cels_nr - 1);
 
 	if (*cel < 0) {
 		GFXWARN("View %d loop %d has no cels\n", nr, *loop);
