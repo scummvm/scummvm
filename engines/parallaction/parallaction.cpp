@@ -988,7 +988,7 @@ bool CharacterName::dummy() const {
 void Parallaction::beep() {
 	_soundMan->execute(SC_SETSFXCHANNEL, 3);
 	_soundMan->execute(SC_SETSFXVOLUME, 127);
-	_soundMan->execute(SC_SETSFXLOOPING, 0);
+	_soundMan->execute(SC_SETSFXLOOPING, (int)0);
 	_soundMan->execute(SC_PLAYSFX, "beep");
 }
 
