@@ -100,48 +100,25 @@ struct gfx_resstate_t {
 };
 
 
-
-gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
-	gfx_driver_t *driver, ResourceManager *resManager);
-/* Allocates and initializes a new resource manager
-** Parameters: (int) version: Interpreter version
-**             (gfx_options_t *): Pointer to all relevant drawing options
-**             (gfx_driver_t *): The graphics driver (needed for capability flags and the mode
-**                               structure)
-**             (void *) misc_payload: Additional information for the interpreter's
-**                      resource loaders
-** Returns   : (gfx_resstate_t *): A newly allocated resource manager
-** The options are considered to be read-only, as they belong to the overlying state object.
-*/
-
-void gfxr_free_resource_manager(gfx_resstate_t *state);
-/* Frees a previously allocated resource manager, and all allocated resources.
-** Parameters: (gfx_resstate_t *) state: The state manager to free
-** Return    : (void)
-*/
-
-void gfxr_free_all_resources(gfx_resstate_t *state);
-/* Frees all resources currently allocated
-** Parameter: (gfx_resstate_t *) state: The state to do this on
-** Returns  : (void)
-** This function is intended to be used primarily for debugging.
-*/
-
-void gfxr_free_tagged_resources(gfx_resstate_t *state);
-/* Frees all tagged resources.
-** Parameters: (gfx_resstate_t *) state: The state to alter
-** Returns   : (void)
-** Resources are tagged by calling gfx_tag_resources(), and untagged by calling the
-** approprate dereferenciation function.
-** Note that this function currently only affects view resources, as pic resources are
-** treated differently, while font and cursor resources are relatively rare.
-*/
-
-
 class GfxResManager {
 public:
 	GfxResManager(gfx_resstate_t *state) : _state(state) {}
 	~GfxResManager() {}
+
+
+	/* Calculates a unique hash value for the specified options/type setup
+	** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
+	** Returns   : (int) A hash over the values of the options entries, covering entries iff
+	**                   they are relevant for the specified type
+	** Covering more entries than relevant may slow down the system when options are changed,
+	** while covering less may result in invalid cached data being used.
+	** Only positive values may be returned, as negative values are used internally by the generic
+	** resource manager code.
+	** Also, only the lower 20 bits are available to the interpreter.
+	** (Yes, this isn't really a "hash" in the traditional sense...)
+	*/
+	int getOptionsHash(gfx_resource_type_t type);
+
 
 	/* 'Tags' all resources for deletion
 	** Paramters: (void)
@@ -149,6 +126,7 @@ public:
 	** Tagged resources are untagged if they are referenced.
 	*/
 	void tagResources() { (_state->tag_lock_counter)++; }
+
 
 	/* Retreives an SCI0/SCI01 mouse cursor
 	** Parameters: (int) num: The cursor number
@@ -174,6 +152,20 @@ public:
 	gfx_bitmap_font_t *getFont(int num, bool scaled = false);
 
 
+	/* Retreives a translated view cel
+	** Parameters: 
+	**             (int) nr: The view number
+	**             (int *) loop: Pointer to a variable containing the loop number
+	**             (int *) cel: Pointer to a variable containing the cel number
+	**	           (int) palette: The palette to use
+	** Returns   : (gfx_view_t *) The relevant view, or NULL if nr was invalid
+	** loop and cel are given as pointers in order to allow the underlying variables to be
+	** modified if they are invalid (this is relevant for SCI version 0, where invalid
+	** loop and cel numbers have to be interpreted as 'maximum' or 'minimum' by the interpreter)
+	*/
+	gfxr_view_t *getView(int nr, int *loop, int *cel, int palette);
+
+
 	/* Retreives a displayable (translated) pic resource
 	** Parameters: (int) nr: Number of the pic resource
 	**             (int) maps: The maps to translate (ORred GFX_MASK_*)
@@ -187,90 +179,71 @@ public:
 	gfxr_pic_t *getPic(int num, int maps, int flags, int default_palette, bool scaled = false);
 
 
+	/* Retrieves a displayable (translated) pic resource written ontop of an existing pic
+	** Parameters: (int) old_nr: Number of the pic resource to write on
+	**             (int) new_nr: Number of the pic resource that is to be added
+	**             (int) flags: Interpreter-dependant pic flags
+	**             (int) default_palette: The default palette to use for drawing (if applicable)
+	**             (int) scaled: Whether to return the scaled maps, or the unscaled
+	**                           ones (which may be identical) for some special operations.
+	** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
+	**                           neccessarily translated) data.
+	** This function invalidates the cached pic pointed to by old_nr in the cache. While subsequent
+	** addToPic() writes will still modify the 'invalidated' pic, gfxr_get_pic() operations will
+	** cause it to be removed from the cache and to be replaced by a clean version.
+	*/
+	gfxr_pic_t *addToPic(int old_nr, int new_nr, int flags, int old_default_palette, int default_palette);
+
+
 	/* Determines whether support for pointers with more than two colors is required
 	** Returns   : (bool) false if no support for multi-colored pointers is required, true
 	**                   otherwise
 	*/
 	bool multicoloredPointers() { return _state->version > SCI_VERSION_1; }
 
+
+	/* Frees all resources currently allocated
+	** Parameter: (void)
+	** Returns  : (void)
+	** This function is intended to be used primarily for debugging.
+	*/
+	void freeAllResources();
+
+
+	/* Frees all tagged resources.
+	** Parameters: (void)
+	** Returns   : (void)
+	** Resources are tagged by calling gfx_tag_resources(), and untagged by calling the
+	** approprate dereferenciation function.
+	** Note that this function currently only affects view resources, as pic resources are
+	** treated differently, while font and cursor resources are relatively rare.
+	*/
+	void freeTaggedResources();
+
+
+	/* Frees a previously allocated resource manager, and all allocated resources.
+	** Parameters: (void)
+	** Return    : (void)
+	*/
+	void freeResManager();
+
 private:
 	gfx_resstate_t *_state;
 };
 
-gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
-	int old_default_palette, int default_palette, int scaled);
-/* Retreives a displayable (translated) pic resource written ontop of an existing pic
-** Parameters: (gfx_resstate_t *) state: The resource state
-**             (int) old_nr: Number of the pic resource to write on
-**             (int) new_nr: Number of the pic resource that is to be added
-**             (int) maps: The maps to translate (ORred GFX_MASK_*)
-**             (int) flags: Interpreter-dependant pic flags
-**             (int) default_palette: The default palette to use for drawing (if applicable)
-**             (int) scaled: Whether to return the scaled maps, or the unscaled
-**                           ones (which may be identical) for some special operations.
-** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
-**                           neccessarily translated) data.
-** This function invalidates the cached pic pointed to by old_nr in the cache. While subsequent
-** gfxr_add_to_pic() writes will still modify the 'invalidated' pic, gfxr_get_pic() operations will
-** cause it to be removed from the cache and to be replaced by a clean version.
-*/
 
-gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette);
-/* Retreives a translated view cel
-** Parameters: (gfx_resstate_t *) state: The resource state
-**             (int) nr: The view number
-**             (int *) loop: Pointer to a variable containing the loop number
-**             (int *) cel: Pointer to a variable containing the cel number
-**	       (int) palette: The palette to use
-** Returns   : (gfx_view_t *) The relevant view, or NULL if nr was invalid
-** loop and cel are given as pointers in order to allow the underlying variables to be
-** modified if they are invalid (this is relevant for SCI version 0, where invalid
-** loop and cel numbers have to be interpreted as 'maximum' or 'minimum' by the interpreter)
-*/
-
-/* =========================== */
-/* Interpreter-dependant stuff */
-/* =========================== */
-
-
-int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version,
-	gfx_options_t *options, int palette);
-/* Calculates a unique hash value for the specified options/type setup
-** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
-**             (int) version: The interpreter type and version
-**             (gfx_options_t *) options: The options to hashify
-**	       (int) palette: The palette to use (FIXME: should this be here?)
-** Returns   : (int) A hash over the values of the options entries, covering entries iff
-**                   they are relevant for the specified type
-** Covering more entries than relevant may slow down the system when options are changed,
-** while covering less may result in invalid cached data being used.
-** Only positive values may be returned, as negative values are used internally by the generic
-** resource manager code.
-** Also, only the lower 20 bits are available to the interpreter.
-** (Yes, this isn't really a "hash" in the traditional sense...)
-*/
-
-int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
-	int flags, int default_palette, int nr);
-/* Instructs the interpreter-specific code to calculate a picture
-** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
-**             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
-**             (gfxr_pic_t *) unscaled_pic: The pic structure the unscaled pic is to be written to,
-**                                          or NULL if it isn't needed.
-**             (int) flags: Pic drawing flags (interpreter dependant)
-**             (int) default_palette: The default palette to use for pic drawing (interpreter dependant)
-**             (int) nr: pic resource number
-** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
-*/
-
-gfxr_view_t *gfxr_interpreter_get_view(ResourceManager& resourceManager, int nr, int palette, Palette* staticPalette, int version);
-/* Instructs the interpreter-specific code to calculate a view
-** Parameters: (ResourceManager& ) resourceManager: The resource manager
-**             (int) nr: The view resource number
-**             (int) palette: The palette number to use
-**             (Palette*) staticPalette: The static palette to use in VGA games
-**             (int) version: The interpreter version
-** Returns   : (gfx_view_t *) The appropriate view, or NULL on error
+// FIXME: get rid of this
+gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
+	gfx_driver_t *driver, ResourceManager *resManager);
+/* Allocates and initializes a new resource manager
+** Parameters: (int) version: Interpreter version
+**             (gfx_options_t *): Pointer to all relevant drawing options
+**             (gfx_driver_t *): The graphics driver (needed for capability flags and the mode
+**                               structure)
+**             (void *) misc_payload: Additional information for the interpreter's
+**                      resource loaders
+** Returns   : (gfx_resstate_t *): A newly allocated resource manager
+** The options are considered to be read-only, as they belong to the overlying state object.
 */
 
 } // End of namespace Sci

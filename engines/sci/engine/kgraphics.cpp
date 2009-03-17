@@ -874,7 +874,13 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxr_view_t *res = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
-	if (!(res = gfxr_get_view(s->gfx_state->resstate, view, &loop, &cel, 0))) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
+	res = _gfx->getView(view, &loop, &cel, 0);
+	delete _gfx;
+
+	if (!res) {
 		GFXWARN("Attempt to get cel parameters for invalid view %d\n", view);
 		return make_reg(0, -1);
 	}
@@ -2348,9 +2354,14 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		s->gfx_state->options->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4),
 		        UKPV(3), UKPV(2));
+
 		// FIXME: Should really only invalidate all loaded pic resources here;
 		// this is overkill
-		gfxr_free_all_resources(s->gfx_state->resstate);
+		// FIXME: the initialization of the GFX resource manager should
+		// be pushed up, and it shouldn't occur here
+		GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
+		_gfx->freeAllResources();
+		delete _gfx;
 
 		break;
 	}

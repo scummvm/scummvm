@@ -48,6 +48,75 @@ struct param_struct {
 	gfx_driver_t *driver;
 };
 
+#define DRAW_PIC01(pic, picStyle, isSci1) \
+	gfxr_draw_pic01((pic), flags, default_palette, res->size, res->data, (picStyle), res->id, (isSci1), state->static_palette);
+
+#define DRAW_PIC11(pic, picStyle) \
+	gfxr_draw_pic11((pic), flags, default_palette, res->size, res->data, (picStyle), res->id, state->static_palette);
+
+/* Calculate a picture
+** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
+**             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
+**             (gfxr_pic_t *) unscaled_pic: The pic structure the unscaled pic is to be written to,
+**                                          or NULL if it isn't needed.
+**             (int) flags: Pic drawing flags (interpreter dependant)
+**             (int) default_palette: The default palette to use for pic drawing (interpreter dependant)
+**             (int) nr: pic resource number
+** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
+*/
+int calculatePic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
+	Resource *res = state->resManager->findResource(kResourceTypePic, nr, 0);
+	int need_unscaled = unscaled_pic != NULL;
+	gfxr_pic0_params_t style, basic_style;
+
+	basic_style.line_mode = GFX_LINE_MODE_CORRECT;
+	basic_style.brush_mode = GFX_BRUSH_MODE_SCALED;
+	basic_style.pic_port_bounds = state->options->pic_port_bounds;
+
+	style.line_mode = state->options->pic0_line_mode;
+	style.brush_mode = state->options->pic0_brush_mode;
+	style.pic_port_bounds = state->options->pic_port_bounds;
+
+	if (!res || !res->data)
+		return GFX_ERROR;
+
+	if (need_unscaled) {
+		if (state->version == SCI_VERSION_1_1)
+			DRAW_PIC11(unscaled_pic, &basic_style)
+		else
+			DRAW_PIC01(unscaled_pic, &basic_style, state->version >= SCI_VERSION_01_VGA)
+	}
+
+	if (scaled_pic && scaled_pic->undithered_buffer)
+		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
+
+	if (state->version == SCI_VERSION_1_1)
+		DRAW_PIC11(scaled_pic, &style)
+	else
+		DRAW_PIC01(scaled_pic, &style, state->version >= SCI_VERSION_01_VGA)
+
+	if (state->version < SCI_VERSION_01_VGA) {
+		if (need_unscaled)
+			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
+
+		if (!scaled_pic->undithered_buffer)
+			scaled_pic->undithered_buffer = sci_malloc(scaled_pic->undithered_buffer_size);
+
+		memcpy(scaled_pic->undithered_buffer, scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer_size);
+
+		gfxr_dither_pic0(scaled_pic, state->options->pic0_dither_mode, state->options->pic0_dither_pattern);
+	}
+
+	// Mark default palettes
+	if (scaled_pic)
+		scaled_pic->visual_map->loop = default_palette;
+
+	if (unscaled_pic)
+		unscaled_pic->visual_map->loop = default_palette;
+
+	return GFX_OK;
+}
+
 gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) {
 	gfx_resstate_t *state = new gfx_resstate_t();
 
@@ -60,6 +129,31 @@ gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options, g
 	state->tag_lock_counter = state->lock_counter = 0;
 
 	return state;
+}
+
+int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
+	switch (type) {
+	case GFX_RESOURCE_TYPE_VIEW:
+		// This should never happen
+		error("getOptionsHash called on a VIEW resource");
+
+	case GFX_RESOURCE_TYPE_PIC:
+		if (_state->version >= SCI_VERSION_01_VGA)
+			return _state->options->pic_port_bounds.y;
+		else
+			return (_state->options->pic0_unscaled) ? 0x10000 : (_state->options->pic0_dither_mode << 12)
+			       | (_state->options->pic0_dither_pattern << 8) | (_state->options->pic0_brush_mode << 4) 
+				   | (_state->options->pic0_line_mode);
+
+	case GFX_RESOURCE_TYPE_FONT:
+	case GFX_RESOURCE_TYPE_CURSOR:
+		return 0;
+
+	case GFX_RESOURCE_TYPES_NR:
+	default:
+		GFXERROR("Invalid resource type: %d\n", type);
+		return -1;
+	}
 }
 
 #define FREEALL(freecmd, type) \
@@ -99,29 +193,29 @@ void gfxr_free_resource(gfx_resource_t *resource, int type) {
 	free(resource);
 }
 
-void gfxr_free_all_resources(gfx_resstate_t *state) {
+void GfxResManager::freeAllResources() {
 	for (int type = 0; type < GFX_RESOURCE_TYPES_NR; ++type) {
-		for (IntResMap::iterator iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+		for (IntResMap::iterator iter = _state->_resourceMaps[type].begin(); iter != _state->_resourceMaps[type].end(); ++iter) {
 			gfxr_free_resource(iter->_value, type);
 			iter->_value = 0;
 		}
 	}
 }
 
-void gfxr_free_resource_manager(gfx_resstate_t *state) {
-	gfxr_free_all_resources(state);
-	delete state;
+void GfxResManager::freeResManager() {
+	freeAllResources();
+	delete _state;
 }
 
-void gfxr_free_tagged_resources(gfx_resstate_t *state) {
+void GfxResManager::freeTaggedResources() {
 	// Current heuristics: free tagged views and old pics
 
 	IntResMap::iterator iter;
 	int type;
-	const int tmp = state->tag_lock_counter;
+	const int tmp = _state->tag_lock_counter;
 
 	type = GFX_RESOURCE_TYPE_VIEW;
-	for (iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+	for (iter = _state->_resourceMaps[type].begin(); iter != _state->_resourceMaps[type].end(); ++iter) {
 		gfx_resource_t *resource = iter->_value;
 
 		if (resource) {
@@ -135,7 +229,7 @@ void gfxr_free_tagged_resources(gfx_resstate_t *state) {
 	}
 
 	type = GFX_RESOURCE_TYPE_PIC;
-	for (iter = state->_resourceMaps[type].begin(); iter != state->_resourceMaps[type].end(); ++iter) {
+	for (iter = _state->_resourceMaps[type].begin(); iter != _state->_resourceMaps[type].end(); ++iter) {
 		gfx_resource_t *resource = iter->_value;
 
 		if (resource) {
@@ -148,7 +242,7 @@ void gfxr_free_tagged_resources(gfx_resstate_t *state) {
 		}
 	}
 
-	state->tag_lock_counter = 0;
+	_state->tag_lock_counter = 0;
 }
 
 #define XLATE_AS_APPROPRIATE(key, entry) \
@@ -179,10 +273,9 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
 	gfxr_pic_t *npic = NULL;
-	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_PIC;
-	IntResMap &resMap = _state->_resourceMaps[restype];
+	IntResMap &resMap = _state->_resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, _state->version, _state->options, 0);
+	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
 	int must_post_process_pic = 0;
 	int need_unscaled = (_state->driver->mode->xfact != 1 || _state->driver->mode->yfact != 1);
 
@@ -196,9 +289,9 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 
 		if (_state->options->pic0_unscaled) {
 			need_unscaled = 0;
-			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(restype, num), _state->version >= SCI_VERSION_01_VGA);
+			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _state->version >= SCI_VERSION_01_VGA);
 		} else
-			pic = gfxr_init_pic(_state->driver->mode, GFXR_RES_ID(restype, num), _state->version >= SCI_VERSION_01_VGA);
+			pic = gfxr_init_pic(_state->driver->mode, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _state->version >= SCI_VERSION_01_VGA);
 		if (!pic) {
 			GFXERROR("Failed to allocate scaled pic!\n");
 			return NULL;
@@ -207,14 +300,14 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 
 		if (need_unscaled) {
-			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(restype, num), _state->version >= SCI_VERSION_01_VGA);
+			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _state->version >= SCI_VERSION_01_VGA);
 			if (!unscaled_pic) {
 				GFXERROR("Failed to allocate unscaled pic!\n");
 				return NULL;
 			}
 			gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 		}
-		if (gfxr_interpreter_calculate_pic(_state, pic, unscaled_pic, flags, default_palette, num)) {
+		if (calculatePic(_state, pic, unscaled_pic, flags, default_palette, num)) {
 			gfxr_free_pic(pic);
 			if (unscaled_pic)
 				gfxr_free_pic(unscaled_pic);
@@ -222,7 +315,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		}
 		if (!res) {
 			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
-			res->ID = GFXR_RES_ID(restype, num);
+			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num);
 			res->lock_sequence_nr = _state->options->buffer_pics_nr;
 			resMap[num] = res;
 		} else {
@@ -299,22 +392,20 @@ static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode)
 	pxm->flags &= ~GFX_PIXMAP_FLAG_SCALED_INDEX;
 }
 
-gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int maps, int flags,
-							int old_default_palette, int default_palette, int scaled) {
-	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_PIC;
-	IntResMap &resMap = state->_resourceMaps[restype];
+gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_default_palette, int default_palette) {
+	IntResMap &resMap = _state->_resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfxr_pic_t *pic = NULL;
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, 0);
-	int need_unscaled = !(state->options->pic0_unscaled) && (state->driver->mode->xfact != 1 || state->driver->mode->yfact != 1);
+	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
+	int need_unscaled = !(_state->options->pic0_unscaled) && (_state->driver->mode->xfact != 1 || _state->driver->mode->yfact != 1);
 
 	res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
 	if (!res || (res->mode != MODE_INVALID && res->mode != hash)) {
 		// FIXME: the initialization of the GFX resource manager should
 		// be pushed up, and it shouldn't occur here
-		GfxResManager *_gfx = new GfxResManager(state);
-		_gfx->getPic(old_nr, 0, flags, old_default_palette, scaled);
+		GfxResManager *_gfx = new GfxResManager(_state);
+		_gfx->getPic(old_nr, 0, flags, old_default_palette, 1);
 		delete _gfx;
 
 		res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
@@ -325,36 +416,34 @@ gfxr_pic_t *gfxr_add_to_pic(gfx_resstate_t *state, int old_nr, int new_nr, int m
 		}
 	}
 
-	if (state->options->pic0_unscaled) // Unscale priority map, if we scaled it earlier
-		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, state->driver->mode);
+	if (_state->options->pic0_unscaled) // Unscale priority map, if we scaled it earlier
+		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, _state->driver->mode);
 
-	if (scaled) {
-		res->lock_sequence_nr = state->options->buffer_pics_nr;
-
-		gfxr_interpreter_calculate_pic(state, res->scaled_data.pic, need_unscaled ? res->unscaled_data.pic : NULL,
+	// The following two operations are needed when returning scaled maps (which is always the case here)
+	res->lock_sequence_nr = _state->options->buffer_pics_nr;
+	calculatePic(_state, res->scaled_data.pic, need_unscaled ? res->unscaled_data.pic : NULL,
 		                               flags | DRAWPIC01_FLAG_OVERLAID_PIC, default_palette, new_nr);
-	}
 
 	res->mode = MODE_INVALID; // Invalidate
 
-	if (state->options->pic0_unscaled) // Scale priority map again, if needed
-		res->scaled_data.pic->priority_map = gfx_pixmap_scale_index_data(res->scaled_data.pic->priority_map, state->driver->mode);
+	if (_state->options->pic0_unscaled) // Scale priority map again, if needed
+		res->scaled_data.pic->priority_map = gfx_pixmap_scale_index_data(res->scaled_data.pic->priority_map, _state->driver->mode);
 	{
 		int old_ID = get_pic_id(res);
-		set_pic_id(res, GFXR_RES_ID(restype, new_nr)); // To ensure that our graphical translation optoins work properly
-		pic = gfxr_pic_xlate_common(res, maps, scaled, 1, state->driver->mode, state->options->pic_xlate_filter, 1, state->options);
+		set_pic_id(res, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, new_nr)); // To ensure that our graphical translation optoins work properly
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _state->driver->mode, _state->options->pic_xlate_filter, 1, _state->options);
 		set_pic_id(res, old_ID);
 	}
 
 	return pic;
 }
 
+gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
 
-gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, int palette) {
-	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_VIEW;
-	IntResMap &resMap = state->_resourceMaps[restype];
+gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
+	IntResMap &resMap = _state->_resourceMaps[GFX_RESOURCE_TYPE_VIEW];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, state->version, state->options, palette);
+	int hash = palette;
 	gfxr_view_t *view = NULL;
 	gfxr_loop_t *loop_data = NULL;
 	gfx_pixmap_t *cel_data = NULL;
@@ -362,16 +451,43 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
-		view = gfxr_interpreter_get_view(*(state->resManager), nr, palette, state->static_palette, state->version);
-
-		if (!view)
+		Resource *viewRes = _state->resManager->findResource(kResourceTypeView, nr, 0);
+		if (!viewRes || !viewRes->data)
 			return NULL;
+
+		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
+
+		if (_state->version < SCI_VERSION_01)
+			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, -1);
+		else if (_state->version == SCI_VERSION_01)
+			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
+		else if (_state->version >= SCI_VERSION_01_VGA && _state->version <= SCI_VERSION_1_LATE)
+			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _state->static_palette);
+		else if (_state->version >= SCI_VERSION_1_1)
+			view = gfxr_draw_view11(resid, viewRes->data, viewRes->size);
+
+		if (_state->version >= SCI_VERSION_01_VGA) {
+			if (!view->palette) {
+				view->palette = new Palette(_state->static_palette->size());
+				view->palette->name = "interpreter_get_view";
+			}
+			
+			// Palettize view
+			for (unsigned i = 0; i < MIN(view->palette->size(), _state->static_palette->size()); i++) {
+				const PaletteEntry& vc = view->palette->getColor(i);
+				if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
+					const PaletteEntry& sc = _state->static_palette->getColor(i);
+					view->palette->setColor(i, sc.r, sc.g, sc.b);
+				}
+			}
+
+		}
 
 		if (!res) {
 			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
 			res->scaled_data.view = NULL;
-			res->ID = GFXR_RES_ID(restype, nr);
-			res->lock_sequence_nr = state->tag_lock_counter;
+			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
+			res->lock_sequence_nr = _state->tag_lock_counter;
 			res->mode = hash;
 			resMap[nr] = res;
 		} else {
@@ -382,7 +498,7 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 		res->unscaled_data.view = view;
 
 	} else {
-		res->lock_sequence_nr = state->tag_lock_counter; // Update lock counter
+		res->lock_sequence_nr = _state->tag_lock_counter; // Update lock counter
 		view = res->unscaled_data.view;
 	}
 
@@ -422,21 +538,18 @@ gfxr_view_t *gfxr_get_view(gfx_resstate_t *state, int nr, int *loop, int *cel, i
 	}
 
 	if (!cel_data->data) {
-		gfx_get_res_config(state->options, cel_data);
-		gfx_xlate_pixmap(cel_data, state->driver->mode, state->options->view_xlate_filter);
-		gfxr_endianness_adjust(cel_data, state->driver->mode);
+		gfx_get_res_config(_state->options, cel_data);
+		gfx_xlate_pixmap(cel_data, _state->driver->mode, _state->options->view_xlate_filter);
+		gfxr_endianness_adjust(cel_data, _state->driver->mode);
 	}
 
 	return view;
 }
 
 gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
-	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_FONT;
-	IntResMap &resMap = _state->_resourceMaps[restype];
+	IntResMap &resMap = _state->_resourceMaps[GFX_RESOURCE_TYPE_FONT];
 	gfx_resource_t *res = NULL;
-	int hash;
-
-	hash = gfxr_interpreter_options_hash(restype, _state->version, _state->options, 0);
+	int hash = getOptionsHash(GFX_RESOURCE_TYPE_FONT);
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
@@ -450,7 +563,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 		if (!res) {
 			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
 			res->scaled_data.font = NULL;
-			res->ID = GFXR_RES_ID(restype, num);
+			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_FONT, num);
 			res->lock_sequence_nr = _state->tag_lock_counter;
 			res->mode = hash;
 			resMap[num] = res;
@@ -471,10 +584,9 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 }
 
 gfx_pixmap_t *GfxResManager::getCursor(int num) {
-	gfx_resource_type_t restype = GFX_RESOURCE_TYPE_CURSOR;
-	IntResMap &resMap = _state->_resourceMaps[restype];
+	IntResMap &resMap = _state->_resourceMaps[GFX_RESOURCE_TYPE_CURSOR];
 	gfx_resource_t *res = NULL;
-	int hash = gfxr_interpreter_options_hash(restype, _state->version, _state->options, 0);
+	int hash = getOptionsHash(GFX_RESOURCE_TYPE_CURSOR);
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
@@ -497,7 +609,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 		if (!res) {
 			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
 			res->scaled_data.pointer = NULL;
-			res->ID = GFXR_RES_ID(restype, num);
+			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num);
 			res->lock_sequence_nr = _state->tag_lock_counter;
 			res->mode = hash;
 			resMap[num] = res;

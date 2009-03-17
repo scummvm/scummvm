@@ -49,7 +49,6 @@ MODULE_OBJS = \
 	gfx/sci_widgets.o \
 	gfx/resource/res_cursor.o \
 	gfx/resource/res_font.o \
-	gfx/resource/res_manager.o \
 	gfx/resource/res_pal.o \
 	gfx/resource/res_pic.o \
 	gfx/resource/res_view0.o \

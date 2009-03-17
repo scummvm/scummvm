@@ -272,7 +272,12 @@ static void _gfxop_full_pointer_refresh(gfx_state_t *state) {
 static int _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffer_t buffer);
 
 gfx_pixmap_t *_gfxr_get_cel(gfx_state_t *state, int nr, int *loop, int *cel, int palette) {
-	gfxr_view_t *view = gfxr_get_view(state->resstate, nr, loop, cel, palette);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	gfxr_view_t *view = _gfx->getView(nr, loop, cel, palette);
+	delete _gfx;
+
 	gfxr_loop_t *indexed_loop;
 
 	if (!view)
@@ -504,7 +509,12 @@ int gfxop_set_parameter(gfx_state_t *state, char *attribute, char *value) {
 
 int gfxop_exit(gfx_state_t *state) {
 	BASIC_CHECKS(GFX_ERROR);
-	gfxr_free_resource_manager(state->resstate);
+
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	_gfx->freeResManager();
+	delete _gfx;
 
 	if (state->control_map) {
 		gfx_free_pixmap(state->control_map);
@@ -1171,7 +1181,13 @@ int gfxop_update(gfx_state_t *state) {
 
 	if (state->tag_mode) {
 		// This usually happens after a pic and all resources have been drawn
-		gfxr_free_tagged_resources(state->resstate);
+
+		// FIXME: the initialization of the GFX resource manager should
+		// be pushed up, and it shouldn't occur here
+		GfxResManager *_gfx = new GfxResManager(state->resstate);
+		_gfx->freeTaggedResources();
+		delete _gfx;
+
 		state->tag_mode = 0;
 	}
 
@@ -1713,7 +1729,11 @@ int gfxop_lookup_view_get_loops(gfx_state_t *state, int nr) {
 
 	BASIC_CHECKS(GFX_ERROR);
 
-	view = gfxr_get_view(state->resstate, nr, &loop, &cel, 0);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	view = _gfx->getView(nr, &loop, &cel, 0);
+	delete _gfx;
 
 	if (!view) {
 		GFXWARN("Attempt to retrieve number of loops from invalid view %d\n", nr);
@@ -1729,7 +1749,11 @@ int gfxop_lookup_view_get_cels(gfx_state_t *state, int nr, int loop) {
 
 	BASIC_CHECKS(GFX_ERROR);
 
-	view = gfxr_get_view(state->resstate, nr, &real_loop, &cel, 0);
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	view = _gfx->getView(nr, &real_loop, &cel, 0);
+	delete _gfx;
 
 	if (!view) {
 		GFXWARN("Attempt to retrieve number of cels from invalid/broken view %d\n", nr);
@@ -1744,7 +1768,13 @@ int gfxop_lookup_view_get_cels(gfx_state_t *state, int nr, int loop) {
 int gfxop_check_cel(gfx_state_t *state, int nr, int *loop, int *cel) {
 	BASIC_CHECKS(GFX_ERROR);
 
-	if (!gfxr_get_view(state->resstate, nr, loop, cel, 0)) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	gfxr_view_t *testView = _gfx->getView(nr, loop, cel, 0);
+	delete _gfx;
+
+	if (!testView) {
 		GFXWARN("Attempt to verify loop/cel values for invalid view %d\n", nr);
 		return GFX_ERROR;
 	}
@@ -1757,7 +1787,13 @@ int gfxop_overflow_cel(gfx_state_t *state, int nr, int *loop, int *cel) {
 	int cel_v = *cel;
 	BASIC_CHECKS(GFX_ERROR);
 
-	if (!gfxr_get_view(state->resstate, nr, &loop_v, &cel_v, 0)) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	gfxr_view_t *testView = _gfx->getView(nr, &loop_v, &cel_v, 0);
+	delete _gfx;
+
+	if (!testView) {
 		GFXWARN("Attempt to verify loop/cel values for invalid view %d\n", nr);
 		return GFX_ERROR;
 	}
@@ -1777,7 +1813,13 @@ int gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel, int 
 	gfx_pixmap_t *pxm = NULL;
 	BASIC_CHECKS(GFX_ERROR);
 
-	if (!(view = gfxr_get_view(state->resstate, nr, &loop, &cel, 0))) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	view = _gfx->getView(nr, &loop, &cel, 0);
+	delete _gfx;
+
+	if (!view) {
 		GFXWARN("Attempt to get cel parameters for invalid view %d\n", nr);
 		return GFX_ERROR;
 	}
@@ -1799,7 +1841,13 @@ static int _gfxop_draw_cel_buffer(gfx_state_t *state, int nr, int loop, int cel,
 	int old_x, old_y;
 	BASIC_CHECKS(GFX_FATAL);
 
-	if (!(view = gfxr_get_view(state->resstate, nr, &loop, &cel, palette))) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	view = _gfx->getView(nr, &loop, &cel, palette);
+	delete _gfx;
+
+	if (!view) {
 		GFXWARN("Attempt to draw loop/cel %d/%d in invalid view %d\n", loop, cel, nr);
 		return GFX_ERROR;
 	}
@@ -1868,17 +1916,14 @@ int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette) {
 	state->tag_mode = 1;
 	state->palette_nr = default_palette;
 	state->pic = _gfx->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, true);
-	delete _gfx;
 
 	if (state->driver->mode->xfact == 1 && state->driver->mode->yfact == 1) {
 		state->pic_unscaled = state->pic;
 	} else {
-		// FIXME: the initialization of the GFX resource manager should
-		// be pushed up, and it shouldn't occur here
-		_gfx = new GfxResManager(state->resstate);
 		state->pic = _gfx->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
-		delete _gfx;
 	}
+
+	delete _gfx;
 
 	if (!state->pic || !state->pic_unscaled) {
 		GFXERROR("Could not retrieve background pic %d!\n", nr);
@@ -1907,12 +1952,19 @@ int gfxop_add_to_pic(gfx_state_t *state, int nr, int flags, int default_palette)
 		return GFX_ERROR;
 	}
 
-	if (!(state->pic = gfxr_add_to_pic(state->resstate, state->pic_nr, nr, GFX_MASK_VISUAL, flags, state->palette_nr, default_palette, 1))) {
+	// FIXME: the initialization of the GFX resource manager should
+	// be pushed up, and it shouldn't occur here
+	GfxResManager *_gfx = new GfxResManager(state->resstate);
+	state->pic = _gfx->addToPic(state->pic_nr, nr, flags, state->palette_nr, default_palette);
+
+	if (!state->pic) {
 		GFXERROR("Could not add pic #%d to pic #%d!\n", state->pic_nr, nr);
+		delete _gfx;
 		return GFX_ERROR;
 	}
-	state->pic_unscaled = gfxr_add_to_pic(state->resstate, state->pic_nr, nr, GFX_MASK_VISUAL, flags,
-	                                      state->palette_nr, default_palette, 1);
+
+	state->pic_unscaled = _gfx->addToPic(state->pic_nr, nr, flags, state->palette_nr, default_palette);
+	delete _gfx;
 
 	return _gfxop_set_pic(state);
 }
