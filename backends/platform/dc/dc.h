@@ -151,8 +151,8 @@ class OSystem_Dreamcast : public BaseBackend, public FilesystemFactory {
   void showOverlay();
   void hideOverlay();
   void clearOverlay();
-  void grabOverlay(int16 *buf, int pitch);
-  void copyRectToOverlay(const int16 *buf, int pitch, int x, int y, int w, int h);
+  void grabOverlay(OverlayColor *buf, int pitch);
+  void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
   virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
   // Mutex handling

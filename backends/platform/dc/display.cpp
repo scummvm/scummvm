@@ -555,7 +555,7 @@ void OSystem_Dreamcast::clearOverlay()
   _overlay_dirty = true;
 }
 
-void OSystem_Dreamcast::grabOverlay(int16 *buf, int pitch)
+void OSystem_Dreamcast::grabOverlay(OverlayColor *buf, int pitch)
 {
   int h = OVL_H;
   unsigned short *src = overlay;
@@ -566,7 +566,7 @@ void OSystem_Dreamcast::grabOverlay(int16 *buf, int pitch)
   } while (--h);
 }
 
-void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
+void OSystem_Dreamcast::copyRectToOverlay(const OverlayColor *buf, int pitch,
 					  int x, int y, int w, int h)
 {
   if (w<1 || h<1)
