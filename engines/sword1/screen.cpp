@@ -858,6 +858,7 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 
 	uint8 *decomp_tile = (uint8 *)malloc(16 * 16); //Tiles are always 16 * 16
 	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * yresInTiles * 32);
+	memset(fullres_buffer, 0, bakXres * yresInTiles * 32);
 
 	bool isCompressed = (tag == 0x434F4D50);
 
@@ -899,6 +900,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 
 	uint8 *decomp_tile = (uint8 *)malloc(16 * 16); //Tiles are always 16 * 16
 	uint8 *fullres_buffer = (uint8 *)malloc(bakXres * (yresInTiles + 1) * 32);
+	memset(fullres_buffer, 0, bakXres * (yresInTiles + 1) * 32);
 
 	bool isCompressed = (READ_LE_UINT32(psxBackground) == MKID_BE('COMP'));
 
