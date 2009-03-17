@@ -142,7 +142,7 @@ Common::Error Parallaction::init() {
 
 void Parallaction::pauseEngineIntern(bool pause) {
 	if (_soundMan) {
-		_soundMan->execute(SC_PAUSE, pause);
+		_soundMan->execute(SC_PAUSE, (int)pause);
 	}
 }
 
@@ -638,9 +638,9 @@ void Parallaction::runZone(ZonePtr z) {
 
 	case kZoneHear:
 		_soundMan->execute(SC_SETSFXCHANNEL, z->u.hear->_channel);
-		_soundMan->execute(SC_SETSFXLOOPING, ((z->_flags & kFlagsLooping) == kFlagsLooping));
+		_soundMan->execute(SC_SETSFXLOOPING, (int)((z->_flags & kFlagsLooping) == kFlagsLooping));
 		_soundMan->execute(SC_SETSFXVOLUME, 60);
-		_soundMan->execute(SC_PLAYSFX, z->u.hear->_name);		
+		_soundMan->execute(SC_PLAYSFX, z->u.hear->_name);
 		break;
 
 	case kZoneSpeak:
@@ -986,9 +986,9 @@ bool CharacterName::dummy() const {
 }
 
 void Parallaction::beep() {
-	_soundMan->execute(SC_SETSFXCHANNEL, 3);	
-	_soundMan->execute(SC_SETSFXVOLUME, 127);	
-	_soundMan->execute(SC_SETSFXLOOPING, 0);	
+	_soundMan->execute(SC_SETSFXCHANNEL, 3);
+	_soundMan->execute(SC_SETSFXVOLUME, 127);
+	_soundMan->execute(SC_SETSFXLOOPING, 0);
 	_soundMan->execute(SC_PLAYSFX, "beep");
 }
 

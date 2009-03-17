@@ -57,9 +57,6 @@ class SoundMan {
 public:
 	SoundMan(SoundManImpl *impl) : _impl(impl) { }
 	virtual ~SoundMan() { delete _impl; }
-	void execute(int command, bool parm) {
-		execute(command, parm ? "1" : "0");
-	}
 	void execute(int command, int32 parm) {
 		char n[12];
 		sprintf(n, "%i", parm);
@@ -104,7 +101,7 @@ protected:
 	int		_sfxVolume;
 	int		_sfxRate;
 	uint	_sfxChannel;
-	
+
 	int		_musicType;
 
 public:
@@ -176,7 +173,7 @@ public:
 };
 
 class DummySoundMan : public SoundManImpl {
-public:	
+public:
 	void execute(int command, const char *parm) { }
 };
 
@@ -191,7 +188,7 @@ protected:
 	int		_sfxVolume;
 	int		_sfxRate;
 	uint	_sfxChannel;
-	
+
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void pause(bool p) = 0;
@@ -202,7 +199,7 @@ public:
 	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
 	virtual void stopSfx(uint channel) { }
 
-	virtual void execute(int command, const char *parm);	
+	virtual void execute(int command, const char *parm);
 	void setMusicFile(const char *parm);
 };
 
@@ -213,7 +210,7 @@ class DosSoundMan_br : public SoundMan_br {
 public:
 	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
 	~DosSoundMan_br();
-	
+
 	void playMusic();
 	void stopMusic();
 	void pause(bool p);
