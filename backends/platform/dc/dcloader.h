@@ -62,6 +62,6 @@ extern "C" {
   void *dlsym(void *handle, const char *symbol);
   const char *dlerror();
   void dlforgetsyms(void *handle);
-};
+}
 
 #endif
