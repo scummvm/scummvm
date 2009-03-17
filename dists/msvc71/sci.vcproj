@@ -338,9 +338,6 @@
 					RelativePath="..\..\engines\sci\gfx\resource\res_font.cpp">
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_manager.cpp">
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\gfx\resource\res_pal.cpp">
 				</File>
 				<File
