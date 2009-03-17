@@ -129,9 +129,14 @@ static inline rect_t gfx_rect(int x, int y, int width, int height) {
 	return rect;
 }
 
-// Temporary helper defines to ease the transition from rect_t to Common::Rect
-#define toSCIRect(in) gfx_rect(in.left, in.top, in.width(), in.height())
-#define toCommonRect(in) Common::Rect(in.x, in.y, in.x + in.width, in.y + in.height)
+// Temporary helper functions to ease the transition from rect_t to Common::Rect
+static inline rect_t toSCIRect(Common::Rect in) {
+	return gfx_rect(in.left, in.top, in.width(), in.height());
+}
+
+static inline Common::Rect toCommonRect(rect_t in) {
+	return Common::Rect(in.x, in.y, in.x + in.width, in.y + in.height);
+}
 
 #define GFX_PRINT_RECT(rect) (rect).x, (rect).y, (rect).width, (rect).height
 
