@@ -218,8 +218,8 @@ int ADPCMInputStream::readBufferIMA(int16 *buffer, const int numSamples) {
 
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		data = _stream->readByte();
-		buffer[samples] = TO_LE_16(decodeIMA((data >> 4) & 0x0f));
-		buffer[samples + 1] = TO_LE_16(decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0));
+		buffer[samples] = decodeIMA((data >> 4) & 0x0f);
+		buffer[samples + 1] = decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0);
 	}
 	return samples;
 }
