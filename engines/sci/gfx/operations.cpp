@@ -1875,7 +1875,7 @@ int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette) {
 	} else {
 		// FIXME: the initialization of the GFX resource manager should
 		// be pushed up, and it shouldn't occur here
-		GfxResManager *_gfx = new GfxResManager(state->resstate);
+		_gfx = new GfxResManager(state->resstate);
 		state->pic = _gfx->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
 		delete _gfx;
 	}
