@@ -117,7 +117,7 @@ int _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *lef
 }
 
 void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font, reg_t entries_base) {
-	int i, add_freesci = 0;
+	int i;
 	menu_t *menu;
 	char tracker;
 	char *left = NULL, *right;
@@ -127,9 +127,6 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 	int height;
 
 	if (menubar->menus_nr == 0) {
-#ifdef MENU_FREESCI_BLATANT_PLUG
-		add_freesci = 1;
-#endif
 		menubar->menus = (menu_t *)sci_malloc(sizeof(menu_t));
 		menubar->menus_nr = 1;
 	} else
@@ -266,16 +263,6 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 		} // right string finished
 	} while (tracker);
 
-#ifdef MENU_FREESCI_BLATANT_PLUG
-	if (add_freesci) {
-		char *freesci_text = sci_strdup("About FreeSCI");
-		c_width = _menubar_add_menu_item(state, menu, MENU_TYPE_NORMAL, freesci_text, NULL, font, 0, 0, 0, NULL_REG);
-		if (c_width > max_width)
-			max_width = c_width;
-
-		menu->items[menu->items_nr-1].flags = MENU_FREESCI_BLATANT_PLUG;
-	}
-#endif
 	menu->width = max_width;
 }
 

@@ -36,10 +36,6 @@ namespace Sci {
 
 struct EngineState;
 
-#define MENU_FREESCI_BLATANT_PLUG 0xfff0
-/* This adds an "About FreeSCI" menu option to the first menu */
-
-
 #define MENU_HBAR_STRING_1 "--!"
 #define MENU_HBAR_STRING_2 "-!"
 #define MENU_HBAR_STRING_3 "!--"
@@ -159,9 +155,6 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 ** '^' : Control key (replaced by \002, which looks like "CTRL")
 ** '=' : Initial tag value
 ** and the special string "--!", which represents a horizontal bar in the menu.
-**
-** If MENU_FREESCI_BLATANT_PLUG is defined, an additional option "About FreeSCI" will be
-** added if this was the first menu to be added to the menu bar.
 */
 
 
