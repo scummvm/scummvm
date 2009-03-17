@@ -378,24 +378,20 @@ void Screen::draw(void) {
 				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
 			memcpy(_screenBuf, _psxCache.decodedBackground, _scrnSizeX * _scrnSizeY);
 		} else {
-#if 0
-		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
-			for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
-				if (*(src + cnty * _scrnSizeX + cntx))
-					if (!(SwordEngine::isMac()) || *src != 255) // see bug #1701058
-						*(dest + cnty * _scrnSizeX + cntx) = *(src + cnty * _scrnSizeX + cntx);
-			}
-#endif
-
 			uint16 scrnScrlY = MIN((uint32)_oldScrollY, Logic::_scriptVars[SCROLL_OFFSET_Y]);
 			uint16 scrnHeight = SCREEN_DEPTH + ABS((int32)_oldScrollY - (int32)Logic::_scriptVars[SCROLL_OFFSET_Y]);
+
+			src += scrnScrlY * _scrnSizeX;
+			dest += scrnScrlY * _scrnSizeX;
 
 			// In this background to create transparency we have to iterate through all pixels, avoid checking those out of screen
 			for (uint16 cnty = scrnScrlY; (cnty < _scrnSizeY) && (cnty < scrnHeight + scrnScrlY); cnty++)
 				for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
-					if (*(src + cnty * _scrnSizeX + cntx))
+					if (*src)
 						if (!(SwordEngine::isMac()) || *src != 255) // see bug #1701058
-							*(dest + cnty * _scrnSizeX + cntx) = *(src + cnty * _scrnSizeX + cntx);
+							*dest = *src;
+					src++;
+					dest++;
 				}
 	}
 
