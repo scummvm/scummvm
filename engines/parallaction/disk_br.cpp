@@ -652,7 +652,7 @@ Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
 
 Common::ReadStream* AmigaDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
-	return openFile("sfx/" + Common::String(name), ".sfx");
+	return tryOpenFile("sfx/" + Common::String(name), ".sfx");
 }
 
 static const uint16 objectsMax[5] = {
