@@ -445,7 +445,8 @@ void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int move) {
 	uint size = surf.w * surf.h;
 	byte *data = (byte*)surf.pixels;
 	for (uint i = 0; i < size; i++, data++) {
-		*data += move;
+		if (*data)
+			*data += move;
 	}
 }
 
