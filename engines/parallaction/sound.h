@@ -187,12 +187,20 @@ protected:
 
 	Common::String _musicFile;
 
+	bool 	_sfxLooping;
+	int		_sfxVolume;
+	int		_sfxRate;
+	uint	_sfxChannel;
+	
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void pause(bool p) = 0;
 
 public:
 	SoundMan_br(Parallaction_br *vm);
+
+	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
+	virtual void stopSfx(uint channel) { }
 
 	virtual void execute(int command, const char *parm);	
 	void setMusicFile(const char *parm);
@@ -209,12 +217,26 @@ public:
 	void playMusic();
 	void stopMusic();
 	void pause(bool p);
+
+	void playSfx(const char *filename, uint channel, bool looping, int volume);
+	void stopSfx(uint channel);
 };
 
 class AmigaSoundMan_br : public SoundMan_br {
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
+
+	struct Channel {
+		Audio::Voice8Header	header;
+		int8				*data;
+		uint32				dataSize;
+		bool				dispose;
+		Audio::SoundHandle	handle;
+		uint32				flags;
+	} _channels[NUM_AMIGA_CHANNELS];
+
+	void loadChannelData(const char *filename, Channel *ch);
 
 public:
 	AmigaSoundMan_br(Parallaction_br *vm);
@@ -223,6 +245,9 @@ public:
 	void playMusic();
 	void stopMusic();
 	void pause(bool p);
+
+	void playSfx(const char *filename, uint channel, bool looping, int volume);
+	void stopSfx(uint channel);
 };
 
 } // namespace Parallaction
