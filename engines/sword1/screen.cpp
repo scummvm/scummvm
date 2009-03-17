@@ -372,11 +372,11 @@ void Screen::draw(void) {
 			renderParallax(_parallax[0]);
 		uint8 *src = _layerBlocks[0];
 		uint8 *dest = _screenBuf;
-		uint8 *indxScreen = NULL;
 
 		if(SwordEngine::isPsx()) {
-			indxScreen = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
-			src = indxScreen;
+			if (!_psxCache.decodedBackground)
+				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
+			src = _psxCache.decodedBackground;
 		}
 
 		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
@@ -387,8 +387,6 @@ void Screen::draw(void) {
 				dest++;
 				src++;
 			}
-
-		free(indxScreen);
 
 	} else if (!(SwordEngine::isPsx())) {
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
