@@ -443,13 +443,12 @@ void AmigaDisk_br::init() {
 		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
 }
 
-void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int move) {
+void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColor) {
 	uint size = surf.w * surf.h;
 	byte *data = (byte*)surf.pixels;
-	// Color zero is used for transparency, and shouldn't be adjusted
 	for (uint i = 0; i < size; i++, data++) {
-		if (*data)
-			*data += move;
+		if (transparentColor == -1 || transparentColor != *data)
+			*data += 16;
 	}
 }
 
@@ -509,7 +508,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	free(pal);
 
 	// background data is drawn used the upper portion of the palette
-	adjustForPalette(info.bg, 16);
+	adjustForPalette(info.bg);
 }
 
 
@@ -570,7 +569,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	decoder.decode();
 
 	// static pictures are drawn used the upper half of the palette
-	adjustForPalette(*surf, 16);
+	adjustForPalette(*surf, 0);
 
 	free(pal);
 	delete stream;

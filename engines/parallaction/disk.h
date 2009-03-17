@@ -253,7 +253,7 @@ protected:
 	Sprites*	createSprites(Common::ReadStream &stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, const char *filename);
-	void adjustForPalette(Graphics::Surface &surf, int move);
+	void adjustForPalette(Graphics::Surface &surf, int transparentColor = -1);
 
 public:
 	AmigaDisk_br(Parallaction *vm);
