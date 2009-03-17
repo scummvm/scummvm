@@ -437,7 +437,8 @@ void AmigaDisk_br::init() {
 
 	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
 	const Common::String subDirPrefixes[3] = { "fonts", "backs", Common::String::emptyString };
-	for (int i = 0; i < 3; i++)
+	uint numDir = (_vm->getFeatures() & GF_DEMO) ? 2 : 3;
+	for (uint i = 0; i < numDir; i++)
 		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
 }
 
