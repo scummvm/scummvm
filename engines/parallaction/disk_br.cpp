@@ -569,6 +569,11 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	free(pal);
 	delete stream;
 
+	// Static pictures are drawn used the upper half of the palette: this must be
+	// done before shadow mask is applied. This way, only really transparent pixels
+	// will have zero as a color.
+	adjustForPalette(*surf);
+
 	// NOTE: this assumes that the extension is always present in the file name
 	sName.deleteLastChar();
 	sName.deleteLastChar();
@@ -597,9 +602,6 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 		delete []shadow;
 		delete stream;
 	}
-
-	// static pictures are drawn used the upper half of the palette
-	adjustForPalette(*surf);
 
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
