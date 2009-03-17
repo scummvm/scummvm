@@ -447,12 +447,18 @@ AmigaSoundMan_br::~AmigaSoundMan_br() {
 	stopSfx(3);
 }
 
-void AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
+bool AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	// NOTE: Sound files don't always exist
+	if (!stream)
+		return false;
+
 	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
 	decoder.decode();
 	ch->dispose = true;
 	delete stream;
+
+	return true;
 }
 
 void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -466,7 +472,8 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	loadChannelData(filename, ch);
+	if (!loadChannelData(filename, ch))
+		return;
 
 	uint32 loopStart, loopEnd, flags;
 	if (looping) {
@@ -509,6 +516,7 @@ void AmigaSoundMan_br::playMusic() {
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playMusic()");
 
 	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile.c_str());
+	// NOTE: Music files don't always exist
 	if (!stream)
 		return;
 

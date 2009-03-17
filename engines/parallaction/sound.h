@@ -236,7 +236,7 @@ class AmigaSoundMan_br : public SoundMan_br {
 		uint32				flags;
 	} _channels[NUM_AMIGA_CHANNELS];
 
-	void loadChannelData(const char *filename, Channel *ch);
+	bool loadChannelData(const char *filename, Channel *ch);
 
 public:
 	AmigaSoundMan_br(Parallaction_br *vm);
