@@ -500,11 +500,9 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 		info.palette.setEntry(i, r, g, b);
 	}
 
-#if 0
-	// The first entry in the palette is overwritten in the original, but I could not
-	// find any difference so far.
+	// Overwrite the first color (transparent key) in the palette
 	info.palette.setEntry(0, pal[0] >> 2, pal[1] >> 2, pal[2] >> 0);
-#endif
+
 	free(pal);
 
 	// background data is drawn used the upper portion of the palette
@@ -561,18 +559,47 @@ void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
 
-	Common::SeekableReadStream *stream = openFile("ras/" + Common::String(name), ".ras");
+	Common::String sName = name;
 
+	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
 	byte *pal = 0;
 	Graphics::Surface* surf = new Graphics::Surface;
 	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
 	decoder.decode();
-
-	// static pictures are drawn used the upper half of the palette
-	adjustForPalette(*surf, 0);
-
 	free(pal);
 	delete stream;
+
+	// NOTE: this assumes that the extension is always present in the file name
+	sName.deleteLastChar();
+	sName.deleteLastChar();
+	sName.deleteLastChar();
+	sName.deleteLastChar();
+	stream = openFile("ras/" + sName + ".ras_shdw");
+
+	if (!stream) {
+		warning("Cannot find shadow file for '%s'\n", name);
+	} else {
+		uint32 shadowWidth = ((surf->w + 15)/8) & ~1;
+		uint32 shadowSize = shadowWidth * surf->h;
+		byte *shadow = new byte[shadowSize];
+		assert(shadow);
+		stream->read(shadow, shadowSize);
+		for (int32 i = 0; i < surf->h; ++i) {
+			byte *src = shadow + shadowWidth * i;
+			byte *dst = (byte*)surf->pixels + surf->pitch * i;
+
+			for (int32 j = 0; j < surf->w; ++j, ++dst) {
+				byte bit = src[j/8] & (1 << (7 - (j & 7)));
+				if (bit == 0) *dst = 0;
+			}
+		}
+
+		delete []shadow;
+		delete stream;
+	}
+
+	// static pictures are drawn used the upper half of the palette
+	adjustForPalette(*surf);
 
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
