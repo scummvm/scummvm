@@ -460,9 +460,9 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 
 	stream = tryOpenFile("backs/" + Common::String(filename), ".ap");
 	if (stream) {
-		// NOTE: Always 15 palette entries, start at zero or one?
+		// NOTE: Additional palette (15-colors) is always loaded onto colors 1-15
 		uint32 size = stream->size() / 3;
-		for (i = 0; i < size; i++) {
+		for (i = 1; i < size; i++) {
 			r = stream->readByte() >> 2;
 			g = stream->readByte() >> 2;
 			b = stream->readByte() >> 2;
