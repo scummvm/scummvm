@@ -437,6 +437,7 @@ void AmigaDisk_br::init() {
 
 	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
 	const Common::String subDirPrefixes[3] = { "fonts", "backs", Common::String::emptyString };
+	// The common sub directory, doesn't exist in the Amiga demo
 	uint numDir = (_vm->getFeatures() & GF_DEMO) ? 2 : 3;
 	for (uint i = 0; i < numDir; i++)
 		_sset.add(subDirNames[i], _baseDir->getSubDirectory(subDirPrefixes[i], subDirNames[i], 2), 6);
@@ -588,9 +589,8 @@ Sprites* AmigaDisk_br::createSprites(Common::ReadStream &stream) {
 		spr->x = stream.readUint16BE();
 		spr->y = stream.readUint16BE();
 		spr->w = stream.readUint16BE();
-		spr->h = stream.readUint16BE();
+		spr->h = stream.readUint16BE() - 1;
 
-		// TODO: Convert image format
 		spr->packedData = (byte*)malloc(spr->size);
 		stream.read(spr->packedData, spr->size);
 	}
