@@ -444,39 +444,49 @@ void AmigaDisk_br::init() {
 void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int move) {
 	uint size = surf.w * surf.h;
 	byte *data = (byte*)surf.pixels;
+	// Color zero is used for transparency, and shouldn't be adjusted
 	for (uint i = 0; i < size; i++, data++) {
 		if (*data)
 			*data += move;
 	}
 }
 
-void AmigaDisk_br::loadBackground(BackgroundInfo& info, Common::SeekableReadStream &stream) {
+void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
+	byte r,g,b;
+	byte *pal, *p;
+	Common::SeekableReadStream *stream;
+	uint i;
 
-	byte *pal;
+	stream = tryOpenFile("backs/" + Common::String(filename), ".ap");
+	if (stream) {
+		// NOTE: Always 15 palette entries, start at zero or one?
+		uint32 size = stream->size() / 3;
+		for (i = 0; i < size; i++) {
+			r = stream->readByte() >> 2;
+			g = stream->readByte() >> 2;
+			b = stream->readByte() >> 2;
+			info.palette.setEntry(i, r, g, b);
+		}
+		delete stream;
+	} else {
+		p = _braAmigaFramesDefaultPalette;
+		for (i = 0; i < 16; i++) {
+			r = *p >> 2;
+			p++;
+			g = *p >> 2;
+			p++;
+			b = *p >> 2;
+			p++;
+			info.palette.setEntry(i, r, g, b);
+		}
+	}
 
-	Graphics::ILBMDecoder decoder(stream, info.bg, pal);
+	stream = openFile("backs/" + Common::String(filename), ".bkg");
+	Graphics::ILBMDecoder decoder(*stream, info.bg, pal);
 	decoder.decode();
-
-	int i;
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
-
-	/* TODO: support loading of additional palette (*.ap files), for locations which
-	   have them. If an additional palette is present then it is used in place of
-	   _braAmigaFramesDefaultPalette.
-	*/
-	byte r,g,b;
-	byte *p = _braAmigaFramesDefaultPalette;
-	for (i = 0; i < 16; i++) {
-		r = *p >> 2;
-		p++;
-		g = *p >> 2;
-		p++;
-		b = *p >> 2;
-		p++;
-		info.palette.setEntry(i, r, g, b);
-	}
 
 	p = pal;
 	for (i = 16; i < 32; i++) {
@@ -523,12 +533,8 @@ void AmigaDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
 void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery '%s', '%s' '%s'", name, mask, path);
 
-	Common::SeekableReadStream *stream;
-
 	if (name) {
-		stream = openFile("backs/" + Common::String(name), ".bkg");
-		loadBackground(info, *stream);
-		delete stream;
+		loadBackground(info, name);
 	}
 	if (mask) {
 #if 0
@@ -548,10 +554,7 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 
 void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadSlide '%s'", name);
-
-	Common::SeekableReadStream *stream = openFile("backs/" + Common::String(name), ".bkg");
-	loadBackground(info, *stream);
-	delete stream;
+	loadBackground(info, name);
 }
 
 GfxObj* AmigaDisk_br::loadStatic(const char* name) {
