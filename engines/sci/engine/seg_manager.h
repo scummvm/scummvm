@@ -103,8 +103,7 @@ public:
 	// Get the segment ID associated with a script number
 	// Parameters: (int) script_nr: Number of the script to look up
 	// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
-	// This function is "pure" (i.e, it doesn't modify anything).
-	int segGet(int script_nr);
+	int segGet(int script_nr) const;
 
 
 	// script lock operations
@@ -445,6 +444,11 @@ private:
 
 // 11. Segment interface, primarily for GC
 
+// TODO: Merge SegInterface and MemObject?
+// After all, _mobj->type == _typeId
+// and we make very little use of _segmgr (-> could get rid of that).
+// Other code would benefit, e.g. the saveload code.
+// But note that _mobj->segmgr_id != _segId !
 class SegInterface {
 protected:
 	SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId);

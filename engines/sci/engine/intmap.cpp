@@ -70,9 +70,9 @@ int IntMapper::checkKey(int key, bool add, bool *was_added) {
 	if (was_added)
 		*was_added = false;
 
-	if (*node) {
+	if (*node)
 		return (*node)->idx;
-	}
+
 	// Not found
 
 	if (!add)
@@ -94,6 +94,18 @@ int IntMapper::checkKey(int key, bool add, bool *was_added) {
 	}
 
 	return (*node)->idx;
+}
+
+int IntMapper::lookupKey(int key) const {
+	Node *const *node = &(nodes[HASH(key)]);
+
+	while (*node && (key != (*node)->key))
+		node = &((*node)->next);
+
+	if (*node)
+		return (*node)->idx;
+	
+	return -1;
 }
 
 void IntMapper::saveLoadWithSerializer(Common::Serializer &s) {

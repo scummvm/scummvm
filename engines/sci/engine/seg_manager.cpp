@@ -568,8 +568,8 @@ void SegManager::sm_put_heap(reg_t reg, int16 value) {
 #endif
 
 // return the seg if script_id is valid and in the map, else -1
-int SegManager::segGet(int script_id) {
-	return id_seg_map->checkKey(script_id, false);
+int SegManager::segGet(int script_id) const {
+	return id_seg_map->lookupKey(script_id);
 }
 
 // validate the seg

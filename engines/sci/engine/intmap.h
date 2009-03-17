@@ -93,6 +93,9 @@ public:
 	 */
 	int checkKey(int key, bool add, bool *wasAdded = 0);
 
+	int lookupKey(int key) const;
+
+
 	/**
 	 * Removes a key from the map.
 	 * @param key		The key to remove
