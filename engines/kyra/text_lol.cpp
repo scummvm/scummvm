@@ -33,8 +33,8 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
-	_scriptParameter(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true),
-	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0), _posX(0), _posY(0), _colour1(0), _colour2(0) {
+	_scriptParameter(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true), _lineCount(0),
+	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0) {
 	
 	memset(_stringParameters, 0, 15 * sizeof(char*));
 	_buffer = new char[600];
@@ -45,6 +45,14 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
+
+	for (int i = 0; i < 14; i++){
+		const ScreenDim *d = _screen->getScreenDim(i);
+		_textDimData[i].color1 = d->unk8;
+		_textDimData[i].color2 = d->unkA;
+		_textDimData[i].line = d->unkC;
+		_textDimData[i].column = d->unkE;
+	}
 }
 
 TextDisplayer_LoL::~TextDisplayer_LoL() {
@@ -61,7 +69,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer2);
 			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 		} else {
-			_screen->clearDim(4);
+			_screen->setScreenDim(clearDim(4));
 			int cp = _screen->setCurPage(2);
 			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer2);
@@ -84,7 +92,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 		}
 	} else {
 		if (!mode)
-			_screen->clearDim(4);
+			_screen->setScreenDim(clearDim(4));
 		_vm->toggleSelectedCharacterFrame(1);
 	}
 }
@@ -96,7 +104,7 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_fadeText = false;
 		_vm->_textColourFlag = 0;
 		_vm->_timer->disable(11);
-		_screen->clearDim(3);
+		_screen->setScreenDim(clearDim(3));
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
 		_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);
 
@@ -113,10 +121,25 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_updateFlags |= 2;
 
 	} else {
-		_screen->clearDim(3);
+		clearDim(3);
 		_vm->toggleSelectedCharacterFrame(0);
 	}
 }
+
+int TextDisplayer_LoL::clearDim(int dim) {
+	int res = _screen->curDimIndex();
+	_screen->setScreenDim(dim);
+	_textDimData[dim].color1 = _screen->_curDim->unk8;
+	_textDimData[dim].color2 = _screen->_curDim->unkA;
+	clearCurDim();
+	return res;
+}
+
+void TextDisplayer_LoL::resetDimTextPositions(int dim) {
+	_textDimData[dim].column = 0;
+	_textDimData[dim].line = 0;
+}
+
 void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, uint8 col2) {
 	static const char defaultStr[] = "<MORE>";
 
@@ -134,29 +157,23 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 }
 
 void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
-	_colour1prot = false;
-	int oldDim = _screen->curDimIndex();
+	int oldDim = 0;
 
 	if (dim == 3) {
 		if (_vm->_updateFlags & 2) {			
-			_screen->setScreenDim(4);
-			_screen->clearDim(4);			
-			_colour1 = 254;
-			_colour1prot = true;
+			oldDim = clearDim(4);			
+			_textDimData[4].color1 = 254;
 		} else {
-			_screen->setScreenDim(3);
-			_screen->clearDim(3);
-			_colour1 = 192;
-			_colour1prot = true;
+			oldDim = clearDim(3);
+			_textDimData[3].color1 = 192;
 			_screen->copyColour(192, 254);
 			_vm->enableTimer(11);
 			_vm->_textColourFlag = 0;
 			_vm->_fadeText = false;
 		}
 	} else {
-		_screen->setScreenDim(dim);
-		_colour1 = 254;
-		_colour1prot = true;
+		oldDim = clearDim(dim);			
+		_textDimData[dim].color1 = 254;
 	}
 
 	int cp = _screen->setCurPage(0);
@@ -186,18 +203,14 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 	int od = _screen->curDimIndex();
 
 	if (_vm->_updateFlags & 2) {
-		_screen->setScreenDim(4);
-		clearCurDim();
-		_colour1 = col;
+		clearDim(4);
+		_textDimData[4].color1 = col;
 	} else {
-		_screen->setScreenDim(3);
-		clearCurDim();
+		clearDim(3);
 		_screen->copyColour(192, col);
-		_colour1 = 192;
+		_textDimData[3].color1 = 192;
 		_vm->enableTimer(11);
 	}
-	
-	_colour1prot = true;
 
 	va_list args;
 	va_start(args, str);
@@ -330,18 +343,13 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 	memset(_ctrl, 0, 3);
 
-	if (!_colour1prot)
-		_colour1 = _screen->_curDim->unk8;
-	_colour2 = _screen->_curDim->unkA;
-	_posX = _screen->_curDim->unkC;
-	_posY = _screen->_curDim->unkE;
-	
 	char c = parseCommand();
 	
 	va_list args;
 	va_start(args, str);
 
 	const ScreenDim *sd = _screen->_curDim;
+	int sdx = _screen->curDimIndex();
 
 	while (c) {
 		char a = tolower(_ctrl[1]);
@@ -370,12 +378,12 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 			case 1:
 				printLine(_currentLine);
-				_colour2 = parseCommand();
+				_textDimData[sdx].color2 = parseCommand();
 				break;
 
 			case 5:
 				printLine(_currentLine);
-				_colour1 = parseCommand();
+				_textDimData[sdx].color1 = parseCommand();
 				break;
 
 			case 8:
@@ -388,9 +396,9 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 			case 12:
 				printLine(_currentLine);
-				_screen->_dimLineCount++;
-				_posX = 0;
-				_posY++;
+				_lineCount++;
+				_textDimData[sdx].column = 0;
+				_textDimData[sdx].line++;
 				break;
 
 			case 18:
@@ -418,7 +426,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
 
-				if ((_posX + _lineWidth) > (sd->w << 3))
+				if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
 					printLine(_currentLine);
 				
 				break;
@@ -472,13 +480,14 @@ void TextDisplayer_LoL::readNextPara() {
 
 void TextDisplayer_LoL::printLine(char *str) {
 	const ScreenDim *sd = _screen->_curDim;
+	int sdx = _screen->curDimIndex();
 
 	int fh = (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
 	
-	while (_posY >= lines) {
-		if (lines <= _screen->_dimLineCount && _animFlag) {
-			_screen->_dimLineCount = 0;
+	while (_textDimData[sdx].line >= lines) {
+		if (lines <= _lineCount && _animFlag) {
+			_lineCount = 0;
 			textPageBreak();
 			_numCharsPrinted = 0;
 		}
@@ -489,23 +498,23 @@ void TextDisplayer_LoL::printLine(char *str) {
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _colour2);	
-		if (_posY)
-			_posY--;
+		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _textDimData[sdx].color2);	
+		if (_textDimData[sdx].line)
+			_textDimData[sdx].line--;
 	}
 
-	int x1 = (sd->sx << 3) + _posX;
-	int y = sd->sy + fh * _posY;
+	int x1 = (sd->sx << 3) + _textDimData[sdx].column;
+	int y = sd->sy + fh * _textDimData[sdx].line;
 	int w = sd->w << 3;
 	int lw = _lineWidth;
 	int s = _numCharsLeft;
 	char c = 0;
 
-	if ((lw + _posX) > w) {
-		if ((lines - 1) <= _screen->_dimLineCount && _animFlag)
+	if ((lw + _textDimData[sdx].column) > w) {
+		if ((lines - 1) <= _lineCount && _animFlag)
 			w -= (_animWidth * (_screen->getFontWidth() + _screen->_charWidth));
 
-		w -= _posX;
+		w -= _textDimData[sdx].column;
 
 		int n2 = 0;
 		int n1 = s - 1;
@@ -528,7 +537,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 		}
 
 		if (!n1) {
-			if (_posX && !_printFlag) {
+			if (_textDimData[sdx].column && !_printFlag) {
 				s = lw = 0;
 				_printFlag = true;
 			} else {
@@ -540,8 +549,8 @@ void TextDisplayer_LoL::printLine(char *str) {
 	c = str[s];
 	str[s] = 0;
 	
-	_screen->printText(str, x1, y, _colour1, _colour2);
-	_posX += lw;
+	_screen->printText(str, x1, y, _textDimData[sdx].color1, _textDimData[sdx].color2);
+	_textDimData[sdx].column += lw;
 	_numCharsPrinted += strlen(str);
 	
 	str[s] = c;
@@ -560,12 +569,12 @@ void TextDisplayer_LoL::printLine(char *str) {
 	_numCharsLeft = strlen(str);
 	_lineWidth = _screen->getTextWidth(str);
 
-	if (!_numCharsLeft && _posX < (sd->w << 3))
+	if (!_numCharsLeft && _textDimData[sdx].column < (sd->w << 3))
 		return;
 
-	_posX = 0;
-	_posY++;
-	_screen->_dimLineCount++;
+	_textDimData[sdx].column = 0;
+	_textDimData[sdx].line++;
+	_lineCount++;
 
 	printLine(str);
 }
@@ -661,7 +670,8 @@ void TextDisplayer_LoL::textPageBreak() {
 		}
 	} while (loop);
 
-	_screen->fillRect(x, y, x + 74, y + 9, _colour2);
+
+	_screen->fillRect(x, y, x + 74, y + 9, _textDimData[_screen->curDimIndex()].color2);
 	clearCurDim();
 
 	_vm->_timer->pauseSingleTimer(11, false);
@@ -682,10 +692,11 @@ void TextDisplayer_LoL::textPageBreak() {
 }
 
 void TextDisplayer_LoL::clearCurDim() {
+	int d = _screen->curDimIndex();
 	const ScreenDim *tmp = _screen->getScreenDim(_screen->curDimIndex());
-	_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _colour2);
-	_screen->_dimLineCount = 0;
-	_posX = _posY = 0;	
+	_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
+	_lineCount = 0;
+	_textDimData[d].column = _textDimData[d].line = 0;
 }
 
 } // end of namespace Kyra

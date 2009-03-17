@@ -333,6 +333,7 @@ protected:
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
 	void drawShapePlotType37(uint8 *dst, uint8 cmd);
+	void drawShapePlotType52(uint8 *dst, uint8 cmd);
 
 	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
 	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
@@ -346,6 +347,8 @@ protected:
 	const uint8 *_dsTable;
 	int _dsTableLoopCount;
 	const uint8 *_dsTable2;
+	const uint8 *_dsTable3;
+	const uint8 *_dsTable4;
 	const uint8 *_dsTable5;
 	int _dsDrawLayer;
 	uint8 *_dsDstPage;

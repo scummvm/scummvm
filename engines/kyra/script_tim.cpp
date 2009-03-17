@@ -1131,18 +1131,12 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	if (!_vm->textEnabled() && _vm->_hideControls) {
 		_screen->setScreenDim(5);
 		const ScreenDim *d = _screen->getScreenDim(5);
-		_screen->hideMouse();
 		_screen->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->unkA);
-		_screen->showMouse();
 	} else {
 		const ScreenDim *d = _screen->_curDim;
-		_screen->hideMouse();
 		_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 1, d->unkA);
-		_screen->clearDim(4);
-		_screen->setScreenDim(4);
-		_screen->showMouse();
-		//_screen->setDialogueColumn(8, 0);
-		//_screen->setDialogueLine(8, 0);
+		_vm->_txt->clearDim(4);
+		_vm->_txt->resetDimTextPositions(4);
 	}
 
 	return res;

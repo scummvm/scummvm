@@ -325,7 +325,7 @@ void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
 	*assignedBlockObjects = id;
 }
 
-int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag) {
+int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag) {
 	_monsterLastWalkDirection = 0;
 	int x2 = 0;
 	int y2 = 0;
@@ -333,7 +333,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 	int yOffs = 0;
 	int flag = 0;
 
-	int r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y), x, y, monsterWidth, testFlag, wallFlag);
+	int r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y), x, y, objectWidth, testFlag, wallFlag);
 	if (r)
 		return r;
 
@@ -342,12 +342,12 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 		return 4;
 
 	if (x & 0x80) {
-		if (((x & 0xff) + monsterWidth) & 0xff00) {
+		if (((x & 0xff) + objectWidth) & 0xff00) {
 			xOffs = 1;
 			_monsterLastWalkDirection = 2;
-			x2 = x + monsterWidth;
+			x2 = x + objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, monsterWidth, testFlag, wallFlag);
+			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -358,12 +358,12 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 			flag = 1;
 		}
 	} else {
-		if (((x & 0xff) - monsterWidth) & 0xff00) {
+		if (((x & 0xff) - objectWidth) & 0xff00) {
 			xOffs = -1;
 			_monsterLastWalkDirection = 6;
-			x2 = x - monsterWidth;
+			x2 = x - objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, monsterWidth, testFlag, wallFlag);
+			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -376,12 +376,12 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 	}
 
 	if (y & 0x80) {
-		if (((y & 0xff) + monsterWidth) & 0xff00) {
+		if (((y & 0xff) + objectWidth) & 0xff00) {
 			yOffs = 1;
 			_monsterLastWalkDirection = 4;
-			y2 = y + monsterWidth;
+			y2 = y + objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, monsterWidth, testFlag, wallFlag);
+			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -392,12 +392,12 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 			flag = 0;
 		}
 	} else {
-		if (((y & 0xff) - monsterWidth) & 0xff00) {
+		if (((y & 0xff) - objectWidth) & 0xff00) {
 			yOffs = -1;
 			_monsterLastWalkDirection = 0;
-			y2 = y - monsterWidth;
+			y2 = y - objectWidth;
 
-			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, monsterWidth, testFlag, wallFlag);
+			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
 			if (r)
 				return r;
 
@@ -412,7 +412,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 	if (!flag)
 		return 0;
 
-	r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y2), x, y, monsterWidth, testFlag, wallFlag);
+	r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y2), x, y, objectWidth, testFlag, wallFlag);
 	if (r)
 		return r;
 
@@ -423,24 +423,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, i
 	return 0;
 }
 
-int LoLEngine::calcMonsterSkillLevel(int id, int a) {
-	const uint16 *c = getCharacterOrMonsterStats(id);
-	int r = (a << 8) / c[4];
-
-	if (!(id & 0x8000))
-		r = (r * _monsterModifiers[3 + ((_unkGameFlag & 0x30) << 4)]) >> 8;
-
-	id &= 0x7fff;
-
-	if (_characters[id].skillLevels[1] <= 3)
-		return r;
-	else if (_characters[id].skillLevels[1] <= 7)
-		return (r- (r >> 2));
-
-	return (r- (r >> 1));
-}
-
-int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag) {
+int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag) {
 	if (block == _currentBlock)
 		testFlag &= 0xfffe;
 
@@ -461,7 +444,7 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 
 		if (monster->mode < 13) {
 			int r = checkDrawObjectSpace(x, y, monster->x, monster->y);
-			if ((monsterWidth + monster->properties->maxWidth) > r)
+			if ((objectWidth + monster->properties->maxWidth) > r)
 				return 2;
 		}
 
@@ -469,6 +452,23 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 	}
 
 	return 0;
+}
+
+int LoLEngine::calcMonsterSkillLevel(int id, int a) {
+	const uint16 *c = getCharacterOrMonsterStats(id);
+	int r = (a << 8) / c[4];
+
+	if (!(id & 0x8000))
+		r = (r * _monsterModifiers[3 + ((_unkGameFlag & 0x30) << 4)]) >> 8;
+
+	id &= 0x7fff;
+
+	if (_characters[id].skillLevels[1] <= 3)
+		return r;
+	else if (_characters[id].skillLevels[1] <= 7)
+		return (r- (r >> 2));
+
+	return (r- (r >> 1));
 }
 
 bool LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
@@ -519,7 +519,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 
 			if ((_itemProperties[i->itemPropertyIndex].flags & 0x1000) && !(i->shpCurFrame_flg & 0xC000)) {
 				int shpIndex = _itemProperties[i->itemPropertyIndex].flags & 0x800 ? 7 : _itemProperties[i->itemPropertyIndex].shpIndex;
-				
+				shpIndex=12;
 				int ii = 0;
 				for (; ii < 8; ii++) {
 					if (!_flyingItems[ii].enable)
@@ -896,6 +896,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		ovl = _screen->getLevelOverlay(r);
 	} else {
 		memset (tmpOvl + 1, tblValue, 15);
+		tmpOvl[0] = 0;
 		table = tmpOvl;
 		ovl = _screen->getLevelOverlay(7);
 	}

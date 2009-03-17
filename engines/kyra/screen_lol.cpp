@@ -46,7 +46,6 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 	
 	_fadeFlag = 2;
 	_curDimIndex = 0;
-	_dimLineCount = 0;
 }
 
 Screen_LoL::~Screen_LoL() {
@@ -67,7 +66,6 @@ void Screen_LoL::setScreenDim(int dim) {
 	assert(dim < _screenDimTableCount);
 	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
 	_curDimIndex = dim;
-	_dimLineCount = 0;
 }
 
 const ScreenDim *Screen_LoL::getScreenDim(int dim) {
@@ -85,11 +83,6 @@ void Screen_LoL::modifyScreenDim(int dim, int x, int y, int w, int h) {
 	_customDimTable[dim]->w = w;
 	_customDimTable[dim]->h = h;
 	setScreenDim(dim);
-}
-
-void Screen_LoL::clearDim(int dim) {
-	const ScreenDim *tmp = getScreenDim(dim);
-	fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, tmp->unkA);
 }
 
 void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {

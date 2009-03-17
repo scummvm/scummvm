@@ -1151,11 +1151,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	_dsTable = 0;
 	_dsTableLoopCount = 0;
 	_dsTable2 = 0;
+	_dsTable3 = 0;
+	_dsTable4 = 0;
 	_dsTable5 = 0;
 	_dsDrawLayer = 0;
-
-	uint8 *table3 = 0;
-	uint8 *table4 = 0;
 
 	if (flags & 0x8000) {
 		_dsTable2 = va_arg(args, uint8*);
@@ -1169,8 +1168,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x1000) {
-		table3 = va_arg(args, uint8*);
-		table4 = va_arg(args, uint8*);
+		_dsTable3 = va_arg(args, uint8*);
+		_dsTable4 = va_arg(args, uint8*);
 	}
 
 	if (flags & 0x200) {
@@ -1252,8 +1251,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0,
 		&Screen::drawShapePlotType37,		// used by LoL (monsters)
-		0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 
+		&Screen::drawShapePlotType52,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0
 	};
 
 	int scaleCounterV = 0;
@@ -1825,6 +1827,16 @@ void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
 
 	if (cmd)
 		*dst = cmd;
+}
+
+void Screen::drawShapePlotType52(uint8 *dst, uint8 cmd) {
+	cmd = _dsTable2[cmd];
+	uint8 offs = _dsTable3[cmd];
+
+	if (!(offs & 0x80))
+		cmd = _dsTable4[(offs << 8) | *dst];
+
+	*dst = cmd;
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {

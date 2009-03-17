@@ -719,8 +719,6 @@ void LoLEngine::startup() {
 	_txt->setAnimParameters("<MORE>", 10, 31, 0);
 	_txt->setAnimFlag(true);
 
-	_screen->_dimLineCount = 0;
-
 	_sound->loadSfxFile("LORESFX");
 
 	setMouseCursorToItemInHand();
@@ -1016,7 +1014,7 @@ void LoLEngine::initTextFading(int textType, int clearField) {
 
 	updatePortraits();
 	if (_hideInventory)
-		_screen->clearDim(3);
+		_screen->setScreenDim(_txt->clearDim(3));
 
 	_fadeText = false;
 	_timer->disable(11);
@@ -1235,7 +1233,7 @@ void LoLEngine::initNonAnimatedDialogue(int controlMode, int pageNum) {
 
 		_screen->modifyScreenDim(5, 8, 131, 304, 66);
 		_screen->modifyScreenDim(4, 1, 133, 38, 60);
-		_screen->clearDim(4);
+		_txt->clearDim(4);
 
 		_updateFlags |= 2;
 		_hideControls = controlMode;
@@ -1257,7 +1255,7 @@ void LoLEngine::initNonAnimatedDialogue(int controlMode, int pageNum) {
 		_txt->setupField(true);
 		_txt->expandField();
 		setupScreenDims();
-		_screen->clearDim(4);
+		_txt->clearDim(4);
 	}
 	
 	_hideControls = controlMode;
@@ -1279,8 +1277,7 @@ void LoLEngine::restoreAfterNonAnimatedDialogue(int controlMode) {
 	} else {
 		const ScreenDim *d = _screen->getScreenDim(5);
 		_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
-		_screen->clearDim(4);
-		_screen->setScreenDim(4);
+		_txt->clearDim(4);
 		_txt->setupField(false);
 	}
 
@@ -1305,7 +1302,7 @@ void LoLEngine::fadeText() {
 	if (_hideInventory)
 		return;
 
-	_screen->clearDim(3);
+	_screen->setScreenDim(_txt->clearDim(3));
 
 	_timer->disable(11);
 
@@ -1690,15 +1687,13 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 			_txt->printDialogueText(3, str, script, paramList, paramIndex);
 
 		} else if (mode == 1) {
-			_screen->setScreenDim(4);
-			_screen->clearDim(4);
+			_txt->clearDim(4);
 			_screen->modifyScreenDim(4, 16, 123, 23, 47);
 			_txt->printDialogueText(4, str, script, paramList, paramIndex);
 			_screen->modifyScreenDim(4, 11, 123, 28, 47);
 
 		} else if (mode == 2) {
-			_screen->setScreenDim(4);
-			_screen->clearDim(4);
+			_txt->clearDim(4);
 			_screen->modifyScreenDim(4, 9, 133, 30, 60);
 			_txt->printDialogueText(4, str, script, paramList, 3);
 			_screen->modifyScreenDim(4, 1, 133, 37, 60);

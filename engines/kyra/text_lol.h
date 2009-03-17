@@ -46,6 +46,9 @@ public:
 	void setupField(bool mode);
 	void expandField();
 
+	int clearDim(int dim);
+	void resetDimTextPositions(int dim);
+
 	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, char *str, ...);
 	
@@ -72,6 +75,7 @@ private:
 	char _scriptParaString[11];
 
 	uint16 _lineWidth;
+	int _lineCount;
 	uint32 _numCharsTotal;
 	uint32 _numCharsLeft;
 	uint32 _numCharsPrinted;
@@ -84,14 +88,17 @@ private:
 	bool _animFlag;
 	bool _printFlag;
 
-	uint8 _posX;
-	uint8 _posY;
-	uint8 _colour1;
-	uint8 _colour2;
-	bool _colour1prot;
-
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
+
+	struct TextDimData {
+		uint8 color1;
+		uint8 color2;
+		uint8 column;
+		uint8 line;
+	};
+
+	TextDimData _textDimData[14];
 };
 
 } // end of namespace Kyra

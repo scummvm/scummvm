@@ -1031,9 +1031,9 @@ private:
 	void removeDrawObjectFromBlock(LevelBlockProperty *l, int id);
 	void assignMonsterToBlock(uint16 *assignedBlockObjects, int id);
 	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
-	int checkBlockBeforeObjectPlacement(int x, int y, int monsterWidth, int testFlag, int wallFlag);
-	int calcMonsterSkillLevel(int id, int a);
-	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int monsterWidth, int testFlag, int wallFlag);
+	int checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag);
+	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
+	int calcMonsterSkillLevel(int id, int a);	
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
 	void drawBlockObjects(int blockArrayIndex);

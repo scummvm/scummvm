@@ -43,7 +43,6 @@ public:
 	const ScreenDim *getScreenDim(int dim);
 	int curDimIndex() { return _curDimIndex; }
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
-	void clearDim(int dim);
 
 	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...);
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...);
@@ -77,7 +76,6 @@ public:
 	uint8 *_paletteOverlay2;
 	uint8 *_grayOverlay;
 	int _fadeFlag;
-	int _dimLineCount;
 
 private:
 	LoLEngine *_vm;
