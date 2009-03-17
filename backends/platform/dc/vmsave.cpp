@@ -41,7 +41,7 @@ enum vmsaveResult {
   VMSAVE_OK,
   VMSAVE_NOVM,
   VMSAVE_NOSPACE,
-  VMSAVE_WRITEERROR,
+  VMSAVE_WRITEERROR
 };
 
 
@@ -340,7 +340,7 @@ public:
 	return ::deleteSaveGame(filename);
   }
 
-  virtual Common::StringList VMSaveManager::listSavefiles(const char *glob);
+  virtual Common::StringList listSavefiles(const char *glob);
 };
 
 void OutVMSave::finalize()
