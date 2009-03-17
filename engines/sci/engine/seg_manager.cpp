@@ -1259,7 +1259,14 @@ uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 }
 
 void SegManager::free_hunk_entry(reg_t addr) {
-	free_Hunk(addr);
+	MemObject *mobj = GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
+
+	if (!mobj) {
+		sciprintf("Attempt to free Hunk from address "PREG": Invalid segment type\n", PRINT_REG(addr));
+		return;
+	}
+
+	Sci::free_Hunk_entry(&(mobj->data.hunks), addr.offset);
 }
 
 Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
@@ -1290,7 +1297,7 @@ DEFINE_HEAPENTRY(Node, 32, 16)
 DEFINE_HEAPENTRY_WITH_CLEANUP(Clone, 16, 4, _clone_cleanup)
 DEFINE_HEAPENTRY_WITH_CLEANUP(Hunk, 4, 4, _hunk_cleanup)
 
-#define DEFINE_ALLOC_DEALLOC(TYPE, SEGTYPE, PLURAL) \
+#define DEFINE_ALLOC(TYPE, SEGTYPE, PLURAL) \
 TYPE *SegManager::alloc_##TYPE(reg_t *addr) {											 \
 	MemObject *mobj;									  \
 	TYPE##Table *table;									  \
@@ -1307,23 +1314,13 @@ TYPE *SegManager::alloc_##TYPE(reg_t *addr) {											 \
 												  \
 	*addr = make_reg(TYPE##s_seg_id, offset);						  \
 	return &(mobj->data.PLURAL.table[offset].entry);					  \
-}												  \
-												  \
-void	SegManager::free_##TYPE(reg_t addr) {					  \
-	MemObject *mobj = GET_SEGMENT(*this, addr.segment, SEGTYPE);				  \
-												  \
-	if (!mobj) {										  \
-		sciprintf("Attempt to free " #TYPE " from address "PREG": Invalid segment type\n", PRINT_REG(addr));							  \
-		return;										  \
-	}											  \
-												  \
-	Sci::free_##TYPE##_entry(&(mobj->data.PLURAL), addr.offset);					  \
 }
 
-DEFINE_ALLOC_DEALLOC(Clone, MEM_OBJ_CLONES, clones)
-DEFINE_ALLOC_DEALLOC(List, MEM_OBJ_LISTS, lists)
-DEFINE_ALLOC_DEALLOC(Node, MEM_OBJ_NODES, nodes)
-DEFINE_ALLOC_DEALLOC(Hunk, MEM_OBJ_HUNK, hunks)
+DEFINE_ALLOC(Clone, MEM_OBJ_CLONES, clones)
+DEFINE_ALLOC(List, MEM_OBJ_LISTS, lists)
+DEFINE_ALLOC(Node, MEM_OBJ_NODES, nodes)
+DEFINE_ALLOC(Hunk, MEM_OBJ_HUNK, hunks)
+
 
 byte *SegManager::dereference(reg_t pointer, int *size) {
 	MemObject *mobj;
@@ -1600,7 +1597,7 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	_segmgr->free_Clone(addr);
+	Sci::free_Clone_entry(&(_mobj->data.clones), addr.offset);
 }
 
 
@@ -1689,7 +1686,7 @@ public:
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
-	_segmgr->free_List(sub_addr);
+	Sci::free_List_entry(&(_mobj->data.lists), sub_addr.offset);
 }
 
 void SegInterfaceLists::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
@@ -1723,7 +1720,7 @@ public:
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
-	_segmgr->free_Node(sub_addr);
+	Sci::free_Node_entry(&(_mobj->data.nodes), sub_addr.offset);
 }
 
 void SegInterfaceNodes::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {

@@ -255,10 +255,6 @@ public:
 	//           (reg_t) *addr: The offset of the freshly allocated clone
 	Clone *alloc_Clone(reg_t *addr);
 
-	// Deallocates a Clone
-	// Parameters: (reg_t) addr: Offset of the Clone scheduled for termination
-	void free_Clone(reg_t addr);
-
 
 	// 3. Objects (static, from Scripts, and dynmic, from Clones)
 
@@ -319,18 +315,10 @@ public:
 	//           (reg_t) *addr: The offset of the freshly allocated list
 	List *alloc_List(reg_t *addr);
 
-	// Deallocates a list
-	// Parameters: (reg_t) addr: Offset of the list scheduled for termination
-	void free_List(reg_t addr);
-
 	// Allocate a fresh node
 	// Returns : (node_t*): Reference to the memory allocated for the node
 	//           (reg_t) *addr: The offset of the freshly allocated node
 	Node *alloc_Node(reg_t *addr);
-
-	// Deallocates a list node
-	// Parameters: (reg_t) addr: Offset of the node scheduled for termination
-	void free_Node(reg_t addr);
 
 
 	// 8. Hunk Memory
@@ -429,7 +417,6 @@ private:
 	int deallocate(int seg, bool recursive);
 
 	Hunk *alloc_Hunk(reg_t *);
-	void free_Hunk(reg_t addr);
 
 	int relocateLocal(Script *scr, SegmentId segment, int location);
 	int relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location);
