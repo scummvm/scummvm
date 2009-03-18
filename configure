@@ -918,21 +918,8 @@ fi
 
 #
 # Determine the compiler version
-
+#
 echocheck "compiler version"
-
-case $_host_os in
-	# On Solaris, use Unix-compliant tail
-	solaris*)
-		tail=/usr/xpg4/bin/tail
-		;;
-
-	# All other OSes: use the tail in PATH
-	*)
-		tail=tail
-		;;
-esac
-
 
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
@@ -978,7 +965,6 @@ fi
 #
 # Do CXXFLAGS now we know the compiler version
 #
-
 if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
 	mingw* | cygwin*)
@@ -1309,9 +1295,6 @@ add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
 
 
-add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
-add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
-
 #
 # Check whether plugin support is requested and possible
 #
@@ -1410,6 +1393,12 @@ else
 	_def_mt32emu='#define USE_MT32EMU'
 fi
 add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
+
+#
+# Check whether to enable the (hq) scalers
+#
+add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
+add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
 #
 # Check for math lib
