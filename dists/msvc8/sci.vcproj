@@ -494,6 +494,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\scicore\resource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp"
 				>
 			</File>
@@ -506,11 +510,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\scicore\versions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\scicore\vocabulary.h"
 				>
 			</File>
 		</Filter>
@@ -652,6 +664,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\tools.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\uinput.h"
 			>
 		</File>
 	</Files>
