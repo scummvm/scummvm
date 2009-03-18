@@ -38,6 +38,7 @@ MODULE_OBJS = \
 	gfx/font.o \
 	gfx/gfx_driver.o \
 	gfx/gfx_res_options.o \
+	gfx/res_resmgr.o \
 	gfx/gfx_resource.o \
 	gfx/gfx_support.o \
 	gfx/gfx_tools.o \
@@ -45,14 +46,13 @@ MODULE_OBJS = \
 	gfx/menubar.o \
 	gfx/operations.o \
 	gfx/palette.o \
-	gfx/resmgr.o \
 	gfx/sci_widgets.o \
-	gfx/resource/res_cursor.o \
-	gfx/resource/res_font.o \
-	gfx/resource/res_pal.o \
-	gfx/resource/res_pic.o \
-	gfx/resource/res_view0.o \
-	gfx/resource/res_view1.o \
+	gfx/res_cursor.o \
+	gfx/res_font.o \
+	gfx/res_pal.o \
+	gfx/res_pic.o \
+	gfx/res_view0.o \
+	gfx/res_view1.o \
 	scicore/decompressor.o \
 	scicore/resource.o \
 	scicore/sciconsole.o \
