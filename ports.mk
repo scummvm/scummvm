@@ -174,7 +174,7 @@ win32dist: $(EXECUTABLE)
 # Special target to create an AmigaOS snapshot installation
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
-	strip -R.comment $< -o $(AOS4PATH)/$<_SVN
+	strip $(EXECUTABLE) -o $(AOS4PATH)/$<_SVN
 	cp icons/scummvm.info $(AOS4PATH)/$<_SVN.info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
