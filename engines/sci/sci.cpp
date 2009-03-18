@@ -236,15 +236,15 @@ Common::Error SciEngine::run() {
 	// Set the savegame dir
 	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
 
+	gfx_crossblit_alpha_threshold = 0x90;
+	gfx_state_t gfx_state;
+	gfx_state.driver = &gfx_driver_scummvm;
+	gfx_state.version = _resmgr->_sciVersion;
+
 	gamestate->port_serial = 0;
 	gamestate->have_mouse_flag = 1;
 	gamestate->animation_delay = 5;
 	gamestate->animation_granularity = 4;
-	gfx_crossblit_alpha_threshold = 0x90;
-
-	gfx_state_t gfx_state;
-	gfx_state.driver = &gfx_driver_scummvm;
-	gfx_state.version = _resmgr->_sciVersion;
 	gamestate->gfx_state = &gfx_state;
 
 	// Default config:
@@ -268,7 +268,7 @@ Common::Error SciEngine::run() {
 	}
 	// Default config ends
 
-	if (gfxop_init_default(&gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(&gfx_state, &gfx_options, _resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}

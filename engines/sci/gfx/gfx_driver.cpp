@@ -43,7 +43,7 @@ struct _scummvm_driver_state {
 
 #define S ((struct _scummvm_driver_state *)(drv->state))
 
-static int scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
+static int scummvm_init(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 	int i;
 
 	if (!drv->state) // = S
@@ -84,10 +84,6 @@ static int scummvm_init_specific(gfx_driver_t *drv, int xfact, int yfact, int by
 		S->palette_data[i] = 0;
 
 	return GFX_OK;
-}
-
-static int scummvm_init(gfx_driver_t *drv) {
-	return scummvm_init_specific(drv, 1, 1, GFX_COLOR_MODE_INDEX);
 }
 
 static void scummvm_exit(gfx_driver_t *drv) {
@@ -331,7 +327,6 @@ gfx_driver_t gfx_driver_scummvm = {
 	0,		// flags here
 	0,
 	NULL,
-	scummvm_init_specific,
 	scummvm_init,
 	scummvm_exit,
 	scummvm_draw_line,

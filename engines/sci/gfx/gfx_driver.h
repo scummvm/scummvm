@@ -111,7 +111,7 @@ struct gfx_driver_t { /* Graphics driver */
 	** console).
 	*/
 
-	int (*init_specific)(gfx_driver_t *drv, int xres, int yres,
+	int (*init)(gfx_driver_t *drv, int xres, int yres,
 	                     int bytespp);
 	/* Attempts to initialize a specific graphics mode
 	** Parameters: (gfx_driver_t *) drv: The affected driver
@@ -125,18 +125,6 @@ struct gfx_driver_t { /* Graphics driver */
 	** and is used for internal representation of graphical data. The physical
 	** resolution set by the graphics driver may be different for practical
 	** reasons.
-	** Must also set drv->mode, preferably with the gfx_new_mode() function
-	** specified in gfx_tools.h.
-	*/
-
-	int (*init)(gfx_driver_t *drv);
-	/* Initialize any graphics mode
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	** Returns   : (int) GFX_OK on success, GFX_FATAL otherwise.
-	** This function attempts to set /any/ graphics mode, starting with the one
-	** most 'natural' to the graphics target. Target implementors have relatively
-	** free reign in choosing the heuristics used to determine the resulting
-	** mode.
 	** Must also set drv->mode, preferably with the gfx_new_mode() function
 	** specified in gfx_tools.h.
 	*/

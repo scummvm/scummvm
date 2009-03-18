@@ -139,18 +139,9 @@ struct gfx_state_t {
 /* Fundamental operations */
 /**************************/
 
-int gfxop_init_default(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager);
-/* Initializes a graphics mode suggested by the graphics driver
-** Parameters: (gfx_state_ t *) state: The state to initialize in that mode
-**             (gfx_options_t *) options: Rendering options
-**             (void *) misc_info: Additional information for the interpreter
-**                      part of the resource loader
-** Returns   : (int) GFX_OK on success, GFX_FATAL otherwise
-*/
-
-int gfxop_init(gfx_state_t *state, int xfact, int yfact, gfx_color_mode_t bpp,
-	gfx_options_t *options, ResourceManager *resManager);
-/* Initializes a custom graphics mode
+int gfxop_init(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager,
+			   int xfact = 1, int yfact = 1, gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
+/* Initializes a graphics mode
 ** Parameters: (gfx_state_t *) state: The state to initialize
 **             (int x int) xfact, yfact: Horizontal and vertical scale factors
 **             (gfx_color_mode_t) bpp: Bytes per pixel to initialize with, or
