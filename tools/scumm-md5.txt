@@ -167,6 +167,7 @@ loom	Loom
 	fa127d7c4bb47d05bb1c33ddcaa9f767	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
 	187d315f6b5168f68680dfe8c3d76a3e	-1	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	-1	it	DOS	EGA	EGA	-	Andrea Petrucci
+	0be88565f734b1e9e77ccaaf3bb14b29	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
 	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No Adlib	EGA	v1.2 25 Jan 91	Fingolfin
 
