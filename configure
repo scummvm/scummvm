@@ -1108,7 +1108,11 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
 	amigaos*)
-		# TODO: anything to be added here?
+		CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
+		type_1_byte='char'
+		type_2_byte='short'
+		type_4_byte='long'
 		;;
 	# given this is a shell script assume some type of unix
 	*)
