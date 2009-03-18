@@ -167,6 +167,7 @@ loom	Loom
 	fa127d7c4bb47d05bb1c33ddcaa9f767	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
 	187d315f6b5168f68680dfe8c3d76a3e	-1	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	-1	it	DOS	EGA	EGA	-	Andrea Petrucci
+	0be88565f734b1e9e77ccaaf3bb14b29	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
 	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No Adlib	EGA	v1.2 25 Jan 91	Fingolfin
 
@@ -497,8 +498,8 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
-	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 80	-	-	GoodOldGeorg
 	51305e929e330e24a75a0351c8f9975e	-1	us	All	HE 99	Updated	-	Kirben
+	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
