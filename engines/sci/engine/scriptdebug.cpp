@@ -2506,7 +2506,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int brLeft, brRight, brBottom, brTop;
 	int i;
 	int have_rects = 0;
-	abs_rect_t nsrect, nsrect_clipped, brrect;
+	Common::Rect nsrect, nsrect_clipped, brrect;
 
 	if (lookup_selector(s, pos, s->selector_map.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);

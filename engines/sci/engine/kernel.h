@@ -48,10 +48,6 @@ extern int _debug_step_running;
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 
 
-struct abs_rect_t {
-	int x, y, xend, yend;
-};
-
 /* Formerly, the heap macros were here; they have been deprecated, however. */
 
 /******************** Selector functionality ********************/
@@ -211,14 +207,14 @@ int _find_view_priority(EngineState *s, int y);
 
 /******************** Dynamic view list functions ********************/
 
-abs_rect_t set_base(EngineState *s, reg_t object);
+Common::Rect set_base(EngineState *s, reg_t object);
 /* Determines the base rectangle of the specified view object
 ** Parameters: (EngineState *) s: The state to use
 **             (reg_t) object: The object to set
 ** Returns   : (abs_rect) The absolute base rectangle
 */
 
-extern abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip);
+extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
 /* Determines the now-seen rectangle of a view object
 ** Parameters: (EngineState *) s: The state to use
 **             (reg_t) object: The object to check

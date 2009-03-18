@@ -730,28 +730,28 @@ reg_t kDirLoop(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define GASEOUS_VIEW_MASK_ACTIVE (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 #define GASEOUS_VIEW_MASK_PASSIVE (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
 
-static abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority);
+static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority);
 
-static int collides_with(EngineState *s, abs_rect_t area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc, reg_t *argv) {
+static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int use_nsrect, int view_mask, int funct_nr, int argc, reg_t *argv) {
 	int other_signal = GET_SEL32V(other_obj, signal);
 	int other_priority = GET_SEL32V(other_obj, priority);
 	int y = GET_SEL32SV(other_obj, y);
-	abs_rect_t other_area;
+	Common::Rect other_area;
 
 	if (use_nsrect) {
 		other_area = get_nsrect(s, other_obj, 0);
 		other_area = nsrect_clip(s, y, other_area, other_priority);
 	} else {
-		other_area.x = GET_SEL32V(other_obj, brLeft);
-		other_area.xend = GET_SEL32V(other_obj, brRight);
-		other_area.y = GET_SEL32V(other_obj, brTop);
-		other_area.yend = GET_SEL32V(other_obj, brBottom);
+		other_area.left = GET_SEL32V(other_obj, brLeft);
+		other_area.right = GET_SEL32V(other_obj, brRight);
+		other_area.top = GET_SEL32V(other_obj, brTop);
+		other_area.bottom = GET_SEL32V(other_obj, brBottom);
 	}
 
-	if (other_area.xend < 0 || other_area.yend < 0 || area.xend < 0 || area.yend < 0)
+	if (other_area.right < 0 || other_area.bottom < 0 || area.right < 0 || area.bottom < 0)
 		return 0; // Out of scope
 
-	if (other_area.x >= 320 || other_area.y >= 190 || area.xend >= 320 || area.yend >= 190)
+	if (other_area.left >= 320 || other_area.top >= 190 || area.right >= 320 || area.bottom >= 190)
 		return 0; // Out of scope
 
 	SCIkdebug(SCIkBRESEN, "OtherSignal=%04x, z=%04x obj="PREG"\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
@@ -759,10 +759,9 @@ static int collides_with(EngineState *s, abs_rect_t area, reg_t other_obj, int u
 	if ((other_signal & (view_mask)) == 0) {
 		// check whether the other object ignores actors
 
-		SCIkdebug(SCIkBRESEN, "  against (%d,%d) to (%d,%d)\n", other_area.x, other_area.y, other_area.xend, other_area.yend);
+		SCIkdebug(SCIkBRESEN, "  against (%d,%d) to (%d,%d)\n", other_area.left, other_area.top, other_area.right, other_area.bottom);
 
-		if (((other_area.xend > area.x) && (other_area.x < area.xend)) // [other_x, other_xend] intersects [x, xend])?
-		        && ((other_area.yend > area.y) && (other_area.y < area.yend))) // [other_y, other_yend] intersects [y, yend]?
+		if (area.intersects(other_area))
 			return 1;
 		/* CR (from :Bob Heitman:) Collision rects have Mac semantics, ((0,0),(1,1)) only
 		** covers the coordinate (0,0) */
@@ -780,21 +779,21 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	uint16 signal;
 	int retval;
 
-	abs_rect_t abs_zone;
+	Common::Rect abs_zone;
 	rect_t zone;
 	uint16 edgehit;
 	uint16 illegal_bits;
 
-	abs_zone.x = GET_SEL32SV(obj, brLeft);
-	abs_zone.xend = GET_SEL32SV(obj, brRight);
-	abs_zone.y = GET_SEL32SV(obj, brTop);
-	abs_zone.yend = GET_SEL32SV(obj, brBottom);
+	abs_zone.left = GET_SEL32SV(obj, brLeft);
+	abs_zone.right = GET_SEL32SV(obj, brRight);
+	abs_zone.top = GET_SEL32SV(obj, brTop);
+	abs_zone.bottom = GET_SEL32SV(obj, brBottom);
 
-	zone = gfx_rect(abs_zone.x + port->zone.x, abs_zone.y + port->zone.y, abs_zone.xend - abs_zone.x, abs_zone.yend - abs_zone.y);
+	zone = gfx_rect(abs_zone.left + port->zone.x, abs_zone.top + port->zone.y, abs_zone.width(), abs_zone.height());
 
 	signal = GET_SEL32V(obj, signal);
 	SCIkdebug(SCIkBRESEN, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj="PREG", sig=%04x, cliplist="PREG"\n",
-	          GFX_PRINT_RECT(zone), abs_zone.x, abs_zone.xend, abs_zone.y, abs_zone.yend,
+	          GFX_PRINT_RECT(zone), abs_zone.left, abs_zone.right, abs_zone.top, abs_zone.bottom,
 	          PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
 
 	illegal_bits = GET_SEL32V(obj, illegalBits);
@@ -1088,13 +1087,13 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 }
 
-abs_rect_t set_base(EngineState *s, reg_t object) {
+Common::Rect set_base(EngineState *s, reg_t object) {
 	int x, y, original_y, z, ystep, xsize, ysize;
 	int xbase, ybase, xend, yend;
 	int view, loop, cel;
 	int oldloop, oldcel;
 	int xmod = 0, ymod = 0;
-	abs_rect_t retval;
+	Common::Rect retval;
 
 	x = GET_SEL32SV(object, x);
 	original_y = y = GET_SEL32SV(object, y);
@@ -1142,27 +1141,27 @@ abs_rect_t set_base(EngineState *s, reg_t object) {
 	SCIkdebug(SCIkBASESETTER, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
 	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
 
-	retval.x = xbase;
-	retval.y = ybase;
-	retval.xend = xend;
-	retval.yend = yend;
+	retval.left = xbase;
+	retval.top = ybase;
+	retval.right = xend;
+	retval.bottom = yend;
 
 	return retval;
 }
 
 void _k_base_setter(EngineState *s, reg_t object) {
-	abs_rect_t absrect = set_base(s, object);
+	Common::Rect absrect = set_base(s, object);
 
 	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	if (s->version <= SCI_VERSION_LTU_BASE_OB1)
-		--absrect.y; // Compensate for early SCI OB1 'bug'
+		--absrect.top; // Compensate for early SCI OB1 'bug'
 
-	PUT_SEL32V(object, brLeft, absrect.x);
-	PUT_SEL32V(object, brRight, absrect.xend);
-	PUT_SEL32V(object, brTop, absrect.y);
-	PUT_SEL32V(object, brBottom, absrect.yend);
+	PUT_SEL32V(object, brLeft, absrect.left);
+	PUT_SEL32V(object, brRight, absrect.right);
+	PUT_SEL32V(object, brTop, absrect.top);
+	PUT_SEL32V(object, brBottom, absrect.bottom);
 }
 
 reg_t kBaseSetter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -1173,7 +1172,7 @@ reg_t kBaseSetter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 } // kBaseSetter
 
-static abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int priority) {
+static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority) {
 	int pri_top;
 
 	if (priority == -1)
@@ -1182,19 +1181,19 @@ static abs_rect_t nsrect_clip(EngineState *s, int y, abs_rect_t retval, int prio
 	pri_top = PRIORITY_BAND_FIRST(priority) + 1;
 	// +1: Don't know why, but this seems to be happening
 
-	if (retval.y < pri_top)
-		retval.y = pri_top;
+	if (retval.top < pri_top)
+		retval.top = pri_top;
 
-	if (retval.yend < retval.y)
-		retval.y = retval.yend - 1;
+	if (retval.bottom < retval.top)
+		retval.top = retval.bottom - 1;
 
 	return retval;
 }
 
-static abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
+static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
 	int xbase, ybase, xend, yend, xsize, ysize;
 	int xmod = 0, ymod = 0;
-	abs_rect_t retval = {0, 0, 0, 0};
+	Common::Rect retval(0, 0, 0, 0);
 
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		xsize = ysize = xmod = ymod = 0;
@@ -1212,18 +1211,18 @@ static abs_rect_t calculate_nsrect(EngineState *s, int x, int y, int view, int l
 	yend = y - ymod + 1; // +1: magic modifier
 	ybase = yend - ysize;
 
-	retval.x = xbase;
-	retval.y = ybase;
-	retval.xend = xend;
-	retval.yend = yend;
+	retval.left = xbase;
+	retval.top = ybase;
+	retval.right = xend;
+	retval.bottom = yend;
 
 	return retval;
 }
 
-abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
+Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 	int x, y, z;
 	int view, loop, cel;
-	abs_rect_t retval;
+	Common::Rect retval;
 
 	x = GET_SEL32SV(object, x);
 	y = GET_SEL32SV(object, y);
@@ -1250,16 +1249,16 @@ abs_rect_t get_nsrect(EngineState *s, reg_t object, byte clip) {
 }
 
 static void _k_set_now_seen(EngineState *s, reg_t object) {
-	abs_rect_t absrect = get_nsrect(s, object, 0);
+	Common::Rect absrect = get_nsrect(s, object, 0);
 
 	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
-	PUT_SEL32V(object, nsLeft, absrect.x);
-	PUT_SEL32V(object, nsRight, absrect.xend);
-	PUT_SEL32V(object, nsTop, absrect.y);
-	PUT_SEL32V(object, nsBottom, absrect.yend);
+	PUT_SEL32V(object, nsLeft, absrect.left);
+	PUT_SEL32V(object, nsRight, absrect.right);
+	PUT_SEL32V(object, nsTop, absrect.top);
+	PUT_SEL32V(object, nsBottom, absrect.bottom);
 }
 
 reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -1657,16 +1656,16 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 }
 
 
-static void draw_rect_to_control_map(EngineState *s, abs_rect_t abs_zone) {
+static void draw_rect_to_control_map(EngineState *s, Common::Rect abs_zone) {
 	gfxw_box_t *box;
 	gfx_color_t color;
 
 	gfxop_set_color(s->gfx_state, &color, -1, -1, -1, -1, -1, 0xf);
 
-	SCIkdebug(SCIkGRAPHICS, "    adding control block (%d,%d)to(%d,%d)\n", abs_zone.x, abs_zone.y, abs_zone.xend, abs_zone.yend);
+	SCIkdebug(SCIkGRAPHICS, "    adding control block (%d,%d)to(%d,%d)\n", abs_zone.left, abs_zone.top, abs_zone.right, abs_zone.bottom);
 
-	box = gfxw_new_box(s->gfx_state, gfx_rect(abs_zone.x, abs_zone.y, abs_zone.xend - abs_zone.x,
-						abs_zone.yend - abs_zone.y), color, color, GFX_BOX_SHADE_FLAT);
+	box = gfxw_new_box(s->gfx_state, gfx_rect(abs_zone.left, abs_zone.top, abs_zone.width(),
+						abs_zone.height()), color, color, GFX_BOX_SHADE_FLAT);
 
 	assert_primary_widget_lists(s);
 
@@ -1680,7 +1679,7 @@ static void draw_obj_to_control_map(EngineState *s, gfxw_dyn_view_t *view) {
 		warning("View %d does not contain valid object reference "PREG"", view->ID, PRINT_REG(obj));
 
 	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
-		abs_rect_t abs_zone = get_nsrect(s, make_reg(view->ID, view->subID), 1);
+		Common::Rect abs_zone = get_nsrect(s, make_reg(view->ID, view->subID), 1);
 		draw_rect_to_control_map(s, abs_zone);
 	}
 }
@@ -2273,7 +2272,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		} else {
 			widget->ID = -1;
 			if (control >= 0) {
-				abs_rect_t abs_zone = nsrect_clip(s, y, calculate_nsrect(s, x, y, view, loop, cel), priority);
+				Common::Rect abs_zone = nsrect_clip(s, y, calculate_nsrect(s, x, y, view, loop, cel), priority);
 				draw_rect_to_control_map(s, abs_zone);
 			}
 			ADD_TO_CURRENT_PICTURE_PORT(gfxw_picviewize_dynview((gfxw_dyn_view_t *) widget));
