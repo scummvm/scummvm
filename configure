@@ -150,6 +150,7 @@ _host=""
 _host_cpu=""
 _host_vendor=""
 _host_os=""
+_host_alias=""
 
 cc_check() {
 	echo >> "$TMPLOG"
@@ -858,6 +859,10 @@ neuros)
 	;;
 esac
 
+if test -z "$_host_alias"; then
+	_host_alias="$_host_cpu-$_host_os"
+fi
+
 #
 # Determine extension used for executables
 #
@@ -893,7 +898,7 @@ esac
 #
 echo_n "Looking for C++ compiler... "
 if test -n "$_host"; then
-	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++ $_host-g++ $_host-c++"
+	compilers="$CXX $_host_alias-g++ $_host_alias-c++ $_host-g++ $_host-c++"
 else
 	compilers="$CXX g++ c++"
 fi
