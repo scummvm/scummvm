@@ -80,21 +80,15 @@ if (!state->driver) { \
 // Internal operations
 
 static void _gfxop_scale_rect(rect_t *rect, gfx_mode_t *mode) {
-	int xfact = mode->xfact;
-	int yfact = mode->yfact;
-
-	rect->x *= xfact;
-	rect->y *= yfact;
-	rect->width *= xfact;
-	rect->height *= yfact;
+	rect->x *= mode->xfact;
+	rect->y *= mode->yfact;
+	rect->width *= mode->xfact;
+	rect->height *= mode->yfact;
 }
 
 static void _gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
-	int xfact = mode->xfact;
-	int yfact = mode->yfact;
-
-	point->x *= xfact;
-	point->y *= yfact;
+	point->x *= mode->xfact;
+	point->y *= mode->yfact;
 }
 
 int _gfxop_clip(rect_t *rect, rect_t clipzone) {
