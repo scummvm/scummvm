@@ -112,14 +112,6 @@ static gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, in
 	return NULL;
 }
 
-void apply_assign(gfx_res_assign_t *conf, gfx_pixmap_t *pxm) {
-	if (pxm->palette)
-		pxm->palette->free();
-
-	pxm->palette = new Palette(conf->assign.palette.colors, conf->assign.palette.colors_nr);
-	pxm->palette->name = "res";
-}
-
 void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 	Palette *pal = pxm->palette;
 	int i, pal_size = pal ? pal->size() : 0;
@@ -177,8 +169,15 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 
 	conf = find_match(options->res_conf.assign[restype], restype, nr, loop, cel);
 
-	if (conf)
-		apply_assign(&(conf->conf.assign), pxm);
+	if (conf) {
+		// Assign palette
+		if (pxm->palette)
+			pxm->palette->free();
+
+		pxm->palette = new Palette(conf->conf.assign.assign.palette.colors, 
+								   conf->conf.assign.assign.palette.colors_nr);
+		pxm->palette->name = "res";
+	}
 
 	conf = options->res_conf.mod[restype];
 	while (conf) {
