@@ -133,6 +133,8 @@ protected:
 		int numZones;
 		BackgroundInfo	*info;
 		char *characterName;
+		Common::String _maskName;
+		Common::String _pathName;
 	} ctxt;
 
 	void warning_unexpected();
@@ -244,23 +246,7 @@ public:
 
 };
 
-/*
-	TODO: adapt the parser to effectively use the
-	statement list provided by preprocessor as its
-	input, instead of relying on the current Script
-	class.
 
-	This would need a major rewrite of the parsing
-	system!
-
-	parseNextToken could then be sealed into the
-	PreProcessor class forever, together with the
-	_tokens[] and _numTokens stuff, now dangling as
-	global objects.
-
-	NS balloons code should be dealt with before,
-	though.
-*/
 class LocationParser_br : public LocationParser_ns {
 
 protected:

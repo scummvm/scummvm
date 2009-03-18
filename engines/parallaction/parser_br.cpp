@@ -466,14 +466,16 @@ DECLARE_LOCATION_PARSER(mask)  {
 	ctxt.info->layers[2] = atoi(_tokens[3]);
 	ctxt.info->layers[3] = atoi(_tokens[4]);
 
-	_vm->_disk->loadScenery(*ctxt.info, 0, _tokens[1], 0);
+	// postpone loading of screen mask data, because background must be loaded first
+	ctxt._maskName = _tokens[1];
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
 
-	_vm->_disk->loadScenery(*ctxt.info, 0, 0, _tokens[1]);
+	// postpone loading of screen path data, because background must be loaded first
+	ctxt._pathName = _tokens[1];
 }
 
 
@@ -1297,8 +1299,15 @@ void LocationParser_br::parse(Script *script) {
 	ctxt.numZones = 0;
 	ctxt.characterName = 0;
 	ctxt.info = new BackgroundInfo;
+	ctxt._pathName.clear();
+	ctxt._maskName.clear();
 
 	LocationParser_ns::parse(script);
+
+	// finally load mask and path, if any
+	_vm->_disk->loadScenery(*ctxt.info, 0,
+		ctxt._maskName.empty() ? 0 : ctxt._maskName.c_str(),
+		ctxt._pathName.empty() ? 0 : ctxt._pathName.c_str());
 
 	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
 
