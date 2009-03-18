@@ -1147,6 +1147,9 @@ if test -n "$_host"; then
 		bfin*)
 			_need_memalign=yes
 			;;
+		*darwin*)
+			_ranlib=$_host-ranlib
+			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SMUSH_ASM"
