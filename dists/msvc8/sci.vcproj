@@ -370,6 +370,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_resmgr.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_resmgr.h"
 				>
 			</File>
@@ -438,7 +442,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\resmgr.cpp"
+				RelativePath="..\..\engines\sci\gfx\res_cursor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\res_font.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\res_pal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\res_pic.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\res_view0.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\res_view1.cpp"
 				>
 			</File>
 			<File
@@ -449,34 +473,6 @@
 				RelativePath="..\..\engines\sci\gfx\sci_widgets.h"
 				>
 			</File>
-			<Filter
-				Name="resource"
-				>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_cursor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_font.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_pal.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_pic.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_view0.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\gfx\resource\res_view1.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="scicore"
