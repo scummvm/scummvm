@@ -34,12 +34,18 @@ namespace AGOS {
 
 uint16 AGOSEngine::getBackExit(int n) {
 	switch (n) {
-		case 0:return 2;
-		case 1:return 3;
-		case 2:return 0;
-		case 3:return 1;
-		case 4:return 5;
-		case 5:return 4;
+		case 0:
+			return 2;
+		case 1:
+			return 3;
+		case 2:
+			return 0;
+		case 3:
+			return 1;
+		case 4:
+			return 5;
+		case 5:
+			return 4;
 	}
 
 	return 0;
@@ -419,10 +425,10 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 					item->parent = 0;
 					item->child = 0;
 
-					 for (uint16 z = _itemArrayInited - 1; z; z--) {
-						itemTmp = _itemArrayPtr[z];
+					 for (uint16 z = _itemArrayInited; z; z--) {
+						itemTmp = derefItem(z);
 
-						if (itemTmp->parent == 0)
+						if (!itemTmp)
 							continue;
 						if (itemTmp->parent != itemNum)
 							continue;
@@ -437,7 +443,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 								break;
 							}
 
-							itemTmp = _itemArrayPtr[itemTmp->next];
+							itemTmp = derefItem(itemTmp->next);
 						}
 					}
 
