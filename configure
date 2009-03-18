@@ -992,9 +992,6 @@ else
 	CXXFLAGS="$CXXFLAGS -Wconversion"
 fi;
 
-add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
-add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
-
 #
 # Check for endianness
 #
@@ -1306,6 +1303,9 @@ add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 
 add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
 
+
+add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
+add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
 #
 # Check whether plugin support is requested and possible
