@@ -111,18 +111,44 @@ endif
 
 
 ######################################################################
+# Get the current version information
+######################################################################
+
+VERSION = $(shell grep SCUMMVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
+VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
+VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
+VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
+
+######################################################################
+# Get Subversion's working copy information
+######################################################################
+
+ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
+SVNROOT := $(srcdir)
+ifeq ($(origin SVNREV), undefined)
+# Get the working copy base revision
+VER_SVNREV := $(shell svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
+endif
+else
+SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
+endif
+
+# Define the Subversion revision if available, either autodetected or
+# specified by the user
+ifneq ($(origin VER_SVNREV), undefined)
+CXXFLAGS+= -DSCUMMVM_SVN_REVISION=\"$(VER_SVNREV)\"
+endif
+
+
+######################################################################
 # Create the files that depend on the version
 ######################################################################
 
 VERSION_FILES = \
 	$(srcdir)/dists/iphone/Info.plist \
 	$(srcdir)/dists/macosx/Info.plist
-
-VERSION = $(shell tail -1 "${srcdir}/base/internal_version.h" | cut -d\" -f2)
-VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
-VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
-VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
-VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 $(VERSION_FILES): %: %.in
 	@echo "Creating $@"
@@ -148,12 +174,6 @@ endif
 DISTNAME := scummvm-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
-
-ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
-SVNROOT := $(srcdir)
-else
-SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
-endif
 
 $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)

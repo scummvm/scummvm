@@ -30,10 +30,6 @@ CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
 
-ifneq "$(SCUMMVM_SVN_REVISION)" ""
-CXXFLAGS+= -DSCUMMVM_SVN_REVISION=\"$(SCUMMVM_SVN_REVISION)\"
-endif
-
 # There is a nice extra warning that flags variables that are potentially
 # used before being initialized. Very handy to catch a certain kind of
 # bugs. Unfortunately, it only works when optimizations are turned on,
