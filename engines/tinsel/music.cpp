@@ -839,6 +839,10 @@ bool PCMMusicPlayer::getNextChunk() {
 		if (file.read(buffer, sampleCLength) != sampleCLength)
 			error(FILE_IS_CORRUPT, _fileName);
 
+		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Creating ADPCM music chunk with size %d, "
+				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
+				_scriptNum, _scriptIndex - 1);
+
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, true);
 
 		delete _curChunk;
@@ -849,6 +853,9 @@ bool PCMMusicPlayer::getNextChunk() {
 		return true;
 
 	case S_END1:
+		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END1 (script %d.%d)",
+				_scriptNum, _scriptIndex);
+
 		script = scriptBuffer = (int32 *) LockMem(_hScript);
 
 		id = _scriptNum;
@@ -869,10 +876,16 @@ bool PCMMusicPlayer::getNextChunk() {
 		return true;
 
 	case S_END2:
+		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END2 (script %d.%d)",
+				_scriptNum, _scriptIndex);
+
 		_silenceSamples = 11025; // Half a second of silence
 		return true;
 
 	case S_END3:
+		debugC(DEBUG_DETAILED, kTinselDebugMusic, "Music reached state S_END3 (script %d.%d)",
+				_scriptNum, _scriptIndex);
+
 		stop();
 		_state = S_IDLE;
 		return false;
