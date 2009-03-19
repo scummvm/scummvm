@@ -31,6 +31,7 @@
 #include "gob/sound/soundblaster.h"
 #include "gob/sound/adlib.h"
 #include "gob/sound/infogrames.h"
+#include "gob/sound/protracker.h"
 #include "gob/sound/cdrom.h"
 #include "gob/sound/bgatmosphere.h"
 
@@ -102,6 +103,11 @@ public:
 	void infogramesStop();
 
 
+	// Protracker
+	bool protrackerPlay(const char *fileName);
+	void protrackerStop();
+
+
 	// CD-ROM
 	void cdLoadLIC(const char *fname);
 	void cdUnloadLIC();
@@ -139,6 +145,7 @@ private:
 	SoundBlaster *_blaster;
 	AdLib *_adlib;
 	Infogrames *_infogrames;
+	Protracker *_protracker;
 	CDROM *_cdrom;
 	BackgroundAtmosphere *_bgatmos;
 };

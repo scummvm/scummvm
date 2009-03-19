@@ -64,6 +64,7 @@ MODULE_OBJS := \
 	sound/pcspeaker.o \
 	sound/adlib.o \
 	sound/infogrames.o \
+	sound/protracker.o \
 	sound/soundmixer.o \
 	sound/soundblaster.o \
 	sound/cdrom.o \

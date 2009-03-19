@@ -39,13 +39,16 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 
 	_adlib = 0;
 	_infogrames = 0;
+	_protracker = 0;
 	_cdrom = 0;
 	_bgatmos = 0;
 
 	if (!_vm->_noMusic && _vm->hasAdlib())
 		_adlib = new AdLib(*_vm->_mixer);
-	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga))
+	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
+		_protracker = new Protracker(*_vm->_mixer);
+	}
 	if (_vm->isCD())
 		_cdrom = new CDROM;
 	if (_vm->getGameType() == kGameTypeWoodruff)
@@ -61,6 +64,7 @@ Sound::~Sound() {
 	delete _blaster;
 	delete _adlib;
 	delete _infogrames;
+	delete _protracker;
 	delete _cdrom;
 	delete _bgatmos;
 
@@ -181,6 +185,24 @@ bool Sound::infogramesLoadSong(const char *fileName) {
 	debugC(1, kDebugSound, "Infogrames: Loading song \"%s\"", fileName);
 
 	return _infogrames->loadSong(fileName);
+}
+
+bool Sound::protrackerPlay(const char *fileName) {
+	if (!_protracker)
+		return false;
+
+	debugC(1, kDebugSound, "Protracker: Playing song \"%s\"", fileName);
+
+	return _protracker->play(fileName);
+}
+
+void Sound::protrackerStop() {
+	if (!_protracker)
+		return;
+
+	debugC(1, kDebugSound, "Protracker: Stopping playback");
+
+	_protracker->stop();
 }
 
 void Sound::infogramesPlay() {
