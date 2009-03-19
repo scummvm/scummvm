@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	sci.o \
 	sci_memory.o \
 	tools.o \
-	engine/aatree.o \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
