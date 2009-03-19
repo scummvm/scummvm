@@ -2197,6 +2197,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
 	},
 
+	// Space Quest 4 - English DOS
+	{{"sq4", "", {
+		{"resource.map", 0, "71ccf4f82ac4efb588731acfb7bf2603", 5646},
+		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 933928},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
+	},
+
 #if 0
 	// Space Quest 4 - German DOS (from Tobis87)
 	{{"sq4", "", {
