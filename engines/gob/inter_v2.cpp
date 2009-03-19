@@ -90,37 +90,8 @@ const int Inter_v2::_goblinFuncLookUp[][2] = {
 	{52, 37},
 	{53, 38},
 	{100, 39},
-	{152, 40},
-	{200, 41},
-	{201, 42},
-	{202, 43},
-	{203, 44},
-	{204, 45},
-	{250, 46},
-	{251, 47},
-	{252, 48},
-	{500, 49},
-	{502, 50},
-	{503, 51},
-	{600, 52},
-	{601, 53},
-	{602, 54},
-	{603, 55},
-	{604, 56},
-	{605, 57},
-	{1000, 58},
-	{1001, 59},
-	{1002, 60},
-	{1003, 61},
-	{1004, 62},
-	{1005, 63},
-	{1006, 64},
-	{1008, 65},
-	{1009, 66},
-	{1010, 67},
-	{1011, 68},
-	{1015, 69},
-	{2005, 70}
+	{500, 40},
+	{501, 41}
 };
 
 Inter_v2::Inter_v2(GobEngine *vm) : Inter_v1(vm) {
@@ -606,8 +577,8 @@ void Inter_v2::setupOpcodes() {
 		{NULL, ""},
 		OPCODE(o2_handleGoblins),
 		/* 28 */
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_playProtracker),
+		OPCODE(o2_stopProtracker),
 		{NULL, ""},
 		{NULL, ""},
 		/* 2C */
@@ -2061,6 +2032,14 @@ void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
 	load16();
 
 	_vm->_sound->infogramesStop();
+}
+
+void Inter_v2::o2_playProtracker(OpGobParams &params) {
+	_vm->_sound->protrackerPlay("mod.babayaga");
+}
+
+void Inter_v2::o2_stopProtracker(OpGobParams &params) {
+	_vm->_sound->protrackerStop();
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {

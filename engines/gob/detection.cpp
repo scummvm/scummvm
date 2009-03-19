@@ -50,6 +50,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob2cd", "Gobliins 2 CD"},
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
+	{"littlered", "Little Red Riding Hood"},
 	{"ajworld", "A.J's World of Discovery"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
@@ -997,6 +998,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS
 		},
 		kGameTypeBargon,
+		kFeaturesNone,
+		"intro"
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+			UNK_LANG,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
 		kFeaturesNone,
 		"intro"
 	},

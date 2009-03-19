@@ -401,6 +401,8 @@ protected:
 	void o2_startInfogrames(OpGobParams &params);
 	void o2_stopInfogrames(OpGobParams &params);
 	void o2_handleGoblins(OpGobParams &params);
+	void o2_playProtracker(OpGobParams &params);
+	void o2_stopProtracker(OpGobParams &params);
 };
 
 class Inter_Bargon : public Inter_v2 {
