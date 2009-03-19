@@ -644,10 +644,10 @@ static int vertex_compare(const void *a, const void *b) {
 	return -1;
 }
 
-static void clockwise(Vertex *v, Common::Point *p1, Common::Point *p2) {
+static void clockwise(const Vertex *v, Common::Point *p1, Common::Point *p2) {
 	// Orders the points of an edge clockwise around vertex_cur. If all three
 	// points are collinear the original order is used
-	// Parameters: (Vertex *) v: The first vertex of the edge
+	// Parameters: (const Vertex *) v: The first vertex of the edge
 	// Returns   : (void)
 	//             (Common::Point) *p1: The first point in clockwise order
 	//             (Common::Point) *p2: The second point in clockwise order
@@ -662,45 +662,33 @@ static void clockwise(Vertex *v, Common::Point *p1, Common::Point *p2) {
 	}
 }
 
-static int edge_compare(const void *a, const void *b) {
+struct EdgeIsCloser: public Common::BinaryFunction<const Vertex *, const Vertex *, bool> {
 	// Compares two edges that are intersected by the sweeping line by distance
 	// from vertex_cur
-	// Parameters: (const void *) a, b: The first vertices of the edges
-	// Returns   : (int) -1 if a is closer than b, 1 if b is closer than a, and
-	//                   0 if a and b are equal
-	Common::Point v1, v2, w1, w2;
+	// Parameters: (const Vertex *const &) a, b: The first vertices of the edges
+	// Returns   : (bool) true if a is closer to vertex_cur than b, false otherwise
+	bool operator()(const Vertex *const &a, const Vertex *const &b) const {
+		Common::Point v1, v2, w1, w2;
 
-	// We can assume that the sweeping line intersects both edges and
-	// that the edges do not properly intersect
+		// Check for comparison of the same edge
+		if (a == b)
+			return false;
 
-	if (a == b)
-		return 0;
+		// We can assume that the sweeping line intersects both edges and
+		// that the edges do not properly intersect
 
-	// Order vertices clockwise so we know vertex_cur is to the right of
-	// directed edges (v1, v2) and (w1, w2)
-	clockwise((Vertex *)a, &v1, &v2);
-	clockwise((Vertex *)b, &w1, &w2);
+		// Order vertices clockwise so we know vertex_cur is to the right of
+		// directed edges (v1, v2) and (w1, w2)
+		clockwise(a, &v1, &v2);
+		clockwise(b, &w1, &w2);
 
-	// As the edges do not properly intersect one edge must lie entirely
-	// to one side of another. Note that the special case where edges are
-	// collinear does not need to be handled as those edges will never be
-	// in the tree simultaneously
+		// At this point we know that one edge must lie entirely to one side
+		// of the other, as the edges are not collinear and cannot intersect
+		// other than possibly sharing a vertex.
 
-	// b is left of a
-	if (left_on(v1, v2, w1) && left_on(v1, v2, w2))
-		return -1;
-
-	// b is right of a
-	if (left_on(v2, v1, w1) && left_on(v2, v1, w2))
-		return 1;
-
-	// a is left of b
-	if (left_on(w1, w2, v1) && left_on(w1, w2, v2))
-		return 1;
-
-	// a is right of b
-	return -1;
-}
+		return ((left_on(v1, v2, w1) && left_on(v1, v2, w2)) || (left_on(w2, w1, v1) && left_on(w2, w1, v2)));
+	}
+};
 
 static int inside(Common::Point p, Vertex *vertex) {
 	// Determines whether or not a line from a point to a vertex intersects the
@@ -731,19 +719,20 @@ static int inside(Common::Point p, Vertex *vertex) {
 	return 0;
 }
 
-static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, aatree_t *tree) {
+typedef AATree<const Vertex *, EdgeIsCloser> EdgeAATree;
+
+static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, EdgeAATree &tree) {
 	// Determines whether or not a vertex is visible from vertex_cur
 	// Parameters: (Vertex *) vertex: The vertex
 	//             (Vertex *) vertex_prev: The previous vertex in the sort
 	//                                       order, or NULL
 	//             (int) visible: 1 if vertex_prev is visible, 0 otherwise
-	//             (aatree_t *) tree: The tree of edges intersected by the
-	//                                sweeping line
+	//             (EdgeAATree &) tree: The tree of edges intersected by the
+	//                                  sweeping line
 	// Returns   : (int) 1 if vertex is visible from vertex_cur, 0 otherwise
-	Vertex *edge;
+	const Vertex *const *edge;
 	Common::Point p = vertex_cur->v;
 	Common::Point w = vertex->v;
-	aatree_t *tree_n = tree;
 
 	// Check if sweeping line intersects the interior of the polygon
 	// locally at vertex
@@ -755,17 +744,13 @@ static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, aatree_t *t
 	if (vertex_prev && !visible && between(p, w, vertex_prev->v))
 		return 0;
 
-	// Find leftmost node of tree */
-	while ((tree_n = aatree_walk(tree_n, AATREE_WALK_LEFT)))
-		tree = tree_n;
-
-	edge = (Vertex*)aatree_get_data(tree);
+	edge = tree.findSmallest();
 
 	if (edge) {
 		Common::Point p1, p2;
 
 		// Check for intersection with sweeping line before vertex
-		clockwise(edge, &p1, &p2);
+		clockwise(*edge, &p1, &p2);
 		if (left(p2, p1, p) && left(p1, p2, w))
 			return 0;
 	}
@@ -778,7 +763,7 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	// updates the visibility matrix
 	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Vertex *) vert: The vertex
-	aatree_t *tree = aatree_new();
+	EdgeAATree tree;
 	Common::Point p = vert->v;
 	Polygon *polygon;
 	int i;
@@ -804,7 +789,7 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 			clockwise(vertex, &high, &low);
 
 			if ((high.y < p.y) && (low.y >= p.y) && (low != p))
-				aatree_insert(vertex, &tree, edge_compare);
+				tree.insert(vertex);
 		}
 	}
 
@@ -824,13 +809,13 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 		// Delete anti-clockwise edges from tree
 		v1 = CLIST_PREV(vert_sorted[i]);
 		if (left(p, vert_sorted[i]->v, v1->v)) {
-			if (aatree_delete(v1, &tree, edge_compare))
+			if (!tree.remove(v1))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
 		}
 
 		v1 = CLIST_NEXT(vert_sorted[i]);
 		if (left(p, vert_sorted[i]->v, v1->v)) {
-			if (aatree_delete(vert_sorted[i], &tree, edge_compare))
+			if (!tree.remove(vert_sorted[i]))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
 		}
 
@@ -840,19 +825,16 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 			for (j = i; (j >= 1) && collinear(p, vert_sorted[i]->v, vert_sorted[j]->v); j--) {
 				v1 = CLIST_PREV(vert_sorted[j]);
 				if (left(vert_sorted[j]->v, p, v1->v))
-					aatree_insert(v1, &tree, edge_compare);
+					tree.insert(v1);
 
 				v1 = CLIST_NEXT(vert_sorted[j]);
 				if (left(vert_sorted[j]->v, p, v1->v))
-					aatree_insert(vert_sorted[j], &tree, edge_compare);
+					tree.insert(vert_sorted[j]);
 			}
 		}
 	}
 
 	free(vert_sorted);
-
-	// Free tree
-	aatree_free(tree);
 }
 
 static float distance(FloatPoint a, FloatPoint b) {

@@ -26,61 +26,172 @@
 #ifndef SCI_ENGINE_AATREE_H
 #define SCI_ENGINE_AATREE_H
 
+#include "common/func.h"
+
 namespace Sci {
 
-/* Andersson tree implementation. Stores data pointers in a balanced binary
-** tree. A user-supplied comparison function defines the ordering. For the
-** semantics of this function see qsort(3)
-*/
+// Andersson tree implementation.
 
-typedef struct aatree aatree_t;
+template<typename Key>
+struct AATreeNode {
+	AATreeNode() : _left(this), _right(this), _level(0) { }
+	AATreeNode(const Key &key, AATreeNode *left, AATreeNode *right, int level) : _key(key), _left(left), _right(right), _level(level) { }
 
-// Left child
-#define AATREE_WALK_LEFT 0
-// Right child
-#define AATREE_WALK_RIGHT 1
+	Key _key;
+	AATreeNode *_left, *_right;
+	int _level;
+};
 
-aatree_t *aatree_new();
-/* Allocates a new aatree
-** Parameters: (void)
-** Returns   : (aatree_t *) A newly allocated aatree
-*/
+template<typename Key, class LessFunc = Common::Less<Key> >
+class AATree {
+public:
+	AATree() {
+		_bottom = new AATreeNode<Key>;
+		_root = _bottom;
+	}
 
-void aatree_free(aatree_t *t);
-/* Deallocates an aatree
-** Parameters: (aatree_t *) t: The aatree
-** Returns   : (void)
-*/
+	AATree(const AATree<Key, LessFunc> &tree) {
+		_bottom = new AATreeNode<Key>;
+		_root = copyTree(tree._root, tree._bottom);
+	}
 
-int aatree_delete(void *x, aatree_t **t, int (*compar)(const void *, const void *));
-/* Deletes a data element from an aatree
-** Parameters: (void *) x: The data element to delete
-**             (aatree_t **) t: The aatree
-**             compar: The comparison function
-** Returns   : (int) 0 on success, -1 if x wasn't found in t
-*/
+	const AATree<Key, LessFunc> &operator=(const AATree<Key, LessFunc> &tree) {
+		if (this != &tree) {
+			freeNode(_root);
+			_root = copyTree(tree._root, tree._bottom);
+		}
 
-int aatree_insert(void *x, aatree_t **t, int (*compar)(const void *, const void *));
-/* Inserts a data element into an aatree
-** Parameters: (void *) x: The data element to insert
-**             (aatree_t **) t: The aatree
-**             compar: The comparison function
-** Returns   : (int) 0 on success, -1 if x already exists in t
-*/
+		return *this;
+	}
 
-aatree_t *aatree_walk(aatree_t *t, int direction);
-/* Walks to either the left or right child of a node
-** Parameters: (aatree_t *) t: The node
-**             (int) direction: AATREE_WALK_LEFT or AATREE_WALK_RIGHT
-** Returns   : (aatree_t *) The requested child of t or NULL if it doesn't
-**                          exist
-*/
+	~AATree() {
+		freeNode(_root);
+		delete _bottom;
+	}
 
-void *aatree_get_data(aatree_t *t);
-/* Returns the data element of a node
-** Parameters: (aatree_t *) t: The node
-** Returns   : (void *) The data element
-*/
+	void insert(const Key &key) {
+		insertNode(key, _root);
+	}
+
+	bool remove(const Key &key) {
+		return removeNode(key, _root);
+	}
+
+	// Returns a pointer to the smallest Key or NULL if the tree is empty.
+	const Key *findSmallest() {
+		AATreeNode<Key> *node = _root;
+
+		if (node == _bottom)
+			return NULL;
+
+		while (node->_left != _bottom)
+			node = node->_left;
+
+		return &node->_key;
+	}
+
+private:
+	AATreeNode<Key> *_root;
+	AATreeNode<Key> *_bottom;
+	LessFunc _less;
+
+private:
+	void freeNode(AATreeNode<Key> *node) {
+		if (node == _bottom)
+			return;
+
+		freeNode(node->_left);
+		freeNode(node->_right);
+
+		delete node;
+	}
+
+	void skew(AATreeNode<Key> *&node) {
+		if (node->_left->_level == node->_level) {
+			// Rotate right
+			AATreeNode<Key> *temp = node;
+			node = node->_left;
+			temp->_left = node->_right;
+			node->_right = temp;
+		}
+	}
+
+	void split(AATreeNode<Key> *&node) {
+		if (node->_right->_right->_level == node->_level) {
+			// Rotate left
+			AATreeNode<Key> *temp = node;
+			node = node->_right;
+			temp->_right = node->_left;
+			node->_left = temp;
+			node->_level++;
+		}
+	}
+
+	bool removeNode(const Key &key, AATreeNode<Key> *&node) {
+		bool ok = false;
+		static AATreeNode<Key> *last, *deleted = _bottom;
+
+		if (node != _bottom) {
+			// Search down the tree and set pointers last and deleted
+			last = node;
+
+			if (_less(key, node->_key))
+				ok = removeNode(key, node->_left);
+			else {
+				deleted = node;
+				ok = removeNode(key, node->_right);
+			}
+
+			if ((node == last) && (deleted != _bottom) && !_less(key, deleted->_key) && !_less(deleted->_key, key)) {
+				// At the bottom of the tree we remove the element (if it is present)
+				deleted->_key = node->_key;
+				deleted = _bottom;
+				node = node->_right;
+				delete last;
+				return true;
+			}
+
+			if ((node->_left->_level < node->_level - 1) || (node->_right->_level < node->_level - 1)) {
+				// On the way back, we rebalance
+				node->_level--;
+				if (node->_right->_level > node->_level)
+					node->_right->_level = node->_level;
+
+				skew(node);
+				skew(node->_right);
+				skew(node->_right->_right);
+				split(node);
+				split(node->_right);
+			}
+		}
+
+		return ok;
+	}
+
+	void insertNode(const Key &key, AATreeNode<Key> *&node) {
+		if (node == _bottom) {
+			node = new AATreeNode<Key>(key, _bottom, _bottom, 1);
+
+			assert(node);
+			return;
+		}
+
+		if (_less(key, node->_key))
+			insertNode(key, node->_left);
+		else if (_less(node->_key, key))
+			insertNode(key, node->_right);
+
+		skew(node);
+		split(node);
+	}
+
+	AATreeNode<Key> *copyTree(AATreeNode<Key> *node, const AATreeNode<Key> *bottom) {
+		if (node == bottom)
+			return _bottom;
+
+		return new AATreeNode<Key>(node->_key, copyTree(node->_left, bottom), copyTree(node->_right, bottom), node->_level);
+	}
+};
 
 } // End of namespace Sci
 
