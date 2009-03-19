@@ -220,7 +220,7 @@ Subroutine *AGOSEngine::getSubroutineByID(uint subroutineId) {
 }
 
 void AGOSEngine::alignTableMem() {
-	if ((unsigned long)_tablesHeapPtr & 3) {
+	if (!IS_ALIGNED(_tablesHeapPtr, 4)) {
 		_tablesHeapPtr += 2;
 		_tablesHeapCurPos += 2;
 	}
