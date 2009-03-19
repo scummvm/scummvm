@@ -247,7 +247,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 	char fileName[12];
 	snprintf(fileName, 12, "sword1.%03d", slot);
 	char name[40];
-	uint32 playTime;
+	uint32 playTime = 0;
 	byte versionSave;
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);

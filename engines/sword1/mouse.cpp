@@ -205,8 +205,8 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
 		uint16 ptrSizeX = _resMan->getLEUint16(ptr->sizeX);
 		uint16 ptrSizeY = _resMan->getLEUint16(ptr->sizeY);
-		uint16 luggSizeX;
-		uint16 luggSizeY;
+		uint16 luggSizeX = 0;
+		uint16 luggSizeY = 0;
 		uint16 resSizeX;
 		uint16 resSizeY;
 
