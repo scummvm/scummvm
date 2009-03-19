@@ -411,7 +411,11 @@ static int _gfxwop_box_superarea_of(gfxw_widget_t *widget, gfxw_widget_t *other)
 	if (box->shade_type != GFX_BOX_SHADE_FLAT && box->color2.alpha)
 		return 0;
 
-	if (!toCommonRect(box->bounds).contains(toCommonRect(other->bounds)))
+	// Note: the check for box->bounds and other->bounds is NOT the same as contains()
+	// in Common::Rect (this one includes equality too)
+	if (!(box->bounds.x <= other->bounds.x && box->bounds.y <= other->bounds.y &&
+		  box->bounds.x + box->bounds.width >= other->bounds.x + other->bounds.width && 
+		  box->bounds.y + box->bounds.height >= other->bounds.y + other->bounds.height))
 		return 0;
 
 	return 1;
@@ -491,12 +495,6 @@ static int _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 
 	oprim = (gfxw_primitive_t *) other;
 
-	// FIXME: I'm not even sure why this happens...
-	if (wprim->bounds.height < 0 || oprim->bounds.height < 0) {
-		warning("_gfxwop_primitive_equals: height < 0");
-		return 0;
-	}
-
 	if (!toCommonRect(wprim->bounds).equals(toCommonRect(oprim->bounds)))
 		return 0;
 
@@ -553,12 +551,7 @@ static int _gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
 	linepos.width--;
 	linepos.height--;
 
-	if (widget->type == GFXW_INVERSE_LINE) {
-		linepos.x += linepos.width;
-		linepos.width = -linepos.width;
-	} else {
-		DRAW_ASSERT(widget, GFXW_LINE);
-	}
+	DRAW_ASSERT(widget, GFXW_LINE);
 
 	_split_rect(_move_rect(linepos, pos), &p1, &p2);
 	GFX_ASSERT(gfxop_draw_line(line->visual->gfx_state, p1, p2, line->color, line->line_mode, line->line_style));
@@ -567,10 +560,6 @@ static int _gfxwop_line_draw(gfxw_widget_t *widget, Common::Point pos) {
 
 static int _gfxwop_line_print(gfxw_widget_t *widget, int indentation) {
 	_gfxw_print_widget(widget, indentation);
-	if (widget->type == GFXW_INVERSE_LINE)
-		sciprintf("INVERSE-LINE");
-	else
-		sciprintf("LINE");
 
 	return 0;
 }
@@ -582,28 +571,20 @@ void _gfxw_set_ops_LINE(gfxw_widget_t *prim) {
 
 gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim;
+
+	// SCI can draw lines inversely. We convert inverse lines to normal ones here, because the resulting rectangles are invalid
+	if (end.x < start.x || end.y < start.y) {
+		SWAP(start.x, end.x);
+		SWAP(start.y, end.y);
+	}
+
 	// Encode into internal representation
 	rect_t line = gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y);
-
-	byte inverse = 0;
-
-	if (line.width < 0) {
-		line.x += line.width;
-		line.y += line.height;
-		line.width = -line.width;
-		line.height = -line.height;
-	}
-
-	if (line.height < 0) {
-		inverse = 1;
-		line.x += line.width;
-		line.width = -line.width;
-	}
 
 	line.width++;
 	line.height++;
 
-	prim = _gfxw_new_primitive(line, color, line_mode, line_style, inverse ? GFXW_INVERSE_LINE : GFXW_LINE);
+	prim = _gfxw_new_primitive(line, color, line_mode, line_style, GFXW_LINE);
 
 	_gfxw_set_ops_LINE(GFXW(prim));
 
@@ -1976,15 +1957,14 @@ int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, gfxw_widget_t *widge
 	if (!GFXW_IS_CONTAINER(widget) && widget->parent) {
 		bounds.x += widget->parent->bounds.x;
 		bounds.y += widget->parent->bounds.y;
-		// FIXME: I'm not even sure why this happens...
-		if (bounds.height < 0) {
-			warning("gfxw_widget_matches_snapshot: height < 0");
-			return 0;
-		}
 	}
 
+	// Note: the check for snapshot->area and bounds is NOT the same as contains() in Common::Rect
+	// (this one includes equality too)
 	return ((widget->serial >= free_above_eq || widget->serial < free_below) && 
-		toCommonRect(snapshot->area).contains(toCommonRect(bounds)));
+			(snapshot->area.x <= bounds.x && snapshot->area.y <= bounds.y &&
+			 snapshot->area.x + snapshot->area.width >= bounds.x + bounds.width && 
+			 snapshot->area.y + snapshot->area.height >= bounds.y + bounds.height));
 }
 
 #define MAGIC_FREE_NUMBER -42
@@ -2118,9 +2098,8 @@ static gfxw_widget_t *gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget
 		bounds = widget->bounds;
 		origin.x = seeker->parent->zone.x;
 		origin.y = seeker->parent->zone.y;
-		Common::Rect tmp = toCommonRect(bounds);
-		tmp.translate(origin.x, origin.y);
-		bounds = toSCIRect(tmp);
+		bounds.x += origin.x;
+		bounds.y += origin.y;
 
 		if (gfx_rects_overlap(bounds, seeker->bounds))
 			return seeker;
@@ -2148,9 +2127,8 @@ void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfx
 		gfxw_remove_widget_from_container(GFXWC(chrono->parent), GFXW(chrono));
 		gfxw_annihilate(GFXW(chrono));
 
-		Common::Rect tmp = toCommonRect(tw->zone);
-		tmp.translate(origin.x, origin.y);
-		tw->zone = toSCIRect(tmp);
+		tw->zone.x += origin.x;
+		tw->zone.y += origin.y;
 
 		target->add(GFXWC(target), GFXW(tw));
 	}

@@ -335,8 +335,8 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 
 	case GFXOP_DIRTY_FRAMES_ONE:
 		if (base) {
-			Common::Rect tmp = toCommonRect(box);
-			tmp.extend(toCommonRect(base->rect));
+			Common::Rect tmp = toCommonRect(base->rect);
+			tmp.extend(toCommonRect(box));
 			base->rect = toSCIRect(tmp);
 		} else {
 			base = _rect_create(box);
@@ -349,8 +349,8 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 		while (*rectp) {
 			if (gfx_rects_overlap((*rectp)->rect, box)) {
 				gfx_dirty_rect_t *next = (*rectp)->next;
-				Common::Rect tmp = toCommonRect((*rectp)->rect);
-				tmp.extend(toCommonRect(box));
+				Common::Rect tmp = toCommonRect(box);
+				tmp.extend(toCommonRect((*rectp)->rect));
 				box = toSCIRect(tmp);
 
 				free(*rectp);

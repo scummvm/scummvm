@@ -55,7 +55,6 @@ enum gfxw_widget_type_t {
 	GFXW_RECT,
 	GFXW_LINE, /* For lines, the bounding rectangle's xl, yl determine the line's expansion:
 		   ** (x2, y2) = (x+xl, y+yl) */
-	GFXW_INVERSE_LINE,
 	GFXW_VIEW,
 	GFXW_STATIC_VIEW,
 	GFXW_DYN_VIEW,
@@ -119,7 +118,7 @@ struct gfxw_box_t : public gfxw_widget_t {
 };
 
 
-#define GFXW_IS_PRIMITIVE(widget) ((widget)->type == GFXW_RECT || (widget)->type == GFXW_LINE || (widget->type == GFXW_INVERSE_LINE))
+#define GFXW_IS_PRIMITIVE(widget) ((widget)->type == GFXW_RECT || (widget)->type == GFXW_LINE)
 struct gfxw_primitive_t : public gfxw_widget_t {
 	gfx_color_t color;
 	gfx_line_mode_t line_mode;
