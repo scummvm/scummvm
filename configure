@@ -785,9 +785,9 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
 		;;
-        --with-staticlib-prefix=*)
-                _staticlibpath=`echo $ac_option | cut -d '=' -f 2`
-                ;;
+	--with-staticlib-prefix=*)
+		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
