@@ -166,7 +166,7 @@ cc_check() {
 	return "$TMP"
 }
 
-echocheck () {
+echocheck() {
 	echo_n "Checking for $@... "
 }
 
@@ -215,37 +215,10 @@ add_to_config_mk_if_no() {
 }
 
 #
-# Check whether the given command is a working C++ compiler
-#
-test_compiler ()
-{
-cat <<EOF >tmp_cxx_compiler.cpp
-class Foo {
-	int a;
-};
-int main(int argc, char **argv)
-{
-	Foo *a = new Foo();
-	delete a;
-	return 0;
-}
-EOF
-
-if test -n "$_host"; then
-	# In cross-compiling mode, we cannot run the result
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
-else
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
-fi
-}
-
-#
 # Determine sdl-config
 #
 # TODO: small bit of code to test sdl useability
-find_sdlconfig()
-{
-
+find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
@@ -280,18 +253,16 @@ find_sdlconfig()
 #
 # Function to provide echo -n for bourne shells that don't have it
 #
-echo_n()
-{
+echo_n() {
 	printf "$@"
 }
 
 #
 # Determine a data type with the given length
 #
-find_type_with_size ()
-{
-for datatype in int short char long unknown; do
-cat <<EOF >tmp_find_type_with_size.cpp
+find_type_with_size() {
+	for datatype in int short char long unknown; do
+	cat <<EOF >tmp_find_type_with_size.cpp
 typedef $datatype ac__type_sizeof_;
 int main() {
 	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
@@ -299,60 +270,18 @@ int main() {
 	return 0;
 }
 EOF
-if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
-	break
-else
-	if test "$datatype" = "unknown"; then
-		echo "couldn't find data type with $1 bytes"
-		exit 1
-	fi
-	continue
-fi
-done
-rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
-echo $datatype
-}
-
-CheckNASM()
-{
-	echocheck "nasm"
-	if test "$_nasm" = no ; then
-		echo "disabled"
-		return;
-	fi
-
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-
-	for path_dir in $_nasmpath; do
-		if test -x "$path_dir/nasm$EXEEXT" ; then
-			NASM="$path_dir/nasm$EXEEXT"
-			echo $NASM
-			break
-		fi
-	done
-
-	IFS="$ac_save_ifs"
-
-	if test x$NASM = x -o x$NASM = x'"$NASM"'; then
-		echo "not found"
-		_nasm=no
+	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+		break
 	else
-		case $_host_os in
-			os2-emx*)
-				NASMFLAGS="-f aout"
-			;;
-			mingw* | cygwin*)
-				NASMFLAGS="-f win32"
-			;;
-			darwin*)
-				NASMFLAGS="-f macho"
-			;;
-			*)
-				NASMFLAGS="-f elf"
-			;;
-		esac
-		_nasm=yes
+		if test "$datatype" = "unknown"; then
+			echo "couldn't find data type with $1 bytes"
+			exit 1
+		fi
+		continue
 	fi
+	done
+	rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
+	echo $datatype
 }
 
 # Get the name of the engine
@@ -879,8 +808,8 @@ gamecube)
 		guessed_host=`$_srcdir/config.sub $_host`
 	fi
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
-	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 	_host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 	;;
 esac
 
@@ -940,12 +869,32 @@ esac
 # Determine the C++ compiler
 #
 echo_n "Looking for C++ compiler... "
+
+# Check whether the given command is a working C++ compiler
+test_compiler() {
+	cat <<EOF >tmp_cxx_compiler.cpp
+	class Foo { int a; };
+	int main(int argc, char **argv) {
+		Foo *a = new Foo(); delete a; return 0;
+	}
+EOF
+
+	if test -n "$_host"; then
+		# In cross-compiling mode, we cannot run the result
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	else
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	fi
+}
+
+# Prepare a list of candidates for the C++ compiler
 if test -n "$_host"; then
 	compilers="$CXX $_host_alias-g++ $_host_alias-c++ $_host-g++ $_host-c++"
 else
 	compilers="$CXX g++ c++"
 fi
 
+# Iterate over all candidates, pick the first working one
 CXX=
 for compiler in $compilers; do
 	if test_compiler $compiler; then
@@ -1029,12 +978,6 @@ rm -f tmp_endianness_check.o tmp_endianness_check.cpp
 
 #
 # Determine data type sizes
-# TODO: proper error checking
-# TODO: Actually, we should check individually for both signed & unsigned
-# data types - there are systems on which the size of an unsigned int
-# differs from that of a signed int!
-# However, so far we haven't encountered one of those, so we can live with
-# the limited check for now.
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
@@ -1087,7 +1030,7 @@ case $_host_os in
 		type_1_byte='char'
 		type_2_byte='short'
 		type_4_byte='long'
-		;;	
+		;;
 	haiku*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
@@ -1096,7 +1039,7 @@ case $_host_os in
 		type_1_byte='char'
 		type_2_byte='short'
 		type_4_byte='long'
-		;;	
+		;;
 	solaris*)
 		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
@@ -1348,8 +1291,7 @@ else
 			cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
 	signal(SIGBUS, exit);
 	signal(SIGABRT, exit);
@@ -1592,7 +1534,7 @@ if test "$_mad" = auto ; then
 	_mad=no
 	cat > $TMPC << EOF
 #include <mad.h>
-int main(void) {return 0; }
+int main(void) { return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
@@ -1721,14 +1663,51 @@ rm -f $TMPC $TMPO$EXEEXT
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
-	CheckNASM
+	echocheck "nasm"
+	if test "$_nasm" = no ; then
+		echo "disabled"
+		return;
+	fi
+
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+
+	for path_dir in $_nasmpath; do
+		if test -x "$path_dir/nasm$EXEEXT" ; then
+			NASM="$path_dir/nasm$EXEEXT"
+			echo $NASM
+			break
+		fi
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+		echo "not found"
+		_nasm=no
+	else
+		case $_host_os in
+			os2-emx*)
+				NASMFLAGS="-f aout"
+			;;
+			mingw* | cygwin*)
+				NASMFLAGS="-f win32"
+			;;
+			darwin*)
+				NASMFLAGS="-f macho"
+			;;
+			*)
+				NASMFLAGS="-f elf"
+			;;
+		esac
+		_nasm=yes
+	fi
 fi
 
 add_to_config_h_if_yes $_nasm '#define USE_NASM'
 add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
 
 #
-# Enable vkeybd / keymapper 
+# Enable vkeybd / keymapper
 #
 if test "$_vkeybd" = yes ; then
 	DEFINES="$DEFINES -DENABLE_VKEYBD"
