@@ -28,6 +28,15 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+
+/**
+ * Check whether a given pointer is aligned correctly.
+ * Note that 'alignment' must be a power of two!
+ */
+#define IS_ALIGNED(value, alignment) \
+          ((((size_t)value) & ((alignment) - 1)) == 0)
+
+
 #ifdef MIN
 #undef MIN
 #endif
@@ -47,6 +56,9 @@ template<typename T> inline T CLIP (T v, T amin, T amax)
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
+/**
+ * Macro which determines the number of entries in a fixed size array.
+ */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 

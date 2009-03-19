@@ -793,7 +793,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	assert(h > 0 && y + h <= _videoMode.screenHeight);
 	assert(w > 0 && x + w <= _videoMode.screenWidth);
 
-	if (((long)src & 3) == 0 && pitch == _videoMode.screenWidth && x == 0 && y == 0 &&
+	if (IS_ALIGNED(src, 4) && pitch == _videoMode.screenWidth && x == 0 && y == 0 &&
 			w == _videoMode.screenWidth && h == _videoMode.screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
 		 * It tries to determine what areas were actually changed,
@@ -997,7 +997,7 @@ void OSystem_SDL::makeChecksums(const byte *buf) {
 
 void OSystem_SDL::addDirtyRgnAuto(const byte *buf) {
 	assert(buf);
-	assert(((long)buf & 3) == 0);
+	assert(IS_ALIGNED(buf, 4));
 
 	/* generate a table of the checksums */
 	makeChecksums(buf);
