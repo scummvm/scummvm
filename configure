@@ -973,27 +973,6 @@ if test "$cxx_verc_fail" = yes ; then
 fi
 
 #
-# Do CXXFLAGS now we know the compiler version
-#
-if test "$_cxx_major" -ge "3" ; then
-	case $_host_os in
-	mingw* | cygwin* | dreamcast)
-		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-		;;
-	*)
-		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-		;;
-	esac
-	add_line_to_config_mk 'HAVE_GCC3 = 1'
-fi;
-
-if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
-	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
-else
-	CXXFLAGS="$CXXFLAGS -Wconversion"
-fi;
-
-#
 # Check for endianness
 #
 echo_n "Checking endianness... "
@@ -1752,6 +1731,34 @@ case $_backend in
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
 		;;
+esac
+
+#
+# Do CXXFLAGS now we know the compiler version
+#
+if test "$_cxx_major" -ge "3" ; then
+	case $_host_os in
+	mingw* | cygwin* | dreamcast)
+		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+		;;
+	*)
+		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+		;;
+	esac
+	add_line_to_config_mk 'HAVE_GCC3 = 1'
+fi;
+
+if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
+else
+	CXXFLAGS="$CXXFLAGS -Wconversion"
+fi;
+
+# Some platforms use certain GNU extensions in header files
+case $_host_os in
+*)
+	CXXFLAGS="$CXXFLAGS -pedantic"
+	;;
 esac
 
 #
