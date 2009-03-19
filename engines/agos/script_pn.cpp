@@ -970,7 +970,7 @@ void AGOSEngine_PN::funcentry(int *store, int procn) {
 }
 
 int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
-	int val, code, q = _dataBase[57];
+	int val = 0, code = 0, q = _dataBase[57];
 	uint8 *vocbase = _dataBase + getlong(15);
 	while (*vocbase != 255) {
 		if (*vocbase < 0x80) {
