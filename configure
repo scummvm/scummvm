@@ -1473,7 +1473,7 @@ if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
 #include <tremor/ivorbiscodec.h>
-int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+int main(void) { vorbis_info_init(0); return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
 	_tremor=yes
