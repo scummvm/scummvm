@@ -166,7 +166,11 @@ $(VERSION_FILES): %: %.in
 ######################################################################
 
 ifeq ($(VER_EXTRA),svn)
+ifeq ($(origin VER_SVNREV), undefined)
 DISTVERSION = $(shell date '+%Y-%m-%d')
+else
+DISTVERSION = svn$(VER_SVNREV)
+endif
 else
 DISTVERSION = $(VERSION)
 endif
@@ -179,6 +183,12 @@ $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
+ifneq ($(origin VER_SVNREV), undefined)
+	@# Use the current SVN revision as a default for the snapshot sources
+	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
+		"s/^#define SCUMMVM_SVN_REVISION$$/#define SCUMMVM_SVN_REVISION \"$(VER_SVNREV)\"/g" \
+		> $(VERFILE)
+endif
 
 $(DISTDIR)/$(DISTNAME).tar.gz: $(VERFILE)
 	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
