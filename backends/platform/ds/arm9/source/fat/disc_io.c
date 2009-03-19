@@ -33,7 +33,6 @@
 #endif
 
 #include "disc_io.h"
-#include "scummconsole.h"
 
 
 // Include known io-interfaces:

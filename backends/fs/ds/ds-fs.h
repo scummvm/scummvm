@@ -27,7 +27,6 @@
 #include "common/fs.h"
 #include "zipreader.h"
 #include "ramsave.h"
-#include "scummconsole.h"
 #include "fat/gba_nds_fat.h"
 #include "backends/fs/abstract-fs.h"
 
@@ -167,6 +166,41 @@ struct fileHandle {
 
 	DSSaveFile* sramFile;
 };
+
+
+class DSFileStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+protected:
+	static const int WRITE_BUFFER_SIZE = 512;
+
+	/** File handle to the actual file. */
+	void 	*_handle;
+
+	char	_writeBuffer[WRITE_BUFFER_SIZE];
+	int	_writeBufferPos;
+
+public:
+	/**
+	 * Given a path, invokes fopen on that path and wrap the result in a
+	 * StdioStream instance.
+	 */
+	static DSFileStream *makeFromPath(const Common::String &path, bool writeMode);
+
+	DSFileStream(void *handle);
+	virtual ~DSFileStream();
+
+	bool err() const;
+	void clearErr();
+	bool eos() const;
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual bool flush();
+
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	bool seek(int32 offs, int whence = SEEK_SET);
+	uint32 read(void *dataPtr, uint32 dataSize);
+};
+
 
 #undef stderr
 #undef stdout

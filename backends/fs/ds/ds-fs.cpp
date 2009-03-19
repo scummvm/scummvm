@@ -197,11 +197,11 @@ AbstractFSNode* DSFileSystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *DSFileSystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return DSFileStream::makeFromPath(getPath().c_str(), false);
 }
 
 Common::WriteStream *DSFileSystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return DSFileStream::makeFromPath(getPath().c_str(), true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -211,9 +211,8 @@ Common::WriteStream *DSFileSystemNode::createWriteStream() {
 GBAMPFileSystemNode::GBAMPFileSystemNode() {
 	_displayName = "mp:/";
 	_path = "mp:/";
-	_isValid = true;
+	_isValid = false;
 	_isDirectory = true;
-	_path = "mp:/";
 }
 
 GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
@@ -283,9 +282,9 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const GBAMPFileSystemNode* node) {
 
 AbstractFSNode *GBAMPFileSystemNode::getChild(const Common::String& n) const {
 	if (_path.lastChar() == '\\') {
-		return new DSFileSystemNode(_path + n);
+		return new GBAMPFileSystemNode(_path + n);
 	} else {
-		return new DSFileSystemNode(_path + "\\" + n);
+		return new GBAMPFileSystemNode(_path + "\\" + n);
 	}
 
 	return NULL;
@@ -376,15 +375,112 @@ Common::SeekableReadStream *GBAMPFileSystemNode::createReadStream() {
 //	consolePrintf("Opening: %s\n", getPath().c_str());
 
 	if (!strncmp(getPath().c_str(), "mp:/", 4)) {
-		return StdioStream::makeFromPath(getPath().c_str() + 3, false);
+		return DSFileStream::makeFromPath(getPath().c_str() + 3, false);
 	} else {
-		return StdioStream::makeFromPath(getPath().c_str(), false);
+		return DSFileStream::makeFromPath(getPath().c_str(), false);
 	}
 }
 
 Common::WriteStream *GBAMPFileSystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return DSFileStream::makeFromPath(getPath().c_str(), true);
 }
+
+
+
+
+DSFileStream::DSFileStream(void *handle) : _handle(handle) {
+	assert(handle);
+	_writeBufferPos = 0;
+}
+
+DSFileStream::~DSFileStream() {
+	if (_writeBufferPos > 0) {
+		flush();
+	}
+	std_fclose((FILE *)_handle);
+}
+
+bool DSFileStream::err() const {
+	return std_ferror((FILE *)_handle) != 0;
+}
+
+void DSFileStream::clearErr() {
+	std_clearerr((FILE *)_handle);
+}
+
+bool DSFileStream::eos() const {
+	return std_feof((FILE *)_handle) != 0;
+}
+
+int32 DSFileStream::pos() const {
+	if (_writeBufferPos > 0) {
+		// Discard constness.  Bad, but I can't see another way.
+		((DSFileStream *) (this))->flush();
+	}
+	return std_ftell((FILE *)_handle);
+}
+
+int32 DSFileStream::size() const {
+	if (_writeBufferPos > 0) {
+		// Discard constness.  Bad, but I can't see another way.
+		((DSFileStream *) (this))->flush();
+	}
+	int32 oldPos = std_ftell((FILE *)_handle);
+	std_fseek((FILE *)_handle, 0, SEEK_END);
+	int32 length = std_ftell((FILE *)_handle);
+	std_fseek((FILE *)_handle, oldPos, SEEK_SET);
+
+	return length;
+}
+
+bool DSFileStream::seek(int32 offs, int whence) {
+	if (_writeBufferPos > 0) {
+		flush();
+	}
+	return std_fseek((FILE *)_handle, offs, whence) == 0;
+}
+
+uint32 DSFileStream::read(void *ptr, uint32 len) {
+	if (_writeBufferPos > 0) {
+		flush();
+	}
+	return std_fread((byte *)ptr, 1, len, (FILE *)_handle);
+}
+
+uint32 DSFileStream::write(const void *ptr, uint32 len) {
+	if (_writeBufferPos + len < WRITE_BUFFER_SIZE) {
+		memcpy(_writeBuffer + _writeBufferPos, ptr, len);
+		_writeBufferPos += len;
+	}
+	else
+	{
+		if (_writeBufferPos > 0) {
+			flush();
+		}
+		return std_fwrite(ptr, 1, len, (FILE *)_handle);
+	}
+}
+
+bool DSFileStream::flush() {
+
+	if (_writeBufferPos > 0) {
+		std_fwrite(_writeBuffer, 1, _writeBufferPos, (FILE *) _handle);
+		_writeBufferPos = 0;
+	}
+
+	return std_fflush((FILE *)_handle) == 0;
+}
+
+DSFileStream *DSFileStream::makeFromPath(const Common::String &path, bool writeMode) {
+	FILE *handle = std_fopen(path.c_str(), writeMode ? "wb" : "rb");
+
+	if (handle)
+		return new DSFileStream(handle);
+	return 0;
+}
+
+
+
 
 // Stdio replacements
 #define MAX_FILE_HANDLES 32

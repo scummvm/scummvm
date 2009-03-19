@@ -34,6 +34,8 @@
 #include <bios.h>
 #include <arm7/touch.h>
 #include <arm7/clock.h>
+#include <arm7/audio.h>
+#include <system.h>
 #include <stdlib.h>
 #include <string.h>
 //#include <registers_alt.h>	// not needed in current libnds
@@ -135,13 +137,13 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 
   switch (format) {
 	case 1: {
-		flags |= SOUND_8BIT;
+		flags |= SOUND_FORMAT_8BIT;
 		flags |= SOUND_REPEAT;// | (1 << 15);
 		break;
 	}
 
 	case 0: {
-		flags |= SOUND_16BIT;
+		flags |= SOUND_FORMAT_16BIT;
 		flags |= SOUND_REPEAT;// | (1 << 15);
 		break;
 	}
@@ -433,13 +435,14 @@ void InterruptTimer3() {
     but = REG_KEYXY;
     if (!(but & 0x40)) {
       // Read the touch screen
-	  touchPosition p = touchReadXY();
+	touchPosition p;
+	touchReadXY(&p);
 
 //      x = touchRead(TSC_MEASURE_X);
  //     y = touchRead(TSC_MEASURE_Y);
 
-	  x = p.x;
-	  y = p.y;
+	  x = p.rawx;
+	  y = p.rawy;
 
 	  xpx = p.px;
 	  ypx = p.py;
@@ -581,13 +584,13 @@ int main(int argc, char ** argv) {
   rtcReset();
 
   //enable sound
-  powerON(POWER_SOUND);
+//  powerOn(POWER_SOUND);
   SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
   IPC->soundData = 0;
   IPC->reset = false;
 
 
-
+ fifoInit();
 
   for (int r = 0; r < 8; r++) {
 	IPC->adpcm.arm7Buffer[r] = (u8 *) malloc(512);

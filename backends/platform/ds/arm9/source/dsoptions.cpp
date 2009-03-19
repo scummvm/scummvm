@@ -52,7 +52,9 @@ static int confGetInt(Common::String key, int defaultVal) {
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	new GUI::ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
-	_tab = new GUI::TabWidget(this, 5, 5, 300, 230 - 20 - 40 - 10);
+	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, "ScummVM Main Menu", 0x40000000, 'M');
+
+	_tab = new GUI::TabWidget(this, 10, 5, 300, 230 - 20 - 40 - 20);
 
 	_tab->addTab("Controls");
 
@@ -264,8 +266,8 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 	}
 
-	if ((!guard) && (_radioButtonMode))
-	{
+
+	if ((!guard) && (_radioButtonMode)) {
 		guard = true;
 
 		if ((sender == _touchPadStyle) && (cmd == 0x20000001)) {
@@ -332,30 +334,17 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		updateConfigManager();
 		close();
 	}
-}
 
-void togglePause() {
-	// Toggle pause mode by simulating pressing 'p'.  Not a good way of doing things!
-	// FIXME: What is this code meant to do ?!?
-
-	if (getCurrentGame()->control == CONT_SCUMM_ORIGINAL) {
-		Common::Event event;
-		OSystem_DS* system = OSystem_DS::instance();
-
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_p;
-		event.kbd.ascii = 'p';
-		event.kbd.flags = 0;
-		system->addEvent(event);
-
-		event.type = Common::EVENT_KEYUP;
-		system->addEvent(event);
+	
+	if ((!guard) && (cmd == 0x40000000)) {
+		close();
+		g_engine->openMainMenuDialog();
 	}
 }
 
+
 void showOptionsDialog() {
 
-	togglePause();
 
 	DS::displayMode16Bit();
 
@@ -366,7 +355,6 @@ void showOptionsDialog() {
 
 	DS::displayMode8Bit();
 
-	togglePause();
 }
 
 void setOptions() {

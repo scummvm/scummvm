@@ -8,36 +8,39 @@ libndsdir = $(DEVKITPRO)/libnds
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
 
-ifeq ($(SCUMM_BUILD),h)
-        DS_BUILD_H = 1
- else
- ifeq ($(SCUMM_BUILD),g)
-        DS_BUILD_G = 1
+ifeq ($(SCUMM_BUILD),i)
+        DS_BUILD_I = 1
+else
+ ifeq ($(SCUMM_BUILD),h)
+         DS_BUILD_H = 1
   else
-  ifeq ($(SCUMM_BUILD),f)
-        DS_BUILD_F = 1
-  else
-   ifeq ($(SCUMM_BUILD),e)
-        DS_BUILD_E = 1
+   ifeq ($(SCUMM_BUILD),g)
+         DS_BUILD_G = 1
    else
-    ifeq ($(SCUMM_BUILD),d)
-        DS_BUILD_D = 1
+    ifeq ($(SCUMM_BUILD),f)
+         DS_BUILD_F = 1
     else
-     ifeq ($(SCUMM_BUILD),c)
-        DS_BUILD_C = 1
+     ifeq ($(SCUMM_BUILD),e)
+         DS_BUILD_E = 1
      else
-      ifeq ($(SCUMM_BUILD),b)
-        DS_BUILD_B = 1
+      ifeq ($(SCUMM_BUILD),d)
+         DS_BUILD_D = 1
       else
-        DS_BUILD_A = 1
+       ifeq ($(SCUMM_BUILD),c)
+         DS_BUILD_C = 1
+       else
+        ifeq ($(SCUMM_BUILD),b)
+         DS_BUILD_B = 1
+        else
+         DS_BUILD_A = 1
+        endif
+       endif
       endif
      endif
     endif
    endif
   endif
  endif
-endif
-
 # To do:
 # - FAT cache?
 
@@ -151,6 +154,12 @@ ifdef DS_BUILD_H
 	BUILD=scummvm-H
 endif
 
+ifdef DS_BUILD_I
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
+	LOGO = logog.bmp
+	ENABLE_TUCKER = STATIC_PLUGIN
+	BUILD=scummvm-H
+endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
 ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
@@ -196,9 +205,12 @@ ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
 
-DEFINES += -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DREDUCE_MEMORY_USAGE
+DEFINES += -DREDUCE_MEMORY_USAGE
 
-LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
+# Removed, as these are done in portdefs.h
+# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE 
+
+LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
@@ -239,8 +251,9 @@ endif
 PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
-		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
-		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o
+		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
+		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
+		$(portdir)/source/interrupt.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
@@ -281,7 +294,7 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp 
 OPT_SPEED := -O3
 
 # Compiler options for files which should be optimised for space
-OPT_SIZE := -Os
+OPT_SIZE := -Os -mthumb
 
 
 #-mthumb -fno-gcse -fno-schedule-insns2
