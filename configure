@@ -1502,8 +1502,13 @@ if test "$_flac" = auto ; then
 #include <FLAC/format.h>
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-		-lFLAC -logg && _flac=yes
+	if test "$_vorbis" = yes ; then
+		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lFLAC -logg && _flac=yes
+	else
+		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
+			-lFLAC && _flac=yes
+	fi
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
