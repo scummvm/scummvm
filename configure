@@ -603,7 +603,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, wii, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -615,6 +615,9 @@ Installation directories:
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
                          special targets: linupy for Yopy PDA
+                                          dreamcast for Sega Dreamcast
+                                          wii for Nintendo Wii
+                                          gamecube for Nintendo GameCube
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
@@ -854,6 +857,16 @@ dreamcast)
 	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
 	LDFLAGS="$LDFLAGS -ml -m4-single-only"
 	;;
+wii)
+	_host_os=wii
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+gamecube)
+	_host_os=gamecube
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
 *)
 	if test -z "$_host"; then
 		guessed_host=`$_srcdir/config.guess`
@@ -883,7 +896,7 @@ arm-riscos)
 gp2x-linux)
 	EXEEXT=".gp2x"
 	;;
-dreamcast)
+dreamcast | wii | gamecube)
 	EXEEXT=".elf"
 	;;
 *)
@@ -900,6 +913,21 @@ os2-emx* )
 	;;
 * )
 	SEPARATOR=":"
+	;;
+esac
+
+#
+# Platform specific sanity checks
+#
+
+case $_host_os in
+wii | gamecube)
+	if test -z "$DEVKITPRO"; then
+		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+*)
 	;;
 esac
 
@@ -1104,6 +1132,18 @@ case $_host_os in
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
 		;;
+	wii)
+		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii"
+		;;
+	gamecube)
+		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
+		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
@@ -1231,6 +1271,41 @@ if test -n "$_host"; then
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
+			;;
+		wii)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="wii"
+			_build_hq_scalers="no"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
+			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "#define USE_WII_DI"
+			add_line_to_config_h "#define USE_WII_KBD"
+			;;
+		gamecube)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="wii"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
+			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -1727,6 +1802,19 @@ case $_backend in
 		LIBS="$LIBS -lronin -lm"
 		MODULES="$MODULES backends/platform/dc"
 		;;
+	wii)
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		MODULES="$MODULES backends/platform/wii"
+		case $_host_os in
+		gamecube)
+			DEFINES="$DEFINES -DGAMECUBE"
+			LIBS="$LIBS -lfat -logc -ldb"
+			;;
+		*)
+			LIBS="$LIBS -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			;;
+		esac
+		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -1738,7 +1826,9 @@ esac
 #
 if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
-	mingw* | cygwin* | dreamcast)
+	# newlib-based system include files suppress non-C89 function 
+	# declarations under __STRICT_ANSI__
+	mingw* | cygwin* | dreamcast | wii | gamecube)
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		;;
 	*)
@@ -1756,6 +1846,8 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
+wii | gamecube)
+	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"
 	;;

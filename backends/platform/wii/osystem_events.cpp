@@ -22,6 +22,8 @@
 #include <unistd.h>
 #include <malloc.h>
 
+#include "osystem.h"
+
 #ifndef GAMECUBE
 #include <wiiuse/wpad.h>
 #endif
@@ -30,8 +32,6 @@
 #endif
 
 #include <ogc/lwp_watchdog.h>
-
-#include "osystem.h"
 
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64

@@ -27,6 +27,8 @@
 #include <ogc/machine/processor.h>
 #include <fat.h>
 
+#include "osystem.h"
+
 #ifdef USE_WII_DI
 #include <di/di.h>
 #endif
@@ -34,8 +36,6 @@
 #ifdef DEBUG_WII_GDB
 #include <debug.h>
 #endif
-
-#include "osystem.h"
 
 #ifdef __cplusplus
 extern "C" {
