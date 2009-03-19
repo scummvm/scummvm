@@ -66,10 +66,6 @@ gfx_pixmap_color_t default_colors[DEFAULT_COLORS_NR] = {{GFX_COLOR_SYSTEM, 0x00,
 if (!state) { \
 	GFXERROR("Null state!\n"); \
 	return error_retval; \
-} \
-if (!state->driver) { \
-	GFXERROR("GFX driver invalid!\n"); \
-	return error_retval; \
 }
 
 // How to determine whether colors have to be allocated
@@ -895,7 +891,6 @@ int gfxop_draw_line(gfx_state_t *state, Common::Point start, Common::Point end,
 int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	int retval = 0;
 	int xfact, yfact;
-	int xunit, yunit;
 	int x, y, xl, yl;
 	Common::Point upper_left_u, upper_right_u, lower_left_u, lower_right_u;
 	Common::Point upper_left, upper_right, lower_left, lower_right;
@@ -906,20 +901,11 @@ int gfxop_draw_rectangle(gfx_state_t *state, rect_t rect, gfx_color_t color, gfx
 	xfact = state->driver->mode->xfact;
 	yfact = state->driver->mode->yfact;
 
-	if (line_mode == GFX_LINE_MODE_FINE) {
-		xunit = yunit = 1;
-		xl = 1 + (rect.width - 1) * xfact;
-		yl = 1 + (rect.height - 1) * yfact;
-		x = rect.x * xfact + (xfact - 1);
-		y = rect.y * yfact + (yfact - 1);
-	} else {
-		xunit = xfact;
-		yunit = yfact;
-		xl = rect.width * xfact;
-		yl = rect.height * yfact;
-		x = rect.x * xfact;
-		y = rect.y * yfact;
-	}
+	int offset = line_mode == GFX_LINE_MODE_FINE ? 1 : 0;
+	x = rect.x * xfact + (xfact - 1) * offset;
+	y = rect.y * yfact + (yfact - 1) * offset;
+	xl = offset + (rect.width - offset) * xfact;
+	yl = offset + (rect.height - offset) * yfact;
 
 	upper_left_u = Common::Point(rect.x, rect.y);
 	upper_right_u = Common::Point(rect.x + rect.width, rect.y);
