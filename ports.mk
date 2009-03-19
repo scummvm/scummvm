@@ -107,8 +107,7 @@ scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
-		-lSystemStubs \
-		-lz
+		-lSystemStubs
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
