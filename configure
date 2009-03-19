@@ -123,10 +123,12 @@ _nasm=auto
 # more defaults
 _backend=sdl
 _ranlib=ranlib
+_strip=strip
 _ar="ar cru"
 _windres=windres
 _win32path="C:/scummvm"
 _aos4path="Games:ScummVM"
+_staticlibpath=/sw
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
 _nasmpath="$PATH"
@@ -783,6 +785,9 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
 		;;
+        --with-staticlib-prefix=*)
+                _staticlibpath=`echo $ac_option | cut -d '=' -f 2`
+                ;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1181,6 +1186,7 @@ if test -n "$_host"; then
 			;;
 		*darwin*)
 			_ranlib=$_host-ranlib
+			_strip=$_host-strip
 			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1641,6 +1647,7 @@ if test "$_zlib" = yes ; then
 else
 	_def_zlib='#undef USE_ZLIB'
 fi
+add_to_config_mk_if_yes "$_zlib" 'USE_ZLIB = 1'
 echo "$_zlib"
 
 #
@@ -1979,10 +1986,12 @@ CXX := $CXX
 CXXFLAGS := $CXXFLAGS
 LIBS += $LIBS
 RANLIB := $_ranlib
+STRIP := $_strip
 AR := $_ar
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
+STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend
 MODULES += $MODULES

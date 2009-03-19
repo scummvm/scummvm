@@ -55,7 +55,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
-	strip $(bundle_name)/Contents/MacOS/scummvm
+	$(STRIP) $(bundle_name)/Contents/MacOS/scummvm
 
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
@@ -67,39 +67,37 @@ iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
 
-# location of additional libs for OS X usually /sw/ for fink or
-# /opt/local/ for darwinports
-OSXOPT=/sw
-
 # Location of static libs for the iPhone
-ifeq ($(BACKEND), iphone)
-OSXOPT=/usr/local/arm-apple-darwin
-else
+ifneq ($(BACKEND), iphone)
 # Static libaries, used for the scummvm-static and iphone targets
-OSX_STATIC_LIBS := `$(OSXOPT)/bin/sdl-config --static-libs`
+OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
 endif
 
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
-		$(OSXOPT)/lib/libvorbisfile.a \
-		$(OSXOPT)/lib/libvorbis.a \
-		$(OSXOPT)/lib/libogg.a
+		$(STATICLIBPATH)/lib/libvorbisfile.a \
+		$(STATICLIBPATH)/lib/libvorbis.a \
+		$(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_TREMOR
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libvorbisidec.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libvorbisidec.a
 endif
 
 ifdef USE_FLAC
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libFLAC.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
 endif
 
 ifdef USE_MAD
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libmad.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
 ifdef USE_MPEG2
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libmpeg2.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
+endif
+
+ifdef USE_ZLIB
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libz.a
 endif
 
 # Special target to create a static linked binary for Mac OS X.
@@ -111,7 +109,6 @@ scummvm-static: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-lSystemStubs \
 		-lz
-#		$(OSXOPT)/lib/libz.a
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -124,8 +121,9 @@ iphone: $(OBJS)
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
-osxsnap: bundle credits
+osxsnap: bundle
 	mkdir ScummVM-snapshot
+	$(srcdir)/tools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ScummVM-snapshot/Authors
 	cp $(srcdir)/COPYING ./ScummVM-snapshot/License
 	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
@@ -153,7 +151,7 @@ scummvmico.o: $(srcdir)/icons/scummvm.ico
 # Special target to create a win32 snapshot binary
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
-	strip $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/dists/pred.dic $(WIN32PATH)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
@@ -174,7 +172,7 @@ win32dist: $(EXECUTABLE)
 # Special target to create an AmigaOS snapshot installation
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
-	strip $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
+	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
 	cp icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
