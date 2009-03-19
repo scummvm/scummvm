@@ -144,7 +144,7 @@ void lzwExpand(uint8 *in, uint8 *out, int32 len) {
 	setBits(START_BITS);	/* Starts at 9-bits */
 	lzwnext = 257;		/* Next available code to define */
 
-	end = (uint8 *)((uint8)out + (uint8)len);
+	end = (uint8 *)(out + (uint32)len);
 
 	lzwold = inputCode(&in);	/* Read in the first code */
 	c = lzwold;
