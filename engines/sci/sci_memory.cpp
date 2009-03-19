@@ -52,7 +52,7 @@ do {\
 \
 	if (res == NULL) {\
 		/* exit immediately */\
-		error("Memory allocation of %u bytes failed [%s (%s) : %u]", (uint32)size, filename, funcname, linenum);\
+		error("Memory allocation of %u bytes failed [%s (%s) : %u]", (uint)(size), filename, funcname, linenum);\
 	}\
 } while (0);
 
