@@ -257,5 +257,4 @@ void ILBMDecoder::planarToChunky(byte *out, uint32 width, byte *in, uint32 plane
 }
 
 
-} // end of namespace Kyra
-
+} // End of namespace Parallaction
