@@ -194,7 +194,7 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 							int width, int height) {
 	uint8 *r;
 
-	assert(((long)dstPtr & 3) == 0);
+	assert(IS_ALIGNED(dstPtr, 4));
 	assert(sizeof(OverlayColor) == 2);
 	while (height--) {
 		r = dstPtr;
@@ -220,7 +220,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
 
-	assert(((long)dstPtr & 1) == 0);
+	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
 		r = dstPtr;
 		for (int i = 0; i < width; ++i, r += 6) {
