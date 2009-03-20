@@ -44,14 +44,6 @@
 
 namespace Toltecs {
 
-/*
-	TODO:
-	
-	ArchiveReader:
-		- Add support for external resources; and check if they're used
-
-*/
-
 const uint kMaxCacheItems = 1024;
 const uint kMaxCacheSize = 8 * 1024 * 1024; // 8 MB
 
