@@ -78,7 +78,7 @@ public:
 	}
 
 	// Returns a pointer to the smallest Key or NULL if the tree is empty.
-	const Key *findSmallest() {
+	const Key *findSmallest() const {
 		AATreeNode<Key> *node = _root;
 
 		if (node == _bottom)

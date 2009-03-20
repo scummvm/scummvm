@@ -721,30 +721,29 @@ static int inside(Common::Point p, Vertex *vertex) {
 
 typedef AATree<const Vertex *, EdgeIsCloser> EdgeAATree;
 
-static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, EdgeAATree &tree) {
-	// Determines whether or not a vertex is visible from vertex_cur
-	// Parameters: (Vertex *) vertex: The vertex
-	//             (Vertex *) vertex_prev: The previous vertex in the sort
-	//                                       order, or NULL
-	//             (int) visible: 1 if vertex_prev is visible, 0 otherwise
-	//             (EdgeAATree &) tree: The tree of edges intersected by the
-	//                                  sweeping line
-	// Returns   : (int) 1 if vertex is visible from vertex_cur, 0 otherwise
-	const Vertex *const *edge;
+/**
+ * Determines whether or not a vertex is visible from vertex_cur.
+ * @param vertex		the vertex
+ * @param vertex_prev	the previous vertex in the sort order, or NULL
+ * @param visible		true if vertex_prev is visible, false otherwise
+ * @param tree			the tree of edges intersected by the sweeping line
+ * @return true if vertex is visible from vertex_cur, false otherwise
+ */
+static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const EdgeAATree &tree) {
 	Common::Point p = vertex_cur->v;
 	Common::Point w = vertex->v;
 
 	// Check if sweeping line intersects the interior of the polygon
 	// locally at vertex
 	if (inside(p, vertex))
-		return 0;
+		return false;
 
 	// If vertex_prev is on the sweeping line, then vertex is invisible
 	// if vertex_prev is invisible
 	if (vertex_prev && !visible && between(p, w, vertex_prev->v))
-		return 0;
+		return false;
 
-	edge = tree.findSmallest();
+	const Vertex *const *edge = tree.findSmallest();
 
 	if (edge) {
 		Common::Point p1, p2;
@@ -752,10 +751,10 @@ static int visible(Vertex *vertex, Vertex *vertex_prev, int visible, EdgeAATree 
 		// Check for intersection with sweeping line before vertex
 		clockwise(*edge, &p1, &p2);
 		if (left(p2, p1, p) && left(p1, p2, w))
-			return 0;
+			return false;
 	}
 
-	return 1;
+	return true;
 }
 
 static void visible_vertices(PathfindingState *s, Vertex *vert) {
@@ -781,15 +780,16 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 		vertex = polygon->vertices.first();
 
 		// Check that there is more than one vertex.
-		if (VERTEX_HAS_EDGES(vertex))
+		if (VERTEX_HAS_EDGES(vertex)) {
 			CLIST_FOREACH(vertex, &polygon->vertices) {
-			Common::Point high, low;
-
-			// Add edges that intersect the initial position of the sweeping line
-			clockwise(vertex, &high, &low);
-
-			if ((high.y < p.y) && (low.y >= p.y) && (low != p))
-				tree.insert(vertex);
+				Common::Point high, low;
+	
+				// Add edges that intersect the initial position of the sweeping line
+				clockwise(vertex, &high, &low);
+	
+				if ((high.y < p.y) && (low.y >= p.y) && (low != p))
+					tree.insert(vertex);
+			}
 		}
 	}
 
