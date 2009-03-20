@@ -130,7 +130,8 @@ int AGOSEngine::getUserFlag(Item *item, int a) {
 	if (subUserFlag == NULL)
 		return 0;
 
-	if (a < 0 || a > 7)
+	int max = (getGameType() == GType_ELVIRA1) ? 7 : 3;
+	if (a < 0 || a > max)
 		return 0;
 
 	return subUserFlag->userFlags[a];
