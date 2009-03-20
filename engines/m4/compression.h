@@ -52,7 +52,7 @@ private:
 public:
 	static bool isCompressed(Common::SeekableReadStream *stream);
 	MadsPack(Common::SeekableReadStream *stream);
-	MadsPack(const char *resourceName, M4Engine* _vm);
+	MadsPack(const char *resourceName, M4Engine *vm);
 	~MadsPack();
 
 	int getCount() const { return _count; }

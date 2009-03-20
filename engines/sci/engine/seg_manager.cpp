@@ -1456,10 +1456,10 @@ reg_t SegInterface::findCanonicAddress(reg_t addr) {
 void SegInterface::freeAtAddress(reg_t sub_addr) {
 }
 
-void SegInterface::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterface::listAllDeallocatable(void *param, NoteCallback note) {
 }
 
-void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note) {
 }
 
 
@@ -1470,7 +1470,7 @@ protected:
 		SegInterface(segmgr, mobj, segId, typeId) {}
 public:
 	reg_t findCanonicAddress(reg_t addr);
-	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+	void listAllDeallocatable(void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
@@ -1478,7 +1478,7 @@ reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void SegInterfaceBase::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterfaceBase::listAllDeallocatable(void *param, NoteCallback note) {
 	(*note)(param, make_reg(_segId, 0));
 }
 
@@ -1489,7 +1489,7 @@ public:
 	SegInterfaceScript(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_SCRIPT) {}
 	void freeAtAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceScript::freeAtAddress(reg_t addr) {
@@ -1504,7 +1504,7 @@ void SegInterfaceScript::freeAtAddress(reg_t addr) {
 		_segmgr->deallocateScript(script->nr);
 }
 
-void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	Script *script = &(_mobj->data.script);
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
@@ -1544,15 +1544,15 @@ public:
 	SegInterfaceClones(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_CLONES) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllDeallocatable(void *param, NoteCallback note);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
-void SegInterfaceClones::listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterfaceClones::listAllDeallocatable(void *param, NoteCallback note) {
 	LIST_ALL_DEALLOCATABLE(Clone, clones);
 }
 
-void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr)) {
+void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	CloneTable *clone_table = &(_mobj->data.clones);
 	Clone *clone;
 	int i;
@@ -1608,7 +1608,7 @@ public:
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
 	reg_t findCanonicAddress(reg_t addr);
 	void freeAtAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
@@ -1643,7 +1643,7 @@ public:
 	SegInterfaceStack(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_STACK) {}
 	reg_t findCanonicAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
@@ -1681,8 +1681,8 @@ public:
 	SegInterfaceLists(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LISTS) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllDeallocatable(void *param, NoteCallback note);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
@@ -1715,8 +1715,8 @@ public:
 	SegInterfaceNodes(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_NODES) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void *param, reg_t addr));
+	void listAllDeallocatable(void *param, NoteCallback note);
+	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
@@ -1751,7 +1751,7 @@ public:
 	SegInterfaceHunk(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_HUNK) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, void (*note)(void *param, reg_t addr));
+	void listAllDeallocatable(void *param, NoteCallback note);
 };
 
 void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
