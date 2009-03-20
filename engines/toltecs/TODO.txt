@@ -11,7 +11,6 @@ TODO
   - each resource type gets its own class, the resource cache manages the resource instances
   - generic resource class which has a method that creates a MemoryReadStream
   - rewrite parts of the engine to use the new resource system
-- Add movie playback functionality (movie format is known, needs implementing)
 - Add sound support (after rewrite of the resource system)
 - Add music support (game seems to use XMIDI, MIDI and headerless music...figure out more)
 - Add game menu
@@ -26,8 +25,10 @@ BUGS
 - Still some clipping issues (walking upstairs in the saloon, when on top of the tower in the hideout)
 - Crashes sometimes on scene changes
   (I guess because some talktext is still running although the slot used by it has changed)
+- Crashes sometimes (e.g. when inside the barn and going up the ladder)
 
 DONE
 ------
 - Implement dirty rectangles (low priority)
 - Optimize segment mask redrawing (only redraw what's neccessary)
+- Add movie playback functionality (movie format is known, needs implementing)
