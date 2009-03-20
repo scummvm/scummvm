@@ -959,6 +959,7 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 	}
 }
 
+// TODO: extend the ILBMDecoder to return CRNG chunks and get rid of this BackgroundDecoder crap
 class BackgroundDecoder : public Graphics::ILBMDecoder {
 
 	PaletteFxRange *_range;
@@ -1070,6 +1071,7 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
 
+	// TODO: use the new ILBMDecoder here!
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
@@ -1092,8 +1094,8 @@ void AmigaDisk_ns::loadPath(BackgroundInfo& info, const char *name) {
 	if (!s)
 		return;	// no errors if missing path files: not every location has one
 
-
-	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	// TODO: use the new ILBMDecoder here!
+	s->seek(0x120, SEEK_SET);
 
 	Graphics::PackBitsReadStream stream(*s);
 
