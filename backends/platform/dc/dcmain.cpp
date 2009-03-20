@@ -199,7 +199,7 @@ void OSystem_Dreamcast::getTimeAndDate(struct tm &t) const {
   t = *localtime(&curTime);
 }
 
-void dc_init_hardware()
+void DCHardware::dc_init_hardware()
 {
 #ifndef NOSERIAL
   serial_init(57600);
@@ -213,18 +213,17 @@ void dc_init_hardware()
   init_arm();
 }
 
+static OSystem_Dreamcast osys_dc;
+
 int main()
 {
   static char *argv[] = { "scummvm", NULL, };
   static int argc = 1;
 
-  dc_init_hardware();
-
-  g_system = new OSystem_Dreamcast();
-  assert(g_system);
+  g_system = &osys_dc;
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new DCPluginProvider());
+  PluginManager::instance().addPluginProvider(new DCPluginProvider());
 #endif
 
   int res = scummvm_main(argc, argv);

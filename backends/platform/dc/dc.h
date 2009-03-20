@@ -43,7 +43,14 @@ class Interactive
 
 #include "softkbd.h"
 
-class OSystem_Dreamcast : public BaseBackend, public FilesystemFactory {
+class DCHardware {
+ private:
+  static void dc_init_hardware();
+ protected:
+  DCHardware() { dc_init_hardware(); }
+};
+
+class OSystem_Dreamcast : private DCHardware, public BaseBackend, public FilesystemFactory {
 
  public:
   OSystem_Dreamcast();
