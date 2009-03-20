@@ -255,7 +255,7 @@ void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 srcPitch2 = srcPitch * 2;
 
-	assert(((long)dstPtr & 1) == 0);
+	assert(IS_ALIGNED(dstPtr, 2));
 	while (height > 0) {
 		r = dstPtr;
 		for (int i = 0; i < width; i += 2, r += 6) {
