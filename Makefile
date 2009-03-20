@@ -61,7 +61,7 @@ include $(srcdir)/Makefile.common
 config.h config.mk: $(srcdir)/configure
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
-	@sleep 2s
+	@sleep 2
 	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" \
 		$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else
