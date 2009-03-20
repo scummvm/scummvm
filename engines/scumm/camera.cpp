@@ -22,11 +22,10 @@
  *
  */
 
-
 #include "scumm/scumm.h"
-#include "scumm/intern.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/scumm_v7.h"
 
 namespace Scumm {
 

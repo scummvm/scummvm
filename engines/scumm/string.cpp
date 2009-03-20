@@ -27,16 +27,16 @@
 
 #include "common/config-manager.h"
 
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/intern.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
+#include "scumm/scumm.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/verbs.h"
 #include "scumm/he/sound_he.h"
 

@@ -28,6 +28,7 @@
 #include "engines/engine.h"
 
 #include "scumm/insane/insane.h"
+#include "scumm/scumm_v7.h"
 
 namespace Scumm {
 

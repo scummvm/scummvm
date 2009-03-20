@@ -32,8 +32,6 @@
 
 #include "scumm/detection.h"
 #include "scumm/scumm.h"
-//#include "scumm/intern.h"
-//#include "scumm/he/intern_he.h"
 
 #include "scumm/scumm-md5.h"
 

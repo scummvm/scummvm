@@ -29,11 +29,10 @@
 #include "common/util.h"
 
 #include "scumm/actor.h"
-#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {

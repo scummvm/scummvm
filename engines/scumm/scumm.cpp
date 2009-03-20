@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "common/events.h"
@@ -46,7 +45,6 @@
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane.h"
-#include "scumm/intern.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
@@ -58,7 +56,8 @@
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/he/resource_he.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm_v0.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/imuse/sysex.h"
 #include "scumm/he/sprite_he.h"

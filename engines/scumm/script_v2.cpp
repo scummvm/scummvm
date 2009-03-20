@@ -28,7 +28,7 @@
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"

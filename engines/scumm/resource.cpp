@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/str.h"
 
 #include "scumm/charset.h"
@@ -31,11 +30,12 @@
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v5.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"

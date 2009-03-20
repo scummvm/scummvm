@@ -26,8 +26,7 @@
 
 
 #include "scumm/file.h"
-#include "scumm/scumm.h"
-#include "scumm/intern.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/resource.h"
 
 namespace Scumm {

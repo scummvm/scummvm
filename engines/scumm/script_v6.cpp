@@ -38,6 +38,8 @@
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v6.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"

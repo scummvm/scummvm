@@ -23,14 +23,13 @@
  *
  */
 
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm_v0.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {

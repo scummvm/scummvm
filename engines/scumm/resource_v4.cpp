@@ -24,8 +24,7 @@
  */
 
 
-#include "scumm/scumm.h"
-#include "scumm/intern.h"
+#include "scumm/scumm_v4.h"
 #include "scumm/file.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"

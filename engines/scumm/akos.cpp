@@ -23,15 +23,14 @@
  *
  */
 
-
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/bomp.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/he/wiz_he.h"

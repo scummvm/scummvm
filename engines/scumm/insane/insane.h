@@ -26,8 +26,6 @@
 #if !defined(SCUMM_INSANE_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_INSANE_H
 
-#include "engines/engine.h"
-#include "scumm/intern.h"
 #include "scumm/nut_renderer.h"
 
 #include "scumm/smush/smush_player.h"

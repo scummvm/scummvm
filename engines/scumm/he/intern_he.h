@@ -27,6 +27,7 @@
 #define SCUMM_HE_INTERN_HE_H
 
 #include "scumm/intern.h"
+#include "scumm/scumm_v6.h"
 #ifdef ENABLE_HE
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/wiz_he.h"

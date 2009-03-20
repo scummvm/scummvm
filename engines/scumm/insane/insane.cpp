@@ -29,9 +29,9 @@
 
 #include "common/system.h"
 
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/file.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 
 #include "scumm/imuse/imuse.h"

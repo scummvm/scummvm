@@ -23,14 +23,14 @@
  */
 
 #include "common/system.h"
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/intern.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/resource.h"
+#include "scumm/scumm_v5.h"
+#include "scumm/scumm_v6.h"
 #include "scumm/usage_bits.h"
 #include "scumm/he/wiz_he.h"
 #include "scumm/util.h"

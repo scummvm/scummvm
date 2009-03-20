@@ -23,13 +23,13 @@
  *
  */
 
-#include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
-#include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
+#include "scumm/scumm_v0.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 

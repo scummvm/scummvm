@@ -23,11 +23,10 @@
  *
  */
 
-
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
-#include "scumm/intern.h"
+#include "scumm/scumm_v6.h"
 #include "scumm/util.h"
 
 #include "common/util.h"

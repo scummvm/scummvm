@@ -23,20 +23,33 @@
  *
  */
 
-#ifndef SCUMM_INTERN_H
-#define SCUMM_INTERN_H
+#ifndef SCUMM_SCRIPT_V4_H
+#define SCUMM_SCRIPT_V4_H
 
-#include "scumm/scumm.h"
+#include "scumm/scumm_v5.h"
 
 namespace Scumm {
 
-// This is to help devices with small memory (PDA, smartphones, ...)
-// to save abit of memory used by opcode names in the Scumm engine.
-#ifndef REDUCE_MEMORY_USAGE
-#	define _OPCODE(ver, x)	{ &ver::x, #x }
-#else
-#	define _OPCODE(ver, x)	{ &ver::x, "" }
-#endif
+/**
+ * Engine for version 4 SCUMM games; GF_SMALL_HEADER is always set for these.
+ */
+class ScummEngine_v4 : public ScummEngine_v5 {
+public:
+	ScummEngine_v4(OSystem *syst, const DetectorResult &dr);
+
+	virtual void resetScumm();
+
+protected:
+	virtual void readResTypeList(int id);
+	virtual void readIndexFile();
+	virtual void loadCharset(int no);
+	virtual void resetRoomObjects();
+	virtual void readMAXS(int blockSize);
+	virtual void readGlobalObjects();
+
+	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+};
+
 
 } // End of namespace Scumm
 

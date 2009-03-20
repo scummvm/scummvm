@@ -29,7 +29,7 @@
 
 #include "common/config-manager.h"
 
-#include "scumm/scumm.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 
 #include "scumm/insane/insane.h"

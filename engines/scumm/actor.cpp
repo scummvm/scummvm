@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
@@ -31,11 +30,11 @@
 #include "scumm/boxes.h"
 #include "scumm/charset.h"
 #include "scumm/costume.h"
-#include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/usage_bits.h"

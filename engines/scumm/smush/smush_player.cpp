@@ -37,6 +37,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/smush/channel.h"

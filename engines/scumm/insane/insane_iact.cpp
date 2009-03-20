@@ -23,14 +23,8 @@
  *
  */
 
-
-
-#include "engines/engine.h"
-
-#include "scumm/scumm.h"
-
+#include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
-
 #include "scumm/insane/insane.h"
 
 namespace Scumm {

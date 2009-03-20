@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -35,7 +34,7 @@
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/scumm.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
