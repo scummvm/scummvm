@@ -56,7 +56,6 @@ extern void wii_memstats(void);
 class OSystem_Wii : public BaseBackend {
 private:
 	s64 _startup_time;
-	syswd_t _alarm;
 
 	u16 *_palette;
 	u16 *_cursorPalette;

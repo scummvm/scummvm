@@ -128,7 +128,7 @@ bool OSystem_Wii::setGraphicsMode(int mode) {
 
 #ifndef GAMECUBE
 	if (CONF_GetAspectRatio() && !_fullscreen)
-		xar /= 1.33f;
+		xar = s16(float(xar) / 1.33f);
 #endif
 
 	GX_SetCamPosZ(400 - mode * 10);

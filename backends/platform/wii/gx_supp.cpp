@@ -180,7 +180,7 @@ void GX_Start(u16 width, u16 height, s16 haspect, s16 vaspect) {
 	memset(texturemem, 0, texturesize);
 
 	/*** Setup for first call to scaler ***/
-	oldvwidth = oldvheight = -1;
+	oldvwidth = oldvheight = 0;
 
 	if (inited)
 		return;

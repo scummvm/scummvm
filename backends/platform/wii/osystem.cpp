@@ -31,7 +31,6 @@
 
 OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
-	_alarm(-1),
 
 	_palette(NULL),
 	_cursorPalette(NULL),

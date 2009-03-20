@@ -357,8 +357,8 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		WPAD_IR(0, &ir);
 
 		if (ir.valid) {
-			mx = ir.x - _currentWidth / 10;
-			my = ir.y - _currentHeight / 10;
+			mx = s32(ir.x) - _currentWidth / 10;
+			my = s32(ir.y) - _currentHeight / 10;
 
 			if (mx < 0)
 				mx = 0;
