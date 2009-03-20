@@ -414,6 +414,16 @@ void AGOSEngine_Elvira2::oe2_ifDoorOpen() {
 	// 148: if door open
 	Item *i = getNextItemPtr();
 	uint16 d = getVarOrByte();
+
+	if (getGameType() == GType_WW) {
+		// WORKAROUND bug #2686883: A NULL item can occur when
+		// walking through Jack the Ripper scene
+		if (i == NULL) {
+			setScriptCondition(false);
+			return;
+		}
+	}
+
 	setScriptCondition(getDoorState(i, d) == 1);
 }
 
