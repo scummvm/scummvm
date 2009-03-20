@@ -27,6 +27,7 @@
 
 #include "common/config-manager.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/iff.h"
 
 
 namespace Parallaction {
@@ -483,12 +484,19 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	}
 
 	stream = openFile("backs/" + Common::String(filename), ".bkg");
-	Graphics::ILBMDecoder decoder(*stream, info.bg, pal);
-	decoder.decode();
+	ILBMDecoder decoder(stream, true);
+
+	info.bg.w = decoder.getWidth();
+	info.bg.h = decoder.getHeight();
+	info.bg.pitch = info.bg.w;
+
+	info.bg.pixels = decoder.getBitmap();
+	assert(info.bg.pixels);
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
+	pal = decoder.getPalette();
 	p = pal;
 	for (i = 16; i < 32; i++) {
 		r = *p >> 2;
@@ -509,24 +517,44 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	adjustForPalette(info.bg);
 }
 
+void finalpass(byte *buffer, uint32 size) {
+	byte b = 0xC0;
+	byte r1 = 0x40;
+	byte r2 = 0x80;
+	for (uint32 i = 0; i < size*4; i++) {
+		byte s = buffer[i/4];
+		s &= b;
+
+		if (s == r1) {
+			buffer[i/4] |= b;
+		} else
+		if (s == b) {
+			buffer[i/4] ^= r2;
+		}
+
+		b >>= 2; if (b == 0) { b = 0xC0; }
+		r1 >>= 2; if (r1 == 0) { r1 = 0x40; }
+		r2 >>= 2; if (r2 == 0) { r2 = 0x80; }
+	}
+}
 
 void AmigaDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
 	if (!name) {
 		return;
 	}
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadMask '%s'", name);
 
 	Common::SeekableReadStream *stream = openFile("msk/" + Common::String(name), ".msk");
+	ILBMDecoder decoder(stream, true);
 
-	byte *pal = 0;
-	Graphics::Surface* surf = new Graphics::Surface;
-	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
-	decoder.decode();
-	free(pal);
+	// TODO: the buffer is allocated by the caller, so a copy here is
+	// unavoidable... a better solution would be inform the function
+	// of the size of the mask (the size in the mask file is not valid!)
+	byte *bitmap = decoder.getBitmap(2, true);
+	memcpy(buffer.data, bitmap, buffer.size);
+	finalpass(buffer.data, buffer.size);
 
-	buffer.create(surf->w, surf->h);
-	memcpy(buffer.data, surf->pixels, buffer.size);
-	buffer.bigEndian = false;
-	delete stream;
+	buffer.bigEndian = true;
 }
 
 void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
@@ -536,10 +564,9 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		loadBackground(info, name);
 	}
 	if (mask) {
-#if 0
 		info._mask = new MaskBuffer;
+		info._mask->create(info.width, info.height);
 		loadMask(mask, *info._mask);
-#endif
 	}
 
 	if (path) {
@@ -562,12 +589,16 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	Common::String sName = name;
 
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
-	byte *pal = 0;
+	ILBMDecoder decoder(stream);
+
 	Graphics::Surface* surf = new Graphics::Surface;
-	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
-	decoder.decode();
-	free(pal);
-	delete stream;
+	assert(surf);
+
+	surf->w = decoder.getWidth();
+	surf->h = decoder.getHeight();
+	surf->pitch = surf->w;
+	surf->pixels = decoder.getBitmap();
+	assert(surf->pixels);
 
 	// Static pictures are drawn used the upper half of the palette: this must be
 	// done before shadow mask is applied. This way, only really transparent pixels
@@ -692,15 +723,15 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
+	ILBMDecoder decoder(stream);
 
-	byte *pal = 0;
 	Graphics::Surface* surf = new Graphics::Surface;
-
-	Graphics::ILBMDecoder decoder(*stream, *surf, pal);
-	decoder.decode();
-
-	delete stream;
-	free(pal);
+	assert(surf);
+	surf->w = decoder.getWidth();
+	surf->h = decoder.getHeight();
+	surf->pitch = surf->w;
+	surf->pixels = decoder.getBitmap();
+	assert(surf->pixels);
 
 	uint16 max = objectsMax[part];
 	if (_vm->getFeatures() & GF_DEMO)
