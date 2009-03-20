@@ -279,7 +279,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
-	EngineMan.getPlugins();
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
