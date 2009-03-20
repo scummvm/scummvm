@@ -685,7 +685,7 @@ void AGOSEngine_Elvira2::oe2_b2NotZero() {
 void AGOSEngine_Elvira2::printStats() {
 	WindowBlock *window = _dummyWindow;
 	int val;
-	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 131 : 134;
+	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 134;
 
 	window->flags = 1;
 
