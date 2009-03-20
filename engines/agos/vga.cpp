@@ -975,9 +975,9 @@ void AGOSEngine::vc22_setPaletteOld() {
 
 			palptr += 4;
 		};
+		palptr = _displayPalette;
 	}
 
-	palptr = _displayPalette;
 	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 	src = offs + b * 32;
 
