@@ -1832,16 +1832,15 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		ensureResourceLoaded(resType[op - 1], resid);
 		break;
 	case 4:			// SO_LOAD_ROOM
+		ensureResourceLoaded(rtRoom, resid);
 		if (_game.version == 3) {
-			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
 				resid = _resourceMapper[resid & 0x7F];
 
 			if (_currentRoom != resid) {
 				_res->setResourceCounter(rtRoom, resid, 1);
 			}
-		} else
-			ensureResourceLoaded(rtRoom, resid);
+		}
 		break;
 
 	case 5:			// SO_NUKE_SCRIPT
@@ -1941,8 +1940,9 @@ void ScummEngine_v5::o5_resourceRoutines() {
 
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
+	const bool paramsBeforeOpcode = (_game.version == 3 && _game.platform != Common::kPlatformPCEngine);
 
-	if (_game.version == 3 && _game.platform != Common::kPlatformPCEngine) {
+	if (paramsBeforeOpcode) {
 		a = getVarOrDirectWord(PARAM_1);
 		b = getVarOrDirectWord(PARAM_2);
 	}
@@ -1950,7 +1950,7 @@ void ScummEngine_v5::o5_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:		// SO_ROOM_SCROLL
-		if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
+		if (!paramsBeforeOpcode) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
@@ -1967,7 +1967,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 	case 2:		// SO_ROOM_COLOR
 		if (_game.features & GF_SMALL_HEADER) {
-			if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
+			if (!paramsBeforeOpcode) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
@@ -1980,7 +1980,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 
 	case 3:		// SO_ROOM_SCREEN
-		if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
+		if (!paramsBeforeOpcode) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
@@ -1988,7 +1988,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 	case 4:		// SO_ROOM_PALETTE
 		if (_game.features & GF_SMALL_HEADER) {
-			if (_game.version != 3 || _game.platform == Common::kPlatformPCEngine) {
+			if (!paramsBeforeOpcode) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
