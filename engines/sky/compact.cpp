@@ -29,12 +29,13 @@
 #include "common/file.h"
 #include "sky/compact.h"
 #include "gui/message.h"
+#include <stddef.h>	// for ptrdiff_t
 
 namespace Sky {
 
 #define	SKY_CPT_SIZE	419427
 
-#define OFFS(type,item) (((long)(&((type*)0)->item)))
+#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->item))-42)
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
