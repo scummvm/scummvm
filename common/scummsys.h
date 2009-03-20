@@ -346,15 +346,13 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-#elif defined (__DS__) //NeilM
+#elif defined (__DS__)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 
 	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN
-
-	#include "nds/jtypes.h"
 
 	#define SCUMMVM_DONT_DEFINE_TYPES
 
