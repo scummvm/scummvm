@@ -36,6 +36,7 @@
 #include "scumm/he/intern_he.h"
 #endif
 #include "scumm/scumm.h"
+#include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/verbs.h"
 #include "scumm/he/sound_he.h"
