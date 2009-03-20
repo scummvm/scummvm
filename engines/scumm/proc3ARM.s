@@ -15,8 +15,8 @@
 @ along with this program@ if not, write to the Free Software
 @ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 @
-@ $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/scumm/gfxARM.s $
-@ $Id: gfxARM.s 29646 2007-11-26 16:54:56Z fingolfin $
+@ $URL$
+@ $Id$
 @
 @ @author Robin Watts (robin@wss.co.uk)
 

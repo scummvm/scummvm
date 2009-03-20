@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.10 2007/08/11 06:00:23 wntrmute Exp $
+	$Id$
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
