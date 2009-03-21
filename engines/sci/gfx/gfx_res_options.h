@@ -40,8 +40,6 @@ struct gfx_res_pattern_t {
 /* GFX resource assignments */
 
 struct gfx_res_assign_t {
-	short type; /* GFX_RES_ASSIGN_TYPE_* */
-
 	union {
 		struct {
 			int colors_nr;
@@ -53,11 +51,7 @@ struct gfx_res_assign_t {
 
 /* GFX resource modifications */
 
-#define GFX_RES_MULTIPLY_FIXED 0 /* Linear palette update */
-
 struct gfx_res_mod_t {
-	short type; /* GFX_RES_ASSIGN_TYPE_* */
-
 	union {
 		byte factor[3]; /* divide by 16 to retrieve factor */
 	} mod;

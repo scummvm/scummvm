@@ -123,11 +123,8 @@ void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 		pxm->palette = pal;
 	}
 
-	switch (mod->type) {
-
-	case GFX_RES_MULTIPLY_FIXED: {
-		for (i = 0; i < pal_size; i++) {
-			int v;
+	for (i = 0; i < pal_size; i++) {
+		int v;
 
 #define UPDATE_COL(nm, idx)                        \
 		v = nm;             \
@@ -135,19 +132,13 @@ void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 		v >>= 4;                   \
 		nm = (v > 255)? 255 : v;
 
-			PaletteEntry c = pal->getColor(i);
-			UPDATE_COL(c.r, 0);
-			UPDATE_COL(c.g, 1);
-			UPDATE_COL(c.b, 2);
-			pal->setColor(i, c.r, c.g, c.b);
+		PaletteEntry c = pal->getColor(i);
+		UPDATE_COL(c.r, 0);
+		UPDATE_COL(c.g, 1);
+		UPDATE_COL(c.b, 2);
+		pal->setColor(i, c.r, c.g, c.b);
 			
 #undef UPDATE_COL
-		}
-		break;
-	}
-
-	default:
-		GFXERROR("Using unexpected visual resource modifier %d\n", mod->type);
 	}
 }
 
