@@ -652,6 +652,7 @@ int BalloonManager_br::setDialogueBalloon(const char *text, uint16 winding, Text
 	balloon->surface = expandBalloon(src, srcFrame);
 	src->getRect(srcFrame, balloon->box);
 
+	// TODO: fix text positioning in the Amiga version
 	_writer.write(text, 216, _textColors[textColor], balloon->surface);
 
 	// TODO: extract some text to make a name for obj
@@ -742,9 +743,15 @@ void BalloonManager_br::cacheAnims() {
 BalloonManager_br::BalloonManager_br(Disk *disk, Gfx *gfx, Font *font) : _numBalloons(0), _disk(disk), _gfx(gfx), _font(font),
 	_leftBalloon(0), _rightBalloon(0), _writer(_font) {
 
-	_textColors[kSelectedColor] = 12;
-	_textColors[kUnselectedColor] = 0;
-	_textColors[kNormalColor] = 0;
+	if (_vm->getPlatform() == Common::kPlatformPC) {
+		_textColors[kSelectedColor] = 12;
+		_textColors[kUnselectedColor] = 0;
+		_textColors[kNormalColor] = 0;
+	} else {
+		_textColors[kSelectedColor] = 11;
+		_textColors[kUnselectedColor] = 1;
+		_textColors[kNormalColor] = 1;
+	}
 }
 
 BalloonManager_br::~BalloonManager_br() {
