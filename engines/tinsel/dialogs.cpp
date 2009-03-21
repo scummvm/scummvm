@@ -5566,7 +5566,7 @@ void setInvWinParts(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)LockMem(hf);
-	assert(FROM_LE_32(pfilm->numreels) >= HOPEDFORREELS); // not as many reels as expected
+	assert(FROM_LE_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
 #endif
 }
 

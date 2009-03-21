@@ -163,7 +163,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 			// New text objects
 			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
-			_ctx->cpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->cpText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, CPOSX, POSY, GetTagFontHandle(), TXT_CENTRE);
 			if (DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
@@ -175,7 +175,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 						PolyCornerX(hp, 1), PolyCornerY(hp, 1),
 						PolyCornerX(hp, 2), PolyCornerY(hp, 2),
 						PolyCornerX(hp, 3), PolyCornerY(hp, 3));
-				_ctx->cpathText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->cpathText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
 							0, 4, POSY+ 10, GetTagFontHandle(), 0);
 			}
 
@@ -207,7 +207,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 		| Lead actor's position. |
 		\*----------------------*/
 		pActor = GetMover(LEAD_ACTOR);
-		if (pActor && pActor->MActorState == NORM_MOVER) {
+		if (pActor && getMActorState(pActor)) {
 			// get lead's animation position
 			GetActorPos(LEAD_ACTOR, &aniX, &aniY);
 
@@ -221,7 +221,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 
 				// create new text object list
 				sprintf(PositionString, "%d %d", aniX, aniY);
-				_ctx->rpText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+				_ctx->rpText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
 								0, LPOSX, POSY,	GetTagFontHandle(), TXT_CENTRE);
 
 				// update previous position
@@ -240,7 +240,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			}
 
 			sprintf(PositionString, "String: %d", newestString);
-			_ctx->spText = ObjectTextOut(GetPlayfieldList(FIELD_STATUS), PositionString,
+			_ctx->spText = ObjectTextOut(nullContext, GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, SPOSX, POSY+10, GetTalkFontHandle(), TXT_CENTRE);
 
 			// update previous value

@@ -1412,7 +1412,7 @@ void CheckNPathIntegrity() {
 	uint8		*pps;	// Compiled polygon data
 	const POLYGON *rp;	// Run-time polygon structure
 	HPOLYGON	hp;
-	const POLY *cp;	// Compiled polygon structure
+	const Poly *cp;	// Compiled polygon structure
 	int		i, j;	// Loop counters
 	int		n;	// Last node in current path
 	int32	*nlistx, *nlisty;
@@ -1423,11 +1423,11 @@ void CheckNPathIntegrity() {
 		rp = Polys[i];
 		if (rp && rp->polyType == PATH && rp->subtype == NODE) { //...if it's a node path
 			// Get compiled polygon structure
-			cp = (const POLY *)pps + rp->pIndex;	// This polygon
-			nlistx = (int32 *)(pps + (int)FROM_LE_32(cp.pnodelistx));
-			nlisty = (int32 *)(pps + (int)FROM_LE_32(cp.pnodelisty));
+			cp = (const Poly *)pps + rp->pIndex;	// This polygon
+			nlistx = (int32 *)(pps + (int)FROM_LE_32(cp->pnodelistx));
+			nlisty = (int32 *)(pps + (int)FROM_LE_32(cp->pnodelisty));
 
-			n = (int)FROM_LE_32(cp.nodecount) - 1;		// Last node
+			n = (int)FROM_LE_32(cp->nodecount) - 1;		// Last node
 			assert(n >= 1); // Node paths must have at least 2 nodes
 
 			hp = PolygonIndex(rp);
@@ -1447,12 +1447,12 @@ void CheckNPathIntegrity() {
 				if (IsInPolygon((int)FROM_LE_32(nlistx[0]), (int)FROM_LE_32(nlisty[0]), PolygonIndex(rp->adjpaths[j]))) {
 					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 (int)FROM_LE_32(nlistx[0]), (int)FROM_LE_32(nlisty[0]), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
-					error(TextBufferAddr())
+					error(TextBufferAddr());
 				}
 				if (IsInPolygon((int)FROM_LE_32(nlistx[n]), (int)FROM_LE_32(nlisty[n]), PolygonIndex(rp->adjpaths[j]))) {
 					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 (int)FROM_LE_32(nlistx[n]), (int)FROM_LE_32(nlisty[n]), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
-					error(TextBufferAddr())
+					error(TextBufferAddr());
 				}
 			}
 		}
