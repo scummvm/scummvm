@@ -256,6 +256,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\iff.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\iff.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\input.cpp"
 			>
 		</File>

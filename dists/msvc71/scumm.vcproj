@@ -559,6 +559,30 @@
 			RelativePath="..\..\engines\scumm\scumm.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\scumm_v0.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v2.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v3.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v4.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v5.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v6.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v7.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\scumm_v8.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\sound.cpp">
 		</File>
 		<File

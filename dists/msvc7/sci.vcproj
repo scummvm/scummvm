@@ -106,9 +106,6 @@
 		<Filter
 			Name="engine">
 			<File
-				RelativePath="..\..\engines\sci\engine\aatree.cpp">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\aatree.h">
 			</File>
 			<File

@@ -150,6 +150,12 @@
 				RelativePath="..\..\engines\gob\sound\pcspeaker.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\gob\sound\protracker.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\gob\sound\protracker.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\gob\sound\sound.cpp">
 			</File>
 			<File
