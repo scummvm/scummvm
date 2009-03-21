@@ -89,7 +89,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_hideControls = 0;
 	_lastCharInventory = -1;
 
-	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _iceShapes = _fireballShapes = 0;
+	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _effectShapes = _fireballShapes = 0;
 	_levelShpList = _levelDatList = 0;
 	_monsterShapes = _monsterPalettes = 0;
 	_monsterShapesEx = 0;
@@ -254,10 +254,10 @@ LoLEngine::~LoLEngine() {
 			delete[]  _thrownShapes[i];
 		delete[] _thrownShapes;
 	}
-	if (_iceShapes) {
-		for (int i = 0; i < _numIceShapes; i++)
-			delete[]  _iceShapes[i];
-		delete[] _iceShapes;
+	if (_effectShapes) {
+		for (int i = 0; i < _numEffectShapes; i++)
+			delete[]  _effectShapes[i];
+		delete[] _effectShapes;
 	}
 	if (_fireballShapes) {
 		for (int i = 0; i < _numFireballShapes; i++)
@@ -695,10 +695,10 @@ void LoLEngine::startup() {
 
 	_screen->loadBitmap("ICE.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
-	_numIceShapes = READ_LE_UINT16(shp);
-	_iceShapes = new uint8*[_numIceShapes];
-	for (int i = 0; i < _numIceShapes; i++)
-		_iceShapes[i] = _screen->makeShapeCopy(shp, i);
+	_numEffectShapes = READ_LE_UINT16(shp);
+	_effectShapes = new uint8*[_numEffectShapes];
+	for (int i = 0; i < _numEffectShapes; i++)
+		_effectShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("FIREBALL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);

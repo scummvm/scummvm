@@ -86,7 +86,7 @@ void LoLEngine::loadLevel(int index) {
 	addLevelItems();
 	disableMonstersForBlock(_currentBlock);
 
-	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay,32, 16, 0, 0, 128, true);
+	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
 
 	_sceneDefaultUpdate = 0;
 	if (_screen->_fadeFlag == 3)
@@ -1525,12 +1525,12 @@ void LoLEngine::drawSceneShapes() {
 		if (i == 16)
 			w |= 0x80;
 
-		drawIceShapes(t, 0);
+		drawBlockEffects(t, 0);
 
 		if (_curBlockCaps[t]->assignedObjects && (w & 0x80))
 			drawBlockObjects(t);
 
-		drawIceShapes(t, 1);
+		drawBlockEffects(t, 1);
 
 		if (!(w & 8))
 			continue;
@@ -1714,10 +1714,31 @@ void LoLEngine::drawDecorations(int index) {
 	}
 }
 
-void LoLEngine::drawIceShapes(int index, int iceShapeIndex) {
-	uint8 f = _curBlockCaps[index]->flags;
-	if (!(f & 0xf0))
+void LoLEngine::drawBlockEffects(int index, int type) {
+	static const int16 yOffs[] = { 0xff, 0xff, 0x80, 0x80 };
+	uint8 flg = _curBlockCaps[index]->flags;
+	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
+	if (!(flg & 0xf0))
 		return;
+	
+	type = (type == 0) ? 2 : 0;
+	
+	for (int i = 0; i < 2; i++, type++) {
+		if (!((0x10 << type) & flg))
+			continue;
+
+		int16 x = 0x80;
+		int16 y = yOffs[type];
+		uint16 drawFlag = (type == 3) ? 0x80 : 0x20;
+		uint8 *ovl = (type == 3) ? _screen->_grayOverlay : 0;
+		
+		calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
+
+		x |= ((_currentBlockPropertyIndex[index] & 0x1f) << 8);
+		y |= ((_currentBlockPropertyIndex[index] & 0xffe0) << 3);
+
+		drawItemOrMonster(_effectShapes[type], ovl, x, y, 0, (type == 1) ? -20 : 0, drawFlag, -1, false);
+	}
 }
 
 void LoLEngine::drawScriptShapes(int pageNum) {

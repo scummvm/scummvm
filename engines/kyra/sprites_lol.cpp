@@ -989,8 +989,7 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint
 	int l = y1 >> 5;
 	y2 = _monsterScaleY[l];
 	x2 = ((_monsterScaleX[l] * x1) >> 8) + 200;
-	assert (_shpDmY - 56 < 66);
-	w = h = _monsterScaleWH[_shpDmY - 56];
+	w = h = (_shpDmY > 120) ? 0x100 : _monsterScaleWH[_shpDmY - 56];
 
 	if (flip)
 		y2 = ((120 - y2) >> 1) + _screen->getShapeScaledHeight(shape, _dmScaleH);

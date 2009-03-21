@@ -332,7 +332,9 @@ protected:
 	void drawShapePlotType12(uint8 *dst, uint8 cmd);
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
+	void drawShapePlotType33(uint8 *dst, uint8 cmd);
 	void drawShapePlotType37(uint8 *dst, uint8 cmd);
+	void drawShapePlotType48(uint8 *dst, uint8 cmd);
 	void drawShapePlotType52(uint8 *dst, uint8 cmd);
 
 	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);

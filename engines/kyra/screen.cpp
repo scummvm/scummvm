@@ -1248,12 +1248,14 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
 		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0,
+		0, 0, 0, 0, 0, 0, 0,
+		&Screen::drawShapePlotType33,		// used by LoL (blood spots on the floor)
+		0, 0, 0,
 		&Screen::drawShapePlotType37,		// used by LoL (monsters)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 
-		&Screen::drawShapePlotType52,
+		&Screen::drawShapePlotType48,		// used by LoL (slime spots on the floor)
+		0, 0, 0, 
+		&Screen::drawShapePlotType52,		// used by LoL (projectiles)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0
 	};
@@ -1815,6 +1817,17 @@ void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 	*dst = cmd;
 }
 
+void Screen::drawShapePlotType33(uint8 *dst, uint8 cmd) {
+	if (cmd == 255) {
+		*dst = _dsTable5[*dst];
+	} else {
+		for (int i = 0; i < _dsTableLoopCount; ++i)
+			cmd = _dsTable[cmd];
+		if (cmd)
+			*dst = cmd;
+	}
+}
+
 void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
 	cmd = _dsTable2[cmd];
 	
@@ -1827,6 +1840,13 @@ void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
 
 	if (cmd)
 		*dst = cmd;
+}
+
+void Screen::drawShapePlotType48(uint8 *dst, uint8 cmd) {
+	uint8 offs = _dsTable3[cmd];
+	if (!(offs & 0x80))
+		cmd = _dsTable4[(offs << 8) | *dst];
+	*dst = cmd;
 }
 
 void Screen::drawShapePlotType52(uint8 *dst, uint8 cmd) {

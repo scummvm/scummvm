@@ -685,8 +685,8 @@ private:
 	int _numGameShapes;
 	uint8 **_thrownShapes;
 	int _numThrownShapes;
-	uint8 **_iceShapes;
-	int _numIceShapes;
+	uint8 **_effectShapes;
+	int _numEffectShapes;
 	uint8 **_fireballShapes;
 	int _numFireballShapes;
 
@@ -793,7 +793,7 @@ private:
 	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawDecorations(int index);
-	void drawIceShapes(int index, int iceShapeIndex);
+	void drawBlockEffects(int index, int type);
 	void drawScriptShapes(int pageNum);
 	void setWallType(int block, int wall, int val);
 	void updateSceneWindow();
