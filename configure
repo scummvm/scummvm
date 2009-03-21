@@ -1410,6 +1410,22 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
+	dreamcast)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
 	*)
 		_dynamic_modules=no
 		_mak_plugins=
