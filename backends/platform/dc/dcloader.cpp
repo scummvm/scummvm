@@ -30,9 +30,9 @@
 #include "dcloader.h"
 
 #ifdef DL_DEBUG
-#define DBG(...) reportf(__VA_ARGS__)
+#define DBG(x) reportf x
 #else
-#define DBG(...) 0
+#define DBG(x) do{}while(0)
 #endif
 
 
@@ -156,7 +156,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size)
   }
 
   if (lseek(fd, offset, SEEK_SET)<0 ||
-     read(fd, rela, size) != size) {
+      read(fd, rela, size) != (ssize_t)size) {
     seterror("Relocation table load failed.");
     free(rela);
     return false;
@@ -165,7 +165,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size)
   int cnt = size / sizeof(*rela);
   for (int i=0; i<cnt; i++) {
 
-    Elf32_Sym *sym = (Elf32_Sym *)(((char *)symtab)+(rela[i].r_info>>4));
+    Elf32_Sym *sym = (Elf32_Sym *)(void *)(((char *)symtab)+(rela[i].r_info>>4));
 
     void *target = ((char *)segment)+rela[i].r_offset;
 
@@ -203,8 +203,8 @@ bool DLObject::load(int fd)
     return false;
   }
 
-  DBG("phoff = %d, phentsz = %d, phnum = %d\n",
-      ehdr.e_phoff, ehdr.e_phentsize, ehdr.e_phnum);
+  DBG(("phoff = %d, phentsz = %d, phnum = %d\n",
+       ehdr.e_phoff, ehdr.e_phentsize, ehdr.e_phnum));
 
   if (lseek(fd, ehdr.e_phoff, SEEK_SET)<0 ||
      read(fd, &phdr, sizeof(phdr)) != sizeof(phdr)) {
@@ -218,27 +218,27 @@ bool DLObject::load(int fd)
     return false;
   }
 
-  DBG("offs = %d, filesz = %d, memsz = %d, align = %d\n",
-      phdr.p_offset, phdr.p_filesz, phdr.p_memsz, phdr.p_align);
+  DBG(("offs = %d, filesz = %d, memsz = %d, align = %d\n",
+       phdr.p_offset, phdr.p_filesz, phdr.p_memsz, phdr.p_align));
 
   if (!(segment = memalign(phdr.p_align, phdr.p_memsz))) {
     seterror("Out of memory.");
     return false;
   }
 
-  DBG("segment @ %p\n", segment);
+  DBG(("segment @ %p\n", segment));
 
   if (phdr.p_memsz > phdr.p_filesz)
     memset(((char *)segment) + phdr.p_filesz, 0, phdr.p_memsz - phdr.p_filesz);
 
   if (lseek(fd, phdr.p_offset, SEEK_SET)<0 ||
-     read(fd, segment, phdr.p_filesz) != phdr.p_filesz) {
+      read(fd, segment, phdr.p_filesz) != (ssize_t)phdr.p_filesz) {
     seterror("Segment load failed.");
     return false;
   }
 
-  DBG("shoff = %d, shentsz = %d, shnum = %d\n",
-      ehdr.e_shoff, ehdr.e_shentsize, ehdr.e_shnum);
+  DBG(("shoff = %d, shentsz = %d, shnum = %d\n",
+       ehdr.e_shoff, ehdr.e_shentsize, ehdr.e_shnum));
 
   if (!(shdr = (Elf32_Shdr *)malloc(ehdr.e_shnum * sizeof(*shdr)))) {
     seterror("Out of memory.");
@@ -246,16 +246,16 @@ bool DLObject::load(int fd)
   }
 
   if (lseek(fd, ehdr.e_shoff, SEEK_SET)<0 ||
-     read(fd, shdr, ehdr.e_shnum * sizeof(*shdr)) !=
-     ehdr.e_shnum * sizeof(*shdr)) {
+      read(fd, shdr, ehdr.e_shnum * sizeof(*shdr)) !=
+      (ssize_t)(ehdr.e_shnum * sizeof(*shdr))) {
     seterror("Section headers load failed.");
     free(shdr);
     return false;
   }
 
   for (int i=0; i<ehdr.e_shnum; i++) {
-    DBG("Section %d: type = %d, size = %d, entsize = %d, link = %d\n",
-	i, shdr[i].sh_type, shdr[i].sh_size, shdr[i].sh_entsize, shdr[i].sh_link);
+    DBG(("Section %d: type = %d, size = %d, entsize = %d, link = %d\n",
+	 i, shdr[i].sh_type, shdr[i].sh_size, shdr[i].sh_entsize, shdr[i].sh_link));
     if (shdr[i].sh_type == 2 && shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
        shdr[i].sh_link < ehdr.e_shnum && shdr[shdr[i].sh_link].sh_type == 3 &&
        symtab_sect < 0)
@@ -275,7 +275,8 @@ bool DLObject::load(int fd)
   }
 
   if (lseek(fd, shdr[symtab_sect].sh_offset, SEEK_SET)<0 ||
-     read(fd, symtab, shdr[symtab_sect].sh_size) != shdr[symtab_sect].sh_size){
+      read(fd, symtab, shdr[symtab_sect].sh_size) !=
+      (ssize_t)shdr[symtab_sect].sh_size){
     seterror("Symbol table load failed.");
     free(shdr);
     return false;
@@ -288,15 +289,15 @@ bool DLObject::load(int fd)
   }
 
   if (lseek(fd, shdr[shdr[symtab_sect].sh_link].sh_offset, SEEK_SET)<0 ||
-     read(fd, strtab, shdr[shdr[symtab_sect].sh_link].sh_size) !=
-     shdr[shdr[symtab_sect].sh_link].sh_size){
+      read(fd, strtab, shdr[shdr[symtab_sect].sh_link].sh_size) !=
+      (ssize_t)shdr[shdr[symtab_sect].sh_link].sh_size){
     seterror("Symbol table strings load failed.");
     free(shdr);
     return false;
   }
 
   symbol_cnt = shdr[symtab_sect].sh_size / sizeof(Elf32_Sym);
-  DBG("Loaded %d symbols.\n", symbol_cnt);
+  DBG(("Loaded %d symbols.\n", symbol_cnt));
 
   Elf32_Sym *s = (Elf32_Sym *)symtab;
   for (int c = symbol_cnt; c--; s++)
@@ -305,8 +306,8 @@ bool DLObject::load(int fd)
 
   for (int i=0; i<ehdr.e_shnum; i++)
     if (shdr[i].sh_type == 4 && shdr[i].sh_entsize == sizeof(Elf32_Rela) &&
-       shdr[i].sh_link == symtab_sect && shdr[i].sh_info < ehdr.e_shnum &&
-       (shdr[shdr[i].sh_info].sh_flags & 2))
+	(int)shdr[i].sh_link == symtab_sect && shdr[i].sh_info < ehdr.e_shnum &&
+	(shdr[shdr[i].sh_info].sh_flags & 2))
       if (!relocate(fd, shdr[i].sh_offset, shdr[i].sh_size)) {
 	free(shdr);
 	return false;
@@ -322,7 +323,7 @@ bool DLObject::open(const char *path)
   int fd;
   void *ctors_start, *ctors_end;
 
-  DBG("open(\"%s\")\n", path);
+  DBG(("open(\"%s\")\n", path));
 
   if ((fd = ::open(path, O_RDONLY))<0) {
     seterror("%s not found.", path);
@@ -356,11 +357,11 @@ bool DLObject::open(const char *path)
     return false;
   }
 
-  DBG("Calling constructors.\n");
+  DBG(("Calling constructors.\n"));
   for (void (**f)(void) = (void (**)(void))ctors_start; f != ctors_end; f++)
     (**f)();
 
-  DBG("%s opened ok.\n", path);
+  DBG(("%s opened ok.\n", path));
   return true;
 }
 
@@ -376,7 +377,7 @@ bool DLObject::close()
 
 void *DLObject::symbol(const char *name)
 {
-  DBG("symbol(\"%s\")\n", name);
+  DBG(("symbol(\"%s\")\n", name));
 
   if (symtab == NULL || strtab == NULL || symbol_cnt < 1) {
     seterror("No symbol table loaded.");
@@ -387,7 +388,7 @@ void *DLObject::symbol(const char *name)
   for (int c = symbol_cnt; c--; s++)
     if ((s->st_info>>4 == 1 || s->st_info>>4 == 2) &&
        strtab[s->st_name] == '_' && !strcmp(name, strtab+s->st_name+1)) {
-      DBG("=> %p\n", (void*)s->st_value);
+      DBG(("=> %p\n", (void*)s->st_value));
       return (void*)s->st_value;
     }
 

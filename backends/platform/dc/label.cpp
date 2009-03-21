@@ -29,7 +29,7 @@
 #include "label.h"
 
 
-static void *get_romfont_address() __asm__(".get_romfont_address");
+void *get_romfont_address() __asm__(".get_romfont_address");
 __asm__("\
 			\n\
 .get_romfont_address:	\n\

@@ -132,10 +132,6 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   struct vmsinfo info;
   struct superblock super;
   struct vms_file file;
-  struct vms_file_header header;
-  struct timestamp tstamp;
-  struct tm tm;
-  time_t t;
 
   if (!vmsfs_check_unit(vm, 0, &info))
     return false;

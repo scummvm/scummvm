@@ -462,7 +462,6 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   _mouse_buffer &= NUM_BUFFERS-1;
 
   unsigned short *dst = (unsigned short *)mouse_tx[_mouse_buffer];
-  int y=0;
 
   if (visible && w && h && w<=MOUSE_W && h<=MOUSE_H)
     for (int y=0; y<h; y++) {

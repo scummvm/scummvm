@@ -316,6 +316,7 @@ int gameMenu(Game *games, int num_games)
 {
   int top_game = 0, selector_pos = 0;
   int mousex = 0, mousey = 0;
+  float y;
 
   if (!num_games)
     return -1;
@@ -331,7 +332,7 @@ int gameMenu(Game *games, int num_games)
 
     ta_commit_end();
 
-    float y = 40.0;
+    y = 40.0;
     for (int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++) {
       int pal = 48+(i&15);
 
@@ -360,15 +361,13 @@ int gameMenu(Game *games, int num_games)
 
       for (int fade=0; fade<=256; fade+=4) {
 
-	unsigned int fade_colour = 0x00ffffff | ((255-fade)<<24);
-
 	ta_begin_frame();
 
 	drawBackground();
 
 	ta_commit_end();
 
-	float y = 40.0;
+	y = 40.0;
 
 	if (fade < 256)
 	  for (int i=top_game, cnt=0; cnt<10 && i<num_games;

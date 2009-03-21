@@ -226,7 +226,7 @@ int main()
   PluginManager::instance().addPluginProvider(new DCPluginProvider());
 #endif
 
-  int res = scummvm_main(argc, argv);
+  scummvm_main(argc, argv);
 
   g_system->quit();
 }
