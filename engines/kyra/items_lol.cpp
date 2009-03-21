@@ -413,7 +413,7 @@ void LoLEngine::updateObjectFlightPosition(FlyingObject *t) {
 }
 
 void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock) {
-	int r = 0;
+	uint16 r = 0;
 
 	if (objectOnNextBlock == 1) {
 		runLevelScriptCustom(calcNewBlockPosition(_itemsInPlay[t->item].blockPropertyIndex, t->direction >> 1), 0x8000, -1, t->item, 0, 0);
@@ -432,7 +432,7 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 			return;
 
 		} else {
-			r = flyingObjectHitMonsters(x, y);
+			r = getClosestMonster(x, y);
 		}
 
 	} else if (objectOnNextBlock == 4) {
@@ -445,23 +445,11 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 			return;
 
 		} else {
-			r = flyingObjectHitParty(x, y);
+			r = getClosestPartyMember(x, y);
 		}
 	}
 
 	runItemScript(t->charNum, t->item, 0x8000, r, 0);
-}
-
-uint16 LoLEngine::flyingObjectHitMonsters(int x, int y) {
-	////////////
-	// TODO
-	return 0;
-}
-
-uint16 LoLEngine::flyingObjectHitParty(int x, int y) {
-	////////////
-	// TODO
-	return 0;
 }
 
 void LoLEngine::updateFlyingObjects(FlyingObject *t) {

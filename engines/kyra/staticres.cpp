@@ -1001,9 +1001,9 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->field_34 = file->readUint16LE();
 		t->field_36 = file->readByte();
 		t->itemsProtection = file->readUint16LE();
-		t->hitPointsCur = file->readUint16LE();;
+		t->hitPointsCur = file->readSint16LE();;
 		t->hitPointsMax = file->readUint16LE();;
-		t->magicPointsCur = file->readUint16LE();;
+		t->magicPointsCur = file->readSint16LE();;
 		t->magicPointsMax = file->readUint16LE();;
 		t->field_41 = file->readByte();
 		t->damageSuffered = file->readUint16LE();

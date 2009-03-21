@@ -273,7 +273,7 @@ void LoLEngine::loadLevelCmzFile(int index) {
 		}
 	}
 
-	loadCMZ_Sub(tmpLvlVal, (_unkGameFlag & 0x30) >> 4);
+	loadCMZ_Sub(tmpLvlVal, _monsterDifficulty);
 
 	delete[] cmzdata;
 }
@@ -654,9 +654,41 @@ uint16 LoLEngine::calcBlockIndex(uint16 x, uint16 y) {
 	return ((y & 0xff00) >> 3) | (x >> 8);
 }
 
-void LoLEngine::calcCoordinates(uint16 & x, uint16 & y, int block, uint16 xOffs, uint16 yOffs) {
+void LoLEngine::calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, uint16 yOffs) {
 	x = (block & 0x1f) << 8 | xOffs;
 	y = ((block & 0xffe0) << 3) | yOffs;
+}
+
+void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, int16 &x, int16 &y) {
+	static const uint8 xOffsets[] = {  0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0 };
+	int c = countActiveCharacters();
+	if (!c)
+		return;
+
+	c = (c - 1) * 3 + charNum;
+
+	x = xOffsets[c];
+	y = 0x80;
+
+	calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
+
+	x |= (_partyPosX & 0xff00);
+	y |= (_partyPosY & 0xff00);
+}
+
+void LoLEngine::calcCoordinatesAddDirectionOffset(int16 &x, int16 &y, int direction) {
+	if (!direction)
+		return;
+
+	if (direction & 1)
+		SWAP(x, y);
+
+	if (direction == 1)
+		y = (y - 256) * -1;
+
+	if (direction == 3) {
+		x = (x - 256) * -1;
+	}
 }
 
 bool LoLEngine::checkBlockPassability(uint16 block, uint16 direction) {
@@ -825,7 +857,7 @@ void LoLEngine::openCloseDoor(uint16 block, int openClose) {
 }
 
 void LoLEngine::movePartySmoothScrollBlocked(int speed) {
-	if (!(_unkGameFlag & 8) || ((_unkGameFlag & 8) && _hideInventory))
+	if (!_smoothScrollingEnabled || (_smoothScrollingEnabled && _hideInventory))
 		return;
 
 	_screen->backupSceneWindow(_sceneDrawPage2 == 2 ? 2 : 6, 6);
@@ -863,7 +895,7 @@ void LoLEngine::movePartySmoothScrollBlocked(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollUp(int speed) {
-	if (!(_unkGameFlag & 8) || ((_unkGameFlag & 8) && _hideInventory))
+	if (!_smoothScrollingEnabled || (_smoothScrollingEnabled && _hideInventory))
 		return;
 
 	int d = 0;
@@ -908,7 +940,7 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollDown(int speed) {
-	if (!(_unkGameFlag & 8))
+	if (!_smoothScrollingEnabled)
 		return;
 
 	//int d = smoothScrollDrawSpecialShape(2);
@@ -943,7 +975,7 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollLeft(int speed) {
-	if (!(_unkGameFlag & 8))
+	if (!_smoothScrollingEnabled)
 		return;
 
 	speed <<= 1;
@@ -969,7 +1001,7 @@ void LoLEngine::movePartySmoothScrollLeft(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollRight(int speed) {
-	if (!(_unkGameFlag & 8))
+	if (!_smoothScrollingEnabled)
 		return;
 
 	speed <<= 1;
@@ -1008,7 +1040,7 @@ void LoLEngine::movePartySmoothScrollRight(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
-	if (!(_unkGameFlag & 8))
+	if (!_smoothScrollingEnabled)
 		return;
 
 	speed <<= 1;
@@ -1052,7 +1084,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 }
 
 void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
-	if (!(_unkGameFlag & 8))
+	if (!_smoothScrollingEnabled)
 		return;
 
 	speed <<= 1;

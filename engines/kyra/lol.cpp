@@ -149,7 +149,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_tempBuffer5120 = 0;
 	_flyingItems = 0;
 	_monsters = 0;
-	_unkGameFlag = 0;
 	_lastMouseRegion = 0;
 	_monsterLastWalkDirection = _monsterCountUnk = _monsterShiftAlt = 0;
 	_monsterCurBlock = 0;
@@ -206,6 +205,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_activeButtons = 0;
 	_preserveEvents = false;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
+
+	_monsterDifficulty = 1;
+	_smoothScrollingEnabled = true;
+	_floatingCursorsEnabled = false;
 }
 
 LoLEngine::~LoLEngine() {
@@ -730,7 +733,7 @@ void LoLEngine::startupNew() {
 	_compassDirection = _compassDirectionIndex = -1;
 
 	_lastMouseRegion = -1;
-	_unkGameFlag |= 0x1B;
+	
 	/*
 	_unk5 = 1;
 	_unk6 = 1;
@@ -1080,7 +1083,7 @@ int LoLEngine::calculateProtection(int index) {
 	if (index & 0x8000) {
 		// Monster
 		index &= 0x7fff;
-		c = (_monsters[index].properties->itemProtection * _monsters[index].properties->protection) >> 8;
+		c = (_monsters[index].properties->itemProtection * _monsters[index].properties->fightingStats[2]) >> 8;
 	} else {
 		// Character
 		c = _characters[index].itemsProtection + _characters[index].protection;
@@ -1521,7 +1524,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 }
 
 void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
-	if (!(_unkGameFlag & 1))
+	if (!_sound->sfxEnabled())
 		return;
 
 	if (_environmentSfx)
@@ -1560,7 +1563,7 @@ void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 }
 
 void LoLEngine::snd_loadSoundFile(int track) {
-	if (_unkGameFlag & 2) {
+	if (_sound->musicEnabled()) {
 		char filename[13];
 		int t = (track - 250) * 3;
 
@@ -1585,7 +1588,7 @@ int LoLEngine::snd_playTrack(int track) {
 	int res = _lastMusicTrack;
 	_lastMusicTrack = track;
 
-	if (_unkGameFlag & 2) {
+	if (_sound->musicEnabled()) {
 		snd_loadSoundFile(track);
 		int t = (track - 250) * 3;
 		_sound->playTrack(_musicTrackMap[t + 2]);
@@ -1595,7 +1598,7 @@ int LoLEngine::snd_playTrack(int track) {
 }
 
 int LoLEngine::snd_stopMusic() {
-	if (_unkGameFlag & 2) {
+	if (_sound->musicEnabled()) {
 		if (_sound->isPlaying()) {
 			_sound->beginFadeOut();
 			_system->delayMillis(3 * _tickLength);
@@ -1716,7 +1719,7 @@ void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
 }
 
 const uint16 *LoLEngine::getCharacterOrMonsterStats(int id) {
-	return (id & 0x8000) ? (const uint16*)_monsters[id & 0x7fff].properties->pos : _characters[id].defaultModifiers;
+	return (id & 0x8000) ? (const uint16*)_monsters[id & 0x7fff].properties->fightingStats : _characters[id].defaultModifiers;
 }
 
 void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
@@ -1769,6 +1772,113 @@ bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
 	}
 
 	return false;
+}
+
+int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
+	if (target == -1)
+		return 0;
+	if (attacker == -1)
+		return 1;
+
+	if (target & 0x8000) {
+		if (_monsters[target & 0x7fff].mode >= 13)
+			return 0;
+	}
+	
+	uint16 hitChanceModifier = 0;
+	uint16 evadeChanceModifier = 0;
+	int sk = 0;
+
+	if (attacker & 0x8000) {
+		hitChanceModifier = _monsters[target & 0x7fff].properties->fightingStats[0];
+		sk = 100 - _monsters[target & 0x7fff].properties->skillLevel;
+	} else {
+		hitChanceModifier = _characters[attacker].defaultModifiers[0];		
+		uint8 m = _characters[attacker].skillModifiers[skill];
+		if (skill == 1)
+			m *= 3;
+		sk = 100 - (_characters[attacker].skillLevels[skill] + m);
+	}
+
+	if (target & 0x8000) {
+		evadeChanceModifier = _monsters[target & 0x7fff].properties->fightingStats[3];
+		_monsters[target & 0x7fff].flags |= 0x10;
+	} else {
+		evadeChanceModifier = _characters[target].defaultModifiers[3];
+	}
+
+	int r = _rnd.getRandomNumberRng(1, 100);
+	if (r >= sk)
+		return 2;
+
+	uint16 v = ((_monsterModifiers[9 + _monsterDifficulty] * evadeChanceModifier) & 0xffffff00) / hitChanceModifier;
+
+	if (r < v)
+		return 0;
+
+	return 1;
+}
+
+int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) {
+	const uint16 *s = getCharacterOrMonsterStats(attacker);
+	
+	int res = 0;
+	for (int i = 0; i < 8; i++)
+		res += calcInflictableDamagePerStat(attacker, target, s[2 + i], i, hitType);
+
+	return res;
+}
+
+void LoLEngine::battleHit_sub2(int16 target, int damageInflicted, int16 attacker, uint32 b) {
+
+}
+
+void LoLEngine::battleHit_sub3(MonsterInPlay *monster, int16 target, int16 damageInflicted) {
+
+}
+
+int LoLEngine::calcInflictableDamagePerStat(int16 attacker, int16 target, uint16 stat2m, int index, int hitType) {
+	return 1;
+}
+
+uint16 LoLEngine::getClosestMonster(int x, int y) {
+	uint16 id = 0xffff;
+	int minDist = 0x7fff;
+
+	for (int i = 0; i < 30; i++) {
+		if (_monsters[i].mode > 13)
+			continue;
+
+		int d = ABS(x - _monsters[i].x) + ABS(y - _monsters[i].y);		
+		if (d < minDist) {
+			minDist = d;
+			id = 0x8000 | i;
+		}
+	}
+
+	return id;
+}
+
+uint16 LoLEngine::getClosestPartyMember(int x, int y) {
+	uint16 id = 0xffff;
+	int minDist = 0x7fff;
+
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1) || _characters[i].hitPointsCur <= 0)
+			continue;
+
+		int16 charX = 0;
+		int16 charY = 0;
+		calcCoordinatesForSingleCharacter(i, charX, charY);
+
+		int d = ABS(x - charX) + ABS(y - charY);
+		if (d < minDist) {
+			minDist = d;
+			id = i;
+		}
+	}
+
+	return id;
 }
 
 } // end of namespace Kyra

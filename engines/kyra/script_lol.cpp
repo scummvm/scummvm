@@ -684,7 +684,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		if (l->might || l->mode == 13)
 			continue;
 
-		memset(l, 0, sizeof(MonsterInPlay));
+		memset(l, 0, sizeof(MonsterInPlay));		
 		l->id = i;
 		l->x = x;
 		l->y = y;
@@ -692,7 +692,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->type = stackPos(4);
 		l->properties = &_monsterProperties[l->type];
 		l->direction = l->facing << 1;
-		l->might = (l->properties->might * _monsterModifiers[((_unkGameFlag & 0x30) >> 4)]) >> 8;
+		l->might = (l->properties->might * _monsterModifiers[_monsterDifficulty]) >> 8;
 
 		if (_currentLevel == 12 && l->type == 2)
 			l->might = (l->might * (_rnd.getRandomNumberRng(1, 128) + 192)) >> 8;
@@ -735,6 +735,10 @@ int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_dummy0(EMCState *script) {
+	return 0;
+}
+
 int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterProperties(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
 		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
@@ -757,25 +761,25 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 
 	l->maxWidth = shpWidthMax;
 
-	l->field2[0] = (stackPos(2) << 8) / 100;
-	l->field2[1] = 256;
-	l->protection = (stackPos(3) << 8) / 100;
-	l->unk[0] = stackPos(4);
-	l->unk[1] = (stackPos(5) << 8) / 100;
-	l->unk[2] = (stackPos(6) << 8) / 100;
-	l->unk[3] = (stackPos(7) << 8) / 100;
-	l->unk[4] = (stackPos(8) << 8) / 100;
-	l->unk[5] = 0;
+	l->fightingStats[0] = (stackPos(2) << 8) / 100;		// hit chance
+	l->fightingStats[1] = 256;							//
+	l->fightingStats[2] = (stackPos(3) << 8) / 100;		// protection
+	l->fightingStats[3] = stackPos(4);					// evade chance
+	l->fightingStats[4] = (stackPos(5) << 8) / 100;		// speed
+	l->fightingStats[5] = (stackPos(6) << 8) / 100;		//
+	l->fightingStats[6] = (stackPos(7) << 8) / 100;		//
+	l->fightingStats[7] = (stackPos(8) << 8) / 100;		//
+	l->fightingStats[8] = 0;
+	l->fightingStats[9] = 0;
 
 	for (int i = 0; i < 8; i++) {
 		l->unk2[i] = stackPos(9 + i);
 		l->unk3[i] = (stackPos(17 + i) << 8) / 100;
 	}
 
-	l->pos = &l->field2[0];
 	l->itemProtection = stackPos(25);
 	l->might = stackPos(26);
-	l->waitTicks = 1;
+	l->speedTotalWaitTicks = 1;
 	l->flags = stackPos(27);
 	l->unk5 = stackPos(28);
 	// FIXME???
@@ -794,6 +798,11 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 		l->sounds[i] = stackPos(39 + i);
 
 	return 1;
+}
+
+int LoLEngine::olol_battleHitSkillTest(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_battleHitSkillTest(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	return battleHitSkillTest(stackPos(0), stackPos(1), stackPos(2));
 }
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
@@ -1022,7 +1031,8 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_checkForMonsterMode1(EMCState *script) {
+int LoLEngine::olol_checkMonsterTypeHostility(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkMonsterTypeHostility(%p) (%d)", (const void *)script, stackPos(0));
 	for (int i = 0; i < 30; i++) {
 		if (stackPos(0) != _monsters[i].type && stackPos(0) != -1)
 			continue;
@@ -1445,11 +1455,11 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x3C
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_dummy0);
 	Opcode(olol_loadMonsterProperties);
 
 	// 0x40
-	OpcodeUnImpl();
+	Opcode(olol_battleHitSkillTest);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1536,7 +1546,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_playDialogueTalkText);
-	Opcode(olol_checkForMonsterMode1);
+	Opcode(olol_checkMonsterTypeHostility);
 
 	// 0x7C
 	Opcode(olol_setNextFunc);

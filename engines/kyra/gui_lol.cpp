@@ -943,7 +943,7 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 }
 
 int LoLEngine::clickedUpArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty(_currentDirection, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 0, 80);
@@ -952,7 +952,7 @@ int LoLEngine::clickedUpArrow(Button *button) {
 }
 
 int LoLEngine::clickedDownArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty(_currentDirection ^ 2, 0, 1, 83);
@@ -961,7 +961,7 @@ int LoLEngine::clickedDownArrow(Button *button) {
 }
 
 int LoLEngine::clickedLeftArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty((_currentDirection - 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 2, 82);
@@ -970,7 +970,7 @@ int LoLEngine::clickedLeftArrow(Button *button) {
 }
 
 int LoLEngine::clickedRightArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, 84);
@@ -979,7 +979,7 @@ int LoLEngine::clickedRightArrow(Button *button) {
 }
 
 int LoLEngine::clickedTurnLeftArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	gui_toggleButtonDisplayMode(79, 1);
@@ -1001,7 +1001,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 }
 
 int LoLEngine::clickedTurnRightArrow(Button *button) {
-	if (button->data2Val2 && !(_unkGameFlag & 4))
+	if (button->data2Val2 && !_floatingCursorsEnabled)
 		return 0;
 
 	gui_toggleButtonDisplayMode(81, 1);
