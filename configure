@@ -776,10 +776,6 @@ i586-mingw32msvc)
 	_host_os=mingw32msvc
 	_host_cpu=i586
 	;;
-iphone)
-	_host_os=iphone
-	_host_cpu=arm
-	;;
 neuros)
 	_host_os=linux
 	_host_cpu=arm
@@ -1050,7 +1046,7 @@ case $_host_os in
 		LIBS="$LIBS -lmd "
 		_ranlib=:
 		;;
-	darwin*)
+	i686-darwin*|ppc-darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
@@ -1127,7 +1123,7 @@ if test -n "$_host"; then
 		bfin*)
 			_need_memalign=yes
 			;;
-		*darwin*)
+		i686-darwin*|ppc-darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
 			;;
@@ -1190,7 +1186,7 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
 			;;
-		iphone)
+		arm-apple-darwin*)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM"
 			_endian=little
@@ -1202,6 +1198,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
 			_build_hq_scalers="no"
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
