@@ -43,7 +43,7 @@ void Init_v1::initVideo() {
 
 	_vm->_global->_inVM = 0;
 
-	if (_vm->_global->_videoMode == 0x13)
+	if ((_vm->_global->_videoMode == 0x13) && !_vm->isEGA())
 		_vm->_global->_colorCount = 256;
 
 	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;

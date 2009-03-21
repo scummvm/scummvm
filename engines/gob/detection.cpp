@@ -1007,6 +1007,23 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
 			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		"intro"
+	},
+	{
+		{
+			"littlered",
+			"",
+			{
+				{"intro.stk", 0, "0b72992f5d8b5e6e0330572a5753ea25", 256490},
+				{"mod.babayaga", 0, "43484cde74e0860785f8e19f0bc776d1", 60248},
+				{NULL, 0, NULL, 0}
+			},
+			UNK_LANG,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS
 		},
