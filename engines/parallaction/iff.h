@@ -64,14 +64,17 @@ private:
 
 class ILBMDecoder {
 	Common::SeekableReadStream *_in;
-	IFFParser 		_parser;
+	bool _disposeStream;
+
+	void planarToChunky(byte *out, uint32 width, byte *in, uint32 planeWidth, uint32 nPlanes, bool packPlanes);
+
+protected:
+	IFFParser 	_parser;
 	Graphics::BMHD 	_header;
 	bool	_hasHeader;
 	uint32	_bodySize;
 	uint32	_paletteSize;
-	bool _disposeStream;
 
-	void planarToChunky(byte *out, uint32 width, byte *in, uint32 planeWidth, uint32 nPlanes, bool packPlanes);
 
 public:
 	ILBMDecoder(Common::SeekableReadStream *input, bool disposeStream = false);

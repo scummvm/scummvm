@@ -161,10 +161,10 @@ byte *ILBMDecoder::getPalette() {
 
 byte *ILBMDecoder::getBitmap(uint32 numPlanes, bool packPlanes) {
 	assert(_bodySize != (uint32)-1);
-	assert(numPlanes == 2 || numPlanes == 4 || numPlanes == 8);
+	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
 
 	numPlanes = MIN(numPlanes, (uint32)_header.depth);
-	if (numPlanes == 8) {
+	if (numPlanes > 4) {
 		packPlanes = false;
 	}
 
@@ -245,6 +245,9 @@ void ILBMDecoder::planarToChunky(byte *out, uint32 width, byte *in, uint32 plane
 		// then output the pixel according to the requested packing
 		if (!packPlanes) {
 			out[x] = pix;
+		} else
+		if (nPlanes == 1) {
+			out[x/8] |= (pix << (x & 7));
 		} else
 		if (nPlanes == 2) {
 			out[x/4] |= (pix << ((x & 3) << 1));
