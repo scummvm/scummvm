@@ -5,12 +5,12 @@
 #
 ######################################################################
 
-TESTS        := test/common/*.h test/sound/*.h
+TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/sound/*.h
 TEST_LIBS    := common/libcommon.a sound/libsound.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter
-TEST_CFLAGS  := -Itest/cxxtest
+TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS :=
 
 
@@ -24,7 +24,8 @@ test: test/runner
 test/runner: test/runner.cpp $(TEST_LIBS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TEST_LDFLAGS) $(TEST_CFLAGS) -o $@ $+
 test/runner.cpp: $(TESTS)
-	test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
+	@mkdir -p test
+	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
 
 
 clean: clean-test
