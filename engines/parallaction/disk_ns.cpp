@@ -974,7 +974,7 @@ public:
 			return 0;
 		}
 
-		uint32 count = MIN(size / sizeof(PaletteFxRange), num);
+		uint32 count = MIN((uint32)(size / sizeof(PaletteFxRange)), num);
 		_parser.loadIFFBlock(ID_CRNG, ranges, count * sizeof(PaletteFxRange));
 
 		for (uint32 i = 0; i < count; ++i) {
