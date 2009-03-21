@@ -725,33 +725,28 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	Common::SeekableReadStream *stream = openFile(name);
 	ILBMDecoder decoder(stream);
 
-	Graphics::Surface* surf = new Graphics::Surface;
-	assert(surf);
-	surf->w = decoder.getWidth();
-	surf->h = decoder.getHeight();
-	surf->pitch = surf->w;
-	surf->pixels = decoder.getBitmap();
-	assert(surf->pixels);
-
 	uint16 max = objectsMax[part];
 	if (_vm->getFeatures() & GF_DEMO)
 		max = 72;
 
 	byte *data = new byte[max * 2601];
+	byte *srcPtr = decoder.getBitmap();
+	int w = decoder.getWidth();
 
 	// Convert to the expected display format
 	for (int i = 0; i < max; i++) {
 		uint16 x = (i % 8) * 51;
 		uint16 y = (i / 8) * 51;
 
-		byte *src = (byte *)surf->getBasePtr(x, y);
+		byte *src = srcPtr + y * w + x;
 		byte *dst = data + i * 2601;
 		for (int h = 0; h < 51; h++) {
 			memcpy(dst, src, 51);
-			src += surf->w;
+			src += w;
 			dst += 51;
 		}
 	}
+	free(srcPtr);
 
 	return new GfxObj(0, new Cnv(max, 51, 51, data, true));
 }
