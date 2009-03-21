@@ -281,7 +281,7 @@ void registerDefaults() {
 	}
 
 
-Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
 	const char *s, *s2;
 
 	// argv[0] contains the name of the executable.
@@ -710,7 +710,7 @@ static void runDetectorTest() {
 #else // DISABLE_COMMAND_LINE
 
 
-Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
 	return Common::String();
 }
 

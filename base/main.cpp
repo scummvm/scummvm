@@ -235,7 +235,7 @@ static void setupGraphics(OSystem &system) {
 }
 
 
-extern "C" int scummvm_main(int argc, char *argv[]) {
+extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
 

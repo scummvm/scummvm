@@ -217,7 +217,7 @@ static OSystem_Dreamcast osys_dc;
 
 int main()
 {
-  static char *argv[] = { "scummvm", NULL, };
+  static const char *argv[] = { "scummvm", NULL, };
   static int argc = 1;
 
   g_system = &osys_dc;

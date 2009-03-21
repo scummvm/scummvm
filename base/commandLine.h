@@ -32,7 +32,7 @@
 namespace Base {
 
 void registerDefaults();
-Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
+Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv);
 bool processSettings(Common::String &command, Common::StringMap &settings);
 
 } // End of namespace Base
