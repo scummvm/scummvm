@@ -1799,7 +1799,7 @@ case $_backend in
 		MODULES="$MODULES backends/platform/iphone"
 		;;
 	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -I$(ronindir)/include'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
 		MODULES="$MODULES backends/platform/dc"
