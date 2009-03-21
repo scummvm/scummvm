@@ -619,17 +619,16 @@ void LoLEngine::drawMonster(uint16 id) {
 	MonsterInPlay *m = &_monsters[id];
 	int16 flg = _monsterDirFlags[(_currentDirection << 2) + m->facing];
 	int curFrm = getMonsterCurFrame(m, flg & 0xffef);
+	uint8 *shp = 0;
 
-	if (curFrm == -1) {
-		////////////
-		// TODO
-		curFrm=curFrm;
-
+	if (curFrm == -1) {		
+		shp = _monsterShapes[m->properties->shapeIndex << 4];
+		calcDrawingLayerParameters(m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], _shpDmX, _shpDmY, _dmScaleW, _dmScaleH, shp, 0);
 	} else {
 		int d = m->flags & 7;
 		bool flip = m->properties->flags & 0x200 ? true : false;
 		flg &= 0x10;
-		uint8 *shp = _monsterShapes[(m->properties->shapeIndex << 4) + curFrm];
+		shp = _monsterShapes[(m->properties->shapeIndex << 4) + curFrm];
 
 		if (m->properties->flags & 0x800)
 			flg |= 0x20;
@@ -648,49 +647,49 @@ void LoLEngine::drawMonster(uint16 id) {
 
 			drawDoorOrMonsterShape(shp2, 0, _shpDmX, _shpDmY, flg | 1, ovl2);
 		}
-
-		if (!m->field_1B)
-			return;
-
-		int dW = _screen->getShapeScaledWidth(shp, _dmScaleW) >> 1;
-		int dH = _screen->getShapeScaledHeight(shp, _dmScaleH) >> 1;
-
-		int a = (m->mode == 13) ? (m->fightCurTick << 1) : (m->properties->might / (m->field_1B & 0x7fff));
-
-		shp = _gameShapes[6];
-
-		int cF = m->properties->flags & 0xc000;
-		if (cF == 0x4000)
-			cF = 63;
-		else if (cF == 0x8000)
-			cF = 15;
-		else if (cF == 0xc000)
-			cF = 74;
-		else
-			cF = 0;
-
-		uint8 *tbl = new uint8[256];
-		if (cF) {
-			for (int i = 0; i < 256; i++) {
-				tbl[i] = i;
-				if (i < 2 || i > 7)
-					continue;
-				tbl[i] += cF;
-			}
-		}
-
-		dW += m->anon8;
-		dH += m->anonh;
-
-		a = CLIP(a, 1, 4);
-
-		int sW = _dmScaleW / a;
-		int sH = _dmScaleH / a;
-
-		_screen->drawShape(_sceneDrawPage1, shp, _shpDmX + dW, _shpDmY + dH, 13, 0x124, tbl, cF ? 1 : 0, sW, sH);
-
-		delete[] tbl;
 	}
+
+	if (!m->field_1B)
+		return;
+
+	int dW = _screen->getShapeScaledWidth(shp, _dmScaleW) >> 1;
+	int dH = _screen->getShapeScaledHeight(shp, _dmScaleH) >> 1;
+
+	int a = (m->mode == 13) ? (m->fightCurTick << 1) : (m->properties->might / (m->field_1B & 0x7fff));
+
+	shp = _gameShapes[6];
+
+	int cF = m->properties->flags & 0xc000;
+	if (cF == 0x4000)
+		cF = 63;
+	else if (cF == 0x8000)
+		cF = 15;
+	else if (cF == 0xc000)
+		cF = 74;
+	else
+		cF = 0;
+
+	uint8 *tbl = new uint8[256];
+	if (cF) {
+		for (int i = 0; i < 256; i++) {
+			tbl[i] = i;
+			if (i < 2 || i > 7)
+				continue;
+			tbl[i] += cF;
+		}
+	}
+
+	dW += m->anon8;
+	dH += m->anonh;
+
+	a = CLIP(a, 1, 4);
+
+	int sW = _dmScaleW / a;
+	int sH = _dmScaleH / a;
+
+	_screen->drawShape(_sceneDrawPage1, shp, _shpDmX + dW, _shpDmY + dH, 13, 0x124, tbl, cF ? 1 : 0, sW, sH);
+
+	delete[] tbl;
 }
 
 int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
@@ -1125,8 +1124,9 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 			break;
 
 		case 13:
+			// monster death
 			if (++monster->fightCurTick > 2)
-				mode13sub(monster);
+				killMonster(monster);
 			checkSceneUpdateNeed(monster->blockPropertyIndex);
 			break;
 
@@ -1462,7 +1462,7 @@ void LoLEngine::moveStrayingMonster(MonsterInPlay *monster) {
 	}
 }
 
-void LoLEngine::mode13sub(MonsterInPlay *monster) {
+void LoLEngine::killMonster(MonsterInPlay *monster) {
 	setMonsterMode(monster, 14);
 	monsterDropItems(monster);
 	checkSceneUpdateNeed(monster->blockPropertyIndex);

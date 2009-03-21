@@ -1065,7 +1065,7 @@ private:
 	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
 	void rearrangeAttackingMonster(MonsterInPlay *monster);
 	void moveStrayingMonster(MonsterInPlay *monster);
-	void mode13sub(MonsterInPlay *monster);
+	void killMonster(MonsterInPlay *monster);
 
 	MonsterInPlay *_monsters;
 	MonsterProperty *_monsterProperties;
