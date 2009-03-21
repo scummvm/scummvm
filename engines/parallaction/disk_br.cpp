@@ -486,10 +486,11 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	stream = openFile("backs/" + Common::String(filename), ".bkg");
 	ILBMDecoder decoder(stream, true);
 
+	// TODO: encapsulate surface creation
 	info.bg.w = decoder.getWidth();
 	info.bg.h = decoder.getHeight();
 	info.bg.pitch = info.bg.w;
-
+	info.bg.bytesPerPixel = 1;
 	info.bg.pixels = decoder.getBitmap();
 	assert(info.bg.pixels);
 
@@ -594,9 +595,11 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	Graphics::Surface* surf = new Graphics::Surface;
 	assert(surf);
 
+	// TODO: encapsulate surface creation
 	surf->w = decoder.getWidth();
 	surf->h = decoder.getHeight();
 	surf->pitch = surf->w;
+	surf->bytesPerPixel = 1;
 	surf->pixels = decoder.getBitmap();
 	assert(surf->pixels);
 
