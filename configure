@@ -1046,7 +1046,7 @@ case $_host_os in
 		LIBS="$LIBS -lmd "
 		_ranlib=:
 		;;
-	i686-darwin*|ppc-darwin*)
+	i686-apple-darwin*|ppc-apple-darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
@@ -1123,7 +1123,7 @@ if test -n "$_host"; then
 		bfin*)
 			_need_memalign=yes
 			;;
-		i686-darwin*|ppc-darwin*)
+		i686-apple-darwin*|ppc-apple-darwin*)
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
 			;;
