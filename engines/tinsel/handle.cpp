@@ -364,7 +364,7 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
  * Returns the address of a image, given its memory handle.
  * @param offset			Handle and offset to data
  */
-uint8 *LockMem(SCNHANDLE offset) {
+byte *LockMem(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
 	MEMHANDLE *pH;			// points to table entry
 

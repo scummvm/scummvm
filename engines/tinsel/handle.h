@@ -22,10 +22,9 @@
  * $Id$
  *
  * Graphics Memory Manager data structures
- * TODO: This should really be named dos_hand.h, or the dos_hand.cpp should be renamed
  */
 
-#ifndef TINSEL_HANDLE_H			// prevent multiple includes
+#ifndef TINSEL_HANDLE_H
 #define TINSEL_HANDLE_H
 
 #include "tinsel/dw.h"			// new data types
@@ -36,28 +35,26 @@ namespace Tinsel {
 |*                              Function Prototypes                     *|
 \*----------------------------------------------------------------------*/
 
-void SetupHandleTable(void);			// Loads the graphics handle table index file and preloads all the permanent graphics etc.
+/**
+ * Loads the graphics handle table index file and preloads all the permanent graphics etc.
+ */
+void SetupHandleTable(void);
 void FreeHandleTable(void);
 
-uint8 *LockMem(			// returns the addr of a image, given its memory handle
-	SCNHANDLE offset);			// handle and offset to data
+byte *LockMem(SCNHANDLE offset);
 
-void LockScene(					// Called to make the current scene non-discardable
-	SCNHANDLE offset);			// handle and offset to data
-
-void UnlockScene(				// Called to make the current scene discardable again
-	SCNHANDLE offset);			// handle and offset to data
+void LockScene(SCNHANDLE offset);
+void UnlockScene(SCNHANDLE offset);
 
 bool IsCdPlayHandle(SCNHANDLE offset);
 
 void TouchMem(SCNHANDLE offset);
 
-void SetCdPlaySceneDetails(			// Called at scene startup
-	int	sceneNum,
-	const char *fileName);
+// Called at scene startup
+void SetCdPlaySceneDetails(int sceneNum, const char *fileName);
 
-void SetCdPlayHandle(				// Called at game startup
-	int	fileNum);
+// Called at game startup
+void SetCdPlayHandle(int	fileNum);
 
 void LoadExtraGraphData(
 	SCNHANDLE start,		// Handle of start of range
