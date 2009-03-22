@@ -254,20 +254,18 @@ struct PathfindingState {
 };
 
 
-static Vertex *vertex_cur;
+static Vertex *vertex_cur;	// FIXME
 
 // Temporary hack to deal with points in reg_ts
-static int polygon_is_reg_t(unsigned char *list, int size) {
-	int i;
-
+static bool polygon_is_reg_t(unsigned char *list, int size) {
 	// Check the first three reg_ts
-	for (i = 0; i < (size < 3 ? size : 3); i++)
+	for (int i = 0; i < (size < 3 ? size : 3); i++)
 		if ((((reg_t *) list) + i)->segment)
 			// Non-zero segment, cannot be reg_ts
-			return 0;
+			return false;
 
 	// First three segments were zero, assume reg_ts
-	return 1;
+	return true;
 }
 
 static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
@@ -424,38 +422,38 @@ static int area(Common::Point a, Common::Point b, Common::Point c) {
 	return (b.x - a.x) * (a.y - c.y) - (c.x - a.x) * (a.y - b.y);
 }
 
-static int left(Common::Point a, Common::Point b, Common::Point c) {
+static bool left(Common::Point a, Common::Point b, Common::Point c) {
 	// Determines whether or not a point is to the left of a directed line
 	// Parameters: (Common::Point) a, b: The directed line (a, b)
 	//             (Common::Point) c: The query point
-	// Returns   : (int) 1 if c is to the left of (a, b), 0 otherwise
+	// Returns   : (int) true if c is to the left of (a, b), false otherwise
 	return area(a, b, c) > 0;
 }
 
-static int left_on(Common::Point a, Common::Point b, Common::Point c) {
+static bool left_on(Common::Point a, Common::Point b, Common::Point c) {
 	// Determines whether or not a point is to the left of or collinear with a
 	// directed line
 	// Parameters: (Common::Point) a, b: The directed line (a, b)
 	//             (Common::Point) c: The query point
-	// Returns   : (int) 1 if c is to the left of or collinear with (a, b), 0
+	// Returns   : (int) true if c is to the left of or collinear with (a, b), false
 	//                   otherwise
 	return area(a, b, c) >= 0;
 }
 
-static int collinear(Common::Point a, Common::Point b, Common::Point c) {
+static bool collinear(Common::Point a, Common::Point b, Common::Point c) {
 	// Determines whether or not three points are collinear
 	// Parameters: (Common::Point) a, b, c: The three points
-	// Returns   : (int) 1 if a, b, and c are collinear, 0 otherwise
+	// Returns   : (int) true if a, b, and c are collinear, false otherwise
 	return area(a, b, c) == 0;
 }
 
-static int between(Common::Point a, Common::Point b, Common::Point c) {
+static bool between(Common::Point a, Common::Point b, Common::Point c) {
 	// Determines whether or not a point lies on a line segment
 	// Parameters: (Common::Point) a, b: The line segment (a, b)
 	//             (Common::Point) c: The query point
-	// Returns   : (int) 1 if c lies on (a, b), 0 otherwise
+	// Returns   : (int) true if c lies on (a, b), false otherwise
 	if (!collinear(a, b, c))
-		return 0;
+		return false;
 
 	// Assumes a != b.
 	if (a.x != b.x)
@@ -464,24 +462,24 @@ static int between(Common::Point a, Common::Point b, Common::Point c) {
 		return ((a.y <= c.y) && (c.y <= b.y)) || ((a.y >= c.y) && (c.y >= b.y));
 }
 
-static int intersect_proper(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
+static bool intersect_proper(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
 	// Determines whether or not two line segments properly intersect
 	// Parameters: (Common::Point) a, b: The line segment (a, b)
 	//             (Common::Point) c, d: The line segment (c, d)
-	// Returns   : (int) 1 if (a, b) properly intersects (c, d), 0 otherwise
+	// Returns   : (int) true if (a, b) properly intersects (c, d), false otherwise
 	int ab = (left(a, b, c) && left(b, a, d)) || (left(a, b, d) && left(b, a, c));
 	int cd = (left(c, d, a) && left(d, c, b)) || (left(c, d, b) && left(d, c, a));
 
 	return ab && cd;
 }
 
-static int intersect(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
+static bool intersect(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
 	// Determines whether or not two line segments intersect
 	// Parameters: (Common::Point) a, b: The line segment (a, b)
 	//             (Common::Point) c, d: The line segment (c, d)
-	// Returns   : (int) 1 if (a, b) intersects (c, d), 0 otherwise
+	// Returns   : (int) true if (a, b) intersects (c, d), false otherwise
 	if (intersect_proper(a, b, c, d))
-		return 1;
+		return true;
 
 	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
 }
@@ -837,28 +835,38 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	free(vert_sorted);
 }
 
-static float distance(FloatPoint a, FloatPoint b) {
-	// Computes the distance between two pointfs
-	// Parameters: (Common::Point) a, b: The two pointfs
-	// Returns   : (int) The distance between a and b, rounded to int
+/**
+ * Computes the distance between two FloatPoints.
+ */
+static float distance(const FloatPoint &a, const FloatPoint &b) {
 	float w = a.x - b.x;
 	float h = a.y - b.y;
 
 	return sqrt(w * w + h * h);
 }
 
-static int point_on_screen_border(Common::Point p) {
+/**
+ * Computes the square of the distance between two FloatPoints.
+ */
+static float distanceSqr(const FloatPoint &a, const FloatPoint &b) {
+	float w = a.x - b.x;
+	float h = a.y - b.y;
+
+	return w * w + h * h;
+}
+
+static bool point_on_screen_border(const Common::Point &p) {
 	// Determines if a point lies on the screen border
 	// Parameters: (Common::Point) p: The point
-	// Returns   : (int) 1 if p lies on the screen border, 0 otherwise
+	// Returns   : (int) true if p lies on the screen border, false otherwise
 	// FIXME get dimensions from somewhere?
 	return (p.x == 0) || (p.x == 319) || (p.y == 0) || (p.y == 189);
 }
 
-static int edge_on_screen_border(Common::Point p, Common::Point q) {
+static bool edge_on_screen_border(const Common::Point &p, const Common::Point &q) {
 	// Determines if an edge lies on the screen border
 	// Parameters: (Common::Point) p, q: The edge (p, q)
-	// Returns   : (int) 1 if (p, q) lies on the screen border, 0 otherwise
+	// Returns   : (int) true if (p, q) lies on the screen border, false otherwise
 	// FIXME get dimensions from somewhere?
 	return ((p.x == 0 && q.x == 0) || (p.x == 319 && q.x == 319) || (p.y == 0 && q.y == 0) || (p.y == 189 && q.y == 189));
 }
@@ -934,7 +942,7 @@ static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
 
-		new_dist = distance(toFloatPoint(p), new_point);
+		new_dist = distanceSqr(toFloatPoint(p), new_point);
 
 		if (new_dist < dist) {
 			near_p = new_point;
@@ -1029,7 +1037,7 @@ static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Po
 					continue;
 			}
 
-			new_dist = distance(toFloatPoint(p), new_isec);
+			new_dist = distanceSqr(toFloatPoint(p), new_isec);
 			if (new_dist < dist) {
 				ipolygon = polygon;
 				isec = new_isec;
