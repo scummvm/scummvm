@@ -1057,7 +1057,7 @@ case $_host_os in
 		LIBS="$LIBS -lmd "
 		_ranlib=:
 		;;
-	i686-apple-darwin*|ppc-apple-darwin*)
+	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
