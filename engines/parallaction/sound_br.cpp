@@ -42,8 +42,8 @@ namespace Parallaction {
 
 /*
  * List of calls to the original music driver.
- * 
- * 
+ *
+ *
  * 1 set music buffer segment
  * 2 set music buffer offset
  * 3 set music buffer size
@@ -400,7 +400,7 @@ DosSoundMan_br::DosSoundMan_br(Parallaction_br *vm, MidiDriver *driver) : SoundM
 DosSoundMan_br::~DosSoundMan_br() {
 	delete _midiPlayer;
 }
-	
+
 void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
 	warning("SC_PLAYSFX not yet supported!");
 }
@@ -413,7 +413,7 @@ void DosSoundMan_br::playMusic() {
 	if (_musicFile.empty()) {
 		return;
 	}
-	
+
 	Common::SeekableReadStream *s = _vm->_disk->loadMusic(_musicFile.c_str());
 	assert(s);
 	_midiPlayer->play(s);
@@ -448,7 +448,7 @@ AmigaSoundMan_br::~AmigaSoundMan_br() {
 }
 
 bool AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
-	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 	// NOTE: Sound files don't always exist
 	if (!stream)
 		return false;
@@ -492,7 +492,7 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 		volume = ch->header.volume;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, 
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
 		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
 }
 
@@ -550,10 +550,10 @@ void SoundMan_br::setMusicFile(const char *name) {
 	_musicFile = name;
 }
 
-void SoundMan_br::execute(int command, const char *parm) {	
+void SoundMan_br::execute(int command, const char *parm) {
 	uint32 n = parm ? strtoul(parm, 0, 10) : 0;
 	bool b = (n == 1) ? true : false;
-	
+
 	switch (command) {
 	case SC_PLAYMUSIC:
 		playMusic();
@@ -564,14 +564,14 @@ void SoundMan_br::execute(int command, const char *parm) {
 	case SC_SETMUSICFILE:
 		setMusicFile(parm);
 		break;
-	
+
 	case SC_PLAYSFX:
 		playSfx(parm, _sfxChannel, _sfxLooping, _sfxVolume);
-		break;	
+		break;
 	case SC_STOPSFX:
 		stopSfx(n);
 		break;
-	
+
 	case SC_SETSFXCHANNEL:
 		_sfxChannel = n;
 		break;
@@ -581,7 +581,7 @@ void SoundMan_br::execute(int command, const char *parm) {
 	case SC_SETSFXVOLUME:
 		_sfxVolume = n;
 		break;
-	
+
 	case SC_PAUSE:
 		pause(b);
 		break;

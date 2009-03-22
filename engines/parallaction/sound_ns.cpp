@@ -379,7 +379,7 @@ void AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch) {
 		return;
 	}
 
-	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
 	decoder.decode();
 	ch->dispose = true;
@@ -416,7 +416,7 @@ void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping,
 		volume = ch->header.volume;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize, 
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
 		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
 }
 
@@ -480,7 +480,7 @@ void SoundMan_ns::setMusicFile(const char *filename) {
 void SoundMan_ns::execute(int command, const char *parm = 0) {
 	uint32 n = strtoul(parm, 0, 10);
 	bool b = (n == 1) ? true : false;
-	
+
 	switch (command) {
 	case SC_PLAYMUSIC:
 		if (_musicType == MUSIC_CHARACTER) playCharacterMusic(parm);
@@ -491,19 +491,19 @@ void SoundMan_ns::execute(int command, const char *parm = 0) {
 		stopMusic();
 		break;
 	case SC_SETMUSICTYPE:
-		_musicType = n;			
+		_musicType = n;
 		break;
 	case SC_SETMUSICFILE:
 		setMusicFile(parm);
 		break;
-	
+
 	case SC_PLAYSFX:
 		playSfx(parm, _sfxChannel, _sfxLooping, _sfxVolume);
-		break;	
+		break;
 	case SC_STOPSFX:
 		stopSfx(n);
 		break;
-	
+
 	case SC_SETSFXCHANNEL:
 		_sfxChannel = n;
 		break;
@@ -513,7 +513,7 @@ void SoundMan_ns::execute(int command, const char *parm = 0) {
 	case SC_SETSFXVOLUME:
 		_sfxVolume = n;
 		break;
-	
+
 	case SC_PAUSE:
 		pause(b);
 		break;

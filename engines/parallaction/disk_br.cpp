@@ -401,7 +401,7 @@ Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {
 }
 
 
-Common::ReadStream* DosDisk_br::loadSound(const char* name) {
+Common::SeekableReadStream* DosDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSound");
 	return 0;
 }
@@ -713,7 +713,7 @@ Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
 }
 
 
-Common::ReadStream* AmigaDisk_br::loadSound(const char* name) {
+Common::SeekableReadStream* AmigaDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
 	return tryOpenFile("sfx/" + Common::String(name), ".sfx");
 }

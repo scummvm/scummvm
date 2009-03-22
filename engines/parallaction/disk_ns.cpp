@@ -548,7 +548,7 @@ Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 }
 
 
-Common::ReadStream* DosDisk_ns::loadSound(const char* name) {
+Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
 	return NULL;
 }
 
@@ -1195,7 +1195,7 @@ Common::SeekableReadStream* AmigaDisk_ns::loadMusic(const char* name) {
 	return tryOpenFile(name);
 }
 
-Common::ReadStream* AmigaDisk_ns::loadSound(const char* name) {
+Common::SeekableReadStream* AmigaDisk_ns::loadSound(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.snd", name);
 

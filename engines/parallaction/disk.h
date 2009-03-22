@@ -76,7 +76,7 @@ public:
 	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
 	virtual Table* loadTable(const char* name) = 0;
 	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
-	virtual Common::ReadStream* loadSound(const char* name) = 0;
+	virtual Common::SeekableReadStream* loadSound(const char* name) = 0;
 	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
 	virtual void loadPath(const char *name, PathBuffer &buffer) { }
 };
@@ -140,7 +140,7 @@ public:
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::ReadStream* loadSound(const char* name);
+	Common::SeekableReadStream* loadSound(const char* name);
 };
 
 class AmigaDisk_ns : public Disk_ns {
@@ -176,7 +176,7 @@ public:
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::ReadStream* loadSound(const char* name);
+	Common::SeekableReadStream* loadSound(const char* name);
 };
 
 
@@ -232,7 +232,7 @@ public:
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::ReadStream* loadSound(const char* name);
+	Common::SeekableReadStream* loadSound(const char* name);
 	void loadMask(const char *name, MaskBuffer &buffer);
 	void loadPath(const char *name, PathBuffer &buffer);
 };
@@ -269,7 +269,7 @@ public:
 	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::ReadStream* loadSound(const char* name);
+	Common::SeekableReadStream* loadSound(const char* name);
 	void loadMask(const char *name, MaskBuffer &buffer);
 };
 
