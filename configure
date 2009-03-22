@@ -539,7 +539,8 @@ Special configuration feature:
                          special targets: linupy for Yopy PDA
                                           dreamcast for Sega Dreamcast
                                           wii for Nintendo Wii
-                                          gamecube for Nintendo GameCube
+                                          gamecube for Nintendo Gamecube
+                                          iphone for Apple iPhone
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
@@ -764,6 +765,7 @@ i586-mingw32msvc)
 iphone)
 	_host_os=iphone
 	_host_cpu=arm
+	_host_alias=arm-apple-darwin9
 	;;
 neuros)
 	_host_os=linux
@@ -1213,6 +1215,9 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
 			_build_hq_scalers="no"
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
