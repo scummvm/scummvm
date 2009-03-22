@@ -1626,7 +1626,7 @@ void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
 	// STUB
 }
 
-void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	LocalVariables *locals = &(_mobj->data.locals);
 	int i;
 
@@ -1651,7 +1651,7 @@ reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	int i;
 	fprintf(stderr, "Emitting %d stack entries\n", _mobj->data.stack.nr);
 	for (i = 0; i < _mobj->data.stack.nr; i++)
@@ -1689,11 +1689,11 @@ void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
 	Sci::free_List_entry(&(_mobj->data.lists), sub_addr.offset);
 }
 
-void SegInterfaceLists::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
 	LIST_ALL_DEALLOCATABLE(List, lists);
 }
 
-void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	ListTable *table = &(_mobj->data.lists);
 	List *list = &(table->table[addr.offset].entry);
 
@@ -1723,11 +1723,11 @@ void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
 	Sci::free_Node_entry(&(_mobj->data.nodes), sub_addr.offset);
 }
 
-void SegInterfaceNodes::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
 	LIST_ALL_DEALLOCATABLE(Node, nodes);
 }
 
-void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	NodeTable *table = &(_mobj->data.nodes);
 	Node *node = &(table->table[addr.offset].entry);
 
@@ -1759,7 +1759,7 @@ void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
 	// STUB
 }
 
-void SegInterfaceHunk::listAllDeallocatable(void *param, void (*note)(void*param, reg_t addr)) {
+void SegInterfaceHunk::listAllDeallocatable(void *param, NoteCallback note) {
 	LIST_ALL_DEALLOCATABLE(Hunk, hunks);
 }
 
