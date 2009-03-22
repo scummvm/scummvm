@@ -125,22 +125,16 @@ int _reset_graphics_input(EngineState *s) {
 		// Check for Amiga palette file.
 		Common::File file;
 		if (file.open("spal")) {
-			if (s->gfx_state->resstate->static_palette)
-				s->gfx_state->resstate->static_palette->free();
-			s->gfx_state->resstate->static_palette = gfxr_read_pal1_amiga(file);
-			s->gfx_state->resstate->static_palette->name = "static palette";
+			s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1_amiga(file));
 			file.close();
 			_sci1_alloc_system_colors(s);
 		} else {
 			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
 			if (resource) {
-				if (s->gfx_state->resstate->static_palette)
-					s->gfx_state->resstate->static_palette->free();
 				if (s->version < SCI_VERSION(1, 001, 000))
-					s->gfx_state->resstate->static_palette = gfxr_read_pal1(999, resource->data, resource->size);
+					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
-					s->gfx_state->resstate->static_palette = gfxr_read_pal11(999, resource->data, resource->size);
-				s->gfx_state->resstate->static_palette->name = "static palette";
+					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
 				_sci1_alloc_system_colors(s);
 				s->resmgr->unlockResource(resource, 999, kResourceTypePalette);
 			} else {

@@ -102,7 +102,9 @@ struct gfx_resstate_t {
 
 class GfxResManager {
 public:
-	GfxResManager(gfx_resstate_t *state) : _state(state) {}
+	GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, Palette *staticPalette, ResourceManager *resManager) : 
+				_version(version), _options(options), _driver(driver), _resManager(resManager), 
+				_staticPalette(staticPalette), _lockCounter(0), _tagLockCounter(0) {}
 	~GfxResManager() {}
 
 
@@ -125,7 +127,7 @@ public:
 	** Returns  : (void)
 	** Tagged resources are untagged if they are referenced.
 	*/
-	void tagResources() { (_state->tag_lock_counter)++; }
+	void tagResources() { _tagLockCounter++; }
 
 
 	/* Retreives an SCI0/SCI01 mouse cursor
@@ -194,12 +196,23 @@ public:
 	*/
 	gfxr_pic_t *addToPic(int old_nr, int new_nr, int flags, int old_default_palette, int default_palette);
 
+	/* Calculate a picture
+	** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
+	**             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
+	**             (gfxr_pic_t *) unscaled_pic: The pic structure the unscaled pic is to be written to,
+	**                                          or NULL if it isn't needed.
+	**             (int) flags: Pic drawing flags (interpreter dependant)
+	**             (int) default_palette: The default palette to use for pic drawing (interpreter dependant)
+	**             (int) nr: pic resource number
+	** Returns   : (int) GFX_ERROR if the resource could not be found, GFX_OK otherwise
+	*/
+	int calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr);
 
 	/* Determines whether support for pointers with more than two colors is required
 	** Returns   : (bool) false if no support for multi-colored pointers is required, true
 	**                   otherwise
 	*/
-	bool multicoloredPointers() { return _state->version > SCI_VERSION_1; }
+	bool multicoloredPointers() { return _version > SCI_VERSION_1; }
 
 
 	/* Frees all resources currently allocated
@@ -227,24 +240,35 @@ public:
 	*/
 	void freeResManager();
 
+	Palette *getStaticPalette() { return _staticPalette; }
+
+	void setStaticPalette(Palette *newPalette) {
+		freeStaticPalette();
+		_staticPalette = newPalette;
+		_staticPalette->name = "static palette";
+	}
+
+	void freeStaticPalette() { 
+		if (_staticPalette)
+			_staticPalette->free();
+	}
+
+	int getNumberOfColors() { return _staticPalette ? _staticPalette->size() : 0; }
+
 private:
-	gfx_resstate_t *_state;
+	int _version;
+	gfx_options_t *_options;
+	gfx_driver_t *_driver;
+	Palette *_staticPalette;
+	int _lockCounter; /* Global lock counter; increased for each new resource allocated.
+			  ** The newly allocated resource will then be assigned the new value
+			  ** of the lock_counter, as will any resources referenced afterwards.
+			  */
+	int _tagLockCounter; /* lock counter value at tag time */
+
+	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
+	ResourceManager *_resManager;
 };
-
-
-// FIXME: get rid of this
-gfx_resstate_t *gfxr_new_resource_manager(int version, gfx_options_t *options,
-	gfx_driver_t *driver, ResourceManager *resManager);
-/* Allocates and initializes a new resource manager
-** Parameters: (int) version: Interpreter version
-**             (gfx_options_t *): Pointer to all relevant drawing options
-**             (gfx_driver_t *): The graphics driver (needed for capability flags and the mode
-**                               structure)
-**             (void *) misc_payload: Additional information for the interpreter's
-**                      resource loaders
-** Returns   : (gfx_resstate_t *): A newly allocated resource manager
-** The options are considered to be read-only, as they belong to the overlying state object.
-*/
 
 } // End of namespace Sci
 

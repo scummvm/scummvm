@@ -260,28 +260,16 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 	kfree(s, handle);
 }
 
-#if 0
-#define KERNEL_COLOR_PALETTE s->gfx_state->pic->visual_map->colors
-#define KERNEL_COLORS_NR s->gfx_state->pic->visual_map->colors_nr
-#else
-#define KERNEL_COLOR_PALETTE (s->gfx_state->resstate->static_palette)
-#define KERNEL_COLORS_NR (s->gfx_state->resstate->static_palette ? s->gfx_state->resstate->static_palette->size() : 0)
-#endif
-
-//static gfx_pixmap_color_t white = {GFX_COLOR_INDEX_UNMAPPED, 255, 255, 255};
-
-//PaletteEntry white(255, 255, 255);
-
 PaletteEntry get_pic_color(EngineState *s, int color) {
 	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
 		return s->ega_colors[color].visual;
 
 	if (color == 255)
 		return PaletteEntry(255,255,255);
-	else if (color < (int)KERNEL_COLORS_NR)
-		return KERNEL_COLOR_PALETTE->getColor(color);
+	else if (color < s->gfx_state->gfxResMan->getNumberOfColors())
+		return s->gfx_state->gfxResMan->getStaticPalette()->getColor(color);
 	else {
-		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, KERNEL_COLORS_NR);
+		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getNumberOfColors());
 		BREAKPOINT();
 		return PaletteEntry(0,0,0); 
 	}
@@ -873,11 +861,7 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxr_view_t *res = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
-	// FIXME: the initialization of the GFX resource manager should
-	// be pushed up, and it shouldn't occur here
-	GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
-	res = _gfx->getView(view, &loop, &cel, 0);
-	delete _gfx;
+	res = s->gfx_state->gfxResMan->getView(view, &loop, &cel, 0);
 
 	if (!res) {
 		GFXWARN("Attempt to get cel parameters for invalid view %d\n", view);
@@ -1278,10 +1262,10 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		int i, delta, bestindex = -1, bestdelta = 200000;
 
-		for (i = 0; i < (int)KERNEL_COLORS_NR; i++) {
-			int dr = abs(KERNEL_COLOR_PALETTE->getColor(i).r - r);
-			int dg = abs(KERNEL_COLOR_PALETTE->getColor(i).g - g);
-			int db = abs(KERNEL_COLOR_PALETTE->getColor(i).b - b);
+		for (i = 0; i < s->gfx_state->gfxResMan->getNumberOfColors(); i++) {
+			int dr = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).r - r);
+			int dg = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).g - g);
+			int db = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).b - b);
 
 			delta = dr * dr + dg * dg + db * db;
 
@@ -2356,11 +2340,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// FIXME: Should really only invalidate all loaded pic resources here;
 		// this is overkill
-		// FIXME: the initialization of the GFX resource manager should
-		// be pushed up, and it shouldn't occur here
-		GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
-		_gfx->freeAllResources();
-		delete _gfx;
+		s->gfx_state->gfxResMan->freeAllResources();
 
 		break;
 	}

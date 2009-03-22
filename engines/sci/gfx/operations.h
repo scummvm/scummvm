@@ -102,11 +102,11 @@ struct gfx_state_t {
 	rect_t clip_zone; /* The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
 	gfx_driver_t *driver;
-	Palette *static_palette; /* Null for dynamic palettes */
 
 	int visible_map;
 
-	gfx_resstate_t *resstate; /* Resource state */
+	//gfx_resstate_t *resstate; /* Resource state */
+	GfxResManager *gfxResMan;
 
 	gfx_pixmap_t *priority_map; /* back buffer priority map (unscaled) */
 	gfx_pixmap_t *static_priority_map; /* static buffer priority map (unscaled) */

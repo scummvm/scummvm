@@ -864,10 +864,6 @@ int c_viewinfo(EngineState *s) {
 	else {
 		sciprintf("has %d loops:\n", loops);
 
-		// FIXME: the initialization of the GFX resource manager should
-		// be pushed up, and it shouldn't occur here
-		GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
-		
 		for (i = 0; i < loops; i++) {
 			int j, cels;
 
@@ -878,11 +874,10 @@ int c_viewinfo(EngineState *s) {
 				Common::Point mod;
 
 				if (con_can_handle_pixmaps()) {
-					view_pixmaps = _gfx->getView(view, &i, &j, palette);
+					view_pixmaps = s->gfx_state->gfxResMan->getView(view, &i, &j, palette);
 					con_insert_pixmap(gfx_clone_pixmap(view_pixmaps->loops[i].cels[j], s->gfx_state->driver->mode));
 				}
 
-				delete _gfx;
 				gfxop_get_cel_parameters(s->gfx_state, view, i, j, &width, &height, &mod);
 
 				sciprintf("   cel %d: size %dx%d, adj+(%d,%d)\n", j, width, height, mod.x, mod.y);
@@ -2016,11 +2011,7 @@ static int c_gfx_flush_resources(EngineState *s) {
 	gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
 	sciprintf("Flushing resources...\n");
 	s->visual->widfree(GFXW(s->visual));
-	// FIXME: the initialization of the GFX resource manager should
-	// be pushed up, and it shouldn't occur here
-	GfxResManager *_gfx = new GfxResManager(s->gfx_state->resstate);
-	_gfx->freeAllResources();
-	delete _gfx;
+	s->gfx_state->gfxResMan->freeAllResources();
 	s->visual = NULL;
 
 	return 0;
