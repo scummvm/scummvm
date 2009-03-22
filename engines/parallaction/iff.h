@@ -46,7 +46,9 @@ public:
 
 	operator bool() const { return (_startOffset != _endOffset) && _stream; }
 
-	uint32 getFORMBlockSize();
+	uint32 getFORMSize() const;
+	Common::IFF_ID getFORMType() const;
+
 	uint32 getIFFBlockSize(Common::IFF_ID chunk);
 	bool loadIFFBlock(Common::IFF_ID chunk, void *loadTo, uint32 ptrSize);
 	Common::SeekableReadStream *getIFFBlockStream(Common::IFF_ID chunkName);
@@ -57,6 +59,9 @@ private:
 	Common::SeekableReadStream *_stream;
 	uint32 _startOffset;
 	uint32 _endOffset;
+
+	uint32 _formSize;
+	Common::IFF_ID _formType;
 };
 
 

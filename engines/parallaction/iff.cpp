@@ -39,6 +39,22 @@ void IFFParser::setInputStream(Common::SeekableReadStream *stream) {
 	_stream = stream;
 	_startOffset = 0;
 	_endOffset = _stream->size();
+
+	_formType = 0;
+	_formSize = (uint32)-1;
+
+	if (_stream->size() < 12) {
+		// this file is too small to be a valid IFF container
+		return;
+	}
+
+	if (_stream->readUint32BE() != ID_FORM) {
+		// no FORM header was found
+		return;
+	}
+
+	_formSize = _stream->readUint32BE();
+	_formType = _stream->readUint32BE();
 }
 
 void IFFParser::destroy() {
@@ -46,18 +62,12 @@ void IFFParser::destroy() {
 	_startOffset = _endOffset = 0;
 }
 
-uint32 IFFParser::getFORMBlockSize() {
-	uint32 oldOffset = _stream->pos();
+uint32 IFFParser::getFORMSize() const {
+	return _formSize;
+}
 
-	uint32 data = _stream->readUint32BE();
-
-	if (data != ID_FORM) {
-		_stream->seek(oldOffset);
-		return (uint32)-1;
-	}
-
-	data = _stream->readUint32BE();
-	return data;
+Common::IFF_ID IFFParser::getFORMType() const {
+	return _formType;
 }
 
 uint32 IFFParser::moveToIFFBlock(Common::IFF_ID chunkName) {
@@ -116,6 +126,10 @@ Common::SeekableReadStream *IFFParser::getIFFBlockStream(Common::IFF_ID chunkNam
 ILBMDecoder::ILBMDecoder(Common::SeekableReadStream *in, bool disposeStream) : _in(in), _hasHeader(false), _bodySize((uint32)-1), _paletteSize((uint32)-1) {
 	assert(in);
 	_parser.setInputStream(in);
+
+	if (_parser.getFORMType() != ID_ILBM) {
+		return;
+	}
 
 	_hasHeader = _parser.loadIFFBlock(ID_BMHD, &_header, sizeof(_header));
 	if (!_hasHeader) {
