@@ -1698,40 +1698,39 @@ if test "$_have_x86" = yes ; then
 	echocheck "nasm"
 	if test "$_nasm" = no ; then
 		echo "disabled"
-		return;
-	fi
-
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-
-	for path_dir in $_nasmpath; do
-		if test -x "$path_dir/nasm$EXEEXT" ; then
-			NASM="$path_dir/nasm$EXEEXT"
-			echo $NASM
-			break
-		fi
-	done
-
-	IFS="$ac_save_ifs"
-
-	if test x$NASM = x -o x$NASM = x'"$NASM"'; then
-		echo "not found"
-		_nasm=no
 	else
-		case $_host_os in
-			os2-emx*)
-				NASMFLAGS="-f aout"
-			;;
-			mingw* | cygwin*)
-				NASMFLAGS="-f win32"
-			;;
-			darwin*)
-				NASMFLAGS="-f macho"
-			;;
-			*)
-				NASMFLAGS="-f elf"
-			;;
-		esac
-		_nasm=yes
+		IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+
+		for path_dir in $_nasmpath; do
+			if test -x "$path_dir/nasm$EXEEXT" ; then
+				NASM="$path_dir/nasm$EXEEXT"
+				echo $NASM
+				break
+			fi
+		done
+
+		IFS="$ac_save_ifs"
+
+		if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+			echo "not found"
+			_nasm=no
+		else
+			case $_host_os in
+				os2-emx*)
+					NASMFLAGS="-f aout"
+				;;
+				mingw* | cygwin*)
+					NASMFLAGS="-f win32"
+				;;
+				darwin*)
+					NASMFLAGS="-f macho"
+				;;
+				*)
+					NASMFLAGS="-f elf"
+				;;
+			esac
+			_nasm=yes
+		fi
 	fi
 fi
 
