@@ -30,7 +30,7 @@ SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 
-# use environment vars if set
+# Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 
 # Backslashes into forward slashes:
@@ -54,23 +54,6 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 	unset ac_TEMP_PATH
 fi
 
-
-# default lib behaviour yes/no/auto
-_vorbis=auto
-_tremor=auto
-_flac=auto
-_mad=auto
-_alsa=auto
-_zlib=auto
-_mpeg2=no
-_fluidsynth=auto
-_mt32emu=yes
-# default option behaviour yes/no
-_build_hq_scalers=yes
-_build_scalers=yes
-# default vkeybd/keymapper options
-_vkeybd=no
-_keymapper=no
 
 # Add an engine: id name build subengines
 add_engine() {
@@ -113,15 +96,35 @@ add_engine tinsel "Tinsel" no
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
+
+#
+# Default settings
+#
+# Default lib behaviour yes/no/auto
+_vorbis=auto
+_tremor=auto
+_flac=auto
+_mad=auto
+_alsa=auto
+_zlib=auto
+_mpeg2=no
+_fluidsynth=auto
+_mt32emu=yes
+# Default option behaviour yes/no
+_build_hq_scalers=yes
+_build_scalers=yes
+# Default vkeybd/keymapper options
+_vkeybd=no
+_keymapper=no
+# Default platform settings
+_backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
 _dynamic_modules=no
 _plugins_default=static
 _nasm=auto
-
-# more defaults
-_backend=sdl
+# Default commands
 _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
@@ -135,6 +138,12 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _prefix=/usr/local
+# For cross compiling
+_host=""
+_host_cpu=""
+_host_vendor=""
+_host_os=""
+_host_alias=""
 
 _srcdir=`dirname $0`
 
@@ -147,13 +156,6 @@ fi
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
-# For cross compiling
-_host=""
-_host_cpu=""
-_host_vendor=""
-_host_os=""
-_host_alias=""
-
 cc_check() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
@@ -164,6 +166,13 @@ cc_check() {
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
+}
+
+#
+# Function to provide echo -n for bourne shells that don't have it
+#
+echo_n() {
+	printf "$@"
 }
 
 echocheck() {
@@ -250,39 +259,29 @@ find_sdlconfig() {
 	fi
 }
 
-#
-# Function to provide echo -n for bourne shells that don't have it
-#
-echo_n() {
-	printf "$@"
-}
 
 #
-# Determine a data type with the given length
+# Generic options functions
 #
-find_type_with_size() {
-	for datatype in int short char long unknown; do
-	cat <<EOF >tmp_find_type_with_size.cpp
-typedef $datatype ac__type_sizeof_;
-int main() {
-	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
-	test_array [0] = 0;
-	return 0;
+
+# Show the configure help line for an option
+option_help() {
+        tmpopt=`echo $1 | sed 's/_/-/g'`
+	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	echo "  ${option}  ${2}"
 }
-EOF
-	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
-		break
-	else
-		if test "$datatype" = "unknown"; then
-			echo "couldn't find data type with $1 bytes"
-			exit 1
-		fi
-		continue
-	fi
-	done
-	rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
-	echo $datatype
+
+# Show an error about an unknown option
+option_error() {
+	echo "error: unrecognised option: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
 }
+
+
+#
+# Engine handling functions
+#
 
 # Get the name of the engine
 get_engine_name() {
@@ -365,13 +364,6 @@ engine_disable() {
 	else
 		option_error
 	fi
-}
-
-# Show the configure help line for an option
-option_help() {
-        tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
-	echo "  ${option}  ${2}"
 }
 
 # Show the configure help line for a given engine
@@ -507,7 +499,6 @@ get_saga_build_string() {
 #
 # Greet user
 #
-
 echo "Running ScummVM configure..."
 echo "Configure run on" `date` > $TMPLOG
 
@@ -607,12 +598,6 @@ EOF
 done # for parm in ...
 
 DEBFLAGS="-g"
-
-option_error() {
-	echo "error: unrecognised option: $ac_option
-Try \`$0 --help' for more information." >&2
-	exit 1
-}
 
 for ac_option in $@; do
 	case "$ac_option" in
@@ -849,7 +834,6 @@ esac
 #
 # Platform specific sanity checks
 #
-
 case $_host_os in
 wii | gamecube)
 	if test -z "$DEVKITPRO"; then
@@ -894,9 +878,9 @@ fi
 CXX=
 for compiler in $compilers; do
 	if test_compiler $compiler; then
-	CXX=$compiler
-	echo $CXX
-	break
+		CXX=$compiler
+		echo $CXX
+		break
 	fi
 done
 if test -z "$CXX"; then
@@ -971,6 +955,33 @@ else
 fi
 echo $_endian;
 rm -f tmp_endianness_check.o tmp_endianness_check.cpp
+
+#
+# Determine a data type with the given length
+#
+find_type_with_size() {
+	for datatype in int short char long unknown; do
+	cat <<EOF >tmp_find_type_with_size.cpp
+typedef $datatype ac__type_sizeof_;
+int main() {
+	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
+	test_array [0] = 0;
+	return 0;
+}
+EOF
+	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+		break
+	else
+		if test "$datatype" = "unknown"; then
+			echo "couldn't find data type with $1 bytes"
+			exit 1
+		fi
+		continue
+	fi
+	done
+	rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
+	echo $datatype
+}
 
 #
 # Determine data type sizes
@@ -1731,7 +1742,7 @@ if test "$_keymapper" = yes ; then
 fi
 
 #
-# figure out installation directories
+# Figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
 test -z "$_mandir" && _mandir="$_prefix/share/man"
@@ -1773,14 +1784,12 @@ fi
 case $_backend in
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-		MODULES="$MODULES backends/platform/null"
 		;;
 	sdl)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
-		MODULES="$MODULES backends/platform/sdl"
 		;;
 	gp2x)
 		find_sdlconfig
@@ -1788,23 +1797,19 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		LDFLAGS="$LDFLAGS -static"
 		CXXFLAGS="$CXXFLAGS -march=armv4t"
-		MODULES="$MODULES backends/platform/gp2x"
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		DEFINES="$DEFINES -DIPHONE_BACKEND"
-		MODULES="$MODULES backends/platform/iphone"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
-		MODULES="$MODULES backends/platform/dc"
 		;;
 	wii)
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
-		MODULES="$MODULES backends/platform/wii"
 		case $_host_os in
 		gamecube)
 			DEFINES="$DEFINES -DGAMECUBE"
@@ -1820,6 +1825,7 @@ case $_backend in
 		exit 1
 		;;
 esac
+MODULES="$MODULES backends/platform/$_backend"
 
 #
 # Do CXXFLAGS now we know the compiler version
