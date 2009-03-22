@@ -108,10 +108,8 @@ struct Vertex {
 	int idx;
 
 	// Vertex circular list entry
-	struct {
-		Vertex *cle_next;	// next element
-		Vertex *cle_prev;	// previous element
-	} entries;
+	Vertex *_next;	// next element
+	Vertex *_prev;	// previous element
 
 	// Distance from starting vertex
 	float dist;
@@ -142,36 +140,50 @@ public:
 	
 	void insertHead(Vertex *elm) {
 		if (_head == NULL) {
-			elm->entries.cle_next = elm->entries.cle_prev = elm;
+			elm->_next = elm->_prev = elm;
 		} else {
-			elm->entries.cle_next = _head;
-			elm->entries.cle_prev = _head->entries.cle_prev;
-			_head->entries.cle_prev = elm;
-			elm->entries.cle_prev->entries.cle_next = elm;
+			elm->_next = _head;
+			elm->_prev = _head->_prev;
+			_head->_prev = elm;
+			elm->_prev->_next = elm;
 		}
 		_head = elm;
 	}
 
 	static void insertAfter(Vertex *listelm, Vertex *elm) {
-		elm->entries.cle_prev = listelm;
-		(elm)->entries.cle_next = listelm->entries.cle_next;
-		listelm->entries.cle_next->entries.cle_prev = elm;
-		listelm->entries.cle_next = elm;
+		elm->_prev = listelm;
+		elm->_next = listelm->_next;
+		listelm->_next->_prev = elm;
+		listelm->_next = elm;
 	}
 
 	void remove(Vertex *elm) {
-		if (elm->entries.cle_next == elm) {
+		if (elm->_next == elm) {
 			_head = NULL;
 		} else {
 			if (_head == elm)
-				_head = elm->entries.cle_next;
-			elm->entries.cle_prev->entries.cle_next = elm->entries.cle_next;
-			elm->entries.cle_next->entries.cle_prev = elm->entries.cle_prev;
+				_head = elm->_next;
+			elm->_prev->_next = elm->_next;
+			elm->_next->_prev = elm->_prev;
 		}
 	}
 
 	bool empty() const {
 		return _head == NULL;
+	}
+
+	/**
+	 * Reverse the order of the elements in this circular list.
+	 */
+	void reverse() {
+		if (!_head)
+			return;
+
+		Vertex *elm = _head;
+		do {
+			SWAP(elm->_prev, elm->_next);
+			elm = elm->_next;
+		} while (elm != _head);
 	}
 };
 
@@ -180,12 +192,12 @@ public:
 #define CLIST_FOREACH(var, head)					\
 	for ((var) = (head)->first();					\
 		(var);							\
-		(var) = ((var)->entries.cle_next == (head)->first() ?	\
-		    NULL : (var)->entries.cle_next))
+		(var) = ((var)->_next == (head)->first() ?	\
+		    NULL : (var)->_next))
 
 /* Circular list access methods. */
-#define CLIST_NEXT(elm)		((elm)->entries.cle_next)
-#define CLIST_PREV(elm)		((elm)->entries.cle_prev)
+#define CLIST_NEXT(elm)		((elm)->_next)
+#define CLIST_PREV(elm)		((elm)->_prev)
 
 
 struct Polygon {
@@ -580,17 +592,7 @@ static void fix_vertex_order(Polygon *polygon) {
 	if (((area > 0) && (polygon->type == POLY_CONTAINED_ACCESS))
 	        || ((area < 0) && (polygon->type != POLY_CONTAINED_ACCESS))) {
 
-		// Create a new circular list
-		CircularVertexList vertices;
-
-		while (!polygon->vertices.empty()) {
-			// Put first vertex in new list
-			Vertex *vertex = polygon->vertices.first();
-			polygon->vertices.remove(vertex);
-			vertices.insertHead(vertex);
-		}
-
-		polygon->vertices = vertices;
+		polygon->vertices.reverse();
 	}
 }
 
