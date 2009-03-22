@@ -754,18 +754,18 @@ static int simulate_stippled_line_draw(gfx_driver_t *driver, int skipone, Common
 	int stepwidth = (xl) ? driver->mode->xfact : driver->mode->yfact;
 	int dbl_stepwidth = 2 * stepwidth;
 	int linelength = (line_mode == GFX_LINE_MODE_FINE) ? stepwidth - 1 : 0;
-	int *posvar;
+	int16 *posvar;
 	int length;
 	int delta;
 	int length_left;
 
 	if (!xl) { // xl = 0, so we move along yl
-		posvar = (int *) &start.y;
+		posvar = &start.y;
 		length = yl;
 		delta = (yl < 0) ? -dbl_stepwidth : dbl_stepwidth;
 	} else {
 		assert(!yl);  // We don't do diagonals; that's not needed ATM.
-		posvar = (int *) &start.x;
+		posvar = &start.x;
 		length = xl;
 		delta = (xl < 0) ? -dbl_stepwidth : dbl_stepwidth;
 	}
