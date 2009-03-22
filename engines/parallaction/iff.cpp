@@ -175,7 +175,7 @@ byte *ILBMDecoder::getPalette() {
 
 byte *ILBMDecoder::getBitmap(uint32 numPlanes, bool packPlanes) {
 	assert(_bodySize != (uint32)-1);
-	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
+	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 3 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
 
 	numPlanes = MIN(numPlanes, (uint32)_header.depth);
 	if (numPlanes > 4) {
