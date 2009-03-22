@@ -113,14 +113,11 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
 	int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
 
-	uint8 *buffer = (uint8 *) malloc(spriteSize);
+	uint8 *buffer = (uint8 *)malloc(spriteSize);
+	uint8 *destP = buffer;
 
 	for (int line = 0; line < pCurrentFileEntry->height; line++) {
-		uint8 p0;
-		uint8 p1;
-		uint8 p2;
-		uint8 p3;
-		uint8 p4;
+		uint8 p0, p1, p2, p3, p4;
 
 		for (int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
 			int bit = 7 - (x % 8);
@@ -132,7 +129,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 			p3 = (dataPtr[line*pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
 			p4 = (dataPtr[line*pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
 
-			buffer[line * pCurrentFileEntry->widthInColumn + x] = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
+			*destP++ = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
 		}
 	}
 
@@ -148,10 +145,11 @@ int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 
 	int maskSize = height * width;	// for sprites: width * height
 
-	if (resType == OBJ_TYPE_SPRITE) {
+	if (resType == 4) {
 		div = maskSize / 4;
-	} else if (resType == OBJ_TYPE_MESSAGE) {
+	} else if (resType == 5) {
 		width = (width * 8) / 5;
+		maskSize = height * width;
 	}
 
 	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(maskSize + div);
@@ -193,9 +191,9 @@ int createResFileEntry(int width, int height, int resType) {
 
 	size = width * height;	// for sprites: width * height
 
-	if (resType == OBJ_TYPE_SPRITE) {
+	if (resType == 4) {
 		div = size / 4;
-	} else if (resType == OBJ_TYPE_MESSAGE) {
+	} else if (resType == 5) {
 		width = (width * 8) / 5;
 	}
 
@@ -423,19 +421,23 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 
 		Common::MemoryReadStream s4(ptr + offset + 6, 16);
 
-		localBuffer.field_0 = s4.readUint32BE();
+		localBuffer.offset = s4.readUint32BE();
 		localBuffer.width = s4.readUint16BE();
 		localBuffer.height = s4.readUint16BE();
 		localBuffer.type = s4.readUint16BE();
 		localBuffer.transparency = s4.readUint16BE();
-		localBuffer.field_C = s4.readUint16BE();
-		localBuffer.field_E = s4.readUint16BE();
+		localBuffer.hotspotY = s4.readUint16BE();
+		localBuffer.hotspotX = s4.readUint16BE();
 
-		if (sec == 1) {
-			localBuffer.width = localBuffer.width - (localBuffer.type * 2);	// Type 1: Width - (1*2) , Type 5: Width - (5*2)
-		}
+		if (sec == 1) 
+			// Type 1: Width - (1*2) , Type 5: Width - (5*2)
+			localBuffer.width -= localBuffer.type * 2;
 
 		resourceSize = localBuffer.width * localBuffer.height;
+
+		if (!sec && (localBuffer.type == 5))
+			// Type 5: Width - (2*5)
+			localBuffer.width -= 10;
 
 		if (currentDestEntry == -1) {
 			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, localBuffer.type);
@@ -447,7 +449,15 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			return -1;	// TODO: buffer is not freed
 		}
 
-		ptr5 = ptr3 + localBuffer.field_0 + numIdx * 16;
+		if (!sec && (localBuffer.type == 5)) {
+			// There are sometimes sprites with a reduced width than what their pixels provide.
+			// The original handled this here by copy parts of each line - for ScummVM, we're
+			// simply setting the width in bytes and letting the decoder do the rest
+			filesDatabase[fileIndex].width += 2;
+				//(((localBuffer.width + 10) << 3) / 5) >> 3;
+		}
+
+		ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
 
 		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
 		ptr5 += resourceSize;
@@ -515,6 +525,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 					}
 				}
 			}
+
 			break;
 		}
 		default: {

@@ -91,13 +91,13 @@ struct dataFileName {
 };
 
 struct setHeaderEntry {
-	int32 field_0;		// offset ptr
+	int32 offset;		// offset ptr
 	int16 width;
 	int16 height;
 	int16 type;		// resource type, ie. sprites 0,1,4,5 and 8
 	int16 transparency;
-	int16 field_C;
-	int16 field_E;
+	int16 hotspotY;
+	int16 hotspotX;
 };
 
 struct volumeDataStruct {
