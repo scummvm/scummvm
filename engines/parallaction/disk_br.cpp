@@ -545,7 +545,11 @@ void AmigaDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
 	}
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadMask '%s'", name);
 
-	Common::SeekableReadStream *stream = openFile("msk/" + Common::String(name), ".msk");
+	Common::SeekableReadStream *stream = tryOpenFile("msk/" + Common::String(name), ".msk");
+	if (!stream) {
+		return;
+	}
+
 	ILBMDecoder decoder(stream, true);
 
 	// TODO: the buffer is allocated by the caller, so a copy here is
@@ -613,10 +617,10 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	sName.deleteLastChar();
 	sName.deleteLastChar();
 	sName.deleteLastChar();
-	stream = openFile("ras/" + sName + ".ras_shdw");
+	stream = tryOpenFile("ras/" + sName + ".ras_shdw");
 
 	if (!stream) {
-		warning("Cannot find shadow file for '%s'\n", name);
+		debugC(9, kDebugDisk, "Cannot find shadow file for '%s'\n", name);
 	} else {
 		uint32 shadowWidth = ((surf->w + 15)/8) & ~1;
 		uint32 shadowSize = shadowWidth * surf->h;
