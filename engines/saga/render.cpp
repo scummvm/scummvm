@@ -49,6 +49,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
 	_initialized = false;
+	_fullRefresh = false;
 
 #ifdef SAGA_DEBUG
 	// Initialize FPS timer callback
