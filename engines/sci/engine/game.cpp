@@ -92,14 +92,6 @@ static void _free_vocabulary(EngineState *s) {
 	s->opcodes = NULL;
 }
 
-
-static int _init_graphics_input(EngineState *s) {
-	s->pic_priority_table = NULL;
-	s->pics = NULL;
-	s->pics_nr = 0;
-	return 0;
-}
-
 static void _sci1_alloc_system_colors(EngineState *s) {
 	gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
 	gfxop_set_system_color(s->gfx_state, 0, &black);
@@ -509,8 +501,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	sciprintf("Engine initialized\n");
 
-	if (_init_graphics_input(s))
-		return 1;
+	s->pic_priority_table = NULL;
+	s->pics = NULL;
+	s->pics_nr = 0;
 
 	return 0;
 }
@@ -525,11 +518,14 @@ void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 
 void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
 
+#if 0
+// Unreferenced - removed
 void script_set_gamestate_save_dir(EngineState *s, reg_t path) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
 	reg_t *srcbuf = kernel_dereference_reg_pointer(s, path, 1);
 	internal_stringfrag_strncpy(s, str->value, srcbuf, MAX_SAVE_DIR_SIZE);
 }
+#endif
 
 void script_free_vm_memory(EngineState *s) {
 	sciprintf("Freeing VM memory\n");

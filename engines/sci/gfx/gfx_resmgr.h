@@ -60,7 +60,7 @@ enum gfx_resource_type_t {
 
 struct gfx_resource_t {
 	int ID; /* Resource ID */
-	int lock_sequence_nr; /* See description of lock_counter in gfx_resstate_t */
+	int lock_sequence_nr; /* See description of lock_counter in GfxResManager */
 	int mode; /* A mode type hash */
 
 	union {
@@ -83,21 +83,6 @@ struct gfx_resource_t {
 struct gfx_options_t;
 
 typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
-
-struct gfx_resstate_t {
-	int version; /* Interpreter version */
-	gfx_options_t *options;
-	gfx_driver_t *driver;
-	Palette *static_palette;
-	int lock_counter; /* Global lock counter; increased for each new resource allocated.
-			  ** The newly allocated resource will then be assigned the new value
-			  ** of the lock_counter, as will any resources referenced afterwards.
-			  */
-	int tag_lock_counter; /* lock counter value at tag time */
-
-	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
-	ResourceManager *resManager;
-};
 
 
 class GfxResManager {
@@ -195,8 +180,7 @@ public:
 	gfxr_pic_t *addToPic(int old_nr, int new_nr, int flags, int old_default_palette, int default_palette);
 
 	/* Calculate a picture
-	** Parameters: (gfx_resstate_t *) state: The resource state, containing options and version information
-	**             (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
+	** Parameters: (gfxr_pic_t *) scaled_pic: The pic structure that is to be written to
 	**             (gfxr_pic_t *) unscaled_pic: The pic structure the unscaled pic is to be written to,
 	**                                          or NULL if it isn't needed.
 	**             (int) flags: Pic drawing flags (interpreter dependant)
