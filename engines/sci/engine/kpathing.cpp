@@ -96,7 +96,7 @@ struct FloatPoint {
 	float x, y;
 };
 
-FloatPoint toFloatPoint(Common::Point p) {
+FloatPoint toFloatPoint(const Common::Point &p) {
 	return FloatPoint(p.x, p.y);
 }
 
@@ -427,42 +427,42 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	}
 }
 
-static int area(Common::Point a, Common::Point b, Common::Point c) {
+static int area(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Computes the area of a triangle
-	// Parameters: (Common::Point) a, b, c: The points of the triangle
+	// Parameters: (const Common::Point &) a, b, c: The points of the triangle
 	// Returns   : (int) The area multiplied by two
 	return (b.x - a.x) * (a.y - c.y) - (c.x - a.x) * (a.y - b.y);
 }
 
-static bool left(Common::Point a, Common::Point b, Common::Point c) {
+static bool left(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Determines whether or not a point is to the left of a directed line
-	// Parameters: (Common::Point) a, b: The directed line (a, b)
-	//             (Common::Point) c: The query point
+	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
+	//             (const Common::Point &) c: The query point
 	// Returns   : (int) true if c is to the left of (a, b), false otherwise
 	return area(a, b, c) > 0;
 }
 
-static bool left_on(Common::Point a, Common::Point b, Common::Point c) {
+static bool left_on(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Determines whether or not a point is to the left of or collinear with a
 	// directed line
-	// Parameters: (Common::Point) a, b: The directed line (a, b)
-	//             (Common::Point) c: The query point
+	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
+	//             (const Common::Point &) c: The query point
 	// Returns   : (int) true if c is to the left of or collinear with (a, b), false
 	//                   otherwise
 	return area(a, b, c) >= 0;
 }
 
-static bool collinear(Common::Point a, Common::Point b, Common::Point c) {
+static bool collinear(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Determines whether or not three points are collinear
-	// Parameters: (Common::Point) a, b, c: The three points
+	// Parameters: (const Common::Point &) a, b, c: The three points
 	// Returns   : (int) true if a, b, and c are collinear, false otherwise
 	return area(a, b, c) == 0;
 }
 
-static bool between(Common::Point a, Common::Point b, Common::Point c) {
+static bool between(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Determines whether or not a point lies on a line segment
-	// Parameters: (Common::Point) a, b: The line segment (a, b)
-	//             (Common::Point) c: The query point
+	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
+	//             (const Common::Point &) c: The query point
 	// Returns   : (int) true if c lies on (a, b), false otherwise
 	if (!collinear(a, b, c))
 		return false;
@@ -474,10 +474,10 @@ static bool between(Common::Point a, Common::Point b, Common::Point c) {
 		return ((a.y <= c.y) && (c.y <= b.y)) || ((a.y >= c.y) && (c.y >= b.y));
 }
 
-static bool intersect_proper(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
+static bool intersect_proper(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
 	// Determines whether or not two line segments properly intersect
-	// Parameters: (Common::Point) a, b: The line segment (a, b)
-	//             (Common::Point) c, d: The line segment (c, d)
+	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
+	//             (const Common::Point &) c, d: The line segment (c, d)
 	// Returns   : (int) true if (a, b) properly intersects (c, d), false otherwise
 	int ab = (left(a, b, c) && left(b, a, d)) || (left(a, b, d) && left(b, a, c));
 	int cd = (left(c, d, a) && left(d, c, b)) || (left(c, d, b) && left(d, c, a));
@@ -485,10 +485,10 @@ static bool intersect_proper(Common::Point a, Common::Point b, Common::Point c, 
 	return ab && cd;
 }
 
-static bool intersect(Common::Point a, Common::Point b, Common::Point c, Common::Point d) {
+static bool intersect(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
 	// Determines whether or not two line segments intersect
-	// Parameters: (Common::Point) a, b: The line segment (a, b)
-	//             (Common::Point) c, d: The line segment (c, d)
+	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
+	//             (const Common::Point &) c, d: The line segment (c, d)
 	// Returns   : (int) true if (a, b) intersects (c, d), false otherwise
 	if (intersect_proper(a, b, c, d))
 		return true;
@@ -496,9 +496,9 @@ static bool intersect(Common::Point a, Common::Point b, Common::Point c, Common:
 	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
 }
 
-static int contained(Common::Point p, Polygon *polygon) {
+static int contained(const Common::Point &p, Polygon *polygon) {
 	// Polygon containment test
-	// Parameters: (Common::Point) p: The point
+	// Parameters: (const Common::Point &) p: The point
 	//             (Polygon *) polygon: The polygon
 	// Returns   : (int) CONT_INSIDE if p is strictly contained in polygon,
 	//                   CONT_ON_EDGE if p lies on an edge of polygon,
@@ -509,8 +509,8 @@ static int contained(Common::Point p, Polygon *polygon) {
 
 	// Iterate over edges
 	CLIST_FOREACH(vertex, &polygon->vertices) {
-		Common::Point v1 = vertex->v;
-		Common::Point v2 = CLIST_NEXT(vertex)->v;
+		const Common::Point &v1 = vertex->v;
+		const Common::Point &v2 = CLIST_NEXT(vertex)->v;
 
 		// Flags for ray straddling left and right
 		int rstrad, lstrad;
@@ -603,9 +603,9 @@ static int vertex_compare(const void *a, const void *b) {
 	// Parameters: (const void *) a, b: The vertices
 	// Returns   : (int) -1 if a is smaller than b, 1 if a is larger than b, and
 	//                   0 if a and b are equal
-	Common::Point p0 = vertex_cur->v;
-	Common::Point p1 = (*(Vertex **) a)->v;
-	Common::Point p2 = (*(Vertex **) b)->v;
+	const Common::Point &p0 = vertex_cur->v;
+	const Common::Point &p1 = (*(Vertex **) a)->v;
+	const Common::Point &p2 = (*(Vertex **) b)->v;
 
 	if (p1 == p2)
 		return 0;
@@ -644,21 +644,21 @@ static int vertex_compare(const void *a, const void *b) {
 	return -1;
 }
 
-static void clockwise(const Vertex *v, Common::Point *p1, Common::Point *p2) {
+static void clockwise(const Vertex *v, const Common::Point *&p1, const Common::Point *&p2) {
 	// Orders the points of an edge clockwise around vertex_cur. If all three
 	// points are collinear the original order is used
 	// Parameters: (const Vertex *) v: The first vertex of the edge
 	// Returns   : (void)
-	//             (Common::Point) *p1: The first point in clockwise order
-	//             (Common::Point) *p2: The second point in clockwise order
+	//             (const Common::Point *&) p1: The first point in clockwise order
+	//             (const Common::Point *&) p2: The second point in clockwise order
 	Vertex *w = CLIST_NEXT(v);
 
 	if (left_on(vertex_cur->v, w->v, v->v)) {
-		*p1 = v->v;
-		*p2 = w->v;
+		p1 = &v->v;
+		p2 = &w->v;
 	} else {
-		*p1 = w->v;
-		*p2 = v->v;
+		p1 = &w->v;
+		p2 = &v->v;
 	}
 }
 
@@ -668,7 +668,7 @@ struct EdgeIsCloser: public Common::BinaryFunction<const Vertex *, const Vertex 
 	// Parameters: (const Vertex *const &) a, b: The first vertices of the edges
 	// Returns   : (bool) true if a is closer to vertex_cur than b, false otherwise
 	bool operator()(const Vertex *const &a, const Vertex *const &b) const {
-		Common::Point v1, v2, w1, w2;
+		const Common::Point *v1, *v2, *w1, *w2;
 
 		// Check for comparison of the same edge
 		if (a == b)
@@ -679,18 +679,18 @@ struct EdgeIsCloser: public Common::BinaryFunction<const Vertex *, const Vertex 
 
 		// Order vertices clockwise so we know vertex_cur is to the right of
 		// directed edges (v1, v2) and (w1, w2)
-		clockwise(a, &v1, &v2);
-		clockwise(b, &w1, &w2);
+		clockwise(a, v1, v2);
+		clockwise(b, w1, w2);
 
 		// At this point we know that one edge must lie entirely to one side
 		// of the other, as the edges are not collinear and cannot intersect
 		// other than possibly sharing a vertex.
 
-		return ((left_on(v1, v2, w1) && left_on(v1, v2, w2)) || (left_on(w2, w1, v1) && left_on(w2, w1, v2)));
+		return ((left_on(*v1, *v2, *w1) && left_on(*v1, *v2, *w2)) || (left_on(*w2, *w1, *v1) && left_on(*w2, *w1, *v2)));
 	}
 };
 
-static int inside(Common::Point p, Vertex *vertex) {
+static int inside(const Common::Point &p, Vertex *vertex) {
 	// Determines whether or not a line from a point to a vertex intersects the
 	// interior of the polygon, locally at that vertex
 	// Parameters: (Common::Point) p: The point
@@ -699,9 +699,9 @@ static int inside(Common::Point p, Vertex *vertex) {
 	//                   the polygon, locally at the vertex. 0 otherwise
 	// Check that it's not a single-vertex polygon
 	if (VERTEX_HAS_EDGES(vertex)) {
-		Common::Point prev = CLIST_PREV(vertex)->v;
-		Common::Point next = CLIST_NEXT(vertex)->v;
-		Common::Point cur = vertex->v;
+		const Common::Point &prev = CLIST_PREV(vertex)->v;
+		const Common::Point &next = CLIST_NEXT(vertex)->v;
+		const Common::Point &cur = vertex->v;
 
 		if (left(prev, cur, next)) {
 			// Convex vertex, line (p, cur) intersects the inside
@@ -730,8 +730,8 @@ typedef AATree<const Vertex *, EdgeIsCloser> EdgeAATree;
  * @return true if vertex is visible from vertex_cur, false otherwise
  */
 static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const EdgeAATree &tree) {
-	Common::Point p = vertex_cur->v;
-	Common::Point w = vertex->v;
+	const Common::Point &p = vertex_cur->v;
+	const Common::Point &w = vertex->v;
 
 	// Check if sweeping line intersects the interior of the polygon
 	// locally at vertex
@@ -746,11 +746,11 @@ static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const Edg
 	const Vertex *const *edge = tree.findSmallest();
 
 	if (edge) {
-		Common::Point p1, p2;
+		const Common::Point *p1, *p2;
 
 		// Check for intersection with sweeping line before vertex
-		clockwise(*edge, &p1, &p2);
-		if (left(p2, p1, p) && left(p1, p2, w))
+		clockwise(*edge, p1, p2);
+		if (left(*p2, *p1, p) && left(*p1, *p2, w))
 			return false;
 	}
 
@@ -763,7 +763,7 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Vertex *) vert: The vertex
 	EdgeAATree tree;
-	Common::Point p = vert->v;
+	const Common::Point &p = vert->v;
 	Polygon *polygon;
 	int i;
 	int is_visible;
@@ -782,12 +782,12 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 		// Check that there is more than one vertex.
 		if (VERTEX_HAS_EDGES(vertex)) {
 			CLIST_FOREACH(vertex, &polygon->vertices) {
-				Common::Point high, low;
+				const Common::Point *high, *low;
 	
 				// Add edges that intersect the initial position of the sweeping line
-				clockwise(vertex, &high, &low);
+				clockwise(vertex, high, low);
 	
-				if ((high.y < p.y) && (low.y >= p.y) && (low != p))
+				if ((high->y < p.y) && (low->y >= p.y) && (*low != p))
 					tree.insert(vertex);
 			}
 		}
@@ -859,7 +859,7 @@ static float distanceSqr(const FloatPoint &a, const FloatPoint &b) {
 
 static bool point_on_screen_border(const Common::Point &p) {
 	// Determines if a point lies on the screen border
-	// Parameters: (Common::Point) p: The point
+	// Parameters: (const Common::Point &) p: The point
 	// Returns   : (int) true if p lies on the screen border, false otherwise
 	// FIXME get dimensions from somewhere?
 	return (p.x == 0) || (p.x == 319) || (p.y == 0) || (p.y == 189);
@@ -867,7 +867,7 @@ static bool point_on_screen_border(const Common::Point &p) {
 
 static bool edge_on_screen_border(const Common::Point &p, const Common::Point &q) {
 	// Determines if an edge lies on the screen border
-	// Parameters: (Common::Point) p, q: The edge (p, q)
+	// Parameters: (const Common::Point &) p, q: The edge (p, q)
 	// Returns   : (int) true if (p, q) lies on the screen border, false otherwise
 	// FIXME get dimensions from somewhere?
 	return ((p.x == 0 && q.x == 0) || (p.x == 319 && q.x == 319) || (p.y == 0 && q.y == 0) || (p.y == 189 && q.y == 189));
@@ -908,9 +908,9 @@ static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
 	return PF_OK;
 }
 
-static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
+static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *ret) {
 	// Computes the near point of a point contained in a polygon
-	// Parameters: (Common::Point) p: The point
+	// Parameters: (const Common::Point &) p: The point
 	//             (Polygon *) polygon: The polygon
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: The near point of p in polygon on success
@@ -919,8 +919,8 @@ static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
 	float dist = HUGE_DISTANCE;
 
 	CLIST_FOREACH(vertex, &polygon->vertices) {
-		Common::Point p1 = vertex->v;
-		Common::Point p2 = CLIST_NEXT(vertex)->v;
+		const Common::Point &p1 = vertex->v;
+		const Common::Point &p2 = CLIST_NEXT(vertex)->v;
 		float w, h, l, u;
 		FloatPoint new_point;
 		float new_dist;
@@ -956,10 +956,10 @@ static int near_point(Common::Point p, Polygon *polygon, Common::Point *ret) {
 	return find_free_point(near_p, polygon, ret);
 }
 
-static int intersection(Common::Point a, Common::Point b, Vertex *vertex, FloatPoint *ret) {
+static int intersection(const Common::Point &a, const Common::Point &b, Vertex *vertex, FloatPoint *ret) {
 	// Computes the intersection point of a line segment and an edge (not
 	// including the vertices themselves)
-	// Parameters: (Common::Point) a, b: The line segment (a, b)
+	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
 	//             (Vertex *) vertex: The first vertex of the edge
 	// Returns   : (int) FP_OK on success, PF_ERROR otherwise
 	//             (FloatPoint) *ret: The intersection point
@@ -967,8 +967,8 @@ static int intersection(Common::Point a, Common::Point b, Vertex *vertex, FloatP
 	float s, t;
 	// Numerator and denominator of equations
 	float num, denom;
-	Common::Point c = vertex->v;
-	Common::Point d = CLIST_NEXT(vertex)->v;
+	const Common::Point &c = vertex->v;
+	const Common::Point &d = CLIST_NEXT(vertex)->v;
 
 	denom = a.x * (float)(d.y - c.y) + b.x * (float)(c.y - d.y) +
 	        d.x * (float)(b.y - a.y) + c.x * (float)(a.y - b.y);
@@ -995,13 +995,13 @@ static int intersection(Common::Point a, Common::Point b, Vertex *vertex, FloatP
 	return PF_ERROR;
 }
 
-static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Point q, Common::Point *ret) {
+static int nearest_intersection(PathfindingState *s, const Common::Point &p, const Common::Point &q, Common::Point *ret) {
 	// Computes the nearest intersection point of a line segment and the polygon
 	// set. Intersection points that are reached from the inside of a polygon
 	// are ignored as are improper intersections which do not obstruct
 	// visibility
 	// Parameters: (PathfindingState *) s: The pathfinding state
-	//             (Common::Point) p, q: The line segment (p, q)
+	//             (const Common::Point &) p, q: The line segment (p, q)
 	// Returns   : (int) PF_OK on success, PF_ERROR when no intersections were
 	//                   found, PF_FATAL otherwise
 	//             (Common::Point) *ret: On success, the closest intersection point
@@ -1055,12 +1055,12 @@ static int nearest_intersection(PathfindingState *s, Common::Point p, Common::Po
 	return find_free_point(isec, ipolygon, ret);
 }
 
-static int fix_point(PathfindingState *s, Common::Point p, Common::Point *ret, Polygon **ret_pol) {
+static int fix_point(PathfindingState *s, const Common::Point &p, Common::Point *ret, Polygon **ret_pol) {
 	// Checks a point for containment in any of the polygons in the polygon set.
 	// If the point is contained in a totally accessible polygon that polygon
 	// is removed from the set. If the point is contained in a polygon of another
 	// type the near point is returned. Otherwise the original point is returned
-	// Parameters: (Common::Point) p: The point
+	// Parameters: (const Common::Point &) p: The point
 	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
 	//             (Common::Point) *ret: A valid input point for pathfinding
 	//             (Polygon *) *ret_pol: The polygon p was contained in if p
@@ -1103,13 +1103,13 @@ static int fix_point(PathfindingState *s, Common::Point p, Common::Point *ret, P
 	return PF_OK;
 }
 
-static Vertex *merge_point(PathfindingState *s, Common::Point v) {
+static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
 	// Merges a point into the polygon set. A new vertex is allocated for this
 	// point, unless a matching vertex already exists. If the point is on an
 	// already existing edge that edge is split up into two edges connected by
 	// the new vertex
 	// Parameters: (PathfindingState *) s: The pathfinding state
-	//             (Common::Point) v: The point to merge
+	//             (const Common::Point &) v: The point to merge
 	// Returns   : (Vertex *) The vertex corresponding to v
 	Vertex *vertex;
 	Vertex *v_new;
