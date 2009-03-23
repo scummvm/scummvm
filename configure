@@ -160,9 +160,9 @@ cc_check() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $TMPC -o $TMPO$EXEEXT $@" >> "$TMPLOG"
-	rm -f "$TMPO$EXEEXT"
-	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	echo "$CXX $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
+	rm -f "$TMPO$HOSTEXEEXT"
+	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
@@ -259,6 +259,28 @@ find_sdlconfig() {
 	fi
 }
 
+#
+# Determine extension used for executables
+#
+get_system_exe_extension() {
+	case $1 in
+	mingw* | cygwin* | os2-emx*)
+		_exeext=".exe"
+		;;
+	arm-riscos)
+		_exeext=",ff8"
+		;;
+	gp2x-linux)
+		_exeext=".gp2x"
+		;;
+	dreamcast | wii | gamecube)
+		_exeext=".elf"
+		;;
+	*)
+		_exeext=""
+		;;
+	esac
+}
 
 #
 # Generic options functions
@@ -741,6 +763,10 @@ done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
+guessed_host=`$_srcdir/config.guess`
+get_system_exe_extension $guessed_host
+NATIVEEXEEXT=$_exeext
+
 case $_host in
 linupy)
 	_host_os=linux
@@ -789,9 +815,7 @@ gamecube)
 	_host_alias=powerpc-gekko
 	;;
 *)
-	if test -z "$_host"; then
-		guessed_host=`$_srcdir/config.guess`
-	else
+	if test -n "$_host"; then
 		guessed_host=`$_srcdir/config.sub $_host`
 	fi
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
@@ -807,23 +831,8 @@ fi
 #
 # Determine extension used for executables
 #
-case $_host_os in
-mingw* | cygwin* | os2-emx*)
-	EXEEXT=".exe"
-	;;
-arm-riscos)
-	EXEEXT=",ff8"
-	;;
-gp2x-linux)
-	EXEEXT=".gp2x"
-	;;
-dreamcast | wii | gamecube)
-	EXEEXT=".elf"
-	;;
-*)
-	EXEEXT=""
-	;;
-esac
+get_system_exe_extension $_host_os 
+HOSTEXEEXT=$_exeext
 
 #
 # Determine separator used for $PATH
@@ -867,9 +876,9 @@ EOF
 
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
 	else
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
 	fi
 }
 
@@ -981,7 +990,7 @@ int main() {
 	return 0;
 }
 EOF
-	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
 		break
 	else
 		if test "$datatype" = "unknown"; then
@@ -991,7 +1000,7 @@ EOF
 		continue
 	fi
 	done
-	rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
+	rm -f tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp
 	echo $datatype
 }
 
@@ -1200,7 +1209,6 @@ if test -n "$_host"; then
 		*mingw32*)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=little
-			_have_x86=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
@@ -1325,7 +1333,7 @@ int main(int argc, char **argv) {
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO$EXEEXT && _need_memalign=no
+			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
@@ -1662,7 +1670,7 @@ EOF
 		# don't execute while cross compiling
 		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$EXEEXT && _mpeg2=yes
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
 	fi
 fi
 if test "$_mpeg2" = yes ; then
@@ -1695,7 +1703,7 @@ else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
 echo "$_fluidsynth"
-rm -f $TMPC $TMPO$EXEEXT
+rm -f $TMPC $TMPO$HOSTEXEEXT
 
 #
 # Check for nasm
@@ -1708,8 +1716,8 @@ if test "$_have_x86" = yes ; then
 		IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 
 		for path_dir in $_nasmpath; do
-			if test -x "$path_dir/nasm$EXEEXT" ; then
-				NASM="$path_dir/nasm$EXEEXT"
+			if test -x "$path_dir/nasm$NATIVEEXEEXT" ; then
+				NASM="$path_dir/nasm$NATIVEEXEEXT"
 				echo $NASM
 				break
 			fi
@@ -2007,7 +2015,7 @@ STATICLIBPATH=$_staticlibpath
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
-EXEEXT := $EXEEXT
+EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 
