@@ -89,10 +89,11 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	// FIXME: render subtitles using the right color (10 instead of 0).
 	// The original game features a nasty hack, having the font rendering routine
 	// replacing color 12 of font RUSSIA with 10 when preparing subtitles.
-	_subtitle[0] = _gfx->createLabel(_labelFont, s, 0);
+	uint8 color = (_vm->getPlatform() == Common::kPlatformAmiga) ? 11 : 0;
+	_subtitle[0] = _gfx->createLabel(_labelFont, s, color);
 	_gfx->showLabel(_subtitle[0], CENTER_LABEL_HORIZONTAL, _subtitleY);
 	if (s2) {
-		_subtitle[1] = _gfx->createLabel(_labelFont, s2, 0);
+		_subtitle[1] = _gfx->createLabel(_labelFont, s2, color);
 		_gfx->showLabel(_subtitle[1], CENTER_LABEL_HORIZONTAL, _subtitleY + 5 + _labelFont->height());
 	} else {
 		_subtitle[1] = -1;

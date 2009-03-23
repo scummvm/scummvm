@@ -529,18 +529,18 @@ uint Gfx::renderFloatingLabel(Font *font, char *text) {
 	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
-	if (_vm->getGameType() == GType_Nippon && _vm->getPlatform() == Common::kPlatformAmiga) {
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		w = font->getStringWidth(text) + 16;
-		h = 10;
+		h = font->height() + 2;
 
 		setupLabelSurface(*cnv, w, h);
 
-		font->setColor(7);
+		font->setColor((_vm->getGameType() == GType_BRA) ? 0 : 7);
 		font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
-		font->setColor(1);
+		font->setColor((_vm->getGameType() == GType_BRA) ? 11 : 1);
 		font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
 	} else {
 		w = font->getStringWidth(text);
