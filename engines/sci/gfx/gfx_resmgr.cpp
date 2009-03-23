@@ -48,6 +48,27 @@ struct param_struct {
 	gfx_driver_t *driver;
 };
 
+GfxResManager::GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) : 
+				_version(version), _options(options), _driver(driver), _resManager(resManager), 
+				_lockCounter(0), _tagLockCounter(0) {
+	gfxr_init_static_palette();
+
+	if (_version < SCI_VERSION_01_VGA) {
+		_staticPalette = gfx_sci0_pic_colors->getref();
+	} else if (_version == SCI_VERSION_1_1 || _version == SCI_VERSION_32) {
+		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+	} else {
+		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
+		if (res && res->data)
+			_staticPalette = gfxr_read_pal1(res->id, res->data, res->size);
+	}
+}
+
+GfxResManager::~GfxResManager() {
+	_staticPalette->free();
+	delete _staticPalette;
+}
+
 #define DRAW_PIC01(pic, picStyle, isSci1) \
 	gfxr_draw_pic01((pic), flags, default_palette, res->size, res->data, (picStyle), res->id, (isSci1), _staticPalette);
 

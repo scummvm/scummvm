@@ -266,10 +266,10 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 
 	if (color == 255)
 		return PaletteEntry(255,255,255);
-	else if (color < s->gfx_state->gfxResMan->getNumberOfColors())
-		return s->gfx_state->gfxResMan->getStaticPalette()->getColor(color);
+	else if (color < s->gfx_state->gfxResMan->getColorCount())
+		return s->gfx_state->gfxResMan->getColor(color);
 	else {
-		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getNumberOfColors());
+		SCIkwarn(SCIkERROR, "Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getColorCount());
 		BREAKPOINT();
 		return PaletteEntry(0,0,0); 
 	}
@@ -1262,10 +1262,10 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		int i, delta, bestindex = -1, bestdelta = 200000;
 
-		for (i = 0; i < s->gfx_state->gfxResMan->getNumberOfColors(); i++) {
-			int dr = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).r - r);
-			int dg = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).g - g);
-			int db = abs(s->gfx_state->gfxResMan->getStaticPalette()->getColor(i).b - b);
+		for (i = 0; i < s->gfx_state->gfxResMan->getColorCount(); i++) {
+			int dr = abs(s->gfx_state->gfxResMan->getColor(i).r - r);
+			int dg = abs(s->gfx_state->gfxResMan->getColor(i).g - g);
+			int db = abs(s->gfx_state->gfxResMan->getColor(i).b - b);
 
 			delta = dr * dr + dg * dg + db * db;
 

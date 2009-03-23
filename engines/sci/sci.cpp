@@ -239,7 +239,6 @@ Common::Error SciEngine::run() {
 	gfx_crossblit_alpha_threshold = 0x90;
 	gfx_state_t gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
-	gfx_state.version = _resmgr->_sciVersion;
 
 	gamestate->port_serial = 0;
 	gamestate->have_mouse_flag = 1;
@@ -268,7 +267,7 @@ Common::Error SciEngine::run() {
 	}
 	// Default config ends
 
-	if (gfxop_init(&gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}
@@ -284,9 +283,9 @@ Common::Error SciEngine::run() {
 	}
 
 	printf("Emulating SCI version %d.%03d.%03d\n",
-	       SCI_VERSION_MAJOR(gamestate->version),
-	       SCI_VERSION_MINOR(gamestate->version),
-	       SCI_VERSION_PATCHLEVEL(gamestate->version));
+	       SCI_VERSION_MAJOR(_resmgr->_sciVersion),
+	       SCI_VERSION_MINOR(_resmgr->_sciVersion),
+	       SCI_VERSION_PATCHLEVEL(_resmgr->_sciVersion));
 
 	game_run(&gamestate); // Run the game
 

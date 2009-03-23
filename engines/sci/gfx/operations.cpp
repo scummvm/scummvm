@@ -414,11 +414,10 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-int gfxop_init(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager, 
+int gfxop_init(int version, gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager, 
 			   int xfact, int yfact, gfx_color_mode_t bpp) {
 	int color_depth = bpp ? bpp : 1;
 	int initialized = 0;
-	Palette *staticPalette = NULL; /* Null for dynamic palettes */
 
 	BASIC_CHECKS(GFX_FATAL);
 
@@ -443,19 +442,7 @@ int gfxop_init(gfx_state_t *state, gfx_options_t *options, ResourceManager *resM
 	if (!initialized)
 		return GFX_FATAL;
 
-	gfxr_init_static_palette();
-
-	if (state->version < SCI_VERSION_01_VGA) {
-		staticPalette = gfx_sci0_pic_colors->getref();
-	} else if (state->version == SCI_VERSION_1_1 || state->version == SCI_VERSION_32) {
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
-	} else {
-		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
-		if (res && res->data)
-			staticPalette = gfxr_read_pal1(res->id, res->data, res->size);
-	}
-
-	state->gfxResMan = new GfxResManager(state->version, state->options, state->driver, staticPalette, resManager);
+	state->gfxResMan = new GfxResManager(version, state->options, state->driver, resManager);
 
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 

@@ -102,11 +102,9 @@ struct gfx_resstate_t {
 
 class GfxResManager {
 public:
-	GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, Palette *staticPalette, ResourceManager *resManager) : 
-				_version(version), _options(options), _driver(driver), _resManager(resManager), 
-				_staticPalette(staticPalette), _lockCounter(0), _tagLockCounter(0) {}
-	~GfxResManager() {}
+	GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager);
 
+	~GfxResManager();
 
 	/* Calculates a unique hash value for the specified options/type setup
 	** Parameters: (gfx_resource_type_t) type: The type the hash is to be generated for
@@ -240,20 +238,17 @@ public:
 	*/
 	void freeResManager();
 
-	Palette *getStaticPalette() { return _staticPalette; }
+	const PaletteEntry &getColor(int color) { return _staticPalette->getColor(color); }
 
 	void setStaticPalette(Palette *newPalette) {
-		freeStaticPalette();
+		if (_staticPalette)
+			_staticPalette->free();
+
 		_staticPalette = newPalette;
 		_staticPalette->name = "static palette";
 	}
 
-	void freeStaticPalette() { 
-		if (_staticPalette)
-			_staticPalette->free();
-	}
-
-	int getNumberOfColors() { return _staticPalette ? _staticPalette->size() : 0; }
+	int getColorCount() { return _staticPalette ? _staticPalette->size() : 0; }
 
 private:
 	int _version;

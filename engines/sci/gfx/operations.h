@@ -92,8 +92,6 @@ struct gfx_dirty_rect_t {
 
 
 struct gfx_state_t {
-	int version; /* Interpreter version */
-
 	gfx_options_t *options;
 
 	Common::Point pointer_pos; /* Mouse pointer coordinates */
@@ -105,7 +103,6 @@ struct gfx_state_t {
 
 	int visible_map;
 
-	//gfx_resstate_t *resstate; /* Resource state */
 	GfxResManager *gfxResMan;
 
 	gfx_pixmap_t *priority_map; /* back buffer priority map (unscaled) */
@@ -139,10 +136,11 @@ struct gfx_state_t {
 /* Fundamental operations */
 /**************************/
 
-int gfxop_init(gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager,
+int gfxop_init(int version, gfx_state_t *state, gfx_options_t *options, ResourceManager *resManager,
 			   int xfact = 1, int yfact = 1, gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
 /* Initializes a graphics mode
-** Parameters: (gfx_state_t *) state: The state to initialize
+** Parameters: (int) version: The interpreter version
+**             (gfx_state_t *) state: The state to initialize
 **             (int x int) xfact, yfact: Horizontal and vertical scale factors
 **             (gfx_color_mode_t) bpp: Bytes per pixel to initialize with, or
 **                                     0 (GFX_COLOR_MODE_AUTO) to auto-detect
