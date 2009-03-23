@@ -191,47 +191,6 @@ Zone::Zone() {
 Zone::~Zone() {
 //	printf("~Zone(%s)\n", _name);
 
-	switch (ACTIONTYPE(this)) {
-	case kZoneExamine:
-		free(u.examine->_filename);
-		u.examine->_description.clear();
-		delete u.examine->_cnv;
-		delete u.examine;
-		break;
-
-	case kZoneDoor:
-		free(u.door->_location);
-		u.door->gfxobj->release();
-		delete u.door;
-		break;
-
-	case kZoneSpeak:
-		delete u.speak->_dialogue;
-		delete u.speak;
-		break;
-
-	case kZoneGet:
-		u.get->gfxobj->release();
-		delete u.get;
-		break;
-
-	case kZoneHear:
-		delete u.hear;
-		break;
-
-	case kZoneMerge:
-		delete u.merge;
-		break;
-
-	case kZonePath:
-		delete u.path;
-		break;
-
-	default:
-		break;
-	}
-
-
 	free(_linkedName);
 }
 

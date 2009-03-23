@@ -287,9 +287,9 @@ void PathWalker_NS::checkDoor(const Common::Point &foot) {
 	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
 	if (z) {
 		if ((z->_flags & kFlagsClosed) == 0) {
-			_vm->_location._startPosition = z->u.door->_startPos;
-			_vm->_location._startFrame = z->u.door->_startFrame;
-			_vm->scheduleLocationSwitch(z->u.door->_location);
+			_vm->_location._startPosition = z->u._doorStartPos;
+			_vm->_location._startFrame = z->u._doorStartFrame;
+			_vm->scheduleLocationSwitch(z->u._doorLocation.c_str());
 			_vm->_zoneTrap.reset();
 		} else {
 			_vm->_cmdExec->run(z->_commands, z);
@@ -478,14 +478,14 @@ void PathWalker_BR::buildPath(State &s, uint16 x, uint16 y) {
 	// build complex path
 	int id = atoi(z0->_name);
 
-	if (z1->u.path->_lists[id].empty()) {
+	if (z1->u._pathLists[id].empty()) {
 		s._walkPath.clear();
 		debugC(3, kDebugWalk, "buildPath: no path");
 		return;
 	}
 
-	PointList::iterator b = z1->u.path->_lists[id].begin();
-	PointList::iterator e = z1->u.path->_lists[id].end();
+	PointList::iterator b = z1->u._pathLists[id].begin();
+	PointList::iterator e = z1->u._pathLists[id].end();
 	for ( ; b != e; ++b) {
 		s._walkPath.push_front(*b);
 	}
@@ -502,21 +502,21 @@ void PathWalker_BR::finalizeWalk(State &s) {
 
 	ZonePtr z = _vm->hitZone(kZoneDoor, foot.x, foot.y);
 	if (z && ((z->_flags & kFlagsClosed) == 0)) {
-		_vm->_location._startPosition = z->u.door->_startPos; // foot pos
-		_vm->_location._startFrame = z->u.door->_startFrame;
+		_vm->_location._startPosition = z->u._doorStartPos; // foot pos
+		_vm->_location._startFrame = z->u._doorStartFrame;
 
 		// TODO: implement working follower. Must find out a location in which the code is
 		// used and which is stable enough.
 		if (_follower._active) {
-			_vm->_location._followerStartPosition = z->u.door->_startPos2;	// foot pos
-			_vm->_location._followerStartFrame = z->u.door->_startFrame2;
+			_vm->_location._followerStartPosition = z->u._doorStartPos2_br;	// foot pos
+			_vm->_location._followerStartFrame = z->u._doorStartFrame2_br;
 		} else {
 			_vm->_location._followerStartPosition.x = -1000;
 			_vm->_location._followerStartPosition.y = -1000;
 			_vm->_location._followerStartFrame = 0;
 		}
 
-		_vm->scheduleLocationSwitch(z->u.door->_location);
+		_vm->scheduleLocationSwitch(z->u._doorLocation.c_str());
 		_vm->_cmdExec->run(z->_commands, z);
 	}
 

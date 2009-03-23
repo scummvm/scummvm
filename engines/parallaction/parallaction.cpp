@@ -467,10 +467,10 @@ void Parallaction::drawZone(ZonePtr zone) {
 
 	GfxObj *obj = 0;
 	if (ACTIONTYPE(zone) == kZoneGet) {
-		obj = zone->u.get->gfxobj;
+		obj = zone->u._gfxobj;
 	} else
 	if (ACTIONTYPE(zone) == kZoneDoor) {
-		obj = zone->u.door->gfxobj;
+		obj = zone->u._gfxobj;
 	}
 
 	if (!obj) {
@@ -520,7 +520,7 @@ void Parallaction::showZone(ZonePtr z, bool visible) {
 	}
 
 	if (ACTIONTYPE(z) == kZoneGet) {
-		_gfx->showGfxObj(z->u.get->gfxobj, visible);
+		_gfx->showGfxObj(z->u._gfxobj, visible);
 	}
 }
 
@@ -536,32 +536,32 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 
 	_commentZone = z;
 
-	ExamineData *data = _commentZone->u.examine;
+	TypeData *data = &_commentZone->u;
 
-	if (data->_description.empty()) {
+	if (data->_examineText.empty()) {
 		return;
 	}
 
 	// TODO: move this balloons stuff into DialogueManager and BalloonManager
 	if (getGameType() == GType_Nippon) {
-		if (data->_filename) {
-			if (data->_cnv == 0) {
-				data->_cnv = _disk->loadStatic(data->_filename);
+		if (!data->_filename.empty()) {
+			if (data->_gfxobj == 0) {
+				data->_gfxobj = _disk->loadStatic(data->_filename.c_str());
 			}
 
 			_gfx->setHalfbriteMode(true);
-			_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 90, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_examineText.c_str(), 0, 90, 0, BalloonManager::kNormalColor);
 			Common::Rect r;
-			data->_cnv->getRect(0, r);
-			_gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+			data->_gfxobj->getRect(0, r);
+			_gfx->setItem(data->_gfxobj, 140, (_screenHeight - r.height())/2);
 			_gfx->setItem(_char._head, 100, 152);
 		} else {
-			_balloonMan->setSingleBalloon(data->_description.c_str(), 140, 10, 0, BalloonManager::kNormalColor);
+			_balloonMan->setSingleBalloon(data->_examineText.c_str(), 140, 10, 0, BalloonManager::kNormalColor);
 			_gfx->setItem(_char._talk, 190, 80);
 		}
 	} else
 	if (getGameType() == GType_BRA) {
-		_balloonMan->setSingleBalloon(data->_description.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
+		_balloonMan->setSingleBalloon(data->_examineText.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
 		_gfx->setItem(_char._talk, 10, 80);
 	}
 
@@ -611,10 +611,10 @@ void Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneHear:
-		_soundMan->execute(SC_SETSFXCHANNEL, z->u.hear->_channel);
+		_soundMan->execute(SC_SETSFXCHANNEL, z->u._hearChannel);
 		_soundMan->execute(SC_SETSFXLOOPING, (int)((z->_flags & kFlagsLooping) == kFlagsLooping));
 		_soundMan->execute(SC_SETSFXVOLUME, 60);
-		_soundMan->execute(SC_PLAYSFX, z->u.hear->_name);
+		_soundMan->execute(SC_PLAYSFX, z->u._filename.c_str());
 		break;
 
 	case kZoneSpeak:
@@ -635,10 +635,10 @@ void Parallaction::runZone(ZonePtr z) {
 void Parallaction::updateDoor(ZonePtr z, bool close) {
 	z->_flags = close ? (z->_flags |= kFlagsClosed) : (z->_flags &= ~kFlagsClosed);
 
-	if (z->u.door->gfxobj) {
+	if (z->u._gfxobj) {
 		uint frame = (close ? 0 : 1);
-//		z->u.door->gfxobj->setFrame(frame);
-		z->u.door->gfxobj->frame = frame;
+//		z->u._gfxobj->setFrame(frame);
+		z->u._gfxobj->frame = frame;
 	}
 
 	return;
@@ -655,7 +655,7 @@ bool Parallaction::pickupItem(ZonePtr z) {
 		return false;
 	}
 
-	int slot = addInventoryItem(z->u.get->_icon);
+	int slot = addInventoryItem(z->u._getIcon);
 	if (slot != -1) {
 		showZone(z, false);
 	}
@@ -673,8 +673,8 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 	// but we need to check it separately here. The same workaround is applied in freeZones.
-	if (((ACTIONTYPE(z) == kZoneMerge) && (((x == z->u.merge->_obj1) && (y == z->u.merge->_obj2)) || ((x == z->u.merge->_obj2) && (y == z->u.merge->_obj1)))) ||
-		((ACTIONTYPE(z) == kZoneGet) && ((x == z->u.get->_icon) || (y == z->u.get->_icon)))) {
+	if (((ACTIONTYPE(z) == kZoneMerge) && (((x == z->u._mergeObj1) && (y == z->u._mergeObj2)) || ((x == z->u._mergeObj2) && (y == z->u._mergeObj1)))) ||
+		((ACTIONTYPE(z) == kZoneGet) && ((x == z->u._getIcon) || (y == z->u._getIcon)))) {
 
 		// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
 		// the EXAMINE/USE action to be applied on some particular item in the inventory.

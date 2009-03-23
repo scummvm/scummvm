@@ -754,27 +754,21 @@ DECLARE_ZONE_PARSER(type)  {
 }
 
 void LocationParser_br::parsePathData(ZonePtr z) {
-
-	PathData *data = new PathData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp("zone", _tokens[0])) {
 			int id = atoi(_tokens[1]);
-			parsePointList(data->_lists[id]);
-			data->_numLists++;
+			parsePointList(data->_pathLists[id]);
+			data->_pathNumLists++;
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp("endzone", _tokens[0]));
-
-	z->u.path = data;
 }
 
 void LocationParser_br::parseGetData(ZonePtr z) {
-
-	GetData *data = new GetData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
@@ -784,31 +778,27 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 			obj->x = z->getX();
 			obj->y = z->getY();
 			obj->_prog = _zoneProg;
-			data->gfxobj = obj;
+			data->_gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0], "mask")) {
-			ctxt.info->loadGfxObjMask(_tokens[1], data->gfxobj);
+			ctxt.info->loadGfxObjMask(_tokens[1], data->_gfxobj);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "path")) {
-			ctxt.info->loadGfxObjPath(_tokens[1], data->gfxobj);
+			ctxt.info->loadGfxObjPath(_tokens[1], data->_gfxobj);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "icon")) {
-			data->_icon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+			data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
-
-	z->u.get = data;
 }
 
 void LocationParser_br::parseDoorData(ZonePtr z) {
-
-	DoorData *data = new DoorData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "slidetext")) {
@@ -817,7 +807,7 @@ void LocationParser_br::parseDoorData(ZonePtr z) {
 		}
 
 		if (!scumm_stricmp(_tokens[0], "location")) {
-			data->_location = strdup(_tokens[1]);
+			data->_doorLocation = strdup(_tokens[1]);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
@@ -831,26 +821,23 @@ void LocationParser_br::parseDoorData(ZonePtr z) {
 			obj->y = z->getY();
 			_vm->_gfx->showGfxObj(obj, true);
 
-			data->gfxobj = obj;
+			data->_gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0],	"startpos")) {
-			data->_startPos.x = atoi(_tokens[1]);
-			data->_startPos.y = atoi(_tokens[2]);
-			data->_startFrame = atoi(_tokens[3]);
+			data->_doorStartPos.x = atoi(_tokens[1]);
+			data->_doorStartPos.y = atoi(_tokens[2]);
+			data->_doorStartFrame = atoi(_tokens[3]);
 		}
 
 		if (!scumm_stricmp(_tokens[0],	"startpos2")) {
-			data->_startPos2.x = atoi(_tokens[1]);
-			data->_startPos2.y = atoi(_tokens[2]);
-			data->_startFrame2 = atoi(_tokens[3]);
+			data->_doorStartPos2_br.x = atoi(_tokens[1]);
+			data->_doorStartPos2_br.y = atoi(_tokens[2]);
+			data->_doorStartFrame2_br = atoi(_tokens[3]);
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.door = data;
-
 }
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {

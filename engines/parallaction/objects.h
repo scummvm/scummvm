@@ -193,102 +193,63 @@ struct Dialogue {
 	~Dialogue();
 };
 
-struct GetData {
-	uint32			_icon;
-	GfxObj			*gfxobj;
-
-	GetData() {
-		_icon = 0;
-		gfxobj = NULL;
-	}
-};
-struct SpeakData {
-	char		_name[32];
-	Dialogue	*_dialogue;
-
-	SpeakData() {
-		_name[0] = '\0';
-		_dialogue = NULL;
-	}
-};
-struct ExamineData {
-	GfxObj	*_cnv;
-	Common::String	_description;
-	char*		_filename;
-
-	ExamineData() {
-		_filename = NULL;
-		_cnv = NULL;
-	}
-};
-struct DoorData {
-	char*	_location;
-	GfxObj	*gfxobj;
-	Common::Point	_startPos;
-	uint16	_startFrame;
-	// BRA specific
-	Common::Point	_startPos2;
-	uint16	_startFrame2;
-
-	DoorData() {
-		_location = NULL;
-		_startFrame = 0;
-		_startPos.x = -1000;
-		_startPos.y = -1000;
-		_startFrame2 = 0;
-		_startPos2.x = -1000;
-		_startPos2.y = -1000;
-		gfxobj = NULL;
-	}
-};
-struct HearData {	// size = 20
-	char		_name[20];
-	int			_channel;
-	int			_freq;
-
-	HearData() {
-		_channel = -1;
-		_freq = -1;
-		_name[0] = '\0';
-	}
-};
-struct MergeData {	// size = 12
-	uint32	_obj1;
-	uint32	_obj2;
-	uint32	_obj3;
-
-	MergeData() {
-		_obj1 = _obj2 = _obj3 = 0;
-	}
-};
 #define MAX_WALKPOINT_LISTS 20
-struct PathData {
-	int	_numLists;
-	PointList	_lists[MAX_WALKPOINT_LISTS];
-
-	PathData() {
-		_numLists = 0;
-	}
-};
 
 struct TypeData {
-	GetData		*get;
-	SpeakData	*speak;
-	ExamineData *examine;
-	DoorData	*door;
-	HearData	*hear;
-	MergeData	*merge;
-	// BRA specific field
-	PathData	*path;
+	// common
+	GfxObj		*_gfxobj;	// get, examine, door
+	Common::String	_filename; // speak, examine, hear
+
+	// get
+	uint32		_getIcon;
+
+	// speak
+	Dialogue		*_speakDialogue;
+
+	// examine
+	Common::String	_examineText;
+
+	// door
+	Common::String	_doorLocation;
+	Common::Point	_doorStartPos;
+	uint16		_doorStartFrame;
+	Common::Point	_doorStartPos2_br;
+	uint16		_doorStartFrame2_br;
+
+	// hear
+	int		_hearChannel;
+	int		_hearFreq;
+
+	// merge
+	uint32	_mergeObj1;
+	uint32	_mergeObj2;
+	uint32	_mergeObj3;
+
+	// path
+	int		_pathNumLists;
+	PointList	_pathLists[MAX_WALKPOINT_LISTS];
 
 	TypeData() {
-		get = NULL;
-		speak = NULL;
-		examine = NULL;
-		door = NULL;
-		hear = NULL;
-		merge = NULL;
-		path = NULL;
+		_gfxobj = 0;
+		_getIcon = 0;
+		_speakDialogue = 0;
+		_doorStartFrame = 0;
+		_doorStartPos.x = -1000;
+		_doorStartPos.y = -1000;
+		_doorStartFrame2_br = 0;
+		_doorStartPos2_br.x = -1000;
+		_doorStartPos2_br.y = -1000;
+		_hearChannel = -1;
+		_hearFreq = -1;
+		_mergeObj1 = 0;
+		_mergeObj2 = 0;
+		_mergeObj3 = 0;
+		_pathNumLists = 0;
+	}
+
+	~TypeData() {
+		_gfxobj->release();
+		delete _speakDialogue;
 	}
 };
 

@@ -203,7 +203,7 @@ DECLARE_COMMAND_OPCODE(add) {
 
 DECLARE_COMMAND_OPCODE(leave) {
 	ZonePtr z = ctxt._cmd->u._zone;
-	_vm->dropItem(z->u.get->_icon);
+	_vm->dropItem(z->u._getIcon);
 	_vm->showZone(z, true);
 }
 

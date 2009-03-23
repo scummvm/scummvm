@@ -176,9 +176,9 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	} else
 		error("unsupported game in DialogueManager");
 
-	_dialogue = _z->u.speak->_dialogue;
-	isNpc = scumm_stricmp(_z->u.speak->_name, "yourself") && _z->u.speak->_name[0] != '\0';
-	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u.speak->_name) : _vm->_char._talk;
+	_dialogue = _z->u._speakDialogue;
+	isNpc = !_z->u._filename.empty() && _z->u._filename.compareToIgnoreCase("yourself");
+	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u._filename.c_str()) : _vm->_char._talk;
 	_answerer = _vm->_char._talk;
 
 	_askPassword = false;
@@ -432,7 +432,7 @@ void DialogueManager::run() {
 }
 
 void Parallaction::enterDialogueMode(ZonePtr z) {
-	debugC(1, kDebugDialogue, "Parallaction::enterDialogueMode(%s)", z->u.speak->_name);
+	debugC(1, kDebugDialogue, "Parallaction::enterDialogueMode(%s)", z->u._filename.c_str());
 	_dialogueMan = _vm->createDialogueManager(z);
 	_input->_inputMode = Input::kInputModeDialogue;
 }

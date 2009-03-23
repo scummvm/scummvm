@@ -375,9 +375,9 @@ void Input::exitInventoryMode() {
 		ZonePtr z = _vm->hitZone(kZoneMerge, _activeItem._index, _vm->getInventoryItemIndex(pos));
 
 		if (z) {
-			_vm->dropItem(z->u.merge->_obj1);
-			_vm->dropItem(z->u.merge->_obj2);
-			_vm->addInventoryItem(z->u.merge->_obj3);
+			_vm->dropItem(z->u._mergeObj1);
+			_vm->dropItem(z->u._mergeObj2);
+			_vm->addInventoryItem(z->u._mergeObj3);
 			_vm->_cmdExec->run(z->_commands);
 		}
 

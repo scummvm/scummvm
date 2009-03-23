@@ -1385,9 +1385,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 
 
 void LocationParser_ns::parseGetData(ZonePtr z) {
-
-	GetData *data = new GetData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
@@ -1401,46 +1399,35 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 			obj->_prog = _zoneProg;
 			_vm->_gfx->showGfxObj(obj, visible);
 
-			data->gfxobj = obj;
+			data->_gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0], "icon")) {
-			data->_icon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+			data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.get = data;
-
 }
 
 
 void LocationParser_ns::parseExamineData(ZonePtr z) {
-
-	ExamineData *data = new ExamineData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
 			data->_filename = strdup(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "desc")) {
-			data->_description = parseComment();
+			data->_examineText = parseComment();
 		}
-
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.examine = data;
-
 }
 
 
 void LocationParser_ns::parseDoorData(ZonePtr z) {
-
-	DoorData *data = new DoorData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "slidetext")) {
@@ -1449,7 +1436,7 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 		}
 
 		if (!scumm_stricmp(_tokens[0], "location")) {
-			data->_location = strdup(_tokens[1]);
+			data->_doorLocation = strdup(_tokens[1]);
 		}
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
@@ -1463,85 +1450,66 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 			obj->y = z->getY();
 			_vm->_gfx->showGfxObj(obj, true);
 
-			data->gfxobj = obj;
+			data->_gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0],	"startpos")) {
-			data->_startPos.x = atoi(_tokens[1]);
-			data->_startPos.y = atoi(_tokens[2]);
-			data->_startFrame = atoi(_tokens[3]);
+			data->_doorStartPos.x = atoi(_tokens[1]);
+			data->_doorStartPos.y = atoi(_tokens[2]);
+			data->_doorStartFrame = atoi(_tokens[3]);
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.door = data;
-
 }
 
 
 void LocationParser_ns::parseMergeData(ZonePtr z) {
-
-	MergeData *data = new MergeData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "obj1")) {
-			data->_obj1 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+			data->_mergeObj1 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "obj2")) {
-			data->_obj2 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+			data->_mergeObj2 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "newobj")) {
-			data->_obj3 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+			data->_mergeObj3 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.merge = data;
-
 }
 
 void LocationParser_ns::parseHearData(ZonePtr z) {
-
-	HearData *data = new HearData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "sound")) {
-			strcpy(data->_name, _tokens[1]);
-			data->_channel = atoi(_tokens[2]);
+			data->_filename = _tokens[1];
+			data->_hearChannel = atoi(_tokens[2]);
 		}
 		if (!scumm_stricmp(_tokens[0], "freq")) {
-			data->_freq = atoi(_tokens[1]);
+			data->_hearFreq = atoi(_tokens[1]);
 		}
-
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.hear = data;
-
 }
 
 void LocationParser_ns::parseSpeakData(ZonePtr z) {
-
-	SpeakData *data = new SpeakData;
-
+	TypeData *data = &z->u;
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
-			strcpy(data->_name, _tokens[1]);
+			data->_filename = _tokens[1];
 		}
 		if (!scumm_stricmp(_tokens[0], "Dialogue")) {
-			data->_dialogue = parseDialogue();
+			data->_speakDialogue = parseDialogue();
 		}
 
 		_script->readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
-
-	z->u.speak = data;
-
 }
 
 
