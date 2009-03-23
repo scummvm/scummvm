@@ -1917,7 +1917,7 @@ bool validate_executable() {
 
 
 int main(int argc, char *argv[]) {
-	const char /**inFilename,*/ *outFilename;
+	const char /**inFilename,*/ *outFilename = 0;
 
 	if (argc == 1) {
 		printf("Format: %s output_filename [lureExecutable ..]\n", argv[0]);
