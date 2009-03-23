@@ -2082,6 +2082,20 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
+void ScummEngine_v5::scummLoop_handleSaveLoad() {
+	byte saveLoad = (_saveLoadFlag != 0);
+
+	ScummEngine::scummLoop_handleSaveLoad();
+
+	// update IQ points after loading
+	if (saveLoad == 2) {
+		if (_game.id == GID_INDY3)
+			updateIQPoints();
+		if (_game.id == GID_INDY4)
+			runScript(145, 0, 0, 0);
+	}
+}
+
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::scummLoop_handleSaveLoad() {
 	ScummEngine::scummLoop_handleSaveLoad();

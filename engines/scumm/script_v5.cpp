@@ -954,7 +954,11 @@ void ScummEngine_v5::loadVars() {
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
 				if (_game.id == GID_INDY3) {
-					loadIQPoints();
+					byte *ptr = getResourceAddress(rtString, STRINGID_IQ_SERIES);		
+					if (ptr) {
+						int size = getResourceSize(rtString, STRINGID_IQ_SERIES);
+						loadIQPoints(ptr, size);
+					}
 				}
 				break;
 			}
@@ -1001,6 +1005,53 @@ void ScummEngine_v5::loadVars() {
 	}
 }
 
+/**
+ * IQ Point calculation for Indy3. 
+ * The scripts that perform this task are 
+ * - script-9 (save/load dialog initialization, loads room 14), 
+ * - room-14-204 (load series IQ string), 
+ * - room-14-205 (save series IQ string), 
+ * - room-14-206 (calculate series IQ string).
+ * Unfortunately script-9 contains lots of GUI stuff so calling this script
+ * directly is not possible. The other scripts depend on script-9.
+ */
+void ScummEngine_v5::updateIQPoints() {
+	int seriesIQ;
+	int episodeIQStringSize;
+	byte *episodeIQString;
+	byte seriesIQString[73];
+
+	// load string with IQ points given per puzzle in any savegame
+	// IMPORTANT: the resource string STRINGID_IQ_SERIES is only valid while
+	// the original save/load dialog is executed, so do not use it here.
+	memset(seriesIQString, 0, sizeof(seriesIQString));
+	loadIQPoints(seriesIQString, sizeof(seriesIQString));
+
+	// string with IQ points given per puzzle in current savegame
+	episodeIQString = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
+	if (!episodeIQString)
+		return;
+	episodeIQStringSize = getResourceSize(rtString, STRINGID_IQ_EPISODE);
+	if (episodeIQStringSize < 73)
+		return;
+
+	// merge episode and series IQ strings and calculate series IQ
+	seriesIQ = 0;
+	// iterate over puzzles (each of the first 73 bytes corresponds to a puzzle's IQ)
+	for (int i = 0; i < 73 ; ++i) {
+		char puzzleIQ = seriesIQString[i];
+		// if puzzle is solved copy points to episode string
+		if (puzzleIQ > 0)
+			episodeIQString[i] = puzzleIQ;
+		// add puzzle's IQ-points to series IQ
+		seriesIQ += episodeIQString[i];
+	}
+	_scummVars[245] = seriesIQ;
+
+	// save series IQ string
+	saveIQPoints();
+}
+
 void ScummEngine_v5::saveIQPoints() {
 	// save Indy3 IQ-points
 	Common::OutSaveFile *file;
@@ -1008,22 +1059,22 @@ void ScummEngine_v5::saveIQPoints() {
 
 	file = _saveFileMan->openForSaving(filename.c_str());
 	if (file != NULL) {
-		int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
 		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
-		file->write(ptr, size);
+		if (ptr) {
+			int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
+			file->write(ptr, size);
+		}
 		delete file;
 	}
 }
 
-void ScummEngine_v5::loadIQPoints() {
+void ScummEngine_v5::loadIQPoints(byte *ptr, int size) {
 	// load Indy3 IQ-points
 	Common::InSaveFile *file;
 	Common::String filename = _targetName + ".iq";
 
 	file = _saveFileMan->openForLoading(filename.c_str());
 	if (file != NULL) {
-		int size = getResourceSize(rtString, STRINGID_IQ_SERIES);
-		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_SERIES);
 		byte *tmp = (byte*)malloc(size);
 		int nread = file->read(tmp, size);
 		if (nread == size) {
@@ -2403,6 +2454,11 @@ void ScummEngine_v5::o5_startScript() {
 	}
 
 	runScript(script, (op & 0x20) != 0, (op & 0x40) != 0, data);
+
+	// WORKAROUND: Indy3 does not save the series IQ automatically after changing it.
+	// Save on IQ increment (= script 125 was executed).
+	if (_game.id == GID_INDY3 && script == 125)
+		updateIQPoints();
 }
 
 void ScummEngine_v5::o5_stopObjectCode() {

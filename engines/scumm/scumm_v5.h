@@ -65,6 +65,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
+	virtual void scummLoop_handleSaveLoad();
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
@@ -78,7 +79,8 @@ protected:
 	void saveVars();
 	void loadVars();
 	void saveIQPoints();
-	void loadIQPoints();
+	void loadIQPoints(byte *ptr, int size);
+	void updateIQPoints();
 
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);

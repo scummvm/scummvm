@@ -440,16 +440,10 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 		// SCUMM var 244 is the episode score
 		// and var 245 is the series score
 		char text[50];
-
-		// FIXME: Currently, the series score does not work properly
-		// This workaround just sets it equal to the episode score
-		// However, at the end of the game, it does show the episode
-		// score by itself
-		int a = _scummVars[245];
-		if (!a)
-			a = _scummVars[244];
-
-		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], a);
+		
+		updateIQPoints();
+		
+		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
 		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
 		runDialog(indy3IQPointsDialog);
 	}
