@@ -248,7 +248,9 @@ struct TypeData {
 	}
 
 	~TypeData() {
-		_gfxobj->release();
+		if (_gfxobj) {
+			_gfxobj->release();
+		}
 		delete _speakDialogue;
 	}
 };
