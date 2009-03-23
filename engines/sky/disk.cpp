@@ -84,7 +84,7 @@ bool Disk::fileExists(uint16 fileNr) {
 uint8 *Disk::loadFile(uint16 fileNr) {
 	uint8 cflag;
 
-	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
+	debug(3, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
 
 	uint8 *fileInfoPtr = getFileInfo(fileNr);
 	if (fileInfoPtr == NULL) {
@@ -123,7 +123,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	DataFileHeader *fileHeader = (DataFileHeader*)fileDest;
 
 	if ((!cflag) && ((FROM_LE_16(fileHeader->flag) >> 7) & 1)) {
-		debug(2, "File is RNC compressed.");
+		debug(4, "File is RNC compressed.");
 
 		uint32 decompSize = (FROM_LE_16(fileHeader->flag) & ~0xFF) << 8;
 		decompSize |= FROM_LE_16(fileHeader->s_tot_size);
@@ -152,7 +152,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 				unpackLen += sizeof(DataFileHeader);
 		}
 
-		debug(3, "UnpackM1 returned: %d", unpackLen);
+		debug(5, "UnpackM1 returned: %d", unpackLen);
 
 		if (unpackLen == 0) { //Unpack returned 0: file was probably not packed.
 			free(uncompDest);
@@ -192,7 +192,7 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 
 	for (i = 0; i < _dinnerTableEntries; i++) {
 		if (READ_LE_UINT16(dnrTbl16Ptr) == fileNr) {
-			debug(2, "file %d found", fileNr);
+			debug(4, "file %d found", fileNr);
 			return (uint8 *)dnrTbl16Ptr;
 		}
 		dnrTbl16Ptr += 4;
