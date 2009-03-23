@@ -158,6 +158,8 @@ protected:
 	ResourceContext *_contexts;
 	int _contextsCount;
 	char _voicesFileName[8][256];
+	char _musicFileName[256];
+	char _soundFileName[256];
 
 	bool loadContext(ResourceContext *context);
 	virtual bool loadMacContext(ResourceContext *context) = 0;
