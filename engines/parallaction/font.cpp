@@ -692,15 +692,12 @@ void Parallaction_br::initFonts() {
 		_dialogueFont = _disk->loadFont("comic");
 		_labelFont = _menuFont;
 	} else {
-		// TODO: Confirm fonts matches
-		// fonts/natasha/16
-		// fonts/sonya/18
+		// TODO: Where is vanya used?
 		// fonts/vanya/16
 
 		_menuFont = _disk->loadFont("sonya");
 		_dialogueFont = _disk->loadFont("natasha");
-		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
-		_labelFont = new AmigaFont(stream);
+		_labelFont = _menuFont;
 	}
 }
 

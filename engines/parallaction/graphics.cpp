@@ -529,8 +529,7 @@ uint Gfx::renderFloatingLabel(Font *font, char *text) {
 	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
-
-	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+	if (_vm->getGameType() == GType_Nippon && _vm->getPlatform() == Common::kPlatformAmiga) {
 		w = font->getStringWidth(text) + 16;
 		h = 10;
 
