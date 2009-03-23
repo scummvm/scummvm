@@ -1406,7 +1406,6 @@ void CheckNPathIntegrity() {
 	uint8		*pps;	// Compiled polygon data
 	const POLYGON *rp;	// Run-time polygon structure
 	HPOLYGON	hp;
-	const Poly *cp;	// Compiled polygon structure
 	int		i, j;	// Loop counters
 	int		n;	// Last node in current path
 
@@ -1416,16 +1415,16 @@ void CheckNPathIntegrity() {
 		rp = Polys[i];
 		if (rp && rp->polyType == PATH && rp->subtype == NODE) { //...if it's a node path
 			// Get compiled polygon structure
-			cp = (const Poly *)pps + rp->pIndex;	// This polygon
+			const Poly cp(pps, rp->pIndex);	// This polygon
 
-			n = cp->getNodecount() - 1;		// Last node
+			n = cp.getNodecount() - 1;		// Last node
 			assert(n >= 1); // Node paths must have at least 2 nodes
 
 			hp = PolygonIndex(rp);
 			for (j = 0; j <= n; j++) {
-				if (!IsInPolygon(cp->getNodeX(j), cp->getNodeY(j), hp)) {
+				if (!IsInPolygon(cp.getNodeX(j), cp.getNodeY(j), hp)) {
 					sprintf(TextBufferAddr(), "Node (%d, %d) is not in its own path (starting (%d, %d))",
-						 cp->getNodeX(j), cp->getNodeY(j), rp->cx[0], rp->cy[0]);
+						 cp.getNodeX(j), cp.getNodeY(j), rp->cx[0], rp->cy[0]);
 					error(TextBufferAddr());
 				}
 			}
@@ -1435,14 +1434,14 @@ void CheckNPathIntegrity() {
 				if (rp->adjpaths[j] == NULL)
 					break;
 
-				if (IsInPolygon(cp->getNodeX(0), cp->getNodeY(0), PolygonIndex(rp->adjpaths[j]))) {
+				if (IsInPolygon(cp.getNodeX(0), cp.getNodeY(0), PolygonIndex(rp->adjpaths[j]))) {
 					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
-						 cp->getNodeX(0), cp->getNodeY(0), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
+						 cp.getNodeX(0), cp.getNodeY(0), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
 					error(TextBufferAddr());
 				}
-				if (IsInPolygon(cp->getNodeX(n), cp->getNodeY(n), PolygonIndex(rp->adjpaths[j]))) {
+				if (IsInPolygon(cp.getNodeX(n), cp.getNodeY(n), PolygonIndex(rp->adjpaths[j]))) {
 					sprintf(TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
-						 cp->getNodeX(n), cp->getNodeY(n), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
+						 cp.getNodeX(n), cp.getNodeY(n), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
 					error(TextBufferAddr());
 				}
 			}
