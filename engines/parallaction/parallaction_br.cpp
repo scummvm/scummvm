@@ -293,6 +293,19 @@ void Parallaction_br::changeLocation() {
 	_location._followerStartPosition.x = -1000;
 	_location._followerStartPosition.y = -1000;
 
+	_gfx->setScrollPosX(0);
+	_gfx->setScrollPosY(0);
+	if (_char._ani->gfxobj) {
+		Common::Point foot;
+		_char._ani->getFoot(foot);
+
+		if (foot.x > 550)
+			_gfx->setScrollPosX(320);
+
+		if (foot.y > 350)
+			_gfx->setScrollPosY(foot.y - 350);
+	}
+
 	// kFlagsRemove is cleared because the character is visible by default.
 	// Commands can hide the character, anyway.
 	_char._ani->_flags &= ~kFlagsRemove;
@@ -301,8 +314,8 @@ void Parallaction_br::changeLocation() {
 	doLocationEnterTransition();
 
 	_cmdExec->run(_location._aCommands);
-	
-	// NOTE: music should not started here! 
+
+	// NOTE: music should not started here!
 	// TODO: implement the music commands which control music execution
 	_soundMan->execute(SC_PLAYMUSIC);
 

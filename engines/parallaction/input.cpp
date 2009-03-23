@@ -442,8 +442,9 @@ bool Input::isMouseEnabled() {
 }
 
 void Input::getAbsoluteCursorPos(Common::Point& p) const {
-	p = _mousePos;
-	p.x += _vm->_gfx->getScrollPos();
+	_vm->_gfx->getScrollPos(p);
+	p.x += _mousePos.x;
+	p.y += _mousePos.y;
 }
 
 

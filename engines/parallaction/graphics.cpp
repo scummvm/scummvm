@@ -317,7 +317,7 @@ void Gfx::drawList(Graphics::Surface &surface, GfxObjArray &list) {
 void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (_doubleBuffering) {
 		if (_overlayMode)
-			x += _scrollPos;
+			x += _scrollPosX;
 
 		byte *dst = (byte*)_backBuffer.getBasePtr(x, y);
 		for (int i = 0; i < h; i++) {
@@ -357,23 +357,60 @@ void Gfx::unlockScreen() {
 
 void Gfx::updateScreenIntern() {
 	if (_doubleBuffering) {
-		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPos, 0);
+		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPosX, 0);
 		_vm->_system->copyRectToScreen(data, _backBuffer.pitch, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	}
 
 	_vm->_system->updateScreen();
 }
 
-int Gfx::getScrollPos() {
-	return _scrollPos;
+void Gfx::getScrollPos(Common::Point &p) {
+	p.x = _scrollPosX;
+	p.y = _scrollPosY;
 }
 
-void Gfx::setScrollPos(int scrollX) {
-	_scrollPos = CLIP(scrollX, _minScroll, _maxScroll);
+void Gfx::setScrollPosX(int scrollX) {
+	_scrollPosX = CLIP(scrollX, _minScrollX, _maxScrollX);
+}
+
+void Gfx::setScrollPosY(int scrollY) {
+	_scrollPosY = CLIP(scrollY, _minScrollY, _maxScrollY);
+}
+
+void Gfx::initiateScroll(int deltaX, int deltaY) {
+	if (deltaX != 0) {
+		_requestedHScrollDir = deltaX > 0 ? 1 : -1;
+		deltaX *= _requestedHScrollDir;
+		_requestedHScrollSteps = ((deltaX+31)/32) / _requestedHScrollDir;
+	}
+
+	if (deltaY != 0) {
+		_requestedVScrollDir = deltaY > 0 ? 1 : -1;
+		deltaY *= _requestedVScrollDir;
+		_requestedVScrollSteps = ((deltaY+7)/8) / _requestedVScrollDir;
+	}
+}
+
+void Gfx::scroll() {
+	int32 x = _scrollPosX, y = _scrollPosY;
+
+	if (_requestedHScrollSteps) {
+		x += 32*_requestedHScrollDir;	// scroll 32 pixels at a time
+		_requestedHScrollSteps--;
+	}
+
+	if (_requestedVScrollSteps) {
+		y += 8*_requestedVScrollDir;	// scroll 8 pixel at a time
+		_requestedVScrollSteps--;
+	}
+
+	setScrollPosX(x);
+	setScrollPosY(y);
 }
 
 void Gfx::beginFrame() {
 	resetSceneDrawList();
+	scroll();
 }
 
 void Gfx::updateScreen() {
@@ -392,20 +429,7 @@ void Gfx::updateScreen() {
 		uint16 backgroundPitch = _backgroundInfo->bg.pitch;
 		copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo->_x, _backgroundInfo->_y, w, h);
 	}
-/*
-	if (_varDrawPathZones == 1) {
-		Graphics::Surface *surf = lockScreen();
-		ZoneList::iterator b = _vm->_location._zones.begin();
-		ZoneList::iterator e = _vm->_location._zones.end();
-		for (; b != e; b++) {
-			ZonePtr z = *b;
-			if (z->_type & kZonePath) {
-				surf->frameRect(Common::Rect(z->getX(), z->getY(), z->getX() + z->width(), z->getY() + z->height()), 2);
-			}
-		}
-		unlockScreen();
-	}
-*/
+
 	sortScene();
 	Graphics::Surface *surf = lockScreen();
 		// draws animations frames and other game items
@@ -691,7 +715,8 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 
 
 Gfx::Gfx(Parallaction* vm) :
-	_vm(vm), _disk(vm->_disk), _backgroundInfo(0), _scrollPos(0), _minScroll(0), _maxScroll(0) {
+	_vm(vm), _disk(vm->_disk), _backgroundInfo(0), _scrollPosX(0), _minScrollX(0), _maxScrollX(0),
+	_minScrollY(0), _maxScrollY(0), _requestedHScrollSteps(0), _requestedVScrollSteps(0) {
 
 	_gameType = _vm->getGameType();
 	_doubleBuffering = _gameType != GType_Nippon;
@@ -827,8 +852,8 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		}
 	}
 
-	_minScroll = 0;
-	_maxScroll = MAX<int>(0, _backgroundInfo->width - _vm->_screenWidth);
+	_minScrollX = 0;
+	_maxScrollX = MAX<int>(0, _backgroundInfo->width - _vm->_screenWidth);
 }
 
 

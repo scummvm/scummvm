@@ -529,14 +529,6 @@ void PathWalker_BR::finalizeWalk(State &s) {
 
 	s._a->setF(s._dirFrame);	// temporary solution
 
-#if 0
-	// TODO: support scrolling ;)
-	if (foot.x > _gfx->hscroll + 600) _gfx->scrollRight(78);
-	if (foot.x < _gfx->hscroll + 40) _gfx->scrollLeft(78);
-	if (foot.y > 350) _gfx->scrollDown(100);
-	if (foot.y < 80) _gfx->scrollUp(100);
-#endif
-
 	s._active = false;
 }
 
@@ -549,6 +541,27 @@ void PathWalker_BR::walk() {
 
 	doWalk(_character);
 	doWalk(_follower);
+
+	Common::Point pos, foot;
+	_vm->_gfx->getScrollPos(pos);
+	_character._a->getFoot(foot);
+
+	int32 dx = 0, dy = 0;
+	if (foot.x > pos.x + 600) {
+		dx = 78*4;
+	} else
+	if (foot.x < pos.x + 40) {
+		dx = -78*4;
+	}
+
+	if (foot.y > pos.y + 350) {
+		dy = 100;
+	} else
+	if (foot.y < pos.y + 80) {
+		dy = -100;
+	}
+
+	_vm->_gfx->initiateScroll(dx, dy);
 
 	debugC(3, kDebugWalk, "PathWalker_BR::walk() -> done");
 }

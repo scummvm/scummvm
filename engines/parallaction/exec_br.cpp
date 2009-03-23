@@ -264,7 +264,9 @@ DECLARE_COMMAND_OPCODE(zeta) {
 
 
 DECLARE_COMMAND_OPCODE(scroll) {
-	warning("Parallaction_br::cmdOp_scroll not yet implemented");
+	Common::Point p;
+	_vm->_gfx->getScrollPos(p);
+	_vm->_gfx->initiateScroll(ctxt._cmd->u._counterValue - p.x, 0);
 }
 
 

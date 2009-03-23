@@ -227,7 +227,7 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 
 	int x = obj->x;
 	if (_overlayMode) {
-		x += _scrollPos;
+		x += _scrollPosX;
 	}
 	rect.translate(x, obj->y);
 	data = obj->getData(obj->frame);
@@ -248,29 +248,6 @@ void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, cons
 }
 
 
-#if 0
-void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
-
-	byte *d = _unpackedBitmap;
-
-	while (size > 0) {
-
-		uint8 p = *data++;
-		size--;
-		uint8 color = p & 0xF;
-		uint8 repeat = (p & 0xF0) >> 4;
-		if (repeat == 0) {
-			repeat = *data++;
-			size--;
-		}
-
-		memset(d, color, repeat);
-		d += repeat;
-	}
-
-	blt(r, _unpackedBitmap, surf, z, transparentColor);
-}
-#endif
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 
 	byte *d = _unpackedBitmap;

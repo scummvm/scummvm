@@ -478,8 +478,13 @@ public:
 	void setProjectorProgram(int16 *data);
 	int16 *_nextProjectorPos;
 
-	int getScrollPos();
-	void setScrollPos(int scrollX);
+	// start programmatic relative scroll
+	void initiateScroll(int deltaX, int deltaY);
+	// immediate and absolute x,y scroll
+	void setScrollPosX(int scrollX);
+	void setScrollPosY(int scrollY);
+	// return current scroll position
+	void getScrollPos(Common::Point &p);
 
 	// init
 	Gfx(Parallaction* vm);
@@ -512,9 +517,14 @@ protected:
 	Graphics::Surface	_backBuffer;
 	void				copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
-	int					_scrollPos;
-	int					_minScroll, _maxScroll;
+	int					_scrollPosX, _scrollPosY;
+	int					_minScrollX, _maxScrollX, _minScrollY, _maxScrollY;
 
+	uint32				_requestedHScrollSteps;
+	uint32				_requestedVScrollSteps;
+	int32				_requestedHScrollDir;
+	int32				_requestedVScrollDir;
+	void				scroll();
 	#define NO_FLOATING_LABEL	1000
 
 	GfxObjArray	_labels;
