@@ -1768,9 +1768,9 @@ static const byte english_elvira1Font[] = {
 };
 
 void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
-	const byte *src;
-	byte color, *dst;
-	uint h, w, i;
+	const byte *src = 0;
+	byte color, *dst = 0;
+	uint h = 0, w = 0, i;
 
 	if (_noOracleScroll)
 		return;
