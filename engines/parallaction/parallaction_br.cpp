@@ -29,6 +29,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
+#include "parallaction/parser.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"

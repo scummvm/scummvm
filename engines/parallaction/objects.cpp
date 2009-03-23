@@ -25,6 +25,7 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/objects.h"
+#include "parallaction/parser.h"
 
 namespace Parallaction {
 

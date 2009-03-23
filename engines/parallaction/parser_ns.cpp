@@ -25,6 +25,7 @@
 
 
 #include "parallaction/parallaction.h"
+#include "parallaction/parser.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {
@@ -1443,9 +1444,8 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "slidetext")) {
-			strcpy(_vm->_location._slideText[0], _tokens[1]);
-//				printf("%s\t", _slideText[0]);
-			strcpy(_vm->_location._slideText[1], _tokens[2]);
+			_vm->_location._slideText[0] = _tokens[1];
+			_vm->_location._slideText[1] = _tokens[2];
 		}
 
 		if (!scumm_stricmp(_tokens[0], "location")) {

@@ -30,6 +30,7 @@
 #include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
+#include "parallaction/parser.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"
@@ -173,7 +174,7 @@ Common::Error Parallaction_ns::init() {
 	} else {
 		_soundManI = new AmigaSoundMan_ns(this);
 	}
-	
+
 	_soundMan = new SoundMan(_soundManI);
 
 	initResources();
@@ -333,7 +334,7 @@ void Parallaction_ns::changeLocation() {
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
-		uint id = _gfx->createLabel(_menuFont, _location._slideText[0], 1);
+		uint id = _gfx->createLabel(_menuFont, _location._slideText[0].c_str(), 1);
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
 		_gfx->updateScreen();
 

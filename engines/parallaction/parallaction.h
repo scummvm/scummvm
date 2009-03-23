@@ -36,7 +36,6 @@
 
 #include "parallaction/input.h"
 #include "parallaction/inventory.h"
-#include "parallaction/parser.h"
 #include "parallaction/objects.h"
 #include "parallaction/disk.h"
 
@@ -126,6 +125,10 @@ class ProgramExec;
 class SoundMan;
 class SoundMan_ns;
 class SoundMan_br;
+class LocationParser_ns;
+class LocationParser_br;
+class ProgramParser_ns;
+class ProgramParser_br;
 
 
 struct Location {
@@ -148,7 +151,7 @@ struct Location {
 
 	// NS specific
 	PointList	_walkPoints;
-	char _slideText[2][MAX_TOKEN_LEN];
+	Common::String _slideText[2];
 
 	// BRA specific
 	int			_zeta0;
@@ -535,7 +538,7 @@ private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
 	SoundMan_br				*_soundManI;
-	
+
 	int32		_counters[32];
 	Table		*_countersNames;
 
