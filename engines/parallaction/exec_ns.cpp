@@ -67,7 +67,7 @@ extern const char *_instructionNamesRes_ns[];
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	InstructionPtr inst = *ctxt._inst;
+	InstructionPtr inst = ctxt._inst;
 
 	inst->_a->_flags |= kFlagsActive;
 	inst->_a->_flags &= ~kFlagsRemove;
@@ -75,12 +75,12 @@ DECLARE_INSTRUCTION_OPCODE(on) {
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	(*ctxt._inst)->_a->_flags |= kFlagsRemove;
+	ctxt._inst->_a->_flags |= kFlagsRemove;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	InstructionPtr inst = *ctxt._inst;
+	InstructionPtr inst = ctxt._inst;
 
 	ctxt._program->_loopCounter = inst->_opB.getValue();
 	ctxt._program->_loopStart = ctxt._ip;
@@ -94,7 +94,7 @@ DECLARE_INSTRUCTION_OPCODE(endloop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	InstructionPtr inst = *ctxt._inst;
+	InstructionPtr inst = ctxt._inst;
 	int16 _si = inst->_opB.getValue();
 
 	if (inst->_flags & kInstMod) {	// mod
@@ -118,13 +118,12 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	InstructionPtr inst = *ctxt._inst;
-	inst->_opA.setValue(inst->_opB.getValue());
+	ctxt._inst->_opA.setValue(ctxt._inst->_opB.getValue());
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(put) {
-	InstructionPtr inst = *ctxt._inst;
+	InstructionPtr inst = ctxt._inst;
 	Common::Rect r;
 	inst->_a->getFrameRect(r);
 
@@ -145,11 +144,11 @@ DECLARE_INSTRUCTION_OPCODE(show) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(invalid) {
-	error("Can't execute invalid opcode %i", (*ctxt._inst)->_index);
+	error("Can't execute invalid opcode %i", ctxt._inst->_index);
 }
 
 DECLARE_INSTRUCTION_OPCODE(call) {
-	_vm->callFunction((*ctxt._inst)->_immediate, 0);
+	_vm->callFunction(ctxt._inst->_immediate, 0);
 }
 
 
@@ -162,17 +161,17 @@ DECLARE_INSTRUCTION_OPCODE(wait) {
 
 
 DECLARE_INSTRUCTION_OPCODE(start) {
-	(*ctxt._inst)->_a->_flags |= (kFlagsActing | kFlagsActive);
+	ctxt._inst->_a->_flags |= (kFlagsActing | kFlagsActive);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(sound) {
-	_vm->_activeZone = (*ctxt._inst)->_z;
+	_vm->_activeZone = ctxt._inst->_z;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(move) {
-	InstructionPtr inst = (*ctxt._inst);
+	InstructionPtr inst = ctxt._inst;
 
 	int16 x = inst->_opA.getValue();
 	int16 y = inst->_opB.getValue();
@@ -187,7 +186,7 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 		ctxt._program->_status = kProgramDone;
 	}
 
-	ctxt._ip = ctxt._program->_instructions.begin();
+	ctxt._ip = 0;
 	ctxt._suspend = true;
 }
 

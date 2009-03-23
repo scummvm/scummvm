@@ -1058,9 +1058,7 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 DECLARE_INSTRUCTION_PARSER(if_op)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(if_op) ");
 
-
-	if (ctxt.openIf)
-		error("cannot nest 'if' blocks");
+	beginIfStatement();
 
 	parseLValue(ctxt.inst->_opA, _tokens[1]);
 	parseRValue(ctxt.inst->_opB, _tokens[3]);
@@ -1075,20 +1073,27 @@ DECLARE_INSTRUCTION_PARSER(if_op)  {
 		ctxt.inst->_index = INST_IFLT;
 	} else
 		error("unknown test operator '%s' in if-clause", _tokens[2]);
+}
 
-	ctxt.openIf = ctxt.inst;
+void ProgramParser_br::beginIfStatement() {
+	if (_openIfStatement != -1)
+		error("cannot nest 'if' statements");
 
+	_openIfStatement = _currentInstruction;
+}
+
+void ProgramParser_br::endIfStatement() {
+	if (_openIfStatement == -1)
+		error("unexpected 'endif' in script");
+
+	_program->_instructions[_openIfStatement]->_endif = _currentInstruction;
+	_openIfStatement = -1;
 }
 
 
 DECLARE_INSTRUCTION_PARSER(endif)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(endif) ");
-
-	if (!ctxt.openIf)
-		error("unexpected 'endif'");
-
-//	ctxt.openIf->_endif = ctxt.inst;
-	ctxt.openIf = InstructionPtr();
+	endIfStatement();
 	ctxt.inst->_index = _parser->_lookup;
 }
 
@@ -1140,6 +1145,11 @@ void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 		warning("Lip sync instruction encountered! Please notify the team!");
 	}
 
+}
+
+void ProgramParser_br::parse(Script *script, ProgramPtr program) {
+	_openIfStatement = -1;
+	ProgramParser_ns::parse(script, program);
 }
 
 

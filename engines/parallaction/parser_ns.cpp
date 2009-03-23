@@ -327,6 +327,9 @@ void ProgramParser_ns::parseInstruction() {
 
 	InstructionPtr inst(new Instruction);
 	ctxt.inst = inst;
+
+	_currentInstruction = _program->_instructions.size();
+
 	_parser->parseStatement();
 	_program->_instructions.push_back(inst);
 
@@ -337,7 +340,6 @@ void ProgramParser_ns::parse(Script *script, ProgramPtr program) {
 	_script = script;
 	_program = program;
 
-	ctxt.openIf = InstructionPtr();
 	ctxt.end = false;
 	ctxt.locals = program->_locals;
 
@@ -348,7 +350,7 @@ void ProgramParser_ns::parse(Script *script, ProgramPtr program) {
 	} while (!ctxt.end);
 	_parser->popTables();
 
-	program->_ip = program->_instructions.begin();
+	program->_ip = 0;
 }
 
 void Parallaction_ns::loadProgram(AnimationPtr a, const char *filename) {

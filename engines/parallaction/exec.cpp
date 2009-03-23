@@ -37,18 +37,18 @@ void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 	_ctxt._suspend = false;
 	_ctxt._modCounter = _modCounter;
 
-	InstructionList::iterator inst;
+	InstructionPtr inst;
 	for ( ; (a->_flags & kFlagsActing) ; ) {
 
-		inst = _ctxt._ip;
+		inst = script->_instructions[_ctxt._ip];
 		_ctxt._inst = inst;
 		++_ctxt._ip;
 
-		debugC(9, kDebugExec, "inst [%02i] %s\n", (*inst)->_index, _instructionNames[(*inst)->_index - 1]);
+		debugC(9, kDebugExec, "inst [%02i] %s\n", inst->_index, _instructionNames[inst->_index - 1]);
 
 		script->_status = kProgramRunning;
 
-		(*_opcodes[(*inst)->_index])(_ctxt);
+		(*_opcodes[inst->_index])(_ctxt);
 
 		if (_ctxt._suspend)
 			break;

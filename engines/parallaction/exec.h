@@ -64,8 +64,8 @@ typedef Common::Array<const CommandOpcode*>	CommandOpcodeSet;
 struct ProgramContext {
 	AnimationPtr	_anim;
 	ProgramPtr		_program;
-	InstructionList::iterator _inst;
-	InstructionList::iterator _ip;
+	InstructionPtr _inst;
+	uint32 		_ip;
 	uint16		_modCounter;
 	bool		_suspend;
 };

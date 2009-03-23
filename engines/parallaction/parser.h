@@ -328,14 +328,13 @@ protected:
 	OpcodeSet	_instructionParsers;
 	Table		*_instructionNames;
 
+	uint32		_currentInstruction; // index of the instruction being parsed
+
 	struct ParserContext {
 		bool		end;
 		AnimationPtr	a;
 		InstructionPtr inst;
 		LocalVariable *locals;
-
-		// BRA specific
-		InstructionPtr openIf;
 	} ctxt;
 
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
@@ -377,7 +376,7 @@ public:
 		clearSet(_instructionParsers);
 	}
 
-	void parse(Script *script, ProgramPtr program);
+	virtual void parse(Script *script, ProgramPtr program);
 
 };
 
@@ -395,6 +394,10 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
 
+	int32 _openIfStatement;
+	void beginIfStatement();
+	void endIfStatement();
+
 	virtual void parseRValue(ScriptVar &var, const char *str);
 
 public:
@@ -402,7 +405,7 @@ public:
 	}
 
 	virtual void init();
-
+	virtual void parse(Script *script, ProgramPtr program);
 };
 
 

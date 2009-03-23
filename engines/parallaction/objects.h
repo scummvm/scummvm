@@ -49,7 +49,7 @@ typedef Common::SharedPtr<Animation> AnimationPtr;
 typedef Common::List<AnimationPtr> AnimationList;
 
 typedef Common::SharedPtr<Instruction> InstructionPtr;
-typedef Common::List<InstructionPtr> InstructionList;
+typedef Common::Array<InstructionPtr> InstructionList;
 
 typedef Common::List<Common::Point> PointList;
 
@@ -468,7 +468,7 @@ struct Instruction {
 	char		*_text;
 	char		*_text2;
 	int			_y;
-	InstructionList::iterator	_endif;
+	uint32		_endif;
 
 	Instruction();
 	~Instruction();
@@ -483,16 +483,14 @@ enum {
 
 struct Program {
 	AnimationPtr	_anim;
-
 	LocalVariable	*_locals;
 
-	uint16			_loopCounter;
+	uint16		_loopCounter;
+	uint16		_numLocals;
 
-	uint16	_numLocals;
-
-	InstructionList::iterator	_ip;
-	InstructionList::iterator	_loopStart;
-	InstructionList				_instructions;
+	uint32				_ip;
+	uint32 				_loopStart;
+	InstructionList		_instructions;
 
 	uint32	_status;
 
