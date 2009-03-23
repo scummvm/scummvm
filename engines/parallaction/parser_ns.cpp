@@ -1385,170 +1385,116 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 
 void LocationParser_ns::parseGetData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "file")) {
-
-			bool visible = (z->_flags & kFlagsRemove) == 0;
-
-			GfxObj *obj = _vm->_gfx->loadGet(_tokens[1]);
-			obj->frame = 0;
-			obj->x = z->getX();
-			obj->y = z->getY();
-			obj->_prog = _zoneProg;
-			_vm->_gfx->showGfxObj(obj, visible);
-
-			data->_gfxobj = obj;
-		}
-
-		if (!scumm_stricmp(_tokens[0], "icon")) {
-			data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-		}
-
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "file")) {
+		GfxObj *obj = _vm->_gfx->loadGet(_tokens[1]);
+		obj->frame = 0;
+		obj->x = z->getX();
+		obj->y = z->getY();
+		obj->_prog = _zoneProg;
+		bool visible = (z->_flags & kFlagsRemove) == 0;
+		_vm->_gfx->showGfxObj(obj, visible);
+		data->_gfxobj = obj;
+	} else
+	if (!scumm_stricmp(_tokens[0], "icon")) {
+		data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+	}
 }
-
 
 void LocationParser_ns::parseExamineData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "file")) {
-			data->_filename = strdup(_tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "desc")) {
-			data->_examineText = parseComment();
-		}
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "file")) {
+		data->_filename = strdup(_tokens[1]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "desc")) {
+		data->_examineText = parseComment();
+	}
 }
-
 
 void LocationParser_ns::parseDoorData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "slidetext")) {
-			_vm->_location._slideText[0] = _tokens[1];
-			_vm->_location._slideText[1] = _tokens[2];
-		}
-
-		if (!scumm_stricmp(_tokens[0], "location")) {
-			data->_doorLocation = strdup(_tokens[1]);
-		}
-
-		if (!scumm_stricmp(_tokens[0], "file")) {
-//				printf("file: '%s'", _tokens[0]);
-
-			uint16 frame = (z->_flags & kFlagsClosed ? 0 : 1);
-
-			GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
-			obj->frame = frame;
-			obj->x = z->getX();
-			obj->y = z->getY();
-			_vm->_gfx->showGfxObj(obj, true);
-
-			data->_gfxobj = obj;
-		}
-
-		if (!scumm_stricmp(_tokens[0],	"startpos")) {
-			data->_doorStartPos.x = atoi(_tokens[1]);
-			data->_doorStartPos.y = atoi(_tokens[2]);
-			data->_doorStartFrame = atoi(_tokens[3]);
-		}
-
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "slidetext")) {
+		_vm->_location._slideText[0] = _tokens[1];
+		_vm->_location._slideText[1] = _tokens[2];
+	} else
+	if (!scumm_stricmp(_tokens[0], "location")) {
+		data->_doorLocation = strdup(_tokens[1]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "file")) {
+		GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
+		obj->frame = z->_flags & kFlagsClosed ? 0 : 1;
+		obj->x = z->getX();
+		obj->y = z->getY();
+		_vm->_gfx->showGfxObj(obj, true);
+		data->_gfxobj = obj;
+	} else
+	if (!scumm_stricmp(_tokens[0],	"startpos")) {
+		data->_doorStartPos.x = atoi(_tokens[1]);
+		data->_doorStartPos.y = atoi(_tokens[2]);
+		data->_doorStartFrame = atoi(_tokens[3]);
+	}
 }
-
 
 void LocationParser_ns::parseMergeData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "obj1")) {
-			data->_mergeObj1 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "obj2")) {
-			data->_mergeObj2 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "newobj")) {
-			data->_mergeObj3 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
-		}
-
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "obj1")) {
+		data->_mergeObj1 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "obj2")) {
+		data->_mergeObj2 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "newobj")) {
+		data->_mergeObj3 = 4 + _vm->_objectsNames->lookup(_tokens[1]);
+	}
 }
 
 void LocationParser_ns::parseHearData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "sound")) {
-			data->_filename = _tokens[1];
-			data->_hearChannel = atoi(_tokens[2]);
-		}
-		if (!scumm_stricmp(_tokens[0], "freq")) {
-			data->_hearFreq = atoi(_tokens[1]);
-		}
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "sound")) {
+		data->_filename = _tokens[1];
+		data->_hearChannel = atoi(_tokens[2]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "freq")) {
+		data->_hearFreq = atoi(_tokens[1]);
+	}
 }
 
 void LocationParser_ns::parseSpeakData(ZonePtr z) {
 	TypeData *data = &z->u;
-	do {
-
-		if (!scumm_stricmp(_tokens[0], "file")) {
-			data->_filename = _tokens[1];
-		}
-		if (!scumm_stricmp(_tokens[0], "Dialogue")) {
-			data->_speakDialogue = parseDialogue();
-		}
-
-		_script->readLineToken(true);
-	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
+	if (!scumm_stricmp(_tokens[0], "file")) {
+		data->_filename = _tokens[1];
+	} else
+	if (!scumm_stricmp(_tokens[0], "Dialogue")) {
+		data->_speakDialogue = parseDialogue();
+	}
 }
-
 
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
+	typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr z);
+	ZoneTypeParser parsers[] = {
+		0,	// no type
+		&LocationParser_ns::parseExamineData,
+		&LocationParser_ns::parseDoorData,
+		&LocationParser_ns::parseGetData,
+		&LocationParser_ns::parseMergeData,
+		0,	// taste
+		&LocationParser_ns::parseHearData,
+		0,	// feel
+		&LocationParser_ns::parseSpeakData,
+		0,	// none
+		0,	// trap
+		0,	// you
+		0	// command
+	};
 
-	switch (ACTIONTYPE(z)) {
-	case kZoneExamine:	// examine Zone alloc
-		parseExamineData(z);
-		break;
-
-	case kZoneDoor: // door Zone alloc
-		parseDoorData(z);
-		break;
-
-	case kZoneGet:	// get Zone alloc
-		parseGetData(z);
-		break;
-
-	case kZoneMerge:	// merge Zone alloc
-		parseMergeData(z);
-		break;
-
-	case kZoneHear: // hear Zone alloc
-		parseHearData(z);
-		break;
-
-	case kZoneSpeak:	// speak Zone alloc
-		parseSpeakData(z);
-		break;
-
-	default:
-		// eats up 'ENDZONE' line for unprocessed zone types
+	ZoneTypeParser p = parsers[ACTIONTYPE(z)];
+	do {
+		if (p) {
+			(this->*p)(z);
+		}
 		_script->readLineToken(true);
-		break;
-	}
-
+	} while (scumm_stricmp(_tokens[0], "endzone") && scumm_stricmp(_tokens[0], "endanimation"));
 	debugC(7, kDebugParser, "parseZoneTypeBlock() done");
-
-	return;
 }
 
 
