@@ -1409,7 +1409,6 @@ void CheckNPathIntegrity() {
 	const Poly *cp;	// Compiled polygon structure
 	int		i, j;	// Loop counters
 	int		n;	// Last node in current path
-	int32	*nlistx, *nlisty;
 
 	pps = LockMem(pHandle);		// All polygons
 
