@@ -197,8 +197,6 @@ bool Resource::loadContext(ResourceContext *context) {
 bool Resource::createContexts() {
 	int i;
 	ResourceContext *context;
-	char musicFileName[256];
-	char soundFileName[256];
 	int soundFileIndex = 0;
 	int voicesFileIndex = 0;
 	bool digitalMusic = false;
@@ -285,7 +283,7 @@ bool Resource::createContexts() {
 			if (Common::File::exists(curSoundfiles[i].fileName)) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				strcpy(soundFileName, curSoundfiles[i].fileName);
+				strcpy(_soundFileName, curSoundfiles[i].fileName);
 				compressedSounds = curSoundfiles[i].isCompressed;
 				fileFound = true;
 				break;
@@ -426,7 +424,7 @@ bool Resource::createContexts() {
 				digitalMusic = true;
 				compressedMusic = musicFilesITE[i].isCompressed;
 				fileFound = true;
-				strcpy(musicFileName, musicFilesITE[i].fileName);
+				strcpy(_musicFileName, musicFilesITE[i].fileName);
 				break;
 			}
 		}
@@ -446,11 +444,11 @@ bool Resource::createContexts() {
 
 		// For ITE, add the digital music file and sfx file information here
 		if (_vm->getGameId() == GID_ITE && digitalMusic && i == _contextsCount - 1) {
-			context->fileName = musicFileName;
+			context->fileName = _musicFileName;
 			context->fileType = GAME_MUSICFILE;
 			context->isCompressed = compressedMusic;
 		} else if (!soundFileInArray && i == soundFileIndex) {
-			context->fileName = soundFileName;
+			context->fileName = _soundFileName;
 			context->fileType = GAME_SOUNDFILE;
 			context->isCompressed = compressedSounds;
 		} else if (_vm->_voiceFilesExist && i == voicesFileIndex && !(_vm->getGameId() == GID_IHNM && _vm->isMacResources())) {
