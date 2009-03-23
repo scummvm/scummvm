@@ -447,7 +447,10 @@ DECLARE_INSTRUCTION_OPCODE(process) {
 
 
 DECLARE_INSTRUCTION_OPCODE(move) {
-	warning("Parallaction_br::instOp_move not yet implemented");
+	// NOTE: I couldn't find evidence of scripts containing this instruction being used
+	InstructionPtr inst =*ctxt._inst;
+	_vm->scheduleWalk(inst->_opA.getValue(), inst->_opB.getValue(), false);
+	ctxt._suspend = true;
 }
 
 

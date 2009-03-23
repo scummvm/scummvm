@@ -437,6 +437,10 @@ void PathWalker_BR::setFollowerPath(AnimationPtr a, uint16 x, uint16 y) {
 }
 
 void PathWalker_BR::stopFollower() {
+	if (_follower._active) {
+		uint32 frame = _follower._a->getF();
+		_follower._a->setF((frame/9) * 9);
+	}
 	_follower._a.reset();
 	_follower._active = false;
 }
