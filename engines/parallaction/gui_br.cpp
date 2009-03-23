@@ -104,7 +104,7 @@ class MainMenuInputState_BR : public MenuInputState {
 	#define MENUITEMS_X			250
 	#define MENUITEMS_Y			200
 
-	#define MENUITEM_WIDTH		190
+	#define MENUITEM_WIDTH		200
 	#define MENUITEM_HEIGHT		18
 
 	Frames* renderMenuItem(const char *text) {
