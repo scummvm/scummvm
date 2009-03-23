@@ -211,15 +211,9 @@ DECLARE_ANIM_PARSER(commands)  {
 DECLARE_ANIM_PARSER(type)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(type) ");
 
-	if (_tokens[2][0] != '\0') {
-		ctxt.a->_type = PACK_ZONETYPE(0, 4 + _vm->_objectsNames->lookup(_tokens[2]));
-	}
-	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-	if (_si != Table::notFound) {
-		ctxt.a->_type |= 1 << (_si-1);
-		if (/*(ACTIONTYPE(ctxt.a) != kZoneNone) &&*/ (ACTIONTYPE(ctxt.a) != kZoneCommand)) {
-			parseZoneTypeBlock(ctxt.a);
-		}
+	ctxt.a->_type = buildZoneType(_tokens[1], _tokens[2]);
+	if ((ACTIONTYPE(ctxt.a) != 0) && (ACTIONTYPE(ctxt.a) != kZoneCommand)) {
+		parseZoneTypeBlock(ctxt.a);
 	}
 
 	ctxt.a->_flags |= 0x1000000;
@@ -1314,16 +1308,21 @@ DECLARE_ZONE_PARSER(moveto)  {
 	ctxt.z->_moveTo.y = atoi(_tokens[2]);
 }
 
+uint32 LocationParser_ns::buildZoneType(const char *t0, const char* t1) {
+	uint16 it = 0;
+	if (t1[0] != '\0') {
+		it = 4 + _vm->_objectsNames->lookup(t1);
+	}
+	uint16 zt = _zoneTypeNames->lookup(t0);
+	return PACK_ZONETYPE(zt, it);
+}
+
 
 DECLARE_ZONE_PARSER(type)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(type) ");
 
-	if (_tokens[2][0] != '\0') {
-		ctxt.z->_type = (4 + _vm->_objectsNames->lookup(_tokens[2])) << 16;
-	}
-	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-	if (_si != Table::notFound) {
-		ctxt.z->_type |= 1 << (_si - 1);
+	ctxt.z->_type = buildZoneType(_tokens[1], _tokens[2]);
+	if (ACTIONTYPE(ctxt.z) != 0) {
 		parseZoneTypeBlock(ctxt.z);
 	}
 

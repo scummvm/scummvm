@@ -737,15 +737,11 @@ DECLARE_ZONE_PARSER(moveto)  {
 DECLARE_ZONE_PARSER(type)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(type) ");
 
-	if (_tokens[2][0] != '\0') {
-		ctxt.z->_type = (4 + _vm->_objectsNames->lookup(_tokens[2])) << 16;
-	}
-	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-	if (_si != Table::notFound) {
-		ctxt.z->_type |= 1 << (_si - 1);
+	ctxt.z->_type = buildZoneType(_tokens[1], _tokens[2]);
+	if (ACTIONTYPE(ctxt.z) != 0) {
 		parseZoneTypeBlock(ctxt.z);
 
-//		if (ctxt.z->_type & kZoneHear) {
+//		if (ACTIONTYPE(ctxt.z) == kZoneHear) {
 //			_soundMan->sfxCommand(START...);
 //		}
 	}

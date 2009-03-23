@@ -56,20 +56,20 @@ typedef Common::List<Common::Point> PointList;
 enum ZoneTypes {
 	kZoneExamine	   = 1,					// zone displays comment if activated
 	kZoneDoor		   = 2,					// zone activated on click (after some walk if needed)
-	kZoneGet		   = 4,					// for pickable items
-	kZoneMerge		   = 8,					// tags items which can be merged in inventory
-	kZoneTaste		   = 0x10,				// NEVER USED
-	kZoneHear		   = 0x20,				// NEVER USED: they ran out of time before integrating sfx
-	kZoneFeel		   = 0x40,				// NEVER USED
-	kZoneSpeak		   = 0x80,				// tags NPCs the character can talk with
-	kZoneNone		   = 0x100,				// used to prevent parsing on peculiar Animations
-	kZoneTrap		   = 0x200,				// zone activated when character enters
-	kZoneYou		   = 0x400,				// marks the character
-	kZoneCommand	   = 0x800,
+	kZoneGet		   = 3,					// for pickable items
+	kZoneMerge		   = 4,					// tags items which can be merged in inventory
+	kZoneTaste		   = 5,				// NEVER USED
+	kZoneHear		   = 6,				// NEVER USED: they ran out of time before integrating sfx
+	kZoneFeel		   = 7,				// NEVER USED
+	kZoneSpeak		   = 8,				// tags NPCs the character can talk with
+	kZoneNone		   = 9,				// used to prevent parsing on peculiar Animations
+	kZoneTrap		   = 10,				// zone activated when character enters
+	kZoneYou		   = 11,				// marks the character
+	kZoneCommand	   = 12,
 
 	// BRA specific
-	kZonePath          = 0x1000,			// defines nodes for assisting walk calculation routines
-	kZoneBox           = 0x2000
+	kZonePath          = 13,			// defines nodes for assisting walk calculation routines
+	kZoneBox           = 14
 };
 
 

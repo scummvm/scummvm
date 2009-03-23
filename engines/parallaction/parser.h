@@ -196,6 +196,8 @@ protected:
 	void		parseAnswerBody(Answer *answer);
 	Question	*parseQuestion();
 
+	uint32		buildZoneType(const char *t0, const char* t1);
+
 	void		parseZone(ZoneList &list, char *name);
 	virtual void parseZoneTypeBlock(ZonePtr z);
 	void		parsePointList(PointList &list);
