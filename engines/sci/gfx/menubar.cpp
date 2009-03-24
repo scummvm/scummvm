@@ -101,7 +101,7 @@ int Menu::addMenuItem(gfx_state_t *state, MenuType type, const char *left, const
 
 void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries, int font, reg_t entries_base) {
 	char tracker;
-	char *left = NULL, *right;
+	char *left = NULL;
 	reg_t left_origin = entries_base;
 	int string_len = 0;
 	int tag = 0, c_width, max_width = 0;
@@ -150,6 +150,7 @@ void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries
 					max_width = c_width;
 
 				string_len = 0;
+				free(left);
 				left = NULL; // Start over
 			} else if (tracker == '`') { // Start of right string
 				if (!left) {
@@ -165,7 +166,7 @@ void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries
 			if ((tracker == ':') || (tracker == 0)) { // End of entry
 				int key, modifiers = 0;
 
-				right = sci_strndup(entries - string_len - 1, string_len);
+				char *right = sci_strndup(entries - string_len - 1, string_len);
 
 				if (right[0] == '#') {
 					right[0] = SCI_SPECIAL_CHAR_FUNCTION; // Function key
@@ -190,7 +191,7 @@ void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries
 					if (right[2] == '=') {
 						tag = atoi(right + 3);
 						right[2] = 0;
-					};
+					}
 				} else {
 					if (right[0] == '^') {
 						right[0] = SCI_SPECIAL_CHAR_CTRL; // Control key - there must be a replacement...
@@ -230,6 +231,8 @@ void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries
 					max_width = c_width;
 
 				string_len = 0;
+				free(right);
+				free(left);
 				left = NULL;  // Start over
 
 			} else
