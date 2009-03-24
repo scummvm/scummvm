@@ -49,7 +49,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
 	_initialized = false;
-	_fullRefresh = false;
+	_fullRefresh = true;
 
 #ifdef SAGA_DEBUG
 	// Initialize FPS timer callback
@@ -82,10 +82,6 @@ void Render::drawScene() {
 	Point textPoint;
 	int curMode = _vm->_interface->getMode();
 	assert(_initialized);
-
-	// TODO: Remove this to use dirty rectangles
-	// Still quite buggy
-	_fullRefresh = true;
 
 #ifdef SAGA_DEBUG
 	_renderedFrameCount++;
@@ -206,7 +202,9 @@ void Render::drawScene() {
 
 	_system->updateScreen();
 
-	_fullRefresh = false;
+	// TODO: Change this to false to use dirty rectangles
+	// Still quite buggy
+	_fullRefresh = true;
 }
 
 void Render::addDirtyRect(Common::Rect rect) {
