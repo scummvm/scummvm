@@ -1017,9 +1017,13 @@ void ScummEngine_v5::loadVars() {
  */
 void ScummEngine_v5::updateIQPoints() {
 	int seriesIQ;
-	int episodeIQStringSize;
+	// IQString[0..72] corresponds to each puzzle's IQ.
+	// IQString[73] indicates that the IQ-file was loaded successfully and is always 0 when
+	// the IQ is calculated, hence it will be ignored here.
+	const int NUM_PUZZLES = 73;
+	byte seriesIQString[NUM_PUZZLES];
 	byte *episodeIQString;
-	byte seriesIQString[73];
+	int episodeIQStringSize;
 
 	// load string with IQ points given per puzzle in any savegame
 	// IMPORTANT: the resource string STRINGID_IQ_SERIES is only valid while
@@ -1032,14 +1036,14 @@ void ScummEngine_v5::updateIQPoints() {
 	if (!episodeIQString)
 		return;
 	episodeIQStringSize = getResourceSize(rtString, STRINGID_IQ_EPISODE);
-	if (episodeIQStringSize < 73)
+	if (episodeIQStringSize < NUM_PUZZLES)
 		return;
 
 	// merge episode and series IQ strings and calculate series IQ
 	seriesIQ = 0;
-	// iterate over puzzles (each of the first 73 bytes corresponds to a puzzle's IQ)
-	for (int i = 0; i < 73 ; ++i) {
-		char puzzleIQ = seriesIQString[i];
+	// iterate over puzzles
+	for (int i = 0; i < NUM_PUZZLES ; ++i) {
+		byte puzzleIQ = seriesIQString[i];
 		// if puzzle is solved copy points to episode string
 		if (puzzleIQ > 0)
 			episodeIQString[i] = puzzleIQ;

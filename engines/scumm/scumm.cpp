@@ -2083,7 +2083,8 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
-	byte saveLoad = (_saveLoadFlag != 0);
+	// copy saveLoadFlag as handleSaveLoad() resets it
+	byte saveLoad = _saveLoadFlag;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
