@@ -1037,7 +1037,7 @@ int c_parse(EngineState *s) {
 	if (!words.empty()) {
 		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, s->synonyms, s->synonyms_nr);
+		vocab_synonymize_tokens(words, s->_synonyms);
 
 		sciprintf("Parsed to the following blocks:\n");
 

@@ -599,16 +599,14 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes) {
 	sciprintf("))\n");
 }
 
-void vocab_synonymize_tokens(ResultWordList &words, synonym_t *synonyms, int synonyms_nr) {
-	int sync;
-
-	if (!synonyms || !synonyms_nr)
+void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms) {
+	if (synonyms.empty())
 		return; // No synonyms: Nothing to check
 
 	for (ResultWordList::iterator i = words.begin(); i != words.end(); ++i)
-		for (sync = 0; sync < synonyms_nr; sync++)
-			if (i->group == synonyms[sync].replaceant)
-				i->group = synonyms[sync].replacement;
+		for (SynonymList::const_iterator sync = synonyms.begin(); sync != synonyms.end(); ++sync)
+			if (i->group == sync->replaceant)
+				i->group = sync->replacement;
 }
 
 } // End of namespace Sci

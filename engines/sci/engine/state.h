@@ -259,8 +259,7 @@ public:
 
 	int parser_valid; /* If something has been correctly parsed */
 
-	synonym_t *synonyms; /* The list of synonyms */
-	int synonyms_nr;
+	SynonymList _synonyms; /* The list of synonyms */
 
 	reg_t game_obj; /* Pointer to the game object */
 

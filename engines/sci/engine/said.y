@@ -305,8 +305,6 @@ static tree_t said_terminal(int val) {
 static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 	int retval;
 
-	// FIXME: The following code is ambiguous and *not* safely portable,
-	// due to the way the SAID_NEXT_NODE macro is implemented
 	retval = said_branch_node(SAID_NEXT_NODE,
 				said_branch_node(SAID_NEXT_NODE,
 					said_leaf_node(SAID_NEXT_NODE, n1),

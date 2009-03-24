@@ -589,8 +589,7 @@ int game_init(EngineState *s) {
 	s->parser_valid = 0; // Invalidate parser
 	s->parser_event = NULL_REG; // Invalidate parser event
 
-	s->synonyms = NULL;
-	s->synonyms_nr = 0; // No synonyms
+	s->_synonyms.clear(); // No synonyms
 
 	// Initialize send_calls buffer
 
@@ -664,9 +663,7 @@ int game_exit(EngineState *s) {
 
 	delete s->seg_manager;
 
-	free(s->synonyms);
-	s->synonyms = NULL;
-	s->synonyms_nr = 0;
+	s->_synonyms.clear();
 
 	sciprintf("Freeing miscellaneous data...\n");
 

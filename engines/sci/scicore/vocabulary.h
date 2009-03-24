@@ -165,13 +165,11 @@ struct synonym_t {
 	int replacement; /* The replacement word group for this one */
 };
 
+typedef Common::List<synonym_t> SynonymList;
 
 struct parse_tree_branch_t {
-
 	int id;
-
 	int data[10];
-
 };
 
 #define PARSE_TREE_NODE_LEAF 0
@@ -179,16 +177,11 @@ struct parse_tree_branch_t {
 
 
 struct parse_tree_node_t {
-
 	short type;  /* leaf or branch */
-
 	union {
-
 		int value;  /* For leaves */
 		short branches[2]; /* For branches */
-
 	} content;
-
 };
 
 
@@ -374,11 +367,10 @@ void vocab_decypher_said_block(EngineState *s, byte *pos);
 */
 
 
-void vocab_synonymize_tokens(ResultWordList &words, synonym_t *synonyms, int synonyms_nr);
+void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms);
 /* Synonymizes a token list
 ** Parameters: (ResultWordList &) words: The word list to synonymize
-**             (synonym_t *) synonyms: Synonym list
-**             (int) synonyms_nr: Number of synonyms in the list
+**             (const SynonymList &) synonyms: Synonym list
 */
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,

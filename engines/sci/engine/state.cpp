@@ -151,9 +151,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	parser_valid = 0;
 
-	synonyms = 0;
-	synonyms_nr = 0;
-
 	game_obj = NULL_REG;
 
 	classtable_size = 0;

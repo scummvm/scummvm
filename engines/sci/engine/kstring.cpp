@@ -185,12 +185,8 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *list;
 	Node *node;
 	int script;
-	int synpos = 0;
 
-	if (s->synonyms_nr)
-		free(s->synonyms);
-
-	s->synonyms_nr = 0;
+	s->_synonyms.clear();
 
 	list = LOOKUP_LIST(GET_SEL32(object, elements));
 	node = LOOKUP_NODE(list->first);
@@ -203,22 +199,14 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		script = GET_SEL32V(objpos, number);
 		seg = s->seg_manager->segGet(script);
 
-		if (seg >= 0) synonyms_nr = s->seg_manager->getSynonymsNr(seg, SEG_ID);
+		if (seg >= 0)
+			synonyms_nr = s->seg_manager->getSynonymsNr(seg, SEG_ID);
 
 		if (synonyms_nr) {
 			byte *synonyms;
 
 			synonyms = s->seg_manager->getSynonyms(seg, SEG_ID);
 			if (synonyms) {
-				int i;
-				if (s->synonyms_nr)
-					s->synonyms = (synonym_t*)sci_realloc(s->synonyms,
-					                                      sizeof(synonym_t) * (s->synonyms_nr + synonyms_nr));
-				else
-					s->synonyms = (synonym_t*)sci_malloc(sizeof(synonym_t) * synonyms_nr);
-
-				s->synonyms_nr +=  synonyms_nr;
-
 				SCIkdebug(SCIkPARSER, "Setting %d synonyms for script.%d\n",
 				          synonyms_nr, script);
 
@@ -228,11 +216,11 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
 				} else
-					for (i = 0; i < synonyms_nr; i++) {
-						s->synonyms[synpos].replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
-						s->synonyms[synpos].replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
-
-						synpos++;
+					for (int i = 0; i < synonyms_nr; i++) {
+						synonym_t tmp;
+						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
+						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
+						s->_synonyms.push_back(tmp);
 					}
 			} else
 				warning("Synonyms of script.%03d were requested, but script is not available", script);
@@ -242,10 +230,8 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		node = LOOKUP_NODE(node->succ);
 	}
 
-	SCIkdebug(SCIkPARSER, "A total of %d synonyms are active now.\n", s->synonyms_nr);
+	SCIkdebug(SCIkPARSER, "A total of %d synonyms are active now.\n", s->_synonyms.size());
 
-	if (!s->synonyms_nr)
-		s->synonyms = NULL;
 	return s->r_acc;
 }
 
@@ -277,7 +263,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, s->synonyms, s->synonyms_nr);
+		vocab_synonymize_tokens(words, s->_synonyms);
 
 		s->r_acc = make_reg(0, 1);
 
