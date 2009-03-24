@@ -33,7 +33,7 @@ namespace Common {
 
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
-	template <class T> \
+	template <typename T> \
 	void syncAs ## SUFFIX(T &val) { \
 		if (_loadStream) \
 			val = static_cast<T>(_loadStream->read ## SUFFIX()); \
@@ -57,8 +57,29 @@ public:
 	bool isSaving() { return (_saveStream != 0); }
 	bool isLoading() { return (_loadStream != 0); }
 
+	/**
+	 * Return the total number of bytes synced so far.
+	 */
 	uint bytesSynced() const { return _bytesSynced; }
 
+
+	/**
+	 * Skip a number of bytes in the data stream.
+	 * This is useful to skip obsolete fields in old savestates.
+	 */
+	void skip(uint32 size) {
+		_bytesSynced += size;
+		if (_loadStream)
+			_loadStream->skip(size);
+		else {
+			while (size--)
+				_saveStream->writeByte(0);
+		}
+	}
+
+	/**
+	 * Sync a block of arbitrary fixed-length data.
+	 */
 	void syncBytes(byte *buf, uint32 size) {
 		if (_loadStream)
 			_loadStream->read(buf, size);
@@ -91,16 +112,6 @@ public:
 	 */
 	void syncString(char *buf, uint16 size) {
 		syncBytes((byte *)buf, size);
-	}
-
-	void skip(uint32 size) {
-		_bytesSynced += size;
-		if (_loadStream)
-			_loadStream->skip(size);
-		else {
-			while (size--)
-				_saveStream->writeByte(0);
-		}
 	}
 
 	SYNC_AS(Byte, byte, 1)
