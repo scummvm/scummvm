@@ -40,7 +40,7 @@ namespace Sci {
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 
-static void POLY_GET_POINT(byte *p, int i, Common::Point &pt) {
+static void POLY_GET_POINT(const byte *p, int i, Common::Point &pt) {
 	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);
 	pt.y = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2);
 }
@@ -50,7 +50,7 @@ static void POLY_SET_POINT(byte *p, int i, const Common::Point &pt) {
 	WRITE_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2, pt.y);
 }
 
-static void POLY_GET_POINT_REG_T(reg_t *p, int i, Common::Point &pt) {
+static void POLY_GET_POINT_REG_T(const reg_t *p, int i, Common::Point &pt) {
 	pt.x = KP_SINT((p)[(i) * 2]);
 	pt.y = KP_SINT((p)[(i) * 2 + 1]);
 }
@@ -240,7 +240,7 @@ struct PathfindingState {
 	Vertex **vertex_index;
 
 	// Visibility matrix
-	char *vis_matrix;
+	byte *vis_matrix;
 
 	// Total number of vertices
 	int vertices;
@@ -269,7 +269,7 @@ struct PathfindingState {
 static Vertex *vertex_cur;	// FIXME
 
 // Temporary hack to deal with points in reg_ts
-static bool polygon_is_reg_t(unsigned char *list, int size) {
+static bool polygon_is_reg_t(const byte *list, int size) {
 	// Check the first three reg_ts
 	for (int i = 0; i < (size < 3 ? size : 3); i++)
 		if ((((reg_t *) list) + i)->segment)
@@ -280,7 +280,7 @@ static bool polygon_is_reg_t(unsigned char *list, int size) {
 	return true;
 }
 
-static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
+static Common::Point read_point(const byte *list, int is_reg_t, int offset) {
 	Common::Point point;
 
 	if (!is_reg_t) {
@@ -290,6 +290,35 @@ static Common::Point read_point(unsigned char *list, int is_reg_t, int offset) {
 	}
 
 	return point;
+}
+
+/**
+ * Checks whether two polygons are equal
+ */
+static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2)
+{
+	// Check for same type
+	if (KP_UINT(GET_SEL32(p1, type)) != KP_UINT(GET_SEL32(p2, type)))
+		return false;
+
+	int size = KP_UINT(GET_SEL32(p1, size));
+
+	// Check for same number of points
+	if (size != KP_UINT(GET_SEL32(p2, size)))
+		return false;
+
+	const byte *p1_points = kernel_dereference_bulk_pointer(s, GET_SEL32(p1, points), size * POLY_POINT_SIZE);
+	const byte *p2_points = kernel_dereference_bulk_pointer(s, GET_SEL32(p2, points), size * POLY_POINT_SIZE);
+	bool p1_is_reg_t = polygon_is_reg_t(p1_points, size);
+	bool p2_is_reg_t = polygon_is_reg_t(p2_points, size);
+
+	// Check for the same points
+	for (int i = 0; i < size; i++) {
+		if (read_point(p1_points, p1_is_reg_t, i) != read_point(p2_points, p2_is_reg_t, i))
+			return false;
+	}
+
+	return true;
 }
 
 static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type) {
@@ -340,7 +369,7 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
 	Common::Point first, prev;
-	unsigned char *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(list, size);
 	int i;
 
@@ -368,7 +397,7 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	list = LOOKUP_LIST(poly_list);
 
 	if (!list) {
-		warning("Could not obtain polygon list");
+		warning("[avoidpath] Could not obtain polygon list");
 		return;
 	}
 
@@ -385,7 +414,7 @@ static void print_polygon(EngineState *s, reg_t polygon) {
 	int size = KP_UINT(GET_SEL32(polygon, size));
 	int type = KP_UINT(GET_SEL32(polygon, type));
 	int i;
-	unsigned char *point_array = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *point_array = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(point_array, size);
 	Common::Point point;
 
@@ -414,7 +443,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	list = LOOKUP_LIST(poly_list);
 
 	if (!list) {
-		warning("Could not obtain polygon list");
+		warning("[avoidpath] Could not obtain polygon list");
 		return;
 	}
 
@@ -1159,7 +1188,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = KP_UINT(GET_SEL32(polygon, size));
-	unsigned char *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	Polygon *poly = new Polygon(KP_UINT(GET_SEL32(polygon, type)));
 	int is_reg_t = polygon_is_reg_t(list, size);
 
@@ -1215,9 +1244,24 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		Node *node = LOOKUP_NODE(list->first);
 
 		while (node) {
-			polygon = convert_polygon(s, node->value);
-			pf_s->polygons.push_front(polygon);
-			count += KP_UINT(GET_SEL32(node->value, size));
+			Node *dup = LOOKUP_NODE(list->first);
+
+			// Workaround for game bugs that put a polygon in the list more than once
+			while (dup != node) {
+				if (polygons_equal(s, node->value, dup->value)) {
+					warning("[avoidpath] Ignoring duplicate polygon");
+					break;
+				}
+				dup = LOOKUP_NODE(dup->succ);
+			}
+
+			if (dup == node) {
+				// Polygon is not a duplicate, so convert it
+				polygon = convert_polygon(s, node->value);
+				pf_s->polygons.push_front(polygon);
+				count += KP_UINT(GET_SEL32(node->value, size));
+			}
+
 			node = LOOKUP_NODE(node->succ);
 		}
 	}
@@ -1282,7 +1326,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	pf_s->vertices = count;
 
 	// Allocate and clear visibility matrix
-	pf_s->vis_matrix = (char *)sci_calloc(pf_s->vertices * VIS_MATRIX_ROW_SIZE(pf_s->vertices), 1);
+	pf_s->vis_matrix = (byte *)sci_calloc(pf_s->vertices * VIS_MATRIX_ROW_SIZE(pf_s->vertices), 1);
 
 	return pf_s;
 }
