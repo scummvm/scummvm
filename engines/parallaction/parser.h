@@ -203,7 +203,7 @@ protected:
 	void		parseAnimation(AnimationList &list, char *name);
 	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
-	void		parseCommandFlag(CommandPtr cmd, const char *flag, Table *table, bool checkTrap);
+	void		parseCommandFlag(CommandPtr cmd, const char *flag, Table *table);
 	void		saveCommandForward(const char *name, CommandPtr cmd);
 	void		resolveCommandForwards();
 	void		createCommand(uint id);

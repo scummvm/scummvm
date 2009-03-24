@@ -713,18 +713,18 @@ DECLARE_COMMAND_PARSER(endcommands)  {
 	ctxt.endcommands = true;
 }
 
-void LocationParser_ns::parseCommandFlag(CommandPtr cmd, const char *flag, Table *table, bool checkTrap) {
+void LocationParser_ns::parseCommandFlag(CommandPtr cmd, const char *flag, Table *table) {
 
 	if (!scumm_stricmp(flag, "exit")) {
 		cmd->_flagsOn |= kFlagsExit;
 	} else
-	if (checkTrap && !scumm_stricmp(flag, "exittrap")) {
+	if (!scumm_stricmp(flag, "exittrap")) {
 		cmd->_flagsOn |= kFlagsExit;
 	} else
 	if (!scumm_stricmp(flag, "enter")) {
 		cmd->_flagsOn |= kFlagsEnter;
 	} else
-	if (checkTrap && !scumm_stricmp(flag, "entertrap")) {
+	if (!scumm_stricmp(flag, "entertrap")) {
 		cmd->_flagsOn |= kFlagsEnter;
 	} else
 	if (!scumm_strnicmp(flag, "no", 2)) {
@@ -752,7 +752,7 @@ void LocationParser_ns::parseCommandFlags() {
 	if (!scumm_stricmp(_tokens[_si], "flags")) {
 		do {
 			_si++;
-			parseCommandFlag(cmd, _tokens[_si], _vm->_localFlagNames, true);
+			parseCommandFlag(cmd, _tokens[_si], _vm->_localFlagNames);
 			_si++;
 		} while (!scumm_stricmp(_tokens[_si], "|"));
 	}
@@ -760,7 +760,7 @@ void LocationParser_ns::parseCommandFlags() {
 	if (!scumm_stricmp(_tokens[_si], "gflags")) {
 		do {
 			_si++;
-			parseCommandFlag(cmd, _tokens[_si], _vm->_globalFlagsNames, false);
+			parseCommandFlag(cmd, _tokens[_si], _vm->_globalFlagsNames);
 			_si++;
 		} while (!scumm_stricmp(_tokens[_si], "|"));
 		cmd->_flagsOn |= kFlagsGlobal;
