@@ -1032,9 +1032,9 @@ int c_parse(EngineState *s) {
 
 	string = cmd_params[0].str;
 	sciprintf("Parsing '%s'\n", string);
-	words = vocab_tokenize_string(string, s->parser_words, s->parser_words_nr,
-	                              s->_parserSuffixes, &error);
-	if (!words.empty()) {
+	int res = vocab_tokenize_string(words, string, s->parser_words, s->parser_words_nr,
+	                                s->_parserSuffixes, &error);
+	if (res == 0&& !words.empty()) {
 		int syntax_fail = 0;
 
 		vocab_synonymize_tokens(words, s->_synonyms);

@@ -477,13 +477,12 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 }
 #endif
 
-ResultWordList vocab_tokenize_string(char *sentence, word_t **words, int words_nr,
+int vocab_tokenize_string(ResultWordList &retval, char *sentence, word_t **words, int words_nr,
 	const SuffixList &suffixes, char **error) {
 	char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;
 	int wordlen = 0;
-	ResultWordList retval;
 
 	*error = NULL;
 
@@ -507,7 +506,7 @@ ResultWordList vocab_tokenize_string(char *sentence, word_t **words, int words_n
 					*error = (char *)sci_calloc(wordlen + 1, 1);
 					strncpy(*error, lastword, wordlen); // Set the offending word
 					retval.clear();
-					return retval; // And return with error
+					return 1; // And return with error
 				}
 
 				// Copy into list
@@ -520,7 +519,7 @@ ResultWordList vocab_tokenize_string(char *sentence, word_t **words, int words_n
 
 	} while (c); // Until terminator is hit
 
-	return retval;
+	return 0;
 }
 
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {

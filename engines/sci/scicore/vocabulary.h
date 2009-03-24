@@ -283,7 +283,7 @@ ResultWord vocab_lookup_word(char *word, int word_len,
 */
 
 
-ResultWordList vocab_tokenize_string(char *sentence,
+int vocab_tokenize_string(ResultWordList &retval, char *sentence,
 	word_t **words, int words_nr, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
@@ -291,7 +291,8 @@ ResultWordList vocab_tokenize_string(char *sentence,
 **             (int) words_nr: Number of words to scan for
 **             (SuffixList) suffixes: suffixes to scan for
 **             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
-** Returns   : (word_t *): A list of word_ts containing the result, or NULL.
+**             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
+** Returns   : 0 on success, 1 if an error occurred
 ** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
 ** if not, *error points to a malloc'd copy of the offending word.
 ** The returned list may contain anywords.
