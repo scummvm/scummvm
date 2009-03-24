@@ -95,24 +95,4 @@ char *sci_strdup(const char *src) {
 	return (char*)res;
 }
 
-char *sci_strndup(const char *src, size_t length) {
-	void *res;
-	char *strres;
-	size_t rlen = (int)MIN(strlen(src), length) + 1;
-
-	if (!src) {
-		fprintf(stderr, "_SCI_STRNDUP() [%s (%s) : %u]\n",
-		        __FILE__, "", __LINE__);
-		fprintf(stderr, " attempt to strndup NULL pointer\n");
-		BREAKPOINT();
-	}
-	ALLOC_MEM((res = malloc(rlen)), rlen, __FILE__, __LINE__, "")
-
-	strres = (char *)res;
-	strncpy(strres, src, rlen);
-	strres[rlen - 1] = 0;
-
-	return strres;
-}
-
 } // End of namespace Sci

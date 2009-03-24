@@ -36,6 +36,29 @@
 
 namespace Sci {
 
+
+/* Copies a string into a newly allocated memory part, up to a certain length.
+** Parameters: (char *) src: The source string
+**             (int) length: The maximum length of the string (not counting
+**                           a trailing \0).
+** Returns   : (char *) The resulting copy, allocated with sci_malloc().
+** To free this string, use the free() command.
+** See _SCI_MALLOC() for more information if call fails.
+*/
+char *sci_strndup(const char *src, size_t length) {
+	assert(src);
+
+	size_t rlen = (int)MIN(strlen(src), length) + 1;
+	char *strres = (char *)malloc(rlen);
+	assert(strres);
+
+	strncpy(strres, src, rlen);
+	strres[rlen - 1] = 0;
+
+	return strres;
+}
+
+
 #define SIZE_INF 32767
 
 Menu::Menu() {

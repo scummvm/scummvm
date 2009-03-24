@@ -75,17 +75,6 @@ extern char *sci_strdup(const char *src);
 ** See _SCI_MALLOC() for more information if call fails.
 */
 
-
-extern char *sci_strndup(const char *src, size_t length);
-/* Copies a string into a newly allocated memory part, up to a certain length.
-** Parameters: (char *) src: The source string
-**             (int) length: The maximum length of the string (not counting
-**                           a trailing \0).
-** Returns   : (char *) The resulting copy, allocated with sci_malloc().
-** To free this string, use the free() command.
-** See _SCI_MALLOC() for more information if call fails.
-*/
-
 } // End of namespace Sci
 
 #endif	// SCI_SCI_MEMORY_H
