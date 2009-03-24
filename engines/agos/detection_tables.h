@@ -762,6 +762,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Waxworks - German DOS Floppy
+	{
+		{
+			"waxworks",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"32ee34134422e286525c73e71bd0ea2d", 53523},
+	{ "icon.dat",		GAME_ICONFILE,	"ef1b8ad3494cf103dc10a99fe152ef9a", 20901},
+	{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+	{ "roomslst",		GAME_RMSLFILE,	"e3758c46ab8f3c23a1ac012bd607108d", 128},
+	{ "start",		GAME_RESTFILE,	"036b647973d6884cdfc2042a3d12df83", 15354},
+	{ "statelst",		GAME_STATFILE,	"469e98c69f00928a8366ba415d91902d", 11104},
+	{ "stripped.txt",	GAME_STRFILE,	"f259e3e07a1cde8d0404a767d815e12c", 225},
+	{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+	{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE
+	},
+
 	// Waxworks - Spanish DOS Floppy
 	{
 		{
