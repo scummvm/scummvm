@@ -190,11 +190,10 @@ protected:
 	Common::String	parseComment();
 	Common::String	parseDialogueString();
 	Dialogue	*parseDialogue();
-	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
 	virtual Answer *parseAnswer();
 	void		parseAnswerFlags(Answer *answer);
 	void		parseAnswerBody(Answer *answer);
-	Question	*parseQuestion();
+	void		parseQuestion(Question *q);
 
 	uint32		buildZoneType(const char *t0, const char* t1);
 

@@ -160,9 +160,8 @@ typedef Common::List<CommandPtr> CommandList;
 
 struct Answer {
 	Common::String	_text;
-	uint16		_mood;
-	Question*	_followingQuestion;
-	Common::String _followingName;
+	uint16			_mood;
+	Common::String 	_followingName;
 
 	CommandList	_commands;
 	uint32		_noFlags;
@@ -178,16 +177,21 @@ struct Answer {
 };
 
 struct Question {
+	Common::String	_name;
 	Common::String	_text;
-	uint16		_mood;
-	Answer*		_answers[NUM_ANSWERS];
+	uint16			_mood;
+	Answer*			_answers[NUM_ANSWERS];
 
-	Question();
+	Question(const Common::String &name);
 	~Question();
 };
 
 struct Dialogue {
 	Question	*_questions[NUM_QUESTIONS];
+	uint		_numQuestions;
+
+	Question *findQuestion(const Common::String &name) const;
+	void addQuestion(Question *q);
 
 	Dialogue();
 	~Dialogue();

@@ -212,6 +212,7 @@ bool Zone::hitRect(int x, int y) const {
 
 Dialogue::Dialogue() {
 	memset(_questions, 0, sizeof(_questions));
+	_numQuestions = 0;
 }
 
 Dialogue::~Dialogue() {
@@ -220,20 +221,31 @@ Dialogue::~Dialogue() {
 	}
 }
 
+Question *Dialogue::findQuestion(const Common::String &name) const {
+	for (uint i = 0; _questions[i]; ++i) {
+		if (_questions[i]->_name == name) {
+			return _questions[i];
+		}
+	}
+	return 0;
+}
+
+void Dialogue::addQuestion(Question *q) {
+	assert(_numQuestions < NUM_QUESTIONS);
+	assert(q);
+	_questions[_numQuestions] = q;
+	_numQuestions++;
+}
+
 Answer::Answer() {
 	_mood = 0;
-	_followingQuestion =  NULL;
 	_noFlags = 0;
 	_yesFlags = 0;
 	_hasCounterCondition = false;
 }
 
-Question::Question() {
-	_mood = 0;
-
-	for (uint32 i = 0; i < NUM_ANSWERS; i++)
-		_answers[i] = NULL;
-
+Question::Question(const Common::String &name) : _name(name), _mood(0) {
+	memset(_answers, 0, sizeof(_answers));
 }
 
 Question::~Question() {

@@ -388,7 +388,7 @@ void DialogueManager::runAnswer() {
 void DialogueManager::nextQuestion() {
 	debugC(9, kDebugDialogue, "nextQuestion\n");
 
-	_q = _q->_answers[_answerId]->_followingQuestion;
+	_q = _dialogue->findQuestion(_q->_answers[_answerId]->_followingName);
 	if (_q == 0) {
 		_state = DIALOGUE_OVER;
 	} else {

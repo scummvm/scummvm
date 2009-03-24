@@ -810,51 +810,39 @@ void LocationParser_ns::parseCommands(CommandList& list) {
 Dialogue *LocationParser_ns::parseDialogue() {
 	debugC(7, kDebugParser, "parseDialogue()");
 
-	uint16 numQuestions = 0;
-
 	Dialogue *dialogue = new Dialogue;
 	assert(dialogue);
-
-	Table forwards(NUM_QUESTIONS);
 
 	_script->readLineToken(true);
 
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
-		if (scumm_stricmp(_tokens[0], "Question")) continue;
-
-		forwards.addData(_tokens[1]);
-
-		dialogue->_questions[numQuestions++] = parseQuestion();
-
+		if (!scumm_stricmp(_tokens[0], "question")) {
+			Question *q = new Question(_tokens[1]);
+			assert(q);
+			parseQuestion(q);
+			dialogue->addQuestion(q);
+		}
 		_script->readLineToken(true);
 	}
-
-	resolveDialogueForwards(dialogue, numQuestions, forwards);
 
 	debugC(7, kDebugParser, "parseDialogue() done");
 
 	return dialogue;
 }
 
-Question *LocationParser_ns::parseQuestion() {
-
-	Question *question = new Question;
-	assert(question);
-
-	question->_text = parseDialogueString();
+void LocationParser_ns::parseQuestion(Question *q) {
+	q->_text = parseDialogueString();
 
 	_script->readLineToken(true);
-	question->_mood = atoi(_tokens[0]);
+	q->_mood = atoi(_tokens[0]);
 
 	uint16 numAnswers = 0;
 
 	_script->readLineToken(true);
 	while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
-		question->_answers[numAnswers] = parseAnswer();
+		q->_answers[numAnswers] = parseAnswer();
 		numAnswers++;
 	}
-
-	return question;
 }
 
 void LocationParser_ns::parseAnswerBody(Answer *answer) {
@@ -918,27 +906,6 @@ Answer *LocationParser_ns::parseAnswer() {
 	return answer;
 }
 
-void LocationParser_ns::resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards) {
-
-	for (uint16 i = 0; i < numQuestions; i++) {
-		Question *question = dialogue->_questions[i];
-
-		for (uint16 j = 0; j < NUM_ANSWERS; j++) {
-			Answer *answer = question->_answers[j];
-			if (answer == 0) continue;
-
-			int16 index = forwards.lookup(answer->_followingName.c_str());
-			answer->_followingName.clear();
-
-			if (index == Table::notFound)
-				answer->_followingQuestion = 0;
-			else
-				answer->_followingQuestion = dialogue->_questions[index - 1];
-
-		}
-	}
-
-}
 
 Common::String LocationParser_ns::parseDialogueString() {
 	char buf[400];
