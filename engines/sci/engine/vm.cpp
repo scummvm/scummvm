@@ -2078,7 +2078,7 @@ int objinfo(EngineState *s, reg_t pos);
 int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
-	sciprintf(" Calling %s::play()\n", s->game_name);
+	sciprintf(" Calling %s::play()\n", s->_gameName.c_str());
 	_init_stack_base_with_selector(s, s->selector_map.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
@@ -2094,35 +2094,6 @@ int game_run(EngineState **_s) {
 
 	return 0;
 }
-
-#if 0
-int game_restore(EngineState **_s, char *game_name) {
-	EngineState *s;
-	int debug_state = _debugstate_valid;
-
-	sciprintf("Restoring savegame '%s'...\n", game_name);
-	s = gamestate_restore(*_s, game_name);
-
-	if (!s) {
-		sciprintf("Restoring gamestate '%s' failed.\n", game_name);
-		return 1;
-	}
-	_debugstate_valid = debug_state;
-	script_abort_flag = 0;
-	s->restarting_flags = 0;
-
-	s->execution_stack_pos = -1; // Resatart with replay
-
-	_init_stack_base_with_selector(s, s->selector_map.replay);
-
-	send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
-
-	*_s = s = _game_run(s, 1);
-
-	sciprintf(" Game::play() finished.\n");
-	return 0;
-}
-#endif
 
 Object *obj_get(EngineState *s, reg_t offset) {
 	MemObject *memobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);

@@ -603,7 +603,7 @@ int game_init(EngineState *s) {
 		return 1;
 
 	s->successor = NULL; // No successor
-	s->status_bar_text = NULL; // Status bar is blank
+	s->_statusBarText.clear(); // Status bar is blank
 	s->status_bar_foreground = 0;
 	s->status_bar_background = s->resmgr->_sciVersion >= SCI_VERSION_01_VGA ? 255 : 15;
 
@@ -628,20 +628,16 @@ int game_init(EngineState *s) {
 	game_obj = script_lookup_export(s, 0, 0);
 	// The first entry in the export table of script 0 points to the game object
 
-	s->game_name = sci_strdup(obj_get_name(s, game_obj));
+	const char *tmp = obj_get_name(s, game_obj);
 
-	if (!s->game_name) {
+	if (!tmp) {
 		sciprintf("Error: script.000, export 0 ("PREG") does not\n"
 		          " yield an object with a name -> sanity check failed\n", PRINT_REG(game_obj));
 		return 1;
 	}
+	s->_gameName = tmp;
 
-	sciprintf(" \"%s\" at "PREG"\n", s->game_name, PRINT_REG(game_obj));
-
-	if (strlen((char *)s->game_name) >= MAX_GAMEDIR_SIZE) {
-		s->game_name[MAX_GAMEDIR_SIZE - 1] = 0; // Fix length with brute force
-		sciprintf(" Designation too long; was truncated to \"%s\"\n", s->game_name);
-	}
+	sciprintf(" \"%s\" at "PREG"\n", s->_gameName.c_str(), PRINT_REG(game_obj));
 
 	s->game_obj = game_obj;
 
@@ -683,8 +679,6 @@ int game_exit(EngineState *s) {
 	delete s->_menubar;
 
 	_free_graphics_input(s);
-
-	free(s->game_name);
 
 	return 0;
 }

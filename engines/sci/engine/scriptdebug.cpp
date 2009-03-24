@@ -2781,7 +2781,7 @@ int c_statusbar(EngineState *s) {
 	s->status_bar_foreground = cmd_params[0].val;
 	s->status_bar_background = cmd_params[1].val;
 
-	sciw_set_status_bar(s, s->titlebar_port, s->status_bar_text, s->status_bar_foreground, s->status_bar_background);
+	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
 	gfxop_update(s->gfx_state);
 
 	return 0;

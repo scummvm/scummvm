@@ -62,7 +62,7 @@ class Menu;
 /* Used by the interpreter to flag buttons that are enabled */
 #define CONTROL_STATE_ENABLED 0x0001
 
-void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const char *text, int fgcolor, int bgcolor);
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const Common::String &text, int fgcolor, int bgcolor);
 /* Sets the contents of a port used as status bar
 ** Parmeters: (EngineState *) s: The affected game state
 **            (gfxw_port_t *) status_bar: The status bar port

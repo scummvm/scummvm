@@ -72,7 +72,7 @@ static gfxw_list_t *finish_titlebar_list(EngineState *s, gfxw_list_t *list, gfxw
 	return list;
 }
 
-void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const char *text, int fgcolor, int bgcolor) {
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const Common::String &text, int fgcolor, int bgcolor) {
 	gfx_state_t *state;
 	gfxw_list_t *list;
 	gfx_color_t bg = status_bar->bgcolor;
@@ -93,9 +93,9 @@ void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const char *te
 
 	clear_titlebar(status_bar);
 
-	if (text) {
+	if (!text.empty()) {
 		gfxw_text_t *textw = gfxw_new_text(state, gfx_rect(0, 0, status_bar->bounds.width, status_bar->bounds.height),
-		                                   status_bar->font_nr, text, ALIGN_LEFT, ALIGN_CENTER,
+		                                   status_bar->font_nr, text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
 		                                   fg, fg, bg, GFXR_FONT_FLAG_NO_NEWLINES);
 
 		list = make_titlebar_list(s, status_bar->bounds, status_bar);

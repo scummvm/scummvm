@@ -76,15 +76,12 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->status_bar_foreground = fgcolor;
 	s->status_bar_background = bgcolor;
 
-	if (NULL != s->status_bar_text) {
-		free(s->status_bar_text);
-		s->status_bar_text = NULL;
+	if (text.segment) {
+		const char *tmp = sci_strdup(kernel_dereference_char_pointer(s, text, 0));
+		s->_statusBarText = tmp ? tmp : "";
 	}
 
-	if (text.segment)
-		s->status_bar_text = sci_strdup(kernel_dereference_char_pointer(s, text, 0));
-
-	sciw_set_status_bar(s, s->titlebar_port, s->status_bar_text, fgcolor, bgcolor);
+	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, fgcolor, bgcolor);
 
 	gfxop_update(s->gfx_state);
 
@@ -97,7 +94,7 @@ reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (SKPV(0))
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
 	else
-		sciw_set_status_bar(s, s->titlebar_port, NULL, 0, 0);
+		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
 
 	s->titlebar_port->draw(GFXW(s->titlebar_port), Common::Point(0, 0));
 	gfxop_update(s->gfx_state);
@@ -317,7 +314,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			port->widfree(GFXW(port));
 			port = NULL;
 
-			sciw_set_status_bar(s, s->titlebar_port, s->status_bar_text, s->status_bar_foreground, s->status_bar_background);
+			sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
 			gfxop_update(s->gfx_state);
 		}
 		FULL_REDRAW;

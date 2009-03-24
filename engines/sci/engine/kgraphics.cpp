@@ -1297,7 +1297,10 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
-	if (type == K_CONTROL_BUTTON && text && !strcmp(s->game_name, "sq4") &&
+	// FIXME: This seems to be some kind of of game specific workaround.
+	// Therefore, a proper WORKAROUND comment should be added here which
+	// explains what this does.
+	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
 			s->version < SCI_VERSION(1, 001, 000) && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | CONTROL_STATE_GRAY) & ~CONTROL_STATE_ENABLED);
 	}

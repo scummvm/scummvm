@@ -34,7 +34,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	resmgr = 0;
 
-	game_name = 0;
 	game_version = 0;
 
 	gfx_state = 0;
@@ -54,8 +53,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	osc_backup = 0;
 
 	pic_priority_table = 0;
-
-	status_bar_text = 0;
 
 	status_bar_foreground = 0;
 	status_bar_background = 0;

@@ -76,7 +76,6 @@ public:
 #define CURRENT_SAVEGAME_VERSION 8
 #define MINIMUM_SAVEGAME_VERSION 8
 
-#define MAX_GAMEDIR_SIZE 32 /* Used for subdirectory inside of "~/.freesci/" */
 #define MAX_SAVEGAME_NR 20 /* Maximum number of savegames */
 
 #define MAX_SAVE_DIR_SIZE MAXPATHLEN
@@ -119,7 +118,7 @@ public:
 
 	ResourceManager *resmgr; /* The resource manager */
 
-	char *game_name; /* Designation of the primary object (which inherits from Game) */
+	Common::String _gameName; /* Designation of the primary object (which inherits from Game) */
 	char *game_version;
 
 	/* Non-VM information */
@@ -142,7 +141,8 @@ public:
 
 	int *pic_priority_table; /* 16 entries with priorities or NULL if not present */
 
-	char *status_bar_text; /* Text on the status bar, or NULL if the title bar is blank */
+	/** Text on the status bar, or NULL if the title bar is blank */
+	Common::String _statusBarText;
 
 	int status_bar_foreground, status_bar_background;
 
