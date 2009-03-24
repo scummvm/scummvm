@@ -116,7 +116,10 @@ public:
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
+	Palette &saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, double normalizedGray);
 	uint colorCount() const;
+
+	Palette &fillWithBlack();
 
 	/*! \brief The original endian type in which this palette was loaded.
 	 * \note This will always return either CINE_BIG_ENDIAN or CINE_LITTLE_ENDIAN (So no CINE_NATIVE_ENDIAN).

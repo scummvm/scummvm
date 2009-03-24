@@ -211,6 +211,16 @@ uint Palette::colorCount() const {
 	return _colors.size();
 }
 
+Palette &Palette::fillWithBlack() {
+	for (uint i = 0; i < _colors.size(); i++) {
+		_colors[i].r = 0;
+		_colors[i].g = 0;
+		_colors[i].b = 0;
+	}
+
+	return *this;
+}
+
 EndianType Palette::endianType() const {
 	return (_bigEndian ? CINE_BIG_ENDIAN : CINE_LITTLE_ENDIAN);
 }
@@ -245,6 +255,16 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 		output._colors[i] = saturatedAddColor(_colors[i], r, g, b);
 
 	return output;
+}
+
+Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, double normalizedGray) {
+	// Calculate the gray value rounded up away from zero
+	const double signedHalf = ((normalizedGray >= 0) ? +0.5 : -0.5);
+	const signed r = (signed)(_rMax * normalizedGray + signedHalf);
+	const signed g = (signed)(_gMax * normalizedGray + signedHalf);
+	const signed b = (signed)(_bMax * normalizedGray + signedHalf);
+
+	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
 
 // a.k.a. transformColor
