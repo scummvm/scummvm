@@ -119,7 +119,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayInfo().width;
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
-	_pathRect.bottom = _vm->getDisplayInfo().height;
+	_pathRect.bottom = _vm->_scene->getHeight();
 
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
