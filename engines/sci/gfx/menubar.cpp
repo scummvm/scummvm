@@ -387,40 +387,40 @@ bool Menubar::itemValid(int menu_nr, int item_nr) const {
 	return false; // May not be selected
 }
 
-bool Menubar::mapPointer(gfx_state_t *state, int *menu_nr, int *item_nr, gfxw_port_t *port) const {
+bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, gfxw_port_t *port) const {
 
-	if (state->pointer_pos.y <= 10) { // Re-evaulate menu
+	if (pointerPos.y <= 10) { // Re-evaulate menu
 		int x = MENU_LEFT_BORDER;
 
 		for (uint i = 0; i < _menus.size(); i++) {
 			int newx = x + MENU_BORDER_SIZE * 2 + _menus[i]._titleWidth;
 
-			if (state->pointer_pos.x < x)
+			if (pointerPos.x < x)
 				return false;
 
-			if (state->pointer_pos.x < newx) {
-				*menu_nr = i;
-				*item_nr = -1;
+			if (pointerPos.x < newx) {
+				menu_nr = i;
+				item_nr = -1;
 			}
 
 			x = newx;
 		}
 	} else {
-		int row = (state->pointer_pos.y / 10) - 1;
+		int row = (pointerPos.y / 10) - 1;
 
-		if ((*menu_nr < 0) || (*menu_nr >= (int)_menus.size()))
+		if ((menu_nr < 0) || (menu_nr >= (int)_menus.size()))
 			return true; // No menu
 
-		const Menu &menu = _menus[*menu_nr]; // Menu is valid, assume that it's popped up
+		const Menu &menu = _menus[menu_nr]; // Menu is valid, assume that it's popped up
 
 		if ((int)menu._items.size() <= row)
 			return true;
 
-		if ((state->pointer_pos.x < port->bounds.x) || (state->pointer_pos.x > port->bounds.x + port->bounds.width))
+		if ((pointerPos.x < port->bounds.x) || (pointerPos.x > port->bounds.x + port->bounds.width))
 			return true;
 
-		if (itemValid(*menu_nr, row))
-			*item_nr = row; // Only modify if we'll be hitting a valid element
+		if (itemValid(menu_nr, row))
+			item_nr = row; // Only modify if we'll be hitting a valid element
 
 	}
 

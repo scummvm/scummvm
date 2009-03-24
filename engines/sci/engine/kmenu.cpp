@@ -193,7 +193,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		/* Default to menu 0, unless the mouse was used to generate this effect */
 		if (mouse_down)
-			s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
+			s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
 		else
 			menu_nr = 0;
 
@@ -267,7 +267,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			case SCI_EVT_MOUSE_RELEASE:
 				menu_mode = (s->gfx_state->pointer_pos.y < 10);
-				claimed = !menu_mode && !s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
+				claimed = !menu_mode && !s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
 				mouse_down = 0;
 				break;
 
@@ -281,7 +281,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
-				s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
+				s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 

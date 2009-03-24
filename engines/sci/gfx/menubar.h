@@ -204,12 +204,13 @@ public:
 
 	/**
 	 * Maps the pointer position to a (menu,item) tuple.
-	 * Parameters: (gfx_state_t *) state: The current state
-	 *             ((int *) x (int *)) (menu_nr, item_nr): Pointers to the current menu/item tuple
-	 *             (port_t *) port: The port of the currently active menu (if any)
+	 * @param pointerPos	the current pointer position
+	 * @param menu_nr		the current menu (updated by this function if necessary)
+	 * @param item_nr		the current menu item (updated by this function if necessary)
+	 * @param port			the port of the currently active menu (if any)
 	 * @return true if the pointer is outside a valid port, false otherwise.
 	 */
-	bool mapPointer(gfx_state_t *state, int *menu_nr, int *item_nr, gfxw_port_t *port) const;
+	bool mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, gfxw_port_t *port) const;
 
 };
 
