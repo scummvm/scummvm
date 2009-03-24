@@ -11,15 +11,38 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      it ran too fast).
 
  Broken Sword 1:
-   - Added support for the original Smacker cutscenes. 
+   - Added support for the original cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Added support for the PlayStation version.
    
  Broken Sword 2:
-   - Added support for the original Smacker cutscenes. 
+   - Added support for the original cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Dropped support for playing cutscene sound without the video.
 
+0.13.1 (2009-??-??)    
+ AGOS:
+    - Added support for the original cutscenes of The Feeble Files
+    - Fixed a crash in Waxworks
+    - Fixed a crash when loading savegames from a specific location in Simon 2
+    - Fixed some glitches in the AtariST version of Elvira 2
+    
+ Gob:
+    - Fixed a crash in the Italian version of Woodruff
+        
+ Groovie:
+    - Fixed some issues with music in The 7th Guest
+    
+ Parallaction:
+    - Fixed the sarcophagus puzzle in Nippon Safes
+    - Credits of the Nippon Safes Amiga demo are now shown correctly
+    
+ SAGA:
+    - Fixed a crash in Inherit the Earth
+    
+ iPhone port:
+    - Fixed backspace handling on the iPhone soft keyboard
+    
 0.13.0 (2009-02-28)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
