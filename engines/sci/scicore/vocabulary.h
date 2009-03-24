@@ -27,6 +27,8 @@
 #define SCI_SCICORE_VOCABULARY_H
 
 #include "common/str.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/list.h"
 
 #include "sci/scicore/versions.h"
@@ -115,17 +117,13 @@ extern const char *class_names[]; /* Vocabulary class names */
 #define SAID_LONG(x) ((x) << 8)
 
 struct ResultWord {
-	int w_class; /* Word class */
-	int group; /* Word group */
+	int _class; /* Word class */
+	int _group; /* Word group */
 };
 
 typedef Common::List<ResultWord> ResultWordList;
 
-struct word_t {
-	int w_class; /* Word class */
-	int group; /* Word group */
-	char word[1]; /* The actual word */
-};
+typedef Common::HashMap<Common::String, ResultWord, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> WordMap;
 
 
 struct parse_rule_t {
@@ -210,7 +208,6 @@ opcode *vocabulary_get_opcodes(ResourceManager *resmgr);
 void vocabulary_free_opcodes(opcode *opcodes);
 /* Frees a previously allocated list of opcodes
 ** Parameters: (opcode *) opcodes: Opcodes to free
-** Returns   : (void)
 */
 
 /**
@@ -225,21 +222,13 @@ char **vocabulary_get_knames(ResourceManager *resmgr, int* count);
 void vocabulary_free_knames(char** names);
 
 
-
-word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter);
-/* Gets all words from the main vocabulary
-** Parameters: (ResourceManager *) resmr: The resource manager to read from
-**             (int *) word_counter: The int which the number of words is stored in
-** Returns   : (word_t **): A list of all words, dynamically allocated
-*/
-
-
-void vocab_free_words(word_t **words, int words_nr);
-/* Frees memory allocated by vocab_get_words
-** Parameters: (word_t **) words: The words to free
-**             (int) words_nr: Number of words in the structure
-** Returns   : (void)
-*/
+/**
+ * Gets all words from the main vocabulary.
+ * @param resmr		The resource manager to read from
+ * @param words		A list of all words
+ * @return true on success, false on failure
+ */
+bool vocab_get_words(ResourceManager *resmgr, WordMap &words);
 
 
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
@@ -253,7 +242,6 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
 /* Frees all suffixes in the given list.
 ** Parameters: (ResourceManager *) resmgr: The resource manager to free from
 **             (SuffixList) suffixes: The suffixes to free
-** Returns   : (void)
 */
 
 parse_tree_branch_t *vocab_get_branches(ResourceManager *resmgr, int *branches_nr);
@@ -272,27 +260,25 @@ void vocab_free_branches(parse_tree_branch_t *parser_branches);
 */
 
 ResultWord vocab_lookup_word(char *word, int word_len,
-	word_t **words, int words_nr, const SuffixList &suffixes);
+	const WordMap &words, const SuffixList &suffixes);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
 **             (int) word_len: Length of the word to look up
-**             (word_t **) words: List of words
-**             (int) words_nr: Number of elements in 'words'
+**             (const WordMap &) words: List of words
 **             (SuffixList) suffixes: List of suffixes
 ** Returns   : (const ResultWordList &) A list containing 1 or 0 words
 */
 
 
-int vocab_tokenize_string(ResultWordList &retval, char *sentence,
-	word_t **words, int words_nr, const SuffixList &suffixes, char **error);
+bool vocab_tokenize_string(ResultWordList &retval, char *sentence,
+	const WordMap &words, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
-**             (word_t **) words: The words to scan for
-**             (int) words_nr: Number of words to scan for
+**             (const WordMap &) words: The words to scan for
 **             (SuffixList) suffixes: suffixes to scan for
 **             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
 **             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
-** Returns   : 0 on success, 1 if an error occurred
+** Returns   : true on success, false on failure
 ** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
 ** if not, *error points to a malloc'd copy of the offending word.
 ** The returned list may contain anywords.
@@ -315,7 +301,6 @@ parse_rule_list_t *vocab_build_gnf(parse_tree_branch_t *branches, int branches_n
 void vocab_free_rule_list(parse_rule_list_t *rule_list);
 /* Frees a parser rule list as returned by vocab_build_gnf()
 ** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
-** Returns   : (void)
 */
 
 
@@ -337,7 +322,6 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 /* Prints a parse tree
 ** Parameters: (const char *) tree_name: Name of the tree to dump (free-form)
 **             (parse_tree_node_t *) nodes: The nodes containing the parse tree
-** Returns   : (void)
 */
 
 
@@ -351,13 +335,12 @@ int said(EngineState *s, byte *spec, int verbose);
 ** Returns   : (int) 1 on a match, 0 otherwise
 */
 
-const char *vocab_get_any_group_word(int group, word_t **words, int words_nr);
-/* Gets any word from the specified group.
-** Parameters: (int) group: Group number.
-**             (word_t **) words: List of words
-**             (int) words_nr: Count of words in the list.
-** For debugging only.
-*/
+/**
+ * Gets any word from the specified group. For debugging only.
+ * @param group		Group number
+ * @param words		List of words
+ */
+const char *vocab_get_any_group_word(int group, const WordMap &words);
 
 
 void vocab_decypher_said_block(EngineState *s, byte *pos);

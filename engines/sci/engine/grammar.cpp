@@ -203,15 +203,15 @@ static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input)
 
 	dep = rule->data[rule->first_special];
 
-	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input.w_class)) ||
-			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input.group))) {
+	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input._class)) ||
+			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input._group))) {
 		parse_rule_t *retval = (parse_rule_t*)sci_malloc(sizeof(int) * (4 + rule->length));
 		++_allocd_rules;
 		retval->id = rule->id;
 		retval->specials_nr = rule->specials_nr - 1;
 		retval->length = rule->length;
 		memcpy(retval->data, rule->data, sizeof(int) * retval->length);
-		retval->data[rule->first_special] = TOKEN_STUFFING_WORD | input.group;
+		retval->data[rule->first_special] = TOKEN_STUFFING_WORD | input._group;
 		retval->first_special = 0;
 
 		if (retval->specials_nr) { // find first special, if it exists

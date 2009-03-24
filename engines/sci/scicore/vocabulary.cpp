@@ -63,11 +63,8 @@ const char *class_names[] = {"",
                              ""
                             };
 */
-int _vocab_cmp_words(const void *word1, const void *word2) {
-	return scumm_stricmp((*((word_t **) word1))->word, (*((word_t **)word2))->word);
-}
 
-word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
+bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
@@ -86,7 +83,7 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 
 	if (!resource) {
 		warning("SCI1: Could not find a main vocabulary");
-		return NULL; // NOT critical: SCI1 games and some demos don't have one!
+		return false; // NOT critical: SCI1 games and some demos don't have one!
 	}
 
 	unsigned int seeker;
@@ -97,18 +94,14 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 
 	if (resource->size < seeker) {
 		fprintf(stderr, "Invalid main vocabulary encountered: Too small\n");
-		return NULL;
+		return false;
 		// Now this ought to be critical, but it'll just cause parse() and said() not to work
 	}
 
-	int counter = 0;
-	word_t **words;
-	words = (word_t **)sci_malloc(sizeof(word_t *));
+	words.clear();
 
 	while (seeker < resource->size) {
 		byte c;
-
-		words = (word_t**)sci_realloc(words, (counter + 1) * sizeof(word_t *));
 
 		currentwordpos = resource->data[seeker++]; // Parts of previous words may be re-used
 
@@ -120,8 +113,8 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 			}
 			if (seeker == resource->size) {
 				warning("SCI1: Vocabulary not usable, disabling");
-				vocab_free_words(words, counter);
-				return NULL;
+				words.clear();
+				return false;
 			}
 		} else {
 			do {
@@ -132,45 +125,33 @@ word_t **vocab_get_words(ResourceManager *resmgr, int *word_counter) {
 
 		currentword[currentwordpos] = 0;
 
-		words[counter] = (word_t*)sci_malloc(sizeof(word_t) + currentwordpos);
-		// Allocate more memory, so that the word fits into the structure
-
-		strcpy(&(words[counter]->word[0]), &(currentword[0])); // Copy the word
-
 		// Now decode class and group:
 		c = resource->data[seeker + 1];
-		words[counter]->w_class = ((resource->data[seeker]) << 4) | ((c & 0xf0) >> 4);
-		words[counter]->group = (resource->data[seeker + 2]) | ((c & 0x0f) << 8);
+		ResultWord newWord;
+		newWord._class = ((resource->data[seeker]) << 4) | ((c & 0xf0) >> 4);
+		newWord._group = (resource->data[seeker + 2]) | ((c & 0x0f) << 8);
+
+		// Add the word to the list
+		words[currentword] = newWord;
 
 		seeker += 3;
-		++counter;
 	}
 
-	*word_counter = counter;
 
-	qsort(words, counter, sizeof(word_t *), _vocab_cmp_words); // Sort entries
+// FIXME: Sort the list.
+// Or even switch it to a hashmap?
+//	qsort(words, counter, sizeof(word_t *), _vocab_cmp_words); // Sort entries
 
-	return words;
+	return true;
 }
 
-void vocab_free_words(word_t **words, int words_nr) {
-	int i;
-
-	for (i = 0; i < words_nr; i++)
-		free(words[i]);
-
-	free(words);
-}
-
-const char *vocab_get_any_group_word(int group, word_t **words, int words_nr) {
-	int i;
-
+const char *vocab_get_any_group_word(int group, const WordMap &words) {
 	if (group == VOCAB_MAGIC_NUMBER_GROUP)
 		return "{number}";
 
-	for (i = 0; i < words_nr; i++)
-		if (words[i]->group == group)
-			return words[i]->word;
+	for (WordMap::const_iterator i = words.begin(); i != words.end(); ++i)
+		if (i->_value._group == group)
+			return i->_key.c_str();
 
 	return "{invalid}";
 }
@@ -261,29 +242,23 @@ parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_
 }
 
 
-ResultWord vocab_lookup_word(char *word, int word_len, word_t **words, int words_nr,
-	const SuffixList &suffixes) {
-	word_t *tempword = (word_t*)sci_malloc(sizeof(word_t) + word_len + 256);
-	// 256: For suffixes. Should suffice.
-	word_t **dict_word;
-	char *tester;
-	int word_len_tmp;
+ResultWord vocab_lookup_word(char *word, int word_len, const WordMap &words, const SuffixList &suffixes) {
+	Common::String tempword(word, word_len);
 
-	strncpy(&(tempword->word[0]), word, word_len);
-	tempword->word[word_len] = 0;
+	// Remove all dashes from tempword
+	for (uint i = 0; i < tempword.size(); ) {
+		if (tempword[i] == '-')
+			tempword.deleteChar(i);
+		else
+			++i;
+	}
 
-	word_len_tmp = word_len;
-	while ((tester = strchr(tempword->word, '-')))
-		memmove(tester, tester + 1, (tempword->word + word_len_tmp--) - tester);
+	// Look it up:
+	WordMap::iterator dict_word = words.find(tempword);
 
-	dict_word = (word_t **)bsearch(&tempword, words, words_nr, sizeof(word_t *), _vocab_cmp_words);
-
-	if (dict_word) {
-		free(tempword);
-
-		ResultWord tmp = { (*dict_word)->w_class, (*dict_word)->group };
-
-		return tmp;
+	// Match found? Return it!
+	if (dict_word != words.end()) {
+		return dict_word->_value;
 	}
 
 	// Now try all suffixes
@@ -294,18 +269,18 @@ ResultWord vocab_lookup_word(char *word, int word_len, word_t **words, int words
 			// Offset of the start of the suffix
 
 			if (scumm_strnicmp(suffix->alt_suffix, word + suff_index, suffix->alt_suffix_length) == 0) { // Suffix matched!
-				strncpy(&(tempword->word[0]), word, word_len);
-				tempword->word[suff_index] = 0; // Terminate word at suffix start position...
-				strncat(&(tempword->word[0]), suffix->word_suffix, suffix->word_suffix_length); // ...and append "correct" suffix
+				// Terminate word at suffix start position...:
+				Common::String tempword2(word, MIN(word_len, suff_index));
 
-				dict_word = (word_t**)bsearch(&tempword, words, words_nr, sizeof(word_t *), _vocab_cmp_words);
+				// ...and append "correct" suffix
+				tempword2 += Common::String(suffix->word_suffix, suffix->word_suffix_length);
 
-				if ((dict_word) && ((*dict_word)->w_class & suffix->class_mask)) { // Found it?
-					free(tempword);
+				dict_word = words.find(tempword2);
 
+				if ((dict_word != words.end()) && (dict_word->_value._class & suffix->class_mask)) { // Found it?
 					// Use suffix class
-					ResultWord tmp = { suffix->result_class, (*dict_word)->group };
-
+					ResultWord tmp = dict_word->_value;
+					tmp._class = suffix->result_class;
 					return tmp;
 				}
 			}
@@ -313,20 +288,12 @@ ResultWord vocab_lookup_word(char *word, int word_len, word_t **words, int words
 
 	// No match so far? Check if it's a number.
 
-	strncpy(&(tempword->word[0]), word, word_len);
-	tempword->word[word_len] = 0;
-
-	word_len_tmp = word_len;
-	while ((tester = strchr(tempword->word, '-')))
-		memmove(tester, tester + 1, (tempword->word + word_len--) - tester);
-
 	ResultWord retval = { -1, -1 };
-	if ((strtol(&(tempword->word[0]), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
+	char *tester;
+	if ((strtol(tempword.c_str(), &tester, 10) >= 0) && (*tester == '\0')) { // Do we have a complete number here?
 		ResultWord tmp = { VOCAB_CLASS_NUMBER, VOCAB_MAGIC_NUMBER_GROUP };
 		retval = tmp;
 	}
-
-	free(tempword);
 
 	return retval;
 }
@@ -339,7 +306,7 @@ void vocab_decypher_said_block(EngineState *s, byte *addr) {
 
 		if (nextitem < 0xf0) {
 			nextitem = nextitem << 8 | *addr++;
-			sciprintf(" %s[%03x]", vocab_get_any_group_word(nextitem, s->parser_words, s->parser_words_nr), nextitem);
+			sciprintf(" %s[%03x]", vocab_get_any_group_word(nextitem, s->_parserWords), nextitem);
 
 			nextitem = 42; // Make sure that group 0xff doesn't abort
 		} else switch (nextitem) {
@@ -396,13 +363,13 @@ static const short _related_words[][2] = { // 0 is backwards, 1 is forward
 	{0x000, 0x180} // number
 };
 
-int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words, int words_nr) {
+int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, WordMap &words) {
 	int i, length, pos = 0;
 
-	for (i = 0; i < words_nr; ++i) {
-		if (words[i].w_class != VOCAB_CLASS_ANYWORD) {
-			nodes[pos].type = words[i].w_class;
-			nodes[pos].content.value = words[i].group;
+	for (i = 0; i < words.size(); ++i) {
+		if (words[i]._class != VOCAB_CLASS_ANYWORD) {
+			nodes[pos].type = words[i]._class;
+			nodes[pos].content.value = words[i]._group;
 			pos += 2; // Link information is filled in below
 		}
 	}
@@ -477,7 +444,7 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, result_word_t *words
 }
 #endif
 
-int vocab_tokenize_string(ResultWordList &retval, char *sentence, word_t **words, int words_nr,
+bool vocab_tokenize_string(ResultWordList &retval, char *sentence, const WordMap &words,
 	const SuffixList &suffixes, char **error) {
 	char *lastword = sentence;
 	int pos_in_sentence = 0;
@@ -499,14 +466,14 @@ int vocab_tokenize_string(ResultWordList &retval, char *sentence, word_t **words
 			if (wordlen) { // Finished a word?
 
 				ResultWord lookup_result =
-				    vocab_lookup_word(lastword, wordlen, words, words_nr, suffixes);
+				    vocab_lookup_word(lastword, wordlen, words, suffixes);
 				// Look it up
 
-				if (lookup_result.w_class == -1) { // Not found?
+				if (lookup_result._class == -1) { // Not found?
 					*error = (char *)sci_calloc(wordlen + 1, 1);
 					strncpy(*error, lastword, wordlen); // Set the offending word
 					retval.clear();
-					return 1; // And return with error
+					return false; // And return with error
 				}
 
 				// Copy into list
@@ -519,7 +486,7 @@ int vocab_tokenize_string(ResultWordList &retval, char *sentence, word_t **words
 
 	} while (c); // Until terminator is hit
 
-	return 0;
+	return true;
 }
 
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {
@@ -604,8 +571,8 @@ void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms)
 
 	for (ResultWordList::iterator i = words.begin(); i != words.end(); ++i)
 		for (SynonymList::const_iterator sync = synonyms.begin(); sync != synonyms.end(); ++sync)
-			if (i->group == sync->replaceant)
-				i->group = sync->replacement;
+			if (i->_group == sync->replaceant)
+				i->_group = sync->replacement;
 }
 
 } // End of namespace Sci

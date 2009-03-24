@@ -689,21 +689,21 @@ static ResourceType parseResourceType(char *resid) {
 }
 
 static int c_list_words(EngineState *s) {
-	word_t **words;
-	int words_nr;
-	int i;
+	WordMap words;
 
-	words = vocab_get_words(s->resmgr, &words_nr);
+	vocab_get_words(s->resmgr, words);
 
-	if (!words) {
+	if (words.empty()) {
 		sciprintf("No vocabulary.\n");
 		return 1;
 	}
 
-	for (i = 0; i < words_nr; i++)
-		sciprintf("%4d: %03x [%03x] %s\n", i, words[i]->w_class, words[i]->group, words[i]->word);
+	int j = 0;
+	for (WordMap::iterator i = words.begin(); i != words.end(); ++i) {
+		sciprintf("%4d: %03x [%03x] %s\n", j, i->_value._class, i->_value._group, i->_key.c_str());
+		j++;
+	}
 
-	vocab_free_words(words, words_nr);
 	return 0;
 }
 

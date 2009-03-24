@@ -253,13 +253,10 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	int res = vocab_tokenize_string(words, string,
-	                                s->parser_words, s->parser_words_nr,
-	                                s->_parserSuffixes,
-	                                &error);
+	bool res = vocab_tokenize_string(words, string, s->_parserWords, s->_parserSuffixes, &error);
 	s->parser_valid = 0; /* not valid */
 
-	if (res == 0 && !words.empty()) {
+	if (res && !words.empty()) {
 
 		int syntax_fail = 0;
 
@@ -271,7 +268,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkPARSER, "Parsed to the following blocks:\n", 0);
 
 			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", i->w_class, i->group);
+				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 		}
 
 		if (vocab_build_parse_tree(&(s->parser_nodes[0]), words, s->parser_branches,

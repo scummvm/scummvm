@@ -802,11 +802,11 @@ int c_sim_parse(EngineState *s) {
 			if (openb)
 				*openb = 0; // remove them and the rest
 
-			result = vocab_lookup_word(token, strlen(token), s->parser_words, s->parser_words_nr, s->_parserSuffixes);
+			result = vocab_lookup_word(token, strlen(token), s->_parserWords, s->_parserSuffixes);
 
-			if (result.w_class != -1) {
+			if (result._class != -1) {
 				s->parser_nodes[i].type = 0;
-				s->parser_nodes[i].content.value = result.group;
+				s->parser_nodes[i].content.value = result._group;
 			} else { // group name was specified directly?
 				int val = strtol(token, NULL, 0);
 				if (val) {
@@ -1032,9 +1032,8 @@ int c_parse(EngineState *s) {
 
 	string = cmd_params[0].str;
 	sciprintf("Parsing '%s'\n", string);
-	int res = vocab_tokenize_string(words, string, s->parser_words, s->parser_words_nr,
-	                                s->_parserSuffixes, &error);
-	if (res == 0&& !words.empty()) {
+	bool res = vocab_tokenize_string(words, string, s->_parserWords, s->_parserSuffixes, &error);
+	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
 		vocab_synonymize_tokens(words, s->_synonyms);
@@ -1042,7 +1041,7 @@ int c_parse(EngineState *s) {
 		sciprintf("Parsed to the following blocks:\n");
 
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			sciprintf("   Type[%04x] Group[%04x]\n", i->w_class, i->group);
+			sciprintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
 		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, s->parser_branches, s->parser_rules, 1))
 			syntax_fail = 1; // Building a tree failed
@@ -2390,23 +2389,20 @@ int c_gfx_debuglog(EngineState *s) {
 }
 
 int c_dump_words(EngineState *s) {
-	int i;
-
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	if (!s->parser_words) {
+	if (s->_parserWords.empty()) {
 		sciprintf("No words.\n");
 		return 0;
 	}
 
-	for (i = 0; i < s->parser_words_nr; i++) {
-		word_t *word = s->parser_words[i];
-		sciprintf("%s: C %03x G %03x\n", word->word, word->w_class, word->group);
-	}
-	sciprintf("%d words\n", s->parser_words_nr);
+	for (WordMap::iterator i = s->_parserWords.begin(); i != s->_parserWords.end(); ++i)
+		sciprintf("%s: C %03x G %03x\n", i->_key.c_str(), i->_value._class, i->_value._group);
+
+	sciprintf("%d words\n", s->_parserWords.size());
 
 	return 0;
 }

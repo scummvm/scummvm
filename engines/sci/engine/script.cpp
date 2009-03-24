@@ -330,15 +330,14 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	Resource *script = resmgr->findResource(kResourceTypeScript, res_no, 0);
-	word_t **words;
-	int word_count;
+	WordMap words;
 
 	if (!script) {
 		sciprintf("Script not found!\n");
 		return;
 	}
 
-	words = vocab_get_words(resmgr, &word_count);
+	vocab_get_words(resmgr, words);
 
 	while (_seeker < script->size) {
 		int objtype = (int16)READ_LE_UINT16(script->data + _seeker);
@@ -349,7 +348,6 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 			sciprintf("End of script object (#0) encountered.\n");
 			sciprintf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
 			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
-			vocab_free_words(words, word_count);
 			return;
 		}
 
@@ -424,7 +422,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					sciprintf("%s[%03x] ", vocab_get_any_group_word(nextitem, words, word_count), nextitem);
+					sciprintf("%s[%03x] ", vocab_get_any_group_word(nextitem, words), nextitem);
 				}
 			}
 			sciprintf("\n");
