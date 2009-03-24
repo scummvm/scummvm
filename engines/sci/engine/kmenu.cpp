@@ -36,7 +36,7 @@ reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
 	char *contents = kernel_dereference_char_pointer(s, argv[1], 0);
 
-	menubar_add_menu(s->gfx_state, s->menubar, name,
+	s->_menubar->addMenu(s->gfx_state, name,
 	                 contents, s->titlebar_port->font_nr, argv[1]);
 
 	return s->r_acc;
@@ -49,7 +49,7 @@ reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i = 2;
 
 	while (i < argc) {
-		menubar_set_attribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(i - 1), argv[i]);
+		s->_menubar->setAttribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(i - 1), argv[i]);
 		i += 2;
 	}
 
@@ -59,7 +59,7 @@ reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int index = UKPV(0);
 
-	return menubar_get_attribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
+	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
 }
 
 
@@ -95,7 +95,7 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (SKPV(0))
-		sciw_set_menubar(s, s->titlebar_port, s->menubar, -1);
+		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
 	else
 		sciw_set_status_bar(s, s->titlebar_port, NULL, 0, 0);
 
@@ -106,11 +106,12 @@ reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-static int _menu_go_down(EngineState *s, int menu_nr, int item_nr) {
-	int seeker, max = s->menubar->menus[menu_nr].items_nr;
+static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
+	int seeker;
+	const int max = menubar->_menus[menu_nr]._items.size();
 	seeker = item_nr + 1;
 
-	while ((seeker < max) && !menubar_item_valid(s, menu_nr, seeker))
+	while ((seeker < max) && !menubar->itemValid(menu_nr, seeker))
 		++seeker;
 
 	if (seeker != max)
@@ -127,12 +128,12 @@ static int _menu_go_down(EngineState *s, int menu_nr, int item_nr) {
 reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[0];
 	/*int pause_sound = UKPV_OR_ALT(1, 1);*/ /* FIXME: Do this eventually */
-	int claimed = 0;
+	bool claimed = false;
 	int type = GET_SEL32V(event, type);
 	int message = GET_SEL32V(event, message);
 	int modifiers = GET_SEL32V(event, modifiers);
 	int menu_nr = -1, item_nr = 0;
-	menu_item_t *item;
+	MenuItem *item;
 	int menu_mode = 0; /* Menu is active */
 	int mouse_down = 0;
 
@@ -150,27 +151,27 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkMENU, "Menu: Got %s event: %04x/%04x\n",
 			          ((type == SCI_EVT_SAID) ? "SAID" : "KBD"), message, modifiers);
 
-			for (menuc = 0; menuc < s->menubar->menus_nr; menuc++)
-				for (itemc = 0; itemc < s->menubar->menus[menuc].items_nr; itemc++) {
-					item = s->menubar->menus[menuc].items + itemc;
+			for (menuc = 0; menuc < (int)s->_menubar->_menus.size(); menuc++)
+				for (itemc = 0; itemc < (int)s->_menubar->_menus[menuc]._items.size(); itemc++) {
+					item = &s->_menubar->_menus[menuc]._items[itemc];
 
 					SCIkdebug(SCIkMENU, "Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
-					          item->text ? item->text : "--bar--", item->key, item->modifiers,
-					          item->type, item->enabled ? "enabled" : "disabled");
+					          !item->_text.empty() ? item->_text.c_str() : "--bar--", item->_key, item->_modifiers,
+					          item->_type, item->_enabled ? "enabled" : "disabled");
 
-					if (((item->type == MENU_TYPE_NORMAL)
-					        && (item->enabled))
+					if (((item->_type == MENU_TYPE_NORMAL)
+					        && (item->_enabled))
 					        && (((type == SCI_EVT_KEYBOARD) /* keyboard event */
-					             && menubar_match_key(item, message, modifiers))
+					             && item->matchKey(message, modifiers))
 					            || ((type == SCI_EVT_SAID) /* Said event */
-					                && (item->flags & MENU_ATTRIBUTE_FLAGS_SAID)
-					                && (said(s, item->said, (s->debug_mode & (1 << SCIkPARSER_NR))) != SAID_NO_MATCH)
+					                && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
+					                && (said(s, item->_said, (s->debug_mode & (1 << SCIkPARSER_NR))) != SAID_NO_MATCH)
 					               )
 					           )
 					   ) {
 						/* Claim the event */
 						SCIkdebug(SCIkMENU, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
-						claimed = 1;
+						claimed = true;
 						menu_nr = menuc;
 						item_nr = itemc;
 					}
@@ -192,11 +193,11 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		/* Default to menu 0, unless the mouse was used to generate this effect */
 		if (mouse_down)
-			menubar_map_pointer(s, &menu_nr, &item_nr, port);
+			s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
 		else
 			menu_nr = 0;
 
-		sciw_set_menubar(s, s->titlebar_port, s->menubar, menu_nr);
+		sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 		FULL_REDRAW;
 
 		old_item = -1;
@@ -205,7 +206,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		while (menu_mode) {
 			sci_event_t ev = gfxop_get_event(s->gfx_state, SCI_EVT_ANY);
 
-			claimed = 0;
+			claimed = false;
 
 			switch (ev.type) {
 			case SCI_EVT_QUIT:
@@ -227,37 +228,37 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				case SCI_K_ENTER:
 					menu_mode = 0;
 					if ((item_nr >= 0) && (menu_nr >= 0))
-						claimed = 1;
+						claimed = true;
 					break;
 
 				case SCI_K_LEFT:
 					if (menu_nr > 0)
 						--menu_nr;
 					else
-						menu_nr = s->menubar->menus_nr - 1;
+						menu_nr = s->_menubar->_menus.size() - 1;
 
-					item_nr = _menu_go_down(s, menu_nr, -1);
+					item_nr = _menu_go_down(s->_menubar, menu_nr, -1);
 					break;
 
 				case SCI_K_RIGHT:
-					if (menu_nr < (s->menubar->menus_nr - 1))
+					if (menu_nr < ((int)s->_menubar->_menus.size() - 1))
 						++menu_nr;
 					else
 						menu_nr = 0;
 
-					item_nr = _menu_go_down(s, menu_nr, -1);
+					item_nr = _menu_go_down(s->_menubar, menu_nr, -1);
 					break;
 
 				case SCI_K_UP:
 					if (item_nr > -1) {
 
 						do { --item_nr; }
-						while ((item_nr > -1) && !menubar_item_valid(s, menu_nr, item_nr));
+						while ((item_nr > -1) && !s->_menubar->itemValid(menu_nr, item_nr));
 					}
 					break;
 
 				case SCI_K_DOWN: {
-					item_nr = _menu_go_down(s, menu_nr, item_nr);
+					item_nr = _menu_go_down(s->_menubar, menu_nr, item_nr);
 				}
 				break;
 
@@ -266,7 +267,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			case SCI_EVT_MOUSE_RELEASE:
 				menu_mode = (s->gfx_state->pointer_pos.y < 10);
-				claimed = !menu_mode && !menubar_map_pointer(s, &menu_nr, &item_nr, port);
+				claimed = !menu_mode && !s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
 				mouse_down = 0;
 				break;
 
@@ -280,16 +281,16 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
-				menubar_map_pointer(s, &menu_nr, &item_nr, port);
+				s->_menubar->mapPointer(s->gfx_state, &menu_nr, &item_nr, port);
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 
-				sciw_set_menubar(s, s->titlebar_port, s->menubar, menu_nr);
+				sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 
 				if (port)
 					port->widfree(GFXW(port));
 
-				port = sciw_new_menu(s, s->titlebar_port, s->menubar, menu_nr);
+				port = sciw_new_menu(s, s->titlebar_port, s->_menubar, menu_nr);
 				s->wm_port->add(GFXWC(s->wm_port), GFXW(port));
 
 				if (item_nr > -1)
@@ -302,8 +303,8 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			/* Remove the active menu item, if neccessary */
 			if (item_nr != old_item) {
-				port = sciw_unselect_item(s, port, s->menubar->menus + menu_nr, old_item);
-				port = sciw_select_item(s, port, s->menubar->menus + menu_nr, item_nr);
+				port = sciw_unselect_item(s, port, &(s->_menubar->_menus[menu_nr]), old_item);
+				port = sciw_select_item(s, port, &(s->_menubar->_menus[menu_nr]), item_nr);
 				FULL_REDRAW;
 			}
 
@@ -331,7 +332,8 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->r_acc = NULL_REG;
 
 		SCIkdebug(SCIkMENU, "Menu: Claim -> %04x\n", s->r_acc.offset);
-	} else s->r_acc = NULL_REG; /* Not claimed */
+	} else
+		s->r_acc = NULL_REG; /* Not claimed */
 
 	return s->r_acc;
 }

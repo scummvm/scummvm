@@ -46,7 +46,7 @@ namespace Common {
 
 namespace Sci {
 
-struct menubar_t;
+class Menubar;
 struct kfunct_sig_pair_t;	// from kernel.h
 
 struct gfx_state_t;
@@ -183,7 +183,7 @@ public:
 	long animation_delay; /* A delay factor for pic opening animations. Defaults to 500. */
 	int animation_granularity; /* Number of animation steps to perform betwen updates for transition animations */
 
-	menubar_t *menubar; /* The menu bar */
+	Menubar *_menubar; /* The menu bar */
 
 	int priority_first; /* The line where priority zone 0 ends */
 	int priority_last; /* The line where the highest priority zone starts */

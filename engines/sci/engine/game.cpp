@@ -649,7 +649,7 @@ int game_init(EngineState *s) {
 	s->parser_nodes[0].type = PARSE_TREE_NODE_LEAF;
 	s->parser_nodes[0].content.value = 0;
 
-	s->menubar = menubar_new(); // Create menu bar
+	s->_menubar = new Menubar(); // Create menu bar
 
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
 		game_init_sound(s, 0);
@@ -680,7 +680,7 @@ int game_exit(EngineState *s) {
 
 	// TODO Free scripts here
 
-	menubar_free(s->menubar);
+	delete s->_menubar;
 
 	_free_graphics_input(s);
 

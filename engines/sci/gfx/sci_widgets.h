@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-struct menu_t;
+class Menu;
 
 /* The following flags are applicable to windows in SCI0: */
 #define WINDOW_FLAG_TRANSPARENT 0x01
@@ -62,11 +62,11 @@ struct menu_t;
 /* Used by the interpreter to flag buttons that are enabled */
 #define CONTROL_STATE_ENABLED 0x0001
 
-void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor);
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const char *text, int fgcolor, int bgcolor);
 /* Sets the contents of a port used as status bar
 ** Parmeters: (EngineState *) s: The affected game state
 **            (gfxw_port_t *) status_bar: The status bar port
-**            (char *) text: The text to draw
+**            (const char *) text: The text to draw
 ** Returns  : (void)
 */
 
@@ -163,39 +163,39 @@ gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 /*** Menubar widgets ***/
 /*---------------------*/
 
-void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
+void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection);
 /* Draws the menu bar
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) status_bar: The status bar port to modify
-**             (menubar_t *) menubar: The menu bar to use
+**             (Menubar *) menubar: The menu bar to use
 **             (int) selection: Number of the menu to hightlight, or -1 for 'none'
 ** Returns   : (void)
 */
 
-gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection);
+gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection);
 /* Creates a menu port
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) status_bar: The status bar
-**             (menubar_t *) menubar: The menu bar to use
+**             (Menubar *) menubar: The menu bar to use
 **             (int) selection: Number of the menu to interpret
 ** Returns   : (gfxw_port_t *) The result port
 */
 
-gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection);
+gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection);
 /* Unselects a previously selected item from a menu port
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) menu_port: The port modify
-**             (menu_t *) menu: The menu the menu port corresponds to
+**             (Menu *) menu: The menu the menu port corresponds to
 **             (int) selection: Number of the menu entry to unselect, or -1 to do a NOP
 ** Returns   : (gfxw_port_t *) The modified menu
 */
 
 gfxw_port_t *
-sciw_select_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection);
+sciw_select_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection);
 /* Selects a menu item from a menu port
 ** Parameters: (EngineState *) s: The state to operate on
 **             (gfxw_port_t *) menu_port: The port modify
-**             (menu_t *) menu: The menu the menu port corresponds to
+**             (Menu *) menu: The menu the menu port corresponds to
 **             (int) selection: Number of the menu entry to select, or -1 to do a NOP
 ** Returns   : (gfxw_port_t *) The modified menu
 */

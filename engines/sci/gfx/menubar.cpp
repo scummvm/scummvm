@@ -38,87 +38,68 @@ namespace Sci {
 
 #define SIZE_INF 32767
 
-menubar_t *menubar_new() {
-	menubar_t *tmp = (menubar_t*)sci_malloc(sizeof(menubar_t));
-	tmp->menus_nr = 0;
-
-	return tmp;
+Menu::Menu() {
+	_titleWidth = 0;
+	_width = 0;
 }
 
-void menubar_free(menubar_t *menubar) {
-	int i;
-
-	for (i = 0; i < menubar->menus_nr; i++) {
-		menu_t *menu = &(menubar->menus[i]);
-		int j;
-
-		for (j = 0; j < menu->items_nr; j++) {
-			free(menu->items[j].keytext);
-			free(menu->items[j].text);
-		}
-
-		free(menu->items);
-		free(menu->title);
-	}
-
-	if (menubar->menus_nr)
-		free(menubar->menus);
-
-	free(menubar);
+MenuItem::MenuItem() {
+	_type = MENU_TYPE_NORMAL;
+	_flags = 0;
+	memset(_said, 0, sizeof(_said));
+	_saidPos = NULL_REG;
+	_textPos = NULL_REG;
+	_modifiers = 0;
+	_key = 0;
+	_enabled = 0;
+	_tag = 0;
 }
 
-int _menubar_add_menu_item(gfx_state_t *state, menu_t *menu, int type, char *left, char *right,
+
+int Menu::addMenuItem(gfx_state_t *state, MenuType type, const char *left, const char *right,
 						   int font, int key, int modifiers, int tag, reg_t text_pos) {
 // Returns the total text size, plus MENU_BOX_CENTER_PADDING if (right != NULL)
-	menu_item_t *item;
+	MenuItem newItem;
+	MenuItem *item;
 	int total_left_size = 0;
 	int width, height;
 
-	if (menu->items_nr == 0) {
-		menu->items = (menu_item_t *)sci_malloc(sizeof(menu_item_t));
-		menu->items_nr = 1;
-	} else
-		menu->items = (menu_item_t *)sci_realloc(menu->items, sizeof(menu_item_t) * ++(menu->items_nr));
+	item = &newItem;
+	item->_type = type;
 
-	item = &(menu->items[menu->items_nr - 1]);
-
-	memset(item, 0, sizeof(menu_item_t));
-
-	if ((item->type = type) == MENU_TYPE_HBAR)
+	if (type == MENU_TYPE_HBAR) {
+		_items.push_back(newItem);
 		return 0;
+	}
 
 	// else assume MENU_TYPE_NORMAL
-	item->text = left;
+	item->_text = left;
 	if (right) {
-		int end = strlen(right);
-		item->keytext = right;
-		while (end && isspace(right[end]))
-			right[end--] = 0; // Remove trailing whitespace
-		item->flags = MENU_ATTRIBUTE_FLAGS_KEY;
-		item->key = key;
-		item->modifiers = modifiers;
+		item->_keytext = right;
+		item->_keytext.trim();	// Remove trailing whitespace
+		item->_flags = MENU_ATTRIBUTE_FLAGS_KEY;
+		item->_key = key;
+		item->_modifiers = modifiers;
 	} else {
-		item->keytext = NULL;
-		item->flags = 0;
+		item->_flags = 0;
 	}
 
 	if (right) {
-		gfxop_get_text_params(state, font, right, SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
-		item->keytext_size = width;
+		gfxop_get_text_params(state, font, item->_keytext.c_str(), SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
 		total_left_size = MENU_BOX_CENTER_PADDING + width;
 	}
 
-	item->enabled = 1;
-	item->tag = tag;
-	item->text_pos = text_pos;
+	item->_enabled = 1;
+	item->_tag = tag;
+	item->_textPos = text_pos;
 	gfxop_get_text_params(state, font, left, SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
+
+	_items.push_back(newItem);
 
 	return total_left_size + width;
 }
 
-void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font, reg_t entries_base) {
-	int i;
-	menu_t *menu;
+void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries, int font, reg_t entries_base) {
 	char tracker;
 	char *left = NULL, *right;
 	reg_t left_origin = entries_base;
@@ -126,18 +107,11 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 	int tag = 0, c_width, max_width = 0;
 	int height;
 
-	if (menubar->menus_nr == 0) {
-		menubar->menus = (menu_t *)sci_malloc(sizeof(menu_t));
-		menubar->menus_nr = 1;
-	} else
-		menubar->menus = (menu_t *)sci_realloc(menubar->menus, ++(menubar->menus_nr) * sizeof(menu_t));
+	Menu menu;
 
-	menu = &(menubar->menus[menubar->menus_nr-1]);
-	memset(menu, 0, sizeof(menu_t));
-	menu->items_nr = 0;
-	menu->title = sci_strdup(title);
+	menu._title = title;
 
-	gfxop_get_text_params(state, font, menu->title, SIZE_INF, &(menu->title_width), &height, 0, NULL, NULL, NULL);
+	gfxop_get_text_params(state, font, title, SIZE_INF, &(menu._titleWidth), &height, 0, NULL, NULL, NULL);
 
 	do {
 		tracker = *entries++;
@@ -150,7 +124,7 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 				tracker =  *entries++;
 			}
 			if ((tracker == 0 && string_len > 0) || (tracker == '=') || (tracker == ':')) { // End of entry
-				int entrytype = MENU_TYPE_NORMAL;
+				MenuType entrytype = MENU_TYPE_NORMAL;
 				char *inleft;
 				reg_t beginning;
 
@@ -171,7 +145,7 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 
 				beginning = entries_base;
 				beginning.offset -= string_len + 1;
-				c_width = _menubar_add_menu_item(state, menu, entrytype, left, NULL, font, 0, 0, tag, beginning);
+				c_width = menu.addMenuItem(state, entrytype, left, NULL, font, 0, 0, tag, beginning);
 				if (c_width > max_width)
 					max_width = c_width;
 
@@ -244,12 +218,12 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 						key = key - 'A' + 'a'; // Lowercase the key
 				}
 
-				i = strlen(right);
+				int i = strlen(right);
 
 				while (i > 0 && right[--i] == ' ')
 					right[i] = 0; // Cut off chars to the right
 
-				c_width = _menubar_add_menu_item(state, menu, MENU_TYPE_NORMAL, left, right, font, key,
+				c_width = menu.addMenuItem(state, MENU_TYPE_NORMAL, left, right, font, key,
 				                                 modifiers, tag, left_origin);
 				tag = 0;
 				if (c_width > max_width)
@@ -263,78 +237,74 @@ void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char 
 		} // right string finished
 	} while (tracker);
 
-	menu->width = max_width;
+	menu._width = max_width;
+
+	_menus.push_back(menu);
 }
 
-int menubar_match_key(menu_item_t *item, int message, int modifiers) {
-	if ((item->key == message) && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == item->modifiers))
-		return 1;
+bool MenuItem::matchKey(int message, int modifiers) {
+	if ((_key == message) && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == _modifiers))
+		return true;
 
-	if (message == '\t' && item->key == 'i' && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == 0) && item->modifiers == SCI_EVM_CTRL)
-		return 1; // Match TAB to ^I
+	if (message == '\t' && _key == 'i' && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == 0) && _modifiers == SCI_EVM_CTRL)
+		return true; // Match TAB to ^I
 
 	return 0;
 }
 
-int menubar_set_attribute(EngineState *s, int menu_nr, int item_nr, int attribute, reg_t value) {
-	menubar_t *menubar = s->menubar;
-	menu_item_t *item;
+int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribute, reg_t value) {
+	MenuItem *item;
 
 	if ((menu_nr < 0) || (item_nr < 0))
 		return 1;
 
-	if ((menu_nr >= menubar->menus_nr) || (item_nr >= menubar->menus[menu_nr].items_nr))
+	if ((menu_nr >= (int)_menus.size()) || (item_nr >= (int)_menus[menu_nr]._items.size()))
 		return 1;
 
-	item = menubar->menus[menu_nr].items + item_nr;
+	item = &_menus[menu_nr]._items[item_nr];
 
 	switch (attribute) {
 
 	case MENU_ATTRIBUTE_SAID:
 		if (value.segment) {
-			item->said_pos = value;
-			memcpy(item->said, kernel_dereference_bulk_pointer(s, value, 0), MENU_SAID_SPEC_SIZE); // Copy Said spec
-			item->flags |= MENU_ATTRIBUTE_FLAGS_SAID;
+			item->_saidPos = value;
+			memcpy(item->_said, kernel_dereference_bulk_pointer(s, value, 0), MENU_SAID_SPEC_SIZE); // Copy Said spec
+			item->_flags |= MENU_ATTRIBUTE_FLAGS_SAID;
 
 		} else
-			item->flags &= ~MENU_ATTRIBUTE_FLAGS_SAID;
+			item->_flags &= ~MENU_ATTRIBUTE_FLAGS_SAID;
 
 		break;
 
 	case MENU_ATTRIBUTE_TEXT:
-		free(item->text);
 		assert(value.segment);
-		item->text = sci_strdup(kernel_dereference_char_pointer(s, value, 0));
-		item->text_pos = value;
+		item->_text = kernel_dereference_char_pointer(s, value, 0);
+		item->_textPos = value;
 		break;
 
 	case MENU_ATTRIBUTE_KEY:
-		free(item->keytext);
-		item->keytext = 0;
+		item->_keytext.clear();
 
 		if (value.segment) {
 
 			// FIXME: What happens here if <value> is an extended key? Potential bug. LS
-			item->key = value.offset;
-			item->modifiers = 0;
-			item->keytext = (char *)sci_malloc(2);
-			item->keytext[0] = value.offset;
-			item->keytext[1] = 0;
-			item->flags |= MENU_ATTRIBUTE_FLAGS_KEY;
-			if ((item->key >= 'A') && (item->key <= 'Z'))
-				item->key = item->key - 'A' + 'a'; // Lowercase the key
+			item->_key = value.offset;
+			item->_modifiers = 0;
+			item->_keytext = value.offset;
+			item->_flags |= MENU_ATTRIBUTE_FLAGS_KEY;
+			if ((item->_key >= 'A') && (item->_key <= 'Z'))
+				item->_key = item->_key - 'A' + 'a'; // Lowercase the key
 		} else {
-			item->keytext = NULL;
-			item->flags &= ~MENU_ATTRIBUTE_FLAGS_KEY;
+			item->_flags &= ~MENU_ATTRIBUTE_FLAGS_KEY;
 		}
 		break;
 
 	case MENU_ATTRIBUTE_ENABLED:
-		item->enabled = value.offset;
+		item->_enabled = value.offset;
 		break;
 
 	case MENU_ATTRIBUTE_TAG:
-		item->tag = value.offset;
+		item->_tag = value.offset;
 		break;
 
 	default:
@@ -345,33 +315,30 @@ int menubar_set_attribute(EngineState *s, int menu_nr, int item_nr, int attribut
 	return 0;
 }
 
-reg_t menubar_get_attribute(EngineState *s, int menu_nr, int item_nr, int attribute) {
-	menubar_t *menubar = s->menubar;
-	menu_item_t *item;
-
+reg_t Menubar::getAttribute(int menu_nr, int item_nr, int attribute) const {
 	if ((menu_nr < 0) || (item_nr < 0))
 		return make_reg(0, -1);
 
-	if ((menu_nr >= menubar->menus_nr) || (item_nr >= menubar->menus[menu_nr].items_nr))
+	if ((menu_nr >= (int)_menus.size()) || (item_nr >= (int)_menus[menu_nr]._items.size()))
 		return make_reg(0, -1);
 
-	item = menubar->menus[menu_nr].items + item_nr;
+	const MenuItem &item = _menus[menu_nr]._items[item_nr];
 
 	switch (attribute) {
 	case MENU_ATTRIBUTE_SAID:
-		return item->said_pos;
+		return item._saidPos;
 
 	case MENU_ATTRIBUTE_TEXT:
-		return item->text_pos;
+		return item._textPos;
 
 	case MENU_ATTRIBUTE_KEY:
-		return make_reg(0, item->key);
+		return make_reg(0, item._key);
 
 	case MENU_ATTRIBUTE_ENABLED:
-		return make_reg(0, item->enabled);
+		return make_reg(0, item._enabled);
 
 	case MENU_ATTRIBUTE_TAG:
-		return make_reg(0, item->tag);
+		return make_reg(0, item._tag);
 
 	default:
 		sciprintf("Attempt to read invalid attribute from menu %d, item %d: 0x%04x\n", menu_nr, item_nr, attribute);
@@ -379,65 +346,59 @@ reg_t menubar_get_attribute(EngineState *s, int menu_nr, int item_nr, int attrib
 	}
 }
 
-int menubar_item_valid(EngineState *s, int menu_nr, int item_nr) {
-	menubar_t *menubar = s->menubar;
-	menu_item_t *item;
-
+bool Menubar::itemValid(int menu_nr, int item_nr) const {
 	if ((menu_nr < 0) || (item_nr < 0))
-		return 0;
+		return false;
 
-	if ((menu_nr >= menubar->menus_nr) || (item_nr >= menubar->menus[menu_nr].items_nr))
-		return 0;
+	if ((menu_nr >= (int)_menus.size()) || (item_nr >= (int)_menus[menu_nr]._items.size()))
+		return false;
 
-	item = menubar->menus[menu_nr].items + item_nr;
+	const MenuItem &item = _menus[menu_nr]._items[item_nr];
 
-	if ((item->type == MENU_TYPE_NORMAL) && item->enabled)
-		return 1;
+	if ((item._type == MENU_TYPE_NORMAL) && item._enabled)
+		return true;
 
-	return 0; // May not be selected
+	return false; // May not be selected
 }
 
-int menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port) {
-	menubar_t *menubar = s->menubar;
-	menu_t *menu;
+bool Menubar::mapPointer(gfx_state_t *state, int *menu_nr, int *item_nr, gfxw_port_t *port) const {
 
-	if (s->gfx_state->pointer_pos.y <= 10) { // Re-evaulate menu
+	if (state->pointer_pos.y <= 10) { // Re-evaulate menu
 		int x = MENU_LEFT_BORDER;
-		int i;
 
-		for (i = 0; i < menubar->menus_nr; i++) {
-			int newx = x + MENU_BORDER_SIZE * 2 + menubar->menus[i].title_width;
+		for (uint i = 0; i < _menus.size(); i++) {
+			int newx = x + MENU_BORDER_SIZE * 2 + _menus[i]._titleWidth;
 
-			if (s->gfx_state->pointer_pos.x < x)
-				return 0;
+			if (state->pointer_pos.x < x)
+				return false;
 
-			if (s->gfx_state->pointer_pos.x < newx) {
+			if (state->pointer_pos.x < newx) {
 				*menu_nr = i;
 				*item_nr = -1;
 			}
 
 			x = newx;
 		}
-		return 0;
 	} else {
-		int row = (s->gfx_state->pointer_pos.y / 10) - 1;
+		int row = (state->pointer_pos.y / 10) - 1;
 
-		if ((*menu_nr < 0) || (*menu_nr >= menubar->menus_nr))
-			return 1; // No menu
-		else
-			menu = menubar->menus + *menu_nr; // Menu is valid, assume that it's popped up
+		if ((*menu_nr < 0) || (*menu_nr >= (int)_menus.size()))
+			return true; // No menu
 
-		if (menu->items_nr <= row)
-			return 1;
+		const Menu &menu = _menus[*menu_nr]; // Menu is valid, assume that it's popped up
 
-		if ((s->gfx_state->pointer_pos.x < port->bounds.x) || (s->gfx_state->pointer_pos.x > port->bounds.x + port->bounds.width))
-			return 1;
+		if ((int)menu._items.size() <= row)
+			return true;
 
-		if (menubar_item_valid(s, *menu_nr, row))
+		if ((state->pointer_pos.x < port->bounds.x) || (state->pointer_pos.x > port->bounds.x + port->bounds.width))
+			return true;
+
+		if (itemValid(*menu_nr, row))
 			*item_nr = row; // Only modify if we'll be hitting a valid element
 
-		return 0;
 	}
+
+	return false;
 }
 
 } // End of namespace Sci

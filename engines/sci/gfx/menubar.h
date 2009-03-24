@@ -32,6 +32,8 @@
 #include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
 
+#include "common/array.h"
+
 namespace Sci {
 
 struct EngineState;
@@ -60,9 +62,6 @@ struct EngineState;
 #define MENU_BAR_HEIGHT 10
 
 
-#define MENU_TYPE_NORMAL 0
-#define MENU_TYPE_HBAR 1 /* Horizontal bar */
-
 /* Special characters used while building the menu bar */
 #define SCI_SPECIAL_CHAR_FUNCTION 'F'
 #define SCI_SPECIAL_CHAR_CTRL 3
@@ -77,130 +76,142 @@ struct EngineState;
 #define MENU_ATTRIBUTE_ENABLED 0x70
 #define MENU_ATTRIBUTE_TAG 0x71
 
-/* Those flags determine whether the corresponding menu_item_t entries are valid */
+/* Those flags determine whether the corresponding MenuItem entries are valid */
 #define MENU_ATTRIBUTE_FLAGS_KEY 0x01
 #define MENU_ATTRIBUTE_FLAGS_SAID 0x02
 
-struct menu_item_t {
-	int type; /* Normal or hbar */
-	char *keytext; /* right-centered part of the text (the key) */
-	int keytext_size; // FIXME: Essentially unused
 
-	int flags;
-	byte said[MENU_SAID_SPEC_SIZE]; /* Said spec for this item */
-	reg_t said_pos;
-	char *text;
-	reg_t text_pos;
-	int modifiers, key; /* Hotkey for this item */
-	int enabled;
-	int tag;
+enum MenuType {
+	MENU_TYPE_NORMAL = 0,
+	MENU_TYPE_HBAR = 1 /* Horizontal bar */
+};
 
+class MenuItem : public Common::Serializable {
+public:
+	MenuType _type; /* Normal or hbar */
+	Common::String _keytext; /* right-centered part of the text (the key) */
+
+	int _flags;
+	byte _said[MENU_SAID_SPEC_SIZE]; /* Said spec for this item */
+	reg_t _saidPos;
+	Common::String _text;
+	reg_t _textPos;
+	int _modifiers; /* Hotkey for this item */
+	int _key; /* Hotkey for this item */
+	int _enabled;
+	int _tag;
+
+public:
+	MenuItem();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	/**
+	 * Determines whether a message/modifiers key pair matches a menu item's key parameters.
+	 * @param message		The message to match
+	 * @param modifiers		The modifier flags to match
+	 * @return true on match, false otherwise
+	 */
+	bool matchKey(int message, int modifiers);
 };
 
 
-struct menu_t {
-	char *title;
+class Menu : public Common::Serializable {
+public:
+	Common::String _title;
 
-	int title_width; /* Width of the title in pixels */
-	int width; /* Pixel width of the menu window */
+	/** Width of the title in pixels */
+	int _titleWidth;
 
-	int items_nr; /* Window height equals to intems_nr * 10 */
-	menu_item_t *items; /* Actual entries into the menu */
+	/** Pixel width of the menu window */
+	int _width;
 
+	/**
+	 * Actual entries into the menu.
+	 * Window height equals to number of items times 10.
+	 */
+	Common::Array<MenuItem> _items;
+
+public:
+	Menu();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+//protected:
+	// FIXME: This should be (partially) turned into a MenuItem constructor
+	int addMenuItem(gfx_state_t *state, MenuType type, const char *left, const char *right,
+	                int font, int key, int modifiers, int tag, reg_t text_pos);
 };
 
 
 
-struct menubar_t {
 
-	int menus_nr;
-	menu_t *menus; /* The actual menus */
+class Menubar : public Common::Serializable {
+public:
+	/** The actual menus. */
+	Common::Array<Menu> _menus;
+
+public:
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	/**
+	 * Adds a menu to the menubar.
+	 * Parameters: (gfx_state_t *) state: The state the fonts are stored in
+	 *             (char *) title: The menu title
+	 *             (char *) entries: A string of menu entries
+	 *             (int) font: The font which is to be used for drawing
+	 *             (reg_t) entries_base: Segmented VM address of the entries string
+	 * Returns   : (void)
+	 * The menu entries use the following special characters:
+	 * '`' : Right justify the following part
+	 * ':' : End of this entry
+	 * '#' : Function key (replaced by 'F')
+	 * '^' : Control key (replaced by \002, which looks like "CTRL")
+	 * '=' : Initial tag value
+	 * and the special string "--!", which represents a horizontal bar in the menu.
+	 */
+	void addMenu(gfx_state_t *state, const char *title, const char *entries, int font, reg_t entries_base);
+
+
+	/**
+	 * Sets the (currently unidentified) foo and bar values.
+	 * Parameters: (state_t *) s: The current state
+	 *             (int) menu: The menu number to edit
+	 *             (int) item: The menu item to change
+	 *             (int) attribute: The attribute to modify
+	 *             (int) value: The value the attribute should be set to
+	 * Returns   : (int) 0 on success, 1 if either menu or item were invalid
+	 */
+	int setAttribute(EngineState *s, int menu, int item, int attribute, reg_t value);
+
+
+	/**
+	 * Sets the (currently unidentified) foo and bar values.
+	 * Parameters: (int) menu: The menu number
+	 *             (int) item: The menu item to read
+	 *             (int) attribute: The attribute to read from
+	 * Returns   : (int) The attribute value, or -1 on error
+	 */
+	reg_t getAttribute(int menu, int item, int attribute) const;
+
+
+	/**
+	 * Determines whether the specified menu entry may be activated.
+	 * @return true if the menu item may be selected, false otherwise
+	 */
+	bool itemValid(int menu, int item) const;
+
+
+	/**
+	 * Maps the pointer position to a (menu,item) tuple.
+	 * Parameters: (gfx_state_t *) state: The current state
+	 *             ((int *) x (int *)) (menu_nr, item_nr): Pointers to the current menu/item tuple
+	 *             (port_t *) port: The port of the currently active menu (if any)
+	 * @return true if the pointer is outside a valid port, false otherwise.
+	 */
+	bool mapPointer(gfx_state_t *state, int *menu_nr, int *item_nr, gfxw_port_t *port) const;
 
 };
-
-struct gfx_port;
-struct gfx_picture; /* forward declarations for graphics.h */
-
-
-/********** function definitions *********/
-
-menubar_t *menubar_new();
-/* Creates a new menubar struct
-** Parameters: (void)
-** Returns   : (menubar_t *) A pointer to the new menubar entity
-** To free the entity, call menubar_free.
-*/
-
-
-void menubar_free(menubar_t *menubar);
-/* Frees all memory associated with a menubar
-** Parameters: (menubar_t *) menubar: The menubar to free
-** Returns   : (void)
-*/
-
-
-void menubar_add_menu(gfx_state_t *state, menubar_t *menubar, char *title, char *entries, int font, reg_t entries_base);
-/* Adds a menu to the menubar.
-** Parameters: (gfx_state_t *) state: The state the fonts are stored in
-**             (menubar_t *) menubar: The menubar to operate on
-**             (char *) title: The menu title
-**             (char *) entries: A string of menu entries
-**             (int) font: The font which is to be used for drawing
-**             (reg_t) entries_base: Segmented VM address of the entries string
-** Returns   : (void)
-** The menu entries use the following special characters:
-** '`' : Right justify the following part
-** ':' : End of this entry
-** '#' : Function key (replaced by 'F')
-** '^' : Control key (replaced by \002, which looks like "CTRL")
-** '=' : Initial tag value
-** and the special string "--!", which represents a horizontal bar in the menu.
-*/
-
-
-int menubar_set_attribute(EngineState *s, int menu, int item, int attribute, reg_t value);
-/* Sets the (currently unidentified) foo and bar values.
-** Parameters: (state_t *) s: The current state
-**             (int) menu: The menu number to edit
-**             (int) item: The menu item to change
-**             (int) attribute: The attribute to modify
-**             (int) value: The value the attribute should be set to
-** Returns   : (int) 0 on success, 1 if either menu or item were invalid
-*/
-
-
-reg_t menubar_get_attribute(EngineState *s, int menu, int item, int attribute);
-/* Sets the (currently unidentified) foo and bar values.
-** Parameters: (state_t *) s: The current state
-**             (int) menu: The menu number
-**             (int) item: The menu item to read
-**             (int) attribute: The attribute to read from
-** Returns   : (int) The attribute value, or -1 on error
-*/
-
-
-int menubar_item_valid(EngineState *s, int menu, int item);
-/* Determines whether the specified menu entry may be activated
-** Parameters: (state_t *) s: The current state
-**             (int x int) (menu, item): The menu item to check
-** Returns   : (int) 1 if the menu item may be selected, 0 otherwise
-*/
-
-
-int menubar_map_pointer(EngineState *s, int *menu_nr, int *item_nr, gfxw_port_t *port);
-/* Maps the pointer position to a (menu,item) tuple.
-** Parameters: (state_t *) s: The current state
-**             ((int *) x (int *)) (menu_nr, item_nr): Pointers to the current menu/item tuple
-**             (port_t *) port: The port of the currently active menu (if any)
-** Returns   : (int) 1 if the pointer is outside a valid port, 0 otherwise.
-*/
-
-int menubar_match_key(menu_item_t *item, int message, int modifiers);
-/* Determines whether a message/modifiers key pair matches a menu item's key parameters
-** Parameters: (menu_item_t *) item: The menu item to match
-**             (int x int) message, modifiers: The input to compare
-** Returns   : (int) 1 on match, 0 otherwise
-*/
 
 } // End of namespace Sci
 

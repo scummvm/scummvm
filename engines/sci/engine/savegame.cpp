@@ -95,42 +95,67 @@ static void sync_IntMapper(Common::Serializer &s, IntMapper &obj) {
 	obj.saveLoadWithSerializer(s);
 }
 
-static void sync_menu_item_t(Common::Serializer &s, menu_item_t &obj) {
-	s.syncAsSint32LE(obj.type);
-	syncCStr(s, &obj.keytext);
-	s.syncAsSint32LE(obj.keytext_size);
 
-	s.syncAsSint32LE(obj.flags);
-	s.syncBytes(obj.said, MENU_SAID_SPEC_SIZE);
-	sync_reg_t(s, obj.said_pos);
-	syncCStr(s, &obj.text);
-	sync_reg_t(s, obj.text_pos);
-	s.syncAsSint32LE(obj.modifiers);
-	s.syncAsSint32LE(obj.key);
-	s.syncAsSint32LE(obj.enabled);
-	s.syncAsSint32LE(obj.tag);
+/**
+ * Sync a Common::Array using a Common::Serializer.
+ * When saving, this writes the length of the array, then syncs (writes) all entries.
+ * When loading, it loads the length of the array, then resizes it accordingly, before
+ * syncing all entries.
+ *
+ * TODO: Right now, this can only sync arrays containing objects which subclass Serializable.
+ * To sync arrays containing e.g. ints, we have to tell it how to sync those. There are
+ * ways to do that, I just haven't decided yet how to approach it. One way would be to use
+ * the same preprocessors tricks as in common/serializer.h. Another is to rely on template
+ * specialization (that one could be rather elegant, in fact).
+ * 
+ *
+ * Note: I didn't add this as a member method to Common::Array (and subclass that from Serializable)
+ * on purpose, as not all code using Common::Array wants to do deal with serializers...
+ *
+ * TODO: Add something like this for lists, queues....
+ */
+template<typename T>
+void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
+	uint len = arr.size();
+	s.syncAsUint32LE(len);
+
+	// Resize the array if loading.
+	if (s.isLoading())
+		arr.resize(len);
+
+	typename Common::Array<T>::iterator i;
+	for (i = arr.begin(); i != arr.end(); ++i) {
+		i->saveLoadWithSerializer(s);
+	}
 }
 
-static void sync_menu_t(Common::Serializer &s, menu_t &obj) {
-	syncCStr(s, &obj.title);
-	s.syncAsSint32LE(obj.title_width);
-	s.syncAsSint32LE(obj.width);
+void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(_type);
+	s.syncString(_keytext);
+	s.skip(4); 	// Used to be keytext_size (an already unused field)
 
-	s.syncAsSint32LE(obj.items_nr);
-
-	if (!obj.items && obj.items_nr)
-		obj.items = (menu_item_t *)sci_calloc(obj.items_nr, sizeof(menu_item_t));
-	for (int i = 0; i < obj.items_nr; ++i)
-		sync_menu_item_t(s, obj.items[i]);
+	s.syncAsSint32LE(_flags);
+	s.syncBytes(_said, MENU_SAID_SPEC_SIZE);
+	sync_reg_t(s, _saidPos);
+	s.syncString(_text);
+	sync_reg_t(s, _textPos);
+	s.syncAsSint32LE(_modifiers);
+	s.syncAsSint32LE(_key);
+	s.syncAsSint32LE(_enabled);
+	s.syncAsSint32LE(_tag);
 }
 
-static void sync_menubar_t(Common::Serializer &s, menubar_t &obj) {
-	s.syncAsSint32LE(obj.menus_nr);
+void Menu::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncString(_title);
+	s.syncAsSint32LE(_titleWidth);
+	s.syncAsSint32LE(_width);
 
-	if (!obj.menus && obj.menus_nr)
-		obj.menus = (menu_t *)sci_calloc(obj.menus_nr, sizeof(menu_t));
-	for (int i = 0; i < obj.menus_nr; ++i)
-		sync_menu_t(s, obj.menus[i]);
+	syncArray<MenuItem>(s, _items);
+}
+
+
+void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
+	syncArray<Menu>(s, _menus);
 }
 
 static void sync_SegManager(Common::Serializer &s, SegManager &obj) {
@@ -205,10 +230,10 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	if (s.isLoading()) {
 		//free(menubar);
-		menubar = (menubar_t *)sci_calloc(1, sizeof(menubar_t));
+		_menubar = new Menubar();
 	} else
-		assert(menubar);
-	sync_menubar_t(s, *menubar);
+		assert(_menubar);
+	_menubar->saveLoadWithSerializer(s);
 
 	s.syncAsSint32LE(status_bar_foreground);
 	s.syncAsSint32LE(status_bar_background);

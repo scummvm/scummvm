@@ -97,7 +97,7 @@ EngineState::EngineState() : _dirseeker(this) {
 	animation_delay = 0;
 	animation_granularity = 0;
 
-	menubar = 0;
+	_menubar = 0;
 
 	priority_first = 0;
 	priority_last = 0;

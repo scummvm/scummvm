@@ -72,7 +72,7 @@ static gfxw_list_t *finish_titlebar_list(EngineState *s, gfxw_list_t *list, gfxw
 	return list;
 }
 
-void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, char *text, int fgcolor, int bgcolor) {
+void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const char *text, int fgcolor, int bgcolor) {
 	gfx_state_t *state;
 	gfxw_list_t *list;
 	gfx_color_t bg = status_bar->bgcolor;
@@ -129,8 +129,11 @@ static void sciw_make_window_fit(rect_t *rect, gfxw_port_t *parent) {
 		rect->y -= (rect->y + rect->height) - (parent->bounds.y + parent->bounds.height) + 2;
 }
 
-gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
-	int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor, const char *title, int flags) {
+gfxw_port_t *sciw_new_window(EngineState *s,
+		rect_t area, int font,
+		gfx_color_t color, gfx_color_t bgcolor,
+		int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor,
+		const char *title, int flags) {
 	gfxw_visual_t *visual = s->visual;
 	gfx_state_t *state = s->gfx_state;
 	int shadow_offset = 2;
@@ -525,26 +528,26 @@ gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 	return list;
 }
 
-void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
+void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection) {
 	gfxw_list_t *list = make_titlebar_list(s, status_bar->bounds, status_bar);
 	int offset = MENU_LEFT_BORDER;
 	int i;
 
 	clear_titlebar(status_bar);
 
-	for (i = 0; i < menubar->menus_nr; i++) {
-		menu_t *menu = menubar->menus + i;
-		int width = menu->title_width + (MENU_BORDER_SIZE * 2);
+	for (i = 0; i < (int)menubar->_menus.size(); i++) {
+		Menu *menu = &menubar->_menus[i];
+		int width = menu->_titleWidth + (MENU_BORDER_SIZE * 2);
 
 		if (i == selection) {
 			list->add(GFXWC(list), GFXW(gfxw_new_box(status_bar->visual->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
 			                            status_bar->color, status_bar->color, GFX_BOX_SHADE_FLAT)));
 			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
-			                             status_bar->font_nr, menu->title, ALIGN_CENTER, ALIGN_CENTER,
+			                             status_bar->font_nr, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
 			                             status_bar->bgcolor, status_bar->bgcolor, status_bar->color, GFXR_FONT_FLAG_NO_NEWLINES)));
 		} else
 			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
-			                             status_bar->font_nr, menu->title, ALIGN_CENTER, ALIGN_CENTER,
+			                             status_bar->font_nr, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
 			                             status_bar->color, status_bar->color, status_bar->bgcolor, GFXR_FONT_FLAG_NO_NEWLINES)));
 		offset += width;
 	}
@@ -553,32 +556,32 @@ void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, menubar_t *menuba
 	finish_titlebar_list(s, list, status_bar);
 }
 
-gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, menubar_t *menubar, int selection) {
+gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection) {
 	gfxw_port_t *retval;
-	menu_t *menu = menubar->menus + selection;
+	Menu *menu = &menubar->_menus[selection];
 	rect_t area = gfx_rect(MENU_LEFT_BORDER, 10, 0, 0);
 	int i;
 
 	if (selection < -1)
 		return NULL;
 
-	if (selection >= menubar->menus_nr) {
-		GFXERROR("Attempt to make menu #%d of %d\n", selection, menubar->menus_nr);
+	if (selection >= (int)menubar->_menus.size()) {
+		GFXERROR("Attempt to make menu #%d of %d\n", selection, menubar->_menus.size());
 		return NULL;
 	}
 
 	for (i = 0; i < selection; i++)
-		area.x += menubar->menus[i].title_width;
+		area.x += menubar->_menus[i]._titleWidth;
 
-	area.width = menu->width - 1;
-	area.height = menu->items_nr * 10;
+	area.width = menu->_width - 1;
+	area.height = menu->_items.size() * 10;
 
 	retval = sciw_new_window(s, area, status_bar->font_nr, status_bar->color, status_bar->bgcolor,
 	                         0, status_bar->color, status_bar->bgcolor, NULL, WINDOW_FLAG_NO_DROP_SHADOW | WINDOW_FLAG_TRANSPARENT);
 
 	retval->set_visual(GFXW(retval), s->visual);
 
-	for (i = 0; i < menu->items_nr; i++)
+	for (i = 0; i < (int)menu->_items.size(); i++)
 		sciw_unselect_item(s, retval, menu, i);
 
 	return retval;
@@ -593,7 +596,7 @@ static gfx_color_t un_prioritize(gfx_color_t col) {
 	return col;
 }
 
-gfxw_widget_t *_make_menu_entry(menu_item_t *item, int offset, int width, gfxw_port_t *port, gfx_color_t color, gfx_color_t bgcolor, int ID, int gray) {
+gfxw_widget_t *_make_menu_entry(MenuItem *item, int offset, int width, gfxw_port_t *port, gfx_color_t color, gfx_color_t bgcolor, int ID, int gray) {
 	rect_t area = gfx_rect(MENU_BOX_LEFT_PADDING, 0, width - MENU_BOX_LEFT_PADDING, 10);
 	rect_t list_area = gfx_rect(port->zone.x, area.y + offset + port->zone.y, width, area.height);
 	gfxw_list_t *list = (gfxw_list_t *) gfxw_set_id(GFXW(gfxw_new_list(list_area, 0)), ID, GFXW_NO_ID);
@@ -605,12 +608,12 @@ gfxw_widget_t *_make_menu_entry(menu_item_t *item, int offset, int width, gfxw_p
 	xcolor = gray ? color : bgcolor;
 
 	list->add(GFXWC(list), GFXW(gfxw_new_box(port->visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT)));
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->visual->gfx_state, area, port->font_nr, item->text, ALIGN_LEFT, ALIGN_CENTER,
+	list->add(GFXWC(list), GFXW(gfxw_new_text(port->visual->gfx_state, area, port->font_nr, item->_text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
 	                            color, xcolor, bgcolor, GFXR_FONT_FLAG_NO_NEWLINES)));
 
-	if (item->keytext) {
+	if (!item->_keytext.empty()) {
 		area.width -= MENU_BOX_RIGHT_PADDING;
-		list->add(GFXWC(list), GFXW(gfxw_new_text(port->visual->gfx_state, area, port->font_nr, item->keytext, ALIGN_RIGHT, ALIGN_CENTER,
+		list->add(GFXWC(list), GFXW(gfxw_new_text(port->visual->gfx_state, area, port->font_nr, item->_keytext.c_str(), ALIGN_RIGHT, ALIGN_CENTER,
 		                            color, xcolor, bgcolor, GFXR_FONT_FLAG_NO_NEWLINES)));
 	}
 
@@ -632,16 +635,16 @@ gfxw_widget_t *_make_menu_hbar(int offset, int width, gfxw_port_t *port, gfx_col
 	return GFXW(list);
 }
 
-gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
-	menu_item_t *item = menu->items + selection;
-
-	if (selection < 0 || selection >= menu->items_nr)
+gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection) {
+	if (selection < 0 || selection >= (int)menu->_items.size())
 		return menu_port;
 
-	if (item->type == MENU_TYPE_NORMAL)
+	MenuItem *item = &menu->_items[selection];
+
+	if (item->_type == MENU_TYPE_NORMAL)
 		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_entry(item, selection * 10, menu_port->zone.width + 1,
 		                                      menu_port, menu_port->color, menu_port->bgcolor, selection + MAGIC_ID_OFFSET,
-		                                      item->enabled)));
+		                                      item->_enabled)));
 	else
 		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_hbar(selection * 10, menu_port->zone.width + 1,
 		                                      menu_port, menu_port->color, menu_port->bgcolor, selection + MAGIC_ID_OFFSET)));
@@ -649,16 +652,16 @@ gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, menu_t *
 	return menu_port;
 }
 
-gfxw_port_t *sciw_select_item(EngineState *s, gfxw_port_t *menu_port, menu_t *menu, int selection) {
-	menu_item_t *item = menu->items + selection;
-
-	if (selection < 0 || selection >= menu->items_nr)
+gfxw_port_t *sciw_select_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection) {
+	if (selection < 0 || selection >= (int)menu->_items.size())
 		return menu_port;
 
-	if (item->type == MENU_TYPE_NORMAL)
+	MenuItem *item = &menu->_items[selection];
+
+	if (item->_type == MENU_TYPE_NORMAL)
 		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_entry(item, selection * 10, menu_port->zone.width + 1,
 		                                      menu_port, menu_port->bgcolor, menu_port->color, selection + MAGIC_ID_OFFSET,
-		                                      item->enabled)));
+		                                      item->_enabled)));
 	else
 		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_hbar(selection * 10, menu_port->zone.width + 1,
 		                                      menu_port, menu_port->bgcolor, menu_port->color, selection + MAGIC_ID_OFFSET)));
