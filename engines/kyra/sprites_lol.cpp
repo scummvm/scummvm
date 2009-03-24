@@ -228,7 +228,7 @@ bool LoLEngine::updateMonsterAdjustBlocks(MonsterInPlay *monster) {
 		return false;
 
 	for (int i = 0; i < 18; i++)
-		_curBlockCaps[i] = &_levelBlockProperties[(monster->blockPropertyIndex + _dscBlockIndex[dir + i]) & 0x3ff];
+		_visibleBlocks[i] = &_levelBlockProperties[(monster->blockPropertyIndex + _dscBlockIndex[dir + i]) & 0x3ff];
 
 	int16 fx1 = 0;
 	int16 fx2 = 0;
@@ -523,7 +523,7 @@ bool LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
 }
 
 void LoLEngine::drawBlockObjects(int blockArrayIndex) {
-	LevelBlockProperty *l = _curBlockCaps[blockArrayIndex];
+	LevelBlockProperty *l = _visibleBlocks[blockArrayIndex];
 	uint16 s = l->assignedObjects;
 	ItemInPlay *i = findObject(s);
 
@@ -565,10 +565,10 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 				int shpIndex = _itemProperties[i->itemPropertyIndex].flags & 0x800 ? 7 : _itemProperties[i->itemPropertyIndex].shpIndex;
 				int ii = 0;
 				for (; ii < 8; ii++) {
-					if (!_flyingItems[ii].enable)
+					if (!_flyingObjects[ii].enable)
 						continue;
 
-					if (_flyingItems[ii].item == s)
+					if (_flyingObjects[ii].item == s)
 						break;
 				}
 
@@ -578,7 +578,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 				flg |= _flyingItemShapes[shpIndex].drawFlags;
 
 				if (ii != 8) {
-					switch (_currentDirection - (_flyingItems[ii].direction >> 1) + 3) {
+					switch (_currentDirection - (_flyingObjects[ii].direction >> 1) + 3) {
 						case 1:
 						case 5:
 							shpIndex = _flyingItemShapes[shpIndex].shapeFront;
@@ -764,7 +764,7 @@ void LoLEngine::reassignDrawObjects(uint16 direction, uint16 itemIndex, LevelBlo
 }
 
 void LoLEngine::redrawSceneItem() {
-	assignBlockCaps(_currentBlock, _currentDirection);
+	assignVisibleBlocks(_currentBlock, _currentDirection);
 	_screen->fillRect(112, 0, 287, 119, 0);
 
 	static const uint8 sceneClickTileIndex[] = { 13, 16};
@@ -775,7 +775,7 @@ void LoLEngine::redrawSceneItem() {
 	for (int i = 0; i < 2; i++) {
 		uint8 tile = sceneClickTileIndex[i];
 		setLevelShapesDim(tile, x1, x2, 13);
-		uint16 s = _curBlockCaps[tile]->drawObjects;
+		uint16 s = _visibleBlocks[tile]->drawObjects;
 
 		int t = (i << 7) + 1;		
 		while (s) {

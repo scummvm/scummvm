@@ -117,9 +117,9 @@ void LoLEngine::timerSub3(int timerNum) {
 
 void LoLEngine::timerProcessFlyingObjects(int timerNum) {
 	for (int i = 0; i < 8; i++) {
-		if (!_flyingItems[i].enable)
+		if (!_flyingObjects[i].enable)
 			continue;
-		updateFlyingObjects(&_flyingItems[i]);
+		updateFlyingObjects(&_flyingObjects[i]);
 	}
 }
 

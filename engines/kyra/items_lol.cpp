@@ -110,7 +110,7 @@ void LoLEngine::takeCredits(int credits, int redraw) {
 	}
 }
 
-int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
+int LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 	int cnt = 0;
 	int r = 0;
 	int i = 1;
@@ -171,11 +171,27 @@ int LoLEngine::makeItem(int itemIndex, int curFrame, int flags) {
 
 	memset(&_itemsInPlay[slot], 0, sizeof(ItemInPlay));
 
-	_itemsInPlay[slot].itemPropertyIndex = itemIndex;
+	_itemsInPlay[slot].itemPropertyIndex = itemType;
 	_itemsInPlay[slot].shpCurFrame_flg = (curFrame & 0x1fff) | flags;
 	_itemsInPlay[slot].level = -1;
 
 	return slot;
+}
+
+void LoLEngine::placeMoveLevelItem(int itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight) {
+	calcCoordinates(_itemsInPlay[itemIndex].x, _itemsInPlay[itemIndex].y, block, xOffs, yOffs);
+
+	if (_itemsInPlay[itemIndex].blockPropertyIndex)
+		removeLevelItem(itemIndex, _itemsInPlay[itemIndex].blockPropertyIndex);
+
+	if (_currentLevel == level) {
+		setItemPosition(itemIndex, _itemsInPlay[itemIndex].x, _itemsInPlay[itemIndex].y, flyingHeight, 1);
+	} else {
+		_itemsInPlay[itemIndex].level = level;
+		_itemsInPlay[itemIndex].blockPropertyIndex = block;
+		_itemsInPlay[itemIndex].flyingHeight = flyingHeight;
+		_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x4000;
+	}
 }
 
 bool LoLEngine::addItemToInventory(int itemIndex) {
@@ -265,7 +281,7 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 
 	if (itemIndex && !(_gameFlags[15] & 0x200)) {
 		mouseOffs = 10;
-		if (!_hideControls || textEnabled())
+		if (!_currentControlMode || textEnabled())
 			_txt->printMessage(0, getLangString(0x403E), getLangString(_itemProperties[_itemsInPlay[itemIndex].itemPropertyIndex].nameStringId));
 	}
 
@@ -300,7 +316,7 @@ void LoLEngine::setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, 
 	checkSceneUpdateNeed(block);
 }
 
-void LoLEngine::pickupItem(int item, int block) {
+void LoLEngine::removeLevelItem(int item, int block) {
 	removeAssignedObjectFromBlock(&_levelBlockProperties[block], item);
 	removeDrawObjectFromBlock(&_levelBlockProperties[block], item);
 	runLevelScriptCustom(block, 0x100, -1, item, 0, 0);
@@ -310,7 +326,7 @@ void LoLEngine::pickupItem(int item, int block) {
 
 bool LoLEngine::throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c) {
 	int sp = checkDrawObjectSpace(_partyPosX, _partyPosX, x, y);
-	FlyingObject *t = _flyingItems;
+	FlyingObject *t = _flyingObjects;
 	int slot = -1;
 	int i = 0;
 
@@ -331,7 +347,7 @@ bool LoLEngine::throwItem(int a, int item, int x, int y, int flyingHeight, int d
 	if (sp != -1 && slot != -1) {
 		i = slot;
 
-		t = &_flyingItems[i];
+		t = &_flyingObjects[i];
 		endObjectFlight(t, x, y, 8);
 	}
 

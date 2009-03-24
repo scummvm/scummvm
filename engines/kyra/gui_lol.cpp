@@ -74,7 +74,7 @@ void LoLEngine::gui_drawScene(int pageNum) {
 }
 
 void LoLEngine::gui_drawInventory() {
-	if (!_hideControls || !_hideInventory) {
+	if (!_currentControlMode || !_hideInventory) {
 		for (int i = 0; i < 9; i++)
 			gui_drawInventoryItem(i);
 	}
@@ -342,7 +342,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	int cp = _screen->setCurPage(6);
 
 	gui_drawBox(0, 0, 66, 34, 1, 1, -1);
-	gui_drawCharFaceShape(0, 0, 1, _screen->_curPage);
+	gui_drawCharFaceShape(charNum, 0, 1, _screen->_curPage);
 
 	gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 162, 1, 0);
 	gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 154, 1, 1);
@@ -427,11 +427,11 @@ void LoLEngine::gui_drawBox(int x, int y, int w, int h, int frameColor1, int fra
 }
 
 void LoLEngine::gui_drawCharFaceShape(int charNum, int x, int y, int pageNum) {
-	if (_characters[charNum].curFaceFrame < 7 && _characters[charNum].nextFaceFrame)
-		_characters[charNum].curFaceFrame = _characters[charNum].nextFaceFrame;
+	if (_characters[charNum].curFaceFrame < 7 && _characters[charNum].defaultFaceFrame)
+		_characters[charNum].curFaceFrame = _characters[charNum].defaultFaceFrame;
 
-	if (_characters[charNum].nextFaceFrame == 0 && _characters[charNum].curFaceFrame > 1 && _characters[charNum].curFaceFrame < 7)
-		_characters[charNum].curFaceFrame = _characters[charNum].nextFaceFrame;
+	if (_characters[charNum].defaultFaceFrame == 0 && _characters[charNum].curFaceFrame > 1 && _characters[charNum].curFaceFrame < 7)
+		_characters[charNum].curFaceFrame = _characters[charNum].defaultFaceFrame;
 
 	int frm = (_characters[charNum].flags & 0x1108 && _characters[charNum].curFaceFrame < 7) ? 1 : _characters[charNum].curFaceFrame;
 
@@ -573,7 +573,7 @@ void LoLEngine::gui_drawCompass() {
 int LoLEngine::gui_enableControls() {
 	_floatingMouseArrowControl = 0;
 
-	if (!_hideControls) {
+	if (!_currentControlMode) {
 		for (int i = 76; i < 85; i++)
 			gui_toggleButtonDisplayMode(i, 2);
 	}
@@ -583,7 +583,7 @@ int LoLEngine::gui_enableControls() {
 }
 
 int LoLEngine::gui_disableControls(int controlMode) {
-	if (_hideControls)
+	if (_currentControlMode)
 		return 0;
 
 	_floatingMouseArrowControl = (controlMode & 2) ? 2 : 1;
@@ -603,7 +603,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	if (shapeIndex == 78 && !(_gameFlags[15] & 0x1000))
 		return;
 
-	if (_hideControls && _hideInventory)
+	if (_currentControlMode && _hideInventory)
 		return;
 
 	if (mode == 0)
@@ -807,11 +807,11 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 void LoLEngine::gui_enableDefaultPlayfieldButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_buttonList1);
-	gui_initCharacterControlButtons(7, 44);
-	gui_initCharacterControlButtons(11, 44);
-	gui_initCharacterControlButtons(17, 0);
-	gui_initCharacterControlButtons(29, 0);
-	gui_initCharacterControlButtons(25, 33);
+	gui_setFaceFramesControlButtons(7, 44);
+	gui_setFaceFramesControlButtons(11, 44);
+	gui_setFaceFramesControlButtons(17, 0);
+	gui_setFaceFramesControlButtons(29, 0);
+	gui_setFaceFramesControlButtons(25, 33);
 
 	if (_gameFlags[15] & 0x2000)
 		gui_initMagicScrollButtons();
@@ -834,11 +834,19 @@ void LoLEngine::gui_enableSequenceButtons(int x, int y, int w, int h, int enable
 		gui_initButtonsFromList(_buttonList5);
 }
 
+void LoLEngine::gui_specialSceneRestoreButtons() {
+	if (!_spsWindowW && !_spsWindowH)
+		return;
+
+	gui_enableDefaultPlayfieldButtons();
+	_spsWindowX = _spsWindowY = _spsWindowW = _spsWindowH = _seqTrigger = 0;
+}
+
 void LoLEngine::gui_enableCharInventoryButtons(int charNum) {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_buttonList2);
 	gui_initCharInventorySpecialButtons(charNum);
-	gui_initCharacterControlButtons(21, 0);
+	gui_setFaceFramesControlButtons(21, 0);
 }
 
 void LoLEngine::gui_resetButtonList() {
@@ -857,7 +865,7 @@ void LoLEngine::gui_initButtonsFromList(const int16 *list) {
 		gui_initButton(*list++);
 }
 
-void LoLEngine::gui_initCharacterControlButtons(int index, int xOffs) {
+void LoLEngine::gui_setFaceFramesControlButtons(int index, int xOffs) {
 	int c = countActiveCharacters();
 	for (int i = 0; i < c; i++)
 		gui_initButton(index + i, _activeCharsXpos[i] + xOffs);
@@ -1061,7 +1069,7 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 		// TODO
 		///
 		/*if (processSpellcast(c, _availableSpells[_selectedSpell], spellLevel)) {
-			initCharacterUnkSub(c, 1, 8, 1);
+			setFaceFramesUnkArrays(c, 1, 8, 1);
 			sub_718F(c, 2, spellLevel * spellLevel);
 		} else {*/
 			_characters[c].flags &= 0xfffb;
@@ -1252,7 +1260,7 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 	int found = checkSceneForItems(&_levelBlockProperties[block].drawObjects, p & 0x7f);
 
 	if (found != -1) {
-		pickupItem(found, block);
+		removeLevelItem(found, block);
 		setHandItem(found);
 	}
 
@@ -1348,7 +1356,7 @@ int LoLEngine::clickedWall(Button *button) {
 			break;
 
 		case 2:
-			res = clicked2(block, dir);
+			res = clickedLever(block, dir);
 			break;
 
 		case 3:

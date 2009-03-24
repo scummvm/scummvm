@@ -51,7 +51,7 @@ void LoLEngine::loadLevel(int index) {
 	_emc->unload(&_scriptData);
 
 	resetItems(1);
-	resetLvlBuffer();
+	disableMonsters();
 	resetBlockProperties();
 
 	releaseMonsterShapes(0);
@@ -63,7 +63,7 @@ void LoLEngine::loadLevel(int index) {
 	_currentLevel = index;
 	_updateFlags = 0;
 
-	restoreDefaultGui();
+	setDefaultButtonState();
 
 	loadTalkFile(index);
 
@@ -335,9 +335,9 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 		for (int ii = 0; ii < 10; ii++)
 			l->scaleFlag[ii] = s->readByte();
 		for (int ii = 0; ii < 10; ii++)
-			l->shapeX[ii] = s->readUint16LE();
+			l->shapeX[ii] = s->readSint16LE();
 		for (int ii = 0; ii < 10; ii++)
-			l->shapeY[ii] = s->readUint16LE();
+			l->shapeY[ii] = s->readSint16LE();
 		l->next = s->readByte();
 		l->flags = s->readByte();
 	}
@@ -402,7 +402,19 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memset(_screen->_currentPalette + 384, 0xff, 384);
 	memcpy(_screen->_currentPalette + 384, tmpPal, 384);*/
 
-	//loadSwampIceCol();
+	if (_currentLevel == 11) {
+		uint8 *swampPal = _res->fileData("SWAMPICE.COL", 0);
+		memcpy(_screen->getPalette(2), swampPal, 384);
+		memcpy(_screen->getPalette(2) + 0x180, _screen->_currentPalette, 384);
+		delete[] swampPal;
+
+		if (_unkIceSHpFlag & 4) {
+			uint8 *pal0 = _screen->_currentPalette;
+			uint8 *pal2 = _screen->getPalette(2);
+			for (int i = 1; i < 768; i++)
+				SWAP(pal0[i], pal2[i]);
+		}		
+	}
 
 	memcpy(_vcnBlocks, v, vcnLen);
 	v += vcnLen;
@@ -469,14 +481,15 @@ void LoLEngine::resetItems(int flag) {
 		ItemInPlay *it = &_itemsInPlay[id];
 		it->level = _currentLevel;
 		it->blockPropertyIndex = i;
-		r->nextAssignedObject = 0;
+		if (r)
+			r->nextAssignedObject = 0;
 	}
 
 	if (flag)
-		memset(_flyingItems, 0, 8 * sizeof(FlyingObject));
+		memset(_flyingObjects, 0, 8 * sizeof(FlyingObject));
 }
 
-void LoLEngine::resetLvlBuffer() {
+void LoLEngine::disableMonsters() {
 	memset(_monsters, 0, 30 * sizeof(MonsterInPlay));
 	for (int i = 0; i < 30; i++)
 		_monsters[i].mode = 0x10;
@@ -726,7 +739,7 @@ int LoLEngine::clickedWallShape(uint16 block, uint16 direction) {
 	return 1;
 }
 
-int LoLEngine::clicked2(uint16 block, uint16 direction) {
+int LoLEngine::clickedLever(uint16 block, uint16 direction) {
 	return 1;
 }
 
@@ -853,6 +866,22 @@ void LoLEngine::openCloseDoor(uint16 block, int openClose) {
 		
 		_levelBlockProperties[block].walls[c] = _levelBlockProperties[block].walls[c ^ 2] = v;
 		checkSceneUpdateNeed(block);
+	}
+}
+
+void LoLEngine::resetDoors() {
+	for (int i = 0; i < 3; i++) {
+		if (!_openDoorState[i].block)
+			continue;
+
+		uint16 b = _openDoorState[i].block;
+		
+		do {
+			_levelBlockProperties[b].walls[_openDoorState[i].wall] += _openDoorState[i].state;
+			_levelBlockProperties[b].walls[_openDoorState[i].wall ^ 2] += _openDoorState[i].state;
+		} while	(!(_wllWallFlags[_levelBlockProperties[b].walls[_openDoorState[i].wall]] & 0x30));
+
+		_openDoorState[i].block = 0;
 	}
 }
 
@@ -1152,8 +1181,8 @@ void LoLEngine::drawScene(int pageNum) {
 		updateSceneWindow();
 	}
 
-	generateBlockDrawingBuffer(_currentBlock, _currentDirection);
-	drawVcnBlocks(_vcnBlocks, _blockDrawingBuffer, _vcnShift, _sceneDrawPage1);
+	generateBlockDrawingBuffer();
+	drawVcnBlocks();
 	drawSceneShapes();
 
 	if (!pageNum) {
@@ -1192,7 +1221,108 @@ void LoLEngine::updateSceneWindow() {
 	_screen->showMouse();
 }
 
-void LoLEngine::setSequenceGui(int x, int y, int w, int h, int enableFlags) {
+void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendGui, int allowSceneUpdate, int controlMode, int fadeFlag) {
+	resetPortraitsAndDisableSysTimer();
+	if (fieldType) {
+		if (suspendGui)
+			gui_specialSceneSuspendControls(1);
+
+		if (!allowSceneUpdate)
+			_sceneDefaultUpdate = 0;
+
+		if (hasDialogue)
+			initDialogueSequence(fieldType, 0);
+
+		if (fadeFlag) {
+			_screen->fadePalette(_screen->getPalette(3), 10);
+			_screen->_fadeFlag = 0;
+		}
+		
+		setSpecialSceneButtons(0, 0, 320, 130, controlMode);
+
+	} else {
+		if (suspendGui)
+			gui_specialSceneSuspendControls(0);
+
+		if (!allowSceneUpdate)
+			_sceneDefaultUpdate = 0;
+
+		gui_disableControls(controlMode);
+
+		if (fadeFlag) {
+			memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
+			_screen->loadSpecialColours(_screen->getPalette(3));
+			_screen->fadePalette(_screen->getPalette(3), 10);
+			_screen->_fadeFlag = 0;
+		}
+
+		if (hasDialogue)
+			initDialogueSequence(fieldType, 0);
+
+		setSpecialSceneButtons(112, 0, 176, 120, controlMode);
+	}
+}
+
+int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int releaseTimScripts, int sceneUpdateMode) {
+	if (!_hideInventory)
+		return 0;
+
+	_hideInventory = 0;
+	enableSysTimer(2);
+
+	if (_dialogueField)
+		restoreAfterDialogueSequence(_currentControlMode);
+
+	if (_specialSceneFlag)
+		gui_specialSceneRestoreControls(_currentControlMode);
+
+	int l = _currentControlMode;
+	_currentControlMode = 0;
+
+	gui_specialSceneRestoreButtons();
+	calcCharPortraitXpos();
+
+	_currentControlMode = l;
+
+	if (releaseTimScripts) {
+		for (int i = 0; i < TIM::kWSASlots; i++)
+			_tim->freeAnimStruct(i);
+		
+		for (int i = 0; i < 10; i++)
+			_tim->unload(_activeTim[i]);
+	}
+
+	gui_enableControls();
+
+	if (fadeFlag) {
+		if ((_screen->_fadeFlag != 1 && _screen->_fadeFlag != 2) || (_screen->_fadeFlag == 1 && _currentControlMode)) {
+			if (_currentControlMode)
+				_screen->fadeToBlack(10);
+			else
+				_screen->fadeClearSceneWindow(10);
+		} 
+		
+		_currentControlMode = 0;
+		calcCharPortraitXpos();
+
+		if (redrawPlayField)
+			gui_drawPlayField();
+
+		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+
+	} else {
+		_currentControlMode = 0;
+		calcCharPortraitXpos();
+
+		if (redrawPlayField)			
+			gui_drawPlayField();
+	}
+
+	_sceneDefaultUpdate = sceneUpdateMode;
+	return 1;
+}
+
+void LoLEngine::setSequenceButtons(int x, int y, int w, int h, int enableFlags) {
 	gui_enableSequenceButtons(x, y, w, h, enableFlags);
 	_seqWindowX1 = x;
 	_seqWindowY1 = y;
@@ -1204,7 +1334,15 @@ void LoLEngine::setSequenceGui(int x, int y, int w, int h, int enableFlags) {
 	_lampStatusSuspended = true;
 }
 
-void LoLEngine::restoreDefaultGui() {
+void LoLEngine::setSpecialSceneButtons(int x, int y, int w, int h, int enableFlags) {
+	gui_enableSequenceButtons(x, y, w, h, enableFlags);
+	_spsWindowX = x;
+	_spsWindowY = y;
+	_spsWindowW = w;
+	_spsWindowH = h;
+}
+
+void LoLEngine::setDefaultButtonState() {
 	gui_enableDefaultPlayfieldButtons();
 	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 	if (_lampStatusSuspended)
@@ -1212,140 +1350,157 @@ void LoLEngine::restoreDefaultGui() {
 	_lampStatusSuspended = false;
 }
 
-void LoLEngine::generateBlockDrawingBuffer(int block, int direction) {
-	_sceneDrawVar1 = _dscBlockMap[_currentDirection];
-	_sceneDrawVar2 = _dscBlockMap[_currentDirection + 4];
-	_sceneDrawVar3 = _dscBlockMap[_currentDirection + 8];
+void LoLEngine::generateBlockDrawingBuffer() {
+	_sceneDrawVarDown = _dscBlockMap[_currentDirection];
+	_sceneDrawVarRight = _dscBlockMap[_currentDirection + 4];
+	_sceneDrawVarLeft = _dscBlockMap[_currentDirection + 8];
+
+	/*******************************************
+    *             _visibleBlocks map           *
+	*                                          *
+	*     |     |     |     |     |     |      *
+	*  00 |  01 |  02 |  03 |  04 |  05 |  06  *
+	* ____|_____|_____|_____|_____|_____|_____ *
+	*     |     |     |     |     |     |      *
+	*     |  07 |  08 |  09 |  10 |  11 |      *
+	*     |_____|_____|_____|_____|_____|      *
+	*           |     |     |     |            *
+	*           |  12 |  13 |  14 |            *
+	*           |_____|_____|_____|            *
+	*                 |     |                  *
+	*              15 |  16 |  17              *
+	*                 | (P) |                  *
+	********************************************/
 
 	memset(_blockDrawingBuffer, 0, 660 * sizeof(uint16));
 
-	_wllProcessFlag = ((block >> 5) + (block & 0x1f) + _currentDirection) & 1;
+	_wllProcessFlag = ((_currentBlock >> 5) + (_currentBlock & 0x1f) + _currentDirection) & 1;
 
 	if (_wllProcessFlag) // floor and ceiling
-		generateBlockDrawingBufferF1(0, 15, 1, -330, 22, 15);
+		generateVmpTileDataFlipped(0, 15, 1, -330, 22, 15);
 	else
-		generateBlockDrawingBufferF0(0, 15, 1, -330, 22, 15);
+		generateVmpTileData(0, 15, 1, -330, 22, 15);
 
-	assignBlockCaps(block, direction);
+	assignVisibleBlocks(_currentBlock, _currentDirection);
 
-	uint8 t = _curBlockCaps[0]->walls[_sceneDrawVar2];
+	uint8 t = _visibleBlocks[0]->walls[_sceneDrawVarRight];
 	if (t)
-		generateBlockDrawingBufferF0(-2, 3, t, 102, 3, 5);
+		generateVmpTileData(-2, 3, t, 102, 3, 5);
 
-	t = _curBlockCaps[6]->walls[_sceneDrawVar3];
+	t = _visibleBlocks[6]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateBlockDrawingBufferF1(21, 3, t, 102, 3, 5);
+		generateVmpTileDataFlipped(21, 3, t, 102, 3, 5);
 
-	t = _curBlockCaps[1]->walls[_sceneDrawVar2];
-	uint8 t2 = _curBlockCaps[2]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[1]->walls[_sceneDrawVarRight];
+	uint8 t2 = _visibleBlocks[2]->walls[_sceneDrawVarDown];
 
 	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateBlockDrawingBufferF0(2, 3, t, 102, 3, 5);
+		generateVmpTileData(2, 3, t, 102, 3, 5);
 	else if (t && (_wllWallFlags[t2] & 8))
-		generateBlockDrawingBufferF0(2, 3, t2, 102, 3, 5);
+		generateVmpTileData(2, 3, t2, 102, 3, 5);
 
-	t = _curBlockCaps[5]->walls[_sceneDrawVar3];
-	t2 = _curBlockCaps[4]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[5]->walls[_sceneDrawVarLeft];
+	t2 = _visibleBlocks[4]->walls[_sceneDrawVarDown];
 
 	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateBlockDrawingBufferF1(17, 3, t, 102, 3, 5);
+		generateVmpTileDataFlipped(17, 3, t, 102, 3, 5);
 	else if (t && (_wllWallFlags[t2] & 8))
-		generateBlockDrawingBufferF1(17, 3, t2, 102, 3, 5);
+		generateVmpTileDataFlipped(17, 3, t2, 102, 3, 5);
 
-	t = _curBlockCaps[2]->walls[_sceneDrawVar2];
+	t = _visibleBlocks[2]->walls[_sceneDrawVarRight];
 	if (t)
-		generateBlockDrawingBufferF0(8, 3, t, 97, 1, 5);
+		generateVmpTileData(8, 3, t, 97, 1, 5);
 
-	t = _curBlockCaps[4]->walls[_sceneDrawVar3];
+	t = _visibleBlocks[4]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateBlockDrawingBufferF1(13, 3, t, 97, 1, 5);
+		generateVmpTileDataFlipped(13, 3, t, 97, 1, 5);
 
-	t = _curBlockCaps[1]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[1]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(-4, 3, t, 129, 6, 5);
+		generateVmpTileData(-4, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[5]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[5]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(20, 3, t, 129, 6, 5);
+		generateVmpTileData(20, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[2]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[2]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(2, 3, t, 129, 6, 5);
+		generateVmpTileData(2, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[4]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[4]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(14, 3, t, 129, 6, 5);
+		generateVmpTileData(14, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[3]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[3]->walls[_sceneDrawVarDown];
 	if (t)
-		generateBlockDrawingBufferF0(8, 3, t, 129, 6, 5);
+		generateVmpTileData(8, 3, t, 129, 6, 5);
 
-	t = _curBlockCaps[7]->walls[_sceneDrawVar2];
+	t = _visibleBlocks[7]->walls[_sceneDrawVarRight];
 	if (t)
-		generateBlockDrawingBufferF0(0, 3, t, 117, 2, 6);
+		generateVmpTileData(0, 3, t, 117, 2, 6);
 
-	t = _curBlockCaps[11]->walls[_sceneDrawVar3];
+	t = _visibleBlocks[11]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateBlockDrawingBufferF1(20, 3, t, 117, 2, 6);
+		generateVmpTileDataFlipped(20, 3, t, 117, 2, 6);
 
-	t = _curBlockCaps[8]->walls[_sceneDrawVar2];
+	t = _visibleBlocks[8]->walls[_sceneDrawVarRight];
 	if (t)
-		generateBlockDrawingBufferF0(6, 2, t, 81, 2, 8);
+		generateVmpTileData(6, 2, t, 81, 2, 8);
 
-	t = _curBlockCaps[10]->walls[_sceneDrawVar3];
+	t = _visibleBlocks[10]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateBlockDrawingBufferF1(14, 2, t, 81, 2, 8);
+		generateVmpTileDataFlipped(14, 2, t, 81, 2, 8);
 
-	t = _curBlockCaps[8]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[8]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(-4, 2, t, 159, 10, 8);
+		generateVmpTileData(-4, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[10]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[10]->walls[_sceneDrawVarDown];
 	if (hasWall(t))
-		generateBlockDrawingBufferF0(16, 2, t, 159, 10, 8);
+		generateVmpTileData(16, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[9]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[9]->walls[_sceneDrawVarDown];
 	if (t)
-		generateBlockDrawingBufferF0(6, 2, t, 159, 10, 8);
+		generateVmpTileData(6, 2, t, 159, 10, 8);
 
-	t = _curBlockCaps[12]->walls[_sceneDrawVar2];
+	t = _visibleBlocks[12]->walls[_sceneDrawVarRight];
 	if (t)
-		generateBlockDrawingBufferF0(3, 1, t, 45, 3, 12);
+		generateVmpTileData(3, 1, t, 45, 3, 12);
 
-	t = _curBlockCaps[14]->walls[_sceneDrawVar3];
+	t = _visibleBlocks[14]->walls[_sceneDrawVarLeft];
 	if (t)
-		generateBlockDrawingBufferF1(16, 1, t, 45, 3, 12);
+		generateVmpTileDataFlipped(16, 1, t, 45, 3, 12);
 
-	t = _curBlockCaps[12]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[12]->walls[_sceneDrawVarDown];
 	if (!(_wllWallFlags[t] & 8))
-		generateBlockDrawingBufferF0(-13, 1, t, 239, 16, 12);
+		generateVmpTileData(-13, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[14]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[14]->walls[_sceneDrawVarDown];
 	if (!(_wllWallFlags[t] & 8))
-		generateBlockDrawingBufferF0(19, 1, t, 239, 16, 12);
+		generateVmpTileData(19, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[13]->walls[_sceneDrawVar1];
+	t = _visibleBlocks[13]->walls[_sceneDrawVarDown];
 	if (t)
-		generateBlockDrawingBufferF0(3, 1, t, 239, 16, 12);
+		generateVmpTileData(3, 1, t, 239, 16, 12);
 
-	t = _curBlockCaps[15]->walls[_sceneDrawVar2];
-	t2 = _curBlockCaps[17]->walls[_sceneDrawVar3];
-	if (t)	// wall to the immediate left
-		generateBlockDrawingBufferF0(0, 0, t, 0, 3, 15);
-	if (t2) // wall to the immediate right
-		generateBlockDrawingBufferF1(19, 0, t2, 0, 3, 15);
+	t = _visibleBlocks[15]->walls[_sceneDrawVarRight];
+	t2 = _visibleBlocks[17]->walls[_sceneDrawVarLeft];
+	if (t)
+		generateVmpTileData(0, 0, t, 0, 3, 15);
+	if (t2)
+		generateVmpTileDataFlipped(19, 0, t2, 0, 3, 15);
 }
 
-void LoLEngine::generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries) {
-	if (!_wllVmpMap[wllVmpIndex])
+void LoLEngine::generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 vmpMapIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY) {
+	if (!_wllVmpMap[vmpMapIndex])
 		return;
 
-	uint16 *vmp = &_vmpPtr[(_wllVmpMap[wllVmpIndex] - 1) * 431 + vmpOffset + 330];
+	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330];
 
-	for (int i = 0; i < numEntries; i++) {
-		uint16 *bl = &_blockDrawingBuffer[(wllIndex + i) * 22 + wllOffset];
-		for (int ii = 0; ii < len; ii++) {
-			if ((wllOffset + ii >= 0) && (wllOffset + ii < 22) && *vmp)
+	for (int i = 0; i < numBlocksY; i++) {
+		uint16 *bl = &_blockDrawingBuffer[(startBlockY + i) * 22 + startBlockX];
+		for (int ii = 0; ii < numBlocksX; ii++) {
+			if ((startBlockX + ii >= 0) && (startBlockX + ii < 22) && *vmp)
 				*bl = *vmp;
 			bl++;
 			vmp++;
@@ -1353,18 +1508,18 @@ void LoLEngine::generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, ui
 	}
 }
 
-void LoLEngine::generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries) {
-	if (!_wllVmpMap[wllVmpIndex])
+void LoLEngine::generateVmpTileDataFlipped(int16 startBlockX, uint8 startBlockY, uint8 vmpMapIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY) {
+	if (!_wllVmpMap[vmpMapIndex])
 		return;
 
-	uint16 *vmp = &_vmpPtr[(_wllVmpMap[wllVmpIndex] - 1) * 431 + vmpOffset + 330];
+	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330];
 
-	for (int i = 0; i < numEntries; i++) {
-		for (int ii = 0; ii < len; ii++) {
-			if ((wllOffset + ii) < 0 || (wllOffset + ii) > 21)
+	for (int i = 0; i < numBlocksY; i++) {
+		for (int ii = 0; ii < numBlocksX; ii++) {
+			if ((startBlockX + ii) < 0 || (startBlockX + ii) > 21)
 				continue;
 
-			uint16 v = vmp[i * len + (len - 1 - ii)];
+			uint16 v = vmp[i * numBlocksX + (numBlocksX - 1 - ii)];
 			if (!v)
 				continue;
 
@@ -1373,7 +1528,7 @@ void LoLEngine::generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, ui
 			else
 				v |= 0x4000;
 
-			_blockDrawingBuffer[(wllIndex + i) * 22 + wllOffset + ii] = v;
+			_blockDrawingBuffer[(startBlockY + i) * 22 + startBlockX + ii] = v;
 		}
 	}
 }
@@ -1384,48 +1539,51 @@ bool LoLEngine::hasWall(int index) {
 	return true;
 }
 
-void LoLEngine::assignBlockCaps(int block, int direction) {
+void LoLEngine::assignVisibleBlocks(int block, int direction) {
 	for (int i = 0; i < 18; i++) {
 		uint16 t = (block + _dscBlockIndex[direction * 18 + i]) & 0x3ff;
-		_currentBlockPropertyIndex[i] = t;
+		_visibleBlockIndex[i] = t;
 
-		_curBlockCaps[i] = &_levelBlockProperties[t];
+		_visibleBlocks[i] = &_levelBlockProperties[t];
 		_lvlShapeLeftRight[i] = _lvlShapeLeftRight[18 + i] = -1;
 	}
 }
 
-void LoLEngine::drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint8 *vcnShift, int pageNum) {
+void LoLEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
+	uint16 *bdb = _blockDrawingBuffer;
 
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
-			bool flag = false;
+			bool horizontalFlip = false;
 			int remainder = 0;
 
-			uint16 vcnOffset = *blockDrawingBuffer++;
+			uint16 vcnOffset = *bdb++;
 
 			if (vcnOffset & 0x8000) {
+				// this renders a wall block over the transparent pixels of a floor/ceiling block 
 				remainder = vcnOffset - 0x8000;
 				vcnOffset = 0;
 			}
 
 			if (vcnOffset & 0x4000) {
-				flag = true;
+				horizontalFlip = true;
 				vcnOffset &= 0x3fff;
 			}
 
 			if (!vcnOffset) {
-				vcnOffset = blockDrawingBuffer[329];
+				// floor/ceiling blocks
+				vcnOffset = bdb[329];
 				if (vcnOffset & 0x4000) {
-					flag = true;
+					horizontalFlip = true;
 					vcnOffset &= 0x3fff;
 				}
 			}
 
-			uint8 shift = vcnShift[vcnOffset];
-			uint8 *src = &vcnBlocks[vcnOffset << 5];
+			uint8 shift = _vcnShift[vcnOffset];
+			uint8 *src = &_vcnBlocks[vcnOffset << 5];
 
-			if (flag) {
+			if (horizontalFlip) {
 				for (int blockY = 0; blockY < 8; blockY++) {
 					src += 3;
 					for (int blockX = 0; blockX < 4; blockX++) {
@@ -1450,17 +1608,17 @@ void LoLEngine::drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint
 
 			if (remainder) {
 				d -= 8;
-				flag = false;
+				horizontalFlip = false;
 
 				if (remainder & 0x4000) {
 					remainder &= 0x3fff;
-					flag = true;
+					horizontalFlip = true;
 				}
 
-				shift = vcnShift[remainder];
-				src = &vcnBlocks[remainder << 5];
+				shift = _vcnShift[remainder];
+				src = &_vcnBlocks[remainder << 5];
 
-				if (flag) {
+				if (horizontalFlip) {
 					for (int blockY = 0; blockY < 8; blockY++) {
 						src += 3;
 						for (int blockX = 0; blockX < 4; blockX++) {
@@ -1499,13 +1657,13 @@ void LoLEngine::drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint
 		d += 1232;
 	}
 
-	_screen->copyBlockToPage(pageNum, 112, 0, 176, 120, _sceneWindowBuffer);
+	_screen->copyBlockToPage(_sceneDrawPage1, 112, 0, 176, 120, _sceneWindowBuffer);
 }
 
 void LoLEngine::drawSceneShapes() {
 	for (int i = 0; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
-		uint8 s = _curBlockCaps[t]->walls[_sceneDrawVar1];
+		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];
 
 		int16 x1 = 0;
 		int16 x2 = 0;
@@ -1527,7 +1685,7 @@ void LoLEngine::drawSceneShapes() {
 
 		drawBlockEffects(t, 0);
 
-		if (_curBlockCaps[t]->assignedObjects && (w & 0x80))
+		if (_visibleBlocks[t]->assignedObjects && (w & 0x80))
 			drawBlockObjects(t);
 
 		drawBlockEffects(t, 1);
@@ -1554,7 +1712,7 @@ void LoLEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) {
 		int m = index * 18;
 
 		for (int i = 0; i < 18; i++) {
-			uint8 d = _curBlockCaps[i]->walls[_sceneDrawVar1];
+			uint8 d = _visibleBlocks[i]->walls[_sceneDrawVarDown];
 			uint8 a = _wllWallFlags[d];
 
 			if (a & 8) {
@@ -1650,7 +1808,7 @@ void LoLEngine::drawDecorations(int index) {
 			continue;
 
 		uint8 d = (_currentDirection + _dscUnk1[s]) & 3;
-		int8 l = _wllShapeMap[_curBlockCaps[index]->walls[d]];
+		int8 l = _wllShapeMap[_visibleBlocks[index]->walls[d]];
 
 		uint8 *shapeData = 0;
 
@@ -1716,7 +1874,7 @@ void LoLEngine::drawDecorations(int index) {
 
 void LoLEngine::drawBlockEffects(int index, int type) {
 	static const int16 yOffs[] = { 0xff, 0xff, 0x80, 0x80 };
-	uint8 flg = _curBlockCaps[index]->flags;
+	uint8 flg = _visibleBlocks[index]->flags;
 	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
 	if (!(flg & 0xf0))
 		return;
@@ -1734,8 +1892,8 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 		
 		calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 
-		x |= ((_currentBlockPropertyIndex[index] & 0x1f) << 8);
-		y |= ((_currentBlockPropertyIndex[index] & 0xffe0) << 3);
+		x |= ((_visibleBlockIndex[index] & 0x1f) << 8);
+		y |= ((_visibleBlockIndex[index] & 0xffe0) << 3);
 
 		drawItemOrMonster(_effectShapes[type], ovl, x, y, 0, (type == 1) ? -20 : 0, drawFlag, -1, false);
 	}

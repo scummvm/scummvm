@@ -936,10 +936,12 @@ void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
 	anim->curFrame = p->firstFrame;
 	anim->cyclesCompleted = 0;
 
-	anim->wsa->setX(anim->x);
-	anim->wsa->setY(anim->y);
-	anim->wsa->setDrawPage(0);
-	anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
+	if (anim->wsa) {
+		anim->wsa->setX(anim->x);
+		anim->wsa->setY(anim->y);
+		anim->wsa->setDrawPage(0);
+		anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
+	}
 }
 
 void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
@@ -1128,7 +1130,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 
 	_vm->updatePortraits();
 
-	if (!_vm->textEnabled() && _vm->_hideControls) {
+	if (!_vm->textEnabled() && _vm->_currentControlMode) {
 		_screen->setScreenDim(5);
 		const ScreenDim *d = _screen->getScreenDim(5);
 		_screen->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->unkA);

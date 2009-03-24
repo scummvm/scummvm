@@ -986,7 +986,7 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->raceClassSex = file->readByte();
 		t->id = file->readSint16LE();
 		t->curFaceFrame = file->readByte();
-		t->nextFaceFrame = file->readByte();
+		t->defaultFaceFrame = file->readByte();
 		t->field_12 = file->readByte();
 		file->readUint32LE();
 		for (int ii = 0; ii < 8; ii++)

@@ -607,7 +607,7 @@ void TextDisplayer_LoL::textPageBreak() {
 	int y = 0;
 
 	if (_vm->_hideInventory && (_vm->_updateFlags & 2)) {
-		if (_vm->_hideControls || !(_vm->_updateFlags & 2)) {
+		if (_vm->_currentControlMode || !(_vm->_updateFlags & 2)) {
 			y = dim->sy + dim->h - 5;
 		} else {
 			x += 6;

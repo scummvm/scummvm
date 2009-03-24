@@ -49,7 +49,7 @@ struct LoLCharacter {
 	uint8 raceClassSex;
 	int16 id;
 	uint8 curFaceFrame;
-	uint8 nextFaceFrame;
+	uint8 defaultFaceFrame;
 	uint8 field_12;
 	const uint16 *defaultModifiers;
 	uint16 itemsMight[8];
@@ -180,8 +180,8 @@ struct ItemProperty {
 struct LevelShapeProperty {
 	uint16 shapeIndex[10];
 	uint8 scaleFlag[10];
-	uint16 shapeX[10];
-	uint16 shapeY[10];
+	int16 shapeX[10];
+	int16 shapeY[10];
 	int8 next;
 	uint8 flags;
 };
@@ -420,6 +420,8 @@ private:
 	void gui_toggleButtonDisplayMode(int shapeIndex, int mode);
 	void gui_toggleFightButtons(bool disable);
 	void gui_prepareForSequence(int x, int y, int w, int h, int buttonFlags);
+	void gui_specialSceneSuspendControls(int controlMode);
+	void gui_specialSceneRestoreControls(int restoreLamp);
 
 	bool _weaponsDisabled;
 	int _lastButtonShape;
@@ -437,11 +439,12 @@ private:
 	void gui_triggerEvent(int eventType);
 	void gui_enableDefaultPlayfieldButtons();
 	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
+	void gui_specialSceneRestoreButtons();
 	void gui_enableCharInventoryButtons(int charNum);
 
 	void gui_resetButtonList();
 	void gui_initButtonsFromList(const int16 *list);
-	void gui_initCharacterControlButtons(int index, int xOffs);
+	void gui_setFaceFramesControlButtons(int index, int xOffs);
 	void gui_initCharInventorySpecialButtons(int charNum);
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
@@ -524,7 +527,7 @@ private:
 	uint16 _currentDirection;
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
-	int16 _currentBlockPropertyIndex[18];
+	int16 _visibleBlockIndex[18];
 	uint16 _gameFlags[16];
 	uint16 _globalScriptVars[16];
 
@@ -542,6 +545,7 @@ private:
 	int olol_allocItemPropertiesBuffer(EMCState *script);
 	int olol_setItemProperty(EMCState *script);
 	int olol_makeItem(EMCState *script);
+	int olol_createLevelItem(EMCState *script);
 	int olol_getItemPara(EMCState *script);
 	int olol_getCharacterStat(EMCState *script);
 	int olol_setCharacterStat(EMCState *script);
@@ -553,10 +557,13 @@ private:
 	int olol_freeAnimStruct(EMCState *script);
 	int olol_getDirection(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
+	int olol_setSequenceButtons(EMCState *script);
+	int olol_setDefaultButtonState(EMCState *script);
 	int olol_checkRectForMousePointer(EMCState *script);
 	int olol_clearDialogueField(EMCState *script);
 	int olol_setupBackgroundAnimationPart(EMCState *script);
 	int olol_startBackgroundAnimation(EMCState *script);
+	int olol_fadeToBlack(EMCState *script);	
 	int olol_fadePalette(EMCState *script);
 	int olol_loadBitmap(EMCState *script);
 	int olol_stopBackgroundAnimation(EMCState *script);
@@ -572,6 +579,8 @@ private:
 	int olol_initMonster(EMCState *script);
 	int olol_fadeClearSceneWindow(EMCState *script);
 	int olol_fadeSequencePalette(EMCState *script);
+	int olol_redrawPlayfield(EMCState *script);
+	int olol_loadNewLevel(EMCState *script);
 	int olol_dummy0(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
 	int olol_battleHitSkillTest(EMCState *script);
@@ -581,11 +590,12 @@ private:
 	int olol_checkMoney(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
 	int olol_createHandItem(EMCState *script);
+	int olol_characterJoinsParty(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
-	int olol_initAnimatedDialogue(EMCState *script);
-	int olol_restoreAfterAnimatedDialogue(EMCState *script);
+	int olol_initSceneWindowDialogue(EMCState *script);
+	int olol_restoreAfterSceneWindowDialogue(EMCState *script);
 	int olol_getItemInHand(EMCState *script);
 	int olol_giveItemToMonster(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
@@ -593,6 +603,7 @@ private:
 	int olol_processDialogue(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
 	int olol_getWallFlags(EMCState *script);
+	int olol_changeMonsterSettings(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_update(EMCState *script);
 	int olol_drawExitButton(EMCState *script);
@@ -604,17 +615,25 @@ private:
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
+	int olol_dummy1(EMCState *script);
+	int olol_suspendMonster(EMCState *script);	
 	int olol_setDoorState(EMCState *script);
 	int olol_processButtonClick(EMCState *script);
 	int olol_savePage5(EMCState *script);
 	int olol_restorePage5(EMCState *script);
-	int olol_initNonAnimatedDialogue(EMCState *script);
-	int olol_restoreAfterNonAnimatedDialogue(EMCState *script);
+	int olol_initDialogueSequence(EMCState *script);
+	int olol_restoreAfterDialogueSequence(EMCState *script);
+	int olol_setSpecialSceneButtons(EMCState *script);
+	int olol_prepareSpecialScene(EMCState *script);
+	int olol_restoreAfterSpecialScene(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
-	int olol_resetPortraitsArea(EMCState *script);
+	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
+	int olol_disableControls(EMCState *script);
+	int olol_enableControls(EMCState *script);	
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
+	int olol_getLanguage(EMCState *script);
 
 	// tim scripts
 	TIM *_activeTim[10];
@@ -629,8 +648,8 @@ private:
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
 
-	int tlol_initAnimatedDialogue(const TIM *tim, const uint16 *param);
-	int tlol_restoreAfterAnimatedDialogue(const TIM *tim, const uint16 *param);
+	int tlol_initSceneWindowDialogue(const TIM *tim, const uint16 *param);
+	int tlol_restoreAfterSceneWindowDialogue(const TIM *tim, const uint16 *param);
 	int tlol_giveItem(const TIM *tim, const uint16 *param);
 	int tlol_setPartyPosition(const TIM *tim, const uint16 *param);
 	int tlol_fadeClearWindow(const TIM *tim, const uint16 *param);
@@ -663,11 +682,11 @@ private:
 
 	// graphics
 	void setupScreenDims();
-	void initAnimatedDialogue(int controlMode);
-	void restoreAfterAnimatedDialogue(int redraw);
-	void initNonAnimatedDialogue(int controlMode, int pageNum);
-	void restoreAfterNonAnimatedDialogue(int controlMode);
-	void resetPortraitsArea();
+	void initSceneWindowDialogue(int controlMode);
+	void restoreAfterSceneWindowDialogue(int redraw);
+	void initDialogueSequence(int controlMode, int pageNum);
+	void restoreAfterDialogueSequence(int controlMode);
+	void resetPortraitsAndDisableSysTimer();
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
 	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
@@ -699,8 +718,8 @@ private:
 
 	// characters
 	bool addCharacter(int id);
-	void initCharacter(int charNum, int firstFaceFrame, int unk2, int redraw);
-	void initCharacterUnkSub(int charNum, int unk1, int unk2, int unk3);
+	void setFaceFrames(int charNum, int defaultFrame, int unk2, int redraw);
+	void setFaceFramesUnkArrays(int charNum, int unk1, int unk2, int unk3);
 	int countActiveCharacters();
 	void loadCharFaceShapes(int charNum, int id);
 	void calcCharPortraitXpos();
@@ -774,20 +793,20 @@ private:
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
 	void resetItems(int flag);
-	void resetLvlBuffer();
+	void disableMonsters();
 	void resetBlockProperties();
 	bool testWallFlag(int block, int direction, int flag);
 	bool testWallInvisibility(int block, int direction);
 
 	void drawScene(int pageNum);
 
-	void generateBlockDrawingBuffer(int block, int direction);
-	void generateBlockDrawingBufferF0(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
-	void generateBlockDrawingBufferF1(int16 wllOffset, uint8 wllIndex, uint8 wllVmpIndex, int16 vmpOffset, uint8 len, uint8 numEntries);
+	void generateBlockDrawingBuffer();
+	void generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
+	void generateVmpTileDataFlipped(int16 startBlockX, uint8 startBlockY, uint8 wllVmpIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY);
 	bool hasWall(int index);
-	void assignBlockCaps(int block, int direction);
+	void assignVisibleBlocks(int block, int direction);
 
-	void drawVcnBlocks(uint8 *vcnBlocks, uint16 *blockDrawingBuffer, uint8 *vcnShift, int pageNum);
+	void drawVcnBlocks();
 	void drawSceneShapes();
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);
 	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
@@ -798,8 +817,12 @@ private:
 	void setWallType(int block, int wall, int val);
 	void updateSceneWindow();
 
-	void setSequenceGui(int x, int y, int w, int h, int enableFlags);
-	void restoreDefaultGui();
+	void prepareSpecialScene(int fieldType, int hasDialogue, int suspendGui, int allowSceneUpdate, int controlMode, int fadeFlag);
+	int restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int releaseTimScripts, int sceneUpdateMode);
+
+	void setSequenceButtons(int x, int y, int w, int h, int enableFlags);
+	void setSpecialSceneButtons(int x, int y, int w, int h, int enableFlags);
+	void setDefaultButtonState();
 
 	void updateCompass();
 
@@ -814,7 +837,7 @@ private:
 	void calcCoordinatesAddDirectionOffset(int16 &x, int16 &y, int direction);
 
 	int clickedWallShape(uint16 block, uint16 direction);
-	int clicked2(uint16 block, uint16 direction);
+	int clickedLever(uint16 block, uint16 direction);
 	int clicked3(uint16 block, uint16 direction);
 	int clickedWallOnlyScript(uint16 block);
 	int clickedDoorSwitch(uint16 block, uint16 direction);
@@ -823,6 +846,7 @@ private:
 	bool clickedShape(int shapeIndex);
 	void processDoorSwitch(uint16 block, int unk);
 	void openCloseDoor(uint16 block, int openClose);
+	void resetDoors();
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -874,9 +898,9 @@ private:
 	int _lastSpecialColor;
 	int _lastSpecialColorWeight;
 
-	int _sceneDrawVar1;
-	int _sceneDrawVar2;
-	int _sceneDrawVar3;
+	int _sceneDrawVarDown;
+	int _sceneDrawVarRight;
+	int _sceneDrawVarLeft;
 	int _wllProcessFlag;
 
 	uint8 *_trueLightTable2;
@@ -895,7 +919,7 @@ private:
 	int16 *_lvlShapeLeftRight;
 
 	LevelBlockProperty *_levelBlockProperties;
-	LevelBlockProperty *_curBlockCaps[18];
+	LevelBlockProperty *_visibleBlocks[18];
 
 	uint16 _partyPosX;
 	uint16 _partyPosY;
@@ -913,6 +937,7 @@ private:
 
 	int _lastMouseRegion;
 	int _seqWindowX1, _seqWindowY1,	_seqWindowX2, _seqWindowY2, _seqTrigger;
+	int _spsWindowX, _spsWindowY,	_spsWindowW, _spsWindowH;
 	
 	uint8 *_tempBuffer5120;
 	
@@ -970,7 +995,8 @@ private:
 	// items
 	void giveCredits(int credits, int redraw);
 	void takeCredits(int credits, int redraw);
-	int makeItem(int itemIndex, int curFrame, int flags);
+	int makeItem(int itemType, int curFrame, int flags);
+	void placeMoveLevelItem(int itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight);
 	bool addItemToInventory(int itemIndex);
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
@@ -979,7 +1005,7 @@ private:
 	void setHandItem(uint16 itemIndex);
 
 	void setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b);
-	void pickupItem(int item, int block);
+	void removeLevelItem(int item, int block);
 	bool throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c);
 	void endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock);
 	void processObjectFlight(FlyingObject *t, int x, int y);
@@ -1000,10 +1026,11 @@ private:
 	int _itemInHand;
 	uint16 _inventory[48];
 	int _inventoryCurItem;
-	int _hideControls;
+	int _currentControlMode;
+	int _specialSceneFlag;
 	int _lastCharInventory;
 
-	FlyingObject *_flyingItems;
+	FlyingObject *_flyingObjects;
 
 	EMCData _itemScript;
 
@@ -1121,6 +1148,7 @@ private:
 	const SpellProperty *_spellProperties;
 	int _spellPropertiesSize;
 	int _subMenuIndex;
+	uint16 _unkIceSHpFlag;
 
 	// unneeded
 	void setWalkspeed(uint8) {}

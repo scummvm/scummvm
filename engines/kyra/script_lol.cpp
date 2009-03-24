@@ -98,7 +98,7 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 		return true;
 
 	for (int i = 0; i < 15; i++) {
-		if (_currentBlockPropertyIndex[i] == func) {
+		if (_visibleBlockIndex[i] == func) {
 			_sceneUpdateRequired = true;
 			return true;
 		}
@@ -210,6 +210,15 @@ int LoLEngine::olol_setItemProperty(EMCState *script) {
 int LoLEngine::olol_makeItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_makeItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	return makeItem(stackPos(0), stackPos(1), stackPos(2));
+}
+
+int LoLEngine::olol_createLevelItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));
+	if (item == -1)
+		return item;
+	placeMoveLevelItem(item, stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	return item;
 }
 
 int LoLEngine::olol_getItemPara(EMCState *script) {
@@ -458,6 +467,18 @@ int LoLEngine::olol_setMusicTrack(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_setSequenceButtons(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setSequenceButtons(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	setSequenceButtons(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	return 1;
+}
+
+int LoLEngine::olol_setDefaultButtonState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDefaultButtonState(%p)", (const void *)script);
+	setDefaultButtonState();
+	return 1;
+}
+
 int LoLEngine::olol_checkRectForMousePointer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkRectForMousePointer(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return posWithinRect(_mouseX, _mouseY, stackPos(0), stackPos(1), stackPos(2), stackPos(3)) ? 1 : 0;
@@ -465,7 +486,7 @@ int LoLEngine::olol_checkRectForMousePointer(EMCState *script) {
 
 int LoLEngine::olol_clearDialogueField(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%d)", (const void *)script, stackPos(0));
-	if (_hideControls && (!textEnabled()))
+	if (_currentControlMode && (!textEnabled()))
 		return 1;
 
 	_screen->setScreenDim(5);
@@ -486,6 +507,12 @@ int LoLEngine::olol_setupBackgroundAnimationPart(EMCState *script) {
 int LoLEngine::olol_startBackgroundAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_startBackgroundAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	_tim->startBackgroundAnimation(stackPos(0), stackPos(1));
+	return 1;
+}
+
+int LoLEngine::olol_fadeToBlack(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeToBlack(%p) (%d)", (const void *)script, stackPos(0));
+	_screen->fadeToBlack(10);
 	return 1;
 }
 
@@ -602,7 +629,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 	case 8:
 		_updateFlags = b;
 		if (b == 1) {
-			if (!textEnabled() || (!(_hideControls & 2)))
+			if (!textEnabled() || (!(_currentControlMode & 2)))
 				timerUpdatePortraitAnimations(1);
 			disableSysTimer(2);
 		} else {
@@ -732,6 +759,45 @@ int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	_screen->loadSpecialColours(_screen->getPalette(3));
 	_screen->fadePalette(_screen->getPalette(3), 10);
 	_screen->_fadeFlag = 0;
+	return 1;
+}
+
+int LoLEngine::olol_redrawPlayfield(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_redrawPlayfield(%p)", (const void *)script);
+	if (_screen->_fadeFlag != 2)
+		_screen->fadeClearSceneWindow(10);
+	gui_drawPlayField();
+	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+	_screen->_fadeFlag = 0;
+	return 1;
+}
+
+int LoLEngine::olol_loadNewLevel(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadNewLevel(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	_screen->fadeClearSceneWindow(10);
+	_screen->fillRect(112, 0, 288, 120, 0);
+	disableSysTimer(2);
+	
+	for (int i = 0; i < 8; i++) {
+		if (!_flyingObjects[i].enable || _flyingObjects[i].a)
+			continue;
+		endObjectFlight(&_flyingObjects[i], _flyingObjects[i].x, _flyingObjects[i].y, 1);
+	}
+
+	resetDoors();
+
+	///////////////////////
+	// TODO: generate temp files
+
+	_currentBlock = stackPos(1);
+	_currentDirection = stackPos(2);
+	calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
+
+	loadLevel(stackPos(0));
+
+	enableSysTimer(2);
+
+	script->ip = 0;
 	return 1;
 }
 
@@ -865,6 +931,41 @@ int LoLEngine::olol_createHandItem(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_characterJoinsParty(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterJoinsParty(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+
+	int16 id = stackPos(0);
+	if (id < 0)
+		id = -id;
+
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1) || _characters[i].id != id)
+			continue;
+
+		_characters[i].flags &= 0xfffe;
+		calcCharPortraitXpos();
+		
+		if (!_updateFlags) {
+			gui_enableDefaultPlayfieldButtons();
+			gui_drawPlayField();
+		}
+
+		if (_selectedCharacter == i)
+			_selectedCharacter = 0;
+
+		return 1;
+	}
+
+	addCharacter(id);
+
+	if (!_updateFlags) {
+		gui_enableDefaultPlayfieldButtons();
+		gui_drawPlayField();
+	}
+
+	return 1;
+}
+
 int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
 	if (_activeTim[stackPos(0)])
@@ -886,15 +987,15 @@ int LoLEngine::olol_releaseTimScript(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_initAnimatedDialogue(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
-	initAnimatedDialogue(stackPos(0));
+int LoLEngine::olol_initSceneWindowDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initSceneWindowDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	initSceneWindowDialogue(stackPos(0));
 	return 1;
 }
 
-int LoLEngine::olol_restoreAfterAnimatedDialogue(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
-	restoreAfterAnimatedDialogue(stackPos(0));
+int LoLEngine::olol_restoreAfterSceneWindowDialogue(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterSceneWindowDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	restoreAfterSceneWindowDialogue(stackPos(0));
 	return 1;
 }
 
@@ -942,6 +1043,48 @@ int LoLEngine::olol_getWallFlags(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getWallFlags(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return _wllWallFlags[_levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3]];
 }
+
+int LoLEngine::olol_changeMonsterSettings(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeMonsterSettings(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (stackPos(0) == -1)
+		return 1;
+
+	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+
+	int16 d = stackPos(2);
+	uint16 x = 0;
+	uint16 y = 0;
+
+	switch (stackPos(1)) {
+		case 0:
+			setMonsterMode(m, d);
+			break;
+
+		case 1:
+			m->might = d;
+			break;
+
+		case 2:
+			calcCoordinates(x, y, d, m->x & 0xff, m->y & 0xff);
+			if (!walkMonsterCheckDest(x, y, m, 7))
+				placeMonster(m, x, y);
+			break;
+
+		case 3:
+			setMonsterDirection(m, d << 1);
+			break;
+
+		case 6:
+			m->flags |= d;
+			break;
+
+		default:
+			break;
+	}
+
+	return 1;
+}
+
 
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
@@ -1047,6 +1190,19 @@ int LoLEngine::olol_setNextFunc(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_dummy1(EMCState *script) {
+	return 1;
+}
+
+int LoLEngine::olol_suspendMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_suspendMonster(%p) (%d)", (const void *)script, stackPos(0));
+	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	setMonsterMode(m, 14);
+	checkSceneUpdateNeed(m->blockPropertyIndex);
+	placeMonster(m, 0, 0);
+	return 1;
+}
+
 int LoLEngine::olol_setDoorState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d)", (const void *)script, stackPos(0));
 	_emcDoorState = stackPos(0);
@@ -1071,16 +1227,33 @@ int LoLEngine::olol_restorePage5(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_initNonAnimatedDialogue(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initNonAnimatedDialogue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	initNonAnimatedDialogue(stackPos(0), stackPos(1));
+int LoLEngine::olol_initDialogueSequence(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initDialogueSequence(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	initDialogueSequence(stackPos(0), stackPos(1));
 	return 1;
 }
 
-int LoLEngine::olol_restoreAfterNonAnimatedDialogue(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterNonAnimatedDialogue(%p) (%d)", (const void *)script, stackPos(0));
-	restoreAfterNonAnimatedDialogue(stackPos(0));
+int LoLEngine::olol_restoreAfterDialogueSequence(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterDialogueSequence(%p) (%d)", (const void *)script, stackPos(0));
+	restoreAfterDialogueSequence(stackPos(0));
 	return 1;
+}
+
+int LoLEngine::olol_setSpecialSceneButtons(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setSpecialSceneButtons(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	setSpecialSceneButtons(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	return 1;
+}
+
+int LoLEngine::olol_prepareSpecialScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_prepareSpecialScene(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	prepareSpecialScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	return 1;
+}
+
+int LoLEngine::olol_restoreAfterSpecialScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreAfterSpecialScene(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	return restoreAfterSpecialScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 }
 
 int LoLEngine::olol_assignCustomSfx(EMCState *script) {
@@ -1100,15 +1273,27 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::olol_resetPortraitsArea(EMCState *script) {
-	resetPortraitsArea();
+int LoLEngine::olol_resetPortraitsAndDisableSysTimer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_resetPortraitsAndDisableSysTimer(%p)", (const void *)script);
+	resetPortraitsAndDisableSysTimer();
 	return 1;
 }
 
 int LoLEngine::olol_enableSysTimer(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_enableSysTimer(%p)", (const void *)script);
 	_hideInventory = 0;
 	enableSysTimer(2);
 	return 1;
+}
+
+int LoLEngine::olol_disableControls(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_disableControls(%p) (%d)", (const void *)script, stackPos(0));
+	return gui_disableControls(stackPos(0));
+}
+
+int LoLEngine::olol_enableControls(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_enableControls(%p)", (const void *)script);
+	return gui_enableControls();
 }
 
 int LoLEngine::olol_queueSpeech(EMCState *script) {
@@ -1138,6 +1323,11 @@ int LoLEngine::olol_getItemPrice(EMCState *script) {
 	}
 
 	return 0;
+}
+
+int LoLEngine::olol_getLanguage(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getLanguage(%p)", (const void *)script);
+	return _lang;
 }
 
 #pragma mark -
@@ -1199,15 +1389,15 @@ int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
-int LoLEngine::tlol_initAnimatedDialogue(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initAnimatedDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	initAnimatedDialogue(param[0]);
+int LoLEngine::tlol_initSceneWindowDialogue(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initSceneWindowDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	initSceneWindowDialogue(param[0]);
 	return 1;
 }
 
-int LoLEngine::tlol_restoreAfterAnimatedDialogue(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreAfterAnimatedDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	restoreAfterAnimatedDialogue(param[0]);
+int LoLEngine::tlol_restoreAfterSceneWindowDialogue(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreAfterSceneWindowDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	restoreAfterSceneWindowDialogue(param[0]);
 	return 1;
 }
 
@@ -1388,7 +1578,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x10
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_createLevelItem);
 	Opcode(olol_getItemPara);
 	Opcode(olol_getCharacterStat);
 
@@ -1408,19 +1598,19 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_getDirection);
 	OpcodeUnImpl();
 	Opcode(olol_setMusicTrack);
-	OpcodeUnImpl();
+	Opcode(olol_setSequenceButtons);
 
 	// 0x20
-	OpcodeUnImpl();
+	Opcode(olol_setDefaultButtonState);
 	Opcode(olol_checkRectForMousePointer);
 	Opcode(olol_clearDialogueField);
 	Opcode(olol_setupBackgroundAnimationPart);
 
 	// 0x24
 	Opcode(olol_startBackgroundAnimation);
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(o1_hideMouse);
+	Opcode(o1_showMouse);
+	Opcode(olol_fadeToBlack);
 
 	// 0x28
 	Opcode(olol_fadePalette);
@@ -1450,10 +1640,10 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_initMonster);
 	Opcode(olol_fadeClearSceneWindow);
 	Opcode(olol_fadeSequencePalette);
-	OpcodeUnImpl();
+	Opcode(olol_redrawPlayfield);
 
 	// 0x3C
-	OpcodeUnImpl();
+	Opcode(olol_loadNewLevel);
 	OpcodeUnImpl();
 	Opcode(olol_dummy0);
 	Opcode(olol_loadMonsterProperties);
@@ -1474,7 +1664,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setScriptTimer);
 	Opcode(olol_createHandItem);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_characterJoinsParty);
 
 	// 0x4C
 	OpcodeUnImpl();
@@ -1484,8 +1674,8 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x50
 	Opcode(olol_releaseTimScript);
-	Opcode(olol_initAnimatedDialogue);
-	Opcode(olol_restoreAfterAnimatedDialogue);
+	Opcode(olol_initSceneWindowDialogue);
+	Opcode(olol_restoreAfterSceneWindowDialogue);
 	Opcode(olol_getItemInHand);
 
 	// 0x54
@@ -1498,7 +1688,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_processDialogue);
 	Opcode(olol_stopTimScript);
 	Opcode(olol_getWallFlags);
-	OpcodeUnImpl();
+	Opcode(olol_changeMonsterSettings);
 
 	// 0x5C
 	OpcodeUnImpl();
@@ -1550,9 +1740,9 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x7C
 	Opcode(olol_setNextFunc);
+	Opcode(olol_dummy1);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_suspendMonster);
 
 	// 0x80
 	OpcodeUnImpl();
@@ -1573,16 +1763,16 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_restorePage5);
 
 	// 0x8C
-	Opcode(olol_initNonAnimatedDialogue);
-	Opcode(olol_restoreAfterNonAnimatedDialogue);
-	OpcodeUnImpl();
+	Opcode(olol_initDialogueSequence);
+	Opcode(olol_restoreAfterDialogueSequence);
+	Opcode(olol_setSpecialSceneButtons);
 	OpcodeUnImpl();
 
 	// 0x90
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_prepareSpecialScene);
+	Opcode(olol_restoreAfterSpecialScene);
 
 	// 0x94
 	Opcode(olol_assignCustomSfx);
@@ -1593,7 +1783,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x98
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	Opcode(olol_resetPortraitsArea);
+	Opcode(olol_resetPortraitsAndDisableSysTimer);
 	Opcode(olol_enableSysTimer);
 
 	// 0x9C
@@ -1629,11 +1819,11 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xB0
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_dummy1); // anim buffer select?
+	Opcode(olol_disableControls);
 
 	// 0xB4
-	OpcodeUnImpl();
+	Opcode(olol_enableControls);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1647,7 +1837,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xBC
 	Opcode(olol_queueSpeech);
 	Opcode(olol_getItemPrice);
-	OpcodeUnImpl();
+	Opcode(olol_getLanguage);
 	OpcodeUnImpl();
 
 	Common::Array<const TIMOpcode*> *timTable = 0;
@@ -1668,8 +1858,8 @@ void LoLEngine::setupOpcodeTable() {
 	SetTimOpcodeTable(_timIngameOpcodes);
 
 	// 0x00
-	OpcodeTim(tlol_initAnimatedDialogue);
-	OpcodeTim(tlol_restoreAfterAnimatedDialogue);
+	OpcodeTim(tlol_initSceneWindowDialogue);
+	OpcodeTim(tlol_restoreAfterSceneWindowDialogue);
 	OpcodeTimUnImpl();
 	OpcodeTim(tlol_giveItem);
 
