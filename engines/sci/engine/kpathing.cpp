@@ -1192,6 +1192,17 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	Polygon *poly = new Polygon(KP_UINT(GET_SEL32(polygon, type)));
 	int is_reg_t = polygon_is_reg_t(list, size);
 
+	// WORKAROUND: broken polygon in LSL1VGA, room 350, after opening elevator
+	// Polygon has 17 points but size is set to 19
+	if ((strcmp(s->game_name, "LSL1") == 0)) {
+		// FIXME: implement function to get current room number
+		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 350)
+		&& (size == 19) && (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
+			debug(1, "Applying fix for broken polygon in LSL1, room 350");
+			size = 17;
+		}
+	}
+
 	for (i = 0; i < size; i++) {
 		Vertex *vertex = new Vertex(read_point(list, is_reg_t, i));
 		poly->vertices.insertHead(vertex);
