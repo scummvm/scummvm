@@ -74,16 +74,7 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(narratorIdx);
 	s.syncAsSint16LE(aniX);
 	s.syncAsSint16LE(aniY);
-
-	if (s.isSaving()) {
-		uint16 v = animationStart ? 1 : 0;
-		s.syncAsUint16LE(v);
-	} else {
-		uint16 v;
-		s.syncAsUint16LE(v);
-		animationStart = v != 0;
-	}
-
+	s.syncAsUint16LE(animationStart);
 	s.syncAsSint16LE(masterScreen);
 	s.syncAsSint16LE(switchPal);
 	s.syncAsSint16LE(scroll);
@@ -134,6 +125,7 @@ static void syncSoundList(Common::Serializer &s) {
 
 static void syncFilesDatabase(Common::Serializer &s) {
 	uint8 dummyVal = 0;
+	uint32 tmp;
 
 	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		dataFileEntry &fe = filesDatabase[i];
@@ -144,13 +136,10 @@ static void syncFilesDatabase(Common::Serializer &s) {
 		s.syncAsUint16LE(fe.height);
 	
 		// TODO: Have a look at the saving/loading of this pointer
+		tmp = (fe.subData.ptr) ? 1 : 0;
+		s.syncAsUint32LE(tmp);
 		if (s.isLoading()) {
-			uint32 v;
-			s.syncAsUint32LE(v);
-			fe.subData.ptr = (uint8 *)v;
-		} else {
-			uint32 v = (fe.subData.ptr) ? 1 : 0;
-			s.syncAsUint32LE(v);
+			fe.subData.ptr = (uint8 *)tmp;
 		}
 
 		s.syncAsSint16LE(fe.subData.index);
@@ -160,13 +149,10 @@ static void syncFilesDatabase(Common::Serializer &s) {
 		s.syncAsSint16LE(fe.subData.transparency);
 
 		// TODO: Have a look at the saving/loading of this pointer
+		tmp = (fe.subData.ptrMask) ? 1 : 0;
+		s.syncAsUint32LE(tmp);
 		if (s.isLoading()) {
-			uint32 v;
-			s.syncAsUint32LE(v);
-			fe.subData.ptrMask = (uint8 *)v;
-		} else {
-			uint32 v = (fe.subData.ptrMask) ? 1 : 0;
-			s.syncAsUint32LE(v);
+			fe.subData.ptrMask = (uint8 *)tmp;
 		}
 
 		s.syncAsUint16LE(fe.subData.resourceType);
@@ -428,14 +414,10 @@ static void syncIncrust(Common::Serializer &s) {
 		s.syncAsSint16LE(t->scriptOverlayIdx);
 		s.syncAsUint32LE(dummyLong);
 
-		if (s.isSaving()) {
-			int v = t->saveWidth / 2;
-			s.syncAsSint16LE(v);
-		} else {
-			int v;
-			s.syncAsSint16LE(v);
-			t->saveWidth = v / 2;
-		}
+		int tmp = t->saveWidth / 2;
+		s.syncAsSint16LE(tmp);
+		t->saveWidth = tmp * 2;
+
 		s.syncAsSint16LE(t->saveHeight);
 		s.syncAsSint16LE(t->saveSize);
 		s.syncAsSint16LE(t->savedX);
