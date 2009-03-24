@@ -74,6 +74,8 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 		int pal_count;
 		int p, c;
 
+		_entries[i].cycle = 0;
+
 		color_count = readS.readUint16();
 		pal_count = readS.readUint16();
 
