@@ -36,12 +36,12 @@ MODULE_OBJS = \
 	engine/vm.o \
 	gfx/font.o \
 	gfx/gfx_driver.o \
+	gfx/gfx_gui.o \
 	gfx/gfx_res_options.o \
 	gfx/gfx_resmgr.o \
 	gfx/gfx_resource.o \
 	gfx/gfx_support.o \
 	gfx/gfx_tools.o \
-	gfx/gfx_widgets.o \
 	gfx/menubar.o \
 	gfx/operations.o \
 	gfx/palette.o \

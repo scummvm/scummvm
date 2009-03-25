@@ -56,9 +56,6 @@ struct gfxw_widget_t;
 /* Our strategy for dirty rectangle management */
 #define GFXW_DIRTY_STRATEGY GFXOP_DIRTY_FRAMES_CLUSTERS
 
-/* Properly belongs in sci_widgets.h, but we need it here */
-#define WINDOW_FLAG_AUTO_RESTORE 0x2000000
-
 /* Indicates that a Chrono-Port should not be created even if it doesn't exist. */
 #define GFXW_CHRONO_NO_CREATE 1
 

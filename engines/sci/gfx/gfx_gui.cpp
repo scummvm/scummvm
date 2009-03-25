@@ -27,7 +27,7 @@
 #include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/menubar.h"
-#include "sci/gfx/sci_widgets.h"
+#include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/font.h"
 

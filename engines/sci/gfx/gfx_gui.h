@@ -36,12 +36,14 @@ class Menu;
 
 // The following flags are applicable to windows in SCI0
 enum windowFlags {
-	kWindowTransparent  = 0x01,          // 0001
-	kWindowNoFrame      = 0x02,          // 0010 - a window without a frame
+	kWindowTransparent  = 0x01,          // 0000 0001
+	kWindowNoFrame      = 0x02,          // 0000 0010 - a window without a frame
 	// Add title bar to window (10 pixels high, framed, text is centered and written in white on dark gray)
-	kWindowTitle        = 0x04,          // 0100
+	kWindowTitle        = 0x04,          // 0000 0100
+	// bits 3-6 are unused
 	kWindowDontDraw     = 0x80,          // 1000 0000 - don't draw anything
-	kWindowNoDropShadow = 0x1000000      // 0001 0000 0000 0000 0000 0000 0000
+	kWindowNoDropShadow = 0x1000000,     // 0001 0000 0000 0000 0000 0000 0000 (not in SCI)
+	kWindowAutoRestore  = 0x2000000
 };
 
 enum controlStateFlags {

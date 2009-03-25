@@ -24,6 +24,7 @@
  */
 
 #include "sci/sci_memory.h"
+#include "sci/gfx/gfx_gui.h"		// for kWindowAutoRestore
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"
 
@@ -1822,7 +1823,7 @@ gfxw_port_t *gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect
 }
 
 void gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *window, rect_t auto_rect) {
-	window->port_flags |= WINDOW_FLAG_AUTO_RESTORE;
+	window->port_flags |= kWindowAutoRestore;
 	window->restore_snap = gfxw_make_snapshot(visual, auto_rect);
 }
 
@@ -1837,7 +1838,7 @@ gfxw_port_t *gfxw_remove_port(gfxw_visual_t *visual, gfxw_port_t *port) {
 	}
 
 	parent = (gfxw_port_t *)port->parent;
-	if (port->port_flags & WINDOW_FLAG_AUTO_RESTORE)
+	if (port->port_flags & kWindowAutoRestore)
 		gfxw_restore_snapshot(visual, port->restore_snap);
 
 	if (port->widfree(GFXW(port)))
