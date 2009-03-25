@@ -41,7 +41,7 @@ enum windowFlags {
 	// Add title bar to window (10 pixels high, framed, text is centered and written in white on dark gray)
 	kWindowTitle        = 0x04,          // 0100
 	kWindowDontDraw     = 0x80,          // 1000 0000 - don't draw anything
-	kWindowNoDropShadow = 0x1000000,     // 0001 0000 0000 0000 0000 0000 0000
+	kWindowNoDropShadow = 0x1000000      // 0001 0000 0000 0000 0000 0000 0000
 };
 
 enum controlStateFlags {
