@@ -42,10 +42,10 @@ MODULE_OBJS = \
 	gfx/gfx_resource.o \
 	gfx/gfx_support.o \
 	gfx/gfx_tools.o \
+	gfx/gfx_widgets.o \
 	gfx/menubar.o \
 	gfx/operations.o \
 	gfx/palette.o \
-	gfx/sci_widgets.o \
 	gfx/res_cursor.o \
 	gfx/res_font.o \
 	gfx/res_pal.o \
