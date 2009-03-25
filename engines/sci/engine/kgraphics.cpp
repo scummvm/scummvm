@@ -458,7 +458,7 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 
 	newport = sciw_new_window(s, port->zone, port->font_nr, port->color, newbgcolor,
 	                          s->titlebar_port->font_nr, s->ega_colors[15], s->ega_colors[8],
-	                          port->title_text, port->port_flags & ~WINDOW_FLAG_TRANSPARENT);
+	                          port->title_text, port->port_flags & ~kWindowTransparent);
 
 	if (s->dyn_views) {
 		int found = 0;
@@ -1302,7 +1302,7 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	// explains what this does.
 	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
 			s->version < SCI_VERSION(1, 001, 000) && !strcmp(text, " Delete ")) {
-		PUT_SEL32V(obj, state, (state | CONTROL_STATE_GRAY) & ~CONTROL_STATE_ENABLED);
+		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
 
@@ -1510,7 +1510,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_CONTROL_TEXT: {
 			int state = GET_SEL32V(obj, state);
-			PUT_SEL32V(obj, state, state | CONTROL_STATE_DITHER_FRAMED);
+			PUT_SEL32V(obj, state, state | kControlStateDitherFramed);
 			_k_draw_control(s, obj, 0);
 			PUT_SEL32V(obj, state, state);
 		}
@@ -1552,7 +1552,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	case K_CONTROL_BUTTON:
 		SCIkdebug(SCIkGRAPHICS, "drawing button "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_button_control(s->port, obj, area, text, font_nr,
-		                          (int8)(state & CONTROL_STATE_FRAMED), (int8)inverse, (int8)(state & CONTROL_STATE_GRAY)));
+		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
 
 	case K_CONTROL_TEXT:
@@ -1561,7 +1561,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		SCIkdebug(SCIkGRAPHICS, "drawing text "PREG" to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
-									(int8)(!!(state & CONTROL_STATE_DITHER_FRAMED)), (int8)inverse));
+									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
 	case K_CONTROL_EDIT:
@@ -1585,7 +1585,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
 		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
-		                          (int8)(state & CONTROL_STATE_FRAMED), (int8)inverse));
+		                          (int8)(state & kControlStateFramed), (int8)inverse));
 		break;
 
 	case K_CONTROL_CONTROL:

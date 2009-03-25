@@ -34,33 +34,22 @@ namespace Sci {
 
 class Menu;
 
-/* The following flags are applicable to windows in SCI0: */
-#define WINDOW_FLAG_TRANSPARENT 0x01
+// The following flags are applicable to windows in SCI0
+enum windowFlags {
+	kWindowTransparent  = 0x01,          // 0001
+	kWindowNoFrame      = 0x02,          // 0010 - a window without a frame
+	// Add title bar to window (10 pixels high, framed, text is centered and written in white on dark gray)
+	kWindowTitle        = 0x04,          // 0100
+	kWindowDontDraw     = 0x80,          // 1000 0000 - don't draw anything
+	kWindowNoDropShadow = 0x1000000,     // 0001 0000 0000 0000 0000 0000 0000
+};
 
-
-#define WINDOW_FLAG_NOFRAME 0x02
-/* No frame is drawn around the window onto wm_view */
-
-#define WINDOW_FLAG_TITLE 0x04
-/* Add titlebar to window (10 pixels high, framed, text is centered and written
-** in white on dark gray
-*/
-
-#define WINDOW_FLAG_DONTDRAW 0x80
-/* Don't draw anything */
-
-#define WINDOW_FLAG_NO_DROP_SHADOW 0x1000000
-
-
-/* Used in kgraphics to flag text surrounded by a dithered frame */
-#define CONTROL_STATE_DITHER_FRAMED 0x1000
-
-/* Used by the interpreter to flag buttons that are grayed out */
-#define CONTROL_STATE_GRAY 0x0004
-/* Used by the interpreter to flag some widgets to determine whether they should be surrounded by a frame */
-#define CONTROL_STATE_FRAMED 0x0008
-/* Used by the interpreter to flag buttons that are enabled */
-#define CONTROL_STATE_ENABLED 0x0001
+enum controlStateFlags {
+	kControlStateEnabled      = 0x0001,  // 0001 - enabled buttons (used by the interpreter)
+	kControlStateDisabled     = 0x0004,  // 0010 - grayed out buttons (used by the interpreter)
+	kControlStateFramed       = 0x0008,  // 1000 - widgets surrounded by a frame (used by the interpreter)
+	kControlStateDitherFramed = 0x1000   // 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
+};
 
 void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const Common::String &text, int fgcolor, int bgcolor);
 /* Sets the contents of a port used as status bar

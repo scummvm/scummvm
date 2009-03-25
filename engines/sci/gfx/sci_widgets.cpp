@@ -142,11 +142,11 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 	gfxop_set_color(state, &black, 0, 0, 0, 0, 0, 0);
 	gfxw_port_t *win;
 	gfxw_list_t *decorations;
-//	int xextra = !(flags & WINDOW_FLAG_NOFRAME) ? 1 : 0;
-//	int yextra = !(flags & WINDOW_FLAG_NOFRAME) ? 2 : 0;
+//	int xextra = !(flags & kWindowNoFrame) ? 1 : 0;
+//	int yextra = !(flags & kWindowNoFrame) ? 2 : 0;
 
 	if (area.width == 319 && area.height == 189) {
-		flags |= WINDOW_FLAG_NOFRAME;
+		flags |= kWindowNoFrame;
 		// The below line makes the points bar in QfG2 work, but breaks
 		// the one in QfG1. Hm.
 		if ((byte)bgcolor.priority == 255) /* Yep, QfG2 */
@@ -163,10 +163,10 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 	}
 	*/
 
-	if (flags & WINDOW_FLAG_TITLE)
+	if (flags & kWindowTitle)
 		area. y += 10;
 
-	if (!(flags & (WINDOW_FLAG_TITLE | WINDOW_FLAG_NOFRAME)))
+	if (!(flags & (kWindowTitle | kWindowNoFrame)))
 		area.height -= 1; // Normal windows are drawn one pixel too small.
 
 	sciw_make_window_fit(&area, s->wm_port);
@@ -178,13 +178,13 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 
 	win->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 
-	if (flags & WINDOW_FLAG_DONTDRAW)
-		flags = WINDOW_FLAG_TRANSPARENT | WINDOW_FLAG_NOFRAME;
+	if (flags & kWindowDontDraw)
+		flags = kWindowTransparent | kWindowNoFrame;
 
-	if (flags == (WINDOW_FLAG_TRANSPARENT | WINDOW_FLAG_NOFRAME))
+	if (flags == (kWindowTransparent | kWindowNoFrame))
 		return win; // Fully transparent window
 
-	if (flags & WINDOW_FLAG_TITLE)
+	if (flags & kWindowTitle)
 		frame = gfx_rect(area.x - 1, area.y - 10, area.width + 2, area.height + 11);
 	else
 		frame = gfx_rect(area.x - 1, area.y - 1, area.width + 2, area.height + 2);
@@ -194,15 +194,15 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 
 	decorations = gfxw_new_list(gfx_rect(frame.x, frame.y, frame.width + 1 + shadow_offset, frame.height + 1 + shadow_offset), 0);
 
-	if (!(flags & WINDOW_FLAG_TRANSPARENT)) {
+	if (!(flags & kWindowTransparent)) {
 		// Draw window background
-		win->port_bg = (gfxw_widget_t *)gfxw_new_box(state, gfx_rect(1, (flags & WINDOW_FLAG_TITLE) ? 10 : 1,
+		win->port_bg = (gfxw_widget_t *)gfxw_new_box(state, gfx_rect(1, (flags & kWindowTitle) ? 10 : 1,
 		                        area.width, area.height), bgcolor, bgcolor, GFX_BOX_SHADE_FLAT);
 		decorations->add((gfxw_container_t *) decorations, win->port_bg);
 		win->flags |= GFXW_FLAG_OPAQUE;
 	}
 
-	if (flags & WINDOW_FLAG_TITLE) {
+	if (flags & kWindowTitle) {
 		// Add window title
 		rect_t title_rect = gfx_rect(1, 1, area.width, 8);
 
@@ -214,10 +214,10 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 						title_bgcolor, GFXR_FONT_FLAG_NO_NEWLINES));
 	}
 
-	if (!(flags & WINDOW_FLAG_NOFRAME)) {
+	if (!(flags & kWindowNoFrame)) {
 		// Draw backdrop shadow
 
-		if (!(flags & WINDOW_FLAG_NO_DROP_SHADOW)) {
+		if (!(flags & kWindowNoDropShadow)) {
 			if (gfxop_set_color(state, &black, 0, 0, 0, 0x80, bgcolor.priority, -1)) {
 				GFXERROR("Could not get black/semitrans color entry!\n");
 				return NULL;
@@ -239,12 +239,12 @@ gfxw_port_t *sciw_new_window(EngineState *s,
 			return NULL;
 		}
 
-		if (!(flags & WINDOW_FLAG_NO_DROP_SHADOW)) {
+		if (!(flags & kWindowNoDropShadow)) {
 
 			decorations->add((gfxw_container_t *)decorations, (gfxw_widget_t *)
 			                 gfxw_new_rect(gfx_rect(0, 0, frame.width - 1, frame.height - 1), black, GFX_LINE_MODE_FINE, GFX_LINE_STYLE_NORMAL));
 
-			if (flags & WINDOW_FLAG_TITLE)
+			if (flags & kWindowTitle)
 				decorations->add((gfxw_container_t *)decorations, (gfxw_widget_t *)gfxw_new_line(Common::Point(1, 9),
 									Common::Point(frame.width - 2, 9), black, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 		} else {
@@ -577,7 +577,7 @@ gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, Menubar *men
 	area.height = menu->_items.size() * 10;
 
 	retval = sciw_new_window(s, area, status_bar->font_nr, status_bar->color, status_bar->bgcolor,
-	                         0, status_bar->color, status_bar->bgcolor, NULL, WINDOW_FLAG_NO_DROP_SHADOW | WINDOW_FLAG_TRANSPARENT);
+	                         0, status_bar->color, status_bar->bgcolor, NULL, kWindowNoDropShadow | kWindowTransparent);
 
 	retval->set_visual(GFXW(retval), s->visual);
 
