@@ -496,7 +496,10 @@ static int _gfxwop_primitive_equals(gfxw_widget_t *widget, gfxw_widget_t *other)
 
 	oprim = (gfxw_primitive_t *) other;
 
-	if (!toCommonRect(wprim->bounds).equals(toCommonRect(oprim->bounds)))
+	// Check if the two primitives are equal (note: the primitives aren't always rectangles, so
+	// the "width" and the "height" here could be negative)
+	if (wprim->bounds.x != oprim->bounds.x || wprim->bounds.y != oprim->bounds.y ||
+		wprim->bounds.width != oprim->bounds.width || wprim->bounds.height != oprim->bounds.height)
 		return 0;
 
 	if (!_color_equals(wprim->color, oprim->color))
