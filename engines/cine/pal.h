@@ -116,7 +116,18 @@ public:
 
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
-	Palette &saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, double normalizedGray);
+
+	/*! \brief Saturated add a normalized gray value to current palette's subset and save the modified colors in the given output palette.
+	 * \param output The output palette (Only this palette is modified)
+	 * \param firstIndex First color index of the palette's subset (Inclusive range)
+	 * \param lastIndex Last color index of the palette's subset (Inclusive range)
+	 * \param grayDividend Dividend of the normalized gray value
+	 * \param grayDenominator Denominator of the normalized gray value
+	 * \note The normalized gray value (i.e. in range [-1, +1]) is given as a fractional number
+	 * (i.e. the normalized gray value is calculated by dividing grayDividend by grayDenominator).
+	 */
+	Palette &saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator);
+
 	uint colorCount() const;
 
 	Palette &fillWithBlack();

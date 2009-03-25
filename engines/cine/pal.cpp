@@ -257,12 +257,11 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	return output;
 }
 
-Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, double normalizedGray) {
-	// Calculate the gray value rounded up away from zero
-	const double signedHalf = ((normalizedGray >= 0) ? +0.5 : -0.5);
-	const signed r = (signed)(_rMax * normalizedGray + signedHalf);
-	const signed g = (signed)(_gMax * normalizedGray + signedHalf);
-	const signed b = (signed)(_bMax * normalizedGray + signedHalf);
+Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) {
+	assert(grayDenominator != 0);
+	const signed r = _rMax * grayDividend / grayDenominator;
+	const signed g = _gMax * grayDividend / grayDenominator;
+	const signed b = _bMax * grayDividend / grayDenominator;
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
