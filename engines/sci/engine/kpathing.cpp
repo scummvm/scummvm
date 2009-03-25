@@ -227,12 +227,6 @@ struct PathfindingState {
 	// List of all polygons
 	PolygonList polygons;
 
-	// Original start and end points
-	Common::Point start, end;
-
-	// Flags for adding original points to final path
-	char keep_start, keep_end;
-
 	// Start and end points for pathfinding
 	Vertex *vertex_start, *vertex_end;
 
@@ -244,21 +238,31 @@ struct PathfindingState {
 
 	// Total number of vertices
 	int vertices;
-	
-	PathfindingState(const Common::Point &s, const Common::Point &e) : start(s), end(e) {
-		keep_start = 0;
-		keep_end = 0;
+
+	// Point to prepend and append to final path
+	Common::Point *_prependPoint;
+	Common::Point *_appendPoint;
+
+	PathfindingState() {
 		vertex_start = NULL;
 		vertex_end = NULL;
 		vertex_index = NULL;
 		vis_matrix = NULL;
+		_prependPoint = NULL;
+		_appendPoint = NULL;
 		vertices = 0;
 	}
 	
 	~PathfindingState() {
 		free(vertex_index);
 		free(vis_matrix);
-	
+
+		if (_prependPoint)
+			delete _prependPoint;
+
+		if (_appendPoint)
+			delete _appendPoint;
+
 		for (PolygonList::iterator it = polygons.begin(); it != polygons.end(); ++it) {
 			delete *it;
 		}
@@ -1247,7 +1251,9 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	Polygon *polygon;
 	int err;
 	int count = 0;
-	PathfindingState *pf_s = new PathfindingState(start, end);
+	PathfindingState *pf_s = new PathfindingState();
+	Common::Point new_start = start;
+	Common::Point new_end = end;
 
 	// Convert all polygons
 	if (poly_list.segment) {
@@ -1282,7 +1288,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		change_polygons_opt_0(pf_s);
 
 		// Find nearest intersection
-		err = nearest_intersection(pf_s, start, end, &start);
+		err = nearest_intersection(pf_s, start, end, &new_start);
 
 		if (err == PF_FATAL) {
 			sciprintf("[avoidpath] Error: fatal error finding nearest intersecton\n");
@@ -1290,21 +1296,21 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			return NULL;
 		} else if (err == PF_OK)
 			// Keep original start position if intersection was found
-			pf_s->keep_start = 1;
+			pf_s->_prependPoint = new Common::Point(start);
 	} else {
-		if (fix_point(pf_s, start, &start, &polygon) != PF_OK) {
+		if (fix_point(pf_s, start, &new_start, &polygon) != PF_OK) {
 			sciprintf("[avoidpath] Error: couldn't fix start position for pathfinding\n");
 			delete pf_s;
 			return NULL;
 		} else if (polygon) {
 			// Start position has moved
-			pf_s->keep_start = 1;
+			pf_s->_prependPoint = new Common::Point(start);
 			if ((polygon->type != POLY_NEAREST_ACCESS))
 				sciprintf("[avoidpath] Warning: start position at unreachable location\n");
 		}
 	}
 
-	if (fix_point(pf_s, end, &end, &polygon) != PF_OK) {
+	if (fix_point(pf_s, end, &new_end, &polygon) != PF_OK) {
 		sciprintf("[avoidpath] Error: couldn't fix end position for pathfinding\n");
 		delete pf_s;
 		return NULL;
@@ -1312,12 +1318,12 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		// Keep original end position if it is contained in a
 		// near-point accessible polygon
 		if (polygon && (polygon->type == POLY_NEAREST_ACCESS))
-			pf_s->keep_end = 1;
+			pf_s->_appendPoint = new Common::Point(end);
 	}
 
 	// Merge start and end points into polygon set
-	pf_s->vertex_start = merge_point(pf_s, start);
-	pf_s->vertex_end = merge_point(pf_s, end);
+	pf_s->vertex_start = merge_point(pf_s, new_start);
+	pf_s->vertex_end = merge_point(pf_s, new_end);
 
 	// Allocate and build vertex index
 	pf_s->vertex_index = (Vertex**)sci_malloc(sizeof(Vertex *) * (count + 2));
@@ -1468,15 +1474,14 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	byte *oref;
 	reg_t output;
 	Vertex *vertex = p->vertex_end;
-	int i;
 	int unreachable = vertex->path_prev == NULL;
 
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
 		oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
-		if (p->keep_start)
-			POLY_SET_POINT(oref, 0, p->start);
+		if (p->_prependPoint)
+			POLY_SET_POINT(oref, 0, *p->_prependPoint);
 		else
 			POLY_SET_POINT(oref, 0, p->vertex_start->v);
 
@@ -1492,36 +1497,30 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 		vertex = vertex->path_prev;
 	}
 
-	oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * (path_len + 1 + p->keep_start + p->keep_end), AVOIDPATH_DYNMEM_STRING, &output);
+	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
+	oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
 
-	// Sentinel
-	POLY_SET_POINT(oref, path_len + p->keep_start + p->keep_end, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+	int offset = 0;
 
-	// Add original start and end points if needed
-	if (p->keep_end)
-		POLY_SET_POINT(oref, path_len + p->keep_start, p->end);
-	if (p->keep_start)
-		POLY_SET_POINT(oref, 0, p->start);
-
-	i = path_len + p->keep_start - 1;
-
-	if (unreachable) {
-		// Return straight trajectory from start to end
-		POLY_SET_POINT(oref, i - 1, p->vertex_start->v);
-		POLY_SET_POINT(oref, i, p->vertex_end->v);
-		return output;
-	}
+	if (p->_prependPoint)
+		POLY_SET_POINT(oref, offset++, *p->_prependPoint);
 
 	vertex = p->vertex_end;
-	while (vertex) {
-		POLY_SET_POINT(oref, i, vertex->v);
+	for (int i = path_len - 1; i >= 0; i--) {
+		POLY_SET_POINT(oref, offset + i, vertex->v);
 		vertex = vertex->path_prev;
-		i--;
 	}
+	offset += path_len;
+
+	if (p->_appendPoint)
+		POLY_SET_POINT(oref, offset++, *p->_appendPoint);
+
+	// Sentinel
+	POLY_SET_POINT(oref, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
 		sciprintf("[avoidpath] Returning path:");
-		for (i = 0; i < path_len + p->keep_start + p->keep_end; i++) {
+		for (int i = 0; i < offset; i++) {
 			Common::Point pt;
 			POLY_GET_POINT(oref, i, pt);
 			sciprintf(" (%i, %i)", pt.x, pt.y);
