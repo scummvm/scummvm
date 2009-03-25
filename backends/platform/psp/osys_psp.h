@@ -30,8 +30,9 @@
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
 
-
 #include <SDL.h>
+
+#include <pspctrl.h>
 
 enum GraphicModeID {
 	CENTERED_320X200,

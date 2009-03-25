@@ -22,10 +22,13 @@
  * $Id$
  */
 
-#include <zlib.h>
 #include "osys_psp_gu.h"
-#include "./trace.h"
+#include "trace.h"
 #include "common/events.h"
+
+#include <zlib.h>
+
+#include <pspdisplay.h>
 
 #define PIXEL_SIZE (4)
 #define BUF_WIDTH (512)

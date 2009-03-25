@@ -332,6 +332,8 @@
 
 #elif defined(__PSP__)
 
+	#include <malloc.h>
+
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 

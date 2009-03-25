@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 
+#include <pspkernel.h>
 
 #define PSP_DEFAULT_SAVE_PATH "ms0:/scummvm_savegames"
 

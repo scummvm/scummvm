@@ -273,7 +273,7 @@ get_system_exe_extension() {
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;
-	dreamcast | wii | gamecube)
+	dreamcast | wii | gamecube | psp)
 		_exeext=".elf"
 		;;
 	*)
@@ -547,7 +547,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, wii, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, wii, psp, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -563,6 +563,7 @@ Special configuration feature:
                                           wii for Nintendo Wii
                                           gamecube for Nintendo Gamecube
                                           iphone for Apple iPhone
+                                          psp for PlayStation Portable 
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
@@ -809,6 +810,12 @@ wii)
 	_host_cpu=ppc
 	_host_alias=powerpc-gekko
 	;;
+psp)
+	_host_os=psp
+	_host_cpu=mipsallegrexel
+	_host_alias=psp
+	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
+	;;
 gamecube)
 	_host_os=gamecube
 	_host_cpu=ppc
@@ -853,6 +860,12 @@ case $_host_os in
 wii | gamecube)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+psp)
+	if test -z "$PSPDEV"; then
+		echo "Please set PSPDEV in your environment. export PSPDEV=<path to psp toolchain>"
 		exit 1
 	fi
 	;;
@@ -1120,6 +1133,9 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
 		;;
+	psp)
+		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
@@ -1285,6 +1301,20 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			;;
+		psp)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="psp"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -1840,6 +1870,11 @@ case $_backend in
 			;;
 		esac
 		;;
+	psp)
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
+		LIBS="$LIBS -lSDL"
+		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -1854,7 +1889,7 @@ if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function 
 	# declarations under __STRICT_ANSI__
-	mingw* | cygwin* | dreamcast | wii | gamecube)
+	mingw* | cygwin* | dreamcast | wii | gamecube | psp)
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		;;
 	*)
@@ -1872,7 +1907,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-wii | gamecube)
+wii | gamecube | psp)
 	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"

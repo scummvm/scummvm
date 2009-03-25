@@ -37,6 +37,9 @@
 #include "sound/mixer_intern.h"
 
 #include <pspgu.h>
+#include <pspdisplay.h>
+
+#include <time.h>
 
 #include "./trace.h"
 
