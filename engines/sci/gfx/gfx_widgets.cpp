@@ -576,12 +576,6 @@ void _gfxw_set_ops_LINE(gfxw_widget_t *prim) {
 gfxw_primitive_t *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	gfxw_primitive_t *prim;
 
-	// SCI can draw lines inversely. We convert inverse lines to normal ones here, because the resulting rectangles are invalid
-	if (end.x < start.x || end.y < start.y) {
-		SWAP(start.x, end.x);
-		SWAP(start.y, end.y);
-	}
-
 	// Encode into internal representation
 	rect_t line = gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y);
 
