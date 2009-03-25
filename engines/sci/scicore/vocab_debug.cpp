@@ -471,12 +471,31 @@ static char **vocabulary_get_knames0(ResourceManager *resmgr, int* names) {
 	return t;
 }
 
-//NOTE: Untested
 static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	char **t = NULL;
+	// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
+	// We hardcode the default SCI1 kernel names here (i.e. the ones inside the "special"
+	// 999.voc file from FreeSCI). All SCI1 games seem to be working with this change, but
+	// if any SCI1 game has different kernel vocabulary names, it might not work. It seems
+	// that all SCI1 games use the same kernel vocabulary names though, so this seems to be
+	// a safe change. If there's any SCI1 game with different kernel vocabulary names, we can
+	// add special flags to it to our detector
+	t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
+	*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
+
+	for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
+		t[i] = sci_strdup(sci1_default_knames[i]);
+
+	t[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = NULL; // Terminate list
+
+	return t;
+
+// Previous code, which used the unreliable 999.voc resource
+#if 0
 	unsigned int size = 64, used = 0, pos = 0;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
-	if(r == NULL) {// failed to open vocab.999 (happens with SCI1 demos)
+
+	if (r == NULL) {// failed to open vocab.999 (happens with SCI1 demos)
 		t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
 		*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
 
@@ -504,6 +523,7 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	t[used] = NULL;
 
 	return t;
+#endif
 }
 //
 static char **vocabulary_get_knames11(ResourceManager *resmgr, int *count) {
