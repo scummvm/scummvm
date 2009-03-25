@@ -355,6 +355,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_gui.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_options.h"
 				>
 			</File>
@@ -460,14 +468,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\res_view1.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\sci_widgets.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\sci_widgets.h"
 				>
 			</File>
 		</Filter>
