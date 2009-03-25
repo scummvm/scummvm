@@ -1943,7 +1943,7 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 
 	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->text, &(handle->width), &(handle->height), &(handle->lines_nr),
 	                             NULL, NULL, ((state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) ?
-	                              GFXR_FONT_FLAG_COUNT_WHITESPACE : 0) | flags);
+	                              kFontCountWhitespace : 0) | flags);
 
 	if (!handle->lines) {
 		free(handle->text);
@@ -1952,7 +1952,7 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 		return NULL;
 	}
 
-	if (flags & GFXR_FONT_FLAG_NO_NEWLINES) {
+	if (flags & kFontNoNewlines) {
 		handle->lines_nr = 1;
 		handle->lines->length = strlen(text);
 	}

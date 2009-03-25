@@ -65,18 +65,14 @@ struct gfx_bitmap_font_t { /* gfx_bitmap_font_t: Bitmap font information */
 /*******************/
 
 /* SCI0, SCI01 and SCI1 all use the same font format. */
-
-/* SQ3 uses a somewhat different scheme for calculating text sizes: it counts
-** whitespace while calculating the text size.  */
-#define GFXR_FONT_FLAG_COUNT_WHITESPACE (1<<0)
-/* Don't give newline characters special semantics */
-#define GFXR_FONT_FLAG_NO_NEWLINES (1<<1)
-/* Interpret CR LF sequences as a single newline, rather than two of them */
-#define GFXR_FONT_FLAG_EAT_TRAILING_LF (1<<2)
-
+enum fontFlags {
+	kFontCountWhitespace = 1 << 0,    // In SQ3, whitespace is included in text size
+	kFontNoNewlines      = 1 << 1,    // Don't treat newline characters
+	kFontIgnoreLF        = 1 << 2     // Interpret CR LF sequences as a single newline, rather than two
+};
 
 gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size);
-/* Geneartes a bitmap font data structure from a resource
+/* Generates a bitmap font data structure from a resource
 ** Parameters: (int) id: Resource ID of the resulting font
 **             (byte *) resource: Pointer to the resource data
 **             (int) size: Size of the resource block

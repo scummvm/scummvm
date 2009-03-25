@@ -82,7 +82,7 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 			}
 		}
 
-		if (((foo == '\n') || (foo == 0x0d)) && !(flags & GFXR_FONT_FLAG_NO_NEWLINES)) {
+		if (((foo == '\n') || (foo == 0x0d)) && !(flags & kFontNoNewlines)) {
 			fragments[current_fragment-1].length = text - 1 - fragments[current_fragment-1].offset;
 
 			if (*text)
@@ -133,7 +133,7 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 					fragments = (text_fragment_t*)sci_realloc(fragments, sizeof(text_fragment_t *) * (fragments_nr <<= 1));
 
 				localmaxwidth = localmaxwidth - last_breakpoint;
-				if (!(flags & GFXR_FONT_FLAG_COUNT_WHITESPACE))
+				if (!(flags & kFontCountWhitespace))
 					localmaxwidth -= last_break_width;
 				last_breakpoint = localmaxwidth = 0;
 
