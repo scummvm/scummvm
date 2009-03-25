@@ -96,6 +96,7 @@ static const char *credits[] = {
 "",
 "C1""MADE",
 "C0""Benjamin Haisch",
+"C0""Filippos Karapetis",
 "",
 "C1""Parallaction",
 "C0""peres",

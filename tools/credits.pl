@@ -563,6 +563,7 @@ begin_credits("Credits");
 	  
 	  begin_section("MADE");
 		  add_person("Benjamin Haisch", "johndoe", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
 	  
 	  begin_section("Parallaction");
