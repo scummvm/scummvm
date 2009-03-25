@@ -25,9 +25,10 @@
 
 // Resource library
 
-#include <common/util.h>
-#include <common/endian.h>
-#include <common/debug.h>
+#include "common/util.h"
+#include "common/endian.h"
+#include "common/debug.h"
+
 #include "sci/scicore/decompressor.h"
 #include "sci/sci.h"
 
@@ -62,16 +63,6 @@ void Decompressor::fetchBitsMSB() {
 	}
 }
 
-bool Decompressor::getBitMSB() {
-	// fetching more bits to _dwBits buffer
-	if (_nBits == 0)
-		fetchBitsMSB();
-	bool b = _dwBits & 0x80000000;
-	_dwBits <<= 1;
-	_nBits--;
-	return b;
-}
-
 uint32 Decompressor::getBitsMSB(int n) {
 	// fetching more data to buffer if needed
 	if (_nBits < n)
@@ -92,16 +83,6 @@ void Decompressor::fetchBitsLSB() {
 		_nBits += 8;
 		_dwRead++;
 	}
-}
-
-bool Decompressor::getBitLSB() {
-	// fetching more bits to _dwBits buffer
-	if (_nBits == 0) 
-		fetchBitsLSB();
-	bool b = _dwBits & 0x1;
-	_dwBits >>= 1;
-	_nBits--;
-	return b;
 }
 
 uint32 Decompressor::getBitsLSB(int n) {
@@ -147,7 +128,7 @@ int16 DecompressorHuffman::getc2() {
 	byte *node = _nodes;
 	int16 next;
 	while (node[1]) {
-		if (getBitMSB()) {
+		if (getBitsMSB(1)) {
 			next = node[1] & 0x0F; // use lower 4 bits
 			if (next == 0)
 				return getByteMSB() | 0x100;
@@ -226,7 +207,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 					warning("unpackLZW: Trying to write beyond the end of array(len=%d, destctr=%d, tok_len=%d)",
 					        _szUnpacked, _dwWrote, tokenlastlength);
 					for (int i = 0; _dwWrote < _szUnpacked; i++)
-						putByte(dest [tokenlist[token] + i]);
+						putByte(dest[tokenlist[token] + i]);
 				} else
 					for (int i = 0; i < tokenlastlength; i++)
 						putByte(dest[tokenlist[token] + i]);
@@ -369,11 +350,9 @@ void DecompressorLZW::decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffe
 	*pixeldata = pd;
 }
 
-/*
- * Does the same this as above, only to determine the length of the compressed
- * source data.
- *
- * Yes, this is inefficient.
+/**
+ * Does the same this as decodeRLE, only to determine the length of the
+ * compressed source data.
  */
 int DecompressorLZW::getRLEsize(byte *rledata, int dsize) {
 	int pos = 0;
@@ -641,7 +620,7 @@ int DecompressorDCL::huffman_lookup(int *tree) {
 	int bit;
 
 	while (!(tree[pos] & HUFFMAN_LEAF)) {
-		bit = getBitLSB();
+		bit = getBitsLSB(1);
 		debugC(kDebugLevelDclInflate, "[%d]:%d->", pos, bit);
 		pos = bit ? tree[pos] & 0xFFF : tree[pos] >> BRANCH_SHIFT;
 	}
@@ -669,7 +648,7 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
 
 	while (_dwWrote < _szUnpacked) {
-		if (getBitLSB()) { // (length,distance) pair
+		if (getBitsLSB(1)) { // (length,distance) pair
 			value = huffman_lookup(length_tree);
 
 			if (value < 8)
@@ -739,8 +718,8 @@ int DecompressorLZS::unpackLZS() {
 	uint16 offs = 0, clen;
 
 	while (!isFinished()) {
-		if (getBitMSB()) { // Compressed bytes follow 
-			if (getBitMSB()) { // Seven bit offset follows
+		if (getBitsMSB(1)) { // Compressed bytes follow 
+			if (getBitsMSB(1)) { // Seven bit offset follows
 				offs = getBitsMSB(7);
 				if (!offs) // This is the end marker - a 7 bit offset of zero 
 					break;
@@ -787,7 +766,7 @@ uint16 DecompressorLZS::getCompLen() {
 			do {
 				nibble = getBitsMSB(4);
 				clen += nibble;
-			}while (nibble == 0xf);
+			} while (nibble == 0xf);
 			return clen;
 		}
 	}

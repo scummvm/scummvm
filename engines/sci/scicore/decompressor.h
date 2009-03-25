@@ -48,53 +48,68 @@ class Decompressor {
 public:
 	Decompressor() {}
 	virtual ~Decompressor() {}
+
+
 	virtual int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
-	//! Initialize decompressor
-	/** @param src - source stream to read from
-		@param dest - destination stream to write to
-		@param nPacked - size of packed data
-		@param nUnpacket - size of unpacked data
-		@return (int) 0 on success, non-zero on error
-	  */
+	/**
+	 * Initialize decompressor.
+	 * @param src		source stream to read from
+	 * @param dest		destination stream to write to
+	 * @param nPacked	size of packed data
+	 * @param nUnpacket	size of unpacked data
+	 * @return 0 on success, non-zero on error
+	 */
 	virtual void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);	
-	//! get one bit from _src stream
-	/** @return (bool) bit;
-	  */
-	bool getBitMSB();
-	bool getBitLSB();
-	//! get a number of bits from _src stream
-	/** @param n - number of bits to get
-		@return (uint32) n-bits number
-	  */
+
+	/**
+	 * Get a number of bits from _src stream, starting with the most
+	 * significant unread bit of the current four byte block.
+	 * @param n		number of bits to get
+	 * @return n-bits number
+	 */
 	uint32 getBitsMSB(int n);
+
+	/**
+	 * Get a number of bits from _src stream, starting with the least
+	 * significant unread bit of the current four byte block.
+	 * @param n		number of bits to get
+	 * @return n-bits number
+	 */
 	uint32 getBitsLSB(int n);
-	//! get one byte from _src stream
-	/** @return (byte) byte
-	  */
+
+	/**
+	 * Get one byte from _src stream.
+	 * @return byte
+	 */
 	byte getByteMSB();
 	byte getByteLSB();
 
 	void fetchBitsMSB();
 	void fetchBitsLSB(); 
 
-	//! put byte to _dest stream
-	/** @param b - byte to put
-	  */
+	/**
+	 * Write one byte into _dest stream
+	 * @param b byte to put
+	 */
+
 	virtual void putByte(byte b);
-	// Returns true if all expected data has been unpacked to _dest 
-	// and there is no more data in _src
+
+	/**
+	 * Returns true if all expected data has been unpacked to _dest
+	 * and there is no more data in _src.
+	 */
 	bool isFinished() {
 		return (_dwWrote == _szUnpacked) && (_dwRead >= _szPacked);
 	}
 
-	uint32 _dwBits; // bits buffer
-	byte _nBits; // # of bits in buffer
-	uint32 _szPacked;
-	uint32 _szUnpacked;
-	uint32 _dwRead;	// # of bytes read from _src
-	uint32 _dwWrote;
+	uint32 _dwBits;		//!< bits buffer
+	byte _nBits;		//!< number of unread bits in _dwBits
+	uint32 _szPacked;	//!< size of the compressed data
+	uint32 _szUnpacked;	//!< size of the decompressed data
+	uint32 _dwRead;		//!< number of bytes read from _src
+	uint32 _dwWrote;	//!< number of bytes written to _dest
 	Common::ReadStream *_src;
 	byte *_dest;
 };
