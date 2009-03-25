@@ -300,8 +300,8 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			/* Remove the active menu item, if neccessary */
 			if (item_nr != old_item) {
-				port = sciw_unselect_item(s, port, &(s->_menubar->_menus[menu_nr]), old_item);
-				port = sciw_select_item(s, port, &(s->_menubar->_menus[menu_nr]), item_nr);
+				port = sciw_toggle_item(port, &(s->_menubar->_menus[menu_nr]), old_item, false);
+				port = sciw_toggle_item(port, &(s->_menubar->_menus[menu_nr]), item_nr, true);
 				FULL_REDRAW;
 			}
 

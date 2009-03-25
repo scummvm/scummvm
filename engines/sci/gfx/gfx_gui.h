@@ -172,22 +172,12 @@ gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, Menubar *men
 ** Returns   : (gfxw_port_t *) The result port
 */
 
-gfxw_port_t *sciw_unselect_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection);
-/* Unselects a previously selected item from a menu port
-** Parameters: (EngineState *) s: The state to operate on
-**             (gfxw_port_t *) menu_port: The port modify
+gfxw_port_t *sciw_toggle_item(gfxw_port_t *menu_port, Menu *menu, int selection, bool selected);
+/* Toggle the selection of a menu item from a menu port
+** Parameters: (gfxw_port_t *) menu_port: The port to modify
 **             (Menu *) menu: The menu the menu port corresponds to
 **             (int) selection: Number of the menu entry to unselect, or -1 to do a NOP
-** Returns   : (gfxw_port_t *) The modified menu
-*/
-
-gfxw_port_t *
-sciw_select_item(EngineState *s, gfxw_port_t *menu_port, Menu *menu, int selection);
-/* Selects a menu item from a menu port
-** Parameters: (EngineState *) s: The state to operate on
-**             (gfxw_port_t *) menu_port: The port modify
-**             (Menu *) menu: The menu the menu port corresponds to
-**             (int) selection: Number of the menu entry to select, or -1 to do a NOP
+**             (bool) selected: Whether to set the item's state to selected or not
 ** Returns   : (gfxw_port_t *) The modified menu
 */
 
