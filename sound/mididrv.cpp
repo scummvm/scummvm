@@ -124,9 +124,9 @@ const MidiDriverDescription *MidiDriver::getAvailableMidiDrivers() {
 	return s_musicDrivers;
 }
 
-const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &str) {
+const MidiDriverDescription *MidiDriver::findMusicDriver(const Common::String &str) {
 	if (str.empty())
-		return s_musicDrivers[0];
+		return 0;
 
 	const char *s = str.c_str();
 	int len = 0;
@@ -141,19 +141,15 @@ const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &s
 		// We ignore any characters following an (optional) colon ':'
 		// contained in str.
 		if (!scumm_strnicmp(md->name, s, len)) {
-			return *md;
+			return md;
 		}
 		md++;
 	}
 
-	return s_musicDrivers[0];
+	return 0;
 }
 
-int MidiDriver::parseMusicDriver(const Common::String &str) {
-	return findMusicDriver(str).id;
-}
-
-static int getDefaultMIDIDriver() {
+static MidiDriverType getDefaultMIDIDriver() {
 #if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
 	return MD_WINDOWS;
 #elif defined(MACOSX)
@@ -171,15 +167,25 @@ static int getDefaultMIDIDriver() {
 #endif
 }
 
-int MidiDriver::detectMusicDriver(int flags) {
+MidiDriverType MidiDriver::parseMusicDriver(const Common::String &str) {
+	const MidiDriverDescription *md = findMusicDriver(str);
+	if (md)
+		return md->id;
+	return MD_AUTO;
+}
+
+MidiDriverType MidiDriver::detectMusicDriver(int flags) {
+	MidiDriverType musicDriver;
+
 	// Query the selected music driver (defaults to MD_AUTO).
-	const MidiDriverDescription &md = findMusicDriver(ConfMan.get("music_driver"));
-	int musicDriver = md.id;
+	const MidiDriverDescription *md = findMusicDriver("music_driver");
 
 	// Check whether the selected music driver is compatible with the
 	// given flags.
-	if (! (md.flags & flags))
+	if (!md || !(md->flags & flags))
 		musicDriver = MD_AUTO;
+	else
+		musicDriver = md->id;
 
 	// If the selected driver is MD_AUTO, we try to determine
 	// a suitable and "optimal" music driver.

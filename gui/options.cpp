@@ -177,17 +177,8 @@ void OptionsDialog::open() {
 	// Audio options
 	if (_midiPopUp) {
 		// Music driver
-		const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
-		int i = 0;
-		const int midiDriver =
-			ConfMan.hasKey("music_driver", _domain)
-				? MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain))
-				: MD_AUTO;
-		while (md->name && md->id != midiDriver) {
-			i++;
-			md++;
-		}
-		_midiPopUp->setSelected(md->name ? i : 0);
+		MidiDriverType id = MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain));
+		_midiPopUp->setSelectedTag(id);
 	}
 
 	if (_outputRatePopUp) {

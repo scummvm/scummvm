@@ -126,10 +126,10 @@ struct MidiDriverDescription {
 class MidiDriver {
 public:
 	/** Find the music driver matching the given driver name/description. */
-	static const MidiDriverDescription &findMusicDriver(const Common::String &str);
+	static const MidiDriverDescription *findMusicDriver(const Common::String &str);
 
-	/** Convert a string containing a music driver name into MIDI Driver type. */
-	static int parseMusicDriver(const Common::String &str);
+	/** Get the id of the music driver matching the given driver name, or MD_AUTO if there is no match. */
+	static MidiDriverType parseMusicDriver(const Common::String &str);
 
 	/**
 	 * Get a list of all available MidiDriver types.
@@ -139,7 +139,7 @@ public:
 
 	static MidiDriver *createMidi(int midiDriver);
 
-	static int detectMusicDriver(int flags);
+	static MidiDriverType detectMusicDriver(int flags);
 
 
 public:
