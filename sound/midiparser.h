@@ -42,16 +42,16 @@ class MidiDriver;
 //
 //////////////////////////////////////////////////
 
-//! Maintains time and position state within a MIDI stream.
-/*! A single Tracker struct is used by MidiParser to keep track
- *  of its current position in the MIDI stream. The Tracker
- *  struct, however, allows alternative locations to be cached.
- *  See MidiParser::jumpToTick() for an example of tracking
- *  multiple locations within a MIDI stream. NOTE: It is
- *  important to also maintain pre-parsed EventInfo data for
- *  each Tracker location.
+/**
+ * Maintains time and position state within a MIDI stream.
+ * A single Tracker struct is used by MidiParser to keep track
+ * of its current position in the MIDI stream. The Tracker
+ * struct, however, allows alternative locations to be cached.
+ * See MidiParser::jumpToTick() for an example of tracking
+ * multiple locations within a MIDI stream. NOTE: It is
+ * important to also maintain pre-parsed EventInfo data for
+ * each Tracker location.
  */
-
 struct Tracker {
 	byte * _play_pos;        //!< A pointer to the next event to be parsed
 	uint32 _play_time;       //!< Current time in microseconds; may be in between event times
@@ -83,11 +83,11 @@ struct Tracker {
 	}
 };
 
-//! Provides comprehensive information on the next event in the MIDI stream.
-/*! An EventInfo struct is instantiated by format-specific implementations
- *  of MidiParser::parseNextEvent() each time another event is needed.
+/**
+ * Provides comprehensive information on the next event in the MIDI stream.
+ * An EventInfo struct is instantiated by format-specific implementations
+ * of MidiParser::parseNextEvent() each time another event is needed.
  */
-
 struct EventInfo {
 	byte * start; //!< Position in the MIDI stream where the event starts.
 	              //!< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
@@ -113,13 +113,13 @@ struct EventInfo {
 	byte command() { return event >> 4; }   //!< Separates the command code from the event.
 };
 
-//! Provides expiration tracking for hanging notes.
-/*! Hanging notes are used when a MIDI format does not include explicit Note Off
- *  events, or when "Smart Jump" is enabled so that active notes are intelligently
- *  expired when a jump occurs. The NoteTimer struct keeps track of how much
- *  longer a note should remain active before being turned off.
+/**
+ * Provides expiration tracking for hanging notes.
+ * Hanging notes are used when a MIDI format does not include explicit Note Off
+ * events, or when "Smart Jump" is enabled so that active notes are intelligently
+ * expired when a jump occurs. The NoteTimer struct keeps track of how much
+ * longer a note should remain active before being turned off.
  */
-
 struct NoteTimer {
 	byte channel;     //!< The MIDI channel on which the note was played
 	byte note;        //!< The note number for the active note
@@ -136,136 +136,136 @@ struct NoteTimer {
 //
 //////////////////////////////////////////////////
 
-//! A framework and common functionality for parsing event-based music streams.
-/*! The MidiParser provides a framework in which to load,
- *  parse and traverse event-based music data. Note the
- *  avoidance of the phrase "MIDI data." Despite its name,
- *  MidiParser derivatives can be used to manage a wide
- *  variety of event-based music formats. It is, however,
- *  based on the premise that the format in question can
- *  be played in the form of specification MIDI events.
+/**
+ * A framework and common functionality for parsing event-based music streams.
+ * The MidiParser provides a framework in which to load,
+ * parse and traverse event-based music data. Note the
+ * avoidance of the phrase "MIDI data." Despite its name,
+ * MidiParser derivatives can be used to manage a wide
+ * variety of event-based music formats. It is, however,
+ * based on the premise that the format in question can
+ * be played in the form of specification MIDI events.
  *
- *  In order to use MidiParser to parse your music format,
- *  follow these steps:
+ * In order to use MidiParser to parse your music format,
+ * follow these steps:
  *
- *  <b>STEP 1: Write a MidiParser derivative.</b>
- *  The MidiParser base class provides functionality
- *  considered common to the task of parsing event-based
- *  music. In order to parse a particular format, create
- *  a derived class that implements, at minimum, the
- *  following format-specific methods:
- *    - loadMusic
- *    - parseNextEvent
+ * <b>STEP 1: Write a MidiParser derivative.</b>
+ * The MidiParser base class provides functionality
+ * considered common to the task of parsing event-based
+ * music. In order to parse a particular format, create
+ * a derived class that implements, at minimum, the
+ * following format-specific methods:
+ *   - loadMusic
+ *   - parseNextEvent
  *
- *  In addition to the above functions, the derived class
- *  may also override the default MidiParser behavior for
- *  the following methods:
- *    - resetTracking
- *    - allNotesOff
- *    - unloadMusic
- *    - property
- *    - getTick
+ * In addition to the above functions, the derived class
+ * may also override the default MidiParser behavior for
+ * the following methods:
+ *   - resetTracking
+ *   - allNotesOff
+ *   - unloadMusic
+ *   - property
+ *   - getTick
  *
- *  Please see the documentation for these individual
- *  functions for more information on their use.
+ * Please see the documentation for these individual
+ * functions for more information on their use.
  *
- *  The naming convention for classes derived from
- *  MidiParser is MidiParser_XXX, where "XXX" is some
- *  short designator for the format the class will
- *  support. For instance, the MidiParser derivative
- *  for parsing the Standard MIDI File format is
- *  MidiParser_SMF.
+ * The naming convention for classes derived from
+ * MidiParser is MidiParser_XXX, where "XXX" is some
+ * short designator for the format the class will
+ * support. For instance, the MidiParser derivative
+ * for parsing the Standard MIDI File format is
+ * MidiParser_SMF.
  *
- *  <b>STEP 2: Create an object of your derived class.</b>
- *  Each MidiParser object can parse at most one (1) song
- *  at a time. However, a MidiParser object can be reused
- *  to play another song once it is no longer needed to
- *  play whatever it was playing. In other words, MidiParser
- *  objects do not have to be destroyed and recreated from
- *  one song to the next.
+ * <b>STEP 2: Create an object of your derived class.</b>
+ * Each MidiParser object can parse at most one (1) song
+ * at a time. However, a MidiParser object can be reused
+ * to play another song once it is no longer needed to
+ * play whatever it was playing. In other words, MidiParser
+ * objects do not have to be destroyed and recreated from
+ * one song to the next.
  *
- *  <b>STEP 3: Specify a MidiDriver to send events to.</b>
- *  MidiParser works by sending MIDI and meta events to a
- *  MidiDriver. In the simplest configuration, you can plug
- *  a single MidiParser directly into the output MidiDriver
- *  being used. However, you can only plug in one at a time;
- *  otherwise channel conflicts will occur. Furthermore,
- *  meta events that may be needed to interactively control
- *  music flow cannot be handled because they are being
- *  sent directly to the output device.
+ * <b>STEP 3: Specify a MidiDriver to send events to.</b>
+ * MidiParser works by sending MIDI and meta events to a
+ * MidiDriver. In the simplest configuration, you can plug
+ * a single MidiParser directly into the output MidiDriver
+ * being used. However, you can only plug in one at a time;
+ * otherwise channel conflicts will occur. Furthermore,
+ * meta events that may be needed to interactively control
+ * music flow cannot be handled because they are being
+ * sent directly to the output device.
  *
- *  If you need more control over the MidiParser while it's
- *  playing, you can create your own "pseudo-MidiDriver" and
- *  place it in between your MidiParser and the output
- *  MidiDriver. The MidiParser will send events to your
- *  pseudo-MidiDriver, which in turn must send them to the
- *  output MidiDriver (or do whatever special handling is
- *  required).
+ * If you need more control over the MidiParser while it's
+ * playing, you can create your own "pseudo-MidiDriver" and
+ * place it in between your MidiParser and the output
+ * MidiDriver. The MidiParser will send events to your
+ * pseudo-MidiDriver, which in turn must send them to the
+ * output MidiDriver (or do whatever special handling is
+ * required).
  *
- *  To specify the MidiDriver to send music output to,
- *  use the MidiParser::setMidiDriver method.
+ * To specify the MidiDriver to send music output to,
+ * use the MidiParser::setMidiDriver method.
  *
- *  <b>STEP 4: Specify the onTimer call rate.</b>
- *  MidiParser bases the timing of its parsing on an external
- *  clock. Every time MidiParser::onTimer is called, a bit
- *  more music is parsed. You must specify how many
- *  microseconds will occur between each call to onTimer,
- *  in order to ensure an accurate music tempo.
+ * <b>STEP 4: Specify the onTimer call rate.</b>
+ * MidiParser bases the timing of its parsing on an external
+ * clock. Every time MidiParser::onTimer is called, a bit
+ * more music is parsed. You must specify how many
+ * microseconds will occur between each call to onTimer,
+ * in order to ensure an accurate music tempo.
  *
- *  To set the onTimer call rate, in microseconds,
- *  use the MidiParser::setTimerRate method. The onTimer
- *  call rate will typically match the timer rate for
- *  the output MidiDriver used. This rate can be obtained
- *  by calling MidiDriver::getBaseTempo.
+ * To set the onTimer call rate, in microseconds,
+ * use the MidiParser::setTimerRate method. The onTimer
+ * call rate will typically match the timer rate for
+ * the output MidiDriver used. This rate can be obtained
+ * by calling MidiDriver::getBaseTempo.
  *
- *  <b>STEP 5: Load the music.</b>
- *  MidiParser requires that the music data already be loaded
- *  into memory. The client code is responsible for memory
- *  management on this block of memory. That means that the
- *  client code must ensure that the data remain in memory
- *  while the MidiParser is using it, and properly freed
- *  after it is no longer needed. Some MidiParser variants may
- *  require internal buffers as well; memory management for those
- *  buffers is the responsibility of the MidiParser object.
+ * <b>STEP 5: Load the music.</b>
+ * MidiParser requires that the music data already be loaded
+ * into memory. The client code is responsible for memory
+ * management on this block of memory. That means that the
+ * client code must ensure that the data remain in memory
+ * while the MidiParser is using it, and properly freed
+ * after it is no longer needed. Some MidiParser variants may
+ * require internal buffers as well; memory management for those
+ * buffers is the responsibility of the MidiParser object.
  *
- *  To load the music into the MidiParser, use the
- *  MidiParser::loadMusic method, specifying a memory pointer
- *  to the music data and the size of the data. (NOTE: Some
- *  MidiParser variants don't require a size, and 0 is fine.
- *  However, when writing client code to use MidiParser, it is
- *  best to assume that a valid size will be required.
+ * To load the music into the MidiParser, use the
+ * MidiParser::loadMusic method, specifying a memory pointer
+ * to the music data and the size of the data. (NOTE: Some
+ * MidiParser variants don't require a size, and 0 is fine.
+ * However, when writing client code to use MidiParser, it is
+ * best to assume that a valid size will be required.
  *
- *  Convention requires that each implementation of
- *  MidiParser::loadMusic automatically set up default tempo
- *  and current track. This effectively means that the
- *  MidiParser will start playing as soon as timer events
- *  start coming in.
+ * Convention requires that each implementation of
+ * MidiParser::loadMusic automatically set up default tempo
+ * and current track. This effectively means that the
+ * MidiParser will start playing as soon as timer events
+ * start coming in.
  *
- *  <b>STEP 6: Activate a timer source for the MidiParser.</b>
- *  The easiest timer source to use is the timer of the
- *  output MidiDriver. You can attach the MidiDriver's
- *  timer output directly to a MidiParser by calling
- *  MidiDriver::setTimerCallback. In this case, the timer_proc
- *  will be the static method MidiParser::timerCallback,
- *  and timer_param will be a pointer to your MidiParser object.
+ * <b>STEP 6: Activate a timer source for the MidiParser.</b>
+ * The easiest timer source to use is the timer of the
+ * output MidiDriver. You can attach the MidiDriver's
+ * timer output directly to a MidiParser by calling
+ * MidiDriver::setTimerCallback. In this case, the timer_proc
+ * will be the static method MidiParser::timerCallback,
+ * and timer_param will be a pointer to your MidiParser object.
  *
- *  This configuration only allows one MidiParser to be driven
- *  by the MidiDriver at a time. To drive more MidiDrivers, you
- *  will need to create a "pseudo-MidiDriver" as described earlier,
- *  In such a configuration, the pseudo-MidiDriver should be set
- *  as the timer recipient in MidiDriver::setTimerCallback, and
- *  could then call MidiParser::onTimer for each MidiParser object.
+ * This configuration only allows one MidiParser to be driven
+ * by the MidiDriver at a time. To drive more MidiDrivers, you
+ * will need to create a "pseudo-MidiDriver" as described earlier,
+ * In such a configuration, the pseudo-MidiDriver should be set
+ * as the timer recipient in MidiDriver::setTimerCallback, and
+ * could then call MidiParser::onTimer for each MidiParser object.
  *
- *  <b>STEP 7: Music shall begin to play!</b>
- *  Congratulations! At this point everything should be hooked up
- *  and the MidiParser should generate music. Note that there is
- *  no way to "stop" the MidiParser. You can "pause" the MidiParser
- *  simply by not sending timer events to it, or you can call
- *  MidiParser::unloadMusic to permanently stop the music. (This
- *  method resets everything and detaches the MidiParser from the
- *  memory block containing the music data.)
+ * <b>STEP 7: Music shall begin to play!</b>
+ * Congratulations! At this point everything should be hooked up
+ * and the MidiParser should generate music. Note that there is
+ * no way to "stop" the MidiParser. You can "pause" the MidiParser
+ * simply by not sending timer events to it, or you can call
+ * MidiParser::unloadMusic to permanently stop the music. (This
+ * method resets everything and detaches the MidiParser from the
+ * memory block containing the music data.)
  */
-
 class MidiParser {
 private:
 	uint16    _active_notes[128];   //!< Each uint16 is a bit mask for channels that have that note on.
@@ -303,10 +303,11 @@ protected:
 	void hangingNote(byte channel, byte note, uint32 ticks_left, bool recycle = true);
 	void hangAllActiveNotes();
 
-	//! Platform independent BE uint32 read-and-advance.
-	/*! This helper function reads Big Endian 32-bit numbers
-	 *  from a memory pointer, at the same time advancing
-	 *  the pointer.
+	/**
+	 * Platform independent BE uint32 read-and-advance.
+	 * This helper function reads Big Endian 32-bit numbers
+	 * from a memory pointer, at the same time advancing
+	 * the pointer.
 	 */
 	uint32 read4high(byte * &data) {
 		uint32 val = READ_BE_UINT32(data);
@@ -314,10 +315,11 @@ protected:
 		return val;
 	}
 
-	//! Platform independent LE uint16 read-and-advance.
-	/*! This helper function reads Little Endian 16-bit numbers
-	 *  from a memory pointer, at the same time advancing
-	 *  the pointer.
+	/**
+	 * Platform independent LE uint16 read-and-advance.
+	 * This helper function reads Little Endian 16-bit numbers
+	 * from a memory pointer, at the same time advancing
+	 * the pointer.
 	 */
 	uint16 read2low(byte * &data) {
 		uint16 val = READ_LE_UINT16(data);
@@ -326,26 +328,35 @@ protected:
 	}
 
 public:
-	//! Configuration options for MidiParser
-	/*! The following options can be set to modify MidiParser's
-	 *  behavior.
-	 *
-	 *  \b mpMalformedPitchBends - Events containing a pitch bend
-	 *  command should be treated as single-byte padding before the
-	 *  real event. This allows the MidiParser to work with some
-	 *  malformed SMF files from Simon 1/2.
-	 *
-	 *  \b mpAutoLoop - Sets auto-looping, which can be used by
-	 *  lightweight clients that don't provide their own flow control.
-	 *
-	 *  \b mpSmartJump - Sets smart jumping, which intelligently
-	 *  expires notes that are active when a jump is made, rather
-	 *  than just cutting them off.
+	/**
+	 * Configuration options for MidiParser
+	 * The following options can be set to modify MidiParser's
+	 * behavior.
 	 */
 	enum {
+		/**
+		 * Events containing a pitch bend command should be treated as
+		 * single-byte padding before the  real event. This allows the
+		 * MidiParser to work with some malformed SMF files from Simon 1/2.
+		 */
 		mpMalformedPitchBends = 1,
+
+		/**
+		 * Sets auto-looping, which can be used by lightweight clients
+		 * that don't provide their own flow control.
+		 */
 		mpAutoLoop = 2,
+
+		/**
+		 * Sets smart jumping, which intelligently expires notes that are
+		 * active when a jump is made, rather than just cutting them off.
+		 */
 		mpSmartJump = 3,
+
+		/**
+		 * Center the pitch wheels when unloading music in preparation
+		 * for the next piece of music.
+		 */
 		mpCenterPitchWheelOnUnload = 4
 	};
 
