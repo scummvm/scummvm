@@ -1621,8 +1621,8 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_CTOff,
 	Op_Random,
 	Op_LoadSong,
-	Op_PlaySong,
 	Op_FadeSong,
+	Op_PlaySong,
 
 	Op_FreeSong, // 0x40
 	Op_FrameExist,
