@@ -97,12 +97,20 @@ void ThemeBrowser::updateListing() {
 
 	ThemeEngine::listUsableThemes(_themes);
 
+	const Common::String currentThemeId = g_gui.theme()->getThemeId();	
+	int currentThemeIndex = 0, index = 0;
+
 	Common::StringList list;
-	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i)
+	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i, ++index) {
 		list.push_back(i->name);
+
+		if (i->id == currentThemeId)
+			currentThemeIndex = index;
+	}
 
 	_fileList->setList(list);
 	_fileList->scrollTo(0);
+	_fileList->setSelected(currentThemeIndex);
 
 	// Finally, redraw
 	draw();
