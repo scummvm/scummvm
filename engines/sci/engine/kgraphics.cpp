@@ -503,6 +503,11 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
 
 		redraw_port = 1;
+
+		// Note: it's quite possible that the coordinates of the line will *not* form a valid rectangle (e.g. it might
+		// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
+		// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
+		// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
 		ADD_TO_CURRENT_BG_WIDGETS(GFXW(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
 		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
 
