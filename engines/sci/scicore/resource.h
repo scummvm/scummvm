@@ -284,7 +284,7 @@ protected:
 	/* Reads the SCI1 resource.map file from a local directory
 	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
 	*/
-	int readResourceMapSCI1(ResourceSource *map, ResourceSource *vol);
+	int readResourceMapSCI1(ResourceSource *map);
 
 	/**--- Patch management functions ---*/
 

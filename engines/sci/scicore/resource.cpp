@@ -379,7 +379,8 @@ int ResourceManager::scanNewSources(ResourceSource *source) {
 			if (_mapVersion < SCI_VERSION_1)
 				resource_error = readResourceMapSCI0(source);
 			else
-				resource_error = readResourceMapSCI1(source, getVolume(source, 0));
+				resource_error = readResourceMapSCI1(source);
+
 			if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
 				// FIXME: Try reading w/o resource.map
 				resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
@@ -957,7 +958,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	return 0;
 }
 
-int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vol) {
+int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	Common::File file;
 	Resource *res;
 	if (!file.open(map->location_name))
@@ -1001,7 +1002,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map, ResourceSource *vo
 				res->type = (ResourceType)type;
 				res->number = number;
 				res->id = resId;//res->number | (res->type << 16);
-				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : vol;
+				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : getVolume(map, 0);
 				if (_mapVersion < SCI_VERSION_32)
 					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
 				else
