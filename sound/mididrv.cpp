@@ -178,7 +178,7 @@ MidiDriverType MidiDriver::detectMusicDriver(int flags) {
 	MidiDriverType musicDriver;
 
 	// Query the selected music driver (defaults to MD_AUTO).
-	const MidiDriverDescription *md = findMusicDriver("music_driver");
+	const MidiDriverDescription *md = findMusicDriver(ConfMan.get("music_driver"));
 
 	// Check whether the selected music driver is compatible with the
 	// given flags.
