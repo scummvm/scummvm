@@ -784,6 +784,7 @@ ppc-amigaos)
 gp2x)
 	_host_os=gp2x-linux
 	_host_cpu=arm
+	_host_alias=arm-open2x-linux
 	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
@@ -1177,16 +1178,21 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM"
+			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			LDFLAGS="$LDFLAGS -static"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		neuros)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
