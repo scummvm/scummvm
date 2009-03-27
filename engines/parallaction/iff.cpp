@@ -203,7 +203,7 @@ byte *ILBMDecoder::getBitmap(uint32 numPlanes, bool packPlanes) {
 		byte *out = bitmap;
 
 		// setup a buffer to hold enough data to build a line in the output
-		uint32 scanWidth = (_header.width + 7) >> 3;
+		uint32 scanWidth = ((_header.width + 15)/16) << 1;
 		byte *scanBuffer = (byte*)malloc(scanWidth * _header.depth);
 
 		for (uint i = 0; i < _header.height; ++i) {
