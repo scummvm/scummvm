@@ -126,6 +126,17 @@ public:
 
 typedef Common::List<Vertex *> VertexList;
 
+/* Circular list definitions. */
+
+#define CLIST_FOREACH(var, head)					\
+	for ((var) = (head)->first();					\
+		(var);							\
+		(var) = ((var)->_next == (head)->first() ?	\
+		    NULL : (var)->_next))
+
+/* Circular list access methods. */
+#define CLIST_NEXT(elm)		((elm)->_next)
+#define CLIST_PREV(elm)		((elm)->_prev)
 
 class CircularVertexList {
 public:
@@ -134,7 +145,7 @@ public:
 public:
 	CircularVertexList() : _head(0) {}
 	
-	Vertex *first() {
+	Vertex *first() const {
 		return _head;
 	}
 	
@@ -172,6 +183,14 @@ public:
 		return _head == NULL;
 	}
 
+	uint size() const {
+		int n = 0;
+		Vertex *v;
+		CLIST_FOREACH(v, this)
+			++n;
+		return n;
+	}
+
 	/**
 	 * Reverse the order of the elements in this circular list.
 	 */
@@ -186,19 +205,6 @@ public:
 		} while (elm != _head);
 	}
 };
-
-/* Circular list definitions. */
-
-#define CLIST_FOREACH(var, head)					\
-	for ((var) = (head)->first();					\
-		(var);							\
-		(var) = ((var)->_next == (head)->first() ?	\
-		    NULL : (var)->_next))
-
-/* Circular list access methods. */
-#define CLIST_NEXT(elm)		((elm)->_next)
-#define CLIST_PREV(elm)		((elm)->_prev)
-
 
 struct Polygon {
 	// SCI polygon type
@@ -1217,6 +1223,56 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	return poly;
 }
 
+// WORKAROUND: intersecting polygons in Longbow, room 210.
+static void fixLongbowRoom210(PathfindingState *s, const Common::Point &start, const Common::Point &end) {
+	Polygon *barred = NULL;
+	Polygon *total = NULL;
+
+	// Find the intersecting polygons
+	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
+		Polygon *polygon = *it;
+		assert(polygon);
+
+		if ((polygon->type == POLY_BARRED_ACCESS) && (polygon->vertices.size() == 11)
+		&& (polygon->vertices.first()->v == Common::Point(319, 161)))
+			barred = polygon;
+		else if ((polygon->type == POLY_TOTAL_ACCESS) && (polygon->vertices.size() == 8)
+		&& (polygon->vertices.first()->v == Common::Point(313, 58)))
+			total = polygon;
+	}
+
+	if (!barred || !total)
+		return;
+
+	debug(1, "[avoidpath] Applying fix for intersecting polygons in Longbow, room 210");
+
+	// If the start or end point is contained in the total access polygon, removing that
+	// polygon is sufficient. Otherwise we merge the total and barred access polygons.
+	bool both_outside = (contained(start, total) == CONT_OUTSIDE) && (contained(end, total) == CONT_OUTSIDE);
+
+	s->polygons.remove(total);
+	delete total;
+
+	if (both_outside) {
+		int points[28] = {
+			224, 159, 223, 162 ,194, 173 ,107, 173, 74, 162, 67, 156, 2, 58,
+			63, 160, 0, 160, 0, 0, 319, 0, 319, 161, 228, 161, 313, 58
+		};
+
+		s->polygons.remove(barred);
+		delete barred;
+
+		barred = new Polygon(POLY_BARRED_ACCESS);
+
+		for (int i = 0; i < 14; i++) {
+			Vertex *vertex = new Vertex(Common::Point(points[i * 2], points[i * 2 + 1]));
+			barred->vertices.insertHead(vertex);
+		}
+
+		s->polygons.push_front(barred);
+	}
+}
+
 static void change_polygons_opt_0(PathfindingState *s) {
 	// Changes the polygon list for optimization level 0 (used for keyboard
 	// support). Totally accessible polygons are removed and near-point
@@ -1275,7 +1331,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			if (dup == node) {
 				// Polygon is not a duplicate, so convert it
 				polygon = convert_polygon(s, node->value);
-				pf_s->polygons.push_front(polygon);
+				pf_s->polygons.push_back(polygon);
 				count += KP_UINT(GET_SEL32(node->value, size));
 			}
 
@@ -1319,6 +1375,12 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		// near-point accessible polygon
 		if (polygon && (polygon->type == POLY_NEAREST_ACCESS))
 			pf_s->_appendPoint = new Common::Point(end);
+	}
+
+	if (s->_gameName == "Longbow") {
+		// FIXME: implement function to get current room number
+		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 210))
+			fixLongbowRoom210(pf_s, new_start, new_end);
 	}
 
 	// Merge start and end points into polygon set
