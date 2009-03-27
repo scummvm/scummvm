@@ -132,11 +132,6 @@ public:
 
 	Palette &fillWithBlack();
 
-	/*! \brief The original endian type in which this palette was loaded.
-	 * \note This will always return either CINE_BIG_ENDIAN or CINE_LITTLE_ENDIAN (So no CINE_NATIVE_ENDIAN).
-	 */
-	EndianType endianType() const;
-
 	/*! \brief The original color format in which this palette was loaded. */
 	Graphics::PixelFormat colorFormat() const;
 
@@ -145,15 +140,13 @@ public:
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
-	void setEndianType(const EndianType endian);
 	Cine::Palette::Color saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
 
 private:
-	// The used source format, its endianness etc.
+	// The used source format and some values calculated from it
 	Graphics::PixelFormat _format;
 	uint _rBits, _gBits, _bBits;
 	uint _rMax, _gMax, _bMax;
-	bool _bigEndian;
 
 	Common::Array<Color> _colors;
 };

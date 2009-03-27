@@ -222,10 +222,6 @@ Palette &Palette::fillWithBlack() {
 	return *this;
 }
 
-EndianType Palette::endianType() const {
-	return (_bigEndian ? CINE_BIG_ENDIAN : CINE_LITTLE_ENDIAN);
-}
-
 Graphics::PixelFormat Palette::colorFormat() const {
 	return _format;
 }
@@ -246,10 +242,6 @@ void Palette::setColorFormat(const Graphics::PixelFormat format) {
 	_rMax = (1 << _rBits) - 1;
 	_gMax = (1 << _gBits) - 1;
 	_bMax = (1 << _bBits) - 1;
-}
-
-void Palette::setEndianType(const EndianType endian) {
-	_bigEndian = isBigEndian(endian);
 }
 
 // a.k.a. transformPaletteRange
@@ -292,7 +284,6 @@ Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFo
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
 
-	setEndianType(endian);
 	setColorFormat(format);
 
 	_colors.clear();
