@@ -143,12 +143,8 @@ private:
 	Cine::Palette::Color saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
 
 private:
-	// The used source format and some values calculated from it
-	Graphics::PixelFormat _format;
-	uint _rBits, _gBits, _bBits;
-	uint _rMax, _gMax, _bMax;
-
-	Common::Array<Color> _colors;
+	Graphics::PixelFormat _format; //!< The used source color format
+	Common::Array<Color> _colors;  //!< The actual palette data
 };
 
 } // End of namespace Cine

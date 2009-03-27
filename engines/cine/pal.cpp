@@ -234,14 +234,6 @@ void Palette::setGlobalOSystemPalette() const {
 
 void Palette::setColorFormat(const Graphics::PixelFormat format) {
 	_format = format;
-
-	_rBits = (8 - format.rLoss);
-	_gBits = (8 - format.gLoss);
-	_bBits = (8 - format.bLoss);
-
-	_rMax = (1 << _rBits) - 1;
-	_gMax = (1 << _gBits) - 1;
-	_bMax = (1 << _bBits) - 1;
 }
 
 // a.k.a. transformPaletteRange
@@ -258,9 +250,9 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 
 Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) {
 	assert(grayDenominator != 0);
-	const signed r = _rMax * grayDividend / grayDenominator;
-	const signed g = _gMax * grayDividend / grayDenominator;
-	const signed b = _bMax * grayDividend / grayDenominator;
+	const signed r = _format.rMax() * grayDividend / grayDenominator;
+	const signed g = _format.gMax() * grayDividend / grayDenominator;
+	const signed b = _format.bMax() * grayDividend / grayDenominator;
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
@@ -271,18 +263,18 @@ Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, b
 // e.g. r = -7 sets the resulting color's red component to minimum (i.e. zero)
 Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const {
 	Cine::Palette::Color result;
-	result.r = CLIP<int>(baseColor.r + r, 0, _rMax);
-	result.g = CLIP<int>(baseColor.g + g, 0, _gMax);
-	result.b = CLIP<int>(baseColor.b + b, 0, _bMax);
+	result.r = CLIP<int>(baseColor.r + r, 0, _format.rMax());
+	result.g = CLIP<int>(baseColor.g + g, 0, _format.gMax());
+	result.b = CLIP<int>(baseColor.b + b, 0, _format.bMax());
 	return result;
 }
 
 Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian) {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
 	assert(format.aLoss == 8); // No alpha
-	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
-	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
-	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
+	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte
+	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, format.gBits() - 1)) / 8); // G must be inside one byte
+	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, format.bBits() - 1)) / 8); // B must be inside one byte
 
 	setColorFormat(format);
 
@@ -294,10 +286,10 @@ Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFo
 	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endian));
 	
 	for (uint i = 0; i < numColors; i++) {
-		// _rMax, _gMax, _bMax are also used as masks here
-		_colors[i].r = (buf[i * format.bytesPerPixel + rBytePos] >> (format.rShift % 8)) & _rMax;
-		_colors[i].g = (buf[i * format.bytesPerPixel + gBytePos] >> (format.gShift % 8)) & _gMax;
-		_colors[i].b = (buf[i * format.bytesPerPixel + bBytePos] >> (format.bShift % 8)) & _bMax;
+		// format.rMax(), format.gMax(), format.bMax() are also used as masks here
+		_colors[i].r = (buf[i * format.bytesPerPixel + rBytePos] >> (format.rShift % 8)) & format.rMax();
+		_colors[i].g = (buf[i * format.bytesPerPixel + gBytePos] >> (format.gShift % 8)) & format.gMax();
+		_colors[i].b = (buf[i * format.bytesPerPixel + bBytePos] >> (format.bShift % 8)) & format.bMax();
 	}
 
 	return *this;
@@ -314,9 +306,9 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex) const {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
 	assert(format.aLoss == 8); // No alpha
-	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, 8 - format.rLoss - 1)) / 8); // R must be inside one byte
-	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, 8 - format.gLoss - 1)) / 8); // G must be inside one byte
-	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, 8 - format.bLoss - 1)) / 8); // B must be inside one byte
+	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte
+	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, format.gBits() - 1)) / 8); // G must be inside one byte
+	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, format.bBits() - 1)) / 8); // B must be inside one byte
 
 	// Clear the part of the output palette we're going to be writing to with all black
 	memset(buf, 0, format.bytesPerPixel * numColors);
@@ -327,9 +319,9 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 	const signed bShiftLeft = (colorFormat().bLoss - (signed) format.bLoss) + (format.bShift % 8);
 
 	// Calculate the byte masks for each color component (for masking away excess bits)
-	const byte rMask = ((1 << (8 - format.rLoss)) - 1) << (format.rShift % 8);
-	const byte gMask = ((1 << (8 - format.gLoss)) - 1) << (format.gShift % 8);
-	const byte bMask = ((1 << (8 - format.bLoss)) - 1) << (format.bShift % 8);
+	const byte rMask = format.rMax() << (format.rShift % 8);
+	const byte gMask = format.gMax() << (format.gShift % 8);
+	const byte bMask = format.bMax() << (format.bShift % 8);
 
 	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endian));
 	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endian));
@@ -337,7 +329,6 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
-		// _rMax, _gMax, _bMax are also used as masks here
 		buf[i * format.bytesPerPixel + rBytePos] |= (shiftByteLeft(_colors[i].r, rShiftLeft) & rMask);
 		buf[i * format.bytesPerPixel + gBytePos] |= (shiftByteLeft(_colors[i].g, gShiftLeft) & gMask);
 		buf[i * format.bytesPerPixel + bBytePos] |= (shiftByteLeft(_colors[i].b, bShiftLeft) & bMask);
