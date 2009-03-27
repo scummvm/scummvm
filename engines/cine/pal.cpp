@@ -269,6 +269,17 @@ Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, 
 	return result;
 }
 
+Palette::Palette(const Graphics::PixelFormat format, const uint numColors) : _format(format), _colors() {
+	_colors.resize(numColors);
+	fillWithBlack();
+}
+
+Palette &Palette::clear() {
+	_format = Graphics::PixelFormat();
+	_colors.clear();
+	return *this;
+}
+
 Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian) {
 	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
 	assert(format.aLoss == 8); // No alpha

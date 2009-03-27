@@ -80,6 +80,17 @@ private:
 	};
 
 public:
+	/*! \brief Create an initially black palette with the given color format and number of colors.
+	 * \param format Color format
+	 * \param numColors Number of colors
+	 */
+	Palette(const Graphics::PixelFormat format, const uint numColors);
+
+	/*! \brief Clear the palette (Set color count to zero, release memory, overwrite color format with default value).
+	 * \note This is very different from using fillWithBlack-function which fills the palette with black.
+	 */
+	Palette &clear();
+
 	/*! \brief Load palette from buffer with given color format, endianness and number of colors.
 	 * \param buf Input buffer
 	 * \param size Input buffer size in bytes
