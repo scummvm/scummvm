@@ -26,6 +26,7 @@
 #include "cine/cine.h"
 #include "cine/various.h"
 #include "cine/pal.h"
+#include "common/system.h" // For g_system->setPalette
 
 namespace Cine {
 
@@ -227,6 +228,12 @@ EndianType Palette::endianType() const {
 
 Graphics::PixelFormat Palette::colorFormat() const {
 	return _format;
+}
+
+void Palette::setGlobalOSystemPalette() const {
+	byte buf[256 * 4]; // Allocate space for the largest possible palette
+	save(buf, sizeof(buf), Cine::kSystemPalFormat, CINE_LITTLE_ENDIAN);
+	g_system->setPalette(buf, 0, colorCount());
 }
 
 void Palette::setColorFormat(const Graphics::PixelFormat format) {

@@ -140,6 +140,9 @@ public:
 	/*! \brief The original color format in which this palette was loaded. */
 	Graphics::PixelFormat colorFormat() const;
 
+	/*! \brief Sets current palette to global OSystem's palette using g_system->setPalette. */
+	void setGlobalOSystemPalette() const;
+
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
 	void setEndianType(const EndianType endian);
