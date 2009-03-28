@@ -30,15 +30,21 @@
 
 namespace Cine {
 
+// Constants related to kLowPalFormat
+#define kLowPalBytesPerColor 2
+#define kLowPalNumColors 16
+#define kLowPalNumBytes ((kLowPalNumColors) * (kLowPalBytesPerColor))
+
 /*! \brief Low resolution (9-bit) color format used in Cine's 16-color modes. */
-static const Graphics::PixelFormat kLowPalFormat  = {2, 5, 5, 5, 8, 8, 4,  0, 0};
-static const int kLowPalNumColors = 16;
-static const int kLowPalNumBytes = kLowPalNumColors * kLowPalFormat.bytesPerPixel;
+static const Graphics::PixelFormat kLowPalFormat  = {kLowPalBytesPerColor, 5, 5, 5, 8, 8, 4, 0, 0};
+
+// Constants related to kHighPalFormat
+#define kHighPalBytesPerColor 3
+#define kHighPalNumColors 256
+#define kHighPalNumBytes ((kHighPalNumColors) * (kHighPalBytesPerColor))
 
 /*! \brief High resolution (24-bit) color format used in Cine's 256-color modes. */
-static const Graphics::PixelFormat kHighPalFormat = {3, 0, 0, 0, 8, 0, 8, 16, 0};
-static const int kHighPalNumColors = 256;
-static const int kHighPalNumBytes = kHighPalNumColors * kHighPalFormat.bytesPerPixel;
+static const Graphics::PixelFormat kHighPalFormat = {kHighPalBytesPerColor, 0, 0, 0, 8, 0, 8, 16, 0};
 
 /*! \brief The color format used by OSystem's setPalette-function. */
 static const Graphics::PixelFormat kSystemPalFormat = {4, 0, 0, 0, 8, 0, 8, 16, 0};
