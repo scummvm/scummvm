@@ -326,6 +326,12 @@ DECLARE_COMMAND_OPCODE(clear) {
 }
 
 DECLARE_COMMAND_OPCODE(speak) {
+	// WORKAROUND: this avoids crashing when the zone is not parsed, like in the case
+	// of script bug in ticket #2718449.
+	if (!ctxt._cmd->u._zone) {
+		return;
+	}
+
 	if (ACTIONTYPE(ctxt._cmd->u._zone) == kZoneSpeak) {
 		_vm->enterDialogueMode(ctxt._cmd->u._zone);
 	} else {
