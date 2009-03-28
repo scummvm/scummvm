@@ -462,8 +462,18 @@ AmigaSoundMan_br::~AmigaSoundMan_br() {
 
 void AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
-	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-	decoder.decode();
+	if (_vm->getFeatures() & GF_DEMO) {
+		ch->dataSize = stream->size();
+		ch->data = (int8*)malloc(ch->dataSize);
+		if (stream->read(ch->data, ch->dataSize) != ch->dataSize)
+			error("DosSoundMan_br::loadChannelData: Read failed");
+
+		// TODO: Confirm sound rate
+		ch->header.samplesPerSec = 11025;
+	} else {
+		Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
+		decoder.decode();
+	}
 	ch->dispose = true;
 	delete stream;
 }
