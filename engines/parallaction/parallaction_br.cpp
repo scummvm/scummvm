@@ -207,6 +207,16 @@ void Parallaction_br::freeLocation(bool removeAll) {
 
 	_gfx->freeLocationObjects();
 
+	// save zone and animation flags
+	ZoneList::iterator zit = _location._zones.begin();
+	for ( ; zit != _location._zones.end(); ++zit) {
+		restoreOrSaveZoneFlags(*zit, false);
+	}
+	AnimationList::iterator ait = _location._animations.begin();
+	for ( ; ait != _location._animations.end(); ++ait) {
+		restoreOrSaveZoneFlags(*ait, false);
+	}
+
 	_location._animations.remove(_char._ani);
 	_location.cleanup(removeAll);
 	_location._animations.push_front(_char._ani);
