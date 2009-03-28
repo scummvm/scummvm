@@ -211,7 +211,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_smoothScrollingEnabled = true;
 	_floatingCursorsEnabled = false;
 
-	memset (_lvlTempData, 0, sizeof(LevelTempData) * 28);
+	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 	_unkIceSHpFlag = 0;
 }
 
