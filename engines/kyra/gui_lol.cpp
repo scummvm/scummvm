@@ -1482,7 +1482,7 @@ int LoLEngine::clickedLamp(Button *button) {
 	}
 
 	if (_brightness)
-			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
 
 	return 1;
 }
