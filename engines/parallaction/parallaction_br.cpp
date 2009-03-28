@@ -486,6 +486,10 @@ void Parallaction_br::setFollower(const Common::String &name) {
 }
 
 void Parallaction_br::restoreOrSaveZoneFlags(ZonePtr z, bool restore) {
+	if ((z->_locationIndex == INVALID_LOCATION_INDEX) || (z->_index == INVALID_ZONE_INDEX)) {
+		return;
+	}
+
 	if (restore) {
 		z->_flags = _zoneFlags[z->_locationIndex][z->_index];
 	} else {

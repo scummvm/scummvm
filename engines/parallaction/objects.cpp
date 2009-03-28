@@ -184,7 +184,8 @@ Zone::Zone() {
 	_label = 0;
 
 	// BRA specific
-	_index = 0;
+	_index = INVALID_ZONE_INDEX;
+	_locationIndex = INVALID_LOCATION_INDEX;
 	_linkedName = 0;
 }
 

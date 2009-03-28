@@ -266,6 +266,9 @@ struct TypeData {
 
 #define ZONENAME_LENGTH 32
 
+#define INVALID_LOCATION_INDEX ((uint32)-1)
+#define INVALID_ZONE_INDEX ((uint32)-1)
+
 struct Zone {
 private:
 	int16			_right;
