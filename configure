@@ -1113,7 +1113,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
 	amigaos*)
-		CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 		type_1_byte='char'
 		type_2_byte='short'
@@ -1214,8 +1214,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
-			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-			LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 			;;
 		m68k-atari-mint)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1895,7 +1893,7 @@ if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function 
 	# declarations under __STRICT_ANSI__
-	mingw* | cygwin* | dreamcast | wii | gamecube | psp)
+	mingw* | cygwin* | dreamcast | wii | gamecube | psp | amigaos*)
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		;;
 	*)
