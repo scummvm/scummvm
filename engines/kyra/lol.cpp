@@ -105,7 +105,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColourFlag = _hideInventory = 0;
+	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColourFlag = _needSceneRestore = 0;
 	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
@@ -122,7 +122,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_currentBlock = 0;
 	memset(_visibleBlockIndex, 0, sizeof(_visibleBlockIndex));
 
-	_scrollSceneBuffer = 0;
 	_smoothScrollModeNormal = 1;
 	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllWallFlags = 0;
 	_wllShapeMap = 0;
@@ -145,7 +144,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_sceneWindowBuffer = 0;
 	memset(_doorShapes, 0, sizeof(_doorShapes));
 
-	_lampOilStatus = _brightness = _lampStatusUnk = 0;
+	_lampEffect = _brightness = _lampOilStatus = 0;
 	_lampStatusSuspended = false;
 	_tempBuffer5120 = 0;
 	_flyingObjects = 0;
@@ -212,6 +211,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_smoothScrollingEnabled = true;
 	_floatingCursorsEnabled = false;
 
+	memset (_lvlTempData, 0, sizeof(LevelTempData) * 28);
 	_unkIceSHpFlag = 0;
 }
 
@@ -307,7 +307,6 @@ LoLEngine::~LoLEngine() {
 	delete[] _monsters;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
-	delete[] _scrollSceneBuffer;
 	delete[] _scriptAssignedLevelShape;
 
 	delete[] _levelFileData;
@@ -336,6 +335,16 @@ LoLEngine::~LoLEngine() {
 		for (int i = 0; i < _ingameSoundListSize; i++)
 			delete[] _ingameSoundList[i];
 		delete[] _ingameSoundList;
+	}
+
+	for (int i = 0; i < 28; i++) {
+		if (_lvlTempData[i]) {
+			delete[] _lvlTempData[i]->wallsXorData;
+			delete[] _lvlTempData[i]->flags;
+			delete[] _lvlTempData[i]->monsters;
+			delete[] _lvlTempData[i]->flyingObjects;
+			delete _lvlTempData[i];
+		}		
 	}
 }
 
@@ -413,8 +422,6 @@ Common::Error LoLEngine::init() {
 	_monsterProperties = new MonsterProperty[5];
 	memset(_monsterProperties, 0, 5 * sizeof(MonsterProperty));
 
-	_scrollSceneBuffer = new uint8[21120];
-
 	_vcnExpTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
 		_vcnExpTable[i] = i & 0x0f;
@@ -443,7 +450,7 @@ Common::Error LoLEngine::init() {
 	memset(_monsterShapesEx, 0, 576 * sizeof(uint8*));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
-	_levelFlagUnk = 0;
+	_hasTempDataFlags = 0;
 	_unkCharNum = -1;
 
 	return Common::kNoError;
@@ -1020,7 +1027,7 @@ void LoLEngine::initTextFading(int textType, int clearField) {
 		return;
 
 	updatePortraits();
-	if (_hideInventory)
+	if (_needSceneRestore)
 		_screen->setScreenDim(_txt->clearDim(3));
 
 	_fadeText = false;
@@ -1242,11 +1249,11 @@ void LoLEngine::restoreAfterSceneWindowDialogue(int redraw) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 	}
 
-	_hideInventory = 0;
+	_needSceneRestore = 0;
 	enableSysTimer(2);
 }
 
@@ -1314,7 +1321,7 @@ void LoLEngine::restoreAfterDialogueSequence(int controlMode) {
 }
 
 void LoLEngine::resetPortraitsAndDisableSysTimer() {
-	_hideInventory = 1;
+	_needSceneRestore = 1;
 	if (!textEnabled() || (!(_currentControlMode & 2)))
 		timerUpdatePortraitAnimations(1);
 
@@ -1328,7 +1335,7 @@ void LoLEngine::fadeText() {
 	if (_screen->fadeColour(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength))
 		return;
 
-	if (_hideInventory)
+	if (_needSceneRestore)
 		return;
 
 	_screen->setScreenDim(_txt->clearDim(3));
@@ -1533,7 +1540,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	volume = 254 - volume;
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
-	if (vocIndex != -1) {
+	if (vocIndex != -1
+) {
 		_sound->voicePlay(_ingameSoundList[vocIndex], volume & 0xff, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
@@ -1635,7 +1643,7 @@ int LoLEngine::snd_stopMusic() {
 	return snd_playTrack(-1);
 }
 
-bool LoLEngine::characterSays(int track, int charId, bool redraw) {
+int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	if (charId == 1) {
 		charId = _selectedCharacter;
 	} else {
@@ -1648,7 +1656,7 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 		}
 
 		if (i == 4)
-			return false;
+			return 0;
 	}
 
 	bool r = snd_playCharacterSpeech(track, charId, 0);
@@ -1662,7 +1670,7 @@ bool LoLEngine::characterSays(int track, int charId, bool redraw) {
 		updatePortraitSpeechAnim();
 	}
 
-	return r ? textEnabled() : 1;
+	return r ? (textEnabled() ? 1 : 0) : 1;
 }
 
 int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
@@ -1905,6 +1913,50 @@ uint16 LoLEngine::getClosestPartyMember(int x, int y) {
 	}
 
 	return id;
+}
+
+void LoLEngine::generateTempData() {
+	int l = _currentLevel - 1;
+	if (_lvlTempData[l]) {
+		delete[] _lvlTempData[l]->wallsXorData;
+		delete[] _lvlTempData[l]->flags;
+		delete[] _lvlTempData[l]->monsters;
+		delete[] _lvlTempData[l]->flyingObjects;
+		delete _lvlTempData[l];
+	}
+
+	_lvlTempData[l] = new LevelTempData;
+
+	_lvlTempData[l]->wallsXorData = new uint8[4096];
+	_lvlTempData[l]->flags = new uint8[1024];
+	_lvlTempData[l]->monsters = new MonsterInPlay[30];
+	_lvlTempData[l]->flyingObjects = new FlyingObject[8];
+
+	char filename[13];
+	snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", _currentLevel);
+
+	_screen->loadBitmap(filename, 3, 3, 0);
+	const uint8 *p = _screen->getCPagePtr(2);
+	uint16 len = READ_LE_UINT16(p + 4);
+	p += 6;
+
+	memset(_lvlTempData[l]->wallsXorData, 0, 4096);
+	memset(_lvlTempData[l]->flags, 0, 1024);
+	uint8 *d = _lvlTempData[l]->wallsXorData;
+	uint8 *df = _lvlTempData[l]->flags;
+
+	for (int i = 0; i < 1024; i++) {
+		for (int ii = 0; ii < 4; ii++)
+			*d++ = p[i * len + ii] ^ _levelBlockProperties[i].walls[ii];
+		*df++ = _levelBlockProperties[i].flags;
+	}
+
+	memcpy(_lvlTempData[l]->monsters, _monsters,  sizeof(MonsterInPlay) * 30);
+	memcpy(_lvlTempData[l]->flyingObjects, _flyingObjects,  sizeof(FlyingObject) * 8);
+
+	_lvlTempData[l]->monsterDifficulty =_monsterDifficulty;
+
+	_hasTempDataFlags |= (1 << l);
 }
 
 } // end of namespace Kyra

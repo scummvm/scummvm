@@ -223,8 +223,10 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 
 	_screen->setScreenDim(od);
 
-	if (!(type & 0x8000) && soundEffect[type])
-		_vm->sound()->playSoundEffect(soundEffect[type]);
+	if (!(type & 0x8000)) {
+		if (soundEffect[type])
+			_vm->sound()->playSoundEffect(soundEffect[type]);
+	}
 
 	_vm->_textColourFlag = type & 0x7fff;
 	_vm->_fadeText = false;
@@ -606,7 +608,7 @@ void TextDisplayer_LoL::textPageBreak() {
 	int x = ((dim->sx + dim->w) << 3) - 77;
 	int y = 0;
 
-	if (_vm->_hideInventory && (_vm->_updateFlags & 2)) {
+	if (_vm->_needSceneRestore && (_vm->_updateFlags & 2)) {
 		if (_vm->_currentControlMode || !(_vm->_updateFlags & 2)) {
 			y = dim->sy + dim->h - 5;
 		} else {

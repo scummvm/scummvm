@@ -235,6 +235,14 @@ struct FlyingObjectShape {
 	uint8 flipFlags;
 };
 
+struct LevelTempData {
+	uint8 *wallsXorData;
+	uint8 *flags;
+	MonsterInPlay *monsters;
+	FlyingObject *flyingObjects;
+	uint8 monsterDifficulty;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -509,7 +517,7 @@ private:
 	int _buttonList8Size;
 
 	// text
-	bool characterSays(int track, int charId, bool redraw);
+	int characterSays(int track, int charId, bool redraw);
 	int playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 
 	TextDisplayer_LoL *_txt;
@@ -612,6 +620,7 @@ private:
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
+	int olol_deleteLevelItem(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
@@ -630,7 +639,8 @@ private:
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
 	int olol_disableControls(EMCState *script);
-	int olol_enableControls(EMCState *script);	
+	int olol_enableControls(EMCState *script);
+	int olol_characterSays(EMCState *script);	
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
 	int olol_getLanguage(EMCState *script);
@@ -745,12 +755,12 @@ private:
 	int _updateCharV3;
 	int _textColourFlag;
 	bool _fadeText;
-	int _hideInventory;
+	int _needSceneRestore;
 	uint32 _palUpdateTimer;
 	uint32 _updatePortraitNext;
 
 	int _loadLevelFlag;
-	int _levelFlagUnk;
+	int _hasTempDataFlags;
 	int _unkCharNum;
 	int _charStatsTemp[5];
 
@@ -773,9 +783,9 @@ private:
 	void setLampMode(bool lampOn);
 	void updateLampStatus();
 
-	int _lampOilStatus;
+	int _lampEffect;
 	int _brightness;
-	int _lampStatusUnk;
+	int _lampOilStatus;
 	uint32 _lampStatusTimer;
 	bool _lampStatusSuspended;
 
@@ -786,8 +796,8 @@ private:
 	void assignBlockObject(uint16 *cmzItemIndex, uint16 item);
 	int assignLevelShapes(int index);
 	uint8 *getLevelShapes(int index);
-	void loadLevelCmzFile(int index);
-	void loadCMZ_Sub(int index1, int index2);
+	void restoreBlockTempData(int index);
+	void restoreTempDataAdjustMonsterStrength(int index);
 	void loadCmzFile(const char *file);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
@@ -815,7 +825,7 @@ private:
 	void drawBlockEffects(int index, int type);
 	void drawScriptShapes(int pageNum);
 	void setWallType(int block, int wall, int val);
-	void updateSceneWindow();
+	void updateDrawPage2();
 
 	void prepareSpecialScene(int fieldType, int hasDialogue, int suspendGui, int allowSceneUpdate, int controlMode, int fadeFlag);
 	int restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int releaseTimScripts, int sceneUpdateMode);
@@ -837,8 +847,8 @@ private:
 	void calcCoordinatesAddDirectionOffset(int16 &x, int16 &y, int direction);
 
 	int clickedWallShape(uint16 block, uint16 direction);
-	int clickedLever(uint16 block, uint16 direction);
-	int clicked3(uint16 block, uint16 direction);
+	int clickedLeverOn(uint16 block, uint16 direction);
+	int clickedLeverOff(uint16 block, uint16 direction);
 	int clickedWallOnlyScript(uint16 block);
 	int clickedDoorSwitch(uint16 block, uint16 direction);
 	int clicked6(uint16 block, uint16 direction);
@@ -846,7 +856,7 @@ private:
 	bool clickedShape(int shapeIndex);
 	void processDoorSwitch(uint16 block, int unk);
 	void openCloseDoor(uint16 block, int openClose);
-	void resetDoors();
+	void completeDoorOperations();
 
 	void movePartySmoothScrollBlocked(int speed);
 	void movePartySmoothScrollUp(int speed);
@@ -862,7 +872,6 @@ private:
 	OpenDoorState _openDoorState[3];
 	int _emcDoorState;
 
-	uint8 *_scrollSceneBuffer;
 	uint32 _smoothScrollTimer;
 	int _smoothScrollModeNormal;
 
@@ -1158,6 +1167,9 @@ private:
 	// save
 	Common::Error loadGameState(int slot) { return Common::kNoError; }
 	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) { return Common::kNoError; }
+
+	void generateTempData();
+	LevelTempData *_lvlTempData[28];
 };
 
 } // end of namespace Kyra

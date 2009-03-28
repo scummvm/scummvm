@@ -571,7 +571,7 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 	case 8:
 		return _updateFlags;
 	case 9:
-		return _lampStatusUnk;
+		return _lampOilStatus;
 	case 10:
 		return _sceneDefaultUpdate;
 	case 11:
@@ -638,7 +638,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 9:
-		_lampStatusUnk = b & 0xff;
+		_lampOilStatus = b & 0xff;
 		break;
 
 	case 10:
@@ -767,7 +767,7 @@ int LoLEngine::olol_redrawPlayfield(EMCState *script) {
 	if (_screen->_fadeFlag != 2)
 		_screen->fadeClearSceneWindow(10);
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -784,10 +784,9 @@ int LoLEngine::olol_loadNewLevel(EMCState *script) {
 		endObjectFlight(&_flyingObjects[i], _flyingObjects[i].x, _flyingObjects[i].y, 1);
 	}
 
-	resetDoors();
+	completeDoorOperations();
 
-	///////////////////////
-	// TODO: generate temp files
+	generateTempData();
 
 	_currentBlock = stackPos(1);
 	_currentDirection = stackPos(2);
@@ -1147,7 +1146,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampOilStatus);
+		setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampEffect);
 	return old;
 }
 
@@ -1156,8 +1155,18 @@ int LoLEngine::olol_printMessage(EMCState *script) {
 	int snd = stackPos(2);
 	_txt->printMessage(stackPos(0), getLangString(stackPos(1)), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 
-	if (snd)
-		snd_playSoundEffect(snd, 255);
+	if (snd >= 0)
+		snd_playSoundEffect(snd, -1);
+
+	return 1;
+}
+
+int LoLEngine::olol_deleteLevelItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_deleteLevelItem(%p) (%d)", (const void *)script, stackPos(0));
+	if (_itemsInPlay[stackPos(0)].blockPropertyIndex)
+		removeLevelItem(stackPos(0), _itemsInPlay[stackPos(0)].blockPropertyIndex);
+
+	deleteItem(stackPos(0));
 
 	return 1;
 }
@@ -1281,7 +1290,7 @@ int LoLEngine::olol_resetPortraitsAndDisableSysTimer(EMCState *script) {
 
 int LoLEngine::olol_enableSysTimer(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_enableSysTimer(%p)", (const void *)script);
-	_hideInventory = 0;
+	_needSceneRestore = 0;
 	enableSysTimer(2);
 	return 1;
 }
@@ -1294,6 +1303,19 @@ int LoLEngine::olol_disableControls(EMCState *script) {
 int LoLEngine::olol_enableControls(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_enableControls(%p)", (const void *)script);
 	return gui_enableControls();
+}
+
+int LoLEngine::olol_characterSays(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSays(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (stackPos(0) == -1) {
+		snd_stopSpeech(true);
+		return 1;
+	}
+
+	if (stackPos(0) != -1)
+		return characterSays(stackPos(0), stackPos(1), stackPos(2));
+	else
+		return snd_characterSpeaking();
 }
 
 int LoLEngine::olol_queueSpeech(EMCState *script) {
@@ -1455,7 +1477,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 			if (_screen->_fadeFlag != 2)
 				_screen->fadeClearSceneWindow(10);
 			gui_drawPlayField();
-			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
 			_screen->_fadeFlag = 0;
 			break;
 
@@ -1721,7 +1743,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_printMessage);
 
 	// 0x70
-	OpcodeUnImpl();
+	Opcode(olol_deleteLevelItem);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -1832,7 +1854,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_characterSays);
 
 	// 0xBC
 	Opcode(olol_queueSpeech);

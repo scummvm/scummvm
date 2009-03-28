@@ -56,6 +56,7 @@ void LoLEngine::gui_drawPlayField() {
 	if (_gameFlags[15] & 0x800)
 		resetLampStatus();
 
+	updateDrawPage2();
 	gui_drawScene(2);
 
 	gui_drawAllCharPortraitsWithStats();
@@ -63,9 +64,8 @@ void LoLEngine::gui_drawPlayField() {
 	gui_drawMoneyBox(_screen->_curPage);
 
 	_screen->setCurPage(cp);
-	_screen->hideMouse();
 	_screen->copyPage(2, 0);
-	_screen->showMouse();
+	updateDrawPage2();
 }
 
 void LoLEngine::gui_drawScene(int pageNum) {
@@ -74,7 +74,7 @@ void LoLEngine::gui_drawScene(int pageNum) {
 }
 
 void LoLEngine::gui_drawInventory() {
-	if (!_currentControlMode || !_hideInventory) {
+	if (!_currentControlMode || !_needSceneRestore) {
 		for (int i = 0; i < 9; i++)
 			gui_drawInventoryItem(i);
 	}
@@ -603,7 +603,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	if (shapeIndex == 78 && !(_gameFlags[15] & 0x1000))
 		return;
 
-	if (_currentControlMode && _hideInventory)
+	if (_currentControlMode && _needSceneRestore)
 		return;
 
 	if (mode == 0)
@@ -1198,7 +1198,7 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 	_screen->copyBlockToPage(2, 0, 0, 320, 200, _pageBuffer2);
 
 	_lastCharInventory = -1;
-	updateSceneWindow();
+	updateDrawPage2();
 	enableSysTimer(2);
 	
 	return 1;
@@ -1356,11 +1356,11 @@ int LoLEngine::clickedWall(Button *button) {
 			break;
 
 		case 2:
-			res = clickedLever(block, dir);
+			res = clickedLeverOn(block, dir);
 			break;
 
 		case 3:
-			res = clicked3(block, dir);
+			res = clickedLeverOff(block, dir);
 			break;
 
 		case 4:
@@ -1454,11 +1454,36 @@ int LoLEngine::clickedAutomap(Button *button) {
 	// displayAutopmap();
 
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampOilStatus);
+	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
 	return 1;
 }
 
 int LoLEngine::clickedLamp(Button *button) {
+	if (!(_gameFlags[15] & 0x800))
+		return 0;
+
+	if (_itemsInPlay[_itemInHand].itemPropertyIndex == 248) {
+		if (_lampOilStatus >= 100) {
+			_txt->printMessage(0, getLangString(0x4061));
+			return 1;
+		}
+
+		_txt->printMessage(0, getLangString(0x4062));
+
+		deleteItem(_itemInHand);
+		snd_playSoundEffect(181, -1);
+		setHandItem(0);
+
+		_lampOilStatus += 100;
+
+	} else {
+		uint16 s = (_lampOilStatus >= 100) ? 0x4060 : ((!_lampOilStatus) ? 0x405c : (_lampOilStatus / 33) + 0x405d);
+		_txt->printMessage(0, getLangString(0x405b), getLangString(s));
+	}
+
+	if (_brightness)
+			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+
 	return 1;
 }
 
