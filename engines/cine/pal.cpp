@@ -208,6 +208,10 @@ Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
 	return *this;
 }
 
+bool Palette::empty() const {
+	return _colors.empty();
+}
+
 uint Palette::colorCount() const {
 	return _colors.size();
 }
@@ -220,6 +224,13 @@ Palette &Palette::fillWithBlack() {
 	}
 
 	return *this;
+}
+
+// TODO: Add better heuristic for checking whether the color format is valid
+bool Palette::isValid() const {
+	// Check that the color format has been actually set and not just default constructed.
+	// Also check that the alpha channel is discarded.
+	return _format != Graphics::PixelFormat() && _format.aLoss == 8;
 }
 
 Graphics::PixelFormat Palette::colorFormat() const {

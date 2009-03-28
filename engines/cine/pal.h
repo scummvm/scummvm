@@ -139,9 +139,13 @@ public:
 	 */
 	Palette &saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator);
 
+	bool empty() const;
 	uint colorCount() const;
 
 	Palette &fillWithBlack();
+
+	/*! \brief Is the palette valid? (Mostly just checks the color format for correctness) */
+	bool isValid() const;
 
 	/*! \brief The original color format in which this palette was loaded. */
 	Graphics::PixelFormat colorFormat() const;
