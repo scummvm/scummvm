@@ -115,7 +115,7 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 int LoLEngine::olol_setWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (_wllWallFlags[stackPos(2)] & 4)
-		disableMonstersForBlock(stackPos(0));
+		deleteMonstersForBlock(stackPos(0));
 	setWallType(stackPos(0), stackPos(1), stackPos(2));
 	return 1;
 }
@@ -1134,6 +1134,20 @@ int LoLEngine::olol_playMusicTrack(EMCState *script) {
 	return snd_playTrack(stackPos(0));
 }
 
+int LoLEngine::olol_countBlockItems(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countBlockItems(%p) (%d)", (const void *)script, stackPos(0));
+	uint16 o = _levelBlockProperties[stackPos(0)].assignedObjects;
+	int res = 0;
+
+	while (o) {
+		if (!(o & 0x8000))
+			res++;
+		o = findObject(o)->nextAssignedObject;
+	}
+
+	return res;
+}
+
 int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopCharacterSpeech(%p)", (const void *)script);
 	snd_stopSpeech(1);
@@ -1727,7 +1741,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x64
 	Opcode(olol_playMusicTrack);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_countBlockItems);
 	OpcodeUnImpl();
 
 	// 0x68

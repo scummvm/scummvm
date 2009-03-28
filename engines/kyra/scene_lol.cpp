@@ -84,7 +84,7 @@ void LoLEngine::loadLevel(int index) {
 	runInfScript(filename);
 
 	addLevelItems();
-	disableMonstersForBlock(_currentBlock);
+	deleteMonstersForBlock(_currentBlock);
 
 	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
 

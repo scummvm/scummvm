@@ -617,6 +617,7 @@ private:
 	int olol_drawExitButton(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_playMusicTrack(EMCState *script);
+	int olol_countBlockItems(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
@@ -1061,7 +1062,7 @@ private:
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
-	int disableMonstersForBlock(int block);
+	int deleteMonstersForBlock(int block);
 	void setMonsterMode(MonsterInPlay *monster, int mode);
 	bool updateMonsterAdjustBlocks(MonsterInPlay *monster);
 	void placeMonster(MonsterInPlay *monster, uint16 x, uint16 y);
