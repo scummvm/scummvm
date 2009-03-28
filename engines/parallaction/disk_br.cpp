@@ -404,7 +404,7 @@ Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {
 
 Common::SeekableReadStream* DosDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSound");
-	return 0;
+	return openFile("sfx/" + Common::String(name), ".sfx");
 }
 
 
@@ -720,7 +720,7 @@ Common::SeekableReadStream* AmigaDisk_br::loadMusic(const char* name) {
 
 Common::SeekableReadStream* AmigaDisk_br::loadSound(const char* name) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadSound");
-	return tryOpenFile("sfx/" + Common::String(name), ".sfx");
+	return openFile("sfx/" + Common::String(name), ".sfx");
 }
 
 static const uint16 objectsMax[5] = {

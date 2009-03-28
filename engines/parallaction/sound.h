@@ -141,7 +141,7 @@ public:
 	void pause(bool p);
 };
 
-#define NUM_AMIGA_CHANNELS 4
+#define NUM_SFX_CHANNELS 4
 
 class AmigaSoundMan_ns : public SoundMan_ns {
 
@@ -155,7 +155,7 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 		bool				dispose;
 		Audio::SoundHandle	handle;
 		uint32				flags;
-	} _channels[NUM_AMIGA_CHANNELS];
+	} _channels[NUM_SFX_CHANNELS];
 
 	void loadChannelData(const char *filename, Channel *ch);
 
@@ -193,11 +193,23 @@ protected:
 	virtual void stopMusic() = 0;
 	virtual void pause(bool p) = 0;
 
+	struct Channel {
+		Audio::Voice8Header	header;
+		int8				*data;
+		uint32				dataSize;
+		bool				dispose;
+		Audio::SoundHandle	handle;
+		uint32				flags;
+	} _channels[NUM_SFX_CHANNELS];
+
+	virtual void loadChannelData(const char *filename, Channel *ch) = 0;
+
 public:
 	SoundMan_br(Parallaction_br *vm);
+	~SoundMan_br();
 
 	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
-	virtual void stopSfx(uint channel) { }
+	void stopSfx(uint channel);
 
 	virtual void execute(int command, const char *parm);
 	void setMusicFile(const char *parm);
@@ -206,6 +218,8 @@ public:
 class DosSoundMan_br : public SoundMan_br {
 
 	MidiPlayer_MSC	*_midiPlayer;
+
+	void loadChannelData(const char *filename, Channel *ch);
 
 public:
 	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
@@ -216,7 +230,6 @@ public:
 	void pause(bool p);
 
 	void playSfx(const char *filename, uint channel, bool looping, int volume);
-	void stopSfx(uint channel);
 };
 
 class AmigaSoundMan_br : public SoundMan_br {
@@ -224,16 +237,7 @@ class AmigaSoundMan_br : public SoundMan_br {
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
 
-	struct Channel {
-		Audio::Voice8Header	header;
-		int8				*data;
-		uint32				dataSize;
-		bool				dispose;
-		Audio::SoundHandle	handle;
-		uint32				flags;
-	} _channels[NUM_AMIGA_CHANNELS];
-
-	bool loadChannelData(const char *filename, Channel *ch);
+	void loadChannelData(const char *filename, Channel *ch);
 
 public:
 	AmigaSoundMan_br(Parallaction_br *vm);
@@ -244,7 +248,6 @@ public:
 	void pause(bool p);
 
 	void playSfx(const char *filename, uint channel, bool looping, int volume);
-	void stopSfx(uint channel);
 };
 
 } // namespace Parallaction

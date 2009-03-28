@@ -401,12 +401,37 @@ DosSoundMan_br::~DosSoundMan_br() {
 	delete _midiPlayer;
 }
 
-void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
-	warning("SC_PLAYSFX not yet supported!");
+void DosSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
+	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
+
+	ch->dataSize = stream->size();
+	ch->data = (int8*)malloc(ch->dataSize);
+	if (stream->read(ch->data, ch->dataSize) != ch->dataSize)
+		error("DosSoundMan_br::loadChannelData: Read failed");
+
+	ch->dispose = true;
+	delete stream;
+
+	// TODO: Confirm sound rate
+	ch->header.samplesPerSec = 11025;
 }
 
-void DosSoundMan_br::stopSfx(uint channel) {
-	warning("SC_STOPSFX not yet supported!");
+void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
+	stopSfx(channel);
+
+	debugC(1, kDebugAudio, "DosSoundMan_br::playSfx(%s, %u, %i, %i)", filename, channel, looping, volume);
+
+	Channel *ch = &_channels[channel];
+	loadChannelData(filename, ch);
+
+	uint32 loopStart = 0, loopEnd = 0, flags = Audio::Mixer::FLAG_UNSIGNED;
+	if (looping) {
+		loopEnd = ch->dataSize;
+		flags |= Audio::Mixer::FLAG_LOOP;
+	}
+
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
+		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
 }
 
 void DosSoundMan_br::playMusic() {
@@ -429,40 +454,22 @@ void DosSoundMan_br::pause(bool p) {
 
 AmigaSoundMan_br::AmigaSoundMan_br(Parallaction_br *vm) : SoundMan_br(vm)  {
 	_musicStream = 0;
-	_channels[0].data = 0;
-	_channels[0].dispose = false;
-	_channels[1].data = 0;
-	_channels[1].dispose = false;
-	_channels[2].data = 0;
-	_channels[2].dispose = false;
-	_channels[3].data = 0;
-	_channels[3].dispose = false;
 }
 
 AmigaSoundMan_br::~AmigaSoundMan_br() {
 	stopMusic();
-	stopSfx(0);
-	stopSfx(1);
-	stopSfx(2);
-	stopSfx(3);
 }
 
-bool AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
+void AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
-	// NOTE: Sound files don't always exist
-	if (!stream)
-		return false;
-
 	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
 	decoder.decode();
 	ch->dispose = true;
 	delete stream;
-
-	return true;
 }
 
 void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
-	if (channel >= NUM_AMIGA_CHANNELS) {
+	if (channel >= NUM_SFX_CHANNELS) {
 		warning("unknown sfx channel");
 		return;
 	}
@@ -472,10 +479,9 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	if (!loadChannelData(filename, ch))
-		return;
+	loadChannelData(filename, ch);
 
-	uint32 loopStart, loopEnd, flags;
+	uint32 loopStart = 0, loopEnd = 0, flags = 0;
 	if (looping) {
 		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
 		// repeatHiSamples fields, but Nippon Safes handles loops according to flags
@@ -483,9 +489,6 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 		loopStart = 0;
 		loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
 		flags = Audio::Mixer::FLAG_LOOP;
-	} else {
-		loopStart = loopEnd = 0;
-		flags = 0;
 	}
 
 	if (volume == -1) {
@@ -494,20 +497,6 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
 		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
-}
-
-void AmigaSoundMan_br::stopSfx(uint channel) {
-	if (channel >= NUM_AMIGA_CHANNELS) {
-		warning("unknown sfx channel");
-		return;
-	}
-
-	if (_channels[channel].dispose) {
-		debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
-		_mixer->stopHandle(_channels[channel].handle);
-		free(_channels[channel].data);
-		_channels[channel].data = 0;
-	}
 }
 
 void AmigaSoundMan_br::playMusic() {
@@ -544,10 +533,40 @@ void AmigaSoundMan_br::pause(bool p) {
 
 SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
 	_mixer = _vm->_mixer;
+
+	_channels[0].data = 0;
+	_channels[0].dispose = false;
+	_channels[1].data = 0;
+	_channels[1].dispose = false;
+	_channels[2].data = 0;
+	_channels[2].dispose = false;
+	_channels[3].data = 0;
+	_channels[3].dispose = false;
+}
+
+SoundMan_br::~SoundMan_br() {
+	stopSfx(0);
+	stopSfx(1);
+	stopSfx(2);
+	stopSfx(3);
 }
 
 void SoundMan_br::setMusicFile(const char *name) {
 	_musicFile = name;
+}
+
+void SoundMan_br::stopSfx(uint channel) {
+	if (channel >= NUM_SFX_CHANNELS) {
+		warning("unknown sfx channel");
+		return;
+	}
+
+	if (_channels[channel].dispose) {
+		debugC(1, kDebugAudio, "SoundMan_br::stopSfx(%i)", channel);
+		_mixer->stopHandle(_channels[channel].handle);
+		free(_channels[channel].data);
+		_channels[channel].data = 0;
+	}
 }
 
 void SoundMan_br::execute(int command, const char *parm) {
