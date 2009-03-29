@@ -360,8 +360,14 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 	ZoneList::iterator zit = _vm->_location._zones.begin();
 	for ( ; zit != _vm->_location._zones.end(); ++zit) {
+		ZonePtr z = *zit;
 		// restore the flags if the location has already been visited
-		restoreOrSaveZoneFlags(*zit, visited);
+		restoreOrSaveZoneFlags(z, visited);
+
+		// (re)link the bounding animation if needed
+		if (z->_flags & kFlagsAnimLinked) {
+			z->_linkedAnim = _location.findAnimation(z->_linkedName.c_str());
+		}
 	}
 
 	debugC(1, kDebugParser, "parseLocation('%s') done", filename);

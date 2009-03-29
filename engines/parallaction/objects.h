@@ -281,7 +281,7 @@ public:
 	// BRA specific
 	uint			_index;
 	uint			_locationIndex;
-	char			*_linkedName;
+	Common::String	_linkedName;
 	AnimationPtr	_linkedAnim;
 
 	Zone();

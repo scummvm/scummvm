@@ -728,7 +728,9 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (z->_flags & kFlagsRemove)
 		return false;
 
-	if ((z->_flags & kFlagsAnimLinked) == 0)
+	// flag kFlagsAnimLinked may be on, but the animation may not be loaded, so
+	// we must use the animation reference to check here
+	if (!z->_linkedAnim)
 		return false;
 
 	debugC(5, kDebugExec, "checkLinkedAnimBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);

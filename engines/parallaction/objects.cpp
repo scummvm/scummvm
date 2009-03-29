@@ -201,13 +201,9 @@ Zone::Zone() {
 	// BRA specific
 	_index = INVALID_ZONE_INDEX;
 	_locationIndex = INVALID_LOCATION_INDEX;
-	_linkedName = 0;
 }
 
 Zone::~Zone() {
-//	printf("~Zone(%s)\n", _name);
-
-	free(_linkedName);
 }
 
 void Zone::translate(int16 x, int16 y) {
