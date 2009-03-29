@@ -123,7 +123,7 @@ Common::SeekableReadStream *IFFParser::getIFFBlockStream(Common::IFF_ID chunkNam
 
 // ILBM decoder implementation
 
-ILBMDecoder::ILBMDecoder(Common::SeekableReadStream *in, bool disposeStream) : _in(in), _hasHeader(false), _bodySize((uint32)-1), _paletteSize((uint32)-1) {
+ILBMDecoder::ILBMDecoder(Common::SeekableReadStream *in, bool disposeStream) : _in(in), _disposeStream(disposeStream), _hasHeader(false), _bodySize((uint32)-1), _paletteSize((uint32)-1) {
 	assert(in);
 	_parser.setInputStream(in);
 
@@ -192,9 +192,8 @@ byte *ILBMDecoder::getBitmap(uint32 numPlanes, bool packPlanes) {
 	Common::SeekableReadStream *bodyStream = _parser.getIFFBlockStream(ID_BODY);
 	assert(bodyStream);
 
-	byte *bitmap = new byte[bitmapSize];
+	byte *bitmap = (byte*)calloc(bitmapSize, 1);
 	assert(bitmap);
-	memset(bitmap, 0, bitmapSize);
 
 	switch (_header.pack) {
 	case 1: {	// PackBits compressed bitmap

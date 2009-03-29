@@ -1049,7 +1049,7 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 		b = pal[i*3+2];
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
-	delete pal;
+	delete []pal;
 
 	info._mask = new MaskBuffer;
 	info._mask->w = info.width;

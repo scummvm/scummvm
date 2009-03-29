@@ -513,7 +513,7 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	// Overwrite the first color (transparent key) in the palette
 	info.palette.setEntry(0, pal[0] >> 2, pal[1] >> 2, pal[2] >> 0);
 
-	free(pal);
+	delete []pal;
 
 	// background data is drawn used the upper portion of the palette
 	adjustForPalette(info.bg);
@@ -595,7 +595,7 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	Common::String sName = name;
 
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
-	ILBMDecoder decoder(stream);
+	ILBMDecoder decoder(stream, true);
 
 	Graphics::Surface* surf = new Graphics::Surface;
 	assert(surf);
@@ -731,7 +731,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
-	ILBMDecoder decoder(stream);
+	ILBMDecoder decoder(stream, true);
 
 	uint16 max = objectsMax[part];
 	if (_vm->getFeatures() & GF_DEMO)
