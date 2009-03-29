@@ -497,7 +497,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_DRAW_LINE: {
 
-		gfx_color_t gfxcolor = graph_map_color(s, SKPV(5) & 0xf, SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
+		gfx_color_t gfxcolor = graph_map_color(s, SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
 
 		SCIkdebug(SCIkGRAPHICS, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
 		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
