@@ -2529,10 +2529,11 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define K_ANIMATE_BORDER_CLOSE_F_CENTER_OPEN_F 16 // close from edges to center, reopen from
 // center to edges */
 #define K_ANIMATE_CLOSE_CHECKERS_OPEN_CHECKERS 17 // close random checkboard, reopen
-#define K_ANIMATE_SCROLL_LEFT 0x28
-#define K_ANIMATE_SCROLL_RIGHT 0x29
-#define K_ANIMATE_SCROLL_DOWN 0x2a
-#define K_ANIMATE_SCROLL_UP 0x2b
+#define K_ANIMATE_PALETTE_FADEOUT_FADEIN       0x1e
+#define K_ANIMATE_SCROLL_LEFT                  0x28
+#define K_ANIMATE_SCROLL_RIGHT                 0x29
+#define K_ANIMATE_SCROLL_DOWN                  0x2a
+#define K_ANIMATE_SCROLL_UP                    0x2b
 
 #define K_ANIMATE_OPEN_SIMPLE 100 // No animation
 
@@ -2800,6 +2801,11 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 			gfxop_sleep(s->gfx_state, 7 * s->animation_delay / 1000);
 			process_sound_events(s);
 		}
+		break;
+
+	case K_ANIMATE_PALETTE_FADEOUT_FADEIN:
+		warning("TODO: Palette fadeout/fadein");
+		GRAPH_UPDATE_BOX(s, 0, 10, 320, 190);
 		break;
 
 	case K_ANIMATE_CLOSE_CHECKERS_OPEN_CHECKERS :
