@@ -198,86 +198,86 @@ DECLARE_COMMAND_OPCODE(invalid) {
 }
 
 DECLARE_COMMAND_OPCODE(set) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags |= ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags |= ctxt._cmd->_flags;
 	} else {
-		_vm->setLocationFlags(ctxt._cmd->u._flags);
+		_vm->setLocationFlags(ctxt._cmd->_flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(clear) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags &= ~ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags &= ~ctxt._cmd->_flags;
 	} else {
-		_vm->clearLocationFlags(ctxt._cmd->u._flags);
+		_vm->clearLocationFlags(ctxt._cmd->_flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(start) {
-	ctxt._cmd->u._zone->_flags |= kFlagsActing;
+	ctxt._cmd->_zone->_flags |= kFlagsActing;
 }
 
 
 DECLARE_COMMAND_OPCODE(speak) {
-	if (ACTIONTYPE(ctxt._cmd->u._zone) == kZoneSpeak) {
-		_vm->enterDialogueMode(ctxt._cmd->u._zone);
+	if (ACTIONTYPE(ctxt._cmd->_zone) == kZoneSpeak) {
+		_vm->enterDialogueMode(ctxt._cmd->_zone);
 	} else {
-		_vm->_activeZone = ctxt._cmd->u._zone;
+		_vm->_activeZone = ctxt._cmd->_zone;
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(get) {
-	ctxt._cmd->u._zone->_flags &= ~kFlagsFixed;
-	_vm->runZone(ctxt._cmd->u._zone);
+	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
+	_vm->runZone(ctxt._cmd->_zone);
 }
 
 
 DECLARE_COMMAND_OPCODE(location) {
-	_vm->scheduleLocationSwitch(ctxt._cmd->u._string);
+	_vm->scheduleLocationSwitch(ctxt._cmd->_string);
 }
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	_vm->updateDoor(ctxt._cmd->u._zone, false);
+	_vm->updateDoor(ctxt._cmd->_zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	_vm->updateDoor(ctxt._cmd->u._zone, true);
+	_vm->updateDoor(ctxt._cmd->_zone, true);
 }
 
 DECLARE_COMMAND_OPCODE(on) {
-	_vm->showZone(ctxt._cmd->u._zone, true);
+	_vm->showZone(ctxt._cmd->_zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	_vm->showZone(ctxt._cmd->u._zone, false);
+	_vm->showZone(ctxt._cmd->_zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	_vm->callFunction(ctxt._cmd->u._callable, &ctxt._z);
+	_vm->callFunction(ctxt._cmd->_callable, &ctxt._z);
 }
 
 
 DECLARE_COMMAND_OPCODE(toggle) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags ^= ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags ^= ctxt._cmd->_flags;
 	} else {
-		_vm->toggleLocationFlags(ctxt._cmd->u._flags);
+		_vm->toggleLocationFlags(ctxt._cmd->_flags);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(drop){
-	_vm->dropItem( ctxt._cmd->u._object );
+	_vm->dropItem( ctxt._cmd->_object );
 }
 
 
@@ -287,12 +287,12 @@ DECLARE_COMMAND_OPCODE(quit) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	_vm->scheduleWalk(ctxt._cmd->u._move.x, ctxt._cmd->u._move.y, false);
+	_vm->scheduleWalk(ctxt._cmd->_move.x, ctxt._cmd->_move.y, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(stop) {
-	ctxt._cmd->u._zone->_flags &= ~kFlagsActing;
+	ctxt._cmd->_zone->_flags &= ~kFlagsActing;
 }
 
 CommandExec_ns::CommandExec_ns(Parallaction_ns* vm) : CommandExec(vm), _vm(vm) {

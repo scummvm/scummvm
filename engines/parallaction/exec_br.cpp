@@ -117,68 +117,68 @@ void Parallaction_br::clearSubtitles() {
 DECLARE_COMMAND_OPCODE(location) {
 	warning("Parallaction_br::cmdOp_location command not yet implemented");
 
-	_vm->_location._startPosition = ctxt._cmd->u._startPos;
+	_vm->_location._startPosition = ctxt._cmd->_startPos;
 	_vm->_location._startFrame = 0; // TODO: verify this against the disassembly!f
-	_vm->_location._followerStartPosition = ctxt._cmd->u._startPos2;
+	_vm->_location._followerStartPosition = ctxt._cmd->_startPos2;
 	_vm->_location._followerStartFrame = 0;
 
 	// TODO: handle startPos and startPos2
-	_vm->scheduleLocationSwitch(ctxt._cmd->u._string);
+	_vm->scheduleLocationSwitch(ctxt._cmd->_string);
 }
 
 
 DECLARE_COMMAND_OPCODE(open) {
-	_vm->updateDoor(ctxt._cmd->u._zone, false);
+	_vm->updateDoor(ctxt._cmd->_zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
-	_vm->updateDoor(ctxt._cmd->u._zone, true);
+	_vm->updateDoor(ctxt._cmd->_zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	_vm->showZone(ctxt._cmd->u._zone, true);
+	_vm->showZone(ctxt._cmd->_zone, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	_vm->showZone(ctxt._cmd->u._zone, false);
+	_vm->showZone(ctxt._cmd->_zone, false);
 }
 
 
 DECLARE_COMMAND_OPCODE(call) {
-	_vm->callFunction(ctxt._cmd->u._callable, &ctxt._z);
+	_vm->callFunction(ctxt._cmd->_callable, &ctxt._z);
 }
 
 
 DECLARE_COMMAND_OPCODE(drop) {
-	_vm->dropItem(ctxt._cmd->u._object);
+	_vm->dropItem(ctxt._cmd->_object);
 }
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	_vm->scheduleWalk(ctxt._cmd->u._move.x, ctxt._cmd->u._move.y, false);
+	_vm->scheduleWalk(ctxt._cmd->_move.x, ctxt._cmd->_move.y, false);
 	suspend();
 }
 
 DECLARE_COMMAND_OPCODE(start) {
-	ctxt._cmd->u._zone->_flags |= kFlagsActing;
+	ctxt._cmd->_zone->_flags |= kFlagsActing;
 }
 
 DECLARE_COMMAND_OPCODE(stop) {
-	ctxt._cmd->u._zone->_flags &= ~kFlagsActing;
+	ctxt._cmd->_zone->_flags &= ~kFlagsActing;
 }
 
 
 DECLARE_COMMAND_OPCODE(character) {
-	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", ctxt._cmd->u._string);
-	_vm->changeCharacter(ctxt._cmd->u._string);
+	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", ctxt._cmd->_string);
+	_vm->changeCharacter(ctxt._cmd->_string);
 }
 
 
 DECLARE_COMMAND_OPCODE(followme) {
-	Common::String s(ctxt._cmd->u._string);
+	Common::String s(ctxt._cmd->_string);
 	if (!s.compareToIgnoreCase("NULL")) {
 		s.clear();
 	}
@@ -197,26 +197,26 @@ DECLARE_COMMAND_OPCODE(offmouse) {
 
 
 DECLARE_COMMAND_OPCODE(add) {
-	_vm->addInventoryItem(ctxt._cmd->u._object);
+	_vm->addInventoryItem(ctxt._cmd->_object);
 }
 
 
 DECLARE_COMMAND_OPCODE(leave) {
-	ZonePtr z = ctxt._cmd->u._zone;
+	ZonePtr z = ctxt._cmd->_zone;
 	_vm->dropItem(z->u._getIcon);
 	_vm->showZone(z, true);
 }
 
 
 DECLARE_COMMAND_OPCODE(inc) {
-	int v = _vm->getCounterValue(ctxt._cmd->u._counterName);
-	_vm->setCounterValue(ctxt._cmd->u._counterName, v + ctxt._cmd->u._counterValue);
+	int v = _vm->getCounterValue(ctxt._cmd->_counterName);
+	_vm->setCounterValue(ctxt._cmd->_counterName, v + ctxt._cmd->_counterValue);
 }
 
 
 DECLARE_COMMAND_OPCODE(dec) {
-	int v = _vm->getCounterValue(ctxt._cmd->u._counterName);
-	_vm->setCounterValue(ctxt._cmd->u._counterName, v - ctxt._cmd->u._counterValue);
+	int v = _vm->getCounterValue(ctxt._cmd->_counterName);
+	_vm->setCounterValue(ctxt._cmd->_counterName, v - ctxt._cmd->_counterValue);
 }
 
 // these definitions must match those in parser_br.cpp
@@ -225,20 +225,20 @@ DECLARE_COMMAND_OPCODE(dec) {
 #define CMD_TEST_LT		27
 
 DECLARE_COMMAND_OPCODE(ifeq) {
-	_vm->testCounterCondition(ctxt._cmd->u._counterName, CMD_TEST, ctxt._cmd->u._counterValue);
+	_vm->testCounterCondition(ctxt._cmd->_counterName, CMD_TEST, ctxt._cmd->_counterValue);
 }
 
 DECLARE_COMMAND_OPCODE(iflt) {
-	_vm->testCounterCondition(ctxt._cmd->u._counterName, CMD_TEST_LT, ctxt._cmd->u._counterValue);
+	_vm->testCounterCondition(ctxt._cmd->_counterName, CMD_TEST_LT, ctxt._cmd->_counterValue);
 }
 
 DECLARE_COMMAND_OPCODE(ifgt) {
-	_vm->testCounterCondition(ctxt._cmd->u._counterName, CMD_TEST_GT, ctxt._cmd->u._counterValue);
+	_vm->testCounterCondition(ctxt._cmd->_counterName, CMD_TEST_GT, ctxt._cmd->_counterValue);
 }
 
 
 DECLARE_COMMAND_OPCODE(let) {
-	_vm->setCounterValue(ctxt._cmd->u._counterName, ctxt._cmd->u._counterValue);
+	_vm->setCounterValue(ctxt._cmd->_counterName, ctxt._cmd->_counterValue);
 }
 
 
@@ -248,26 +248,26 @@ DECLARE_COMMAND_OPCODE(music) {
 
 
 DECLARE_COMMAND_OPCODE(fix) {
-	ctxt._cmd->u._zone->_flags |= kFlagsFixed;
+	ctxt._cmd->_zone->_flags |= kFlagsFixed;
 }
 
 
 DECLARE_COMMAND_OPCODE(unfix) {
-	ctxt._cmd->u._zone->_flags &= ~kFlagsFixed;
+	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
 }
 
 
 DECLARE_COMMAND_OPCODE(zeta) {
-	_vm->_location._zeta0 = ctxt._cmd->u._zeta0;
-	_vm->_location._zeta1 = ctxt._cmd->u._zeta1;
-	_vm->_location._zeta2 = ctxt._cmd->u._zeta2;
+	_vm->_location._zeta0 = ctxt._cmd->_zeta0;
+	_vm->_location._zeta1 = ctxt._cmd->_zeta1;
+	_vm->_location._zeta2 = ctxt._cmd->_zeta2;
 }
 
 
 DECLARE_COMMAND_OPCODE(scroll) {
 	Common::Point p;
 	_vm->_gfx->getScrollPos(p);
-	_vm->_gfx->initiateScroll(ctxt._cmd->u._counterValue - p.x, 0);
+	_vm->_gfx->initiateScroll(ctxt._cmd->_counterValue - p.x, 0);
 }
 
 
@@ -282,8 +282,7 @@ DECLARE_COMMAND_OPCODE(give) {
 
 
 DECLARE_COMMAND_OPCODE(text) {
-	CommandData *data = &ctxt._cmd->u;
-	_vm->setupSubtitles(data->_string, data->_string2, data->_zeta0);
+	_vm->setupSubtitles(ctxt._cmd->_string, ctxt._cmd->_string2, ctxt._cmd->_zeta0);
 }
 
 
@@ -317,40 +316,40 @@ DECLARE_INSTRUCTION_OPCODE(invalid) {
 }
 
 DECLARE_COMMAND_OPCODE(clear) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags &= ~ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags &= ~ctxt._cmd->_flags;
 	} else {
-		_vm->clearLocationFlags(ctxt._cmd->u._flags);
+		_vm->clearLocationFlags(ctxt._cmd->_flags);
 	}
 }
 
 DECLARE_COMMAND_OPCODE(speak) {
 	// WORKAROUND: this avoids crashing when the zone is not parsed, like in the case
 	// of script bug in ticket #2718449.
-	if (!ctxt._cmd->u._zone) {
+	if (!ctxt._cmd->_zone) {
 		return;
 	}
 
-	if (ACTIONTYPE(ctxt._cmd->u._zone) == kZoneSpeak) {
-		_vm->enterDialogueMode(ctxt._cmd->u._zone);
+	if (ACTIONTYPE(ctxt._cmd->_zone) == kZoneSpeak) {
+		_vm->enterDialogueMode(ctxt._cmd->_zone);
 	} else {
-		_vm->_activeZone = ctxt._cmd->u._zone;
+		_vm->_activeZone = ctxt._cmd->_zone;
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(get) {
-	ctxt._cmd->u._zone->_flags &= ~kFlagsFixed;
-	_vm->runZone(ctxt._cmd->u._zone);
+	ctxt._cmd->_zone->_flags &= ~kFlagsFixed;
+	_vm->runZone(ctxt._cmd->_zone);
 }
 
 DECLARE_COMMAND_OPCODE(toggle) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags ^= ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags ^= ctxt._cmd->_flags;
 	} else {
-		_vm->toggleLocationFlags(ctxt._cmd->u._flags);
+		_vm->toggleLocationFlags(ctxt._cmd->_flags);
 	}
 }
 
@@ -363,11 +362,11 @@ DECLARE_COMMAND_OPCODE(invalid) {
 }
 
 DECLARE_COMMAND_OPCODE(set) {
-	if (ctxt._cmd->u._flags & kFlagsGlobal) {
-		ctxt._cmd->u._flags &= ~kFlagsGlobal;
-		_globalFlags |= ctxt._cmd->u._flags;
+	if (ctxt._cmd->_flags & kFlagsGlobal) {
+		ctxt._cmd->_flags &= ~kFlagsGlobal;
+		_globalFlags |= ctxt._cmd->_flags;
 	} else {
-		_vm->setLocationFlags(ctxt._cmd->u._flags);
+		_vm->setLocationFlags(ctxt._cmd->_flags);
 	}
 }
 

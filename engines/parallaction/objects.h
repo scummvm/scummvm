@@ -108,8 +108,15 @@ enum CommandFlags {
 	kFlagsTestTrue		= 2
 };
 
+struct Command {
+	uint16			_id;
+	uint32			_flagsOn;
+	uint32			_flagsOff;
 
-struct CommandData {
+	Command();
+	~Command();
+
+	// Common fields
 	uint32			_flags;
 	ZonePtr			_zone;
 	char*			_string;
@@ -129,26 +136,6 @@ struct CommandData {
 	char*			_string2;
 	int				_musicCommand;
 	int				_musicParm;
-
-
-	CommandData() {
-		memset(this, 0, sizeof(CommandData));
-	}
-
-	~CommandData() {
-		free(_string);
-		free(_string2);
-	}
-};
-
-struct Command {
-	uint16			_id;
-	CommandData		u;
-	uint32			_flagsOn;
-	uint32			_flagsOff;
-
-	Command();
-	~Command();
 };
 
 typedef Common::SharedPtr<Command> CommandPtr;

@@ -34,10 +34,24 @@ Command::Command() {
 	_id = 0;
 	_flagsOn = 0;
 	_flagsOff = 0;
+
+	_flags = 0;
+	_string = 0;
+	_callable = 0;
+	_object = 0;
+	_counterValue = 0;
+	_zeta0 = 0;
+	_zeta1 = 0;
+	_zeta2 = 0;
+	_characterId = 0;
+	_string2 = 0;
+	_musicCommand = 0;
+	_musicParm = 0;
 }
 
 Command::~Command() {
-
+	free(_string);
+	free(_string2);
 }
 
 

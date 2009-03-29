@@ -519,23 +519,23 @@ DECLARE_COMMAND_PARSER(location)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._string = strdup(_tokens[1]);
+	ctxt.cmd->_string = strdup(_tokens[1]);
 	ctxt.nextToken++;
 
-	ctxt.cmd->u._startPos.x = -1000;
-	ctxt.cmd->u._startPos2.x = -1000;
+	ctxt.cmd->_startPos.x = -1000;
+	ctxt.cmd->_startPos2.x = -1000;
 	if (_tokens[ctxt.nextToken][0] != '\0') {
 		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
-			ctxt.cmd->u._startPos.x = atoi(_tokens[ctxt.nextToken]);
+			ctxt.cmd->_startPos.x = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
-			ctxt.cmd->u._startPos.y = atoi(_tokens[ctxt.nextToken]);
+			ctxt.cmd->_startPos.y = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
 		}
 
 		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
-			ctxt.cmd->u._startPos2.x = atoi(_tokens[ctxt.nextToken]);
+			ctxt.cmd->_startPos2.x = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
-			ctxt.cmd->u._startPos2.y = atoi(_tokens[ctxt.nextToken]);
+			ctxt.cmd->_startPos2.y = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
 		}
 	}
@@ -550,7 +550,7 @@ DECLARE_COMMAND_PARSER(string)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._string = strdup(_tokens[1]);
+	ctxt.cmd->_string = strdup(_tokens[1]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -566,9 +566,9 @@ DECLARE_COMMAND_PARSER(math)  {
 		error("counter '%s' doesn't exists", _tokens[1]);
 	}
 
-	ctxt.cmd->u._counterName = _tokens[1];
+	ctxt.cmd->_counterName = _tokens[1];
 	ctxt.nextToken++;
-	ctxt.cmd->u._counterValue = atoi(_tokens[2]);
+	ctxt.cmd->_counterValue = atoi(_tokens[2]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -589,8 +589,8 @@ DECLARE_COMMAND_PARSER(test)  {
 			error("unknown counter '%s' in test opcode", _tokens[1]);
 		}
 	} else {
-		ctxt.cmd->u._counterName = _tokens[1];
-		ctxt.cmd->u._counterValue = atoi(_tokens[3]);
+		ctxt.cmd->_counterName = _tokens[1];
+		ctxt.cmd->_counterValue = atoi(_tokens[3]);
 		ctxt.nextToken++;
 
 		if (_tokens[2][0] == '>') {
@@ -612,11 +612,11 @@ DECLARE_COMMAND_PARSER(music)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._musicCommand = _audioCommandsNames->lookup(_tokens[1]);
+	ctxt.cmd->_musicCommand = _audioCommandsNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
 
 	if (_tokens[2][0] != '\0' && scumm_stricmp("flags", _tokens[2]) && scumm_stricmp("gflags", _tokens[2])) {
-		ctxt.cmd->u._musicParm = atoi(_tokens[2]);
+		ctxt.cmd->_musicParm = atoi(_tokens[2]);
 		ctxt.nextToken++;
 	}
 
@@ -630,16 +630,16 @@ DECLARE_COMMAND_PARSER(zeta)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
+	ctxt.cmd->_zeta0 = atoi(_tokens[1]);
 	ctxt.nextToken++;
-	ctxt.cmd->u._zeta1 = atoi(_tokens[2]);
+	ctxt.cmd->_zeta1 = atoi(_tokens[2]);
 	ctxt.nextToken++;
 
 	if (_tokens[3][0] != '\0') {
-		ctxt.cmd->u._zeta2 = atoi(_tokens[3]);
+		ctxt.cmd->_zeta2 = atoi(_tokens[3]);
 		ctxt.nextToken++;
 	} else {
-		ctxt.cmd->u._zeta2 = 50;
+		ctxt.cmd->_zeta2 = 50;
 	}
 
 	parseCommandFlags();
@@ -652,17 +652,17 @@ DECLARE_COMMAND_PARSER(give)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._object = 4 + atoi(_tokens[1]);
+	ctxt.cmd->_object = 4 + atoi(_tokens[1]);
 	ctxt.nextToken++;
 
 	if (!scumm_stricmp("dino", _tokens[2])) {
-		ctxt.cmd->u._characterId = 1;
+		ctxt.cmd->_characterId = 1;
 	} else
 	if (!scumm_stricmp("doug", _tokens[2])) {
-		ctxt.cmd->u._characterId = 2;
+		ctxt.cmd->_characterId = 2;
 	} else
 	if (!scumm_stricmp("donna", _tokens[2])) {
-		ctxt.cmd->u._characterId = 3;
+		ctxt.cmd->_characterId = 3;
 	} else
 		error("unknown recipient '%s' in give command", _tokens[2]);
 
@@ -679,17 +679,17 @@ DECLARE_COMMAND_PARSER(text)  {
 	createCommand(_parser->_lookup);
 
 	if (isdigit(_tokens[1][1])) {
-		ctxt.cmd->u._zeta0 = atoi(_tokens[1]);
+		ctxt.cmd->_zeta0 = atoi(_tokens[1]);
 		ctxt.nextToken++;
 	} else {
-		ctxt.cmd->u._zeta0 = -1;
+		ctxt.cmd->_zeta0 = -1;
 	}
 
-	ctxt.cmd->u._string = strdup(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_string = strdup(_tokens[ctxt.nextToken]);
 	ctxt.nextToken++;
 
 	if (_tokens[ctxt.nextToken][0] != '\0' && scumm_stricmp("flags", _tokens[ctxt.nextToken])) {
-		ctxt.cmd->u._string2 = strdup(_tokens[ctxt.nextToken]);
+		ctxt.cmd->_string2 = strdup(_tokens[ctxt.nextToken]);
 		ctxt.nextToken++;
 	}
 
@@ -704,7 +704,7 @@ DECLARE_COMMAND_PARSER(unary)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._counterValue = atoi(_tokens[1]);
+	ctxt.cmd->_counterValue = atoi(_tokens[1]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();

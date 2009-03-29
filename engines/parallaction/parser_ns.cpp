@@ -608,15 +608,15 @@ DECLARE_COMMAND_PARSER(flags)  {
 		do {
 			char _al = _vm->_localFlagNames->lookup(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
-			ctxt.cmd->u._flags |= 1 << (_al - 1);
+			ctxt.cmd->_flags |= 1 << (_al - 1);
 		} while (!scumm_stricmp(_tokens[ctxt.nextToken++], "|"));
 		ctxt.nextToken--;
 	} else {
-		ctxt.cmd->u._flags |= kFlagsGlobal;
+		ctxt.cmd->_flags |= kFlagsGlobal;
 		do {
 			char _al = _vm->_globalFlagsNames->lookup(_tokens[1]);
 			ctxt.nextToken++;
-			ctxt.cmd->u._flags |= 1 << (_al - 1);
+			ctxt.cmd->_flags |= 1 << (_al - 1);
 		} while (!scumm_stricmp(_tokens[ctxt.nextToken++], "|"));
 		ctxt.nextToken--;
 	}
@@ -631,8 +631,8 @@ DECLARE_COMMAND_PARSER(zone)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._zone = _vm->_location.findZone(_tokens[ctxt.nextToken]);
-	if (!ctxt.cmd->u._zone) {
+	ctxt.cmd->_zone = _vm->_location.findZone(_tokens[ctxt.nextToken]);
+	if (!ctxt.cmd->_zone) {
 		saveCommandForward(_tokens[ctxt.nextToken], ctxt.cmd);
 	}
 	ctxt.nextToken++;
@@ -647,7 +647,7 @@ DECLARE_COMMAND_PARSER(location)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._string = strdup(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_string = strdup(_tokens[ctxt.nextToken]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -660,7 +660,7 @@ DECLARE_COMMAND_PARSER(invObject)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._object = 4 + _vm->_objectsNames->lookup(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_object = 4 + _vm->_objectsNames->lookup(_tokens[ctxt.nextToken]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -673,7 +673,7 @@ DECLARE_COMMAND_PARSER(call)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._callable = _vm->_callableNames->lookup(_tokens[ctxt.nextToken]) - 1;
+	ctxt.cmd->_callable = _vm->_callableNames->lookup(_tokens[ctxt.nextToken]) - 1;
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -695,9 +695,9 @@ DECLARE_COMMAND_PARSER(move)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->u._move.x = atoi(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_move.x = atoi(_tokens[ctxt.nextToken]);
 	ctxt.nextToken++;
-	ctxt.cmd->u._move.y = atoi(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_move.y = atoi(_tokens[ctxt.nextToken]);
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -790,8 +790,8 @@ void LocationParser_ns::saveCommandForward(const char *name, CommandPtr cmd) {
 
 void LocationParser_ns::resolveCommandForwards() {
 	for (uint i = 0; i < _numForwardedCommands; i++) {
-		_forwardedCommands[i].cmd->u._zone = _vm->_location.findZone(_forwardedCommands[i].name);
-		if (_forwardedCommands[i].cmd->u._zone == 0) {
+		_forwardedCommands[i].cmd->_zone = _vm->_location.findZone(_forwardedCommands[i].name);
+		if (_forwardedCommands[i].cmd->_zone == 0) {
 			warning("Cannot find zone '%s' into current location script. This may be a bug in the original scripts.\n", _forwardedCommands[i].name);
 		}
 	}
