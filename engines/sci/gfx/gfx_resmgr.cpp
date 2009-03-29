@@ -66,7 +66,7 @@ GfxResManager::GfxResManager(int version, gfx_options_t *options, gfx_driver_t *
 
 GfxResManager::~GfxResManager() {
 	_staticPalette->free();
-	delete _staticPalette;
+	_staticPalette = 0;
 }
 
 #define DRAW_PIC01(pic, picStyle, isSci1) \
