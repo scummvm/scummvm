@@ -554,12 +554,14 @@ private:
 	typedef void (Parallaction_br::*Callable)(void*);
 	const Callable *_callables;
 	static const Callable _dosCallables[6];
+	static const Callable _amigaCallables[6];
 
 	Common::String		_followerName;
 	AnimationPtr		_follower;
 	PathWalker_BR		*_walker;
 
 	// dos callables
+	void _c_null(void*);
 	void _c_blufade(void*);
 	void _c_resetpalette(void*);
 	void _c_ferrcycle(void*);

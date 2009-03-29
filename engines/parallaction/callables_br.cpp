@@ -27,6 +27,9 @@
 
 namespace Parallaction {
 
+void Parallaction_br::_c_null(void*) {
+	// do nothing :)
+}
 
 void Parallaction_br::_c_blufade(void*) {
 	warning("Parallaction_br::_c_blufade() not yet implemented");

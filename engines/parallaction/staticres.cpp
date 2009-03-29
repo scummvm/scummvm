@@ -384,6 +384,15 @@ const Parallaction_br::Callable Parallaction_br::_dosCallables[] = {
 	CALLABLE_BR(_c_password)
 };
 
+const Parallaction_br::Callable Parallaction_br::_amigaCallables[] = {
+	CALLABLE_BR(_c_blufade),
+	CALLABLE_BR(_c_resetpalette),
+	CALLABLE_BR(_c_null),
+	CALLABLE_BR(_c_null),
+	CALLABLE_BR(_c_null),
+	CALLABLE_BR(_c_null)
+};
+
 void Parallaction_ns::initResources() {
 
 	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_ns), _callableNamesRes_ns);
@@ -409,6 +418,8 @@ void Parallaction_br::initResources() {
 
 	if (getPlatform() == Common::kPlatformPC) {
 		_callables = _dosCallables;
+	} else {
+		_callables = _amigaCallables;
 	}
 
 }
