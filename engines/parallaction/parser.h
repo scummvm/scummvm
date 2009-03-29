@@ -204,16 +204,8 @@ protected:
 	void		parseCommands(CommandList&);
 	void		parseCommandFlags();
 	void		parseCommandFlag(CommandPtr cmd, const char *flag, Table *table);
-	void		saveCommandForward(const char *name, CommandPtr cmd);
-	void		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
-
-	struct CommandForwardReference {
-		char		name[20];
-		CommandPtr	cmd;
-	} _forwardedCommands[MAX_FORWARDS];
-	uint		_numForwardedCommands;
 
 	void clearSet(OpcodeSet &opcodes) {
 		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)

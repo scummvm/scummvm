@@ -631,10 +631,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->_zone = _vm->_location.findZone(_tokens[ctxt.nextToken]);
-	if (!ctxt.cmd->_zone) {
-		saveCommandForward(_tokens[ctxt.nextToken], ctxt.cmd);
-	}
+	ctxt.cmd->_zoneName = _tokens[ctxt.nextToken];
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -776,26 +773,8 @@ void LocationParser_ns::createCommand(uint id) {
 	ctxt.nextToken = 1;
 	ctxt.cmd = CommandPtr(new Command);
 	ctxt.cmd->_id = id;
+	ctxt.cmd->_valid = true;
 
-}
-
-void LocationParser_ns::saveCommandForward(const char *name, CommandPtr cmd) {
-	assert(_numForwardedCommands < MAX_FORWARDS);
-
-	strcpy(_forwardedCommands[_numForwardedCommands].name, name);
-	_forwardedCommands[_numForwardedCommands].cmd = cmd;
-
-	_numForwardedCommands++;
-}
-
-void LocationParser_ns::resolveCommandForwards() {
-	for (uint i = 0; i < _numForwardedCommands; i++) {
-		_forwardedCommands[i].cmd->_zone = _vm->_location.findZone(_forwardedCommands[i].name);
-		if (_forwardedCommands[i].cmd->_zone == 0) {
-			warning("Cannot find zone '%s' into current location script. This may be a bug in the original scripts.\n", _forwardedCommands[i].name);
-		}
-	}
-	_numForwardedCommands = 0;
 }
 
 void LocationParser_ns::parseCommands(CommandList& list) {
@@ -1058,7 +1037,6 @@ DECLARE_LOCATION_PARSER(music)  {
 
 void LocationParser_ns::parse(Script *script) {
 	_zoneProg = 0;
-	_numForwardedCommands = 0;
 
 	ctxt.end = false;
 	_script = script;
@@ -1071,8 +1049,6 @@ void LocationParser_ns::parse(Script *script) {
 		_parser->parseStatement();
 	} while (!ctxt.end);
 	_parser->popTables();
-
-	resolveCommandForwards();
 }
 
 void LocationParser_ns::parsePointList(PointList &list) {

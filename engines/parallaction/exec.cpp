@@ -102,6 +102,16 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 
 		CommandPtr cmd = *first;
 
+		if (cmd->_valid && !cmd->_zone && !cmd->_zoneName.empty()) {
+			// try binding the command to a zone
+			cmd->_zone = _vm->_location.findZone(cmd->_zoneName.c_str());
+			cmd->_valid = cmd->_zone != 0;
+		}
+
+		if (!cmd->_valid) {
+			continue;
+		}
+
 		if (cmd->_flagsOn & kFlagsGlobal) {
 			useFlags = _globalFlags | kFlagsGlobal;
 			useLocalFlags = false;

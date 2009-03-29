@@ -112,6 +112,7 @@ struct Command {
 	uint16			_id;
 	uint32			_flagsOn;
 	uint32			_flagsOff;
+	bool			_valid;
 
 	Command();
 	~Command();
@@ -119,6 +120,7 @@ struct Command {
 	// Common fields
 	uint32			_flags;
 	ZonePtr			_zone;
+	Common::String	_zoneName;
 	char*			_string;
 	uint16			_callable;
 	uint16			_object;
