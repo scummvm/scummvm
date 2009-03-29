@@ -224,14 +224,8 @@ public:
 
 	const PaletteEntry &getColor(int color) { return _staticPalette->getColor(color); }
 
-	void setStaticPalette(Palette *newPalette) {
-		if (_staticPalette)
-			_staticPalette->free();
-
-		_staticPalette = newPalette;
-		_staticPalette->name = "static palette";
-	}
-
+	// Set static palette and merge it into the global palette
+	void setStaticPalette(Palette *newPalette);
 	int getColorCount() { return _staticPalette ? _staticPalette->size() : 0; }
 
 private:

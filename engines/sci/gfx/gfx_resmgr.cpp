@@ -242,6 +242,19 @@ void GfxResManager::freeTaggedResources() {
 	_tagLockCounter = 0;
 }
 
+
+void GfxResManager::setStaticPalette(Palette *newPalette)
+{
+	if (_staticPalette)
+		_staticPalette->free();
+
+	_staticPalette = newPalette;
+	_staticPalette->name = "static palette";
+
+	_staticPalette->mergeInto(_driver->mode->palette);
+}
+
+
 #define XLATE_AS_APPROPRIATE(key, entry) \
 	if (maps & key) { \
 		if (res->unscaled_data.pic&& (force || !res->unscaled_data.pic->entry->data)) { \
