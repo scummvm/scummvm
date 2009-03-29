@@ -105,7 +105,7 @@ class MainMenuInputState_BR : public MenuInputState {
 	#define MENUITEMS_Y			200
 
 	#define MENUITEM_WIDTH		200
-	#define MENUITEM_HEIGHT		18
+	#define MENUITEM_HEIGHT		20
 
 	Frames* renderMenuItem(const char *text) {
 		// this builds a surface containing two copies of the text.
