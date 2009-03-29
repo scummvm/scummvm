@@ -112,9 +112,6 @@ void Palette::unmerge() {
 			_parent->_colors[pi].refcount = PALENTRY_FREE;
 			count++;
 		}
-#ifdef DEBUG_MERGE
-		fprintf(stderr, "%d: %d -> %d\n", pi, old, _parent->_colors[pi].refcount);
-#endif
 		_colors[i].parent_index = -1;
 	}
 #ifdef DEBUG_MERGE
