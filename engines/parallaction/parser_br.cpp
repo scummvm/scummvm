@@ -447,7 +447,9 @@ DECLARE_LOCATION_PARSER(character)  {
 DECLARE_LOCATION_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(ifchar) ");
 
-	_script->skip("ENDIF");
+	if (scumm_stricmp(_vm->_char.getName(), _tokens[1])) {
+		_script->skip("ENDIF");
+	}
 }
 
 
