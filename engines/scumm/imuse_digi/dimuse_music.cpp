@@ -106,8 +106,8 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq &&	(_digSeqMusicTable[_curMusicSeq].transitionType == 4)
-				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
+		if (_curMusicSeq && ((_digSeqMusicTable[_curMusicSeq].transitionType == 4)
+				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6))) {
 			_nextSeqToPlay = num;
 			return;
 		} else {
