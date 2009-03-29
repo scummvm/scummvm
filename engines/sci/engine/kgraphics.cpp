@@ -1260,7 +1260,19 @@ reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
-	case 5 : {
+	case 1:
+		warning("STUB: kPalette() effect 1, direct palette set");
+		break;
+	case 2:
+		warning("STUB: kPalette() effect 2, set flag to colors");
+		break;
+	case 3:
+		warning("STUB: kPalette() effect 3, clear flag to colors");
+		break;
+	case 4:
+		warning("STUB: kPalette() effect 4, set color intensity");
+		break;
+	case 5: {
 		int r = UKPV(1);
 		int g = UKPV(2);
 		int b = UKPV(3);
@@ -1283,12 +1295,17 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// rule rather than the exception
 		return make_reg(0, bestindex);
 	}
-
-	case 4 :
-	case 6 :
+	case 6:
+		warning("STUB: kPalette() effect 6, animate palette");
 		break;
-	default :
-		warning("Unimplemented subfunction: %d", UKPV(0));
+	case 7:
+		warning("STUB: kPalette() effect 7, save palette to heap");
+		break;
+	case 8:
+		warning("STUB: kPalette() effect 8, set stored palette");
+		break;
+	default:
+		warning("kPalette(): Unimplemented subfunction: %d", UKPV(0));
 	}
 
 	return s->r_acc;
