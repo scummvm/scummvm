@@ -344,12 +344,24 @@ void Parallaction_br::parseLocation(const char *filename) {
 	_locationParser->parse(script);
 	delete script;
 
+	bool visited = getLocationFlags() & kFlagsVisited;
+
 	// this loads animation scripts
-	AnimationList::iterator it = _location._animations.begin();
-	for ( ; it != _location._animations.end(); ++it) {
-		if ((*it)->_scriptName) {
-			loadProgram(*it, (*it)->_scriptName);
+	AnimationList::iterator ait = _location._animations.begin();
+	for ( ; ait != _location._animations.end(); ++ait) {
+		// restore the flags if the location has already been visited
+		restoreOrSaveZoneFlags(*ait, visited);
+
+		// load the script
+		if ((*ait)->_scriptName) {
+			loadProgram(*ait, (*ait)->_scriptName);
 		}
+	}
+
+	ZoneList::iterator zit = _vm->_location._zones.begin();
+	for ( ; zit != _vm->_location._zones.end(); ++zit) {
+		// restore the flags if the location has already been visited
+		restoreOrSaveZoneFlags(*zit, visited);
 	}
 
 	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
