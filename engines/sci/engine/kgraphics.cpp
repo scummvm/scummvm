@@ -264,7 +264,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
 		return s->ega_colors[color].visual;
 
-	if (color == 255)
+	if (color == -1 || color == 255)     // -1 occurs in Eco Quest 1. Not sure if this is the best approach, but it seems to work
 		return PaletteEntry(255,255,255);
 	else if (color < s->gfx_state->gfxResMan->getColorCount())
 		return s->gfx_state->gfxResMan->getColor(color);
