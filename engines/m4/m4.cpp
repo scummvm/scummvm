@@ -220,7 +220,7 @@ bool M4Engine::delay(int duration, bool keyAborts, bool clickAborts) {
 
 	while (!_events->quitFlag && (g_system->getMillis() < endTime)) {
 		event = _events->handleEvents();
-		if (clickAborts && (event == MEVENT_LEFT_RELEASE) || (event == MEVENT_RIGHT_RELEASE))
+		if (clickAborts && ((event == MEVENT_LEFT_RELEASE) || (event == MEVENT_RIGHT_RELEASE)))
 			return true;
 
 		if (_events->kbdCheck(keycode)) {
