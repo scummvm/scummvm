@@ -37,10 +37,10 @@ enum ResourceCompression {
 	kCompLZW1,			// LZW-like compression used in SCI01 and SCI1
 	kCompLZW1View,		// Comp3 + view Post-processing
 	kCompLZW1Pic,		// Comp3 + pic Post-processing
-	kCompDCL,
 #ifdef ENABLE_SCI32
-	kCompSTACpack	// ? Used in SCI32
+	kCompSTACpack,	// ? Used in SCI32
 #endif
+	kCompDCL
 };
 //----------------------------------------------
 // Base class for decompressors
