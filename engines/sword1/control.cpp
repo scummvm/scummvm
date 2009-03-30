@@ -1112,8 +1112,8 @@ void Control::saveGameToFile(uint8 slot) {
 	tm curTime;
 	_system->getTimeAndDate(curTime);
 
-	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
-	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | ((curTime.tm_min) & 0xFF);
 
 	outf->writeUint32BE(saveDate);
 	outf->writeUint16BE(saveTime);
@@ -1278,8 +1278,8 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	tm curTime;
 	_system->getTimeAndDate(curTime);
 
-	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
-	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
+	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = (curTime.tm_hour & 0xFF) << 8 | ((curTime.tm_min) & 0xFF);
 
 	newSave->writeUint32BE(saveDate);
 	newSave->writeUint16BE(saveTime);

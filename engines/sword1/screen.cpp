@@ -538,7 +538,7 @@ void Screen::processImage(uint32 id) {
 
 	if ((sprSizeX > 0) && (sprSizeY > 0)) {
 		if( (!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT) 
-		|| (compact->o_resource == LVSFLY) || !(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))) 
+		|| (compact->o_resource == LVSFLY) || (!(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))))
 			drawSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
 		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a psx shrinked sprite (1/2 width)
 				|| ((compact->o_resource == GMPOWER) && (sprSizeX < 515)) )                                         // some needs to be hardcoded, headers don't give useful infos
