@@ -27,11 +27,12 @@
 
 namespace Audio {
 
-VagStream::VagStream(Common::SeekableReadStream *stream, bool loop) : _stream(stream) {
+VagStream::VagStream(Common::SeekableReadStream *stream, bool loop, int rate) : _stream(stream) {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
 	_loop = loop;
+	_rate = rate;
 }
 
 
@@ -58,8 +59,14 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 			buffer[samplesDecoded] = d;
 			samplesDecoded++;
 		}
-		
+
+#if 0
 		assert(i == 28); // We're screwed if this fails :P
+#endif
+		// This might mean the file is corrupted, or that the stream has
+		// been closed.
+		if (i != 28) return 0;
+
 		_samplesRemaining = 0;
 	}
 	
