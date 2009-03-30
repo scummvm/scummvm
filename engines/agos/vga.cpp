@@ -924,8 +924,8 @@ void AGOSEngine::vc22_setPaletteOld() {
 
 	b = vcReadNextWord();
 
-	// PC version of Personal Nightmare uses standard EGA palette
-	if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC)
+	// PC EGA version of Personal Nightmare uses standard EGA palette
+	if (getGameType() == GType_PN && (getFeatures() & GF_EGA))
 		return;
 
 	num = 16;
@@ -1298,8 +1298,8 @@ void AGOSEngine::vc37_pokePalette() {
 	uint16 offs = vcReadNextWord();
 	uint16 color = vcReadNextWord();
 
-	// PC version of Personal Nightmare uses standard EGA palette
-	if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC)
+	// PC EGA version of Personal Nightmare uses standard EGA palette
+	if (getGameType() == GType_PN && (getFeatures() & GF_EGA))
 		return;
 
 	byte *palptr = _displayPalette + offs * 4;

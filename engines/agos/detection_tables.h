@@ -92,7 +92,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
-	// Personal Nightmare 1.1c - English DOS Floppy
+	// Personal Nightmare 1.1c - EGA English DOS Floppy
 	{
 		{
 			"pn",
@@ -111,7 +111,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_PN,
 		GID_PN,
-		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_EGA | GF_PLANAR
 	},
 
 	// Elvira 1 - English Amiga Floppy Demo

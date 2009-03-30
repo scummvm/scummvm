@@ -128,7 +128,7 @@ Common::Error AGOSEngine_PN::go() {
 
 	addVgaEvent(_frameCount, ANIMATE_INT, NULL, 0, 0);
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getFeatures() & GF_EGA) {
 		// Set EGA Palette
 		for (int i = 0; i < 16; i++) {
 			_displayPalette[i * 4 + 0] = egaPalette[i * 3 + 0];
