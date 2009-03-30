@@ -562,9 +562,14 @@ char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
 	switch (resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
+		return vocabulary_get_knames0(resmgr, count);
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
-		return vocabulary_get_knames0(resmgr, count);
+		// HACK: KQ5 needs the SCI1 default vocabulary names to work correctly.
+		// Having more vocabulary names (like in SCI1) doesn't seem to have any
+		// ill effects, other than resulting in unmapped functions towards the
+		// end, which are never used by the game interpteter anyway
+		// return vocabulary_get_knames0(resmgr, count);
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
 		return vocabulary_get_knames1(resmgr, count);
