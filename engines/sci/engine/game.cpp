@@ -264,6 +264,8 @@ static int suggested_script(Resource *res, unsigned int classId) {
 	return (int16)READ_LE_UINT16(res->data + offset);
 }
 
+#if 0
+// Unreferenced - removed
 int test_cursor_style(EngineState *s) {
 	int resource_nr = 0;
 	int ok = 0;
@@ -274,6 +276,7 @@ int test_cursor_style(EngineState *s) {
 
 	return ok;
 }
+#endif
 
 int create_class_table_sci11(EngineState *s) {
 	int scriptnr;
