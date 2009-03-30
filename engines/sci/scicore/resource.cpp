@@ -487,9 +487,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	case SCI_VERSION_1_1:
 		debug("Resmgr: Detected SCI1.1");
 		break;
+#ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
 		debug("Resmgr: Couldn't determine SCI version");
 		break;
+#endif
 	default:
 		debug("Resmgr: Couldn't determine SCI version");
 		break;
@@ -692,11 +694,14 @@ int ResourceManager::detectMapVersion() {
 		}
 		return SCI_VERSION_1;
 	}
+
+#ifdef ENABLE_SCI32
 	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
 	// offset set to filesize and 4 more bytes
 	file.seek(off - 7, SEEK_SET);
 	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
 		return SCI_VERSION_32; // TODO : check if there is a difference between these maps
+#endif
 
 	return SCI_VERSION_AUTODETECT;
 }
@@ -786,6 +791,8 @@ int ResourceManager::detectVolVersion() {
 	}
 	if (!bFailed)
 		return SCI_VERSION_1_1;
+
+#ifdef ENABLE_SCI32
 	//
 	// Check for SCI32 v2 format (Gabriel Knight 1 CD)
 	bFailed = false;
@@ -809,6 +816,7 @@ int ResourceManager::detectVolVersion() {
 	}
 	if (!bFailed)
 		return SCI_VERSION_32;
+#endif
 
 	// Failed to detect volume version
 	return SCI_VERSION_AUTODETECT;
@@ -1003,10 +1011,13 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				res->number = number;
 				res->id = resId;//res->number | (res->type << 16);
 				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : getVolume(map, 0);
-				if (_mapVersion < SCI_VERSION_32)
-					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
-				else
+#ifdef ENABLE_SCI32
+				if (_mapVersion >= SCI_VERSION_32)
 					res->file_offset = off; // in SCI32 it's a plain offset
+				else
+#endif
+					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
+					
 			}
 		}
 	}
@@ -1046,6 +1057,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
+#ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
 		type = (ResourceType)(file->readByte() &0x7F);
 		number = file->readUint16LE();
@@ -1053,6 +1065,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		szUnpacked = file->readUint32LE();
 		wCompression = file->readUint16LE();
 		break;
+#endif
 	default:
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
@@ -1085,9 +1098,11 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	case 20:
 		compression = kCompDCL;
 		break;
+#ifdef ENABLE_SCI32
 	case 32:
 		compression = kCompSTACpack;
 		break;
+#endif
 	default:
 		compression = kCompUnknown;
 	}
@@ -1122,9 +1137,11 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 	case kCompDCL:
 		dec = new DecompressorDCL;
 		break;
+#ifdef ENABLE_SCI32
 	case kCompSTACpack:
 		dec = new DecompressorLZS;
 		break;
+#endif
 	default:
 		warning("Resource %s #%d: Compression method %d not supported",
 		        getResourceTypeName(res->type), res->number, compression);

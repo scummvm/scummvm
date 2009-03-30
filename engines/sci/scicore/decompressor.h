@@ -38,7 +38,9 @@ enum ResourceCompression {
 	kCompLZW1View,		// Comp3 + view Post-processing
 	kCompLZW1Pic,		// Comp3 + pic Post-processing
 	kCompDCL,
+#ifdef ENABLE_SCI32
 	kCompSTACpack	// ? Used in SCI32
+#endif
 };
 //----------------------------------------------
 // Base class for decompressors
@@ -179,6 +181,7 @@ protected:
 	int huffman_lookup(int *tree);
 };
 
+#ifdef ENABLE_SCI32
 //----------------------------------------------
 // STACpack decompressor for SCI32
 //----------------------------------------------
@@ -190,6 +193,7 @@ protected:
 	uint16 getCompLen();
 	void copyComp(int offs, int clen);
 };
+#endif
 
 } // End of namespace Sci
 

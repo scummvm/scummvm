@@ -705,6 +705,8 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
 }
 
+#ifdef ENABLE_SCI32
+
 //----------------------------------------------
 // STACpack/LZS decompressor for SCI32
 // Based on Andre Beck's code from http://micky.ibh.de/~beck/stuff/lzs4i4l/
@@ -778,5 +780,7 @@ void DecompressorLZS::copyComp(int offs, int clen) {
 	while (clen--)
 		putByte(_dest[hpos++]);
 }
+
+#endif	// #ifdef ENABLE_SCI32
 
 } // End of namespace Sci

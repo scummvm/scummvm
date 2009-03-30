@@ -47,8 +47,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"ecoquest",        "EcoQuest: The Search for Cetus"},
 	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
-	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	{"hoyle1",          "Hoyle's Official Book of Games: Volume 1"},
 	{"hoyle2",          "Hoyle's Official Book of Games: Volume 2"},
 	{"hoyle3",          "Hoyle's Official Book of Games: Volume 3"},
@@ -57,7 +55,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"kq4sci",          "King's Quest IV: The Perils of Rosella"},
 	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
-	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
 	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
@@ -65,32 +62,37 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
-	{"lighthouse",      "Lighthouse: The Dark Being"},
 	//{"fairytales",      "Mixed-up Fairy Tales"},
 	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	//{"pepper",          "Pepper's Adventure in Time"},
-	{"phantasmagoria",  "Phantasmagoria"},
-	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
 	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
 	{"pq2",             "Police Quest II: The Vengeance"},
 	{"pq3",             "Police Quest III: The Kindred"},
-	{"pq4",             "Police Quest IV: Open Season"},
 	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
-	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},
-	{"rama",            "RAMA"},
-	{"shivers",         "Shivers"},
-	//{"shivers2",        "Shivers II: Harvest of Souls"},
 	{"sq1sci",          "Space Quest I: The Sarien Encounter"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
-	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"islandbrain",     "The Island of Dr. Brain"},
+#ifdef ENABLE_SCI32
+	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
+	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
+	{"kq7",             "King's Quest VII: The Princeless Bride"},
+	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
+	{"lighthouse",      "Lighthouse: The Dark Being"},
+	{"phantasmagoria",  "Phantasmagoria"},
+	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
+	{"pq4",             "Police Quest IV: Open Season"},
+	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},
+	{"rama",            "RAMA"},
+	{"shivers",         "Shivers"},
+	//{"shivers2",        "Shivers II: Harvest of Souls"},
+	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
+#endif
 	{0, 0}
 };
 
@@ -542,6 +544,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 95)
 	},
 
+#ifdef ENABLE_SCI32
 	// Gabriel Knight - English DOS Floppy
 	{{"gk1", "", {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10783},
@@ -562,7 +565,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 000, 000)
 	},
 
-#if 0
 	// Gabriel Knight - German DOS CD (from Tobis87)
 	{{"gk1", "CD", {
 		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
@@ -570,11 +572,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 000, 000)	// FIXME: Not sure if this is the correct version
 	},
-#endif
 
-#if 0
 	// Gabriel Knight - Spanish DOS CD
 	{{"gk1", "CD", {
 		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
@@ -582,9 +582,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 000, 000)	// FIXME: Not sure if this is the correct version
 	},
-#endif
 
 	// Gabriel Knight - English DOS CD Demo
 	{{"gk1", "CD Demo", {
@@ -616,6 +615,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
+#endif
+
 #endif
 
 	// Hoyle 1 - English DOS (supplied by wibble92 in bug report #2644547)
@@ -894,6 +895,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 54)
 	},
 
+#ifdef ENABLE_SCI32
 	// King's Quest 7 - English DOS
 	{{"kq7", "", {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
@@ -935,6 +937,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
+#endif
 
 	// Laura Bow - English Amiga
 	{{"laurabow", "", {
@@ -1403,6 +1406,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 115)
 	},
 
+#ifdef ENABLE_SCI32
 	// Larry 6 - English/German DOS CD - HIRES
 	{{"lsl6", "", {
 		{"resource.map", 0, "0c0804434ea62278dd15032b1947426c", 8872},
@@ -1412,6 +1416,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
+#endif
 
 	// Larry 6 - German DOS CD - LORES (provided by richiefs in bug report #2670691)
 	{{"lsl6", "", {
@@ -1423,6 +1428,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 115)
 	},
 
+#ifdef ENABLE_SCI32
 	// Larry 6 - German DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	{{"lsl6", "", {
 		{"resource.map", 0, "badfdf446ffed569a310d2c63a249421", 8896},
@@ -1432,6 +1438,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
+#endif
 
 	// Larry 6 - French DOS CD - LORES (provided by richiefs in bug report #2670691)
 	{{"lsl6", "", {
@@ -1443,6 +1450,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 115)
 	},
 
+#ifdef ENABLE_SCI32
 	// Larry 6 - French DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	{{"lsl6", "", {
 		{"resource.map", 0, "d184e9aa4f2d4b5670ddb3669db82cda", 8896},
@@ -1452,6 +1460,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 002)
 	},
+#endif
 
 #if 0
 	// Larry 6 - Spanish DOS
@@ -1465,6 +1474,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+#ifdef ENABLE_SCI32
 	// Larry 7 - English DOS CD (from spookypeanut)
 	{{"lsl7", "", {
 		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
@@ -1557,6 +1567,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+#endif	// #ifdef ENABLE_SCI32
+
 	// Mixed-Up Mother Goose - English Amiga (from www.back2roots.org)
 	{{"mothergoose", "", {
 		{"resource.map", 0, "4aa28ac93fae03cf854594da13d9229c", 2700},
@@ -1589,6 +1601,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 679)
 	},
+
+#ifdef ENABLE_SCI32
 
 #if 0
 	// Phantasmagoria - English DOS
@@ -1633,6 +1647,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+#endif	// #ifdef ENABLE_SCI32
 
 	// Police Quest 1 VGA Remake - English DOS
 	{{"pq1sci", "VGA Remake", {
@@ -1750,6 +1766,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 0, 510)	// T.A00.052
 	},
 
+#ifdef ENABLE_SCI32
 	// Police Quest 4 - English DOS demo (from FRG)
 	{{"pq4", "Demo", {
 		{"resource.map", 0, "be56f87a1c4a13062a30a362df860c2f", 1472},
@@ -1779,6 +1796,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 000)
 	},
+#endif
 
 	// Quest for Glory 1 - English Amiga
 	{{"qfg1", "", {
@@ -1909,6 +1927,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+#ifdef ENABLE_SCI32
 #if 0
 	// Quest for Glory 4 - English DOS
 	{{"qfg4", "", {
@@ -2032,6 +2051,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
 	},
 #endif
+
+#endif	// #ifdef ENABLE_SCI32
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	{{"sq1sci", "VGA Remake", {
@@ -2329,6 +2350,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+#ifdef ENABLE_SCI32
 	// Space Quest 6 - English DOS/Win3.11 CD
 	{{"sq6", "", {
 		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
@@ -2371,6 +2393,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+#endif	// #ifdef ENABLE_SCI32
+
 	// The Island of Dr. Brain - English 1.1 2.3.93 (from Quietust)
 	{{"islandbrain", "", {
 		{"resource.map", 0, "3c07da06bdd1689f9d07af78fb94d0ec", 3101},
@@ -2403,6 +2427,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 53)
 	},
 
+#ifdef ENABLE_SCI32
 	// Torin's Passage - English Windows
 	{{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
@@ -2452,7 +2477,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 100, 2)
 	},
-	
+#endif	// #ifdef ENABLE_SCI32
+
 	// SCI Fanmade Games
 	FANMADE("Al Pond 2: Island Quest", "9625372e710d1a95d2027b48f9e325af", 1506, "a0f9aa65b9bf3d8703adff5a621f243c", 889843),
 	FANMADE("Al Pond: Island Quest 2", "4cba6a5a4c8f66f21935ed78b0511a92", 870, "876587dc9a5ec569287a3dc4b29139d8", 613769),
@@ -2525,7 +2551,11 @@ public:
 	SciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
-		return "SCI Engine";
+		return "SCI Engine [SCI0, SCI01, SCI10, SCI11"
+#ifdef ENABLE_SCI32
+			", SCI32"
+#endif
+			"]";
 	}
 
 	virtual const char *getOriginalCopyright() const {

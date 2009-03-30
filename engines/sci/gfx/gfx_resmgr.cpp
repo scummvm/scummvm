@@ -55,8 +55,12 @@ GfxResManager::GfxResManager(int version, gfx_options_t *options, gfx_driver_t *
 
 	if (_version < SCI_VERSION_01_VGA) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
-	} else if (_version == SCI_VERSION_1_1 || _version == SCI_VERSION_32) {
+	} else if (_version == SCI_VERSION_1_1) {
 		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+#ifdef ENABLE_SCI32
+	} else if (_version == SCI_VERSION_32) {
+		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+#endif
 	} else {
 		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
 		if (res && res->data)

@@ -569,8 +569,11 @@ char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
 	case SCI_VERSION_1_LATE:
 		return vocabulary_get_knames1(resmgr, count);
 	case SCI_VERSION_1_1:
+		return vocabulary_get_knames11(resmgr, count);
+#ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
 		return vocabulary_get_knames11(resmgr, count);
+#endif
 	default:
 		return 0;
 	}

@@ -185,7 +185,9 @@ static int sci_max_allowed_unknown_kernel_functions[] = {
 	0x7b, // SCI1/EARLY
 	0x7b, // SCI1/LATE
 	0x7b, // SCI1.1
+#ifdef ENABLE_SCI32
 	0x0, // SCI32
+#endif
 };
 
 #define DEFUN(nm, cname, sig) {KF_NEW, nm, {cname, sig, NULL}}

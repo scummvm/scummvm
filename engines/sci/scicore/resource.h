@@ -79,7 +79,9 @@ enum ResourceStatus {
 #define SCI_VERSION_1_EARLY 5
 #define SCI_VERSION_1_LATE 6
 #define SCI_VERSION_1_1 7
+#ifdef ENABLE_SCI32
 #define SCI_VERSION_32 8
+#endif
 #define SCI_VERSION_LAST SCI_VERSION_1_LATE /* The last supported SCI version */
 
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
