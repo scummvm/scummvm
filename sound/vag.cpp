@@ -37,6 +37,7 @@ VagStream::VagStream(Common::SeekableReadStream *stream, bool loop, int rate) : 
 
 
 VagStream::~VagStream() {
+	delete _stream;
 }
 
 double f[5][2] = { { 0.0, 0.0 },
