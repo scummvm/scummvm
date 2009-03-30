@@ -911,13 +911,14 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 				if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 					retval = 1;
 		} else {
-			if (weaponMaxRange(actor2) >= dist && _actor[actor2].weapon == INV_CHAINSAW)
+			if (weaponMaxRange(actor2) >= dist && _actor[actor2].weapon == INV_CHAINSAW) {
 				if (!_actor[actor2].kicking) {
 					if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
 						retval = 1;
 				} else {
 					retval = 1;
 				}
+			}
 			_actor[actor1].cursorX = 0;
 			if (_enHdlVar[EN_VULTF2][0] >= 100)
 				_enHdlVar[EN_VULTF2][3] = 3;
