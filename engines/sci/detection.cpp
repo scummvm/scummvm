@@ -1260,7 +1260,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 001, 123)  // got S.old.123 by executable scan
+		SCI_VERSION(0, 000, 572)  // got S.old.123 by executable scan
 	},
 
 	// Larry 5 - English Amiga
