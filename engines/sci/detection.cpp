@@ -631,6 +631,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 530)
 	},
 
+	// Hoyle 1 - English DOS (supplied by merkur in bug report #2719227)
+	{{"hoyle1", "", {
+		{"resource.map", 0, "1034a218943d12f1f36e753fa10c95b8", 4386},
+		{"resource.001", 0, "e0dd44069a62a463fd124974b915f10d", 518308},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 530)
+	},
+
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 1 - English Amiga (from www.back2roots.org)
 	{{"hoyle1", "", {
