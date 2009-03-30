@@ -901,7 +901,10 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			// SCI1 scheme
 			if (isdigit(name[0])) {
 				number = atoi(name.c_str());
-				bAdd = true;
+				// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
+				// Also check vocabulary_get_knames1()
+				if (number != VOCAB_RESOURCE_KNAMES)
+					bAdd = true;
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
