@@ -954,8 +954,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685) // got 1.002.030 by executable scan
 	},
 
-#if 0
-	// Laura Bow - English DOS (from "The Roberta Williams Anthology"/1996)
+	// Laura Bow - English DOS 3.5" floppy (from "The Roberta Williams Anthology"/1996)
 	{{"laurabow", "", {
 		{"resource.map", 0, "4e511f47d9893fa529d6621a93fa0030", 8478},
 		{"resource.001", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 515788},
@@ -967,7 +966,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 631)
 	},
-#endif
 
 #if 0
 	// Laura Bow - German DOS (from Tobis87)
