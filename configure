@@ -1907,7 +1907,7 @@ if test "$_cxx_major" -ge "3" ; then
 fi;
 
 if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
-	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
+	CXXFLAGS="$CXXFLAGS -Wno-empty-body"
 else
 	CXXFLAGS="$CXXFLAGS -Wconversion"
 fi;
