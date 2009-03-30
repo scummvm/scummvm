@@ -1024,8 +1024,8 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
 	/*------------------------------------------------
 	 Don't overrun if this is the final destination. |
 	 ------------------------------------------------*/
-	if (*targetX == pMover->UtargetX && (*targetY == -1 || *targetY == pMover->UtargetY) ||
-			*targetY == pMover->UtargetY && (*targetX == -1 || *targetX == pMover->UtargetX))
+	if ((*targetX == pMover->UtargetX && (*targetY == -1 || *targetY == pMover->UtargetY)) ||
+		(*targetY == pMover->UtargetY && (*targetX == -1 || *targetX == pMover->UtargetX)))
 		bOver = false;
 
 	/*----------------------------------------------------

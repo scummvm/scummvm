@@ -280,8 +280,8 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 						break;
 
 					// move palette down - indicate change
-					pNxtPal->posInDAC = pPrev->posInDAC
-						+ pPrev->numColours | PALETTE_MOVED;
+					pNxtPal->posInDAC = (pPrev->posInDAC
+						+ pPrev->numColours) | PALETTE_MOVED;
 
 					// Q the palette change in position to the video DAC
 					if (!TinselV2)
@@ -396,8 +396,8 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 				break;
 
 			// move palette down
-			pNxtPalQ->posInDAC = pPalQ->posInDAC
-				+ pPalQ->numColours | PALETTE_MOVED;
+			pNxtPalQ->posInDAC = (pPalQ->posInDAC
+				+ pPalQ->numColours) | PALETTE_MOVED;
 
 			// Q the palette change in position to the video DAC
 			UpdateDACqueueHandle(pNxtPalQ->posInDAC,

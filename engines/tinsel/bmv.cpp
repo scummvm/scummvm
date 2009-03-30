@@ -260,7 +260,7 @@ static void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
 			firstLoop = true;
 		} else {
 			// Get the high nibble
-			eax = eax & 0xffffff00 | (NibbleHi >> 4);
+			eax = (eax & 0xffffff00) | (NibbleHi >> 4);
 			firstLoop = false;
 		}
 
