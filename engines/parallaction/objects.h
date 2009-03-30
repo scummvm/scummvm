@@ -251,7 +251,7 @@ struct TypeData {
 #define ACTIONTYPE(z) ((z)->_type & 0xFFFF)
 #define ITEMTYPE(z) ((z)->_type & 0xFFFF0000)
 
-#define PACK_ZONETYPE(zt,it) ((zt) & 0xFFFF | (((it) & 0xFFFF) << 16))
+#define PACK_ZONETYPE(zt,it) (((zt) & 0xFFFF) | (((it) & 0xFFFF) << 16))
 
 #define ZONENAME_LENGTH 32
 
