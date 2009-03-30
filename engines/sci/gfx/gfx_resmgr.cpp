@@ -50,7 +50,7 @@ struct param_struct {
 
 GfxResManager::GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) : 
 				_version(version), _options(options), _driver(driver), _resManager(resManager), 
-				_lockCounter(0), _tagLockCounter(0) {
+				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
 	if (_version < SCI_VERSION_01_VGA) {
