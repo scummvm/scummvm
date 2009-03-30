@@ -265,7 +265,7 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | cygwin* | os2-emx*)
+	mingw* | os2-emx*)
 		_exeext=".exe"
 		;;
 	arm-riscos)
@@ -1102,11 +1102,6 @@ case $_host_os in
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
-	cygwin*)
-		DEFINES="$DEFINES -mno-cygwin -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
-		LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
-		OBJS="$OBJS scummvmico.o"
-		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
@@ -1459,7 +1454,7 @@ POST_OBJS_FLAGS :=
 LIBS            += -ldl
 '
 		;;
-	*mingw32* | cygwin*)
+	*mingw32*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".dll"
@@ -1733,7 +1728,7 @@ fi
 if test "$_fluidsynth" = yes ; then
 	_def_fluidsynth='#define USE_FLUIDSYNTH'
 	case $_host_os in
-		mingw* | cygwin*)
+		mingw*)
 			LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
 		;;
 		*)
@@ -1775,7 +1770,7 @@ if test "$_have_x86" = yes ; then
 				os2-emx*)
 					NASMFLAGS="-f aout"
 				;;
-				mingw* | cygwin*)
+				mingw*)
 					NASMFLAGS="-f win32"
 				;;
 				darwin*)
@@ -1901,7 +1896,7 @@ if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function 
 	# declarations under __STRICT_ANSI__
-	mingw* | cygwin* | dreamcast | wii | gamecube | psp | amigaos*)
+	mingw* | dreamcast | wii | gamecube | psp | amigaos*)
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		;;
 	*)
