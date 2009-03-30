@@ -1806,6 +1806,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Quest for Glory 1 / Hero's Quest, 3.5" floppy (supplied by merkur in bug report #2718784)
+	{{"qfg1", "", {
+		{"resource.map", 0, "c1dc4470fb947c067567252f62d6c1b6", 6474},
+		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
+		{"resource.001", 0, "4d67acf52833ff45c7f753d6663532e8", 462727},
+		{"resource.002", 0, "439ba9b6dde216e6eb97ef3a9830fbe4", 646869},
+		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
+		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 566) // got 0.000.566 by executable scan
+	},
+
 	// Quest for Glory 1 - English Amiga
 	{{"qfg1", "", {
 		{"resource.map", 0, "e65034832f0c9df1dc22128227b782d0", 6066},
