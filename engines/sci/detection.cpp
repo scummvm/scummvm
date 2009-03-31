@@ -2013,6 +2013,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #2723852)
+	{{"qfg4", "", {
+		{"resource.map", 0, "685bdb1ed47bbbb0e5e25db392da83ce", 9301},
+		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11004993},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 000, 000)
+	},
+
+	// Quest for Glory 4 1.1 Floppy - German DOS (supplied by markcool in bug report #2723850)
+	{{"qfg4", "", {
+		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
+		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 000, 000)
+	},
+
 	// Quest for Glory 4 - English DOS demo (from FRG)
 	{{"qfg4", "Demo", {
 		{"resource.map", 0, "1ba7c7ae1efb315326d45cb931569b1b", 922},
@@ -2439,17 +2459,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 67)
 	},
 
-#if 0
-	// Space Quest 5 - German DOS (from Tobis87)
+	// Space Quest 5 v1.04 - German DOS (from Tobis87, updated information by markcool from bug report #2723935)
 	{{"sq5", "", {
 		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)
+		SCI_VERSION(1, 1, 68)
 	},
-#endif
 
 #if 0
 	// Space Quest 5 - Italian DOS Floppy (from glorifindel)
