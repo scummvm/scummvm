@@ -98,6 +98,7 @@ class DialogueManager {
 	bool			_isKeyDown;
 	uint16			_downKey;
 
+protected:
 	BalloonPositions	_ballonPos;
 
 public:
@@ -138,6 +139,7 @@ class DialogueManager_ns : public DialogueManager {
 
 public:
 	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
+		_ballonPos = _balloonPositions_NS;
 	}
 
 	virtual bool canDisplayAnswer(Answer *a) {
@@ -150,6 +152,7 @@ class DialogueManager_br : public DialogueManager {
 
 public:
 	DialogueManager_br(Parallaction_br *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
+		_ballonPos = _balloonPositions_BR;
 	}
 
 	virtual bool canDisplayAnswer(Answer *a) {
@@ -167,15 +170,6 @@ public:
 
 
 DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
-	int gtype = vm->getGameType();
-	if (gtype == GType_Nippon) {
-		_ballonPos = _balloonPositions_NS;
-	} else
-	if (gtype == GType_BRA) {
-		_ballonPos = _balloonPositions_BR;
-	} else
-		error("unsupported game in DialogueManager");
-
 	_dialogue = _z->u._speakDialogue;
 	isNpc = !_z->u._filename.empty() && _z->u._filename.compareToIgnoreCase("yourself");
 	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u._filename.c_str()) : _vm->_char._talk;
