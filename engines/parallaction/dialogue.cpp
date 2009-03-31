@@ -105,6 +105,8 @@ public:
 	DialogueManager(Parallaction *vm, ZonePtr z);
 	virtual ~DialogueManager();
 
+	void start();
+
 	bool isOver() {
 		return _state == DIALOGUE_OVER;
 	}
@@ -176,13 +178,17 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	_answerer = _vm->_char._talk;
 
 	_askPassword = false;
-	_q = _dialogue->_questions[0];
 
 	_cmdList = 0;
 	_answerId = 0;
+}
 
+void DialogueManager::start() {
+	assert(_dialogue);
+	_q = _dialogue->_questions[0];
 	_state = displayQuestion() ? RUN_QUESTION : NEXT_ANSWER;
 }
+
 
 DialogueManager::~DialogueManager() {
 	if (isNpc) {
@@ -428,6 +434,8 @@ void DialogueManager::run() {
 void Parallaction::enterDialogueMode(ZonePtr z) {
 	debugC(1, kDebugDialogue, "Parallaction::enterDialogueMode(%s)", z->u._filename.c_str());
 	_dialogueMan = _vm->createDialogueManager(z);
+	assert(_dialogueMan);
+	_dialogueMan->start();
 	_input->_inputMode = Input::kInputModeDialogue;
 }
 
