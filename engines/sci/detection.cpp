@@ -453,6 +453,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 0, 510)
 	},
 
+	// Eco Quest - German DOS Floppy (supplied by markcoolio in bug report #2723744)
+	{{"ecoquest", "Floppy", {
+		{"resource.map", 0, "7a9b43bf27dc000ac8559ecbe824b659", 4395},
+		{"resource.000", 0, "99b73d40403a51c7e60d01df0d6cd34a", 998227},
+		{"resource.001", 0, "2fed7451bca81b0c891eed1a956f2263", 1212060},
+		{"resource.002", 0, "02d7d0411f7903aacb3bc8b0f8ca8a9a", 1202581},
+		{"resource.003", 0, "84dd11b6825255671c703aee5ceff620", 1175835},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 0, 510)
+	},
+
 	// Eco Quest 2 - English DOS Demo
 	{{"ecoquest2", "Demo", {
 		{"resource.map", 0, "607cfa0d8a03b7d348c06ee727e3d939", 1321},
@@ -463,17 +476,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 55)
 	},
 
-#if 0	
-	// Eco Quest 2 - English DOS Floppy
+	// Eco Quest 2 - English DOS Floppy (supplied by markcoolio in bug report #2723761)
 	{{"ecoquest2", "Floppy", {
 		{"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
 		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 0, 000)		// FIXME: add version here
+		SCI_VERSION(1, 1, 65)
 	},
-#endif
 	
 #if 0
 	// Freddy Pharkas - German DOS (from Tobis87)
