@@ -62,7 +62,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	//{"fairytales",      "Mixed-up Fairy Tales"},
+	{"fairytales",      "Mixed-up Fairy Tales"},
 	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	//{"pepper",          "Pepper's Adventure in Time"},
@@ -1584,6 +1584,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 #endif	// #ifdef ENABLE_SCI32
 
+	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
+	{{"fairytales", "", {
+		{"resource.map", 0, "9ae5aecc1cb797b11ea5cf0caeea272c", 3261},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 923685},
+		{"resource.001", 0, "49c8f7dcd9989e4491a93554bec325b0", 52324},
+		{"resource.002", 0, "6767f8c8585f617aaa91d442f41ae714", 1032989},
+		{"resource.003", 0, "b1288e0821ee358d1ffe877e5900c8ec", 1047565},
+		{"resource.004", 0, "f79daa70390d73746742ffcfc3dc4471", 937580},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_01,
+		SCI_VERSION(1, 000, 145) // got 1.000.145 by executable scan
+	},
+
 	// Mixed-Up Mother Goose - English Amiga (from www.back2roots.org)
 	{{"mothergoose", "", {
 		{"resource.map", 0, "4aa28ac93fae03cf854594da13d9229c", 2700},
@@ -2318,10 +2332,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 753)	// got 1.000.753 by executable scan
+		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
 	},
 
-#if 0
 	// Space Quest 4 - German DOS (from Tobis87)
 	{{"sq4", "", {
 		{"resource.map", 0, "71715e775e3791178d606cfe6c7e1fb9", 6339},
@@ -2337,7 +2350,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)
 	},
-#endif
 
 	// Space Quest 4 - Italian DOS Floppy (from glorifindel)
 	{{"sq4", "", {
