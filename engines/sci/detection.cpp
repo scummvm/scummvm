@@ -1609,6 +1609,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 001, 10) // got 1.003.009 by executable scan
 	},
 
+	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #2723795)
+	{{"mothergoose", "", {
+		{"resource.map", 0, "52aae15e493cafd1da7e1c9b657a5bb9", 7026},
+		{"resource.000", 0, "b7ecd8ae9e254e80310b5a668b276e6e", 2948975},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 001, 31) // got 1.001.031 by executable scan
+	},
+
+	// Mixed-Up Mother Goose Deluxe - Windows DOS CD (supplied by markcoolio in bug report #2723810)
+	{{"mothergoose", "", {
+		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
+		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 100, 2) // got 2.100.002 by executable scan
+	},
+
 #if 0
 	// Mixed-Up Mother Goose - English DOS CD
 	{{"mothergoose", "CD", {
@@ -2081,7 +2101,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// RAMA - English Windows
 	{{"rama", "", {
 		{"resmap.001", 0, "3bac72a1910a563f8f92cf5b77c8b7f2", 8338},
@@ -2093,11 +2112,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
-#if 0
 	// RAMA - Italian Windows CD (from glorifindel)
 	{{"rama", "", {
 		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70611091},
@@ -2105,11 +2122,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformWindows, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
-#if 0
 	// Shivers - English Windows
 	{{"shivers", "", {
 		{"resmap.000", 0, "f2ead37749ed8f6535a2445a7d05a0cc", 46525},
@@ -2117,9 +2132,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)	// FIXME: add version here
 	},
-#endif
+
+	// Shivers - German Windows (from Tobis87)
+	{{"shivers", "", {
+		{"resmap.000", 0, "f483d0a1f78334c18052e92785c3086e", 46537},
+		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 100, 2)
+	},
+
 
 #if 0
 	// Shivers - English Windows Demo
@@ -2127,18 +2152,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO},
-		{},
-		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
-	},
-#endif
-
-#if 0
-	// Shivers - German Windows (from Tobis87)
-	{{"shivers", "", {
-		{"resmap.000", 0, "f483d0a1f78334c18052e92785c3086e", 46537},
-		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
-		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 000)	// FIXME: add version here
