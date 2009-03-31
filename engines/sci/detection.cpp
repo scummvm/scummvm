@@ -1633,7 +1633,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#if 0
 	// Phantasmagoria - English DOS
 	{{"phantasmagoria", "", {
 		{"resmap.001", 0, "416138651ea828219ca454cae18341a3", 11518},
@@ -1653,11 +1652,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
 
-#if 0
 	// Phantasmagoria 2 - English Windows
 	{{"phantasmagoria2", "", {
 		{"resmap.001", 0, "0a961e135f4f7effb195158325856633", 1108},
@@ -1673,9 +1670,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(3, 000, 000)
 	},
-#endif
 
 #endif	// #ifdef ENABLE_SCI32
 
@@ -1980,6 +1976,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 50)
+	},
+
+	// Quest for Glory 3 - German DOS (supplied by markcoolio in bug report #2723846)
+	{{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868042},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 1, 83)	// got L.rry.083 by executable scan
 	},
 
 #if 0
