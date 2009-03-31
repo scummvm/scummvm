@@ -202,6 +202,8 @@ Common::Error Parallaction_ns::init() {
 
 	_saveLoad = new SaveLoad_ns(this, _saveFileMan);
 
+	initInventory();
+
 	Parallaction::init();
 
 	return Common::kNoError;
@@ -210,6 +212,8 @@ Common::Error Parallaction_ns::init() {
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
 	freeCharacter();
+
+	destroyInventory();
 
 	delete _locationParser;
 	delete _programParser;

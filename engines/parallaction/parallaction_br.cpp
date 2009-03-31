@@ -96,6 +96,8 @@ Common::Error Parallaction_br::init() {
 
 	_saveLoad = new SaveLoad_br(this, _saveFileMan);
 
+	initInventory();
+
 	Parallaction::init();
 
 	return Common::kNoError;
@@ -104,6 +106,8 @@ Common::Error Parallaction_br::init() {
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
 	freeCharacter();
+
+	destroyInventory();
 
 	delete _objects;
 
@@ -406,6 +410,9 @@ void Parallaction_br::changeCharacter(const char *name) {
 		_char.setName(name);
 		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
+
+		// TODO: select the inventory according to character
+		_inventoryRenderer->bindInventory(_inventory[0]);
 	}
 
 	_char._ani->_flags |= kFlagsActive;
@@ -514,5 +521,6 @@ void Parallaction_br::restoreOrSaveZoneFlags(ZonePtr z, bool restore) {
 		_zoneFlags[z->_locationIndex][z->_index] = z->_flags;
 	}
 }
+
 
 } // namespace Parallaction

@@ -93,8 +93,6 @@ Parallaction::~Parallaction() {
 	delete _balloonMan;
 	_balloonMan = 0;
 
-	destroyInventory();
-
 	delete _localFlagNames;
 	delete _gfx;
 	delete _soundMan;
@@ -123,8 +121,6 @@ Common::Error Parallaction::init() {
 	strcpy(_characterName1, "null");
 
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
-
-	initInventory();	// needs to be pushed into subclass
 
 	// this needs _disk to be already setup
 	_input = new Input(this);

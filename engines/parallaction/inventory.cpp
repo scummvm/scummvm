@@ -102,56 +102,31 @@ void Parallaction::highlightInventoryItem(ItemPosition pos) {
 }
 
 int Parallaction::addInventoryItem(ItemName item) {
-	return _inventory->addItem(item);
+	return getActiveInventory()->addItem(item);
 }
 
 int Parallaction::addInventoryItem(ItemName item, uint32 value) {
-	return _inventory->addItem(item, value);
+	return getActiveInventory()->addItem(item, value);
 }
 
 void Parallaction::dropItem(uint16 v) {
-	_inventory->removeItem(v);
+	getActiveInventory()->removeItem(v);
 }
 
 bool Parallaction::isItemInInventory(int32 v) {
-	return (_inventory->findItem(v) != -1);
+	return (getActiveInventory()->findItem(v) != -1);
 }
 
 const InventoryItem* Parallaction::getInventoryItem(int16 pos) {
-	return _inventory->getItem(pos);
+	return getActiveInventory()->getItem(pos);
 }
 
 int16 Parallaction::getInventoryItemIndex(int16 pos) {
-	return _inventory->getItemName(pos);
-}
-
-void Parallaction::initInventory() {
-	InventoryProperties *props;
-	InventoryItem *verbs;
-
-	if (getGameType() == GType_Nippon) {
-		props = &_invProps_NS;
-		verbs = _verbs_NS;
-	} else {
-		props = &_invProps_BR;
-		verbs = _verbs_BR;
-	}
-
-	_inventory = new Inventory(props, verbs);
-	_inventoryRenderer = new InventoryRenderer(this, props);
-	_inventoryRenderer->bindInventory(_inventory);
-}
-
-void Parallaction::destroyInventory() {
-	delete _inventory;
-	delete _inventoryRenderer;
-
-	_inventory = 0;
-	_inventoryRenderer = 0;
+	return getActiveInventory()->getItemName(pos);
 }
 
 void Parallaction::cleanInventory(bool keepVerbs) {
-	_inventory->clear(keepVerbs);
+	getActiveInventory()->clear(keepVerbs);
 }
 
 void Parallaction::openInventory() {
@@ -361,7 +336,47 @@ const InventoryItem* Inventory::getItem(ItemPosition pos) const {
 	return &_items[pos];
 }
 
+Inventory *Parallaction::getActiveInventory() {
+	return _inventoryRenderer->getBoundInventory();
+}
 
+
+
+void Parallaction_ns::initInventory() {
+	_inventory = new Inventory(&_invProps_NS, _verbs_NS);
+	assert(_inventory);
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS);
+	assert(_inventoryRenderer);
+	_inventoryRenderer->bindInventory(_inventory);
+}
+
+void Parallaction_br::initInventory() {
+	for (int i = 0; i < 3; ++i) {
+		_inventory[i] = new Inventory(&_invProps_BR, _verbs_BR);
+		assert(_inventory[i]);
+	}
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
+	assert(_inventoryRenderer);
+	// don't bind here, wait for changeCharacter()
+}
+
+void Parallaction_ns::destroyInventory() {
+	delete _inventoryRenderer;
+	delete _inventory;
+	_inventory = 0;
+	_inventoryRenderer = 0;
+}
+
+void Parallaction_br::destroyInventory() {
+	delete _inventoryRenderer;
+	delete _inventory[0];
+	delete _inventory[1];
+	delete _inventory[2];
+	_inventory[0] = 0;
+	_inventory[1] = 0;
+	_inventory[2] = 0;
+	_inventoryRenderer = 0;
+}
 
 
 } // namespace Parallaction

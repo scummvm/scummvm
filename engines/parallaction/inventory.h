@@ -105,6 +105,7 @@ public:
 	virtual ~InventoryRenderer();
 
 	void bindInventory(Inventory *inv) { _inv = inv; }
+	Inventory *getBoundInventory() const { return _inv; }
 
 	void showInventory();
 	void hideInventory();

@@ -296,7 +296,6 @@ public:
 	Table				*_localFlagNames;
 	CommandExec			*_cmdExec;
 	ProgramExec			*_programExec;
-	Inventory			*_inventory;
 	BalloonManager		*_balloonMan;
 	DialogueManager		*_dialogueMan;
 	InventoryRenderer	*_inventoryRenderer;
@@ -366,11 +365,10 @@ public:
 	bool		isItemInInventory(int32 v);
 	const		InventoryItem* getInventoryItem(int16 pos);
 	int16		getInventoryItemIndex(int16 pos);
-	void		initInventory();
-	void		destroyInventory();
 	void		cleanInventory(bool keepVerbs = true);
 	void		openInventory();
 	void		closeInventory();
+	Inventory 	*getActiveInventory();
 
 	virtual void parseLocation(const char* name) = 0;
 	virtual void changeLocation() = 0;
@@ -406,7 +404,6 @@ public:
 	virtual void cleanupGame();
 	virtual void updateWalkers();
 	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
-
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
 	void	switchBackground(const char* background, const char* mask);
@@ -415,11 +412,14 @@ private:
 	bool				_inTestResult;
 	LocationParser_ns	*_locationParser;
 	ProgramParser_ns	*_programParser;
+	Inventory			*_inventory;
 
 private:
 	void	initFonts();
 	void	freeFonts();
 	void	initResources();
+	void	initInventory();
+	void	destroyInventory();
 	void	startGui();
 	void	startCreditSequence();
 	void	startEndPartSequence();
@@ -536,12 +536,15 @@ private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
 	SoundMan_br				*_soundManI;
+	Inventory				*_inventory[3];
 
 	int32		_counters[32];
 	Table		*_countersNames;
 
 private:
 	void	initResources();
+	void	initInventory();
+	void	destroyInventory();
 	void	initFonts();
 	void	freeFonts();
 	void	freeLocation(bool removeAll);
