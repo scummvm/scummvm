@@ -1781,6 +1781,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 0, 510)	// T.A00.052
 	},
 
+	// Police Quest 3 - German DOS (supplied by markcoolio in bug report #2723837)
+	{{"pq3", "", {
+		{"resource.map", 0, "8a970edf98eba4c11bb1827aab1694d1", 5625},
+		{"resource.000", 0, "5ee460af3d70c06a745cc482b6c783ba", 865204},
+		{"resource.001", 0, "ff6182bf96c8f8af5bd8c11769c9cbf2", 1183456},
+		{"resource.002", 0, "cce99b96a578b62ff6cebdae8d122feb", 1179358},
+		{"resource.003", 0, "4836f460f4cfc8de61e2df4c45775504", 1180956},
+		{"resource.004", 0, "0c3eb84b9755852d9e795e0d5c9373c7", 1171760},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 510)	// T.A00.178
+	},
+
 #ifdef ENABLE_SCI32
 	// Police Quest 4 - English DOS demo (from FRG)
 	{{"pq4", "Demo", {
@@ -1807,6 +1821,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "aed9643158ccf01b71f359db33137f82", 9895},
 		{"resource.000", 0, "da383857b3be1e4514daeba2524359e0", 15141432},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 000, 000)
+	},
+
+	// Police Quest 4 - German DOS (supplied by markcoolio in bug report #2723840)
+	{{"pq4", "", {
+		{"resource.map", 0, "2393ee728ab930b2762cb5889f9b5aff", 9256},
+		{"resource.000", 0, "6ba98bd2e436739d87ecd2a9b99cabb4", 14730155},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(2, 000, 000)
