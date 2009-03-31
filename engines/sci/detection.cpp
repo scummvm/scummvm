@@ -460,7 +460,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "2fed7451bca81b0c891eed1a956f2263", 1212060},
 		{"resource.002", 0, "02d7d0411f7903aacb3bc8b0f8ca8a9a", 1202581},
 		{"resource.003", 0, "84dd11b6825255671c703aee5ceff620", 1175835},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 0, 510)
@@ -1053,17 +1053,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 69)		// FIXME: some version are v. 1.001.072
 	},
 
-#if 0
-	// Laura Bow 2 - German DOS CD (from Tobis87)
-	{{"laurabow2", "CD", {
+	// Laura Bow 2 v1.1 - German DOS floppy (from Tobis87, updated info from  markcoolio in bug report #2723787))
+	{{"laurabow2", "", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 000, 274)
 	},
-#endif
 
 #if 0
 	// Laura Bow 2 - Spanish DOS CD
@@ -1254,8 +1252,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
-#if 0
-	// Larry 3 - German DOS (from Tobis87)
+	// Larry 3 - German DOS (from Tobis87, updated info from markcoolio in bug report #2723832)
 	{{"lsl3", "", {
 		{"resource.map", 0, "4a77c8382e48a90c4168d3c144fc1b8f", 6480},
 		{"resource.001", 0, "3827a9b17b926e12dcc336860f50612a", 460488},
@@ -1265,9 +1262,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 572)
+		SCI_VERSION(0, 000, 572)  // got S.old.123 by executable scan
 	},
-#endif
 
 	// Larry 3 - French DOS (provided by richiefs in bug report #2670691)
 	{{"lsl3", "", {
