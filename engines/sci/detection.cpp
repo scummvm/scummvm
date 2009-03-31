@@ -566,6 +566,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 000, 000)
 	},
 
+	// Gabriel Knight - English DOS Floppy (supplied my markcoolio in bug report #2723777)
+	{{"gk1", "", {
+		{"resource.map", 0, "65e8c14092e4c9b3b3538b7602c8c5ec", 10783},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 13022630},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 000, 000)
+	},
+
+	// Gabriel Knight - German DOS Floppy (supplied my markcoolio in bug report #2723775)
+	{{"gk1", "", {
+		{"resource.map", 0, "ad6508b0296b25c07b1f58828dc33696", 10789},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13077029},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 000, 000)
+	},
+
 	// Gabriel Knight - English DOS CD
 	{{"gk1", "CD", {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
@@ -583,7 +603,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(2, 000, 000)	// FIXME: Not sure if this is the correct version
+		SCI_VERSION(2, 000, 000)
 	},
 
 	// Gabriel Knight - Spanish DOS CD
@@ -593,7 +613,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::ES_ESP, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(2, 000, 000)	// FIXME: Not sure if this is the correct version
+		SCI_VERSION(2, 000, 000)
 	},
 
 	// Gabriel Knight - English DOS CD Demo
@@ -606,7 +626,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 92)
 	},
 
-#if 0
 	// Gabriel Knight 2 - English DOS
 	{{"gk2", "", {
 		{"resmap.001", 0, "1b8bf6a23b37ed67358eb825fc687260", 2776},
@@ -624,9 +643,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 2)
 	},
-#endif
 
 #endif
 
