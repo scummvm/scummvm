@@ -112,7 +112,7 @@ static gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, in
 	return NULL;
 }
 
-void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
+void apply_mod(byte *factor, gfx_pixmap_t *pxm) {
 	Palette *pal = pxm->palette;
 	int i, pal_size = pal ? pal->size() : 0;
 
@@ -128,7 +128,7 @@ void apply_mod(gfx_res_mod_t *mod, gfx_pixmap_t *pxm) {
 
 #define UPDATE_COL(nm, idx)                        \
 		v = nm;             \
-		v *= mod->mod.factor[idx]; \
+		v *= factor[idx]; \
 		v >>= 4;                   \
 		nm = (v > 255)? 255 : v;
 
@@ -174,7 +174,7 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 	while (conf) {
 		conf = find_match(conf, restype, nr, loop, cel);
 		if (conf) {
-			apply_mod(&(conf->conf.mod), pxm);
+			apply_mod(conf->conf.factor, pxm);
 			conf = conf->next;
 		}
 	}

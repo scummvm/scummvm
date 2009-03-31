@@ -51,13 +51,6 @@ struct gfx_res_assign_t {
 
 /* GFX resource modifications */
 
-struct gfx_res_mod_t {
-	union {
-		byte factor[3]; /* divide by 16 to retrieve factor */
-	} mod;
-};
-
-
 struct gfx_res_conf_t {
 	int type; /* Resource type-- only one allowed */
 
@@ -71,7 +64,7 @@ struct gfx_res_conf_t {
 
 	union {
 		gfx_res_assign_t assign;
-		gfx_res_mod_t mod;
+		byte factor[3]; /* divide by 16 to retrieve factor */
 	} conf; /* The actual configuration */
 
 	gfx_res_conf_t *next;
