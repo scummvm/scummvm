@@ -2232,6 +2232,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Space Quest 3 v1.052 - German DOS (supplied by markcoolio in bug report #2723860)
+	{{"sq3", "", {
+		{"resource.map", 0, "f0dd735098c254f584878649c6f08dbc", 5154},
+		{"resource.001", 0, "9107c2aa5398e28b5c5406df13491f85", 567245},
+		{"resource.002", 0, "9107c2aa5398e28b5c5406df13491f85", 596768},
+		{"resource.003", 0, "9107c2aa5398e28b5c5406df13491f85", 693573},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 001, 114)	// got S.old.114 by executable scan
+	},
+
 	// Space Quest 4 - English Amiga
 	{{"sq4", "", {
 		{"resource.map", 0, "d87ae90031e7fd04f32a27db054f5c9c", 6174},
@@ -2292,6 +2304,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 200)	// FIXME: the executable is version 1.000.753, which doesn't work
+	},
+
+	// Space Quest 4 1.052 - English DOS floppy (supplied by markcoolio in bug report #2723865)
+	{{"sq4", "", {
+		{"resource.map", 0, "98852d6379622001efd0b50ae93c9a30", 5928},
+		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 173330},
+		{"resource.001", 0, "cc2f89e6057e05b040566b3699df7288", 1247215},
+		{"resource.002", 0, "9c342cd76b421369406d6fafd7b1a285", 1218373},
+		{"resource.003", 0, "96fa33d89d838bc3f671c5b953e7a896", 1240130},
+		{"resource.004", 0, "ff9c87da3bc53473fdee8b9d3edbc93c", 1200631},
+		{"resource.005", 0, "e33019ac19f755ae33fbf49b4fc9066c", 1053294},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 753)	// got 1.000.753 by executable scan
 	},
 
 #if 0
@@ -2358,6 +2385,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 200)
 	},
 #endif
+
+	// Space Quest 4 1.000 - German DOS floppy (supplied by markcoolio in bug report #2723862)
+	{{"sq4", "", {
+		{"resource.map", 0, "8f08b97ca093f370c56d99715b015554", 6153},
+		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 206032},
+		{"resource.001", 0, "99a6df6d366b3f061271ff3450ac0d32", 1270577},
+		{"resource.002", 0, "a6a8d7a24dbb7a266a26b084e7275e89", 1242817},
+		{"resource.003", 0, "47ee647b5b12232d27e63cc627c25899", 1321146},
+		{"resource.004", 0, "c06350184a490c10eb4585fff0aa3192", 1254368},
+		{"resource.005", 0, "b8d6efbd3235329bfe844c794097b2c9", 1098717},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 030)	// got 1.SQ4.030 by executable scan
+	},
 
 	// Space Quest 5 - English DOS
 	{{"sq5", "", {
@@ -2434,17 +2476,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 002)
 	},
 
-#if 0
-	// Space Quest 6 - German DOS (from Tobis87)
+	// Space Quest 6 - German DOS (from Tobis87, updated info from markcoolio in bug report #2723884)
 	{{"sq6", "", {
 		{"resource.map", 0, "664d797415484f85c90b1b45aedc7686", 10534},
 		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(2, 100, 002)
 	},
-#endif
 
 #endif	// #ifdef ENABLE_SCI32
 
