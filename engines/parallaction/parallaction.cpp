@@ -60,7 +60,7 @@ uint32		_globalFlags = 0;
 
 
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _char(this), _location(getGameType()) {
+	Engine(syst), _gameDescription(gameDesc), _location(getGameType()) {
 
 	_vm = this;
 	Common::addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
@@ -844,7 +844,7 @@ void Location::freeZones(bool removeAll) {
 
 
 
-Character::Character(Parallaction *vm) : _vm(vm), _ani(new Animation) {
+Character::Character() : _ani(new Animation) {
 	_talk = NULL;
 	_head = NULL;
 

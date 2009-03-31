@@ -210,13 +210,11 @@ public:
 
 
 struct Character {
-	Parallaction	*_vm;
-
 	AnimationPtr	_ani;
 	GfxObj			*_head;
 	GfxObj			*_talk;
 
-	Character(Parallaction *vm);
+	Character();
 
 protected:
 	CharacterName	_name;
