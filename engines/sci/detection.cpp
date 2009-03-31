@@ -486,18 +486,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 65)
 	},
 	
-#if 0
-	// Freddy Pharkas - German DOS (from Tobis87)
-	{{"freddypharkas", "", {
-		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
-		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
-		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
-		{},
-		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
-	},
-#endif
-
 	// Freddy Pharkas - English DOS demo(from FRG)
 	{{"freddypharkas", "Demo", {
 		{"resource.map", 0, "97aa9fcfe84c9993a64debd28c32393a", 1909},
@@ -518,18 +506,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 132)
 	},
 
-#if 0
-	// Freddy Pharkas - English Floppy
+	// Freddy Pharkas - English DOS Floppy (updated information from markcoolio in bug report #2723773)
 	{{"freddypharkas", "Floppy", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 000)	// FIXME: add version here
+		SCI_VERSION(1, 001, 132)	// original version is 1.cfs.081, so this is just a guess
 	},
-#endif
 	
+	// Freddy Pharkas - German DOS Floppy (from Tobis87, updated information from markcoolio in bug report #2723772)
+	{{"freddypharkas", "", {
+		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
+		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 001, 132)	// original version is 1.cfs.081, so this is just a guess
+	},
+
 #if 0
 	// Freddy Pharkas - Spanish DOS CD
 	{{"freddypharkas", "CD", {
@@ -1893,6 +1889,23 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "439ba9b6dde216e6eb97ef3a9830fbe4", 646869},
 		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
 		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 566) // got 0.000.566 by executable scan
+	},
+
+	// Quest for Glory 1 / Hero's Quest, 5.25" floppy (supplied by markcoolio in bug report #2723843)
+	{{"qfg1", "", {
+		{"resource.map", 0, "94bc3f2ae2dad12f1303606740d087ff", 6936},
+		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
+		{"resource.001", 0, "4d67acf52833ff45c7f753d6663532e8", 95498},
+		{"resource.002", 0, "3e2a89d60d385caca5b3394049da4bc4", 271587},
+		{"resource.003", 0, "e56e9fd2f7d2c98774699f7a5087e524", 255998},
+		{"resource.004", 0, "d74cd4290bf60e1409117202e4ce8592", 266415},
+		{"resource.005", 0, "7288ed6d5da89b7a80b4af3897a7963a", 271185},
+		{"resource.006", 0, "69366c2a2f99917199fe1b60a4fee19d", 267852},
+		{"resource.007", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 272747},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
