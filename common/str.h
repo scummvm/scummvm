@@ -180,7 +180,7 @@ public:
 	inline bool empty() const	{ return (_size == 0); }
 	char lastChar() const	{ return (_size > 0) ? _str[_size-1] : 0; }
 
-	char operator [](int idx) const {
+	char operator[](int idx) const {
 		assert(_str && idx >= 0 && idx < (int)_size);
 		return _str[idx];
 	}
