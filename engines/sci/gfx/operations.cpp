@@ -367,7 +367,11 @@ static void _gfxop_add_dirty(gfx_state_t *state, rect_t box) {
 	if (state->disable_dirty)
 		return;
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	state->dirty_rects = gfxdr_add_dirty(state->dirty_rects, box, state->options->dirty_frames);
+#else
+	state->dirty_rects = gfxdr_add_dirty(state->dirty_rects, box, GFXOP_DIRTY_FRAMES_CLUSTERS);
+#endif
 }
 
 static void _gfxop_add_dirty_x(gfx_state_t *state, rect_t box) {
@@ -1803,7 +1807,9 @@ static int _gfxop_set_pic(gfx_state_t *state) {
 
 	_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	if (state->options->pic0_unscaled)
+#endif
 		state->pic->priority_map = gfx_pixmap_scale_index_data(state->pic->priority_map, state->driver->mode);
 	return state->driver->set_static_buffer(state->driver, state->pic->visual_map, state->pic->priority_map);
 }
@@ -1896,8 +1902,12 @@ int gfxop_get_text_params(gfx_state_t *state, int font_nr, const char *text, int
 		return GFX_ERROR;
 	}
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	textsplits = gfxr_font_calculate_size(font, maxwidth, text, width, height, lines_nr, lineheight, lastline_width,
 	                                      (state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) | text_flags);
+#else
+	textsplits = gfxr_font_calculate_size(font, maxwidth, text, width, height, lines_nr, lineheight, lastline_width, text_flags);
+#endif
 
 	if (!textsplits) {
 		GFXERROR("Could not calculate text size!");
@@ -1941,9 +1951,14 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 	handle->valign = valign;
 	handle->line_height = font->line_height;
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->text, &(handle->width), &(handle->height), &(handle->lines_nr),
 	                             NULL, NULL, ((state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) ?
 	                              kFontCountWhitespace : 0) | flags);
+#else
+	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->text, &(handle->width), &(handle->height), &(handle->lines_nr),
+	                             NULL, NULL, flags);
+#endif
 
 	if (!handle->lines) {
 		free(handle->text);
@@ -2054,7 +2069,11 @@ int gfxop_draw_text(gfx_state_t *state, gfx_text_handle_t *handle, rect_t zone) 
 		gfx_pixmap_t *pxm = handle->text_pixmaps[i];
 
 		if (!pxm->data) {
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 			gfx_xlate_pixmap(pxm, state->driver->mode, state->options->text_xlate_filter);
+#else
+			gfx_xlate_pixmap(pxm, state->driver->mode, GFX_XLATE_FILTER_NONE);
+#endif
 			gfxr_endianness_adjust(pxm, state->driver->mode); // FIXME: resmgr layer!
 		}
 		if (!pxm) {

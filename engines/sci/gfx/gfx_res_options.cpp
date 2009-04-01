@@ -27,6 +27,8 @@
 #include "sci/gfx/gfx_options.h"
 #include "sci/gfx/gfx_resmgr.h"
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
+
 namespace Sci {
 
 //#define DEBUG
@@ -184,3 +186,5 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 }
 
 } // End of namespace Sci
+
+#endif

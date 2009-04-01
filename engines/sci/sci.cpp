@@ -248,7 +248,9 @@ Common::Error SciEngine::run() {
 
 	// Default config:
 	gfx_options_t gfx_options;
-	gfx_options.workarounds = 0;
+	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
+
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	gfx_options.buffer_pics_nr = 0;
 	gfx_options.pic0_unscaled = 1;
 	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_D256;
@@ -260,12 +262,14 @@ Common::Error SciEngine::run() {
 	gfx_options.pic_xlate_filter = GFX_XLATE_FILTER_NONE;
 	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
 	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
-	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
 		gfx_options.res_conf.assign[i] = NULL;
 		gfx_options.res_conf.mod[i] = NULL;
 	}
+	gfx_options.workarounds = 0;
+
 	// Default config ends
+#endif
 
 	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");

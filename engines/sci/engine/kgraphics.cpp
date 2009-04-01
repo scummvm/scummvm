@@ -1269,10 +1269,25 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 3:
 		warning("STUB: kPalette() effect 3, clear flag to colors");
 		break;
-	case 4:
+	case 4:	{	// Set palette intensity
+#if 0
+		// Colors 0 (black) and 255 (white) cannot be changed
+		int16 from = CLIP<int16>(1, 255, UKPV(2));
+		int16 to = CLIP<int16>(1, 255, UKPV(3));
+		int16 intensity = UKPV(4);
+
+		if (argc < 5 || UKPV(5) == 0) {
+			s->gfx_state->gfxResMan->setPaletteIntensity(from, to, intensity);
+		} else {
+			warning("kPalette: argv[5] != 0");
+		}
+
+		return s->r_acc;
+#endif
 		warning("STUB: kPalette() effect 4, set color intensity");
 		break;
-	case 5: {
+		}
+	case 5: {	// Find closest color
 		int r = UKPV(1);
 		int g = UKPV(2);
 		int b = UKPV(3);
@@ -2360,6 +2375,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
+		// FIXME: this actually changes the picture port bounds, which are supposed to be user-defined...
 		s->gfx_state->options->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4),
 		        UKPV(3), UKPV(2));
 

@@ -29,7 +29,16 @@
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
+
+// Define this to enable user-defined custom graphics options
+// TODO: Most of these options don't work in 256-color mode, plus there
+// is currently no way to actually set/change them somehow (other than
+// modifying the code)
+//#define CUSTOM_GRAPHICS_OPTIONS
+
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 #include "sci/gfx/gfx_res_options.h"
+#endif
 
 namespace Sci {
 
@@ -41,8 +50,8 @@ namespace Sci {
 /* Clusters: Accumulate dirty rects, merging those that overlap (insert is O(n))  */
 #define GFXOP_DIRTY_FRAMES_CLUSTERS 2
 
-
 struct gfx_options_t {
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	/* gfx_options_t: Contains all user options to the rendering pipeline */
 	/* See note in sci_conf.h for config_entry_t before changing types of
 	** variables */
@@ -62,18 +71,21 @@ struct gfx_options_t {
 	gfx_xlate_filter_t view_xlate_filter;
 	gfx_xlate_filter_t pic_xlate_filter; /* Only relevant if (pic0_unscaled) */
 	gfx_xlate_filter_t text_xlate_filter;
-
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
 
 	int dirty_frames;
 
-	int workarounds; /* Workaround flags- see below */
+	int workarounds;	// Workaround flags - see below
+#endif
 
+	// FIXME: This option is abused: pic_port_bounds is actually set by the game itself in kSetPort()
 	rect_t pic_port_bounds;
 };
 
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 /* SQ3 counts whitespaces towards the total text size, as does gfxop_get_text_params() if this is set: */
 #define GFX_WORKAROUND_WHITESPACE_COUNT (1 << 0)
+#endif
 
 } // End of namespace Sci
 

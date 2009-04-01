@@ -226,6 +226,24 @@ public:
 
 	// Set static palette and merge it into the global palette
 	void setStaticPalette(Palette *newPalette);
+
+#if 0
+	void setPaletteIntensity(int16 from, int16 to, int16 intensity) {
+		Palette *pal = _staticPalette->getref();
+
+		for (uint16 i = 0; i < _driver->mode->palette->size(); i++) {
+			byte r = pal->getColor(i).r * intensity / 100;
+			byte g = pal->getColor(i).g * intensity / 100;
+			byte b = pal->getColor(i).b * intensity / 100;
+			pal->makeSystemColor(i, PaletteEntry(r, g, b));
+		}
+		pal->mergeInto(_driver->mode->palette);
+		_driver->install_palette(_driver, pal);
+		pal->unmerge();
+		pal->free();
+	}
+#endif
+
 	int getColorCount() { return _staticPalette ? _staticPalette->size() : 0; }
 
 private:
