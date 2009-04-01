@@ -454,7 +454,6 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			// The original handled this here by copy parts of each line - for ScummVM, we're
 			// simply setting the width in bytes and letting the decoder do the rest
 			filesDatabase[fileIndex].width += 2;
-				//(((localBuffer.width + 10) << 3) / 5) >> 3;
 		}
 
 		ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
@@ -464,13 +463,13 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 
 		switch (localBuffer.type) {
 		case 0: { // polygon
-			filesDatabase[fileIndex].subData.resourceType = 8;
+			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_POLY;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			break;
 		}
 		case 1: {
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
-			filesDatabase[fileIndex].subData.resourceType = 2;
+			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_BGMASK;
 			decodeGfxFormat1(&filesDatabase[fileIndex]);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = 0;
@@ -478,14 +477,14 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		}
 		case 4: {
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
-			filesDatabase[fileIndex].subData.resourceType = 4;
+			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			decodeGfxFormat4(&filesDatabase[fileIndex]);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 			break;
 		}
 		case 5: {
-			filesDatabase[fileIndex].subData.resourceType = 4;
+			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			decodeGfxFormat5(&filesDatabase[fileIndex]);
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
@@ -493,7 +492,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			break;
 		}
 		case 8: {
-			filesDatabase[fileIndex].subData.resourceType = 4;
+			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
