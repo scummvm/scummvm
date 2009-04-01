@@ -104,7 +104,7 @@ uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
 int initCt(const char * ctpName);
-void loadPakedFileToMem(int fileIdx, uint8 * buffer);
+void loadPackedFileToMem(int fileIdx, uint8 * buffer);
 int getNumObjectsByClass(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
 int getProcParam(int overlayIdx, int param2, const char * name);

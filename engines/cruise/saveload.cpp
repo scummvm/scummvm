@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "cruise/cruise.h"
 
 #include "common/serializer.h"
 #include "common/savefile.h"
@@ -46,9 +47,6 @@ static void syncPalette(Common::Serializer &s, uint8 *p) {
 }
 
 static void syncBasicInfo(Common::Serializer &s) {
-	s.syncAsSint16LE(songLoaded);
-	s.syncAsSint16LE(songPlayed);
-	s.syncAsSint16LE(songLoop);
 	s.syncAsSint16LE(activeMouse);
 	s.syncAsSint16LE(userEnabled);
 	s.syncAsSint16LE(dialogueEnabled);
@@ -63,8 +61,6 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(displayOn);
 	s.syncAsSint16LE(isMessage);
 	s.syncAsSint16LE(fadeFlag);
-	s.syncAsSint16LE(playMusic);
-	s.syncAsSint16LE(playMusic2);
 	s.syncAsSint16LE(automaticMode);
 	s.syncAsSint16LE(titleColor);
 	s.syncAsSint16LE(itemColor);
@@ -558,11 +554,11 @@ static void syncCT(Common::Serializer &s) {
 
 static void DoSync(Common::Serializer &s) {
 	syncBasicInfo(s);
+	_vm->music().doSync(s);
 
 	syncPalette(s, newPal);
 	syncPalette(s, workpal);
 
-	s.syncString(musicName, 21);
 	s.syncString(currentCtpName, 40);
 
 	syncBackgroundTable(s);
@@ -700,8 +696,6 @@ void initVars(void) {
 
 	isMessage = 0;
 	fadeFlag = 0;
-	playMusic = 0;
-	playMusic2 = 0;
 	automaticMode = 0;
 
 	// video param (vga and mcga mode)

@@ -43,7 +43,7 @@ void drawBlackSolidBoxSmall() {
 	drawSolidBox(64, 100, 256, 117, 0);
 }
 
-void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
+void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 	changeCursor(CURSOR_DISK);
 
 	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
@@ -343,7 +343,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
 		uint8 *pakedBuffer = (uint8 *) mallocAndZero(volumePtrToFileDescriptor[fileIdx].size + 2);
 
-		loadPakedFileToMem(fileIdx, pakedBuffer);
+		loadPackedFileToMem(fileIdx, pakedBuffer);
 
 		uint32 realUnpackedSize = READ_BE_UINT32(pakedBuffer + volumePtrToFileDescriptor[fileIdx].size - 4);
 
@@ -353,7 +353,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 		free(pakedBuffer);
 	} else {
-		loadPakedFileToMem(fileIdx, unpackedBuffer);
+		loadPackedFileToMem(fileIdx, unpackedBuffer);
 	}
 
 	*ptr = unpackedBuffer;
@@ -1901,6 +1901,7 @@ void *mallocAndZero(int32 size) {
 	void *ptr;
 
 	ptr = malloc(size);
+	assert(ptr);
 	memset(ptr, 0, size);
 	return ptr;
 }

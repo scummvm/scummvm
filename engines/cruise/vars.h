@@ -154,7 +154,6 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern char musicName[21];
 extern char lastOverlay[15];
 extern char nextOverlay[15];
 
@@ -227,8 +226,6 @@ extern int16 sysY;
 extern int16 automoveInc;
 extern int16 automoveMax;
 extern int16 isMessage;
-extern int16 playMusic;
-extern int16 playMusic2;
 extern int16 automaticMode;
 extern int16 aniX;
 extern int16 aniY;

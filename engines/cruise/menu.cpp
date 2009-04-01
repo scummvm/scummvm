@@ -207,9 +207,7 @@ int playerMenu(int menuX, int menuY) {
 
 	if (entrerMenuJoueur && displayOn) {
 		if (remdo) {
-			musicName[0] = 0;
-			playMusic2 = 0;
-			playMusic = 0;
+			_vm->music().removeSong();
 			freeStuff2();
 		}
 		/*

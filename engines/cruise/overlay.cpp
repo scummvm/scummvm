@@ -117,13 +117,13 @@ int loadOverlay(const char *scriptName) {
 		    (char *)mallocAndZero(volumePtrToFileDescriptor[fileIdx].
 		                          size + 2);
 
-		loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
+		loadPackedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
 		delphineUnpack((uint8 *)unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 		free(pakedBuffer);
 	} else {
-		loadPakedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
+		loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 	}
 
 	printf("OVL loading done...\n");
@@ -498,13 +498,13 @@ int loadOverlay(const char *scriptName) {
 			    mallocAndZero(volumePtrToFileDescriptor[fileIdx].
 			                  size + 2);
 
-			loadPakedFileToMem(fileIdx, (uint8 *) pakedBuffer);
+			loadPackedFileToMem(fileIdx, (uint8 *) pakedBuffer);
 
 			delphineUnpack((uint8 *) unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 			free(pakedBuffer);
 		} else {
-			loadPakedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
+			loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 		}
 
 		Common::MemoryReadStream s2(unpackedBuffer, unpackedSize);

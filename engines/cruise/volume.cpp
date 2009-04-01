@@ -189,22 +189,6 @@ int32 findFileInDisksSub1(const char *fileName) {
 	return (foundDisk);
 }
 
-void strToUpper(char *fileName) {
-	char character;
-
-	do {
-		character = *fileName;
-
-		if (character >= 'a' && character <= 'z') {
-			character &= 0xDF;
-			*fileName = character;
-		}
-
-		fileName++;
-
-	} while (character);
-}
-
 void freeDisk(void) {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
@@ -266,10 +250,12 @@ void askDisk(int16 discNumber) {
 	changeCursor(currentCursor);
 }
 
-int16 findFileInDisks(char *fileName) {
+int16 findFileInDisks(const char *name) {
+	char fileName[50];
 	int disk;
 	int fileIdx;
 
+	strcpy(fileName, name);
 	strToUpper(fileName);
 
 	if (!volumeDataLoaded) {

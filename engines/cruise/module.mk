@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	polys.o \
 	saveload.o \
 	script.o \
+	sound.o \
 	stack.o \
 	staticres.o \
 	various.o \

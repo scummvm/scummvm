@@ -51,7 +51,6 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-char musicName[21];
 char lastOverlay[15];
 char nextOverlay[15];
 
@@ -125,8 +124,6 @@ int16 sysY = 0;
 int16 automoveInc;
 int16 automoveMax;
 int16 isMessage;
-int16 playMusic;
-int16 playMusic2;
 int16 automaticMode;
 int16 aniX;
 int16 aniY;

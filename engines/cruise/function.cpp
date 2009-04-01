@@ -26,6 +26,7 @@
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
+#include "cruise/sound.h"
 #include "cruise/staticres.h"
 #include "common/util.h"
 
@@ -732,11 +733,6 @@ int16 Op_LoadCt(void) {
 	return initCt((char*)popPtr());
 }
 
-int16 Op_LoadSong(void) {
-	popPtr();
-	return 0;
-}
-
 int16 Op_EndAnim(void) {
 	int param1 = popVar();
 	int param2 = popVar();
@@ -1207,12 +1203,6 @@ int16 Op_TrackAnim(void) {		// setup actor position
 	return 0;
 }
 
-int16 Op_StopSong(void) {
-	printf("Partial op 45 stop sound\n");
-
-	return 0;
-}
-
 int16 Op_BgName(void) {
 	char* bgName = (char*)popPtr();
 	int bgIdx = popVar();
@@ -1237,9 +1227,41 @@ int16 Op_StopFX(void) {
 	return 0;
 }
 
-int16 Op_PlaySong(void) {
-	printf("PlaySong()\n");
+int16 Op_LoadSong(void) {
+	const char *ptr = (const char *)popPtr();
+	char buffer[33];
 
+	strcpy(buffer, ptr);
+	strupr(buffer);
+	_vm->music().loadSong(buffer);
+
+	changeCursor(CURSOR_NORMAL);
+	return 0;
+}
+
+int16 Op_PlaySong(void) {
+	if (_vm->music().songLoaded() && !_vm->music().songPlayed())
+		_vm->music().startSong();
+
+	return 0;
+}
+
+int16 Op_StopSong(void) {
+	if (_vm->music().isPlaying())
+		_vm->music().stop();
+
+	return 0;
+}
+
+int16 Op_FadeSong(void) {
+	_vm->music().fadeSong();
+	
+	return 0;
+}
+
+int16 Op_FreeSong(void) {
+	_vm->music().stop();
+	_vm->music().removeSong();
 	return 0;
 }
 
@@ -1254,21 +1276,6 @@ int16 Op_CTOn(void) {
 
 int16 Op_CTOff(void) {
 	setVar49Value(0);
-	return 0;
-}
-
-int16 Op_FadeSong(void) {
-	printf("FadeSong()\n");
-	return 0;
-}
-
-int16 Op_FreeSong(void) {
-	printf("FreeSong()\n");
-	//freeStuff1();
-	freeStuff2();
-
-	playMusic2 = 0;
-	playMusic = 0;
 	return 0;
 }
 

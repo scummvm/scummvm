@@ -33,6 +33,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/debugger.h"
+#include "cruise/sound.h"
 
 namespace Cruise {
 
@@ -53,6 +54,10 @@ class CruiseEngine: public Engine {
 private:
 	bool _preLoad;
 	Debugger *_debugger;
+	MidiDriver *_driver;
+	MusicPlayer *_music;
+	bool _mt32, _adlib;
+	int _musicVolume;
 	Common::StringList _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
@@ -78,6 +83,9 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	MusicPlayer &music() { return *_music; }
+	bool mt32() const { return _mt32; }
+	bool adlib() const { return _adlib; }
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 	virtual void pauseEngineIntern(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
