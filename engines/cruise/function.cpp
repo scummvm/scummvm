@@ -39,7 +39,7 @@ int16 Op_LoadOverlay(void) {
 	char overlayName[38] = "";
 	int overlayLoadResult;
 
-	pOverlayName = (char *) popPtr();
+	pOverlayName = (char *)popPtr();
 
 	if (strlen(pOverlayName) == 0)
 		return 0;
@@ -1232,7 +1232,7 @@ int16 Op_LoadSong(void) {
 	char buffer[33];
 
 	strcpy(buffer, ptr);
-	strupr(buffer);
+	strToUpper(buffer);
 	_vm->music().loadSong(buffer);
 
 	changeCursor(CURSOR_NORMAL);
