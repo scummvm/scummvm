@@ -351,6 +351,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\cruise\sound.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\cruise\sound.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\cruise\stack.cpp"
 			>
 		</File>
