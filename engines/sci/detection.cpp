@@ -506,20 +506,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 132)
 	},
 
-	// Freddy Pharkas - English DOS Floppy (updated information from markcoolio in bug report #2723773)
+	// Freddy Pharkas - English DOS Floppy (updated information from markcoolio in bug reports #2723773 and #2724720)
 	{{"freddypharkas", "Floppy", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
+		{"resource.msg", 0, "554f65315d851184f6e38211489fdd8f", -1},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 001, 132)	// original version is 1.cfs.081, so this is just a guess
 	},
 	
-	// Freddy Pharkas - German DOS Floppy (from Tobis87, updated information from markcoolio in bug report #2723772)
+	// Freddy Pharkas - German DOS Floppy (from Tobis87, updated information from markcoolio in bug reports #2723772 and #2724720)
 	{{"freddypharkas", "", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
+		{"resource.msg", 0, "304b5a5781800affd2235152a5794fa8", -1},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
@@ -891,7 +893,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 60)
 	},
 
-#if 0
 	// King's Quest 5 - Italian DOS Floppy (from glorifindel)
 	{{"kq5", "", {
 		{"resource.map", 0, "d55c9e83894a0885e37cd79bacf86384", 8283},
@@ -906,9 +907,25 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 60)	// FIXME: this is a guess
+	},
+
+	// King's Quest 5 - Polish DOS Floppy (supplied by jacek909 in bug report #2725722)
+	{{"kq5", "", {
+		{"resource.map", 0, "70010c20138541f89013bb5e1b30f16a", 7998},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
+		{"resource.001", 0, "c0f48d4a7ebeaa6aa074fc98d77423e9", 1018560},
+		{"resource.002", 0, "7f188a95acdb60bbe32a8379ba299393", 1307048},
+		{"resource.003", 0, "0860785af59518b94d54718dddcd6907", 1348500},
+		{"resource.004", 0, "c4745dd1e261c22daa6477961d08bf6c", 1239887},
+		{"resource.005", 0, "6556ff8e7c4d1acf6a78aea154daa76c", 1287869},
+		{"resource.006", 0, "da82e4beb744731d0a151f1d4922fafa", 1170456},
+		{"resource.007", 0, "431def14ca29cdb5e6a5e84d3f38f679", 1240176},
+		{NULL, 0, NULL, 0}}, Common::PL_POL, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 60)
 	},
-#endif
 
 	// King's Quest 6 - English DOS
 	{{"kq6", "", {
@@ -2483,10 +2500,11 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 030)	// got 1.SQ4.030 by executable scan
 	},
 
-	// Space Quest 5 - English DOS
+	// Space Quest 5 - English DOS (updated information by markcool from bug report #2724762)
 	{{"sq5", "", {
 		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
+		{"resource.msg", 0, "bb8ad78793c26bdb3f77498b1d6515a9", 125988},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
@@ -2503,10 +2521,11 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 1, 67)
 	},
 
-	// Space Quest 5 v1.04 - German DOS (from Tobis87, updated information by markcool from bug report #2723935)
+	// Space Quest 5 v1.04 - German DOS (from Tobis87, updated information by markcool from bug reports #2723935 and #2724762)
 	{{"sq5", "", {
 		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
+		{"resource.msg", 0, "7c71cfc36153cfe07b450423a51f7e68", 146282},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
