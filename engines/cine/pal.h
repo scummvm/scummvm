@@ -93,8 +93,9 @@ public:
 	/*! \brief Create an initially black palette with the given color format and number of colors.
 	 * \param format Color format
 	 * \param numColors Number of colors
+	 * \note For the default constructed object (i.e. no parameters given) this will hold: empty() && !isValid()
 	 */
-	Palette(const Graphics::PixelFormat format, const uint numColors);
+	Palette(const Graphics::PixelFormat format = Graphics::PixelFormat(), const uint numColors = 0);
 
 	/*! \brief Clear the palette (Set color count to zero, release memory, overwrite color format with default value).
 	 * \note This is very different from using fillWithBlack-function which fills the palette with black.
