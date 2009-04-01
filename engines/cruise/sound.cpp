@@ -112,9 +112,9 @@ void MusicPlayer::loadSong(const char *name) {
 
 	// Get the details of the song
 	// TODO: Figure this out for sure for use in actually playing song
-	int numTracksMaybe = *(_songPointer + 470);
-	int speed = 244 - *(_songPointer + 471);
-	int musicSpeed = (speed * 100) / 1060;
+	//int numTracksMaybe = *(_songPointer + 470);
+	//int speed = 244 - *(_songPointer + 471);
+	//int musicSpeed = (speed * 100) / 1060;
 
 
 	// Get the file without the extension
@@ -127,8 +127,7 @@ void MusicPlayer::loadSong(const char *name) {
 	strcat(tempName, ".IST");
 
 	fileIdx = findFileInDisks(tempName);
-	if (fileIdx >= 0)
-	{
+	if (fileIdx >= 0) {
 		// TODO: Figure out instrument state usage
 		uint8 instrumentState[15];
 		loadPackedFileToMem(fileIdx, instrumentState);
