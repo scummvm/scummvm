@@ -259,6 +259,15 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	return output;
 }
 
+Palette &Palette::saturatedAddNormalizedColor(Palette& output, byte firstIndex, byte lastIndex, signed rNormalized, signed gNormalized, signed bNormalized, signed dividend, signed denominator) {
+	assert(denominator != 0);
+	const signed r = _format.rMax() * rNormalized * dividend / denominator;
+	const signed g = _format.gMax() * gNormalized * dividend / denominator;
+	const signed b = _format.bMax() * bNormalized * dividend / denominator;
+
+	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
+}
+
 Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) {
 	assert(grayDenominator != 0);
 	const signed r = _format.rMax() * grayDividend / grayDenominator;
