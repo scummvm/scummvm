@@ -23,10 +23,6 @@
  *
  */
 
-/* Detailed information on the implementation can be found in the report
-** which can be downloaded from FIXME.
-*/
-
 #include "sci/engine/state.h"
 #include "sci/engine/aatree.h"
 #include "sci/engine/kernel.h"
@@ -70,7 +66,7 @@ enum {
 	CONT_INSIDE = 2
 };
 
-#define HUGE_DISTANCE 1e10
+#define HUGE_DISTANCE 0xFFFFFFFF
 
 #define VERTEX_HAS_EDGES(V) ((V) != CLIST_NEXT(V))
 
@@ -86,26 +82,23 @@ struct FloatPoint {
 	FloatPoint() : x(0), y(0) {}
 	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
 
+	Common::Point toPoint() {
+		return Common::Point((int16)roundf(x), (int16)roundf(y));
+	}
+
 	float x, y;
 };
-
-FloatPoint toFloatPoint(const Common::Point &p) {
-	return FloatPoint(p.x, p.y);
-}
 
 struct Vertex {
 	// Location
 	Common::Point v;
-
-	// Index
-	int idx;
 
 	// Vertex circular list entry
 	Vertex *_next;	// next element
 	Vertex *_prev;	// previous element
 
 	// Distance from starting vertex
-	float dist;
+	uint32 dist;
 
 	// Previous vertex in shortest path
 	Vertex *path_prev;
@@ -229,7 +222,7 @@ struct PathfindingState {
 	// Start and end points for pathfinding
 	Vertex *vertex_start, *vertex_end;
 
-	// Array to quickly find vertices by idx
+	// Array of all vertices, used for sorting
 	Vertex **vertex_index;
 
 	// Total number of vertices
@@ -784,26 +777,23 @@ static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const Edg
 	return true;
 }
 
+/**
+ * Returns a list of all vertices that are visible from a particular vertex.
+ * @param s				the pathfinding state
+ * @param vert			the vertex
+ * @return list of vertices that are visible from vert
+ */
 static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
-	// Determines all vertices that are visible from a particular vertex and
-	// updates the visibility matrix
-	// Parameters: (PathfindingState *) s: The pathfinding state
-	//             (Vertex *) vert: The vertex
 	EdgeAATree tree;
 	VertexList *visVerts = new VertexList();
 	const Common::Point &p = vert->v;
-	Polygon *polygon;
-	int i;
-	int is_visible;
-	Vertex **vert_sorted = (Vertex**)sci_malloc(sizeof(Vertex *) * s->vertices);
 
 	// Sort vertices by angle (first) and distance (second)
-	memcpy(vert_sorted, s->vertex_index, sizeof(Vertex *) * s->vertices);
 	vertex_cur = vert;
-	qsort(vert_sorted, s->vertices, sizeof(Vertex *), vertex_compare);
+	qsort(s->vertex_index, s->vertices, sizeof(Vertex *), vertex_compare);
 
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		polygon = *it;
+		Polygon *polygon = *it;
 		Vertex *vertex;
 		vertex = polygon->vertices.first();
 
@@ -821,70 +811,48 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 		}
 	}
 
-	is_visible = 1;
+	int is_visible = 1;
 
 	// The first vertex will be vertex_cur, so we skip it
-	for (i = 1; i < s->vertices; i++) {
+	for (int i = 1; i < s->vertices; i++) {
 		Vertex *v1;
 
 		// Compute visibility of vertex_index[i]
-		is_visible = visible(vert_sorted[i], vert_sorted[i - 1], is_visible, tree);
+		is_visible = visible(s->vertex_index[i], s->vertex_index[i - 1], is_visible, tree);
 
 		// Update visibility matrix
 		if (is_visible)
-			visVerts->push_front(vert_sorted[i]);
+			visVerts->push_front(s->vertex_index[i]);
 
 		// Delete anti-clockwise edges from tree
-		v1 = CLIST_PREV(vert_sorted[i]);
-		if (left(p, vert_sorted[i]->v, v1->v)) {
+		v1 = CLIST_PREV(s->vertex_index[i]);
+		if (left(p, s->vertex_index[i]->v, v1->v)) {
 			if (!tree.remove(v1))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
 		}
 
-		v1 = CLIST_NEXT(vert_sorted[i]);
-		if (left(p, vert_sorted[i]->v, v1->v)) {
-			if (!tree.remove(vert_sorted[i]))
+		v1 = CLIST_NEXT(s->vertex_index[i]);
+		if (left(p, s->vertex_index[i]->v, v1->v)) {
+			if (!tree.remove(s->vertex_index[i]))
 				sciprintf("[avoidpath] Error: failed to remove edge from tree\n");
 		}
 
 		// Add clockwise edges of collinear vertices when sweeping line moves
-		if ((i < s->vertices - 1) && !collinear(p, vert_sorted[i]->v, vert_sorted[i + 1]->v)) {
+		if ((i < s->vertices - 1) && !collinear(p, s->vertex_index[i]->v, s->vertex_index[i + 1]->v)) {
 			int j;
-			for (j = i; (j >= 1) && collinear(p, vert_sorted[i]->v, vert_sorted[j]->v); j--) {
-				v1 = CLIST_PREV(vert_sorted[j]);
-				if (left(vert_sorted[j]->v, p, v1->v))
+			for (j = i; (j >= 1) && collinear(p, s->vertex_index[i]->v, s->vertex_index[j]->v); j--) {
+				v1 = CLIST_PREV(s->vertex_index[j]);
+				if (left(s->vertex_index[j]->v, p, v1->v))
 					tree.insert(v1);
 
-				v1 = CLIST_NEXT(vert_sorted[j]);
-				if (left(vert_sorted[j]->v, p, v1->v))
-					tree.insert(vert_sorted[j]);
+				v1 = CLIST_NEXT(s->vertex_index[j]);
+				if (left(s->vertex_index[j]->v, p, v1->v))
+					tree.insert(s->vertex_index[j]);
 			}
 		}
 	}
 
-	free(vert_sorted);
-
 	return visVerts;
-}
-
-/**
- * Computes the distance between two FloatPoints.
- */
-static float distance(const FloatPoint &a, const FloatPoint &b) {
-	float w = a.x - b.x;
-	float h = a.y - b.y;
-
-	return sqrt(w * w + h * h);
-}
-
-/**
- * Computes the square of the distance between two FloatPoints.
- */
-static float distanceSqr(const FloatPoint &a, const FloatPoint &b) {
-	float w = a.x - b.x;
-	float h = a.y - b.y;
-
-	return w * w + h * h;
 }
 
 static bool point_on_screen_border(const Common::Point &p) {
@@ -946,24 +914,21 @@ static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *r
 	//             (Common::Point) *ret: The near point of p in polygon on success
 	Vertex *vertex;
 	FloatPoint near_p;
-	float dist = HUGE_DISTANCE;
+	uint32 dist = HUGE_DISTANCE;
 
 	CLIST_FOREACH(vertex, &polygon->vertices) {
 		const Common::Point &p1 = vertex->v;
 		const Common::Point &p2 = CLIST_NEXT(vertex)->v;
-		float w, h, l, u;
+		float u;
 		FloatPoint new_point;
-		float new_dist;
+		uint32 new_dist;
 
 		// Ignore edges on the screen border
 		if (edge_on_screen_border(p1, p2))
 			continue;
 
 		// Compute near point
-		w = p2.x - p1.x;
-		h = p2.y - p1.y;
-		l = sqrt(w * w + h * h);
-		u = ((p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y) * (p2.y - p1.y)) / (l * l);
+		u = ((p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y) * (p2.y - p1.y)) / (float)p1.sqrDist(p2);
 
 		// Clip to edge
 		if (u < 0.0f)
@@ -974,7 +939,7 @@ static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *r
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
 
-		new_dist = distanceSqr(toFloatPoint(p), new_point);
+		new_dist = p.sqrDist(new_point.toPoint());
 
 		if (new_dist < dist) {
 			near_p = new_point;
@@ -1038,14 +1003,14 @@ static int nearest_intersection(PathfindingState *s, const Common::Point &p, con
 	Polygon *polygon = 0;
 	FloatPoint isec;
 	Polygon *ipolygon = 0;
-	float dist = HUGE_DISTANCE;
+	uint32 dist = HUGE_DISTANCE;
 
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
 		polygon = *it;
 		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices) {
-			float new_dist;
+			uint32 new_dist;
 			FloatPoint new_isec;
 
 			// Check for intersection with vertex
@@ -1069,7 +1034,7 @@ static int nearest_intersection(PathfindingState *s, const Common::Point &p, con
 					continue;
 			}
 
-			new_dist = distanceSqr(toFloatPoint(p), new_isec);
+			new_dist = p.sqrDist(new_isec.toPoint());
 			if (new_dist < dist) {
 				ipolygon = polygon;
 				isec = new_isec;
@@ -1388,7 +1353,6 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		Vertex *vertex;
 
 		CLIST_FOREACH(vertex, &polygon->vertices) {
-			vertex->idx = count;
 			pf_s->vertex_index[count++] = vertex;
 		}
 	}
@@ -1450,14 +1414,14 @@ static void dijkstra(PathfindingState *s) {
 		}
 	}
 
-	s->vertex_start->dist = 0.0f;
+	s->vertex_start->dist = 0;
 
 	// Loop until we find vertex_end
 	while (1) {
 		// Find vertex at shortest distance from set done
 		VertexList::iterator vertex_min_it = remain.end();
 		Vertex *vertex_min = 0;
-		float min = HUGE_DISTANCE;
+		uint32 min = HUGE_DISTANCE;
 		for (VertexList::iterator it = remain.begin(); it != remain.end(); ++it) {
 			Vertex *vertex = *it;
 			if (vertex->dist < min) {
@@ -1483,14 +1447,14 @@ static void dijkstra(PathfindingState *s) {
 		VertexList *visVerts = visible_vertices(s, vertex_min);
 
 		for (VertexList::iterator it = visVerts->begin(); it != visVerts->end(); ++it) {
-			float new_dist;
+			uint32 new_dist;
 			Vertex *vertex = *it;
 
 			// Avoid plotting path along screen edge
 			if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
 				continue;
 
-			new_dist = vertex_min->dist + distance(toFloatPoint(vertex_min->v), toFloatPoint(vertex->v));
+			new_dist = vertex_min->dist + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
 			if (new_dist < vertex->dist) {
 				vertex->dist = new_dist;
 				vertex->path_prev = vertex_min;
@@ -1620,12 +1584,6 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		p = convert_polygon_set(s, poly_list, start, end, opt);
 
-		if (intersecting_polygons(p)) {
-			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
-			delete p;
-			p = NULL;
-		}
-
 		if (!p) {
 			byte *oref;
 			sciprintf("[avoidpath] Error: pathfinding failed for following input:\n");
@@ -1639,6 +1597,12 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 			return output;
+		}
+
+		if (intersecting_polygons(p)) {
+			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
+			delete p;
+			p = NULL;
 		}
 
 		dijkstra(p);
