@@ -707,6 +707,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 				int j;
 				CloneEntry *seeker = mobj->data.clones.table;
 
+				/*
 				sciprintf("Free list: ");
 				for (j = mobj->data.clones.first_free; j != HEAPENTRY_INVALID; j = mobj->data.clones.table[j].next_free) {
 					sciprintf("%d ", j);
@@ -719,6 +720,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
+				*/
 
 				for (j = 0; j < mobj->data.clones.max_entry; j++) {
 					Object *base_obj;
