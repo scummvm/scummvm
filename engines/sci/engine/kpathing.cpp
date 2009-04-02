@@ -72,13 +72,6 @@ enum {
 
 #define HUGE_DISTANCE 1e10
 
-// Visibility matrix
-#define VIS_MATRIX_ROW_SIZE(N) (((N) / 8) + ((N) % 8 ? 1 : 0))
-#define SET_VISIBLE(S, P, Q) ((S)->vis_matrix)[(P) * VIS_MATRIX_ROW_SIZE((S)->vertices) \
-	+ (Q) / 8] |= (1 << ((Q) % 8))
-#define IS_VISIBLE(S, P, Q) (((S)->vis_matrix[(P) * VIS_MATRIX_ROW_SIZE((S)->vertices) \
-	+ (Q) / 8] & (1 << ((Q) % 8))) != 0)
-
 #define VERTEX_HAS_EDGES(V) ((V) != CLIST_NEXT(V))
 
 // Error codes
@@ -239,9 +232,6 @@ struct PathfindingState {
 	// Array to quickly find vertices by idx
 	Vertex **vertex_index;
 
-	// Visibility matrix
-	byte *vis_matrix;
-
 	// Total number of vertices
 	int vertices;
 
@@ -253,7 +243,6 @@ struct PathfindingState {
 		vertex_start = NULL;
 		vertex_end = NULL;
 		vertex_index = NULL;
-		vis_matrix = NULL;
 		_prependPoint = NULL;
 		_appendPoint = NULL;
 		vertices = 0;
@@ -261,7 +250,6 @@ struct PathfindingState {
 	
 	~PathfindingState() {
 		free(vertex_index);
-		free(vis_matrix);
 
 		if (_prependPoint)
 			delete _prependPoint;
@@ -796,12 +784,13 @@ static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const Edg
 	return true;
 }
 
-static void visible_vertices(PathfindingState *s, Vertex *vert) {
+static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 	// Determines all vertices that are visible from a particular vertex and
 	// updates the visibility matrix
 	// Parameters: (PathfindingState *) s: The pathfinding state
 	//             (Vertex *) vert: The vertex
 	EdgeAATree tree;
+	VertexList *visVerts = new VertexList();
 	const Common::Point &p = vert->v;
 	Polygon *polygon;
 	int i;
@@ -843,7 +832,7 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 
 		// Update visibility matrix
 		if (is_visible)
-			SET_VISIBLE(s, vert->idx, vert_sorted[i]->idx);
+			visVerts->push_front(vert_sorted[i]);
 
 		// Delete anti-clockwise edges from tree
 		v1 = CLIST_PREV(vert_sorted[i]);
@@ -874,6 +863,8 @@ static void visible_vertices(PathfindingState *s, Vertex *vert) {
 	}
 
 	free(vert_sorted);
+
+	return visVerts;
 }
 
 /**
@@ -1404,25 +1395,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	pf_s->vertices = count;
 
-	// Allocate and clear visibility matrix
-	pf_s->vis_matrix = (byte *)sci_calloc(pf_s->vertices * VIS_MATRIX_ROW_SIZE(pf_s->vertices), 1);
-
 	return pf_s;
-}
-
-static void visibility_graph(PathfindingState *s) {
-	// Computes the visibility graph
-	// Parameters: (PathfindingState *) s: The pathfinding state
-	Polygon *polygon;
-
-	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		polygon = *it;
-		Vertex *vertex;
-
-		CLIST_FOREACH(vertex, &polygon->vertices) {
-			visible_vertices(s, vertex);
-		}
-	}
 }
 
 static int intersecting_polygons(PathfindingState *s) {
@@ -1482,11 +1455,10 @@ static void dijkstra(PathfindingState *s) {
 	// Loop until we find vertex_end
 	while (1) {
 		// Find vertex at shortest distance from set done
-		VertexList::iterator it;
 		VertexList::iterator vertex_min_it = remain.end();
 		Vertex *vertex_min = 0;
 		float min = HUGE_DISTANCE;
-		for (it = remain.begin(); it != remain.end(); ++it) {
+		for (VertexList::iterator it = remain.begin(); it != remain.end(); ++it) {
 			Vertex *vertex = *it;
 			if (vertex->dist < min) {
 				vertex_min_it = it;
@@ -1508,22 +1480,24 @@ static void dijkstra(PathfindingState *s) {
 		done.push_front(vertex_min);
 		remain.erase(vertex_min_it);
 
-		for (int i = 0; i < s->vertices; i++) {
-			// Adjust upper bound for all vertices that are visible from vertex_min
-			if (IS_VISIBLE(s, vertex_min->idx, i)) {
-				float new_dist;
+		VertexList *visVerts = visible_vertices(s, vertex_min);
 
-				// Avoid plotting path along screen edge
-				if ((s->vertex_index[i] != s->vertex_end) && point_on_screen_border(s->vertex_index[i]->v))
-					continue;
+		for (VertexList::iterator it = visVerts->begin(); it != visVerts->end(); ++it) {
+			float new_dist;
+			Vertex *vertex = *it;
 
-				new_dist = vertex_min->dist + distance(toFloatPoint(vertex_min->v), toFloatPoint(s->vertex_index[i]->v));
-				if (new_dist < s->vertex_index[i]->dist) {
-					s->vertex_index[i]->dist = new_dist;
-					s->vertex_index[i]->path_prev = vertex_min;
-				}
+			// Avoid plotting path along screen edge
+			if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
+				continue;
+
+			new_dist = vertex_min->dist + distance(toFloatPoint(vertex_min->v), toFloatPoint(vertex->v));
+			if (new_dist < vertex->dist) {
+				vertex->dist = new_dist;
+				vertex->path_prev = vertex_min;
 			}
 		}
+
+		delete visVerts;
 	}
 }
 
@@ -1667,7 +1641,6 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return output;
 		}
 
-		visibility_graph(p);
 		dijkstra(p);
 
 		output = output_path(p, s);
