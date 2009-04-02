@@ -681,6 +681,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif
 
+	// Hoyle 2 - English DOS
+	{{"hoyle2", "", {
+		{"resource.map", 0, "4f894d203f64aa23d9ff64d30ae36926", 2100},
+		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 98138},
+		{"resource.002", 0, "8f2dd70abe01112eca464cda818b5eb6", 196631},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 572)
+	},
+
 	// Hoyle 2 - English Amiga (from www.back2roots.org)
 	{{"hoyle2", "", {
 		{"resource.map", 0, "62ed48d20c580e5a98f102f7cd93706a", 1356},
