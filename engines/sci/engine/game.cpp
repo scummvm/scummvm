@@ -168,7 +168,11 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->visual = gfxw_new_visual(s->gfx_state, font_nr);
 
-	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->options->pic_port_bounds, s->ega_colors[0], transparent);
+#ifdef CUSTOM_GRAPHICS_OPTIONS
+	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->options->pic_port_bounds, s->ega_colors[0], transparent);	
+#else
+	s->wm_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 10, 320, 190), s->ega_colors[0], transparent);
+#endif
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
@@ -196,7 +200,11 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	// but this is correct
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->options->pic_port_bounds, s->ega_colors[0], transparent);
+#else
+	s->picture_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 10, 320, 190), s->ega_colors[0], transparent);
+#endif
 
 	s->pics_drawn_nr = 0;
 

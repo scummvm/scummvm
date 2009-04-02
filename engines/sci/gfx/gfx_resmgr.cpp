@@ -86,16 +86,18 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 	basic_style.line_mode = GFX_LINE_MODE_CORRECT;
 	basic_style.brush_mode = GFX_BRUSH_MODE_SCALED;
-	basic_style.pic_port_bounds = _options->pic_port_bounds;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
+	basic_style.pic_port_bounds = _options->pic_port_bounds;
 	style.line_mode = _options->pic0_line_mode;
 	style.brush_mode = _options->pic0_brush_mode;
+	style.pic_port_bounds = _options->pic_port_bounds;
 #else
+	basic_style.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	style.line_mode = GFX_LINE_MODE_CORRECT;
 	style.brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
+	style.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 #endif
-	style.pic_port_bounds = _options->pic_port_bounds;
 
 	if (!res || !res->data)
 		return GFX_ERROR;
@@ -148,14 +150,17 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 		error("getOptionsHash called on a VIEW resource");
 
 	case GFX_RESOURCE_TYPE_PIC:
+#ifdef CUSTOM_GRAPHICS_OPTIONS
 		if (_version >= SCI_VERSION_01_VGA)
 			return _options->pic_port_bounds.y;
 		else
-#ifdef CUSTOM_GRAPHICS_OPTIONS
 			return (_options->pic0_unscaled) ? 0x10000 : (_options->pic0_dither_mode << 12)
 			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4) 
 				   | (_options->pic0_line_mode);
 #else
+		if (_version >= SCI_VERSION_01_VGA)
+			return 10;
+		else
 			return 0x10000 | (GFXR_DITHER_PATTERN_SCALED << 8) | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
 #endif
 

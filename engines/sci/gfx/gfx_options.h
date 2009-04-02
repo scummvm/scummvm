@@ -76,10 +76,8 @@ struct gfx_options_t {
 	int dirty_frames;
 
 	int workarounds;	// Workaround flags - see below
-#endif
-
-	// FIXME: This option is abused: pic_port_bounds is actually set by the game itself in kSetPort()
 	rect_t pic_port_bounds;
+#endif
 };
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS

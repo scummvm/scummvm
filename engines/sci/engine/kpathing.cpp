@@ -77,7 +77,7 @@ enum {
 	PF_FATAL = -2
 };	
 
-#define scummvm_roundf(a) ((fmod(a,1)<0.5) ? floor(a) : ceil(a))
+#define scummvm_roundf(a) ((fmod(a, 1) < 0.5) ? floor(a) : ceil(a))
 
 // Floating point struct
 struct FloatPoint {
