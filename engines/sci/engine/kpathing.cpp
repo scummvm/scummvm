@@ -77,15 +77,13 @@ enum {
 	PF_FATAL = -2
 };	
 
-#define scummvm_roundf(a) ((fmod(a, 1) < 0.5) ? floor(a) : ceil(a))
-
 // Floating point struct
 struct FloatPoint {
 	FloatPoint() : x(0), y(0) {}
 	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
 
 	Common::Point toPoint() {
-		return Common::Point((int16)scummvm_roundf(x), (int16)scummvm_roundf(y));
+		return Common::Point(x + 0.5, y + 0.5);
 	}
 
 	float x, y;
