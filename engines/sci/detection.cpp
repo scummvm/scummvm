@@ -997,6 +997,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(2, 100, 2)
 	},
 
+	// King's Quest 7 - German Windows (supplied by markcoolio in bug report #2727402)
+	{{"kq7", "", {
+		{"resource.map", 0, "838b9ff132bd6962026fee832e8a7ddb", 18697},
+		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 206626576},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(2, 100, 2)
+	},
+
 	// King's Quest 7 - Spanish DOS
 	{{"kq7", "", {
 		{"resource.map", 0, "0b62693cbe87e3aaca3e8655a437f27f", 18709},
