@@ -360,7 +360,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 		amiga_game = 1;
 		view->palette = static_pal->getref();
 	} else {
-		GFXWARN("view %04x: Doesn't have a palette. Can FreeSCI handle this?\n", view->ID);
+		GFXWARN("view %04x: Doesn't have a palette. Can SCI handle this?\n", view->ID);
 		view->palette = NULL;
 	}
 
