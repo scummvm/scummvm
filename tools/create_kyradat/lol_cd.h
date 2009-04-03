@@ -69,6 +69,11 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolButtonList7, 0x00029790, 0x00029796 },
 	{ lolButtonList8, 0x000297A0, 0x000297A4 },
 
+	{ lolLegendData, 0x000321F0, 0x0003222C },
+	{ lolMapCursorOvl, 0x0003222C, 0x00032245 },
+	{ lolMapStringId, 0x000287D0, 0x0002880C },
+	//{ lolMapPal, 0x0001D9C0, 0x0001DBC0 },
+
 	{ -1, 0, 0 }
 };
 

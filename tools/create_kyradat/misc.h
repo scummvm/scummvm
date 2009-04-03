@@ -552,6 +552,11 @@ const int lolCDFile2Need[] = {
 	lolButtonList7,
 	lolButtonList8,
 
+	lolLegendData,
+	lolMapCursorOvl,
+	lolMapStringId,
+	//lolMapPal,
+
 	-1
 };
 

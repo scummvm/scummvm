@@ -243,6 +243,13 @@ struct LevelTempData {
 	uint8 monsterDifficulty;
 };
 
+struct MapLegendData {
+	uint8 shapeIndex;
+	bool enable;
+	uint8 x;
+	uint16 stringId;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -793,7 +800,7 @@ private:
 	// level
 	void loadLevel(int index);
 	void addLevelItems();
-	void loadLevelWLL(int index, bool mapShapes);
+	void loadLevelWallData(int index, bool mapShapes);
 	void assignBlockObject(uint16 *cmzItemIndex, uint16 item);
 	int assignLevelShapes(int index);
 	uint8 *getLevelShapes(int index);
@@ -852,7 +859,7 @@ private:
 	int clickedLeverOff(uint16 block, uint16 direction);
 	int clickedWallOnlyScript(uint16 block);
 	int clickedDoorSwitch(uint16 block, uint16 direction);
-	int clicked6(uint16 block, uint16 direction);
+	int clickedNiche(uint16 block, uint16 direction);
 
 	bool clickedShape(int shapeIndex);
 	void processDoorSwitch(uint16 block, int unk);
@@ -868,7 +875,6 @@ private:
 	void movePartySmoothScrollTurnRight(int speed);
 
 	int smoothScrollDrawSpecialShape(int pageNum);
-	void updateAutoMap(int block);
 
 	OpenDoorState _openDoorState[3];
 	int _emcDoorState;
@@ -1062,7 +1068,7 @@ private:
 	// monsters
 	void loadMonsterShapes(const char *file, int monsterIndex, int b);
 	void releaseMonsterShapes(int monsterIndex);
-	int deleteMonstersForBlock(int block);
+	int deleteMonstersFromBlock(int block);
 	void setMonsterMode(MonsterInPlay *monster, int mode);
 	bool updateMonsterAdjustBlocks(MonsterInPlay *monster);
 	void placeMonster(MonsterInPlay *monster, uint16 x, uint16 y);
@@ -1171,6 +1177,36 @@ private:
 
 	void generateTempData();
 	LevelTempData *_lvlTempData[28];
+
+	// magic atlas
+	void displayAutomap();
+	void updateAutoMap(uint16 block);
+	bool updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOffs, int16 yOffs);
+	void loadMapLegendData(int level);
+	void drawMapPage(int pageNum);
+	bool automapProcessButtons(int inputFlag);
+	void automapBackButton();
+	void automapForwardButton();
+	void redrawMapCursor();
+	void drawMapBlockWall(uint16 block, uint8 wall, int x, int y, int direction);
+	void drawMapShape(uint8 wall, int x, int y, int direction);
+	int mapGetStartPosX();
+	int mapGetStartPosY();
+	void mapIncludeLegendData(int type);
+	void printMapText(uint16 stringId, int x, int y);
+	void printMapExitButtonText();
+
+	uint8 _currentMapLevel;
+	uint8 *_mapOverlay;
+	const uint8 **_automapShapes;
+	const uint16 *_autoMapStrings;
+	int _autoMapStringsSize;
+	MapLegendData *_defaultLegendData;
+	uint8 *_mapCursorOverlay;
+	uint8 _automapTopLeftX;
+	uint8 _automapTopLeftY;
+	static const int8 _mapCoords[12][4];
+	bool _mapUpdateNeeded;
 };
 
 } // end of namespace Kyra

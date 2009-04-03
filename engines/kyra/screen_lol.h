@@ -60,6 +60,11 @@ public:
 	void smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum);
 	void smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum);
 
+	// magic atlas
+	// This method basically works like copyRegion, but the pixels
+	// copied also have a palette overlay applied to them.
+	void copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
+
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void loadSpecialColours(uint8 *destPalette);
@@ -87,6 +92,22 @@ private:
 	int _curDimIndex;
 
 	uint8 *_levelOverlays[8];
+
+	// magic atlas
+	void calcMapBoundaries(int dstX, int dstY, int c, int d);
+
+	int _mapDimX;
+	int _mapDimY;
+	int _mapDimW;
+	int _mapDimH;
+	int _mapDimDstX;
+	int _mapBlockWidth;
+	int _mapDimDstY;
+	int _mapBlockHeight;
+	int _mapDimU5;
+	int _mapDimU6;
+	int _mapBlockWidth2;
+	int _mapDimU8;
 };
 
 } // end of namespace Kyra

@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 43,
+	kKyraDatVersion = 44,
 	kIndexSize = 12
 };
 
@@ -335,6 +335,11 @@ const ExtractFilename extractFilenames[] = {
 	{ lolButtonList6, lolTypeRaw16, "BUTTON6.LST" },
 	{ lolButtonList7, lolTypeRaw16, "BUTTON7.LST" },
 	{ lolButtonList8, lolTypeRaw16, "BUTTON84.LST" },
+
+	{ lolLegendData, kTypeRawData, "MAPLGND.DEF" },
+	{ lolMapCursorOvl, kTypeRawData, "MAPCURSOR.PAL" },
+	{ lolMapStringId, lolTypeRaw16, "MAPSTRID.LST" },
+	//{ lolMapPal, kTypeRawData, "MAP.PAL" },
 
 	{ -1, 0, 0 }
 };

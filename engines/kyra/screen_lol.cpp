@@ -27,6 +27,7 @@
 
 #include "kyra/screen_lol.h"
 #include "kyra/lol.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -46,6 +47,8 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 	
 	_fadeFlag = 2;
 	_curDimIndex = 0;
+
+	_mapDimX = _mapDimY = _mapDimW = _mapDimH = _mapDimDstX = _mapBlockWidth = _mapDimDstY = _mapBlockHeight = _mapDimU5 = _mapDimU6 = _mapBlockWidth2 = _mapDimU8 = 0;
 }
 
 Screen_LoL::~Screen_LoL() {
@@ -515,6 +518,94 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 		s += 305;
 		d += 132;
 	}
+}
+
+void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl) {
+	if (!w || !h || !ovl)
+		return;
+
+	const ScreenDim *cdim = getScreenDim(dim);
+	_mapDimX = cdim->sx << 3;
+	_mapDimY = cdim->sy;
+	_mapDimW = cdim->w << 3;
+	_mapDimH = cdim->h;
+
+	calcMapBoundaries(x2, y2, w, h);
+	if (_mapBlockWidth == -1)
+		return;
+
+	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
+	uint8 *dst = getPagePtr(page2) + (_mapDimDstY + _mapDimY) * 320;
+
+	for (int i = 0; i < _mapBlockHeight; i++) {
+		uint8 *s = src + _mapDimU5;
+		uint8 *d = dst + (_mapDimDstX + _mapDimX);
+
+		for (int ii = 0; ii < _mapBlockWidth; ii++) {
+			uint8 p = ovl[*s++];
+			if (p)
+				*d = p;
+			d++;
+		}
+
+		dst += 320;
+		src += 320;
+	}
+
+	addDirtyRect(_mapDimDstX + _mapDimX, _mapDimDstY + _mapDimY, _mapBlockWidth, _mapBlockHeight);
+}
+
+void Screen_LoL::calcMapBoundaries(int dstX, int dstY, int width, int height) {
+	_mapBlockWidth = _mapBlockWidth2 = width;
+	_mapBlockHeight = height;
+	_mapDimDstX = dstX;
+	_mapDimDstY = dstY;
+
+	_mapDimU5 = _mapDimU6 = _mapDimU8 = 0;
+
+	int t = _mapDimDstX + _mapBlockWidth;
+	if (t <= 0) {
+		_mapBlockWidth = _mapBlockHeight = -1;
+		return;
+	}
+
+	if (t <= _mapDimDstX) {
+		_mapDimU5 = _mapBlockWidth - t;
+		_mapBlockWidth = t;
+		_mapDimDstX = 0;
+	}
+
+	t = _mapDimW - _mapDimDstX;
+	if (t <= 0) {
+		_mapBlockWidth = _mapBlockHeight = -1;
+		return;
+	}
+
+	if (t <= _mapBlockWidth)
+		_mapBlockWidth = t;
+
+	_mapBlockWidth2 -= _mapBlockWidth;
+
+	t = _mapDimDstY + _mapBlockHeight;
+	if (t <= 0) {
+		_mapBlockWidth = _mapBlockHeight = -1;
+		return;
+	}
+
+	if (t <= _mapDimDstY) {
+		_mapDimU6 = _mapBlockHeight - t;
+		_mapBlockHeight = t;
+		_mapDimDstY = 0;
+	}
+
+	t = _mapDimH - _mapDimDstY;
+	if (t <= 0) {
+		_mapBlockWidth = _mapBlockHeight = -1;
+		return;
+	}
+
+	if (t <= _mapBlockHeight)
+		_mapBlockHeight = t;
 }
 
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {

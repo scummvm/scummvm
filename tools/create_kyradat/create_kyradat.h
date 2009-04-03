@@ -246,6 +246,11 @@ enum kExtractID {
 	lolButtonList7,
 	lolButtonList8,
 
+	lolLegendData,
+	lolMapCursorOvl,
+	lolMapStringId,
+	//lolMapPal,
+
 	kMaxResIDs
 };
 

@@ -28,6 +28,7 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
+
 #include "kyra/sound.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
@@ -213,6 +214,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 	_unkIceSHpFlag = 0;
+	
+	_mapOverlay = 0;
+	_automapShapes = 0;
+	_defaultLegendData = 0;
 }
 
 LoLEngine::~LoLEngine() {
@@ -285,6 +290,9 @@ LoLEngine::~LoLEngine() {
 		delete[] _monsterShapesEx;
 	}
 
+	if (_automapShapes)
+		delete[] _automapShapes;
+
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
 	_timIntroOpcodes.clear();
@@ -346,6 +354,10 @@ LoLEngine::~LoLEngine() {
 			delete _lvlTempData[i];
 		}		
 	}
+
+	delete[] _defaultLegendData;
+	delete[] _mapCursorOverlay;
+	delete[] _mapOverlay;
 }
 
 Screen *LoLEngine::screen() {
@@ -452,6 +464,9 @@ Common::Error LoLEngine::init() {
 
 	_hasTempDataFlags = 0;
 	_unkCharNum = -1;
+
+	_automapShapes = new const uint8*[109];
+	_mapOverlay = new uint8[256];
 
 	return Common::kNoError;
 }
@@ -1206,7 +1221,7 @@ void LoLEngine::gui_prepareForSequence(int x, int y, int w, int h, int buttonFla
 	_lastMouseRegion = -1;
 
 	if (w == 320) {
-		setLampMode(0);
+		setLampMode(false);
 		_lampStatusSuspended = true;
 	}
 }
@@ -1957,6 +1972,490 @@ void LoLEngine::generateTempData() {
 	_lvlTempData[l]->monsterDifficulty =_monsterDifficulty;
 
 	_hasTempDataFlags |= (1 << l);
+}
+
+// magic atlas
+
+void LoLEngine::displayAutomap() {
+	snd_playSoundEffect(105, -1);
+	gui_toggleButtonDisplayMode(78, 1);
+
+	_currentMapLevel = _currentLevel;
+	uint8 *tmpWll = new uint8[80];
+	memcpy(tmpWll, _wllBuffer4, 80);
+
+	_screen->loadBitmap("parch.cps", 2, 2, _screen->getPalette(3));
+	_screen->loadBitmap("autobut.shp", 3, 5, 0);
+	const uint8 *shp = _screen->getCPagePtr(5);
+
+	for (int i = 0; i < 109; i++)
+		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
+	
+	_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
+
+	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
+	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");
+
+	for (int i = 0; i < 11; i++)
+		_defaultLegendData[i].enable = false;
+
+	disableSysTimer(2);
+	generateTempData();
+	resetItems(1);
+	disableMonsters();
+
+	bool exitAutomap = false;
+	_mapUpdateNeeded = false;
+
+	restoreBlockTempData(_currentMapLevel);
+	loadMapLegendData(_currentMapLevel);
+	_screen->fadeToBlack(10);
+	drawMapPage(2);
+
+	_screen->copyPage(2, 0);
+	_screen->updateScreen();
+	_screen->fadePalette(_screen->getPalette(3), 10);
+	_smoothScrollTimer = _system->getMillis() + 8 * _tickLength;
+
+	while (!exitAutomap) {
+		if (_mapUpdateNeeded) {
+			drawMapPage(2);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			_mapUpdateNeeded = false;
+		}
+
+		if (_system->getMillis() >= _smoothScrollTimer) {
+			redrawMapCursor();
+			_smoothScrollTimer = _system->getMillis() + 8 * _tickLength;
+		}
+
+		int f = checkInput(0) & 0xff;
+		removeInputTop();
+
+		if (f) {
+			exitAutomap = automapProcessButtons(f);
+			gui_notifyButtonListChanged();
+		}
+
+		if (f == 0x30) {
+			for (int i = 0; i < 1024; i++)
+				 _levelBlockProperties[i].flags |= 7;
+			_mapUpdateNeeded = true;
+		} else if (f == 0x6e) {
+			exitAutomap = true;
+		}
+
+		delay (_tickLength);
+	}
+
+	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
+	_screen->loadFont(Screen::FID_6_FNT, "FONT6P.FNT");
+
+	_screen->fadeToBlack(10);
+	loadLevelWallData(_currentLevel, false);
+	memcpy(_wllBuffer4, tmpWll, 80);
+	delete[] tmpWll;
+	restoreBlockTempData(_currentLevel);
+	addLevelItems();
+	gui_notifyButtonListChanged();
+	enableSysTimer(2);
+}
+
+void LoLEngine::updateAutoMap(uint16 block) {
+	if (!(_gameFlags[15] & 0x1000))
+		return;
+	_levelBlockProperties[block].flags |= 7;
+
+	uint16 x = block & 0x1f;
+	uint16 y = block >> 5;
+
+	updateAutoMapIntern(block, x, y, -1, -1);
+	updateAutoMapIntern(block, x, y, 1, -1);
+	updateAutoMapIntern(block, x, y, -1, 1);
+	updateAutoMapIntern(block, x, y, 1, 1);
+	updateAutoMapIntern(block, x, y, 0, -1);
+	updateAutoMapIntern(block, x, y, 0, 1);
+	updateAutoMapIntern(block, x, y, -1, 0);
+	updateAutoMapIntern(block, x, y, 1, 0);
+}
+
+bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOffs, int16 yOffs) {
+	static const int16 blockPosTable[] = { 1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32 };
+	x += xOffs;
+	y += yOffs;
+
+	if ((x & 0xffe0) || (y & 0xffe0))
+		return false;
+
+	xOffs++;
+	yOffs++;
+
+	int16 fx = blockPosTable[xOffs];
+	uint16 b = block + blockPosTable[6 + xOffs];
+
+	if (fx != -1) {
+		if (_wllBuffer4[_levelBlockProperties[b].walls[fx]] & 0xc0)
+			return false;
+	}
+
+	int16 fy = blockPosTable[3 + yOffs];
+	b = block + blockPosTable[9 + yOffs];
+
+	if (fy != -1) {
+		if (_wllBuffer4[_levelBlockProperties[b].walls[fy]] & 0xc0)
+			return false;
+	}
+
+	b = block + blockPosTable[6 + xOffs] + blockPosTable[9 + yOffs];
+
+	if ((fx != -1) && (fy != -1) && (_wllBuffer4[_levelBlockProperties[b].walls[fx]] & 0xc0) && (_wllBuffer4[_levelBlockProperties[b].walls[fy]] & 0xc0))
+		return false;
+
+	_levelBlockProperties[b].flags |= 7;
+
+	return true;
+}
+
+void LoLEngine::loadMapLegendData(int level) {
+	uint16 *legendData= (uint16*) _tempBuffer5120;
+	for (int i = 0; i < 32; i++) {
+		legendData[i * 6] = 0xffff;
+		legendData[i * 6 + 5] = 0xffff;
+	}
+
+	char file[13];
+	uint32 size = 0;
+	snprintf(file, 12, "level%d.xxx", level);
+	uint8 *data = _res->fileData(file, &size);
+	uint8 *pos = data;
+	size = MIN<uint32>(size / 12, 32);
+
+	for (uint32 i = 0; i < size; i++) {
+		uint16 *l = &legendData[i * 6];
+		l[3] = READ_LE_UINT16(pos);
+		pos += 2;
+		l[4] = READ_LE_UINT16(pos);
+		pos += 2;
+		l[5] = READ_LE_UINT16(pos);
+		pos += 2;
+		l[0] = READ_LE_UINT16(pos);
+		pos += 2;
+		l[1] = READ_LE_UINT16(pos);
+		pos += 2;
+		l[2] = READ_LE_UINT16(pos);
+		pos += 2;
+	}
+
+	delete[] data;
+}
+
+void LoLEngine::drawMapPage(int pageNum) {
+	for (int i = 0; i < 2; i++) {
+		_screen->loadBitmap("parch.cps", pageNum, pageNum, _screen->getPalette(3));
+		
+		int cp = _screen->setCurPage(pageNum);
+		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236, 8, 1, 0);
+		uint16 blX = mapGetStartPosX();
+		uint16 bl = (mapGetStartPosY() << 5) + blX;
+
+		int sx = _automapTopLeftX;
+		int sy = _automapTopLeftY;
+
+		for (; bl < 1024; bl++) {
+			uint8 *w = _levelBlockProperties[bl].walls;
+			if ((_levelBlockProperties[bl].flags & 7) == 7 && (!(_wllBuffer4[w[0]] & 0xc0)) && (!(_wllBuffer4[w[2]] & 0xc0)) && (!(_wllBuffer4[w[1]] & 0xc0))&& (!(_wllBuffer4[w[3]] & 0xc0))) {
+				uint16 b0 = calcNewBlockPosition(bl, 0);
+				uint16 b2 = calcNewBlockPosition(bl, 2);
+				uint16 b1 = calcNewBlockPosition(bl, 1);
+				uint16 b3 = calcNewBlockPosition(bl, 3);
+
+				uint8 w02 = _levelBlockProperties[b0].walls[2];
+				uint8 w20 = _levelBlockProperties[b2].walls[0];
+				uint8 w13 = _levelBlockProperties[b1].walls[3];
+				uint8 w31 = _levelBlockProperties[b3].walls[1];
+
+				// draw block
+				_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 6, 0, _mapOverlay);
+
+				// draw north wall
+				drawMapBlockWall(b3, w31, sx, sy, 3);
+				drawMapShape(w31, sx, sy, 3);
+				if (_wllBuffer4[w31] & 0xc0)
+					_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 1, 6, 0, _mapOverlay);
+
+				// draw west wall
+				drawMapBlockWall(b1, w13, sx, sy, 1);
+				drawMapShape(w13, sx, sy, 1);
+				if (_wllBuffer4[w13] & 0xc0)
+					_screen->copyBlockSpecial(_screen->_curPage, sx + 6, sy, _screen->_curPage, sx + 6, sy, 1, 6, 0, _mapOverlay);
+
+				// draw east wall
+				drawMapBlockWall(b0, w02, sx, sy, 0);
+				drawMapShape(w02, sx, sy, 0);
+				if (_wllBuffer4[w02] & 0xc0)
+					_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 1, 0, _mapOverlay);
+
+				//draw south wall
+				drawMapBlockWall(b2, w20, sx, sy, 2);
+				drawMapShape(w20, sx, sy, 2);
+				if (_wllBuffer4[w20] & 0xc0)
+					_screen->copyBlockSpecial(_screen->_curPage, sx, sy + 5, _screen->_curPage, sx, sy + 5, 7, 1, 0, _mapOverlay);
+			}
+
+			sx += 7;
+			if (bl % 32 == 31) {
+				sx = _automapTopLeftX;
+				sy += 6;
+				bl += blX;
+			}
+		}
+
+		_screen->setFont(of);
+		_screen->setCurPage(cp);
+
+		of = _screen->setFont(Screen::FID_6_FNT);
+
+		int tY = 0;
+		sx = mapGetStartPosX();
+		sy = mapGetStartPosY();
+
+		uint16 *legendData = (uint16*)_tempBuffer5120;
+
+		for (int ii = 0; ii < 32; ii++)  {
+			uint16 *l = &legendData[ii * 6];
+			if (l[0] == 0xffff)
+				break;
+
+			uint16 cbl = l[0] + (l[1] << 5);
+			if ((_levelBlockProperties[cbl].flags & 7) != 7)
+				continue;
+
+			if (l[2] == 0xffff)
+				continue;
+
+			printMapText(l[2], 244, (tY << 3) + 22);
+
+			if (l[5] == 0xffff) {
+				tY++;
+				continue;
+			}
+
+			uint16 cbl2 = l[3] + (l[4] << 5);
+			_levelBlockProperties[cbl2].flags |= 7;
+			_screen->drawShape(2, _automapShapes[l[5] << 2], (l[3] - sx) * 7 + _automapTopLeftX - 3, (l[4] - sy) * 6 + _automapTopLeftY - 3, 0, 0);
+			_screen->drawShape(2, _automapShapes[l[5] << 2], 231, (tY << 3) + 19, 0, 0);
+			tY++;			
+		}
+			
+		cp = _screen->setCurPage(pageNum);
+
+		for (int ii = 0; ii < 11; ii++) {
+			if (!_defaultLegendData[ii].enable)
+				continue;
+			_screen->copyBlockSpecial(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
+			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232, (tY << 3) + 18 + _defaultLegendData[ii].x, 0, 0);
+			printMapText(_defaultLegendData[ii].stringId, 244, (tY << 3) + 22);
+			tY++;
+		}
+
+		_screen->setFont(of);
+		_screen->setCurPage(cp);
+	}
+
+	printMapExitButtonText();
+}
+
+bool LoLEngine::automapProcessButtons(int inputFlag) {
+	if (inputFlag != 199)
+		return false;
+
+	int r = -1;
+	if (posWithinRect(_mouseX, _mouseY, 252, 175, 273, 200))
+		r = 0;
+	else if (posWithinRect(_mouseX, _mouseY, 231, 175, 252, 200))
+		r = 1;
+	else if (posWithinRect(_mouseX, _mouseY, 275, 175, 315, 197))
+		r = 2;
+
+	printMapExitButtonText();
+
+	while (inputFlag == 199 || inputFlag == 200) {
+		inputFlag = checkInput(0, false);
+		removeInputTop();
+		delay (_tickLength);
+	}
+
+	if (r == 0) {			
+		automapForwardButton();
+		printMapExitButtonText();
+	} else if (r == 1) {
+		automapBackButton();
+		printMapExitButtonText();
+	} if (r == 2) {
+		return true;
+	}
+
+	return false;
+}
+
+void LoLEngine::automapForwardButton() {
+	int i = (_currentMapLevel + 1) & 0x1f;
+	for (; !(_hasTempDataFlags & (1 << (i - 1))); i++) {
+		if (i >= 32 || i == _currentMapLevel)
+			return;
+	}
+	
+	for (int l = 0; l < 11; l++) {
+		_defaultLegendData[l].enable = false;
+		_defaultLegendData[l].shapeIndex = 255;
+	}
+
+	_currentMapLevel = i;
+	loadLevelWallData(i, false);
+	restoreBlockTempData(i);
+	loadMapLegendData(i);
+	_mapUpdateNeeded = true;
+}
+
+void LoLEngine::automapBackButton() {
+	int i = (_currentMapLevel - 1) & 0x1f;
+	for (; !(_hasTempDataFlags & (1 << (i - 1))); i--) {
+		if (i < 0 || i == _currentMapLevel)
+			return;
+	}
+	
+	for (int l = 0; l < 11; l++) {
+		_defaultLegendData[l].enable = false;
+		_defaultLegendData[l].shapeIndex = 255;
+	}
+
+	_currentMapLevel = i;
+	loadLevelWallData(i, false);
+	restoreBlockTempData(i);
+	loadMapLegendData(i);
+	_mapUpdateNeeded = true;
+}
+
+void LoLEngine::redrawMapCursor() {
+	int sx = mapGetStartPosX();
+	int sy = mapGetStartPosY();
+
+	if (_currentLevel != _currentMapLevel)
+		return;
+
+	_screen->fillRect(0, 0, 16, 16, 0, 2);
+	_screen->drawShape(2, _automapShapes[48 + _currentDirection], 0, 0, 0, 0);
+	int cx = _automapTopLeftX + (((_currentBlock - sx) % 32) * 7);
+	int cy = _automapTopLeftY + (((_currentBlock - (sy << 5)) / 32) * 6);
+	_screen->copyRegion(cx, cy, cx, cy, 16, 16, 2, 0);
+	_screen->copyBlockSpecial(2, 0, 0, 0, cx - 3, cy - 2, 16, 16, 0, _mapCursorOverlay);
+
+	_mapCursorOverlay[24] = _mapCursorOverlay[1];
+	for (int i = 1; i < 24; i++)
+		_mapCursorOverlay[i] = _mapCursorOverlay[i + 1];
+
+	_screen->updateScreen();
+}
+
+void LoLEngine::drawMapBlockWall(uint16 block, uint8 wall, int x, int y, int direction) {
+	if (((1 << direction) & _levelBlockProperties[block].flags) || ((_wllBuffer4[wall] & 0x1f) != 13))
+		return;
+
+	int cp = _screen->_curPage;
+	_screen->copyBlockSpecial(cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], _mapCoords[2][direction], _mapCoords[3][direction], 0, _mapOverlay);
+	_screen->copyBlockSpecial(cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
+	_screen->copyBlockSpecial(cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
+}
+
+void LoLEngine::drawMapShape(uint8 wall, int x, int y, int direction) {
+	int l = _wllBuffer4[wall] & 0x1f;
+	if (l == 0x1f)
+		return;
+
+	_screen->drawShape(_screen->_curPage, _automapShapes[(l << 2) + direction], x + _mapCoords[10][direction] - 2, y + _mapCoords[11][direction] - 2, 0, 0);
+	mapIncludeLegendData(l);
+}
+
+int LoLEngine::mapGetStartPosX() {
+	int c = 0;
+	int a = 32;
+
+	do {
+		for (a = 0; a < 32; a++) {
+			if (_levelBlockProperties[(a << 5) + c].flags)
+				break;
+		}
+		if (a == 32)
+			c++;
+	} while (c < 32 && a == 32);
+
+	int d = 31;
+	a = 32;
+
+	do {
+		for (a = 0; a < 32; a++) {
+			if (_levelBlockProperties[(a << 5) + d].flags)
+				break;				
+		}
+		if (a == 32)
+			d--;
+	} while (d > 0 && a == 32);
+
+	_automapTopLeftX = (d > c) ? ((32 - (d - c)) >> 1) * 7 + 5 : 5;
+	return (d > c) ? c : 0;
+}
+
+int LoLEngine::mapGetStartPosY() {
+	int c = 0;
+	int a = 32;
+
+	do {
+		for (a = 0; a < 32; a++) {
+			if (_levelBlockProperties[(c << 5) + a].flags)
+				break;
+		}
+		if (a == 32)
+			c++;
+	} while (c < 32 && a == 32);
+
+	int d = 31;
+	a = 32;
+
+	do {
+		for (a = 0; a < 32; a++) {
+			if (_levelBlockProperties[(d << 5) + a].flags)
+				break;
+		}
+		if (a == 32)
+			d--;
+	} while (d > 0 && a == 32);
+
+	_automapTopLeftY = (d > c) ? ((32 - (d - c)) >> 1) * 6 + 4 : 4;
+	return (d > c) ? c : 0;
+}
+
+void LoLEngine::mapIncludeLegendData(int type) {
+	type &= 0x7f;
+	for (int i = 0; i < 11; i++) {
+		if (_defaultLegendData[i].shapeIndex != type)
+			continue;
+		_defaultLegendData[i].enable = true;
+		return;
+	}
+}
+
+void LoLEngine::printMapText(uint16 stringId, int x, int y) {
+	int cp = _screen->setCurPage(2);
+	_screen->printText(getLangString(stringId), x, y, 239, 0);
+	_screen->setCurPage(cp);
+}
+
+void LoLEngine::printMapExitButtonText() {
+	int cp = _screen->setCurPage(2);
+	_screen->fprintString(getLangString(0x4033), 295, 182, 172, 0, 5);
+	_screen->setCurPage(cp);
 }
 
 } // end of namespace Kyra

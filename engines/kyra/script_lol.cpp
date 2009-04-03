@@ -115,7 +115,7 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 int LoLEngine::olol_setWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (_wllWallFlags[stackPos(2)] & 4)
-		deleteMonstersForBlock(stackPos(0));
+		deleteMonstersFromBlock(stackPos(0));
 	setWallType(stackPos(0), stackPos(1), stackPos(2));
 	return 1;
 }

@@ -43,7 +43,7 @@ void LoLEngine::gui_drawPlayField() {
 
 	if (_gameFlags[15] & 0x1000)
 		// draw automap book
-		_screen->drawShape(2, _gameShapes[78], 289, 32, 0, 0);
+		_screen->drawShape(2, _gameShapes[78], 290, 32, 0, 0);
 
 	int cp = _screen->setCurPage(2);
 
@@ -1372,7 +1372,7 @@ int LoLEngine::clickedWall(Button *button) {
 			break;
 
 		case 6:
-			res = clicked6(block, dir);
+			res = clickedNiche(block, dir);
 			break;
 
 		default:
@@ -1451,7 +1451,7 @@ int LoLEngine::clickedAutomap(Button *button) {
 	if (!(_gameFlags[15] & 0x1000))
 		return 0;
 
-	// displayAutopmap();
+	displayAutomap();
 
 	gui_drawPlayField();
 	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);

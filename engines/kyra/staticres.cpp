@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 43
+#define RESFILE_VERSION 44
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -443,6 +443,11 @@ bool StaticResource::init() {
 		{ kLolButtonList6, kLolRawDataBe16, "BUTTON6.LST" },
 		{ kLolButtonList7, kLolRawDataBe16, "BUTTON7.LST" },
 		{ kLolButtonList8, kLolRawDataBe16, "BUTTON84.LST" },
+
+		{ lolLegendData, kRawData, "MAPLGND.DEF" },
+		{ lolMapCursorOvl, kRawData, "MAPCURSOR.PAL" },
+		{ lolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
+		//{ lolMapPal, kRawData, "MAP.PAL" },
 
 		{ 0, 0, 0 }
 	};
@@ -1856,6 +1861,31 @@ void LoLEngine::initStaticResource() {
 	_buttonList6 = (const int16*)_staticres->loadRawDataBe16(kLolButtonList6, _buttonList6Size);
 	_buttonList7 = (const int16*)_staticres->loadRawDataBe16(kLolButtonList7, _buttonList7Size);
 	_buttonList8 = (const int16*)_staticres->loadRawDataBe16(kLolButtonList8, _buttonList8Size);
+
+	_autoMapStrings = _staticres->loadRawDataBe16(lolMapStringId, _autoMapStringsSize);
+
+	int tmpSize = 0;
+	const uint8 *tmp = _staticres->loadRawData(lolLegendData, tmpSize);
+	tmpSize /= 5;
+	_defaultLegendData = new MapLegendData[tmpSize];
+	for (int i = 0; i < tmpSize; i++) {
+		_defaultLegendData[i].shapeIndex = *tmp++;
+		_defaultLegendData[i].enable = *tmp++ ? true : false;
+		_defaultLegendData[i].x = *tmp++;
+		_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
+		tmp += 2;
+	}
+	_staticres->unloadId(lolLegendData);
+
+	tmp = _staticres->loadRawData(lolMapCursorOvl, tmpSize);
+	_mapCursorOverlay = new uint8[tmpSize];
+	memcpy (_mapCursorOverlay, tmp, tmpSize);
+	_staticres->unloadId(lolMapCursorOvl);
+
+	/*tmp = _staticres->loadRawData(lolMapPal, tmpSize);
+	_screen->_automapPal = new uint8[tmpSize];
+	memcpy (_screen->_automapPal, tmp, tmpSize);
+	_staticres->unloadId(lolMapPal);*/
 }
 
 void LoLEngine::assignButtonCallback(Button *button, int index) {
@@ -3031,6 +3061,13 @@ const uint8 LoLEngine::_charInfoFrameTable[] = {
 const uint8 LoLEngine::_clock2Timers[] = {
 	0x00, 0x10, 0x11, 0x03, 0x04, 0x50,
 	0x51, 0x52, 0x08, 0x09, 0x0A
+};
+
+const int8 LoLEngine::_mapCoords[12][4] = {
+	{ 0x00, 0x07, 0x00, 0xFB }, { 0xFB, 0x00, 0x06, 0x00 }, { 0x07, 0x05, 0x07, 0x01 },
+	{ 0x05, 0x06, 0x04, 0x06 }, { 0x00, 0x07, 0x00, 0xFF }, { 0xFD, 0x00, 0x06, 0x00 },
+	{ 0x06, 0x07, 0x06, 0xFD }, { 0xFD, 0x05, 0x06, 0x05 }, { 0x01, 0x05, 0x01, 0x01 },
+	{ 0x03, 0x01, 0x03, 0x01 }, { 0xFF, 0x06, 0xFF, 0xF8 }, { 0xF9, 0xFF, 0x05, 0xFF }
 };
 
 const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);

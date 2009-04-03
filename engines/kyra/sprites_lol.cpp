@@ -135,7 +135,7 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 	}
 }
 
-int LoLEngine::deleteMonstersForBlock(int block) {
+int LoLEngine::deleteMonstersFromBlock(int block) {
 	int i = _levelBlockProperties[block].assignedObjects;
 	int cnt = 0;
 	uint16 next = 0;
@@ -1079,7 +1079,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 			_unkDrawLevelBool = true;
 			monster->fightCurTick--;
 			if ((monster->fightCurTick <= 0) || (checkDrawObjectSpace(_partyPosX, _partyPosY, monster->x, monster->y) > 256) || (monster->flags & 8))
-				setMonsterMode(monster, 13/*7*/);
+				setMonsterMode(monster, 7);
 			else
 				rearrangeAttackingMonster(monster);
 			break;
