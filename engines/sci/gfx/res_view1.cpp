@@ -66,108 +66,61 @@ namespace Sci {
 static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *dest, int mirrored, int pixmap_size, int size,
 	int runlength_pos, int literal_pos, int xl, int yl, int color_key) {
 	int writepos = mirrored ? xl : 0;
+	int linebase = 0;
 
-	if (mirrored) {
-		int linebase = 0;
+	while ((mirrored ? linebase < pixmap_size : writepos < pixmap_size) && literal_pos < size && runlength_pos < size) {
+		int op = resource[runlength_pos];
+		int bytes;
+		int readbytes = 0;
+		int color = 0;
 
-		while (linebase < pixmap_size && literal_pos < size && runlength_pos < size) {
-			int op = resource[runlength_pos];
-			int bytes;
-			int readbytes = 0;
-			int color = 0;
+		NEXT_RUNLENGTH_BYTE(1);
 
-			NEXT_RUNLENGTH_BYTE(1);
+		if (op & V1_RLE) {
+			bytes = op & 0x3f;
+			op &= (V1_RLE | V1_RLE_BG);
+			readbytes = (op & V1_RLE_BG) ? 0 : 1;
+		} else {
+			readbytes = bytes = op & 0x3f;
+			op = 0;
+		}
 
-			if (op & V1_RLE) {
-				bytes = op & 0x3f;
-				op &= (V1_RLE | V1_RLE_BG);
-				readbytes = (op & V1_RLE_BG) ? 0 : 1;
-			} else {
-				readbytes = bytes = op & 0x3f;
-				op = 0;
-			}
+		assert(runlength_pos + readbytes <= size);
 
-			if (runlength_pos + readbytes > size) {
-				GFXWARN("View %02x:(%d/%d) requires %d bytes to be read when %d are available at pos %d\n",
-				        id, loop, cel, readbytes, size - runlength_pos, runlength_pos - 1);
-				return 1;
-			}
-			/*
-			if (writepos - bytes < 0) {
-				GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
-						id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
-				bytes = pixmap_size - writepos;
-			}
-			*/
-			if (op == V1_RLE) {
-				color = resource[literal_pos];
-				NEXT_LITERAL_BYTE(1);
-			}
+		/*
+		if (writepos - bytes < 0) {
+			GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
+					id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
+			bytes = pixmap_size - writepos;
+		}
+		*/
 
-			if (!op && literal_pos + bytes > size) {
-				GFXWARN("View %02x:(%d/%d) requires %d bytes to be read when %d are available at pos %d\n",
-				        id, loop, cel, bytes, size - literal_pos, literal_pos - 1);
-				return 1;
-			}
+		if (mirrored && op == V1_RLE) {
+			color = resource[literal_pos];
+			NEXT_LITERAL_BYTE(1);
+		}
 
+		assert(op || literal_pos + bytes <= size);
+
+		if (!mirrored && (writepos + bytes > pixmap_size)) {
+			GFXWARN("Writing out of bounds: %d bytes at %d > size %d\n", bytes, writepos, pixmap_size);
+		}
+
+		if (mirrored) {
 			while (bytes--) {
+				writepos--;
 				if (op) {
-					if (op & V1_RLE_BG) {
-						writepos--;
-						*(dest + writepos) = color_key;
-					} else {
-						writepos--;
-						*(dest + writepos) = color;
-					}
+					*(dest + writepos) = (op & V1_RLE_BG) ? color_key : color;
 				} else {
-					writepos--;
 					*(dest + writepos) = *(resource + literal_pos);
 					NEXT_LITERAL_BYTE(1);
-
 				}
 				if (writepos == linebase) {
 					writepos += 2 * xl;
 					linebase += xl;
 				}
 			}
-		}
-	} else {
-		while (writepos < pixmap_size && literal_pos < size && runlength_pos < size) {
-			int op = resource[runlength_pos];
-			int bytes;
-			int readbytes = 0;
-
-			NEXT_RUNLENGTH_BYTE(1);
-
-			if (op & V1_RLE) {
-				bytes = op & 0x3f;
-				op &= (V1_RLE | V1_RLE_BG);
-				readbytes = (op & V1_RLE_BG) ? 0 : 1;
-			} else {
-				readbytes = bytes = op & 0x3f;
-				op = 0;
-			}
-
-			if (runlength_pos + readbytes > size) {
-				return 1;
-			}
-
-			if (writepos + bytes > pixmap_size) {
-				GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
-				        id, loop, cel, writepos - bytes, pixmap_size, runlength_pos - 1);
-				bytes = pixmap_size - writepos;
-			}
-
-			if (!op && literal_pos + bytes > size) {
-				GFXWARN("View %02x:(%d/%d) requires %d bytes to be read when %d are available at pos %d\n",
-				        id, loop, cel, bytes, size - literal_pos, literal_pos - 1);
-				return 1;
-			}
-
-			if (writepos + bytes > pixmap_size) {
-				GFXWARN("Writing out of bounds: %d bytes at %d > size %d\n", bytes, writepos, pixmap_size);
-			}
-
+		} else {
 			if (op) {
 				if (op & V1_RLE_BG)
 					memset(dest + writepos, color_key, bytes);
@@ -182,10 +135,8 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 				NEXT_LITERAL_BYTE(bytes);
 			}
 			writepos += bytes;
-
 		}
-
-	};
+	}
 
 	return 0;
 }
