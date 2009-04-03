@@ -811,7 +811,7 @@ void LocationParser_br::parseDoorData(ZonePtr z) {
 
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
-	typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr z);
+	typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
 	ZoneTypeParser parsers[] = {
 		0,	// no type
 		&LocationParser_br::parseExamineData,

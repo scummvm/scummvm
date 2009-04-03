@@ -1413,7 +1413,7 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
-	typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr z);
+	typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
 	ZoneTypeParser parsers[] = {
 		0,	// no type
 		&LocationParser_ns::parseExamineData,
