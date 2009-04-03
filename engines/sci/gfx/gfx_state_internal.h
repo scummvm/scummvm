@@ -202,7 +202,6 @@ struct gfxw_port_t : public gfxw_container_t {
 	gfxw_list_t *decorations; /* optional window decorations- drawn before the contents */
 	gfxw_widget_t *port_bg; /* Port background widget or NULL */
 	gfx_color_t color, bgcolor;
-	int chrono_port;
 	int font_nr;
 	Common::Point draw_pos; /* Drawing position */
 	gfxw_snapshot_t *restore_snap; /* Snapshot to be restored automagically,

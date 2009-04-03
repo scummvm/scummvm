@@ -1811,7 +1811,6 @@ gfxw_port_t *gfxw_new_port(gfxw_visual_t *visual, gfxw_port_t *predecessor, rect
 	widget->bgcolor = bgcolor;
 	widget->font_nr = visual->font_nr;
 	widget->ID = _visual_find_free_ID(visual);
-	widget->chrono_port = 0;
 	visual->port_refs[widget->ID] = widget;
 
 	_gfxw_set_ops_PORT(GFXWC(widget));
@@ -2022,123 +2021,6 @@ gfxw_dyn_view_t *gfxw_picviewize_dynview(gfxw_dyn_view_t *dynview) {
 		_gfxw_dirtify_container(dynview->parent, GFXW(dynview));
 
 	return dynview;
-}
-
-// Chrono-Ports (tm)
-
-gfxw_port_t *gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags) {
-	gfxw_port_t *result = NULL;
-	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0};
-	int id = 0;
-
-	if (!(flags & GFXW_CHRONO_NON_TOPMOST)) {
-		result = gfxw_find_default_port(visual);
-	} else {
-		id = visual->port_refs_nr;
-		while (id >= 0 && (!visual->port_refs[id] || !visual->port_refs[id]->chrono_port))
-			id--;
-
-		if (id >= 0)
-			result = visual->port_refs[id];
-	}
-
-	if (!result || !result->chrono_port) {
-		if (flags & GFXW_CHRONO_NO_CREATE)
-			return NULL;
-		result = gfxw_new_port(visual, NULL, gfx_rect(0, 0, 320, 200), transparent, transparent);
-		*temp_widgets_list = gfxw_new_list(gfx_rect(0, 0, 320, 200), 1);
-		result->add(GFXWC(result), GFXW(*temp_widgets_list));
-		result->chrono_port = 1;
-		if (temp_widgets_list)
-			*temp_widgets_list = GFXWC(result->contents);
-		return result;
-	};
-
-	if (temp_widgets_list)
-		*temp_widgets_list = GFXWC(result->contents);
-
-	return result;
-}
-
-static int gfxw_check_chrono_overlaps(gfxw_port_t *chrono, gfxw_widget_t *widget) {
-	gfxw_widget_t *seeker = GFXWC(chrono->contents)->contents;
-
-	while (seeker) {
-		if (toCommonRect(seeker->bounds).equals(toCommonRect(widget->bounds))) {
-			gfxw_annihilate(GFXW(seeker));
-			return 1;
-		}
-
-		seeker = seeker->next;
-	}
-
-	return 0;
-}
-
-void gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget) {
-	gfxw_list_t *tw;
-	gfxw_port_t *chrono = gfxw_get_chrono_port(visual, &tw, 0);
-
-	gfxw_check_chrono_overlaps(chrono, widget);
-	chrono->add(GFXWC(chrono), widget);
-}
-
-static gfxw_widget_t *gfxw_widget_intersects_chrono(gfxw_list_t *tw, gfxw_widget_t *widget) {
-	gfxw_widget_t *seeker;
-
-	assert(tw->type == GFXW_SORTED_LIST);
-
-	seeker = tw->contents;
-	while (seeker) {
-		Common::Point origin;
-		rect_t bounds = widget->bounds;
-
-		bounds = widget->bounds;
-		origin.x = seeker->parent->zone.x;
-		origin.y = seeker->parent->zone.y;
-		bounds.x += origin.x;
-		bounds.y += origin.y;
-
-		if (gfx_rects_overlap(bounds, seeker->bounds))
-			return seeker;
-
-		seeker = seeker->next;
-	}
-
-	return 0;
-}
-
-void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target) {
-	gfxw_list_t *tw;
-	gfxw_port_t *chrono;
-	gfxw_widget_t *intersector;
-
-	chrono = gfxw_get_chrono_port(visual, &tw, GFXW_CHRONO_NO_CREATE);
-	if (chrono == NULL)
-		return;
-
-	intersector = gfxw_widget_intersects_chrono(tw, view);
-	if (intersector) {
-		Common::Point origin = Common::Point(intersector->parent->zone.x, intersector->parent->zone.y);
-
-		gfxw_remove_widget_from_container(GFXWC(chrono), GFXW(tw));
-		gfxw_remove_widget_from_container(GFXWC(chrono->parent), GFXW(chrono));
-		gfxw_annihilate(GFXW(chrono));
-
-		tw->zone.x += origin.x;
-		tw->zone.y += origin.y;
-
-		target->add(GFXWC(target), GFXW(tw));
-	}
-}
-
-void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window) {
-	int i;
-
-	for (i = window; i < visual->port_refs_nr ; i++) {
-		if (visual->port_refs[i] && visual->port_refs[i]->chrono_port)
-			gfxw_annihilate(GFXW(visual->port_refs[i]));
-	}
 }
 
 } // End of namespace Sci

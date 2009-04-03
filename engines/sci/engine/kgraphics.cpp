@@ -1026,7 +1026,6 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		GFX_ASSERT(gfxop_new_pic(s->gfx_state, pic_nr, 1, palette));
 	}
 
-	gfxw_widget_kill_chrono(s->visual, 0);
 	s->wm_port->widfree(GFXW(s->wm_port));
 	s->picture_port->widfree(GFXW(s->picture_port));
 	s->iconbar_port->widfree(GFXW(s->iconbar_port));
@@ -2168,8 +2167,6 @@ static void _k_raise_topmost_in_view_list(EngineState *s, gfxw_list_t *list, gfx
 
 		gfxw_remove_widget_from_container(view->parent, GFXW(view));
 
-		gfxw_widget_reparent_chrono(s->visual, GFXW(view), GFXWC(list));
-
 		if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
 			gfxw_hide_widget(GFXW(view));
 		else
@@ -2441,7 +2438,6 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfxw_port_t *pred;
 	int id = s->visual->port_refs_nr;
 
-	gfxw_widget_kill_chrono(s->visual, goner_nr);
 	goner = gfxw_find_port(s->visual, goner_nr);
 	if ((goner_nr < 3) || (goner == NULL)) {
 		SCIkwarn(SCIkERROR, "Removal of invalid window %04x requested\n", goner_nr);
