@@ -83,7 +83,7 @@ struct FloatPoint {
 	FloatPoint(float x_, float y_) : x(x_), y(y_) {}
 
 	Common::Point toPoint() {
-		return Common::Point(x + 0.5, y + 0.5);
+		return Common::Point((int16)(x + 0.5), (int16)(y + 0.5));
 	}
 
 	float x, y;
