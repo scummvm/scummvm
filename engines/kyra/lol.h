@@ -1205,7 +1205,7 @@ private:
 	uint8 *_mapCursorOverlay;
 	uint8 _automapTopLeftX;
 	uint8 _automapTopLeftY;
-	static const int8 _mapCoords[12][4];
+	static const uint8 _mapCoords[12][4];
 	bool _mapUpdateNeeded;
 };
 
