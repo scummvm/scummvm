@@ -136,7 +136,7 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 		step = _defaultStepGlobal;
 	} else if (parentNode->name == "drawdata") {
 		if (_defaultStepLocal == 0)
-			_defaultStepLocal = new Graphics::DrawStep(*_defaultStepLocal);
+			_defaultStepLocal = new Graphics::DrawStep(*_defaultStepGlobal);
 
 		step = _defaultStepLocal;
 	} else {
