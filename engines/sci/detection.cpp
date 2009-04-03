@@ -47,6 +47,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"ecoquest",        "EcoQuest: The Search for Cetus"},
 	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
+	{"funseeker",       "Fun Seeker's Guide"},
 	{"hoyle1",          "Hoyle's Official Book of Games: Volume 1"},
 	{"hoyle2",          "Hoyle's Official Book of Games: Volume 2"},
 	{"hoyle3",          "Hoyle's Official Book of Games: Volume 3"},
@@ -109,15 +110,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, lang, SCI_VERSION(0, 0, 629))
 #define FANMADE_V(name, resMapMd5, resMapSize, resMd5, resSize, ver) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, Common::EN_ANY, ver)
 #define FANMADE(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_LV(name, resMapMd5, resMapSize, resMd5, resSize, Common::EN_ANY, SCI_VERSION(0, 0, 629))
-
-
-/*
-	// Missing - from FreeSCI
-	{ 0xE4A3234D, SCI_VERSION(0, 000, 506), "Fun Seekers Guide v1.02"},
-	{ 0x1EACB959, SCI_VERSION(0, 000, 566), "HQ v1.000-5.25"},
-	{ 0x2BEAF5E7, SCI_VERSION(0, 000, 566), "HQ v1.001-5.25"},
-	{ 0x4447B28D, SCI_VERSION(1, 000, 72),  "Trial v1.105"},
-*/
 
 // Game descriptions
 static const struct SciGameDescription SciGameDescriptions[] = {
@@ -306,20 +298,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// Conquests of Camelot - English DOS
-        {{"camelot", "", {
-                {"resource.map", 0, "86bffb2a393b7a5d8de45e735091f037", 9504},
-                {"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 212461},
-                {"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 317865},
-                {"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 359145},
-                {"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 345180},
-                {"resource.005", 0, "8e1a3a8c588007404b532b8dfacc1460", 345734},
-                {"resource.006", 0, "8e1a3a8c588007404b532b8dfacc1460", 332446},
-                {"resource.007", 0, "8e1a3a8c588007404b532b8dfacc1460", 358182},
-                {NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
-                {},
-                SCI_VERSION_AUTODETECT,
-                SCI_VERSION(0, 000, 685)
-        },
+	{{"camelot", "", {
+		{"resource.map", 0, "86bffb2a393b7a5d8de45e735091f037", 9504},
+		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 212461},
+		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 317865},
+		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 359145},
+		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 345180},
+		{"resource.005", 0, "8e1a3a8c588007404b532b8dfacc1460", 345734},
+		{"resource.006", 0, "8e1a3a8c588007404b532b8dfacc1460", 332446},
+		{"resource.007", 0, "8e1a3a8c588007404b532b8dfacc1460", 358182},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 685)
+	},
 
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
 	{{"longbow", "", {
@@ -351,6 +343,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	      SCI_VERSION_AUTODETECT,
 	      SCI_VERSION(1, 000, 510)
 	},
+
 	// Conquests of the Longbow - English DOS
 	{{"longbow", "", {
 		{"resource.map", 0, "247f955865572569342751de47e861ab", 6027},
@@ -389,6 +382,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 181)
+	},
+
+	// Conquests of the Longbow - German DOS (suplied by markcoolio in bug report #2727681)
+	{{"longbow", "", {
+		{"resource.map", 0, "7376b7a07f8bd3a8ab8d67595d3f5b51", 6285},
+		{"resource.000", 0, "ee39f92e006142424cf9209329e727c6", 977281},
+		{"resource.001", 0, "d4c299213f8d799da1492680d12d0fb3", 1167657},
+		{"resource.002", 0, "7f6ce331219d58d5087731e4475ab4f1", 1172521},
+		{"resource.003", 0, "a204de2a083a7770ff455a838210a678", 1165249},
+		{"resource.004", 0, "9cfce07e204a329e94fda8b5657621da", 1101869},
+		{"resource.005", 0, "d036df0872f2db19bca34601276be2d7", 1176914},
+		{"resource.006", 0, "b367a6a59f29ee30dde1d88a5a41152d", 1123585},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(1, 000, 510)
 	},
 
 	// Eco Quest - English DOS Demo (from FRG)
@@ -551,6 +560,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 1, 95)
+	},
+
+	// Fun Seeker's Guide
+	{{"funseeker", "", {
+		{"resource.map", 0, "7ee6859ef74314f6d91938c3595348a9", 282},
+		{"resource.001", 0, "f1e680095424e31f7fae1255d36bacba", 40692},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 0, 506)
 	},
 
 #ifdef ENABLE_SCI32
