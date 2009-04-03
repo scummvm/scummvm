@@ -128,13 +128,6 @@ protected:
 		CommandList *list;
 		bool		endcommands;
 		CommandPtr	cmd;
-
-		// BRA specific
-		int numZones;
-		BackgroundInfo	*info;
-		char *characterName;
-		Common::String _maskName;
-		Common::String _pathName;
 	} ctxt;
 
 	void warning_unexpected();
@@ -240,11 +233,22 @@ public:
 };
 
 
+struct LocationParserOutput_br {
+	BackgroundInfo	*_info;
+
+	Common::String _characterName;
+	Common::String _backgroundName;
+	Common::String _maskName;
+	Common::String _pathName;
+};
+
 class LocationParser_br : public LocationParser_ns {
 
 protected:
 	Parallaction_br*	_vm;
 	Table		*_audioCommandsNames;
+
+	LocationParserOutput_br *_out;
 
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
@@ -302,7 +306,7 @@ public:
 		delete _audioCommandsNames;
 	}
 
-	void parse(Script *script);
+	void parse(Script *script, LocationParserOutput_br *out);
 
 };
 

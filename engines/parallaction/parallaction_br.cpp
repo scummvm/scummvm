@@ -342,26 +342,28 @@ void Parallaction_br::changeLocation() {
 void Parallaction_br::parseLocation(const char *filename) {
 	debugC(1, kDebugParser, "parseLocation('%s')", filename);
 
+	// find a new available slot
 	allocateLocationSlot(filename);
 	Script *script = _disk->loadLocation(filename);
 
-	_locationParser->parse(script);
+	// parse the text file
+	LocationParserOutput_br out;
+	_locationParser->parse(script, &out);
+	assert(out._info);
 	delete script;
 
 	bool visited = getLocationFlags() & kFlagsVisited;
 
-	// this loads animation scripts
-	AnimationList::iterator ait = _location._animations.begin();
-	for ( ; ait != _location._animations.end(); ++ait) {
-		// restore the flags if the location has already been visited
-		restoreOrSaveZoneFlags(*ait, visited);
+	// load background, mask and path
+	_vm->_disk->loadScenery(*out._info,
+		out._backgroundName.empty() ? 0 : out._backgroundName.c_str(),
+		out._maskName.empty()       ? 0 : out._maskName.c_str(),
+		out._pathName.empty()       ? 0 : out._pathName.c_str());
+	// assign background
+	_vm->_gfx->setBackground(kBackgroundLocation, out._info);
 
-		// load the script
-		if ((*ait)->_scriptName) {
-			loadProgram(*ait, (*ait)->_scriptName);
-		}
-	}
 
+	// process zones
 	ZoneList::iterator zit = _vm->_location._zones.begin();
 	for ( ; zit != _vm->_location._zones.end(); ++zit) {
 		ZonePtr z = *zit;
@@ -371,6 +373,28 @@ void Parallaction_br::parseLocation(const char *filename) {
 		// (re)link the bounding animation if needed
 		if (z->_flags & kFlagsAnimLinked) {
 			z->_linkedAnim = _location.findAnimation(z->_linkedName.c_str());
+		}
+
+		bool visible = (z->_flags & kFlagsRemove) == 0;
+		if (visible) {
+			_vm->showZone(z, visible);
+		}
+	}
+
+	// load the character (must be done before animations are processed)
+	if (!out._characterName.empty()) {
+		_vm->changeCharacter(out._characterName.c_str());
+	}
+
+	// process animations
+	AnimationList::iterator ait = _location._animations.begin();
+	for ( ; ait != _location._animations.end(); ++ait) {
+		// restore the flags if the location has already been visited
+		restoreOrSaveZoneFlags(*ait, visited);
+
+		// load the script
+		if ((*ait)->_scriptName) {
+			loadProgram(*ait, (*ait)->_scriptName);
 		}
 	}
 

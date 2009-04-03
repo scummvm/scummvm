@@ -340,7 +340,7 @@ DECLARE_LOCATION_PARSER(location)  {
 		_vm->_char._ani->setF(atoi(_tokens[nextToken]));
 	}
 
-	_vm->_disk->loadScenery(*ctxt.info, _tokens[1], 0, 0);
+	_out->_backgroundName = _tokens[1];
 }
 
 DECLARE_LOCATION_PARSER(zone)  {
@@ -352,7 +352,7 @@ DECLARE_LOCATION_PARSER(zone)  {
 		return;
 	}
 
-	ctxt.z->_index = ctxt.numZones++;
+	ctxt.z->_index = _zoneProg;
 	ctxt.z->_locationIndex = _vm->_currentLocationIndex;
 
 	_vm->restoreOrSaveZoneFlags(ctxt.z, _vm->getLocationFlags() & kFlagsVisited);
@@ -368,7 +368,7 @@ DECLARE_LOCATION_PARSER(animation)  {
 		return;
 	}
 
-	ctxt.a->_index = ctxt.numZones++;
+	ctxt.a->_index = _zoneProg;
 	ctxt.a->_locationIndex = _vm->_currentLocationIndex;
 
 	_vm->restoreOrSaveZoneFlags(ctxt.a, _vm->getLocationFlags() & kFlagsVisited);
@@ -439,8 +439,7 @@ DECLARE_LOCATION_PARSER(redundant)  {
 
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
-
-	ctxt.characterName = strdup(_tokens[1]);
+	_out->_characterName = _tokens[1];
 }
 
 
@@ -463,13 +462,13 @@ DECLARE_LOCATION_PARSER(null)  {
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
 
-	ctxt.info->layers[0] = 0;
-	ctxt.info->layers[1] = atoi(_tokens[2]);
-	ctxt.info->layers[2] = atoi(_tokens[3]);
-	ctxt.info->layers[3] = atoi(_tokens[4]);
+	_out->_info->layers[0] = 0;
+	_out->_info->layers[1] = atoi(_tokens[2]);
+	_out->_info->layers[2] = atoi(_tokens[3]);
+	_out->_info->layers[3] = atoi(_tokens[4]);
 
 	// postpone loading of screen mask data, because background must be loaded first
-	ctxt._maskName = _tokens[1];
+	_out->_maskName = _tokens[1];
 }
 
 
@@ -477,7 +476,7 @@ DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
 
 	// postpone loading of screen path data, because background must be loaded first
-	ctxt._pathName = _tokens[1];
+	_out->_pathName = _tokens[1];
 }
 
 
@@ -770,10 +769,10 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 		data->_gfxobj = obj;
 	} else
 	if (!scumm_stricmp(_tokens[0], "mask")) {
-		ctxt.info->loadGfxObjMask(_tokens[1], data->_gfxobj);
+		_out->_info->loadGfxObjMask(_tokens[1], data->_gfxobj);
 	} else
 	if (!scumm_stricmp(_tokens[0], "path")) {
-		ctxt.info->loadGfxObjPath(_tokens[1], data->_gfxobj);
+		_out->_info->loadGfxObjPath(_tokens[1], data->_gfxobj);
 	} else
 	if (!scumm_stricmp(_tokens[0], "icon")) {
 		data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);
@@ -1247,34 +1246,13 @@ void ProgramParser_br::init() {
 	INSTRUCTION_PARSER(endscript);
 }
 
-void LocationParser_br::parse(Script *script) {
-	ctxt.numZones = 0;
-	ctxt.characterName = 0;
-	ctxt.info = new BackgroundInfo;
-	ctxt._pathName.clear();
-	ctxt._maskName.clear();
+void LocationParser_br::parse(Script *script, LocationParserOutput_br *out) {
+	assert(out);
+	_out = out;
+	_out->_info = new BackgroundInfo;
+	assert(_out->_info);
 
 	LocationParser_ns::parse(script);
-
-	// finally load mask and path, if any
-	_vm->_disk->loadScenery(*ctxt.info, 0,
-		ctxt._maskName.empty() ? 0 : ctxt._maskName.c_str(),
-		ctxt._pathName.empty() ? 0 : ctxt._pathName.c_str());
-
-	_vm->_gfx->setBackground(kBackgroundLocation, ctxt.info);
-
-	ZoneList::iterator it = _vm->_location._zones.begin();
-	for ( ; it != _vm->_location._zones.end(); ++it) {
-		bool visible = ((*it)->_flags & kFlagsRemove) == 0;
-		if (visible)
-			_vm->showZone((*it), visible);
-	}
-
-	if (ctxt.characterName) {
-		_vm->changeCharacter(ctxt.characterName);
-	}
-
-	free(ctxt.characterName);
 }
 
 } // namespace Parallaction
