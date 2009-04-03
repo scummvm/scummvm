@@ -179,7 +179,7 @@ void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
 
 		if (mem->data.script.buf_size > 65535) {
 			sciprintf("Script and heap sizes combined exceed 64K.\n"
-			          "This means a fundamental design bug was made in FreeSCI\n"
+			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
 			          "fixed in the next major version!\n");
 			return;

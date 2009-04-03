@@ -23,7 +23,7 @@
  *
  */
 
-/* Tandy/PCJr sequencer for FreeSCI */
+/* Tandy/PCJr sequencer for SCI */
 
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/sci_midi.h"

@@ -714,7 +714,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[2];
 }
 
-#define DUMMY_MESSAGE "No MESSAGE support in FreeSCI yet"
+#define DUMMY_MESSAGE "No MESSAGE support in SCI yet"
 
 static MessageState state;
 

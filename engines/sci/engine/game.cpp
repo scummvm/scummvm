@@ -228,7 +228,7 @@ int game_init_graphics(EngineState *s) {
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 #ifndef WITH_PIC_SCALING
 	if (s->gfx_state->options->pic0_unscaled == 0)
-		warning("Pic scaling was disabled; your version of FreeSCI has no support for scaled pic drawing built in.");
+		warning("Pic scaling was disabled; your version of ScummVM has no support for scaled pic drawing built in.");
 
 	s->gfx_state->options->pic0_unscaled = 1;
 #endif

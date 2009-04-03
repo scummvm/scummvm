@@ -60,7 +60,7 @@ struct sfx_sequencer_t {
 	** 'patch' and 'patch_len' refer to the patch resource passed to open,
 	** as specified by the 'patchfile' property. 'patch' may be NULL if the
 	** resource wasn't found.
-	**   For more information regarding patch resources, please refer to the
+	** For more information regarding patch resources, please refer to the
 	** FreeSCI documentation, particularly the part regarding 'patch.*' resource
 	** data.
 	*/

@@ -23,7 +23,7 @@
  *
  */
 
-/* FreeSCI 0.3.1+ graphics subsystem helper functions */
+/* SCI 0.3.1+ graphics subsystem helper functions */
 
 
 #ifndef SCI_GFX_GFX_TOOLS_H

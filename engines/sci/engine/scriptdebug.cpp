@@ -2328,7 +2328,7 @@ const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
 	{"File I/O", 'F', (1 << 13)},
 	{"Time", 't', (1 << 14)},
 	{"Room numbers", 'r', (1 << 15)},
-	{"FreeSCI 0.3.3 kernel emulation", 'e', (1 << 16)},
+	{"SCI 0.3.3 kernel emulation", 'e', (1 << 16)},
 	{"Pathfinding", 'P', (1 << SCIkAVOIDPATH_NR)}
 } ;
 

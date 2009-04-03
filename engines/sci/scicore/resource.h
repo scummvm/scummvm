@@ -186,7 +186,7 @@ public:
 	int _volVersion; // RESOURCE.0xx version
 
 	/**
-	 * Creates a new FreeSCI resource manager.
+	 * Creates a new SCI resource manager.
 	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
 	 *						in the default case.
 	 * @param maxMemory		Maximum number of bytes to allow allocated for resources

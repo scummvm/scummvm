@@ -23,7 +23,7 @@
  *
  */
 
-/* PC speaker software sequencer for FreeSCI */
+/* PC speaker software sequencer for SCI */
 
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/sci_midi.h"
