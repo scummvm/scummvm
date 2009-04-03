@@ -260,9 +260,7 @@ Common::Error Parallaction_ns::go() {
 	return Common::kNoError;
 }
 
-void Parallaction_ns::switchBackground(const char* background, const char* mask) {
-//	printf("switchBackground(%s)", name);
-
+void Parallaction_ns::changeBackground(const char* background, const char* mask, const char* path) {
 	Palette pal;
 
 	uint16 v2 = 0;
@@ -278,9 +276,13 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 		_gfx->updateScreen();
 	}
 
-	setBackground(background, mask, mask);
+	if (path == 0) {
+		path = mask;
+	}
 
-	return;
+	BackgroundInfo *info = new BackgroundInfo;
+	_disk->loadScenery(*info, background, mask, path);
+	_gfx->setBackground(kBackgroundLocation, info);
 }
 
 

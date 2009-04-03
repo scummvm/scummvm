@@ -356,7 +356,6 @@ public:
 	bool		pickupItem(ZonePtr z);
 	void		updateDoor(ZonePtr z, bool close);
 	void		showZone(ZonePtr z, bool visible);
-	void		setBackground(const char *background, const char *mask, const char *path);
 	void		highlightInventoryItem(ItemPosition pos);
 	int16		getHoverInventoryItem(int16 x, int16 y);
 	int		addInventoryItem(ItemName item);
@@ -406,7 +405,7 @@ public:
 	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 
-	void	switchBackground(const char* background, const char* mask);
+	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
 
 private:
 	bool				_inTestResult;

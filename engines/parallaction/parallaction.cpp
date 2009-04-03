@@ -268,12 +268,6 @@ void Parallaction::showSlide(const char *name, int x, int y) {
 }
 
 
-void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
-	BackgroundInfo *info = new BackgroundInfo;
-	_disk->loadScenery(*info, name, mask, path);
-	_gfx->setBackground(kBackgroundLocation, info);
-}
-
 void Parallaction::showLocationComment(const Common::String &text, bool end) {
 	_balloonMan->setLocationBalloon(text.c_str(), end);
 }

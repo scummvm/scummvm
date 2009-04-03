@@ -918,7 +918,7 @@ DECLARE_LOCATION_PARSER(location)  {
 	}
 
 	strcpy(_vm->_location._name, _tokens[1]);
-	_vm->switchBackground(_vm->_location._name, mask);
+	_vm->changeBackground(_vm->_location._name, mask);
 
 	if (_tokens[2][0] != '\0') {
 		_vm->_char._ani->setX(atoi(_tokens[2]));

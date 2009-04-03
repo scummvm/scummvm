@@ -291,12 +291,12 @@ public:
 
 
 class NewGameInputState_NS : public MenuInputState {
-	Parallaction *_vm;
+	Parallaction_ns *_vm;
 
 	static const char *introMsg3[4];
 
 public:
-	NewGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
+	NewGameInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("newgame", helper), _vm(vm) {
 	}
 
 	virtual MenuInputState* run() {
@@ -318,7 +318,7 @@ public:
 	}
 
 	virtual void enter() {
-		_vm->setBackground("test", NULL, NULL);
+		_vm->changeBackground("test");
 		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
 
 		uint id[4];
