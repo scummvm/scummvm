@@ -915,7 +915,7 @@ int16 Op_SetColor(void)	{
 		}
 	}
 
-	gfxModuleData_setPal256(workpal);
+	gfxModuleData_setPalEntries(workpal, 0, 32);
 
 	return 0;
 }

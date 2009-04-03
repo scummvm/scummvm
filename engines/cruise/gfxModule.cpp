@@ -117,13 +117,10 @@ void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
 	gfxModuleData_setDirtyColors(idx, idx);
 }
 
-void gfxModuleData_setPal256(uint8 *ptr) {
-	int R;
-	int G;
-	int B;
-	int i;
+void gfxModuleData_setPalEntries(const byte *ptr, int start, int num) {
+	int R, G, B, i;
 
-	for (i = 0; i < 256; i++) {
+	for (i = start; i < start + num; i++) {
 		R = *(ptr++);
 		G = *(ptr++);
 		B = *(ptr++);
@@ -134,7 +131,11 @@ void gfxModuleData_setPal256(uint8 *ptr) {
 		lpalette[i].A = 255;
 	}
 
-	gfxModuleData_setDirtyColors(0, 255);
+	gfxModuleData_setDirtyColors(start, start + num - 1);
+}
+
+void gfxModuleData_setPal256(const byte *ptr) {
+	gfxModuleData_setPalEntries(ptr, 0, 256);
 }
 
 /*void gfxModuleData_setPal(uint8 *ptr) {

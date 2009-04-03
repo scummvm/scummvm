@@ -59,7 +59,8 @@ void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *d
 void gfxModuleData_flipScreen(void);
 //void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8 *pOutput);
-void gfxModuleData_setPal256(uint8 *ptr);
+void gfxModuleData_setPalEntries(const byte *ptr, int start, int num);
+void gfxModuleData_setPal256(const byte *ptr);
 void flip(void);
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
 void resetBitmap(uint8 *dataPtr, int32 dataSize);
