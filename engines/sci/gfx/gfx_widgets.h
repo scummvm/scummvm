@@ -56,12 +56,6 @@ struct gfxw_widget_t;
 /* Our strategy for dirty rectangle management */
 #define GFXW_DIRTY_STRATEGY GFXOP_DIRTY_FRAMES_CLUSTERS
 
-/* Indicates that a Chrono-Port should not be created even if it doesn't exist. */
-#define GFXW_CHRONO_NO_CREATE 1
-
-/* Indicates that non-topmost ports should be scanned for a Chrono-Port. */
-#define GFXW_CHRONO_NON_TOPMOST 2
-
 /* Terminology
 **
 ** Two special terms are used in here: /equivalent/ and /clear/. Their meanings
@@ -518,15 +512,6 @@ void gfxw_port_auto_restore_background(gfxw_visual_t *visual, gfxw_port_t *windo
 **             (rect_t) auto_rect: The background to remember
 ** Also records the specified background rectangle, for later recovery
 */
-
-
-gfxw_port_t *gfxw_get_chrono_port(gfxw_visual_t *visual, gfxw_list_t **temp_widgets_list, int flags);
-
-void gfxw_add_to_chrono(gfxw_visual_t *visual, gfxw_widget_t *widget);
-
-void gfxw_widget_reparent_chrono(gfxw_visual_t *visual, gfxw_widget_t *view, gfxw_list_t *target);
-
-void gfxw_widget_kill_chrono(gfxw_visual_t *visual, int window);
 
 } // End of namespace Sci
 

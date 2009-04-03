@@ -1719,14 +1719,6 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 	while (widget) {
 		reg_t obj = make_reg(widget->ID, widget->subID);
 
-		if (widget->type == GFXW_SORTED_LIST)
-			_k_view_list_do_postdraw(s, GFXWC(widget));
-
-		if (widget->type != GFXW_DYN_VIEW) {
-			widget = (gfxw_dyn_view_t *) widget->next;
-			continue;
-		}
-
 		/*
 		 * this fixes a few problems, but doesn't match SSCI's logic.
 		 * The semantics of the private flag need to be verified before this can be uncommented.
