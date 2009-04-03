@@ -1280,7 +1280,6 @@ static void view_transparentize(gfx_pixmap_t *view, gfx_pixmap_t *background, in
 }
 
 extern gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored);
-extern gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game);
 extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
@@ -1661,7 +1660,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (!sci1 && !nodraw)
 					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, 0);
 				else
-					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR));
+					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, resource + pos, bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR), false);
 				pos += bytesize;
 				if (nodraw)
 					continue;
@@ -1792,7 +1791,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
 
 	if (has_bitmap)
-		view = gfxr_draw_cel11(-1, 0, 0, 0, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL);
+		view = gfxr_draw_cel1(-1, 0, 0, 0, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL, 0, true);
 
 	if (view) {
 		view->palette = pic->visual_map->palette->getref();

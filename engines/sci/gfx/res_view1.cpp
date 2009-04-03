@@ -42,6 +42,17 @@ namespace Sci {
 #define V1_RLE 0x80 // run-length encode?
 #define V1_RLE_BG 0x40 // background fill
 
+#define V2_HEADER_SIZE 0
+#define V2_LOOPS_NUM 2
+#define V2_PALETTE_OFFSET 8
+#define V2_BYTES_PER_LOOP 12
+#define V2_BYTES_PER_CEL 13
+
+#define V2_IS_MIRROR 1
+#define V2_COPY_OF_LOOP 2
+#define V2_CELS_NUM 4
+#define V2_LOOP_OFFSET 14
+
 #define NEXT_RUNLENGTH_BYTE(n) \
 	if (literal_pos == runlength_pos) \
 		literal_pos += n; \
@@ -229,25 +240,22 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 	return 0;
 }
 
-gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, int size, gfxr_view_t *view, int amiga_game) {
-	int xl = READ_LE_UINT16(resource);
-	int yl = READ_LE_UINT16(resource + 2);
-	int xhot = (int8) resource[4];
-	int yhot = (uint8) resource[5];
-	int pos = 8;
+gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11) {
+	int xl = READ_LE_UINT16(cel_base);
+	int yl = READ_LE_UINT16(cel_base + 2);
 	int pixmap_size = xl * yl;
+	int xdisplace = isSci11 ? READ_LE_UINT16(cel_base + 4) : (int8) cel_base[4];
+	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : (uint8) cel_base[5];
+	int runlength_offset = isSci11 ? READ_LE_UINT16(cel_base + 24) : 8;
+	int literal_offset = isSci11 ? READ_LE_UINT16(cel_base + 28) : 8;
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
 	byte *dest = retval->index_data;
 	int decompress_failed;
 
-	retval->color_key = resource[6];
-	retval->xoffset = (mirrored) ? xhot : -xhot;
-	retval->yoffset = -yhot;
-
-	if (view)
-		retval->palette = view->palette->getref();
-	else
-		retval->palette = NULL;
+	retval->color_key = cel_base[isSci11 ? 8 : 6];
+	retval->xoffset = (mirrored) ? xdisplace : -xdisplace;
+	retval->yoffset = -ydisplace;
+	retval->palette = view ? view->palette->getref() : NULL;
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(retval);
@@ -255,12 +263,12 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 		return NULL;
 	}
 
-	if (amiga_game)
-		decompress_failed = decompress_sci_view_amiga(id, loop, cel, resource, dest, mirrored, pixmap_size, size, pos,
-		                    xl, yl, retval->color_key);
+	if (!isAmiga)
+		decompress_failed = decompress_sci_view(id, loop, cel, resource, dest, mirrored, pixmap_size, size, runlength_offset,
+		                                        literal_offset, xl, yl, retval->color_key);
 	else
-		decompress_failed = decompress_sci_view(id, loop, cel, resource, dest, mirrored, pixmap_size, size, pos,
-		                                        pos, xl, yl, retval->color_key);
+		decompress_failed = decompress_sci_view_amiga(id, loop, cel, resource, dest, mirrored, pixmap_size, size, runlength_offset,
+		                    xl, yl, retval->color_key);
 
 	if (decompress_failed) {
 		gfx_free_pixmap(retval);
@@ -295,7 +303,7 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 			GFXERROR("View %02x:(%d/%d) supposed to be at illegal offset 0x%04x\n", id, loop, i, cel_offset);
 			cel = NULL;
 		} else
-			cel = gfxr_draw_cel1(id, loop, i, mirrored, resource + cel_offset, size - cel_offset, view, amiga_game);
+			cel = gfxr_draw_cel1(id, loop, i, mirrored, resource + cel_offset, resource + cel_offset, size - cel_offset, view, amiga_game, false);
 
 		if (!cel) {
 			dest->cels_nr = i;
@@ -309,10 +317,6 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 
 	return 0;
 }
-
-#define V1_FIRST_MAGIC 1
-#define V1_MAGICS_NR 5
-//static byte view_magics[V1_MAGICS_NR] = {0x80, 0x00, 0x00, 0x00, 0x00};
 
 gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal) {
 	int i;
@@ -339,15 +343,6 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 		free(view);
 		return NULL;
 	}
-
-	/*	fprintf(stderr, "View flags are 0x%02x\n", resource[3]);*/
-
-	/*
-		for (i = 0; i < V1_MAGICS_NR; i++)
-			if (resource[V1_FIRST_MAGIC + i] != view_magics[i]) {
-				GFXWARN("View %04x: View magic #%d should be %02x but is %02x\n", id, i, view_magics[i], resource[V1_FIRST_MAGIC + i]);
-			}
-	*/
 
 	if (palette_offset > 0) {
 		if (palette_offset > size) {
@@ -391,62 +386,6 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 	return view;
 }
 
-#define V2_HEADER_SIZE 0
-#define V2_LOOPS_NUM 2
-#define V2_PALETTE_OFFSET 8
-#define V2_BYTES_PER_LOOP 12
-#define V2_BYTES_PER_CEL 13
-
-#define V2_IS_MIRROR 1
-#define V2_COPY_OF_LOOP 2
-#define V2_CELS_NUM 4
-#define V2_LOOP_OFFSET 14
-
-#define V2_CEL_WIDTH 0
-#define V2_CEL_HEIGHT 2
-#define V2_X_DISPLACEMENT 4
-#define V2_Y_DISPLACEMENT 6
-#define V2_COLOR_KEY 8
-#define V2_RUNLENGTH_OFFSET 24
-#define V2_LITERAL_OFFSET 28
-
-gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view) {
-	int xl = READ_LE_UINT16(cel_base + V2_CEL_WIDTH);
-	int yl = READ_LE_UINT16(cel_base + V2_CEL_HEIGHT);
-	int xdisplace = READ_LE_UINT16(cel_base + V2_X_DISPLACEMENT);
-	int ydisplace = READ_LE_UINT16(cel_base + V2_Y_DISPLACEMENT);
-	int runlength_offset = READ_LE_UINT16(cel_base + V2_RUNLENGTH_OFFSET);
-	int literal_offset = READ_LE_UINT16(cel_base + V2_LITERAL_OFFSET);
-	int pixmap_size = xl * yl;
-
-	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
-	byte *dest = retval->index_data;
-	int decompress_failed;
-
-	retval->color_key = cel_base[V2_COLOR_KEY];
-	retval->xoffset = (mirrored) ? xdisplace : -xdisplace;
-	retval->yoffset = -ydisplace;
-
-	if (view)
-		retval->palette = view->palette->getref();
-
-	if (xl <= 0 || yl <= 0) {
-		gfx_free_pixmap(retval);
-		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
-		return NULL;
-	}
-
-	decompress_failed = decompress_sci_view(id, loop, cel, resource_base, dest, mirrored, pixmap_size, size,
-	                                        runlength_offset, literal_offset, xl, yl, retval->color_key);
-
-	if (decompress_failed) {
-		gfx_free_pixmap(retval);
-		return NULL;
-	}
-
-	return retval;
-}
-
 gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop_base, int size, int cels_nr,
 	gfxr_loop_t *result, gfxr_view_t *view, int bytes_per_cel) {
 	byte *seeker = loop_base;
@@ -456,7 +395,7 @@ gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_bas
 	result->cels = (gfx_pixmap_t **)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
-		result->cels[i] = gfxr_draw_cel11(id, loop, i, mirrored, resource_base, seeker, size, view);
+		result->cels[i] = gfxr_draw_cel1(id, loop, i, mirrored, resource_base, seeker, size, view, 0, true);
 		seeker += bytes_per_cel;
 	}
 

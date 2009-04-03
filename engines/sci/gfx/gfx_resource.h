@@ -290,7 +290,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 ** Returns   : (gfxr_view_t *) The resulting view
 */
 
-gfx_pixmap_t *gfxr_draw_cel11(int id, int loop, int cel, int mirrored, byte *resource_base, byte *cel_base, int size, gfxr_view_t *view);
+gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11);
 
 
 gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
