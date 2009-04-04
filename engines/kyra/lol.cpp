@@ -1916,8 +1916,8 @@ uint16 LoLEngine::getClosestPartyMember(int x, int y) {
 		if (!(_characters[i].flags & 1) || _characters[i].hitPointsCur <= 0)
 			continue;
 
-		int16 charX = 0;
-		int16 charY = 0;
+		uint16 charX = 0;
+		uint16 charY = 0;
 		calcCoordinatesForSingleCharacter(i, charX, charY);
 
 		int d = ABS(x - charX) + ABS(y - charY);

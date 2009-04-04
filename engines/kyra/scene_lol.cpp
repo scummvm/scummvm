@@ -662,7 +662,7 @@ void LoLEngine::calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, u
 	y = ((block & 0xffe0) << 3) | yOffs;
 }
 
-void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, int16 &x, int16 &y) {
+void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y) {
 	static const uint8 xOffsets[] = {  0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0 };
 	int c = countActiveCharacters();
 	if (!c)
@@ -679,19 +679,25 @@ void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, int16 &x, int16 &
 	y |= (_partyPosY & 0xff00);
 }
 
-void LoLEngine::calcCoordinatesAddDirectionOffset(int16 &x, int16 &y, int direction) {
+void LoLEngine::calcCoordinatesAddDirectionOffset(uint16 &x, uint16 &y, int direction) {
 	if (!direction)
 		return;
 
+	int tx = x;
+	int ty = y;
+
 	if (direction & 1)
-		SWAP(x, y);
+		SWAP(tx, ty);
 
-	if (direction == 1)
-		y = (y - 256) * -1;
+	if (direction != 1)
+		ty = (ty - 256) * -1;
 
-	if (direction == 3) {
-		x = (x - 256) * -1;
+	if (direction != 3) {
+		tx = (tx - 256) * -1;
 	}
+
+	x = tx;
+	y = ty;
 }
 
 bool LoLEngine::checkBlockPassability(uint16 block, uint16 direction) {
@@ -781,6 +787,16 @@ int LoLEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 }
 
 int LoLEngine::clickedNiche(uint16 block, uint16 direction) {
+	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
+	if (!clickedShape(v) || !_itemInHand)
+		return 0;
+
+	uint16 x = 0x80;
+	uint16 y = 0xff;
+	calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
+	calcCoordinates(x, y, block, x, y);
+	setItemPosition(_itemInHand, x, y, 8, 1);
+	setHandItem(0);
 	return 1;
 }
 
@@ -1878,7 +1894,7 @@ void LoLEngine::drawDecorations(int index) {
 }
 
 void LoLEngine::drawBlockEffects(int index, int type) {
-	static const int16 yOffs[] = { 0xff, 0xff, 0x80, 0x80 };
+	static const uint16 yOffs[] = { 0xff, 0xff, 0x80, 0x80 };
 	uint8 flg = _visibleBlocks[index]->flags;
 	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
 	if (!(flg & 0xf0))
@@ -1890,8 +1906,8 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 		if (!((0x10 << type) & flg))
 			continue;
 
-		int16 x = 0x80;
-		int16 y = yOffs[type];
+		uint16 x = 0x80;
+		uint16 y = yOffs[type];
 		uint16 drawFlag = (type == 3) ? 0x80 : 0x20;
 		uint8 *ovl = (type == 3) ? _screen->_grayOverlay : 0;
 		

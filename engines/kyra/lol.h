@@ -851,8 +851,8 @@ private:
 	uint16 calcNewBlockPosition(uint16 curBlock, uint16 direction);
 	uint16 calcBlockIndex(uint16 x, uint16 y);
 	void calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, uint16 yOffs);
-	void calcCoordinatesForSingleCharacter(int charNum, int16 &x, int16 &y);
-	void calcCoordinatesAddDirectionOffset(int16 &x, int16 &y, int direction);
+	void calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y);
+	void calcCoordinatesAddDirectionOffset(uint16 &x, uint16 &y, int direction);
 
 	int clickedWallShape(uint16 block, uint16 direction);
 	int clickedLeverOn(uint16 block, uint16 direction);
@@ -1205,7 +1205,7 @@ private:
 	uint8 *_mapCursorOverlay;
 	uint8 _automapTopLeftX;
 	uint8 _automapTopLeftY;
-	static const uint8 _mapCoords[12][4];
+	static const int8 _mapCoords[12][4];
 	bool _mapUpdateNeeded;
 };
 
