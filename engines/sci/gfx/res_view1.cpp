@@ -125,7 +125,7 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 				if (op & V1_RLE_BG)
 					memset(dest + writepos, color_key, bytes);
 				else {
-					int color = resource[literal_pos];
+					color = resource[literal_pos];
 
 					NEXT_LITERAL_BYTE(1);
 					memset(dest + writepos, color, bytes);
