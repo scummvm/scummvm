@@ -176,12 +176,12 @@ int createResFileEntry(int width, int height, int resType) {
 	printf("Executing untested createResFileEntry!\n");
 	exit(1);
 
-	for (i = 0; i < 257; i++) {
+	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!filesDatabase[i].subData.ptr)
 			break;
 	}
 
-	if (i >= 257) {
+	if (i >= NUM_FILE_ENTRIES) {
 		return (-19);
 	}
 

@@ -605,7 +605,7 @@ void unloadOverlay(const char*name, int overlayNumber) {
 
 void initVars(void) {
 	closeAllMenu();
-	resetFileEntryRange(0, 257);
+	resetFileEntryRange(0, NUM_FILE_ENTRIES);
 
 	resetPreload();
 	freeCTP();
@@ -659,7 +659,7 @@ void initVars(void) {
 		backgroundTable[i].name[0] = 0;
 	}
 
-	for (unsigned long int i = 0; i < 257; i++) {
+	for (unsigned long int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		filesDatabase[i].subData.ptr = NULL;
 		filesDatabase[i].subData.ptrMask = NULL;
 	}
@@ -828,12 +828,12 @@ int loadSavegameData(int saveGameIdx) {
 
 	lowMemorySave = lowMemory;
 
-	for (int i = 0; i < 257; i++) {
+	for (int i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			int j;
 			int k;
 
-			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++)
+			for (j = i + 1; j < NUM_FILE_ENTRIES && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j - i)); j++)
 				;
 
 			for (k = i; k < j; k++) {

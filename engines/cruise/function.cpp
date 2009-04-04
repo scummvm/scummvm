@@ -294,7 +294,7 @@ int16 Op_FindSet(void) {
 	strcpy(name, ptr);
 	strToUpper(name);
 
-	for (i = 0; i < 257; i++) {
+	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!strcmp(name, filesDatabase[i].subData.name)) {
 			return (i);
 		}
@@ -471,7 +471,7 @@ int16 Op_LoadFrame(void) {
 	param2 = popVar();
 	param3 = popVar();
 
-	if (param3 >= 0 || param3 < 257) {
+	if (param3 >= 0 || param3 < NUM_FILE_ENTRIES) {
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();
@@ -502,7 +502,7 @@ int16 Op_LoadAbs(void) {
 
 	param1 = popVar();
 
-	if (param1 >= 0 || param1 < 257) {
+	if (param1 >= 0 || param1 < NUM_FILE_ENTRIES) {
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();

@@ -150,7 +150,7 @@ void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScri
 void initBigVar3() {
 	int i;
 
-	for (i = 0; i < 257; i++) {
+	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
 			free(filesDatabase[i].subData.ptr);
 		}
@@ -362,7 +362,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 }
 
 void resetFileEntry(int32 entryNumber) {
-	if (entryNumber >= 257)
+	if (entryNumber >= NUM_FILE_ENTRIES)
 		return;
 
 	if (!filesDatabase[entryNumber].subData.ptr)
@@ -416,7 +416,7 @@ int initAllData(void) {
 		backgroundTable[i].name[0] = 0;
 	}
 
-	for (i = 0; i < 257; i++) {
+	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		filesDatabase[i].subData.ptr = NULL;
 		filesDatabase[i].subData.ptrMask = NULL;
 	}

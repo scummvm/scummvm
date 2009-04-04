@@ -191,7 +191,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 		//int screen = pl->backgroundIdx;
 
 		if ((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
-			frame = 257 - 1;
+			frame = NUM_FILE_ENTRIES - 1;
 			if (loadFile(pl->name, frame, pl->spriteId) >= 0) {
 				bLoad = true;
 			} else {
