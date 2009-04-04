@@ -133,7 +133,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 
 	int cp = _screen->setCurPage(2);
 	LoLCharacter *l = &_characters[charNum];
-	
+
 	int id = l->id;
 	if (id < 0)
 		id = -id;
@@ -274,7 +274,7 @@ void LoLEngine::gui_changeCharacterStats(int charNum) {
 	} while (prc);
 }
 
-void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {	
+void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
 	static const uint8 slotShapes[] = { 0x30, 0x34, 0x30, 0x34, 0x2E, 0x2F, 0x32, 0x33, 0x31, 0x35, 0x35 };
 
 	const uint8 *coords = &_charInvDefs[_charInvIndex[_characters[_selectedCharacter].raceClassSex] * 22 + itemIndex * 2];
@@ -307,7 +307,7 @@ void LoLEngine::gui_drawBarGraph(int x, int y, int w, int h, int32 cur, int32 ma
 		cur = 0;
 
 	int32 e = MIN(cur, max);
-	
+
 	if (!--w)
 		return;
 	if (!--h)
@@ -803,7 +803,7 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 				break;
 		}
 	}
-	
+
 	removeInputTop();
 	_eventList.push_back(Event(evt, true));
 	_preserveEvents = true;
@@ -883,7 +883,7 @@ void LoLEngine::gui_initCharInventorySpecialButtons(int charNum) {
 		if (*s != 0xff)
 			gui_initButton(33 + i, s[0], s[1], i);
 		s += 2;
-	}	
+	}
 }
 
 void LoLEngine::gui_initMagicScrollButtons() {
@@ -1063,7 +1063,7 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 	int c = button->data2Val2;
 
 	gui_enableDefaultPlayfieldButtons();
-	
+
 	if (notEnoughMagic(c, _availableSpells[_selectedSpell], spellLevel)) {
 		_characters[c].flags &= 0xffef;
 		gui_drawCharPortraitWithStats(c);
@@ -1139,7 +1139,7 @@ int LoLEngine::clickedCharInventorySlot(Button *button) {
 		int type = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].type;
 		if (!(sl & type)) {
 			bool f = false;
-			
+
 			for (int i = 0; i < 11; i++) {
 				if (!(type & (1 << i)))
 					continue;
@@ -1205,7 +1205,7 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 	_lastCharInventory = -1;
 	updateDrawPage2();
 	enableSysTimer(2);
-	
+
 	return 1;
 }
 
@@ -1228,7 +1228,7 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 	uint16 x = 0;
 	uint16 y = 0;
 	int i = dirIndex[(_currentDirection << 2) + button->data2Val2];
-	
+
 	calcCoordinates(x, y, block, offsX[i], offsY[i]);
 	setItemPosition(_itemInHand, x, y, 0, 1);
 	setHandItem(0);
@@ -1309,7 +1309,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		}
 
 		_screen->showMouse();
-		
+
 		wsa->close();
 		delete wsa;
 
@@ -1353,7 +1353,7 @@ int LoLEngine::clickedWall(Button *button) {
 	int block = calcNewBlockPosition(_currentBlock, _currentDirection);
 	int dir = _currentDirection ^ 2;
 	uint8 type = _wllBuffer3[_levelBlockProperties[block].walls[dir]];
-	
+
 	int res = 0;
 	switch (type) {
 		case 1:
@@ -1449,6 +1449,16 @@ int LoLEngine::clickedMoneyBox(Button *button) {
 }
 
 int LoLEngine::clickedCompass(Button *button) {
+	if (!(_gameFlags[15] & 0x4000))
+		return 0;
+
+	if (_compassBroken) {
+		if (characterSays(0x425b, -1, true))
+			_txt->printMessage(4, getLangString(0x425b));
+	} else {
+		_txt->printMessage(0, getLangString(0x402f + _currentDirection));
+	}
+
 	return 1;
 }
 

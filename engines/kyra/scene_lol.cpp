@@ -403,7 +403,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 			uint8 *pal2 = _screen->getPalette(2);
 			for (int i = 1; i < 768; i++)
 				SWAP(pal0[i], pal2[i]);
-		}		
+		}
 	}
 
 	memcpy(_vcnBlocks, v, vcnLen);
@@ -584,7 +584,53 @@ void LoLEngine::updateLampStatus() {
 }
 
 void LoLEngine::updateCompass() {
+	if (!(_gameFlags[15] & 0x4000) || (_updateFlags & 4))
+		return;
 
+	if (_compassDirection == -1) {
+		_compassStep = 0;
+		gui_drawCompass();
+		return;
+	}
+
+	if (_compassTimer >= _system->getMillis())
+		return;
+
+	if ((_currentDirection << 6) == _compassDirection && (!_compassStep))
+		return;
+
+	_compassTimer = _system->getMillis() + 3 * _tickLength;
+	int dir = _compassStep >= 0 ? 1 : -1;
+	if (_compassStep)
+		_compassStep -= (((ABS(_compassStep) >> 4) + 2) * dir);
+
+	int16 d = _compassBroken ? ((int8)getRandomNumberSpecial() - _compassDirection) : (_currentDirection << 6) - _compassDirection;
+	if (d <= -128)
+		d += 256;
+	if (d >= 128)
+		d -= 256;
+
+	d >>= 2;
+	_compassStep += d;
+	_compassStep = CLIP(_compassStep, -24, 24);
+	_compassDirection += _compassStep;
+
+	if (_compassDirection < 0)
+		_compassDirection += 256;
+	if (_compassDirection > 255)
+		_compassDirection -= 256;
+
+	if ((_compassDirection >> 6) == _currentDirection && _compassStep < 2) {
+		int16 d2 = d >> 16;
+		d ^= d2;
+		d -= d2;
+		if (d < 4) {
+			_compassDirection = _currentDirection << 6;
+			_compassStep = 0;
+		}
+	}
+
+	gui_drawCompass();
 }
 
 void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape) {
@@ -642,7 +688,7 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 
 			if (_levelBlockProperties[npos].walls[0] == 0x1a)
 				memset(_levelBlockProperties[npos].walls, 0, 4);
-		}		
+		}
 	}
 
 	updateAutoMap(_currentBlock);
@@ -731,7 +777,7 @@ int LoLEngine::clickedWallShape(uint16 block, uint16 direction) {
 
 	snd_stopSpeech(true);
 	runLevelScript(block, 0x40);
-	
+
 	return 1;
 }
 
@@ -765,7 +811,7 @@ int LoLEngine::clickedLeverOff(uint16 block, uint16 direction) {
 }
 
 int LoLEngine::clickedWallOnlyScript(uint16 block) {
-	runLevelScript(block, 0x40);	
+	runLevelScript(block, 0x40);
 	return 1;
 }
 
@@ -803,7 +849,7 @@ int LoLEngine::clickedNiche(uint16 block, uint16 direction) {
 bool LoLEngine::clickedShape(int shapeIndex) {
 	while (shapeIndex) {
 		uint16 s = _levelShapeProperties[shapeIndex].shapeIndex[1];
-		
+
 		if (s == 0xffff)
 			continue;
 
@@ -873,7 +919,7 @@ void LoLEngine::openCloseDoor(uint16 block, int openClose) {
 		_openDoorState[s1].wall = c;
 
 		flg = (-openClose == 1) ? 0x10 : (-openClose == -1 ? 0x20 : 0);
-		
+
 		if (_wllWallFlags[v] & flg) {
 			_levelBlockProperties[block].walls[c] += openClose;
 			_levelBlockProperties[block].walls[c ^ 2] += openClose;
@@ -890,7 +936,7 @@ void LoLEngine::openCloseDoor(uint16 block, int openClose) {
 	} else {
 		while (!(flg & _wllWallFlags[v]))
 			v += openClose;
-		
+
 		_levelBlockProperties[block].walls[c] = _levelBlockProperties[block].walls[c ^ 2] = v;
 		checkSceneUpdateNeed(block);
 	}
@@ -902,7 +948,7 @@ void LoLEngine::completeDoorOperations() {
 			continue;
 
 		uint16 b = _openDoorState[i].block;
-		
+
 		do {
 			_levelBlockProperties[b].walls[_openDoorState[i].wall] += _openDoorState[i].state;
 			_levelBlockProperties[b].walls[_openDoorState[i].wall ^ 2] += _openDoorState[i].state;
@@ -1228,7 +1274,7 @@ void LoLEngine::setWallType(int block, int wall, int val) {
 			_levelBlockProperties[block].flags |= 0x20;
 		} else {
 			_levelBlockProperties[block].flags &= 0xdf;
-		}		
+		}
 	} else {
 		_levelBlockProperties[block].walls[wall] = val;
 	}
@@ -1256,7 +1302,7 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 			_screen->fadePalette(_screen->getPalette(3), 10);
 			_screen->_fadeFlag = 0;
 		}
-		
+
 		setSpecialSceneButtons(0, 0, 320, 130, controlMode);
 
 	} else {
@@ -1306,7 +1352,7 @@ int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int r
 	if (releaseTimScripts) {
 		for (int i = 0; i < TIM::kWSASlots; i++)
 			_tim->freeAnimStruct(i);
-		
+
 		for (int i = 0; i < 10; i++)
 			_tim->unload(_activeTim[i]);
 	}
@@ -1319,8 +1365,8 @@ int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int r
 				_screen->fadeToBlack(10);
 			else
 				_screen->fadeClearSceneWindow(10);
-		} 
-		
+		}
+
 		_currentControlMode = 0;
 		calcCharPortraitXpos();
 
@@ -1333,7 +1379,7 @@ int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int r
 		_currentControlMode = 0;
 		calcCharPortraitXpos();
 
-		if (redrawPlayField)			
+		if (redrawPlayField)
 			gui_drawPlayField();
 	}
 
@@ -1582,7 +1628,7 @@ void LoLEngine::drawVcnBlocks() {
 			uint16 vcnOffset = *bdb++;
 
 			if (vcnOffset & 0x8000) {
-				// this renders a wall block over the transparent pixels of a floor/ceiling block 
+				// this renders a wall block over the transparent pixels of a floor/ceiling block
 				remainder = vcnOffset - 0x8000;
 				vcnOffset = 0;
 			}
@@ -1899,9 +1945,9 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
 	if (!(flg & 0xf0))
 		return;
-	
+
 	type = (type == 0) ? 2 : 0;
-	
+
 	for (int i = 0; i < 2; i++, type++) {
 		if (!((0x10 << type) & flg))
 			continue;
@@ -1910,7 +1956,7 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 		uint16 y = yOffs[type];
 		uint16 drawFlag = (type == 3) ? 0x80 : 0x20;
 		uint8 *ovl = (type == 3) ? _screen->_grayOverlay : 0;
-		
+
 		calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 
 		x |= ((_visibleBlockIndex[index] & 0x1f) << 8);

@@ -192,17 +192,17 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_activeTim, 0, sizeof(_activeTim));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
-	
+
 	_activeVoiceFileTotalTime = 0;
 	_pageBuffer1 = _pageBuffer2 = 0;
 
 	memset(_charStatsTemp, 0, sizeof(_charStatsTemp));
-	
-	_unkBt1 = _unkBt2 = 0;
+
+	_compassBroken = _unkBt2 = 0;
 	_dialogueField = false;
 
 	_rndSpecial = 0x12349876;
-	
+
 	_buttonData = 0;
 	_activeButtons = 0;
 	_preserveEvents = false;
@@ -214,10 +214,12 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 	_unkIceSHpFlag = 0;
-	
+
 	_mapOverlay = 0;
 	_automapShapes = 0;
 	_defaultLegendData = 0;
+
+	_compassTimer = 0;
 }
 
 LoLEngine::~LoLEngine() {
@@ -352,7 +354,7 @@ LoLEngine::~LoLEngine() {
 			delete[] _lvlTempData[i]->monsters;
 			delete[] _lvlTempData[i]->flyingObjects;
 			delete _lvlTempData[i];
-		}		
+		}
 	}
 
 	delete[] _defaultLegendData;
@@ -390,7 +392,7 @@ Common::Error LoLEngine::init() {
 	memset(_pageBuffer1, 0, 0xfa00);
 	_pageBuffer2 = new uint8[0xfa00];
 	memset(_pageBuffer2, 0, 0xfa00);
- 
+
 	_itemsInPlay = new ItemInPlay[400];
 	memset(_itemsInPlay, 0, sizeof(ItemInPlay) * 400);
 
@@ -755,11 +757,11 @@ void LoLEngine::startup() {
 
 void LoLEngine::startupNew() {
 	_selectedSpell = 0;
-	_compassUnk = 0;
+	_compassStep = 0;
 	_compassDirection = _compassDirectionIndex = -1;
 
 	_lastMouseRegion = -1;
-	
+
 	/*
 	_unk5 = 1;
 	_unk6 = 1;
@@ -830,7 +832,7 @@ void LoLEngine::update() {
 	if (_gameFlags[15] & 0x800 || !(_updateFlags & 4))
 		updateLampStatus();
 
-	if (_gameFlags[15] & 0x4000 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassUnk))
+	if (_gameFlags[15] & 0x4000 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassStep))
 		updateCompass();
 
 	snd_characterSpeaking();
@@ -933,7 +935,7 @@ void LoLEngine::setFaceFramesUnkArrays(int charNum, int unk1, int unk2, int unk3
 		l->arrayUnk2[i] = unk1;
 		l->arrayUnk1[i] = unk2;
 		_timer->setNextRun(3, _system->getMillis());
-		_timer->enable(3);		
+		_timer->enable(3);
 	}
 }
 
@@ -1157,7 +1159,7 @@ void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
 				_txt->printMessage(0x8003, getLangString(0x4024), _characters[charNum].name);
 				inc = (_characters[charNum].defaultModifiers[6] * (_rnd.getRandomNumberRng(1, 8) + 17)) >> 8;
 				_characters[charNum].magicPointsCur += inc;
-				_characters[charNum].magicPointsMax += inc;			
+				_characters[charNum].magicPointsMax += inc;
 				inc = _rnd.getRandomNumberRng(1, 6);
 				_characters[charNum].hitPointsCur += inc;
 				_characters[charNum].hitPointsMax += inc;
@@ -1308,9 +1310,9 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 		setupScreenDims();
 		_txt->clearDim(4);
 	}
-	
+
 	_currentControlMode = controlMode;
-	_dialogueField = true;	
+	_dialogueField = true;
 }
 
 void LoLEngine::restoreAfterDialogueSequence(int controlMode) {
@@ -1375,7 +1377,7 @@ void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness
 		if (brightness < 0)
 			brightness = 0;
 	}
-	
+
 	for (int i = 0; i < 384; i++) {
 		uint16 c = (dst[i] * brightness) >> 8;
 		dst[i] = c & 0xff;
@@ -1401,7 +1403,7 @@ void LoLEngine::savePage5() {
 void LoLEngine::restorePage5() {
 	if (!_pageSavedFlag)
 		return;
-	
+
 	for (int i = 0; i < 6; i++)
 		_tim->freeAnimStruct(i);
 
@@ -1667,6 +1669,8 @@ int LoLEngine::snd_stopMusic() {
 int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	if (charId == 1) {
 		charId = _selectedCharacter;
+	} if (charId <= 0) {
+		charId = 0;
 	} else {
 		int i = 0;
 		for (;i < 4; i++) {
@@ -1798,10 +1802,10 @@ uint8 LoLEngine::getRandomNumberSpecial() {
 	uint cs = c >> 7;
 
 	a >>= 1;
-	c = (c << 1) | as;	
+	c = (c << 1) | as;
 	b = (b << 1) | cs;
 
-	a -= ((_rndSpecial & 0xff) - bs);	
+	a -= ((_rndSpecial & 0xff) - bs);
 	as = a & 1;
 	a >>= 1;
 
@@ -1839,7 +1843,7 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 		if (_monsters[target & 0x7fff].mode >= 13)
 			return 0;
 	}
-	
+
 	uint16 hitChanceModifier = 0;
 	uint16 evadeChanceModifier = 0;
 	int sk = 0;
@@ -1848,7 +1852,7 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 		hitChanceModifier = _monsters[target & 0x7fff].properties->fightingStats[0];
 		sk = 100 - _monsters[target & 0x7fff].properties->skillLevel;
 	} else {
-		hitChanceModifier = _characters[attacker].defaultModifiers[0];		
+		hitChanceModifier = _characters[attacker].defaultModifiers[0];
 		uint8 m = _characters[attacker].skillModifiers[skill];
 		if (skill == 1)
 			m *= 3;
@@ -1876,7 +1880,7 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 
 int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) {
 	const uint16 *s = getCharacterOrMonsterStats(attacker);
-	
+
 	int res = 0;
 	for (int i = 0; i < 8; i++)
 		res += calcInflictableDamagePerStat(attacker, target, s[2 + i], i, hitType);
@@ -1904,7 +1908,7 @@ uint16 LoLEngine::getClosestMonster(int x, int y) {
 		if (_monsters[i].mode > 13)
 			continue;
 
-		int d = ABS(x - _monsters[i].x) + ABS(y - _monsters[i].y);		
+		int d = ABS(x - _monsters[i].x) + ABS(y - _monsters[i].y);
 		if (d < minDist) {
 			minDist = d;
 			id = 0x8000 | i;
@@ -1996,7 +2000,7 @@ void LoLEngine::displayAutomap() {
 
 	for (int i = 0; i < 109; i++)
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
-	
+
 	_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
@@ -2124,7 +2128,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 }
 
 void LoLEngine::loadMapLegendData(int level) {
-	uint16 *legendData = (uint16 *)_tempBuffer5120;
+	uint16 *legendData= (uint16*) _tempBuffer5120;
 	for (int i = 0; i < 32; i++) {
 		legendData[i * 6] = 0xffff;
 		legendData[i * 6 + 5] = 0xffff;
@@ -2159,7 +2163,7 @@ void LoLEngine::loadMapLegendData(int level) {
 void LoLEngine::drawMapPage(int pageNum) {
 	for (int i = 0; i < 2; i++) {
 		_screen->loadBitmap("parch.cps", pageNum, pageNum, _screen->getPalette(3));
-		
+
 		int cp = _screen->setCurPage(pageNum);
 		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236, 8, 1, 0);
@@ -2227,7 +2231,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		sx = mapGetStartPosX();
 		sy = mapGetStartPosY();
 
-		uint16 *legendData = (uint16 *)_tempBuffer5120;
+		uint16 *legendData = (uint16*)_tempBuffer5120;
 
 		for (int ii = 0; ii < 32; ii++)  {
 			uint16 *l = &legendData[ii * 6];
@@ -2252,9 +2256,9 @@ void LoLEngine::drawMapPage(int pageNum) {
 			_levelBlockProperties[cbl2].flags |= 7;
 			_screen->drawShape(2, _automapShapes[l[5] << 2], (l[3] - sx) * 7 + _automapTopLeftX - 3, (l[4] - sy) * 6 + _automapTopLeftY - 3, 0, 0);
 			_screen->drawShape(2, _automapShapes[l[5] << 2], 231, (tY << 3) + 19, 0, 0);
-			tY++;			
+			tY++;
 		}
-			
+
 		cp = _screen->setCurPage(pageNum);
 
 		for (int ii = 0; ii < 11; ii++) {
@@ -2293,7 +2297,7 @@ bool LoLEngine::automapProcessButtons(int inputFlag) {
 		delay (_tickLength);
 	}
 
-	if (r == 0) {			
+	if (r == 0) {
 		automapForwardButton();
 		printMapExitButtonText();
 	} else if (r == 1) {
@@ -2312,7 +2316,7 @@ void LoLEngine::automapForwardButton() {
 		if (i >= 32 || i == _currentMapLevel)
 			return;
 	}
-	
+
 	for (int l = 0; l < 11; l++) {
 		_defaultLegendData[l].enable = false;
 		_defaultLegendData[l].shapeIndex = 255;
@@ -2331,7 +2335,7 @@ void LoLEngine::automapBackButton() {
 		if (i < 0 || i == _currentMapLevel)
 			return;
 	}
-	
+
 	for (int l = 0; l < 11; l++) {
 		_defaultLegendData[l].enable = false;
 		_defaultLegendData[l].shapeIndex = 255;
@@ -2403,7 +2407,7 @@ int LoLEngine::mapGetStartPosX() {
 	do {
 		for (a = 0; a < 32; a++) {
 			if (_levelBlockProperties[(a << 5) + d].flags)
-				break;				
+				break;
 		}
 		if (a == 32)
 			d--;

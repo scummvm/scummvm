@@ -443,8 +443,9 @@ private:
 	uint32 _buttonPressTimer;
 	int _selectedCharacter;
 	int _compassDirection;
-	int _compassUnk;
+	int _compassStep;
 	int _compassDirectionIndex;
+	uint32 _compassTimer;
 	int _charInventoryUnk;
 
 	const CompassDef *_compassDefs;
@@ -578,7 +579,7 @@ private:
 	int olol_clearDialogueField(EMCState *script);
 	int olol_setupBackgroundAnimationPart(EMCState *script);
 	int olol_startBackgroundAnimation(EMCState *script);
-	int olol_fadeToBlack(EMCState *script);	
+	int olol_fadeToBlack(EMCState *script);
 	int olol_fadePalette(EMCState *script);
 	int olol_loadBitmap(EMCState *script);
 	int olol_stopBackgroundAnimation(EMCState *script);
@@ -633,7 +634,7 @@ private:
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_dummy1(EMCState *script);
-	int olol_suspendMonster(EMCState *script);	
+	int olol_suspendMonster(EMCState *script);
 	int olol_setDoorState(EMCState *script);
 	int olol_processButtonClick(EMCState *script);
 	int olol_savePage5(EMCState *script);
@@ -648,7 +649,7 @@ private:
 	int olol_enableSysTimer(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
-	int olol_characterSays(EMCState *script);	
+	int olol_characterSays(EMCState *script);
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
 	int olol_getLanguage(EMCState *script);
@@ -676,7 +677,7 @@ private:
 	int tlol_drawScene(const TIM *tim, const uint16 *param);
 	int tlol_update(const TIM *tim, const uint16 *param);
 	int tlol_loadSoundFile(const TIM *tim, const uint16 *param);
-	int tlol_playMusicTrack(const TIM *tim, const uint16 *param);	
+	int tlol_playMusicTrack(const TIM *tim, const uint16 *param);
 	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);
 	int tlol_playSoundEffect(const TIM *tim, const uint16 *param);
 	int tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param);
@@ -954,9 +955,9 @@ private:
 	int _lastMouseRegion;
 	int _seqWindowX1, _seqWindowY1,	_seqWindowX2, _seqWindowY2, _seqTrigger;
 	int _spsWindowX, _spsWindowY,	_spsWindowW, _spsWindowH;
-	
+
 	uint8 *_tempBuffer5120;
-	
+
 	const char *const * _levelDatList;
 	int _levelDatListSize;
 	const char *const * _levelShpList;
@@ -1027,7 +1028,7 @@ private:
 	void processObjectFlight(FlyingObject *t, int x, int y);
 	void updateObjectFlightPosition(FlyingObject *t);
 	void objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock);
-	void updateFlyingObjects(FlyingObject *t);	
+	void updateFlyingObjects(FlyingObject *t);
 
 	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
 	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
@@ -1081,7 +1082,7 @@ private:
 	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
 	int checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
-	int calcMonsterSkillLevel(int id, int a);	
+	int calcMonsterSkillLevel(int id, int a);
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
 	void drawBlockObjects(int blockArrayIndex);
@@ -1138,7 +1139,7 @@ private:
 	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
 	uint8 getRandomNumberSpecial();
 
-	uint8 _unkBt1;
+	uint8 _compassBroken;
 	uint8 _unkBt2;
 	uint16 _unkWordArraySize8[8];
 
@@ -1152,7 +1153,7 @@ private:
 	void battleHit_sub2(int16 target, int damageInflicted, int16 attacker, uint32 b);
 	void battleHit_sub3(MonsterInPlay *monster, int16 target, int16 damageInflicted);
 	int calcInflictableDamagePerStat(int16 attacker, int16 target, uint16 stat2m, int index, int hitType);
-	
+
 	uint16 getClosestMonster(int x, int y);
 	uint16 getClosestPartyMember(int x, int y);
 

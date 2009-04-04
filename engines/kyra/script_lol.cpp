@@ -575,7 +575,7 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 	case 10:
 		return _sceneDefaultUpdate;
 	case 11:
-		return _unkBt1;
+		return _compassBroken;
 	case 12:
 		return _unkBt2;
 	case 13:
@@ -647,7 +647,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 11:
-		_unkBt1 = a & 0xff;
+		_compassBroken = a & 0xff;
 		break;
 
 	case 12:
@@ -711,7 +711,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		if (l->might || l->mode == 13)
 			continue;
 
-		memset(l, 0, sizeof(MonsterInPlay));		
+		memset(l, 0, sizeof(MonsterInPlay));
 		l->id = i;
 		l->x = x;
 		l->y = y;
@@ -777,7 +777,7 @@ int LoLEngine::olol_loadNewLevel(EMCState *script) {
 	_screen->fadeClearSceneWindow(10);
 	_screen->fillRect(112, 0, 288, 120, 0);
 	disableSysTimer(2);
-	
+
 	for (int i = 0; i < 8; i++) {
 		if (!_flyingObjects[i].enable || _flyingObjects[i].a)
 			continue;
@@ -943,7 +943,7 @@ int LoLEngine::olol_characterJoinsParty(EMCState *script) {
 
 		_characters[i].flags &= 0xfffe;
 		calcCharPortraitXpos();
-		
+
 		if (!_updateFlags) {
 			gui_enableDefaultPlayfieldButtons();
 			gui_drawPlayField();
@@ -1100,7 +1100,7 @@ int LoLEngine::olol_update(EMCState *script) {
 
 int LoLEngine::olol_drawExitButton(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawExitButton(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	
+
 	static const uint8 printPara[] = { 0x90, 0x78, 0x0C, 0x9F, 0x80, 0x1E };
 
 	int cp = _screen->setCurPage(0);
@@ -1111,7 +1111,7 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 
 	char *str = getLangString(0x4033);
 	int w = _screen->getTextWidth(str);
-	
+
 	gui_drawBox(x - offs - w, y - 9, w + offs, 9, 136, 251, 252);
 	_screen->printText(str, x - (offs >> 1) - w, y - 7, 144, 0);
 
@@ -1119,7 +1119,7 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 		_screen->drawGridBox(x - offs - w + 1, y - 8, w + offs - 2, 7, 1);
 
 	_screen->setFont(cf);
-	_screen->setCurPage(cp);	
+	_screen->setCurPage(cp);
 	return 1;
 }
 
