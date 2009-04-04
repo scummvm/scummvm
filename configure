@@ -1263,7 +1263,7 @@ case $_backend in
 		exit 1
 		;;
 esac
-MODULES="$MODULES backends/platform/$_backend"
+MODULES="$MODULES engine/backend/platform/$_backend"
 
 #
 # Do CXXFLAGS now we know the compiler version
