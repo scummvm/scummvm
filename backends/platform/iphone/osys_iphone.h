@@ -23,8 +23,6 @@
  *
  */
 
-#ifdef IPHONE_BACKEND
-
 #include "graphics/surface.h"
 #include "iphone_common.h"
 #include "backends/base-backend.h"
@@ -210,5 +208,3 @@ protected:
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 };
-
-#endif
