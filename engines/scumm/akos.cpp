@@ -303,7 +303,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (_vm->_game.heversion >= 99 && _paletteNum) {
 		for (i = 0; i < size; i++)
 			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
-	} else if (_vm->_game.heversion >= 99 && rgbs) {
+	} else if ((_vm->_game.features & GF_16BIT_COLOR) && rgbs) {
 		for (i = 0; i < size; i++) {
 			if (new_palette[i] == 0xFF) {
 				uint8 col = akpl[i];
