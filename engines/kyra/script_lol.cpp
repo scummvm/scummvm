@@ -1023,7 +1023,7 @@ int LoLEngine::olol_loadLangFile(EMCState *script) {
 
 int LoLEngine::olol_playSoundEffect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
-	snd_playSoundEffect(stackPos(0), 255);
+	snd_playSoundEffect(stackPos(0), -1);
 	return 1;
 }
 
