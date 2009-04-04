@@ -94,7 +94,7 @@ private:
 	struct TextDimData {
 		uint8 color1;
 		uint8 color2;
-		uint8 column;
+		uint16 column;
 		uint8 line;
 	};
 
