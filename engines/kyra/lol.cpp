@@ -2311,11 +2311,11 @@ bool LoLEngine::automapProcessButtons(int inputFlag) {
 }
 
 void LoLEngine::automapForwardButton() {
-	int i = (_currentMapLevel + 1) & 0x1f;
-	for (; !(_hasTempDataFlags & (1 << (i - 1))); i++) {
-		if (i >= 32 || i == _currentMapLevel)
-			return;
-	}
+	int i = _currentMapLevel + 1;
+	while (!(_hasTempDataFlags & (1 << (i - 1))))
+		i = (i + 1) & 0x1f;
+	if (i == _currentMapLevel)
+		return;
 
 	for (int l = 0; l < 11; l++) {
 		_defaultLegendData[l].enable = false;
@@ -2330,11 +2330,11 @@ void LoLEngine::automapForwardButton() {
 }
 
 void LoLEngine::automapBackButton() {
-	int i = (_currentMapLevel - 1) & 0x1f;
-	for (; !(_hasTempDataFlags & (1 << (i - 1))); i--) {
-		if (i < 0 || i == _currentMapLevel)
-			return;
-	}
+	int i = _currentMapLevel - 1;
+	while (!(_hasTempDataFlags & (1 << (i - 1))))
+		i = (i - 1) & 0x1f;
+	if (i == _currentMapLevel)
+		return;
 
 	for (int l = 0; l < 11; l++) {
 		_defaultLegendData[l].enable = false;
