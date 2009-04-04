@@ -84,10 +84,6 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
-ifdef USE_ZLIB
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libz.a
-endif
-
 BUILD_DATE := `date +%y%m%d`
 #BUILD_DATE := rev`svn info | grep '^Revision' | sed -e 's/Revision: *//'`
 
@@ -98,7 +94,7 @@ residual-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residual-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
-		-lSystemStubs \
+		-lSystemStubs -lz
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
