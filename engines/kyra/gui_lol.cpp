@@ -500,11 +500,16 @@ void LoLEngine::gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int m
 void LoLEngine::calcCharPortraitXpos() {
 	int nc = countActiveCharacters();
 
-	// TODO
+	if (_currentControlMode && !textEnabled()) {
+		int t = (280 - (nc * 33)) / (nc + 1);
+		for (int i = 0; i < nc; i++)
+			_activeCharsXpos[i] = i * 33 + t * (i + 1) + 10;
 
-	int t = (235 - (nc * 66)) / (nc + 1);
-	for (int i = 0; i < nc; i++)
-		_activeCharsXpos[i] = i * 66 + t * (i + 1) + 83;
+	} else {
+		int t = (235 - (nc * 66)) / (nc + 1);
+		for (int i = 0; i < nc; i++)
+			_activeCharsXpos[i] = i * 66 + t * (i + 1) + 83;
+	}
 }
 
 void LoLEngine::gui_drawMoneyBox(int pageNum) {
