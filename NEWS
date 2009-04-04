@@ -14,7 +14,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the original cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Added support for the PlayStation version.
-   
+
  Broken Sword 2:
    - Added support for the original cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
@@ -26,23 +26,46 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
     - Fixed a crash in Waxworks
     - Fixed a crash when loading savegames from a specific location in Simon 2
     - Fixed some glitches in the AtariST version of Elvira 2
-    
+
  Gob:
     - Fixed a crash in the Italian version of Woodruff
-        
+
  Groovie:
     - Fixed some issues with music in The 7th Guest
-    
+
  Parallaction:
     - Fixed the sarcophagus puzzle in Nippon Safes
     - Credits of the Nippon Safes Amiga demo are now shown correctly
-    
+
  SAGA:
     - Fixed a crash in Inherit the Earth
-    
+
+ Game launcher:
+   - Fixed a case where memory could be corrupted
+   - Fixed the small cursor in the modern theme
+   - Fixed a bug in the theme engine, which could cause crashes
+   - Made the file browser bigger in 1x mode
+
  iPhone port:
     - Fixed backspace handling on the iPhone soft keyboard
-    
+
+ DS port:
+     - Added support for the Global Main Menu feature
+     
+ PS2 port:
+    - Switched to the new GUI and theme code
+    - All possible devices are supported to store, play and save games
+      (CD, HD, USB, MC and remote)
+    - Optimized cache/read-ahead for every media
+    - Added support for the Return to Launcher feature
+
+ Symbian port:
+    - Added Bluetooth mouse support
+    - Added support for the Return to Launcher feature
+ 
+ WinCE port:
+    - Fixed an issue which could cause random crashes with VGA devices
+
 0.13.0 (2009-02-28)
  General:
    - Added MIDI driver for Atari ST / FreeMint.
