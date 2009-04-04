@@ -233,7 +233,7 @@ bool Palette::isValid() const {
 	return _format != Graphics::PixelFormat() && _format.aLoss == 8;
 }
 
-Graphics::PixelFormat Palette::colorFormat() const {
+const Graphics::PixelFormat &Palette::colorFormat() const {
 	return _format;
 }
 
@@ -259,11 +259,11 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	return output;
 }
 
-Palette &Palette::saturatedAddNormalizedColor(Palette& output, byte firstIndex, byte lastIndex, signed rNormalized, signed gNormalized, signed bNormalized, signed dividend, signed denominator) {
-	assert(denominator != 0);
-	const signed r = _format.rMax() * rNormalized * dividend / denominator;
-	const signed g = _format.gMax() * gNormalized * dividend / denominator;
-	const signed b = _format.bMax() * bNormalized * dividend / denominator;
+Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) {
+	// Convert the source color to the internal color format ensuring that no divide by zero will happen
+	const signed r = _format.rMax() * rSource / MAX<int>(sourceFormat.rMax(), 1);
+	const signed g = _format.gMax() * gSource / MAX<int>(sourceFormat.gMax(), 1);
+	const signed b = _format.bMax() * bSource / MAX<int>(sourceFormat.bMax(), 1);
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }

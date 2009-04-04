@@ -139,19 +139,18 @@ public:
 	Palette &rotateRight(byte firstIndex, byte lastIndex);
 	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
 
-	/*! \brief Saturated add a normalized RGB color to current palette's subset and save the modified colors in the given output palette.
+	/*! \brief Saturated add an RGB color in given color format to current palette's subset and save the modified colors in the given output palette.
 	 * \param output The output palette (Only this palette is modified)
 	 * \param firstIndex First color index of the palette's subset (Inclusive range)
 	 * \param lastIndex Last color index of the palette's subset (Inclusive range)
-	 * \param rNormalized The normalized red color component
-	 * \param gNormalized The normalized green color component
-	 * \param bNormalized The normalized blue color component
-	 * \param dividend Dividend of the normalized color component values
-	 * \param denominator Denominator of the normalized color component values
-	 * \note The normalized color component multiplier value (i.e. in range [-1, +1]) is given as a fractional number
-	 * so each input color component is multiplied by it and the color component's maximum (Specified by this palette's color format)
+	 * \param rSource The red color component in the source color format
+	 * \param gSource The green color component in the source color format
+	 * \param bSource The blue color component in the source color format
+	 * \param sourceFormat The source color format (i.e. the color format of the given RGB color)
+	 * \note This function basically converts the given color to the palette's internal color format
+	 * and adds that using the normal saturatedAddColor-function.
 	 */
-	Palette &saturatedAddNormalizedColor(Palette& output, byte firstIndex, byte lastIndex, signed rNormalized, signed gNormalized, signed bNormalized, signed dividend, signed denominator);
+	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat);
 
 	/*! \brief Saturated add a normalized gray value to current palette's subset and save the modified colors in the given output palette.
 	 * \param output The output palette (Only this palette is modified)
@@ -173,7 +172,7 @@ public:
 	bool isValid() const;
 
 	/*! \brief The original color format in which this palette was loaded. */
-	Graphics::PixelFormat colorFormat() const;
+	const Graphics::PixelFormat &colorFormat() const;
 
 	/*! \brief Sets current palette to global OSystem's palette using g_system->setPalette. */
 	void setGlobalOSystemPalette() const;
