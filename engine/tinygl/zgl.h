@@ -13,6 +13,7 @@ enum {
 
 #include "engine/tinygl/opinfo.h"
 
+	DUMMY
 };
 
 // initially # of allocated GLVertexes (will grow when necessary)
