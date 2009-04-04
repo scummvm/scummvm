@@ -356,7 +356,7 @@ int main(int argc, char *argv[])
 		buffer[0] = '\0';
 		for (i = 0; i < numEntries; ++i) {
 			const char *currentEntry = entriesBuffer + i * entrySize;
-			fprintf(outFile, currentEntry);
+			fprintf(outFile, "%s", currentEntry);
 			if (strncmp(currentEntry + 4, buffer, 32) == 0) {
 				warning("Duplicate MD5 found '%.32s'", buffer);
 			} else {
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		/* Finally, print the footer */
-		fprintf(outFile, c_footer);
+		fprintf(outFile, "%s", c_footer);
 	}
 
 	free(entriesBuffer);
