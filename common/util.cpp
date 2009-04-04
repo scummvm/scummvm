@@ -30,7 +30,7 @@ namespace Common {
 //
 // Print hexdump of the data passed in
 //
-void hexdump(const byte *data, int len, int bytesPerLine) {
+void hexdump(const byte * data, int len, int bytesPerLine) {
 	assert(1 <= bytesPerLine && bytesPerLine <= 32);
 	int i;
 	byte c;
@@ -79,6 +79,22 @@ void hexdump(const byte *data, int len, int bytesPerLine) {
 	printf("|\n");
 }
 
+String tag2string(uint32 tag) {
+	char str[5];
+	str[0] = (char)(tag >> 24);
+	str[1] = (char)(tag >> 16);
+	str[2] = (char)(tag >> 8);
+	str[3] = (char)tag;
+	str[4] = '\0';
+	// Replace non-printable chars by dot
+	for (int i = 0; i < 4; ++i) {
+		if (!isprint(str[i]))
+			str[i] = '.';
+	}
+	return Common::String(str);
+}
+
+
 #pragma mark -
 
 
@@ -110,15 +126,6 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 	return getRandomNumber(max - min) + min;
 }
 
-Common::String tag2string(uint32 tag) {
-	char str[5];
-	str[0] = (char)(tag >> 24);
-	str[1] = (char)(tag >> 16);
-	str[2] = (char)(tag >> 8);
-	str[3] = (char)tag;
-	str[4] = '\0';
-	return Common::String(str);
-}
 
 }	// End of namespace Common
 

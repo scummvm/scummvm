@@ -52,7 +52,8 @@ public:
 	virtual bool installTimerProc(TimerProc proc, int32 interval, void *refCon) = 0;
 
 	/**
-	 * Remove the given timer callback. It will not be invoked anymore.
+	 * Remove the given timer callback. It will not be invoked anymore,
+	 * and no instance of this callback will be running anymore.
 	 */
 	virtual void removeTimerProc(TimerProc proc) = 0;
 };

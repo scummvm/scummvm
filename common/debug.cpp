@@ -36,41 +36,39 @@
 	#include "engine/backend/platform/ps2/fileio.h"
 
 	#define fprintf				ps2_fprintf
+	#define fputs(str, file)	ps2_fputs(str, file)
 	#define fflush(a)			ps2_fflush(a)
 #endif
 
 #ifdef __DS__
 	#include "engine/backend/fs/ds/ds-fs.h"
 
-	#undef stderr
-	#undef stdout
-	#undef stdin
-
-	#define stdout ((DS::fileHandle*) -1)
-	#define stderr ((DS::fileHandle*) -2)
-	#define stdin ((DS::fileHandle*) -3)
-
 	void	std_fprintf(FILE* handle, const char* fmt, ...);
 	void	std_fflush(FILE* handle);
 
-	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
+	#define fprintf(file, fmt, ...)				do { char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); } while(0)
+	#define fputs(str, file)					DS::std_fwrite(str, strlen(str), 1, file)
 	#define fflush(file)						DS::std_fflush(file)
 #endif
 
-static void debugHelper(const char *in_buf, bool caret = true) {
+#ifndef DISABLE_TEXT_CONSOLE
+
+static void debugHelper(const char *s, va_list va, bool caret = true) {
+	char in_buf[STRINGBUFLEN];
 	char buf[STRINGBUFLEN];
+	vsnprintf(in_buf, STRINGBUFLEN, s, va);
 
 	strcpy(buf, in_buf);
 
-	if (caret)
-		printf("%s\n", buf);
-	else
-		printf("%s", buf);
-
-#if defined(USE_WINDBG)
-	if (caret)
+	if (caret) {
+		buf[STRINGBUFLEN-2] = '\0';
 		strcat(buf, "\n");
-#if defined(_WIN32_WCE)
+	}
+
+	fputs(buf, stdout);
+
+#if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
 	TCHAR buf_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
 	OutputDebugString(buf_unicode);
@@ -83,29 +81,25 @@ static void debugHelper(const char *in_buf, bool caret = true) {
 }
 
 void debug(const char *s, ...) {
-	char buf[STRINGBUFLEN];
 	va_list va;
 
 	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
+	debugHelper(s, va);
 	va_end(va);
-
-	debugHelper(buf);
 }
 
 void debug(int level, const char *s, ...) {
-	char buf[STRINGBUFLEN];
 	va_list va;
 
 	if (level > debugLevel)
 		return;
 
 	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
+	debugHelper(s, va);
 	va_end(va);
-
-	debugHelper(buf);
 }
+
+#endif
 
 void NORETURN error(const char *s, ...) {
 	char buf_input[STRINGBUFLEN];
@@ -122,8 +116,17 @@ void NORETURN error(const char *s, ...) {
 	// Print the error message to stderr
 	fprintf(stderr, "%s!\n", buf_output);
 
-#if defined(USE_WINDBG)
-#if defined(_WIN32_WCE)
+	buf_output[STRINGBUFLEN-3] = '\0';
+	buf_output[STRINGBUFLEN-2] = '\0';
+	buf_output[STRINGBUFLEN-1] = '\0';
+	strcat(buf_output, "!\n");
+
+
+	// Print the error message to stderr
+	fputs(buf_output, stderr);
+
+#if defined( USE_WINDBG )
+#if defined( _WIN32_WCE )
 	TCHAR buf_output_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
 	OutputDebugString(buf_output_unicode);
@@ -146,28 +149,30 @@ void NORETURN error(const char *s, ...) {
 #ifdef __SYMBIAN32__
 	Symbian::FatalError(buf_output);
 #endif
-
+	// Finally exit. quit() will terminate the program if g_driver is present
 	if (g_driver)
 		g_driver->quit();
 
 	exit(1);
 }
 
-void warning(const char *fmt, ...) {
+#ifndef DISABLE_TEXT_CONSOLE
+
+void warning(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	va_start(va, fmt);
-	vsnprintf(buf, STRINGBUFLEN, fmt, va);
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
 #if !defined (__SYMBIAN32__)
 	fprintf(stderr, "WARNING: %s!\n", buf);
 #endif
 
-#if defined(USE_WINDBG)
+#if defined( USE_WINDBG )
 	strcat(buf, "\n");
-#if defined(_WIN32_WCE)
+#if defined( _WIN32_WCE )
 	TCHAR buf_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
 	OutputDebugString(buf_unicode);
@@ -176,6 +181,9 @@ void warning(const char *fmt, ...) {
 #endif
 #endif
 }
+
+#endif
+
 
 const char *debug_levels[] = {
 	"NONE",

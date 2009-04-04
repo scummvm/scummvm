@@ -93,8 +93,6 @@ extern "C" int residual_main(int argc, char *argv[]);
 
 #if defined(__SYMBIAN32__)
 
-	#define strcasecmp stricmp
-
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
 
@@ -125,7 +123,9 @@ extern "C" int residual_main(int argc, char *argv[]);
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
 
+	#if _WIN32_WCE < 300
 	#define SMALL_SCREEN_DEVICE
+	#endif
 
 	typedef signed char int8_t;
 	typedef signed short int16_t;
@@ -143,6 +143,11 @@ extern "C" int residual_main(int argc, char *argv[]);
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned short uint16_t;
+
+//	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
+//	typedef signed long int32_t;
+//	typedef unsigned long uint32_t;
+//	#endif
 
 #elif defined(__MINGW32__)
 
@@ -185,10 +190,38 @@ extern "C" int residual_main(int argc, char *argv[]);
 	#define SYSTEM_NEED_ALIGNMENT
 	#define STRINGBUFLEN 256
 
+	extern const char *RESIDUAL_SAVEPATH;
+
+	#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
+	#	define NEWGUI_256
+	#else
+	#	undef UNUSED
+	#endif
+
 #elif defined(__DC__)
 
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
+
+#elif defined(__GP32__)
+
+	#define strcasecmp stricmp
+
+	#define SYSTEM_LITTLE_ENDIAN
+	#define SYSTEM_NEED_ALIGNMENT
+
+	// Override typenames. uint is already defined by system header files.
+	#define SYSTEM_DONT_DEFINE_TYPES
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned long int uint32;
+	typedef signed long int int32;
 
 #elif defined(__PLAYSTATION2__)
 
@@ -205,7 +238,7 @@ extern "C" int residual_main(int argc, char *argv[]);
 	#define	SYSTEM_BIG_ENDIAN
 	#define	SYSTEM_NEED_ALIGNMENT
 
-#elif defined (__DS__) //NeilM
+#elif defined (__DS__)
 
 	#define strcasecmp stricmp
 
@@ -230,39 +263,15 @@ extern "C" int residual_main(int argc, char *argv[]);
 #endif
 
 //
-// Typedef our system types unless SYSTEM_DONT_DEFINE_TYPES is set.
-//
-#ifndef SYSTEM_DONT_DEFINE_TYPES
-
-	typedef unsigned char byte;
-
-	typedef unsigned char uint8;
-	typedef signed char int8;
-
-	typedef unsigned short uint16;
-	typedef signed short int16;
-
-	#ifdef SYSTEM_USE_LONG_INT
-	typedef unsigned long uint32;
-	typedef signed long int32;
-	typedef unsigned long uint;
-	#else
-	typedef unsigned int uint32;
-	typedef signed int int32;
-	typedef unsigned int uint;
-	#endif
-#endif
-
-//
 // GCC specific stuff
 //
 #if defined(__GNUC__)
 	#define NORETURN __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((packed))
-	#define GCC_PRINTF(x, y) __attribute__((format(printf, x, y)))
+	#define GCC_PRINTF(x,y) __attribute__((format(printf, x, y)))
 #else
 	#define PACKED_STRUCT
-	#define GCC_PRINTF(x, y)
+	#define GCC_PRINTF(x,y)
 #endif
 
 //
@@ -285,7 +294,31 @@ extern "C" int residual_main(int argc, char *argv[]);
 #endif
 
 #ifndef NORETURN
-#define NORETURN
+#define	NORETURN
+#endif
+
+//
+// Typedef our system types unless SYSTEM_DONT_DEFINE_TYPES is set.
+//
+#ifndef SYSTEM_DONT_DEFINE_TYPES
+
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short uint16;
+	typedef signed short int16;
+
+	#ifdef SYSTEM_USE_LONG_INT
+	typedef unsigned long uint32;
+	typedef signed long int32;
+	typedef unsigned long uint;
+	#else
+	typedef unsigned int uint32;
+	typedef signed int int32;
+	typedef unsigned int uint;
+	#endif
 #endif
 
 #endif // COMMON_SYS_H

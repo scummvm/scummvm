@@ -26,6 +26,13 @@
 #include "common/hash-str.h"
 #include "common/util.h"
 
+#include "common/memorypool.h"
+
+#if !defined(__SYMBIAN32__)
+#include <new>
+#endif
+
+
 namespace Common {
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
@@ -323,12 +330,12 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
-bool String::matchString(const char *pat) const {
-	return Common::matchString(c_str(), pat);
+bool String::matchString(const char *pat, bool pathMode) const {
+	return Common::matchString(c_str(), pat, pathMode);
 }
 
-bool String::matchString(const String &pat) const {
-	return Common::matchString(c_str(), pat.c_str());
+bool String::matchString(const String &pat, bool pathMode) const {
+	return Common::matchString(c_str(), pat.c_str(), pathMode);
 }
 
 void String::deleteLastChar() {
@@ -608,7 +615,7 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 	return result;
 }
 
-bool matchString(const char *str, const char *pat) {
+bool matchString(const char *str, const char *pat, bool pathMode) {
 	assert(str);
 	assert(pat);
 
@@ -616,6 +623,13 @@ bool matchString(const char *str, const char *pat) {
 	const char *q = 0;
 
 	for (;;) {
+		if (pathMode && *str == '/') {
+			p = 0;
+			q = 0;
+			if (*pat == '?')
+				return false;
+		}
+
 		switch (*pat) {
 		case '*':
 			// Record pattern / string possition for backtracking

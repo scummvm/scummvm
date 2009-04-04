@@ -53,9 +53,20 @@ extern const char *debug_descriptions[];
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
 extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
 
-void warning(const char *fmt, ...);
 void error(const char *fmt, ...);
+
+#ifdef DISABLE_TEXT_CONSOLE
+
+inline int printf(const char *s, ...) { return 0; }
+
+inline void warning(const char *s, ...) {}
+
+#else
+
+void warning(const char *fmt, ...);
 void debug(int level, const char *s, ...);
 void debug(const char *s, ...);
+
+#endif
 
 #endif

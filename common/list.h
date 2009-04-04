@@ -26,7 +26,7 @@
 #ifndef COMMON_LIST_H
 #define COMMON_LIST_H
 
-#include "common/sys.h"
+#include "common/list_intern.h"
 
 namespace Common {
 
@@ -34,100 +34,17 @@ namespace Common {
  * Simple double linked list, modeled after the list template of the standard
  * C++ library.
  */
-template<class t_T>
+template<typename t_T>
 class List {
 protected:
-#if defined (_WIN32_WCE) || defined (_MSC_VER)
-//FIXME evc4 and msvc7 doesn't like it as protected member
-public:
-#endif
-	struct NodeBase {
-		NodeBase *_prev;
-		NodeBase *_next;
-	};
-
-	template <class t_T2>
-	struct Node : public NodeBase {
-		t_T2 _data;
-
-		Node(const t_T2 &x) : _data(x) {}
-	};
-
-	template<class t_T2>
-	class Iterator {
-		template<class T> friend class Iterator;
-		friend class List<t_T>;
-		NodeBase *_node;
-
-#if !defined (__WINSCW__)
-		explicit Iterator(NodeBase *node) : _node(node) {}
-#else
-		Iterator(NodeBase *node) : _node(node) {}
-#endif
-
-	public:
-		Iterator() : _node(0) {}
-		template<class T>
-		Iterator(const Iterator<T> &c) : _node(c._node) {}
-
-		template<class T>
-		Iterator<t_T2> &operator=(const Iterator<T> &c) {
-			_node = c._node;
-			return *this;
-		}
-
-		// Prefix inc
-		Iterator<t_T2> &operator++() {
-			if (_node)
-				_node = _node->_next;
-			return *this;
-		}
-		// Postfix inc
-		Iterator<t_T2> operator++(int) {
-			Iterator tmp(_node);
-			++(*this);
-			return tmp;
-		}
-		// Prefix dec
-		Iterator<t_T2> &operator--() {
-			if (_node)
-				_node = _node->_prev;
-			return *this;
-		}
-		// Postfix dec
-		Iterator<t_T2> operator--(int) {
-			Iterator tmp(_node);
-			--(*this);
-			return tmp;
-		}
-		t_T2 &operator*() const {
-			assert(_node);
-#if (__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)
-			return static_cast<List<t_T>::Node<t_T2> *>(_node)->_data;
-#else
-			return static_cast<Node<t_T2> *>(_node)->_data;
-#endif
-		}
-		t_T2 *operator->() const {
-			return &(operator*());
-		}
-
-		template<class T>
-		bool operator==(const Iterator<T> &x) const {
-			return _node == x._node;
-		}
-
-		template<class T>
-		bool operator!=(const Iterator<T> &x) const {
-			return _node != x._node;
-		}
-	};
+	typedef ListInternal::NodeBase		NodeBase;
+	typedef ListInternal::Node<t_T>		Node;
 
 	NodeBase _anchor;
 
 public:
-	typedef Iterator<t_T>			iterator;
-	typedef Iterator<const t_T>	const_iterator;
+	typedef ListInternal::Iterator<t_T>		iterator;
+	typedef ListInternal::ConstIterator<t_T>	const_iterator;
 
 	typedef t_T value_type;
 
@@ -156,7 +73,7 @@ public:
 	}
 
 	void insert(iterator pos, const t_T &element) {
-		NodeBase *newNode = new Node<t_T>(element);
+		ListInternal::NodeBase *newNode = new Node(element);
 
 		newNode->_next = pos._node;
 		newNode->_prev = pos._node->_prev;
@@ -175,7 +92,7 @@ public:
 
 		NodeBase *next = pos._node->_next;
 		NodeBase *prev = pos._node->_prev;
-		Node<t_T> *node = static_cast<Node<t_T> *>(pos._node);
+		Node *node = static_cast<Node *>(pos._node);
 		prev->_next = next;
 		next->_prev = prev;
 		delete node;
@@ -187,7 +104,7 @@ public:
 
 		NodeBase *next = pos._node->_next;
 		NodeBase *prev = pos._node->_prev;
-		Node<t_T> *node = static_cast<Node<t_T> *>(pos._node);
+		Node *node = static_cast<Node *>(pos._node);
 		prev->_next = next;
 		next->_prev = prev;
 		delete node;
@@ -222,7 +139,7 @@ public:
 			const_iterator j;
 
 			for (i = begin(), j = list.begin();  (i != end()) && (j != list.end()) ; ++i, ++j) {
-				static_cast<Node<t_T> *>(i._node)->_data = static_cast<Node<t_T> *>(j._node)->_data;
+				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(j._node)->_data;
 			}
 
 			if (i == end())

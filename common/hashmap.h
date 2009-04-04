@@ -24,34 +24,6 @@
  */
 
 // The hash map (associative array) implementation in this file is
-// based on code by Andrew Y. Ng, 1996:
-
-/*
- * Copyright (c) 1998-2003 Massachusetts Institute of Technology.
- * This code was developed as part of the Haystack research project
- * (http://haystack.lcs.mit.edu/). Permission is hereby granted,
- * free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit
- * persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
-
-// The hash map (associative array) implementation in this file is
 // based on the PyDict implementation of CPython. The erase() method
 // is based on example code in the Wikipedia article on Hash tables.
 
@@ -290,8 +262,15 @@ public:
  * Base constructor, creates an empty hashmap.
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
-	_defaultVal() {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
+//
+// We have to skip _defaultVal() on PS2 to avoid gcc 3.2.2 ICE
+//
+#ifdef __PLAYSTATION2__
+	{
+#else
+	: _defaultVal() {
+#endif
 	_mask = HASHMAP_MIN_CAPACITY - 1;
 	_storage = new Node *[HASHMAP_MIN_CAPACITY];
 	assert(_storage != NULL);
@@ -459,6 +438,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 
 	if (_storage[ctr] == NULL) {
 		_storage[ctr] = allocNode(key);
+		assert(_storage[ctr] != NULL);
 		_size++;
 
 		// Keep the load factor below a certain threshold.
@@ -467,6 +447,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 			capacity = capacity < 500 ? (capacity * 4) : (capacity * 2);
 			expandStorage(capacity);
 			ctr = lookup(key);
+			assert(_storage[ctr] != NULL);
 		}
 	}
 

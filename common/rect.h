@@ -137,6 +137,17 @@ struct Rect {
 	}
 
 	/**
+	 * Check if the given rect is equal to this one.
+	 *
+	 * @param r The rectangle to check
+	 *
+	 * @return true if the given rect is equal, false otherwise
+	 */
+	bool equals(const Rect &r) const {
+		return (left == r.left) && (right == r.right) && (top == r.top) && (bottom == r.bottom);
+	}
+
+	/**
 	 * Check if given rectangle intersects with this rectangle
 	 *
 	 * @param r the rectangle to check

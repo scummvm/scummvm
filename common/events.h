@@ -27,6 +27,7 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/queue.h"
 #include "common/rect.h"
 #include "common/noncopyable.h"
 
@@ -42,6 +43,7 @@ namespace Common {
  *       indicates which button was pressed.
  */
 enum EventType {
+	EVENT_INVALID = 0,
 	/** A key was pressed, details in Event::kbd. */
 	EVENT_KEYDOWN = 1,
 	/** A key was released, details in Event::kbd. */
@@ -56,6 +58,8 @@ enum EventType {
 	EVENT_WHEELDOWN = 9,
 	EVENT_MBUTTONDOWN = 13,
 	EVENT_MBUTTONUP = 14,
+
+	EVENT_MAINMENU = 15,
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
@@ -116,8 +120,11 @@ struct Event {
 	 * screen area as defined by the most recent call to initSize().
 	 */
 	Common::Point mouse;
+
+	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
+class Keymapper;
 
 /**
  * The EventManager provides user input events to the client code.
@@ -134,12 +141,24 @@ public:
 		RBUTTON = 1 << 1
 	};
 
+
+	/**
+	 * Initialise the event manager.
+	 * @note	called after graphics system has been set up
+	 */
+	virtual void init() {}
+
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
 	 * @return true if an event was retrieved.
 	 */
 	virtual bool pollEvent(Common::Event &event) = 0;
+
+	/**
+	 * Pushes a "fake" event into the event queue
+	 */
+	virtual void pushEvent(const Common::Event &event) = 0;
 
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
@@ -172,6 +191,10 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
+
+protected:
+
+	Common::Queue<Common::Event> artificialEventQueue;
 };
 
 } // End of namespace Common

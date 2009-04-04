@@ -20,25 +20,73 @@
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifndef COMMON_NONCOPYABLE_H
-#define COMMON_NONCOPYABLE_H
+#ifndef COMMON_QUEUE_H
+#define COMMON_QUEUE_H
+
+#include "common/sys.h"
+#include "common/list.h"
 
 namespace Common {
 
 /**
- * Subclass of NonCopyable can not be copied due to the fact that
- * we made the copy constructor and assigment operator private.
+ * Variable size Queue class, implemented using our List class.
  */
-class NonCopyable {
+template<class T>
+class Queue {
 public:
-	NonCopyable() {}
+	typedef T value_type;
+
+public:
+	Queue<T>() : _impl() {}
+	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
+
+	Queue<T> &operator=(const Queue<T> &queue) {
+		_impl = queue._impl;
+		return *this;
+	}
+
+	bool empty() const {
+		return _impl.empty();
+	}
+
+	void clear() {
+		_impl.clear();
+	}
+
+	void push(const T &x) {
+		_impl.push_back(x);
+	}
+
+	T &front() {
+		return *_impl.begin();
+	}
+
+	const T &front() const {
+		return *_impl.begin();
+	}
+
+	T &back() {
+		return *_impl.reverse_begin();
+	}
+
+	const T &back() const {
+		return *_impl.reverse_begin();
+	}
+
+	T pop() {
+		T tmp = front();
+		_impl.pop_front();
+		return tmp;
+	}
+
+	int size() const {
+		return _impl.size();
+	}
+
 private:
-	// Prevent copying instances by accident
-	NonCopyable(const NonCopyable&);
-	NonCopyable& operator=(const NonCopyable&);
+	List<T>	_impl;
 };
 
 } // End of namespace Common

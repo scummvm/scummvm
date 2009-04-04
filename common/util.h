@@ -32,6 +32,13 @@
 #include <windows.h>
 #endif
 
+/**
+ * Check whether a given pointer is aligned correctly.
+ * Note that 'alignment' must be a power of two!
+ */
+#define IS_ALIGNED(value, alignment) \
+          ((((size_t)value) & ((alignment) - 1)) == 0)
+
 #ifdef MIN
 #undef MIN
 #endif
@@ -40,9 +47,9 @@
 #undef MAX
 #endif
 
-template<typename T> inline T ABS (T x)			{ return (x >= 0) ? x : -x; }
-template<typename T> inline T MIN (T a, T b)	{ return (a < b) ? a : b; }
-template<typename T> inline T MAX (T a, T b)	{ return (a > b) ? a : b; }
+template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
+template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
+template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 template<typename T> inline T CLIP (T v, T amin, T amax)
 		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
 
@@ -55,6 +62,9 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 // VS2005beta2 introduces new stuff in winnt.h
 #undef ARRAYSIZE
 #endif
+/**
+ * Macro which determines the number of entries in a fixed size array.
+ */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 #ifndef round
@@ -70,7 +80,19 @@ namespace Common {
  * @param len	the lenght of that data
  * @param bytesPerLine	number of bytes to print per line (default: 16)
  */
-extern void hexdump(const byte *data, int len, int bytesPerLine = 16);
+extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
+
+
+/**
+ * Take a 32 bit value and turn it into a four character string, where each of
+ * the four bytes is turned into one character. Most significant byte is printed
+ * first.
+ */
+String tag2string(uint32 tag);
+#define tag2str(x)	Common::tag2string(x).c_str()
+
+
+
 
 /**
  * Simple random number generator. Although it is definitely not suitable for
@@ -108,8 +130,6 @@ public:
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 };
-
-Common::String tag2string(uint32 tag);
 
 }	// End of namespace Common
 
