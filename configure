@@ -30,7 +30,7 @@ SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 
-# use environment vars if set
+# Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 
 # Backslashes into forward slashes:
@@ -54,27 +54,36 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 	unset ac_TEMP_PATH
 fi
 
-
-# default lib behaviour yes/no/auto
+#
+# Default settings
+#
+# Default lib behaviour yes/no/auto
 _vorbis=auto
 _tremor=auto
 _flac=auto
 _mad=auto
-
+# Default platform settings
+_backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
-
-# more defaults
-_backend=sdl
+# Default commands
 _ranlib=ranlib
+_strip=strip
 _ar="ar cru"
 _windres=windres
 _win32path="C:/residual"
 _aos4path="Games:Residual"
+_staticlibpath=/sw
 _sdlconfig=sdl-config
 _sdlpath="$PATH"
 _prefix=/usr/local
+# For cross compiling
+_host=""
+_host_cpu=""
+_host_vendor=""
+_host_os=""
+_host_alias=""
 
 _srcdir=`dirname $0`
 
@@ -82,31 +91,32 @@ _srcdir=`dirname $0`
 if type mktemp > /dev/null 2>&1 ; then
 	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
 else
-	TMPO=residual-conf
+	TMPO=./residual-conf
 fi
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
-
-# For cross compiling
-_host=""
-_host_cpu=""
-_host_vendor=""
-_host_os=""
 
 cc_check() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $TMPC -o $TMPO$EXEEXT $@" >> "$TMPLOG"
-	rm -f "$TMPO$EXEEXT"
+	echo "$CXX $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
+	rm -f "$TMPO$HOSTEXEEXT"
 	rm -rf "$TMPO.dSYM"
-	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
 }
 
-echocheck () {
+#
+# Function to provide echo -n for bourne shells that don't have it
+#
+echo_n() {
+	printf "$@"
+}
+
+echocheck() {
 	echo_n "Checking for $@... "
 }
 
@@ -155,37 +165,10 @@ add_to_config_mk_if_no() {
 }
 
 #
-# Check whether the given command is a working C++ compiler
-#
-test_compiler ()
-{
-cat <<EOF >tmp_cxx_compiler.cpp
-class Foo {
-	int a;
-};
-int main(int argc, char **argv)
-{
-	Foo *a = new Foo();
-	delete a;
-	return 0;
-}
-EOF
-
-if test -n "$_host"; then
-	# In cross-compiling mode, we cannot run the result
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -rf tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp tmp_cxx_compiler.dSYM
-else
-	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$EXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp tmp_cxx_compiler.dSYM
-fi
-}
-
-#
 # Determine sdl-config
 #
 # TODO: small bit of code to test sdl useability
-find_sdlconfig()
-{
-
+find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
@@ -218,57 +201,37 @@ find_sdlconfig()
 }
 
 #
-# Function to provide echo -n for bourne shells that don't have it
+# Determine extension used for executables
 #
-echo_n()
-{
-	printf "$@"
+get_system_exe_extension() {
+	case $1 in
+	mingw* | os2-emx*)
+		_exeext=".exe"
+		;;
+	arm-riscos)
+		_exeext=",ff8"
+		;;
+	gp2x-linux)
+		_exeext=".gp2x"
+		;;
+	dreamcast | wii | gamecube | psp)
+		_exeext=".elf"
+		;;
+	*)
+		_exeext=""
+		;;
+	esac
 }
 
 #
-# Determine a data type with the given length
+# Generic options functions
 #
-find_type_with_size ()
-{
-for datatype in int short char long 'long long' unknown; do
-cat <<EOF >tmp_find_type_with_size.cpp
-typedef $datatype ac__type_sizeof_;
-int main() {
-	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
-	test_array [0] = 0;
-	return 0;
-}
-EOF
-if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
-	break
-else
-	if test "$datatype" = "unknown"; then
-		echo "couldn't find data type with $1 bytes"
-		exit 1
-	fi
-	continue
-fi
-done
-rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
-echo $datatype
-}
 
-#
-# Determine a size of pointer type
-#
-find_pointer_size ()
-{
-cat <<EOF >tmp_find_pointer_size.cpp
-int main() {
-	void *p;
-	int v = (int)p;
-	return 0;
-}
-EOF
-$CXX $CXXFLAGS -c -o tmp_find_pointer_size$EXEEXT tmp_find_pointer_size.cpp 2>/dev/null
-status=$?
-rm -f tmp_find_pointer_size$EXEEXT tmp_find_pointer_size.cpp
-return $status
+# Show an error about an unknown option
+option_error() {
+	echo "error: unrecognised option: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
 }
 
 # Show the configure help line for an option
@@ -281,7 +244,6 @@ option_help() {
 #
 # Greet user
 #
-
 echo "Running Residual configure..."
 echo "Configure run on" `date` > $TMPLOG
 
@@ -302,7 +264,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, wii, psp, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing Residual [/usr/local]
@@ -314,6 +276,11 @@ Installation directories:
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
                          special targets: linupy for Yopy PDA
+                                          dreamcast for Sega Dreamcast
+                                          wii for Nintendo Wii
+                                          gamecube for Nintendo Gamecube
+                                          iphone for Apple iPhone
+                                          psp for PlayStation Portable
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
@@ -353,12 +320,6 @@ EOF
 done # for parm in ...
 
 DEBFLAGS="-g"
-
-option_error() {
-	echo "error: unrecognised option: $ac_option
-Try \`$0 --help' for more information." >&2
-	exit 1
-}
 
 for ac_option in $@; do
 	case "$ac_option" in
@@ -423,6 +384,9 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_sdlpath="$arg:$arg/bin"
 		;;
+	--with-staticlib-prefix=*)
+		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -455,6 +419,10 @@ done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
+guessed_host=`$_srcdir/config.guess`
+get_system_exe_extension $guessed_host
+NATIVEEXEEXT=$_exeext
+
 case $_host in
 linupy)
 	_host_os=linux
@@ -468,6 +436,11 @@ ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=ppc
 	;;
+gp2x)
+	_host_os=gp2x-linux
+	_host_cpu=arm
+	_host_alias=arm-open2x-linux
+	;;
 i586-mingw32msvc)
 	_host_os=mingw32msvc
 	_host_cpu=i586
@@ -475,36 +448,54 @@ i586-mingw32msvc)
 iphone)
 	_host_os=iphone
 	_host_cpu=arm
+	_host_alias=arm-apple-darwin9
+	;;
+neuros)
+	_host_os=linux
+	_host_cpu=arm
+	;;
+dreamcast)
+	_host_os=dreamcast
+	_host_cpu=sh
+	_host_alias=sh-elf
+	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
+	LDFLAGS="$LDFLAGS -ml -m4-single-only"
+	;;
+wii)
+	_host_os=wii
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+psp)
+	_host_os=psp
+	_host_cpu=mipsallegrexel
+	_host_alias=psp
+	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/engine/backend/platform/psp/psp.spec"
+	;;
+gamecube)
+	_host_os=gamecube
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
 	;;
 *)
-	if test -z "$_host"; then
-		guessed_host=`$_srcdir/config.guess`
-	else
+	if test -n "$_host"; then
 		guessed_host=`$_srcdir/config.sub $_host`
 	fi
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
-	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 	_host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 	;;
 esac
+
+if test -z "$_host_alias"; then
+	_host_alias="$_host_cpu-$_host_os"
+fi
 
 #
 # Determine extension used for executables
 #
-case $_host_os in
-mingw* | cygwin* | os2-emx*)
-	EXEEXT=".exe"
-	;;
-arm-riscos)
-	EXEEXT=",ff8"
-	;;
-gp2x-linux)
-	EXEEXT=".gp2x"
-	;;
-*)
-	EXEEXT=""
-	;;
-esac
+get_system_exe_extension $_host_os 
+HOSTEXEEXT=$_exeext
 
 #
 # Determine separator used for $PATH
@@ -519,23 +510,69 @@ os2-emx* )
 esac
 
 #
+# Platform specific sanity checks
+#
+case $_host_os in
+wii | gamecube)
+	if test -z "$DEVKITPRO"; then
+		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+psp)
+	if test -z "$PSPDEV"; then
+		echo "Please set PSPDEV in your environment. export PSPDEV=<path to psp toolchain>"
+		exit 1
+	fi
+	;;
+*)
+	;;
+esac
+
+#
 # Determine the C++ compiler
 #
 echo_n "Looking for C++ compiler... "
-if test -n "$_host"; then
-	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++ $_host-g++ $_host-c++"
+
+# Check whether the given command is a working C++ compiler
+test_compiler() {
+	cat <<EOF >tmp_cxx_compiler.cpp
+	class Foo { int a; };
+	int main(int argc, char **argv) {
+		Foo *a = new Foo(); delete a; return 0;
+	}
+EOF
+
+	if test -n "$_host"; then
+		# In cross-compiling mode, we cannot run the result
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+	else
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+	fi
+}
+
+# Prepare a list of candidates for the C++ compiler
+if test -n "$CXX" && test_compiler "$CXX"; then
+	# Use the compiler specified in CXX
+	echo $CXX
 else
-	compilers="$CXX g++ c++"
+	if test -n "$_host"; then
+		compilers="$_host_alias-g++ $_host_alias-c++ $_host-g++ $_host-c++"
+	else
+		compilers="g++ c++"
+	fi
+
+	# Iterate over all candidates, pick the first working one
+	CXX=
+	for compiler in $compilers; do
+		if test_compiler $compiler; then
+			CXX=$compiler
+			echo $CXX
+			break
+		fi
+	done
 fi
 
-CXX=
-for compiler in $compilers; do
-	if test_compiler $compiler; then
-	CXX=$compiler
-	echo $CXX
-	break
-	fi
-done
 if test -z "$CXX"; then
 	echo "none found!"
 	exit 1
@@ -543,21 +580,8 @@ fi
 
 #
 # Determine the compiler version
-
+#
 echocheck "compiler version"
-
-case $_host_os in
-	# On Solaris, use Unix-compliant tail
-	solaris*)
-		tail=/usr/xpg4/bin/tail
-		;;
-
-	# All other OSes: use the tail in PATH
-	*)
-		tail=tail
-		;;
-esac
-
 
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
@@ -601,28 +625,6 @@ if test "$cxx_verc_fail" = yes ; then
 fi
 
 #
-# Do CXXFLAGS now we know the compiler version
-#
-
-if test "$_cxx_major" -ge "3" ; then
-	case $_host_os in
-	mingw* | cygwin*)
-		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-		;;
-	*)
-		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-		;;
-	esac
-	add_line_to_config_mk 'HAVE_GCC3 = 1'
-fi;
-
-if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
-	CXXFLAGS="$CXXFLAGS -Wno-parentheses -Wno-empty-body"
-else
-	CXXFLAGS="$CXXFLAGS -Wconversion"
-fi;
-
-#
 # Check for endianness
 #
 echo_n "Checking endianness... "
@@ -645,13 +647,51 @@ echo $_endian;
 rm -f tmp_endianness_check.o tmp_endianness_check.cpp
 
 #
+# Determine a data type with the given length
+#
+find_type_with_size() {
+	for datatype in int short char long 'long long' unknown; do
+	cat <<EOF >tmp_find_type_with_size.cpp
+typedef $datatype ac__type_sizeof_;
+int main() {
+	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
+	test_array [0] = 0;
+	return 0;
+}
+EOF
+if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+	break
+else
+	if test "$datatype" = "unknown"; then
+		echo "couldn't find data type with $1 bytes"
+		exit 1
+	fi
+	continue
+fi
+done
+rm -f tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp
+echo $datatype
+}
+
+#
+# Determine a size of pointer type
+#
+find_pointer_size() {
+	cat <<EOF >tmp_find_pointer_size.cpp
+int main() {
+	void *p;
+	int v = (int)p;
+	return 0;
+}
+EOF
+	$CXX $CXXFLAGS -c -o tmp_find_pointer_size$HOSTEXEEXT tmp_find_pointer_size.cpp 2>/dev/null
+	status=$?
+	rm -f tmp_find_pointer_size$HOSTEXEEXT tmp_find_pointer_size.cpp
+	return $status
+}
+
+#
 # Determine data type sizes
-# TODO: proper error checking
-# TODO: Actually, we should check individually for both signed & unsigned
-# data types - there are systems on which the size of an unsigned int
-# differs from that of a signed int!
-# However, so far we haven't encountered one of those, so we can live with
-# the limited check for now.
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
@@ -693,7 +733,7 @@ fi
 #
 # Check whether we can use x86 asm routines
 #
-echo_n "Running on x86... "
+echo_n "Compiling for x86... "
 case $_host_cpu in
 	i386|i486|i586|i686|x86_64)
 		_have_x86=yes
@@ -749,11 +789,6 @@ case $_host_os in
 		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
-	cygwin*)
-		DEFINES="$DEFINES -mno-cygwin -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
-		LIBS="$LIBS -mno-cygwin -lmingw32 -lopengl32 -lglu32"
-		OBJS="$OBJS residualico.o"
-		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
@@ -762,7 +797,30 @@ case $_host_os in
 		;;
 	amigaos*)
 		DEFINES="$DEFINES -DMINIGL"
+		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 		LIBS="$LIBS -lGL -lGLU"
+		type_1_byte='char'
+		type_2_byte='short'
+		type_4_byte='long'
+		;;
+	dreamcast)
+		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
+		;;
+	wii)
+		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii"
+		;;
+	gamecube)
+		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
+		;;
+	psp)
+		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
 	# given this is a shell script assume some type of unix
 	*)
@@ -798,16 +856,35 @@ if test -n "$_host"; then
 		bfin*)
 			_need_memalign=yes
 			;;
+		*darwin*)
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
+			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			LDFLAGS="$LDFLAGS -static"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			_backend="gp2x"
+			;;
+		neuros)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_h "#define NEUROS"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend='null'
 			;;
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -816,8 +893,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
-			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-			LDFLAGS="$LDFLAGS -mcrt=newlib"
 			;;
 		m68k-atari-mint)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -833,7 +908,6 @@ if test -n "$_host"; then
 		*mingw32*)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=little
-			_have_x86=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
@@ -841,6 +915,7 @@ if test -n "$_host"; then
 			_windres=$_host-windres
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
+			_strip=$_host-strip
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -852,6 +927,67 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			_backend="iphone"
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
+			;;
+		dreamcast)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			CXXFLAGS="$CXXFLAGS -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend="dc"
+			_build_scalers="no"
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
+			;;
+		wii)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="wii"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
+			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "#define USE_WII_DI"
+			add_line_to_config_h "#define USE_WII_KBD"
+			;;
+		gamecube)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=big
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="wii"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
+			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			;;
+		psp)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_backend="psp"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -888,8 +1024,7 @@ else
 			cat > $TMPC << EOF
 #include <stdlib.h>
 #include <signal.h>
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
 	signal(SIGBUS, exit);
 	signal(SIGABRT, exit);
@@ -901,7 +1036,7 @@ int main(int argc, char **argv)
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO$EXEEXT && _need_memalign=no
+			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
@@ -934,7 +1069,7 @@ add_to_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
 cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
-cc_check $LDFLAGS $CXXFLAGS && LDFLAGS="$LDFLAGS"
+cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -967,7 +1102,7 @@ if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
 #include <tremor/ivorbiscodec.h>
-int main(void) { vorbis_packet_blocksize(0,0); return 0; }
+int main(void) { vorbis_info_init(0); return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
 	_tremor=yes
@@ -996,8 +1131,13 @@ if test "$_flac" = auto ; then
 #include <FLAC/format.h>
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-		-lFLAC -logg && _flac=yes
+	if test "$_vorbis" = yes ; then
+		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+			-lFLAC -logg && _flac=yes
+	else
+		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
+			-lFLAC && _flac=yes
+	fi
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
@@ -1021,7 +1161,7 @@ if test "$_mad" = auto ; then
 	_mad=no
 	cat > $TMPC << EOF
 #include <mad.h>
-int main(void) {return 0; }
+int main(void) { return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
@@ -1065,7 +1205,7 @@ echo "$_zlib"
 rm -rf $TMPC $TMPO$EXEEXT $TMPO.dSYM
 
 #
-# figure out installation directories
+# Figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
 test -z "$_mandir" && _mandir="$_prefix/share/man"
@@ -1084,7 +1224,6 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
-		MODULES="$MODULES engine/backend/platform/sdl"
 		;;
 	gp2x)
 		find_sdlconfig
@@ -1092,18 +1231,70 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		LDFLAGS="$LDFLAGS -static"
 		CXXFLAGS="$CXXFLAGS -march=armv4t"
-		MODULES="$MODULES backend/gp2x"
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework LayerKit -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
-		DEFINES="$DEFINES -DIPHONE_BACKEND"
-		MODULES="$MODULES backend/iphone"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		;;
+	dc)
+		INCLUDES="$INCLUDES "'-I$(srcdir)/engine/backend/platform/dc -isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		LIBS="$LIBS -lronin -lm"
+		;;
+	wii)
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		case $_host_os in
+		gamecube)
+			DEFINES="$DEFINES -DGAMECUBE"
+			LIBS="$LIBS -lfat -logc -ldb"
+			;;
+		*)
+			LIBS="$LIBS -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			;;
+		esac
+		;;
+	psp)
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
+		LIBS="$LIBS -lSDL"
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
 		;;
+esac
+MODULES="$MODULES backends/platform/$_backend"
+
+#
+# Do CXXFLAGS now we know the compiler version
+#
+if test "$_cxx_major" -ge "3" ; then
+	case $_host_os in
+	# newlib-based system include files suppress non-C89 function 
+	# declarations under __STRICT_ANSI__
+	mingw* | dreamcast | wii | gamecube | psp | amigaos*)
+		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+		;;
+	*)
+		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+		;;
+	esac
+	add_line_to_config_mk 'HAVE_GCC3 = 1'
+fi;
+
+if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	CXXFLAGS="$CXXFLAGS -Wno-empty-body"
+else
+	CXXFLAGS="$CXXFLAGS -Wconversion"
+fi;
+
+# Some platforms use certain GNU extensions in header files
+case $_host_os in
+wii | gamecube | psp)
+	;;
+*)
+	CXXFLAGS="$CXXFLAGS -pedantic"
+	;;
 esac
 
 echo
@@ -1147,15 +1338,17 @@ CXX := $CXX
 CXXFLAGS := $CXXFLAGS
 LIBS += $LIBS
 RANLIB := $_ranlib
+STRIP := $_strip
 AR := $_ar
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
+STATICLIBPATH=$_staticlibpath
 
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
-EXEEXT := $EXEEXT
+EXEEXT := $HOSTEXEEXT
 
 PREFIX := $_prefix
 BINDIR := $_bindir
@@ -1195,6 +1388,7 @@ vpath %.c \$(srcdir)
 vpath %.m \$(srcdir)
 vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
+vpath %.S \$(srcdir)
 include \$(srcdir)/Makefile
 EOF
 

@@ -24,8 +24,8 @@ CXXFLAGS:= -Wall $(CXXFLAGS)
 # Turn off some annoying and not-so-useful warnings
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wno-unused-parameter
 # Enable even more warnings...
-#CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wcast-align
-#CXXFLAGS+= -Wimplicit -Wundef -Wnon-virtual-dtor -Wwrite-strings
+#CXXFLAGS+= -Wpointer-arith -Wcast-qual -Wcast-align
+#CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor -Wwrite-strings
 
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 #CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
@@ -61,7 +61,7 @@ include $(srcdir)/Makefile.common
 config.h config.mk: $(srcdir)/configure
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
-	@sleep 2s
+	@sleep 2
 	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" \
 		$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else

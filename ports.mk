@@ -10,7 +10,7 @@
 #
 install: all
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "$(srcdir)/residual$(EXEEXT)" "$(DESTDIR)$(BINDIR)/residual$(EXEEXT)"
+	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
 	#$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
 	#$(INSTALL) -c -m 644 "$(srcdir)/dists/residual.6" "$(DESTDIR)$(MANDIR)/man6/residual.6"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
@@ -19,7 +19,7 @@ install: all
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO" "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINDIR)/residual$(EXEEXT)"
+	rm -f "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
 	#rm -f "$(DESTDIR)$(MANDIR)/man6/residual.6"
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/residual/"
@@ -56,34 +56,36 @@ iphonebundle: $(srcdir)/dists/iphone/Info.plist
 OSXOPT=/sw
 
 # Location of static libs for the iPhone
-ifeq ($(BACKEND), iphone)
-OSXOPT=/usr/local/arm-apple-darwin
-else
-# Static libaries, used for the residual-static and iphone targets
-OSX_STATIC_LIBS := `$(OSXOPT)/bin/sdl-config --static-libs`
+ifneq ($(BACKEND), iphone)
+# Static libaries, used for the scummvm-static and iphone targets
+OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
 endif
 
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
-		$(OSXOPT)/lib/libvorbisfile.a \
-		$(OSXOPT)/lib/libvorbis.a \
-		$(OSXOPT)/lib/libogg.a
+		$(STATICLIBPATH)/lib/libvorbisfile.a \
+		$(STATICLIBPATH)/lib/libvorbis.a \
+		$(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_TREMOR
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libvorbisidec.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libvorbisidec.a
 endif
 
 ifdef USE_FLAC
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libFLAC.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
 endif
 
 ifdef USE_MAD
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libmad.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
 endif
 
 ifdef USE_MPEG2
-OSX_STATIC_LIBS += $(OSXOPT)/lib/libmpeg2.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
+endif
+
+ifdef USE_ZLIB
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libz.a
 endif
 
 BUILD_DATE := `date +%y%m%d`
@@ -97,15 +99,13 @@ residual-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		-lSystemStubs \
-		-lz
-#		$(OSXOPT)/lib/libz.a
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o residual $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework CoreSurface \
-		-framework LayerKit -framework GraphicsServices -framework CoreFoundation \
+		-framework GraphicsServices -framework CoreFoundation -framework QuartzCore \
 		-framework Foundation -framework AudioToolbox -framework CoreAudio \
 		-lobjc -lz
 
@@ -139,9 +139,9 @@ residualico.o: $(srcdir)/icons/residual.ico
 	$(WINDRES) -I$(srcdir) $(srcdir)/dists/residual.rc residualico.o
 
 # Special target to create a win32 snapshot binary under Windows
-win32dist: residual$(EXEEXT)
+win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
-	strip residual.exe -o $(WIN32PATH)/residual$(EXEEXT)
+	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL $(WIN32PATH)/COPYING_GPL.txt
@@ -153,9 +153,9 @@ win32dist: residual$(EXEEXT)
 	u2d $(WIN32PATH)/*.txt
 
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
-crosswin32dist: residual$(EXEEXT)
+crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
-	i586-mingw32msvc-strip residual.exe -o ResidualWin32/residual$(EXEEXT)
+	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
@@ -175,10 +175,10 @@ crosswin32dist: residual$(EXEEXT)
 #
 
 # Special target to create an AmigaOS snapshot installation
-aos4dist: residual
+aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
-	strip -R.comment $< -o $(AOS4PATH)/$<_SVN
-	cp icons/residual.info $(AOS4PATH)/$<_SVN.info
+	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
+	cp icons/residual.info $(AOS4PATH)/$$(EXECUTABLE)_SVN.info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt

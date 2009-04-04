@@ -87,18 +87,44 @@ endif
 
 
 ######################################################################
-# Create the files that depend on the version
+# Get the current version information
 ######################################################################
 
-VERSION_FILES = \
-	$(srcdir)/dists/macosx/Info.plist
-#$(srcdir)/dists/iphone/Info.plist
-
-VERSION = $(shell cat "${srcdir}/engine/internal_version.h" | cut -d\" -f2)
+# AmigaOS4's grep has a problem with "./" in pathnames, so use cat.
+VERSION = $(shell cat "${srcdir}/engine/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
+######################################################################
+# Get Subversion's working copy information
+######################################################################
+
+ifeq ($(shell LANG=C svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
+SVNROOT := $(srcdir)
+ifeq ($(origin SVNREV), undefined)
+# Get the working copy base revision
+VER_SVNREV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
+endif
+else
+SVNROOT := https://residual.svn.sourceforge.net/svnroot/scummvm/residual/trunk/
+endif
+
+# Define the Subversion revision if available, either autodetected or
+# specified by the user
+ifneq ($(origin VER_SVNREV), undefined)
+CXXFLAGS+= -DRESIDUAL_SVN_REVISION=\"$(VER_SVNREV)\"
+endif
+
+
+######################################################################
+# Create the files that depend on the version
+######################################################################
+
+VERSION_FILES = \
+	$(srcdir)/dists/iphone/Info.plist \
+	$(srcdir)/dists/macosx/Info.plist
 
 $(VERSION_FILES): %: %.in
 	@echo "Creating $@"
@@ -116,7 +142,11 @@ $(VERSION_FILES): %: %.in
 ######################################################################
 
 ifeq ($(VER_EXTRA),svn)
+ifeq ($(origin VER_SVNREV), undefined)
 DISTVERSION = $(shell date '+%Y-%m-%d')
+else
+DISTVERSION = svn$(VER_SVNREV)
+endif
 else
 DISTVERSION = $(VERSION)
 endif
@@ -135,14 +165,20 @@ $(VERFILE): $(srcdir)/engine/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
+ifneq ($(origin VER_SVNREV), undefined)
+	@# Use the current SVN revision as a default for the snapshot sources
+	@svn cat $(SVNROOT)/engine/internal_version.h | sed -e \
+		"s/^#define RESIDUAL_SVN_REVISION$$/#define RESIDUAL_SVN_REVISION \"$(VER_SVNREV)\"/g" \
+		> $(VERFILE)
+endif
 
-$(DISTDIR)/$(DISTNAME).tar.gz: 
+$(DISTDIR)/$(DISTNAME).tar.gz: $(VERFILE)
 	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
 
-$(DISTDIR)/$(DISTNAME).tar.bz2: 
+$(DISTDIR)/$(DISTNAME).tar.bz2: $(VERFILE)
 	cd $(DISTDIR); tar jcf $(DISTNAME).tar.bz2 $(DISTNAME)
 
-$(DISTDIR)/$(DISTNAME).zip: 
+$(DISTDIR)/$(DISTNAME).zip: $(VERFILE)
 	cd $(DISTDIR); zip -qr9 $(DISTNAME).zip $(DISTNAME)
 
 dist-src: \
