@@ -743,7 +743,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	0f9d3317910ac7a9f449243118884ada	42070	de	Windows	-	-	-	George Kormendi
 	92e7727e67f5cd979d8a1070e4eb8cb3	-1	en	All	HE 98.5	Updated	-	cyx
 	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
-	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	-	-	Lightkey
+	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 
 	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
