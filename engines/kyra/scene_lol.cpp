@@ -1701,7 +1701,7 @@ void LoLEngine::drawSceneShapes() {
 
 		uint16 w = _wllWallFlags[s];
 
-		if (i == 16)
+		if (t == 16)
 			w |= 0x80;
 
 		drawBlockEffects(t, 0);
