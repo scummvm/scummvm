@@ -2124,7 +2124,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 }
 
 void LoLEngine::loadMapLegendData(int level) {
-	uint16 *legendData= (uint16*) _tempBuffer5120;
+	uint16 *legendData = (uint16 *)_tempBuffer5120;
 	for (int i = 0; i < 32; i++) {
 		legendData[i * 6] = 0xffff;
 		legendData[i * 6 + 5] = 0xffff;
@@ -2227,7 +2227,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		sx = mapGetStartPosX();
 		sy = mapGetStartPosY();
 
-		uint16 *legendData = (uint16*)_tempBuffer5120;
+		uint16 *legendData = (uint16 *)_tempBuffer5120;
 
 		for (int ii = 0; ii < 32; ii++)  {
 			uint16 *l = &legendData[ii * 6];
