@@ -1185,6 +1185,52 @@ int LoLEngine::olol_deleteLevelItem(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_objectLeavesLevel(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	int o = _levelBlockProperties[stackPos(0)].assignedObjects;
+	int res = 0;
+	int level = stackPos(2);
+	int block = stackPos(1);
+	int runScript = stackPos(4);
+	int includeMonsters = stackPos(3);
+	int includeItems = stackPos(5);
+
+	while (o) {
+		int l = o;
+		o = findObject(o)->nextAssignedObject;
+		if (l & 0x8000) {
+			if (!includeMonsters)
+				continue;
+
+			l &= 0x7fff;
+
+			MonsterInPlay *m = &_monsters[l];
+
+			setMonsterMode(m, 14);
+			checkSceneUpdateNeed(m->blockPropertyIndex);
+			placeMonster(m, 0, 0);
+
+			res = 1;
+
+		} else {
+			if (!(_itemsInPlay[l].shpCurFrame_flg & 0x4000) || !includeItems)
+				continue;
+
+			placeMoveLevelItem(l, level, block, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
+
+			if (!runScript || level != _currentLevel) {
+				res = 1;
+				continue;
+			}
+
+			runLevelScriptCustom(block, 0x80, -1, l, 0, 0);
+			res = 1;
+		}
+	}
+
+	return res;
+}
+
 int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueTalkText(%p) (%d)", (const void *)script, stackPos(0));
 	int track = stackPos(0);
@@ -1764,7 +1810,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x74
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_objectLeavesLevel);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 

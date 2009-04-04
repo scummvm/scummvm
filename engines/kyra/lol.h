@@ -630,6 +630,7 @@ private:
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_printMessage(EMCState *script);
 	int olol_deleteLevelItem(EMCState *script);
+	int olol_objectLeavesLevel(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
