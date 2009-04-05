@@ -8,25 +8,25 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
 #include "common/sys.h"
-
-#include "engine/backend/platform/driver.h"
 #include "engine/backend/timer/default/default-timer.h"
+#include "common/util.h"
+#include "engine/backend/platform/driver.h"
+
 
 struct TimerSlot {
 	Common::TimerManager::TimerProc callback;
@@ -93,8 +93,7 @@ void DefaultTimerManager::handler() {
 		_head->next = slot->next;
 
 		// Update the fire time and reinsert the TimerSlot into the priority
-		// queue. Has to be done before the timer callback is invoked, in case
-		// the callback wants to remove itself.
+		// queue.
 		assert(slot->interval > 0);
 		slot->nextFireTime += (slot->interval / 1000);
 		slot->nextFireTimeMicro += (slot->interval % 1000);

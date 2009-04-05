@@ -26,6 +26,8 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
+#include "common/archive.h"
+
 #include "engine/lab.h"
 
 #include <map>
@@ -96,7 +98,8 @@ class ResourceLoader {
 public:
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
-	Common::File *openNewStream(const char *filename) const;
+	Common::File *openNewStreamFile(const char *filename) const;
+	LuaFile *openNewStreamLua(const char *filename) const;
 	int fileLength(const char *filename) const;
 
 	bool exportResource(const char *filename);
@@ -121,6 +124,8 @@ private:
 
 	typedef std::map<std::string, Resource *> CacheType;
 	CacheType _cache;
+
+	Common::SearchSet _files;
 
 	// Shut up pointless g++ warning
 	friend class dummy;

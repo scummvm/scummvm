@@ -48,22 +48,18 @@ static void makeLower(std::string& s) {
 ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
-	const char *directory = g_registry->get("GrimDataDir", ".");
 	int lab_counter = 0;
-	FSList *fslist;
-	FilesystemNode *fsdir;
+	Lab *l;
+	Common::ArchiveMemberList files;
 
-	fslist = new FSList();
-	fsdir = new FilesystemNode(directory);
-	fsdir->lookupFile(*fslist, "*.lab", false, true, 0);
-	if (fslist->empty())
+	SearchMan.listMatchingMembers(files, "*.lab");
+
+	if (files.empty())
 		error("Cannot find game data - check configuration file");
 
-	Lab *l;
-
-	for (FSList::const_iterator findfile = fslist->begin(); findfile != fslist->end(); ++findfile) {
-		Common::String filename(findfile->getName());
-		l = new Lab(findfile->getPath().c_str());
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String filename = (*x)->getName();
+		l = new Lab(filename.c_str());
 		if (l->isOpen()) {
 			if (filename == "005.lab")
 				_labs.push_front(l);
@@ -78,10 +74,13 @@ ResourceLoader::ResourceLoader() {
 		}
 	}
 
-	fsdir->lookupFile(*fslist, "*.mus", false, true, 0);
-	for (FSList::const_iterator findfile = fslist->begin(); findfile != fslist->end(); ++findfile) {
-		Common::String filename(findfile->getName());
-		l = new Lab(findfile->getPath().c_str());
+	files.clear();
+
+	SearchMan.listMatchingMembers(files, "*.mus");
+
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String filename = (*x)->getName();
+		l = new Lab(filename.c_str());
 		if (l->isOpen()) {
 			_labs.push_back(l);
 			lab_counter++;
@@ -89,8 +88,6 @@ ResourceLoader::ResourceLoader() {
 			delete l;
 		}
 	}
-	delete fsdir;
-	delete fslist;
 }
 
 ResourceLoader::~ResourceLoader() {
@@ -118,13 +115,22 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 		return l->getFileBlock(filename);
 }
 
-Common::File *ResourceLoader::openNewStream(const char *filename) const {
+LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const {
 	const Lab *l = findFile(filename);
 
 	if (!l)
 		return NULL;
 	else
-		return l->openNewStream(filename);
+		return l->openNewStreamLua(filename);
+}
+
+Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
+	const Lab *l = findFile(filename);
+
+	if (!l)
+		return NULL;
+	else
+		return l->openNewStreamFile(filename);
 }
 
 int ResourceLoader::fileLength(const char *filename) const {

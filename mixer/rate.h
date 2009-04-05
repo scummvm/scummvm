@@ -1,4 +1,5 @@
 /* Residual - Virtual machine to run LucasArts' 3D adventure games
+ *
  * Copyright (C) 2003-2008 The ScummVM-Residual Team (www.scummvm.org)
  *
  * This program is free software; you can redistribute it and/or

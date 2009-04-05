@@ -23,9 +23,10 @@
  *
  */
 
-#ifndef AUDIOSTREAM_H
-#define AUDIOSTREAM_H
+#ifndef SOUND_AUDIOSTREAM_H
+#define SOUND_AUDIOSTREAM_H
 
+#include "common/util.h"
 #include "common/sys.h"
 
 
@@ -58,6 +59,9 @@ public:
 	/** Is this a stereo stream? */
 	virtual bool isStereo() const = 0;
 
+	/** Sample rate of the stream. */
+	virtual int getRate() const = 0;
+
 	/**
 	 * End of data reached? If this returns true, it means that at this
 	 * time there is no data available in the stream. However there may be
@@ -77,8 +81,32 @@ public:
 	 */
 	virtual bool endOfStream() const { return endOfData(); }
 
-	/** Sample rate of the stream. */
-	virtual int getRate() const = 0;
+	/**
+	 * Tries to load a file by trying all available formats.
+	 * In case of an error, the file handle will be closed, but deleting
+	 * it is still the responsibilty of the caller.
+	 * @param basename	a filename without an extension
+	 * @param startTime	the (optional) time offset in milliseconds from which to start playback
+	 * @param duration	the (optional) time in milliseconds specifying how long to play
+	 * @param numLoops	how often the data shall be looped (0 = infinite)
+	 * @return	an Audiostream ready to use in case of success;
+	 *			NULL in case of an error (e.g. invalid/nonexisting file)
+	 */
+	static AudioStream* openStreamFile(const Common::String &basename, uint32 startTime = 0, uint32 duration = 0, uint numLoops = 1);
+
+	enum {
+		kUnknownPlayTime = -1
+	};
+
+	/**
+	 * Returns total playtime of the AudioStream object.
+	 * Note that this does not require to return an playtime, if the
+	 * playtime of the AudioStream is unknown it returns 'kUnknownPlayTime'.
+	 * @see kUnknownPlayTime
+	 *
+	 * @return	playtime in milliseconds
+	 */
+	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
 /**

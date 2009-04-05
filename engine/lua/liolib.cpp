@@ -15,6 +15,7 @@
 
 #include "engine/resource.h"
 #include "engine/cmd_line.h"
+#include "engine/engine.h"
 #include "engine/savegame.h"
 #include "engine/backend/platform/driver.h"
 
@@ -34,55 +35,67 @@
 #define FINPUT		"_INPUT"
 #define FOUTPUT		"_OUTPUT"
 
-Common::File *g_fin;
-Common::File *g_fout;
-Common::File *g_stdin;
-Common::File *g_stdout;
-Common::File *g_stderr;
+LuaFile *g_fin;
+LuaFile *g_fout;
+LuaFile *g_stdin;
+LuaFile *g_stdout;
+LuaFile *g_stderr;
 
-
-extern Common::SaveFileManager *g_saveFileMan;
-
-static void checkPath(const Common::String &path) {
-	FilesystemNode node(path);
-	if (node.exists() && node.isDirectory())
-		return;
-#if defined(UNIX) || defined(__SYMBIAN32__)
-	if (mkdir(path.c_str(), 0755) == 0)
-		return;
-#elif defined(_WIN32)
-	if (_mkdir(path.c_str()) == 0)
-		return;
-#endif
-	warning("Can't creating missing director for save path: %s", path.c_str());
+LuaFile::LuaFile() : _in(NULL), _out(NULL), _file(NULL), _stdin(false), _stdout(false), _stderr(false) {
 }
 
-static void join_paths(const char *filename, const char *directory,
-								 char *buf, int bufsize) {
-	buf[bufsize - 1] = '\0';
-	strncpy(buf, directory, bufsize - 1);
-
-#ifdef WIN32
-	// Fix for Win98 issue related with game directory pointing to root drive ex. "c:\"
-	if ((buf[0] != 0) && (buf[1] == ':') && (buf[2] == '\\') && (buf[3] == 0)) {
-		buf[2] = 0;
-	}
-#endif
-
-	const int dirLen = strlen(buf);
-
-	if (dirLen > 0) {
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-		if (buf[dirLen - 1] != ':' && buf[dirLen - 1] != '/')
-#endif
-
-#if !defined(__GP32__)
-		strncat(buf, "/", bufsize - 1);	// prevent double /
-#endif
-	}
-	strncat(buf, filename, bufsize - 1);
+LuaFile::~LuaFile() {
+	close();
 }
 
+void LuaFile::close() {
+	delete _in;
+	delete _out;
+	delete _file;
+	_in = NULL;
+	_out = NULL;
+	_file = NULL;
+	_stdin = _stdout = _stderr = false;
+}
+
+bool LuaFile::isOpen() const {
+	return _in || _out || _stdin || stdout || stderr;
+}
+
+uint32 LuaFile::read(void *buf, uint32 len) {
+	if (_stdin) {
+		return fread(buf, len, 1, stdin);
+	} else if (_in) {
+		return _in->read(buf, len);
+	} else if (_file) {
+		return _file->read(buf, len);
+	} else
+		assert(0);
+	return 0;
+}
+
+uint32 LuaFile::write(const char *buf, uint32 len) {
+	if (_stdout) {
+		return fwrite(buf, len, 1, stdout);
+	} else if (_stderr) {
+		return fwrite(buf, len, 1, stderr);
+	} else if (_out) {
+		return _out->write(buf, len);
+	} else
+		assert(0);
+	return 0;
+}
+
+void LuaFile::seek(int32 pos, int whence) {
+	if (_stdin) {
+		fseek(stdin, pos, whence);
+	} else if (_in) {
+		_in->seek(pos, whence);
+	} else if (_file) {
+		_file->seek(pos, whence);
+	} else
+		assert(0);
+}
 
 static int32 gettag(int32 i) {
 	return (int32)lua_getnumber(lua_getparam(i));
@@ -106,35 +119,35 @@ static int32 ishandler(lua_Object f) {
 	else return 0;
 }
 
-static Common::File *getfile(const char *name) {
+static LuaFile *getfile(const char *name) {
 	lua_Object f = lua_getglobal(name);
 	if (!ishandler(f))
 		luaL_verror("global variable `%.50s' is not a file handle", name);
-	return (Common::File *)lua_getuserdata(f);
+	return (LuaFile *)lua_getuserdata(f);
 }
 
-static Common::File *getfileparam(const char *name, int32 *arg) {
+static LuaFile *getfileparam(const char *name, int32 *arg) {
 	lua_Object f = lua_getparam(*arg);
 	if (ishandler(f)) {
 		(*arg)++;
-		return (Common::File *)lua_getuserdata(f);
+		return (LuaFile *)lua_getuserdata(f);
 	} else
 		return getfile(name);
 }
 
 static void closefile(const char *name) {
-	Common::File *f = getfile(name);
+	LuaFile *f = getfile(name);
 	f->close();
 	lua_pushobject(lua_getglobal(name));
 	lua_settag(gettag(CLOSEDTAG));
 }
 
-static void setfile(Common::File *f, const char *name, int32 tag) {
+static void setfile(LuaFile *f, const char *name, int32 tag) {
 	lua_pushusertag(f, tag);
 	lua_setglobal(name);
 }
 
-static void setreturn(Common::File *f, const char *name) {
+static void setreturn(LuaFile *f, const char *name) {
 	int32 tag = gettag(IOTAG);
 	setfile(f, name, tag);
 	lua_pushusertag(f, tag);
@@ -146,7 +159,7 @@ static void io_readfrom() {
 		closefile(FINPUT);
 		setreturn(g_fin, FINPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		Common::File *current = (Common::File *)lua_getuserdata(f);
+		LuaFile *current = (LuaFile *)lua_getuserdata(f);
 		if (!current) {
 			pushresult(0);
 			return;
@@ -154,22 +167,18 @@ static void io_readfrom() {
 		setreturn(current, FINPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
-		Common::File *current = new Common::File();
-		Common::String dir = ConfMan.get("savepath");
-#ifdef _WIN32_WCE
-		if (dir.empty())
-			dir = ConfMan.get("path");
-#endif
-		checkPath(dir);
-		char buf[256];
-		join_paths(s, dir.c_str(), buf, sizeof(buf));
-		if (current->exists(buf))
-			current->open(buf);
-		if (!current->isOpen()) {
-			delete current;
-			current = g_resourceloader->openNewStream(s);
+		LuaFile *current;
+		Common::SeekableReadStream *inFile = NULL;
+		Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+		inFile = saveFileMan->openForLoading(s);
+		if (!inFile)
+			current = g_resourceloader->openNewStreamLua(s);
+		else {
+			current = new LuaFile();
+			current->_in = inFile;
 		}
 		if (!current) {
+			delete current;
 			pushresult(0);
 			return;
 		}
@@ -183,7 +192,7 @@ static void io_writeto() {
 		closefile(FOUTPUT);
 		setreturn(g_fout, FOUTPUT);
 	} else if (lua_tag(f) == gettag(IOTAG)) {
-		Common::File *current = (Common::File *)lua_getuserdata(f);
+		LuaFile *current = (LuaFile *)lua_getuserdata(f);
 		if (!current->isOpen()) {
 			pushresult(0);
 			return;
@@ -191,66 +200,56 @@ static void io_writeto() {
 		setreturn(current, FOUTPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
-		Common::File *current = new Common::File();
-		Common::String dir = ConfMan.get("savepath");
-#ifdef _WIN32_WCE
-		if (dir.empty())
-			dir = ConfMan.get("path");
-#endif
-		checkPath(dir);
-		char buf[256];
-		join_paths(s, dir.c_str(), buf, sizeof(buf));
-		current->open(buf, Common::File::kFileWriteMode);
-		if (!current->isOpen()) {
-			delete current;
+		LuaFile *current;
+		Common::WriteStream *outFile = NULL;
+		Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+		outFile = saveFileMan->openForSaving(s);
+		if (!outFile) {
 			pushresult(0);
 			return;
 		}
+		current = new LuaFile();
+		current->_out = outFile;
 		setreturn(current, FOUTPUT);
 	}
 }
 
 static void io_appendto() {
 	const char *s = luaL_check_string(FIRSTARG);
-	Common::File file;
-	Common::String dir = ConfMan.get("savepath");
-#ifdef _WIN32_WCE
-	if (dir.empty())
-		dir = ConfMan.get("path");
-#endif
-	checkPath(dir);
-	char path[256];
-	join_paths(s, dir.c_str(), path, sizeof(path));
-	file.open(path);
-	if (!file.isOpen()) {
+	Common::SeekableReadStream *inFile = NULL;
+	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	inFile = saveFileMan->openForLoading(s);
+	if (!inFile) {
 		pushresult(0);
 		return;
 	}
-	int size = file.size();
+	int size = inFile->size();
 	byte *buf = new byte[size];
-	file.read(buf, size);
-	file.close();
+	inFile->read(buf, size);
+	delete inFile;
 
-	Common::File *fp = new Common::File();
-	fp->open(path, Common::File::kFileWriteMode);
-	if (fp->isOpen()) {
-		fp->write(buf, size);
-		setreturn(fp, FOUTPUT);
-	} else {
-		delete fp;
+	Common::WriteStream *outFile = NULL;
+	outFile = saveFileMan->openForSaving(s);
+	if (!outFile)
 		pushresult(0);
+	else {
+		outFile->write(buf, size);
+		LuaFile *current = new LuaFile();
+		current->_out = outFile;
+		setreturn(current, FOUTPUT);
 	}
 	delete[] buf;
 }
 
 #define NEED_OTHER (EOF - 1)  // just some flag different from EOF
 
-static void read_until(Common::File *f, int32 lim) {
+static void read_until(LuaFile *f, int32 lim) {
 	int32 l = 0;
 	int8 c;
 
 	if (f->read(&c, 1) == 0)
 		c = EOF;
+
 	for (; c != EOF && c != lim; ) {
 		luaL_addchar(c);
 		l++;
@@ -263,7 +262,7 @@ static void read_until(Common::File *f, int32 lim) {
 
 static void io_read() {
 	int32 arg = FIRSTARG;
-	Common::File *f = (Common::File *)getfileparam(FINPUT, &arg);
+	LuaFile *f = (LuaFile *)getfileparam(FINPUT, &arg);
 	const char *p = luaL_opt_string(arg, NULL);
 	luaL_resetbuffer();
 	if (!p)  // default: read a line
@@ -325,7 +324,7 @@ static void io_read() {
 			}
 		}
 break_while:
-		if (c >= 0)  // not EOF nor NEED_OTHER?
+		if (c >= 0) // not EOF nor NEED_OTHER?
 			f->seek(-1, SEEK_CUR);
 		if (l > 0 || *p == 0)  // read something or did not fail?
 			lua_pushlstring(luaL_buffer(), l);
@@ -334,7 +333,7 @@ break_while:
 
 static void io_write() {
 	int32 arg = FIRSTARG;
-	Common::File *f = (Common::File *)getfileparam(FOUTPUT, &arg);
+	LuaFile *f = (LuaFile *)getfileparam(FOUTPUT, &arg);
 	int32 status = 1;
 	const char *s;
 	int32 l;
@@ -435,36 +434,25 @@ static void openwithtags() {
 		lua_setglobal(iolibtag[i].name);
 	}
 
-	g_fin = new Common::File();
-	g_fin->open("(stdin)");
-	if (!g_fin->isOpen())
-		delete g_fin;
-	else
-		setfile(g_fin, FINPUT, iotag);
-	g_fout = new Common::File();
-	g_fout->open("(stdout)", Common::File::kFileWriteMode);
-	if (!g_fout->isOpen())
-		delete g_fout;
-	else
-		setfile(g_fout, FOUTPUT, iotag);
-	g_stdin = new Common::File();
-	g_stdin->open("(stdin)");
-	if (!g_stdin->isOpen())
-		delete g_stdin;
-	else
-		setfile(g_stdin, "_STDIN", iotag);
-	g_stdout = new Common::File();
-	g_stdout->open("(stdout)", Common::File::kFileWriteMode);
-	if (!g_stdout->isOpen())
-		delete g_stdout;
-	else
-		setfile(g_stdout, "_STDOUT", iotag);
-	g_stderr = new Common::File();
-	g_stderr->open("(stderr)", Common::File::kFileWriteMode);
-	if (!g_stderr->isOpen())
-		delete g_stderr;
-	else
-		setfile(g_stderr, "_STDERR", iotag);
+	g_fin = new LuaFile();
+	g_fin->_stdin = true;
+	setfile(g_fin, FINPUT, iotag);
+
+	g_fout = new LuaFile();
+	g_fout->_stdout = true;
+	setfile(g_fout, FOUTPUT, iotag);
+
+	g_stdin = new LuaFile();
+	g_stdin->_stdin = true;
+	setfile(g_stdin, "_STDIN", iotag);
+
+	g_stdout = new LuaFile();
+	g_stdout->_stdout = true;
+	setfile(g_stdout, "_STDOUT", iotag);
+
+	g_stderr = new LuaFile();
+	g_stderr->_stderr = true;
+	setfile(g_stderr, "_STDERR", iotag);
 }
 
 void lua_iolibopen() {

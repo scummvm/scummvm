@@ -64,9 +64,8 @@
 
 extern Imuse *g_imuse;
 
-extern FilesystemNode *g_fsdir;
-extern FSList *g_fslist;
-extern FSList::const_iterator g_findfile;
+Common::StringList g_listfiles;
+Common::StringList::const_iterator g_filesiter;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 #define DEBUG_FUNCTION()		debugFunction("Function", __FUNCTION__)
@@ -1527,20 +1526,21 @@ static void TextFileGetLine() {
 	char textBuf[512];
 	textBuf[0] = 0;
 	const char *filename;
-	Common::File file;
+	Common::SeekableReadStream *file;
 	
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	file.open(filename);
-	if (!file.isOpen()) {
+	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	file = saveFileMan->openForLoading(filename);
+	if (!file) {
 		lua_pushnil();
 		return;
 	}
 
 	int pos = check_int(2);
-	file.seek(pos, SEEK_SET);
-	file.readLine(textBuf, 512);
-	file.close();
+	file->seek(pos, SEEK_SET);
+	file->readLine_NEW(textBuf, 512);
+	delete file;
 
 	lua_pushstring(textBuf);
 }
@@ -1548,12 +1548,13 @@ static void TextFileGetLine() {
 static void TextFileGetLineCount() {
 	char textBuf[512];
 	const char *filename;
-	Common::File file;
-	
+	Common::SeekableReadStream *file;
+
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	file.open(filename);
-	if (!file.isOpen()) {
+	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	file = saveFileMan->openForLoading(filename);
+	if (!file) {
 		lua_pushnil();
 		return;
 	}
@@ -1562,17 +1563,17 @@ static void TextFileGetLineCount() {
 
 	int line = 0;
 	for (;;) {
-		if (file.eof())
+		if (file->eos())
 			break;
 		lua_pushobject(result);
 		lua_pushnumber(line);
-		int pos = file.pos();
+		int pos = file->pos();
 		lua_pushnumber(pos);
 		lua_settable();
-		file.readLine(textBuf, 512);
+		file->readLine_NEW(textBuf, 512);
 		line++;
 	}
-	file.close();
+	delete file;
 
 	lua_pushobject(result);
 	lua_pushstring("count");
@@ -2103,7 +2104,7 @@ static void RestoreIMuse() {
 	g_imuse->resetState();
 	g_imuse->restoreState(savedIMuse);
 	delete savedIMuse;
-	g_saveFileMan->removeSavefile("grim.tmp");
+	g_driver->getSavefileManager()->removeSavefile("grim.tmp");
 }
 
 static void SetSoundPosition() {
@@ -2152,44 +2153,35 @@ static void PlaySoundAt() {
 static void FileFindDispose() {
 	DEBUG_FUNCTION();
 
-	delete g_fslist;
-	g_fslist = NULL;
-
-	delete g_fsdir;
-	g_fsdir = NULL;
+	if (g_filesiter)
+		g_filesiter->begin();
+	g_listfiles.clear();
 }
 
 static void luaFileFindNext() {
-	if (g_findfile != g_fslist->end()) {
-		lua_pushstring(g_findfile->getName().c_str());
-		g_findfile++;
-	} else {
+	if (g_filesiter == g_listfiles.end()) {
 		lua_pushnil();
 		FileFindDispose();
+	} else {
+		lua_pushstring(g_filesiter->c_str());
+		g_filesiter++;
 	}
 }
 
 static void luaFileFindFirst() {
-	const char *path, *extension;
+	const char *extension;
 
 	DEBUG_FUNCTION();
 	extension = luaL_check_string(1);
-	lua_getparam(2); // overrinding below devel external gama data path to savepath
+	lua_getparam(2);
 	FileFindDispose();
 
-	path = ConfMan.get("savepath").c_str();
-#ifdef _WIN32_WCE
-	if (path.empty())
-		path = ConfMan.get("path").c_str();
-#endif
+	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	g_listfiles = saveFileMan->listSavefiles(extension);
+	g_filesiter = g_listfiles.begin();
 
-	g_fslist = new FSList();
-	g_fsdir = new FilesystemNode(path);
-	g_fsdir->lookupFile(*g_fslist, extension, false, true, 0);
-	if (g_fslist->empty())
+	if (g_filesiter == g_listfiles.end())
 		lua_pushnil();
-
-	g_findfile = g_fslist->begin();
 
 	luaFileFindNext();
 }
@@ -2346,7 +2338,8 @@ static void CleanBuffer() {
  
 static void Exit() {
 	DEBUG_FUNCTION();
-	g_driver->quit();
+
+	exit(0);
 }
 
 /* Check for an existing object by a certain name
@@ -3078,11 +3071,11 @@ static void Save() {
 }
 
 static void lua_remove() {
-	if (g_saveFileMan->removeSavefile(luaL_check_string(1)))
+	if (g_driver->getSavefileManager()->removeSavefile(luaL_check_string(1)))
 		lua_pushuserdata(NULL);
 	else {
 		lua_pushnil();
-		lua_pushstring(g_saveFileMan->getErrorDesc().c_str());
+		lua_pushstring(g_driver->getSavefileManager()->getErrorDesc().c_str());
 	}
 }
 

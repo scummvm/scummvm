@@ -28,8 +28,7 @@
 #include "common/endian.h"
 
 #include "engine/savegame.h"
-
-Common::SaveFileManager *g_saveFileMan;
+#include "engine/backend/platform/driver.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
@@ -39,7 +38,7 @@ Common::SaveFileManager *g_saveFileMan;
 SaveGame::SaveGame(const char *filename, bool saving) :
 		_saving(saving), _currentSection(0) {
 	if (_saving) {
-		_outSaveFile = g_saveFileMan->openForSaving(filename);
+		_outSaveFile = g_driver->getSavefileManager()->openForSaving(filename);
 		if (!_outSaveFile) {
 			warning("SaveGame::SaveGame() Error creating savegame file");
 			return;
@@ -49,7 +48,7 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 	} else {
 		uint32 tag, version;
 
-		_inSaveFile = g_saveFileMan->openForLoading(filename);
+		_inSaveFile = g_driver->getSavefileManager()->openForLoading(filename);
 		if (!_inSaveFile) {
 			warning("SaveGame::SaveGame() Error opening savegame file");
 			return;
@@ -66,10 +65,11 @@ SaveGame::~SaveGame() {
 		_outSaveFile->writeUint32BE(SAVEGAME_FOOTERTAG);
 		_outSaveFile->finalize();
 		if (_outSaveFile->ioFailed())
-			warning("SaveGame::~SaveGame()Can't write file. (Disk full?)");
+			warning("SaveGame::~SaveGame() Can't write file. (Disk full?)");
 		delete _outSaveFile;
-	} else
+	} else {
 		delete _inSaveFile;
+	}
 }
 
 uint32 SaveGame::beginSection(uint32 sectionTag) {

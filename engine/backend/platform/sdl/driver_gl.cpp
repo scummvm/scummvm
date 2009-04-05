@@ -31,8 +31,18 @@
 
 #include "engine/backend/platform/sdl/driver_gl.h"
 
-// Constructor. Should create the driver and open screens, etc.
-DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
+DriverGL::DriverGL() {
+	_storedDisplay = NULL;
+	_emergFont = NULL;
+}
+
+DriverGL::~DriverGL() {
+	delete[] _storedDisplay;
+	if (_emergFont && glIsList(_emergFont))
+		glDeleteLists(_emergFont, 128);
+}
+
+void DriverGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	char GLDriver[1024];
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -46,11 +56,11 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	uint32 flags = SDL_OPENGL;
 	if (fullscreen)
 		flags |= SDL_FULLSCREEN;
-	if (SDL_SetVideoMode(screenW, screenH, screenBPP, flags) == 0)
+	if (SDL_SetVideoMode(screenW, screenH, 24, flags) == 0)
 		error("Could not initialize video");
 	_screenWidth = screenW;
 	_screenHeight = screenH;
-	_screenBPP = screenBPP;
+	_screenBPP = 24;
 	_isFullscreen = fullscreen;
 	int flag;
 	SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &flag);
@@ -84,12 +94,6 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	glPolygonOffset(-6.0, -6.0);
-}
-
-DriverGL::~DriverGL() {
-	delete[] _storedDisplay;
-	if (glIsList(_emergFont))
-		glDeleteLists(_emergFont, 128);
 }
 
 void DriverGL::toggleFullscreenMode() {

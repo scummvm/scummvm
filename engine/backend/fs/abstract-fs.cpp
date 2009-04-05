@@ -22,21 +22,19 @@
  * $Id$
  */
 
-#if defined(UNIX)
-#include "engine/backend/fs/posix/posix-fs-factory.h"
-#include "engine/backend/fs/posix/posix-fs.cpp"
+#include "engine/backend/fs/abstract-fs.h"
 
-AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
-	return new POSIXFilesystemNode("/");
-}
+const char *AbstractFSNode::lastPathComponent(const Common::String &str, const char sep) {
+	// TODO: Get rid of this eventually! Use Common::lastPathComponent instead
+	if(str.empty())
+		return "";
 
-AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	char buf[MAXPATHLEN];
-	return getcwd(buf, MAXPATHLEN) ? new POSIXFilesystemNode(buf) : NULL;
-}
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
 
-AbstractFSNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	assert(!path.empty());
-	return new POSIXFilesystemNode(path);
+	while (cur >= start && *cur != sep) {
+		--cur;
+	}
+
+	return cur + 1;
 }
-#endif

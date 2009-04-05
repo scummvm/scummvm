@@ -398,7 +398,7 @@ bool zlibFile::open(const char *filename) {
 	if (!filename || *filename == 0)
 		return false;
 
-	_handle = g_resourceloader->openNewStream(filename);
+	_handle = g_resourceloader->openNewStreamFile(filename);
 	if (!_handle->isOpen()) {
 		if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("zlibFile::open() zlibFile %s not found", filename);

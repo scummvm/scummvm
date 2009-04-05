@@ -22,21 +22,31 @@
  * $Id$
  */
 
+#if !defined(BACKEND_POSIX_SAVES_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+#define BACKEND_POSIX_SAVES_H
+
+#include "engine/backend/saves/default/default-saves.h"
+
 #if defined(UNIX)
-#include "engine/backend/fs/posix/posix-fs-factory.h"
-#include "engine/backend/fs/posix/posix-fs.cpp"
+/**
+ * Customization of the DefaultSaveFileManager for POSIX platforms.
+ * The only two differences are that the default constructor sets
+ * up the savepath based on HOME, and that checkPath tries to
+ * create the savedir, if missing, via the mkdir() syscall.
+ */
+class POSIXSaveFileManager : public DefaultSaveFileManager {
+public:
+	POSIXSaveFileManager();
+//	POSIXSaveFileManager(const Common::String &defaultSavepath);
 
-AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
-	return new POSIXFilesystemNode("/");
-}
+protected:
+	/**
+	 * Checks the given path for read access, existence, etc.
+	 * In addition, tries to create a missing savedir, if possible.
+	 * Sets the internal error and error message accordingly.
+	 */
+	virtual void checkPath(const Common::FSNode &dir);
+};
+#endif
 
-AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	char buf[MAXPATHLEN];
-	return getcwd(buf, MAXPATHLEN) ? new POSIXFilesystemNode(buf) : NULL;
-}
-
-AbstractFSNode *POSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
-	assert(!path.empty());
-	return new POSIXFilesystemNode(path);
-}
 #endif

@@ -218,9 +218,7 @@ extern Imuse *g_imuse;
 int g_imuseState = -1;
 int g_flags = 0;
 
-FilesystemNode *g_fsdir;
-FSList *g_fslist;
-FSList::const_iterator g_findfile;
+extern Common::StringList::const_iterator g_filesiter;
 
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
@@ -249,8 +247,7 @@ Engine::Engine() :
 	sprintf(buf, "%d", 1000 / _speedLimitMs);
 	g_registry->set("engine_speed", buf);
 	_refreshDrawNeeded = true;
-	g_fslist = NULL;
-	g_fsdir = NULL;
+	g_filesiter = NULL;
 	_savedState = NULL;
 	_fps[0] = 0;
 
@@ -603,7 +600,7 @@ void Engine::mainLoop() {
 
 		// Process events
 		Common::Event event;
-		while (g_driver->pollEvent(event)) {
+		while (g_driver->getEventManager()->pollEvent(event)) {
 			// Handle any button operations
 			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
 				handleButton(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);

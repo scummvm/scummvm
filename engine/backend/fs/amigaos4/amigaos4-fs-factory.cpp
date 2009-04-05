@@ -26,17 +26,15 @@
 #include "engine/backend/fs/amigaos4/amigaos4-fs-factory.h"
 #include "engine/backend/fs/amigaos4/amigaos4-fs.cpp"
 
-DECLARE_SINGLETON(AmigaOSFilesystemFactory);
-
-AbstractFilesystemNode *AmigaOSFilesystemFactory::makeRootFileNode() const {
+AbstractFSNode *AmigaOSFilesystemFactory::makeRootFileNode() const {
 	return new AmigaOSFilesystemNode();
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemFactory::makeCurrentDirectoryFileNode() const {
+AbstractFSNode *AmigaOSFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	return new AmigaOSFilesystemNode();
 }
 
-AbstractFilesystemNode *AmigaOSFilesystemFactory::makeFileNodePath(const String &path) const {
+AbstractFSNode *AmigaOSFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new AmigaOSFilesystemNode(path);
 }
 #endif

@@ -37,16 +37,13 @@ Localizer *g_localizer = NULL;
 
 Localizer::Localizer() {
 	Common::File f;
-	const char *namesToTry[] = { "/GRIM.TAB", "/Grim.tab", "/grim.tab" };
+	const char *namesToTry[] = { "GRIM.TAB", "Grim.tab", "grim.tab" };
 
 	if (g_flags & GF_DEMO)
 		return;
 
 	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {
-		const char *datadir = g_registry->get("GrimDataDir", ".");
-		std::string fname = (datadir != NULL ? datadir : ".");
-		fname += namesToTry[i];
-		f.open(fname.c_str());
+		f.open(namesToTry[i]);
 		if (f.isOpen())
 			break;
 	}

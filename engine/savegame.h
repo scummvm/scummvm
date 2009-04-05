@@ -33,13 +33,12 @@
 #endif
 
 #include "common/debug.h"
+#include "common/savefile.h"
 
 #include "engine/lua.h"
 
 namespace Common {
 	class SaveFileManager;
-	class InSaveFile;
-	class OutSaveFile;
 }
 
 extern Common::SaveFileManager *g_saveFileMan;

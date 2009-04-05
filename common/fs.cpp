@@ -8,18 +8,19 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
 #include "common/util.h"
@@ -27,81 +28,51 @@
 #include "engine/backend/fs/abstract-fs.h"
 #include "engine/backend/fs/fs-factory.h"
 
-static bool matchString(const char *str, const char *pat) {
-	const char *p = 0;
-	const char *q = 0;
+namespace Common {
 
-	for (;;) {
-		switch (*pat) {
-		case '*':
-			p = ++pat;
-			q = str;
-			break;
-
-		default:
-			if (*pat != *str) {
-				if (p) {
-					pat = p;
-					str = ++q;
-					if (!*str)
-						return !*pat;
-					break;
-				}
-				else
-					return false;
-			}
-			// fallthrough
-		case '?':
-			if (!*str)
-				return !*pat;
-			pat++;
-			str++;
-		}
-	}
+FSNode::FSNode() {
 }
 
-FilesystemNode::FilesystemNode() {
-}
-
-FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) 
+FSNode::FSNode(AbstractFSNode *realNode)
 	: _realNode(realNode) {
 }
 
-FilesystemNode::FilesystemNode(const Common::String &p) {
+FSNode::FSNode(const Common::String &p) {
+	assert(g_driver);
 	FilesystemFactory *factory = g_driver->getFilesystemFactory();
-	AbstractFilesystemNode *tmp = 0;
-	
+	AbstractFSNode *tmp = 0;
+
 	if (p.empty() || p == ".")
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
 		tmp = factory->makeFileNodePath(p);
-	_realNode = Common::SharedPtr<AbstractFilesystemNode>(tmp);
+	_realNode = Common::SharedPtr<AbstractFSNode>(tmp);
 }
 
-bool FilesystemNode::operator<(const FilesystemNode& node) const {
+bool FSNode::operator<(const FSNode& node) const {
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
-	return strcasecmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
+	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
-bool FilesystemNode::exists() const {
+bool FSNode::exists() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->exists();
 }
 
-FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
-	if (_realNode == 0)
-		return *this;
+FSNode FSNode::getChild(const Common::String &n) const {
+	// If this node is invalid or not a directory, return an invalid node
+	if (_realNode == 0 || !_realNode->isDirectory())
+		return FSNode();
 
-	assert(_realNode->isDirectory());
-	AbstractFilesystemNode *node = _realNode->getChild(n);
-	return FilesystemNode(node);
+	AbstractFSNode *node = _realNode->getChild(n);
+	return FSNode(node);
 }
 
-bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
+bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
@@ -112,94 +83,264 @@ bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) con
 
 	fslist.clear();
 	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
-		fslist.push_back(FilesystemNode(*i));
+		fslist.push_back(FSNode(*i));
 	}
 
 	return true;
 }
 
-Common::String FilesystemNode::getDisplayName() const {
+Common::String FSNode::getDisplayName() const {
 	assert(_realNode);
 	return _realNode->getDisplayName();
 }
 
-Common::String FilesystemNode::getName() const {
+Common::String FSNode::getName() const {
 	assert(_realNode);
 	return _realNode->getName();
 }
 
-FilesystemNode FilesystemNode::getParent() const {
+FSNode FSNode::getParent() const {
 	if (_realNode == 0)
 		return *this;
 
-	AbstractFilesystemNode *node = _realNode->getParent();
+	AbstractFSNode *node = _realNode->getParent();
 	if (node == 0) {
 		return *this;
 	} else {
-		return FilesystemNode(node);
+		return FSNode(node);
 	}
 }
 
-Common::String FilesystemNode::getPath() const {
+Common::String FSNode::getPath() const {
 	assert(_realNode);
 	return _realNode->getPath();
 }
 
-bool FilesystemNode::isDirectory() const {
+bool FSNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isDirectory();
 }
 
-bool FilesystemNode::isReadable() const {
+bool FSNode::isReadable() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isReadable();
 }
 
-bool FilesystemNode::isWritable() const {
+bool FSNode::isWritable() const {
 	if (_realNode == 0)
 		return false;
 
 	return _realNode->isWritable();
 }
 
-bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool hidden, bool exhaustive, int depth) const {
-	if (!isDirectory())
+Common::SeekableReadStream *FSNode::createReadStream() const {
+	if (_realNode == 0)
+		return 0;
+
+	if (!_realNode->exists()) {
+		warning("FSNode::createReadStream: FSNode does not exist");
+		return false;
+	} else if (_realNode->isDirectory()) {
+		warning("FSNode::createReadStream: FSNode is a directory");
+		return false;
+	}
+
+	return _realNode->createReadStream();
+}
+
+Common::WriteStream *FSNode::createWriteStream() const {
+	if (_realNode == 0)
+		return 0;
+
+	if (_realNode->isDirectory()) {
+		warning("FSNode::createWriteStream: FSNode is a directory");
+		return 0;
+	}
+
+	return _realNode->createWriteStream();
+}
+
+FSDirectory::FSDirectory(const FSNode &node, int depth)
+  : _node(node), _cached(false), _depth(depth) {
+}
+
+FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth)
+  : _node(node), _cached(false), _depth(depth) {
+
+	setPrefix(prefix);
+}
+
+FSDirectory::FSDirectory(const String &name, int depth)
+  : _node(name), _cached(false), _depth(depth) {
+}
+
+FSDirectory::FSDirectory(const String &prefix, const String &name, int depth)
+  : _node(name), _cached(false), _depth(depth) {
+
+	setPrefix(prefix);
+}
+
+FSDirectory::~FSDirectory() {
+}
+
+void FSDirectory::setPrefix(const String &prefix) {
+	_prefix = prefix;
+
+	if (!_prefix.empty() && !_prefix.hasSuffix("/"))
+		_prefix += "/";
+}
+
+FSNode FSDirectory::getFSNode() const {
+	return _node;
+}
+
+FSNode *FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
+	// make caching as lazy as possible
+	if (!name.empty()) {
+		ensureCached();
+
+		if (cache.contains(name))
+			return &cache[name];
+	}
+
+	return 0;
+}
+
+bool FSDirectory::hasFile(const String &name) {
+	if (name.empty() || !_node.isDirectory())
 		return false;
 
-	FSList children;
-	FSList subdirs;
-	Common::String pattern = p;
+	FSNode *node = lookupCache(_fileCache, name);
+	return node && node->exists();
+}
 
-	pattern.toUppercase();
+ArchiveMemberPtr FSDirectory::getMember(const String &name) {
+	if (name.empty() || !_node.isDirectory())
+		return ArchiveMemberPtr();
 
-	// First match all files on this level
-	getChildren(children, FilesystemNode::kListAll, hidden);
-	for (FSList::iterator entry = children.begin(); entry != children.end(); ++entry) {
-		if (entry->isDirectory()) {
-			if (depth != 0)
-				subdirs.push_back(*entry);
+	FSNode *node = lookupCache(_fileCache, name);
+
+	if (!node || !node->exists()) {
+		warning("FSDirectory::getMember: FSNode does not exist");
+		return ArchiveMemberPtr();
+	} else if (node->isDirectory()) {
+		warning("FSDirectory::getMember: FSNode is a directory");
+		return ArchiveMemberPtr();
+	}
+
+	return ArchiveMemberPtr(new FSNode(*node));
+}
+
+SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) const {
+	if (name.empty() || !_node.isDirectory())
+		return 0;
+
+	FSNode *node = lookupCache(_fileCache, name);
+	if (!node)
+		return 0;
+	SeekableReadStream *stream = node->createReadStream();
+	if (!stream)
+		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
+
+	return stream;
+}
+
+FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth) {
+	return getSubDirectory(String::emptyString, name, depth);
+}
+
+FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth) {
+	if (name.empty() || !_node.isDirectory())
+		return 0;
+
+	FSNode *node = lookupCache(_subDirCache, name);
+	if (!node)
+		return 0;
+
+	return new FSDirectory(prefix, *node, depth);
+}
+
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
+	if (depth <= 0)
+		return;
+
+	FSList list;
+	node.getChildren(list, FSNode::kListAll, false);
+
+	FSList::iterator it = list.begin();
+	for ( ; it != list.end(); ++it) {
+		String name = prefix + it->getName();
+
+		// don't touch name as it might be used for warning messages
+		String lowercaseName = name;
+		lowercaseName.toLowercase();
+
+		// since the hashmap is case insensitive, we need to check for clashes when caching
+		if (it->isDirectory()) {
+			if (_subDirCache.contains(lowercaseName)) {
+				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'", name.c_str());
+			} else {
+				cacheDirectoryRecursive(*it, depth - 1, lowercaseName + "/");
+				_subDirCache[lowercaseName] = *it;
+			}
 		} else {
-			Common::String filename = entry->getName();
-			filename.toUppercase();
-			if (matchString(filename.c_str(), pattern.c_str())) {
-				results.push_back(*entry);
-
-				if (!exhaustive)
-					return true;	// Abort on first match if no exhaustive search was requested
+			if (_fileCache.contains(lowercaseName)) {
+				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'", name.c_str());
+			} else {
+				_fileCache[lowercaseName] = *it;
 			}
 		}
 	}
 
-	// Now scan all subdirs
-	for (FSList::iterator child = subdirs.begin(); child != subdirs.end(); ++child) {
-		child->lookupFile(results, pattern, hidden, exhaustive, depth - 1);
-		if (!exhaustive && !results.empty())
-			return true;	// Abort on first match if no exhaustive search was requested
+}
+
+void FSDirectory::ensureCached() const  {
+	if (_cached)
+		return;
+	cacheDirectoryRecursive(_node, _depth, _prefix);
+	_cached = true;
+}
+
+int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) {
+	if (!_node.isDirectory())
+		return 0;
+
+	// Cache dir data
+	ensureCached();
+
+	String lowercasePattern(pattern);
+	lowercasePattern.toLowercase();
+
+	int matches = 0;
+	NodeCache::iterator it = _fileCache.begin();
+	for ( ; it != _fileCache.end(); ++it) {
+		if (it->_key.matchString(lowercasePattern, true)) {
+			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			matches++;
+		}
+	}
+	return matches;
+}
+
+int FSDirectory::listMembers(ArchiveMemberList &list) {
+	if (!_node.isDirectory())
+		return 0;
+
+	// Cache dir data
+	ensureCached();
+
+	int files = 0;
+	for (NodeCache::iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
+		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+		++files;
 	}
 
-	return !results.empty();
+	return files;
 }
+
+
+}	// End of namespace Common

@@ -32,6 +32,8 @@
 
 #include "common/file.h"
 
+#include "engine/lua/lua.h"
+
 class Block {
 public:
 	Block(const char *data, int len) : _data(data), _len(len) {}
@@ -56,7 +58,8 @@ public:
 	void close();
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
-	Common::File *openNewStream(const char *filename) const;
+	Common::File *openNewStreamFile(const char *filename) const;
+	LuaFile *openNewStreamLua(const char *filename) const;
 	int fileLength(const char *filename) const;
 
 	~Lab() { close(); }

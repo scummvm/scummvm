@@ -39,27 +39,14 @@ namespace Common {
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class InSaveFile : public SeekableReadStream {};
+typedef SeekableReadStream InSaveFile;
 
 /**
  * A class which allows game engines to save game state data.
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile : public WriteStream {
-public:
-	/**
-	 * Close this savefile, to be called right before destruction of this
-	 * savefile. The idea is that this ways, I/O errors that occur
-	 * during closing/flushing of the file can still be handled by the
-	 * game engine.
-	 *
-	 * By default, this just flushes the stream.
-	 */
-	virtual void finalize() {
-		flush();
-	}
-};
+typedef WriteStream OutSaveFile;
 
 
 /**
@@ -78,7 +65,7 @@ public:
 class SaveFileManager : NonCopyable {
 
 protected:
-	SFMError _error;
+	Error _error;
 	String _errorDesc;
 
 	/**
@@ -86,7 +73,7 @@ protected:
 	 * @param error Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
-	virtual void setError(SFMError error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
+	virtual void setError(Error error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
 
 public:
 	virtual ~SaveFileManager() {}
@@ -94,14 +81,14 @@ public:
 	/**
 	 * Clears the last set error code and string.
 	 */
-	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
+	virtual void clearError() { _error = kNoError; _errorDesc.clear(); }
 
 	/**
-	 * Returns the last occurred error code. If none occurred, returns SFM_NO_ERROR.
+	 * Returns the last occurred error code. If none occurred, returns kNoError.
 	 *
-	 * @return A SFMError indicating the type of the last error.
+	 * @return A value indicating the type of the last error.
 	 */
-	virtual SFMError getError() { return _error; }
+	virtual Error getError() { return _error; }
 
 	/**
 	 * Returns the last occurred error description. If none occurred, returns 0.
@@ -149,11 +136,11 @@ public:
 
 	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
-	 * also known as "glob" in the UNIX world. Refer to the Common::match()
+	 * also known as "glob" in the UNIX world. Refer to the Common::matchString()
 	 * function to learn about the precise pattern format.
 	 * @param pattern Pattern to match. Wildcards like * or ? are available.
 	 * @return list of strings for all present file names.
-	 * @see Common::match
+	 * @see Common::matchString()
 	 */
 	virtual Common::StringList listSavefiles(const char *pattern) = 0;
 };

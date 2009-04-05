@@ -32,6 +32,7 @@
 
 #include "engine/backend/platform/driver.h"
 
+
 namespace Audio {
 
 #pragma mark -
@@ -57,6 +58,8 @@ private:
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
 	uint32 _mixerTimeStamp;
+	uint32 _pauseStartTime;
+	uint32 _pauseTime;
 
 protected:
 	RateConverter *_converter;
@@ -81,6 +84,11 @@ public:
 			_pauseLevel++;
 		else if (_pauseLevel > 0)
 			_pauseLevel--;
+
+		if (_pauseLevel > 0)
+			_pauseStartTime = g_driver->getMillis();
+		else
+			_pauseTime += (g_driver->getMillis() - _pauseStartTime);
 	}
 	bool isPaused() {
 		return _pauseLevel != 0;
@@ -103,8 +111,8 @@ public:
 #pragma mark -
 
 
-MixerImpl::MixerImpl()
-	: _sampleRate(0), _mixerReady(false), _handleSeed(0) {
+MixerImpl::MixerImpl(Driver *system)
+	: _syst(system), _sampleRate(0), _mixerReady(false), _handleSeed(0) {
 
 	int i;
 
@@ -208,7 +216,7 @@ void MixerImpl::mixCallback(byte *samples, uint len) {
 	assert(samples);
 
 	Common::StackLock lock(_mutex);
-	
+
 	int16 *buf = (int16 *)samples;
 	len >>= 2;
 
@@ -382,7 +390,8 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
 	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
 	  _volume(Mixer::kMaxChannelVolume), _balance(0), _pauseLevel(0), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _converter(0), _input(input), _permanent(permanent) {
+	  _samplesDecoded(0), _mixerTimeStamp(0), _pauseStartTime(0), _pauseTime(0), _converter(0),
+	  _input(input), _permanent(permanent) {
 	assert(mixer);
 	assert(input);
 
@@ -432,6 +441,7 @@ void Channel::mix(int16 *data, uint len) {
 
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_driver->getMillis();
+		_pauseTime = 0;
 
 		_converter->flow(*_input, data, len, vol_l, vol_r);
 
@@ -451,7 +461,7 @@ uint32 Channel::getElapsedTime() {
 	uint32 seconds = _samplesConsumed / rate;
 	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
 
-	uint32 delta = g_driver->getMillis() - _mixerTimeStamp;
+	uint32 delta = g_driver->getMillis() - _mixerTimeStamp - _pauseTime;
 
 	// In theory it would seem like a good idea to limit the approximation
 	// so that it never exceeds the theoretical upper bound set by
@@ -459,7 +469,6 @@ uint32 Channel::getElapsedTime() {
 	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
 	// isn't invoked at the regular intervals that I first imagined.
 
-	// FIXME: This won't work very well if the sound is paused.
 	return 1000 * seconds + milliseconds + delta;
 }
 

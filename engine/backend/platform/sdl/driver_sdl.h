@@ -34,6 +34,7 @@
 #include "engine/bitmap.h"
 #include "engine/vector3d.h"
 #include "engine/backend/platform/driver.h"
+#include "engine/backend/events/default/default-events.h"
 
 #include <SDL.h>
 
@@ -47,7 +48,7 @@ namespace Audio {
 	class Mixer;
 }
 
-class DriverSDL : public Driver {
+class DriverSDL : public Driver, EventProvider {
 public:
 	DriverSDL();
 	virtual ~DriverSDL();
@@ -63,27 +64,59 @@ public:
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 	Common::TimerManager *getTimerManager();
+	Common::EventManager *getEventManager();
 	void getTimeAndDate(struct tm &t) const;
+
+	// Set function that generates samples
+	virtual void setupMixer();
+	static void mixCallback(void *s, byte *samples, int len);
+
+	virtual void closeMixer();
+
+	virtual Audio::Mixer *getMixer();
+
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 
-	void setupMixer();
-	static void mixCallback(void *s, byte *samples, int len);
-	Audio::Mixer *getMixer();
-
 	void quit();
-	FilesystemFactory *getFilesystemFactory();
-	Common::SaveFileManager *getSavefileManager();
+
+	virtual Common::SaveFileManager *getSavefileManager();
+	virtual FilesystemFactory *getFilesystemFactory();
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 private:
 
 	int _samplesPerSec;
+
+#ifdef MIXER_DOUBLE_BUFFERING
+	SDL_mutex *_soundMutex;
+	SDL_cond *_soundCond;
+	SDL_Thread *_soundThread;
+	bool _soundThreadIsRunning;
+	bool _soundThreadShouldQuit;
+
+	byte _activeSoundBuf;
+	uint _soundBufSize;
+	byte *_soundBuffers[2];
+
+	void mixerProducerThread();
+	static int SDLCALL mixerProducerThreadEntry(void *arg);
+	void initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize);
+	void deinitThreadedMixer();
+#endif
+
+	FilesystemFactory *_fsFactory;
 	Common::SaveFileManager *_savefile;
-	Common::TimerManager *_timer;
+	Audio::MixerImpl *_mixer;
+
 	SDL_TimerID _timerID;
+	Common::TimerManager *_timer;
 
 	virtual void fillMouseEvent(Common::Event &event, int x, int y);
 
@@ -101,10 +134,6 @@ private:
 	void handleKbdMouse();
 
 	bool remapKey(SDL_Event &ev, Common::Event &event);
-
-protected:
-
-	Audio::MixerImpl *_mixer;
 };
 
 #endif

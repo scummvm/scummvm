@@ -8,25 +8,25 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
 #include "common/config-manager.h"
 #include "engine/backend/events/default/default-events.h"
+#include "engine/backend/platform/driver.h"
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
@@ -85,11 +85,13 @@ void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event
 	}
 }
 
-DefaultEventManager::DefaultEventManager(Driver *boss) :
+DefaultEventManager::DefaultEventManager(EventProvider *boss) :
 	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
-	_shouldQuit(false) {
+	_shouldQuit(false),
+	_shouldRTL(false),
+	_confirmExitDialogActive(false) {
 
 	assert(_boss);
 
@@ -97,8 +99,8 @@ DefaultEventManager::DefaultEventManager(Driver *boss) :
 	_recordTimeFile = NULL;
 	_playbackFile = NULL;
 	_playbackTimeFile = NULL;
-	_timeMutex = _boss->createMutex();
-	_recorderMutex = _boss->createMutex();
+	_timeMutex = g_driver->createMutex();
+	_recorderMutex = g_driver->createMutex();
 
 	_eventCount = 0;
 	_lastEventCount = 0;
@@ -135,8 +137,8 @@ DefaultEventManager::DefaultEventManager(Driver *boss) :
 	if (_recordMode == kRecorderRecord) {
 		_recordCount = 0;
 		_recordTimeCount = 0;
-		_recordFile = _boss->getSavefileManager()->openForSaving(_recordTempFileName.c_str());
-		_recordTimeFile = _boss->getSavefileManager()->openForSaving(_recordTimeFileName.c_str());
+		_recordFile = g_driver->getSavefileManager()->openForSaving(_recordTempFileName.c_str());
+		_recordTimeFile = g_driver->getSavefileManager()->openForSaving(_recordTimeFileName.c_str());
 		_recordSubtitles = ConfMan.getBool("subtitles");
 	}
 
@@ -146,8 +148,8 @@ DefaultEventManager::DefaultEventManager(Driver *boss) :
 	if (_recordMode == kRecorderPlayback) {
 		_playbackCount = 0;
 		_playbackTimeCount = 0;
-		_playbackFile = _boss->getSavefileManager()->openForLoading(_recordFileName.c_str());
-		_playbackTimeFile = _boss->getSavefileManager()->openForLoading(_recordTimeFileName.c_str());
+		_playbackFile = g_driver->getSavefileManager()->openForLoading(_recordFileName.c_str());
+		_playbackTimeFile = g_driver->getSavefileManager()->openForLoading(_recordTimeFileName.c_str());
 
 		if (!_playbackFile) {
 			warning("Cannot open playback file %s. Playback was switched off", _recordFileName.c_str());
@@ -187,14 +189,25 @@ DefaultEventManager::DefaultEventManager(Driver *boss) :
 
 		_hasPlaybackEvent = false;
 	}
+
+#ifdef ENABLE_VKEYBD
+	_vk = new Common::VirtualKeyboard();
+#endif
+#ifdef ENABLE_KEYMAPPER
+	_keymapper = new Common::Keymapper(this);
+	_remap = false;
+#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
-	_boss->lockMutex(_timeMutex);
-	_boss->lockMutex(_recorderMutex);
+	g_driver->lockMutex(_timeMutex);
+	g_driver->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
-	_boss->unlockMutex(_timeMutex);
-	_boss->unlockMutex(_recorderMutex);
+	g_driver->unlockMutex(_timeMutex);
+	g_driver->unlockMutex(_recorderMutex);
+
+	if (!artificialEventQueue.empty())
+		artificialEventQueue.clear();
 
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
@@ -209,9 +222,9 @@ DefaultEventManager::~DefaultEventManager() {
 		_recordTimeFile->finalize();
 		delete _recordTimeFile;
 
-		_playbackFile = _boss->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
+		_playbackFile = g_driver->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
 
-		_recordFile = _boss->getSavefileManager()->openForSaving(_recordFileName.c_str());
+		_recordFile = g_driver->getSavefileManager()->openForSaving(_recordFileName.c_str());
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);
 		_recordFile->writeUint32LE(RECORD_VERSION);
 
@@ -241,8 +254,11 @@ DefaultEventManager::~DefaultEventManager() {
 
 		//TODO: remove recordTempFileName'ed file
 	}
-	_boss->deleteMutex(_timeMutex);
-	_boss->deleteMutex(_recorderMutex);
+	g_driver->deleteMutex(_timeMutex);
+	g_driver->deleteMutex(_recorderMutex);
+}
+
+void DefaultEventManager::init() {
 }
 
 bool DefaultEventManager::playback(Common::Event &event) {
@@ -265,7 +281,7 @@ bool DefaultEventManager::playback(Common::Event &event) {
 			case Common::EVENT_RBUTTONUP:
 			case Common::EVENT_WHEELUP:
 			case Common::EVENT_WHEELDOWN:
-				_boss->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
+				g_driver->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
 				break;
 			default:
 				break;
@@ -313,7 +329,7 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 		return;
 	}
 
-	_boss->lockMutex(_timeMutex);
+	g_driver->lockMutex(_timeMutex);
 	if (_recordMode == kRecorderRecord) {
 		//Simple RLE compression
 		d = millis - _lastMillis;
@@ -338,18 +354,38 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 	}
 
 	_lastMillis = millis;
-	_boss->unlockMutex(_timeMutex);
+	g_driver->unlockMutex(_timeMutex);
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
-	uint32 time = _boss->getMillis();
+	uint32 time = g_driver->getMillis();
 	bool result;
 
-	result = _boss->pollEvent(event);
+	if (!artificialEventQueue.empty()) {
+		event = artificialEventQueue.pop();
+		result = true;
+	} else {
+		result = _boss->pollEvent(event);
+
+#ifdef ENABLE_KEYMAPPER
+		if (result) {
+			// send key press events to keymapper
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (_keymapper->mapKeyDown(event.kbd)) {
+					result = false;
+				}
+			} else if (event.type == Common::EVENT_KEYUP) {
+				if (_keymapper->mapKeyUp(event.kbd)) {
+					result = false;
+				}
+			}
+		}
+#endif
+	}
 
 	if (_recordMode != kPassthrough)  {
 
-		_boss->lockMutex(_recorderMutex);
+		g_driver->lockMutex(_recorderMutex);
 		_eventCount++;
 
 		if (_recordMode == kRecorderPlayback)  {
@@ -363,7 +399,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 		}
-		_boss->unlockMutex(_recorderMutex);
+		g_driver->unlockMutex(_recorderMutex);
 	}
 
 	if (result) {
@@ -371,7 +407,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
-
 			// init continuous event stream
 			// not done on PalmOS because keyboard is emulated and keyup is not generated
 #if !defined(PALMOS_MODE)
@@ -381,6 +416,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
 			break;
+
 		case Common::EVENT_KEYUP:
 			_modifierState = event.kbd.flags;
 			if (event.kbd.keycode == _currentKeyDown.keycode) {
@@ -397,6 +433,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= LBUTTON;
 			break;
+
 		case Common::EVENT_LBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~LBUTTON;
@@ -406,13 +443,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_mousePos = event.mouse;
 			_buttonState |= RBUTTON;
 			break;
+
 		case Common::EVENT_RBUTTONUP:
 			_mousePos = event.mouse;
 			_buttonState &= ~RBUTTON;
 			break;
 
 		case Common::EVENT_QUIT:
-				_shouldQuit = true;
+			_shouldQuit = true;
 			break;
 
 		default:
@@ -433,6 +471,16 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	return result;
+}
+
+void DefaultEventManager::pushEvent(const Common::Event &event) {
+
+	// If already received an EVENT_QUIT, don't add another one
+	if (event.type == Common::EVENT_QUIT) {
+		if (!_shouldQuit)
+			artificialEventQueue.push(event);
+	} else
+		artificialEventQueue.push(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

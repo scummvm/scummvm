@@ -53,7 +53,7 @@ McmpMgr::~McmpMgr() {
 }
 
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
-	_file = g_resourceloader->openNewStream(filename);
+	_file = g_resourceloader->openNewStreamFile(filename);
 
 	if (!_file || !_file->isOpen()) {
 		warning("McmpMgr::openSound() Can't open sound MCMP file: %s", filename);

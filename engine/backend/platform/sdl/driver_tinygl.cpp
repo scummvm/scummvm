@@ -136,18 +136,31 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 	return TGL_TRUE;
 }
 
-DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
+DriverTinyGL::DriverTinyGL() {
+	_zb = NULL;
+	_storedDisplay = NULL;
+}
+
+DriverTinyGL::~DriverTinyGL() {
+	delete[] _storedDisplay;
+	if (_zb) {
+		tglClose();
+		ZB_close(_zb);
+	}
+}
+
+void DriverTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	uint32 flags = SDL_HWSURFACE;
 
 	if (fullscreen)
 		flags |= SDL_FULLSCREEN;
-	_screen = SDL_SetVideoMode(screenW, screenH, screenBPP, flags);
+	_screen = SDL_SetVideoMode(screenW, screenH, 16, flags);
 	if (_screen == NULL)
 		error("Could not initialize video");
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
-	_screenBPP = screenBPP;
+	_screenBPP = 15;
 	_isFullscreen = fullscreen;
 
 	SDL_WM_SetCaption("Residual: Software 3D Renderer", "Residual");
@@ -162,12 +175,6 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 
 	TGLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
-}
-
-DriverTinyGL::~DriverTinyGL() {
-	delete[] _storedDisplay;
-	tglClose();
-	ZB_close(_zb);
 }
 
 void DriverTinyGL::toggleFullscreenMode() {

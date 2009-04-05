@@ -91,7 +91,22 @@ Block *Lab::getFileBlock(const char *filename) const {
 	return new Block(data, i->second.len);
 }
 
-Common::File *Lab::openNewStream(const char *filename) const {
+LuaFile *Lab::openNewStreamLua(const char *filename) const {
+	FileMapType::const_iterator i = findFilename(filename);
+	if (i == _fileMap.end())
+		return NULL;
+
+	Common::File *file = new Common::File();
+	file->open(_labFileName.c_str());
+	file->seek(i->second.offset, SEEK_SET);
+
+	LuaFile *filehandle = new LuaFile();
+	filehandle->_file = file;
+
+	return filehandle;
+}
+
+Common::File *Lab::openNewStreamFile(const char *filename) const {
 	Common::File *file;
 	FileMapType::const_iterator i = findFilename(filename);
 	if (i == _fileMap.end())

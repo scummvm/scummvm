@@ -24,24 +24,20 @@
 
 #ifdef WIN32
 
-#ifdef ARRAYSIZE
+#if defined(ARRAYSIZE)
 #undef ARRAYSIZE
 #endif
-#ifdef _WIN32_WCE
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
+#ifdef _WIN32_WCE
 #undef GetCurrentDirectory
 #endif
 #include "engine/backend/fs/abstract-fs.h"
+#include "engine/backend/fs/stdiostream.h"
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef _WIN32_WCE
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
 #include <tchar.h>
 
 // F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
@@ -62,12 +58,12 @@
 /**
  * Implementation of the ScummVM file system API based on Windows API.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class WindowsFilesystemNode : public AbstractFilesystemNode {
+class WindowsFilesystemNode : public AbstractFSNode {
 protected:
-	String _displayName;
-	String _path;
+	Common::String _displayName;
+	Common::String _path;
 	bool _isDirectory;
 	bool _isPseudoRoot;
 	bool _isValid;
@@ -89,22 +85,25 @@ public:
 	 *			path=c:\foo\bar.txt, currentDir=true -> current directory
 	 *			path=NULL, currentDir=true -> current directory
 	 *
-	 * @param path String with the path the new node should point to.
+	 * @param path Common::String with the path the new node should point to.
 	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
 	 */
-	WindowsFilesystemNode(const String &path, const bool currentDir);
+	WindowsFilesystemNode(const Common::String &path, const bool currentDir);
 
 	virtual bool exists() const { return _access(_path.c_str(), F_OK) == 0; }
-	virtual String getDisplayName() const { return _displayName; }
-	virtual String getName() const { return _displayName; }
-	virtual String getPath() const { return _path; }
+	virtual Common::String getDisplayName() const { return _displayName; }
+	virtual Common::String getName() const { return _displayName; }
+	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 
-	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFilesystemNode *getParent() const;
+	virtual AbstractFSNode *getParent() const;
+
+	virtual Common::SeekableReadStream *createReadStream();
+	virtual Common::WriteStream *createWriteStream();
 
 private:
 	/**
@@ -113,7 +112,7 @@ private:
 	 *
 	 * @param list List to put the file entry node in.
 	 * @param mode Mode to use while adding the file entry to the list.
-	 * @param base String with the directory being listed.
+	 * @param base Common::String with the directory being listed.
 	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
 	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
@@ -121,7 +120,7 @@ private:
 	/**
 	 * Converts a Unicode string to Ascii format.
 	 *
-	 * @param str String to convert from Unicode to Ascii.
+	 * @param str Common::String to convert from Unicode to Ascii.
 	 * @return str in Ascii format.
 	 */
 	static char *toAscii(TCHAR *str);
@@ -129,35 +128,11 @@ private:
 	/**
 	 * Converts an Ascii string to Unicode format.
 	 *
-	 * @param str String to convert from Ascii to Unicode.
+	 * @param str Common::String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
 	 */
 	static const TCHAR* toUnicode(const char *str);
 };
-
-/**
- * Returns the last component of a given path.
- *
- * Examples:
- *			c:\foo\bar.txt would return "\bar.txt"
- *			c:\foo\bar\    would return "\bar\"
- *
- * @param str Path to obtain the last component from.
- * @return Pointer to the first char of the last component inside str.
- */
-const char *lastPathComponent(const Common::String &str) {
-	if(str.empty())
-		return "";
-
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data) {
 	WindowsFilesystemNode entry;
@@ -170,8 +145,8 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
-	if ((!isDirectory && mode == FilesystemNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == FilesystemNode::kListFilesOnly))
+	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) ||
+		(isDirectory && mode == Common::FSNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -222,18 +197,17 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 #endif
 }
 
-WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool currentDir) {
+WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool currentDir) {
 	if (currentDir) {
 		char path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
 		_path = path;
-	}
-	else {
+	} else {
 		assert(p.size() > 0);
 		_path = p;
 	}
 
-	_displayName = lastPathComponent(_path);
+	_displayName = lastPathComponent(_path, '\\');
 
 	// Check whether it is a directory, and whether the file actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
@@ -245,25 +219,23 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 		_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
 		_isValid = true;
 		// Add a trailing slash, if necessary.
-		if (_path.lastChar() != '\\') {
+		if (_isDirectory && _path.lastChar() != '\\') {
 			_path += '\\';
 		}
 	}
 	_isPseudoRoot = false;
 }
 
-AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
+AbstractFSNode *WindowsFilesystemNode::getChild(const Common::String &n) const {
 	assert(_isDirectory);
 
-	String newPath(_path);
+	// Make sure the string contains no slashes
+	assert(!n.contains('/'));
+
+	Common::String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
 	newPath += n;
-
-	// Check whether the directory actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode(newPath.c_str()));
-	if (fileAttribs == INVALID_FILE_ATTRIBUTES)
-		return 0;
 
 	return new WindowsFilesystemNode(newPath, false);
 }
@@ -319,7 +291,7 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	return true;
 }
 
-AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
+AbstractFSNode *WindowsFilesystemNode::getParent() const {
 	assert(_isValid || _isPseudoRoot);
 
 	if (_isPseudoRoot)
@@ -328,17 +300,25 @@ AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (_path.size() > 3) {
 		const char *start = _path.c_str();
-		const char *end = lastPathComponent(_path);
+		const char *end = lastPathComponent(_path, '\\');
 
 		p = new WindowsFilesystemNode();
-		p->_path = String(start, end - start);
+		p->_path = Common::String(start, end - start);
 		p->_isValid = true;
 		p->_isDirectory = true;
-		p->_displayName = lastPathComponent(p->_path);
+		p->_displayName = lastPathComponent(p->_path, '\\');
 		p->_isPseudoRoot = false;
 	}
 
 	return p;
+}
+
+Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
+	return StdioStream::makeFromPath(getPath().c_str(), false);
+}
+
+Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
+	return StdioStream::makeFromPath(getPath().c_str(), true);
 }
 
 #endif //#ifdef WIN32

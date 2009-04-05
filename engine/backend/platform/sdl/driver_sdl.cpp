@@ -23,13 +23,25 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
-
-#include "mixer/mixer_intern.h"
+#include "common/events.h"
+#include "common/util.h"
 
 #include "engine/backend/platform/sdl/driver_sdl.h"
+
+#ifdef UNIX
+	#include "engine/backend/saves/posix/posix-saves.h"
+#else
+	#include "engine/backend/saves/default/default-saves.h"
+#endif
+#include "engine/backend/timer/default/default-timer.h"
+#include "mixer/mixer_intern.h"
+
 #include "engine/backend/timer/default/default-timer.h"
 #include "engine/backend/saves/default/default-saves.h"
+#include "engine/backend/events/default/default-events.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -51,9 +63,19 @@
 #endif
 
 
-// NOTE: This is not a complete driver, it needs to be subclassed
-//       to provide rendering functionality.
+#if defined(UNIX)
+#ifdef MACOSX
+#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
+#else
+#define DEFAULT_CONFIG_FILE ".residualrc"
+#endif
+#else
+#define DEFAULT_CONFIG_FILE "residual.ini"
+#endif
 
+#if defined(MACOSX) || defined(IPHONE)
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -74,8 +96,8 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
-// numupper provides conversion between number keys and their "upper case"
-const char numupper[] = {')', '!', '@', '#', '$', '%', '^', '&', '*', '('};
+
+
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -86,10 +108,8 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 		return key;
 	} else if (unicode) {
 		return unicode;
-	} else if (key >= 'a' && key <= 'z' && mod & KMOD_SHIFT) {
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
-	} else if (key >= SDLK_0 && key <= SDLK_9 && mod & KMOD_SHIFT) {
-		return numupper[key - SDLK_0];
 	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
 		return 0;
 	}
@@ -408,8 +428,82 @@ bool DriverSDL::pollEvent(Common::Event &event) {
 }
 
 bool DriverSDL::remapKey(SDL_Event &ev, Common::Event &event) {
+#ifdef LINUPY
+	// On Yopy map the End button to quit
+	if ((ev.key.keysym.sym == 293)) {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+	// Map menu key to f5 (scumm menu)
+	if (ev.key.keysym.sym == 306) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_F5;
+		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+		return true;
+	}
+	// Map action key to action
+	if (ev.key.keysym.sym == 291) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_TAB;
+		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+		return true;
+	}
+	// Map OK key to skip cinematic
+	if (ev.key.keysym.sym == 292) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_ESCAPE;
+		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+		return true;
+	}
+#endif
 
+#ifdef QTOPIA
+	// Quit on fn+backspace on zaurus
+	if (ev.key.keysym.sym == 127) {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+
+	// Map menu key (f11) to f5 (scumm menu)
+	if (ev.key.keysym.sym == SDLK_F11) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_F5;
+		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+	}
+	// Nap center (space) to tab (default action )
+	// I wanted to map the calendar button but the calendar comes up
+	//
+	else if (ev.key.keysym.sym == SDLK_SPACE) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_TAB;
+		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
+	}
+	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
+	else if (ev.key.keysym.sym == SDLK_TAB) {
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_SPACE;
+		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+	} else {
+	// Let the events fall through if we didn't change them, this may not be the best way to
+	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+	// and yes i have an huge terminal size so i dont wrap soon enough.
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = ev.key.keysym.sym;
+		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	}
+#endif
 	return false;
+}
+
+static Common::EventManager *s_eventManager = 0;
+
+Common::EventManager *DriverSDL::getEventManager() {
+	// FIXME/TODO: Eventually this method should be turned into an abstract one,
+	// to force backends to implement this conciously (even if they
+	// end up returning the default event manager anyway).
+	if (!s_eventManager)
+		s_eventManager = new DefaultEventManager(this);
+	return s_eventManager;
 }
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
@@ -417,42 +511,99 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 	return interval;
 }
 
-Common::TimerManager *DriverSDL::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-void DriverSDL::getTimeAndDate(struct tm &t) const {
-	time_t curTime = time(0);
-	t = *localtime(&curTime);
-}
-
 DriverSDL::DriverSDL() {
 	_mixer = NULL;
 	_timer = NULL;
 	_savefile = NULL;
+	_timerID = 0;
+#ifdef MIXER_DOUBLE_BUFFERING
+	_soundMutex = NULL;
+	_soundCond = NULL;
+	_soundThread = NULL;
+	_soundThreadIsRunning = false;
+	_soundThreadShouldQuit = false;
+#endif
+	_samplesPerSec = 0;
+
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
 DriverSDL::~DriverSDL() {
 	SDL_RemoveTimer(_timerID);
-	SDL_CloseAudio();
+	closeMixer();
 
-	delete _mixer;
-	delete _timer;
-	delete _savefile;
+	delete _fsFactory;
 }
 
 void DriverSDL::init() {
-	_timer = new DefaultTimerManager();
-	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+	int joystick_num = ConfMan.getInt("joystick_num");
+	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
-	if (!_savefile) {
-		_savefile = new DefaultSaveFileManager();
+	if (ConfMan.hasKey("disable_sdl_parachute"))
+		sdlFlags |= SDL_INIT_NOPARACHUTE;
+
+#ifdef _WIN32_WCE
+	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
+		SDL_VideoInit("windib", 0);
+		sdlFlags ^= SDL_INIT_VIDEO;
 	}
+#endif
+
+	if (joystick_num > -1)
+		sdlFlags |= SDL_INIT_JOYSTICK;
+
+	if (SDL_Init(sdlFlags) == -1) {
+		error("Could not initialize SDL: %s", SDL_GetError());
+	}
+
+	SDL_ShowCursor(SDL_DISABLE);
+
+	// Enable unicode support if possible
+	SDL_EnableUNICODE(1);
 
 #if !defined(MACOSX)
 	setupIcon();
 #endif
+
+	// Create the savefile manager, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (!_savefile) {
+#ifdef UNIX
+		_savefile = new POSIXSaveFileManager();
+#else
+		_savefile = new DefaultSaveFileManager();
+#endif
+	}
+
+	// Create and hook up the mixer, if none exists yet (we check for this to
+	// allow subclasses to provide their own).
+	if (_mixer == 0) {
+		setupMixer();
+	}
+
+	// Create and hook up the timer manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_timer == NULL) {
+		// Note: We could implement a custom SDLTimerManager by using
+		// SDL_AddTimer. That might yield better timer resolution, but it would
+		// also change the semantics of a timer: Right now, ScummVM timers
+		// *never* run in parallel, due to the way they are implemented. If we
+		// switched to SDL_AddTimer, each timer might run in a separate thread.
+		// However, not all our code is prepared for that, so we can't just
+		// switch. Still, it's a potential future change to keep in mind.
+		_timer = new DefaultTimerManager();
+		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+	}
 }
 
 const char *DriverSDL::getVideoDeviceName() {
@@ -460,113 +611,152 @@ const char *DriverSDL::getVideoDeviceName() {
 }
 
 uint32 DriverSDL::getMillis() {
-	return SDL_GetTicks();
+	uint32 millis = SDL_GetTicks();
+	getEventManager()->processMillis(millis);
+	return millis;
 }
 
 void DriverSDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-Common::MutexRef DriverSDL::createMutex() {
-	return (MutexRef)SDL_CreateMutex();
+void DriverSDL::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
 }
 
-void DriverSDL::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *)mutex);
-}
-
-void DriverSDL::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *)mutex);
-}
-
-void DriverSDL::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *)mutex);
-}
-
-void DriverSDL::mixCallback(void *sys, byte *samples, int len) {
-	DriverSDL *this_ = (DriverSDL *)sys;
-	assert(this_);
-
-	if (this_->_mixer)
-		this_->_mixer->mixCallback(samples, len);
-}
-
-void DriverSDL::setupMixer() {
-	SDL_AudioSpec desired;
-	SDL_AudioSpec obtained;
-
-	// Determine the desired output sampling frequency.
-	_samplesPerSec = 0;
-
-	if (_samplesPerSec <= 0)
-		_samplesPerSec = SAMPLES_PER_SEC;
-
-	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/16th of a second. Note that it must be a power of two.
-	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
-	int samples = 8192;
-	while (16 * samples >= _samplesPerSec) {
-		samples >>= 1;
-	}
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = _samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = (uint16)samples;
-	desired.callback = mixCallback;
-	desired.userdata = this;
-
-	// Create the mixer instance
-	assert(!_mixer);
-	_mixer = new Audio::MixerImpl();
-	assert(_mixer);
-
-	if (SDL_OpenAudio(&desired, &obtained) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-		_samplesPerSec = 0;
-		_mixer->setReady(false);
-	} else {
-		_samplesPerSec = obtained.freq;
-		_mixer->setOutputRate(_samplesPerSec);
-		_mixer->setReady(true);
-		SDL_PauseAudio(0);
-	}
-}
-
-Audio::Mixer *DriverSDL::getMixer() {
-	assert(_mixer);
-	return _mixer;
-}
-
-/* This function sends the SDL signal to
- * go ahead and exit the game
- */
-void DriverSDL::quit() {
-	SDL_Event event;
-	
-	event.type = SDL_QUIT;
-	if (SDL_PushEvent(&event) != 0)
-		error("Unable to push exit event!");
-}
-
-FilesystemFactory *DriverSDL::getFilesystemFactory() {
-	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();	
-	#elif defined(UNIX)
-		return &POSIXFilesystemFactory::instance();
-	#elif defined(WIN32)
-		return &WindowsFilesystemFactory::instance();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported backend in Driver_SDL::getFilesystemFactory
-	#endif
+Common::TimerManager *DriverSDL::getTimerManager() {
+	assert(_timer);
+	return _timer;
 }
 
 Common::SaveFileManager *DriverSDL::getSavefileManager() {
 	assert(_savefile);
 	return _savefile;
+}
+
+FilesystemFactory *DriverSDL::getFilesystemFactory() {
+	assert(_fsFactory);
+	return _fsFactory;
+}
+
+void DriverSDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
+	Common::FSNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
+	}
+#endif
+
+#ifdef MACOSX
+	// Get URL of the Resource directory of the .app bundle
+	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (fileUrl) {
+		// Try to convert the URL to an absolute path
+		UInt8 buf[MAXPATHLEN];
+		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
+			// Success: Add it to the search path
+			Common::String bundlePath((const char *)buf);
+			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
+		}
+		CFRelease(fileUrl);
+	}
+
+#endif
+
+}
+
+
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
+				error("Unable to access application data directory");
+		} else {
+			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
+				error("Unable to access user profile directory");
+
+			strcat(configFile, "\\Application Data");
+			CreateDirectory(configFile, NULL);
+		}
+
+		strcat(configFile, "\\Residual");
+		CreateDirectory(configFile, NULL);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+
+		FILE *tmp = NULL;
+		if ((tmp = fopen(configFile, "r")) == NULL) {
+			// Check windows directory
+			char oldConfigFile[MAXPATHLEN];
+			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
+			if ((tmp = fopen(oldConfigFile, "r"))) {
+				strcpy(configFile, oldConfigFile);
+
+				fclose(tmp);
+			}
+		} else {
+			fclose(tmp);
+		}
+	} else {
+		// Check windows directory
+		GetWindowsDirectory(configFile, MAXPATHLEN);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+	}
+#elif defined(UNIX)
+	// On UNIX type systems, by default we store the config file inside
+	// to the HOME directory of the user.
+	//
+	// GP2X is Linux based but Home dir can be read only so do not use
+	// it and put the config in the executable dir.
+	//
+	// On the iPhone, the home dir of the user when you launch the app
+	// from the Springboard, is /. Which we don't want.
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN)
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
+#else
+	strcpy(configFile, DEFAULT_CONFIG_FILE);
+#endif
+
+	return configFile;
+}
+
+Common::SeekableReadStream *DriverSDL::createConfigReadStream() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createReadStream();
+}
+
+Common::WriteStream *DriverSDL::createConfigWriteStream() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createWriteStream();
+}
+
+void DriverSDL::quit() {
+	SDL_ShowCursor(SDL_ENABLE);
+
+	SDL_RemoveTimer(_timerID);
+	closeMixer();
+
+	delete _savefile;
+	delete _timer;
+
+	SDL_Quit();
+
+	delete getEventManager();
 }
 
 void DriverSDL::setupIcon() {
@@ -615,6 +805,213 @@ void DriverSDL::setupIcon() {
 	SDL_FreeSurface(sdl_surf);
 }
 
+Common::MutexRef DriverSDL::createMutex() {
+	return (MutexRef)SDL_CreateMutex();
+}
+
+void DriverSDL::lockMutex(MutexRef mutex) {
+	SDL_mutexP((SDL_mutex *)mutex);
+}
+
+void DriverSDL::unlockMutex(MutexRef mutex) {
+	SDL_mutexV((SDL_mutex *)mutex);
+}
+
+void DriverSDL::deleteMutex(MutexRef mutex) {
+	SDL_DestroyMutex((SDL_mutex *)mutex);
+}
+
+
+#pragma mark -
+#pragma mark --- Audio ---
+#pragma mark -
+
+#ifdef MIXER_DOUBLE_BUFFERING
+
+void DriverSDL::mixerProducerThread() {
+	byte nextSoundBuffer;
+
+	SDL_LockMutex(_soundMutex);
+	while (true) {
+		// Wait till we are allowed to produce data
+		SDL_CondWait(_soundCond, _soundMutex);
+
+		if (_soundThreadShouldQuit)
+			break;
+
+		// Generate samples and put them into the next buffer
+		nextSoundBuffer = _activeSoundBuf ^ 1;
+		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
+
+		// Swap buffers
+		_activeSoundBuf = nextSoundBuffer;
+	}
+	SDL_UnlockMutex(_soundMutex);
+}
+
+int SDLCALL DriverSDL::mixerProducerThreadEntry(void *arg) {
+	DriverSDL *this_ = (DriverSDL *)arg;
+	assert(this_);
+	this_->mixerProducerThread();
+	return 0;
+}
+
+void DriverSDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
+	_soundThreadIsRunning = false;
+	_soundThreadShouldQuit = false;
+
+	// Create mutex and condition variable
+	_soundMutex = SDL_CreateMutex();
+	_soundCond = SDL_CreateCond();
+
+	// Create two sound buffers
+	_activeSoundBuf = 0;
+	_soundBufSize = bufSize;
+	_soundBuffers[0] = (byte *)calloc(1, bufSize);
+	_soundBuffers[1] = (byte *)calloc(1, bufSize);
+
+	_soundThreadIsRunning = true;
+
+	// Finally start the thread
+	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
+}
+
+void DriverSDL::deinitThreadedMixer() {
+	// Kill thread?? _soundThread
+
+	if (_soundThreadIsRunning) {
+		// Signal the producer thread to end, and wait for it to actually finish.
+		_soundThreadShouldQuit = true;
+		SDL_CondBroadcast(_soundCond);
+		SDL_WaitThread(_soundThread, NULL);
+
+		// Kill the mutex & cond variables.
+		// Attention: AT this point, the mixer callback must not be running
+		// anymore, else we will crash!
+		SDL_DestroyMutex(_soundMutex);
+		SDL_DestroyCond(_soundCond);
+
+		_soundThreadIsRunning = false;
+
+		free(_soundBuffers[0]);
+		free(_soundBuffers[1]);
+	}
+}
+
+
+void DriverSDL::mixCallback(void *arg, byte *samples, int len) {
+	DriverSDL *this_ = (DriverSDL *)arg;
+	assert(this_);
+	assert(this_->_mixer);
+
+	assert((int)this_->_soundBufSize == len);
+
+	// Lock mutex, to ensure our data is not overwritten by the producer thread
+	SDL_LockMutex(this_->_soundMutex);
+
+	// Copy data from the current sound buffer
+	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
+
+	// Unlock mutex and wake up the produced thread
+	SDL_UnlockMutex(this_->_soundMutex);
+	SDL_CondSignal(this_->_soundCond);
+}
+
+#else
+
+void DriverSDL::mixCallback(void *sys, byte *samples, int len) {
+	DriverSDL *this_ = (DriverSDL *)sys;
+	assert(this_);
+
+	if (this_->_mixer)
+		this_->_mixer->mixCallback(samples, len);
+}
+
+#endif
+
+void DriverSDL::setupMixer() {
+	SDL_AudioSpec desired;
+	SDL_AudioSpec obtained;
+
+	// Determine the desired output sampling frequency.
+	_samplesPerSec = 0;
+
+	if (ConfMan.hasKey("output_rate"))
+		_samplesPerSec = ConfMan.getInt("output_rate");
+	if (_samplesPerSec <= 0)
+		_samplesPerSec = SAMPLES_PER_SEC;
+
+	// Determine the sample buffer size. We want it to store enough data for
+	// about 1/16th of a second. Note that it must be a power of two.
+	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	int samples = 8192;
+	while (16 * samples >= _samplesPerSec) {
+		samples >>= 1;
+	}
+
+	memset(&desired, 0, sizeof(desired));
+	desired.freq = _samplesPerSec;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 2;
+	desired.samples = (uint16)samples;
+	desired.callback = mixCallback;
+	desired.userdata = this;
+
+	// Create the mixer instance
+	assert(!_mixer);
+	_mixer = new Audio::MixerImpl(this);
+	assert(_mixer);
+
+	if (SDL_OpenAudio(&desired, &obtained) != 0) {
+		warning("Could not open audio device: %s", SDL_GetError());
+		_samplesPerSec = 0;
+		_mixer->setReady(false);
+	} else {
+		// Note: This should be the obtained output rate, but it seems that at
+		// least on some platforms SDL will lie and claim it did get the rate
+		// even if it didn't. Probably only happens for "weird" rates, though.
+		_samplesPerSec = obtained.freq;
+		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
+
+		// Tell the mixer that we are ready and start the sound processing
+		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setReady(true);
+
+#ifdef MIXER_DOUBLE_BUFFERING
+		initThreadedMixer(_mixer, obtained.samples * 4);
+#endif
+
+		// start the sound system
+		SDL_PauseAudio(0);
+	}
+}
+
+void DriverSDL::closeMixer() {
+	if (_mixer)
+		_mixer->setReady(false);
+
+	SDL_CloseAudio();
+
+	delete _mixer;
+	_mixer = 0;
+
+#ifdef MIXER_DOUBLE_BUFFERING
+	deinitThreadedMixer();
+#endif
+
+}
+
+Audio::Mixer *DriverSDL::getMixer() {
+	assert(_mixer);
+	return _mixer;
+}
+
+#if defined(__SYMBIAN32__)
+#include "SymbianOs.h"
+#endif
+
+#if !defined(__MAEMO__) && !defined(_WIN32_WCE)
+
 #if defined (WIN32)
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
@@ -623,7 +1020,55 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 #endif
 
 int main(int argc, char *argv[]) {
+
+#if defined(__SYMBIAN32__)
+	//
+	// Set up redirects for stdout/stderr under Windows and Symbian.
+	// Code copied from SDL_main.
+	//
+
+	// Symbian does not like any output to the console through any *print* function
+	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
+	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
+	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
+	strcat(STDOUT_FILE, "residual.stdout.txt");
+	strcat(STDERR_FILE, "residual.stderr.txt");
+
+	/* Flush the output in case anything is queued */
+	fclose(stdout);
+	fclose(stderr);
+
+	/* Redirect standard input and standard output */
+	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+	if (newfp == NULL) {	/* This happens on NT */
+#if !defined(stdout)
+		stdout = fopen(STDOUT_FILE, "w");
+#else
+		newfp = fopen(STDOUT_FILE, "w");
+		if (newfp) {
+			*stdout = *newfp;
+		}
+#endif
+	}
+	newfp = freopen(STDERR_FILE, "w", stderr);
+	if (newfp == NULL) {	/* This happens on NT */
+#if !defined(stderr)
+		stderr = fopen(STDERR_FILE, "w");
+#else
+		newfp = fopen(STDERR_FILE, "w");
+		if (newfp) {
+			*stderr = *newfp;
+		}
+#endif
+	}
+	setbuf(stderr, NULL);			/* No buffering */
+
+#endif // defined(__SYMBIAN32__)
+
+
 	int res = residual_main(argc, argv);
 
 	return res;
 }
+
+#endif

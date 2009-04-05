@@ -25,6 +25,7 @@
 
 #include "common/sys.h"
 #include "common/timer.h"
+#include "common/fs.h"
 
 #include "engine/bitmap.h"
 #include "engine/resource.h"
@@ -65,6 +66,9 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	Common::StringMap settings;
 	command = parseCommandLine(settings, argc, argv);
 
+	// init temporary to allow read config file
+	g_driver = new DriverTinyGL();
+
 	// Load the config file (possibly overriden via command line):
 	if (settings.contains("config")) {
 		ConfMan.loadConfigFile(settings["config"]);
@@ -101,17 +105,20 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	ZBUFFER_GLOBAL = (tolower(g_registry->get("gl_zbuffer", "FALSE")[0]) == 't');
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-		return 1;
+	delete g_driver; // delete temporary created driver
+	if (TINYGL_GLOBAL)
+		g_driver = new DriverTinyGL();
+	else
+		g_driver = new DriverGL();
+
+	g_driver->init();
+	g_driver->setupScreen(640, 480, fullscreen);
 
 	atexit(quit);
 
-	if (TINYGL_GLOBAL)
-		g_driver = new DriverTinyGL(640, 480, 16, fullscreen);
-	else
-		g_driver = new DriverGL(640, 480, 24, fullscreen);
-	g_driver->init();
-	g_driver->setupMixer();
+	Common::FSNode dir(g_registry->get("GrimDataDir", "."));
+	SearchMan.addDirectory(dir.getPath(), dir, 0, 1);
+
 	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
@@ -121,7 +128,6 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	g_localizer = new Localizer();
 	g_smush = new Smush();
 	g_imuse = new Imuse(20);
-	g_saveFileMan = g_driver->getSavefileManager();
 
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))
@@ -184,8 +190,8 @@ void quit() {
 	g_engine = NULL;
 	delete g_resourceloader;
 	g_resourceloader = NULL;
+	if (g_driver)
+		g_driver->quit();
 	delete g_driver;
 	g_driver = NULL;
-
-	SDL_Quit();
 }

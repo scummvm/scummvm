@@ -29,54 +29,66 @@
 #include "common/str.h"
 #include "common/fs.h"
 
-class AbstractFilesystemNode;
+class AbstractFSNode;
 
-typedef Common::Array<AbstractFilesystemNode *>	AbstractFSList;
+typedef Common::Array<AbstractFSNode *>	AbstractFSList;
 
 /**
  * Abstract file system node. Private subclasses implement the actual
  * functionality.
  *
- * Most of the methods correspond directly to methods in class FilesystemNode,
+ * Most of the methods correspond directly to methods in class FSNode,
  * so if they are not documented here, look there for more information about
  * the semantics.
  */
-class AbstractFilesystemNode {
+class AbstractFSNode {
 protected:
-	friend class FilesystemNode;
-	typedef Common::String String;
-	typedef FilesystemNode::ListMode ListMode;
+	friend class Common::FSNode;
+	typedef Common::FSNode::ListMode ListMode;
 
 	/**
-	 * Returns the child node with the given name. If no child with this name
-	 * exists, returns 0. When called on a non-directory node, it should
-	 * handle this gracefully by returning 0.
+	 * Returns the child node with the given name. When called on a non-directory
+	 * node, it should handle this gracefully by returning 0.
+	 * When called with a name not matching any of the files/dirs contained in this
+	 * directory, a valid node should be returned, which returns 'false' upon calling
+	 * the exists() method. The idea is that this node can then still can be used to
+	 * create a new file via the createWriteStream() method.
 	 *
 	 * Example:
 	 *			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
 	 *			would produce a new node with "/foo/bar/file.txt" as path.
-	 *
-	 * @note This function will append a separator char (\ or /) to the end of the
-	 * path if needed.
 	 *
 	 * @note Handling calls on non-dir nodes gracefully makes it possible to
 	 * switch to a lazy type detection scheme in the future.
 	 *
 	 * @param name String containing the name of the child to create a new node.
 	 */
-	virtual AbstractFilesystemNode *getChild(const String &name) const = 0;
+	virtual AbstractFSNode *getChild(const Common::String &name) const = 0;
 
 	/**
 	 * The parent node of this directory.
 	 * The parent of the root is the root itself.
 	 */
-	virtual AbstractFilesystemNode *getParent() const = 0;
+	virtual AbstractFSNode *getParent() const = 0;
+
+	/**
+	 * Returns the last component of a given path.
+	 *
+	 * Examples:
+	 *			/foo/bar.txt would return /bar.txt
+	 *			/foo/bar/    would return /bar/
+	 *
+	 * @param str String containing the path.
+	 * @param sep character used to separate path components
+	 * @return Pointer to the first char of the last component inside str.
+	 */
+	static const char *lastPathComponent(const Common::String &str, const char sep);
 
 public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~AbstractFilesystemNode() {}
+	virtual ~AbstractFSNode() {}
 
 	/*
 	 * Indicates whether the object referred by this path exists in the filesystem or not.
@@ -100,10 +112,10 @@ public:
 	 *
 	 * @note By default, this method returns the value of getName().
 	 */
-	virtual String getDisplayName() const { return getName(); }
+	virtual Common::String getDisplayName() const { return getName(); }
 
 	/**
-	 * Returns the last component of the path pointed by this FilesystemNode.
+	 * Returns the last component of the path pointed by this FSNode.
 	 *
 	 * Examples (POSIX):
 	 *			/foo/bar.txt would return /bar.txt
@@ -111,12 +123,12 @@ public:
 	 *
 	 * @note This method is very architecture dependent, please check the concrete implementation for more information.
 	 */
-	virtual String getName() const = 0;
+	virtual Common::String getName() const = 0;
 
 	/**
 	 * Returns the 'path' of the current node, usable in fopen().
 	 */
-	virtual String getPath() const = 0;
+	virtual Common::String getPath() const = 0;
 
 	/**
 	 * Indicates whether this path refers to a directory or not.
@@ -149,9 +161,26 @@ public:
 	 */
 	virtual bool isWritable() const = 0;
 
-	/* TODO:
-	bool isFile();
-	*/
+
+	/**
+	 * Creates a SeekableReadStream instance corresponding to the file
+	 * referred by this node. This assumes that the node actually refers
+	 * to a readable file. If this is not the case, 0 is returned.
+	 *
+	 * @return pointer to the stream object, 0 in case of a failure
+	 */
+	virtual Common::SeekableReadStream *createReadStream() = 0;
+
+	/**
+	 * Creates a WriteStream instance corresponding to the file
+	 * referred by this node. This assumes that the node actually refers
+	 * to a readable file. If this is not the case, 0 is returned.
+	 *
+	 * @return pointer to the stream object, 0 in case of a failure
+	 */
+	virtual Common::WriteStream *createWriteStream() = 0;
 };
+
+
 
 #endif //BACKENDS_ABSTRACT_FS_H

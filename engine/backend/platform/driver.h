@@ -29,6 +29,7 @@
 #include "common/sys.h"
 #include "common/mutex.h"
 #include "common/events.h"
+#include "common/archive.h"
 
 #include "engine/color.h"
 #include "engine/model.h"
@@ -71,6 +72,7 @@ public:
 	};
 
 	virtual void init() = 0;
+	virtual void setupScreen(int screenW, int screenH, bool fullscreen = false) = 0;
 
 	virtual void toggleFullscreenMode() = 0;
 
@@ -136,22 +138,21 @@ public:
 
 	virtual const char *getVideoDeviceName() = 0;
 
-	/** @name Events and Time */
+	/** @name Mouse */
 	//@{
 
-	typedef unsigned int (*TimerProc)(unsigned int interval, void *param);
-
-	virtual void getTimeAndDate(struct tm &t) const = 0;
-
+	/**
+	 * Move ("warp") the mouse cursor to the specified position in virtual
+	 * screen coordinates.
+	 * @param x		the new x position of the mouse
+	 * @param y		the new y position of the mouse
+	 */
 	virtual void warpMouse(int x, int y) = 0;
 
-	friend class DefaultEventManager;
-	/**
-	 * Get the next event in the event queue.
-	 * @param event	point to an Event struct, which will be filled with the event data.
-	 * @return true if an event was retrieved.
-	 */
-	virtual bool pollEvent(Common::Event &event) = 0;
+	//@}
+
+	/** @name Events and Time */
+	//@{
 
 	/** Get the number of milliseconds since the program was started. */
 	virtual uint32 getMillis() = 0;
@@ -159,7 +160,24 @@ public:
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
 
+	/**
+	 * Get the current time and date, in the local timezone.
+	 * Corresponds on many systems to the combination of time()
+	 * and localtime().
+	 */
+	virtual void getTimeAndDate(struct tm &t) const = 0;
+
+	/**
+	 * Return the timer manager singleton. For more information, refer
+	 * to the TimerManager documentation.
+	 */
 	virtual Common::TimerManager *getTimerManager() = 0;
+
+	/**
+	 * Return the event manager singleton. For more information, refer
+	 * to the EventManager documentation.
+	 */
+	virtual Common::EventManager *getEventManager() = 0;
 
 	//@}
 
@@ -209,8 +227,11 @@ public:
 
 	/** @name Sound */
 	//@{
-	virtual void setupMixer() = 0;
 
+	/**
+	 * Return the audio mixer. For more information, refer to the
+	 * Audio::Mixer documentation.
+	 */
 	virtual Audio::Mixer *getMixer() = 0;
 
 	//@}
@@ -219,14 +240,49 @@ public:
 	//@{
 	/** Quit (exit) the application. */
 	virtual void quit() = 0;
+
+	/**
+	 * Return the SaveFileManager, used to store and load savestates
+	 * and other modifiable persistent game data. For more information,
+	 * refer to the SaveFileManager documentation.
+	 */
+	virtual Common::SaveFileManager *getSavefileManager() = 0;
+
 	/**
 	 * Returns the FilesystemFactory object, depending on the current architecture.
 	 *
-	 * @return FilesystemFactory* The specific factory for the current architecture.
+	 * @return the FSNode factory for the current architecture
 	 */
 	virtual FilesystemFactory *getFilesystemFactory() = 0;
 
-	virtual Common::SaveFileManager *getSavefileManager() = 0;
+	/**
+	 * Add system specific Common::Archive objects to the given SearchSet.
+	 * E.g. on Unix the dir corresponding to DATA_PATH (if set), or on
+	 * Mac OS X the 'Resource' dir in the app bundle.
+	 *
+	 * @todo Come up with a better name. This one sucks.
+	 *
+	 * @param s		the SearchSet to which the system specific dirs, if any, are added
+	 * @param priority	the priority with which those dirs are added
+	 */
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) {}
+
+	/**
+	 * Open the default config file for reading, by returning a suitable
+	 * ReadStream instance. It is the callers responsiblity to delete
+	 * the stream after use.
+	 */
+	virtual Common::SeekableReadStream *createConfigReadStream() = 0;
+
+	/**
+	 * Open the default config file for writing, by returning a suitable
+	 * WriteStream instance. It is the callers responsiblity to delete
+	 * the stream after use.
+	 *
+	 * May return 0 to indicate that writing to config file is not possible.
+	 */
+	virtual Common::WriteStream *createConfigWriteStream() = 0;
+
 	//@}
 
 protected:

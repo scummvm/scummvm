@@ -31,22 +31,6 @@
 #include "engine/version.h"
 #include "engine/backend/platform/driver.h"
 
-#ifdef IPHONE
-#include "engine/backend/platform/iphone/osys_iphone.h"
-#endif
-
-#ifdef UNIX
-#ifdef MACOSX
-#define DEFAULT_SAVE_PATH "Documents/Residual Savegames"
-#else
-#define DEFAULT_SAVE_PATH ".residual"
-#endif
-#elif defined(__SYMBIAN32__)
-#define DEFAULT_SAVE_PATH "Residual"
-#elif defined(PALMOS_MODE)
-#define DEFAULT_SAVE_PATH "/PALM/Programs/Residual/Saved"
-#endif
-
 #define DETECTOR_TESTING_HACK
 
 static const char USAGE_STRING[] =
@@ -141,27 +125,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("engine_speed", "30");
 
 	ConfMan.registerDefault("disable_sdl_parachute", false);
-
-	// Register default savepath
-#ifdef DEFAULT_SAVE_PATH
-	char savePath[MAXPATHLEN];
-#if defined(UNIX) && !defined(IPHONE)
-	const char *home = getenv("HOME");
-	if (home && *home && strlen(home) < MAXPATHLEN) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
-		ConfMan.registerDefault("savepath", savePath);
-	}
-#elif defined(__SYMBIAN32__)
-	strcpy(savePath, Symbian::GetExecutablePath());
-	strcat(savePath, DEFAULT_SAVE_PATH);
-	ConfMan.registerDefault("savepath", savePath);
-#elif defined (IPHONE)
-	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
-
-#elif defined(PALMOS_MODE)
-	ConfMan.registerDefault("savepath", DEFAULT_SAVE_PATH);
-#endif
-#endif // #ifdef DEFAULT_SAVE_PATH
 
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
@@ -330,7 +293,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				FilesystemNode path(option);
+				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent game path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -342,7 +305,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				FilesystemNode path(option);
+				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent savegames path '%s'", option);
 				} else if (!path.isWritable()) {
@@ -351,7 +314,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("extrapath")
-				FilesystemNode path(option);
+				Common::FSNode path(option);
 				if (!path.exists()) {
 					usage("Non-existent extra path '%s'", option);
 				} else if (!path.isReadable()) {
@@ -389,7 +352,7 @@ unknownOption:
 		}
 	}
 
-	return Common::String::emptyString;
+	return Common::String();
 }
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
@@ -439,7 +402,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("RESIDUAL_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			FilesystemNode saveDir(dir);
+			Common::FSNode saveDir(dir);
 			if (!saveDir.exists()) {
 				warning("Non-existent RESIDUAL_SAVEPATH save path. It will be ignored.");
 			} else if (!saveDir.isWritable()) {

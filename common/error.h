@@ -26,22 +26,45 @@
 #ifndef COMMON_ERROR_H
 #define COMMON_ERROR_H
 
-/**
- * This file contains enums with error codes commonly used.
- */
+namespace Common {
 
 /**
- * Errors used in the SaveFileManager class.
+ * This file contains an enum with commonly used error codes.
  */
-enum SFMError {
-	SFM_NO_ERROR,			//Default state, indicates no error has been recorded
-	SFM_DIR_ACCESS,			//stat(), mkdir()::EACCES: Search or write permission denied
-	SFM_DIR_LINKMAX,		//mkdir()::EMLINK: The link count of the parent directory would exceed {LINK_MAX}
-	SFM_DIR_LOOP,			//stat(), mkdir()::ELOOP: Too many symbolic links encountered while traversing the path
-	SFM_DIR_NAMETOOLONG,	//stat(), mkdir()::ENAMETOOLONG: The path name is too long
-	SFM_DIR_NOENT,			//stat(), mkdir()::ENOENT: A component of the path path does not exist, or the path is an empty string
-	SFM_DIR_NOTDIR,			//stat(), mkdir()::ENOTDIR: A component of the path prefix is not a directory
-	SFM_DIR_ROFS			//mkdir()::EROFS: The parent directory resides on a read-only file system
+
+
+
+/**
+ * Error codes which may be reported by plugins under various circumstances.
+ *
+ * @todo Clarify the names; add more codes, resp. verify all existing ones are acutally useful.
+ *       Also, try to avoid overlap.
+ * @todo Maybe introduce a naming convention? E.g. k-NOUN/ACTION-CONDITION-Error, so
+ *       kPathInvalidError would be correct, but these would not be: kInvalidPath,
+ *       kPathInvalid, kPathIsInvalid, kInvalidPathError
+ */
+enum Error {
+	kNoError = 0,				//!< No error occured
+	kInvalidPathError,			//!< Engine initialization: Invalid game path was passed
+	kNoGameDataFoundError,		//!< Engine initialization: No game data was found in the specified location
+	kUnsupportedGameidError,	//!< Engine initialization: Gameid not supported by this (Meta)Engine
+
+
+	kReadPermissionDenied,		//!< Unable to read data due to missing read permission
+	kWritePermissionDenied,		//!< Unable to write data due to missing write permission
+
+	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
+	kPathDoesNotExist,			//!< The specified path does not exist
+	kPathNotDirectory,			//!< The specified path does not point to a directory
+	kPathNotFile,				//!< The specified path does not point to a file
+
+	kCreatingFileFailed,
+	kReadingFailed,				//!< Failed creating a (savestate) file
+	kWritingFailed,				//!< Failure to write data -- disk full?
+
+	kUnknownError				//!< Catch-all error, used if no other error code matches
 };
+
+} // End of namespace Common
 
 #endif //COMMON_ERROR_H

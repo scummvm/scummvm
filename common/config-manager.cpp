@@ -31,29 +31,12 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/util.h"
 
+#include "engine/backend/platform/driver.h"
+
 DECLARE_SINGLETON(Common::ConfigManager);
-
-#ifdef __PLAYSTATION2__
-#include "backends/platform/ps2/systemps2.h"
-#endif
-
-#ifdef IPHONE
-#include "backends/platform/iphone/osys_iphone.h"
-#endif
-
-#if defined(UNIX)
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
-#else
-#define DEFAULT_CONFIG_FILE ".residualrc"
-#endif
-#else
-#define DEFAULT_CONFIG_FILE "residual.ini"
-#endif
-
-#define MAXLINELEN 256
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
@@ -85,236 +68,194 @@ ConfigManager::ConfigManager()
 
 
 void ConfigManager::loadDefaultConfigFile() {
-	char configFile[MAXPATHLEN];
-	// GP2X is Linux based but Home dir can be read only so do not use it and put the config in the executable dir.
-	// On the iPhone, the home dir of the user when you launch the app from the Springboard, is /. Which we don't want.
-#if defined(UNIX) && !defined(GP2X) && !defined(IPHONE)
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-#else
-	#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-		OSVERSIONINFO win32OsVersion;
-		ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-		win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&win32OsVersion);
-		// Check for non-9X version of Windows.
-		if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-			// Use the Application Data directory of the user profile.
-			if (win32OsVersion.dwMajorVersion >= 5) {
-				if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-					error("Unable to access application data directory");
-			} else {
-				if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-					error("Unable to access user profile directory");
+	// Open the default config file
+	assert(g_driver);
+	SeekableReadStream *stream = g_driver->createConfigReadStream();
+	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
-				strcat(configFile, "\\Application Data");
-				CreateDirectory(configFile, NULL);
-			}
+	// ... load it, if available ...
+	if (stream)
+		loadFromStream(*stream);
 
-			strcat(configFile, "\\Residual");
-			CreateDirectory(configFile, NULL);
-			strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-		} else {
-			// Check windows directory
-			GetWindowsDirectory(configFile, MAXPATHLEN);
-			strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-		}
+	// ... and close it again.
+	delete stream;
 
-	#elif defined(PALMOS_MODE)
-		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
-	#elif defined(IPHONE)
-		strcpy(configFile, OSystem_IPHONE::getConfigPath());	
-	#elif defined(__PLAYSTATION2__)
-		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
-	#elif defined(__PSP__)
-		strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
-	#elif defined (__SYMBIAN32__)
-		strcpy(configFile, Symbian::GetExecutablePath());
-		strcat(configFile, DEFAULT_CONFIG_FILE);
-	#else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-	#endif
-#endif
-
-	loadConfigFile(configFile);
 	flushToDisk();
 }
 
 void ConfigManager::loadConfigFile(const String &filename) {
+	_filename = filename;
+
+	FSNode node(filename);
+	File cfg_file;
+	if (!cfg_file.open(node)) {
+		printf("Creating configuration file: %s\n", filename.c_str());
+	} else {
+		printf("Using configuration file: %s\n", _filename.c_str());
+		loadFromStream(cfg_file);
+	}
+}
+
+void ConfigManager::loadFromStream(SeekableReadStream &stream) {
+	String domain;
+	String comment;
+	int lineno = 0;
+
 	_appDomain.clear();
 	_gameDomains.clear();
 	_transientDomain.clear();
-
-	_filename = filename;
 	_domainSaveOrder.clear();
-	loadFile(_filename);
-	printf("Using configuration file: %s\n", _filename.c_str());
-}
 
-void ConfigManager::loadFile(const String &filename) {
-	File cfg_file;
+	// TODO: Detect if a domain occurs multiple times (or likewise, if
+	// a key occurs multiple times inside one domain).
 
-	if (!cfg_file.open(filename)) {
-		printf("Creating configuration file: %s\n", filename.c_str());
-	} else {
-		String domain;
-		String comment;
-		int lineno = 0;
+	while (!stream.eos() && !stream.ioFailed()) {
+		lineno++;
 
-		// TODO: Detect if a domain occurs multiple times (or likewise, if
-		// a key occurs multiple times inside one domain).
+		// Read a line
+		String line = stream.readLine();
 
-		while (!cfg_file.eof() && !cfg_file.ioFailed()) {
-			lineno++;
-
-			// Read a line
-			String line;
+		if (line.size() == 0) {
+			// Do nothing
+		} else if (line[0] == '#') {
+			// Accumulate comments here. Once we encounter either the start
+			// of a new domain, or a key-value-pair, we associate the value
+			// of the 'comment' variable with that entity.
+			comment += line;
 #ifdef _WIN32
-			while (line.lastChar() != '\r' && line.lastChar() != '\n') {
+			comment += "\r\n";
 #else
-			while (line.lastChar() != '\n') {
+			comment += "\n";
 #endif
-				char buf[MAXLINELEN];
-				if (!cfg_file.readLine_NEW(buf, MAXLINELEN))
-					break;
-				line += buf;
-			}
+		} else if (line[0] == '[') {
+			// It's a new domain which begins here.
+			const char *p = line.c_str() + 1;
+			// Get the domain name, and check whether it's valid (that
+			// is, verify that it only consists of alphanumerics,
+			// dashes and underscores).
+			while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+				p++;
 
-			if (line.size() == 0) {
-				// Do nothing
-			} else if (line[0] == '#') {
-				// Accumulate comments here. Once we encounter either the start
-				// of a new domain, or a key-value-pair, we associate the value
-				// of the 'comment' variable with that entity.
-				comment += line;
-			} else if (line[0] == '[') {
-				// It's a new domain which begins here.
-				const char *p = line.c_str() + 1;
-				// Get the domain name, and check whether it's valid (that
-				// is, verify that it only consists of alphanumerics,
-				// dashes and underscores).
-				while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
-					p++;
+			if (*p == '\0')
+				error("Config file buggy: missing ] in line %d", lineno);
+			else if (*p != ']')
+				error("Config file buggy: Invalid character '%c' occurred in section name in line %d", *p, lineno);
 
-				switch (*p) {
-				case '\0':
-					error("Config file buggy: missing ] in line %d", lineno);
-					break;
-				case ']':
-					domain = String(line.c_str() + 1, p - (line.c_str() + 1));
-					//domain = String(line.c_str() + 1, p);	// TODO: Pending Common::String changes
-					break;
-				default:
-					error("Config file buggy: Invalid character '%c' occured in domain name in line %d", *p, lineno);
-				}
+			domain = String(line.c_str() + 1, p);
 
-				// Store domain comment
-				if (domain == kApplicationDomain) {
-					_appDomain.setDomainComment(comment);
-				} else {
-					_gameDomains[domain].setDomainComment(comment);
-				}
-				comment.clear();
-
-				_domainSaveOrder.push_back(domain);
+			// Store domain comment
+			if (domain == kApplicationDomain) {
+				_appDomain.setDomainComment(comment);
 			} else {
-				// This line should be a line with a 'key=value' pair, or an empty one.
-				
-				// Skip leading whitespaces
-				const char *t = line.c_str();
-				while (isspace(*t))
-					t++;
-
-				// Skip empty lines / lines with only whitespace
-				if (*t == 0)
-					continue;
-
-				// If no domain has been set, this config file is invalid!
-				if (domain.empty()) {
-					error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
-				}
-
-				// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
-				const char *p = strchr(t, '=');
-				if (!p)
-					error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
-
-				// Trim spaces before the '=' to obtain the key
-				const char *p2 = p;
-				while (p2 > t && isspace(*(p2-1)))
-					p2--;
-				String key(t, p2 - t);
-				
-				// Skip spaces after the '='
-				t = p + 1;
-				while (isspace(*t))
-					t++;
-
-				// Trim trailing spaces
-				p2 = t + strlen(t);
-				while (p2 > t && isspace(*(p2-1)))
-					p2--;
-
-				String value(t, p2 - t);
-
-				// Finally, store the key/value pair in the active domain
-				set(key, value, domain);
-
-				// Store comment
-				if (domain == kApplicationDomain) {
-					_appDomain.setKVComment(key, comment);
-				} else {
-					_gameDomains[domain].setKVComment(key, comment);
-				}
-				comment.clear();
+				_gameDomains[domain].setDomainComment(comment);
 			}
+			comment.clear();
+
+			_domainSaveOrder.push_back(domain);
+		} else {
+			// This line should be a line with a 'key=value' pair, or an empty one.
+
+			// Skip leading whitespaces
+			const char *t = line.c_str();
+			while (isspace(*t))
+				t++;
+
+			// Skip empty lines / lines with only whitespace
+			if (*t == 0)
+				continue;
+
+			// If no domain has been set, this config file is invalid!
+			if (domain.empty()) {
+				error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
+			}
+
+			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
+			const char *p = strchr(t, '=');
+			if (!p)
+				error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
+
+			// Extract the key/value pair
+			String key(t, p);
+			String value(p + 1);
+
+			// Trim of spaces
+			key.trim();
+			value.trim();
+
+			// Finally, store the key/value pair in the active domain
+			set(key, value, domain);
+
+			// Store comment
+			if (domain == kApplicationDomain) {
+				_appDomain.setKVComment(key, comment);
+			} else {
+				_gameDomains[domain].setKVComment(key, comment);
+			}
+			comment.clear();
 		}
 	}
 }
 
 void ConfigManager::flushToDisk() {
 #ifndef __DC__
-	File cfg_file;
+	WriteStream *stream;
 
-// TODO
-//	if (!willwrite)
-//		return;
-
-	if (!cfg_file.open(_filename, File::kFileWriteMode)) {
-		warning("Unable to write configuration file: %s", _filename.c_str());
+	if (_filename.empty()) {
+		// Write to the default config file
+		assert(g_driver);
+		stream = g_driver->createConfigWriteStream();
+		if (!stream)	// If writing to the config file is not possible, do nothing
+			return;
 	} else {
-		// First write the domains in _domainSaveOrder, in that order.
-		// Note: It's possible for _domainSaveOrder to list domains which
-		// are not present anymore.
-		StringList::const_iterator i;
-		for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
-			if (kApplicationDomain == *i) {
-				writeDomain(cfg_file, *i, _appDomain);
-			} else if (_gameDomains.contains(*i)) {
-				writeDomain(cfg_file, *i, _gameDomains[*i]);
-			}
+		DumpFile *dump = new DumpFile();
+		assert(dump);
+
+		if (!dump->open(_filename)) {
+			warning("Unable to write configuration file: %s", _filename.c_str());
+			delete dump;
+			return;
 		}
 
-		DomainMap::const_iterator d;
+		stream = dump;
+	}
 
-
-		// Now write the domains which haven't been written yet
-		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kApplicationDomain) == _domainSaveOrder.end())
-			writeDomain(cfg_file, kApplicationDomain, _appDomain);
-		for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
-			if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
-				writeDomain(cfg_file, d->_key, d->_value);
+	// First write the domains in _domainSaveOrder, in that order.
+	// Note: It's possible for _domainSaveOrder to list domains which
+	// are not present anymore.
+	StringList::const_iterator i;
+	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
+		if (kApplicationDomain == *i) {
+			writeDomain(*stream, *i, _appDomain);
+		} else if (_gameDomains.contains(*i)) {
+			writeDomain(*stream, *i, _gameDomains[*i]);
 		}
 	}
+
+	DomainMap::const_iterator d;
+
+
+	// Now write the domains which haven't been written yet
+	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kApplicationDomain) == _domainSaveOrder.end())
+		writeDomain(*stream, kApplicationDomain, _appDomain);
+	for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
+		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
+			writeDomain(*stream, d->_key, d->_value);
+	}
+
+	delete stream;
+
 #endif // !__DC__
 }
 
 void ConfigManager::writeDomain(WriteStream &stream, const String &name, const Domain &domain) {
 	if (domain.empty())
 		return;		// Don't bother writing empty domains.
+
+	// WORKAROUND: Fix for bug #1972625 "ALL: On-the-fly targets are
+	// written to the config file": Do not save domains that came from
+	// the command line
+	if (domain.contains("id_came_from_command_line"))
+		return;
 
 	String comment;
 
@@ -646,6 +587,10 @@ void ConfigManager::addGameDomain(const String &domName) {
 	// the given name already exists?
 
 	_gameDomains[domName];
+
+	// Add it to the _domainSaveOrder, if it's not already in there
+	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), domName) == _domainSaveOrder.end())
+		_domainSaveOrder.push_back(domName);
 }
 
 void ConfigManager::removeGameDomain(const String &domName) {

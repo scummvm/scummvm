@@ -23,15 +23,17 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/list.h"
 #include "common/util.h"
 
-#include "engine/backend/platform/driver.h"
-
 #include "mixer/audiostream.h"
 #include "mixer/mixer.h"
+//#include "sound/mp3.h"
+//#include "sound/vorbis.h"
+//#include "sound/flac.h"
 
 
 // This used to be an inline template function, but
@@ -44,6 +46,48 @@
 
 
 namespace Audio {
+
+struct StreamFileFormat {
+	/** Decodername */
+	const char* decoderName;
+	const char* fileExtension;
+	/**
+	 * Pointer to a function which tries to open a file of type StreamFormat.
+	 * Return NULL in case of an error (invalid/nonexisting file).
+	 */
+	AudioStream* (*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse,
+					uint32 startTime, uint32 duration, uint numLoops);
+};
+
+static const StreamFileFormat STREAM_FILEFORMATS[] = {
+	/* decoderName,		fileExt, openStreamFuntion */
+
+	{ NULL, NULL, NULL } // Terminator
+};
+
+AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 startTime, uint32 duration, uint numLoops) {
+	AudioStream* stream = NULL;
+	Common::File *fileHandle = new Common::File();
+
+	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
+		Common::String filename = basename + STREAM_FILEFORMATS[i].fileExtension;
+		fileHandle->open(filename);
+		if (fileHandle->isOpen()) {
+			// Create the stream object
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, startTime, duration, numLoops);
+			fileHandle = 0;
+			break;
+		}
+	}
+
+	delete fileHandle;
+
+	if (stream == NULL) {
+		debug(1, "AudioStream: Could not open compressed AudioFile %s", basename.c_str());
+	}
+
+	return stream;
+}
 
 #pragma mark -
 #pragma mark --- LinearMemoryStream ---
@@ -80,19 +124,9 @@ public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
 
-		// Verify the buffer sizes are sane
-		if (is16Bit && stereo) {
-			assert((len & 3) == 0 && (loopLen & 3) == 0);
-		} else if (is16Bit || stereo) {
-			assert((len & 1) == 0 && (loopLen & 1) == 0);
-		}
-
 		if (loopLen) {
 			_loopPtr = _ptr + loopOffset;
 			_loopEnd = _loopPtr + loopLen;
-		}
-		if (stereo)	{ // Stereo requires even sized data
-			assert(len % 2 == 0);
 		}
 
 		_origPtr = autoFreeMemory ? ptr : 0;
@@ -106,7 +140,6 @@ public:
 	bool endOfData() const			{ return _ptr >= _end; }
 
 	int getRate() const				{ return _rate; }
-	int32 getTotalPlayTime() const	{ return _playtime; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
@@ -169,6 +202,13 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 		loopLen = loopEnd - loopStart;
 	}
 
+	// Verify the buffer sizes are sane
+	if (is16Bit && isStereo) {
+		assert((len & 3) == 0 && (loopLen & 3) == 0);
+	} else if (is16Bit || isStereo) {
+		assert((len & 1) == 0 && (loopLen & 1) == 0);
+	}
+
 	if (isStereo) {
 		if (isUnsigned) {
 			MAKE_LINEAR(true, true);
@@ -197,8 +237,7 @@ struct Buffer {
 /**
  * Wrapped memory stream.
  */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class AppendableMemoryStream : public AppendableAudioStream {
+class BaseAppendableMemoryStream : public AppendableAudioStream {
 protected:
 
 	// A mutex to avoid access problems (causing e.g. corruption of
@@ -215,28 +254,38 @@ protected:
 
 	inline bool eosIntern() const { return _bufferQueue.empty(); };
 public:
-	AppendableMemoryStream(int rate);
-	~AppendableMemoryStream();
-	int readBuffer(int16 *buffer, const int numSamples);
+	BaseAppendableMemoryStream(int rate);
+	~BaseAppendableMemoryStream();
 
-	bool isStereo() const		{ return stereo; }
 	bool endOfStream() const	{ return _finalized && eosIntern(); }
 	bool endOfData() const		{ return eosIntern(); }
 
 	int getRate() const			{ return _rate; }
 
-	void queueBuffer(byte *data, uint32 size);
 	void finish()				{ _finalized = true; }
+
+	void queueBuffer(byte *data, uint32 size);
 };
 
+/**
+ * Wrapped memory stream.
+ */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate)
+class AppendableMemoryStream : public BaseAppendableMemoryStream {
+public:
+	AppendableMemoryStream(int rate) : BaseAppendableMemoryStream(rate) {}
+
+	bool isStereo() const		{ return stereo; }
+
+	int readBuffer(int16 *buffer, const int numSamples);
+};
+
+BaseAppendableMemoryStream::BaseAppendableMemoryStream(int rate)
  : _finalized(false), _rate(rate), _pos(0) {
 
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
+BaseAppendableMemoryStream::~BaseAppendableMemoryStream() {
 	// Clear the queue
 	Common::List<Buffer>::iterator iter;
 	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
@@ -270,20 +319,20 @@ int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 
 		} while (--len);
 	}
 
-	return numSamples-samples;
+	return numSamples - samples;
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::queueBuffer(byte *data, uint32 size) {
+void BaseAppendableMemoryStream::queueBuffer(byte *data, uint32 size) {
 	Common::StackLock lock(_mutex);
 
+/*
 	// Verify the buffer size is sane
 	if (is16Bit && stereo) {
 		assert((size & 3) == 0);
 	} else if (is16Bit || stereo) {
 		assert((size & 1) == 0);
 	}
-
+*/
 	// Verify that the stream has not yet been finalized (by a call to finish())
 	assert(!_finalized);
 

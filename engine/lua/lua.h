@@ -8,6 +8,7 @@
 */
 
 #include "common/sys.h"
+#include "common/str.h"
 
 #ifndef lua_h
 #define lua_h
@@ -33,6 +34,32 @@ struct PointerId {
 
 PointerId makeIdFromPointer(void *ptr);
 void *makePointerFromId(PointerId ptr);
+
+namespace Common {
+	class String;
+	class SeekableReadStream;
+	class WriteStream;
+	class File;
+}
+
+class LuaFile {
+public:
+	Common::String _name;
+	Common::SeekableReadStream *_in;
+	Common::WriteStream *_out;
+	Common::File *_file;
+	bool _stdin, _stdout, _stderr;
+
+public:
+	LuaFile();
+	~LuaFile();
+	
+	void close();
+	bool isOpen() const;
+	uint32 read(void *buf, uint32 len);
+	uint32 write(const char *buf, uint32 len);
+	void seek(int32 pos, int whence = 0);
+};
 
 typedef void (*SaveStream)(void *, int32);
 typedef void (*SaveSint32)(int32);

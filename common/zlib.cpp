@@ -23,24 +23,36 @@
  *
  */
 
-#include "common/savefile.h"
+#include "common/zlib.h"
 #include "common/util.h"
-#include "common/debug.h"
-#include "engine/backend/saves/compressed/compressed-saves.h"
 
 #if defined(USE_ZLIB)
-#include <zlib.h>
+  #ifdef __SYMBIAN32__
+    #include <zlib\zlib.h>
+  #else
+    #include <zlib.h>
+  #endif
 
-#if ZLIB_VERNUM < 0x1204
-#error Version 1.2.0.4 or newer of zlib is required for this code
+  #if ZLIB_VERNUM < 0x1204
+  #error Version 1.2.0.4 or newer of zlib is required for this code
+  #endif
 #endif
+
+
+namespace Common {
+
+#if defined(USE_ZLIB)
+
+bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
+	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
+}
 
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
- * other InSaveFile and will then provide on-the-fly decompression support.
+ * other SeekableReadStream and will then provide on-the-fly decompression support.
  * Assumes the compressed data to be in gzip format.
  */
-class CompressedInSaveFile : public Common::InSaveFile {
+class GZipReadStream : public Common::SeekableReadStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
@@ -48,22 +60,23 @@ protected:
 
 	byte	_buf[BUFSIZE];
 
-	Common::InSaveFile *_wrapped;
+	Common::SeekableReadStream *_wrapped;
 	z_stream _stream;
 	int _zlibErr;
 	uint32 _pos;
 	uint32 _origSize;
+	bool _eos;
 
 public:
 
-	CompressedInSaveFile(Common::InSaveFile *w) : _wrapped(w) {
+	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w) {
 		assert(w != 0);
 
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
 
-		// Verify file header is correct once more
+		// Verify file header is correct
 		w->seek(0, SEEK_SET);
 		uint16 header = w->readUint16BE();
 		assert(header == 0x1F8B ||
@@ -79,6 +92,7 @@ public:
 		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
+		_eos = false;
 
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
 		// automatically detect whether gzip or zlib headers are used for
@@ -94,13 +108,16 @@ public:
 		_stream.avail_in = 0;
 	}
 
-	~CompressedInSaveFile() {
+	~GZipReadStream() {
 		inflateEnd(&_stream);
 		delete _wrapped;
 	}
 
-	bool ioFailed() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
-	void clearIOFailed() { /* errors here are not recoverable!  */ }
+	bool err() const { return (_zlibErr != Z_OK) && (_zlibErr != Z_STREAM_END); }
+	void clearErr() {
+		// only reset _eos; I/O errors are not recoverable
+		_eos = false;
+	}
 
 	uint32 read(void *dataPtr, uint32 dataSize) {
 		_stream.next_out = (byte *)dataPtr;
@@ -119,66 +136,78 @@ public:
 		// Update the position counter
 		_pos += dataSize - _stream.avail_out;
 
+		if (_zlibErr == Z_STREAM_END && _stream.avail_out > 0)
+			_eos = true;
+
 		return dataSize - _stream.avail_out;
 	}
 
 	bool eos() const {
-		return (_zlibErr == Z_STREAM_END);
-		//return _pos == _origSize;
+		return _eos;
 	}
-	uint32 pos() const {
+	int32 pos() const {
 		return _pos;
 	}
-	uint32 size() const {
+	int32 size() const {
 		return _origSize;
 	}
-	void seek(int32 offset, int whence = SEEK_SET) {
+	bool seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
+		assert(whence != SEEK_END);	// SEEK_END not supported
 		switch(whence) {
-		case SEEK_END:
-			newPos = size() - offset;
-			break;
 		case SEEK_SET:
 			newPos = offset;
 			break;
 		case SEEK_CUR:
 			newPos = _pos + offset;
 		}
+
+		assert(newPos >= 0);
+
+		if ((uint32)newPos < _pos) {
+			// To search backward, we have to restart the whole decompression
+			// from the start of the file. A rather wasteful operation, best
+			// to avoid it. :/
+#if DEBUG
+			warning("Backward seeking in GZipReadStream detected");
+#endif
+			_pos = 0;
+			_wrapped->seek(0, SEEK_SET);
+			_zlibErr = inflateReset(&_stream);
+			if (_zlibErr != Z_OK)
+				return false;	// FIXME: STREAM REWRITE
+			_stream.next_in = _buf;
+			_stream.avail_in = 0;
+		}
+
 		offset = newPos - _pos;
-
-		if (offset < 0)
-			error("Backward seeking not supported in compressed savefiles");
-
-		// We could implement backward seeking, but it is tricky to do efficiently.
-		// A simple solution would be to restart the whole decompression from the
-		// start of the file. Or we could decompress the whole file in one go
-		// in the constructor, and wrap it into a MemoryReadStream -- but that
-		// would be rather wasteful. As long as we don't need it, I'd rather not
-		// implement this at all. -- Fingolfin
 
 		// Skip the given amount of data (very inefficient if one tries to skip
 		// huge amounts of data, but usually client code will only skip a few
 		// bytes, so this should be fine.
 		byte tmpBuf[1024];
-		while (!ioFailed() && offset > 0) {
+		while (!err() && offset > 0) {
 			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
 		}
+
+		_eos = false;
+		return true;	// FIXME: STREAM REWRITE
 	}
 };
 
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
- * other OutSaveFile and will then provide on-the-fly compression support.
+ * other WriteStream and will then provide on-the-fly compression support.
  * The compressed data is written in the gzip format.
  */
-class CompressedOutSaveFile : public Common::OutSaveFile {
+class GZipWriteStream : public Common::WriteStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
 	};
 
 	byte	_buf[BUFSIZE];
-	Common::OutSaveFile *_wrapped;
+	Common::WriteStream *_wrapped;
 	z_stream _stream;
 	int _zlibErr;
 
@@ -198,7 +227,7 @@ protected:
 	}
 
 public:
-	CompressedOutSaveFile(Common::OutSaveFile *w) : _wrapped(w) {
+	GZipWriteStream(Common::WriteStream *w) : _wrapped(w) {
 		assert(w != 0);
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;
@@ -213,7 +242,7 @@ public:
 		                 Z_DEFLATED,
 		                 MAX_WBITS + 16,
 		                 8,
-                         Z_DEFAULT_STRATEGY);
+				 Z_DEFAULT_STRATEGY);
 		assert(_zlibErr == Z_OK);
 
 		_stream.next_out = _buf;
@@ -222,20 +251,21 @@ public:
 		_stream.next_in = 0;
 	}
 
-	~CompressedOutSaveFile() {
+	~GZipWriteStream() {
 		finalize();
 		deflateEnd(&_stream);
 		delete _wrapped;
 	}
 
-	bool ioFailed() const {
-		return (_zlibErr != Z_OK && _zlibErr != Z_STREAM_END) || _wrapped->ioFailed();
+	bool err() const {
+		// CHECKME: does Z_STREAM_END make sense here?
+		return (_zlibErr != Z_OK && _zlibErr != Z_STREAM_END) || _wrapped->err();
 	}
 
-	void clearIOFailed() {
+	void clearErr() {
 		// Note: we don't reset the _zlibErr here, as it is not
-		// clear in general ho
-		_wrapped->clearIOFailed();
+		// clear in general how
+		_wrapped->clearErr();
 	}
 
 	void finalize() {
@@ -259,7 +289,7 @@ public:
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) {
-		if (ioFailed())
+		if (err())
 			return 0;
 
 		// Hook in the new data ...
@@ -277,7 +307,7 @@ public:
 
 #endif	// USE_ZLIB
 
-Common::InSaveFile *wrapInSaveFile(Common::InSaveFile *toBeWrapped) {
+Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
@@ -286,16 +316,19 @@ Common::InSaveFile *wrapInSaveFile(Common::InSaveFile *toBeWrapped) {
 				      header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
 		if (isCompressed)
-			return new CompressedInSaveFile(toBeWrapped);
+			return new GZipReadStream(toBeWrapped);
 	}
 #endif
 	return toBeWrapped;
 }
 
-Common::OutSaveFile *wrapOutSaveFile(Common::OutSaveFile *toBeWrapped) {
+Common::WriteStream *wrapCompressedWriteStream(Common::WriteStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped)
-		return new CompressedOutSaveFile(toBeWrapped);
+		return new GZipWriteStream(toBeWrapped);
 #endif
 	return toBeWrapped;
 }
+
+
+}	// End of namespace Common

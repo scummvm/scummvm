@@ -32,12 +32,32 @@
 
 namespace Audio {
 
+/**
+ * The (default) implementation of the ScummVM audio mixing subsystem.
+ *
+ * Backends are responsible for allocating (and later releasing) an instance
+ * of this class, which engines can access via OSystem::getMixer().
+ *
+ * Initialisation of instances of this class usually happens as follows:
+ * 1) Creat a new Audio::MixerImpl instance.
+ * 2) Set the hardware output sample rate via the setSampleRate() method.
+ * 3) Hook up the mixCallback() in a suitable audio processing thread/callback.
+ * 4) Change the mixer into ready mode via setReady(true).
+ * 5) Start audio processing (e.g. by resuming the audio thread, if applicable).
+ *
+ * In the future, we might make it possible for backends to provide
+ * (partial) alternative implementations of the mixer, e.g. to make
+ * better use of native sound mixing support on low-end devices.
+ *
+ * @see OSystem::getMixer()
+ */
 class MixerImpl : public Mixer {
 private:
 	enum {
 		NUM_CHANNELS = 32
 	};
 
+	Driver *_syst;
 	Common::Mutex _mutex;
 
 	uint _sampleRate;
@@ -49,7 +69,7 @@ private:
 
 
 public:
-	MixerImpl();
+	MixerImpl(Driver *system);
 	~MixerImpl();
 
 	virtual bool isReady() const { return _mixerReady; }
@@ -115,7 +135,7 @@ public:
 	 * setOutputRate() has been called).
 	 */
 	void setReady(bool ready);
-	
+
 	/**
 	 * Set the output sample rate.
 	 *

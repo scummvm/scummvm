@@ -30,6 +30,9 @@
 #include "common/mutex.h"
 
 
+class Driver;
+
+
 namespace Audio {
 
 class AudioStream;
@@ -139,7 +142,7 @@ public:
 	 * Start playing the given audio input stream.
 	 *
 	 * Note that the sound id assigned below is unique. At most one stream
-	 * with a given idea can play at any given time. Trying to play a sound
+	 * with a given id can play at any given time. Trying to play a sound
 	 * with an id that is already in use causes the new sound to be not played.
 	 *
 	 * @param type	the type (voice/sfx/music) of the stream
