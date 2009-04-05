@@ -56,6 +56,7 @@ private:
 	Debugger *_debugger;
 	MidiDriver *_driver;
 	MusicPlayer *_music;
+	SoundPlayer *_sound;
 	bool _mt32, _adlib;
 	int _musicVolume;
 	Common::StringList _langStrings;
@@ -84,6 +85,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	MusicPlayer &music() { return *_music; }
+	SoundPlayer &sound() { return *_sound; }
 	bool mt32() const { return _mt32; }
 	bool adlib() const { return _adlib; }
 	virtual GUI::Debugger *getDebugger() { return _debugger; }

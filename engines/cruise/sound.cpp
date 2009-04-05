@@ -112,7 +112,7 @@ void MusicPlayer::loadSong(const char *name) {
 
 	// Get the details of the song
 	// TODO: Figure this out for sure for use in actually playing song
-	//int numTracksMaybe = *(_songPointer + 470);
+	//int size = *(_songPointer + 470);
 	//int speed = 244 - *(_songPointer + 471);
 	//int musicSpeed = (speed * 100) / 1060;
 

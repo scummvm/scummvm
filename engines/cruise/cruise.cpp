@@ -69,6 +69,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 CruiseEngine::~CruiseEngine() {
 	delete _debugger;
 	delete _music;
+	delete _sound;
 
 	freeSystem();
 }
@@ -125,6 +126,7 @@ void CruiseEngine::initialize() {
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	_music = new MusicPlayer();
+	_sound = new SoundPlayer();
 }
 
 bool CruiseEngine::loadLanguageStrings() {

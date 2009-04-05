@@ -45,6 +45,7 @@ private:
 	byte _masterVolume;
 
 	byte *_songPointer;
+	// TODO: lib_SongSize 
 	int _songSize;
 
 	void patchMidi(uint32 adr, const byte *data, int size);
@@ -71,8 +72,20 @@ public:
 	bool songLoaded() const { return _songPointer != NULL; }
 	bool songPlayed() const { return _songPlayed; }
 	bool isPlaying() const { return _isPlaying; }
+	bool looping() const { return _looping; }
+	byte volume() const { return _masterVolume; }
+	byte *songData() { return _songPointer; }
 	void setPlaying(bool playing) { _isPlaying = playing; }
 	void setLoop(bool loop) { _looping = loop; }
+};
+
+class SoundPlayer {
+public:
+	SoundPlayer() {}
+
+	void startSound(int channelNum, const byte *ptr, int size, int speed, int volume, bool loop) {}
+	void startNote(int channelNum, int speed, int volume) {}
+	void stopChannel(int channelNum) {}
 };
 
 } // End of namespace Cruise
