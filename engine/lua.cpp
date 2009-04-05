@@ -2965,6 +2965,7 @@ static void GetSaveGameImage() {
 		error("Could not restore screenshot from file!");
 	}
 	savedState->endSection();
+	delete savedState;
 	printf("GetSaveGameImage() finished.\n");
 }
 
