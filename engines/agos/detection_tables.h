@@ -1803,6 +1803,30 @@ static const AGOSGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Simon the Sorcerer 2 - German DOS Floppy alternate?
+	{
+		{
+			"simon2",
+			"Floppy",
+
+			{
+	{ "game32",		GAME_BASEFILE,	"604d04315935e77624bd356ac926e068", 59111},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"ec9f0f24fd895e7ea72e3c8e448c0240", 19698755},
+	{ "stripped.txt",	GAME_STRFILE,	"6de6292c9ac11bfb2e70fdb0f773ba85", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		0
+	},
+
 	// Simon the Sorcerer 2 - Italian DOS Floppy
 	{
 		{
