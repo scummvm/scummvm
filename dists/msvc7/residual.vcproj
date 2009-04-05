@@ -115,6 +115,12 @@
 				RelativePath="..\..\common\algorithm.h">
 			</File>
 			<File
+				RelativePath="..\..\common\archive.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\archive.h">
+			</File>
+			<File
 				RelativePath="..\..\common\array.h">
 			</File>
 			<File
@@ -178,6 +184,9 @@
 				RelativePath="..\..\common\list.h">
 			</File>
 			<File
+				RelativePath="..\..\common\list_intern.h">
+			</File>
+			<File
 				RelativePath="..\..\common\memorypool.cpp">
 			</File>
 			<File
@@ -194,6 +203,9 @@
 			</File>
 			<File
 				RelativePath="..\..\common\ptr.h">
+			</File>
+			<File
+				RelativePath="..\..\common\queue.h">
 			</File>
 			<File
 				RelativePath="..\..\common\rect.h">
@@ -227,6 +239,12 @@
 			</File>
 			<File
 				RelativePath="..\..\common\util.h">
+			</File>
+			<File
+				RelativePath="..\..\common\zlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\zlib.h">
 			</File>
 		</Filter>
 		<Filter
@@ -709,10 +727,19 @@
 				<Filter
 					Name="fs">
 					<File
+						RelativePath="..\..\engine\backend\fs\abstract-fs.cpp">
+					</File>
+					<File
 						RelativePath="..\..\engine\backend\fs\abstract-fs.h">
 					</File>
 					<File
 						RelativePath="..\..\engine\backend\fs\fs-factory.h">
+					</File>
+					<File
+						RelativePath="..\..\engine\backend\fs\stdiostream.cpp">
+					</File>
+					<File
+						RelativePath="..\..\engine\backend\fs\stdiostream.h">
 					</File>
 					<Filter
 						Name="windows">
@@ -731,17 +758,6 @@
 					<File
 						RelativePath="..\..\engine\backend\saves\savefile.cpp">
 					</File>
-					<Filter
-						Name="compressed">
-						<File
-							RelativePath="..\..\engine\backend\saves\compressed\compressed-saves.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\engine\backend\saves\compressed\compressed-saves.h"
-							>
-						</File>
-					</Filter>
 					<Filter
 						Name="default">
 						<File
