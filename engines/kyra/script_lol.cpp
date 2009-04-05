@@ -1372,7 +1372,7 @@ int LoLEngine::olol_characterSays(EMCState *script) {
 		return 1;
 	}
 
-	if (stackPos(0) != -1)
+	if (stackPos(0) != -2)
 		return characterSays(stackPos(0), stackPos(1), stackPos(2));
 	else
 		return snd_characterSpeaking();

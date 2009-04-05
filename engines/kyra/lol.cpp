@@ -1522,7 +1522,7 @@ int LoLEngine::snd_characterSpeaking() {
 			return 2;
 	}
 
-	return 1;
+	return 0;
 }
 
 void LoLEngine::snd_stopSpeech(bool setFlag) {
