@@ -393,7 +393,6 @@ int initAllData(void) {
 	int i;
 
 	setupFuncArray();
-	setupOpcodeTable();
 	initOverlayTable();
 
 	stateID = 0;

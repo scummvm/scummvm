@@ -30,7 +30,7 @@ namespace Cruise {
 
 persoStruct *persoTable[NUM_PERSONS];
 
-int16 computedVar14;
+int16 numPoly;
 
 void freePerso(int persoIdx) {
 	if (persoTable[persoIdx]) {
@@ -222,7 +222,7 @@ void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droit
 	resx_y.zoom = computeZoom(resx_y.y);
 
 	getPixel(resx_y.x, resx_y.y);
-	resx_y.poly = computedVar14;
+	resx_y.poly = numPoly;
 
 	u = subOp23(resx_y.zoom, inc_jo);
 	if (!u)

@@ -88,9 +88,9 @@ void getPixel(int x, int y) {
 		y_min = *tableau++;
 		y_max = *tableau++;
 
-		computedVar14 = *polygone++;
+		numPoly = *polygone++;
 
-		if (walkboxState[computedVar14] == 0 && ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max))) {
+		if (walkboxState[numPoly] == 0 && ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max))) {
 			// click was in given box
 			int u = y - y_min;
 			tableau += u * 2;
@@ -98,7 +98,7 @@ void getPixel(int x, int y) {
 			x_max = *tableau++;
 
 			if ((x >= x_min && x <= x_max)) {
-				flag_obstacle = walkboxColor[computedVar14];
+				flag_obstacle = walkboxColor[numPoly];
 
 				return;
 			}
@@ -627,7 +627,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 		*(ptr++) = moveInfo.y = destY;
 		*(ptr++) = -1;
 
-		moveInfo.poly = computedVar14;
+		moveInfo.poly = numPoly;
 
 		perso->inc_droite = 0;
 		perso->inc_chemin = 0;
@@ -650,7 +650,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 
 	getPixel(x, y);
 
-	moveInfo.poly = computedVar14;
+	moveInfo.poly = numPoly;
 
 	x_mouse = x;
 	y_mouse = y;
@@ -699,7 +699,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 
 	moveInfo.x = table_ptselect[1][0];
 	moveInfo.y = table_ptselect[1][1];
-	moveInfo.poly = computedVar14;
+	moveInfo.poly = numPoly;
 	perso->inc_chemin = 0;
 	perso->inc_droite = 0;
 

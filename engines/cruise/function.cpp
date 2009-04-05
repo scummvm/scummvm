@@ -186,7 +186,7 @@ int16 Op_GetMouseY(void) {	// TODO: implement properly
 	return (mouseY);
 }
 
-int16 Op_Random(void) {		// TODO: implement
+int16 Op_Random(void) {
 	int var = popVar();
 
 	if (var < 2) {
@@ -196,13 +196,67 @@ int16 Op_Random(void) {		// TODO: implement
 	return (_vm->_rnd.getRandomNumber(var - 1));
 }
 
-int16 Op_PlayFX(void) {		// TODO: implement
-	popVar();
-	popVar();
-	popVar();
-	popVar();
+int16 Op_PlayFX(void) {
+	int volume = popVar();
+	int speed = popVar();
+	int channelNum = popVar();
+	int sampleNum = popVar();
 
-	// printf("Op_PlayFX, implement (sound related)\n");
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+		if (speed == -1)
+			speed = filesDatabase[sampleNum].subData.transparency;
+
+		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, speed, volume, false);
+	}
+
+	return (0);
+}
+
+int16 Op_LoopFX(void) {
+	int volume = popVar();
+	int speed = popVar();
+	int channelNum = popVar();
+	int sampleNum = popVar();
+
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+		if (speed == -1)
+			speed = filesDatabase[sampleNum].subData.transparency;
+
+		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, speed, volume, true);
+	}
+
+	return (0);
+}
+
+int16 Op_StopFX(void) {
+	int channelNum = popVar();
+
+	if (channelNum == -1) {
+		_vm->sound().stopChannel(0);
+		_vm->sound().stopChannel(1);
+		_vm->sound().stopChannel(2);
+		_vm->sound().stopChannel(3);
+	} else {
+		_vm->sound().stopChannel(channelNum);
+	}
+
+	return 0;
+}
+
+int16 Op_FreqFX(void) {
+	int volume = popVar();
+	int speed = popVar();
+	int channelNum = popVar();
+	int sampleNum = popVar();
+
+	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
+		if (speed == -1)
+			speed = filesDatabase[sampleNum].subData.transparency;
+
+		_vm->sound().startNote(channelNum, volume, speed);
+	}
 
 	return (0);
 }
@@ -368,9 +422,30 @@ int16 Op_FindProc(void) {
 	return param;
 }
 
+int16 Op_GetRingWord(void) {
+	// Original method had a ringed queue allowing this method to return words one at a time.
+	// But it never seemed to be used; no entries were ever added to the list
+	return 0;
+}
+
 int16 Op_KillMenu(void) {
-	// TODO: implement
-	printf("Op_KillMenu, implement\n");
+	// Free menus, if active
+	if (menuTable[0]) {
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+		currentActiveMenu = -1;
+	}
+
+	if (menuTable[1]) {
+		freeMenu(menuTable[1]);
+		menuTable[1] = NULL;
+		currentActiveMenu = -1;
+	}
+
+	// Free the message list
+//	if (linkedMsgList) freeMsgList(linkedMsgList);
+	linkedMsgList = NULL;
+	linkedRelation = NULL;
 
 	return 0;
 }
@@ -426,7 +501,7 @@ int16 Op_LoadBackground(void) {
 
 	bgIdx = popVar();
 
-	if (bgIdx >= 0 || bgIdx < 8) {
+	if (bgIdx >= 0 || bgIdx < NBSCREENS) {
 		strToUpper(bgName);
 
 		gfxModuleData_gfxWaitVSync();
@@ -534,6 +609,21 @@ int16 Op_InitializeState(void) {
 
 int16 Op_GetlowMemory(void) {
 	return lowMemory;
+}
+
+int16 Op_AniDir(void) {
+	int type = popVar();
+	int objIdx = popVar();
+	int ovlIdx = popVar();
+
+	if (!ovlIdx)
+		ovlIdx = currentScriptPtr->overlayNumber;
+
+	actorStruct *pActor = findActor(&actorHead, ovlIdx, objIdx, type);
+	if (pActor)
+		return pActor->startDirection;
+
+	return -1;
 }
 
 int16 Op_FadeOut(void) {
@@ -695,7 +785,19 @@ int16 Op_ProtectionFlag(void) {
 	if (newVar != -1) {
 		protectionCode = newVar;
 	}
+
 	return temp;
+}
+
+int16 Op_ClearScreen(void) {
+	int bgIdx = popVar();
+
+	if ((bgIdx >= 0) && (bgIdx < NBSCREENS) && (backgroundScreens[bgIdx])) {
+		memset(backgroundScreens[bgIdx], 0, 320 * 200);
+		strcpy(backgroundTable[0].name, "");
+	}
+
+	return 0;
 }
 
 int16 Op_AddMessage(void) {
@@ -823,7 +925,7 @@ int16 Op_SetActiveBackground(void) {
 	int currentPlane = masterScreen;
 	int newPlane = popVar();
 
-	if (newPlane >= 0 && newPlane < 8) {
+	if (newPlane >= 0 && newPlane < NBSCREENS) {
 		if (backgroundScreens[newPlane]) {
 			masterScreen = newPlane;
 			switchPal = 1;
@@ -1089,7 +1191,7 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 	return dir;
 }
 
-int flag_obstacle;		// computedVar14Bis
+int flag_obstacle;		// numPolyBis
 
 // add animation
 int16 Op_AddAnimation(void) {
@@ -1136,7 +1238,7 @@ int16 Op_AddAnimation(void) {
 
 			setObjectPosition(overlay, obj, 3, newFrame + start);
 			setObjectPosition(overlay, obj, 4, zoom);
-			setObjectPosition(overlay, obj, 5, computedVar14);
+			setObjectPosition(overlay, obj, 5, numPoly);
 
 			animationStart = false;
 		}
@@ -1173,6 +1275,36 @@ int16 Op_SetStringColors(void) {
 	return 0;
 }
 
+int16 Op_XClick(void) {
+	int x = popVar();
+
+	if (x != -1) {
+		aniX = x;
+		animationStart = true;
+	}
+
+	return aniX;
+}
+
+int16 Op_YClick(void) {
+	int y = popVar();
+
+	if (y != -1) {
+		aniY = y;
+		animationStart = true;
+	}
+
+	return aniY;
+}
+
+int16 Op_GetPixel(void) {
+	int x = popVar();
+	int y = popVar();
+
+	getPixel(x, y);
+	return numPoly;
+}
+
 int16 Op_TrackAnim(void) {		// setup actor position
 	actorStruct *pActor;
 
@@ -1207,7 +1339,7 @@ int16 Op_BgName(void) {
 	char* bgName = (char*)popPtr();
 	int bgIdx = popVar();
 
-	if ((bgIdx >= 0) && (bgIdx < 8) && bgName) {
+	if ((bgIdx >= 0) && (bgIdx < NBSCREENS) && bgName) {
 		strcpy(bgName, backgroundTable[bgIdx].name);
 
 		if (strlen(bgName))
@@ -1215,14 +1347,6 @@ int16 Op_BgName(void) {
 
 		return 0;
 	}
-
-	return 0;
-}
-
-int16 Op_StopFX(void) {
-	int fxIdx = popVar();
-
-	printf("StopFX(%d)\n", fxIdx);
 
 	return 0;
 }
@@ -1253,6 +1377,39 @@ int16 Op_StopSong(void) {
 	return 0;
 }
 
+int16 Op_RestoreSong(void) {
+	// Used in the original to restore the contents of a song. Doesn't seem to be used,
+	// since the backup buffer it uses is never set
+	return 0;
+}
+
+int16 Op_SongSize(void) {
+	int size, oldSize;
+
+	if (_vm->music().songLoaded()) {
+		byte *pSize = _vm->music().songData() + 470;
+		oldSize = *pSize;
+		size = popVar();
+		if ((size >= 1) && (size < 128))
+			*pSize = size;
+	} else
+		oldSize = 0;
+	
+	return oldSize;
+}
+
+int16 Op_SetPattern(void) {
+	int value = popVar();
+	int offset = popVar();
+
+	if (_vm->music().songLoaded()) {
+		byte *pData = _vm->music().songData();
+		*(pData + 472 + offset) = (byte)value;
+	}
+
+	return 0;
+}
+
 int16 Op_FadeSong(void) {
 	_vm->music().fadeSong();
 	
@@ -1263,6 +1420,17 @@ int16 Op_FreeSong(void) {
 	_vm->music().stop();
 	_vm->music().removeSong();
 	return 0;
+}
+
+int16 Op_SongLoop(void) {
+	bool oldLooping = _vm->music().looping();
+	_vm->music().setLoop(popVar() != 0);
+
+	return oldLooping;
+}
+
+int16 Op_SongPlayed(void) {
+	return _vm->music().songPlayed();
 }
 
 void setVar49Value(int value) {
@@ -1466,11 +1634,32 @@ int16 Op_GetNodeY(void) {
 	return nodeInfo[1];
 }
 
+int16 Op_SetVolume(void) {
+	int oldVolume = _vm->music().volume() >> 2;
+	int newVolume = popVar();
+
+	// TODO: The game seems to expect the volume will only range from 0 - 63, so for now
+	// I'm doing a translation of the full range 0 - 255 to the 0 - 63 for this script.
+	// Need to verify at some point that there's no problem with this
+	if (newVolume > 63) newVolume = 63;
+	if (newVolume >= 0) {
+		int volume = 63 - newVolume;
+		_vm->music().setVolume(volume << 2);
+	}
+	
+	return oldVolume >> 2;
+}
+
 int16 Op_SongExist(void) {
 	char* songName = (char*)popPtr();
 
 	printf("Unimplemented \"Op_SongExist\": %s\n", songName);
 
+	return 0;
+}
+
+int16 Op_TrackPos(void) {
+	// This function returns a variable that never seems to change from 0
 	return 0;
 }
 
@@ -1489,9 +1678,7 @@ int16 Op_SetNodeColor(void) {
 }
 
 int16 Op_SetXDial(void) {
-	int16 old;
-
-	old = xdial;
+	int16 old = xdial;
 	xdial = popVar();
 
 	return old;
@@ -1541,6 +1728,95 @@ int16 Op_LinkObjects(void) {
 	return 0;
 }
 
+int16 Op_UserClick(void) {
+	sysKey = popVar();
+	sysY = popVar();
+	sysX = popVar();
+
+	return 0;
+}
+
+int16 Op_XMenuItem(void) {
+	int index = popVar();
+	int count = 0;
+
+	if (!menuTable[0] || (menuTable[0]->numElements == 0))
+		return 0;
+
+	menuElementStruct *p = menuTable[0]->ptrNextElement;
+
+	while (p) {
+		if (count == index)
+			return p->x + 1;
+
+		++count;
+		p = p->next;
+	}
+
+	return 0;
+}
+
+int16 Op_YMenuItem(void) {
+	int index = popVar();
+	int count = 0;
+
+	if (!menuTable[0] || (menuTable[0]->numElements == 0))
+		return 0;
+
+	menuElementStruct *p = menuTable[0]->ptrNextElement;
+
+	while (p) {
+		if (count == index)
+			return p->y + 1;
+
+		++count;
+		p = p->next;
+	}
+
+	return 0;
+}
+
+
+int16 Op_Menu() {
+	return (int16)(menuTable[0] != NULL);
+}
+
+int16 Op_AutoControl(void) {
+	int oldValue = automaticMode;
+	int newValue = popVar();
+
+	if (newValue >= 0) {
+		automaticMode = newValue;
+		activeMouse = newValue;
+	}
+
+	return oldValue;
+}
+
+int16 Op_MouseMove(void) {
+	int16 handle, button;
+	Common::Point pt;
+
+	getMouseStatus(&handle, &pt.x, &button, &pt.y);
+
+	// x/y parameters aren't used
+	popVar();
+	popVar();
+
+	return 0;
+}
+
+int16 Op_MouseEnd(void) {
+	if (automoveInc < automoveMax)
+		return (int16)false;
+
+	return (int16)true;
+}
+
+int16 Op_MsgExist(void) {
+	return isMessage;
+}
+
 int16 Op_UserDelay(void) {
 	int delay = popVar();
 
@@ -1549,6 +1825,12 @@ int16 Op_UserDelay(void) {
 	}
 
 	return userDelay;
+}
+
+int16 Op_ThemeReset(void) {
+	objectReset();
+
+	return 0;
 }
 
 int16 Op_UserWait(void) {
@@ -1602,9 +1884,9 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_GetZoom,
 	Op_GetStep,
 	Op_SetStringColors,
-	NULL, // xClick
-	NULL, // yClick
-	NULL, // getPixel
+	Op_XClick,
+	Op_YClick,
+	Op_GetPixel,
 	Op_UserOn,
 	Op_FreeCT,
 	Op_FindObject,
@@ -1620,7 +1902,7 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_DialogOn,
 	Op_DialogOff,
 	Op_UserDelay,
-	NULL, // ThemeReset
+	Op_ThemeReset,
 	Op_Narrator,
 	Op_RemoveBackground,
 	Op_SetActiveBackground,
@@ -1633,25 +1915,25 @@ opcodeFunction opcodeTablePtr[] = {
 
 	Op_FreeSong, // 0x40
 	Op_FrameExist,
-	NULL, // SetVolume
+	Op_SetVolume,
 	Op_SongExist,
-	NULL, // TrackPos
+	Op_TrackPos,
 	Op_StopSong,
-	NULL, // RestoreSong
-	NULL, // SongSize
-	NULL, // SetPattern
-	NULL, // SongLoop
-	NULL, // SongPlayed
+	Op_RestoreSong,
+	Op_SongSize,
+	Op_SetPattern,
+	Op_SongLoop,
+	Op_SongPlayed,
 	Op_LinkObjects,
-	NULL, // UserClick
-	NULL, // XMenuItem
-	NULL, // YMenuItem
-	NULL, // Menu
+	Op_UserClick,
+	Op_XMenuItem,
+	Op_YMenuItem,
+	Op_Menu,
 
-	NULL, // AutoControl 0x50
-	NULL, // MouseMove
-	NULL, // MouseEnd
-	NULL, // MsgExist
+	Op_AutoControl, // 0x50
+	Op_MouseMove,
+	Op_MouseEnd,
+	Op_MsgExist,
 	Op_SetFont,
 	NULL, // MergeMsg
 	Op_Display,
@@ -1661,9 +1943,9 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_FindSet,
 	Op_regenerateBackgroundIncrust,
 	Op_BgName,
-	NULL, // loopFX
+	Op_LoopFX,
 	Op_StopFX,
-	NULL, // freqFX
+	Op_FreqFX,
 
 	Op_FreezeAni, // 0x60
 	Op_FindMsg,
@@ -1687,123 +1969,16 @@ opcodeFunction opcodeTablePtr[] = {
 	Op_FindSymbol,
 	Op_SetXDial,
 	Op_GetlowMemory,
-	NULL, // aniDir
+	Op_AniDir,
 	Op_Protect,
-	NULL, // Cls
+	Op_ClearScreen,
 	Op_Inventory,
 	Op_UserMenu,
-	NULL, // GetChar
+	Op_GetRingWord,
 	Op_Sec,
 	Op_ProtectionFlag,
 	Op_KillMenu,
 };
-
-void setupOpcodeTable(void) {
-//	int i;
-
-	/*	for (i = 0; i < 256; i++) {
-			opcodeTablePtr[i] = NULL;
-		}
-
-		opcodeTablePtr[0x1] = Op_FadeIn;
-		opcodeTablePtr[0x2] = Op_FadeOut;
-		opcodeTablePtr[0x3] = Op_LoadBackground;
-		opcodeTablePtr[0x4] = Op_LoadAbs;
-		opcodeTablePtr[0x5] = Op_AddCell;
-		opcodeTablePtr[0x6] = Op_AddProc;
-		opcodeTablePtr[0x7] = Op_InitializeState;
-		opcodeTablePtr[0x8] = Op_RemoveCell;
-		opcodeTablePtr[0x9] = Op_FreeCell;
-		opcodeTablePtr[0xA] = Op_RemoveProc;
-		opcodeTablePtr[0xB] = Op_RemoveFrame;
-		opcodeTablePtr[0xC] = Op_LoadOverlay;
-		opcodeTablePtr[0xD] = Op_SetColor;
-		opcodeTablePtr[0xE] = Op_PlayFX;
-		opcodeTablePtr[0xF] = NULL;	// used to be debug
-		opcodeTablePtr[0x10] = Op_FreeOverlay;
-		opcodeTablePtr[0x11] = Op_FindOverlay;
-		opcodeTablePtr[0x12] = NULL;	// used to be exec debug
-		opcodeTablePtr[0x13] = Op_AddMessage;
-		opcodeTablePtr[0x14] = Op_RemoveMessage;
-		opcodeTablePtr[0x15] = Op_UserWait;
-		opcodeTablePtr[0x16] = Op_FreezeCell;
-		opcodeTablePtr[0x17] = Op_LoadCt;
-		opcodeTablePtr[0x18] = Op_AddAnimation;
-		opcodeTablePtr[0x19] = Op_RemoveAnimation;
-		opcodeTablePtr[0x1A] = Op_SetZoom;
-		opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
-		opcodeTablePtr[0x1D] = Op_SetNodeColor;
-		opcodeTablePtr[0x1E] = Op_TrackAnim;
-		opcodeTablePtr[0x1F] = Op_GetNodeX;
-		opcodeTablePtr[0x20] = Op_GetNodeY;
-		opcodeTablePtr[0x21] = Op_EndAnim;
-		opcodeTablePtr[0x22] = Op_GetZoom;
-		opcodeTablePtr[0x23] = Op_GetStep;
-		opcodeTablePtr[0x24] = Op_SetStringColors;
-		opcodeTablePtr[0x28] = Op_UserOn;
-		opcodeTablePtr[0x29] = Op_FreeCT;
-		opcodeTablePtr[0x2A] = Op_FindObject;
-		opcodeTablePtr[0x2B] = Op_FindProc;
-		opcodeTablePtr[0x2C] = Op_WriteObject;
-		opcodeTablePtr[0x2E] = Op_RemoveOverlay;
-		opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
-		opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
-		opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
-		opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
-		opcodeTablePtr[0x33] = Op_DialogOn;
-		opcodeTablePtr[0x34] = Op_DialogOff;
-		opcodeTablePtr[0x35] = Op_UserDelay;
-		opcodeTablePtr[0x37] = Op_Narrator;
-		opcodeTablePtr[0x38] = Op_RemoveBackground;
-		opcodeTablePtr[0x39] = Op_SetActiveBackground;
-		opcodeTablePtr[0x3A] = Op_CTOn;
-		opcodeTablePtr[0x3B] = Op_CTOff;
-		opcodeTablePtr[0x3C] = Op_Random;
-		opcodeTablePtr[0x3D] = Op_LoadSong;
-		opcodeTablePtr[0x3E] = Op_PlaySong;
-		opcodeTablePtr[0x3F] = Op_FadeSong;
-		opcodeTablePtr[0x40] = Op_FreeSong;
-		opcodeTablePtr[0x41] = Op_FrameExist;
-		opcodeTablePtr[0x43] = Op_SongExist;
-		opcodeTablePtr[0x45] = Op_StopSong;
-		opcodeTablePtr[0x4B] = Op_LinkObjects;
-		opcodeTablePtr[0x54] = Op_SetFont;
-		opcodeTablePtr[0x56] = Op_Display;
-		opcodeTablePtr[0x57] = Op_GetMouseX;
-		opcodeTablePtr[0x58] = Op_GetMouseY;
-		opcodeTablePtr[0x59] = Op_GetMouseButton;
-		opcodeTablePtr[0x5A] = Op_FindSet;
-		opcodeTablePtr[0x5B] = Op_regenerateBackgroundIncrust;
-		opcodeTablePtr[0x5C] = Op_BgName;
-		opcodeTablePtr[0x5E] = Op_StopFX;
-		opcodeTablePtr[0x60] = Op_FreezeAni;
-		opcodeTablePtr[0x61] = Op_FindMsg;
-		opcodeTablePtr[0x62] = Op_FreezeParent;
-		opcodeTablePtr[0x63] = Op_UnfreezeParent;
-		opcodeTablePtr[0x64] = Op_Exec;
-		opcodeTablePtr[0x65] = Op_AutoCell;
-		opcodeTablePtr[0x66] = Op_Sizeof;
-		opcodeTablePtr[0x67] = Op_Preload;
-		opcodeTablePtr[0x68] = Op_FreePreload;
-		opcodeTablePtr[0x6A] = Op_VBL;
-		opcodeTablePtr[0x6B] = Op_LoadFrame;
-		opcodeTablePtr[0x6C] = Op_FreezeOverlay;
-		opcodeTablePtr[0x6D] = Op_Strcpy;
-		opcodeTablePtr[0x6E] = Op_Strcat;
-		opcodeTablePtr[0x6F] = Op_Itoa;
-		opcodeTablePtr[0x70] = Op_comment;
-		opcodeTablePtr[0x71] = Op_ComputeLine;
-		opcodeTablePtr[0x72] = Op_FindSymbol;
-		opcodeTablePtr[0x73] = Op_SetXDial;
-		opcodeTablePtr[0x74] = Op_GetlowMemory;
-		opcodeTablePtr[0x76] = Op_Protect;
-		opcodeTablePtr[0x79] = Op_UserMenu;
-		opcodeTablePtr[0x78] = Op_Inventory;
-		opcodeTablePtr[0x7B] = Op_Sec;
-		opcodeTablePtr[0x7C] = Op_ProtectionFlag;
-		opcodeTablePtr[0x7D] = Op_KillMenu;*/
-	// TODO: copy the opcodes here
-}
 
 int32 opcodeType8(void) {
 	int opcode = getByteFromScript();
