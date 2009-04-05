@@ -1635,7 +1635,7 @@ int16 Op_GetNodeY(void) {
 }
 
 int16 Op_SetVolume(void) {
-	int oldVolume = _vm->music().volume() >> 2;
+	int oldVolume = _vm->music().getVolume() >> 2;
 	int newVolume = popVar();
 
 	// TODO: The game seems to expect the volume will only range from 0 - 63, so for now

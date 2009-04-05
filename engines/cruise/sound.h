@@ -55,7 +55,7 @@ public:
 	~MusicPlayer();
 
 	void setVolume(int volume);
-	int getVolume() { return _masterVolume; }
+	int getVolume() const { return _masterVolume; }
 
 	void stop();
 	void pause();
@@ -73,7 +73,6 @@ public:
 	bool songPlayed() const { return _songPlayed; }
 	bool isPlaying() const { return _isPlaying; }
 	bool looping() const { return _looping; }
-	byte volume() const { return _masterVolume; }
 	byte *songData() { return _songPointer; }
 	void setPlaying(bool playing) { _isPlaying = playing; }
 	void setLoop(bool loop) { _looping = loop; }
