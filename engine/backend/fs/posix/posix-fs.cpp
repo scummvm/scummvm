@@ -24,7 +24,7 @@
 
 #if defined(UNIX)
 
-#include "engine/backend/fs/abstract-fs.h"
+#include "engine/backend/fs/posix/posix-fs.h"
 #include "engine/backend/fs/stdiostream.h"
 #include "common/algorithm.h"
 
