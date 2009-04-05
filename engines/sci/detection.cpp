@@ -2848,9 +2848,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			foundRes000 = true;
 
 		// Check if it's a known executable name
-		// Note: "sier" matches "sier.exe", "sierw.exe" and "sierw5.exe"
-		if (filename.contains("scidhuv") || filename.contains("sciv") ||
-			filename.contains("sierra") || filename.contains("sciw") ||
+		// Note: "sier" matches "sier.exe", "sierra.exe", "sierw.exe" and "sierw5.exe"
+		if (filename.contains("scidhuv") || filename.contains("sciduv") ||
+			filename.contains("sciv") || filename.contains("sciw") ||
 			filename.contains("prog") || filename.contains("sier")) {
 
 			// We already found a valid exe, no need to check this one.
