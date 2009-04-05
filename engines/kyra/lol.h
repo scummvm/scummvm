@@ -628,6 +628,7 @@ private:
 	int olol_countBlockItems(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
+	int olol_checkForCertainPartyMember(EMCState *script);
 	int olol_printMessage(EMCState *script);
 	int olol_deleteLevelItem(EMCState *script);
 	int olol_objectLeavesLevel(EMCState *script);
@@ -677,6 +678,7 @@ private:
 	int tlol_characterChat(const TIM *tim, const uint16 *param);
 	int tlol_drawScene(const TIM *tim, const uint16 *param);
 	int tlol_update(const TIM *tim, const uint16 *param);
+	int tlol_clearTextField(const TIM *tim, const uint16 *param);
 	int tlol_loadSoundFile(const TIM *tim, const uint16 *param);
 	int tlol_playMusicTrack(const TIM *tim, const uint16 *param);
 	int tlol_playDialogueTalkText(const TIM *tim, const uint16 *param);

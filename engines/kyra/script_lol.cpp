@@ -1164,6 +1164,15 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	return old;
 }
 
+int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkForCertainPartyMember(%p) (%d)", (const void *)script, stackPos(0));
+	for (int i = 0; i < 4; i++) {
+		if (_characters[i].flags & 9 && _characters[i].id == stackPos(0))
+			return true;
+	}
+	return 0;
+}
+
 int LoLEngine::olol_printMessage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_printMessage(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	int snd = stackPos(2);
@@ -1581,6 +1590,18 @@ int LoLEngine::tlol_update(const TIM *tim, const uint16 *param) {
 	return 1;
 }
 
+int LoLEngine::tlol_clearTextField(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_clearTextField(%p, %p)", (const void*)tim, (const void*)param);
+	if (_currentControlMode && !textEnabled())
+		return 1;
+	_screen->setScreenDim(5);
+	const ScreenDim *d = _screen->_curDim;
+	_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
+	_txt->clearDim(4);
+	_txt->resetDimTextPositions(4);
+	return 1;
+}
+
 int LoLEngine::tlol_loadSoundFile(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadSoundFile(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
 	snd_loadSoundFile(param[0]);
@@ -1799,7 +1820,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x6C
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_checkForCertainPartyMember);
 	Opcode(olol_printMessage);
 
 	// 0x70
@@ -1954,7 +1975,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x08
 	OpcodeTim(tlol_drawScene);
 	OpcodeTim(tlol_update);
-	OpcodeTimUnImpl();
+	OpcodeTim(tlol_clearTextField);
 	OpcodeTim(tlol_loadSoundFile);
 
 	// 0x0C
