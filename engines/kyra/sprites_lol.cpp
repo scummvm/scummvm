@@ -1370,7 +1370,7 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 		if (centered) {
 			bool r = false;
 			
-			if (_levelBlockProperties[monster->blockPropertyIndex].assignedObjects & 0x8000) {
+			if (monster->nextAssignedObject & 0x8000) {
 				r = true;
 			} else {
 				uint16 id = _levelBlockProperties[monster->blockPropertyIndex].assignedObjects;
@@ -1381,8 +1381,7 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 				} else {					
 					for (int i = 0; i < 3; i++) {
 						t = (t + 1) & 3;
-						calcNewBlockPosition(monster->blockPropertyIndex, t);
-						id = _levelBlockProperties[monster->blockPropertyIndex].assignedObjects;
+						id = _levelBlockProperties[calcNewBlockPosition(monster->blockPropertyIndex, t)].assignedObjects;
 						id = (id & 0x8000) ? (id & 0x7fff) : 0xffff;
 						if (id != 0xffff)
 							r = true;
