@@ -206,7 +206,8 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	retval->color_key = cel_base[isSci11 ? 8 : 6];
 	retval->xoffset = (mirrored) ? xdisplace : -xdisplace;
 	retval->yoffset = -ydisplace;
-	retval->palette = view ? view->palette->getref() : NULL;
+	// FIXME: In LSL5, it seems that the inventory has views without palettes (or we don't load palettes properly)
+	retval->palette = (view && view->palette) ? view->palette->getref() : NULL;
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(retval);
