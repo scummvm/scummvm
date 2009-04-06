@@ -203,6 +203,9 @@ Common::Error Parallaction_ns::init() {
 	_saveLoad = new SaveLoad_ns(this, _saveFileMan);
 
 	initInventory();
+	setupBalloonManager();
+
+	_score = 1;
 
 	Parallaction::init();
 

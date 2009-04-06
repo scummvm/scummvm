@@ -97,6 +97,7 @@ Common::Error Parallaction_br::init() {
 	_saveLoad = new SaveLoad_br(this, _saveFileMan);
 
 	initInventory();
+	setupBalloonManager();
 
 	Parallaction::init();
 

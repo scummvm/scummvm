@@ -32,7 +32,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
@@ -50,9 +49,6 @@ Parallaction *_vm = NULL;
 
 char		_saveData1[30] = { '\0' };
 uint32		_engineFlags = 0;
-
-uint16		_score = 1;
-char		_password[8];
 
 uint32		_globalFlags = 0;
 
@@ -130,8 +126,6 @@ Common::Error Parallaction::init() {
 	_debugger = new Debugger(this);
 
 	_menuHelper = 0;
-
-	setupBalloonManager();
 
 	return Common::kNoError;
 }
@@ -899,6 +893,7 @@ CharacterName::CharacterName() {
 CharacterName::CharacterName(const char *name) {
 	bind(name);
 }
+
 
 void CharacterName::bind(const char *name) {
 	const char *begin = name;

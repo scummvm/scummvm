@@ -94,8 +94,6 @@ struct PARALLACTIONGameDescription;
 
 
 
-extern char			_password[8];
-extern uint16		_score;
 extern uint32		_engineFlags;
 extern char			_saveData1[];
 extern uint32		_globalFlags;
@@ -129,7 +127,7 @@ class LocationParser_ns;
 class LocationParser_br;
 class ProgramParser_ns;
 class ProgramParser_br;
-
+class BalloonManager;
 
 struct Location {
 
@@ -331,7 +329,6 @@ protected:
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
 	void	showLocationComment(const Common::String &text, bool end);
-	void	setupBalloonManager();
 
 public:
 	void	beep();
@@ -394,6 +391,10 @@ public:
 
 	SoundMan_ns*	_soundManI;
 
+	uint16			_score;
+	Common::String	_password;
+
+
 public:
 	virtual void parseLocation(const char *filename);
 	virtual void changeLocation();
@@ -419,6 +420,7 @@ private:
 	void	initResources();
 	void	initInventory();
 	void	destroyInventory();
+	void	setupBalloonManager();
 	void	startGui();
 	void	startCreditSequence();
 	void	startEndPartSequence();
@@ -437,6 +439,7 @@ private:
 	ZonePtr _moveSarcGetZones[5];
 	ZonePtr _moveSarcExaZones[5];
 	uint16 num_foglie;
+
 	int16 _sarcophagusDeltaX;
 	bool	_movingSarcophagus;		 // sarcophagus stuff to be saved
 	uint16	_freeSarcophagusSlotX;		 // sarcophagus stuff to be saved
@@ -544,6 +547,7 @@ private:
 	void	initResources();
 	void	initInventory();
 	void	destroyInventory();
+	void	setupBalloonManager();
 	void	initFonts();
 	void	freeFonts();
 	void	freeLocation(bool removeAll);

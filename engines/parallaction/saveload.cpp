@@ -125,7 +125,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	_vm->_location._startPosition.y = atoi(s.c_str());
 
 	s = f->readLine();
-	_score = atoi(s.c_str());
+	_vm->_score = atoi(s.c_str());
 
 	s = f->readLine();
 	_globalFlags = atoi(s.c_str());
@@ -202,7 +202,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	sprintf(s, "%d\n", _vm->_char._ani->getY());
 	f->writeString(s);
-	sprintf(s, "%d\n", _score);
+	sprintf(s, "%d\n", _vm->_score);
 	f->writeString(s);
 	sprintf(s, "%u\n", _globalFlags);
 	f->writeString(s);
