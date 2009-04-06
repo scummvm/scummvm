@@ -125,7 +125,7 @@ bool Resource::reset() {
 
 		if (!_vm->gameFlags().isTalkie) {
 			static const char * const list[] = {
-				"GENERAL.PAK", "STARTUP.PAK", 0
+				"GENERAL.PAK", 0
 			};
 
 			loadProtectedFiles(list);

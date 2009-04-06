@@ -619,7 +619,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
 		vm()->sound()->voicePlay(_vocFiles[index].c_str(), volume, true);
 	else
-		vm()->snd_playSoundEffect(index, volume);
+		vm()->sound()->playSoundEffect(index);
 
 	return 1;
 }
