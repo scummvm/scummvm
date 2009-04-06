@@ -356,17 +356,17 @@ void Parallaction_br::parseLocation(const char *filename) {
 	bool visited = getLocationFlags() & kFlagsVisited;
 
 	// load background, mask and path
-	_vm->_disk->loadScenery(*out._info,
+	_disk->loadScenery(*out._info,
 		out._backgroundName.empty() ? 0 : out._backgroundName.c_str(),
 		out._maskName.empty()       ? 0 : out._maskName.c_str(),
 		out._pathName.empty()       ? 0 : out._pathName.c_str());
 	// assign background
-	_vm->_gfx->setBackground(kBackgroundLocation, out._info);
+	_gfx->setBackground(kBackgroundLocation, out._info);
 
 
 	// process zones
-	ZoneList::iterator zit = _vm->_location._zones.begin();
-	for ( ; zit != _vm->_location._zones.end(); ++zit) {
+	ZoneList::iterator zit = _location._zones.begin();
+	for ( ; zit != _location._zones.end(); ++zit) {
 		ZonePtr z = *zit;
 		// restore the flags if the location has already been visited
 		restoreOrSaveZoneFlags(z, visited);
@@ -378,13 +378,13 @@ void Parallaction_br::parseLocation(const char *filename) {
 
 		bool visible = (z->_flags & kFlagsRemove) == 0;
 		if (visible) {
-			_vm->showZone(z, visible);
+			showZone(z, visible);
 		}
 	}
 
 	// load the character (must be done before animations are processed)
 	if (!out._characterName.empty()) {
-		_vm->changeCharacter(out._characterName.c_str());
+		changeCharacter(out._characterName.c_str());
 	}
 
 	// process animations

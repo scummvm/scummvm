@@ -466,7 +466,7 @@ public:
 
 void Parallaction::enterDialogueMode(ZonePtr z) {
 	debugC(1, kDebugDialogue, "Parallaction::enterDialogueMode(%s)", z->u._filename.c_str());
-	_dialogueMan = _vm->createDialogueManager(z);
+	_dialogueMan = createDialogueManager(z);
 	assert(_dialogueMan);
 	_dialogueMan->start();
 	_input->_inputMode = Input::kInputModeDialogue;
