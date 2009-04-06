@@ -15,7 +15,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Parallaction:
     - Fixed the sarcophagus puzzle in Nippon Safes
-    - Credits of the Nippon Safes Amiga demo are now shown correctly
 
  SAGA:
     - Fixed a crash in Inherit the Earth
@@ -70,6 +69,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  KYRA:
    - Added support for Auto-save feature.
    - Added support for MIDI music.
+
+ Parallaction:
+    - Credits of the Nippon Safes Amiga demo are now shown correctly
 
  SCUMM:
    - Implemented radio-chatter effect in The DIG.
