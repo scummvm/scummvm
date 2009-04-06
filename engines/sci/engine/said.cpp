@@ -811,6 +811,11 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
 # else
   YYUSE (yyoutput);
 # endif
+  switch (yytype)
+    {
+      default:
+	break;
+    }
 }
 
 
@@ -894,7 +899,7 @@ yy_reduce_print (yyvsp, yyrule)
       fprintf (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		      		       );
+		       		       );
       fprintf (stderr, "\n");
     }
 }
@@ -1167,6 +1172,13 @@ yydestruct (yymsg, yytype, yyvaluep)
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
+
+  switch (yytype)
+    {
+
+      default:
+	break;
+    }
 }
 
 
@@ -1937,8 +1949,6 @@ static tree_t said_terminal(int val) {
 static tree_t said_aug_branch(int n1, int n2, tree_t t1, tree_t t2) {
 	int retval;
 
-	// FIXME: The following code is ambiguous and *not* safely portable,
-	// due to the way the SAID_NEXT_NODE macro is implemented
 	retval = said_branch_node(SAID_NEXT_NODE,
 				said_branch_node(SAID_NEXT_NODE,
 					said_leaf_node(SAID_NEXT_NODE, n1),
@@ -1987,7 +1997,7 @@ static said_spec_t said_top_branch(tree_t first) {
 	return 0;
 }
 
-int said_parse_spec(EngineState *s, byte *spec) {
+static int said_parse_spec(EngineState *s, byte *spec) {
 	int nextitem;
 
 	said_parse_error = NULL;

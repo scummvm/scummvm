@@ -353,7 +353,7 @@ static said_spec_t said_top_branch(tree_t first) {
 	return 0;
 }
 
-int said_parse_spec(EngineState *s, byte *spec) {
+static int said_parse_spec(EngineState *s, byte *spec) {
 	int nextitem;
 
 	said_parse_error = NULL;
