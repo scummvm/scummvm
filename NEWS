@@ -22,10 +22,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.13.1 (2009-??-??)    
  AGOS:
-    - Added support for the original cutscenes of The Feeble Files
-    - Fixed a crash in Waxworks
-    - Fixed a crash when loading savegames from a specific location in Simon 2
-    - Fixed some glitches in the AtariST version of Elvira 2
+    - Fixed crashes when exploring Jack the Ripper scene in the PC version of
+      the Waxworks
+    - Fixed palette glitches in the AtariST version of Elvira 2
 
  Gob:
     - Fixed a crash in the Italian version of Woodruff
@@ -80,6 +79,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Blue's ABC Time Activities.
    - Added support for Bud Tucker in Double Trouble.
    - Added support for The 7th Guest.
+
+ AGOS:
+    - Added support for the original cutscenes of The Feeble Files
+    - Added support for text compression in the AtariST version of Elvira 1
+    - Fixed combining items in Waxworks
+    - Fixed display of spell descriptions in Elvira 2
 
  KYRA:
    - Added support for Auto-save feature.
