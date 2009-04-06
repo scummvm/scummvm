@@ -420,12 +420,21 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	bool lsl5PasswordWorkaround = false;
+	// LSL5 stores the password at the beginning in memory.drv, using XOR encryption,
+	// which means that is_print_str() will fail. Therefore, do not use the heuristic to determine
+	// if we're handling a string or an array for LSL5's password screen (room 155)
+	// FIXME: implement function to get current room number
+	if (s->_gameName.equalsIgnoreCase("lsl5") && (KP_UINT(s->script_000->locals_block->locals[13]) == 155))
+		lsl5PasswordWorkaround = true;
+
+	const char* dst = (const char *)dest; // used just for code beautification purposes
+
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
-	        (strcmp(s->seg_manager->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0)  &&
-	        ((strlen((const char*)dest) < 2) || (!is_print_str((const char*)dest))))
-		/* SQ4 array handling detected */
-	{
+	        (strcmp(s->seg_manager->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
+	        ((strlen(dst) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dst)))) {
+		// SQ4 array handling detected
 #ifndef SCUMM_BIG_ENDIAN
 		int odd = KP_UINT(argv[1]) & 1;
 #else
