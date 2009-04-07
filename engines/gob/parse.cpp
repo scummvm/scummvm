@@ -82,10 +82,10 @@ void Parse::skipExpr(char stopToken) {
 	int16 dim;
 
 	num = 0;
-	while (1) {
+	while (true) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if ((operation >= 14) && (operation <= 29)) {
+		if ((operation >= 14) && (operation <= OP_FUNC)) {
 			switch (operation) {
 			case 14:
 				_vm->_global->_inter_execPtr += 4;
@@ -95,26 +95,26 @@ void Parse::skipExpr(char stopToken) {
 
 			case 17:
 			case 18:
-			case 20:
+			case OP_LOAD_IMM_INT16:
 			case 23:
 			case 24:
 				_vm->_global->_inter_execPtr += 2;
 				break;
 
-			case 19:
+			case OP_LOAD_IMM_INT32:
 				_vm->_global->_inter_execPtr += 4;
 				break;
 
-			case 21:
+			case OP_LOAD_IMM_INT8:
 				_vm->_global->_inter_execPtr += 1;
 				break;
 
-			case 22:
+			case OP_LOAD_IMM_STR:
 				_vm->_global->_inter_execPtr +=
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
-			case 25:
+			case OP_LOAD_VAR_STR:
 				_vm->_global->_inter_execPtr += 2;
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
@@ -125,10 +125,10 @@ void Parse::skipExpr(char stopToken) {
 			case 15:
 				_vm->_global->_inter_execPtr += 2;
 
-			case 16:
-			case 26:
-			case 27:
-			case 28:
+			case OP_ARRAY_UINT8:
+			case OP_ARRAY_UINT32:
+			case OP_ARRAY_UINT16:
+			case OP_ARRAY_STR:
 				dimCount = _vm->_global->_inter_execPtr[2];
 				// skip header and dimensions
 				_vm->_global->_inter_execPtr += 3 + dimCount;
@@ -136,31 +136,31 @@ void Parse::skipExpr(char stopToken) {
 				for (dim = 0; dim < dimCount; dim++)
 					skipExpr(12);
 
-				if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
+				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
 					skipExpr(12);
 				}
 				break;
 
-			case 29:
+			case OP_FUNC:
 				_vm->_global->_inter_execPtr++;
 				skipExpr(10);
 			}
 			continue;
-		} // if ((operation >= 16) && (operation <= 29))
+		} // if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC))
 
-		if (operation == 9) {
+		if (operation == OP_BEGIN_EXPR) {
 			num++;
 			continue;
 		}
 
-		if ((operation == 11) || ((operation >= 1) && (operation <= 8)))
+		if ((operation == OP_NOT) || ((operation >= OP_NEG) && (operation <= 8)))
 			continue;
 
-		if ((operation >= 30) && (operation <= 37))
+		if ((operation >= OP_OR) && (operation <= OP_NEQ))
 			continue;
 
-		if (operation == 10)
+		if (operation == OP_END_EXPR)
 			num--;
 
 		if (operation != stopToken)
@@ -191,10 +191,10 @@ void Parse::printExpr_internal(char stopToken) {
 	byte func;
 
 	num = 0;
-	while (1) {
+	while (true) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if ((operation >= 16) && (operation <= 29)) {
+		if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC)) {
 			// operands
 
 			switch (operation) {
@@ -206,20 +206,20 @@ void Parse::printExpr_internal(char stopToken) {
 				debugN(5, "var8_%d", _vm->_inter->load16());
 				break;
 
-			case 19: // int32/uint32 immediate
+			case OP_LOAD_IMM_INT32: // int32/uint32 immediate
 				debugN(5, "%d", READ_LE_UINT32(_vm->_global->_inter_execPtr));
 				_vm->_global->_inter_execPtr += 4;
 				break;
 
-			case 20: // int16 immediate
+			case OP_LOAD_IMM_INT16: // int16 immediate
 				debugN(5, "%d", _vm->_inter->load16());
 				break;
 
-			case 21: // int8 immediate
+			case OP_LOAD_IMM_INT8: // int8 immediate
 				debugN(5, "%d", (int8) *_vm->_global->_inter_execPtr++);
 				break;
 
-			case 22: // string immediate
+			case OP_LOAD_IMM_STR: // string immediate
 				debugN(5, "\42%s\42", _vm->_global->_inter_execPtr);
 				_vm->_global->_inter_execPtr +=
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
@@ -230,7 +230,7 @@ void Parse::printExpr_internal(char stopToken) {
 				debugN(5, "var_%d", _vm->_inter->load16());
 				break;
 
-			case 25: // string variable load
+			case OP_LOAD_VAR_STR: // string variable load
 				debugN(5, "(&var_%d)", _vm->_inter->load16());
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
@@ -239,12 +239,12 @@ void Parse::printExpr_internal(char stopToken) {
 				}
 				break;
 
-			case 16: // uint8 array access
-			case 26: // uint32 array access
-			case 27: // uint16 array access
-			case 28: // string array access
+			case OP_ARRAY_UINT8: // uint8 array access
+			case OP_ARRAY_UINT32: // uint32 array access
+			case OP_ARRAY_UINT16: // uint16 array access
+			case OP_ARRAY_STR: // string array access
 				debugN(5, "\n");
-				if (operation == 28)
+				if (operation == OP_ARRAY_STR)
 					debugN(5, "(&");
 
 				debugN(5, "var_%d[", _vm->_inter->load16());
@@ -258,25 +258,25 @@ void Parse::printExpr_internal(char stopToken) {
 						debugN(5, ",");
 				}
 				debugN(5, "]");
-				if (operation == 28)
+				if (operation == OP_ARRAY_STR)
 					debugN(5, ")");
 
-				if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
+				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
 					debugN(5, "{");
 					printExpr_internal(12); // this also prints the closing }
 				}
 				break;
 
-			case 29: // function
+			case OP_FUNC: // function
 				func = *_vm->_global->_inter_execPtr++;
-				if (func == 5)
+				if (func == FUNC_SQR)
 					debugN(5, "sqr(");
-				else if (func == 10)
+				else if (func == FUNC_RAND)
 					debugN(5, "rand(");
-				else if (func == 7)
+				else if (func == FUNC_ABS)
 					debugN(5, "abs(");
-				else if ((func == 0) || (func == 1) || (func == 6))
+				else if ((func == FUNC_SQRT1) || (func == FUNC_SQRT2) || (func == FUNC_SQRT3))
 					debugN(5, "sqrt(");
 				else
 					debugN(5, "id(");
@@ -284,23 +284,23 @@ void Parse::printExpr_internal(char stopToken) {
 				break;
 			}
 			continue;
-		}		// if ((operation >= 16) && (operation <= 29))
+		}		// if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC))
 
 		// operators
 		switch (operation) {
-		case 9:
+		case OP_BEGIN_EXPR:
 			debugN(5, "(");
 			break;
 
-		case 11:
+		case OP_NOT:
 			debugN(5, "!");
 			break;
 
-		case 10:
+		case OP_END_EXPR:
 			debugN(5, ")");
 			break;
 
-		case 1:
+		case OP_NEG:
 			debugN(5, "-");
 			break;
 
@@ -332,7 +332,7 @@ void Parse::printExpr_internal(char stopToken) {
 			debugN(5, "&");
 			break;
 
-		case 30:
+		case OP_OR:
 			debugN(5, "||");
 			break;
 
@@ -340,27 +340,27 @@ void Parse::printExpr_internal(char stopToken) {
 			debugN(5, "&&");
 			break;
 
-		case 32:
+		case OP_LESS:
 			debugN(5, "<");
 			break;
 
-		case 33:
+		case OP_LEQ:
 			debugN(5, "<=");
 			break;
 
-		case 34:
+		case OP_GREATER:
 			debugN(5, ">");
 			break;
 
-		case 35:
+		case OP_GEQ:
 			debugN(5, ">=");
 			break;
 
-		case 36:
+		case OP_EQ:
 			debugN(5, "==");
 			break;
 
-		case 37:
+		case OP_NEQ:
 			debugN(5, "!=");
 			break;
 
@@ -381,18 +381,18 @@ void Parse::printExpr_internal(char stopToken) {
 			break;
 		}
 
-		if (operation == 9) {
+		if (operation == OP_BEGIN_EXPR) {
 			num++;
 			continue;
 		}
 
-		if ((operation == 11) || ((operation >= 1) && (operation <= 8)))
+		if ((operation == OP_NOT) || ((operation >= OP_NEG) && (operation <= 8)))
 			continue;
 
-		if ((operation >= 30) && (operation <= 37))
+		if ((operation >= OP_OR) && (operation <= OP_NEQ))
 			continue;
 
-		if (operation == 10)
+		if (operation == OP_END_EXPR)
 			num--;
 
 		if (operation == stopToken) {
@@ -416,18 +416,18 @@ void Parse::printVarIndex() {
 	operation = *_vm->_global->_inter_execPtr++;
 	switch (operation) {
 	case 23:
-	case 25:
+	case OP_LOAD_VAR_STR:
 		temp = _vm->_inter->load16() * 4;
 		debugN(5, "&var_%d", temp);
-		if ((operation == 25) && (*_vm->_global->_inter_execPtr == 13)) {
+		if ((operation == OP_LOAD_VAR_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
 			printExpr(12);
 		}
 		break;
 
-	case 26:
-	case 28:
+	case OP_ARRAY_UINT32:
+	case OP_ARRAY_STR:
 		debugN(5, "&var_%d[", _vm->_inter->load16());
 		dimCount = *_vm->_global->_inter_execPtr++;
 		arrDesc = _vm->_global->_inter_execPtr;
@@ -440,7 +440,7 @@ void Parse::printVarIndex() {
 		}
 		debugN(5, "]");
 
-		if ((operation == 28) && (*_vm->_global->_inter_execPtr == 13)) {
+		if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
 			printExpr(12);
@@ -459,9 +459,9 @@ void Parse::printVarIndex() {
 int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
 	byte var_C = operPtr[-3];
 	int cmpTemp;
-	if (var_C == 20) {
+	if (var_C == OP_LOAD_IMM_INT16) {
 		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
-	} else if (var_C == 22) {
+	} else if (var_C == OP_LOAD_IMM_STR) {
 		if ((char *)decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
 			strcpy(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-3]));
 			valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
