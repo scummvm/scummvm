@@ -89,8 +89,8 @@ Sprite::~Sprite(void) {
 
 void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	SpriteInfo *spriteInfo;
-	byte *spriteListData;
-	size_t spriteListLength;
+	byte *spriteListData = 0;
+	size_t spriteListLength = 0;
 	uint16 oldSpriteCount;
 	uint16 newSpriteCount;
 	uint16 spriteCount;
