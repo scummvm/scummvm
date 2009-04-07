@@ -1075,10 +1075,10 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 		glBegin(GL_LINE_LOOP);
 	}
 
-	glVertex2f(x1, y1);
-	glVertex2f(x2, y1);
-	glVertex2f(x2, y2);
-	glVertex2f(x1, y2);
+	glVertex2i(x1, y1);
+	glVertex2i(x2, y1);
+	glVertex2i(x2, y2);
+	glVertex2i(x1, y2);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -1109,8 +1109,8 @@ void DriverGL::drawLine(PrimitiveObject *primitive) {
 	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
 
 	glBegin(GL_LINES);
-	glVertex2f(x1, y1);
-	glVertex2f(x2, y2);
+	glVertex2i(x1, y1);
+	glVertex2i(x2, y2);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -1145,13 +1145,13 @@ void DriverGL::drawPolygon(PrimitiveObject *primitive) {
 	glColor3f(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f);
 
 	glBegin(GL_LINES);
-	glVertex2f(x1, y1);
-	glVertex2f(x2, y2);
+	glVertex2i(x1, y1);
+	glVertex2i(x2, y2);
 	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex2f(x3, y3);
-	glVertex2f(x4, y4);
+	glVertex2i(x3, y3);
+	glVertex2i(x4, y4);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
