@@ -287,9 +287,9 @@ Common::Error SciEngine::run() {
 	}
 
 	printf("Emulating SCI version %d.%03d.%03d\n",
-	       SCI_VERSION_MAJOR(_resmgr->_sciVersion),
-	       SCI_VERSION_MINOR(_resmgr->_sciVersion),
-	       SCI_VERSION_PATCHLEVEL(_resmgr->_sciVersion));
+	       SCI_VERSION_MAJOR(version),
+	       SCI_VERSION_MINOR(version),
+	       SCI_VERSION_PATCHLEVEL(version));
 
 	game_run(&gamestate); // Run the game
 
