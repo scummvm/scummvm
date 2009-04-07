@@ -481,7 +481,7 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	// a safe change. If there's any SCI1 game with different kernel vocabulary names, we can
 	// add special flags to it to our detector
 	t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
-	*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
+	*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR;
 
 	for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
 		t[i] = sci_strdup(sci1_default_knames[i]);
