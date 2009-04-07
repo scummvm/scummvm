@@ -394,7 +394,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "9cfce07e204a329e94fda8b5657621da", 1101869},
 		{"resource.005", 0, "d036df0872f2db19bca34601276be2d7", 1176914},
 		{"resource.006", 0, "b367a6a59f29ee30dde1d88a5a41152d", 1123585},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(1, 000, 510)
