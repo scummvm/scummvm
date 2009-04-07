@@ -118,7 +118,7 @@ void Parse::skipExpr(char stopToken) {
 				_vm->_global->_inter_execPtr += 2;
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					skipExpr(12);
+					skipExpr(OP_END_MARKER);
 				}
 				break;
 
@@ -134,17 +134,17 @@ void Parse::skipExpr(char stopToken) {
 				_vm->_global->_inter_execPtr += 3 + dimCount;
 				// skip indices
 				for (dim = 0; dim < dimCount; dim++)
-					skipExpr(12);
+					skipExpr(OP_END_MARKER);
 
 				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
-					skipExpr(12);
+					skipExpr(OP_END_MARKER);
 				}
 				break;
 
 			case OP_FUNC:
 				_vm->_global->_inter_execPtr++;
-				skipExpr(10);
+				skipExpr(OP_END_EXPR);
 			}
 			continue;
 		} // if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC))
@@ -166,7 +166,7 @@ void Parse::skipExpr(char stopToken) {
 		if (operation != stopToken)
 			continue;
 
-		if ((stopToken != 10) || (num < 0))
+		if ((stopToken != OP_END_EXPR) || (num < 0))
 			return;
 	}
 }
@@ -235,7 +235,7 @@ void Parse::printExpr_internal(char stopToken) {
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
 					debugN(5, "{");
-					printExpr_internal(12); // this also prints the closing }
+					printExpr_internal(OP_END_MARKER); // this also prints the closing }
 				}
 				break;
 
@@ -252,7 +252,7 @@ void Parse::printExpr_internal(char stopToken) {
 				arrDesc = _vm->_global->_inter_execPtr;
 				_vm->_global->_inter_execPtr += dimCount;
 				for (dim = 0; dim < dimCount; dim++) {
-					printExpr_internal(12);
+					printExpr_internal(OP_END_MARKER);
 					debugN(5, " of %d", (int16) arrDesc[dim]);
 					if (dim != dimCount - 1)
 						debugN(5, ",");
@@ -264,7 +264,7 @@ void Parse::printExpr_internal(char stopToken) {
 				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 					_vm->_global->_inter_execPtr++;
 					debugN(5, "{");
-					printExpr_internal(12); // this also prints the closing }
+					printExpr_internal(OP_END_MARKER); // this also prints the closing }
 				}
 				break;
 
@@ -280,7 +280,7 @@ void Parse::printExpr_internal(char stopToken) {
 					debugN(5, "sqrt(");
 				else
 					debugN(5, "id(");
-				printExpr_internal(10);
+				printExpr_internal(OP_END_EXPR);
 				break;
 			}
 			continue;
@@ -368,9 +368,9 @@ void Parse::printExpr_internal(char stopToken) {
 			debugN(5, "\n");
 			break;
 
-		case 12:
+		case OP_END_MARKER:
 			debugN(5, "}");
-			if (stopToken != 12) {
+			if (stopToken != OP_END_MARKER) {
 				debugN(5, "Closing paren without opening?");
 			}
 			break;
@@ -396,7 +396,7 @@ void Parse::printExpr_internal(char stopToken) {
 			num--;
 
 		if (operation == stopToken) {
-			if ((stopToken != 10) || (num < 0)) {
+			if ((stopToken != OP_END_EXPR) || (num < 0)) {
 				return;
 			}
 		}
@@ -422,7 +422,7 @@ void Parse::printVarIndex() {
 		if ((operation == OP_LOAD_VAR_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
-			printExpr(12);
+			printExpr(OP_END_MARKER);
 		}
 		break;
 
@@ -433,7 +433,7 @@ void Parse::printVarIndex() {
 		arrDesc = _vm->_global->_inter_execPtr;
 		_vm->_global->_inter_execPtr += dimCount;
 		for (dim = 0; dim < dimCount; dim++) {
-			printExpr(12);
+			printExpr(OP_END_MARKER);
 			debugN(5, " of %d", (int16) arrDesc[dim]);
 			if (dim != dimCount - 1)
 				debugN(5, ",");
@@ -443,7 +443,7 @@ void Parse::printVarIndex() {
 		if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
 			debugN(5, "+");
-			printExpr(12);
+			printExpr(OP_END_MARKER);
 		}
 		break;
 

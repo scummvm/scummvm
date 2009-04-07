@@ -56,7 +56,7 @@ int16 Parse_v1::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 
 		if ((operation == OP_LOAD_VAR_STR) && (*_vm->_global->_inter_execPtr == 13)) {
 			_vm->_global->_inter_execPtr++;
-			val = parseValExpr(12);
+			val = parseValExpr(OP_END_MARKER);
 			temp += val;
 			debugC(5, kDebugParser, "parse subscript = %d", val);
 		}
@@ -70,7 +70,7 @@ int16 Parse_v1::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 		_vm->_global->_inter_execPtr += dimCount;
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
-			temp2 = parseValExpr(12);
+			temp2 = parseValExpr(OP_END_MARKER);
 			offset = arrDesc[dim] * offset + temp2;
 		}
 		offset *= 4;
@@ -79,7 +79,7 @@ int16 Parse_v1::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 
 		if (*_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
-			temp += parseValExpr(12);
+			temp += parseValExpr(OP_END_MARKER);
 		}
 		return offset * _vm->_global->_inter_animDataSize + temp;
 
@@ -140,7 +140,7 @@ int16 Parse_v1::parseValExpr(byte stopToken) {
 			case OP_LOAD_VAR_STR:
 				temp = _vm->_inter->load16() * 4;
 				_vm->_global->_inter_execPtr++;
-				temp += parseValExpr(12);
+				temp += parseValExpr(OP_END_MARKER);
 				*valPtr = READ_VARO_UINT8(temp);
 				break;
 
@@ -152,14 +152,14 @@ int16 Parse_v1::parseValExpr(byte stopToken) {
 				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				for (dim = 0; dim < dimCount; dim++) {
-					temp2 = parseValExpr(12);
+					temp2 = parseValExpr(OP_END_MARKER);
 					offset = arrDesc[dim] * offset + temp2;
 				}
 				if (operation == OP_ARRAY_UINT32) {
 					*valPtr = (uint16) VAR(temp + offset);
 				} else {
 					_vm->_global->_inter_execPtr++;
-					temp2 = parseValExpr(12);
+					temp2 = parseValExpr(OP_END_MARKER);
 					*valPtr = READ_VARO_UINT8(temp * 4 + offset * 4 *
 							_vm->_global->_inter_animDataSize + temp2);
 				}
@@ -167,7 +167,7 @@ int16 Parse_v1::parseValExpr(byte stopToken) {
 
 			case OP_FUNC:
 				operation = *_vm->_global->_inter_execPtr++;
-				parseExpr(10, 0);
+				parseExpr(OP_END_EXPR, 0);
 
 				if (operation == FUNC_SQR) {
 					_vm->_global->_inter_resVal =
@@ -379,7 +379,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 						kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					temp += parseValExpr(12);
+					temp += parseValExpr(OP_END_MARKER);
 					*operPtr = OP_LOAD_IMM_INT16;
 					*valPtr = READ_VARO_UINT8(temp);
 				}
@@ -395,7 +395,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 				offset = 0;
 				dim = 0;
 				for (dim = 0; dim < dimCount; dim++) {
-					temp2 = parseValExpr(12);
+					temp2 = parseValExpr(OP_END_MARKER);
 					offset = offset * arrDescPtr[dim] + temp2;
 				}
 
@@ -408,7 +408,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 						kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					temp2 = parseValExpr(12);
+					temp2 = parseValExpr(OP_END_MARKER);
 					*operPtr = OP_LOAD_IMM_INT16;
 					*valPtr = READ_VARO_UINT8(temp * 4 +
 							offset * 4 * _vm->_global->_inter_animDataSize + temp2);
@@ -417,7 +417,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 
 			case OP_FUNC:
 				operation = *_vm->_global->_inter_execPtr++;
-				parseExpr(10, 0);
+				parseExpr(OP_END_EXPR, 0);
 
 				switch (operation) {
 				case FUNC_SQR:
@@ -473,7 +473,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 				continue;
 
 			switch (operPtr[-1]) {
-			case 2:
+			case OP_ADD:
 				if (operPtr[-2] == OP_LOAD_IMM_STR) {
 					if ((char *) decodePtr(valPtr[-2]) != _vm->_global->_inter_resStr) {
 						strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-2]));
@@ -734,7 +734,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 				if (((operation == OP_OR) && (operPtr[-1] == GOB_TRUE)) ||
 				    ((operation == OP_AND) && (operPtr[-1] == GOB_FALSE))) {
 					if ((stkPos > 1) && (operPtr[-2] == OP_BEGIN_EXPR)) {
-						skipExpr(10);
+						skipExpr(OP_END_EXPR);
 						operPtr[-2] = operPtr[-1];
 						stkPos -= 2;
 						operPtr -= 2;

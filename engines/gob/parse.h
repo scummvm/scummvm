@@ -41,6 +41,8 @@ enum {
 	OP_END_EXPR = 10,
 	OP_NOT = 11,
 
+	OP_END_MARKER = 12,	// Marks end of an array or string
+
 
 	OP_ARRAY_UINT8 = 16,
 
