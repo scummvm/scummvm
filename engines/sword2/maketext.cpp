@@ -59,8 +59,11 @@ namespace Sword2 {
 #define MAX_LINES	30	// max character lines in output sprite
 
 #define BORDER_COL	200	// source colour for character border (only
-				// needed for remapping colours)
+						// needed for remapping colours)
+
 #define LETTER_COL	193	// source colour for bulk of character ( " )
+#define LETTER_COL_PSX1 33
+#define LETTER_COL_PSX2 34
 #define SPACE		' '
 #define FIRST_CHAR	SPACE	// first character in character set
 #define LAST_CHAR	255	// last character in character set
@@ -91,7 +94,10 @@ byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, u
 	// of the resource.
 
 	if (fontRes == _vm->_speechFontId) {
-		_lineSpacing = -6;
+		if (Sword2Engine::isPsx())
+			_lineSpacing = -4; // Text would be unreadable with psx font if linespacing is higher
+		else
+			_lineSpacing = -6;
 		_charSpacing = -3;
 	} else if (fontRes == CONSOLE_FONT_ID) {
 		_lineSpacing = 0;
@@ -214,6 +220,13 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 		if (line[i].width > spriteWidth)
 			spriteWidth = line[i].width;
 
+
+	// Check that text sprite has even horizontal resolution in PSX version
+	// (needed to work around a problem in some sprites, which reports an odd
+	// number as horiz resolution, but then have the next even number as true width)
+	if (Sword2Engine::isPsx()) 
+		spriteWidth = (spriteWidth % 2) ? spriteWidth + 1 : spriteWidth;
+
 	// Find the total height of the text sprite: the total height of the
 	// text lines, plus the total height of the spacing between them.
 
@@ -233,6 +246,14 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 	frame_head.compSize = 0;
 	frame_head.width = spriteWidth;
 	frame_head.height = spriteHeight;
+
+	// Normally for PSX frame header we double the height
+	// of the sprite artificially to regain correct aspect
+	// ratio, but this is an "artificially generated" text
+	// sprite, which gets created with correct aspect, so
+	// fix the height.
+	if (Sword2Engine::isPsx())
+		frame_head.height /= 2;
 
 	frame_head.write(textSprite);
 
@@ -264,13 +285,23 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 
 			assert(frame_head.height == char_height);
 			copyChar(charPtr, spritePtr, spriteWidth, pen);
+
+			// We must remember to free memory for generated character in psx,
+			// as it is extracted differently than pc version (copyed from a
+			// char atlas).
+			if (Sword2Engine::isPsx())
+				free(charPtr);
+
 			spritePtr += frame_head.width + _charSpacing;
 		}
 
 		// Skip space at end of last word in this line
 		pos++;
-
-		linePtr += (char_height + _lineSpacing) * spriteWidth;
+		
+		if (Sword2Engine::isPsx())
+			linePtr += (char_height / 2 + _lineSpacing) * spriteWidth;
+		else
+			linePtr += (char_height + _lineSpacing) * spriteWidth;
 	}
 
 	_vm->_resman->closeResource(fontRes);
@@ -286,10 +317,17 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 
 uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 	byte *charSet = _vm->_resman->openResource(fontRes);
+	byte *charBuf;
 
 	FrameHeader frame_head;
 
-	frame_head.read(findChar(ch, charSet));
+	charBuf = findChar(ch, charSet);
+
+	frame_head.read(charBuf);
+
+	if(Sword2Engine::isPsx())
+		free(charBuf);
+
 	_vm->_resman->closeResource(fontRes);
 
 	return frame_head.width;
@@ -307,10 +345,17 @@ uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 
 uint16 FontRenderer::charHeight(uint32 fontRes) {
 	byte *charSet = _vm->_resman->openResource(fontRes);
+	byte *charbuf;
 
 	FrameHeader frame_head;
 
-	frame_head.read(findChar(FIRST_CHAR, charSet));
+	charbuf = findChar(FIRST_CHAR, charSet);
+
+	frame_head.read(charbuf);
+
+	if(Sword2Engine::isPsx())
+		free(charbuf);
+
 	_vm->_resman->closeResource(fontRes);
 
 	return frame_head.height;
@@ -324,9 +369,77 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
  */
 
 byte *FontRenderer::findChar(byte ch, byte *charSet) {
-	if (ch < FIRST_CHAR)
-		ch = DUD;
-	return _vm->fetchFrameHeader(charSet, ch - FIRST_CHAR);
+	
+	// PSX version doesn't use an animation table to keep all letters,
+	// instead a big sprite (char atlas) is used, and the single char
+	// must be extracted from that.
+	
+	if (Sword2Engine::isPsx()) {
+		byte *buffer;
+		PSXFontEntry header;
+		FrameHeader bogusHeader;
+
+		charSet += ResHeader::size() + 2;
+
+		if (ch < FIRST_CHAR)
+			ch = DUD;
+
+		// Read font entry of the corresponding char.
+		header.read(charSet + PSXFontEntry::size() * (ch - 32));
+
+		// We have no such character, generate an empty one
+		// on the fly, size 6x12.
+		if (header.charWidth == 0) {
+			
+			// Prepare a "bogus" FrameHeader to be returned with
+			// "empty" character data.
+			bogusHeader.compSize = 0;
+			bogusHeader.width = 6;
+			bogusHeader.height = 12;
+
+			buffer = (byte *)malloc(24 * 3 + FrameHeader::size());
+			memset(buffer, 0, 24 * 3 + FrameHeader::size());
+			bogusHeader.write(buffer);
+			
+			return buffer;
+		}
+
+		buffer = (byte *)malloc(FrameHeader::size() + header.charWidth * header.charHeight * 4);
+		byte *tempchar = (byte *)malloc(header.charWidth * header.charHeight);
+
+		// Prepare the "bogus" header to be returned with character
+		bogusHeader.compSize = 0;
+		bogusHeader.width = header.charWidth * 2;
+		bogusHeader.height = header.charHeight;
+
+		// Go to the beginning of char atlas
+		charSet += 2062;
+
+		memset(buffer, 0, FrameHeader::size() + header.charWidth * header.charHeight * 4);
+
+		bogusHeader.write(buffer);
+
+		// Copy and stretch the char into destination buffer
+		for (int idx = 0; idx < header.charHeight; idx++) {
+			memcpy(tempchar + header.charWidth * idx, charSet + header.offset + 128 * (header.skipLines + idx), header.charWidth);
+		}
+
+		for (int line = 0; line < header.charHeight; line++) {
+			for (int col = 0; col < header.charWidth; col++) {
+				*(buffer + FrameHeader::size() + line * bogusHeader.width + col * 2) = *(tempchar + line * header.charWidth + col);
+				*(buffer + FrameHeader::size() + line * bogusHeader.width + col * 2 + 1) = *(tempchar + line * header.charWidth + col);
+			}
+		}
+
+		free(tempchar);
+
+		return buffer;
+
+	} else {
+		if (ch < FIRST_CHAR)
+			ch = DUD;
+		return _vm->fetchFrameHeader(charSet, ch - FIRST_CHAR);
+	}
 }
 
 /**
@@ -354,19 +467,22 @@ void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, 
 			// Use the specified colours
 			for (uint j = 0; j < frame.width; j++) {
 				switch (*source++) {
+				case 0:
+					// Do nothing if source pixel is zero,
+					// ie. transparent
+					break;
+				case LETTER_COL_PSX1: // Values for colored zone 
+				case LETTER_COL_PSX2: 
 				case LETTER_COL:
 					*dest = pen;
 					break;
 				case BORDER_COL:
+				default:
 					// Don't do a border pixel if there's
 					// already a bit of another character
 					// underneath (for overlapping!)
 					if (!*dest)
 						*dest = _borderPen;
-					break;
-				default:
-					// Do nothing if source pixel is zero,
-					// ie. transparent
 					break;
 				}
 				dest++;
@@ -400,7 +516,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 	assert(i < MAX_text_blocs);
 
 	// Create and position the sprite
-
+	
 	_blocList[i].text_mem = makeTextSprite(ascii, width, pen, fontRes);
 
 	// 'NO_JUSTIFICATION' means print sprite with top-left at (x,y)
@@ -498,6 +614,7 @@ void FontRenderer::printTextBlocs() {
 			spriteInfo.blend = 0;
 			spriteInfo.data = _blocList[i].text_mem + FrameHeader::size();
 			spriteInfo.colourTable = 0;
+			spriteInfo.isText = true;
 
 			uint32 rv = _vm->_screen->drawSprite(&spriteInfo);
 			if (rv)

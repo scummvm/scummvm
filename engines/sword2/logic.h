@@ -314,6 +314,9 @@ public:
 	void resetKillList();
 
 	void pauseMovie(bool pause);
+
+	// Read location number from script vars
+	uint32 getLocationNum();
 };
 
 } // End of namespace Sword2

@@ -159,15 +159,27 @@ struct AnimHeader {
 	void read(byte *addr) {
 		Common::MemoryReadStream readS(addr, size());
 
-		runTimeComp = readS.readByte();
-		noAnimFrames = readS.readUint16LE();
-		feetStartX = readS.readUint16LE();
-		feetStartY = readS.readUint16LE();
-		feetStartDir = readS.readByte();
-		feetEndX = readS.readUint16LE();
-		feetEndY = readS.readUint16LE();
-		feetEndDir = readS.readByte();
-		blend = readS.readUint16LE();
+		if (Sword2Engine::isPsx()) {
+			noAnimFrames = readS.readUint16LE();
+			feetStartX = readS.readUint16LE();
+			feetStartY = readS.readUint16LE();
+			feetEndX = readS.readUint16LE();
+			feetEndY = readS.readUint16LE();
+			blend = readS.readUint16LE();
+			runTimeComp = readS.readByte();
+			feetStartDir = readS.readByte();
+			feetEndDir = readS.readByte();	
+		} else {
+			runTimeComp = readS.readByte();
+			noAnimFrames = readS.readUint16LE();
+			feetStartX = readS.readUint16LE();
+			feetStartY = readS.readUint16LE();
+			feetStartDir = readS.readByte();
+			feetEndX = readS.readUint16LE();
+			feetEndY = readS.readUint16LE();
+			feetEndDir = readS.readByte();
+			blend = readS.readUint16LE();
+		}
 	}
 
 	void write(byte *addr) {
@@ -210,16 +222,27 @@ struct CdtEntry {
 				// corner at (x,y), otherwise see below...
 
 	static int size() {
-		return 9;
+		if (Sword2Engine::isPsx())
+			return 12;
+		else
+			return 9;
 	}
 
 	void read(byte *addr) {
 		Common::MemoryReadStream readS(addr, size());
 
-		x = readS.readUint16LE();
-		y = readS.readUint16LE();
-		frameOffset = readS.readUint32LE();
-		frameType = readS.readByte();
+		if (Sword2Engine::isPsx()) {
+			readS.readByte(); // Skip a byte in psx version
+			x = readS.readUint16LE();
+			y = readS.readUint16LE();
+			frameOffset = readS.readUint32LE();
+			frameType = readS.readByte();
+		} else {
+			x = readS.readUint16LE();
+			y = readS.readUint16LE();
+			frameOffset = readS.readUint32LE();
+			frameType = readS.readByte();
+		}
 	}
 
 	void write(byte *addr) {
@@ -260,6 +283,11 @@ struct FrameHeader {
 		compSize = readS.readUint32LE();
 		width = readS.readUint16LE();
 		height = readS.readUint16LE();
+
+		if (Sword2Engine::isPsx()) { // In PSX version, frames are half height
+			height *= 2;
+			width = (width % 2) ? width + 1 : width;
+		}
 	}
 
 	void write(byte *addr) {
@@ -503,6 +531,108 @@ struct TextHeader {
 //	look up table, to
 //	line of text,0
 //	line of text,0
+
+//----------------------------------------------------------
+// SCREENS.CLU file
+//----------------------------------------------------------
+// This file is present in PSX version of the game only.
+// It keeps parallax and background images, aligned at 1024 bytes
+// for faster access by the psx cd drive.
+//
+// SCREENS.CLU structure:
+// In first 2048 Bytes there's an offset table. Each entry is an
+// 32bit offset for a background/parallax group. If entry is 0, screen
+// does not exist.
+// To find matching screen for the location, you must count LOCATION_NO
+// words and then go to the corresponding offset indicated by last 32bit
+// word.
+// Each screen then begins with a PSXScreensEntry entry:
+
+struct PSXScreensEntry {
+	uint16 fgPlxXres; // If these values are 0, subsequent fgPlx* values must be
+	uint16 fgPlxYres; // ignored, as this means foreground parallax is not present.
+	uint32 fgPlxOffset; // This offset is relative, counting from the beginning of Resource Header
+	uint32 fgPlxSize; // Size of parallax, the size is aligned at 1024 bytes.
+					  // fgPlxSize/1024 gives number of sector the parallax is divided into.
+	uint16 bgXres;
+	uint16 bgYres;
+	uint32 bgOffset; // relative
+	uint32 bgSize;
+	uint16 bgPlxXres; // same considerations for fg parallaxes apply
+	uint16 bgPlxYres;
+	uint32 bgPlxOffset; // relative
+	uint32 bgPlxSize;
+
+	static int size() {
+		return 36;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		bgPlxXres = readS.readUint16LE();
+		bgPlxYres = readS.readUint16LE();
+		bgPlxOffset = readS.readUint32LE();
+		bgPlxSize = readS.readUint32LE();
+		bgXres = readS.readUint16LE();
+		bgYres = readS.readUint16LE();
+		bgOffset = readS.readUint32LE();
+		bgSize = readS.readUint32LE();
+		fgPlxXres = readS.readUint16LE();
+		fgPlxYres = readS.readUint16LE();
+		fgPlxOffset = readS.readUint32LE();
+		fgPlxSize = readS.readUint32LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(bgPlxXres);
+		writeS.writeUint16LE(bgPlxYres);
+		writeS.writeUint32LE(bgPlxOffset);
+		writeS.writeUint32LE(bgPlxSize);
+		writeS.writeUint16LE(bgXres);
+		writeS.writeUint16LE(bgYres);
+		writeS.writeUint32LE(bgOffset);
+		writeS.writeUint32LE(bgSize);
+		writeS.writeUint16LE(fgPlxXres);
+		writeS.writeUint16LE(fgPlxYres);
+		writeS.writeUint32LE(fgPlxOffset);
+		writeS.writeUint32LE(fgPlxSize);
+	}
+};
+
+// PSXFontEntry is present in font resource file, it is used
+// to address a single char in the character atlas image.
+
+struct PSXFontEntry {
+	uint16 offset;
+	uint16 skipLines;
+	uint16 charWidth;
+	uint16 charHeight;
+
+	static int size() {
+		return 8;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		offset = readS.readUint16LE() / 2;
+		skipLines = readS.readUint16LE();
+		charWidth = readS.readUint16LE() / 2;
+		charHeight = readS.readUint16LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(offset);
+		writeS.writeUint16LE(skipLines);
+		writeS.writeUint16LE(charWidth);
+		writeS.writeUint16LE(charHeight);
+	}	
+};
 
 } // End of namespace Sword2
 

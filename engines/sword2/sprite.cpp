@@ -25,7 +25,7 @@
  * $Id$
  */
 
-
+#include "common/endian.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -138,16 +138,23 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
  * Unwinds a run of 16-colour data into 256-colour palette data.
  */
 
-void Screen::unwindRaw16(byte *dst, byte *src, uint8 blockSize, byte *colTable) {
+void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
-		// 1st colour = number in table at position given by upper
-		// nibble of source byte
-		*dst++ = colTable[(*src) >> 4];
+		
+		if (Sword2Engine::isPsx()) {
+			// 1st colour = number in table at position given by upper
+			// nibble of source byte
+			*dst++ = colTable[(*src) & 0x0f];
 
-		// 2nd colour = number in table at position given by lower
-		// nibble of source byte
-		*dst++ = colTable[(*src) & 0x0f];
+			// 2nd colour = number in table at position given by lower
+			// nibble of source byte
+			*dst++ = colTable[(*src) >> 4];
+		} else {
+			*dst++ = colTable[(*src) >> 4];
+			*dst++ = colTable[(*src) & 0x0f];
+		}
+
 
 		// point to next source byte
 		src++;
@@ -242,6 +249,118 @@ int32 Screen::decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colT
 	}
 
 	return rv;
+}
+
+/**
+ * This function takes a compressed HIF image and decompresses it.
+ * Used for PSX version sprites.
+ * @param dst destination buffer
+ * @param src source buffer
+ * @param skipData if pointer != NULL, value of pointed var
+ * is set to number of bytes composing the compressed data.
+ */
+
+uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
+	uint32 decompSize = 0;
+	uint32 readByte = 0;
+
+	for (;;) { // Main loop
+		byte control_byte = *src++;
+		readByte++;
+		uint32 byte_count = 0;
+		while (byte_count < 8) {
+			if (control_byte & 0x80) {
+				uint16 info_word = READ_BE_UINT16(src); // Read the info word
+				src += 2;
+				readByte += 2;
+				if (info_word == 0xFFFF) { // Got 0xFFFF code, finished.
+					if (skipData != NULL) *(skipData) = readByte;
+					return decompSize;
+				}
+
+				int32 repeat_count = (info_word >> 12) + 2; // How many time data needs to be refetched
+				while(repeat_count >= 0) {
+					uint16 refetchData = (info_word & 0xFFF) + 1;
+					if (refetchData > decompSize) return 0; // We have a problem here...
+					uint8 *old_data_src = dst - refetchData; 
+					*dst++ = *old_data_src;
+					decompSize++;
+					repeat_count--;
+				}
+			} else {
+				*dst++ = *src++;
+				readByte++;
+				decompSize++;
+			}
+			byte_count++;
+			control_byte <<= 1; // Shifting left the control code one bit
+		}
+	}
+}
+
+// Double line image to keep aspect ratio. 
+// Used in PSX version.
+void Screen::resizePsxSprite(byte *dst, byte *src, uint16 destW, uint16 destH) {
+	for (int i = 0; i < destH / 2; i++) {
+		memcpy(dst + i * destW * 2, src + i * destW, destW);
+		memcpy(dst + i * destW * 2 + destW, src + i * destW, destW);
+	}
+}
+
+// Sprites wider than 254px in PSX version are divided
+// into slices, this recomposes the image.
+void Screen::recomposePsxSprite(SpriteInfo *s) {
+	if (!s)
+		return;
+
+	uint16 noStripes = (s->w / 254) + ((s->w % 254) ? 1 : 0);
+	uint16 lastStripeSize = (s->w % 254) ? s->w % 254 : 254;
+	byte *buffer = (byte *)malloc(s->w * s->h / 2);
+
+	memset(buffer, 0, s->w * s->h / 2);
+
+	for (int idx = 0; idx < noStripes; idx++) {
+		uint16 stripeSize = (idx == noStripes - 1) ? lastStripeSize : 254;
+		for (int line = 0; line < s->h / 2; line++) {
+			memcpy(buffer + idx * 254 + line * s->w, s->data, stripeSize);
+			s->data += stripeSize;
+		}
+	}
+
+	s->data = buffer;
+
+}
+
+// Recomposes sprites wider than 254 pixels but also
+// compressed with HIF.
+// Used in PSX version.
+void Screen::recomposeCompPsxSprite(SpriteInfo *s) {
+	if (!s)
+		return;
+
+	uint16 noStripes = (s->w / 254) + ((s->w % 254) ? 1 : 0);
+	uint16 lastStripeSize = (s->w % 254) ? s->w % 254 : 254;
+	byte *buffer = (byte *)malloc(s->w * s->h / 2);
+	byte *stripeBuffer = (byte *)malloc(254 * s->h);;
+
+	memset(buffer, 0, s->w * s->h / 2);
+	uint32 skipData = 0;
+	uint32 compBytes = 0;
+
+	for (int idx = 0; idx < noStripes; idx++) {
+		uint16 stripeSize = (idx == noStripes - 1) ? lastStripeSize : 254;
+
+		decompressHIF((s->data) + skipData, stripeBuffer, &compBytes);
+		skipData += compBytes;
+
+		for (int line = 0; line < s->h / 2; line++) {
+			memcpy(buffer + idx * 254 + line * s->w, stripeBuffer + line * stripeSize, stripeSize);
+		}
+	}
+
+	free(stripeBuffer);
+	s->data = buffer;
+
 }
 
 /**
@@ -378,23 +497,90 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	// -----------------------------------------------------------------
 	// Decompression and mirroring
 	// -----------------------------------------------------------------
+	if (s->type & RDSPR_NOCOMPRESSION) {
+		if(Sword2Engine::isPsx()) { // PSX Uncompressed sprites
+			if (s->w > 254 && !s->isText) { // We need to recompose these frames
+				recomposePsxSprite(s);
+			}
 
-	if (s->type & RDSPR_NOCOMPRESSION)
-		sprite = s->data;
-	else {
-		sprite = (byte *)malloc(s->w * s->h);
+			freeSprite = true;
+			byte *tempBuf = (byte *)malloc(s->w * s->h * 2);
+			memset(tempBuf, 0, s->w * s->h * 2);
+			resizePsxSprite(tempBuf, s->data, s->w, s->h);
+
+			if (s->w > 254 && !s->isText) {
+				free(s->data);
+			}
+
+			sprite = tempBuf;
+		} else { // PC Uncompressed sprites
+			sprite = s->data;
+		}
+	} else {
 		freeSprite = true;
-		if (!sprite)
-			return RDERR_OUTOFMEMORY;
+
 		if ((s->type & 0xff00) == RDSPR_RLE16) {
-			if (decompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
-				free(sprite);
-				return RDERR_DECOMPRESSION;
+			if (Sword2Engine::isPsx()) { // PSX HIF16 sprites
+				uint32 decompData;
+				byte *tempBuf = (byte *)malloc(s->w * s->h);
+				memset(tempBuf, 0, s->w * s->h);
+
+				decompData = decompressHIF(s->data, tempBuf);
+
+				s->w = (decompData / (s->h / 2)) * 2;
+				byte *tempBuf2 = (byte *)malloc(s->w * s->h * 10);
+				memset(tempBuf2, 0, s->w * s->h * 2);
+
+				unwindRaw16(tempBuf2, tempBuf, (s->w * (s->h / 2)), s->colourTable);
+				sprite = (byte *)malloc(s->w * s->h);
+
+				if (!sprite)
+					return RDERR_OUTOFMEMORY;
+
+				resizePsxSprite(sprite, tempBuf2, s->w, s->h);
+
+				free(tempBuf2);
+				free(tempBuf);
+			} else { // PC RLE16 sprites
+				sprite = (byte *)malloc(s->w * s->h);
+				
+				if (!sprite)
+					return RDERR_OUTOFMEMORY;
+
+				if (decompressRLE16(sprite, s->data, s->w * s->h, s->colourTable)) {
+					free(sprite);
+					return RDERR_DECOMPRESSION;
+				}
 			}
 		} else {
-			if (decompressRLE256(sprite, s->data, s->w * s->h)) {
-				free(sprite);
-				return RDERR_DECOMPRESSION;
+			if (Sword2Engine::isPsx()) { // PSX HIF256 sprites
+				if (s->w > 255) {
+					sprite = (byte *)malloc(s->w * s->h);
+					recomposeCompPsxSprite(s);
+					resizePsxSprite(sprite, s->data, s->w, s->h);
+					free(s->data);
+				} else {
+					byte *tempBuf = (byte *)malloc(s->w * s->h);
+					uint32 decompData = decompressHIF(s->data, tempBuf);
+					s->w = (decompData / (s->h / 2));
+					sprite = (byte *)malloc(s->w * s->h);
+				
+					if (!sprite)
+						return RDERR_OUTOFMEMORY;
+
+					resizePsxSprite(sprite, tempBuf, s->w, s->h);
+					free(tempBuf);
+				}
+			} else { // PC RLE256 sprites
+				sprite = (byte *)malloc(s->w * s->h);
+
+				if (!sprite)
+					return RDERR_OUTOFMEMORY;
+
+				if (decompressRLE256(sprite, s->data, s->w * s->h)) {
+					free(sprite);
+					return RDERR_DECOMPRESSION;
+				}
 			}
 		}
 	}
@@ -500,7 +686,9 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 			return RDERR_OUTOFMEMORY;
 		}
 
-		if (_renderCaps & RDBLTFX_EDGEBLEND)
+		// We cannot use good scaling for PSX version, as we are missing 
+		// some required data.
+		if (_renderCaps & RDBLTFX_EDGEBLEND && !Sword2Engine::isPsx())
 			scaleImageGood(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, _buffer + _screenWide * rd.top + rd.left);
 		else
 			scaleImageFast(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
@@ -518,8 +706,10 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	// The light mask is an optional layer that covers the entire room
 	// and which is used to simulate light and shadows. Scaled sprites
 	// (actors, presumably) are always affected.
+	// Light masking makes use of palette match table, so it's unavailable
+	// in PSX version.
 
-	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || (s->type & RDSPR_SHADOW))) {
+	if ((_renderCaps & RDBLTFX_SHADOWBLEND) && _lightMask && (scale != 256 || ((s->type & RDSPR_SHADOW) && !Sword2Engine::isPsx()) )) {
 		byte *lightMap;
 
 		// Make sure that we never apply the shadow to the original
@@ -557,7 +747,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	src = sprite + rs.top * srcPitch + rs.left;
 	dst = _buffer + _screenWide * rd.top + rd.left;
 
-	if (s->type & RDSPR_BLEND) {
+	if (s->type & RDSPR_BLEND && !Sword2Engine::isPsx()) { // Blending is unavailable in PSX version
 		// The original code had two different blending cases. One for
 		// s->blend & 0x01 and one for s->blend & 0x02. However, the
 		// only values that actually appear in the cluster files are
@@ -638,6 +828,9 @@ int32 Screen::openLightMask(SpriteInfo *s) {
 	_lightMask = (byte *)malloc(s->w * s->h);
 	if (!_lightMask)
 		return RDERR_OUTOFMEMORY;
+
+	if (s->data == NULL) // Check, as there's no mask in psx version
+		return RDERR_NOTOPEN;
 
 	if (decompressRLE256(_lightMask, s->data, s->w * s->h))
 		return RDERR_DECOMPRESSION;

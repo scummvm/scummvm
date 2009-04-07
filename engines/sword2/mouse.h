@@ -70,6 +70,7 @@ enum {
 };
 
 #define RDMENU_ICONWIDE		35
+#define RDMENU_PSXICONWIDE	36
 #define RDMENU_ICONDEEP		30
 #define RDMENU_ICONSTART	24
 #define RDMENU_ICONSPACING	5
@@ -269,6 +270,10 @@ public:
 	uint32 chooseMouse();
 
 	int menuClick(int menu_items);
+
+	int getMouseMode();
+
+	void setMouseMode(int mouseMode); // Used to force mouse mode
 };
 
 } // End of namespace Sword2

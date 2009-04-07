@@ -280,14 +280,21 @@ bool Mouse::heldIsInInventory() {
 
 int Mouse::menuClick(int menu_items) {
 	int x = getX();
+	byte menuIconWidth;
+
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
+
 
 	if (x < RDMENU_ICONSTART)
 		return -1;
 
-	if (x > RDMENU_ICONSTART + menu_items * (RDMENU_ICONWIDE + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
+	if (x > RDMENU_ICONSTART + menu_items * (menuIconWidth + RDMENU_ICONSPACING) - RDMENU_ICONSPACING)
 		return -1;
 
-	return (x - RDMENU_ICONSTART) / (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
+	return (x - RDMENU_ICONSTART) / (menuIconWidth + RDMENU_ICONSPACING);
 }
 
 void Mouse::systemMenuMouse() {
@@ -328,6 +335,13 @@ void Mouse::systemMenuMouse() {
 	hit = menuClick(ARRAYSIZE(icon_list));
 
 	if (hit < 0)
+		return;
+
+	// Do nothing if using PSX version and are on TOP menu.
+
+	if ((icon_list[hit] == OPTIONS_ICON || icon_list[hit] == QUIT_ICON 
+		|| icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON 
+		|| icon_list[hit] == RESTART_ICON ) && Sword2Engine::isPsx() )
 		return;
 
 	// No save when dead
@@ -857,6 +871,14 @@ uint32 Mouse::chooseMouse() {
 	// Unlike the other mouse "engines", this one is called directly by the
 	// fnChoose() opcode.
 
+	byte menuIconWidth;
+
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
+
+
 	uint i;
 
 	_vm->_logic->writeVar(AUTO_SELECTED, 0);
@@ -912,7 +934,7 @@ uint32 Mouse::chooseMouse() {
 			error("fnChoose with no subjects");
 
 		for (i = 0; i < in_subject; i++) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + ResHeader::size() + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+			icon = _vm->_resman->openResource(_subjectList[i].res) + ResHeader::size() + menuIconWidth * RDMENU_ICONDEEP;
 			setMenuIcon(RDMENU_BOTTOM, i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
@@ -1485,23 +1507,41 @@ void Mouse::decompressMouse(byte *decomp, byte *comp, uint8 frame, int width, in
 	int x = 0;
 	int y = 0;
 
-	comp = comp + READ_LE_UINT32(comp + frame * 4) - MOUSE_ANIM_HEADER_SIZE;
+	if (Sword2Engine::isPsx()) {
+		comp = comp + READ_LE_UINT32(comp + 2 + frame * 4) - MOUSE_ANIM_HEADER_SIZE;
 
-	while (i < size) {
-		if (*comp > 183) {
-			decomp[(y + yOff) * pitch + x + xOff] = *comp++;
-			if (++x >= width) {
-				x = 0;
-				y++;
+		yOff /= 2; // Without this, distance of object from cursor is too big.
+
+		byte *buffer;
+
+		buffer = (byte *)malloc(size);
+		Screen::decompressHIF(comp, buffer);
+
+		for (int line = 0; line < height; line++) {
+			memcpy(decomp + (line + yOff) * pitch + xOff, buffer + line * width, width);
+		}
+
+		free(buffer);
+	
+	} else {
+		comp = comp + READ_LE_UINT32(comp + frame * 4) - MOUSE_ANIM_HEADER_SIZE;	
+
+		while (i < size) {
+			if (*comp > 183) {
+				decomp[(y + yOff) * pitch + x + xOff] = *comp++;
+				if (++x >= width) {
+					x = 0;
+					y++;
+				}
+				i++;
+			} else {
+				x += *comp;
+				while (x >= width) {
+					y++;
+					x -= width;
+				}
+				i += *comp++;
 			}
-			i++;
-		} else {
-			x += *comp;
-			while (x >= width) {
-				y++;
-				x -= width;
-			}
-			i += *comp++;
 		}
 	}
 }
@@ -1562,6 +1602,17 @@ void Mouse::drawMouse() {
 	if (_mouseAnim.data)
 		decompressMouse(mouseData, _mouseAnim.data, _mouseFrame,
 			_mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
+
+	// Fix height for mouse sprite in PSX version
+	if (Sword2Engine::isPsx()) { 
+		mouse_height *= 2;
+		
+		byte *buffer = (byte *)malloc(mouse_width * mouse_height);
+		Screen::resizePsxSprite(buffer, mouseData, mouse_width, mouse_height);
+		
+		free(mouseData);
+		mouseData = buffer;
+	}
 
 	CursorMan.replaceCursor(mouseData, mouse_width, mouse_height, hotspot_x, hotspot_y, 0);
 
@@ -1673,6 +1724,14 @@ int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 	}
 
 	return RD_OK;
+}
+
+int Mouse::getMouseMode() {
+	return _mouseMode;
+}
+
+void Mouse::setMouseMode(int mouseMode) {
+	_mouseMode = mouseMode;
 }
 
 } // End of namespace Sword2

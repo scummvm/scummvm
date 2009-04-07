@@ -173,6 +173,7 @@ struct SpriteInfo {
 	uint16 blend;		// holds the blending values.
 	byte *data;		// pointer to the sprite data
 	byte *colourTable;	// pointer to 16-byte colour table, only applicable to 16-col compression type
+	bool isText;		// It is a engine-generated sprite containing text
 };
 
 struct BlockSurface {
@@ -214,7 +215,7 @@ private:
 	// positions, etc.
 
 	ScreenInfo _thisScreen;
-
+	
 	int32 _renderCaps;
 	int8 _renderLevel;
 
@@ -330,14 +331,22 @@ private:
 
 	void mirrorSprite(byte *dst, byte *src, int16 w, int16 h);
 	int32 decompressRLE256(byte *dst, byte *src, int32 decompSize);
-	void unwindRaw16(byte *dst, byte *src, uint8 blockSize, byte *colTable);
+	void unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable);
 	int32 decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable);
 	void renderParallax(byte *ptr, int16 layer);
+
 
 	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
 
 	uint8 _xBlocks[MAXLAYERS];
 	uint8 _yBlocks[MAXLAYERS];
+
+	// This is used to cache PSX backgrounds and parallaxes
+	// data, as they are kept in a file unmanageable from
+	// resource manager. These gets freed everytime an user
+	// exits from a room.
+	byte *_psxScrCache[3];
+	bool _psxCacheEnabled[3];
 
 	// An array of sub-blocks, one for each of the parallax layers.
 
@@ -396,11 +405,14 @@ public:
 
 	void setLocationMetrics(uint16 w, uint16 h);
 	int32 initialiseBackgroundLayer(byte *parallax);
+	int32 initialisePsxParallaxLayer(byte *parallax);   // These are used to initialize psx backgrounds and
+	int32 initialisePsxBackgroundLayer(byte *parallax); // parallaxes, which are different from pc counterparts.
 	void closeBackgroundLayer();
 
 	void initialiseRenderCycle();
 
 	void initBackground(int32 res, int32 new_palette);
+	void initPsxBackground(int32 res, int32 new_palette);
 	void registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega);
 
 	void setScrollFraction(uint8 f) { _scrollFraction = f; }
@@ -446,6 +458,22 @@ public:
 
 	void rollCredits();
 	void splashScreen();
+
+	// Some sprites are compressed in HIF format 
+	static uint32 decompressHIF(byte *src, byte *dst, uint32 *skipData = NULL);
+	// This is used to resize psx sprites back to original resolution
+	static void resizePsxSprite(byte *dst, byte *src, uint16 destW, uint16 destH);
+	// Some sprites are divided into 254 pixel wide stripes, this recomposes them
+	// and generates a "normal" sprite.
+	static void recomposePsxSprite(SpriteInfo *s);
+	static void recomposeCompPsxSprite(SpriteInfo *s);
+
+	// These functions manage the PSX screen cache
+	void setPsxScrCache(byte *psxScrCache, uint8 level);
+	byte *getPsxScrCache(uint8 level);
+	bool getPsxScrCacheStatus(uint8 level);
+	void flushPsxScrCache();
+
 };
 
 } // End of namespace Sword2

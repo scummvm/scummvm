@@ -35,6 +35,7 @@
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
+#include "sword2/screen.h"
 #include "sword2/animation.h"
 
 #include "gui/message.h"
@@ -207,6 +208,7 @@ void MoviePlayer::openTextObject(uint32 index) {
 		text->_textSprite.h = frame.height;
 		text->_textSprite.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
 		text->_textSprite.data = text->_textMem + FrameHeader::size();
+		text->_textSprite.isText = true;
 		_vm->_screen->createSurface(&text->_textSprite, &_textSurface);
 
 		_textX = 320 - text->_textSprite.w / 2;
@@ -238,6 +240,14 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 		byte *src = text->_textSprite.data;
 		uint16 width = text->_textSprite.w;
 		uint16 height = text->_textSprite.h;
+
+		// Resize text sprites for PSX version
+		if (Sword2Engine::isPsx()) { 
+			height *= 2;
+			byte *buffer = (byte *)malloc(width * height);
+			Screen::resizePsxSprite(buffer, src, width, height);
+			src = buffer;
+		}
 
 		byte *dst = screen + _textY * _decoder->getWidth() + _textX;
 

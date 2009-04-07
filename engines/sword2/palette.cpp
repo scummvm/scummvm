@@ -48,7 +48,11 @@ void Screen::startNewPalette() {
 
 	byte *screenFile = _vm->_resman->openResource(_thisScreen.background_layer_id);
 
-	memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(screenFile), PALTABLESIZE);
+	// Don't fetch palette match table while using PSX version,
+	// because it is not present.
+	if(!Sword2Engine::isPsx()) 
+		memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(screenFile), PALTABLESIZE);
+	
 	setPalette(0, 256, _vm->fetchPalette(screenFile), RDPAL_FADE);
 
 	// Indicating that it's a screen palette
@@ -116,7 +120,12 @@ void Screen::setFullPalette(int32 palRes) {
 	} else {
 		if (_thisScreen.background_layer_id) {
 			byte *data = _vm->_resman->openResource(_thisScreen.background_layer_id);
-			memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(data), PALTABLESIZE);
+			
+			// Do not fetch palette match table when using PSX version,
+			// because it is not present.
+			if (!Sword2Engine::isPsx())  
+				memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(data), PALTABLESIZE);
+			
 			setPalette(0, 256, _vm->fetchPalette(data), RDPAL_INSTANT);
 			_vm->_resman->closeResource(_thisScreen.background_layer_id);
 		} else

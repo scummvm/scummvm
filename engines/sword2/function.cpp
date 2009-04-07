@@ -71,8 +71,11 @@ int32 Logic::fnInitBackground(int32 *params) {
 
 	// params:	0 res id of normal background layer - cannot be 0
 	//		1 1 yes 0 no for a new palette
-
-	_vm->_screen->initBackground(params[0], params[1]);
+	
+	if (Sword2Engine::isPsx())
+		_vm->_screen->initPsxBackground(params[0], params[1]);
+	else
+		_vm->_screen->initBackground(params[0], params[1]);
 	return IR_CONT;
 }
 
@@ -392,13 +395,13 @@ int32 Logic::fnSetFrame(int32 *params) {
 	assert(_vm->_resman->fetchType(res) == ANIMATION_FILE);
 
 	// set up pointer to the animation header
-	AnimHeader anim_head;
-
+	AnimHeader anim_head;	
+	
 	anim_head.read(_vm->fetchAnimHeader(anim_file));
-
+	
 	// set up anim resource in graphic object
 	ObjectGraphic obGraph(decodePtr(params[0]));
-
+	
 	obGraph.setAnimResource(res);
 	obGraph.setAnimPc(params[2] ? anim_head.noAnimFrames - 1 : 0);
 

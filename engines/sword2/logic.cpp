@@ -284,4 +284,12 @@ void Logic::pauseMovie(bool pause) {
 		_moviePlayer->pauseMovie(pause);
 }
 
+/**
+ * Read current location number from script vars
+ */
+
+uint32 Logic::getLocationNum() {
+	return readVar(LOCATION);
+}
+
 } // End of namespace Sword2

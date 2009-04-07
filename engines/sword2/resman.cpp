@@ -159,7 +159,10 @@ bool ResourceManager::init() {
 
 	file.close();
 
-	if (!file.open("cd.inf")) {
+	// Check that we have cd.inf file, unless we are running PSX
+	// version, which has all files on one disc.
+
+	if (!file.open("cd.inf") && !Sword2Engine::isPsx()) {
 		GUIErrorMessage("Broken Sword 2: Cannot open cd.inf");
 		return false;
 	}
@@ -167,15 +170,21 @@ bool ResourceManager::init() {
 	CdInf *cdInf = new CdInf[_totalClusters];
 
 	for (i = 0; i < _totalClusters; i++) {
-		file.read(cdInf[i].clusterName, sizeof(cdInf[i].clusterName));
 
-		cdInf[i].cd = file.readByte();
+		if (Sword2Engine::isPsx()) { // We are running PSX version, artificially fill CdInf structure
+			cdInf[i].cd = CD1;
+		} else { // We are running PC version, read cd.inf file
+			file.read(cdInf[i].clusterName, sizeof(cdInf[i].clusterName));
 
-		if (file.ioFailed()) {
-			delete cdInf;
-			file.close();
-			GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
-			return false;
+			cdInf[i].cd = file.readByte();
+
+			if (file.ioFailed()) {
+				delete cdInf;
+				file.close();
+				GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
+				return false;
+			}
+
 		}
 
 		// It has been reported that there are two different versions
@@ -208,19 +217,24 @@ bool ResourceManager::init() {
 
 	file.close();
 
-	for (i = 0; i < _totalClusters; i++) {
-		for (j = 0; j < _totalClusters; j++) {
-			if (scumm_stricmp((char *)cdInf[j].clusterName, _resFiles[i].fileName) == 0)
-				break;
-		}
+	// We check the presence of resource files in cd.inf 
+	// This is ok in PC version, but in PSX version we don't
+	// have cd.inf so we'll have to skip this.
+	if (!Sword2Engine::isPsx()) {
+		for (i = 0; i < _totalClusters; i++) {
+			for (j = 0; j < _totalClusters; j++) {
+				if (scumm_stricmp((char *)cdInf[j].clusterName, _resFiles[i].fileName) == 0)
+					break;
+			}
 
-		if (j == _totalClusters) {
-			delete[] cdInf;
-			GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
-			return false;
-		}
+			if (j == _totalClusters) {
+				delete[] cdInf;
+				GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
+				return false;
+			}
 
-		_resFiles[i].cd = cdInf[j].cd;
+			_resFiles[i].cd = cdInf[j].cd;
+		}
 	}
 
 	delete[] cdInf;
@@ -247,11 +261,19 @@ bool ResourceManager::init() {
 byte *ResourceManager::openResource(uint32 res, bool dump) {
 	assert(res < _totalResFiles);
 
+
+	// FIXME: In PSX edition, not all top menu icons are present (TOP menu is not used).
+	// Though, at present state, the engine still ask for the resources.
+	if (Sword2Engine::isPsx()) { // We need to "rewire" missing icons 
+		if (res == 342) res = 364; // Rewire RESTORE ICON to SAVE ICON
+	}
+
 	// Is the resource in memory already? If not, load it.
 
 	if (!_resList[res].ptr) {
 		// Fetch the correct file and read in the correct portion.
 		uint16 cluFileNum = _resConvTable[res * 2]; // points to the number of the ascii filename
+		
 		assert(cluFileNum != 0xffff);
 
 		// Relative resource within the file
@@ -264,7 +286,10 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		// of the CDs, remember which one so that we can play the
 		// correct speech and music.
 
-		setCD(_resFiles[cluFileNum].cd);
+		if (Sword2Engine::isPsx()) // We have only one disk in PSX version 
+			setCD(CD1);
+		else
+			setCD(_resFiles[cluFileNum].cd);
 
 		// Actually, as long as the file can be found we don't really
 		// care which CD it's on. But if we can't find it, keep asking
@@ -478,6 +503,25 @@ bool ResourceManager::checkValid(uint32 res) {
 		return false;
 
 	return true;
+}
+
+/**
+ * Fetch resource type
+ */
+
+uint8 ResourceManager::fetchType(byte *ptr) {
+	if (!Sword2Engine::isPsx()) {
+		return ptr[0];
+	} else { // in PSX version, some files got a "garbled" resource header, with type stored in ninth byte
+		if (ptr[0]) { 
+			return ptr[0];
+		} else if (ptr[8]) {
+			return ptr[8];
+		} else  {            // In PSX version there is no resource header for audio files,
+			return WAV_FILE; // but hopefully all audio files got first 16 bytes zeroed,
+		}                    // Allowing us to check for this condition.
+
+	}
 }
 
 /**

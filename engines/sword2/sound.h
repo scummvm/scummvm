@@ -231,7 +231,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }
 	bool endOfData() const;
-	int getRate() const { return 22050; }
+	int getRate() const { return Sword2Engine::isPsx() ? 11025 : 22050; }
 
 	// End of AudioStream API
 

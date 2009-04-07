@@ -77,6 +77,12 @@ void Mouse::addSubject(int32 id, int32 ref) {
 
 void Mouse::buildMenu() {
 	uint32 i, j;
+	byte menuIconWidth;
+
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
 
 	// Clear the temporary inventory list, since we are going to build a
 	// new one from scratch.
@@ -178,7 +184,7 @@ void Mouse::buildMenu() {
 			// greyed out one.
 
 			if (icon_coloured)
-				icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+				icon += (menuIconWidth * RDMENU_ICONDEEP);
 		}
 
 		setMenuIcon(RDMENU_BOTTOM, i, icon);
@@ -203,6 +209,13 @@ void Mouse::buildSystemMenu() {
 		RESTART_ICON
 	};
 
+	byte menuIconWidth;
+
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
+
 	// Build them all high in full colour - when one is clicked on all the
 	// rest will grey out.
 
@@ -213,7 +226,7 @@ void Mouse::buildSystemMenu() {
 		// is dead. Then SAVE is not available.
 
 		if (!_vm->_logic->readVar(DEAD) || icon_list[i] != SAVE_ICON)
-			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+			icon += (menuIconWidth * RDMENU_ICONDEEP);
 
 		setMenuIcon(RDMENU_TOP, i, icon);
 		_vm->_resman->closeResource(icon_list[i]);

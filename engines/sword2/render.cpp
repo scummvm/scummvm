@@ -252,21 +252,35 @@ void Screen::setLocationMetrics(uint16 w, uint16 h) {
  */
 
 void Screen::renderParallax(byte *ptr, int16 l) {
-	Parallax p;
 	int16 x, y;
+	uint16 xRes, yRes;
 	Common::Rect r;
 
-	p.read(ptr);
+	if (!ptr)
+		return;
+
+	// Fetch resolution data from parallax
+	
+	if (Sword2Engine::isPsx()) {
+		xRes = READ_LE_UINT16(ptr);
+		yRes = READ_LE_UINT16(ptr + 2) * 2;
+	} else {
+		Parallax p;
+		
+		p.read(ptr);
+		xRes = p.w;
+		yRes = p.h;
+	}
 
 	if (_locationWide == _screenWide)
 		x = 0;
 	else
-		x = ((int32)((p.w - _screenWide) * _scrollX) / (int32)(_locationWide - _screenWide));
+		x = ((int32)((xRes - _screenWide) * _scrollX) / (int32)(_locationWide - _screenWide));
 
 	if (_locationDeep == _screenDeep - MENUDEEP * 2)
 		y = 0;
 	else
-		y = ((int32)((p.h - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32)(_locationDeep - (_screenDeep - MENUDEEP * 2)));
+		y = ((int32)((yRes - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32)(_locationDeep - (_screenDeep - MENUDEEP * 2)));
 
 	Common::Rect clipRect;
 
@@ -537,11 +551,264 @@ int32 Screen::initialiseBackgroundLayer(byte *parallax) {
 }
 
 /**
+ * This converts PSX format background data into a format that
+ * can be understood by renderParallax functions.
+ * PSX Backgrounds are divided into tiles of 64x32 (with aspect
+ * ratio correction), while PC backgrounds are in tiles of 64x64.
+ */
+
+int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
+	uint16 bgXres, bgYres;
+	uint16 trueXres, stripeNumber, totStripes;
+	uint32 baseAddress, stripePos;
+	uint16 i, j;
+	byte *dst;
+
+	debug(2, "initialisePsxBackgroundLayer");
+
+	assert(_layer < MAXLAYERS);
+
+	if (!parallax) {
+		_layer++;
+		return RD_OK;
+	}
+
+	// Fetch data from buffer
+
+	bgXres = READ_LE_UINT16(parallax);
+	bgYres = READ_LE_UINT16(parallax + 2) * 2;
+	baseAddress = READ_LE_UINT32(parallax + 4);
+	parallax += 8;
+
+	// Calculate TRUE resolution of background, must be
+	// a multiple of 64
+
+	trueXres = (bgXres % 64) ? ((bgXres/64) + 1) * 64 : bgXres;
+	totStripes = trueXres / 64;
+
+	_xBlocks[_layer] = (bgXres + BLOCKWIDTH - 1) / BLOCKWIDTH;
+	_yBlocks[_layer] = (bgYres + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
+	
+	uint16 remLines = bgYres % 64;
+
+	byte *tileChunk = (byte *)malloc(BLOCKHEIGHT * BLOCKWIDTH);
+	if (!tileChunk)
+		return RDERR_OUTOFMEMORY;
+
+	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
+	if (!_blockSurfaces[_layer])
+		return RDERR_OUTOFMEMORY;
+
+	// Group PSX background (64x32, when stretched vertically) tiles together,
+	// to make them compatible with pc version (composed by 64x64 tiles)
+
+	stripeNumber = 0;
+	stripePos = 0;
+	for (i = 0; i < _xBlocks[_layer] * _yBlocks[_layer]; i++) {
+		bool block_has_data = false;
+		bool block_is_transparent = false;
+
+		int posX = i / _yBlocks[_layer];
+		int posY = i % _yBlocks[_layer];
+
+		uint32 stripeOffset = READ_LE_UINT32(parallax + stripeNumber * 8 + 4) + stripePos - baseAddress;
+
+		memset(tileChunk, 1, BLOCKHEIGHT * BLOCKWIDTH);
+
+		if (!(remLines && posY == _yBlocks[_layer] - 1)) 
+			remLines = 32;
+
+		for(j = 0; j < remLines; j++) {
+			memcpy(tileChunk + j * BLOCKWIDTH * 2, parallax + stripeOffset + j * BLOCKWIDTH, BLOCKWIDTH);
+			memcpy(tileChunk + j * BLOCKWIDTH * 2 + BLOCKWIDTH, parallax + stripeOffset + j * BLOCKWIDTH, BLOCKWIDTH);
+		}
+
+		for (j = 0; j < BLOCKHEIGHT * BLOCKWIDTH; j++) {
+			if (tileChunk[j])
+				block_has_data = true;
+			else
+				block_is_transparent = true;
+		}	
+
+		int tileIndex = totStripes * posY + posX;
+
+		//  Only assign a surface to the block if it contains data.
+
+		if (block_has_data) {
+			_blockSurfaces[_layer][tileIndex] = (BlockSurface *)malloc(sizeof(BlockSurface));
+
+			//  Copy the data into the surfaces.
+			dst = _blockSurfaces[_layer][tileIndex]->data;
+			memcpy(dst, tileChunk, BLOCKWIDTH * BLOCKHEIGHT);
+
+			_blockSurfaces[_layer][tileIndex]->transparent = block_is_transparent;
+
+		} else
+			_blockSurfaces[_layer][tileIndex] = NULL;
+
+		if (posY == _yBlocks[_layer] - 1) {
+			stripeNumber++;
+			stripePos = 0;
+		} else {
+			stripePos += 0x800;
+		}
+	}
+
+	free(tileChunk);
+	_layer++;
+
+	return RD_OK;	
+}
+
+/**
+ * This converts PSX format parallax data into a format that
+ * can be understood by renderParallax functions.
+ */
+
+int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
+	uint16 plxXres, plxYres;
+	uint16 xTiles, yTiles;
+	uint16 i, j, k;
+	byte *data;
+	byte *dst;
+
+	debug(2, "initialisePsxParallaxLayer");
+
+	assert(_layer < MAXLAYERS);
+
+	if (!parallax) {
+		_layer++;
+		return RD_OK;
+	}
+
+	plxXres = READ_LE_UINT16(parallax);
+	plxYres = READ_LE_UINT16(parallax + 2);
+	xTiles = READ_LE_UINT16(parallax + 4);
+	yTiles = READ_LE_UINT16(parallax + 6);
+
+	// Beginning of parallax table composed by uint32,
+	// if word is 0, corresponding tile contains no data and must be skipped,
+	// if word is 0x400 tile contains data.
+	parallax += 8;
+
+	// Beginning if tiles data.
+	data = parallax + xTiles * yTiles * 4;
+
+	_xBlocks[_layer] = xTiles;
+	_yBlocks[_layer] = (yTiles / 2) + (yTiles % 2 ? 1 : 0);
+	bool oddTiles = (yTiles % 2 ? true : false);
+
+	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
+	if (!_blockSurfaces[_layer])
+		return RDERR_OUTOFMEMORY;
+
+	// We have to check two tiles for every block in PSX version, if one of those
+	// has data in it, the whole block has data. Also, tiles must be doublelined to
+	// get correct aspect ratio.
+	for (i = 0; i < _xBlocks[_layer] * _yBlocks[_layer]; i++) {
+		bool block_has_data = false;
+		bool block_is_transparent = false;
+		bool firstTilePresent, secondTilePresent;
+
+		int posX = i / _yBlocks[_layer];
+		int posY = i % _yBlocks[_layer];
+
+		if (oddTiles && posY == _yBlocks[_layer] - 1) {
+			firstTilePresent = READ_LE_UINT32(parallax) == 0x400;
+			secondTilePresent = false;
+			parallax += 4;
+		} else {
+			firstTilePresent = READ_LE_UINT32(parallax) == 0x400;
+			secondTilePresent = READ_LE_UINT32(parallax + 4) == 0x400;
+			parallax += 8;
+		}
+
+		// If one of the two grouped tiles has data, then the whole block has data
+		if (firstTilePresent || secondTilePresent) {
+			block_has_data = true;
+
+			// If one of the two grouped blocks is without data, then we also have transparency
+			if(!firstTilePresent || !secondTilePresent) 
+				block_is_transparent = true;
+		}
+
+		// Now do a second check to see if we have a partially transparent block
+		if (block_has_data && !block_is_transparent) {
+			byte *block = data;
+			if (firstTilePresent) {
+				for (k = 0; k < 0x400; k++) {
+					if ( *(block + k) == 0) {
+						block_is_transparent = true;
+						break;
+					}
+				}
+				block += 0x400; // On to next block...
+			}
+
+			// If we didn't find transparency in first block and we have
+			// a second tile, check it
+			if (secondTilePresent && !block_is_transparent) { 
+				for (k = 0; k < 0x400; k++) {
+					if ( *(block + k) == 0) {
+						block_is_transparent = true;
+						break;
+					}
+				}
+			}
+		}
+
+		int tileIndex = xTiles * posY + posX;
+
+		//  Only assign a surface to the block if it contains data.
+
+		if (block_has_data) {
+			_blockSurfaces[_layer][tileIndex] = (BlockSurface *)malloc(sizeof(BlockSurface));
+			memset(_blockSurfaces[_layer][tileIndex], 0, BLOCKHEIGHT * BLOCKWIDTH);
+
+			//  Copy the data into the surfaces.
+			dst = _blockSurfaces[_layer][tileIndex]->data;
+
+			if (firstTilePresent) { //There is data in the first tile
+				for (j = 0; j < 16; j++) {
+					memcpy(dst, data, BLOCKWIDTH);
+					dst += BLOCKWIDTH;
+					memcpy(dst, data, BLOCKWIDTH);
+					dst += BLOCKWIDTH;
+					data += BLOCKWIDTH;
+				}
+			} else {
+				dst += 0x800;
+			}
+
+			if (secondTilePresent) {
+				for (j = 0; j < 16; j++) {
+					memcpy(dst, data, BLOCKWIDTH);
+					dst += BLOCKWIDTH;
+					memcpy(dst, data, BLOCKWIDTH);
+					dst += BLOCKWIDTH;
+					data += BLOCKWIDTH;
+				}
+			}
+
+			_blockSurfaces[_layer][tileIndex]->transparent = block_is_transparent;
+		} else
+			_blockSurfaces[_layer][tileIndex] = NULL;
+	}
+
+	_layer++;
+
+	return RD_OK;
+}
+
+/**
  * Should be called once after leaving the room to free up memory.
  */
 
 void Screen::closeBackgroundLayer() {
 	debug(2, "CloseBackgroundLayer");
+
+	if (Sword2Engine::isPsx())
+		flushPsxScrCache();
 
 	for (int i = 0; i < MAXLAYERS; i++) {
 		if (_blockSurfaces[i]) {

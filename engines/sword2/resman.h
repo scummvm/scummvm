@@ -64,7 +64,7 @@ private:
 	void removeFromCacheList(Resource *res);
 	void addToCacheList(Resource *res);
 	void checkMemUsage();
-
+	
 	Sword2Engine *_vm;
 
 	int _curCD;
@@ -96,16 +96,13 @@ public:
 
 	bool checkValid(uint32 res);
 	uint32 fetchLen(uint32 res);
+	uint8 fetchType(byte *ptr);
 	uint8 fetchType(uint32 res) {
 		byte *ptr = openResource(res);
-		uint8 type = ptr[0];
+		uint8 type = fetchType(ptr);
 		closeResource(res);
 
 		return type;
-	}
-
-	uint8 fetchType(byte *ptr) {
-		return ptr[0];
 	}
 
 	byte *fetchName(uint32 res, byte *buf = NULL) {

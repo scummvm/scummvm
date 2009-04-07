@@ -76,7 +76,7 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_needFullRedraw = false;
 
 	memset(&_thisScreen, 0, sizeof(_thisScreen));
-
+	
 	_fps = 0;
 	_frameCount = 0;
 	_cycleTime = 0;
@@ -100,9 +100,18 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 
 	_pauseTicks = 0;
 	_pauseStartTick = 0;
+
+	// Clean the cache for PSX version SCREENS.CLU 
+	_psxScrCache[0] = NULL;
+	_psxScrCache[1] = NULL;
+	_psxScrCache[2] = NULL;
+	_psxCacheEnabled[0] = true;
+	_psxCacheEnabled[1] = true;
+	_psxCacheEnabled[2] = true;
 }
 
 Screen::~Screen() {
+	flushPsxScrCache();
 	free(_buffer);
 	free(_dirtyGrid);
 	closeBackgroundLayer();
@@ -277,7 +286,8 @@ void Screen::buildDisplay() {
 
 	MultiScreenHeader screenLayerTable;
 
-	screenLayerTable.read(file + ResHeader::size());
+	if (!Sword2Engine::isPsx()) // On PSX version, there would be nothing to read here
+		screenLayerTable.read(file + ResHeader::size());
 
 	// Render at least one frame, but if the screen is scrolling, and if
 	// there is time left, we will render extra frames to smooth out the
@@ -285,13 +295,13 @@ void Screen::buildDisplay() {
 
 	do {
 		// first background parallax + related anims
-		if (screenLayerTable.bg_parallax[0]) {
+		if (Sword2Engine::isPsx() || screenLayerTable.bg_parallax[0]) { // No need to check on PSX version
 			renderParallax(_vm->fetchBackgroundParallaxLayer(file, 0), 0);
 			drawBackPar0Frames();
 		}
 
 		// second background parallax + related anims
-		if (screenLayerTable.bg_parallax[1]) {
+		if (!Sword2Engine::isPsx() && screenLayerTable.bg_parallax[1]) { // Nothing here in PSX version
 			renderParallax(_vm->fetchBackgroundParallaxLayer(file, 1), 1);
 			drawBackPar1Frames();
 		}
@@ -306,14 +316,14 @@ void Screen::buildDisplay() {
 
 		// first foreground parallax + related anims
 
-		if (screenLayerTable.fg_parallax[0]) {
+		if (Sword2Engine::isPsx() || screenLayerTable.fg_parallax[0]) {
 			renderParallax(_vm->fetchForegroundParallaxLayer(file, 0), 3);
 			drawForePar0Frames();
 		}
 
 		// second foreground parallax + related anims
 
-		if (screenLayerTable.fg_parallax[1]) {
+		if (!Sword2Engine::isPsx() && screenLayerTable.fg_parallax[1]) {
 			renderParallax(_vm->fetchForegroundParallaxLayer(file, 1), 4);
 			drawForePar1Frames();
 		}
@@ -333,6 +343,7 @@ void Screen::buildDisplay() {
 	} while (!endRenderCycle());
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
+
 }
 
 /**
@@ -381,6 +392,7 @@ void Screen::displayMsg(byte *text, int time) {
 	spriteInfo.blend = 0;
 	spriteInfo.data = text_spr + FrameHeader::size();
 	spriteInfo.colourTable = 0;
+	spriteInfo.isText = true;
 
 	uint32 rv = drawSprite(&spriteInfo);
 	if (rv)
@@ -490,6 +502,7 @@ void Screen::drawForePar1Frames() {
 }
 
 void Screen::processLayer(byte *file, uint32 layer_number) {
+
 	LayerHeader layer_head;
 
 	layer_head.read(_vm->fetchLayerHeader(file, layer_number));
@@ -503,9 +516,19 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 	spriteInfo.scaledWidth = 0;
 	spriteInfo.scaledHeight = 0;
 	spriteInfo.h = layer_head.height;
-	spriteInfo.type = RDSPR_TRANS | RDSPR_RLE256FAST;
+	spriteInfo.isText = false;
+
+	// Layers are uncompressed in PSX version, RLE256 compressed
+	// in PC version.
+	if (Sword2Engine::isPsx()) { 
+		spriteInfo.type = RDSPR_TRANS | RDSPR_NOCOMPRESSION;
+		spriteInfo.data = file + layer_head.offset;
+	} else {
+		spriteInfo.type = RDSPR_TRANS | RDSPR_RLE256FAST;
+		spriteInfo.data = file + ResHeader::size() + layer_head.offset;
+	}
+
 	spriteInfo.blend = 0;
-	spriteInfo.data = file + ResHeader::size() + layer_head.offset;
 	spriteInfo.colourTable = 0;
 
 	// check for largest layer for debug info
@@ -575,6 +598,8 @@ void Screen::processImage(BuildUnit *build_unit) {
 			// points to just after last cdt_entry, ie.
 			// start of colour table
 			colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size() + anim_head.noAnimFrames * CdtEntry::size();
+			if (Sword2Engine::isPsx())
+				colTablePtr++; // There is one additional byte to skip before the table in psx version
 			break;
 		}
 	}
@@ -598,6 +623,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 	// points to just after frame header, ie. start of sprite data
 	spriteInfo.data = frame + FrameHeader::size();
 	spriteInfo.colourTable = colTablePtr;
+	spriteInfo.isText = false;
 
 	// check for largest layer for debug info
 	uint32 current_sprite_area = frame_head.width * frame_head.height;
@@ -864,7 +890,7 @@ void Screen::rollCredits() {
 	//     that this is a coincidence, but let's use the image palette
 	//     directly anyway, just to be safe.
 	//
-	// credits.clu  - The credits text
+	// credits.clu  - The credits text (credits.txt in PSX version)
 	//
 	//     This is simply a text file with CRLF line endings.
 	//     '^' is not shown, but used to mark the center of the line.
@@ -882,6 +908,8 @@ void Screen::rollCredits() {
 	SpriteInfo spriteInfo;
 	Common::File f;
 	int i;
+
+	spriteInfo.isText = false;
 
 	// Read the "Smacker" logo
 
@@ -925,9 +953,16 @@ void Screen::rollCredits() {
 	int paragraphStart = 0;
 	bool hasCenterMark = false;
 
-	if (!f.open("credits.clu")) {
-		warning("Can't find credits.clu");
-		return;
+	if (Sword2Engine::isPsx()) {
+		if (!f.open("credits.txt")) {
+			warning("Can't find credits.txt");
+			return;
+		}
+	} else {
+		if (!f.open("credits.clu")) {
+			warning("Can't find credits.clu");
+			return;
+		}
 	}
 
 	while (1) {
@@ -1088,6 +1123,7 @@ void Screen::rollCredits() {
 				spriteInfo.w = frame.width;
 				spriteInfo.h = frame.height;
 				spriteInfo.data = creditsLines[i]->sprite + FrameHeader::size();
+				spriteInfo.isText = true;
 
 				switch (creditsLines[i]->type) {
 				case LINE_LEFT:
@@ -1214,6 +1250,7 @@ void Screen::splashScreen() {
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
 	barSprite.data = frame + FrameHeader::size();
+	barSprite.isText = false;
 
 	drawSprite(&barSprite);
 
@@ -1232,6 +1269,46 @@ void Screen::splashScreen() {
 
 	fadeDown();
 	waitForFade();
+}
+
+// Following functions are used to manage screen cache for psx version.
+
+void Screen::setPsxScrCache(byte *psxScrCache, uint8 level) {
+		if (level < 3) {
+			if (psxScrCache)
+				_psxCacheEnabled[level] = true;
+			else
+				_psxCacheEnabled[level] = false;
+
+			_psxScrCache[level] = psxScrCache;
+		}
+}
+
+byte *Screen::getPsxScrCache(uint8 level) {
+	if (level > 3) {
+		level = 0;
+	}
+
+	if (_psxCacheEnabled[level])
+		return _psxScrCache[level];
+	else
+		return NULL;
+}
+
+bool Screen::getPsxScrCacheStatus(uint8 level) {
+	if (level > 3) {
+		level = 0;
+	}
+	
+	return _psxCacheEnabled[level];
+}
+
+void Screen::flushPsxScrCache() {
+	for (uint8 i = 0; i < 3; i++) {
+		free(_psxScrCache[i]);
+		_psxScrCache[i] = NULL;
+		_psxCacheEnabled[i] = true;
+	}
 }
 
 } // End of namespace Sword2

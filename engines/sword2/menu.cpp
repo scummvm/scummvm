@@ -42,16 +42,25 @@ namespace Sword2 {
 void Mouse::clearIconArea(int menu, int pocket, Common::Rect *r) {
 	byte *buf = _vm->_screen->getScreen();
 	int16 screenWide = _vm->_screen->getScreenWide();
+	byte menuIconWidth;
+	
+	// Initialize menu icon width at correct size
+	// depending if we are using pc or psx version.
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
+
 
 	r->top = menu * (RENDERDEEP + MENUDEEP) + (MENUDEEP - RDMENU_ICONDEEP) / 2;
 	r->bottom = r->top + RDMENU_ICONDEEP;
-	r->left = RDMENU_ICONSTART + pocket * (RDMENU_ICONWIDE + RDMENU_ICONSPACING);
-	r->right = r->left + RDMENU_ICONWIDE;
+	r->left = RDMENU_ICONSTART + pocket * (menuIconWidth + RDMENU_ICONSPACING);
+	r->right = r->left + menuIconWidth;
 
 	byte *dst = buf + r->top * screenWide + r->left;
 
 	for (int i = 0; i < RDMENU_ICONDEEP; i++) {
-		memset(dst, 0, RDMENU_ICONWIDE);
+		memset(dst, 0, menuIconWidth);
 		dst += screenWide;
 	}
 }
@@ -71,6 +80,13 @@ void Mouse::processMenu() {
 
 	byte *buf = _vm->_screen->getScreen();
 	int16 screenWide = _vm->_screen->getScreenWide();
+	byte menuIconWidth; 
+	
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
+
 
 	if (lastTime == 0) {
 		lastTime = _vm->getMillis();
@@ -141,7 +157,7 @@ void Mouse::processMenu() {
 			_menuStatus[menu] = RDMENU_HIDDEN;
 
 		// Draw the menu here.
-		int32 curx = RDMENU_ICONSTART + RDMENU_ICONWIDE / 2;
+		int32 curx = RDMENU_ICONSTART + menuIconWidth / 2;
 		int32 cury = (MENUDEEP / 2) + (RENDERDEEP + MENUDEEP) * menu;
 
 		for (i = 0; i < RDMENU_MAXPOCKETS; i++) {
@@ -154,14 +170,14 @@ void Mouse::processMenu() {
 				clearIconArea(menu, i, &r1);
 
 				if (_pocketStatus[menu][i] == MAXMENUANIMS) {
-					xoff = (RDMENU_ICONWIDE / 2);
+					xoff = (menuIconWidth / 2);
 					r2.left = curx - xoff;
-					r2.right = r2.left + RDMENU_ICONWIDE;
+					r2.right = r2.left + menuIconWidth;
 					yoff = (RDMENU_ICONDEEP / 2);
 					r2.top = cury - yoff;
 					r2.bottom = r2.top + RDMENU_ICONDEEP;
 				} else {
-					xoff = (RDMENU_ICONWIDE / 2) * _pocketStatus[menu][i] / MAXMENUANIMS;
+					xoff = (menuIconWidth / 2) * _pocketStatus[menu][i] / MAXMENUANIMS;
 					r2.left = curx - xoff;
 					r2.right = curx + xoff;
 					yoff = (RDMENU_ICONDEEP / 2) * _pocketStatus[menu][i] / MAXMENUANIMS;
@@ -176,18 +192,18 @@ void Mouse::processMenu() {
 					if (_pocketStatus[menu][i] != MAXMENUANIMS) {
 						_vm->_screen->scaleImageFast(
 							dst, screenWide, r2.right - r2.left, r2.bottom - r2.top,
-							src, RDMENU_ICONWIDE, RDMENU_ICONWIDE, RDMENU_ICONDEEP);
+							src, menuIconWidth, menuIconWidth, RDMENU_ICONDEEP);
 					} else {
 						for (j = 0; j < RDMENU_ICONDEEP; j++) {
-							memcpy(dst, src, RDMENU_ICONWIDE);
-							src += RDMENU_ICONWIDE;
+							memcpy(dst, src, menuIconWidth);
+							src += menuIconWidth;
 							dst += screenWide;
 						}
 					}
 				}
 				_vm->_screen->updateRect(&r1);
 			}
-			curx += (RDMENU_ICONSPACING + RDMENU_ICONWIDE);
+			curx += (RDMENU_ICONSPACING + menuIconWidth);
 		}
 	}
 }
@@ -199,6 +215,13 @@ void Mouse::processMenu() {
  */
 
 int32 Mouse::showMenu(uint8 menu) {
+
+	// Do not show menu in PSX version, as there was really
+	// nothing similar in the original game (menu was started
+	// using SELECT button in psx pad)
+	if (Sword2Engine::isPsx() && menu == RDMENU_TOP) 
+		return RD_OK;
+
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -219,6 +242,11 @@ int32 Mouse::showMenu(uint8 menu) {
  */
 
 int32 Mouse::hideMenu(uint8 menu) {
+
+	// In PSX version, do nothing. There is no such menu.
+	if (Sword2Engine::isPsx() && menu == RDMENU_TOP)
+		return RD_OK;
+
 	// Check for invalid menu parameter
 	if (menu > RDMENU_BOTTOM)
 		return RDERR_INVALIDMENU;
@@ -267,6 +295,12 @@ void Mouse::closeMenuImmediately() {
 
 int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	Common::Rect r;
+	byte menuIconWidth;
+	
+	if (Sword2Engine::isPsx())
+		menuIconWidth = RDMENU_PSXICONWIDE;
+	else
+		menuIconWidth = RDMENU_ICONWIDE;
 
 	// Check for invalid menu parameter.
 	if (menu > RDMENU_BOTTOM)
@@ -288,10 +322,10 @@ int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	// Only put the icon in the pocket if it is not NULL
 	if (icon != NULL) {
 		_iconCount++;
-		_icons[menu][pocket] = (byte *)malloc(RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+		_icons[menu][pocket] = (byte *)malloc(menuIconWidth * RDMENU_ICONDEEP);
 		if (_icons[menu][pocket] == NULL)
 			return RDERR_OUTOFMEMORY;
-		memcpy(_icons[menu][pocket], icon, RDMENU_ICONWIDE * RDMENU_ICONDEEP);
+		memcpy(_icons[menu][pocket], icon, menuIconWidth * RDMENU_ICONDEEP);
 	}
 
 	return RD_OK;

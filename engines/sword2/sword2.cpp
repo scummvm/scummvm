@@ -51,6 +51,7 @@
 #include "sword2/router.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
+#include "sword2/saveload.h"
 
 namespace Sword2 {
 
@@ -104,7 +105,9 @@ bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
-		(f == kSupportsSubtitleOptions);
+		(f == kSupportsSubtitleOptions) ||
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 GameList Sword2MetaEngine::getSupportedGames() const {
@@ -299,6 +302,8 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameCycle = 0;
 	_gameSpeed = 1;
 
+	_gmmLoadSlot = -1; // Used to manage GMM Loading
+
 	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
 }
 
@@ -429,8 +434,8 @@ Common::Error Sword2Engine::run() {
 			if (!dialog.runModal())
 				startGame();
 		}
-	} else if (!_bootParam && saveExists()) {
-		int32 pars[2] = { 221, FX_LOOP };
+	} else if (!_bootParam && saveExists() && !isPsx()) { // Initial load/restart panel disabled in PSX
+		int32 pars[2] = { 221, FX_LOOP };                 // version because of missing panel resources
 		bool result;
 
 		_mouse->setMouse(NORMAL_MOUSE_ID);
@@ -464,6 +469,26 @@ Common::Error Sword2Engine::run() {
 			_stepOneCycle = false;
 		}
 #endif
+
+		// Handle GMM Loading
+		if (_gmmLoadSlot != -1) {
+			
+			// Hide mouse cursor and fade screen
+			_mouse->hideMouse();
+			_screen->fadeDown();
+			
+			// Clean up and load game
+			_logic->_router->freeAllRouteMem();
+
+			// TODO: manage error handling
+			restoreGame(_gmmLoadSlot);
+
+			// Reset load slot
+			_gmmLoadSlot = -1;
+
+			// Show mouse
+			_mouse->addHuman();
+		}
 
 		KeyboardEvent *ke = keyboardEvent();
 
@@ -803,6 +828,67 @@ void Sword2Engine::pauseEngineIntern(bool pause) {
 
 uint32 Sword2Engine::getMillis() {
 	return _system->getMillis();
+}
+
+Common::Error Sword2Engine::saveGameState(int slot, const char *desc) {
+	uint32 saveVal = saveGame(slot, (byte *)desc);
+
+	if (saveVal == SR_OK)
+		return Common::kNoError;
+	else if (saveVal == SR_ERR_WRITEFAIL || saveVal == SR_ERR_FILEOPEN)
+		return Common::kWritingFailed;
+	else
+		return Common::kUnknownError;
+}
+
+bool Sword2Engine::canSaveGameStateCurrently() {
+	bool canSave = true;
+
+	// No save if dead
+	if (_logic->readVar(DEAD))
+		canSave = false;
+
+	// No save if mouse not shown
+	else if (_mouse->getMouseStatus())
+		canSave = false;
+	// No save if inside a menu
+	else if (_mouse->getMouseMode() == MOUSE_system_menu)
+		canSave = false;
+
+	// No save if fading
+	else if (_screen->getFadeStatus())
+		canSave = false;
+
+	return canSave;
+}
+
+Common::Error Sword2Engine::loadGameState(int slot) {
+
+	// Prepare the game to load through GMM
+	_gmmLoadSlot = slot;
+
+	// TODO: error handling.
+	return Common::kNoError;
+}
+
+bool Sword2Engine::canLoadGameStateCurrently() {
+	bool canLoad = true;
+
+	// No load if mouse is disabled
+	if (_mouse->getMouseStatus())
+		canLoad = false;
+	// No load if mouse is in system menu
+	else if (_mouse->getMouseMode() == MOUSE_system_menu)
+		canLoad = false;
+	// No load if we are fading
+	else if (_screen->getFadeStatus())
+		canLoad = false;
+
+	// But if we are dead, ignore previous conditions
+	if (_logic->readVar(DEAD))
+		canLoad = true;
+
+	return canLoad;
 }
 
 } // End of namespace Sword2

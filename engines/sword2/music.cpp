@@ -40,6 +40,7 @@
 #include "sound/flac.h"
 #include "sound/rate.h"
 #include "sound/wave.h"
+#include "sound/vag.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -83,6 +84,7 @@ bool SafeSubReadStream::seek(int32 offset, int whence) {
 }
 
 static Audio::AudioStream *makeCLUStream(Common::File *fp, int size);
+static Audio::AudioStream *makePSXCLUStream(Common::File *fp, int size);
 
 static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
 	bool alreadyOpen;
@@ -189,7 +191,10 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 
 	switch (fh->fileType) {
 	case kCLUMode:
-		return makeCLUStream(&fh->file, enc_len);
+		if (Sword2Engine::isPsx())
+			return makePSXCLUStream(&fh->file, enc_len);
+		else
+			return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
 		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len, false);
@@ -287,6 +292,16 @@ void CLUInputStream::refill() {
 
 Audio::AudioStream *makeCLUStream(Common::File *file, int size) {
 	return new CLUInputStream(file, size);
+}
+
+Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
+	
+	// Buffer audio file data, and ask MemoryReadStream to dispose of it
+	// when not needed anymore.
+
+	byte *buffer = (byte *)malloc(size);
+	file->read(buffer, size);
+	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, true));
 }
 
 // ----------------------------------------------------------------------------

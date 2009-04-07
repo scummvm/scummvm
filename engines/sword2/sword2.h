@@ -120,7 +120,16 @@ private:
 	bool _useSubtitles;
 	int _gameSpeed;
 
+	// Used to trigger GMM Loading
+	int _gmmLoadSlot;
+
 	StartUp _startList[MAX_starts];
+
+	// We need these to fetch data from SCREENS.CLU, which is
+	// a resource file with custom format keeping background and
+	// parallax data (which is removed from multiscreen files).
+	byte *fetchPsxBackground(uint32 location);
+	byte *fetchPsxParallax(uint32 location, uint8 level); // level: 0 -> bg, 1 -> fg
 
 	// Original game platform (PC/PSX)
 	static Common::Platform _platform;
@@ -149,6 +158,12 @@ public:
 
 	bool getSubtitles() { return _useSubtitles; }
 	void setSubtitles(bool b) { _useSubtitles = b; }
+
+	// GMM Loading/Saving
+	Common::Error saveGameState(int slot, const char *desc);
+	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently();	
 
 	uint32 _features;
 
@@ -203,7 +218,7 @@ public:
 	byte *fetchTextLine(byte *file, uint32 text_line);
 	bool checkTextLine(byte *file, uint32 text_line);
 	byte *fetchPaletteMatchTable(byte *screenFile);
-
+	
 	uint32 saveGame(uint16 slotNo, byte *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, byte *description);

@@ -274,7 +274,7 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 
 bool Debugger::Cmd_ResList(int argc, const char **argv) {
 	// By default, list only resources that are being held open.
-	uint minCount = 1;
+	uint32 minCount = 1;
 
 	if (argc > 1)
 		minCount = atoi(argv[1]);
