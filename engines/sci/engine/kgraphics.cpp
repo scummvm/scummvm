@@ -861,8 +861,8 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int view = SKPV(0);
 	int loop = SKPV(1);
 	int cel = SKPV(2);
-	int x = UKPV(3);
-	int y = UKPV(4);
+	int y = UKPV(3);
+	int x = UKPV(4);
 	gfxr_view_t *res = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
