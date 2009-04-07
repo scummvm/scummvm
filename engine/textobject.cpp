@@ -213,9 +213,19 @@ void TextObject::draw() {
 		int y;
 
 		if (_blastDraw)
-			y = _y;
-		else
-			y = _y - _font->getBaseOffsetY();
+			y = _y + 5;
+		else {
+			if (_font->getHeight() == 21)
+				y = _y - 6;
+			else if (_font->getHeight() == 26)
+				y = _y - 12;
+			else if (_font->getHeight() == 13)
+				y = _y;
+			else if (_font->getHeight() == 19)
+				y = _y - 6;
+			else
+				y = _y;
+		}
 
 		if (y < 0)
 			y = 0;

@@ -2307,7 +2307,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		if (strmatch(key_text, "x"))
 			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "y"))
-			textObject->setY(atoi(lua_getstring(lua_getresult(2))) + 5);
+			textObject->setY(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "width"))
 			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "height"))
@@ -2387,14 +2387,15 @@ static void KillTextObject() {
 static void ChangeTextObject() {
 	TextObject *modifyObject, *textObject;
 	lua_Object tableObj;
+	const char *line;
 
 	DEBUG_FUNCTION();
 	textObject = check_textobject(1);
 	// when called in certain instances (such as don's computer)
 	// the second parameter is the string and the third is the table
-	if (lua_isstring(lua_getparam(2)))
+	if (lua_isstring(lua_getparam(2))) {
 		tableObj = lua_getparam(3);
-	else
+	} else
 		tableObj = lua_getparam(2);
 
 	modifyObject = TextObjectExists((char *)textObject->name());
@@ -2408,9 +2409,10 @@ static void ChangeTextObject() {
 
 	if (lua_istable(tableObj))
 		getTextObjectParams(modifyObject, tableObj);
-	else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("Expecting table parameter!");
-
+	else if (lua_isstring(lua_getparam(2))) {
+		line = lua_getstring(lua_getparam(2));
+		modifyObject->setText((char *)line);
+	}
 	modifyObject->createBitmap();
 
 	lua_pushnumber(modifyObject->getBitmapWidth());
@@ -2454,7 +2456,6 @@ static void MakeTextObject() {
 	//printf("Make: %s\n", (char *)text.c_str());
 
 	textObject->setText((char *)text.c_str());
-	//textObject->subBaseOffsetY();
 
 	textObject->createBitmap();
 	g_engine->registerTextObject(textObject);
