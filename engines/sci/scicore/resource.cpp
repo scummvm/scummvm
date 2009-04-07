@@ -996,7 +996,22 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 		file.seek(resMap[type].wOffset);
 		for (int i = 0; i < resMap[type].wSize; i++) {
 			uint16 number = file.readUint16LE();
-			file.read(&off, nEntrySize - 2);
+			int volume_nr = 0;
+			if (_mapVersion == SCI_VERSION_1_1) {
+				// offset stored in 3 bytes
+				off = file.readUint16LE();
+				off |= file.readByte() << 16;
+				off <<= 1;
+			} else {
+				// offset/volume stored in 4 bytes
+				off = file.readUint32LE();
+				if (_mapVersion < SCI_VERSION_1_1) {
+					volume_nr = off >> 28; // most significant 4 bits
+					off &= 0x0FFFFFFF;     // least significant 28 bits
+				} else {
+					// in SCI32 it's a plain offset
+				}
+			}
 			if (file.ioFailed()) {
 				warning("Error while reading %s: ", map->location_name.c_str());
 				perror("");
@@ -1010,14 +1025,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				res->type = (ResourceType)type;
 				res->number = number;
 				res->id = resId;//res->number | (res->type << 16);
-				res->source = _mapVersion < SCI_VERSION_1_1 ? getVolume(map, off  >> 28) : getVolume(map, 0);
-#ifdef ENABLE_SCI32
-				if (_mapVersion >= SCI_VERSION_32)
-					res->file_offset = off; // in SCI32 it's a plain offset
-				else
-#endif
-					res->file_offset = _mapVersion < SCI_VERSION_1_1 ? off & 0x0FFFFFFF : off << 1;
-					
+				res->source = getVolume(map, volume_nr);
+				res->file_offset = off;
 			}
 		}
 	}
