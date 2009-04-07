@@ -456,4 +456,21 @@ void Parse::printVarIndex() {
 	return;
 }
 
+int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
+	byte var_C = operPtr[-3];
+	int cmpTemp;
+	if (var_C == 20) {
+		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
+	} else if (var_C == 22) {
+		if ((char *)decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+			strcpy(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-3]));
+			valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
+		}
+		cmpTemp = strcmp(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-1]));
+	}
+
+	return cmpTemp;
+}
+
+
 } // End of namespace Gob

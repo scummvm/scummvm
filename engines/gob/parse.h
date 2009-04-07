@@ -63,6 +63,8 @@ protected:
 	byte *decodePtr(int32 n);
 
 	void printExpr_internal(char stopToken);
+
+	int cmpHelper(byte *operPtr, int32 *valPtr);
 };
 
 class Parse_v1 : public Parse {

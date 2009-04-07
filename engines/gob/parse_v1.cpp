@@ -328,7 +328,6 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 	int32 *valPtr;
 	byte *operPtr;
 	byte *arrDescPtr;
-	byte var_C;
 	byte operation;
 	int16 dimCount;
 	int16 temp;
@@ -595,7 +594,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 					brackStart++;
 
 				switch (operPtr[-2]) {
-				case 2:
+				case OP_ADD:
 					if (operStack[brackStart] == 20) {
 						values[brackStart] += valPtr[-1];
 					} else if (operStack[brackStart] == 22) {
@@ -670,114 +669,42 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 					break;
 
 				case 32:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] < valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) < 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) < 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
 				case 33:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] <= valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) <= 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) <= 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
 				case 34:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] > valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) > 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) > 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
 				case 35:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] >= valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) >= 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) >= 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
 				case 36:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] == valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) == 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) == 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
 				case 37:
-					var_C = operPtr[-3];
-					operPtr[-3] = 23;
-					if (var_C == 20) {
-						if (valPtr[-3] != valPtr[-1])
-							operPtr[-3] = 24;
-					} else if (var_C == 22) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						if (strcmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1])) != 0)
-							operPtr[-3] = 24;
-					}
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) != 0) ? 24 : 23;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
@@ -869,7 +796,7 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 				continue;
 
 			if (stkPos > 2) {
-				if (operPtr[-2] == 2) {
+				if (operPtr[-2] == OP_ADD) {
 					if (operPtr[-3] == 20) {
 						valPtr[-3] += valPtr[-1];
 					} else if (operPtr[-3] == 22) {
@@ -883,12 +810,12 @@ int16 Parse_v1::parseExpr(byte stopToken, byte *arg_2) {
 					operPtr -= 2;
 					valPtr -= 2;
 
-				} else if (operPtr[-2] == 3) {
+				} else if (operPtr[-2] == OP_SUB) {
 					valPtr[-3] -= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
-				} else if (operPtr[-2] == 4) {
+				} else if (operPtr[-2] == OP_BITOR) {
 					valPtr[-3] |= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
