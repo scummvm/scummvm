@@ -46,13 +46,8 @@ enum {
 
 	OP_ARRAY_UINT8 = 16,
 
-	// FIXME: OP_LOAD_VAR_UINT16 comment says "uint16 variable load" in
-	// Parse::printExpr_internal, and does that in Parse_v2::parseExpr,
-	// but reads int8 in Parse_v2::parseValExpr
-	OP_LOAD_VAR_UINT16 = 17,
-	// FIXME: OP_LOAD_VAR_UINT8 comment says "uint8 variable load" in
-	// Parse::printExpr_internal, but reads int8 in Parse_v2::parseValExpr
-	OP_LOAD_VAR_UINT8 = 18,
+	OP_LOAD_VAR_INT16 = 17,
+	OP_LOAD_VAR_INT8 = 18,
 	OP_LOAD_IMM_INT32 = 19,
 	OP_LOAD_IMM_INT16 = 20,
 	OP_LOAD_IMM_INT8 = 21,

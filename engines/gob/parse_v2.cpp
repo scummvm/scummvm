@@ -139,10 +139,10 @@ int16 Parse_v2::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 		}
 		return varPos + offset * _vm->_global->_inter_animDataSize + temp;
 
-	case 17:
+	case OP_LOAD_VAR_INT16:
 		return varPos + _vm->_inter->load16() * 2;
 
-	case 18:
+	case OP_LOAD_VAR_INT8:
 		return varPos + _vm->_inter->load16();
 
 	case 23:
@@ -267,11 +267,11 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 				}
 				break;
 
-			case 17:
+			case OP_LOAD_VAR_INT16:
 				*valPtr = READ_VARO_UINT16(varPos + _vm->_inter->load16() * 2);
 				break;
 
-			case 18:
+			case OP_LOAD_VAR_INT8:
 				*valPtr = (int8) READ_VARO_UINT8(varPos + _vm->_inter->load16());
 				break;
 
@@ -566,12 +566,12 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				}
 				break;
 
-			case 17:
+			case OP_LOAD_VAR_INT16:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = (int16) READ_VARO_UINT16(varPos + _vm->_inter->load16() * 2);
 				break;
 
-			case 18:
+			case OP_LOAD_VAR_INT8:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = (int8) READ_VARO_UINT8(varPos + _vm->_inter->load16());
 				break;

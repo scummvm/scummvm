@@ -93,8 +93,8 @@ void Parse::skipExpr(char stopToken) {
 					_vm->_global->_inter_execPtr++;
 				break;
 
-			case 17:
-			case 18:
+			case OP_LOAD_VAR_INT16:
+			case OP_LOAD_VAR_INT8:
 			case OP_LOAD_IMM_INT16:
 			case 23:
 			case 24:
@@ -198,11 +198,11 @@ void Parse::printExpr_internal(char stopToken) {
 			// operands
 
 			switch (operation) {
-			case 17: // uint16 variable load
+			case OP_LOAD_VAR_INT16: // int16 variable load
 				debugN(5, "var16_%d", _vm->_inter->load16());
 				break;
 
-			case 18: // uint8 variable load:
+			case OP_LOAD_VAR_INT8: // int8 variable load:
 				debugN(5, "var8_%d", _vm->_inter->load16());
 				break;
 
