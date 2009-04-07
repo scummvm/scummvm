@@ -156,7 +156,7 @@ void TextObject::createBitmap() {
 		}
 
 		_textBitmap = new uint8[_font->getHeight() * (_bitmapWidthPtr[j] + 1)];
-		memset(_textBitmap, 0xff, _font->getHeight() * (_bitmapWidthPtr[j] + 1));
+		memset(_textBitmap, 0, _font->getHeight() * (_bitmapWidthPtr[j] + 1));
 
 		// Fill bitmap
 		int startOffset = 0;
