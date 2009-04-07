@@ -2307,7 +2307,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		if (strmatch(key_text, "x"))
 			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "y"))
-			textObject->setY(atoi(lua_getstring(lua_getresult(2))) + textObject->getBaseOffsetY());
+			textObject->setY(atoi(lua_getstring(lua_getresult(2))) + 5);
 		else if (strmatch(key_text, "width"))
 			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
 		else if (strmatch(key_text, "height"))
@@ -2454,7 +2454,7 @@ static void MakeTextObject() {
 	//printf("Make: %s\n", (char *)text.c_str());
 
 	textObject->setText((char *)text.c_str());
-	textObject->subBaseOffsetY();
+	//textObject->subBaseOffsetY();
 
 	textObject->createBitmap();
 	g_engine->registerTextObject(textObject);
