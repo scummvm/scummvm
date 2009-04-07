@@ -2385,38 +2385,30 @@ static void KillTextObject() {
  * in the table in the LUA parameter 2.
  */
 static void ChangeTextObject() {
-	TextObject *modifyObject, *textObject;
+	TextObject *textObject;
 	lua_Object tableObj;
 	const char *line;
 
 	DEBUG_FUNCTION();
 	textObject = check_textobject(1);
-	// when called in certain instances (such as don's computer)
-	// the second parameter is the string and the third is the table
 	if (lua_isstring(lua_getparam(2))) {
 		tableObj = lua_getparam(3);
 	} else
 		tableObj = lua_getparam(2);
 
-	modifyObject = TextObjectExists((char *)textObject->name());
-	if (!modifyObject) {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("ChangeTextObject(): Cannot find active text object");
-		return;
-	}
-
-	modifyObject->destroyBitmap();
+	textObject->destroyBitmap();
 
 	if (lua_istable(tableObj))
-		getTextObjectParams(modifyObject, tableObj);
-	else if (lua_isstring(lua_getparam(2))) {
+		getTextObjectParams(textObject, tableObj);
+	
+	if (lua_isstring(lua_getparam(2))) {
 		line = lua_getstring(lua_getparam(2));
-		modifyObject->setText((char *)line);
+		textObject->setText((char *)line);
 	}
-	modifyObject->createBitmap();
+	textObject->createBitmap();
 
-	lua_pushnumber(modifyObject->getBitmapWidth());
-	lua_pushnumber(modifyObject->getBitmapHeight());
+	lua_pushnumber(textObject->getBitmapWidth());
+	lua_pushnumber(textObject->getBitmapHeight());
 }
 
 /* Return the "text speed", this option must be handled
