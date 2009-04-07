@@ -28,6 +28,16 @@
 
 namespace Gob {
 
+enum {
+	OP_ADD = 2,
+	OP_SUB = 3,
+	OP_BITOR = 4,
+	OP_MUL = 5,
+	OP_DIV = 6,
+	OP_MOD = 7,
+	OP_BITAND = 8
+};
+
 class Parse {
 public:
 	void skipExpr(char stopToken);

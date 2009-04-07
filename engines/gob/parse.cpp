@@ -304,31 +304,31 @@ void Parse::printExpr_internal(char stopToken) {
 			debugN(5, "-");
 			break;
 
-		case 2:
+		case OP_ADD:
 			debugN(5, "+");
 			break;
 
-		case 3:
+		case OP_SUB:
 			debugN(5, "-");
 			break;
 
-		case 4:
+		case OP_BITOR:
 			debugN(5, "|");
 			break;
 
-		case 5:
+		case OP_MUL:
 			debugN(5, "*");
 			break;
 
-		case 6:
+		case OP_DIV:
 			debugN(5, "/");
 			break;
 
-		case 7:
+		case OP_MOD:
 			debugN(5, "%%");
 			break;
 
-		case 8:
+		case OP_BITAND:
 			debugN(5, "&");
 			break;
 

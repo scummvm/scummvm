@@ -335,19 +335,19 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 				valPtr -= 2;
 
 				switch (operPtr[1]) {
-				case 5:
+				case OP_MUL:
 					valPtr[0] *= valPtr[2];
 					break;
 
-				case 6:
+				case OP_DIV:
 					valPtr[0] /= valPtr[2];
 					break;
 
-				case 7:
+				case OP_MOD:
 					valPtr[0] %= valPtr[2];
 					break;
 
-				case 8:
+				case OP_BITAND:
 					valPtr[0] &= valPtr[2];
 					break;
 				}
@@ -383,19 +383,19 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 					operPtr -= 2;
 					valPtr -= 2;
 					switch (operPtr[0]) {
-					case 5:
+					case OP_MUL:
 						valPtr[-1] *= valPtr[1];
 						break;
 
-					case 6:
+					case OP_DIV:
 						valPtr[-1] /= valPtr[1];
 						break;
 
-					case 7:
+					case OP_MOD:
 						valPtr[-1] %= valPtr[1];
 						break;
 
-					case 8:
+					case OP_BITAND:
 						valPtr[-1] &= valPtr[1];
 						break;
 					}
@@ -419,25 +419,25 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 			operPtr -= 2;
 			valPtr -= 2;
 			switch (operPtr[0]) {
-			case 2:
+			case OP_ADD:
 				values[brackPos] += valPtr[1];
 				continue;
-			case 3:
+			case OP_SUB:
 				values[brackPos] -= valPtr[1];
 				continue;
-			case 4:
+			case OP_BITOR:
 				values[brackPos] |= valPtr[1];
 				continue;
-			case 5:
+			case OP_MUL:
 				valPtr[-1] *= valPtr[1];
 				continue;
-			case 6:
+			case OP_DIV:
 				valPtr[-1] /= valPtr[1];
 				continue;
-			case 7:
+			case OP_MOD:
 				valPtr[-1] %= valPtr[1];
 				continue;
-			case 8:
+			case OP_BITAND:
 				valPtr[-1] &= valPtr[1];
 				continue;
 			}
@@ -693,28 +693,28 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				}
 				break;
 
-			case 5:
+			case OP_MUL:
 				valPtr[-2] *= valPtr[0];
 				stkPos -= 2;
 				operPtr -= 2;
 				valPtr -= 2;
 				break;
 
-			case 6:
+			case OP_DIV:
 				valPtr[-2] /= valPtr[0];
 				stkPos -= 2;
 				operPtr -= 2;
 				valPtr -= 2;
 				break;
 
-			case 7:
+			case OP_MOD:
 				valPtr[-2] %= valPtr[0];
 				stkPos -= 2;
 				operPtr -= 2;
 				valPtr -= 2;
 				break;
 
-			case 8:
+			case OP_BITAND:
 				valPtr[-2] &= valPtr[0];
 				stkPos -= 2;
 				operPtr -= 2;
@@ -756,28 +756,28 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 
 					if (stkPos > 2) {
 						switch (operPtr[-2]) {
-						case 5:
+						case OP_MUL:
 							valPtr[-3] *= valPtr[-1];
 							stkPos -= 2;
 							operPtr -= 2;
 							valPtr -= 2;
 							break;
 
-						case 6:
+						case OP_DIV:
 							valPtr[-3] /= valPtr[-1];
 							stkPos -= 2;
 							operPtr -= 2;
 							valPtr -= 2;
 							break;
 
-						case 7:
+						case OP_MOD:
 							valPtr[-3] %= valPtr[-1];
 							stkPos -= 2;
 							operPtr -= 2;
 							valPtr -= 2;
 							break;
 
-						case 8:
+						case OP_BITAND:
 							valPtr[-3] &= valPtr[-1];
 							stkPos -= 2;
 							operPtr -= 2;
@@ -815,42 +815,42 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 					valPtr -= 2;
 					continue;
 
-				case 3:
+				case OP_SUB:
 					values[brackStart] -= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					continue;
 
-				case 4:
+				case OP_BITOR:
 					values[brackStart] |= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					continue;
 
-				case 5:
+				case OP_MUL:
 					valPtr[-3] *= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
-				case 6:
+				case OP_DIV:
 					valPtr[-3] /= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
-				case 7:
+				case OP_MOD:
 					valPtr[-3] %= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
 
-				case 8:
+				case OP_BITAND:
 					valPtr[-3] &= valPtr[-1];
 					stkPos -= 2;
 					operPtr -= 2;

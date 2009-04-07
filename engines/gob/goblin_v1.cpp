@@ -671,6 +671,7 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 				_gobPositions[_currentGoblin].y++;
 				break;
 			}
+
 			if (_currentGoblin == 1) {
 				if (gobDesc->nextState == 28)
 					_gobPositions[1].y--;
