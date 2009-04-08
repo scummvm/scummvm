@@ -745,6 +745,8 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 	uint8 g = fgColor.green();
 	uint8 b = fgColor.blue();
 	uint16 color = ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+	if (color == 0xf81f)
+		color = 0xf81e;
 
 	for (int i = 0; i < width * height; i++, texDataPtr++, bitmapData++) {
 		byte pixel = *bitmapData;

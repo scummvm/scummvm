@@ -215,14 +215,14 @@ void TextObject::draw() {
 		if (_blastDraw)
 			y = _y + 5;
 		else {
-			if (_font->getHeight() == 21)
+			if (_font->getHeight() == 21) // talk_font,verb_font
 				y = _y - 6;
-			else if (_font->getHeight() == 26)
+			else if (_font->getHeight() == 26) // special_font
 				y = _y - 12;
-			else if (_font->getHeight() == 13)
-				y = _y;
-			else if (_font->getHeight() == 19)
+			else if (_font->getHeight() == 13) // computer_font
 				y = _y - 6;
+			else if (_font->getHeight() == 19) // pt_font
+				y = _y - 9;
 			else
 				y = _y;
 		}
