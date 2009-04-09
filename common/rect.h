@@ -127,14 +127,14 @@ struct Rect {
 	}
 
 	/**
-	 * Check if the given rect is _fully_ contained inside this rectangle.
+	 * Check if the given rect is contained inside this rectangle.
 	 *
 	 * @param r The rectangle to check
 	 *
 	 * @return true if the given rect is inside, false otherwise
 	 */
 	bool contains(const Rect &r) const {
-		return (left < r.left) && (right > r.right) && (top < r.top) && (bottom > r.bottom);
+		return (left <= r.left) && (r.right <= right) && (top <= r.top) && (r.bottom <= bottom);
 	}
 
 	/**

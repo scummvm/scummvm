@@ -26,6 +26,24 @@ class RectTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( !Common::Rect(0, 0, 1, 1).intersects(Common::Rect(1, 1, 2, 2)) );
 	}
 
+	void test_contains( void )
+	{
+		Common::Rect r0;
+		Common::Rect r1(0, 0, 1, 1);
+		Common::Rect r2(0, 0, 2, 2);
+		TS_ASSERT( !r0.contains(r1) );
+		TS_ASSERT( !r0.contains(r2) );
+		TS_ASSERT( !r1.contains(r2) );
+		TS_ASSERT( r0.contains(r0) );
+
+		TS_ASSERT( r1.contains(r0) );
+		TS_ASSERT( r1.contains(r1) );
+
+		TS_ASSERT( r2.contains(r0) );
+		TS_ASSERT( r2.contains(r1) );
+		TS_ASSERT( r2.contains(r2) );
+	}
+
 	void test_extend( void )
 	{
 		Common::Rect r0;
@@ -33,7 +51,7 @@ class RectTestSuite : public CxxTest::TestSuite
 		Common::Rect r2(0, 0, 2, 2);
 		TS_ASSERT( !r0.contains(r1) );
 		r0.extend(r1);
-//		TS_ASSERT( r0.contains(r1) );
+		TS_ASSERT( r0.contains(r1) );
 		TS_ASSERT_EQUALS(r0.top,    0);
 		TS_ASSERT_EQUALS(r0.left,   0);
 		TS_ASSERT_EQUALS(r0.bottom, 1);
