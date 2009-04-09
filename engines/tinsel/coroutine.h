@@ -30,7 +30,9 @@
 
 namespace Tinsel {
 
-/*
+/**
+ * @defgroup TinselCoroutines	Coroutine support for Tinsel
+ *
  * The following is loosely based on an article by Simon Tatham:
  *   <http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html>.
  * However, many improvements and tweaks have been made, in particular
@@ -54,11 +56,11 @@ namespace Tinsel {
  * regressions, and will be helpful in the future when comparing things
  * against the original code base.
  */
-
+//@{
 
 /**
  * The core of any coroutine context which captures the 'state' of a coroutine.
- * Private use only
+ * Private use only.
  */
 struct CoroBaseContext {
 	int _line;
@@ -70,6 +72,8 @@ struct CoroBaseContext {
 
 typedef CoroBaseContext *CoroContext;
 
+
+// FIXME: Document this!
 extern CoroContext nullContext;
 
 /**
@@ -83,7 +87,11 @@ extern CoroContext nullContext;
 class CoroContextHolder {
 	CoroContext &_ctx;
 public:
-	CoroContextHolder(CoroContext &ctx) : _ctx(ctx) {}
+	CoroContextHolder(CoroContext &ctx) : _ctx(ctx) {
+		assert(ctx);
+		assert(ctx->_sleep >= 0);
+		ctx->_sleep = 0;
+	}
 	~CoroContextHolder() {
 		if (_ctx && _ctx->_sleep == 0) {
 			delete _ctx;
@@ -98,22 +106,58 @@ public:
 #define CORO_SUBCTX   coroParam->_subctx
 
 
+/**
+ * Begin the declaration of a coroutine context.
+ * This allows declaring variables which are 'persistent' during the
+ * lifetime of the coroutine. An example use would be:
+ *
+ *  CORO_BEGIN_CONTEXT;
+ *    int var;
+ *    char *foo;
+ *  CORO_END_CONTEXT(_ctx);
+ *
+ * It is not possible to initialize variables here, due to the way this
+ * macro is implemented. Furthermore, to use the variables declared in
+ * the coroutine context, you have to access them via the context variable
+ * name that was specified as parameter to CORO_END_CONTEXT, e.g.
+ *   _ctx->var = 0;
+ *
+ * @see CORO_END_CONTEXT
+ *
+ * @note We always declare a variable 'DUMMY' to allow the user to specify
+ * an 'empty' context.
+ */
 #define CORO_BEGIN_CONTEXT  struct CoroContextTag : CoroBaseContext { int DUMMY
+
+/**
+ * End the declaration of a coroutine context.
+ * @param x	name of the coroutine context
+ * @see CORO_BEGIN_CONTEXT
+ */
 #define CORO_END_CONTEXT(x)    } *x = (CoroContextTag *)coroParam
 
+/**
+ * Begin the code section of a coroutine. 
+ * @param x	name of the coroutine context
+ * @see CORO_BEGIN_CODE
+ */
 #define CORO_BEGIN_CODE(x) \
 		if (&coroParam == &nullContext) assert(!nullContext);\
 		if (!x) {coroParam = x = new CoroContextTag();}\
-		assert(coroParam);\
-		assert(coroParam->_sleep >= 0);\
-		coroParam->_sleep = 0;\
 		CoroContextHolder tmpHolder(coroParam);\
 		switch(coroParam->_line) { case 0:;
 
+/**
+ * End the code section of a coroutine.
+ * @see CORO_END_CODE
+ */
 #define CORO_END_CODE \
 			if (&coroParam == &nullContext) nullContext = NULL; \
 		}
 
+/**
+ * Sleep for the specified number of scheduler cycles.
+ */
 #define CORO_SLEEP(delay) do {\
 			coroParam->_line = __LINE__;\
 			coroParam->_sleep = delay;\
@@ -124,11 +168,18 @@ public:
 #define CORO_GIVE_WAY do { g_scheduler->giveWay(); CORO_SLEEP(1); } while (0)
 #define CORO_RESCHEDULE do { g_scheduler->reschedule(); CORO_SLEEP(1); } while (0)
 
-/** Stop the currently running coroutine */
+/**
+ * Stop the currently running coroutine.
+ */
 #define CORO_KILL_SELF() \
 		do { if (&coroParam != &nullContext) { coroParam->_sleep = -1; } return; } while (0)
 
-/** Invoke another coroutine */
+/**
+ * Invoke another coroutine.
+ *
+ * What makes this tricky is that the coroutine we called my yield/sleep,
+ * and we need to deal with this adequately.
+ */
 #define CORO_INVOKE_ARGS(subCoro, ARGS)  \
 		do {\
 			coroParam->_line = __LINE__;\
@@ -141,6 +192,13 @@ public:
 				return; case __LINE__:;\
 			} while (1);\
 		} while (0)
+
+/**
+ * Invoke another coroutine. Similar to CORO_INVOKE_ARGS,
+ * but allows specifying a return value which is returned
+ * if invoked coroutine yields (thus causing the current
+ * coroutine to yield, too).
+ */
 #define CORO_INVOKE_ARGS_V(subCoro, RESULT, ARGS)  \
 		do {\
 			coroParam->_line = __LINE__;\
@@ -154,15 +212,35 @@ public:
 			} while (1);\
 		} while (0)
 
+/**
+ * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
+ * with no parameters.
+ */
 #define CORO_INVOKE_0(subCoroutine) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX))
+
+/**
+ * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
+ * with one parameter.
+ */
 #define CORO_INVOKE_1(subCoroutine, a0) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0))
+
+/**
+ * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
+ * with two parameters.
+ */
 #define CORO_INVOKE_2(subCoroutine, a0,a1) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1))
+
+/**
+ * Convenience wrapper for CORO_INVOKE_ARGS for invoking a coroutine
+ * with three parameters.
+ */
 #define CORO_INVOKE_3(subCoroutine, a0,a1,a2) \
 			CORO_INVOKE_ARGS(subCoroutine,(CORO_SUBCTX,a0,a1,a2))
 
+//@}
 
 } // end of namespace Tinsel
 
