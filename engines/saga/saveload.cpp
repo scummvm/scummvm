@@ -106,6 +106,19 @@ uint SagaEngine::getNewSaveSlotNumber() {
 	error("getNewSaveSlotNumber save list is full");
 }
 
+static int compareSaveFileData(const void *a, const void *b) {
+	const SaveFileData *s1 = (const SaveFileData *)a;
+	const SaveFileData *s2 = (const SaveFileData *)b;
+
+	if (s1->slotNumber < s2->slotNumber) {
+		return -1;
+	} else if (s1->slotNumber > s2->slotNumber) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 void SagaEngine::fillSaveList() {
 
 	int i;
@@ -155,6 +168,8 @@ void SagaEngine::fillSaveList() {
 			}
 		}
 	}
+
+	qsort(_saveFiles, _saveFilesCount, sizeof(_saveFiles[0]), compareSaveFileData);
 }
 
 void SagaEngine::save(const char *fileName, const char *saveName) {
