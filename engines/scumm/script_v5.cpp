@@ -2144,7 +2144,7 @@ void ScummEngine_v5::o5_roomOps() {
 			while ((chr = fetchScriptByte()))
 				filename += chr;
 
-			if (filename.hasPrefix("iq-") || filename.hasSuffix("-iq")) {
+			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq")) {
 				filename = _targetName + ".iq";
 			} else {
 				error("SO_SAVE_STRING: Unsupported filename %s\n", filename.c_str());
@@ -2169,7 +2169,7 @@ void ScummEngine_v5::o5_roomOps() {
 			while ((chr = fetchScriptByte()))
 				filename += chr;
 
-			if (filename.hasPrefix("iq-") || filename.hasSuffix("-iq")) {
+			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq")) {
 				filename = _targetName + ".iq";
 			} else {
 				error("SO_LOAD_STRING: Unsupported filename %s\n", filename.c_str());
