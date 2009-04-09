@@ -1339,9 +1339,25 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
-	// FIXME: This seems to be some kind of of game specific workaround.
-	// Therefore, a proper WORKAROUND comment should be added here which
-	// explains what this does.
+	/*
+	 * WORKAROUND: The function is a "prevent the user from doing something
+	 * nasty" type of thing, and goes back to the ugly way in which savegame
+	 * deletion is implemented in SCI (and even worse in SQ4/Floppy, for
+	 * which the workaround is intended). The result is basically that you
+	 * can't implement savegame deletion for SQ4/Floppy unless you duplicate
+	 * the exact naming scheme of savefiles (i.e. savefiles must be named
+	 * SQ4SG.<number>) and the exact file format of the savegame index
+	 * (SQ4SG.DIR). From the earlier discussions on file I/O handling -
+	 * before as well as after the merge - I gather that this is not an
+	 * option. 
+	 * 
+	 * SQ4/Floppy is special, being the first game to implement savegame
+	 * deletion at all. For later games, we manage to implement deletion by
+	 * using gross hacks in kDeviceInfo() (essentially repurposing a few
+	 * subfunctions). I decided at the time that SQ4/Floppy was not worth the
+	 * effort (see above), and to simply disable the delete functionality for
+	 * that game - bringing the save/load dialog on a par with SCI0.
+	 */
 	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
 			s->version < SCI_VERSION(1, 001, 000) && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
