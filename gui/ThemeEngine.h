@@ -311,19 +311,13 @@ public:
 
 
 	/**
-	 *	Actual implementation of a Dirty Rect drawing routine.
-	 *	Dirty rectangles are queued on a list and are later merged/calculated
-	 *	before the actual drawing.
+	 * Actual implementation of a dirty rect handling.
+	 * Dirty rectangles are queued on a list and are later used for the
+	 * actual drawing.
 	 *
-	 *	@param r Area of the dirty rect.
-	 *	@param backup Deprecated.
-	 *	@param special Deprecated.
+	 * @param r Area of the dirty rect.
 	 */
-	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false) {
-		r.clip(_screen.w, _screen.h);
-		_dirtyScreen.push_back(r);
-		return true;
-	}
+	void addDirtyRect(Common::Rect r);
 
 
 	/**

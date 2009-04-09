@@ -1103,16 +1103,40 @@ void ThemeEngine::updateScreen() {
 	renderDirtyScreen();
 }
 
+void ThemeEngine::addDirtyRect(Common::Rect r) {
+	// Clip the rect to screen coords
+	r.clip(_screen.w, _screen.h);
+
+	// If it is empty after clipping, we are done
+	if (r.isEmpty())
+		return;
+
+	// Check if the new rectangle is contained within another in the list
+	Common::List<Common::Rect>::iterator it;
+	for (it = _dirtyScreen.begin(); it != _dirtyScreen.end(); ) {
+		// If we find a rectangle which fully contains the new one,
+		// we can abort the search.
+		if (it->contains(r))
+			return;
+
+		// Conversely, if we find rectangles which are contained in
+		// the new one, we can remove them
+		if (r.contains(*it))
+			it = _dirtyScreen.erase(it);
+		else;
+			++it;
+	}
+
+	// If we got here, we can safely add r to the list of dirty rects.
+	_dirtyScreen.push_back(r);
+}
+
 void ThemeEngine::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
 	Common::List<Common::Rect>::iterator i, j;
 	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
-		for (j = i; j != _dirtyScreen.end(); ++j)
-			if (j != i && i->contains(*j))
-				j = _dirtyScreen.reverse_erase(j);
-
 		_vectorRenderer->copyFrame(_system, *i);
 	}
 
