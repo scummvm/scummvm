@@ -52,6 +52,8 @@ private:
 	bool cmdActionMapInfo(int argc, const char **argv);
 	bool cmdObjectMapInfo(int argc, const char **argv);
 
+	bool cmdWakeUpThreads(int argc, const char **argv);
+
 	bool cmdCurrentPanelMode(int argc, const char **argv);
 	bool cmdSetPanelMode(int argc, const char **argv);
 

@@ -74,6 +74,9 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	DCmd_Register("action_map_info",	WRAP_METHOD(Console, cmdActionMapInfo));
 	DCmd_Register("object_map_info",	WRAP_METHOD(Console, cmdObjectMapInfo));
 
+	// Script commands
+	DCmd_Register("wake_up_threads",	WRAP_METHOD(Console, cmdWakeUpThreads));
+
 	// Panel commands
 	DCmd_Register("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
 	DCmd_Register("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
@@ -156,6 +159,17 @@ bool Console::cmdActionMapInfo(int argc, const char **argv) {
 
 bool Console::cmdObjectMapInfo(int argc, const char **argv) {
 	_vm->_scene->cmdObjectMapInfo();
+	return true;
+}
+
+bool Console::cmdWakeUpThreads(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <wait type>\n", argv[0]);
+		DebugPrintf("e.g.: 1 for kWaitTypeDelay, 2 for kWaitTypeSpeech, 10 for kWaitTypeWaitFrames");
+		DebugPrintf("Refer to saga/script.h for additional types");
+	} else {
+		_vm->_script->wakeUpThreads(atoi(argv[1]));
+	}
 	return true;
 }
 
