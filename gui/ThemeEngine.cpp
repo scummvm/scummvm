@@ -1123,7 +1123,7 @@ void ThemeEngine::addDirtyRect(Common::Rect r) {
 		// the new one, we can remove them
 		if (r.contains(*it))
 			it = _dirtyScreen.erase(it);
-		else;
+		else
 			++it;
 	}
 
