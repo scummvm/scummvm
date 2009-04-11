@@ -43,10 +43,6 @@ public:
 
 public:
 
-	iterator pushFront(const T& element) {
-		return insert(Common::List<T>::begin(), element);
-	}
-
 	iterator pushBack(const T& element) {
 		return insert(Common_List::end(), element);
 	}
@@ -57,20 +53,13 @@ public:
 	}
 
 	iterator pushFront() {
-		return insert(Common_List::begin());
-	}
-
-	iterator pushBack() {
-		return insert(Common_List::end());
+		T tmp;
+		return insert(Common_List::begin(), tmp);
 	}
 
 	iterator insert(iterator pos) {
 		T init;
 		return insert(pos, init);
-	}
-
-	iterator pushFront(const T& element, CompareFunction compareFunction) {
-		return insert(Common::List<T>::begin(), element, compareFunction);
 	}
 
 	iterator pushBack(const T& element, CompareFunction compareFunction) {
@@ -81,20 +70,12 @@ public:
 		int res;
 
 		for (iterator i = Common_List::begin(); i != Common_List::end(); ++i) {
-			res = compareFunction(element, i.operator*());
+			res = compareFunction(element, *i);
 			if	(res < 0) {
 				return insert(i, element);
 			}
 		}
 		return pushBack(element);
-	}
-
-	void remove(const T* val) {
-		for (iterator i = Common_List::begin(); i != Common_List::end(); ++i)
-			if (val == i.operator->()) {
-				erase(i);
-				return;
-			}
 	}
 };
 

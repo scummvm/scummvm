@@ -290,7 +290,7 @@ int Events::handleOneShot(Event *event) {
 			((TextListEntry *)event->data)->display = true;
 			break;
 		case kEventRemove:
-			_vm->_scene->_textList.remove((TextListEntry *)event->data);
+			_vm->_scene->_textList.remove(*((TextListEntry *)event->data));
 			break;
 		default:
 			break;

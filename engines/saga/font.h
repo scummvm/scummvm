@@ -88,6 +88,10 @@ struct TextListEntry {
 	TextListEntry() {
 		memset(this, 0, sizeof(*this));
 	}
+
+	bool operator==(const TextListEntry &e) const {
+		return 0 == memcmp(this, &e, sizeof(*this));
+	}
 };
 
 class TextList: public SortedList<TextListEntry> {
