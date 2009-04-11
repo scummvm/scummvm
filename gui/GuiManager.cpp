@@ -136,19 +136,25 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) 
 
 void GuiManager::redraw() {
 	int i;
+	ThemeEngine::ShadingStyle shading;
 
-	if (_redrawStatus == kRedrawDisabled)
+	if (_redrawStatus == kRedrawDisabled || _dialogStack.empty())
 		return;
 
-	if (_dialogStack.empty())
-		return;
+	shading = (ThemeEngine::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0);
+
+	// Tanoku: Do not apply shading more than once when opening many dialogs
+	// on top of each other. Screen ends up being too dark and it's a
+	// performance hog.
+	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 2)
+		shading = ThemeEngine::kShadingNone;
 
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
 		case kRedrawFull:
 		case kRedrawTopDialog:
 			_theme->clearAll();
-			_theme->openDialog(true);
+			_theme->openDialog(true, ThemeEngine::kShadingNone);
 
 			for (i = 0; i < _dialogStack.size() - 1; i++) {
 				_dialogStack[i]->drawDialog();
@@ -158,7 +164,7 @@ void GuiManager::redraw() {
 
 		case kRedrawOpenDialog:
 			_theme->updateScreen();
-			_theme->openDialog(true, (ThemeEngine::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0));
+			_theme->openDialog(true, shading);
 			_dialogStack.top()->drawDialog();
 			_theme->finishBuffering();
 			break;
@@ -370,6 +376,8 @@ void GuiManager::closeTopDialog() {
 	_dialogStack.pop();
 	if (_redrawStatus != kRedrawFull)
 		_redrawStatus = kRedrawCloseDialog;
+
+	redraw();
 }
 
 void GuiManager::setupCursor() {

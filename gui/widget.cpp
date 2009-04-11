@@ -146,10 +146,14 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 }
 
 void Widget::setEnabled(bool e) {
-	if (e)
-		setFlags(WIDGET_ENABLED);
-	else
-		clearFlags(WIDGET_ENABLED);
+	if ((_flags & WIDGET_ENABLED) != e) {
+		if (e)
+			setFlags(WIDGET_ENABLED);
+		else
+			clearFlags(WIDGET_ENABLED);
+
+		_boss->draw();
+	}
 }
 
 bool Widget::isEnabled() const {
