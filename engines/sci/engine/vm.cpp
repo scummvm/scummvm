@@ -24,6 +24,7 @@
  */
 
 #include "common/debug.h"
+#include "common/stack.h"
 
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
@@ -56,9 +57,7 @@ extern int _debug_seeking;
 extern int _weak_validations;
 
 
-CallsStruct *send_calls = NULL;
-int send_calls_allocated = 0;
-int bp_flag = 0;
+static bool breakpointFlag = false;
 static reg_t _dummy_register;
 
 // validation functionality
@@ -283,7 +282,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
 				sciprintf("Break on script %d, export %d\n", script, pubfunct);
 				script_debug_flag = 1;
-				bp_flag = 1;
+				breakpointFlag = true;
 				break;
 			}
 			bp = bp->next;
@@ -327,7 +326,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
-	int send_calls_nr = -1;
+	Common::Stack<CallsStruct> sendCalls;
 
 	if (NULL == s) {
 		sciprintf("vm.c: ExecStack(): NULL passed for \"s\"\n");
@@ -359,7 +358,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->data.name, method_name, cmplen)) {
 					sciprintf("Break on %s (in ["PREG"])\n", method_name, PRINT_REG(send_obj));
 					script_debug_flag = print_send_action = 1;
-					bp_flag = 1;
+					breakpointFlag = true;
 					break;
 				}
 				bp = bp->next;
@@ -370,16 +369,10 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		sciprintf("Send to "PREG", selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
-		if (++send_calls_nr == (send_calls_allocated - 1)) {
-			send_calls_allocated *= 2;
-			send_calls = (CallsStruct *)sci_realloc(send_calls, sizeof(CallsStruct) * send_calls_allocated);
-		}
-
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			sciprintf("Send to invalid selector 0x%x of object at "PREG"\n", 0xffff & selector, PRINT_REG(send_obj));
 			script_error_flag = script_debug_flag = 1;
-			--send_calls_nr;
 			break;
 
 		case kSelectorVariable:
@@ -411,16 +404,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 						sciprintf("[write to selector: change "PREG" to "PREG"]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
 						print_send_action = 0;
 					}
-					send_calls[send_calls_nr].address.var = varp; // register the call
-					send_calls[send_calls_nr].argp = argp;
-					send_calls[send_calls_nr].argc = argc;
-					send_calls[send_calls_nr].selector = selector;
-					send_calls[send_calls_nr].type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
+					CallsStruct call;
+					call.address.var = varp; // register the call
+					call.argp = argp;
+					call.argc = argc;
+					call.selector = selector;
+					call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
+					sendCalls.push(call);
 				}
 				break;
 #ifdef STRICT_SEND
 			default:
-				--send_calls_nr;
 				sciprintf("Send error: Variable selector %04x in "PREG" called with %04x params\n", selector, PRINT_REG(send_obj), argc);
 				script_debug_flag = 1; // Enter debug mode
 				_debug_seeking = _debug_step_running = 0;
@@ -444,13 +438,15 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				print_send_action = 0;
 			}
 
-			send_calls[send_calls_nr].address.func = funcp; // register call
-			send_calls[send_calls_nr].argp = argp;
-			send_calls[send_calls_nr].argc = argc;
-			send_calls[send_calls_nr].selector = selector;
-			send_calls[send_calls_nr].type = EXEC_STACK_TYPE_CALL;
-			send_calls[send_calls_nr].sp = sp;
+			CallsStruct call;
+			call.address.func = funcp; // register call
+			call.argp = argp;
+			call.argc = argc;
+			call.selector = selector;
+			call.type = EXEC_STACK_TYPE_CALL;
+			call.sp = sp;
 			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
+			sendCalls.push(call);
 
 			break;
 		} // switch(lookup_selector())
@@ -461,14 +457,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 	// Iterate over all registered calls in the reverse order. This way, the first call is
 	// placed on the TOS; as soon as it returns, it will cause the second call to be executed.
-	for (; send_calls_nr >= 0; send_calls_nr--)
-		if (send_calls[send_calls_nr].type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			retval = add_exec_stack_varselector(s, work_obj, send_calls[send_calls_nr].argc, send_calls[send_calls_nr].argp,
-			                                    send_calls[send_calls_nr].selector, send_calls[send_calls_nr].address.var, origin);
+	while (!sendCalls.empty()) {
+		CallsStruct call = sendCalls.pop();
+		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
+			retval = add_exec_stack_varselector(s, work_obj, call.argc, call.argp,
+			                                    call.selector, call.address.var, origin);
 		else
-			retval = add_exec_stack_entry(s, send_calls[send_calls_nr].address.func, send_calls[send_calls_nr].sp, work_obj,
-			                         send_calls[send_calls_nr].argc, send_calls[send_calls_nr].argp,
-			                         send_calls[send_calls_nr].selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
+			retval = add_exec_stack_entry(s, call.address.func, call.sp, work_obj,
+			                         call.argc, call.argp,
+			                         call.selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
+	}
+
 	_exec_varselectors(s);
 
 	retval = s->execution_stack + s->execution_stack_pos;
@@ -720,8 +719,8 @@ void run_vm(EngineState *s, int restoring) {
 #else
 			             variables_max,
 #endif
-			             bp_flag);
-			bp_flag = 0;
+			             breakpointFlag);
+			breakpointFlag = false;
 		}
 
 #ifndef DISABLE_VALIDATIONS
@@ -2048,11 +2047,6 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				script_free_vm_memory(s);
 				delete s;
 				s = successor;
-
-				if (!send_calls_allocated) {
-					send_calls_allocated = 16;
-					send_calls = (CallsStruct *)sci_calloc(sizeof(CallsStruct), 16);
-				}
 
 				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
 					sciprintf("Restarting with replay()\n");

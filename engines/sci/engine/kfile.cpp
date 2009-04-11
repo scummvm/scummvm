@@ -23,12 +23,6 @@
  *
  */
 
-#ifdef WIN32
-#  include <direct.h>
-#elif defined (__DC__)
-#  include <dc.h>
-#endif
-
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/str.h"

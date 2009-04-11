@@ -37,11 +37,6 @@
 
 namespace Sci {
 
-// Structures and data from vm.c:
-extern CallsStruct *send_calls;
-extern int send_calls_allocated;
-extern int bp_flag;
-
 static int _init_vocabulary(EngineState *s) { // initialize vocabulary and related resources
 	s->parser_lastmatch_word = SAID_NO_MATCH;
 	s->parser_rules = NULL;
@@ -602,13 +597,6 @@ int game_init(EngineState *s) {
 
 	s->_synonyms.clear(); // No synonyms
 
-	// Initialize send_calls buffer
-
-	if (!send_calls_allocated) {
-		send_calls_allocated = 16;
-		send_calls = (CallsStruct*)sci_calloc(sizeof(CallsStruct), send_calls_allocated);
-	}
-
 	if (s->gfx_state && _reset_graphics_input(s))
 		return 1;
 
@@ -679,8 +667,6 @@ int game_exit(EngineState *s) {
 	sciprintf("Freeing miscellaneous data...\n");
 
 	// TODO Free parser segment here
-	free(send_calls);
-	send_calls_allocated = 0;
 
 	// TODO Free scripts here
 
