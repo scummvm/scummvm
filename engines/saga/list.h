@@ -42,7 +42,7 @@ public:
 	iterator insert(const T& element, CompareFunction compareFunction) {
 		int res;
 
-		for (Common::List<T>::iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
+		for (typename Common::List<T>::iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
 			res = compareFunction(element, *i);
 			if	(res < 0) {
 				Common::List<T>::insert(i, element);
