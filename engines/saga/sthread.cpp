@@ -121,6 +121,7 @@ void Script::executeThreads(uint msec) {
 				thread->_flags |= kTFlagAborted;
 				++threadIterator;
 			} else {
+				delete *threadIterator;
 				threadIterator = _threadList.erase(threadIterator);
 			}
 			continue;
