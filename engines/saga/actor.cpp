@@ -944,7 +944,7 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	createDrawOrderList();
 
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
-		drawObject = drawOrderIterator.operator*();
+		drawObject = *drawOrderIterator;
 		if (skipProtagonist && (drawObject == _protagonist)) {
 			continue;
 		}
@@ -1070,7 +1070,7 @@ void Actor::drawActors() {
 	createDrawOrderList();
 
 	for (drawOrderIterator = _drawOrderList.begin(); drawOrderIterator != _drawOrderList.end(); ++drawOrderIterator) {
-		drawObject = drawOrderIterator.operator*();
+		drawObject = *drawOrderIterator;
 
 		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;

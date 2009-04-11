@@ -94,7 +94,7 @@ class TextList: public SortedList<TextListEntry> {
 public:
 
 	TextListEntry *addEntry(const TextListEntry &entry) {
-		return pushBack(entry).operator->();
+		return &*pushBack(entry);
 	}
 };
 

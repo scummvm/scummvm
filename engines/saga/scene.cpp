@@ -252,10 +252,8 @@ void Scene::getResourceTypes(SAGAResourceTypes *&types, int &typesCount) {
 }
 
 void Scene::drawTextList() {
-	TextListEntry *entry;
+	for (TextList::iterator entry = _textList.begin(); entry != _textList.end(); ++entry) {
 
-	for (TextList::iterator textIterator = _textList.begin(); textIterator != _textList.end(); ++textIterator) {
-		entry = (TextListEntry *)textIterator.operator->();
 		if (entry->display) {
 
 			if (entry->useRect) {
@@ -317,7 +315,7 @@ void Scene::startScene() {
 		return;
 	}
 
-	sceneQueue = queueIterator.operator->();
+	sceneQueue = &*queueIterator;
 
 	loadScene(sceneQueue);
 }
@@ -378,7 +376,7 @@ void Scene::nextScene() {
 	}
 
 	// Load the head in scene queue
-	sceneQueue = queueIterator.operator->();
+	sceneQueue = &*queueIterator;
 
 	loadScene(sceneQueue);
 }
@@ -405,7 +403,7 @@ void Scene::skipScene() {
 
 	++queueIterator;
 	while (queueIterator != _sceneQueue.end()) {
-		sceneQueue = queueIterator.operator->();
+		sceneQueue = &*queueIterator;
 		assert(sceneQueue != NULL);
 
 		if (sceneQueue->sceneSkipTarget) {
