@@ -406,7 +406,6 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	int new_entry;
 	byte *ppal;
 	PalEntry *palE;
-	double fpercent;
 
 	from = CLIP<int16>(from, 0, 256);
 	to   = CLIP<int16>(to,   0, 256);
@@ -420,21 +419,17 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 			percent += 1 / x;
 	}
 
-	// Exponential fade
 	percent = percent > 1.0 ? 1.0 : percent;
-	fpercent = percent * percent;
-
 	if (from > to)
-		fpercent = 1.0 - fpercent;
+		percent = 1.0 - percent;
+
+	byte fadePal[PAL_ENTRIES * 4];
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-		if (i < start || i >= start + numColors)
-			palE = &_globalPalette[i];
-		else
-			palE = &srcPal[i];
+	for (i = start, ppal = fadePal + start * 4; i < start + numColors; i++, ppal += 4) {
+		palE = &srcPal[i];
 
-		new_entry = (int)(palE->red * fpercent);
+		new_entry = (int)(palE->red * percent);
 
 		if (new_entry < 0) {
 			ppal[0] = 0;
@@ -442,7 +437,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 			ppal[0] = (byte) new_entry;
 		}
 
-		new_entry = (int)(palE->green * fpercent);
+		new_entry = (int)(palE->green * percent);
 
 		if (new_entry < 0) {
 			ppal[1] = 0;
@@ -450,7 +445,7 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 			ppal[1] = (byte) new_entry;
 		}
 
-		new_entry = (int)(palE->blue * fpercent);
+		new_entry = (int)(palE->blue * percent);
 
 		if (new_entry < 0) {
 			ppal[2] = 0;
@@ -461,9 +456,9 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	}
 
 	// Color 0 should always be black in IHNM
-	memset(&_currentPal[0 * 4], 0, 4);
+	memset(&fadePal[0 * 4], 0, 4);
 
-	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+	_system->setPalette(&fadePal[start * 4], start, numColors);
 }
 
 #endif
