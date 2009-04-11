@@ -374,7 +374,7 @@ class Scene {
 	}
 
  private:
-	void loadScene(LoadSceneParams *loadSceneParams);
+	void loadScene(LoadSceneParams &loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);
 	void loadSceneResourceList(uint32 resourceId);
 	void loadSceneEntryList(const byte* resourcePointer, size_t resourceLength);

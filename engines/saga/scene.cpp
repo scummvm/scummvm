@@ -267,7 +267,6 @@ void Scene::drawTextList() {
 
 void Scene::startScene() {
 	SceneQueueList::iterator queueIterator;
-	LoadSceneParams *sceneQueue;
 	Event event;
 
 	if (_sceneLoaded) {
@@ -315,9 +314,7 @@ void Scene::startScene() {
 		return;
 	}
 
-	sceneQueue = &*queueIterator;
-
-	loadScene(sceneQueue);
+	loadScene(*queueIterator);
 }
 
 #ifdef ENABLE_IHNM
@@ -351,7 +348,6 @@ void Scene::creditsScene() {
 
 void Scene::nextScene() {
 	SceneQueueList::iterator queueIterator;
-	LoadSceneParams *sceneQueue;
 
 	if (!_sceneLoaded) {
 		error("Scene::next(): Error: Can't advance scene...no scene loaded");
@@ -376,16 +372,11 @@ void Scene::nextScene() {
 	}
 
 	// Load the head in scene queue
-	sceneQueue = &*queueIterator;
-
-	loadScene(sceneQueue);
+	loadScene(*queueIterator);
 }
 
 void Scene::skipScene() {
 	SceneQueueList::iterator queueIterator;
-
-	LoadSceneParams *sceneQueue = NULL;
-	LoadSceneParams *skipQueue = NULL;
 
 	if (!_sceneLoaded) {
 		error("Scene::skip(): Error: Can't skip scene...no scene loaded");
@@ -403,23 +394,18 @@ void Scene::skipScene() {
 
 	++queueIterator;
 	while (queueIterator != _sceneQueue.end()) {
-		sceneQueue = &*queueIterator;
-		assert(sceneQueue != NULL);
+		if (queueIterator->sceneSkipTarget) {
+			// If skip target found, remove preceding scenes and load
+			_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
 
-		if (sceneQueue->sceneSkipTarget) {
-			skipQueue = sceneQueue;
+			endScene();
+			
+			loadScene(*_sceneQueue.begin());
 			break;
 		}
 		++queueIterator;
 	}
 
-	// If skip target found, remove preceding scenes and load
-	if (skipQueue != NULL) {
-		_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
-
-		endScene();
-		loadScene(skipQueue);
-	}
 }
 
 static struct SceneSubstitutes {
@@ -534,7 +520,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 		endScene();
 	}
 
-	loadScene(&sceneParams);
+	loadScene(sceneParams);
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
@@ -611,13 +597,13 @@ void Scene::initDoorsState() {
 	memcpy(_sceneDoors, initSceneDoors, sizeof (_sceneDoors) );
 }
 
-void Scene::loadScene(LoadSceneParams *loadSceneParams) {
+void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 	size_t i;
 	Event event;
 	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 
-	if (loadSceneParams->transitionType == kTransitionFade)
+	if (loadSceneParams.transitionType == kTransitionFade)
 		_vm->_interface->setFadeMode(kFadeOut);
 
 	// Change the cursor to an hourglass in IHNM
@@ -630,12 +616,12 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	_chapterPointsChanged = false;
 
 #ifdef ENABLE_IHNM
-	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {
-		if (loadSceneParams->loadFlag != kLoadBySceneNumber) {
+	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams.chapter != NO_CHAPTER_CHANGE)) {
+		if (loadSceneParams.loadFlag != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
 		}
 
-		if (loadSceneParams->chapter == 6 || loadSceneParams->chapter == 8)
+		if (loadSceneParams.chapter == 6 || loadSceneParams.chapter == 8)
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
@@ -646,11 +632,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		// installSomeAlarm()
 
 		_vm->_interface->clearInventory();
-		_vm->_resource->loadGlobalResources(loadSceneParams->chapter, loadSceneParams->actorsEntrance);
+		_vm->_resource->loadGlobalResources(loadSceneParams.chapter, loadSceneParams.actorsEntrance);
 		_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
 		_vm->_interface->activate();
 
-		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1) {
+		if (loadSceneParams.chapter == 8 || loadSceneParams.chapter == -1) {
 			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
 				_vm->_interface->setMode(kPanelChapterSelection);
 			else
@@ -663,7 +649,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_vm->_script->setVerb(_vm->_script->getVerbType(kVerbWalkTo));
 
-		if (loadSceneParams->sceneDescriptor == -2) {
+		if (loadSceneParams.sceneDescriptor == -2) {
 			_vm->_interface->setFadeMode(kNoFade);
 			return;
 		}
@@ -678,30 +664,30 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
-		if (loadSceneParams->loadFlag == kLoadBySceneNumber) // When will we get rid of it?
-			if (loadSceneParams->sceneDescriptor <= 0)
-				loadSceneParams->sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
+		if (loadSceneParams.loadFlag == kLoadBySceneNumber) // When will we get rid of it?
+			if (loadSceneParams.sceneDescriptor <= 0)
+				loadSceneParams.sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
 	}
 #endif
 
-	switch (loadSceneParams->loadFlag) {
+	switch (loadSceneParams.loadFlag) {
 	case kLoadByResourceId:
 		_sceneNumber = 0;		// original assign zero for loaded by resource id
-		_sceneResourceId = loadSceneParams->sceneDescriptor;
+		_sceneResourceId = loadSceneParams.sceneDescriptor;
 		break;
 	case kLoadBySceneNumber:
-		_sceneNumber = loadSceneParams->sceneDescriptor;
+		_sceneNumber = loadSceneParams.sceneDescriptor;
 		_sceneResourceId = getSceneResourceId(_sceneNumber);
 		break;
 	case kLoadByDescription:
 		_sceneNumber = -1;
 		_sceneResourceId = -1;
-		assert(loadSceneParams->sceneDescription != NULL);
-		assert(loadSceneParams->sceneDescription->resourceList != NULL);
+		assert(loadSceneParams.sceneDescription != NULL);
+		assert(loadSceneParams.sceneDescription->resourceList != NULL);
 		_loadDescription = false;
-		_sceneDescription = *loadSceneParams->sceneDescription;
-		_resourceList = loadSceneParams->sceneDescription->resourceList;
-		_resourceListCount = loadSceneParams->sceneDescription->resourceListCount;
+		_sceneDescription = *loadSceneParams.sceneDescription;
+		_resourceList = loadSceneParams.sceneDescription->resourceList;
+		_resourceListCount = loadSceneParams.sceneDescription->resourceListCount;
 		break;
 	}
 
@@ -765,7 +751,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	q_event = NULL;
 
-	if (loadSceneParams->transitionType == kTransitionFade) {
+	if (loadSceneParams.transitionType == kTransitionFade) {
 
 		_vm->_interface->setFadeMode(kFadeOut);
 
@@ -809,12 +795,12 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.param2 = _sceneDescription.startScriptEntrypointNumber;
 		event.param3 = 0;		// Action
 		event.param4 = _sceneNumber;	// Object
-		event.param5 = loadSceneParams->actorsEntrance;	// With Object
+		event.param5 = loadSceneParams.actorsEntrance;	// With Object
 		event.param6 = 0;		// Actor
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	if (loadSceneParams->transitionType == kTransitionFade) {
+	if (loadSceneParams.transitionType == kTransitionFade) {
 
 		// set fade mode
 		event.type = kEvTImmediate;
@@ -844,7 +830,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-	if (loadSceneParams->sceneProc == NULL) {
+	if (loadSceneParams.sceneProc == NULL) {
 		if (!_inGame && _vm->getGameId() == GID_ITE) {
 			_inGame = true;
 			_vm->_interface->setMode(kPanelMain);
@@ -895,7 +881,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			event.param2 = _sceneDescription.sceneScriptEntrypointNumber;
 			event.param3 = _vm->_script->getVerbType(kVerbEnter);		// Action
 			event.param4 = _sceneNumber;	// Object
-			event.param5 = loadSceneParams->actorsEntrance;		// With Object
+			event.param5 = loadSceneParams.actorsEntrance;		// With Object
 			event.param6 = 0;		// Actor
 			_vm->_events->queue(&event);
 		}
@@ -903,13 +889,13 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		debug(3, "Scene started");
 
 	} else {
-		loadSceneParams->sceneProc(SCENE_BEGIN, this);
+		loadSceneParams.sceneProc(SCENE_BEGIN, this);
 	}
 
 	// We probably don't want "followers" to go into scene -1 , 0. At the very
 	// least we don't want garbage to be drawn that early in the ITE intro.
 	if (_sceneNumber > 0 && _sceneNumber != ITE_SCENE_PUZZLE)
-		_vm->_actor->updateActorsScene(loadSceneParams->actorsEntrance);
+		_vm->_actor->updateActorsScene(loadSceneParams.actorsEntrance);
 
 	if (_sceneNumber == ITE_SCENE_PUZZLE)
 		_vm->_puzzle->execute();
