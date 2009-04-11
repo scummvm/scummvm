@@ -267,7 +267,7 @@ public:
 	}
 };
 
-typedef Common::List<ScriptThread> ScriptThreadList;
+typedef Common::List<ScriptThread*> ScriptThreadList;
 
 #define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
@@ -397,7 +397,7 @@ protected:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
 	// runThread returns true if we should break running of other threads
-	bool runThread(ScriptThread &thread);
+	bool runThread(ScriptThread *thread);
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:

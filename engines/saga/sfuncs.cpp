@@ -399,7 +399,7 @@ void Script::sfKillActorThreads(SCRIPTFUNC_PARAMS) {
 	int16 actorId = thread->pop();
 
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
-		anotherThread = &*threadIterator;
+		anotherThread = *threadIterator;
 		if ((anotherThread != thread) && (anotherThread->_threadVars[kThreadVarActor] == actorId)) {
 			anotherThread->_flags &= ~kTFlagWaiting;
 			anotherThread->_flags |= kTFlagAborted;
