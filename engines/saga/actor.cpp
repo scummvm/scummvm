@@ -985,7 +985,7 @@ void Actor::createDrawOrderList() {
 			continue;
 
 		if (calcScreenPosition(actor)) {
-			_drawOrderList.pushBack(actor, compareFunction);
+			_drawOrderList.insert(actor, compareFunction);
 		}
 	}
 
@@ -1005,7 +1005,7 @@ void Actor::createDrawOrderList() {
 			continue;
 
 		if (calcScreenPosition(obj)) {
-			_drawOrderList.pushBack(obj, compareFunction);
+			_drawOrderList.insert(obj, compareFunction);
 		}
 	}
 }

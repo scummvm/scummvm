@@ -268,7 +268,7 @@ public:
 	}
 };
 
-typedef SortedList<ScriptThread> ScriptThreadList;
+typedef Common::List<ScriptThread> ScriptThreadList;
 
 #define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue

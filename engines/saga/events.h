@@ -148,7 +148,7 @@ struct Event {
 	}
 };
 
-typedef SortedList<Event> EventList;
+typedef Common::List<Event> EventList;
 
 #define EVENT_WARNINGCOUNT 1000
 #define EVENT_MASK 0x00FF

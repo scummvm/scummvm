@@ -580,7 +580,8 @@ int Events::handleInterval(Event *event) {
 Event *Events::queue(Event *event) {
 	Event *queuedEvent;
 
-	queuedEvent = &*_eventList.pushBack(*event);
+	_eventList.push_back(*event);
+	queuedEvent = &*--_eventList.end();
 	initializeEvent(queuedEvent);
 
 	return queuedEvent;

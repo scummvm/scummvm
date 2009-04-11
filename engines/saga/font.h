@@ -94,11 +94,12 @@ struct TextListEntry {
 	}
 };
 
-class TextList: public SortedList<TextListEntry> {
+class TextList: public Common::List<TextListEntry> {
 public:
 
 	TextListEntry *addEntry(const TextListEntry &entry) {
-		return &*pushBack(entry);
+		Common::List<TextListEntry>::push_back(entry);
+		return &*--Common::List<TextListEntry>::end();
 	}
 };
 

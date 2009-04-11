@@ -37,31 +37,18 @@ class SortedList : public Common::List<T> {
 public:
 	typedef int (*CompareFunction) (const T& a, const T& b);
 
-	typedef typename Common::List<T>::iterator        iterator;
-	typedef typename Common::List<T>::const_iterator  const_iterator;
-
-public:
-
-	iterator pushBack(const T& element) {
-		Common::List<T>::insert(Common::List<T>::end(), element);
-		return --Common::List<T>::end();
-	}
-
-	iterator pushBack(const T& element, CompareFunction compareFunction) {
-		return insert(Common::List<T>::end(), element, compareFunction);
-	}
-
-	iterator insert(iterator pos, const T& element, CompareFunction compareFunction) {
+	iterator insert(const T& element, CompareFunction compareFunction) {
 		int res;
 
-		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
+		for (Common::List<T>::iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i) {
 			res = compareFunction(element, *i);
 			if	(res < 0) {
 				Common::List<T>::insert(i, element);
 				return --i;
 			}
 		}
-		return pushBack(element);
+		Common::List<T>::push_back(element);
+		return --Common::List<T>::end();
 	}
 };
 
