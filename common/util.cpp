@@ -591,6 +591,10 @@ void NORETURN error(const char *s, ...) {
 	}
 
 
+#ifdef __DS__
+	consolePrintf("%s!\n", buf_output);
+#endif
+
 	// Print the error message to stderr
 	fprintf(stderr, "%s!\n", buf_output);
 
