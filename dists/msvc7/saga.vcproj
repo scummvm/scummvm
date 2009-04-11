@@ -191,9 +191,6 @@
 			RelativePath="..\..\engines\saga\itedata.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\saga\list.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\saga\music.cpp">
 		</File>
 		<File

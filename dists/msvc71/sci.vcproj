@@ -120,9 +120,6 @@
 		<Filter
 			Name="engine">
 			<File
-				RelativePath="..\..\engines\sci\engine\aatree.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\game.cpp">
 			</File>
 			<File
