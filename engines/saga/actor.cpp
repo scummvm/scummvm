@@ -183,16 +183,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->_location.y = ITE_ObjectTable[i].y;
 			obj->_location.z = ITE_ObjectTable[i].z;
 		}
-	} else {
-#ifdef ENABLE_IHNM
-		// TODO. This is causing problems for SYMBIAN os as it doesn't like a static class here
-		ActorData dummyActor;
-
-		dummyActor._frames = NULL;
-		dummyActor._walkStepsPoints = NULL;
-
-		_protagonist = &dummyActor;
-#endif
 	}
 
 	_dragonHunt = true;
