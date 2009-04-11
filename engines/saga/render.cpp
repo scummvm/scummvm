@@ -220,7 +220,7 @@ void Render::addDirtyRect(Common::Rect r) {
 
 	// Check if the new rectangle is contained within another in the list
 	Common::List<Common::Rect>::iterator it;
-	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ) {
 		// If we find a rectangle which fully contains the new one,
 		// we can abort the search.
 		if (it->contains(r))
@@ -229,7 +229,7 @@ void Render::addDirtyRect(Common::Rect r) {
 		// Conversely, if we find rectangles which are contained in
 		// the new one, we can remove them
 		if (r.contains(*it))
-			_dirtyRects.erase(it);
+			it = _dirtyRects.erase(it);
 		else
 			++it;
 	}
