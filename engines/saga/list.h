@@ -35,6 +35,8 @@ namespace Saga {
 template <class T>
 class SortedList : public Common::List<T> {
 public:
+	typedef typename Common::List<T>::iterator iterator;
+	typedef typename Common::List<T>::const_iterator const_iterator;
 	typedef int (*CompareFunction) (const T& a, const T& b);
 
 	iterator insert(const T& element, CompareFunction compareFunction) {
