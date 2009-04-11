@@ -580,8 +580,10 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stu
 		return false;
 	}
 
-	if (!Graphics::skipThumbnailHeader(*in))
+	if (!Graphics::skipThumbnailHeader(*in)) {
+		delete in;
 		return false;
+	}
 
 	if (!loadInfos(in, stuff)) {
 		delete in;
