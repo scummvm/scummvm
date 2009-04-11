@@ -1437,6 +1437,8 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, rect);
 
 			mouseY = mousePoint.y - rect.top -_optionSaveFileMouseOff;
+			if (mouseY < 0)
+				mouseY = 0;
 
 			if (totalFiles - visibleFiles <= 0) {
 				_optionSaveFileTop = 0;
@@ -1445,7 +1447,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 					(_optionSaveFileSlider->height - _optionSaveRectSlider.height());
 			}
 
-			_optionSaveFileTop = CLIP<uint>(_optionSaveFileTop, 0, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+			_optionSaveFileTop = CLIP<uint>(_optionSaveFileTop, 0, totalFiles - visibleFiles);
 			calcOptionSaveSlider();
 		}
 	}
