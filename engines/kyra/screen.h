@@ -28,6 +28,8 @@
 
 #include "common/util.h"
 #include "common/func.h"
+#include "common/list.h"
+#include "common/rect.h"
 
 class OSystem;
 
@@ -36,11 +38,6 @@ namespace Kyra {
 typedef Common::Functor0<void> UpdateFunctor;
 
 class KyraEngine_v1;
-
-struct Rect {
-	int x, y;
-	int x2, y2;
-};
 
 struct ScreenDim {
 	uint16 sx;
@@ -300,8 +297,7 @@ protected:
 	};
 
 	bool _forceFullUpdate;
-	int _numDirtyRects;
-	Rect *_dirtyRects;
+	Common::List<Common::Rect> _dirtyRects;
 
 	void addDirtyRect(int x, int y, int w, int h);
 

@@ -62,8 +62,6 @@ Screen::~Screen() {
 			delete[] _palettes[i];
 	}
 
-	delete[] _dirtyRects;
-
 	CursorMan.popAllCursors();
 }
 
@@ -162,9 +160,6 @@ bool Screen::init() {
 	CursorMan.showMouse(false);
 
 	_forceFullUpdate = false;
-	_numDirtyRects = 0;
-	_dirtyRects = new Rect[kMaxDirtyRects];
-	assert(_dirtyRects);
 
 	return true;
 }
@@ -234,13 +229,13 @@ void Screen::updateDirtyRects() {
 		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	} else {
 		const byte *page0 = getCPagePtr(0);
-		for (int i = 0; i < _numDirtyRects; ++i) {
-			Rect &cur = _dirtyRects[i];
-			_system->copyRectToScreen(page0 + cur.y * SCREEN_W + cur.x, SCREEN_W, cur.x, cur.y, cur.x2, cur.y2);
+		Common::List<Common::Rect>::iterator it;
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
 		}
 	}
 	_forceFullUpdate = false;
-	_numDirtyRects = 0;
+	_dirtyRects.clear();
 }
 
 void Screen::updateDirtyRectsOvl() {
@@ -255,18 +250,18 @@ void Screen::updateDirtyRectsOvl() {
 		const byte *page0 = getCPagePtr(0);
 		byte *ovl0 = _sjisOverlayPtrs[0];
 
-		for (int i = 0; i < _numDirtyRects; ++i) {
-			Rect &cur = _dirtyRects[i];
-			byte *dst = ovl0 + cur.y * 1280 + (cur.x<<1);
-			const byte *src = page0 + cur.y * SCREEN_W + cur.x;
+		Common::List<Common::Rect>::iterator it;
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			byte *dst = ovl0 + it->top * 1280 + (it->left<<1);
+			const byte *src = page0 + it->top * SCREEN_W + it->left;
 
-			scale2x(dst, 640, src, SCREEN_W, cur.x2, cur.y2);
-			mergeOverlay(cur.x<<1, cur.y<<1, cur.x2<<1, cur.y2<<1);
-			_system->copyRectToScreen(dst, 640, cur.x<<1, cur.y<<1, cur.x2<<1, cur.y2<<1);
+			scale2x(dst, 640, src, SCREEN_W, it->width(), it->height());
+			mergeOverlay(it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
+			_system->copyRectToScreen(dst, 640, it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
 		}
 	}
 	_forceFullUpdate = false;
-	_numDirtyRects = 0;
+	_dirtyRects.clear();
 }
 
 void Screen::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
@@ -2835,35 +2830,38 @@ void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
 // dirty rect handling
 
 void Screen::addDirtyRect(int x, int y, int w, int h) {
-	if (_numDirtyRects == kMaxDirtyRects || _forceFullUpdate) {
+	if (_dirtyRects.size() >= kMaxDirtyRects || _forceFullUpdate) {
 		_forceFullUpdate = true;
 		return;
 	}
 
-	if (w == 0 || h == 0 || x >= SCREEN_W || y >= SCREEN_H || x + w < 0 || y + h < 0)
+	Common::Rect r(x, y, x + w, y + h);
+
+	// Clip rectangle
+	r.clip(SCREEN_W, SCREEN_H);
+
+	// If it is empty after clipping, we are done
+	if (r.isEmpty())
 		return;
 
-	if (x < 0) {
-		w += x;
-		x = 0;
+	// Check if the new rectangle is contained within another in the list
+	Common::List<Common::Rect>::iterator it;
+	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ) {
+		// If we find a rectangle which fully contains the new one,
+		// we can abort the search.
+		if (it->contains(r))
+			return;
+
+		// Conversely, if we find rectangles which are contained in
+		// the new one, we can remove them
+		if (r.contains(*it))
+			it = _dirtyRects.erase(it);
+		else
+			++it;
 	}
 
-	if (x + w >= 320)
-		w = 320 - x;
-
-	if (y < 0) {
-		h += y;
-		y = 0;
-	}
-
-	if (y + h >= 200)
-		h = 200 - y;
-
-	Rect &cur = _dirtyRects[_numDirtyRects++];
-	cur.x = x;
-	cur.x2 = w;
-	cur.y = y;
-	cur.y2 = h;
+	// If we got here, we can safely add r to the list of dirty rects.
+	_dirtyRects.push_back(r);
 }
 
 // overlay functions

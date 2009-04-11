@@ -422,7 +422,7 @@ protected:
 	int32 _scaleMode;
 	int16 _scaleTable[145];
 
-	Rect _noDropRects[11];
+	Common::Rect _noDropRects[11];
 
 	int8 _birthstoneGemTable[4];
 	int8 _idolGemsTable[3];

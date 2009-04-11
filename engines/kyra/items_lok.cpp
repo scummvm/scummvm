@@ -57,12 +57,12 @@ int KyraEngine_LoK::findDuplicateItemShape(int shape) {
 
 void KyraEngine_LoK::addToNoDropRects(int x, int y, int w, int h) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::addToNoDropRects(%d, %d, %d, %d)", x, y, w, h);
-	for (int rect = 0; rect < 11; ++rect) {
-		if (_noDropRects[rect].x == -1) {
-			_noDropRects[rect].x = x;
-			_noDropRects[rect].y = y;
-			_noDropRects[rect].x2 = x + w - 1;
-			_noDropRects[rect].y2 = y + h - 1;
+	for (int rect = 0; rect < ARRAYSIZE(_noDropRects); ++rect) {
+		if (_noDropRects[rect].top == -1) {
+			_noDropRects[rect].left = x;
+			_noDropRects[rect].top = y;
+			_noDropRects[rect].right = x + w;
+			_noDropRects[rect].bottom = y + h;
 			break;
 		}
 	}
@@ -466,25 +466,25 @@ int KyraEngine_LoK::checkNoDropRects(int x, int y) {
 	debugC(9, kDebugLevelMain, "KyraEngine_LoK::checkNoDropRects(%d, %d)", x, y);
 	if (_lastProcessedItemHeight < 1 || _lastProcessedItemHeight > 16)
 		_lastProcessedItemHeight = 16;
-	if (_noDropRects[0].x == -1)
+	if (_noDropRects[0].left == -1)
 		return 0;
 
-	for (int i = 0; i < 11; ++i) {
-		if (_noDropRects[i].x == -1)
+	for (int i = 0; i < ARRAYSIZE(_noDropRects); ++i) {
+		if (_noDropRects[i].left == -1)
 			break;
 
-		int xpos = _noDropRects[i].x;
-		int ypos = _noDropRects[i].y;
-		int xpos2 = _noDropRects[i].x2;
-		int ypos2 = _noDropRects[i].y2;
+		int xpos = _noDropRects[i].left;
+		int ypos = _noDropRects[i].top;
+		int xpos2 = _noDropRects[i].right;
+		int ypos2 = _noDropRects[i].bottom;
 
 		if (xpos > x + 16)
 			continue;
-		if (xpos2 < x)
+		if (xpos2 <= x)
 			continue;
 		if (y < ypos)
 			continue;
-		if (ypos2 < y - _lastProcessedItemHeight)
+		if (ypos2 <= y - _lastProcessedItemHeight)
 			continue;
 		return 1;
 	}

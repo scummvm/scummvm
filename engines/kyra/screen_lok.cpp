@@ -28,7 +28,6 @@
 
 namespace Kyra {
 
-#define BITBLIT_RECTS 10
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system) {
@@ -36,8 +35,6 @@ Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 }
 
 Screen_LoK::~Screen_LoK() {
-	delete[] _bitBlitRects;
-
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
 		delete[] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
@@ -56,9 +53,7 @@ bool Screen_LoK::init() {
 	if (!Screen::init())
 		return false;
 
-	_bitBlitRects = new Rect[BITBLIT_RECTS];
-	assert(_bitBlitRects);
-	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
+	memset(_bitBlitRects, 0, sizeof(_bitBlitRects));
 	_bitBlitNum = 0;
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
 	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
@@ -104,19 +99,19 @@ void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
 	if (_bitBlitNum >= BITBLIT_RECTS)
 		error("too many bit blit rects");
 
-	_bitBlitRects[_bitBlitNum].x = x;
-	_bitBlitRects[_bitBlitNum].y = y;
-	_bitBlitRects[_bitBlitNum].x2 = w;
-	_bitBlitRects[_bitBlitNum].y2 = h;
+	_bitBlitRects[_bitBlitNum].left = x;
+	_bitBlitRects[_bitBlitNum].top = y;
+	_bitBlitRects[_bitBlitNum].right = x + w;
+	_bitBlitRects[_bitBlitNum].bottom = y + h;
 	++_bitBlitNum;
 }
 
 void Screen_LoK::bitBlitRects() {
 	debugC(9, kDebugLevelScreen, "Screen_LoK::bitBlitRects()");
-	Rect *cur = _bitBlitRects;
+	Common::Rect *cur = _bitBlitRects;
 	while (_bitBlitNum) {
 		_bitBlitNum--;
-		copyRegion(cur->x, cur->y, cur->x, cur->y, cur->x2, cur->y2, 2, 0);
+		copyRegion(cur->left, cur->top, cur->left, cur->top, cur->width(), cur->height(), 2, 0);
 		++cur;
 	}
 }
