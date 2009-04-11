@@ -38,14 +38,13 @@
 namespace Saga {
 
 ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber) {
-	ScriptThread *newThread;
+	ScriptThread *newThread = new ScriptThread();
 
 	loadModule(scriptModuleNumber);
 	if (_modules[scriptModuleNumber].entryPointsCount <= scriptEntryPointNumber) {
 		error("Script::createThread wrong scriptEntryPointNumber");
 	}
 
-	newThread = &(*_threadList.pushFront());
 	newThread->_flags = kTFlagNone;
 	newThread->_stackSize = DEFAULT_THREAD_STACK_SIZE;
 	newThread->_stackBuf = (uint16 *)malloc(newThread->_stackSize * sizeof(uint16));
@@ -55,7 +54,6 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	newThread->_staticBase = _commonBuffer + _modules[scriptModuleNumber].staticOffset;
 	newThread->_moduleBase = _modules[scriptModuleNumber].moduleBase;
 	newThread->_moduleBaseSize = _modules[scriptModuleNumber].moduleBaseSize;
-
 	newThread->_strings = &_modules[scriptModuleNumber].strings;
 
 	if (_vm->getGameId() == GID_IHNM)
@@ -63,7 +61,9 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	else
 		newThread->_voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
 
-	return newThread;
+	_threadList.push_front(*newThread);
+
+	return &*_threadList.begin();
 }
 
 void Script::wakeUpActorThread(int waitType, void *threadObj) {
