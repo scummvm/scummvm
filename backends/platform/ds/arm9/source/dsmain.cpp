@@ -579,9 +579,11 @@ void displayMode8Bit() {
 
 	displayModeIs8Bit = true;
 
+	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+
 	if (isCpuScalerEnabled())
 	{
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -595,14 +597,13 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = 256;
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	}
 	else
 	{
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -616,12 +617,20 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 	}
 
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
+
+	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
++
+	// Move the cursor to the bottom of the screen using ANSI escape code
+	consolePrintf("\033[23;0f");
+
 	SUB_BG3_CR = BG_BMP8_512x256;
+
 
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
     	SUB_BG3_XDY = 0;
@@ -630,13 +639,6 @@ void displayMode8Bit() {
 
 
 
-	if (consoleEnable)
-	{
-		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
-
-		// Move the cursor to the bottom of the screen using ANSI escape code
-		consolePrintf("\033[23;0f");
-	}
 //	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
 //	consoleSetWindow(NULL, 0, 0, 32, 24);
 //	consolePrintSet(0, 23);
@@ -651,7 +653,9 @@ void displayMode8Bit() {
 	}
 
 	// ConsoleInit destroys the hardware palette :-(
-	OSystem_DS::instance()->restoreHardwarePalette();
+	if (OSystem_DS::instance()) {
+		OSystem_DS::instance()->restoreHardwarePalette();
+	}
 	
 //	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
@@ -3060,7 +3064,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.13.1 beta1 ");
+	consolePrintf("Version 0.13.1 beta2 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
