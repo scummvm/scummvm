@@ -16,6 +16,19 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( container.empty() );
 	}
 
+	public:
+	void test_size( void )
+	{
+		Common::List<int> container;
+		TS_ASSERT( container.size() == 0 );
+		container.push_back(17);
+		TS_ASSERT( container.size() == 1 );
+		container.push_back(33);
+		TS_ASSERT( container.size() == 2 );
+		container.clear();
+		TS_ASSERT( container.size() == 0 );
+	}
+
 	void test_iterator_begin_end( void )
 	{
 		Common::List<int> container;

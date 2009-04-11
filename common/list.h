@@ -119,8 +119,9 @@ public:
 
 	void remove(const t_T &val) {
 		iterator i = begin();
-		while (i != end())
-			if (val == i.operator*())
+		const iterator e = end();
+		while (i != e)
+			if (val == *i)
 				i = erase(i);
 			else
 				++i;
@@ -135,16 +136,18 @@ public:
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
-			const_iterator j;
+			const iterator e = end();
+			const_iterator i2;
+			const_iterator e2 = list.end();
 
-			for (i = begin(), j = list.begin();  (i != end()) && (j != list.end()) ; ++i, ++j) {
-				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(j._node)->_data;
+			for (i = begin(), i2 = list.begin();  (i != e) && (i2 != e2) ; ++i, ++i2) {
+				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(i2._node)->_data;
 			}
 
-			if (i == end())
-				insert(i, j, list.end());
+			if (i == e)
+				insert(i, i2, e2);
 			else
-				erase(i, end());
+				erase(i, e);
 		}
 
 		return *this;
@@ -152,7 +155,7 @@ public:
 
 	uint size() const {
 		int n = 0;
-		for (const_iterator i = begin(); i != end(); ++i)
+		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
 			++n;
 		return n;
 	}
