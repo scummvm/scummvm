@@ -42,7 +42,6 @@ namespace Saga {
 
 #define ITE_SCRIPT_FUNCTION_MAX 78
 #define IHNM_SCRIPT_FUNCTION_MAX 105
-#define DEFAULT_THREAD_STACK_SIZE 256
 
 enum AddressTypes {
 	kAddressCommon     = 0,	// offset from global variables
@@ -169,8 +168,7 @@ struct ModuleData {
 
 class ScriptThread {
 public:
-	uint16 *_stackBuf;
-	uint16 _stackSize;					// stack size in uint16
+	int16 *_stackBuf;
 
 	uint16 _stackTopIndex;
 	uint16 _frameIndex;
@@ -196,6 +194,10 @@ public:
 
 	int32 _frameWait;
 
+	enum {
+		THREAD_STACK_SIZE = 256
+	};
+
 public:
 	byte *baseAddress(byte addrMode) {
 		switch (addrMode) {
@@ -215,25 +217,25 @@ public:
 	}
 
 	int16 stackTop() {
-		return (int16)_stackBuf[_stackTopIndex];
+		return _stackBuf[_stackTopIndex];
 	}
 
 	uint pushedSize() {
-		return _stackSize - _stackTopIndex - 2;
+		return THREAD_STACK_SIZE - _stackTopIndex - 2;
 	}
 
 	void push(int16 value) {
 		if (_stackTopIndex <= 0) {
 			error("ScriptThread::push() stack overflow");
 		}
-		_stackBuf[--_stackTopIndex] = (uint16)value;
+		_stackBuf[--_stackTopIndex] = value;
 	}
 
 	int16 pop() {
-		if (_stackTopIndex >= _stackSize) {
+		if (_stackTopIndex >= THREAD_STACK_SIZE) {
 			error("ScriptThread::pop() stack underflow");
 		}
-		return (int16)_stackBuf[_stackTopIndex++];
+		return _stackBuf[_stackTopIndex++];
 	}
 
 
@@ -260,14 +262,42 @@ public:
 
 	ScriptThread() {
 		memset(this, 0xFE, sizeof(*this));
-		_stackBuf = NULL;
+		_flags = kTFlagNone;
+		_stackBuf = 0;
 	}
+
+	// copy constructor
+	ScriptThread(const ScriptThread& s) {
+		memcpy(this, &s, sizeof(*this));
+
+		// Verify that s doesn't have a non-zero _stackBuf, for else
+		// we would have to clone  that buffer, too, which we currently
+		// don't do. This case should never occur anyway, though (at
+		// least as long as the thread handling code does not change).
+		assert(!_stackBuf);
+	}
+
+	// assignment operator
+	ScriptThread& operator=(const ScriptThread &s) {
+		if (this == &s)
+			return *this;
+
+		free(_stackBuf);
+		memcpy(this, &s, sizeof(*this));
+
+		// Verify that s doesn't have a non-zero _stackBuf, for else
+		// we would have to clone  that buffer, too, which we currently
+		// don't do. This case should never occur anyway, though (at
+		// least as long as the thread handling code does not change).
+		assert(!_stackBuf);
+	}
+
 	~ScriptThread() {
 		free(_stackBuf);
 	}
 };
 
-typedef Common::List<ScriptThread*> ScriptThreadList;
+typedef Common::List<ScriptThread> ScriptThreadList;
 
 #define SCRIPTOP_PARAMS ScriptThread *thread, MemoryReadStream *scriptS, bool &stopParsing, bool &breakOut
 #define SCRIPTFUNC_PARAMS ScriptThread *thread, int nArgs, bool &disContinue
@@ -381,7 +411,7 @@ public:
 	VoiceLUT _globalVoiceLUT;
 
 public:
-	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
+	ScriptThread &createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
 	void executeThreads(uint msec);
 	void completeThread(void);
@@ -397,7 +427,7 @@ protected:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
 	// runThread returns true if we should break running of other threads
-	bool runThread(ScriptThread *thread);
+	bool runThread(ScriptThread &thread);
 	void setThreadEntrypoint(ScriptThread *thread, int entrypointNumber);
 
 public:

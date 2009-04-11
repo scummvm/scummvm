@@ -273,7 +273,6 @@ int Events::handleImmediate(Event *event) {
 }
 
 int Events::handleOneShot(Event *event) {
-	ScriptThread *sthread;
 	Rect rect;
 
 
@@ -478,24 +477,20 @@ int Events::handleOneShot(Event *event) {
 	case kScriptEvent:
 		switch (event->op) {
 		case kEventExecBlocking:
-		case kEventExecNonBlocking:
+		case kEventExecNonBlocking: {
 			debug(6, "Exec module number %ld script entry number %ld", event->param, event->param2);
 
-			sthread = _vm->_script->createThread(event->param, event->param2);
-			if (sthread == NULL) {
-				_vm->_console->DebugPrintf("Thread creation failed.\n");
-				break;
-			}
-
-			sthread->_threadVars[kThreadVarAction] = event->param3;
-			sthread->_threadVars[kThreadVarObject] = event->param4;
-			sthread->_threadVars[kThreadVarWithObject] = event->param5;
-			sthread->_threadVars[kThreadVarActor] = event->param6;
+			ScriptThread &sthread = _vm->_script->createThread(event->param, event->param2);
+			sthread._threadVars[kThreadVarAction] = event->param3;
+			sthread._threadVars[kThreadVarObject] = event->param4;
+			sthread._threadVars[kThreadVarWithObject] = event->param5;
+			sthread._threadVars[kThreadVarActor] = event->param6;
 
 			if (event->op == kEventExecBlocking)
 				_vm->_script->completeThread();
 
 			break;
+			}
 		case kEventThreadWake:
 			_vm->_script->wakeUpThreads(event->param);
 			break;

@@ -220,11 +220,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 
 // Shut down script module gracefully; free all allocated module resources
 Script::~Script() {
-	ScriptThreadList::iterator threadIterator = _threadList.begin();
-	while (threadIterator != _threadList.end()) {
-		delete *threadIterator;
-		threadIterator = _threadList.erase(threadIterator);
-	}
+
 }
 
 // Script opcodes

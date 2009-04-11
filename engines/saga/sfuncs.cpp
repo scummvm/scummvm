@@ -394,15 +394,14 @@ void Script::sfPreDialog(SCRIPTFUNC_PARAMS) {
 
 // Script function #13 (0x0D)
 void Script::sfKillActorThreads(SCRIPTFUNC_PARAMS) {
-	ScriptThread *anotherThread;
 	ScriptThreadList::iterator threadIterator;
 	int16 actorId = thread->pop();
 
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
-		anotherThread = *threadIterator;
-		if ((anotherThread != thread) && (anotherThread->_threadVars[kThreadVarActor] == actorId)) {
-			anotherThread->_flags &= ~kTFlagWaiting;
-			anotherThread->_flags |= kTFlagAborted;
+		ScriptThread &anotherThread = *threadIterator;
+		if ((&anotherThread != thread) && (anotherThread._threadVars[kThreadVarActor] == actorId)) {
+			anotherThread._flags &= ~kTFlagWaiting;
+			anotherThread._flags |= kTFlagAborted;
 		}
 	}
 }
