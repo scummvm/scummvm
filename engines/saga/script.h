@@ -31,7 +31,6 @@
 #include "common/endian.h"
 
 #include "saga/font.h"
-#include "saga/list.h"
 
 namespace Saga {
 

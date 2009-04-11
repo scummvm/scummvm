@@ -28,7 +28,6 @@
 #ifndef SAGA_FONT_H
 #define SAGA_FONT_H
 
-#include "saga/list.h"
 #include "saga/gfx.h"
 
 namespace Saga {

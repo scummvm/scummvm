@@ -32,7 +32,6 @@
 
 #include "saga/sprite.h"
 #include "saga/itedata.h"
-#include "saga/list.h"
 #include "saga/saga.h"
 #include "saga/font.h"
 
@@ -328,7 +327,7 @@ public:
 
 typedef CommonObjectData *CommonObjectDataPointer;
 
-typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
+typedef Common::List<CommonObjectDataPointer> CommonObjectOrderList;
 
 class ObjectData: public CommonObjectData {
 public:
@@ -558,7 +557,7 @@ struct SpeechData {
 	}
 };
 
-
+typedef int (*CompareFunction) (const CommonObjectDataPointer& a, const CommonObjectDataPointer& b);
 
 class Actor {
 	friend class IsoMap;
@@ -662,6 +661,7 @@ private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 	void loadActorSpriteList(ActorData *actor);
 
+	void drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunction compareFunction);
 	void createDrawOrderList();
 	bool calcScreenPosition(CommonObjectData *commonObjectData);
 	bool getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList);

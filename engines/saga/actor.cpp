@@ -960,11 +960,24 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	return result;					// in IHNM, return the last result found (read above)
 }
 
+void Actor::drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunction compareFunction) {
+	int res;
+
+	for (CommonObjectOrderList::iterator i = _drawOrderList.begin(); i !=_drawOrderList.end(); ++i) {
+		res = compareFunction(element, *i);
+		if	(res < 0) {
+			_drawOrderList.insert(i, element);
+			return;
+		}
+	}
+	_drawOrderList.push_back(element);
+}
+
 void Actor::createDrawOrderList() {
 	int i;
 	ActorData *actor;
 	ObjectData *obj;
-	CommonObjectOrderList::CompareFunction compareFunction = 0;
+	CompareFunction compareFunction = 0;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
@@ -985,7 +998,7 @@ void Actor::createDrawOrderList() {
 			continue;
 
 		if (calcScreenPosition(actor)) {
-			_drawOrderList.insert(actor, compareFunction);
+			drawOrderListAdd(actor, compareFunction);
 		}
 	}
 
@@ -1005,7 +1018,7 @@ void Actor::createDrawOrderList() {
 			continue;
 
 		if (calcScreenPosition(obj)) {
-			_drawOrderList.insert(obj, compareFunction);
+			drawOrderListAdd(obj, compareFunction);
 		}
 	}
 }

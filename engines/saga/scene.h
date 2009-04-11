@@ -29,7 +29,6 @@
 #define SAGA_SCENE_H
 
 #include "saga/font.h"
-#include "saga/list.h"
 #include "saga/actor.h"
 #include "saga/interface.h"
 #include "saga/puzzle.h"

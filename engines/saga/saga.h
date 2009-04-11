@@ -32,7 +32,6 @@
 #include "sound/mididrv.h"
 
 #include "saga/gfx.h"
-#include "saga/list.h"
 
 struct ADGameFileDescription;
 
