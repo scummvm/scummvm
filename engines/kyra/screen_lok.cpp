@@ -96,7 +96,7 @@ void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int 
 
 void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
 	debugC(9, kDebugLevelScreen, "Screen_LoK::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
-	if (_bitBlitNum >= BITBLIT_RECTS)
+	if (_bitBlitNum >= kNumBitBlitRects)
 		error("too many bit blit rects");
 
 	_bitBlitRects[_bitBlitNum].left = x;

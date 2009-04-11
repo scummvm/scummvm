@@ -32,10 +32,6 @@ namespace Kyra {
 
 class KyraEngine_LoK;
 
-enum {
-	BITBLIT_RECTS = 10
-};
-
 class Screen_LoK : public Screen {
 public:
 	Screen_LoK(KyraEngine_LoK *vm, OSystem *system);
@@ -64,12 +60,16 @@ public:
 	void bitBlitRects();
 
 protected:
+	enum {
+		kNumBitBlitRects = 10
+	};
+
 	KyraEngine_LoK *_vm;
 
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 
-	Common::Rect _bitBlitRects[BITBLIT_RECTS];
+	Common::Rect _bitBlitRects[kNumBitBlitRects];
 	int _bitBlitNum;
 	uint8 *_unkPtr1, *_unkPtr2;
 
