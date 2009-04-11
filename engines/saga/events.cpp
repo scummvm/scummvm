@@ -98,7 +98,7 @@ int Events::handleEvents(long msec) {
 		if ((result == kEvStDelete) || (result == kEvStInvalidCode)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
-				eventi = _eventList.eraseAndPrev(eventi);
+				eventi = _eventList.reverse_erase(eventi);
 			} else {
 				// If there is an event chain present, move the next event
 				// in the chain up, adjust it by the previous delta time,
@@ -650,7 +650,7 @@ int Events::clearList(bool playQueuedMusic) {
 				next_chain = chain_walk->chain;
 				free(chain_walk);
 			}
-			eventi = _eventList.eraseAndPrev(eventi);
+			eventi = _eventList.reverse_erase(eventi);
 		}
 	}
 

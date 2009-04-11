@@ -89,69 +89,12 @@ public:
 		return pushBack(element);
 	}
 
-#if 0
-	iterator reorderUp(iterator pos, CompareFunction compareFunction) {
-		iterator i(pos);
-		int res;
-
-		--i;
-		while (i != Common::List<T>::end()) {
-			res = compareFunction(i.operator*(), pos.operator*());
-			if (res <= 0) {
-				T temp(*pos);
-				erase(pos);
-				++i;
-				return insert(i, temp);
-			}
-			--i;
-		}
-		return pos;
-	}
-
-	iterator reorderDown(iterator pos, CompareFunction compareFunction) {
-		iterator i(pos);
-		int res;
-
-		++i;
-		while (i != Common::List<T>::end()) {
-			res = compareFunction(i.operator*(), pos.operator*());
-			if (res >= 0) {
-				T temp(*pos);
-				erase(pos);
-				return insert(i, temp);
-			}
-			++i;
-		}
-		return pos;
-	}
-#endif
-
-	iterator eraseAndPrev(iterator pos) {
-		assert(pos != Common_List::end());
-		iterator res(pos);
-
-		--res;
-		erase(pos);
-		return res;
-	}
-
 	void remove(const T* val) {
 		for (iterator i = Common_List::begin(); i != Common_List::end(); ++i)
 			if (val == i.operator->()) {
 				erase(i);
 				return;
 			}
-	}
-
-	bool locate(const T* val, iterator& foundIterator) {
-
-		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
-			if (val == i.operator->()) {
-				foundIterator = i;
-				return true;
-			}
-
-		return false;
 	}
 };
 
