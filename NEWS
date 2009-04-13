@@ -37,6 +37,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  SAGA:
     - Fixed a crash in Inherit the Earth
+    - Fixed glitches in the save/load dialog.
+
+ Sword2:
+    - Fixed random sound corruption when using the original sound files.
 
  Game launcher:
    - Fixed a case where memory could be corrupted
