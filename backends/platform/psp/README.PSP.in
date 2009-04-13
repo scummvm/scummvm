@@ -91,8 +91,8 @@ To build ScummVM for PSP you need:
 (*) = optional
 
 When you've installed these libraries (read their README.PSP for instructions),
-type "make" in the backends/psp directory to build an 1.00 firmware EBOOT.PBP,
-or "make kxploit" to build the 1.50/kxploit EBOOT.PBPs
+type "make" in the backends/platform/psp directory to build a 1.00 firmware
+EBOOT.PBP, or "make kxploit" to build the 1.50/kxploit EBOOT.PBPs
 
 You can control most of the build process (engines and libraries used) from
 the Makefile.
