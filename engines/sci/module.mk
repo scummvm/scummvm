@@ -63,6 +63,7 @@ MODULE_OBJS = \
 	sfx/iterator.o \
 	sfx/songlib.o \
 	sfx/device/devices.o \
+	sfx/player/player.o \
 	sfx/player/players.o \
 	sfx/player/polled.o \
 	sfx/player/realtime.o \
@@ -71,6 +72,7 @@ MODULE_OBJS = \
 	sfx/seq/map-mt32-to-gm.o \
 	sfx/seq/sequencers.o \
 	sfx/softseq/amiga.o \
+	sfx/softseq/pcjr.o \
 	sfx/softseq/opl2.o \
 	sfx/softseq/pcspeaker.o \
 	sfx/softseq/SN76496.o \

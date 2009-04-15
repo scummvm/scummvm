@@ -432,11 +432,17 @@ void sfx_exit(sfx_state_t *self) {
 
 	// WARNING: The mixer may hold feeds from the player, so we must
 	// stop the mixer BEFORE stopping the player.
-	g_system->getMixer()->stopAll();
+	// FIXME Player "new" frees its own feeds, so we only need to stop any
+	// remaining sfx feeds after stopping the player.
+	if (strcmp(player->name, "new") != 0)
+		g_system->getMixer()->stopAll();
 
 	if (player)
 		// See above: This must happen AFTER stopping the mixer
 		player->exit();
+
+	if (strcmp(player->name, "new") == 0)
+		g_system->getMixer()->stopAll();
 }
 
 void sfx_suspend(sfx_state_t *self, int suspend) {

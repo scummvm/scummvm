@@ -26,7 +26,12 @@
 #ifndef SCI_SFX_MIDI_H
 #define SCI_SFX_MIDI_H
 
+#include "sound/mididrv.h"
+#include "sci/sfx/sfx.h"
+
 namespace Sci {
+
+class ResourceManager;
 
 #define MIDI_RHYTHM_CHANNEL 9
 
@@ -43,12 +48,45 @@ namespace Sci {
 #define SCI_MIDI_SET_REVERB 0x50
 #define SCI_MIDI_HOLD 0x52
 #define SCI_MIDI_CUMULATIVE_CUE 0x60
+#define SCI_MIDI_CHANNEL_SOUND_OFF 0x78 /* all-sound-off for Bn */
 #define SCI_MIDI_CHANNEL_NOTES_OFF 0x7B /* all-notes-off for Bn */
 
 #define SCI_MIDI_SET_SIGNAL_LOOP 0x7F
 /* If this is the parameter of 0xCF, the loop point is set here */
 
 #define SCI_MIDI_CONTROLLER(status) ((status & 0xF0) == 0xB0)
+
+class MidiPlayer : public MidiDriver {
+protected:
+	MidiDriver *_driver;
+public:
+	int open() { return open(NULL); }
+	int open(ResourceManager *resmgr) { return _driver->open(); }
+	void close() { _driver->close(); }
+	void send(uint32 b) { _driver->send(b); }
+	uint32 getBaseTempo() { return _driver->getBaseTempo(); }
+	bool hasRhythmChannel() const { return true; }
+	MidiChannel *allocateChannel() { return _driver->allocateChannel(); }
+	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
+
+	virtual int getPlayMask() const = 0;
+	virtual int getPolyphony() const = 0;
+	virtual int getPatchNr() const { return -1; }
+
+	virtual void setVolume(byte volume) {
+		// Master Volume SysEx message
+		const byte message[] = {0x7f, 0x7f, 0x04, 0x01, volume & 0x7f, volume & 0x7f};
+
+		_driver->sysEx(message, 6);
+	}
+
+	virtual void allSoundOff() {
+		// Send "All Sound Off" on all channels
+		for (int i = 0; i < MIDI_CHANNELS; ++i)
+			_driver->send(0xb0 + i, SCI_MIDI_CHANNEL_SOUND_OFF, 0);
+	}
+};
 
 } // End of namespace Sci
 
