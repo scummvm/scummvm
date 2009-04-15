@@ -304,7 +304,7 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		if (vgaSpriteId != 1)
-			WRITE_LE_UINT16(p, READ_LE_UINT32(p - 8) + READ_LE_UINT32(p - 4) * READ_LE_UINT32(p - 2));
+			WRITE_LE_UINT32(p, READ_LE_UINT32(p - 8) + READ_LE_UINT16(p - 4) * READ_LE_UINT16(p - 2));
 
 		WRITE_LE_UINT16(p + 4, height);
 		WRITE_LE_UINT16(p + 6, width);
