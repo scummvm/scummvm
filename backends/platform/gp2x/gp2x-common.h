@@ -29,15 +29,13 @@
 #include <SDL.h>
 #include <SDL_gp2x.h>
 
-#include "common/scummsys.h"
-#include "common/system.h"
+#include "backends/base-backend.h"
 #include "graphics/scaler.h"
 
 #define __GP2X__
 #define USE_OSD
-/* #define DISABLE_SCALERS
-#define MIXER_DOUBLE_BUFFERING 1 */
-
+/* #define DISABLE_SCALERS */
+#define MIXER_DOUBLE_BUFFERING 1
 
 namespace Audio {
 	class MixerImpl;
@@ -59,7 +57,7 @@ enum {
 };
 
 
-class OSystem_GP2X : public OSystem {
+class OSystem_GP2X : public BaseBackend {
 public:
 	OSystem_GP2X();
 	virtual ~OSystem_GP2X();
@@ -189,8 +187,8 @@ public:
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
-	virtual Common::SeekableReadStream *openConfigFileForReading();
-	virtual Common::WriteStream *openConfigFileForWriting();
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 
 protected:
 	bool _inited;
@@ -285,6 +283,7 @@ protected:
 
 	enum {
 		NUM_DIRTY_RECT = 100,
+
 		MAX_MOUSE_W = 80,
 		MAX_MOUSE_H = 80,
 		MAX_SCALING = 3

@@ -739,18 +739,18 @@ void OSystem_GP2X::setFullscreenMode(bool enable) {
 }
 
 void OSystem_GP2X::setAspectRatioCorrection(bool enable) {
-
 	if ((_videoMode.screenHeight == 200 && _videoMode.aspectRatio != enable) ||
 		_transactionMode == kTransactionActive) {
+
 		Common::StackLock lock(_graphicsMutex);
-	}
 
-	if (_oldVideoMode.setup && _oldVideoMode.aspectRatio == enable)
-		return;
+		if (_oldVideoMode.setup && _oldVideoMode.aspectRatio == enable)
+			return;
 
-	if (_transactionMode == kTransactionActive) {
-		_videoMode.aspectRatio = enable;
-		_transactionDetails.needHotswap = true;
+		if (_transactionMode == kTransactionActive) {
+			_videoMode.aspectRatio = enable;
+			_transactionDetails.needHotswap = true;
+		}
 	}
 }
 
