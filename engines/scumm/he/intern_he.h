@@ -26,7 +26,6 @@
 #ifndef SCUMM_HE_INTERN_HE_H
 #define SCUMM_HE_INTERN_HE_H
 
-#include "scumm/intern.h"
 #include "scumm/scumm_v6.h"
 #ifdef ENABLE_HE
 #include "scumm/he/floodfill_he.h"
@@ -51,13 +50,6 @@ class CUP_Player;
 
 class ScummEngine_v60he : public ScummEngine_v6 {
 protected:
-	typedef void (ScummEngine_v60he::*OpcodeProcv60he)();
-	struct OpcodeEntryv60he {
-		OpcodeProcv60he proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryv60he *_opcodesv60he;
 
 public:
 	Common::SeekableReadStream *_hInFileTable[17];
@@ -75,8 +67,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void saveOrLoad(Serializer *s);
 
@@ -115,14 +105,6 @@ class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
 
 protected:
-	typedef void (ScummEngine_v70he::*OpcodeProcv70he)();
-	struct OpcodeEntryv70he {
-		OpcodeProcv70he proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryv70he *_opcodesv70he;
-
 	ResExtractor *_resExtractor;
 
 	byte *_heV7RoomOffsets;
@@ -140,8 +122,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
@@ -185,15 +165,8 @@ class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 
 protected:
-	typedef void (ScummEngine_v71he::*OpcodeProcv71he)();
-	struct OpcodeEntryv71he {
-		OpcodeProcv71he proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryv71he *_opcodesv71he;
-
 	bool _skipProcessActors;
+
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v71he();
@@ -206,8 +179,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void saveOrLoad(Serializer *s);
 
@@ -253,11 +224,6 @@ public:
 
 class ScummEngine_v72he : public ScummEngine_v71he {
 protected:
-	typedef void (ScummEngine_v72he::*OpcodeProcV72he)();
-	struct OpcodeEntryV72he {
-		OpcodeProcV72he proc;
-		const char *desc;
-	};
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -272,8 +238,6 @@ protected:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	const OpcodeEntryV72he *_opcodesV72he;
-
 	int _stringLength;
 	byte _stringBuffer[4096];
 
@@ -286,8 +250,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
@@ -386,14 +348,6 @@ protected:
 
 class ScummEngine_v80he : public ScummEngine_v72he {
 protected:
-	typedef void (ScummEngine_v80he::*OpcodeProcV80he)();
-	struct OpcodeEntryV80he {
-		OpcodeProcV80he proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryV80he *_opcodesV80he;
-
 	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs, _sndDataSize;
 
 public:
@@ -401,8 +355,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
@@ -443,14 +395,6 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class Sprite;
 
 protected:
-	typedef void (ScummEngine_v90he::*OpcodeProcV90he)();
-	struct OpcodeEntryV90he {
-		OpcodeProcV90he proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryV90he *_opcodesV90he;
-
 	FloodFillParameters _floodFillParams;
 
 	struct VideoParameters {
@@ -481,8 +425,6 @@ public:
 protected:
 	virtual void allocateArrays();
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void resetScumm();
 
@@ -596,15 +538,7 @@ protected:
 
 class ScummEngine_v100he : public ScummEngine_v99he {
 protected:
-	typedef void (ScummEngine_v100he::*OpcodeProcV100he)();
-	struct OpcodeEntryV100he {
-		OpcodeProcV100he proc;
-		const char *desc;
-	};
-
 	int32 _heResId, _heResType;
-
-	const OpcodeEntryV100he *_opcodesV100he;
 
 	byte _debugInputBuffer[256];
 public:
@@ -614,8 +548,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void saveOrLoad(Serializer *s);
 

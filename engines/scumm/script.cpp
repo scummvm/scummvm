@@ -477,6 +477,15 @@ void ScummEngine::executeScript() {
 	}
 }
 
+void ScummEngine::executeOpcode(byte i) {
+	assert(_opcodes[i].proc && _opcodes[i].proc->isValid());
+	(*_opcodes[i].proc)();
+}
+
+const char *ScummEngine::getOpcodeDesc(byte i) {
+	return _opcodes[i].desc;
+}
+
 byte ScummEngine::fetchScriptByte() {
 	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
 		long oldoffs = _scriptPointer - _scriptOrgPointer;

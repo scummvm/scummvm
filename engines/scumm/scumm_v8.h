@@ -34,14 +34,6 @@ namespace Scumm {
 
 class ScummEngine_v8 : public ScummEngine_v7 {
 protected:
-	typedef void (ScummEngine_v8::*OpcodeProcV8)();
-	struct OpcodeEntryV8 {
-		OpcodeProcV8 proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryV8 *_opcodesV8;
-
 	struct ObjectNameId {
 		char name[40];
 		int id;
@@ -57,8 +49,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void printString(int m, const byte *msg);
 

@@ -35,14 +35,6 @@ namespace Scumm {
  */
 class ScummEngine_v2 : public ScummEngine_v3old {
 protected:
-	typedef void (ScummEngine_v2::*OpcodeProcV2)();
-	struct OpcodeEntryV2 {
-		OpcodeProcV2 proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryV2 *_opcodesV2;
-
 	struct V2MouseoverBox {
 		Common::Rect rect;
 		byte color;
@@ -69,8 +61,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();

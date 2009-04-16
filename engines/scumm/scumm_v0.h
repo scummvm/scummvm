@@ -35,15 +35,8 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
-	typedef void (ScummEngine_v0::*OpcodeProcC64)();
-	struct OpcodeEntryC64 {
-		OpcodeProcC64 proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryC64 *_opcodesC64;
-
 	int _currentMode;
+
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
 
@@ -53,8 +46,6 @@ protected:
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();

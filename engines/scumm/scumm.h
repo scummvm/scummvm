@@ -680,9 +680,11 @@ protected:
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];
 
+	OpcodeEntry _opcodes[256];
+
 	virtual void setupOpcodes() = 0;
-	virtual void executeOpcode(byte i) = 0;
-	virtual const char *getOpcodeDesc(byte i) = 0;
+	void executeOpcode(byte i);
+	const char *getOpcodeDesc(byte i);
 
 	void initializeLocals(int slot, int *vars);
 	int	getScriptSlot();

@@ -26,340 +26,335 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
 
-#define OPCODE(x)	_OPCODE(ScummEngine_v0, x)
+#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v0, x)
 
 void ScummEngine_v0::setupOpcodes() {
-	static const OpcodeEntryC64 opcodes[256] = {
-		/* 00 */
-		OPCODE(o5_stopObjectCode),
-		OPCODE(o2_putActor),
-		OPCODE(o5_startMusic),
-		OPCODE(o_doSentence),
-		/* 04 */
-		OPCODE(o_isGreaterEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_getDist),
-		OPCODE(o5_getActorRoom),
-		/* 08 */
-		OPCODE(o_isNotEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setActorBitVar),
-		/* 0C */
-		OPCODE(o_loadSound),
-		OPCODE(o_printEgo_c64),
-		OPCODE(o_putActorAtObject),
-		OPCODE(o2_clearState02),
-		/* 10 */
-		OPCODE(o5_breakHere),
-		OPCODE(o_animateActor),
-		OPCODE(o2_panCameraTo),
-		OPCODE(o_lockCostume),
-		/* 14 */
-		OPCODE(o_print_c64),
-		OPCODE(o5_walkActorToActor),
-		OPCODE(o5_getRandomNr),
-		OPCODE(o_clearState08),
-		/* 18 */
-		OPCODE(o_jumpRelative),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_move),
-		OPCODE(o_getActorBitVar),
-		/* 1C */
-		OPCODE(o5_startSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifState04),
-		/* 20 */
-		OPCODE(o5_stopMusic),
-		OPCODE(o2_putActor),
-		OPCODE(o5_saveLoadGame),
-		OPCODE(o_stopCurrentScript),
-		/* 24 */
-		OPCODE(o_unknown2),
-		OPCODE(o5_loadRoom),
-		OPCODE(o_getClosestObjActor),
-		OPCODE(o2_getActorY),
-		/* 28 */
-		OPCODE(o_equalZero),
-		OPCODE(o_setOwnerOf),
-		OPCODE(o2_delay),
-		OPCODE(o_setActorBitVar),
-		/* 2C */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_putActorInRoom),
-		OPCODE(o_print_c64),
-		OPCODE(o2_ifState08),
-		/* 30 */
-		OPCODE(o_loadCostume),
-		OPCODE(o_getBitVar),
-		OPCODE(o2_setCameraAt),
-		OPCODE(o_lockScript),
-		/* 34 */
-		OPCODE(o5_getDist),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_walkActorToObject),
-		OPCODE(o2_clearState04),
-		/* 38 */
-		OPCODE(o_isLessEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_subtract),
-		OPCODE(o_stopCurrentScript),
-		/* 3C */
-		OPCODE(o5_stopSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifState02),
-		/* 40 */
-		OPCODE(o_cutscene),
-		OPCODE(o2_putActor),
-		OPCODE(o2_startScript),
-		OPCODE(o_doSentence),
-		/* 44 */
-		OPCODE(o_isLess),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_increment),
-		OPCODE(o2_getActorX),
-		/* 48 */
-		OPCODE(o_isEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_loadRoom),
-		OPCODE(o_setActorBitVar),
-		/* 4C */
-		OPCODE(o_loadScript),
-		OPCODE(o_lockRoom),
-		OPCODE(o_putActorAtObject),
-		OPCODE(o2_clearState02),
-		/* 50 */
-		OPCODE(o_nop),
-		OPCODE(o_animateActor),
-		OPCODE(o5_actorFollowCamera),
-		OPCODE(o_lockSound),
-		/* 54 */
-		OPCODE(o_setObjectName),
-		OPCODE(o5_walkActorToActor),
-		OPCODE(o_getActorMoving),
-		OPCODE(o_clearState08),
-		/* 58 */
-		OPCODE(o_beginOverride),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_add),
-		OPCODE(o_getActorBitVar),
-		/* 5C */
-		OPCODE(o5_startSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifState04),
-		/* 60 */
-		OPCODE(o_cursorCommand),
-		OPCODE(o2_putActor),
-		OPCODE(o2_stopScript),
-		OPCODE(o_stopCurrentScript),
-		/* 64 */
-		OPCODE(o_ifActiveObject),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_getClosestObjActor),
-		OPCODE(o5_getActorFacing),
-		/* 68 */
-		OPCODE(o5_isScriptRunning),
-		OPCODE(o_setOwnerOf),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setActorBitVar),
-		/* 6C */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_putActorInRoom),
-		OPCODE(o2_dummy),
-		OPCODE(o2_ifState08),
-		/* 70 */
-		OPCODE(o_lights),
-		OPCODE(o_getBitVar),
-		OPCODE(o_nop),
-		OPCODE(o5_getObjectOwner),
-		/* 74 */
-		OPCODE(o5_getDist),
-		OPCODE(o_printEgo_c64),
-		OPCODE(o2_walkActorToObject),
-		OPCODE(o2_clearState04),
-		/* 78 */
-		OPCODE(o_isGreater),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		/* 7C */
-		OPCODE(o5_isSoundRunning),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifNotState02),
-		/* 80 */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_putActor),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_doSentence),
-		/* 84 */
-		OPCODE(o_isGreaterEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_nop),
-		OPCODE(o5_getActorRoom),
-		/* 88 */
-		OPCODE(o_isNotEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setActorBitVar),
-		/* 8C */
-		OPCODE(o_loadSound),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_putActorAtObject),
-		OPCODE(o2_setState02),
-		/* 90 */
-		OPCODE(o_pickupObject),
-		OPCODE(o_animateActor),
-		OPCODE(o2_panCameraTo),
-		OPCODE(o_unlockCostume),
-		/* 94 */
-		OPCODE(o5_print),
-		OPCODE(o2_actorFromPos),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setState08),
-		/* 98 */
-		OPCODE(o2_restart),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_move),
-		OPCODE(o_getActorBitVar),
-		/* 9C */
-		OPCODE(o5_startSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifNotState04),
-		/* A0 */
-		OPCODE(o5_stopObjectCode),
-		OPCODE(o2_putActor),
-		OPCODE(o5_saveLoadGame),
-		OPCODE(o_stopCurrentScript),
-		/* A4 */
-		OPCODE(o_unknown2),
-		OPCODE(o5_loadRoom),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_getActorY),
-		/* A8 */
-		OPCODE(o_notEqualZero),
-		OPCODE(o_setOwnerOf),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setActorBitVar),
-		/* AC */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_putActorInRoom),
-		OPCODE(o_print_c64),
-		OPCODE(o2_ifNotState08),
-		/* B0 */
-		OPCODE(o_loadCostume),
-		OPCODE(o_getBitVar),
-		OPCODE(o2_setCameraAt),
-		OPCODE(o_unlockScript),
-		/* B4 */
-		OPCODE(o5_getDist),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_walkActorToObject),
-		OPCODE(o2_setState04),
-		/* B8 */
-		OPCODE(o_isLessEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_subtract),
-		OPCODE(o_stopCurrentScript),
-		/* BC */
-		OPCODE(o5_stopSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifNotState02),
-		/* C0 */
-		OPCODE(o_endCutscene),
-		OPCODE(o2_putActor),
-		OPCODE(o2_startScript),
-		OPCODE(o_doSentence),
-		/* C4 */
-		OPCODE(o_isLess),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_decrement),
-		OPCODE(o2_getActorX),
-		/* C8 */
-		OPCODE(o_isEqual),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_loadRoom),
-		OPCODE(o_setActorBitVar),
-		/* CC */
-		OPCODE(o_loadScript),
-		OPCODE(o_unlockRoom),
-		OPCODE(o_putActorAtObject),
-		OPCODE(o2_setState02),
-		/* D0 */
-		OPCODE(o_nop),
-		OPCODE(o_animateActor),
-		OPCODE(o5_actorFollowCamera),
-		OPCODE(o_unlockSound),
-		/* D4 */
-		OPCODE(o_setObjectName),
-		OPCODE(o2_actorFromPos),
-		OPCODE(o_getActorMoving),
-		OPCODE(o_setState08),
-		/* D8 */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_add),
-		OPCODE(o_getActorBitVar),
-		/* DC */
-		OPCODE(o5_startSound),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifNotState04),
-		/* E0 */
-		OPCODE(o_cursorCommand),
-		OPCODE(o2_putActor),
-		OPCODE(o2_stopScript),
-		OPCODE(o_stopCurrentScript),
-		/* E4 */
-		OPCODE(o_ifActiveObject),
-		OPCODE(o_loadRoomWithEgo),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o5_getActorFacing),
-		/* E8 */
-		OPCODE(o5_isScriptRunning),
-		OPCODE(o_setOwnerOf),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setActorBitVar),
-		/* EC */
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_putActorInRoom),
-		OPCODE(o2_dummy),
-		OPCODE(o2_ifNotState08),
-		/* F0 */
-		OPCODE(o_lights),
-		OPCODE(o_getBitVar),
-		OPCODE(o_nop),
-		OPCODE(o5_getObjectOwner),
-		/* F4 */
-		OPCODE(o5_getDist),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_walkActorToObject),
-		OPCODE(o2_setState04),
-		/* F8 */
-		OPCODE(o_isGreater),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		OPCODE(o_stopCurrentScript),
-		/* FC */
-		OPCODE(o5_isSoundRunning),
-		OPCODE(o_setBitVar),
-		OPCODE(o2_walkActorTo),
-		OPCODE(o2_ifState02)
-	};
-
-	_opcodesC64 = opcodes;
+	/* 00 */
+	OPCODE(0x00, o5_stopObjectCode);
+	OPCODE(0x01, o2_putActor);
+	OPCODE(0x02, o5_startMusic);
+	OPCODE(0x03, o_doSentence);
+	/* 04 */
+	OPCODE(0x04, o_isGreaterEqual);
+	OPCODE(0x05, o_stopCurrentScript);
+	OPCODE(0x06, o5_getDist);
+	OPCODE(0x07, o5_getActorRoom);
+	/* 08 */
+	OPCODE(0x08, o_isNotEqual);
+	OPCODE(0x09, o_stopCurrentScript);
+	OPCODE(0x0a, o_stopCurrentScript);
+	OPCODE(0x0b, o_setActorBitVar);
+	/* 0C */
+	OPCODE(0x0c, o_loadSound);
+	OPCODE(0x0d, o_printEgo_c64);
+	OPCODE(0x0e, o_putActorAtObject);
+	OPCODE(0x0f, o2_clearState02);
+	/* 10 */
+	OPCODE(0x10, o5_breakHere);
+	OPCODE(0x11, o_animateActor);
+	OPCODE(0x12, o2_panCameraTo);
+	OPCODE(0x13, o_lockCostume);
+	/* 14 */
+	OPCODE(0x14, o_print_c64);
+	OPCODE(0x15, o5_walkActorToActor);
+	OPCODE(0x16, o5_getRandomNr);
+	OPCODE(0x17, o_clearState08);
+	/* 18 */
+	OPCODE(0x18, o_jumpRelative);
+	OPCODE(0x19, o_stopCurrentScript);
+	OPCODE(0x1a, o5_move);
+	OPCODE(0x1b, o_getActorBitVar);
+	/* 1C */
+	OPCODE(0x1c, o5_startSound);
+	OPCODE(0x1d, o_setBitVar);
+	OPCODE(0x1e, o2_walkActorTo);
+	OPCODE(0x1f, o2_ifState04);
+	/* 20 */
+	OPCODE(0x20, o5_stopMusic);
+	OPCODE(0x21, o2_putActor);
+	OPCODE(0x22, o5_saveLoadGame);
+	OPCODE(0x23, o_stopCurrentScript);
+	/* 24 */
+	OPCODE(0x24, o_unknown2);
+	OPCODE(0x25, o5_loadRoom);
+	OPCODE(0x26, o_getClosestObjActor);
+	OPCODE(0x27, o2_getActorY);
+	/* 28 */
+	OPCODE(0x28, o_equalZero);
+	OPCODE(0x29, o_setOwnerOf);
+	OPCODE(0x2a, o2_delay);
+	OPCODE(0x2b, o_setActorBitVar);
+	/* 2C */
+	OPCODE(0x2c, o_stopCurrentScript);
+	OPCODE(0x2d, o2_putActorInRoom);
+	OPCODE(0x2e, o_print_c64);
+	OPCODE(0x2f, o2_ifState08);
+	/* 30 */
+	OPCODE(0x30, o_loadCostume);
+	OPCODE(0x31, o_getBitVar);
+	OPCODE(0x32, o2_setCameraAt);
+	OPCODE(0x33, o_lockScript);
+	/* 34 */
+	OPCODE(0x34, o5_getDist);
+	OPCODE(0x35, o_stopCurrentScript);
+	OPCODE(0x36, o2_walkActorToObject);
+	OPCODE(0x37, o2_clearState04);
+	/* 38 */
+	OPCODE(0x38, o_isLessEqual);
+	OPCODE(0x39, o_stopCurrentScript);
+	OPCODE(0x3a, o2_subtract);
+	OPCODE(0x3b, o_stopCurrentScript);
+	/* 3C */
+	OPCODE(0x3c, o5_stopSound);
+	OPCODE(0x3d, o_setBitVar);
+	OPCODE(0x3e, o2_walkActorTo);
+	OPCODE(0x3f, o2_ifState02);
+	/* 40 */
+	OPCODE(0x40, o_cutscene);
+	OPCODE(0x41, o2_putActor);
+	OPCODE(0x42, o2_startScript);
+	OPCODE(0x43, o_doSentence);
+	/* 44 */
+	OPCODE(0x44, o_isLess);
+	OPCODE(0x45, o_stopCurrentScript);
+	OPCODE(0x46, o5_increment);
+	OPCODE(0x47, o2_getActorX);
+	/* 48 */
+	OPCODE(0x48, o_isEqual);
+	OPCODE(0x49, o_stopCurrentScript);
+	OPCODE(0x4a, o_loadRoom);
+	OPCODE(0x4b, o_setActorBitVar);
+	/* 4C */
+	OPCODE(0x4c, o_loadScript);
+	OPCODE(0x4d, o_lockRoom);
+	OPCODE(0x4e, o_putActorAtObject);
+	OPCODE(0x4f, o2_clearState02);
+	/* 50 */
+	OPCODE(0x50, o_nop);
+	OPCODE(0x51, o_animateActor);
+	OPCODE(0x52, o5_actorFollowCamera);
+	OPCODE(0x53, o_lockSound);
+	/* 54 */
+	OPCODE(0x54, o_setObjectName);
+	OPCODE(0x55, o5_walkActorToActor);
+	OPCODE(0x56, o_getActorMoving);
+	OPCODE(0x57, o_clearState08);
+	/* 58 */
+	OPCODE(0x58, o_beginOverride);
+	OPCODE(0x59, o_stopCurrentScript);
+	OPCODE(0x5a, o2_add);
+	OPCODE(0x5b, o_getActorBitVar);
+	/* 5C */
+	OPCODE(0x5c, o5_startSound);
+	OPCODE(0x5d, o_setBitVar);
+	OPCODE(0x5e, o2_walkActorTo);
+	OPCODE(0x5f, o2_ifState04);
+	/* 60 */
+	OPCODE(0x60, o_cursorCommand);
+	OPCODE(0x61, o2_putActor);
+	OPCODE(0x62, o2_stopScript);
+	OPCODE(0x63, o_stopCurrentScript);
+	/* 64 */
+	OPCODE(0x64, o_ifActiveObject);
+	OPCODE(0x65, o_stopCurrentScript);
+	OPCODE(0x66, o_getClosestObjActor);
+	OPCODE(0x67, o5_getActorFacing);
+	/* 68 */
+	OPCODE(0x68, o5_isScriptRunning);
+	OPCODE(0x69, o_setOwnerOf);
+	OPCODE(0x6a, o_stopCurrentScript);
+	OPCODE(0x6b, o_setActorBitVar);
+	/* 6C */
+	OPCODE(0x6c, o_stopCurrentScript);
+	OPCODE(0x6d, o2_putActorInRoom);
+	OPCODE(0x6e, o2_dummy);
+	OPCODE(0x6f, o2_ifState08);
+	/* 70 */
+	OPCODE(0x70, o_lights);
+	OPCODE(0x71, o_getBitVar);
+	OPCODE(0x72, o_nop);
+	OPCODE(0x73, o5_getObjectOwner);
+	/* 74 */
+	OPCODE(0x74, o5_getDist);
+	OPCODE(0x75, o_printEgo_c64);
+	OPCODE(0x76, o2_walkActorToObject);
+	OPCODE(0x77, o2_clearState04);
+	/* 78 */
+	OPCODE(0x78, o_isGreater);
+	OPCODE(0x79, o_stopCurrentScript);
+	OPCODE(0x7a, o_stopCurrentScript);
+	OPCODE(0x7b, o_stopCurrentScript);
+	/* 7C */
+	OPCODE(0x7c, o5_isSoundRunning);
+	OPCODE(0x7d, o_setBitVar);
+	OPCODE(0x7e, o2_walkActorTo);
+	OPCODE(0x7f, o2_ifNotState02);
+	/* 80 */
+	OPCODE(0x80, o_stopCurrentScript);
+	OPCODE(0x81, o2_putActor);
+	OPCODE(0x82, o_stopCurrentScript);
+	OPCODE(0x83, o_doSentence);
+	/* 84 */
+	OPCODE(0x84, o_isGreaterEqual);
+	OPCODE(0x85, o_stopCurrentScript);
+	OPCODE(0x86, o_nop);
+	OPCODE(0x87, o5_getActorRoom);
+	/* 88 */
+	OPCODE(0x88, o_isNotEqual);
+	OPCODE(0x89, o_stopCurrentScript);
+	OPCODE(0x8a, o_stopCurrentScript);
+	OPCODE(0x8b, o_setActorBitVar);
+	/* 8C */
+	OPCODE(0x8c, o_loadSound);
+	OPCODE(0x8d, o_stopCurrentScript);
+	OPCODE(0x8e, o_putActorAtObject);
+	OPCODE(0x8f, o2_setState02);
+	/* 90 */
+	OPCODE(0x90, o_pickupObject);
+	OPCODE(0x91, o_animateActor);
+	OPCODE(0x92, o2_panCameraTo);
+	OPCODE(0x93, o_unlockCostume);
+	/* 94 */
+	OPCODE(0x94, o5_print);
+	OPCODE(0x95, o2_actorFromPos);
+	OPCODE(0x96, o_stopCurrentScript);
+	OPCODE(0x97, o_setState08);
+	/* 98 */
+	OPCODE(0x98, o2_restart);
+	OPCODE(0x99, o_stopCurrentScript);
+	OPCODE(0x9a, o5_move);
+	OPCODE(0x9b, o_getActorBitVar);
+	/* 9C */
+	OPCODE(0x9c, o5_startSound);
+	OPCODE(0x9d, o_setBitVar);
+	OPCODE(0x9e, o2_walkActorTo);
+	OPCODE(0x9f, o2_ifNotState04);
+	/* A0 */
+	OPCODE(0xa0, o5_stopObjectCode);
+	OPCODE(0xa1, o2_putActor);
+	OPCODE(0xa2, o5_saveLoadGame);
+	OPCODE(0xa3, o_stopCurrentScript);
+	/* A4 */
+	OPCODE(0xa4, o_unknown2);
+	OPCODE(0xa5, o5_loadRoom);
+	OPCODE(0xa6, o_stopCurrentScript);
+	OPCODE(0xa7, o2_getActorY);
+	/* A8 */
+	OPCODE(0xa8, o_notEqualZero);
+	OPCODE(0xa9, o_setOwnerOf);
+	OPCODE(0xaa, o_stopCurrentScript);
+	OPCODE(0xab, o_setActorBitVar);
+	/* AC */
+	OPCODE(0xac, o_stopCurrentScript);
+	OPCODE(0xad, o2_putActorInRoom);
+	OPCODE(0xae, o_print_c64);
+	OPCODE(0xaf, o2_ifNotState08);
+	/* B0 */
+	OPCODE(0xb0, o_loadCostume);
+	OPCODE(0xb1, o_getBitVar);
+	OPCODE(0xb2, o2_setCameraAt);
+	OPCODE(0xb3, o_unlockScript);
+	/* B4 */
+	OPCODE(0xb4, o5_getDist);
+	OPCODE(0xb5, o_stopCurrentScript);
+	OPCODE(0xb6, o2_walkActorToObject);
+	OPCODE(0xb7, o2_setState04);
+	/* B8 */
+	OPCODE(0xb8, o_isLessEqual);
+	OPCODE(0xb9, o_stopCurrentScript);
+	OPCODE(0xba, o2_subtract);
+	OPCODE(0xbb, o_stopCurrentScript);
+	/* BC */
+	OPCODE(0xbc, o5_stopSound);
+	OPCODE(0xbd, o_setBitVar);
+	OPCODE(0xbe, o2_walkActorTo);
+	OPCODE(0xbf, o2_ifNotState02);
+	/* C0 */
+	OPCODE(0xc0, o_endCutscene);
+	OPCODE(0xc1, o2_putActor);
+	OPCODE(0xc2, o2_startScript);
+	OPCODE(0xc3, o_doSentence);
+	/* C4 */
+	OPCODE(0xc4, o_isLess);
+	OPCODE(0xc5, o_stopCurrentScript);
+	OPCODE(0xc6, o5_decrement);
+	OPCODE(0xc7, o2_getActorX);
+	/* C8 */
+	OPCODE(0xc8, o_isEqual);
+	OPCODE(0xc9, o_stopCurrentScript);
+	OPCODE(0xca, o_loadRoom);
+	OPCODE(0xcb, o_setActorBitVar);
+	/* CC */
+	OPCODE(0xcc, o_loadScript);
+	OPCODE(0xcd, o_unlockRoom);
+	OPCODE(0xce, o_putActorAtObject);
+	OPCODE(0xcf, o2_setState02);
+	/* D0 */
+	OPCODE(0xd0, o_nop);
+	OPCODE(0xd1, o_animateActor);
+	OPCODE(0xd2, o5_actorFollowCamera);
+	OPCODE(0xd3, o_unlockSound);
+	/* D4 */
+	OPCODE(0xd4, o_setObjectName);
+	OPCODE(0xd5, o2_actorFromPos);
+	OPCODE(0xd6, o_getActorMoving);
+	OPCODE(0xd7, o_setState08);
+	/* D8 */
+	OPCODE(0xd8, o_stopCurrentScript);
+	OPCODE(0xd9, o_stopCurrentScript);
+	OPCODE(0xda, o2_add);
+	OPCODE(0xdb, o_getActorBitVar);
+	/* DC */
+	OPCODE(0xdc, o5_startSound);
+	OPCODE(0xdd, o_setBitVar);
+	OPCODE(0xde, o2_walkActorTo);
+	OPCODE(0xdf, o2_ifNotState04);
+	/* E0 */
+	OPCODE(0xe0, o_cursorCommand);
+	OPCODE(0xe1, o2_putActor);
+	OPCODE(0xe2, o2_stopScript);
+	OPCODE(0xe3, o_stopCurrentScript);
+	/* E4 */
+	OPCODE(0xe4, o_ifActiveObject);
+	OPCODE(0xe5, o_loadRoomWithEgo);
+	OPCODE(0xe6, o_stopCurrentScript);
+	OPCODE(0xe7, o5_getActorFacing);
+	/* E8 */
+	OPCODE(0xe8, o5_isScriptRunning);
+	OPCODE(0xe9, o_setOwnerOf);
+	OPCODE(0xea, o_stopCurrentScript);
+	OPCODE(0xeb, o_setActorBitVar);
+	/* EC */
+	OPCODE(0xec, o_stopCurrentScript);
+	OPCODE(0xed, o2_putActorInRoom);
+	OPCODE(0xee, o2_dummy);
+	OPCODE(0xef, o2_ifNotState08);
+	/* F0 */
+	OPCODE(0xf0, o_lights);
+	OPCODE(0xf1, o_getBitVar);
+	OPCODE(0xf2, o_nop);
+	OPCODE(0xf3, o5_getObjectOwner);
+	/* F4 */
+	OPCODE(0xf4, o5_getDist);
+	OPCODE(0xf5, o_stopCurrentScript);
+	OPCODE(0xf6, o2_walkActorToObject);
+	OPCODE(0xf7, o2_setState04);
+	/* F8 */
+	OPCODE(0xf8, o_isGreater);
+	OPCODE(0xf9, o_stopCurrentScript);
+	OPCODE(0xfa, o_stopCurrentScript);
+	OPCODE(0xfb, o_stopCurrentScript);
+	/* FC */
+	OPCODE(0xfc, o5_isSoundRunning);
+	OPCODE(0xfd, o_setBitVar);
+	OPCODE(0xfe, o2_walkActorTo);
+	OPCODE(0xff, o2_ifState02);
 }
 
 #define SENTENCE_SCRIPT 2
@@ -368,21 +363,12 @@ void ScummEngine_v0::setupOpcodes() {
 #define PARAM_2 0x40
 #define PARAM_3 0x20
 
-void ScummEngine_v0::executeOpcode(byte i) {
-	OpcodeProcC64 op = _opcodesC64[i].proc;
-	(this->*op) ();
-}
-
 int ScummEngine_v0::getVarOrDirectWord(byte mask) {
 	return getVarOrDirectByte(mask);
 }
 
 uint ScummEngine_v0::fetchScriptWord() {
 	return fetchScriptByte();
-}
-
-const char *ScummEngine_v0::getOpcodeDesc(byte i) {
-	return _opcodesC64[i].desc;
 }
 
 int ScummEngine_v0::getObjectFlag() {

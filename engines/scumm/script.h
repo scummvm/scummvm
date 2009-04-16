@@ -26,9 +26,39 @@
 #ifndef SCUMM_SCRIPT_H
 #define SCUMM_SCRIPT_H
 
-#include "engines/engine.h"
+#include "common/func.h"
 
 namespace Scumm {
+
+
+typedef Common::Functor0<void> Opcode;
+
+struct OpcodeEntry : Common::NonCopyable {
+	Opcode *proc;
+	const char *desc;
+
+	OpcodeEntry() : proc(0), desc(0) {}
+	~OpcodeEntry() {
+		setProc(0, 0);
+	}
+
+	void setProc(Opcode *p, const char *d) {
+		if (proc != p) {
+			delete proc;
+			proc = p;
+		}
+		desc = d;
+	}
+};
+
+
+// This is to help devices with small memory (PDA, smartphones, ...)
+// to save abit of memory used by opcode names in the Scumm engine.
+#ifndef REDUCE_MEMORY_USAGE
+#	define _OPCODE(ver, x)	setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
+#else
+#	define _OPCODE(ver, x)	setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
+#endif
 
 /**
  * The number of script slots, which determines the maximal number

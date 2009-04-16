@@ -32,12 +32,6 @@ namespace Scumm {
 
 class ScummEngine_v6 : public ScummEngine {
 protected:
-	typedef void (ScummEngine_v6::*OpcodeProcV6)();
-	struct OpcodeEntryV6 {
-		OpcodeProcV6 proc;
-		const char *desc;
-	};
-
 	enum ArrayType {
 		kBitArray = 1,
 		kNibbleArray = 2,
@@ -57,8 +51,6 @@ protected:
 	} PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
-
-	const OpcodeEntryV6 *_opcodesV6;
 
 	struct TextObject {
 		int16 xpos, ypos;
@@ -109,8 +101,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);

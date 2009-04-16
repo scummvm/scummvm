@@ -40,342 +40,329 @@
 
 namespace Scumm {
 
-#define OPCODE(x)	_OPCODE(ScummEngine_v100he, x)
+#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v100he, x)
 
 void ScummEngine_v100he::setupOpcodes() {
-	static const OpcodeEntryV100he opcodes[256] = {
-		/* 00 */
-		OPCODE(o100_actorOps),
-		OPCODE(o6_add),
-		OPCODE(o6_faceActor),
-		OPCODE(o90_sortArray),
-		/* 04 */
-		OPCODE(o100_arrayOps),
-		OPCODE(o6_band),
-		OPCODE(o6_bor),
-		OPCODE(o6_breakHere),
-		/* 08 */
-		OPCODE(o6_delayFrames),
-		OPCODE(o90_shl),
-		OPCODE(o90_shr),
-		OPCODE(o90_xor),
-		/* 0C */
-		OPCODE(o6_setCameraAt),
-		OPCODE(o6_actorFollowCamera),
-		OPCODE(o6_loadRoom),
-		OPCODE(o6_panCameraTo),
-		/* 10 */
-		OPCODE(o72_captureWizImage),
-		OPCODE(o100_jumpToScript),
-		OPCODE(o6_setClass),
-		OPCODE(o60_closeFile),
-		/* 14 */
-		OPCODE(o6_loadRoomWithEgo),
-		OPCODE(o6_invalid),
-		OPCODE(o72_createDirectory),
-		OPCODE(o100_createSound),
-		/* 18 */
-		OPCODE(o6_cutscene),
-		OPCODE(o6_pop),
-		OPCODE(o72_traceStatus),
-		OPCODE(o6_wordVarDec),
-		/* 1C */
-		OPCODE(o6_wordArrayDec),
-		OPCODE(o72_deleteFile),
-		OPCODE(o100_dim2dimArray),
-		OPCODE(o100_dimArray),
-		/* 20 */
-		OPCODE(o6_div),
-		OPCODE(o6_animateActor),
-		OPCODE(o6_doSentence),
-		OPCODE(o6_drawBox),
-		/* 24 */
-		OPCODE(o72_drawWizImage),
-		OPCODE(o80_drawWizPolygon),
-		OPCODE(o100_drawLine),
-		OPCODE(o100_drawObject),
-		/* 28 */
-		OPCODE(o6_dup),
-		OPCODE(o90_dup_n),
-		OPCODE(o6_endCutscene),
-		OPCODE(o6_stopObjectCode),
-		/* 2C */
-		OPCODE(o6_stopObjectCode),
-		OPCODE(o6_eq),
-		OPCODE(o100_floodFill),
-		OPCODE(o6_freezeUnfreeze),
-		/* 30 */
-		OPCODE(o6_ge),
-		OPCODE(o6_getDateTime),
-		OPCODE(o100_setSpriteGroupInfo),
-		OPCODE(o6_gt),
-		/* 34 */
-		OPCODE(o100_resourceRoutines),
-		OPCODE(o6_if),
-		OPCODE(o6_ifNot),
-		OPCODE(o100_wizImageOps),
-		/* 38 */
-		OPCODE(o72_isAnyOf),
-		OPCODE(o6_wordVarInc),
-		OPCODE(o6_wordArrayInc),
-		OPCODE(o6_jump),
-		/* 3C */
-		OPCODE(o90_kernelSetFunctions),
-		OPCODE(o6_land),
-		OPCODE(o6_le),
-		OPCODE(o60_localizeArrayToScript),
-		/* 40 */
-		OPCODE(o6_wordArrayRead),
-		OPCODE(o6_wordArrayIndexedRead),
-		OPCODE(o6_lor),
-		OPCODE(o6_lt),
-		/* 44 */
-		OPCODE(o90_mod),
-		OPCODE(o6_mul),
-		OPCODE(o6_neq),
-		OPCODE(o100_dim2dim2Array),
-		/* 48 */
-		OPCODE(o6_invalid),
-		OPCODE(o100_redim2dimArray),
-		OPCODE(o6_not),
-		OPCODE(o6_invalid),
-		/* 4C */
-		OPCODE(o6_beginOverride),
-		OPCODE(o6_endOverride),
-		OPCODE(o72_resetCutscene),
-		OPCODE(o6_setOwner),
-		/* 50 */
-		OPCODE(o100_paletteOps),
-		OPCODE(o70_pickupObject),
-		OPCODE(o71_polygonOps),
-		OPCODE(o6_pop),
-		/* 54 */
-		OPCODE(o6_printDebug),
-		OPCODE(o72_printWizImage),
-		OPCODE(o6_printLine),
-		OPCODE(o6_printSystem),
-		/* 58 */
-		OPCODE(o6_printText),
-		OPCODE(o100_jumpToScriptUnk),
-		OPCODE(o100_startScriptUnk),
-		OPCODE(o6_pseudoRoom),
-		/* 5C */
-		OPCODE(o6_pushByte),
-		OPCODE(o72_pushDWord),
-		OPCODE(o72_getScriptString),
-		OPCODE(o6_pushWord),
-		/* 60 */
-		OPCODE(o6_pushWordVar),
-		OPCODE(o6_putActorAtObject),
-		OPCODE(o6_putActorAtXY),
-		OPCODE(o6_invalid),
-		/* 64 */
-		OPCODE(o100_redimArray),
-		OPCODE(o72_rename),
-		OPCODE(o6_stopObjectCode),
-		OPCODE(o80_localizeArrayToRoom),
-		/* 68 */
-		OPCODE(o100_roomOps),
-		OPCODE(o6_printActor),
-		OPCODE(o6_printEgo),
-		OPCODE(o72_talkActor),
-		/* 6C */
-		OPCODE(o72_talkEgo),
-		OPCODE(o6_invalid),
-		OPCODE(o60_seekFilePos),
-		OPCODE(o6_setBoxFlags),
-		/* 70 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_setBoxSet),
-		OPCODE(o100_setSystemMessage),
-		OPCODE(o6_shuffle),
-		/* 74 */
-		OPCODE(o6_delay),
-		OPCODE(o6_delayMinutes),
-		OPCODE(o6_delaySeconds),
-		OPCODE(o100_startSound),
-		/* 78 */
-		OPCODE(o80_sourceDebug),
-		OPCODE(o100_setSpriteInfo),
-		OPCODE(o6_stampObject),
-		OPCODE(o72_startObject),
-		/* 7C */
-		OPCODE(o100_startScript),
-		OPCODE(o6_startScriptQuick),
-		OPCODE(o80_setState),
-		OPCODE(o6_stopObjectScript),
-		/* 80 */
-		OPCODE(o6_stopScript),
-		OPCODE(o6_stopSentence),
-		OPCODE(o6_stopSound),
-		OPCODE(o6_stopTalking),
-		/* 84 */
-		OPCODE(o6_writeWordVar),
-		OPCODE(o6_wordArrayWrite),
-		OPCODE(o6_wordArrayIndexedWrite),
-		OPCODE(o6_sub),
-		/* 88 */
-		OPCODE(o100_systemOps),
-		OPCODE(o6_invalid),
-		OPCODE(o72_setTimer),
-		OPCODE(o100_cursorCommand),
-		/* 8C */
-		OPCODE(o100_videoOps),
-		OPCODE(o100_wait),
-		OPCODE(o6_walkActorToObj),
-		OPCODE(o6_walkActorTo),
-		/* 90 */
-		OPCODE(o100_writeFile),
-		OPCODE(o72_writeINI),
-		OPCODE(o80_writeConfigFile),
-		OPCODE(o6_abs),
-		/* 94 */
-		OPCODE(o6_getActorWalkBox),
-		OPCODE(o6_getActorCostume),
-		OPCODE(o6_getActorElevation),
-		OPCODE(o6_getObjectOldDir),
-		/* 98 */
-		OPCODE(o6_getActorMoving),
-		OPCODE(o90_getActorData),
-		OPCODE(o6_getActorRoom),
-		OPCODE(o6_getActorScaleX),
-		/* 9C */
-		OPCODE(o6_getAnimateVariable),
-		OPCODE(o6_getActorWidth),
-		OPCODE(o6_getObjectX),
-		OPCODE(o6_getObjectY),
-		/* A0 */
-		OPCODE(o90_atan2),
-		OPCODE(o90_getSegmentAngle),
-		OPCODE(o90_getActorAnimProgress),
-		OPCODE(o90_getDistanceBetweenPoints),
-		/* A4 */
-		OPCODE(o6_ifClassOfIs),
-		OPCODE(o6_invalid),
-		OPCODE(o90_cond),
-		OPCODE(o90_cos),
-		/* A8 */
-		OPCODE(o100_debugInput),
-		OPCODE(o80_getFileSize),
-		OPCODE(o6_getActorFromXY),
-		OPCODE(o72_findAllObjects),
-		/* AC */
-		OPCODE(o90_findAllObjectsWithClassOf),
-		OPCODE(o71_findBox),
-		OPCODE(o6_findInventory),
-		OPCODE(o72_findObject),
-		/* B0 */
-		OPCODE(o72_findObjectWithClassOf),
-		OPCODE(o71_polygonHit),
-		OPCODE(o90_getLinesIntersectionPoint),
-		OPCODE(o90_fontUnk),
-		/* B4 */
-		OPCODE(o72_getNumFreeArrays),
-		OPCODE(o72_getArrayDimSize),
-		OPCODE(o100_isResourceLoaded),
-		OPCODE(o100_getResourceSize),
-		/* B8 */
-		OPCODE(o100_getSpriteGroupInfo),
-		OPCODE(o6_invalid),
-		OPCODE(o100_getWizData),
-		OPCODE(o6_isActorInBox),
-		/* BC */
-		OPCODE(o6_isAnyOf),
-		OPCODE(o6_getInventoryCount),
-		OPCODE(o90_kernelGetFunctions),
-		OPCODE(o90_max),
-		/* C0 */
-		OPCODE(o90_min),
-		OPCODE(o72_getObjectImageX),
-		OPCODE(o72_getObjectImageY),
-		OPCODE(o6_isRoomScriptRunning),
-		/* C4 */
-		OPCODE(o90_getObjectData),
-		OPCODE(o72_openFile),
-		OPCODE(o90_getPolygonOverlap),
-		OPCODE(o6_getOwner),
-		/* C8 */
-		OPCODE(o100_getPaletteData),
-		OPCODE(o6_pickOneOf),
-		OPCODE(o6_pickOneOfDefault),
-		OPCODE(o80_pickVarRandom),
-		/* CC */
-		OPCODE(o72_getPixel),
-		OPCODE(o6_distObjectObject),
-		OPCODE(o6_distObjectPt),
-		OPCODE(o6_distPtPt),
-		/* D0 */
-		OPCODE(o6_getRandomNumber),
-		OPCODE(o6_getRandomNumberRange),
-		OPCODE(o6_invalid),
-		OPCODE(o100_readFile),
-		/* D4 */
-		OPCODE(o72_readINI),
-		OPCODE(o80_readConfigFile),
-		OPCODE(o6_isScriptRunning),
-		OPCODE(o90_sin),
-		/* D8 */
-		OPCODE(o72_getSoundPosition),
-		OPCODE(o6_isSoundRunning),
-		OPCODE(o80_getSoundVar),
-		OPCODE(o100_getSpriteInfo),
-		/* DC */
-		OPCODE(o90_sqrt),
-		OPCODE(o6_startObjectQuick),
-		OPCODE(o6_startScriptQuick2),
-		OPCODE(o6_getState),
-		/* E0 */
-		OPCODE(o71_compareString),
-		OPCODE(o71_copyString),
-		OPCODE(o71_appendString),
-		OPCODE(o71_concatString),
-		/* E4 */
-		OPCODE(o70_getStringLen),
-		OPCODE(o71_getStringLenForWidth),
-		OPCODE(o80_stringToInt),
-		OPCODE(o71_getCharIndexInString),
-		/* E8 */
-		OPCODE(o71_getStringWidth),
-		OPCODE(o60_readFilePos),
-		OPCODE(o72_getTimer),
-		OPCODE(o6_getVerbEntrypoint),
-		/* EC */
-		OPCODE(o100_getVideoData),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		/* F0 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		/* F4 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		/* F8 */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		/* FC */
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-		OPCODE(o6_invalid),
-	};
-
-	_opcodesV100he = opcodes;
-}
-
-void ScummEngine_v100he::executeOpcode(byte i) {
-	OpcodeProcV100he op = _opcodesV100he[i].proc;
-	(this->*op) ();
-}
-
-const char *ScummEngine_v100he::getOpcodeDesc(byte i) {
-	return _opcodesV100he[i].desc;
+	/* 00 */
+	OPCODE(0x00, o100_actorOps);
+	OPCODE(0x01, o6_add);
+	OPCODE(0x02, o6_faceActor);
+	OPCODE(0x03, o90_sortArray);
+	/* 04 */
+	OPCODE(0x04, o100_arrayOps);
+	OPCODE(0x05, o6_band);
+	OPCODE(0x06, o6_bor);
+	OPCODE(0x07, o6_breakHere);
+	/* 08 */
+	OPCODE(0x08, o6_delayFrames);
+	OPCODE(0x09, o90_shl);
+	OPCODE(0x0a, o90_shr);
+	OPCODE(0x0b, o90_xor);
+	/* 0C */
+	OPCODE(0x0c, o6_setCameraAt);
+	OPCODE(0x0d, o6_actorFollowCamera);
+	OPCODE(0x0e, o6_loadRoom);
+	OPCODE(0x0f, o6_panCameraTo);
+	/* 10 */
+	OPCODE(0x10, o72_captureWizImage);
+	OPCODE(0x11, o100_jumpToScript);
+	OPCODE(0x12, o6_setClass);
+	OPCODE(0x13, o60_closeFile);
+	/* 14 */
+	OPCODE(0x14, o6_loadRoomWithEgo);
+	OPCODE(0x15, o6_invalid);
+	OPCODE(0x16, o72_createDirectory);
+	OPCODE(0x17, o100_createSound);
+	/* 18 */
+	OPCODE(0x18, o6_cutscene);
+	OPCODE(0x19, o6_pop);
+	OPCODE(0x1a, o72_traceStatus);
+	OPCODE(0x1b, o6_wordVarDec);
+	/* 1C */
+	OPCODE(0x1c, o6_wordArrayDec);
+	OPCODE(0x1d, o72_deleteFile);
+	OPCODE(0x1e, o100_dim2dimArray);
+	OPCODE(0x1f, o100_dimArray);
+	/* 20 */
+	OPCODE(0x20, o6_div);
+	OPCODE(0x21, o6_animateActor);
+	OPCODE(0x22, o6_doSentence);
+	OPCODE(0x23, o6_drawBox);
+	/* 24 */
+	OPCODE(0x24, o72_drawWizImage);
+	OPCODE(0x25, o80_drawWizPolygon);
+	OPCODE(0x26, o100_drawLine);
+	OPCODE(0x27, o100_drawObject);
+	/* 28 */
+	OPCODE(0x28, o6_dup);
+	OPCODE(0x29, o90_dup_n);
+	OPCODE(0x2a, o6_endCutscene);
+	OPCODE(0x2b, o6_stopObjectCode);
+	/* 2C */
+	OPCODE(0x2c, o6_stopObjectCode);
+	OPCODE(0x2d, o6_eq);
+	OPCODE(0x2e, o100_floodFill);
+	OPCODE(0x2f, o6_freezeUnfreeze);
+	/* 30 */
+	OPCODE(0x30, o6_ge);
+	OPCODE(0x31, o6_getDateTime);
+	OPCODE(0x32, o100_setSpriteGroupInfo);
+	OPCODE(0x33, o6_gt);
+	/* 34 */
+	OPCODE(0x34, o100_resourceRoutines);
+	OPCODE(0x35, o6_if);
+	OPCODE(0x36, o6_ifNot);
+	OPCODE(0x37, o100_wizImageOps);
+	/* 38 */
+	OPCODE(0x38, o72_isAnyOf);
+	OPCODE(0x39, o6_wordVarInc);
+	OPCODE(0x3a, o6_wordArrayInc);
+	OPCODE(0x3b, o6_jump);
+	/* 3C */
+	OPCODE(0x3c, o90_kernelSetFunctions);
+	OPCODE(0x3d, o6_land);
+	OPCODE(0x3e, o6_le);
+	OPCODE(0x3f, o60_localizeArrayToScript);
+	/* 40 */
+	OPCODE(0x40, o6_wordArrayRead);
+	OPCODE(0x41, o6_wordArrayIndexedRead);
+	OPCODE(0x42, o6_lor);
+	OPCODE(0x43, o6_lt);
+	/* 44 */
+	OPCODE(0x44, o90_mod);
+	OPCODE(0x45, o6_mul);
+	OPCODE(0x46, o6_neq);
+	OPCODE(0x47, o100_dim2dim2Array);
+	/* 48 */
+	OPCODE(0x48, o6_invalid);
+	OPCODE(0x49, o100_redim2dimArray);
+	OPCODE(0x4a, o6_not);
+	OPCODE(0x4b, o6_invalid);
+	/* 4C */
+	OPCODE(0x4c, o6_beginOverride);
+	OPCODE(0x4d, o6_endOverride);
+	OPCODE(0x4e, o72_resetCutscene);
+	OPCODE(0x4f, o6_setOwner);
+	/* 50 */
+	OPCODE(0x50, o100_paletteOps);
+	OPCODE(0x51, o70_pickupObject);
+	OPCODE(0x52, o71_polygonOps);
+	OPCODE(0x53, o6_pop);
+	/* 54 */
+	OPCODE(0x54, o6_printDebug);
+	OPCODE(0x55, o72_printWizImage);
+	OPCODE(0x56, o6_printLine);
+	OPCODE(0x57, o6_printSystem);
+	/* 58 */
+	OPCODE(0x58, o6_printText);
+	OPCODE(0x59, o100_jumpToScriptUnk);
+	OPCODE(0x5a, o100_startScriptUnk);
+	OPCODE(0x5b, o6_pseudoRoom);
+	/* 5C */
+	OPCODE(0x5c, o6_pushByte);
+	OPCODE(0x5d, o72_pushDWord);
+	OPCODE(0x5e, o72_getScriptString);
+	OPCODE(0x5f, o6_pushWord);
+	/* 60 */
+	OPCODE(0x60, o6_pushWordVar);
+	OPCODE(0x61, o6_putActorAtObject);
+	OPCODE(0x62, o6_putActorAtXY);
+	OPCODE(0x63, o6_invalid);
+	/* 64 */
+	OPCODE(0x64, o100_redimArray);
+	OPCODE(0x65, o72_rename);
+	OPCODE(0x66, o6_stopObjectCode);
+	OPCODE(0x67, o80_localizeArrayToRoom);
+	/* 68 */
+	OPCODE(0x68, o100_roomOps);
+	OPCODE(0x69, o6_printActor);
+	OPCODE(0x6a, o6_printEgo);
+	OPCODE(0x6b, o72_talkActor);
+	/* 6C */
+	OPCODE(0x6c, o72_talkEgo);
+	OPCODE(0x6d, o6_invalid);
+	OPCODE(0x6e, o60_seekFilePos);
+	OPCODE(0x6f, o6_setBoxFlags);
+	/* 70 */
+	OPCODE(0x70, o6_invalid);
+	OPCODE(0x71, o6_setBoxSet);
+	OPCODE(0x72, o100_setSystemMessage);
+	OPCODE(0x73, o6_shuffle);
+	/* 74 */
+	OPCODE(0x74, o6_delay);
+	OPCODE(0x75, o6_delayMinutes);
+	OPCODE(0x76, o6_delaySeconds);
+	OPCODE(0x77, o100_startSound);
+	/* 78 */
+	OPCODE(0x78, o80_sourceDebug);
+	OPCODE(0x79, o100_setSpriteInfo);
+	OPCODE(0x7a, o6_stampObject);
+	OPCODE(0x7b, o72_startObject);
+	/* 7C */
+	OPCODE(0x7c, o100_startScript);
+	OPCODE(0x7d, o6_startScriptQuick);
+	OPCODE(0x7e, o80_setState);
+	OPCODE(0x7f, o6_stopObjectScript);
+	/* 80 */
+	OPCODE(0x80, o6_stopScript);
+	OPCODE(0x81, o6_stopSentence);
+	OPCODE(0x82, o6_stopSound);
+	OPCODE(0x83, o6_stopTalking);
+	/* 84 */
+	OPCODE(0x84, o6_writeWordVar);
+	OPCODE(0x85, o6_wordArrayWrite);
+	OPCODE(0x86, o6_wordArrayIndexedWrite);
+	OPCODE(0x87, o6_sub);
+	/* 88 */
+	OPCODE(0x88, o100_systemOps);
+	OPCODE(0x89, o6_invalid);
+	OPCODE(0x8a, o72_setTimer);
+	OPCODE(0x8b, o100_cursorCommand);
+	/* 8C */
+	OPCODE(0x8c, o100_videoOps);
+	OPCODE(0x8d, o100_wait);
+	OPCODE(0x8e, o6_walkActorToObj);
+	OPCODE(0x8f, o6_walkActorTo);
+	/* 90 */
+	OPCODE(0x90, o100_writeFile);
+	OPCODE(0x91, o72_writeINI);
+	OPCODE(0x92, o80_writeConfigFile);
+	OPCODE(0x93, o6_abs);
+	/* 94 */
+	OPCODE(0x94, o6_getActorWalkBox);
+	OPCODE(0x95, o6_getActorCostume);
+	OPCODE(0x96, o6_getActorElevation);
+	OPCODE(0x97, o6_getObjectOldDir);
+	/* 98 */
+	OPCODE(0x98, o6_getActorMoving);
+	OPCODE(0x99, o90_getActorData);
+	OPCODE(0x9a, o6_getActorRoom);
+	OPCODE(0x9b, o6_getActorScaleX);
+	/* 9C */
+	OPCODE(0x9c, o6_getAnimateVariable);
+	OPCODE(0x9d, o6_getActorWidth);
+	OPCODE(0x9e, o6_getObjectX);
+	OPCODE(0x9f, o6_getObjectY);
+	/* A0 */
+	OPCODE(0xa0, o90_atan2);
+	OPCODE(0xa1, o90_getSegmentAngle);
+	OPCODE(0xa2, o90_getActorAnimProgress);
+	OPCODE(0xa3, o90_getDistanceBetweenPoints);
+	/* A4 */
+	OPCODE(0xa4, o6_ifClassOfIs);
+	OPCODE(0xa5, o6_invalid);
+	OPCODE(0xa6, o90_cond);
+	OPCODE(0xa7, o90_cos);
+	/* A8 */
+	OPCODE(0xa8, o100_debugInput);
+	OPCODE(0xa9, o80_getFileSize);
+	OPCODE(0xaa, o6_getActorFromXY);
+	OPCODE(0xab, o72_findAllObjects);
+	/* AC */
+	OPCODE(0xac, o90_findAllObjectsWithClassOf);
+	OPCODE(0xad, o71_findBox);
+	OPCODE(0xae, o6_findInventory);
+	OPCODE(0xaf, o72_findObject);
+	/* B0 */
+	OPCODE(0xb0, o72_findObjectWithClassOf);
+	OPCODE(0xb1, o71_polygonHit);
+	OPCODE(0xb2, o90_getLinesIntersectionPoint);
+	OPCODE(0xb3, o90_fontUnk);
+	/* B4 */
+	OPCODE(0xb4, o72_getNumFreeArrays);
+	OPCODE(0xb5, o72_getArrayDimSize);
+	OPCODE(0xb6, o100_isResourceLoaded);
+	OPCODE(0xb7, o100_getResourceSize);
+	/* B8 */
+	OPCODE(0xb8, o100_getSpriteGroupInfo);
+	OPCODE(0xb9, o6_invalid);
+	OPCODE(0xba, o100_getWizData);
+	OPCODE(0xbb, o6_isActorInBox);
+	/* BC */
+	OPCODE(0xbc, o6_isAnyOf);
+	OPCODE(0xbd, o6_getInventoryCount);
+	OPCODE(0xbe, o90_kernelGetFunctions);
+	OPCODE(0xbf, o90_max);
+	/* C0 */
+	OPCODE(0xc0, o90_min);
+	OPCODE(0xc1, o72_getObjectImageX);
+	OPCODE(0xc2, o72_getObjectImageY);
+	OPCODE(0xc3, o6_isRoomScriptRunning);
+	/* C4 */
+	OPCODE(0xc4, o90_getObjectData);
+	OPCODE(0xc5, o72_openFile);
+	OPCODE(0xc6, o90_getPolygonOverlap);
+	OPCODE(0xc7, o6_getOwner);
+	/* C8 */
+	OPCODE(0xc8, o100_getPaletteData);
+	OPCODE(0xc9, o6_pickOneOf);
+	OPCODE(0xca, o6_pickOneOfDefault);
+	OPCODE(0xcb, o80_pickVarRandom);
+	/* CC */
+	OPCODE(0xcc, o72_getPixel);
+	OPCODE(0xcd, o6_distObjectObject);
+	OPCODE(0xce, o6_distObjectPt);
+	OPCODE(0xcf, o6_distPtPt);
+	/* D0 */
+	OPCODE(0xd0, o6_getRandomNumber);
+	OPCODE(0xd1, o6_getRandomNumberRange);
+	OPCODE(0xd2, o6_invalid);
+	OPCODE(0xd3, o100_readFile);
+	/* D4 */
+	OPCODE(0xd4, o72_readINI);
+	OPCODE(0xd5, o80_readConfigFile);
+	OPCODE(0xd6, o6_isScriptRunning);
+	OPCODE(0xd7, o90_sin);
+	/* D8 */
+	OPCODE(0xd8, o72_getSoundPosition);
+	OPCODE(0xd9, o6_isSoundRunning);
+	OPCODE(0xda, o80_getSoundVar);
+	OPCODE(0xdb, o100_getSpriteInfo);
+	/* DC */
+	OPCODE(0xdc, o90_sqrt);
+	OPCODE(0xdd, o6_startObjectQuick);
+	OPCODE(0xde, o6_startScriptQuick2);
+	OPCODE(0xdf, o6_getState);
+	/* E0 */
+	OPCODE(0xe0, o71_compareString);
+	OPCODE(0xe1, o71_copyString);
+	OPCODE(0xe2, o71_appendString);
+	OPCODE(0xe3, o71_concatString);
+	/* E4 */
+	OPCODE(0xe4, o70_getStringLen);
+	OPCODE(0xe5, o71_getStringLenForWidth);
+	OPCODE(0xe6, o80_stringToInt);
+	OPCODE(0xe7, o71_getCharIndexInString);
+	/* E8 */
+	OPCODE(0xe8, o71_getStringWidth);
+	OPCODE(0xe9, o60_readFilePos);
+	OPCODE(0xea, o72_getTimer);
+	OPCODE(0xeb, o6_getVerbEntrypoint);
+	/* EC */
+	OPCODE(0xec, o100_getVideoData);
+	OPCODE(0xed, o6_invalid);
+	OPCODE(0xee, o6_invalid);
+	OPCODE(0xef, o6_invalid);
+	/* F0 */
+	OPCODE(0xf0, o6_invalid);
+	OPCODE(0xf1, o6_invalid);
+	OPCODE(0xf2, o6_invalid);
+	OPCODE(0xf3, o6_invalid);
+	/* F4 */
+	OPCODE(0xf4, o6_invalid);
+	OPCODE(0xf5, o6_invalid);
+	OPCODE(0xf6, o6_invalid);
+	OPCODE(0xf7, o6_invalid);
+	/* F8 */
+	OPCODE(0xf8, o6_invalid);
+	OPCODE(0xf9, o6_invalid);
+	OPCODE(0xfa, o6_invalid);
+	OPCODE(0xfb, o6_invalid);
+	/* FC */
+	OPCODE(0xfc, o6_invalid);
+	OPCODE(0xfd, o6_invalid);
+	OPCODE(0xfe, o6_invalid);
+	OPCODE(0xff, o6_invalid);
 }
 
 void ScummEngine_v100he::o100_actorOps() {

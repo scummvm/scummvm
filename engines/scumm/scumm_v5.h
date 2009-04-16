@@ -32,14 +32,6 @@ namespace Scumm {
 
 class ScummEngine_v5 : public ScummEngine {
 protected:
-	typedef void (ScummEngine_v5::*OpcodeProcV5)();
-	struct OpcodeEntryV5 {
-		OpcodeProcV5 proc;
-		const char *desc;
-	};
-
-	const OpcodeEntryV5 *_opcodesV5;
-
 	uint16 _cursorImages[4][17];
 	byte _cursorHotspots[2 * 4];
 
@@ -61,8 +53,6 @@ public:
 
 protected:
 	virtual void setupOpcodes();
-	virtual void executeOpcode(byte i);
-	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void scummLoop_handleActors();
 	virtual void scummLoop_handleSaveLoad();
