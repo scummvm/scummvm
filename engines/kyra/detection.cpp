@@ -326,6 +326,52 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
+	{ // Kyra 1 Mac CD as mentioned in fr #2766454 "KYRA1: Add support for Macintosh CD" by nnooiissee
+		{
+			"kyra1",
+			"CD",
+			{
+				{ "GEMCUT.PAK", 0, "d3d4b281cd357230aabcec46843d04bd", -1 },
+				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_CD
+		},
+		KYRA1_CD_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"CD",
+			{
+				{ "GEMCUT.PAK", 0, "4a0cb720e824295bcbccbd1407652110", -1 },
+				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformMacintosh,
+			ADGF_CD
+		},
+		KYRA1_CD_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"CD",
+			{
+				{ "GEMCUT.PAK", 0, "b71ee090aa12e80ed2ba068826d92bed", -1 },
+				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_CD
+		},
+		KYRA1_CD_FLAGS
+	},
+
 	{
 		{
 			"kyra1",

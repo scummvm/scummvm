@@ -1292,7 +1292,9 @@ void KyraEngine_LoK::initStaticResource() {
 	static const char *tIntro98[] = { "intro%d.dat" };
 	static const char *tIngame98[] = { "kyram%d.dat" };
 
-	if (_flags.platform == Common::kPlatformPC) {
+	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
+	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
+	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
 		_soundData[0]._fileList = _soundFilesIntro;
 		_soundData[0]._fileListLen = _soundFilesIntroSize;
 		_soundData[0]._cdaTracks = 0;
