@@ -37,7 +37,6 @@
 #include "common/events.h"
 #include "common/util.h"
 
-#include "common/debug.h"
 #include "common/file.h"
 #include "base/main.h"
 
@@ -377,22 +376,6 @@ void OSystem_GP2X::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	}
 #endif
 
-#if defined(MACOSX) || defined(IPHONE)
-	// Get URL of the Resource directory of the .app bundle
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			// Success: Add it to the search path
-			Common::String bundlePath((const char *)buf);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
-		}
-		CFRelease(fileUrl);
-	}
-
-#endif
-
 }
 
 static Common::String getDefaultConfigFileName() {
@@ -401,14 +384,14 @@ static Common::String getDefaultConfigFileName() {
 	return configFile;
 }
 
-Common::SeekableReadStream *OSystem_GP2X::createConfigReadStream() {
+Common::SeekableReadStream *OSystem_GP2X::openConfigFileForReading() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
+	return file.openForReading();
 }
 
-Common::WriteStream *OSystem_GP2X::createConfigWriteStream() {
+Common::WriteStream *OSystem_GP2X::openConfigFileForWriting() {
 	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
+	return file.openForWriting();
 }
 
 bool OSystem_GP2X::hasFeature(Feature f) {
