@@ -149,7 +149,7 @@ endif
 
 ifdef DS_BUILD_H
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
-	LOGO = logog.bmp
+	LOGO = logoh.bmp
 	ENABLE_PARALLACTION = STATIC_PLUGIN
 	BUILD=scummvm-H
 endif
