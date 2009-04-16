@@ -337,7 +337,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_CD
+			Common::ADGF_CD
 		},
 		KYRA1_CD_FLAGS
 	},
@@ -352,7 +352,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
-			ADGF_CD
+			Common::ADGF_CD
 		},
 		KYRA1_CD_FLAGS
 	},
@@ -367,7 +367,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
-			ADGF_CD
+			Common::ADGF_CD
 		},
 		KYRA1_CD_FLAGS
 	},
