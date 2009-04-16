@@ -232,7 +232,6 @@ void ScummEngine_v6::setupOpcodes() {
 	OPCODE(0xbb, o6_talkEgo);
 	/* BC */
 	OPCODE(0xbc, o6_dimArray);
-	OPCODE(0xbd, o6_dummy);
 	OPCODE(0xbe, o6_startObjectQuick);
 	OPCODE(0xbf, o6_startScriptQuick2);
 	/* C0 */
@@ -272,10 +271,6 @@ void ScummEngine_v6::setupOpcodes() {
 	/* EC */
 	OPCODE(0xec, o6_getActorLayer);
 	OPCODE(0xed, o6_getObjectNewDir);
-	/* F0 */
-	/* F4 */
-	/* F8 */
-	/* FC */
 }
 
 int ScummEngine_v6::popRoomAndObj(int *room) {
@@ -2357,9 +2352,6 @@ void ScummEngine_v6::o6_dimArray() {
 }
 
 void ScummEngine_v6::o6_dummy() {
-	if (_game.heversion >= 60) {
-		stopObjectCode();
-	}
 }
 
 void ScummEngine_v6::o6_dim2dimArray() {
