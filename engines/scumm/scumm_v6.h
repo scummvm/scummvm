@@ -167,7 +167,6 @@ protected:
 	void o6_pushWord();
 	void o6_pushByteVar();
 	void o6_pushWordVar();
-	void o6_invalid();
 	void o6_byteArrayRead();
 	void o6_wordArrayRead();
 	void o6_byteArrayIndexedRead();

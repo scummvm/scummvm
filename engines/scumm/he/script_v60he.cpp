@@ -72,13 +72,9 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0x02, o6_pushByteVar);
 	OPCODE(0x03, o6_pushWordVar);
 	/* 04 */
-	OPCODE(0x04, o6_invalid);
-	OPCODE(0x05, o6_invalid);
 	OPCODE(0x06, o6_byteArrayRead);
 	OPCODE(0x07, o6_wordArrayRead);
 	/* 08 */
-	OPCODE(0x08, o6_invalid);
-	OPCODE(0x09, o6_invalid);
 	OPCODE(0x0a, o6_byteArrayIndexedRead);
 	OPCODE(0x0b, o6_wordArrayIndexedRead);
 	/* 0C */
@@ -100,85 +96,34 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0x18, o6_land);
 	OPCODE(0x19, o6_lor);
 	OPCODE(0x1a, o6_pop);
-	OPCODE(0x1b, o6_invalid);
 	/* 1C */
-	OPCODE(0x1c, o6_invalid);
-	OPCODE(0x1d, o6_invalid);
-	OPCODE(0x1e, o6_invalid);
-	OPCODE(0x1f, o6_invalid);
 	/* 20 */
-	OPCODE(0x20, o6_invalid);
-	OPCODE(0x21, o6_invalid);
-	OPCODE(0x22, o6_invalid);
-	OPCODE(0x23, o6_invalid);
 	/* 24 */
-	OPCODE(0x24, o6_invalid);
-	OPCODE(0x25, o6_invalid);
-	OPCODE(0x26, o6_invalid);
-	OPCODE(0x27, o6_invalid);
 	/* 28 */
-	OPCODE(0x28, o6_invalid);
-	OPCODE(0x29, o6_invalid);
-	OPCODE(0x2a, o6_invalid);
-	OPCODE(0x2b, o6_invalid);
 	/* 2C */
-	OPCODE(0x2c, o6_invalid);
-	OPCODE(0x2d, o6_invalid);
-	OPCODE(0x2e, o6_invalid);
-	OPCODE(0x2f, o6_invalid);
 	/* 30 */
-	OPCODE(0x30, o6_invalid);
-	OPCODE(0x31, o6_invalid);
-	OPCODE(0x32, o6_invalid);
-	OPCODE(0x33, o6_invalid);
 	/* 34 */
-	OPCODE(0x34, o6_invalid);
-	OPCODE(0x35, o6_invalid);
-	OPCODE(0x36, o6_invalid);
-	OPCODE(0x37, o6_invalid);
 	/* 38 */
-	OPCODE(0x38, o6_invalid);
-	OPCODE(0x39, o6_invalid);
-	OPCODE(0x3a, o6_invalid);
-	OPCODE(0x3b, o6_invalid);
 	/* 3C */
-	OPCODE(0x3c, o6_invalid);
-	OPCODE(0x3d, o6_invalid);
-	OPCODE(0x3e, o6_invalid);
-	OPCODE(0x3f, o6_invalid);
 	/* 40 */
-	OPCODE(0x40, o6_invalid);
-	OPCODE(0x41, o6_invalid);
 	OPCODE(0x42, o6_writeByteVar);
 	OPCODE(0x43, o6_writeWordVar);
 	/* 44 */
-	OPCODE(0x44, o6_invalid);
-	OPCODE(0x45, o6_invalid);
 	OPCODE(0x46, o6_byteArrayWrite);
 	OPCODE(0x47, o6_wordArrayWrite);
 	/* 48 */
-	OPCODE(0x48, o6_invalid);
-	OPCODE(0x49, o6_invalid);
 	OPCODE(0x4a, o6_byteArrayIndexedWrite);
 	OPCODE(0x4b, o6_wordArrayIndexedWrite);
 	/* 4C */
-	OPCODE(0x4c, o6_invalid);
-	OPCODE(0x4d, o6_invalid);
 	OPCODE(0x4e, o6_byteVarInc);
 	OPCODE(0x4f, o6_wordVarInc);
 	/* 50 */
-	OPCODE(0x50, o6_invalid);
-	OPCODE(0x51, o6_invalid);
 	OPCODE(0x52, o6_byteArrayInc);
 	OPCODE(0x53, o6_wordArrayInc);
 	/* 54 */
-	OPCODE(0x54, o6_invalid);
-	OPCODE(0x55, o6_invalid);
 	OPCODE(0x56, o6_byteVarDec);
 	OPCODE(0x57, o6_wordVarDec);
 	/* 58 */
-	OPCODE(0x58, o6_invalid);
-	OPCODE(0x59, o6_invalid);
 	OPCODE(0x5a, o6_byteArrayDec);
 	OPCODE(0x5b, o6_wordArrayDec);
 	/* 5C */
@@ -190,9 +135,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0x60, o6_startObject);
 	OPCODE(0x61, o6_drawObject);
 	OPCODE(0x62, o6_drawObjectAt);
-	OPCODE(0x63, o6_invalid);
 	/* 64 */
-	OPCODE(0x64, o6_invalid);
 	OPCODE(0x65, o6_stopObjectCode);
 	OPCODE(0x66, o6_stopObjectCode);
 	OPCODE(0x67, o6_endCutscene);
@@ -234,11 +177,9 @@ void ScummEngine_v60he::setupOpcodes() {
 	/* 84 */
 	OPCODE(0x84, o6_pickupObject);
 	OPCODE(0x85, o6_loadRoomWithEgo);
-	OPCODE(0x86, o6_invalid);
 	OPCODE(0x87, o6_getRandomNumber);
 	/* 88 */
 	OPCODE(0x88, o6_getRandomNumberRange);
-	OPCODE(0x89, o6_invalid);
 	OPCODE(0x8a, o6_getActorMoving);
 	OPCODE(0x8b, o6_isScriptRunning);
 	/* 8C */
@@ -259,7 +200,6 @@ void ScummEngine_v60he::setupOpcodes() {
 	/* 98 */
 	OPCODE(0x98, o6_isSoundRunning);
 	OPCODE(0x99, o6_setBoxFlags);
-	OPCODE(0x9a, o6_invalid);
 	OPCODE(0x9b, o6_resourceRoutines);
 	/* 9C */
 	OPCODE(0x9c, o60_roomOps);
@@ -282,7 +222,6 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0xaa, o6_getActorScaleX);
 	OPCODE(0xab, o6_getActorAnimCounter);
 	/* AC */
-	OPCODE(0xac, o6_invalid);
 	OPCODE(0xad, o6_isAnyOf);
 	OPCODE(0xae, o6_systemOps);
 	OPCODE(0xaf, o6_isActorInBox);
@@ -308,9 +247,6 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0xbf, o6_startScriptQuick2);
 	/* C0 */
 	OPCODE(0xc0, o6_dim2dimArray);
-	OPCODE(0xc1, o6_invalid);
-	OPCODE(0xc2, o6_invalid);
-	OPCODE(0xc3, o6_invalid);
 	/* C4 */
 	OPCODE(0xc4, o6_abs);
 	OPCODE(0xc5, o6_distObjectObject);
@@ -324,13 +260,10 @@ void ScummEngine_v60he::setupOpcodes() {
 	/* CC */
 	OPCODE(0xcc, o6_pickOneOfDefault);
 	OPCODE(0xcd, o6_stampObject);
-	OPCODE(0xce, o6_invalid);
-	OPCODE(0xcf, o6_invalid);
 	/* D0 */
 	OPCODE(0xd0, o6_getDateTime);
 	OPCODE(0xd1, o6_stopTalking);
 	OPCODE(0xd2, o6_getAnimateVariable);
-	OPCODE(0xd3, o6_invalid);
 	/* D4 */
 	OPCODE(0xd4, o6_shuffle);
 	OPCODE(0xd5, o6_jumpToScript);
@@ -353,39 +286,15 @@ void ScummEngine_v60he::setupOpcodes() {
 	OPCODE(0xe3, o6_pickVarRandom);
 	/* E4 */
 	OPCODE(0xe4, o6_setBoxSet);
-	OPCODE(0xe5, o6_invalid);
-	OPCODE(0xe6, o6_invalid);
-	OPCODE(0xe7, o6_invalid);
 	/* E8 */
-	OPCODE(0xe8, o6_invalid);
 	OPCODE(0xe9, o60_seekFilePos);
 	OPCODE(0xea, o60_redimArray);
 	OPCODE(0xeb, o60_readFilePos);
 	/* EC */
-	OPCODE(0xec, o6_invalid);
-	OPCODE(0xed, o6_invalid);
-	OPCODE(0xee, o6_invalid);
-	OPCODE(0xef, o6_invalid);
 	/* F0 */
-	OPCODE(0xf0, o6_invalid);
-	OPCODE(0xf1, o6_invalid);
-	OPCODE(0xf2, o6_invalid);
-	OPCODE(0xf3, o6_invalid);
 	/* F4 */
-	OPCODE(0xf4, o6_invalid);
-	OPCODE(0xf5, o6_invalid);
-	OPCODE(0xf6, o6_invalid);
-	OPCODE(0xf7, o6_invalid);
 	/* F8 */
-	OPCODE(0xf8, o6_invalid);
-	OPCODE(0xf9, o6_invalid);
-	OPCODE(0xfa, o6_invalid);
-	OPCODE(0xfb, o6_invalid);
 	/* FC */
-	OPCODE(0xfc, o6_invalid);
-	OPCODE(0xfd, o6_invalid);
-	OPCODE(0xfe, o6_invalid);
-	OPCODE(0xff, o6_invalid);
 }
 
 int ScummEngine_v60he::convertFilePath(byte *dst) {

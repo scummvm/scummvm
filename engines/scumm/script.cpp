@@ -445,14 +445,14 @@ void ScummEngine::getScriptEntryPoint() {
 	_scriptPointer = _scriptOrgPointer + vm.slot[_currentScript].offs;
 }
 
-/* Execute a script - Read opcode, and execute it from the table */
+/** Execute a script - Read opcode, and execute it from the table */
 void ScummEngine::executeScript() {
 	int c;
 	while (_currentScript != 0xFF) {
 
 		if (_showStack == 1) {
 			printf("Stack:");
-			for (c=0; c < _scummStackPos; c++) {
+			for (c = 0; c < _scummStackPos; c++) {
 				printf(" %d", _vmStack[c]);
 			}
 			printf("\n");
@@ -466,7 +466,7 @@ void ScummEngine::executeScript() {
 				_opcode,
 				getOpcodeDesc(_opcode));
 		if (_hexdumpScripts == true) {
-			for (c= -1; c < 15; c++) {
+			for (c = -1; c < 15; c++) {
 				printf(" %02x", *(_scriptPointer + c));
 			}
 			printf("\n");
@@ -478,8 +478,11 @@ void ScummEngine::executeScript() {
 }
 
 void ScummEngine::executeOpcode(byte i) {
-	assert(_opcodes[i].proc && _opcodes[i].proc->isValid());
-	(*_opcodes[i].proc)();
+	if (_opcodes[i].proc && _opcodes[i].proc->isValid())
+		(*_opcodes[i].proc)();
+	else {
+		error("Invalid opcode '%x' at %lx", i, (long)(_scriptPointer - _scriptOrgPointer));
+	}
 }
 
 const char *ScummEngine::getOpcodeDesc(byte i) {
