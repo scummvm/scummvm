@@ -183,6 +183,10 @@ public:
 	FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
+
+	Common::SeekableReadStream* openConfigFileForReading();
+	Common::WriteStream* openConfigFileForWriting();
+
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

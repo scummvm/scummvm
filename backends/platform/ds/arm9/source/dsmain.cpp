@@ -2925,7 +2925,7 @@ void powerOff() {
 void dsExceptionHandler() {
 	consolePrintf("Blue screen of death");
 	setExceptionHandler(NULL);
-	while(1);
+//	while(1);
 
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
@@ -3064,7 +3064,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.13.1 beta2 ");
+	consolePrintf("Version 0.13.1 beta3 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -3217,26 +3217,9 @@ int main(void) {
 //	printf("'%s'", Common::ConfigManager::kTransientDomain.c_str());
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
 
-#if defined(DS_BUILD_A)
-	const char *argv[] = {"/scummvmds"};
-#elif defined(DS_BUILD_B)
-	const char *argv[] = {"/scummvmds", "--config=scummvmb.ini"};
-#elif defined(DS_BUILD_C)
-	const char *argv[] = {"/scummvmds", "--config=scummvmc.ini"};
-#elif defined(DS_BUILD_D)
-	const char *argv[] = {"/scummvmds", "--config=scummvmd.ini"};
-#elif defined(DS_BUILD_E)
-	const char *argv[] = {"/scummvmds", "--config=scummvme.ini"};
-#elif defined(DS_BUILD_F)
-	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
-#elif defined(DS_BUILD_G)
-	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
-#elif defined(DS_BUILD_H)
-	const char *argv[] = {"/scummvmds", "--config=scummvmh.ini"};
-#endif
 
 	while (1) {
-		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
+		scummvm_main(0, NULL);
 		powerOff();
 	}
 

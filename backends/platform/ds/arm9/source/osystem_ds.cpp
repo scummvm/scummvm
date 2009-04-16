@@ -38,6 +38,26 @@
 #include "touchkeyboard.h"
 #include "backends/fs/ds/ds-fs-factory.h"
 
+
+#if defined(DS_BUILD_A)
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#elif defined(DS_BUILD_B)
+#define DEFAULT_CONFIG_FILE "scummvmb.ini"
+#elif defined(DS_BUILD_C)
+#define DEFAULT_CONFIG_FILE "scummvmc.ini"
+#elif defined(DS_BUILD_D)
+#define DEFAULT_CONFIG_FILE "scummvmd.ini"
+#elif defined(DS_BUILD_E)
+#define DEFAULT_CONFIG_FILE "scummvme.ini"
+#elif defined(DS_BUILD_F)
+#define DEFAULT_CONFIG_FILE "scummvmf.ini"
+#elif defined(DS_BUILD_G)
+#define DEFAULT_CONFIG_FILE "scummvmg.ini"
+#elif defined(DS_BUILD_H)
+#define DEFAULT_CONFIG_FILE "scummvmh.ini"
+#endif
+
+
 OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
@@ -769,5 +789,15 @@ OSystem *OSystem_DS_create() {
 	return new OSystem_DS();
 }
 
+
+Common::SeekableReadStream *OSystem_DS::openConfigFileForReading() {
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+	return file.openForReading();
+}
+
+Common::WriteStream *OSystem_DS::openConfigFileForWriting() {
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+	return file.openForWriting();
+}
 
 
