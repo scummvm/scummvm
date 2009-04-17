@@ -448,10 +448,9 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-  begin_section("ScummVM-Residual Team:");
+  begin_section("Residual Team:");
 	  begin_persons();
-		  add_person("James Brown", "ender", "Core developer. ScummVM co-lead dev");
-		  add_person("Erich Hoover", "Compholio", "x86-64, various fixes and comments, menu support, improved state support");
+		  add_person("James Brown", "ender", "Core developer");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer. SMUSH, iMUSE implemention");
 	  end_persons();
   end_section();
@@ -464,9 +463,10 @@ begin_credits("Credits");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
 		  add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support");
 		  add_person("Marcus Comstedt", "", "Dreamcast port");
-		  add_person("Andrea Corna", "Yak Bizzarro", "Improved font support");
+		  add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
 		  add_person("Jonathan Gray", "khalek", "Various code fixes");
 		  add_person("Vincent Hamm", "yazoo", "Various engine code");
+		  add_person("Erich Hoover", "Compholio", "x86-64, various fixes and comments, menu support, improved state support");
 		  add_person("Travis Howell", "Kirben", "Various code fixes, Windows daily builds");
 		  add_person("Joost Peters", "joostp", "Various code fixes");
 		  add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");

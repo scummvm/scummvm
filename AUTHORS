@@ -1,8 +1,6 @@
-ScummVM-Residual Team:
-**********************
-   James Brown           - Core developer.
-   Erich Hoover          - x86-64, various fixes and comments, menu support,
-                           improved state support
+Residual Team:
+**************
+   James Brown           - Core developer
    Pawel Kolodziejski    - Core developer. SMUSH, iMUSE implemention
 
 Contributors:
@@ -16,6 +14,8 @@ Contributors:
    Andrea Corna          - Improved font support, patch extractor
    Jonathan Gray         - Various code fixes
    Vincent Hamm          - Various engine code
+   Erich Hoover          - x86-64, various fixes and comments, menu support,
+                           improved state support
    Travis Howell         - Various code fixes, Windows daily builds
    Joost Peters          - Various code fixes
    Christian Neumair     - Various optimisation patches
