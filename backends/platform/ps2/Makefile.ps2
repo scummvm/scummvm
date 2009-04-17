@@ -53,7 +53,7 @@ VPATH = $(srcdir)
 INCDIR = ../../../
 # DEPDIR = .deps
 
-DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
+DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
