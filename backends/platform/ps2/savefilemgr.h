@@ -26,7 +26,7 @@
 #ifndef __SAVEFILEMGR_H__
 #define __SAVEFILEMGR_H__
 
-// #include "common/savefile.h"
+#include "common/savefile.h"
 #include "backends/saves/default/default-saves.h"
 
 class Gs2dScreen;
