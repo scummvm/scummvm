@@ -45,11 +45,14 @@ class DSTimerManager : public DefaultTimerManager {
 
 class OSystem_DS : public OSystem {
 protected:
+	static const int MAX_EVENTS = 96;
 
 	int eventNum;
 	int lastPenFrame;
 
-	Common::Event eventQueue[96];
+	bool mouseMoveReceived;
+
+	Common::Event eventQueue[MAX_EVENTS];
 	int queuePos;
 
 #ifdef GBA_SRAM_SAVE

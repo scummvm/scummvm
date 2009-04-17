@@ -62,7 +62,7 @@ OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false),
-	_disableCursorPalette(true), _graphicsEnable(true)
+	_disableCursorPalette(true), _graphicsEnable(true), mouseMoveReceived(false)
 {
 //	eventNum = 0;
 //	lastPenFrame = 0;
@@ -528,12 +528,39 @@ void OSystem_DS::refreshCursor() {
 }
 
 void OSystem_DS::addEvent(Common::Event& e) {
-	eventQueue[queuePos++] = e;
+
+#ifdef DS_BUILD_F
+	// FIXME: Hack for Kyra 1 long pauses
+	// only allow one MOUSEMOVE event in the queue
+	// every 35 milliseconds.
+
+	static int timer = 0;
+
+	if (timer != DS::getMillis() / 35) {
+		mouseMoveReceived = false;
+	}
+
+	timer = DS::getMillis() / 35;
+
+	if (e.type == Common::EVENT_MOUSEMOVE) {
+		if (!mouseMoveReceived) {
+			mouseMoveReceived = true;
+		} else {
+			// Return without adding the event to the queue
+			return;
+		}
+	}
+#endif
+
+	// Ignore events once our queue is full
+	if (queuePos < MAX_EVENTS) {
+		eventQueue[queuePos++] = e;
+	}
+
 }
 
 bool OSystem_DS::pollEvent(Common::Event &event) {
 
-	if (lastPenFrame != DS::getMillis()) {
 
 		if (eventNum == queuePos) {
 			eventNum = 0;
@@ -544,6 +571,8 @@ bool OSystem_DS::pollEvent(Common::Event &event) {
 			event.kbd.ascii = 0;
 			event.kbd.keycode = Common::KEYCODE_INVALID;
 			event.kbd.flags = 0;
+
+
 //			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
@@ -551,7 +580,6 @@ bool OSystem_DS::pollEvent(Common::Event &event) {
 //			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
-	}
 
 	return false;
 
