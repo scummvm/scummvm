@@ -183,7 +183,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
 **             (gfxr_pic0_params_t *) style: The drawing style
 **             (int) resid: The resource ID
 **             (int) sci1: Nonzero if SCI1
-**             (gfx_pixmap_color_t *) static_pal: The static palette
+**             (Palette *) static_pal: The static palette
 **             (int) static_pal_nr: Number of entries in static palette
 ** Returns   : (void)
 ** The result is stored in gfxr_visual_map, gfxr_priority_map, and gfxr_control_map.
@@ -203,7 +203,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
 **             (byte *) resource: Pointer to the resource data
 **             (gfxr_pic0_params_t *) style: The drawing style
 **             (int) resid: The resource ID
-**             (gfx_pixmap_color_t *) static_pal: The static palette
+**             (Palette *) static_pal: The static palette
 **             (int) static_pal_nr: Number of entries in static palette
 ** Returns   : (void)
 ** The result is stored in gfxr_visual_map, gfxr_priority_map, and gfxr_control_map.
@@ -259,7 +259,7 @@ Palette *gfxr_read_pal1(int id, byte *resource, int size);
 **                                will be stored in
 **             (byte *) resource: Source data
 **             (int) size: Size of the memory block pointed to by resource
-** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
+** Returns   : (Palette *) *colors_nr Palette with the colors
 */
 
 Palette *gfxr_read_pal1_amiga(Common::File &file);
@@ -267,7 +267,7 @@ Palette *gfxr_read_pal1_amiga(Common::File &file);
 ** Parameters: (int *) colors_nr: Pointer to the variable the number of colors
 **                                will be stored in
 **             (FILE *) f: Palette file
-** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
+** Returns   : (Palette *) Palette with the colors
 */
 
 Palette *gfxr_read_pal11(int id, byte *resource, int size);
@@ -277,7 +277,7 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size);
 **                                will be stored in
 **             (byte *) resource: Source data
 **             (int) size: Size of the memory block pointed to by resource
-** Returns   : (gfx_pixmap_color_t *) *colors_nr color_t entries with the colors
+** Returns   : (Palette *) Palette with the colors
 */
 
 gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal);
@@ -285,7 +285,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 ** Parameters: (int) id: Resource ID of the view
 **             (byte *) resource: Pointer to the resource to read
 **             (int) size: Size of the resource
-**             (gfx_pixmap_color_t *) static_pal: The static palette
+**             (Palette *) static_pal: The static palette
 **             (int) static_pal_nr: Number of entries in static palette
 ** Returns   : (gfxr_view_t *) The resulting view
 */

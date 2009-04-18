@@ -190,22 +190,6 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 ** linear access.
 */
 
-//int gfx_alloc_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
-/* Allocates a color entry for the specified pixmap color
-** Parameters: (gfx_palette_t *) pal: The palette structure the color should be allocated in
-**             (gfx_pixmap_color_t *) color: The color to allocate
-** Returns   : (int) GFX_ERROR if any error occured, GFX_OK if the color could be mapped to an
-**                   existing color or a positive value if a new color was allocated in the
-**                   palette.
-*/
-
-//int gfx_free_color(gfx_palette_t *pal, gfx_pixmap_color_t *color);
-/* Frees the color entry allocated for the specified pixmap color
-** Parameters: (gfx_palette_t *) pal: The palette structure the color was previously allocated in
-**             (gfx_pixmap_color_t *) color: The color to free
-** Returns   : (int) GFX_ERROR if any error occured, GFX_OK otherwise
-*/
-
 gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
 /* Scales the index data associated with a pixmap
 ** Parameters: (gfx_pixmap_t *) pixmap: The pixmap whose index data should be scaled

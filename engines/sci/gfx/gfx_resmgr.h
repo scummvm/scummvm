@@ -123,7 +123,7 @@ public:
 	/* Retrieves the static palette from the interpreter-specific code
 	** Parameters: (int *) colors_nr: Number of colors to use
 	**             (int) nr: The palette to read
-	** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
+	** Returns   : (Palette *) static palette
 	**             if a static palette must be used, NULL otherwise
 	*/
 	Palette *getPalette(int *colors_nr, int num = 999);
@@ -158,7 +158,7 @@ public:
 	**             (int) default_palette: The default palette to use for drawing (if applicable)
 	**             (bool) scaled: Whether to return the scaled maps, or the unscaled
 	**                           ones (which may be identical) for some special operations.
-	** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
+	** Returns   : (gfxr_pic_t *) The appropriate pic resource with all maps as index (but not
 	**                           neccessarily translated) data.
 	*/
 	gfxr_pic_t *getPic(int num, int maps, int flags, int default_palette, bool scaled = false);
@@ -171,7 +171,7 @@ public:
 	**             (int) default_palette: The default palette to use for drawing (if applicable)
 	**             (int) scaled: Whether to return the scaled maps, or the unscaled
 	**                           ones (which may be identical) for some special operations.
-	** Returns   : (gfx_pic_t *) The appropriate pic resource with all maps as index (but not
+	** Returns   : (gfxr_pic_t *) The appropriate pic resource with all maps as index (but not
 	**                           neccessarily translated) data.
 	** This function invalidates the cached pic pointed to by old_nr in the cache. While subsequent
 	** addToPic() writes will still modify the 'invalidated' pic, gfxr_get_pic() operations will
