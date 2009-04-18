@@ -89,7 +89,7 @@ _srcdir=`dirname $0`
 
 # Determine a tmp file name, using mktemp(1) when available.
 if type mktemp > /dev/null 2>&1 ; then
-	TMPO=`mktemp /tmp/scummvm-conf.XXXXXXXXXX`
+	TMPO=`mktemp /tmp/residual-conf.XXXXXXXXXX`
 else
 	TMPO=./residual-conf
 fi
@@ -268,7 +268,7 @@ Configuration:
 
 Installation directories:
   --prefix=DIR           use this prefix for installing Residual [/usr/local]
-  --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
+  --bindir=DIR           directory to install the residual binary in [PREFIX/bin]
   --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
   --datadir=DIR          directory to install the data files in [PREFIX/share]
   --libdir=DIR           directory to install the plugins in [PREFIX/lib]

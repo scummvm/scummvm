@@ -24,7 +24,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "Comments", "\0"
-            VALUE "CompanyName", "ScummVM-Residual\0"
+            VALUE "CompanyName", "Residual\0"
             VALUE "FileDescription", "http://www.scummvm.org/\0"
             VALUE "FileVersion", "0.0.6svn\0"
             VALUE "InternalName", "residual\0"

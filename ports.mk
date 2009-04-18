@@ -57,7 +57,7 @@ OSXOPT=/sw
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
-# Static libaries, used for the scummvm-static and iphone targets
+# Static libaries, used for the residual-static and iphone targets
 OSX_STATIC_LIBS := `$(STATICLIBPATH)/bin/sdl-config --static-libs`
 endif
 

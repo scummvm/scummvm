@@ -139,14 +139,6 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 	// Try to use game specific savepath from config
 	dir = ConfMan.get("savepath");
 
-	// Work around a bug (#999122) in the original 0.6.1 release of
-	// ScummVM, which would insert a bad savepath value into config files.
-	if (dir == "None") {
-		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
-		ConfMan.flushToDisk();
-		dir = ConfMan.get("savepath");
-	}
-
 #ifdef _WIN32_WCE
 	if (dir.empty())
 		dir = ConfMan.get("path");

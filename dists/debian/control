@@ -9,12 +9,8 @@ Package: residual
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: free implementation of LucasArts' LUA-based 3D adventures interpreter
- Residual is a ScummVM (http://www.scummvm.org/) sub-project to play
- LucasArts' LUA-based 3D adventures, such as Grim Fandango. Residual utilizes
- OpenGL for 3D graphics hardware acceleration.
+ Residual to allow play LucasArts' LUA-based 3D adventures, such as
+ Grim Fandango.
  .
+ Residual utilizes OpenGL for 3D graphics hardware acceleration.
  A software renderer is also included for machines without hardware OpenGL.
- .
- Residual is named such as it aims to do the same for the residual (remaining)
- games. It is also a word pun, as the engine used in these LUA-based adventure
- is called GrimE (as opposed to SCUMM). Grime is a type of residue.
