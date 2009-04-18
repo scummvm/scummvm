@@ -263,7 +263,7 @@ int playerMenu(int menuX, int menuY) {
 		case 6: // restart
 			break;
 		case 7: // exit
-			exit(0);
+			return 1;
 			break;
 		}
 	}
