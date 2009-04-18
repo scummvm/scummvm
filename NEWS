@@ -20,7 +20,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Dropped support for playing cutscene sound without the video.
 
-0.13.1 (2009-??-??)    
+0.13.1 (2009-04-27)    
  AGOS:
     - Fixed crashes when exploring Jack the Ripper scene in the PC version of
       the Waxworks
