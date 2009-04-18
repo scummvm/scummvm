@@ -549,6 +549,15 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 }
 
 void Screen::processImage(BuildUnit *build_unit) {
+
+	// We have some problematic animation frames in PSX demo (looks like there is missing data),
+	// so we just skip them.
+	if ( (Sword2Engine::isPsx() &&  _vm->_logic->readVar(DEMO)) &&
+		 ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) || 
+		 (build_unit->anim_resource == 296 && build_unit->anim_pc == 5)  ||
+		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)) ) 
+		return;
+
 	byte *file = _vm->_resman->openResource(build_unit->anim_resource);
 	byte *colTablePtr = NULL;
 
@@ -662,10 +671,10 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 	uint32 rv = drawSprite(&spriteInfo);
 	if (rv) {
-		error("Driver Error %.8x with sprite %s (%d) in processImage",
+		error("Driver Error %.8x with sprite %s (%d, %d) in processImage",
 			rv,
 			_vm->_resman->fetchName(build_unit->anim_resource),
-			build_unit->anim_resource);
+			build_unit->anim_resource, build_unit->anim_pc);
 	}
 
 	// release the anim resource

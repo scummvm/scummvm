@@ -69,6 +69,7 @@ static const GameSettings sword2_settings[] = {
 	{"sword2", "Broken Sword 2: The Smoking Mirror", 0, "players.clu" },
 	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
 	{"sword2psx", "Broken Sword 2: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
+	{"sword2psxdemo", "Broken Sword 2: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "rdemo.str"},
 	{"sword2demo", "Broken Sword 2: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, 0, NULL}
 };
@@ -264,13 +265,13 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("smacks"));
 
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo"))
+	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;
 
 	// Check if we are running PC or PSX version.
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx"))
+	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		Sword2Engine::_platform = Common::kPlatformPSX;
 	else
 		Sword2Engine::_platform = Common::kPlatformPC;

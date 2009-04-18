@@ -520,6 +520,7 @@ uint8 ResourceManager::fetchType(byte *ptr) {
 		} else  {            // In PSX version there is no resource header for audio files,
 			return WAV_FILE; // but hopefully all audio files got first 16 bytes zeroed,
 		}                    // Allowing us to check for this condition.
+							 // Alas, this doesn't work with PSX DEMO audio files.
 
 	}
 }
