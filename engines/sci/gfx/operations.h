@@ -386,7 +386,7 @@ int gfxop_set_pointer_position(gfx_state_t *state, Common::Point pos);
 */
 
 sci_event_t gfxop_get_event(gfx_state_t *state, unsigned int mask);
-/* Retreives the next input event from the driver
+/* Retrieves the next input event from the driver
 ** Parameters: (gfx_state_t *) state: The affected state
 **             (int) mask: The event mask to poll from (see uinput.h)
 ** Returns   : (sci_event_t) The next event in the driver's event queue, or
@@ -443,7 +443,7 @@ int gfxop_overflow_cel(gfx_state_t *state, int nr, int *loop, int *cel);
 
 int gfxop_get_cel_parameters(gfx_state_t *state, int nr, int loop, int cel,
 	int *width, int *height, Common::Point *offset);
-/* Retreives the width and height of a cel
+/* Retrieves the width and height of a cel
 ** Parameters: (gfx_state_t *) state: The state to use
 **             (int) nr: Number of the view
 **             (int) loop: Loop number to examine
@@ -516,7 +516,7 @@ int gfxop_new_pic(gfx_state_t *state, int nr, int flags, int default_palette);
 */
 
 int *gfxop_get_pic_metainfo(gfx_state_t *state);
-/* Retreives all meta-information assigned to the current pic
+/* Retrieves all meta-information assigned to the current pic
 ** Parameters: (gfx_state_t *) state: The state affected
 ** Returns   : (int *) NULL if the pic doesn't exist or has no meta-information,
 **             the meta-info otherwise

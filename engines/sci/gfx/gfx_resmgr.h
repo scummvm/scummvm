@@ -113,14 +113,14 @@ public:
 	void tagResources() { _tagLockCounter++; }
 
 
-	/* Retreives an SCI0/SCI01 mouse cursor
+	/* Retrieves an SCI0/SCI01 mouse cursor
 	** Parameters: (int) num: The cursor number
 	** Returns   : (gfx_font_t *) The approprate cursor as a pixmap, or NULL on error
 	*/
 	gfx_pixmap_t *getCursor(int num);
 
 
-	/* Retreives the static palette from the interpreter-specific code
+	/* Retrieves the static palette from the interpreter-specific code
 	** Parameters: (int *) colors_nr: Number of colors to use
 	**             (int) nr: The palette to read
 	** Returns   : (gfx_pixmap_color_t *) *colors_nr static color entries
@@ -129,7 +129,7 @@ public:
 	Palette *getPalette(int *colors_nr, int num = 999);
 
 
-	/* Retreives a font
+	/* Retrieves a font
 	** Parameters: (int) nr: The font number
 	**             (int) scaled: Whether the font should be font-scaled
 	** Returns   : (gfx_font_t *) The appropriate font, or NULL on error
@@ -137,7 +137,7 @@ public:
 	gfx_bitmap_font_t *getFont(int num, bool scaled = false);
 
 
-	/* Retreives a translated view cel
+	/* Retrieves a translated view cel
 	** Parameters: 
 	**             (int) nr: The view number
 	**             (int *) loop: Pointer to a variable containing the loop number
@@ -151,7 +151,7 @@ public:
 	gfxr_view_t *getView(int nr, int *loop, int *cel, int palette);
 
 
-	/* Retreives a displayable (translated) pic resource
+	/* Retrieves a displayable (translated) pic resource
 	** Parameters: (int) nr: Number of the pic resource
 	**             (int) maps: The maps to translate (ORred GFX_MASK_*)
 	**             (int) flags: Interpreter-dependant pic flags

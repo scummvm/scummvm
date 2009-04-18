@@ -811,7 +811,7 @@ const char *obj_get_name(EngineState *s, reg_t pos);
 */
 
 Object *obj_get(EngineState *s, reg_t offset);
-/* Retreives an object from the specified location
+/* Retrieves an object from the specified location
 ** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (reg_t) offset: The object's offset
 ** Returns   : (Object *) The object in question, or NULL if there is none
