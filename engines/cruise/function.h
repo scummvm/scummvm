@@ -35,6 +35,7 @@ int16 computeZoom(int param);
 int16 subOp23(int param1, int param2);
 void freeObjectList(cellStruct *pListHead);
 int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType);
+int16 Op_FadeOut(void);
 
 } // End of namespace Cruise
 

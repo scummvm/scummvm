@@ -261,6 +261,12 @@ int playerMenu(int menuX, int menuY) {
 			loadSavegameData(0);
 			break;
 		case 6: // restart
+			Op_FadeOut();
+			memset(globalScreen, 0, 320 * 200);
+			initVars();
+			initAllData();
+			changeCursor(CURSOR_NORMAL);
+			userEnabled = 0;
 			break;
 		case 7: // exit
 			return 1;

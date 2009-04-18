@@ -124,6 +124,7 @@ void closeAllMenu(void);
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle);
 void initBigVar3(void);
 void resetActorPtr(actorStruct *ptr);
+int initAllData(void);
 
 } // End of namespace Cruise
 
