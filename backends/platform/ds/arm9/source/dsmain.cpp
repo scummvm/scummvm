@@ -1249,9 +1249,16 @@ void setKeyboardEnable(bool en) {
 		}
 
 		// Restore the screens so they're the right way round
-		if (gameScreenSwap) {
-			POWER_CR |= POWER_SWAP_LCDS;
+		if (displayModeIs8Bit) {
+			// In 8-bit mode, detect whether the player has swapped the screens
+			// over, and restore that setting.
+			if (gameScreenSwap) {
+				POWER_CR |= POWER_SWAP_LCDS;
+			} else {
+				POWER_CR &= ~POWER_SWAP_LCDS;
+			}
 		} else {
+			// In 16-bit mode, main screen should always be on the bottom
 			POWER_CR &= ~POWER_SWAP_LCDS;
 		}
 	}
@@ -2000,19 +2007,14 @@ void VBlankHandler(void) {
 
 	frameCount++;
 
-	if ((cursorEnable) && (mouseCursorVisible)) {
+	if ((cursorEnable) && (mouseCursorVisible) && !(getKeysHeld() & KEY_L) && !(getKeysHeld() & KEY_R)) {
 		if (!keyboardEnable) {
 			storedMouseX = penX;
 			storedMouseY = penY;
 		}
 
-		if (gameScreenSwap) {
-			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
-			setIconMain(3, 0, 0, 0, 0, false);
-		} else {
-			setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
-			setIcon(3, 0, 0, 0, 0, false);
-		}
+		setIconMain(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
+		setIcon(3, 0, 0, 0, 0, false);
 	} else {
 		setIconMain(3, 0, 0, 0, 0, false);
 		setIcon(3, 0, 0, 0, 0, false);
