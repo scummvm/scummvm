@@ -207,4 +207,5 @@ protected:
 	bool handleEvent_secondMouseUp(Common::Event &event, int x, int y);
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
+	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);	
 };

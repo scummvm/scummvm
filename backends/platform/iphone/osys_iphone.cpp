@@ -731,20 +731,21 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			case kInputMouseDragged:
 				if (!handleEvent_mouseDragged(event, x, y))
 					return false;
+				break;				
+			case kInputMouseSecondDragged:
+				if (!handleEvent_mouseSecondDragged(event, x, y))
+					return false;
 				break;
-
-			case kInputMouseSecondToggled:
-				_secondaryTapped = !_secondaryTapped;
-				//printf("Mouse second at (%u, %u). State now %s.\n", x, y, _secondaryTapped ? "on" : "off");
-				if (_secondaryTapped) {
-					if (!handleEvent_secondMouseDown(event, x, y))
-						return false;
-				} else {
-					if (!handleEvent_secondMouseUp(event, x, y))
-						return false;
-				}
+			case kInputMouseSecondDown:
+				_secondaryTapped = true;
+				if (!handleEvent_secondMouseDown(event, x, y))
+					return false;				
 				break;
-
+			case kInputMouseSecondUp:
+				_secondaryTapped = false;
+				if (!handleEvent_secondMouseUp(event, x, y))
+					return false;				
+				break;				
 			case kInputOrientationChanged:
 				handleEvent_orientationChanged((int)xUnit);
 				return false;
@@ -894,101 +895,102 @@ bool OSystem_IPHONE::handleEvent_mouseDragged(Common::Event &event, int x, int y
 	_lastDragPosY = y;
 
 	//printf("Mouse dragged at (%u, %u)\n", x, y);
-	if (_secondaryTapped) {
-		 if (_gestureStartX == -1 || _gestureStartY == -1) {
-			return false;
-		 }
+	int mouseNewPosX;
+	int mouseNewPosY;
+	if (_touchpadModeEnabled ) {
+		int deltaX = _lastPadX - x;
+		int deltaY = _lastPadY - y;
+		_lastPadX = x;
+		_lastPadY = y;
+		
+		mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
+		mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
+		
+		if (mouseNewPosX < 0)
+			mouseNewPosX = 0;
+		else if (mouseNewPosX > _screenWidth)
+			mouseNewPosX = _screenWidth;
+		
+		if (mouseNewPosY < 0)
+			mouseNewPosY = 0;
+		else if (mouseNewPosY > _screenHeight)
+			mouseNewPosY = _screenHeight;
+		
+	} else {
+		mouseNewPosX = x;
+		mouseNewPosY = y;
+	}
+	
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse.x = mouseNewPosX;
+	event.mouse.y = mouseNewPosY;
+	warpMouse(mouseNewPosX, mouseNewPosY);
+	
+	return true;
+}
 
-		int vecX = (x - _gestureStartX);
-		int vecY = (y - _gestureStartY);
-		int lengthSq =  vecX * vecX + vecY * vecY;
-		//printf("Lengthsq: %u\n", lengthSq);
-
-		if (lengthSq > 15000) { // Long enough gesture to react upon.
-			_gestureStartX = -1;
-			_gestureStartY = -1;
-
-			float vecLength = sqrt(lengthSq);
-			float vecXNorm = vecX / vecLength;
-			float vecYNorm = vecY / vecLength;
-
-			//printf("Swipe vector: (%.2f, %.2f)\n", vecXNorm, vecYNorm);
-
-			if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm > 0.75) {
-				// Swipe down
-				event.type = Common::EVENT_KEYDOWN;
-				_queuedInputEvent.type = Common::EVENT_KEYUP;
-
-				event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-				event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
-				event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
-				_needEventRestPeriod = true;
-			} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
-				// Swipe up
-				_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
-				const char *dialogMsg;
-				if (_mouseClickAndDragEnabled) {
-					_touchpadModeEnabled = false;
-					dialogMsg = "Mouse-click-and-drag mode enabled.";
-				} else
-					dialogMsg = "Mouse-click-and-drag mode disabled.";
-				GUI::TimedMessageDialog dialog(dialogMsg, 1500);
-				dialog.runModal();
-				return false;
-
-			} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
-				// Swipe right
-				_touchpadModeEnabled = !_touchpadModeEnabled;
-				const char *dialogMsg;
-				if (_touchpadModeEnabled)
-					dialogMsg = "Touchpad mode enabled.";
-				else
-					dialogMsg = "Touchpad mode disabled.";
-				GUI::TimedMessageDialog dialog(dialogMsg, 1500);
-				dialog.runModal();
-				return false;
-
-			} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
-				// Swipe left
-				return false;
+bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x, int y) {
+	if (_gestureStartX == -1 || _gestureStartY == -1) {
+		return false;
+	}
+	
+	int vecX = (x - _gestureStartX);
+	int vecY = (y - _gestureStartY);
+	int lengthSq =  vecX * vecX + vecY * vecY;
+	//printf("Lengthsq: %u\n", lengthSq);
+	
+	if (lengthSq > 15000) { // Long enough gesture to react upon.
+		_gestureStartX = -1;
+		_gestureStartY = -1;
+		
+		float vecLength = sqrt(lengthSq);
+		float vecXNorm = vecX / vecLength;
+		float vecYNorm = vecY / vecLength;
+		
+		//printf("Swipe vector: (%.2f, %.2f)\n", vecXNorm, vecYNorm);
+		
+		if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm > 0.75) {
+			// Swipe down
+			event.type = Common::EVENT_KEYDOWN;
+			_queuedInputEvent.type = Common::EVENT_KEYUP;
+			
+			event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
+			_needEventRestPeriod = true;
+		} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
+			// Swipe up
+			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
+			const char *dialogMsg;
+			if (_mouseClickAndDragEnabled) {
+				_touchpadModeEnabled = false;
+				dialogMsg = "Mouse-click-and-drag mode enabled.";
 			} else
-				return false;
+				dialogMsg = "Mouse-click-and-drag mode disabled.";
+			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
+			dialog.runModal();
+			return false;
+			
+		} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
+			// Swipe right
+			_touchpadModeEnabled = !_touchpadModeEnabled;
+			const char *dialogMsg;
+			if (_touchpadModeEnabled)
+				dialogMsg = "Touchpad mode enabled.";
+			else
+				dialogMsg = "Touchpad mode disabled.";
+			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
+			dialog.runModal();
+			return false;
+			
+		} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
+			// Swipe left
+			return false;
 		} else
 			return false;
-	} else {
-		int mouseNewPosX;
-		int mouseNewPosY;
-		if (_touchpadModeEnabled ) {
-			int deltaX = _lastPadX - x;
-			int deltaY = _lastPadY - y;
-			_lastPadX = x;
-			_lastPadY = y;
-
-			mouseNewPosX = (int)(_mouseX - deltaX / 0.5f);
-			mouseNewPosY = (int)(_mouseY - deltaY / 0.5f);
-
-			if (mouseNewPosX < 0)
-				mouseNewPosX = 0;
-			else if (mouseNewPosX > _screenWidth)
-				mouseNewPosX = _screenWidth;
-
-			if (mouseNewPosY < 0)
-				mouseNewPosY = 0;
-			else if (mouseNewPosY > _screenHeight)
-				mouseNewPosY = _screenHeight;
-
-		} else {
-			mouseNewPosX = x;
-			mouseNewPosY = y;
-		}
-
-		event.type = Common::EVENT_MOUSEMOVE;
-		event.mouse.x = mouseNewPosX;
-		event.mouse.y = mouseNewPosY;
-		warpMouse(mouseNewPosX, mouseNewPosY);
-	}
-
-	return true;
+	} else
+		return false;
+	
 }
 
 void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {

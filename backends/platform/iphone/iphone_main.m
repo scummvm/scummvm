@@ -50,7 +50,6 @@ int main(int argc, char** argv) {
         [ NSAutoreleasePool alloc ] init
     ];
 
-    UIApplicationUseLegacyEvents(1);
     int returnCode = UIApplicationMain(argc, argv, @"iPhoneMain", @"iPhoneMain");
     [ autoreleasePool release ];
     return returnCode;
@@ -86,7 +85,9 @@ int main(int argc, char** argv) {
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];
 
-	_view = [[iPhoneView alloc] initWithFrame: rect];	
+	_view = [[iPhoneView alloc] initWithFrame: rect];
+	_view.multipleTouchEnabled = YES;
+
 	[_window setContentView: _view];
 
 	//[_window orderFront: self];
