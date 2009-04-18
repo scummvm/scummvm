@@ -42,6 +42,7 @@
 #endif
 #include "time.h"
 #include "dirent.h"
+#include "common/util.h"
 
 char *strdup(const char *strSource);
 
@@ -182,11 +183,19 @@ int _access(const char *path, int mode) {
 	HANDLE h = FindFirstFile(fname, &ffd);
 	FindClose(h);
 
-	if (h == INVALID_HANDLE_VALUE)
-		return -1;  //Can't find file
+	if (h == INVALID_HANDLE_VALUE) {
+		// WORKAROUND: WinCE 3.0 doesn't find paths ending in '\'
+		if (path[strlen(path)-1] == '\\') {
+			char p2[MAX_PATH];
+			strncpy(p2, path, strlen(path)-1);
+			p2[strlen(path) - 1]= '\0';
+			return _access(p2, mode);
+		} else
+			return -1;  //Can't find file
+	}
 
 	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
-		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus direcotry
+		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus directory
 		// hits for files that don't exist. TRIPLE checking for the same fname
 		// seems to weed out those false positives.
 		// Exhibited in kyra engine.
