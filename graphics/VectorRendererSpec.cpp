@@ -473,7 +473,7 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 		}
 	}
 
-	font->drawString(_activeSurface, text, area.left, offset, area.width(), _fgColor, alignH, deltax, ellipsis);
+	font->drawString(_activeSurface, text, area.left, offset, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
 }
 
 /** LINES **/
