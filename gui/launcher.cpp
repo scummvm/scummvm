@@ -646,7 +646,7 @@ void LauncherDialog::addGame() {
 	// 1) show a dir selection dialog which lets the user pick the directory
 	//    the game data resides in.
 	// 2) try to auto detect which game is in the directory, if we cannot
-	//    determine it uniquely preent a list of candidates to the user
+	//    determine it uniquely present a list of candidates to the user
 	//    to pick from
 	// 3) Display the 'Edit' dialog for that item, letting the user specify
 	//    an alternate description (to distinguish multiple versions of the

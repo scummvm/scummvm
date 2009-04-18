@@ -1226,7 +1226,7 @@ panel actions. Please consult the README-WinCE.txt file.
 Savegames are by default put in the current directory on some platforms
 and preset directories on others.  You can specify the save in the
 config file by setting the savepath parameter. See the example config
-file later in this readme.
+file later in this README.
 
 The platforms that currently have a different default directory are:
     Mac OS X:     $HOME/Documents/ScummVM Savegames/
@@ -1541,7 +1541,7 @@ set the environment variable SCUMMVM_PORT or the config file parameter
 dmedia_port to your sequencer port. The default is to use the first port.
 
 To get a list of configured midi interfaces on your system, run startmidi
-without parameters. Exaple output:
+without parameters. Example output:
 
   2 MIDI interfaces configured:
           Serial Port 2
@@ -2012,7 +2012,7 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
   Maemo:
     * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
-    * Install limbad, Tremor, FLAC, libmpeg2 from source
+    * Install libmad, Tremor, FLAC, libmpeg2 from source
     * patch scummvm source (some stuff is currently too dirty to be in svn directly)
       patch -p1 < backends/platform/maemo/scummvm-0.11.0-maemo.patch
     * go to backends/platform/maemo
