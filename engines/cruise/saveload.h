@@ -27,11 +27,21 @@
 #define CRUISE_SAVELOAD_H
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 
 namespace Cruise {
 
-int saveSavegameData(int saveGameIdx);
-int loadSavegameData(int saveGameIdx);
+#define CRUISE_SAVEGAME_VERSION 1
+
+struct CruiseSavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+};
+
+Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName);
+Common::Error loadSavegameData(int saveGameIdx);
+bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header);
 
 } // End of namespace Cruise
 

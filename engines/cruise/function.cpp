@@ -451,8 +451,8 @@ int16 Op_KillMenu(void) {
 }
 
 int16 Op_UserMenu(void) {
-	int oldValue = entrerMenuJoueur;
-	entrerMenuJoueur = popVar();
+	int oldValue = playerMenuEnabled;
+	playerMenuEnabled = popVar();
 
 	return oldValue;
 }

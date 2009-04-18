@@ -30,6 +30,9 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
+
 namespace Cruise {
 
 struct overlayRestoreTemporary {
@@ -40,6 +43,53 @@ struct overlayRestoreTemporary {
 };
 
 overlayRestoreTemporary ovlRestoreData[90];
+
+bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header) {
+	char saveIdentBuffer[6];
+	header.thumbnail = NULL;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, 6);
+	if (strcmp(saveIdentBuffer, "SVMCR"))
+		return false;
+
+	header.version = in->readByte();
+	if (header.version != CRUISE_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = new Graphics::Surface();
+	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+		delete header.thumbnail;
+		header.thumbnail = NULL;
+		return false;
+	}
+
+	return true;
+}
+
+void writeSavegameHeader(Common::OutSaveFile *out, CruiseSavegameHeader &header) {
+	// Write out a savegame header
+	char saveIdentBuffer[6];
+	strcpy(saveIdentBuffer, "SVMCR");
+	out->write(saveIdentBuffer, 6);
+
+	out->writeByte(CRUISE_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->write(header.saveName.c_str(), header.saveName.size() + 1);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+	::createThumbnail(thumb, globalScreen, 320, 200, workpal);
+	Graphics::saveThumbnail(*out, *thumb);
+	delete thumb;
+}
 
 static void syncPalette(Common::Serializer &s, uint8 *p) {
 	// This is different from the original, where palette entries are 2 bytes each
@@ -92,7 +142,7 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(var48);
 	s.syncAsSint16LE(flagCt);
 	s.syncAsSint16LE(var41);
-	s.syncAsSint16LE(entrerMenuJoueur);
+	s.syncAsSint16LE(playerMenuEnabled);
 }
 
 static void syncBackgroundTable(Common::Serializer &s) {
@@ -716,68 +766,61 @@ void initVars(void) {
 	menuDown = 0;
 	buttonDown = 0;
 	var41 = 0;
-	entrerMenuJoueur = 0;
+	playerMenuEnabled = 0;
 	PCFadeFlag = 0;
 }
 
-int saveSavegameData(int saveGameIdx) {
-	char buffer[256];
-
-	sprintf(buffer, "CR.%d", saveGameIdx);
-
+Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName) {
+	const char *filename = _vm->getSavegameFile(saveGameIdx);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *f = saveMan->openForSaving(buffer);
+	Common::OutSaveFile *f = saveMan->openForSaving(filename);
 	if (f == NULL)
-		return 0;
+		return Common::kNoGameDataFoundError;
 
-	// Write out a savegame header
-	char saveIdentBuffer[6];
-	strcpy(saveIdentBuffer, "SAVPC");
-	f->write(saveIdentBuffer, 6);
+	// Save the savegame header
+	CruiseSavegameHeader header;
+	header.saveName = saveName;
+	writeSavegameHeader(f, header);
 
-	if (!f->ioFailed()) {
+	if (f->ioFailed()) {
+		delete f;
+		saveMan->removeSavefile(filename);
+		return Common::kWritingFailed;
+	} else {
+		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-
 		DoSync(s);
 
 		f->finalize();
 		delete f;
-		return 1;
-
-	} else {
-		delete f;
-		saveMan->removeSavefile(buffer);
-		return 0;
+		return Common::kNoError;
 	}
 }
 
-int loadSavegameData(int saveGameIdx) {
-	char buffer[256];
-	char saveIdentBuffer[6];
+Common::Error loadSavegameData(int saveGameIdx) {
 	int lowMemorySave;
+	Common::String saveName;
 	cellStruct *currentcellHead;
 
-	sprintf(buffer, "CR.%d", saveGameIdx);
-
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *f = saveMan->openForLoading(buffer);
+	Common::InSaveFile *f = saveMan->openForLoading(_vm->getSavegameFile(saveGameIdx));
 
 	if (f == NULL) {
 		printInfoBlackBox("Savegame not found...");
 		waitForPlayerInput();
-		return -1;
+		return Common::kNoGameDataFoundError;
 	}
 
 	printInfoBlackBox("Loading in progress...");
 
-	f->read(saveIdentBuffer, 6);
-	if (strcmp(saveIdentBuffer, "SAVPC")) {
-		delete f;
-		return -1;
-	}
-
 	initVars();
 
+	// Skip over the savegame header
+	CruiseSavegameHeader header;
+	readSavegameHeader(f, header);
+	if (header.thumbnail) delete header.thumbnail;
+
+	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
 	DoSync(s);
 
@@ -903,7 +946,7 @@ int loadSavegameData(int saveGameIdx) {
 	mainDraw(1);
 	flipScreen();
 
-	return (0);
+	return Common::kNoError;
 }
 
 } // End of namespace Cruise

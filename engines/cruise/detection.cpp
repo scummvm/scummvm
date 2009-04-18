@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 
 #include "cruise/cruise.h"
+#include "cruise/saveload.h"
 
 namespace Cruise {
 
@@ -177,8 +178,71 @@ public:
 		return "Cruise for a Corpse (C) Delphine Software";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 99; };
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
+
+bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
+}
+
+SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	Common::String pattern("cruise.s??");
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				Cruise::CruiseSavegameHeader header;
+				Cruise::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+				if (header.thumbnail) delete header.thumbnail;
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Cruise::CruiseEngine::getSavegameFile(slot));
+}
+
+SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
+		Cruise::CruiseEngine::getSavegameFile(slot));
+	assert(f);
+
+	Cruise::CruiseSavegameHeader header;
+	Cruise::readSavegameHeader(f, header);
+	delete f;
+
+	// Create the return descriptor
+	SaveStateDescriptor desc(slot, header.saveName);
+	desc.setDeletableFlag(true);
+	desc.setWriteProtectedFlag(false);
+	desc.setThumbnail(header.thumbnail);
+
+	return desc;
+}
 
 bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)desc;
@@ -187,6 +251,7 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	}
 	return gd != 0;
 }
+
 
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)
 REGISTER_PLUGIN_DYNAMIC(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);

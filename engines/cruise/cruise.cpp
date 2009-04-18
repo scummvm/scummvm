@@ -74,6 +74,13 @@ CruiseEngine::~CruiseEngine() {
 	freeSystem();
 }
 
+bool CruiseEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 Common::Error CruiseEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
@@ -156,8 +163,8 @@ bool CruiseEngine::loadLanguageStrings() {
 	return true;
 }
 
-void CruiseEngine::pauseEngineIntern(bool pause) {
-	Engine::pauseEngineIntern(pause);
+void CruiseEngine::pauseEngine(bool pause) {
+	Engine::pauseEngine(pause);
 
 	if (pause) {
 		// Draw the 'Paused' message
@@ -174,5 +181,26 @@ void CruiseEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
+Common::Error CruiseEngine::loadGameState(int slot) {
+	return loadSavegameData(slot);
+}
+
+bool CruiseEngine::canLoadGameStateCurrently() {
+	return playerMenuEnabled != 0;
+}
+
+Common::Error CruiseEngine::saveGameState(int slot, const char *desc) {
+	return saveSavegameData(slot, desc);
+}
+
+bool CruiseEngine::canSaveGameStateCurrently() {
+	return (playerMenuEnabled != 0) && (userEnabled != 0);
+}
+
+const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
+	static char buffer[20];
+	sprintf(buffer, "cruise.s%02d", saveGameIdx);
+	return buffer;
+}
 
 } // End of namespace Cruise

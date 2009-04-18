@@ -30,6 +30,7 @@
 #include "common/util.h"
 
 #include "engines/engine.h"
+#include "engines/game.h"
 
 #include "cruise/cruise_main.h"
 #include "cruise/debugger.h"
@@ -79,6 +80,7 @@ protected:
 public:
 	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
 	virtual ~ CruiseEngine();
+	virtual bool hasFeature(EngineFeature f) const;
 
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -89,11 +91,14 @@ public:
 	bool mt32() const { return _mt32; }
 	bool adlib() const { return _adlib; }
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
-	virtual void pauseEngineIntern(bool pause);
+	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
-	bool loadSaveDirectory(void);
-	void makeSystemMenu(void);
+	static const char *getSavegameFile(int saveGameIdx);
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual bool canSaveGameStateCurrently();
 
 	const CRUISEGameDescription *_gameDescription;
 

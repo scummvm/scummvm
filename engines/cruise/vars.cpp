@@ -131,7 +131,7 @@ bool animationStart;
 
 int16 autoOvl;
 int16 var39;
-int16 entrerMenuJoueur;
+int16 playerMenuEnabled = 0;
 int16 var41;
 int16 var42;
 int16 var45;

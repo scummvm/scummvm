@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/system.h"	// for g_system->getEventManager()
@@ -34,6 +35,7 @@
 
 namespace Cruise {
 
+static int playerDontAskQuit;
 unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
@@ -1583,8 +1585,9 @@ void manageEvents() {
 			currentMouseY = event.mouse.y;
 			break;
 		case Common::EVENT_QUIT:
-			g_system->quit();
-			break;
+		case Common::EVENT_RTL:
+			playerDontAskQuit = 1;
+			return;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
@@ -1724,7 +1727,7 @@ void CruiseEngine::mainLoop(void) {
 
 	initAllData();
 
-	int playerDontAskQuit = 1;
+	playerDontAskQuit = 0;
 	int quitValue2 = 1;
 	int quitValue = 0;
 
@@ -1739,6 +1742,7 @@ void CruiseEngine::mainLoop(void) {
 				currentTick = g_system->getMillis();
 
 				manageEvents();
+				if (playerDontAskQuit) break;
 
 				if (_vm->getDebugger()->isAttached())
 					_vm->getDebugger()->onFrame();
@@ -1753,6 +1757,8 @@ void CruiseEngine::mainLoop(void) {
 					_vm->getDebugger()->onFrame();
 			}
 		}
+		if (playerDontAskQuit)
+			break;
 
 		lastTick = g_system->getMillis();
 
@@ -1763,6 +1769,8 @@ void CruiseEngine::mainLoop(void) {
 
 //      readKeyboard();
 		playerDontAskQuit = processInput();
+		if (playerDontAskQuit)
+			break;
 
 		if (enableUser) {
 			userEnabled = 1;

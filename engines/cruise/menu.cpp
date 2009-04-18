@@ -205,7 +205,7 @@ int playerMenu(int menuX, int menuY) {
 	int retourMenu;
 	//int restartGame = 0;
 
-	if (entrerMenuJoueur && displayOn) {
+	if (playerMenuEnabled && displayOn) {
 		if (remdo) {
 			_vm->music().removeSong();
 			freeStuff2();
@@ -255,7 +255,7 @@ int playerMenu(int menuX, int menuY) {
 		case 3: // select save drive
 			break;
 		case 4: // save
-			saveSavegameData(0);
+			saveSavegameData(0, "Default Save");
 			break;
 		case 5: // load
 			loadSavegameData(0);

@@ -233,7 +233,7 @@ extern bool animationStart;
 
 extern int16 autoOvl;
 extern int16 var39;
-extern int16 entrerMenuJoueur;
+extern int16 playerMenuEnabled;
 extern int16 var39;
 extern int16 var41;
 extern int16 var42;
