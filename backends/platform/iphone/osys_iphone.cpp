@@ -162,6 +162,7 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	else
 		iPhone_initSurface(width, height, false);
 
+	_fullScreenIsDirty = false;
 	dirtyFullScreen();
 	_mouseVisible = false;
 	_screenChangeCount++;
