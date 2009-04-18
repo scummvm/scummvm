@@ -133,6 +133,14 @@
 
 #include "sci/engine/state.h"
 
+
+// Bison generates an empty switch statement that gives a warning in MSVC.
+// This disables that warning.
+#ifdef _MSC_VER
+#pragma warning(disable:4065)
+#endif
+
+
 namespace Sci {
 
 #define SAID_BRANCH_NULL 0
@@ -238,7 +246,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 242 "said.cpp"
+#line 250 "said.tab.c"
 
 #ifdef short
 # undef short
@@ -535,10 +543,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   121,   121,   123,   125,   131,   132,   139,   140,   146,
-     148,   150,   156,   158,   160,   165,   170,   172,   177,   179,
-     181,   183,   185,   190,   192,   194,   199,   201,   203,   208,
-     210,   212,   214,   219,   221,   223
+       0,   129,   129,   131,   133,   139,   140,   147,   148,   154,
+     156,   158,   164,   166,   168,   173,   178,   180,   185,   187,
+     189,   191,   193,   198,   200,   202,   207,   209,   211,   216,
+     218,   220,   222,   227,   229,   231
 };
 #endif
 
@@ -1482,178 +1490,178 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 122 "said.y"
+#line 130 "said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (2)]), (yyvsp[(2) - (2)]))); ;}
     break;
 
   case 3:
-#line 124 "said.y"
+#line 132 "said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (3)]), said_attach_branch((yyvsp[(2) - (3)]), (yyvsp[(3) - (3)])))); ;}
     break;
 
   case 4:
-#line 126 "said.y"
+#line 134 "said.y"
     { (yyval) = said_top_branch(said_attach_branch((yyvsp[(1) - (4)]), said_attach_branch((yyvsp[(2) - (4)]), said_attach_branch((yyvsp[(3) - (4)]), (yyvsp[(4) - (4)]))))); ;}
     break;
 
   case 5:
-#line 131 "said.y"
-    { (yyval) = SAID_BRANCH_NULL; ;}
-    break;
-
-  case 6:
-#line 133 "said.y"
-    { (yyval) = said_paren(said_value(0x14b, said_value(0xf900, said_terminal(0xf900))), SAID_BRANCH_NULL); ;}
-    break;
-
-  case 7:
 #line 139 "said.y"
     { (yyval) = SAID_BRANCH_NULL; ;}
     break;
 
-  case 8:
+  case 6:
 #line 141 "said.y"
+    { (yyval) = said_paren(said_value(0x14b, said_value(0xf900, said_terminal(0xf900))), SAID_BRANCH_NULL); ;}
+    break;
+
+  case 7:
+#line 147 "said.y"
+    { (yyval) = SAID_BRANCH_NULL; ;}
+    break;
+
+  case 8:
+#line 149 "said.y"
     { (yyval) = said_paren(said_value(0x141, said_value(0x149, (yyvsp[(1) - (1)]))), SAID_BRANCH_NULL); ;}
     break;
 
   case 9:
-#line 147 "said.y"
+#line 155 "said.y"
     { (yyval) = said_aug_branch(0x142, 0x14a, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 10:
-#line 149 "said.y"
+#line 157 "said.y"
     { (yyval) = said_aug_branch(0x152, 0x142, said_aug_branch(0x142, 0x14a, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 11:
-#line 151 "said.y"
+#line 159 "said.y"
     { (yyval) = SAID_BRANCH_NULL; ;}
     break;
 
   case 12:
-#line 157 "said.y"
+#line 165 "said.y"
     { (yyval) = said_aug_branch(0x143, 0x14a, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 13:
-#line 159 "said.y"
+#line 167 "said.y"
     { (yyval) = said_aug_branch(0x152, 0x143, said_aug_branch(0x143, 0x14a, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 14:
-#line 161 "said.y"
+#line 169 "said.y"
     { (yyval) = SAID_BRANCH_NULL; ;}
     break;
 
   case 15:
-#line 166 "said.y"
+#line 174 "said.y"
     { (yyval) = said_paren(said_value(0x141, said_value(0x153, said_terminal((yyvsp[(1) - (1)])))), SAID_BRANCH_NULL); ;}
     break;
 
   case 16:
-#line 171 "said.y"
+#line 179 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x14f, (yyvsp[(1) - (1)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 17:
-#line 173 "said.y"
+#line 181 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x14f, said_aug_branch(0x152, 0x14c, said_aug_branch(0x141, 0x14f, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 18:
-#line 178 "said.y"
+#line 186 "said.y"
     { (yyval) = (yyvsp[(1) - (1)]); ;}
     break;
 
   case 19:
-#line 180 "said.y"
+#line 188 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x14c, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 20:
-#line 182 "said.y"
+#line 190 "said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (3)]), (yyvsp[(3) - (3)])); ;}
     break;
 
   case 21:
-#line 184 "said.y"
+#line 192 "said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (4)]), (yyvsp[(3) - (4)])); ;}
     break;
 
   case 22:
-#line 186 "said.y"
+#line 194 "said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (5)]), (yyvsp[(3) - (5)])); ;}
     break;
 
   case 23:
-#line 191 "said.y"
+#line 199 "said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (2)]), (yyvsp[(2) - (2)])); ;}
     break;
 
   case 24:
-#line 193 "said.y"
+#line 201 "said.y"
     { (yyval) = (yyvsp[(1) - (1)]); ;}
     break;
 
   case 25:
-#line 195 "said.y"
+#line 203 "said.y"
     { (yyval) = (yyvsp[(1) - (1)]); ;}
     break;
 
   case 26:
-#line 200 "said.y"
+#line 208 "said.y"
     { (yyval) = (yyvsp[(1) - (1)]); ;}
     break;
 
   case 27:
-#line 202 "said.y"
+#line 210 "said.y"
     { (yyval) = said_aug_branch(0x152, 0x144, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 28:
-#line 204 "said.y"
+#line 212 "said.y"
     { (yyval) = said_attach_branch((yyvsp[(1) - (4)]), said_aug_branch(0x152, 0x144, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL)); ;}
     break;
 
   case 29:
-#line 209 "said.y"
+#line 217 "said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (3)]), (yyvsp[(3) - (3)])); ;}
     break;
 
   case 30:
-#line 211 "said.y"
+#line 219 "said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, said_aug_branch(0x141, 0x144, (yyvsp[(2) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 31:
-#line 213 "said.y"
+#line 221 "said.y"
     { (yyval) = said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL); ;}
     break;
 
   case 32:
-#line 215 "said.y"
+#line 223 "said.y"
     { (yyval) = said_aug_branch(0x152, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(3) - (4)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 33:
-#line 220 "said.y"
+#line 228 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (3)]), SAID_BRANCH_NULL), (yyvsp[(3) - (3)])); ;}
     break;
 
   case 34:
-#line 222 "said.y"
+#line 230 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x144, said_aug_branch(0x144, 0x14f, (yyvsp[(2) - (2)]), SAID_BRANCH_NULL), SAID_BRANCH_NULL); ;}
     break;
 
   case 35:
-#line 224 "said.y"
+#line 232 "said.y"
     { (yyval) = said_aug_branch(0x141, 0x14c, (yyvsp[(2) - (4)]), SAID_BRANCH_NULL); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1657 "said.cpp"
+#line 1665 "said.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1867,7 +1875,7 @@ yyreturn:
 }
 
 
-#line 227 "said.y"
+#line 235 "said.y"
 
 
 int parse_yy_token_lookup[] = {YY_COMMA, YY_AMP, YY_SLASH, YY_PARENO, YY_PARENC, YY_BRACKETSO, YY_BRACKETSC, YY_HASH, YY_LT, YY_GT};

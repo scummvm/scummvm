@@ -26,6 +26,14 @@
 
 #include "sci/engine/state.h"
 
+
+// Bison generates an empty switch statement that gives a warning in MSVC.
+// This disables that warning.
+#ifdef _MSC_VER
+#pragma warning(disable:4065)
+#endif
+
+
 namespace Sci {
 
 #define SAID_BRANCH_NULL 0
