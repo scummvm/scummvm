@@ -1215,7 +1215,7 @@ panel actions. Please consult the README-WinCE.txt file.
 Savegames are by default put in the current directory on some platforms
 and preset directories on others.  You can specify the save in the
 config file by setting the savepath parameter. See the example config
-file later in this readme.
+file later in this README.
 
 The platforms that currently have a different default directory are:
     Mac OS X:     $HOME/Documents/ScummVM Savegames/
@@ -1979,7 +1979,7 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
   Maemo:
     * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
-    * Install limbad, Tremor, FLAC, libmpeg2 from source
+    * Install libmad, Tremor, FLAC, libmpeg2 from source
     * patch scummvm source (some stuff is currently too dirty to be in svn directly)
       patch -p1 < backends/platform/maemo/scummvm-0.11.0-maemo.patch
     * go to backends/platform/maemo
