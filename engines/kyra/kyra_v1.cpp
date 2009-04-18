@@ -310,6 +310,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 void KyraEngine_v1::updateInput() {
 	Common::Event event;
 
+	bool updateScreen = false;
+
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
@@ -326,7 +328,8 @@ void KyraEngine_v1::updateInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			screen()->updateScreen();
+			if (screen()->isMouseVisible())
+				updateScreen = true;
 			// fall through
 
 		case Common::EVENT_LBUTTONUP:
@@ -339,6 +342,9 @@ void KyraEngine_v1::updateInput() {
 			break;
 		}
 	}
+
+	if (updateScreen)
+		screen()->updateScreen();
 }
 
 void KyraEngine_v1::removeInputTop() {
