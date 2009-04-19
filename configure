@@ -1611,7 +1611,14 @@ EOF
 fi
 if test "$_fluidsynth" = yes ; then
 	_def_fluidsynth='#define USE_FLUIDSYNTH'
-	LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth"
+	case $_host_os in
+		mingw*)
+			LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
+		;;
+		*)
+		LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth"
+		;;
+	esac
 	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
 else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
