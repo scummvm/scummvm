@@ -62,6 +62,9 @@ protected:
 	virtual void loadCharset(int no);
 
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
+
+	/* Version 3 script opcodes */
+	void o3_setBoxFlags();
 };
 
 /**

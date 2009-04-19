@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
@@ -1681,13 +1680,6 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 
 void ScummEngine_v5::o5_matrixOps() {
 	int a, b;
-
-	if (_game.version == 3) {
-		a = getVarOrDirectByte(PARAM_1);
-		b = fetchScriptByte();
-		setBoxFlags(a, b);
-		return;
-	}
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {

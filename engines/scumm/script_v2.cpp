@@ -98,7 +98,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0x2e, o2_delay);
 	OPCODE(0x2f, o2_ifNotState04);
 	/* 30 */
-	OPCODE(0x30, o2_setBoxFlags);
+	OPCODE(0x30, o3_setBoxFlags);
 	OPCODE(0x31, o2_getBitVar);
 	OPCODE(0x32, o2_setCameraAt);
 	OPCODE(0x33, o2_roomOps);
@@ -258,7 +258,7 @@ void ScummEngine_v2::setupOpcodes() {
 	OPCODE(0xae, o2_waitForMessage);
 	OPCODE(0xaf, o2_ifNotState04);
 	/* B0 */
-	OPCODE(0xb0, o2_setBoxFlags);
+	OPCODE(0xb0, o3_setBoxFlags);
 	OPCODE(0xb1, o2_getBitVar);
 	OPCODE(0xb2, o2_setCameraAt);
 	OPCODE(0xb3, o2_roomOps);
@@ -1404,14 +1404,6 @@ void ScummEngine_v2::o2_delay() {
 	o5_breakHere();
 }
 
-void ScummEngine_v2::o2_setBoxFlags() {
-	int a, b;
-
-	a = getVarOrDirectByte(PARAM_1);
-	b = fetchScriptByte();
-	setBoxFlags(a, b);
-}
-
 void ScummEngine_v2::o2_setCameraAt() {
 	setCameraAtEx(getVarOrDirectByte(PARAM_1) * V12_X_MULTIPLIER);
 }
@@ -1595,8 +1587,8 @@ void ScummEngine_v2::o2_getActorWalkBox() {
 }
 
 void ScummEngine_v2::o2_dummy() {
-	// Opcode 238 is used in maniac and zak but has no purpose
-	if (_opcode != 238)
+	// Opcode 0xEE is used in maniac and zak but has no purpose
+	if (_opcode != 0xEE)
 		warning("o2_dummy invoked (opcode %d)", _opcode);
 }
 

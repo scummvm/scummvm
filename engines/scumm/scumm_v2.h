@@ -143,7 +143,6 @@ protected:
 	void o2_isLessEqual();
 	void o2_lights();
 	void o2_loadRoomWithEgo();
-	void o2_setBoxFlags();
 	void o2_panCameraTo();
 	void o2_pickupObject();
 	void o2_putActor();

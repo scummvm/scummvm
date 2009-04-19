@@ -31,6 +31,17 @@ namespace Scumm {
 
 void ScummEngine_v3::setupOpcodes() {
 	ScummEngine_v4::setupOpcodes();
+
+	OPCODE(0x30, o3_setBoxFlags);
+	OPCODE(0xb0, o3_setBoxFlags);
+}
+
+void ScummEngine_v3::o3_setBoxFlags() {
+	int a, b;
+
+	a = getVarOrDirectByte(PARAM_1);
+	b = fetchScriptByte();
+	setBoxFlags(a, b);
 }
 
 } // End of namespace Scumm
