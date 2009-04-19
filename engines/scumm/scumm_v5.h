@@ -136,8 +136,6 @@ protected:
 	void o5_getStringWidth();
 	void o5_getVerbEntrypoint();
 	void o5_ifClassOfIs();
-	void o5_ifNotState();
-	void o5_ifState();
 	void o5_increment();
 	void o5_isActorInBox();
 	void o5_isEqual();

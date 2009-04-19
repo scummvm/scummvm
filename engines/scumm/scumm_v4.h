@@ -52,6 +52,8 @@ protected:
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
 	/* Version 4 script opcodes */
+	void o4_ifState();
+	void o4_ifNotState();
 	void o4_oldRoomEffect();
 	void o4_pickupObject();
 };

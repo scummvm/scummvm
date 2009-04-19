@@ -45,6 +45,35 @@ void ScummEngine_v4::setupOpcodes() {
 
 	OPCODE(0x5c, o4_oldRoomEffect);
 	OPCODE(0xdc, o4_oldRoomEffect);
+
+	OPCODE(0x0f, o4_ifState);
+	OPCODE(0x2f, o4_ifNotState);
+	OPCODE(0x4f, o4_ifState);
+	OPCODE(0x6f, o4_ifNotState);
+	OPCODE(0x8f, o4_ifState);
+	OPCODE(0xaf, o4_ifNotState);
+	OPCODE(0xcf, o4_ifState);
+	OPCODE(0xef, o4_ifNotState);
+}
+
+void ScummEngine_v4::o4_ifState() {
+	int a = getVarOrDirectWord(PARAM_1);
+	int b = getVarOrDirectByte(PARAM_2);
+
+	if (getState(a) != b)
+		o5_jumpRelative();
+	else
+		ignoreScriptWord();
+}
+
+void ScummEngine_v4::o4_ifNotState() {
+	int a = getVarOrDirectWord(PARAM_1);
+	int b = getVarOrDirectByte(PARAM_2);
+
+	if (getState(a) == b)
+		o5_jumpRelative();
+	else
+		ignoreScriptWord();
 }
 
 void ScummEngine_v4::o4_pickupObject() {

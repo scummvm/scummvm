@@ -98,7 +98,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x2c, o5_cursorCommand);
 	OPCODE(0x2d, o5_putActorInRoom);
 	OPCODE(0x2e, o5_delay);
-	OPCODE(0x2f, o5_ifNotState);
+//	OPCODE(0x2f, o5_ifNotState);
 	/* 30 */
 	OPCODE(0x30, o5_matrixOps);
 	OPCODE(0x31, o5_getInventoryCount);
@@ -138,7 +138,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x4c, o5_soundKludge);
 	OPCODE(0x4d, o5_walkActorToActor);
 	OPCODE(0x4e, o5_putActorAtObject);
-	OPCODE(0x4f, o5_ifState);
+//	OPCODE(0x4f, o5_ifState);
 	/* 50 */
 //	OPCODE(0x50, o5_pickupObjectOld);
 	OPCODE(0x51, o5_animateActor);
@@ -178,7 +178,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x6c, o5_getActorWidth);
 	OPCODE(0x6d, o5_putActorInRoom);
 	OPCODE(0x6e, o5_stopObjectScript);
-	OPCODE(0x6f, o5_ifNotState);
+//	OPCODE(0x6f, o5_ifNotState);
 	/* 70 */
 	OPCODE(0x70, o5_lights);
 	OPCODE(0x71, o5_getActorCostume);
@@ -258,7 +258,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xac, o5_expression);
 	OPCODE(0xad, o5_putActorInRoom);
 	OPCODE(0xae, o5_wait);
-	OPCODE(0xaf, o5_ifNotState);
+//	OPCODE(0xaf, o5_ifNotState);
 	/* B0 */
 	OPCODE(0xb0, o5_matrixOps);
 	OPCODE(0xb1, o5_getInventoryCount);
@@ -298,7 +298,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xcc, o5_pseudoRoom);
 	OPCODE(0xcd, o5_walkActorToActor);
 	OPCODE(0xce, o5_putActorAtObject);
-	OPCODE(0xcf, o5_ifState);
+//	OPCODE(0xcf, o5_ifState);
 	/* D0 */
 //	OPCODE(0xd0, o5_pickupObjectOld);
 	OPCODE(0xd1, o5_animateActor);
@@ -338,7 +338,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xec, o5_getActorWidth);
 	OPCODE(0xed, o5_putActorInRoom);
 	OPCODE(0xee, o5_stopObjectScript);
-	OPCODE(0xef, o5_ifNotState);
+//	OPCODE(0xef, o5_ifNotState);
 	/* F0 */
 	OPCODE(0xf0, o5_lights);
 	OPCODE(0xf1, o5_getActorCostume);
@@ -1407,32 +1407,8 @@ void ScummEngine_v5::o5_getObjectOwner() {
 }
 
 void ScummEngine_v5::o5_getObjectState() {
-	if (_game.features & GF_SMALL_HEADER) {
-		o5_ifState();
-	} else {
-		getResultPos();
-		setResult(getState(getVarOrDirectWord(PARAM_1)));
-	}
-}
-
-void ScummEngine_v5::o5_ifState() {
-	int a = getVarOrDirectWord(PARAM_1);
-	int b = getVarOrDirectByte(PARAM_2);
-
-	if (getState(a) != b)
-		o5_jumpRelative();
-	else
-		ignoreScriptWord();
-}
-
-void ScummEngine_v5::o5_ifNotState() {
-	int a = getVarOrDirectWord(PARAM_1);
-	int b = getVarOrDirectByte(PARAM_2);
-
-	if (getState(a) == b)
-		o5_jumpRelative();
-	else
-		ignoreScriptWord();
+	getResultPos();
+	setResult(getState(getVarOrDirectWord(PARAM_1)));
 }
 
 void ScummEngine_v5::o5_getRandomNr() {
