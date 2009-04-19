@@ -63,6 +63,10 @@ iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+	cp $(srcdir)/AUTHORS $(bundle_name)/
+	cp $(srcdir)/COPYING $(bundle_name)/
+	cp $(srcdir)/COPYING.LGPL $(bundle_name)/
+	cp $(srcdir)/COPYRIGHT $(bundle_name)/
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -124,7 +128,8 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot
 	$(srcdir)/tools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ScummVM-snapshot/Authors
-	cp $(srcdir)/COPYING ./ScummVM-snapshot/License
+	cp $(srcdir)/COPYING ./ScummVM-snapshot/License\ \(GPL\)
+	cp $(srcdir)/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
 	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
 	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
 	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
@@ -136,7 +141,7 @@ osxsnap: bundle
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ScummVM-snapshot \
-					-volname "ScummVM snapshot" \
+					-volname "ScummVM" \
 					ScummVM-snapshot.dmg
 	rm -rf ScummVM-snapshot
 
