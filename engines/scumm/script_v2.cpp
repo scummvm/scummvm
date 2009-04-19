@@ -80,7 +80,7 @@ void ScummEngine_v2::setupOpcodes() {
 	/* 20 */
 	OPCODE(0x20, o5_stopMusic);
 	OPCODE(0x21, o2_putActor);
-	OPCODE(0x22, o5_saveLoadGame);
+	OPCODE(0x22, o4_saveLoadGame);
 	OPCODE(0x23, o2_getActorY);
 	/* 24 */
 	OPCODE(0x24, o2_loadRoomWithEgo);
@@ -240,7 +240,7 @@ void ScummEngine_v2::setupOpcodes() {
 	/* A0 */
 	OPCODE(0xa0, o5_stopObjectCode);
 	OPCODE(0xa1, o2_putActor);
-	OPCODE(0xa2, o5_saveLoadGame);
+	OPCODE(0xa2, o4_saveLoadGame);
 	OPCODE(0xa3, o2_getActorY);
 	/* A4 */
 	OPCODE(0xa4, o2_loadRoomWithEgo);

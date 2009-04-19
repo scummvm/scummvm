@@ -72,11 +72,6 @@ protected:
 	virtual void readMAXS(int blockSize);
 
 	int getWordVararg(int *ptr);
-	void saveVars();
-	void loadVars();
-	void saveIQPoints();
-	void loadIQPoints(byte *ptr, int size);
-	void updateIQPoints();
 
 	virtual int getVar();
 	virtual int getVarOrDirectByte(byte mask);
@@ -109,6 +104,7 @@ protected:
 	void o5_doSentence();
 	void o5_drawBox();
 	void o5_drawObject();
+	void o5_dummy();
 	void o5_endCutscene();
 	void o5_equalZero();
 	void o5_expression();
@@ -167,8 +163,6 @@ protected:
 	void o5_systemOps();
 	void o5_resourceRoutines();
 	void o5_roomOps();
-	void o5_saveLoadGame();
-	void o5_saveLoadVars();
 	void o5_saveRestoreVerbs();
 	void o5_setCameraAt();
 	void o5_setClass();

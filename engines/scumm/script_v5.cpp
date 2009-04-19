@@ -248,7 +248,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xa4, o5_loadRoomWithEgo);
 	OPCODE(0xa5, o5_pickupObject);
 	OPCODE(0xa6, o5_setVarRange);
-	OPCODE(0xa7, o5_saveLoadVars);
+	OPCODE(0xa7, o5_dummy);
 	/* A8 */
 	OPCODE(0xa8, o5_notEqualZero);
 	OPCODE(0xa9, o5_setOwnerOf);
@@ -831,6 +831,13 @@ void ScummEngine_v5::o5_drawObject() {
 	putState(obj, state);
 }
 
+void ScummEngine_v5::o5_dummy() {
+	// The KIXX XL release of Monkey Island 2 (Amiga disk) used opcode 0xa7
+	// as dummy, in order to remove copy protection and keep level selection.
+	if (_opcode != 0xa7 || _game.id == GID_MONKEY2)
+		warning("o5_dummy invoked (opcode %d)", _opcode);
+}
+
 void ScummEngine_v5::o5_getStringWidth() {
 	int string, width = 0;
 	byte *ptr;
@@ -843,231 +850,6 @@ void ScummEngine_v5::o5_getStringWidth() {
 	width = _charset->getStringWidth(0, ptr);
 
 	setResult(width);
-}
-
-enum StringIds {
-	// The string IDs used by Indy3 to store the episode resp. series IQ points.
-	// Note that we save the episode IQ points but load the series IQ points,
-	// which matches the original Indy3 save/load code. See also the notes
-	// on Feature Request #1666521.
-	STRINGID_IQ_EPISODE = 7,
-	STRINGID_IQ_SERIES = 9,
-	// The string IDs of the first savegame name, used as an offset to determine
-	// the IDs of all savenames.
-	// Loom is the only game whose savenames start with a different ID.
-	STRINGID_SAVENAME1 = 10,
-	STRINGID_SAVENAME1_LOOM = 9
-};
-
-void ScummEngine_v5::o5_saveLoadVars() {
-	// The KIXX XL release of Monkey Island 2 (Amiga disk) used this opcode
-	// as dummy, in order to remove copy protection and keep level selection.
-	if (_game.version == 5)
-		return;
-
-	if (fetchScriptByte() == 1)
-		saveVars();
-	else
-		loadVars();
-}
-
-void ScummEngine_v5::saveVars() {
-	int a, b;
-
-	while ((_opcode = fetchScriptByte()) != 0) {
-		switch (_opcode & 0x1F) {
-		case 0x01: // write a range of variables
-			getResultPos();
-			a = _resultVarNumber;
-			getResultPos();
-			b = _resultVarNumber;
-			debug(0, "stub saveVars: vars %d -> %d", a, b);
-			break;
-		case 0x02: // write a range of string variables
-			a = getVarOrDirectByte(PARAM_1);
-			b = getVarOrDirectByte(PARAM_2);
-
-			if (a == STRINGID_IQ_EPISODE && b == STRINGID_IQ_EPISODE) {
-				if (_game.id == GID_INDY3) {
-					saveIQPoints();
-				}
-				break;
-			}
-			// FIXME: changing savegame-names not supported
-			break;
-		case 0x03: // open file
-			a = resStrLen(_scriptPointer);
-			strncpy(_saveLoadVarsFilename, (const char *)_scriptPointer, a);
-			_saveLoadVarsFilename[a] = '\0';
-			_scriptPointer += a + 1;
-			break;
-		case 0x04:
-			return;
-		case 0x1F: // close file
-			_saveLoadVarsFilename[0] = '\0';
-			return;
-		}
-	}
-}
-
-void ScummEngine_v5::loadVars() {
-	int a, b;
-
-	while ((_opcode = fetchScriptByte()) != 0) {
-		switch (_opcode & 0x1F) {
-		case 0x01: // read a range of variables
-			getResultPos();
-			a = _resultVarNumber;
-			getResultPos();
-			b = _resultVarNumber;
-			debug(0, "stub loadVars: vars %d -> %d", a, b);
-			break;
-		case 0x02: // read a range of string variables
-			a = getVarOrDirectByte(PARAM_1);
-			b = getVarOrDirectByte(PARAM_2);
-
-			int slot;
-			int slotSize;
-			byte* slotContent;
-			int savegameId;
-			bool avail_saves[100];
-
-			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
-				// Zak256 loads the IQ script-slot but does not use it -> ignore it
-				if (_game.id == GID_INDY3) {
-					byte *ptr = getResourceAddress(rtString, STRINGID_IQ_SERIES);		
-					if (ptr) {
-						int size = getResourceSize(rtString, STRINGID_IQ_SERIES);
-						loadIQPoints(ptr, size);
-					}
-				}
-				break;
-			}
-
-			listSavegames(avail_saves, ARRAYSIZE(avail_saves));
-			for (slot = a; slot <= b; ++slot) {
-				slotSize = getResourceSize(rtString, slot);
-				slotContent = getResourceAddress(rtString, slot);
-
-				// load savegame names
-				savegameId = slot - a + 1;
-				Common::String name;
-				if (avail_saves[savegameId] && getSavegameName(savegameId, name)) {
-					int pos;
-					const char *ptr = name.c_str();
-					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
-					for (pos = 0; pos < slotSize - 2; ++pos) {
-						if (!ptr[pos])
-							break;
-						// replace special characters
-						if (ptr[pos] >= 32 && ptr[pos] <= 122 && ptr[pos] != 64)
-							slotContent[pos] = ptr[pos];
-						else
-							slotContent[pos] = '_';
-					}
-					slotContent[pos] = '\0';
-				} else {
-					slotContent[0] = '\0';
-				}
-			}
-			break;
-		case 0x03: // open file
-			a = resStrLen(_scriptPointer);
-			strncpy(_saveLoadVarsFilename, (const char *)_scriptPointer, a);
-			_saveLoadVarsFilename[a] = '\0';
-			_scriptPointer += a + 1;
-			break;
-		case 0x04:
-			return;
-		case 0x1F: // close file
-			_saveLoadVarsFilename[0] = '\0';
-			return;
-		}
-	}
-}
-
-/**
- * IQ Point calculation for Indy3. 
- * The scripts that perform this task are 
- * - script-9 (save/load dialog initialization, loads room 14), 
- * - room-14-204 (load series IQ string), 
- * - room-14-205 (save series IQ string), 
- * - room-14-206 (calculate series IQ string).
- * Unfortunately script-9 contains lots of GUI stuff so calling this script
- * directly is not possible. The other scripts depend on script-9.
- */
-void ScummEngine_v5::updateIQPoints() {
-	int seriesIQ;
-	// IQString[0..72] corresponds to each puzzle's IQ.
-	// IQString[73] indicates that the IQ-file was loaded successfully and is always 0 when
-	// the IQ is calculated, hence it will be ignored here.
-	const int NUM_PUZZLES = 73;
-	byte seriesIQString[NUM_PUZZLES];
-	byte *episodeIQString;
-	int episodeIQStringSize;
-
-	// load string with IQ points given per puzzle in any savegame
-	// IMPORTANT: the resource string STRINGID_IQ_SERIES is only valid while
-	// the original save/load dialog is executed, so do not use it here.
-	memset(seriesIQString, 0, sizeof(seriesIQString));
-	loadIQPoints(seriesIQString, sizeof(seriesIQString));
-
-	// string with IQ points given per puzzle in current savegame
-	episodeIQString = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
-	if (!episodeIQString)
-		return;
-	episodeIQStringSize = getResourceSize(rtString, STRINGID_IQ_EPISODE);
-	if (episodeIQStringSize < NUM_PUZZLES)
-		return;
-
-	// merge episode and series IQ strings and calculate series IQ
-	seriesIQ = 0;
-	// iterate over puzzles
-	for (int i = 0; i < NUM_PUZZLES ; ++i) {
-		byte puzzleIQ = seriesIQString[i];
-		// if puzzle is solved copy points to episode string
-		if (puzzleIQ > 0)
-			episodeIQString[i] = puzzleIQ;
-		// add puzzle's IQ-points to series IQ
-		seriesIQ += episodeIQString[i];
-	}
-	_scummVars[245] = seriesIQ;
-
-	// save series IQ string
-	saveIQPoints();
-}
-
-void ScummEngine_v5::saveIQPoints() {
-	// save Indy3 IQ-points
-	Common::OutSaveFile *file;
-	Common::String filename = _targetName + ".iq";
-
-	file = _saveFileMan->openForSaving(filename.c_str());
-	if (file != NULL) {
-		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
-		if (ptr) {
-			int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
-			file->write(ptr, size);
-		}
-		delete file;
-	}
-}
-
-void ScummEngine_v5::loadIQPoints(byte *ptr, int size) {
-	// load Indy3 IQ-points
-	Common::InSaveFile *file;
-	Common::String filename = _targetName + ".iq";
-
-	file = _saveFileMan->openForLoading(filename.c_str());
-	if (file != NULL) {
-		byte *tmp = (byte*)malloc(size);
-		int nread = file->read(tmp, size);
-		if (nread == size) {
-			memcpy(ptr, tmp, size);
-		}
-		free(tmp);
-		delete file;
-	}
 }
 
 void ScummEngine_v5::o5_expression() {
@@ -1249,99 +1031,7 @@ void ScummEngine_v5::o5_getActorY() {
 	setResult(getObjY(a));
 }
 
-void ScummEngine_v5::o5_saveLoadGame() {
-	getResultPos();
-	byte a = getVarOrDirectByte(PARAM_1);
-	byte slot = a & 0x1F;
-	byte result = 0;
-
-	// Slot numbers in older games start with 0, in newer games with 1
-	if (_game.version <= 2)
-		slot++;
-
-	if ((_game.id == GID_MANIAC) && (_game.version <= 1)) {
-		// Convert older load/save screen
-		// 1 Load
-		// 2 Save
-		slot = 1;
-		if (a == 1)
-			_opcode = 0x40;
-		else if ((a == 2) || (_game.platform == Common::kPlatformNES))
-			_opcode = 0x80;
-	} else {
-		_opcode = a & 0xE0;
-	}
-
-	switch (_opcode) {
-	case 0x00: // num slots available
-		result = 100;
-		break;
-	case 0x20: // drive
-		if (_game.version <= 3) {
-			// 0 = ???
-			// [1,2] = disk drive [A:,B:]
-			// 3 = hard drive
-			result = 3;
-		} else {
-			// set current drive
-			result = 1;
-		}
-		break;
-	case 0x40: // load
-		if (loadState(slot, false))
-			result = 3; // sucess
-		else
-			result = 5; // failed to load
-		break;
-	case 0x80: // save
-		if (_game.version <= 3) {
-			char name[32];
-			if (_game.version <= 2) {
-				// use generic name
-				sprintf(name, "Game %c", 'A'+slot-1);
-			} else {
-				// use name entered by the user
-				char* ptr;
-				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
-				ptr = (char*)getStringAddress(slot + firstSlot - 1);
-				strncpy(name, ptr, sizeof(name));
-			}
-
-			if (((ScummEngine_v3 *)this)->savePreparedSavegame(slot, name))
-				result = 0;
-			else
-				result = 2;
-		} else {
-			result = 2; // failed to save
-		}
-		break;
-	case 0xC0: // test if save exists
-		{
-		Common::InSaveFile *file;
-		bool avail_saves[100];
-
-		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
-		Common::String filename = makeSavegameName(slot, false);
-		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename.c_str()))) {
-			result = 6; // save file exists
-			delete file;
-		} else
-			result = 7; // save file does not exist
-		}
-		break;
-	default:
-		error("o5_saveLoadGame: unknown subopcode %d", _opcode);
-	}
-
-	setResult(result);
-}
-
 void ScummEngine_v5::o5_getAnimCounter() {
-	if (_game.version == 3) {
-		o5_saveLoadGame();
-		return;
-	}
-
 	getResultPos();
 
 	int act = getVarOrDirectByte(PARAM_1);
@@ -2407,7 +2097,7 @@ void ScummEngine_v5::o5_startScript() {
 	// WORKAROUND: Indy3 does not save the series IQ automatically after changing it.
 	// Save on IQ increment (= script 125 was executed).
 	if (_game.id == GID_INDY3 && script == 125)
-		updateIQPoints();
+		((ScummEngine_v4 *)this)->updateIQPoints();
 }
 
 void ScummEngine_v5::o5_stopObjectCode() {

@@ -34,6 +34,21 @@ namespace Scumm {
  * Engine for version 4 SCUMM games; GF_SMALL_HEADER is always set for these.
  */
 class ScummEngine_v4 : public ScummEngine_v5 {
+	friend class ScummEngine_v5;
+public:
+
+	/**
+	 * Prepared savegame used by the orginal save/load dialog.
+	 * Must be valid as long as the savescreen is active. As we are not
+	 * notified when the savescreen is closed, memory is only freed on a game
+	 * reset, at the destruction of the engine or when the original save/load
+	 * dialog is entered the next time.
+	 */
+	Common::SeekableReadStream *_savePreparedSavegame;
+
+	void prepareSavegame();
+	bool savePreparedSavegame(int slot, char *desc);
+
 public:
 	ScummEngine_v4(OSystem *syst, const DetectorResult &dr);
 
@@ -41,6 +56,8 @@ public:
 
 protected:
 	virtual void setupOpcodes();
+
+	virtual void scummLoop_handleSaveLoad();
 
 	virtual void readResTypeList(int id);
 	virtual void readIndexFile();
@@ -51,11 +68,19 @@ protected:
 
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
 
+	void saveVars();
+	void loadVars();
+	void saveIQPoints();
+	void loadIQPoints(byte *ptr, int size);
+	void updateIQPoints();
+
 	/* Version 4 script opcodes */
 	void o4_ifState();
 	void o4_ifNotState();
 	void o4_oldRoomEffect();
 	void o4_pickupObject();
+	void o4_saveLoadGame();
+	void o4_saveLoadVars();
 };
 
 

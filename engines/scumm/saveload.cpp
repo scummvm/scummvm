@@ -179,7 +179,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 }
 
 
-void ScummEngine_v3::prepareSavegame() {
+void ScummEngine_v4::prepareSavegame() {
 	Common::MemoryWriteStreamDynamic *memStream;
 	Common::WriteStream *writeStream;
 
@@ -205,7 +205,7 @@ void ScummEngine_v3::prepareSavegame() {
 	delete writeStream;
 }
 
-bool ScummEngine_v3::savePreparedSavegame(int slot, char *desc) {
+bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 	bool success;
 	Common::String filename;
 	Common::OutSaveFile *out;
