@@ -155,7 +155,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x5a, o5_add);
 	OPCODE(0x5b, o5_divide);
 	/* 5C */
-	OPCODE(0x5c, o5_oldRoomEffect);
+//	OPCODE(0x5c, o5_oldRoomEffect);
 	OPCODE(0x5d, o5_setClass);
 	OPCODE(0x5e, o5_walkActorTo);
 	OPCODE(0x5f, o5_isActorInBox);
@@ -315,7 +315,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xda, o5_add);
 	OPCODE(0xdb, o5_divide);
 	/* DC */
-	OPCODE(0xdc, o5_oldRoomEffect);
+//	OPCODE(0xdc, o5_oldRoomEffect);
 	OPCODE(0xdd, o5_setClass);
 	OPCODE(0xde, o5_walkActorTo);
 	OPCODE(0xdf, o5_isActorInBox);
@@ -2966,78 +2966,6 @@ void ScummEngine_v5::decodeParseString() {
 	}
 
 	_string[textSlot].saveDefault();
-}
-
-void ScummEngine_v5::o5_oldRoomEffect() {
-	int a;
-
-	_opcode = fetchScriptByte();
-	if ((_opcode & 0x1F) == 3) {
-		a = getVarOrDirectWord(PARAM_1);
-
-#if 1
-		if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
-			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
-			// maybe also in other games, this opcode does a bit more. I added
-			// some stubs here, but somebody with a full IDA or more knowledge
-			// about this will have to fill in the gaps. At least now we know
-			// that something is missing here :-)
-
-			if (a == 4) {
-				//printf("o5_oldRoomEffect ODDBALL: _opcode = 0x%x, a = 0x%x\n", _opcode, a);
-				// No idea what byte_2FCCF is, but it's a globale boolean flag.
-				// I only add it here as a temporary hack to make the pseudo code compile.
-				// Maybe it is just there as a reentry protection guard, given
-				// how it is used? It might also correspond to _screenEffectFlag.
-				int byte_2FCCF = 0;
-
-				// For now, we force a redraw of the screen background. This
-				// way the Zak end credits seem to work mostly correct.
-				VirtScreen *vs = &_virtscr[kMainVirtScreen];
-				restoreBackground(Common::Rect(0, vs->topline, vs->w, vs->topline + vs->h));
-				vs->setDirtyRange(0, vs->h);
-				updateDirtyScreen(kMainVirtScreen);
-
-				if (byte_2FCCF) {
-					// Here now "sub_1C44" is called, which sets byte_2FCCF to 0 then
-					// calls yet another sub (which also reads byte_2FCCF):
-
-					byte_2FCCF = 0;
-					//call sub_0BB3
-
-
-					// Now sub_085C is called. This is quite simply: it sets
-					// 0xF000 bytes. starting at 0x40000 to 0. No idea what that
-					// buffer is, maybe a screen buffer, though. Note that
-					// 0xF000 = 320*192.
-					// Maybe this is also the charset mask being cleaned?
-
-					// call sub_085C
-
-
-					// And then sub_1C54 is called, which is almost identical to
-					// the above sub_1C44, only it sets byte_2FCCF to 1:
-
-					byte_2FCCF = 1;
-					// call sub_0BB3
-
-				} else {
-					// Here only sub_085C is called (see comment above)
-
-					// call sub_085C
-				}
-			return;
-			}
-#endif
-
-		}
-		if (a) {
-			_switchRoomEffect = (byte)(a & 0xFF);
-			_switchRoomEffect2 = (byte)(a >> 8);
-		} else {
-			fadeIn(_newEffect);
-		}
-	}
 }
 
 } // End of namespace Scumm

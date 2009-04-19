@@ -156,7 +156,6 @@ protected:
 	void o5_move();
 	void o5_multiply();
 	void o5_notEqualZero();
-	void o5_oldRoomEffect();
 	void o5_or();
 	void o5_beginOverride();
 	void o5_panCameraTo();
