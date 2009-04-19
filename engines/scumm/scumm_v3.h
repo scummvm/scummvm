@@ -56,6 +56,8 @@ public:
 	virtual void resetScumm();
 
 protected:
+	virtual void setupOpcodes();
+
 	virtual void readRoomsOffsets();
 	virtual void loadCharset(int no);
 

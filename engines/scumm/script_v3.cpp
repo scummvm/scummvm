@@ -23,36 +23,14 @@
  *
  */
 
-#ifndef SCUMM_SCRIPT_V4_H
-#define SCUMM_SCRIPT_V4_H
-
-#include "scumm/scumm_v5.h"
+#include "scumm/scumm_v3.h"
 
 namespace Scumm {
 
-/**
- * Engine for version 4 SCUMM games; GF_SMALL_HEADER is always set for these.
- */
-class ScummEngine_v4 : public ScummEngine_v5 {
-public:
-	ScummEngine_v4(OSystem *syst, const DetectorResult &dr);
+#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v3, x)
 
-	virtual void resetScumm();
-
-protected:
-	virtual void setupOpcodes();
-
-	virtual void readResTypeList(int id);
-	virtual void readIndexFile();
-	virtual void loadCharset(int no);
-	virtual void resetRoomObjects();
-	virtual void readMAXS(int blockSize);
-	virtual void readGlobalObjects();
-
-	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
-};
-
+void ScummEngine_v3::setupOpcodes() {
+	ScummEngine_v4::setupOpcodes();
+}
 
 } // End of namespace Scumm
-
-#endif

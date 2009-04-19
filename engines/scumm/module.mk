@@ -47,6 +47,8 @@ MODULE_OBJS := \
 	saveload.o \
 	script_v0.o \
 	script_v2.o \
+	script_v3.o \
+	script_v4.o \
 	script_v5.o \
 	script_v6.o \
 	script.o \
