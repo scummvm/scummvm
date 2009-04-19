@@ -359,10 +359,6 @@ void ScummEngine_v0::setupOpcodes() {
 
 #define SENTENCE_SCRIPT 2
 
-#define PARAM_1 0x80
-#define PARAM_2 0x40
-#define PARAM_3 0x20
-
 int ScummEngine_v0::getVarOrDirectWord(byte mask) {
 	return getVarOrDirectByte(mask);
 }
@@ -1036,9 +1032,5 @@ void ScummEngine_v0::resetSentence() {
 	_activeObject = 0;
 	_activeVerb = 13;
 }
-
-#undef PARAM_1
-#undef PARAM_2
-#undef PARAM_3
 
 } // End of namespace Scumm

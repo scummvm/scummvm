@@ -361,10 +361,6 @@ void ScummEngine_v2::setupOpcodes() {
 
 #define SENTENCE_SCRIPT 2
 
-#define PARAM_1 0x80
-#define PARAM_2 0x40
-#define PARAM_3 0x20
-
 int ScummEngine_v2::getVar() {
 	return readVar(fetchScriptByte());
 }
@@ -1625,9 +1621,5 @@ void ScummEngine_v2::resetSentence() {
 void ScummEngine_v2::runInventoryScript(int i) {
 	redrawV2Inventory();
 }
-
-#undef PARAM_1
-#undef PARAM_2
-#undef PARAM_3
 
 } // End of namespace Scumm

@@ -362,10 +362,6 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xff, o5_drawBox);
 }
 
-#define PARAM_1 0x80
-#define PARAM_2 0x40
-#define PARAM_3 0x20
-
 int ScummEngine_v5::getVar() {
 	return readVar(fetchScriptWord());
 }
@@ -2294,7 +2290,7 @@ void ScummEngine_v5::o5_setVarRange() {
 		_resultVarNumber++;
 	} while (--a);
 
-	// Macintosh verison of indy3ega used different interface, so adjust values.
+	// Macintosh version of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 		VAR(68) = 0;
 		VAR(69) = 0;
@@ -2745,9 +2741,7 @@ void ScummEngine_v5::o5_wait() {
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
-			break;
-		}
-		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
+		} else if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
 	default:
@@ -3081,9 +3075,5 @@ void ScummEngine_v5::o5_pickupObjectOld() {
 	clearDrawObjectQueue();
 	runInventoryScript(1);
 }
-
-#undef PARAM_1
-#undef PARAM_2
-#undef PARAM_3
 
 } // End of namespace Scumm
