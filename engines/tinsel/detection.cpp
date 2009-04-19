@@ -263,6 +263,30 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
+#if 0
+	{	// UK multilanguage PSX CD
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "bb78992e3c1cb088e30cc00ad18fc1d7", 339768},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPSX,
+			ADGF_NO_FLAGS
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+#endif
 
 #if 0
 	{	// English Saturn CD
@@ -280,7 +304,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_CD | GC_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
 #endif
