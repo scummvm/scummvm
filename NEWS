@@ -19,6 +19,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the original cutscenes. 
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Dropped support for playing cutscene sound without the video.
+   - Added support for the PlayStation version.
 
 0.13.1 (2009-04-27)    
  AGOS:
