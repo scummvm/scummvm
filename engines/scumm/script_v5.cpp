@@ -126,7 +126,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x43, o5_getActorX);
 	/* 44 */
 	OPCODE(0x44, o5_isLess);
-	OPCODE(0x45, o5_drawObject);
+//	OPCODE(0x45, o5_drawObject);
 	OPCODE(0x46, o5_increment);
 	OPCODE(0x47, o5_setState);
 	/* 48 */
@@ -286,7 +286,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xc3, o5_getActorX);
 	/* C4 */
 	OPCODE(0xc4, o5_isLess);
-	OPCODE(0xc5, o5_drawObject);
+//	OPCODE(0xc5, o5_drawObject);
 	OPCODE(0xc6, o5_decrement);
 	OPCODE(0xc7, o5_setState);
 	/* C8 */
@@ -1736,11 +1736,6 @@ void ScummEngine_v5::o5_panCameraTo() {
 
 void ScummEngine_v5::o5_pickupObject() {
 	int obj, room;
-	if (_game.version == 3 || _game.version == 4) {
-		o5_drawObject();
-		return;
-	}
-
 	obj = getVarOrDirectWord(PARAM_1);
 	room = getVarOrDirectByte(PARAM_2);
 	if (room == 0)

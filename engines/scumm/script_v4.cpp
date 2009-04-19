@@ -33,6 +33,13 @@ namespace Scumm {
 void ScummEngine_v4::setupOpcodes() {
 	ScummEngine_v5::setupOpcodes();
 
+	OPCODE(0x25, o5_drawObject);
+	OPCODE(0x45, o5_drawObject);
+	OPCODE(0x65, o5_drawObject);
+	OPCODE(0xa5, o5_drawObject);
+	OPCODE(0xc5, o5_drawObject);
+	OPCODE(0xe5, o5_drawObject);
+
 	OPCODE(0x50, o4_pickupObject);
 	OPCODE(0xd0, o4_pickupObject);
 }
