@@ -161,7 +161,6 @@ protected:
 	void o5_beginOverride();
 	void o5_panCameraTo();
 	void o5_pickupObject();
-	void o5_pickupObjectOld();
 	void o5_print();
 	void o5_printEgo();
 	void o5_pseudoRoom();

@@ -32,6 +32,32 @@ namespace Scumm {
 
 void ScummEngine_v4::setupOpcodes() {
 	ScummEngine_v5::setupOpcodes();
+
+	OPCODE(0x50, o4_pickupObject);
+	OPCODE(0xd0, o4_pickupObject);
+}
+
+void ScummEngine_v4::o4_pickupObject() {
+	int obj = getVarOrDirectWord(PARAM_1);
+
+	if (obj < 1) {
+		error("pickupObjectOld received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
+	}
+
+	if (getObjectIndex(obj) == -1)
+		return;
+
+	if (whereIsObject(obj) == WIO_INVENTORY)	// Don't take an object twice
+		return;
+
+	// debug(0, "adding %d from %d to inventoryOld", obj, _currentRoom);
+	addObjectToInventory(obj, _roomResource);
+	markObjectRectAsDirty(obj);
+	putOwner(obj, VAR(VAR_EGO));
+	putClass(obj, kObjectClassUntouchable, 1);
+	putState(obj, 1);
+	clearDrawObjectQueue();
+	runInventoryScript(1);
 }
 
 } // End of namespace Scumm

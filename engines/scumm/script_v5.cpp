@@ -141,7 +141,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x4e, o5_putActorAtObject);
 	OPCODE(0x4f, o5_ifState);
 	/* 50 */
-	OPCODE(0x50, o5_pickupObjectOld);
+//	OPCODE(0x50, o5_pickupObjectOld);
 	OPCODE(0x51, o5_animateActor);
 	OPCODE(0x52, o5_actorFollowCamera);
 	OPCODE(0x53, o5_actorOps);
@@ -301,7 +301,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xce, o5_putActorAtObject);
 	OPCODE(0xcf, o5_ifState);
 	/* D0 */
-	OPCODE(0xd0, o5_pickupObjectOld);
+//	OPCODE(0xd0, o5_pickupObjectOld);
 	OPCODE(0xd1, o5_animateActor);
 	OPCODE(0xd2, o5_actorFollowCamera);
 	OPCODE(0xd3, o5_actorOps);
@@ -3051,29 +3051,6 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 			fadeIn(_newEffect);
 		}
 	}
-}
-
-void ScummEngine_v5::o5_pickupObjectOld() {
-	int obj = getVarOrDirectWord(PARAM_1);
-
-	if (obj < 1) {
-		error("pickupObjectOld received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
-	}
-
-	if (getObjectIndex(obj) == -1)
-		return;
-
-	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;											/* object twice */
-
-	// debug(0, "adding %d from %d to inventoryOld", obj, _currentRoom);
-	addObjectToInventory(obj, _roomResource);
-	markObjectRectAsDirty(obj);
-	putOwner(obj, VAR(VAR_EGO));
-	putClass(obj, kObjectClassUntouchable, 1);
-	putState(obj, 1);
-	clearDrawObjectQueue();
-	runInventoryScript(1);
 }
 
 } // End of namespace Scumm
