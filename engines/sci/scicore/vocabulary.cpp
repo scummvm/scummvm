@@ -137,11 +137,6 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 		seeker += 3;
 	}
 
-
-// FIXME: Sort the list.
-// Or even switch it to a hashmap?
-//	qsort(words, counter, sizeof(word_t *), _vocab_cmp_words); // Sort entries
-
 	return true;
 }
 
@@ -199,8 +194,7 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 }
 
 void vocab_free_branches(parse_tree_branch_t *parser_branches) {
-	if (parser_branches)
-		free(parser_branches);
+	free(parser_branches);
 }
 
 parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
