@@ -9,7 +9,7 @@ MODULE_OBJS := \
 	font.o \
 	keyframe.o \
 	lab.o \
-	lipsynch.o \
+	lipsync.o \
 	localize.o \
 	lua.o \
 	main.o \
