@@ -199,8 +199,7 @@ void AGOSEngine::waitForInput() {
 					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();
 			if (processSpecialKeys()) {
-				if ((getGameType() == GType_PP && getGameId() != GID_DIMP) ||
-					getGameType() == GType_WW)
+				if (getGameId() != GID_DIMP)
 					goto out_of_here;
 			}
 			if (_lastHitArea3 == (HitArea *) -1) {
@@ -474,6 +473,10 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 302;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 239;
+		else if (getGameType() == GType_ELVIRA2 && isBoxDead(101))
+			_verbHitArea = 200;
+		else if (getGameType() == GType_ELVIRA1 && isBoxDead(101))
+			_verbHitArea = 214;
 		verbCode = true;
 		break;
 	case Common::KEYCODE_DOWN:
@@ -481,6 +484,10 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 304;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 241;
+		else if (getGameType() == GType_ELVIRA2 && isBoxDead(107))
+			_verbHitArea = 202;
+		else if (getGameType() == GType_ELVIRA1 && isBoxDead(105))
+			_verbHitArea = 215;
 		verbCode = true;
 		break;
 	case Common::KEYCODE_RIGHT:
@@ -488,6 +495,10 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 303;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 240;
+		else if (getGameType() == GType_ELVIRA2 && isBoxDead(102))
+			_verbHitArea = 201;
+		else if (getGameType() == GType_ELVIRA1 && isBoxDead(103))
+			_verbHitArea = 216;
 		verbCode = true;
 		break;
 	case Common::KEYCODE_LEFT:
@@ -495,6 +506,10 @@ bool AGOSEngine::processSpecialKeys() {
 			_verbHitArea = 301;
 		else if (getGameType() == GType_WW)
 			_verbHitArea = 242;
+		else if (getGameType() == GType_ELVIRA2 && isBoxDead(104))
+			_verbHitArea = 203;
+		else if (getGameType() == GType_ELVIRA1 && isBoxDead(107))
+			_verbHitArea = 217;
 		verbCode = true;
 		break;
 	case Common::KEYCODE_ESCAPE:
