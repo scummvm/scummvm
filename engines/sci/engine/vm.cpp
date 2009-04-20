@@ -737,8 +737,8 @@ void run_vm(EngineState *s, int restoring) {
 
 		opnumber = opcode >> 1;
 
-		for (temp = 0; formats[opnumber][temp]; temp++)
-			switch (formats[opnumber][temp]) {
+		for (temp = 0; g_opcode_formats[opnumber][temp]; temp++)
+			switch (g_opcode_formats[opnumber][temp]) {
 
 			case Script_Byte:
 				opparams[temp] = GET_OP_BYTE();

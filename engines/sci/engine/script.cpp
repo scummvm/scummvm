@@ -33,7 +33,7 @@ namespace Sci {
 
 #define END Script_None
 
-opcode_format formats[128][4] = {
+opcode_format g_opcode_formats[128][4] = {
 	/*00*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
 	/*04*/
@@ -99,8 +99,8 @@ void script_adjust_opcode_formats(int res_version) {
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
 	case SCI_VERSION_1_1:
-		formats[op_lofsa][0] = Script_Offset;
-		formats[op_lofss][0] = Script_Offset;
+		g_opcode_formats[op_lofsa][0] = Script_Offset;
+		g_opcode_formats[op_lofss][0] = Script_Offset;
 		break;
 	default:
 		sciprintf("script_adjust_opcode_formats(): Unknown script version %d\n", res_version);

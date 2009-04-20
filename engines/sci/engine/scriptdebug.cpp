@@ -1262,8 +1262,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	sciprintf(PREG": ", PRINT_REG(pos));
 
 	if (print_bytecode) {
-		while (formats[opcode][i]) {
-			switch (formats[opcode][i++]) {
+		while (g_opcode_formats[opcode][i]) {
+			switch (g_opcode_formats[opcode][i++]) {
 
 			case Script_SByte:
 			case Script_Byte:
@@ -1311,8 +1311,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	sciprintf("%s", s->opcodes[opcode].name);
 
 	i = 0;
-	while (formats[opcode][i]) {
-		switch (formats[opcode][i++]) {
+	while (g_opcode_formats[opcode][i]) {
+		switch (g_opcode_formats[opcode][i++]) {
 		case Script_Invalid:
 			sciprintf("-Invalid operation-");
 			break;
