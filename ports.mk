@@ -47,6 +47,10 @@ bundle: residual-static $(srcdir)/dists/macosx/Info.plist
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
+	cp $(srcdir)/AUTHORS $(bundle_name)/
+	cp $(srcdir)/COPYING $(bundle_name)/
+	cp $(srcdir)/COPYING.LGPL $(bundle_name)/
+	cp $(srcdir)/COPYRIGHT $(bundle_name)/
 	cp residual $(bundle_name)/Residual
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -110,8 +114,8 @@ iphone: $(OBJS)
 osxsnap: bundle
 	mkdir Residual-snapshot
 	cp $(srcdir)/AUTHORS ./Residual-snapshot/Authors
-	cp $(srcdir)/COPYING.LGPL ./Residual-snapshot/License.LGPL
-	cp $(srcdir)/COPYING.GPL ./Residual-snapshot/License.GPL
+	cp $(srcdir)/COPYING.GPL ./Residual-snapshot/License\ \(GPL\)
+	cp $(srcdir)/COPYING.LGPL ./Residual-snapshot/License\ \(LGPL\)
 	cp $(srcdir)/NEWS ./Residual-snapshot/News
 	cp $(srcdir)/TODO ./Residual-snapshot/Todo
 	cp $(srcdir)/README ./Residual-snapshot/Residual\ ReadMe
@@ -123,7 +127,7 @@ osxsnap: bundle
 	#/Developer/Tools/SetFile -a V ./Residual-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder Residual-snapshot \
-					-volname "Residual snapshot $(BUILD_DATE)" \
+					-volname "Residual $(BUILD_DATE)" \
 					Residual-svn-$(BUILD_DATE).dmg
 	rm -rf Residual-snapshot
 
