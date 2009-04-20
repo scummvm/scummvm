@@ -195,6 +195,8 @@ void AGOSEngine::vc52_playSound() {
 		_sound->playEffects(sound);
 	} else if (getGameId() == GID_SIMON1DOS) {
 		playSting(sound);
+	} else if (getGameType() == GType_WW) {
+		// TODO: Sound effects in PC version only
 	} else {
 		loadSound(sound, 0, 0);
 	}

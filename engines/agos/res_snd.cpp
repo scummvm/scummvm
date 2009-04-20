@@ -533,35 +533,36 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 
 	dst = _curSfxFile;
 	if (getGameType() == GType_WW) {
-		uint tmp = sound;
+		uint16 tmp = sound;
+
 		while (tmp--) {
-			dst += READ_LE_UINT16(dst) + 4;
 			size += READ_LE_UINT16(dst) + 4;
+			dst += READ_LE_UINT16(dst) + 4;
 
 			if (size > _curSfxFileSize)
-				error("loadSound: Reading beyond EOF");
+				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
 		}
 
 		size = READ_LE_UINT16(dst);
 		offs = 4;
 	} else if (getGameType() == GType_ELVIRA2) {
 		while (READ_BE_UINT32(dst + 4) != sound) {
-			dst += 12;
 			size += 12;
+			dst += 12;
 
 			if (size > _curSfxFileSize)
-				error("loadSound: Reading beyond EOF");
+				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
 		}
 
 		size = READ_BE_UINT32(dst);
 		offs = READ_BE_UINT32(dst + 8);
 	} else {
 		while (READ_BE_UINT16(dst + 6) != sound) {
-			dst += 12;
 			size += 12;
+			dst += 12;
 
 			if (size > _curSfxFileSize)
-				error("loadSound: Reading beyond EOF");
+				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
 
 		}
 

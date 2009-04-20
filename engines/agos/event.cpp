@@ -285,6 +285,7 @@ void AGOSEngine::animateEvent(const byte *codePtr, uint16 curZoneNum, uint16 cur
 	_curVgaFile1 = vpe->vgaFile1;
 	_curVgaFile2 = vpe->vgaFile2;
 	_curSfxFile = vpe->sfxFile;
+	_curSfxFileSize = vpe->sfxFileEnd - vpe->sfxFile;
 
 	_vcPtr = codePtr;
 
