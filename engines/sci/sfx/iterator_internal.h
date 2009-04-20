@@ -29,20 +29,10 @@
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/sci_midi.h"
 
+#include "common/array.h"
 #include "common/list.h"
 
 namespace Sci {
-
-/* States */
-
-#define SI_STATE_UNINITIALISED -1
-#define SI_STATE_DELTA_TIME 0 /* Now at a delta time */
-#define SI_STATE_COMMAND 1 /* Now at a MIDI operation */
-#define SI_STATE_PENDING 2 /* Pending for loop */
-#define SI_STATE_FINISHED 3 /* End of song */
-#define SI_STATE_PCM 4 /* Should report a PCM next (-> DELTA_TIME) */
-#define SI_STATE_PCM_MAGIC_DELTA 5 /* Should report a ``magic'' one tick delta time next (goes on to FINISHED) */
-
 
 /* Iterator types */
 
@@ -52,29 +42,42 @@ namespace Sci {
 #define SIPFX __FILE__" : "
 
 
+enum {
+	SI_STATE_UNINITIALISED		= -1,
+	SI_STATE_DELTA_TIME			= 0,	//!< Now at a delta time
+	SI_STATE_COMMAND			= 1,	//!< Now at a MIDI operation
+	SI_STATE_PENDING			= 2,	//!< Pending for loop
+	SI_STATE_FINISHED			= 3,	//!< End of song
+	SI_STATE_PCM				= 4,	//!< Should report a PCM next (-> DELTA_TIME)
+	SI_STATE_PCM_MAGIC_DELTA	= 5		//!< Should report a ``magic'' one tick delta time next (goes on to FINISHED)
+};
+
 struct SongIteratorChannel {
-	int state;	/* SI_STATE_* */
-	int offset;     /* Offset into the data chunk */
-	int end;	/* Last allowed byte in track */
-	int id;		/* Some channel ID */
-	int loop_offset;
-	int delay;	/* Number of ticks before the
-			** specified channel is next
-			** used, or
-			** CHANNEL_DELAY_MISSING to
-			** indicate that the delay has
-			** not yet been read  */
+	
+	int state;	//!< State of this song iterator channel
+	int offset;     //!< Offset into the data chunk */
+	int end;	//!< Last allowed byte in track */
+	int id;		//!< Some channel ID */
+
+	/**
+	 * Number of ticks before the specified channel is next used, or
+	 * CHANNEL_DELAY_MISSING to indicate that the delay has not yet
+	 * been read.
+	 */
+	int delay;
 
 	/* Two additional offsets for recovering: */
+	int loop_offset;
 	int initial_offset;
-	int playmask; /* Active playmask (MIDI channels to play in here) */
-	int notes_played; /* #of notes played since the last loop start */
-	int loop_timepos; /* Total delay for this channel's loop marker */
-	int total_timepos; /* Number of ticks since the beginning, ignoring loops */
-	int timepos_increment; /* Number of ticks until the next command (to add) */
 
-	int saw_notes;  /* Bitmask of channels we have currently played notes on */
-	byte last_cmd;	/* Last operation executed, for running status */
+	int playmask; //!< Active playmask (MIDI channels to play in here) */
+	int notes_played; //!< #of notes played since the last loop start */
+	int loop_timepos; //!< Total delay for this channel's loop marker */
+	int total_timepos; //!< Number of ticks since the beginning, ignoring loops */
+	int timepos_increment; //!< Number of ticks until the next command (to add) */
+
+	int saw_notes;  //!< Bitmask of channels we have currently played notes on */
+	byte last_cmd;	//!< Last operation executed, for running status */
 
 public:
 	void resetSynthChannels();
@@ -82,27 +85,21 @@ public:
 
 class BaseSongIterator : public SongIterator {
 public:
-	int polyphony[MIDI_CHANNELS]; /* # of simultaneous notes on each */
-	int importance[MIDI_CHANNELS]; /* priority rating for each channel, 0 means unrated. */
+	int polyphony[MIDI_CHANNELS]; //!< # of simultaneous notes on each
+	int importance[MIDI_CHANNELS]; //!< priority rating for each channel, 0 means unrated.
 
 
-	int ccc; /* Cumulative cue counter, for those who need it */
-	byte resetflag; /* for 0x4C -- on DoSound StopSound, do we return to start? */
-	int _deviceId; /* ID of the device we generating events for */
-	int active_channels; /* Number of active channels */
-	uint _size; /* Song size */
-	byte *_data;
+	int ccc; //!< Cumulative cue counter, for those who need it
+	byte resetflag; //!< for 0x4C -- on DoSound StopSound, do we return to start?
+	int _deviceId; //!< ID of the device we generating events for
+	int active_channels; //!< Number of active channels
+	Common::Array<byte> _data;	//!< Song data
 
-	int loops; /* Number of loops remaining */
+	int loops; //!< Number of loops remaining
 	int recover_delay;
 
 public:
 	BaseSongIterator(byte *data, uint size, songit_id_t id);
-
-	// Copy constructor taking care of memory handling
-	BaseSongIterator(const BaseSongIterator&);
-
-	~BaseSongIterator();
 };
 
 /********************************/
@@ -131,7 +128,8 @@ public:
 
 
 struct Sci1Sample {
-	/* Time left-- initially, this is 'Sample point 1'.
+	/**
+	 * Time left-- initially, this is 'Sample point 1'.
 	 * After initialisation, it is 'sample point 1 minus the sample
 	 * point of the previous sample'
 	 */

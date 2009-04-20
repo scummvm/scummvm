@@ -26,6 +26,7 @@
 /* Song iterators */
 
 #include "common/util.h"
+
 #include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/player.h"
 #include "sci/tools.h"
@@ -35,102 +36,6 @@
 #include "sound/mixer.h"
 
 namespace Sci {
-
-/****************************************/
-/* Refcounting garbage collected memory */
-/****************************************/
-
-#define REFCOUNT_OVERHEAD (sizeof(uint32) * 3)
-#define REFCOUNT_MAGIC_LIVE_1 0xebdc1741
-#define REFCOUNT_MAGIC_LIVE_2 0x17015ac9
-#define REFCOUNT_MAGIC_DEAD_1 0x11dead11
-#define REFCOUNT_MAGIC_DEAD_2 0x22dead22
-
-#define REFCOUNT_CHECK(p) ((((uint32 *)(p))[-3] == REFCOUNT_MAGIC_LIVE_2) && (((uint32 *)(p))[-1] == REFCOUNT_MAGIC_LIVE_1))
-
-#define REFCOUNT(p) (((uint32 *)p)[-2])
-
-#undef TRACE_REFCOUNT
-
-/* Allocates "garbage" memory
-** Parameters: (size_t) length: Number of bytes to allocate
-** Returns   : (void *) The allocated memory
-** Memory allocated in this fashion will be marked as holding one reference.
-** It cannot be freed with 'free()', only by using sci_refcount_decref().
-*/
-static void *sci_refcount_alloc(size_t length) {
-	uint32 *data = (uint32 *)sci_malloc(REFCOUNT_OVERHEAD + length);
-#ifdef TRACE_REFCOUNT
-	fprintf(stderr, "[] REF: Real-alloc at %p\n", data);
-#endif
-	data += 3;
-
-	data[-1] = REFCOUNT_MAGIC_LIVE_1;
-	data[-3] = REFCOUNT_MAGIC_LIVE_2;
-	REFCOUNT(data) = 1;
-#ifdef TRACE_REFCOUNT
-	fprintf(stderr, "[] REF: Alloc'd %p (ref=%d) OK=%d\n", data, REFCOUNT(data),
-	        REFCOUNT_CHECK(data));
-#endif
-	return data;
-}
-
-/* Adds another reference to refcounted memory
-** Parameters: (void *) data: The data to add a reference to
-** Returns   : (void *) data
-*/
-static void *sci_refcount_incref(void *data) {
-	if (!REFCOUNT_CHECK(data)) {
-		BREAKPOINT();
-	} else
-		REFCOUNT(data)++;
-
-#ifdef TRACE_REFCOUNT
-	fprintf(stderr, "[] REF: Inc'ing %p (now ref=%d)\n", data, REFCOUNT(data));
-#endif
-	return data;
-}
-
-/* Decrements the reference count for refcounted memory
-** Parameters: (void *) data: The data to add a reference to
-** Returns   : (void *) data
-** If the refcount reaches zero, the memory will be deallocated
-*/
-static void sci_refcount_decref(void *data) {
-#ifdef TRACE_REFCOUNT
-	fprintf(stderr, "[] REF: Dec'ing %p (prev ref=%d) OK=%d\n", data, REFCOUNT(data),
-	        REFCOUNT_CHECK(data));
-#endif
-	if (!REFCOUNT_CHECK(data)) {
-		BREAKPOINT();
-	} else if (--REFCOUNT(data) == 0) {
-		uint32 *fdata = (uint32 *)data;
-
-		fdata[-1] = REFCOUNT_MAGIC_DEAD_1;
-		fdata[-3] = REFCOUNT_MAGIC_DEAD_2;
-
-#ifdef TRACE_REFCOUNT
-		fprintf(stderr, "[] REF: Freeing (%p)...\n", fdata - 3);
-#endif
-		free(fdata - 3);
-#ifdef TRACE_REFCOUNT
-		fprintf(stderr, "[] REF: Done.\n");
-#endif
-	}
-}
-
-/* Duplicates non-refcounted memory into a refcounted block
-** Parameters: (void *) data: The memory to copy from
-**             (size_t) len: The number of bytes to copy/allocate
-** Returns   : (void *) Newly allocated refcounted memory
-** The number of references accounted for will be one.
-*/
-static void *sci_refcount_memdup(void *data, size_t len) {
-	void *dest = sci_refcount_alloc(len);
-	memcpy(dest, data, len);
-	return dest;
-}
-
 
 
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
@@ -147,52 +52,9 @@ static void print_tabs_id(int nr, songit_id_t id) {
 	fprintf(stderr, "[%08lx] ", id);
 }
 
-static byte *sci_memchr(byte *data, int c, int n) {
-	while (n && *data != c) {
-		++data;
-		--n;
-	}
-
-	if (n)
-		return data;
-	else
-		return NULL;
-}
-
-BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id) {
+BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id)
+	: _data(data, size) {
 	ID = id;
-
-	_data = (byte *)sci_refcount_memdup(data, size);
-	_size = size;
-}
-
-BaseSongIterator::BaseSongIterator(const BaseSongIterator& bsi) : SongIterator(bsi) {
-	memcpy(polyphony, bsi.polyphony, sizeof(polyphony));
-	memcpy(importance, bsi.importance, sizeof(importance));
-	ccc = bsi.ccc;
-	resetflag = bsi.resetflag;
-	_deviceId = bsi._deviceId;
-	active_channels = bsi.active_channels;
-	_size = bsi._size;
-	_data = bsi._data;
-	loops = bsi.loops;
-	recover_delay = bsi.recover_delay;
-
-	if (_data) {
-#ifdef DEBUG_VERBOSE
-		fprintf(stderr, "** CLONE INCREF for new %p from %p at %p\n", mem, this, mem->_data);
-#endif
-		sci_refcount_incref(_data);
-	}
-}
-
-BaseSongIterator::~BaseSongIterator() {
-#ifdef DEBUG_VERBOSE
-	fprintf(stderr, "** FREEING it %p: data at %p\n", this, _data);
-#endif
-	if (_data)
-		sci_refcount_decref(_data);
-	_data = NULL;
 }
 
 /************************************/
@@ -207,8 +69,8 @@ BaseSongIterator::~BaseSongIterator() {
 #define SCI0_PCM_DATA_OFFSET 0x2c
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
-	if (offset > self->_size) { \
-		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->_size, __LINE__); \
+	if (offset > self->_data.size()) { \
+		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->_data.size(), __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -307,7 +169,7 @@ static int _parse_sci_midi_command(BaseSongIterator *self, byte *buf,
 
 
 	CHECK_FOR_END(paramsleft);
-	memcpy(buf + 1, self->_data + channel->offset, paramsleft);
+	memcpy(buf + 1, self->_data.begin() + channel->offset, paramsleft);
 	*result = 1 + paramsleft;
 
 	channel->offset += paramsleft;
@@ -477,8 +339,8 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 	switch (channel->state) {
 
 	case SI_STATE_PCM: {
-		if (*(self->_data + channel->offset) == 0
-		        && *(self->_data + channel->offset + 1) == SCI_MIDI_EOT)
+		if (self->_data[channel->offset] == 0
+		        && self->_data[channel->offset + 1] == SCI_MIDI_EOT)
 			/* Fake one extra tick to trick the interpreter into not killing the song iterator right away */
 			channel->state = SI_STATE_PCM_MAGIC_DELTA;
 		else
@@ -510,9 +372,9 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 
 	case SI_STATE_DELTA_TIME: {
 		int offset;
-		int ticks = _parse_ticks(self->_data + channel->offset,
+		int ticks = _parse_ticks(self->_data.begin() + channel->offset,
 		                         &offset,
-		                         self->_size - channel->offset);
+		                         self->_data.size() - channel->offset);
 
 		channel->offset += offset;
 		channel->delay += ticks;
@@ -589,7 +451,7 @@ static int _sci0_header_magic_p(byte *data, int offset, int size) {
 static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	sfx_pcm_config_t *format, int *xoffset, uint *xsize) {
 	int tries = 2;
-	int found_it = 0;
+	bool found_it = false;
 	byte *pcm_data;
 	int size;
 	uint offset = SCI0_MIDI_OFFSET;
@@ -598,23 +460,23 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		return 1;
 	/* No such luck */
 
-	while ((tries--) && (offset < self->_size) && (!found_it)) {
-		/* Search through the garbage manually */
-		byte *fc = sci_memchr(self->_data + offset,
-		                    SCI0_END_OF_SONG,
-		                    self->_size - offset);
+	while ((tries--) && (offset < self->_data.size()) && (!found_it)) {
+		// Search through the garbage manually
+		// FIXME: Replace offset by an iterator
+		Common::Array<byte>::iterator iter = Common::find(self->_data.begin() + offset, self->_data.end(), SCI0_END_OF_SONG);
 
-		if (!fc) {
+		if (iter == self->_data.end()) {
 			warning(SIPFX "Playing unterminated song!");
 			return 1;
 		}
 
-		/* add one to move it past the END_OF_SONG marker */
-		offset = fc - self->_data + 1;
+		// add one to move it past the END_OF_SONG marker
+		iter++;
+		offset = iter - self->_data.begin();	// FIXME
 
 
-		if (_sci0_header_magic_p(self->_data, offset, self->_size))
-			found_it = 1;
+		if (_sci0_header_magic_p(self->_data.begin(), offset, self->_data.size()))
+			found_it = true;
 	}
 
 	if (!found_it) {
@@ -624,7 +486,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		return 1;
 	}
 
-	pcm_data = self->_data + offset;
+	pcm_data = self->_data.begin() + offset;
 
 	size = READ_LE_UINT16(pcm_data + SCI0_PCM_SIZE_OFFSET);
 
@@ -633,12 +495,12 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	format->stereo = SFX_PCM_MONO;
 	format->rate = READ_LE_UINT16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
 
-	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_size) {
-		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_size;
+	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_data.size()) {
+		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_data.size();
 
 		warning(SIPFX "PCM advertizes %d bytes of data, but %d"
 		        " bytes are trailing in the resource!",
-		        size, self->_size - (offset + SCI0_PCM_DATA_OFFSET));
+		        size, self->_data.size() - (offset + SCI0_PCM_DATA_OFFSET));
 
 		if (d > 0)
 			size -= d; /* Fix this */
@@ -682,7 +544,7 @@ Audio::AudioStream *Sci0SongIterator::getAudioStream() {
 
 	channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
 
-	return makeStream(_data + offset + SCI0_PCM_DATA_OFFSET, size, conf);
+	return makeStream(_data.begin() + offset + SCI0_PCM_DATA_OFFSET, size, conf);
 }
 
 SongIterator *Sci0SongIterator::handleMessage(Message msg) {
@@ -692,7 +554,7 @@ SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg._arg.i, ID);
 			fprintf(stderr, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
-			        _deviceId, active_channels, _size, loops);
+			        _deviceId, active_channels, _data.size(), loops);
 			break;
 
 		case _SIMSG_BASEMSG_SET_LOOPS:
@@ -787,7 +649,7 @@ void Sci0SongIterator::init() {
 
 	ccc = 0; /* Reset cumulative cue counter */
 	active_channels = 1;
-	_base_init_channel(&channel, 0, SCI0_MIDI_OFFSET, _size);
+	_base_init_channel(&channel, 0, SCI0_MIDI_OFFSET, _data.size());
 	channel.resetSynthChannels();
 
 	if (_data[0] == 2) /* Do we have an embedded PCM? */
@@ -833,20 +695,20 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
 		          self->_data[offset + 1]);
 
-	rate = (int16)READ_LE_UINT16(self->_data + offset + 2);
-	length = READ_LE_UINT16(self->_data + offset + 4);
-	begin = (int16)READ_LE_UINT16(self->_data + offset + 6);
-	end = (int16)READ_LE_UINT16(self->_data + offset + 8);
+	rate = (int16)READ_LE_UINT16(self->_data.begin() + offset + 2);
+	length = READ_LE_UINT16(self->_data.begin() + offset + 4);
+	begin = (int16)READ_LE_UINT16(self->_data.begin() + offset + 6);
+	end = (int16)READ_LE_UINT16(self->_data.begin() + offset + 8);
 
 	CHECK_FOR_END_ABSOLUTE((uint)(offset + 10 + length));
 
 	sample.delta = begin;
 	sample.size = length;
-	sample._data = self->_data + offset + 10;
+	sample._data = self->_data.begin() + offset + 10;
 
 #ifdef DEBUG_VERBOSE
 	fprintf(stderr, "[SAMPLE] %x/%x/%x/%x l=%x\n",
-	        offset + 10, begin, end, self->_size, length);
+	        offset + 10, begin, end, self->_data.size(), length);
 #endif
 
 	sample.format.format = SFX_PCM_FORMAT_U8;
@@ -904,8 +766,8 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 
 		CHECK_FOR_END_ABSOLUTE(offset + 4);
 
-		track_offset = READ_LE_UINT16(self->_data + offset);
-		end = READ_LE_UINT16(self->_data + offset + 2);
+		track_offset = READ_LE_UINT16(self->_data.begin() + offset);
+		end = READ_LE_UINT16(self->_data.begin() + offset + 2);
 
 		CHECK_FOR_END_ABSOLUTE(track_offset - 1);
 
