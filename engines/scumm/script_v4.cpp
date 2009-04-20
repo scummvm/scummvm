@@ -66,20 +66,14 @@ void ScummEngine_v4::o4_ifState() {
 	int a = getVarOrDirectWord(PARAM_1);
 	int b = getVarOrDirectByte(PARAM_2);
 
-	if (getState(a) != b)
-		o5_jumpRelative();
-	else
-		ignoreScriptWord();
+	jumpRelative(getState(a) == b);
 }
 
 void ScummEngine_v4::o4_ifNotState() {
 	int a = getVarOrDirectWord(PARAM_1);
 	int b = getVarOrDirectByte(PARAM_2);
 
-	if (getState(a) == b)
-		o5_jumpRelative();
-	else
-		ignoreScriptWord();
+	jumpRelative(getState(a) != b);
 }
 
 void ScummEngine_v4::o4_pickupObject() {

@@ -84,10 +84,11 @@ protected:
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
 
-	virtual void ifStateCommon(byte type);
-	virtual void ifNotStateCommon(byte type);
-	virtual void setStateCommon(byte type);
-	virtual void clearStateCommon(byte type);
+	virtual int getActiveObject();
+	void ifStateCommon(byte type);
+	void ifNotStateCommon(byte type);
+	void setStateCommon(byte type);
+	void clearStateCommon(byte type);
 
 	virtual void resetSentence();
 	void setUserState(byte state);

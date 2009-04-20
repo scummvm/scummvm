@@ -66,18 +66,11 @@ protected:
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();
 
-	virtual void ifStateCommon(byte type);
-	virtual void ifNotStateCommon(byte type);
-	virtual void setStateCommon(byte type);
-	virtual void clearStateCommon(byte type);
+	virtual int getActiveObject();
 
 	virtual void resetSentence();
 
-	int getObjectFlag();
-
 	/* Version C64 script opcodes */
-	void o_setState08();
-	void o_clearState08();
 	void o_stopCurrentScript();
 	void o_loadSound();
 	void o_getActorMoving();
@@ -114,15 +107,6 @@ protected:
 	void o_cutscene();
 	void o_endCutscene();
 	void o_beginOverride();
-	void o_isEqual();
-	void o_isGreater();
-	void o_isGreaterEqual();
-	void o_isLess();
-	void o_isLessEqual();
-	void o_isNotEqual();
-	void o_notEqualZero();
-	void o_equalZero();
-	void o_jumpRelative();
 	void o_setOwnerOf();
 };
 

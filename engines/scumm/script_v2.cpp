@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
@@ -444,25 +443,41 @@ void ScummEngine_v2::getResultPos() {
 	_resultVarNumber = fetchScriptByte();
 }
 
+int ScummEngine_v2::getActiveObject() {
+	return getVarOrDirectWord(PARAM_1);
+}
+
 void ScummEngine_v2::setStateCommon(byte type) {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = getActiveObject();
 	putState(obj, getState(obj) | type);
 }
 
 void ScummEngine_v2::clearStateCommon(byte type) {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = getActiveObject();
 	putState(obj, getState(obj) & ~type);
 }
 
+void ScummEngine_v2::ifStateCommon(byte type) {
+	int obj = getActiveObject();
+
+	jumpRelative((getState(obj) & type) != 0);
+}
+
+void ScummEngine_v2::ifNotStateCommon(byte type) {
+	int obj = getActiveObject();
+
+	jumpRelative((getState(obj) & type) == 0);
+}
+
 void ScummEngine_v2::o2_setState08() {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = getActiveObject();
 	putState(obj, getState(obj) | kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
 }
 
 void ScummEngine_v2::o2_clearState08() {
-	int obj = getVarOrDirectWord(PARAM_1);
+	int obj = getActiveObject();
 	putState(obj, getState(obj) & ~kObjectState_08);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
@@ -554,24 +569,6 @@ void ScummEngine_v2::o2_getBitVar() {
 	bit_var >>= 4;
 
 	setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
-}
-
-void ScummEngine_v2::ifStateCommon(byte type) {
-	int obj = getVarOrDirectWord(PARAM_1);
-
-	if ((getState(obj) & type) != 0)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
-}
-
-void ScummEngine_v2::ifNotStateCommon(byte type) {
-	int obj = getVarOrDirectWord(PARAM_1);
-
-	if ((getState(obj) & type) == 0)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
 }
 
 void ScummEngine_v2::o2_ifState08() {
@@ -1087,6 +1084,8 @@ void ScummEngine_v2::o2_drawSentence() {
 void ScummEngine_v2::o2_ifClassOfIs() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	int clsop = getVarOrDirectByte(PARAM_2);
+
+
 	byte *obcd = getOBCDFromObject(obj);
 
 	if (obcd == 0) {
@@ -1095,11 +1094,7 @@ void ScummEngine_v2::o2_ifClassOfIs() {
 	}
 
 	byte cls = *(obcd + 6);
-	if ((cls & clsop) != clsop) {
-		o5_jumpRelative();
-		return;
-	}
-	ignoreScriptWord();
+	jumpRelative((cls & clsop) == clsop);
 }
 
 void ScummEngine_v2::o2_walkActorTo() {
@@ -1127,7 +1122,6 @@ void ScummEngine_v2::o2_putActor() {
 	Actor *a;
 
 	a = derefActor(act, "o2_putActor");
-
 	x = getVarOrDirectByte(PARAM_2);
 	y = getVarOrDirectByte(PARAM_3);
 
@@ -1283,38 +1277,26 @@ void ScummEngine_v2::o2_getActorY() {
 void ScummEngine_v2::o2_isGreater() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(PARAM_1);
-	if (b > a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b > a);
 }
 
 void ScummEngine_v2::o2_isGreaterEqual() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(PARAM_1);
-	if (b >= a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b >= a);
 }
 
 void ScummEngine_v2::o2_isLess() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(PARAM_1);
 
-	if (b < a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b < a);
 }
 
 void ScummEngine_v2::o2_isLessEqual() {
 	uint16 a = getVar();
 	uint16 b = getVarOrDirectWord(PARAM_1);
-	if (b <= a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b <= a);
 }
 
 void ScummEngine_v2::o2_lights() {

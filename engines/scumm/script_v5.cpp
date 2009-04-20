@@ -110,7 +110,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0x36, o5_walkActorToObject);
 	OPCODE(0x37, o5_startObject);
 	/* 38 */
-	OPCODE(0x38, o5_lessOrEqual);
+	OPCODE(0x38, o5_isLessEqual);
 	OPCODE(0x39, o5_doSentence);
 	OPCODE(0x3a, o5_subtract);
 	OPCODE(0x3b, o5_getActorScale);
@@ -270,7 +270,7 @@ void ScummEngine_v5::setupOpcodes() {
 	OPCODE(0xb6, o5_walkActorToObject);
 	OPCODE(0xb7, o5_startObject);
 	/* B8 */
-	OPCODE(0xb8, o5_lessOrEqual);
+	OPCODE(0xb8, o5_isLessEqual);
 	OPCODE(0xb9, o5_doSentence);
 	OPCODE(0xba, o5_subtract);
 	OPCODE(0xbb, o5_getActorScale);
@@ -374,7 +374,17 @@ int ScummEngine_v5::getVarOrDirectByte(byte mask) {
 int ScummEngine_v5::getVarOrDirectWord(byte mask) {
 	if (_opcode & mask)
 		return getVar();
-	return (int16)fetchScriptWord();
+	return fetchScriptWordSigned();
+}
+
+void ScummEngine_v5::jumpRelative(bool cond) {
+	// We explicitly call ScummEngine::fetchScriptWordSigned()
+	// to make this method work also in v0, which overloads
+	// fetchScriptWord to only read bytes (which is the right thing
+	// to do for most opcodes, but not for jump offsets).
+	int16 offset = ScummEngine::fetchScriptWordSigned();
+	if (!cond)
+		_scriptPointer += offset;
 }
 
 void ScummEngine_v5::o5_actorFollowCamera() {
@@ -1121,21 +1131,18 @@ void ScummEngine_v5::o5_getVerbEntrypoint() {
 }
 
 void ScummEngine_v5::o5_ifClassOfIs() {
-	int act, cls, b = 0;
+	int obj, cls, b = 0;
 	bool cond = true;
 
-	act = getVarOrDirectWord(PARAM_1);
+	obj = getVarOrDirectWord(PARAM_1);
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
-		b = getClass(act, cls);
+		b = getClass(obj, cls);
 		if (((cls & 0x80) && !b) || (!(cls & 0x80) && b))
 			cond = false;
 	}
-	if (cond)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(cond);
 }
 
 void ScummEngine_v5::o5_increment() {
@@ -1148,10 +1155,7 @@ void ScummEngine_v5::o5_isActorInBox() {
 	int box = getVarOrDirectByte(PARAM_2);
 	Actor *a = derefActor(act, "o5_isActorInBox");
 
-	if (!checkXYInBoxBounds(box, a->getRealPos().x, a->getRealPos().y))
-		o5_jumpRelative();
-	else
-		ignoreScriptWord();
+	jumpRelative(checkXYInBoxBounds(box, a->getRealPos().x, a->getRealPos().y));
 }
 
 void ScummEngine_v5::o5_isEqual() {
@@ -1178,41 +1182,28 @@ void ScummEngine_v5::o5_isEqual() {
 	if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO) && isScriptRunning(173) && b == 180)
 		b = 100;
 
-	if (b == a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
-
+	jumpRelative(b == a);
 }
 
 void ScummEngine_v5::o5_isGreater() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(PARAM_1);
-	if (b > a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b > a);
 }
 
 void ScummEngine_v5::o5_isGreaterEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(PARAM_1);
-	if (b >= a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b >= a);
 }
 
 void ScummEngine_v5::o5_isLess() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(PARAM_1);
-	if (b < a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b < a);
 }
 
-void ScummEngine_v5::o5_lessOrEqual() {
+void ScummEngine_v5::o5_isLessEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(PARAM_1);
 
@@ -1224,47 +1215,27 @@ void ScummEngine_v5::o5_lessOrEqual() {
 		return;
 	}
 
-	if (b <= a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b <= a);
 }
 
 void ScummEngine_v5::o5_isNotEqual() {
 	int16 a = getVar();
 	int16 b = getVarOrDirectWord(PARAM_1);
-	if (b != a)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(b != a);
 }
 
 void ScummEngine_v5::o5_notEqualZero() {
 	int a = getVar();
-	if (a != 0)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(a != 0);
 }
 
 void ScummEngine_v5::o5_equalZero() {
 	int a = getVar();
-	if (a == 0)
-		ignoreScriptWord();
-	else
-		o5_jumpRelative();
+	jumpRelative(a == 0);
 }
 
 void ScummEngine_v5::o5_jumpRelative() {
-	// Note that calling fetchScriptWord() will also modify _scriptPointer,
-	// so *don't* do this: _scriptPointer += (int16)fetchScriptWord();
-	//
-	// I'm not enough of a language lawyer to say for certain that this is
-	// undefined, but I do know that GCC 4.0 doesn't think it means what
-	// we want it to mean.
-
-	int16 offset = (int16)fetchScriptWord();
-	_scriptPointer += offset;
+	jumpRelative(false);
 }
 
 void ScummEngine_v5::o5_lights() {
@@ -1311,8 +1282,8 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	oldDir = a->getFacing();
 	_egoPositioned = false;
 
-	x = (int16)fetchScriptWord();
-	y = (int16)fetchScriptWord();
+	x = fetchScriptWordSigned();
+	y = fetchScriptWordSigned();
 
 	VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->_room, a, obj);

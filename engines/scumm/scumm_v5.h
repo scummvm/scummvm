@@ -85,6 +85,12 @@ protected:
 
 	void drawFlashlight();
 
+	/**
+	 * Fetch the next script word, then if cond is *false*, perform a relative jump.
+	 * So this corresponds to a "jne" jump instruction.
+	 */
+	void jumpRelative(bool cond);
+
 	/* Version 5 script opcodes */
 	void o5_actorFollowCamera();
 	void o5_actorFromPos();
@@ -138,11 +144,11 @@ protected:
 	void o5_isGreater();
 	void o5_isGreaterEqual();
 	void o5_isLess();
+	void o5_isLessEqual();
 	void o5_isNotEqual();
 	void o5_isScriptRunning();
 	void o5_isSoundRunning();
 	void o5_jumpRelative();
-	void o5_lessOrEqual();
 	void o5_lights();
 	void o5_loadRoom();
 	void o5_loadRoomWithEgo();
