@@ -158,7 +158,7 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/engine/internal_version.h
 ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
 SVNROOT := $(srcdir)
 else
-SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/residual/residual/trunk/
+SVNROOT := https://residual.svn.sourceforge.net/svnroot/residual/residual/trunk/
 endif
 
 $(VERFILE): $(srcdir)/engine/internal_version.h
