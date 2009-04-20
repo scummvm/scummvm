@@ -25,7 +25,7 @@ BEGIN
         BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "Residual\0"
-            VALUE "FileDescription", "http://www.scummvm.org/\0"
+            VALUE "FileDescription", "http://residual.sourceforge.net/\0"
             VALUE "FileVersion", "@VERSION@\0"
             VALUE "InternalName", "residual\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"

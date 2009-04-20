@@ -25,7 +25,7 @@ residual ($VERSION) experimental; urgency=low
     Build-date: $DATE
 
     Please don't file bugs you find in this package in the Debian Bug Tracking
-    system, use the ScummVM team's own bug tracker instead.  You can find this
+    system, use the Residual team's own bug tracker instead.  You can find this
     tracker at <http://sourceforge.net/tracker/?group_id=37116>.
 
  -- Pino Toscano <pino@kde.org>  $DATE

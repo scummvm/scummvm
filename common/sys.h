@@ -101,7 +101,7 @@ extern "C" int residual_main(int argc, char *argv[]);
 	// Enable Symbians own datatypes
 	// This is done for two reasons
 	// a) uint is already defined by Symbians libc component
-	// b) Symbian is using its "own" datatyping, and the Scummvm port
+	// b) Symbian is using its "own" datatyping, and the Residual port
 	//    should follow this to ensure the best compability possible.
 	#define SYSTEM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
