@@ -43,29 +43,7 @@ int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 int sci_ffs(int bits);
 
 
-/* The following was originally based on glib.h code, which was
- * Copyright (C) 1995-1997  Peter Mattis, Spencer Kimball and Josh MacDonald
- */
-#if defined (__GNUC__) && __GNUC__ >= 2
-#  if defined (__i386__)
-#    define BREAKPOINT()          {__asm__ __volatile__ ("int $03"); }
-#  elif defined(__alpha__)
-#    define BREAKPOINT()          {__asm__ __volatile__ ("call_pal 0x80"); }
-#  endif /* !__i386__ && !__alpha__ */
-#elif defined (_MSC_VER)
-#  if defined (_M_IX86)
-#    define BREAKPOINT()          { __asm { int 03 } }
-#  elif defined(_M_ALPHA)
-#    define BREAKPOINT()          { __asm { bpt } }
-#  endif /* !_M_IX86 && !_M_ALPHA */
-#elif defined (__DECC)
-#  if defined(__alpha__)
-#    define BREAKPOINT()          {asm ("call_pal 0x80"); }
-#  endif /* !__i386__ && !__alpha__ */
-#endif
-#ifndef BREAKPOINT
-#  define BREAKPOINT() { fprintf(stderr, "Missed breakpoint in %s, line %d\n", __FILE__, __LINE__); *((int *) NULL) = 42; }
-#endif  /* !BREAKPOINT() */
+#  define BREAKPOINT() { error("Breakpoint in %s, line %d\n", __FILE__, __LINE__); }
 
 } // End of namespace Sci
 
