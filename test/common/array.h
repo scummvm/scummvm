@@ -73,6 +73,8 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( array[2], 33 );
 		TS_ASSERT_EQUALS( array[3], 25 );
 		TS_ASSERT_EQUALS( array[4], -11 );
+
+		TS_ASSERT_EQUALS( array.size(), 5 );
 	}
 
 	void test_remove_at() {
@@ -92,6 +94,8 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( array[1], 33 );
 		TS_ASSERT_EQUALS( array[2], 25 );
 		TS_ASSERT_EQUALS( array[3], -11 );
+
+		TS_ASSERT_EQUALS( array.size(), 4 );
 	}
 
 	void test_push_back() {
@@ -114,6 +118,9 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( array1[3], 3 );
 		TS_ASSERT_EQUALS( array1[4], -2 );
 		TS_ASSERT_EQUALS( array1[5], -131 );
+
+		TS_ASSERT_EQUALS( array1.size(), 6 );
+		TS_ASSERT_EQUALS( array2.size(), 3 );
 	}
 
 	void test_copy_constructor() {
@@ -129,5 +136,19 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( array2[0], -3 );
 		TS_ASSERT_EQUALS( array2[1], 5 );
 		TS_ASSERT_EQUALS( array2[2], 9 );
+
+		TS_ASSERT_EQUALS( array2.size(), 3 );
+	}
+
+	void test_array_constructor() {
+		const int array1[] = { -3, 5, 9 };
+
+		Common::Array<int> array2(array1, 3);
+
+		TS_ASSERT_EQUALS( array2[0], -3 );
+		TS_ASSERT_EQUALS( array2[1], 5 );
+		TS_ASSERT_EQUALS( array2[2], 9 );
+
+		TS_ASSERT_EQUALS( array2.size(), 3 );
 	}
 };

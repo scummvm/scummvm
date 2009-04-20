@@ -46,10 +46,18 @@ public:
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 	Array(const Array<T> &array) : _capacity(0), _size(0), _storage(0) {
-		_size = array._size;
-		_capacity = _size + 32;
+		_capacity = _size = array._size;
 		_storage = new T[_capacity];
 		copy(array._storage, array._storage + _size, _storage);
+	}
+
+	/**
+	 * Construct an array by copying data from a regular array.
+	 */
+	Array(const T *data, int n) {
+		_capacity = _size = n;
+		_storage = new T[_capacity];
+		copy(data, data + _size, _storage);
 	}
 
 	~Array() {
