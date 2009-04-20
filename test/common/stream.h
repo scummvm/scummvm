@@ -4,7 +4,7 @@
 
 class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 	public:
-	void test_readline(void) {
+	void test_readline() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
@@ -26,7 +26,7 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(ms.eos());
 	}
 
-	void test_readline2(void) {
+	void test_readline2() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 

@@ -4,7 +4,7 @@
 
 class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 	public:
-	void test_seek_set(void) {
+	void test_seek_set() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
@@ -21,7 +21,7 @@ class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!ms.eos());
 	}
 
-	void test_seek_cur(void) {
+	void test_seek_cur() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
@@ -42,7 +42,7 @@ class MemoryReadStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!ms.eos());
 	}
 
-	void test_seek_end(void) {
+	void test_seek_end() {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 

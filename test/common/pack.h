@@ -20,13 +20,11 @@ struct TestStruct {
 class PackTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_packing( void )
-	{
+	void test_packing() {
 		TS_ASSERT_EQUALS( sizeof(TestStruct), size_t(4+1+2+4+1) );
 	}
 
-	void test_offsets( void )
-	{
+	void test_offsets() {
 		TS_ASSERT_EQUALS( OFFS(TestStruct, x), (ptrdiff_t)0 );
 		TS_ASSERT_EQUALS( OFFS(TestStruct, y), (ptrdiff_t)4 );
 		TS_ASSERT_EQUALS( OFFS(TestStruct, z), (ptrdiff_t)5 );

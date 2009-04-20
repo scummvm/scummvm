@@ -5,8 +5,7 @@
 class ArrayTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_empty_clear( void )
-	{
+	void test_empty_clear() {
 		Common::Array<int> array;
 		TS_ASSERT( array.empty() );
 		array.push_back(17);
@@ -16,8 +15,7 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( array.empty() );
 	}
 
-	void test_iterator( void )
-	{
+	void test_iterator() {
 		Common::Array<int> array;
 		Common::Array<int>::iterator iter;
 
@@ -31,22 +29,21 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 		iter = array.begin();
 
-		TS_ASSERT( *iter == 17 );
+		TS_ASSERT_EQUALS( *iter, 17 );
 		++iter;
 		TS_ASSERT( iter != array.end() );
 
-		TS_ASSERT( *iter == 33 );
+		TS_ASSERT_EQUALS( *iter, 33 );
 		++iter;
 		TS_ASSERT( iter != array.end() );
 
 		// Also test the postinc
-		TS_ASSERT( *iter == -11 );
+		TS_ASSERT_EQUALS( *iter, -11 );
 		iter++;
 		TS_ASSERT( iter == array.end() );
 	}
 
-	void test_direct_access( void )
-	{
+	void test_direct_access() {
 		Common::Array<int> array;
 
 		// Fill the array with some random data
@@ -54,13 +51,12 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		array.push_back(33);
 		array.push_back(-11);
 
-		TS_ASSERT( array[0] == 17 );
-		TS_ASSERT( array[1] == 33 );
-		TS_ASSERT( array[2] == -11 );
+		TS_ASSERT_EQUALS( array[0], 17 );
+		TS_ASSERT_EQUALS( array[1], 33 );
+		TS_ASSERT_EQUALS( array[2], -11 );
 	}
 
-	void test_insert_at( void )
-	{
+	void test_insert_at() {
 		Common::Array<int> array;
 
 		// First of all some data
@@ -72,15 +68,14 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		// Insert some data
 		array.insert_at(2, 33);
 
-		TS_ASSERT( array[0] == -12 );
-		TS_ASSERT( array[1] == 17 );
-		TS_ASSERT( array[2] == 33 );
-		TS_ASSERT( array[3] == 25 );
-		TS_ASSERT( array[4] == -11 );
+		TS_ASSERT_EQUALS( array[0], -12 );
+		TS_ASSERT_EQUALS( array[1], 17 );
+		TS_ASSERT_EQUALS( array[2], 33 );
+		TS_ASSERT_EQUALS( array[3], 25 );
+		TS_ASSERT_EQUALS( array[4], -11 );
 	}
 
-	void test_remove_at( void )
-	{
+	void test_remove_at() {
 		Common::Array<int> array;
 
 		// First of all some data
@@ -93,14 +88,13 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		// Remove some data
 		array.remove_at(1);
 
-		TS_ASSERT( array[0] == -12 );
-		TS_ASSERT( array[1] == 33 );
-		TS_ASSERT( array[2] == 25 );
-		TS_ASSERT( array[3] == -11 );
+		TS_ASSERT_EQUALS( array[0], -12 );
+		TS_ASSERT_EQUALS( array[1], 33 );
+		TS_ASSERT_EQUALS( array[2], 25 );
+		TS_ASSERT_EQUALS( array[3], -11 );
 	}
 
-	void test_push_back( void )
-	{
+	void test_push_back() {
 		Common::Array<int> array1, array2;
 
 		// Some data for both
@@ -114,16 +108,15 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 		array1.push_back(array2);
 
-		TS_ASSERT( array1[0] == -3 );
-		TS_ASSERT( array1[1] == 5 );
-		TS_ASSERT( array1[2] == 9 );
-		TS_ASSERT( array1[3] == 3 );
-		TS_ASSERT( array1[4] == -2 );
-		TS_ASSERT( array1[5] == -131 );
+		TS_ASSERT_EQUALS( array1[0], -3 );
+		TS_ASSERT_EQUALS( array1[1], 5 );
+		TS_ASSERT_EQUALS( array1[2], 9 );
+		TS_ASSERT_EQUALS( array1[3], 3 );
+		TS_ASSERT_EQUALS( array1[4], -2 );
+		TS_ASSERT_EQUALS( array1[5], -131 );
 	}
 
-	void test_copy_constructor( void )
-	{
+	void test_copy_constructor() {
 		Common::Array<int> array1;
 
 		// Some data for both
@@ -133,8 +126,8 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 		Common::Array<int> array2(array1);
 
-		TS_ASSERT( array2[0] == -3 );
-		TS_ASSERT( array2[1] == 5 );
-		TS_ASSERT( array2[2] == 9 );
+		TS_ASSERT_EQUALS( array2[0], -3 );
+		TS_ASSERT_EQUALS( array2[1], 5 );
+		TS_ASSERT_EQUALS( array2[2], 9 );
 	}
 };

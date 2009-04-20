@@ -4,7 +4,7 @@
 
 class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 	public:
-	void test_traverse(void) {
+	void test_traverse() {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 

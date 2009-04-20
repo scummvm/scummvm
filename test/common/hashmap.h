@@ -6,7 +6,7 @@
 class HashMapTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_empty_clear(void) {
+	void test_empty_clear() {
 		Common::HashMap<int, int> container;
 		TS_ASSERT( container.empty() );
 		container[0] = 17;
@@ -24,7 +24,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( container2.empty() );
 	}
 
-	void test_contains(void) {
+	void test_contains() {
 		Common::HashMap<int, int> container;
 		container[0] = 17;
 		container[1] = 33;
@@ -42,7 +42,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( !container2.contains("asdf") );
 	}
 
-	void test_add_remove(void) {
+	void test_add_remove() {
 		Common::HashMap<int, int> container;
 		container[0] = 17;
 		container[1] = 33;
@@ -71,7 +71,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( container.empty() );
 	}
 
-	void test_lookup(void) {
+	void test_lookup() {
 		Common::HashMap<int, int> container;
 		container[0] = 17;
 		container[1] = -1;
@@ -86,7 +86,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( container[4], 96 );
 	}
 
-	void test_iterator_begin_end(void) {
+	void test_iterator_begin_end() {
 		Common::HashMap<int, int> container;
 
 		// The container is initially empty ...
@@ -101,7 +101,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( container.begin() == container.end() );
 	}
 
-	void test_hash_map_copy(void) {
+	void test_hash_map_copy() {
 		Common::HashMap<int, int> map1, container2;
 		map1[323] = 32;
 		container2 = map1;

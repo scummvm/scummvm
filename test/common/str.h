@@ -5,7 +5,7 @@
 class StringTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_constructors(void) {
+	void test_constructors() {
 		Common::String str("test-string");
 		TS_ASSERT( str == "test-string");
 		str = Common::String(str.c_str()+5, 3);
@@ -16,7 +16,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( str == "str");
 	}
 
-	void test_trim(void) {
+	void test_trim() {
 		Common::String str("  This is a s tring with spaces  ");
 		Common::String str2 = str;
 		str.trim();
@@ -24,14 +24,14 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( str2 == "  This is a s tring with spaces  ");
 	}
 
-	void test_empty_clear(void) {
+	void test_empty_clear() {
 		Common::String str("test");
 		TS_ASSERT( !str.empty());
 		str.clear();
 		TS_ASSERT( str.empty());
 	}
 
-	void test_lastChar(void) {
+	void test_lastChar() {
 		Common::String str;
 		TS_ASSERT_EQUALS(str.lastChar(), '\0');
 		str = "test";
@@ -40,7 +40,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2.lastChar(), 'r');
 	}
 
-	void test_concat1(void) {
+	void test_concat1() {
 		Common::String str("foo");
 		Common::String str2("bar");
 		str += str2;
@@ -48,19 +48,19 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2, "bar");
 	}
 
-	void test_concat2(void) {
+	void test_concat2() {
 		Common::String str("foo");
 		str += "bar";
 		TS_ASSERT_EQUALS(str, "foobar");
 	}
 
-	void test_concat3(void) {
+	void test_concat3() {
 		Common::String str("foo");
 		str += 'X';
 		TS_ASSERT_EQUALS(str, "fooX");
 	}
 
-	void test_refCount(void) {
+	void test_refCount() {
 		// using internal storage
 		Common::String foo1("foo");
 		Common::String foo2(foo1);
@@ -75,7 +75,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "foo""X");
 	}
 
-	void test_refCount2(void) {
+	void test_refCount2() {
 		// using external storage
 		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		Common::String foo2(foo1);
@@ -90,7 +90,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""X");
 	}
 
-	void test_refCount3(void) {
+	void test_refCount3() {
 		Common::String foo1("0123456789abcdefghijk");
 		Common::String foo2(foo1);
 		Common::String foo3(foo2);
@@ -104,7 +104,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "0123456789abcdefghijk""0123456789abcdefghijk");
 	}
 
-	void test_refCount4(void) {
+	void test_refCount4() {
 		Common::String foo1("fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 		Common::String foo2(foo1);
 		Common::String foo3(foo2);
@@ -118,7 +118,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 	}
 
-	void test_hasPrefix(void) {
+	void test_hasPrefix() {
 		Common::String str("this/is/a/test, haha");
 		TS_ASSERT_EQUALS(str.hasPrefix(""), true);
 		TS_ASSERT_EQUALS(str.hasPrefix("this"), true);
@@ -126,7 +126,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str.hasPrefix("foo"), false);
 	}
 
-	void test_hasSuffix(void) {
+	void test_hasSuffix() {
 		Common::String str("this/is/a/test, haha");
 		TS_ASSERT_EQUALS(str.hasSuffix(""), true);
 		TS_ASSERT_EQUALS(str.hasSuffix("haha"), true);
@@ -134,7 +134,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str.hasSuffix("hahah"), false);
 	}
 
-	void test_contains(void) {
+	void test_contains() {
 		Common::String str("this/is/a/test, haha");
 		TS_ASSERT_EQUALS(str.contains(""), true);
 		TS_ASSERT_EQUALS(str.contains("haha"), true);
@@ -142,7 +142,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str.contains("test"), true);
 	}
 
-	void test_toLowercase(void) {
+	void test_toLowercase() {
 		Common::String str("Test it, NOW! 42");
 		Common::String str2 = str;
 		str.toLowercase();
@@ -150,7 +150,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2, "Test it, NOW! 42");
 	}
 
-	void test_toUppercase(void) {
+	void test_toUppercase() {
 		Common::String str("Test it, NOW! 42");
 		Common::String str2 = str;
 		str.toUppercase();
@@ -158,8 +158,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2, "Test it, NOW! 42");
 	}
 
-	void test_deleteChar( void )
-	{
+	void test_deleteChar() {
 		Common::String str("01234567890123456789012345678901");
 		str.deleteChar(10);
 		TS_ASSERT_EQUALS( str, "0123456789123456789012345678901" );
@@ -167,8 +166,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( str, "012345678923456789012345678901" );
 	}
 
-	void test_sharing( void )
-	{
+	void test_sharing() {
 		Common::String str("01234567890123456789012345678901");
 		Common::String str2(str);
 		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
@@ -177,7 +175,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( str2, "01234567890123456789012345678901" );
 	}
 
-	void test_lastPathComponent(void) {
+	void test_lastPathComponent() {
 		TS_ASSERT(Common::lastPathComponent("/", '/') == "");
 		TS_ASSERT(Common::lastPathComponent("/foo/bar", '/') == "bar");
 		TS_ASSERT(Common::lastPathComponent("/foo//bar/", '/') == "bar");
@@ -193,7 +191,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::lastPathComponent("foo//.bar//", '/') == ".bar");
 	}
 
-	void test_normalizePath(void) {
+	void test_normalizePath() {
 		TS_ASSERT(Common::normalizePath("/", '/') == "/");
 		TS_ASSERT(Common::normalizePath("/foo/bar", '/') == "/foo/bar");
 		TS_ASSERT(Common::normalizePath("/foo//bar/", '/') == "/foo/bar");
@@ -209,7 +207,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::normalizePath("foo//.bar//", '/') == "foo/.bar");
 	}
 
-	void test_matchString(void) {
+	void test_matchString() {
 		TS_ASSERT( Common::matchString("",  "*"));
 		TS_ASSERT( Common::matchString("a",  "*"));
 		TS_ASSERT( Common::matchString("monkey.s01",  "*"));

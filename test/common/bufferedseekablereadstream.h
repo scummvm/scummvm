@@ -4,7 +4,7 @@
 
 class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 	public:
-	void test_traverse(void) {
+	void test_traverse() {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 
@@ -26,7 +26,7 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT( ssrs.eos() );
 	}
 
-	void test_seek(void) {
+	void test_seek() {
 		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		Common::MemoryReadStream ms(contents, 10);
 

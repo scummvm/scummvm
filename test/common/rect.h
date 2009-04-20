@@ -5,8 +5,7 @@
 class RectTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_point_sqrDist( void )
-	{
+	void test_point_sqrDist() {
 		Common::Point p0;
 		Common::Point p11(1, 1);
 		Common::Point p21(2, 1);
@@ -19,15 +18,13 @@ class RectTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( p11.sqrDist(p23), (uint) 5 );
 	}
 
-	void test_intersects( void )
-	{
+	void test_intersects() {
 		TS_ASSERT( Common::Rect(0, 0, 2, 2).intersects(Common::Rect(0, 0, 1, 1)) );
 		TS_ASSERT( Common::Rect(0, 0, 2, 2).intersects(Common::Rect(1, 1, 2, 2)) );
 		TS_ASSERT( !Common::Rect(0, 0, 1, 1).intersects(Common::Rect(1, 1, 2, 2)) );
 	}
 
-	void test_contains( void )
-	{
+	void test_contains() {
 		Common::Rect r0;
 		Common::Rect r1(0, 0, 1, 1);
 		Common::Rect r2(0, 0, 2, 2);
@@ -44,8 +41,7 @@ class RectTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( r2.contains(r2) );
 	}
 
-	void test_extend( void )
-	{
+	void test_extend() {
 		Common::Rect r0;
 		Common::Rect r1(0, 0, 1, 1);
 		Common::Rect r2(0, 0, 2, 2);
