@@ -1936,7 +1936,7 @@ need to install nasm assembler (see http://nasm.sf.net). Note, that
 currently we have only x86 MMX optimized versions, and they will not
 compile on other processors.
 
-On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse
+On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
 debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
 
