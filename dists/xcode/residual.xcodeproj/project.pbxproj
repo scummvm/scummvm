@@ -39,7 +39,7 @@
 		289EEEED0D8921F600521A80 /* imuse_track.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE570D8921F600521A80 /* imuse_track.cpp */; };
 		289EEEEE0D8921F600521A80 /* keyframe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE590D8921F600521A80 /* keyframe.cpp */; };
 		289EEEEF0D8921F600521A80 /* lab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE5B0D8921F600521A80 /* lab.cpp */; };
-		289EEEF00D8921F600521A80 /* lipsynch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE5D0D8921F600521A80 /* lipsynch.cpp */; };
+		289EEEF00D8921F600521A80 /* lipsync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE5D0D8921F600521A80 /* lipsync.cpp */; };
 		289EEEF10D8921F600521A80 /* localize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE5F0D8921F600521A80 /* localize.cpp */; };
 		289EEEF20D8921F600521A80 /* lapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE660D8921F600521A80 /* lapi.cpp */; };
 		289EEEF30D8921F600521A80 /* lauxlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEE680D8921F600521A80 /* lauxlib.cpp */; };
@@ -207,8 +207,8 @@
 		289EEE5A0D8921F600521A80 /* keyframe.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = keyframe.h; sourceTree = "<group>"; };
 		289EEE5B0D8921F600521A80 /* lab.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = lab.cpp; sourceTree = "<group>"; };
 		289EEE5C0D8921F600521A80 /* lab.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = lab.h; sourceTree = "<group>"; };
-		289EEE5D0D8921F600521A80 /* lipsynch.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = lipsynch.cpp; sourceTree = "<group>"; };
-		289EEE5E0D8921F600521A80 /* lipsynch.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = lipsynch.h; sourceTree = "<group>"; };
+		289EEE5D0D8921F600521A80 /* lipsync.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = lipsync.cpp; sourceTree = "<group>"; };
+		289EEE5E0D8921F600521A80 /* lipsync.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = lipsync.h; sourceTree = "<group>"; };
 		289EEE5F0D8921F600521A80 /* localize.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = localize.cpp; sourceTree = "<group>"; };
 		289EEE600D8921F600521A80 /* localize.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = localize.h; sourceTree = "<group>"; };
 		289EEE660D8921F600521A80 /* lapi.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = lapi.cpp; sourceTree = "<group>"; };
@@ -523,8 +523,8 @@
 				289EEE5A0D8921F600521A80 /* keyframe.h */,
 				289EEE5B0D8921F600521A80 /* lab.cpp */,
 				289EEE5C0D8921F600521A80 /* lab.h */,
-				289EEE5D0D8921F600521A80 /* lipsynch.cpp */,
-				289EEE5E0D8921F600521A80 /* lipsynch.h */,
+				289EEE5D0D8921F600521A80 /* lipsync.cpp */,
+				289EEE5E0D8921F600521A80 /* lipsync.h */,
 				289EEE5F0D8921F600521A80 /* localize.cpp */,
 				289EEE600D8921F600521A80 /* localize.h */,
 				289EEE610D8921F600521A80 /* lua */,
@@ -813,7 +813,7 @@
 				289EEEED0D8921F600521A80 /* imuse_track.cpp in Sources */,
 				289EEEEE0D8921F600521A80 /* keyframe.cpp in Sources */,
 				289EEEEF0D8921F600521A80 /* lab.cpp in Sources */,
-				289EEEF00D8921F600521A80 /* lipsynch.cpp in Sources */,
+				289EEEF00D8921F600521A80 /* lipsync.cpp in Sources */,
 				289EEEF10D8921F600521A80 /* localize.cpp in Sources */,
 				289EEEF20D8921F600521A80 /* lapi.cpp in Sources */,
 				289EEEF30D8921F600521A80 /* lauxlib.cpp in Sources */,
