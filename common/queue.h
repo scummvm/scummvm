@@ -35,17 +35,12 @@ namespace Common {
  */
 template<class T>
 class Queue {
-public:
-	typedef T value_type;
+//public:
+//	typedef T value_type;
 
 public:
 	Queue<T>() : _impl() {}
 	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
-
-	Queue<T> &operator=(const Queue<T> &queue) {
-		_impl = queue._impl;
-		return *this;
-	}
 
 	bool empty() const {
 		return _impl.empty();

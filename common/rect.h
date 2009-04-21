@@ -40,9 +40,7 @@ struct Point {
 	int16 y;	//!< The vertical part of the point
 
 	Point() : x(0), y(0) {}
-	Point(const Point &p) : x(p.x), y(p.y) {}
-	explicit Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
+	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
 	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
 
