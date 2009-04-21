@@ -49,7 +49,7 @@
 #include "engine/font.h"
 #include "engine/primitives.h"
 #include "engine/savegame.h"
-#include "engine/lipsynch.h"
+#include "engine/lipsync.h"
 
 #include "engine/imuse/imuse.h"
 

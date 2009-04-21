@@ -27,14 +27,14 @@
 #include "common/endian.h"
 #include "common/debug.h"
 
-#include "engine/lipsynch.h"
+#include "engine/lipsync.h"
 
 #include <cstring>
 
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
-LipSynch::LipSynch(const char *filename, const char *data, int len) :
+LipSync::LipSync(const char *filename, const char *data, int len) :
 	Resource(filename) {
 	uint16 readPhoneme;
 	int j;
@@ -51,7 +51,7 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 		else {
 			data += 8;
 #ifdef DEBUG_VERBOSE
-			printf("Reading LipSynch %s, %d entries\n", filename, _numEntries);
+			printf("Reading LipSync %s, %d entries\n", filename, _numEntries);
 #endif
 			_entries = new LipEntry[_numEntries];
 			for (int i = 0; i < _numEntries; i++) {
@@ -75,11 +75,11 @@ LipSynch::LipSynch(const char *filename, const char *data, int len) :
 	}
 }
 
-LipSynch::~LipSynch() {
+LipSync::~LipSync() {
 	delete[] _entries;
 }
 
-int LipSynch::getAnim(int pos) {
+int LipSync::getAnim(int pos) {
 	int frame1, frame2;
 
 	// tune a bit to prevent internal imuse drift
@@ -101,7 +101,7 @@ int LipSynch::getAnim(int pos) {
 	return -1;
 }
 
-const LipSynch::PhonemeAnim LipSynch::_animTable[] = {
+const LipSync::PhonemeAnim LipSync::_animTable[] = {
 	{0x005F, 0}, {0x0251, 1}, {0x0061, 1}, {0x00E6, 1}, {0x028C, 8}, 
 	{0x0254, 1}, {0x0259, 1}, {0x0062, 6}, {0x02A7, 2}, {0x0064, 2}, 
 	{0x00F0, 5}, {0x025B, 8}, {0x0268, 8}, {0x025A, 9}, {0x025D, 9}, 
@@ -114,4 +114,4 @@ const LipSynch::PhonemeAnim LipSynch::_animTable[] = {
 	{0x0292, 2}, {0x002E, 2}
 };
 
-const int LipSynch::_animTableSize = sizeof(LipSynch::_animTable) / sizeof(LipSynch::_animTable[0]);
+const int LipSync::_animTableSize = sizeof(LipSync::_animTable) / sizeof(LipSync::_animTable[0]);

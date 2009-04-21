@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LIPSYNCH_H
-#define LIPSYNCH_H
+#ifndef LIPSYNC_H
+#define LIPSYNC_H
 
 #include "common/sys.h"
 
@@ -32,10 +32,10 @@
 
 #include <list>
 
-class LipSynch : public Resource {
+class LipSync : public Resource {
 public:
-	LipSynch(const char *filename, const char *data, int len);
-	~LipSynch();
+	LipSync(const char *filename, const char *data, int len);
+	~LipSync();
 
 	struct LipEntry {
 		uint16 frame;

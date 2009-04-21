@@ -41,7 +41,7 @@ class Font;
 class KeyframeAnim;
 class Material;
 class Model;
-class LipSynch;
+class LipSync;
 
 class Resource {
 public:
@@ -110,7 +110,7 @@ public:
 	KeyframeAnim *loadKeyframe(const char *fname);
 	Material *loadMaterial(const char *fname, const CMap &c);
 	Model *loadModel(const char *fname, const CMap &c);
-	LipSynch *loadLipSynch(const char *fname);
+	LipSync *loadLipSync(const char *fname);
 	void uncache(const char *fname);
 
 	ResourceLoader();

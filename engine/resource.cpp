@@ -37,7 +37,7 @@
 #include "engine/material.h"
 #include "engine/model.h"
 #include "engine/engine.h"
-#include "engine/lipsynch.h"
+#include "engine/lipsync.h"
 
 #include <algorithm>
 
@@ -225,25 +225,25 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	return result;
 }
 
-LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
+LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	std::string fname = filename;
-	LipSynch *result;
+	LipSync *result;
 
 	makeLower(fname);
 	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
-		return dynamic_cast<LipSynch *>(i->second);
+		return dynamic_cast<LipSync *>(i->second);
 	}
 
 	Block *b = getFileBlock(filename);
 	if (!b) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Could not find lipsynch file %s", filename);
+			warning("Could not find lipsync file %s", filename);
 		result = NULL;
 	} else {
-		result = new LipSynch(filename, b->data(), b->len());
+		result = new LipSync(filename, b->data(), b->len());
 		
-		// Some lipsynch files have no data
+		// Some lipsync files have no data
 		if (result->isValid()) {
 			delete b;
 			_cache[fname] = result;

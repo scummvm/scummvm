@@ -30,7 +30,7 @@
 #include "engine/actor.h"
 #include "engine/engine.h"
 #include "engine/costume.h"
-#include "engine/lipsynch.h"
+#include "engine/lipsync.h"
 #include "engine/localize.h"
 #include "engine/smush/smush.h"
 #include "engine/walkplane.h"
@@ -50,7 +50,7 @@ Actor::Actor(const char *name) :
 		// _walkRate so Glottis at the demon beaver entrance can walk
 		_pitch(0), _yaw(0), _roll(0), _walkRate(1.0f), _turnRate(100.0f),
 		_reflectionAngle(80),
-		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
+		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
@@ -345,17 +345,17 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
 		}
 
-		// If the actor is clearly not visible then don't try to play the lip synch
+		// If the actor is clearly not visible then don't try to play the lip sync
 		if (visible()) {
 			// Sometimes actors speak offscreen before they, including their
 			// talk chores are initialized.
 			// For example, when reading the work order (a LIP file exists for no reason).
-			// Also, some lip synch files have no entries
+			// Also, some lip sync files have no entries
 			// In these cases, revert to using the mumble chore.
-			_lipSynch = g_resourceloader->loadLipSynch(soundLip.c_str());
-			// If there's no lip synch file then load the mumble chore if it exists
+			_lipSync = g_resourceloader->loadLipSync(soundLip.c_str());
+			// If there's no lip sync file then load the mumble chore if it exists
 			// (the mumble chore doesn't exist with the cat races announcer)
-			if (!_lipSynch && _mumbleChore != -1)
+			if (!_lipSync && _mumbleChore != -1)
 				_mumbleCostume->playChoreLooping(_mumbleChore);
 			
 			_talkAnim = -1;
@@ -404,10 +404,10 @@ void Actor::shutUp() {
 		g_imuse->stopSound(_talkSoundName.c_str());
 		_talkSoundName = "";
 	}
-	if (_lipSynch) {
+	if (_lipSync) {
 		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
-		_lipSynch = NULL;
+		_lipSync = NULL;
 	} else if (_mumbleChore >= 0) {
 		_mumbleCostume->stopChore(_mumbleChore);
 	}
@@ -573,8 +573,8 @@ void Actor::update() {
 	_lastTurnDir = _currTurnDir;
 	_currTurnDir = 0;
 
-	// Update lip synching
-	if (_lipSynch) {
+	// Update lip syncing
+	if (_lipSync) {
 		int posSound;
 		
 		// While getPosIn60HzTicks will return "-1" to indicate that the
@@ -584,7 +584,7 @@ void Actor::update() {
 		else
 			posSound = -1;
 		if (posSound != -1) {
-			int anim = _lipSynch->getAnim(posSound);
+			int anim = _lipSync->getAnim(posSound);
 			if (_talkAnim != anim) {
 				if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
 					_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);

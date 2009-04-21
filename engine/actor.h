@@ -35,7 +35,7 @@
 #include <list>
 
 class Costume;
-class LipSynch;
+class LipSync;
 class TextObject;
 class Sector;
 
@@ -176,7 +176,7 @@ private:
 	bool _visible;
 	bool _lookingMode;
 	std::string _talkSoundName;
-	ResPtr<LipSynch> _lipSynch;
+	ResPtr<LipSync> _lipSync;
 	std::list<Costume *> _costumeStack;
 
 	// Variables for gradual turning

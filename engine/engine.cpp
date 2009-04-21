@@ -36,7 +36,7 @@
 #include "engine/smush/smush.h"
 #include "engine/backend/platform/driver.h"
 #include "engine/savegame.h"
-#include "engine/lipsynch.h"
+#include "engine/lipsync.h"
 #include "engine/registry.h"
 
 #include "engine/imuse/imuse.h"
@@ -377,7 +377,7 @@ void Engine::handleDebugLoadResource() {
 	else if (strstr(buf, ".cos"))
 		resource = (void *)g_resourceloader->loadCostume(buf, NULL);
 	else if (strstr(buf, ".lip"))
-		resource = (void *)g_resourceloader->loadLipSynch(buf);
+		resource = (void *)g_resourceloader->loadLipSync(buf);
 	else if (strstr(buf, ".snm"))
 		resource = (void *)g_smush->play(buf, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
