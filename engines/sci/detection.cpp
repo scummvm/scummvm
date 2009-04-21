@@ -858,7 +858,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 784) // got 1.004.018 by executable scan
+		SCI_VERSION(1, 000, 60) // got 1.004.018 by executable scan
 	},
 
 	// King's Quest 5 - German Amiga
@@ -875,7 +875,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+		SCI_VERSION(1, 000, 60) // got 1.004.024 by executable scan
 	},
 
 	// King's Quest 5 - Italian Amiga
@@ -892,21 +892,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 784) // got 1.004.024 by executable scan
+		SCI_VERSION(1, 000, 60) // got 1.004.024 by executable scan
 	},
 
-	// King's Quest 5 - English DOS
-	{{"kq5", "", {
+	// King's Quest 5 - English DOS CD
+	{{"kq5", "CD", {
 		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
 		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(1, 000, 60)
+		SCI_VERSION(1, 000, 784)
 	},
 
-	// King's Quest 5 - English DOS
+	// King's Quest 5 - English DOS floppy
 	{{"kq5", "", {
 		{"resource.map", 0, "d6172c27b453350e158815fbae23f41e", 8004},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276351},
