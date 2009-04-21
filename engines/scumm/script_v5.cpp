@@ -378,11 +378,7 @@ int ScummEngine_v5::getVarOrDirectWord(byte mask) {
 }
 
 void ScummEngine_v5::jumpRelative(bool cond) {
-	// We explicitly call ScummEngine::fetchScriptWordSigned()
-	// to make this method work also in v0, which overloads
-	// fetchScriptWord to only read bytes (which is the right thing
-	// to do for most opcodes, but not for jump offsets).
-	int16 offset = ScummEngine::fetchScriptWordSigned();
+	int16 offset = ScummEngine::fetchScriptWord();
 	if (!cond)
 		_scriptPointer += offset;
 }
