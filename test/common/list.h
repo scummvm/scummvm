@@ -18,13 +18,13 @@ class ListTestSuite : public CxxTest::TestSuite
 	public:
 	void test_size() {
 		Common::List<int> container;
-		TS_ASSERT_EQUALS( container.size(), 0 );
+		TS_ASSERT_EQUALS( container.size(), (unsigned int)0 );
 		container.push_back(17);
-		TS_ASSERT_EQUALS( container.size(), 1 );
+		TS_ASSERT_EQUALS( container.size(), (unsigned int)1 );
 		container.push_back(33);
-		TS_ASSERT_EQUALS( container.size(), 2 );
+		TS_ASSERT_EQUALS( container.size(), (unsigned int)2 );
 		container.clear();
-		TS_ASSERT_EQUALS( container.size(), 0 );
+		TS_ASSERT_EQUALS( container.size(), (unsigned int)0 );
 	}
 
 	void test_iterator_begin_end() {
