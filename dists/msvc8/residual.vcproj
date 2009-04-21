@@ -460,7 +460,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lipsynch.h"
+				RelativePath="..\..\engine\lipsync.h"
 				>
 			</File>
 			<File
