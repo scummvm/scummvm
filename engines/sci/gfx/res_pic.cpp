@@ -190,13 +190,13 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
 
 // Pic rendering operations
 
-void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size) {
-	memset(pic->visual_map->index_data, 0x00, (320 * pic->mode->xfact * sci_titlebar_size * pic->mode->yfact));
-	memset(pic->visual_map->index_data + (320 * pic->mode->xfact * sci_titlebar_size * pic->mode->yfact),
-	       0xff, pic->mode->xfact * 320 * pic->mode->yfact * (200 - sci_titlebar_size)); // white
-	memset(pic->priority_map->index_data + (320 * pic->mode->xfact * sci_titlebar_size * pic->mode->yfact),
-	       0x0, pic->mode->xfact * 320 * pic->mode->yfact * (200 - sci_titlebar_size));
-	memset(pic->priority_map->index_data, 0x0a, sci_titlebar_size * (pic->mode->yfact * 320 * pic->mode->xfact));
+void gfxr_clear_pic0(gfxr_pic_t *pic, int titlebar_size) {
+	memset(pic->visual_map->index_data, 0x00, (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact));
+	memset(pic->visual_map->index_data + (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact),
+	       0xff, pic->mode->xfact * 320 * pic->mode->yfact * (200 - titlebar_size)); // white
+	memset(pic->priority_map->index_data + (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact),
+	       0x0, pic->mode->xfact * 320 * pic->mode->yfact * (200 - titlebar_size));
+	memset(pic->priority_map->index_data, 0x0a, titlebar_size * (pic->mode->yfact * 320 * pic->mode->xfact));
 	memset(pic->control_map->index_data, 0, GFXR_AUX_MAP_SIZE);
 	memset(pic->aux_map, 0, GFXR_AUX_MAP_SIZE);
 }
@@ -226,10 +226,10 @@ void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size) {
 	}; \
 	buffer[linewidth * y + x] operation color;
 
-static void _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int sci_titlebar_size) {
+static void _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int color2, int titlebar_size) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = line.x;
-	int y = line.y + sci_titlebar_size;
+	int y = line.y + titlebar_size;
 	unsigned char *buffer = pic->aux_map;
 	int linewidth = 320;
 
@@ -272,10 +272,10 @@ static void _gfxr_auxbuf_line_draw(gfxr_pic_t *pic, rect_t line, int color, int 
 	}
 }
 
-static void _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int sci_titlebar_size) {
+static void _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int titlebar_size) {
 	int dx, dy, incrE, incrNE, d, finalx, finaly;
 	int x = line.x;
-	int y = line.y + sci_titlebar_size;
+	int y = line.y + titlebar_size;
 	unsigned char *buffer = pic->aux_map;
 	int linewidth = 320;
 
@@ -819,7 +819,7 @@ static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int 
 }
 
 static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int control, int drawenable,
-	int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode, int sci_titlebar_size) {
+	int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode, int titlebar_size) {
 	int xsize = (pattern_size + 1) * pic->mode->xfact - 1;
 	int ysize = (pattern_size + 1) * pic->mode->yfact - 1;
 	int scaled_x, scaled_y;
@@ -828,13 +828,13 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 
 	p0printf(stderr, "Pattern at (%d,%d) size %d, rand=%d, code=%02x\n", x, y, pattern_size, pattern_nr, pattern_code);
 
-	y += sci_titlebar_size;
+	y += titlebar_size;
 
 	if (x - pattern_size < 0)
 		x = pattern_size;
 
-	if (y - pattern_size < sci_titlebar_size)
-		y = sci_titlebar_size + pattern_size;
+	if (y - pattern_size < titlebar_size)
+		y = titlebar_size + pattern_size;
 
 	if (x + pattern_size > max_x)
 		x = max_x - pattern_size;
@@ -848,8 +848,8 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 	if (scaled_x < xsize)
 		scaled_x = xsize;
 
-	if (scaled_y < ysize + sci_titlebar_size * pic->mode->yfact)
-		scaled_y = ysize + sci_titlebar_size * pic->mode->yfact;
+	if (scaled_y < ysize + titlebar_size * pic->mode->yfact)
+		scaled_y = ysize + titlebar_size * pic->mode->yfact;
 
 	if (scaled_x > (320 * pic->mode->xfact) - 1 - xsize)
 		scaled_x = (320 * pic->mode->xfact) - 1 - xsize;
@@ -934,7 +934,7 @@ static void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, in
 }
 
 static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
-	int priority, int control, int drawenable, int line_mode, int cmd, int sci_titlebar_size) {
+	int priority, int control, int drawenable, int line_mode, int cmd, int titlebar_size) {
 	int scale_x = pic->mode->xfact;
 	int scale_y = pic->mode->yfact;
 	int xc, yc;
@@ -952,8 +952,8 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 		return;
 	}
 
-	y += sci_titlebar_size;
-	ey += sci_titlebar_size;
+	y += titlebar_size;
+	ey += titlebar_size;
 
 	if (drawenable & GFX_MASK_CONTROL) {
 		p0printf(" ctl:%x", control);
@@ -967,14 +967,14 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 		int mask2 = mask;
 		if (partially_white)
 			mask2 = mask &= ~GFX_MASK_VISUAL;
-		_gfxr_auxbuf_line_draw(pic, line, mask, mask2, sci_titlebar_size);
+		_gfxr_auxbuf_line_draw(pic, line, mask, mask2, titlebar_size);
 	}
 
 	// Calculate everything that is changed to TRANSPARENT
 	mask = drawenable & (((color == 0xff) ? 1 : 0) | ((!priority) ? 2 : 0) | ((!control) ? 4 : 0));
 
 	if (mask)
-		_gfxr_auxbuf_line_clear(pic, line, ~mask, sci_titlebar_size);
+		_gfxr_auxbuf_line_clear(pic, line, ~mask, titlebar_size);
 
 	x *= scale_x;
 	y *= scale_y;
@@ -1314,12 +1314,10 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int pal, index;
 	int temp;
 	int line_mode = style->line_mode;
-	int sci_titlebar_size;
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	sci_titlebar_size = _options->pic_port_bounds.y;	
-#else
-	sci_titlebar_size = 10;
-#endif
+	// NOTE: here, it is assumed that the titlebar size is always 10. This may differ depending on
+	// the port bounds y starting point, but we haven't come across a case where this actually occurs.
+	// Also, there is a check further down which sets the titlebar size to 0 if the picture port goes off screen.
+	int titlebar_size = 10;
 	byte op, opx;
 
 #ifdef FILL_RECURSIVE_DEBUG
@@ -1396,7 +1394,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			GET_ABS_COORDS(x, y);
 
 			_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-			                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+			                   pattern_size, pattern_nr, style->brush_mode, titlebar_size);
 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
@@ -1407,7 +1405,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				GET_REL_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1424,7 +1422,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				fprintf(stderr, " to %d,%d\n", x, y);
 #endif
 				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
-				                PIC_OP_MEDIUM_LINES, sci_titlebar_size);
+				                PIC_OP_MEDIUM_LINES, titlebar_size);
 				oldx = x;
 				oldy = y;
 			}
@@ -1436,7 +1434,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				GET_ABS_COORDS(x, y);
 				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
-				                PIC_OP_LONG_LINES, sci_titlebar_size);
+				                PIC_OP_LONG_LINES, titlebar_size);
 				oldx = x;
 				oldy = y;
 			}
@@ -1450,7 +1448,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				GET_REL_COORDS(x, y);
 				_gfxr_draw_line(pic, oldx, oldy, x, y, color, priority, control, drawenable, line_mode,
-				                PIC_OP_SHORT_LINES, sci_titlebar_size);
+				                PIC_OP_SHORT_LINES, titlebar_size);
 				oldx = x;
 				oldy = y;
 			}
@@ -1462,16 +1460,16 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				//fprintf(stderr,"####################\n");
 				GET_ABS_COORDS(x, y);
 				p0printf("Abs coords %d,%d\n", x, y);
-				//fprintf(stderr,"C=(%d,%d)\n", x, y + sci_titlebar_size);
+				//fprintf(stderr,"C=(%d,%d)\n", x, y + titlebar_size);
 #ifdef WITH_PIC_SCALING
 				if (pic->mode->xfact > 1 || pic->mode->yfact > 1)
-					_gfxr_fill_any(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
-					               color : 0, priority, control, drawenable, sci_titlebar_size);
+					_gfxr_fill_any(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
+					               color : 0, priority, control, drawenable, titlebar_size);
 
 				else
 #endif
-					_gfxr_fill_1(pic, x, y + sci_titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
-					             color : 0, priority, control, drawenable, sci_titlebar_size);
+					_gfxr_fill_1(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
+					             color : 0, priority, control, drawenable, titlebar_size);
 
 #ifdef FILL_RECURSIVE_DEBUG
 				if (!fillmagc) {
@@ -1530,7 +1528,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				GET_ABS_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1557,7 +1555,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			GET_ABS_COORDS(oldx, oldy);
 
 			_gfxr_draw_pattern(pic, oldx, oldy, color, priority, control, drawenable, pattern_code,
-			                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+			                   pattern_size, pattern_nr, style->brush_mode, titlebar_size);
 
 			x = oldx;
 			y = oldy;
@@ -1570,7 +1568,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				GET_MEDREL_COORDS(x, y);
 
 				_gfxr_draw_pattern(pic, x, y, color, priority, control, drawenable, pattern_code,
-				                   pattern_size, pattern_nr, style->brush_mode, sci_titlebar_size);
+				                   pattern_size, pattern_nr, style->brush_mode, titlebar_size);
 			}
 			goto end_op_loop;
 
@@ -1693,8 +1691,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				// Hack to prevent overflowing the visual map buffer.
 				// Yes, this does happen otherwise.
-				if (view->index_height + sci_titlebar_size > 200)
-					sci_titlebar_size = 0;
+				if (view->index_height + titlebar_size > 200)
+					titlebar_size = 0;
 
 				// Set up mode structure for resizing the view
 				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1byte/p, which handles masks and the rest for us
@@ -1708,10 +1706,10 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				view->palette = NULL;
 
 				if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
-					view_transparentize(view, pic->visual_map, posx, sci_titlebar_size + posy,
+					view_transparentize(view, pic->visual_map, posx, titlebar_size + posy,
 					                    view->index_width, view->index_height);
 
-				_gfx_crossblit_simple(pic->visual_map->index_data + (sci_titlebar_size * 320) + posy * 320 + posx,
+				_gfx_crossblit_simple(pic->visual_map->index_data + (titlebar_size * 320) + posy * 320 + posx,
 				                      view->index_data, pic->visual_map->index_width, view->index_width,
 				                      view->index_width, view->index_height, 1);
 
@@ -1789,13 +1787,11 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int vector_data_ptr = READ_LE_UINT16(resource + 16);
 	int palette_data_ptr = READ_LE_UINT16(resource + 28);
 	int bitmap_data_ptr = READ_LE_UINT16(resource + 32);
-	int sci_titlebar_size;
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	sci_titlebar_size = _options->pic_port_bounds.y;	
-#else
-	sci_titlebar_size = 10;
-#endif
 	gfx_pixmap_t *view = NULL;
+	// NOTE: here, it is assumed that the titlebar size is always 10. This may differ depending on
+	// the port bounds y starting point, but we haven't come across a case where this actually occurs.
+	// Also, there is a check further down which sets the titlebar size to 0 if the picture port goes off screen.
+	int titlebar_size = 10;
 
 	if (pic->visual_map->palette) pic->visual_map->palette->free();
 	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
@@ -1818,10 +1814,10 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 		// Hack to prevent overflowing the visual map buffer.
 		// Yes, this does happen otherwise.
-		if (view->index_height + sci_titlebar_size > 200)
-			sci_titlebar_size = 0;
+		if (view->index_height + titlebar_size > 200)
+			titlebar_size = 0;
 
-		_gfx_crossblit_simple(pic->visual_map->index_data + sci_titlebar_size*view->index_width,
+		_gfx_crossblit_simple(pic->visual_map->index_data + titlebar_size*view->index_width,
 		                      view->index_data,
 		                      pic->visual_map->index_width, view->index_width,
 		                      view->index_width,

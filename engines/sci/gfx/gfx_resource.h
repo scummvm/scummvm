@@ -159,10 +159,10 @@ void gfxr_free_view(gfxr_view_t *view);
 /*********************/
 
 
-void gfxr_clear_pic0(gfxr_pic_t *pic, int sci_titlebar_size);
+void gfxr_clear_pic0(gfxr_pic_t *pic, int titlebar_size);
 /* Clears all pic buffers of one pic
 ** Parameters: (gfxr_pic_t) pic: The picture to clear
-**             (int) sci_titlebar_size: How much space to reserve for the title bar
+**             (int) titlebar_size: How much space to reserve for the title bar
 ** Returns   : (void)
 ** This function should be called before gfxr_draw_pic0, unless cumulative
 ** drawing is intended

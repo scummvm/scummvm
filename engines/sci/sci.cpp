@@ -266,8 +266,6 @@ Common::Error SciEngine::run() {
 		gfx_options.res_conf.mod[i] = NULL;
 	}
 	gfx_options.workarounds = 0;
-	gfx_options.pic_port_bounds = gfx_rect(0, 10, 320, 190);
-
 	// Default config ends
 #endif
 

@@ -76,7 +76,6 @@ struct gfx_options_t {
 	int dirty_frames;
 
 	int workarounds;	// Workaround flags - see below
-	rect_t pic_port_bounds;
 #endif
 };
 

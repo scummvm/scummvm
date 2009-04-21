@@ -434,6 +434,7 @@ int gfxop_init(int version, gfx_state_t *state, gfx_options_t *options, Resource
 	state->pic = state->pic_unscaled = NULL;
 	state->pic_nr = -1; // Set background pic number to an invalid value
 	state->tag_mode = 0;
+	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	state->dirty_rects = NULL;
 
 	do {

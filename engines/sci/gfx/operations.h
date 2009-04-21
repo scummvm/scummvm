@@ -127,6 +127,7 @@ struct gfx_state_t {
 					   ** which is generally slow */
 
 	gfxr_pic_t *pic, *pic_unscaled; /* The background picture and its unscaled equivalent */
+	rect_t pic_port_bounds;  /* Picture port bounds */
 
 	gfx_dirty_rect_t *dirty_rects; /* Dirty rectangles */
 };

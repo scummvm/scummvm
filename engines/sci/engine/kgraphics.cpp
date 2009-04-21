@@ -1030,13 +1030,8 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->picture_port->widfree(GFXW(s->picture_port));
 	s->iconbar_port->widfree(GFXW(s->iconbar_port));
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->options->pic_port_bounds, s->ega_colors[0], transparent);
-	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->options->pic_port_bounds, s->ega_colors[0], transparent);
-#else
-	s->wm_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 10, 320, 190), s->ega_colors[0], transparent);
-	s->picture_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 10, 320, 190), s->ega_colors[0], transparent);
-#endif
+	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
+	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
@@ -2386,13 +2381,8 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		// This should never occur. This case happens when the port is supplied via command line parameters
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		s->gfx_state->options->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4),
+		s->gfx_state->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4),
 		        UKPV(3), UKPV(2));
-#else
-		warning("kSetPort() was called to change the picture port bounds, but custom graphics options are not enabled, so it has been ignored");
-#endif
 
 		// FIXME: Should really only invalidate all loaded pic resources here;
 		// this is overkill

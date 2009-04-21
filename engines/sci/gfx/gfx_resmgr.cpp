@@ -148,7 +148,9 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 	case GFX_RESOURCE_TYPE_PIC:
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		if (_version >= SCI_VERSION_01_VGA)
-			return _options->pic_port_bounds.y;
+			// NOTE: here, it is assumed that the upper port bound is always 10, but this doesn't seem to matter for the
+			// generated options hash anyway
+			return 10;
 		else
 			return (_options->pic0_unscaled) ? 0x10000 : (_options->pic0_dither_mode << 12)
 			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4) 
