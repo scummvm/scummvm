@@ -316,7 +316,7 @@
 				RelativePath="..\..\engine\lipsync.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engine\lipsynch.h">
+				RelativePath="..\..\engine\lipsync.h">
 			</File>
 			<File
 				RelativePath="..\..\engine\localize.cpp">

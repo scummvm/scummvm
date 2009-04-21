@@ -327,7 +327,7 @@
 				RelativePath="..\..\engine\lab.h">
 			</File>
 			<File
-				RelativePath="..\..\engine\lipsynch.cpp">
+				RelativePath="..\..\engine\lipsync.cpp">
 			</File>
 			<File
 				RelativePath="..\..\engine\lipsynch.h">
