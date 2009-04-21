@@ -76,21 +76,17 @@ namespace Sci {
 #define ADD_TO_WINDOW_PORT(widget) \
 	s->wm_port->add(GFXWC(s->wm_port), GFXW(widget));
 
-#define ADD_TO_CURRENT_FG_WIDGETS(widget) \
-	ADD_TO_CURRENT_PICTURE_PORT(widget)
-
-#define ADD_TO_CURRENT_BG_WIDGETS(widget) \
-	ADD_TO_CURRENT_PICTURE_PORT(widget)
-
 #define FULL_REDRAW()\
 	if (s->visual) \
 		s->visual->draw(GFXW(s->visual), gfxw_point_zero); \
 	gfxop_update(s->gfx_state);
 
+#if 0
+// Used for debugging
 #define FULL_INSPECTION()\
 	if (s->visual) \
 		s->visual->print(GFXW(s->visual), 0);
-
+#endif
 
 #define GFX_ASSERT(x) { \
 	int val = !!(x); \
@@ -508,7 +504,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
 		// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
 		// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
-		ADD_TO_CURRENT_BG_WIDGETS(GFXW(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
+		ADD_TO_CURRENT_PICTURE_PORT(GFXW(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
 		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
 
 	}
@@ -554,7 +550,9 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		SCIkdebug(SCIkGRAPHICS, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
 		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1), UKPV(5));
 
-		ADD_TO_CURRENT_BG_WIDGETS(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
+		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
+		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
+		s->picture_port->add(GFXWC(s->picture_port), GFXW(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT)));
 
 	}
 	break;
@@ -1604,7 +1602,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		SCIkdebug(SCIkGRAPHICS, "drawing button "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_button_control(s->port, obj, area, text, font_nr,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, font_nr,
 		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
 
@@ -1613,7 +1611,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 		SCIkdebug(SCIkGRAPHICS, "drawing text "PREG" to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
 									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
@@ -1630,14 +1628,14 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 			update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
 
 		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (int8)inverse));
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (int8)inverse));
 		break;
 
 	case K_CONTROL_ICON:
 
 		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
 		                          (int8)(state & kControlStateFramed), (int8)inverse));
 		break;
 
@@ -1675,7 +1673,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 			}
 		}
 
-		ADD_TO_CURRENT_BG_WIDGETS(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
 		                          list_top, selection, (int8)inverse));
 		if (entries_nr)
 			free(entries_list);
@@ -3308,9 +3306,9 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	SCIkdebug(SCIkGRAPHICS, "Display: Commiting text '%s'\n", text);
 
-	//ADD_TO_CURRENT_FG_WIDGETS(text_handle);
+	//ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 
-	ADD_TO_CURRENT_FG_WIDGETS(GFXW(text_handle));
+	ADD_TO_CURRENT_PICTURE_PORT(GFXW(text_handle));
 	if ((!s->pic_not_valid) && update_immediately) { // Refresh if drawn to valid picture
 		FULL_REDRAW();
 		SCIkdebug(SCIkGRAPHICS, "Refreshing display...\n");
