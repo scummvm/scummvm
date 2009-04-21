@@ -576,6 +576,22 @@ restart:
 		sl = (SubroutineLine *)((byte *)sub + sl->next);
 	}
 
+	// WORKAROUND: Feeble walks in the incorrect direction, when looking at the Vent in the Research and Testing area of
+	// the Company Central Command Compound. We manually add the extra script code from the updated English 2CD release, 
+	// which fixed this particular script bug.
+	if (getGameType() == GType_FF && _language == Common::EN_ANY) {
+		if (sub->id == 39125 && readVariable(84) == 2) {
+			writeVariable(1, 1136);
+			writeVariable(2, 346);
+		}
+		if (sub->id == 39126 && readVariable(84) == 2) {
+			Subroutine *tmpSub = getSubroutineByID(80);
+			if (tmpSub != NULL) {
+				startSubroutine(tmpSub);
+			}
+		}
+	}
+
 	if (_classMode1) {
 		_subjectItem = nextInByClass(_subjectItem, _classMask);
 		if (!_subjectItem) {
