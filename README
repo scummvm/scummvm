@@ -387,7 +387,7 @@ package.
 
 3.4) Macintosh games notes:
 ---- ----------------------
-All LucasArts SCUMM based adventures except COMI also exist in versions
+All LucasArts SCUMM based adventures, except COMI, also exist in versions
 for the Macintosh. ScummVM can use most (all?) of them, however, in some
 cases some additional work is required. First off, if you are not using
 a Macintosh for this, accessing the CD/floppy data might be tricky. The
