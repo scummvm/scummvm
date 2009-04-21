@@ -74,7 +74,6 @@ extern Palette* gfx_sci0_pic_colors;
 struct gfxr_pic0_params_t {
 	gfx_line_mode_t line_mode; /* one of GFX_LINE_MODE_* */
 	gfx_brush_mode_t brush_mode;
-	rect_t pic_port_bounds;
 };
 
 struct gfxr_pic_t {

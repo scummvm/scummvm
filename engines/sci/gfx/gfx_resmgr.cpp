@@ -88,15 +88,11 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	basic_style.brush_mode = GFX_BRUSH_MODE_SCALED;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	basic_style.pic_port_bounds = _options->pic_port_bounds;
 	style.line_mode = _options->pic0_line_mode;
 	style.brush_mode = _options->pic0_brush_mode;
-	style.pic_port_bounds = _options->pic_port_bounds;
 #else
-	basic_style.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	style.line_mode = GFX_LINE_MODE_CORRECT;
 	style.brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
-	style.pic_port_bounds = gfx_rect(0, 10, 320, 190);
 #endif
 
 	if (!res || !res->data)

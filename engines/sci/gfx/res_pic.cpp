@@ -1314,7 +1314,12 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int pal, index;
 	int temp;
 	int line_mode = style->line_mode;
-	int sci_titlebar_size = style->pic_port_bounds.y;
+	int sci_titlebar_size;
+#ifdef CUSTOM_GRAPHICS_OPTIONS
+	sci_titlebar_size = _options->pic_port_bounds.y;	
+#else
+	sci_titlebar_size = 10;
+#endif
 	byte op, opx;
 
 #ifdef FILL_RECURSIVE_DEBUG
@@ -1784,7 +1789,12 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int vector_data_ptr = READ_LE_UINT16(resource + 16);
 	int palette_data_ptr = READ_LE_UINT16(resource + 28);
 	int bitmap_data_ptr = READ_LE_UINT16(resource + 32);
-	int sci_titlebar_size = style->pic_port_bounds.y;
+	int sci_titlebar_size;
+#ifdef CUSTOM_GRAPHICS_OPTIONS
+	sci_titlebar_size = _options->pic_port_bounds.y;	
+#else
+	sci_titlebar_size = 10;
+#endif
 	gfx_pixmap_t *view = NULL;
 
 	if (pic->visual_map->palette) pic->visual_map->palette->free();
