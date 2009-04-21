@@ -732,6 +732,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\script_v3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\script_v4.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\script_v5.cpp"
 			>
 		</File>
