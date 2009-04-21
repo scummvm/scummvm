@@ -283,6 +283,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\draw_fascin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\draw_v1.cpp"
 			>
 		</File>
@@ -400,6 +404,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter_bargon.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\inter_fascin.cpp"
 			>
 		</File>
 		<File
