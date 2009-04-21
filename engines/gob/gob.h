@@ -95,7 +95,12 @@ enum GameType {
 	kGameTypeLostInTime,
 	kGameTypeInca2,
 	kGameTypeDynasty,
-	kGameTypeUrban
+	kGameTypeUrban,
+	kGameTypeArchibald,
+	kGameTypeSpirou,
+	kGameTypeFascination,
+	kGameTypeGeisha,
+	kGameTypeAdibou4
 };
 
 enum Features {
@@ -208,8 +213,8 @@ public:
 	uint16 _height;
 	uint8 _mode;
 
+	char *_startStk;
 	char *_startTot;
-	char *_startTot0;
 	bool _copyProtection;
 	bool _noMusic;
 

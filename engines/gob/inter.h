@@ -451,6 +451,58 @@ protected:
 	void oBargon_intro9(OpGobParams &params);
 };
 
+class Inter_Fascination : public Inter_v2 {
+public:
+	Inter_Fascination(GobEngine *vm);
+	virtual ~Inter_Fascination() {}
+
+protected:
+	typedef void (Inter_Fascination::*OpcodeDrawProcFascination)();
+	typedef bool (Inter_Fascination::*OpcodeFuncProcFascination)(OpFuncParams &);
+	typedef void (Inter_Fascination::*OpcodeGoblinProcFascination)(OpGobParams &);
+	struct OpcodeDrawEntryFascination {
+		OpcodeDrawProcFascination proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryFascination {
+		OpcodeFuncProcFascination proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryFascination {
+		OpcodeGoblinProcFascination proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryFascination *_opcodesDrawFascination;
+	const OpcodeFuncEntryFascination *_opcodesFuncFascination;
+	const OpcodeGoblinEntryFascination *_opcodesGoblinFascination;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	void oFascin_playProtracker(OpGobParams &params);
+
+	void oFascin_geUnknown2(OpGobParams &params);
+	void oFascin_geUnknown3(OpGobParams &params);
+	void oFascin_geUnknown4(OpGobParams &params);
+	void oFascin_geUnknown5(OpGobParams &params);
+	void oFascin_geUnknown6(OpGobParams &params);
+	void oFascin_geUnknown10(OpGobParams &params);
+	bool oFascin_feUnknown4(OpFuncParams &params);
+	void oFascin_cdUnknown3();
+	void oFascin_cdUnknown4();
+	void oFascin_cdUnknown5();
+	void oFascin_cdUnknown6();
+	void oFascin_cdUnknown10();
+	void oFascin_cdUnknown11();
+
+};
+
 class Inter_v3 : public Inter_v2 {
 public:
 	Inter_v3(GobEngine *vm);

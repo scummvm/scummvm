@@ -1142,7 +1142,7 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 	}
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746)
-			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
+			&& !scumm_stricmp(_vm->_game->_curTotFile, "intro0.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
 	}
@@ -1436,7 +1436,11 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 		buf[size] = 0;
 	}
 
+//	if (_vm->getGameType() == kGameTypeGeisha)
+//		strcat(buf, ".0ot");
+//	else
 	strcat(buf, ".tot");
+
 	if (_terminate != 2)
 		_terminate = 1;
 	strcpy(_vm->_game->_totToLoad, buf);

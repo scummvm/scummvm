@@ -71,7 +71,8 @@ void Game_v1::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			if (_vm->getPlatform() == Common::kPlatformMacintosh)
+			if ((_vm->getPlatform() == Common::kPlatformMacintosh)||
+				  (_vm->getPlatform() == Common::kPlatformWindows))
 				_vm->_sound->adlibStop();
 			else
 				_vm->_sound->cdStop();

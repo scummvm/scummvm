@@ -231,10 +231,12 @@ void Inter::funcBlock(int16 retFlag) {
 			break;
 
 		// WORKAROUND:
-		// The EGA and Mac versions of gob1 doesn't add a delay after showing
-		// images between levels. We manually add it here.
+		// The EGA, Mac and Windows versions of gob1 doesn't add a delay after
+		// showing images between levels. We manually add it here.
 		if ((_vm->getGameType() == kGameTypeGob1) &&
-		   (_vm->isEGA() || (_vm->getPlatform() == Common::kPlatformMacintosh))) {
+		   (  _vm->isEGA() || 
+		     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
+		     (_vm->getPlatform() == Common::kPlatformWindows))) {
 
 			int addr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
 

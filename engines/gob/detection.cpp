@@ -35,6 +35,7 @@ struct GOBGameDescription {
 
 	GameType gameType;
 	int32 features;
+	const char *startStkBase;
 	const char *startTotBase;
 };
 
@@ -59,6 +60,11 @@ static const PlainGameDescriptor gobGames[] = {
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
 	{"urban", "Urban Runner"},
+	{"archibald", "Playtoon 1 - Uncle Archibald"},
+	{"spirou", "Playtoon 2 - Spirou"},
+	{"fascination", "Fascination"},
+	{"geisha", "Geisha"},
+	{"adibou4", "Adibou v4"},
 	{0, 0}
 };
 
@@ -82,7 +88,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesEGA,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -95,7 +102,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesEGA,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Theruler76 in bug report #1201233
 		{
@@ -108,7 +116,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by raziel_ in bug report #1891864
 		{
@@ -121,7 +130,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.000 version.
 		{
@@ -134,7 +144,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.000 version.
 		{
@@ -147,7 +158,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.000 version.
 		{
@@ -160,7 +172,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.000 version.
 		{
@@ -173,7 +186,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.000 version.
 		{
@@ -186,7 +200,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.02 version. Multilingual
 		{
@@ -199,7 +214,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.02 version. Multilingual
 		{
@@ -212,7 +228,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.02 version. Multilingual
 		{
@@ -225,7 +242,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.02 version. Multilingual
 		{
@@ -238,7 +256,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // CD 1.02 version. Multilingual
 		{
@@ -251,7 +270,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -264,7 +284,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -277,7 +298,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -290,7 +312,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by raina in the forums
 		{
@@ -303,7 +326,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -316,7 +340,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -329,7 +354,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -342,7 +368,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -355,7 +382,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -368,7 +396,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0,
+		0
 	},
 	{ // Supplied by fac76 in bug report #1883808
 		{
@@ -381,7 +428,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -394,7 +442,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2602057
 		{
@@ -407,7 +456,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by bgk in bug report #1706861
 		{
@@ -420,7 +470,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by fac76 in bug report #1673397
 		{
@@ -437,7 +488,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by koalet in bug report #2478585
 		{
@@ -454,7 +506,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -467,7 +520,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -480,7 +534,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by raziel_ in bug report #1891867
 		{
@@ -493,7 +548,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -506,7 +562,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by blackwhiteeagle in bug report #1605235
 		{
@@ -519,7 +576,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -532,7 +590,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2602017
 		{
@@ -545,7 +604,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -558,7 +618,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by arcepi in bug report #1659884
 		{
@@ -571,7 +632,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -584,7 +646,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -597,7 +660,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -610,7 +674,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -623,7 +688,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -636,7 +702,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -649,7 +716,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -662,7 +730,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"usa"
+		0,
+		"usa.tot"
 	},
 	{
 		{
@@ -675,7 +744,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -688,7 +758,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by polluks in bug report #1895126
 		{
@@ -701,7 +772,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "285d7340f98ebad65d465585da12910b", 837286},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0,
+		0
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
@@ -718,7 +808,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
@@ -731,7 +822,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
@@ -744,7 +836,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
@@ -757,7 +850,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2563539 
 		{
@@ -774,7 +868,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by pwigren in bug report #1764174
 		{
@@ -791,7 +886,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -804,7 +900,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -817,7 +914,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -830,7 +928,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by cybot_tmin in bug report #1667743
 		{
@@ -843,7 +942,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -856,7 +956,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by cartman_ on #scummvm
 		{
@@ -869,7 +970,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by glorfindel in bugreport #1722142
 		{
@@ -882,7 +984,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -895,7 +998,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"show"
+		0,
+		"show.tot"
 	},
 	{
 		{
@@ -908,7 +1012,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
-		"show"
+		0,
+		"show.tot"
 	},
 	{
 		{
@@ -921,7 +1026,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Trekky in the forums
 		{
@@ -934,7 +1040,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by cesardark in bug #1681649
 		{
@@ -947,7 +1054,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug #1692667
 		{
@@ -960,7 +1068,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by pwigren in bugreport #1764174
 		{
@@ -973,7 +1082,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by kizkoool in bugreport #2089734
 		{
@@ -986,7 +1096,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by glorfindel in bugreport #1722142
 		{
@@ -999,7 +1110,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1012,7 +1124,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1029,7 +1142,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1042,7 +1156,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1055,7 +1170,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Arshlan in the forums
 		{
@@ -1068,7 +1184,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by cartman_ on #scummvm
 		{
@@ -1081,7 +1198,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2105220
 		{
@@ -1094,7 +1212,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by koalet in bug report #2479034
 		{
@@ -1111,7 +1230,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1124,7 +1244,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1137,7 +1258,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1150,7 +1272,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1163,7 +1286,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1176,7 +1300,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1189,7 +1314,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1202,7 +1328,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1215,7 +1342,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1228,7 +1356,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1241,7 +1370,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1254,7 +1384,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2093672
 		{
@@ -1267,7 +1398,135 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"fascination",
+			"CD Version (Censored)",
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545952),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesCD,
+		"disk0.stk",
+		0
+	},
+	{
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "a50a8495e1b2d67699fb562cb98fc3e2", 1064387),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},
+	//Provided by Sanguine
+	{
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},
+	{
+		{
+			"fascination",
+			"VGA",
+			AD_ENTRY1s("disk0.stk", "e8ab4f200a2304849f462dc901705599", 183337),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},
+	{
+		{
+			"fascination",
+			"",
+			AD_ENTRY1s("disk0.stk", "68b1c01564f774c0b640075fbad1b695", 189968),
+			DE_DEU,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},	
+	{
+		{
+			"fascination",
+			"",
+			AD_ENTRY1s("disk0.stk", "7062117e9c5adfb6bfb2dac3ff74df9e", 189951),
+			EN_ANY,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},	
+	{
+		{
+			"fascination",
+			"",
+			AD_ENTRY1s("disk0.stk", "55c154e5a3e8e98afebdcff4b522e1eb", 190005),
+			FR_FRA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},	
+	{
+		{
+			"fascination",
+			"",
+			AD_ENTRY1s("disk0.stk", "7691827fff35df7799f14cfd6be178ad", 189931),
+			IT_ITA,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},	
+	{
+		{
+			"geisha",
+			"",
+			AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeGeisha,
+		kFeaturesNone,
+		"disk1.stk",
+		"intro.tot"
 	},
 	{
 		{
@@ -1280,7 +1539,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"demo"
+		"demo.stk",
+		"demo.tot"
 	},
 	{
 		{
@@ -1293,7 +1553,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"demo"
+		"demo.stk",
+		"demo.tot"
 	},
 	{
 		{
@@ -1306,7 +1567,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by raziel_ in bug report #1891869
 		{
@@ -1319,7 +1581,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by fac76 in bug report #1742716
 		{
@@ -1336,7 +1599,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1349,7 +1613,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 in bug report #1652352
 		{
@@ -1362,7 +1627,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1375,7 +1641,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Paranoimia on #scummvm
 		{
@@ -1388,7 +1655,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1401,7 +1669,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1414,7 +1683,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by SiRoCs in bug report #2098621
 		{
@@ -1427,7 +1697,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1440,7 +1711,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesNone,
-		"menu"
+		0,
+		"menu.tot"
 	},
 	{
 		{
@@ -1453,7 +1725,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesNone,
-		"menu"
+		0,
+		"menu.tot"
 	},
 	{
 		{
@@ -1466,7 +1739,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
@@ -1479,7 +1753,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
@@ -1492,7 +1767,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
@@ -1505,7 +1781,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
@@ -1518,7 +1795,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by paul66 and noizert in bug reports #1652352 and #1691230
 		{
@@ -1531,7 +1809,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1544,7 +1823,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1557,7 +1837,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1570,7 +1851,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1583,7 +1865,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "edd7403e5dc2a14459d2665a4c17714d", 209534},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0,
+		0
 	},
 	{
 		{
@@ -1596,7 +1897,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1609,7 +1911,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1622,7 +1925,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1635,7 +1939,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1648,7 +1953,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1661,7 +1967,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1674,7 +1981,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1687,7 +1995,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1700,7 +2009,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1713,7 +2023,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1726,7 +2037,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1739,7 +2051,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1752,7 +2065,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1765,7 +2079,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1778,7 +2093,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1791,7 +2107,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1804,7 +2121,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1817,7 +2135,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -1830,7 +2149,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by jvprat on #scummvm
 		{
@@ -1843,7 +2163,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by jvprat on #scummvm
 		{
@@ -1856,7 +2177,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by jvprat on #scummvm
 		{
@@ -1869,7 +2191,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by jvprat on #scummvm
 		{
@@ -1882,7 +2205,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by jvprat on #scummvm
 		{
@@ -1895,7 +2219,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Hkz on #scummvm
 		{
@@ -1908,7 +2233,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Hkz on #scummvm
 		{
@@ -1921,7 +2247,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by Hkz on #scummvm
 		{
@@ -1934,7 +2261,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
 		{
@@ -1947,7 +2275,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
 		{
@@ -1960,7 +2289,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
 		{
@@ -1973,7 +2303,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
 		{
@@ -1986,7 +2317,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by DjDiabolik in bug report #1971294
 		{
@@ -1999,7 +2331,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{ // Supplied by goodoldgeorg in bug report #2098838
 		{
@@ -2012,7 +2345,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2025,7 +2359,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeDynasty,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2038,7 +2373,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeDynasty,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2051,7 +2387,8 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeDynasty,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2064,7 +2401,22 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeDynasty,
 		kFeatures640,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"dynasty",
+			"Demo",
+			AD_ENTRY1s("lda1.stk", "0e56a899357cbc0bf503260fd2dd634e", 15032774),
+			UNK_LANG,
+			kPlatformWindows,
+			ADGF_DEMO
+		},
+		kGameTypeDynasty,
+		kFeatures640,
+		"lda1.stk",
+		0
 	},
 	{
 		{
@@ -2077,7 +2429,36 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeUrban,
 		kFeatures640,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"spirou",
+			"",
+			AD_ENTRY1s("intro2.stk", "5e214cec5041d6a4a810feba8ddaaa92",247576),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeSpirou,
+		kFeatures640,
+		"intro2.stk",
+		0
+	},
+	{
+		{
+			"archibald",
+			"",
+			AD_ENTRY1s("intro2.stk", "9aa412f5b8a1ee1761cb7b26e97fbd56",247094),
+			UNK_LANG,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeArchibald,
+		kFeatures640,
+		"intro2.stk",
+		0
 	},
 	{ // Supplied by gamin in the forums
 		{
@@ -2090,7 +2471,22 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeUrban,
 		kFeatures640,
-		"intro"
+		0,
+		0
+	},
+	{
+		{
+			"adibou4",
+			"",
+			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibou4,
+		kFeatures640,
+		0,
+		0
 	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
 };
@@ -2107,7 +2503,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2120,7 +2517,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2133,7 +2531,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2146,7 +2545,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2159,7 +2559,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2172,7 +2573,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2185,7 +2587,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2198,7 +2601,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2211,7 +2615,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2224,7 +2629,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2237,7 +2643,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2250,7 +2657,8 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
-		"intro"
+		0,
+		0
 	},
 	{
 		{
@@ -2263,8 +2671,51 @@ static const GOBGameDescription fallbackDescs[] = {
 		},
 		kGameTypeUrban,
 		kFeaturesCD,
-		"intro"
-	}
+		0,
+		0
+	},
+	{
+		{
+			"fascination",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk",
+		0
+	},
+	{
+		{
+			"geisha",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGeisha,
+		kFeaturesNone,
+		"disk1.stk",
+		"intro.tot"
+	},
+	{
+		{
+			"adibou4",
+			"",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibou4,
+		kFeatures640,
+		"adif41.stk",
+		0
+	},
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -2282,6 +2733,9 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
 	{ &fallbackDescs[11], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
 	{ &fallbackDescs[12], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
+	{ &fallbackDescs[13], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[14], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[15], { "adif41.stk", "adim41.stk", 0 } },
 	{ 0, { 0 } }
 };
 
@@ -2350,22 +2804,21 @@ namespace Gob {
 void GobEngine::initGame(const GOBGameDescription *gd) {
 	if (gd->startTotBase == 0) {
 		_startTot = new char[10];
-		_startTot0 = new char[11];
 		strcpy(_startTot, "intro.tot");
-		strcpy(_startTot0, "intro0.tot");
 	} else {
-		_startTot = new char[strlen(gd->startTotBase) + 5];
-		_startTot0 = new char[strlen(gd->startTotBase) + 6];
+		_startTot = new char[strlen(gd->startTotBase) + 1];
 		strcpy(_startTot, gd->startTotBase);
-		strcpy(_startTot0, gd->startTotBase);
-		strcat(_startTot, ".tot");
-		strcat(_startTot0, "0.tot");
 	}
-
+	if (gd->startStkBase == 0) {
+		_startStk = new char[10];
+		strcpy(_startStk, "intro.stk");
+	} else {
+		_startStk = new char[strlen(gd->startStkBase) + 1];
+		strcpy(_startStk, gd->startStkBase);
+	}
 	_gameType = gd->gameType;
 	_features = gd->features;
 	_language = gd->desc.language;
 	_platform = gd->desc.platform;
 }
-
 } // End of namespace Gob

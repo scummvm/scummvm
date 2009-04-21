@@ -370,6 +370,7 @@ void DataIO::openDataFile(const char *src, bool itk) {
 	ChunkDesc *dataDesc;
 	char path[128];
 	int16 file;
+	char *fakeTotPtr; 
 
 	strncpy0(path, src, 127);
 	if (!strchr(path, '.')) {
@@ -409,6 +410,13 @@ void DataIO::openDataFile(const char *src, bool itk) {
 		Util::replaceChar(dataDesc[i].chunkName, (char) 0x8E, 'O');
 		Util::replaceChar(dataDesc[i].chunkName, (char) 0x91, 'C');
 		Util::replaceChar(dataDesc[i].chunkName, (char) 0x92, 'T');
+
+		// Geisha use 0ot files, which are compressed TOT files without the packed byte set.
+		fakeTotPtr = strstr(dataDesc[i].chunkName, "0OT");
+		if (fakeTotPtr != 0) {
+			strncpy(fakeTotPtr, "TOT", 3);
+			dataDesc[i].packed = 1;
+		}
 	}
 
 	for (int i = 0; i < _numDataChunks[file]; i++)

@@ -23,54 +23,22 @@
  *
  */
 
-#ifndef GOB_INIT_H
-#define GOB_INIT_H
-
+#include "gob/gob.h"
+#include "gob/draw.h"
+#include "gob/global.h"
 #include "gob/video.h"
 
 namespace Gob {
 
-class Init {
-public:
-	void initGame();
+Draw_Fascin::Draw_Fascin(GobEngine *vm) : Draw_v2(vm) {
+}
 
-	virtual void initVideo() = 0;
+void Draw_Fascin::initScreen(void) {
+	_vm->_global->_videoMode = 0x14;
+	_vm->_video->_surfWidth = 640;
+	_vm->_video->initPrimary(_vm->_global->_videoMode);
 
-	Init(GobEngine *vm);
-	virtual ~Init() {}
-
-protected:
-	Video::PalDesc *_palDesc;
-	static const char *_fontNames[4];
-	GobEngine *_vm;
-
-	void cleanup(void);
-};
-
-class Init_v1 : public Init {
-public:
-	virtual void initVideo();
-
-	Init_v1(GobEngine *vm);
-	virtual ~Init_v1() {}
-};
-
-class Init_v2 : public Init_v1 {
-public:
-	virtual void initVideo();
-
-	Init_v2(GobEngine *vm);
-	virtual ~Init_v2() {}
-};
-
-class Init_v3 : public Init_v2 {
-public:
-	virtual void initVideo();
-
-	Init_v3(GobEngine *vm);
-	virtual ~Init_v3() {}
-};
+	Draw_v2::initScreen();
+}
 
 } // End of namespace Gob
-
-#endif // GOB_INIT_H

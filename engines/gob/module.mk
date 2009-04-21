@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	draw_v1.o \
 	draw_v2.o \
 	draw_bargon.o \
+	draw_fascin.o \
 	driver_vga.o \
 	game.o \
 	game_v1.o \
@@ -30,6 +31,7 @@ MODULE_OBJS := \
 	inter_v1.o \
 	inter_v2.o \
 	inter_bargon.o \
+	inter_fascin.o \
 	inter_v3.o \
 	inter_v4.o \
 	inter_v5.o \

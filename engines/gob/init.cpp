@@ -55,7 +55,7 @@ void Init::cleanup(void) {
 	_vm->_dataIO->closeDataFile();
 }
 
-void Init::initGame(const char *totName) {
+void Init::initGame() {
 	int16 handle2;
 	int16 handle;
 	int16 imdHandle;
@@ -66,19 +66,10 @@ void Init::initGame(const char *totName) {
 
 	initVideo();
 
-	// The Lost In Time demo uses different file prefix
-	if (_vm->getGameType() == kGameTypeLostInTime) {
-		handle2 = _vm->_dataIO->openData("demo.stk");
-		if (handle2 >= 0) {
-			_vm->_dataIO->closeData(handle2);
-			_vm->_dataIO->openDataFile("demo.stk");
-		}
-	}
-
-	handle2 = _vm->_dataIO->openData("intro.stk");
+	handle2 = _vm->_dataIO->openData(_vm->_startStk);
 	if (handle2 >= 0) {
 		_vm->_dataIO->closeData(handle2);
-		_vm->_dataIO->openDataFile("intro.stk");
+		_vm->_dataIO->openDataFile(_vm->_startStk);
 	}
 
 	_vm->_util->initInput();
@@ -142,12 +133,7 @@ void Init::initGame(const char *totName) {
 		delete[] infBuf;
 	}
 
-	if (totName) {
-		strncpy0(buffer, totName, 15);
-		strcat(buffer, ".tot");
-	} else
-		strncpy0(buffer, _vm->_startTot, 19);
-
+	strcpy(buffer, _vm->_startTot);
 	handle = _vm->_dataIO->openData(buffer);
 
 	if (handle >= 0) {

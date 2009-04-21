@@ -557,6 +557,9 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		_vm->_inter->_variables = 0;
 
 	strncpy0(_curTotFile, newTotFile, 9);
+//	if (_vm->getGameType() == kGameTypeGeisha)
+//		strcat(_curTotFile, ".0OT");
+//	else
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0)
