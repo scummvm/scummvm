@@ -599,9 +599,9 @@ file, which can be found on the 'Downloads' page of the ScummVM website.
 
 3.15) Sierra AGI games Predictive Input Dialog notes:
 ----- -----------------------------------------------
-The Predictive Input Dialog is a ScummVM aid for running AGI engines
+The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
-limited keyboard support. In these situations since typing with emulated
+limited keyboard support. In these situations, since typing with emulated
 keyboards is quite tedious, commands can be entered quickly and easily
 via the Predictive Input Dialog.
 
@@ -669,7 +669,7 @@ is simpler and more straightforward than moving around using the menu.
 3.17) Winnie the Pooh notes:
 ----- ----------------------
 It is possible to import saved games from the original interpreter of the
-game in ScummVM.
+game into ScummVM.
 
 There is extensive mouse support for the game under ScummVM, even though
 there wasn't any mouse support in the original game. Menu items can be
@@ -758,7 +758,7 @@ site, please see the section on reporting bugs.
   The Legend of Kyrandia:
     - Amiga versions aren't supported
 
-  Waxworks
+  Waxworks:
     - No music in the PC version
 
   Humongous Entertainment games:
@@ -850,6 +850,7 @@ arguments -- see the next section.
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
   --gui-theme=THEME        Select GUI theme (default, modern, classic)
   --themepath=PATH         Path to where GUI themes are stored
+  --list-themes            Display list of all usable GUI themes
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
   -q, --language=LANG      Select language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
@@ -860,13 +861,15 @@ arguments -- see the next section.
   -n, --subtitles          Enable subtitles (use with games that have voice)
   -b, --boot-param=NUM     Pass number to the boot script (boot param)
   -d, --debuglevel=NUM     Set debug verbosity level
+  --debugflags=FLAGS       Enable engine specific debug flags
+                           (separated by commas)
   -u, --dump-scripts       Enable script dumping if a directory called 'dumps'
                            exists in the current directory
 
   --cdrom=NUM              CD drive to play CD audio from (default: 0 = first
                            drive)
   --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)
-  --platform=WORD          Specify version of game (allowed values: 2gs, 3do,
+  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,
                            acorn, amiga, atari, c64, fmtowns, mac, nes, pc,
                            pce, segacd, windows)
   --savepath=PATH          Path to where savegames are stored
