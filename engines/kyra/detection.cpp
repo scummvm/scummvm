@@ -252,7 +252,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // PC-9821 version
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
 				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
@@ -267,7 +267,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
-			0,
+			"CD",
 			{
 				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
 				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
