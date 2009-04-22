@@ -140,7 +140,7 @@ byte *AGOSEngine::allocBlock(uint32 size) {
 
 void AGOSEngine::checkRunningAnims() {
 	VgaSprite *vsp;
-	if (getGameType() != GType_FF && getGameType() != GType_PP &&
+	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
 		(_lockWord & 0x20)) {
 		return;
 	}
@@ -152,7 +152,7 @@ void AGOSEngine::checkRunningAnims() {
 	}
 }
 
-void AGOSEngine_Feeble::checkNoOverWrite() {
+void AGOSEngine::checkNoOverWrite() {
 	VgaPointersEntry *vpe;
 
 	if (_noOverWrite == 0xFFFF)
@@ -174,7 +174,7 @@ void AGOSEngine_Feeble::checkNoOverWrite() {
 	}
 }
 
-void AGOSEngine_Feeble::checkAnims(uint a) {
+void AGOSEngine::checkAnims(uint a) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
@@ -193,7 +193,7 @@ void AGOSEngine_Feeble::checkAnims(uint a) {
 	}
 }
 
-void AGOSEngine_Feeble::checkZonePtrs() {
+void AGOSEngine::checkZonePtrs() {
 	uint count = ARRAYSIZE(_vgaBufferPointers);
 	VgaPointersEntry *vpe = _vgaBufferPointers;
 	do {
@@ -206,49 +206,6 @@ void AGOSEngine_Feeble::checkZonePtrs() {
 			vpe->vgaFile2End = NULL;
 			vpe->sfxFile = NULL;
 			vpe->sfxFileEnd = NULL;
-		}
-	} while (++vpe, --count);
-}
-
-void AGOSEngine::checkNoOverWrite() {
-	VgaPointersEntry *vpe;
-
-	if (_noOverWrite == 0xFFFF)
-		return;
-
-	vpe = &_vgaBufferPointers[_noOverWrite];
-
-	if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
-		((_vgaMemPtr <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
-		_rejectBlock = true;
-		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
-	} else {
-		_rejectBlock = false;
-	}
-}
-
-void AGOSEngine::checkAnims(uint a) {
-	VgaPointersEntry *vpe;
-
-	vpe = &_vgaBufferPointers[a];
-
-	if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
-			((_block <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
-		_rejectBlock = true;
-		_vgaMemPtr = vpe->vgaFile1 + 0x5000;
-	} else {
-		_rejectBlock = false;
-	}
-}
-
-void AGOSEngine::checkZonePtrs() {
-	uint count = ARRAYSIZE(_vgaBufferPointers);
-	VgaPointersEntry *vpe = _vgaBufferPointers;
-	do {
-		if (((_block <= vpe->vgaFile1) && (_blockEnd >= vpe->vgaFile1)) ||
-			((_block <= vpe->vgaFile2) && (_blockEnd >= vpe->vgaFile2))) {
-			vpe->vgaFile1 = NULL;
-			vpe->vgaFile2 = NULL;
 		}
 	} while (++vpe, --count);
 }
