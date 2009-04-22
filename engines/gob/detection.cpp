@@ -2488,7 +2488,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, NULL }
+	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0 }
 };
 
 static const GOBGameDescription fallbackDescs[] = {
