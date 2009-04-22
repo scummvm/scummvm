@@ -856,10 +856,10 @@ protected:
 	void writeChar(WindowBlock *window, int x, int y, int offs, int val);
 
 	byte *allocBlock(uint32 size);
-	virtual void checkNoOverWrite();
+	void checkNoOverWrite();
 	void checkRunningAnims();
-	virtual void checkAnims(uint a);
-	virtual void checkZonePtrs();
+	void checkAnims(uint a);
+	void checkZonePtrs();
 	void setZoneBuffers();
 
 	void runVgaScript();
@@ -1710,10 +1710,6 @@ protected:
 	void listSaveGames(int n);
 	void saveUserGame(int slot);
 	void windowBackSpace(WindowBlock *window);
-
-	virtual void checkNoOverWrite();
-	virtual void checkAnims(uint a);
-	virtual void checkZonePtrs();
 
 	virtual char *genSaveName(int slot);
 };
