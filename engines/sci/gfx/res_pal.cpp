@@ -42,22 +42,13 @@ namespace Sci {
 Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 	int start_color = resource[25];
 	int format = resource[32];
-	int entry_size = 0;
-	Palette *retval;
+	int offset = (format == SCI_PAL_FORMAT_VARIABLE_FLAGS) ? 1 : 0;
+	int entry_size = 3 + offset;
 	byte *pal_data = resource + 37;
 	int _colors_nr = READ_LE_UINT16(resource + 29);
+	Palette *retval = new Palette(_colors_nr + start_color);
 	int i;
 
-	switch (format) {
-	case SCI_PAL_FORMAT_VARIABLE_FLAGS :
-		entry_size = 4;
-		break;
-	case SCI_PAL_FORMAT_CONSTANT_FLAGS :
-		entry_size = 3;
-		break;
-	}
-
-	retval = new Palette(_colors_nr + start_color);
 	char buf[100];
 	sprintf(buf, "read_pal11 (id %d)", id);
 	retval->name = buf;
@@ -66,14 +57,7 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 		retval->setColor(i, 0, 0, 0);
 	}
 	for (i = start_color; i < start_color + _colors_nr; i ++) {
-		switch (format) {
-		case SCI_PAL_FORMAT_CONSTANT_FLAGS:
-			retval->setColor(i, pal_data[0], pal_data[1], pal_data[2]);
-			break;
-		case SCI_PAL_FORMAT_VARIABLE_FLAGS:
-			retval->setColor(i, pal_data[1], pal_data[2], pal_data[3]);
-			break;
-		}
+		retval->setColor(i, pal_data[0 + offset], pal_data[1 + offset], pal_data[2 + offset]);
 		pal_data += entry_size;
 	}
 
@@ -93,16 +77,8 @@ Palette *gfxr_read_pal1(int id, byte *resource, int size) {
 	pos = PALETTE_START;
 
 	while (pos < size/* && resource[pos] == COLOR_OK && counter < MAX_COLORS*/) {
-		int color = resource[pos] | (resource[pos + 1] << 8) | (resource[pos + 2] << 16) | (resource[pos + 3] << 24);
-
+		colors[counter++] = resource[pos] | (resource[pos + 1] << 8) | (resource[pos + 2] << 16) | (resource[pos + 3] << 24);
 		pos += 4;
-
-		colors[counter++] = color;
-	}
-
-	if (counter < MAX_COLORS && resource[pos] != COLOR_OK) {
-		GFXERROR("Palette %04x uses unknown palette color prefix 0x%02x at offset 0x%04x\n", id, resource[pos], pos);
-		return NULL;
 	}
 
 	if (counter < MAX_COLORS) {
