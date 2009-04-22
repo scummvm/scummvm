@@ -55,8 +55,8 @@ static int sci_max_allowed_unknown_kernel_functions[] = {
 #endif
 };
 
-#define DEFUN(nm, cname, sig) {KF_NEW, nm, {cname, sig, NULL}}
-#define NOFUN(nm) {KF_NONE, nm, {NULL, NULL, NULL}}
+#define DEFUN(nm, cname, sig) {KF_NEW, nm, cname, sig}
+#define NOFUN(nm) {KF_NONE, nm, NULL, NULL}
 
 SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
@@ -208,9 +208,9 @@ SciKernelFunction kfunct_mappers[] = {
 
 
 	// Special and NOP stuff
-	{KF_NEW, NULL, {k_Unknown, NULL, NULL}},
+	{KF_NEW, NULL, k_Unknown, NULL},
 
-	{KF_TERMINATOR, NULL, {NULL, NULL, NULL}} // Terminator
+	{KF_TERMINATOR, NULL, NULL, NULL} // Terminator
 };
 
 static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic" };
@@ -321,7 +321,7 @@ reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	} else {
 		switch (kfunct_mappers[funct_nr].type) {
 		case KF_NEW:
-			return kfunct_mappers[funct_nr].sig_pair.fun(s, funct_nr, argc, argv);
+			return kfunct_mappers[funct_nr].fun(s, funct_nr, argc, argv);
 		case KF_NONE:
 		default:
 			warning("Unhandled Unknown function %04x", funct_nr);
@@ -642,7 +642,9 @@ int script_map_kernel(EngineState *s) {
 				break;
 
 			case KF_NEW:
-				s->_kfuncTable[functnr] = kfunct_mappers[found].sig_pair;
+				s->_kfuncTable[functnr].fun = kfunct_mappers[found].fun;
+				s->_kfuncTable[functnr].signature = kfunct_mappers[found].signature;
+				s->_kfuncTable[functnr].orig_name.clear();
 				kernel_compile_signature(&(s->_kfuncTable[functnr].signature));
 				++mapped;
 				break;

@@ -318,7 +318,8 @@ struct kfunct_sig_pair_t {
 struct SciKernelFunction {
 	int type; /* KF_* */
 	const char *name;
-	kfunct_sig_pair_t sig_pair;
+	kfunct *fun; /* The actual function */
+	const char *signature;  /* kfunct signature */
 };
 
 extern SciKernelFunction kfunct_mappers[];
