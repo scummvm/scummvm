@@ -276,6 +276,7 @@ protected:
 	uint32 _lastVgaTick;
 
 	uint16 _marks;
+ 	bool _omniTV;
 
 	bool _scriptVar2;
 	bool _runScriptReturn1;

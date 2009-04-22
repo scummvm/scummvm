@@ -574,6 +574,8 @@ void AGOSEngine_Feeble::off_playVideo() {
 	if (getBitFlag(40)) {
 		// Omni TV controls
 		if (_moviePlayer) {
+			setBitFlag(42, false);
+			_omniTV = true;
 			_moviePlayer->play();
 		} else {
 			_variableArray[254] = 6747;

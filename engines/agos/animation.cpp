@@ -324,6 +324,7 @@ void MoviePlayerDXA::nextFrame() {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 	} else {
 		closeFile();
+		_vm->_omniTV = false;
 		_vm->_variableArray[254] = 6747;
 	}
 }
@@ -431,11 +432,6 @@ void MoviePlayerSMK::handleNextFrame() {
 }
 
 void MoviePlayerSMK::nextFrame() {
-	if (_vm->getBitFlag(42)) {
-		closeFile();
-		return;
-	}
-
 	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
