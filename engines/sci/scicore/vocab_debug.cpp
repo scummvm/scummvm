@@ -280,10 +280,6 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x7d*/ "IsItSkip"
 };
 
-int getInt(unsigned char* d) {
-	return d[0] | (d[1] << 8);
-}
-
 int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 	Resource* r;
 	int *c;
@@ -294,7 +290,7 @@ int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 
 	c = (int *)sci_malloc(sizeof(int) * r->size / 2);
 	for (i = 2; i < r->size; i += 4) {
-		c[i/4] = getInt(r->data + i);
+		c[i/4] = READ_LE_UINT16(r->data + i);
 	}
 	*count = r->size / 4;
 
@@ -318,11 +314,11 @@ bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Commo
 	if (!r) // No such resource?
 		return false;
 
-	count = getInt(r->data) + 1; // Counter is slightly off
+	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
-		int offset = getInt(r->data + 2 + i * 2);
-		int len = getInt(r->data + offset);
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset);
 		
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		selectorNames.push_back(tmp);
@@ -356,13 +352,13 @@ opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 		return NULL;
 	}
 
-	count = getInt(r->data);
+	count = READ_LE_UINT16(r->data);
 
 	o = (opcode*)sci_malloc(sizeof(opcode) * 256);
 	for (i = 0; i < count; i++) {
-		int offset = getInt(r->data + 2 + i * 2);
-		int len = getInt(r->data + offset) - 2;
-		o[i].type = getInt(r->data + offset + 2);
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset) - 2;
+		o[i].type = READ_LE_UINT16(r->data + offset + 2);
 		o[i].number = i;
 		o[i].name = (char *)sci_malloc(len + 1);
 		memcpy(o[i].name, r->data + offset + 4, len);
@@ -417,7 +413,7 @@ static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &
 		return;
 	}
 
-	count = getInt(r->data);
+	count = READ_LE_UINT16(r->data);
 
 	if (count > 1023) {
 		_vocabulary_get_knames0alt(r, names);
@@ -432,8 +428,8 @@ static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &
 	names.resize(count + 1 + empty_to_add);
 
 	for (i = 0; i < count; i++) {
-		int offset = getInt(r->data + index);
-		int len = getInt(r->data + offset);
+		int offset = READ_LE_UINT16(r->data + index);
+		int len = READ_LE_UINT16(r->data + offset);
 		//fprintf(stderr,"Getting name %d of %d...\n", i, count);
 		index += 2;
 		names[i] = Common::String((const char *)r->data + offset + 2, len);
