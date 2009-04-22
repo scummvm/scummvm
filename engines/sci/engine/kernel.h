@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/debug.h"
+#include "common/rect.h"
 
 #include "sci/engine/kdebug.h"
 #include "sci/uinput.h"
@@ -306,7 +307,7 @@ typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
 struct kfunct_sig_pair_t {
 	kfunct *fun; /* The actual function */
 	const char *signature;  /* kfunct signature */
-	const char *orig_name; /* Original name, in case we couldn't map it */
+	Common::String orig_name; /* Original name, in case we couldn't map it */
 };
 
 #define KF_OLD 0

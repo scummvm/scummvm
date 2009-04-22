@@ -157,9 +157,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	seg_manager = 0;
 	gc_countdown = 0;
 
-	kfunct_table = 0;
-	kfunct_nr = 0;
-
 	opcodes = 0;
 
 	memset(&selector_map, 0, sizeof(selector_map));	// FIXME: Remove this once/if we C++ify selector_map_t

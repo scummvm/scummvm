@@ -505,11 +505,9 @@ reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	warning("Kernel function 0x%02x invoked: unmapped", funct_nr);
 
-/* TODO: re-enable this
-	if (s->kfunct_table[funct_nr].orig_name != SCRIPT_UNKNOWN_FUNCTION_STRING) {
-		warning(" (but its name is known to be %s)", s->kfunct_table[funct_nr].orig_name.c_str());
+	if (s->_kfuncTable[funct_nr].orig_name != SCRIPT_UNKNOWN_FUNCTION_STRING) {
+		warning(" (but its name is known to be %s)", s->_kfuncTable[funct_nr].orig_name.c_str());
 	}
-*/
 
 	return NULL_REG;
 }
@@ -607,8 +605,7 @@ int script_map_kernel(EngineState *s) {
 		functions_nr = max_functions_nr;
 	}
 
-	s->kfunct_table = (kfunct_sig_pair_t*)sci_malloc(sizeof(kfunct_sig_pair_t) * functions_nr);
-	s->kfunct_nr = functions_nr;
+	s->_kfuncTable.resize(functions_nr);
 
 	for (uint functnr = 0; functnr < functions_nr; functnr++) {
 		int seeker, found = -1;
@@ -625,16 +622,14 @@ int script_map_kernel(EngineState *s) {
 		if (found == -1) {
 			if (!sought_name.empty()) {
 				warning("Kernel function %s[%x] unmapped", s->_kernelNames[functnr].c_str(), functnr);
-				s->kfunct_table[functnr].fun = kNOP;
+				s->_kfuncTable[functnr].fun = kNOP;
 			} else {
 				warning("Flagging kernel function %x as unknown", functnr);
-				s->kfunct_table[functnr].fun = k_Unknown;
+				s->_kfuncTable[functnr].fun = k_Unknown;
 			}
 
-			s->kfunct_table[functnr].signature = NULL;
-/* TODO: re-enable this
-			s->kfunct_table[functnr].orig_name = sought_name;
-*/
+			s->_kfuncTable[functnr].signature = NULL;
+			s->_kfuncTable[functnr].orig_name = sought_name;
 		} else
 			switch (kfunct_mappers[found].type) {
 			case KF_OLD:
@@ -642,13 +637,13 @@ int script_map_kernel(EngineState *s) {
 				return 1;
 
 			case KF_NONE:
-				s->kfunct_table[functnr].signature = NULL;
+				s->_kfuncTable[functnr].signature = NULL;
 				++ignored;
 				break;
 
 			case KF_NEW:
-				s->kfunct_table[functnr] = kfunct_mappers[found].sig_pair;
-				kernel_compile_signature(&(s->kfunct_table[functnr].signature));
+				s->_kfuncTable[functnr] = kfunct_mappers[found].sig_pair;
+				kernel_compile_signature(&(s->_kfuncTable[functnr].signature));
 				++mapped;
 				break;
 			}
@@ -661,11 +656,6 @@ int script_map_kernel(EngineState *s) {
 	sciprintf(".\n");
 
 	return 0;
-}
-
-void free_kfunct_tables(EngineState *s) {
-	free(s->kfunct_table);
-	s->kfunct_table = NULL;
 }
 
 int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {

@@ -904,8 +904,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// static VM/Kernel information:
 	retval->_selectorNames = s->_selectorNames;
 	retval->_kernelNames = s->_kernelNames;
-	retval->kfunct_table = s->kfunct_table;
-	retval->kfunct_nr = s->kfunct_nr;
+	retval->_kfuncTable = s->_kfuncTable;
 	retval->opcodes = s->opcodes;
 
 	memcpy(&(retval->selector_map), &(s->selector_map), sizeof(selector_map_t));

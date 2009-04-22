@@ -68,22 +68,6 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 extern int _allocd_rules;
 
-static void _free_vocabulary(EngineState *s) {
-	sciprintf("Freeing vocabulary\n");
-
-	s->_parserWords.clear();
-	vocab_free_suffixes(s->resmgr, s->_parserSuffixes);
-	vocab_free_branches(s->parser_branches);
-	vocab_free_rule_list(s->parser_rules);
-
-	s->_selectorNames.clear();
-	s->_kernelNames.clear();
-	vocabulary_free_opcodes(s->opcodes);
-	s->opcodes = NULL;
-
-	s->opcodes = NULL;
-}
-
 static void _sci1_alloc_system_colors(EngineState *s) {
 	gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
 	gfxop_set_system_color(s->gfx_state, 0, &black);
@@ -537,17 +521,22 @@ void script_free_vm_memory(EngineState *s) {
 	s->_fileHandles.resize(5);
 }
 
-extern void free_kfunct_tables(EngineState *s);
-// From kernel.c
-
 void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
 	sciprintf("Freeing state-dependant data\n");
 
-	free_kfunct_tables(s);
+	s->_kfuncTable.clear();
 
-	_free_vocabulary(s);
+	s->_parserWords.clear();
+	vocab_free_suffixes(s->resmgr, s->_parserSuffixes);
+	vocab_free_branches(s->parser_branches);
+	vocab_free_rule_list(s->parser_rules);
+
+	s->_selectorNames.clear();
+	s->_kernelNames.clear();
+	vocabulary_free_opcodes(s->opcodes);
+	s->opcodes = NULL;
 }
 
 void script_free_breakpoints(EngineState *s) {

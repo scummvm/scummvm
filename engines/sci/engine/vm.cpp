@@ -1016,7 +1016,7 @@ void run_vm(EngineState *s, int restoring) {
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
 
-			if (opparams[0] >= s->kfunct_nr) {
+			if (opparams[0] >= (int)s->_kfuncTable.size()) {
 				sciprintf("Invalid kernel function 0x%x requested\n", opparams[0]);
 				script_debug_flag = script_error_flag = 1;
 			} else {
@@ -1025,12 +1025,12 @@ void run_vm(EngineState *s, int restoring) {
 				if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
 					argc += restadjust;
 
-				if (s->kfunct_table[opparams[0]].signature
-				        && !kernel_matches_signature(s, s->kfunct_table[opparams[0]].signature, argc, xs->sp + 1)) {
+				if (s->_kfuncTable[opparams[0]].signature
+				        && !kernel_matches_signature(s, s->_kfuncTable[opparams[0]].signature, argc, xs->sp + 1)) {
 					sciprintf("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 					script_debug_flag = script_error_flag = 1;
 				} else {
-					s->r_acc = s->kfunct_table[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
+					s->r_acc = s->_kfuncTable[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
 				}
 				// Call kernel function
 

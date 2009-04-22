@@ -37,9 +37,10 @@ namespace Common {
 
 #include "sci/scicore/vocabulary.h"
 #include "sci/scicore/resource.h"
-#include "sci/engine/script.h"
 #include "sci/scicore/sciconsole.h"
 #include "sci/scicore/versions.h"
+#include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
+#include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/core.h"
@@ -271,9 +272,7 @@ public:
 	Common::StringList _selectorNames;
 	Common::StringList _kernelNames; /* List of kernel names */
 
-	kfunct_sig_pair_t *kfunct_table; /* Table of kernel functions */
-	int kfunct_nr; /* Number of mapped kernel functions; may be more than
-		       ** kernel_names_nr  */
+	Common::Array<kfunct_sig_pair_t> _kfuncTable; /* Table of kernel functions */
 
 	opcode *opcodes;
 
