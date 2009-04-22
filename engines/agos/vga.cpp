@@ -1147,6 +1147,7 @@ void AGOSEngine::vc27_resetSprite() {
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF || getGameType() == GType_PP)
 		vcWriteVar(254, 0);
 
+	// Stop any OmniTV video that is currently been played
 	if (getGameType() == GType_FF || getGameType() == GType_PP)
 		setBitFlag(42, true);
 

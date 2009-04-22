@@ -23,9 +23,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.13.1 (2009-04-27)    
  AGOS:
+    - Fixed crash after OmniTV video is played in The Feeble Files
     - Fixed crashes when exploring Jack the Ripper scene in the PC version of
       the Waxworks
     - Fixed palette glitches in the AtariST version of Elvira 2
+    - Fixed noise that can occur when sound effects are played, when exploring 
+      Pyramid scene in the Waxworks
 
  Gob:
     - Fixed a crash in the Italian version of Woodruff
