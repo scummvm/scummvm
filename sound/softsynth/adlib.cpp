@@ -599,9 +599,9 @@ private:
 	void adlib_key_off(int chan);
 	void adlib_note_on(int chan, byte note, int mod);
 	void adlib_note_on_ex(int chan, byte note, int mod);
-	int adlib_read_param(int chan, byte data);
+	int adlib_get_reg_value_param(int chan, byte data);
 	void adlib_setup_channel(int chan, AdlibInstrument * instr, byte vol_1, byte vol_2);
-	byte adlib_read(byte reg) {
+	byte adlib_get_reg_value(byte reg) {
 		return _adlib_reg_cache[reg];
 	}
 	void adlib_set_param(int channel, byte param, int value);
@@ -1135,7 +1135,7 @@ void MidiDriver_ADLIB::mc_inc_stuff(AdlibVoice *voice, Struct10 *s10, Struct11 *
 
 void MidiDriver_ADLIB::adlib_key_off(int chan){
 	byte reg = chan + 0xB0;
-	adlib_write(reg, adlib_read(reg) & ~0x20);
+	adlib_write(reg, adlib_get_reg_value(reg) & ~0x20);
 }
 
 byte MidiDriver_ADLIB::struct10_ontimer(Struct10 *s10, Struct11 *s11) {
@@ -1212,7 +1212,7 @@ void MidiDriver_ADLIB::adlib_set_param(int channel, byte param, int value) {
 	if (as->d)
 		value = as->d - value;
 	reg += as->a;
-	adlib_write(reg, (adlib_read(reg) & ~as->c) | (((byte)value) << as->b));
+	adlib_write(reg, (adlib_get_reg_value(reg) & ~as->c) | (((byte)value) << as->b));
 }
 
 void MidiDriver_ADLIB::adlib_key_onoff(int channel) {
@@ -1220,7 +1220,7 @@ void MidiDriver_ADLIB::adlib_key_onoff(int channel) {
 	byte reg = channel + 0xB0;
 	assert(channel >= 0 && channel < 9);
 
-	val = adlib_read(reg);
+	val = adlib_get_reg_value(reg);
 	adlib_write(reg, val & ~0x20);
 	adlib_write(reg, val | 0x20);
 }
@@ -1289,7 +1289,7 @@ void MidiDriver_ADLIB::adlib_playnote(int channel, int note) {
 		oct <<= 2;
 	notex = note2 % 12 + 3;
 
-	old = adlib_read(channel + 0xB0);
+	old = adlib_get_reg_value(channel + 0xB0);
 	if (old & 0x20) {
 		old &= ~0x20;
 		if (oct > old) {
@@ -1498,7 +1498,7 @@ void MidiDriver_ADLIB::mc_init_stuff(AdlibVoice *voice, Struct10 * s10,
 		s11->s10->unk3 = 0;
 		break;
 	default:
-		s10->start_value = adlib_read_param(voice->_channel, s11->param);
+		s10->start_value = adlib_get_reg_value_param(voice->_channel, s11->param);
 	}
 
 	struct10_init(s10, ie);
@@ -1529,7 +1529,7 @@ void MidiDriver_ADLIB::struct10_init(Struct10 *s10, InstrumentExtra *ie) {
 	struct10_setup(s10);
 }
 
-int MidiDriver_ADLIB::adlib_read_param(int chan, byte param) {
+int MidiDriver_ADLIB::adlib_get_reg_value_param(int chan, byte param) {
 	const AdlibSetParams *as;
 	byte val;
 	byte channel;
@@ -1553,7 +1553,7 @@ int MidiDriver_ADLIB::adlib_read_param(int chan, byte param) {
 	}
 
 	as = &adlib_setparam_table[param];
-	val = adlib_read(channel + as->a);
+	val = adlib_get_reg_value(channel + as->a);
 	val &= as->c;
 	val >>= as->b;
 	if (as->d)
