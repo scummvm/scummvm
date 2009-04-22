@@ -1192,7 +1192,6 @@ protected:
 	void openGameFile();
 	void readGameFile(void *dst, uint32 offs, uint32 size);
 
-	virtual void timerCallback();
 	virtual void timerProc();
 
 	virtual void animateSprites();
@@ -1244,7 +1243,6 @@ protected:
 	virtual void playMusic(uint16 music, uint16 track);
 	void stopMusic();
 
-	void checkTimerCallback();
 	void delay(uint delay);
 	void pause();
 
@@ -2051,7 +2049,7 @@ protected:
 	void loadMouseImage();
 
 	void dimpIdle();
-	virtual void timerCallback();
+	virtual void timerProc();
 
 	void startOverlayAnims();
 	void startAnOverlayAnim();

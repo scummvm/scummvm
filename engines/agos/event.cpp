@@ -451,7 +451,7 @@ void AGOSEngine::delay(uint amount) {
 				_lastVgaTick = cur;
 
 			_inCallBack = true;
-			timerCallback();
+			timerProc();
 			_inCallBack = false;
 		}
 
@@ -550,15 +550,11 @@ void AGOSEngine::delay(uint amount) {
 	} while (cur < start + amount && !shouldQuit());
 }
 
-void AGOSEngine_PuzzlePack::timerCallback() {
+void AGOSEngine_PuzzlePack::timerProc() {
 	_lastTickCount = _system->getMillis();
 
-	timerProc();
+	AGOSEngine_Feeble::timerProc();
 	dimpIdle();
-}
-
-void AGOSEngine::timerCallback() {
-	timerProc();
 }
 
 void AGOSEngine_Feeble::timerProc() {
