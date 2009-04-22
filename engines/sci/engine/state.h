@@ -269,8 +269,7 @@ public:
 	int gc_countdown; /* Number of kernel calls until next gc */
 
 	Common::StringList _selectorNames;
-	int kernel_names_nr; /* Number of kernel function names */
-	char **kernel_names; /* List of kernel names */
+	Common::StringList _kernelNames; /* List of kernel names */
 
 	kfunct_sig_pair_t *kfunct_table; /* Table of kernel functions */
 	int kfunct_nr; /* Number of mapped kernel functions; may be more than

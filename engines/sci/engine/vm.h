@@ -756,7 +756,7 @@ void script_map_selectors(EngineState *s, selector_map_t *map);
 
 int script_map_kernel(EngineState *s);
 /* Maps kernel functions
-** Parameters: (EngineState *) s: The state which the kernel_names are retrieved from
+** Parameters: (EngineState *) s: The state which the _kernelNames are retrieved from
 ** Returns   : (void)
 ** This function reads from and writes to s. It is called by script_run().
 */
@@ -776,11 +776,11 @@ reg_t kalloc(EngineState *s, const char *type, int space);
 ** Returns   : (reg_t) The handle
 */
 
-int has_kernel_function(EngineState *s, const char *kname);
+bool has_kernel_function(EngineState *s, const char *kname);
 /* Detects whether a particular kernel function is required in the game
 ** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
 **             (const char *) kname: The name of the desired kernel function
-** Returns   : (int) 1 if the kernel function is listed in the kernel table,
+** Returns   : (bool) 1 if the kernel function is listed in the kernel table,
 **                   0 otherwise
 */
 

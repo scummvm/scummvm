@@ -77,11 +77,10 @@ static void _free_vocabulary(EngineState *s) {
 	vocab_free_rule_list(s->parser_rules);
 
 	s->_selectorNames.clear();
-	vocabulary_free_knames(s->kernel_names);
+	s->_kernelNames.clear();
 	vocabulary_free_opcodes(s->opcodes);
 	s->opcodes = NULL;
 
-	s->kernel_names = NULL;
 	s->opcodes = NULL;
 }
 
@@ -477,7 +476,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->execution_stack_base = -1; // No vm is running yet
 	s->execution_stack_pos = -1;   // Start at execution stack position 0
 
-	s->kernel_names = vocabulary_get_knames(s->resmgr, &s->kernel_names_nr);
+	vocabulary_get_knames(s->resmgr, s->_kernelNames);
 	script_map_kernel(s);
 	// Maps the kernel functions
 

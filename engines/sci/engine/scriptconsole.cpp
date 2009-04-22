@@ -1029,25 +1029,23 @@ static int c_selectornames(EngineState * s) {
 }
 
 static int c_kernelnames(EngineState * s) {
-	int knamectr;
-	char **knames = vocabulary_get_knames(s->resmgr, &knamectr);
-	int seeker = 0;
+	Common::StringList knames;
 
 	if (NULL == s) {
 		sciprintf("console.c: c_kernelnames NULL passed for parameter s\n");
 		return -1;
 	}
 
-	if (!knames) {
+	vocabulary_get_knames(s->resmgr, knames);
+
+	if (knames.empty()) {
 		sciprintf("No kernel name table found!\n");
 		return 1;
 	}
 
 	sciprintf("Syscalls in numeric order:\n");
-	for (seeker = 0; seeker < knamectr; seeker++)
-		sciprintf("%03x: %s\n", seeker, knames[seeker]);
-
-	vocabulary_free_knames(knames);
+	for (uint seeker = 0; seeker < knames.size(); seeker++)
+		sciprintf("%03x: %s\n", seeker, knames[seeker].c_str());
 
 	return 0;
 }

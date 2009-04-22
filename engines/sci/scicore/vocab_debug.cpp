@@ -393,86 +393,58 @@ void vocabulary_free_opcodes(opcode *opcodes) {
 }
 
 // Alternative kernel func names retriever. Required for KQ1/SCI (at least).
-static char **_vocabulary_get_knames0alt(int *names, Resource *r) {
-	unsigned int mallocsize = 32;
-	char **retval = (char **)sci_malloc(sizeof(char *) * mallocsize);
-	unsigned int i = 0, index = 0;
+static void _vocabulary_get_knames0alt(const Resource *r, Common::StringList &names) {
+	uint idx = 0;
 
-	while (index < r->size) {
-		int slen = strlen((char *) r->data + index) + 1;
-
-		retval[i] = (char *)sci_malloc(slen);
-		memcpy(retval[i++], r->data + index, slen);
-		// Wouldn't normally read this, but the cleanup code wants to free() this
-
-		index += slen;
-
-		if (i == mallocsize)
-			retval = (char **)sci_realloc(retval, sizeof(char *) * (mallocsize <<= 1));
+	while (idx < r->size) {
+		Common::String tmp((const char *)r->data + idx);
+		names.push_back(tmp);
+		idx += tmp.size() + 1;
 	}
 
-	*names = i + 1;
-	retval = (char **)sci_realloc(retval, sizeof(char *) * (i + 2));
-	retval[i] = (char *)sci_malloc(strlen(SCRIPT_UNKNOWN_FUNCTION_STRING) + 1);
-	strcpy(retval[i], SCRIPT_UNKNOWN_FUNCTION_STRING);
 	// The mystery kernel function- one in each SCI0 package
-
-	retval[i + 1] = NULL; // Required for cleanup
-
-	return retval;
+	names.push_back(SCRIPT_UNKNOWN_FUNCTION_STRING);
 }
 
-static char **vocabulary_get_knames0(ResourceManager *resmgr, int* names) {
-	char** t;
+static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
 	int count, i, index = 2, empty_to_add = 1;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
 
 	if (!r) { // No kernel name table found? Fall back to default table
-		t = (char **)sci_malloc((SCI0_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
-		*names = SCI0_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
-
+		names.resize(SCI0_KNAMES_DEFAULT_ENTRIES_NR);
 		for (i = 0; i < SCI0_KNAMES_DEFAULT_ENTRIES_NR; i++)
-			t[i] = sci_strdup(sci0_default_knames[i]);
-
-		t[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = NULL; // Terminate list
-
-		return t;
+			names[i] = sci0_default_knames[i];
+		return;
 	}
 
 	count = getInt(r->data);
 
-	if (count > 1023)
-		return _vocabulary_get_knames0alt(names, r);
+	if (count > 1023) {
+		_vocabulary_get_knames0alt(r, names);
+		return;
+	}
 
 	if (count < SCI0_KNAMES_WELL_DEFINED) {
 		empty_to_add = SCI0_KNAMES_WELL_DEFINED - count;
 		sciprintf("Less than %d kernel functions; adding %d\n", SCI0_KNAMES_WELL_DEFINED, empty_to_add);
 	}
 
-	t = (char **)sci_malloc(sizeof(char*) * (count + 1 + empty_to_add));
+	names.resize(count + 1 + empty_to_add);
+
 	for (i = 0; i < count; i++) {
 		int offset = getInt(r->data + index);
 		int len = getInt(r->data + offset);
 		//fprintf(stderr,"Getting name %d of %d...\n", i, count);
 		index += 2;
-		t[i] = (char *)sci_malloc(len + 1);
-		memcpy(t[i], r->data + offset + 2, len);
-		t[i][len] = '\0';
+		names[i] = Common::String((const char *)r->data + offset + 2, len);
 	}
 
 	for (i = 0; i < empty_to_add; i++) {
-		t[count + i] = (char *)sci_malloc(strlen(SCRIPT_UNKNOWN_FUNCTION_STRING) + 1);
-		strcpy(t[count + i], SCRIPT_UNKNOWN_FUNCTION_STRING);
+		names[count + i] = SCRIPT_UNKNOWN_FUNCTION_STRING;
 	}
-
-	t[count+empty_to_add] = 0;
-	*names = count + empty_to_add;
-
-	return t;
 }
 
-static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
-	char **t = NULL;
+static void vocabulary_get_knames1(ResourceManager *resmgr, Common::StringList &names) {
 	// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
 	// We hardcode the default SCI1 kernel names here (i.e. the ones inside the "special"
 	// 999.voc file from FreeSCI). All SCI1 games seem to be working with this change, but
@@ -480,53 +452,14 @@ static char **vocabulary_get_knames1(ResourceManager *resmgr, int *count) {
 	// that all SCI1 games use the same kernel vocabulary names though, so this seems to be
 	// a safe change. If there's any SCI1 game with different kernel vocabulary names, we can
 	// add special flags to it to our detector
-	t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
-	*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR;
 
+	names.resize(SCI1_KNAMES_DEFAULT_ENTRIES_NR);
 	for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
-		t[i] = sci_strdup(sci1_default_knames[i]);
-
-	t[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = NULL; // Terminate list
-
-	return t;
-
-// Previous code, which used the unreliable 999.voc resource
-#if 0
-	unsigned int size = 64, used = 0, pos = 0;
-	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
-
-	if (r == NULL) {// failed to open vocab.999 (happens with SCI1 demos)
-		t = (char **)sci_malloc((SCI1_KNAMES_DEFAULT_ENTRIES_NR + 1) * sizeof(char*));
-		*count = SCI1_KNAMES_DEFAULT_ENTRIES_NR - 1; // index of last element
-
-		for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
-			t[i] = sci_strdup(sci1_default_knames[i]);
-
-		t[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = NULL; // Terminate list
-
-		return t;
-	}
-	while (pos < r->size) {
-		int len;
-		if ((used == size - 1) || (!t)) {
-			size *= 2;
-			t = (char **)sci_realloc(t, size * sizeof(char*));
-		}
-		len = strlen((char *)r->data + pos);
-		t[used] = (char *)sci_malloc(len + 1);
-		strcpy(t[used], (char *)r->data + pos);
-		used++;
-		pos += len + 1;
-	}
-	*count = used;
-	t = (char **)sci_realloc(t, (used + 1) * sizeof(char*));
-	t[used] = NULL;
-
-	return t;
-#endif
+		names[i] = sci1_default_knames[i];
 }
+
 //
-static char **vocabulary_get_knames11(ResourceManager *resmgr, int *count) {
+static void vocabulary_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
 /*
  999.voc format for SCI1.1 games:
 	[b] # of kernel functions
@@ -536,33 +469,29 @@ static char **vocabulary_get_knames11(ResourceManager *resmgr, int *count) {
     {[w name-len][function name]}
 		...
 */
-	char **t = NULL;
 	//unsigned int size = 64, pos = 3;
 	int len;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
 	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
-		return 0; // FIXME: should return a default table for this engine 
-	byte nCnt = *r->data, i;
-	t = (char **)sci_malloc(nCnt * sizeof(char*) + 1);
+		return; // FIXME: should return a default table for this engine 
+	const byte nCnt = *r->data;
 	
-	for (i = 0; i < nCnt; i++) {
+	names.resize(nCnt);
+	for (int i = 0; i < nCnt; i++) {
 		int off = READ_LE_UINT16(r->data + 2 * i + 2);
 		len = READ_LE_UINT16(r->data + off);
-		t[i] = (char *)sci_malloc(len + 1);
-		memcpy(t[i], (char *)r->data + off + 2, len);
-		t[i][len] = 0;
+		names[i] = Common::String((char *)r->data + off + 2, len);
 	}
-	*count = nCnt;
-	t[nCnt] = NULL;
-
-	return t;
 }
 
-char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
+void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
+	names.clear();
+
 	switch (resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
-		return vocabulary_get_knames0(resmgr, count);
+		vocabulary_get_knames0(resmgr, names);
+		break;
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
 		// HACK: KQ5 needs the SCI1 default vocabulary names to work correctly.
@@ -572,27 +501,19 @@ char **vocabulary_get_knames(ResourceManager *resmgr, int *count) {
 		// return vocabulary_get_knames0(resmgr, count);
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-		return vocabulary_get_knames1(resmgr, count);
+		vocabulary_get_knames1(resmgr, names);
+		break;
 	case SCI_VERSION_1_1:
-		return vocabulary_get_knames11(resmgr, count);
+		vocabulary_get_knames11(resmgr, names);
+		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
-		return vocabulary_get_knames11(resmgr, count);
+		vocabulary_get_knames11(resmgr, names);
 #endif
+		break;
 	default:
-		return 0;
+		break;
 	}
-}
-
-void vocabulary_free_knames(char **names) {
-	int i = 0;
-
-	while (names[i]) {
-		free(names[i]);
-		i++;
-	}
-
-	free(names);
 }
 
 } // End of namespace Sci

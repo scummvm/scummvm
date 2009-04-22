@@ -109,7 +109,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 
 #define CHECK_THIS_KERNEL_FUNCTION if (s->debug_mode & (1 << SCIkFUNCCHK_NR)) {\
 	int i;\
-	sciprintf("Kernel CHECK: %s[%x](", s->kernel_names[funct_nr], funct_nr); \
+	sciprintf("Kernel CHECK: %s[%x](", s->_kernelNames[funct_nr].c_str(), funct_nr); \
 	for (i = 0; i < argc; i++) { \
 		sciprintf("%04x", 0xffff & UKPV(i)); \
 		if (i+1 < argc) sciprintf(", "); \

@@ -1344,7 +1344,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 			if (opcode == op_callk)
 				sciprintf(" %s[%x]", (param_value < s->kfunct_nr) ?
-							((param_value < s->kernel_names_nr) ? s->kernel_names[param_value] : "[Unknown(postulated)]")
+							((param_value < s->_kernelNames.size()) ? s->_kernelNames[param_value].c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
 				sciprintf(opsize ? " %02x" : " %04x", param_value);
@@ -1564,7 +1564,7 @@ static int c_backtrace(EngineState *s) {
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call->origin, s->kernel_names[-(call->selector)-42]);
+			sciprintf(" %x:[%x]  k%s(", i, call->origin, s->_kernelNames[-(call->selector)-42].c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
@@ -2111,17 +2111,15 @@ static int c_snk(EngineState *s) {
 		   and scan the function table to find out the index. */
 		callk_index = strtoul(cmd_params [0].str, &endptr, 0);
 		if (*endptr != '\0') {
-			int i;
-
 			callk_index = -1;
-			for (i = 0; i < s->kernel_names_nr; i++)
-				if (!strcmp(cmd_params [0].str, s->kernel_names [i])) {
+			for (uint i = 0; i < s->_kernelNames.size(); i++)
+				if (cmd_params [0].str == s->_kernelNames[i]) {
 					callk_index = i;
 					break;
 				}
 
 			if (callk_index == -1) {
-				sciprintf("Unknown kernel function '%s'\n", cmd_params [0].str);
+				sciprintf("Unknown kernel function '%s'\n", cmd_params[0].str);
 				return 1;
 			}
 		}

@@ -211,15 +211,14 @@ void vocabulary_free_opcodes(opcode *opcodes);
 */
 
 /**
- * Returns a null terminated array of kernel function names.
+ * Fills a StringList with kernel function names.
  *
  * This function reads the kernel function name table from resource_map,
- * and returns a null terminated array of deep copies of them.
- * The returned array has the same format regardless of the format of the
+ * and fills the given StringList with them.
+ * The resulting list has the same format regardless of the format of the
  * name table of the resource (the format changed between version 0 and 1).
  */
-char **vocabulary_get_knames(ResourceManager *resmgr, int* count);
-void vocabulary_free_knames(char** names);
+void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names);
 
 
 /**

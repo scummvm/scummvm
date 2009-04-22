@@ -157,9 +157,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	seg_manager = 0;
 	gc_countdown = 0;
 
-	kernel_names_nr = 0;
-	kernel_names = 0;
-
 	kfunct_table = 0;
 	kfunct_nr = 0;
 
