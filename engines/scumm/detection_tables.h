@@ -254,8 +254,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttmoon", "", 0, GID_PUTTMOON, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"puttmoon", "HE 70", 0, GID_PUTTMOON, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
 
+	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"puttputt", "HE 61", 0, GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
-	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
 	{"puttputt", "Demo",  0, GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 	// The following are meant to be generic HE game variants and as such do
@@ -491,6 +491,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "puttdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttputt", "Putt-Putt", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 #ifdef ENABLE_HE
 	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -779,6 +780,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// Windows encoding
 	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "puttzoo", "Putt-Putt Saves the Zoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "readtime", "Blues-ReadingTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
