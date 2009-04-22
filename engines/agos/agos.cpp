@@ -200,6 +200,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lastVgaTick = 0;
 
 	_marks = 0;
+	_omniTV = false;
 	_scanFlag = false;
 
 	_scriptVar2 = 0;
