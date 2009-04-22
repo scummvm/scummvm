@@ -314,16 +314,7 @@ Common::String normalizePath(const Common::String &path, const char sep);
 bool matchString(const char *str, const char *pat, bool pathMode = false);
 
 
-class StringList : public Array<String> {
-public:
-	void push_back(const char *str) {
-		Array<String>::push_back(str);
-	}
-
-	void push_back(const String &str) {
-		Array<String>::push_back(str);
-	}
-};
+typedef Array<String> StringList;
 
 }	// End of namespace Common
 

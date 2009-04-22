@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "common/array.h"
+#include "common/str.h"
 
 class ArrayTestSuite : public CxxTest::TestSuite
 {
@@ -148,6 +149,18 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( array2[0], -3 );
 		TS_ASSERT_EQUALS( array2[1], 5 );
 		TS_ASSERT_EQUALS( array2[2], 9 );
+
+		TS_ASSERT_EQUALS( array2.size(), (unsigned int)3 );
+	}
+
+	void test_array_constructor_str() {
+		const char *array1[] = { "a", "b", "c" };
+
+		Common::StringList array2(array1, 3);
+
+		TS_ASSERT_EQUALS( array2[0], "a" );
+		TS_ASSERT_EQUALS( array2[1], "b" );
+		TS_ASSERT_EQUALS( array2[2], "c" );
 
 		TS_ASSERT_EQUALS( array2.size(), (unsigned int)3 );
 	}

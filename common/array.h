@@ -54,7 +54,8 @@ public:
 	/**
 	 * Construct an array by copying data from a regular array.
 	 */
-	Array(const T *data, int n) {
+	template<class T2>
+	Array(const T2 *data, int n) {
 		_capacity = _size = n;
 		_storage = new T[_capacity];
 		copy(data, data + _size, _storage);
