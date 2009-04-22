@@ -950,7 +950,7 @@ case $cxx_version in
 		;;
 	3_4)
 		_cxx_major=3
-		_mxx_minor=4
+		_cxx_minor=4
 		;;
 	'not found')
 		cxx_verc_fail=yes
