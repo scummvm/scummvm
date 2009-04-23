@@ -1358,7 +1358,7 @@ void Vmd::deRLE(byte *&srcPtr, byte *&destPtr, int16 len) {
 	srcPtr++;
 
 	if (len & 1)
-		*destPtr += *srcPtr++;
+		*destPtr++ = *srcPtr++;
 
 	len >>= 1;
 
