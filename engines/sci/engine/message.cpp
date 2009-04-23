@@ -169,8 +169,8 @@ static MessageHandler fixed_handler_old = {
 	get_talker_trivial,
 	index_record_get_text_2101,
 	header_get_index_record_count_2101,
-	10,		// FIXME: is this correct?
-	11		// FIXME: is this correct?
+	6,
+	4
 };
 
 static MessageHandler fixed_handler = {

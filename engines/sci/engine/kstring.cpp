@@ -782,7 +782,6 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-// FIXME: This doesn't always work, sometimes it doesn't find the requested tuple (tested with EcoQuest 1)
 reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.initialized)
 		message_state_initialize(s->resmgr, &state);
