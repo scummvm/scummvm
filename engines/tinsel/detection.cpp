@@ -263,7 +263,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
-#if 0
 	{	// UK multilanguage PSX CD
 		{
 			"dw",
@@ -286,7 +285,6 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
-#endif
 
 #if 0
 	{	// English Saturn CD

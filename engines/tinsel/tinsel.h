@@ -123,6 +123,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define TinselV0 (TinselVersion == TINSEL_V0)
 #define TinselV1 (TinselVersion == TINSEL_V1)
 #define TinselV2 (TinselVersion == TINSEL_V2)
+#define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
 
 // Global reference to the TinselEngine object
 extern TinselEngine *_vm;

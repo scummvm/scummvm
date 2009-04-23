@@ -45,6 +45,110 @@ extern uint8 transPalette[MAX_COLOURS];
 //----------------- SUPPORT FUNCTIONS ---------------------
 
 /**
+ * PSX Block list unwinder.
+ * Chunk type 0x3 in PSX version of Discworld 1 is compressed, thus we need to decompress
+ * it before passing data to drawing functions
+ */
+uint8* psxBlockListUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
+	uint32 remainingBlocks = 0;
+
+	uint16 compressionType = 0; // Kind of decompression to apply 
+	uint16 controlBits = 0; // Control bits used to calculate the number of decompressed indexes
+	uint16 baseIndex = 0; // Base index to be repeated / incremented.
+
+	uint16 controlData;
+
+	uint8* dstIdx = NULL;
+
+	if (!imageWidth || !imageHeight)
+		return NULL;
+
+	// Calculate needed index numbers, align width and height not next multiple of four
+	imageWidth = imageWidth % 4 ? ((imageWidth / 4) + 1) * 4 : imageWidth;
+	imageHeight = imageHeight % 4 ? ((imageHeight / 4) + 1) * 4 : imageHeight;
+	dstIdx = (uint8*)malloc((imageWidth * imageHeight) / 8);
+	remainingBlocks = (imageWidth * imageHeight) / 16;
+
+	controlData = READ_LE_UINT16(srcIdx);
+
+	// Get to index data 
+	if ( (controlData & 0xff) == 0x88) // These images go straight to compressed index data
+		srcIdx += 2;		
+	else  // In this case we have to skip psx CLUT before getting to data
+		srcIdx += 32;
+
+	while (remainingBlocks) { // Repeat until all blocks are decompressed
+		if (!controlBits) {
+			controlData = READ_LE_UINT16(srcIdx);
+			srcIdx += 2;
+
+			// If bit 15 of controlData is enabled, compression data is type 1.
+			// else if controlData has bit 16 enabled, compression type is 2,
+			// else there is no compression.
+			if (controlData & 0x4000)
+				compressionType = 2;
+			else if (controlData & 0x8000) 
+				compressionType = 1;
+			else
+				compressionType = 0;
+
+			// Fetch control bits from controlData
+			controlBits = controlData & 0x3FFF;
+
+			// If there is compression, we need to fetch an index
+			// to be treated as "base" for compression.
+			if (compressionType != 0) {
+				controlData = READ_LE_UINT16(srcIdx);
+				srcIdx += 2;
+				baseIndex = controlData;
+			}
+		}
+
+		uint32 decremTiles; // Number of blocks that will be decompressed
+		if (remainingBlocks < controlBits) {
+			controlBits = controlBits - remainingBlocks;
+			decremTiles = remainingBlocks;
+		} else {
+			decremTiles = controlBits;
+			controlBits = 0;
+		}
+
+		// Decrement remaining blocks
+		remainingBlocks -= decremTiles;
+
+		// Manage different compressions
+		switch (compressionType) {
+			case 0: // No compression, plain copy of indexes
+				while (decremTiles) {
+					WRITE_LE_UINT16(dstIdx, READ_LE_UINT16(srcIdx));
+					srcIdx += 2;
+					dstIdx += 2;
+					decremTiles--;
+				}
+				break;
+			case 1: // Compression type 1, repeat a base index
+				while (decremTiles) {
+					WRITE_LE_UINT16(dstIdx, baseIndex);
+					dstIdx += 2;
+					decremTiles--;
+				}
+				break;
+			case 2: // Compression type 2, increment a base index
+				while (decremTiles) {
+					WRITE_LE_UINT16(dstIdx, baseIndex);
+					baseIndex++;
+					dstIdx += 2;
+					decremTiles--;
+				}
+				break;
+		}
+	}
+
+	// End.
+	return dstIdx;
+}
+
+/**
  * Straight rendering of uncompressed data
  */
 static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
