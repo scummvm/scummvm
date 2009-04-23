@@ -1225,6 +1225,11 @@ int gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common
 		new_pointer->yoffset = hotspot->y;
 	}
 
+	// Special case for Eco Quest 1: The game is trying to hide the mouse cursor by clipping it, which is rejected
+	// by our graphics scaler. Hide the cursor when that happens instead.
+	if (new_pointer->width < 2 || new_pointer->height < 2)
+		return _gfxop_set_pointer(state, NULL);
+
 	if (!new_pointer) {
 		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
 		return GFX_ERROR;

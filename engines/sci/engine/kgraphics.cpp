@@ -289,7 +289,7 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 	return retval;
 }
 
-reg_t kSetCursor_SCI11(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
 		if (UKPV(0) == 0) {
@@ -334,8 +334,9 @@ reg_t kSetCursor_SCI11(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version >= SCI_VERSION(1, 001, 000) ||
+		s->_gameName.equalsIgnoreCase("eco") ||    // Eco Quest 1 needs kSetCursorNew
 	        has_kernel_function(s, "MoveCursor")) {
-		return kSetCursor_SCI11(s, funct_nr, argc, argv);
+		return kSetCursorNew(s, funct_nr, argc, argv);
 	}
 
 	if (SKPV_OR_ALT(1, 1)) {
