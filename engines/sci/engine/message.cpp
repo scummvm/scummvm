@@ -28,17 +28,12 @@
 
 namespace Sci {
 
-#if 0
-// Unreferenced - removed
 static int get_talker_trivial(IndexRecordCursor *cursor) {
 	return -1;
 }
-#endif
 
 /* Version 2.101 and later code ahead */
 
-#if 0
-// Unreferenced - removed
 static void index_record_parse_2101(IndexRecordCursor *cursor, MessageTuple *t) {
 	int noun = *(cursor->index_record + 0);
 	int verb = *(cursor->index_record + 1);
@@ -47,24 +42,17 @@ static void index_record_parse_2101(IndexRecordCursor *cursor, MessageTuple *t) 
 	t->verb = verb;
 	t->cond = t->seq = 0;
 }
-#endif
 
-#if 0
-// Unreferenced - removed
 static void index_record_get_text_2101(IndexRecordCursor *cursor, char *buffer, int buffer_size) {
 	int offset = READ_LE_UINT16(cursor->index_record + 2);
 	char *stringptr = (char *)cursor->resource_beginning + offset;
 
 	strncpy(buffer, stringptr, buffer_size);
 }
-#endif
 
-#if 0
-// Unreferenced - removed
 static int header_get_index_record_count_2101(byte *header) {
 	return READ_LE_UINT16(header + 4);
 }
-#endif
 
 // Version 3.411 and later code ahead
 
@@ -175,6 +163,16 @@ int MessageState::loadRes(int module) {
 	return 1;
 }
 
+static MessageHandler fixed_handler_old = {
+	2101,
+	index_record_parse_2101,
+	get_talker_trivial,
+	index_record_get_text_2101,
+	header_get_index_record_count_2101,
+	10,		// FIXME: is this correct?
+	11		// FIXME: is this correct?
+};
+
 static MessageHandler fixed_handler = {
 	3411,
 	index_record_parse_3411,
@@ -186,20 +184,23 @@ static MessageHandler fixed_handler = {
 };
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
-	//Resource *tester = resmgr->findResource(kResourceTypeMessage, 0, 0);
-	//int version;
+	Resource *tester = resmgr->findResource(kResourceTypeMessage, 0, 0);
+	int version;
 
-	//if (tester == NULL)
-	//	return;
+	if (tester == NULL)
+		return;
 
-	//version = READ_LE_UINT16(tester->data);
+	version = READ_LE_UINT16(tester->data);
 
 	state->initialized = 1;
 	state->_module = -1;
 	state->resmgr = resmgr;
 	state->current_res = NULL;
 	state->record_count = 0;
-	state->handler = &fixed_handler;
+	if (version == 2101)
+		state->handler = &fixed_handler_old;
+	else
+		state->handler = &fixed_handler;
 }
 
 } // End of namespace Sci

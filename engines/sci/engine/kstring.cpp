@@ -782,4 +782,28 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+// FIXME: This doesn't always work, sometimes it doesn't find the requested tuple (tested with EcoQuest 1)
+reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	if (!state.initialized)
+		message_state_initialize(s->resmgr, &state);
+
+	char *buffer = argc == 4 ? kernel_dereference_char_pointer(s, argv[3], 0) : NULL;
+
+	MessageTuple tuple;
+	tuple.noun = UKPV(0);
+	int module = UKPV(1);
+	tuple.verb = UKPV(2);
+	tuple.cond = 0;
+	tuple.seq = 0;
+
+	if (state.loadRes(module) && state.getSpecific(&tuple)) {
+		if (buffer)
+			state.getText(buffer, 100);
+
+		return make_reg(0, *buffer);
+	} else {
+		return NULL_REG;
+	}
+}
+
 } // End of namespace Sci
