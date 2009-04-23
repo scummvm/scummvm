@@ -265,7 +265,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x6e*/ "ShiftScreen",
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
-	/*0x71*/ "Intersections",
+	/*0x71*/ "MoveCursor",
 	/*0x72*/ "Memory",
 	/*0x73*/ "ListOps",
 	/*0x74*/ "FileIO",

@@ -311,12 +311,14 @@ reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, pt));
 		break;
 	}
-	case 3 :
-		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
+	case 3 : {
+		Common::Point hotspot = Common::Point(0, 0);
+		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot));
 		s->mouse_pointer_view = UKPV(0);
 		s->mouse_pointer_loop = UKPV(1);
 		s->mouse_pointer_cel = UKPV(2);
 		break;
+	}
 	case 9 : {
 		Common::Point hotspot = Common::Point(SKPV(3), SKPV(4));
 
@@ -334,8 +336,7 @@ reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version >= SCI_VERSION(1, 001, 000) ||
-		s->_gameName.equalsIgnoreCase("eco") ||    // Eco Quest 1 needs kSetCursorNew
-	        has_kernel_function(s, "MoveCursor")) {
+		s->_gameName.equalsIgnoreCase("eco")) {    // Eco Quest 1 needs kSetCursorNew
 		return kSetCursorNew(s, funct_nr, argc, argv);
 	}
 
