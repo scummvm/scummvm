@@ -142,8 +142,9 @@ SciKernelFunction kfunct_mappers[] = {
 	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
 	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
 	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),
+	// Opcode 51 is defined twice for a reason. Older SCI versions
+	// call CanBeHere, whereas newer ones its inverse, CantBeHere
 	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
-	// FIXME: The number 0x51 occurs twice :-)
 	/*51*/	DEFUN("CantBeHere", kCanBeHere, "ol*"),
 	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
 	/*53*/	DEFUN("InitBresen", kInitBresen, "oi*"),
@@ -173,13 +174,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6b*/	DEFUN("FlushResources", kFlushResources, "i"),
 	/*6c*/	DEFUN("TimesSin", kTimesSin, "ii"),
 	/*6d*/	DEFUN("TimesCos", kTimesCos, "ii"),
-#if 0
-	/*6e*/	NOFUN(NULL),
-	/*6f*/	NOFUN(NULL),
-#else
 	/*6e*/	DEFUN("6e", kTimesSin, "ii"),
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
-#endif
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
 	/*72*/	NOFUN(NULL),
