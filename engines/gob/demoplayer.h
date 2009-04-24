@@ -23,33 +23,37 @@
  *
  */
 
-#ifndef GOB_SCNPLAYER_H
-#define GOB_SCNPLAYER_H
+#ifndef GOB_DEMOPLAYER_H
+#define GOB_DEMOPLAYER_H
 
 #include "common/file.h"
 #include "common/str.h"
 #include "common/hashmap.h"
 
-#include "demoplayer.h"
-
 namespace Gob {
 
-class SCNPlayer : public DemoPlayer {
+class GobEngine;
+
+class DemoPlayer {
 public:
-	SCNPlayer(GobEngine *vm);
-	virtual ~SCNPlayer();
+	DemoPlayer(GobEngine *vm);
+	virtual ~DemoPlayer();
 
-	virtual bool play(const char *fileName);
+	virtual bool play(const char *fileName) = 0;
 
-private:
-	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;
+protected:
+	GobEngine *_vm;
+	bool _doubleMode;
 
-	bool play(Common::File &scn);
-	bool readLabels(Common::File &scn, LabelMap &labels);
+	bool lineStartsWith(const Common::String &line, const char *start);
 
-	void gotoLabel(Common::File &scn, const LabelMap &labels, const char *label);
+	void init();
+
+	void evaluateVideoMode(const char *mode);
+	void clearScreen();
+	void playVideo(const char *fileName);
 };
 
 } // End of namespace Gob
 
-#endif // GOB_SCNPLAYER_H
+#endif // GOB_DEMOPLAYER_H

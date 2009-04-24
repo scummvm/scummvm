@@ -23,33 +23,59 @@
  *
  */
 
-#ifndef GOB_SCNPLAYER_H
-#define GOB_SCNPLAYER_H
+#include "common/endian.h"
 
-#include "common/file.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-
-#include "demoplayer.h"
+#include "gob/gob.h"
+#include "gob/batplayer.h"
+#include "gob/global.h"
+#include "gob/util.h"
+#include "gob/draw.h"
+#include "gob/inter.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
-class SCNPlayer : public DemoPlayer {
-public:
-	SCNPlayer(GobEngine *vm);
-	virtual ~SCNPlayer();
+BATPlayer::BATPlayer(GobEngine *vm) : DemoPlayer(vm) {
+	_doubleMode = false;
+}
 
-	virtual bool play(const char *fileName);
+BATPlayer::~BATPlayer() {
+}
 
-private:
-	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;
+bool BATPlayer::play(const char *fileName) {
+	debugC(1, kDebugDemo, "Playing BAT \"%s\"", fileName);
 
-	bool play(Common::File &scn);
-	bool readLabels(Common::File &scn, LabelMap &labels);
+	init();
 
-	void gotoLabel(Common::File &scn, const LabelMap &labels, const char *label);
-};
+	Common::File bat;
+
+	if (!bat.open(fileName))
+		return false;
+
+	return play(bat);
+}
+
+bool BATPlayer::play(Common::File &bat) {
+	// Iterate over all lines
+	while (!bat.err() && !bat.eos()) {
+		Common::String line = bat.readLine();
+
+		// Interpret
+		if (lineStartsWith(line, "slide ")) {
+			playVideo(line.c_str() + 6);
+			clearScreen();
+		}
+
+		// Mind user input
+		_vm->_util->processInput();
+		if (_vm->shouldQuit())
+			return true;
+	}
+
+	if (bat.err())
+		return false;
+
+	return true;
+}
 
 } // End of namespace Gob
-
-#endif // GOB_SCNPLAYER_H

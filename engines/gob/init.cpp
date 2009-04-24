@@ -37,6 +37,7 @@
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/scnplayer.h"
+#include "gob/batplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
@@ -101,9 +102,17 @@ void Init::initGame() {
 
 		SCNPlayer scnPlayer(_vm);
 
-		bool ret = scnPlayer.play(_vm->_startTot);
+		scnPlayer.play(_vm->_startTot);
 
-		warning("Played: %d", ret);
+		return;
+	}
+
+	if (_vm->isBATDemo()) {
+		// This is a non-interactive demo with a BAT script and videos
+
+		BATPlayer batPlayer(_vm);
+
+		batPlayer.play(_vm->_startTot);
 
 		return;
 	}

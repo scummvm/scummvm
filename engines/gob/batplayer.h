@@ -23,33 +23,26 @@
  *
  */
 
-#ifndef GOB_SCNPLAYER_H
-#define GOB_SCNPLAYER_H
+#ifndef GOB_BATPLAYER_H
+#define GOB_BATPLAYER_H
 
 #include "common/file.h"
-#include "common/str.h"
-#include "common/hashmap.h"
 
 #include "demoplayer.h"
 
 namespace Gob {
 
-class SCNPlayer : public DemoPlayer {
+class BATPlayer : public DemoPlayer {
 public:
-	SCNPlayer(GobEngine *vm);
-	virtual ~SCNPlayer();
+	BATPlayer(GobEngine *vm);
+	virtual ~BATPlayer();
 
 	virtual bool play(const char *fileName);
 
 private:
-	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;
-
-	bool play(Common::File &scn);
-	bool readLabels(Common::File &scn, LabelMap &labels);
-
-	void gotoLabel(Common::File &scn, const LabelMap &labels, const char *label);
+	bool play(Common::File &bat);
 };
 
 } // End of namespace Gob
 
-#endif // GOB_SCNPLAYER_H
+#endif // GOB_BATPLAYER_H

@@ -1,0 +1,107 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "common/endian.h"
+
+#include "gob/gob.h"
+#include "gob/demoplayer.h"
+#include "gob/global.h"
+#include "gob/util.h"
+#include "gob/draw.h"
+#include "gob/inter.h"
+#include "gob/videoplayer.h"
+
+namespace Gob {
+
+DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
+	_doubleMode = false;
+}
+
+DemoPlayer::~DemoPlayer() {
+}
+
+bool DemoPlayer::lineStartsWith(const Common::String &line, const char *start) {
+	return (strstr(line.c_str(), start) == line.c_str());
+}
+
+void DemoPlayer::init() {
+	// The video player needs some fake variables
+	_vm->_inter->allocateVars(32);
+
+	// Init the screen
+	_vm->_draw->initScreen();
+	_vm->_draw->_cursorIndex = -1;
+
+	_vm->_util->longDelay(200); // Letting everything settle
+
+}
+
+void DemoPlayer::clearScreen() {
+	debugC(1, kDebugDemo, "Clearing the screen");
+	_vm->_video->clearScreen();
+}
+
+void DemoPlayer::playVideo(const char *fileName) {
+	uint32 waitTime = 0;
+
+	// Trimming spaces front
+	while (*fileName == ' ')
+		fileName++;
+
+	char *spaceBack = strchr(fileName, ' ');
+	if (spaceBack) {
+		char *nextSpace = strchr(spaceBack, ' ');
+
+		if (nextSpace)
+			*nextSpace = '\0';
+
+		*spaceBack++ = '\0';
+
+		waitTime = atoi(spaceBack) * 100;
+	}
+
+	debugC(1, kDebugDemo, "Playing video \"%s\"", fileName);
+
+	// Playing the video
+	if (_vm->_vidPlayer->primaryOpen(fileName)) {
+		_vm->_vidPlayer->slotSetDoubleMode(-1, _doubleMode);
+		_vm->_vidPlayer->primaryPlay();
+		_vm->_vidPlayer->primaryClose();
+
+		if (waitTime > 0)
+			_vm->_util->longDelay(waitTime);
+	}
+}
+
+void DemoPlayer::evaluateVideoMode(const char *mode) {
+	debugC(2, kDebugDemo, "Video mode \"%s\"", mode);
+
+	if (!scumm_strnicmp(mode, "VESA", 4))
+		_doubleMode = false;
+	else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+		_doubleMode = true;
+}
+
+} // End of namespace Gob

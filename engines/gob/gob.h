@@ -109,7 +109,8 @@ enum Features {
 	kFeaturesEGA     = 1 << 1,
 	kFeaturesAdlib   = 1 << 2,
 	kFeatures640     = 1 << 3,
-	kFeaturesSCNDemo = 1 << 4
+	kFeaturesSCNDemo = 1 << 4,
+	kFeaturesBATDemo = 1 << 5
 };
 
 enum {
@@ -124,7 +125,7 @@ enum {
 	kDebugGraphics   = 1 <<  8,
 	kDebugVideo      = 1 <<  9,
 	kDebugCollisions = 1 << 10,
-	kDebugSCN        = 1 << 11
+	kDebugDemo       = 1 << 11
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {
@@ -250,6 +251,7 @@ public:
 	bool is640() const;
 	bool hasAdlib() const;
 	bool isSCNDemo() const;
+	bool isBATDemo() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

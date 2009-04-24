@@ -2000,6 +2000,34 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"inca2",
+			"Non-Interactive Demo",
+			{
+				{"demo.bat", 0, "01a1c983c3d360cd4a96f93961a805de", 483},
+				{"cons.imd", 0, "f896ba0c4a1ac7f7260d342655980b49", 17804},
+				{"conseil.imd", 0, "aaedd5482d5b271e233e86c5a03cf62e", 33999},
+				{"int.imd", 0, "6308222fcefbcb20925f01c1aff70dee", 30871},
+				{"inter.imd", 0, "39bd6d3540f3bedcc97293f352c7f3fc", 191719},
+				{"machu.imd", 0, "c0bc8211d93b467bfd063b63fe61b85c", 34609},
+				{"post.imd", 0, "d75cad0e3fc22cb0c8b6faf597f509b2", 1047709},
+				{"posta.imd", 0, "2a5b3fe75681ddf4d21ac724db8111b4", 547250},
+				{"postb.imd", 0, "24260ce4e80a4c472352b76637265d09", 868312},
+				{"postc.imd", 0, "24accbcc8b83a9c2be4bd82849a2bd29", 415637},
+				{"tum.imd", 0, "0993d4810ec9deb3f77c5e92095320fd", 20330},
+				{"tumi.imd", 0, "bf53f229480d694de0947fe3366fbec6", 248952},
+				{NULL, 0, NULL, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib | kFeaturesBATDemo,
+		0,
+		"demo.bat"
+	},
+	{
+		{
 			"woodruff",
 			"",
 			AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
