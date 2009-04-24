@@ -243,20 +243,13 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
 **             (SuffixList) suffixes: The suffixes to free
 */
 
-parse_tree_branch_t *vocab_get_branches(ResourceManager *resmgr, int *branches_nr);
-/* Retrieves all grammar rules from the resource data
-** Parameters: (ResourceManager*) resmgr: Resource manager the rules are
-**                               read from
-**             (int *) branches_nr: Pointer to the variable which the number of entries is to be
-**                     stored in
-** Returns   : (parse_tree_branch_t *): The rules, or NULL on error
-*/
-
-void vocab_free_branches(parse_tree_branch_t *parser_branches);
-/* Frees all branches
-** Parameters: (parse_tree_branch_t *) parser_branches: The branches to free
-** Returns   : (null)
-*/
+/**
+ * Retrieves all grammar rules from the resource data.
+ * @param resmgr		Resource manager the rules are	read from
+ * @param branches		The rules are stored into this Array
+ * @return true on success, false on error
+ */
+bool vocab_get_branches(ResourceManager *resmgr, Common::Array<parse_tree_branch_t> &branches);
 
 ResultWord vocab_lookup_word(char *word, int word_len,
 	const WordMap &words, const SuffixList &suffixes);
@@ -284,10 +277,9 @@ bool vocab_tokenize_string(ResultWordList &retval, char *sentence,
 */
 
 
-parse_rule_list_t *vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr);
+parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches);
 /* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
 ** Parameters: (parse_tree_branch_t *) branches: The parser's branches
-**             (int) branches_nr: Number of parser branches
 ** Returns   : (parse_rule_list_t *): Pointer to a list of singly linked
 **                                    GNF rules describing the same language
 **                                    that was described by 'branches'
@@ -304,7 +296,7 @@ void vocab_free_rule_list(parse_rule_list_t *rule_list);
 
 
 int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
-	parse_tree_branch_t *branch0, parse_rule_list_t *rules);
+	const parse_tree_branch_t &branch0, parse_rule_list_t *rules);
 /* Builds a parse tree from a list of words
 ** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
 **                                          at least VOCAB_TREE_NODES entries)
@@ -357,9 +349,9 @@ void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms)
 */
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
-	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose);
+	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose);
 
-void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr);
+void vocab_gnf_dump(const Common::Array<parse_tree_branch_t> &branches);
 
 } // End of namespace Sci
 

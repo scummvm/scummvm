@@ -142,9 +142,7 @@ EngineState::EngineState() : _dirseeker(this) {
 	debug_mode = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
-	parser_branches = 0;
 	parser_rules = 0;
-	parser_branches_nr = 0;
 	memset(parser_nodes, 0, sizeof(parser_nodes));
 
 	parser_valid = 0;

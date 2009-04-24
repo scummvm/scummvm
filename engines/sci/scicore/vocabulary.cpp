@@ -193,46 +193,40 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	suffixes.clear();
 }
 
-void vocab_free_branches(parse_tree_branch_t *parser_branches) {
-	free(parser_branches);
-}
-
-parse_tree_branch_t *vocab_get_branches(ResourceManager * resmgr, int *branches_nr) {
+bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branch_t> &branches) {
 	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
-	parse_tree_branch_t *retval;
-	int i;
+
+	branches.clear();
 
 	if (!resource) {
 		fprintf(stderr, "No parser tree data found!\n");
-		return NULL;
+		return false;
 	}
 
-	*branches_nr = resource->size / 20;
+	int branches_nr = resource->size / 20;
 
-	if (*branches_nr == 0) {
+	if (branches_nr == 0) {
 		fprintf(stderr, "Parser tree data is empty!\n");
-		return NULL;
+		return false;
 	}
 
-	retval = (parse_tree_branch_t *)sci_malloc(sizeof(parse_tree_branch_t) * *branches_nr);
+	branches.resize(branches_nr);
 
-	for (i = 0; i < *branches_nr; i++) {
-		int k;
-
+	for (int i = 0; i < branches_nr; i++) {
 		byte *base = resource->data + i * 20;
 
-		retval[i].id = (int16)READ_LE_UINT16(base);
+		branches[i].id = (int16)READ_LE_UINT16(base);
 
-		for (k = 0; k < 9; k++)
-			retval[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
+		for (int k = 0; k < 9; k++)
+			branches[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
 
-		retval[i].data[9] = 0; // Always terminate
+		branches[i].data[9] = 0; // Always terminate
 	}
 
-	if (!retval[*branches_nr - 1].id) /* branch lists may be terminated by empty rules */
-		--(*branches_nr);
+	if (!branches[branches_nr - 1].id) // branch lists may be terminated by empty rules
+		branches.remove_at(branches_nr - 1);
 
-	return retval;
+	return true;
 }
 
 

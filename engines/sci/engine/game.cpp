@@ -45,9 +45,9 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 	if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && vocab_get_words(s->resmgr, s->_parserWords)) {
 		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
-		if ((s->parser_branches = vocab_get_branches(s->resmgr, &(s->parser_branches_nr))))
+		if (vocab_get_branches(s->resmgr, s->_parserBranches))
 			// Now build a GNF grammar out of this
-			s->parser_rules = vocab_build_gnf(s->parser_branches, s->parser_branches_nr);
+			s->parser_rules = vocab_build_gnf(s->_parserBranches);
 	} else {
 		sciprintf("Assuming that this game does not use a parser.\n");
 		s->parser_rules = NULL;
@@ -530,7 +530,7 @@ void script_free_engine(EngineState *s) {
 
 	s->_parserWords.clear();
 	vocab_free_suffixes(s->resmgr, s->_parserSuffixes);
-	vocab_free_branches(s->parser_branches);
+	s->_parserBranches.clear();
 	vocab_free_rule_list(s->parser_rules);
 
 	s->_selectorNames.clear();

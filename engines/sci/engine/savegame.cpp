@@ -898,8 +898,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->parser_rules = s->parser_rules;
 	retval->_parserWords = s->_parserWords;
 	retval->_parserSuffixes = s->_parserSuffixes;
-	retval->parser_branches_nr = s->parser_branches_nr;
-	retval->parser_branches = s->parser_branches;
+	retval->_parserBranches = s->_parserBranches;
 
 	// static VM/Kernel information:
 	retval->_selectorNames = s->_selectorNames;

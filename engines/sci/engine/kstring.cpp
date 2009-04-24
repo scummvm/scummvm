@@ -271,7 +271,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 		}
 
-		if (vocab_build_parse_tree(&(s->parser_nodes[0]), words, s->parser_branches,
+		if (vocab_build_parse_tree(s->parser_nodes, words, s->_parserBranches[0],
 		                           s->parser_rules))
 			syntax_fail = 1; /* Building a tree failed */
 

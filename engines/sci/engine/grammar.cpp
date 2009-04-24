@@ -144,7 +144,7 @@ static parse_rule_t *_vinsert(parse_rule_t *turkey, parse_rule_t *stuffing) {
 	return rule;
 }
 
-static parse_rule_t *_vbuild_rule(parse_tree_branch_t *branch) {
+static parse_rule_t *_vbuild_rule(const parse_tree_branch_t *branch) {
 	parse_rule_t *rule;
 	int tokens = 0, tokenpos = 0, i;
 
@@ -344,16 +344,15 @@ static parse_rule_list_t *_vocab_clone_rule_list_by_id(parse_rule_list_t *list, 
 	return result;
 }
 
-parse_rule_list_t *_vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr, int verbose) {
-	int i;
+parse_rule_list_t *_vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose) {
 	int iterations = 0;
 	int last_termrules, termrules = 0;
 	int ntrules_nr;
 	parse_rule_list_t *ntlist = NULL;
 	parse_rule_list_t *tlist, *new_tlist;
 
-	for (i = 1; i < branches_nr; i++) { // branch rule 0 is treated specially
-		parse_rule_t *rule = _vbuild_rule(branches + i);
+	for (uint i = 1; i < branches.size(); i++) { // branch rule 0 is treated specially
+		parse_rule_t *rule = _vbuild_rule(&branches[i]);
 		if (!rule)
 			return NULL;
 		ntlist = _vocab_add_rule(ntlist, rule);
@@ -406,19 +405,19 @@ parse_rule_list_t *_vocab_build_gnf(parse_tree_branch_t *branches, int branches_
 	return tlist;
 }
 
-parse_rule_list_t *vocab_build_gnf(parse_tree_branch_t *branches, int branches_nr) {
-	return _vocab_build_gnf(branches, branches_nr, 0);
+parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches) {
+	return _vocab_build_gnf(branches, 0);
 }
 
-void vocab_gnf_dump(parse_tree_branch_t *branches, int branches_nr) {
-	parse_rule_list_t *tlist = _vocab_build_gnf(branches, branches_nr, 1);
+void vocab_gnf_dump(const Common::Array<parse_tree_branch_t> &branches) {
+	parse_rule_list_t *tlist = _vocab_build_gnf(branches, 1);
 
 	sciprintf("%d allocd rules\n", _allocd_rules);
 	vocab_free_rule_list(tlist);
 }
 
 int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
-	parse_tree_branch_t *branch0, parse_rule_list_t *rules) {
+	const parse_tree_branch_t &branch0, parse_rule_list_t *rules) {
 	return vocab_gnf_parse(nodes, words, branch0, rules, 0);
 }
 
@@ -489,9 +488,9 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 }
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
-	parse_tree_branch_t *branch0, parse_rule_list_t *tlist, int verbose) {
+	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose) {
 	// Get the start rules:
-	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(tlist, branch0->data[1]);
+	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(tlist, branch0.data[1]);
 	parse_rule_list_t *results = NULL;
 	int word = 0;
 	const int words_nr = words.size();
@@ -557,7 +556,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	results = work;
 
 	if (verbose) {
-		sciprintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", branch0->id);
+		sciprintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", branch0.id);
 		vocab_print_rule_list(results);
 		sciprintf("\n");
 	}
@@ -579,7 +578,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 
 		pos = 2;
 
-		temp = _vbpt_append(nodes, &pos, 2, branch0->id);
+		temp = _vbpt_append(nodes, &pos, 2, branch0.id);
 		//_vbpt_write_subexpression(nodes, &pos, results[_vocab_rule_list_length(results)].rule, 0, temp);
 		_vbpt_write_subexpression(nodes, &pos, results->rule, 0, temp);
 	}

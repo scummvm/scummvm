@@ -889,39 +889,37 @@ int c_viewinfo(EngineState *s) {
 }
 
 int c_list_sentence_fragments(EngineState *s) {
-	int i;
-
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	for (i = 0; i < s->parser_branches_nr; i++) {
+	for (uint i = 0; i < s->_parserBranches.size(); i++) {
 		int j = 0;
 
-		sciprintf("R%02d: [%x] ->", i, s->parser_branches[i].id);
-		while ((j < 10) && s->parser_branches[i].data[j]) {
-			int dat = s->parser_branches[i].data[j++];
+		sciprintf("R%02d: [%x] ->", i, s->_parserBranches[i].id);
+		while ((j < 10) && s->_parserBranches[i].data[j]) {
+			int dat = s->_parserBranches[i].data[j++];
 
 			switch (dat) {
 			case VOCAB_TREE_NODE_COMPARE_TYPE:
-				dat = s->parser_branches[i].data[j++];
+				dat = s->_parserBranches[i].data[j++];
 				sciprintf(" C(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_COMPARE_GROUP:
-				dat = s->parser_branches[i].data[j++];
+				dat = s->_parserBranches[i].data[j++];
 				sciprintf(" WG(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_FORCE_STORAGE:
-				dat = s->parser_branches[i].data[j++];
+				dat = s->_parserBranches[i].data[j++];
 				sciprintf(" FORCE(%x)", dat);
 				break;
 
 			default:
 				if (dat > VOCAB_TREE_NODE_LAST_WORD_STORAGE) {
-					int dat2 = s->parser_branches[i].data[j++];
+					int dat2 = s->_parserBranches[i].data[j++];
 					sciprintf(" %x[%x]", dat, dat2);
 				} else
 					sciprintf(" ?%x?", dat);
@@ -930,7 +928,7 @@ int c_list_sentence_fragments(EngineState *s) {
 		sciprintf("\n");
 	}
 
-	sciprintf("%d rules.\n", s->parser_branches_nr);
+	sciprintf("%d rules.\n", s->_parserBranches.size());
 
 	return 0;
 }
@@ -1043,7 +1041,7 @@ int c_parse(EngineState *s) {
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			sciprintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (vocab_gnf_parse(&(s->parser_nodes[0]), words, s->parser_branches, s->parser_rules, 1))
+		if (vocab_gnf_parse(s->parser_nodes, words, s->_parserBranches[0], s->parser_rules, 1))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)
@@ -2717,7 +2715,7 @@ int c_gnf(EngineState *s) {
 		return 1;
 	}
 
-	vocab_gnf_dump(s->parser_branches, s->parser_branches_nr);
+	vocab_gnf_dump(s->_parserBranches);
 
 	return 0;
 }
