@@ -107,6 +107,8 @@ void ResetPalAllocator(void);	// wipe out all palettes
 void PaletteStats(void);	// Shows the maximum number of palettes used at once
 #endif
 
+COLORREF* psxClutToRGBPal(uint8 *srcClut); // Convert Discworld PSX 555 CLUTs to compatible 888 palette
+
 void PalettesToVideoDAC(void);	// Update the video DAC with palettes currently the the DAC queue
 
 void UpdateDACqueueHandle(

@@ -92,6 +92,33 @@ static int maxDACQ = 0;
 #endif
 
 /**
+ * Convert Discworld PSX 555 CLUTs to compatible 888 palette
+ */
+COLORREF* psxClutToRGBPal(uint8 *srcClut) {
+	uint8 red, green, blue;
+	uint16 clutEntry;
+
+	// Allocate space for the 16 colour destination palette
+	COLORREF *dstPal = (COLORREF*)calloc(sizeof(COLORREF), MAX_COLOURS);
+	memset(dstPal, 0, MAX_COLOURS * sizeof(COLORREF));
+
+	for (int idx = 0; idx < 0x10; idx++) {
+		clutEntry = READ_LE_UINT16(srcClut); // Read PSX CLUT entry
+		srcClut += sizeof(uint16);
+		
+		// Extract color data
+		red = ((clutEntry & 0x1F) * 255) / 31;
+		green =  (((clutEntry & 0x3E0) >> 5) * 255) / 31;
+		blue = (((clutEntry & 0x7C00) >> 10) * 255) / 31;
+
+		// Write the palette
+		dstPal[idx] = TINSEL_RGB(red, green, blue);
+	}
+
+	return dstPal;
+}
+
+/**
  * Transfer palettes in the palette Q to Video DAC.
  */
 void PalettesToVideoDAC(void) {
