@@ -101,21 +101,89 @@ struct GfxWidget {
 public:
 	GfxWidget(gfxw_widget_type_t type);
 
-	/*
+	/**
 	 * The widget automatically removes itself from its owner, if it has one.
 	 * Deleting a container will recursively free all of its
 	 * contents.
 	 */
 	virtual ~GfxWidget();
 
-	// TODO: Replace the following with virtual methods
-	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistent */
-	gfxw_op *tag; /* Tag the specified widget */
-	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
-	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */
-	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */
-	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */
-	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
+	/**
+	 * Draws the widget.
+	 *
+	 * The widget is drawn iff it is flagged as dirty. Invoking this operation on
+	 * a container widget will recursively draw all of its contents.
+	 *
+	 * @param pos	The position to draw to (added to the widget's  internal position)
+	 */
+	gfxw_point_op *draw;
+
+	/**
+	 * Tags the specified widget.
+	 *
+	 * If invoked on a container widget, this will also tag all of the container's
+	 * contents (but not the contents' contents!)
+	 */
+	gfxw_op *tag;
+
+	/**
+	 * Prints a string representation of the widget with sciprintf.
+	 *
+	 * Will recursively print all of the widget's contents if the widget contains
+	 * further sub-widgets
+	 *
+	 * @param indentation	Number of double spaces to indent
+	 */
+	gfxw_op_int *print;
+
+	/**
+	 * Compares two comparable widgets by their screen position.
+	 *
+	 * This comparison only applies to some widgets; compare_to(a,a)=0 is not
+	 * guaranteed. It may be used for sorting for all widgets.
+	 *
+	 * @param other	other widget
+	 * @return <0, 0, or >0 if other is, respectively, less than, equal
+	 *          to, or greater than self
+	 */
+	gfxw_bin_op *compare_to;
+
+	/**
+	 * Compares two compareable widgets for equality.
+	 *
+	 * This operation checks whether two widgets describe the same graphical data.
+	 * It is used to determine whether a new widget should be discarded because it
+	 * describes the same graphical data as an old widget that has already been
+	 * drawn. For lists, it also checks whether all contents are in an identical
+	 * order.
+	 *
+	 * @param other	other widget
+	 * @return false if the widgets are not equal, true if they match
+	 */
+	gfxw_bin_op *equals;
+
+	/**
+	 * Determine whether other should replace this even though they are equivalent.
+	 *
+	 * When 'equals' returns true, this means that no new widget will be added.
+	 * However, in some cases newer widgets may contain information that should
+	 * cause the older widget to be removed nonetheless; this is indicated by this
+	 * function.
+	 *
+	 * @param other	other widget
+	 * @return false if this should be kept, true if this should be replaced by the 'other'
+	 */
+	gfxw_bin_op *should_replace;
+
+	/**
+	 * Tests whether drawing this after other would reduce all traces of other.
+	 *
+	 * /a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location
+	 *
+	 * @param other	the widget to compare for containment
+	 * @return	true if this is superarea_of other, false otherwise
+	 */
+	gfxw_bin_op *superarea_of;
 
 	/**
 	 * Sets the visual for the widget
