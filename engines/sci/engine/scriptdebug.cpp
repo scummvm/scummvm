@@ -1613,7 +1613,7 @@ static int c_redraw_screen(EngineState *s) {
 		return 1;
 	}
 
-	s->visual->draw(s->visual, Common::Point(0, 0));
+	s->visual->draw(Common::Point(0, 0));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
 	gfxop_sleep(s->gfx_state, 0);
@@ -1822,7 +1822,7 @@ static int c_gfx_show_map(EngineState *s) {
 	switch (map) {
 	case 0:
 		s->visual->add_dirty_abs(GFXWC(s->visual), gfx_rect(0, 0, 320, 200), 0);
-		s->visual->draw(s->visual, Common::Point(0, 0));
+		s->visual->draw(Common::Point(0, 0));
 		break;
 
 	case 1:

@@ -81,7 +81,7 @@ enum {
 
 #define FULL_REDRAW()\
 	if (s->visual) \
-		s->visual->draw(s->visual, gfxw_point_zero); \
+		s->visual->draw(gfxw_point_zero); \
 	gfxop_update(s->gfx_state);
 
 #if 0
@@ -403,7 +403,7 @@ reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (old_map != s->pic_visible_map) {
 
 			if (s->pic_visible_map == GFX_MASK_VISUAL) // Full widget redraw
-				s->visual->draw(s->visual, Common::Point(0, 0));
+				s->visual->draw(Common::Point(0, 0));
 
 			gfxop_update(s->gfx_state);
 			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
@@ -582,7 +582,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		area.y += s->port->zone.y;
 
 		if (s->dyn_views && s->dyn_views->_parent == GFXWC(s->port))
-			s->dyn_views->draw(s->dyn_views, Common::Point(0, 0));
+			s->dyn_views->draw(Common::Point(0, 0));
 
 		gfxop_update_box(s->gfx_state, area);
 
@@ -2368,7 +2368,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		s->port->draw(s->port, gfxw_point_zero); // Update the port we're leaving
+		s->port->draw(gfxw_point_zero); // Update the port we're leaving
 		s->port = new_port;
 		return s->r_acc;
 	}
@@ -2377,7 +2377,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		port_origin_x = SKPV(1);
 
 		if (SKPV(0) == -10) {
-			s->port->draw(s->port, gfxw_point_zero); // Update the port we're leaving
+			s->port->draw(gfxw_point_zero); // Update the port we're leaving
 			s->port = s->iconbar_port;
 			activated_icon_bar = 1;
 			return s->r_acc;
@@ -2540,7 +2540,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();
 
-	window->draw(window, gfxw_point_zero);
+	window->draw(gfxw_point_zero);
 	gfxop_update(s->gfx_state);
 
 	s->port = window; // Set active port

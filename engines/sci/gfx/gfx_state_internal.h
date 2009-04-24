@@ -80,7 +80,6 @@ struct GfxContainer;
 struct GfxVisual;
 struct GfxPort;
 
-typedef int gfxw_point_op(GfxWidget *, Common::Point);
 typedef int gfxw_bin_op(GfxWidget *, GfxWidget *);
 
 struct GfxWidget {
@@ -115,7 +114,7 @@ public:
 	 *
 	 * @param pos	The position to draw to (added to the widget's  internal position)
 	 */
-	gfxw_point_op *draw;
+	virtual int draw(const Common::Point &pos) = 0;
 
 	/**
 	 * Tags the specified widget.
@@ -207,6 +206,8 @@ struct GfxBox : public GfxWidget {
 
 public:
 	GfxBox(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
+
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 };
 
@@ -235,6 +236,8 @@ struct GfxView  : public GfxWidget {
 public:
 	GfxView(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int flags);
+
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 };
 
@@ -248,10 +251,13 @@ struct GfxDynView : public GfxView {
 	int sequence; /* Sequence number: For sorting */
 	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
 
+	bool _isDrawn;	// FIXME: This is specific to GFXW_PIC_VIEW
+
 public:
 	GfxDynView(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 };
 
@@ -264,9 +270,9 @@ struct GfxText : public GfxWidget {
 	char *text;
 	gfx_alignment_t halign, valign;
 	gfx_color_t _color1, _color2, _bgcolor;
-	int text_flags;
+	int _textFlags;
 	int width, height; /* Real text width and height */
-	gfx_text_handle_t *text_handle;
+	gfx_text_handle_t *_textHandle;
 
 public:
 	GfxText(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
@@ -274,6 +280,7 @@ public:
 
 	~GfxText();
 
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 };
 
@@ -320,6 +327,7 @@ struct GfxList : public GfxContainer {
 public:
 	GfxList(rect_t area, bool sorted);
 
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 };
 
@@ -332,6 +340,7 @@ struct GfxVisual : public GfxContainer {
 public:
 	GfxVisual(gfx_state_t *state, int font);
 
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };
@@ -353,6 +362,7 @@ public:
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 	~GfxPort();
 
+	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };

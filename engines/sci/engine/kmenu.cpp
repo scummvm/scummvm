@@ -96,7 +96,7 @@ reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	else
 		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
 
-	s->titlebar_port->draw(s->titlebar_port, Common::Point(0, 0));
+	s->titlebar_port->draw(Common::Point(0, 0));
 	gfxop_update(s->gfx_state);
 
 	return s->r_acc;
@@ -118,7 +118,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 }
 
 #define FULL_REDRAW \
-	s->visual->draw(s->visual, Common::Point(0, 0)); \
+	s->visual->draw(Common::Point(0, 0)); \
 	gfxop_update(s->gfx_state);
 
 

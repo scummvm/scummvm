@@ -114,7 +114,7 @@ void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::Stri
 	list->add(GFXWC(status_bar), list);
 	finish_titlebar_list(s, list, status_bar);
 
-	status_bar->draw(status_bar, gfxw_point_zero);
+	status_bar->draw(gfxw_point_zero);
 	gfxop_update(state);
 }
 
