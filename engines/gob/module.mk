@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
+	scnplayer.o \
 	util.o \
 	variables.o \
 	video.o \

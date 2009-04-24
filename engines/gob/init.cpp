@@ -36,6 +36,7 @@
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
+#include "gob/scnplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {
@@ -92,6 +93,18 @@ void Init::initGame() {
 
 	for (int i = 0; i < 8; i++)
 		_vm->_draw->_fonts[i] = 0;
+
+	if (_vm->isSCNDemo()) {
+		// This is a non-interactive demo with a SCN script and VMD videos
+
+		SCNPlayer scnPlayer(_vm);
+
+		bool ret = scnPlayer.play(_vm->_startTot);
+
+		warning("Played: %d", ret);
+
+		return;
+	}
 
 	handle = _vm->_dataIO->openData("intro.inf");
 

@@ -96,6 +96,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
 	Common::addDebugChannel(kDebugCollisions, "Collisions", "Collisions debug level");
+	Common::addDebugChannel(kDebugSCN, "SCN", "SCN demo script debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");
 }
@@ -169,6 +170,10 @@ bool GobEngine::is640() const {
 
 bool GobEngine::hasAdlib() const {
 	return (_features & kFeaturesAdlib) != 0;
+}
+
+bool GobEngine::isSCNDemo() const {
+	return (_features & kFeaturesSCNDemo) != 0;
 }
 
 Common::Error GobEngine::run() {

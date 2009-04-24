@@ -104,25 +104,27 @@ enum GameType {
 };
 
 enum Features {
-	kFeaturesNone = 0,
-	kFeaturesCD = 1 << 0,
-	kFeaturesEGA = 1 << 1,
-	kFeaturesAdlib = 1 << 2,
-	kFeatures640 = 1 << 3
+	kFeaturesNone    =      0,
+	kFeaturesCD      = 1 << 0,
+	kFeaturesEGA     = 1 << 1,
+	kFeaturesAdlib   = 1 << 2,
+	kFeatures640     = 1 << 3,
+	kFeaturesSCNDemo = 1 << 4
 };
 
 enum {
-	kDebugFuncOp = 1 << 0,
-	kDebugDrawOp = 1 << 1,
-	kDebugGobOp = 1 << 2,
-	kDebugSound = 1 << 3,
-	kDebugParser = 1 << 4,
-	kDebugGameFlow = 1 << 5,
-	kDebugFileIO = 1 << 6,
-	kDebugSaveLoad = 1 << 7,
-	kDebugGraphics = 1 << 8,
-	kDebugVideo = 1 << 9,
-	kDebugCollisions = 1 << 10
+	kDebugFuncOp     = 1 <<  0,
+	kDebugDrawOp     = 1 <<  1,
+	kDebugGobOp      = 1 <<  2,
+	kDebugSound      = 1 <<  3,
+	kDebugParser     = 1 <<  4,
+	kDebugGameFlow   = 1 <<  5,
+	kDebugFileIO     = 1 <<  6,
+	kDebugSaveLoad   = 1 <<  7,
+	kDebugGraphics   = 1 <<  8,
+	kDebugVideo      = 1 <<  9,
+	kDebugCollisions = 1 << 10,
+	kDebugSCN        = 1 << 11
 };
 
 inline char *strncpy0(char *dest, const char *src, size_t n) {
@@ -247,6 +249,7 @@ public:
 	bool isEGA() const;
 	bool is640() const;
 	bool hasAdlib() const;
+	bool isSCNDemo() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
