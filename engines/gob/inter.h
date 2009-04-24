@@ -487,12 +487,18 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
+	void oFascin_geUnknown0(OpGobParams &params);
+	void oFascin_geUnknown1(OpGobParams &params);
 	void oFascin_geUnknown2(OpGobParams &params);
 	void oFascin_geUnknown3(OpGobParams &params);
 	void oFascin_geUnknown4(OpGobParams &params);
 	void oFascin_geUnknown5(OpGobParams &params);
 	void oFascin_geUnknown6(OpGobParams &params);
+	void oFascin_geUnknown7(OpGobParams &params);
+	void oFascin_geUnknown8(OpGobParams &params);
+	void oFascin_geUnknown9(OpGobParams &params);
 	void oFascin_geUnknown10(OpGobParams &params);
+	void oFascin_geUnknown11(OpGobParams &params);
 	bool oFascin_feUnknown4(OpFuncParams &params);
 	void oFascin_cdUnknown3();
 	void oFascin_cdUnknown4();

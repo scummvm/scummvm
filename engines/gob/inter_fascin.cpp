@@ -550,20 +550,20 @@ void Inter_Fascination::setupOpcodes() {
 
 	static const OpcodeGoblinEntryFascination opcodesGoblin[71] = {
 		/* 00 */
-		{NULL, ""},//OPCODE(o2_loadInfogramesIns),
-		{NULL, ""},//OPCODE(o2_startInfogrames),
-		OPCODE(oFascin_geUnknown2),//OPCODE(o2_stopInfogrames),
-		OPCODE(oFascin_geUnknown3), // OPCODE(o2_startInfogrames),
+		OPCODE(oFascin_geUnknown0),
+		OPCODE(oFascin_geUnknown1),
+		OPCODE(oFascin_geUnknown2),
+		OPCODE(oFascin_geUnknown3),
 		/* 04 */
 		OPCODE(oFascin_geUnknown4),
-		OPCODE(oFascin_geUnknown5),//OPCODE(o2_playProtracker), //OPCODE(o2_geUnknown5),
-		OPCODE(oFascin_geUnknown6),//OPCODE(o2_stopProtracker), //OPCODE(o2_geUnknown6),
-		{NULL, ""},
+		OPCODE(oFascin_geUnknown5),
+		OPCODE(oFascin_geUnknown6),
+		OPCODE(oFascin_geUnknown7),
 		/* 08 */
-		{NULL, ""},
-		OPCODE(oFascin_geUnknown10), // OPCODE(o2_playInfogrames),
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(oFascin_geUnknown8),
+		OPCODE(oFascin_geUnknown9),
+		OPCODE(oFascin_geUnknown10),
+		OPCODE(oFascin_geUnknown11),
 		/* 0C */
 		{NULL, ""},
 		{NULL, ""},
@@ -625,8 +625,8 @@ void Inter_Fascination::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		/* 3C */
-		OPCODE(oFascin_playProtracker),//{NULL, ""},
-		OPCODE(o2_stopProtracker),//{NULL, ""},
+		{NULL, ""},
+		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
 		/* 40 */
@@ -638,6 +638,7 @@ void Inter_Fascination::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
+
 	};
 
 	_opcodesDrawFascination = opcodesDraw;
@@ -657,28 +658,75 @@ void Inter_Fascination::executeDrawOpcode(byte i) {
 		(this->*op) ();
 }
 
+void Inter_Fascination::oFascin_geUnknown0(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 0\n");
+	warning("sub_BBF8 with parameter : 'tirb.imd'\n");
+	_vm->_dataIO->openData("tirb.imd");
+}
+
+void Inter_Fascination::oFascin_geUnknown1(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 1\n");
+	warning("sub_BBF8 with parameter : 'tira.imd'\n");
+	_vm->_dataIO->openData("tira.imd");
+}
+
 void Inter_Fascination::oFascin_geUnknown2(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 2\n");
+	warning("sub_1B3A6 with parameter : 'extasy.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'extasy.mdy'. Guess is : Load music\n");
 }
 
 void Inter_Fascination::oFascin_geUnknown3(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 3\n");
+	warning("Verify if 'Guess music' is loaded. If yes, call sub_1B517. Guess is : Play music\n");
 }
 
 void Inter_Fascination::oFascin_geUnknown4(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 4\n");
+	warning("Verify if 'Guess music' is loaded. If yes, call sub_1B496. Guess is : Stop music\n");
 }
 
 void Inter_Fascination::oFascin_geUnknown5(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 5\n");
+	warning("Verify if 'Guess instruments' is loaded, If yes call mem_free\n");
+	warning("Verify if 'Guess music' is loaded. If yes, call sub_1B472\n");
+	warning("Then set pointers to 0 (word_238B4 to word_238BA)\n");
 }
 
 void Inter_Fascination::oFascin_geUnknown6(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 6\n");
+	warning("sub_1B3A6 with parameter : 'music1.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'music1.mdy'. Guess is : Load music\n");
+}
+
+void Inter_Fascination::oFascin_geUnknown7(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 7\n");
+	warning("sub_1B3A6 with parameter : 'music2.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'music2.mdy'. Guess is : Load music\n");
+}
+
+void Inter_Fascination::oFascin_geUnknown8(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 8\n");
+	warning("sub_1B3A6 with parameter : 'music3.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'music3.mdy'. Guess is : Load music\n");
+}
+
+void Inter_Fascination::oFascin_geUnknown9(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 9\n");
+	warning("sub_1B3A6 with parameter : 'batt1.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'batt1.mdy'. Guess is : Load music\n");
 }
 
 void Inter_Fascination::oFascin_geUnknown10(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 10\n");
+	warning("sub_1B3A6 with parameter : 'batt2.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'batt2.mdy'. Guess is : Load music\n");
+}
+
+void Inter_Fascination::oFascin_geUnknown11(OpGobParams &params) {
+	warning("Fascination Unknown GE Function 11\n");
+	warning("sub_1B3A6 with parameter : 'batt3.tbr'. Guess is : Load instruments\n");
+	warning("sub_1B3C6 with parameter : 'batt3.mdy'. Guess is : Load music\n");
 }
 
 bool Inter_Fascination::oFascin_feUnknown4(OpFuncParams &params) {
