@@ -164,6 +164,7 @@ extern rect_t gfx_rect_fullscreen;
 #define GFX_PIXMAP_FLAG_PALETTIZED	  (1<<6) /* Indicates a palettized view */
 
 #define GFX_PIXMAP_COLOR_KEY_NONE -1 /* No transpacency colour key */
+#define GFX_CURSOR_TRANSPARENT 255 // Cursor colour key
 
 struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 

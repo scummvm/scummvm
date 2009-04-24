@@ -37,8 +37,6 @@ namespace Sci {
 #define GFX_SCI01_CURSOR_COLORS_NR 3
 #define GFX_SCI0_CURSOR_COLORS_NR 2
 
-#define GFX_CURSOR_TRANSPARENT 255
-
 gfx_pixmap_color_t gfx_sci01_cursor_colors[GFX_SCI01_CURSOR_COLORS_NR] = {
 	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0x00, 0x00},
 	{GFX_COLOR_INDEX_UNMAPPED, 0xff, 0xff, 0xff},

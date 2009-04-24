@@ -271,7 +271,8 @@ static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 
 		for (int xc = 0; xc < pointer->index_width; xc++) {
 			uint8 color = *src;
-			if (color != 255)
+			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
+			if (color < pointer->palette->size())
 				color = pointer->palette->getColor(color).parent_index;
 			for (int scalectr = 0; scalectr < drv->mode->xfact; scalectr++) {
 				*pos++ = color;
@@ -292,7 +293,13 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 	} else {
 		delete[] S->pointer_data;
 		S->pointer_data = create_cursor(drv, pointer, 1);
-		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, hotspot->x, hotspot->y);
+
+		// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
+		uint8 color_key = GFX_CURSOR_TRANSPARENT;
+		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && ((unsigned int)pointer->color_key < pointer->palette->size()))
+			color_key = pointer->palette->getColor(pointer->color_key).parent_index;
+
+		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
 		g_system->showMouse(true);
 	}
 
