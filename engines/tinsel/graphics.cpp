@@ -223,7 +223,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
  * TODO: finish supporting 4-bit data
  */
-static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut) {
+static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 palStart) {
 	// Set up the offset between destination blocks
 	int rightClip = applyClipping ? pObj->rightClip : 0;
 	Common::Rect boxBounds;
@@ -298,10 +298,10 @@ static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool appl
 					if(!fourBitClut)
 						Common::copy(p + boxBounds.left, p + boxBounds.right + 1, tempDest + (SCREEN_WIDTH * (yp - boxBounds.top)));
 					else {
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 0) = *p & 0x0f;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 1) = (*p & 0xf0) >> 4;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 2) = *(p + 1) & 0x0f;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 3) = (*(p + 1) & 0xf0) >> 4;
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 0) = (*p & 0x0f) + palStart;
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 1) = ((*p & 0xf0) >> 4) + palStart;
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 2) = (*(p + 1) & 0x0f) + palStart;
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 3) = ((*(p + 1) & 0xf0) >> 4) + palStart;
 					}
 				}
 
@@ -842,7 +842,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x08:
 		case 0x41:
 		case 0x48:
-			PsxWrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut);
+			PsxWrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, pObj->pPal->posInDAC);
 			break;
 
 		case 0x04:
