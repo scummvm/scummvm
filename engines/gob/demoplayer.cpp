@@ -86,6 +86,11 @@ void DemoPlayer::playVideo(const char *fileName) {
 		waitTime = atoi(spaceBack) * 100;
 	}
 
+	// WORKAROUND: The Inca2 demo wants to play cons2.imd, but that file doesn't exist.
+	//             cons.imd does, however.
+	if ((_vm->getGameType() == kGameTypeInca2) && (!scumm_stricmp(file, "cons2.imd")))
+		strcpy(file, "cons.imd");
+
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
 	// Playing the video
