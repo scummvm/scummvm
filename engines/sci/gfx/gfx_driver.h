@@ -251,11 +251,13 @@ struct gfx_driver_t { /* Graphics driver */
 
 	/*** Mouse pointer operations ***/
 
-	int (*set_pointer)(gfx_driver_t *drv, gfx_pixmap_t *pointer);
+	int (*set_pointer)(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common::Point *hotspot);
 	/* Sets a new mouse pointer.
 	** Parameters: (gfx_driver_t *) drv: The driver to modify
 	**             (gfx_pixmap_t *) pointer: The pointer to set, or NULL to set
 	**                              no pointer
+	**             (Common::Point *) hotspot: The coordinates of the hotspot,
+	**                               or NULL to set no pointer
 	** Returns   : (int) GFX_OK or GFX_FATAL
 	** If pointer is not NULL, it will have been scaled to the appropriate
 	** size and registered as a pixmap (if neccessary) beforehand.

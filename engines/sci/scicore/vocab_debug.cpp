@@ -233,7 +233,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x4e*/ "OnControl",
 	/*0x4f*/ "InitBresen",
 	/*0x50*/ "DoBresen",
-	/*0x51*/ "DoAvoider",
+	/*0x51*/ SCRIPT_UNKNOWN_FUNCTION_STRING, // DoAvoider is not implemented in SCI1
 	/*0x52*/ "SetJump",
 	/*0x53*/ "SetDebug",
 	/*0x54*/ "InspectObj",

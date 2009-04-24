@@ -315,8 +315,7 @@ reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case 3 : {
-		Common::Point hotspot = Common::Point(0, 0);
-		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot));
+		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
 		s->mouse_pointer_view = UKPV(0);
 		s->mouse_pointer_loop = UKPV(1);
 		s->mouse_pointer_cel = UKPV(2);

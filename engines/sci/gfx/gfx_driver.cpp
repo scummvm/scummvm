@@ -286,13 +286,13 @@ static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 }
 
 
-static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer) {
-	if (pointer == NULL) {
+static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common::Point *hotspot) {
+	if ((pointer == NULL) || (hotspot == NULL)) {
 		g_system->showMouse(false);
 	} else {
 		delete[] S->pointer_data;
 		S->pointer_data = create_cursor(drv, pointer, 1);
-		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, pointer->xoffset, pointer->yoffset);
+		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, hotspot->x, hotspot->y);
 		g_system->showMouse(true);
 	}
 

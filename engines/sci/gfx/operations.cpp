@@ -1185,33 +1185,32 @@ int gfxop_sleep(gfx_state_t *state, uint32 msecs) {
 	return GFX_OK;
 }
 
-int _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm) {
+static int _gfxop_set_pointer(gfx_state_t *state, gfx_pixmap_t *pxm, Common::Point *hotspot) {
 	BASIC_CHECKS(GFX_FATAL);
 
-	state->driver->set_pointer(state->driver, pxm);
+	state->driver->set_pointer(state->driver, pxm, hotspot);
 
 	return GFX_OK;
 }
 
 int gfxop_set_pointer_cursor(gfx_state_t *state, int nr) {
-	gfx_pixmap_t *new_pointer = NULL;
-
 	BASIC_CHECKS(GFX_FATAL);
 
 	if (nr == GFXOP_NO_POINTER)
-		new_pointer = NULL;
-	else {
-		new_pointer = state->gfxResMan->getCursor(nr);
+		return _gfxop_set_pointer(state, NULL, NULL);
 
-		if (!new_pointer) {
-			GFXWARN("Attempt to set invalid pointer #%d\n", nr);
-		}
+	gfx_pixmap_t *new_pointer = state->gfxResMan->getCursor(nr);
+
+	if (!new_pointer) {
+		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
+		return GFX_ERROR;
 	}
 
-	return _gfxop_set_pointer(state, new_pointer);
+	Common::Point p = Common::Point(new_pointer->xoffset, new_pointer->yoffset);
+	return _gfxop_set_pointer(state, new_pointer, &p);
 }
 
-int gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common::Point  *hotspot) {
+int gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common::Point *hotspot) {
 	int real_loop = loop;
 	int real_cel = cel;
 	gfx_pixmap_t *new_pointer = NULL;
@@ -1220,24 +1219,25 @@ int gfxop_set_pointer_view(gfx_state_t *state, int nr, int loop, int cel, Common
 
 	new_pointer = _gfxr_get_cel(state, nr, &real_loop, &real_cel, 0); // FIXME: For now, don't palettize pointers
 
-	if (hotspot) {
-		new_pointer->xoffset = hotspot->x;
-		new_pointer->yoffset = hotspot->y;
-	}
-
-	// Special case for Eco Quest 1: The game is trying to hide the mouse cursor by clipping it, which is rejected
-	// by our graphics scaler. Hide the cursor when that happens instead.
-	if (new_pointer->width < 2 || new_pointer->height < 2)
-		return _gfxop_set_pointer(state, NULL);
-
 	if (!new_pointer) {
 		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
 		return GFX_ERROR;
-	} else {
-		if (real_loop != loop || real_cel != cel) {
-			GFXDEBUG("Changed loop/cel from %d/%d to %d/%d in view %d\n", loop, cel, real_loop, real_cel, nr);
-		}
-		return _gfxop_set_pointer(state, new_pointer);
+	}
+
+	if (real_loop != loop || real_cel != cel) {
+		GFXDEBUG("Changed loop/cel from %d/%d to %d/%d in view %d\n", loop, cel, real_loop, real_cel, nr);
+	}
+
+	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this.
+	if (new_pointer->width < 2 || new_pointer->height < 2)
+		return _gfxop_set_pointer(state, NULL, NULL);
+
+	if (hotspot)
+		return _gfxop_set_pointer(state, new_pointer, hotspot);
+	else {
+		// Compute hotspot from xoffset/yoffset
+		Common::Point p = Common::Point(new_pointer->xoffset + (new_pointer->width >> 1), new_pointer->yoffset + new_pointer->height - 1);
+		return _gfxop_set_pointer(state, new_pointer, &p);
 	}
 }
 
