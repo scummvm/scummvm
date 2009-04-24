@@ -1118,7 +1118,63 @@ static const GOBGameDescription gameDescriptions[] = {
 			"littlered",
 			"",
 			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
-			UNK_LANG,
+			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0,
+		0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0,
+		0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0,
+		0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0,
+		0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "0b72992f5d8b5e6e0330572a5753ea25", 256490),
+			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
@@ -2897,6 +2953,7 @@ void GobEngine::initGame(const GOBGameDescription *gd) {
 		_startTot = new char[strlen(gd->startTotBase) + 1];
 		strcpy(_startTot, gd->startTotBase);
 	}
+
 	if (gd->startStkBase == 0) {
 		_startStk = new char[10];
 		strcpy(_startStk, "intro.stk");
@@ -2904,6 +2961,7 @@ void GobEngine::initGame(const GOBGameDescription *gd) {
 		_startStk = new char[strlen(gd->startStkBase) + 1];
 		strcpy(_startStk, gd->startStkBase);
 	}
+
 	_gameType = gd->gameType;
 	_features = gd->features;
 	_language = gd->desc.language;
