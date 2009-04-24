@@ -65,12 +65,16 @@ void DemoPlayer::clearScreen() {
 
 void DemoPlayer::playVideo(const char *fileName) {
 	uint32 waitTime = 0;
+	char *file;
+
+	file = new char[strlen(fileName) + 1];
+	strcpy(file, fileName);
 
 	// Trimming spaces front
-	while (*fileName == ' ')
-		fileName++;
+	while (*file == ' ')
+		file++;
 
-	char *spaceBack = strchr(fileName, ' ');
+	char *spaceBack = strchr(file, ' ');
 	if (spaceBack) {
 		char *nextSpace = strchr(spaceBack, ' ');
 
@@ -82,10 +86,10 @@ void DemoPlayer::playVideo(const char *fileName) {
 		waitTime = atoi(spaceBack) * 100;
 	}
 
-	debugC(1, kDebugDemo, "Playing video \"%s\"", fileName);
+	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
 	// Playing the video
-	if (_vm->_vidPlayer->primaryOpen(fileName)) {
+	if (_vm->_vidPlayer->primaryOpen(file)) {
 		_vm->_vidPlayer->slotSetDoubleMode(-1, _doubleMode);
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
@@ -93,6 +97,8 @@ void DemoPlayer::playVideo(const char *fileName) {
 		if (waitTime > 0)
 			_vm->_util->longDelay(waitTime);
 	}
+
+	delete[] file;
 }
 
 void DemoPlayer::evaluateVideoMode(const char *mode) {
