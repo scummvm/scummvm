@@ -121,18 +121,18 @@ static inline int sign_extend_byte(int value) {
 
 static void assert_primary_widget_lists(EngineState *s) {
 	if (!s->dyn_views) {
-		rect_t bounds = s->picture_port->bounds;
+		rect_t bounds = s->picture_port->_bounds;
 
 		s->dyn_views = gfxw_new_list(bounds, GFXW_LIST_SORTED);
-		s->dyn_views->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
+		s->dyn_views->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 		ADD_TO_CURRENT_PICTURE_PORT(s->dyn_views);
 	}
 
 	if (!s->drop_views) {
-		rect_t bounds = s->picture_port->bounds;
+		rect_t bounds = s->picture_port->_bounds;
 
 		s->drop_views = gfxw_new_list(bounds, GFXW_LIST_SORTED);
-		s->drop_views->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
+		s->drop_views->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 		ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
 	}
 }
@@ -142,7 +142,7 @@ static void reparentize_primary_widget_lists(EngineState *s, gfxw_port_t *newpor
 		newport = s->picture_port;
 
 	if (s->dyn_views) {
-		gfxw_remove_widget_from_container(s->dyn_views->parent, GFXW(s->dyn_views));
+		gfxw_remove_widget_from_container(s->dyn_views->_parent, GFXW(s->dyn_views));
 
 		newport->add(GFXWC(newport), GFXW(s->dyn_views));
 	}
@@ -208,7 +208,7 @@ reg_t graph_save_box(EngineState *s, rect_t area) {
 
 void graph_restore_box(EngineState *s, reg_t handle) {
 	gfxw_snapshot_t **ptr;
-	int port_nr = s->port->ID;
+	int port_nr = s->port->_ID;
 
 	if (!handle.segment) {
 		warning("Attempt to restore box with zero handle");
@@ -222,20 +222,20 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		return;
 	}
 
-	while (port_nr > 2 && !(s->port->flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, GFXW(s->port)))) {
+	while (port_nr > 2 && !(s->port->_flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, GFXW(s->port)))) {
 		// This shouldn't ever happen, actually, since windows (ports w/ ID > 2) should all be immune
 		gfxw_port_t *newport = gfxw_find_port(s->visual, port_nr);
-		SCIkwarn(SCIkERROR, "Port %d is not immune against snapshots!\n", s->port->ID);
+		SCIkwarn(SCIkERROR, "Port %d is not immune against snapshots!\n", s->port->_ID);
 		port_nr--;
 		if (newport)
 			s->port = newport;
 	}
 
-	if (s->dyn_views && gfxw_widget_matches_snapshot(*ptr, GFXW(s->dyn_views->parent))) {
-		gfxw_container_t *parent = s->dyn_views->parent;
+	if (s->dyn_views && gfxw_widget_matches_snapshot(*ptr, GFXW(s->dyn_views->_parent))) {
+		gfxw_container_t *parent = s->dyn_views->_parent;
 
 		do {
-			parent = parent->parent;
+			parent = parent->_parent;
 		} while (parent && (gfxw_widget_matches_snapshot(*ptr, GFXW(parent))));
 
 		if (!parent) {
@@ -353,7 +353,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, s->mouse_pointer_view));
 
 	if (argc > 2) {
-		Common::Point newpos = Common::Point(SKPV(2) + s->port->bounds.x, SKPV(3) + s->port->bounds.y);
+		Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
 		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
 	}
 
@@ -457,21 +457,21 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	gfxw_port_t *port = s->port;
 	gfxw_port_t *newport;
 
-	newport = sciw_new_window(s, port->zone, port->font_nr, port->color, newbgcolor,
+	newport = sciw_new_window(s, port->zone, port->font_nr, port->_color, newbgcolor,
 	                          s->titlebar_port->font_nr, s->ega_colors[15], s->ega_colors[8],
 	                          port->title_text, port->port_flags & ~kWindowTransparent);
 
 	if (s->dyn_views) {
 		int found = 0;
-		gfxw_container_t *parent = s->dyn_views->parent;
+		gfxw_container_t *parent = s->dyn_views->_parent;
 
 		while (parent && !(found |= (GFXW(parent) == GFXW(port))))
-			parent = parent->parent;
+			parent = parent->_parent;
 
 		s->dyn_views = NULL;
 	}
 
-	port->parent->add(GFXWC(port->parent), GFXW(newport));
+	port->_parent->add(GFXWC(port->_parent), GFXW(newport));
 	port->widfree(GFXW(port));
 }
 
@@ -532,7 +532,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
 
-		_k_graph_rebuild_port_with_color(s, port->bgcolor);
+		_k_graph_rebuild_port_with_color(s, port->_bgcolor);
 		port = s->port;
 
 		redraw_port = 1;
@@ -540,7 +540,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
 
-		_k_graph_rebuild_port_with_color(s, port->color);
+		_k_graph_rebuild_port_with_color(s, port->_color);
 		port = s->port;
 
 		redraw_port = 1;
@@ -582,7 +582,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
 
-		if (s->dyn_views && s->dyn_views->parent == GFXWC(s->port))
+		if (s->dyn_views && s->dyn_views->_parent == GFXWC(s->port))
 			s->dyn_views->draw(GFXW(s->dyn_views), Common::Point(0, 0));
 
 		gfxop_update_box(s->gfx_state, area);
@@ -811,13 +811,13 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
 
 		while (widget) {
-			if (widget->ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
-			        && ((widget->ID != obj.segment) || (widget->subID != obj.offset))
-			        && is_object(s, make_reg(widget->ID, widget->subID)))
-				if (collides_with(s, abs_zone, make_reg(widget->ID, widget->subID), 1, GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
+			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
+			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
+			        && is_object(s, make_reg(widget->_ID, widget->_subID)))
+				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
 					return not_register(s, NULL_REG);
 
-			widget = (gfxw_dyn_view_t *) widget->next;
+			widget = (gfxw_dyn_view_t *) widget->_next;
 		}
 	}
 
@@ -987,7 +987,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int pic_nr = SKPV(0);
 	int add_to_pic = 1;
 	int palette = SKPV_OR_ALT(3, 0);
-	gfx_color_t transparent = s->wm_port->bgcolor;
+	gfx_color_t transparent = s->wm_port->_bgcolor;
 
 	CHECK_THIS_KERNEL_FUNCTION;
 
@@ -1037,7 +1037,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
-	s->iconbar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
+	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	s->visual->add(GFXWC(s->visual), GFXW(s->picture_port));
 	s->visual->add(GFXWC(s->visual), GFXW(s->wm_port));
@@ -1716,13 +1716,13 @@ static void draw_rect_to_control_map(EngineState *s, Common::Rect abs_zone) {
 }
 
 static void draw_obj_to_control_map(EngineState *s, gfxw_dyn_view_t *view) {
-	reg_t obj = make_reg(view->ID, view->subID);
+	reg_t obj = make_reg(view->_ID, view->_subID);
 
 	if (!is_object(s, obj))
-		warning("View %d does not contain valid object reference "PREG"", view->ID, PRINT_REG(obj));
+		warning("View %d does not contain valid object reference "PREG"", view->_ID, PRINT_REG(obj));
 
 	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
-		Common::Rect abs_zone = get_nsrect(s, make_reg(view->ID, view->subID), 1);
+		Common::Rect abs_zone = get_nsrect(s, make_reg(view->_ID, view->_subID), 1);
 		draw_rect_to_control_map(s, abs_zone);
 	}
 }
@@ -1731,7 +1731,7 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
 	while (widget) {
-		reg_t obj = make_reg(widget->ID, widget->subID);
+		reg_t obj = make_reg(widget->_ID, widget->_subID);
 
 		/*
 		 * this fixes a few problems, but doesn't match SSCI's logic.
@@ -1776,7 +1776,7 @@ static void _k_view_list_do_postdraw(EngineState *s, gfxw_list_t *list) {
 			*((reg_t *)(widget->signalp)) = make_reg(0, widget->signal & 0xffff); /* Write back signal */
 		}
 
-		widget = (gfxw_dyn_view_t *) widget->next;
+		widget = (gfxw_dyn_view_t *) widget->_next;
 	}
 }
 
@@ -1786,12 +1786,12 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 		gfxw_dyn_view_t *w = (gfxw_dyn_view_t *) s->dyn_views->contents;
 
 		while (w) {
-			if (w->ID == off.segment
-			        && w->subID == off.offset) {
+			if (w->_ID == off.segment
+			        && w->_subID == off.offset) {
 				w->under_bitsp = NULL;
 			}
 
-			w = (gfxw_dyn_view_t *) w->next;
+			w = (gfxw_dyn_view_t *) w->_next;
 		}
 	}
 }
@@ -1809,15 +1809,15 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, gfxw_dyn_view_t *widge
 	if (widget) {
 		int retval;
 		// Recurse:
-		retval = _k_view_list_dispose_loop(s, list, (gfxw_dyn_view_t *) widget->next, funct_nr, argc, argv);
+		retval = _k_view_list_dispose_loop(s, list, (gfxw_dyn_view_t *) widget->_next, funct_nr, argc, argv);
 
 		if (retval == -1) // Bail out on annihilation, rely on re-start from Animate()
 			return -1;
 
-		if (GFXW_IS_DYN_VIEW(widget) && (widget->ID != GFXW_NO_ID)) {
+		if (GFXW_IS_DYN_VIEW(widget) && (widget->_ID != GFXW_NO_ID)) {
 			signal = ((reg_t *)widget->signalp)->offset;
 			if (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME) {
-				reg_t obj = make_reg(widget->ID, widget->subID);
+				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
 
 				if (!is_object(s, obj)) {
@@ -1857,20 +1857,20 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, gfxw_dyn_view_t *widge
 
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
 						SCIkdebug(SCIkGRAPHICS, "Adding view at "PREG" to background\n", PRINT_REG(obj));
-						if (!(gfxw_remove_id(widget->parent, widget->ID, widget->subID) == GFXW(widget))) {
-							SCIkwarn(SCIkERROR, "Attempt to remove view with ID %x:%x from list failed!\n", widget->ID, widget->subID);
+						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == GFXW(widget))) {
+							SCIkwarn(SCIkERROR, "Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
 							BREAKPOINT();
 						}
 
 						s->drop_views->add(GFXWC(s->drop_views), GFXW(gfxw_picviewize_dynview(widget)));
 
 						draw_obj_to_control_map(s, widget);
-						widget->draw_bounds.y += s->dyn_views->bounds.y - widget->parent->bounds.y;
-						widget->draw_bounds.x += s->dyn_views->bounds.x - widget->parent->bounds.x;
+						widget->draw_bounds.y += s->dyn_views->_bounds.y - widget->_parent->_bounds.y;
+						widget->draw_bounds.x += s->dyn_views->_bounds.x - widget->_parent->_bounds.x;
 						dropped = 1;
 					} else {
 						SCIkdebug(SCIkGRAPHICS, "Deleting view at "PREG"\n", PRINT_REG(obj));
-						widget->flags |= GFXW_FLAG_VISIBLE;
+						widget->_flags |= GFXW_FLAG_VISIBLE;
 						gfxw_annihilate(GFXW(widget));
 						return -1; // restart: Done in Animate()
 					}
@@ -1957,7 +1957,7 @@ static gfxw_dyn_view_t *_k_make_dynview_obj(EngineState *s, reg_t obj, int optio
 	if (widget) {
 		widget = (gfxw_dyn_view_t *) gfxw_set_id(GFXW(widget), obj.segment, obj.offset);
 		widget = gfxw_dyn_view_set_params(widget, under_bits.segment, under_bitsp, signal, signalp);
-		widget->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS; // Only works the first time 'round'
+		widget->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS; // Only works the first time 'round'
 
 		return widget;
 	} else {
@@ -2023,20 +2023,20 @@ static void _k_make_view_list(EngineState *s, gfxw_list_t **widget_list, List *l
 		if (widget->signalp)
 			widget->signal = ((reg_t *)(widget->signalp))->offset;
 
-		widget = (gfxw_dyn_view_t *) widget->next;
+		widget = (gfxw_dyn_view_t *) widget->_next;
 	}
 }
 
 static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
-		reg_t obj = make_reg(view->ID, view->subID);
+		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);
-		_priority = /*GET_SELECTOR(obj, y); */((view->pos.y));
+		_priority = /*GET_SELECTOR(obj, y); */((view->_pos.y));
 		_priority = _find_view_priority(s, _priority - 1);
 
 		if (options & _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP) { // Picview
@@ -2054,12 +2054,12 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 				priority = GET_SEL32SV(obj, priority);
 		}
 
-		view->color.priority = priority;
+		view->_color.priority = priority;
 
 		if (priority > -1)
-			view->color.mask |= GFX_MASK_PRIORITY;
+			view->_color.mask |= GFX_MASK_PRIORITY;
 		else
-			view->color.mask &= ~GFX_MASK_PRIORITY;
+			view->_color.mask &= ~GFX_MASK_PRIORITY;
 
 		// CR (from :Bob Heitman:) stopupdated views (like pic views) have
 		// their clipped nsRect drawn to the control map
@@ -2107,7 +2107,7 @@ static void _k_prepare_view_list(EngineState *s, gfxw_list_t *list, int options)
 			fprintf(stderr, "Unsetting magic StopUpd for view "PREG"\n", PRINT_REG(obj));
 		} */
 
-		view = (gfxw_dyn_view_t *) view->next;
+		view = (gfxw_dyn_view_t *) view->_next;
 	}
 }
 
@@ -2125,16 +2125,16 @@ static void _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *n
 		gfxw_dyn_view_t *new_widget = (gfxw_dyn_view_t *) new_list->contents;
 
 		while (new_widget
-		        && (new_widget->ID != old_widget->ID
-		            || new_widget->subID != old_widget->subID))
-			new_widget = (gfxw_dyn_view_t *) new_widget->next;
+		        && (new_widget->_ID != old_widget->_ID
+		            || new_widget->_subID != old_widget->_subID))
+			new_widget = (gfxw_dyn_view_t *) new_widget->_next;
 
 		if (new_widget) {
 			int carry = old_widget->signal & _K_VIEW_SIG_FLAG_STOPUPD;
 			// Transfer 'stopupd' flag
 
-			if ((new_widget->pos.x != old_widget->pos.x)
-			        || (new_widget->pos.y != old_widget->pos.y)
+			if ((new_widget->_pos.x != old_widget->_pos.x)
+			        || (new_widget->_pos.y != old_widget->_pos.y)
 					// No idea why this is supposed to be bad
 /*			        || (new_widget->z != old_widget->z)
 			        || (new_widget->view != old_widget->view)
@@ -2146,24 +2146,24 @@ static void _k_update_signals_in_view_list(gfxw_list_t *old_list, gfxw_list_t *n
 			old_widget->signal = new_widget->signal |= carry;
 		}
 
-		old_widget = (gfxw_dyn_view_t *) old_widget->next;
+		old_widget = (gfxw_dyn_view_t *) old_widget->_next;
 	}
 }
 
 static void _k_view_list_kryptonize(gfxw_widget_t *v) {
 	if (v) {
-		v->flags &= ~GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
-		_k_view_list_kryptonize(v->next);
+		v->_flags &= ~GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
+		_k_view_list_kryptonize(v->_next);
 	}
 }
 
 static void _k_raise_topmost_in_view_list(EngineState *s, gfxw_list_t *list, gfxw_dyn_view_t *view) {
 	if (view) {
-		gfxw_dyn_view_t *next = (gfxw_dyn_view_t *)view->next;
+		gfxw_dyn_view_t *next = (gfxw_dyn_view_t *)view->_next;
 
 		// step 11
 		if ((view->signal & (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0) {
-			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at ["PREG"] with %04x\n", PRINT_REG(make_reg(view->ID, view->subID)), view->signal);
+			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at ["PREG"] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 			view->force_precedence = 2;
 
 			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
@@ -2171,7 +2171,7 @@ static void _k_raise_topmost_in_view_list(EngineState *s, gfxw_list_t *list, gfx
 			}
 		}
 
-		gfxw_remove_widget_from_container(view->parent, GFXW(view));
+		gfxw_remove_widget_from_container(view->_parent, GFXW(view));
 
 		if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
 			gfxw_hide_widget(GFXW(view));
@@ -2188,7 +2188,7 @@ static void _k_redraw_view_list(EngineState *s, gfxw_list_t *list) {
 	gfxw_dyn_view_t *view = (gfxw_dyn_view_t *) list->contents;
 	while (view) {
 
-		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x\n", make_reg(view->ID, view->subID), view->signal);
+		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
 
 		// step 1 of subalgorithm
 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
@@ -2221,7 +2221,7 @@ static void _k_redraw_view_list(EngineState *s, gfxw_list_t *list) {
 
 		SCIkdebug(SCIkGRAPHICS, "    -> signal %04x\n", view->signal);
 
-		view = (gfxw_dyn_view_t *) view->next;
+		view = (gfxw_dyn_view_t *) view->_next;
 	}
 }
 
@@ -2239,14 +2239,14 @@ void _k_draw_view_list(EngineState *s, gfxw_list_t *list, int flags) {
 	// Draws list_nr members of list to s->pic.
 	gfxw_dyn_view_t *widget = (gfxw_dyn_view_t *) list->contents;
 
-	if (GFXWC(s->port) != GFXWC(s->dyn_views->parent))
+	if (GFXWC(s->port) != GFXWC(s->dyn_views->_parent))
 		return; // Return if the pictures are meant for a different port
 
 	while (widget) {
 		if (flags & _K_DRAW_VIEW_LIST_PICVIEW)
 			widget = gfxw_picviewize_dynview(widget);
 
-		if (GFXW_IS_DYN_VIEW(widget) && widget->ID) {
+		if (GFXW_IS_DYN_VIEW(widget) && widget->_ID) {
 			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -2274,7 +2274,7 @@ void _k_draw_view_list(EngineState *s, gfxw_list_t *list, int flags) {
 			  // disposeables and this one isn't disposeable
 		}
 
-		widget = (gfxw_dyn_view_t *) widget->next;
+		widget = (gfxw_dyn_view_t *) widget->_next;
 	} // while (widget)
 
 }
@@ -2303,7 +2303,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (!widget) {
 			SCIkwarn(SCIkERROR, "Attempt to single-add invalid picview (%d/%d/%d)\n", view, loop, cel);
 		} else {
-			widget->ID = -1;
+			widget->_ID = -1;
 			if (control >= 0) {
 				Common::Rect abs_zone = nsrect_clip(s, y, calculate_nsrect(s, x, y, view, loop, cel), priority);
 				draw_rect_to_control_map(s, abs_zone);
@@ -2320,7 +2320,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		list = LOOKUP_LIST(list_ref);
 
-		pic_views = gfxw_new_list(s->picture_port->bounds, 1);
+		pic_views = gfxw_new_list(s->picture_port->_bounds, 1);
 
 		SCIkdebug(SCIkGRAPHICS, "Preparing picview list...\n");
 		_k_make_view_list(s, &pic_views, list, 0, funct_nr, argc, argv);
@@ -2339,7 +2339,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	return make_reg(0, s->port->ID);
+	return make_reg(0, s->port->_ID);
 }
 
 reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -2360,7 +2360,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		   official semantics) would cut off the lower part of the
 		   icons in an SCI1 icon bar. Instead we have an
 		   iconbar_port that does not exist in SSCI. */
-		if (port_nr == (unsigned int) - 1) port_nr = s->iconbar_port->ID;
+		if (port_nr == (unsigned int) - 1) port_nr = s->iconbar_port->_ID;
 
 		new_port = gfxw_find_port(s->visual, port_nr);
 
@@ -2445,11 +2445,11 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (s->dyn_views && GFXWC(s->dyn_views->parent) == GFXWC(goner)) {
-		reparentize_primary_widget_lists(s, (gfxw_port_t *) goner->parent);
+	if (s->dyn_views && GFXWC(s->dyn_views->_parent) == GFXWC(goner)) {
+		reparentize_primary_widget_lists(s, (gfxw_port_t *) goner->_parent);
 	}
 
-	if (s->drop_views && GFXWC(s->drop_views->parent) == GFXWC(goner))
+	if (s->drop_views && GFXWC(s->drop_views->_parent) == GFXWC(goner))
 		s->drop_views = NULL; // Kill it
 
 	pred = gfxw_remove_port(s->visual, goner);
@@ -2458,7 +2458,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->port = pred;
 
 	// Find the last port that exists and that isn't marked no-switch
-	while ((!s->visual->port_refs[id] && id >= 0) || (s->visual->port_refs[id]->flags & GFXW_FLAG_NO_IMPLICIT_SWITCH))
+	while ((!s->visual->port_refs[id] && id >= 0) || (s->visual->port_refs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH))
 		id--;
 
 	sciprintf("Activating port %d after disposing window %d\n", id, goner_nr);
@@ -2487,7 +2487,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	yl = SKPV(2) - y;
 	xl = SKPV(3) - x;
 
-	y += s->wm_port->bounds.y;
+	y += s->wm_port->_bounds.y;
 
 	if (x + xl > 319)
 		x -= ((x + xl) - 319);
@@ -2546,7 +2546,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->port = window; // Set active port
 
-	return make_reg(0, window->ID);
+	return make_reg(0, window->_ID);
 }
 
 #define K_ANIMATE_CENTER_OPEN_H  0 // horizontally open from center
@@ -2993,12 +2993,12 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	assert_primary_widget_lists(s);
 
 	if (!s->dyn_views->contents // Only reparentize empty dynview list
-	        && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) // If dynviews are on other port...
-	            || (s->dyn_views->next))) // ... or not on top of the view list
+	        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
+	            || (s->dyn_views->_next))) // ... or not on top of the view list
 		reparentize_primary_widget_lists(s, s->port);
 
 	if (cast_list) {
-		gfxw_list_t *templist = gfxw_new_list(s->dyn_views->bounds, 0);
+		gfxw_list_t *templist = gfxw_new_list(s->dyn_views->_bounds, 0);
 
 		_k_make_view_list(s, &(templist), cast_list, (cycle ? _K_MAKE_VIEW_LIST_CYCLE : 0)
 		                  | _K_MAKE_VIEW_LIST_CALC_PRIORITY, funct_nr, argc, argv);
@@ -3007,8 +3007,8 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		assert_primary_widget_lists(s);
 
 		if (!s->dyn_views->contents // Only reparentize empty dynview list
-		        && ((GFXWC(s->port) != GFXWC(s->dyn_views->parent)) // If dynviews are on other port...
-		            || (s->dyn_views->next))) // ... or not on top of the view list
+		        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
+		            || (s->dyn_views->_next))) // ... or not on top of the view list
 			reparentize_primary_widget_lists(s, s->port);
 		// End of doit() recovery code
 
@@ -3056,18 +3056,18 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			reparentize = 1;
 
 		if (s->drop_views->contents) {
-			s->drop_views = gfxw_new_list(s->dyn_views->bounds, GFXW_LIST_SORTED);
-			s->drop_views->flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
+			s->drop_views = gfxw_new_list(s->dyn_views->_bounds, GFXW_LIST_SORTED);
+			s->drop_views->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 			ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
 		} else {
 			assert(s->drop_views);
-			gfxw_remove_widget_from_container(s->drop_views->parent, GFXW(s->drop_views));
+			gfxw_remove_widget_from_container(s->drop_views->_parent, GFXW(s->drop_views));
 			ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
 		}
 
 		if ((reparentize | retval)
-		        && (GFXWC(s->port) == GFXWC(s->dyn_views->parent)) // If dynviews are on the same port...
-		        && (s->dyn_views->next)) // ... and not on top of the view list...
+		        && (GFXWC(s->port) == GFXWC(s->dyn_views->_parent)) // If dynviews are on the same port...
+		        && (s->dyn_views->_next)) // ... and not on top of the view list...
 			reparentize_primary_widget_lists(s, s->port); // ...then reparentize.
 
 		_k_view_list_kryptonize(s->dyn_views->contents);
@@ -3146,8 +3146,8 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int font_nr = port->font_nr;
 	gfxw_text_t *text_handle;
 
-	color0 = port->color;
-	bg_color = port->bgcolor;
+	color0 = port->_color;
+	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked 
 	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
@@ -3299,12 +3299,12 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (save_under) {    // Backup
-		rect_t save_area = text_handle->bounds;
-		save_area.x += port->bounds.x;
-		save_area.y += port->bounds.y;
+		rect_t save_area = text_handle->_bounds;
+		save_area.x += port->_bounds.x;
+		save_area.y += port->_bounds.y;
 
 		s->r_acc = graph_save_box(s, save_area);
-		text_handle->serial++; // This is evil!
+		text_handle->_serial++; // This is evil!
 
 		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as "PREG"\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
 	}

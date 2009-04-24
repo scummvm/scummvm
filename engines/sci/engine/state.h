@@ -54,7 +54,7 @@ struct gfx_state_t;
 struct gfxw_port_t;
 struct gfxw_visual_t;
 struct gfxw_container_t;	
-typedef gfxw_container_t gfxw_list_t;
+struct gfxw_list_t;
 
 
 class DirSeeker {

@@ -416,7 +416,7 @@ bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &ite
 		if ((int)menu._items.size() <= row)
 			return true;
 
-		if ((pointerPos.x < port->bounds.x) || (pointerPos.x > port->bounds.x + port->bounds.width))
+		if ((pointerPos.x < port->_bounds.x) || (pointerPos.x > port->_bounds.x + port->_bounds.width))
 			return true;
 
 		if (itemValid(menu_nr, row))

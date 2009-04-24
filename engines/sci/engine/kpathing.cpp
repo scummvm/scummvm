@@ -1543,7 +1543,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!port->decorations) {
 			port->decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
-			port->decorations->set_visual(GFXW(port->decorations), port->visual);
+			port->decorations->set_visual(GFXW(port->decorations), port->_visual);
 		} else {
 			port->decorations->free_contents(port->decorations);
 		}

@@ -39,7 +39,7 @@ struct gfx_state_t;
 struct gfxw_box_t;
 struct gfxw_dyn_view_t;
 struct gfxw_container_t;
-typedef gfxw_container_t gfxw_list_t;
+struct gfxw_list_t;
 struct gfxw_port_t;
 struct gfxw_primitive_t;
 struct gfxw_snapshot_t;
@@ -82,7 +82,7 @@ struct gfxw_widget_t;
 /*********************************/
 
 
-#define GFXW(foo) ((gfxw_widget_t *) foo)
+#define GFXW(foo) (foo)
 /* Typecast an arbitrary widget to gfxw_widget_t*. Might eventually be changed to do tests as well. */
 
 #define GFXWC(foo) ((gfxw_container_t *) foo)

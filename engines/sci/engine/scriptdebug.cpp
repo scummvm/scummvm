@@ -1663,7 +1663,7 @@ static int c_gfx_current_port(EngineState *s) {
 	if (!s->port)
 		sciprintf("none.\n");
 	else
-		sciprintf("%d\n", s->port->ID);
+		sciprintf("%d\n", s->port->_ID);
 
 	return 0;
 }
@@ -2767,8 +2767,8 @@ int c_statusbar(EngineState *s) {
 		return 1;
 	}
 
-	s->titlebar_port->color = s->ega_colors[cmd_params[0].val];
-	s->titlebar_port->bgcolor = s->ega_colors[cmd_params[1].val];
+	s->titlebar_port->_color = s->ega_colors[cmd_params[0].val];
+	s->titlebar_port->_bgcolor = s->ega_colors[cmd_params[1].val];
 
 	s->status_bar_foreground = cmd_params[0].val;
 	s->status_bar_background = cmd_params[1].val;

@@ -67,7 +67,6 @@ enum gfxw_widget_type_t {
 	GFXW_SORTED_LIST,
 	GFXW_VISUAL,
 	GFXW_PORT
-
 };
 
 
@@ -88,18 +87,21 @@ typedef int gfxw_op_int(gfxw_widget_t *, int);
 typedef int gfxw_bin_op(gfxw_widget_t *, gfxw_widget_t *);
 
 struct gfxw_widget_t {
-	int magic; /* Extra check after typecasting */
-	int serial; /* Serial number */
-	int flags; /* Widget flags */
-	gfxw_widget_type_t type;
-	rect_t bounds; /* Boundaries */
-	gfxw_widget_t *next; /* Next widget in widget list */
-	int ID; /* Unique ID or GFXW_NO_ID */
-	int subID; /* A 'sub-ID', or GFXW_NO_ID */
-	gfxw_container_t *parent; /* The parent widget, or NULL if not owned */
-	gfxw_visual_t *visual; /* The owner visual */
-	int widget_priority; /* Drawing priority, or -1 */
-	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistant */
+	int _magic; /* Extra check after typecasting */
+	int _serial; /* Serial number */
+	int _flags; /* Widget flags */
+	gfxw_widget_type_t _type;
+	rect_t _bounds; /* Boundaries */
+	gfxw_widget_t *_next; /* Next widget in widget list */
+	int _ID; /* Unique ID or GFXW_NO_ID */
+	int _subID; /* A 'sub-ID', or GFXW_NO_ID */
+	gfxw_container_t *_parent; /* The parent widget, or NULL if not owned */
+	gfxw_visual_t *_visual; /* The owner visual */
+	int _widgetPriority; /* Drawing priority, or -1 */
+
+public:
+	// TODO: Replace the following with virtual methods
+	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistent */
 	gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */
 	gfxw_op *tag; /* Tag the specified widget */
 	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
@@ -108,57 +110,73 @@ struct gfxw_widget_t {
 	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */
 	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
 	gfxw_visual_op *set_visual; /* Sets the visual the widget belongs to */
+
+	gfxw_widget_t(gfxw_widget_type_t type);
 };
 
 
-#define GFXW_IS_BOX(widget) ((widget)->type == GFXW_BOX)
+#define GFXW_IS_BOX(widget) ((widget)->_type == GFXW_BOX)
 struct gfxw_box_t : public gfxw_widget_t {
-	gfx_color_t color1, color2;
-	gfx_box_shade_t shade_type;
+	gfx_color_t _color1, _color2;
+	gfx_box_shade_t _shadeType;
+
+	gfxw_box_t(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
 };
 
 
-#define GFXW_IS_PRIMITIVE(widget) ((widget)->type == GFXW_RECT || (widget)->type == GFXW_LINE)
+#define GFXW_IS_PRIMITIVE(widget) ((widget)->_type == GFXW_RECT || (widget)->_type == GFXW_LINE)
 struct gfxw_primitive_t : public gfxw_widget_t {
-	gfx_color_t color;
-	gfx_line_mode_t line_mode;
-	gfx_line_style_t line_style;
+	gfx_color_t _color;
+	gfx_line_mode_t _lineMode;
+	gfx_line_style_t _lineStyle;
+
+	gfxw_primitive_t(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
+						gfx_line_style_t style, gfxw_widget_type_t type);
 };
 
 
 
-#define GFXW_IS_VIEW(widget) ((widget)->type == GFXW_VIEW || (widget)->type == GFXW_STATIC_VIEW \
-			      || (widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
+#define GFXW_IS_VIEW(widget) ((widget)->_type == GFXW_VIEW || (widget)->_type == GFXW_STATIC_VIEW \
+			      || (widget)->_type == GFXW_DYN_VIEW || (widget)->_type == GFXW_PIC_VIEW)
 struct gfxw_view_t  : public gfxw_widget_t {
-	Common::Point pos; /* Implies the value of 'bounds' in gfxw_widget_t */
-	gfx_color_t color;
-	int view, loop, cel;
-	int palette;
+	Common::Point _pos; /* Implies the value of 'bounds' in gfxw_widget_t */
+	gfx_color_t _color;
+	int _view, _loop, _cel;
+	int _palette;
+
+	gfxw_view_t(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
+		gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 };
 
-#define GFXW_IS_DYN_VIEW(widget) ((widget)->type == GFXW_DYN_VIEW || (widget)->type == GFXW_PIC_VIEW)
+#define GFXW_IS_DYN_VIEW(widget) ((widget)->_type == GFXW_DYN_VIEW || (widget)->_type == GFXW_PIC_VIEW)
 struct gfxw_dyn_view_t : public gfxw_view_t {
 	/* FIXME: This code is specific to SCI */
 	rect_t draw_bounds; /* The correct position to draw to */
 	void *under_bitsp, *signalp;
 	int under_bits, signal;
-	int z; /* The z coordinate: Added to y, but used for sorting */
+	int _z; /* The z coordinate: Added to y, but used for sorting */
 	int sequence; /* Sequence number: For sorting */
 	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
+
+	gfxw_dyn_view_t(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
+		gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 };
 
 
 
-#define GFXW_IS_TEXT(widget) ((widget)->type == GFXW_TEXT)
+#define GFXW_IS_TEXT(widget) ((widget)->_type == GFXW_TEXT)
 struct gfxw_text_t : public gfxw_widget_t {
 	int font_nr;
 	int lines_nr, lineheight, lastline_width;
 	char *text;
 	gfx_alignment_t halign, valign;
-	gfx_color_t color1, color2, bgcolor;
+	gfx_color_t _color1, _color2, _bgcolor;
 	int text_flags;
 	int width, height; /* Real text width and height */
 	gfx_text_handle_t *text_handle;
+
+	gfxw_text_t(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+		gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags);
 };
 
 
@@ -174,34 +192,44 @@ struct gfxw_container_t : public gfxw_widget_t {
 	gfx_dirty_rect_t *dirty; /* List of dirty rectangles */
 	gfxw_widget_t *contents;
 	gfxw_widget_t **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
+
+public:
+	// TODO: Replace the following with virtual methods
 	gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */
 	gfxw_unary_container_op *free_contents; /* Free all contained widgets */
 	gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */
 	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */
 	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
+
+	gfxw_container_t(rect_t area, gfxw_widget_type_t type);
 };
 
 
-#define GFXW_IS_CONTAINER(widget) ((widget)->type == GFXW_PORT || (widget)->type == GFXW_VISUAL || \
-				   (widget)->type == GFXW_SORTED_LIST || (widget)->type == GFXW_LIST)
+#define GFXW_IS_CONTAINER(widget) ((widget)->_type == GFXW_PORT || (widget)->_type == GFXW_VISUAL || \
+				   (widget)->_type == GFXW_SORTED_LIST || (widget)->_type == GFXW_LIST)
 
-#define GFXW_IS_LIST(widget) ((widget)->type == GFXW_LIST || (widget)->type == GFXW_SORTED_LIST)
-#define GFXW_IS_SORTED_LIST(widget) ((widget)->type == GFXW_SORTED_LIST)
-typedef gfxw_container_t gfxw_list_t;
+#define GFXW_IS_LIST(widget) ((widget)->_type == GFXW_LIST || (widget)->_type == GFXW_SORTED_LIST)
+#define GFXW_IS_SORTED_LIST(widget) ((widget)->_type == GFXW_SORTED_LIST)
 
-#define GFXW_IS_VISUAL(widget) ((widget)->type == GFXW_VISUAL)
+struct gfxw_list_t : public gfxw_container_t {
+	gfxw_list_t(rect_t area, bool sorted);
+};
+
+#define GFXW_IS_VISUAL(widget) ((widget)->_type == GFXW_VISUAL)
 struct gfxw_visual_t : public gfxw_container_t {
 	gfxw_port_t **port_refs; /* References to ports */
 	int port_refs_nr;
 	int font_nr; /* Default font */
 	gfx_state_t *gfx_state;
+
+	gfxw_visual_t(gfx_state_t *state, int font);
 };
 
-#define GFXW_IS_PORT(widget) ((widget)->type == GFXW_PORT)
+#define GFXW_IS_PORT(widget) ((widget)->_type == GFXW_PORT)
 struct gfxw_port_t : public gfxw_container_t {
 	gfxw_list_t *decorations; /* optional window decorations- drawn before the contents */
 	gfxw_widget_t *port_bg; /* Port background widget or NULL */
-	gfx_color_t color, bgcolor;
+	gfx_color_t _color, _bgcolor;
 	int font_nr;
 	Common::Point draw_pos; /* Drawing position */
 	gfxw_snapshot_t *restore_snap; /* Snapshot to be restored automagically,
@@ -209,6 +237,8 @@ struct gfxw_port_t : public gfxw_container_t {
 	int port_flags; /* interpreter-dependant flags */
 	const char *title_text;
 	byte gray_text; /* Whether text is 'grayed out' (dithered) */
+
+	gfxw_port_t(gfxw_visual_t *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 };
 
 } // End of namespace Sci

@@ -149,7 +149,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);	
 
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
-	s->iconbar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
+	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
 		// This bit sets the foreground and background colors in VGA SCI games
@@ -168,11 +168,11 @@ int _reset_graphics_input(EngineState *s) {
 	} else {
 		s->titlebar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 10), s->ega_colors[0], s->ega_colors[15]);
 	}
-	s->titlebar_port->color.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->color.priority = 11;
-	s->titlebar_port->bgcolor.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->bgcolor.priority = 11;
-	s->titlebar_port->flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
+	s->titlebar_port->_color.mask |= GFX_MASK_PRIORITY;
+	s->titlebar_port->_color.priority = 11;
+	s->titlebar_port->_bgcolor.mask |= GFX_MASK_PRIORITY;
+	s->titlebar_port->_bgcolor.priority = 11;
+	s->titlebar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	// but this is correct
 	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
@@ -188,8 +188,8 @@ int _reset_graphics_input(EngineState *s) {
 	s->port = s->picture_port; // Currently using the picture port
 
 #if 0
-	s->titlebar_port->bgcolor.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->bgcolor.priority = 11; // Standard priority for the titlebar port
+	s->titlebar_port->_bgcolor.mask |= GFX_MASK_PRIORITY;
+	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
 #endif
 
 	return 0;
