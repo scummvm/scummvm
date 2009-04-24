@@ -82,10 +82,10 @@ struct GfxPort;
 
 typedef int gfxw_point_op(GfxWidget *, Common::Point);
 typedef int gfxw_op(GfxWidget *);
-typedef int gfxw_op_int(GfxWidget *, int);
 typedef int gfxw_bin_op(GfxWidget *, GfxWidget *);
 
 struct GfxWidget {
+public:
 	int _magic; /* Extra check after typecasting */
 	int _serial; /* Serial number */
 	int _flags; /* Widget flags */
@@ -134,7 +134,7 @@ public:
 	 *
 	 * @param indentation	Number of double spaces to indent
 	 */
-	gfxw_op_int *print;
+	virtual void print(int indentation) const;
 
 	/**
 	 * Compares two comparable widgets by their screen position.
@@ -191,6 +191,10 @@ public:
 	 * It also makes sure that dirty rectangles are passed to parent containers.
 	 */
 	virtual int setVisual(GfxVisual *);
+
+//protected:
+	void printIntern(int indentation) const;
+
 };
 
 
@@ -199,7 +203,9 @@ struct GfxBox : public GfxWidget {
 	gfx_color_t _color1, _color2;
 	gfx_box_shade_t _shadeType;
 
+public:
 	GfxBox(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
+	virtual void print(int indentation) const;
 };
 
 
@@ -209,6 +215,7 @@ struct GfxPrimitive : public GfxWidget {
 	gfx_line_mode_t _lineMode;
 	gfx_line_style_t _lineStyle;
 
+public:
 	GfxPrimitive(rect_t area, gfx_color_t color, gfx_line_mode_t mode,
 						gfx_line_style_t style, gfxw_widget_type_t type);
 };
@@ -223,8 +230,10 @@ struct GfxView  : public GfxWidget {
 	int _view, _loop, _cel;
 	int _palette;
 
+public:
 	GfxView(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int flags);
+	virtual void print(int indentation) const;
 };
 
 #define GFXW_IS_DYN_VIEW(widget) ((widget)->_type == GFXW_DYN_VIEW || (widget)->_type == GFXW_PIC_VIEW)
@@ -237,8 +246,11 @@ struct GfxDynView : public GfxView {
 	int sequence; /* Sequence number: For sorting */
 	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
 
+public:
 	GfxDynView(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
+
+	virtual void print(int indentation) const;
 };
 
 
@@ -254,10 +266,13 @@ struct GfxText : public GfxWidget {
 	int width, height; /* Real text width and height */
 	gfx_text_handle_t *text_handle;
 
+public:
 	GfxText(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
 		gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags);
 
 	~GfxText();
+
+	virtual void print(int indentation) const;
 };
 
 
@@ -270,9 +285,9 @@ typedef int gfxw_rect_op(GfxContainer *, rect_t, int);
 
 struct GfxContainer : public GfxWidget {
 	rect_t zone; /* The writeable zone (absolute) for contained objects */
-	gfx_dirty_rect_t *dirty; /* List of dirty rectangles */
-	GfxWidget *contents;
-	GfxWidget **nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
+	gfx_dirty_rect_t *_dirty; /* List of dirty rectangles */
+	GfxWidget *_contents;
+	GfxWidget **_nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
 
 public:
 	// TODO: Replace the following with virtual methods
@@ -282,10 +297,12 @@ public:
 	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */
 	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
 
+public:
 	// FIXME: This should be a virtual base class, mark it so somehow?
 	GfxContainer(rect_t area, gfxw_widget_type_t type);
 	~GfxContainer();
 
+	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };
 
@@ -297,7 +314,10 @@ public:
 #define GFXW_IS_SORTED_LIST(widget) ((widget)->_type == GFXW_SORTED_LIST)
 
 struct GfxList : public GfxContainer {
+public:
 	GfxList(rect_t area, bool sorted);
+
+	virtual void print(int indentation) const;
 };
 
 #define GFXW_IS_VISUAL(widget) ((widget)->_type == GFXW_VISUAL)
@@ -309,6 +329,7 @@ struct GfxVisual : public GfxContainer {
 public:
 	GfxVisual(gfx_state_t *state, int font);
 
+	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };
 
@@ -329,6 +350,7 @@ public:
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 	~GfxPort();
 
+	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };
 

@@ -805,7 +805,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 	if ((illegal_bits & 0x8000) // If we are vulnerable to those views at all...
 	        && s->dyn_views) { // ...check against all stop-updated dynviews
-		GfxDynView *widget = (GfxDynView *) s->dyn_views->contents;
+		GfxDynView *widget = (GfxDynView *) s->dyn_views->_contents;
 
 		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
 
@@ -1727,7 +1727,7 @@ static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 }
 
 static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
-	GfxDynView *widget = (GfxDynView *) list->contents;
+	GfxDynView *widget = (GfxDynView *) list->_contents;
 
 	while (widget) {
 		reg_t obj = make_reg(widget->_ID, widget->_subID);
@@ -1782,7 +1782,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 void _k_view_list_mark_free(EngineState *s, reg_t off) {
 	if (s->dyn_views) {
 
-		GfxDynView *w = (GfxDynView *) s->dyn_views->contents;
+		GfxDynView *w = (GfxDynView *)s->dyn_views->_contents;
 
 		while (w) {
 			if (w->_ID == off.segment
@@ -1790,7 +1790,7 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 				w->under_bitsp = NULL;
 			}
 
-			w = (GfxDynView *) w->_next;
+			w = (GfxDynView *)w->_next;
 		}
 	}
 }
@@ -2016,7 +2016,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 		node = LOOKUP_NODE(next_node); // Next node
 	}
 
-	widget = (GfxDynView *)(*widget_list)->contents;
+	widget = (GfxDynView *)(*widget_list)->_contents;
 
 	while (widget) { // Read back widget values
 		if (widget->signalp)
@@ -2027,7 +2027,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 }
 
 static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
-	GfxDynView *view = (GfxDynView *) list->contents;
+	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
@@ -2112,7 +2112,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 
 static void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list) {
 	// O(n^2)... a bit painful, but much faster than the redraws it helps prevent
-	GfxDynView *old_widget = (GfxDynView *) old_list->contents;
+	GfxDynView *old_widget = (GfxDynView *) old_list->_contents;
 
 	/* Traverses all old widgets, updates them with signals from the new widgets.
 	** This is done to avoid evil hacks in widget.c; widgets with unique IDs are
@@ -2121,7 +2121,7 @@ static void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list)
 	*/
 
 	while (old_widget) {
-		GfxDynView *new_widget = (GfxDynView *) new_list->contents;
+		GfxDynView *new_widget = (GfxDynView *) new_list->_contents;
 
 		while (new_widget
 		        && (new_widget->_ID != old_widget->_ID
@@ -2184,7 +2184,7 @@ static void _k_raise_topmost_in_view_list(EngineState *s, GfxList *list, GfxDynV
 }
 
 static void _k_redraw_view_list(EngineState *s, GfxList *list) {
-	GfxDynView *view = (GfxDynView *) list->contents;
+	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 
 		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
@@ -2236,7 +2236,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 
 void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 	// Draws list_nr members of list to s->pic.
-	GfxDynView *widget = (GfxDynView *) list->contents;
+	GfxDynView *widget = (GfxDynView *) list->_contents;
 
 	if (GFXWC(s->port) != GFXWC(s->dyn_views->_parent))
 		return; // Return if the pictures are meant for a different port
@@ -2991,7 +2991,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	assert_primary_widget_lists(s);
 
-	if (!s->dyn_views->contents // Only reparentize empty dynview list
+	if (!s->dyn_views->_contents // Only reparentize empty dynview list
 	        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
 	            || (s->dyn_views->_next))) // ... or not on top of the view list
 		reparentize_primary_widget_lists(s, s->port);
@@ -3005,7 +3005,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// Make sure that none of the doits() did something evil
 		assert_primary_widget_lists(s);
 
-		if (!s->dyn_views->contents // Only reparentize empty dynview list
+		if (!s->dyn_views->_contents // Only reparentize empty dynview list
 		        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
 		            || (s->dyn_views->_next))) // ... or not on top of the view list
 			reparentize_primary_widget_lists(s, s->port);
@@ -3027,7 +3027,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		_k_update_signals_in_view_list(s->dyn_views, templist);
 		s->dyn_views->tag(s->dyn_views);
 
-		_k_raise_topmost_in_view_list(s, s->dyn_views, (GfxDynView *)templist->contents);
+		_k_raise_topmost_in_view_list(s, s->dyn_views, (GfxDynView *)templist->_contents);
 
 		delete templist;
 		s->dyn_views->free_tagged(GFXWC(s->dyn_views)); // Free obsolete dynviews
@@ -3051,10 +3051,10 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		_k_view_list_do_postdraw(s, s->dyn_views);
 
 		// _k_view_list_dispose_loop() returns -1 if it requested a re-start, so we do just that.
-		while ((retval = _k_view_list_dispose_loop(s, cast_list, (GfxDynView *) s->dyn_views->contents, funct_nr, argc, argv) < 0))
+		while ((retval = _k_view_list_dispose_loop(s, cast_list, (GfxDynView *) s->dyn_views->_contents, funct_nr, argc, argv) < 0))
 			reparentize = 1;
 
-		if (s->drop_views->contents) {
+		if (s->drop_views->_contents) {
 			s->drop_views = gfxw_new_list(s->dyn_views->_bounds, GFXW_LIST_SORTED);
 			s->drop_views->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 			ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
@@ -3069,7 +3069,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		        && (s->dyn_views->_next)) // ... and not on top of the view list...
 			reparentize_primary_widget_lists(s, s->port); // ...then reparentize.
 
-		_k_view_list_kryptonize(s->dyn_views->contents);
+		_k_view_list_kryptonize(s->dyn_views->_contents);
 	}
 
 	FULL_REDRAW();

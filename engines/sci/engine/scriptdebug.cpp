@@ -1688,7 +1688,7 @@ static int c_gfx_print_port(EngineState *s) {
 	}
 
 	if (port)
-		port->print(port, 0);
+		port->print(0);
 	else
 		sciprintf("No such port.\n");
 
@@ -1722,7 +1722,7 @@ static int c_gfx_print_visual(EngineState *s) {
 	}
 
 	if (s->visual)
-		s->visual->print(s->visual, 0);
+		s->visual->print(0);
 	else
 		sciprintf("visual is uninitialized.\n");
 
@@ -1738,7 +1738,7 @@ static int c_gfx_print_dynviews(EngineState *s) {
 	if (!s->dyn_views)
 		sciprintf("No dynview list active.\n");
 	else
-		s->dyn_views->print(s->dyn_views, 0);
+		s->dyn_views->print(0);
 
 	return 0;
 }
@@ -1752,7 +1752,7 @@ static int c_gfx_print_dropviews(EngineState *s) {
 	if (!s->drop_views)
 		sciprintf("No dropped dynview list active.\n");
 	else
-		s->drop_views->print(s->drop_views, 0);
+		s->drop_views->print(0);
 
 	return 0;
 }
@@ -1796,7 +1796,7 @@ static int c_gfx_print_widget(EngineState *s) {
 			int widget_nr = cmd_params[i].val;
 
 			sciprintf("===== Widget #%d:\n", widget_nr);
-			debug_widgets[widget_nr]->print(debug_widgets[widget_nr], 0);
+			debug_widgets[widget_nr]->print(0);
 		}
 
 	} else if (debug_widget_pos > 1)

@@ -39,10 +39,10 @@ namespace Sci {
 #define SCI_SPECIAL_CHAR_ARROW_DOWN 0x19
 
 static void clear_titlebar(GfxPort *titlebar) {
-	if (titlebar->contents) {
-		delete titlebar->contents;
-		titlebar->contents = NULL;
-		titlebar->nextpp = &(titlebar->contents);
+	if (titlebar->_contents) {
+		delete titlebar->_contents;
+		titlebar->_contents = NULL;
+		titlebar->_nextpp = &(titlebar->_contents);
 	}
 }
 

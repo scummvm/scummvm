@@ -215,7 +215,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 				case '`':
 					if (ev.buckybits & SCI_EVM_CTRL)
-						s->visual->print(s->visual, 0);
+						s->visual->print(0);
 					break;
 
 				case SCI_K_ESC:
