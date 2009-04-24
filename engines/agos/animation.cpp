@@ -100,11 +100,11 @@ void MoviePlayer::handleNextFrame() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_PAUSE)
-				_vm->pause();
-			if (event.kbd.ascii == 27) {
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				_leftButtonDown = true;
 				_rightButtonDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_PAUSE) {
+				_vm->pause();
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
