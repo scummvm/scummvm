@@ -983,13 +983,11 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 
 		_midi.pause(true);
 		_mixer->pauseAll(true);
-		_sound->ambientPause(true);
 	} else {
 		_pause = false;
 
 		_midi.pause(_musicPaused);
 		_mixer->pauseAll(false);
-		_sound->ambientPause(_ambientPaused);
 	}
 }
 
@@ -998,8 +996,10 @@ void AGOSEngine::pause() {
 
 	while (_pause && !shouldQuit()) {
 		delay(1);
-		if (_keyPressed.keycode == Common::KEYCODE_PAUSE)
+		if (_keyPressed.keycode == Common::KEYCODE_PAUSE) {
 			pauseEngine(false);
+			_keyPressed.reset();
+		}
 	}
 }
 
