@@ -214,7 +214,7 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 
 static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int priority, int control,
 	rect_t src, rect_t dest, rect_t clip, int static_buf, gfx_pixmap_t *control_map, gfx_pixmap_t *priority_map) {
-	int error;
+	int err;
 	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.width, dest.height);
 
 	if (control >= 0 || priority >= 0) {
@@ -237,18 +237,18 @@ static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int prior
 	src.width = clipped_dest.width;
 	src.height = clipped_dest.height;
 
-	error = _gfxop_install_pixmap(driver, pxm);
-	if (error)
-		return error;
+	err = _gfxop_install_pixmap(driver, pxm);
+	if (err)
+		return err;
 
 	DDIRTY(stderr, "\\-> Drawing to actual %d %d %d %d\n", clipped_dest.x / driver->mode->xfact,
 	       clipped_dest.y / driver->mode->yfact, clipped_dest.width / driver->mode->xfact, clipped_dest.height / driver->mode->yfact);
 
-	error = driver->draw_pixmap(driver, pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
+	err = driver->draw_pixmap(driver, pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 
-	if (error) {
-		GFXERROR("driver->draw_pixmap() returned error!\n");
-		return error;
+	if (err) {
+		GFXERROR("driver->draw_pixmap() returned err!\n");
+		return err;
 	}
 
 	return GFX_OK;
@@ -1036,14 +1036,14 @@ int gfxop_fill_box(gfx_state_t *state, rect_t box, gfx_color_t color) {
 }
 
 static int _gfxop_buffer_propagate_box(gfx_state_t *state, rect_t box, gfx_buffer_t buffer) {
-	int error;
+	int err;
 
 	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->mode->xfact, 200 * state->driver->mode->yfact)))
 		return GFX_OK;
 
-	if ((error = state->driver->update(state->driver, box, Common::Point(box.x, box.y), buffer))) {
+	if ((err = state->driver->update(state->driver, box, Common::Point(box.x, box.y), buffer))) {
 		GFXERROR("Error occured while updating region (%d,%d,%d,%d) in buffer %d\n", box.x, box.y, box.width, box.height, buffer);
-		return error;
+		return err;
 	}
 
 	return GFX_OK;
@@ -1930,14 +1930,14 @@ gfx_text_handle_t *gfxop_new_text(gfx_state_t *state, int font_nr, char *text, i
 								  gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color, int flags) {
 	gfx_text_handle_t *handle;
 	gfx_bitmap_font_t *font;
-	int i, error = 0;
+	int i, err = 0;
 	BASIC_CHECKS(NULL);
 
 	// mapping text colors to palette
-	error |= gfxop_set_color(state, &color1, color1);
-	error |= gfxop_set_color(state, &color2, color2);
-	error |= gfxop_set_color(state, &bg_color, bg_color);
-	if (error) {
+	err |= gfxop_set_color(state, &color1, color1);
+	err |= gfxop_set_color(state, &color2, color2);
+	err |= gfxop_set_color(state, &bg_color, bg_color);
+	if (err) {
 		GFXERROR("Unable to set up colors");
 		return NULL;
 	}
