@@ -2452,6 +2452,25 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"urban",
+			"Non-Interactive Demo",
+			{
+				{"wdemo.s24", 0, "14ac9bd51db7a075d69ddb144904b271", 87},
+				{"demo.vmd", 0, "65d04715d871c292518b56dd160b0161", 9091237},
+				{"urband.vmd", 0, "60343891868c91854dd5c82766c70ecc", 922461},
+				{NULL, 0, NULL, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"wdemo.s24"
+	},
+	{
+		{
 			"spirou",
 			"",
 			AD_ENTRY1s("intro2.stk", "5e214cec5041d6a4a810feba8ddaaa92",247576),

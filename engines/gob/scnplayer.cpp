@@ -79,6 +79,8 @@ bool SCNPlayer::play(Common::File &scn) {
 			clearScreen();
 		} else if (lineStartsWith(line, "IMD_PRELOAD ")) {
 			playVideo(line.c_str() + 12);
+		} else if (lineStartsWith(line, "IMD ")) {
+			playVideo(line.c_str() + 4);
 		} else if (lineStartsWith(line, "GOTO ")) {
 			gotoLabel(scn, labels, line.c_str() + 5);
 		}
