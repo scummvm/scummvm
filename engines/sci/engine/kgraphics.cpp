@@ -3025,7 +3025,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		_k_update_signals_in_view_list(s->dyn_views, templist);
-		s->dyn_views->tag(s->dyn_views);
+		s->dyn_views->tag();
 
 		_k_raise_topmost_in_view_list(s, s->dyn_views, (GfxDynView *)templist->_contents);
 

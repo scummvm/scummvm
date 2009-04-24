@@ -81,7 +81,6 @@ struct GfxVisual;
 struct GfxPort;
 
 typedef int gfxw_point_op(GfxWidget *, Common::Point);
-typedef int gfxw_op(GfxWidget *);
 typedef int gfxw_bin_op(GfxWidget *, GfxWidget *);
 
 struct GfxWidget {
@@ -123,8 +122,11 @@ public:
 	 *
 	 * If invoked on a container widget, this will also tag all of the container's
 	 * contents (but not the contents' contents!)
+	 * FIXME: Actually, the code in GfxContainer::tag contradicts the last claim!
 	 */
-	gfxw_op *tag;
+	virtual void tag() {
+		_flags |= GFXW_FLAG_TAGGED;
+	}
 
 	/**
 	 * Prints a string representation of the widget with sciprintf.
@@ -302,6 +304,7 @@ public:
 	GfxContainer(rect_t area, gfxw_widget_type_t type);
 	~GfxContainer();
 
+	virtual void tag();
 	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
 };

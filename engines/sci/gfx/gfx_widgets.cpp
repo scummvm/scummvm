@@ -144,7 +144,6 @@ GfxWidget::GfxWidget(gfxw_widget_type_t type_) {
 	_widgetPriority = -1;
 
 	draw = NULL;
-	tag = NULL;
 	compare_to = NULL;
 	equals = NULL;
 	should_replace = NULL;
@@ -252,10 +251,9 @@ static int _gfxwop_basic_should_replace(GfxWidget *widget, GfxWidget *other) {
 	return 0;
 }
 
-static void _gfxw_set_ops(GfxWidget *widget, gfxw_point_op *draw, gfxw_op *tag,
+static void _gfxw_set_ops(GfxWidget *widget, gfxw_point_op *draw,
 	gfxw_bin_op *compare_to, gfxw_bin_op *equals, gfxw_bin_op *superarea_of) {
 	widget->draw = draw;
-	widget->tag = tag;
 	widget->compare_to = compare_to;
 	widget->equals = equals;
 	widget->superarea_of = superarea_of;
@@ -316,12 +314,6 @@ GfxWidget::~GfxWidget() {
 
 	_magic = GFXW_MAGIC_INVALID;
 	_gfxw_debug_remove_widget(this);
-}
-
-static int _gfxwop_basic_tag(GfxWidget *widget) {
-	widget->_flags |= GFXW_FLAG_TAGGED;
-
-	return 0;
 }
 
 static int _gfxwop_basic_compare_to(GfxWidget *widget, GfxWidget *other) {
@@ -409,7 +401,7 @@ static int _gfxwop_box_equals(GfxWidget *widget, GfxWidget *other) {
 }
 
 void _gfxw_set_ops_BOX(GfxWidget *widget) {
-	_gfxw_set_ops(widget, _gfxwop_box_draw, _gfxwop_basic_tag,
+	_gfxw_set_ops(widget, _gfxwop_box_draw,
 	              _gfxwop_basic_compare_to, _gfxwop_box_equals, _gfxwop_box_superarea_of);
 }
 
@@ -498,7 +490,7 @@ void GfxRect::print(int indentation) const {
 }
 
 void _gfxw_set_ops_RECT(GfxWidget *prim) {
-	_gfxw_set_ops(prim, _gfxwop_rect_draw, _gfxwop_basic_tag,
+	_gfxw_set_ops(prim, _gfxwop_rect_draw,
 	              _gfxwop_basic_compare_to, _gfxwop_primitive_equals, _gfxwop_basic_superarea_of);
 }
 
@@ -543,7 +535,7 @@ void GfxLine::print(int indentation) const {
 }
 
 void _gfxw_set_ops_LINE(GfxWidget *prim) {
-	_gfxw_set_ops(prim, _gfxwop_line_draw, _gfxwop_basic_tag,
+	_gfxw_set_ops(prim, _gfxwop_line_draw,
 	              _gfxwop_basic_compare_to, _gfxwop_primitive_equals, _gfxwop_basic_superarea_of);
 }
 
@@ -637,7 +629,6 @@ void GfxView::print(int indentation) const {
 
 void _gfxw_set_ops_VIEW(GfxWidget *view, char stat) {
 	_gfxw_set_ops(view, (stat) ? _gfxwop_static_view_draw : _gfxwop_view_draw,
-	              _gfxwop_basic_tag,
 	              _gfxwop_basic_compare_to, _gfxwop_basic_equals, _gfxwop_basic_superarea_of);
 }
 
@@ -767,7 +758,7 @@ static int _gfxwop_dyn_view_compare_to(GfxWidget *widget, GfxWidget *other) {
 }
 
 void _gfxw_set_ops_DYNVIEW(GfxWidget *widget) {
-	_gfxw_set_ops(widget, _gfxwop_dyn_view_draw, _gfxwop_basic_tag,
+	_gfxw_set_ops(widget, _gfxwop_dyn_view_draw,
 	              _gfxwop_dyn_view_compare_to, _gfxwop_dyn_view_equals, _gfxwop_basic_superarea_of);
 }
 
@@ -929,7 +920,7 @@ static int _gfxwop_text_compare_to(GfxWidget *widget, GfxWidget *other) {
 }
 
 void _gfxw_set_ops_TEXT(GfxWidget *widget) {
-	_gfxw_set_ops(widget, _gfxwop_text_alloc_and_draw, _gfxwop_basic_tag,
+	_gfxw_set_ops(widget, _gfxwop_text_alloc_and_draw,
 	              _gfxwop_text_compare_to, _gfxwop_text_equals,
 	              _gfxwop_basic_superarea_of);
 	widget->should_replace = _gfxwop_text_should_replace;
@@ -993,12 +984,12 @@ static int _gfxwop_container_add_dirty_rel(GfxContainer *cont, rect_t rect, int 
 	return cont->add_dirty_abs(cont, _move_rect(rect, Common::Point(cont->zone.x, cont->zone.y)), propagate);
 }
 
-static void _gfxw_set_container_ops(GfxContainer *container, gfxw_point_op *draw, gfxw_op *tag,
+static void _gfxw_set_container_ops(GfxContainer *container, gfxw_point_op *draw,
 	gfxw_bin_op *compare_to, gfxw_bin_op *equals,
 	gfxw_bin_op *superarea_of,
 	gfxw_unary_container_op *free_tagged, gfxw_unary_container_op *free_contents,
 	gfxw_rect_op *add_dirty, gfxw_container_op *add) {
-	_gfxw_set_ops(container, draw, tag, compare_to, equals, superarea_of);
+	_gfxw_set_ops(container, draw, compare_to, equals, superarea_of);
 
 	container->free_tagged = free_tagged;
 	container->free_contents = free_contents;
@@ -1155,16 +1146,13 @@ GfxContainer::~GfxContainer() {
 	_dirty = NULL;
 }
 
-static int _gfxwop_container_tag(GfxWidget *widget) {
-	GfxContainer *container = (GfxContainer *) widget;
-	GfxWidget *seeker = container->_contents;
-
+void GfxContainer::tag() {
+	// FIXME: Should we also tag this object itself?
+	GfxWidget *seeker = _contents;
 	while (seeker) {
-		seeker->tag(seeker);
+		seeker->tag();
 		seeker = seeker->_next;
 	}
-
-	return 0;
 }
 
 int GfxContainer::setVisual(GfxVisual *visual) {
@@ -1432,7 +1420,6 @@ static int _gfxwop_sorted_list_add(GfxContainer *container, GfxWidget *widget) {
 
 void _gfxw_set_ops_LIST(GfxContainer *list, char sorted) {
 	_gfxw_set_container_ops((GfxContainer *)list, sorted ? _gfxwop_sorted_list_draw : _gfxwop_list_draw,
-	                        _gfxwop_container_tag,
 	                        _gfxwop_basic_compare_to, sorted ? _gfxwop_basic_equals : _gfxwop_list_equals,
 	                        _gfxwop_basic_superarea_of,
 	                        _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
@@ -1507,7 +1494,7 @@ int GfxVisual::setVisual(GfxVisual *visual) {
 
 void _gfxw_set_ops_VISUAL(GfxContainer *visual) {
 	_gfxw_set_container_ops((GfxContainer *)visual, _gfxwop_visual_draw,
-	                        _gfxwop_container_tag, _gfxwop_basic_compare_to,
+	                        _gfxwop_basic_compare_to,
 	                        _gfxwop_basic_equals, _gfxwop_basic_superarea_of,
 	                        _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
 	                        _gfxwop_container_add_dirty, _gfxwop_container_add);
@@ -1668,7 +1655,7 @@ static int _gfxwop_port_add(GfxContainer *container, GfxWidget *widget) {
 }
 
 void _gfxw_set_ops_PORT(GfxContainer *widget) {
-	_gfxw_set_container_ops((GfxContainer *)widget, _gfxwop_port_draw, _gfxwop_container_tag,
+	_gfxw_set_container_ops((GfxContainer *)widget, _gfxwop_port_draw,
 	                        _gfxwop_basic_compare_to, _gfxwop_basic_equals, _gfxwop_port_superarea_of,
 	                        _gfxwop_container_free_tagged, _gfxwop_container_free_contents,
 	                        _gfxwop_port_add_dirty, _gfxwop_port_add);
