@@ -34,7 +34,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_gui.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for gfxw_container_t, gfxw_port_t, gfxw_visual_t
+#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/scicore/resource.h"
 #include "sci/scicore/sciconsole.h"
 #include "sci/scicore/vocabulary.h"
@@ -1669,7 +1669,7 @@ static int c_gfx_current_port(EngineState *s) {
 }
 
 static int c_gfx_print_port(EngineState *s) {
-	gfxw_port_t *port;
+	GfxPort *port;
 
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -1781,7 +1781,7 @@ static int c_gfx_drawpic(EngineState *s) {
 }
 
 #ifdef GFXW_DEBUG_WIDGETS
-extern gfxw_widget_t *debug_widgets[];
+extern GfxWidget *debug_widgets[];
 extern int debug_widget_pos;
 
 static int c_gfx_print_widget(EngineState *s) {

@@ -32,7 +32,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/gfx/gfx_widgets.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for gfxw_port_t, gfxw_visual_t
+#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
 
 namespace Sci {

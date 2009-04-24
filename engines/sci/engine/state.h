@@ -51,10 +51,10 @@ class Menubar;
 struct kfunct_sig_pair_t;	// from kernel.h
 
 struct gfx_state_t;
-struct gfxw_port_t;
-struct gfxw_visual_t;
-struct gfxw_container_t;	
-struct gfxw_list_t;
+struct GfxPort;
+struct GfxVisual;
+struct GfxContainer;	
+struct GfxList;
 
 
 class DirSeeker {
@@ -161,25 +161,25 @@ public:
 	int save_mouse_pointer_cel; /* Temporary storage for mouse pointer resource, when the pointer is hidden */
 
 	int port_serial; /* Port serial number, for save/restore */
-	gfxw_port_t *port; /* The currently active port */
+	GfxPort *port; /* The currently active port */
 
 	gfx_color_t ega_colors[16]; /* The 16 EGA colors- for SCI0(1) */
 
-	gfxw_visual_t *visual; /* A visual widget, containing all ports */
+	GfxVisual *visual; /* A visual widget, containing all ports */
 
-	gfxw_port_t *titlebar_port; /* Title bar viewport (0,0,9,319) */
-	gfxw_port_t *wm_port; /* window manager viewport and designated &heap[0] view (10,0,199,319) */
-	gfxw_port_t *picture_port; /* The background picture viewport (10,0,199,319) */
-	gfxw_port_t *iconbar_port; /* Full-screen port used for non-clipped icon bar draw in SCI1 */
+	GfxPort *titlebar_port; /* Title bar viewport (0,0,9,319) */
+	GfxPort *wm_port; /* window manager viewport and designated &heap[0] view (10,0,199,319) */
+	GfxPort *picture_port; /* The background picture viewport (10,0,199,319) */
+	GfxPort *iconbar_port; /* Full-screen port used for non-clipped icon bar draw in SCI1 */
 
 	gfx_map_mask_t pic_visible_map; /* The number of the map to display in update commands */
 	int pic_animate; /* The animation used by Animate() to display the picture */
 
 	int dyn_views_list_serial; /* Used for save/restore */
-	gfxw_list_t *dyn_views; /* Pointers to pic and dynamic view lists */
+	GfxList *dyn_views; /* Pointers to pic and dynamic view lists */
 
 	int drop_views_list_serial; /* Used for save/restore */
-	gfxw_list_t *drop_views; /* A list Animate() can dump dropped dynviews into */
+	GfxList *drop_views; /* A list Animate() can dump dropped dynviews into */
 
 	long animation_delay; /* A delay factor for pic opening animations. Defaults to 500. */
 	int animation_granularity; /* Number of animation steps to perform betwen updates for transition animations */

@@ -210,7 +210,7 @@ public:
 	 * @param port			the port of the currently active menu (if any)
 	 * @return true if the pointer is outside a valid port, false otherwise.
 	 */
-	bool mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, gfxw_port_t *port) const;
+	bool mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, GfxPort *port) const;
 
 };
 

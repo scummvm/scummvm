@@ -53,15 +53,15 @@ enum controlStateFlags {
 	kControlStateDitherFramed = 0x1000   // 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
 };
 
-void sciw_set_status_bar(EngineState *s, gfxw_port_t *status_bar, const Common::String &text, int fgcolor, int bgcolor);
+void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::String &text, int fgcolor, int bgcolor);
 /* Sets the contents of a port used as status bar
 ** Parmeters: (EngineState *) s: The affected game state
-**            (gfxw_port_t *) status_bar: The status bar port
+**            (GfxPort *) status_bar: The status bar port
 **            (const char *) text: The text to draw
 ** Returns  : (void)
 */
 
-gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
+GfxPort *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t color, gfx_color_t bgcolor,
 	int title_font, gfx_color_t title_color, gfx_color_t title_bg_color,
 	const char *title, int flags);
 /* Creates a new SCI style window
@@ -75,16 +75,16 @@ gfxw_port_t *sciw_new_window(EngineState *s, rect_t area, int font, gfx_color_t 
 **             (gfx_color_t) title_bg_color: Color to use for the title bar background
 **             (const char *) title: The text to write into the title bar
 **             (int) flags: Any ORred combination of window flags
-** Returns   : (gfxw_port_t *) A newly allocated port with the requested characteristics
+** Returns   : (GfxPort *) A newly allocated port with the requested characteristics
 */
 
 /*---------------------*/
 /*** Control widgets ***/
 /*---------------------*/
 
-gfxw_list_t *sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, char selected, char inverse, char gray);
+GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font, char selected, char inverse, char gray);
 /* Creates a new button control list
-** Parameters: (gfxw_port_t *) port: The port containing the color values to use for the
+** Parameters: (GfxPort *) port: The port containing the color values to use for the
 **                                   button (the button is /not/ appended to the port there)
 **             (reg_t) ID: Button's ID
 **             (rect_t) zone: The area occupied by the button
@@ -93,13 +93,13 @@ gfxw_list_t *sciw_new_button_control(gfxw_port_t *port, reg_t ID, rect_t zone, c
 **             (char) selected: Whether the button should be marked as being selected by the keyboard focus
 **             (char) inverse: Whether to inverse the color scheme
 **             (char) gray: Whether the button should be grayed out
-** Returns   : (gfxw_list_t *) The button
+** Returns   : (GfxList *) The button
 */
 
-gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font,
+GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font,
 	gfx_alignment_t align, char frame, char inverse);
 /* Creates a new text control list
-** Parameters: (gfxw_port_t *) port: The port containing the color values to use
+** Parameters: (GfxPort *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
 **             (rect_t) zone: Area occupied by the text
 **             (char *) text: The text
@@ -107,38 +107,38 @@ gfxw_list_t *sciw_new_text_control(gfxw_port_t *port, reg_t ID, rect_t zone, cha
 **             (gfx_alignment_t) align: Horizontal text alignment to use
 **             (char) frame: Whether a dithered frame should surround the text
 **             (char) inverse: Whether the text colors should be inversed
-** Returns   : (gfxw_list_t *) The text control widget list
+** Returns   : (GfxList *) The text control widget list
 */
 
-gfxw_list_t *sciw_new_edit_control(gfxw_port_t *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
+GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
 	char inverse);
 /* Creates a new edit control list
-** Parameters: (gfxw_port_t *) port: The port containing the color values to use
+** Parameters: (GfxPort *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
 **             (rect_t) zone: Area occupied by the text
 **             (char *) text: The text
 **             (int) font: The font the text is to be drawn in
 **             (int) cursor: Cursor position
 **             (char) inverse: Whether the edit widget should be reversed
-** Returns   : (gfxw_list_t *) An appropriate widget list
+** Returns   : (GfxList *) An appropriate widget list
 */
 
-gfxw_list_t *sciw_new_icon_control(gfxw_port_t *port, reg_t ID, rect_t zone, int view, int loop, int cel,
+GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, int loop, int cel,
 	char frame, char inverse);
 /* Creates a new icon control list
-** Parameters: (gfxw_port_t *) port: The port containing the color values to use
+** Parameters: (GfxPort *) port: The port containing the color values to use
 **             (reg_t) ID: Text widget ID
 **             (rect_t) zone: Area occupied by the text
 **             (int x int x int) view, loop, cel: The cel to display
 **             (char) frame: Whether the widget should be surrounded by a frame
 **             (char) lina inverse: Whether colors should be inversed
-** Returns   : (gfxw_list_t *) An appropriate widget list
+** Returns   : (GfxList *) An appropriate widget list
 */
 
-gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
+GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
 	int entries_nr, int list_top, int selection, char inverse);
 /* Creates a new list control list
-** Parameters: (gfxw_port_t *) port: The port containing the color values to use
+** Parameters: (GfxPort *) port: The port containing the color values to use
 **             (int) ID: Text widget ID
 **             (rect_t) zone: Area occupied by the text
 **             (int) font_nr: number of the font to use
@@ -147,38 +147,38 @@ gfxw_list_t *sciw_new_list_control(gfxw_port_t *port, reg_t ID, rect_t zone, int
 **             (int) list_top: First list item that is visible
 **             (int) selection: The list item that is selected
 **             (char) invserse: The usual meaning
-** Returns   : (gfxw_list_t *) An appropriate widget list
+** Returns   : (GfxList *) An appropriate widget list
 */
 
 /*---------------------*/
 /*** Menubar widgets ***/
 /*---------------------*/
 
-void sciw_set_menubar(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection);
+void sciw_set_menubar(EngineState *s, GfxPort *status_bar, Menubar *menubar, int selection);
 /* Draws the menu bar
 ** Parameters: (EngineState *) s: The state to operate on
-**             (gfxw_port_t *) status_bar: The status bar port to modify
+**             (GfxPort *) status_bar: The status bar port to modify
 **             (Menubar *) menubar: The menu bar to use
 **             (int) selection: Number of the menu to hightlight, or -1 for 'none'
 ** Returns   : (void)
 */
 
-gfxw_port_t *sciw_new_menu(EngineState *s, gfxw_port_t *status_bar, Menubar *menubar, int selection);
+GfxPort *sciw_new_menu(EngineState *s, GfxPort *status_bar, Menubar *menubar, int selection);
 /* Creates a menu port
 ** Parameters: (EngineState *) s: The state to operate on
-**             (gfxw_port_t *) status_bar: The status bar
+**             (GfxPort *) status_bar: The status bar
 **             (Menubar *) menubar: The menu bar to use
 **             (int) selection: Number of the menu to interpret
-** Returns   : (gfxw_port_t *) The result port
+** Returns   : (GfxPort *) The result port
 */
 
-gfxw_port_t *sciw_toggle_item(gfxw_port_t *menu_port, Menu *menu, int selection, bool selected);
+GfxPort *sciw_toggle_item(GfxPort *menu_port, Menu *menu, int selection, bool selected);
 /* Toggle the selection of a menu item from a menu port
-** Parameters: (gfxw_port_t *) menu_port: The port to modify
+** Parameters: (GfxPort *) menu_port: The port to modify
 **             (Menu *) menu: The menu the menu port corresponds to
 **             (int) selection: Number of the menu entry to unselect, or -1 to do a NOP
 **             (bool) selected: Whether to set the item's state to selected or not
-** Returns   : (gfxw_port_t *) The modified menu
+** Returns   : (GfxPort *) The modified menu
 */
 
 } // End of namespace Sci

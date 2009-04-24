@@ -218,7 +218,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 #if 0
 	if (s->dyn_views) {  // Free any widget associated with the clone
-		gfxw_widget_t *widget = gfxw_set_id(gfxw_remove_ID(s->dyn_views, offset), GFXW_NO_ID);
+		GfxWidget *widget = gfxw_set_id(gfxw_remove_ID(s->dyn_views, offset), GFXW_NO_ID);
 
 		if (widget && s->bg_widgets)
 			s->bg_widgets->add(GFXWC(s->bg_widgets), widget);

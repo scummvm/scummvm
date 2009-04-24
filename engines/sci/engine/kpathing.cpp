@@ -26,7 +26,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_widgets.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for gfxw_port_t, gfxw_container_t
+#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
 
 #include "common/list.h"
 
@@ -319,8 +319,8 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Yellow: Contained access
 	int poly_colors[][3] = {{0, 255, 0}, {0, 0, 255}, {255, 0, 0}, {255, 255, 0}};
 	gfx_color_t col;
-	gfxw_list_t *decorations = s->picture_port->decorations;
-	gfxw_primitive_t *line;
+	GfxList *decorations = s->picture_port->decorations;
+	GfxPrimitive *line;
 
 	col.visual = PaletteEntry(poly_colors[type][0], poly_colors[type][1], poly_colors[type][2]);
 	col.alpha = 0;
@@ -332,7 +332,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y += 10;
 
 	line = gfxw_new_line(p1, p2, col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL);
-	decorations->add((gfxw_container_t *)decorations, (gfxw_widget_t *)line);
+	decorations->add((GfxContainer *)decorations, (GfxWidget *)line);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start) {
@@ -341,8 +341,8 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	// Blue: Starting point
 	int point_colors[][3] = {{0, 255, 0}, {0, 0, 255}};
 	gfx_color_t col;
-	gfxw_list_t *decorations = s->picture_port->decorations;
-	gfxw_box_t *box;
+	GfxList *decorations = s->picture_port->decorations;
+	GfxBox *box;
 
 	col.visual = PaletteEntry(point_colors[start][0], point_colors[start][1], point_colors[start][2]);
 	col.alpha = 0;
@@ -351,7 +351,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	col.mask = GFX_MASK_VISUAL | GFX_MASK_PRIORITY;
 
 	box = gfxw_new_box(s->gfx_state, gfx_rect(p.x - 1, p.y - 1 + 10, 3, 3), col, col, GFX_BOX_SHADE_FLAT);
-	decorations->add((gfxw_container_t *) decorations, (gfxw_widget_t *) box);
+	decorations->add((GfxContainer *) decorations, (GfxWidget *) box);
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
@@ -1539,7 +1539,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point start = Common::Point(SKPV(0), SKPV(1));
 
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
-		gfxw_port_t *port = s->picture_port;
+		GfxPort *port = s->picture_port;
 
 		if (!port->decorations) {
 			port->decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);

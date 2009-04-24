@@ -28,7 +28,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/menubar.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for gfxw_port_t, gfxw_visual_t
+#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 
 namespace Sci {
 
@@ -184,7 +184,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (menu_mode) {
 		int old_item;
 		int old_menu;
-		gfxw_port_t *port = NULL;
+		GfxPort *port = NULL;
 
 		item_nr = -1;
 
