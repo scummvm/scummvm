@@ -68,6 +68,10 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 	int writepos = mirrored ? xl : 0;
 	int linebase = 0;
 
+	// For some cels the RLE data ends at the last non-transparent pixel,
+	// so we initialize the whole pixmap to transparency first
+	memset(dest, color_key, pixmap_size);
+
 	while ((mirrored ? linebase < pixmap_size : writepos < pixmap_size) && literal_pos < size && runlength_pos < size) {
 		int op = resource[runlength_pos];
 		int bytes;
