@@ -187,7 +187,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("Sort", kSort, "ooo"),
 	/*(?)*/	DEFUN("AvoidPath", kAvoidPath, "ii.*"),
 	/*(?)*/	DEFUN("Lock", kLock, "iii*"),
-	/*(?)*/	DEFUN("Palette", kPalette, "i*"),
+	/*(?)*/	DEFUN("Palette", kPalette, "i.*"),
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 
 	// Non-experimental Functions without a fixed ID
