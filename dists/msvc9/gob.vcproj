@@ -536,6 +536,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\scnplayer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\scnplayer.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\util.cpp"
 			>
 		</File>
