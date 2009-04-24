@@ -2437,7 +2437,6 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	unsigned int goner_nr = SKPV(0);
 	GfxPort *goner;
 	GfxPort *pred;
-	int id = s->visual->port_refs_nr;
 
 	goner = gfxw_find_port(s->visual, goner_nr);
 	if ((goner_nr < 3) || (goner == NULL)) {
@@ -2458,11 +2457,12 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->port = pred;
 
 	// Find the last port that exists and that isn't marked no-switch
-	while ((!s->visual->port_refs[id] && id >= 0) || (s->visual->port_refs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH))
+	int id = s->visual->_portRefs.size() - 1;
+	while (id > 0 && (!s->visual->_portRefs[id] || (s->visual->_portRefs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH)))
 		id--;
 
 	sciprintf("Activating port %d after disposing window %d\n", id, goner_nr);
-	s->port = s->visual->port_refs[id];
+	s->port = (id >= 0) ? s->visual->_portRefs[id] : 0;
 
 	if (!s->port)
 		s->port = gfxw_find_default_port(s->visual);

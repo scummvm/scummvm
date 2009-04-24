@@ -179,6 +179,11 @@ static int verify_widget(GfxWidget *widget) {
 	return 0;
 }
 
+GfxWidget::~GfxWidget() {
+	_magic = GFXW_MAGIC_INVALID;
+	_gfxw_debug_remove_widget(this);
+}
+
 #define VERIFY_WIDGET(w) \
 	if (verify_widget((GfxWidget *)(w))) { GFXERROR("Error occured while validating widget\n"); }
 
@@ -197,9 +202,7 @@ static void _gfxw_unallocate_widget(gfx_state_t *state, GfxWidget *widget) {
 		}
 	}
 
-	widget->_magic = GFXW_MAGIC_INVALID;
 	delete widget;
-	_gfxw_debug_remove_widget(widget);
 }
 
 #define GFX_ASSERT(_x) \
@@ -1544,7 +1547,6 @@ static int _gfxwop_visual_draw(GfxWidget *widget, Common::Point pos) {
 
 static int _gfxwop_visual_free(GfxWidget *widget) {
 	GfxVisual *visual = (GfxVisual *) widget;
-	GfxPort **portrefs;
 	int retval;
 
 	if (!GFXW_IS_VISUAL(visual)) {
@@ -1553,17 +1555,12 @@ static int _gfxwop_visual_free(GfxWidget *widget) {
 		return 1;
 	}
 
-	portrefs = visual->port_refs;
-
 	retval = _gfxwop_container_free(widget);
-
-	free(portrefs);
 
 	return 0;
 }
 
 static int _gfxwop_visual_print(GfxWidget *widget, int indentation) {
-	int i;
 	int comma = 0;
 	GfxVisual *visual = (GfxVisual *) widget;
 
@@ -1575,8 +1572,8 @@ static int _gfxwop_visual_print(GfxWidget *widget, int indentation) {
 
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("VISUAL; ports={");
-	for (i = 0; i < visual->port_refs_nr; i++)
-		if (visual->port_refs[i]) {
+	for (uint i = 0; i < visual->_portRefs.size(); i++) {
+		if (visual->_portRefs[i]) {
 			if (comma)
 				sciprintf(",");
 			else
@@ -1584,6 +1581,7 @@ static int _gfxwop_visual_print(GfxWidget *widget, int indentation) {
 
 			sciprintf("%d", i);
 		}
+	}
 	sciprintf("}\n");
 
 	return _w_gfxwop_container_print(widget, indentation);
@@ -1617,23 +1615,17 @@ GfxVisual::GfxVisual(gfx_state_t *state, int font)
 	font_nr = font;
 	gfx_state = state;
 
-	port_refs_nr = 16;
-	port_refs = (GfxPort **)sci_calloc(sizeof(GfxPort), port_refs_nr);	// FIXME: Isn't this bogus???
-
 	_gfxw_set_ops_VISUAL(this);
 }
 
 static int _visual_find_free_ID(GfxVisual *visual) {
-	int id = 0;
-	int newports = 16;
+	uint id = 0;
 
-	while (visual->port_refs[id] && id < visual->port_refs_nr)
+	while (id < visual->_portRefs.size() && visual->_portRefs[id])
 		id++;
 
-	if (id == visual->port_refs_nr) { // Out of ports?
-		visual->port_refs_nr += newports;
-		visual->port_refs = (GfxPort**)sci_realloc(visual->port_refs, visual->port_refs_nr);	// FIXME: Isn't this bogus???
-		memset(visual->port_refs + id, 0, newports * sizeof(GfxPort *)); // Clear new port refs
+	if (id == visual->_portRefs.size()) { // Out of ports?
+		visual->_portRefs.push_back(0);
 	}
 
 	return id;
@@ -1681,15 +1673,15 @@ static int _gfxwop_port_free(GfxWidget *widget) {
 		GfxVisual *visual = port->_visual;
 		int ID = port->_ID;
 
-		if (ID < 0 || ID >= visual->port_refs_nr) {
-			GFXWARN("Attempt to free port #%d; allowed: [0..%d]!\n", ID, visual->port_refs_nr);
+		if (ID < 0 || ID >= (int)visual->_portRefs.size()) {
+			GFXWARN("Attempt to free port #%d; allowed: [0..%d]!\n", ID, visual->_portRefs.size());
 			return GFX_ERROR;
 		}
 
-		if (visual->port_refs[ID] != port) {
-			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p", ID, (void *)port, (void *)visual->port_refs[ID]);
+		if (visual->_portRefs[ID] != port) {
+			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p", ID, (void *)port, (void *)visual->_portRefs[ID]);
 		} else
-			visual->port_refs[ID] = NULL;
+			visual->_portRefs[ID] = NULL;
 
 	}
 
@@ -1804,7 +1796,7 @@ GfxPort::GfxPort(GfxVisual *visual_, rect_t area, gfx_color_t fgcolor, gfx_color
 	_bgcolor = bgcolor_;
 	font_nr = visual_->font_nr;
 	_ID = _visual_find_free_ID(visual_);
-	visual_->port_refs[_ID] = this;
+	visual_->_portRefs[_ID] = this;
 
 	_gfxw_set_ops_PORT(this);
 }
@@ -1838,17 +1830,17 @@ GfxPort *gfxw_remove_port(GfxVisual *visual, GfxPort *port) {
 }
 
 GfxPort *gfxw_find_port(GfxVisual *visual, int ID) {
-	if (ID < 0 || ID >= visual->port_refs_nr)
+	if (ID < 0 || ID >= (int)visual->_portRefs.size())
 		return NULL;
 
-	return visual->port_refs[ID];
+	return visual->_portRefs[ID];
 }
 
 GfxPort *gfxw_find_default_port(GfxVisual *visual) {
-	int id = visual->port_refs_nr;
+	int id = visual->_portRefs.size();
 
 	while (id--) {
-		GfxPort *port = visual->port_refs[id];
+		GfxPort *port = visual->_portRefs[id];
 
 		if (port)
 			return port;

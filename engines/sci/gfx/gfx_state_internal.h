@@ -112,6 +112,7 @@ public:
 	gfxw_visual_op *set_visual; /* Sets the visual the widget belongs to */
 
 	GfxWidget(gfxw_widget_type_t type);
+	virtual ~GfxWidget();
 };
 
 
@@ -217,8 +218,7 @@ struct GfxList : public GfxContainer {
 
 #define GFXW_IS_VISUAL(widget) ((widget)->_type == GFXW_VISUAL)
 struct GfxVisual : public GfxContainer {
-	GfxPort **port_refs; /* References to ports */
-	int port_refs_nr;
+	Common::Array<GfxPort *> _portRefs; /* References to ports */
 	int font_nr; /* Default font */
 	gfx_state_t *gfx_state;
 
