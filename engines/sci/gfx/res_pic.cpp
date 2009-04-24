@@ -1726,7 +1726,8 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (!pic->priorityTable) {
 					pic->priorityTable = (int*)sci_malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", (void *)pic->priorityTable);
+					// This occurs in the title screen of Longbow, perhaps with the animated Robin sprite
+					GFXWARN("pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", (void *)pic->priorityTable);
 				}
 
 				pri_table = pic->priorityTable;
