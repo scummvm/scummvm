@@ -319,7 +319,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Yellow: Contained access
 	int poly_colors[][3] = {{0, 255, 0}, {0, 0, 255}, {255, 0, 0}, {255, 255, 0}};
 	gfx_color_t col;
-	GfxList *decorations = s->picture_port->decorations;
+	GfxList *decorations = s->picture_port->_decorations;
 	GfxPrimitive *line;
 
 	col.visual = PaletteEntry(poly_colors[type][0], poly_colors[type][1], poly_colors[type][2]);
@@ -341,7 +341,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	// Blue: Starting point
 	int point_colors[][3] = {{0, 255, 0}, {0, 0, 255}};
 	gfx_color_t col;
-	GfxList *decorations = s->picture_port->decorations;
+	GfxList *decorations = s->picture_port->_decorations;
 	GfxBox *box;
 
 	col.visual = PaletteEntry(point_colors[start][0], point_colors[start][1], point_colors[start][2]);
@@ -351,7 +351,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	col.mask = GFX_MASK_VISUAL | GFX_MASK_PRIORITY;
 
 	box = gfxw_new_box(s->gfx_state, gfx_rect(p.x - 1, p.y - 1 + 10, 3, 3), col, col, GFX_BOX_SHADE_FLAT);
-	decorations->add((GfxContainer *) decorations, (GfxWidget *) box);
+	decorations->add((GfxContainer *)decorations, (GfxWidget *)box);
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
@@ -1541,11 +1541,11 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
 		GfxPort *port = s->picture_port;
 
-		if (!port->decorations) {
-			port->decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
-			port->decorations->set_visual(port->decorations, port->_visual);
+		if (!port->_decorations) {
+			port->_decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
+			port->_decorations->setVisual(port->_visual);
 		} else {
-			port->decorations->free_contents(port->decorations);
+			port->_decorations->free_contents(port->_decorations);
 		}
 	}
 

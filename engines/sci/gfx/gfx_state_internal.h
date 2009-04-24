@@ -81,7 +81,6 @@ struct GfxVisual;
 struct GfxPort;
 
 typedef int gfxw_point_op(GfxWidget *, Common::Point);
-typedef int gfxw_visual_op(GfxWidget *, GfxVisual *);
 typedef int gfxw_op(GfxWidget *);
 typedef int gfxw_op_int(GfxWidget *, int);
 typedef int gfxw_bin_op(GfxWidget *, GfxWidget *);
@@ -100,17 +99,6 @@ struct GfxWidget {
 	int _widgetPriority; /* Drawing priority, or -1 */
 
 public:
-	// TODO: Replace the following with virtual methods
-	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistent */
-	gfxw_op *tag; /* Tag the specified widget */
-	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
-	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */
-	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */
-	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */
-	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
-	gfxw_visual_op *set_visual; /* Sets the visual the widget belongs to */
-
-public:
 	GfxWidget(gfxw_widget_type_t type);
 
 	/*
@@ -119,6 +107,22 @@ public:
 	 * contents.
 	 */
 	virtual ~GfxWidget();
+
+	// TODO: Replace the following with virtual methods
+	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistent */
+	gfxw_op *tag; /* Tag the specified widget */
+	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
+	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */
+	gfxw_bin_op *equals; /* a equals b if both cause the same data to be displayed */
+	gfxw_bin_op *should_replace; /* (only if a equals b) Whether b should replace a even though they are equivalent */
+	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
+
+	/**
+	 * Sets the visual for the widget
+	 * This function is called by container->add() and need not be invoked explicitly.
+	 * It also makes sure that dirty rectangles are passed to parent containers.
+	 */
+	virtual int setVisual(GfxVisual *);
 };
 
 
@@ -210,8 +214,11 @@ public:
 	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */
 	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
 
+	// FIXME: This should be a virtual base class, mark it so somehow?
 	GfxContainer(rect_t area, gfxw_widget_type_t type);
 	~GfxContainer();
+
+	virtual int setVisual(GfxVisual *);
 };
 
 
@@ -229,14 +236,17 @@ struct GfxList : public GfxContainer {
 struct GfxVisual : public GfxContainer {
 	Common::Array<GfxPort *> _portRefs; /* References to ports */
 	int _font; /* Default font */
-	gfx_state_t *gfx_state;
+	gfx_state_t *_gfxState;
 
+public:
 	GfxVisual(gfx_state_t *state, int font);
+
+	virtual int setVisual(GfxVisual *);
 };
 
 #define GFXW_IS_PORT(widget) ((widget)->_type == GFXW_PORT)
 struct GfxPort : public GfxContainer {
-	GfxList *decorations; /* optional window decorations- drawn before the contents */
+	GfxList *_decorations; /* optional window decorations- drawn before the contents */
 	GfxWidget *port_bg; /* Port background widget or NULL */
 	gfx_color_t _color, _bgcolor;
 	int _font;
@@ -247,8 +257,11 @@ struct GfxPort : public GfxContainer {
 	const char *title_text;
 	byte gray_text; /* Whether text is 'grayed out' (dithered) */
 
+public:
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 	~GfxPort();
+
+	virtual int setVisual(GfxVisual *);
 };
 
 } // End of namespace Sci

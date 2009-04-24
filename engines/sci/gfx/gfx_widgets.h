@@ -165,14 +165,6 @@ extern Common::Point gfxw_point_zero;
 ** Returns   : (int) 1 if self is superarea_of other, 0 otherwise
 **
 **
-** -- set_visual(GfxWidget *self)
-** Sets the visual for the widget
-** Parameters: (GfxWidget *) self: self reference
-** Returns   : (int) 0
-** This function is called by container->add() and need not be invoked explicitly.
-** It also makes sure that dirty rectangles are passed to parent containers.
-**
-**
 **
 ** **************************
 ** ** Container operations **
