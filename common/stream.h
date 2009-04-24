@@ -404,7 +404,7 @@ public:
 	 *
 	 * Upon successful completion, return a string with the content
 	 * of the line, *without* the end of a line marker. This method
-	 * does not indicate whether an error occured. Callers muse use
+	 * does not indicate whether an error occured. Callers must use
 	 * ioFailed() or eos() to determine whether an exception occurred.
 	 */
 	virtual String readLine();
