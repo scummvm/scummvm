@@ -797,7 +797,7 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (state.loadRes(module) && state.getSpecific(&tuple)) {
 		if (buffer)
-			state.getText(buffer, 100);
+			state.getText(buffer, 255);
 
 		return make_reg(0, *buffer);
 	} else {
