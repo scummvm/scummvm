@@ -565,50 +565,53 @@ bool AGOSEngine::processSpecialKeys() {
 	case Common::KEYCODE_PAUSE:
 		pause();
 		break;
-	case Common::KEYCODE_t:
+	default:
+		break;
+	}
+
+	switch (_keyPressed.ascii) {
+	case 't':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
 			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
 				_subtitles ^= 1;
 		}
 		break;
-	case Common::KEYCODE_v:
+	case 'v':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
 			if (_subtitles)
 				_speech ^= 1;
 		}
 		break;
-	case Common::KEYCODE_PLUS:
-	case Common::KEYCODE_KP_PLUS:
+	case '+':
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getMusicVolume() + 16, _midi.getSFXVolume() + 16);
 		}
 		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		syncSoundSettings();
 		break;
-	case Common::KEYCODE_MINUS:
-	case Common::KEYCODE_KP_MINUS:
+	case '-':
 		if (_midiEnabled) {
 			_midi.setVolume(_midi.getMusicVolume() - 16, _midi.getSFXVolume() - 16);
 		}
 		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		syncSoundSettings();
 		break;
-	case Common::KEYCODE_m:
+	case 'm':
 		_musicPaused ^= 1;
 		if (_midiEnabled) {
 			_midi.pause(_musicPaused);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
 		break;
-	case Common::KEYCODE_s:
+	case 's':
 		if (getGameId() == GID_SIMON1DOS) {
 			_midi._enable_sfx ^= 1;
 		} else {
 			_sound->effectsPause(_effectsPaused ^= 1);
 		}
 		break;
-	case Common::KEYCODE_b:
+	case 'b':
 		if (getGameType() == GType_SIMON2) {
 			_sound->ambientPause(_ambientPaused ^= 1);
 		}
