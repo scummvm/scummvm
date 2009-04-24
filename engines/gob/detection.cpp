@@ -2350,6 +2350,24 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"woodruff",
+			"Non-Interactive Demo",
+			{
+				{"demo.scn", 0, "16bb85fc5f8e519147b60475dbf33962", 89},
+				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
+				{NULL, 0, NULL, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"demo.scn"
+	},
+	{
+		{
 			"dynasty",
 			"",
 			AD_ENTRY1s("intro.stk", "6190e32404b672f4bbbc39cf76f41fda", 2511470),
@@ -2459,6 +2477,29 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk",
 		0
+	},
+	{
+		{
+			"archibald",
+			"Non-Interactive Demo",
+			{
+				{"play123.scn", 0, "4689a31f543915e488c3bc46ea358add", 258},
+				{"archi.vmd", 0, "a410fcc8116bc173f038100f5857191c", 5617210},
+				{"chato.vmd", 0, "5a10e39cb66c396f2f9d8fb35e9ac016", 5445937},
+				{"genedeb.vmd", 0, "3bb4a45585f88f4d839efdda6a1b582b", 1244228},
+				{"generik.vmd", 0, "b46bdd64b063e86927fb2826500ad512", 603242},
+				{"genespi.vmd", 0, "b7611916f32a370ae9832962fc17ef72", 758719},
+				{"spirou.vmd", 0, "8513dbf7ac51c057b21d371d6b217b47", 2550788},
+				{NULL, 0, NULL, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeArchibald,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"play123.scn"
 	},
 	{ // Supplied by gamin in the forums
 		{
