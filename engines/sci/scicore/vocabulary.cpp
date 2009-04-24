@@ -163,7 +163,7 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
 		suffix_t suffix;
 
-		suffix.alt_suffix = (char *)resource->data + seeker;
+		suffix.alt_suffix = (const char *)resource->data + seeker;
 		suffix.alt_suffix_length = strlen(suffix.alt_suffix);
 		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
@@ -173,7 +173,7 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 		// Beginning of next string - skip leading '*'
 		seeker++;
 
-		suffix.word_suffix = (char *)resource->data + seeker;
+		suffix.word_suffix = (const char *)resource->data + seeker;
 		suffix.word_suffix_length = strlen(suffix.word_suffix);
 		seeker += suffix.word_suffix_length + 1;
 
@@ -230,7 +230,7 @@ bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branc
 }
 
 
-ResultWord vocab_lookup_word(char *word, int word_len, const WordMap &words, const SuffixList &suffixes) {
+ResultWord vocab_lookup_word(const char *word, int word_len, const WordMap &words, const SuffixList &suffixes) {
 	Common::String tempword(word, word_len);
 
 	// Remove all dashes from tempword
@@ -432,9 +432,9 @@ int vocab_build_simple_parse_tree(parse_tree_node_t *nodes, WordMap &words) {
 }
 #endif
 
-bool vocab_tokenize_string(ResultWordList &retval, char *sentence, const WordMap &words,
+bool vocab_tokenize_string(ResultWordList &retval, const char *sentence, const WordMap &words,
 	const SuffixList &suffixes, char **error) {
-	char *lastword = sentence;
+	const char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;
 	int wordlen = 0;

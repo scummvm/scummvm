@@ -65,7 +65,6 @@ But the solution resulting from that is a lot more complicated, so we use the ab
 Still, what we compute in the end is of course not a real velocity anymore, but an integer approximation,
 used in an iterative stepping algorithm
 */
-
 reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Input data
 	reg_t object = argv[0];
@@ -163,7 +162,7 @@ reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
-void initialize_bresen(EngineState *s, int funct_nr, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
+static void initialize_bresen(EngineState *s, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
 	reg_t client = GET_SEL32(mover, client);
 	int stepx = GET_SEL32SV(client, xStep) * step_factor;
 	int stepy = GET_SEL32SV(client, yStep) * step_factor;
@@ -223,7 +222,7 @@ reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int deltax = GET_SEL32SV(mover, x) - GET_SEL32SV(client, x);
 	int deltay = GET_SEL32SV(mover, y) - GET_SEL32SV(client, y);
 
-	initialize_bresen(s, funct_nr, argc, argv, mover, KP_UINT(KP_ALT(1, make_reg(0, 1))), deltax, deltay);
+	initialize_bresen(s, argc, argv, mover, KP_UINT(KP_ALT(1, make_reg(0, 1))), deltax, deltay);
 
 	return s->r_acc;
 }

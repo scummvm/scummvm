@@ -150,8 +150,8 @@ struct suffix_t {
 	int alt_suffix_length; /* String length of the suffix */
 	int word_suffix_length; /* String length of the other suffix */
 
-	char *alt_suffix; /* The alternative suffix */
-	char *word_suffix; /* The suffix as used in the word vocabulary */
+	const char *alt_suffix; /* The alternative suffix */
+	const char *word_suffix; /* The suffix as used in the word vocabulary */
 
 };
 
@@ -251,7 +251,7 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
  */
 bool vocab_get_branches(ResourceManager *resmgr, Common::Array<parse_tree_branch_t> &branches);
 
-ResultWord vocab_lookup_word(char *word, int word_len,
+ResultWord vocab_lookup_word(const char *word, int word_len,
 	const WordMap &words, const SuffixList &suffixes);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
@@ -262,7 +262,7 @@ ResultWord vocab_lookup_word(char *word, int word_len,
 */
 
 
-bool vocab_tokenize_string(ResultWordList &retval, char *sentence,
+bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
 	const WordMap &words, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine

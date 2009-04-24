@@ -673,22 +673,6 @@ void script_uninstantiate(EngineState *s, int script_nr);
 */
 
 
-int game_save_state(EngineState *s, char *name, int coredump);
-/* Saves the game state to the harddisk
-** Parameters: (EngineState *) s: The game state to save
-**             (char *) name: Name of the subdirectory (relative to s->save_dir)
-**             (int) coredump: Set to non-zero in order to write additional debug information
-** Returns   : (int) 0 on success, 1 otherwise
-*/
-
-
-EngineState *game_restore_state(char *name);
-/* Restores the game state from a file
-** Parameters: (char *) name: Name of the saved game state to restore
-** Returns   : (EngineState *): The restored game state, or NULL on failure
-*/
-
-
 int game_init(EngineState *s);
 /* Initializes an SCI game
 ** Parameters: (EngineState *) s: The state to operate on
