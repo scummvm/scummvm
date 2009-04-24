@@ -457,8 +457,8 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	GfxPort *port = s->port;
 	GfxPort *newport;
 
-	newport = sciw_new_window(s, port->zone, port->font_nr, port->_color, newbgcolor,
-	                          s->titlebar_port->font_nr, s->ega_colors[15], s->ega_colors[8],
+	newport = sciw_new_window(s, port->zone, port->_font, port->_color, newbgcolor,
+	                          s->titlebar_port->_font, s->ega_colors[15], s->ega_colors[8],
 	                          port->title_text, port->port_flags & ~kWindowTransparent);
 
 	if (s->dyn_views) {
@@ -2529,8 +2529,8 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	lWhite.priority = -1;
 	lWhite.control = -1;
 
-	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->font_nr, fgcolor, bgcolor,
-							s->titlebar_port->font_nr, lWhite, black, argv[4 + argextra].segment ?
+	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
+							s->titlebar_port->_font, lWhite, black, argv[4 + argextra].segment ?
 							kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL, flags);
 
 	// PQ3 has the interpreter store underBits implicitly.
@@ -3143,7 +3143,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_alignment_t halign = ALIGN_LEFT;
 	rect_t area = gfx_rect(port->draw_pos.x, port->draw_pos.y, 320 - port->draw_pos.x, 200 - port->draw_pos.y);
 	int gray = port->gray_text;
-	int font_nr = port->font_nr;
+	int font_nr = port->_font;
 	GfxText *text_handle;
 
 	color0 = port->_color;

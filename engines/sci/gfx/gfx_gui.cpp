@@ -95,7 +95,7 @@ void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::Stri
 
 	if (!text.empty()) {
 		GfxText *textw = gfxw_new_text(state, gfx_rect(0, 0, status_bar->_bounds.width, status_bar->_bounds.height),
-		                                   status_bar->font_nr, text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
+		                                   status_bar->_font, text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
 		                                   fg, fg, bg, kFontNoNewlines);
 
 		list = make_titlebar_list(s, status_bar->_bounds, status_bar);
@@ -172,7 +172,7 @@ GfxPort *sciw_new_window(EngineState *s,
 	sciw_make_window_fit(&area, s->wm_port);
 	win = gfxw_new_port(visual, s->wm_port, area, color, bgcolor);
 
-	win->font_nr = font;
+	win->_font = font;
 	win->title_text = title;
 	win->port_flags = flags;
 
@@ -502,12 +502,12 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 
 	// Add up arrow
 	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, 0, zone.width - 2, 8),
-	                             port->font_nr, arr_up, ALIGN_CENTER, ALIGN_CENTER,
+	                             port->_font, arr_up, ALIGN_CENTER, ALIGN_CENTER,
 	                             port->_color, port->_color, port->_bgcolor, 0)));
 
 	// Add down arrow
 	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, zone.height - 9, zone.width - 2, 8),
-	                             port->font_nr, arr_down, ALIGN_CENTER, ALIGN_CENTER,
+	                             port->_font, arr_down, ALIGN_CENTER, ALIGN_CENTER,
 	                             port->_color, port->_color, port->_bgcolor, 0)));
 
 	if (list_top & 1) { // Hack to work around aggressive caching
@@ -541,11 +541,11 @@ void sciw_set_menubar(EngineState *s, GfxPort *status_bar, Menubar *menubar, int
 			list->add(GFXWC(list), GFXW(gfxw_new_box(status_bar->_visual->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
 			                            status_bar->_color, status_bar->_color, GFX_BOX_SHADE_FLAT)));
 			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
-			                             status_bar->font_nr, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
+			                             status_bar->_font, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
 			                             status_bar->_bgcolor, status_bar->_bgcolor, status_bar->_color, kFontNoNewlines)));
 		} else
 			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
-			                             status_bar->font_nr, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
+			                             status_bar->_font, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
 			                             status_bar->_color, status_bar->_color, status_bar->_bgcolor, kFontNoNewlines)));
 		offset += width;
 	}
@@ -574,7 +574,7 @@ GfxPort *sciw_new_menu(EngineState *s, GfxPort *status_bar, Menubar *menubar, in
 	area.width = menu->_width - 1;
 	area.height = menu->_items.size() * 10;
 
-	retval = sciw_new_window(s, area, status_bar->font_nr, status_bar->_color, status_bar->_bgcolor,
+	retval = sciw_new_window(s, area, status_bar->_font, status_bar->_color, status_bar->_bgcolor,
 	                         0, status_bar->_color, status_bar->_bgcolor, NULL, kWindowNoDropShadow | kWindowTransparent);
 
 	retval->set_visual(GFXW(retval), s->visual);
@@ -606,12 +606,12 @@ GfxWidget *_make_menu_entry(MenuItem *item, int offset, int width, GfxPort *port
 	xcolor = gray ? color : bgcolor;
 
 	list->add(GFXWC(list), GFXW(gfxw_new_box(port->_visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT)));
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->font_nr, item->_text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
+	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
 	                            color, xcolor, bgcolor, kFontNoNewlines)));
 
 	if (!item->_keytext.empty()) {
 		area.width -= MENU_BOX_RIGHT_PADDING;
-		list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->font_nr, item->_keytext.c_str(), ALIGN_RIGHT, ALIGN_CENTER,
+		list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_keytext.c_str(), ALIGN_RIGHT, ALIGN_CENTER,
 		                            color, xcolor, bgcolor, kFontNoNewlines)));
 	}
 

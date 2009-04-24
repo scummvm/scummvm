@@ -37,7 +37,7 @@ reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *contents = kernel_dereference_char_pointer(s, argv[1], 0);
 
 	s->_menubar->addMenu(s->gfx_state, name,
-	                 contents, s->titlebar_port->font_nr, argv[1]);
+	                 contents, s->titlebar_port->_font, argv[1]);
 
 	return s->r_acc;
 

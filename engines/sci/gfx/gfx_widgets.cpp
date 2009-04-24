@@ -917,7 +917,7 @@ static int _gfxwop_text_alloc_and_draw(GfxWidget *widget, Common::Point pos) {
 	GfxText *text = (GfxText *)widget;
 	DRAW_ASSERT(widget, GFXW_TEXT);
 
-	text->text_handle = gfxop_new_text(widget->_visual->gfx_state, text->font_nr, text->text, text->_bounds.width,
+	text->text_handle = gfxop_new_text(widget->_visual->gfx_state, text->_font, text->text, text->_bounds.width,
 	                   text->halign, text->valign, text->_color1, text->_color2, text->_bgcolor, text->text_flags);
 
 	text->draw = _gfxwop_text_draw;
@@ -948,7 +948,7 @@ static int _gfxwop_text_equals(GfxWidget *widget, GfxWidget *other) {
 	if (wtext->text_flags != otext->text_flags)
 		return 0;
 
-	if (wtext->font_nr != otext->font_nr)
+	if (wtext->_font != otext->_font)
 		return 0;
 
 	/* if (!(_color_equals(wtext->_color1, otext->_color1) && _color_equals(wtext->_color2, otext->_color2)
@@ -990,7 +990,7 @@ GfxText::GfxText(gfx_state_t *state, rect_t area, int font, const char *text_, g
 	: GfxWidget(GFXW_TEXT) {
 
 	_widgetPriority = _gfxw_color_get_priority(color1_);
-	font_nr = font;
+	_font = font;
 	text = (char *)sci_malloc(strlen(text_) + 1);
 	halign = halign_;
 	valign = valign_;
@@ -1612,7 +1612,7 @@ GfxVisual *gfxw_new_visual(gfx_state_t *state, int font) {
 GfxVisual::GfxVisual(gfx_state_t *state, int font)
 	: GfxContainer(gfx_rect(0, 0, 320, 200), GFXW_VISUAL) {
 
-	font_nr = font;
+	_font = font;
 	gfx_state = state;
 
 	_gfxw_set_ops_VISUAL(this);
@@ -1696,7 +1696,7 @@ static int _gfxwop_port_print(GfxWidget *widget, int indentation) {
 
 	_gfxw_print_widget(widget, indentation);
 	sciprintf("PORT");
-	sciprintf(" font=%d drawpos=(%d,%d)", port->font_nr, port->draw_pos.x, port->draw_pos.y);
+	sciprintf(" font=%d drawpos=(%d,%d)", port->_font, port->draw_pos.x, port->draw_pos.y);
 	if (port->gray_text)
 		sciprintf(" (gray)");
 	_w_gfxwop_container_print(GFXW(port), indentation);
@@ -1794,7 +1794,7 @@ GfxPort::GfxPort(GfxVisual *visual_, rect_t area, gfx_color_t fgcolor, gfx_color
 	gray_text = 0;
 	_color = fgcolor;
 	_bgcolor = bgcolor_;
-	font_nr = visual_->font_nr;
+	_font = visual_->_font;
 	_ID = _visual_find_free_ID(visual_);
 	visual_->_portRefs[_ID] = this;
 

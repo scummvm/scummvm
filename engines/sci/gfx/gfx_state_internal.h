@@ -167,7 +167,7 @@ struct GfxDynView : public GfxView {
 
 #define GFXW_IS_TEXT(widget) ((widget)->_type == GFXW_TEXT)
 struct GfxText : public GfxWidget {
-	int font_nr;
+	int _font;
 	int lines_nr, lineheight, lastline_width;
 	char *text;
 	gfx_alignment_t halign, valign;
@@ -219,7 +219,7 @@ struct GfxList : public GfxContainer {
 #define GFXW_IS_VISUAL(widget) ((widget)->_type == GFXW_VISUAL)
 struct GfxVisual : public GfxContainer {
 	Common::Array<GfxPort *> _portRefs; /* References to ports */
-	int font_nr; /* Default font */
+	int _font; /* Default font */
 	gfx_state_t *gfx_state;
 
 	GfxVisual(gfx_state_t *state, int font);
@@ -230,7 +230,7 @@ struct GfxPort : public GfxContainer {
 	GfxList *decorations; /* optional window decorations- drawn before the contents */
 	GfxWidget *port_bg; /* Port background widget or NULL */
 	gfx_color_t _color, _bgcolor;
-	int font_nr;
+	int _font;
 	Common::Point draw_pos; /* Drawing position */
 	gfxw_snapshot_t *restore_snap; /* Snapshot to be restored automagically,
 					  experimental feature used in the PQ3 interpreter */
