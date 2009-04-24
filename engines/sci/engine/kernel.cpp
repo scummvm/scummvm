@@ -47,6 +47,7 @@ static int sci_max_allowed_unknown_kernel_functions[] = {
 	0x72, // SCI0
 	0x7b, // SCI01/EGA
 	0x7b, // SCI01/VGA
+	0x7b, // SCI01/VGA ODD
 	0x7b, // SCI1/EARLY
 	0x7b, // SCI1/LATE
 	0x7b, // SCI1.1
