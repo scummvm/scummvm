@@ -40,7 +40,7 @@ namespace Sci {
 
 static void clear_titlebar(GfxPort *titlebar) {
 	if (titlebar->contents) {
-		titlebar->contents->widfree(titlebar->contents);
+		delete titlebar->contents;
 		titlebar->contents = NULL;
 		titlebar->nextpp = &(titlebar->contents);
 	}
@@ -111,10 +111,10 @@ void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::Stri
 		list->add((GfxContainer *)list, (GfxWidget *)bgbox);
 	}
 
-	list->add(GFXWC(status_bar), GFXW(list));
+	list->add(GFXWC(status_bar), list);
 	finish_titlebar_list(s, list, status_bar);
 
-	status_bar->draw(GFXW(status_bar), gfxw_point_zero);
+	status_bar->draw(status_bar, gfxw_point_zero);
 	gfxop_update(state);
 }
 
@@ -280,14 +280,14 @@ GfxList *_sciw_add_text_to_list(GfxList *list, GfxPort *port, rect_t zone, char 
 		bgcolor = &(port->_bgcolor);
 	}
 
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, zone, font, text, align, ALIGN_TOP,
-	                            *color1, *color2, *bgcolor, flags)));
+	list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, zone, font, text, align, ALIGN_TOP,
+	                            *color1, *color2, *bgcolor, flags));
 
 	zone.width--;
 	zone.height -= 2;
 
 	if (framed) {
-		list->add(GFXWC(list), GFXW(gfxw_new_rect(zone, *color2, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_STIPPLED)));
+		list->add(GFXWC(list), gfxw_new_rect(zone, *color2, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_STIPPLED));
 	}
 
 	return list;
@@ -304,7 +304,7 @@ GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *tex
 
 	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 
-	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
+	gfxw_set_id(list, ID.segment, ID.offset);
 
 	zone.x = 0;
 	zone.y = 0;
@@ -314,10 +314,10 @@ GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *tex
 		                              text, font, ALIGN_CENTER, 0, inverse, kFontIgnoreLF, grayed_out);
 
 		list->add(GFXWC(list),
-		          GFXW(gfxw_new_rect(zone, *frame_col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		          gfxw_new_rect(zone, *frame_col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 	} else {
-		list->add(GFXWC(list), GFXW(gfxw_new_box(NULL, gfx_rect(zone.x, zone.y, zone.width + 1, zone.height + 1),
-		                            port->_color, port->_color, GFX_BOX_SHADE_FLAT)));
+		list->add(GFXWC(list), gfxw_new_box(NULL, gfx_rect(zone.x, zone.y, zone.width + 1, zone.height + 1),
+		                            port->_color, port->_color, GFX_BOX_SHADE_FLAT));
 
 		list = _sciw_add_text_to_list(list, port, gfx_rect(zone.x + 1, zone.y + 2, zone.width - 1, zone.height),
 		                              text, font, ALIGN_CENTER, 0, inverse, kFontIgnoreLF, grayed_out);
@@ -325,8 +325,8 @@ GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *tex
 
 	if (selected)
 		list->add(GFXWC(list),
-		          GFXW(gfxw_new_rect(gfx_rect(zone.x + 1, zone.y + 1, zone.width - 2, zone.height - 2),
-		                             *frame_col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		          gfxw_new_rect(gfx_rect(zone.x + 1, zone.y + 1, zone.width - 2, zone.height - 2),
+		                             *frame_col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 
 	return list;
 }
@@ -335,7 +335,7 @@ GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 								   gfx_alignment_t align, char framed, char inverse) {
 	GfxList *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 2), 0);
 
-	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
+	gfxw_set_id(list, ID.segment, ID.offset);
 
 	zone.x = 0;
 	zone.y = 0;
@@ -356,7 +356,7 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 	zone.height++;
 
 	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
-	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
+	gfxw_set_id(list, ID.segment, ID.offset);
 	zone.x = 1;
 	zone.y = 1;
 
@@ -364,7 +364,7 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 		text_handle = gfxw_new_text(port->_visual->gfx_state, zone, font, text, ALIGN_LEFT, ALIGN_TOP,
 		                            port->_color, port->_color, port->_bgcolor, kFontNoNewlines);
 
-		list->add(GFXWC(list), GFXW(text_handle));
+		list->add(GFXWC(list), text_handle);
 	} else {
 		char *textdup = (char *)sci_malloc(strlen(text) + 1);
 
@@ -377,7 +377,7 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 			text_handle = gfxw_new_text(port->_visual->gfx_state, zone, font, textdup, ALIGN_LEFT, ALIGN_TOP,
 			                            port->_color, port->_color, port->_bgcolor, kFontNoNewlines);
 
-			list->add(GFXWC(list), GFXW(text_handle));
+			list->add(GFXWC(list), text_handle);
 			zone.x += text_handle->width;
 		}
 
@@ -386,26 +386,26 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 			textdup[1] = 0;
 			text_handle =  gfxw_new_text(port->_visual->gfx_state, zone, font, textdup, ALIGN_LEFT, ALIGN_TOP,
 			                             port->_bgcolor, port->_bgcolor, port->_color, kFontNoNewlines);
-			list->add(GFXWC(list), GFXW(text_handle));
+			list->add(GFXWC(list), text_handle);
 			zone.x += text_handle->width;
 		};
 
 		if (cursor + 1 < strlen(text)) {
 			text_handle = gfxw_new_text(port->_visual->gfx_state, zone, font, text + cursor + 1, ALIGN_LEFT, ALIGN_TOP,
 			                            port->_color, port->_color, port->_bgcolor, kFontNoNewlines);
-			list->add(GFXWC(list), GFXW(text_handle));
+			list->add(GFXWC(list), text_handle);
 			zone.x += text_handle->width;
 		};
 
 		if (cursor == strlen(text))
-			list->add(GFXWC(list), GFXW(gfxw_new_line(Common::Point(zone.x, zone.y), Common::Point(zone.x, zone.y + cursor_height - 1),
-			                            port->_color, GFX_LINE_MODE_FAST, GFX_LINE_STYLE_NORMAL)));
+			list->add(GFXWC(list), gfxw_new_line(Common::Point(zone.x, zone.y), Common::Point(zone.x, zone.y + cursor_height - 1),
+			                            port->_color, GFX_LINE_MODE_FAST, GFX_LINE_STYLE_NORMAL));
 		free(textdup);
 	}
 
 	zone.x = zone.y = 0;
 
-	list->add(GFXWC(list), GFXW(gfxw_new_rect(zone, port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+	list->add(GFXWC(list), gfxw_new_rect(zone, port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 
 	return list;
 }
@@ -414,7 +414,7 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, i
 	char frame, char inverse) {
 	GfxList *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 	GfxWidget *icon;
-	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
+	gfxw_set_id(list, ID.segment, ID.offset);
 
 	if (!port->_visual) {
 		GFXERROR("Attempting to create icon control for virtual port!\n");
@@ -424,8 +424,8 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, i
 	zone.x = 0;
 	zone.y = 0;
 
-	icon = GFXW(gfxw_new_view(port->_visual->gfx_state, Common::Point(zone.x, zone.y), view, loop, cel, 0, -1, -1,
-	                          ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET));
+	icon = gfxw_new_view(port->_visual->gfx_state, Common::Point(zone.x, zone.y), view, loop, cel, 0, -1, -1,
+	                          ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
 	if (!icon) {
 		GFXERROR("Attempt to create icon control with cel %d/%d/%d (invalid)\n", view, loop, cel);
@@ -461,13 +461,13 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 
 	if (font_height <= 0) {
 		GFXERROR("Attempt to create list control with invalid font %d\n", font_nr);
-		list->widfree(GFXW(list));
+		delete list;
 		return NULL;
 	}
 
 	columns /= font_height;
 
-	gfxw_set_id(GFXW(list), ID.segment, ID.offset);
+	gfxw_set_id(list, ID.segment, ID.offset);
 
 	arr_up[0] = SCI_SPECIAL_CHAR_ARROW_UP;
 	arr_down[0] = SCI_SPECIAL_CHAR_ARROW_DOWN;
@@ -481,15 +481,15 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 	for (i = list_top; columns-- && i < entries_nr; i++) {
 		if (i != selection)
 			list->add(GFXWC(list),
-			          GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 2, font_height),
+			          gfxw_new_text(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 2, font_height),
 			                             font_nr, entries_list[i], ALIGN_LEFT, ALIGN_TOP,
-			                             port->_color, port->_color, port->_bgcolor, kFontNoNewlines)));
+			                             port->_color, port->_color, port->_bgcolor, kFontNoNewlines));
 		else {
-			list->add(GFXWC(list), GFXW(gfxw_new_box(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 1, font_height),
-			                            port->_color, port->_color, GFX_BOX_SHADE_FLAT)));
-			list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 2, font_height),
+			list->add(GFXWC(list), gfxw_new_box(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 1, font_height),
+			                            port->_color, port->_color, GFX_BOX_SHADE_FLAT));
+			list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, gfx_rect(zone.x, zone.y, zone.width - 2, font_height),
 			                             font_nr, entries_list[i], ALIGN_LEFT, ALIGN_TOP,
-			                             port->_bgcolor, port->_bgcolor, port->_color, kFontNoNewlines)));
+			                             port->_bgcolor, port->_bgcolor, port->_color, kFontNoNewlines));
 		}
 
 		zone.y += font_height;
@@ -501,26 +501,26 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 	zone.y = 0;
 
 	// Add up arrow
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, 0, zone.width - 2, 8),
+	list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, 0, zone.width - 2, 8),
 	                             port->_font, arr_up, ALIGN_CENTER, ALIGN_CENTER,
-	                             port->_color, port->_color, port->_bgcolor, 0)));
+	                             port->_color, port->_color, port->_bgcolor, 0));
 
 	// Add down arrow
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, zone.height - 9, zone.width - 2, 8),
+	list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, gfx_rect(1, zone.height - 9, zone.width - 2, 8),
 	                             port->_font, arr_down, ALIGN_CENTER, ALIGN_CENTER,
-	                             port->_color, port->_color, port->_bgcolor, 0)));
+	                             port->_color, port->_color, port->_bgcolor, 0));
 
 	if (list_top & 1) { // Hack to work around aggressive caching
-		list->add(GFXWC(list), GFXW(gfxw_new_rect(zone, port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
-		list->add(GFXWC(list), GFXW(gfxw_new_rect(gfx_rect(zone.x, zone.y + 10, zone.width, zone.height - 20),
-		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		list->add(GFXWC(list), gfxw_new_rect(zone, port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
+		list->add(GFXWC(list), gfxw_new_rect(gfx_rect(zone.x, zone.y + 10, zone.width, zone.height - 20),
+		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 	} else {
 		list->add(GFXWC(list),
-		          GFXW(gfxw_new_rect(gfx_rect(zone.x, zone.y, zone.width, zone.height - 10),
-		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		          gfxw_new_rect(gfx_rect(zone.x, zone.y, zone.width, zone.height - 10),
+		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 		list->add(GFXWC(list),
-		          GFXW(gfxw_new_rect(gfx_rect(zone.x, zone.y + 10, zone.width, zone.height - 10),
-		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		          gfxw_new_rect(gfx_rect(zone.x, zone.y + 10, zone.width, zone.height - 10),
+		                             port->_color, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 	}
 
 	return list;
@@ -538,19 +538,19 @@ void sciw_set_menubar(EngineState *s, GfxPort *status_bar, Menubar *menubar, int
 		int width = menu->_titleWidth + (MENU_BORDER_SIZE * 2);
 
 		if (i == selection) {
-			list->add(GFXWC(list), GFXW(gfxw_new_box(status_bar->_visual->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
-			                            status_bar->_color, status_bar->_color, GFX_BOX_SHADE_FLAT)));
-			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
+			list->add(GFXWC(list), gfxw_new_box(status_bar->_visual->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
+			                            status_bar->_color, status_bar->_color, GFX_BOX_SHADE_FLAT));
+			list->add(GFXWC(list), gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
 			                             status_bar->_font, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
-			                             status_bar->_bgcolor, status_bar->_bgcolor, status_bar->_color, kFontNoNewlines)));
+			                             status_bar->_bgcolor, status_bar->_bgcolor, status_bar->_color, kFontNoNewlines));
 		} else
-			list->add(GFXWC(list), GFXW(gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
+			list->add(GFXWC(list), gfxw_new_text(s->gfx_state, gfx_rect(offset, 0, width, MENU_BAR_HEIGHT),
 			                             status_bar->_font, menu->_title.c_str(), ALIGN_CENTER, ALIGN_CENTER,
-			                             status_bar->_color, status_bar->_color, status_bar->_bgcolor, kFontNoNewlines)));
+			                             status_bar->_color, status_bar->_color, status_bar->_bgcolor, kFontNoNewlines));
 		offset += width;
 	}
 
-	status_bar->add(GFXWC(status_bar), GFXW(list));
+	status_bar->add(GFXWC(status_bar), list);
 	finish_titlebar_list(s, list, status_bar);
 }
 
@@ -577,7 +577,7 @@ GfxPort *sciw_new_menu(EngineState *s, GfxPort *status_bar, Menubar *menubar, in
 	retval = sciw_new_window(s, area, status_bar->_font, status_bar->_color, status_bar->_bgcolor,
 	                         0, status_bar->_color, status_bar->_bgcolor, NULL, kWindowNoDropShadow | kWindowTransparent);
 
-	retval->set_visual(GFXW(retval), s->visual);
+	retval->set_visual(retval, s->visual);
 
 	for (i = 0; i < (int)menu->_items.size(); i++)
 		sciw_toggle_item(retval, menu, i, false);
@@ -597,7 +597,7 @@ static gfx_color_t un_prioritize(gfx_color_t col) {
 GfxWidget *_make_menu_entry(MenuItem *item, int offset, int width, GfxPort *port, gfx_color_t color, gfx_color_t bgcolor, int ID, int gray) {
 	rect_t area = gfx_rect(MENU_BOX_LEFT_PADDING, 0, width - MENU_BOX_LEFT_PADDING, 10);
 	rect_t list_area = gfx_rect(port->zone.x, area.y + offset + port->zone.y, width, area.height);
-	GfxList *list = (GfxList *) gfxw_set_id(GFXW(gfxw_new_list(list_area, 0)), ID, GFXW_NO_ID);
+	GfxList *list = (GfxList *) gfxw_set_id(gfxw_new_list(list_area, 0), ID, GFXW_NO_ID);
 	gfx_color_t xcolor = { PaletteEntry(), 0, 0, 0, 0};
 
 	color = un_prioritize(color);
@@ -605,32 +605,32 @@ GfxWidget *_make_menu_entry(MenuItem *item, int offset, int width, GfxPort *port
 
 	xcolor = gray ? color : bgcolor;
 
-	list->add(GFXWC(list), GFXW(gfxw_new_box(port->_visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT)));
-	list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
-	                            color, xcolor, bgcolor, kFontNoNewlines)));
+	list->add(GFXWC(list), gfxw_new_box(port->_visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT));
+	list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_text.c_str(), ALIGN_LEFT, ALIGN_CENTER,
+	                            color, xcolor, bgcolor, kFontNoNewlines));
 
 	if (!item->_keytext.empty()) {
 		area.width -= MENU_BOX_RIGHT_PADDING;
-		list->add(GFXWC(list), GFXW(gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_keytext.c_str(), ALIGN_RIGHT, ALIGN_CENTER,
-		                            color, xcolor, bgcolor, kFontNoNewlines)));
+		list->add(GFXWC(list), gfxw_new_text(port->_visual->gfx_state, area, port->_font, item->_keytext.c_str(), ALIGN_RIGHT, ALIGN_CENTER,
+		                            color, xcolor, bgcolor, kFontNoNewlines));
 	}
 
-	return GFXW(list);
+	return list;
 }
 
 GfxWidget *_make_menu_hbar(int offset, int width, GfxPort *port, gfx_color_t color, gfx_color_t bgcolor, int ID) {
 	rect_t area = gfx_rect(0, 0, width, 10);
 	rect_t list_area = gfx_rect(area.x + port->zone.x, area.y + offset + port->zone.y, area.width, area.height);
-	GfxList *list = (GfxList *) gfxw_set_id(GFXW(gfxw_new_list(list_area, 0)), ID, GFXW_NO_ID);
+	GfxList *list = (GfxList *) gfxw_set_id(gfxw_new_list(list_area, 0), ID, GFXW_NO_ID);
 
 	color = un_prioritize(color);
 	bgcolor = un_prioritize(bgcolor);
 
-	list->add(GFXWC(list), GFXW(gfxw_new_box(port->_visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT)));
-	list->add(GFXWC(list), GFXW(gfxw_new_line(Common::Point(0, 5), Common::Point(width, 5), color,
-	                            GFX_LINE_MODE_FAST, GFX_LINE_STYLE_STIPPLED)));
+	list->add(GFXWC(list), gfxw_new_box(port->_visual->gfx_state, area, bgcolor, bgcolor, GFX_BOX_SHADE_FLAT));
+	list->add(GFXWC(list), gfxw_new_line(Common::Point(0, 5), Common::Point(width, 5), color,
+	                            GFX_LINE_MODE_FAST, GFX_LINE_STYLE_STIPPLED));
 
-	return GFXW(list);
+	return list;
 }
 
 GfxPort *sciw_toggle_item(GfxPort *menu_port, Menu *menu, int selection, bool selected) {
@@ -643,11 +643,11 @@ GfxPort *sciw_toggle_item(GfxPort *menu_port, Menu *menu, int selection, bool se
 	MenuItem *item = &menu->_items[selection];
 
 	if (item->_type == MENU_TYPE_NORMAL)
-		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_entry(item, selection * 10, menu_port->zone.width + 1,
-		                                      menu_port, fgColor, bgColor, selection + MAGIC_ID_OFFSET, item->_enabled)));
+		menu_port->add(GFXWC(menu_port), _make_menu_entry(item, selection * 10, menu_port->zone.width + 1,
+		                                      menu_port, fgColor, bgColor, selection + MAGIC_ID_OFFSET, item->_enabled));
 	else
-		menu_port->add(GFXWC(menu_port), GFXW(_make_menu_hbar(selection * 10, menu_port->zone.width + 1,
-		                                      menu_port, fgColor, bgColor, selection + MAGIC_ID_OFFSET)));
+		menu_port->add(GFXWC(menu_port), _make_menu_hbar(selection * 10, menu_port->zone.width + 1,
+		                                      menu_port, fgColor, bgColor, selection + MAGIC_ID_OFFSET));
 
 	return menu_port;
 }

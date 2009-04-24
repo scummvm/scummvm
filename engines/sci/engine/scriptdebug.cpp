@@ -1613,7 +1613,7 @@ static int c_redraw_screen(EngineState *s) {
 		return 1;
 	}
 
-	s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
+	s->visual->draw(s->visual, Common::Point(0, 0));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
 	gfxop_sleep(s->gfx_state, 0);
@@ -1688,7 +1688,7 @@ static int c_gfx_print_port(EngineState *s) {
 	}
 
 	if (port)
-		port->print(GFXW(port), 0);
+		port->print(port, 0);
 	else
 		sciprintf("No such port.\n");
 
@@ -1722,7 +1722,7 @@ static int c_gfx_print_visual(EngineState *s) {
 	}
 
 	if (s->visual)
-		s->visual->print(GFXW(s->visual), 0);
+		s->visual->print(s->visual, 0);
 	else
 		sciprintf("visual is uninitialized.\n");
 
@@ -1738,7 +1738,7 @@ static int c_gfx_print_dynviews(EngineState *s) {
 	if (!s->dyn_views)
 		sciprintf("No dynview list active.\n");
 	else
-		s->dyn_views->print(GFXW(s->dyn_views), 0);
+		s->dyn_views->print(s->dyn_views, 0);
 
 	return 0;
 }
@@ -1752,7 +1752,7 @@ static int c_gfx_print_dropviews(EngineState *s) {
 	if (!s->drop_views)
 		sciprintf("No dropped dynview list active.\n");
 	else
-		s->drop_views->print(GFXW(s->drop_views), 0);
+		s->drop_views->print(s->drop_views, 0);
 
 	return 0;
 }
@@ -1822,7 +1822,7 @@ static int c_gfx_show_map(EngineState *s) {
 	switch (map) {
 	case 0:
 		s->visual->add_dirty_abs(GFXWC(s->visual), gfx_rect(0, 0, 320, 200), 0);
-		s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
+		s->visual->draw(s->visual, Common::Point(0, 0));
 		break;
 
 	case 1:
@@ -2007,7 +2007,7 @@ static int c_gfx_flush_resources(EngineState *s) {
 
 	gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
 	sciprintf("Flushing resources...\n");
-	s->visual->widfree(GFXW(s->visual));
+	delete s->visual;
 	s->gfx_state->gfxResMan->freeAllResources();
 	s->visual = NULL;
 

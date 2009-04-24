@@ -102,7 +102,6 @@ struct GfxWidget {
 public:
 	// TODO: Replace the following with virtual methods
 	gfxw_point_op *draw; /* Draw widget (if dirty) and anything else required for the display to be consistent */
-	gfxw_op *widfree; /* Remove widget (and any sub-widgets it may contain) */
 	gfxw_op *tag; /* Tag the specified widget */
 	gfxw_op_int *print; /* Prints the widget's contents, using sciprintf. Second parameter is indentation. */
 	gfxw_bin_op *compare_to; /* a.compare_to(a, b) returns <0 if a<b, =0 if a=b and >0 if a>b */
@@ -111,7 +110,14 @@ public:
 	gfxw_bin_op *superarea_of; /* a superarea_of b <=> for each pixel of b there exists an opaque pixel in a at the same location */
 	gfxw_visual_op *set_visual; /* Sets the visual the widget belongs to */
 
+public:
 	GfxWidget(gfxw_widget_type_t type);
+
+	/*
+	 * The widget automatically removes itself from its owner, if it has one.
+	 * Deleting a container will recursively free all of its
+	 * contents.
+	 */
 	virtual ~GfxWidget();
 };
 
@@ -178,6 +184,8 @@ struct GfxText : public GfxWidget {
 
 	GfxText(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
 		gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags);
+
+	~GfxText();
 };
 
 
@@ -203,6 +211,7 @@ public:
 	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
 
 	GfxContainer(rect_t area, gfxw_widget_type_t type);
+	~GfxContainer();
 };
 
 
@@ -239,6 +248,7 @@ struct GfxPort : public GfxContainer {
 	byte gray_text; /* Whether text is 'grayed out' (dithered) */
 
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
+	~GfxPort();
 };
 
 } // End of namespace Sci

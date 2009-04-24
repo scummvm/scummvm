@@ -66,29 +66,29 @@ enum {
 
 #define ADD_TO_CURRENT_PORT(widget) \
 	{if (s->port)				   \
-		s->port->add(GFXWC(s->port), GFXW(widget)); \
+		s->port->add(GFXWC(s->port), widget); \
 	else \
-		s->picture_port->add(GFXWC(s->visual), GFXW(widget));}
+		s->picture_port->add(GFXWC(s->visual), widget);}
 
 #define ADD_TO_CURRENT_PICTURE_PORT(widget) \
 	{if (s->port)				   \
-		s->port->add(GFXWC(s->port), GFXW(widget)); \
+		s->port->add(GFXWC(s->port), widget); \
 	else \
-		s->picture_port->add(GFXWC(s->picture_port), GFXW(widget));}
+		s->picture_port->add(GFXWC(s->picture_port), widget);}
 
 #define ADD_TO_WINDOW_PORT(widget) \
-	s->wm_port->add(GFXWC(s->wm_port), GFXW(widget));
+	s->wm_port->add(GFXWC(s->wm_port), widget);
 
 #define FULL_REDRAW()\
 	if (s->visual) \
-		s->visual->draw(GFXW(s->visual), gfxw_point_zero); \
+		s->visual->draw(s->visual, gfxw_point_zero); \
 	gfxop_update(s->gfx_state);
 
 #if 0
 // Used for debugging
 #define FULL_INSPECTION()\
 	if (s->visual) \
-		s->visual->print(GFXW(s->visual), 0);
+		s->visual->print(s->visual, 0);
 #endif
 
 #define GFX_ASSERT(x) { \
@@ -142,9 +142,9 @@ static void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport) {
 		newport = s->picture_port;
 
 	if (s->dyn_views) {
-		gfxw_remove_widget_from_container(s->dyn_views->_parent, GFXW(s->dyn_views));
+		gfxw_remove_widget_from_container(s->dyn_views->_parent, s->dyn_views);
 
-		newport->add(GFXWC(newport), GFXW(s->dyn_views));
+		newport->add(GFXWC(newport), s->dyn_views);
 	}
 }
 
@@ -222,7 +222,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		return;
 	}
 
-	while (port_nr > 2 && !(s->port->_flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, GFXW(s->port)))) {
+	while (port_nr > 2 && !(s->port->_flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, s->port))) {
 		// This shouldn't ever happen, actually, since windows (ports w/ ID > 2) should all be immune
 		GfxPort *newport = gfxw_find_port(s->visual, port_nr);
 		SCIkwarn(SCIkERROR, "Port %d is not immune against snapshots!\n", s->port->_ID);
@@ -231,12 +231,12 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 			s->port = newport;
 	}
 
-	if (s->dyn_views && gfxw_widget_matches_snapshot(*ptr, GFXW(s->dyn_views->_parent))) {
+	if (s->dyn_views && gfxw_widget_matches_snapshot(*ptr, s->dyn_views->_parent)) {
 		GfxContainer *parent = s->dyn_views->_parent;
 
 		do {
 			parent = parent->_parent;
-		} while (parent && (gfxw_widget_matches_snapshot(*ptr, GFXW(parent))));
+		} while (parent && (gfxw_widget_matches_snapshot(*ptr, parent)));
 
 		if (!parent) {
 			SCIkwarn(SCIkERROR, "Attempted widget mass destruction by a snapshot\n");
@@ -404,7 +404,7 @@ reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (old_map != s->pic_visible_map) {
 
 			if (s->pic_visible_map == GFX_MASK_VISUAL) // Full widget redraw
-				s->visual->draw(GFXW(s->visual), Common::Point(0, 0));
+				s->visual->draw(s->visual, Common::Point(0, 0));
 
 			gfxop_update(s->gfx_state);
 			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
@@ -465,14 +465,14 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 		int found = 0;
 		GfxContainer *parent = s->dyn_views->_parent;
 
-		while (parent && !(found |= (GFXW(parent) == GFXW(port))))
+		while (parent && !(found |= (parent == port)))
 			parent = parent->_parent;
 
 		s->dyn_views = NULL;
 	}
 
-	port->_parent->add(GFXWC(port->_parent), GFXW(newport));
-	port->widfree(GFXW(port));
+	port->_parent->add(GFXWC(port->_parent), newport);
+	delete port;
 }
 
 static int activated_icon_bar = 0;
@@ -509,8 +509,8 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
 		// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
 		// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
-		ADD_TO_CURRENT_PICTURE_PORT(GFXW(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
-		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL)));
+		ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
+		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 
 	}
 	break;
@@ -557,7 +557,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
 		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
-		s->picture_port->add(GFXWC(s->picture_port), GFXW(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT)));
+		s->picture_port->add(GFXWC(s->picture_port), gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
 
 	}
 	break;
@@ -583,7 +583,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		area.y += s->port->zone.y;
 
 		if (s->dyn_views && s->dyn_views->_parent == GFXWC(s->port))
-			s->dyn_views->draw(GFXW(s->dyn_views), Common::Point(0, 0));
+			s->dyn_views->draw(s->dyn_views, Common::Point(0, 0));
 
 		gfxop_update_box(s->gfx_state, area);
 
@@ -1029,9 +1029,9 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		GFX_ASSERT(gfxop_new_pic(s->gfx_state, pic_nr, 1, palette));
 	}
 
-	s->wm_port->widfree(GFXW(s->wm_port));
-	s->picture_port->widfree(GFXW(s->picture_port));
-	s->iconbar_port->widfree(GFXW(s->iconbar_port));
+	delete s->wm_port;
+	delete s->picture_port;
+	delete s->iconbar_port;
 
 	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
@@ -1039,9 +1039,9 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	s->visual->add(GFXWC(s->visual), GFXW(s->picture_port));
-	s->visual->add(GFXWC(s->visual), GFXW(s->wm_port));
-	s->visual->add(GFXWC(s->visual), GFXW(s->iconbar_port));
+	s->visual->add(GFXWC(s->visual), s->picture_port);
+	s->visual->add(GFXWC(s->visual), s->wm_port);
+	s->visual->add(GFXWC(s->visual), s->iconbar_port);
 
 	s->port = s->picture_port;
 
@@ -1857,12 +1857,12 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
 						SCIkdebug(SCIkGRAPHICS, "Adding view at "PREG" to background\n", PRINT_REG(obj));
-						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == GFXW(widget))) {
+						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
 							SCIkwarn(SCIkERROR, "Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
 							BREAKPOINT();
 						}
 
-						s->drop_views->add(GFXWC(s->drop_views), GFXW(gfxw_picviewize_dynview(widget)));
+						s->drop_views->add(GFXWC(s->drop_views), gfxw_picviewize_dynview(widget));
 
 						draw_obj_to_control_map(s, widget);
 						widget->draw_bounds.y += s->dyn_views->_bounds.y - widget->_parent->_bounds.y;
@@ -1871,7 +1871,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 					} else {
 						SCIkdebug(SCIkGRAPHICS, "Deleting view at "PREG"\n", PRINT_REG(obj));
 						widget->_flags |= GFXW_FLAG_VISIBLE;
-						gfxw_annihilate(GFXW(widget));
+						gfxw_annihilate(widget);
 						return -1; // restart: Done in Animate()
 					}
 				}
@@ -1955,7 +1955,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	widget = gfxw_new_dyn_view(s->gfx_state, pos, z, view_nr, loop, cel, palette, -1, -1, ALIGN_CENTER, ALIGN_BOTTOM, nr);
 
 	if (widget) {
-		widget = (GfxDynView *) gfxw_set_id(GFXW(widget), obj.segment, obj.offset);
+		widget = (GfxDynView *) gfxw_set_id(widget, obj.segment, obj.offset);
 		widget = gfxw_dyn_view_set_params(widget, under_bits.segment, under_bitsp, signal, signalp);
 		widget->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS; // Only works the first time 'round'
 
@@ -2012,7 +2012,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 		tempWidget = _k_make_dynview_obj(s, obj, options, sequence_nr--, funct_nr, argc, argv);
 		if (tempWidget)
-			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), GFXW(tempWidget)));
+			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), tempWidget));
 
 		node = LOOKUP_NODE(next_node); // Next node
 	}
@@ -2171,14 +2171,14 @@ static void _k_raise_topmost_in_view_list(EngineState *s, GfxList *list, GfxDynV
 			}
 		}
 
-		gfxw_remove_widget_from_container(view->_parent, GFXW(view));
+		gfxw_remove_widget_from_container(view->_parent, view);
 
 		if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
-			gfxw_hide_widget(GFXW(view));
+			gfxw_hide_widget(view);
 		else
-			gfxw_show_widget(GFXW(view));
+			gfxw_show_widget(view);
 
-		list->add(GFXWC(list), GFXW(view));
+		list->add(GFXWC(list), view);
 
 		_k_raise_topmost_in_view_list(s, list, next);
 	}
@@ -2250,9 +2250,9 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
-				gfxw_hide_widget(GFXW(widget));
+				gfxw_hide_widget(widget);
 			else
-				gfxw_show_widget(GFXW(widget));
+				gfxw_show_widget(widget);
 
 			if (!(flags & _K_DRAW_VIEW_LIST_USE_SIGNAL)
 			        || ((flags & _K_DRAW_VIEW_LIST_DISPOSEABLE) && (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))
@@ -2263,9 +2263,9 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 					// Clear all of those flags
 
 					if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
-						gfxw_hide_widget(GFXW(widget));
+						gfxw_hide_widget(widget);
 					else
-						gfxw_show_widget(GFXW(widget));
+						gfxw_show_widget(widget);
 
 					*((reg_t *)(widget->signalp)) = make_reg(0, signal); // Write the changes back
 				};
@@ -2297,8 +2297,8 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		priority = KP_SINT(argv[5]);
 		control = KP_SINT(argv[6]);
 
-		widget = GFXW(gfxw_new_dyn_view(s->gfx_state, Common::Point(x, y), 0, view, loop, cel, 0,
-		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0));
+		widget = gfxw_new_dyn_view(s->gfx_state, Common::Point(x, y), 0, view, loop, cel, 0,
+		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0);
 
 		if (!widget) {
 			SCIkwarn(SCIkERROR, "Attempt to single-add invalid picview (%d/%d/%d)\n", view, loop, cel);
@@ -2369,7 +2369,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		s->port->draw(GFXW(s->port), gfxw_point_zero); // Update the port we're leaving
+		s->port->draw(s->port, gfxw_point_zero); // Update the port we're leaving
 		s->port = new_port;
 		return s->r_acc;
 	}
@@ -2378,7 +2378,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		port_origin_x = SKPV(1);
 
 		if (SKPV(0) == -10) {
-			s->port->draw(GFXW(s->port), gfxw_point_zero); // Update the port we're leaving
+			s->port->draw(s->port, gfxw_point_zero); // Update the port we're leaving
 			s->port = s->iconbar_port;
 			activated_icon_bar = 1;
 			return s->r_acc;
@@ -2427,7 +2427,7 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	new_view = gfxw_new_view(s->gfx_state, Common::Point(x, y), view, loop, cel, 0, priority, -1,
 	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
-	ADD_TO_CURRENT_PICTURE_PORT(GFXW(new_view));
+	ADD_TO_CURRENT_PICTURE_PORT(new_view);
 	FULL_REDRAW();
 
 	return s->r_acc;
@@ -2541,7 +2541,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();
 
-	window->draw(GFXW(window), gfxw_point_zero);
+	window->draw(window, gfxw_point_zero);
 	gfxop_update(s->gfx_state);
 
 	s->port = window; // Set active port
@@ -3026,11 +3026,11 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		_k_update_signals_in_view_list(s->dyn_views, templist);
-		s->dyn_views->tag(GFXW(s->dyn_views));
+		s->dyn_views->tag(s->dyn_views);
 
 		_k_raise_topmost_in_view_list(s, s->dyn_views, (GfxDynView *)templist->contents);
 
-		templist->widfree(GFXW(templist));
+		delete templist;
 		s->dyn_views->free_tagged(GFXWC(s->dyn_views)); // Free obsolete dynviews
 	} // if (cast_list)
 
@@ -3061,7 +3061,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
 		} else {
 			assert(s->drop_views);
-			gfxw_remove_widget_from_container(s->drop_views->_parent, GFXW(s->drop_views));
+			gfxw_remove_widget_from_container(s->drop_views->_parent, s->drop_views);
 			ADD_TO_CURRENT_PICTURE_PORT(s->drop_views);
 		}
 
@@ -3313,7 +3313,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	//ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 
-	ADD_TO_CURRENT_PICTURE_PORT(GFXW(text_handle));
+	ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 	if ((!s->pic_not_valid) && update_immediately) { // Refresh if drawn to valid picture
 		FULL_REDRAW();
 		SCIkdebug(SCIkGRAPHICS, "Refreshing display...\n");

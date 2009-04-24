@@ -96,7 +96,7 @@ reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	else
 		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
 
-	s->titlebar_port->draw(GFXW(s->titlebar_port), Common::Point(0, 0));
+	s->titlebar_port->draw(s->titlebar_port, Common::Point(0, 0));
 	gfxop_update(s->gfx_state);
 
 	return s->r_acc;
@@ -118,7 +118,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 }
 
 #define FULL_REDRAW \
-	s->visual->draw(GFXW(s->visual), Common::Point(0, 0)); \
+	s->visual->draw(s->visual, Common::Point(0, 0)); \
 	gfxop_update(s->gfx_state);
 
 
@@ -215,7 +215,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 				case '`':
 					if (ev.buckybits & SCI_EVM_CTRL)
-						s->visual->print(GFXW(s->visual), 0);
+						s->visual->print(s->visual, 0);
 					break;
 
 				case SCI_K_ESC:
@@ -284,11 +284,10 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 				sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 
-				if (port)
-					port->widfree(GFXW(port));
+				delete port;
 
 				port = sciw_new_menu(s, s->titlebar_port, s->_menubar, menu_nr);
-				s->wm_port->add(GFXWC(s->wm_port), GFXW(port));
+				s->wm_port->add(GFXWC(s->wm_port), port);
 
 				if (item_nr > -1)
 					old_item = -42; /* Enforce redraw in next step */
@@ -311,7 +310,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		} /* while (menu_mode) */
 
 		if (port) {
-			port->widfree(GFXW(port));
+			delete port;
 			port = NULL;
 
 			sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);

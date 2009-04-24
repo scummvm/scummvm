@@ -179,10 +179,10 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->pics_drawn_nr = 0;
 
-	s->visual->add(GFXWC(s->visual), GFXW(s->wm_port));
-	s->visual->add(GFXWC(s->visual), GFXW(s->titlebar_port));
-	s->visual->add(GFXWC(s->visual), GFXW(s->picture_port));
-	s->visual->add(GFXWC(s->visual), GFXW(s->iconbar_port));
+	s->visual->add(GFXWC(s->visual), s->wm_port);
+	s->visual->add(GFXWC(s->visual), s->titlebar_port);
+	s->visual->add(GFXWC(s->visual), s->picture_port);
+	s->visual->add(GFXWC(s->visual), s->iconbar_port);
 	// Add ports to visual
 
 	s->port = s->picture_port; // Currently using the picture port
@@ -210,7 +210,7 @@ int game_init_graphics(EngineState *s) {
 static void _free_graphics_input(EngineState *s) {
 	sciprintf("Freeing graphics\n");
 
-	s->visual->widfree(GFXW(s->visual));
+	delete s->visual;
 
 	s->wm_port = s->titlebar_port = s->picture_port = NULL;
 	s->visual = NULL;

@@ -82,13 +82,10 @@ struct GfxWidget;
 /*********************************/
 
 
-#define GFXW(foo) (foo)
-/* Typecast an arbitrary widget to GfxWidget*. Might eventually be changed to do tests as well. */
-
 #define GFXWC(foo) ((GfxContainer *) foo)
 /* Typecasts a container widget to gfxw_container_widget_t *. */
 
-/* gfxw_point_zero is declared in gfx/widgets.c */
+/* gfxw_point_zero is declared in gfx/widgets.cpp */
 extern Common::Point gfxw_point_zero;
 
 /*********************/
@@ -108,15 +105,6 @@ extern Common::Point gfxw_point_zero;
 ** Returns   : (int) 0
 ** The widget is drawn iff it is flagged as dirty. Invoking this operation on
 ** a container widget will recursively draw all of its contents.
-**
-**
-** -- widfree(GfxWidget *self)
-** Frees all memory associated to the widget
-** Parameters: (GfxWidget *) self: self reference
-** Returns   : (int) 0
-** The widget automatically removes itself from its owner, if it has one.
-** Invoking this operation on a container will recursively free all of its
-** contents.
 **
 **
 ** -- tag(GfxWidget *self)
