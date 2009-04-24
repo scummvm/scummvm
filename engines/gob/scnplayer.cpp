@@ -27,6 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/scnplayer.h"
+#include "gob/global.h"
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/inter.h"
@@ -35,6 +36,7 @@
 namespace Gob {
 
 SCNPlayer::SCNPlayer(GobEngine *vm) : _vm(vm) {
+	_doubleMode = false;
 }
 
 SCNPlayer::~SCNPlayer() {
@@ -77,6 +79,8 @@ bool SCNPlayer::play(Common::File &scn) {
 		// Interpret
 		if (line == "CLEAR") {
 			clearScreen();
+		} else if (lineStartsWith(line, "VIDEO:")) {
+			evaluateVideoMode(line.c_str() + 6);
 		} else if (lineStartsWith(line, "IMD_PRELOAD ")) {
 			playVideo(line.c_str() + 12);
 		} else if (lineStartsWith(line, "IMD ")) {
@@ -146,9 +150,19 @@ void SCNPlayer::playVideo(const char *fileName) {
 
 	// Playing the video
 	if (_vm->_vidPlayer->primaryOpen(fileName)) {
+		_vm->_vidPlayer->slotSetDoubleMode(-1, _doubleMode);
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
 	}
+}
+
+void SCNPlayer::evaluateVideoMode(const char *mode) {
+	debugC(2, kDebugSCN, "Video mode \"%s\"", mode);
+
+	if (!scumm_strnicmp(mode, "VESA", 4))
+		_doubleMode = false;
+	else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+		_doubleMode = true;
 }
 
 } // End of namespace Gob

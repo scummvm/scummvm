@@ -949,6 +949,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	_frameDataSize = _stream->readUint32LE();
 	_vidBufferSize = _stream->readUint32LE();
 
+	_doubleMode = false;
+
 	if ((_version & 2) && !(_version & 8)) {
 		_externalCodec = true;
 		_frameDataSize = _vidBufferSize = 0;
@@ -1163,6 +1165,34 @@ void Vmd::setXY(int16 x, int16 y) {
 		_y = y;
 }
 
+void Vmd::setDoubleMode(bool doubleMode) {
+	if (_doubleMode == doubleMode)
+		return;
+
+	if (_vidBuffer) {
+		delete[] _vidBuffer;
+
+		if (doubleMode)
+			_vidBufferSize *= 4;
+		else
+			_vidBufferSize /= 4;
+
+		_vidBuffer = new byte[_vidBufferSize];
+		assert(_vidBuffer);
+		memset(_vidBuffer, 0, _vidBufferSize);
+
+	}
+
+	if (_codecIndeo3) {
+		delete _codecIndeo3;
+
+		_codecIndeo3 = new Indeo3(_width * (doubleMode ? 2 : 1),
+				_height * (doubleMode ? 2 : 1), _palLUT);
+	}
+
+	_doubleMode = doubleMode;
+}
+
 void Vmd::seekFrame(int32 frame, int16 whence, bool restart) {
 	if (!_stream)
 		// Nothing to do
@@ -1222,6 +1252,7 @@ void Vmd::clear(bool del) {
 	_soundStereo = 0;
 
 	_externalCodec = false;
+	_doubleMode = false;
 	_blitMode = 0;
 	_bytesPerPixel = 1;
 	_preScaleX = 1;
@@ -1404,13 +1435,14 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		if (!_codecIndeo3)
 			return 0;
 
-		if (!_codecIndeo3->decompressFrame(dataPtr, dataLen, _vidBuffer, width, height))
+		if (!_codecIndeo3->decompressFrame(dataPtr, dataLen, _vidBuffer,
+					width * (_doubleMode ? 2 : 1), height * (_doubleMode ? 2 : 1)))
 			return 0;
 
 		type = 2;
 		srcPtr = _vidBuffer;
-		width = _width;
-		height = _height;
+		width = _width * (_doubleMode ? 2 : 1);
+		height = _height * (_doubleMode ? 2 : 1);
 		right = left + width - 1;
 		bottom = top + height - 1;
 

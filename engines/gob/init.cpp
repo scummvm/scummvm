@@ -97,6 +97,8 @@ void Init::initGame() {
 	if (_vm->isSCNDemo()) {
 		// This is a non-interactive demo with a SCN script and VMD videos
 
+		_vm->_video->setPrePalette();
+
 		SCNPlayer scnPlayer(_vm);
 
 		bool ret = scnPlayer.play(_vm->_startTot);

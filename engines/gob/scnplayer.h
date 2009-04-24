@@ -45,6 +45,7 @@ private:
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;
 
 	GobEngine *_vm;
+	bool _doubleMode;
 
 	bool play(Common::File &scn);
 	bool readLabels(Common::File &scn, LabelMap &labels);
@@ -52,6 +53,7 @@ private:
 	inline bool lineStartsWith(const Common::String &line, const char *start);
 
 	void gotoLabel(Common::File &scn, const LabelMap &labels, const char *label);
+	void evaluateVideoMode(const char *mode);
 	void clearScreen();
 	void playVideo(const char *fileName);
 };

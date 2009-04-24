@@ -72,6 +72,8 @@ public:
 	void slotCopyPalette(int slot, int16 palStart = -1, int16 palEnd = -1);
 	void slotWaitEndFrame(int slot, bool onlySound = false);
 
+	void slotSetDoubleMode(int slot, bool doubleMode);
+
 	bool slotIsOpen(int slot) const;
 
 	uint16 getFlags(int slot = -1) const;

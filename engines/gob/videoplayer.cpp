@@ -466,6 +466,13 @@ bool VideoPlayer::slotIsOpen(int slot) const {
 	return false;
 }
 
+void VideoPlayer::slotSetDoubleMode(int slot, bool doubleMode) {
+	Video *video = getVideoBySlot(slot);
+
+	if (video)
+		video->getVideo()->setDoubleMode(doubleMode);
+}
+
 const VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) const {
 	if (slot < 0) {
 		if (_primaryVideo->isOpen())

@@ -145,6 +145,9 @@ public:
 	/** Use an own memory block as video memory. */
 	virtual void setVideoMemory() = 0;
 
+	/** Double the video's resolution. */
+	virtual void setDoubleMode(bool doubleMode) = 0;
+
 	/** Play sound (if the video has sound). */
 	virtual void enableSound(Audio::Mixer &mixer) = 0;
 	/** Don't play sound or stop currently playing sound. */
@@ -225,6 +228,8 @@ public:
 	void setXY(int16 x, int16 y);
 	void setVideoMemory(byte *vidMem, uint16 width, uint16 height);
 	void setVideoMemory();
+
+	void setDoubleMode(bool doubleMode) { }
 
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
@@ -319,6 +324,8 @@ public:
 
 	void setXY(int16 x, int16 y);
 
+	void setDoubleMode(bool doubleMode);
+
 	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 
 	State nextFrame();
@@ -375,6 +382,8 @@ protected:
 	byte _postScaleX;
 	byte _scaleExternalX;
 	byte *_vidMemBuffer;
+
+	bool _doubleMode;
 
 	Graphics::PaletteLUT *_palLUT;
 	Indeo3 *_codecIndeo3;

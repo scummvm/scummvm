@@ -31,10 +31,31 @@
 #include "gob/video.h"
 #include "gob/util.h"
 #include "gob/indeo3.h"
+#include "gob/draw.h"
+#include "gob/global.h"
 
 namespace Gob {
 
 Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
+}
+
+void Video_v6::setPrePalette() {
+	byte *tpal = (byte *) _vm->_draw->_vgaPalette;;
+	const byte *fpal = (const byte *) _ditherPalette;
+
+	for (int i = 0; i < 256; i++) {
+		byte r, g, b;
+
+		Graphics::PaletteLUT::YUV2RGB(fpal[i * 3 + 0], fpal[i * 3 + 1], fpal[i * 3 + 2],
+		                              r, g, b);
+
+		tpal[i * 3 + 0] = r >> 2;
+		tpal[i * 3 + 1] = g >> 2;
+		tpal[i * 3 + 2] = b >> 2;
+	}
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
 }
 
 void Video_v6::init(const char *target) {

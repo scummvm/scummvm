@@ -182,6 +182,8 @@ public:
 
 	virtual void init(const char *target = "") { }
 
+	virtual void setPrePalette() { }
+
 	Video(class GobEngine *vm);
 	virtual ~Video();
 
@@ -229,6 +231,8 @@ public:
 			int16 right, int16 bottom, int16 color);
 
 	virtual void init(const char *target = "");
+
+	virtual void setPrePalette();
 
 	Video_v6(GobEngine *vm);
 	virtual ~Video_v6() {}
