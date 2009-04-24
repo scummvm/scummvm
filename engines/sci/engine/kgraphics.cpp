@@ -292,7 +292,7 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 	return retval;
 }
 
-reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
 		if (UKPV(0) == 0) {
@@ -306,14 +306,29 @@ reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->mouse_pointer_loop = s->save_mouse_pointer_loop;
 			s->mouse_pointer_cel = s->save_mouse_pointer_cel;
 		}
-	case 2 : {
-		Common::Point pt;
-		pt.x = UKPV(0);
-		pt.y = UKPV(1);
+	case 2 : 
+	case 4 :
+		if (s->version >= SCI_VERSION(1, 1, 0) ||
+			s->_gameName.equalsIgnoreCase("eco") ||
+			(s->_gameName.equalsIgnoreCase("KQ5") && s->version == SCI_VERSION(1, 000, 784))	// KQ5 CD
+			) {
+			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, Common::Point(UKPV(0), UKPV(1))));
+		} else {
+			if (SKPV_OR_ALT(1, 1)) {
+				s->mouse_pointer_view = SKPV(0);
+			} else
+				s->mouse_pointer_view = GFXOP_NO_POINTER;
 
-		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, pt));
+			s->mouse_pointer_loop = s->mouse_pointer_cel = 0; // Not used with cursor-format pointers
+
+			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, s->mouse_pointer_view));
+
+			if (argc > 2) {
+				Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
+				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
+			}
+		}
 		break;
-	}
 	case 3 : {
 		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
 		s->mouse_pointer_view = UKPV(0);
@@ -333,29 +348,6 @@ reg_t kSetCursorNew(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		SCIkwarn(SCIkERROR, "kSetCursor: Unhandled case: %d arguments given!\n", argc);
 		break;
 	}
-	return s->r_acc;
-}
-
-reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->version >= SCI_VERSION(1, 001, 000) ||
-		s->_gameName.equalsIgnoreCase("eco")) {    // Eco Quest 1 needs kSetCursorNew
-		return kSetCursorNew(s, funct_nr, argc, argv);
-	}
-
-	if (SKPV_OR_ALT(1, 1)) {
-		s->mouse_pointer_view = SKPV(0);
-	} else
-		s->mouse_pointer_view = GFXOP_NO_POINTER;
-
-	s->mouse_pointer_loop = s->mouse_pointer_cel = 0; // Not used with cursor-format pointers
-
-	GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, s->mouse_pointer_view));
-
-	if (argc > 2) {
-		Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
-		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
-	}
-
 	return s->r_acc;
 }
 
