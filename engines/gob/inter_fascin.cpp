@@ -661,13 +661,22 @@ void Inter_Fascination::executeDrawOpcode(byte i) {
 void Inter_Fascination::oFascin_geUnknown0(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 0");
 	warning("sub_BBF8 with parameter : 'tirb.imd'");
-	_vm->_dataIO->openData("tirb.imd");
+
+	if (_vm->_vidPlayer->primaryOpen("tirb.imd")) {
+		_vm->_vidPlayer->primaryPlay();
+		_vm->_vidPlayer->primaryClose();
+	}
+	_vm->_draw->closeScreen();
 }
 
 void Inter_Fascination::oFascin_geUnknown1(OpGobParams &params) {
 	warning("Fascination Unknown GE Function 1");
 	warning("sub_BBF8 with parameter : 'tira.imd'");
-	_vm->_dataIO->openData("tira.imd");
+	if (_vm->_vidPlayer->primaryOpen("tira.imd")) {
+		_vm->_vidPlayer->primaryPlay();
+		_vm->_vidPlayer->primaryClose();
+	}
+	_vm->_draw->closeScreen();
 }
 
 void Inter_Fascination::oFascin_geUnknown2(OpGobParams &params) {
@@ -773,7 +782,7 @@ void Inter_Fascination::oFascin_cdUnknown10() {
 	int16 expr;
 	warning("Fascination Unknown CD Function 10 (loc_66E0)");	
 	evalExpr(&expr);
-    printf("_draw_renderFlags <- %d",expr);
+	warning("_draw_renderFlags <- %d",expr);
 	_vm->_draw->_renderFlags = expr;
 }
 
@@ -781,7 +790,7 @@ void Inter_Fascination::oFascin_cdUnknown11() {
 	int16 expr;
 	warning("Fascination Unknown CD Function 11 (loc_66E6)");	
 	evalExpr(&expr);
-    printf("Word_23906 <- %d",expr);
+	warning("Word_23906 <- %d",expr);
 }
 
 bool Inter_Fascination::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
