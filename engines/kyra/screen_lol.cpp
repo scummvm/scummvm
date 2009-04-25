@@ -32,9 +32,6 @@
 namespace Kyra {
 
 Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), _vm(vm) {
-	_customDimTable = new ScreenDim*[_screenDimTableCount];
-	memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
-
 	_paletteOverlay1 = new uint8[0x100];
 	_paletteOverlay2 = new uint8[0x100];
 	_grayOverlay = new uint8[0x100];
@@ -48,7 +45,7 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 	_fadeFlag = 2;
 	_curDimIndex = 0;
 
-	_mapDimX = _mapDimY = _mapDimW = _mapDimH = _mapDimDstX = _mapBlockWidth = _mapDimDstY = _mapBlockHeight = _mapDimU5 = _mapDimU6 = _mapBlockWidth2 = _mapDimU8 = 0;
+	_internDimX = _internDimY = _internDimW = _internDimH = _internDimDstX = _internBlockWidth = _internDimDstY = _internBlockHeight = _internDimU5 = _internDimU6 = _internBlockWidth2 = _internDimU8 = 0;
 }
 
 Screen_LoL::~Screen_LoL() {
@@ -63,6 +60,17 @@ Screen_LoL::~Screen_LoL() {
 	delete[] _paletteOverlay2;
 	delete[] _grayOverlay;
 }
+
+bool Screen_LoL::init() {
+	if (Screen::init()) {
+		_screenDimTable = _use16ColorMode ? _screenDimTable16C : _screenDimTable256C;
+		_customDimTable = new ScreenDim*[_screenDimTableCount];
+		memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
+		return true;
+	}
+	return false;
+}
+
 
 void Screen_LoL::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "Screen_LoL::setScreenDim(%d)", dim);
@@ -525,23 +533,23 @@ void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, 
 		return;
 
 	const ScreenDim *cdim = getScreenDim(dim);
-	_mapDimX = cdim->sx << 3;
-	_mapDimY = cdim->sy;
-	_mapDimW = cdim->w << 3;
-	_mapDimH = cdim->h;
+	_internDimX = cdim->sx << 3;
+	_internDimY = cdim->sy;
+	_internDimW = cdim->w << 3;
+	_internDimH = cdim->h;
 
 	calcMapBoundaries(x2, y2, w, h);
-	if (_mapBlockWidth == -1)
+	if (_internBlockWidth == -1)
 		return;
 
 	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
-	uint8 *dst = getPagePtr(page2) + (_mapDimDstY + _mapDimY) * 320;
+	uint8 *dst = getPagePtr(page2) + (_internDimDstY + _internDimY) * 320;
 
-	for (int i = 0; i < _mapBlockHeight; i++) {
-		uint8 *s = src + _mapDimU5;
-		uint8 *d = dst + (_mapDimDstX + _mapDimX);
+	for (int i = 0; i < _internBlockHeight; i++) {
+		uint8 *s = src + _internDimU5;
+		uint8 *d = dst + (_internDimDstX + _internDimX);
 
-		for (int ii = 0; ii < _mapBlockWidth; ii++) {
+		for (int ii = 0; ii < _internBlockWidth; ii++) {
 			uint8 p = ovl[*s++];
 			if (p)
 				*d = p;
@@ -552,60 +560,97 @@ void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, 
 		src += 320;
 	}
 
-	addDirtyRect(_mapDimDstX + _mapDimX, _mapDimDstY + _mapDimY, _mapBlockWidth, _mapBlockHeight);
+	addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+}
+
+void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl) {
+	if (!w || !h || !ovl)
+		return;
+
+	const ScreenDim *cdim = getScreenDim(dim);
+	_internDimX = cdim->sx << 3;
+	_internDimY = cdim->sy;
+	_internDimW = cdim->w << 3;
+	_internDimH = cdim->h;
+
+	calcMapBoundaries(x2, y2, w, h);
+	if (_internBlockWidth == -1)
+		return;
+
+	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
+	uint8 *dst = getPagePtr(page2) + (_internDimDstY + _internDimY) * 320;
+
+	for (int i = 0; i < _internBlockHeight; i++) {
+		uint8 *s = src + _internDimU5;
+		uint8 *d = dst + (_internDimDstX + _internDimX);
+
+		if (flag)
+			d += (i >> 1);
+
+		for (int ii = 0; ii < _internBlockWidth; ii++) {
+			if (*s++)
+				*d = ovl[*d];
+			d++;
+		}
+
+		dst += 320;
+		src += 320;
+	}
+
+	addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
 }
 
 void Screen_LoL::calcMapBoundaries(int dstX, int dstY, int width, int height) {
-	_mapBlockWidth = _mapBlockWidth2 = width;
-	_mapBlockHeight = height;
-	_mapDimDstX = dstX;
-	_mapDimDstY = dstY;
+	_internBlockWidth = _internBlockWidth2 = width;
+	_internBlockHeight = height;
+	_internDimDstX = dstX;
+	_internDimDstY = dstY;
 
-	_mapDimU5 = _mapDimU6 = _mapDimU8 = 0;
+	_internDimU5 = _internDimU6 = _internDimU8 = 0;
 
-	int t = _mapDimDstX + _mapBlockWidth;
+	int t = _internDimDstX + _internBlockWidth;
 	if (t <= 0) {
-		_mapBlockWidth = _mapBlockHeight = -1;
+		_internBlockWidth = _internBlockHeight = -1;
 		return;
 	}
 
-	if (t <= _mapDimDstX) {
-		_mapDimU5 = _mapBlockWidth - t;
-		_mapBlockWidth = t;
-		_mapDimDstX = 0;
+	if (t <= _internDimDstX) {
+		_internDimU5 = _internBlockWidth - t;
+		_internBlockWidth = t;
+		_internDimDstX = 0;
 	}
 
-	t = _mapDimW - _mapDimDstX;
+	t = _internDimW - _internDimDstX;
 	if (t <= 0) {
-		_mapBlockWidth = _mapBlockHeight = -1;
+		_internBlockWidth = _internBlockHeight = -1;
 		return;
 	}
 
-	if (t <= _mapBlockWidth)
-		_mapBlockWidth = t;
+	if (t <= _internBlockWidth)
+		_internBlockWidth = t;
 
-	_mapBlockWidth2 -= _mapBlockWidth;
+	_internBlockWidth2 -= _internBlockWidth;
 
-	t = _mapDimDstY + _mapBlockHeight;
+	t = _internDimDstY + _internBlockHeight;
 	if (t <= 0) {
-		_mapBlockWidth = _mapBlockHeight = -1;
+		_internBlockWidth = _internBlockHeight = -1;
 		return;
 	}
 
-	if (t <= _mapDimDstY) {
-		_mapDimU6 = _mapBlockHeight - t;
-		_mapBlockHeight = t;
-		_mapDimDstY = 0;
+	if (t <= _internDimDstY) {
+		_internDimU6 = _internBlockHeight - t;
+		_internBlockHeight = t;
+		_internDimDstY = 0;
 	}
 
-	t = _mapDimH - _mapDimDstY;
+	t = _internDimH - _internDimDstY;
 	if (t <= 0) {
-		_mapBlockWidth = _mapBlockHeight = -1;
+		_internBlockWidth = _internBlockHeight = -1;
 		return;
 	}
 
-	if (t <= _mapBlockHeight)
-		_mapBlockHeight = t;
+	if (t <= _internBlockHeight)
+		_internBlockHeight = t;
 }
 
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {

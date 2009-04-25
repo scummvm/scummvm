@@ -50,18 +50,11 @@ struct LoLCharacter {
 	int16 id;
 	uint8 curFaceFrame;
 	uint8 defaultFaceFrame;
-	uint8 field_12;
+	uint8 screamSfx;
 	const uint16 *defaultModifiers;
 	uint16 itemsMight[8];
-	uint16 field_27[2];
-	uint8 field_2B;
-	uint16 field_2C;
-	uint16 field_2E;
-	uint16 field_30;
-	uint16 field_32;
-	uint16 field_34;
-	uint8 field_36;
-	uint16 itemsProtection;
+	uint16 protectionAgainstItems[8];
+	uint16 itemProtection;
 	int16 hitPointsCur;
 	uint16 hitPointsMax;
 	int16 magicPointsCur;
@@ -78,8 +71,8 @@ struct LoLCharacter {
 	uint8 skillLevels[3];
 	uint8 skillModifiers[3];
 	int32 experiencePts[3];
-	uint8 arrayUnk2[5];
-	uint8 arrayUnk1[5];
+	uint8 characterUpdateEvents[5];
+	uint8 characterUpdateDelay[5];
 };
 
 struct SpellProperty {
@@ -100,17 +93,22 @@ struct LevelBlockProperty {
 struct MonsterProperty {
 	uint8 shapeIndex;
 	uint8 maxWidth;
-	uint16 fightingStats[10];
-	uint16 unk2[8];
-	uint16 unk3[8];
+	uint16 fightingStats[9];
+	uint16 itemsMight[8];
+	uint16 protectionAgainstItems[8];
 	uint16 itemProtection;
-	uint16 might;
+	uint16 hitPoints;
 	uint8 speedTotalWaitTicks;
 	uint8 skillLevel;
 	uint16 flags;
 	uint16 unk5;
-	uint16 unk6[5];
-	uint8 unk7[4];
+	uint16 numDistAttacks;
+	uint16 numDistWeapons;
+	uint16 distWeapons[3];
+	uint8 attackSkillChance;
+	uint8 attackSkillType;
+	uint8 defenseSkillChance;
+	uint8 defenseSkillType;
 	uint8 sounds[3];
 };
 
@@ -118,15 +116,15 @@ struct MonsterInPlay {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
 	uint8 flyingHeight;
-	uint16 blockPropertyIndex;
+	uint16 block;
 	uint16 x;
 	uint16 y;
 	int8 shiftStep;
 	uint16 destX;
 	uint16 destY;
 	uint8 destDirection;
-	uint8 anon8;
-	uint8 anonh;
+	int8 hitOffsX;
+	int8 hitOffsY;
 	uint8 currentSubFrame;
 
 	uint8 mode;
@@ -135,15 +133,15 @@ struct MonsterInPlay {
 	uint8 direction;
 	uint8 facing;
 	uint16 flags;
-	uint8 field_1B;
-	uint8 field_1C;
-	int16 might;
+	uint16 damageReceived;
+	//uint8 field_1C;
+	int16 hitPoints;
 	uint8 speedTick;
 	uint8 type;
 	MonsterProperty *properties;
-	uint8 field_25;
-	uint8 field_26;
-	uint8 field_27;
+	uint8 numDistAttacks;
+	uint8 curDistWeapon;
+	int8 distAttackTick;
 	uint16 assignedItems;
 	uint8 field_2A[4];
 };
@@ -152,15 +150,15 @@ struct ItemInPlay {
 	uint16 nextAssignedObject;
 	uint16 nextDrawObject;
 	uint8 flyingHeight;
-	uint16 blockPropertyIndex;
+	uint16 block;
 	uint16 x;
 	uint16 y;
 	int8 level;
 	uint16 itemPropertyIndex;
 	uint16 shpCurFrame_flg;
 	uint8 destDirection;
-	uint8 anon8;
-	uint8 anonh;
+	int8 hitOffsX;
+	int8 hitOffsY;
 	uint8 currentSubFrame;
 };
 
@@ -213,8 +211,8 @@ struct OpenDoorState {
 
 struct FlyingObject {
 	uint8 enable;
-	uint8 a;
-	uint16 charNum;
+	uint8 objectType;
+	uint16 attackerId;
 	uint16 item;
 	uint16 x;
 	uint16 y;
@@ -324,6 +322,8 @@ private:
 
 	int getCharSelection();
 	int selectionCharAccept();
+	
+	void showStarcraftLogo();
 
 	int _charSelection;
 	int _charSelectionInfoResult;
@@ -354,16 +354,17 @@ private:
 
 	void timerProcessDoors(int timerNum);
 	void timerProcessMonsters(int timerNum);
-	void timerSub3(int timerNum);
+	void timerSpecialCharacterUpdate(int timerNum);
 	void timerProcessFlyingObjects(int timerNum);
 	void timerRunSceneAnimScript(int timerNum);
-	void timerSub6(int timerNum);
+	void timerRegeneratePoints(int timerNum);
 	void timerUpdatePortraitAnimations(int skipUpdate);
 	void timerUpdateLampState(int timerNum);
 	void timerFadeMessageText(int timerNum);
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
+	int _timer3Para;
 
 	// sound
 	void loadTalkFile(int index);
@@ -373,6 +374,7 @@ private:
 	void snd_stopSpeech(bool setFlag);
 	void snd_playSoundEffect(int track, int volume);
 	void snd_processEnvironmentalSoundEffect(int soundId, int block);
+	void snd_queueEnvironmentalSoundEffect(int soundId, int block);
 	void snd_loadSoundFile(int track);
 	int snd_playTrack(int track);
 	int snd_stopMusic();
@@ -387,7 +389,11 @@ private:
 	char _curMusicFileExt;
 	int _environmentSfx;
 	int _environmentSfxVol;
-	int _environmentSfxDistThreshold;
+	int _envSfxDistThreshold;
+	bool _envSfxUseQueue;
+	int _envSfxNumTracksInQueue;
+	uint16 _envSfxQueuedTracks[10];
+	uint16 _envSfxQueuedBlocks[10];
 	int _nextSpeechId;
 	int _nextSpeaker;
 
@@ -405,8 +411,8 @@ private:
 	int _ingameGMSoundIndexSize;
 	const uint8 *_ingameMT32SoundIndex;
 	int _ingameMT32SoundIndexSize;
-	/*const uint8 *_ingameADLSoundIndex;
-	int _ingameADLSoundIndexSize;*/
+
+	AudioDataStruct _soundData[3];
 
 	// gui
 	void gui_drawPlayField();
@@ -597,15 +603,18 @@ private:
 	int olol_fadeSequencePalette(EMCState *script);
 	int olol_redrawPlayfield(EMCState *script);
 	int olol_loadNewLevel(EMCState *script);
+	int olol_getNearestMonsterFromCharacter(EMCState *script);
 	int olol_dummy0(EMCState *script);
 	int olol_loadMonsterProperties(EMCState *script);
 	int olol_battleHitSkillTest(EMCState *script);
+	int olol_inflictDamage(EMCState *script);
 	int olol_moveMonster(EMCState *script);
 	int olol_dialogueBox(EMCState *script);
 	int olol_giveTakeMoney(EMCState *script);
 	int olol_checkMoney(EMCState *script);
 	int olol_setScriptTimer(EMCState *script);
 	int olol_createHandItem(EMCState *script);
+	int olol_playAttackSound(EMCState *script);
 	int olol_characterJoinsParty(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
@@ -619,18 +628,23 @@ private:
 	int olol_processDialogue(EMCState *script);
 	int olol_stopTimScript(EMCState *script);
 	int olol_getWallFlags(EMCState *script);
-	int olol_changeMonsterSettings(EMCState *script);
+	int olol_changeMonsterStat(EMCState *script);
+	int olol_getMonsterStat(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_update(EMCState *script);
+	int olol_healCharacter(EMCState *script);
 	int olol_drawExitButton(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_playMusicTrack(EMCState *script);
 	int olol_countBlockItems(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
+	int olol_calcInflictableDamage(EMCState *script);
+	int olol_getInflictedDamage(EMCState *script);
 	int olol_checkForCertainPartyMember(EMCState *script);
 	int olol_printMessage(EMCState *script);
 	int olol_deleteLevelItem(EMCState *script);
+	int olol_calcInflictableDamagePerItem(EMCState *script);
 	int olol_objectLeavesLevel(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
@@ -638,7 +652,7 @@ private:
 	int olol_dummy1(EMCState *script);
 	int olol_suspendMonster(EMCState *script);
 	int olol_setDoorState(EMCState *script);
-	int olol_processButtonClick(EMCState *script);
+	int olol_resetTimDialogueState(EMCState *script);
 	int olol_savePage5(EMCState *script);
 	int olol_restorePage5(EMCState *script);
 	int olol_initDialogueSequence(EMCState *script);
@@ -699,6 +713,7 @@ private:
 								// Maybe we can someday reduce the size.
 	char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
+	void decodeSjis(const char *src, char *dst);
 
 	static const char * const _languageExt[];
 
@@ -728,8 +743,6 @@ private:
 	int _numThrownShapes;
 	uint8 **_effectShapes;
 	int _numEffectShapes;
-	uint8 **_fireballShapes;
-	int _numFireballShapes;
 
 	const int8 *_gameShapeMap;
 	int _gameShapeMapSize;
@@ -740,8 +753,8 @@ private:
 
 	// characters
 	bool addCharacter(int id);
-	void setFaceFrames(int charNum, int defaultFrame, int unk2, int redraw);
-	void setFaceFramesUnkArrays(int charNum, int unk1, int unk2, int unk3);
+	void setTemporaryFaceFrame(int charNum, int frame, int updateDelay, int redraw);
+	void setCharacterUpdateEvent(int charNum, int updateType, int updateDelay, int overwrite);
 	int countActiveCharacters();
 	void loadCharFaceShapes(int charNum, int id);
 	void calcCharPortraitXpos();
@@ -756,7 +769,9 @@ private:
 	int calculateCharacterStats(int charNum, int index);
 	int calculateProtection(int index);
 
+	void setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode);
 	void increaseExperience(int charNum, int skill, uint32 points);
+	void increaseCharacterHitpoints(int charNum, int points, bool unk);
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
@@ -1023,15 +1038,16 @@ private:
 	ItemInPlay *findObject(uint16 index);
 	void runItemScript(int charNum, int item, int sub, int next, int reg4);
 	void setHandItem(uint16 itemIndex);
+	bool itemEquipped(int charNum, uint16 itemType);
 
 	void setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b);
 	void removeLevelItem(int item, int block);
-	bool throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c);
+	bool launchObject(int objectType, int item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
 	void endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextBlock);
 	void processObjectFlight(FlyingObject *t, int x, int y);
 	void updateObjectFlightPosition(FlyingObject *t);
 	void objectFlightProcessHits(FlyingObject *t, int x, int y, int objectOnNextBlock);
-	void updateFlyingObjects(FlyingObject *t);
+	void updateFlyingObject(FlyingObject *t);
 
 	void assignItemToBlock(uint16 *assignedBlockObjects, int id);
 	int checkDrawObjectSpace(int itemX, int itemY, int partyX, int partyY);
@@ -1088,6 +1104,9 @@ private:
 	int calcMonsterSkillLevel(int id, int a);
 	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
+	uint16 *getCharacterOrMonsterItemsMight(int id);
+	uint16 *getCharacterOrMonsterProtectionAgainstItems(int id);
+
 	void drawBlockObjects(int blockArrayIndex);
 	void drawMonster(uint16 id);
 	int getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags);
@@ -1107,7 +1126,7 @@ private:
 	void chasePartyWithCloseAttacks(MonsterInPlay *monster);
 	int walkMonsterCalcNextStep(MonsterInPlay *monster);
 	int getMonsterDistance(uint16 block1, uint16 block2);
-	int walkMonster_s3(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
+	int checkForPossibleDistanceAttack(uint16 monsterBlock, int direction, int distance, uint16 curBlock);
 	int walkMonsterCheckDest(int x, int y, MonsterInPlay *monster, int unk);
 	void getNextStepCoords(int16 monsterX, int16 monsterY, int &newX, int &newY, uint16 direction);
 	void rearrangeAttackingMonster(MonsterInPlay *monster);
@@ -1143,25 +1162,16 @@ private:
 	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;
-	uint8 _unkBt2;
+	uint8 _drainMagic;
 	uint16 _unkWordArraySize8[8];
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
 	uint32 _rndSpecial;
 
-	// fight
-	int battleHitSkillTest(int16 attacker, int16 target, int skill);
-	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
-	void battleHit_sub2(int16 target, int damageInflicted, int16 attacker, uint32 b);
-	void battleHit_sub3(MonsterInPlay *monster, int16 target, int16 damageInflicted);
-	int calcInflictableDamagePerStat(int16 attacker, int16 target, uint16 stat2m, int index, int hitType);
-
-	uint16 getClosestMonster(int x, int y);
-	uint16 getClosestPartyMember(int x, int y);
-
 	// spells
-	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);
+	void processMagicHeal(int charNum, int points);
+	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);	
 
 	int8 _availableSpells[7];
 	int _selectedSpell;
@@ -1170,17 +1180,46 @@ private:
 	int _subMenuIndex;
 	uint16 _unkIceSHpFlag;
 
-	// unneeded
-	void setWalkspeed(uint8) {}
-	void removeHandItem() {}
-	bool lineIsPassable(int, int) { return false; }
+	uint8 *_healOverlay;
 
-	// save
-	Common::Error loadGameState(int slot) { return Common::kNoError; }
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) { return Common::kNoError; }
+	uint8 **_fireballShapes;
+	int _numFireballShapes;
+	uint8 **_healShapes;
+	int _numHealShapes;
+	uint8 **_healiShapes;
+	int _numHealiShapes;
 
-	void generateTempData();
-	LevelTempData *_lvlTempData[28];
+	const uint8 *_healShapeFrames;
+	int _healShapeFramesSize;
+
+	// fight
+	int battleHitSkillTest(int16 attacker, int16 target, int skill);
+	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
+	int inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag);
+	void characterHitpointsZero(int16 charNum, int a);
+	void resetCharacterState(LoLCharacter *c, int first, int last);
+	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
+	void checkForPartyDeath();
+
+	void applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage);
+	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int deathFlag, int skill, int damage);
+	int removeCharacterItem(int charNum, int itemFlags);
+	bool paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
+	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
+	void stunCharacter(int charNum);
+	void level11specialUnk();
+
+	void distObj1Sub(int a, int b, int c, int d);
+	void launchMagicViper();
+
+	void attackWall(int a, int b);
+
+	uint16 getNearestMonsterFromCharacter(int charNum);
+	uint16 getNearestMonsterFromCharacterForBlock(int block, int charNum);
+	uint16 getNearestMonsterFromPos(int x, int y);
+	uint16 getNearestPartyMemberFromPos(int x, int y);
+
+	int _partyDeathFlag;
 
 	// magic atlas
 	void displayAutomap();
@@ -1211,6 +1250,18 @@ private:
 	uint8 _automapTopLeftY;
 	static const int8 _mapCoords[12][4];
 	bool _mapUpdateNeeded;
+
+	// unneeded
+	void setWalkspeed(uint8) {}
+	void removeHandItem() {}
+	bool lineIsPassable(int, int) { return false; }
+
+	// save
+	Common::Error loadGameState(int slot) { return Common::kNoError; }
+	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) { return Common::kNoError; }
+
+	void generateTempData();
+	LevelTempData *_lvlTempData[28];
 };
 
 } // end of namespace Kyra

@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 44
+#define RESFILE_VERSION 45
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -448,6 +448,8 @@ bool StaticResource::init() {
 		{ lolMapCursorOvl, kRawData, "MAPCURSOR.PAL" },
 		{ lolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
 		//{ lolMapPal, kRawData, "MAP.PAL" },
+
+		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },		
 
 		{ 0, 0, 0 }
 	};
@@ -992,20 +994,13 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		t->id = file->readSint16LE();
 		t->curFaceFrame = file->readByte();
 		t->defaultFaceFrame = file->readByte();
-		t->field_12 = file->readByte();
+		t->screamSfx = file->readByte();
 		file->readUint32LE();
 		for (int ii = 0; ii < 8; ii++)
 			t->itemsMight[ii] = file->readUint16LE();
-		for (int ii = 0; ii < 2; ii++)
-			t->field_27[ii] = file->readUint16LE();
-		t->field_2B = file->readByte();
-		t->field_2C = file->readUint16LE();
-		t->field_2E = file->readUint16LE();
-		t->field_30 = file->readUint16LE();
-		t->field_32 = file->readUint16LE();
-		t->field_34 = file->readUint16LE();
-		t->field_36 = file->readByte();
-		t->itemsProtection = file->readUint16LE();
+		for (int ii = 0; ii < 8; ii++)
+			t->protectionAgainstItems[ii] = file->readUint16LE();
+		t->itemProtection = file->readUint16LE();
 		t->hitPointsCur = file->readSint16LE();;
 		t->hitPointsMax = file->readUint16LE();;
 		t->magicPointsCur = file->readSint16LE();;
@@ -1027,9 +1022,9 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 		for (int ii = 0; ii < 3; ii++)
 			t->experiencePts[ii] = file->readUint32LE();
 		for (int ii = 0; ii < 5; ii++)
-			t->arrayUnk2[ii] = file->readByte();
+			t->characterUpdateEvents[ii] = file->readByte();
 		for (int ii = 0; ii < 5; ii++)
-			t->arrayUnk1[ii] = file->readByte();
+			t->characterUpdateDelay[ii] = file->readByte();
 	};
 
 	ptr = charData;
@@ -1430,47 +1425,28 @@ void KyraEngine_LoK::initStaticResource() {
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
 	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
+	memset(_soundData, 0, sizeof(_soundData));
 	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
-		_soundData[0]._fileList = _soundFilesIntro;
-		_soundData[0]._fileListLen = _soundFilesIntroSize;
-		_soundData[0]._cdaTracks = 0;
-		_soundData[0]._cdaNumTracks = 0;
-		_soundData[1]._fileList = _soundFiles;
-		_soundData[1]._fileListLen = _soundFilesSize;
-		_soundData[1]._cdaTracks = 0;
-		_soundData[1]._cdaNumTracks = 0;
-		_soundData[2]._fileList = 0;
-		_soundData[2]._fileListLen = 0;
-		_soundData[2]._cdaTracks = 0;
-		_soundData[2]._cdaNumTracks = 0;
+		_soundData[0].fileList = _soundFilesIntro;
+		_soundData[0].fileListLen = _soundFilesIntroSize;
+		_soundData[1].fileList = _soundFiles;
+		_soundData[1].fileListLen = _soundFilesSize;
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_soundData[0]._fileList = _soundFiles;
-		_soundData[0]._fileListLen = _soundFilesSize;
-		_soundData[0]._cdaTracks = _cdaTrackTable;
-		_soundData[0]._cdaNumTracks = _cdaTrackTableSize;
-		_soundData[1]._fileList = _soundFiles;
-		_soundData[1]._fileListLen = _soundFilesSize;
-		_soundData[1]._cdaTracks = _cdaTrackTable;
-		_soundData[1]._cdaNumTracks = _cdaTrackTableSize;
-		_soundData[2]._fileList = 0;
-		_soundData[2]._fileListLen = 0;
-		_soundData[2]._cdaTracks = 0;
-		_soundData[2]._cdaNumTracks = 0;
+		_soundData[0].fileList = _soundFiles;
+		_soundData[0].fileListLen = _soundFilesSize;
+		_soundData[0].cdaTracks = _cdaTrackTable;
+		_soundData[0].cdaNumTracks = _cdaTrackTableSize;
+		_soundData[1].fileList = _soundFiles;
+		_soundData[1].fileListLen = _soundFilesSize;
+		_soundData[1].cdaTracks = _cdaTrackTable;
+		_soundData[1].cdaNumTracks = _cdaTrackTableSize;
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0]._fileList = tIntro98;
-		_soundData[0]._fileListLen = 1;
-		_soundData[0]._cdaTracks = 0;
-		_soundData[0]._cdaNumTracks = 0;
-		_soundData[1]._fileList = tIngame98;
-		_soundData[1]._fileListLen = 1;
-		_soundData[1]._cdaTracks = 0;
-		_soundData[1]._cdaNumTracks = 0;
-		_soundData[2]._fileList = 0;
-		_soundData[2]._fileListLen = 0;
-		_soundData[2]._cdaTracks = 0;
-		_soundData[2]._cdaNumTracks = 0;
-	} else {
-		memset(_soundData, 0, sizeof(_soundData));
+		_soundData[0].fileList = tIntro98;
+		_soundData[0].fileListLen = 1;
+		_soundData[0].extraOffset = -56;
+		_soundData[1].fileList = tIngame98;
+		_soundData[1].fileListLen = 1;
+		_soundData[1].extraOffset = -1;
 	}
 }
 
@@ -1673,45 +1649,34 @@ void KyraEngine_HoF::initStaticResource() {
 	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
 	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
 
+	memset(_soundData, 0, sizeof(_soundData));
 	if (_flags.platform == Common::kPlatformPC) {
-		_soundData[0]._fileList = _musicFileListIntro;
-		_soundData[0]._fileListLen = _musicFileListIntroSize;
-		_soundData[0]._cdaTracks = 0;
-		_soundData[0]._cdaNumTracks = 0;
-		_soundData[1]._fileList = _musicFileListIngame;
-		_soundData[1]._fileListLen = _musicFileListIngameSize;
-		_soundData[1]._cdaTracks = 0;
-		_soundData[1]._cdaNumTracks = 0;
-		_soundData[2]._fileList = _musicFileListFinale;
-		_soundData[2]._fileListLen = _musicFileListIntroSize;
-		_soundData[2]._cdaTracks = 0;
-		_soundData[2]._cdaNumTracks = 0;
+		_soundData[0].fileList = _musicFileListIntro;
+		_soundData[0].fileListLen = _musicFileListIntroSize;
+		_soundData[1].fileList = _musicFileListIngame;
+		_soundData[1].fileListLen = _musicFileListIngameSize;
+		_soundData[2].fileList = _musicFileListFinale;
+		_soundData[2].fileListLen = _musicFileListIntroSize;
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_soundData[0]._fileList = fmtMusicFileListIntro;
-		_soundData[0]._fileListLen = 1;
-		_soundData[0]._cdaTracks = _cdaTrackTableIntro;
-		_soundData[0]._cdaNumTracks = _cdaTrackTableIntroSize >> 1;
-		_soundData[1]._fileList = fmtMusicFileListIngame;
-		_soundData[1]._fileListLen = 1;
-		_soundData[1]._cdaTracks = _cdaTrackTableIngame;
-		_soundData[1]._cdaNumTracks = _cdaTrackTableIngameSize >> 1;
-		_soundData[2]._fileList = fmtMusicFileListFinale;
-		_soundData[2]._fileListLen = 1;
-		_soundData[2]._cdaTracks = _cdaTrackTableFinale;
-		_soundData[2]._cdaNumTracks = _cdaTrackTableFinaleSize >> 1;
+		_soundData[0].fileList = fmtMusicFileListIntro;
+		_soundData[0].fileListLen = 1;
+		_soundData[0].cdaTracks = _cdaTrackTableIntro;
+		_soundData[0].cdaNumTracks = _cdaTrackTableIntroSize >> 1;
+		_soundData[1].fileList = fmtMusicFileListIngame;
+		_soundData[1].fileListLen = 1;
+		_soundData[1].cdaTracks = _cdaTrackTableIngame;
+		_soundData[1].cdaNumTracks = _cdaTrackTableIngameSize >> 1;
+		_soundData[2].fileList = fmtMusicFileListFinale;
+		_soundData[2].fileListLen = 1;
+		_soundData[2].cdaTracks = _cdaTrackTableFinale;
+		_soundData[2].cdaNumTracks = _cdaTrackTableFinaleSize >> 1;
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0]._fileList = pc98MusicFileListIntro;
-		_soundData[0]._fileListLen = 1;
-		_soundData[0]._cdaTracks = 0;
-		_soundData[0]._cdaNumTracks = 0;
-		_soundData[1]._fileList = pc98MusicFileListIngame;
-		_soundData[1]._fileListLen = 1;
-		_soundData[1]._cdaTracks = 0;
-		_soundData[1]._cdaNumTracks = 0;
-		_soundData[2]._fileList = pc98MusicFileListFinale;
-		_soundData[2]._fileListLen = 1;
-		_soundData[2]._cdaTracks = 0;
-		_soundData[2]._cdaNumTracks = 0;
+		_soundData[0].fileList = pc98MusicFileListIntro;
+		_soundData[0].fileListLen = 1;
+		_soundData[1].fileList = pc98MusicFileListIngame;
+		_soundData[1].fileListLen = 1;
+		_soundData[2].fileList = pc98MusicFileListFinale;
+		_soundData[2].fileListLen = 1;
 	}
 
 	// setup sequence data
@@ -1884,10 +1849,33 @@ void LoLEngine::initStaticResource() {
 	memcpy (_mapCursorOverlay, tmp, tmpSize);
 	_staticres->unloadId(lolMapCursorOvl);
 
-	/*tmp = _staticres->loadRawData(lolMapPal, tmpSize);
-	_screen->_automapPal = new uint8[tmpSize];
-	memcpy (_screen->_automapPal, tmp, tmpSize);
-	_staticres->unloadId(lolMapPal);*/
+	_healShapeFrames = _staticres->loadRawData(lolHealShapeFrames, _healShapeFramesSize);
+
+	// assign music data
+	static const char *pcMusicFileListIntro[] = { "LOREINTR" };
+	static const char *pcMusicFileListFinale[] = { "LOREFINL" };
+	static const char *pcMusicFileListIngame[] = { "LORE%02d%c" };
+
+	static const char *pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
+	static const char *pc98MusicFileListFinale[] = { "lore%02d.86" };
+	static const char *pc98MusicFileListIngame[] = { "lore%02d.86" };
+
+	memset(_soundData, 0, sizeof(_soundData));
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0].fileList = pcMusicFileListIntro;
+		_soundData[0].fileListLen = 1;
+		_soundData[1].fileList = pcMusicFileListIngame;
+		_soundData[1].fileListLen = 1;
+		_soundData[2].fileList = pcMusicFileListFinale;
+		_soundData[3].fileListLen = 1;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0].fileList = pc98MusicFileListIntro;
+		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
+		_soundData[1].fileList = pc98MusicFileListIngame;
+		_soundData[1].fileListLen = 1;
+		_soundData[2].fileList = pc98MusicFileListFinale;
+		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);;
+	}
 }
 
 void LoLEngine::assignButtonCallback(Button *button, int index) {
@@ -2949,7 +2937,7 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 // lands of lore static res
 
 #ifdef ENABLE_LOL
-const ScreenDim Screen_LoL::_screenDimTable[] = {
+const ScreenDim Screen_LoL::_screenDimTable256C[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },	// Taken from Intro
 	{ 0x08, 0x48, 0x18, 0x38, 0xFE, 0x01, 0x00, 0x00 },
 	{ 0x0E, 0x00, 0x16, 0x78, 0xFE, 0x01, 0x00, 0x00 },
@@ -2966,7 +2954,24 @@ const ScreenDim Screen_LoL::_screenDimTable[] = {
 	{ 0x0B, 0x8C, 0x10, 0x23, 0x3D, 0x01, 0x00, 0x00 }	// Main menu box (3 entries, floppy version only)
 };
 
-const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable);
+const ScreenDim Screen_LoL::_screenDimTable16C[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0x33, 0x44, 0x00, 0x00 },	// Taken from Intro
+	{ 0x08, 0x48, 0x18, 0x38, 0x33, 0x44, 0x00, 0x00 },
+	{ 0x0E, 0x00, 0x16, 0x78, 0x33, 0x44, 0x00, 0x00 },
+	{ 0x0B, 0x7B, 0x1C, 0x12, 0x33, 0x11, 0x00, 0x00 },
+	{ 0x0B, 0x7B, 0x1C, 0x2D, 0x33, 0x11, 0x00, 0x00 },
+	{ 0x55, 0x7B, 0xE9, 0x37, 0x33, 0x11, 0x00, 0x00 },
+	{ 0x0B, 0x8C, 0x10, 0x2B, 0x33, 0x44, 0x00, 0x00 },	// Main menu box (4 entries)
+	{ 0x04, 0x59, 0x20, 0x3C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x05, 0x6E, 0x1E, 0x0C, 0x33, 0x44, 0x00, 0x00 },
+	{ 0x07, 0x19, 0x1A, 0x97, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x03, 0x1E, 0x22, 0x8C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x02, 0x48, 0x24, 0x34, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x0B, 0x8C, 0x10, 0x33, 0x33, 0x44, 0x00, 0x00 },	// Main menu box (5 entries, not used here)
+	{ 0x0B, 0x8C, 0x10, 0x23, 0x33, 0x44, 0x00, 0x00 }	// Main menu box (3 entries)
+};
+
+const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable256C);
 
 const char * const LoLEngine::_languageExt[] = {
 	"ENG",

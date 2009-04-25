@@ -43,36 +43,35 @@ struct KYRAGameDescription {
 
 namespace {
 
-#define FLAGS(x, y, z, a, b, c, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, id }
-#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, id }
+#define FLAGS(x, y, z, a, b, c, d, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, id }
+#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_KYRA2)
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, true, false, Kyra::GI_KYRA3)
-#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, true, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, true, false, Kyra::GI_KYRA3)
 
-#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, true, Kyra::GI_LOL)
-#define LOL_PC98_FLAGS FLAGS(false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, false, false, Kyra::GI_LOL)
-#define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, Kyra::GI_KYRA2)
+#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_LOL)
+#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, true, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
@@ -1020,23 +1019,6 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
-	/* disable these targets until they get supported
-	{
-		{
-			"lol",
-			0,
-			{
-				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
-				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
-				{ 0, 0, 0, 0 }
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC98,
-			ADGF_NO_FLAGS
-		},
-		LOL_PC98_FLAGS
-	},
-
 	{
 		{
 			"lol",
@@ -1051,7 +1033,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS
 		},
 		LOL_PC98_SJIS_FLAGS
-	},*/
+	},
 
 	{
 		{
@@ -1069,7 +1051,7 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 #endif // ENABLE_LOL
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

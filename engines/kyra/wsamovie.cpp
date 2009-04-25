@@ -372,11 +372,20 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			memcpy(palBuf, wsaData + 8 + ((_numFrames << 2) & 0xFFFF), 0x300);
+			_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x300);
 	}
 
-	if (flags & 2)
+	if (flags & 2) {
+		if (_vm->gameFlags().use16ColorMode) {
+			offsPal = 0x30;
+			_flags |= WF_HAS_PALETTE;
+			if (palBuf)
+				_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x30);
+		}
+		
 		_flags |= WF_XOR;
+	}
+
 
 	if (!(unk1 & 2)) {
 		_flags |= WF_OFFSCREEN_DECODE;

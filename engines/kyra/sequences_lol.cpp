@@ -88,6 +88,7 @@ void LoLEngine::setupPrologueData(bool load) {
 
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
 		memset(_screen->getPalette(1), 0, 768);
+
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 		
@@ -114,6 +115,13 @@ void LoLEngine::setupPrologueData(bool load) {
 
 		_eventList.clear();
 	}
+
+	// We have three sound.dat files, one for the intro, one for the
+	// end sequence and one for ingame, each contained in a different
+	// PAK file. Therefore a new call to loadSoundFile() is required
+	// whenever the PAK file configuration changes.
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile("sound.dat");
 }
 
 void LoLEngine::showIntro() {
@@ -122,13 +130,16 @@ void LoLEngine::showIntro() {
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
+	if (_flags.platform == Common::kPlatformPC98)
+		showStarcraftLogo();
+
 	uint8 *pal = _screen->getPalette(0);
 	memset(pal, 0, 768);
 	_screen->setScreenPalette(pal);
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
-	_screen->clearPage(8);	
+	_screen->clearPage(8);
 
 	TIM *intro = _tim->load("LOLINTRO.TIM", &_timIntroOpcodes);
 
@@ -225,6 +236,9 @@ int LoLEngine::chooseCharacter() {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->_curPage = 0;
+
+	if (_flags.use16ColorMode)
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
 	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 
@@ -569,6 +583,51 @@ int LoLEngine::selectionCharAccept() {
 	}
 
 	return -1;
+}
+
+void LoLEngine::showStarcraftLogo() {
+	WSAMovie_v2 *ci = new WSAMovie_v2(this, _screen);
+	assert(ci);
+
+	_screen->clearPage(0);
+	_screen->clearPage(2);
+
+	int endframe = ci->open("ci01.wsa", 0, _screen->_currentPalette);
+	if (!ci->opened()) {
+		delete ci;
+		return;
+	}
+	_screen->hideMouse();
+	ci->setX(32);
+	ci->setY(80);
+	ci->setDrawPage(2);
+	ci->displayFrame(0, 0);
+	_screen->copyPage(2, 0);
+	_screen->fadeFromBlack();
+	int inputFlag = 0;
+	for (int i = 0; i < endframe; i++) {
+		inputFlag = checkInput(0) & 0xff;
+		if (shouldQuit() || inputFlag)
+			break;
+		ci->displayFrame(i, 0);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		delay(4 * _tickLength);
+	}
+
+	if (!(shouldQuit() || inputFlag)) {
+		_sound->voicePlay("star2");
+		while(_sound->voiceIsPlaying("star2") && !(shouldQuit() || inputFlag)) {
+			inputFlag = checkInput(0) & 0xff;
+			delay(_tickLength);			
+		}
+	}
+
+	_screen->fadeToBlack();
+	_screen->showMouse();
+
+	_eventList.clear();
+	delete ci;
 }
 
 } // end of namespace Kyra

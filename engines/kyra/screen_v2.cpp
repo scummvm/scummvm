@@ -119,7 +119,8 @@ void Screen_v2::getFadeParams(const uint8 *palette, int delay, int &delayInc, in
 
 	int maxDiff = 0;
 	diff = 0;
-	for (int i = 0; i < 768; ++i) {
+	int len = _use16ColorMode ? 48 : 768;
+	for (int i = 0; i < len; ++i) {
 		diff = ABS(palette[i] - _screenPalette[i]);
 		maxDiff = MAX(maxDiff, diff);
 	}

@@ -473,7 +473,7 @@ void LoLEngine::gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int m
 
 	int barHeight = (curPoints * h) / maxPoints;
 
-	if (barHeight < 1 && curPoints < 1)
+	if (barHeight < 1 && curPoints > 0)
 		barHeight = 1;
 
 	_screen->drawClippedLine(x - 1, y - h, x - 1, y, 1);
@@ -1037,6 +1037,46 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 }
 
 int LoLEngine::clickedAttackButton(Button *button) {
+	int c = button->data2Val2;
+
+	if (_characters[c].flags & 0x314C)
+		return 1;
+
+	int bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+
+	if (_levelBlockProperties[bl].flags & 0x10) {
+		attackWall(0, 0);
+		return 1;
+	}
+
+	uint16 target = getNearestMonsterFromCharacter(c);
+	int s = 0;
+
+	for (int i = 0; i < 4; i++) {
+		if (!_characters[c].items[i])
+			continue;
+
+		runItemScript(c, _characters[c].items[i], 0x400, target, s);
+		runLevelScriptCustom(_currentBlock, 0x400, c, _characters[c].items[i], target, s);
+		s -= 10;
+	}
+
+	if (!s) {
+		runItemScript(c, 0, 0x400, target, s);
+		runLevelScriptCustom(_currentBlock, 0x400, c, 0, target, s);
+	}
+
+	s = _characters[c].weaponHit ? 4 : calcMonsterSkillLevel(c, 8) + 4;
+
+	// check for Zephyr ring
+	if (itemEquipped(c, 230))
+		s >>= 1;
+
+	_characters[c].flags |= 4;
+	gui_highlightPortraitFrame(c);
+
+	setCharacterUpdateEvent(c, 1, s, 1);
+
 	return 1;
 }
 
@@ -1074,7 +1114,7 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 		// TODO
 		///
 		/*if (processSpellcast(c, _availableSpells[_selectedSpell], spellLevel)) {
-			setFaceFramesUnkArrays(c, 1, 8, 1);
+			setCharacterUpdateEvent(c, 1, 8, 1);
 			sub_718F(c, 2, spellLevel * spellLevel);
 		} else {*/
 			_characters[c].flags &= 0xfffb;
@@ -1130,6 +1170,23 @@ int LoLEngine::clickedLiveMagicBarsLeft(Button *button) {
 }
 
 int LoLEngine::clickedPortraitEtcRight(Button *button) {
+	if (!_itemInHand)
+		return 1;
+
+	int flg = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].flags;
+	int c = button->data2Val2;
+
+	if (flg & 1) {
+		if (!(_characters[c].flags & 8) || (flg & 0x20)) {
+			runItemScript(c, _itemInHand, 0x400, 0, 0);
+			runLevelScriptCustom(_currentBlock, 0x400, c, _itemInHand, 0, 0);			
+		} else {
+			_txt->printMessage(2, getLangString(0x402c), _characters[c].name);
+		}
+		return 1;
+	}
+
+	_txt->printMessage(2, getLangString((flg & 8) ? 0x4029 : ((flg & 0x10) ? 0x402a : 0x402b)));
 	return 1;
 }
 
@@ -1389,8 +1446,10 @@ int LoLEngine::clickedWall(Button *button) {
 
 int LoLEngine::clickedSequenceWindow(Button *button) {
 	runLevelScript(calcNewBlockPosition(_currentBlock, _currentDirection), 0x40);
-	if (!_seqTrigger || !posWithinRect(_mouseX, _mouseY, _seqWindowX1, _seqWindowY1, _seqWindowX2, _seqWindowY2))
+	if (!_seqTrigger || !posWithinRect(_mouseX, _mouseY, _seqWindowX1, _seqWindowY1, _seqWindowX2, _seqWindowY2)) {
 		_seqTrigger = 0;
+		removeInputTop();
+	}
 	return 1;
 }
 
@@ -1418,7 +1477,7 @@ int LoLEngine::clickedSceneThrowItem(Button *button) {
 	uint16 y = 0;
 	calcCoordinates(x, y, _currentBlock, 0x80, 0x80);
 
-	if (throwItem(0, _itemInHand, x, y, 12, _currentDirection << 1, 6, _selectedCharacter, 0x3f)) {
+	if (launchObject(0, _itemInHand, x, y, 12, _currentDirection << 1, 6, _selectedCharacter, 0x3f)) {
 		snd_playSoundEffect(18, -1);
 		setHandItem(0);
 	}

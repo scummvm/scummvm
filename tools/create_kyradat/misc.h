@@ -557,6 +557,8 @@ const int lolCDFile2Need[] = {
 	lolMapStringId,
 	//lolMapPal,
 
+	lolHealShapeFrames,
+
 	-1
 };
 

@@ -251,6 +251,8 @@ enum kExtractID {
 	lolMapStringId,
 	//lolMapPal,
 
+	lolHealShapeFrames,
+
 	kMaxResIDs
 };
 

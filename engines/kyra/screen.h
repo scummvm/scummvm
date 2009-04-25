@@ -271,6 +271,7 @@ protected:
 
 	bool _useOverlays;
 	bool _useSJIS;
+	bool _use16ColorMode;
 
 	uint8 *_sjisFontData;
 	uint8 *_sjisTempPage;
@@ -328,6 +329,7 @@ protected:
 	void drawShapePlotType12(uint8 *dst, uint8 cmd);
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
+	void drawShapePlotType20(uint8 *dst, uint8 cmd);
 	void drawShapePlotType33(uint8 *dst, uint8 cmd);
 	void drawShapePlotType37(uint8 *dst, uint8 cmd);
 	void drawShapePlotType48(uint8 *dst, uint8 cmd);

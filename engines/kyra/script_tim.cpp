@@ -618,6 +618,8 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
 		vm()->sound()->voicePlay(_vocFiles[index].c_str(), volume, true);
+	else if (index == 7 && !_vm->gameFlags().isTalkie)
+		vm()->sound()->playTrack(index);
 	else
 		vm()->sound()->playSoundEffect(index);
 
@@ -1144,7 +1146,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	return res;
 }
 
-void TIMInterpreter_LoL::forceDialogue(TIM *tim) {
+void TIMInterpreter_LoL::resetDialogueState(TIM *tim) {
 	if (!tim)
 		return;
 

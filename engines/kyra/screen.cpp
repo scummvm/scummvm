@@ -73,6 +73,8 @@ bool Screen::init() {
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
 	_useOverlays = false;
 	_useSJIS = false;
+	_use16ColorMode = _vm->gameFlags().use16ColorMode;
+	
 	_sjisTempPage = _sjisFontData = 0;
 
 	if (_vm->gameFlags().useHiResOverlay) {
@@ -432,11 +434,13 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 int Screen::fadePalStep(const uint8 *palette, int diff) {
 	debugC(9, kDebugLevelScreen, "Screen::fadePalStep(%p, %d)", (const void *)palette, diff);
 
+	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
+	
 	uint8 fadePal[768];
-	memcpy(fadePal, _screenPalette, 768);
+	memcpy(fadePal, _screenPalette, colors);
 
 	bool needRefresh = false;
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
+	
 	for (int i = 0; i < colors; ++i) {
 		int c1 = palette[i];
 		int c2 = fadePal[i];
@@ -495,17 +499,35 @@ void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+
+	uint8 screenPal[256 * 4];
 	if (palData != _screenPalette)
 		memcpy(_screenPalette, palData, colors*3);
 
-	uint8 screenPal[256 * 4];
-	for (int i = 0; i < colors; ++i) {
-		screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
-		screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
-		screenPal[4 * i + 2] = (palData[2] << 2) | (palData[2] & 3);
-		screenPal[4 * i + 3] = 0;
-		palData += 3;
+	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
+		for (int l = 0; l < 1024; l += 64) {
+			const uint8 *tp = palData;
+			for (int i = 0; i < 16; ++i) {
+				screenPal[l + 4 * i + 0] = palData[1];
+				screenPal[l + 4 * i + 1] = palData[0];
+				screenPal[l + 4 * i + 2] = palData[2];
+				screenPal[l + 4 * i + 3] = 0;
+				palData += 3;
+			}
+			palData = tp;
+		}
+	} else {
+		if (palData != _screenPalette)
+			memcpy(_screenPalette, palData, colors*3);
+		for (int i = 0; i < colors; ++i) {
+			screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
+			screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
+			screenPal[4 * i + 2] = (palData[2] << 2) | (palData[2] & 3);
+			screenPal[4 * i + 3] = 0;
+			palData += 3;
+		}
 	}
+
 	_system->setPalette(screenPal, 0, colors);
 }
 
@@ -1242,7 +1264,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType13,		// used by Kyra 1
 		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
 		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0,
+		&Screen::drawShapePlotType20,		// used by LoL (heal spell effect)
+		0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0,
 		&Screen::drawShapePlotType33,		// used by LoL (blood spots on the floor)
 		0, 0, 0,
@@ -1683,7 +1707,6 @@ void Screen::drawShapePlotType0(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType1(uint8 *dst, uint8 cmd) {
-	// uint32 relOffs = dst - _dsDstPage;
 	for (int i = 0; i < _dsTableLoopCount; ++i)
 		cmd = _dsTable[cmd];
 
@@ -1705,7 +1728,6 @@ void Screen::drawShapePlotType4(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::drawShapePlotType5(uint8 *dst, uint8 cmd) {
-	// uint32 relOffs = dst - _dsDstPage;
 	cmd = _dsTable2[cmd];
 	for (int i = 0; i < _dsTableLoopCount; ++i)
 		cmd = _dsTable[cmd];
@@ -1809,6 +1831,15 @@ void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
 	}
 
 	_drawShapeVar4 = t;
+	*dst = cmd;
+}
+
+void Screen::drawShapePlotType20(uint8 *dst, uint8 cmd) {
+	cmd = _dsTable2[cmd];
+	uint8 tOffs = _dsTable3[cmd];
+	if (!(tOffs & 0x80))
+		cmd = _dsTable4[tOffs << 8 | *dst];
+
 	*dst = cmd;
 }
 
@@ -2822,6 +2853,9 @@ void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
 			palData[0] = (col & 0xF) << 2; col >>= 4;
 			palData += 3;
 		}
+	} else if (_use16ColorMode) {
+		for (int i = 0; i < bytes; ++i)
+			palData[i] = ((data[i] & 0xF) << 4) | (data[i] & 0xF0);
 	} else {
 		memcpy(palData, data, bytes);
 	}

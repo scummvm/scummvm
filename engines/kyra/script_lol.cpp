@@ -231,7 +231,7 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 
 	switch (stackPos(1)) {
 	case 0:
-		return i->blockPropertyIndex;
+		return i->block;
 	case 1:
 		return i->x;
 	case 2:
@@ -298,7 +298,7 @@ int LoLEngine::olol_getCharacterStat(EMCState *script) {
 		return c->magicPointsMax;
 
 	case 9:
-		return c->itemsProtection;
+		return c->itemProtection;
 
 	case 10:
 		return c->items[d];
@@ -307,7 +307,7 @@ int LoLEngine::olol_getCharacterStat(EMCState *script) {
 		return c->skillLevels[d] + c->skillModifiers[d];
 
 	case 12:
-		return c->field_27[d];
+		return c->protectionAgainstItems[d];
 
 	case 13:
 		return (d & 0x80) ? c->itemsMight[7] : c->itemsMight[d];
@@ -341,7 +341,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 5:
-		//// TODO
+		setCharacterMagicOrHitPoints(stackPos(0), 0, e, 0);
 		break;
 
 	case 6:
@@ -349,7 +349,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 7:
-		//// TODO
+		setCharacterMagicOrHitPoints(stackPos(0), 1, e, 0);
 		break;
 
 	case 8:
@@ -357,7 +357,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 9:
-		c->itemsProtection = e;
+		c->itemProtection = e;
 		break;
 
 	case 10:
@@ -369,7 +369,7 @@ int LoLEngine::olol_setCharacterStat(EMCState *script) {
 		break;
 
 	case 12:
-		c->field_27[d] = e;
+		c->protectionAgainstItems[d] = e;
 		break;
 
 	case 13:
@@ -577,7 +577,7 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 	case 11:
 		return _compassBroken;
 	case 12:
-		return _unkBt2;
+		return _drainMagic;
 	case 13:
 		return _speechFlag;
 	default:
@@ -651,7 +651,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 12:
-		_unkBt2 = a & 0xff;
+		_drainMagic = a & 0xff;
 		break;
 
 	default:
@@ -708,7 +708,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 
 	for (uint8 i = 0; i < 30; i++) {
 		MonsterInPlay *l = &_monsters[i];
-		if (l->might || l->mode == 13)
+		if (l->hitPoints || l->mode == 13)
 			continue;
 
 		memset(l, 0, sizeof(MonsterInPlay));
@@ -719,13 +719,13 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->type = stackPos(4);
 		l->properties = &_monsterProperties[l->type];
 		l->direction = l->facing << 1;
-		l->might = (l->properties->might * _monsterModifiers[_monsterDifficulty]) >> 8;
+		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
 
 		if (_currentLevel == 12 && l->type == 2)
-			l->might = (l->might * (_rnd.getRandomNumberRng(1, 128) + 192)) >> 8;
+			l->hitPoints = (l->hitPoints * (_rnd.getRandomNumberRng(1, 128) + 192)) >> 8;
 
-		l->field_25 = l->properties->unk6[0];
-		l->field_27 = _rnd.getRandomNumberRng(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
+		l->numDistAttacks = l->properties->numDistAttacks;
+		l->distAttackTick = _rnd.getRandomNumberRng(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
 		l->flyingHeight = 2;
 		l->flags = stackPos(5);
 		l->assignedItems = 0;
@@ -740,7 +740,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		for (int ii = 0; ii < 4; ii++)
 			l->field_2A[ii] = stackPos(7 + ii);
 
-		checkSceneUpdateNeed(l->blockPropertyIndex);
+		checkSceneUpdateNeed(l->block);
 		return i;
 	}
 
@@ -779,7 +779,7 @@ int LoLEngine::olol_loadNewLevel(EMCState *script) {
 	disableSysTimer(2);
 
 	for (int i = 0; i < 8; i++) {
-		if (!_flyingObjects[i].enable || _flyingObjects[i].a)
+		if (!_flyingObjects[i].enable || _flyingObjects[i].objectType)
 			continue;
 		endObjectFlight(&_flyingObjects[i], _flyingObjects[i].x, _flyingObjects[i].y, 1);
 	}
@@ -798,6 +798,11 @@ int LoLEngine::olol_loadNewLevel(EMCState *script) {
 
 	script->ip = 0;
 	return 1;
+}
+
+int LoLEngine::olol_getNearestMonsterFromCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getNearestMonsterFromCharacter(%p) (%d)", (const void *)script, stackPos(0));
+	return getNearestMonsterFromCharacter(stackPos(0));
 }
 
 int LoLEngine::olol_dummy0(EMCState *script) {
@@ -835,15 +840,14 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	l->fightingStats[6] = (stackPos(7) << 8) / 100;		//
 	l->fightingStats[7] = (stackPos(8) << 8) / 100;		//
 	l->fightingStats[8] = 0;
-	l->fightingStats[9] = 0;
 
 	for (int i = 0; i < 8; i++) {
-		l->unk2[i] = stackPos(9 + i);
-		l->unk3[i] = (stackPos(17 + i) << 8) / 100;
+		l->itemsMight[i] = stackPos(9 + i);
+		l->protectionAgainstItems[i] = (stackPos(17 + i) << 8) / 100;
 	}
 
 	l->itemProtection = stackPos(25);
-	l->might = stackPos(26);
+	l->hitPoints = stackPos(26);
 	l->speedTotalWaitTicks = 1;
 	l->flags = stackPos(27);
 	l->unk5 = stackPos(28);
@@ -851,13 +855,15 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	l->unk5 = stackPos(29);
 	//
 
-	for (int i = 0; i < 5; i++)
-		l->unk6[i] = stackPos(30 + i);
+	l->numDistAttacks = stackPos(30);
+	l->numDistWeapons = stackPos(31);
+	for (int i = 0; i < 3; i++)
+		l->distWeapons[i] = stackPos(32 + i);
 
-	for (int i = 0; i < 2; i++) {
-		l->unk7[i] = stackPos(35 + i);
-		l->unk7[i + 2] = stackPos(37 + i);
-	}
+	l->attackSkillChance = stackPos(35);
+	l->attackSkillType = stackPos(36);
+	l->defenseSkillChance = stackPos(37);
+	l->defenseSkillType = stackPos(38);
 
 	for (int i = 0; i < 3; i++)
 		l->sounds[i] = stackPos(39 + i);
@@ -868,6 +874,18 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 int LoLEngine::olol_battleHitSkillTest(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_battleHitSkillTest(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	return battleHitSkillTest(stackPos(0), stackPos(1), stackPos(2));
+}
+
+int LoLEngine::olol_inflictDamage(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_inflictDamage(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	if (stackPos(0) == -1) {
+		for (int i = 0; i < 4; i++)
+			inflictDamage(i, stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	} else {
+		inflictDamage(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	}
+
+	return 1;
 }
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
@@ -927,6 +945,20 @@ int LoLEngine::olol_createHandItem(EMCState *script) {
 	if (_itemInHand)
 		return 0;
 	setHandItem(makeItem(stackPos(0), stackPos(1), stackPos(2)));
+	return 1;
+}
+
+int LoLEngine::olol_playAttackSound(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAttackSound(%p) (%d)", (const void *)script, stackPos(0));
+	
+	static const uint8 sounds[] = { 12, 62, 63 };
+	int d = stackPos(0);
+
+	if ((d < 70 || d > 74) && (d < 81 || d > 89) && (d < 93 || d > 97) && (d < 102 || d > 106))
+		snd_playSoundEffect(sounds[_itemProperties[d].skill & 3], -1);
+	else
+		snd_playSoundEffect(12, -1);
+
 	return 1;
 }
 
@@ -1043,8 +1075,8 @@ int LoLEngine::olol_getWallFlags(EMCState *script) {
 	return _wllWallFlags[_levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3]];
 }
 
-int LoLEngine::olol_changeMonsterSettings(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeMonsterSettings(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+int LoLEngine::olol_changeMonsterStat(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeMonsterStat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) == -1)
 		return 1;
 
@@ -1060,7 +1092,7 @@ int LoLEngine::olol_changeMonsterSettings(EMCState *script) {
 			break;
 
 		case 1:
-			m->might = d;
+			m->hitPoints = d;
 			break;
 
 		case 2:
@@ -1084,6 +1116,39 @@ int LoLEngine::olol_changeMonsterSettings(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_getMonsterStat(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getMonsterStat(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(0) == -1)
+		return 0;
+
+	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	int d = stackPos(1);
+
+	switch (d) {
+		case 0:
+			return m->mode;
+		case 1:
+			return m->hitPoints;
+		case 2:
+			return m->block;
+		case 3:
+			return m->facing;
+		case 4:
+			return m->type;
+		case 5:
+			return m->properties->hitPoints;
+		case 6:
+			return m->flags;
+		case 7:
+			return m->properties->flags;
+		case 8:
+			return _monsterUnk[m->properties->shapeIndex];
+		default:
+			break;
+	}
+
+	return 0;
+}
 
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
@@ -1095,6 +1160,18 @@ int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 int LoLEngine::olol_update(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_update(%p)", (const void *)script);
 	update();
+	return 1;
+}
+
+int LoLEngine::olol_healCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_healCharacter(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	if (stackPos(3)) {
+		processMagicHeal(stackPos(0), stackPos(1));
+	} else {
+		increaseCharacterHitpoints(stackPos(0), stackPos(1), true);
+		if (stackPos(2))
+			gui_drawCharPortraitWithStats(stackPos(0));
+	}
 	return 1;
 }
 
@@ -1164,6 +1241,17 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	return old;
 }
 
+int LoLEngine::olol_calcInflictableDamage(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_calcInflictableDamage(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	return calcInflictableDamage(stackPos(0), stackPos(1), stackPos(2));
+}
+
+int LoLEngine::olol_getInflictedDamage(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getInflictedDamage(%p) (%d)", (const void *)script, stackPos(0));
+	int mx = stackPos(0);	
+	return mx ? _rnd.getRandomNumberRng(2, mx) : 0;
+}
+
 int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkForCertainPartyMember(%p) (%d)", (const void *)script, stackPos(0));
 	for (int i = 0; i < 4; i++) {
@@ -1186,12 +1274,17 @@ int LoLEngine::olol_printMessage(EMCState *script) {
 
 int LoLEngine::olol_deleteLevelItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_deleteLevelItem(%p) (%d)", (const void *)script, stackPos(0));
-	if (_itemsInPlay[stackPos(0)].blockPropertyIndex)
-		removeLevelItem(stackPos(0), _itemsInPlay[stackPos(0)].blockPropertyIndex);
+	if (_itemsInPlay[stackPos(0)].block)
+		removeLevelItem(stackPos(0), _itemsInPlay[stackPos(0)].block);
 
 	deleteItem(stackPos(0));
 
 	return 1;
+}
+
+int LoLEngine::olol_calcInflictableDamagePerItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_calcInflictableDamagePerItem(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	return calcInflictableDamagePerItem(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 }
 
 int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
@@ -1216,7 +1309,7 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 			MonsterInPlay *m = &_monsters[l];
 
 			setMonsterMode(m, 14);
-			checkSceneUpdateNeed(m->blockPropertyIndex);
+			checkSceneUpdateNeed(m->block);
 			placeMonster(m, 0, 0);
 
 			res = 1;
@@ -1276,7 +1369,7 @@ int LoLEngine::olol_suspendMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_suspendMonster(%p) (%d)", (const void *)script, stackPos(0));
 	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
 	setMonsterMode(m, 14);
-	checkSceneUpdateNeed(m->blockPropertyIndex);
+	checkSceneUpdateNeed(m->block);
 	placeMonster(m, 0, 0);
 	return 1;
 }
@@ -1287,9 +1380,9 @@ int LoLEngine::olol_setDoorState(EMCState *script) {
 	return _emcDoorState;
 }
 
-int LoLEngine::olol_processButtonClick(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processButtonClick(%p) (%d)", (const void *)script, stackPos(0));
-	_tim->forceDialogue(_activeTim[stackPos(0)]);
+int LoLEngine::olol_resetTimDialogueState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_resetTimDialogueState(%p) (%d)", (const void *)script, stackPos(0));
+	_tim->resetDialogueState(_activeTim[stackPos(0)]);
 	return 1;
 }
 
@@ -1433,7 +1526,7 @@ int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
 	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
-	_res->loadFileToBuf(palFile, _screen->getPalette(0), 768);
+	_screen->loadPalette(palFile, _screen->getPalette(0));
 	return 1;
 }
 
@@ -1747,13 +1840,13 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x3C
 	Opcode(olol_loadNewLevel);
-	OpcodeUnImpl();
+	Opcode(olol_getNearestMonsterFromCharacter);
 	Opcode(olol_dummy0);
 	Opcode(olol_loadMonsterProperties);
 
 	// 0x40
 	Opcode(olol_battleHitSkillTest);
-	OpcodeUnImpl();
+	Opcode(olol_inflictDamage);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1766,7 +1859,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x48
 	Opcode(olol_setScriptTimer);
 	Opcode(olol_createHandItem);
-	OpcodeUnImpl();
+	Opcode(olol_playAttackSound);
 	Opcode(olol_characterJoinsParty);
 
 	// 0x4C
@@ -1791,17 +1884,17 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_processDialogue);
 	Opcode(olol_stopTimScript);
 	Opcode(olol_getWallFlags);
-	Opcode(olol_changeMonsterSettings);
+	Opcode(olol_changeMonsterStat);
 
 	// 0x5C
-	OpcodeUnImpl();
+	Opcode(olol_getMonsterStat);
 	OpcodeUnImpl();
 	Opcode(olol_playCharacterScriptChat);
 	Opcode(olol_update);
 
 	// 0x60
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_healCharacter);
 	Opcode(olol_drawExitButton);
 	Opcode(olol_loadSoundFile);
 
@@ -1818,14 +1911,14 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setPaletteBrightness);
 
 	// 0x6C
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_calcInflictableDamage);
+	Opcode(olol_getInflictedDamage);
 	Opcode(olol_checkForCertainPartyMember);
 	Opcode(olol_printMessage);
 
 	// 0x70
 	Opcode(olol_deleteLevelItem);
-	OpcodeUnImpl();
+	Opcode(olol_calcInflictableDamagePerItem);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -1857,7 +1950,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_setDoorState);
-	Opcode(olol_processButtonClick);
+	Opcode(olol_resetTimDialogueState);
 
 	// 0x88
 	OpcodeUnImpl();

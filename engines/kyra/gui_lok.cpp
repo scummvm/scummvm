@@ -962,7 +962,7 @@ int GUI_LoK::controlsChangeMusic(Button *button) {
 	debugC(9, kDebugLevelGUI, "GUI_LoK::controlsChangeMusic()");
 	updateMenuButton(button);
 
-	_vm->_configMusic = ++_vm->_configMusic % ((_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) ? 3 : 2);
+	_vm->_configMusic = ++_vm->_configMusic % (_vm->gameFlags().platform == Common::kPlatformFMTowns ? 3 : 2);
 	setupControls(_menu[5]);
 	return 0;
 }

@@ -39,6 +39,8 @@ public:
 	Screen_LoL(LoLEngine *vm, OSystem *system);
 	~Screen_LoL();
 
+	bool init();
+
 	void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 	int curDimIndex() { return _curDimIndex; }
@@ -60,11 +62,6 @@ public:
 	void smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum);
 	void smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum);
 
-	// magic atlas
-	// This method basically works like copyRegion, but the pixels
-	// copied also have a palette overlay applied to them.
-	void copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
-
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void loadSpecialColours(uint8 *destPalette);
@@ -74,6 +71,9 @@ public:
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColours);
 	uint8 *generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight);
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
+
+	void copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
+	void applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl);
 
 	uint8 getShapePaletteSize(const uint8 *shp);
 
@@ -85,8 +85,11 @@ public:
 private:
 	LoLEngine *_vm;
 
-	static const ScreenDim _screenDimTable[];
+	const ScreenDim *_screenDimTable;
 	static const int _screenDimTableCount;
+
+	static const ScreenDim _screenDimTable256C[];
+	static const ScreenDim _screenDimTable16C[];
 
 	ScreenDim **_customDimTable;
 	int _curDimIndex;
@@ -96,18 +99,18 @@ private:
 	// magic atlas
 	void calcMapBoundaries(int dstX, int dstY, int c, int d);
 
-	int _mapDimX;
-	int _mapDimY;
-	int _mapDimW;
-	int _mapDimH;
-	int _mapDimDstX;
-	int _mapBlockWidth;
-	int _mapDimDstY;
-	int _mapBlockHeight;
-	int _mapDimU5;
-	int _mapDimU6;
-	int _mapBlockWidth2;
-	int _mapDimU8;
+	int _internDimX;
+	int _internDimY;
+	int _internDimW;
+	int _internDimH;
+	int _internDimDstX;
+	int _internBlockWidth;
+	int _internDimDstY;
+	int _internBlockHeight;
+	int _internDimU5;
+	int _internDimU6;
+	int _internBlockWidth2;
+	int _internDimU8;
 };
 
 } // end of namespace Kyra

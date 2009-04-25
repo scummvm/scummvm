@@ -286,6 +286,8 @@ enum kKyraResources {
 	lolMapCursorOvl,
 	lolMapStringId,
 	//lolMapPal,
+
+	lolHealShapeFrames,
 #endif // ENABLE_LOL
 
 	kMaxResIDs

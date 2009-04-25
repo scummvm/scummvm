@@ -232,7 +232,7 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 		timer->enabled &= (~2);
 		timer->lastUpdate += elapsedTime;
 		timer->nextRun += elapsedTime;
-		resync();
+		resetNextRun();
 		timer->pauseStartTime = 0;
 	}	
 }

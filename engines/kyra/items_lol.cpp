@@ -181,14 +181,14 @@ int LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 void LoLEngine::placeMoveLevelItem(int itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight) {
 	calcCoordinates(_itemsInPlay[itemIndex].x, _itemsInPlay[itemIndex].y, block, xOffs, yOffs);
 
-	if (_itemsInPlay[itemIndex].blockPropertyIndex)
-		removeLevelItem(itemIndex, _itemsInPlay[itemIndex].blockPropertyIndex);
+	if (_itemsInPlay[itemIndex].block)
+		removeLevelItem(itemIndex, _itemsInPlay[itemIndex].block);
 
 	if (_currentLevel == level) {
 		setItemPosition(itemIndex, _itemsInPlay[itemIndex].x, _itemsInPlay[itemIndex].y, flyingHeight, 1);
 	} else {
 		_itemsInPlay[itemIndex].level = level;
-		_itemsInPlay[itemIndex].blockPropertyIndex = block;
+		_itemsInPlay[itemIndex].block = block;
 		_itemsInPlay[itemIndex].flyingHeight = flyingHeight;
 		_itemsInPlay[itemIndex].shpCurFrame_flg |= 0x4000;
 	}
@@ -289,6 +289,24 @@ void LoLEngine::setHandItem(uint16 itemIndex) {
 	_screen->setMouseCursor(mouseOffs, mouseOffs, getItemIconShapePtr(itemIndex));
 }
 
+bool LoLEngine::itemEquipped(int charNum, uint16 itemType) {
+	if (charNum < 0 || charNum > 3)
+		return false;
+
+	if (!(_characters[charNum].flags & 1))
+		return false;
+
+	for (int i = 0; i < 11; i++) {
+		if (!_characters[charNum].items[i])
+			continue;
+
+		if (_itemsInPlay[_characters[charNum].items[i]].itemPropertyIndex == itemType)
+			return true;
+	}
+
+	return false;
+}
+
 void LoLEngine::setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, int b) {
 	if (!flyingHeight) {
 		x = (x & 0xffc0) | 0x40;
@@ -298,7 +316,7 @@ void LoLEngine::setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, 
 	uint16 block = calcBlockIndex(x, y);
 	_itemsInPlay[item].x = x;
 	_itemsInPlay[item].y = y;
-	_itemsInPlay[item].blockPropertyIndex = block;
+	_itemsInPlay[item].block = block;
 	_itemsInPlay[item].flyingHeight = flyingHeight;
 
 	if (b)
@@ -320,12 +338,12 @@ void LoLEngine::removeLevelItem(int item, int block) {
 	removeAssignedObjectFromBlock(&_levelBlockProperties[block], item);
 	removeDrawObjectFromBlock(&_levelBlockProperties[block], item);
 	runLevelScriptCustom(block, 0x100, -1, item, 0, 0);
-	_itemsInPlay[item].blockPropertyIndex = 0;
+	_itemsInPlay[item].block = 0;
 	_itemsInPlay[item].level = 0;
 }
 
-bool LoLEngine::throwItem(int a, int item, int x, int y, int flyingHeight, int direction, int, int charNum, int c) {
-	int sp = checkDrawObjectSpace(_partyPosX, _partyPosX, x, y);
+bool LoLEngine::launchObject(int objectType, int item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c) {
+	int sp = checkDrawObjectSpace(_partyPosX, _partyPosX, startX, startY);
 	FlyingObject *t = _flyingObjects;
 	int slot = -1;
 	int i = 0;
@@ -348,31 +366,31 @@ bool LoLEngine::throwItem(int a, int item, int x, int y, int flyingHeight, int d
 		i = slot;
 
 		t = &_flyingObjects[i];
-		endObjectFlight(t, x, y, 8);
+		endObjectFlight(t, startX, startY, 8);
 	}
 
 	if (i == 8)
 		return false;
 
 	t->enable = 1;
-	t->a = a;
+	t->objectType = objectType;
 	t->item = item;
-	t->x = x;
-	t->y = y;
+	t->x = startX;
+	t->y = startY;
 	t->flyingHeight = flyingHeight;
 	t->direction = direction;
 	t->distance = 255;
-	t->charNum = charNum;
+	t->attackerId = attackerId;
 	t->flags = 7;
 	t->wallFlags = 2;
 	t->c = c;	
 
-	if (charNum != -1) {
-		if (charNum & 0x8000) {
+	if (attackerId != -1) {
+		if (attackerId & 0x8000) {
 			t->flags &= 0xfd;
 		} else {
 			t->flags &= 0xfb;
-			increaseExperience(charNum, 1, 2);
+			increaseExperience(attackerId, 1, 2);
 		}
 	}
 
@@ -393,7 +411,7 @@ void LoLEngine::endObjectFlight(FlyingObject *t, int x, int y, int objectOnNextB
 		cy = t->y;
 	}
 
-	if (t->a == 0 || t->a == 1) {
+	if (t->objectType == 0 || t->objectType == 1) {
 		objectFlightProcessHits(t, cx, cy, objectOnNextBlock);
 		t->x = (cx & 0xffc0) | 0x40;
 		t->y = (cy & 0xffc0) | 0x40;
@@ -416,9 +434,9 @@ void LoLEngine::processObjectFlight(FlyingObject *t, int x, int y) {
 }
 
 void LoLEngine::updateObjectFlightPosition(FlyingObject *t) {
-	if (t->a == 0) {
+	if (t->objectType == 0) {
 		setItemPosition(t->item, t->x, t->y, t->flyingHeight, (t->flyingHeight == 0) ? 1 : 0);
-	} else if (t->a == 1) {
+	} else if (t->objectType == 1) {
 		if (t->flyingHeight == 0) {
 			deleteItem(t->item);
 			checkSceneUpdateNeed(calcBlockIndex(t->x, t->y));
@@ -432,23 +450,23 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 	uint16 r = 0;
 
 	if (objectOnNextBlock == 1) {
-		runLevelScriptCustom(calcNewBlockPosition(_itemsInPlay[t->item].blockPropertyIndex, t->direction >> 1), 0x8000, -1, t->item, 0, 0);
+		runLevelScriptCustom(calcNewBlockPosition(_itemsInPlay[t->item].block, t->direction >> 1), 0x8000, -1, t->item, 0, 0);
 		return;
 
 	} else if (objectOnNextBlock == 2) {
 		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
-			int o = _levelBlockProperties[_itemsInPlay[t->item].blockPropertyIndex].assignedObjects;
+			int o = _levelBlockProperties[_itemsInPlay[t->item].block].assignedObjects;
 			
 			while (o & 0x8000) {
 				ItemInPlay *i = findObject(o);
 				o = i->nextAssignedObject;
-				runItemScript(t->charNum, t->item, 0x8000, o, 0);
+				runItemScript(t->attackerId, t->item, 0x8000, o, 0);
 			}
 			
 			return;
 
 		} else {
-			r = getClosestMonster(x, y);
+			r = getNearestMonsterFromPos(x, y);
 		}
 
 	} else if (objectOnNextBlock == 4) {
@@ -456,19 +474,19 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
 			for (int i = 0; i < 4; i++) {
 				if (_characters[i].flags & 1)
-					runItemScript(t->charNum, t->item, 0x8000, i, 0);
+					runItemScript(t->attackerId, t->item, 0x8000, i, 0);
 			}
 			return;
 
 		} else {
-			r = getClosestPartyMember(x, y);
+			r = getNearestPartyMemberFromPos(x, y);
 		}
 	}
 
-	runItemScript(t->charNum, t->item, 0x8000, r, 0);
+	runItemScript(t->attackerId, t->item, 0x8000, r, 0);
 }
 
-void LoLEngine::updateFlyingObjects(FlyingObject *t) {
+void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	int x = 0;
 	int y = 0;
 	getNextStepCoords(t->x, t->y, x, y, t->direction);

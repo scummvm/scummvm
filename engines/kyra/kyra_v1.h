@@ -56,6 +56,7 @@ struct GameFlags {
 	bool useAltShapeHeader		: 1;	// alternative shape header (uses 2 bytes more, those are unused though)
 	bool isTalkie				: 1;
 	bool useHiResOverlay		: 1;
+	bool use16ColorMode			: 1;
 	bool useDigSound			: 1;
 	bool useInstallerPackage	: 1;
 
@@ -70,10 +71,11 @@ enum {
 };
 
 struct AudioDataStruct {
-	const char * const *_fileList;
-	int _fileListLen;
-	const void * _cdaTracks;
-	int _cdaNumTracks;
+	const char *const *fileList;
+	int fileListLen;
+	const void *cdaTracks;
+	int cdaNumTracks;
+	int extraOffset;
 };
 
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable

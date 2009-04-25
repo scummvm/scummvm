@@ -145,7 +145,7 @@ public:
 	virtual void updateBackgroundAnimation(int animIndex) {}
 	virtual void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {}
 
-	virtual void forceDialogue(TIM *tim) {}
+	virtual void resetDialogueState(TIM *tim) {}
 
 	int _drawPage2;
 
@@ -231,7 +231,7 @@ public:
 	
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
 	uint16 processDialogue();
-	void forceDialogue(TIM *tim);
+	void resetDialogueState(TIM *tim);
 
 	void setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame);
 	void startBackgroundAnimation(int animIndex, int part);

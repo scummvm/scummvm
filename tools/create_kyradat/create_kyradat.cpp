@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 44,
+	kKyraDatVersion = 45,
 	kIndexSize = 12
 };
 
@@ -340,6 +340,8 @@ const ExtractFilename extractFilenames[] = {
 	{ lolMapCursorOvl, kTypeRawData, "MAPCURSOR.PAL" },
 	{ lolMapStringId, lolTypeRaw16, "MAPSTRID.LST" },
 	//{ lolMapPal, kTypeRawData, "MAP.PAL" },
+
+	{ lolHealShapeFrames, kTypeRawData, "MHEAL.SHP" },
 
 	{ -1, 0, 0 }
 };

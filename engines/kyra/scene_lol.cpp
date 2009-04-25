@@ -105,9 +105,9 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].assignedObjects, i);
+		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].block].assignedObjects, i);
 
-		_levelBlockProperties[_itemsInPlay[i].blockPropertyIndex].direction = 5;
+		_levelBlockProperties[_itemsInPlay[i].block].direction = 5;
 		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
@@ -259,8 +259,8 @@ void LoLEngine::restoreBlockTempData(int index) {
 	}
 
 	for (int i = 0; i < 30; i++) {
-		if (_monsters[i].blockPropertyIndex) {
-			_monsters[i].blockPropertyIndex = 0;
+		if (_monsters[i].block) {
+			_monsters[i].block = 0;
 			_monsters[i].properties = &_monsterProperties[_monsters[i].type];
 			placeMonster(&_monsters[i], _monsters[i].x, _monsters[i].y);
 		}
@@ -276,14 +276,14 @@ void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 	uint16 d = (_monsterModifiers[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers[_monsterDifficulty];
 
 	for (int i = 0; i < 30; i++) {
-		if (_monsters[i].mode >= 14 || _monsters[i].blockPropertyIndex == 0 || _monsters[i].might <= 0)
+		if (_monsters[i].mode >= 14 || _monsters[i].block == 0 || _monsters[i].hitPoints <= 0)
 			continue;
 
-		_monsters[i].might = (d * _monsters[i].might) >> 8;
+		_monsters[i].hitPoints = (d * _monsters[i].hitPoints) >> 8;
 		if (_monsterDifficulty < _lvlTempData[index]->monsterDifficulty)
-			_monsters[i].might++;
-		if (_monsters[i].might == 0)
-			_monsters[i].might = 1;
+			_monsters[i].hitPoints++;
+		if (_monsters[i].hitPoints == 0)
+			_monsters[i].hitPoints = 1;
 	}
 }
 
@@ -470,7 +470,7 @@ void LoLEngine::resetItems(int flag) {
 
 		ItemInPlay *it = &_itemsInPlay[id];
 		it->level = _currentLevel;
-		it->blockPropertyIndex = i;
+		it->block = i;
 		if (r)
 			r->nextAssignedObject = 0;
 	}

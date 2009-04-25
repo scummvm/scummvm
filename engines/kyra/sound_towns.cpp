@@ -2714,7 +2714,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 		}
 
-		finOut /= 2;
+		finOut /= 4;
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2887,7 +2887,7 @@ void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _rhChan[ii].out;
 		}
 
-		finOut *= 7;
+		finOut *= 3;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -3381,7 +3381,7 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 				break;
 			};
 
-			int32 finOut = ((output * 7) / 2);
+			int32 finOut = ((output * 3) / ((_numChan + _numSSG - 3) / 3));
 
 			if (_chanInternal[i].enableLeft)
 				*leftSample += finOut;
@@ -4064,8 +4064,7 @@ bool SoundPC98::init() {
 }
 
 void SoundPC98::playTrack(uint8 track) {
-	if (--track >= 56)
-		track -= 55;
+	track += extraOffset();
 
 	if (track == _lastTrack && _musicEnabled)
 		return;
@@ -4074,6 +4073,10 @@ void SoundPC98::playTrack(uint8 track) {
 
 	char musicfile[13];
 	sprintf(musicfile, fileListEntry(0), track);
+	if (fileListLen() == 1)
+		sprintf(musicfile, fileListEntry(0), track);
+	else
+		strcpy(musicfile, fileListEntry(track));
 	delete[] _musicTrackData;
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
 	if (_musicEnabled)
@@ -4126,19 +4129,25 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 bool SoundTownsPC98_v2::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
 		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
-	_useFmSfx = _vm->gameFlags().platform == Common::kPlatformPC98 ? true : false;
-	_vm->checkCD();
-	// FIXME: While checking for 'track1.XXX(X)' looks like
-	// a good idea, we should definitely not be doing this
-	// here. Basically our filenaming scheme could change
-	// or we could add support for other audio formats. Also
-	// this misses the possibility that we play the tracks
-	// right off CD. So we should find another way to
-	// check if we have access to CD audio.
-	Resource *res = _vm->resource();
-	if (_musicEnabled &&
-		(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
-			_musicEnabled = 2;
+	
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		_vm->checkCD();
+		// FIXME: While checking for 'track1.XXX(X)' looks like
+		// a good idea, we should definitely not be doing this
+		// here. Basically our filenaming scheme could change
+		// or we could add support for other audio formats. Also
+		// this misses the possibility that we play the tracks
+		// right off CD. So we should find another way to
+		// check if we have access to CD audio.
+		Resource *res = _vm->resource();
+		if (_musicEnabled &&
+			(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
+				_musicEnabled = 2;
+		_useFmSfx = false;
+
+	} else {
+		_useFmSfx = true;
+	}
 
 	return _driver->init();
 }
@@ -4153,6 +4162,8 @@ void SoundTownsPC98_v2::process() {
 }
 
 void SoundTownsPC98_v2::playTrack(uint8 track) {
+	track += extraOffset();
+
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
@@ -4171,7 +4182,10 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	beginFadeOut();
 
 	char musicfile[13];
-	sprintf(musicfile, fileListEntry(0), track);
+	if (fileListLen() == 1)
+		sprintf(musicfile, fileListEntry(0), track);
+	else
+		strcpy(musicfile, fileListEntry(track));
 	delete[] _musicTrackData;
 
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
@@ -4208,6 +4222,8 @@ void SoundTownsPC98_v2::beginFadeOut() {
 
 int32 SoundTownsPC98_v2::voicePlay(const char *file, uint8, bool) {
 	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
+	static const char patternHOF[] = "%s.PCM";
+	static const char patternLOL[] = "%s.VOC";
 
 	int h = 0;
 	if (_currentSFX) {
@@ -4218,10 +4234,13 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, uint8, bool) {
 	}
 
 	char filename[13];
-	sprintf(filename, "%s.PCM", file);
+	const char *pattern = _vm->game() == GI_LOL ? patternLOL : patternHOF;
+	sprintf(filename, pattern, file);
 
 	uint8 *data = _vm->resource()->fileData(filename, 0);
 	uint8 *src = data;
+	if (!src)
+		return 0;
 
 	uint16 sfxRate = rates[READ_LE_UINT16(src)];
 	src += 2;
