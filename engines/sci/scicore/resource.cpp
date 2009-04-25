@@ -1167,4 +1167,36 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 	return error;
 }
 
+void ResourceSync::startSync(Object *obj) {
+	_syncTime = _syncCue = 0xFFFF;
+	// TODO: Convert the following from Greg's code to SCI's code
+	//obj.setPropertyN(g_sci->_objOfs[0x33], 0);	// Greg's
+	//obj->variables[s->game_obj.offset[0x33]] = 0;	// something like this?
+	_ptr = (uint16 *)data;
+	//syncStarted = true;	// not used
+}
+
+void ResourceSync::nextSync(Object *obj) {
+	if (_ptr) {
+		_syncTime = READ_LE_UINT16(_ptr);
+		if (_syncTime == 0xFFFF) {
+			stopSync();
+		} else {
+			_syncCue = READ_LE_UINT16(_ptr + 1);
+			_ptr += 2;
+		}
+		// TODO: Convert the following from Greg's code to SCI's code
+		//obj.setPropertyN(g_sci->_objOfs[0x32], _syncTime);	// Greg's
+		//obj->variables[s->game_obj.offset[0x32]] = _syncTime;	// something like this?
+		//obj.setPropertyN(g_sci->_objOfs[0x33], _syncCue);		// Greg's
+		//obj->variables[s->game_obj.offset[0x33]] = _syncCue;	// something like this?
+	}
+}
+//--------------------------------
+void ResourceSync::stopSync() {
+	_ptr = 0;
+	_syncCue = 0xFFFF;
+	//syncStarted = false;	// not used
+}
+
 } // End of namespace Sci

@@ -26,6 +26,7 @@
 #include "sci/engine/state.h"
 #include "sci/sfx/player.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/vm.h"		// for Object
 
 namespace Sci {
 
@@ -984,6 +985,48 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case _K_SCI1_AUDIO_POSITION :
 		return make_reg(0, -1); /* Finish immediately */
+	}
+
+	return s->r_acc;
+}
+
+reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	switch (UKPV(0)) {
+	case 0:	// start sync
+		//printf("kDoSync: start sync\n");
+		if (s->sound.soundSync) {
+			s->resmgr->unlockResource(s->sound.soundSync, s->sound.soundSync->number, kResourceTypeSync);
+		}
+
+		// Load sound sync resource and lock it
+		s->sound.soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
+
+		if (s->sound.soundSync) {
+			Object *obj = obj_get(s, argv[1]);
+			s->sound.soundSync->startSync(obj);
+		} else {
+			// Notify the scripts to stop sound sync
+			//Object *obj = obj_get(s, argv[1]);
+			// TODO: Convert the following from Greg's code to SCI's code
+			//obj.setPropertyN(_objOfs[0x33], 0xFFFF);	// Greg's
+			//obj->variables[s->game_obj.offset[0x33]] = 0xFFFF;	// something like this?
+		}
+		break;
+	case 1:	// next sync
+		//printf("kDoSync: next sync\n");
+		if (s->sound.soundSync) {
+			Object *obj = obj_get(s, argv[1]);
+			s->sound.soundSync->nextSync(obj);
+		}
+		break;
+	case 2:	// stop sync
+		//printf("kDoSync: stop sync\n");
+		if (s->sound.soundSync) {
+			s->sound.soundSync->stopSync();
+			s->resmgr->unlockResource(s->sound.soundSync, s->sound.soundSync->number, kResourceTypeSync);
+			s->sound.soundSync = NULL;
+		}
+		break;
 	}
 
 	return s->r_acc;

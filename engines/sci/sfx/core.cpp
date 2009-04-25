@@ -367,6 +367,7 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	self->song = NULL;
 	self->flags = flags;
 	self->debug = 0; /* Disable all debugging by default */
+	self->soundSync = NULL;
 
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
 		player = NULL;

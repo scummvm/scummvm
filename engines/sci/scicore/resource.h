@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/archive.h"
 
+#include "sci/engine/vm.h"          // for Object
 #include "sci/scicore/decompressor.h"
 
 namespace Common {
@@ -299,6 +300,21 @@ protected:
 	void printLRU();
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
+};
+
+class ResourceSync : public Resource {
+public:
+	ResourceSync() {}
+	~ResourceSync() {}
+
+	void startSync(Object *obj);
+	void nextSync(Object *obj);
+	void stopSync();
+
+protected:
+	uint16 *_ptr;
+	uint16 _syncTime, _syncCue;
+	//bool _syncStarted;	// not used
 };
 
 } // End of namespace Sci

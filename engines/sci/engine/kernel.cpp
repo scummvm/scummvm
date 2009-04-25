@@ -203,7 +203,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Message", kMessage, ".*"),
 	DEFUN("GetMessage", kGetMessage, ".*"),
 	DEFUN("DoAudio", kDoAudio, ".*"),
-
+	DEFUN("DoSync", kDoSync, ".*"),
 
 	// Special and NOP stuff
 	{KF_NEW, NULL, k_Unknown, NULL},
