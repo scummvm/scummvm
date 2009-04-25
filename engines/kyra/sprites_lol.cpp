@@ -1242,7 +1242,9 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 				if (item)
 					setItemPosition(item, _partyPosX, _partyPosY, 0, 1);
 
-				inflictDamage(i, 20, 0, 0, 2);
+				// FIXME: attacker is a uint16, and -1 was used here. It has been substituted with 0xFFFF, which could
+				// be the original intended value
+				inflictDamage(i, 20, 0xFFFF, 0, 2);
 			}
 
 		} else if (flyingObject == 3) {
