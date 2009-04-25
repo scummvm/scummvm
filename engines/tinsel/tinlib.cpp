@@ -636,11 +636,19 @@ static void CdChangeScene(SCNHANDLE hScene) {
  * CdDoChange
  */
 void CdDoChange(CORO_PARAM) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
 	if (!GotoCD())
 		return;
 
-	CdCD(coroParam);
+	CORO_INVOKE_0(CdCD);
+	
 	CdHasChanged();
+
+	CORO_END_CODE;
 }
 
 /**
