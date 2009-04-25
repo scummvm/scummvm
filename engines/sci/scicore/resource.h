@@ -307,13 +307,13 @@ public:
 	ResourceSync() {}
 	~ResourceSync() {}
 
-	void startSync(Object *obj);
-	void nextSync(Object *obj);
+	void startSync(EngineState *s, reg_t obj);
+	void nextSync(EngineState *s, reg_t obj);
 	void stopSync();
 
 protected:
 	uint16 *_ptr;
-	uint16 _syncTime, _syncCue;
+	int16 _syncTime, _syncCue;
 	//bool _syncStarted;	// not used
 };
 

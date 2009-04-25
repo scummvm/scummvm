@@ -1002,21 +1002,16 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->sound.soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
 
 		if (s->sound.soundSync) {
-			Object *obj = obj_get(s, argv[1]);
-			s->sound.soundSync->startSync(obj);
+			s->sound.soundSync->startSync(s, argv[1]);
 		} else {
 			// Notify the scripts to stop sound sync
-			//Object *obj = obj_get(s, argv[1]);
-			// TODO: Convert the following from Greg's code to SCI's code
-			//obj.setPropertyN(_objOfs[0x33], 0xFFFF);	// Greg's
-			//obj->variables[s->game_obj.offset[0x33]] = 0xFFFF;	// something like this?
+			PUT_SEL32V(argv[1], syncCue, -1);
 		}
 		break;
 	case 1:	// next sync
 		//printf("kDoSync: next sync\n");
 		if (s->sound.soundSync) {
-			Object *obj = obj_get(s, argv[1]);
-			s->sound.soundSync->nextSync(obj);
+			s->sound.soundSync->nextSync(s, argv[1]);
 		}
 		break;
 	case 2:	// stop sync

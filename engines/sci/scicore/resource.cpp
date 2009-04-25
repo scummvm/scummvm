@@ -28,6 +28,8 @@
 #include "common/util.h"
 #include "common/debug.h"
 
+#include "sci/engine/state.h"
+#include "sci/engine/kernel.h"
 #include "sci/tools.h"
 #include "sci/sci_memory.h"
 #include "sci/scicore/resource.h"
@@ -1167,35 +1169,30 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 	return error;
 }
 
-void ResourceSync::startSync(Object *obj) {
-	_syncTime = _syncCue = 0xFFFF;
-	// TODO: Convert the following from Greg's code to SCI's code
-	//obj.setPropertyN(g_sci->_objOfs[0x33], 0);	// Greg's
-	//obj->variables[s->game_obj.offset[0x33]] = 0;	// something like this?
+void ResourceSync::startSync(EngineState *s, reg_t obj) {
+	_syncTime = _syncCue = -1;
+	PUT_SEL32V(obj, syncCue, 0);
 	_ptr = (uint16 *)data;
 	//syncStarted = true;	// not used
 }
 
-void ResourceSync::nextSync(Object *obj) {
+void ResourceSync::nextSync(EngineState *s, reg_t obj) {
 	if (_ptr) {
-		_syncTime = READ_LE_UINT16(_ptr);
-		if (_syncTime == 0xFFFF) {
+		_syncTime = (int16)READ_LE_UINT16(_ptr);
+		if (_syncTime == -1) {
 			stopSync();
 		} else {
-			_syncCue = READ_LE_UINT16(_ptr + 1);
+			_syncCue = (int16)READ_LE_UINT16(_ptr + 1);
 			_ptr += 2;
 		}
-		// TODO: Convert the following from Greg's code to SCI's code
-		//obj.setPropertyN(g_sci->_objOfs[0x32], _syncTime);	// Greg's
-		//obj->variables[s->game_obj.offset[0x32]] = _syncTime;	// something like this?
-		//obj.setPropertyN(g_sci->_objOfs[0x33], _syncCue);		// Greg's
-		//obj->variables[s->game_obj.offset[0x33]] = _syncCue;	// something like this?
+		PUT_SEL32V(obj, syncTime, _syncTime);
+		PUT_SEL32V(obj, syncCue, _syncCue);
 	}
 }
 //--------------------------------
 void ResourceSync::stopSync() {
 	_ptr = 0;
-	_syncCue = 0xFFFF;
+	_syncCue = -1;
 	//syncStarted = false;	// not used
 }
 

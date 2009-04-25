@@ -208,6 +208,8 @@ void script_map_selectors(EngineState *s, selector_map_t *map) {
 	FIND_SELECTOR(nodePtr);
 	FIND_SELECTOR(flags);
 	FIND_SELECTOR(points);
+	FIND_SELECTOR(syncCue);
+	FIND_SELECTOR(syncTime);
 }
 
 int sci_hexdump(byte *data, int length, int offsetplus) {

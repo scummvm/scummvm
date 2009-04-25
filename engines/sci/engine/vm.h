@@ -380,6 +380,9 @@ struct selector_map_t {
 	Selector flags;
 
 	Selector points; /* Used by AvoidPath() */
+
+	Selector syncCue; /* Used by DoSync() */
+	Selector syncTime; /* Used by DoSync() */
 }; /* Contains selector IDs for a few selected selectors */
 
 struct ViewObject {
