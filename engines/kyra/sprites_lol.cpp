@@ -1242,7 +1242,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 				if (item)
 					setItemPosition(item, _partyPosX, _partyPosY, 0, 1);
 
-				inflictDamage(i, 20, -1, 0, 2);
+				inflictDamage(i, 20, 0, 0, 2);
 			}
 
 		} else if (flyingObject == 3) {
