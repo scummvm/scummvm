@@ -1195,7 +1195,7 @@ private:
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);
 	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
-	int inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag);
+	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag);
 	void characterHitpointsZero(int16 charNum, int a);
 	void resetCharacterState(LoLCharacter *c, int first, int last);
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);

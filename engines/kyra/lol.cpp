@@ -2198,7 +2198,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 	return res;
 }
 
-int LoLEngine::inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag) {
+int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag) {
 	MonsterInPlay *m = 0;
 	LoLCharacter *c = 0;
 
