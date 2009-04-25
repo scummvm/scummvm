@@ -6,7 +6,6 @@
 	ProjectGUID="{976D947A-A45F-4437-991E-412F695C64C7}"
 	RootNamespace="gob"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -580,11 +579,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\videoplayer.h"
+			RelativePath="..\..\engines\gob\videoplayer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\videoplayer.cpp"
+			RelativePath="..\..\engines\gob\videoplayer.h"
 			>
 		</File>
 		<File
