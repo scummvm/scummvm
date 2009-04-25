@@ -499,6 +499,8 @@ protected:
 	void oFascin_geUnknown9(OpGobParams &params);
 	void oFascin_geUnknown10(OpGobParams &params);
 	void oFascin_geUnknown11(OpGobParams &params);
+	void oFascin_geUnknown1000(OpGobParams &params);
+	void oFascin_geUnknown1001(OpGobParams &params);
 	bool oFascin_feUnknown4(OpFuncParams &params);
 	void oFascin_cdUnknown3();
 	void oFascin_cdUnknown4();
@@ -506,7 +508,6 @@ protected:
 	void oFascin_cdUnknown6();
 	void oFascin_cdUnknown10();
 	void oFascin_cdUnknown11();
-
 };
 
 class Inter_v3 : public Inter_v2 {
