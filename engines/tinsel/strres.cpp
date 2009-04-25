@@ -25,6 +25,7 @@
  */
 
 #include "tinsel/dw.h"
+#include "tinsel/drives.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
 #include "common/file.h"
@@ -80,7 +81,7 @@ LANGUAGE textLanguage, sampleLanguage = TXT_ENGLISH;
  * @param newLang			The new language
  */
 void ChangeLanguage(LANGUAGE newLang) {
-	Common::File f;
+	TinselFile f;
 	uint32 textLen = 0;	// length of buffer
 
 	textLanguage = newLang;

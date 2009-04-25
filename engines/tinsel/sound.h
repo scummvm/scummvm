@@ -34,6 +34,7 @@
 
 #include "tinsel/dw.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/drives.h"
 
 namespace Tinsel {
 
@@ -87,7 +88,7 @@ protected:
 	long _sampleIndexLen;
 
 	/** file stream for sample file */
-	Common::File _sampleStream;
+	TinselFile _sampleStream;
 
 	bool offscreenChecks(int x, int &y);
 	int8 getPan(int x);

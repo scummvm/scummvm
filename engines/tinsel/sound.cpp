@@ -399,7 +399,7 @@ void SoundManager::openSampleFiles(void) {
 	if (_vm->getFeatures() & GF_FLOPPY || _vm->getFeatures() & GF_DEMO)
 		return;
 
-	Common::File f;
+	TinselFile f;
 
 	if (_sampleIndex)
 		// already allocated

@@ -27,6 +27,7 @@
 
 #include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "common/savefile.h"
 
 #include "tinsel/cursor.h"
@@ -475,6 +476,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
@@ -540,6 +542,162 @@ bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		*engine = new Tinsel::TinselEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+struct SizeMD5 {
+	int size;
+	char md5[32+1];
+};
+typedef Common::HashMap<Common::String, SizeMD5, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeMD5Map;
+typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+typedef Common::Array<const ADGameDescription*> ADGameDescList;
+
+/**
+ * Fallback detection scans the list of Discworld 2 targets to see if it can detect an installation
+ * where the files haven't been renamed (i.e. don't have the '1' just before the extension)
+ */
+const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
+	Common::String extra;
+	FileMap allFiles;
+	SizeMD5Map filesSizeMD5;
+
+	const ADGameFileDescription *fileDesc;
+	const Tinsel::TinselGameDescription *g;
+
+	if (fslist.empty())
+		return NULL;
+
+	// First we compose a hashmap of all files in fslist.
+	// Includes nifty stuff like removing trailing dots and ignoring case.
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) {
+			if (!scumm_stricmp(file->getName().c_str(), "dw2")) {
+				// Probably Discworld 2 subfolder on CD, so add it's contents as well
+				Common::FSList files;
+				if (file->getChildren(files, Common::FSNode::kListAll)) {
+					Common::FSList::const_iterator file2;
+					for (file2 = files.begin(); file2 != files.end(); ++file2) {
+						if (file2->isDirectory())
+							continue;
+
+						Common::String fname = file2->getName();
+						allFiles[fname] = *file2;
+					}
+				}
+			}
+			continue;
+		}
+
+		Common::String tstr = file->getName();
+
+		allFiles[tstr] = *file;	// Record the presence of this file
+	}
+
+	// Check which files are included in some dw2 ADGameDescription *and* present
+	// in fslist without a '1' suffix character. Compute MD5s and file sizes for these files.
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
+		if (strcmp(g->desc.gameid, "dw2") != 0)
+			continue;
+
+		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
+			// Get the next filename, stripping off any '1' suffix character
+			char tempFilename[50];
+			strcpy(tempFilename, fileDesc->fileName);
+			char *pOne = strchr(tempFilename, '1');
+			if (pOne) strcpy(pOne, pOne + 1);
+
+			Common::String fname(tempFilename);
+			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+				SizeMD5 tmp;
+				if (!md5_file_string(allFiles[fname], tmp.md5, detectionParams.md5Bytes))
+					tmp.md5[0] = 0;
+
+				Common::File testFile;
+				if (testFile.open(allFiles[fname]))
+					tmp.size = (int32)testFile.size();
+				else
+					tmp.size = -1;
+
+				filesSizeMD5[fname] = tmp;
+			}
+		}
+	}
+
+	ADGameDescList matched;
+	int maxFilesMatched = 0;
+	bool gotAnyMatchesWithAllFiles = false;
+
+	// MD5 based matching
+	uint i;
+	for (i = 0, g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
+		if (strcmp(g->desc.gameid, "dw2") != 0)
+			continue;
+
+		bool fileMissing = false;
+
+		if ((detectionParams.flags & kADFlagUseExtraAsHint) && !extra.empty() && g->desc.extra != extra)
+			continue;
+
+		bool allFilesPresent = true;
+
+		// Try to match all files for this game
+		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
+			// Get the next filename, stripping off any '1' suffix character
+			char tempFilename[50];
+			strcpy(tempFilename, fileDesc->fileName);
+			char *pOne = strchr(tempFilename, '1');
+			if (pOne) strcpy(pOne, pOne + 1);
+
+			Common::String tstr(tempFilename);
+
+			if (!filesSizeMD5.contains(tstr)) {
+				fileMissing = true;
+				allFilesPresent = false;
+				break;
+			}
+
+			if (fileDesc->md5 != NULL && 0 != strcmp(fileDesc->md5, filesSizeMD5[tstr].md5)) {
+				fileMissing = true;
+				break;
+			}
+
+			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
+				fileMissing = true;
+				break;
+			}
+		}
+
+		if (allFilesPresent)
+			gotAnyMatchesWithAllFiles = true;
+
+		if (!fileMissing) {
+			// Count the number of matching files. Then, only keep those
+			// entries which match a maximal amount of files.
+			int curFilesMatched = 0;
+			for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++)
+				curFilesMatched++;
+
+			if (curFilesMatched > maxFilesMatched) {
+				maxFilesMatched = curFilesMatched;
+
+				for (uint j = 0; j < matched.size();) {
+					if (matched[j]->flags & ADGF_KEEPMATCH)
+						 ++j;
+					else
+						matched.remove_at(j);
+				}
+				matched.push_back((const ADGameDescription *)g);
+			} else if (curFilesMatched == maxFilesMatched) {
+				matched.push_back((const ADGameDescription *)g);
+			}
+		}
+	}
+
+	// We didn't find a match
+	if (matched.empty())
+		return NULL;
+
+	return *matched.begin();
 }
 
 int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }

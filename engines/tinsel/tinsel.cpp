@@ -862,6 +862,9 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
+	// Add DW2 subfolder to search path in case user is running directly from the CDs
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("dw2"));
+
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();

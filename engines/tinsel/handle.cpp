@@ -420,6 +420,10 @@ byte *LockMem(SCNHANDLE offset) {
 		if (pH->pNode->pBaseAddr == NULL)
 			error("Out of memory");
 
+		if (TinselV2) {
+			SetCD(pH->flags2 & fAllCds);
+			CdCD(nullContext);
+		}
 		LoadFile(pH, true);
 
 		// make sure address is valid

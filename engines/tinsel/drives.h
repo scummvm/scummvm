@@ -27,6 +27,7 @@
 #ifndef TINSEL_DRIVES_H
 #define TINSEL_DRIVES_H
 
+#include "common/file.h"
 #include "tinsel/dw.h"
 #include "tinsel/coroutine.h"
 
@@ -44,6 +45,8 @@ namespace Tinsel {
 
 #define fAllCds	(fCd1|fCd2|fCd3|fCd4|fCd5|fCd6|fCd7|fCd8)
 
+extern char currentCD;
+
 void DoCdChange(void);
 
 void CdCD(CORO_PARAM);
@@ -57,6 +60,15 @@ int GetCD(int flags);
 void SetNextCD(int cdNumber);
 
 bool GotoCD(void);
+
+class TinselFile: public Common::File {
+private:
+	static bool _warningShown;
+public:
+	virtual bool open(const Common::String &filename);
+	char getCdNumber();
+};
+
 
 } // end of namespace Tinsel
 

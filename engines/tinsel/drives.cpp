@@ -24,6 +24,7 @@
  * CD/drive handling functions
  */
 
+#include "gui/message.h"
 #include "tinsel/drives.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
@@ -32,7 +33,7 @@
 
 namespace Tinsel {
 
-static char currentCD = '1';
+char currentCD = '1';
 static uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 static bool bChangingCD = false;
@@ -93,9 +94,29 @@ int GetCD(int flags) {
 	return cd;
 }
 
+static uint32 lastTime = 0;
+extern LANGUAGE sampleLanguage;
+
 void DoCdChange(void) {
-	if (bChangingCD) {
+	if (bChangingCD && (g_system->getMillis() > (lastTime + 1000))) {
+		lastTime = g_system->getMillis();
 		_vm->_sound->closeSampleStream();
+
+		// Use the filesize of the sample file to determine, for Discworld 2, which CD it is
+		if (TinselV2) {
+			TinselFile f;
+			if (!f.open(_vm->getSampleFile(sampleLanguage)))
+				// No CD present
+				return;
+
+			char sampleCdNumber = (f.size() >= (200 * 1024 * 1024)) ? '1' : '2';
+
+			f.close();
+
+			if (currentCD != sampleCdNumber)
+				return;
+		}
+
 		_vm->_sound->openSampleFiles();
 		ChangeLanguage(TextLanguage());
 		bChangingCD = false;
@@ -124,6 +145,35 @@ bool GotoCD(void) {
 	bChangingCD = true;
 
 	return true;
+}
+
+bool TinselFile::_warningShown = false;
+
+bool TinselFile::open(const Common::String &filename) {
+	if (Common::File::open(filename)) {
+		// If it's the sample file, strip off the CD number from the filename
+
+
+		return true;
+	}
+
+	if (!TinselV2)
+		return false;
+
+	// Check if the file being requested is the *1.* or *2.* files
+	const char *fname = filename.c_str();
+	const char *p = strchr(fname, '1');
+	if (!p)
+		p = strchr(fname, '2');
+	if (!p || (*(p + 1) != '.'))
+		return false;
+
+	// Form a filename without the CD number character
+	char newFilename[50];
+	strncpy(newFilename, fname, p - fname);
+	strcpy(newFilename + (p - fname), p + 1);
+
+	return Common::File::open(newFilename);
 }
 
 } // end of namespace Tinsel
