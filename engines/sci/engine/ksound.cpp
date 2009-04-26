@@ -82,7 +82,18 @@ namespace Sci {
 #define _K_SCI1_SOUND_REVERB 19 /* Get/Set */
 #define _K_SCI1_SOUND_UPDATE_VOL_PRI 20
 
-#define _K_SCI1_AUDIO_POSITION 6 /* Return current position in audio stream */
+enum AudioCommands {
+	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
+	kSci1AudioWPlay = 1, /* Plays an audio stream */
+	kSci1AudioPlay = 2, /* Plays an audio stream */
+	kSci1AudioStop = 3, /* Stops an audio stream */
+	kSci1AudioPause = 4, /* Pauses an audio stream */
+	kSci1AudioResume = 5, /* Resumes an audio stream */
+	kSci1AudioPosition = 6, /* Return current position in audio stream */
+	kSci1AudioRate = 7, /* Return audio rate */
+	kSci1AudioVolume = 8, /* Return audio volume */
+	kSci1AudioLanguage = 9 /* Return audio language */
+};
 
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
 #define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
@@ -983,8 +994,24 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
-	case _K_SCI1_AUDIO_POSITION :
+	case kSci1AudioWPlay:
+		break;
+	case kSci1AudioPlay:
+		break;
+	case kSci1AudioStop:
+		break;
+	case kSci1AudioPause:
+		break;
+	case kSci1AudioResume:
+		break;
+	case kSci1AudioPosition :
 		return make_reg(0, -1); /* Finish immediately */
+	case kSci1AudioRate:
+		break;
+	case kSci1AudioVolume:
+		break;
+	case kSci1AudioLanguage:
+		break;
 	}
 
 	return s->r_acc;
