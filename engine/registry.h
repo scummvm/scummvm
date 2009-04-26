@@ -58,7 +58,6 @@ private:
 	Common::String _spewOnError;
 	Common::String _showFps;
 	Common::String _softRenderer;
-	Common::String _glZbuffer;
 	Common::String _fullscreen;
 	Common::String _engineSpeed;
 

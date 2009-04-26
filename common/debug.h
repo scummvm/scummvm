@@ -51,7 +51,7 @@ extern const char *debug_levels[];
 extern const char *debug_descriptions[];
 
 // Hacky toggles for experimental / debug code (defined/set in main.cpp)
-extern bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL;
+extern bool SHOWFPS_GLOBAL;
 
 void error(const char *fmt, ...);
 

@@ -48,7 +48,6 @@ Registry *g_registry = NULL;
 // good_times
 
 // show_fps
-// gl_zbuffer
 // soft_renderer
 // fullscreen
 // engine_speed
@@ -71,7 +70,6 @@ Registry::Registry() : _dirty(true) {
 	_spewOnError = ConfMan.get("spew_on_error");
 	_showFps = ConfMan.get("show_fps");
 	_softRenderer = ConfMan.get("soft_renderer");
-	_glZbuffer = ConfMan.get("gl_zbuffer");
 	_fullscreen = ConfMan.get("fullscreen");
 	_engineSpeed = ConfMan.get("engine_speed");
 }
@@ -111,8 +109,6 @@ const char *Registry::get(const char *key, const char *defval) const {
 		return _showFps.c_str();
 	} else if (strcasecmp("soft_renderer", key) == 0) {
 		return _softRenderer.c_str();
-	} else if (strcasecmp("gl_zbuffer", key) == 0) {
-		return _glZbuffer.c_str();
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		return _fullscreen.c_str();
 	} else if (strcasecmp("engine_speed", key) == 0) {
@@ -182,9 +178,6 @@ void Registry::set(const char *key, const char *val) {
 	} else if (strcasecmp("soft_renderer", key) == 0) {
 		_softRenderer = val;
 		return;
-	} else if (strcasecmp("gl_zbuffer", key) == 0) {
-		_glZbuffer = val;
-		return;
 	} else if (strcasecmp("fullscreen", key) == 0) {
 		_fullscreen = val;
 		return;
@@ -215,7 +208,6 @@ void Registry::save() {
 	ConfMan.set("spew_on_error", _spewOnError);
 	ConfMan.set("show_fps", _showFps);
 	ConfMan.set("soft_renderer", _softRenderer);
-	ConfMan.set("gl_zbuffer", _glZbuffer);
 	ConfMan.set("fullscreen", _fullscreen);
 	ConfMan.set("engine_speed", _engineSpeed);
 

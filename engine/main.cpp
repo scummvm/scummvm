@@ -45,7 +45,7 @@
 #include "engine/imuse/imuse.h"
 
 // Hacky global toggles for experimental/debug code
-bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
+bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 enDebugLevels debugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
@@ -102,7 +102,6 @@ extern "C" int residual_main(int argc, char *argv[]) {
 
 	SHOWFPS_GLOBAL = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
 	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
-	ZBUFFER_GLOBAL = (tolower(g_registry->get("gl_zbuffer", "FALSE")[0]) == 't');
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
 	delete g_driver; // delete temporary created driver
