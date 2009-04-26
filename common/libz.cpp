@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/zlib.h"
+#include "common/libz.h"
 #include "common/util.h"
 
 #if defined(USE_ZLIB)
