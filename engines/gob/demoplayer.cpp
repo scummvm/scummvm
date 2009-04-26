@@ -65,9 +65,9 @@ void DemoPlayer::clearScreen() {
 
 void DemoPlayer::playVideo(const char *fileName) {
 	uint32 waitTime = 0;
-	char *file;
+	char *file, *filePtr;
 
-	file = new char[strlen(fileName) + 1];
+	file = filePtr = new char[strlen(fileName) + 1];
 	strcpy(file, fileName);
 
 	// Trimming spaces front
@@ -103,7 +103,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 			_vm->_util->longDelay(waitTime);
 	}
 
-	delete[] file;
+	delete[] filePtr;
 }
 
 void DemoPlayer::evaluateVideoMode(const char *mode) {
