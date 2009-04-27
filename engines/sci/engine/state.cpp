@@ -70,7 +70,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	save_mouse_pointer_loop = 0;
 	save_mouse_pointer_cel = 0;
 
-	port_serial = 0;
 	port = 0;
 
 	memset(ega_colors, 0, sizeof(ega_colors));
@@ -85,10 +84,8 @@ EngineState::EngineState() : _dirseeker(this) {
 	memset(&pic_visible_map, 0, sizeof(pic_visible_map));	// FIXME: Remove this once/if we C++ify gfx_map_mask_t
 	pic_animate = 0;
 
-	dyn_views_list_serial = 0;
 	dyn_views = 0;
 
-	drop_views_list_serial = 0;
 	drop_views = 0;
 
 	animation_delay = 0;

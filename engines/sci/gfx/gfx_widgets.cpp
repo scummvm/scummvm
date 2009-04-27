@@ -1138,16 +1138,13 @@ int GfxContainer::setVisual(GfxVisual *visual) {
 }
 
 static int _gfxwop_container_free_tagged(GfxContainer *container) {
-	GfxWidget *seekerp = container->_contents;
+	GfxWidget *seeker = container->_contents;
 
-	while (seekerp) {
-		GfxWidget *redshirt = seekerp;
-
-		if (redshirt->_flags & GFXW_FLAG_TAGGED) {
-			seekerp = (redshirt->_next);
-			delete redshirt;
-		} else
-			seekerp = seekerp->_next;
+	while (seeker) {
+		GfxWidget *next = seeker->_next;
+		if (seeker->_flags & GFXW_FLAG_TAGGED)
+			delete seeker;
+		seeker = next;
 	}
 
 	return 0;

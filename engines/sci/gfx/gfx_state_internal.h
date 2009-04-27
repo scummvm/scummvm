@@ -39,17 +39,17 @@ namespace Sci {
 #define GFXW_FLAG_CONTAINER (1<<2)
 #define GFXW_FLAG_DIRTY (1<<3)
 #define GFXW_FLAG_TAGGED (1<<4)
-#define GFXW_FLAG_MULTI_ID (1<<5) /* Means that the ID used herein may be used more than once, i.e. is not unique */
-#define GFXW_FLAG_IMMUNE_TO_SNAPSHOTS (1<<6) /* Snapshot restoring doesn't kill this widget, and +5 bonus to saving throws vs. Death Magic */
-#define GFXW_FLAG_NO_IMPLICIT_SWITCH (1<<7) /* Ports: Don't implicitly switch to this port when disposing windows */
+#define GFXW_FLAG_MULTI_ID (1<<5) /**< Means that the ID used herein may be used more than once, i.e. is not unique */
+#define GFXW_FLAG_IMMUNE_TO_SNAPSHOTS (1<<6) /**< Snapshot restoring doesn't kill this widget, and +5 bonus to saving throws vs. Death Magic */
+#define GFXW_FLAG_NO_IMPLICIT_SWITCH (1<<7) /**< Ports: Don't implicitly switch to this port when disposing windows */
 
 struct gfxw_snapshot_t {
-	int serial; /* The first serial number to kill */
+	int serial; /**< The first serial number to kill */
 	rect_t area;
 };
 
 enum gfxw_widget_type_t {
-	GFXW_, /* Base widget */
+	GFXW_, /**< Base widget */
 
 	GFXW_BOX,
 	GFXW_RECT,
@@ -84,17 +84,17 @@ typedef int gfxw_bin_op(GfxWidget *, GfxWidget *);
 
 struct GfxWidget {
 public:
-	int _magic; /* Extra check after typecasting */
-	int _serial; /* Serial number */
-	int _flags; /* Widget flags */
+	int _magic; /**< Extra check after typecasting */
+	int _serial; /**< Serial number */
+	int _flags; /**< Widget flags */
 	gfxw_widget_type_t _type;
-	rect_t _bounds; /* Boundaries */
-	GfxWidget *_next; /* Next widget in widget list */
-	int _ID; /* Unique ID or GFXW_NO_ID */
-	int _subID; /* A 'sub-ID', or GFXW_NO_ID */
-	GfxContainer *_parent; /* The parent widget, or NULL if not owned */
-	GfxVisual *_visual; /* The owner visual */
-	int _widgetPriority; /* Drawing priority, or -1 */
+	rect_t _bounds; /**< Boundaries */
+	GfxWidget *_next; /**< Next widget in widget list */
+	int _ID; /**< Unique ID or GFXW_NO_ID */
+	int _subID; /**< A 'sub-ID', or GFXW_NO_ID */
+	GfxContainer *_parent; /**< The parent widget, or NULL if not owned */
+	GfxVisual *_visual; /**< The owner visual */
+	int _widgetPriority; /**< Drawing priority, or -1 */
 
 public:
 	GfxWidget(gfxw_widget_type_t type);
@@ -228,7 +228,7 @@ public:
 #define GFXW_IS_VIEW(widget) ((widget)->_type == GFXW_VIEW || (widget)->_type == GFXW_STATIC_VIEW \
 			      || (widget)->_type == GFXW_DYN_VIEW || (widget)->_type == GFXW_PIC_VIEW)
 struct GfxView  : public GfxWidget {
-	Common::Point _pos; /* Implies the value of 'bounds' in GfxWidget */
+	Common::Point _pos; /**< Implies the value of 'bounds' in GfxWidget */
 	gfx_color_t _color;
 	int _view, _loop, _cel;
 	int _palette;
@@ -247,9 +247,9 @@ struct GfxDynView : public GfxView {
 	rect_t draw_bounds; /* The correct position to draw to */
 	void *under_bitsp, *signalp;
 	int under_bits, signal;
-	int _z; /* The z coordinate: Added to y, but used for sorting */
-	int sequence; /* Sequence number: For sorting */
-	int force_precedence; /* Precedence enforcement variable for sorting- defaults to 0 */
+	int _z; /**< The z coordinate: Added to y, but used for sorting */
+	int sequence; /**< Sequence number: For sorting */
+	int force_precedence; /**< Precedence enforcement variable for sorting- defaults to 0 */
 
 	bool _isDrawn;	// FIXME: This is specific to GFXW_PIC_VIEW
 
@@ -271,7 +271,8 @@ struct GfxText : public GfxWidget {
 	gfx_alignment_t halign, valign;
 	gfx_color_t _color1, _color2, _bgcolor;
 	int _textFlags;
-	int width, height; /* Real text width and height */
+	int width; /**< Real text width */
+	int height; /**< Real text height */
 	gfx_text_handle_t *_textHandle;
 
 public:
@@ -293,18 +294,18 @@ typedef int gfxw_rect_op(GfxContainer *, rect_t, int);
 
 
 struct GfxContainer : public GfxWidget {
-	rect_t zone; /* The writeable zone (absolute) for contained objects */
-	DirtyRectList _dirtyRects; /* List of dirty rectangles */
+	rect_t zone; /**< The writeable zone (absolute) for contained objects */
+	DirtyRectList _dirtyRects; /**< List of dirty rectangles */
 	GfxWidget *_contents;
-	GfxWidget **_nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
+	GfxWidget **_nextpp; /**< Pointer to the 'next' pointer in the last entry in contents */
 
 public:
 	// TODO: Replace the following with virtual methods
-	gfxw_unary_container_op *free_tagged; /* Free all tagged contained widgets */
-	gfxw_unary_container_op *free_contents; /* Free all contained widgets */
-	gfxw_rect_op *add_dirty_abs; /* Add an absolute dirty rectangle */
-	gfxw_rect_op *add_dirty_rel; /* Add a relative dirty rectangle */
-	gfxw_container_op *add;  /* Append widget to an appropriate position (for view and control lists) */
+	gfxw_unary_container_op *free_tagged; /**< Free all tagged contained widgets */
+	gfxw_unary_container_op *free_contents; /**< Free all contained widgets */
+	gfxw_rect_op *add_dirty_abs; /**< Add an absolute dirty rectangle */
+	gfxw_rect_op *add_dirty_rel; /**< Add a relative dirty rectangle */
+	gfxw_container_op *add;  /**< Append widget to an appropriate position (for view and control lists) */
 
 public:
 	// FIXME: This should be a virtual base class, mark it so somehow?
@@ -333,8 +334,8 @@ public:
 
 #define GFXW_IS_VISUAL(widget) ((widget)->_type == GFXW_VISUAL)
 struct GfxVisual : public GfxContainer {
-	Common::Array<GfxPort *> _portRefs; /* References to ports */
-	int _font; /* Default font */
+	Common::Array<GfxPort *> _portRefs; /**< References to ports */
+	int _font; /**< Default font */
 	GfxState *_gfxState;
 
 public:
@@ -347,16 +348,16 @@ public:
 
 #define GFXW_IS_PORT(widget) ((widget)->_type == GFXW_PORT)
 struct GfxPort : public GfxContainer {
-	GfxList *_decorations; /* optional window decorations- drawn before the contents */
-	GfxWidget *port_bg; /* Port background widget or NULL */
+	GfxList *_decorations; /**< optional window decorations - drawn before the contents */
+	GfxWidget *port_bg; /**< Port background widget or NULL */
 	gfx_color_t _color, _bgcolor;
 	int _font;
-	Common::Point draw_pos; /* Drawing position */
-	gfxw_snapshot_t *restore_snap; /* Snapshot to be restored automagically,
+	Common::Point draw_pos; /**< Drawing position */
+	gfxw_snapshot_t *restore_snap; /**< Snapshot to be restored automagically,
 					  experimental feature used in the PQ3 interpreter */
-	int port_flags; /* interpreter-dependant flags */
+	int port_flags; /**< interpreter-dependant flags */
 	const char *title_text;
-	byte gray_text; /* Whether text is 'grayed out' (dithered) */
+	byte gray_text; /**< Whether text is 'grayed out' (dithered) */
 
 public:
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);

@@ -240,7 +240,6 @@ Common::Error SciEngine::run() {
 	GfxState gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
 
-	gamestate->port_serial = 0;
 	gamestate->have_mouse_flag = 1;
 	gamestate->animation_delay = 5;
 	gamestate->animation_granularity = 4;

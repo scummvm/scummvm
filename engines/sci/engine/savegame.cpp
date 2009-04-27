@@ -510,9 +510,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
 	s->savegame_version = CURRENT_SAVEGAME_VERSION;
-	s->dyn_views_list_serial = (s->dyn_views)? s->dyn_views->_serial : -2;
-	s->drop_views_list_serial = (s->drop_views)? s->drop_views->_serial : -2;
-	s->port_serial = (s->port)? s->port->_serial : -2;
 
 	if (s->execution_stack_base) {
 		sciprintf("Cannot save from below kernel function\n");

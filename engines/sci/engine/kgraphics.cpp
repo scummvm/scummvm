@@ -797,7 +797,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 	if ((illegal_bits & 0x8000) // If we are vulnerable to those views at all...
 	        && s->dyn_views) { // ...check against all stop-updated dynviews
-		GfxDynView *widget = (GfxDynView *) s->dyn_views->_contents;
+		GfxDynView *widget = (GfxDynView *)s->dyn_views->_contents;
 
 		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
 
@@ -808,7 +808,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, funct_nr, argc, argv))
 					return not_register(s, NULL_REG);
 
-			widget = (GfxDynView *) widget->_next;
+			widget = (GfxDynView *)widget->_next;
 		}
 	}
 
@@ -1767,7 +1767,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 			*((reg_t *)(widget->signalp)) = make_reg(0, widget->signal & 0xffff); /* Write back signal */
 		}
 
-		widget = (GfxDynView *) widget->_next;
+		widget = (GfxDynView *)widget->_next;
 	}
 }
 
@@ -1800,7 +1800,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 	if (widget) {
 		int retval;
 		// Recurse:
-		retval = _k_view_list_dispose_loop(s, list, (GfxDynView *) widget->_next, funct_nr, argc, argv);
+		retval = _k_view_list_dispose_loop(s, list, (GfxDynView *)widget->_next, funct_nr, argc, argv);
 
 		if (retval == -1) // Bail out on annihilation, rely on re-start from Animate()
 			return -1;
@@ -2014,7 +2014,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 		if (widget->signalp)
 			widget->signal = ((reg_t *)(widget->signalp))->offset;
 
-		widget = (GfxDynView *) widget->_next;
+		widget = (GfxDynView *)widget->_next;
 	}
 }
 
@@ -2098,7 +2098,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 			fprintf(stderr, "Unsetting magic StopUpd for view "PREG"\n", PRINT_REG(obj));
 		} */
 
-		view = (GfxDynView *) view->_next;
+		view = (GfxDynView *)view->_next;
 	}
 }
 
@@ -2118,7 +2118,7 @@ static void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list)
 		while (new_widget
 		        && (new_widget->_ID != old_widget->_ID
 		            || new_widget->_subID != old_widget->_subID))
-			new_widget = (GfxDynView *) new_widget->_next;
+			new_widget = (GfxDynView *)new_widget->_next;
 
 		if (new_widget) {
 			int carry = old_widget->signal & _K_VIEW_SIG_FLAG_STOPUPD;
@@ -2137,7 +2137,7 @@ static void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list)
 			old_widget->signal = new_widget->signal |= carry;
 		}
 
-		old_widget = (GfxDynView *) old_widget->_next;
+		old_widget = (GfxDynView *)old_widget->_next;
 	}
 }
 
@@ -2212,7 +2212,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 
 		SCIkdebug(SCIkGRAPHICS, "    -> signal %04x\n", view->signal);
 
-		view = (GfxDynView *) view->_next;
+		view = (GfxDynView *)view->_next;
 	}
 }
 
@@ -2265,7 +2265,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 			  // disposeables and this one isn't disposeable
 		}
 
-		widget = (GfxDynView *) widget->_next;
+		widget = (GfxDynView *)widget->_next;
 	} // while (widget)
 
 }
