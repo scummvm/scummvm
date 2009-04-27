@@ -35,7 +35,7 @@
 
 namespace Sci {
 
-struct gfx_state_t;
+struct GfxState;
 struct GfxBox;
 struct GfxDynView;
 struct GfxContainer;
@@ -158,9 +158,9 @@ extern Common::Point gfxw_point_zero;
 
 /*-- Primitive types --*/
 
-GfxBox *gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
+GfxBox *gfxw_new_box(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
 /* Creates a new box
-** Parameters: (gfx_state_t *) state: The (optional) state
+** Parameters: (GfxState *) state: The (optional) state
 **             (rect_t) area: The box's dimensions, relative to its container widget
 **             (gfx_color_t) color1: The primary color
 **             (gfx_color_t) color1: The secondary color (ignored if shading is disabled)
@@ -194,10 +194,10 @@ GfxPrimitive *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t 
 /* Whether the view should _not_ apply its x/y offset modifyers */
 #define GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET (1 << 1)
 
-GfxView *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
+GfxView *gfxw_new_view(GfxState *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
 	gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 /* Creates a new view (a cel, actually)
-** Parameters: (gfx_state_t *) state: The graphics state
+** Parameters: (GfxState *) state: The graphics state
 **             (Common::Point) pos: The position to place the view at
 **             (int x int x int) view, loop, cel: The global cel ID
 **             (int) priority: The priority to use for drawing, or -1 for none
@@ -208,10 +208,10 @@ GfxView *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view, int loop
 ** Returns   : (gfxw_cel_t *) A newly allocated cel according to the specs
 */
 
-GfxDynView *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
+GfxDynView *gfxw_new_dyn_view(GfxState *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
 	int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 /* Creates a new dyn view
-** Parameters: (gfx_state_t *) state: The graphics state
+** Parameters: (GfxState *) state: The graphics state
 **             (Common::Point) pos: The position to place the dynamic view at
 **             (int) z: The z coordinate
 **             (int x int x int) view, loop, cel: The global cel ID
@@ -226,11 +226,11 @@ GfxDynView *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int 
 ** optimizations when they move or change shape.
 */
 
-GfxText *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+GfxText *gfxw_new_text(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
 	gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
 	gfx_color_t bgcolor, int flags);
 /* Creates a new text widget
-** Parameters: (gfx_state_t *) state: The state the text is to be calculated from
+** Parameters: (GfxState *) state: The state the text is to be calculated from
 **             (rect_t) area: The area the text is to be confined to (the yl value is only
 **                            relevant for text aligment, though)
 **             (int) font: The number of the font to use
@@ -243,10 +243,10 @@ GfxText *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *te
 ** Returns   : (GfxText *) The resulting text widget
 */
 
-void gfxw_text_info(gfx_state_t *state, GfxText *text, int *lines_nr,
+void gfxw_text_info(GfxState *state, GfxText *text, int *lines_nr,
 	int *lineheight, int *offset);
 /* Determines text widget meta-information
-** Parameters: (gfx_state_t *) state: The state to operate on
+** Parameters: (GfxState *) state: The state to operate on
 **             (gfx_text_t *) text: The widget to query
 ** Returns   : (int) lines_nr: Number of lines used in the text
 **             (int) lineheight: Pixel height (SCI scale) of each text line
@@ -314,9 +314,9 @@ GfxList *gfxw_new_list(rect_t area, int sorted);
 ** List widgets are also referred to as Display Lists.
 */
 
-GfxVisual *gfxw_new_visual(gfx_state_t *state, int font);
+GfxVisual *gfxw_new_visual(GfxState *state, int font);
 /* Creates a new visual widget
-** Parameters: (gfx_state_t *) state: The graphics state
+** Parameters: (GfxState *) state: The graphics state
 **             (int) font: The default font number for contained ports
 ** Returns   : (GfxList *) A newly allocated visual widget
 ** Visual widgets are containers for port widgets.

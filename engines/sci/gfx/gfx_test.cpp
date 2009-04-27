@@ -101,8 +101,8 @@ static int skip_intro = 0;
 #define ALL_TESTS "abcdefghijkl"
 static char tests[256];
 
-gfx_state_t graphics_state;
-gfx_state_t *state = &graphics_state;
+GfxState graphics_state;
+GfxState *state = &graphics_state;
 
 gfx_options_t graphics_options;
 gfx_options_t *options = &graphics_options;

@@ -205,7 +205,7 @@ struct GfxBox : public GfxWidget {
 	gfx_box_shade_t _shadeType;
 
 public:
-	GfxBox(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
+	GfxBox(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
 
 	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
@@ -234,7 +234,7 @@ struct GfxView  : public GfxWidget {
 	int _palette;
 
 public:
-	GfxView(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
+	GfxView(GfxState *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int flags);
 
 	virtual int draw(const Common::Point &pos);
@@ -254,7 +254,7 @@ struct GfxDynView : public GfxView {
 	bool _isDrawn;	// FIXME: This is specific to GFXW_PIC_VIEW
 
 public:
-	GfxDynView(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
+	GfxDynView(GfxState *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
 		gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 
 	virtual int draw(const Common::Point &pos);
@@ -275,7 +275,7 @@ struct GfxText : public GfxWidget {
 	gfx_text_handle_t *_textHandle;
 
 public:
-	GfxText(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+	GfxText(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
 		gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags);
 
 	~GfxText();
@@ -335,10 +335,10 @@ public:
 struct GfxVisual : public GfxContainer {
 	Common::Array<GfxPort *> _portRefs; /* References to ports */
 	int _font; /* Default font */
-	gfx_state_t *_gfxState;
+	GfxState *_gfxState;
 
 public:
-	GfxVisual(gfx_state_t *state, int font);
+	GfxVisual(GfxState *state, int font);
 
 	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;

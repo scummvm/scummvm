@@ -79,7 +79,7 @@ MenuItem::MenuItem() {
 }
 
 
-int Menu::addMenuItem(gfx_state_t *state, MenuType type, const char *left, const char *right,
+int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const char *right,
 						   int font, int key, int modifiers, int tag, reg_t text_pos) {
 // Returns the total text size, plus MENU_BOX_CENTER_PADDING if (right != NULL)
 	MenuItem newItem;
@@ -122,7 +122,7 @@ int Menu::addMenuItem(gfx_state_t *state, MenuType type, const char *left, const
 	return total_left_size + width;
 }
 
-void Menubar::addMenu(gfx_state_t *state, const char *title, const char *entries, int font, reg_t entries_base) {
+void Menubar::addMenu(GfxState *state, const char *title, const char *entries, int font, reg_t entries_base) {
 	char tracker;
 	char *left = NULL;
 	reg_t left_origin = entries_base;

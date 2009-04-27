@@ -237,7 +237,7 @@ Common::Error SciEngine::run() {
 	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
 
 	gfx_crossblit_alpha_threshold = 0x90;
-	gfx_state_t gfx_state;
+	GfxState gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
 
 	gamestate->port_serial = 0;

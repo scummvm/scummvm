@@ -404,11 +404,11 @@ static int _gfxw_color_get_priority(gfx_color_t color) {
 	return (color.mask & GFX_MASK_PRIORITY) ? color.priority : -1;
 }
 
-GfxBox *gfxw_new_box(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
+GfxBox *gfxw_new_box(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	return new GfxBox(state, area, color1, color2, shade_type);
 }
 
-GfxBox::GfxBox(gfx_state_t *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type)
+GfxBox::GfxBox(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type)
 	: GfxWidget(GFXW_BOX) {
 
 	_widgetPriority = _gfxw_color_get_priority(color1);
@@ -548,7 +548,7 @@ GfxLine::GfxLine(Common::Point start, Common::Point end, gfx_color_t color_, gfx
 //*** Views and static views ***
 
 
-GfxView::GfxView(gfx_state_t *state, Common::Point pos_, int view_, int loop_, int cel_, int palette_, int priority, int control,
+GfxView::GfxView(GfxState *state, Common::Point pos_, int view_, int loop_, int cel_, int palette_, int priority, int control,
 	gfx_alignment_t halign, gfx_alignment_t valign, int flags_)
 	: GfxWidget((flags_ & GFXW_VIEW_FLAG_STATIC) ? GFXW_STATIC_VIEW : GFXW_VIEW) {
 
@@ -623,7 +623,7 @@ void _gfxw_set_ops_VIEW(GfxWidget *view, char stat) {
 	_gfxw_set_ops(view, _gfxwop_basic_compare_to, _gfxwop_basic_equals, _gfxwop_basic_superarea_of);
 }
 
-GfxView *gfxw_new_view(gfx_state_t *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
+GfxView *gfxw_new_view(GfxState *state, Common::Point pos, int view_nr, int loop, int cel, int palette, int priority, int control,
 	gfx_alignment_t halign, gfx_alignment_t valign, int flags) {
 	GfxView *view;
 
@@ -750,13 +750,13 @@ void _gfxw_set_ops_PICVIEW(GfxWidget *widget) {
 	_gfxw_set_ops_DYNVIEW(widget);
 }
 
-GfxDynView *gfxw_new_dyn_view(gfx_state_t *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
+GfxDynView *gfxw_new_dyn_view(GfxState *state, Common::Point pos, int z, int view, int loop, int cel, int palette, int priority, int control,
 	gfx_alignment_t halign, gfx_alignment_t valign, int sequence) {
 
 	return new GfxDynView(state, pos, z, view, loop, cel, palette, priority, control, halign, valign, sequence);
 }
 
-GfxDynView::GfxDynView(gfx_state_t *state, Common::Point pos_, int z_, int view_, int loop_, int cel_, int palette_, int priority, int control,
+GfxDynView::GfxDynView(GfxState *state, Common::Point pos_, int z_, int view_, int loop_, int cel_, int palette_, int priority, int control,
 	gfx_alignment_t halign, gfx_alignment_t valign, int sequence_)
 	: GfxView(state, pos_, view_, loop_, cel_, palette_, priority, control, halign, valign, 0) {
 	int width, height;
@@ -826,7 +826,7 @@ GfxText::~GfxText() {
 	text = NULL;
 
 	if (_textHandle) {
-		gfx_state_t *state = _visual ? _visual->_gfxState : NULL;
+		GfxState *state = _visual ? _visual->_gfxState : NULL;
 		if (!state) {
 			GFXERROR("Attempt to free text without supplying mode to free it from!\n");
 			BREAKPOINT();
@@ -902,12 +902,12 @@ void _gfxw_set_ops_TEXT(GfxWidget *widget) {
 	widget->should_replace = _gfxwop_text_should_replace;
 }
 
-GfxText *gfxw_new_text(gfx_state_t *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
+GfxText *gfxw_new_text(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
 	gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bgcolor, int text_flags) {
 	return new GfxText(state, area, font, text, halign, valign, color1, color2, bgcolor, text_flags);
 }
 
-GfxText::GfxText(gfx_state_t *state, rect_t area, int font, const char *text_, gfx_alignment_t halign_,
+GfxText::GfxText(GfxState *state, rect_t area, int font, const char *text_, gfx_alignment_t halign_,
 	gfx_alignment_t valign_, gfx_color_t color1_, gfx_color_t color2_, gfx_color_t bgcolor_, int text_flags_)
 	: GfxWidget(GFXW_TEXT) {
 
@@ -944,7 +944,7 @@ GfxText::GfxText(gfx_state_t *state, rect_t area, int font, const char *text_, g
 	_gfxw_set_ops_TEXT(this);
 }
 
-void gfxw_text_info(gfx_state_t *state, GfxText *text, int *lines, int *lineheight, int *offset) {
+void gfxw_text_info(GfxState *state, GfxText *text, int *lines, int *lineheight, int *offset) {
 	if (lines)
 		*lines = text->lines_nr;
 	if (lineheight)
@@ -1042,7 +1042,7 @@ static int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds
 static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *contents) {
 	GfxContainer *container = (GfxContainer *)widget;
 	gfx_dirty_rect_t *dirty = container->_dirty;
-	gfx_state_t *gfx_state = (widget->_visual) ? widget->_visual->_gfxState : ((GfxVisual *) widget)->_gfxState;
+	GfxState *gfx_state = (widget->_visual) ? widget->_visual->_gfxState : ((GfxVisual *) widget)->_gfxState;
 	int draw_ports;
 	rect_t nullzone = {0, 0, 0, 0};
 
@@ -1473,11 +1473,11 @@ void _gfxw_set_ops_VISUAL(GfxContainer *visual) {
 	                        _gfxwop_container_add_dirty, _gfxwop_container_add);
 }
 
-GfxVisual *gfxw_new_visual(gfx_state_t *state, int font) {
+GfxVisual *gfxw_new_visual(GfxState *state, int font) {
 	return new GfxVisual(state, font);
 }
 
-GfxVisual::GfxVisual(gfx_state_t *state, int font)
+GfxVisual::GfxVisual(GfxState *state, int font)
 	: GfxContainer(gfx_rect(0, 0, 320, 200), GFXW_VISUAL) {
 
 	_font = font;

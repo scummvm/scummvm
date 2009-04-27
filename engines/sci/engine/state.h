@@ -50,7 +50,7 @@ namespace Sci {
 class Menubar;
 struct kfunct_sig_pair_t;	// from kernel.h
 
-struct gfx_state_t;
+struct GfxState;
 struct GfxPort;
 struct GfxVisual;
 struct GfxContainer;	
@@ -124,7 +124,7 @@ public:
 
 	/* Non-VM information */
 
-	gfx_state_t *gfx_state; /* Graphics state and driver */
+	GfxState *gfx_state; /* Graphics state and driver */
 	gfx_pixmap_t *old_screen; /* Old screen content: Stored during kDrawPic() for kAnimate() */
 
 	sfx_state_t sound; /* sound subsystem */

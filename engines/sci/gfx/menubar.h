@@ -139,7 +139,7 @@ public:
 
 //protected:
 	// FIXME: This should be (partially) turned into a MenuItem constructor
-	int addMenuItem(gfx_state_t *state, MenuType type, const char *left, const char *right,
+	int addMenuItem(GfxState *state, MenuType type, const char *left, const char *right,
 	                int font, int key, int modifiers, int tag, reg_t text_pos);
 };
 
@@ -156,7 +156,7 @@ public:
 
 	/**
 	 * Adds a menu to the menubar.
-	 * Parameters: (gfx_state_t *) state: The state the fonts are stored in
+	 * Parameters: (GfxState *) state: The state the fonts are stored in
 	 *             (char *) title: The menu title
 	 *             (char *) entries: A string of menu entries
 	 *             (int) font: The font which is to be used for drawing
@@ -170,7 +170,7 @@ public:
 	 * '=' : Initial tag value
 	 * and the special string "--!", which represents a horizontal bar in the menu.
 	 */
-	void addMenu(gfx_state_t *state, const char *title, const char *entries, int font, reg_t entries_base);
+	void addMenu(GfxState *state, const char *title, const char *entries, int font, reg_t entries_base);
 
 
 	/**

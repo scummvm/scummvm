@@ -73,7 +73,7 @@ static GfxList *finish_titlebar_list(EngineState *s, GfxList *list, GfxPort *sta
 }
 
 void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::String &text, int fgcolor, int bgcolor) {
-	gfx_state_t *state;
+	GfxState *state;
 	GfxList *list;
 	gfx_color_t bg = status_bar->_bgcolor;
 	gfx_color_t fg = status_bar->_color;
@@ -135,7 +135,7 @@ GfxPort *sciw_new_window(EngineState *s,
 		int title_font, gfx_color_t title_color, gfx_color_t title_bgcolor,
 		const char *title, int flags) {
 	GfxVisual *visual = s->visual;
-	gfx_state_t *state = s->gfx_state;
+	GfxState *state = s->gfx_state;
 	int shadow_offset = 2;
 	rect_t frame;
 	gfx_color_t black;
