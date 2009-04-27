@@ -154,7 +154,7 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	bundle_dofile("_system.lua");
 
 	lua_pushnil();		// resumeSave
-	lua_pushnil();		// bootParam
+	lua_pushnil();		// bootParam - not used in scripts
 //	lua_pushnumber(0);		// bootParam
 	lua_call("BOOT");
 
