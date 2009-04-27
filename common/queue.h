@@ -55,19 +55,19 @@ public:
 	}
 
 	T &front() {
-		return *_impl.begin();
+		return _impl.front();
 	}
 
 	const T &front() const {
-		return *_impl.begin();
+		return _impl.front();
 	}
 
 	T &back() {
-		return *_impl.reverse_begin();
+		return _impl.back();
 	}
 
 	const T &back() const {
-		return *_impl.reverse_begin();
+		return _impl.back();
 	}
 
 	T pop() {

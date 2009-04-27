@@ -132,6 +132,22 @@ public:
 		i = erase(i);
 	}
 
+	t_T &front() {
+		return static_cast<Node *>(_anchor._next)->_data;
+	}
+
+	const t_T &front() const {
+		return static_cast<Node *>(_anchor._next)->_data;
+	}
+
+	t_T &back() {
+		return static_cast<Node *>(_anchor._prev)->_data;
+	}
+
+	const t_T &back() const {
+		return static_cast<Node *>(_anchor._prev)->_data;
+	}
+
 
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
