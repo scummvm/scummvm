@@ -2520,6 +2520,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		"lda1.stk",
 		0
 	},
+	{ // Supplied by goodoldgeorg in bug report #2770340
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "4bd31979ea3d77a58a358c09000a85ed", 1253018),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeatures640,
+		0,
+		0
+	},
 	{
 		{
 			"urban",
