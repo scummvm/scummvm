@@ -111,7 +111,7 @@ int IntMapper::lookupKey(int key) const {
 void IntMapper::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(base_value);
 	if (s.isLoading()) {
-		uint32 key, idx;
+		uint32 key = 0, idx = 0;
 		clear();
 		while (true) {
 			s.syncAsSint32LE(key);

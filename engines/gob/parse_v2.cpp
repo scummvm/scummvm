@@ -797,8 +797,6 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				if ((operStack[brackStart] >= OP_OR) || (operStack[brackStart] == OP_BEGIN_EXPR))
 					brackStart++;
 
-				int cmpTemp;
-
 				switch (operPtr[-2]) {
 				case OP_ADD:
 					if (operStack[brackStart] == OP_LOAD_IMM_INT16) {
@@ -913,7 +911,9 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 					valPtr -= 2;
 					break;
 
-				case OP_NEQ:
+				case OP_NEQ: {
+					int cmpTemp = 0;
+
 					if (operPtr[-3] == OP_LOAD_IMM_INT16) {
 						cmpTemp = valPtr[-3] - valPtr[-1];
 					} else if (operPtr[-3] == OP_LOAD_IMM_STR) {
@@ -930,6 +930,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
+					}
 
 				default:
 					var_1A = true;

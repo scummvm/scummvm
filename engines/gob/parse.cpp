@@ -458,7 +458,7 @@ void Parse::printVarIndex() {
 
 int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
 	byte var_C = operPtr[-3];
-	int cmpTemp;
+	int cmpTemp = 0;
 	if (var_C == OP_LOAD_IMM_INT16) {
 		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
 	} else if (var_C == OP_LOAD_IMM_STR) {
