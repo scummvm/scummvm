@@ -4199,7 +4199,7 @@ void InventoryProcess(CORO_PARAM, const void *) {
 					break;
 				case INITGAME:
 					KillInventory();
-					bRestart = true;
+					FnRestartGame();
 					break;
 				case CLANG:
 					if (!LanguageChange())

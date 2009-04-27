@@ -53,6 +53,7 @@ void Control(int param);
 void HookScene(SCNHANDLE scene, int entrance, int transition);
 void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition);
 void Offset(EXTREME extreme, int x, int y);
+void FnRestartGame(void);
 void RestoreScene(void);
 void ResumeLastGame(void);
 void SaveScene(CORO_PARAM);

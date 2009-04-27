@@ -2400,9 +2400,9 @@ void ResetIdleTime(void) {
 }
 
 /**
- * restartgame
+ * FnRestartGame
  */
-static void RestartGame(void) {
+void FnRestartGame(void) {
 	// TODO: Tinsel 2 comments out the 2 calls, but I'm not sure that this should be done
 	StopMidi();
 	StopSample();
@@ -5040,7 +5040,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case RESTARTGAME:
 		// Common to both DW1 & DW2
-		RestartGame();
+		FnRestartGame();
 		return 0;
 
 	case RESTORESCENE:
