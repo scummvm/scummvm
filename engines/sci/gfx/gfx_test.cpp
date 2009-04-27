@@ -559,7 +559,7 @@ int wait_specific_key(int key) {
 
 
 int message(char *msg) {
-	gfx_text_handle_t *handle;
+	TextHandle *handle;
 	rect_t text_rect = gfx_rect(0, 150, 320, 50);
 
 
@@ -926,7 +926,7 @@ void test_e(void) {
 
 void test_wrap(int width, char *text) {
 	rect_t rect = gfx_rect(0, 0, width, 120);
-	gfx_text_handle_t *handle = gfxop_new_text(state, 0,
+	TextHandle *handle = gfxop_new_text(state, 0,
 	                            text,
 	                            width, ALIGN_LEFT, ALIGN_TOP, white, white, transparent, 0);
 
@@ -939,7 +939,7 @@ void test_wrap(int width, char *text) {
 void test_f(void) {
 	int i;
 	int x, y;
-	gfx_text_handle_t *handle;
+	TextHandle *handle;
 	MESSAGE("-- Test F: Full font test --");
 	waitkey();
 

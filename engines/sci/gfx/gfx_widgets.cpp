@@ -822,9 +822,6 @@ GfxDynView::GfxDynView(GfxState *state, Common::Point pos_, int z_, int view_, i
 //*** Text ***
 
 GfxText::~GfxText() {
-	free(text);
-	text = NULL;
-
 	if (_textHandle) {
 		GfxState *state = _visual ? _visual->_gfxState : NULL;
 		if (!state) {
@@ -841,7 +838,7 @@ int GfxText::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_TEXT);
 
 	if (_textHandle == 0) {
-		_textHandle = gfxop_new_text(_visual->_gfxState, _font, text, _bounds.width,
+		_textHandle = gfxop_new_text(_visual->_gfxState, _font, _text, _bounds.width,
 	                   halign, valign, _color1, _color2, _bgcolor, _textFlags);
 	}
 
@@ -851,7 +848,7 @@ int GfxText::draw(const Common::Point &pos) {
 
 void GfxText::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("TEXT:'%s'", text);
+	sciprintf("TEXT:'%s'", _text.c_str());
 }
 
 static int _gfxwop_text_equals(GfxWidget *widget, GfxWidget *other) {
@@ -888,7 +885,7 @@ static int _gfxwop_text_should_replace(GfxWidget *widget, GfxWidget *other) {
 
 	otext = (GfxText *)other;
 
-	return strcmp(wtext->text, otext->text);
+	return wtext->_text != otext->_text;
 }
 
 static int _gfxwop_text_compare_to(GfxWidget *widget, GfxWidget *other) {
@@ -907,13 +904,13 @@ GfxText *gfxw_new_text(GfxState *state, rect_t area, int font, const char *text,
 	return new GfxText(state, area, font, text, halign, valign, color1, color2, bgcolor, text_flags);
 }
 
-GfxText::GfxText(GfxState *state, rect_t area, int font, const char *text_, gfx_alignment_t halign_,
+GfxText::GfxText(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign_,
 	gfx_alignment_t valign_, gfx_color_t color1_, gfx_color_t color2_, gfx_color_t bgcolor_, int text_flags_)
 	: GfxWidget(GFXW_TEXT) {
 
 	_widgetPriority = _gfxw_color_get_priority(color1_);
 	_font = font;
-	text = (char *)sci_malloc(strlen(text_) + 1);
+	_text = text;
 	halign = halign_;
 	valign = valign_;
 	_color1 = color1_;
@@ -921,8 +918,6 @@ GfxText::GfxText(GfxState *state, rect_t area, int font, const char *text_, gfx_
 	_bgcolor = bgcolor_;
 	_textFlags = text_flags_;
 	_textHandle = NULL;
-
-	strcpy(text, text_);
 
 	gfxop_get_text_params(state, font, text, area.width, &width, &height, _textFlags,
 	                      &lines_nr, &lineheight, &lastline_width);

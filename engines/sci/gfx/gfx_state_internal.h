@@ -267,13 +267,13 @@ public:
 struct GfxText : public GfxWidget {
 	int _font;
 	int lines_nr, lineheight, lastline_width;
-	char *text;
+	Common::String _text;
 	gfx_alignment_t halign, valign;
 	gfx_color_t _color1, _color2, _bgcolor;
 	int _textFlags;
 	int width; /**< Real text width */
 	int height; /**< Real text height */
-	gfx_text_handle_t *_textHandle;
+	TextHandle *_textHandle;
 
 public:
 	GfxText(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign,

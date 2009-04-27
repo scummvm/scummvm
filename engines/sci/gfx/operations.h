@@ -47,12 +47,12 @@ struct text_fragment_t;
 */
 #define GFXOP_ALPHA_THRESHOLD 0xff
 
-struct gfx_text_handle_t {
-	char *text; /* Copy of the actual text */
+struct TextHandle {
+	Common::String _text; /**< Copy of the actual text */
 
 	int lines_nr;
 	int line_height;
-	text_fragment_t *lines; /* Text offsets */
+	text_fragment_t *lines; /**< Text offsets */
 	gfx_bitmap_font_t *font;
 	gfx_pixmap_t **text_pixmaps;
 
@@ -60,6 +60,9 @@ struct gfx_text_handle_t {
 
 	int priority, control;
 	gfx_alignment_t halign, valign;
+
+	TextHandle();
+	~TextHandle();
 };
 
 /* Unless individually stated otherwise, the following applies:
@@ -563,13 +566,13 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text,
 **                   after the last character in the last line
 */
 
-gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int maxwidth,
+TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &text, int maxwidth,
 	gfx_alignment_t halign, gfx_alignment_t valign, gfx_color_t color1,
 	gfx_color_t color2, gfx_color_t bg_color, int flags);
 /* Generates a new text handle that can be used to draw any text
 ** Parameters: (GfxState *) state: The state to use
 **             (int) font_nr: Font number to use for the calculation
-**             (char *) text: The text to examine
+**             (const char *) text: The text to examine
 **             (int) maxwidth: The maximum pixel width to allow for the text
 **             (gfx_alignment_t) halign: The horizontal text alignment
 **             (gfx_alignment_t) valign: The vertical text alignment
@@ -577,24 +580,24 @@ gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int 
 **                                         (the function will dither between those two)
 **             (gfx_color_t) bg_color: The background color
 **             (int) flags: ORred GFXR_FONT_FLAGs
-** Returns   : (gfx_text_handle_t *) A newly allocated gfx_text_handle_t, or
+** Returns   : (TextHandle *) A newly allocated TextHandle, or
 **             NULL if font_nr was invalid
 ** The control and priority values for the text will be extracted from color1.
 ** Note that the colors must have been allocated properly, or the text may display in
 ** incorrect colors.
 */
 
-int gfxop_free_text(GfxState *state, gfx_text_handle_t *handle);
+int gfxop_free_text(GfxState *state, TextHandle *handle);
 /* Frees a previously allocated text handle and all related resources
 ** Parameters: (GfxState *) state: The state to use
-**             (gfx_text_handle_t *) handle: The handle to free
+**             (TextHandle *) handle: The handle to free
 ** Returns   : (int) GFX_OK
 */
 
-int gfxop_draw_text(GfxState *state, gfx_text_handle_t *handle, rect_t zone);
+int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone);
 /* Draws text stored in a text handle
 ** Parameters: (GfxState *) state: The target state
-**             (gfx_text_handle_t *) handle: The text handle to use for drawing
+**             (TextHandle *) handle: The text handle to use for drawing
 **             (rect_t) zone: The rectangular box to draw to. In combination with
 **                            halign and valign, this defines where the text is
 **                            drawn to.

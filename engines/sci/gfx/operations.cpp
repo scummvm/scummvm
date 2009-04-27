@@ -1906,9 +1906,9 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 	return GFX_OK;
 }
 
-gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int maxwidth, gfx_alignment_t halign,
+TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &text, int maxwidth, gfx_alignment_t halign,
 								  gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color, int flags) {
-	gfx_text_handle_t *handle;
+	TextHandle *handle;
 	gfx_bitmap_font_t *font;
 	int i, err = 0;
 	BASIC_CHECKS(NULL);
@@ -1929,36 +1929,34 @@ gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int 
 		return NULL;
 	}
 
-	handle = (gfx_text_handle_t *)sci_malloc(sizeof(gfx_text_handle_t));
+	handle = new TextHandle();
 
-	handle->text = (char *)sci_malloc(strlen(text) + 1);
-	strcpy(handle->text, text);
+	handle->_text = text;
 	handle->halign = halign;
 	handle->valign = valign;
 	handle->line_height = font->line_height;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->text, &(handle->width), &(handle->height), &(handle->lines_nr),
+	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height), &(handle->lines_nr),
 	                             NULL, NULL, ((state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) ?
 	                              kFontCountWhitespace : 0) | flags);
 #else
-	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->text, &(handle->width), &(handle->height), &(handle->lines_nr),
+	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height), &(handle->lines_nr),
 	                             NULL, NULL, flags);
 #endif
 
 	if (!handle->lines) {
-		free(handle->text);
-		free(handle);
 		GFXERROR("Could not calculate text parameters in font #%d\n", font_nr);
+		delete handle;
 		return NULL;
 	}
 
 	if (flags & kFontNoNewlines) {
 		handle->lines_nr = 1;
-		handle->lines->length = strlen(text);
+		handle->lines->length = text.size();
 	}
 
-	handle->text_pixmaps = (gfx_pixmap_t **)sci_malloc(sizeof(gfx_pixmap_t *) * handle->lines_nr);
+	handle->text_pixmaps = (gfx_pixmap_t **)calloc(sizeof(gfx_pixmap_t *), handle->lines_nr);
 
 	for (i = 0; i < handle->lines_nr; i++) {
 		int chars_nr = handle->lines[i].length;
@@ -1969,16 +1967,8 @@ gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int 
 		                          (bg_color.mask & GFX_MASK_VISUAL) ? &bg_color.visual : NULL);
 
 		if (!handle->text_pixmaps[i]) {
-			int j;
-
-			for (j = 0; j < i; j++)
-				gfx_free_pixmap(handle->text_pixmaps[j]);
-
-			free(handle->text_pixmaps);
-			free(handle->text);
-			free(handle->lines);
 			GFXERROR("Failed to draw text pixmap for line %d/%d\n", i, handle->lines_nr);
-			free(handle);
+			delete handle;
 			return NULL;
 		}
 	}
@@ -1991,25 +1981,39 @@ gfx_text_handle_t *gfxop_new_text(GfxState *state, int font_nr, char *text, int 
 	return handle;
 }
 
-int gfxop_free_text(GfxState *state, gfx_text_handle_t *handle) {
-	int j;
-
+int gfxop_free_text(GfxState *state, TextHandle *handle) {
 	BASIC_CHECKS(GFX_ERROR);
 
-	if (handle->text_pixmaps) {
-		for (j = 0; j < handle->lines_nr; j++)
-			gfx_free_pixmap(handle->text_pixmaps[j]);
-		free(handle->text_pixmaps);
-	}
-
-	free(handle->text);
-	free(handle->lines);
-	free(handle);
+	delete handle;
 
 	return GFX_OK;
 }
 
-int gfxop_draw_text(GfxState *state, gfx_text_handle_t *handle, rect_t zone) {
+TextHandle::TextHandle() {
+	lines_nr = 0;
+	line_height = 0;
+	lines = 0;
+	font = 0;
+	text_pixmaps = 0;
+
+	width = height = 0;
+
+	priority = control = 0;
+	halign = valign = ALIGN_BOTTOM;
+}
+
+TextHandle::~TextHandle() {
+	if (text_pixmaps) {
+		for (int j = 0; j < lines_nr; j++)
+			if (text_pixmaps[j])
+				gfx_free_pixmap(text_pixmaps[j]);
+		free(text_pixmaps);
+	}
+
+	free(lines);
+}
+
+int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 	int line_height;
 	rect_t pos;
 	int i;
