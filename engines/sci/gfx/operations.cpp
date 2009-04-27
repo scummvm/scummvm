@@ -296,17 +296,7 @@ static int _gfxop_update_box(GfxState *state, rect_t box) {
 	return GFX_OK;
 }
 
-static gfx_dirty_rect_t *_rect_create(rect_t box) {
-	gfx_dirty_rect_t *rect;
-
-	rect = (gfx_dirty_rect_t *)sci_malloc(sizeof(gfx_dirty_rect_t));
-	rect->next = NULL;
-	rect->rect = box;
-
-	return rect;
-}
-
-gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strategy) {
+void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy) {
 	if (box.width < 0) {
 		box.x += box.width;
 		box.width = - box.width;
@@ -321,46 +311,41 @@ gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strate
 	        GFX_PRINT_RECT(box));
 #endif
 	if (_gfxop_clip(&box, gfx_rect(0, 0, 320, 200)))
-		return base;
+		return;
 
 	switch (strategy) {
 
 	case GFXOP_DIRTY_FRAMES_ONE:
-		if (base) {
-			Common::Rect tmp = toCommonRect(base->rect);
+		if (!list.empty()) {
+			Common::Rect tmp = toCommonRect(list.front());
 			tmp.extend(toCommonRect(box));
-			base->rect = toSCIRect(tmp);
+			list.front() = toSCIRect(tmp);
 		} else {
-			base = _rect_create(box);
+			list.push_back(box);
 		}
 		break;
 
 	case GFXOP_DIRTY_FRAMES_CLUSTERS: {
-		gfx_dirty_rect_t **rectp = &(base);
-
-		while (*rectp) {
-			if (gfx_rects_overlap((*rectp)->rect, box)) {
-				gfx_dirty_rect_t *next = (*rectp)->next;
+		DirtyRectList::iterator dirty = list.begin();
+		while (dirty != list.end()) {
+			if (gfx_rects_overlap(*dirty, box)) {
 				Common::Rect tmp = toCommonRect(box);
-				tmp.extend(toCommonRect((*rectp)->rect));
+				tmp.extend(toCommonRect(*dirty));
 				box = toSCIRect(tmp);
 
-				free(*rectp);
-				*rectp = next;
+				dirty = list.erase(dirty);
 			} else
-				rectp = &((*rectp)->next);
+				++dirty;
 		}
-		*rectp = _rect_create(box);
+		list.push_back(box);
 
-	}
-	break;
+		}
+		break;
 
 	default:
 		GFXERROR("Attempt to use invalid dirty frame mode %d!\nPlease refer to gfx_options.h.", strategy);
 
 	}
-
-	return base;
 }
 
 static void _gfxop_add_dirty(GfxState *state, rect_t box) {
@@ -368,9 +353,9 @@ static void _gfxop_add_dirty(GfxState *state, rect_t box) {
 		return;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	state->dirty_rects = gfxdr_add_dirty(state->dirty_rects, box, state->options->dirty_frames);
+	gfxdr_add_dirty(state->_dirtyRects, box, state->options->dirty_frames);
 #else
-	state->dirty_rects = gfxdr_add_dirty(state->dirty_rects, box, GFXOP_DIRTY_FRAMES_CLUSTERS);
+	gfxdr_add_dirty(state->_dirtyRects, box, GFXOP_DIRTY_FRAMES_CLUSTERS);
 #endif
 }
 
@@ -389,24 +374,21 @@ static void _gfxop_add_dirty_x(GfxState *state, rect_t box) {
 	_gfxop_add_dirty(state, box);
 }
 
-static int _gfxop_clear_dirty_rec(GfxState *state, gfx_dirty_rect_t *rect) {
-	int retval;
+static int _gfxop_clear_dirty_rec(GfxState *state, DirtyRectList &dirtyRects) {
+	int retval = GFX_OK;
 
-	if (!rect)
-		return GFX_OK;
+	DirtyRectList::iterator dirty = dirtyRects.begin();
+	while (dirty != dirtyRects.end()) {
 
-#ifdef GFXOP_DEBUG_DIRTY
-	fprintf(stderr, "\tClearing dirty (%d %d %d %d)\n",
-	        GFX_PRINT_RECT(rect->rect));
-#endif
-	if (!state->fullscreen_override)
-		retval = _gfxop_update_box(state, rect->rect);
-	else
-		retval = GFX_OK;
+	#ifdef GFXOP_DEBUG_DIRTY
+		fprintf(stderr, "\tClearing dirty (%d %d %d %d)\n", GFX_PRINT_RECT(*dirty));
+	#endif
+		if (!state->fullscreen_override)
+			retval |= _gfxop_update_box(state, *dirty);
+		++dirty;
+	}
+	dirtyRects.clear();
 
-	retval |= _gfxop_clear_dirty_rec(state, rect->next);
-
-	free(rect);
 	return retval;
 }
 
@@ -435,7 +417,7 @@ int gfxop_init(int version, GfxState *state, gfx_options_t *options, ResourceMan
 	state->pic_nr = -1; // Set background pic number to an invalid value
 	state->tag_mode = 0;
 	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
-	state->dirty_rects = NULL;
+	state->_dirtyRects.clear();
 
 	do {
 		if (!state->driver->init(state->driver, xfact, yfact, color_depth))
@@ -1106,9 +1088,7 @@ int gfxop_update(GfxState *state) {
 
 	BASIC_CHECKS(GFX_FATAL);
 
-	retval = _gfxop_clear_dirty_rec(state, state->dirty_rects);
-
-	state->dirty_rects = NULL;
+	retval = _gfxop_clear_dirty_rec(state, state->_dirtyRects);
 
 	if (state->fullscreen_override) {
 		// We've been asked to re-draw the active full-screen image, essentially.

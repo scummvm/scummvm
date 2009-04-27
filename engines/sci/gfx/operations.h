@@ -85,10 +85,7 @@ enum gfx_box_shade_t {
 };
 
 
-struct gfx_dirty_rect_t {
-	rect_t rect;
-	gfx_dirty_rect_t *next;
-};
+typedef Common::List<rect_t> DirtyRectList;
 
 
 struct GfxState {
@@ -129,7 +126,7 @@ struct GfxState {
 	gfxr_pic_t *pic, *pic_unscaled; /* The background picture and its unscaled equivalent */
 	rect_t pic_port_bounds;  /* Picture port bounds */
 
-	gfx_dirty_rect_t *dirty_rects; /* Dirty rectangles */
+	DirtyRectList _dirtyRects; /* Dirty rectangles */
 };
 
 
@@ -637,14 +634,13 @@ int gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm);
 /* Dirty rectangle operations */
 /******************************/
 
-gfx_dirty_rect_t *gfxdr_add_dirty(gfx_dirty_rect_t *base, rect_t box, int strategy);
-/* Adds a dirty rectangle to 'base' according to a strategy
-** Parameters: (gfx_dirty_rect_t *) base: The base rectangle to add to, or NULL
-**             (rect_t) box: The dirty frame to add
-**             (int) strategy: The dirty frame heuristic to use (see gfx_options.h)
-** Returns   : (gfx_dirty_rect_t *) an appropriate singly-linked dirty rectangle
-**                                  result cluster
-*/
+/**
+ * Adds a dirty rectangle to 'base' according to a strategy.
+ * @param list		the list to add to
+ * @param box		the dirty frame to addable
+ * @param strategy	the dirty frame heuristic to use (see gfx_options.h)
+ */
+void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy);
 
 int _gfxop_clip(rect_t *rect, rect_t clipzone);
 /* Clips a rectangle against another one

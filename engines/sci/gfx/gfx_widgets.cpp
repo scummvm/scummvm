@@ -991,18 +991,14 @@ static int _w_gfxwop_container_print_contents(const char *name, GfxWidget *widge
 }
 
 void GfxContainer::print(int indentation) const {
-	gfx_dirty_rect_t *dirty;
-
 	sciprintf(" viszone=((%d,%d),(%dx%d))\n", zone.x, zone.y, zone.width, zone.height);
 
 	indent(indentation);
 	sciprintf("--dirty:\n");
 
-	dirty = _dirty;
-	while (dirty) {
+	for (DirtyRectList::const_iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
 		indent(indentation + 1);
-		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->rect.x, dirty->rect.y, dirty->rect.width, dirty->rect.height);
-		dirty = dirty->next;
+		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->x, dirty->y, dirty->width, dirty->height);
 	}
 
 	_w_gfxwop_container_print_contents("contents", _contents, indentation);
@@ -1014,7 +1010,6 @@ GfxContainer::GfxContainer(rect_t area, gfxw_widget_type_t type_)
 	_bounds = zone = area;
 	_contents = NULL;
 	_nextpp = &_contents;
-	_dirty = NULL;
 
 	free_tagged = NULL;
 	free_contents = NULL;
@@ -1023,13 +1018,6 @@ GfxContainer::GfxContainer(rect_t area, gfxw_widget_type_t type_)
 	add = NULL;
 
 	_flags |= GFXW_FLAG_VISIBLE | GFXW_FLAG_CONTAINER;
-}
-
-static void recursively_free_dirty_rects(gfx_dirty_rect_t *dirty) {
-	if (dirty) {
-		recursively_free_dirty_rects(dirty->next);
-		free(dirty);
-	}
 }
 
 static int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds, rect_t dirty) {
@@ -1041,7 +1029,6 @@ static int _gfxw_dirty_rect_overlaps_normal_rect(rect_t port_zone, rect_t bounds
 
 static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *contents) {
 	GfxContainer *container = (GfxContainer *)widget;
-	gfx_dirty_rect_t *dirty = container->_dirty;
 	GfxState *gfx_state = (widget->_visual) ? widget->_visual->_gfxState : ((GfxVisual *) widget)->_gfxState;
 	int draw_ports;
 	rect_t nullzone = {0, 0, 0, 0};
@@ -1049,17 +1036,18 @@ static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *content
 	if (!contents)
 		return 0;
 
-	while (dirty) {
+	DirtyRectList::iterator dirty = container->_dirtyRects.begin();
+	while (dirty != container->_dirtyRects.end()) {
 		GfxWidget *seeker = contents;
 
 		while (seeker) {
 			if (_gfxw_dirty_rect_overlaps_normal_rect(GFXW_IS_CONTAINER(seeker) ? nullzone : container->zone,
 			        // Containers have absolute coordinates, reflect this.
-			        seeker->_bounds, dirty->rect)) {
+			        seeker->_bounds, *dirty)) {
 
 				if (GFXW_IS_CONTAINER(seeker)) {// Propagate dirty rectangles /upwards/
-					DDIRTY(stderr, "container_draw_contents: propagate upwards (%d,%d,%d,%d ,0)\n", GFX_PRINT_RECT(dirty->rect));
-					((GfxContainer *)seeker)->add_dirty_abs((GfxContainer *)seeker, dirty->rect, 0);
+					DDIRTY(stderr, "container_draw_contents: propagate upwards (%d,%d,%d,%d ,0)\n", GFX_PRINT_RECT(*dirty));
+					((GfxContainer *)seeker)->add_dirty_abs((GfxContainer *)seeker, *dirty, 0);
 				}
 
 				seeker->_flags |= GFXW_FLAG_DIRTY;
@@ -1068,21 +1056,23 @@ static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *content
 			seeker = seeker->_next;
 		}
 
-		dirty = dirty->next;
+		++dirty;
 	}
 
 	// The draw loop is executed twice: Once for normal data, and once for ports.
 	for (draw_ports = 0; draw_ports < 2; draw_ports++) {
-		dirty = container->_dirty;
 
-		while (dirty) {
+		dirty = container->_dirtyRects.begin();
+		while (dirty != container->_dirtyRects.end()) {
 			GfxWidget *seeker = contents;
-			while (seeker && (draw_ports || !GFXW_IS_PORT(seeker))) {
-				rect_t small_rect;
-				byte draw_noncontainers;
+			// FIXME: Ugly hack to check whether this is the last dirty rect or not
+			DirtyRectList::iterator next = dirty;
+			++next;
+			const bool isLastDirtyRect = (next == container->_dirtyRects.end());
 
-				memcpy(&small_rect, &(dirty->rect), sizeof(rect_t));
-				draw_noncontainers = !_gfxop_clip(&small_rect, container->_bounds);
+			while (seeker && (draw_ports || !GFXW_IS_PORT(seeker))) {
+				rect_t small_rect = *dirty;
+				bool draw_noncontainers = !_gfxop_clip(&small_rect, container->_bounds);
 
 				if (seeker->_flags & GFXW_FLAG_DIRTY) {
 
@@ -1095,13 +1085,13 @@ static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *content
 					if (draw_noncontainers || GFXW_IS_CONTAINER(seeker))
 						seeker->draw(Common::Point(container->zone.x, container->zone.y));
 
-					if (!dirty->next)
+					if (isLastDirtyRect)
 						seeker->_flags &= ~GFXW_FLAG_DIRTY;
 				}
 
 				seeker = seeker->_next;
 			}
-			dirty = dirty->next;
+			++dirty;
 		}
 	}
 	// Remember that the dirty rects should be freed afterwards!
@@ -1118,8 +1108,7 @@ GfxContainer::~GfxContainer() {
 		seeker = next;
 	}
 
-	recursively_free_dirty_rects(_dirty);
-	_dirty = NULL;
+	_dirtyRects.clear();
 }
 
 void GfxContainer::tag() {
@@ -1237,7 +1226,7 @@ static int _gfxwop_container_add_dirty(GfxContainer *container, rect_t dirty, in
 #endif
 
 	DDIRTY(stderr, "Effectively adding dirty %d,%d,%d,%d %d to ID %d\n", GFX_PRINT_RECT(dirty), propagate, container->_ID);
-	container->_dirty = gfxdr_add_dirty(container->_dirty, dirty, GFXW_DIRTY_STRATEGY);
+	gfxdr_add_dirty(container->_dirtyRects, dirty, GFXW_DIRTY_STRATEGY);
 	return 0;
 }
 
@@ -1266,16 +1255,14 @@ int GfxList::draw(const Common::Point &pos) {
 		DRAW_ASSERT(this, GFXW_LIST);
 
 		_gfxwop_container_draw_contents(this, _contents);
-		recursively_free_dirty_rects(_dirty);
-		_dirty = NULL;
 		_flags &= ~GFXW_FLAG_DIRTY;
 	} else {
 		DRAW_ASSERT(this, GFXW_SORTED_LIST);
 
 		_gfxwop_container_draw_contents(this, _contents);
-		recursively_free_dirty_rects(_dirty);
-		_dirty = NULL;
 	}
+	_dirtyRects.clear();
+
 	return 0;
 }
 
@@ -1417,24 +1404,20 @@ GfxList::GfxList(rect_t area, bool sorted)
 int GfxVisual::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_VISUAL);
 
-	gfx_dirty_rect_t *dirty = _dirty;
-	while (dirty) {
-		int err = gfxop_clear_box(_gfxState, dirty->rect);
+	for (DirtyRectList::iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
+		int err = gfxop_clear_box(_gfxState, *dirty);
 
 		if (err) {
-			GFXERROR("Error while clearing dirty rect (%d,%d,(%dx%d))\n", dirty->rect.x,
-			         dirty->rect.y, dirty->rect.width, dirty->rect.height);
+			GFXERROR("Error while clearing dirty rect (%d,%d,(%dx%d))\n", dirty->x,
+			         dirty->y, dirty->width, dirty->height);
 			if (err == GFX_FATAL)
 				return err;
 		}
-
-		dirty = dirty->next;
 	}
 
 	_gfxwop_container_draw_contents(this, _contents);
 
-	recursively_free_dirty_rects(_dirty);
-	_dirty = NULL;
+	_dirtyRects.clear();
 	_flags &= ~GFXW_FLAG_DIRTY;
 
 	return 0;
@@ -1499,16 +1482,6 @@ static int _visual_find_free_ID(GfxVisual *visual) {
 	return id;
 }
 
-static int _gfxwop_add_dirty_rects(GfxContainer *dest, gfx_dirty_rect_t *src) {
-	DDIRTY(stderr, "Adding multiple dirty to #%d\n", dest->_ID);
-	if (src) {
-		dest->_dirty = gfxdr_add_dirty(dest->_dirty, src->rect, GFXW_DIRTY_STRATEGY);
-		_gfxwop_add_dirty_rects(dest, src->next);
-	}
-
-	return 0;
-}
-
 //*** Ports ***
 
 int GfxPort::draw(const Common::Point &pos) {
@@ -1516,18 +1489,22 @@ int GfxPort::draw(const Common::Point &pos) {
 
 	if (_decorations) {
 		DDIRTY(stderr, "Getting/applying deco dirty (multi)\n");
-		_gfxwop_add_dirty_rects(GFXWC(_decorations), _dirty);
+
+		DDIRTY(stderr, "Adding multiple dirty to #%d\n", _decorations->_ID);
+		for (DirtyRectList::iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
+			gfxdr_add_dirty(_decorations->_dirtyRects, *dirty, GFXW_DIRTY_STRATEGY);
+		}
+
 		if (_decorations->draw(gfxw_point_zero)) {
-			_decorations->_dirty = NULL;
+			_decorations->_dirtyRects.clear();
 			return 1;	// error
 		}
-		_decorations->_dirty = NULL;
+		_decorations->_dirtyRects.clear();
 	}
 
 	_gfxwop_container_draw_contents(this, _contents);
 
-	recursively_free_dirty_rects(_dirty);
-	_dirty = NULL;
+	_dirtyRects.clear();
 	_flags &= ~GFXW_FLAG_DIRTY;
 
 	return 0;

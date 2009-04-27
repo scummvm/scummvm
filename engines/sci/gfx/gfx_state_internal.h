@@ -294,7 +294,7 @@ typedef int gfxw_rect_op(GfxContainer *, rect_t, int);
 
 struct GfxContainer : public GfxWidget {
 	rect_t zone; /* The writeable zone (absolute) for contained objects */
-	gfx_dirty_rect_t *_dirty; /* List of dirty rectangles */
+	DirtyRectList _dirtyRects; /* List of dirty rectangles */
 	GfxWidget *_contents;
 	GfxWidget **_nextpp; /* Pointer to the 'next' pointer in the last entry in contents */
 
