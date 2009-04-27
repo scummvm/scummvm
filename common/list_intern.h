@@ -57,7 +57,7 @@ namespace ListInternal {
 		NodeBase *_node;
 
 		Iterator() : _node(0) {}
-		Iterator(NodeBase *node) : _node(node) {}
+		explicit Iterator(NodeBase *node) : _node(node) {}
 
 		// Prefix inc
 		Self &operator++() {
@@ -110,7 +110,7 @@ namespace ListInternal {
 		const NodeBase *_node;
 
 		ConstIterator() : _node(0) {}
-		ConstIterator(const NodeBase *node) : _node(node) {}
+		explicit ConstIterator(const NodeBase *node) : _node(node) {}
 		ConstIterator(const Iterator<T> &x) : _node(x._node) {}
 
 		// Prefix inc

@@ -65,6 +65,7 @@ public:
 		delete[] _storage;
 	}
 
+	/** Appends element to the end of the array. */
 	void push_back(const T &element) {
 		ensureCapacity(_size + 1);
 		_storage[_size++] = element;
@@ -76,26 +77,31 @@ public:
 		_size += array._size;
 	}
 
+	/** Removes the last element of the array. */
 	void pop_back() {
 		assert(_size > 0);
 		_size--;
 	}
 
+	/** Returns a reference to the first element of the array. */
 	T &front() {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
+	/** Returns a reference to the first element of the array. */
 	const T &front() const {
 		assert(_size > 0);
 		return _storage[0];
 	}
 
+	/** Returns a reference to the last element of the array. */
 	T &back() {
 		assert(_size > 0);
 		return _storage[_size-1];
 	}
 
+	/** Returns a reference to the last element of the array. */
 	const T &back() const {
 		assert(_size > 0);
 		return _storage[_size-1];

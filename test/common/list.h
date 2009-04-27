@@ -104,6 +104,7 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.insert(iter, 42);
 		container.insert(iter, 43);
 
+		// Verify contents are correct
 		iter = container.begin();
 
 		TS_ASSERT_EQUALS( *iter, 17 );
@@ -123,6 +124,82 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( iter != container.end() );
 
 		TS_ASSERT_EQUALS( *iter, -11 );
+		++iter;
+		TS_ASSERT( iter == container.end() );
+	}
+
+	void test_erase() {
+		Common::List<int> container;
+		Common::List<int>::iterator first, last;
+
+		// Fill the container with some random data
+		container.push_back(17);
+		container.push_back(33);
+		container.push_back(-11);
+		container.push_back(42);
+		container.push_back(43);
+
+		// Iterate to after the second element
+		first = container.begin();
+		++first;
+		++first;
+
+		// Iterate to after the fourth element
+		last = first;
+		++last;
+		++last;
+
+		// Now erase that range
+		container.erase(first, last);
+
+		// Verify contents are correct
+		Common::List<int>::iterator iter = container.begin();
+
+		TS_ASSERT_EQUALS( *iter, 17 );
+		++iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT_EQUALS( *iter, 33 );
+		++iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT_EQUALS( *iter, 43 );
+		++iter;
+		TS_ASSERT( iter == container.end() );
+	}
+
+	void test_remove() {
+		Common::List<int> container;
+		Common::List<int>::iterator first, last;
+
+		// Fill the container with some random data
+		container.push_back(-11);
+		container.push_back(17);
+		container.push_back(33);
+		container.push_back(42);
+		container.push_back(-11);
+		container.push_back(42);
+		container.push_back(43);
+
+		// Remove some stuff
+		container.remove(42);
+		container.remove(-11);
+
+		// Now erase that range
+		container.erase(first, last);
+
+		// Verify contents are correct
+		Common::List<int>::iterator iter = container.begin();
+
+		TS_ASSERT_EQUALS( *iter, 17 );
+		++iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT_EQUALS( *iter, 33 );
+		++iter;
+		TS_ASSERT( iter != container.end() );
+
+		TS_ASSERT_EQUALS( *iter, 43 );
 		++iter;
 		TS_ASSERT( iter == container.end() );
 	}
@@ -186,5 +263,13 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.pop_front();
 		TS_ASSERT_EQUALS(container.front(), 163);
 		TS_ASSERT_EQUALS(container.back(),  163);
+
+		container.push_front(99);
+		TS_ASSERT_EQUALS(container.front(), 99);
+		TS_ASSERT_EQUALS(container.back(),  163);
+
+		container.pop_back();
+		TS_ASSERT_EQUALS(container.front(), 99);
+		TS_ASSERT_EQUALS(container.back(),  99);
 	}
 };

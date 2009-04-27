@@ -63,94 +63,103 @@ public:
 		clear();
 	}
 
+	/**
+	 * Inserts element before pos.
+	 */
 	void insert(iterator pos, const t_T &element) {
-		ListInternal::NodeBase *newNode = new Node(element);
-
-		newNode->_next = pos._node;
-		newNode->_prev = pos._node->_prev;
-		newNode->_prev->_next = newNode;
-		newNode->_next->_prev = newNode;
+		insert(pos._node, element);
 	}
 
+	/**
+	 * Inserts the elements from first to last before pos.
+	 */
 	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
 	}
 
+	/**
+	 * Deletes the element at location pos and returns an iterator pointing
+	 * to the element after the one which was deleted.
+	 */
 	iterator erase(iterator pos) {
 		assert(pos != end());
-
-		NodeBase *next = pos._node->_next;
-		NodeBase *prev = pos._node->_prev;
-		Node *node = static_cast<Node *>(pos._node);
-		prev->_next = next;
-		next->_prev = prev;
-		delete node;
-		return iterator(next);
+		return iterator(erase(pos._node)._next);
 	}
 
+	/**
+	 * Deletes the element at location pos and returns an iterator pointing
+	 * to the element before the one which was deleted.
+	 */
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
-
-		NodeBase *next = pos._node->_next;
-		NodeBase *prev = pos._node->_prev;
-		Node *node = static_cast<Node *>(pos._node);
-		prev->_next = next;
-		next->_prev = prev;
-		delete node;
-		return iterator(prev);
+		return iterator(erase(pos._node)._prev);
 	}
 
+	/**
+	 * Deletes the elements between first and last (including first but not
+	 * last) and returns an iterator pointing to the element after the one
+	 * which was deleted (i.e., last).
+	 */
 	iterator erase(iterator first, iterator last) {
-		while (first != last)
-			erase(first++);
-
+		NodeBase *f = first._node;
+		NodeBase *l = last._node;
+		while (f != l)
+			f = erase(f)._next;
 		return last;
 	}
 
+	/**
+	 * Removes all elements that are equal to val from the list.
+	 */
 	void remove(const t_T &val) {
-		iterator i = begin();
-		const iterator e = end();
-		while (i != e)
-			if (val == *i)
-				i = erase(i);
+		NodeBase *i = _anchor._next;
+		while (i != &_anchor)
+			if (val == static_cast<Node *>(i)->_data)
+				i = erase(i)._next;
 			else
-				++i;
+				i = i->_next;
 	}
 
+	/** Inserts element at the start of the list. */
 	void push_front(const t_T &element) {
-		// TODO: Bypass iterators here for improved efficency
-		insert(begin(), element);
+		insert(_anchor._next, element);
 	}
 
+	/** Appends element to the end of the list. */
 	void push_back(const t_T &element) {
-		// TODO: Bypass iterators here for improved efficency
-		insert(end(), element);
+		insert(&_anchor, element);
 	}
 
+	/** Removes the first element of the list. */
 	void pop_front() {
-		// TODO: Bypass iterators here for improved efficency
-		erase(begin());
+		assert(!empty());
+		erase(_anchor._next);
 	}
 
+	/** Removes the last element of the list. */
 	void pop_back() {
-		// TODO: Bypass iterators here for improved efficency
-		erase(reverse_begin());
+		assert(!empty());
+		erase(_anchor._prev);
 	}
 
+	/** Returns a reference to the first element of the list. */
 	t_T &front() {
 		return static_cast<Node *>(_anchor._next)->_data;
 	}
 
+	/** Returns a reference to the first element of the list. */
 	const t_T &front() const {
 		return static_cast<Node *>(_anchor._next)->_data;
 	}
 
+	/** Returns a reference to the last element of the list. */
 	t_T &back() {
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
 
+	/** Returns a reference to the last element of the list. */
 	const t_T &back() const {
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
@@ -213,6 +222,28 @@ public:
 
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase*>(&_anchor));
+	}
+
+protected:
+	NodeBase erase(NodeBase *pos) {
+		NodeBase n = *pos;
+		Node *node = static_cast<Node *>(pos);
+		n._prev->_next = n._next;
+		n._next->_prev = n._prev;
+		delete node;
+		return n;
+	}
+
+	/**
+	 * Inserts element before pos.
+	 */
+	void insert(NodeBase *pos, const t_T &element) {
+		ListInternal::NodeBase *newNode = new Node(element);
+
+		newNode->_next = pos;
+		newNode->_prev = pos->_prev;
+		newNode->_prev->_next = newNode;
+		newNode->_next->_prev = newNode;
 	}
 };
 
