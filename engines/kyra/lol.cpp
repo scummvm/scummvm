@@ -99,7 +99,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsterShapes = _monsterPalettes = 0;
 	_monsterShapesEx = 0;
 	_gameShapeMap = 0;
-	memset(_monsterUnk, 0, 3);
+	memset(_monsterAnimType, 0, 3);
 	_pageSavedFlag = false;
 	_healOverlay = 0;
 
@@ -635,6 +635,27 @@ void LoLEngine::loadItemIconShapes() {
 		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+}
+
+int LoLEngine::checkInput(Button *buttonList, bool mainLoop) {
+	int mx = _mouseX;
+	int my = _mouseY;
+
+	int inputFlag = KyraEngine_v1::checkInput(buttonList, mainLoop);
+
+	if (!inputFlag) {
+		// This fixes a bug with some interactive sequences (like the inn where you mee Timothy).
+		// In the original code Mouse position variables are only updated when mouse button
+		// or keyboard events get triggered. 
+
+		// TODO/FIXME: Check whether this is the correct way to do it in KYRA, too. In this case a
+		// fix could be added to KyraEngine_v1::checkInput() and the virtual stuff would not be
+		// necessary.
+		_mouseX = mx;
+		_mouseY = my;
+	}
+
+	return inputFlag;
 }
 
 void LoLEngine::setMouseCursorToIcon(int icon) {
@@ -2125,17 +2146,17 @@ void LoLEngine::processMagicHeal(int charNum, int points) {
 	updateDrawPage2();
 }
 
-bool LoLEngine::notEnoughMagic(int charNum, int spellNum, int spellLevel) {
+int LoLEngine::checkMagic(int charNum, int spellNum, int spellLevel) {
 	if (_spellProperties[spellNum].mpRequired[spellLevel] > _characters[charNum].magicPointsCur) {
 		if (characterSays(0x4043, _characters[charNum].id, true))
 			_txt->printMessage(6, getLangString(0x4043), _characters[charNum].name);
-		return true;
+		return 1;
 	} else if (_spellProperties[spellNum + 1].unkArr[spellLevel] >= _characters[charNum].hitPointsCur) {
 		_txt->printMessage(2, getLangString(0x4179), _characters[charNum].name);
-		return true;
+		return 1;
 	}
 
-	return false;
+	return 0;
 }
 
 // fight
@@ -2280,6 +2301,7 @@ void LoLEngine::resetCharacterState(LoLCharacter *c, int first, int last) {
 	for (int i = first; i <= last; i++) {
 		switch (i - 1) {
 			case 0:
+				c->flags &= 0xfffb;
 				c->weaponHit = 0;
 				break;
 

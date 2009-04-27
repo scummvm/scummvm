@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int b) {
+void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animType) {
 	releaseMonsterShapes(monsterIndex);
 	_screen->loadBitmap(file, 3, 3, 0);
 
@@ -69,7 +69,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int b) {
 			of[2] = _screen->makeShapeCopy(p, s + 2);
 		}
 	}
-	_monsterUnk[monsterIndex] = b & 0xff;
+	_monsterAnimType[monsterIndex] = animType & 0xff;
 
 	uint8 *tsh = _screen->makeShapeCopy(p, 16);
 
@@ -695,8 +695,10 @@ void LoLEngine::drawMonster(uint16 id) {
 }
 
 int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
-	switch (_monsterUnk[m->properties->shapeIndex]) {
+	int tmp = 0;
+	switch (_monsterAnimType[m->properties->shapeIndex]) {
 		case 0:
+			// default
 			if (dirFlags) {
 				return (m->mode == 13) ? -1 : (dirFlags + m->currentSubFrame);
 			} else {
@@ -718,8 +720,26 @@ int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 			}
 			break;
 		case 1:
-			///////
-			// TODO
+			// monsters whose outward appearance reflects the damage they have taken
+			tmp = (m->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
+			if (m->hitPoints > (tmp >> 1))
+				tmp = 0;
+			else if (m->hitPoints > (tmp >> 2))
+				tmp = 4;
+			else
+				tmp = 8;
+
+			switch (m->mode) {
+				case 8:
+					return (m->fightCurTick + tmp);
+				case 11:
+					return 12;
+				case 13:
+					return (m->fightCurTick + 12);
+				default:
+					return tmp;
+			}
+			
 			break;
 		case 2:
 			///////
@@ -918,7 +938,7 @@ void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y,
 	}
 }
 
-uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, int fineX, int fineY, int flags, int tblValue, bool flip) {
+uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip) {
 	uint8 *ovl2 = 0;
 	uint8 *ovl = 0;
 	uint8 tmpOvl[16];
@@ -931,7 +951,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		ovl2 = _screen->getLevelOverlay(4);
 	}
 
-	int r = calcDrawingLayerParameters(x, y, _shpDmX, _shpDmY, _dmScaleW, _dmScaleH, shape, flip);
+	int r = calcDrawingLayerParameters(x, y, _shpDmX, _shpDmY, _dmScaleW, _dmScaleH, shape, vflip);
 
 	if (tblValue == -1) {
 		r = 7 - ((r / 3) - 1);
@@ -980,7 +1000,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 	return ovl;
 }
 
-int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int flip) {
+int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip) {
 	calcSpriteRelPosition(_partyPosX, _partyPosY, x1, y1, _currentDirection);
 
 	if (y1 < 0) {
@@ -993,8 +1013,9 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint
 	x2 = ((_monsterScaleX[l] * x1) >> 8) + 200;
 	w = h = (_shpDmY > 120) ? 0x100 : _monsterScaleWH[_shpDmY - 56];
 
-	if (flip)
-		y2 = ((120 - y2) >> 1) + _screen->getShapeScaledHeight(shape, _dmScaleH);
+	if (vflip)
+		// objects aligned to the ceiling (like the "lobsters" in the mines)
+		y2 = ((120 - y2) >> 1) + (_screen->getShapeScaledHeight(shape, _dmScaleH) >> 1);
 	else
 		y2 -= (_screen->getShapeScaledHeight(shape, _dmScaleH) >> 1);
 
@@ -1242,8 +1263,6 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 				if (item)
 					setItemPosition(item, _partyPosX, _partyPosY, 0, 1);
 
-				// FIXME: attacker is a uint16, and -1 was used here. It has been substituted with 0xFFFF, which could
-				// be the original intended value
 				inflictDamage(i, 20, 0xFFFF, 0, 2);
 			}
 

@@ -288,6 +288,8 @@ private:
 	void updateEnvironmentalSfx(int soundId);
 
 	// mouse
+	int checkInput(Button *buttonList, bool mainLoop = false);
+
 	void setMouseCursorToIcon(int icon);
 	void setMouseCursorToItemInHand();
 	uint8 *getItemIconShapePtr(int index);
@@ -551,7 +553,7 @@ private:
 	bool _sceneUpdateRequired;
 	int16 _visibleBlockIndex[18];
 	uint16 _gameFlags[16];
-	uint16 _globalScriptVars[16];
+	int16 _globalScriptVars[24];
 
 	// emc opcode
 	int olol_setWallType(EMCState *script);
@@ -594,6 +596,7 @@ private:
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);
+	int olol_setDoorState(EMCState *script);
 	int olol_updateBlockAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
 	int olol_resetBlockShapeAssignment(EMCState *script);
@@ -622,6 +625,7 @@ private:
 	int olol_initSceneWindowDialogue(EMCState *script);
 	int olol_restoreAfterSceneWindowDialogue(EMCState *script);
 	int olol_getItemInHand(EMCState *script);
+	int olol_checkMagic(EMCState *script);
 	int olol_giveItemToMonster(EMCState *script);
 	int olol_loadLangFile(EMCState *script);
 	int olol_playSoundEffect(EMCState *script);
@@ -651,7 +655,7 @@ private:
 	int olol_setNextFunc(EMCState *script);
 	int olol_dummy1(EMCState *script);
 	int olol_suspendMonster(EMCState *script);
-	int olol_setDoorState(EMCState *script);
+	int olol_setUnkDoorVar(EMCState *script);
 	int olol_resetTimDialogueState(EMCState *script);
 	int olol_savePage5(EMCState *script);
 	int olol_restorePage5(EMCState *script);
@@ -663,6 +667,7 @@ private:
 	int olol_assignCustomSfx(EMCState *script);
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
+	int olol_checkNeedSceneRestore(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_characterSays(EMCState *script);
@@ -1116,8 +1121,8 @@ private:
 	void calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, uint16 direction);
 	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
 	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
-	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int fineX, int fineY, int flags, int tblValue, bool flip);
-	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int flip);
+	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip);
+	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip);
 
 	void updateMonster(MonsterInPlay *monster);
 	void moveMonster(MonsterInPlay *monster);
@@ -1138,7 +1143,7 @@ private:
 	uint8 **_monsterShapes;
 	uint8 **_monsterPalettes;
 	uint8 **_monsterShapesEx;
-	uint8 _monsterUnk[3];
+	uint8 _monsterAnimType[3];
 	uint16 _monsterCurBlock;
 	int _monsterLastWalkDirection;
 	int _monsterCountUnk;
@@ -1171,7 +1176,7 @@ private:
 
 	// spells
 	void processMagicHeal(int charNum, int points);
-	bool notEnoughMagic(int charNum, int spellNum, int spellLevel);	
+	int checkMagic(int charNum, int spellNum, int spellLevel);	
 
 	int8 _availableSpells[7];
 	int _selectedSpell;

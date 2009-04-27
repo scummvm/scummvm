@@ -390,7 +390,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	}
 
 	uint16 f = _characters[charNum].flags & 0x314C;
-	if ((f == 0 && _weaponsDisabled) || (f && (f != 4 || _characters[charNum].weaponHit == 0 || _weaponsDisabled)))
+	if ((f == 0 && _weaponsDisabled) || (f && (f != 4 || _characters[charNum].weaponHit == 0 || (_characters[charNum].weaponHit && _weaponsDisabled))))
 		_screen->drawGridBox(44, 0, 22, 34, 1);
 
 	if (_characters[charNum].weaponHit) {
@@ -1086,7 +1086,7 @@ int LoLEngine::clickedMagicButton(Button *button) {
 	if (_characters[c].flags & 0x314C)
 		return 1;
 
-	if (notEnoughMagic(c, _availableSpells[_selectedSpell], 0))
+	if (checkMagic(c, _availableSpells[_selectedSpell], 0))
 		return 1;
 
 	_characters[c].flags ^= 0x10;
@@ -1104,7 +1104,7 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 
 	gui_enableDefaultPlayfieldButtons();
 
-	if (notEnoughMagic(c, _availableSpells[_selectedSpell], spellLevel)) {
+	if (checkMagic(c, _availableSpells[_selectedSpell], spellLevel)) {
 		_characters[c].flags &= 0xffef;
 		gui_drawCharPortraitWithStats(c);
 	} else {

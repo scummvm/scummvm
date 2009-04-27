@@ -545,7 +545,7 @@ int LoLEngine::olol_getGlobalScriptVar(EMCState *script) {
 
 int LoLEngine::olol_setGlobalScriptVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGlobalScriptVar(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < 16);
+	assert(stackPos(0) < 24);
 	_globalScriptVars[stackPos(0)] = stackPos(1);
 	return 1;
 }
@@ -664,6 +664,15 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerDoorSwitch(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	processDoorSwitch(stackPos(0)/*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
+	return 1;
+}
+
+int LoLEngine::olol_setDoorState(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(1))
+		_levelBlockProperties[stackPos(0)].flags = (_levelBlockProperties[stackPos(0)].flags & 0xef) | 0x20;
+	else
+		_levelBlockProperties[stackPos(0)].flags &= 0xdf;
 	return 1;
 }
 
@@ -1035,6 +1044,11 @@ int LoLEngine::olol_getItemInHand(EMCState *script) {
 	return _itemInHand;
 }
 
+int LoLEngine::olol_checkMagic(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkMagic(%p )(%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	return checkMagic(stackPos(0), stackPos(1), stackPos(2));
+}
+
 int LoLEngine::olol_giveItemToMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveItemToMonster(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(0) == -1)
@@ -1142,7 +1156,7 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 		case 7:
 			return m->properties->flags;
 		case 8:
-			return _monsterUnk[m->properties->shapeIndex];
+			return _monsterAnimType[m->properties->shapeIndex];
 		default:
 			break;
 	}
@@ -1374,8 +1388,8 @@ int LoLEngine::olol_suspendMonster(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_setDoorState(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_setUnkDoorVar(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setUnkDoorVar(%p) (%d)", (const void *)script, stackPos(0));
 	_emcDoorState = stackPos(0);
 	return _emcDoorState;
 }
@@ -1455,6 +1469,11 @@ int LoLEngine::olol_enableSysTimer(EMCState *script) {
 	_needSceneRestore = 0;
 	enableSysTimer(2);
 	return 1;
+}
+
+int LoLEngine::olol_checkNeedSceneRestore(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkNeedSceneRestore(%p)", (const void *)script);
+	return _needSceneRestore;
 }
 
 int LoLEngine::olol_disableControls(EMCState *script) {
@@ -1824,7 +1843,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setGlobalVar);
 	Opcode(olol_triggerDoorSwitch);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_setDoorState);
 
 	// 0x34
 	Opcode(olol_updateBlockAnimations);
@@ -1875,7 +1894,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_getItemInHand);
 
 	// 0x54
-	OpcodeUnImpl();
+	Opcode(olol_checkMagic);
 	Opcode(olol_giveItemToMonster);
 	Opcode(olol_loadLangFile);
 	Opcode(olol_playSoundEffect);
@@ -1949,7 +1968,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x84
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	Opcode(olol_setDoorState);
+	Opcode(olol_setUnkDoorVar);
 	Opcode(olol_resetTimDialogueState);
 
 	// 0x88
@@ -1983,7 +2002,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_enableSysTimer);
 
 	// 0x9C
-	OpcodeUnImpl();
+	Opcode(olol_checkNeedSceneRestore);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();

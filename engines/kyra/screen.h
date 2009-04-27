@@ -330,6 +330,7 @@ protected:
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
 	void drawShapePlotType20(uint8 *dst, uint8 cmd);
+	void drawShapePlotType21(uint8 *dst, uint8 cmd);
 	void drawShapePlotType33(uint8 *dst, uint8 cmd);
 	void drawShapePlotType37(uint8 *dst, uint8 cmd);
 	void drawShapePlotType48(uint8 *dst, uint8 cmd);

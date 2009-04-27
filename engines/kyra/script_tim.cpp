@@ -1028,7 +1028,10 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 			anim->wsa->displayFrame(i - 1, 0);
 			_screen->updateScreen();
 		}
-		_vm->delay(next - _system->getMillis());
+		while ((int)(next - _system->getMillis()) > 0) {
+			_vm->updateInput();
+			_vm->delay(_vm->_tickLength);
+		}
 	}
 }
 
@@ -1064,11 +1067,14 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	if (_dialogueNumButtons == 0) {
 		int e = _vm->checkInput(0, false) & 0xFF;
 		_vm->removeInputTop();
-		_vm->gui_notifyButtonListChanged();
 		
-		if (e == 43 || e == 61) {
-			_vm->snd_stopSpeech(true);
-			//_dlgTimer = 0;
+		if (e) {
+			_vm->gui_notifyButtonListChanged();
+		
+			if (e == 43 || e == 61) {
+				_vm->snd_stopSpeech(true);
+				//_dlgTimer = 0;
+			}
 		}
 
 		if (_vm->snd_characterSpeaking() != 2) {
@@ -1083,7 +1089,9 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	} else {
 		int e = _vm->checkInput(0, false) & 0xFF;
 		_vm->removeInputTop();
-		_vm->gui_notifyButtonListChanged();
+		if (e)
+			_vm->gui_notifyButtonListChanged();
+
 		switch (e) {
 			case 43:
 			case 61:

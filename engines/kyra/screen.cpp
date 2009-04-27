@@ -1266,8 +1266,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
 		0, 0, 0, 0,
 		&Screen::drawShapePlotType20,		// used by LoL (heal spell effect)
-		0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0,
+		&Screen::drawShapePlotType21,		// used by LoL (white tower spirits)
+		0, 0, 0, 0,	0, 0, 0, 0, 0, 0,
+		0,
 		&Screen::drawShapePlotType33,		// used by LoL (blood spots on the floor)
 		0, 0, 0,
 		&Screen::drawShapePlotType37,		// used by LoL (monsters)
@@ -1841,6 +1842,19 @@ void Screen::drawShapePlotType20(uint8 *dst, uint8 cmd) {
 		cmd = _dsTable4[tOffs << 8 | *dst];
 
 	*dst = cmd;
+}
+
+void Screen::drawShapePlotType21(uint8 *dst, uint8 cmd) {
+	cmd = _dsTable2[cmd];
+	uint8 tOffs = _dsTable3[cmd];
+	if (!(tOffs & 0x80))
+		cmd = _dsTable4[tOffs << 8 | *dst];
+
+	for (int i = 0; i < _dsTableLoopCount; ++i)
+		cmd = _dsTable[cmd];
+
+	if (cmd)
+		*dst = cmd;
 }
 
 void Screen::drawShapePlotType33(uint8 *dst, uint8 cmd) {

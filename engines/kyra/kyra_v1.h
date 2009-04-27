@@ -201,7 +201,7 @@ protected:
 
 	// input
 	void updateInput();
-	int checkInput(Button *buttonList, bool mainLoop = false);
+	virtual int checkInput(Button *buttonList, bool mainLoop = false);
 	void removeInputTop();
 
 	int _mouseX, _mouseY;
