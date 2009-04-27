@@ -164,4 +164,24 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 		TS_ASSERT_EQUALS( array2.size(), (unsigned int)3 );
 	}
+
+	void test_front_back_push_pop() {
+		Common::Array<int> container;
+
+		container.push_back( 42);
+		container.push_back(-23);
+
+		TS_ASSERT_EQUALS(container.front(), 42);
+		TS_ASSERT_EQUALS(container.back(), -23);
+
+		container.front() = -17;
+		container.back() = 163;
+		TS_ASSERT_EQUALS(container.front(), -17);
+		TS_ASSERT_EQUALS(container.back(),  163);
+
+		container.pop_back();
+		TS_ASSERT_EQUALS(container.front(), -17);
+		TS_ASSERT_EQUALS(container.back(),  -17);
+	}
+
 };

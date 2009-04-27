@@ -76,6 +76,31 @@ public:
 		_size += array._size;
 	}
 
+	void pop_back() {
+		assert(_size > 0);
+		_size--;
+	}
+
+	T &front() {
+		assert(_size > 0);
+		return _storage[0];
+	}
+
+	const T &front() const {
+		assert(_size > 0);
+		return _storage[0];
+	}
+
+	T &back() {
+		assert(_size > 0);
+		return _storage[_size-1];
+	}
+
+	const T &back() const {
+		assert(_size > 0);
+		return _storage[_size-1];
+	}
+
 	void insert_at(int idx, const T &element) {
 		assert(idx >= 0 && (uint)idx <= _size);
 		ensureCapacity(_size + 1);

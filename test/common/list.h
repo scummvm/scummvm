@@ -168,4 +168,23 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( container.begin() == container.end() );
 		TS_ASSERT( container.reverse_begin() == container.end() );
 	}
+
+	void test_front_back_push_pop() {
+		Common::List<int> container;
+
+		container.push_back( 42);
+		container.push_back(-23);
+
+		TS_ASSERT_EQUALS(container.front(), 42);
+		TS_ASSERT_EQUALS(container.back(), -23);
+
+		container.front() = -17;
+		container.back() = 163;
+		TS_ASSERT_EQUALS(container.front(), -17);
+		TS_ASSERT_EQUALS(container.back(),  163);
+
+		container.pop_front();
+		TS_ASSERT_EQUALS(container.front(), 163);
+		TS_ASSERT_EQUALS(container.back(),  163);
+	}
 };

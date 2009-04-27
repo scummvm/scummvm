@@ -32,22 +32,23 @@ public:
 		TS_ASSERT_EQUALS(queue.size(), 2);
 	}
 
-	void test_front_back_pop() {
-		Common::Queue<int> queue;
+	void test_front_back_push_pop() {
+		Common::Queue<int> container;
 
-		queue.push( 42);
-		queue.push(-23);
+		container.push( 42);
+		container.push(-23);
 
-		TS_ASSERT_EQUALS(queue.front(), 42);
-		TS_ASSERT_EQUALS(queue.back(), -23);
+		TS_ASSERT_EQUALS(container.front(), 42);
+		TS_ASSERT_EQUALS(container.back(), -23);
 
-		queue.front() = -23;
-		queue.back() = 42;
-		TS_ASSERT_EQUALS(queue.front(), -23);
-		TS_ASSERT_EQUALS(queue.back(),   42);
+		container.front() = -17;
+		container.back() = 163;
+		TS_ASSERT_EQUALS(container.front(), -17);
+		TS_ASSERT_EQUALS(container.back(),  163);
 
-		queue.pop();
-		TS_ASSERT_EQUALS(queue.front(), 42);
+		container.pop();
+		TS_ASSERT_EQUALS(container.front(), 163);
+		TS_ASSERT_EQUALS(container.back(),  163);
 	}
 
 	void test_assign() {

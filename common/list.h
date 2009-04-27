@@ -63,14 +63,6 @@ public:
 		clear();
 	}
 
-	void push_front(const t_T &element) {
-		insert(begin(), element);
-	}
-
-	void push_back(const t_T &element) {
-		insert(end(), element);
-	}
-
 	void insert(iterator pos, const t_T &element) {
 		ListInternal::NodeBase *newNode = new Node(element);
 
@@ -127,9 +119,24 @@ public:
 				++i;
 	}
 
+	void push_front(const t_T &element) {
+		// TODO: Bypass iterators here for improved efficency
+		insert(begin(), element);
+	}
+
+	void push_back(const t_T &element) {
+		// TODO: Bypass iterators here for improved efficency
+		insert(end(), element);
+	}
+
 	void pop_front() {
-		iterator i = begin();
-		i = erase(i);
+		// TODO: Bypass iterators here for improved efficency
+		erase(begin());
+	}
+
+	void pop_back() {
+		// TODO: Bypass iterators here for improved efficency
+		erase(reverse_begin());
 	}
 
 	t_T &front() {
@@ -147,7 +154,6 @@ public:
 	const t_T &back() const {
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
-
 
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
