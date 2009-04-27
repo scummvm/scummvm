@@ -83,8 +83,8 @@ int _kdebug_cheap_soundcue_hack = -1;
 char inputbuf[256] = "";
 
 #define LOOKUP_SPECIES(species) (\
-	(species >= 1000) ? species : *(s->classtable[species].scriptposp) \
-		+ s->classtable[species].class_offset)
+	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
+		+ s->_classtable[species].class_offset)
 
 const char *_debug_get_input_default() {
 	char newinpbuf[256];
@@ -830,17 +830,15 @@ int c_sim_parse(EngineState *s) {
 }
 
 int c_classtable(EngineState *s) {
-	int i;
-
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
 	sciprintf("Available classes:\n");
-	for (i = 0; i < s->classtable_size; i++)
-		if (s->classtable[i].reg.segment)
-			sciprintf(" Class 0x%x at "PREG" (script 0x%x)\n", i, PRINT_REG(s->classtable[i].reg), s->classtable[i].script);
+	for (uint i = 0; i < s->_classtable.size(); i++)
+		if (s->_classtable[i].reg.segment)
+			sciprintf(" Class 0x%x at "PREG" (script 0x%x)\n", i, PRINT_REG(s->_classtable[i].reg), s->_classtable[i].script);
 
 	return 0;
 }

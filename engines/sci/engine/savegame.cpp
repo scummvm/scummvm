@@ -25,6 +25,7 @@
 
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/func.h"
 #include "common/serializer.h"
 
 #include <time.h>	// FIXME: For struct tm
@@ -128,6 +129,22 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 		i->saveLoadWithSerializer(s);
 	}
 }
+
+template<typename T>
+void syncArray(Common::Serializer &s, Common::Array<T> &arr, const Common::Functor2<Common::Serializer &, T &, void> &func) {
+	uint len = arr.size();
+	s.syncAsUint32LE(len);
+
+	// Resize the array if loading.
+	if (s.isLoading())
+		arr.resize(len);
+
+	typename Common::Array<T>::iterator i;
+	for (i = arr.begin(); i != arr.end(); ++i) {
+		func(s, *i);
+	}
+}
+
 
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
@@ -241,12 +258,8 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	sync_SegManagerPtr(s, seg_manager);
 
 
-	s.syncAsSint32LE(classtable_size);
-
-	if (!classtable && classtable_size)
-		classtable = (Class *)sci_calloc(classtable_size, sizeof(Class));
-	for (int i = 0; i < classtable_size; ++i)
-		sync_Class(s, classtable[i]);
+	Common::Functor2Fun<Common::Serializer &, Class &, void> tmp(sync_Class);
+	syncArray<Class>(s, _classtable, tmp);
 
 	sync_sfx_state_t(s, sound);
 }

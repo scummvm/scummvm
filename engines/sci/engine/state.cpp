@@ -146,9 +146,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	game_obj = NULL_REG;
 
-	classtable_size = 0;
-	classtable = 0;
-
 	seg_manager = 0;
 	gc_countdown = 0;
 

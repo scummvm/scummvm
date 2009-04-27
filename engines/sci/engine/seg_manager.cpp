@@ -1127,16 +1127,16 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 			int classpos = seeker - scr->buf;
 			int species = READ_LE_UINT16(seeker + 10);
 
-			if (species < 0 || species >= s->classtable_size) {
+			if (species < 0 || species >= (int)s->_classtable.size()) {
 				sciprintf("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
-				          species, species, s->classtable_size, scr->nr);
+				          species, species, s->_classtable.size(), scr->nr);
 				script_debug_flag = script_error_flag = 1;
 				return;
 			}
 
-			s->classtable[species].script = scr->nr;
-			s->classtable[species].reg.segment = seg;
-			s->classtable[species].reg.offset = classpos;
+			s->_classtable[species].script = scr->nr;
+			s->_classtable[species].reg.segment = seg;
+			s->_classtable[species].reg.offset = classpos;
 		}
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}

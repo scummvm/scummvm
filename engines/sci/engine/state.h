@@ -259,8 +259,7 @@ public:
 
 	reg_t game_obj; /**< Pointer to the game object */
 
-	int classtable_size; /**< Number of classes in the table- for debugging */
-	Class *classtable; /**< Table of all classes */
+	Common::Array<Class> _classtable; /**< Table of all classes */
 
 	SegManager *seg_manager;
 	int gc_countdown; /**< Number of kernel calls until next gc */

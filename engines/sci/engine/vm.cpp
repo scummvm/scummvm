@@ -199,24 +199,24 @@ int script_error(EngineState *s, const char *file, int line, const char *reason)
 #define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
 
 reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
-	Class *the_class = s->classtable + classnr;
 
 	if (NULL == s) {
-		sciprintf("vm.c: get_class_address(): NULL passed for \"s\"\n");
+		warning("vm.c: get_class_address(): NULL passed for \"s\"");
 		return NULL_REG;
 	}
 
-	if (classnr < 0 || s->classtable_size <= classnr || the_class->script < 0) {
-		sciprintf("[VM] Attempt to dereference class %x, which doesn't exist (max %x)\n", classnr, s->classtable_size);
+	if (classnr < 0 || (int)s->_classtable.size() <= classnr || s->_classtable[classnr].script < 0) {
+		warning("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, s->_classtable.size());
 		script_error_flag = script_debug_flag = 1;
 		return NULL_REG;
 	} else {
+		Class *the_class = &s->_classtable[classnr];
 		if (!the_class->reg.segment) {
 			script_get_segment(s, the_class->script, lock);
 
 			if (!the_class->reg.segment) {
-				sciprintf("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
-				          " Entering debugger.\n", classnr, the_class->script, the_class->script);
+				warning("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
+				          " Entering debugger.", classnr, the_class->script, the_class->script);
 				script_error_flag = script_debug_flag = 1;
 				return NULL_REG;
 			}
@@ -1811,18 +1811,18 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			int species;
 			reg_tmp.offset = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			species = OBJ_SPECIES(s, reg_tmp);
-			if (species < 0 || species >= s->classtable_size) {
+			if (species < 0 || species >= (int)s->_classtable.size()) {
 				sciprintf("Invalid species %d(0x%x) not in interval "
 				          "[0,%d) while instantiating script %d\n",
-				          species, species, s->classtable_size,
+				          species, species, s->_classtable.size(),
 				          script_nr);
 				script_debug_flag = script_error_flag = 1;
 				return 1;
 			}
 
-			s->classtable[species].script = script_nr;
-			s->classtable[species].reg = addr;
-			s->classtable[species].reg.offset = classpos;
+			s->_classtable[species].script = script_nr;
+			s->_classtable[species].reg = addr;
+			s->_classtable[species].reg.offset = classpos;
 			// Set technical class position-- into the block allocated for it
 		}
 		break;
@@ -1952,7 +1952,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 			superclass = OBJ_SUPERCLASS(s, reg); // Get superclass...
 
 			if (superclass >= 0) {
-				int superclass_script = s->classtable[superclass].script;
+				int superclass_script = s->_classtable[superclass].script;
 
 				if (superclass_script == script_nr) {
 					if (s->seg_manager->getLockers(reg.segment, SEG_ID))
@@ -1972,7 +1972,6 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 
 void script_uninstantiate(EngineState *s, int script_nr) {
 	reg_t reg = make_reg(0, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
-	int i;
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 
@@ -1988,9 +1987,9 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 		return;
 
 	// Free all classtable references to this script
-	for (i = 0; i < s->classtable_size; i++)
-		if (s->classtable[i].reg.segment == reg.segment)
-			s->classtable[i].reg = NULL_REG;
+	for (uint i = 0; i < s->_classtable.size(); i++)
+		if (s->_classtable[i].reg.segment == reg.segment)
+			s->_classtable[i].reg = NULL_REG;
 
 	if (s->version < SCI_VERSION(1, 001, 000))
 		script_uninstantiate_sci0(s, script_nr, reg.segment);

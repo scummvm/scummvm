@@ -268,11 +268,9 @@ int create_class_table_sci11(EngineState *s) {
 	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
 
 	if (!vocab996)
-		s->classtable_size = 20;
+		s->_classtable.resize(20);
 	else
-		s->classtable_size = vocab996->size >> 2;
-
-	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
+		s->_classtable.resize(vocab996->size >> 2);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		Resource *heap = s->resmgr->findResource(kResourceTypeHeap, scriptnr, 0);
@@ -286,23 +284,19 @@ int create_class_table_sci11(EngineState *s) {
 			while (READ_LE_UINT16((byte*)seeker_ptr) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 				if (READ_LE_UINT16((byte*)seeker_ptr + 14) & SCRIPT_INFO_CLASS) {
 					classnr = READ_LE_UINT16((byte*)seeker_ptr + 10);
-					if (classnr >= s->classtable_size) {
+					if (classnr >= (int)s->_classtable.size()) {
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							fprintf(stderr, "Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
 							        classnr, scriptnr, scriptnr, seeker_offset);
 							return 1;
 						}
 
-						s->classtable = (Class*)sci_realloc(s->classtable, sizeof(Class) * (classnr + 1));
-						// Clear after resize
-						memset(&(s->classtable[s->classtable_size]), 0, sizeof(Class) * (1 + classnr - s->classtable_size));
-
-						s->classtable_size = classnr + 1; // Adjust maximum number of entries
+						s->_classtable.resize(classnr + 1); // Adjust maximum number of entries
 					}
 
-					s->classtable[classnr].reg.offset = seeker_offset;
-					s->classtable[classnr].reg.segment = 0;
-					s->classtable[classnr].script = scriptnr;
+					s->_classtable[classnr].reg.offset = seeker_offset;
+					s->_classtable[classnr].reg.segment = 0;
+					s->_classtable[classnr].script = scriptnr;
 				}
 
 				seeker_ptr += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
@@ -323,11 +317,9 @@ static int create_class_table_sci0(EngineState *s) {
 	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
 
 	if (!vocab996)
-		s->classtable_size = 20;
+		s->_classtable.resize(20);
 	else
-		s->classtable_size = vocab996->size >> 2;
-
-	s->classtable = (Class*)sci_calloc(sizeof(Class), s->classtable_size);
+		s->_classtable.resize(vocab996->size >> 2);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		int objtype = 0;
@@ -347,8 +339,8 @@ static int create_class_table_sci0(EngineState *s) {
 						break;
 					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
 					if (seeker <= lastseeker) {
-						sciprintf("Warning: Script version is invalid.\n");
-						free(s->classtable);
+						warning("Script version is invalid");
+						s->_classtable.clear();
 						return SCI_ERROR_INVALID_SCRIPT_VERSION;
 					}
 				}
@@ -359,30 +351,26 @@ static int create_class_table_sci0(EngineState *s) {
 					seeker -= SCRIPT_OBJECT_MAGIC_OFFSET; // Adjust position; script home is base +8 bytes
 
 					classnr = (int16)READ_LE_UINT16(script->data + seeker + 4 + SCRIPT_SPECIES_OFFSET);
-					if (classnr >= s->classtable_size) {
+					if (classnr >= (int)s->_classtable.size()) {
 
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							fprintf(stderr, "Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
 							        classnr, scriptnr, scriptnr, seeker);
 							return 1;
 						}
 
-						s->classtable = (Class*)sci_realloc(s->classtable, sizeof(Class) * (classnr + 1));
-						// Clear after resize
-						memset(&(s->classtable[s->classtable_size]), 0, sizeof(Class) * (1 + classnr - s->classtable_size));
-
-						s->classtable_size = classnr + 1; // Adjust maximum number of entries
+						s->_classtable.resize(classnr + 1); // Adjust maximum number of entries
 					}
 
 					sugg_script = suggested_script(vocab996, classnr);
 
 					// First, test whether the script hasn't been claimed, or if it's been claimed by the wrong script
 
-					if (sugg_script == -1 || scriptnr == sugg_script /*|| !s->classtable[classnr].reg.segment*/)  {
+					if (sugg_script == -1 || scriptnr == sugg_script /*|| !s->_classtable[classnr].reg.segment*/)  {
 						// Now set the home script of the class
-						s->classtable[classnr].reg.offset = seeker + 4 - magic_offset;
-						s->classtable[classnr].reg.segment = 0;
-						s->classtable[classnr].script = scriptnr;
+						s->_classtable[classnr].reg.offset = seeker + 4 - magic_offset;
+						s->_classtable[classnr].reg.segment = 0;
+						s->_classtable[classnr].script = scriptnr;
 					}
 
 					seeker += SCRIPT_OBJECT_MAGIC_OFFSET; // Re-adjust position
@@ -513,8 +501,7 @@ void script_free_vm_memory(EngineState *s) {
 	sciprintf("Freeing VM memory\n");
 	s->save_dir_copy_buf = NULL;
 
-	free(s->classtable);
-	s->classtable = NULL;
+	s->_classtable.clear();
 
 	// Close all opened file handles
 	s->_fileHandles.clear();
