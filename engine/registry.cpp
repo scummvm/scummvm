@@ -76,7 +76,7 @@ Registry::Registry() : _dirty(true) {
 
 const char *Registry::get(const char *key, const char *defval) const {
 	if (strcasecmp("good_times", key) == 0 || strcasecmp("GrimDeveloper", key) == 0) {
-		return _develMode.c_str();
+		return "";//_develMode.c_str();
 	} else if (strcasecmp("GrimDataDir", key) == 0) {
 		return _dataPath.c_str();
 	} else if (strcasecmp("savepath", key) == 0) {
@@ -121,8 +121,8 @@ const char *Registry::get(const char *key, const char *defval) const {
 void Registry::set(const char *key, const char *val) {
 	// Hack: Don't save these, so we can run in good_times mode
 	// without new games being bogus.
-	if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
-		return;
+	//if (strstr(key, "GrimLastSet") || strstr(key, "GrimMannyState"))
+	//	return;
 
 	_dirty = true;
 	assert(val);

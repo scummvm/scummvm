@@ -112,7 +112,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("text_speed", "7");
 	ConfMan.registerDefault("speech_mode", "3");
 	ConfMan.registerDefault("transcript", "TRUE");
-	ConfMan.registerDefault("game_devel_mode", "TRUE");
+	ConfMan.registerDefault("game_devel_mode", "");
 	ConfMan.registerDefault("joystick", "TRUE");
 	ConfMan.registerDefault("movement", "Character");
 	ConfMan.registerDefault("gamma", "1.0");
