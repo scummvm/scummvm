@@ -87,7 +87,7 @@ int16 Parse_v2::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 			for (int i = 0; i < var_A; i++) {
 				temp2 = parseValExpr(OP_END_MARKER);
 
-				int16 ax = sub_12063(temp2, var_12[i], varPos, 0, 0);
+				int16 ax = getOffset(temp2, var_12[i], varPos, 0, 0);
 
 				var_6 = var_6 * var_12[i] + ax;
 			}
@@ -218,7 +218,7 @@ int16 Parse_v2::parseValExpr(byte stopToken) {
 				for (int i = 0; i < var_A; i++) {
 					temp2 = parseValExpr(OP_END_MARKER);
 
-					int16 ax = sub_12063(temp2, var_12[i], varPos, 0, 0);
+					int16 ax = getOffset(temp2, var_12[i], varPos, 0, 0);
 
 					var_6 = var_6 * var_12[i] + ax;
 				}
@@ -510,7 +510,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 				for (int i = 0; i < var_A; i++) {
 					temp2 = parseValExpr(OP_END_MARKER);
 
-					int16 ax = sub_12063(temp2, var_12[i], varPos, 0, 0);
+					int16 ax = getOffset(temp2, var_12[i], varPos, 0, 0);
 
 					var_6 = var_6 * var_12[i] + ax;
 				}
@@ -1049,7 +1049,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 	}
 }
 
-int16 Parse_v2::sub_12063(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9) {
+int16 Parse_v2::getOffset(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9) {
 	if (arg_0 < 0)
 		return 0;
 

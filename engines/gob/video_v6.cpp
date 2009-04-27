@@ -242,8 +242,8 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *sur
 
 		uncBuf = new byte[size];
 
-		//sub_4F020(data, buf);
-		warning("Urban Stub: drawPacked: sub_4F020(data, uncBuf)");
+		//spriteUncompressor(data, buf);
+		warning("Urban Stub: drawPacked: spriteUncompressor(data, uncBuf)");
 
 		srcData = uncBuf;
 	}

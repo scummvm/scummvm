@@ -126,17 +126,17 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 	if (_vm->_map->_widthByte == 4) {
 		switch (dir) {
 		case Map::kDirNW:
-			animData->nextState = sub_20430(animData->state, Map::kDirNW);
+			animData->nextState = turnState(animData->state, Map::kDirNW);
 			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
 					(animData->nextState == 1))
 				animData->nextState = 40;
 			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY - 2) != 10)
-				animData->nextState = sub_20430(animData->state, Map::kDirNW);
+				animData->nextState = turnState(animData->state, Map::kDirNW);
 			break;
 
 		case Map::kDirN:
 			animData->nextState =
-				(animData->curLookDir == 2) ? 2 : sub_20430(animData->state, Map::kDirN);
+				(animData->curLookDir == 2) ? 2 : turnState(animData->state, Map::kDirN);
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) {
 				if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY - 2) != 10) {
 					if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY - 2) == 10)
@@ -155,34 +155,34 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			break;
 
 		case Map::kDirNE:
-			animData->nextState = sub_20430(animData->state, Map::kDirNE);
+			animData->nextState = turnState(animData->state, Map::kDirNE);
 			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
 			    (animData->nextState == 3))
 				animData->nextState = 42;
 			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY - 2) != 10)
-				animData->nextState = sub_20430(animData->state, Map::kDirNE);
+				animData->nextState = turnState(animData->state, Map::kDirNE);
 			break;
 
 		case Map::kDirW:
-			animData->nextState = sub_20430(animData->state, Map::kDirW);
+			animData->nextState = turnState(animData->state, Map::kDirW);
 			break;
 
 		case Map::kDirE:
-			animData->nextState = sub_20430(animData->state, Map::kDirE);
+			animData->nextState = turnState(animData->state, Map::kDirE);
 			break;
 
 		case Map::kDirSW:
-			animData->nextState = sub_20430(animData->state, Map::kDirSW);
+			animData->nextState = turnState(animData->state, Map::kDirSW);
 			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
 			    (animData->nextState == 7))
 				animData->nextState = 41;
 			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY) != 10)
-				animData->nextState = sub_20430(animData->state, Map::kDirSW);
+				animData->nextState = turnState(animData->state, Map::kDirSW);
 			break;
 
 		case Map::kDirS:
 			animData->nextState =
-				(animData->curLookDir == 6) ? 6 : sub_20430(animData->state, Map::kDirS);
+				(animData->curLookDir == 6) ? 6 : turnState(animData->state, Map::kDirS);
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) {
 				if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY + 2) != 10) {
 					if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY + 2) == 10)
@@ -192,7 +192,7 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 				} else
 					animData->nextState = 41;
 			}
-			// loc_20AAD
+
 			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20) &&
 			    (animData->nextState == 6))
 				animData->nextState = 39;
@@ -202,66 +202,57 @@ void Goblin_v4::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 			break;
 
 		case Map::kDirSE:
-			animData->nextState = sub_20430(animData->state, Map::kDirSE);
+			animData->nextState = turnState(animData->state, Map::kDirSE);
 			if ((_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10) &&
 			    (animData->nextState == 5))
 				animData->nextState = 43;
 			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY) != 10)
-				animData->nextState = sub_20430(animData->state, Map::kDirSE);
+				animData->nextState = turnState(animData->state, Map::kDirSE);
 			break;
 
 		default:
-			// loc_20D18
 			switch (animData->state) {
 			case 0:
 			case 8:
-				// loc_21134
 				animData->nextState = 8;
 				break;
 
 			case 1:
 			case 10:
 			case 40:
-				// loc_21152
 				animData->nextState = 10;
 				break;
 
 			case 2:
 			case 29:
-				// loc_2113E
 				animData->nextState = 29;
 				break;
 
 			case 3:
 			case 11:
 			case 42:
-				// loc_2115C
 				animData->nextState = 11;
 				break;
 
 			case 4:
 			case 9:
-				// loc_2112A
 				animData->nextState = 9;
 				break;
 
 			case 5:
 			case 30:
 			case 43:
-				// loc_21166
 				animData->nextState = 30;
 				break;
 
 			case 6:
 			case 28:
-				// loc_21148
 				animData->nextState = 28;
 				break;
 
 			case 7:
 			case 31:
 			case 41:
-				// loc_21170
 				animData->nextState = 31;
 				break;
 			}
@@ -541,8 +532,8 @@ void Goblin_v4::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	}
 }
 
-int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
-	static const int16 word_3F25E[8][8] = {
+int16 Goblin_v4::turnState(int16 state, uint16 dir) {
+	static const int16 newStates[8][8] = {
 		{ 0,  1, 10, 10, 10, 31, 31,  7},
 		{ 0,  1,  2, 29, 29, 29,  8,  8},
 		{10,  1,  2,  3, 11, 11, 11, 10},
@@ -557,55 +548,45 @@ int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
 	switch (state) {
 	case 0:
 	case 8:
-		// loc_20447
 		dx = 0;
 		break;
 
 	case 1:
 	case 10:
 	case 40:
-		// loc_2044B
 		dx = 1;
 		break;
 
 	case 3:
 	case 11:
 	case 42:
-		// loc_20455
 		dx = 3;
 		break;
 
 	case 5:
 	case 30:
 	case 43:
-		// loc_2045F
 		dx = 5;
 		break;
 
 	case 7:
 	case 31:
 	case 41:
-		// loc_20469
 		dx = 7;
 		break;
 
 	case 9:
-		// loc_2045A
 		dx = 4;
 		break;
 
 	case 28:
-		// loc_20464
 		dx = 6;
 		break;
 
 	case 29:
-		// loc_20450
 		dx = 2;
 		break;
 	}
-
-	// loc_2046C
 
 	switch (dir) {
 	case Map::kDirNW:
@@ -641,7 +622,7 @@ int16 Goblin_v4::sub_20430(int16 state, uint16 dir) {
 		break;
 	}
 
-	return word_3F25E[dx][cx];
+	return newStates[dx][cx];
 }
 
 } // End of namespace Gob

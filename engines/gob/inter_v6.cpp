@@ -982,10 +982,10 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 	evalExpr(0);
 
 	_vm->_draw->_backColor = _vm->_global->_inter_resVal & 0xFFFF;
-	uint16 word_63E64 = _vm->_global->_inter_resVal >> 16;
+	uint16 extraVar = _vm->_global->_inter_resVal >> 16;
 
-	if (word_63E64 != 0)
-		warning("Urban Stub: o6_fillRect(), word_63E64 = %d", word_63E64);
+	if (extraVar != 0)
+		warning("Urban Stub: o6_fillRect(), extraVar = %d", extraVar);
 
 	if (_vm->_draw->_spriteRight < 0) {
 		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;

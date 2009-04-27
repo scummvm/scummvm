@@ -327,7 +327,7 @@ public:
 	virtual ~Goblin_v4() {}
 
 private:
-	int16 sub_20430(int16 state, uint16 dir);
+	int16 turnState(int16 state, uint16 dir);
 };
 
 } // End of namespace Gob

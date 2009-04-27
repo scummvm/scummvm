@@ -946,26 +946,24 @@ void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 */
 
 /*
-	// Calculating whether speed throttling is necessary?
+	speedSum = MAX(_cdSpeed, 150);
+	speedSum += (_ram << 3);
+	speedSum += (_cpuSpeed << 3);
+	speedSum /= 17;
 
-	var_E = MAX(_cdSpeed, 150);
-	var_E += (_ram << 3);
-	var_E += (_cpuSpeed << 3);
-	var_E /= 17;
+	needThrottle2 = (speedSum > 81) ? 1 : 0;
+	needThrottle1 = (_total >= 95) ? 1 : 0;
 
-	byte_8A61E = (var_E > 81) ? 1 : 0;
-	byte_8A5E0 = (_total >= 95) ? 1 : 0;
-
-	if (byte_8A5E0 == 1) {
-		word_8AEE2 = 100;
-		byte_8AEE4 = 1;
-		byte_8AEE5 = 1;
-		word_8AEE6 = 0;
+	if (needThrottle1 == 1) {
+		speedThrottle1 = 100;
+		speedThrottle2 = 1;
+		speedThrottle3 = 1;
+		speedThrottle4 = 0;
 	} else {
-		word_8AEE2 = 0;
-		byte_8AEE4 = 0;
-		byte_8AEE5 = 0;
-		word_8AEE6 = 40;
+		speedThrottle1 = 0;
+		speedThrottle2 = 0;
+		speedThrottle3 = 0;
+		speedThrottle4 = 40;
 	}
 */
 }
@@ -975,7 +973,7 @@ void Inter_v5::o5_gob92(OpGobParams &params) {
 
 	_vm->_global->_inter_execPtr += 2;
 
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8) byte_86B9E)) */);
+	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8) _gob92_1)) */);
 }
 
 void Inter_v5::o5_gob95(OpGobParams &params) {
@@ -983,87 +981,37 @@ void Inter_v5::o5_gob95(OpGobParams &params) {
 
 	_vm->_global->_inter_execPtr += 2;
 
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) word_8AEE6)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  byte_8AEE5)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  byte_8AEE4)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) word_8AEE2)) */);
+	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) speedThrottle4)) */);
+	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle3)) */);
+	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle2)) */);
+	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) speedThrottle1)) */);
 }
 
 void Inter_v5::o5_gob96(OpGobParams &params) {
-	int16 word_8AEE6, word_85B50, word_8AEE2;
-	byte byte_8AEE5, byte_8AEE4;
+	int16 speedThrottle4, speedThrottle1;
+	byte speedThrottle3, speedThrottle2;
 
 	_vm->_global->_inter_execPtr += 2;
 
-	word_8AEE6 = word_85B50 = READ_VAR_UINT16(load16());
-	byte_8AEE5 = READ_VAR_UINT8(load16());
-	byte_8AEE4 = READ_VAR_UINT8(load16());
-	word_8AEE2 = READ_VAR_UINT16(load16());
+	speedThrottle4 = READ_VAR_UINT16(load16());
+	speedThrottle3 = READ_VAR_UINT8(load16());
+	speedThrottle2 = READ_VAR_UINT8(load16());
+	speedThrottle1 = READ_VAR_UINT16(load16());
 
 	warning("Dynasty Stub: GobFunc 96: %d, %d, %d, %d",
-			word_8AEE6, byte_8AEE5, byte_8AEE4, word_8AEE2);
+			speedThrottle4, speedThrottle3, speedThrottle2, speedThrottle1);
 
-	// .--- sub_194B0 ---
-
-	int16 word_8A8F0, word_8A8F2, word_8A8F4, word_8A8F6, word_8A8F8, word_8A8FA;
-
-	int16 word_8A62C = 1;
-	int16 word_8A63C, word_8A640, word_8B464, word_8B466;
-
-	byte byte_8A62E;
-
-	int16 var_2, var_4;
-
-	var_2 = word_85B50 + 31;
-	word_8A8F0 = word_8A8F2 = var_2;
-	word_8A8F4 = word_85B50;
-
-	var_4 = 315 - word_85B50;
-	word_8A8F6 = word_8A8F8 = var_4;
-
-	word_8A8FA = 479 - word_85B50;
-
-	if (word_8A62C == 0) {
-		word_8A63C = word_8A8F0;
-		word_8A640 = word_8A8F6;
-		word_8B464 = word_8A8F0;
-		word_8B466 = word_8A8F6;
-	} else if (word_8A62C == 1) {
-		word_8A63C = word_85B50;
-		word_8A640 = word_8A8FA;
-		word_8B464 = word_85B50;
-		word_8B466 = word_8A8FA;
-	} else if (word_8A62C == 2) {
-		word_8A63C = word_8A8F4;
-		word_8A640 = word_8A8FA;
-		word_8B464 = word_8A8F4;
-		word_8B466 = word_8A8FA;
-	} else if (word_8A62C == 3) {
-		word_8A63C = word_8A8F4;
-		word_8A640 = word_8A8FA;
-		word_8B464 = word_8A8F4;
-		word_8B466 = word_8A8FA;
-	} else if (word_8A62C == 4) {
-		word_8A63C = word_8A8F4;
-		word_8A640 = word_8A8FA;
-		word_8B464 = word_8A8F4;
-		word_8B466 = word_8A8FA;
-	}
-
-	byte_8A62E = 1;
-
-// '--- ---
-
+	// TODO 
 }
 
 void Inter_v5::o5_gob97(OpGobParams &params) {
-	_byte_8AA14 = 1;
+	_gob_97_98_val = 1;
 
 	_vm->_global->_inter_execPtr += 2;
 }
 
 void Inter_v5::o5_gob98(OpGobParams &params) {
-	_byte_8AA14 = 0;
+	_gob_97_98_val = 0;
 
 	_vm->_global->_inter_execPtr += 2;
 }

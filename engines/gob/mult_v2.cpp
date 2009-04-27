@@ -628,7 +628,7 @@ void Mult_v2::drawStatics(bool &stop) {
 	}
 }
 
-void Mult_v2::drawAnims(bool &stop) { // loc_50D5
+void Mult_v2::drawAnims(bool &stop) {
 	int16 count;
 	int animIndex;
 
@@ -698,7 +698,6 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	}
 
 	if (animData.animType == 4) {
-		// loc_1E091
 		animData.frame = 0;
 		animData.isPaused = 1;
 		if (animData.animation < 0)

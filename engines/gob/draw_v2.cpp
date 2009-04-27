@@ -617,8 +617,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 	bool deltaVeto;
 	int16 left;
 	int16 ratio;
-	// Some handle, but always assigned to -1 in Game::loadTotFile()
-	int16 word_2F2D2 = -1;
+	// Always assigned to -1 in Game::loadTotFile()
+	int16 someHandle = -1;
 
 	deltaVeto = (operation & 0x10) != 0;
 	operation &= 0x0F;
@@ -816,7 +816,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
-					if ((word_2F2D2 < 0) || (_textToPrint[i] != ' ')) {
+					if ((someHandle < 0) || (_textToPrint[i] != ' ')) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
 								_frontColor, _backColor, _spritesArray[_destSurface]);

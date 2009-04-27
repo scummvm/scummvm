@@ -625,7 +625,7 @@ protected:
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
 	virtual const char *getOpcodeGoblinDesc(int i);
 
-	byte _byte_8AA14;
+	byte _gob_97_98_val;
 
 	void o5_deleteFile();
 	void o5_initScreen();

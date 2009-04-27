@@ -348,7 +348,7 @@ void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
 }
 
 int Draw::stringLength(const char *str, int16 fontIndex) {
-	static const int8 dword_8F74C[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static const int8 japaneseExtraCharLen[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	if ((fontIndex < 0) || (fontIndex > 7) || !_fonts[fontIndex])
 		return 0;
@@ -359,7 +359,7 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 
 		for (int i = 0; str[i] != 0; i++) {
 			if (((unsigned char) str[i+1]) < 128) {
-				len += dword_8F74C[4];
+				len += japaneseExtraCharLen[4];
 				i++;
 			} else
 				len += _fonts[fontIndex]->itemWidth;

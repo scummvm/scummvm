@@ -327,7 +327,7 @@ public:
 	virtual ~Game_v6() {}
 
 protected:
-	uint32 _dword_63E44;
+	uint32 _someTimeDly;
 
 	virtual void setCollisions(byte arg_0 = 1);
 	virtual void collSub(uint16 offset);
@@ -336,7 +336,7 @@ protected:
 
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
 
-	void sub_1BA78();
+	void collSubReenter();
 };
 
 } // End of namespace Gob

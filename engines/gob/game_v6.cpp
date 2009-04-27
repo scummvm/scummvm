@@ -37,7 +37,7 @@
 namespace Gob {
 
 Game_v6::Game_v6(GobEngine *vm) : Game_v2(vm) {
-	_dword_63E44 = 0;
+	_someTimeDly = 0;
 }
 
 // flagbits: 5 = freeInterVariables, 6 = skipPlay
@@ -266,7 +266,7 @@ int16 Game_v6::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 			return 0;
 		}
 
-		sub_1BA78();
+		collSubReenter();
 		if (!_vm->_draw->_noInvalidated) {
 			if (handleMouse != 0)
 				_vm->_draw->animateCursor(-1);
@@ -345,7 +345,7 @@ int16 Game_v6::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 				if ((_lastCollKey != 0) && (_lastCollId & 0x8000))
 					collAreaSub(_lastCollAreaIndex, 1);
 			} else
-				sub_1BA78();
+				collSubReenter();
 		}
 
 		if ((deltaTime == -2) && (key == 0) && (_mouseButtons == 0)) {
@@ -1022,7 +1022,7 @@ void Game_v6::collSub(uint16 offset) {
 	_shouldPushColls = 0;
 	_vm->_global->_inter_execPtr = savedIP;
 
-	if ((_vm->_util->getTimeKey() - _dword_63E44) > 500)
+	if ((_vm->_util->getTimeKey() - _someTimeDly) > 500)
 		setCollisions(0);
 }
 
@@ -1135,7 +1135,7 @@ int16 Game_v6::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 	return 0;
 }
 
-void Game_v6::sub_1BA78() {
+void Game_v6::collSubReenter() {
 	int16 lastCollAreaIndex = _lastCollAreaIndex;
 	int16 lastCollId = _lastCollId;
 	int16 collKey = checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
