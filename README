@@ -60,7 +60,6 @@ An example config file looks as follows:
 
 	[grim]
 	path=[path to all the .lab files]
-	game_devel_mode=TRUE
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
