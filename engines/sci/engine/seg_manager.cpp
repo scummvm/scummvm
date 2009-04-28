@@ -1282,23 +1282,13 @@ Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) 
 	return h;
 }
 
-void _clone_cleanup(Clone *clone) {
-	if (clone->variables)
-		free(clone->variables); // Free the dynamically allocated memory part
-}
-
-void _hunk_cleanup(Hunk *hunk) {
-	if (hunk->mem)
-		free(hunk->mem);
-}
-
 
 void init_List_table(ListTable *table) {
 	table->entries_nr = 8;
 	table->max_entry = 0;
 	table->entries_used = 0;
 	table->first_free = HEAPENTRY_INVALID;
-	table->table = (ListEntry *)sci_malloc(sizeof(ListEntry) * 8);\
+	table->table = (ListEntry *)sci_malloc(sizeof(ListEntry) * 8);
 	memset(table->table, 0, sizeof(ListEntry) * 8);
 }
 
@@ -1306,9 +1296,7 @@ void free_List_entry(ListTable *table, int index) {
 	ListEntry *e = table->table + index;
 
 	if (index < 0 || index >= table->max_entry) {
-		fprintf(stderr, "heapmgr: Attempt to release"
-			" invalid table index %d!\n", index);
-		BREAKPOINT();
+		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
 	e->next_free = table->first_free;
@@ -1316,26 +1304,6 @@ void free_List_entry(ListTable *table, int index) {
 	table->entries_used--;
 }
 
-int	alloc_List_entry(ListTable *table) {
-	table->entries_used++;
-	if (table->first_free != HEAPENTRY_INVALID) {
-		int oldff = table->first_free;
-		table->first_free = table->table[oldff].next_free;
-
-		table->table[oldff].next_free = oldff;
-		return oldff;
-	} else {
-		if (table->max_entry == table->entries_nr) {
-			table->entries_nr += 4;
-
-			table->table = (ListEntry *)sci_realloc(table->table,\
-						   sizeof(ListEntry) * table->entries_nr);\
-			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(ListEntry));\
-		}
-		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
-		return table->max_entry++;
-	}
-}
 
 
 void init_Node_table(NodeTable *table) {
@@ -1343,7 +1311,7 @@ void init_Node_table(NodeTable *table) {
 	table->max_entry = 0;
 	table->entries_used = 0;
 	table->first_free = HEAPENTRY_INVALID;
-	table->table = (NodeEntry *)sci_malloc(sizeof(NodeEntry) * 32);\
+	table->table = (NodeEntry *)sci_malloc(sizeof(NodeEntry) * 32);
 	memset(table->table, 0, sizeof(NodeEntry) * 32);
 }
 
@@ -1351,9 +1319,7 @@ void free_Node_entry(NodeTable *table, int index) {
 	NodeEntry *e = table->table + index;
 
 	if (index < 0 || index >= table->max_entry) {
-		fprintf(stderr, "heapmgr: Attempt to release"
-			" invalid table index %d!\n", index);
-		BREAKPOINT();
+		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
 	e->next_free = table->first_free;
@@ -1361,26 +1327,6 @@ void free_Node_entry(NodeTable *table, int index) {
 	table->entries_used--;
 }
 
-int	alloc_Node_entry(NodeTable *table) {
-	table->entries_used++;
-	if (table->first_free != HEAPENTRY_INVALID) {
-		int oldff = table->first_free;
-		table->first_free = table->table[oldff].next_free;
-
-		table->table[oldff].next_free = oldff;
-		return oldff;
-	} else {
-		if (table->max_entry == table->entries_nr) {
-			table->entries_nr += 16;
-
-			table->table = (NodeEntry *)sci_realloc(table->table,\
-						   sizeof(NodeEntry) * table->entries_nr);\
-			memset(&table->table[table->entries_nr-16], 0, 16 * sizeof(NodeEntry));\
-		}
-		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
-		return table->max_entry++;
-	}
-}
 
 
 void init_Clone_table(CloneTable *table) {
@@ -1388,7 +1334,7 @@ void init_Clone_table(CloneTable *table) {
 	table->max_entry = 0;
 	table->entries_used = 0;
 	table->first_free = HEAPENTRY_INVALID;
-	table->table = (CloneEntry *)sci_malloc(sizeof(CloneEntry) * 16);\
+	table->table = (CloneEntry *)sci_malloc(sizeof(CloneEntry) * 16);
 	memset(table->table, 0, sizeof(CloneEntry) * 16);
 }
 
@@ -1396,37 +1342,16 @@ void free_Clone_entry(CloneTable *table, int index) {
 	CloneEntry *e = table->table + index;
 
 	if (index < 0 || index >= table->max_entry) {
-		fprintf(stderr, "heapmgr: Attempt to release"
-			" invalid table index %d!\n", index);
-		BREAKPOINT();
+		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
-	_clone_cleanup(&(e->entry));
+
+	free(e->entry.variables); // Free the dynamically allocated memory part
 
 	e->next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
 }
 
-int	alloc_Clone_entry(CloneTable *table) {
-	table->entries_used++;
-	if (table->first_free != HEAPENTRY_INVALID) {
-		int oldff = table->first_free;
-		table->first_free = table->table[oldff].next_free;
-
-		table->table[oldff].next_free = oldff;
-		return oldff;
-	} else {
-		if (table->max_entry == table->entries_nr) {
-			table->entries_nr += 4;
-
-			table->table = (CloneEntry *)sci_realloc(table->table,\
-						   sizeof(CloneEntry) * table->entries_nr);\
-			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(CloneEntry));\
-		}
-		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
-		return table->max_entry++;
-	}
-}
 
 
 void init_Hunk_table(HunkTable *table) {
@@ -1434,7 +1359,7 @@ void init_Hunk_table(HunkTable *table) {
 	table->max_entry = 0;
 	table->entries_used = 0;
 	table->first_free = HEAPENTRY_INVALID;
-	table->table = (HunkEntry *)sci_malloc(sizeof(HunkEntry) * 4);\
+	table->table = (HunkEntry *)sci_malloc(sizeof(HunkEntry) * 4);
 	memset(table->table, 0, sizeof(HunkEntry) * 4);
 }
 
@@ -1442,62 +1367,90 @@ void free_Hunk_entry(HunkTable *table, int index) {
 	HunkEntry *e = table->table + index;
 
 	if (index < 0 || index >= table->max_entry) {
-		fprintf(stderr, "heapmgr: Attempt to release"
-			" invalid table index %d!\n", index);
-		BREAKPOINT();
+		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
-	_hunk_cleanup(&(e->entry));
+
+	free(e->entry.mem);
 
 	e->next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
 }
 
-int	alloc_Hunk_entry(HunkTable *table) {
-	table->entries_used++;
-	if (table->first_free != HEAPENTRY_INVALID) {
-		int oldff = table->first_free;
-		table->first_free = table->table[oldff].next_free;
 
-		table->table[oldff].next_free = oldff;
-		return oldff;
-	} else {
-		if (table->max_entry == table->entries_nr) {
-			table->entries_nr += 4;
 
-			table->table = (HunkEntry *)sci_realloc(table->table,\
-						   sizeof(HunkEntry) * table->entries_nr);\
-			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(HunkEntry));\
-		}
-		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
-		return table->max_entry++;
-	}
+Clone *SegManager::alloc_Clone(reg_t *addr) {
+	MemObject *mobj;
+	CloneTable *table;
+	int offset;
+
+	if (!Clones_seg_id) {
+		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
+		init_Clone_table(&(mobj->data.clones));
+	} else
+		mobj = heap[Clones_seg_id];
+
+	table = &(mobj->data.clones);
+	offset = table->allocEntry();
+
+	*addr = make_reg(Clones_seg_id, offset);
+	return &(mobj->data.clones.table[offset].entry);
 }
 
+List *SegManager::alloc_List(reg_t *addr) {
+	MemObject *mobj;
+	ListTable *table;
+	int offset;
 
-#define DEFINE_ALLOC(TYPE, SEGTYPE, PLURAL) \
-TYPE *SegManager::alloc_##TYPE(reg_t *addr) {											 \
-	MemObject *mobj;									  \
-	TYPE##Table *table;									  \
-	int offset;										  \
-												  \
-	if (!TYPE##s_seg_id) {								  \
-		mobj = allocNonscriptSegment(SEGTYPE, &(TYPE##s_seg_id));		  \
-		init_##TYPE##_table(&(mobj->data.PLURAL));					  \
-	} else											  \
-		mobj = heap[TYPE##s_seg_id];					  \
-												  \
-	table = &(mobj->data.PLURAL);								  \
-	offset = Sci::alloc_##TYPE##_entry(table);							  \
-												  \
-	*addr = make_reg(TYPE##s_seg_id, offset);						  \
-	return &(mobj->data.PLURAL.table[offset].entry);					  \
+	if (!Lists_seg_id) {
+		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+		init_List_table(&(mobj->data.lists));
+	} else
+		mobj = heap[Lists_seg_id];
+
+	table = &(mobj->data.lists);
+	offset = table->allocEntry();
+
+	*addr = make_reg(Lists_seg_id, offset);
+	return &(mobj->data.lists.table[offset].entry);
 }
 
-DEFINE_ALLOC(Clone, MEM_OBJ_CLONES, clones)
-DEFINE_ALLOC(List, MEM_OBJ_LISTS, lists)
-DEFINE_ALLOC(Node, MEM_OBJ_NODES, nodes)
-DEFINE_ALLOC(Hunk, MEM_OBJ_HUNK, hunks)
+Node *SegManager::alloc_Node(reg_t *addr) {
+	MemObject *mobj;
+	NodeTable *table;
+	int offset;
+
+	if (!Nodes_seg_id) {
+		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+		init_Node_table(&(mobj->data.nodes));
+	} else
+		mobj = heap[Nodes_seg_id];
+
+	table = &(mobj->data.nodes);
+	offset = table->allocEntry();
+
+	*addr = make_reg(Nodes_seg_id, offset);
+	return &(mobj->data.nodes.table[offset].entry);
+}
+
+Hunk *SegManager::alloc_Hunk(reg_t *addr) {
+	MemObject *mobj;
+	HunkTable *table;
+	int offset;
+
+	if (!Hunks_seg_id) {
+		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+		init_Hunk_table(&(mobj->data.hunks));
+	} else
+		mobj = heap[Hunks_seg_id];
+
+	table = &(mobj->data.hunks);
+	offset = table->allocEntry();
+
+	*addr = make_reg(Hunks_seg_id, offset);
+	return &(mobj->data.hunks.table[offset].entry);
+}
+
 
 
 byte *SegManager::dereference(reg_t pointer, int *size) {
