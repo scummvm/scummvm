@@ -2618,6 +2618,67 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		"play123.scn"
 	},
+	{
+		{
+			"archibald",
+			"Non-Interactive Demo",
+			{
+				{"e.scn", 0, "8a0db733c3f77be86e74e8242e5caa61", 124},
+				{"demarchg.vmd", 0, "d14a95da7d8792faf5503f649ffcbc12", 5619415},
+				{NULL, 0, NULL, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeArchibald,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"e.scn"
+	},
+	{
+		{
+			"archibald",
+			"Non-Interactive Demo",
+			{
+				{"i.scn", 0, "8b3294474d39970463663edd22341730", 285},
+				{"demarita.vmd", 0, "84c8672b91c7312462603446e224bfec", 5742533},
+				{"dembouit.vmd", 0, "7a5fdf0a4dbdfe72e31dd489ea0f8aa2", 3536786},
+				{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
+				{"demoita.vmd", 0, "b4c0622d14c8749965cd0f5dfca4cf4b", 1183566},
+				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
+				{NULL, 0, NULL, 0}
+			},
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeArchibald,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"i.scn"
+	},
+	{
+		{
+			"archibald",
+			"Non-Interactive Demo",
+			{
+				{"s.scn", 0, "1f527010626b5490761f16ba7a6f639a", 251},
+				{"demaresp.vmd", 0, "3f860f944056842b35a5fd05416f208e", 5720619},
+				{"demboues.vmd", 0, "3a0caa10c98ef92a15942f8274075b43", 3535838},
+				{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
+				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
+				{NULL, 0, NULL, 0}
+			},
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeArchibald,
+		kFeatures640 | kFeaturesSCNDemo,
+		0,
+		"s.scn"
+	},
 	{ // Supplied by gamin in the forums
 		{
 			"urban",
