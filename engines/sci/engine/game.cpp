@@ -444,7 +444,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->r_acc = s->r_prev = NULL_REG;
 	s->r_amp_rest = 0;
 
-	s->execution_stack = NULL;    // Start without any execution stack
+	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 	s->execution_stack_pos = -1;   // Start at execution stack position 0
 
@@ -620,7 +620,7 @@ int game_init(EngineState *s) {
 }
 
 int game_exit(EngineState *s) {
-	free(s->execution_stack);
+	s->_executionStack.clear();
 
 	if (!s->successor) {
 		sfx_exit(&s->sound);

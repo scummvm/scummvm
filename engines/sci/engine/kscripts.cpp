@@ -271,12 +271,12 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->seg_manager->scriptIsLoaded(script, SCRIPT_ID)) {
 		int id = s->seg_manager->segGet(script);
 
-		if (s->execution_stack[s->execution_stack_pos].addr.pc.segment != id)
+		if (s->_executionStack[s->execution_stack_pos].addr.pc.segment != id)
 			s->seg_manager->setLockers(1, script, SCRIPT_ID);
 	}
 
 	script_uninstantiate(s, script);
-	s->execution_stack_pos_changed = 1;
+	s->_executionStackPosChanged = true;
 	return s->r_acc;
 }
 

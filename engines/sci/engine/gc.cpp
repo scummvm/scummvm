@@ -153,10 +153,10 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Init: Value Stack
 	// We do this one by hand since the stack doesn't know the current execution stack
 	{
-		ExecStack *xs = s->execution_stack + s->execution_stack_pos;
+		ExecStack &xs = s->_executionStack[s->execution_stack_pos];
 		reg_t *pos;
 
-		for (pos = s->stack_base; pos < xs->sp; pos++)
+		for (pos = s->stack_base; pos < xs.sp; pos++)
 			worklist_push(&worklist, nonnormal_map, *pos);
 	}
 #ifdef DEBUG_GC_VERBOSE
@@ -165,13 +165,13 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 	// Init: Execution Stack
 	for (i = 0; i <= s->execution_stack_pos; i++) {
-		ExecStack *es = s->execution_stack + i;
+		ExecStack &es = s->_executionStack[i];
 
-		if (es->type != EXEC_STACK_TYPE_KERNEL) {
-			worklist_push(&worklist, nonnormal_map, es->objp);
-			worklist_push(&worklist, nonnormal_map, es->sendp);
-			if (es->type == EXEC_STACK_TYPE_VARSELECTOR)
-				worklist_push(&worklist, nonnormal_map, *(es->addr.varp));
+		if (es.type != EXEC_STACK_TYPE_KERNEL) {
+			worklist_push(&worklist, nonnormal_map, es.objp);
+			worklist_push(&worklist, nonnormal_map, es.sendp);
+			if (es.type == EXEC_STACK_TYPE_VARSELECTOR)
+				worklist_push(&worklist, nonnormal_map, *(es.addr.varp));
 		}
 	}
 #ifdef DEBUG_GC_VERBOSE

@@ -693,21 +693,16 @@ int c_seginfo(EngineState *s) {
 }
 
 int c_debuginfo(EngineState *s) {
-	ExecStack *eframe = NULL;
-
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	if (s->execution_stack && s->execution_stack_pos >= 0)
-		eframe = s->execution_stack + s->execution_stack_pos;
-
 	sciprintf("acc="PREG" prev="PREG" &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
 
-	if (eframe)
+	if (!s->_executionStack.empty() && s->execution_stack_pos >= 0) {
 		sciprintf("pc="PREG" obj="PREG" fp="PSTK" sp="PSTK"\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
-	else
+	} else
 		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
 
 	return 0;
@@ -1155,26 +1150,23 @@ int c_restart_game(EngineState *s) {
 }
 
 int c_stack(EngineState *s) {
-	int i;
-	ExecStack *xs;
-
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	if (s->execution_stack_pos >= 0)
-		xs = s->execution_stack + s->execution_stack_pos;
-	else {
+	if (s->execution_stack_pos < 0) {
 		sciprintf("No exec stack!");
 		return 1;
 	}
 
-	for (i = cmd_params[0].val ; i > 0; i--) {
-		if ((xs->sp - xs->fp - i) == 0)
+	ExecStack &xs = s->_executionStack[s->execution_stack_pos];
+
+	for (int i = cmd_params[0].val ; i > 0; i--) {
+		if ((xs.sp - xs.fp - i) == 0)
 			sciprintf("-- temp variables --\n");
-		if (xs->sp - i >= s->stack_base)
-			sciprintf(PSTK" = "PREG"\n", PRINT_STK(xs->sp - i), PRINT_REG(xs->sp[-i]));
+		if (xs.sp - i >= s->stack_base)
+			sciprintf(PSTK" = "PREG"\n", PRINT_STK(xs.sp - i), PRINT_REG(xs.sp[-i]));
 	}
 
 	return 0;
@@ -1547,58 +1539,58 @@ static int c_backtrace(EngineState *s) {
 
 	sciprintf("Call stack (current base: 0x%x):\n", s->execution_stack_base);
 	for (i = 0; i <= s->execution_stack_pos; i++) {
-		ExecStack *call = &(s->execution_stack[i]);
-		const char *objname = obj_get_name(s, call->sendp);
+		ExecStack &call = s->_executionStack[i];
+		const char *objname = obj_get_name(s, call.sendp);
 		int paramc, totalparamc;
 
-		switch (call->type) {
+		switch (call.type) {
 
 		case EXEC_STACK_TYPE_CALL: {// Normal function
-			sciprintf(" %x:[%x]  %s::%s(", i, call->origin, objname, (call->selector == -1) ? "<call[be]?>" :
-			          selector_name(s, call->selector));
+			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
+			          selector_name(s, call.selector));
 		}
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call->origin, s->_kernelNames[-(call->selector)-42].c_str());
+			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_kernelNames[-(call.selector)-42].c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
-			sciprintf(" %x:[%x] vs%s %s::%s (", i, call->origin, (call->argc) ? "write" : "read",
-			          objname, s->_selectorNames[call->selector].c_str());
+			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
+			          objname, s->_selectorNames[call.selector].c_str());
 			break;
 		}
 
-		totalparamc = call->argc;
+		totalparamc = call.argc;
 
 		if (totalparamc > 16)
 			totalparamc = 16;
 
 		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			sciprintf(PREG, PRINT_REG(call->variables_argp[paramc]));
+			sciprintf(PREG, PRINT_REG(call.variables_argp[paramc]));
 
-			if (paramc < call->argc)
+			if (paramc < call.argc)
 				sciprintf(", ");
 		}
 
-		if (call->argc > 16)
+		if (call.argc > 16)
 			sciprintf("...");
 
-		sciprintf(")\n    obj@"PREG, PRINT_REG(call->objp));
-		if (call->type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc="PREG, PRINT_REG(call->addr.pc));
-			if (call->sp == CALL_SP_CARRY)
+		sciprintf(")\n    obj@"PREG, PRINT_REG(call.objp));
+		if (call.type == EXEC_STACK_TYPE_CALL) {
+			sciprintf(" pc="PREG, PRINT_REG(call.addr.pc));
+			if (call.sp == CALL_SP_CARRY)
 				sciprintf(" sp,fp:carry");
 			else {
-				sciprintf(" sp="PSTK, PRINT_STK(call->sp));
-				sciprintf(" fp="PSTK, PRINT_STK(call->fp));
+				sciprintf(" sp="PSTK, PRINT_STK(call.sp));
+				sciprintf(" fp="PSTK, PRINT_STK(call.fp));
 			}
 		} else
 			sciprintf(" pc:none");
 
-		sciprintf(" argp:"PSTK, PRINT_STK(call->variables_argp));
-		if (call->type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", s->seg_manager->heap[call->addr.pc.segment]->data.script.nr);
+		sciprintf(" argp:"PSTK, PRINT_STK(call.variables_argp));
+		if (call.type == EXEC_STACK_TYPE_CALL)
+			sciprintf(" script: %d", s->seg_manager->heap[call.addr.pc.segment]->data.script.nr);
 		sciprintf("\n");
 	}
 
@@ -2153,7 +2145,7 @@ static int c_set_acc(EngineState *s) {
 static int c_send(EngineState *s) {
 	reg_t object = cmd_params[0].reg;
 	char *selector_name = cmd_params[1].str;
-	StackPtr stackframe = s->execution_stack->sp;
+	StackPtr stackframe = s->_executionStack[0].sp;
 	int selector_id;
 	unsigned int i;
 	ExecStack *xstack;
@@ -2187,8 +2179,8 @@ static int c_send(EngineState *s) {
 	for (i = 2; i < cmd_paramlength; i++)
 		stackframe[i] = cmd_params[i].reg;
 
-	xstack = add_exec_stack_entry(s, fptr, s->execution_stack->sp + cmd_paramlength, object, cmd_paramlength - 2,
-									s->execution_stack->sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
+	xstack = add_exec_stack_entry(s, fptr, s->_executionStack[0].sp + cmd_paramlength, object, cmd_paramlength - 2,
+									s->_executionStack[0].sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
 	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 
@@ -2198,7 +2190,7 @@ static int c_send(EngineState *s) {
 	xstack->sp += cmd_paramlength;
 	xstack->fp += cmd_paramlength;
 
-	s->execution_stack_pos_changed = 1;
+	s->_executionStackPosChanged = true;
 
 	return 0;
 }
@@ -2934,7 +2926,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return;
 				if ((op & 0x3) > 1)
 					return; // param or temp
-				if ((op & 0x3) && s->execution_stack[s->execution_stack_pos].local_segment > 0)
+				if ((op & 0x3) && s->_executionStack[s->execution_stack_pos].local_segment > 0)
 					return; // locals and not running in script.000
 				if (paramf1 != _debug_seek_special)
 					return; // CORRECT global?

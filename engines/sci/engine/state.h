@@ -209,15 +209,14 @@ public:
 
 	/* VM Information */
 
-	ExecStack *execution_stack; /**< The execution stack */
-	int execution_stack_size;      /**< Number of stack frames allocated */
+	Common::Array<ExecStack> _executionStack; /**< The execution stack */
 	int execution_stack_pos;       /**< Position on the execution stack */
 	/**
 	 * When called from kernel functions, the vm is re-started recursively on
 	 * the same stack. This variable contains the stack base for the current vm.
 	 */
 	int execution_stack_base;
-	int execution_stack_pos_changed;   /**< Set to 1 if the execution stack position should be re-evaluated by the vm */
+	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	reg_t r_acc; /**< Accumulator */
 	unsigned int r_amp_rest; /**< &rest register (only used for save games) */

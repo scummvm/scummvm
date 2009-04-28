@@ -297,14 +297,14 @@ static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
 	// Now check the TOS to execute all varselector entries
 	if (s->execution_stack_pos >= 0)
-		while (s->execution_stack[s->execution_stack_pos].type == EXEC_STACK_TYPE_VARSELECTOR) {
+		while (s->_executionStack[s->execution_stack_pos].type == EXEC_STACK_TYPE_VARSELECTOR) {
 			// varselector access?
-			if (s->execution_stack[s->execution_stack_pos].argc) { // write?
-				reg_t temp = s->execution_stack[s->execution_stack_pos].variables_argp[1];
-				*(s->execution_stack[s->execution_stack_pos].addr.varp) = temp;
+			if (s->_executionStack[s->execution_stack_pos].argc) { // write?
+				reg_t temp = s->_executionStack[s->execution_stack_pos].variables_argp[1];
+				*(s->_executionStack[s->execution_stack_pos].addr.varp) = temp;
 
 			} else // No, read
-				s->r_acc = *(s->execution_stack[s->execution_stack_pos].addr.varp);
+				s->r_acc = *(s->_executionStack[s->execution_stack_pos].addr.varp);
 
 			--(s->execution_stack_pos);
 		}
@@ -321,7 +321,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int selector;
 	int argc;
 	int origin = s->execution_stack_pos; // Origin: Used for debugging
-	ExecStack *retval = s->execution_stack + s->execution_stack_pos;
 	int print_send_action = 0;
 	// We return a pointer to the new active ExecStack
 
@@ -460,18 +459,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	while (!sendCalls.empty()) {
 		CallsStruct call = sendCalls.pop();
 		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			retval = add_exec_stack_varselector(s, work_obj, call.argc, call.argp,
+			add_exec_stack_varselector(s, work_obj, call.argc, call.argp,
 			                                    call.selector, call.address.var, origin);
 		else
-			retval = add_exec_stack_entry(s, call.address.func, call.sp, work_obj,
+			add_exec_stack_entry(s, call.address.func, call.sp, work_obj,
 			                         call.argc, call.argp,
 			                         call.selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
 	}
 
 	_exec_varselectors(s);
 
-	retval = s->execution_stack + s->execution_stack_pos;
-	return retval;
+	return &(s->_executionStack[s->execution_stack_pos]);
 }
 
 ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, reg_t *address, int origin) {
@@ -488,17 +486,14 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId locals_segment) {
 	// Returns new TOS element for the execution stack
 	// locals_segment may be -1 if derived from the called object
-	ExecStack *xstack = NULL;
 
-	if (!s->execution_stack)
-		s->execution_stack = (ExecStack *)sci_malloc(sizeof(ExecStack) * (s->execution_stack_size = 16));
+	++s->execution_stack_pos;
+	if (s->execution_stack_pos >= (int)s->_executionStack.size()) // Out of stack space?
+		s->_executionStack.resize(s->execution_stack_pos+1);
 
-	if (++(s->execution_stack_pos) == s->execution_stack_size) // Out of stack space?
-		s->execution_stack = (ExecStack*)sci_realloc(s->execution_stack, sizeof(ExecStack) * (s->execution_stack_size += 8));
+	//sciprintf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
 
-	//sciprintf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->execution_stack_size, origin, s->execution_stack);
-
-	xstack = s->execution_stack + s->execution_stack_pos;
+	ExecStack *xstack = &(s->_executionStack[s->execution_stack_pos]);
 
 	xstack->objp = objp;
 	if (locals_segment != SCI_XS_CALLEE_LOCALS)
@@ -596,7 +591,7 @@ void run_vm(EngineState *s, int restoring) {
 	int restadjust = s->r_amp_rest;
 	// &rest adjusts the parameter count by this value
 	// Current execution data:
-	ExecStack *xs = s->execution_stack + s->execution_stack_pos;
+	ExecStack *xs = &(s->_executionStack[s->execution_stack_pos]);
 	ExecStack *xs_new = NULL;
 	Object *obj = obj_get(s, xs->objp);
 	Script *local_script = script_locate_by_segment(s, xs->local_segment);
@@ -637,7 +632,7 @@ void run_vm(EngineState *s, int restoring) {
 
 
 
-	s->execution_stack_pos_changed = 1; // Force initialization
+	s->_executionStackPosChanged = true; // Force initialization
 
 	while (1) {
 		byte opcode;
@@ -649,10 +644,10 @@ void run_vm(EngineState *s, int restoring) {
 
 		old_pc_offset = xs->addr.pc.offset;
 
-		if (s->execution_stack_pos_changed) {
+		if (s->_executionStackPosChanged) {
 			Script *scr;
-			xs = s->execution_stack + s->execution_stack_pos;
-			s->execution_stack_pos_changed = 0;
+			xs = &(s->_executionStack[s->execution_stack_pos]);
+			s->_executionStackPosChanged = false;
 
 			scr = script_locate_by_segment(s, xs->addr.pc.segment);
 			if (!scr) {
@@ -1003,7 +998,7 @@ void run_vm(EngineState *s, int restoring) {
 			restadjust = 0; // Used up the &rest adjustment
 			xs->sp = call_base;
 
-			s->execution_stack_pos_changed = 1;
+			s->_executionStackPosChanged = true;
 			break;
 		}
 
@@ -1037,8 +1032,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Calculate xs again: The kernel function might
 				// have spawned a new VM
 
-				xs_new = s->execution_stack + s->execution_stack_pos;
-				s->execution_stack_pos_changed = 1;
+				xs_new = &(s->_executionStack[s->execution_stack_pos]);
+				s->_executionStackPosChanged = true;
 
 				if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
 					restadjust = s->r_amp_rest;
@@ -1055,7 +1050,7 @@ void run_vm(EngineState *s, int restoring) {
 			xs_new = execute_method(s, 0, opparams[0], s_temp, xs->objp, xs->sp[0].offset, xs->sp);
 			restadjust = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
-				s->execution_stack_pos_changed = 1;
+				s->_executionStackPosChanged = true;
 			break;
 
 		case 0x23: // calle
@@ -1068,21 +1063,21 @@ void run_vm(EngineState *s, int restoring) {
 			restadjust = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
-				s->execution_stack_pos_changed = 1;
+				s->_executionStackPosChanged = true;
 			break;
 
 		case 0x24: // ret
 			do {
 				StackPtr old_sp2 = xs->sp;
 				StackPtr old_fp = xs->fp;
-				ExecStack *old_xs = s->execution_stack + s->execution_stack_pos;
+				ExecStack *old_xs = &(s->_executionStack[s->execution_stack_pos]);
 
 				if (s->execution_stack_pos == s->execution_stack_base) { // Have we reached the base?
 					s->execution_stack_base = old_execution_stack_base; // Restore stack base
 
 					--(s->execution_stack_pos);
 
-					s->execution_stack_pos_changed = 1;
+					s->_executionStackPosChanged = true;
 					s->r_amp_rest = restadjust; // Update &rest
 					return; // "Hard" return
 				}
@@ -1098,8 +1093,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Not reached the base, so let's do a soft return
 				--(s->execution_stack_pos);
 				xs = old_xs - 1;
-				s->execution_stack_pos_changed = 1;
-				xs = s->execution_stack + s->execution_stack_pos;
+				s->_executionStackPosChanged = true;
+				xs = &(s->_executionStack[s->execution_stack_pos]);
 
 				if (xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
 				        || xs->type != EXEC_STACK_TYPE_CALL) {
@@ -1109,7 +1104,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			} while (xs->type == EXEC_STACK_TYPE_VARSELECTOR);
 			// Iterate over all varselector accesses
-			s->execution_stack_pos_changed = 1;
+			s->_executionStackPosChanged = true;
 			xs_new = xs;
 
 			break;
@@ -1122,7 +1117,7 @@ void run_vm(EngineState *s, int restoring) {
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
 
 			if (xs_new && xs_new != xs)
-				s->execution_stack_pos_changed = 1;
+				s->_executionStackPosChanged = true;
 
 			restadjust = 0;
 
@@ -1140,7 +1135,7 @@ void run_vm(EngineState *s, int restoring) {
 			xs_new = send_selector(s, xs->objp, xs->objp, s_temp, (int)(opparams[0] >> 1) + (uint16)restadjust, xs->sp);
 
 			if (xs_new && xs_new != xs)
-				s->execution_stack_pos_changed = 1;
+				s->_executionStackPosChanged = true;
 
 			restadjust = 0;
 			break;
@@ -1158,7 +1153,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = send_selector(s, r_temp, xs->objp, s_temp, (int)(opparams[1] >> 1) + (uint16)restadjust, xs->sp);
 
 				if (xs_new && xs_new != xs)
-					s->execution_stack_pos_changed = 1;
+					s->_executionStackPosChanged = true;
 
 				restadjust = 0;
 			}
@@ -1457,12 +1452,12 @@ void run_vm(EngineState *s, int restoring) {
 
 		} // switch(opcode >> 1)
 
-		if (s->execution_stack_pos_changed) // Force initialization
+		if (s->_executionStackPosChanged) // Force initialization
 			xs = xs_new;
 
 #ifndef DISABLE_VALIDATIONS
-		if (xs != s->execution_stack + s->execution_stack_pos) {
-			sciprintf("Error: xs is stale (%d vs %d); last command was %02x\n", (int)(xs - s->execution_stack), s->execution_stack_pos, opnumber);
+		if (xs != &(s->_executionStack[s->execution_stack_pos])) {
+			sciprintf("Error: xs is stale (%d vs %d); last command was %02x\n", (int)(xs - &s->_executionStack[0]), s->execution_stack_pos, opnumber);
 		}
 #endif
 		if (script_error_flag) {
@@ -2018,14 +2013,13 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
 	do {
-		s->execution_stack_pos_changed = 0;
+		s->_executionStackPosChanged = false;
 		run_vm(s, (successor || restoring) ? 1 : 0);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
 			successor = NULL;
-			free(s->execution_stack);
-			s->execution_stack = NULL;
+			s->_executionStack.clear();
 			s->execution_stack_pos = -1;
-			s->execution_stack_pos_changed = 0;
+			s->_executionStackPosChanged = false;
 
 			game_exit(s);
 			script_free_engine(s);
