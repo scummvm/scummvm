@@ -42,33 +42,24 @@ void gfxr_free_font(gfx_bitmap_font_t *font) {
 	free(font);
 }
 
-text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width,
+bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap_font_t *font, int max_width,
 	const char *text, int *width, int *height,
-	int *lines, int *line_height_p, int *last_offset_p, int flags) {
+	int *line_height_p, int *last_offset_p, int flags) {
 
-	int est_char_width = font->widths[(font->chars_nr > 'M')? 'M' : font->chars_nr - 1];
-	// 'M' is typically among the widest chars
-	int fragments_nr;
-	text_fragment_t *fragments;
 	int lineheight = font->line_height;
 	int maxheight = lineheight;
 	int last_breakpoint = 0;
 	int last_break_width = 0;
 	int max_allowed_width = max_width;
 	int maxwidth = 0, localmaxwidth = 0;
-	int current_fragment = 1;
 	const char *breakpoint_ptr = NULL;
 	unsigned char foo;
 
 	if (line_height_p)
 		*line_height_p = lineheight;
 
-	if (max_width > 1) fragments_nr = 3 + (strlen(text) * est_char_width) * 3 / (max_width << 1);
-	else fragments_nr = 1;
 
-	fragments = (text_fragment_t *)sci_calloc(sizeof(text_fragment_t), fragments_nr);
-
-	fragments[0].offset = text;
+	fragments.push_back(TextFragment(text));
 
 	while ((foo = *text++)) {
 		if (foo >= font->chars_nr) {
@@ -77,13 +68,12 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 			if (font->chars_nr > ' ')
 				foo = ' ';
 			else {
-				free(fragments);
-				return NULL;
+				return false;
 			}
 		}
 
 		if (((foo == '\n') || (foo == 0x0d)) && !(flags & kFontNoNewlines)) {
-			fragments[current_fragment-1].length = text - 1 - fragments[current_fragment-1].offset;
+			fragments.back().length = text - 1 - fragments.back().offset;
 
 			if (*text)
 				maxheight += lineheight;
@@ -91,13 +81,10 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 			if (foo == 0x0d && *text == '\n')
 				text++; // Interpret DOS-style CR LF as single NL
 
-			fragments[current_fragment++].offset = text;
+			fragments.push_back(TextFragment(text));
 
 			if (localmaxwidth > maxwidth)
 				maxwidth = localmaxwidth;
-
-			if (current_fragment == fragments_nr)
-				fragments = (text_fragment_t*)sci_realloc(fragments, sizeof(text_fragment_t) * (fragments_nr <<= 1));
 
 			localmaxwidth = 0;
 
@@ -126,11 +113,8 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 				if (last_breakpoint > maxwidth)
 					maxwidth = last_breakpoint;
 
-				fragments[current_fragment-1].length = text - blank_break - fragments[current_fragment-1].offset;
-				fragments[current_fragment++].offset = text;
-
-				if (current_fragment == fragments_nr)
-					fragments = (text_fragment_t*)sci_realloc(fragments, sizeof(text_fragment_t *) * (fragments_nr <<= 1));
+				fragments.back().length = text - blank_break - fragments.back().offset;
+				fragments.push_back(TextFragment(text));
 
 				localmaxwidth = localmaxwidth - last_breakpoint;
 				if (!(flags & kFontCountWhitespace))
@@ -156,12 +140,10 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 
 	if (height)
 		*height = maxheight;
-	if (lines)
-		*lines = current_fragment;
 
-	fragments[current_fragment-1].length = text - fragments[current_fragment-1].offset - 1;
+	fragments.back().length = text - fragments.back().offset - 1;
 
-	return fragments;
+	return true;
 }
 
 static void render_char(byte *dest, byte *src, int width, int line_width, int lines, int bytes_per_src_line, int fg0, int fg1, int bg) {

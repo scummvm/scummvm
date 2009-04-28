@@ -31,9 +31,12 @@
 
 namespace Sci {
 
-struct text_fragment_t {
+struct TextFragment {
 	const char *offset;
 	int length;
+
+	TextFragment() : offset(0), length(0) {}
+	TextFragment(const char *o) : offset(o), length(0) {}
 };
 
 
@@ -86,8 +89,9 @@ void gfxr_free_font(gfx_bitmap_font_t *font);
 ** Returns   : (void)
 */
 
-text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width, const char *text,
-	int *width, int *height, int *lines, int *line_height, int *last_offset, int flags);
+bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments,
+    gfx_bitmap_font_t *font, int max_width, const char *text,
+	int *width, int *height, int *line_height, int *last_offset, int flags);
 /* Calculates the size that would be occupied by drawing a specified text
 ** Parameters: (gfx_bitmap_font_t *) font: The font to calculate with
 **             (int) max_width: Maximum pixel width allowed for the output
@@ -98,7 +102,6 @@ text_fragment_t *gfxr_font_calculate_size(gfx_bitmap_font_t *font, int max_width
 **                               segment
 **             (int) *width: The resulting width
 **             (int) *height: The resulting height
-**             (int) *lines: Number of lines used
 **             (int) *line_height: Pixel height of a single line of text
 **             (int) *last_offset: Pixel offset after the last drawn line
 ** This function assumes 320x200 mode.

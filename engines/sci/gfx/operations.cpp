@@ -1875,7 +1875,8 @@ int gfxop_get_font_height(GfxState *state, int font_nr) {
 
 int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int maxwidth, int *width, int *height, int text_flags,
 						  int *lines_nr, int *lineheight, int *lastline_width) {
-	text_fragment_t *textsplits;
+	Common::Array<TextFragment> fragments;
+	bool textsplits;
 	gfx_bitmap_font_t *font;
 
 	BASIC_CHECKS(GFX_FATAL);
@@ -1889,10 +1890,10 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 	}
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	textsplits = gfxr_font_calculate_size(font, maxwidth, text, width, height, lines_nr, lineheight, lastline_width,
+	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width,
 	                                      (state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) | text_flags);
 #else
-	textsplits = gfxr_font_calculate_size(font, maxwidth, text, width, height, lines_nr, lineheight, lastline_width, text_flags);
+	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width, text_flags);
 #endif
 
 	if (!textsplits) {
@@ -1901,7 +1902,8 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 		return GFX_ERROR;
 	}
 
-	free(textsplits);
+	if (lines_nr)
+		*lines_nr = fragments.size();
 
 	return GFX_OK;
 }
@@ -1910,7 +1912,7 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 								  gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2, gfx_color_t bg_color, int flags) {
 	TextHandle *handle;
 	gfx_bitmap_font_t *font;
-	int i, err = 0;
+	int err = 0;
 	BASIC_CHECKS(NULL);
 
 	// mapping text colors to palette
@@ -1936,29 +1938,30 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 	handle->valign = valign;
 	handle->line_height = font->line_height;
 
+	bool result;
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height), &(handle->lines_nr),
+	result = gfxr_font_calculate_size(handle->lines, font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height),
 	                             NULL, NULL, ((state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) ?
 	                              kFontCountWhitespace : 0) | flags);
 #else
-	handle->lines = gfxr_font_calculate_size(font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height), &(handle->lines_nr),
+	result = gfxr_font_calculate_size(handle->lines, font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height),
 	                             NULL, NULL, flags);
 #endif
 
-	if (!handle->lines) {
+	if (!result) {
 		GFXERROR("Could not calculate text parameters in font #%d\n", font_nr);
 		delete handle;
 		return NULL;
 	}
 
 	if (flags & kFontNoNewlines) {
-		handle->lines_nr = 1;
-		handle->lines->length = text.size();
+		handle->lines.resize(1);
+		handle->lines[0].length = text.size();
 	}
 
-	handle->text_pixmaps = (gfx_pixmap_t **)calloc(sizeof(gfx_pixmap_t *), handle->lines_nr);
+	handle->text_pixmaps.resize(handle->lines.size());
 
-	for (i = 0; i < handle->lines_nr; i++) {
+	for (uint i = 0; i < handle->lines.size(); i++) {
 		int chars_nr = handle->lines[i].length;
 
 		handle->text_pixmaps[i] = gfxr_draw_font(font, handle->lines[i].offset, chars_nr,
@@ -1967,7 +1970,7 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 		                          (bg_color.mask & GFX_MASK_VISUAL) ? &bg_color.visual : NULL);
 
 		if (!handle->text_pixmaps[i]) {
-			GFXERROR("Failed to draw text pixmap for line %d/%d\n", i, handle->lines_nr);
+			GFXERROR("Failed to draw text pixmap for line %d/%d\n", i, handle->lines.size());
 			delete handle;
 			return NULL;
 		}
@@ -1990,11 +1993,8 @@ int gfxop_free_text(GfxState *state, TextHandle *handle) {
 }
 
 TextHandle::TextHandle() {
-	lines_nr = 0;
 	line_height = 0;
-	lines = 0;
 	font = 0;
-	text_pixmaps = 0;
 
 	width = height = 0;
 
@@ -2003,20 +2003,14 @@ TextHandle::TextHandle() {
 }
 
 TextHandle::~TextHandle() {
-	if (text_pixmaps) {
-		for (int j = 0; j < lines_nr; j++)
-			if (text_pixmaps[j])
-				gfx_free_pixmap(text_pixmaps[j]);
-		free(text_pixmaps);
-	}
-
-	free(lines);
+	for (uint j = 0; j < text_pixmaps.size(); j++)
+		if (text_pixmaps[j])
+			gfx_free_pixmap(text_pixmaps[j]);
 }
 
 int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 	int line_height;
 	rect_t pos;
-	int i;
 	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
@@ -2025,7 +2019,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 		return GFX_ERROR;
 	}
 
-	if (!handle->lines_nr) {
+	if (handle->lines.empty()) {
 		GFXDEBUG("Skipping draw_text operation because number of lines is zero\n");
 		return GFX_OK;
 	}
@@ -2042,11 +2036,11 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 		break;
 
 	case ALIGN_CENTER:
-		pos.y += (zone.height - (line_height * handle->lines_nr)) >> 1;
+		pos.y += (zone.height - (line_height * handle->lines.size())) >> 1;
 		break;
 
 	case ALIGN_BOTTOM:
-		pos.y += (zone.height - (line_height * handle->lines_nr));
+		pos.y += (zone.height - (line_height * handle->lines.size()));
 		break;
 
 	default:
@@ -2054,7 +2048,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 		return GFX_FATAL; // Internal error...
 	}
 
-	for (i = 0; i < handle->lines_nr; i++) {
+	for (uint i = 0; i < handle->lines.size(); i++) {
 
 		gfx_pixmap_t *pxm = handle->text_pixmaps[i];
 
@@ -2067,7 +2061,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 			gfxr_endianness_adjust(pxm, state->driver->mode); // FIXME: resmgr layer!
 		}
 		if (!pxm) {
-			GFXERROR("Could not find text pixmap %d/%d\n", i, handle->lines_nr);
+			GFXERROR("Could not find text pixmap %d/%d\n", i, handle->lines.size());
 			return GFX_ERROR;
 		}
 

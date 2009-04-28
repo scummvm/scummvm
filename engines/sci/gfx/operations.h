@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-struct text_fragment_t;
+struct TextFragment;
 
 #define GFXOP_NO_POINTER -1
 
@@ -50,11 +50,10 @@ struct text_fragment_t;
 struct TextHandle {
 	Common::String _text; /**< Copy of the actual text */
 
-	int lines_nr;
 	int line_height;
-	text_fragment_t *lines; /**< Text offsets */
+	Common::Array<TextFragment> lines; /**< Text offsets */
 	gfx_bitmap_font_t *font;
-	gfx_pixmap_t **text_pixmaps;
+	Common::Array<gfx_pixmap_t *> text_pixmaps;
 
 	int width, height;
 
