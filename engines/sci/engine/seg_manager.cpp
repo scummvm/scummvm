@@ -363,7 +363,7 @@ int SegManager::deallocateScript(int script_nr) {
 }
 
 MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType type) {
-	MemObject *mem = (MemObject *)sci_calloc(sizeof(MemObject), 1);
+	MemObject *mem = (MemObject *)sci_calloc(1, sizeof(MemObject));
 	if (!mem) {
 		sciprintf("SegManager: invalid mem_obj ");
 		return NULL;
@@ -1283,96 +1283,46 @@ Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) 
 }
 
 
-void init_List_table(ListTable *table) {
-	table->entries_nr = 8;
-	table->max_entry = 0;
-	table->entries_used = 0;
-	table->first_free = HEAPENTRY_INVALID;
-	table->table = (ListEntry *)sci_malloc(sizeof(ListEntry) * 8);
-	memset(table->table, 0, sizeof(ListEntry) * 8);
-}
-
 void free_List_entry(ListTable *table, int index) {
-	ListEntry *e = table->table + index;
-
 	if (index < 0 || index >= table->max_entry) {
 		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
-	e->next_free = table->first_free;
+	table->table[index].next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
-}
-
-
-
-void init_Node_table(NodeTable *table) {
-	table->entries_nr = 32;
-	table->max_entry = 0;
-	table->entries_used = 0;
-	table->first_free = HEAPENTRY_INVALID;
-	table->table = (NodeEntry *)sci_malloc(sizeof(NodeEntry) * 32);
-	memset(table->table, 0, sizeof(NodeEntry) * 32);
 }
 
 void free_Node_entry(NodeTable *table, int index) {
-	NodeEntry *e = table->table + index;
-
 	if (index < 0 || index >= table->max_entry) {
 		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
-	e->next_free = table->first_free;
+	table->table[index].next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
-}
-
-
-
-void init_Clone_table(CloneTable *table) {
-	table->entries_nr = 16;
-	table->max_entry = 0;
-	table->entries_used = 0;
-	table->first_free = HEAPENTRY_INVALID;
-	table->table = (CloneEntry *)sci_malloc(sizeof(CloneEntry) * 16);
-	memset(table->table, 0, sizeof(CloneEntry) * 16);
 }
 
 void free_Clone_entry(CloneTable *table, int index) {
-	CloneEntry *e = table->table + index;
-
 	if (index < 0 || index >= table->max_entry) {
 		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
-	free(e->entry.variables); // Free the dynamically allocated memory part
+	free(table->table[index].variables); // Free the dynamically allocated memory part
 
-	e->next_free = table->first_free;
+	table->table[index].next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
 }
 
-
-
-void init_Hunk_table(HunkTable *table) {
-	table->entries_nr = 4;
-	table->max_entry = 0;
-	table->entries_used = 0;
-	table->first_free = HEAPENTRY_INVALID;
-	table->table = (HunkEntry *)sci_malloc(sizeof(HunkEntry) * 4);
-	memset(table->table, 0, sizeof(HunkEntry) * 4);
-}
-
 void free_Hunk_entry(HunkTable *table, int index) {
-	HunkEntry *e = table->table + index;
-
 	if (index < 0 || index >= table->max_entry) {
 		error("heapmgr: Attempt to release invalid table index %d", index);
 	}
 
-	free(e->entry.mem);
+	free(table->table[index].mem);
 
-	e->next_free = table->first_free;
+	table->table[index].next_free = table->first_free;
 	table->first_free = index;
 	table->entries_used--;
 }
@@ -1386,7 +1336,7 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 
 	if (!Clones_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
-		init_Clone_table(&(mobj->data.clones));
+		mobj->data.clones.initTable();
 	} else
 		mobj = heap[Clones_seg_id];
 
@@ -1394,7 +1344,7 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Clones_seg_id, offset);
-	return &(mobj->data.clones.table[offset].entry);
+	return &(mobj->data.clones.table[offset]);
 }
 
 List *SegManager::alloc_List(reg_t *addr) {
@@ -1404,7 +1354,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 
 	if (!Lists_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
-		init_List_table(&(mobj->data.lists));
+		mobj->data.lists.initTable();
 	} else
 		mobj = heap[Lists_seg_id];
 
@@ -1412,7 +1362,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Lists_seg_id, offset);
-	return &(mobj->data.lists.table[offset].entry);
+	return &(mobj->data.lists.table[offset]);
 }
 
 Node *SegManager::alloc_Node(reg_t *addr) {
@@ -1422,7 +1372,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 
 	if (!Nodes_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
-		init_Node_table(&(mobj->data.nodes));
+		mobj->data.nodes.initTable();
 	} else
 		mobj = heap[Nodes_seg_id];
 
@@ -1430,7 +1380,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
-	return &(mobj->data.nodes.table[offset].entry);
+	return &(mobj->data.nodes.table[offset]);
 }
 
 Hunk *SegManager::alloc_Hunk(reg_t *addr) {
@@ -1440,7 +1390,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 
 	if (!Hunks_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
-		init_Hunk_table(&(mobj->data.hunks));
+		mobj->data.hunks.initTable();
 	} else
 		mobj = heap[Hunks_seg_id];
 
@@ -1448,7 +1398,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Hunks_seg_id, offset);
-	return &(mobj->data.hunks.table[offset].entry);
+	return &(mobj->data.hunks.table[offset]);
 }
 
 
@@ -1696,7 +1646,7 @@ void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 		return;
 	}
 
-	clone = &(clone_table->table[addr.offset].entry);
+	clone = &(clone_table->table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (i = 0; i < clone->variables_nr; i++)
@@ -1712,7 +1662,7 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 
 	assert(addr.segment == _segId);
 
-	victim_obj = &(_mobj->data.clones.table[addr.offset].entry);
+	victim_obj = &(_mobj->data.clones.table[addr.offset]);
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
@@ -1826,7 +1776,7 @@ void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
 
 void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	ListTable *table = &(_mobj->data.lists);
-	List *list = &(table->table[addr.offset].entry);
+	List *list = &(table->table[addr.offset]);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
 		fprintf(stderr, "Invalid list referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
@@ -1860,7 +1810,7 @@ void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
 
 void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	NodeTable *table = &(_mobj->data.nodes);
-	Node *node = &(table->table[addr.offset].entry);
+	Node *node = &(table->table[addr.offset]);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
 		fprintf(stderr, "Invalid node referenced for outgoing references: "PREG"\n", PRINT_REG(addr));

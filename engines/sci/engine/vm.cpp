@@ -2089,7 +2089,7 @@ Object *obj_get(EngineState *s, reg_t offset) {
 
 	if (memobj != NULL) {
 		if (memobj->type == MEM_OBJ_CLONES && ENTRY_IS_VALID(&memobj->data.clones, offset.offset))
-			obj = &(memobj->data.clones.table[offset.offset].entry);
+			obj = &(memobj->data.clones.table[offset.offset]);
 		else if (memobj->type == MEM_OBJ_SCRIPT) {
 			if (offset.offset <= memobj->data.script.buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(memobj->data.script.buf + offset.offset)) {

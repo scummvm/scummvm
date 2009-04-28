@@ -259,12 +259,24 @@ struct Hunk {
 
 template<typename T, int INITIAL, int INCREMENT>
 struct Table {
+	struct Entry : public T {
+		int next_free; /* Only used for free entries */
+	};
+
 	int entries_nr; /* Number of entries allocated */
 	int first_free; /* Beginning of a singly linked list for entries */
 	int entries_used; /* Statistical information */
 	int max_entry; /* Highest entry used */
 
-	T *table;
+	Entry *table;
+
+	void initTable() {
+		entries_nr = INITIAL;
+		max_entry = 0;
+		entries_used = 0;
+		first_free = HEAPENTRY_INVALID;
+		table = (Entry *)calloc(INITIAL, sizeof(Entry));
+	}
 
 	int	allocEntry() {
 		entries_used++;
@@ -278,9 +290,8 @@ struct Table {
 			if (max_entry == entries_nr) {
 				entries_nr += INCREMENT;
 
-				table = (T *)sci_realloc(table,
-							   sizeof(T) * entries_nr);
-				memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(T));
+				table = (Entry *)sci_realloc(table,  sizeof(Entry) * entries_nr);
+				memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(Entry));
 			}
 			table[max_entry].next_free = max_entry; /* Tag as 'valid' */
 			return max_entry++;
@@ -289,46 +300,22 @@ struct Table {
 };
 
 /* CloneTable */
-struct CloneEntry {
-	int next_free; /* Only used for free entries */
-	Clone entry;
-};
-typedef Table<CloneEntry, 16, 4> CloneTable;
-void init_Clone_table(CloneTable *table);
-int alloc_Clone_entry(CloneTable *table);
+typedef Table<Clone, 16, 4> CloneTable;
 void free_Clone_entry(CloneTable *table, int index);
 
 
 /* NodeTable */
-struct NodeEntry {
-	int next_free; /* Only used for free entries */
-	Node entry;
-};
-typedef Table<NodeEntry, 32, 16> NodeTable;
-void init_Node_table(NodeTable *table);
-int alloc_Node_entry(NodeTable *table);
+typedef Table<Node, 32, 16> NodeTable;
 void free_Node_entry(NodeTable *table, int index);
 
 
 /* ListTable */
-struct ListEntry {
-	int next_free; /* Only used for free entries */
-	List entry;
-};
-typedef Table<ListEntry, 8, 4> ListTable;
-void init_List_table(ListTable *table);
-int alloc_List_entry(ListTable *table);
+typedef Table<List, 8, 4> ListTable;
 void free_List_entry(ListTable *table, int index);
 
 
 /* HunkTable */
-struct HunkEntry {
-	int next_free; /* Only used for free entries */
-	Hunk entry;
-};
-typedef Table<HunkEntry, 4, 4> HunkTable;
-void init_Hunk_table(HunkTable *table);
-int alloc_Hunk_entry(HunkTable *table);
+typedef Table<Hunk, 4, 4> HunkTable;
 void free_Hunk_entry(HunkTable *table, int index);
 
 

@@ -288,16 +288,7 @@ static void sync_Object(Common::Serializer &s, Object &obj) {
 }
 
 static void sync_Clone(Common::Serializer &s, Clone &obj) {
-	s.syncAsSint32LE(obj.flags);
-	sync_reg_t(s, obj.pos);
-	s.syncAsSint32LE(obj.variables_nr);
-	s.syncAsSint32LE(obj.variable_names_nr);
-	s.syncAsSint32LE(obj.methods_nr);
-
-	if (!obj.variables && obj.variables_nr)
-		obj.variables = (reg_t *)sci_calloc(obj.variables_nr, sizeof(reg_t));
-	for (int i = 0; i < obj.variables_nr; ++i)
-		sync_reg_t(s, obj.variables[i]);
+	sync_Object(s, obj);
 }
 
 static void sync_List(Common::Serializer &s, List &obj) {
@@ -312,9 +303,9 @@ static void sync_Node(Common::Serializer &s, Node &obj) {
 	sync_reg_t(s, obj.value);
 }
 
-static void sync_CloneEntry(Common::Serializer &s, CloneEntry &obj) {
+static void sync_CloneEntry(Common::Serializer &s, CloneTable::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
-	sync_Clone(s, obj.entry);
+	sync_Clone(s, obj);
 }
 
 static void sync_CloneTable(Common::Serializer &s, CloneTable &obj) {
@@ -324,14 +315,14 @@ static void sync_CloneTable(Common::Serializer &s, CloneTable &obj) {
 	s.syncAsSint32LE(obj.max_entry);
 
 	if (!obj.table && obj.entries_nr)
-		obj.table = (CloneEntry *)sci_calloc(obj.entries_nr, sizeof(CloneEntry));
+		obj.table = (CloneTable::Entry *)sci_calloc(obj.entries_nr, sizeof(CloneTable::Entry));
 	for (int i = 0; i < obj.entries_nr; ++i)
 		sync_CloneEntry(s, obj.table[i]);
 }
 
-static void sync_ListEntry(Common::Serializer &s, ListEntry &obj) {
+static void sync_ListEntry(Common::Serializer &s, ListTable::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
-	sync_List(s, obj.entry);
+	sync_List(s, obj);
 }
 
 static void sync_ListTable(Common::Serializer &s, ListTable &obj) {
@@ -341,14 +332,14 @@ static void sync_ListTable(Common::Serializer &s, ListTable &obj) {
 	s.syncAsSint32LE(obj.max_entry);
 
 	if (!obj.table && obj.entries_nr)
-		obj.table = (ListEntry *)sci_calloc(obj.entries_nr, sizeof(ListEntry));
+		obj.table = (ListTable::Entry *)sci_calloc(obj.entries_nr, sizeof(ListTable::Entry));
 	for (int i = 0; i < obj.entries_nr; ++i)
 		sync_ListEntry(s, obj.table[i]);
 }
 
-static void sync_NodeEntry(Common::Serializer &s, NodeEntry &obj) {
+static void sync_NodeEntry(Common::Serializer &s, NodeTable::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
-	sync_Node(s, obj.entry);
+	sync_Node(s, obj);
 }
 
 static void sync_NodeTable(Common::Serializer &s, NodeTable &obj) {
@@ -358,7 +349,7 @@ static void sync_NodeTable(Common::Serializer &s, NodeTable &obj) {
 	s.syncAsSint32LE(obj.max_entry);
 
 	if (!obj.table && obj.entries_nr)
-		obj.table = (NodeEntry *)sci_calloc(obj.entries_nr, sizeof(NodeEntry));
+		obj.table = (NodeTable::Entry *)sci_calloc(obj.entries_nr, sizeof(NodeTable::Entry));
 	for (int i = 0; i < obj.entries_nr; ++i)
 		sync_NodeEntry(s, obj.table[i]);
 }
@@ -486,7 +477,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 		break;
 	case MEM_OBJ_HUNK:
 		if (s.isLoading()) {
-			init_Hunk_table(&obj->data.hunks);
+			obj->data.hunks.initTable();
 		}
 		break;
 	case MEM_OBJ_STRING_FRAG:
@@ -501,7 +492,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 		sync_DynMem(s, obj->data.dynmem);
 		break;
 	default:
-		error("Unknown MemObject type %d\n", obj->type);
+		error("Unknown MemObject type %d", obj->type);
 		break;
 	}
 }
@@ -590,7 +581,7 @@ static void reconstruct_stack(EngineState *retval) {
 static int clone_entry_used(CloneTable *table, int n) {
 	int backup;
 	int seeker = table->first_free;
-	CloneEntry *entries = table->table;
+	CloneTable::Entry *entries = table->table;
 
 	if (seeker == HEAPENTRY_INVALID) return 1;
 
@@ -715,7 +706,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 			switch (mobj->type) {
 			case MEM_OBJ_CLONES: {
 				int j;
-				CloneEntry *seeker = mobj->data.clones.table;
+				CloneTable::Entry *seeker = mobj->data.clones.table;
 
 				/*
 				sciprintf("Free list: ");
@@ -726,7 +717,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 
 				sciprintf("Entries w/zero vars: ");
 				for (j = 0; j < mobj->data.clones.max_entry; j++) {
-					if (mobj->data.clones.table[j].entry.variables == NULL)
+					if (mobj->data.clones.table[j].variables == NULL)
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
@@ -739,17 +730,17 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 						seeker++;
 						continue;
 					}
-					base_obj = obj_get(s, seeker->entry.variables[SCRIPT_SPECIES_SELECTOR]);
+					base_obj = obj_get(s, seeker->variables[SCRIPT_SPECIES_SELECTOR]);
 					if (!base_obj) {
 						sciprintf("Clone entry without a base class: %d\n", j);
-						seeker->entry.base = seeker->entry.base_obj = NULL;
-						seeker->entry.base_vars = seeker->entry.base_method = NULL;
+						seeker->base = seeker->base_obj = NULL;
+						seeker->base_vars = seeker->base_method = NULL;
 						continue;
 					}
-					seeker->entry.base = base_obj->base;
-					seeker->entry.base_obj = base_obj->base_obj;
-					seeker->entry.base_vars = base_obj->base_vars;
-					seeker->entry.base_method = base_obj->base_method;
+					seeker->base = base_obj->base;
+					seeker->base_obj = base_obj->base_obj;
+					seeker->base_vars = base_obj->base_vars;
+					seeker->base_method = base_obj->base_method;
 
 					seeker++;
 				}

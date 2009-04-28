@@ -366,7 +366,7 @@ static void print_list(EngineState *s, List *l) {
 			return;
 		}
 
-		node = &(mobj->data.nodes.table[pos.offset].entry);
+		node = &(mobj->data.nodes.table[pos.offset]);
 
 		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -446,7 +446,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		for (i = 0; i < ct->max_entry; i++)
 			if (ENTRY_IS_VALID(ct, i)) {
 				sciprintf("  [%04x] ", i);
-				print_obj_head(s, &(ct->table[i].entry));
+				print_obj_head(s, &(ct->table[i]));
 			}
 	}
 	break;
@@ -459,7 +459,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		for (i = 0; i < lt->max_entry; i++)
 			if (ENTRY_IS_VALID(lt, i)) {
 				sciprintf("  [%04x]: ", i);
-				print_list(s, &(lt->table[i].entry));
+				print_list(s, &(lt->table[i]));
 			}
 	}
 	break;
@@ -477,7 +477,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		for (i = 0; i < ht->max_entry; i++)
 			if (ENTRY_IS_VALID(ht, i)) {
 				sciprintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->table[i].entry.size, ht->table[i].entry.mem, ht->table[i].entry.type);
+				          i, ht->table[i].size, ht->table[i].mem, ht->table[i].type);
 			}
 	}
 
@@ -512,7 +512,7 @@ static int show_node(EngineState *s, reg_t addr) {
 			return 1;
 		}
 
-		list = &(lt->table[addr.offset].entry);
+		list = &(lt->table[addr.offset]);
 
 		sciprintf(PREG" : first x last = ("PREG", "PREG")\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
@@ -531,7 +531,7 @@ static int show_node(EngineState *s, reg_t addr) {
 			sciprintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->table[addr.offset].entry);
+		node = &(nt->table[addr.offset]);
 
 		sciprintf(PREG" : prev x next = ("PREG", "PREG"); maps "PREG" -> "PREG"\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));

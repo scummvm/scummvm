@@ -53,7 +53,7 @@ Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 		return NULL;
 	}
 
-	return &(nt->table[addr.offset].entry);
+	return &(nt->table[addr.offset]);
 }
 
 List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
@@ -73,7 +73,7 @@ List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
 		return NULL;
 	}
 
-	return &(lt->table[addr.offset].entry);
+	return &(lt->table[addr.offset]);
 }
 
 #ifdef DISABLE_VALIDATIONS

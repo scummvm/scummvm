@@ -328,7 +328,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 					obj = mobj->data.script.objects + idx;
 					objpos.offset = obj->pos.offset;
 				} else if (mobj->type == MEM_OBJ_CLONES) {
-					obj = &(mobj->data.clones.table[idx].entry);
+					obj = &(mobj->data.clones.table[idx]);
 					objpos.offset = idx;
 					valid = clone_is_used(&mobj->data.clones, idx);
 				}
