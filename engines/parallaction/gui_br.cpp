@@ -366,6 +366,12 @@ public:
 		_cellH = _menuRect.height() / 2;
 	}
 
+	~IngameMenuInputState_BR() {
+		delete _menuObj;
+		delete _mscMenuObj;
+		delete _sfxMenuObj;
+	}
+
 	MenuInputState *run() {
 		if (_vm->_input->getLastButtonEvent() != kMouseLeftUp) {
 			return this;
@@ -412,7 +418,7 @@ public:
 			break;
 
 		case 5:	// quit
-			_vm->quitGame();
+			return _helper->getState("quitdialog");
 		}
 
 		return 0;
@@ -433,10 +439,86 @@ public:
 	}
 };
 
+class QuitDialogInputState_BR : public MenuInputState {
+	Parallaction_br *_vm;
+	Font *_font;
+	int _x, _y;
+	GfxObj *_obj;
+
+public:
+	QuitDialogInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("quitdialog", helper), _vm(vm) {
+		_font = _vm->_dialogueFont;
+
+		const char *question = "Do you really want to quit ?";
+		const char *option = "Yes No";
+
+		int questionW = _font->getStringWidth(question);
+		int optionW = _font->getStringWidth(option);
+		int w = MAX(questionW, optionW) + 30;
+
+		_x = (640 - w) / 2;
+		_y = 90;
+
+		Graphics::Surface *surf = new Graphics::Surface;
+		surf->create(w, 110, 1);
+		surf->fillRect(Common::Rect(0, 0, w, 110), 12);
+		surf->fillRect(Common::Rect(10, 10, w-10, 100), 15);
+
+		_font->setColor(0);
+		int x = (w - questionW)/2;
+		int y = 13;
+		_font->drawString((byte*)surf->getBasePtr(x, y), surf->pitch, question);
+		x = (w - optionW)/2;
+		y = 13 + _font->height()*2;
+		_font->drawString((byte*)surf->getBasePtr(x,y), surf->pitch, option);
+
+		_obj = new GfxObj(kGfxObjTypeMenu, new SurfaceToFrames(surf), "quitdialog");
+		assert(_obj);
+	}
+
+	~QuitDialogInputState_BR() {
+		delete _obj;
+	}
+
+	MenuInputState *run() {
+		uint16 key;
+		bool e = _vm->_input->getLastKeyDown(key);
+		if (!e) {
+			return this;
+		}
+
+		if (key == 'y' || key == 'Y') {
+			_vm->quitGame();
+			return 0;
+		} else
+		if (key == 'n' || key == 'N') {
+			// NOTE: when the quit dialog is hidden, the in-game menu is
+			// deleted for a frame, and then redrawn. This is because the
+			// current implementation of graphic 'items' doesn't allow
+			// deletion of a single 'item'.
+			_vm->_gfx->freeDialogueObjects();
+			return _helper->getState("ingamemenu");
+		}
+
+		return this;
+	}
+
+
+	void enter() {
+	//	setPaletteEntry(1, 0, 0, 0);	// text color
+	//	setPaletteEntry(15, 255, 255, 255);	// background color
+		int id = _vm->_gfx->setItem(_obj, _x, _y, 0);
+		_vm->_gfx->setItemFrame(id, 0);
+	}
+};
+
+
 void Parallaction_br::startIngameMenu() {
 	_menuHelper = new MenuInputHelper;
 
 	new IngameMenuInputState_BR(this, _menuHelper);
+	new QuitDialogInputState_BR(this, _menuHelper);
+
 	_menuHelper->setState("ingamemenu");
 
 	_input->_inputMode = Input::kInputModeMenu;
