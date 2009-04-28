@@ -2520,12 +2520,12 @@ static const GOBGameDescription gameDescriptions[] = {
 		"lda1.stk",
 		0
 	},
-	{ // Supplied by goodoldgeorg in bug report #2770340
+	{
 		{
 			"urban",
 			"",
-			AD_ENTRY1s("intro.stk", "4bd31979ea3d77a58a358c09000a85ed", 1253018),
-			DE_DEU,
+			AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
+			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
@@ -2534,12 +2534,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	{
+	{ // Supplied by jvprat on #scummvm
 		{
 			"urban",
 			"",
-			AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
-			EN_USA,
+			AD_ENTRY1s("intro.stk", "4ec3c0864e2b54c5b4ccf9f6ad96528d", 1253328),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeatures640,
+		0,
+		0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2770340
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "4bd31979ea3d77a58a358c09000a85ed", 1253018),
+			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
