@@ -2534,6 +2534,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{ // Supplied by gamin in the forums
+		{
+			"urban",
+			"",
+			AD_ENTRY1s("intro.stk", "b991ed1d31c793e560edefdb349882ef", 1276408),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeUrban,
+		kFeatures640,
+		0,
+		0
+	},
 	{ // Supplied by jvprat on #scummvm
 		{
 			"urban",
@@ -2692,20 +2706,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640 | kFeaturesSCNDemo,
 		0,
 		"s.scn"
-	},
-	{ // Supplied by gamin in the forums
-		{
-			"urban",
-			"",
-			AD_ENTRY1s("intro.stk", "b991ed1d31c793e560edefdb349882ef", 1276408),
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS
-		},
-		kGameTypeUrban,
-		kFeatures640,
-		0,
-		0
 	},
 	{
 		{
