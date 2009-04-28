@@ -192,7 +192,15 @@ public:
 	}
 
 	void clear() {
-		erase(begin(), end());
+		NodeBase *pos = _anchor._next;
+		while (pos != &_anchor) {
+			Node *node = static_cast<Node *>(pos);
+			pos = pos->_next;
+			delete node;
+		}
+
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 	}
 
 	bool empty() const {
