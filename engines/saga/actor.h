@@ -390,137 +390,17 @@ public:
 	int32 _walkFrameSequence;
 
 public:
-	void saveState(Common::OutSaveFile *out) {
-		int i = 0;
-		CommonObjectData::saveState(out);
-		out->writeUint16LE(_actorFlags);
-		out->writeSint32LE(_currentAction);
-		out->writeSint32LE(_facingDirection);
-		out->writeSint32LE(_actionDirection);
-		out->writeSint32LE(_actionCycle);
-		out->writeUint16LE(_targetObject);
+	ActorData();
+	~ActorData();
 
-		out->writeSint32LE(_cycleFrameSequence);
-		out->writeByte(_cycleDelay);
-		out->writeByte(_cycleTimeCount);
-		out->writeByte(_cycleFlags);
-		out->writeSint16LE(_fallVelocity);
-		out->writeSint16LE(_fallAcceleration);
-		out->writeSint16LE(_fallPosition);
-		out->writeByte(_dragonBaseFrame);
-		out->writeByte(_dragonStepCycle);
-		out->writeByte(_dragonMoveType);
-		out->writeSint32LE(_frameNumber);
+	void saveState(Common::OutSaveFile *out);
+	void loadState(uint32 version, Common::InSaveFile *in);
 
-		out->writeSint32LE(_tileDirectionsAlloced);
-		for (i = 0; i < _tileDirectionsAlloced; i++) {
-			out->writeByte(_tileDirections[i]);
-		}
-
-		out->writeSint32LE(_walkStepsAlloced);
-		for (i = 0; i < _walkStepsAlloced; i++) {
-			out->writeSint16LE(_walkStepsPoints[i].x);
-			out->writeSint16LE(_walkStepsPoints[i].y);
-		}
-
-		out->writeSint32LE(_walkStepsCount);
-		out->writeSint32LE(_walkStepIndex);
-		_finalTarget.saveState(out);
-		_partialTarget.saveState(out);
-		out->writeSint32LE(_walkFrameSequence);
-	}
-
-	void loadState(uint32 version, Common::InSaveFile *in) {
-		int i = 0;
-		CommonObjectData::loadState(in);
-		_actorFlags = in->readUint16LE();
-		_currentAction = in->readSint32LE();
-		_facingDirection = in->readSint32LE();
-		_actionDirection = in->readSint32LE();
-		_actionCycle = in->readSint32LE();
-		_targetObject = in->readUint16LE();
-
-		_lastZone = NULL;
-		_cycleFrameSequence = in->readSint32LE();
-		_cycleDelay = in->readByte();
-		_cycleTimeCount = in->readByte();
-		_cycleFlags = in->readByte();
-		if (version > 1) {
-			_fallVelocity = in->readSint16LE();
-			_fallAcceleration = in->readSint16LE();
-			_fallPosition = in->readSint16LE();
-		} else {
-			_fallVelocity = _fallAcceleration = _fallPosition = 0;
-		}
-		if (version > 2) {
-			_dragonBaseFrame = in->readByte();
-			_dragonStepCycle = in->readByte();
-			_dragonMoveType = in->readByte();
-		} else {
-			_dragonBaseFrame = _dragonStepCycle = _dragonMoveType = 0;
-		}
-
-		_frameNumber = in->readSint32LE();
-
-
-		setTileDirectionsSize(in->readSint32LE(), true);
-		for (i = 0; i < _tileDirectionsAlloced; i++) {
-			_tileDirections[i] = in->readByte();
-		}
-
-		setWalkStepsPointsSize(in->readSint32LE(), true);
-		for (i = 0; i < _walkStepsAlloced; i++) {
-			_walkStepsPoints[i].x = in->readSint16LE();
-			_walkStepsPoints[i].y = in->readSint16LE();
-		}
-
-		_walkStepsCount = in->readSint32LE();
-		_walkStepIndex = in->readSint32LE();
-		_finalTarget.loadState(in);
-		_partialTarget.loadState(in);
-		_walkFrameSequence = in->readSint32LE();
-	}
-
-	void setTileDirectionsSize(int size, bool forceRealloc) {
-		if ((size <= _tileDirectionsAlloced) && !forceRealloc) {
-			return;
-		}
-		_tileDirectionsAlloced = size;
-		_tileDirections = (byte*)realloc(_tileDirections, _tileDirectionsAlloced * sizeof(*_tileDirections));
-	}
-
-	void cycleWrap(int cycleLimit) {
-		if (_actionCycle >= cycleLimit)
-			_actionCycle = 0;
-	}
-
-	void setWalkStepsPointsSize(int size, bool forceRealloc) {
-		if ((size <= _walkStepsAlloced) && !forceRealloc) {
-			return;
-		}
-		_walkStepsAlloced = size;
-		_walkStepsPoints = (Point*)realloc(_walkStepsPoints, _walkStepsAlloced * sizeof(*_walkStepsPoints));
-	}
-
-	void addWalkStepPoint(const Point &point) {
-		setWalkStepsPointsSize(_walkStepsCount + 1, false);
-		_walkStepsPoints[_walkStepsCount++] = point;
-	}
-
-	void freeSpriteList() {
-		_spriteList.freeMem();
-	}
-
-	ActorData() {
-		memset(this, 0, sizeof(*this));
-	}
-	~ActorData() {
-		if (!_shareFrames)
-			free(_frames);
-		free(_tileDirections);
-		free(_walkStepsPoints);
-		freeSpriteList();
-	}
+	void setTileDirectionsSize(int size, bool forceRealloc);
+	void cycleWrap(int cycleLimit);
+	void setWalkStepsPointsSize(int size, bool forceRealloc);
+	void addWalkStepPoint(const Point &point);
+	void freeSpriteList();
 };
 
 struct ProtagStateData {
@@ -749,17 +629,6 @@ private:
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
-
-	PathDirectionData *_pathDirectionList;
-	int _pathDirectionListCount;
-	int _pathDirectionListAlloced;
-	PathDirectionData * addPathDirectionListData() {
-		if (_pathDirectionListCount + 1 >= _pathDirectionListAlloced) {
-			_pathDirectionListAlloced += 100;
-			_pathDirectionList = (PathDirectionData*) realloc(_pathDirectionList, _pathDirectionListAlloced * sizeof(*_pathDirectionList));
-		}
-		return &_pathDirectionList[_pathDirectionListCount++];
-	}
 
 	Point *_pathList;
 	int _pathListIndex;

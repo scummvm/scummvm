@@ -224,27 +224,23 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &bestPoint) {
 	int bestRating;
 	int currentRating;
-	int i;
 	Point bestPath;
 	int pointCounter;
 	int startDirection;
-	PathDirectionData *pathDirection;
-	PathDirectionData *newPathDirection;
 	const PathDirectionData *samplePathDirection;
 	Point nextPoint;
 	int directionCount;
 	int16 compressX = (_vm->getGameId() == GID_ITE) ? 2 : 1;
 
-	_pathDirectionListCount = 0;
+	Common::Array<PathDirectionData> pathDirectionList;
+
 	pointCounter = 0;
 	bestRating = quickDistance(fromPoint, toPoint, compressX);
 	bestPath = fromPoint;
 
 	for (startDirection = 0; startDirection < 4; startDirection++) {
-		newPathDirection = addPathDirectionListData();
-		newPathDirection->x = fromPoint.x;
-		newPathDirection->y = fromPoint.y;
-		newPathDirection->direction = startDirection;
+		PathDirectionData tmp = { startDirection, fromPoint.x, fromPoint.y };
+		pathDirectionList.push_back(tmp);
 	}
 
 	if (validPathCellPoint(fromPoint)) {
@@ -255,13 +251,10 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #endif
 	}
 
-	i = 0;
-
-	do {
-		pathDirection = &_pathDirectionList[i];
+	for (uint i = 0; i < pathDirectionList.size(); ++i) {
 		for (directionCount = 0; directionCount < 3; directionCount++) {
-			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
-			nextPoint = Point(pathDirection->x, pathDirection->y);
+			samplePathDirection = &pathDirectionLUT[pathDirectionList[i].direction][directionCount];
+			nextPoint = Point(pathDirectionList[i].x, pathDirectionList[i].y);
 			nextPoint.x += samplePathDirection->x;
 			nextPoint.y += samplePathDirection->y;
 
@@ -278,10 +271,10 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 #ifdef ACTOR_DEBUG
 			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
 #endif
-			newPathDirection = addPathDirectionListData();
-			newPathDirection->x = nextPoint.x;
-			newPathDirection->y = nextPoint.y;
-			newPathDirection->direction = samplePathDirection->direction;
+			PathDirectionData tmp = {
+				samplePathDirection->direction,
+				nextPoint.x, nextPoint.y };
+			pathDirectionList.push_back(tmp);
 			++pointCounter;
 			if (nextPoint == toPoint) {
 				bestPoint = toPoint;
@@ -292,10 +285,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestRating = currentRating;
 				bestPath = nextPoint;
 			}
-			pathDirection = &_pathDirectionList[i];
 		}
-		++i;
-	} while (i < _pathDirectionListCount);
+	}
 
 	bestPoint = bestPath;
 	return pointCounter;
