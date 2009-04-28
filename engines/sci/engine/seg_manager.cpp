@@ -1292,10 +1292,188 @@ void _hunk_cleanup(Hunk *hunk) {
 		free(hunk->mem);
 }
 
-DEFINE_HEAPENTRY(List, 8, 4)
-DEFINE_HEAPENTRY(Node, 32, 16)
-DEFINE_HEAPENTRY_WITH_CLEANUP(Clone, 16, 4, _clone_cleanup)
-DEFINE_HEAPENTRY_WITH_CLEANUP(Hunk, 4, 4, _hunk_cleanup)
+
+void init_List_table(ListTable *table) {
+	table->entries_nr = 8;
+	table->max_entry = 0;
+	table->entries_used = 0;
+	table->first_free = HEAPENTRY_INVALID;
+	table->table = (ListEntry *)sci_malloc(sizeof(ListEntry) * 8);\
+	memset(table->table, 0, sizeof(ListEntry) * 8);
+}
+
+void free_List_entry(ListTable *table, int index) {
+	ListEntry *e = table->table + index;
+
+	if (index < 0 || index >= table->max_entry) {
+		fprintf(stderr, "heapmgr: Attempt to release"
+			" invalid table index %d!\n", index);
+		BREAKPOINT();
+	}
+
+	e->next_free = table->first_free;
+	table->first_free = index;
+	table->entries_used--;
+}
+
+int	alloc_List_entry(ListTable *table) {
+	table->entries_used++;
+	if (table->first_free != HEAPENTRY_INVALID) {
+		int oldff = table->first_free;
+		table->first_free = table->table[oldff].next_free;
+
+		table->table[oldff].next_free = oldff;
+		return oldff;
+	} else {
+		if (table->max_entry == table->entries_nr) {
+			table->entries_nr += 4;
+
+			table->table = (ListEntry *)sci_realloc(table->table,\
+						   sizeof(ListEntry) * table->entries_nr);\
+			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(ListEntry));\
+		}
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
+		return table->max_entry++;
+	}
+}
+
+
+void init_Node_table(NodeTable *table) {
+	table->entries_nr = 32;
+	table->max_entry = 0;
+	table->entries_used = 0;
+	table->first_free = HEAPENTRY_INVALID;
+	table->table = (NodeEntry *)sci_malloc(sizeof(NodeEntry) * 32);\
+	memset(table->table, 0, sizeof(NodeEntry) * 32);
+}
+
+void free_Node_entry(NodeTable *table, int index) {
+	NodeEntry *e = table->table + index;
+
+	if (index < 0 || index >= table->max_entry) {
+		fprintf(stderr, "heapmgr: Attempt to release"
+			" invalid table index %d!\n", index);
+		BREAKPOINT();
+	}
+
+	e->next_free = table->first_free;
+	table->first_free = index;
+	table->entries_used--;
+}
+
+int	alloc_Node_entry(NodeTable *table) {
+	table->entries_used++;
+	if (table->first_free != HEAPENTRY_INVALID) {
+		int oldff = table->first_free;
+		table->first_free = table->table[oldff].next_free;
+
+		table->table[oldff].next_free = oldff;
+		return oldff;
+	} else {
+		if (table->max_entry == table->entries_nr) {
+			table->entries_nr += 16;
+
+			table->table = (NodeEntry *)sci_realloc(table->table,\
+						   sizeof(NodeEntry) * table->entries_nr);\
+			memset(&table->table[table->entries_nr-16], 0, 16 * sizeof(NodeEntry));\
+		}
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
+		return table->max_entry++;
+	}
+}
+
+
+void init_Clone_table(CloneTable *table) {
+	table->entries_nr = 16;
+	table->max_entry = 0;
+	table->entries_used = 0;
+	table->first_free = HEAPENTRY_INVALID;
+	table->table = (CloneEntry *)sci_malloc(sizeof(CloneEntry) * 16);\
+	memset(table->table, 0, sizeof(CloneEntry) * 16);
+}
+
+void free_Clone_entry(CloneTable *table, int index) {
+	CloneEntry *e = table->table + index;
+
+	if (index < 0 || index >= table->max_entry) {
+		fprintf(stderr, "heapmgr: Attempt to release"
+			" invalid table index %d!\n", index);
+		BREAKPOINT();
+	}
+	_clone_cleanup(&(e->entry));
+
+	e->next_free = table->first_free;
+	table->first_free = index;
+	table->entries_used--;
+}
+
+int	alloc_Clone_entry(CloneTable *table) {
+	table->entries_used++;
+	if (table->first_free != HEAPENTRY_INVALID) {
+		int oldff = table->first_free;
+		table->first_free = table->table[oldff].next_free;
+
+		table->table[oldff].next_free = oldff;
+		return oldff;
+	} else {
+		if (table->max_entry == table->entries_nr) {
+			table->entries_nr += 4;
+
+			table->table = (CloneEntry *)sci_realloc(table->table,\
+						   sizeof(CloneEntry) * table->entries_nr);\
+			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(CloneEntry));\
+		}
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
+		return table->max_entry++;
+	}
+}
+
+
+void init_Hunk_table(HunkTable *table) {
+	table->entries_nr = 4;
+	table->max_entry = 0;
+	table->entries_used = 0;
+	table->first_free = HEAPENTRY_INVALID;
+	table->table = (HunkEntry *)sci_malloc(sizeof(HunkEntry) * 4);\
+	memset(table->table, 0, sizeof(HunkEntry) * 4);
+}
+
+void free_Hunk_entry(HunkTable *table, int index) {
+	HunkEntry *e = table->table + index;
+
+	if (index < 0 || index >= table->max_entry) {
+		fprintf(stderr, "heapmgr: Attempt to release"
+			" invalid table index %d!\n", index);
+		BREAKPOINT();
+	}
+	_hunk_cleanup(&(e->entry));
+
+	e->next_free = table->first_free;
+	table->first_free = index;
+	table->entries_used--;
+}
+
+int	alloc_Hunk_entry(HunkTable *table) {
+	table->entries_used++;
+	if (table->first_free != HEAPENTRY_INVALID) {
+		int oldff = table->first_free;
+		table->first_free = table->table[oldff].next_free;
+
+		table->table[oldff].next_free = oldff;
+		return oldff;
+	} else {
+		if (table->max_entry == table->entries_nr) {
+			table->entries_nr += 4;
+
+			table->table = (HunkEntry *)sci_realloc(table->table,\
+						   sizeof(HunkEntry) * table->entries_nr);\
+			memset(&table->table[table->entries_nr-4], 0, 4 * sizeof(HunkEntry));\
+		}
+		table->table[table->max_entry].next_free = table->max_entry; /* Tag as 'valid' */\
+		return table->max_entry++;
+	}
+}
+
 
 #define DEFINE_ALLOC(TYPE, SEGTYPE, PLURAL) \
 TYPE *SegManager::alloc_##TYPE(reg_t *addr) {											 \

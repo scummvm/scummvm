@@ -257,14 +257,74 @@ struct Hunk {
 	const char *type;
 };
 
+
 /* CloneTable */
-DECLARE_HEAPENTRY(Clone)
+struct CloneEntry {
+	int next_free; /* Only used for free entries */
+	Clone entry;
+};
+struct CloneTable {
+	int entries_nr; /* Number of entries allocated */
+	int first_free; /* Beginning of a singly linked list for entries */
+	int entries_used; /* Statistical information */
+	int max_entry; /* Highest entry used */
+	CloneEntry *table;
+};
+void init_Clone_table(CloneTable *table);
+int alloc_Clone_entry(CloneTable *table);
+void free_Clone_entry(CloneTable *table, int index);
+
+
 /* NodeTable */
-DECLARE_HEAPENTRY(Node)
+struct NodeEntry {
+	int next_free; /* Only used for free entries */
+	Node entry;
+};
+struct NodeTable {
+	int entries_nr; /* Number of entries allocated */
+	int first_free; /* Beginning of a singly linked list for entries */
+	int entries_used; /* Statistical information */
+	int max_entry; /* Highest entry used */
+	NodeEntry *table;
+};
+void init_Node_table(NodeTable *table);
+int alloc_Node_entry(NodeTable *table);
+void free_Node_entry(NodeTable *table, int index);
+
+
 /* ListTable */
-DECLARE_HEAPENTRY(List) /* list entries */
+struct ListEntry {
+	int next_free; /* Only used for free entries */
+	List entry;
+};
+struct ListTable {
+	int entries_nr; /* Number of entries allocated */
+	int first_free; /* Beginning of a singly linked list for entries */
+	int entries_used; /* Statistical information */
+	int max_entry; /* Highest entry used */
+	ListEntry *table;
+};
+void init_List_table(ListTable *table);
+int alloc_List_entry(ListTable *table);
+void free_List_entry(ListTable *table, int index);
+
+
 /* HunkTable */
-DECLARE_HEAPENTRY(Hunk)
+struct HunkEntry {
+	int next_free; /* Only used for free entries */
+	Hunk entry;
+};
+struct HunkTable {
+	int entries_nr; /* Number of entries allocated */
+	int first_free; /* Beginning of a singly linked list for entries */
+	int entries_used; /* Statistical information */
+	int max_entry; /* Highest entry used */
+	HunkEntry *table;
+};
+void init_Hunk_table(HunkTable *table);
+int alloc_Hunk_entry(HunkTable *table);
+void free_Hunk_entry(HunkTable *table, int index);
+
 
 // Free-style memory
 struct DynMem {
