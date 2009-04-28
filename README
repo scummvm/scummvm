@@ -152,16 +152,19 @@ completeable in the 'Supported Games' section, or compatibility list. We
 -know- those games have bugs.
 
 Please include the following information:
-        - ScummVM version (PLEASE test the latest SVN/Daily build)
-        - Bug details, including instructions on reproducing
-        - Language of game (English, German, ...)
-        - Version of game (talkie, floppy, ...)
-        - Platform and Compiler (Win32, Linux, FreeBSD, ...)
-        - Attach a savegame if possible
-        - If this bug only occurred recently, please note the last
-          version without the bug, and the first version including
-          the bug. That way we can fix it quicker by looking at the
-          changes made.
+    - ScummVM version (PLEASE test the latest SVN/Daily build)
+    - Bug details, including instructions on reproducing
+    - Language of game (English, German, ...)
+    - Version of game (talkie, floppy, ...)
+    - Platform and Compiler (Win32, Linux, FreeBSD, ...)
+    - Attach a savegame if possible
+    - If this bug only occurred recently, please note the last version
+      without the bug, and the first version including the bug. That way
+      we can fix it quicker by looking at the changes made.
+
+Finally, please report each issue separately; do not file multiple issues
+on the same ticket. (Otherwise, it gets difficult to track the status of
+each individual bug).
 
 
 3.0) Supported Games:
