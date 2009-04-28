@@ -126,6 +126,26 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 	(this->*_callables[index])(parm);
 }
 
+bool Parallaction_br::processGameEvent(int event) {
+	if (event == kEvNone) {
+		return true;
+	}
+
+	bool c = true;
+	_input->stopHovering();
+
+	switch(event) {
+	case kEvIngameMenu:
+		startIngameMenu();
+		c = false;
+		break;
+	}
+
+	_input->setArrowCursor();
+
+	return c;
+}
+
 Common::Error Parallaction_br::go() {
 
 	bool splash = true;
@@ -547,5 +567,30 @@ void Parallaction_br::restoreOrSaveZoneFlags(ZonePtr z, bool restore) {
 	}
 }
 
+int Parallaction_br::getSfxStatus() {
+	if (!_soundManI) {
+		return -1;
+	}
+	return _soundManI->isSfxEnabled() ? 1 : 0;
+}
+
+int Parallaction_br::getMusicStatus() {
+	if (!_soundManI) {
+		return -1;
+	}
+	return _soundManI->isMusicEnabled() ? 1 : 0;
+}
+
+void Parallaction_br::enableSfx(bool enable) {
+	if (_soundManI) {
+		_soundManI->enableSfx(enable);
+	}
+}
+
+void Parallaction_br::enableMusic(bool enable) {
+	if (_soundManI) {
+		_soundManI->enableMusic(enable);
+	}
+}
 
 } // namespace Parallaction

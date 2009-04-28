@@ -81,7 +81,8 @@ enum EngineFlags {
 enum {
 	kEvNone			= 0,
 	kEvSaveGame		= 2000,
-	kEvLoadGame		= 4000
+	kEvLoadGame		= 4000,
+	kEvIngameMenu   = 8000
 };
 
 enum ParallactionGameType {
@@ -375,6 +376,7 @@ public:
 	virtual void updateWalkers() = 0;
 	virtual void scheduleWalk(int16 x, int16 y, bool fromUser) = 0;
 	virtual DialogueManager *createDialogueManager(ZonePtr z) = 0;
+	virtual bool processGameEvent(int event) = 0;
 };
 
 
@@ -405,6 +407,7 @@ public:
 	virtual void updateWalkers();
 	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
+	virtual bool processGameEvent(int event);
 
 	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
 
@@ -507,6 +510,7 @@ public:
 	virtual void updateWalkers();
 	virtual void scheduleWalk(int16 x, int16 y, bool fromUser);
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
+	virtual bool processGameEvent(int event);
 
 	void setupSubtitles(char *s, char *s2, int y);
 	void clearSubtitles();
@@ -520,6 +524,11 @@ public:
 	void	setCounterValue(const Common::String &name, int value);
 
 	void	setFollower(const Common::String &name);
+
+	int		getSfxStatus();
+	int		getMusicStatus();
+	void	enableSfx(bool enable);
+	void	enableMusic(bool enable);
 
 	const char **_audioCommandsNamesRes;
 	static const char *_partNames[];
@@ -553,6 +562,7 @@ private:
 	void	freeLocation(bool removeAll);
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	startGui(bool showSplash);
+	void 	startIngameMenu();
 	void	freeCharacter();
 
 	typedef void (Parallaction_br::*Callable)(void*);

@@ -248,6 +248,28 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 	(this->*_callables[index])(parm);
 }
 
+bool Parallaction_ns::processGameEvent(int event) {
+	if (event == kEvNone) {
+		return true;
+	}
+
+	bool c = true;
+	_input->stopHovering();
+
+	switch(event) {
+	case kEvSaveGame:
+		_saveLoad->saveGame();
+		break;
+
+	case kEvLoadGame:
+		_saveLoad->loadGame();
+		break;
+	}
+
+	_input->setArrowCursor();
+
+	return c;
+}
 
 Common::Error Parallaction_ns::go() {
 	_saveLoad->renameOldSavefiles();

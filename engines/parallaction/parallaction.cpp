@@ -266,21 +266,13 @@ void Parallaction::showLocationComment(const Common::String &text, bool end) {
 	_balloonMan->setLocationBalloon(text.c_str(), end);
 }
 
-
 void Parallaction::runGameFrame(int event) {
 	if (_input->_inputMode != Input::kInputModeGame) {
 		return;
 	}
 
-	if (event != kEvNone) {
-		_input->stopHovering();
-		if (event == kEvSaveGame) {
-			_saveLoad->saveGame();
-		} else
-		if (event == kEvLoadGame) {
-			_saveLoad->loadGame();
-		}
-		_input->setArrowCursor();
+	if (!processGameEvent(event)) {
+		return;
 	}
 
 	_gfx->beginFrame();

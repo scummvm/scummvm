@@ -278,7 +278,8 @@ enum {
 	kGfxObjTypeAnim = 2,
 	kGfxObjTypeLabel = 3,
 	kGfxObjTypeBalloon = 4,
-	kGfxObjTypeCharacter = 8
+	kGfxObjTypeCharacter = 8,
+	kGfxObjTypeMenu = 16
 };
 
 enum {

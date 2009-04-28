@@ -419,6 +419,10 @@ void DosSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
 	stopSfx(channel);
 
+	if (!_sfxEnabled) {
+		return;
+	}
+
 	debugC(1, kDebugAudio, "DosSoundMan_br::playSfx(%s, %u, %i, %i)", filename, channel, looping, volume);
 
 	Channel *ch = &_channels[channel];
@@ -436,6 +440,10 @@ void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, i
 
 void DosSoundMan_br::playMusic() {
 	if (_musicFile.empty()) {
+		return;
+	}
+
+	if (!_musicEnabled) {
 		return;
 	}
 
@@ -486,6 +494,10 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 
 	stopSfx(channel);
 
+	if (!_sfxEnabled) {
+		return;
+	}
+
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
@@ -511,6 +523,10 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 
 void AmigaSoundMan_br::playMusic() {
 	stopMusic();
+
+	if (!_musicEnabled) {
+		return;
+	}
 
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playMusic()");
 
@@ -555,6 +571,10 @@ SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
 }
 
 SoundMan_br::~SoundMan_br() {
+	stopAllSfx();
+}
+
+void SoundMan_br::stopAllSfx() {
 	stopSfx(0);
 	stopSfx(1);
 	stopSfx(2);
@@ -562,6 +582,7 @@ SoundMan_br::~SoundMan_br() {
 }
 
 void SoundMan_br::setMusicFile(const char *name) {
+	stopMusic();
 	_musicFile = name;
 }
 
@@ -617,5 +638,28 @@ void SoundMan_br::execute(int command, const char *parm) {
 	}
 }
 
+void SoundMan_br::enableSfx(bool enable) {
+	if (!enable) {
+		stopAllSfx();
+	}
+	_sfxEnabled = enable;
+}
+
+void SoundMan_br::enableMusic(bool enable) {
+	if (enable) {
+		playMusic();
+	} else {
+		stopMusic();
+	}
+	_musicEnabled = enable;
+}
+
+bool SoundMan_br::isSfxEnabled() const {
+	return _sfxEnabled;
+}
+
+bool SoundMan_br::isMusicEnabled() const {
+	return _musicEnabled;
+}
 
 } // namespace Parallaction

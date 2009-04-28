@@ -202,10 +202,20 @@ int Input::updateGameInput() {
 		return event;
 	}
 
-	if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
-		if (_keyPressed.keycode == Common::KEYCODE_l) event = kEvLoadGame;
-		if (_keyPressed.keycode == Common::KEYCODE_s) event = kEvSaveGame;
+	if (_vm->getGameType() == GType_Nippon) {
+		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
+			if (_keyPressed.keycode == Common::KEYCODE_l) event = kEvLoadGame;
+			if (_keyPressed.keycode == Common::KEYCODE_s) event = kEvSaveGame;
+		}
+	} else
+	if (_vm->getGameType() == GType_BRA) {
+		if (_hasKeyPressEvent && (_vm->getFeatures() & GF_DEMO) == 0) {
+			if (_keyPressed.keycode == Common::KEYCODE_F5) event = kEvIngameMenu;
+		}
+	} else {
+		error("unsupported gametype in updateGameInput");
 	}
+
 
 	if (event == kEvNone) {
 		translateGameInput();

@@ -306,12 +306,6 @@ const MainMenuInputState_BR::MenuOptions MainMenuInputState_BR::_optionsPC[NUM_M
 	kMenuPart4
 };
 
-
-
-
-
-
-
 void Parallaction_br::startGui(bool showSplash) {
 	_menuHelper = new MenuInputHelper;
 
@@ -328,6 +322,125 @@ void Parallaction_br::startGui(bool showSplash) {
 	_input->_inputMode = Input::kInputModeMenu;
 }
 
+
+class IngameMenuInputState_BR : public MenuInputState {
+	Parallaction_br *_vm;
+	GfxObj *_menuObj, *_mscMenuObj, *_sfxMenuObj;
+	int _menuObjId, _mscMenuObjId, _sfxMenuObjId;
+
+	Common::Rect _menuRect;
+	int _cellW, _cellH;
+
+	int _sfxStatus, _mscStatus;
+
+	int frameFromStatus(int status) const {
+		int frame;
+		if (status == 0) {
+			frame = 1;
+		} else
+		if (status == 1) {
+			frame = 0;
+		} else {
+			frame = 2;
+		}
+
+		return frame;
+	}
+
+public:
+	IngameMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("ingamemenu", helper), _vm(vm) {
+		Frames *menuFrames = _vm->_disk->loadFrames("request.win");
+		assert(menuFrames);
+		_menuObj = new GfxObj(kGfxObjTypeMenu, menuFrames, "ingamemenu");
+
+		Frames *mscFrames = _vm->_disk->loadFrames("onoff.win");
+		assert(mscFrames);
+		_mscMenuObj = new GfxObj(kGfxObjTypeMenu, mscFrames, "msc");
+
+		Frames *sfxFrames = _vm->_disk->loadFrames("sfx.win");
+		assert(sfxFrames);
+		_sfxMenuObj = new GfxObj(kGfxObjTypeMenu, sfxFrames, "sfx");
+
+		_menuObj->getRect(0, _menuRect);
+		_cellW = _menuRect.width() / 3;
+		_cellH = _menuRect.height() / 2;
+	}
+
+	MenuInputState *run() {
+		if (_vm->_input->getLastButtonEvent() != kMouseLeftUp) {
+			return this;
+		}
+
+		int cell = -1;
+
+		Common::Point p;
+		_vm->_input->getCursorPos(p);
+		if (_menuRect.contains(p)) {
+			cell = (p.x - _menuRect.left) / _cellW + 3 * ((p.y - _menuRect.top) / _cellH);
+		}
+
+		switch (cell) {
+		case 4:	// resume
+		case -1: // invalid cell
+			_vm->_gfx->freeDialogueObjects();
+			return 0;
+
+		case 0:	// toggle music
+			if (_mscStatus != -1) {
+				_vm->enableMusic(!_mscStatus);
+				_mscStatus = _vm->getMusicStatus();
+				_vm->_gfx->setItemFrame(_mscMenuObjId, frameFromStatus(_mscStatus));
+			}
+			return this;
+
+		case 1:	// toggle sfx
+			if (_sfxStatus != -1) {
+				_vm->enableSfx(!_sfxStatus);
+				_sfxStatus = _vm->getSfxStatus();
+				_vm->_gfx->setItemFrame(_sfxMenuObjId, frameFromStatus(_sfxStatus));
+			}
+			return this;
+
+		case 2:	// save
+			warning("Saving is not supported yet!");
+			_vm->_gfx->freeDialogueObjects();
+			break;
+
+		case 3:	// load
+			warning("Loading is not supported yet!");
+			_vm->_gfx->freeDialogueObjects();
+			break;
+
+		case 5:	// quit
+			_vm->quitGame();
+		}
+
+		return 0;
+	}
+
+	void enter() {
+		// TODO: find the right position of the menu object
+		_menuObjId = _vm->_gfx->setItem(_menuObj, 0, 0, 0);
+		_vm->_gfx->setItemFrame(_menuObjId, 0);
+
+		_mscMenuObjId = _vm->_gfx->setItem(_mscMenuObj, 0, 0, 0);
+		_mscStatus = _vm->getMusicStatus();
+		_vm->_gfx->setItemFrame(_mscMenuObjId, frameFromStatus(_mscStatus));
+
+		_sfxMenuObjId = _vm->_gfx->setItem(_sfxMenuObj, 0, 0, 0);
+		_sfxStatus = _vm->getSfxStatus();
+		_vm->_gfx->setItemFrame(_sfxMenuObjId, frameFromStatus(_sfxStatus));
+	}
+};
+
+void Parallaction_br::startIngameMenu() {
+	_menuHelper = new MenuInputHelper;
+
+	new IngameMenuInputState_BR(this, _menuHelper);
+	_menuHelper->setState("ingamemenu");
+
+	_input->_inputMode = Input::kInputModeMenu;
+}
 
 
 

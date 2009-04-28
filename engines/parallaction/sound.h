@@ -189,6 +189,9 @@ protected:
 	int		_sfxRate;
 	uint	_sfxChannel;
 
+	bool	_musicEnabled;
+	bool	_sfxEnabled;
+
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void pause(bool p) = 0;
@@ -210,9 +213,15 @@ public:
 
 	virtual void playSfx(const char *filename, uint channel, bool looping, int volume = -1) { }
 	void stopSfx(uint channel);
+	void stopAllSfx();
 
 	virtual void execute(int command, const char *parm);
 	void setMusicFile(const char *parm);
+
+	void enableSfx(bool enable);
+	void enableMusic(bool enable);
+	bool isSfxEnabled() const;
+	bool isMusicEnabled() const;
 };
 
 class DosSoundMan_br : public SoundMan_br {
