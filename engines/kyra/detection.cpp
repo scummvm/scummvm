@@ -71,6 +71,7 @@ namespace {
 #define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_LOL)
 #define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, true, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
@@ -1034,6 +1035,25 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_PC98_SJIS_FLAGS
 	},
+
+	// TODO: It looks like this demo version does not WSA v2 files, thus being
+	// quite old... Our TIM player does not support that currently, thus
+	// we disable the detection entry for now.
+	/*{
+		{
+			"lol",
+			"Demo",
+			{
+				{ "INTRO.PAK", 0, "4bc22a3b57f19a49212c5de58ab014d6", -1 },
+				{ "INTROVOC.PAK", 0, "7e578e4f1da31c1f294e14a8e8f3cc44", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO
+		},
+		LOL_DEMO_FLAGS
+	},*/
 
 	{
 		{

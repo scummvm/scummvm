@@ -506,8 +506,11 @@ Common::Error LoLEngine::go() {
 	setupPrologueData(true);
 	_sound->setSoundList(&_soundData[kMusicIntro]);
 
-	if (!saveFileLoadable(0))
+	if (!saveFileLoadable(0) || _flags.isDemo)
 		showIntro();
+
+	if (_flags.isDemo)
+		return Common::kNoError;
 
 	preInit();
 

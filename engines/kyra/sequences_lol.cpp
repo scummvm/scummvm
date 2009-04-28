@@ -92,7 +92,7 @@ void LoLEngine::setupPrologueData(bool load) {
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 		
-		if (!_res->loadFileList("FILEDATA.FDT"))
+		if (!_flags.isDemo && !_res->loadFileList("FILEDATA.FDT"))
 			error("Couldn't load file list: 'FILEDATA.FDT'");
 
 		uint8 *pal = _screen->getPalette(0);
