@@ -109,8 +109,7 @@ class DosDisk_ns : public Disk_ns {
 
 private:
 	void unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path);
-	Cnv* loadExternalCnv(const char *filename);
-	Frames* loadCnv(const char *filename);
+	Cnv* loadCnv(const char *filename);
 	void loadBackground(BackgroundInfo& info, const char *filename);
 	void loadMaskAndPath(BackgroundInfo& info, const char *name);
 	void parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream);
@@ -146,7 +145,7 @@ public:
 class AmigaDisk_ns : public Disk_ns {
 
 protected:
-	Cnv* makeCnv(Common::SeekableReadStream *stream, bool disposeStream);
+	Cnv* makeCnv(Common::SeekableReadStream *stream);
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
@@ -208,7 +207,7 @@ class DosDisk_br : public Disk_br {
 
 protected:
 	Font *createFont(const char *name, Common::ReadStream &stream);
-	Sprites*	createSprites(Common::ReadStream &stream);
+	Sprites*	createSprites(Common::ReadStream *stream);
 	void loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette);
 	GfxObj* createInventoryObjects(Common::SeekableReadStream &stream);
 
@@ -250,7 +249,7 @@ public:
 class AmigaDisk_br : public DosDisk_br {
 
 protected:
-	Sprites*	createSprites(Common::ReadStream &stream);
+	Sprites*	createSprites(Common::ReadStream *stream);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadBackground(BackgroundInfo& info, const char *filename);
 	void adjustForPalette(Graphics::Surface &surf, int transparentColor = -1);

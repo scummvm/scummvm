@@ -180,13 +180,11 @@ GfxObj* DosDisk_br::loadTalk(const char *name) {
 	// talk position is set to (0,0), because talks are always displayed at
 	// absolute coordinates, set in the dialogue manager. The original used
 	// to null out coordinates every time they were needed. We do it better!
-	Sprites *spr = createSprites(*stream);
+	Sprites *spr = createSprites(stream);
 	for (int i = 0; i < spr->getNum(); i++) {
 		spr->_sprites[i].x = 0;
 		spr->_sprites[i].y = 0;
 	}
-
-	delete stream;
 	return new GfxObj(0, spr, name);
 }
 
@@ -273,33 +271,41 @@ GfxObj* DosDisk_br::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
-Sprites* DosDisk_br::createSprites(Common::ReadStream &stream) {
+Sprites* DosDisk_br::createSprites(Common::ReadStream *stream) {
 
-	uint16 num = stream.readUint16LE();
+	uint16 num = stream->readUint16LE();
 
 	Sprites *sprites = new Sprites(num);
 
 	for (uint i = 0; i < num; i++) {
 		Sprite *spr = &sprites->_sprites[i];
-		spr->size = stream.readUint16LE();
-		spr->x = stream.readUint16LE();
-		spr->y = stream.readUint16LE();
-		spr->w = stream.readUint16LE();
-		spr->h = stream.readUint16LE();
+		spr->size = stream->readUint16LE();
+		spr->x = stream->readUint16LE();
+		spr->y = stream->readUint16LE();
+		spr->w = stream->readUint16LE();
+		spr->h = stream->readUint16LE();
 
 		spr->packedData = (byte*)malloc(spr->size);
-		stream.read(spr->packedData, spr->size);
+		stream->read(spr->packedData, spr->size);
 	}
+	delete stream;
 
 	return sprites;
 }
 
 Frames* DosDisk_br::loadFrames(const char* name) {
+	Common::SeekableReadStream *stream = 0;
+
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
-	Common::SeekableReadStream *stream = openFile("ani/" + Common::String(name), ".ani");
-	Frames *frames = createSprites(*stream);
-	delete stream;
-	return frames;
+
+	Common::String path(name);
+	if (path.hasSuffix(".win")) {
+		stream = openFile(path);
+	} else {
+		stream = openFile("ani/" + Common::String(name), ".ani");
+	}
+
+	return createSprites(stream);
 }
 
 // Slides in Nippon Safes are basically screen-sized pictures with valid
@@ -645,32 +651,41 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	return new GfxObj(0, new SurfaceToFrames(surf), name);
 }
 
-Sprites* AmigaDisk_br::createSprites(Common::ReadStream &stream) {
-	uint16 num = stream.readUint16BE();
+Sprites* AmigaDisk_br::createSprites(Common::ReadStream *stream) {
+	uint16 num = stream->readUint16BE();
 
 	Sprites *sprites = new Sprites(num);
 
 	for (uint i = 0; i < num; i++) {
 		Sprite *spr = &sprites->_sprites[i];
-		spr->size = stream.readUint16BE();
-		spr->x = stream.readUint16BE();
-		spr->y = stream.readUint16BE();
-		spr->w = stream.readUint16BE();
-		spr->h = stream.readUint16BE() - 1;
+		spr->size = stream->readUint16BE();
+		spr->x = stream->readUint16BE();
+		spr->y = stream->readUint16BE();
+		spr->w = stream->readUint16BE();
+		spr->h = stream->readUint16BE() - 1;
 
 		spr->packedData = (byte*)malloc(spr->size);
-		stream.read(spr->packedData, spr->size);
+		stream->read(spr->packedData, spr->size);
 	}
+
+	delete stream;
 
 	return sprites;
 }
 
 Frames* AmigaDisk_br::loadFrames(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk_br::loadFrames '%s'", name);
-	Common::SeekableReadStream *stream = openFile("anims/" + Common::String(name), ".ani");
-	Frames *frames = createSprites(*stream);
-	delete stream;
-	return frames;
+	Common::SeekableReadStream *stream = 0;
+
+	debugC(5, kDebugDisk, "AmigaDisk_br::loadFrames");
+
+	Common::String path(name);
+	if (path.hasSuffix(".win")) {
+		stream = openFile(path);
+	} else {
+		stream = openFile("anims/" + Common::String(name), ".ani");
+	}
+
+	return createSprites(stream);
 }
 
 GfxObj* AmigaDisk_br::loadTalk(const char *name) {
@@ -681,13 +696,11 @@ GfxObj* AmigaDisk_br::loadTalk(const char *name) {
 	// talk position is set to (0,0), because talks are always displayed at
 	// absolute coordinates, set in the dialogue manager. The original used
 	// to null out coordinates every time they were needed. We do it better!
-	Sprites *spr = createSprites(*stream);
+	Sprites *spr = createSprites(stream);
 	for (int i = 0; i < spr->getNum(); i++) {
 		spr->_sprites[i].x = 0;
 		spr->_sprites[i].y = 0;
 	}
-
-	delete stream;
 	return new GfxObj(0, spr, name);
 }
 

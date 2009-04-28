@@ -267,46 +267,28 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 }
 
 
-//
-// loads a cnv from an external file
-//
-Cnv* DosDisk_ns::loadExternalCnv(const char *filename) {
-
-	char path[PATH_LEN];
-
-	sprintf(path, "%s.cnv", filename);
-
-	Common::SeekableReadStream *stream = openFile(path);
-
-	uint16 numFrames = stream->readByte();
-	uint16 width = stream->readByte();
-	uint16 height = stream->readByte();
-	uint32 decsize = numFrames * width * height;
-
-	byte *data = new byte[decsize];
-	stream->read(data, decsize);
-	delete stream;
-
-	return new Cnv(numFrames, width, height, data, true);
-}
-
-
-Frames* DosDisk_ns::loadCnv(const char *filename) {
-
+Cnv* DosDisk_ns::loadCnv(const char *filename) {
 	Common::SeekableReadStream *stream = openFile(filename);
 
 	uint16 numFrames = stream->readByte();
 	uint16 width = stream->readByte();
 	uint16 height = stream->readByte();
-	uint32 decsize = numFrames * width * height;
+	int32 decsize = numFrames * width * height;
 	byte *data = new byte[decsize];
 
-	Graphics::PackBitsReadStream decoder(*stream);
-	decoder.read(data, decsize);
+	bool packed = (stream->size() - stream->pos()) != decsize;
+	if (packed) {
+		Graphics::PackBitsReadStream decoder(*stream);
+		decoder.read(data, decsize);
+	} else {
+		stream->read(data, decsize);
+	}
+
 	delete stream;
 
 	return new Cnv(numFrames, width, height, data, true);
 }
+
 
 GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
@@ -319,12 +301,12 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
 	char v20[30];
 	if (_engineFlags & kEngineTransformedDonna) {
-		sprintf(v20, "%stta", name);
+		sprintf(v20, "%stta.cnv", name);
 	} else {
-		sprintf(v20, "%stal", name);
+		sprintf(v20, "%stal.cnv", name);
 	}
 
-	return new GfxObj(0, loadExternalCnv(v20), name);
+	return new GfxObj(0, loadCnv(v20), name);
 }
 
 Script* DosDisk_ns::loadLocation(const char *name) {
@@ -355,26 +337,29 @@ GfxObj* DosDisk_ns::loadHead(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
-	return new GfxObj(0, loadExternalCnv(path));
+	strcat(path, ".cnv");
+	return new GfxObj(0, loadCnv(path));
 }
 
 
 Frames* DosDisk_ns::loadPointer(const char *name) {
-	return loadExternalCnv(name);
+	char path[PATH_LEN];
+	sprintf(path, "%s.cnv", name);
+	return loadCnv(path);
 }
 
 
 Font* DosDisk_ns::loadFont(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%scnv", name);
-	return createFont(name, loadExternalCnv(path));
+	sprintf(path, "%scnv.cnv", name);
+	return createFont(name, loadCnv(path));
 }
 
 
 GfxObj* DosDisk_ns::loadObjects(const char *name, uint8 part) {
 	char path[PATH_LEN];
-	sprintf(path, "%sobj", name);
-	return new GfxObj(0, loadExternalCnv(path), name);
+	sprintf(path, "%sobj.cnv", name);
+	return new GfxObj(0, loadCnv(path), name);
 }
 
 
@@ -844,7 +829,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 }
 
 
-Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream *stream, bool disposeStream) {
+Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream *stream) {
 	assert(stream);
 
 	uint16 numFrames = stream->readByte();
@@ -867,8 +852,7 @@ Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream *stream, bool disposeStrea
 
 	free(buf);
 
-	if (disposeStream)
-		delete stream;
+	delete stream;
 
 	return new Cnv(numFrames, width, height, data, true);
 }
@@ -901,13 +885,13 @@ Script* AmigaDisk_ns::loadScript(const char* name) {
 Frames* AmigaDisk_ns::loadPointer(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
 	Common::SeekableReadStream *stream = openFile(name);
-	return makeCnv(stream, true);
+	return makeCnv(stream);
 }
 
 GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadStatic '%s'", name);
 	Common::SeekableReadStream *s = openFile(name);
-	return new GfxObj(0, makeCnv(s, true), name);
+	return new GfxObj(0, makeCnv(s), name);
 }
 
 Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
@@ -1115,7 +1099,7 @@ Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	if (!s)
 		s = openFile(name);
 
-	return makeCnv(s, true);
+	return makeCnv(s);
 }
 
 GfxObj* AmigaDisk_ns::loadHead(const char* name) {
@@ -1123,7 +1107,7 @@ GfxObj* AmigaDisk_ns::loadHead(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.head", name);
 	Common::SeekableReadStream *s = openFile(path);
-	return new GfxObj(0, makeCnv(s, true), name);
+	return new GfxObj(0, makeCnv(s), name);
 }
 
 
@@ -1137,7 +1121,7 @@ GfxObj* AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
 		sprintf(path, "objs/%s.objs", name);
 
 	Common::SeekableReadStream *s = openFile(path);
-	return new GfxObj(0, makeCnv(s, true), name);
+	return new GfxObj(0, makeCnv(s), name);
 }
 
 
@@ -1154,7 +1138,7 @@ GfxObj* AmigaDisk_ns::loadTalk(const char *name) {
 	if (!s) {
 		s = openFile(name);
 	}
-	return new GfxObj(0, makeCnv(s, true), name);
+	return new GfxObj(0, makeCnv(s), name);
 }
 
 Table* AmigaDisk_ns::loadTable(const char* name) {
