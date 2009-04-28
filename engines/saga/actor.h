@@ -620,6 +620,10 @@ private:
 	struct PathNode {
 		Point point;
 		int link;
+
+		PathNode() : link(0) {}
+		PathNode(const Point &p) : point(p), link(0) {}
+		PathNode(const Point &p, int l) : point(p), link(l) {}
 	};
 
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
@@ -643,34 +647,7 @@ private:
 		_pathList[_pathListIndex] = point;
 	}
 
-	int _pathNodeListIndex;
-	int _pathNodeListAlloced;
-	PathNode *_pathNodeList;
-	void addPathNodeListPoint(const Point &point) {
-		++_pathNodeListIndex;
-		if (_pathNodeListIndex >= _pathNodeListAlloced) {
-			_pathNodeListAlloced += 100;
-			_pathNodeList = (PathNode*) realloc(_pathNodeList, _pathNodeListAlloced * sizeof(*_pathNodeList));
-
-		}
-		_pathNodeList[_pathNodeListIndex].point = point;
-	}
-
-	int _newPathNodeListIndex;
-	int _newPathNodeListAlloced;
-	PathNode *_newPathNodeList;
-	void incrementNewPathNodeListIndex() {
-		++_newPathNodeListIndex;
-		if (_newPathNodeListIndex >= _newPathNodeListAlloced) {
-			_newPathNodeListAlloced += 100;
-			_newPathNodeList = (PathNode*) realloc(_newPathNodeList, _newPathNodeListAlloced * sizeof(*_newPathNodeList));
-
-		}
-	}
-	void addNewPathNodeListPoint(const PathNode &pathNode) {
-		incrementNewPathNodeListIndex();
-		_newPathNodeList[_newPathNodeListIndex] = pathNode;
-	}
+	Common::Array<PathNode> _pathNodeList;
 
 public:
 #ifdef ACTOR_DEBUG

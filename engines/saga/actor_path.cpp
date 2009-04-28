@@ -295,7 +295,6 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
 	Point nextPoint;
 	int8 direction;
-	int i;
 
 	_pathListIndex = -1;
 	addPathListPoint(toPoint);
@@ -320,7 +319,7 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	nodeToPath();
 	removePathPoints();
 
-	for (i = 0; i <= _pathNodeListIndex; i++) {
+	for (uint i = 0; i < _pathNodeList.size(); i++) {
 		actor->addWalkStepPoint(_pathNodeList[i].point);
 	}
 }
@@ -334,8 +333,8 @@ void Actor::pathToNode() {
 	point= &_pathList[_pathListIndex];
 	direction = 0;
 
-	_pathNodeListIndex = -1;
-	addPathNodeListPoint(*point);
+	_pathNodeList.clear();
+	_pathNodeList.push_back(PathNode(*point));
 
 	for (i = _pathListIndex; i > 0; i--) {
 		point1 = *point;
@@ -347,13 +346,13 @@ void Actor::pathToNode() {
 			direction++;
 		}
 		if ((point1.x + delta.x != point2.x) || (point1.y + delta.y != point2.y)) {
-			addPathNodeListPoint(point1);
+			_pathNodeList.push_back(PathNode(point1));
 			direction--;
 			i++;
 			point++;
 		}
 	}
-	addPathNodeListPoint(*_pathList);
+	_pathNodeList.push_back(PathNode(*_pathList));
 }
 
 int pathLine(Point *pointList, const Point &point1, const Point &point2) {
@@ -414,7 +413,6 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 void Actor::nodeToPath() {
 	int i;
 	Point point1, point2;
-	PathNode *node;
 	Point *point;
 
 	for (i = 0, point = _pathList; i < _pathListAlloced; i++, point++) {
@@ -424,69 +422,81 @@ void Actor::nodeToPath() {
 	_pathListIndex = 1;
 	_pathList[0] = _pathNodeList[0].point;
 	_pathNodeList[0].link = 0;
-	for (i = 0, node = _pathNodeList; i < _pathNodeListIndex; i++) {
-		point1 = node->point;
-		node++;
-		point2 = node->point;
+	for (i = 0; i < (int)_pathNodeList.size() - 1; i++) {
+		point1 = _pathNodeList[i].point;
+		point2 = _pathNodeList[i+1].point;
 		_pathListIndex += pathLine(&_pathList[_pathListIndex], point1, point2);
-		node->link = _pathListIndex - 1;
+		_pathNodeList[i+1].link = _pathListIndex - 1;
 	}
 	_pathListIndex--;
-	_pathNodeList[_pathNodeListIndex].link = _pathListIndex;
+	_pathNodeList.back().link = _pathListIndex;
 
 }
 
 void Actor::removeNodes() {
-	int i, j, k;
-	PathNode *iNode, *jNode, *kNode, *fNode;
-	fNode = &_pathNodeList[_pathNodeListIndex];
+	uint i, j, k;
 
-	if (scanPathLine(_pathNodeList[0].point, fNode->point)) {
-		_pathNodeList[1] = *fNode;
-		_pathNodeListIndex = 1;
-	}
-
-	if (_pathNodeListIndex < 4) {
+	// If there are only two nodes, nothing to be done
+	if (_pathNodeList.size() <= 2)
 		return;
+
+	// If there is a direct connection between the first and last node, we can
+	// remove all nodes in between and are done.
+	if (scanPathLine(_pathNodeList.front().point, _pathNodeList.back().point)) {
+		_pathNodeList[1] = _pathNodeList.back();
+		_pathNodeList.resize(2);
 	}
 
-	for (i = _pathNodeListIndex - 1, iNode = fNode-1; i > 1 ; i--, iNode--) {
-		if (iNode->point.x == PATH_NODE_EMPTY) {
+	if (_pathNodeList.size() <= 4)
+		return;
+
+	// Scan the nodes in reverse order, and look for a node which can be
+	// directly reached from the first node. If we find any, skip directly
+	// from the first node to that node (by marking all nodes in between as
+	// empty).
+	for (i = _pathNodeList.size() - 2; i > 1 ; i--) {
+		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
 
-		if (scanPathLine(_pathNodeList[0].point, iNode->point)) {
-			for (j = 1, jNode = _pathNodeList + 1; j < i; j++, jNode++) {
-				jNode->point.x = PATH_NODE_EMPTY;
+		if (scanPathLine(_pathNodeList.front().point, _pathNodeList[i].point)) {
+			for (j = 1; j < i; j++) {
+				_pathNodeList[j].point.x = PATH_NODE_EMPTY;
 			}
+			break;
 		}
 	}
 
-	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex - 1; i++, iNode++) {
-		if (iNode->point.x == PATH_NODE_EMPTY) {
+	// Now do the reverse: Find the first node which is directly connected
+	// to the end node; if we find any, skip over all nodes in between.
+	for (i = 1; i < _pathNodeList.size() - 2; i++) {
+		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
 
-		if (scanPathLine(fNode->point, iNode->point)) {
-			for (j = i + 1, jNode = iNode + 1; j < _pathNodeListIndex; j++, jNode++) {
-				jNode->point.x = PATH_NODE_EMPTY;
+		if (scanPathLine(_pathNodeList.back().point, _pathNodeList[i].point)) {
+			for (j = i + 1; j < _pathNodeList.size()-1; j++) {
+				_pathNodeList[j].point.x = PATH_NODE_EMPTY;
 			}
+			break;
 		}
 	}
 	condenseNodeList();
 
-	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex - 1; i++, iNode++) {
-		if (iNode->point.x == PATH_NODE_EMPTY) {
+	// Finally, try arbitrary combinations of non-adjacent nodes and see
+	// if we can skip over any of them.
+	for (i = 1; i < _pathNodeList.size()-1 - 1; i++) {
+		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		for (j = i + 2, jNode = iNode + 2; j < _pathNodeListIndex; j++, jNode++) {
-			if (jNode->point.x == PATH_NODE_EMPTY) {
+		for (j = i + 2; j < _pathNodeList.size()-1; j++) {
+			if (_pathNodeList[j].point.x == PATH_NODE_EMPTY) {
 				continue;
 			}
 
-			if (scanPathLine(iNode->point, jNode->point)) {
-				for (k = i + 1,kNode = iNode + 1; k < j; k++, kNode++) {
-					kNode->point.x = PATH_NODE_EMPTY;
+			if (scanPathLine(_pathNodeList[i].point, _pathNodeList[j].point)) {
+				for (k = i + 1; k < j; k++) {
+					_pathNodeList[k].point.x = PATH_NODE_EMPTY;
 				}
 			}
 		}
@@ -494,50 +504,49 @@ void Actor::removeNodes() {
 	condenseNodeList();
 }
 
+/** Remove all empty nodes from _pathNodeList. */
 void Actor::condenseNodeList() {
-	int i, j, count;
-	PathNode *iNode, *jNode;
+	uint i, j, count;
 
-	count = _pathNodeListIndex;
-
-	for (i = 1, iNode = _pathNodeList + 1; i < _pathNodeListIndex; i++, iNode++) {
-		if (iNode->point.x == PATH_NODE_EMPTY) {
+	count = _pathNodeList.size();
+	for (i = 1; i < _pathNodeList.size()-1; i++) {
+		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			j = i + 1;
-			jNode = iNode + 1;
-			while (jNode->point.x == PATH_NODE_EMPTY) {
+			while (_pathNodeList[j].point.x == PATH_NODE_EMPTY) {
 				j++;
-				jNode++;
 			}
-			*iNode = *jNode;
-			count = i;
-			jNode->point.x = PATH_NODE_EMPTY;
-			if (j == _pathNodeListIndex) {
+			_pathNodeList[i] = _pathNodeList[j];
+			count = i + 1;
+			_pathNodeList[j].point.x = PATH_NODE_EMPTY;
+			if (j == _pathNodeList.size()-1) {
 				break;
 			}
 		}
 	}
-	_pathNodeListIndex = count;
+	_pathNodeList.resize(count);
 }
 
 void Actor::removePathPoints() {
-	int i, j, k, l;
-	PathNode *node;
+	uint i, j, l;
 	int start;
 	int end;
 	Point point1, point2;
 
-	if (_pathNodeListIndex < 2)
+	if (_pathNodeList.size() <= 2)
 		return;
 
-	_newPathNodeListIndex = -1;
-	addNewPathNodeListPoint(_pathNodeList[0]);
+	Common::Array<PathNode> newPathNodeList;
 
-	for (i = 1, node = _pathNodeList + 1; i < _pathNodeListIndex; i++, node++) {
-		addNewPathNodeListPoint(*node);
+	// Add the first node
+	newPathNodeList.push_back(_pathNodeList.front());
+
+	// Process all nodes between the first and the last.
+	for (i = 1; i < _pathNodeList.size()-1; i++) {
+		newPathNodeList.push_back(_pathNodeList[i]);
 
 		for (j = 5; j > 0; j--) {
-			start = node->link - j;
-			end = node->link + j;
+			start = _pathNodeList[i].link - j;
+			end = _pathNodeList[i].link + j;
 
 			if (start < 0 || end > _pathListIndex) {
 				continue;
@@ -550,19 +559,19 @@ void Actor::removePathPoints() {
 			}
 
 			if (scanPathLine(point1, point2)) {
-				for (l = 1; l <= _newPathNodeListIndex; l++) {
-					if (start <= _newPathNodeList[l].link) {
-						_newPathNodeListIndex = l;
-						_newPathNodeList[_newPathNodeListIndex].point = point1;
-						_newPathNodeList[_newPathNodeListIndex].link = start;
-						incrementNewPathNodeListIndex();
+				for (l = 1; l < newPathNodeList.size(); l++) {
+					if (start <= newPathNodeList[l].link) {
+						newPathNodeList.resize(l+1);
+						newPathNodeList.back().point = point1;
+						newPathNodeList.back().link = start;
+						newPathNodeList.resize(l+2);
 						break;
 					}
 				}
-				_newPathNodeList[_newPathNodeListIndex].point = point2;
-				_newPathNodeList[_newPathNodeListIndex].link = end;
+				newPathNodeList.back().point = point2;
+				newPathNodeList.back().link = end;
 
-				for (k = start + 1; k < end; k++) {
+				for (int k = start + 1; k < end; k++) {
 					_pathList[k].x = PATH_NODE_EMPTY;
 				}
 				break;
@@ -570,14 +579,16 @@ void Actor::removePathPoints() {
 		}
 	}
 
-	addNewPathNodeListPoint(_pathNodeList[_pathNodeListIndex]);
+	// Add the last node
+	newPathNodeList.push_back(_pathNodeList.back());
 
-	for (i = 0, j = 0; i <= _newPathNodeListIndex; i++) {
-		if (_newPathNodeListIndex == i || (_newPathNodeList[i].point != _newPathNodeList[i+1].point)) {
-			_pathNodeList[j++] = _newPathNodeList[i];
+	// Copy newPathNodeList into _pathNodeList, skipping any duplicate points
+	_pathNodeList.clear();
+	for (i = 0; i < newPathNodeList.size(); i++) {
+		if (newPathNodeList.size()-1 == i || (newPathNodeList[i].point != newPathNodeList[i+1].point)) {
+			_pathNodeList.push_back(newPathNodeList[i]);
 		}
 	}
-	_pathNodeListIndex = j - 1;
 }
 
 #ifdef ACTOR_DEBUG

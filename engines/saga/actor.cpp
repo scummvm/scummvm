@@ -233,10 +233,9 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_protagStates = NULL;
 	_protagStatesCount = 0;
 
-	_pathNodeList = _newPathNodeList = NULL;
 	_pathList = NULL;
-	_pathListAlloced = _pathNodeListAlloced = _newPathNodeListAlloced = 0;
-	_pathListIndex = _pathNodeListIndex = _newPathNodeListIndex = -1;
+	_pathListAlloced = 0;
+	_pathListIndex = -1;
 
 	_centerActor = _protagonist = NULL;
 	_protagState = 0;
@@ -325,8 +324,6 @@ Actor::~Actor() {
 #ifdef ACTOR_DEBUG
 	free(_debugPoints);
 #endif
-	free(_pathNodeList);
-	free(_newPathNodeList);
 	free(_pathList);
 	free(_pathCell);
 	_actorsStrings.freeMem();
