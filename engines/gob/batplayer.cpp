@@ -43,6 +43,9 @@ BATPlayer::~BATPlayer() {
 }
 
 bool BATPlayer::play(const char *fileName) {
+	if (!fileName)
+		return false;
+
 	debugC(1, kDebugDemo, "Playing BAT \"%s\"", fileName);
 
 	init();

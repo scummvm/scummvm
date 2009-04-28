@@ -43,6 +43,9 @@ SCNPlayer::~SCNPlayer() {
 }
 
 bool SCNPlayer::play(const char *fileName) {
+	if (!fileName)
+		return false;
+
 	debugC(1, kDebugDemo, "Playing SCN \"%s\"", fileName);
 
 	init();
