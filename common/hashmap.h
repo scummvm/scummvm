@@ -211,7 +211,7 @@ public:
 	uint size() const { return _size; }
 
 	iterator	begin() {
-		// Find and return the _key non-empty entry
+		// Find and return the first non-empty entry
 		for (uint ctr = 0; ctr <= _mask; ++ctr) {
 			if (_storage[ctr])
 				return iterator(ctr, this);
