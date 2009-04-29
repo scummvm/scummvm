@@ -92,13 +92,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
-	// Personal Nightmare 1.1c - EGA English DOS Floppy
+	// Personal Nightmare 1.1c - EGA English DOS Floppy (Packed)
 	{
 		{
 			"pn",
 			"Floppy",
 
 			{
+	{ "01.out",		GAME_ICONFILE,	"3a2a4c3e07dfbc4b309deade0af37baf", -1},
 	{ "icon.out",		GAME_ICONFILE,	"40d8347c3154bfa8b642d6860a4b9481", -1},
 	{ "night.dbm",		GAME_BASEFILE,	"177311ae059243f6a2740e950585d786", -1},
 	{ "night.txt",		GAME_TEXTFILE,	"861fc1fa0864eef585f5865dee52e325", -1},
@@ -112,6 +113,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_PN,
 		GID_PN,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_EGA | GF_PLANAR
+	},
+
+	// Personal Nightmare 1.1c - EGA English DOS Floppy (Unpacked)
+	{
+		{
+			"pn",
+			"Floppy",
+
+			{
+	{ "01.out",		GAME_ICONFILE,	"7f3e2a7a3aad016ad1bf540fcbe031ca", -1},
+	{ "icon.out",		GAME_ICONFILE,	"40d8347c3154bfa8b642d6860a4b9481", -1},
+	{ "night.dbm",		GAME_BASEFILE,	"177311ae059243f6a2740e950585d786", -1},
+	{ "night.txt",		GAME_TEXTFILE,	"861fc1fa0864eef585f5865dee52e325", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+
+		GType_PN,
+		GID_PN,
+		GF_OLD_BUNDLE | GF_EGA | GF_PLANAR
 	},
 
 	// Elvira 1 - English Amiga Floppy Demo

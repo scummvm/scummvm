@@ -390,7 +390,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	}
 
 	dstSize = srcSize = in.size();
-	if (getGameType() == GType_PN) {
+	if (getGameType() == GType_PN && (getFeatures() & GF_CRUNCHED)) {
 		Common::Stack<uint32> data;
 		byte *dataOut = 0;
 		int dataOutSize = 0;

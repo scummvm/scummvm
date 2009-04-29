@@ -892,29 +892,27 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in.read(dst, dstSize) != dstSize)
 				error("loadVGAVideoFile: Read failed");
+		} else if (getGameType() == GType_PN && (getFeatures() & GF_CRUNCHED)) {
+			Common::Stack<uint32> data;
+			byte *dataOut = 0;
+			int dataOutSize = 0;
+
+			for (uint i = 0; i < srcSize / 4; ++i)
+				data.push(in.readUint32BE());
+
+			decompressPN(data, dataOut, dataOutSize);
+			dst = allocBlock (dataOutSize + extraBuffer);
+			memcpy(dst, dataOut, dataOutSize);
+			delete[] dataOut;
 		} else if (getFeatures() & GF_CRUNCHED) {
-			if (getGameType() == GType_PN) {
-				Common::Stack<uint32> data;
-				byte *dataOut = 0;
-				int dataOutSize = 0;
+			byte *srcBuffer = (byte *)malloc(srcSize);
+			if (in.read(srcBuffer, srcSize) != srcSize)
+				error("loadVGAVideoFile: Read failed");
 
-				for (uint i = 0; i < srcSize / 4; ++i)
-					data.push(in.readUint32BE());
-
-				decompressPN(data, dataOut, dataOutSize);
-				dst = allocBlock (dataOutSize + extraBuffer);
-				memcpy(dst, dataOut, dataOutSize);
-				delete[] dataOut;
-			} else {
-				byte *srcBuffer = (byte *)malloc(srcSize);
-				if (in.read(srcBuffer, srcSize) != srcSize)
-					error("loadVGAVideoFile: Read failed");
-
-				dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
-				dst = allocBlock (dstSize + extraBuffer);
-				decrunchFile(srcBuffer, dst, srcSize);
-				free(srcBuffer);
-			}
+			dstSize = READ_BE_UINT32(srcBuffer + srcSize - 4);
+			dst = allocBlock (dstSize + extraBuffer);
+			decrunchFile(srcBuffer, dst, srcSize);
+			free(srcBuffer);
 		} else {
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in.read(dst, dstSize) != dstSize)
