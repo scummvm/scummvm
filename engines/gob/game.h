@@ -339,6 +339,15 @@ protected:
 	void collSubReenter();
 };
 
+class Game_Fascination : public Game_v2 {
+public:
+	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
+			int16 *pResId, int16 *pResIndex);
+
+	Game_Fascination(GobEngine *vm);
+	virtual ~Game_Fascination() {}
+};
+
 } // End of namespace Gob
 
 #endif // GOB_GAME_H

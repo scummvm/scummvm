@@ -295,6 +295,7 @@ bool GobEngine::initGameParts() {
 
 	switch (_gameType) {
 	case kGameTypeGeisha:
+	case kGameTypeAdibouUnknown:
 	case kGameTypeGob1:
 		_init = new Init_v1(this);
 		_video = new Video_v1(this);
@@ -315,13 +316,14 @@ bool GobEngine::initGameParts() {
 		_parse = new Parse_v1(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
+		_game = new Game_Fascination(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
 
+	case kGameTypeWeen:
 	case kGameTypeGob2:
 		_init = new Init_v2(this);
 		_video = new Video_v2(this);
@@ -343,20 +345,6 @@ bool GobEngine::initGameParts() {
 		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_Bargon(this);
-		_game = new Game_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
-		break;
-
-	case kGameTypeWeen:
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v2(this);
-		_parse = new Parse_v2(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);

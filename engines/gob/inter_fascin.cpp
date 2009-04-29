@@ -79,7 +79,7 @@ void Inter_Fascination::setupOpcodes() {
 		/* 08 */
 		OPCODE(o1_initCursorAnim),
 		OPCODE(o1_clearCursorAnim),
-		OPCODE(oFascin_cdUnknown10),
+		OPCODE(oFascin_setRenderFlags),
 		OPCODE(oFascin_cdUnknown11),
 		/* 0C */
 		{NULL, ""},
@@ -438,7 +438,7 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(o1_putPixel),
 		OPCODE(o2_goblinFunc),
 		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
+		OPCODE(oFascin_feUnknown27),//OPCODE(o1_freeSprite),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -510,9 +510,7 @@ void Inter_Fascination::setupOpcodes() {
 		/* 0C */
 		OPCODE(oFascin_geUnknown1000),
 		OPCODE(oFascin_geUnknown1001), //protrackerPlay doesn't play correctly "mod.extasy"
-		// NULL should be replaced by "OPCODE(o2_stopProtracker)," when protrackerPlay plays correctly "mod.extasy"		
-		{NULL, ""},
-
+		OPCODE(oFascin_geUnknown1002), //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 	};
 
 	_opcodesDrawFascination = opcodesDraw;
@@ -620,8 +618,17 @@ void Inter_Fascination::oFascin_geUnknown1001(OpGobParams &params) {
 	warning("Fascination oFascin_playProtracker - MOD not compatible, ToBeFixed");
 }
 
+void Inter_Fascination::oFascin_geUnknown1002(OpGobParams &params) {
+	warning("Fascination o2_stopProtracker - Commented out");
+}
+
 bool Inter_Fascination::oFascin_feUnknown4(OpFuncParams &params) {
 	warning("Fascination Unknown FE Function 4");
+	return true;
+}
+
+bool Inter_Fascination::oFascin_feUnknown27(OpFuncParams &params) {
+	warning("Fascination Unknown FE Function 27h");
 	return true;
 }
 
@@ -667,7 +674,7 @@ void Inter_Fascination::oFascin_cdUnknown6() {
 	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
-void Inter_Fascination::oFascin_cdUnknown10() {
+void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
 	warning("Fascination oFascin_cdUnknown10 (set render flags)");	
 	evalExpr(&expr);
@@ -676,10 +683,8 @@ void Inter_Fascination::oFascin_cdUnknown10() {
 }
 
 void Inter_Fascination::oFascin_cdUnknown11() {
-	int16 expr;
 	warning("Fascination oFascin_cdUnknown11 (set variable)");	
-	evalExpr(&expr);
-	warning("evalExpr: %d",expr);
+	evalExpr(0);
 }
 
 bool Inter_Fascination::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {

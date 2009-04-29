@@ -100,7 +100,8 @@ enum GameType {
 	kGameTypeSpirou,
 	kGameTypeFascination,
 	kGameTypeGeisha,
-	kGameTypeAdibou4
+	kGameTypeAdibou4,
+	kGameTypeAdibouUnknown
 };
 
 enum Features {
