@@ -568,6 +568,9 @@ SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
 	_channels[2].dispose = false;
 	_channels[3].data = 0;
 	_channels[3].dispose = false;
+
+	_musicEnabled = true;
+	_sfxEnabled = true;
 }
 
 SoundMan_br::~SoundMan_br() {
