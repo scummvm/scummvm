@@ -131,17 +131,17 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 		return (const SCENE_STRUC *)pStruc;
 
 	// Copy appropriate fields into tempStruc, and return a pointer to it
-	const uint32 *p = (const uint32 *)pStruc;
+	const byte *p = pStruc;
 	memset(&tempStruc, sizeof(SCENE_STRUC), 0);
 
-	tempStruc.numEntrance = *p++;
-	tempStruc.numPoly = *p++;
-	tempStruc.numTaggedActor = *p++;
-	tempStruc.defRefer = *p++;
-	tempStruc.hSceneScript = *p++;
-	tempStruc.hEntrance = *p++;
-	tempStruc.hPoly = *p++;
-	tempStruc.hTaggedActor = *p++;
+	tempStruc.numEntrance = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.numPoly = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.numTaggedActor = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.defRefer = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.hSceneScript = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.hEntrance = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.hPoly = READ_UINT32(p); p += sizeof(uint32);
+	tempStruc.hTaggedActor = READ_UINT32(p); p += sizeof(uint32);
 
 	return &tempStruc;
 }
