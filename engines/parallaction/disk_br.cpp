@@ -396,10 +396,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 
 Table* DosDisk_br::loadTable(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTable");
-	Common::SeekableReadStream *stream = openFile(name, ".tab");
-	Table *t = createTableFromStream(100, *stream);
-	delete stream;
-	return t;
+	return createTableFromStream(100, openFile(name, ".tab"));
 }
 
 Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {

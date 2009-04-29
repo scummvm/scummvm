@@ -541,7 +541,7 @@ public:
 	void clear();
 };
 
-Table* createTableFromStream(uint32 size, Common::SeekableReadStream &stream);
+Table* createTableFromStream(uint32 size, Common::SeekableReadStream *stream);
 
 } // namespace Parallaction
 

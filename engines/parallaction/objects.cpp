@@ -423,18 +423,19 @@ void FixedTable::clear() {
 	_used -= deleted;
 }
 
-Table* createTableFromStream(uint32 size, Common::SeekableReadStream &stream) {
+Table* createTableFromStream(uint32 size, Common::SeekableReadStream *stream) {
+	assert(stream);
 
 	Table *t = new Table(size);
+	assert(t);
 
-	Script s(&stream, false);
-
+	Script s(stream, false);
 	s.readLineToken();
 	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
 		t->addData(_tokens[0]);
 		s.readLineToken();
 	}
-
+	delete stream;
 	return t;
 }
 

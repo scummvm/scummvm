@@ -97,12 +97,18 @@ protected:
 
 	void addArchive(const Common::String& name, int priority);
 
+	virtual void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) = 0;
+	Cnv *makeCnv(Common::SeekableReadStream *stream);
+
 public:
 	Disk_ns(Parallaction *vm);
 	virtual ~Disk_ns();
 
 	Common::String selectArchive(const Common::String &name);
 	void setLanguage(uint16 language);
+
+	virtual Script* loadLocation(const char *name);
+	virtual Script* loadScript(const char* name);
 };
 
 class DosDisk_ns : public Disk_ns {
@@ -111,14 +117,14 @@ private:
 	void unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path);
 	Cnv* loadCnv(const char *filename);
 	void loadBackground(BackgroundInfo& info, const char *filename);
-	void loadMaskAndPath(BackgroundInfo& info, const char *name);
+	void createMaskAndPathBuffers(BackgroundInfo &info);
 	void parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream);
-	void parseBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 	Font *createFont(const char *name, Cnv* cnv);
 
 protected:
 	Gfx	 *_gfx;
 	virtual Common::SeekableReadStream *tryOpenFile(const char* name);
+	virtual void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream);
 
 public:
 	DosDisk_ns(Parallaction *vm);
@@ -126,8 +132,6 @@ public:
 
 	void init();
 
-	Script* loadLocation(const char *name);
-	Script* loadScript(const char* name);
 	GfxObj* loadTalk(const char *name);
 	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Frames* loadPointer(const char *name);
@@ -145,7 +149,6 @@ public:
 class AmigaDisk_ns : public Disk_ns {
 
 protected:
-	Cnv* makeCnv(Common::SeekableReadStream *stream);
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
@@ -156,14 +159,14 @@ protected:
 	void loadBackground(BackgroundInfo& info, const char *name);
 	void buildMask(byte* buf);
 
+	virtual void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream);
+
 public:
 	AmigaDisk_ns(Parallaction *vm);
 	virtual ~AmigaDisk_ns();
 
 	void init();
 
-	Script* loadLocation(const char *name);
-	Script* loadScript(const char* name);
 	GfxObj* loadTalk(const char *name);
 	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Frames* loadPointer(const char *name);

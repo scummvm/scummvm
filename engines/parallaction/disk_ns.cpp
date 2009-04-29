@@ -266,16 +266,49 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 	return _sset.createReadStreamForMember(path);
 }
 
+Script* Disk_ns::loadLocation(const char *name) {
+	char path[PATH_LEN];
 
-Cnv* DosDisk_ns::loadCnv(const char *filename) {
-	Common::SeekableReadStream *stream = openFile(filename);
+	sprintf(path, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
+	debugC(3, kDebugDisk, "Disk_ns::loadLocation(%s): trying '%s'", name, path);
+	Common::SeekableReadStream *stream = tryOpenFile(path);
+
+	if (!stream) {
+		sprintf(path, "%s/%s.loc", _language.c_str(), name);
+		debugC(3, kDebugDisk, "DosDisk_ns::loadLocation(%s): trying '%s'", name, path);
+		stream = openFile(path);
+	}
+	return new Script(stream, true);
+}
+
+Script* Disk_ns::loadScript(const char* name) {
+	debugC(1, kDebugDisk, "Disk_ns::loadScript '%s'", name);
+	char path[PATH_LEN];
+	sprintf(path, "%s.script", name);
+	Common::SeekableReadStream *stream = openFile(path);
+	return new Script(stream, true);
+}
+
+Cnv *Disk_ns::makeCnv(Common::SeekableReadStream *stream) {
+	assert(stream);
 
 	uint16 numFrames = stream->readByte();
 	uint16 width = stream->readByte();
+	assert((width & 7) == 0);
 	uint16 height = stream->readByte();
-	int32 decsize = numFrames * width * height;
+	uint32 decsize = numFrames * width * height;
 	byte *data = new byte[decsize];
+	assert(data);
+	memset(data, 0, decsize);
 
+	decodeCnv(data, numFrames, width, height, stream);
+
+	delete stream;
+	return new Cnv(numFrames, width, height, data, true);
+}
+
+void DosDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) {
+	int32 decsize = numFrames * width * height;
 	bool packed = (stream->size() - stream->pos()) != decsize;
 	if (packed) {
 		Graphics::PackBitsReadStream decoder(*stream);
@@ -283,20 +316,21 @@ Cnv* DosDisk_ns::loadCnv(const char *filename) {
 	} else {
 		stream->read(data, decsize);
 	}
+}
 
-	delete stream;
-
-	return new Cnv(numFrames, width, height, data, true);
+Cnv* DosDisk_ns::loadCnv(const char *filename) {
+	Common::SeekableReadStream *stream = openFile(filename);
+	assert(stream);
+	return makeCnv(stream);
 }
 
 
 GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
 	const char *ext = strstr(name, ".talk");
-	if (ext != NULL) {
+	if (ext) {
 		// npc talk
 		return new GfxObj(0, loadCnv(name), name);
-
 	}
 
 	char v20[30];
@@ -309,29 +343,6 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	return new GfxObj(0, loadCnv(v20), name);
 }
 
-Script* DosDisk_ns::loadLocation(const char *name) {
-
-	char archivefile[PATH_LEN];
-	sprintf(archivefile, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
-
-	debugC(3, kDebugDisk, "DosDisk_ns::loadLocation(%s): trying '%s'", name, archivefile);
-
-	Common::SeekableReadStream *stream = tryOpenFile(archivefile);
-	if  (!stream) {
-		sprintf(archivefile, "%s/%s.loc", _language.c_str(), name);
-		debugC(3, kDebugDisk, "DosDisk_ns::loadLocation(%s): trying '%s'", name, archivefile);
-		stream = openFile(archivefile);
-	}
-
-	return new Script(stream, true);
-}
-
-Script* DosDisk_ns::loadScript(const char* name) {
-	char path[PATH_LEN];
-	sprintf(path, "%s.script", name);
-	Common::SeekableReadStream *stream = openFile(path);
-	return new Script(stream, true);
-}
 
 GfxObj* DosDisk_ns::loadHead(const char* name) {
 	char path[PATH_LEN];
@@ -424,31 +435,16 @@ void DosDisk_ns::parseDepths(BackgroundInfo &info, Common::SeekableReadStream &s
 	info.layers[3] = stream.readByte();
 }
 
+void DosDisk_ns::createMaskAndPathBuffers(BackgroundInfo &info) {
+	info._mask = new MaskBuffer;
+	assert(info._mask);
+	info._mask->create(info.width, info.height);
+	info._mask->bigEndian = true;
 
-void DosDisk_ns::parseBackground(BackgroundInfo& info, Common::SeekableReadStream &stream) {
-
-	byte tmp[3];
-
-	for (uint i = 0; i < 32; i++) {
-		tmp[0] = stream.readByte();
-		tmp[1] = stream.readByte();
-		tmp[2] = stream.readByte();
-		info.palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
-	}
-
-	parseDepths(info, stream);
-
-	PaletteFxRange range;
-	for (uint32 _si = 0; _si < 6; _si++) {
-		range._timer = stream.readUint16BE();
-		range._step = stream.readUint16BE();
-		range._flags = stream.readUint16BE();
-		range._first = stream.readByte();
-		range._last = stream.readByte();
-
-		info.setPaletteRange(_si, range);
-	}
-
+	info._path = new PathBuffer;
+	assert(info._path);
+	info._path->create(info.width, info.height);
+	info._path->bigEndian = true;
 }
 
 void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
@@ -457,73 +453,75 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	info.width = _vm->_screenWidth;	// 320
 	info.height = _vm->_screenHeight;	// 200
 
-	parseBackground(info, *stream);
+	// read palette
+	byte tmp[3];
+	for (uint i = 0; i < 32; i++) {
+		tmp[0] = stream->readByte();
+		tmp[1] = stream->readByte();
+		tmp[2] = stream->readByte();
+		info.palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
+	}
 
+	// read z coordinates
+	parseDepths(info, *stream);
+
+	// read palette rotation parameters
+	PaletteFxRange range;
+	for (uint32 _si = 0; _si < 6; _si++) {
+		range._timer = stream->readUint16BE();
+		range._step = stream->readUint16BE();
+		range._flags = stream->readUint16BE();
+		range._first = stream->readByte();
+		range._last = stream->readByte();
+		info.setPaletteRange(_si, range);
+	}
+
+	// read bitmap, mask and path data and extract them into the 3 buffers
 	info.bg.create(info.width, info.height, 1);
-	info._mask = new MaskBuffer;
-	info._mask->create(info.width, info.height);
-	info._mask->bigEndian = true;
-
-	info._path = new PathBuffer;
-	info._path->create(info.width, info.height);
-	info._path->bigEndian = true;
-
+	createMaskAndPathBuffers(info);
 	unpackBackground(stream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
 
 	delete stream;
 }
 
-//
-//	read background path and mask from a file
-//
-//	mask and path are normally combined (via OR) into the background picture itself
-//	read the comment on the top of this file for more
-//
-void DosDisk_ns::loadMaskAndPath(BackgroundInfo& info, const char *name) {
-	char path[PATH_LEN];
-	sprintf(path, "%s.msk", name);
-	Common::SeekableReadStream *stream = openFile(path);
-	parseDepths(info, *stream);
-	info._path = new PathBuffer;
-	info._path->create(info.width, info.height);
-	info._path->bigEndian = true;
-	stream->read(info._path->data, info._path->size);
-	info._mask = new MaskBuffer;
-	info._mask->create(info.width, info.height);
-	info._mask->bigEndian = true;
-	stream->read(info._mask->data, info._mask->size);
-	delete stream;
-}
 
 void DosDisk_ns::loadSlide(BackgroundInfo& info, const char *filename) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.slide", filename);
 	loadBackground(info, path);
-
-	return;
 }
 
 void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	char filename[PATH_LEN];
 	sprintf(filename, "%s.dyn", name);
 
+	// load bitmap
 	loadBackground(info, filename);
 
-	if (mask != NULL) {
-		// load external masks and paths only for certain locations
-		loadMaskAndPath(info, mask);
+	if (mask == 0) {
+		return;
 	}
 
-	return;
+	// load external mask and path if present (overwriting the ones loaded by loadBackground)
+	char maskPath[PATH_LEN];
+	sprintf(maskPath, "%s.msk", mask);
+
+	Common::SeekableReadStream *stream = openFile(maskPath);
+	assert(stream);
+
+	parseDepths(info, *stream);
+
+	createMaskAndPathBuffers(info);
+	stream->read(info._path->data, info._path->size);
+	stream->read(info._mask->data, info._mask->size);
+
+	delete stream;
 }
 
 Table* DosDisk_ns::loadTable(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.tab", name);
-	Common::SeekableReadStream *stream = openFile(path);
-	Table *t = createTableFromStream(100, *stream);
-	delete stream;
-	return t;
+	return createTableFromStream(100, openFile(path));
 }
 
 Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
@@ -534,7 +532,7 @@ Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 
 
 Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
-	return NULL;
+	return 0;
 }
 
 
@@ -583,7 +581,7 @@ private:
 		byte *buf, *out, *dest_end, *off_lens, bits_left = 0, bit_cnt;
 		uint32 bit_buffer = 0, x, todo, offbits, offset, written = 0;
 
-		if (src == NULL || dest == NULL) return 0;
+		if (!src || !dest) return 0;
 
 		/* set up input and output pointers */
 		off_lens = src; src = &src[4];
@@ -829,58 +827,17 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 }
 
 
-Cnv* AmigaDisk_ns::makeCnv(Common::SeekableReadStream *stream) {
-	assert(stream);
-
-	uint16 numFrames = stream->readByte();
-	uint16 width = stream->readByte();
-	uint16 height = stream->readByte();
-
-	assert((width & 7) == 0);
-
+void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) {
 	byte bytesPerPlane = width / 8;
-
 	uint32 rawsize = numFrames * bytesPerPlane * NUM_PLANES * height;
-	byte *buf = (byte*)malloc(rawsize);
+	byte *buf = new byte[rawsize];
+	assert(buf);
 	stream->read(buf, rawsize);
-
-	uint32 decsize = numFrames * width * height;
-	byte *data = new byte[decsize];
-	memset(data, 0, decsize);
-
 	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
-
-	free(buf);
-
-	delete stream;
-
-	return new Cnv(numFrames, width, height, data, true);
+	delete []buf;
 }
+
 #undef NUM_PLANES
-
-Script* AmigaDisk_ns::loadLocation(const char *name) {
-	debugC(1, kDebugDisk, "AmigaDisk_ns()::loadLocation '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
-
-	Common::SeekableReadStream *stream = tryOpenFile(path);
-	if (!stream) {
-		sprintf(path, "%s/%s.loc", _language.c_str(), name);
-		stream = openFile(path);
-	}
-
-	debugC(3, kDebugDisk, "location file found: %s", path);
-	return new Script(stream, true);
-}
-
-Script* AmigaDisk_ns::loadScript(const char* name) {
-	debugC(1, kDebugDisk, "AmigaDisk_ns::loadScript '%s'", name);
-	char path[PATH_LEN];
-	sprintf(path, "%s.script", name);
-	Common::SeekableReadStream *stream = openFile(path);
-	return new Script(stream, true);
-}
 
 Frames* AmigaDisk_ns::loadPointer(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
@@ -1072,7 +1029,7 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 
 	loadBackground(info, filename);
 
-	if (mask == NULL) {
+	if (mask == 0) {
 		loadMask(info, background);
 		loadPath(info, background);
 	} else {
@@ -1154,11 +1111,7 @@ Table* AmigaDisk_ns::loadTable(const char* name) {
 			sprintf(path, "%s.table", name);
 	}
 
-	Common::SeekableReadStream *stream = openFile(path);
-	Table *t = createTableFromStream(100, *stream);
-	delete stream;
-
-	return t;
+	return createTableFromStream(100, openFile(path));
 }
 
 Font* AmigaDisk_ns::loadFont(const char* name) {
