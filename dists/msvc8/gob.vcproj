@@ -323,6 +323,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\game_fascin.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\global.cpp"
 			>
 		</File>
