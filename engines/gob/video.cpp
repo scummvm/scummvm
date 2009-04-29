@@ -378,6 +378,12 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	_videoDriver->drawSprite(source, dest, left, top, right, bottom, x, y, transp);
 }
 
+void Video::drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
+
+	_videoDriver->drawSpriteDouble(source, dest, left, top, right, bottom, x, y, transp);
+}
+
 void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
 		int16 color1, int16 color2, int16 transp, SurfaceDesc *dest) {
 	byte *dataPtr;

@@ -93,17 +93,65 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
-	// Playing the video
 	if (_vm->_vidPlayer->primaryOpen(file)) {
-		_vm->_vidPlayer->slotSetDoubleMode(-1, _doubleMode);
-		_vm->_vidPlayer->primaryPlay();
+		bool videoSupportsDouble =
+			((_vm->_vidPlayer->getFeatures() & CoktelVideo::kFeaturesSupportsDouble) != 0);
+
+		if (_doubleMode) {
+			if (videoSupportsDouble) {
+				_vm->_vidPlayer->slotSetDoubleMode(-1, true);
+				playVideoNormal();
+			} else
+				playVideoDoubled();
+		} else
+			playVideoNormal();
+
 		_vm->_vidPlayer->primaryClose();
 
 		if (waitTime > 0)
 			_vm->_util->longDelay(waitTime);
 	}
 
+
 	delete[] filePtr;
+}
+
+void DemoPlayer::playVideoNormal() {
+	_vm->_vidPlayer->primaryPlay();
+}
+
+void DemoPlayer::playVideoDoubled() {
+	const char *fileNameOpened;
+	char *fileName;
+
+	fileNameOpened = _vm->_vidPlayer->getFileName();
+
+	fileName = new char[strlen(fileNameOpened) + 1];
+	strcpy(fileName, fileNameOpened);
+
+	_vm->_vidPlayer->primaryClose();
+
+	if (_vm->_vidPlayer->primaryOpen(fileName, 0, -1, VideoPlayer::kFlagOtherSurface)) {
+		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {
+			if (_vm->_vidPlayer->primaryPlay(i, i))
+				break;
+
+			CoktelVideo::State state = _vm->_vidPlayer->getState();
+
+			int16 w = state.right - state.left + 1;
+			int16 h = state.bottom - state.top + 1;
+			int16 wD = (state.left * 2) + (w * 2);
+			int16 hD = (state.top * 2) + (h * 2);
+
+			_vm->_video->drawSpriteDouble(_vm->_draw->_spritesArray[0], _vm->_draw->_frontSurface,
+					state.left, state.top, state.right, state.bottom, state.left, state.top, 0);
+			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
+					state.left * 2, state.top * 2, wD, hD);
+			_vm->_video->retrace();
+		}
+	}
+
+	delete[] fileName;
 }
 
 void DemoPlayer::evaluateVideoMode(const char *mode) {

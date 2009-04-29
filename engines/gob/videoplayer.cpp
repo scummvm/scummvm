@@ -114,6 +114,10 @@ const CoktelVideo *VideoPlayer::Video::getVideo() const {
 	return _video;
 }
 
+uint32 VideoPlayer::Video::getFeatures() const {
+	return _video->getFeatures();
+}
+
 CoktelVideo::State VideoPlayer::Video::getState() const {
 	return _state;
 }
@@ -286,12 +290,12 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 	return true;
 }
 
-void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
+bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
 		int16 palFrame, int16 endFrame, bool fade, int16 reverseTo, bool forceSeek) {
 
 	if (!_primaryVideo->isOpen())
-		return;
+		return false;
 
 	CoktelVideo &video = *(_primaryVideo->getVideo());
 
@@ -318,9 +322,13 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	if (fade)
 		_vm->_palAnim->fade(0, -2, 0);
 
+	bool canceled = false;
+
 	while (startFrame <= lastFrame) {
-		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame))
+		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame)) {
+			canceled = true;
 			break;
+		}
 
 		evalBgShading(video);
 
@@ -355,6 +363,8 @@ void VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	}
 
 	evalBgShading(video);
+
+	return canceled;
 }
 
 void VideoPlayer::primaryClose() {
@@ -493,6 +503,15 @@ VideoPlayer::Video *VideoPlayer::getVideoBySlot(int slot) {
 	return 0;
 }
 
+const char *VideoPlayer::getFileName(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getFileName();
+
+	return "";
+}
+
 uint16 VideoPlayer::getFlags(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 
@@ -554,6 +573,25 @@ int16 VideoPlayer::getDefaultY(int slot) const {
 		return video->getDefaultY();
 
 	return 0;
+}
+
+uint32 VideoPlayer::getFeatures(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+
+	if (video)
+		return video->getFeatures();
+
+	return 0;
+}
+
+CoktelVideo::State VideoPlayer::getState(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	CoktelVideo::State state;
+
+	if (video)
+		state = video->getState();
+
+	return state;
 }
 
 bool VideoPlayer::hasExtraData(const char *fileName, int slot) const {

@@ -56,7 +56,9 @@ public:
 		/** Has video. */
 		kFeaturesVideo = 0x400,
 		/** Is a full color (non-paletted) video. */
-		kFeaturesFullColor = 0x4000
+		kFeaturesFullColor = 0x4000,
+		/** Supports automatic doubling. */
+		kFeaturesSupportsDouble = 0x40000000
 	};
 
 	enum StateFlags {
@@ -95,7 +97,7 @@ public:
 	virtual ~CoktelVideo() { }
 
 	/** Returns the features the loaded video possesses. */
-	virtual uint16 getFeatures() const = 0;
+	virtual uint32 getFeatures() const = 0;
 	/** Returns the flags the loaded video possesses. */
 	virtual uint16 getFlags() const = 0;
 	/** Returns the x coordinate of the video. */
@@ -196,7 +198,7 @@ public:
 	Imd();
 	~Imd();
 
-	uint16 getFeatures() const { return _features; }
+	uint32 getFeatures() const { return _features; }
 	uint16 getFlags() const { return _flags; }
 	int16 getX() const { return _x; }
 	int16 getY() const { return _y; }
@@ -255,7 +257,7 @@ protected:
 
 	Common::SeekableReadStream *_stream;
 	uint16 _version;
-	uint16 _features;
+	uint32 _features;
 	uint16 _flags;
 	int16 _x, _y, _width, _height;
 	int16 _stdX, _stdY, _stdWidth, _stdHeight;

@@ -45,6 +45,8 @@ public:
 			byte transp, SurfaceDesc *dest);
 	void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left,
 			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
+	void drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest, int16 left,
+			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 			int16 x, int16 y, byte transp, SurfaceDesc *dest);
 };

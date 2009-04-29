@@ -1006,6 +1006,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	if (_externalCodec && _codecIndeo3)
+		_features |= kFeaturesSupportsDouble;
+
 	_soundFreq = _stream->readSint16LE();
 	_soundSliceSize = _stream->readSint16LE();
 	_soundSlicesCount = _stream->readSint16LE();

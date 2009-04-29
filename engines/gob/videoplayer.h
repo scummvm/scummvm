@@ -57,7 +57,7 @@ public:
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
 			int16 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
-	void primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
+	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
 			int16 reverseTo = -1, bool forceSeek = false);
@@ -76,6 +76,7 @@ public:
 
 	bool slotIsOpen(int slot) const;
 
+	const char *getFileName(int slot = -1) const;
 	uint16 getFlags(int slot = -1) const;
 	int16 getFramesCount(int slot = -1) const;
 	int16 getCurrentFrame(int slot = -1) const;
@@ -83,6 +84,9 @@ public:
 	int16 getHeight(int slot = -1) const;
 	int16 getDefaultX(int slot = -1) const;
 	int16 getDefaultY(int slot = -1) const;
+
+	CoktelVideo::State getState(int slot = -1) const;
+	uint32 getFeatures(int slot = -1) const;
 
 	bool hasExtraData(const char *fileName, int slot = -1) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName, int slot = -1);
@@ -106,7 +110,9 @@ private:
 			const char *getFileName() const;
 			CoktelVideo *getVideo();
 			const CoktelVideo *getVideo() const;
+
 			CoktelVideo::State getState() const;
+			uint32 getFeatures() const;
 
 			int16 getDefaultX() const;
 			int16 getDefaultY() const;

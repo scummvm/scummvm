@@ -52,6 +52,9 @@ protected:
 	void evaluateVideoMode(const char *mode);
 	void clearScreen();
 	void playVideo(const char *fileName);
+
+	void playVideoNormal();
+	void playVideoDoubled();
 };
 
 } // End of namespace Gob

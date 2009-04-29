@@ -149,6 +149,8 @@ public:
 	void drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			int16 left, int16 top, int16 right, int16 bottom,
 			int16 x, int16 y, int16 transp);
+	void drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
 	void drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc *dest);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
@@ -258,6 +260,7 @@ public:
 	VideoDriver() {}
 	virtual ~VideoDriver() {}
 	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
+	virtual void drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
 	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
 	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;
 	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;

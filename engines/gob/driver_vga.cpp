@@ -163,6 +163,43 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	}
 }
 
+void VGAVideoDriver::drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+		int16 left, int16 top, int16 right, int16 bottom,
+		int16 x, int16 y, int16 transp) {
+
+	if ((x >= dest->getWidth()) || (x < 0) ||
+	    (y >= dest->getHeight()) || (y < 0))
+		return;
+
+	int16 width = MIN<int>((right - left) + 1, dest->getWidth() / 2);
+	int16 height = MIN<int>((bottom - top) + 1, dest->getHeight() / 2);
+
+	if ((width < 1) || (height < 1))
+		return;
+
+	const byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
+	byte *destPos = dest->getVidMem() + ((y * 2) * dest->getWidth()) + (x * 2);
+
+	while (height--) {
+		const byte *srcBak = srcPos;
+
+		for (int i = 0; i < 2; i++) {
+			srcPos = srcBak;
+
+			for (int16 j = 0; j < width; j++) {
+				if (!transp || srcPos[i]) {
+					destPos[2 * j + 0] = srcPos[j];
+					destPos[2 * j + 1] = srcPos[j];
+				}
+			}
+
+			destPos += dest->getWidth();
+		}
+
+		srcPos = srcBak + source->getWidth();
+	}
+}
+
 void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 		int16 x, int16 y, byte transp, SurfaceDesc *dest) {
 	int destRight = x + width;
