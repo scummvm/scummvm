@@ -3812,7 +3812,7 @@ void SoundTowns::playTrack(uint8 track) {
 		return;
 	track -= 2;
 
-	const int32 *const tTable = (const int32 *const) cdaData();
+	const int32 *const tTable = (const int32 *const)cdaData();
 	int tTableIndex = 3 * track;
 
 	int trackNum = (int) READ_LE_UINT32(&tTable[tTableIndex + 2]);
