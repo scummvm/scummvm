@@ -1867,7 +1867,7 @@ void LoLEngine::initStaticResource() {
 		_soundData[1].fileList = pcMusicFileListIngame;
 		_soundData[1].fileListLen = 1;
 		_soundData[2].fileList = pcMusicFileListFinale;
-		_soundData[3].fileListLen = 1;
+		_soundData[2].fileListLen = 1;
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		_soundData[0].fileList = pc98MusicFileListIntro;
 		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
