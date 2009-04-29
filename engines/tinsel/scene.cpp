@@ -112,6 +112,9 @@ static bool ShowPosition = false;	// Set when showpos() has been called
 
 SCNHANDLE newestScene = 0;
 
+int sceneCtr = 0;
+static int initialMyEscape;
+
 static SCNHANDLE SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
 
 static bool bWatchingOut = false;
@@ -152,9 +155,14 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 		INT_CONTEXT *pic;
 		const TP_INIT *pInit;
+		int myEscape;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
+
+	// The following myEscape value setting is used for enabling title screen skipping in DW1
+	if (TinselV1 && (sceneCtr == 1)) initialMyEscape = GetEscEvents();
+	_ctx->myEscape = (TinselV1 && (sceneCtr < 4)) ? initialMyEscape : 0;
 
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
@@ -167,7 +175,7 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 		NOPOLY,			// No polygon
 		0,				// No actor
 		NULL,			// No object
-		0);
+		_ctx->myEscape);
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
 	if (_ctx->pInit->event == CLOSEDOWN || _ctx->pInit->event == LEAVE_T2)

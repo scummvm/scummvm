@@ -220,36 +220,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 
 		case Common::KEYCODE_ESCAPE:
-#if 0
-			if (!TinselV2) {
-				// WORKAROUND: For Discworld 1, check if any of the starting logo screens are
-				// active, and if so manually skip to the title screen, allowing them to be bypassed
-				int sceneOffset = (_vm->getFeatures() & GF_SCNFILES) ? 1 : 0;
-				int sceneNumber = (GetSceneHandle() >> SCNHANDLE_SHIFT) - sceneOffset;
-				if ((g_language == TXT_GERMAN) &&
-					((sceneNumber >= 25 && sceneNumber <= 27) || (sceneNumber == 17))) {
-					// Skip to title screen
-					// It seems the German CD version uses scenes 25,26,27,17 for the intro,
-					// instead of 13,14,15,11;  also, the title screen is 11 instead of 10
-					SetNewScene((11 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
-				} else if ((sceneNumber >= 13) && (sceneNumber <= 15) || (sceneNumber == 11)) {
-					// Skip to title screen
-					SetNewScene((10 + sceneOffset) << SCNHANDLE_SHIFT, 1, TRANS_CUT);
-				} else {
-					// Not on an intro screen, so process the key normally
-					ProcessKeyEvent(PLR_ESCAPE);
-				}
-			} else {
-				// Running Discworld 2, so process the key normally
-				ProcessKeyEvent(PLR_ESCAPE);
-			}
-#else
-	// The above workaround is used to skip the title screens in DW1, but it can throw assertions
-	// in certain versions of the game, e.g. the multilingual version with English speech and several
-	// subtitles (French, German, Italian, Spanish)
-	// FIXME: Add that workaround again, once we make sure it works properly in all versions of the game
-	ProcessKeyEvent(PLR_ESCAPE);
-#endif
+			ProcessKeyEvent(PLR_ESCAPE);
 			continue;
 
 #ifdef SLOW_RINCE_DOWN

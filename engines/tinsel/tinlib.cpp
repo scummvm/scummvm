@@ -108,6 +108,7 @@ extern int NewestSavedGame(void);
 
 // in SCENE.CPP
 extern void setshowpos(void);
+extern int sceneCtr;
 
 // in TINSEL.CPP
 extern void SetCdChangeScene(SCNHANDLE hScene);
@@ -1436,6 +1437,9 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 	else
 		GetControl(CONTROL_STARTOFF);
 
+	if (TinselV1)
+		++sceneCtr;
+
 	// Prevent code subsequent to this call running before scene changes
 	if (g_scheduler->getCurrentPID() != PID_MASTER_SCR)
 		CORO_KILL_SELF();
@@ -2406,7 +2410,9 @@ void FnRestartGame(void) {
 	// TODO: Tinsel 2 comments out the 2 calls, but I'm not sure that this should be done
 	StopMidi();
 	StopSample();
+
 	bRestart = true;
+	sceneCtr = 0;
 }
 
 /**
