@@ -65,6 +65,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
 	{"adibou4", "Adibou v4"},
+	{"adibouunknown", "Adibou (not supported)"},
 	{0, 0}
 };
 
@@ -1459,10 +1460,24 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
+			UNK_LANG,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0,
+		0
+	},
+	{
+		{
 			"fascination",
 			"CD Version (Censored)",
 			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545952),
-			UNK_LANG,
+			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 		},
@@ -1505,7 +1520,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"fascination",
 			"VGA",
 			AD_ENTRY1s("disk0.stk", "e8ab4f200a2304849f462dc901705599", 183337),
-			UNK_LANG,
+			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 		},
@@ -2047,6 +2062,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
 			DE_DEU,
 			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		0,
+		0
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
+			EN_USA,
+			kPlatformWindows,
 			ADGF_NO_FLAGS
 		},
 		kGameTypeInca2,
@@ -2718,6 +2747,89 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeAdibou4,
 		kFeatures640,
+		0,
+		0
+	},
+	{
+		{
+			"adibou4",
+			"ADI 4.21 French",
+			AD_ENTRY1s("intro.stk", "c5b9f6222c0b463f51dab47317c5b687", 5950490),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibou4,
+		kFeaturesNone,
+		0,
+		0
+	},	{
+		{
+			"adibouunknown",
+			"",
+			AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
+			FR_FRA,
+			kPlatformAtariST,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		0,
+		"base.tot"
+	},
+	{
+		{
+			"adibouunknown",
+			"",
+			AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		0,
+		0
+	},
+	{
+		{
+			"adibouunknown",
+			"ADI 2 Spanish",
+			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"adi2.stk",
+		"ediintro.tot"
+	},
+	{
+		{
+			"adibouunknown",
+			"ADIBOU 2 French",
+			AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		0,
+		0
+	},
+	{
+		{
+			"adibouunknown",
+			"ADIBOU 2 French",
+			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
 		0,
 		0
 	},
