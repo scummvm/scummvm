@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	game_v1.o \
 	game_v2.o \
 	game_v6.o \
+	game_fascin.o \
 	global.o \
 	gob.o \
 	goblin.o \
