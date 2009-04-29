@@ -308,11 +308,11 @@ public:
 	bool init();
 	void deinit();
 
-	const char * const*loadStrings(int id, int &strings);
+	const char * const *loadStrings(int id, int &strings);
 	const uint8 *loadRawData(int id, int &size);
 	const Shape *loadShapeTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
-	const uint8 * const*loadPaletteTable(int id, int &entries);
+	const uint8 * const *loadPaletteTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);

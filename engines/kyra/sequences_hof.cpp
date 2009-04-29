@@ -1523,7 +1523,7 @@ void KyraEngine_HoF::seq_finaleActorScreen() {
 
 	int talkieCreditsSize, talkieCreditsSpecialSize;
 	const uint8 *talkieCredits = _staticres->loadRawData(k2SeqplayCredits, talkieCreditsSize);
-	const char *const *talkieCreditsSpecial = _staticres->loadStrings(k2SeqplayCreditsSpecial, talkieCreditsSpecialSize);
+	const char * const *talkieCreditsSpecial = _staticres->loadStrings(k2SeqplayCreditsSpecial, talkieCreditsSpecialSize);
 
 	_sound->setSoundList(&_soundData[kMusicIngame]);
 	_sound->loadSoundFile(3);
