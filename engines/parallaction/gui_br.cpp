@@ -243,7 +243,6 @@ public:
 		_vm->_saveLoad->getGamePartProgress(complete, 3);
 		for (i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
-		// TODO: keep track of and destroy menu item frames/surfaces
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			_menuStrings = _menuStringsAmiga;
 			_options = _optionsAmiga;
