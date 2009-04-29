@@ -121,7 +121,7 @@ int SetupCallbacks(void) {
 int main(void) {
 	SetupCallbacks();
 
-	static char *argv[] = { "scummvm", NULL };
+	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
 	g_system = new OSystem_PSP_GU();
