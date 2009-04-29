@@ -36,8 +36,8 @@
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
-#include "gob/scnplayer.h"
-#include "gob/batplayer.h"
+#include "gob/demos/scnplayer.h"
+#include "gob/demos/batplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {

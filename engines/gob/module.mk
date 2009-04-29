@@ -56,15 +56,15 @@ MODULE_OBJS := \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
-	demoplayer.o \
-	scnplayer.o \
-	batplayer.o \
 	util.o \
 	variables.o \
 	video.o \
 	video_v1.o \
 	video_v2.o \
 	video_v6.o \
+	demos/demoplayer.o \
+	demos/scnplayer.o \
+	demos/batplayer.o \
 	sound/sound.o \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \

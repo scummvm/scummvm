@@ -26,7 +26,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/demoplayer.h"
+#include "gob/demos/demoplayer.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/draw.h"
