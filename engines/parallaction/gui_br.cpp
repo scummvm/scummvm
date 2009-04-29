@@ -155,6 +155,9 @@ class MainMenuInputState_BR : public MenuInputState {
 	static const MenuOptions _optionsAmiga[NUM_MENULINES];
 	static const MenuOptions _optionsPC[NUM_MENULINES];
 
+	const char **_menuStrings;
+	const MenuOptions *_options;
+
 	static const char *_firstLocation[];
 
 	int _availItems;
@@ -169,45 +172,7 @@ class MainMenuInputState_BR : public MenuInputState {
 		}
 	}
 
-	void performChoice(int selectedItem) {
-		switch (selectedItem) {
-		case kMenuQuit: {
-			_vm->quitGame();
-			break;
-		}
-
-		case kMenuLoadGame:
-			warning("loadgame not yet implemented");
-			break;
-
-		default:
-			_vm->scheduleLocationSwitch(_firstLocation[selectedItem]);
-		}
-	}
-
-public:
-	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
-	    memset(_lines, 0, sizeof(_lines));
-	}
-
-    ~MainMenuInputState_BR() {
-        cleanup();
-    }
-
-	virtual MenuInputState* run() {
-
-		int event = _vm->_input->getLastButtonEvent();
-		if ((event == kMouseLeftUp) && _selection >= 0) {
-            _vm->_system->showMouse(false);
-            cleanup();
-			if (_vm->getPlatform() == Common::kPlatformAmiga) {
-				performChoice(_optionsAmiga[_selection]);
-			} else {
-				performChoice(_optionsPC[_selection]);
-			}
-			return 0;
-		}
-
+	void redrawMenu() {
 		Common::Point p;
 		_vm->_input->getCursorPos(p);
 
@@ -222,9 +187,45 @@ public:
 		for (int i = 0; i < _availItems; i++) {
 			_vm->_gfx->setItemFrame(i, _selection == i ? 1 : 0);
 		}
+	}
 
+public:
+	MainMenuInputState_BR(Parallaction_br *vm, MenuInputHelper *helper) : MenuInputState("mainmenu", helper), _vm(vm)  {
+	    memset(_lines, 0, sizeof(_lines));
+	}
 
-		return this;
+    ~MainMenuInputState_BR() {
+        cleanup();
+    }
+
+	virtual MenuInputState* run() {
+		int event = _vm->_input->getLastButtonEvent();
+		if (!((event == kMouseLeftUp) && _selection >= 0)) {
+			redrawMenu();
+			return this;
+		}
+
+		switch (_options[_selection]) {
+		case kMenuQuit: {
+			_vm->quitGame();
+			break;
+		}
+
+		case kMenuLoadGame:
+			warning("loadgame not yet implemented");
+			if (!_vm->_saveLoad->loadGame()) {
+				return this;
+			}
+			break;
+
+		default:
+			_vm->scheduleLocationSwitch(_firstLocation[_options[_selection]]);
+		}
+
+		_vm->_system->showMouse(false);
+		cleanup();
+
+		return 0;
 	}
 
 	virtual void enter() {
@@ -243,12 +244,16 @@ public:
 		for (i = 0; i < 3 && complete[i]; i++, _availItems++) ;
 
 		// TODO: keep track of and destroy menu item frames/surfaces
+		if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			_menuStrings = _menuStringsAmiga;
+			_options = _optionsAmiga;
+		} else {
+			_menuStrings = _menuStringsPC;
+			_options = _optionsPC;
+		}
+
 		for (i = 0; i < _availItems; i++) {
-			if (_vm->getPlatform() == Common::kPlatformAmiga) {
-				_lines[i] = new GfxObj(0, renderMenuItem(_menuStringsAmiga[i]), "MenuItem");
-			} else {
-				_lines[i] = new GfxObj(0, renderMenuItem(_menuStringsPC[i]), "MenuItem");
-			}
+			_lines[i] = new GfxObj(0, renderMenuItem(_menuStrings[i]), "MenuItem");
 			_vm->_gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
 		}
 		_selection = -1;
@@ -385,11 +390,13 @@ public:
 			cell = (p.x - _menuRect.left) / _cellW + 3 * ((p.y - _menuRect.top) / _cellH);
 		}
 
+		bool close = false;
+
 		switch (cell) {
 		case 4:	// resume
 		case -1: // invalid cell
-			_vm->_gfx->freeDialogueObjects();
-			return 0;
+			close = true;
+			break;
 
 		case 0:	// toggle music
 			if (_mscStatus != -1) {
@@ -397,7 +404,7 @@ public:
 				_mscStatus = _vm->getMusicStatus();
 				_vm->_gfx->setItemFrame(_mscMenuObjId, frameFromStatus(_mscStatus));
 			}
-			return this;
+			break;
 
 		case 1:	// toggle sfx
 			if (_sfxStatus != -1) {
@@ -405,23 +412,29 @@ public:
 				_sfxStatus = _vm->getSfxStatus();
 				_vm->_gfx->setItemFrame(_sfxMenuObjId, frameFromStatus(_sfxStatus));
 			}
-			return this;
+			break;
 
 		case 2:	// save
 			warning("Saving is not supported yet!");
-			_vm->_gfx->freeDialogueObjects();
+			_vm->_saveLoad->saveGame();
 			break;
 
 		case 3:	// load
 			warning("Loading is not supported yet!");
-			_vm->_gfx->freeDialogueObjects();
+			close = _vm->_saveLoad->loadGame();
 			break;
 
 		case 5:	// quit
 			return _helper->getState("quitdialog");
 		}
 
-		return 0;
+		if (close) {
+			_vm->_gfx->freeDialogueObjects();
+			return 0;
+		}
+
+		_vm->_input->setArrowCursor();
+		return this;
 	}
 
 	void enter() {

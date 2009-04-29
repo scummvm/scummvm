@@ -41,13 +41,18 @@ protected:
 	Common::String genSaveFileName(uint slot);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
+	int selectSaveFile(Common::String &selectedName, const Common::String &caption, const Common::String &button);
+	int buildSaveFileList(Common::StringList& l);
+	virtual void doLoadGame(uint16 slot) = 0;
+	virtual void doSaveGame(uint16 slot, const char* name) = 0;
 
 public:
 	SaveLoad(Common::SaveFileManager* saveFileMan, const char *prefix) : _saveFileMan(saveFileMan), _saveFilePrefix(prefix) { }
 	virtual ~SaveLoad() { }
 
-	virtual bool loadGame() = 0;
-	virtual bool saveGame() = 0;
+	virtual bool loadGame();
+	virtual bool saveGame();
+
 	virtual void getGamePartProgress(bool *complete, int size) = 0;
 	virtual void setPartComplete(const char *part) = 0;
 
@@ -57,22 +62,18 @@ public:
 class SaveLoad_ns : public SaveLoad {
 
 	Parallaction_ns *_vm;
-
-	Common::String	_saveFileName;
 	Common::String genOldSaveFileName(uint slot);
 
 protected:
 	void renameOldSavefiles();
-	void doLoadGame(uint16 slot);
-	void doSaveGame(uint16 slot, const char* name);
-	int  buildSaveFileList(Common::StringList& l);
-	int  selectSaveFile(uint16 arg_0, const char* caption, const char* button);
+	virtual void doLoadGame(uint16 slot);
+	virtual void doSaveGame(uint16 slot, const char* name);
 
 public:
 	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) { }
 
-	virtual bool loadGame();
 	virtual bool saveGame();
+
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);
 };
@@ -80,12 +81,12 @@ public:
 class SaveLoad_br : public SaveLoad {
 
 	Parallaction_br *_vm;
+	virtual void doLoadGame(uint16 slot);
+	virtual void doSaveGame(uint16 slot, const char* name);
 
 public:
 	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra"), _vm(vm) { }
 
-	virtual bool loadGame();
-	virtual bool saveGame();
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);
 };

@@ -53,13 +53,7 @@ class SaveLoadChooser : public GUI::Dialog {
 protected:
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
 	GUI::ContainerWidget	*_container;
-
-	uint8 _fillR, _fillG, _fillB;
 
 public:
 	SaveLoadChooser(const String &title, const String &buttonLabel);
@@ -240,7 +234,7 @@ enum {
 
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("ScummSaveLoad"), _list(0), _chooseButton(0), _gfxWidget(0) {
+	: Dialog("ScummSaveLoad"), _list(0), _chooseButton(0) {
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
@@ -252,19 +246,10 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_list->setEditable(true);
 	_list->setNumberingMode(GUI::kListNumberingOne);
 
-	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-
-	_date = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No date saved", Graphics::kTextAlignCenter);
-	_time = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No time saved", Graphics::kTextAlignCenter);
-	_playtime = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", Graphics::kTextAlignCenter);
-
 	// Buttons
 	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", GUI::kCloseCmd, 0);
 	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
-
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
@@ -279,10 +264,7 @@ void SaveLoadChooser::setList(const StringList& list) {
 }
 
 int SaveLoadChooser::runModal() {
-	if (_gfxWidget)
-		_gfxWidget->setGfx(0);
-	int ret = GUI::Dialog::runModal();
-	return ret;
+	return GUI::Dialog::runModal();
 }
 
 void SaveLoadChooser::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -319,16 +301,11 @@ void SaveLoadChooser::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 }
 
 void SaveLoadChooser::reflowLayout() {
-	_container->setVisible(false);
-	_gfxWidget->setVisible(false);
-	_date->setVisible(false);
-	_time->setVisible(false);
-	_playtime->setVisible(false);
-
 	Dialog::reflowLayout();
 }
 
-int SaveLoad_ns::buildSaveFileList(Common::StringList& l) {
+
+int SaveLoad::buildSaveFileList(Common::StringList& l) {
 	Common::String pattern = _saveFilePrefix + ".???";
 	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
 
@@ -353,30 +330,28 @@ int SaveLoad_ns::buildSaveFileList(Common::StringList& l) {
 }
 
 
-int SaveLoad_ns::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
+int SaveLoad::selectSaveFile(Common::String &selectedName, const Common::String &caption, const Common::String &button) {
+	Common::StringList list;
+	buildSaveFileList(list);
 
-	SaveLoadChooser* slc = new SaveLoadChooser(caption, button);
+	SaveLoadChooser slc(caption, button);
+	slc.setList(list);
 
-	Common::StringList l;
+	selectedName.clear();
 
-	/*int count = */ buildSaveFileList(l);
-	slc->setList(l);
-
-	int idx = slc->runModal();
-	if (idx >= 0) {
-		_saveFileName = slc->getResultString();
+	int slot = slc.runModal();
+	if (slot >= 0) {
+		selectedName = slc.getResultString();
 	}
 
-	delete slc;
-
-	return idx;
+	return slot;
 }
 
 
 
-bool SaveLoad_ns::loadGame() {
-
-	int _di = selectSaveFile( 0, "Load file", "Load" );
+bool SaveLoad::loadGame() {
+	Common::String null;
+	int _di = selectSaveFile(null, "Load file", "Load");
 	if (_di == -1) {
 		return false;
 	}
@@ -392,18 +367,14 @@ bool SaveLoad_ns::loadGame() {
 }
 
 
-bool SaveLoad_ns::saveGame() {
-
-	if (!scumm_stricmp(_vm->_location._name, "caveau")) {
-		return false;
-	}
-
-	int slot = selectSaveFile( 1, "Save file", "Save" );
+bool SaveLoad::saveGame() {
+	Common::String saveName;
+	int slot = selectSaveFile(saveName, "Save file", "Save");
 	if (slot == -1) {
 		return false;
 	}
 
-	doSaveGame(slot, _saveFileName.c_str());
+	doSaveGame(slot, saveName.c_str());
 
 	GUI::TimedMessageDialog dialog("Saving game...", 1500);
 	dialog.runModal();
@@ -411,6 +382,16 @@ bool SaveLoad_ns::saveGame() {
 	return true;
 }
 
+
+bool SaveLoad_ns::saveGame() {
+	// NOTE: shouldn't this check be done before, so that the
+	// user can't even select 'save'?
+	if (!scumm_stricmp(_vm->_location._name, "caveau")) {
+		return false;
+	}
+
+	return SaveLoad::saveGame();
+}
 
 void SaveLoad_ns::setPartComplete(const char *part) {
 	Common::String s;
@@ -512,14 +493,14 @@ void SaveLoad_ns::renameOldSavefiles() {
 }
 
 
-bool SaveLoad_br::loadGame() {
+void SaveLoad_br::doLoadGame(uint16 slot) {
 	// TODO: implement loadgame
-	return false;
+	return;
 }
 
-bool SaveLoad_br::saveGame() {
+void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
 	// TODO: implement savegame
-	return false;
+	return;
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {
