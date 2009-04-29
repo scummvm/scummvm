@@ -1863,18 +1863,18 @@ void LoLEngine::initStaticResource() {
 	memset(_soundData, 0, sizeof(_soundData));
 	if (_flags.platform == Common::kPlatformPC) {
 		_soundData[0].fileList = pcMusicFileListIntro;
-		_soundData[0].fileListLen = 1;
+		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
 		_soundData[1].fileList = pcMusicFileListIngame;
-		_soundData[1].fileListLen = 1;
+		_soundData[1].fileListLen = ARRAYSIZE(pcMusicFileListIngame);
 		_soundData[2].fileList = pcMusicFileListFinale;
-		_soundData[2].fileListLen = 1;
+		_soundData[2].fileListLen = ARRAYSIZE(pcMusicFileListFinale);
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		_soundData[0].fileList = pc98MusicFileListIntro;
 		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
 		_soundData[1].fileList = pc98MusicFileListIngame;
-		_soundData[1].fileListLen = 1;
+		_soundData[1].fileListLen = ARRAYSIZE(pc98MusicFileListIngame);
 		_soundData[2].fileList = pc98MusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);;
+		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
 	}
 }
 
