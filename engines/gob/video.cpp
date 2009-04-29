@@ -110,7 +110,7 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 
 	_dirtyAll = false;
 
-	_palLUT = new Graphics::PaletteLUT(6, Graphics::PaletteLUT::kPaletteYUV);
+	_palLUT = new Graphics::PaletteLUT(5, Graphics::PaletteLUT::kPaletteYUV);
 }
 
 char Video::initDriver(int16 vidMode) {

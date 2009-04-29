@@ -240,8 +240,6 @@ public:
 private:
 	static const byte _ditherPalette[768];
 
-	bool loadPalLUT(const char *target);
-	bool savePalLUT(const char *target);
 	void buildPalLUT();
 
 	void shadeRect(SurfaceDesc *dest,

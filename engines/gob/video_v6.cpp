@@ -61,66 +61,7 @@ void Video_v6::setPrePalette() {
 void Video_v6::init(const char *target) {
 	initOSD();
 
-	if (loadPalLUT(target))
-		return;
-
 	buildPalLUT();
-
-	savePalLUT(target);
-}
-
-bool Video_v6::loadPalLUT(const char *target) {
-	if (target[0] == '\0')
-		return false;
-
-	char *pltSave = new char[strlen(target) + 5];
-
-	strcpy(pltSave, target);
-	strcat(pltSave, ".plt");
-
-	Common::InSaveFile *saveFile;
-
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	if (!(saveFile = saveMan->openForLoading(pltSave))) {
-		delete[] pltSave;
-		return false;
-	}
-
-	drawOSDText("Loading palette table");
-
-	bool loaded = _palLUT->load(*saveFile);
-
-	delete[] pltSave;
-	delete saveFile;
-
-	return loaded;
-}
-
-bool Video_v6::savePalLUT(const char *target) {
-	if (target[0] == '\0')
-		return false;
-
-	char *pltSave = new char[strlen(target) + 5];
-
-	strcpy(pltSave, target);
-	strcat(pltSave, ".plt");
-
-	Common::OutSaveFile *saveFile;
-
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	if (!(saveFile = saveMan->openForSaving(pltSave))) {
-		delete[] pltSave;
-		return false;
-	}
-
-	drawOSDText("Saving palette table");
-
-	_palLUT->save(*saveFile);
-
-	delete[] pltSave;
-	delete saveFile;
-
-	return true;
 }
 
 void Video_v6::buildPalLUT() {
@@ -128,12 +69,11 @@ void Video_v6::buildPalLUT() {
 
 	_palLUT->setPalette(_ditherPalette, Graphics::PaletteLUT::kPaletteYUV, 8, 0);
 
-	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
-		sprintf(text, "Building palette table: %02d/63", i);
-		drawOSDText(text);
+	sprintf(text, "Building palette table");
+	drawOSDText(text);
+
+	for (int i = 0; (i < 32) && !_vm->shouldQuit(); i++)
 		_palLUT->buildNext();
-		_vm->_util->processInput();
-	}
 }
 
 char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
