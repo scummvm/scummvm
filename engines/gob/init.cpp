@@ -104,6 +104,9 @@ void Init::initGame() {
 
 		scnPlayer.play(_vm->_startTot);
 
+		delete _palDesc;
+		_vm->_video->initPrimary(-1);
+		cleanup();
 		return;
 	}
 
@@ -114,6 +117,9 @@ void Init::initGame() {
 
 		batPlayer.play(_vm->_startTot);
 
+		delete _palDesc;
+		_vm->_video->initPrimary(-1);
+		cleanup();
 		return;
 	}
 
