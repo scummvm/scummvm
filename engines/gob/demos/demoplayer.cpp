@@ -67,8 +67,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 	uint32 waitTime = 0;
 	char *file, *filePtr;
 
-	file = filePtr = new char[strlen(fileName) + 1];
-	strcpy(file, fileName);
+	file = filePtr = strdupcpy(fileName);
 
 	// Trimming spaces front
 	while (*file == ' ')
@@ -121,13 +120,8 @@ void DemoPlayer::playVideoNormal() {
 }
 
 void DemoPlayer::playVideoDoubled() {
-	const char *fileNameOpened;
-	char *fileName;
-
-	fileNameOpened = _vm->_vidPlayer->getFileName();
-
-	fileName = new char[strlen(fileNameOpened) + 1];
-	strcpy(fileName, fileNameOpened);
+	const char *fileNameOpened = _vm->_vidPlayer->getFileName();
+	char *fileName = strdupcpy(fileNameOpened);
 
 	_vm->_vidPlayer->primaryClose();
 

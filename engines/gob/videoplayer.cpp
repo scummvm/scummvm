@@ -77,8 +77,7 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 		return false;
 	}
 
-	_fileName = new char[strlen(fileName) + 1];
-	strcpy(_fileName, fileName);
+	_fileName = strdupcpy(fileName);
 
 	_defaultX = _video->getX();
 	_defaultY = _video->getY();

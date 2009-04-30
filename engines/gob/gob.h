@@ -135,6 +135,19 @@ inline char *strncpy0(char *dest, const char *src, size_t n) {
 	return dest;
 }
 
+inline char *strdupcpy(const char *str) {
+	if (!str)
+		return 0;
+
+	size_t len = strlen(str) + 1;
+
+	char *nstr = new char[len];
+
+	memcpy(nstr, str, len);
+
+	return nstr;
+}
+
 // A "smart" reference counting templated class
 template<typename T>
 class ReferenceCounter {

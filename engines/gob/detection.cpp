@@ -3147,21 +3147,15 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 namespace Gob {
 
 void GobEngine::initGame(const GOBGameDescription *gd) {
-	if (gd->startTotBase == 0) {
-		_startTot = new char[10];
-		strcpy(_startTot, "intro.tot");
-	} else {
-		_startTot = new char[strlen(gd->startTotBase) + 1];
-		strcpy(_startTot, gd->startTotBase);
-	}
+	if (gd->startTotBase == 0)
+		_startTot = strdupcpy("intro.tot");
+	else
+		_startTot = strdupcpy(gd->startTotBase);
 
-	if (gd->startStkBase == 0) {
-		_startStk = new char[10];
-		strcpy(_startStk, "intro.stk");
-	} else {
-		_startStk = new char[strlen(gd->startStkBase) + 1];
-		strcpy(_startStk, gd->startStkBase);
-	}
+	if (gd->startStkBase == 0)
+		_startStk = strdupcpy("intro.stk");
+	else
+		_startStk = strdupcpy(gd->startStkBase);
 
 	_gameType = gd->gameType;
 	_features = gd->features;
