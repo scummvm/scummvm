@@ -418,7 +418,7 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(o1_keyFunc),
 		OPCODE(o1_capturePush),
 		OPCODE(o1_capturePop),
-		OPCODE(o2_animPalInit),
+		OPCODE(o1_animPalInit),
 		/* 18 */
 		OPCODE(o2_addCollision),
 		OPCODE(o2_freeCollision),
@@ -438,7 +438,7 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(o1_putPixel),
 		OPCODE(o2_goblinFunc),
 		OPCODE(o1_createSprite),
-		OPCODE(oFascin_feUnknown27),//OPCODE(o1_freeSprite),
+		OPCODE(o1_freeSprite),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -466,7 +466,7 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(o1_freeSoundSlot),
 		/* 3C */
 		OPCODE(o1_waitEndPlay),
-		{NULL, " "},//OPCODE(o1_playComposition),
+		OPCODE(o1_playComposition),
 		OPCODE(o2_getFreeMem),
 		OPCODE(o2_checkData),
 		/* 40 */
@@ -647,7 +647,7 @@ void Inter_Fascination::oFascin_cdUnknown3() {
 	retVal5 = _vm->_parse->parseVarIndex();
 	retVal6 = _vm->_parse->parseVarIndex();
 	retVal7 = _vm->_parse->parseVarIndex();
-	warning ("Input 1:%d 2:%d",resVar, resVar2);
+	warning ("Width? :%d Height? :%d",resVar, resVar2);
 	warning ("Fetched variables 1:%d 2:%d 3:%d 4:%d 5:%d 6:%d 7:%d", retVal1, retVal2, retVal3, retVal4, retVal5, retVal6, retVal7);
 }
 
@@ -676,14 +676,14 @@ void Inter_Fascination::oFascin_cdUnknown6() {
 
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
-	warning("Fascination oFascin_cdUnknown10 (set render flags)");	
+//	warning("Fascination oFascin_cdUnknown10 (set render flags)");	
 	evalExpr(&expr);
 	warning("_draw_renderFlags <- %d",expr);
 	_vm->_draw->_renderFlags = expr;
 }
 
 void Inter_Fascination::oFascin_cdUnknown11() {
-	warning("Fascination oFascin_cdUnknown11 (set variable)");	
+//	warning("Fascination oFascin_cdUnknown11 (set variable)");	
 	evalExpr(0);
 }
 
