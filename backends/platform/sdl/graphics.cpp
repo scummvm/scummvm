@@ -111,10 +111,10 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			errors |= kTransactionFullscreenFailed;
 
 			_videoMode.fullscreen = _oldVideoMode.fullscreen;
-		} else if (_videoMode.aspectRatio != _oldVideoMode.aspectRatio) {
+		} else if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
 			errors |= kTransactionAspectRatioFailed;
 
-			_videoMode.aspectRatio = _oldVideoMode.aspectRatio;
+			_videoMode.aspectRatioCorrection = _oldVideoMode.aspectRatioCorrection;
 		} else if (_videoMode.mode != _oldVideoMode.mode) {
 			errors |= kTransactionModeSwitchFailed;
 
@@ -130,7 +130,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 		}
 
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
-			_videoMode.aspectRatio == _oldVideoMode.aspectRatio &&
+			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
 		   	_videoMode.screenHeight == _oldVideoMode.screenHeight) {
@@ -369,9 +369,9 @@ bool OSystem_SDL::loadGFXMode() {
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
-		_videoMode.aspectRatio = false;
+		_videoMode.aspectRatioCorrection = false;
 
-	if (_videoMode.aspectRatio)
+	if (_videoMode.aspectRatioCorrection)
 		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 
 	hwW = _videoMode.screenWidth * _videoMode.scaleFactor;
@@ -593,7 +593,7 @@ void OSystem_SDL::internUpdateScreen() {
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
-		if (_videoMode.aspectRatio && !_overlayVisible)
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwscreen, &blackrect, 0);
@@ -702,7 +702,7 @@ void OSystem_SDL::internUpdateScreen() {
 				orig_dst_y = dst_y;
 				dst_y = dst_y * scale1;
 
-				if (_videoMode.aspectRatio && !_overlayVisible)
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
 				assert(scalerProc != NULL);
@@ -716,7 +716,7 @@ void OSystem_SDL::internUpdateScreen() {
 			r->h = dst_h * scale1;
 
 #ifndef DISABLE_SCALERS
-			if (_videoMode.aspectRatio && orig_dst_y < height && !_overlayVisible)
+			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif
 		}
@@ -768,11 +768,11 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 void OSystem_SDL::setAspectRatioCorrection(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
-	if (_oldVideoMode.setup && _oldVideoMode.aspectRatio == enable)
+	if (_oldVideoMode.setup && _oldVideoMode.aspectRatioCorrection == enable)
 		return;
 
 	if (_transactionMode == kTransactionActive) {
-		_videoMode.aspectRatio = enable;
+		_videoMode.aspectRatioCorrection = enable;
 		_transactionDetails.needHotswap = true;
 	}
 }
@@ -936,7 +936,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool realCoordinates)
 	}
 
 #ifndef DISABLE_SCALERS
-	if (_videoMode.aspectRatio && !_overlayVisible && !realCoordinates) {
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates) {
 		makeRectStretchable(x, y, w, h);
 	}
 #endif
@@ -1131,7 +1131,7 @@ void OSystem_SDL::showOverlay() {
 	// Since resolution could change, put mouse to adjusted position
 	// Fixes bug #1349059
 	x = _mouseCurState.x * _videoMode.scaleFactor;
-	if (_videoMode.aspectRatio)
+	if (_videoMode.aspectRatioCorrection)
 		y = real2Aspect(_mouseCurState.y) * _videoMode.scaleFactor;
 	else
 		y = _mouseCurState.y * _videoMode.scaleFactor;
@@ -1155,7 +1155,7 @@ void OSystem_SDL::hideOverlay() {
 	// Fixes bug #1349059
 	x = _mouseCurState.x / _videoMode.scaleFactor;
 	y = _mouseCurState.y / _videoMode.scaleFactor;
-	if (_videoMode.aspectRatio)
+	if (_videoMode.aspectRatioCorrection)
 		y = aspect2Real(y);
 
 	warpMouse(x, y);
@@ -1188,7 +1188,7 @@ void OSystem_SDL::clearOverlay() {
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
 
 #ifndef DISABLE_SCALERS
-	if (_videoMode.aspectRatio)
+	if (_videoMode.aspectRatioCorrection)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
 						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0);
 #endif
@@ -1291,7 +1291,7 @@ void OSystem_SDL::setMousePos(int x, int y) {
 void OSystem_SDL::warpMouse(int x, int y) {
 	int y1 = y;
 
-	if (_videoMode.aspectRatio && !_overlayVisible)
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
@@ -1444,7 +1444,7 @@ void OSystem_SDL::blitCursor() {
 	int rH1 = rH; // store original to pass to aspect-correction function later
 #endif
 
-	if (_videoMode.aspectRatio && _cursorTargetScale == 1) {
+	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1) {
 		rH = real2Aspect(rH - 1) + 1;
 		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
 	}
@@ -1489,7 +1489,7 @@ void OSystem_SDL::blitCursor() {
 		_mouseCurState.w, _mouseCurState.h);
 
 #ifndef DISABLE_SCALERS
-	if (_videoMode.aspectRatio && _cursorTargetScale == 1)
+	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
 
@@ -1586,7 +1586,7 @@ void OSystem_SDL::drawMouse() {
 		dst.y += _currentShakePos;
 	}
 
-	if (_videoMode.aspectRatio && !_overlayVisible)
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
 
 	dst.x = scale * dst.x - _mouseCurState.rHotX;
@@ -1703,11 +1703,11 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key.keysym.sym == 'a') {
 		beginGFXTransaction();
-			setFeatureState(kFeatureAspectRatioCorrection, !_videoMode.aspectRatio);
+			setFeatureState(kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
 		char buffer[128];
-		if (_videoMode.aspectRatio)
+		if (_videoMode.aspectRatioCorrection)
 			sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwscreen->w, _hwscreen->h

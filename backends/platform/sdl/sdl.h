@@ -267,7 +267,7 @@ protected:
 		bool setup;
 
 		bool fullscreen;
-		bool aspectRatio;
+		bool aspectRatioCorrection;
 
 		int mode;
 		int scaleFactor;
@@ -425,7 +425,7 @@ protected:
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 	int effectiveScreenHeight() const {
-		return (_videoMode.aspectRatio ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
+		return (_videoMode.aspectRatioCorrection ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
 			* _videoMode.scaleFactor;
 	}
 

@@ -123,12 +123,12 @@ void OSystem_SDL::initBackend() {
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(DISABLE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
-	_videoMode.aspectRatio = ConfMan.getBool("aspect_ratio");
+	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_scalerProc = Normal2x;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
-	_videoMode.aspectRatio = false;
+	_videoMode.aspectRatioCorrection = false;
 	_scalerProc = Normal1x;
 #endif
 	_scalerType = 0;
@@ -438,7 +438,7 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 	case kFeatureFullscreenMode:
 		return _videoMode.fullscreen;
 	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatio;
+		return _videoMode.aspectRatioCorrection;
 	case kFeatureAutoComputeDirtyRects:
 		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:
