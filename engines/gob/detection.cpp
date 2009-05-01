@@ -2753,6 +2753,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibou4",
+			"Addy 4 Deutsch",
+			AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibou4,
+		kFeatures640,
+		0,
+		0
+	},
+	{
+		{
+			"adibou4",
 			"ADI 4.21 French",
 			AD_ENTRY1s("intro.stk", "c5b9f6222c0b463f51dab47317c5b687", 5950490),
 			FR_FRA,
