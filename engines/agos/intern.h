@@ -269,8 +269,9 @@ enum GameFileTypes {
 	GAME_XTBLFILE = 1 << 8,
 	GAME_RESTFILE = 1 << 9,
 	GAME_TEXTFILE = 1 << 10,
+	GAME_VGAFILE  = 1 << 11,
 
-	GAME_GFXIDXFILE = 1 << 11
+	GAME_GFXIDXFILE = 1 << 12
 };
 
 enum GameIds {

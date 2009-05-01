@@ -55,9 +55,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Demo",
 
 			{
-	{ "01.IN",		0,	"23a4c8c4c9ac460fee7281080b5274e3", 756},
-	{ "02.IN",		0,	"31be87808826538f0c0caebd5fedd48f", 73100},
-	{ "03.IN",		0,	"0e125f3df4e4b800936ebdcc8dc96060", 101664},
+	{ "01.IN",		GAME_VGAFILE,	"23a4c8c4c9ac460fee7281080b5274e3", 756},
+	{ "02.IN",		GAME_VGAFILE,	"31be87808826538f0c0caebd5fedd48f", 73100},
+	{ "03.IN",		GAME_VGAFILE,	"0e125f3df4e4b800936ebdcc8dc96060", 101664},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -99,7 +99,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "01.out",		0,		"3a2a4c3e07dfbc4b309deade0af37baf", -1},
+	{ "01.out",		GAME_VGAFILE,	"3a2a4c3e07dfbc4b309deade0af37baf", -1},
 	{ "icon.out",		GAME_ICONFILE,	"40d8347c3154bfa8b642d6860a4b9481", -1},
 	{ "night.dbm",		GAME_BASEFILE,	"177311ae059243f6a2740e950585d786", -1},
 	{ "night.txt",		GAME_TEXTFILE,	"861fc1fa0864eef585f5865dee52e325", -1},
@@ -122,7 +122,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "01.out",		0,		"7f3e2a7a3aad016ad1bf540fcbe031ca", -1},
+	{ "01.out",		GAME_VGAFILE,	"7f3e2a7a3aad016ad1bf540fcbe031ca", -1},
 	{ "icon.out",		GAME_ICONFILE,	"40d8347c3154bfa8b642d6860a4b9481", -1},
 	{ "night.dbm",		GAME_BASEFILE,	"177311ae059243f6a2740e950585d786", -1},
 	{ "night.txt",		GAME_TEXTFILE,	"861fc1fa0864eef585f5865dee52e325", -1},
@@ -227,9 +227,9 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Demo",
 
 			{
-	{ "991.out",		0,	"9238242d3274bb770cb4925d2b268f83", 1822},
-	{ "992.out",		0,	"5526cd64e515f1c5f9ff8f2fb569c4eb", 192236},
-	{ "993.out",		0,	"d41d8cd98f00b204e9800998ecf8427e", 0},
+	{ "991.out",		GAME_VGAFILE,	"9238242d3274bb770cb4925d2b268f83", 1822},
+	{ "992.out",		GAME_VGAFILE,	"5526cd64e515f1c5f9ff8f2fb569c4eb", 192236},
+	{ "993.out",		GAME_VGAFILE,	"d41d8cd98f00b204e9800998ecf8427e", 0},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
