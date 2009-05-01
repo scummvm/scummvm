@@ -296,10 +296,10 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	Point nextPoint;
 	int8 direction;
 
-	_pathListIndex = -1;
-	addPathListPoint(toPoint);
+	_pathList[0] = toPoint;
 	nextPoint = toPoint;
 
+	_pathListIndex = 0;
 	while (!(nextPoint == fromPoint)) {
 		direction = getPathCell(nextPoint);
 		if ((direction < 0) || (direction >= 8)) {
@@ -307,7 +307,12 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 		}
 		nextPoint.x -= pathDirectionLUT2[direction][0];
 		nextPoint.y -= pathDirectionLUT2[direction][1];
-		addPathListPoint(nextPoint);
+		++_pathListIndex;
+		if (_pathListIndex >= _pathList.size()) {
+			_pathList.push_back(nextPoint);
+		} else {
+			_pathList[_pathListIndex] = nextPoint;
+		}
 
 #ifdef ACTOR_DEBUG
 		addDebugPoint(nextPoint, 0x8a);
@@ -328,18 +333,15 @@ void Actor::pathToNode() {
 	Point point1, point2, delta;
 	int direction;
 	int i;
-	Point *point;
 
-	point= &_pathList[_pathListIndex];
 	direction = 0;
 
 	_pathNodeList.clear();
-	_pathNodeList.push_back(PathNode(*point));
+	_pathNodeList.push_back(PathNode(_pathList[_pathListIndex]));
 
 	for (i = _pathListIndex; i > 0; i--) {
-		point1 = *point;
-		--point;
-		point2 = *point;
+		point1 = _pathList[i];
+		point2 = _pathList[i - 1];
 		if (direction == 0) {
 			delta.x = int16Compare(point2.x, point1.x);
 			delta.y = int16Compare(point2.y, point1.y);
@@ -349,19 +351,18 @@ void Actor::pathToNode() {
 			_pathNodeList.push_back(PathNode(point1));
 			direction--;
 			i++;
-			point++;
 		}
 	}
-	_pathNodeList.push_back(PathNode(*_pathList));
+	_pathNodeList.push_back(PathNode(_pathList[0]));
 }
 
-int pathLine(Point *pointList, const Point &point1, const Point &point2) {
+uint pathLine(PointList &pointList, uint idx, const Point &point1, const Point &point2) {
 	Point point;
 	Point delta;
 	Point tempPoint;
 	Point s;
 	int16 errterm;
-	int16 res;
+	uint res;
 
 	calcDeltaS(point1, point2, delta, s);
 
@@ -384,8 +385,12 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 			point.y += s.y;
 			errterm += tempPoint.x;
 
-			*pointList = point;
-			pointList++;
+			if (idx >= pointList.size()) {
+				pointList.push_back(point);
+			} else {
+				pointList[idx] = point;
+			}
+			++idx;
 			delta.y--;
 		}
 	} else {
@@ -402,8 +407,12 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 			point.x += s.x;
 			errterm += tempPoint.y;
 
-			*pointList = point;
-			pointList++;
+			if (idx >= pointList.size()) {
+				pointList.push_back(point);
+			} else {
+				pointList[idx] = point;
+			}
+			++idx;
 			delta.x--;
 		}
 	}
@@ -412,12 +421,10 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 
 void Actor::nodeToPath() {
 	uint i;
-	int j;
 	Point point1, point2;
-	Point *point;
 
-	for (j = 0, point = _pathList; j < _pathListAlloced; j++, point++) {
-		point->x = point->y = PATH_NODE_EMPTY;
+	for (i = 0; i < _pathList.size(); i++) {
+		_pathList[i].x = _pathList[i].y = PATH_NODE_EMPTY;
 	}
 
 	_pathListIndex = 1;
@@ -426,7 +433,7 @@ void Actor::nodeToPath() {
 	for (i = 0; i < _pathNodeList.size() - 1; i++) {
 		point1 = _pathNodeList[i].point;
 		point2 = _pathNodeList[i + 1].point;
-		_pathListIndex += pathLine(&_pathList[_pathListIndex], point1, point2);
+		_pathListIndex += pathLine(_pathList, _pathListIndex, point1, point2);
 		_pathNodeList[i + 1].link = _pathListIndex - 1;
 	}
 	_pathListIndex--;
@@ -549,7 +556,7 @@ void Actor::removePathPoints() {
 			start = _pathNodeList[i].link - j;
 			end = _pathNodeList[i].link + j;
 
-			if (start < 0 || end > _pathListIndex) {
+			if (start < 0 || end > (int)_pathListIndex) {
 				continue;
 			}
 

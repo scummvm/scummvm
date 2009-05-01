@@ -295,12 +295,13 @@ void Puzzle::alterPiecePriority(void) {
 
 void Puzzle::slidePiece(int x1, int y1, int x2, int y2) {
 	int count;
-	Point slidePoints[320];
+	PointList slidePoints;
+	slidePoints.resize(320);
 
 	x1 += _pieceInfo[_puzzlePiece].offX;
 	y1 += _pieceInfo[_puzzlePiece].offY;
 
-	count = pathLine(&slidePoints[0], Point(x1, y1),
+	count = pathLine(slidePoints, 0, Point(x1, y1),
 		 Point(x2 + _pieceInfo[_puzzlePiece].offX, y2 + _pieceInfo[_puzzlePiece].offY));
 
 	if (count > 1) {

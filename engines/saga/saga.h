@@ -384,7 +384,7 @@ struct StringsTable {
 	}
 };
 
-
+typedef Common::Array<Point> PointList;
 
 enum ColorId {
 	kITEColorTransBlack = 0x00,

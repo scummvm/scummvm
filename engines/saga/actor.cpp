@@ -232,9 +232,8 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_protagStates = NULL;
 	_protagStatesCount = 0;
 
-	_pathList = NULL;
-	_pathListAlloced = 0;
-	_pathListIndex = -1;
+	_pathList.resize(600);
+	_pathListIndex = 0;
 
 	_centerActor = _protagonist = NULL;
 	_protagState = 0;
@@ -320,7 +319,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 Actor::~Actor() {
 	debug(9, "Actor::~Actor()");
 
-	free(_pathList);
 	free(_pathCell);
 	_actorsStrings.freeMem();
 	//release resources

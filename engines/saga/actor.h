@@ -196,7 +196,7 @@ struct ActorFrameSequence {
 	ActorFrameRange directions[ACTOR_DIRECTIONS_COUNT];
 };
 
-int pathLine(Point *pointList, const Point &point1, const Point &point2);
+uint pathLine(PointList &pointList, uint idx, const Point &point1, const Point &point2);
 
 struct Location {
 	int32 x;					// logical coordinates
@@ -635,18 +635,8 @@ private:
 	int _yCellCount;
 	Rect _pathRect;
 
-	Point *_pathList;
-	int _pathListIndex;
-	int _pathListAlloced;
-	void addPathListPoint(const Point &point) {
-		++_pathListIndex;
-		if (_pathListIndex >= _pathListAlloced) {
-			_pathListAlloced += 100;
-			_pathList = (Point*) realloc(_pathList, _pathListAlloced * sizeof(*_pathList));
-
-		}
-		_pathList[_pathListIndex] = point;
-	}
+	PointList _pathList;
+	uint _pathListIndex;
 
 	PathNodeList _pathNodeList;
 
