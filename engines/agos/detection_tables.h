@@ -52,7 +52,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"pn",
-			"Demo",
+			"Non-Interactive Demo",
 
 			{
 	{ "01.IN",		GAME_VGAFILE,	"23a4c8c4c9ac460fee7281080b5274e3", 756},
@@ -142,7 +142,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"elvira1",
-			"Demo",
+			"Non-Interactive Demo",
 
 			{
 	{ "agos.mdf",		GAME_MENUFILE,	"825bc8eecd599f4c26732902ba2c2c77", 98},
@@ -224,7 +224,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"elvira1",
-			"Demo",
+			"Non-Interactive Demo",
 
 			{
 	{ "991.out",		GAME_VGAFILE,	"9238242d3274bb770cb4925d2b268f83", 1822},
@@ -290,7 +290,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"elvira1",
-			"Demo",
+			"Non-Interactive Demo",
 
 			{
 	{ "demo",		GAME_BASEFILE,	"54b43b6ab38964bd7fd17e9f1b41cc64", 2308},
@@ -828,7 +828,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"waxworks",
-			"Demo",
+			"Non-Interactive Demo",
 
 			{
 	{ "demo",		GAME_BASEFILE,	"50704abde6c68a226001400461620129", 7238},
@@ -1909,6 +1909,30 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "gsptr30",		GAME_BASEFILE,	"7596ef2644fde56ee5fad0dcd483a01e", -1},
 	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
 	{ "simon2.gme",		GAME_GMEFILE,	"3f308f201f6b1ddf7c2704c1fc43a3e1", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"4c68cf64e581a9bd638a56c900b08bfe", -1},
+	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_DEMO
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - German DOS CD Non-Interactive Demo
+	{
+		{
+			"simon2",
+			"CD Non-Interactive Demo",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"c45facd0605860684d464b6a62323567", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"30ea02d374327cab6c78444f3c198c1c", -1},
 	{ "stripped.txt",	GAME_STRFILE,	"4c68cf64e581a9bd638a56c900b08bfe", -1},
 	{ "tbllist",		GAME_TBLFILE,	"a0d5a494b5d3d209d1a1d76cc8d76601", -1},
 	{ NULL, 0, NULL, 0}
