@@ -625,6 +625,7 @@ private:
 		PathNode(const Point &p) : point(p), link(0) {}
 		PathNode(const Point &p, int l) : point(p), link(l) {}
 	};
+	typedef Common::Array<PathNode> PathNodeList;
 
 	Rect _barrierList[ACTOR_BARRIERS_MAX];
 	int _barrierCount;
@@ -647,25 +648,34 @@ private:
 		_pathList[_pathListIndex] = point;
 	}
 
-	Common::Array<PathNode> _pathNodeList;
+	PathNodeList _pathNodeList;
 
 public:
 #ifdef ACTOR_DEBUG
+#ifndef SAGA_DEBUG
+	you must also define SAGA_DEBUG
+#endif
 //path debug - use with care
 	struct DebugPoint {
 		Point point;
 		byte color;
+		
+		DebugPoint() : color(0) {}
+
+		DebugPoint(const Point &p, byte c): point(p), color(c) {}
 	};
-	DebugPoint *_debugPoints;
-	int _debugPointsCount;
-	int _debugPointsAlloced;
+
+	Common::Array<DebugPoint> _debugPoints;
+	uint _debugPointsCount;
+	// we still need this trick to speedup debug points addition
 	void addDebugPoint(const Point &point, byte color) {
-		if (_debugPointsCount + 1 > _debugPointsAlloced) {
-			_debugPointsAlloced += 1000;
-			_debugPoints = (DebugPoint*) realloc(_debugPoints, _debugPointsAlloced * sizeof(*_debugPoints));
+		if (_debugPointsCount < _debugPoints.size()) {
+			_debugPoints[_debugPointsCount].point = point;
+			_debugPoints[_debugPointsCount].color = color;
+		} else {
+			_debugPoints.push_back(DebugPoint(point, color));
 		}
-		_debugPoints[_debugPointsCount].color = color;
-		_debugPoints[_debugPointsCount++].point = point;
+		++_debugPointsCount;
 	}
 #endif
 };

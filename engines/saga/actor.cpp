@@ -226,8 +226,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_objsCount = 0;
 
 #ifdef ACTOR_DEBUG
-	_debugPoints = NULL;
-	_debugPointsAlloced = _debugPointsCount = 0;
+	_debugPointsCount = 0;
 #endif
 
 	_protagStates = NULL;
@@ -321,9 +320,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 Actor::~Actor() {
 	debug(9, "Actor::~Actor()");
 
-#ifdef ACTOR_DEBUG
-	free(_debugPoints);
-#endif
 	free(_pathList);
 	free(_pathCell);
 	_actorsStrings.freeMem();

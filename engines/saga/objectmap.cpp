@@ -39,6 +39,9 @@
 #include "saga/actor.h"
 #include "saga/scene.h"
 #include "saga/isomap.h"
+#ifdef SAGA_DEBUG
+#include "saga/render.h"
+#endif
 
 namespace Saga {
 

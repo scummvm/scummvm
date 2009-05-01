@@ -411,22 +411,23 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 }
 
 void Actor::nodeToPath() {
-	int i;
+	uint i;
+	int j;
 	Point point1, point2;
 	Point *point;
 
-	for (i = 0, point = _pathList; i < _pathListAlloced; i++, point++) {
+	for (j = 0, point = _pathList; j < _pathListAlloced; j++, point++) {
 		point->x = point->y = PATH_NODE_EMPTY;
 	}
 
 	_pathListIndex = 1;
 	_pathList[0] = _pathNodeList[0].point;
 	_pathNodeList[0].link = 0;
-	for (i = 0; i < (int)_pathNodeList.size() - 1; i++) {
+	for (i = 0; i < _pathNodeList.size() - 1; i++) {
 		point1 = _pathNodeList[i].point;
-		point2 = _pathNodeList[i+1].point;
+		point2 = _pathNodeList[i + 1].point;
 		_pathListIndex += pathLine(&_pathList[_pathListIndex], point1, point2);
-		_pathNodeList[i+1].link = _pathListIndex - 1;
+		_pathNodeList[i + 1].link = _pathListIndex - 1;
 	}
 	_pathListIndex--;
 	_pathNodeList.back().link = _pathListIndex;
@@ -475,7 +476,7 @@ void Actor::removeNodes() {
 		}
 
 		if (scanPathLine(_pathNodeList.back().point, _pathNodeList[i].point)) {
-			for (j = i + 1; j < _pathNodeList.size()-1; j++) {
+			for (j = i + 1; j < _pathNodeList.size() - 1; j++) {
 				_pathNodeList[j].point.x = PATH_NODE_EMPTY;
 			}
 			break;
@@ -485,11 +486,11 @@ void Actor::removeNodes() {
 
 	// Finally, try arbitrary combinations of non-adjacent nodes and see
 	// if we can skip over any of them.
-	for (i = 1; i < _pathNodeList.size()-1 - 1; i++) {
+	for (i = 1; i < _pathNodeList.size() - 2; i++) {
 		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			continue;
 		}
-		for (j = i + 2; j < _pathNodeList.size()-1; j++) {
+		for (j = i + 2; j < _pathNodeList.size() - 1; j++) {
 			if (_pathNodeList[j].point.x == PATH_NODE_EMPTY) {
 				continue;
 			}
@@ -509,7 +510,7 @@ void Actor::condenseNodeList() {
 	uint i, j, count;
 
 	count = _pathNodeList.size();
-	for (i = 1; i < _pathNodeList.size()-1; i++) {
+	for (i = 1; i < _pathNodeList.size() - 1; i++) {
 		if (_pathNodeList[i].point.x == PATH_NODE_EMPTY) {
 			j = i + 1;
 			while (_pathNodeList[j].point.x == PATH_NODE_EMPTY) {
@@ -518,7 +519,7 @@ void Actor::condenseNodeList() {
 			_pathNodeList[i] = _pathNodeList[j];
 			count = i + 1;
 			_pathNodeList[j].point.x = PATH_NODE_EMPTY;
-			if (j == _pathNodeList.size()-1) {
+			if (j == _pathNodeList.size() - 1) {
 				break;
 			}
 		}
@@ -535,13 +536,13 @@ void Actor::removePathPoints() {
 	if (_pathNodeList.size() <= 2)
 		return;
 
-	Common::Array<PathNode> newPathNodeList;
+	PathNodeList newPathNodeList;
 
 	// Add the first node
 	newPathNodeList.push_back(_pathNodeList.front());
 
 	// Process all nodes between the first and the last.
-	for (i = 1; i < _pathNodeList.size()-1; i++) {
+	for (i = 1; i < _pathNodeList.size() - 1; i++) {
 		newPathNodeList.push_back(_pathNodeList[i]);
 
 		for (j = 5; j > 0; j--) {
@@ -561,10 +562,10 @@ void Actor::removePathPoints() {
 			if (scanPathLine(point1, point2)) {
 				for (l = 1; l < newPathNodeList.size(); l++) {
 					if (start <= newPathNodeList[l].link) {
-						newPathNodeList.resize(l+1);
+						newPathNodeList.resize(l + 1);
 						newPathNodeList.back().point = point1;
 						newPathNodeList.back().link = start;
-						newPathNodeList.resize(l+2);
+						newPathNodeList.resize(l + 2);
 						break;
 					}
 				}
@@ -585,7 +586,7 @@ void Actor::removePathPoints() {
 	// Copy newPathNodeList into _pathNodeList, skipping any duplicate points
 	_pathNodeList.clear();
 	for (i = 0; i < newPathNodeList.size(); i++) {
-		if (newPathNodeList.size()-1 == i || (newPathNodeList[i].point != newPathNodeList[i+1].point)) {
+		if (((newPathNodeList.size() - 1) == i) || (newPathNodeList[i].point != newPathNodeList[i + 1].point)) {
 			_pathNodeList.push_back(newPathNodeList[i]);
 		}
 	}
@@ -593,15 +594,10 @@ void Actor::removePathPoints() {
 
 #ifdef ACTOR_DEBUG
 void Actor::drawPathTest() {
-	int i;
-	Surface *surface;
-	surface = _vm->_gfx->getBackBuffer();
-	if (_debugPoints == NULL) {
-		return;
-	}
+	uint i;
 
 	for (i = 0; i < _debugPointsCount; i++) {
-		*((byte *)surface->pixels + (_debugPoints[i].point.y * surface->pitch) + _debugPoints[i].point.x) = _debugPoints[i].color;
+		_vm->_gfx->setPixelColor(_debugPoints[i].point.x, _debugPoints[i].point.y, _debugPoints[i].color);
 	}
 }
 #endif
