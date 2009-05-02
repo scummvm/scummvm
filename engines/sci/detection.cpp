@@ -1270,9 +1270,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
 		{},
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(0, 000, 572) // x.yyy.zzz (by executable scan)
+		SCI_VERSION(0, 000, 572) // x.yyy.zzz (by executable scan) 
 	},
 
+	// Larry 2 - English DOS Demo
+	{{"lsl2", "Demo", {
+		{"resource.map", 0, "03dba704bb77da55a91ad27b5a3cac09", 528},
+		{"resource.001", 0, "9f5520f0297206928df0b0b36493cd33", 127532},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 409) // FIXME: no version number in executable (x.yyy.zzz)
+	},
+	
 	// Larry 2 - English DOS
 	{{"lsl2", "", {
 		{"resource.map", 0, "42258cf767a8ebaa9e66b6151a80e601", 5628},
