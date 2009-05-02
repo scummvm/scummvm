@@ -540,11 +540,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\scnplayer.cpp"
+			RelativePath="..\..\engines\gob\demos\scnplayer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\scnplayer.h"
+			RelativePath="..\..\engines\gob\demos\scnplayer.h"
 			>
 		</File>
 		<File
@@ -592,19 +592,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\batplayer.cpp"
+			RelativePath="..\..\engines\gob\demos\batplayer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\batplayer.h"
+			RelativePath="..\..\engines\gob\demos\batplayer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\demoplayer.cpp"
+			RelativePath="..\..\engines\gob\demos\demoplayer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\demoplayer.h"
+			RelativePath="..\..\engines\gob\demos\demoplayer.h"
 			>
 		</File>
 	</Files>
