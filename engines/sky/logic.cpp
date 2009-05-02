@@ -2309,7 +2309,7 @@ bool Logic::fnEyeball(uint32 id, uint32 b, uint32 c) {
 
 bool Logic::fnLeaveSection(uint32 sectionNo, uint32 b, uint32 c) {
 	if (SkyEngine::isDemo())
-		_skyControl->showGameQuitMsg();
+		Engine::quitGame();
 
 	if (sectionNo == 5) //linc section - has different mouse icons
 		_skyMouse->replaceMouseCursors(60301);
