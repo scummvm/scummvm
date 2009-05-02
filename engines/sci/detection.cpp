@@ -284,6 +284,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(0, 000, 685) // got 1.002.030 by executable scan
 	},
 
+	// Conquests of Camelot - English DOS Demo
+	{{"camelot", "Demo", {
+		{"resource.map", 0, "f4cd75c15be75e04cdca3acda2c0b0ea", 468},
+		{"resource.001", 0, "4930708722f34bfbaa4945fb08f55f61", 232523},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 668)
+	},
+
 	// Conquests of Camelot - English DOS
 	{{"camelot", "", {
 		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
@@ -2359,10 +2369,10 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// Space Quest 3 - English DOS Demo
-	{{"sq3", "", {
+	{{"sq3", "Demo", {
 		{"resource.map", 0, "ec66ac2b1ce58b2575ba00b65058de1a", 612},
 		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 180245},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		{},
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 453)
