@@ -948,6 +948,22 @@
 		DF0944780F63FD10002D821E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF0944770F63FD10002D821E /* Cocoa.framework */; };
 		DF0944800F63FD67002D821E /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF09447F0F63FD67002D821E /* AudioUnit.framework */; };
 		DF0944B10F6430ED002D821E /* scummvm.icns in Resources */ = {isa = PBXBuildFile; fileRef = DF0944B00F6430ED002D821E /* scummvm.icns */; };
+		DF09CC100FAC4E1900A5AFD7 /* batplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC070FAC4E1900A5AFD7 /* batplayer.cpp */; };
+		DF09CC110FAC4E1900A5AFD7 /* demoplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC090FAC4E1900A5AFD7 /* demoplayer.cpp */; };
+		DF09CC120FAC4E1900A5AFD7 /* scnplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0B0FAC4E1900A5AFD7 /* scnplayer.cpp */; };
+		DF09CC130FAC4E1900A5AFD7 /* draw_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0D0FAC4E1900A5AFD7 /* draw_fascin.cpp */; };
+		DF09CC140FAC4E1900A5AFD7 /* game_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0E0FAC4E1900A5AFD7 /* game_fascin.cpp */; };
+		DF09CC150FAC4E1900A5AFD7 /* inter_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0F0FAC4E1900A5AFD7 /* inter_fascin.cpp */; };
+		DF09CC160FAC4E1900A5AFD7 /* batplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC070FAC4E1900A5AFD7 /* batplayer.cpp */; };
+		DF09CC170FAC4E1900A5AFD7 /* demoplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC090FAC4E1900A5AFD7 /* demoplayer.cpp */; };
+		DF09CC180FAC4E1900A5AFD7 /* scnplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0B0FAC4E1900A5AFD7 /* scnplayer.cpp */; };
+		DF09CC190FAC4E1900A5AFD7 /* draw_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0D0FAC4E1900A5AFD7 /* draw_fascin.cpp */; };
+		DF09CC1A0FAC4E1900A5AFD7 /* game_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0E0FAC4E1900A5AFD7 /* game_fascin.cpp */; };
+		DF09CC1B0FAC4E1900A5AFD7 /* inter_fascin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC0F0FAC4E1900A5AFD7 /* inter_fascin.cpp */; };
+		DF09CC280FAC4EAB00A5AFD7 /* script_v3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC260FAC4EAB00A5AFD7 /* script_v3.cpp */; };
+		DF09CC290FAC4EAB00A5AFD7 /* script_v4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC270FAC4EAB00A5AFD7 /* script_v4.cpp */; };
+		DF09CC2A0FAC4EAB00A5AFD7 /* script_v3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC260FAC4EAB00A5AFD7 /* script_v3.cpp */; };
+		DF09CC2B0FAC4EAB00A5AFD7 /* script_v4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF09CC270FAC4EAB00A5AFD7 /* script_v4.cpp */; };
 		DF2FFB930F485D890006E566 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
 		DF2FFBAF0F485D950006E566 /* dxa_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB9B0F485D950006E566 /* dxa_player.cpp */; };
 		DF2FFBB10F485D950006E566 /* flic_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB9E0F485D950006E566 /* flic_player.cpp */; };
@@ -1967,6 +1983,25 @@
 		DF0944770F63FD10002D821E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DF09447F0F63FD67002D821E /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		DF0944B00F6430ED002D821E /* scummvm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = scummvm.icns; path = ../../icons/scummvm.icns; sourceTree = SOURCE_ROOT; };
+		DF09CC070FAC4E1900A5AFD7 /* batplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = batplayer.cpp; sourceTree = "<group>"; };
+		DF09CC080FAC4E1900A5AFD7 /* batplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = batplayer.h; sourceTree = "<group>"; };
+		DF09CC090FAC4E1900A5AFD7 /* demoplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = demoplayer.cpp; sourceTree = "<group>"; };
+		DF09CC0A0FAC4E1900A5AFD7 /* demoplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = demoplayer.h; sourceTree = "<group>"; };
+		DF09CC0B0FAC4E1900A5AFD7 /* scnplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scnplayer.cpp; sourceTree = "<group>"; };
+		DF09CC0C0FAC4E1900A5AFD7 /* scnplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scnplayer.h; sourceTree = "<group>"; };
+		DF09CC0D0FAC4E1900A5AFD7 /* draw_fascin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = draw_fascin.cpp; sourceTree = "<group>"; };
+		DF09CC0E0FAC4E1900A5AFD7 /* game_fascin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game_fascin.cpp; sourceTree = "<group>"; };
+		DF09CC0F0FAC4E1900A5AFD7 /* inter_fascin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inter_fascin.cpp; sourceTree = "<group>"; };
+		DF09CC1D0FAC4E6200A5AFD7 /* scumm_v0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v0.h; sourceTree = "<group>"; };
+		DF09CC1E0FAC4E6200A5AFD7 /* scumm_v2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v2.h; sourceTree = "<group>"; };
+		DF09CC1F0FAC4E6200A5AFD7 /* scumm_v3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v3.h; sourceTree = "<group>"; };
+		DF09CC200FAC4E6200A5AFD7 /* scumm_v4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v4.h; sourceTree = "<group>"; };
+		DF09CC210FAC4E6200A5AFD7 /* scumm_v5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v5.h; sourceTree = "<group>"; };
+		DF09CC220FAC4E6200A5AFD7 /* scumm_v6.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v6.h; sourceTree = "<group>"; };
+		DF09CC230FAC4E6200A5AFD7 /* scumm_v7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v7.h; sourceTree = "<group>"; };
+		DF09CC240FAC4E6200A5AFD7 /* scumm_v8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scumm_v8.h; sourceTree = "<group>"; };
+		DF09CC260FAC4EAB00A5AFD7 /* script_v3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_v3.cpp; sourceTree = "<group>"; };
+		DF09CC270FAC4EAB00A5AFD7 /* script_v4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = script_v4.cpp; sourceTree = "<group>"; };
 		DF2FFB900F485D890006E566 /* dither.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dither.cpp; sourceTree = "<group>"; };
 		DF2FFB910F485D890006E566 /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither.h; sourceTree = "<group>"; };
 		DF2FFB920F485D890006E566 /* pixelformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixelformat.h; sourceTree = "<group>"; };
@@ -2991,7 +3026,6 @@
 		DF8423D50E7BA6AA00F5680E /* insane_enemy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = insane_enemy.cpp; sourceTree = "<group>"; };
 		DF8423D60E7BA6AA00F5680E /* insane_iact.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = insane_iact.cpp; sourceTree = "<group>"; };
 		DF8423D70E7BA6AA00F5680E /* insane_scenes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = insane_scenes.cpp; sourceTree = "<group>"; };
-		DF8423D80E7BA6AA00F5680E /* intern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intern.h; sourceTree = "<group>"; };
 		DF8423D90E7BA6AA00F5680E /* midiparser_eup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midiparser_eup.cpp; sourceTree = "<group>"; };
 		DF8423DA0E7BA6AA00F5680E /* midiparser_ro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midiparser_ro.cpp; sourceTree = "<group>"; };
 		DF8423DC0E7BA6AA00F5680E /* music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music.h; sourceTree = "<group>"; };
@@ -3726,6 +3760,19 @@
 			path = sdl;
 			sourceTree = "<group>";
 		};
+		DF09CC060FAC4E1900A5AFD7 /* demos */ = {
+			isa = PBXGroup;
+			children = (
+				DF09CC070FAC4E1900A5AFD7 /* batplayer.cpp */,
+				DF09CC080FAC4E1900A5AFD7 /* batplayer.h */,
+				DF09CC090FAC4E1900A5AFD7 /* demoplayer.cpp */,
+				DF09CC0A0FAC4E1900A5AFD7 /* demoplayer.h */,
+				DF09CC0B0FAC4E1900A5AFD7 /* scnplayer.cpp */,
+				DF09CC0C0FAC4E1900A5AFD7 /* scnplayer.h */,
+			);
+			path = demos;
+			sourceTree = "<group>";
+		};
 		DF2FFB940F485D950006E566 /* video */ = {
 			isa = PBXGroup;
 			children = (
@@ -4116,6 +4163,10 @@
 		DF8421170E7BA6A700F5680E /* gob */ = {
 			isa = PBXGroup;
 			children = (
+				DF09CC060FAC4E1900A5AFD7 /* demos */,
+				DF09CC0D0FAC4E1900A5AFD7 /* draw_fascin.cpp */,
+				DF09CC0E0FAC4E1900A5AFD7 /* game_fascin.cpp */,
+				DF09CC0F0FAC4E1900A5AFD7 /* inter_fascin.cpp */,
 				DF2FFC400F4862D90006E566 /* game_v6.cpp */,
 				DF2FFC410F4862D90006E566 /* indeo3.cpp */,
 				DF2FFC420F4862D90006E566 /* indeo3.h */,
@@ -4756,6 +4807,16 @@
 		DF84237B0E7BA6AA00F5680E /* scumm */ = {
 			isa = PBXGroup;
 			children = (
+				DF09CC260FAC4EAB00A5AFD7 /* script_v3.cpp */,
+				DF09CC270FAC4EAB00A5AFD7 /* script_v4.cpp */,
+				DF09CC1D0FAC4E6200A5AFD7 /* scumm_v0.h */,
+				DF09CC1E0FAC4E6200A5AFD7 /* scumm_v2.h */,
+				DF09CC1F0FAC4E6200A5AFD7 /* scumm_v3.h */,
+				DF09CC200FAC4E6200A5AFD7 /* scumm_v4.h */,
+				DF09CC210FAC4E6200A5AFD7 /* scumm_v5.h */,
+				DF09CC220FAC4E6200A5AFD7 /* scumm_v6.h */,
+				DF09CC230FAC4E6200A5AFD7 /* scumm_v7.h */,
+				DF09CC240FAC4E6200A5AFD7 /* scumm_v8.h */,
 				DF84237C0E7BA6AA00F5680E /* actor.cpp */,
 				DF84237D0E7BA6AA00F5680E /* actor.h */,
 				DF84237E0E7BA6AA00F5680E /* akos.cpp */,
@@ -4793,7 +4854,6 @@
 				DF8423C20E7BA6AA00F5680E /* imuse_digi */,
 				DF8423D00E7BA6AA00F5680E /* input.cpp */,
 				DF8423D10E7BA6AA00F5680E /* insane */,
-				DF8423D80E7BA6AA00F5680E /* intern.h */,
 				DF8423D90E7BA6AA00F5680E /* midiparser_eup.cpp */,
 				DF8423DA0E7BA6AA00F5680E /* midiparser_ro.cpp */,
 				DF8423DC0E7BA6AA00F5680E /* music.h */,
@@ -6928,6 +6988,14 @@
 				DF5CEB3C0F75540700DEA624 /* stringfrag.cpp in Sources */,
 				DFE88C470F874A1100C555C5 /* sound.cpp in Sources */,
 				DFE88C4E0F874A6600C555C5 /* gfx_gui.cpp in Sources */,
+				DF09CC160FAC4E1900A5AFD7 /* batplayer.cpp in Sources */,
+				DF09CC170FAC4E1900A5AFD7 /* demoplayer.cpp in Sources */,
+				DF09CC180FAC4E1900A5AFD7 /* scnplayer.cpp in Sources */,
+				DF09CC190FAC4E1900A5AFD7 /* draw_fascin.cpp in Sources */,
+				DF09CC1A0FAC4E1900A5AFD7 /* game_fascin.cpp in Sources */,
+				DF09CC1B0FAC4E1900A5AFD7 /* inter_fascin.cpp in Sources */,
+				DF09CC2A0FAC4EAB00A5AFD7 /* script_v3.cpp in Sources */,
+				DF09CC2B0FAC4EAB00A5AFD7 /* script_v4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7857,6 +7925,14 @@
 				DF5CEB3B0F75540700DEA624 /* stringfrag.cpp in Sources */,
 				DFE88C460F874A1100C555C5 /* sound.cpp in Sources */,
 				DFE88C4D0F874A6600C555C5 /* gfx_gui.cpp in Sources */,
+				DF09CC100FAC4E1900A5AFD7 /* batplayer.cpp in Sources */,
+				DF09CC110FAC4E1900A5AFD7 /* demoplayer.cpp in Sources */,
+				DF09CC120FAC4E1900A5AFD7 /* scnplayer.cpp in Sources */,
+				DF09CC130FAC4E1900A5AFD7 /* draw_fascin.cpp in Sources */,
+				DF09CC140FAC4E1900A5AFD7 /* game_fascin.cpp in Sources */,
+				DF09CC150FAC4E1900A5AFD7 /* inter_fascin.cpp in Sources */,
+				DF09CC280FAC4EAB00A5AFD7 /* script_v3.cpp in Sources */,
+				DF09CC290FAC4EAB00A5AFD7 /* script_v4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7889,10 +7965,13 @@
 					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7905,7 +7984,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EF590570-5FAC-4346-9071-D609DE2B28D8";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos2.0;
 			};
 			name = Debug;
@@ -7922,9 +8001,13 @@
 					"$(inherited)",
 					"\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"",
 				);
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7937,7 +8020,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EF590570-5FAC-4346-9071-D609DE2B28D8";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos2.0;
 				WRAPPER_EXTENSION = app;
 			};
