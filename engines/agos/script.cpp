@@ -110,7 +110,7 @@ void AGOSEngine::o_eq() {
 #ifdef __DS__
 	// HACK: Skip attempt to read Calypso's letter manually,
 	// due to speech segment been too large to fit into memory
-	if (getGameType() == GType_SIMON1 && _currentTable) {
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) _currentTable) {
 		if (_currentTable->id == 71 && tmp == 1 && tmp2 == 1) {
 			setScriptCondition(false);
 			return;
