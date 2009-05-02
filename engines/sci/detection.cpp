@@ -2358,6 +2358,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 784) // got 1.004.006 by executable scan
 	},
 
+	// Space Quest 3 - English DOS Demo
+	{{"sq3", "", {
+		{"resource.map", 0, "ec66ac2b1ce58b2575ba00b65058de1a", 612},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 180245},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		{},
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION(0, 000, 453)
+	},
+
 	// Space Quest 3 - English DOS (provided by richiefs in bug report #2670691)
 	{{"sq3", "", {
 		{"resource.map", 0, "fee82d211c3918a90ce3b476d3dbb245", 5484},
