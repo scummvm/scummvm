@@ -49,8 +49,9 @@ struct SkyVersion {
 
 // TODO: Would be nice if Disk::determineGameVersion() used this table, too.
 static const SkyVersion skyVersions[] = {
+	{  232, -1, "floppy demo", 272 }, // German
 	{  243, -1, "pc gamer demo", 109 },
-	{  247, -1, "floppy demo", 267 },
+	{  247, -1, "floppy demo", 267 }, // English
 	{ 1404, -1, "floppy", 288 },
 	{ 1413, -1, "floppy", 303 },
 	{ 1445, 8830435, "floppy", 348 },

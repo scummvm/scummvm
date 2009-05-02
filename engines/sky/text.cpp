@@ -424,6 +424,7 @@ void Text::initHuffTree() {
 	case 109:
 		_huffTree = _huffTree_00109;
 		break;
+	case 272: // FIXME: Extract data
 	case 267:
 		_huffTree = _huffTree_00267;
 		break;
