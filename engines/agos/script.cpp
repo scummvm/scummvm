@@ -248,7 +248,17 @@ void AGOSEngine::o_clear() {
 void AGOSEngine::o_let() {
 	// 42: set var
 	uint var = getVarWrapper();
-	writeVariable(var, getVarOrWord());
+	uint value = getVarOrWord();
+
+	if (getGameType() == GType_FF && _currentTable) {
+		// WORKAROUND: When the repair man comes to fix the car, the game doesn't
+		// wait long enough for the screen to completely scroll to the left side.
+		if (_currentTable->id == 20438 && var == 103 && value == 60) {
+			value = 71;
+		}
+	}
+
+	writeVariable(var, value);
 }
 
 void AGOSEngine::o_add() {
