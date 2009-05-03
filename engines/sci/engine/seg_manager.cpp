@@ -29,6 +29,17 @@
 
 namespace Sci {
 
+
+/**
+ * Verify the the given condition is true, output the message if condition is false, and exit.
+ * @param cond	condition to be verified
+ * @param msg	the message to be printed if condition fails
+ */
+#define VERIFY( cond, msg ) if (!(cond)) {\
+		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
+	}
+
+
 #define DEFAULT_SCRIPTS 32
 #define DEFAULT_OBJECTS 8	    // default # of objects per script
 #define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
@@ -37,11 +48,6 @@ namespace Sci {
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
 #undef DEBUG_SEG_MANAGER // Define to turn on debugging
-
-#define GET_SEGID()	\
-	if (flag == SCRIPT_ID) \
-		id = segGet(id); \
-		VERIFY(check(id), "invalid seg id");
 
 #define INVALID_SCRIPT_ID -1
 
@@ -301,29 +307,17 @@ int SegManager::deallocate(int seg, bool recursive) {
 }
 
 int SegManager::scriptMarkedDeleted(int script_nr) {
-	Script *scr;
-	int seg = segGet(script_nr);
-	VERIFY(check(seg), "invalid seg id");
-
-	scr = &(heap[seg]->data.script);
+	Script *scr = getScript(script_nr, SCRIPT_ID);
 	return scr->marked_as_deleted;
 }
 
 void SegManager::markScriptDeleted(int script_nr) {
-	Script *scr;
-	int seg = segGet(script_nr);
-	VERIFY(check(seg), "invalid seg id");
-
-	scr = &(heap[seg]->data.script);
+	Script *scr = getScript(script_nr, SCRIPT_ID);
 	scr->marked_as_deleted = 1;
 }
 
 void SegManager::unmarkScriptDeleted(int script_nr) {
-	Script *scr;
-	int seg = segGet(script_nr);
-	VERIFY(check(seg), "invalid seg id");
-
-	scr = &(heap[seg]->data.script);
+	Script *scr = getScript(script_nr, SCRIPT_ID);
 	scr->marked_as_deleted = 0;
 }
 
@@ -423,22 +417,10 @@ void SegManager::freeScript(MemObject *mem) {
 
 // memory operations
 
-void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag) {
-	MemObject *mem_obj;
-	GET_SEGID();
-	mem_obj = heap[id];
-	switch (mem_obj->type) {
-	case MEM_OBJ_SCRIPT:
-		if (mem_obj->data.script.buf) {
-			memcpy(mem_obj->data.script.buf + dst, src, n);
-		}
-		break;
-	case MEM_OBJ_CLONES:
-		sciprintf("memcpy for clones hasn't been implemented yet\n");
-		break;
-	default:
-		sciprintf("unknown mem obj type\n");
-		break;
+void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, idFlag flag) {
+	Script *scr = getScript(id, flag);
+	if (scr->buf) {
+		memcpy(scr->buf + dst, src, n);
 	}
 }
 
@@ -469,6 +451,21 @@ int SegManager::segGet(int script_id) const {
 	return id_seg_map->lookupKey(script_id);
 }
 
+Script *SegManager::getScript(const int id, idFlag flag) {
+	const int seg = (flag == SCRIPT_ID) ? segGet(id) : id;
+
+	if (seg < 0 || seg >= heap_size) {
+		error("SegManager::getScript(%d,%d): seg id %x out of bounds", id, flag, seg);
+	}
+	if (!heap[seg]) {
+		error("SegManager::getScript(%d,%d): seg id %x is not in memory", id, flag, seg);
+	}
+	if (heap[seg]->type != MEM_OBJ_SCRIPT) {
+		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, heap[seg]->type);
+	}
+	return &(heap[seg]->data.script);
+}
+
 // validate the seg
 // return:
 //	false - invalid seg
@@ -492,40 +489,29 @@ int SegManager::scriptIsLoaded(int id, idFlag flag) {
 }
 
 void SegManager::incrementLockers(int id, idFlag flag) {
-	if (flag == SCRIPT_ID)
-		id = segGet(id);
-	VERIFY(check(id), "invalid seg id");
-	heap[id]->data.script.lockers++;
+	Script *scr = getScript(id, flag);
+	scr->lockers++;
 }
 
 void SegManager::decrementLockers(int id, idFlag flag) {
-	if (flag == SCRIPT_ID)
-		id = segGet(id);
-	VERIFY(check(id), "invalid seg id");
-
-	if (heap[id]->data.script.lockers > 0)
-		heap[id]->data.script.lockers--;
+	Script *scr = getScript(id, flag);
+	if (scr->lockers > 0)
+		scr->lockers--;
 }
 
 int SegManager::getLockers(int id, idFlag flag) {
-	if (flag == SCRIPT_ID)
-		id = segGet(id);
-	VERIFY(check(id), "invalid seg id");
-
-	return heap[id]->data.script.lockers;
+	Script *scr = getScript(id, flag);
+	return scr->lockers;
 }
 
 void SegManager::setLockers(int lockers, int id, idFlag flag) {
-	if (flag == SCRIPT_ID)
-		id = segGet(id);
-	VERIFY(check(id), "invalid seg id");
-	heap[id]->data.script.lockers = lockers;
+	Script *scr = getScript(id, flag);
+	scr->lockers = lockers;
 }
 
 void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
-	Script *scr = &(heap[id]->data.script);
+	Script *scr = getScript(id, flag);
 
-	GET_SEGID();
 	if (offset) {
 		scr->export_table = (uint16 *)(scr->buf + offset + 2);
 		scr->exports_nr = READ_LE_UINT16((byte *)(scr->export_table - 1));
@@ -540,23 +526,23 @@ void SegManager::setExportWidth(int flag) {
 }
 
 void SegManager::setSynonymsOffset(int offset, int id, idFlag flag) {
-	GET_SEGID();
-	heap[id]->data.script.synonyms = heap[id]->data.script.buf + offset;
+	Script *scr = getScript(id, flag);
+	scr->synonyms = scr->buf + offset;
 }
 
 byte *SegManager::getSynonyms(int id, idFlag flag) {
-	GET_SEGID();
-	return heap[id]->data.script.synonyms;
+	Script *scr = getScript(id, flag);
+	return scr->synonyms;
 }
 
 void SegManager::setSynonymsNr(int nr, int id, idFlag flag) {
-	GET_SEGID();
-	heap[id]->data.script.synonyms_nr = nr;
+	Script *scr = getScript(id, flag);
+	scr->synonyms_nr = nr;
 }
 
 int SegManager::getSynonymsNr(int id, idFlag flag) {
-	GET_SEGID();
-	return heap[id]->data.script.synonyms_nr;
+	Script *scr = getScript(id, flag);
+	return scr->synonyms_nr;
 }
 
 int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
@@ -594,40 +580,27 @@ int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
 }
 
 void SegManager::scriptAddCodeBlock(reg_t location) {
-	MemObject *mobj = heap[location.segment];
-	Script *scr;
-	int index;
-
-	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to add a code block to non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(location.segment, SEG_ID);
 
 	if (++scr->code_blocks_nr > scr->code_blocks_allocated) {
 		scr->code_blocks_allocated += DEFAULT_OBJECTS_INCREMENT;
 		scr->code = (CodeBlock *)sci_realloc(scr->code, scr->code_blocks_allocated * sizeof(CodeBlock));
 	}
 
-	index = scr->code_blocks_nr - 1;
+	int index = scr->code_blocks_nr - 1;
 	scr->code[index].pos = location;
 	scr->code[index].size = READ_LE_UINT16(scr->buf + location.offset - 2);
 }
 
 void SegManager::scriptRelocate(reg_t block) {
-	MemObject *mobj = heap[block.segment];
-	Script *scr;
-	int count;
-	int i;
-
-	VERIFY(!(block.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(block.segment, SEG_ID);
 
 	VERIFY(block.offset < (uint16)scr->buf_size && READ_LE_UINT16(scr->buf + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
 
-	count = READ_LE_UINT16(scr->buf + block.offset);
+	int count = READ_LE_UINT16(scr->buf + block.offset);
 
-	for (i = 0; i <= count; i++) {
+	for (int i = 0; i <= count; i++) {
 		int pos = READ_LE_UINT16(scr->buf + block.offset + 2 + (i * 2));
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
@@ -665,14 +638,7 @@ void SegManager::scriptRelocate(reg_t block) {
 }
 
 void SegManager::heapRelocate(EngineState *s, reg_t block) {
-	MemObject *mobj = heap[block.segment];
-	Script *scr;
-	int count;
-	int i;
-
-	VERIFY(!(block.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt relocate non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(block.segment, SEG_ID);
 
 	VERIFY(block.offset < (uint16)scr->heap_size && READ_LE_UINT16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
 	       "Relocation block outside of script\n");
@@ -680,9 +646,9 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 	if (scr->relocated)
 		return;
 	scr->relocated = 1;
-	count = READ_LE_UINT16(scr->heap_start + block.offset);
+	int count = READ_LE_UINT16(scr->heap_start + block.offset);
 
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 		int pos = READ_LE_UINT16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
 
 		if (!relocateLocal(scr, block.segment, pos)) {
@@ -714,16 +680,12 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
 
 Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
-	MemObject *mobj = heap[obj_pos.segment];
-	Script *scr;
 	Object *obj;
 	int id;
 	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
 
-	VERIFY(!(obj_pos.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(obj_pos.segment, SEG_ID);
 
 	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
@@ -782,15 +744,11 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 }
 
 Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
-	MemObject *mobj = heap[obj_pos.segment];
-	Script *scr;
 	Object *obj;
 	int id;
 	int base = obj_pos.offset;
 
-	VERIFY(!(obj_pos.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize object in non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(obj_pos.segment, SEG_ID);
 
 	VERIFY(base < (uint16)scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
@@ -882,12 +840,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 }
 
 void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
-	MemObject *mobj = heap[seg];
-	Script *scr;
-
-	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(seg, SEG_ID);
 
 	scr->locals_offset = -count * 2; // Make sure it's invalid
 
@@ -895,14 +848,8 @@ void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
 }
 
 void SegManager::scriptInitialiseLocals(reg_t location) {
-	MemObject *mobj = heap[location.segment];
+	Script *scr = getScript(location.segment, SEG_ID);
 	unsigned int count;
-	Script *scr;
-	LocalVariables *locals;
-
-	VERIFY(!(location.segment >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to initialize locals in non-script\n");
-
-	scr = &(mobj->data.script);
 
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
@@ -919,7 +866,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 		count = (scr->buf_size - location.offset) >> 1;
 	}
 
-	locals = allocLocalsSegment(scr, count);
+	LocalVariables *locals = allocLocalsSegment(scr, count);
 	if (locals) {
 		uint i;
 		byte *base = (byte *)(scr->buf + location.offset);
@@ -930,19 +877,12 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 }
 
 void SegManager::scriptRelocateExportsSci11(int seg) {
-	MemObject *mobj = heap[seg];
-	Script *scr;
-	int i;
-	int location;
-
-	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
-
-	scr = &(mobj->data.script);
-	for (i = 0; i < scr->exports_nr; i++) {
+	Script *scr = getScript(seg, SEG_ID);
+	for (int i = 0; i < scr->exports_nr; i++) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		location = READ_LE_UINT16((byte *)(scr->export_table + i));
+		int location = READ_LE_UINT16((byte *)(scr->export_table + i));
 		if (READ_LE_UINT16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 			WRITE_LE_UINT16((byte *)(scr->export_table + i), location + scr->heap_start - scr->buf);
 		} else {
@@ -953,14 +893,8 @@ void SegManager::scriptRelocateExportsSci11(int seg) {
 }
 
 void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
-	MemObject *mobj = heap[seg];
-	Script *scr;
-	byte *seeker;
-
-	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to relocate exports in non-script\n");
-
-	scr = &(mobj->data.script);
-	seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
+	Script *scr = getScript(seg, SEG_ID);
+	byte *seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
 
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
@@ -1007,12 +941,7 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 }
 
 void SegManager::scriptFreeUnusedObjects(SegmentId seg) {
-	MemObject *mobj = heap[seg];
-	Script *scr;
-
-	VERIFY(!(seg >= heap_size || mobj->type != MEM_OBJ_SCRIPT), "Attempt to free unused objects in non-script\n");
-
-	scr = &(mobj->data.script);
+	Script *scr = getScript(seg, SEG_ID);
 	if (scr->objects_allocated > scr->objects_nr) {
 		if (scr->objects_nr)
 			scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_nr);
@@ -1066,21 +995,16 @@ SegmentId SegManager::allocateStringFrags() {
 }
 
 uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
-	Script* script;
-	uint16 offset;
-	VERIFY(check(seg), "invalid seg id");
-	VERIFY(heap[seg]->type == MEM_OBJ_SCRIPT, "Can only validate exports on scripts");
-
-	script = &heap[seg]->data.script;
-	if (script->exports_nr <= pubfunct) {
+	Script *scr = getScript(seg, SEG_ID);
+	if (scr->exports_nr <= pubfunct) {
 		sciprintf("pubfunct is invalid");
 		return 0;
 	}
 
 	if (exports_wide)
 		pubfunct *= 2;
-	offset = READ_LE_UINT16((byte *)(script->export_table + pubfunct));
-	VERIFY(offset < script->buf_size, "invalid export function pointer");
+	uint16 offset = READ_LE_UINT16((byte *)(scr->export_table + pubfunct));
+	VERIFY(offset < scr->buf_size, "invalid export function pointer");
 
 	return offset;
 }

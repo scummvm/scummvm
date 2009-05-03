@@ -36,17 +36,6 @@ enum idFlag {
 	SEG_ID
 };
 
-// Verify the the given condition is true, output the message if condition is false, and exit
-// Parameters:
-//   cond - condition to be verified
-//   msg  - the message to be printed if condition fails
-// return:
-//   none, terminate the program if fails
-#define VERIFY( cond, msg ) if (!(cond)) {\
-		sciprintf("%s, line, %d, %s\n", __FILE__, __LINE__, msg); \
-		BREAKPOINT(); \
-	}
-
 #define GET_SEGMENT(mgr, index, rtype) ((index) > 0 && (mgr).heap_size > index) ?		\
 		(((mgr).heap[index] && (mgr).heap[index]->type == rtype)? (mgr).heap[index]	: NULL) : NULL
 
@@ -104,6 +93,8 @@ public:
 	// Parameters: (int) script_nr: Number of the script to look up
 	// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
 	int segGet(int script_nr) const;
+
+	Script *getScript(int id, idFlag flag);
 
 
 	// script lock operations
@@ -278,7 +269,7 @@ public:
 	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
 	//				but less convenient.
 	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	void mcpyInOut(int dst, const void *src, size_t n, int id, int flag);
+	void mcpyInOut(int dst, const void *src, size_t n, int id, idFlag flag);
 
 
 	// 4. Stack

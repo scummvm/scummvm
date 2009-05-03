@@ -263,7 +263,6 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	seg = s->seg_manager->segGet(script);
 
 	temp = s->seg_manager->validateExportFunc(pubfunct, seg);
-	VERIFY(temp, "Invalid pubfunct in export table");
 	if (!temp) {
 		sciprintf("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
 		script_error_flag = script_debug_flag = 1;
