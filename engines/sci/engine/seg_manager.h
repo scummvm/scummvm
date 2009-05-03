@@ -26,6 +26,8 @@
 #ifndef SCI_ENGINE_SEG_MANAGER_H
 #define SCI_ENGINE_SEG_MANAGER_H
 
+#include "common/scummsys.h"
+#include "common/serializer.h"
 #include "sci/engine/vm.h"
 
 namespace Sci {
@@ -48,13 +50,15 @@ enum idFlag {
 
 class SegInterface;
 
-class SegManager {
+class SegManager : public Common::Serializable {
 public:
 	// Initialize the segment manager
 	SegManager(bool sci1_1);
 
 	// Deallocate all memory associated with the segment manager
 	~SegManager();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// 1. Scripts
 
@@ -381,8 +385,9 @@ public:
 	int scriptMarkedDeleted(int script_nr);
 	int initialiseScript(Script &scr, EngineState *s, int script_nr);
 
-public: // TODO: make private
+private:
 	IntMapper *id_seg_map; // id - script id; seg - index of heap
+public: // TODO: make private
 	MemObject **heap;
 	int heap_size;		// size of the heap
 	int reserved_id;

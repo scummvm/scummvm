@@ -32,8 +32,6 @@
 namespace Sci {
 
 
-
-
 // Assumes that the ints are relatively evenly distributed
 enum {
 	DCS_INT_HASH_MAX = 256

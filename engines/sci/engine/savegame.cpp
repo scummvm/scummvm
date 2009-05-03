@@ -92,10 +92,6 @@ static void sync_song_t(Common::Serializer &s, song_t &obj) {
 	}
 }
 
-static void sync_IntMapper(Common::Serializer &s, IntMapper &obj) {
-	obj.saveLoadWithSerializer(s);
-}
-
 
 /**
  * Sync a Common::Array using a Common::Serializer.
@@ -175,25 +171,25 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<Menu>(s, _menus);
 }
 
-static void sync_SegManager(Common::Serializer &s, SegManager &obj) {
-	int allocated_heap_size = obj.heap_size;
-	s.syncAsSint32LE(obj.heap_size);
-	s.syncAsSint32LE(obj.reserved_id);
-	s.syncAsSint32LE(obj.exports_wide);
-	s.syncAsSint32LE(obj.gc_mark_bits);
-	s.syncAsUint32LE(obj.mem_allocated);
+void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
+	int allocated_heap_size = heap_size;
+	s.syncAsSint32LE(heap_size);
+	s.syncAsSint32LE(reserved_id);
+	s.syncAsSint32LE(exports_wide);
+	s.syncAsSint32LE(gc_mark_bits);
+	s.syncAsUint32LE(mem_allocated);
 
-	sync_IntMapper(s, *obj.id_seg_map);
+	id_seg_map->saveLoadWithSerializer(s);
 
-	assert(obj.heap);
-	if (allocated_heap_size != obj.heap_size)
-		obj.heap = (MemObject**)sci_realloc((void *)obj.heap, obj.heap_size * sizeof(MemObject *));
-	for (int i = 0; i < obj.heap_size; ++i)
-		sync_MemObjPtr(s, obj.heap[i]);
+	assert(heap);
+	if (allocated_heap_size != heap_size)
+		heap = (MemObject**)sci_realloc((void *)heap, heap_size * sizeof(MemObject *));
+	for (int i = 0; i < heap_size; ++i)
+		sync_MemObjPtr(s, heap[i]);
 
-	s.syncAsSint32LE(obj.Clones_seg_id);
-	s.syncAsSint32LE(obj.Lists_seg_id);
-	s.syncAsSint32LE(obj.Nodes_seg_id);
+	s.syncAsSint32LE(Clones_seg_id);
+	s.syncAsSint32LE(Lists_seg_id);
+	s.syncAsSint32LE(Nodes_seg_id);
 }
 
 static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
@@ -212,7 +208,7 @@ static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 		obj = new SegManager(sci11);
 	}
 	
-	sync_SegManager(s, *obj);
+	obj->saveLoadWithSerializer(s);
 }
 
 
@@ -365,7 +361,8 @@ static void sync_Script(Common::Serializer &s, Script &obj) {
 		assert(s.isLoading());
 		obj.obj_indices = new IntMapper();
 	}
-	sync_IntMapper(s, *obj.obj_indices);
+
+	obj.obj_indices->saveLoadWithSerializer(s);
 
 	s.syncAsSint32LE(obj.exports_nr);
 	s.syncAsSint32LE(obj.synonyms_nr);
