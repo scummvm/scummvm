@@ -200,6 +200,10 @@ static void io_writeto() {
 		setreturn(current, FOUTPUT);
 	} else {
 		const char *s = luaL_check_string(FIRSTARG);
+		if (Common::String(s).hasSuffix("\\bino.txt")) {
+			pushresult(0);
+			return;
+		}
 		LuaFile *current;
 		Common::WriteStream *outFile = NULL;
 		Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
