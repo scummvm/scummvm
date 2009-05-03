@@ -722,7 +722,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_NODE | KSIG_INVALID;
 
 	case MEM_OBJ_DYNMEM:
-		if (allow_invalid || reg.offset < (*(DynMem *)mobj).size)
+		if (allow_invalid || reg.offset < (*(DynMem *)mobj)._size)
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;

@@ -28,6 +28,7 @@
 
 /* VM and kernel declarations */
 
+//#include "common/serializer.h"
 #include "sci/scicore/versions.h"	// for sci_version_t
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/heapmgr.h"
@@ -50,9 +51,14 @@ enum MemObjectType {
 	MEM_OBJ_MAX // For sanity checking
 };
 
-struct MemObject {
+struct MemObject /* : public Common::Serializable */ {
 	MemObjectType _type;
 	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
+
+public:
+	virtual ~MemObject() {}
+
+	virtual byte *dereference(reg_t pointer, int *size);
 
 	inline MemObjectType getType() const { return _type; }
 	inline int getSegMgrId() const { return _segmgrId; }
@@ -80,6 +86,29 @@ struct SystemString {
 
 struct SystemStrings : public MemObject {
 	SystemString strings[SYS_STRINGS_MAX];
+
+public:
+	SystemStrings() {
+		memset(strings, 0, sizeof(strings));
+	}
+	~SystemStrings() {
+		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
+			SystemString *str = &strings[i];
+			if (str->name) {
+				free(str->name);
+				str->name = NULL;
+
+				free(str->value);
+				str->value = NULL;
+
+				str->max_size = 0;
+			}
+		}
+	}
+
+	virtual byte *dereference(reg_t pointer, int *size);
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Number of bytes to be allocated for the stack */
@@ -180,6 +209,21 @@ struct LocalVariables : public MemObject {
 	int script_id; /**< Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
+
+public:
+	LocalVariables() {
+		script_id = 0;
+		locals = 0;
+		nr = 0;
+	}
+	~LocalVariables() {
+		free(locals);
+		locals = NULL;
+	}
+
+	virtual byte *dereference(reg_t pointer, int *size);
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Clone has been marked as 'freed' */
@@ -227,7 +271,7 @@ struct CodeBlock {
 
 struct Script : public MemObject {
 	int nr; /**< Script number */
-	byte* buf; /**< Static data buffer, or NULL if not used */
+	byte *buf; /**< Static data buffer, or NULL if not used */
 	size_t buf_size;
 	size_t script_size;
 	size_t heap_size;
@@ -257,12 +301,65 @@ struct Script : public MemObject {
 	int code_blocks_allocated;
 	int relocated;
 	int marked_as_deleted;
+
+public:
+	Script() {
+		nr = 0;
+		buf = NULL;
+		buf_size = 0;
+		script_size = 0;
+		heap_size = 0;
+
+		synonyms = NULL;
+		heap_start = NULL;
+		export_table = NULL;
+
+		obj_indices = NULL;
+
+		objects = NULL;
+		objects_allocated = 0;
+		objects_nr = 0;
+
+		locals_offset = 0;
+		locals_segment = 0;
+		locals_block = NULL;
+
+		code = NULL;
+		code_blocks_nr = 0;
+		code_blocks_allocated = 0;
+		relocated = 0;
+		marked_as_deleted = 0;
+	}
+
+	~Script() {
+		freeScript();
+	}
+
+	virtual byte *dereference(reg_t pointer, int *size);
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	void freeScript();
 };
 
 /** Data stack */
 struct dstack_t : MemObject {
 	int nr; /**< Number of stack entries */
 	reg_t *entries;
+
+public:
+	dstack_t() {
+		nr = 0;
+		entries = NULL;
+	}
+	~dstack_t() {
+		free(entries);
+		entries = NULL;
+	}
+
+	virtual byte *dereference(reg_t pointer, int *size);
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 #define CLONE_USED -1
@@ -300,6 +397,20 @@ struct Table : public MemObject {
 	int max_entry; /**< Highest entry used */
 
 	Entry *table;
+
+public:
+	Table() {
+		initTable();
+	}
+	~Table() {
+		// FIXME: Shouldn't we make sure that all table entries are disposed
+		// of properly?
+		free(table);
+		table = NULL;
+		entries_nr = max_entry = 0;
+	}
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	void initTable() {
 		entries_nr = INITIAL;
@@ -352,9 +463,22 @@ void free_Hunk_entry(HunkTable *table, int index);
 
 // Free-style memory
 struct DynMem : public MemObject {
-	int size;
-	char *description;
-	byte *buf;
+	int _size;
+	char *_description;
+	byte *_buf;
+
+public:
+	DynMem() : _size(0), _description(0), _buf(0) {}
+	~DynMem() {
+		free(_description);
+		_description = NULL;
+		free(_buf);
+		_buf = NULL;
+	}
+
+	virtual byte *dereference(reg_t pointer, int *size);
+
+//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Contains selector IDs for a few selected selectors */

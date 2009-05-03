@@ -1667,7 +1667,6 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	int seg;
 	int seg_id;
 	int marked_for_deletion;
-	MemObject *mem;
 	reg_t reg;
 
 	*was_new = 1;
@@ -1693,6 +1692,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		return 0;
 	}
 
+	Script *scr = 0;
 	seg = s->seg_manager->segGet(script_nr);
 	if (s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID)) {
 		marked_for_deletion = s->seg_manager->scriptMarkedDeleted(script_nr);
@@ -1701,17 +1701,17 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 			return seg;
 		} else {
 			seg_id = seg;
-			mem = s->seg_manager->_heap[seg];
-			assert(mem);
-			s->seg_manager->freeScript(*(Script *)mem);
+			scr = (Script *)s->seg_manager->_heap[seg];
+			assert(scr);
+			scr->freeScript();
 		}
-	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
+	} else if (!(scr = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
 		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
 		script_debug_flag = script_error_flag = 1;
 		return 0;
 	}
 
-	s->seg_manager->initialiseScript(*(Script *)mem, s, script_nr);
+	s->seg_manager->initialiseScript(*scr, s, script_nr);
 
 	reg.segment = seg_id;
 	reg.offset = 0;

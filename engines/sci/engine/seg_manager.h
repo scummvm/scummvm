@@ -62,15 +62,13 @@ public:
 
 	// 1. Scripts
 
-	void freeScript(Script &scr);
-
 	// Allocate a script into the segment manager
 	// Parameters: (int) script_nr: number of the script to load
 	//	       (state_t *) s: The state containing resource manager handlers to load the
 	//			      script data
 	// Returns   : (int) 0 on failure, 1 on success
 	//	       (int) *seg_id: The segment ID of the newly allocated segment, on success
-	MemObject *allocateScript(EngineState *s, int script_nr, int* seg_id);
+	Script *allocateScript(EngineState *s, int script_nr, int* seg_id);
 
 	// The script must then be initialised; see section (1b.), below.
 

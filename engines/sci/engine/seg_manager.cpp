@@ -114,7 +114,7 @@ SegManager::~SegManager() {
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
+Script *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
 	int seg;
 	bool was_added;
 	MemObject* mem;
@@ -122,7 +122,7 @@ MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 	seg = id_seg_map->checkKey(script_nr, true, &was_added);
 	if (!was_added) {
 		*seg_id = seg;
-		return _heap[*seg_id];
+		return (Script *)_heap[*seg_id];
 	}
 
 	// allocate the MemObject
@@ -133,7 +133,7 @@ MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 	}
 
 	*seg_id = seg;
-	return mem;
+	return (Script *)mem;
 }
 
 void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
@@ -176,11 +176,11 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	// allocate the script.buf
 
 	setScriptSize(scr, s, script_nr);
-	scr.buf = (byte*)sci_malloc(scr.buf_size);
+	scr.buf = (byte *)sci_malloc(scr.buf_size);
 
 	dbgPrint("scr.buf ", scr.buf);
 	if (!scr.buf) {
-		freeScript(scr);
+		scr.freeScript();
 		sciprintf("SegManager: Not enough memory space for script size");
 		scr.buf_size = 0;
 		return 0;
@@ -215,68 +215,35 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 int SegManager::deallocate(int seg, bool recursive) {
 	MemObject *mobj;
 	VERIFY(check(seg), "invalid seg id");
-	int i;
 
 	mobj = _heap[seg];
 	id_seg_map->removeKey(mobj->getSegMgrId());
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		freeScript((*(Script *)mobj));
-
-		(*(Script *)mobj).buf = NULL;
+		// FIXME: Get rid of the recursive flag, so that we can move the
+		// following into the destructor. The only time it is set to false
+		// is in the SegManager destructor.
 		if (recursive && (*(Script *)mobj).locals_segment)
 			deallocate((*(Script *)mobj).locals_segment, recursive);
 		break;
 
 	case MEM_OBJ_LOCALS:
-		free((*(LocalVariables *)mobj).locals);
-		(*(LocalVariables *)mobj).locals = NULL;
 		break;
 
 	case MEM_OBJ_DYNMEM:
-		free((*(DynMem *)mobj).description);
-		(*(DynMem *)mobj).description = NULL;
-		free((*(DynMem *)mobj).buf);
-		(*(DynMem *)mobj).buf = NULL;
 		break;
 	case MEM_OBJ_SYS_STRINGS: 
-		for (i = 0; i < SYS_STRINGS_MAX; i++) {
-			SystemString *str = &(*(SystemStrings *)mobj).strings[i];
-			if (str->name) {
-				free(str->name);
-				str->name = NULL;
-
-				free(str->value);
-				str->value = NULL;
-
-				str->max_size = 0;
-			}
-		}
 		break;
 	case MEM_OBJ_STACK:
-		free((*(dstack_t *)mobj).entries);
-		(*(dstack_t *)mobj).entries = NULL;
 		break;
 	case MEM_OBJ_LISTS:
-		free((*(ListTable *)mobj).table);
-		(*(ListTable *)mobj).table = NULL;
-		(*(ListTable *)mobj).entries_nr = (*(ListTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_NODES:
-		free((*(NodeTable *)mobj).table);
-		(*(NodeTable *)mobj).table = NULL;
-		(*(NodeTable *)mobj).entries_nr = (*(NodeTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_CLONES:
-		free((*(CloneTable *)mobj).table);
-		(*(CloneTable *)mobj).table = NULL;
-		(*(CloneTable *)mobj).entries_nr = (*(CloneTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_HUNK:
-		free((*(HunkTable *)mobj).table);
-		(*(HunkTable *)mobj).table = NULL;
-		(*(HunkTable *)mobj).entries_nr = (*(HunkTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_STRING_FRAG:
 		break;
@@ -393,30 +360,28 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectTyp
 	return mem;
 }
 
-void SegManager::freeScript(Script &scr) {
-	if (scr.buf) {
-		free(scr.buf);
-		scr.buf = NULL;
-		scr.buf_size = 0;
+void Script::freeScript() {
+	if (buf) {
+		free(buf);
+		buf = NULL;
+		buf_size = 0;
 	}
-	if (scr.objects) {
-		int i;
-
-		for (i = 0; i < scr.objects_nr; i++) {
-			Object* object = &scr.objects[i];
+	if (objects) {
+		for (int i = 0; i < objects_nr; i++) {
+			Object *object = &objects[i];
 			if (object->variables) {
 				free(object->variables);
 				object->variables = NULL;
 				object->variables_nr = 0;
 			}
 		}
-		free(scr.objects);
-		scr.objects = NULL;
-		scr.objects_nr = 0;
+		free(objects);
+		objects = NULL;
+		objects_nr = 0;
 	}
 
-	delete scr.obj_indices;
-	free(scr.code);
+	delete obj_indices;
+	free(code);
 }
 
 // memory operations
@@ -979,12 +944,7 @@ dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
 }
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
-	SystemStrings *retval = (SystemStrings *)mobj;
-
-	memset(retval->strings, 0, sizeof(retval->strings));
-
-	return retval;
+	return (SystemStrings *)allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
 }
 
 SegmentId SegManager::allocateStringFrags() {
@@ -1088,7 +1048,6 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 
 	if (!Clones_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
-		(*(CloneTable *)mobj).initTable();
 	} else
 		mobj = _heap[Clones_seg_id];
 
@@ -1106,7 +1065,6 @@ List *SegManager::alloc_List(reg_t *addr) {
 
 	if (!Lists_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
-		(*(ListTable *)mobj).initTable();
 	} else
 		mobj = _heap[Lists_seg_id];
 
@@ -1124,7 +1082,6 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 
 	if (!Nodes_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
-		(*(NodeTable *)mobj).initTable();
 	} else
 		mobj = _heap[Nodes_seg_id];
 
@@ -1142,7 +1099,6 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 
 	if (!Hunks_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
-		(*(HunkTable *)mobj).initTable();
 	} else
 		mobj = _heap[Hunks_seg_id];
 
@@ -1153,70 +1109,71 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	return &(table->table[offset]);
 }
 
-
-
-byte *SegManager::dereference(reg_t pointer, int *size) {
-	MemObject *mobj;
-	byte *base = NULL;
-	int count;
-
-	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
-		sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
+byte *MemObject::dereference(reg_t pointer, int *size) {
+	error("Error: Trying to dereference pointer "PREG" to inappropriate segment",
 		          PRINT_REG(pointer));
-		return NULL; /* Invalid */
-	}
+	return NULL;
+}
 
-	mobj = _heap[pointer.segment];
-
-	switch (mobj->getType()) {
-	case MEM_OBJ_SCRIPT:
-		if (pointer.offset > (*(Script *)mobj).buf_size) {
-			sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
-			          PRINT_REG(pointer), (uint)(*(Script *)mobj).buf_size);
-			return NULL;
-		}
-		if (size)
-			*size = (*(Script *)mobj).buf_size - pointer.offset;
-		return (byte *)((*(Script *)mobj).buf + pointer.offset);
-		break;
-
-	case MEM_OBJ_LOCALS:
-		count = (*(LocalVariables *)mobj).nr * sizeof(reg_t);
-		base = (byte *)(*(LocalVariables *)mobj).locals;
-		break;
-
-	case MEM_OBJ_STACK:
-		count = (*(dstack_t *)mobj).nr * sizeof(reg_t);
-		base = (byte *)(*(dstack_t *)mobj).entries;
-		break;
-
-	case MEM_OBJ_DYNMEM:
-		count = (*(DynMem *)mobj).size;
-		base = (byte *)(*(DynMem *)mobj).buf;
-		break;
-
-	case MEM_OBJ_SYS_STRINGS:
-		if (size)
-			*size = (*(SystemStrings *)mobj).strings[pointer.offset].max_size;
-		if (pointer.offset < SYS_STRINGS_MAX && (*(SystemStrings *)mobj).strings[pointer.offset].name)
-			return (byte *)((*(SystemStrings *)mobj).strings[pointer.offset].value);
-		else {
-			sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
-			          PRINT_REG(pointer));
-			return NULL;
-		}
-
-	default:
-		error("Error: Trying to dereference pointer "PREG" to inappropriate segment",
-		          PRINT_REG(pointer));
+byte *Script::dereference(reg_t pointer, int *size) {
+	if (pointer.offset > buf_size) {
+		sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
+				  PRINT_REG(pointer), (uint)buf_size);
 		return NULL;
 	}
+	if (size)
+		*size = buf_size - pointer.offset;
+	return (byte *)(buf + pointer.offset);
+}
+
+byte *LocalVariables::dereference(reg_t pointer, int *size) {
+	int count = nr * sizeof(reg_t);
+	byte *base = (byte *)locals;
 
 	if (size)
 		*size = count;
 
-	return
-	    base + pointer.offset;
+	return base + pointer.offset;
+}
+
+byte *dstack_t::dereference(reg_t pointer, int *size) {
+	int count = nr * sizeof(reg_t);
+	byte *base = (byte *)entries;
+
+	if (size)
+		*size = count;
+
+	return base + pointer.offset;
+}
+
+byte *DynMem::dereference(reg_t pointer, int *size) {
+	int count = _size;
+	byte *base = (byte *)_buf;
+
+	if (size)
+		*size = count;
+
+	return base + pointer.offset;
+}
+
+byte *SystemStrings::dereference(reg_t pointer, int *size) {
+	if (size)
+		*size = strings[pointer.offset].max_size;
+	if (pointer.offset < SYS_STRINGS_MAX && strings[pointer.offset].name)
+		return (byte *)(strings[pointer.offset].value);
+
+	error("Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
+	return NULL;
+}
+
+byte *SegManager::dereference(reg_t pointer, int *size) {
+	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
+		error("Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
+		return NULL; /* Invalid */
+	}
+
+	MemObject *mobj = _heap[pointer.segment];
+	return mobj->dereference(pointer, size);
 }
 
 unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
@@ -1226,16 +1183,16 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 
 	DynMem &d = *(DynMem *)mobj;
 
-	d.size = size;
+	d._size = size;
 
 	if (size == 0)
-		d.buf = NULL;
+		d._buf = NULL;
 	else
-		d.buf = (byte *)sci_malloc(size);
+		d._buf = (byte *)sci_malloc(size);
 
-	d.description = sci_strdup(descr);
+	d._description = sci_strdup(descr);
 
-	return (unsigned char *)(d.buf);
+	return (unsigned char *)(d._buf);
 }
 
 const char *SegManager::getDescription(reg_t addr) {
@@ -1246,7 +1203,7 @@ const char *SegManager::getDescription(reg_t addr) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_DYNMEM:
-		return (*(DynMem *)mobj).description;
+		return (*(DynMem *)mobj)._description;
 	default:
 		return "";
 	}

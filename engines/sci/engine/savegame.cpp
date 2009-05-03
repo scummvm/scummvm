@@ -394,13 +394,13 @@ static void sync_SystemStrings(Common::Serializer &s, SystemStrings &obj) {
 }
 
 static void sync_DynMem(Common::Serializer &s, DynMem &obj) {
-	s.syncAsSint32LE(obj.size);
-	syncCStr(s, &obj.description);
-	if (!obj.buf && obj.size) {
-		obj.buf = (byte *)sci_calloc(obj.size, 1);
+	s.syncAsSint32LE(obj._size);
+	syncCStr(s, &obj._description);
+	if (!obj._buf && obj._size) {
+		obj._buf = (byte *)sci_calloc(obj._size, 1);
 	}
-	if (obj.size)
-		s.syncBytes(obj.buf, obj.size);
+	if (obj._size)
+		s.syncBytes(obj._buf, obj._size);
 }
 
 #pragma mark -

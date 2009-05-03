@@ -325,7 +325,7 @@ int c_segtable(EngineState *s) {
 				break;
 
 			case MEM_OBJ_DYNMEM:
-				sciprintf("M  dynmem: %d bytes", (*(DynMem *)mobj).size);
+				sciprintf("M  dynmem: %d bytes", (*(DynMem *)mobj)._size);
 				break;
 
 			case MEM_OBJ_STRING_FRAG:
@@ -483,9 +483,9 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 	case MEM_OBJ_DYNMEM: {
 		sciprintf("dynmem (%s): %d bytes\n",
-		          (*(DynMem *)mobj).description ? (*(DynMem *)mobj).description : "no description", (*(DynMem *)mobj).size);
+		          (*(DynMem *)mobj)._description ? (*(DynMem *)mobj)._description : "no description", (*(DynMem *)mobj)._size);
 
-		sci_hexdump((*(DynMem *)mobj).buf, (*(DynMem *)mobj).size, 0);
+		sci_hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 0);
 	}
 	break;
 
