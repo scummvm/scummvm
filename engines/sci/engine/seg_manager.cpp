@@ -148,33 +148,33 @@ MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 	return mem;
 }
 
-void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
+void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	Resource *script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
 	Resource *heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
 
-	mem->data.script.script_size = script->size;
-	mem->data.script.heap_size = 0; // Set later
+	scr.script_size = script->size;
+	scr.heap_size = 0; // Set later
 
 	if (!script || (s->version >= SCI_VERSION(1, 001, 000) && !heap)) {
 		sciprintf("%s: failed to load %s\n", __FUNCTION__, !script ? "script" : "heap");
 		return;
 	}
 	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
-		mem->data.script.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
+		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (s->version < SCI_VERSION(1, 001, 000)) {
-		mem->data.script.buf_size = script->size;
+		scr.buf_size = script->size;
 	} else {
-		mem->data.script.buf_size = script->size + heap->size;
-		mem->data.script.heap_size = heap->size;
+		scr.buf_size = script->size + heap->size;
+		scr.heap_size = heap->size;
 
 		// Ensure that the start of the heap resource can be word-aligned.
 		if (script->size & 2) {
-			mem->data.script.buf_size++;
-			mem->data.script.script_size++;
+			scr.buf_size++;
+			scr.script_size++;
 		}
 
-		if (mem->data.script.buf_size > 65535) {
+		if (scr.buf_size > 65535) {
 			sciprintf("Script and heap sizes combined exceed 64K.\n"
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
@@ -184,44 +184,42 @@ void SegManager::setScriptSize(MemObject *mem, EngineState *s, int script_nr) {
 	}
 }
 
-int SegManager::initialiseScript(MemObject *mem, EngineState *s, int script_nr) {
+int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	// allocate the script.buf
-	Script *scr;
 
-	setScriptSize(mem, s, script_nr);
-	mem->data.script.buf = (byte*) sci_malloc(mem->data.script.buf_size);
+	setScriptSize(scr, s, script_nr);
+	scr.buf = (byte*)sci_malloc(scr.buf_size);
 
-	dbgPrint("mem->data.script.buf ", mem->data.script.buf);
-	if (!mem->data.script.buf) {
-		freeScript(mem);
+	dbgPrint("scr.buf ", scr.buf);
+	if (!scr.buf) {
+		freeScript(scr);
 		sciprintf("SegManager: Not enough memory space for script size");
-		mem->data.script.buf_size = 0;
+		scr.buf_size = 0;
 		return 0;
 	}
 
 	// Initialize objects
-	scr = &(mem->data.script);
-	scr->objects = NULL;
-	scr->objects_allocated = 0;
-	scr->objects_nr = 0; // No objects recorded yet
+	scr.objects = NULL;
+	scr.objects_allocated = 0;
+	scr.objects_nr = 0; // No objects recorded yet
 
-	scr->locals_offset = 0;
-	scr->locals_block = NULL;
+	scr.locals_offset = 0;
+	scr.locals_block = NULL;
 
-	scr->code = NULL;
-	scr->code_blocks_nr = 0;
-	scr->code_blocks_allocated = 0;
+	scr.code = NULL;
+	scr.code_blocks_nr = 0;
+	scr.code_blocks_allocated = 0;
 
-	scr->nr = script_nr;
-	scr->marked_as_deleted = 0;
-	scr->relocated = 0;
+	scr.nr = script_nr;
+	scr.marked_as_deleted = 0;
+	scr.relocated = 0;
 
-	scr->obj_indices = new IntMapper();
+	scr.obj_indices = new IntMapper();
 
 	if (s->version >= SCI_VERSION(1, 001, 000))
-		scr->heap_start = scr->buf + scr->script_size;
+		scr.heap_start = scr.buf + scr.script_size;
 	else
-		scr->heap_start = scr->buf;
+		scr.heap_start = scr.buf;
 
 	return 1;
 }
@@ -236,7 +234,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 
 	switch (mobj->type) {
 	case MEM_OBJ_SCRIPT:
-		freeScript(mobj);
+		freeScript(mobj->data.script);
 
 		mobj->data.script.buf = NULL;
 		if (recursive && mobj->data.script.locals_segment)
@@ -387,32 +385,30 @@ void SegManager::sm_object_init(Object *object) {
 	object->variables = NULL;
 };*/
 
-void SegManager::freeScript(MemObject *mem) {
-	if (!mem)
-		return;
-	if (mem->data.script.buf) {
-		free(mem->data.script.buf);
-		mem->data.script.buf = NULL;
-		mem->data.script.buf_size = 0;
+void SegManager::freeScript(Script &scr) {
+	if (scr.buf) {
+		free(scr.buf);
+		scr.buf = NULL;
+		scr.buf_size = 0;
 	}
-	if (mem->data.script.objects) {
+	if (scr.objects) {
 		int i;
 
-		for (i = 0; i < mem->data.script.objects_nr; i++) {
-			Object* object = &mem->data.script.objects[i];
+		for (i = 0; i < scr.objects_nr; i++) {
+			Object* object = &scr.objects[i];
 			if (object->variables) {
 				free(object->variables);
 				object->variables = NULL;
 				object->variables_nr = 0;
 			}
 		}
-		free(mem->data.script.objects);
-		mem->data.script.objects = NULL;
-		mem->data.script.objects_nr = 0;
+		free(scr.objects);
+		scr.objects = NULL;
+		scr.objects_nr = 0;
 	}
 
-	delete mem->data.script.obj_indices;
-	free(mem->data.script.code);
+	delete scr.obj_indices;
+	free(scr.code);
 }
 
 // memory operations
@@ -426,21 +422,16 @@ void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, idFlag fl
 
 int16 SegManager::getHeap(reg_t reg) {
 	MemObject *mem_obj;
-	memObjType mem_type;
 
 	VERIFY(check(reg.segment), "Invalid seg id");
 	mem_obj = heap[reg.segment];
-	mem_type = mem_obj->type;
 
-	switch (mem_type) {
+	switch (mem_obj->type) {
 	case MEM_OBJ_SCRIPT:
 		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset\n");
 		return (mem_obj->data.script.buf[reg.offset] | (mem_obj->data.script.buf[reg.offset+1]) << 8);
-	case MEM_OBJ_CLONES:
-		sciprintf("memcpy for clones hasn't been implemented yet\n");
-		break;
 	default:
-		sciprintf("unknown mem obj type\n");
+		error("SegManager::getHeap: unsupported mem obj type %d", mem_obj->type);
 		break;
 	}
 	return 0; // never get here

@@ -1702,7 +1702,8 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		} else {
 			seg_id = seg;
 			mem = s->seg_manager->heap[seg];
-			s->seg_manager->freeScript(mem);
+			assert(mem);
+			s->seg_manager->freeScript(mem->data.script);
 		}
 	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
 		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
@@ -1710,7 +1711,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		return 0;
 	}
 
-	s->seg_manager->initialiseScript(mem, s, script_nr);
+	s->seg_manager->initialiseScript(mem->data.script, s, script_nr);
 
 	reg.segment = seg_id;
 	reg.offset = 0;

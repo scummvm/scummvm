@@ -58,7 +58,7 @@ public:
 
 	// 1. Scripts
 
-	void freeScript(MemObject* mem);
+	void freeScript(Script &scr);
 
 	// Allocate a script into the segment manager
 	// Parameters: (int) script_nr: number of the script to load
@@ -379,7 +379,7 @@ public:
 	void scriptRelocateExportsSci11(int seg);
 	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
 	int scriptMarkedDeleted(int script_nr);
-	int initialiseScript(MemObject *mem, EngineState *s, int script_nr);
+	int initialiseScript(Script &scr, EngineState *s, int script_nr);
 
 public: // TODO: make private
 	IntMapper *id_seg_map; // id - script id; seg - index of heap
@@ -413,7 +413,7 @@ private:
 	int relocateObject(Object *obj, SegmentId segment, int location);
 
 	int findFreeId(int *id);
-	static void setScriptSize(MemObject *mem, EngineState *s, int script_nr);
+	static void setScriptSize(Script &scr, EngineState *s, int script_nr);
 	Object *scriptObjInit0(EngineState *s, reg_t obj_pos);
 	Object *scriptObjInit11(EngineState *s, reg_t obj_pos);
 
