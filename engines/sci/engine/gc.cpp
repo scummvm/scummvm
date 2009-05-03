@@ -78,7 +78,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	Common::Array<SegInterface *> interfaces;
 	reg_t_hash_map *normal_map = NULL;
 	WorklistManager wm;
-	int i;
+	uint i;
 
 	interfaces.resize(sm->heap_size);
 	for (i = 1; i < sm->heap_size; i++)
@@ -105,7 +105,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #endif
 
 	// Init: Execution Stack
-	for (i = 0; i <= s->execution_stack_pos; i++) {
+	for (i = 0; (int)i <= s->execution_stack_pos; i++) {
 		ExecStack &es = s->_executionStack[i];
 
 		if (es.type != EXEC_STACK_TYPE_KERNEL) {
@@ -191,7 +191,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 }
 
 void run_gc(EngineState *s) {
-	int seg_nr;
+	uint seg_nr;
 	deallocator_t deallocator;
 	SegManager *sm = s->seg_manager;
 

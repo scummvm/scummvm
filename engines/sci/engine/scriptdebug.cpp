@@ -283,7 +283,7 @@ int c_sfx_01_track(EngineState *s) {
 const char *(*_debug_get_input)(void) = _debug_get_input_default;
 
 int c_segtable(EngineState *s) {
-	int i;
+	uint i;
 
 	sciprintf("  ---- segment table ----\n");
 	for (i = 0; i < s->seg_manager->heap_size; i++) {
@@ -668,12 +668,12 @@ static int c_mousepos(EngineState *s) {
 }
 
 int c_seginfo(EngineState *s) {
-	unsigned int i = 0;
+	uint i = 0;
 
 	if (cmd_paramlength) {
 		while (i < cmd_paramlength) {
 			int nr = cmd_params[i++].val;
-			if (nr < 0 || nr >= s->seg_manager->heap_size || !s->seg_manager->heap[nr]) {
+			if (nr < 0 || (uint)nr >= s->seg_manager->heap_size || !s->seg_manager->heap[nr]) {
 				sciprintf("Segment %04x does not exist\n", nr);
 				return 1;
 			}
@@ -681,7 +681,7 @@ int c_seginfo(EngineState *s) {
 			_c_single_seg_info(s, s->seg_manager->heap[nr]);
 		}
 	} else
-		for (i = 0; i < (unsigned int)s->seg_manager->heap_size; i++) {
+		for (i = 0; i < s->seg_manager->heap_size; i++) {
 			if (s->seg_manager->heap[i]) {
 				sciprintf("[%04x] ", i);
 				_c_single_seg_info(s, s->seg_manager->heap[i]);

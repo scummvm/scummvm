@@ -172,8 +172,8 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	int allocated_heap_size = heap_size;
-	s.syncAsSint32LE(heap_size);
+	uint allocated_heap_size = heap_size;
+	s.syncAsUint32LE(heap_size);
 	s.syncAsSint32LE(reserved_id);
 	s.syncAsSint32LE(exports_wide);
 	s.syncAsSint32LE(gc_mark_bits);
@@ -184,7 +184,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	assert(heap);
 	if (allocated_heap_size != heap_size)
 		heap = (MemObject**)sci_realloc((void *)heap, heap_size * sizeof(MemObject *));
-	for (int i = 0; i < heap_size; ++i)
+	for (uint i = 0; i < heap_size; ++i)
 		sync_MemObjPtr(s, heap[i]);
 
 	s.syncAsSint32LE(Clones_seg_id);
@@ -538,9 +538,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 
 // FIXME: This should probably be turned into a SegManager method
 static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
-	int i;
-
-	for (i = 0; i < self->heap_size; i++)
+	for (uint i = 0; i < self->heap_size; i++)
 		if (self->heap[i] &&
 		    self->heap[i]->getType() == type)
 			return i;
@@ -614,7 +612,7 @@ static void load_script(EngineState *s, SegmentId seg) {
 
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
-	int i;
+	uint i;
 	MemObject *mobj;
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
@@ -694,7 +692,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_clones(EngineState *s, SegManager *self) {
-	int i;
+	uint i;
 	MemObject *mobj;
 
 	for (i = 0; i < self->heap_size; i++) {

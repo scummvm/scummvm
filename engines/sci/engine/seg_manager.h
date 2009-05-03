@@ -38,13 +38,13 @@ enum idFlag {
 	SEG_ID
 };
 
-#define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (mgr).heap_size > index) ?		\
+#define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (int)(mgr).heap_size > index) ?		\
 		(((mgr).heap[index] && (mgr).heap[index]->getType() == rtype)? (mgr).heap[index]	: NULL) : NULL)
 
-#define GET_SEGMENT_ANY(mgr, index) (((index) > 0 && (mgr).heap_size > index) ?			\
+#define GET_SEGMENT_ANY(mgr, index) (((index) > 0 && (int)(mgr).heap_size > index) ?			\
 		(((mgr).heap[index])? (mgr).heap[index]	: NULL) : NULL)
 
-#define GET_OBJECT_SEGMENT(mgr, index) (((index) > 0 && (mgr).heap_size > index) ?		\
+#define GET_OBJECT_SEGMENT(mgr, index) (((index) > 0 && (int)(mgr).heap_size > index) ?		\
 		(((mgr).heap[index]	&& ((mgr).heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr).heap[index]->getType() == MEM_OBJ_CLONES))? (mgr).heap[index]	\
 		: NULL): NULL)
 
@@ -389,7 +389,7 @@ private:
 	IntMapper *id_seg_map; // id - script id; seg - index of heap
 public: // TODO: make private
 	MemObject **heap;
-	int heap_size;		// size of the heap
+	uint heap_size;		// size of the heap
 	int reserved_id;
 	int exports_wide;
 	bool isSci1_1;

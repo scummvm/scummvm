@@ -281,7 +281,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		const char *str_objname;
 		char *str_suffix;
 		char suffchar = 0;
-		int i;
+		uint i;
 		// Parse obj by name
 
 		tmp = (char *)strchr(str, '+');

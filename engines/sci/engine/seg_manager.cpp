@@ -75,8 +75,6 @@ MemObject *SegManager::allocNonscriptSegment(memObjType type, SegmentId *segid) 
 }
 
 SegManager::SegManager(bool sci1_1) {
-	int i;
-
 	// Initialise memory count
 	mem_allocated = 0;
 
@@ -97,7 +95,7 @@ SegManager::SegManager(bool sci1_1) {
 	isSci1_1 = sci1_1;
 
 	// initialize the heap pointers
-	for (i = 0; i < heap_size; i++) {
+	for (uint i = 0; i < heap_size; i++) {
 		heap[i] = NULL;
 	}
 
@@ -107,10 +105,8 @@ SegManager::SegManager(bool sci1_1) {
 
 // Destroy the object, free the memorys if allocated before
 SegManager::~SegManager() {
-	int i;
-
 	// Free memory
-	for (i = 0; i < heap_size; i++) {
+	for (uint i = 0; i < heap_size; i++) {
 		if (heap[i])
 			deallocate(i, false);
 	}
@@ -347,11 +343,11 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType t
 		return NULL;
 	}
 
-	if (segid >= heap_size) {
+	if (segid >= (int)heap_size) {
 		void *temp;
 		int oldhs = heap_size;
 
-		if (segid >= heap_size * 2) {
+		if (segid >= (int)heap_size * 2) {
 			sciprintf("SegManager: hash_map error or others??");
 			return NULL;
 		}
@@ -443,7 +439,7 @@ int SegManager::segGet(int script_id) const {
 Script *SegManager::getScript(const int id, idFlag flag) {
 	const int seg = (flag == SCRIPT_ID) ? segGet(id) : id;
 
-	if (seg < 0 || seg >= heap_size) {
+	if (seg < 0 || (uint)seg >= heap_size) {
 		error("SegManager::getScript(%d,%d): seg id %x out of bounds", id, flag, seg);
 	}
 	if (!heap[seg]) {
@@ -460,7 +456,7 @@ Script *SegManager::getScript(const int id, idFlag flag) {
 //	false - invalid seg
 //	true  - valid seg
 bool SegManager::check(int seg) {
-	if (seg < 0 || seg >= heap_size) {
+	if (seg < 0 || (uint)seg >= heap_size) {
 		return false;
 	}
 	if (!heap[seg]) {
