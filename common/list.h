@@ -247,6 +247,7 @@ protected:
 	 */
 	void insert(NodeBase *pos, const t_T &element) {
 		ListInternal::NodeBase *newNode = new Node(element);
+		assert(newNode);
 
 		newNode->_next = pos;
 		newNode->_prev = pos->_prev;

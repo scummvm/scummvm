@@ -54,6 +54,7 @@ public:
 	Array(const Array<T> &array) : _capacity(0), _size(0), _storage(0) {
 		_capacity = _size = array._size;
 		_storage = new T[_capacity];
+		assert(_storage);
 		copy(array._storage, array._storage + _size, _storage);
 	}
 
@@ -64,6 +65,7 @@ public:
 	Array(const T2 *data, int n) {
 		_capacity = _size = n;
 		_storage = new T[_capacity];
+		assert(_storage);
 		copy(data, data + _size, _storage);
 	}
 
@@ -149,6 +151,7 @@ public:
 		_size = array._size;
 		_capacity = _size + 32;
 		_storage = new T[_capacity];
+		assert(_storage);
 		copy(array._storage, array._storage + _size, _storage);
 
 		return *this;
@@ -193,6 +196,7 @@ public:
 		T *old_storage = _storage;
 		_capacity = newCapacity;
 		_storage = new T[newCapacity];
+		assert(_storage);
 
 		if (old_storage) {
 			// Copy old data

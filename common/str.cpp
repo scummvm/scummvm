@@ -79,7 +79,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 		// Not enough internal storage, so allocate more
 		_extern._capacity = computeCapacity(len+1);
 		_extern._refCount = 0;
-		_str = (char *)malloc(_extern._capacity);
+		_str = new char[_extern._capacity];
 		assert(_str != 0);
 	}
 
@@ -159,7 +159,7 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
 
 		// Allocate new storage
-		newStorage = (char *)malloc(newCapacity);
+		newStorage = new char[newCapacity];
 		assert(newStorage);
 	}
 
@@ -190,8 +190,10 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 void String::incRefCount() const {
 	assert(!isStorageIntern());
 	if (_extern._refCount == 0) {
-		if (g_refCountPool == 0)
+		if (g_refCountPool == 0) {
 			g_refCountPool = new MemoryPool(sizeof(int));
+			assert(g_refCountPool);
+		}
 
 		_extern._refCount = (int *)g_refCountPool->allocChunk();
 		*_extern._refCount = 2;
@@ -214,7 +216,7 @@ void String::decRefCount(int *oldRefCount) {
 			assert(g_refCountPool);
 			g_refCountPool->freeChunk(oldRefCount);
 		}
-		free(_str);
+		delete _str;
 
 		// Even though _str points to a freed memory block now,
 		// we do not change its value, because any code that calls
