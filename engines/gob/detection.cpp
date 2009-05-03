@@ -432,6 +432,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{NULL, 0, NULL, 0}
+			},
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0,
+		0
+	},
 	{ // Supplied by fac76 in bug report #1883808
 		{
 			"gob2",
@@ -800,6 +818,24 @@ static const GOBGameDescription gameDescriptions[] = {
 				{NULL, 0, NULL, 0}
 			},
 			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0,
+		0
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{NULL, 0, NULL, 0}
+			},
+			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS
 		},
@@ -1662,6 +1698,24 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "16b014bf32dbd6ab4c5163c44f56fed1", 445104),
 			EN_GRB,
 			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0,
+		0
+	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{NULL, 0, NULL, 0}
+			},
+			DE_DEU,
+			kPlatformWindows,
 			ADGF_NO_FLAGS
 		},
 		kGameTypeGob3,
@@ -2565,6 +2619,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"dynasty",
+			"Demo",
+			AD_ENTRY1s("lda1.stk", "8669ea2e9a8239c070dc73958fbc8753", 15567724),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_DEMO
+		},
+		kGameTypeDynasty,
+		kFeatures640,
+		"lda1.stk",
+		0
+	},
+	{
+		{
 			"urban",
 			"",
 			AD_ENTRY1s("intro.stk", "3ab2c542bd9216ae5d02cc6f45701ae1", 1252436),
@@ -2767,8 +2835,22 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibou4",
-			"Addy 4 Deutsch",
+			"Addy 4 Grundschule Basis CD",
 			AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibou4,
+		kFeatures640,
+		0,
+		0
+	},
+	{
+		{
+			"adibou4",
+			"Addy 4 Sekundarstufe Basis CD",
+			AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS
