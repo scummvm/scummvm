@@ -286,9 +286,6 @@ int SegManager::deallocate(int seg, bool recursive) {
 		mobj->data.hunks.table = NULL;
 		mobj->data.hunks.entries_nr = mobj->data.hunks.max_entry = 0;
 		break;
-	case MEM_OBJ_RESERVED:
-		free(mobj->data.reserved);
-		break;
 	case MEM_OBJ_STRING_FRAG:
 		break;
 	default:
@@ -1284,16 +1281,8 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 			return NULL;
 		}
 
-	case MEM_OBJ_RESERVED:
-		sciprintf("Error: Trying to dereference pointer "PREG" to reserved segment `%s'!\n",
-		          PRINT_REG(pointer),
-		          mobj->data.reserved);
-		return NULL;
-		break;
-
 	default:
-		sciprintf("Error: Trying to dereference pointer "PREG" to inappropriate"
-		          " segment!\n",
+		error("Error: Trying to dereference pointer "PREG" to inappropriate segment",
 		          PRINT_REG(pointer));
 		return NULL;
 	}
@@ -1689,14 +1678,6 @@ void SegInterfaceDynMem::freeAtAddress(reg_t sub_addr) {
 }
 
 
-//-------------------- reserved --------------------
-class SegInterfaceReserved : public SegInterface {
-public:
-	SegInterfaceReserved(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
-		SegInterface(segmgr, mobj, segId, MEM_OBJ_RESERVED) {}
-};
-
-
 SegInterface *SegManager::getSegInterface(SegmentId segid) {
 	if (!check(segid))
 		return NULL; // Invalid segment
@@ -1733,9 +1714,6 @@ SegInterface *SegManager::getSegInterface(SegmentId segid) {
 		break;
 	case MEM_OBJ_STRING_FRAG:
 		retval = new SegInterfaceStringFrag(this, mobj, segid);
-		break;
-	case MEM_OBJ_RESERVED:
-		retval = new SegInterfaceReserved(this, mobj, segid);
 		break;
 	default:
 		error("Improper segment interface for %d", mobj->type);

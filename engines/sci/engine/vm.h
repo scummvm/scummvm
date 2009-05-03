@@ -338,8 +338,7 @@ enum memObjType {
 	MEM_OBJ_HUNK = 8,
 	MEM_OBJ_DYNMEM = 9,
 	MEM_OBJ_STRING_FRAG = 10,
-	MEM_OBJ_RESERVED = 11,
-	MEM_OBJ_MAX = MEM_OBJ_RESERVED // For sanity checking
+	MEM_OBJ_MAX = 11 // For sanity checking
 };
 
 struct MemObject {
@@ -355,7 +354,6 @@ struct MemObject {
 		NodeTable nodes;
 		HunkTable hunks;
 		DynMem dynmem;
-		char *reserved;
 	} data;
 };
 
