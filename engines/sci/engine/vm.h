@@ -346,8 +346,8 @@ enum memObjType {
 };
 
 struct MemObject {
-	memObjType type;
-	int segmgr_id; /**< Internal value used by the seg_manager's hash map */
+	memObjType _type;
+	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
 	union {
 		Script script;
 		CloneTable clones;
@@ -359,6 +359,9 @@ struct MemObject {
 		HunkTable hunks;
 		DynMem dynmem;
 	} data;
+
+	inline memObjType getType() const { return _type; }
+	inline int getSegMgrId() const { return _segmgrId; }
 };
 
 

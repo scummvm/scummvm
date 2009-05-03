@@ -288,10 +288,10 @@ int c_segtable(EngineState *s) {
 	sciprintf("  ---- segment table ----\n");
 	for (i = 0; i < s->seg_manager->heap_size; i++) {
 		MemObject *mobj = s->seg_manager->heap[i];
-		if (mobj && mobj->type) {
+		if (mobj && mobj->getType()) {
 			sciprintf(" [%04x] ", i);
 
-			switch (mobj->type) {
+			switch (mobj->getType()) {
 			case MEM_OBJ_SCRIPT:
 				sciprintf("S  script.%03d l:%d ", mobj->data.script.nr, mobj->data.script.lockers);
 				break;
@@ -333,11 +333,11 @@ int c_segtable(EngineState *s) {
 				break;
 
 			default:
-				sciprintf("I  Invalid (type = %x)", mobj->type);
+				sciprintf("I  Invalid (type = %x)", mobj->getType());
 				break;
 			}
 
-			sciprintf("  seg_ID = %d \n", mobj->segmgr_id);
+			sciprintf("  seg_ID = %d \n", mobj->getSegMgrId());
 		}
 	}
 	sciprintf("\n");
@@ -385,7 +385,7 @@ static void print_list(EngineState *s, List *l) {
 }
 
 static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 
 	case MEM_OBJ_SCRIPT: {
 		int i;
@@ -495,7 +495,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	}
 
 	default :
-		sciprintf("Invalid type %d\n", mobj->type);
+		sciprintf("Invalid type %d\n", mobj->getType());
 		break;
 	}
 }
@@ -2557,7 +2557,7 @@ int objinfo(EngineState *s, reg_t pos) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
 		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
-	if (s->seg_manager->heap[pos.segment]->type == MEM_OBJ_SCRIPT)
+	if (s->seg_manager->heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
 		sciprintf("\nOwner script:\t%d\n", s->seg_manager->heap[pos.segment]->data.script.nr);
 
 	return 0;

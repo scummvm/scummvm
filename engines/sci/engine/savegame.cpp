@@ -432,7 +432,7 @@ static void sync_songlib_t(Common::Serializer &s, songlib_t &obj) {
 
 static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 	// Sync the memobj type
-	memObjType type = (s.isSaving() && obj) ? obj->type : MEM_OBJ_INVALID;
+	memObjType type = (s.isSaving() && obj) ? obj->getType() : MEM_OBJ_INVALID;
 	s.syncAsUint32LE(type);
 
 	// If we were saving and obj == 0, or if we are loading and this is an
@@ -445,13 +445,13 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 	if (s.isLoading()) {
 		//assert(!obj);
 		obj = (MemObject *)sci_calloc(1, sizeof(MemObject));
-		obj->type = type;
+		obj->_type = type;
 	} else {
 		assert(obj);
 	}
 	
-	s.syncAsSint32LE(obj->segmgr_id);
-	switch (obj->type) {
+	s.syncAsSint32LE(obj->_segmgrId);
+	switch (type) {
 	case MEM_OBJ_SCRIPT:
 		sync_Script(s, obj->data.script);
 		break;
@@ -489,7 +489,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 		sync_DynMem(s, obj->data.dynmem);
 		break;
 	default:
-		error("Unknown MemObject type %d", obj->type);
+		error("Unknown MemObject type %d", type);
 		break;
 	}
 }
@@ -542,7 +542,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 
 	for (i = 0; i < self->heap_size; i++)
 		if (self->heap[i] &&
-		    self->heap[i]->type == type)
+		    self->heap[i]->getType() == type)
 			return i;
 	return -1;
 }
@@ -619,7 +619,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type)  {
+			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
 				Script *scr = &mobj->data.script;
@@ -651,7 +651,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type)  {
+			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
 				Script *scr = &mobj->data.script;
@@ -700,7 +700,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 	for (i = 0; i < self->heap_size; i++) {
 		if (self->heap[i]) {
 			mobj = self->heap[i];
-			switch (mobj->type) {
+			switch (mobj->getType()) {
 			case MEM_OBJ_CLONES: {
 				int j;
 				CloneTable::Entry *seeker = mobj->data.clones.table;

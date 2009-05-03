@@ -455,7 +455,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->seg_manager->heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
+		if (s->seg_manager->heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, (int16)READ_LE_UINT16(ref));
@@ -469,7 +469,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		if (s->seg_manager->heap[argv[1].segment]->type == MEM_OBJ_LOCALS)
+		if (s->seg_manager->heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
@@ -673,7 +673,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 
 	mobj = s->seg_manager->heap[reg.segment];
 
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		if (reg.offset <= mobj->data.script.buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 		        && RAW_IS_OBJECT(mobj->data.script.buf + reg.offset)) {

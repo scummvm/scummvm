@@ -39,13 +39,13 @@ enum idFlag {
 };
 
 #define GET_SEGMENT(mgr, index, rtype) ((index) > 0 && (mgr).heap_size > index) ?		\
-		(((mgr).heap[index] && (mgr).heap[index]->type == rtype)? (mgr).heap[index]	: NULL) : NULL
+		(((mgr).heap[index] && (mgr).heap[index]->getType() == rtype)? (mgr).heap[index]	: NULL) : NULL
 
 #define GET_SEGMENT_ANY(mgr, index) ((index) > 0 && (mgr).heap_size > index) ?			\
 		(((mgr).heap[index])? (mgr).heap[index]	: NULL) : NULL
 
 #define GET_OBJECT_SEGMENT(mgr, index) ((index) > 0 && (mgr).heap_size > index) ?		\
-		(((mgr).heap[index]	&& ((mgr).heap[index]->type == MEM_OBJ_SCRIPT || (mgr).heap[index]->type == MEM_OBJ_CLONES))? (mgr).heap[index]	\
+		(((mgr).heap[index]	&& ((mgr).heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr).heap[index]->getType() == MEM_OBJ_CLONES))? (mgr).heap[index]	\
 		: NULL): NULL
 
 class SegInterface;

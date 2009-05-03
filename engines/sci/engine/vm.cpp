@@ -544,7 +544,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 		return NULL_REG;
 	}
 
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 
 	case MEM_OBJ_LOCALS:
 		base.offset += 2 * offset;
@@ -2088,9 +2088,9 @@ Object *obj_get(EngineState *s, reg_t offset) {
 	int idx;
 
 	if (memobj != NULL) {
-		if (memobj->type == MEM_OBJ_CLONES && ENTRY_IS_VALID(&memobj->data.clones, offset.offset))
+		if (memobj->getType() == MEM_OBJ_CLONES && ENTRY_IS_VALID(&memobj->data.clones, offset.offset))
 			obj = &(memobj->data.clones.table[offset.offset]);
-		else if (memobj->type == MEM_OBJ_SCRIPT) {
+		else if (memobj->getType() == MEM_OBJ_SCRIPT) {
 			if (offset.offset <= memobj->data.script.buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(memobj->data.script.buf + offset.offset)) {
 				idx = RAW_GET_CLASS_INDEX(&(memobj->data.script), offset);

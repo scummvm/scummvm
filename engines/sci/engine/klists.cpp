@@ -29,13 +29,10 @@
 namespace Sci {
 
 Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
-	MemObject *mobj;
-	NodeTable *nt;
-
 	if (!addr.offset && !addr.segment)
 		return NULL; // Non-error null
 
-	mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
+	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
@@ -45,7 +42,7 @@ Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 		return NULL;
 	}
 
-	nt = &(mobj->data.nodes);
+	NodeTable *nt = &(mobj->data.nodes);
 
 	if (!ENTRY_IS_VALID(nt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));

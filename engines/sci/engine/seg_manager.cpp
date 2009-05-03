@@ -230,9 +230,9 @@ int SegManager::deallocate(int seg, bool recursive) {
 	int i;
 
 	mobj = heap[seg];
-	id_seg_map->removeKey(mobj->segmgr_id);
+	id_seg_map->removeKey(mobj->getSegMgrId());
 
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		freeScript(mobj->data.script);
 
@@ -293,9 +293,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 	case MEM_OBJ_STRING_FRAG:
 		break;
 	default:
-		fprintf(stderr, "Deallocating segment type %d not supported!\n",
-		        mobj->type);
-		BREAKPOINT();
+		error("Deallocating segment type %d not supported", mobj->getType());
 	}
 
 	free(mobj);
@@ -325,7 +323,7 @@ int SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 	if (!check(seg))
 		return 0;
 
-	if (heap[seg]->type != MEM_OBJ_SCRIPT)
+	if (heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 
 	scr = &(heap[seg]->data.script);
@@ -369,8 +367,8 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType t
 		memset(heap + oldhs, 0, sizeof(MemObject *) * (heap_size - oldhs));
 	}
 
-	mem->segmgr_id = hash_id;
-	mem->type = type;
+	mem->_segmgrId = hash_id;
+	mem->_type = type;
 
 	// hook it to the heap
 	heap[segid] = mem;
@@ -426,12 +424,12 @@ int16 SegManager::getHeap(reg_t reg) {
 	VERIFY(check(reg.segment), "Invalid seg id");
 	mem_obj = heap[reg.segment];
 
-	switch (mem_obj->type) {
+	switch (mem_obj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset\n");
 		return (mem_obj->data.script.buf[reg.offset] | (mem_obj->data.script.buf[reg.offset+1]) << 8);
 	default:
-		error("SegManager::getHeap: unsupported mem obj type %d", mem_obj->type);
+		error("SegManager::getHeap: unsupported mem obj type %d", mem_obj->getType());
 		break;
 	}
 	return 0; // never get here
@@ -451,8 +449,8 @@ Script *SegManager::getScript(const int id, idFlag flag) {
 	if (!heap[seg]) {
 		error("SegManager::getScript(%d,%d): seg id %x is not in memory", id, flag, seg);
 	}
-	if (heap[seg]->type != MEM_OBJ_SCRIPT) {
-		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, heap[seg]->type);
+	if (heap[seg]->getType() != MEM_OBJ_SCRIPT) {
+		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, heap[seg]->getType());
 	}
 	return &(heap[seg]->data.script);
 }
@@ -816,7 +814,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 		if (scr->locals_segment) {
 			mobj = heap[scr->locals_segment];
 			VERIFY(mobj != NULL, "Re-used locals segment was NULL'd out");
-			VERIFY(mobj->type == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
+			VERIFY(mobj->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(mobj->data.locals.script_id == scr->nr, "Re-used locals segment belonged to other script");
 		} else
 			mobj = allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
@@ -1158,7 +1156,7 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 
 	mobj = heap[pointer.segment];
 
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		if (pointer.offset > mobj->data.script.buf_size) {
 			sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
@@ -1232,7 +1230,7 @@ const char *SegManager::getDescription(reg_t addr) {
 	if (addr.segment >= heap_size)
 		return "";
 
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_DYNMEM:
 		return mobj->data.dynmem.description;
 	default:
@@ -1241,7 +1239,7 @@ const char *SegManager::getDescription(reg_t addr) {
 }
 
 int SegManager::freeDynmem(reg_t addr) {
-	if (addr.segment <= 0 || addr.segment >= heap_size || !heap[addr.segment] || heap[addr.segment]->type != MEM_OBJ_DYNMEM)
+	if (addr.segment <= 0 || addr.segment >= heap_size || !heap[addr.segment] || heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
 		return 1; // error
 
 	deallocate(addr.segment, true);
@@ -1261,7 +1259,7 @@ void SegManager::dbgPrint(const char* msg, void *i) {
 // ------------------- Segment interface ------------------
 SegInterface::SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId) :
 	_segmgr(segmgr), _mobj(mobj), _segId(segId), _typeId(typeId) {
-	VERIFY(_mobj->type == _typeId, "Invalid MemObject type");
+	VERIFY(_mobj->getType() == _typeId, "Invalid MemObject type");
 }
 
 reg_t SegInterface::findCanonicAddress(reg_t addr) {
@@ -1599,7 +1597,7 @@ SegInterface *SegManager::getSegInterface(SegmentId segid) {
 
 	SegInterface *retval = NULL;
 	MemObject *mobj = heap[segid];
-	switch (mobj->type) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		retval = new SegInterfaceScript(this, mobj, segid);
 		break;
@@ -1631,7 +1629,7 @@ SegInterface *SegManager::getSegInterface(SegmentId segid) {
 		retval = new SegInterfaceStringFrag(this, mobj, segid);
 		break;
 	default:
-		error("Improper segment interface for %d", mobj->type);
+		error("Improper segment interface for %d", mobj->getType());
 	}
 
 	return retval;
