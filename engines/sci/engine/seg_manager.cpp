@@ -43,15 +43,6 @@ namespace Sci {
 		id = segGet(id); \
 		VERIFY(check(id), "invalid seg id");
 
-#if 0
-// Unreferenced - removed
-#define VERIFY_MEM(mem_ptr, ret) \
-	if (!(mem_ptr)) {\
-		sciprintf( "%s, *d, no enough memory", __FILE__, __LINE__ ); \
-		return ret; \
-	}
-#endif
-
 #define INVALID_SCRIPT_ID -1
 
 int SegManager::findFreeId(int *id) {
@@ -434,49 +425,6 @@ void SegManager::freeScript(MemObject *mem) {
 }
 
 // memory operations
-#if 0
-// Unreferenced - removed
-static void SegManager::sm_mset(int offset, int c, size_t n, int id, int flag) {
-	MemObject *mem_obj;
-	GET_SEGID();
-	mem_obj = heap[id];
-	switch (mem_obj->type) {
-	case MEM_OBJ_SCRIPT:
-		if (mem_obj->data.script.buf) {
-			memset(mem_obj->data.script.buf + offset, c, n);
-		}
-		break;
-	case MEM_OBJ_CLONES:
-		sciprintf("memset for clones haven't been implemented\n");
-		break;
-	default:
-		sciprintf("unknown mem obj type\n");
-		break;
-	}
-}
-#endif
-
-#if 0
-// Unreferenced - removed
-static void SegManager::sm_mcpy_in_in(int dst, const int src, size_t n, int id, int flag) {
-	MemObject *mem_obj;
-	GET_SEGID();
-	mem_obj = heap[id];
-	switch (mem_obj->type) {
-	case MEM_OBJ_SCRIPT:
-		if (mem_obj->data.script.buf) {
-			memcpy(mem_obj->data.script.buf + dst, mem_obj->data.script.buf + src, n);
-		}
-		break;
-	case MEM_OBJ_CLONES:
-		sciprintf("memcpy for clones haven't been implemented\n");
-		break;
-	default:
-		sciprintf("unknown mem obj type\n");
-		break;
-	}
-}
-#endif
 
 void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag) {
 	MemObject *mem_obj;
@@ -496,28 +444,6 @@ void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, int flag)
 		break;
 	}
 }
-
-#if 0
-// Unreferenced - removed
-static void SegManager::sm_mcpy_out_in(void *dst, const int src, size_t n, int id, int flag) {
-	MemObject *mem_obj;
-	GET_SEGID();
-	mem_obj = heap[id];
-	switch (mem_obj->type) {
-	case MEM_OBJ_SCRIPT:
-		if (mem_obj->data.script.buf) {
-			memcpy(dst, mem_obj->data.script.buf + src, n);
-		}
-		break;
-	case MEM_OBJ_CLONES:
-		sciprintf("memcpy for clones hasn't been implemented yet\n");
-		break;
-	default:
-		sciprintf("unknown mem obj type\n");
-		break;
-	}
-}
-#endif
 
 int16 SegManager::getHeap(reg_t reg) {
 	MemObject *mem_obj;
@@ -540,32 +466,6 @@ int16 SegManager::getHeap(reg_t reg) {
 	}
 	return 0; // never get here
 }
-
-#if 0
-// Unreferenced - removed
-void SegManager::sm_put_heap(reg_t reg, int16 value) {
-	MemObject *mem_obj;
-	memObjType mem_type;
-
-	VERIFY(check(reg.segment), "Invalid seg id");
-	mem_obj = heap[reg.segment];
-	mem_type = mem_obj->type;
-
-	switch (mem_type) {
-	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset");
-		mem_obj->data.script.buf[reg.offset] = value & 0xff;
-		mem_obj->data.script.buf[reg.offset + 1] = value >> 8;
-		break;
-	case MEM_OBJ_CLONES:
-		sciprintf("memcpy for clones haven't been implemented\n");
-		break;
-	default:
-		sciprintf("unknown mem obj type\n");
-		break;
-	}
-}
-#endif
 
 // return the seg if script_id is valid and in the map, else -1
 int SegManager::segGet(int script_id) const {
@@ -638,41 +538,9 @@ void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
 	}
 }
 
-#if 0
-// Unreferenced - removed
-int SegManager::sm_hash_segment_data(int id) {
-	int i, len, hash_code = 0x55555555;
-	char *buf;
-
-	if (heap[id]->type == MEM_OBJ_LISTS)
-		return 0;
-	if (heap[id]->type == MEM_OBJ_NODES)
-		return 0;
-	if (heap[id]->type == MEM_OBJ_CLONES)
-		return 0;
-	buf = (char *)dereference(make_reg(id, 0), &len);
-
-	for (i = 0; i < len; i++)
-		hash_code = (hash_code * 19) + *(buf + i);
-
-	return hash_code;
-}
-#endif
-
 void SegManager::setExportWidth(int flag) {
 	exports_wide = flag;
 }
-
-#if 0
-// Unreferenced - removed
-static uint16 *SegManager::sm_get_export_table_offset(int id, int flag, int *max) {
-	GET_SEGID();
-	if (max)
-		*max = heap[id]->data.script.exports_nr;
-
-	return heap[id]->data.script.export_table;
-}
-#endif
 
 void SegManager::setSynonymsOffset(int offset, int id, idFlag flag) {
 	GET_SEGID();
@@ -693,31 +561,6 @@ int SegManager::getSynonymsNr(int id, idFlag flag) {
 	GET_SEGID();
 	return heap[id]->data.script.synonyms_nr;
 }
-
-#if 0
-// Unreferenced - removed
-static int SegManager::sm_get_heappos(int id, int flag) {
-	GET_SEGID();
-	return 0;
-}
-#endif
-
-#if 0
-// Unreferenced - removed
-static void SegManager::sm_set_variables(reg_t reg, int obj_index, reg_t variable_reg, int variable_index) {
-	Script *script;
-	VERIFY(check(reg.segment), "invalid seg id");
-	VERIFY(heap[reg.segment], "invalid mem");
-
-	script = &(heap[reg.segment]->data.script);
-
-	VERIFY(obj_index < script->objects_nr, "Invalid obj_index");
-
-	VERIFY(variable_index >= 0 && variable_index < script->objects[obj_index].variables_nr, "Attempt to write to invalid variable number");
-
-	script->objects[obj_index].variables[variable_index] = variable_reg;
-}
-#endif
 
 int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
 	int rel = location - block_location;
@@ -1224,19 +1067,6 @@ SegmentId SegManager::allocateStringFrags() {
 
 	return segid;
 }
-
-#if 0
-// Unreferenced - removed
-SegmentId SegManager::sm_allocate_reserved_segment(char *src_name) {
-	SegmentId segid;
-	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_RESERVED, &segid);
-	char *name = sci_strdup(src_name);
-
-	memobj->data.reserved = name;
-
-	return segid;
-}
-#endif
 
 uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 	Script* script;
