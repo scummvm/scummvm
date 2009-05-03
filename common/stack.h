@@ -100,16 +100,14 @@ public:
 		_stack.push_back(x);
 	}
 	T &top() {
-		const int s = size();
-		return _stack[s - 1];
+		return _stack.back();
 	}
 	const T &top() const {
-		const int s = size();
-		return _stack[s - 1];
+		return _stack.back();
 	}
 	T pop() {
-		T tmp = top();
-		_stack.remove_at(size() - 1);
+		T tmp = _stack.back();
+		_stack.pop_back();
 		return tmp;
 	}
 	int size() const {
