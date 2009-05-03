@@ -55,54 +55,54 @@ struct SystemStrings {
 	SystemString strings[SYS_STRINGS_MAX];
 };
 
+/** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
-/* Number of bytes to be allocated for the stack */
 
+/** Maximum number of calls residing on the stack */
 #define SCRIPT_MAX_EXEC_STACK 256
-/* Maximum number of calls residing on the stack */
+/** Maximum number of entries in the class table */
 #define SCRIPT_MAX_CLASSTABLE_SIZE 256
-/* Maximum number of entries in the class table */
+/** Maximum number of cloned objects on the heap */
 #define SCRIPT_MAX_CLONES 256
-/* Maximum number of cloned objects on the heap */
 
 
+/** Object-relative offset of the selector area inside a script */
 #define SCRIPT_SELECTOR_OFFSET 8 -8
-/* Object-relative offset of the selector area inside a script */
 
+/** Object-relative offset of the pointer to the underlying script's local variables */
 #define SCRIPT_LOCALVARPTR_OFFSET 2 -8
-/* Object-relative offset of the pointer to the underlying script's local variables */
 
+/** Object-relative offset of the selector counter */
 #define SCRIPT_SELECTORCTR_OFFSET 6 -8
-/* Object-relative offset of the selector counter */
 
+/** Object-relative offset of the offset of the function area */
 #define SCRIPT_FUNCTAREAPTR_OFFSET 4 -8
-/* Object-relative offset of the offset of the function area */
 
+/** Offset that has to be added to the function area pointer */
 #define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
-/* Offset that has to be added to the function area pointer */
 
+/** Offset of the name pointer */
 #define SCRIPT_NAME_OFFSET (s->version < SCI_VERSION(1,001,000) ? 14 -8 : 16)
-/* Offset of the name pointer */
 #define SCRIPT_NAME_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 3 : 8)
 
+/** Object-relative offset of the -info- selector */
 #define SCRIPT_INFO_OFFSET (s->version < SCI_VERSION(1,001,000) ? 12 -8 : 14)
-/* Object-relative offset of the -info- selector */
 #define SCRIPT_INFO_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 2 : 7)
 
+/** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
-/* Flag fo the -info- selector */
 
+/** Flag for the -info- selector */
 #define SCRIPT_INFO_CLASS 0x8000
-/* Flag for the -info- selector */
 
 
+/** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
-/* Magical object identifier */
+/** Offset of this identifier */
 #define SCRIPT_OBJECT_MAGIC_OFFSET (s->version < SCI_VERSION(1,001,000) ? -8 : 0)
-/* Offset of this identifier */
 
+/** Script-relative offset of the species ID */
 #define SCRIPT_SPECIES_OFFSET 8 -8
-/* Script-relative offset of the species ID */
 
 #define SCRIPT_SUPERCLASS_OFFSET (s->version < SCI_VERSION(1,001,000) ? 10 -8 : 12)
 
@@ -112,13 +112,14 @@ struct SystemStrings {
 #define SCRIPT_SPECIES_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 0 : 5)
 #define SCRIPT_SUPERCLASS_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 1 : 6)
 
+/** Magic adjustment value for lofsa and lofss */
 #define SCRIPT_LOFS_MAGIC 3
-/* Magic adjustment value for lofsa and lofss */
 
 
-#define CALL_SP_CARRY NULL /* Stack pointer value: Use predecessor's value */
+/** Stack pointer value: Use predecessor's value */
+#define CALL_SP_CARRY NULL
 
-// Types of selectors as returned by lookup_selector() below
+/** Types of selectors as returned by lookup_selector() below. */
 enum SelectorType {
 	kSelectorNone = 0,
 	kSelectorVariable,
@@ -126,8 +127,8 @@ enum SelectorType {
 };
 
 struct Class {
-	int script; /* number of the script the class is in, -1 for non-existing */
-	reg_t reg; /* offset; script-relative offset, segment: 0 if not instantiated */
+	int script; /**< number of the script the class is in, -1 for non-existing */
+	reg_t reg; /**< offset; script-relative offset, segment: 0 if not instantiated */
 };
 
 #define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->checkKey(reg.offset, false))
@@ -135,7 +136,7 @@ struct Class {
 
 #define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
 
-/* This struct is used to buffer the list of send calls in send_selector() */
+/** This struct is used to buffer the list of send calls in send_selector() */
 struct CallsStruct {
 	union {
 		reg_t func;
@@ -144,28 +145,29 @@ struct CallsStruct {
 	StackPtr argp;
 	int argc;
 	Selector selector;
-	StackPtr sp; /* Stack pointer */
-	int type; /* Same as ExecStack.type */
+	StackPtr sp; /**< Stack pointer */
+	int type; /**< Same as ExecStack.type */
 };
 
 struct LocalVariables {
-	int script_id; /* Script ID this local variable block belongs to */
+	int script_id; /**< Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
 };
 
-#define OBJECT_FLAG_FREED (0x1 << 0)	/* Clone has been marked as 'freed' */
+/** Clone has been marked as 'freed' */
+#define OBJECT_FLAG_FREED (0x1 << 0)
 
 struct Object {
 	int flags;
-	reg_t pos; /* Object offset within its script; for clones, this is their base */
+	reg_t pos; /**< Object offset within its script; for clones, this is their base */
 	int variables_nr;
-	int variable_names_nr; /* Number of variable names, may be less than variables_nr */
+	int variable_names_nr; /**< Number of variable names, may be less than variables_nr */
 	int methods_nr;
-	byte *base; /* Points to a buffer all relative references (code, strings) point to */
-	byte *base_obj; /* base + object offset within base */
-	uint16 *base_method; /* Pointer to the method selector area for this object */
-	uint16 *base_vars; /* Pointer to the varselector area for this object */
+	byte *base; /**< Points to a buffer all relative references (code, strings) point to */
+	byte *base_obj; /**< base + object offset within base */
+	uint16 *base_method; /**< Pointer to the method selector area for this object */
+	uint16 *base_vars; /**< Pointer to the varselector area for this object */
 	reg_t *variables;
 };
 
@@ -197,30 +199,30 @@ struct CodeBlock {
 
 
 struct Script {
-	int nr; /* Script number */
-	byte* buf; /* Static data buffer, or NULL if not used */
+	int nr; /**< Script number */
+	byte* buf; /**< Static data buffer, or NULL if not used */
 	size_t buf_size;
 	size_t script_size;
 	size_t heap_size;
 
-	byte *synonyms; /* Synonyms block  or 0 if not present*/
-	byte *heap_start; /* Start of heap if SCI1.1, NULL otherwise */
-	uint16 *export_table; /* Abs. offset of the export table or 0 if not present */
+	byte *synonyms; /**< Synonyms block or 0 if not present*/
+	byte *heap_start; /**< Start of heap if SCI1.1, NULL otherwise */
+	uint16 *export_table; /**< Abs. offset of the export table or 0 if not present */
 
 	IntMapper *obj_indices;
 
-	int exports_nr; /* Number of entries in the exports table */
-	int synonyms_nr; /* Number of entries in the synonyms block */
-	int lockers; /* Number of classes and objects that require this script */
+	int exports_nr; /**< Number of entries in the exports table */
+	int synonyms_nr; /**< Number of entries in the synonyms block */
+	int lockers; /**< Number of classes and objects that require this script */
 
-	Object *objects; /* Table for objects, contains property variables */
+	Object *objects; /**< Table for objects, contains property variables */
 	/* Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
 	** see VM_OBJECT_[GS]ET_INDEX()  */
-	int objects_nr; /* Number of objects and classes */
-	int objects_allocated; /* Number of allocated objects */
+	int objects_nr; /**< Number of objects and classes */
+	int objects_allocated; /**< Number of allocated objects */
 
 	int locals_offset;
-	int locals_segment; /* The local variable segment */
+	int locals_segment; /**< The local variable segment */
 	LocalVariables *locals_block;
 
 	CodeBlock *code;
@@ -230,10 +232,11 @@ struct Script {
 	int marked_as_deleted;
 };
 
+/** Data stack */
 struct dstack_t {
-	int nr; /* Number of stack entries */
+	int nr; /**< Number of stack entries */
 	reg_t *entries;
-}; /* Data stack */
+};
 
 #define CLONE_USED -1
 #define CLONE_NONE -1
@@ -241,7 +244,8 @@ struct dstack_t {
 typedef Object Clone;
 
 struct Node {
-	reg_t pred, succ; /* Predecessor, successor */
+	reg_t pred; /**< Predecessor node */
+	reg_t succ; /**< Successor node */
 	reg_t key;
 	reg_t value;
 }; /* List nodes */
@@ -263,10 +267,10 @@ struct Table {
 		int next_free; /* Only used for free entries */
 	};
 
-	int entries_nr; /* Number of entries allocated */
-	int first_free; /* Beginning of a singly linked list for entries */
-	int entries_used; /* Statistical information */
-	int max_entry; /* Highest entry used */
+	int entries_nr; /**< Number of entries allocated */
+	int first_free; /**< Beginning of a singly linked list for entries */
+	int entries_used; /**< Statistical information */
+	int max_entry; /**< Highest entry used */
 
 	Entry *table;
 
@@ -343,7 +347,7 @@ enum memObjType {
 
 struct MemObject {
 	memObjType type;
-	int segmgr_id; /* Internal value used by the seg_manager's hash map */
+	int segmgr_id; /**< Internal value used by the seg_manager's hash map */
 	union {
 		Script script;
 		CloneTable clones;
@@ -358,68 +362,68 @@ struct MemObject {
 };
 
 
-
+/** Contains selector IDs for a few selected selectors */
 struct selector_map_t {
-	Selector init; /* Init function */
-	Selector play; /* Play function (first function to be called) */
-	Selector replay; /* Replay function */
-	Selector x, y, z; /* Coordinates */
+	Selector init; /**< Init function */
+	Selector play; /**< Play function (first function to be called) */
+	Selector replay; /**< Replay function */
+	Selector x, y, z; /**< Coordinates */
 	Selector priority;
-	Selector view, loop, cel; /* Description of a specific image */
-	Selector brLeft, brRight, brTop, brBottom; /* Bounding Rectangle */
-	Selector xStep, yStep; /* BR adjustments */
-	Selector nsLeft, nsRight, nsTop, nsBottom; /* View boundaries ('now seen') */
-	Selector text, font; /* Used by controls */
-	Selector type, state; /* Used by contols as well */
-	Selector doit; /* Called (!) by the Animate() system call */
-	Selector signal; /* Used by Animate() to control a view's behaviour */
-	Selector underBits; /* Used by the graphics subroutines to store backupped BG pic data */
+	Selector view, loop, cel; /**< Description of a specific image */
+	Selector brLeft, brRight, brTop, brBottom; /**< Bounding Rectangle */
+	Selector xStep, yStep; /**< BR adjustments */
+	Selector nsLeft, nsRight, nsTop, nsBottom; /**< View boundaries ('now seen') */
+	Selector text, font; /**< Used by controls */
+	Selector type, state; /**< Used by contols as well */
+	Selector doit; /**< Called (!) by the Animate() system call */
+	Selector signal; /**< Used by Animate() to control a view's behaviour */
+	Selector underBits; /**< Used by the graphics subroutines to store backupped BG pic data */
 
 	/* The following selectors are used by the Bresenham syscalls: */
-	Selector canBeHere; /* Funcselector: Checks for movement validity */
-	Selector client; /* The object that wants to be moved */
-	Selector cycler; /* The cycler of the client */
-	Selector dx, dy; /* Deltas */
+	Selector canBeHere; /**< Funcselector: Checks for movement validity */
+	Selector client; /**< The object that wants to be moved */
+	Selector cycler; /**< The cycler of the client */
+	Selector dx, dy; /**< Deltas */
 	Selector edgeHit;
-	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /* Various Bresenham vars */
+	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /**< Various Bresenham vars */
 	Selector completed;
 
-	Selector illegalBits; /* Used by CanBeHere */
+	Selector illegalBits; /**< Used by CanBeHere */
 	Selector dispose;
 
-	Selector prevSignal; /* Used by DoSound */
+	Selector prevSignal; /**< Used by DoSound */
 
-	Selector message, modifiers; /* Used by GetEvent */
+	Selector message, modifiers; /**< Used by GetEvent */
 
 	Selector owner, handle;
 	Selector cue;
 	Selector number;
 
-	Selector max, cursor; /* Used by EditControl */
-	Selector mode; /* Used by text controls (-> DrawControl()) */
+	Selector max, cursor; /**< Used by EditControl */
+	Selector mode; /**< Used by text controls (-> DrawControl()) */
 
-	Selector wordFail, syntaxFail, semanticFail; /* Used by Parse() */
+	Selector wordFail, syntaxFail, semanticFail; /**< Used by Parse() */
 
-	Selector claimed; /* Used generally by the event mechanism */
+	Selector claimed; /**< Used generally by the event mechanism */
 
-	Selector elements; /* Used by SetSynonyms() */
+	Selector elements; /**< Used by SetSynonyms() */
 
-	Selector lsTop, lsBottom, lsRight, lsLeft; /* Used by Animate() subfunctions and scroll list controls */
+	Selector lsTop, lsBottom, lsRight, lsLeft; /**< Used by Animate() subfunctions and scroll list controls */
 
-	Selector baseSetter; /* Alternative baseSetter */
+	Selector baseSetter; /**< Alternative baseSetter */
 
-	Selector who, distance; /* Used for 'chasing' movers */
+	Selector who, distance; /**< Used for 'chasing' movers */
 
-	Selector looper, mover, isBlocked, heading; /* Used in DoAvoider */
+	Selector looper, mover, isBlocked, heading; /**< Used in DoAvoider */
 
-	Selector caller, moveDone, moveSpeed; /* Used for DoBresen */
+	Selector caller, moveDone, moveSpeed; /**< Used for DoBresen */
 
-	Selector delete_; /* Called by Animate() to dispose a view object */
+	Selector delete_; /**< Called by Animate() to dispose a view object */
 
 	Selector vol;
 	Selector pri;
 
-	Selector min;	/* SMPTE time format */
+	Selector min; /**< SMPTE time format */
 	Selector sec;
 	Selector frame;
 
@@ -430,11 +434,11 @@ struct selector_map_t {
 	Selector nodePtr;
 	Selector flags;
 
-	Selector points; /* Used by AvoidPath() */
+	Selector points; /**< Used by AvoidPath() */
 
-	Selector syncCue; /* Used by DoSync() */
-	Selector syncTime; /* Used by DoSync() */
-}; /* Contains selector IDs for a few selected selectors */
+	Selector syncCue; /**< Used by DoSync() */
+	Selector syncTime; /**< Used by DoSync() */
+};
 
 struct ViewObject {
 	reg_t obj;
@@ -450,81 +454,93 @@ struct ViewObject {
 	int real_y, z, index_nr; /* Used for sorting */
 };
 
-#define VAR_GLOBAL 0
-#define VAR_LOCAL 1
-#define VAR_TEMP 2
-#define VAR_PARAM 3
+enum {
+	VAR_GLOBAL = 0,
+	VAR_LOCAL = 1,
+	VAR_TEMP = 2,
+	VAR_PARAM = 3
+};
 
-#define EXEC_STACK_TYPE_CALL 0
-#define EXEC_STACK_TYPE_KERNEL 1
-#define EXEC_STACK_TYPE_VARSELECTOR 2
+enum ExecStackType {
+	EXEC_STACK_TYPE_CALL = 0,
+	EXEC_STACK_TYPE_KERNEL = 1,
+	EXEC_STACK_TYPE_VARSELECTOR = 2
+};
 
 struct ExecStack {
 	reg_t objp;
-	reg_t sendp; /* Pointer to the object containing the invoked method */
+	reg_t sendp; /**< Pointer to the object containing the invoked method */
 	union {
-		reg_t *varp; /* Variable pointer for read/write access */
-		reg_t pc; /* Not accurate for the TOS element */
+		reg_t *varp; /**< Variable pointer for read/write access */
+		reg_t pc; /**< Not accurate for the TOS element */
 	} addr;
-	StackPtr fp; /* Frame pointer */
-	StackPtr sp; /* Stack pointer */
+	StackPtr fp; /**< Frame pointer */
+	StackPtr sp; /**< Stack pointer */
 	int argc;
 
 	/* former variables[4]: [all other values are derived] */
-	StackPtr variables_argp; /* Argument pointer */
-	SegmentId local_segment; /* local variables etc. */
+	StackPtr variables_argp; /**< Argument pointer */
+	SegmentId local_segment; /**< local variables etc. */
 
-	Selector selector; // The selector which was used to call or -1 if not applicable
-	int origin;   /* The stack frame position the call was made from, or -1 if it
-		      ** was the initial call.  */
-	byte type; /* EXEC_STACK_TYPE* */
+	Selector selector; /**< The selector which was used to call or -1 if not applicable */
+	int origin;   /**< The stack frame position the call was made from, or -1 if it was the initial call.  */
+	ExecStackType type;
+};
 
+
+enum BreakpointType {
+	/**
+	 * Break when selector is executed. data contains (char *) selector name
+	 * (in the format Object::Method)
+	 */
+	BREAK_SELECTOR = 1,
+
+	/**
+	 * Break when an exported function is called. data contains
+	 * script_no << 16 | export_no.
+	 */
+	BREAK_EXPORT = 2
 };
 
 struct Breakpoint {
-	int type;
+	BreakpointType type;
 	union {
-		uint32 address;  /* Breakpoints on exports */
-		char *name; /* Breakpoints on selector names */
+		uint32 address;  /**< Breakpoints on exports */
+		char *name; /**< Breakpoints on selector names */
 	} data;
 	Breakpoint *next;
 };
 
-#define BREAK_SELECTOR 1
-/* Break when selector is executed. data contains (char *) selector name
-   (in the format Object::Method) */
-
-#define BREAK_EXPORT 2
-/* Break when an exported function is called. data contains script_no << 16 |
-   export_no. */
-
+/** Set this to 1 to activate script debugging */
 extern int script_debug_flag;
-/* Set this to 1 to activate script debugging */
 
+/** Set to 1 to move pc back to last position, even though action is executed */
 extern int script_error_flag;
-/* Set to 1 to move pc back to last position, even though action is executed */
 
+/** Displays the numbers of scripts when they are (un)loaded */
 extern int script_checkloads_flag;
-/* Displays the numbers of scripts when they are (un)loaded */
 
 #define SCRIPT_ABORT_WITH_REPLAY 1025
+
+/**
+ * Set this to 1 to abort script execution immediately. Aborting will leave the
+ * debug exec stack intact.
+ * Set it to SCRIPT_ABORT_WITH_REPLAY to force a replay afterwards.
+ */
 extern int script_abort_flag;
-/* Set this to 1 to abort script execution immediately. Aborting will leave the
-** debug exec stack intact.
-** Set it to SCRIPT_ABORT_WITH_REPLAY to force a replay afterwards.
-*/
 
-#define GC_INTERVAL 32768	/* Number of kernel calls in between gcs; should be < 50000 */
+/** Number of kernel calls in between gcs; should be < 50000 */
+#define GC_INTERVAL 32768
 
+/** Initially GC_DELAY, can be set at runtime */
 extern int script_gc_interval;
-/* Initially GC_DELAY, can be set at runtime */
 
+/** Number of steps executed */
 extern int script_step_counter;
-/* Number of steps executed */
 
 
+/** The function used to get input for debugging */
 extern const char *(*_debug_get_input)(void);
-/* The function used to get input for debugging */
 
 extern int _debugstate_valid;
 extern int _debug_seeking;
@@ -685,10 +701,11 @@ SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, reg
 ** *fptr is written to iff it is non-NULL and the selector indicates a member function of that object.
 */
 
-
-#define SCRIPT_GET_DONT_LOAD 0 /* Fail if not loaded */
-#define SCRIPT_GET_LOAD 1 /* Load, if neccessary */
-#define SCRIPT_GET_LOCK 3 /* Load, if neccessary, and lock */
+enum {
+	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
+	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
+	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
+};
 
 SegmentId script_get_segment(EngineState *s, int script_id, int load);
 /* Determines the segment occupied by a certain script
