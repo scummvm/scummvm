@@ -34,6 +34,28 @@
 
 namespace Sci {
 
+enum memObjType {
+	MEM_OBJ_INVALID = 0,
+	MEM_OBJ_SCRIPT = 1,
+	MEM_OBJ_CLONES = 2,
+	MEM_OBJ_LOCALS = 3,
+	MEM_OBJ_STACK = 4,
+	MEM_OBJ_SYS_STRINGS = 5,
+	MEM_OBJ_LISTS = 6,
+	MEM_OBJ_NODES = 7,
+	MEM_OBJ_HUNK = 8,
+	MEM_OBJ_DYNMEM = 9,
+	MEM_OBJ_STRING_FRAG = 10,
+
+	MEM_OBJ_MAX // For sanity checking
+};
+
+struct MemObjectNEW {
+	memObjType _type;
+	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
+};
+
+
 struct IntMapper;
 
 enum {
@@ -51,7 +73,7 @@ struct SystemString {
 	reg_t *value;
 };
 
-struct SystemStrings {
+struct SystemStrings : public MemObjectNEW {
 	SystemString strings[SYS_STRINGS_MAX];
 };
 
@@ -149,7 +171,7 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
-struct LocalVariables {
+struct LocalVariables : public MemObjectNEW {
 	int script_id; /**< Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
@@ -198,7 +220,7 @@ struct CodeBlock {
 
 
 
-struct Script {
+struct Script : public MemObjectNEW {
 	int nr; /**< Script number */
 	byte* buf; /**< Static data buffer, or NULL if not used */
 	size_t buf_size;
@@ -233,7 +255,7 @@ struct Script {
 };
 
 /** Data stack */
-struct dstack_t {
+struct dstack_t : MemObjectNEW {
 	int nr; /**< Number of stack entries */
 	reg_t *entries;
 };
@@ -262,7 +284,7 @@ struct Hunk {
 };
 
 template<typename T, int INITIAL, int INCREMENT>
-struct Table {
+struct Table : public MemObjectNEW {
 	struct Entry : public T {
 		int next_free; /* Only used for free entries */
 	};
@@ -324,31 +346,15 @@ void free_Hunk_entry(HunkTable *table, int index);
 
 
 // Free-style memory
-struct DynMem {
+struct DynMem : public MemObjectNEW {
 	int size;
 	char *description;
 	byte *buf;
 };
 
-enum memObjType {
-	MEM_OBJ_INVALID = 0,
-	MEM_OBJ_SCRIPT = 1,
-	MEM_OBJ_CLONES = 2,
-	MEM_OBJ_LOCALS = 3,
-	MEM_OBJ_STACK = 4,
-	MEM_OBJ_SYS_STRINGS = 5,
-	MEM_OBJ_LISTS = 6,
-	MEM_OBJ_NODES = 7,
-	MEM_OBJ_HUNK = 8,
-	MEM_OBJ_DYNMEM = 9,
-	MEM_OBJ_STRING_FRAG = 10,
-	MEM_OBJ_MAX = 11 // For sanity checking
-};
-
 struct MemObject {
-	memObjType _type;
-	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
 	union {
+		MemObjectNEW tmp_dummy;
 		Script script;
 		CloneTable clones;
 		LocalVariables locals;
@@ -360,8 +366,8 @@ struct MemObject {
 		DynMem dynmem;
 	} data;
 
-	inline memObjType getType() const { return _type; }
-	inline int getSegMgrId() const { return _segmgrId; }
+	inline memObjType getType() const { return data.tmp_dummy._type; }
+	inline int getSegMgrId() const { return data.tmp_dummy._segmgrId; }
 };
 
 

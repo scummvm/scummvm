@@ -367,8 +367,8 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType t
 		memset(heap + oldhs, 0, sizeof(MemObject *) * (heap_size - oldhs));
 	}
 
-	mem->_segmgrId = hash_id;
-	mem->_type = type;
+	mem->data.tmp_dummy._segmgrId = hash_id;
+	mem->data.tmp_dummy._type = type;
 
 	// hook it to the heap
 	heap[segid] = mem;
@@ -970,7 +970,7 @@ SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
 	SystemStrings *retval = &(memobj->data.sys_strings);
 
-	memset(retval, 0, sizeof(SystemString)*SYS_STRINGS_MAX);
+	memset(retval->strings, 0, sizeof(retval->strings));
 
 	return retval;
 }

@@ -445,12 +445,12 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
 	if (s.isLoading()) {
 		//assert(!obj);
 		obj = (MemObject *)sci_calloc(1, sizeof(MemObject));
-		obj->_type = type;
+		obj->data.tmp_dummy._type = type;
 	} else {
 		assert(obj);
 	}
 	
-	s.syncAsSint32LE(obj->_segmgrId);
+	s.syncAsSint32LE(obj->data.tmp_dummy._segmgrId);
 	switch (type) {
 	case MEM_OBJ_SCRIPT:
 		sync_Script(s, obj->data.script);
