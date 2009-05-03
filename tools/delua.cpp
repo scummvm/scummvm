@@ -52,7 +52,7 @@ int g_flags = 0;
 ResourceLoader *g_resourceloader = NULL;
 Driver *g_driver = NULL;
 enDebugLevels debugLevel = DEBUG_NONE;
-Common::File *ResourceLoader::openNewStream(const char *filename) const { return NULL; }
+LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const { return NULL; }
 
 static bool translateStrings = false;
 

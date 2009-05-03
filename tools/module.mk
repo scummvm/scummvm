@@ -42,7 +42,7 @@ clean-tools:
 
 tools/delua$(EXEEXT): $(srcdir)/tools/delua.cpp
 	$(MKDIR) tools/$(DEPDIR)
-	$(CXX) $(CFLAGS) $(DEFINES) -DHAVE_CONFIG_H -I. -Iengine -Iengine/lua -Wall \
+	$(CXX) $(CFLAGS) $(DEFINES) -DHAVE_CONFIG_H -I. -I$(srcdir) -I$(srcdir)/engine -I$(srcdir)/engine/lua -Wall \
 	engine/localize.o engine/registry.o \
 	engine/lua/lapi.o engine/lua/lauxlib.o engine/lua/lbuffer.o engine/lua/lbuiltin.o \
 	engine/lua/ldo.o engine/lua/lfunc.o engine/lua/lgc.o engine/lua/liolib.o \
@@ -80,7 +80,7 @@ tools/vima$(EXEEXT): $(srcdir)/tools/vima.cpp
 	$(MKDIR) tools/$(DEPDIR)
 	$(CXX) $(CFLAGS) -Wall -o $@ $<
 
-tools/patch_ex/patch_ex$(EXEEXT): $(srcdir)/tools/patch_ex/patch_ex.o $(srcdir)/tools/patch_ex/mszipd.o $(srcdir)/tools/patch_ex/cabd.o
+tools/patch_ex/patch_ex$(EXEEXT): tools/patch_ex/patch_ex.o tools/patch_ex/mszipd.o tools/patch_ex/cabd.o
 	$(MKDIR) tools/patch_ex/$(DEPDIR)
 	$(CXX) $(CFLAGS) tools/patch_ex/mszipd.o tools/patch_ex/cabd.o -Wall -o $@ $<
 
