@@ -286,8 +286,8 @@ int c_segtable(EngineState *s) {
 	uint i;
 
 	sciprintf("  ---- segment table ----\n");
-	for (i = 0; i < s->seg_manager->heap_size; i++) {
-		MemObject *mobj = s->seg_manager->heap[i];
+	for (i = 0; i < s->seg_manager->_heap.size(); i++) {
+		MemObject *mobj = s->seg_manager->_heap[i];
 		if (mobj && mobj->getType()) {
 			sciprintf(" [%04x] ", i);
 
@@ -673,18 +673,18 @@ int c_seginfo(EngineState *s) {
 	if (cmd_paramlength) {
 		while (i < cmd_paramlength) {
 			int nr = cmd_params[i++].val;
-			if (nr < 0 || (uint)nr >= s->seg_manager->heap_size || !s->seg_manager->heap[nr]) {
+			if (nr < 0 || (uint)nr >= s->seg_manager->_heap.size() || !s->seg_manager->_heap[nr]) {
 				sciprintf("Segment %04x does not exist\n", nr);
 				return 1;
 			}
 			sciprintf("[%04x] ", nr);
-			_c_single_seg_info(s, s->seg_manager->heap[nr]);
+			_c_single_seg_info(s, s->seg_manager->_heap[nr]);
 		}
 	} else
-		for (i = 0; i < s->seg_manager->heap_size; i++) {
-			if (s->seg_manager->heap[i]) {
+		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
+			if (s->seg_manager->_heap[i]) {
 				sciprintf("[%04x] ", i);
-				_c_single_seg_info(s, s->seg_manager->heap[i]);
+				_c_single_seg_info(s, s->seg_manager->_heap[i]);
 				sciprintf("\n");
 			}
 		}
@@ -727,7 +727,7 @@ int c_stepover(EngineState *s) {
 	}
 
 	_debugstate_valid = 0;
-	opcode = s->heap [*p_pc];
+	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
@@ -1590,7 +1590,7 @@ static int c_backtrace(EngineState *s) {
 
 		sciprintf(" argp:"PSTK, PRINT_STK(call.variables_argp));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", s->seg_manager->heap[call.addr.pc.segment]->data.script.nr);
+			sciprintf(" script: %d", s->seg_manager->_heap[call.addr.pc.segment]->data.script.nr);
 		sciprintf("\n");
 	}
 
@@ -2557,8 +2557,8 @@ int objinfo(EngineState *s, reg_t pos) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
 		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
-	if (s->seg_manager->heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->heap[pos.segment]->data.script.nr);
+	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
+		sciprintf("\nOwner script:\t%d\n", s->seg_manager->_heap[pos.segment]->data.script.nr);
 
 	return 0;
 }

@@ -1701,7 +1701,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 			return seg;
 		} else {
 			seg_id = seg;
-			mem = s->seg_manager->heap[seg];
+			mem = s->seg_manager->_heap[seg];
 			assert(mem);
 			s->seg_manager->freeScript(*(Script *)mem);
 		}

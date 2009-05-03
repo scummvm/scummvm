@@ -80,9 +80,9 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	WorklistManager wm;
 	uint i;
 
-	interfaces.resize(sm->heap_size);
-	for (i = 1; i < sm->heap_size; i++)
-		if (sm->heap[i] == NULL)
+	interfaces.resize(sm->_heap.size());
+	for (i = 1; i < sm->_heap.size(); i++)
+		if (sm->_heap[i] == NULL)
 			interfaces[i] = NULL;
 		else
 			interfaces[i] = sm->getSegInterface(i);
@@ -120,7 +120,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #endif
 
 	// Init: Explicitly loaded scripts
-	for (i = 1; i < sm->heap_size; i++)
+	for (i = 1; i < sm->_heap.size(); i++)
 		if (interfaces[i]
 		        && interfaces[i]->getType() == MEM_OBJ_SCRIPT) {
 			Script *script = &(interfaces[i]->getMobj()->data.script);
@@ -150,7 +150,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #ifdef DEBUG_GC_VERBOSE
 			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg));
 #endif
-			if (reg.segment < sm->heap_size && interfaces[reg.segment])
+			if (reg.segment < sm->_heap.size() && interfaces[reg.segment])
 				interfaces[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
 		}
 	}
@@ -159,7 +159,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	normal_map = normalise_hashmap_ptrs(wm._map, interfaces);
 
 	// Cleanup
-	for (i = 1; i < sm->heap_size; i++)
+	for (i = 1; i < sm->_heap.size(); i++)
 		if (interfaces[i])
 			delete interfaces[i];
 
@@ -204,8 +204,8 @@ void run_gc(EngineState *s) {
 
 	deallocator.use_map = find_all_used_references(s);
 
-	for (seg_nr = 1; seg_nr < sm->heap_size; seg_nr++) {
-		if (sm->heap[seg_nr] != NULL) {
+	for (seg_nr = 1; seg_nr < sm->_heap.size(); seg_nr++) {
+		if (sm->_heap[seg_nr] != NULL) {
 			deallocator.interfce = sm->getSegInterface(seg_nr);
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.interfce->getType()] = deallocator.interfce->type;

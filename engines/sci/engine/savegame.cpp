@@ -172,8 +172,8 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	uint allocated_heap_size = heap_size;
-	s.syncAsUint32LE(heap_size);
+	uint sync_heap_size = _heap.size();
+	s.syncAsUint32LE(sync_heap_size);
 	s.syncAsSint32LE(reserved_id);
 	s.syncAsSint32LE(exports_wide);
 	s.syncAsSint32LE(gc_mark_bits);
@@ -181,11 +181,9 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 	id_seg_map->saveLoadWithSerializer(s);
 
-	assert(heap);
-	if (allocated_heap_size != heap_size)
-		heap = (MemObject**)sci_realloc((void *)heap, heap_size * sizeof(MemObject *));
-	for (uint i = 0; i < heap_size; ++i)
-		sync_MemObjPtr(s, heap[i]);
+	_heap.resize(sync_heap_size);
+	for (uint i = 0; i < sync_heap_size; ++i)
+		sync_MemObjPtr(s, _heap[i]);
 
 	s.syncAsSint32LE(Clones_seg_id);
 	s.syncAsSint32LE(Lists_seg_id);
@@ -538,9 +536,9 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 
 // FIXME: This should probably be turned into a SegManager method
 static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
-	for (uint i = 0; i < self->heap_size; i++)
-		if (self->heap[i] &&
-		    self->heap[i]->getType() == type)
+	for (uint i = 0; i < self->_heap.size(); i++)
+		if (self->_heap[i] &&
+		    self->_heap[i]->getType() == type)
 			return i;
 	return -1;
 }
@@ -566,7 +564,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_STACK);
-	dstack_t *stack = &(retval->seg_manager->heap[stack_seg]->data.stack);
+	dstack_t *stack = &(retval->seg_manager->_heap[stack_seg]->data.stack);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->entries;
@@ -591,7 +589,7 @@ static int clone_entry_used(CloneTable *table, int n) {
 
 static void load_script(EngineState *s, SegmentId seg) {
 	Resource *script, *heap = NULL;
-	Script *scr = &(s->seg_manager->heap[seg]->data.script);
+	Script *scr = &(s->seg_manager->_heap[seg]->data.script);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
 
@@ -614,16 +612,16 @@ static void load_script(EngineState *s, SegmentId seg) {
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	uint i;
 	MemObject *mobj;
-	for (i = 0; i < self->heap_size; i++) {
-		if (self->heap[i]) {
-			mobj = self->heap[i];
+	for (i = 0; i < self->_heap.size(); i++) {
+		if (self->_heap[i]) {
+			mobj = self->_heap[i];
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
 				Script *scr = &mobj->data.script;
 
 				load_script(s, i);
-				scr->locals_block = scr->locals_segment == 0 ? NULL : &s->seg_manager->heap[scr->locals_segment]->data.locals;
+				scr->locals_block = scr->locals_segment == 0 ? NULL : &s->seg_manager->_heap[scr->locals_segment]->data.locals;
 				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
 				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
 				scr->code = NULL;
@@ -646,9 +644,9 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 		}
 	}
 
-	for (i = 0; i < self->heap_size; i++) {
-		if (self->heap[i]) {
-			mobj = self->heap[i];
+	for (i = 0; i < self->_heap.size(); i++) {
+		if (self->_heap[i]) {
+			mobj = self->_heap[i];
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
@@ -695,9 +693,9 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 	uint i;
 	MemObject *mobj;
 
-	for (i = 0; i < self->heap_size; i++) {
-		if (self->heap[i]) {
-			mobj = self->heap[i];
+	for (i = 0; i < self->_heap.size(); i++) {
+		if (self->_heap[i]) {
+			mobj = self->_heap[i];
 			switch (mobj->getType()) {
 			case MEM_OBJ_CLONES: {
 				int j;
@@ -860,7 +858,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	reconstruct_scripts(retval, retval->seg_manager);
 	reconstruct_clones(retval, retval->seg_manager);
 	retval->game_obj = s->game_obj;
-	retval->script_000 = &retval->seg_manager->heap[script_get_segment(s, 0, SCRIPT_GET_DONT_LOAD)]->data.script;
+	retval->script_000 = &retval->seg_manager->_heap[script_get_segment(s, 0, SCRIPT_GET_DONT_LOAD)]->data.script;
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 	retval->save_dir_edit_offset = 0;

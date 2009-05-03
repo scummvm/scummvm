@@ -38,14 +38,14 @@ enum idFlag {
 	SEG_ID
 };
 
-#define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (int)(mgr).heap_size > index) ?		\
-		(((mgr).heap[index] && (mgr).heap[index]->getType() == rtype)? (mgr).heap[index]	: NULL) : NULL)
+#define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (int)(mgr)._heap.size() > index) ?		\
+		(((mgr)._heap[index] && (mgr)._heap[index]->getType() == rtype)? (mgr)._heap[index]	: NULL) : NULL)
 
-#define GET_SEGMENT_ANY(mgr, index) (((index) > 0 && (int)(mgr).heap_size > index) ?			\
-		(((mgr).heap[index])? (mgr).heap[index]	: NULL) : NULL)
+#define GET_SEGMENT_ANY(mgr, index) (((index) > 0 && (int)(mgr)._heap.size() > index) ?			\
+		(((mgr)._heap[index])? (mgr)._heap[index]	: NULL) : NULL)
 
-#define GET_OBJECT_SEGMENT(mgr, index) (((index) > 0 && (int)(mgr).heap_size > index) ?		\
-		(((mgr).heap[index]	&& ((mgr).heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr).heap[index]->getType() == MEM_OBJ_CLONES))? (mgr).heap[index]	\
+#define GET_OBJECT_SEGMENT(mgr, index) (((index) > 0 && (int)(mgr)._heap.size() > index) ?		\
+		(((mgr)._heap[index]	&& ((mgr)._heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr)._heap[index]->getType() == MEM_OBJ_CLONES))? (mgr)._heap[index]	\
 		: NULL): NULL)
 
 class SegInterface;
@@ -388,8 +388,7 @@ public:
 private:
 	IntMapper *id_seg_map; // id - script id; seg - index of heap
 public: // TODO: make private
-	MemObject **heap;
-	uint heap_size;		// size of the heap
+	Common::Array<MemObject *> _heap;
 	int reserved_id;
 	int exports_wide;
 	bool isSci1_1;

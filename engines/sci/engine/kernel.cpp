@@ -454,7 +454,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->seg_manager->heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, (int16)READ_LE_UINT16(ref));
@@ -468,7 +468,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		if (s->seg_manager->heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
@@ -667,10 +667,10 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 		return KSIG_ARITHMETIC;
 	}
 
-	if ((reg.segment >= s->seg_manager->heap_size) || !s->seg_manager->heap[reg.segment])
+	if ((reg.segment >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[reg.segment])
 		return 0; // Invalid
 
-	mobj = s->seg_manager->heap[reg.segment];
+	mobj = s->seg_manager->_heap[reg.segment];
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:

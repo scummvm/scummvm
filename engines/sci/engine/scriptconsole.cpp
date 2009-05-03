@@ -305,8 +305,8 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		str_objname = str + 1;
 
 		// Now all values are available; iterate over all objects.
-		for (i = 0; i < s->seg_manager->heap_size; i++) {
-			MemObject *mobj = s->seg_manager->heap[i];
+		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
+			MemObject *mobj = s->seg_manager->_heap[i];
 			int idx = 0;
 			int max_index = 0;
 

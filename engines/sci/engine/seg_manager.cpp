@@ -83,8 +83,7 @@ SegManager::SegManager(bool sci1_1) {
 	id_seg_map->checkKey(reserved_id, true);	// reserve 0 for seg_id
 	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
 
-	heap_size = DEFAULT_SCRIPTS;
-	heap = (MemObject **)sci_calloc(heap_size, sizeof(MemObject *));
+	_heap.resize(DEFAULT_SCRIPTS);
 
 	Clones_seg_id = 0;
 	Lists_seg_id = 0;
@@ -94,11 +93,6 @@ SegManager::SegManager(bool sci1_1) {
 	exports_wide = 0;
 	isSci1_1 = sci1_1;
 
-	// initialize the heap pointers
-	for (uint i = 0; i < heap_size; i++) {
-		heap[i] = NULL;
-	}
-
 	// gc initialisation
 	gc_mark_bits = 0;
 }
@@ -106,14 +100,12 @@ SegManager::SegManager(bool sci1_1) {
 // Destroy the object, free the memorys if allocated before
 SegManager::~SegManager() {
 	// Free memory
-	for (uint i = 0; i < heap_size; i++) {
-		if (heap[i])
+	for (uint i = 0; i < _heap.size(); i++) {
+		if (_heap[i])
 			deallocate(i, false);
 	}
 
 	delete id_seg_map;
-
-	free(heap);
 }
 
 // allocate a memory for script from heap
@@ -130,7 +122,7 @@ MemObject *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id
 	seg = id_seg_map->checkKey(script_nr, true, &was_added);
 	if (!was_added) {
 		*seg_id = seg;
-		return heap[*seg_id];
+		return _heap[*seg_id];
 	}
 
 	// allocate the MemObject
@@ -225,7 +217,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 	VERIFY(check(seg), "invalid seg id");
 	int i;
 
-	mobj = heap[seg];
+	mobj = _heap[seg];
 	id_seg_map->removeKey(mobj->getSegMgrId());
 
 	switch (mobj->getType()) {
@@ -293,7 +285,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 	}
 
 	free(mobj);
-	heap[seg] = NULL;
+	_heap[seg] = NULL;
 
 	return 1;
 }
@@ -319,10 +311,10 @@ int SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 	if (!check(seg))
 		return 0;
 
-	if (heap[seg]->getType() != MEM_OBJ_SCRIPT)
+	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 
-	scr = &(heap[seg]->data.script);
+	scr = &(_heap[seg]->data.script);
 
 	return scr->marked_as_deleted;
 }
@@ -343,31 +335,19 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType t
 		return NULL;
 	}
 
-	if (segid >= (int)heap_size) {
-		void *temp;
-		int oldhs = heap_size;
-
-		if (segid >= (int)heap_size * 2) {
+	if (segid >= (int)_heap.size()) {
+		if (segid >= (int)_heap.size() * 2) {
 			sciprintf("SegManager: hash_map error or others??");
 			return NULL;
 		}
-		heap_size *= 2;
-		temp = sci_realloc((void *)heap, heap_size * sizeof(MemObject *));
-		if (!temp) {
-			sciprintf("SegManager: Not enough memory space for script size");
-			return NULL;
-		}
-		heap = (MemObject **)temp;
-
-		// Clear pointers
-		memset(heap + oldhs, 0, sizeof(MemObject *) * (heap_size - oldhs));
+		_heap.resize(_heap.size() * 2);
 	}
 
 	mem->data.tmp_dummy._segmgrId = hash_id;
 	mem->data.tmp_dummy._type = type;
 
 	// hook it to the heap
-	heap[segid] = mem;
+	_heap[segid] = mem;
 	return mem;
 }
 
@@ -418,7 +398,7 @@ int16 SegManager::getHeap(reg_t reg) {
 	MemObject *mem_obj;
 
 	VERIFY(check(reg.segment), "Invalid seg id");
-	mem_obj = heap[reg.segment];
+	mem_obj = _heap[reg.segment];
 
 	switch (mem_obj->getType()) {
 	case MEM_OBJ_SCRIPT:
@@ -439,16 +419,16 @@ int SegManager::segGet(int script_id) const {
 Script *SegManager::getScript(const int id, idFlag flag) {
 	const int seg = (flag == SCRIPT_ID) ? segGet(id) : id;
 
-	if (seg < 0 || (uint)seg >= heap_size) {
+	if (seg < 0 || (uint)seg >= _heap.size()) {
 		error("SegManager::getScript(%d,%d): seg id %x out of bounds", id, flag, seg);
 	}
-	if (!heap[seg]) {
+	if (!_heap[seg]) {
 		error("SegManager::getScript(%d,%d): seg id %x is not in memory", id, flag, seg);
 	}
-	if (heap[seg]->getType() != MEM_OBJ_SCRIPT) {
-		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, heap[seg]->getType());
+	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT) {
+		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, _heap[seg]->getType());
 	}
-	return &(heap[seg]->data.script);
+	return &(_heap[seg]->data.script);
 }
 
 // validate the seg
@@ -456,10 +436,10 @@ Script *SegManager::getScript(const int id, idFlag flag) {
 //	false - invalid seg
 //	true  - valid seg
 bool SegManager::check(int seg) {
-	if (seg < 0 || (uint)seg >= heap_size) {
+	if (seg < 0 || (uint)seg >= _heap.size()) {
 		return false;
 	}
-	if (!heap[seg]) {
+	if (!_heap[seg]) {
 		sciprintf("SegManager: seg %x is removed from memory, but not removed from hash_map\n", seg);
 		return false;
 	}
@@ -548,7 +528,7 @@ int SegManager::relocateBlock(reg_t *block, int block_location, int block_items,
 	}
 	block[index].segment = segment; // Perform relocation
 	if (isSci1_1)
-		block[index].offset += heap[segment]->data.script.script_size;
+		block[index].offset += _heap[segment]->data.script.script_size;
 
 	return 1;
 }
@@ -808,7 +788,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 		LocalVariables *locals;
 
 		if (scr->locals_segment) {
-			mobj = heap[scr->locals_segment];
+			mobj = _heap[scr->locals_segment];
 			VERIFY(mobj != NULL, "Re-used locals segment was NULL'd out");
 			VERIFY(mobj->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(mobj->data.locals.script_id == scr->nr, "Re-used locals segment belonged to other script");
@@ -1074,7 +1054,7 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
 		mobj->data.clones.initTable();
 	} else
-		mobj = heap[Clones_seg_id];
+		mobj = _heap[Clones_seg_id];
 
 	table = &(mobj->data.clones);
 	offset = table->allocEntry();
@@ -1092,7 +1072,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
 		mobj->data.lists.initTable();
 	} else
-		mobj = heap[Lists_seg_id];
+		mobj = _heap[Lists_seg_id];
 
 	table = &(mobj->data.lists);
 	offset = table->allocEntry();
@@ -1110,7 +1090,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
 		mobj->data.nodes.initTable();
 	} else
-		mobj = heap[Nodes_seg_id];
+		mobj = _heap[Nodes_seg_id];
 
 	table = &(mobj->data.nodes);
 	offset = table->allocEntry();
@@ -1128,7 +1108,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
 		mobj->data.hunks.initTable();
 	} else
-		mobj = heap[Hunks_seg_id];
+		mobj = _heap[Hunks_seg_id];
 
 	table = &(mobj->data.hunks);
 	offset = table->allocEntry();
@@ -1144,13 +1124,13 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 	byte *base = NULL;
 	int count;
 
-	if (!pointer.segment || (pointer.segment >= heap_size) || !heap[pointer.segment]) {
+	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
 		sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
 		          PRINT_REG(pointer));
 		return NULL; /* Invalid */
 	}
 
-	mobj = heap[pointer.segment];
+	mobj = _heap[pointer.segment];
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
@@ -1221,9 +1201,9 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 }
 
 const char *SegManager::getDescription(reg_t addr) {
-	MemObject *mobj = heap[addr.segment];
+	MemObject *mobj = _heap[addr.segment];
 
-	if (addr.segment >= heap_size)
+	if (addr.segment >= _heap.size())
 		return "";
 
 	switch (mobj->getType()) {
@@ -1235,7 +1215,7 @@ const char *SegManager::getDescription(reg_t addr) {
 }
 
 int SegManager::freeDynmem(reg_t addr) {
-	if (addr.segment <= 0 || addr.segment >= heap_size || !heap[addr.segment] || heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
+	if (addr.segment <= 0 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
 		return 1; // error
 
 	deallocate(addr.segment, true);
@@ -1603,7 +1583,7 @@ SegInterface *SegManager::getSegInterface(SegmentId segid) {
 		return NULL; // Invalid segment
 
 	SegInterface *retval = NULL;
-	MemObject *mobj = heap[segid];
+	MemObject *mobj = _heap[segid];
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		retval = new SegInterfaceScript(this, mobj, segid);
