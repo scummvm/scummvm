@@ -444,7 +444,7 @@ void AGOSEngine::o_process() {
 #ifdef __DS__
 		// HACK: Skip scene of Simon reading letter from Calypso
 		// due to speech segment been too large to fit into memory
-		if (getGameType() == GType_SIMON1 && sub->id == 2922) {
+		if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) && sub->id == 2922) {
 			// set parent special
 			_noParentNotify = true;
 			setItemParent(derefItem(16), me());
