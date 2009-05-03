@@ -960,7 +960,7 @@ dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
 	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
 	dstack_t *retval = &(memobj->data.stack);
 
-	retval->entries = (reg_t*)sci_calloc(size, sizeof(reg_t));
+	retval->entries = (reg_t *)sci_calloc(size, sizeof(reg_t));
 	retval->nr = size;
 
 	return retval;
@@ -1342,15 +1342,6 @@ void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 }
 
 
-#define LIST_ALL_DEALLOCATABLE(kind, kind_field) \
-	kind##Table * table = &(_mobj->data.kind_field);		\
-	int i;								\
-									\
-	for (i = 0; i < table->max_entry; i++)				\
-		if (ENTRY_IS_VALID(table, i))				\
-			(*note) (param, make_reg(_segId, i));
-
-
 //-------------------- clones --------------------
 class SegInterfaceClones : public SegInterface {
 public:
@@ -1362,7 +1353,12 @@ public:
 };
 
 void SegInterfaceClones::listAllDeallocatable(void *param, NoteCallback note) {
-	LIST_ALL_DEALLOCATABLE(Clone, clones);
+	CloneTable *table = (CloneTable *)_mobj;
+	for (int i = 0; i < table->max_entry; i++)
+		if (ENTRY_IS_VALID(table, i))
+			(*note)(param, make_reg(_segId, i));
+
+
 }
 
 void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1503,7 +1499,12 @@ void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
-	LIST_ALL_DEALLOCATABLE(List, lists);
+	ListTable *table = (ListTable *)_mobj;
+	for (int i = 0; i < table->max_entry; i++)
+		if (ENTRY_IS_VALID(table, i))
+			(*note) (param, make_reg(_segId, i));
+
+
 }
 
 void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1537,7 +1538,12 @@ void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
-	LIST_ALL_DEALLOCATABLE(Node, nodes);
+	NodeTable *table = (NodeTable *)_mobj;
+	for (int i = 0; i < table->max_entry; i++)
+		if (ENTRY_IS_VALID(table, i))
+			(*note) (param, make_reg(_segId, i));
+
+
 }
 
 void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1573,7 +1579,12 @@ void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceHunk::listAllDeallocatable(void *param, NoteCallback note) {
-	LIST_ALL_DEALLOCATABLE(Hunk, hunks);
+	HunkTable *table = (HunkTable *)_mobj;
+	for (int i = 0; i < table->max_entry; i++)
+		if (ENTRY_IS_VALID(table, i))
+			(*note) (param, make_reg(_segId, i));
+
+
 }
 
 
