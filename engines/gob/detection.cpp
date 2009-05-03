@@ -316,6 +316,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{ // Supplied by goodoldgeorg in bug report #2785958
+		{
+			"gob1",
+			"Interactive Demo",
+			AD_ENTRY1s("intro.stk", "35a098571af9a03c04e2303aec7c9249", 116582),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_DEMO
+		},
+		kGameTypeGob1,
+		kFeaturesNone,
+		0,
+		0
+	},
 	{ // Supplied by raina in the forums
 		{
 			"gob1",
