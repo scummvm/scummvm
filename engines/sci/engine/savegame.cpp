@@ -428,63 +428,62 @@ static void sync_songlib_t(Common::Serializer &s, songlib_t &obj) {
 	}
 }
 
-static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj) {
+static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 	// Sync the memobj type
-	memObjType type = (s.isSaving() && obj) ? obj->getType() : MEM_OBJ_INVALID;
+	MemObjectType type = (s.isSaving() && mobj) ? mobj->getType() : MEM_OBJ_INVALID;
 	s.syncAsUint32LE(type);
 
-	// If we were saving and obj == 0, or if we are loading and this is an
+	// If we were saving and mobj == 0, or if we are loading and this is an
 	// entry marked as empty -> we are done.
 	if (type == MEM_OBJ_INVALID) {
-		obj = 0;
+		mobj = 0;
 		return;
 	}
 
 	if (s.isLoading()) {
-		//assert(!obj);
-		obj = (MemObject *)sci_calloc(1, sizeof(MemObject));
-		obj->data.tmp_dummy._type = type;
+		//assert(!mobj);
+		mobj = MemObject::createMemObject(type);
 	} else {
-		assert(obj);
+		assert(mobj);
 	}
 	
-	s.syncAsSint32LE(obj->data.tmp_dummy._segmgrId);
+	s.syncAsSint32LE(mobj->_segmgrId);
 	switch (type) {
 	case MEM_OBJ_SCRIPT:
-		sync_Script(s, obj->data.script);
+		sync_Script(s, *(Script *)mobj);
 		break;
 	case MEM_OBJ_CLONES:
-		sync_CloneTable(s, obj->data.clones);
+		sync_CloneTable(s, *(CloneTable *)mobj);
 		break;
 	case MEM_OBJ_LOCALS:
-		sync_LocalVariables(s, obj->data.locals);
+		sync_LocalVariables(s, *(LocalVariables *)mobj);
 		break;
 	case MEM_OBJ_SYS_STRINGS:
-		sync_SystemStrings(s, obj->data.sys_strings);
+		sync_SystemStrings(s, *(SystemStrings *)mobj);
 		break;
 	case MEM_OBJ_STACK:
 		// TODO: Switch this stack to use class Common::Stack?
-		s.syncAsUint32LE(obj->data.stack.nr);
+		s.syncAsUint32LE((*(dstack_t *)mobj).nr);
 		if (s.isLoading()) {
-			//free(obj->data.stack.entries);
-			obj->data.stack.entries = (reg_t *)sci_calloc(obj->data.stack.nr, sizeof(reg_t));
+			//free((*(dstack_t *)mobj).entries);
+			(*(dstack_t *)mobj).entries = (reg_t *)sci_calloc((*(dstack_t *)mobj).nr, sizeof(reg_t));
 		}
 		break;
 	case MEM_OBJ_HUNK:
 		if (s.isLoading()) {
-			obj->data.hunks.initTable();
+			(*(HunkTable *)mobj).initTable();
 		}
 		break;
 	case MEM_OBJ_STRING_FRAG:
 		break;
 	case MEM_OBJ_LISTS:
-		sync_ListTable(s, obj->data.lists);
+		sync_ListTable(s, *(ListTable *)mobj);
 		break;
 	case MEM_OBJ_NODES:
-		sync_NodeTable(s, obj->data.nodes);
+		sync_NodeTable(s, *(NodeTable *)mobj);
 		break;
 	case MEM_OBJ_DYNMEM:
-		sync_DynMem(s, obj->data.dynmem);
+		sync_DynMem(s, *(DynMem *)mobj);
 		break;
 	default:
 		error("Unknown MemObject type %d", type);
@@ -564,7 +563,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_STACK);
-	dstack_t *stack = &(retval->seg_manager->_heap[stack_seg]->data.stack);
+	dstack_t *stack = (dstack_t *)(retval->seg_manager->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->entries;
@@ -589,7 +588,7 @@ static int clone_entry_used(CloneTable *table, int n) {
 
 static void load_script(EngineState *s, SegmentId seg) {
 	Resource *script, *heap = NULL;
-	Script *scr = &(s->seg_manager->_heap[seg]->data.script);
+	Script *scr = (Script *)(s->seg_manager->_heap[seg]);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
 
@@ -618,10 +617,10 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
-				Script *scr = &mobj->data.script;
+				Script *scr = (Script *)mobj;
 
 				load_script(s, i);
-				scr->locals_block = scr->locals_segment == 0 ? NULL : &s->seg_manager->_heap[scr->locals_segment]->data.locals;
+				scr->locals_block = scr->locals_segment == 0 ? NULL : (LocalVariables *)(s->seg_manager->_heap[scr->locals_segment]);
 				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
 				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
 				scr->code = NULL;
@@ -650,7 +649,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
 				int j;
-				Script *scr = &mobj->data.script;
+				Script *scr = (Script *)mobj;
 
 				for (j = 0; j < scr->objects_nr; j++) {
 					byte *data = scr->buf + scr->objects[j].pos.offset;
@@ -699,27 +698,27 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 			switch (mobj->getType()) {
 			case MEM_OBJ_CLONES: {
 				int j;
-				CloneTable::Entry *seeker = mobj->data.clones.table;
+				CloneTable::Entry *seeker = (*(CloneTable *)mobj).table;
 
 				/*
 				sciprintf("Free list: ");
-				for (j = mobj->data.clones.first_free; j != HEAPENTRY_INVALID; j = mobj->data.clones.table[j].next_free) {
+				for (j = (*(CloneTable *)mobj).first_free; j != HEAPENTRY_INVALID; j = (*(CloneTable *)mobj).table[j].next_free) {
 					sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
 				sciprintf("Entries w/zero vars: ");
-				for (j = 0; j < mobj->data.clones.max_entry; j++) {
-					if (mobj->data.clones.table[j].variables == NULL)
+				for (j = 0; j < (*(CloneTable *)mobj).max_entry; j++) {
+					if ((*(CloneTable *)mobj).table[j].variables == NULL)
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 				*/
 
-				for (j = 0; j < mobj->data.clones.max_entry; j++) {
+				for (j = 0; j < (*(CloneTable *)mobj).max_entry; j++) {
 					Object *base_obj;
 
-					if (!clone_entry_used(&mobj->data.clones, j)) {
+					if (!clone_entry_used(&(*(CloneTable *)mobj), j)) {
 						seeker++;
 						continue;
 					}
@@ -858,12 +857,12 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	reconstruct_scripts(retval, retval->seg_manager);
 	reconstruct_clones(retval, retval->seg_manager);
 	retval->game_obj = s->game_obj;
-	retval->script_000 = &retval->seg_manager->_heap[script_get_segment(s, 0, SCRIPT_GET_DONT_LOAD)]->data.script;
+	retval->script_000 = retval->seg_manager->getScript(script_get_segment(s, 0, SCRIPT_GET_DONT_LOAD), SEG_ID);
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 	retval->save_dir_edit_offset = 0;
 	retval->sys_strings_segment = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_SYS_STRINGS);
-	retval->sys_strings = &(((MemObject *)(GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS)))->data.sys_strings);
+	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
 
 	// Restore system strings
 	SystemString *str;

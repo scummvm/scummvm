@@ -66,7 +66,7 @@ int SegManager::findFreeId(int *id) {
 	return retval;
 }
 
-MemObject *SegManager::allocNonscriptSegment(memObjType type, SegmentId *segid) {
+MemObject *SegManager::allocNonscriptSegment(MemObjectType type, SegmentId *segid) {
 	// Allocates a non-script segment
 	int id;
 
@@ -222,27 +222,27 @@ int SegManager::deallocate(int seg, bool recursive) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		freeScript(mobj->data.script);
+		freeScript((*(Script *)mobj));
 
-		mobj->data.script.buf = NULL;
-		if (recursive && mobj->data.script.locals_segment)
-			deallocate(mobj->data.script.locals_segment, recursive);
+		(*(Script *)mobj).buf = NULL;
+		if (recursive && (*(Script *)mobj).locals_segment)
+			deallocate((*(Script *)mobj).locals_segment, recursive);
 		break;
 
 	case MEM_OBJ_LOCALS:
-		free(mobj->data.locals.locals);
-		mobj->data.locals.locals = NULL;
+		free((*(LocalVariables *)mobj).locals);
+		(*(LocalVariables *)mobj).locals = NULL;
 		break;
 
 	case MEM_OBJ_DYNMEM:
-		free(mobj->data.dynmem.description);
-		mobj->data.dynmem.description = NULL;
-		free(mobj->data.dynmem.buf);
-		mobj->data.dynmem.buf = NULL;
+		free((*(DynMem *)mobj).description);
+		(*(DynMem *)mobj).description = NULL;
+		free((*(DynMem *)mobj).buf);
+		(*(DynMem *)mobj).buf = NULL;
 		break;
 	case MEM_OBJ_SYS_STRINGS: 
 		for (i = 0; i < SYS_STRINGS_MAX; i++) {
-			SystemString *str = &mobj->data.sys_strings.strings[i];
+			SystemString *str = &(*(SystemStrings *)mobj).strings[i];
 			if (str->name) {
 				free(str->name);
 				str->name = NULL;
@@ -255,28 +255,28 @@ int SegManager::deallocate(int seg, bool recursive) {
 		}
 		break;
 	case MEM_OBJ_STACK:
-		free(mobj->data.stack.entries);
-		mobj->data.stack.entries = NULL;
+		free((*(dstack_t *)mobj).entries);
+		(*(dstack_t *)mobj).entries = NULL;
 		break;
 	case MEM_OBJ_LISTS:
-		free(mobj->data.lists.table);
-		mobj->data.lists.table = NULL;
-		mobj->data.lists.entries_nr = mobj->data.lists.max_entry = 0;
+		free((*(ListTable *)mobj).table);
+		(*(ListTable *)mobj).table = NULL;
+		(*(ListTable *)mobj).entries_nr = (*(ListTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_NODES:
-		free(mobj->data.nodes.table);
-		mobj->data.nodes.table = NULL;
-		mobj->data.nodes.entries_nr = mobj->data.nodes.max_entry = 0;
+		free((*(NodeTable *)mobj).table);
+		(*(NodeTable *)mobj).table = NULL;
+		(*(NodeTable *)mobj).entries_nr = (*(NodeTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_CLONES:
-		free(mobj->data.clones.table);
-		mobj->data.clones.table = NULL;
-		mobj->data.clones.entries_nr = mobj->data.clones.max_entry = 0;
+		free((*(CloneTable *)mobj).table);
+		(*(CloneTable *)mobj).table = NULL;
+		(*(CloneTable *)mobj).entries_nr = (*(CloneTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_HUNK:
-		free(mobj->data.hunks.table);
-		mobj->data.hunks.table = NULL;
-		mobj->data.hunks.entries_nr = mobj->data.hunks.max_entry = 0;
+		free((*(HunkTable *)mobj).table);
+		(*(HunkTable *)mobj).table = NULL;
+		(*(HunkTable *)mobj).entries_nr = (*(HunkTable *)mobj).max_entry = 0;
 		break;
 	case MEM_OBJ_STRING_FRAG:
 		break;
@@ -284,7 +284,7 @@ int SegManager::deallocate(int seg, bool recursive) {
 		error("Deallocating segment type %d not supported", mobj->getType());
 	}
 
-	free(mobj);
+	delete mobj;
 	_heap[seg] = NULL;
 
 	return 1;
@@ -314,7 +314,7 @@ int SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 
-	scr = &(_heap[seg]->data.script);
+	scr = (Script *)_heap[seg];
 
 	return scr->marked_as_deleted;
 }
@@ -328,10 +328,53 @@ int SegManager::deallocateScript(int script_nr) {
 	return 1;
 }
 
-MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType type) {
-	MemObject *mem = (MemObject *)sci_calloc(1, sizeof(MemObject));
+MemObject *MemObject::createMemObject(MemObjectType type) {
+	MemObject *mem = 0;
+	switch (type) {
+	case MEM_OBJ_SCRIPT:
+		mem = new Script();
+		break;
+	case MEM_OBJ_CLONES:
+		mem = new CloneTable();
+		break;
+	case MEM_OBJ_LOCALS:
+		mem = new LocalVariables();
+		break;
+	case MEM_OBJ_SYS_STRINGS:
+		mem = new SystemStrings();
+		break;
+	case MEM_OBJ_STACK:
+		mem = new dstack_t();
+		break;
+	case MEM_OBJ_HUNK:
+		mem = new HunkTable();
+		break;
+	case MEM_OBJ_STRING_FRAG:
+		mem = new MemObject();	// FIXME: This is a temporary hack until MEM_OBJ_STRING_FRAG is implemented
+		break;
+	case MEM_OBJ_LISTS:
+		mem = new ListTable();
+		break;
+	case MEM_OBJ_NODES:
+		mem = new NodeTable();
+		break;
+	case MEM_OBJ_DYNMEM:
+		mem = new DynMem();
+		break;
+	default:
+		error("Unknown MemObject type %d", type);
+		break;
+	}
+
+	assert(mem);
+	mem->_type = type;
+	return mem;
+}
+
+MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectType type) {
+	MemObject *mem = MemObject::createMemObject(type);
 	if (!mem) {
-		sciprintf("SegManager: invalid mem_obj ");
+		sciprintf("SegManager: invalid mobj ");
 		return NULL;
 	}
 
@@ -343,21 +386,12 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, memObjType t
 		_heap.resize(_heap.size() * 2);
 	}
 
-	mem->data.tmp_dummy._segmgrId = hash_id;
-	mem->data.tmp_dummy._type = type;
+	mem->_segmgrId = hash_id;
 
 	// hook it to the heap
 	_heap[segid] = mem;
 	return mem;
 }
-
-/* No longer in use?
-void SegManager::sm_object_init(Object *object) {
-	if (!object)
-		return;
-	object->variables_nr = 0;
-	object->variables = NULL;
-};*/
 
 void SegManager::freeScript(Script &scr) {
 	if (scr.buf) {
@@ -395,17 +429,19 @@ void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, idFlag fl
 }
 
 int16 SegManager::getHeap(reg_t reg) {
-	MemObject *mem_obj;
+	MemObject *mobj;
+	Script *scr;
 
 	VERIFY(check(reg.segment), "Invalid seg id");
-	mem_obj = _heap[reg.segment];
+	mobj = _heap[reg.segment];
 
-	switch (mem_obj->getType()) {
+	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		VERIFY(reg.offset + 1 < (uint16)mem_obj->data.script.buf_size, "invalid offset\n");
-		return (mem_obj->data.script.buf[reg.offset] | (mem_obj->data.script.buf[reg.offset+1]) << 8);
+		scr = (Script *)mobj;
+		VERIFY(reg.offset + 1 < (uint16)scr->buf_size, "invalid offset\n");
+		return (scr->buf[reg.offset] | (scr->buf[reg.offset+1]) << 8);
 	default:
-		error("SegManager::getHeap: unsupported mem obj type %d", mem_obj->getType());
+		error("SegManager::getHeap: unsupported mem obj type %d", mobj->getType());
 		break;
 	}
 	return 0; // never get here
@@ -428,7 +464,7 @@ Script *SegManager::getScript(const int id, idFlag flag) {
 	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT) {
 		error("SegManager::getScript(%d,%d): seg id %x refers to type %d != MEM_OBJ_SCRIPT", id, flag, seg, _heap[seg]->getType());
 	}
-	return &(_heap[seg]->data.script);
+	return (Script *)_heap[seg];
 }
 
 // validate the seg
@@ -528,7 +564,7 @@ int SegManager::relocateBlock(reg_t *block, int block_location, int block_items,
 	}
 	block[index].segment = segment; // Perform relocation
 	if (isSci1_1)
-		block[index].offset += _heap[segment]->data.script.script_size;
+		block[index].offset += getScript(segment, SEG_ID)->script_size;
 
 	return 1;
 }
@@ -791,11 +827,11 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 			mobj = _heap[scr->locals_segment];
 			VERIFY(mobj != NULL, "Re-used locals segment was NULL'd out");
 			VERIFY(mobj->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
-			VERIFY(mobj->data.locals.script_id == scr->nr, "Re-used locals segment belonged to other script");
+			VERIFY((*(LocalVariables *)mobj).script_id == scr->nr, "Re-used locals segment belonged to other script");
 		} else
 			mobj = allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
 
-		locals = scr->locals_block = &(mobj->data.locals);
+		locals = scr->locals_block = (LocalVariables *)mobj;
 		locals->script_id = scr->nr;
 		locals->locals = (reg_t *)sci_calloc(count, sizeof(reg_t));
 		locals->nr = count;
@@ -933,8 +969,8 @@ static char *SegManager::dynprintf(char *msg, ...) {
 */
 
 dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
-	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
-	dstack_t *retval = &(memobj->data.stack);
+	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
+	dstack_t *retval = (dstack_t *)mobj;
 
 	retval->entries = (reg_t *)sci_calloc(size, sizeof(reg_t));
 	retval->nr = size;
@@ -943,8 +979,8 @@ dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
 }
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	MemObject *memobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
-	SystemStrings *retval = &(memobj->data.sys_strings);
+	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
+	SystemStrings *retval = (SystemStrings *)mobj;
 
 	memset(retval->strings, 0, sizeof(retval->strings));
 
@@ -982,7 +1018,7 @@ void SegManager::free_hunk_entry(reg_t addr) {
 		return;
 	}
 
-	Sci::free_Hunk_entry(&(mobj->data.hunks), addr.offset);
+	Sci::free_Hunk_entry((HunkTable *)mobj, addr.offset);
 }
 
 Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
@@ -1052,11 +1088,11 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 
 	if (!Clones_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
-		mobj->data.clones.initTable();
+		(*(CloneTable *)mobj).initTable();
 	} else
 		mobj = _heap[Clones_seg_id];
 
-	table = &(mobj->data.clones);
+	table = (CloneTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Clones_seg_id, offset);
@@ -1070,11 +1106,11 @@ List *SegManager::alloc_List(reg_t *addr) {
 
 	if (!Lists_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
-		mobj->data.lists.initTable();
+		(*(ListTable *)mobj).initTable();
 	} else
 		mobj = _heap[Lists_seg_id];
 
-	table = &(mobj->data.lists);
+	table = (ListTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Lists_seg_id, offset);
@@ -1088,11 +1124,11 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 
 	if (!Nodes_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
-		mobj->data.nodes.initTable();
+		(*(NodeTable *)mobj).initTable();
 	} else
 		mobj = _heap[Nodes_seg_id];
 
-	table = &(mobj->data.nodes);
+	table = (NodeTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
@@ -1106,11 +1142,11 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 
 	if (!Hunks_seg_id) {
 		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
-		mobj->data.hunks.initTable();
+		(*(HunkTable *)mobj).initTable();
 	} else
 		mobj = _heap[Hunks_seg_id];
 
-	table = &(mobj->data.hunks);
+	table = (HunkTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Hunks_seg_id, offset);
@@ -1134,36 +1170,36 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		if (pointer.offset > mobj->data.script.buf_size) {
+		if (pointer.offset > (*(Script *)mobj).buf_size) {
 			sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
-			          PRINT_REG(pointer), (uint)mobj->data.script.buf_size);
+			          PRINT_REG(pointer), (uint)(*(Script *)mobj).buf_size);
 			return NULL;
 		}
 		if (size)
-			*size = mobj->data.script.buf_size - pointer.offset;
-		return (byte *)(mobj->data.script.buf + pointer.offset);
+			*size = (*(Script *)mobj).buf_size - pointer.offset;
+		return (byte *)((*(Script *)mobj).buf + pointer.offset);
 		break;
 
 	case MEM_OBJ_LOCALS:
-		count = mobj->data.locals.nr * sizeof(reg_t);
-		base = (byte *)mobj->data.locals.locals;
+		count = (*(LocalVariables *)mobj).nr * sizeof(reg_t);
+		base = (byte *)(*(LocalVariables *)mobj).locals;
 		break;
 
 	case MEM_OBJ_STACK:
-		count = mobj->data.stack.nr * sizeof(reg_t);
-		base = (byte *)mobj->data.stack.entries;
+		count = (*(dstack_t *)mobj).nr * sizeof(reg_t);
+		base = (byte *)(*(dstack_t *)mobj).entries;
 		break;
 
 	case MEM_OBJ_DYNMEM:
-		count = mobj->data.dynmem.size;
-		base = (byte *)mobj->data.dynmem.buf;
+		count = (*(DynMem *)mobj).size;
+		base = (byte *)(*(DynMem *)mobj).buf;
 		break;
 
 	case MEM_OBJ_SYS_STRINGS:
 		if (size)
-			*size = mobj->data.sys_strings.strings[pointer.offset].max_size;
-		if (pointer.offset < SYS_STRINGS_MAX && mobj->data.sys_strings.strings[pointer.offset].name)
-			return (byte *)(mobj->data.sys_strings.strings[pointer.offset].value);
+			*size = (*(SystemStrings *)mobj).strings[pointer.offset].max_size;
+		if (pointer.offset < SYS_STRINGS_MAX && (*(SystemStrings *)mobj).strings[pointer.offset].name)
+			return (byte *)((*(SystemStrings *)mobj).strings[pointer.offset].value);
 		else {
 			sciprintf("Error: Attempt to dereference invalid pointer "PREG"!\n",
 			          PRINT_REG(pointer));
@@ -1188,16 +1224,18 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
 
-	mobj->data.dynmem.size = size;
+	DynMem &d = *(DynMem *)mobj;
+
+	d.size = size;
 
 	if (size == 0)
-		mobj->data.dynmem.buf = NULL;
+		d.buf = NULL;
 	else
-		mobj->data.dynmem.buf = (byte*) sci_malloc(size);
+		d.buf = (byte *)sci_malloc(size);
 
-	mobj->data.dynmem.description = sci_strdup(descr);
+	d.description = sci_strdup(descr);
 
-	return (unsigned char *)(mobj->data.dynmem.buf);
+	return (unsigned char *)(d.buf);
 }
 
 const char *SegManager::getDescription(reg_t addr) {
@@ -1208,7 +1246,7 @@ const char *SegManager::getDescription(reg_t addr) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_DYNMEM:
-		return mobj->data.dynmem.description;
+		return (*(DynMem *)mobj).description;
 	default:
 		return "";
 	}
@@ -1233,7 +1271,7 @@ void SegManager::dbgPrint(const char* msg, void *i) {
 
 
 // ------------------- Segment interface ------------------
-SegInterface::SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId) :
+SegInterface::SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, MemObjectType typeId) :
 	_segmgr(segmgr), _mobj(mobj), _segId(segId), _typeId(typeId) {
 	VERIFY(_mobj->getType() == _typeId, "Invalid MemObject type");
 }
@@ -1255,7 +1293,7 @@ void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void 
 //-------------------- base --------------------
 class SegInterfaceBase : public SegInterface {
 protected:
-	SegInterfaceBase(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId) :
+	SegInterfaceBase(SegManager *segmgr, MemObject *mobj, SegmentId segId, MemObjectType typeId) :
 		SegInterface(segmgr, mobj, segId, typeId) {}
 public:
 	reg_t findCanonicAddress(reg_t addr);
@@ -1282,7 +1320,7 @@ public:
 };
 
 void SegInterfaceScript::freeAtAddress(reg_t addr) {
-	Script *script = &(_mobj->data.script);
+	Script *script = (Script *)_mobj;
 	/*
 		sciprintf("[GC] Freeing script "PREG"\n", PRINT_REG(addr));
 		if (script->locals_segment)
@@ -1294,7 +1332,7 @@ void SegInterfaceScript::freeAtAddress(reg_t addr) {
 }
 
 void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	Script *script = &(_mobj->data.script);
+	Script *script = (Script *)_mobj;
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
@@ -1338,7 +1376,7 @@ void SegInterfaceClones::listAllDeallocatable(void *param, NoteCallback note) {
 }
 
 void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	CloneTable *clone_table = &(_mobj->data.clones);
+	CloneTable *clone_table = (CloneTable *)_mobj;
 	Clone *clone;
 	int i;
 
@@ -1366,7 +1404,7 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 
 	assert(addr.segment == _segId);
 
-	victim_obj = &(_mobj->data.clones.table[addr.offset]);
+	victim_obj = &((*(CloneTable *)_mobj).table[addr.offset]);
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
@@ -1382,7 +1420,7 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	Sci::free_Clone_entry(&(_mobj->data.clones), addr.offset);
+	Sci::free_Clone_entry((CloneTable *)_mobj, addr.offset);
 }
 
 
@@ -1397,7 +1435,7 @@ public:
 };
 
 reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
-	LocalVariables *locals = &(_mobj->data.locals);
+	LocalVariables *locals = (LocalVariables *)_mobj;
 	// Reference the owning script
 	SegmentId owner_seg = _segmgr->segGet(locals->script_id);
 
@@ -1412,12 +1450,11 @@ void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
 }
 
 void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	LocalVariables *locals = &(_mobj->data.locals);
-	int i;
+	LocalVariables *locals = (LocalVariables *)_mobj;
 
 	assert(addr.segment == _segId);
 
-	for (i = 0; i < locals->nr; i++)
+	for (int i = 0; i < locals->nr; i++)
 		(*note)(param, locals->locals[i]);
 }
 
@@ -1438,9 +1475,10 @@ reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
 
 void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	int i;
-	fprintf(stderr, "Emitting %d stack entries\n", _mobj->data.stack.nr);
-	for (i = 0; i < _mobj->data.stack.nr; i++)
-		(*note)(param, _mobj->data.stack.entries[i]);
+	dstack_t &d = *(dstack_t *)_mobj;
+	fprintf(stderr, "Emitting %d stack entries\n", d.nr);
+	for (i = 0; i < d.nr; i++)
+		(*note)(param, d.entries[i]);
 	fprintf(stderr, "DONE");
 }
 
@@ -1471,7 +1509,7 @@ public:
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
-	Sci::free_List_entry(&(_mobj->data.lists), sub_addr.offset);
+	Sci::free_List_entry((ListTable *)_mobj, sub_addr.offset);
 }
 
 void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
@@ -1484,7 +1522,7 @@ void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
 }
 
 void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	ListTable *table = &(_mobj->data.lists);
+	ListTable *table = (ListTable *)_mobj;
 	List *list = &(table->table[addr.offset]);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {
@@ -1510,7 +1548,7 @@ public:
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
-	Sci::free_Node_entry(&(_mobj->data.nodes), sub_addr.offset);
+	Sci::free_Node_entry((NodeTable *)_mobj, sub_addr.offset);
 }
 
 void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
@@ -1523,7 +1561,7 @@ void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
 }
 
 void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	NodeTable *table = &(_mobj->data.nodes);
+	NodeTable *table = (NodeTable *)_mobj;
 	Node *node = &(table->table[addr.offset]);
 
 	if (!ENTRY_IS_VALID(table, addr.offset)) {

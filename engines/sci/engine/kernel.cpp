@@ -674,10 +674,10 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		if (reg.offset <= mobj->data.script.buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-		        && RAW_IS_OBJECT(mobj->data.script.buf + reg.offset)) {
-			int idx = RAW_GET_CLASS_INDEX(&(mobj->data.script), reg);
-			if (idx >= 0 && idx < mobj->data.script.objects_nr)
+		if (reg.offset <= (*(Script *)mobj).buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+		        && RAW_IS_OBJECT((*(Script *)mobj).buf + reg.offset)) {
+			int idx = RAW_GET_CLASS_INDEX((Script *)mobj, reg);
+			if (idx >= 0 && idx < (*(Script *)mobj).objects_nr)
 				return KSIG_OBJECT;
 			else
 				return KSIG_REF;
@@ -691,20 +691,20 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_OBJECT | KSIG_INVALID;
 
 	case MEM_OBJ_LOCALS:
-		if (allow_invalid || reg.offset < mobj->data.locals.nr * sizeof(reg_t))
+		if (allow_invalid || reg.offset < (*(LocalVariables *)mobj).nr * sizeof(reg_t))
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;
 
 	case MEM_OBJ_STACK:
-		if (allow_invalid || reg.offset < mobj->data.stack.nr * sizeof(reg_t))
+		if (allow_invalid || reg.offset < (*(dstack_t *)mobj).nr * sizeof(reg_t))
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;
 
 	case MEM_OBJ_SYS_STRINGS:
 		if (allow_invalid || (reg.offset < SYS_STRINGS_MAX
-		                      && mobj->data.sys_strings.strings[reg.offset].name))
+		                      && (*(SystemStrings *)mobj).strings[reg.offset].name))
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;
@@ -722,7 +722,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_NODE | KSIG_INVALID;
 
 	case MEM_OBJ_DYNMEM:
-		if (allow_invalid || reg.offset < mobj->data.dynmem.size)
+		if (allow_invalid || reg.offset < (*(DynMem *)mobj).size)
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;

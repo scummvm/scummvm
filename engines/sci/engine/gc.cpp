@@ -123,7 +123,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	for (i = 1; i < sm->_heap.size(); i++)
 		if (interfaces[i]
 		        && interfaces[i]->getType() == MEM_OBJ_SCRIPT) {
-			Script *script = &(interfaces[i]->getMobj()->data.script);
+			Script *script = (Script *)(interfaces[i]->getMobj());
 
 			if (script->lockers) { // Explicitly loaded?
 				int obj_nr;

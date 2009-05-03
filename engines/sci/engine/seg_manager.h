@@ -405,9 +405,9 @@ public: // TODO: make private
 	SegmentId Hunks_seg_id; // ID of the (a) hunk segment
 
 private:
-	MemObject *allocNonscriptSegment(memObjType type, SegmentId *segid);
+	MemObject *allocNonscriptSegment(MemObjectType type, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
-	MemObject *memObjAllocate(SegmentId segid, int hash_id, memObjType type);
+	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
 	int deallocate(int seg, bool recursive);
 
 	Hunk *alloc_Hunk(reg_t *);
@@ -446,7 +446,7 @@ private:
 // But note that _mobj->segmgr_id != _segId !
 class SegInterface {
 protected:
-	SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, memObjType typeId);
+	SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, MemObjectType typeId);
 
 public:
 	typedef void (*NoteCallback)(void *param, reg_t addr);
@@ -481,7 +481,7 @@ public:
 	MemObject *getMobj() { return _mobj; }
 
 	// Get the segment type
-	memObjType getType() { return _typeId; }
+	MemObjectType getType() { return _typeId; }
 
 protected:
 	SegManager *_segmgr;
@@ -489,7 +489,7 @@ protected:
 	SegmentId _segId;
 
 private:
-	memObjType _typeId; // Segment type
+	MemObjectType _typeId; // Segment type
 };
 
 } // End of namespace Sci

@@ -293,19 +293,19 @@ int c_segtable(EngineState *s) {
 
 			switch (mobj->getType()) {
 			case MEM_OBJ_SCRIPT:
-				sciprintf("S  script.%03d l:%d ", mobj->data.script.nr, mobj->data.script.lockers);
+				sciprintf("S  script.%03d l:%d ", (*(Script *)mobj).nr, (*(Script *)mobj).lockers);
 				break;
 
 			case MEM_OBJ_CLONES:
-				sciprintf("C  clones (%d allocd)", mobj->data.clones.entries_used);
+				sciprintf("C  clones (%d allocd)", (*(CloneTable *)mobj).entries_used);
 				break;
 
 			case MEM_OBJ_LOCALS:
-				sciprintf("V  locals %03d", mobj->data.locals.script_id);
+				sciprintf("V  locals %03d", (*(LocalVariables *)mobj).script_id);
 				break;
 
 			case MEM_OBJ_STACK:
-				sciprintf("D  data stack (%d)", mobj->data.stack.nr);
+				sciprintf("D  data stack (%d)", (*(dstack_t *)mobj).nr);
 				break;
 
 			case MEM_OBJ_SYS_STRINGS:
@@ -313,19 +313,19 @@ int c_segtable(EngineState *s) {
 				break;
 
 			case MEM_OBJ_LISTS:
-				sciprintf("L  lists (%d)", mobj->data.lists.entries_used);
+				sciprintf("L  lists (%d)", (*(ListTable *)mobj).entries_used);
 				break;
 
 			case MEM_OBJ_NODES:
-				sciprintf("N  nodes (%d)", mobj->data.nodes.entries_used);
+				sciprintf("N  nodes (%d)", (*(NodeTable *)mobj).entries_used);
 				break;
 
 			case MEM_OBJ_HUNK:
-				sciprintf("H  hunk (%d)", mobj->data.hunks.entries_used);
+				sciprintf("H  hunk (%d)", (*(HunkTable *)mobj).entries_used);
 				break;
 
 			case MEM_OBJ_DYNMEM:
-				sciprintf("M  dynmem: %d bytes", mobj->data.dynmem.size);
+				sciprintf("M  dynmem: %d bytes", (*(DynMem *)mobj).size);
 				break;
 
 			case MEM_OBJ_STRING_FRAG:
@@ -360,13 +360,13 @@ static void print_list(EngineState *s, List *l) {
 		Node *node;
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
-		if (!mobj || !ENTRY_IS_VALID(&(mobj->data.nodes), pos.offset)) {
+		if (!mobj || !ENTRY_IS_VALID((NodeTable *)mobj, pos.offset)) {
 			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
 			          PRINT_REG(pos));
 			return;
 		}
 
-		node = &(mobj->data.nodes.table[pos.offset]);
+		node = &((*(NodeTable *)mobj).table[pos.offset]);
 
 		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -389,7 +389,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 	case MEM_OBJ_SCRIPT: {
 		int i;
-		Script *scr = &(mobj->data.script);
+		Script *scr = (Script *)mobj;
 		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
 		if (scr->export_table)
 			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
@@ -412,14 +412,14 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	break;
 
 	case MEM_OBJ_LOCALS: {
-		LocalVariables *locals = &(mobj->data.locals);
+		LocalVariables *locals = (LocalVariables *)mobj;
 		sciprintf("locals for script.%03d\n", locals->script_id);
 		sciprintf("  %d (0x%x) locals\n", locals->nr, locals->nr);
 	}
 	break;
 
 	case MEM_OBJ_STACK: {
-		dstack_t *stack = &(mobj->data.stack);
+		dstack_t *stack = (dstack_t *)mobj;
 		sciprintf("stack\n");
 		sciprintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
 	}
@@ -439,7 +439,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 	case MEM_OBJ_CLONES: {
 		int i = 0;
-		CloneTable *ct = &(mobj->data.clones);
+		CloneTable *ct = (CloneTable *)mobj;
 
 		sciprintf("clones\n");
 
@@ -453,7 +453,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 	case MEM_OBJ_LISTS: {
 		int i = 0;
-		ListTable *lt = &(mobj->data.lists);
+		ListTable *lt = (ListTable *)mobj;
 
 		sciprintf("lists\n");
 		for (i = 0; i < lt->max_entry; i++)
@@ -465,15 +465,15 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	break;
 
 	case MEM_OBJ_NODES: {
-		sciprintf("nodes (total %d)\n", mobj->data.nodes.entries_used);
+		sciprintf("nodes (total %d)\n", (*(NodeTable *)mobj).entries_used);
 		break;
 	}
 
 	case MEM_OBJ_HUNK: {
 		int i;
-		HunkTable *ht = &(mobj->data.hunks);
+		HunkTable *ht = (HunkTable *)mobj;
 
-		sciprintf("hunk  (total %d)\n", mobj->data.hunks.entries_used);
+		sciprintf("hunk  (total %d)\n", ht->entries_used);
 		for (i = 0; i < ht->max_entry; i++)
 			if (ENTRY_IS_VALID(ht, i)) {
 				sciprintf("    [%04x] %d bytes at %p, type=%s\n",
@@ -483,9 +483,9 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 	case MEM_OBJ_DYNMEM: {
 		sciprintf("dynmem (%s): %d bytes\n",
-		          mobj->data.dynmem.description ? mobj->data.dynmem.description : "no description", mobj->data.dynmem.size);
+		          (*(DynMem *)mobj).description ? (*(DynMem *)mobj).description : "no description", (*(DynMem *)mobj).size);
 
-		sci_hexdump(mobj->data.dynmem.buf, mobj->data.dynmem.size, 0);
+		sci_hexdump((*(DynMem *)mobj).buf, (*(DynMem *)mobj).size, 0);
 	}
 	break;
 
@@ -504,7 +504,7 @@ static int show_node(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
-		ListTable *lt = &(mobj->data.lists);
+		ListTable *lt = (ListTable *)mobj;
 		List *list;
 
 		if (!ENTRY_IS_VALID(lt, addr.offset)) {
@@ -525,7 +525,7 @@ static int show_node(EngineState *s, reg_t addr) {
 			return 1;
 		}
 
-		nt = &(mobj->data.nodes);
+		nt = (NodeTable *)mobj;
 
 		if (!ENTRY_IS_VALID(nt, addr.offset)) {
 			sciprintf("Address does not contain a node\n");
@@ -1212,7 +1212,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-	MemObject *memobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
+	MemObject *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
 	Script *script_entity = NULL;
 	byte *scr;
 	int scr_size;
@@ -1223,11 +1223,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	int bytecount = 1;
 	int i = 0;
 
-	if (!memobj) {
+	if (!mobj) {
 		sciprintf("Disassembly failed: Segment %04x non-existant or not a script\n", pos.segment);
 		return retval;
 	} else
-		script_entity = &(memobj->data.script);
+		script_entity = (Script *)mobj;
 
 	scr = script_entity->buf;
 	scr_size = script_entity->buf_size;
@@ -1590,7 +1590,7 @@ static int c_backtrace(EngineState *s) {
 
 		sciprintf(" argp:"PSTK, PRINT_STK(call.variables_argp));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", s->seg_manager->_heap[call.addr.pc.segment]->data.script.nr);
+			sciprintf(" script: %d", (*(Script *)s->seg_manager->_heap[call.addr.pc.segment]).nr);
 		sciprintf("\n");
 	}
 
@@ -2558,7 +2558,7 @@ int objinfo(EngineState *s, reg_t pos) {
 		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->_heap[pos.segment]->data.script.nr);
+		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment, SEG_ID)->nr);
 
 	return 0;
 }
@@ -2887,10 +2887,10 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	}
 
 	if (_debug_seeking && !bp) { // Are we looking for something special?
-		MemObject *memobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
+		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
-		if (memobj) {
-			Script *scr = &(memobj->data.script);
+		if (mobj) {
+			Script *scr = (Script *)mobj;
 			byte *code_buf = scr->buf;
 			int code_buf_size = scr->buf_size;
 			int opcode = pc->offset >= code_buf_size ? 0 : code_buf[pc->offset];

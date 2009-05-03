@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-enum memObjType {
+enum MemObjectType {
 	MEM_OBJ_INVALID = 0,
 	MEM_OBJ_SCRIPT = 1,
 	MEM_OBJ_CLONES = 2,
@@ -50,9 +50,14 @@ enum memObjType {
 	MEM_OBJ_MAX // For sanity checking
 };
 
-struct MemObjectNEW {
-	memObjType _type;
+struct MemObject {
+	MemObjectType _type;
 	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
+
+	inline MemObjectType getType() const { return _type; }
+	inline int getSegMgrId() const { return _segmgrId; }
+
+	static MemObject *createMemObject(MemObjectType type);
 };
 
 
@@ -73,7 +78,7 @@ struct SystemString {
 	reg_t *value;
 };
 
-struct SystemStrings : public MemObjectNEW {
+struct SystemStrings : public MemObject {
 	SystemString strings[SYS_STRINGS_MAX];
 };
 
@@ -171,7 +176,7 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
-struct LocalVariables : public MemObjectNEW {
+struct LocalVariables : public MemObject {
 	int script_id; /**< Script ID this local variable block belongs to */
 	reg_t *locals;
 	int nr;
@@ -220,7 +225,7 @@ struct CodeBlock {
 
 
 
-struct Script : public MemObjectNEW {
+struct Script : public MemObject {
 	int nr; /**< Script number */
 	byte* buf; /**< Static data buffer, or NULL if not used */
 	size_t buf_size;
@@ -255,7 +260,7 @@ struct Script : public MemObjectNEW {
 };
 
 /** Data stack */
-struct dstack_t : MemObjectNEW {
+struct dstack_t : MemObject {
 	int nr; /**< Number of stack entries */
 	reg_t *entries;
 };
@@ -284,7 +289,7 @@ struct Hunk {
 };
 
 template<typename T, int INITIAL, int INCREMENT>
-struct Table : public MemObjectNEW {
+struct Table : public MemObject {
 	struct Entry : public T {
 		int next_free; /* Only used for free entries */
 	};
@@ -346,30 +351,11 @@ void free_Hunk_entry(HunkTable *table, int index);
 
 
 // Free-style memory
-struct DynMem : public MemObjectNEW {
+struct DynMem : public MemObject {
 	int size;
 	char *description;
 	byte *buf;
 };
-
-struct MemObject {
-	union {
-		MemObjectNEW tmp_dummy;
-		Script script;
-		CloneTable clones;
-		LocalVariables locals;
-		dstack_t stack;
-		SystemStrings sys_strings;
-		ListTable lists;
-		NodeTable nodes;
-		HunkTable hunks;
-		DynMem dynmem;
-	} data;
-
-	inline memObjType getType() const { return data.tmp_dummy._type; }
-	inline int getSegMgrId() const { return data.tmp_dummy._segmgrId; }
-};
-
 
 /** Contains selector IDs for a few selected selectors */
 struct selector_map_t {
