@@ -30,6 +30,12 @@
 
 namespace Common {
 
+// TODO: Improve the storage management of this class.
+// In particular, don't use new[] and delete[], but rather
+// construct/destruct objects manually. This way, we can
+// ensure that storage which is not currently used does not
+// correspond to a live active object.
+// (This is only of interest for array of non-POD objects).
 template<class T>
 class Array {
 protected:
@@ -196,18 +202,7 @@ public:
 	}
 
 	void resize(uint newSize) {
-		if (newSize == _size)
-			return;
-
-		T *old_storage = _storage;
-		_capacity = newSize;
-		_storage = new T[newSize];
-		if (old_storage) {
-			// Copy old data
-			int cnt = (_size < newSize ? _size : newSize);
-			copy(old_storage, old_storage + cnt, _storage);
-			delete[] old_storage;
-		}
+		reserve(newSize);
 		_size = newSize;
 	}
 
