@@ -1084,7 +1084,7 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Clones_seg_id, offset);
-	return &(mobj->data.clones.table[offset]);
+	return &(table->table[offset]);
 }
 
 List *SegManager::alloc_List(reg_t *addr) {
@@ -1102,7 +1102,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Lists_seg_id, offset);
-	return &(mobj->data.lists.table[offset]);
+	return &(table->table[offset]);
 }
 
 Node *SegManager::alloc_Node(reg_t *addr) {
@@ -1120,7 +1120,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
-	return &(mobj->data.nodes.table[offset]);
+	return &(table->table[offset]);
 }
 
 Hunk *SegManager::alloc_Hunk(reg_t *addr) {
@@ -1138,7 +1138,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Hunks_seg_id, offset);
-	return &(mobj->data.hunks.table[offset]);
+	return &(table->table[offset]);
 }
 
 

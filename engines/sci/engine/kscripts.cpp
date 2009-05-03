@@ -246,7 +246,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!scriptid)
 		return NULL_REG;
 
-	scr = &(s->seg_manager->heap[scriptid]->data.script);
+	scr = s->seg_manager->getScript(scriptid, SEG_ID);
 
 	if (!scr->exports_nr) {
 		SCIkdebug(SCIkERROR, "Script 0x%x does not have a dispatch table\n", script);

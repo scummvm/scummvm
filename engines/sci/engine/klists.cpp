@@ -42,7 +42,7 @@ Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line) {
 		return NULL;
 	}
 
-	NodeTable *nt = &(mobj->data.nodes);
+	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!ENTRY_IS_VALID(nt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
@@ -62,7 +62,7 @@ List *lookup_list(EngineState *s, reg_t addr, const char *file, int line) {
 		return NULL;
 	}
 
-	ListTable *lt = &(mobj->data.lists);
+	ListTable *lt = (ListTable *)mobj;
 
 	if (!ENTRY_IS_VALID(lt, addr.offset)) {
 		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));

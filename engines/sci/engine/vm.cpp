@@ -530,7 +530,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
 	MemObject *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 	if (memobj)
-		return &(memobj->data.script);
+		return (Script *)memobj;
 
 	return NULL;
 }
@@ -1640,7 +1640,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 
 	if (memobj)
-		script = &(memobj->data.script);
+		script = (Script *)memobj;
 
 #ifndef DISABLE_VALIDATIONS
 	if (script
@@ -1703,7 +1703,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 			seg_id = seg;
 			mem = s->seg_manager->heap[seg];
 			assert(mem);
-			s->seg_manager->freeScript(mem->data.script);
+			s->seg_manager->freeScript(*(Script *)mem);
 		}
 	} else if (!(mem = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
 		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
@@ -1711,7 +1711,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		return 0;
 	}
 
-	s->seg_manager->initialiseScript(mem->data.script, s, script_nr);
+	s->seg_manager->initialiseScript(*(Script *)mem, s, script_nr);
 
 	reg.segment = seg_id;
 	reg.offset = 0;
@@ -2088,14 +2088,14 @@ Object *obj_get(EngineState *s, reg_t offset) {
 	int idx;
 
 	if (memobj != NULL) {
-		if (memobj->getType() == MEM_OBJ_CLONES && ENTRY_IS_VALID(&memobj->data.clones, offset.offset))
-			obj = &(memobj->data.clones.table[offset.offset]);
+		if (memobj->getType() == MEM_OBJ_CLONES && ENTRY_IS_VALID((CloneTable *)memobj, offset.offset))
+			obj = &((*(CloneTable *)memobj).table[offset.offset]);
 		else if (memobj->getType() == MEM_OBJ_SCRIPT) {
-			if (offset.offset <= memobj->data.script.buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(memobj->data.script.buf + offset.offset)) {
-				idx = RAW_GET_CLASS_INDEX(&(memobj->data.script), offset);
-				if (idx >= 0 && idx < memobj->data.script.objects_nr)
-					obj = memobj->data.script.objects + idx;
+			if (offset.offset <= (*(Script *)memobj).buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			        && RAW_IS_OBJECT((*(Script *)memobj).buf + offset.offset)) {
+				idx = RAW_GET_CLASS_INDEX((Script *)memobj, offset);
+				if (idx >= 0 && idx < (*(Script *)memobj).objects_nr)
+					obj = (*(Script *)memobj).objects + idx;
 			}
 		}
 	}

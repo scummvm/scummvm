@@ -312,9 +312,9 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 
 			if (mobj) {
 				if (mobj->getType() == MEM_OBJ_SCRIPT)
-					max_index = mobj->data.script.objects_nr;
+					max_index = (*(Script *)mobj).objects_nr;
 				else if (mobj->getType() == MEM_OBJ_CLONES)
-					max_index = mobj->data.clones.max_entry;
+					max_index = (*(CloneTable *)mobj).max_entry;
 			}
 
 			while (idx < max_index) {
@@ -325,12 +325,12 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				objpos.segment = i;
 
 				if (mobj->getType() == MEM_OBJ_SCRIPT) {
-					obj = mobj->data.script.objects + idx;
+					obj = (*(Script *)mobj).objects + idx;
 					objpos.offset = obj->pos.offset;
 				} else if (mobj->getType() == MEM_OBJ_CLONES) {
-					obj = &(mobj->data.clones.table[idx]);
+					obj = &((*(CloneTable *)mobj).table[idx]);
 					objpos.offset = idx;
-					valid = clone_is_used(&mobj->data.clones, idx);
+					valid = clone_is_used((CloneTable *)mobj, idx);
 				}
 
 				if (valid) {
