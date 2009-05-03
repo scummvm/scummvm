@@ -71,6 +71,7 @@ MODULE_OBJS = \
 	sfx/seq/instrument-map.o \
 	sfx/seq/map-mt32-to-gm.o \
 	sfx/seq/sequencers.o \
+	sfx/softseq/adlib.o \
 	sfx/softseq/amiga.o \
 	sfx/softseq/pcjr.o \
 	sfx/softseq/opl2.o \

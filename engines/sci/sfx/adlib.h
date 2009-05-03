@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-#define ADLIB_VOICES 12
+#define ADLIB_VOICES 9
 
 struct adlib_def {
 	uint8 keyscale1;       /* 0-3 !*/

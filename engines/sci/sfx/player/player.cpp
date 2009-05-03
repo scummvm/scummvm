@@ -32,6 +32,7 @@
 #include "common/system.h"
 
 #include "sci/sfx/softseq/pcjr.h"
+#include "sci/sfx/softseq/adlib.h"
 
 namespace Sci {
 
@@ -48,6 +49,7 @@ static int play_it_done = 0;
 static uint32 tempo;
 
 static Common::Mutex *mutex;
+static int volume = 15;
 
 static void play_song(SongIterator *it) {
 	while (play_it && wakeup_time.msecsDiff(current_time) <= 0) {
@@ -62,6 +64,8 @@ static void play_song(SongIterator *it) {
 		                             | IT_READER_MAY_CLEAN))) {
 
 		case SI_FINISHED:
+			delete play_it;
+			play_it = NULL;
 			play_it_done = 1;
 			return;
 
@@ -113,9 +117,12 @@ static int player_set_option(char *name, char *value) {
 }
 
 static int player_init(ResourceManager *resmgr, int expected_latency) {
-	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK);
+	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
 	switch(musicDriver) {
+	case MD_ADLIB:
+		mididrv = new MidiPlayer_Adlib();
+		break;
 	case MD_PCJR:
 		mididrv = new MidiPlayer_PCJr();
 		break;
@@ -139,6 +146,7 @@ static int player_init(ResourceManager *resmgr, int expected_latency) {
 
 	mididrv->setTimerCallback(NULL, player_timer_callback);
 	mididrv->open(resmgr);
+	mididrv->setVolume(volume);
 
 	return SFX_OK;
 }
@@ -166,7 +174,6 @@ static int player_stop(void) {
 	mutex->lock();
 	delete play_it;
 	play_it = NULL;
-	mididrv->allSoundOff();
 	mutex->unlock();
 
 	return SFX_OK;
@@ -190,7 +197,7 @@ static int player_pause(void) {
 	play_paused = 1;
 	play_pause_diff = wakeup_time.msecsDiff(current_time);
 
-	mididrv->allSoundOff();
+	mididrv->playSwitch(false);
 	mutex->unlock();
 
 	return SFX_OK;
@@ -199,6 +206,7 @@ static int player_pause(void) {
 static int player_resume(void) {
 	mutex->lock();
 	wakeup_time = Audio::Timestamp(current_time.msecs() + play_pause_diff, SFX_TICKS_PER_SEC);
+	mididrv->playSwitch(true);
 	play_paused = 0;
 	mutex->unlock();
 
@@ -209,6 +217,8 @@ static int player_exit(void) {
 	mididrv->close();
 	delete mididrv;
 	delete mutex;
+	delete play_it;
+	play_it = NULL;
 
 	return SFX_OK;
 }

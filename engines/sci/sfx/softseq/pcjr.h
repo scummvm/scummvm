@@ -25,8 +25,6 @@
 
 #include "sci/sfx/sci_midi.h"
 
-#include "sound/softsynth/emumidi.h"
-
 namespace Sci {
 
 class MidiDriver_PCJr : public MidiDriver_Emulated {
