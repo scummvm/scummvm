@@ -26,7 +26,7 @@
 #define FILESYSTEM_FACTORY_H
 
 #include "common/str.h"
-#include "engine/backend/fs/abstract-fs.h"
+#include "backends/fs/abstract-fs.h"
 
 /**
  * Creates concrete FSNode objects depending on the current architecture.

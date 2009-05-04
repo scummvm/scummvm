@@ -25,7 +25,7 @@
 #ifndef POSIX_FILESYSTEM_FACTORY_H
 #define POSIX_FILESYSTEM_FACTORY_H
 
-#include "engine/backend/fs/fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates POSIXFilesystemNode objects.

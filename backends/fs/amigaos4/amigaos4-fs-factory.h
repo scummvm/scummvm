@@ -25,7 +25,7 @@
 #ifndef AMIGAOS_FILESYSTEM_FACTORY_H
 #define AMIGAOS_FILESYSTEM_FACTORY_H
 
-#include "engine/backend/fs/fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates AmigaOSFilesystemNode objects.

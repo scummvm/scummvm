@@ -29,7 +29,7 @@
 #include "engine/textobject.h"
 #include "engine/engine.h"
 #include "engine/localize.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 std::string parseMsgText(const char *msg, char *msgId);
 

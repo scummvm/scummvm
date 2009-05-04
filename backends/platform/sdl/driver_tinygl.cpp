@@ -31,7 +31,7 @@
 #include "engine/material.h"
 #include "engine/font.h"
 #include "engine/vector3d.h"
-#include "engine/backend/platform/sdl/driver_tinygl.h"
+#include "backends/platform/sdl/driver_tinygl.h"
 
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zgl.h"

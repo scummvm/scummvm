@@ -37,8 +37,8 @@
 
 #include "common/debug.h"
 #include "common/util.h"
-#include "engine/backend/fs/abstract-fs.h"
-#include "engine/backend/fs/stdiostream.h"
+#include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #define ENTER() /* debug(6, "Enter") */
 #define LEAVE() /* debug(6, "Leave") */

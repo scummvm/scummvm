@@ -1,4 +1,4 @@
-MODULE := engine/backend
+MODULE := backends
 
 MODULE_OBJS := \
 	events/default/default-events.o \

@@ -29,19 +29,19 @@
 #include "common/events.h"
 #include "common/util.h"
 
-#include "engine/backend/platform/sdl/driver_sdl.h"
+#include "backends/platform/sdl/driver_sdl.h"
 
 #ifdef UNIX
-	#include "engine/backend/saves/posix/posix-saves.h"
+	#include "backends/saves/posix/posix-saves.h"
 #else
-	#include "engine/backend/saves/default/default-saves.h"
+	#include "backends/saves/default/default-saves.h"
 #endif
-#include "engine/backend/timer/default/default-timer.h"
+#include "backends/timer/default/default-timer.h"
 #include "mixer/mixer_intern.h"
 
-#include "engine/backend/timer/default/default-timer.h"
-#include "engine/backend/saves/default/default-saves.h"
-#include "engine/backend/events/default/default-events.h"
+#include "backends/timer/default/default-timer.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/events/default/default-events.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -55,11 +55,11 @@
  * Include header files needed for the getFilesystemFactory() method.
  */
 #if defined(__amigaos4__)
-	#include "engine/backend/fs/amigaos4/amigaos4-fs-factory.h"
+	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
 #elif defined(UNIX)
-	#include "engine/backend/fs/posix/posix-fs-factory.h"
+	#include "backends/fs/posix/posix-fs-factory.h"
 #elif defined(WIN32)
-	#include "engine/backend/fs/windows/windows-fs-factory.h"
+	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
 

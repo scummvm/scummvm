@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "engine/backend/fs/abstract-fs.h"
+#include "backends/fs/abstract-fs.h"
 
 const char *AbstractFSNode::lastPathComponent(const Common::String &str, const char sep) {
 	// TODO: Get rid of this eventually! Use Common::lastPathComponent instead

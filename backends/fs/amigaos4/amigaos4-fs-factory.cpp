@@ -23,8 +23,8 @@
  */
 
 #if defined(__amigaos4__)
-#include "engine/backend/fs/amigaos4/amigaos4-fs-factory.h"
-#include "engine/backend/fs/amigaos4/amigaos4-fs.cpp"
+#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#include "backends/fs/amigaos4/amigaos4-fs.cpp"
 
 AbstractFSNode *AmigaOSFilesystemFactory::makeRootFileNode() const {
 	return new AmigaOSFilesystemNode();

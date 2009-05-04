@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "engine/backend/fs/stdiostream.h"
+#include "backends/fs/stdiostream.h"
 
 #include <errno.h>
 
@@ -35,7 +35,7 @@
 	// for those replaced fopen/fread/etc functions
 	typedef unsigned long	uint64;
 	typedef signed long	int64;
-	#include "backends/platform/ps2/fileio.h"
+	#include "platforms/ps2/fileio.h"
 
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)

@@ -28,7 +28,7 @@
 #include "common/endian.h"
 
 #include "engine/savegame.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'

@@ -36,7 +36,7 @@
 #include "engine/walkplane.h"
 #include "engine/imuse/imuse.h"
 
-#include "backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #include <cmath>
 #include <cstring>

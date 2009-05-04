@@ -24,9 +24,9 @@
  */
 
 #include "common/util.h"
-#include "engine/backend/platform/driver.h"
-#include "engine/backend/fs/abstract-fs.h"
-#include "engine/backend/fs/fs-factory.h"
+#include "backends/platform/driver.h"
+#include "backends/fs/abstract-fs.h"
+#include "backends/fs/fs-factory.h"
 
 namespace Common {
 

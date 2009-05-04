@@ -33,8 +33,8 @@
 #ifdef _WIN32_WCE
 #undef GetCurrentDirectory
 #endif
-#include "engine/backend/fs/abstract-fs.h"
-#include "engine/backend/fs/stdiostream.h"
+#include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>

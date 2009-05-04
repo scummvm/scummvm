@@ -34,7 +34,7 @@
 #include "common/fs.h"
 #include "common/util.h"
 
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 

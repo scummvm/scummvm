@@ -29,7 +29,7 @@
 #include "engine/colormap.h"
 #include "engine/material.h"
 
-#include "engine/backend/platform/sdl/driver_gl.h"
+#include "backends/platform/sdl/driver_gl.h"
 
 DriverGL::DriverGL() {
 	_storedDisplay = NULL;

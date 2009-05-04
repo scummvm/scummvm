@@ -34,8 +34,8 @@
 #include "engine/bitmap.h"
 #include "engine/vector3d.h"
 
-#include "engine/backend/platform/driver.h"
-#include "engine/backend/platform/sdl/driver_sdl.h"
+#include "backends/platform/driver.h"
+#include "backends/platform/sdl/driver_sdl.h"
 
 #include <SDL.h>
 #include <SDL_opengl.h>

@@ -23,8 +23,8 @@
  */
 
 #if defined(UNIX)
-#include "engine/backend/fs/posix/posix-fs-factory.h"
-#include "engine/backend/fs/posix/posix-fs.cpp"
+#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/posix/posix-fs.cpp"
 
 AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");

@@ -28,7 +28,7 @@
 #include "common/timer.h"
 #include "common/mutex.h"
 
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"

@@ -34,7 +34,7 @@
 #include "engine/actor.h"
 #include "engine/textobject.h"
 #include "engine/smush/smush.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 #include "engine/savegame.h"
 #include "engine/lipsync.h"
 #include "engine/registry.h"

@@ -29,7 +29,7 @@
 
 #include "engine/material.h"
 #include "engine/colormap.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _cmap((CMap *) &cmap) {

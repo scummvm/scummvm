@@ -24,7 +24,7 @@
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#include "engine/backend/saves/default/default-saves.h"
+#include "backends/saves/default/default-saves.h"
 
 #include "common/savefile.h"
 #include "common/util.h"

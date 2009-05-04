@@ -23,8 +23,8 @@
  */
 
 #if defined(WIN32)
-#include "engine/backend/fs/windows/windows-fs-factory.h"
-#include "engine/backend/fs/windows/windows-fs.cpp"
+#include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/fs/windows/windows-fs.cpp"
 
 AbstractFSNode *WindowsFilesystemFactory::makeRootFileNode() const {
 	return new WindowsFilesystemNode();

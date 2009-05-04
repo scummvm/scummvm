@@ -29,7 +29,7 @@
 
 #include "engine/cmd_line.h"
 #include "engine/version.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #define DETECTOR_TESTING_HACK
 

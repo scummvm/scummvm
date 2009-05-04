@@ -19,8 +19,8 @@ MODULES := tools $(MODULES)
 
 # After the game specific modules follow the shared modules
 MODULES += \
+	backends \
 	engine \
-	engine/backend \
 	engine/imuse \
 	engine/lua \
 	engine/smush \

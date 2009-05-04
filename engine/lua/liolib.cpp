@@ -17,7 +17,7 @@
 #include "engine/cmd_line.h"
 #include "engine/engine.h"
 #include "engine/savegame.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>

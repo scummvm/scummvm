@@ -24,7 +24,7 @@
 
 #if defined(UNIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#include "engine/backend/saves/posix/posix-saves.h"
+#include "backends/saves/posix/posix-saves.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"

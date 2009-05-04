@@ -29,7 +29,7 @@
 
 #include "engine/bitmap.h"
 #include "engine/smush/smush.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #include <cstdlib>
 #include <cstring>

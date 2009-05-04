@@ -1,4 +1,4 @@
-MODULE := engine/backend/platform/sdl
+MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
 	driver_gl.o \
@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	driver_tinygl.o
 
 MODULE_DIRS += \
-	engine/backend/platform/sdl/
+	backends/platform/sdl/
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

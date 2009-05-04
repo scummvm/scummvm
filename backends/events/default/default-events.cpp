@@ -25,8 +25,8 @@
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
 #include "common/config-manager.h"
-#include "engine/backend/events/default/default-events.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/events/default/default-events.h"
+#include "backends/platform/driver.h"
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1

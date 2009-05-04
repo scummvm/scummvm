@@ -25,7 +25,7 @@
 #ifndef WINDOWS_FILESYSTEM_FACTORY_H
 #define WINDOWS_FILESYSTEM_FACTORY_H
 
-#include "engine/backend/fs/fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates WindowsFilesystemNode objects.

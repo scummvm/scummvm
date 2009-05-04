@@ -45,7 +45,7 @@
 
 #include <engine/localize.h>
 #include <engine/resource.h>
-#include <engine/backend/platform/driver.h>
+#include <backends/platform/driver.h>
 
 // hacks below for shutup linker
 int g_flags = 0;

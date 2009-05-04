@@ -32,7 +32,7 @@
 #include "engine/smush/smush.h"
 #include "engine/resource.h"
 #include "engine/engine.h"
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 #include "engine/imuse/imuse_track.h"
 
 #include "mixer/mixer.h"

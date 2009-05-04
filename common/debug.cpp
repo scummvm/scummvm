@@ -27,13 +27,13 @@
 #include "common/debug.h"
 #include "common/str.h"
 
-#include "engine/backend/platform/driver.h"
+#include "backends/platform/driver.h"
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
 	typedef unsigned long	uint64;
 	typedef signed long	int64;
-	#include "engine/backend/platform/ps2/fileio.h"
+	#include "backends/platform/ps2/fileio.h"
 
 	#define fprintf				ps2_fprintf
 	#define fputs(str, file)	ps2_fputs(str, file)
@@ -41,7 +41,7 @@
 #endif
 
 #ifdef __DS__
-	#include "engine/backend/fs/ds/ds-fs.h"
+	#include "backends/fs/ds/ds-fs.h"
 
 	void	std_fprintf(FILE* handle, const char* fmt, ...);
 	void	std_fflush(FILE* handle);
