@@ -1180,19 +1180,28 @@ void AGOSEngine::vc31_setWindow() {
 }
 
 void AGOSEngine::vc32_saveScreen() {
-	uint xoffs = _videoWindows[4 * 4 + 0] * 16;
-	uint yoffs = _videoWindows[4 * 4 + 1];
-	uint width = _videoWindows[4 * 4 + 2] * 16;
-	uint height = _videoWindows[4 * 4 + 3];
+	if (getGameType() == GType_PN) {
+		Graphics::Surface *screen = _system->lockScreen();
 
-	byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
-	byte *src = _window4BackScn;
-	uint srcWidth = _videoWindows[4 * 4 + 2] * 16;
+		byte *dst = getBackGround();
+		byte *src = (byte *)screen->pixels;
+		memcpy(dst, src, 64000);
 
-	for (; height > 0; height--) {
-		memcpy(dst, src, width);
-		dst += _screenWidth;
-		src += srcWidth;
+		_system->unlockScreen();
+	} else {
+		uint16 xoffs = _videoWindows[4 * 4 + 0] * 16;
+		uint16 yoffs = _videoWindows[4 * 4 + 1];
+		uint16 width = _videoWindows[4 * 4 + 2] * 16;
+		uint16 height = _videoWindows[4 * 4 + 3];
+
+		byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
+		byte *src = _window4BackScn;
+		uint16 srcWidth = _videoWindows[4 * 4 + 2] * 16;
+		for (; height > 0; height--) {
+			memcpy(dst, src, width);
+			dst += _screenWidth;
+			src += srcWidth;
+		}
 	}
 }
 
