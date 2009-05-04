@@ -604,7 +604,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 			char tempFilename[50];
 			strcpy(tempFilename, fileDesc->fileName);
 			char *pOne = strchr(tempFilename, '1');
-			if (pOne) strcpy(pOne, pOne + 1);
+			if (pOne) strcpy(pOne, pOne + 1);	// FIXME: Valgrind complains about this
 
 			Common::String fname(tempFilename);
 			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
