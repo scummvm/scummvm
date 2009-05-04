@@ -32,6 +32,8 @@
 #include "sci/scicore/versions.h"	// for sci_version_t
 #include "sci/engine/vm_types.h"	// for reg_t
 
+#include "common/util.h"
+
 namespace Sci {
 
 enum MemObjectType {
@@ -408,13 +410,62 @@ struct Table : public MemObject {
 	Entry *table;
 
 public:
-	Table();
-	~Table();
+	Table() {
+		entries_nr = 0;
+		max_entry = 0;
+		entries_used = 0;
+		first_free = HEAPENTRY_INVALID;
+		table = NULL;
+	}
 
-	void initTable();
-	int	allocEntry();
-	bool isValidEntry(int idx);
-	virtual void freeEntry(int idx);
+	~Table() {
+		// FIXME: Shouldn't we make sure that all table entries are disposed
+		// of properly?
+		free(table);
+		table = NULL;
+		entries_nr = max_entry = 0;
+	}
+
+	void initTable() {
+		entries_nr = INITIAL;
+		max_entry = 0;
+		entries_used = 0;
+		first_free = HEAPENTRY_INVALID;
+		table = (Entry *)calloc(INITIAL, sizeof(Entry));
+	}
+
+	int allocEntry() {
+		entries_used++;
+		if (first_free != HEAPENTRY_INVALID) {
+			int oldff = first_free;
+			first_free = table[oldff].next_free;
+
+			table[oldff].next_free = oldff;
+			return oldff;
+		} else {
+			if (max_entry == entries_nr) {
+				entries_nr += INCREMENT;
+
+				table = (Entry *)sci_realloc(table,  sizeof(Entry) * entries_nr);
+				memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(Entry));
+			}
+			table[max_entry].next_free = max_entry; /* Tag as 'valid' */
+			return max_entry++;
+		}
+	}
+
+	bool isValidEntry(int idx) {
+		return idx >= 0 && idx < max_entry && table[idx].next_free == idx;
+	}
+
+	virtual void freeEntry(int idx) {
+		if (idx < 0 || idx >= max_entry)
+			::error("Table::freeEntry: Attempt to release invalid table index %d", idx);
+
+		table[idx].next_free = first_free;
+		first_free = idx;
+		entries_used--;
+	}
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
