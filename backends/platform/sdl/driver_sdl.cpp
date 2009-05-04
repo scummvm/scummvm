@@ -201,7 +201,8 @@ void DriverSDL::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
+			// disable wrap mouse for now, it's really annoying
+			//SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
 		}
 	}
 }
