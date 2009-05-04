@@ -394,6 +394,7 @@ struct Hunk {
 
 template<typename T, int INITIAL, int INCREMENT>
 struct Table : public MemObject {
+	typedef T value_type;
 	struct Entry : public T {
 		int next_free; /* Only used for free entries */
 	};

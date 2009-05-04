@@ -93,53 +93,62 @@ static void sync_song_t(Common::Serializer &s, song_t &obj) {
 }
 
 
+// Experimental hack: Use syncWithSerializer to sync. By default, this assume
+// the object to be synced is a subclass of Serializable and thus tries to invoke
+// the saveLoadWithSerializer() method. But it is possible to specialize this
+// template function to handle stuff that is not implementing that interface.
+template<typename T>
+void syncWithSerializer(Common::Serializer &s, T &obj) {
+	obj.saveLoadWithSerializer(s);
+}
+
+// By default, sync using syncWithSerializer, which in turn can easily be overloaded.
+template <typename T>
+struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
+	void operator()(Common::Serializer &s, T &obj) const {
+		//obj.saveLoadWithSerializer(s);
+		syncWithSerializer(s, obj);
+	}
+};
+
 /**
  * Sync a Common::Array using a Common::Serializer.
  * When saving, this writes the length of the array, then syncs (writes) all entries.
  * When loading, it loads the length of the array, then resizes it accordingly, before
  * syncing all entries.
  *
- * TODO: Right now, this can only sync arrays containing objects which subclass Serializable.
- * To sync arrays containing e.g. ints, we have to tell it how to sync those. There are
- * ways to do that, I just haven't decided yet how to approach it. One way would be to use
- * the same preprocessors tricks as in common/serializer.h. Another is to rely on template
- * specialization (that one could be rather elegant, in fact).
- * 
- *
- * Note: I didn't add this as a member method to Common::Array (and subclass that from Serializable)
- * on purpose, as not all code using Common::Array wants to do deal with serializers...
+ * Note: This shouldn't be in common/array.h nor in common/serializer.h, after
+ * all, not all code using arrays wants to use the serializer, and vice versa.
+ * But we could put this into a separate header file in common/ at some point.
+ * Something like common/serializer-extras.h or so.
  *
  * TODO: Add something like this for lists, queues....
  */
+template <typename T, class Syncer = DefaultSyncer<T> >
+struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
+	void operator()(Common::Serializer &s, Common::Array<T> &arr) const {
+		uint len = arr.size();
+		s.syncAsUint32LE(len);
+		Syncer sync;
+
+		// Resize the array if loading.
+		if (s.isLoading())
+			arr.resize(len);
+
+		typename Common::Array<T>::iterator i;
+		for (i = arr.begin(); i != arr.end(); ++i) {
+			sync(s, *i);
+		}
+	}
+};
+
+// Convenience wrapper
 template<typename T>
 void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
-	uint len = arr.size();
-	s.syncAsUint32LE(len);
-
-	// Resize the array if loading.
-	if (s.isLoading())
-		arr.resize(len);
-
-	typename Common::Array<T>::iterator i;
-	for (i = arr.begin(); i != arr.end(); ++i) {
-		i->saveLoadWithSerializer(s);
-	}
+	ArraySyncer<T> sync;
+	sync(s, arr);
 }
 
-template<typename T>
-void syncArray(Common::Serializer &s, Common::Array<T> &arr, const Common::Functor2<Common::Serializer &, T &, void> &func) {
-	uint len = arr.size();
-	s.syncAsUint32LE(len);
-
-	// Resize the array if loading.
-	if (s.isLoading())
-		arr.resize(len);
-
-	typename Common::Array<T>::iterator i;
-	for (i = arr.begin(); i != arr.end(); ++i) {
-		func(s, *i);
-	}
-}
 
 
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
@@ -211,7 +220,8 @@ static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 
 
 
-static void sync_Class(Common::Serializer &s, Class &obj) {
+template <>
+void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
 	sync_reg_t(s, obj.reg);
 }
@@ -252,8 +262,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	sync_SegManagerPtr(s, seg_manager);
 
 
-	Common::Functor2Fun<Common::Serializer &, Class &, void> tmp(sync_Class);
-	syncArray<Class>(s, _classtable, tmp);
+	syncArray<Class>(s, _classtable);
 
 	sync_sfx_state_t(s, sound);
 }
@@ -281,71 +290,38 @@ static void sync_Object(Common::Serializer &s, Object &obj) {
 		sync_reg_t(s, obj.variables[i]);
 }
 
-static void sync_Clone(Common::Serializer &s, Clone &obj) {
+template <>
+void syncWithSerializer(Common::Serializer &s, Clone &obj) {
 	sync_Object(s, obj);
 }
 
-static void sync_List(Common::Serializer &s, List &obj) {
+template <>
+void syncWithSerializer(Common::Serializer &s, List &obj) {
 	sync_reg_t(s, obj.first);
 	sync_reg_t(s, obj.last);
 }
 
-static void sync_Node(Common::Serializer &s, Node &obj) {
+template <>
+void syncWithSerializer(Common::Serializer &s, Node &obj) {
 	sync_reg_t(s, obj.pred);
 	sync_reg_t(s, obj.succ);
 	sync_reg_t(s, obj.key);
 	sync_reg_t(s, obj.value);
 }
 
-static void sync_CloneEntry(Common::Serializer &s, CloneTable::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-	sync_Clone(s, obj);
-}
-
-static void sync_CloneTable(Common::Serializer &s, CloneTable &obj) {
+template <typename T>
+static void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.entries_nr);
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 	s.syncAsSint32LE(obj.max_entry);
 
 	if (!obj.table && obj.entries_nr)
-		obj.table = (CloneTable::Entry *)sci_calloc(obj.entries_nr, sizeof(CloneTable::Entry));
-	for (int i = 0; i < obj.entries_nr; ++i)
-		sync_CloneEntry(s, obj.table[i]);
-}
-
-static void sync_ListEntry(Common::Serializer &s, ListTable::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-	sync_List(s, obj);
-}
-
-static void sync_ListTable(Common::Serializer &s, ListTable &obj) {
-	s.syncAsSint32LE(obj.entries_nr);
-	s.syncAsSint32LE(obj.first_free);
-	s.syncAsSint32LE(obj.entries_used);
-	s.syncAsSint32LE(obj.max_entry);
-
-	if (!obj.table && obj.entries_nr)
-		obj.table = (ListTable::Entry *)sci_calloc(obj.entries_nr, sizeof(ListTable::Entry));
-	for (int i = 0; i < obj.entries_nr; ++i)
-		sync_ListEntry(s, obj.table[i]);
-}
-
-static void sync_NodeEntry(Common::Serializer &s, NodeTable::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-	sync_Node(s, obj);
-}
-
-static void sync_NodeTable(Common::Serializer &s, NodeTable &obj) {
-	s.syncAsSint32LE(obj.entries_nr);
-	s.syncAsSint32LE(obj.first_free);
-	s.syncAsSint32LE(obj.entries_used);
-	s.syncAsSint32LE(obj.max_entry);
-
-	if (!obj.table && obj.entries_nr)
-		obj.table = (NodeTable::Entry *)sci_calloc(obj.entries_nr, sizeof(NodeTable::Entry));
-	for (int i = 0; i < obj.entries_nr; ++i)
-		sync_NodeEntry(s, obj.table[i]);
+		obj.table = (typename T::Entry *)sci_calloc(obj.entries_nr, sizeof(typename T::Entry));
+	for (int i = 0; i < obj.entries_nr; ++i) {
+		s.syncAsSint32LE(obj.table[i].next_free);
+		syncWithSerializer<typename T::value_type>(s, obj.table[i]);
+	}
 }
 
 static void sync_Script(Common::Serializer &s, Script &obj) {
@@ -453,7 +429,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 		sync_Script(s, *(Script *)mobj);
 		break;
 	case MEM_OBJ_CLONES:
-		sync_CloneTable(s, *(CloneTable *)mobj);
+		sync_Table<CloneTable>(s, *(CloneTable *)mobj);
 		break;
 	case MEM_OBJ_LOCALS:
 		sync_LocalVariables(s, *(LocalVariables *)mobj);
@@ -477,10 +453,10 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 	case MEM_OBJ_STRING_FRAG:
 		break;
 	case MEM_OBJ_LISTS:
-		sync_ListTable(s, *(ListTable *)mobj);
+		sync_Table<ListTable>(s, *(ListTable *)mobj);
 		break;
 	case MEM_OBJ_NODES:
-		sync_NodeTable(s, *(NodeTable *)mobj);
+		sync_Table<NodeTable>(s, *(NodeTable *)mobj);
 		break;
 	case MEM_OBJ_DYNMEM:
 		sync_DynMem(s, *(DynMem *)mobj);
