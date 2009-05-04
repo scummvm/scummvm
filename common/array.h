@@ -195,7 +195,7 @@ public:
 
 		T *old_storage = _storage;
 		_capacity = newCapacity;
-		_storage = new T[newCapacity];
+		_storage = new T[newCapacity]();
 		assert(_storage);
 
 		if (old_storage) {
