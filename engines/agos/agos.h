@@ -805,7 +805,7 @@ protected:
 	void changeWindow(uint a);
 	void closeWindow(uint a);
 	void setTextColor(uint color);
-	void windowPutChar(WindowBlock *window, byte c, byte b = 0);
+	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 	void waitWindow(WindowBlock *window);
 
 	HitArea *findBox(uint hitarea_id);
@@ -1383,7 +1383,7 @@ public:
 	bool _inputReady;
 	bool _inputting;
 	uint16 _intputCounter, _inputMax;
-	uint16 _mousePrintFG; // NOTE: Currently not used
+	uint16 _mousePrintFG;
 	HitArea *_dragStore;
 	uint8 _hitCalled;
 
@@ -1467,6 +1467,7 @@ public:
 	void drawIconHitBar();
 	void iconPage();
 	void printIcon(HitArea *ha, uint8 i, uint8 r);
+	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 
 	bool badload(int8 errorNum);
 	int loadfl(char *name);

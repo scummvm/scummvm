@@ -484,6 +484,12 @@ void AGOSEngine::openTextWindow() {
 		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
 }
 
+void AGOSEngine_PN::windowPutChar(WindowBlock *window, byte c, byte b) {
+	if (_mousePrintFG || _wiped)
+		return;
+	AGOSEngine::windowPutChar(window, c, b);
+}
+
 void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
