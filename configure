@@ -470,7 +470,7 @@ psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
-	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/engine/backend/platform/psp/psp.spec"
+	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
 	;;
 gamecube)
 	_host_os=gamecube
@@ -1237,7 +1237,7 @@ case $_backend in
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
 	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/engine/backend/platform/dc -isystem $(ronindir)/include'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
 		;;
@@ -1263,7 +1263,7 @@ case $_backend in
 		exit 1
 		;;
 esac
-MODULES="$MODULES engine/backend/platform/$_backend"
+MODULES="$MODULES backends/platform/$_backend"
 
 #
 # Do CXXFLAGS now we know the compiler version
