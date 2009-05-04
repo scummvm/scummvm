@@ -43,7 +43,7 @@
 				AdditionalOptions="/wd 4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;LUA_ADD_CUSTOM_FOPEN;USE_ZLIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;USE_ZLIB"
 				RuntimeLibrary="1"
 				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="2"
@@ -130,7 +130,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;LUA_ADD_CUSTOM_FOPEN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;USE_ZLIB"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="2"
@@ -998,11 +998,11 @@
 						Name="default"
 						>
 						<File
-							RelativePath="..\..\engine\backend\timer\default\default-timer.cpp"
+							RelativePath="..\..\backends\timer\default\default-timer.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\timer\default\default-timer.h"
+							RelativePath="..\..\backends\timer\default\default-timer.h"
 							>
 						</File>
 					</Filter>
@@ -1011,34 +1011,34 @@
 					Name="fs"
 					>
 					<File
-						RelativePath="..\..\engine\backend\fs\abstract-fs.cpp"
+						RelativePath="..\..\backends\fs\abstract-fs.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\engine\backend\fs\abstract-fs.h"
+						RelativePath="..\..\backends\fs\abstract-fs.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\engine\backend\fs\fs-factory.h"
+						RelativePath="..\..\backends\fs\fs-factory.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\engine\backend\fs\stdiostream.cpp"
+						RelativePath="..\..\backends\fs\stdiostream.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\engine\backend\fs\stdiostream.h"
+						RelativePath="..\..\backends\fs\stdiostream.h"
 						>
 					</File>
 					<Filter
 						Name="windows"
 						>
 						<File
-							RelativePath="..\..\engine\backend\fs\windows\windows-fs-factory.cpp"
+							RelativePath="..\..\backends\fs\windows\windows-fs-factory.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\fs\windows\windows-fs-factory.h"
+							RelativePath="..\..\backends\fs\windows\windows-fs-factory.h"
 							>
 						</File>
 					</Filter>
@@ -1047,18 +1047,18 @@
 					Name="saves"
 					>
 					<File
-						RelativePath="..\..\engine\backend\saves\savefile.cpp"
+						RelativePath="..\..\backends\saves\savefile.cpp"
 						>
 					</File>
 					<Filter
 						Name="default"
 						>
 						<File
-							RelativePath="..\..\engine\backend\saves\default\default-saves.cpp"
+							RelativePath="..\..\backends\saves\default\default-saves.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\saves\default\default-saves.h"
+							RelativePath="..\..\backends\saves\default\default-saves.h"
 							>
 						</File>
 					</Filter>
@@ -1067,34 +1067,34 @@
 					Name="platform"
 					>
 					<File
-						RelativePath="..\..\engine\backend\platform\driver.h"
+						RelativePath="..\..\backends\platform\driver.h"
 						>
 					</File>
 					<Filter
 						Name="sdl"
 						>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_gl.cpp"
+							RelativePath="..\..\backends\platform\sdl\driver_gl.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_gl.h"
+							RelativePath="..\..\backends\platform\sdl\driver_gl.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_sdl.cpp"
+							RelativePath="..\..\backends\platform\sdl\driver_sdl.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_sdl.h"
+							RelativePath="..\..\backends\platform\sdl\driver_sdl.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_tinygl.cpp"
+							RelativePath="..\..\backends\platform\sdl\driver_tinygl.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\platform\sdl\driver_tinygl.h"
+							RelativePath="..\..\backends\platform\sdl\driver_tinygl.h"
 							>
 						</File>
 					</Filter>
@@ -1106,11 +1106,11 @@
 						Name="default"
 						>
 						<File
-							RelativePath="..\..\engine\backend\events\default\default-events.cpp"
+							RelativePath="..\..\backends\events\default\default-events.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\engine\backend\events\default\default-events.h"
+							RelativePath="..\..\backends\events\default\default-events.h"
 							>
 						</File>
 					</Filter>
