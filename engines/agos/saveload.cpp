@@ -133,10 +133,7 @@ char *AGOSEngine_Elvira1::genSaveName(int slot) {
 
 char *AGOSEngine::genSaveName(int slot) {
 	static char buf[20];
-	if (getPlatform() == Common::kPlatformPC)
-		sprintf(buf, "pn-pc.%.3d", slot);
-	else
-		sprintf(buf, "pn.%.3d", slot);
+	sprintf(buf, "pn.%.3d", slot);
 	return buf;
 }
 
