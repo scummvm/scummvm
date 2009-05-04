@@ -72,6 +72,7 @@ void AGOSEngine::loadZone(uint16 zoneNum, bool useError) {
 		// Only a single zone is used in Personal Nightmare
 		vpe = _vgaBufferPointers;
 		vc27_resetSprite();
+		_vgaMemPtr = _vgaMemBase;
 	} else {
 		vpe = _vgaBufferPointers + zoneNum;
 		if (vpe->vgaFile1 != NULL)
