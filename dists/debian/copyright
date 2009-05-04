@@ -64,26 +64,26 @@ Files released as GPL v2 or later:
     config.guess
     config.sub
     configure
-    engine/backend/events/default/default-events.cpp
-    engine/backend/events/default/default-events.h
-    engine/backend/fs/abstract-fs.h
-    engine/backend/fs/amigaos4/amigaos4-fs.cpp
-    engine/backend/fs/amigaos4/amigaos4-fs-factory.cpp
-    engine/backend/fs/amigaos4/amigaos4-fs-factory.h
-    engine/backend/fs/fs-factory.h
-    engine/backend/fs/posix/posix-fs.cpp
-    engine/backend/fs/posix/posix-fs-factory.cpp
-    engine/backend/fs/posix/posix-fs-factory.h
-    engine/backend/fs/windows/windows-fs.cpp
-    engine/backend/fs/windows/windows-fs-factory.cpp
-    engine/backend/fs/windows/windows-fs-factory.h
-    engine/backend/saves/compressed/compressed-saves.cpp
-    engine/backend/saves/compressed/compressed-saves.h
-    engine/backend/saves/default/default-saves.cpp
-    engine/backend/saves/default/default-saves.h
-    engine/backend/saves/savefile.cpp
-    engine/backend/timer/default/default-timer.cpp
-    engine/backend/timer/default/default-timer.h
+    backends/events/default/default-events.cpp
+    backends/events/default/default-events.h
+    backends/fs/abstract-fs.h
+    backends/fs/amigaos4/amigaos4-fs.cpp
+    backends/fs/amigaos4/amigaos4-fs-factory.cpp
+    backends/fs/amigaos4/amigaos4-fs-factory.h
+    backends/fs/fs-factory.h
+    backends/fs/posix/posix-fs.cpp
+    backends/fs/posix/posix-fs-factory.cpp
+    backends/fs/posix/posix-fs-factory.h
+    backends/fs/windows/windows-fs.cpp
+    backends/fs/windows/windows-fs-factory.cpp
+    backends/fs/windows/windows-fs-factory.h
+    backends/saves/compressed/compressed-saves.cpp
+    backends/saves/compressed/compressed-saves.h
+    backends/saves/default/default-saves.cpp
+    backends/saves/default/default-saves.h
+    backends/saves/savefile.cpp
+    backends/timer/default/default-timer.cpp
+    backends/timer/default/default-timer.h
     engine/cmd_line.cpp
     engine/cmd_line.h
     mixer/audiostream.cpp
