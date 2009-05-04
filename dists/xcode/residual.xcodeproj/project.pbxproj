@@ -7,12 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		281E11180E3FA94F004A8255 /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11160E3FA94F004A8255 /* default-saves.cpp */; };
-		281E111D0E3FA96D004A8255 /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E111C0E3FA96D004A8255 /* savefile.cpp */; };
 		281E11290E3FA9DA004A8255 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11270E3FA9DA004A8255 /* file.cpp */; };
 		281E112C0E3FA9E8004A8255 /* fs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E112A0E3FA9E8004A8255 /* fs.cpp */; };
 		281E11320E3FAA09004A8255 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11300E3FAA09004A8255 /* stream.cpp */; };
-		281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */; };
+		28211ED30FAF797A009AB5FF /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED10FAF797A009AB5FF /* default-events.cpp */; };
+		28211ED60FAF79B2009AB5FF /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED40FAF79B2009AB5FF /* default-timer.cpp */; };
+		28211EDE0FAF7A19009AB5FF /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED80FAF7A19009AB5FF /* driver_gl.cpp */; };
+		28211EDF0FAF7A19009AB5FF /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */; };
+		28211EE00FAF7A19009AB5FF /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */; };
+		28211EE20FAF7A48009AB5FF /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE10FAF7A48009AB5FF /* savefile.cpp */; };
+		28211EE50FAF7A62009AB5FF /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE30FAF7A62009AB5FF /* posix-saves.cpp */; };
+		28211EE80FAF7A7C009AB5FF /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE60FAF7A7C009AB5FF /* default-saves.cpp */; };
+		28211EFB0FAF7A98009AB5FF /* abstract-fs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE90FAF7A98009AB5FF /* abstract-fs.cpp */; };
+		28211EFE0FAF7A98009AB5FF /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EF10FAF7A98009AB5FF /* posix-fs-factory.cpp */; };
+		28211F000FAF7A98009AB5FF /* stdiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EF50FAF7A98009AB5FF /* stdiostream.cpp */; };
 		2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68B0E0198B200DCA546 /* hashmap.cpp */; };
 		2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68D0E0198B200DCA546 /* memorypool.cpp */; };
 		2862A6970E0198B200DCA546 /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A6900E0198B200DCA546 /* str.cpp */; };
@@ -100,17 +108,9 @@
 		289EEF2D0D8921F600521A80 /* zmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED00D8921F600521A80 /* zmath.cpp */; };
 		289EEF2E0D8921F600521A80 /* ztriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED20D8921F600521A80 /* ztriangle.cpp */; };
 		289EEF2F0D8921F600521A80 /* walkplane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 289EEED40D8921F600521A80 /* walkplane.cpp */; };
-		28A7B7750FA4DEBD001D12C7 /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28A7B7730FA4DEBD001D12C7 /* posix-saves.cpp */; };
-		28A7B7770FA4DEEA001D12C7 /* abstract-fs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28A7B7760FA4DEEA001D12C7 /* abstract-fs.cpp */; };
-		28A7B77A0FA4DEF7001D12C7 /* stdiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28A7B7780FA4DEF7001D12C7 /* stdiostream.cpp */; };
 		28A7B7810FA4DF18001D12C7 /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28A7B77B0FA4DF18001D12C7 /* archive.cpp */; };
 		28A7B7A40FA4E26A001D12C7 /* libz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28A7B7A20FA4E26A001D12C7 /* libz.cpp */; };
-		28AF38310E58096B00B013C5 /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28AF382F0E58096B00B013C5 /* default-events.cpp */; };
 		28AF38370E5809B000B013C5 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28AF38360E5809B000B013C5 /* util.cpp */; };
-		28D6AC3D0E4081B100B1DE57 /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC370E4081B100B1DE57 /* driver_gl.cpp */; };
-		28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */; };
-		28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */; };
-		28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D6AC410E4081CC00B1DE57 /* default-timer.cpp */; };
 		28D9D70D0E5812F600BCBCB1 /* matrix3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D9D7090E5812F600BCBCB1 /* matrix3.cpp */; };
 		28D9D70E0E5812F600BCBCB1 /* matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28D9D70B0E5812F600BCBCB1 /* matrix4.cpp */; };
 		28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28F8DF890E403EA3003543B4 /* config-file.cpp */; };
@@ -130,12 +130,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		281E11160E3FA94F004A8255 /* default-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-saves.cpp"; path = "saves/default/default-saves.cpp"; sourceTree = "<group>"; };
-		281E11170E3FA94F004A8255 /* default-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-saves.h"; path = "saves/default/default-saves.h"; sourceTree = "<group>"; };
-		281E111C0E3FA96D004A8255 /* savefile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = savefile.cpp; path = saves/savefile.cpp; sourceTree = "<group>"; };
-		281E111E0E3FA97D004A8255 /* abstract-fs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "abstract-fs.h"; path = "fs/abstract-fs.h"; sourceTree = "<group>"; };
-		281E111F0E3FA98C004A8255 /* fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "fs-factory.h"; path = "fs/fs-factory.h"; sourceTree = "<group>"; };
-		281E11210E3FA998004A8255 /* posix-fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "posix-fs-factory.h"; path = "fs/posix/posix-fs-factory.h"; sourceTree = "<group>"; };
 		281E11260E3FA9DA004A8255 /* error.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		281E11270E3FA9DA004A8255 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = file.cpp; sourceTree = "<group>"; };
 		281E11280E3FA9DA004A8255 /* file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
@@ -146,7 +140,29 @@
 		281E112F0E3FA9F8004A8255 /* singleton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = singleton.h; sourceTree = "<group>"; };
 		281E11300E3FAA09004A8255 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		281E11310E3FAA09004A8255 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
-		281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "posix-fs-factory.cpp"; path = "fs/posix/posix-fs-factory.cpp"; sourceTree = "<group>"; };
+		28211ED10FAF797A009AB5FF /* default-events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-events.cpp"; path = "../../backends/events/default/default-events.cpp"; sourceTree = SOURCE_ROOT; };
+		28211ED20FAF797A009AB5FF /* default-events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-events.h"; path = "../../backends/events/default/default-events.h"; sourceTree = SOURCE_ROOT; };
+		28211ED40FAF79B2009AB5FF /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-timer.cpp"; path = "../../backends/timer/default/default-timer.cpp"; sourceTree = SOURCE_ROOT; };
+		28211ED50FAF79B2009AB5FF /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-timer.h"; path = "../../backends/timer/default/default-timer.h"; sourceTree = SOURCE_ROOT; };
+		28211ED70FAF79EF009AB5FF /* driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver.h; path = ../../backends/platform/driver.h; sourceTree = SOURCE_ROOT; };
+		28211ED80FAF7A19009AB5FF /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_gl.cpp; path = ../../backends/platform/sdl/driver_gl.cpp; sourceTree = SOURCE_ROOT; };
+		28211ED90FAF7A19009AB5FF /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_gl.h; path = ../../backends/platform/sdl/driver_gl.h; sourceTree = SOURCE_ROOT; };
+		28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_sdl.cpp; path = ../../backends/platform/sdl/driver_sdl.cpp; sourceTree = SOURCE_ROOT; };
+		28211EDB0FAF7A19009AB5FF /* driver_sdl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_sdl.h; path = ../../backends/platform/sdl/driver_sdl.h; sourceTree = SOURCE_ROOT; };
+		28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_tinygl.cpp; path = ../../backends/platform/sdl/driver_tinygl.cpp; sourceTree = SOURCE_ROOT; };
+		28211EDD0FAF7A19009AB5FF /* driver_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_tinygl.h; path = ../../backends/platform/sdl/driver_tinygl.h; sourceTree = SOURCE_ROOT; };
+		28211EE10FAF7A48009AB5FF /* savefile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = savefile.cpp; path = ../../backends/saves/savefile.cpp; sourceTree = SOURCE_ROOT; };
+		28211EE30FAF7A62009AB5FF /* posix-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "posix-saves.cpp"; path = "../../backends/saves/posix/posix-saves.cpp"; sourceTree = SOURCE_ROOT; };
+		28211EE40FAF7A62009AB5FF /* posix-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "posix-saves.h"; path = "../../backends/saves/posix/posix-saves.h"; sourceTree = SOURCE_ROOT; };
+		28211EE60FAF7A7C009AB5FF /* default-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-saves.cpp"; path = "../../backends/saves/default/default-saves.cpp"; sourceTree = SOURCE_ROOT; };
+		28211EE70FAF7A7C009AB5FF /* default-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-saves.h"; path = "../../backends/saves/default/default-saves.h"; sourceTree = SOURCE_ROOT; };
+		28211EE90FAF7A98009AB5FF /* abstract-fs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "abstract-fs.cpp"; path = "../../backends/fs/abstract-fs.cpp"; sourceTree = SOURCE_ROOT; };
+		28211EEA0FAF7A98009AB5FF /* abstract-fs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "abstract-fs.h"; path = "../../backends/fs/abstract-fs.h"; sourceTree = SOURCE_ROOT; };
+		28211EEF0FAF7A98009AB5FF /* fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "fs-factory.h"; path = "../../backends/fs/fs-factory.h"; sourceTree = SOURCE_ROOT; };
+		28211EF10FAF7A98009AB5FF /* posix-fs-factory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "posix-fs-factory.cpp"; sourceTree = "<group>"; };
+		28211EF20FAF7A98009AB5FF /* posix-fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "posix-fs-factory.h"; sourceTree = "<group>"; };
+		28211EF50FAF7A98009AB5FF /* stdiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stdiostream.cpp; path = ../../backends/fs/stdiostream.cpp; sourceTree = SOURCE_ROOT; };
+		28211EF60FAF7A98009AB5FF /* stdiostream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stdiostream.h; path = ../../backends/fs/stdiostream.h; sourceTree = SOURCE_ROOT; };
 		2862A6860E0198B200DCA546 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = algorithm.h; sourceTree = "<group>"; };
 		2862A6870E0198B200DCA546 /* array.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		2862A6880E0198B200DCA546 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
@@ -320,32 +336,16 @@
 		289EEED30D8921F600521A80 /* ztriangle.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ztriangle.h; sourceTree = "<group>"; };
 		289EEED40D8921F600521A80 /* walkplane.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = walkplane.cpp; sourceTree = "<group>"; };
 		289EEED50D8921F600521A80 /* walkplane.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = walkplane.h; sourceTree = "<group>"; };
-		28A7B7730FA4DEBD001D12C7 /* posix-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "posix-saves.cpp"; path = "saves/posix/posix-saves.cpp"; sourceTree = "<group>"; };
-		28A7B7740FA4DEBD001D12C7 /* posix-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "posix-saves.h"; path = "saves/posix/posix-saves.h"; sourceTree = "<group>"; };
-		28A7B7760FA4DEEA001D12C7 /* abstract-fs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "abstract-fs.cpp"; path = "fs/abstract-fs.cpp"; sourceTree = "<group>"; };
-		28A7B7780FA4DEF7001D12C7 /* stdiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stdiostream.cpp; path = fs/stdiostream.cpp; sourceTree = "<group>"; };
-		28A7B7790FA4DEF7001D12C7 /* stdiostream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stdiostream.h; path = fs/stdiostream.h; sourceTree = "<group>"; };
 		28A7B77B0FA4DF18001D12C7 /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = archive.cpp; sourceTree = "<group>"; };
 		28A7B77C0FA4DF18001D12C7 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = archive.h; sourceTree = "<group>"; };
 		28A7B77D0FA4DF18001D12C7 /* list_intern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = list_intern.h; sourceTree = "<group>"; };
 		28A7B77F0FA4DF18001D12C7 /* queue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = queue.h; sourceTree = "<group>"; };
 		28A7B7A20FA4E26A001D12C7 /* libz.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = libz.cpp; sourceTree = "<group>"; };
 		28A7B7A30FA4E26A001D12C7 /* libz.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = libz.h; sourceTree = "<group>"; };
-		28AF382F0E58096B00B013C5 /* default-events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-events.cpp"; path = "events/default/default-events.cpp"; sourceTree = "<group>"; };
-		28AF38300E58096B00B013C5 /* default-events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-events.h"; path = "events/default/default-events.h"; sourceTree = "<group>"; };
 		28AF38330E58098600B013C5 /* events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = events.h; sourceTree = "<group>"; };
 		28AF38340E58099100B013C5 /* keyboard.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = keyboard.h; sourceTree = "<group>"; };
 		28AF38350E58099F00B013C5 /* rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = rect.h; sourceTree = "<group>"; };
 		28AF38360E5809B000B013C5 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
-		28D6AC370E4081B100B1DE57 /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_gl.cpp; path = platform/sdl/driver_gl.cpp; sourceTree = "<group>"; };
-		28D6AC380E4081B100B1DE57 /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_gl.h; path = platform/sdl/driver_gl.h; sourceTree = "<group>"; };
-		28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_sdl.cpp; path = platform/sdl/driver_sdl.cpp; sourceTree = "<group>"; };
-		28D6AC3A0E4081B100B1DE57 /* driver_sdl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_sdl.h; path = platform/sdl/driver_sdl.h; sourceTree = "<group>"; };
-		28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_tinygl.cpp; path = platform/sdl/driver_tinygl.cpp; sourceTree = "<group>"; };
-		28D6AC3C0E4081B100B1DE57 /* driver_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_tinygl.h; path = platform/sdl/driver_tinygl.h; sourceTree = "<group>"; };
-		28D6AC400E4081BE00B1DE57 /* driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver.h; path = platform/driver.h; sourceTree = "<group>"; };
-		28D6AC410E4081CC00B1DE57 /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-timer.cpp"; path = "timer/default/default-timer.cpp"; sourceTree = "<group>"; };
-		28D6AC420E4081CC00B1DE57 /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-timer.h"; path = "timer/default/default-timer.h"; sourceTree = "<group>"; };
 		28D9D7090E5812F600BCBCB1 /* matrix3.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = matrix3.cpp; sourceTree = "<group>"; };
 		28D9D70A0E5812F600BCBCB1 /* matrix3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = matrix3.h; sourceTree = "<group>"; };
 		28D9D70B0E5812F600BCBCB1 /* matrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = matrix4.cpp; sourceTree = "<group>"; };
@@ -381,6 +381,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				28211F030FAF7AB3009AB5FF /* backends */,
 				289EEE280D8921F600521A80 /* engine */,
 				289EEE140D8921E400521A80 /* common */,
 				289EEE0A0D8921CA00521A80 /* mixer */,
@@ -396,43 +397,121 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		281E11110E3FA907004A8255 /* fs */ = {
+		28211EF00FAF7A98009AB5FF /* posix */ = {
 			isa = PBXGroup;
 			children = (
-				28A7B7780FA4DEF7001D12C7 /* stdiostream.cpp */,
-				28A7B7790FA4DEF7001D12C7 /* stdiostream.h */,
-				28A7B7760FA4DEEA001D12C7 /* abstract-fs.cpp */,
-				281E111F0E3FA98C004A8255 /* fs-factory.h */,
-				281E111E0E3FA97D004A8255 /* abstract-fs.h */,
-				281E11130E3FA91A004A8255 /* posix */,
+				28211EF10FAF7A98009AB5FF /* posix-fs-factory.cpp */,
+				28211EF20FAF7A98009AB5FF /* posix-fs-factory.h */,
+			);
+			name = posix;
+			path = ../../backends/fs/posix;
+			sourceTree = SOURCE_ROOT;
+		};
+		28211F030FAF7AB3009AB5FF /* backends */ = {
+			isa = PBXGroup;
+			children = (
+				28211F0C0FAF7B6C009AB5FF /* events */,
+				28211F0A0FAF7B51009AB5FF /* timer */,
+				28211F080FAF7B2B009AB5FF /* platform */,
+				28211F050FAF7AF6009AB5FF /* saves */,
+				28211F040FAF7AD6009AB5FF /* fs */,
+			);
+			name = backends;
+			sourceTree = "<group>";
+		};
+		28211F040FAF7AD6009AB5FF /* fs */ = {
+			isa = PBXGroup;
+			children = (
+				28211EE90FAF7A98009AB5FF /* abstract-fs.cpp */,
+				28211EEA0FAF7A98009AB5FF /* abstract-fs.h */,
+				28211EEF0FAF7A98009AB5FF /* fs-factory.h */,
+				28211EF00FAF7A98009AB5FF /* posix */,
+				28211EF50FAF7A98009AB5FF /* stdiostream.cpp */,
+				28211EF60FAF7A98009AB5FF /* stdiostream.h */,
 			);
 			name = fs;
 			sourceTree = "<group>";
 		};
-		281E11120E3FA90E004A8255 /* saves */ = {
+		28211F050FAF7AF6009AB5FF /* saves */ = {
 			isa = PBXGroup;
 			children = (
-				28A7B7720FA4DE96001D12C7 /* posix */,
-				281E111C0E3FA96D004A8255 /* savefile.cpp */,
-				281E11150E3FA92F004A8255 /* default */,
+				28211F070FAF7B05009AB5FF /* default */,
+				28211F060FAF7B00009AB5FF /* posix */,
+				28211EE10FAF7A48009AB5FF /* savefile.cpp */,
 			);
 			name = saves;
 			sourceTree = "<group>";
 		};
-		281E11130E3FA91A004A8255 /* posix */ = {
+		28211F060FAF7B00009AB5FF /* posix */ = {
 			isa = PBXGroup;
 			children = (
-				281E11440E3FAABB004A8255 /* posix-fs-factory.cpp */,
-				281E11210E3FA998004A8255 /* posix-fs-factory.h */,
+				28211EE30FAF7A62009AB5FF /* posix-saves.cpp */,
+				28211EE40FAF7A62009AB5FF /* posix-saves.h */,
 			);
 			name = posix;
 			sourceTree = "<group>";
 		};
-		281E11150E3FA92F004A8255 /* default */ = {
+		28211F070FAF7B05009AB5FF /* default */ = {
 			isa = PBXGroup;
 			children = (
-				281E11160E3FA94F004A8255 /* default-saves.cpp */,
-				281E11170E3FA94F004A8255 /* default-saves.h */,
+				28211EE60FAF7A7C009AB5FF /* default-saves.cpp */,
+				28211EE70FAF7A7C009AB5FF /* default-saves.h */,
+			);
+			name = default;
+			sourceTree = "<group>";
+		};
+		28211F080FAF7B2B009AB5FF /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				28211F090FAF7B35009AB5FF /* sdl */,
+				28211ED70FAF79EF009AB5FF /* driver.h */,
+			);
+			name = platform;
+			sourceTree = "<group>";
+		};
+		28211F090FAF7B35009AB5FF /* sdl */ = {
+			isa = PBXGroup;
+			children = (
+				28211ED80FAF7A19009AB5FF /* driver_gl.cpp */,
+				28211ED90FAF7A19009AB5FF /* driver_gl.h */,
+				28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */,
+				28211EDB0FAF7A19009AB5FF /* driver_sdl.h */,
+				28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */,
+				28211EDD0FAF7A19009AB5FF /* driver_tinygl.h */,
+			);
+			name = sdl;
+			sourceTree = "<group>";
+		};
+		28211F0A0FAF7B51009AB5FF /* timer */ = {
+			isa = PBXGroup;
+			children = (
+				28211F0B0FAF7B58009AB5FF /* default */,
+			);
+			name = timer;
+			sourceTree = "<group>";
+		};
+		28211F0B0FAF7B58009AB5FF /* default */ = {
+			isa = PBXGroup;
+			children = (
+				28211ED40FAF79B2009AB5FF /* default-timer.cpp */,
+				28211ED50FAF79B2009AB5FF /* default-timer.h */,
+			);
+			name = default;
+			sourceTree = "<group>";
+		};
+		28211F0C0FAF7B6C009AB5FF /* events */ = {
+			isa = PBXGroup;
+			children = (
+				28211F0D0FAF7B74009AB5FF /* default */,
+			);
+			name = events;
+			sourceTree = "<group>";
+		};
+		28211F0D0FAF7B74009AB5FF /* default */ = {
+			isa = PBXGroup;
+			children = (
+				28211ED10FAF797A009AB5FF /* default-events.cpp */,
+				28211ED20FAF797A009AB5FF /* default-events.h */,
 			);
 			name = default;
 			sourceTree = "<group>";
@@ -520,7 +599,6 @@
 				289917E10E1F6D67006704AC /* internal_version.h */,
 				289EEE290D8921F600521A80 /* actor.cpp */,
 				289EEE2A0D8921F600521A80 /* actor.h */,
-				289EEE2B0D8921F600521A80 /* backend */,
 				289EEE420D8921F600521A80 /* bitmap.cpp */,
 				289EEE430D8921F600521A80 /* bitmap.h */,
 				289EEE440D8921F600521A80 /* color.h */,
@@ -572,18 +650,6 @@
 			name = engine;
 			path = ../../engine;
 			sourceTree = SOURCE_ROOT;
-		};
-		289EEE2B0D8921F600521A80 /* backend */ = {
-			isa = PBXGroup;
-			children = (
-				28AF38250E58093700B013C5 /* events */,
-				28D6AC340E40814900B1DE57 /* timer */,
-				28D6AC330E40813F00B1DE57 /* platform */,
-				281E11120E3FA90E004A8255 /* saves */,
-				281E11110E3FA907004A8255 /* fs */,
-			);
-			path = backend;
-			sourceTree = "<group>";
 		};
 		289EEE4C0D8921F600521A80 /* imuse */ = {
 			isa = PBXGroup;
@@ -706,71 +772,6 @@
 				289EEED30D8921F600521A80 /* ztriangle.h */,
 			);
 			path = tinygl;
-			sourceTree = "<group>";
-		};
-		28A7B7720FA4DE96001D12C7 /* posix */ = {
-			isa = PBXGroup;
-			children = (
-				28A7B7730FA4DEBD001D12C7 /* posix-saves.cpp */,
-				28A7B7740FA4DEBD001D12C7 /* posix-saves.h */,
-			);
-			name = posix;
-			sourceTree = "<group>";
-		};
-		28AF38250E58093700B013C5 /* events */ = {
-			isa = PBXGroup;
-			children = (
-				28AF38260E58093E00B013C5 /* default */,
-			);
-			name = events;
-			sourceTree = "<group>";
-		};
-		28AF38260E58093E00B013C5 /* default */ = {
-			isa = PBXGroup;
-			children = (
-				28AF382F0E58096B00B013C5 /* default-events.cpp */,
-				28AF38300E58096B00B013C5 /* default-events.h */,
-			);
-			name = default;
-			sourceTree = "<group>";
-		};
-		28D6AC330E40813F00B1DE57 /* platform */ = {
-			isa = PBXGroup;
-			children = (
-				28D6AC400E4081BE00B1DE57 /* driver.h */,
-				28D6AC360E40816700B1DE57 /* sdl */,
-			);
-			name = platform;
-			sourceTree = "<group>";
-		};
-		28D6AC340E40814900B1DE57 /* timer */ = {
-			isa = PBXGroup;
-			children = (
-				28D6AC350E40814E00B1DE57 /* default */,
-			);
-			name = timer;
-			sourceTree = "<group>";
-		};
-		28D6AC350E40814E00B1DE57 /* default */ = {
-			isa = PBXGroup;
-			children = (
-				28D6AC410E4081CC00B1DE57 /* default-timer.cpp */,
-				28D6AC420E4081CC00B1DE57 /* default-timer.h */,
-			);
-			name = default;
-			sourceTree = "<group>";
-		};
-		28D6AC360E40816700B1DE57 /* sdl */ = {
-			isa = PBXGroup;
-			children = (
-				28D6AC370E4081B100B1DE57 /* driver_gl.cpp */,
-				28D6AC380E4081B100B1DE57 /* driver_gl.h */,
-				28D6AC390E4081B100B1DE57 /* driver_sdl.cpp */,
-				28D6AC3A0E4081B100B1DE57 /* driver_sdl.h */,
-				28D6AC3B0E4081B100B1DE57 /* driver_tinygl.cpp */,
-				28D6AC3C0E4081B100B1DE57 /* driver_tinygl.h */,
-			);
-			name = sdl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -902,28 +903,28 @@
 				2862A6970E0198B200DCA546 /* str.cpp in Sources */,
 				289917E40E1F6D7C006704AC /* version.cpp in Sources */,
 				289917E60E1F6D91006704AC /* ztriangle_shadow.cpp in Sources */,
-				281E11180E3FA94F004A8255 /* default-saves.cpp in Sources */,
-				281E111D0E3FA96D004A8255 /* savefile.cpp in Sources */,
 				281E11290E3FA9DA004A8255 /* file.cpp in Sources */,
 				281E112C0E3FA9E8004A8255 /* fs.cpp in Sources */,
 				281E11320E3FAA09004A8255 /* stream.cpp in Sources */,
-				281E11450E3FAABB004A8255 /* posix-fs-factory.cpp in Sources */,
 				28F8DF8A0E403EA3003543B4 /* config-file.cpp in Sources */,
 				28F8DF8D0E403EB2003543B4 /* config-manager.cpp in Sources */,
-				28D6AC3D0E4081B100B1DE57 /* driver_gl.cpp in Sources */,
-				28D6AC3E0E4081B100B1DE57 /* driver_sdl.cpp in Sources */,
-				28D6AC3F0E4081B100B1DE57 /* driver_tinygl.cpp in Sources */,
-				28D6AC430E4081CC00B1DE57 /* default-timer.cpp in Sources */,
 				286B7CFF0E426E2C00560EAE /* cmd_line.cpp in Sources */,
-				28AF38310E58096B00B013C5 /* default-events.cpp in Sources */,
 				28AF38370E5809B000B013C5 /* util.cpp in Sources */,
 				28D9D70D0E5812F600BCBCB1 /* matrix3.cpp in Sources */,
 				28D9D70E0E5812F600BCBCB1 /* matrix4.cpp in Sources */,
-				28A7B7750FA4DEBD001D12C7 /* posix-saves.cpp in Sources */,
-				28A7B7770FA4DEEA001D12C7 /* abstract-fs.cpp in Sources */,
-				28A7B77A0FA4DEF7001D12C7 /* stdiostream.cpp in Sources */,
 				28A7B7810FA4DF18001D12C7 /* archive.cpp in Sources */,
 				28A7B7A40FA4E26A001D12C7 /* libz.cpp in Sources */,
+				28211ED30FAF797A009AB5FF /* default-events.cpp in Sources */,
+				28211ED60FAF79B2009AB5FF /* default-timer.cpp in Sources */,
+				28211EDE0FAF7A19009AB5FF /* driver_gl.cpp in Sources */,
+				28211EDF0FAF7A19009AB5FF /* driver_sdl.cpp in Sources */,
+				28211EE00FAF7A19009AB5FF /* driver_tinygl.cpp in Sources */,
+				28211EE20FAF7A48009AB5FF /* savefile.cpp in Sources */,
+				28211EE50FAF7A62009AB5FF /* posix-saves.cpp in Sources */,
+				28211EE80FAF7A7C009AB5FF /* default-saves.cpp in Sources */,
+				28211EFB0FAF7A98009AB5FF /* abstract-fs.cpp in Sources */,
+				28211EFE0FAF7A98009AB5FF /* posix-fs-factory.cpp in Sources */,
+				28211F000FAF7A98009AB5FF /* stdiostream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
