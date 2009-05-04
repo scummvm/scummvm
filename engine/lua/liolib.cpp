@@ -51,10 +51,8 @@ LuaFile::~LuaFile() {
 void LuaFile::close() {
 	delete _in;
 	delete _out;
-	delete _file;
 	_in = NULL;
 	_out = NULL;
-	_file = NULL;
 	_stdin = _stdout = _stderr = false;
 }
 
@@ -67,14 +65,16 @@ uint32 LuaFile::read(void *buf, uint32 len) {
 		return fread(buf, len, 1, stdin);
 	} else if (_in) {
 		return _in->read(buf, len);
-	} else if (_file) {
-		return _file->read(buf, len);
 	} else
 		assert(0);
 	return 0;
 }
 
 uint32 LuaFile::write(const char *buf, uint32 len) {
+	if (_stdin)
+		error("LuaFile::write() not allowed on stdin");
+	if (_in)
+		error("LuaFile::write() not allowed on in");
 	if (_stdout) {
 		return fwrite(buf, len, 1, stdout);
 	} else if (_stderr) {
@@ -91,8 +91,6 @@ void LuaFile::seek(int32 pos, int whence) {
 		fseek(stdin, pos, whence);
 	} else if (_in) {
 		_in->seek(pos, whence);
-	} else if (_file) {
-		_file->seek(pos, whence);
 	} else
 		assert(0);
 }
