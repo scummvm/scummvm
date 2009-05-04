@@ -237,7 +237,7 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 BufferedReadStream::~BufferedReadStream() {
 	if (_disposeParentStream)
 		delete _parentStream;
-	delete _buf;
+	delete[] _buf;
 }
 
 uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
