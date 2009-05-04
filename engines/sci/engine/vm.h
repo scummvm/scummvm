@@ -56,14 +56,21 @@ struct MemObject /* : public Common::Serializable */ {
 	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
 
 public:
+	static MemObject *createMemObject(MemObjectType type);
+
+public:
 	virtual ~MemObject() {}
 
+	/**
+	 * Dereferences a raw memory pointer.
+	 * @param reg   reference to dereference
+	 * @param size  if not NULL, set to the theoretical maximum size of the referenced data block
+	 * @return              the data block referenced
+	 */
 	virtual byte *dereference(reg_t pointer, int *size);
 
 	inline MemObjectType getType() const { return _type; }
 	inline int getSegMgrId() const { return _segmgrId; }
-
-	static MemObject *createMemObject(MemObjectType type);
 };
 
 
