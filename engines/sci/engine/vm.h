@@ -406,9 +406,6 @@ struct Table : public MemObject {
 	Entry *table;
 
 public:
-	Table() {
-		initTable();
-	}
 	~Table() {
 		// FIXME: Shouldn't we make sure that all table entries are disposed
 		// of properly?

@@ -361,11 +361,10 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectTyp
 }
 
 void Script::freeScript() {
-	if (buf) {
-		free(buf);
-		buf = NULL;
-		buf_size = 0;
-	}
+	free(buf);
+	buf = NULL;
+	buf_size = 0;
+
 	if (objects) {
 		for (int i = 0; i < objects_nr; i++) {
 			Object *object = &objects[i];
@@ -381,7 +380,9 @@ void Script::freeScript() {
 	}
 
 	delete obj_indices;
+	obj_indices = 0;
 	free(code);
+	code = 0;
 }
 
 // memory operations
@@ -1042,16 +1043,15 @@ void free_Hunk_entry(HunkTable *table, int index) {
 
 
 Clone *SegManager::alloc_Clone(reg_t *addr) {
-	MemObject *mobj;
 	CloneTable *table;
 	int offset;
 
 	if (!Clones_seg_id) {
-		mobj = allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
+		table = (CloneTable *)allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
+		table->initTable();
 	} else
-		mobj = _heap[Clones_seg_id];
+		table = (CloneTable *)_heap[Clones_seg_id];
 
-	table = (CloneTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Clones_seg_id, offset);
@@ -1059,16 +1059,15 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 }
 
 List *SegManager::alloc_List(reg_t *addr) {
-	MemObject *mobj;
 	ListTable *table;
 	int offset;
 
 	if (!Lists_seg_id) {
-		mobj = allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+		table = (ListTable *)allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+		table->initTable();
 	} else
-		mobj = _heap[Lists_seg_id];
+		table = (ListTable *)_heap[Lists_seg_id];
 
-	table = (ListTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Lists_seg_id, offset);
@@ -1076,16 +1075,15 @@ List *SegManager::alloc_List(reg_t *addr) {
 }
 
 Node *SegManager::alloc_Node(reg_t *addr) {
-	MemObject *mobj;
 	NodeTable *table;
 	int offset;
 
 	if (!Nodes_seg_id) {
-		mobj = allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+		table = (NodeTable *)allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+		table->initTable();
 	} else
-		mobj = _heap[Nodes_seg_id];
+		table = (NodeTable *)_heap[Nodes_seg_id];
 
-	table = (NodeTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
@@ -1093,16 +1091,15 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 }
 
 Hunk *SegManager::alloc_Hunk(reg_t *addr) {
-	MemObject *mobj;
 	HunkTable *table;
 	int offset;
 
 	if (!Hunks_seg_id) {
-		mobj = allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+		table = (HunkTable *)allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+		table->initTable();
 	} else
-		mobj = _heap[Hunks_seg_id];
+		table = (HunkTable *)_heap[Hunks_seg_id];
 
-	table = (HunkTable *)mobj;
 	offset = table->allocEntry();
 
 	*addr = make_reg(Hunks_seg_id, offset);
