@@ -216,7 +216,7 @@ void String::decRefCount(int *oldRefCount) {
 			assert(g_refCountPool);
 			g_refCountPool->freeChunk(oldRefCount);
 		}
-		delete _str;
+		delete[] _str;
 
 		// Even though _str points to a freed memory block now,
 		// we do not change its value, because any code that calls
