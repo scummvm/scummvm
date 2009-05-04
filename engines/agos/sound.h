@@ -90,7 +90,7 @@ public:
 	void playAmbient(uint sound);
 
 	// Personal Nightmare specfic
-	void handleSound();
+	void handleSoundQueue();
 	void queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq);
 
 	// Elvira 1/2 and Waxworks specific

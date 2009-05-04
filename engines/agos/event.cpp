@@ -620,7 +620,7 @@ void AGOSEngine_PN::timerProc() {
 
 	_videoLockOut |= 2;
 
-	_sound->handleSound();
+	_sound->handleSoundQueue();
 	handleMouseMoved();
 	handleKeyboard();
 

@@ -700,12 +700,17 @@ void Sound::ambientPause(bool b) {
 }
 
 // Personal Nightmare specific
-void Sound::handleSound() {
-	if (_soundQueuePtr && !isSfxActive()) {
+void Sound::handleSoundQueue() {
+	if (isSfxActive())
+		return;
+
+	_vm->_sampleEnd = 1;
+
+	if (_soundQueuePtr) {
 		playRawData(_soundQueuePtr, _soundQueueNum, _soundQueueSize, _soundQueueFreq);
 
 		_vm->_sampleWait = 1;
-		_vm->_sampleEnd = 1;
+		_vm->_sampleEnd = 0;
 		_soundQueuePtr = 0;
 		_soundQueueNum = 0;
 		_soundQueueSize = 0;
