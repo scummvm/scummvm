@@ -551,13 +551,13 @@ static int clone_entry_used(CloneTable *table, int n) {
 	int seeker = table->first_free;
 	CloneTable::Entry *entries = table->table;
 
-	if (seeker == HEAPENTRY_INVALID) return 1;
+	if (seeker == CloneTable::HEAPENTRY_INVALID) return 1;
 
 	do {
 		if (seeker == n) return 0;
 		backup = seeker;
 		seeker = entries[seeker].next_free;
-	} while (entries[backup].next_free != HEAPENTRY_INVALID);
+	} while (entries[backup].next_free != CloneTable::HEAPENTRY_INVALID);
 
 	return 1;
 }

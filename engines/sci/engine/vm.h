@@ -31,7 +31,6 @@
 //#include "common/serializer.h"
 #include "sci/scicore/versions.h"	// for sci_version_t
 #include "sci/engine/vm_types.h"	// for reg_t
-#include "sci/engine/heapmgr.h"
 
 namespace Sci {
 
@@ -398,6 +397,8 @@ struct Table : public MemObject {
 	struct Entry : public T {
 		int next_free; /* Only used for free entries */
 	};
+	enum { HEAPENTRY_INVALID = -1 };
+
 
 	int entries_nr; /**< Number of entries allocated */
 	int first_free; /**< Beginning of a singly linked list for entries */
@@ -407,63 +408,49 @@ struct Table : public MemObject {
 	Entry *table;
 
 public:
-	~Table() {
-		// FIXME: Shouldn't we make sure that all table entries are disposed
-		// of properly?
-		free(table);
-		table = NULL;
-		entries_nr = max_entry = 0;
-	}
+	Table();
+	~Table();
+
+	void initTable();
+	int	allocEntry();
+	bool isValidEntry(int idx);
+	virtual void freeEntry(int idx);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+};
 
-	void initTable() {
-		entries_nr = INITIAL;
-		max_entry = 0;
-		entries_used = 0;
-		first_free = HEAPENTRY_INVALID;
-		table = (Entry *)calloc(INITIAL, sizeof(Entry));
-	}
+// FIXME: Replace ENTRY_IS_VALID by a direct method call
+#define ENTRY_IS_VALID(t, i) ((t)->isValidEntry(i))
 
-	int	allocEntry() {
-		entries_used++;
-		if (first_free != HEAPENTRY_INVALID) {
-			int oldff = first_free;
-			first_free = table[oldff].next_free;
 
-			table[oldff].next_free = oldff;
-			return oldff;
-		} else {
-			if (max_entry == entries_nr) {
-				entries_nr += INCREMENT;
+/* CloneTable */
+struct CloneTable : public Table<Clone, 16, 4> {
+	virtual void freeEntry(int idx) {
+		Table<Clone, 16, 4>::freeEntry(idx);
 
-				table = (Entry *)sci_realloc(table,  sizeof(Entry) * entries_nr);
-				memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(Entry));
-			}
-			table[max_entry].next_free = max_entry; /* Tag as 'valid' */
-			return max_entry++;
-		}
+		free(table[idx].variables); // Free the dynamically allocated memory part
 	}
 };
 
-/* CloneTable */
-typedef Table<Clone, 16, 4> CloneTable;
-void free_Clone_entry(CloneTable *table, int index);
-
 
 /* NodeTable */
-typedef Table<Node, 32, 16> NodeTable;
-void free_Node_entry(NodeTable *table, int index);
+struct NodeTable : public Table<Node, 32, 16> {
+};
 
 
 /* ListTable */
-typedef Table<List, 8, 4> ListTable;
-void free_List_entry(ListTable *table, int index);
+struct ListTable : public Table<List, 8, 4> {
+};
 
 
 /* HunkTable */
-typedef Table<Hunk, 4, 4> HunkTable;
-void free_Hunk_entry(HunkTable *table, int index);
+struct HunkTable : public Table<Hunk, 4, 4> {
+	virtual void freeEntry(int idx) {
+		Table<Hunk, 4, 4>::freeEntry(idx);
+
+		free(table[idx].mem);
+	}
+};
 
 
 // Free-style memory

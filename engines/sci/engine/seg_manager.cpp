@@ -971,15 +971,80 @@ uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
 	return offset;
 }
 
-void SegManager::free_hunk_entry(reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
+template<typename T, int INITIAL, int INCREMENT>
+Table<T, INITIAL, INCREMENT>::Table() {
+	entries_nr = 0;
+	max_entry = 0;
+	entries_used = 0;
+	first_free = HEAPENTRY_INVALID;
+	table = NULL;
+}
 
-	if (!mobj) {
+template<typename T, int INITIAL, int INCREMENT>
+Table<T, INITIAL, INCREMENT>::~Table() {
+	// FIXME: Shouldn't we make sure that all table entries are disposed
+	// of properly?
+	free(table);
+	table = NULL;
+	entries_nr = max_entry = 0;
+}
+
+template<typename T, int INITIAL, int INCREMENT>
+void Table<T, INITIAL, INCREMENT>::initTable() {
+	entries_nr = INITIAL;
+	max_entry = 0;
+	entries_used = 0;
+	first_free = HEAPENTRY_INVALID;
+	table = (Entry *)calloc(INITIAL, sizeof(Entry));
+}
+
+template<typename T, int INITIAL, int INCREMENT>
+int	Table<T, INITIAL, INCREMENT>::allocEntry() {
+	entries_used++;
+	if (first_free != HEAPENTRY_INVALID) {
+		int oldff = first_free;
+		first_free = table[oldff].next_free;
+
+		table[oldff].next_free = oldff;
+		return oldff;
+	} else {
+		if (max_entry == entries_nr) {
+			entries_nr += INCREMENT;
+
+			table = (Entry *)sci_realloc(table,  sizeof(Entry) * entries_nr);
+			memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(Entry));
+		}
+		table[max_entry].next_free = max_entry; /* Tag as 'valid' */
+		return max_entry++;
+	}
+}
+
+template<typename T, int INITIAL, int INCREMENT>
+void Table<T, INITIAL, INCREMENT>::freeEntry(int idx) {
+	if (idx < 0 || idx >= max_entry) {
+		error("Table::freeEntry: Attempt to release invalid table index %d", idx);
+	}
+
+	table[idx].next_free = first_free;
+	first_free = idx;
+	entries_used--;
+}
+
+template<typename T, int INITIAL, int INCREMENT>
+bool Table<T, INITIAL, INCREMENT>::isValidEntry(int idx) {
+	return idx >= 0 && idx < max_entry && table[idx].next_free == idx;
+}
+
+
+void SegManager::free_hunk_entry(reg_t addr) {
+	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
+
+	if (!ht) {
 		sciprintf("Attempt to free Hunk from address "PREG": Invalid segment type\n", PRINT_REG(addr));
 		return;
 	}
 
-	Sci::free_Hunk_entry((HunkTable *)mobj, addr.offset);
+	ht->freeEntry(addr.offset);
 }
 
 Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
@@ -994,53 +1059,6 @@ Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) 
 
 	return h;
 }
-
-
-void free_List_entry(ListTable *table, int index) {
-	if (index < 0 || index >= table->max_entry) {
-		error("heapmgr: Attempt to release invalid table index %d", index);
-	}
-
-	table->table[index].next_free = table->first_free;
-	table->first_free = index;
-	table->entries_used--;
-}
-
-void free_Node_entry(NodeTable *table, int index) {
-	if (index < 0 || index >= table->max_entry) {
-		error("heapmgr: Attempt to release invalid table index %d", index);
-	}
-
-	table->table[index].next_free = table->first_free;
-	table->first_free = index;
-	table->entries_used--;
-}
-
-void free_Clone_entry(CloneTable *table, int index) {
-	if (index < 0 || index >= table->max_entry) {
-		error("heapmgr: Attempt to release invalid table index %d", index);
-	}
-
-	free(table->table[index].variables); // Free the dynamically allocated memory part
-
-	table->table[index].next_free = table->first_free;
-	table->first_free = index;
-	table->entries_used--;
-}
-
-void free_Hunk_entry(HunkTable *table, int index) {
-	if (index < 0 || index >= table->max_entry) {
-		error("heapmgr: Attempt to release invalid table index %d", index);
-	}
-
-	free(table->table[index].mem);
-
-	table->table[index].next_free = table->first_free;
-	table->first_free = index;
-	table->entries_used--;
-}
-
-
 
 Clone *SegManager::alloc_Clone(reg_t *addr) {
 	CloneTable *table;
@@ -1354,11 +1372,12 @@ void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, v
 }
 
 void SegInterfaceClones::freeAtAddress(reg_t addr) {
+	CloneTable *clone_table = (CloneTable *)_mobj;
 	Object *victim_obj;
 
 	assert(addr.segment == _segId);
 
-	victim_obj = &((*(CloneTable *)_mobj).table[addr.offset]);
+	victim_obj = &(clone_table->table[addr.offset]);
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
@@ -1374,7 +1393,7 @@ void SegInterfaceClones::freeAtAddress(reg_t addr) {
 	*/
 	free(victim_obj->variables);
 	victim_obj->variables = NULL;
-	Sci::free_Clone_entry((CloneTable *)_mobj, addr.offset);
+	clone_table->freeEntry(addr.offset);
 }
 
 
@@ -1463,7 +1482,8 @@ public:
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
-	Sci::free_List_entry((ListTable *)_mobj, sub_addr.offset);
+	ListTable *table = (ListTable *)_mobj;
+	table->freeEntry(sub_addr.offset);
 }
 
 void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
@@ -1471,8 +1491,6 @@ void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
 	for (int i = 0; i < table->max_entry; i++)
 		if (ENTRY_IS_VALID(table, i))
 			(*note) (param, make_reg(_segId, i));
-
-
 }
 
 void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1502,7 +1520,8 @@ public:
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
-	Sci::free_Node_entry((NodeTable *)_mobj, sub_addr.offset);
+	NodeTable *table = (NodeTable *)_mobj;
+	table->freeEntry(sub_addr.offset);
 }
 
 void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
@@ -1510,8 +1529,6 @@ void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
 	for (int i = 0; i < table->max_entry; i++)
 		if (ENTRY_IS_VALID(table, i))
 			(*note) (param, make_reg(_segId, i));
-
-
 }
 
 void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1551,8 +1568,6 @@ void SegInterfaceHunk::listAllDeallocatable(void *param, NoteCallback note) {
 	for (int i = 0; i < table->max_entry; i++)
 		if (ENTRY_IS_VALID(table, i))
 			(*note) (param, make_reg(_segId, i));
-
-
 }
 
 
