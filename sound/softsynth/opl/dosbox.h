@@ -83,7 +83,7 @@ public:
 	virtual void init(uint rate) = 0;
 };
 
-class OPL_DOSBox : public OPL {
+class OPL : public ::OPL::OPL {
 private:
 	kOplType _type;
 	uint _rate;
@@ -98,8 +98,8 @@ private:
 	void free();
 	void dualWrite(uint8 index, uint8 reg, uint8 val);
 public:
-	OPL_DOSBox(kOplType type);
-	~OPL_DOSBox();
+	OPL(kOplType type);
+	~OPL();
 
 	bool init(int rate);
 	void reset();

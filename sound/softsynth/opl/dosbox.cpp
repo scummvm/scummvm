@@ -189,19 +189,19 @@ struct Handler : public DOSBox::Handler {
 };
 } // end of namespace OPL3
 
-OPL_DOSBox::OPL_DOSBox(kOplType type) : _type(type), _rate(0), _handler(0) {
+OPL::OPL(kOplType type) : _type(type), _rate(0), _handler(0) {
 }
 
-OPL_DOSBox::~OPL_DOSBox() {
+OPL::~OPL() {
 	free();
 }
 
-void OPL_DOSBox::free() {
+void OPL::free() {
 	delete _handler;
 	_handler = 0;
 }
 
-bool OPL_DOSBox::init(int rate) {
+bool OPL::init(int rate) {
 	free();
 
 	memset(&_reg, 0, sizeof(_reg));
@@ -226,11 +226,11 @@ bool OPL_DOSBox::init(int rate) {
 	return true;
 }
 
-void OPL_DOSBox::reset() {
+void OPL::reset() {
 	init(_rate);	
 }
 
-void OPL_DOSBox::write(int port, int val) {
+void OPL::write(int port, int val) {
 	if (port&1) {
 		switch (_type) {
 		case kOpl2:
@@ -274,7 +274,7 @@ void OPL_DOSBox::write(int port, int val) {
 	}
 }
 
-byte OPL_DOSBox::read(int port) {
+byte OPL::read(int port) {
 	switch (_type) {
 	case kOpl2:
 		if (!(port & 1))
@@ -295,7 +295,7 @@ byte OPL_DOSBox::read(int port) {
 	return 0;
 }
 
-void OPL_DOSBox::writeReg(int r, int v) {
+void OPL::writeReg(int r, int v) {
 	byte tempReg = 0;
 	switch (_type) {
 	case kOpl2:
@@ -316,7 +316,7 @@ void OPL_DOSBox::writeReg(int r, int v) {
 	};
 }
 
-void OPL_DOSBox::dualWrite(uint8 index, uint8 reg, uint8 val) {
+void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	// Make sure you don't use opl3 features
 	// Don't allow write to disable opl3		
 	if (reg == 5)
@@ -340,7 +340,7 @@ void OPL_DOSBox::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	_handler->writeReg(fullReg, val);
 }
 
-void OPL_DOSBox::readBuffer(int16 *buffer, int length) {
+void OPL::readBuffer(int16 *buffer, int length) {
 	// For stereo OPL cards, we divide the sample count by 2,
 	// to match stereo AudioStream behavior.
 	if (_type != kOpl2)

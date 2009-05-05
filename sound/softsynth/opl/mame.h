@@ -176,12 +176,12 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 FM_OPL *makeAdlibOPL(int rate);
 
 // OPL API implementation
-class OPL_MAME : public OPL {
+class OPL : public ::OPL::OPL {
 private:
 	FM_OPL *_opl;
 public:
-	OPL_MAME() : _opl(0) {}
-	~OPL_MAME();
+	OPL() : _opl(0) {}
+	~OPL();
 
 	bool init(int rate);
 	void reset();

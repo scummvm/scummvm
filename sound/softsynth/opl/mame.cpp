@@ -40,12 +40,12 @@
 namespace OPL {
 namespace MAME {
 
-OPL_MAME::~OPL_MAME() {
+OPL::~OPL() {
 	MAME::OPLDestroy(_opl);
 	_opl = 0;
 }
 
-bool OPL_MAME::init(int rate) {
+bool OPL::init(int rate) {
 	if (_opl)
 		MAME::OPLDestroy(_opl);
 
@@ -53,23 +53,23 @@ bool OPL_MAME::init(int rate) {
 	return (_opl != 0);
 }
 
-void OPL_MAME::reset() {
+void OPL::reset() {
 	MAME::OPLResetChip(_opl);
 }
 
-void OPL_MAME::write(int a, int v) {
+void OPL::write(int a, int v) {
 	MAME::OPLWrite(_opl, a, v);
 }
 
-byte OPL_MAME::read(int a) {
+byte OPL::read(int a) {
 	return MAME::OPLRead(_opl, a);
 }
 
-void OPL_MAME::writeReg(int r, int v) {
+void OPL::writeReg(int r, int v) {
 	MAME::OPLWriteReg(_opl, r, v);
 }
 
-void OPL_MAME::readBuffer(int16 *buffer, int length) {
+void OPL::readBuffer(int16 *buffer, int length) {
 	MAME::YM3812UpdateOne(_opl, buffer, length);
 }
 

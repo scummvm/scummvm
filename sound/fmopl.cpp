@@ -42,9 +42,9 @@ OPL *OPL::create(kOplType type) {
 	if (type != kOpl2)
 		return 0;
 	else
-		return new MAME::OPL_MAME();
+		return new MAME::OPL();
 #else
-	return new DOSBox::OPL_DOSBox(type);
+	return new DOSBox::OPL(type);
 #endif
 }
 
