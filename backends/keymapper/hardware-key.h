@@ -74,7 +74,7 @@ class HardwareKeySet {
 public:
 
 	virtual ~HardwareKeySet() {
-		List<const HardwareKey*>::iterator it;
+		List<const HardwareKey*>::const_iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++)
 			delete *it;
 	}
@@ -85,7 +85,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(const char *id) const {
-		List<const HardwareKey*>::iterator it;
+		List<const HardwareKey*>::const_iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if (strncmp((*it)->hwKeyId, id, HWKEY_ID_SIZE) == 0)
 				return (*it);
@@ -94,7 +94,7 @@ public:
 	}
 
 	const HardwareKey *findHardwareKey(const KeyState& keystate) const {
-		List<const HardwareKey*>::iterator it;
+		List<const HardwareKey*>::const_iterator it;
 		for (it = _keys.begin(); it != _keys.end(); it++) {
 			if ((*it)->key == keystate)
 				return (*it);

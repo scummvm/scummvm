@@ -183,7 +183,7 @@ Action *Keymapper::getAction(const KeyState& key) {
 }
 
 void Keymapper::executeAction(const Action *action, bool keyDown) {
-	List<Event>::iterator it;
+	List<Event>::const_iterator it;
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
 		Event evt = *it;
 		switch (evt.type) {
