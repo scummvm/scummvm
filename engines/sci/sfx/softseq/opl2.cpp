@@ -56,18 +56,14 @@ namespace Sci {
 // FIXME: Instead of hardcoding SAMPLE_RATE we should call Mixer::getOutputRate()
 #ifdef __DC__
 #define SAMPLE_RATE 22050
-#define CHANNELS SFX_PCM_MONO
-#define STEREO 0
 #elif defined (__WII__)
 #define SAMPLE_RATE 48000
-#define CHANNELS SFX_PCM_STEREO_LR
-#define STEREO 1
 #else
 #define SAMPLE_RATE 44100
-#define CHANNELS SFX_PCM_STEREO_LR
-#define STEREO 1
 #endif
 
+#define CHANNELS SFX_PCM_MONO
+#define STEREO 0
 
 /* local function declarations */
 
@@ -78,11 +74,7 @@ static void opl2_allstop(sfx_softseq_t *self);
 /* portions shamelessly lifted from claudio's XMP */
 /* other portions lifted from sound/opl3.c in the Linux kernel */
 
-#define ADLIB_LEFT 0
-#define ADLIB_RIGHT 1
-
 static int ready = 0;
-static int pcmout_stereo = STEREO;
 
 static int register_base[11] = {
 	0x20, 0x23, 0x40, 0x43,
@@ -118,11 +110,9 @@ static int free_voices = ADLIB_VOICES;
 static uint8 oper_note[ADLIB_VOICES];
 static uint8 oper_chn[ADLIB_VOICES];
 
-static FM_OPL *ym3812_L = NULL;
-static FM_OPL *ym3812_R = NULL;
+static FM_OPL *ym3812 = NULL;
 
-static uint8 adlib_reg_L[256];
-static uint8 adlib_reg_R[256];
+static uint8 adlib_reg[256];
 static uint8 adlib_master;
 
 
@@ -147,8 +137,7 @@ void adlibemu_init_lists() {
 	memset(instr, 0, sizeof(instr));
 	memset(vol, 0x7f, sizeof(vol));
 	memset(pan, 0x3f, sizeof(pan));
-	memset(adlib_reg_L, 0, sizeof(adlib_reg_L));
-	memset(adlib_reg_R, 0, sizeof(adlib_reg_R));
+	memset(adlib_reg, 0, sizeof(adlib_reg));
 	memset(oper_chn, 0xff, sizeof(oper_chn));
 	memset(oper_note, 0xff, sizeof(oper_note));
 	adlib_master = 12;
@@ -156,29 +145,11 @@ void adlibemu_init_lists() {
 
 /* more shamelessly lifted from xmp and adplug.  And altered.  :) */
 
-static void opl_write_L(int a, int v) {
-	adlib_reg_L[a] = v;
-	OPLWrite(ym3812_L, 0x388, a);
-	OPLWrite(ym3812_L, 0x389, v);
-}
-
-static void opl_write_R(int a, int v) {
-	adlib_reg_R[a] = v;
-	OPLWrite(ym3812_R, 0x388, a);
-	OPLWrite(ym3812_R, 0x389, v);
-}
-
 static void opl_write(int a, int v) {
-	opl_write_L(a, v);
-	opl_write_R(a, v);
+	adlib_reg[a] = v;
+	OPLWrite(ym3812, 0x388, a);
+	OPLWrite(ym3812, 0x389, v);
 }
-
-/*
-static uint8 opl_read (int a) {
-	OPLWrite (ym3812_L, 0x388, a);
-	return OPLRead (ym3812_L, 0x389);
-}
-*/
 
 void synth_setpatch(int voice, uint8 *data) {
 	int i;
@@ -191,22 +162,21 @@ void synth_setpatch(int voice, uint8 *data) {
 	opl_write(register_base[10] + voice, data[10]);
 
 	/* mute voice after patch change */
-	opl_write_L(0xb0 + voice, adlib_reg_L[0xb0+voice] & 0xdf);
-	opl_write_R(0xb0 + voice, adlib_reg_R[0xb0+voice] & 0xdf);
+	opl_write(0xb0 + voice, adlib_reg[0xb0+voice] & 0xdf);
 
 #ifdef DEBUG_ADLIB
 	for (i = 0; i < 10; i++)
-		printf("%02x ", adlib_reg_L[register_base[i] + register_offset[voice]]);
-	printf("%02x ", adlib_reg_L[register_base[10] + voice]);
+		printf("%02x ", adlib_reg[register_base[i] + register_offset[voice]]);
+	printf("%02x ", adlib_reg[register_base[10] + voice]);
 #endif
 
 }
 
-void synth_setvolume_L(int voice, int volume) {
+void synth_setvolume(int voice, int volume) {
 	int8 level1, level2;
 
-	level1 = ~adlib_reg_L[register_base[2] + register_offset[voice]] & 0x3f;
-	level2 = ~adlib_reg_L[register_base[3] + register_offset[voice]] & 0x3f;
+	level1 = ~adlib_reg[register_base[2] + register_offset[voice]] & 0x3f;
+	level2 = ~adlib_reg[register_base[3] + register_offset[voice]] & 0x3f;
 
 	if (level1) {
 		level1 += sci_adlib_vol_tables[adlib_master][volume>>1];
@@ -227,50 +197,14 @@ void synth_setvolume_L(int voice, int volume) {
 		level2 = 0;
 
 	/* algorithm-dependent; we may need to set both operators. */
-	if (adlib_reg_L[register_base[10] + voice] & 1)
-		opl_write_L(register_base[2] + register_offset[voice],
+	if (adlib_reg[register_base[10] + voice] & 1)
+		opl_write(register_base[2] + register_offset[voice],
 		            (uint8)((~level1 &0x3f) |
-		                     (adlib_reg_L[register_base[2] + register_offset[voice]]&0xc0)));
+		                     (adlib_reg[register_base[2] + register_offset[voice]]&0xc0)));
 
-	opl_write_L(register_base[3] + register_offset[voice],
+	opl_write(register_base[3] + register_offset[voice],
 	            (uint8)((~level2 &0x3f) |
-	                     (adlib_reg_L[register_base[3] + register_offset[voice]]&0xc0)));
-
-}
-
-void synth_setvolume_R(int voice, int volume) {
-	int8 level1, level2;
-
-	level1 = ~adlib_reg_R[register_base[2] + register_offset[voice]] & 0x3f;
-	level2 = ~adlib_reg_R[register_base[3] + register_offset[voice]] & 0x3f;
-
-	if (level1) {
-		level1 += sci_adlib_vol_tables[adlib_master][volume>>1];
-	}
-
-	if (level2) {
-		level2 += sci_adlib_vol_tables[adlib_master][volume>>1];
-	}
-
-	if (level1 > 0x3f)
-		level1 = 0x3f;
-	if (level1 < 0)
-		level1 = 0;
-
-	if (level2 > 0x3f)
-		level2 = 0x3f;
-	if (level2 < 0)
-		level2 = 0;
-
-	/* now for the other side. */
-	if (adlib_reg_R[register_base[10] + voice] & 1)
-		opl_write_R(register_base[2] + register_offset[voice],
-		            (uint8)((~level1 &0x3f) |
-		                     (adlib_reg_R[register_base[2] + register_offset[voice]]&0xc0)));
-
-	opl_write_R(register_base[3] + register_offset[voice],
-	            (uint8)((~level2 &0x3f) |
-	                     (adlib_reg_R[register_base[3] + register_offset[voice]]&0xc0)));
+	                     (adlib_reg[register_base[3] + register_offset[voice]]&0xc0)));
 
 }
 
@@ -300,7 +234,7 @@ void synth_setnote(int voice, int note, int bend) {
 	opl_write(0xb0 + voice,
 	          0x20 | ((oct << 2) & 0x1c) | ((fre >> 8) & 0x03));
 #ifdef DEBUG_ADLIB
-	printf("-- %02x %02x\n", adlib_reg_L[0xa0+voice], adlib_reg_L[0xb0+voice]);
+	printf("-- %02x %02x\n", adlib_reg[0xa0+voice], adlib_reg[0xb0+voice]);
 #endif
 
 }
@@ -336,8 +270,7 @@ int adlibemu_stop_note(int chn, int note, int velocity) {
 		return -1; /* that note isn't playing.. */
 	}
 
-	opl_write_L(0xb0 + op, (adlib_reg_L[0xb0+op] & 0xdf));
-	opl_write_R(0xb0 + op, (adlib_reg_R[0xb0+op] & 0xdf));
+	opl_write(0xb0 + op, (adlib_reg[0xb0+op] & 0xdf));
 
 	oper_chn[op] = 255;
 	oper_note[op] = 255;
@@ -352,7 +285,7 @@ int adlibemu_stop_note(int chn, int note, int velocity) {
 }
 
 int adlibemu_start_note(int chn, int note, int velocity) {
-	int op, volume_L, volume_R, inst = 0;
+	int op, volume, inst = 0;
 
 	//  sciprintf("Note on %d %d %d\n", chn, note, velocity);
 
@@ -375,21 +308,11 @@ int adlibemu_start_note(int chn, int note, int velocity) {
 	}
 
 	/* Scale channel volume */
-	volume_L = velocity * vol[chn] / 127;
-	volume_R = velocity * vol[chn] / 127;
-
-	/* Apply a pan */
-	if (pcmout_stereo) {
-		if (pan[chn] > 0x3f)  /* pan right; so we scale the left down. */
-			volume_L = volume_L / 0x3f * (0x3f - (pan[chn] - 0x3f));
-		else if (pan[chn] < 0x3f) /* pan left; so we scale the right down.*/
-			volume_R = volume_R / 0x3f * (0x3f - (0x3f - pan[chn]));
-	}
+	volume = velocity * vol[chn] / 127;
 	inst = instr[chn];
 
 	synth_setpatch(op, adlib_sbi[inst]);
-	synth_setvolume_L(op, volume_L);
-	synth_setvolume_R(op, volume_R);
+	synth_setvolume(op, volume);
 	synth_setnote(op, note, pitch[chn]);
 
 	oper_chn[op] = chn;
@@ -397,9 +320,9 @@ int adlibemu_start_note(int chn, int note, int velocity) {
 	free_voices--;
 
 #ifdef DEBUG_ADLIB
-	printf("play voice %d (%d rem):  C%02x N%02x V%02x/%02x-%02x P%02x (%02x/%02x)\n", op, free_voices, chn, note, velocity, volume_L, volume_R, inst,
-	       adlib_reg_L[register_base[2] + register_offset[op]] & 0x3f,
-	       adlib_reg_L[register_base[3] + register_offset[op]] & 0x3f);
+	printf("play voice %d (%d rem):  C%02x N%02x V%02x/%02x P%02x (%02x/%02x)\n", op, free_voices, chn, note, velocity, volume, inst,
+	       adlib_reg[register_base[2] + register_offset[op]] & 0x3f,
+	       adlib_reg[register_base[3] + register_offset[op]] & 0x3f);
 #endif
 
 	return 0;
@@ -450,8 +373,7 @@ void test_adlib() {
 	opl_write(0xA0 + voice, 0x57);
 	opl_write(0xB0 + voice, 0x2d);
 #else
-	synth_setvolume_L(voice, 0x50);
-	synth_setvolume_R(voice, 0x50);
+	synth_setvolume(voice, 0x50);
 	synth_setnote(voice, 0x30, 0);
 #endif
 
@@ -479,51 +401,7 @@ static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	if (!ptr)
 		error("synth_mixer(): !buffer \n");
 
-#if 0
-	{
-		static unsigned long remaining_delta = 0;
-		int samples;
-		int remaining = count;
-
-		while (remaining > 0) {
-			samples = remaining_delta * pcmout_sample_rate / 1000000;
-			samples = sci_min(samples, remaining);
-			if (samples) {
-				YM3812UpdateOne(ADLIB_LEFT, ptr, samples, 1);
-				YM3812UpdateOne(ADLIB_RIGHT, ptr + 1, samples, 1);
-			}
-			if (remaining > samples) {
-				remaining_delta = (remaining - samples) * 1000000 / pcmout_sample_rate;
-			} else {
-				song->play_next_note();
-				remaining_delta = song->get_next_delta();
-				song->advance();
-			}
-			remaining -= samples;
-		}
-	}
-#endif
-
-	if (pcmout_stereo) {
-		int16 buffer[512];
-
-		while (count > 0) {
-			int process = count > ARRAYSIZE(buffer) ? ARRAYSIZE(buffer) : count;
-			count -= process;
-
-			YM3812UpdateOne(ym3812_L, buffer, process);
-			for (int i = 0; i < process; ++i)
-				ptr[(i << 1) + 0] = buffer[i];
-			
-			YM3812UpdateOne(ym3812_R, buffer, process);
-			for (int i = 0; i < process; ++i)
-				ptr[(i << 1) + 1] = buffer[i];
-
-			ptr += (process << 1);
-		}
-	} else {
-		YM3812UpdateOne(ym3812_L, ptr, count);
-	}
+	YM3812UpdateOne(ym3812, ptr, count);
 }
 
 static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
@@ -543,7 +421,7 @@ static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte 
 		for (i = 48; i < 96; i++)
 			make_sbi((adlib_def *)(data_ptr + 2 + (28 * i)), adlib_sbi[i]);
 
-	if (!(ym3812_L = makeAdlibOPL(SAMPLE_RATE)) || !(ym3812_R = makeAdlibOPL(SAMPLE_RATE))) {
+	if (!(ym3812 = makeAdlibOPL(SAMPLE_RATE))) {
 		sciprintf("[sfx:seq:opl2] Failure: Emulator init failed!\n");
 		return SFX_ERROR;
 	}
@@ -556,10 +434,8 @@ static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte 
 
 
 static void opl2_exit(sfx_softseq_t *self) {
-	OPLDestroy(ym3812_L);
-	ym3812_L = NULL;
-	OPLDestroy(ym3812_R);
-	ym3812_R = NULL;
+	OPLDestroy(ym3812);
+	ym3812 = NULL;
 
 	// XXX deregister with pcm layer.
 }
@@ -571,8 +447,7 @@ static void opl2_allstop(sfx_softseq_t *self) {
 
 	adlibemu_init_lists();
 
-	OPLResetChip(ym3812_L);
-	OPLResetChip(ym3812_R);
+	OPLResetChip(ym3812);
 
 	opl_write(0x01, 0x20);
 	opl_write(0xBD, 0xc0);
