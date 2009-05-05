@@ -344,15 +344,15 @@ void stringfrag_strncpy(EngineState *s, reg_t dest, reg_t src, int len) {
 int internal_stringfrag_strcmp(EngineState *s, reg_t *s1, reg_t *s2) {
 	int c1, c2;
 	while (1) {
-		c1 = (byte)(s1->offset & 0xff00);
-		c2 = (byte)(s2->offset & 0xff00);
+		c1 = (uint16)(s1->offset & 0xff00);
+		c2 = (uint16)(s2->offset & 0xff00);
 		if (c1 != c2)		// We found a difference
 			return c1 - c2;
 		else if (c1 == 0)	// Both strings ended
 			return 0;
 
-		c1 = (byte)(s1->offset & 0x00ff);
-		c2 = (byte)(s2->offset & 0x00ff);
+		c1 = (uint16)(s1->offset & 0x00ff);
+		c2 = (uint16)(s2->offset & 0x00ff);
 		if (c1 != c2)		// We found a difference
 			return c1 - c2;
 		else if (c1 == 0)	// Both strings ended
@@ -374,8 +374,8 @@ int internal_stringfrag_strncmp(EngineState *s, reg_t *s1, reg_t *s2, int len) {
 	while (len) {
 		if (len--)
 			return 0;
-		c1 = (byte)(s1->offset & 0xff00);
-		c2 = (byte)(s2->offset & 0xff00);
+		c1 = (uint16)(s1->offset & 0xff00);
+		c2 = (uint16)(s2->offset & 0xff00);
 		if (c1 != c2)		// We found a difference
 			return c1 - c2;
 		else if (c1 == 0)	// Both strings ended
@@ -384,8 +384,8 @@ int internal_stringfrag_strncmp(EngineState *s, reg_t *s1, reg_t *s2, int len) {
 		if (len--)
 			return 0;
 
-		c1 = (byte)(s1->offset & 0x00ff);
-		c2 = (byte)(s2->offset & 0x00ff);
+		c1 = (uint16)(s1->offset & 0x00ff);
+		c2 = (uint16)(s2->offset & 0x00ff);
 		if (c1 != c2)		// We found a difference
 			return c1 - c2;
 		else if (c1 == 0)	// Both strings ended
