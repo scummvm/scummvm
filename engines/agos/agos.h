@@ -1498,6 +1498,7 @@ public:
 	virtual void timerProc();
 
 	void addChar(uint8 chr);
+	void clearCursor(WindowBlock *window);
 	void clearInputLine();
 	void handleKeyboard();
 	virtual void handleMouseMoved();

@@ -689,8 +689,8 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 		_intputCounter = 0;
 		_inputMax = size;
 		_inputWindow = _windowArray[_curWindow];
-		userGameBackSpace(_inputWindow, 8);
 		windowPutChar(_inputWindow, 128);
+		windowPutChar(_inputWindow, 8);
 		_inputting = true;
 		_inputReady = true;
 	}
@@ -714,21 +714,32 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 void AGOSEngine_PN::addChar(uint8 chr) {
 	if (chr == 13) {
 		_keyboardBuffer[_intputCounter++] = chr;
-		userGameBackSpace(_inputWindow, 8);
 		windowPutChar(_inputWindow, 13);
 	} else if (chr == 8 && _intputCounter) {
-		userGameBackSpace(_inputWindow, 8);
-		userGameBackSpace(_inputWindow, 8);
+		clearCursor(_inputWindow);
+		windowPutChar(_inputWindow, 8);
 		windowPutChar(_inputWindow, 128);
+		windowPutChar(_inputWindow, 8);
 
 		_keyboardBuffer[--_intputCounter] = 0;
 	} else if (chr >= 32 && _intputCounter < _inputMax) {
 		_keyboardBuffer[_intputCounter++] = chr;
 
-		userGameBackSpace(_inputWindow, 8);
+		clearCursor(_inputWindow);
 		windowPutChar(_inputWindow, chr);
 		windowPutChar(_inputWindow, 128);
+		windowPutChar(_inputWindow, 8);
 	}
+}
+
+void AGOSEngine_PN::clearCursor(WindowBlock *window) {
+	byte oldTextColor = window->textColor;
+
+	window->textColor = window->fillColor;
+	windowPutChar(window, 128);
+	window->textColor = oldTextColor;
+
+	windowPutChar(window, 8);
 }
 
 bool AGOSEngine_PN::processSpecialKeys() {

@@ -882,10 +882,10 @@ void AGOSEngine::disableFileBoxes() {
 }
 
 void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
-	byte old_text;
+	byte oldTextColor;
 
 	windowPutChar(window, x, b);
-	old_text = window->textColor;
+	oldTextColor = window->textColor;
 	window->textColor = window->fillColor;
 
 	if (_language == Common::HB_ISR) {
@@ -898,7 +898,7 @@ void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 
 	windowPutChar(window, x);
 
-	window->textColor = old_text;
+	window->textColor = oldTextColor;
 	windowPutChar(window, 8);
 }
 
