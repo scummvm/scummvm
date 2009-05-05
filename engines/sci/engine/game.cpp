@@ -433,9 +433,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
 	str->name = strdup("savedir");
 	str->max_size = MAX_SAVE_DIR_SIZE;
-	str->value = (reg_t*)sci_malloc(sizeof(reg_t)*MAX_SAVE_DIR_SIZE);
-	str->value->segment = s->string_frag_segment; // Set to empty string
-	str->value->offset = 0; 
+	str->value = (reg_t *)calloc(MAX_SAVE_DIR_SIZE, sizeof(reg_t));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
+	str->value[0].segment = s->string_frag_segment; // Set to empty string
+	str->value[0].offset = 0; 
 
 
 	s->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
@@ -481,7 +481,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
 	
-	strncpy((char *)str->value, path, str->max_size);
+	strncpy((char *)str->value, path, str->max_size);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
 	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
 	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
 }
@@ -576,7 +576,7 @@ int game_init(EngineState *s) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");
 	str->max_size = MAX_PARSER_BASE;
-	str->value = (reg_t*)sci_malloc(MAX_PARSER_BASE + 1);
+	str->value = (reg_t *)calloc(MAX_PARSER_BASE + 1, sizeof(char));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
 	str->value[0].segment = s->string_frag_segment; // Set to empty string
 	str->value[0].offset = 0; // Set to empty string
 
