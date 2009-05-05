@@ -1461,6 +1461,21 @@ GfxVisual::GfxVisual(GfxState *state, int font)
 	_gfxw_set_ops_VISUAL(this);
 }
 
+GfxVisual::~GfxVisual() {
+	// HACK: We must dispose all content *here* already, because our child widgets
+	// still may have references to this object, and will try to invoke methods
+	// of this object which try to access the already cleared _portRefs array
+	// when they are destroyed.
+	GfxWidget *seeker = _contents;
+
+	while (seeker) {
+		GfxWidget *next = seeker->_next;
+		delete seeker;
+		seeker = next;
+	}
+	_contents = 0;
+}
+
 static int _visual_find_free_ID(GfxVisual *visual) {
 	uint id = 0;
 

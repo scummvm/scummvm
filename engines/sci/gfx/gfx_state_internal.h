@@ -340,6 +340,7 @@ struct GfxVisual : public GfxContainer {
 
 public:
 	GfxVisual(GfxState *state, int font);
+	~GfxVisual();
 
 	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
