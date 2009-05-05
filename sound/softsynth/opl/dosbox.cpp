@@ -171,7 +171,7 @@ namespace OPL3 {
 
 struct Handler : public DOSBox::Handler {
 	void writeReg(uint32 reg, uint8 val) {	
-		adlib_write(reg,val);
+		adlib_write(reg, val);
 	}
 
 	uint32 writeAddr(uint32 port, uint8 val) {
@@ -213,11 +213,6 @@ bool OPL::init(int rate) {
 		break;
 
 	case kDualOpl2:
-		_handler = new OPL3::Handler();
-		// Setup opl3 mode in the hander
-		_handler->writeReg(0x105, 1);
-		break;
-
 	case kOpl3:
 		_handler = new OPL3::Handler();
 		break;
@@ -227,6 +222,12 @@ bool OPL::init(int rate) {
 	}
 
 	_handler->init(rate);
+	
+	if (_type == kDualOpl2) {
+		// Setup opl3 mode in the hander
+		_handler->writeReg(0x105, 1);
+	}
+
 	_rate = rate;
 	return true;
 }
@@ -336,7 +337,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 		return;
 
 	// Enabling panning
-	if (reg >= 0xc0 && reg < 0xc8) {
+	if (reg >= 0xC0 && reg < 0xC8) {
 		val &= 7;
 		val |= index ? 0xA0 : 0x50;
 	}
