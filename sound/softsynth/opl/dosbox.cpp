@@ -213,6 +213,11 @@ bool OPL::init(int rate) {
 		break;
 
 	case kDualOpl2:
+		_handler = new OPL3::Handler();
+		// Setup opl3 mode in the hander
+		_handler->writeReg(0x105, 1);
+		break;
+
 	case kOpl3:
 		_handler = new OPL3::Handler();
 		break;
