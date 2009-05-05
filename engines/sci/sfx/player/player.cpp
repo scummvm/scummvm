@@ -156,8 +156,12 @@ static int player_add_iterator(SongIterator *it, uint32 start_time) {
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(mididrv->getPlayMask()));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(mididrv->hasRhythmChannel()));
 
-	current_time = Audio::Timestamp(g_system->getMillis(), 1000000 / tempo);
-	wakeup_time = Audio::Timestamp(start_time, SFX_TICKS_PER_SEC);
+	if (play_it == NULL) {
+		// Resync with clock
+		current_time = Audio::Timestamp(g_system->getMillis(), 1000000 / tempo);
+		wakeup_time = Audio::Timestamp(start_time, SFX_TICKS_PER_SEC);
+	}
+
 	play_it = sfx_iterator_combine(play_it, it);
 	play_it_done = 0;
 	mutex->unlock();
@@ -171,9 +175,12 @@ static int player_fade_out(void) {
 }
 
 static int player_stop(void) {
+	debug(3, "Player: Stopping song iterator %p", (void *)play_it);
 	mutex->lock();
 	delete play_it;
 	play_it = NULL;
+	for (int i = 0; i < MIDI_CHANNELS; i++)
+		static_cast<MidiDriver *>(mididrv)->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 	mutex->unlock();
 
 	return SFX_OK;

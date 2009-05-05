@@ -34,64 +34,11 @@ public:
 		kVoices = 9
 	};
 
-	enum ChannelID {
-		kLeftChannel = 1,
-		kRightChannel = 2
-	};
-
-	struct AdlibOperator {
-		bool amplitudeMod;
-		bool vibrato;
-		bool envelopeType;
-		bool kbScaleRate;
-		byte frequencyMult;	// (0-15)
-		byte kbScaleLevel;	// (0-3)
-		byte totalLevel;	// (0-63, 0=max, 63=min)
-		byte attackRate;	// (0-15)
-		byte decayRate;		// (0-15)
-		byte sustainLevel;	// (0-15)
-		byte releaseRate;	// (0-15)
-		byte waveForm;		// (0-3)
-	};
-
-	struct AdlibModulator {
-		byte feedback;		// (0-7)
-		bool algorithm;
-	};
-
-	struct AdlibPatch {
-		AdlibOperator op[2];
-		AdlibModulator mod;
-	};
-
-	struct Channel {
-		uint8 patch;		// Patch setting
-		uint8 volume;		// Channel volume (0-63)
-		uint8 pan;			// Pan setting (0-127, 64 is center)
-		uint8 holdPedal;	// Hold pedal setting (0 to 63 is off, 127 to 64 is on)
-		uint8 extraVoices;	// The number of additional voices this channel optimally needs
-		uint16 pitchWheel;	// Pitch wheel setting (0-16383, 8192 is center)
-		uint8 lastVoice;	// Last voice used for this MIDI channel
-
-		Channel() : patch(0), volume(63), pan(64), holdPedal(0), extraVoices(0), pitchWheel(8192), lastVoice(0) { }
-	};
-
-	struct AdlibVoice {
-		int8 channel;		// MIDI channel that this voice is assigned to or -1
-		int8 note;			// Currently playing MIDI note or -1
-		int8 patch;			// Currently playing patch or -1
-		uint8 velocity;		// Note velocity
-		bool isSustained;	// Flag indicating a note that is being sustained by the hold pedal
-		uint16 age;			// Age of the current note
-
-		AdlibVoice() : channel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
-	};
-
 	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15) { }
 	~MidiDriver_Adlib() { }
 
 	// MidiDriver
-	int open();
+	int open(bool isSCI0);
 	void close();
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
@@ -108,7 +55,63 @@ public:
 	void playSwitch(bool play);
 
 private:
+	enum ChannelID {
+		kLeftChannel = 1,
+		kRightChannel = 2
+	};
+
+	struct AdlibOperator {
+		bool amplitudeMod;
+		bool vibrato;
+		bool envelopeType;
+		bool kbScaleRate;
+		byte frequencyMult;		// (0-15)
+		byte kbScaleLevel;		// (0-3)
+		byte totalLevel;		// (0-63, 0=max, 63=min)
+		byte attackRate;		// (0-15)
+		byte decayRate;			// (0-15)
+		byte sustainLevel;		// (0-15)
+		byte releaseRate;		// (0-15)
+		byte waveForm;			// (0-3)
+	};
+
+	struct AdlibModulator {
+		byte feedback;			// (0-7)
+		bool algorithm;
+	};
+
+	struct AdlibPatch {
+		AdlibOperator op[2];
+		AdlibModulator mod;
+	};
+
+	struct Channel {
+		uint8 patch;			// Patch setting
+		uint8 volume;			// Channel volume (0-63)
+		uint8 pan;				// Pan setting (0-127, 64 is center)
+		uint8 holdPedal;		// Hold pedal setting (0 to 63 is off, 127 to 64 is on)
+		uint8 extraVoices;		// The number of additional voices this channel optimally needs
+		uint16 pitchWheel;		// Pitch wheel setting (0-16383, 8192 is center)
+		uint8 lastVoice;		// Last voice used for this MIDI channel
+		bool enableVelocity;	// Enable velocity control (SCI0)
+
+		Channel() : patch(0), volume(63), pan(64), holdPedal(0), extraVoices(0),
+					pitchWheel(8192), lastVoice(0), enableVelocity(false) { }
+	};
+
+	struct AdlibVoice {
+		int8 channel;			// MIDI channel that this voice is assigned to or -1
+		int8 note;				// Currently playing MIDI note or -1
+		int8 patch;				// Currently playing patch or -1
+		uint8 velocity;			// Note velocity
+		bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
+		uint16 age;				// Age of the current note
+
+		AdlibVoice() : channel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
+	};
+
 	bool _stereo;
+	bool _isSCI0;
 	FM_OPL *_fmopl[2];
 	bool _playSwitch;
 	int _masterVolume;
@@ -122,7 +125,7 @@ private:
 	void voiceOff(int voice);
 	void setPatch(int voice, int patch);
 	void setNote(int voice, int note, bool key);
-	void setVelocity(int voice, int velocity);
+	void setVelocity(int voice);
 	void setOperator(int oper, AdlibOperator &op);
 	void setRegister(int reg, int value, int channels = kLeftChannel | kRightChannel);
 	void renewNotes(int channel, bool key);
@@ -134,7 +137,8 @@ private:
 	void releaseVoices(int channel, int voices);
 	void donateVoices();
 	int findVoiceBasic(int channel);
-	void setVelocityReg(int regOffset, int velocity, int pan, AdlibOperator &op);
+	void setVelocityReg(int regOffset, int velocity, int kbScaleLevel, int pan);
+	int calcVelocity(int voice, int op);
 };
 
 class MidiPlayer_Adlib : public MidiPlayer {

@@ -41,7 +41,6 @@ namespace Sci {
 
 // FIXME: We don't seem to be sending the polyphony init data, so disable this for now
 #define ADLIB_DISABLE_VOICE_MAPPING
-#define ADLIB_SCI1
 
 static const byte registerOffset[MidiDriver_Adlib::kVoices] = {
 	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12
@@ -75,10 +74,13 @@ static const int ym3812_note[13] = {
 	0x2ae
 };
 
-int MidiDriver_Adlib::open() {
+int MidiDriver_Adlib::open(bool isSCI0) {
 	int rate = _mixer->getOutputRate();
 
 	_stereo = STEREO;
+
+	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
+	_isSCI0 = isSCI0;
 
 	for (int i = 0; i < (isStereo() ? 2 : 1); i++) {
 		_fmopl[i] = makeAdlibOPL(rate);
@@ -152,6 +154,11 @@ void MidiDriver_Adlib::send(uint32 b) {
 #ifndef ADLIB_DISABLE_VOICE_MAPPING
 			voiceMapping(channel, op2);
 #endif
+			break;
+		case 0x4e:
+			// FIXME: this flag should be set to 0 when a new song is started
+			debug(3, "ADLIB: Setting velocity control flag for channel %i to %i", channel, op2);
+			_channels[channel].enableVelocity = op2;
 			break;
 		case SCI_MIDI_CHANNEL_NOTES_OFF:
 			for (int i = 0; i < kVoices; i++)
@@ -481,57 +488,66 @@ void MidiDriver_Adlib::setNote(int voice, int note, bool key) {
 
 	setRegister(0xA0 + voice, fre & 0xff);
 	setRegister(0xB0 + voice, (key << 5) | (oct << 2) | (fre >> 8));
-// FIXME
-#ifdef ADLIB_SCI1
-	int velocity = _channels[_voices[voice].channel].volume + 1;
-	velocity = velocity * (velocityMap1[_voices[voice].velocity] + 1) / 64;
-	velocity = velocity * (_masterVolume + 1) / 16;
 
-	if (--velocity < 0)
-		velocity = 0;
-#else
-	int velocity = _masterVolume + 3;
-	if (velocity > 15)
-		velocity = 15;
-	velocity *= 4;
-#endif
-	if (!_playSwitch)
-		velocity = 0;
-
-	setVelocity(voice, velocity);
+	setVelocity(voice);
 }
 
-void MidiDriver_Adlib::setVelocity(int voice, int velocity) {
+void MidiDriver_Adlib::setVelocity(int voice) {
 	AdlibPatch &patch = _patches[_voices[voice].patch];
 	int pan = _channels[_voices[voice].channel].pan;
-	setVelocityReg(registerOffset[voice] + 3, velocity, pan, patch.op[1]);
+	setVelocityReg(registerOffset[voice] + 3, calcVelocity(voice, 1), patch.op[1].kbScaleLevel, pan);
 
 	// In AM mode we need to set the level for both operators
 	if (_patches[_voices[voice].patch].mod.algorithm == 1)
-		setVelocityReg(registerOffset[voice], velocity, pan, patch.op[0]);
+		setVelocityReg(registerOffset[voice], calcVelocity(voice, 0), patch.op[0].kbScaleLevel, pan);
 }
 
-void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int pan, AdlibOperator &op) {
-// FIXME
-#ifdef ADLIB_SCI1
-	int vel = (velocityMap2[velocity] * (63 - op.totalLevel) / 63);
-#else
-	int vel = (velocity / 4 * ((63 - op.totalLevel) / 15));
-#endif
+int MidiDriver_Adlib::calcVelocity(int voice, int op) {
+	if (_isSCI0) {
+		int velocity = _masterVolume;
+
+		if ((velocity > 0) && (velocity < 13))
+			velocity += 3;
+
+		int insVelocity;
+		if (_channels[_voices[voice].channel].enableVelocity)
+			insVelocity = _voices[voice].velocity;
+		else
+			insVelocity = 63 - _patches[_voices[voice].patch].op[op].totalLevel;
+
+		// Note: Later SCI0 has a static table that is close to this formula, but not exactly the same.
+		// Early SCI0 does (velocity * (insVelocity / 15))
+		return velocity * insVelocity / 15;
+	} else {
+		AdlibOperator &oper = _patches[_voices[voice].patch].op[op];
+		int velocity = _channels[_voices[voice].channel].volume + 1;
+		velocity = velocity * (velocityMap1[_voices[voice].velocity] + 1) / 64;
+		velocity = velocity * (_masterVolume + 1) / 16;
+
+		if (--velocity < 0)
+			velocity = 0;
+
+		return velocityMap2[velocity] * (63 - oper.totalLevel) / 63;
+	}
+}
+
+void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int kbScaleLevel, int pan) {
+	if (!_playSwitch)
+		velocity = 0;
 
 	if (isStereo()) {
-		int velLeft = vel;
-		int velRight = vel;
+		int velLeft = velocity;
+		int velRight = velocity;
 
 		if (pan > 0x40)
 			velLeft = velLeft * (0x7f - pan) / 0x3f;
 		else if (pan < 0x40)
 			velRight = velRight * pan / 0x40;
 
-		setRegister(0x40 + regOffset, (op.kbScaleLevel << 6) | (63 - velLeft), kLeftChannel);
-		setRegister(0x40 + regOffset, (op.kbScaleLevel << 6) | (63 - velRight), kRightChannel);
+		setRegister(0x40 + regOffset, (kbScaleLevel << 6) | (63 - velLeft), kLeftChannel);
+		setRegister(0x40 + regOffset, (kbScaleLevel << 6) | (63 - velRight), kRightChannel);
 	} else {
-		setRegister(0x40 + regOffset, (op.kbScaleLevel << 6) | (63 - vel));
+		setRegister(0x40 + regOffset, (kbScaleLevel << 6) | (63 - velocity));
 	}
 }
 
@@ -575,6 +591,8 @@ void MidiDriver_Adlib::playSwitch(bool play) {
 }
 
 int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
+	assert(resmgr != NULL);
+
 	// Load up the patch.003 file, parse out the instruments
 	Resource *res = resmgr->findResource(kResourceTypePatch, 3, 0);
 
@@ -583,19 +601,19 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 		return -1;
 	}
 
-	if (res->size < 1344) {
-		error("ADLIB: Expected patch.003 of at least %d bytes, got %d", 1344, res->size);
+	if ((res->size != 1344) && (res->size != 2690)) {
+		error("ADLIB: Unsupported patch format (%i bytes)", res->size);
 		return -1;
 	}
 
 	for (int i = 0; i < 48; i++)
 		_driver->sysEx(res->data + (28 * i), 28);
 
-	if (res->size > 1344)
+	if (res->size == 2690)
 		for (int i = 48; i < 96; i++)
 			_driver->sysEx(res->data + 2 + (28 * i), 28);
 
-	return _driver->open();
+	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->_sciVersion == SCI_VERSION_0);
 }
 
 } // End of namespace Sci
