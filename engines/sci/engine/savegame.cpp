@@ -856,8 +856,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	str = &retval->sys_strings->strings[SYS_STRING_SAVEDIR];
 	internal_stringfrag_strncpy(s, str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
-	str->value[str->max_size].segment = s->string_frag_segment; // Make sure to terminate
-	str->value[str->max_size].offset &= 0xff00; // Make sure to terminate
+	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
+	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
 	
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
