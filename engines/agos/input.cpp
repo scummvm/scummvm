@@ -689,6 +689,7 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 		_intputCounter = 0;
 		_inputMax = size;
 		_inputWindow = _windowArray[_curWindow];
+		userGameBackSpace(_inputWindow, 8);
 		windowPutChar(_inputWindow, 128);
 		_inputting = true;
 		_inputReady = true;
