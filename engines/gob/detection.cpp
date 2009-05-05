@@ -1526,7 +1526,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"fascination",
 			"CD Version (Censored)",
-			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545952),
+			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
