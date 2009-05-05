@@ -38,13 +38,13 @@ OPL *OPL::create(kOplType type) {
 	assert(!_hasInstance);
 	_hasInstance = true;
 
-	if (type == kOpl2)
-		return new MAME::OPL_MAME();
-	else
-#ifndef DISABLE_DOSBOX_ADLIB
-		return new DOSBox::OPL_DOSBox(type);
-#else
+#ifdef DISABLE_DOSBOX_OPL
+	if (type != kOpl2)
 		return 0;
+	else
+		return new MAME::OPL_MAME();
+#else
+	return new DOSBox::OPL_DOSBox(type);
 #endif
 }
 
