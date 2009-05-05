@@ -31,11 +31,47 @@
 #include <stdarg.h>
 #include <math.h>
 
-#include "sound/fmopl.h"
+#include "mame.h"
 
 #if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__) || defined (__MINT__)
 #include "common/config-manager.h"
 #endif
+
+namespace OPL {
+namespace MAME {
+
+OPL_MAME::~OPL_MAME() {
+	MAME::OPLDestroy(_opl);
+	_opl = 0;
+}
+
+bool OPL_MAME::init(int rate) {
+	if (_opl)
+		MAME::OPLDestroy(_opl);
+
+	_opl = MAME::makeAdlibOPL(rate);
+	return (_opl != 0);
+}
+
+void OPL_MAME::reset() {
+	MAME::OPLResetChip(_opl);
+}
+
+void OPL_MAME::write(int a, int v) {
+	MAME::OPLWrite(_opl, a, v);
+}
+
+byte OPL_MAME::read(int a) {
+	return MAME::OPLRead(_opl, a);
+}
+
+void OPL_MAME::writeReg(int r, int v) {
+	MAME::OPLWriteReg(_opl, r, v);
+}
+
+void OPL_MAME::readBuffer(int16 *buffer, int length) {
+	MAME::YM3812UpdateOne(_opl, buffer, length);
+}
 
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
@@ -978,7 +1014,7 @@ static void OPL_UnLockTable(void) {
 /*******************************************************************************/
 
 /* ---------- update one of chip ----------- */
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave) {
+void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 	int i;
 	int data;
 	int16 *buf = buffer;
@@ -1020,7 +1056,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave) {
 		/* limit check */
 		data = CLIP(outd[0], OPL_MINOUT, OPL_MAXOUT);
 		/* store to sound buffer */
-		buf[i << interleave] = data >> OPL_OUTSB;
+		buf[i] = data >> OPL_OUTSB;
 	}
 
 	OPL->amsCnt = amsCnt;
@@ -1189,3 +1225,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }
+
+} // end of namespace MAME
+} // end of namespace OPL
+

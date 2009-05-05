@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	audiostream.o \
 	iff.o \
 	flac.o \
+	fmopl.o \
 	mididrv.o \
 	midiparser.o \
 	midiparser_smf.o \
@@ -29,6 +30,7 @@ MODULE_OBJS := \
 	mods/rjp1.o \
 	mods/soundfx.o \
 	softsynth/adlib.o \
+	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \

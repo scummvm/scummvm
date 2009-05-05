@@ -26,11 +26,16 @@
  */
 
 
-#ifndef SOUND_FMOPL_H
-#define SOUND_FMOPL_H
+#ifndef SOUND_SOFTSYNTH_OPL_MAME_H
+#define SOUND_SOFTSYNTH_OPL_MAME_H
 
 #include "common/scummsys.h"
 #include "common/util.h"
+
+#include "sound/fmopl.h"
+
+namespace OPL {
+namespace MAME {
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,
@@ -165,9 +170,32 @@ int OPLWrite(FM_OPL *OPL, int a, int v);
 unsigned char OPLRead(FM_OPL *OPL, int a);
 int OPLTimerOver(FM_OPL *OPL, int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave = 0);
+void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 
 // Factory method
 FM_OPL *makeAdlibOPL(int rate);
+
+// OPL API implementation
+class OPL_MAME : public OPL {
+private:
+	FM_OPL *_opl;
+public:
+	OPL_MAME() : _opl(0) {}
+	~OPL_MAME();
+
+	bool init(int rate);
+	void reset();
+
+	void write(int a, int v);
+	byte read(int a);
+
+	void writeReg(int r, int v);
+
+	void readBuffer(int16 *buffer, int length);
+	bool isStereo() const { return false; }
+};
+
+} // end of namespace MAME
+} // end of namespace OPL
 
 #endif
