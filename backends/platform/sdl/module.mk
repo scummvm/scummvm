@@ -1,9 +1,7 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	driver_gl.o \
-	driver_sdl.o \
-	driver_tinygl.o
+	sdl.o
 
 MODULE_DIRS += \
 	backends/platform/sdl/
