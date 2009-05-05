@@ -342,28 +342,21 @@ void stringfrag_strncpy(EngineState *s, reg_t dest, reg_t src, int len) {
 }
 
 int internal_stringfrag_strcmp(EngineState *s, reg_t *s1, reg_t *s2) {
+	int c1, c2;
 	while (1) {
-		if ((s1->offset & 0xff00) == 0 && (s2->offset & 0xff00) == 0)
+		c1 = (byte)(s1->offset & 0xff00);
+		c2 = (byte)(s2->offset & 0xff00);
+		if (c1 != c2)		// We found a difference
+			return c1 - c2;
+		else if (c1 == 0)	// Both strings ended
 			return 0;
-		if ((s1->offset & 0xff00) == 0)
-			return -1;
-		if ((s2->offset & 0xff00) == 0)
-			return 1;
-		if ((s1->offset & 0xff00) < (s2->offset & 0xff00))
-			return -1;
-		if ((s1->offset & 0xff00) > (s2->offset & 0xff00))
-			return 1;
 
-		if ((s1->offset & 0x00ff) == 0 && (s2->offset & 0x00ff) == 0)
+		c1 = (byte)(s1->offset & 0x00ff);
+		c2 = (byte)(s2->offset & 0x00ff);
+		if (c1 != c2)		// We found a difference
+			return c1 - c2;
+		else if (c1 == 0)	// Both strings ended
 			return 0;
-		if ((s1->offset & 0x00ff) == 0)
-			return -1;
-		if ((s2->offset & 0x00ff) == 0)
-			return 1;
-		if ((s1->offset & 0x00ff) < (s2->offset & 0x00ff))
-			return -1;
-		if ((s1->offset & 0x00ff) > (s2->offset & 0x00ff))
-			return 1;
 	}
 
 	return 0;
@@ -377,32 +370,26 @@ void stringfrag_strcmp(EngineState *s, reg_t s1, reg_t s2) {
 }
 
 int internal_stringfrag_strncmp(EngineState *s, reg_t *s1, reg_t *s2, int len) {
+	int c1, c2;
 	while (len) {
 		if (len--)
 			return 0;
-		if ((s1->offset & 0xff00) == 0 && (s2->offset & 0xff00) == 0)
+		c1 = (byte)(s1->offset & 0xff00);
+		c2 = (byte)(s2->offset & 0xff00);
+		if (c1 != c2)		// We found a difference
+			return c1 - c2;
+		else if (c1 == 0)	// Both strings ended
 			return 0;
-		if ((s1->offset & 0xff00) == 0)
-			return -1;
-		if ((s2->offset & 0xff00) == 0)
-			return 1;
-		if ((s1->offset & 0xff00) < (s2->offset & 0xff00))
-			return -1;
-		if ((s1->offset & 0xff00) > (s2->offset & 0xff00))
-			return 1;
 
 		if (len--)
 			return 0;
-		if ((s1->offset & 0x00ff) == 0 && (s2->offset & 0x00ff) == 0)
+
+		c1 = (byte)(s1->offset & 0x00ff);
+		c2 = (byte)(s2->offset & 0x00ff);
+		if (c1 != c2)		// We found a difference
+			return c1 - c2;
+		else if (c1 == 0)	// Both strings ended
 			return 0;
-		if ((s1->offset & 0x00ff) == 0)
-			return -1;
-		if ((s2->offset & 0x00ff) == 0)
-			return 1;
-		if ((s1->offset & 0x00ff) < (s2->offset & 0x00ff))
-			return -1;
-		if ((s1->offset & 0x00ff) > (s2->offset & 0x00ff))
-			return 1;
 	}
 
 	return 0;
@@ -416,4 +403,3 @@ void stringfrag_strncmp(EngineState *s, reg_t s1, reg_t s2, int len) {
 }
 
 } // end of namespace Sci
-
