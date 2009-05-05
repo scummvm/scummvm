@@ -178,15 +178,12 @@ crosswin32dist: $(EXECUTABLE)
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
-	cp icons/residual.info $(AOS4PATH)/$$(EXECUTABLE)_SVN.info
-	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
-	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL $(AOS4PATH)/COPYING_GPL.txt
 	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
 	cp $(srcdir)/TODO $(AOS4PATH)/TODO.txt
-	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
 .PHONY: deb bundle osxsnap win32dist install uninstall
