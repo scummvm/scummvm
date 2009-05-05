@@ -183,10 +183,24 @@ void MidiDriver_Adlib::send(uint32 b) {
 
 void MidiDriver_Adlib::generateSamples(int16 *data, int len) {
 	if (isStereo()) {
-		YM3812UpdateOne(_fmopl[0], data, len, 1);
-		YM3812UpdateOne(_fmopl[1], data + 1, len, 1);
+		int16 buffer[512];
+
+		while (len > 0) {
+			int process = len > ARRAYSIZE(buffer) ? ARRAYSIZE(buffer) : len;
+			len -= process;
+
+			YM3812UpdateOne(_fmopl[0], buffer, process);
+			for (int i = 0; i < process; ++i)
+				data[(i << 1) + 0] = buffer[i];
+			
+			YM3812UpdateOne(_fmopl[1], buffer, process);
+			for (int i = 0; i < process; ++i)
+				data[(i << 1) + 1] = buffer[i];
+
+			data += (process << 1);
+		}
 	} else {
-		YM3812UpdateOne(_fmopl[0], data, len, 0);
+		YM3812UpdateOne(_fmopl[0], data, len);
 	}
 
 	// Increase the age of the notes

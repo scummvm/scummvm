@@ -42,6 +42,8 @@
 
 ***************************************************************************/
 
+#include "common/util.h"
+
 #include "sci/tools.h"
 #include "sci/sfx/iterator.h"
 #include "../softseq.h"
@@ -78,9 +80,6 @@ static void opl2_allstop(sfx_softseq_t *self);
 
 #define ADLIB_LEFT 0
 #define ADLIB_RIGHT 1
-
-/* #define OPL_INTERNAL_FREQ     3600000 */
-#define OPL_INTERNAL_FREQ    3579545
 
 static int ready = 0;
 static int pcmout_stereo = STEREO;
@@ -157,21 +156,21 @@ void adlibemu_init_lists() {
 
 /* more shamelessly lifted from xmp and adplug.  And altered.  :) */
 
-static int opl_write_L(int a, int v) {
+static void opl_write_L(int a, int v) {
 	adlib_reg_L[a] = v;
 	OPLWrite(ym3812_L, 0x388, a);
-	return OPLWrite(ym3812_L, 0x389, v);
+	OPLWrite(ym3812_L, 0x389, v);
 }
 
-static int opl_write_R(int a, int v) {
+static void opl_write_R(int a, int v) {
 	adlib_reg_R[a] = v;
 	OPLWrite(ym3812_R, 0x388, a);
-	return OPLWrite(ym3812_R, 0x389, v);
+	OPLWrite(ym3812_R, 0x389, v);
 }
 
-static int opl_write(int a, int v) {
+static void opl_write(int a, int v) {
 	opl_write_L(a, v);
-	return opl_write_R(a, v);
+	opl_write_R(a, v);
 }
 
 /*
@@ -472,16 +471,13 @@ void test_adlib() {
    We assume 16-bit stereo frames (ie 4 bytes)
 */
 static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
-	int16 *buffer = (int16 *) dest;
-	int16 *ptr = buffer;
+	int16 *ptr = (int16 *)dest;
 
-	if (!ready) {
+	if (!ready)
 		error("synth_mixer(): !ready \n");
-	}
 
-	if (!buffer) {
+	if (!ptr)
 		error("synth_mixer(): !buffer \n");
-	}
 
 #if 0
 	{
@@ -509,10 +505,24 @@ static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 #endif
 
 	if (pcmout_stereo) {
-		YM3812UpdateOne(ym3812_L, ptr, count, 1);
-		YM3812UpdateOne(ym3812_R, ptr + 1, count, 1);
+		int16 buffer[512];
+
+		while (count > 0) {
+			int process = count > ARRAYSIZE(buffer) ? ARRAYSIZE(buffer) : count;
+			count -= process;
+
+			YM3812UpdateOne(ym3812_L, buffer, process);
+			for (int i = 0; i < process; ++i)
+				ptr[(i << 1) + 0] = buffer[i];
+			
+			YM3812UpdateOne(ym3812_R, buffer, process);
+			for (int i = 0; i < process; ++i)
+				ptr[(i << 1) + 1] = buffer[i];
+
+			ptr += (process << 1);
+		}
 	} else {
-		YM3812UpdateOne(ym3812_L, ptr, count, 0);
+		YM3812UpdateOne(ym3812_L, ptr, count);
 	}
 }
 
@@ -533,10 +543,7 @@ static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte 
 		for (i = 48; i < 96; i++)
 			make_sbi((adlib_def *)(data_ptr + 2 + (28 * i)), adlib_sbi[i]);
 
-	OPLBuildTables(FMOPL_ENV_BITS_HQ, FMOPL_EG_ENT_HQ);
-
-	if (!(ym3812_L = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, SAMPLE_RATE)) ||
-	        !(ym3812_R = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, SAMPLE_RATE))) {
+	if (!(ym3812_L = makeAdlibOPL(SAMPLE_RATE)) || !(ym3812_R = makeAdlibOPL(SAMPLE_RATE))) {
 		sciprintf("[sfx:seq:opl2] Failure: Emulator init failed!\n");
 		return SFX_ERROR;
 	}
@@ -549,12 +556,10 @@ static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte 
 
 
 static void opl2_exit(sfx_softseq_t *self) {
-	FM_OPL *opl = ym3812_L;
+	OPLDestroy(ym3812_L);
 	ym3812_L = NULL;
-	OPLDestroy(opl);
-	opl = ym3812_R;
+	OPLDestroy(ym3812_R);
 	ym3812_R = NULL;
-	OPLDestroy(opl);
 
 	// XXX deregister with pcm layer.
 }
