@@ -71,6 +71,8 @@ public:
 
 	~Array() {
 		delete[] _storage;
+		_storage = 0;
+		_capacity = _size = 0;
 	}
 
 	/** Appends element to the end of the array. */
