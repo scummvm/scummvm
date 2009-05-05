@@ -74,9 +74,8 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 	OPL->readBuffer(buffer, length);
 }
 
-// Factory method
 FM_OPL *makeAdlibOPL(int rate) {
-	FM_OPL *opl = OPL::OPL::create();
+	FM_OPL *opl = OPL::OPL::create(OPL::OPL::kOpl2);
 
 	if (opl) {
 		if (!opl->init(rate)) {

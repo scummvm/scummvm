@@ -100,12 +100,13 @@ public:
 	 */
 	virtual bool isStereo() const = 0;
 
-	static OPL *create(kOplType type = kOpl2);
+	static OPL *create(kOplType type);
 };
 
 } // end of namespace OPL
 
 // Legacy API
+// !You should not write any new code using the legacy API!
 typedef OPL::OPL FM_OPL;
 
 void OPLDestroy(FM_OPL *OPL);
@@ -116,7 +117,11 @@ unsigned char OPLRead(FM_OPL *OPL, int a);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 
-// Factory method
+/**
+ * Legacy factory to create an AdLib (OPL2) chip.
+ *
+ * !You should not write any new code using the legacy API!
+ */
 FM_OPL *makeAdlibOPL(int rate);
 
 #endif
