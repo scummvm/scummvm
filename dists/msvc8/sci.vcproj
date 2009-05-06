@@ -514,11 +514,11 @@
 			Name="sfx"
 			>
 			<File
-				RelativePath="..\..\engines\sci\sfx\adlib.cpp"
+				RelativePath="..\..\engines\sci\sfx\adlib_sbi.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\adlib.h"
+				RelativePath="..\..\engines\sci\sfx\adlib_sbi.h"
 				>
 			</File>
 			<File
