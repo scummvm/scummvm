@@ -57,7 +57,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/scummvm
 
-iphonebundle: $(srcdir)/dists/iphone/Info.plist
+iphonebundle: iphone $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/
