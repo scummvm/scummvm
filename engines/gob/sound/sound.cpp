@@ -262,10 +262,12 @@ void Sound::adlibPlayTrack(const char *trackname) {
 }
 
 void Sound::adlibPlayBgMusic() {
+	int track;
+
 	if (!_adlib)
 		return;
 
-	static const char *tracks[] = {
+	static const char *tracksMac[] = {
 //		"musmac1.adl", // TODO: This track isn't played correctly at all yet
 		"musmac2.adl",
 		"musmac3.adl",
@@ -274,8 +276,21 @@ void Sound::adlibPlayBgMusic() {
 		"musmac6.adl"
 	};
 
-	int track = _vm->_util->getRandom(ARRAYSIZE(tracks));
-	adlibPlayTrack(tracks[track]);
+	static const char *tracksWin[] = {
+		"musmac1.mid",
+		"musmac2.mid",
+		"musmac3.mid",
+		"musmac4.mid",
+		"musmac5.mid"
+	};
+
+	if (_vm->getPlatform() == Common::kPlatformWindows) {
+		track = _vm->_util->getRandom(ARRAYSIZE(tracksWin));
+		adlibPlayTrack(tracksWin[track]);
+	} else {
+		track = _vm->_util->getRandom(ARRAYSIZE(tracksMac));
+		adlibPlayTrack(tracksMac[track]);
+	}
 }
 
 void Sound::adlibPlay() {
