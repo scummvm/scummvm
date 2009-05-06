@@ -36,6 +36,18 @@ typedef int SegmentId;
 struct reg_t {
 	uint16 segment;
 	uint16 offset;
+
+	bool isNull() const {
+		return !(offset || segment);
+	}
+
+	bool operator==(const reg_t &x) const {
+		return (offset == x.offset) && (segment == x.segment);
+	}
+
+	bool operator!=(const reg_t &x) const {
+		return (offset != x.offset) || (segment != x.segment);
+	}
 };
 
 #define PREG "%04x:%04x"
@@ -61,9 +73,8 @@ static inline reg_t make_reg(int segment, int offset) {
 	return r;
 }
 
-#define IS_NULL_REG(r) (!((r).offset || (r).segment))
-#define REG_EQ(a, b) (((a).offset == (b).offset) && ((a).segment == (b).segment))
-#define NULL_REG_INITIALIZER {0, 0}
+#define IS_NULL_REG(r) ((r).isNull())
+#define REG_EQ(a, b) ((a) == (b))
 extern reg_t NULL_REG;
 
 } // End of namespace Sci

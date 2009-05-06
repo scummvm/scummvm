@@ -39,7 +39,7 @@
 
 namespace Sci {
 
-reg_t NULL_REG = NULL_REG_INITIALIZER;
+reg_t NULL_REG = {0, 0};
 
 //#define VM_DEBUG_SEND
 #undef STRICT_SEND // Disallows variable sends with more than one parameter
