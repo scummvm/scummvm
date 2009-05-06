@@ -329,7 +329,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 		return;
 
 	// Only allow 4 waveforms
-	if (reg >= 0xE0)
+	if (reg >= 0xE0 && reg <= 0xE8)
 		val &= 3;
 
 	// Write to the timer?
@@ -337,8 +337,8 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 		return;
 
 	// Enabling panning
-	if (reg >= 0xC0 && reg < 0xC8) {
-		val &= 7;
+	if (reg >= 0xC0 && reg <= 0xC8) {
+		val &= 15;
 		val |= index ? 0xA0 : 0x50;
 	}
 
