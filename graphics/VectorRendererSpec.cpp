@@ -288,7 +288,7 @@ blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
 
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
-	byte *src_ptr = (byte *)source->getBasePtr(r.left, r.top);
+	const byte *src_ptr = (const byte *)source->getBasePtr(r.left, r.top);
 
 	const int dst_pitch = _activeSurface->pitch;
 	const int src_pitch = source->pitch;
@@ -307,7 +307,7 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) {
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
-	byte *src_ptr = (byte *)source->getBasePtr(0, 0);
+	const byte *src_ptr = (const byte *)source->getBasePtr(0, 0);
 
 	const int dst_pitch = _activeSurface->pitch;
 	const int src_pitch = source->pitch;
@@ -335,7 +335,7 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 		y = y + (r.height() >> 1) - (source->h >> 1);
 
 	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-	PixelType *src_ptr = (PixelType *)source->getBasePtr(0, 0);
+	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(0, 0);
 
 	int dst_pitch = _activeSurface->pitch / _activeSurface->bytesPerPixel;
 	int src_pitch = source->pitch / source->bytesPerPixel;
