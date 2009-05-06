@@ -47,7 +47,7 @@
 #include "sci/tools.h"
 #include "sci/sfx/iterator.h"
 #include "../softseq.h"
-#include "../adlib.h"
+#include "../adlib_sbi.h"
 
 #include "sound/fmopl.h"
 
