@@ -1546,7 +1546,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 		},
 		kGameTypeFascination,
-		kFeaturesNone,
+		kFeaturesAdlib,
 		"disk0.stk",
 		0
 	},
@@ -1561,7 +1561,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 		},
 		kGameTypeFascination,
-		kFeaturesNone,
+		kFeaturesAdlib,
 		"disk0.stk",
 		0
 	},
@@ -1575,7 +1575,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 		},
 		kGameTypeFascination,
-		kFeaturesNone,
+		kFeaturesAdlib,
 		"disk0.stk",
 		0
 	},
