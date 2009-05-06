@@ -142,6 +142,14 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				_callbackProc(info.basic.param2, _callbackData);
 			break;
 
+		case 0x6e:	// XMIDI_CONTROLLER_CHAN_LOCK
+		case 0x6f:	// XMIDI_CONTROLLER_CHAN_LOCK_PROT
+		case 0x70:	// XMIDI_CONTROLLER_VOICE_PROT
+		case 0x71:	// XMIDI_CONTROLLER_TIMBRE_PROT
+		case 0x72:	// XMIDI_CONTROLLER_BANK_CHANGE
+		case 0x73:	// XMIDI_CONTROLLER_IND_CTRL_PREFIX
+		case 0x76:	// XMIDI_CONTROLLER_CLEAR_BB_COUNT
+		case 0x78:	// XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
 		default:
 			if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
