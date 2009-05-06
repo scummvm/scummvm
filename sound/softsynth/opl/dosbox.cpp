@@ -34,6 +34,7 @@
 #include "dosbox.h"
 
 #include "common/system.h"
+#include "common/scummsys.h"
 
 #include <math.h>
 #include <string.h>

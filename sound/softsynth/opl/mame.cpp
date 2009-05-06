@@ -37,6 +37,10 @@
 #include "common/config-manager.h"
 #endif
 
+#if defined(__DS__)
+#include "dsmain.h"
+#endif
+
 namespace OPL {
 namespace MAME {
 
@@ -94,7 +98,6 @@ void OPL::readBuffer(int16 *buffer, int length) {
 /* sinwave entries */
 /* used static memory = SIN_ENT * 4 (byte) */
 #ifdef __DS__
-#include "dsmain.h"
 #define SIN_ENT_SHIFT 8
 #else
 #define SIN_ENT_SHIFT 11
