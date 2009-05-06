@@ -82,14 +82,12 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
 	_isSCI0 = isSCI0;
 
-	for (int i = 0; i < (isStereo() ? 2 : 1); i++) {
-		_fmopl[i] = makeAdlibOPL(rate);
+	_opl = OPL::OPL::create(isStereo() ? OPL::OPL::kDualOpl2 : OPL::OPL::kOpl2);
 
-		if (!_fmopl[i])
-			return -1;
+	if (!_opl)
+		return -1;
 
-		OPLResetChip(_fmopl[i]);
-	}
+	_opl->init(rate);
 
 	setRegister(0xBD, 0);
 	setRegister(0x08, 0);
@@ -105,8 +103,7 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 void MidiDriver_Adlib::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
-	for (int i = 0; i < (isStereo() ? 2 : 1); i++)
-		OPLDestroy(_fmopl[i]);
+	delete _opl;
 }
 
 void MidiDriver_Adlib::setVolume(byte volume) {
@@ -182,26 +179,9 @@ void MidiDriver_Adlib::send(uint32 b) {
 }
 
 void MidiDriver_Adlib::generateSamples(int16 *data, int len) {
-	if (isStereo()) {
-		int16 buffer[512];
-
-		while (len > 0) {
-			int process = len > ARRAYSIZE(buffer) ? ARRAYSIZE(buffer) : len;
-			len -= process;
-
-			YM3812UpdateOne(_fmopl[0], buffer, process);
-			for (int i = 0; i < process; ++i)
-				data[(i << 1) + 0] = buffer[i];
-			
-			YM3812UpdateOne(_fmopl[1], buffer, process);
-			for (int i = 0; i < process; ++i)
-				data[(i << 1) + 1] = buffer[i];
-
-			data += (process << 1);
-		}
-	} else {
-		YM3812UpdateOne(_fmopl[0], data, len);
-	}
+	if (isStereo())
+		len <<= 1;
+	_opl->readBuffer(data, len);
 
 	// Increase the age of the notes
 	for (int i = 0; i < kVoices; i++) {
@@ -587,14 +567,14 @@ void MidiDriver_Adlib::setOperator(int reg, AdlibOperator &op) {
 
 void MidiDriver_Adlib::setRegister(int reg, int value, int channels) {
 	if (channels & kLeftChannel) {
-		OPLWrite(_fmopl[0], 0x388, reg);
-		OPLWrite(_fmopl[0], 0x389, value);
+		_opl->write(0x220, reg);
+		_opl->write(0x221, value);
 	}
 
 	if (isStereo()) {
 		if (channels & kRightChannel) {
-			OPLWrite(_fmopl[1], 0x388, reg);
-			OPLWrite(_fmopl[1], 0x389, value);
+			_opl->write(0x222, reg);
+			_opl->write(0x223, value);
 		}
 	}
 }
@@ -611,12 +591,12 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 	Resource *res = resmgr->findResource(kResourceTypePatch, 3, 0);
 
 	if (!res) {
-		error("ADLIB: Failed to load patch.003");
+		warning("ADLIB: Failed to load patch.003");
 		return -1;
 	}
 
 	if ((res->size != 1344) && (res->size != 2690)) {
-		error("ADLIB: Unsupported patch format (%i bytes)", res->size);
+		warning("ADLIB: Unsupported patch format (%i bytes)", res->size);
 		return -1;
 	}
 

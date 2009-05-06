@@ -112,7 +112,7 @@ private:
 
 	bool _stereo;
 	bool _isSCI0;
-	FM_OPL *_fmopl[2];
+	OPL::OPL *_opl;
 	bool _playSwitch;
 	int _masterVolume;
 	Channel _channels[MIDI_CHANNELS];
