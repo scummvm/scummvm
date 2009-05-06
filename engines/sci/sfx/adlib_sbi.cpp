@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/sfx/adlib.h"
+#include "sci/sfx/adlib_sbi.h"
 
 namespace Sci {
 

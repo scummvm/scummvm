@@ -58,7 +58,7 @@ MODULE_OBJS = \
 	scicore/versions.o \
 	scicore/vocabulary.o \
 	scicore/vocab_debug.o \
-	sfx/adlib.o \
+	sfx/adlib_sbi.o \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \
