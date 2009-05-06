@@ -845,6 +845,34 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="opl"
+					>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\dosbox.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\dosbox.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\mame.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\mame.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\opl.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\opl.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="mods"
@@ -1072,6 +1100,98 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="keymapper"
+				>
+				<File
+					RelativePath="..\..\backends\keymapper\action.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\action.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\hardware-key.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\remap-dialog.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\remap-dialog.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\types.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="vkeybd"
+				>
+				<File
+					RelativePath="..\..\backends\vkeybd\image-map.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\image-map.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\keycode-descriptions.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\polygon.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\polygon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
