@@ -2529,6 +2529,21 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{ // Supplied by Luca in scummvm-devel vol.36 iss.1
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "60348a87651f92e8492ee070556a96d8", 7069736),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		0,
+		0
+	},
+
 	{
 		{
 			"woodruff",
