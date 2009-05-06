@@ -145,7 +145,7 @@ uint8 Chip::read() {
 }
 
 namespace OPL2 {
-#include "opl.cpp"
+#include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
 	void writeReg(uint32 reg, uint8 val) {	
@@ -168,7 +168,7 @@ struct Handler : public DOSBox::Handler {
 
 namespace OPL3 {
 #define OPLTYPE_IS_OPL3
-#include "opl.cpp"
+#include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
 	void writeReg(uint32 reg, uint8 val) {	

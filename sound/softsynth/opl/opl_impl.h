@@ -24,7 +24,7 @@
  * Ken Silverman's official web site: "http://www.advsys.net/ken"
  */
 
-#include "opl.h"
+#include "opl_inc.h"
 
 
 static fltype recipsamp;	// inverse of sampling rate
