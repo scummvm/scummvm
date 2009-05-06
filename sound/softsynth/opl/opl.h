@@ -24,6 +24,7 @@
  * Ken Silverman's official web site: "http://www.advsys.net/ken"
  */
 
+#include "common/scummsys.h"
 
 #define fltype double
 
