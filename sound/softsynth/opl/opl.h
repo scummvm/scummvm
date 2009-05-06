@@ -30,14 +30,14 @@
 	define Bits, Bitu, Bit32s, Bit32u, Bit16s, Bit16u, Bit8s, Bit8u here
 */
 
-typedef uint	Bitu;
-typedef int		Bits;
-typedef uint32	Bit32u;
-typedef int32	Bit32s;
-typedef uint16	Bit16u;
-typedef int16	Bit16s;
-typedef uint8	Bit8u;
-typedef int8	Bit8s;
+#define Bitu uint
+#define Bits int
+#define Bit32u uint32
+#define Bit32s int32
+#define Bit16u uint16
+#define Bit16s int16
+#define Bit8u uint8
+#define Bit8s int8
 
 #undef NUM_CHANNELS
 #if defined(OPLTYPE_IS_OPL3)
