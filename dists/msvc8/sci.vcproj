@@ -557,6 +557,10 @@
 				Name="player"
 				>
 				<File
+					RelativePath="..\..\engines\sci\sfx\player\player.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\engines\sci\sfx\player\players.cpp"
 					>
 				</File>
