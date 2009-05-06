@@ -364,13 +364,16 @@
 		<Filter
 			Name="sfx">
 			<File
-				RelativePath="..\..\engines\sci\sfx\adlib.cpp">
+				RelativePath="..\..\engines\sci\sfx\adlib_sbi.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\sfx\adlib.h">
+				RelativePath="..\..\engines\sci\sfx\adlib_sbi.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\core.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\core.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\device.h">
@@ -379,13 +382,34 @@
 				RelativePath="..\..\engines\sci\sfx\iterator.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\iterator.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\iterator_internal.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\player.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sci_midi.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\sequencer.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sfx.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sfx_pcm.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\softseq.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\songlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\songlib.h">
 			</File>
 			<Filter
 				Name="device">
@@ -395,6 +419,9 @@
 			</Filter>
 			<Filter
 				Name="player">
+				<File
+					RelativePath="..\..\engines\sci\sfx\player\player.cpp">
+				</File>
 				<File
 					RelativePath="..\..\engines\sci\sfx\player\players.cpp">
 				</File>

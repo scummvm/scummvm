@@ -526,6 +526,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\core.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\device.h"
 				>
 			</File>
@@ -534,7 +538,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\iterator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\iterator_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\player.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sci_midi.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\sequencer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sfx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\sfx_pcm.h"
 				>
 			</File>
 			<File
@@ -543,6 +571,10 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\songlib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\sfx\songlib.h"
 				>
 			</File>
 			<Filter
