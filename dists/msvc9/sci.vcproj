@@ -187,10 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\heapmgr.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\intmap.cpp"
 				>
 			</File>
@@ -586,11 +582,27 @@
 				Name="softseq"
 				>
 				<File
+					RelativePath="..\..\engines\sci\sfx\softseq\adlib.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engines\sci\sfx\softseq\adlib.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\opl2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h"
 					>
 				</File>
 				<File
