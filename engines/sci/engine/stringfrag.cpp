@@ -28,6 +28,59 @@
 
 namespace Sci {
 
+/*
+The following is an email Lars wrote mid march and which explains a little
+bit about system strings. I paste it here for future reference. Some of this
+could possible be turned into documentation for the strings frags code...
+*/
+
+/*
+Max Horn wrote:
+> Basically, saving the reg_t "array" (?) in the SystemString struct (see
+> sync_SystemString in engine/savegame.cpp) seems like a bad hack that will
+> result in breakage... 
+
+The short explanation is that the casts _will_ go away, but that the
+system strings, too, will become stringfrag-based eventually.
+
+The long version requires a bit of background: During the SCI01
+timeframe, a Memory() call was added which does not really play well
+with the Glutton architecture (as well as having the potential for
+nasty game bugs - it allows games to write to any part of the
+heap). The same memory call is used for modification of strings and
+integer arrays (as is direct array indexing). From a formal point of
+view, the use of either of these for string handling is wrong. There
+exist string APIs that should be used instead. But things being as
+they are, we need to be able to tell the two types apart
+somehow. Currently, we have a heuristic in there which doesn't always
+work (it breaks LSL5 password protection, for one thing) - the string
+frags code is intended to replace this heuristic, but requires
+changing the argument parsing of every kernel function that uses
+strings. This _will_ cause regressions, and for that reason I only
+changed the interface definitions, not the implementation. As I wrote
+to Willem the other day, I was trying to commit as much of the
+stringfrag code as I could without breaking existing code, and isolate
+the breakage to a later set of commits.
+
+Also, a little background on the system strings. In Sierra SCI, the
+heap is stored in the interpreter's data segment and is not precisely
+64K in size - but rather 64K minus the size of the interpreter's
+static data. However, the script code does have read/write access
+to this static data. The strings that we store in the system strings
+table are stored in static data in Sierra SCI. We have only two at
+this point:
+
+1. The savegame directory
+2. Parser error handling
+
+2) doesn't actually need to be saved, because not only is the variable
+only used during error handling, but the routine in question is called
+re-entrantly by the kernel function - and not even the old save system
+supports saving in that kind of situation, much less Sierra SCI. On
+the other hand, the scripts retain a pointer to 1) which needs to
+remain valid across saves.
+*/
+
 #define STRINGFRAG_SEGMENT s->string_frag_segment
 // #define STRINGFRAG_SEGMENT 0xffff
 
