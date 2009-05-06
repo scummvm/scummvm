@@ -91,7 +91,7 @@ bool TempSprite::saveSprite(const SurfaceDesc &surfDesc) {
 }
 
 bool TempSprite::savePalette(const Video::Color *palette) {
-	memcpy((byte *) _palette, (byte *) palette, 768);
+	memcpy((byte *) _palette, (const byte *) palette, 768);
 	return true;
 }
 
@@ -126,7 +126,7 @@ bool TempSprite::toBuffer(byte *buffer, int32 size, bool palette) const {
 	}
 
 	if (palette) {
-		memcpy(buffer, (byte *) _palette, 768);
+		memcpy(buffer, (const byte *) _palette, 768);
 		buffer += 768;
 	}
 

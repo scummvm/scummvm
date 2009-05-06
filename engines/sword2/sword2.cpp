@@ -832,7 +832,7 @@ uint32 Sword2Engine::getMillis() {
 }
 
 Common::Error Sword2Engine::saveGameState(int slot, const char *desc) {
-	uint32 saveVal = saveGame(slot, (byte *)desc);
+	uint32 saveVal = saveGame(slot, (const byte *)desc);
 
 	if (saveVal == SR_OK)
 		return Common::kNoError;

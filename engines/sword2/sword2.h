@@ -219,7 +219,7 @@ public:
 	bool checkTextLine(byte *file, uint32 text_line);
 	byte *fetchPaletteMatchTable(byte *screenFile);
 	
-	uint32 saveGame(uint16 slotNo, byte *description);
+	uint32 saveGame(uint16 slotNo, const byte *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, byte *description);
 	bool saveExists();

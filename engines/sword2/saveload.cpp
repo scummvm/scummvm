@@ -70,14 +70,14 @@ uint32 Sword2Engine::findBufferSize() {
  * Save the game.
  */
 
-uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
+uint32 Sword2Engine::saveGame(uint16 slotNo, const byte *desc) {
 	char description[SAVE_DESCRIPTION_LEN];
 	uint32 bufferSize = findBufferSize();
 	byte *saveBuffer = (byte *)malloc(bufferSize);
 	ScreenInfo *screenInfo = _screen->getScreenInfo();
 
 	memset(description, 0, sizeof(description));
-	strncpy(description, (char *)desc, SAVE_DESCRIPTION_LEN - 1);
+	strncpy(description, (const char *)desc, SAVE_DESCRIPTION_LEN - 1);
 
 	Common::MemoryWriteStream writeS(saveBuffer, bufferSize);
 
